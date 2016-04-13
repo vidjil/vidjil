@@ -27,22 +27,20 @@ def add():
 def add_form(): 
     error =""
 
-    required_fields = ['config_name', 'config_command', 'config_fuse_command', 'config_program']
+    required_fields = ['pre_process_name', 'pre_process_command']
     for field in required_fields:
         if request.vars[field] == "" :
             error += field+" needed, "
 
     if error=="" :
         
-        db.config.insert(name=request.vars['config_name'],
-                        info=request.vars['config_info'],
-                        command=request.vars['config_command'],
-                        fuse_command=request.vars['config_fuse_command'],
-                        program=request.vars['config_program']
+        db.pre_process.insert(name=request.vars['pre_process_name'],
+                        info=request.vars['pre_process_info'],
+                        command=request.vars['pre_process_command']
                         )
 
-        res = {"redirect": "config/index",
-               "message": "config '%s' added" % request.vars['config_name']}
+        res = {"redirect": "pre_process/index",
+               "message": "pre_process '%s' added" % request.vars['pre_process_name']}
         log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
@@ -59,22 +57,20 @@ def edit():
 def edit_form(): 
     error =""
 
-    required_fields = ['id', 'config_name', 'config_command', 'config_fuse_command', 'config_program']
+    required_fields = ['pre_process_name', 'pre_process_command']
     for field in required_fields:
         if request.vars[field] == "" :
             error += field+" needed, "
 
     if error=="" :
 
-        db.config[request.vars["id"]] = dict(name=request.vars['config_name'],
-                                             info=request.vars['config_info'],
-                                             command=request.vars['config_command'],
-                                             fuse_command=request.vars['config_fuse_command'],
-                                             program=request.vars['config_program']
-                                             )
+        db.pre_process[request.vars["id"]] = dict(name=request.vars['pre_process_name'],
+                        info=request.vars['pre_process_info'],
+                        command=request.vars['pre_process_command']
+                        )
 
-        res = {"redirect": "config/index",
-               "message": "config '%s' updated" % request.vars['config_name']}
+        res = {"redirect": "pre_process/index",
+               "message": "pre_process '%s' updated" % request.vars['pre_process_name']}
 
         log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
@@ -85,16 +81,14 @@ def edit_form():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def confirm():
-    return dict(message=T('confirm config deletion'))
+    return dict(message=T('confirm pre_process deletion'))
 
 def delete():
-    #delete results_file using this config
-    db(db.results_file.config_id==request.vars["id"]).delete()
     
-    #delete config
-    db(db.config.id==request.vars["id"]).delete() 
+    #delete pre_process
+    db(db.pre_process.id==request.vars["id"]).delete() 
     
-    res = {"redirect": "config/index",
-           "message": "config '%s' deleted" % request.vars["id"]}
+    res = {"redirect": "pre_process/index",
+           "message": "pre_process '%s' deleted" % request.vars["id"]}
     log.admin(res)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
