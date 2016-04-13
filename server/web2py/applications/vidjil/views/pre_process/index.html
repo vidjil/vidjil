@@ -1,0 +1,44 @@
+{{extend 'db_layout.html'}}
+
+{{('message' in globals())}}
+{{if 'message' in globals():}}
+
+<h3>{{=message}}</h3>
+
+<div id="db_table_container">
+    <table class="db_table" id="table">
+        <thead>
+            <tr><td class="column_50"></td>
+                <td class="column2"> name </td>
+                <td> command </td>
+                <td> info </td>
+
+                <td class="column5"> </td>
+                <td class="column5"> </td>
+                <td class="column5"> </td>
+            </tr>
+        </thead>
+       {{ for row in query :}}
+            <tr>
+                <td> {{=row.id }} </td>
+                <td> {{=row.name }} </td>
+                <td> {{=row.command }} </td>
+                <td> {{=row.info }} </td>
+
+{{if isAdmin:}} <td onclick="db.call('pre_process/permission', {'id' :'{{=row.id}}'} )" > <i class="icon-key" title="set permissions"></i> </td> {{else:}} <td></td> {{pass}}
+                <td onclick="db.call('pre_process/edit', {'id' :'{{=row.id}}'} )" > <i class="icon-pencil-2" title="edit pre-process"></i> </td>
+                <td onclick="db.call('pre_process/confirm', {'id' :'{{=row.id}}'} )" > <i class="icon-erase" title="delete pre-process"></i> </td>
+            </tr>
+        {{pass}}
+    </table>
+    <table class="db_table" id="db_fixed_header"></table>
+</div>
+
+<span class="button2" onclick="db.call('pre_process/add')"> + new pre-process </span>
+
+
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}

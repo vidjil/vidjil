@@ -1,0 +1,36 @@
+{{extend 'db_layout.html'}}
+
+<form id="data_form" action="DB_ADDRESS/pre_process/add_form" enctype="multipart/form-data" method="post">
+    <table>
+        <tbody>
+            <tr>
+                <td > <label for="pre_process_name" id="pre_process_name__label">Name: </label> </td>
+                <td > <input class="string" id="pre_process_name" name="pre_process_name" type="text" value=""> </td> 
+                <td > </td>
+            </tr>
+
+            
+            <tr>
+                <td> <label for="pre_process_command" id="pre_process_command__label">Command: </label> </td>
+                <td> <textarea class="text" cols="60" id="pre_process_command" name="pre_process_command" rows="10"></textarea> </td> 
+                <td> Describe the command usage of your script to help Vidjil to use it correctly.</br>
+                     replace in your command input file paths with &file1& and &file2& and result file path with &result& <br>
+                     for exemple the command: <br>
+            <span style="font-family: 'courier'" >python myReadMergerScript.py -n 50 sample_r1.fastq sample_r2.fastq -o result.fastq</span><br>
+                     must be described as: <br>
+            <span style="font-family: 'courier'">python myReadMergerScript.py -n 50 &file1& &file2& -o &result&</span><br>
+        </td>
+            </tr>
+            <tr>
+                <td> <label for="pre_process_info" id="pre_process_info__label">Info: </label> </td>
+                <td> <textarea class="text" cols="60" id="pre_process_info" name="pre_process_info" rows="10"></textarea> </td> 
+                <td> </td>
+            </tr>
+            <tr>
+                <td> </td>
+                <td ><input type="submit" value="Soumettre" class="btn"> </td>
+                <td> </td>
+            </tr>
+        </tbody>
+    </table>
+</form>

@@ -1,0 +1,35 @@
+{{extend 'db_layout.html'}}
+
+{{
+info = db.pre_process[request.vars["id"]]
+}}
+
+<form id="data_form" action="DB_ADDRESS/pre_process/edit_form" enctype="multipart/form-data" method="post">
+    <input type="HIDDEN" id="pre_process_id" name="id" value="{{=request.vars["id"]}}"> 
+    <table>
+        <tbody>
+            <tr>
+                <td > <label for="pre_process_name" id="pre_process_name__label">Name: </label> </td>
+                <td > <input class="string" id="pre_process_name" name="pre_process_name" type="text" value="{{=info.name}}"> </td> 
+                <td > </td>
+            </tr>
+            <tr>
+                <td> <label for="pre_process_command" id="pre_process_command__label">Command: </label> </td>
+                <td> <textarea class="text" cols="60" id="pre_process_command" name="pre_process_command" rows="10">{{=info.command}}</textarea> </td> 
+                <td> </td>
+            </tr>
+            <tr>
+ 
+            <tr>
+                <td> <label for="pre_process_info" id="pre_process_info__label">Info: </label> </td>
+                <td> <textarea class="text" cols="80" id="pre_process_info" name="pre_process_info" rows="10">{{=info.info}}</textarea> </td> 
+                <td> </td>
+            </tr>
+            <tr>
+                <td> </td>
+                <td ><input type="submit" value="Soumettre" class="btn"> </td>
+                <td> </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
