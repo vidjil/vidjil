@@ -14,21 +14,13 @@ $ Segmentation
 1:"name": "IGHV3-23.05 6/ACCCGGGAGGAACAATAT/9 IGHD6-13.01 0//5 IGHJ4.02"
 
 $ Segmentation details - V
-1:"5": "IGHV3-23.05",
-1:"5end": 54,
-1:"5del": 6,
+1:"5": ."delRight": 6, "end": 54, "name": "IGHV3-23.05".
 
 $ Segmentation details - D
-1:"4delLeft": 9,
-1:"4start": 73,
-1:"4": "IGHD6-13.01",
-1:"4end": 84,
-1:"4delRight": 0,
+1:"4": ."delLeft": 9, "delRight": 0, "end": 84, "name": "IGHD6-13.01", "start": 73.
 
 $ Segmentation details - J
-1:"3del": 5,
-1:"3start": 85,
-1:"3": "IGHJ4.02",
+1:"3": ."delLeft": 5, "name": "IGHJ4.02", "start": 85.
 
 $ Segmentation details - N1, N2
 1:"N1": 18,
