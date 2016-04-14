@@ -50,25 +50,23 @@ string AlignBox::getSequence(string sequence) {
 
 void AlignBox::addToJson(json &seg) {
 
-  seg[key] = ref_label;
+  json j;
 
-  if (key == "5")
+  j["name"] = ref_label;
+
+  if (key != "3") // no end information for J
     {
-      seg[key+"end"] = end;
-      seg[key+"del"] = del_right;
+      j["end"] = end;
+      j["delRight"] = del_right;
     }
-  else if (key == "3")
+
+  if (key != "5") // no start information for V
     {
-      seg[key+"del"] = del_left;
-      seg[key+"start"] = start;
+      j["start"] = start;
+      j["delLeft"] = del_left;
     }
-  else
-    {
-      seg[key+"delLeft"] = del_left;
-      seg[key+"start"] = start;
-      seg[key+"end"] = end;
-      seg[key+"delRight"] = del_right;
-    }
+
+  seg[key] = j ;
 }
 
 ostream &operator<<(ostream &out, const AlignBox &box)
