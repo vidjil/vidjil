@@ -1122,9 +1122,9 @@ Uploader.prototype = {
         
         if (this.is_uploading()){
             $("#upload_summary").css("display","block")
-            $("#upload_summary_label").html("<span class='loading_seq'>upload list</span>")
+            $("#upload_summary_label").html("<span class='loading_seq'>uploading</span>")
         }else{
-            $("#upload_summary_label").html("<span class='loading_status'>upload list</span>")
+            $("#upload_summary_label").html("<span class='loading_status'>uploads</span>")
         }
         
         for (var key in this.queue){
