@@ -1,3 +1,5 @@
+var PROXY_ADDRESS = "https://dev.vidjil.org/proxy/imgt"
+
 //parametre IMGT par defaut
 function initImgtInput() {
     var imgtInput = {};
@@ -169,7 +171,11 @@ function imgtPostForSegmenter(data, system) {
     //disabled due to security concerns
     //form.action = "http://www.imgt.org/IMGT_vquest/vquest";
     //using proxy on server to allow requests on other site than vidjil one's in JS.
-    form.action = "https://test.vidjil.org/vidjil/proxy/imgt";
+    if (typeof config != 'undefined') {
+        form.action = config.proxy
+    } else {
+        form.action = PROXY_ADDRESS;
+    }
     form.method = "POST";
 
     for (var k in imgtInput) {
