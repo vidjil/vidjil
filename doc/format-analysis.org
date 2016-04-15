@@ -304,6 +304,7 @@ In the =.analysis= file, this section is intended to describe some specific clon
       {
          "5": {"name": "IGHV5*01", "start": 1, "stop": 120},    // V (or 5') segment
          "4": {"name": "IGHD1*01", "start": 124, "stop": 135},  // D (or middle) segment
+                     // Recombination with several D may use "4a", "4b"...
          "3": {"name": "IGHJ3*02", "start": 136, "stop": 171},  // J (or 3') segment
 
                      // any feature to be highligthed in the sequence
