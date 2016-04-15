@@ -1,4 +1,4 @@
-#+TITLE: .analysis and .vidjil format
+#+TITLE: .analysis and .vidjil format (2016a)
 #+AUTHOR: The Vidjil team
 
 The following [[http://en.wikipedia.org/wiki/JSON][.json]] format allows to
@@ -46,7 +46,7 @@ or =clusters=, to further cluster some clones, see below).
     {
         "producer": "program xyz version xyz",
         "timestamp": "2014-10-01 12:00:11",
-        "vidjil_json_version": "2014.10",
+        "vidjil_json_version": "2016a",
 
         "samples": {
              "number": 1, 
@@ -93,7 +93,7 @@ do a correct gathering.
     {
         "producer": "program xyz version xyz / fuse.py version xyz",
         "timestamp": "2014-10-01 14:00:11",
-        "vidjil_json_version": "2014.10",
+        "vidjil_json_version": "2016a",
 
         "samples": {
              "number": 2, 
@@ -156,7 +156,7 @@ some clones, and added external data (=data=).
     {
         "producer": "user Bob, via browser",
         "timestamp": "2014-10-01 12:00:11",
-        "vidjil_json_version": "2014.10",
+        "vidjil_json_version": "2016a",
 
         "samples": {
              "number": 2, 
@@ -220,7 +220,7 @@ representative clone of the cluster.
 #+BEGIN_SRC js
    "producer": "my-repseq-software -z -k (v. 123)",    // arbitrary string, user/software/version/options producing this file [required]
    "timestamp": "2014-10-01 12:00:11",                 // last modification date [required]
-   "vidjil_json_version": "2016a", // version of the format  [required]
+   "vidjil_json_version": "2016a",                     // version of the .json format  [required]
 #+END_SRC
 
 
