@@ -1,20 +1,35 @@
 #+TITLE: .analysis and .vidjil format
 #+AUTHOR: The Vidjil team
 
-The =.analysis= and the =.vidjil= files share a common [[http://en.wikipedia.org/wiki/JSON][.json]] format.
-They are produced and used by several components of the Vidjil platform, 
-but you can also use these formats to use the Vidjil browser within 
-your own analysis pipeline.
+The following [[http://en.wikipedia.org/wiki/JSON][.json]] format allows to
+encode a set of clones with V(D)J immune recombinations,
+possibly with user annotations.
 
+In Vidjil, this format is used by both the =.analysis= and the =.vidjil= files.
 The =.vidjil= file represents the actual data on clones (and that can
-reach megabytes). It should be automatically produced.
-
+reach megabytes, or even more), usually produced by processing reads by some RepSeq software.
+(for example with detailed information on the 100 or 1000 top clones).
 The =.analysis= file describes customizations done by the user
 (or by some automatic pre-processing) on the Vidjil browser. The browser
 can load or save such files (and possibly from/to the patient database).
 It is intended to be very small (a few kilobytes).
 All settings in the =.analysis= file override the settings that could be
 present in the =.vidjil= file.
+
+
+
+* What is a clone ?
+
+There are several definitions of what may be a clonotype,
+depending on different RepSeq software or studies.
+This format and the Vidjil browser both accept any kind of definition:
+Clones are identified by a =id= string that may be an arbitrary identifier such as =clone-072a=.
+Software computing clones may choose some relevant identifiers:
+ - =CGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTAC=, Vidjil algorithm, 50 nt window centered on the CDR3
+ - =CARPRDWNTYYYYGMDVW=, a CDR3 AA sequence
+ - =CARPRDWNTYYYYGMDVW IGHV3-11*00 IGHJ6*00=, a CDR3 AA sequence with additional V/J gene information (MiXCR)
+ - the 'clone sequence' as computed by the ARReST in =.clntab= files (processed by =fuse.py=)
+ - see also 'IMGT clonotype (AA) or (nt)'
 
 * Examples
 
@@ -68,10 +83,10 @@ Note that other elements could be added by some program (such as =tag= or =clust
 ** =.vidjil= file -- several samples
 
 This a =.vidjil= file obtained by merging with =fuse.py= two =.vidjil= files corresponding to two samples.
-Clones that have a same =id= are gathered.
+Clones that have a same =id= are gathered (see 'What is a clone?', above).
 It is the responsability of the program generating the initial =.vidjil= files to choose these =id= to
-do a correct gathering ('windows' is used by Vidjil, 'clone sequence' is used by EC-NGS/Brno pipeline, 
-and 'IMGT clonotype (AA) or (nt)' could also be used by some programs).
+do a correct gathering.
+
 
 #+BEGIN_SRC js :tangle analysis-example2.vidjil
     {
@@ -258,9 +273,7 @@ In the .analysis file, this section is intended to describe some specific clones
 
 #+BEGIN_SRC js
   {
-    "id": "",        // clone identifier, must be unique [required]
-                     //          Vidjil/algo output -> the 'window'  
-                     //          Brno .clntab       -> clone sequence
+    "id": "",        // clone identifier, must be unique [required] [see above, 'What is a clone ?']
                      // the clone identifier in the .vidjil file and in .analysis file must match
 
     "germline": ""   // [required for .vidjil]
@@ -358,21 +371,5 @@ The default tag names are defined in [[../browser/js/vidjil-style.js]].
     "key" : "value"  // "key" is the tag id from 0 to 7 and "value" is the custom tag name attributed
 #+END_SRC
 
-* Differences between programs
-  Due to specificities between programs, some elements may differ depending
-  on which program has been run.
-
-** MiXCR
-   The output when using MiXCR differs from Vidjil on the id of each clone.
-   Where Vidjil provides the representative sequence of the clone, MiXCR
-   provides the representative sequence in =Amino Acids= followed by the name
-   of the =V gene= and the name of the =J gene=.
 
 
-#+BEGIN_SRC js
-   {
-      "germline": ...
-      "id": CARPRDWNTYYYYGMDVW IGHV3-11*00 IGHJ6*00
-      ...
-   }
-#+END_SRC
