@@ -103,6 +103,15 @@ Mixed TRA/TRD recombinations can be encoded with =[TRA+D]=.
 Other special cases, such as translocations involving BCL1 or BCL2, should be written now as comments after a =#= character.
 
 
+* Encoding the JUNCTION/CDR3 information
+
+JUNCTION or CDR3 information can be optionnaly encoded, using curly braces:
+
+#+BEGIN_EXAMPLE
+>TRGV10*02 5/AGAC/3 TRGJP1*01  [TRG]  {CAAWRPTGWFKIF}
+AAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGAGACCCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGC
+#+END_EXAMPLE
+
 * Ambiguous or alternate designations
 
 On some sequences, several V(D)J designations may be equally acceptable.
