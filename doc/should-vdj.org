@@ -7,21 +7,17 @@
 * A quality control of bioinformatics analysis
 
 The =.should-vdj.fa= tests are sequences with manually curated V(D)J designations.
-These designations were checked by hand, possibly with the help of other bioinformatics tools.
+These designations were checked by hand, possibly with the help of some bioinformatics tools.
 Tests may range from very easy cases with unambiguous V(D)J designations
 to borderline or difficult cases, including incomplete or unusual recombinations or translocations.
 
-This collection of sequences helps the robustness of Vidjil (and potentially of other programs,
-as this data is open-source). The automated test suite launches Vidjil on all these
-sequences and compares the computed designations with the curated designations.
-
-Tests where Vidjil currently fails will be marked as TODO.
-Having a correct behavior on these tests may be a goal for future releases.
+This collection of sequences, distributed as open-source data, may help the robustness
+of any software doing immune repertoire sequencing (RepSeq) analysis.
 
 
 * Contributing to the tests
 
-Users and developers are strongly encouraged to send us (=contact@vidjil.org=)
+Users and developers of RepSeq software are encouraged to send us (=contact@vidjil.org=)
 their manually curated sequences, ideally in the format described below, or by
 directly proposing pull requests on GitHub with new tests in the [[https://github.com/vidjil/vidjil/tree/master/algo/tests/should-vdj-tests][=algo/tests/should-vdj=]] directory.
 We can also help to encode sequences in this format.
@@ -126,7 +122,14 @@ TGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGTT
 #+END_EXAMPLE
 
 
-* Running the tests
+* Program-specific information
+
+** Vidjil
+
+In Vidjil, the automated test suite launches the analysis on all these
+sequences and compares the computed designations with the curated designations.
+Cases with current failure will be marked as TODO.
+Having a correct behavior on these tests may be a goal for future releases.
 
 Vidjil can be tested on =.should-vdj:= tests can be launched within the =algo/tests= directory:
   - =python should-vdj-to-tap.py= runs one or several tests, given as parameters on the command line,
