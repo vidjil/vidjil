@@ -1,6 +1,7 @@
 
 import collections
 import defs
+import sys
 
 #### Utilities on dictionaries
 
@@ -203,7 +204,9 @@ class VidjilJson():
     def check_version(self, filepath):
         '''Check vidjil_json_version'''
         if "vidjil_json_version" in self.d:
-            if self.d["vidjil_json_version"] <= defs.VIDJIL_JSON_VERSION:
+            if self.d["vidjil_json_version"] < defs.VIDJIL_JSON_VERSION:
+                sys.stderr.write("! Reading file with old .json version %s\n" % self.d["vidjil_json_version"])
+            if self.d["vidjil_json_version"] >= defs.VIDJIL_JSON_VERSION_REQUIRED:
                 return
         raise IOError ("File '%s' is too old -- please regenerate it with a newer version of Vidjil" % filepath)
     

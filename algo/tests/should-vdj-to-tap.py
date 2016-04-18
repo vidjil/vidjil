@@ -16,6 +16,7 @@ The 'should_pattern' is then checked against the 'result' part, and a .tap file 
 
 import sys
 import re
+import ansi
 
 PY_REQUIRED = (2, 7)
 if sys.version_info < PY_REQUIRED:
@@ -231,6 +232,9 @@ def id_line_to_tap(l, tap_id):
 
     if 'TODO' in should:
         tap += '# TODO '
+    else:
+        if not found:
+            tap += ansi.Style.BRIGHT + ansi.Fore.RED + '# not ok ' + ansi.Style.RESET_ALL
 
     tap += '- ' + should_pattern
 
