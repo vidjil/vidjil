@@ -178,7 +178,23 @@ def index():
 ## return form to create new run
 def add(): 
     if (auth.can_create_patient()):
-        return dict(message=T('add run'))
+        sequencer_list = db(
+            db.run.id>0
+        ).select(
+            db.run.sequencer,
+            distinct=True
+        )
+		
+	pcr_list = db(
+		db.run.id>0
+	).select(
+		db.run.pcr,
+		distinct=True
+	)
+		
+        return dict(message=T('add run'),
+				   sequencer_list = sequencer_list,
+				   pcr_list = pcr_list)
     else :
         res = {"message": ACCESS_DENIED}
         log.error(res)
@@ -211,6 +227,8 @@ def add_form():
                                    run_date=request.vars["run_date"],
                                    info=request.vars["info"],
                                    id_label=request.vars["id_label"],
+								   sequencer=request.vars["sequencer"],
+								   pcr=request.vars["pcr"],
                                    creator=auth.user_id)
 
 
@@ -248,7 +266,23 @@ def add_form():
 ## return edit form 
 def edit(): 
     if (auth.can_modify_run(request.vars["id"]) ):
-        return dict(message=T('edit patient'))
+        sequencer_list = db(
+            db.run.id>0
+        ).select(
+            db.run.sequencer,
+            distinct=True
+        )
+		
+	pcr_list = db(
+		db.run.id>0
+	).select(
+		db.run.pcr,
+		distinct=True
+	)
+		
+        return dict(message=T('edit run'),
+				   sequencer_list = sequencer_list,
+				   pcr_list = pcr_list)
     else :
         res = {"message": ACCESS_DENIED}
         log.error(res)
@@ -277,6 +311,8 @@ def edit_form():
             db.patient[request.vars["id"]] = dict(name=request.vars["name"],
                                                    run_date=request.vars["run_date"],
                                                    info=request.vars["info"],
+												   sequencer=request.vars["sequencer"],
+												   pcr=request.vars["pcr"],
                                                    id_label=request.vars["id_label"]
                                                    )
 

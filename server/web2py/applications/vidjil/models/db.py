@@ -124,6 +124,8 @@ db.define_table('run',
                 Field('info','text'),
                 Field('id_label','string'),
                 Field('creator','reference auth_user'),
+				Field('sequencer','string'),
+				Field('pcr','string'),
                 Field('sample_set_id','reference sample_set', ondelete='SET NULL'))
 
 
