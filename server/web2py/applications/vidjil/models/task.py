@@ -329,6 +329,7 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
     cmd = mixcr + ' align --save-reads -t 1 -r ' + align_report + ' ' + args_1 + ' ' + seq_file  + ' ' + out_alignments
     cmd += ' && '
     cmd += mixcr + ' assemble -t 1 -r ' + assembly_report + ' ' + args_2 + ' ' + out_alignments + ' ' + out_clones
+    cmd += ' && rm ' + out_alignments
     cmd += ' && '
     cmd += mixcr + ' exportClones --format vidjil -germline -id -name -reads -sequence -top -seg -s ' + args_3 + ' ' + out_clones + ' ' + out_results
 
