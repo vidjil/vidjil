@@ -35,15 +35,17 @@
                 <td onclick="db.call('config/permission', {'id' :'{{=row.id}}'} )" >
                     <i class="icon-key" title="set permissions"></i>
                 </td>
-            {{else:}}
-                <td></td>
-            {{pass}}
                 <td onclick="db.call('config/edit', {'id' :'{{=row.id}}'} )" >
                     <i class="icon-pencil-2" title="edit config"></i>
                 </td>
                 <td onclick="db.call('config/confirm', {'id' :'{{=row.id}}'} )" >
                     <i class="icon-erase" title="delete config"></i>
                 </td>
+            {{else:}}
+                <td></td>
+                <td></td>
+                <td></td>
+            {{pass}}
             </tr>
         {{pass}}
     </table>
