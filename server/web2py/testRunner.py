@@ -90,6 +90,11 @@ fake_config_id = db.config.insert(name="config_test_popipo",
                                     fuse_command="-plop",
                                     program="plop.cpp"
                                     )
+
+fake_pre_process_id = db.pre_process.insert(name="foobar",
+					    command="cat &file1& &file2& > &result&",
+					    info="barfoo"
+				            )
                                     
 db.auth_permission.insert(group_id = group_id,
                         name = "admin",

@@ -92,6 +92,7 @@ class FileController(unittest.TestCase):
         request.vars['producer']="plop"
         request.vars['patient_id']="plapipou("+str(fake_patient_id)+")"
         request.vars['run_id']=""
+	request.vars['pre_process'] = fake_pre_process_id
         
         
         resp = edit_form()
