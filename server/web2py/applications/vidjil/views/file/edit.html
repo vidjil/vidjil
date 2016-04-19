@@ -13,7 +13,7 @@ info = db.sequence_file[request.vars["id"]]
                 <td ><input id="upload_file" type="file" name="file" ></td>
                 <td >* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
             </tr>
-            <tr>
+            <tr class='devel-mode'>
                 <td ><label for="file2" id="file2__label"> file2 </label></td>
                 <td ><input id="upload_file2" type="file" name="file2" ></td>
                 <td >* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
@@ -56,7 +56,7 @@ info = db.sequence_file[request.vars["id"]]
                 <td><textarea class="text" id="file_info" name="file_info" cols="60" rows="12">{{=file.info}}</textarea></td>
                 <td></td>
             </tr>
-            <tr>
+            <tr class='devel-mode'>
                 <td><label for="pre_process" id="pre_process__label">pre-process: </label></td>
                 <td><select id="pre_process" name="pre_process">
                         <option value="0">none</option>
