@@ -76,7 +76,7 @@ def edit():
 def edit_form(): 
     error =""
 
-    if (auth.can_modify_config(request.vars['config_id'])):
+    if (not auth.can_modify_config(request.vars['config_id'])):
         error += "ACCESS_DENIED"
 
     required_fields = ['id', 'config_name', 'config_command', 'config_fuse_command', 'config_program']
