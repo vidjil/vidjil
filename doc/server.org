@@ -207,6 +207,8 @@ These installation instruction are for Ubuntu server 14.04
    initctl restart web2py-scheduler
    #+END_SRC
 
+** Restarting web2py
+   Just touch the file =/etc/uwsgi/web2py.ini=.
 * Hardware
 ** Minimal
    The minimal requirement for running Vidjil is quite low. For a single run,
