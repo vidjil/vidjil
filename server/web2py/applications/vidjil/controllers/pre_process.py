@@ -34,10 +34,12 @@ def add_form():
 
     if error=="" :
         
-        db.pre_process.insert(name=request.vars['pre_process_name'],
+        pre_proc_id = db.pre_process.insert(name=request.vars['pre_process_name'],
                         info=request.vars['pre_process_info'],
                         command=request.vars['pre_process_command']
                         )
+
+	auth.add_permission(auth.user_group(), 'read', db.pre_process, pre_proc_id)
 
         res = {"redirect": "pre_process/index",
                "message": "pre_process '%s' added" % request.vars['pre_process_name']}
