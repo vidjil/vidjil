@@ -1,5 +1,6 @@
 # coding: utf8
 import gluon.contrib.simplejson
+from controller_utils import error_message
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -36,12 +37,24 @@ def add_form():
 
     if error=="" :
         
-        db.config.insert(name=request.vars['config_name'],
+        config_id = db.config.insert(name=request.vars['config_name'],
                         info=request.vars['config_info'],
                         command=request.vars['config_command'],
                         fuse_command=request.vars['config_fuse_command'],
                         program=request.vars['config_program']
                         )
+
+        user_group = None
+        group_ids = list(auth.user_groups.keys())
+        for gid in group_ids:
+            if (auth.user_groups[gid] != 'public'):
+                user_group = gid
+                break
+
+        db.auth_permission.insert(group_id=user_group,
+                                name='create',
+                                table_name='config',
+                                record_id=config_id)
 
         res = {"redirect": "config/index",
                "message": "config '%s' added" % request.vars['config_name']}
@@ -54,12 +67,17 @@ def add_form():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
-def edit(): 
-    return dict(message=T('edit config'))
+def edit():
+    if (auth.can_modify_config(request.vars['config_id'])):
+        return dict(message=T('edit config'))
+    return error_message(ACCESS_DENIED)
 
 
 def edit_form(): 
     error =""
+
+    if (auth.can_modify_config(request.vars['config_id'])):
+        error += "ACCESS_DENIED"
 
     required_fields = ['id', 'config_name', 'config_command', 'config_fuse_command', 'config_program']
     for field in required_fields:
@@ -87,19 +105,23 @@ def edit_form():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def confirm():
-    return dict(message=T('confirm config deletion'))
+    if (auth.can_modify_config(request.vars['id'])):
+        return dict(message=T('confirm config deletion'))
+    return error_message(ACCESS_DENIED)
 
 def delete():
-    #delete results_file using this config
-    db(db.results_file.config_id==request.vars["id"]).delete()
-    
-    #delete config
-    db(db.config.id==request.vars["id"]).delete() 
-    
-    res = {"redirect": "config/index",
-           "message": "config '%s' deleted" % request.vars["id"]}
-    log.admin(res)
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    if (auth.can_modify_config(request.vars['id'])):
+        #delete results_file using this config
+        db(db.results_file.config_id==request.vars["id"]).delete()
+
+        #delete config
+        db(db.config.id==request.vars["id"]).delete()
+
+        res = {"redirect": "config/index",
+               "message": "config '%s' deleted" % request.vars["id"]}
+        log.admin(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return error_message(ACCESS_DENIED)
 
 
 def permission(): 

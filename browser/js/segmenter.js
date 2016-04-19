@@ -526,7 +526,14 @@ Segment.prototype = {
         span_info.onclick = function () {
             self.m.displayInfoBox(cloneID);
         }
-        span_info.appendChild(icon('icon-info', 'clone information'))
+
+        if (clone.isWarned()) {
+            span_info.className += " warning" ;
+            span_info.appendChild(icon('icon-warning-1', 'clone information'));
+        } else {
+            span_info.appendChild(icon('icon-info', 'clone information'));
+        }
+
 
         // Productive/unproductive
         var productive_info = document.createElement('span');
