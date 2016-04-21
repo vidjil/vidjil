@@ -202,7 +202,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, grep_reads,
 
     (stdoutdata, stderrdata) = p.communicate()
 
-    print "Output log in "+out_folder+'/'+output_filename+'.vidjil.log'
+    print "Output log in " + out_log
     sys.stdout.flush()
     db.commit()
 
@@ -679,12 +679,13 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
     print "==============="
     sys.stdout.flush()
 
-    log_file = open(out_folder+'/'+output_filename+'.pre.log', 'w')
+    out_log = out_folder+'/'+output_filename+'.pre.log'
+    log_file = open(out_log, 'w')
     
     os.chdir(defs.DIR_FUSE)
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=log_file, close_fds=True)
     (stdoutdata, stderrdata) = p.communicate()
-    print "Output log in "+out_folder+'/'+output_filename+'.pre.log'
+    print "Output log in " + out_log
 
     filepath = os.path.abspath(output_file)
 
@@ -704,7 +705,8 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
     db.commit()
 
     # Dump log in scheduler_run.run_output
-    for l in open(log_file):
+    log_file.close()
+    for l in open(out_log):
         print l,
     
     if clean_after:
