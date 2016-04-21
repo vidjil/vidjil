@@ -147,7 +147,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, grep_reads,
     ## re schedule if pre_process is still pending
     if db.sequence_file[id_file].pre_process_flag != True :
         
-        print "re-schedule"
+        print "Pre-process is still pending, re-schedule"
     
         args = [id_file, id_config, id_data, id_fuse, grep_reads]
         task = scheduler.queue_task("vidjil", args,
@@ -647,22 +647,20 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
 
     output_file = out_folder+'/'+output_filename+'.fastq'
             
-    print sequence_file_id
-    print pre_process_id
     sequence_file = db.sequence_file[sequence_file_id]
     pre_process = db.pre_process[pre_process_id]
     
-    print sequence_file
-    print pre_process
     
     cmd = pre_process.command.replace( "&file1&", defs.DIR_SEQUENCES + sequence_file.data_file)
     if sequence_file.data_file2:
         cmd = cmd.replace( "&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
     cmd = cmd.replace( "&result&", output_file)
 
+    print "=== Pre-process %s ===" % pre_process_id
     print cmd
-    
+    print "==============="
     sys.stdout.flush()
+
     log_file = open(out_folder+'/'+output_filename+'.pre.log', 'w')
     
     os.chdir(defs.DIR_FUSE)
@@ -687,6 +685,10 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
                                               pre_process_flag = True)
     db.commit()
 
+    # Dump log in scheduler_run.run_output
+    for l in open(log_file):
+        print l,
+    
     if clean_after:
         clean_cmd = "rm -rf " + out_folder 
         p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
