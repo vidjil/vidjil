@@ -124,6 +124,36 @@ def common_substring(l):
     else:
         return ""
 
+def get_common_suffpref(l, max_length, order):
+    '''
+    Get common prefixes or common suffixes.
+    
+    Maximal length of the prefixes/suffixes is max_length.
+    Order is either 1 (common prefix) or -1 (common suffix).
+
+    >>> get_common_suffpref(['ablkjsdflkj', 'ablmlksdf', 'alkjr'], 5, 1)
+    'a'
+    >>> get_common_suffpref(['ablkjsdflkj', 'ablmlksdf', 'lkjr'], 5, 1)
+    ''
+    >>> get_common_suffpref(['ablkjsdflkj', 'ablmlksdf', 'lkjr'], 5, -1)
+    ''
+    >>> get_common_suffpref(['ablkjsdflkj', 'ablmlklkj', 'lkjrlkj'], 5, -1)
+    'lkj'
+    '''
+    common_string = 0
+    for i in range(max_length):
+        index = i
+        if order == -1:
+            index = i+1
+        if all(map(lambda x: x[order*index] == l[0][order*index], l)):
+            common_string += 1
+        else:
+            break
+    if order==1 or common_string == 0:
+        return l[0][:common_string]
+    else:
+        return l[0][-common_string:]
+    
     
 def interesting_substrings(l, target_length=6, substring_replacement='-'):
     '''Return a list with intersting substrings.
@@ -151,28 +181,18 @@ def interesting_substrings(l, target_length=6, substring_replacement='-'):
 
     ### Remove prefixes
 
-    common_prefix = 0
-    for i in range(min_length):
-        if all(map(lambda x: x[i] == l[0][i], l)):
-            common_prefix = i+1
-        else:
-            break
+    common_prefix = get_common_suffpref(l, min_length, 1)
 
-    substrings = [x[common_prefix:] for x in l]
+    substrings = [x[len(common_prefix):] for x in l]
 
     if max(map (len, substrings)) <= target_length:
         return substrings
 
     ### Remove suffixes
 
-    common_suffix = 0
-    for i in range(min_length - common_prefix):
-        if all(map(lambda x: x[-(i+1)] == l[0][-(i+1)], l)):
-            common_suffix = i
-        else:
-            break
+    common_suffix = get_common_suffpref(l, min_length - len(common_prefix), -1)
 
-    substrings = [x[common_prefix:-(common_suffix+1)] for x in l]            
+    substrings = [x[len(common_prefix):-len(common_suffix)] for x in l]            
 
     if max(map (len, substrings)) <= target_length:
         return substrings
