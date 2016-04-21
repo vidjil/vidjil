@@ -9,7 +9,7 @@ import sys
 import datetime
 import random
 import xmlrpclib
-
+import tools_utils
 
 def assert_scheduler_task_does_not_exist(args):
     ##check scheduled run
@@ -628,6 +628,23 @@ def schedule_pre_process(sequence_file_id, pre_process_id):
     return res
 
 
+def get_preprocessed_filename(filename1, filename2):
+    '''
+    Get the same extension and then get the most common among them
+
+    >>> get_preprocessed_filename('lsdkj_toto-tata_mlkmfsdlkf.fastq.gz', 'rete_toto-tata_eekjdf.fastq.gz')
+    '_toto-tata_.fastq.gz'
+    '''
+    if not filename2:
+        return filename1
+    extension = tools_utils.get_common_suffpref([filename1, filename2], min(len(filename1), len(filename2)), -1)
+    without_extension = [x[0:-len(extension)] for x in [filename1, filename2]]
+    common = tools_utils.common_substring(without_extension)
+    if len(common) == 0:
+        common = '_'.join(without_extension)
+    return common+extension
+
+
 def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_after=False):
     '''
     Run a pre-process on sequence_file.data_file (and possibly sequence_file.data_file+2),
@@ -636,8 +653,10 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
 
     from subprocess import Popen, PIPE, STDOUT, os
     
+    sequence_file = db.sequence_file[sequence_file_id]
+
     out_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
-    output_filename = defs.BASENAME_OUT_VIDJIL_ID % sequence_file_id
+    output_filename = get_preprocessed_filename(sequence_file.data_file, sequence_file.data_file2)
     
     if clean_before:
         cmd = "rm -rf "+out_folder 
@@ -645,9 +664,8 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         p.wait()
         os.makedirs(out_folder)    
 
-    output_file = out_folder+'/'+output_filename+'.fastq'
+    output_file = out_folder+'/'+output_filename
             
-    sequence_file = db.sequence_file[sequence_file_id]
     pre_process = db.pre_process[pre_process_id]
     
     
