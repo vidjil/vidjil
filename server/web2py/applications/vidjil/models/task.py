@@ -629,6 +629,11 @@ def schedule_pre_process(sequence_file_id, pre_process_id):
 
 
 def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_after=False):
+    '''
+    Run a pre-process on sequence_file.data_file (and possibly sequence_file.data_file+2),
+    put the output back in sequence_file.data_file.
+    '''
+
     from subprocess import Popen, PIPE, STDOUT, os
     
     out_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
@@ -675,6 +680,8 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         log.error(res)
         raise IOError
 
+    # Now we update the sequence file with the result of the pre-process
+    # We forget the initial data_file (and possibly data_file2)
     db.sequence_file[sequence_file_id] = dict(data_file = stream,
                                               data_file2 = None,
                                               pre_process_flag = True)
