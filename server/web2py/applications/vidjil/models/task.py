@@ -651,7 +651,8 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
     print pre_process
     
     cmd = pre_process.command.replace( "&file1&", defs.DIR_SEQUENCES + sequence_file.data_file)
-    cmd = cmd.replace( "&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
+    if sequence_file.data_file2:
+        cmd = cmd.replace( "&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
     cmd = cmd.replace( "&result&", output_file)
 
     print cmd
