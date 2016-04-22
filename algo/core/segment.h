@@ -76,13 +76,14 @@ class AlignBox
 {
  public:
   string key;
+  string color;
 
   int del_left;
   int start;
   int end;
   int del_right;
 
-  AlignBox(string key = "");
+  AlignBox(string key = "", string color="");
   string getSequence(string sequence);
   void addToJson(json &seg);
 

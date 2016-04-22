@@ -31,8 +31,9 @@
 
 #define NO_FORBIDDEN_ID (-1)
 
-AlignBox::AlignBox(string _key) {
+AlignBox::AlignBox(string _key, string _color) {
   key = _key;
+  color = _color;
 
   del_left = 0 ;
   start = 0 ;
