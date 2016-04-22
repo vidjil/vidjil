@@ -8,7 +8,7 @@ LIBCORE=../core/vidjil.a ../lib/lib.a
 
 .PHONY: all core clean forcedep
 
-go: align
+go: vdj_assign align
 
 all: $(EXEC)
 
