@@ -250,6 +250,23 @@ Database.prototype = {
         });
     },
     
+    
+    pre_process_onChange : function () {
+        var field = document.getElementById("pre_process");
+        var value = field.value;
+        for (var i=0; i<field.options.length; i++){
+            var option = field.options[i];
+            if (value == option.value){
+                if (option.getAttribute("data-file") == "1"){
+                    document.getElementById("file2_field").style.display = 'none';
+                    document.getElementById("upload_file2").value=""
+                }else{
+                    document.getElementById("file2_field").style.display = '';
+                }
+            }
+        }        
+    },
+    
     /**
      * callback function for callURL() <br>
      * parse the result and depending on the case display the result as an html page or a flash message or ...
@@ -413,6 +430,8 @@ Database.prototype = {
         
         //submit formulaire avec fichier
         if ( document.getElementById('upload_form') ){
+            
+            db.pre_process_onChange()
             
             $('#upload_file').change(function (){
                 var filename = $("#upload_file").val();
