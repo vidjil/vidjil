@@ -145,7 +145,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, grep_reads,
     from datetime import timedelta as timed
     
     ## re schedule if pre_process is still pending
-    if db.sequence_file[id_file].pre_process_flag != "DONE" and db.sequence_file[id_file].pre_process_flag != None :
+    if db.sequence_file[id_file].pre_process_flag == "WAIT" or db.sequence_file[id_file].pre_process_flag == "RUN" :
         
         print "Pre-process is still pending, re-schedule"
     
@@ -160,6 +160,10 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, grep_reads,
         
         return "SUCCESS"
     
+    if db.sequence_file[id_file].pre_process_flag == "FAILED" :
+        print "Pre-process has failed"
+        raise ValueError('pre-process has failed')
+        return "FAIL"
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
     germline_folder = defs.DIR_VIDJIL + '/germline/'
@@ -701,6 +705,8 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         db.sequence_file[sequence_file_id] = dict(pre_process_flag = "FAILED")
         db.commit()
         raise IOError
+
+        
 
     # Now we update the sequence file with the result of the pre-process
     # We forget the initial data_file (and possibly data_file2)

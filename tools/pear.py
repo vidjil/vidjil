@@ -6,6 +6,7 @@ import gzip
 import subprocess
 import argparse
 import shlex
+import os
 
 parser = argparse.ArgumentParser(description='Use PEAR read merger to make a new fastq file and keep unmerged reads')
 
@@ -32,13 +33,16 @@ subprocess.call(["pear",
 )
 
 
-
-with gzip.open(f_out, 'w') as outFile:
-    with open(f_out+'.assembled.fastq', 'rb') as f1:
-        shutil.copyfileobj(f1, outFile)
-    if (args.keep_r1):
-        with open(f_out+'.unassembled.reverse.fastq', 'rb') as f2:
-            shutil.copyfileobj(f2, outFile)
-    if (args.keep_r2):
-        with open(f_out+'.unassembled.forward.fastq', 'rb') as f3:
-            shutil.copyfileobj(f3, outFile)
+try :
+    with gzip.open(f_out, 'w') as outFile:
+        with open(f_out+'.assembled.fastq', 'rb') as f1:
+            shutil.copyfileobj(f1, outFile)
+        if (args.keep_r1):
+            with open(f_out+'.unassembled.reverse.fastq', 'rb') as f2:
+                shutil.copyfileobj(f2, outFile)
+        if (args.keep_r2):
+            with open(f_out+'.unassembled.forward.fastq', 'rb') as f3:
+                shutil.copyfileobj(f3, outFile)
+except IOError :
+    os.remove(f_out)
+    raise IOError
