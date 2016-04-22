@@ -26,6 +26,25 @@ def add():
         if db.sample_set[request.vars["id"]].sample_type == "run" :
             run_id = db( db.run.sample_set_id == request.vars["id"]).select()[0].id
         
+		
+	query_pre_process = db(
+            db.pre_process>0
+        ).select(
+            db.pre_process.ALL,
+			orderby = ~db.pre_process.id
+        )
+		
+	pre_process_list = []
+	for row in query_pre_process :
+		file = 1
+		if "&file2" in row.command: 
+			file = 2
+		pre_process_list.append(dict(
+				id = row.id,
+				name = row.name,
+				file = file
+			))
+			
         query_patient = db(
             auth.accessible_query('admin', db.patient)
         ).select(
@@ -59,10 +78,12 @@ def add():
             run_list.append(run_date+name+id)
             if run_id == row.id :
                 run = run_date+name+id
-        
+				
+				
         return dict(message = T('add file'),
                    patient_list = patient_list,
                    run_list = run_list,
+				   pre_process_list = pre_process_list,
                    patient = patient,
                    run = run)
 
@@ -163,6 +184,24 @@ def edit():
             if db.sample_set[row.sample_set_id].sample_type == "run" :
                 run_id = db( db.run.sample_set_id == row.sample_set_id).select()[0].id
         
+	query_pre_process = db(
+            db.pre_process>0
+        ).select(
+            db.pre_process.ALL,
+			orderby = ~db.pre_process.id
+        )
+		
+	pre_process_list = []
+	for row in query_pre_process :
+		file = 1
+		if "&file2" in row.command: 
+			file = 2
+		pre_process_list.append(dict(
+				id = row.id,
+				name = row.name,
+				file = file
+			))
+			
         query_patient = db(
             auth.accessible_query('admin', db.patient)
         ).select(
@@ -201,6 +240,7 @@ def edit():
                    patient_list = patient_list,
                    run_list = run_list,
                    patient = patient,
+				   pre_process_list = pre_process_list,
                    run = run,
                    file = db.sequence_file[request.vars["id"]])
     else:
