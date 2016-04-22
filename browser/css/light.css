@@ -1233,6 +1233,10 @@ span.warningReads {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.db_table_split {
+  text-align: center;
+  background-color: #fdf6e3;
+}
 .db_table .column_200 {
   width: 200px;
 }

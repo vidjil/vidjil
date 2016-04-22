@@ -6,26 +6,36 @@ info = db.sequence_file[request.vars["id"]]
 
 
 <h3>Edit sequence file</h3>    
-    <table>
-        <tbody>
-            <tr>
-                <td ><label for="file" id="file__label"> file </label></td>
-                <td ><input id="upload_file" type="file" name="file" ></td>
-                <td >* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
-            </tr>
-            <tr class='devel-mode'>
-                <td ><label for="file2" id="file2__label"> file2 </label></td>
-                <td ><input id="upload_file2" type="file" name="file2" ></td>
-                <td >* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
-            </tr>
-        </tbody>
-</table>
 
 <form id="upload_form" action="DB_ADDRESS/file/edit_form" enctype="multipart/form-data" method="post">
     <input type="hidden" id="filename" name="filename" type="text" value="">
     <input type="hidden" id="file_id" name="id" value="{{=request.vars["id"]}}" >
     <table>
         <tbody>
+			<tr class='devel-mode db_table_split' ><td colspan="2"> sequence file(s) </td></tr>
+            <tr class='devel-mode'>
+                <td><label for="pre_process" id="pre_process__label">pre-process: </label></td>
+				<td><select id="pre_process" name="pre_process" onChange="db.pre_process_onChange()">
+                        <option data-file="1" value="0">none</option>
+                        {{for row in pre_process_list :}}
+                                <option data-file="{{=row["file"]}}" value="{{=row["id"]}}" {{if row["id"]==file.pre_process_id :}}selected{{pass}}>
+                                    {{=row["id"]}} &ndash; {{=row["name"]}}
+                                </option> {{pass}}
+                    </select>
+                <td></td>
+            </tr>
+            <tr id="file_field">
+                <td ><label for="file" id="file__label"> file </label></td>
+                <td ><input class="upload_field" id="upload_file" type="file"></td>
+                <td >* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
+            </tr>
+            <tr id="file2_field">
+                <td class='devel-mode'><label for="file2" id="file2__label"> file2 </label></td>
+                <td class='devel-mode'><input class="upload_field" id="upload_file2" type="file" ></td>
+                <td class='devel-mode'>* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
+            </tr>
+			
+			<tr class='devel-mode db_table_split' ><td colspan="2"> sample set(s) </td></tr>
             <tr class='devel-mode'>
                 <td><label for="patient_id" id="patient_id__label">patient: </label></td>
                 <td><input list="patients" id="patient_list" name="patient_id" type="text" size="80" value="{{=patient}}"></td>
@@ -46,6 +56,9 @@ info = db.sequence_file[request.vars["id"]]
                   </datalist>
                 <td></td>
             </tr>
+			
+			
+			<tr class='devel-mode db_table_split' ><td colspan="2"> infos </td></tr>
             <tr>
                 <td><label for="sampling_date" id="sampling_date__label">sampling date: </label></td>
                 <td><input class="date" id="sampling_date" name="sampling_date" type="text" size="20" value="{{=file.sampling_date}}"></td>
@@ -54,18 +67,6 @@ info = db.sequence_file[request.vars["id"]]
             <tr>
                 <td><label for="file_info" id="file_info__label">info: </label></td>
                 <td><textarea class="text" id="file_info" name="file_info" cols="60" rows="12">{{=file.info}}</textarea></td>
-                <td></td>
-            </tr>
-            <tr class='devel-mode'>
-                <td><label for="pre_process" id="pre_process__label">pre-process: </label></td>
-                <td><select id="pre_process" name="pre_process">
-                        <option value="0">none</option>
-                        {{for row in db(db.pre_process.id >0).select() :}}
-                                <option value="{{=row.id }}" {{if row.id==file.pre_process_id :}}selected{{pass}}>
-                                    {{=row.id}} &ndash; {{=row.name}}
-                                </option> {{pass}}
-                    </select>
-                </td>
                 <td></td>
             </tr>
             <tr>
