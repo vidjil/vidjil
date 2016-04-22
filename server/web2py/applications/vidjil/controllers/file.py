@@ -122,10 +122,10 @@ def add_form():
         if not auth.can_modify_run(run_id) :
             error += " missing permission for run "+str(run_id)
     pre_process = None
-    pre_process_flag = True
+    pre_process_flag = "DONE"
     if request.vars['pre_process'] != "0":
         pre_process = request.vars['pre_process']
-        pre_process_flag = False
+        pre_process_flag = "WAIT"
 
     if error=="" :
             
@@ -358,6 +358,9 @@ def upload():
             error += "no data file"
             
         if data_file is not None and data_file2 is not None and request.vars['pre_process'] != '0':
+            db.sequence_file[request.vars["id"]] = dict(pre_process_flag = "WAIT")
+            if db.scheduler_task[db.sequence_file[request.vars["id"]].pre_process_scheduler_task_id] != None:
+                scheduler.stop_task(db.sequence_file[request.vars["id"]].pre_process_scheduler_task_id)
             schedule_pre_process(int(request.vars['id']), int(request.vars['pre_process']))
             mes += "files uploaded, start pre-process !! "+ request.vars['id'] + "-" +request.vars['pre_process']
 

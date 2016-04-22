@@ -145,7 +145,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, grep_reads,
     from datetime import timedelta as timed
     
     ## re schedule if pre_process is still pending
-    if db.sequence_file[id_file].pre_process_flag != True :
+    if db.sequence_file[id_file].pre_process_flag != "DONE" and db.sequence_file[id_file].pre_process_flag != None :
         
         print "Pre-process is still pending, re-schedule"
     
@@ -620,7 +620,8 @@ def schedule_pre_process(sequence_file_id, pre_process_id):
 
     task = scheduler.queue_task("pre_process", args,
                                 repeats = 1, timeout = defs.TASK_TIMEOUT)
-
+    db.sequence_file[sequence_file_id] = dict(pre_process_scheduler_task_id = task.id)
+    
     res = {"redirect": "reload",
            "message": "[%s] (%s): process requested" % (sequence_file_id, pre_process_id)}
 
@@ -654,7 +655,9 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
     from subprocess import Popen, PIPE, STDOUT, os
     
     sequence_file = db.sequence_file[sequence_file_id]
-
+    db.sequence_file[sequence_file_id] = dict(pre_process_flag = "RUN")
+    db.commit()
+    
     out_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
     output_filename = get_preprocessed_filename(sequence_file.data_file, sequence_file.data_file2)
     
@@ -695,13 +698,15 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         print "!!! Pre-process failed, no result file"
         res = {"message": "[%s] c%s: 'pre-process' FAILED - %s" % (sequence_file_id, pre_process_id, output_file)}
         log.error(res)
+        db.sequence_file[sequence_file_id] = dict(pre_process_flag = "FAILED")
+        db.commit()
         raise IOError
 
     # Now we update the sequence file with the result of the pre-process
     # We forget the initial data_file (and possibly data_file2)
     db.sequence_file[sequence_file_id] = dict(data_file = stream,
                                               data_file2 = None,
-                                              pre_process_flag = True)
+                                              pre_process_flag = "DONE")
     db.commit()
 
     # Dump log in scheduler_run.run_output
