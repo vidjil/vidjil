@@ -82,26 +82,30 @@ int main(int argc, const char** argv)
   
   align_against_collection(read, interestingV, -1, false, false, false, &box_V, VDJ);
   align_against_collection(read, interestingJ, -1, false, true, false, &box_J, VDJ);
-
+  // This should be handled directly into align_against_collection
+  box_J.start = box_J.end ;
+  box_J.del_left = box_J.del_right;
   
   int align_V_length = min(GENE_ALIGN, box_V.end - box_V.start + 1);
   int align_J_length = min(GENE_ALIGN, (int)read.size() - box_J.end + 1);
   int start_V = box_V.end - align_V_length + 1;
+  int end_J = box_J.start + align_J_length + 1;
+
   cout << V_COLOR << read.substr(start_V, align_V_length)
        << NO_COLOR
-       << read.substr(box_V.end+1, (box_J.end - 1) - (box_V.end + 1) +1)
+       << read.substr(box_V.end+1, (box_J.start - 1) - (box_V.end + 1) +1)
        << J_COLOR
-       << read.substr(box_J.end, align_J_length)
+       << read.substr(box_J.start, align_J_length)
        << NO_COLOR
        << endl
        << V_COLOR << box_V.ref.substr(box_V.ref.size() - box_V.del_right - align_V_length, align_V_length)
        << NO_COLOR << box_V.ref.substr(box_V.ref.size() - box_V.del_right, box_V.del_right)
        << endl;
-  for (int i = 0; i < box_J.end - start_V - box_J.del_right; i++) {
+  for (int i = 0; i < box_J.start - start_V - box_J.del_left; i++) {
     cout << " ";
   }
-  cout << box_J.ref.substr(0, box_J.del_right)
-       << J_COLOR << box_J.ref.substr(box_J.del_right, align_J_length) << NO_COLOR << endl;
+  cout << box_J.ref.substr(0, box_J.del_left)
+       << J_COLOR << box_J.ref.substr(box_J.del_left, align_J_length) << NO_COLOR << endl;
       
   exit (0);
 }
