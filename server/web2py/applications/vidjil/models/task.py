@@ -663,7 +663,8 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
     db.commit()
     
     out_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
-    output_filename = get_preprocessed_filename(sequence_file.data_file, sequence_file.data_file2)
+    output_filename = get_preprocessed_filename(get_original_filename(sequence_file.data_file),
+                                                get_original_filename(sequence_file.data_file2))
     
     if clean_before:
         cmd = "rm -rf "+out_folder 
