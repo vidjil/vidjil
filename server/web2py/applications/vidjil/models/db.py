@@ -2,7 +2,7 @@
 
 import defs
 from gluon import current
-
+from gluon.custom_import import track_changes; track_changes(True)
 # AUTODELETE should be set to False before any maintenance operation on the DB
 AUTODELETE = True
 
