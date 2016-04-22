@@ -94,3 +94,12 @@ def delete():
            "message": "pre_process '%s' deleted" % request.vars["id"]}
     log.admin(res)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+## need ["sequence_file_id"]
+## need ["sample_set_id"]
+def info():
+    if (auth.can_modify_sample_set(request.vars["sample_set_id"])):
+        return dict(message=T('result info'))
+    else :
+        res = {"message": "acces denied"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
