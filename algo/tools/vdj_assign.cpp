@@ -57,8 +57,8 @@ int main(int argc, const char** argv)
   string read = argv[1];
   string germline = argv[2];
 
-  Fasta Vgenes(germline+"V.fa");
-  Fasta Jgenes(germline+"J.fa");
+  Fasta Vgenes(germline+"V.fa", 2, "|");
+  Fasta Jgenes(germline+"J.fa", 2, "|");
 
   Fasta interestingV = extractInterestingGenes(Vgenes, argv[3]);
   Fasta interestingJ = extractInterestingGenes(Jgenes, argv[4]);
