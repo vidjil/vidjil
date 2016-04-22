@@ -70,6 +70,61 @@ void AlignBox::addToJson(json &seg) {
   seg[key] = j ;
 }
 
+
+#define NO_COLOR "\033[0m"
+
+int AlignBox::posInRef(int i) {
+  // Works now only for V/J boxes
+
+  if (del_left >= 0) // J
+    return i - start + del_left + 1; // Why +1 ?
+
+  if (del_right >= 0) // V
+    return i + (ref.size() - del_right) - end ;
+
+  return -99;
+}
+
+string AlignBox::refToString(int from, int to) {
+
+  stringstream s;
+
+  s << ref_label << "  \t" ;
+
+  int j = posInRef(from);
+
+  s << j << "\t" ;
+
+  if (from > start)
+    s << color;
+
+  for (int i=from; i<=to; i++) {
+
+    if (i == start)
+      s << color;
+
+    if (j > 0 && j <= ref.size())
+      s << ref[j-1] ;
+    else
+      s << ".";
+
+    if (i == end)
+      s << NO_COLOR;
+
+    // Related position. To improve
+    j++ ;
+  }
+
+  if (to < end)
+    s << NO_COLOR;
+
+  s << "\t" << j  ;
+
+  return s.str();
+}
+
+
+
 ostream &operator<<(ostream &out, const AlignBox &box)
 {
   out << "[/" << box.del_left << " " ;
