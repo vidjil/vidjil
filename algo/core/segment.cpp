@@ -854,6 +854,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   evalue = NO_LIMIT_VALUE;
   evalue_left = NO_LIMIT_VALUE;
   evalue_right = NO_LIMIT_VALUE;
+  box_V->marked_pos = 0;
+  box_J->marked_pos = 0;
 
   CDR3start = -1;
   CDR3end = -1;
