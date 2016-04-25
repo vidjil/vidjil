@@ -163,8 +163,12 @@ Segmenter::~Segmenter() {}
 Sequence Segmenter::getSequence() const {
   Sequence s ;
   s.label_full = info ;
-  s.label = label + " " + (reversed ? "-" : "+");
-  s.sequence = revcomp(sequence, reversed);
+  if (segmented) {
+    s.label = label + " " + (reversed ? "-" : "+");
+    s.sequence = revcomp(sequence, reversed);
+  } else {
+    s.sequence = sequence;
+  }
 
   return s ;
 }
