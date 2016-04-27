@@ -1407,6 +1407,10 @@ span.warningReads {
     .ellipsis;
 }
 
+.db_table td:hover {
+    .ellipsisOverflow;
+}
+
 .db_table_split{
     text-align:center;
     background-color: @highlight;
@@ -1959,6 +1963,17 @@ textarea#edit_value {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Doesn't work well
+ * if opacity is not at 1
+ * (for instance with .inactive classes)
+ */
+.ellipsisOverflow {
+   z-index: 999;
+   position: relative;
+   background: inherit;
+   display: inline-block;
 }
 
 #highlightCheckboxes {
