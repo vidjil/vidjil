@@ -1235,7 +1235,7 @@ span.warningReads {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.db_table td:hover {
+.table_compare td:hover {
   z-index: 999;
   position: relative;
   background: inherit;
