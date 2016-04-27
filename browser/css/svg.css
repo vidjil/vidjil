@@ -1228,9 +1228,9 @@ span.warningReads {
   table-layout: fixed;
 }
 .db_table td {
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 .db_table_split {
   text-align: center;
