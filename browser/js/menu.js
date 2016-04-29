@@ -76,6 +76,7 @@ function initMenu () {
 function changeStyle(newStyle){
     if (newStyle=="solarizeD") document.getElementById("palette").href="css/dark.css";
     if (newStyle=="solarizeL") document.getElementById("palette").href="css/light.css";
+    if (newStyle=="display") document.getElementById("palette").href="css/talk.css";
     m.update()
 }
 
