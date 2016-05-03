@@ -76,15 +76,28 @@ class AlignBox
 {
  public:
   string key;
+  string color;
 
   int del_left;
   int start;
   int end;
   int del_right;
 
-  AlignBox(string key = "");
+  AlignBox(string key = "", string color="");
   string getSequence(string sequence);
   void addToJson(json &seg);
+
+  /**
+   * Returns the position in the reference string corresponding to the position in the read
+   * Preliminary implementation, only works for the start of V and J boxes
+   */
+  int posInRef(int i);
+
+  /**
+   * Format the reference string in a given range position, possibly adding the ANSI colors
+   * where there is the alignment
+   */
+  string refToString(int from, int to);
 
   /* Identifier, label and sequence of the reference sequence (the best one) */
   int ref_nb;

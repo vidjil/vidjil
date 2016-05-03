@@ -31,8 +31,9 @@
 
 #define NO_FORBIDDEN_ID (-1)
 
-AlignBox::AlignBox(string _key) {
+AlignBox::AlignBox(string _key, string _color) {
   key = _key;
+  color = _color;
 
   del_left = 0 ;
   start = 0 ;
@@ -68,6 +69,61 @@ void AlignBox::addToJson(json &seg) {
 
   seg[key] = j ;
 }
+
+
+#define NO_COLOR "\033[0m"
+
+int AlignBox::posInRef(int i) {
+  // Works now only for V/J boxes
+
+  if (del_left >= 0) // J
+    return i - start + del_left + 1; // Why +1 ?
+
+  if (del_right >= 0) // V
+    return i + (ref.size() - del_right) - end ;
+
+  return -99;
+}
+
+string AlignBox::refToString(int from, int to) {
+
+  stringstream s;
+
+  s << ref_label << "  \t" ;
+
+  int j = posInRef(from);
+
+  s << j << "\t" ;
+
+  if (from > start)
+    s << color;
+
+  for (int i=from; i<=to; i++) {
+
+    if (i == start)
+      s << color;
+
+    if (j > 0 && j <= ref.size())
+      s << ref[j-1] ;
+    else
+      s << ".";
+
+    if (i == end)
+      s << NO_COLOR;
+
+    // Related position. To improve
+    j++ ;
+  }
+
+  if (to < end)
+    s << NO_COLOR;
+
+  s << "\t" << j  ;
+
+  return s.str();
+}
+
+
 
 ostream &operator<<(ostream &out, const AlignBox &box)
 {
@@ -107,8 +163,12 @@ Segmenter::~Segmenter() {}
 Sequence Segmenter::getSequence() const {
   Sequence s ;
   s.label_full = info ;
-  s.label = label + " " + (reversed ? "-" : "+");
-  s.sequence = revcomp(sequence, reversed);
+  if (segmented) {
+    s.label = label + " " + (reversed ? "-" : "+");
+    s.sequence = revcomp(sequence, reversed);
+  } else {
+    s.sequence = sequence;
+  }
 
   return s ;
 }
@@ -798,6 +858,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   evalue = NO_LIMIT_VALUE;
   evalue_left = NO_LIMIT_VALUE;
   evalue_right = NO_LIMIT_VALUE;
+  box_V->marked_pos = 0;
+  box_J->marked_pos = 0;
 
   CDR3start = -1;
   CDR3end = -1;

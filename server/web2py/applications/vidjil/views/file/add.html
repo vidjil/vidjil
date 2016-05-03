@@ -7,11 +7,11 @@
     <input type="hidden" id="filename" name="filename" type="text" value="">
     <table>
         <tbody>
-			<tr class='devel-mode db_table_split' ><td colspan="2"> sequence file(s) </td></tr>
-            <tr class='devel-mode'>
-                <td><label for="pre_process" id="pre_process__label">pre-process: </label></td>
+			<tr class='beta-mode db_table_split' ><td colspan="2"> sequence file(s) </td></tr>
+            <tr class='beta-mode'>
+                <td><label for="pre_process" id="pre_process__label">pre-process scenario: </label></td>
                 <td><select id="pre_process" name="pre_process" onChange="db.pre_process_onChange()">
-                        <option data-file="1" value="0">none</option>
+                        <option data-file="1" value="0">no pre-process (1 file)</option>
                         {{for row in pre_process_list :}}
                                 <option data-file="{{=row["file"]}}" value="{{=row["id"]}}">
                                     {{=row["id"]}} &ndash; {{=row["name"]}}
@@ -26,12 +26,12 @@
                 <td >* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
             </tr>
             <tr id="file2_field" >
-                <td class='devel-mode'><label for="file2" id="file2__label"> file2 </label></td>
-                <td class='devel-mode'><input class="upload_field" id="upload_file2" type="file" ></td>
-                <td class='devel-mode'>* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
+                <td class='beta-mode'><label for="file2" id="file2__label"> file2 </label></td>
+                <td class='beta-mode'><input class="upload_field" id="upload_file2" type="file" ></td>
+                <td class='beta-mode'>* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
             </tr>
-			<tr class='devel-mode db_table_split' ><td colspan="2"> sample set(s) </td></tr>
-            <tr class='devel-mode'>
+			<tr class='beta-mode db_table_split' ><td colspan="2"> patient and run </td></tr>
+            <tr class='beta-mode'>
                 <td><label for="patient_id" id="patient_id__label">patient: </label></td>
                 <td><input list="patients" id="patient_list" name="patient_id" type="text" size="80" value="{{=patient}}"></td>
                   <datalist id="patients">
@@ -39,9 +39,9 @@
                       <option value="{{=row}}">
                   {{pass}}
                   </datalist>
-                <td rowspan="2">* you must associate a sequence file with at least one patient or run</td>
+                <td rowspan="2">* you must associate this upload with at least one patient or run</td>
             </tr>
-            <tr class='devel-mode'>
+            <tr class='beta-mode'>
                 <td><label for="run_id" id="run_id__label">run: </label></td>
                 <td><input list="runs" id="run_list" name="run_id" type="text" size="80" value="{{=run}}"></td>
                   <datalist id="runs">
@@ -51,7 +51,7 @@
                   </datalist>
                 <td></td>
             </tr>
-			<tr class='devel-mode db_table_split' ><td colspan="2"> infos </td></tr>
+			<tr class='beta-mode db_table_split' ><td colspan="2"> sample information </td></tr>
             <tr>
                 <td><label for="sampling_date" id="sampling_date__label">sampling date: </label></td>
                 <td><input class="date" id="sampling_date" name="sampling_date" type="text" size="20" value=""></td>
@@ -73,7 +73,7 @@
 </form>
 
 <div>
-It is recommended to upload compressed .fasta.gz or .fastq.gz files to speed up the upload.
+It is recommended to upload compressed .fasta.gz or .fastq.gz files to speed up the upload and to save server disk space.
 <br/>
 The server can process files of any size.
 However, note that the majority of browsers (except Opera or Chrome) cannot handle upload of files larger than 2GB.

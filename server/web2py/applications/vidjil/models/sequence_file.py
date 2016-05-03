@@ -1,6 +1,9 @@
 import defs
 import base64
 
+def get_original_filename(data_file):
+    return db.sequence_file.data_file.retrieve_file_properties(data_file)['filename']
+
 def get_new_uploaded_filename(data_file, new_filename):
     '''
     Rename the name given to a data_file uploaded by the user

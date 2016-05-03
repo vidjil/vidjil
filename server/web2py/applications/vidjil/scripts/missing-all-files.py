@@ -1,4 +1,5 @@
 import defs
+import os
 import os.path
 
 def rbx_link(patient_id, config_id):
@@ -47,8 +48,18 @@ def print_analysis_file(res):
 
 print "** Missing sequences **"
 for res in db(db.sequence_file).select():
-    if not os.path.isfile(defs.DIR_SEQUENCES+res.data_file):
+    if res.data_file and not os.path.isfile(defs.DIR_SEQUENCES+res.data_file):
         print_sequence_file(res)
+
+print "** Orphan sequence files **"
+total_size = 0
+nb_files = 0
+for f in os.listdir(defs.DIR_SEQUENCES):
+    if os.path.isfile(defs.DIR_SEQUENCES+f) and db(db.sequence_file.data_file == f).count() == 0:
+        print f
+        total_size += os.path.getsize(defs.DIR_SEQUENCES+f)
+        nb_files += 1
+print "%d bytes could be removed from %d files" % (total_size, nb_files)
 
 print "** Missing results **"
 for res in db(db.results_file).select():

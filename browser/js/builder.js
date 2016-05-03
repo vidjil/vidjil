@@ -857,9 +857,15 @@ Builder.prototype = {
             var spanProductive = document.createElement('span')
             spanProductive.style.backgroundColor = colorProductivity('true')
             spanProductive.className = 'tagColorBox'
-            span2.appendChild(spanNotProductive)
-            span2.appendChild(spanProductive)
-            span3.appendChild(document.createTextNode('productive'));
+            span1.appendChild(spanNotProductive)
+            span1.appendChild(spanProductive)
+            span2.appendChild(document.createTextNode('productive'));
+
+            var spanNoCDR3 = document.createElement('span')
+            spanNoCDR3.className = 'tagColorBox tagColor8'
+            span3.style.marginLeft = '20px'
+            span3.appendChild(document.createTextNode(' no CDR3 '));
+            span3.appendChild(spanNoCDR3);
 
             break;
         case "abundance":

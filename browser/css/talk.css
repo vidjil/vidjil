@@ -1,4 +1,4 @@
-/* default color solarizeD */
+/* default color solarizeL */
 /* base Vidjil style */
 /* @default, @background, @highlight, @select, @secondary and @border have to be defined */
 /* default tag color */
@@ -11,12 +11,12 @@ html {
 }
 body,
 svg {
-  font-family: ubuntulight, Arial, Helvetica, Sans-serif;
+  font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
   font-size: 13px;
   height: 100%;
   margin: 0px;
-  color: #839496;
-  background: #333333;
+  color: #657b83;
+  background: #cccccc;
 }
 .cloneName {
   font-family: ubuntumedium, Arial Bold, Helvetica, Sans-serif;
@@ -27,7 +27,7 @@ svg {
 }
 /* for FF override */
 textarea {
-  font-family: ubuntulight, Arial, Helvetica, Sans-serif;
+  font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
   font-size: 100%;
 }
 /* texts that are not sequences nor identifiers */
@@ -48,12 +48,12 @@ ul {
   height: 100%;
   margin: auto;
   overflow: hidden;
-  background: #000000;
+  background: #ffffff;
 }
 #top-container {
   height: 32px;
   width: 100%;
-  background: #000000;
+  background: #ffffff;
   position: fixed;
   z-index: 1;
 }
@@ -77,7 +77,7 @@ ul {
   width: -webkit-calc(100% - 12px);
   width: calc(100% - 12px);
   overflow: hidden;
-  background: #000000;
+  background: #ffffff;
   margin: 6px;
 }
 #right-container {
@@ -110,7 +110,7 @@ ul {
   max-height: calc(100% - 6px);
 }
 line {
-  stroke: #586e75;
+  stroke: #93a1a1;
   stroke-width: 0.5;
 }
 /* left-container - info */
@@ -121,13 +121,13 @@ line {
 #info {
   font-size: 13px;
   padding: 3px;
-  background: #000000;
+  background: #ffffff;
   display: table-cell;
 }
 .info_line {
   border-bottom: solid;
   border-bottom-width: 1px;
-  border-color: #333333;
+  border-color: #cccccc;
 }
 .locus_line {
   text-align: center;
@@ -150,15 +150,15 @@ line {
 }
 /*Style polyline / graph*/
 .background_graph {
-  fill: #000000;
+  fill: #ffffff;
 }
 .background_graph2 {
-  fill: #000000;
+  fill: #ffffff;
 }
 .graph_line {
   stroke-width: 2.5px;
   cursor: pointer;
-  stroke: #839496;
+  stroke: #657b83;
 }
 .graph_data {
   fill: none;
@@ -178,26 +178,26 @@ line {
   stroke-width: 5px;
   cursor: pointer;
   stroke-dasharray: 20px,5px ;
-  stroke: #839496;
+  stroke: #657b83;
 }
 .graph_focus {
   stroke-width: 5px;
   cursor: pointer;
-  stroke: #fdf6e3;
+  stroke: #002b36;
 }
 .axis_m {
-  stroke: #839496;
+  stroke: #657b83;
   opacity: 0.5 ;
   stroke-width: 20px;
 }
 .axis_m_other {
-  stroke: #839496;
+  stroke: #657b83;
   opacity: 0.25 ;
   stroke-width: 10px;
   display: none;
 }
 .axis_h {
-  stroke: #839496;
+  stroke: #657b83;
 }
 .axis_v {
   display: none;
@@ -208,40 +208,40 @@ line {
 }
 .axis_button,
 .axis_leg {
-  fill: #839496;
+  fill: #657b83;
 }
 #resolution1 {
-  fill: #000000;
+  fill: #ffffff;
   opacity: 1;
 }
 #resolution5 {
-  fill: #333333;
+  fill: #cccccc;
   opacity: 0.6;
 }
 .graph_time {
-  fill: #839496;
+  fill: #657b83;
   text-anchor: middle;
   font-size: 100%;
 }
 .graph_time2 {
   font-weight: bold;
-  fill: #839496;
+  fill: #657b83;
   text-anchor: middle;
   font-size: 120%;
 }
 .graph_text {
   font-weight: bold;
-  fill: #839496;
+  fill: #657b83;
   text-anchor: end;
   dominant-baseline: middle;
 }
 .graph_text2 {
   font-weight: bold;
-  fill: #839496;
+  fill: #657b83;
 }
 .graph_time:hover {
   cursor: pointer;
-  fill: #fdf6e3;
+  fill: #002b36;
 }
 .graph_menu {
   position: absolute;
@@ -252,21 +252,21 @@ line {
   text-align: center;
   border-bottom: solid;
   border-left: solid;
-  border-color: #333333;
-  background: #000000;
+  border-color: #cccccc;
+  background: #ffffff;
 }
 .graph_list {
   display: none;
 }
 .graph_listElem:hover {
-  background: #333333;
+  background: #cccccc;
   width: 100%;
   cursor: move;
   cursor: webkit-grab;
 }
 /*style scatterPlot element*/
 .background_sp {
-  fill: #000000;
+  fill: #ffffff;
 }
 .circle {
   cursor: pointer;
@@ -274,7 +274,7 @@ line {
   -o-transition: fill  0.2s;
   -ms-transition: fill 0.2s;
   transition: fill 0.2s;
-  fill: #839496;
+  fill: #657b83;
   stroke-width: 4px;
 }
 .circle_inactive {
@@ -283,13 +283,13 @@ line {
 }
 .circle_select {
   stroke-width: 2.5px;
-  stroke: #fdf6e3;
+  stroke: #002b36;
   cursor: pointer;
-  fill: #839496;
+  fill: #657b83;
 }
 .circle_focus {
   cursor: pointer;
-  fill: #fdf6e3;
+  fill: #002b36;
 }
 .circle_hidden {
   -webkit-transition: fill 0.2s;
@@ -303,13 +303,13 @@ line {
   display: none;
 }
 .sp_legend {
-  fill: #839496;
+  fill: #657b83;
   font-weight: bold;
   text-anchor: middle;
   dominant-baseline: middle;
 }
 .sp_legend2 {
-  fill: #839496;
+  fill: #657b83;
   opacity: 0.4;
   text-anchor: middle;
   dominant-baseline: middle;
@@ -319,23 +319,23 @@ line {
   top: -0.5em;
 }
 .sp_system_label {
-  color: #839496;
+  color: #657b83;
   height: 0px;
   position: relative;
   -webkit-transition: left 0.5s;
   transition: left 0.5s;
 }
 .sp_system_label:hover {
-  color: #fdf6e3;
+  color: #002b36;
   cursor: pointer;
 }
 .sp_rotated_legend {
-  fill: #839496;
+  fill: #657b83;
   font-weight: bold;
   text-anchor: left;
 }
 .sp_legend_focus {
-  fill: #fdf6e3;
+  fill: #002b36;
   font-weight: bold;
   text-anchor: middle;
 }
@@ -344,7 +344,7 @@ line {
 }
 .sp_line,
 .sp_subline {
-  stroke: #839496;
+  stroke: #657b83;
 }
 .sp_subline {
   stroke-width: 0.5px;
@@ -358,13 +358,13 @@ line {
 .list:hover,
 .tagElem:hover,
 .data:hover {
-  background: #333333;
+  background: #cccccc;
 }
 #list,
 #data {
   border-top: solid;
   border-width: 6px;
-  border-color: #333333;
+  border-color: #cccccc;
 }
 #list-row,
 #data-row {
@@ -382,13 +382,12 @@ line {
   overflow-x: hidden;
   height: calc(100% - 30px);
   /*100% - list_menu height */
-
   padding: 2px;
 }
 #list_data {
   display: block;
   border-width: 4px;
-  border-color: #333333;
+  border-color: #cccccc;
   overflow-y: scroll;
 }
 .data_name {
@@ -417,7 +416,7 @@ line {
   height: 14px;
 }
 .selected {
-  color: #fdf6e3;
+  color: #002b36;
 }
 .nameBox {
   width: 300px;
@@ -463,15 +462,15 @@ line {
   text-align: center;
   border: solid;
   border-width: 1px;
-  border-color: #000000;
+  border-color: #ffffff;
   border-radius: 5px;
   margin: 0px 1px;
 }
 .infoBox:hover {
-  background: #073642;
+  background: #fdf6e3;
 }
 .infoBox-open {
-  background: #333333;
+  background: #cccccc;
 }
 .systemBox,
 .systemBoxMenu {
@@ -487,7 +486,7 @@ line {
   color: #fff;
   color: rgba(255, 255, 255, 0.7);
   font-size: 70%;
-  background: #333333;
+  background: #cccccc;
 }
 .systemBox {
   float: left;
@@ -532,10 +531,10 @@ line {
   border: solid;
   border-width: 2px;
   padding: 0px;
-  border-color: #fdf6e3;
+  border-color: #002b36;
 }
 .list_focus {
-  background: #333333 !important;
+  background: #cccccc !important;
 }
 .sequence-line {
   white-space: nowrap;
@@ -606,7 +605,6 @@ line {
   font-size: 70%;
   letter-spacing: .428em;
   /* (1-.7) / .7 */
-
   left: .214em;
 }
 .highlight {
@@ -627,7 +625,7 @@ span .substitution {
   width: 220px;
   border: solid;
   display: none;
-  background: #000000;
+  background: #ffffff;
 }
 .dataMenu {
   padding: 5px;
@@ -637,7 +635,7 @@ span .substitution {
   width: 220px;
   border: solid;
   display: none;
-  background: #000000;
+  background: #ffffff;
 }
 .tagElem {
   margin: 1px;
@@ -646,7 +644,7 @@ span .substitution {
 .tagElem:hover {
   border-color: white;
   cursor: pointer;
-  color: #fdf6e3;
+  color: #002b36;
 }
 .tagColorBox {
   margin-right: 5px;
@@ -682,7 +680,7 @@ span .substitution {
   padding: 5px;
   border-top: solid;
   border-width: 1px;
-  border-color: #333333;
+  border-color: #cccccc;
 }
 .submenu {
   width: 200px;
@@ -693,14 +691,14 @@ span .substitution {
   padding: 5px;
   border-top: solid;
   border-width: 1px;
-  border-color: #333333;
+  border-color: #cccccc;
 }
 .div-menu-selector {
   float: right;
   margin: -2px 0px 0px 5px;
 }
 .menu-selector {
-  background: #000000;
+  background: #ffffff;
   color: #657B83;
   height: 18px;
   width: 60px;
@@ -720,11 +718,11 @@ span .substitution {
   left: 50%;
   font-size: 13px;
   padding: 10px;
-  background: #000000;
+  background: #ffffff;
   display: none;
 }
 .buttonSelector {
-  background: #000000;
+  background: #ffffff;
   cursor: pointer;
   font-size: 13px;
   margin: 2px;
@@ -737,8 +735,8 @@ span .substitution {
 .button_right:hover,
 .buttonSelector:hover,
 .button2:hover {
-  background: #333333;
-  color: #fdf6e3;
+  background: #cccccc;
+  color: #002b36;
   cursor: pointer;
 }
 /*	//////////////////////////////////////////////////////////////	*/
@@ -751,7 +749,7 @@ span .substitution {
   width: 500px;
   font-size: 13px;
   padding: 10px;
-  background: #000000;
+  background: #ffffff;
   display: none;
   left: -moz-calc(50% - 250px);
   left: -webkit-calc(50% - 250px);
@@ -759,10 +757,10 @@ span .substitution {
 }
 /* Main style for <a> Used in particular in .popup_container, on login screen, in news, in links to results (for patient list and patient info)  */
 a {
-  color: #839496;
+  color: #657b83;
 }
 a:hover {
-  color: #fdf6e3;
+  color: #002b36;
 }
 /* ----------------- */
 .data-container,
@@ -774,7 +772,7 @@ a:hover {
   left: 495px;
   font-size: 13px;
   padding: 10px;
-  background: #000000;
+  background: #ffffff;
   display: none;
   max-width: -moz-calc(100% - 535px);
   max-width: -webkit-calc(100% - 535px);
@@ -796,7 +794,7 @@ a:hover {
 #display-menu,
 #bot-container,
 .seq-fixed {
-  background: #000000;
+  background: #ffffff;
 }
 .closeButton {
   position: absolute;
@@ -812,10 +810,10 @@ a:hover {
   cursor: pointer;
   padding: 1px;
   font-size: 90%;
-  color: #333333;
+  color: #cccccc;
 }
 .closeButton:hover {
-  color: #fdf6e3;
+  color: #002b36;
 }
 .button,
 .button_right,
@@ -826,7 +824,7 @@ a:hover {
   margin-right: 5px;
   margin-left: 5px;
   min-width: 16px;
-  color: #839496;
+  color: #657b83;
 }
 .button_next {
   margin-left: -8px;
@@ -845,7 +843,7 @@ a:hover {
   margin: 3px;
   display: inline-block;
   cursor: pointer;
-  background: #333333;
+  background: #cccccc;
   width: auto;
   text-align: center;
   padding-left: 10px;
@@ -979,25 +977,18 @@ span.logo {
   background: #3d24b6;
   background: -moz-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* FF3.6+ */
-
   background: -webkit-gradient(linear, left top, right top, color-stop(0%, #3d24b6), color-stop(10%, #2448b5), color-stop(20%, #2487b8), color-stop(30%, #24b7ab), color-stop(40%, #24b86e), color-stop(50%, #24b730), color-stop(60%, #55b824), color-stop(70%, #92b724), color-stop(80%, #b89f24), color-stop(90%, #b25f23), color-stop(100%, #b82424));
   /* Chrome,Safari4+ */
-
   background: -webkit-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* Chrome10+,Safari5.1+ */
-
   background: -o-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* Opera 11.10+ */
-
   background: -ms-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* IE10+ */
-
   background: linear-gradient(to right, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* W3C */
-
   filter: "progid:DXImageTransform.Microsoft.gradient( startColorstr='#3d24b6', endColorstr='#b82424',GradientType=1 )";
   /* IE6-9 */
-
   width: 180px;
   height: 8px;
   margin-top: 4px;
@@ -1032,7 +1023,7 @@ span.logo {
 .tagSelector,
 .closeButton,
 #axis_choice {
-  border-color: #333333;
+  border-color: #cccccc;
 }
 #info_window td {
   width: 300px;
@@ -1040,7 +1031,7 @@ span.logo {
   overflow-wrap: break-word;
   word-wrap: break-word;
   border-style: solid;
-  border-color: #333333;
+  border-color: #cccccc;
   border-width: 1px;
   text-align: center;
   vertical-align: middle;
@@ -1051,20 +1042,20 @@ span.logo {
   overflow-wrap: break-word;
   word-wrap: break-word;
   border-style: solid;
-  border-color: #333333;
+  border-color: #cccccc;
   border-width: 1px;
   vertical-align: middle;
 }
 #info_window table,
 #info_timepoint table {
   border-style: solid;
-  border-color: #333333;
+  border-color: #cccccc;
   border-collapse: collapse;
 }
 #info_window table .header,
 #info_timepoint table .header {
   border-width: 2px;
-  background-color: #333333;
+  background-color: #cccccc;
 }
 span.warning {
   color: orange;
@@ -1097,8 +1088,8 @@ span.warningReads {
   min-height: 18px;
   border-bottom: solid;
   border-right: solid;
-  border-color: #333333;
-  background: #000000;
+  border-color: #cccccc;
+  background: #ffffff;
   display: inline-block;
   padding: 2px;
 }
@@ -1130,24 +1121,24 @@ span.warningReads {
   border-width: 2px;
   border-radius: 5px;
   margin: 5px auto;
-  border-color: #000000;
+  border-color: #ffffff;
 }
 .sp_menu_icon:hover {
-  background: #333333;
+  background: #cccccc;
 }
 .sp_selected_mode {
-  border-color: #839496;
+  border-color: #657b83;
 }
 .sp_menu_icon svg {
-  fill: #839496;
+  fill: #657b83;
 }
 .sp_menu_icon svg:hover {
-  fill: #073642;
+  fill: #fdf6e3;
 }
 .sp_selector {
-  fill: #fdf6e3;
+  fill: #002b36;
   stroke-width: 2px;
-  stroke: #fdf6e3;
+  stroke: #002b36;
   fill-opacity: 0.2;
 }
 .axis_select {
@@ -1156,8 +1147,8 @@ span.warningReads {
   white-space: nowrap;
 }
 .axis_select select {
-  background: #000000;
-  color: #839496;
+  background: #ffffff;
+  color: #657b83;
   height: 20px;
   width: 120px;
   -webkit-appearance: none;
@@ -1171,16 +1162,16 @@ span.warningReads {
   display: none;
 }
 .axis_select select[selected=selected] {
-  color: #fdf6e3;
+  color: #002b36;
 }
 #visu-separator {
   height: 6px;
   cursor: move;
   cursor: -webkit-grab;
-  background: #333333;
+  background: #cccccc;
 }
 #bot-separator {
-  background: #333333;
+  background: #cccccc;
   width: 100%;
   height: 6px;
   cursor: pointer;
@@ -1193,13 +1184,13 @@ span.warningReads {
   height: 100%;
   width: 6px;
   line-height: calc(100% - 1px);
-  background: #333333;
+  background: #cccccc;
   cursor: pointer;
 }
 #visu-separator:hover,
 #vertical-separator:hover,
 #bot-separator:hover {
-  background: #073642;
+  background: #fdf6e3;
 }
 .edit_button {
   float: right;
@@ -1213,7 +1204,7 @@ span.warningReads {
   width: 100%;
   height: calc(100% - 35px);
   font-size: 14px;
-  background: #000000;
+  background: #ffffff;
   display: none;
   left: 0%;
 }
@@ -1242,7 +1233,7 @@ span.warningReads {
 }
 .db_table_split {
   text-align: center;
-  background-color: #073642;
+  background-color: #fdf6e3;
 }
 .db_table .column_200 {
   width: 200px;
@@ -1272,8 +1263,8 @@ span.warningReads {
   width: 50px;
   border: solid;
   border-width: 1px;
-  border-color: #000000;
-  background: #000000;
+  border-color: #ffffff;
+  background: #ffffff;
 }
 .db_block {
   width: 100%;
@@ -1293,19 +1284,19 @@ span.warningReads {
 }
 .db_table th {
   border-bottom: solid;
-  border-color: #333333;
+  border-color: #cccccc;
   border-width: 1px;
 }
 .db_table tr {
   border-bottom: solid;
-  border-color: #333333;
+  border-color: #cccccc;
   border-width: 1px;
 }
 .pointer {
   cursor: pointer;
 }
 .db_table tr:hover {
-  background: #333333;
+  background: #cccccc;
 }
 .db_table td {
   border-width: 0px;
@@ -1328,7 +1319,7 @@ span.warningReads {
 #db_fixed_header {
   position: absolute;
   top: 0px;
-  background: #073642;
+  background: #fdf6e3;
 }
 .db_help_desc {
   margin-left: 150px;
@@ -1360,7 +1351,7 @@ span.warningReads {
 .loading_bar {
   height: 100%;
   width: 0%;
-  background-color: #839496;
+  background-color: #657b83;
   display: inline-block;
   transition: width 0.2s;
 }
@@ -1373,10 +1364,10 @@ span.warningReads {
 .loading_seq {
   height: 15px;
   width: 100px;
-  background-image: -webkit-linear-gradient(-45deg, #333333 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, #333333 50%, #333333 75%, rgba(255, 154, 26, 0) 75%);
-  background-image: -moz-linear-gradient(-45deg, #333333 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, #333333 50%, #333333 75%, rgba(255, 154, 26, 0) 75%);
-  background-image: -o-linear-gradient(-45deg, #333333 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, #333333 50%, #333333 75%, rgba(255, 154, 26, 0) 75%);
-  background-image: linear-gradient(-45deg, #333333 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, #333333 50%, #333333 75%, rgba(255, 154, 26, 0) 75%);
+  background-image: -webkit-linear-gradient(-45deg, #cccccc 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, #cccccc 50%, #cccccc 75%, rgba(255, 154, 26, 0) 75%);
+  background-image: -moz-linear-gradient(-45deg, #cccccc 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, #cccccc 50%, #cccccc 75%, rgba(255, 154, 26, 0) 75%);
+  background-image: -o-linear-gradient(-45deg, #cccccc 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, #cccccc 50%, #cccccc 75%, rgba(255, 154, 26, 0) 75%);
+  background-image: linear-gradient(-45deg, #cccccc 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, #cccccc 50%, #cccccc 75%, rgba(255, 154, 26, 0) 75%);
   background-size: 50px 50px;
   -webkit-animation: move 2s linear infinite;
   -moz-animation: move 2s linear infinite;
@@ -1422,8 +1413,8 @@ span.warningReads {
   right: 0px;
   padding: 5px;
   margin: 5px;
-  background: #073642;
-  border-color: #333333;
+  background: #fdf6e3;
+  border-color: #cccccc;
   z-index: 15;
   border: solid;
   border-width: 1px;
@@ -1443,8 +1434,8 @@ span.warningReads {
   border-radius: 5px;
   padding: 5px;
   margin: 5px;
-  background: #000000;
-  border-color: #333333;
+  background: #ffffff;
+  border-color: #cccccc;
   -webkit-transition: background 1s linear;
   -moz-transition: background 1s linear;
   -ms-transition: background 1s linear;
@@ -1459,11 +1450,11 @@ span.warningReads {
   min-height: 20px;
   display: block;
   margin: 5px;
-  background: #000000;
+  background: #ffffff;
   border: solid;
   border-width: 2px;
   border-radius: 2px;
-  border-color: #000000;
+  border-color: #ffffff;
 }
 .flash_1,
 .log_1 {
@@ -1482,7 +1473,7 @@ span.warningReads {
   background-color: #f2dede;
 }
 select > option:hover {
-  background-color: #333333;
+  background-color: #cccccc;
 }
 .inactive {
   opacity: 0.5;
@@ -1496,8 +1487,8 @@ select > option:hover {
   border: solid;
   border-width: 1px;
   min-height: 20px;
-  background: #000000;
-  border-color: #333333;
+  background: #ffffff;
+  border-color: #cccccc;
   max-height: 100px;
   display: none;
   width: 300px;
@@ -1516,14 +1507,14 @@ select > option:hover {
   cursor: pointer;
 }
 .suggestion:hover {
-  background: #073642;
+  background: #fdf6e3;
 }
 input:focus,
 textarea:focus {
-  border-color: #333333;
-  -webkit-box-shadow: inset 0 1px 1px #000000, 0 0 8px #333333;
-  -moz-box-shadow: inset 0 1px 1px #000000, 0 0 8px #333333;
-  box-shadow: inset 0 1px 1px #000000, 0 0 8px #333333;
+  border-color: #cccccc;
+  -webkit-box-shadow: inset 0 1px 1px #ffffff, 0 0 8px #cccccc;
+  -moz-box-shadow: inset 0 1px 1px #ffffff, 0 0 8px #cccccc;
+  box-shadow: inset 0 1px 1px #ffffff, 0 0 8px #cccccc;
   outline: 0;
   outline: thin dotted \9;
 }
@@ -1603,10 +1594,10 @@ table.log textarea {
   background: #859900;
 }
 .tagColor8 {
-  background: #839496;
+  background: #657b83;
 }
 .inactiveTag {
-  background-image: linear-gradient(45deg, transparent -25%, #000000 100%, #000000 100%, transparent 0%);
+  background-image: linear-gradient(45deg, transparent -25%, #ffffff 100%, #ffffff 100%, transparent 0%);
 }
 .message_container {
   display: none;
@@ -1622,7 +1613,7 @@ table.log textarea {
   background-color: #f2dede;
 }
 .info_message {
-  border: 1px solid #333333;
+  border: 1px solid #cccccc;
   margin: 4px;
   background-color: #dff0d8;
 }
@@ -1675,17 +1666,17 @@ table.log textarea {
   text-align: center;
 }
 .info_container {
-  color: #839496;
+  color: #657b83;
   display: block;
   padding: 5px;
-  border: 1px solid #333333;
+  border: 1px solid #cccccc;
   overflow-wrap: break-word;
   overflow-y: hidden;
   max-width: 457px;
   min-height: 32px;
   max-height: 32px;
   width: 100%;
-  background-color: #000000;
+  background-color: #ffffff;
 }
 .info_container:hover {
   max-height: 400px;
@@ -1709,7 +1700,7 @@ textarea#edit_value {
 }
 #top_info div {
   font-weight: normal;
-  color: #839496;
+  color: #657b83;
 }
 .save_info.button {
   vertical-align: top;
@@ -1757,4 +1748,10 @@ label.highlight_label {
 .disabledClass {
   pointer-events: none;
   opacity: 0.4;
+}
+#mid-container {
+  font-size: 125%;
+}
+.sp_legend2 {
+  opacity: 0.8;
 }

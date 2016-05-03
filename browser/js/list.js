@@ -325,7 +325,7 @@ List.prototype = {
         
         elapsedTime = new Date()
             .getTime() - startTime;
-        console.log("update Liste: " + elapsedTime + "ms");
+        // console.log("update List: " + elapsedTime + "ms");
         
         //TODO check order 
         document.getElementById("list_sort_select").selectedIndex = 0;

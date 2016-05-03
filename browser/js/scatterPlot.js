@@ -1320,7 +1320,7 @@ ScatterPlot.prototype = {
             //Donne des informations quant au temps de MàJ des données
             elapsedTime = new Date()
                 .getTime() - startTime;
-            console.log("update sp: " + elapsedTime + "ms");
+            //console.log("update sp: " + elapsedTime + "ms");
         } catch(err) {
             this.db.error(err.stack);
         }

@@ -1062,7 +1062,7 @@ span.logo
     width: eval(@width_highlight);
 }
 
-.devel-mode {
+.devel-mode, .beta-mode {
     display: none;
 }
 
@@ -1403,10 +1403,12 @@ span.warningReads {
     table-layout: fixed;
 }
 
-.db_table td{
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.db_table td {
+    .ellipsis;
+}
+
+.db_table td:hover {
+    .ellipsisOverflow;
 }
 
 .db_table_split{
@@ -1961,6 +1963,17 @@ textarea#edit_value {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Doesn't work well
+ * if opacity is not at 1
+ * (for instance with .inactive classes)
+ */
+.ellipsisOverflow {
+   z-index: 999;
+   position: relative;
+   background: inherit;
+   display: inline-block;
 }
 
 #highlightCheckboxes {

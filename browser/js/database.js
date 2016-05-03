@@ -611,6 +611,7 @@ Database.prototype = {
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.display_result(result, "", args);
+                console.log('=== load_data: success ===');
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
@@ -691,6 +692,7 @@ Database.prototype = {
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.display_result(result)
+                console.log('=== load_analysis: success ===');
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
