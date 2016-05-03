@@ -565,17 +565,14 @@ line {
   word-spacing: normal;
 }
 .V {
-  text-transform: lowercase;
   color: #000;
   background-color: #efe;
 }
 .D {
-  text-transform: lowercase;
   color: #000;
   background-color: #fee;
 }
 .J {
-  text-transform: lowercase;
   color: #000;
   background-color: #ffffe2;
 }
