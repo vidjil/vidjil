@@ -43,7 +43,7 @@
             </tr>
             <tr class='devel-mode'>
                 <td><label for="run_id" id="run_id__label">run: </label></td>
-                <td><input list="runs" id="run_id" name="run_id" type="text" size="80" value="{{=run}}"></td>
+                <td><input list="runs" id="run_list" name="run_id" type="text" size="80" value="{{=run}}"></td>
                   <datalist id="runs">
                   {{for row in run_list :}}
                       <option value="{{=row}}">
