@@ -576,6 +576,11 @@ line {
   color: #000;
   background-color: #ffffe2;
 }
+.N,
+.N + .J,
+.N + .D {
+  box-shadow: -1px 0 0 #777777;
+}
 .highlight_border,
 .highlight_seq {
   display: inline-flex;
