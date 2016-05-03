@@ -204,7 +204,7 @@ Germline.prototype = {
             list1[tmp1[i]] = this.allele[tmp1[i]];
         }
         this.allele = list1;
-        console.log(system +"  "+ type)
+        // console.log(system +"  "+ type)
         
         
         //color

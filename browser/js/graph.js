@@ -321,7 +321,8 @@ Graph.prototype = {
         
         elapsedTime = new Date()
             .getTime() - startTime;
-        console.log("update Graph: " + elapsedTime + "ms");
+
+        // console.log("update Graph: " + elapsedTime + "ms");
         
         return this
     },
