@@ -95,6 +95,8 @@ try {
     this.db.error(err.stack);
 }
 
+console.log("=== main.js finished ===");
+
 (function worker(){
 	db.loadNotifications();
 	setTimeout(worker, 300000);
