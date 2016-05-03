@@ -1102,6 +1102,13 @@ Model.prototype = {
             }
         }
 
+        if ( typeof this.samples.diversity != 'undefined' && typeof this.samples.diversity[timeID] != 'undefined') {
+            html += "<tr><td class='header' colspan='2'> diversity </td></tr>"
+            for (var key in this.samples.diversity[timeID]) {
+                html += "<tr><td> " + key.replace('index_', '') + "</td><td>" + this.samples.diversity[timeID][key].toFixed(3) + '</td></tr>'
+            }
+        }
+
         html += "</table></div>"
         return html
     },

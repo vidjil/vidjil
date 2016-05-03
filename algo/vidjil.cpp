@@ -1524,7 +1524,8 @@ int main (int argc, char **argv)
             {"run_timestamp", {time_buffer}},
             {"producer", {soft_version}},
             {"log", {stream_segmentation_info.str()}},
-            {"commandline", {stream_cmdline.str()}}
+            {"commandline", {stream_cmdline.str()}},
+            {"diversity", {jsonDiversity}}
         }},
         {"reads", {
             {"total", {nb_total_reads}},
@@ -1541,9 +1542,6 @@ int main (int argc, char **argv)
     
     //Added edges in the json output file
     j["similarity"] = jsonLevenshtein;
-    
-    // Diversity measures
-    j["diversity"] = jsonDiversity;
 
 
     //$$ Output json, clean
