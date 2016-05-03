@@ -894,7 +894,8 @@ span.logo {
   float: left;
   width: eval(300px);
 }
-.devel-mode {
+.devel-mode,
+.beta-mode {
   display: none;
 }
 .focus {
