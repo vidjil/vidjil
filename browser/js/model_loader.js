@@ -525,7 +525,10 @@ Model_loader.prototype = {
             info : this.info,
             timestamp : timestamp,
             vidjil_json_version : VIDJIL_JSON_VERSION,
-            samples : this.samples,
+            samples : {
+                info: this.samples.info,
+                order: this.samples.order,
+                names: this.samples.names},
             clones : this.analysis_clones,
             clusters : this.analysis_clusters,
             tags : {}
