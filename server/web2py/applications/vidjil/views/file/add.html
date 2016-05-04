@@ -13,7 +13,7 @@
                 <td><select id="pre_process" name="pre_process" onChange="db.pre_process_onChange()">
                         <option data-file="1" value="0">no pre-process (1 file)</option>
                         {{for row in pre_process_list :}}
-                                <option data-file="{{=row["file"]}}" value="{{=row["id"]}}">
+                                <option title="{{=row["info"]}}" data-file="{{=row["file"]}}" value="{{=row["id"]}}">
                                     {{=row["id"]}} &ndash; {{=row["name"]}}
                                 </option> {{pass}}
                     </select>
