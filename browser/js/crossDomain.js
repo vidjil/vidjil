@@ -171,7 +171,7 @@ function imgtPostForSegmenter(data, system) {
     //disabled due to security concerns
     //form.action = "http://www.imgt.org/IMGT_vquest/vquest";
     //using proxy on server to allow requests on other site than vidjil one's in JS.
-    if (typeof config != 'undefined') {
+    if (typeof config != 'undefined' && typeof config.proxy != 'undefined') {
         form.action = config.proxy
     } else {
         form.action = PROXY_ADDRESS;
