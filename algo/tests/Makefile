@@ -14,6 +14,10 @@ SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
 REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
 VALGRIND=valgrind -v --tool=memcheck --leak-check=full --show-reachable=yes --undef-value-errors=yes --track-origins=yes --xml=yes --xml-file="$$(mktemp "$(REPORTS_PATH)/valgrind.xml.XXXXXX")"
 
+#should-vdj that should not be published in our public curated dataset (just internal tests)
+EXCLUDE_SHOULD_VDJ=bug20151006-rc.should-vdj.fa cdr3-indels.should-vdj.fa ext-nucleotides-N.should-vdj.fa segment_simul.should-vdj.fa
+SHOULD_VDJ_ARCHIVE:=$(filter-out $(addprefix should-vdj-tests/,$(EXCLUDE_SHOULD_VDJ)), $(SHOULD_VDJ))
+
 DATE=$(shell date +%Y-%m-%d--%H:%M:%S)
 SNAPSHOTS_DIR=./snapshots
 SNAPSHOT=$(SNAPSHOTS_DIR)/snapshot-log--$(DATE)
@@ -60,6 +64,15 @@ shouldvdj_with_rc:
 shouldvdj_with_rc_merged:
 	cat $(SHOULD_VDJ) > should-vdj-tests/should-vdj.merged.fa
 	python should-vdj-to-tap.py -r should-vdj-tests/should-vdj.merged.fa
+
+shouldvdj_archive: should-vdj.zip
+should-vdj.zip: $(SHOULD_VDJ_ARCHIVE)
+	$(eval tmpdir := $(shell mktemp -d))
+	mkdir $(tmpdir)/should-vdj
+	cp --parents --preserve $(SHOULD_VDJ_ARCHIVE) $(tmpdir)
+	sed -ri 's/\s*BUG//' $(tmpdir)/should-vdj-tests/*
+	cwd=`pwd` && cd $(tmpdir) && zip $$cwd/$@ $(SHOULD_VDJ_ARCHIVE)
+	rm -rf $(tmpdir)
 
 %.tap: %.should-get force
 	./should-to-tap.sh $<
