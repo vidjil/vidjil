@@ -5,6 +5,7 @@ override CXXFLAGS += -std=c++11 -W -Wall $(OPTIM)
 LDLIBS=-lz
 SRC= unit-tests/tests.cpp
 EXEC=$(SRC:.cpp=)
+OBJ=$(SRC:.cpp=.o)
 OTHER_SRC=$(wildcard *.cpp)
 LIB=../core/vidjil.a ../lib/lib.a
 SHOULD=$(wildcard should-get-tests/*.should-get)
@@ -104,7 +105,7 @@ core:
 	$(CXX) -o $@ $(INCLUDE) -c $< $(CXXFLAGS)
 
 clean:
-	rm -f *.o $(EXEC)
+	rm -f $(OBJ) $(EXEC)
 cleancoverage:
 	rm -f *.gcda *.gcno *.gcov
 cleantests:
