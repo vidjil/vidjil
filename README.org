@@ -26,18 +26,17 @@ to output all sequenced clones. The analysis is extremely fast
 because, in the first phase, no alignment is performed with database
 germline sequences. 
 
-The Vidjil *dynamic browser* is made for the visualization and
+The Vidjil *web application* is made for the interactive visualization and
 analysis of clones and their tracking along the time in a MRD setup or
-in a immunological study. The browser can visualize data processed by
-the Vidjil algorithm or by other V(D)J analysis pipelines.
-The browser enables to explore further cluterings proposed
+in a immunological study. The web application can visualize data processed by
+the Vidjil algorithm or by other V(D)J analysis pipelines, and
+enables to explore further cluterings proposed
 by software and/or done manually done by the user.
-
-Finally, a *patient database* with a server
-is currently developed to link the browser and the
-algorithmic part. The goal is that the clinicians will be able to
-upload, manage and process their runs directly on the browser (with
-authentication).
+The web application can be linked to a *sample, experiment and patient database*
+able to store sequencing data and metadata, to run RepSeq software
+and to save annotations directly from the web application, with authentication.
+Clinicians or researchers in immunology or hematology
+can manage, upload, analyze and annotate their runs directly on the web applicaiton.
 
 * Vidjil components
 
@@ -47,9 +46,9 @@ authentication).
 - Development code is under [[algo/]]
 - Documentation: [[doc/algo.org]]
 
-** The browser and the patient database
+** The web application
 
-- Access at http://rbx.vidjil.org/browser (demo login: demo@vidjil, password: vidjil)
+- Access at http://app.vidjil.org/browser (demo login: demo@vidjil, password: vidjil)
 - Please contact us if you would like to test your data and have a full account on the web server
 - Development code is under [[browser/]] and [[server/]]
 - Documentation (in progress): [[doc/browser.org]] and [[doc/server.org]]
@@ -78,7 +77,11 @@ The research is supported by SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), by R
 
 * References
 
-If you use Vidjil for your research, please cite the following reference:
+If you use Vidjil for your research, please cite the following references:
+
+Marc Duez et al.,
+“Vidjil: High-throughput analysis of immune repertoire”,
+submitted
 
 Mathieu Giraud, Mikaël Salson, et al.,
 “Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing”,
