@@ -51,7 +51,7 @@ script:
   - echo -en 'travis_fold:end:script.test-browser-unit\\r'
 
 after_success:
-  - make should_coveralls
+  - make should_coveralls COVERALLS_OPTIONS="--gcov /usr/bin/gcov-4.8"
 
 notifications:
   email:
