@@ -1,5 +1,5 @@
-#+TITLE: Vidjil -- Browser Manual
-#+AUTHOR: The Vidjil team (Mathieu, Mikaël, Marc and Tatiana)
+#+TITLE: Vidjil -- Web Application Manual
+#+AUTHOR: The Vidjil team (Mathieu, Mikaël, Florian, Marc, Ryan and Tatiana)
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/org-mode.css" />
 
 Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes.
@@ -7,16 +7,16 @@ Vidjil is an open-source platform for the analysis of high-throughput sequencing
 They are also useful markers of pathologies, and in leukemia, are used to quantify the minimal residual disease during patient follow-up.
 High-throughput sequencing (NGS/HTS) now enables the deep sequencing of a lymphoid population with dedicated [[http://omictools.com/rep-seq-c424-p1.html][Rep-Seq]] methods and software.
 
-This is the help of the [[http://rbx.vidjil.org/browser/][Vidjil browser]].
+This is the help of the [[http://app.vidjil.org/browser/][Vidjil web application]].
 Further help can always be asked to [[mailto:contact@vidjil.org][contact@vidjil.org]]. We can also arrange phone or Skype meeting.
 
-The Vidjil team (Mathieu, Mikaël, Marc and Tatiana)
+The Vidjil team (Mathieu, Mikaël, Florian, Marc, Ryan and Tatiana)
 
 * Requirements
 
-** Browser
+** Web application
 
-The Vidjil browser runs in any modern browser. It has been successfully tested on the following platforms
+The Vidjil web application runs in any modern browser. It has been successfully tested on the following platforms
  - Firefox version >= 32
  - Chrome version >= 38
  - IE version >= 10.0 (Vidjil will not run on IE 9.0 or below)
@@ -25,12 +25,12 @@ The Vidjil browser runs in any modern browser. It has been successfully tested o
 
 ** The .vidjil files
 
-The vidjil browser displays =.vidjil= files that summarize the V(D)J
+The vidjil web application displays =.vidjil= files that summarize the V(D)J
 recombinations and the sequences found in a run. 
 
-The easiest way to get these files is to [[http://rbx.vidjil.org/browser][request an account]] on the Vidjil server.
+The easiest way to get these files is to [[http://rbx.vidjil.org/browser][request an account]] on the public Vidjil test server.
 You will then be able to upload,
-manage, process your runs (=.fasta=, =.fastq=, =.gz= or =.clntab= files) directly on the browser 
+manage, process your runs (=.fasta=, =.fastq=, =.gz= or =.clntab= files) directly on the web application
 (see below 'patient database'), and the server behind the patient
 database computes these =.vidjil= files.
 Otherwise, such =.vidjil= files can be obtained:
@@ -45,7 +45,7 @@ Otherwise, such =.vidjil= files can be obtained:
 * First aid
 
 - Open data by:
-    - either with “patients”/“open patient”  if you are connected to a patient database, such as on http://rbx.vidjil.org/
+    - either with “patients”/“open patient”  if you are connected to a patient database, such as on http://app.vidjil.org/
       (in this case, there are always some "Demo" datasets for demonstration purposes),
     - or with “file”/“import/export”, manually selecting a =.vidjil= file
 
@@ -67,7 +67,7 @@ Otherwise, such =.vidjil= files can be obtained:
     - either with “patients”/“save analysis” if you are connected to a patient database
     - or with “file”/“export .analysis”
 
-* The elements of the Vidjil browser
+* The elements of the Vidjil web application
 
 ** The info panel (upper left panel)
    - analysis :: name of the configuration file used for displaying the data
@@ -142,8 +142,8 @@ The aligner display nucleotide sequences from selected clones.
 
 ** The patient database and the server
 
-If a server with a patient database is configured with your
-installation of Vidjil (as on http://rbx.vidjil.org/browser), the
+If a server with a patient/experiment database is configured with your
+installation of Vidjil (as on http://app.vidjil.org/), the
 'patient' menu gives you access to the server.
 
 With authentication, you can add patients, then add either
@@ -321,13 +321,11 @@ There can be several causes leading to bad ratios:
   which share the same V(D)J recombinations in their first half and have
   totally different and unknown sequences in their second half.
 
-  In the browser, the clones with a low clone coverage (< 0.5) are displayed in
+  In the web application, the clones with a low clone coverage (< 0.5) are displayed in
   the list with an orange I on the right. You can also visualize the clones
   according to their clone coverage by selecting for example “clone
   coverage/GC content” in the preset menu of the “plot” box.
 * Keyboard shortcuts
-
-** Browser 
 
   | =←= and =→=             | navigate between samples                            |
   | =Shift-←= and =Shift-→= | decrease or increase the number of displayed clones |
@@ -342,20 +340,21 @@ There can be several causes leading to bad ratios:
   | =l=: IGL        |                                    |
   | =k=: IGK, IGK+  |                                    |
   Note: You can select just one locus by holding the Shift key while pressing
-  the letter corresponding to the locus of interest
+  the letter corresponding to the locus of interest.
 
-
-** Browser connected to a patient databse
-
- | =Ctrl-s=  | save the analysis         |
- | =Shift-p= | open the 'patient' window |
+ | =Ctrl-s=  | save the analysis         (when connected to a patient database)  |
+ | =Shift-p= | open the 'patient' window (when connected to a patient database) |
 
 
 
 
-* Reference
+* References
 
-If you use Vidjil for your research, please cite the following reference:
+If you use Vidjil for your research, please cite the following references:
+
+Marc Duez et al.,
+“Vidjil: High-throughput analysis of immune repertoire”,
+submitted
 
 Mathieu Giraud, Mikaël Salson, et al.,
 “Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing”,
