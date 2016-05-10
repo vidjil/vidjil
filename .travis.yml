@@ -3,6 +3,9 @@ sudo: false
 language: cpp
 compiler: gcc
 
+cache:
+  pip: true
+
 addons:
  apt:
    sources:
@@ -13,7 +16,8 @@ addons:
    env: COMPILER=g++-4.8
 
 before_install:
-  - pip install cpp-coveralls
+  - export PATH="$HOME/.local/bin:$PATH"
+  - pip install --user cpp-coveralls
 
 before_script: make data ; make germline
 
