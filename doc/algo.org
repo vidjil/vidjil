@@ -24,9 +24,13 @@ to output all sequenced clones. The analysis is extremely fast
 because, in the first phase, no alignment is performed with database
 germline sequences. At the end, only the representative sequences 
 of each clone have to be analyzed. Vidjil can also cluster similar
-clones, or leave this to the user after a manual review in the browser.
+clones, or leave this to the user after a manual review in the web application.
 
-The method is described in the following reference:
+The method is described in the following references:
+
+Marc Duez et al.,
+“Vidjil: High-throughput analysis of immune repertoire”,
+submitted
 
 Mathieu Giraud, Mikaël Salson, et al.,
 "Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing",
