@@ -1,20 +1,26 @@
+sudo: false
+
 language: cpp
 compiler: gcc
 
-before_install:
-  - sudo pip install cpp-coveralls
-  # g++-4.8
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update -qq
+addons:
+ apt:
+   sources:
+   - ubuntu-toolchain-r-test
+   packages:
+   - gcc-4.8
+   - g++-4.8
+   env: COMPILER=g++-4.8
 
-install:
-  - sudo apt-get install -qq gcc-4.8 g++-4.8
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
+before_install:
+  - pip install cpp-coveralls
 
 before_script: make data ; make germline
 
 script:
+  - export CXX="g++-4.8"
   - g++ --version
+  - $CXX --version
   ###
   - echo '"Build..."' && echo -en 'travis_fold:start:script.build\\r'
   - make
