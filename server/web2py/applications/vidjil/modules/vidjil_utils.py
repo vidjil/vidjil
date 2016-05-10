@@ -108,10 +108,7 @@ def anon_names(patient_id, first_name, last_name, can_view=None):
     if can_view or (can_view == None and auth.can_view_patient_info(patient_id)):
         name = last_name + " " + first_name
     else:
-        try:
-            ln = unicode(last_name, 'utf-8')
-        except UnicodeDecodeError:
-            ln = last_name
+        ln = safe_encoding(last_name)
         name = ln[:3]
 
     # Admins also see the patient id
@@ -119,6 +116,16 @@ def anon_names(patient_id, first_name, last_name, can_view=None):
         name += ' (%s)' % patient_id
 
     return name
+
+def safe_encoding(string):
+    '''
+    Try to encode the string in UTF-8 but if it fails just
+    returns the string.
+    '''
+    try:
+        return unicode(string, 'utf-8')
+    except UnicodeDecodeError:
+        return string
 
 
 # take a list of strings to check and a filter_str (list of word to find (or not)) 
