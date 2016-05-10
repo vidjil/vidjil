@@ -123,7 +123,7 @@ def safe_encoding(string):
     returns the string.
     '''
     try:
-        return unicode(string, 'utf-8')
+        return unicode(string).encode('utf-8')
     except UnicodeDecodeError:
         return string
 
