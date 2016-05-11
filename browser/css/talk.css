@@ -1237,6 +1237,9 @@ span.warningReads {
   text-align: center;
   background-color: #fdf6e3;
 }
+.db_table_split td {
+  border-top: 2ex solid #ffffff;
+}
 .db_table .column_200 {
   width: 200px;
 }
