@@ -76,6 +76,7 @@
 
                  <tr>
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}  {{pass}} id="sequence_file_{{=row.sequence_file.id}}">
+		       {{if auth.is_admin():}}({{=row.sequence_file.id}}){{pass}}
                          {{=row.sequence_file.filename}}
                     </td>
                     <td> {{if row.sequence_file.sampling_date <> None:}} {{=row.sequence_file.sampling_date}} {{pass}}</td>
