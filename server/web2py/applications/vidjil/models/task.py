@@ -701,7 +701,7 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         stream = open(filepath, 'rb')
     except IOError:
         print "!!! Pre-process failed, no result file"
-        res = {"message": "[%s] c%s: 'pre-process' FAILED - %s" % (sequence_file_id, pre_process_id, output_file)}
+        res = {"message": "[%s] p%s: 'pre_process' FAILED - %s" % (sequence_file_id, pre_process_id, output_file)}
         log.error(res)
         db.sequence_file[sequence_file_id] = dict(pre_process_flag = "FAILED")
         db.commit()
@@ -726,7 +726,7 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
         p.wait()
     
-    res = {"message": "[%s] c%s: 'pre-process' finished - %s" % (sequence_file_id, pre_process_id, output_file)}
+    res = {"message": "[%s] p%s: 'pre_process' finished - %s" % (sequence_file_id, pre_process_id, output_file)}
     log.info(res)
 
     return "SUCCESS"

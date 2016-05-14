@@ -363,7 +363,7 @@ def upload():
             if db.scheduler_task[db.sequence_file[request.vars["id"]].pre_process_scheduler_task_id] != None:
                 scheduler.stop_task(db.sequence_file[request.vars["id"]].pre_process_scheduler_task_id)
             schedule_pre_process(int(request.vars['id']), int(request.vars['pre_process']))
-            mes += "files uploaded, start pre-process !! "+ request.vars['id'] + "-" +request.vars['pre_process']
+            mes += " | p%s start pre_process %s " % (request.vars['pre_process'], request.vars['id'] + "-" +request.vars['pre_process'])
 
         if data_file is not None :
             seq_file = defs.DIR_SEQUENCES + data_file
