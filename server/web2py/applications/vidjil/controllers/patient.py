@@ -326,7 +326,7 @@ def add_form():
 
             res = {"redirect": "sample_set/index",
                    "args" : { "id" : id_sample_set },
-                   "message": patient_name + ": patient added"}
+                   "message": "(%s) patient %s added" % (id_sample_set, patient_name) }
             log.info(res)
 
             if (id % 100) == 0:

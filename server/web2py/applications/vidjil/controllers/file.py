@@ -140,12 +140,14 @@ def add_form():
         
         #add a default sample_set for this sequence file
         id_sample_set = db.sample_set.insert(sample_type="sequence_file")
+        ids_sample_set = []
         
         id_sample_set_membership = db.sample_set_membership.insert(sample_set_id=id_sample_set,
                                                                   sequence_file_id=id)
         #add sequence_file to a run sample_set
         if run_id is not None :
             run_sample_set_id = db.run[run_id].sample_set_id
+            ids_sample_set += [run_sample_set_id] # for logging
             id_sample_set_membership_run = db.sample_set_membership.insert(sample_set_id=run_sample_set_id,
                                                                   sequence_file_id=id)
             redirect_args = {"id" : run_sample_set_id}
@@ -153,13 +155,14 @@ def add_form():
         #add sequence_file to a patient sample_set
         if patient_id is not None :
             patient_sample_set_id = db.patient[patient_id].sample_set_id
+            ids_sample_set += [patient_sample_set_id] # for logging
             id_sample_set_membership_patient = db.sample_set_membership.insert(sample_set_id=patient_sample_set_id,
                                                                   sequence_file_id=id)
             redirect_args = {"id" : patient_sample_set_id}
         
         
         res = {"file_id" : id,
-               "message": "file %s : upload started: %s" % (id, request.vars['filename']),
+               "message": "(%s) file {%s} : upload started: %s" % (','.join(map(str,ids_sample_set)), id, request.vars['filename']),
                "redirect": "sample_set/index",
                "args" : redirect_args
                }
@@ -270,7 +273,7 @@ def edit_form():
             error += "date (wrong format), "
             
     if error=="" :
-        mes = "file " + str(request.vars['id']) + " : "
+        mes = "file {%s}: " % request.vars['id']
         filename = db.sequence_file[request.vars['id']].filename
         if request.vars['filename'] != "":
             filename = request.vars['filename']
@@ -305,7 +308,7 @@ def edit_form():
         
         
         res = {"file_id" : request.vars["id"],
-               "message": "file %s: metadata saved" % request.vars["id"],
+               "message": "file {%s}: metadata saved" % request.vars["id"],
                "redirect": "sample_set/index",
                "args" : redirect_args
                }
@@ -325,11 +328,7 @@ def upload():
         error += "no sequence file with this id"
 
     if not error:
-        patient_id = db((db.sequence_file.id == request.vars["id"])
-                        &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
-                        &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
-                        ).select(db.patient.id).first()
-        mes += " file %s (patient %s) " % (db.sequence_file[request.vars['id']].filename, patient_id['id'])
+        mes += " file {%s} " % (request.vars['id'])
         res = {"message": mes + "processing uploaded file",
                "redirect": "patient/info",
                "args" : {"id" : request.vars['id']}
