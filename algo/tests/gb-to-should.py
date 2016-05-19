@@ -1,13 +1,23 @@
 '''Rough conversion from .gb to .should-vdj.fa'''
 
-# python gb-to-should.py *.gb
+# python gb-to-should.py -t "[TRB+]" *Db*.gb
+# python gb-to-should.py -t "[TRA+D]" *29*.gb
 
 import sys
 
-def parse(stream):
-    sys.stdout.write(">")
+import argparse
 
+parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
+parser.add_argument('--tag', '-t', default='', help='tag to add at the end of the header')
+parser.add_argument('file', nargs='+', help='''.gb files''')
+
+args = parser.parse_args()
+
+def parse_gb(stream):
     phase = 0
+    labels = []
+    seqs = []
+
     for l in stream:
 
         l = l.strip()
@@ -28,24 +38,33 @@ def parse(stream):
             continue
     
         if phase == 1 and l.startswith('/label'):
-            what = l.split('=')[1]
-            if not 'TR' in what:
+            label = l.split('=')[1]
+            if not 'TR' in label:
                 continue
-            sys.stdout.write(what + ' ')
+            labels += [label]
             continue
     
         if phase == 2:
             seq = ''.join(l.split(' ')[1:])
-            sys.stdout.write('\n' + seq)
+            seqs += [seq]
             continue
         
     # print "! Not parsed:", l
 
-    sys.stdout.write('\n\n')
+    return labels, seqs
 
 
+def output_should_vdj(f, labels, seqs):
+    f.write('>%s\n' % ' '.join(labels))
+    f.write('%s\n\n' % '\n'.join(seqs))
 
-for f in sys.argv:
+
+for f in args.file:
+    labels, seqs = parse_gb(open(f))
+
+    if args.tag:
+        labels += [ args.tag ]
+
     sys.stdout.write('#%s\n' % f)
-    parse(open(f))
-    
+    output_should_vdj(sys.stdout, labels, seqs)
+
