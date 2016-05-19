@@ -646,7 +646,7 @@ Builder.prototype = {
         menu_box.className = "menu_box";
         interm.appendChild(menu_box);
 
-        if (m.sample_set_id != 'undefined') {
+        if (typeof m.sample_set_id != 'undefined') {
             var open_patient = document.createElement('a');
             open_patient.className = "buttonSelector";
             open_patient.appendChild(document.createTextNode("open patient"));
