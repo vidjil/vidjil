@@ -288,17 +288,18 @@ def get_data():
         data["samples"]["db_key"] = []
         data["samples"]["ids"] = []
         for i in range(len(data["samples"]["original_names"])) :
-            row = query2[i]
             data["samples"]["original_names"][i] = data["samples"]["original_names"][i].split('/')[-1]
-            data["samples"]["info"].append(row.sequence_file.info)
-            data["samples"]["timestamp"].append(str(row.sequence_file.sampling_date))
-            data["samples"]["sequence_file_id"].append(row.sequence_file.id)
-            data["samples"]["results_file_id"].append(row.results_file.id)
             data["samples"]["config_id"].append(request.vars['config'])
-            data["samples"]["names"].append(row.sequence_file.filename.split('.')[0])
             data["samples"]["db_key"].append('')
-            data["samples"]["ids"].append(row.sequence_file.id)
             data["samples"]["commandline"].append(command)
+            if len(query2) > i:
+                row = query2[i]
+                data["samples"]["info"].append(row.sequence_file.info)
+                data["samples"]["timestamp"].append(str(row.sequence_file.sampling_date))
+                data["samples"]["sequence_file_id"].append(row.sequence_file.id)
+                data["samples"]["results_file_id"].append(row.results_file.id)
+                data["samples"]["names"].append(row.sequence_file.filename.split('.')[0])
+                data["samples"]["ids"].append(row.sequence_file.id)
 
         log.debug("get_data (%s) c%s -> %s" % (request.vars["sample_set_id"], request.vars["config"], fused_file))
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
