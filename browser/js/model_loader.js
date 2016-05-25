@@ -412,7 +412,7 @@ Model_loader.prototype = {
                 
                 //replace names, timestamps, order...
                 for (var key in s)
-                    if (s[key].length == this.samples.number)
+                    if (key != "log" && s[key].length == this.samples.number)
                         this.samples[key] = s[key]
             }
             
