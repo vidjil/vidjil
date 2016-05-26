@@ -57,6 +57,15 @@ ul {
   position: fixed;
   z-index: 1;
 }
+#upload_summary {
+  float: right;
+  display: none;
+  margin-right: 200px;
+  position: relative;
+  right: 200px;
+  z-index: 10;
+  background-color: #000000;
+}
 #menu-container {
   background: inherit;
 }

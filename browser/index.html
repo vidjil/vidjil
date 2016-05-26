@@ -68,8 +68,15 @@
                                     m.loadAnalysis('upload_analysis');">start</button> 
         </div>
         
+        <div id="upload_summary" style="" class="menu" onmouseover="showSelector('upload_summary_selector');" onmouseout="hideSelector();">
+            <span id="upload_summary_label">upload</span>
+            <div id="upload_summary_selector" class="selector"><div>
+
+            </div></div>
+        </div>
+
         <!-- TOP-CONTAINER -->
-        <div id="top-container">
+        <div id="top-container" onmouseout="hideSelector()">
             <div id="menu-container">
                 <div class="menu" id="top_info">
                     <!--Div is filled programmatically -->
@@ -242,13 +249,6 @@
                     <a class="buttonSelector" onclick="changeStyle('solarizeL')">light</a>
                     <a class="buttonSelector" onclick="changeStyle('display')">light (presentation)</a>
                     <a class="buttonSelector" onclick="changeStyle('solarizeD')">dark</a>
-                </div></div>
-            </div>
-
-            <div id="upload_summary" style="float: right; display:none; margin-right: 200px;" class="menu" onmouseover="showSelector('upload_summary_selector');"> 
-                <span id="upload_summary_label">upload</span>
-                <div id="upload_summary_selector" class="selector"><div>
-
                 </div></div>
             </div>
 
