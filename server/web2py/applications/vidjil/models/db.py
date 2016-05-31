@@ -219,7 +219,9 @@ db.define_table('sample_set_membership',
                Field('sample_set_id','reference sample_set', ondelete='SET NULL'),
                Field('sequence_file_id', 'reference sequence_file', ondelete='SET NULL'))
 
-
+db.define_table('group_assoc',
+                Field('first_group_id', 'reference auth_group', ondelete='CASCADE'),
+                Field('second_group_id', 'reference auth_group', ondelete='CASCADE'))
 
 
 ## after defining tables, uncomment below to enable auditing
