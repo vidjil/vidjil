@@ -224,3 +224,21 @@ class VidjilAuth(Auth):
         If the user is None, the current user is taken into account
         '''
         return self.get_permission('anon', 'patient', patient_id, user)
+
+    def get_associated_group_ids(self, group_id):
+        group_assoc_list = db(
+                    (db.group_assoc.first_group_id == group_id)
+                    | (db.group_assoc.second_group_id == group_id)
+                ).select(db.group_assoc.ALL)
+
+        group_set = set()
+        for group_assoc in group_assoc_list:
+            group_set.add(group_assoc.first_group_id)
+            group_set.add(group_assoc.second_group_id)
+
+        return list(group_set)
+
+    def add_read_permission(self, group_id, table_name, record_id):
+        groups = self.get_associated_group_ids(group_id)
+        for g in groups:
+            self.add_permission(g, 'read', table_name, record_id)
