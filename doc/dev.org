@@ -103,6 +103,20 @@ to access the public server at http://rbx.vidjil.org/.
     This is done in the =default.py= controller under the =get_analysis= function.
     Actually the real work is done in the =analysis_file.py= model, in the
     =get_analysis_data= function.
+** Permissions
+   Permissions are handled by Web2py's authentication mechanism which is
+   specialised to Vidjil's characteristics through the =VidjilAuth= class.
+
+*** VidjilAuth
+   One VidjilAuth is launched for a given user when a controller is called.
+   During that call, we cache as much as possible the calls to the DB.  For
+   doing so the =get_permission= method is defined (overriding the native
+   =has_permission=). It calls the native =has_permission= only when that call
+   hasn't already been done (this is particularly useful for DB intensive
+   queries, such as the compare patients).
+
+   Also some user characteristics are preloaded (groups and whether the person
+   is an admin), which also prevents may DB calls.
 * Tests
 ** Algorithm
 *** Unit
