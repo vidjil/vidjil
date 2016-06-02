@@ -10,7 +10,8 @@ def index():
 
 ## return an html form to add a group
 def add(): 
-    return dict(message=T('New group'))
+    groups = auth.get_user_groups()
+    return dict(message=T('New group'), groups=groups)
 
 
 ## create a group if the html form is complete
@@ -33,6 +34,15 @@ def add_form():
 
         #group creator = group admin
         auth.add_permission(user_group, 'admin', db.auth_group, id)
+
+        # Associate group with parent group network
+        parent_list = db(db.group_assoc.second_group_id == request.vars["group_parent"]).select(db.group_assoc.ALL)
+        parent = None
+        if len(parent_list) > 0:
+            for parent in parent_list:
+                db.group_assoc.insert(first_group_id=parent.first_group_id, second_group_id=id)
+        else:
+            db.group_assoc.insert(first_group_id=request.vars["group_parent"], second_group_id=id)
 
         res = {"redirect": "group/index",
                "message" : "group '%s' created" % id}
