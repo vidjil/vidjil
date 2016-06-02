@@ -162,6 +162,13 @@ fake_mail_preference_id = db.user_preference.insert(user_id =user_id,
                                                     val=fake_notification_id
                                                     )
 
+# add a fake group and give it permissions on existing patient
+fake_group_id = db.auth_group.insert(role="test_group_0", description="test group")
+db.auth_permission.insert(group_id=fake_group_id,
+                            name='read',
+                            table_name="patient",
+                            record_id=fake_patient_id)
+
 db.commit()
 
 
