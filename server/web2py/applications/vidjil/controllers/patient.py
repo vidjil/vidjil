@@ -134,11 +134,12 @@ def index():
     
     ##retrieve patient list 
     query = db(
-        auth.accessible_query('read', db.patient)
+        auth.vidjil_accessible_query('read', db.patient)
     ).select(
         db.patient.ALL,
         orderby = ~db.patient.id
     )
+    has_admin = auth.can_modify()
     result = {}
     
     for i, row in enumerate(query) :
@@ -147,7 +148,7 @@ def index():
             "sample_set_id" : int(row.sample_set_id),
             "last_name" : row.last_name,
             "first_name" : row.first_name,
-            "has_permission" : False,
+            "has_permission" : has_admin,
             "anon_allowed": False,
             "birth" : row.birth,
             "info" : row.info,
@@ -164,19 +165,6 @@ def index():
         
     keys = result.keys() 
     
-    query = db(
-        (db.auth_permission.name == "admin") & 
-        (db.auth_permission.table_name == "patient") &
-        (db.patient.id == db.auth_permission.record_id ) &
-        (auth.user_group() == db.auth_permission.group_id )
-    ).select(
-        db.patient.ALL, db.auth_permission.ALL
-    )
-
-    for i, row in enumerate(query) :
-        if row.patient.id in keys :
-            result[row.patient.id]['has_permission'] = True
-            
     query1 = db(
         db.patient.creator == db.auth_user.id
     ).select(
@@ -276,7 +264,11 @@ def index():
 ## return form to create new patient
 def add(): 
     if (auth.can_create_patient()):
-        return dict(message=T('add patient'))
+        if (auth.is_admin()):
+            groups = db(db.auth_group).select(db.auth_group.id, db.auth_group.role)
+        else:
+            groups = auth.get_user_groups()
+        return dict(message=T('add patient'), groups=groups)
     else :
         res = {"message": ACCESS_DENIED}
         log.error(res)
@@ -314,13 +306,13 @@ def add_form():
                                    creator=auth.user_id)
 
 
-            user_group = auth.user_group(auth.user.id)
+            user_group = int(request.vars["patient_group"])
             admin_group = db(db.auth_group.role=='admin').select().first().id
             
             #patient creator automaticaly has all rights 
-            auth.add_permission(user_group, 'admin', db.patient, id)
+            #auth.add_permission(user_group, 'admin', db.patient, id)
             auth.add_permission(user_group, 'read', db.patient, id)
-            auth.add_permission(user_group, 'anon', db.patient, id)
+            #auth.add_permission(user_group, 'anon', db.patient, id)
             
             patient_name = request.vars["first_name"] + ' ' + request.vars["last_name"]
 
