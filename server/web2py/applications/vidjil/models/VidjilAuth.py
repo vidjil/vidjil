@@ -1,4 +1,5 @@
 from gluon.tools import Auth
+from pydal.objects import Row, Set, Query
 
 class VidjilAuth(Auth):
     admin = None
@@ -28,7 +29,15 @@ class VidjilAuth(Auth):
                     result_groups.append(groups[0].role)
         return result_groups
 
-    def get_permission(self, action, object_of_action, id = 0, user = None):
+    def exists_permission(self, action, object_of_action, id, user=None):
+        groups = db(db.auth_membership.user_id == user).select(db.auth_membership.group_id)
+        for group in groups:
+            result = self.has_permission(action, object_of_action, id, group_id = group.group_id)
+            if result == True:
+                return True
+        return False
+
+    def get_permission(self, action, object_of_action, id = 0, user = None, group = None):
         '''
         Returns whether the current user has the permission 
         to perform the action on the object_of_action.
@@ -39,10 +48,11 @@ class VidjilAuth(Auth):
         is_current_user = user == None
         if is_current_user:
             user = self.user_id
+
         if not key in self.permissions and is_current_user:
             self.permissions[key] = {}
         if not is_current_user or not id in self.permissions[key]:
-            result = self.has_permission(action, object_of_action, id, user)
+            result = self.exists_permission(action, object_of_action, id, user)
             if not is_current_user:
                 return result
             self.permissions[key][id] = result
@@ -74,7 +84,17 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('create', 'patient', user = user)\
+        return self.get_permission('create', 'sample_set', user = user)\
+            or self.is_admin(user)
+
+    def can_modify(self, user = None):
+        '''
+        Returns True if the user can modify patients associated to their group
+        or an affiliated group
+
+        If the user is None, the current user is taken into account
+        '''
+        return self.get_permission('admin', 'sample_set', user = user)\
             or self.is_admin(user)
 
     def can_modify_patient(self, patient_id, user = None):
@@ -84,7 +104,9 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('admin', 'patient', patient_id, user)\
+
+        return (self.get_permission('admin', 'sample_set', user)\
+            and self.get_permission('read', 'patient', patient_id, user))\
             or self.is_admin(user)
         
     def can_modify_run(self, run_id, user = None):
@@ -94,13 +116,15 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('admin', 'run', run_id, user)\
+        return (self.get_permission('admin', 'sample_set', user)\
+            and self.get_permission('read', 'run', run_id))\
             or self.is_admin(user)
         
     def can_modify_sample_set(self, sample_set_id, user = None) :
         sample_set = db.sample_set[sample_set_id]
         
-        perm = self.get_permission('admin', 'sample_set', sample_set_id, user)\
+        perm = (self.get_permission('admin', 'sample_set', user)\
+            and self.get_permission('read', 'sample_set', sample_set_id, user))\
             or self.is_admin(user)
 
         if (sample_set.sample_type == "patient") :
@@ -225,20 +249,83 @@ class VidjilAuth(Auth):
         '''
         return self.get_permission('anon', 'patient', patient_id, user)
 
-    def get_associated_group_ids(self, group_id):
-        group_assoc_list = db(
-                    (db.group_assoc.first_group_id == group_id)
-                    | (db.group_assoc.second_group_id == group_id)
+    def get_group_parent(self, group_id):
+        parent_group_list = db(
+                    (db.group_assoc.second_group_id == group_id)
                 ).select(db.group_assoc.ALL)
 
-        group_set = set()
-        for group_assoc in group_assoc_list:
-            group_set.add(group_assoc.first_group_id)
-            group_set.add(group_assoc.second_group_id)
+        group_list = list()
 
-        return list(group_set)
+        for group_assoc in parent_group_list:
+            group_list.append(group_assoc.first_group_id)
+
+        return group_list
+
+    def get_user_groups(self, user = None):
+        is_current_user = user == None
+        if is_current_user:
+            user = self.user_id
+        group_list = db(
+                (db.auth_membership.user_id == user) &
+                ((db.auth_membership.group_id == db.auth_group.id) |
+                ((db.auth_membership.group_id == db.group_assoc.second_group_id) &
+                (db.group_assoc.first_group_id == db.auth_group.id)))
+                ).select(db.auth_group.id, db.auth_group.role, groupby=db.auth_group.id)
+
+
+        return group_list
 
     def add_read_permission(self, group_id, table_name, record_id):
-        groups = self.get_associated_group_ids(group_id)
-        for g in groups:
-            self.add_permission(g, 'read', table_name, record_id)
+        self.add_permission(group_id, 'read', table_name, record_id)
+
+    def vidjil_accessible_query(self, name, table, user_id=None):
+        """
+        Returns a query with all accessible records for user_id or
+        the current logged in user
+        this method does not work on GAE because uses JOIN and IN
+
+        This is an adaptation of accessible_query that better fits
+        the current auth system with group associations
+
+        Example:
+            Use as::
+
+                db(auth.accessible_query('read', db.mytable)).select(db.mytable.ALL)
+
+        """
+        if not user_id:
+            user_id = self.user_id
+        db = self.db
+        if isinstance(table, str) and table in self.db.tables():
+            table = self.db[table]
+        elif isinstance(table, (Set, Query)):
+            # experimental: build a chained query for all tables
+            if isinstance(table, Set):
+                cquery = table.query
+            else:
+                cquery = table
+            tablenames = db._adapter.tables(cquery)
+            for tablename in tablenames:
+                cquery &= self.accessible_query(name, tablename,
+                                                user_id=user_id)
+            return cquery
+        if not isinstance(table, str) and\
+                self.has_permission(name, table, 0, user_id):
+            return table.id > 0
+        membership = self.table_membership()
+        permission = self.table_permission()
+        query = table.id.belongs(
+            db(membership.user_id == user_id)
+                ((membership.group_id == permission.group_id) |
+                ((membership.group_id == db.group_assoc.second_group_id) &
+                (db.group_assoc.first_group_id == permission.group_id)))
+                (permission.name == name)
+                (permission.table_name == table)
+                ._select(permission.record_id))
+        if self.settings.everybody_group_id:
+            query |= table.id.belongs(
+                db(permission.group_id == self.settings.everybody_group_id)
+                    (permission.name == name)
+                    (permission.table_name == table)
+                    ._select(permission.record_id))
+        return query
