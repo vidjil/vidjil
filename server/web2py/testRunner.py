@@ -117,10 +117,22 @@ fake_patient_id = db.patient.insert(first_name="plop",
 				   sample_set_id=fake_sample_set_id)
                                    
 db.auth_permission.insert(group_id = group_id,
-                        name = "admin",
+                        name = "read",
                         table_name = "patient",
                         record_id = fake_patient_id
                         )
+
+fake_run_id = db.run.insert(name="foobar",
+                            run_date="2010-10-25",
+                            info="foobar",
+                            id_label="foobar",
+                            creator=user_id,
+                            sample_set_id=fake_sample_set_id)
+
+db.auth_permission.insert(group_id = group_id,
+                        name = 'read',
+                        table_name = "run",
+                        record_id = fake_run_id)
 
 # and a fake file for this patient
 fake_file_id = db.sequence_file.insert(sampling_date="1903-02-02",
@@ -164,10 +176,6 @@ fake_mail_preference_id = db.user_preference.insert(user_id =user_id,
 
 # add a fake group and give it permissions on existing patient
 fake_group_id = db.auth_group.insert(role="test_group_0", description="test group")
-db.auth_permission.insert(group_id=fake_group_id,
-                            name='read',
-                            table_name="patient",
-                            record_id=fake_patient_id)
 
 db.commit()
 
