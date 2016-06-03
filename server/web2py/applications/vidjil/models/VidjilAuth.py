@@ -250,7 +250,8 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('anon', 'patient', patient_id, user)
+        return self.get_permission('anon', 'sample_set', user=user)\
+                and self.get_permission('read', 'patient', patient_id, user)
 
     def get_group_parent(self, group_id):
         parent_group_list = db(
