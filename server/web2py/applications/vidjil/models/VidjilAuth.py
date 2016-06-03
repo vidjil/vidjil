@@ -30,9 +30,12 @@ class VidjilAuth(Auth):
         return result_groups
 
     def exists_permission(self, action, object_of_action, id, user=None):
-        groups = db(db.auth_membership.user_id == user).select(db.auth_membership.group_id)
+        groups = db(db.auth_membership.user_id == user).select(db.auth_membership.group_id, db.group_assoc.first_group_id,
+                left=db.group_assoc.on(db.auth_membership.group_id == db.group_assoc.second_group_id)  )
         for group in groups:
-            result = self.has_permission(action, object_of_action, id, group_id = group.group_id)
+            result = self.has_permission(action, object_of_action, id, group_id = group.auth_membership.group_id)
+            if group.group_assoc.first_group_id:
+                result = result or self.has_permission(action, object_of_action, id, group_id = group.group_assoc.first_group_id)
             if result == True:
                 return True
         return False
