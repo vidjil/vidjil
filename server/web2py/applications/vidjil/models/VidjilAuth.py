@@ -279,9 +279,6 @@ class VidjilAuth(Auth):
 
         return group_list
 
-    def add_read_permission(self, group_id, table_name, record_id):
-        self.add_permission(group_id, 'read', table_name, record_id)
-
     def vidjil_accessible_query(self, name, table, user_id=None):
         """
         Returns a query with all accessible records for user_id or
