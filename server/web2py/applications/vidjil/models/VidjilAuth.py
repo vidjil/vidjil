@@ -40,7 +40,7 @@ class VidjilAuth(Auth):
                 return True
         return False
 
-    def get_permission(self, action, object_of_action, id = 0, user = None, group = None):
+    def get_permission(self, action, object_of_action, id = 0, user = None):
         '''
         Returns whether the current user has the permission 
         to perform the action on the object_of_action.
