@@ -11,18 +11,49 @@ class VidjilauthModel(unittest.TestCase):
         count = 0
         
     def setUp(self):
+        '''
+        SetUp data for testing purposes. This data is created before each test and deleted after in the tearDown method.
+
+        here is the current relationship status:
+
+                    ##############
+                    # fake_group #
+                    ##############
+                      /      \
+                     /        \
+                #########    #############
+                # group #    # group_sec #
+                #########    #############
+
+        patient is associated to fake_group (group defined in testRunner.py)
+        patient_sec is associated to group
+        '''
         # Load the to-be-tested file
         execfile("applications/vidjil/models/VidjilAuth.py", globals())
         # set up default session/request/auth/...
-        global auth, group, my_user_id, count, patient_id, sample_set_id
+        global auth, group, group_sec, my_user_id, user_id_sec, count, patient_id, patient_id_sec, parent_user_id, sample_set_id
         auth = VidjilAuth(globals(), db)
 
         my_user_id = db.auth_user.insert(
-            first_name='Group',
-            last_name='Tester',
+            first_name='First',
+            last_name='Group Tester',
             email='group.tester%d@vidjil.org' % count,
             password= db.auth_user.password.validate('1234')[0],
         )
+
+        user_id_sec = db.auth_user.insert(
+                first_name='Second',
+                last_name='Group Tester',
+                email='group.testertoo.%d@vidjil.org' % count,
+                password=db.auth_user.password.validate('1234')[0]
+                )
+
+        parent_user_id = db.auth_user.insert(
+                first_name='Par',
+                last_name='ent',
+                email='par.end.%d@vidjil.org' % count,
+                password=db.auth_user.password.validate('1234')[0]
+                )
 
         auth.login_bare("group.tester%d@vidjil.org" % count, "1234")
 
@@ -30,6 +61,7 @@ class VidjilauthModel(unittest.TestCase):
 
         # setup data used for tests
         sample_set_id = db.sample_set.insert(sample_type = 'patient')
+        sample_set_id_sec = db.sample_set.insert(sample_type = 'patient')
 
         patient_id = db.patient.insert(
                 first_name="foo",
@@ -40,19 +72,45 @@ class VidjilauthModel(unittest.TestCase):
                 creator=my_user_id,
                 sample_set_id=sample_set_id)
 
+        patient_id_sec = db.patient.insert(
+                first_name="footoo",
+                last_name="bartoo",
+                birth="1902-02-02",
+                info="footoobartoo",
+                id_label="footoobartoo",
+                creator=my_user_id,
+                sample_set_id=sample_set_id_sec)
+
+        db.auth_membership.insert(user_id=parent_user_id, group_id=fake_group_id)
+
         group = db.auth_group.insert(role="group1", description="first group")
         db.auth_membership.insert(user_id=my_user_id, group_id=group)
 
+        group_sec = db.auth_group.insert(role="group2", description="second_group")
+        db.auth_membership.insert(user_id=user_id_sec, group_id=group_sec)
+
         db.group_assoc.insert(first_group_id = fake_group_id, second_group_id = group)
+        db.group_assoc.insert(first_group_id = fake_group_id, second_group_id = group_sec)
         db.auth_permission.insert(name='read', table_name='patient', group_id=fake_group_id, record_id = patient_id)
+
+        db.auth_permission.insert(name='read', table_name='patient', group_id=group, record_id = patient_id_sec)
 
         db.commit()
 
     def tearDown(self):
-        db(db.auth_group.id == group).delete()
-        db(db.auth_membership.group_id == group).delete
+        db((db.auth_group.id == group) |
+            (db.auth_group.id == group_sec)).delete()
+
+        db((db.auth_membership.group_id == group) |
+            (db.auth_membership.group_id == group_sec)).delete
+
+        db((db.patient.id == patient_id) |
+            (db.patient.id == patient_id_sec)).delete()
+
         auth.logout(next=None, onlogout=None, log=None)
-        db(db.auth_user.id == my_user_id).delete()
+        db((db.auth_user.id == my_user_id) |
+            (db.auth_user.id == user_id_sec) |
+            (db.auth_user.id == parent_user_id)).delete()
 
     def testGetGroupNames(self):
         expected = ["group1"]
@@ -214,10 +272,64 @@ class VidjilauthModel(unittest.TestCase):
         result = [g.id for g in auth.get_user_groups()]
         self.assertEqual(Counter(expected), Counter(result), "Expected: %s, but got: %s" % (str(expected), str(result)))
 
-'''
-    def testAddReadPermission(self):
-        self.assertTrue(False, "Test is not implemented")
-
     def testVidjilAccessibleQuery(self):
-        self.assertTrue(False, "Test is not implemented")
-'''
+        expected = [patient_id, patient_id_sec]
+        result = [p.id for p in db(auth.vidjil_accessible_query('read', 'patient', auth.user_id)).select()]
+        self.assertEqual(Counter(expected), Counter(result),
+                "Expected: %s, but got: %s for user: %d" % (str(expected), str(result), auth.user_id))
+
+        expected = [fake_patient_id, patient_id, patient_id_sec]
+        result = [p.id for p in db(auth.vidjil_accessible_query('read', 'patient', user_id)).select()]
+        self.assertEqual(Counter(expected), Counter(result),
+                "Expected: %s, but got: %s for user: %d" % (str(expected), str(result), user_id))
+
+    def test_child_parent_share(self):
+        '''
+        Tests that a child does not share permissions with a parent group
+        '''
+        child_perm = auth.get_permission('read', 'patient', patient_id_sec, user=auth.user_id)
+        self.assertTrue(child_perm, "User %d is missing permissions on patient %d" % (auth.user_id, patient_id_sec))
+
+        parent_perm = auth.get_permission('read', 'patient', patient_id_sec, user=parent_user_id)
+        self.assertFalse(parent_perm, "Child group %d is conferring permissions to parent group %d" % (group, fake_group_id))
+
+    def test_parent_child_share(self):
+        '''
+        Tests that a parent group shares permissions with a child group
+        '''
+        parent_perm = auth.get_permission('read', 'patient', patient_id, user=parent_user_id)
+        self.assertTrue(parent_perm, "User %d is missing permissions on patient %d" % (parent_user_id, patient_id))
+
+        child_perm = auth.get_permission('read', 'patient', patient_id, user=auth.user_id)
+        self.assertTrue(child_perm, "Parent group %d failed to pass permissions to child group %d" % (fake_group_id, group))
+
+    def test_sibling_share(self):
+        '''
+        Tests that two groups that share a parent do not share their own permissions between them
+        '''
+        owner_perm = auth.get_permission('read', 'patient', patient_id_sec, user=auth.user_id)
+        self.assertTrue(owner_perm, "User %d is missing permissions on patient %d" % (auth.user_id, patient_id_sec))
+
+        sibling_perm = auth.get_permission('read', 'patient', patient_id_sec, user=user_id_sec)
+        self.assertFalse(sibling_perm, "A read permission had been passed from group %d to group %d" % (group, group_sec))
+
+    def test_admin_share(self):
+        expected = [p.id for p in db(db.patient).select()]
+        result = [p.id for p in db(auth.vidjil_accessible_query('read', 'patient', user_id)).select()]
+        self.assertEqual(Counter(expected), Counter(result), "Expected: %s, but got: %s" % (str(expected), str(result)))
+
+        for patient_id in expected:
+            res = auth.can_modify_patient(patient_id, user_id)
+            self.assertTrue(res, "User %d is missing permissions on patient %d" % (user_id, patient_id))
+
+    def test_accessible_can_concordance(self):
+        res_accessible = [p.id for p in db(auth.vidjil_accessible_query('read', 'patient', auth.user_id)).select()]
+        full_patient_list = [p.id for p in db(db.patient).select()]
+
+        res_can = []
+        for p in full_patient_list:
+            if auth.can_view_patient(p, auth.user_id):
+                res_can.append(p)
+
+        self.assertEqual(Counter(res_accessible), Counter(res_can),
+                "The two methods returned different results. accessible: %s, can: %s" % (res_accessible, res_can))
