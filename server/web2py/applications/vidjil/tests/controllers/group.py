@@ -57,7 +57,6 @@ class GroupController(unittest.TestCase):
         resp = add_form()
         self.assertTrue(auth.has_membership("test_group_1"), "group creation failed")
         new_group_id = db(db.auth_group.role == "test_group_1").select(db.auth_group.id).first().id
-        self.assertTrue(auth.get_permission("read", "patient", fake_patient_id, group=new_group_id), "permissions transfer failed")
             
             
     def testConfirm(self):      
