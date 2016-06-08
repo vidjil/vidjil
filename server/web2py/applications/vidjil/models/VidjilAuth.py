@@ -29,16 +29,44 @@ class VidjilAuth(Auth):
                     result_groups.append(groups[0].role)
         return result_groups
 
-    def exists_permission(self, action, object_of_action, id, user=None):
-        groups = db(db.auth_membership.user_id == user).select(db.auth_membership.group_id, db.group_assoc.first_group_id,
-                left=db.group_assoc.on(db.auth_membership.group_id == db.group_assoc.second_group_id)  )
-        for group in groups:
-            result = self.has_permission(action, object_of_action, id, group_id = group.auth_membership.group_id)
-            if group.group_assoc.first_group_id:
-                result = result or self.has_permission(action, object_of_action, id, group_id = group.group_assoc.first_group_id)
-            if result == True:
-                return True
-        return False
+    def get_access_groups(self, object_of_action, oid, user):
+        membership = self.table_membership()
+        permission = self.table_permission()
+
+        groups = db(
+                (permission.record_id == oid) &
+                (permission.name == 'access') &
+                (permission.table_name == object_of_action) &
+                ((membership.group_id == permission.group_id) |
+                ((membership.group_id == db.group_assoc.second_group_id) &
+                (db.group_assoc.first_group_id == permission.group_id))) &
+                (membership.user_id == user)
+            ).select(membership.group_id)
+
+        group_list = [g.group_id for g in groups]
+
+        return list(set(group_list))
+
+    def get_permission_groups(self, action, object_of_action, user=None):
+        '''
+        Returns all the groups for which a user has a given permission
+        '''
+        is_current_user = user == None
+        if is_current_user:
+            user = self.user.id
+
+        membership = self.table_membership()
+        permission = self.table_permission()
+
+        groups = db(
+                (membership.user_id == user) &
+                (membership.group_id == permission.group_id) &
+                (permission.record_id == 0) &
+                (permission.name == action)
+            ).select(membership.group_id)
+        group_list = [g.group_id for g in groups]
+
+        return list(set(group_list))
 
     def get_permission(self, action, object_of_action, id = 0, user = None):
         '''
@@ -55,10 +83,12 @@ class VidjilAuth(Auth):
         if not key in self.permissions and is_current_user:
             self.permissions[key] = {}
         if not is_current_user or not id in self.permissions[key]:
-            result = self.exists_permission(action, object_of_action, id, user)
+            access_groups = self.get_access_groups(object_of_action, id, user)
+            perm_groups = self.get_permission_groups(action, object_of_action, user)
+            intersection = set(access_groups).intersection(perm_groups)
             if not is_current_user:
-                return result
-            self.permissions[key][id] = result
+                return len(intersection) > 0
+            self.permissions[key][id] = len(intersection) > 0
         return self.permissions[key][id]
 
     def is_admin(self, user = None):
@@ -90,16 +120,6 @@ class VidjilAuth(Auth):
         return self.get_permission('create', 'sample_set', user = user)\
             or self.is_admin(user)
 
-    def can_modify(self, user = None):
-        '''
-        Returns True if the user can modify patients associated to their group
-        or an affiliated group
-
-        If the user is None, the current user is taken into account
-        '''
-        return self.get_permission('admin', 'sample_set', user = user)\
-            or self.is_admin(user)
-
     def can_modify_patient(self, patient_id, user = None):
         '''
         Returns True iff the current user can administrate
@@ -108,8 +128,7 @@ class VidjilAuth(Auth):
         If the user is None, the current user is taken into account
         '''
 
-        return (self.get_permission('admin', 'sample_set', user)\
-            and self.get_permission('read', 'patient', patient_id, user))\
+        return self.get_permission('admin', 'patient', patient_id, user=user)\
             or self.is_admin(user)
         
     def can_modify_run(self, run_id, user = None):
@@ -119,15 +138,13 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return (self.get_permission('admin', 'sample_set', user)\
-            and self.get_permission('read', 'run', run_id))\
+        return self.get_permission('admin', 'run', run_id)\
             or self.is_admin(user)
         
     def can_modify_sample_set(self, sample_set_id, user = None) :
         sample_set = db.sample_set[sample_set_id]
         
-        perm = (self.get_permission('admin', 'sample_set', user)\
-            and self.get_permission('read', 'sample_set', sample_set_id, user))\
+        perm = self.get_permission('admin', 'sample_set', user)\
             or self.is_admin(user)
 
         if (sample_set.sample_type == "patient") :
@@ -250,8 +267,7 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('anon', 'sample_set', user=user)\
-                and self.get_permission('read', 'patient', patient_id, user)
+        return self.get_permission('anon', 'patient', patient_id, user)
 
     def get_group_parent(self, group_id):
         parent_group_list = db(
@@ -315,12 +331,14 @@ class VidjilAuth(Auth):
             return table.id > 0
         membership = self.table_membership()
         permission = self.table_permission()
+        perm_groups = self.get_permission_groups(name, table, user_id)
         query = table.id.belongs(
             db(membership.user_id == user_id)
+                (membership.group_id.belongs(perm_groups))
                 ((membership.group_id == permission.group_id) |
                 ((membership.group_id == db.group_assoc.second_group_id) &
                 (db.group_assoc.first_group_id == permission.group_id)))
-                (permission.name == name)
+                (permission.name == 'access')
                 (permission.table_name == table)
                 ._select(permission.record_id))
         if self.settings.everybody_group_id:
