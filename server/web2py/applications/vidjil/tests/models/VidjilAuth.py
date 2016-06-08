@@ -31,7 +31,7 @@ class VidjilauthModel(unittest.TestCase):
         # Load the to-be-tested file
         execfile("applications/vidjil/models/VidjilAuth.py", globals())
         # set up default session/request/auth/...
-        global auth, group, group_sec, my_user_id, user_id_sec, count, patient_id, patient_id_sec, parent_user_id, sample_set_id
+        global auth, group, group_sec, group_admin_perm, my_user_id, user_id_sec, count, patient_id, patient_id_sec, admin_patient_id, parent_user_id, sample_set_id
         auth = VidjilAuth(globals(), db)
 
         my_user_id = db.auth_user.insert(
@@ -81,6 +81,15 @@ class VidjilauthModel(unittest.TestCase):
                 creator=my_user_id,
                 sample_set_id=sample_set_id_sec)
 
+        admin_patient_id = db.patient.insert(
+                first_name="ad",
+                last_name="min",
+                birth="1902-02-02",
+                info="admin",
+                id_label="admin",
+                creator=my_user_id,
+                sample_set_id=sample_set_id_sec)
+
         db.auth_membership.insert(user_id=parent_user_id, group_id=fake_group_id)
 
         group = db.auth_group.insert(role="group1", description="first group")
@@ -89,11 +98,21 @@ class VidjilauthModel(unittest.TestCase):
         group_sec = db.auth_group.insert(role="group2", description="second_group")
         db.auth_membership.insert(user_id=user_id_sec, group_id=group_sec)
 
+        group_admin_perm = db.auth_group.insert(role="group3", description="third group")
+        db.auth_membership.insert(user_id=my_user_id, group_id=group_admin_perm)
+
+
         db.group_assoc.insert(first_group_id = fake_group_id, second_group_id = group)
         db.group_assoc.insert(first_group_id = fake_group_id, second_group_id = group_sec)
-        db.auth_permission.insert(name='read', table_name='patient', group_id=fake_group_id, record_id = patient_id)
+        db.auth_permission.insert(name='admin', table_name='sample_set', group_id=group_admin_perm, record_id=0)
+        db.auth_permission.insert(name='read', table_name='sample_set', group_id=group_admin_perm, record_id=0)
+        db.auth_permission.insert(name='access', table_name='patient', group_id=group_admin_perm, record_id=admin_patient_id)
 
-        db.auth_permission.insert(name='read', table_name='patient', group_id=group, record_id = patient_id_sec)
+        db.auth_permission.insert(name='read', table_name='sample_set', group_id=fake_group_id, record_id=0)
+        db.auth_permission.insert(name='access', table_name='patient', group_id=fake_group_id, record_id = patient_id)
+
+        db.auth_permission.insert(name='read', table_name='sample_set', group_id=group, record_id=0)
+        db.auth_permission.insert(name='access', table_name='patient', group_id=group, record_id = patient_id_sec)
 
         db.commit()
 
@@ -105,7 +124,8 @@ class VidjilauthModel(unittest.TestCase):
             (db.auth_membership.group_id == group_sec)).delete
 
         db((db.patient.id == patient_id) |
-            (db.patient.id == patient_id_sec)).delete()
+            (db.patient.id == patient_id_sec) |
+            (db.patient.id == admin_patient_id)).delete()
 
         auth.logout(next=None, onlogout=None, log=None)
         db((db.auth_user.id == my_user_id) |
@@ -113,18 +133,9 @@ class VidjilauthModel(unittest.TestCase):
             (db.auth_user.id == parent_user_id)).delete()
 
     def testGetGroupNames(self):
-        expected = ["group1"]
+        expected = ["group1", "group3"]
         result = auth.get_group_names()
         self.assertEqual(Counter(expected), Counter(result), msg="Expected: %s, but got: %s" % (str(expected), str(result)))
-
-    def testExistsPermission(self):
-        result = auth.exists_permission('read', 'patient', patient_id, user=auth.user_id)
-        self.assertTrue(result,
-            "The user %d does not have the expected permission: read on patient for %d" % (auth.user_id, patient_id))
-
-        result = auth.exists_permission('read', 'config', fake_config_id, user=auth.user_id)
-        self.assertFalse(result,
-            "The user %d has some unexpected permissions: read on config for %d" % (auth.user_id, fake_config_id))
 
     def testGetPermission(self):
         result = auth.get_permission('read', 'patient', patient_id, user=auth.user_id)
@@ -161,17 +172,6 @@ class VidjilauthModel(unittest.TestCase):
 
         result = auth.can_create_patient(user_id)
         self.assertTrue(result, "User %d is missing patient creation permissions" % user_id)
-
-    def testCanModify(self):
-        result = auth.can_modify()
-        self.assertFalse(result, "User %d should not have modifcation permissions" % auth.user_id)
-
-        db.auth_permission.insert(group_id = group, table_name = 'sample_set', name = 'admin')
-        result = auth.can_modify()
-        #self.assertTrue(result, "User %d should now have modifcation permissions but does not" % auth.user_id)
-
-        result = auth.can_modify(user_id)
-        self.assertTrue(result, "User %d should have modification permissions but does not" % user_id)
 
     def testCanModifyPatient(self):
         result = auth.can_modify_patient(fake_patient_id)
@@ -259,6 +259,7 @@ class VidjilauthModel(unittest.TestCase):
 
     def testCanViewPatientInfo(self):
         db.auth_permission.insert(group_id=group, name='anon', table_name='sample_set', record_id=0)
+        db.commit()
         result = auth.can_view_patient_info(patient_id)
         self.assertTrue(result, "User %d is missing permission anon for patient: %d" % (auth.user_id, patient_id))
 
@@ -268,17 +269,17 @@ class VidjilauthModel(unittest.TestCase):
         self.assertEqual(Counter(expected), Counter(result), "Expected: %s, but got: %s" % (str(expected), str(result)))
 
     def testGetUserGroups(self):
-        expected = [fake_group_id, group]
+        expected = [fake_group_id, group, group_admin_perm]
         result = [g.id for g in auth.get_user_groups()]
         self.assertEqual(Counter(expected), Counter(result), "Expected: %s, but got: %s" % (str(expected), str(result)))
 
     def testVidjilAccessibleQuery(self):
-        expected = [patient_id, patient_id_sec]
+        expected = [patient_id, patient_id_sec, admin_patient_id]
         result = [p.id for p in db(auth.vidjil_accessible_query('read', 'patient', auth.user_id)).select()]
         self.assertEqual(Counter(expected), Counter(result),
                 "Expected: %s, but got: %s for user: %d" % (str(expected), str(result), auth.user_id))
 
-        expected = [fake_patient_id, patient_id, patient_id_sec]
+        expected = [fake_patient_id, patient_id, patient_id_sec, admin_patient_id]
         result = [p.id for p in db(auth.vidjil_accessible_query('read', 'patient', user_id)).select()]
         self.assertEqual(Counter(expected), Counter(result),
                 "Expected: %s, but got: %s for user: %d" % (str(expected), str(result), user_id))
@@ -314,6 +315,9 @@ class VidjilauthModel(unittest.TestCase):
         self.assertFalse(sibling_perm, "A read permission had been passed from group %d to group %d" % (group, group_sec))
 
     def test_admin_share(self):
+        '''
+        Tests that being part of the group admin grants permissions on all patients
+        '''
         expected = [p.id for p in db(db.patient).select()]
         result = [p.id for p in db(auth.vidjil_accessible_query('read', 'patient', user_id)).select()]
         self.assertEqual(Counter(expected), Counter(result), "Expected: %s, but got: %s" % (str(expected), str(result)))
@@ -333,3 +337,16 @@ class VidjilauthModel(unittest.TestCase):
 
         self.assertEqual(Counter(res_accessible), Counter(res_can),
                 "The two methods returned different results. accessible: %s, can: %s" % (res_accessible, res_can))
+
+    def test_admin_cross_bleed(self):
+        '''
+        Tests that having admin permissions in one group will not share admin permissions to another
+        '''
+        res = auth.can_modify_patient(admin_patient_id, auth.user_id)
+        self.assertTrue(res, "User %d is missing admin permissions on patient %d" % (auth.user_id, admin_patient_id))
+
+        res = auth.can_view_patient(patient_id, auth.user_id)
+        self.assertTrue(res, "User %d is missing read permissions on patient %d" % (auth.user_id, patient_id))
+
+        res = auth.can_modify_patient(patient_id, auth.user_id)
+        self.assertFalse(res, "User %d should not have admin permissions on patient %d" % (auth.user_id, patient_id))
