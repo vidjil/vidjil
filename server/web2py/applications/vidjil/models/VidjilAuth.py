@@ -29,6 +29,9 @@ class VidjilAuth(Auth):
                     result_groups.append(groups[0].role)
         return result_groups
 
+    def get_cache_key(self, action, object_of_action):
+        return action +  '/' + object_of_action
+
     def get_access_groups(self, object_of_action, oid, user):
         membership = self.table_membership()
         permission = self.table_permission()
@@ -75,7 +78,7 @@ class VidjilAuth(Auth):
 
         The result is cached to avoid DB calls.
         '''
-        key = action + '/' + object_of_action
+        key = self.get_cache_key(action, object_of_action)
         is_current_user = user == None
         if is_current_user:
             user = self.user_id
