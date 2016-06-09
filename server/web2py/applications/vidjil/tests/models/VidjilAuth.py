@@ -345,7 +345,7 @@ class VidjilauthModel(unittest.TestCase):
         self.assertEqual(Counter(expected), Counter(result),
                 "Expected: %s, but got: %s for user: %d" % (str(expected), str(result), user_id))
 
-    def test_child_parent_share(self):
+    def testChildParentShare(self):
         '''
         Tests that a child does not share permissions with a parent group
         '''
@@ -355,7 +355,7 @@ class VidjilauthModel(unittest.TestCase):
         parent_perm = auth.get_permission('read', 'patient', patient_id_sec, user=parent_user_id)
         self.assertFalse(parent_perm, "Child group %d is conferring permissions to parent group %d" % (group, fake_group_id))
 
-    def test_parent_child_share(self):
+    def testParentChildShare(self):
         '''
         Tests that a parent group shares permissions with a child group
         '''
@@ -365,7 +365,7 @@ class VidjilauthModel(unittest.TestCase):
         child_perm = auth.get_permission('read', 'patient', patient_id, user=user_id_sec)
         self.assertTrue(child_perm, "Parent group %d failed to pass permissions to child group %d" % (fake_group_id, group_sec))
 
-    def test_sibling_share(self):
+    def testSiblingShare(self):
         '''
         Tests that two groups that share a parent do not share their own permissions between them
         '''
@@ -375,7 +375,7 @@ class VidjilauthModel(unittest.TestCase):
         sibling_perm = auth.get_permission('read', 'patient', patient_id_sec, user=user_id_sec)
         self.assertFalse(sibling_perm, "A read permission had been passed from group %d to group %d" % (group, group_sec))
 
-    def test_admin_share(self):
+    def testAdminShare(self):
         '''
         Tests that being part of the group admin grants permissions on all patients
         '''
@@ -387,7 +387,7 @@ class VidjilauthModel(unittest.TestCase):
             res = auth.can_modify_patient(patient_id, user_id)
             self.assertTrue(res, "User %d is missing permissions on patient %d" % (user_id, patient_id))
 
-    def test_accessible_can_concordance(self):
+    def testAccessibleCanConcordance(self):
         res_accessible = [p.id for p in db(auth.vidjil_accessible_query('read', 'patient', auth.user_id)).select()]
         full_patient_list = [p.id for p in db(db.patient).select()]
 
@@ -399,7 +399,7 @@ class VidjilauthModel(unittest.TestCase):
         self.assertEqual(Counter(res_accessible), Counter(res_can),
                 "The two methods returned different results. accessible: %s, can: %s" % (res_accessible, res_can))
 
-    def test_admin_cross_bleed(self):
+    def testAdminCrossBleed(self):
         '''
         Tests that having admin permissions in one group will not share admin permissions to another
         '''
