@@ -159,13 +159,13 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('admin', 'run', run_id)\
+        return self.get_permission('admin', 'run', run_id, user=user)\
             or self.is_admin(user)
         
     def can_modify_sample_set(self, sample_set_id, user = None) :
         sample_set = db.sample_set[sample_set_id]
         
-        perm = self.get_permission('admin', 'sample_set', user)\
+        perm = self.get_permission('admin', 'sample_set', sample_set_id, user)\
             or self.is_admin(user)
 
         if (sample_set.sample_type == "patient") :
@@ -188,7 +188,7 @@ class VidjilAuth(Auth):
         sample_set_list = db(db.sample_set_membership.sequence_file_id == file_id).select(db.sample_set_membership.sample_set_id)
         
         for row in sample_set_list : 
-            if self.can_modify_sample_set(row.sample_set_id) :
+            if self.can_modify_sample_set(row.sample_set_id, user=user) :
                 return True
             
         return False
@@ -209,7 +209,7 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('admin', 'auth_group', user = user)\
+        return self.get_permission('admin', 'auth_group', group_id, user = user)\
             or self.is_admin(user)
 
     def can_process_file(self, user = None):
@@ -218,7 +218,7 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('run', 'results_file', user=user)\
+        return self.get_permission('run', 'sample_set', user=user)\
             or self.is_admin(user)
 
     def can_upload_file(self, user = None):
@@ -227,7 +227,7 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('upload', 'sequence_file', user=user)\
+        return self.get_permission('upload', 'sample_set', user=user)\
             or self.is_admin(user)
 
     def can_use_config(self, config_id, user = None):
