@@ -68,6 +68,18 @@ init_db(True)
 
 fake_sample_set_id = db.sample_set.insert(sample_type = 'patient')
 
+# add a fake group
+fake_group_id = db.auth_group.insert(role="test_group_0", description="test group")
+
+db.auth_permission.insert(group_id=fake_group_id,
+                            name="access",
+                            table_name="sample_set",
+                            record_id=fake_sample_set_id)
+db.auth_permission.insert(group_id=fake_group_id,
+                            name="access",
+                            table_name="auth_group",
+                            record_id=fake_group_id)
+
 # use a fake user
 user_id = db.auth_user.insert(
     first_name='Testers',
@@ -96,17 +108,22 @@ fake_pre_process_id = db.pre_process.insert(name="foobar",
 					    info="barfoo"
 				            )
                                     
-db.auth_permission.insert(group_id = group_id,
+db.auth_permission.insert(group_id = fake_group_id,
                         name = "admin",
-                        table_name = "config",
-                        record_id = fake_config_id
+                        table_name = "sample_set",
+                        record_id = 0
                         )
-db.auth_permission.insert(group_id = group_id,
+db.auth_permission.insert(group_id = fake_group_id,
                         name = "read",
+                        table_name = "sample_set",
+                        record_id = 0
+                        )
+db.auth_permission.insert(group_id = fake_group_id,
+                        name = "access",
                         table_name = "config",
                         record_id = fake_config_id
                         )
-                                
+
 # add fake patient
 fake_patient_id = db.patient.insert(first_name="plop",
                                    last_name="plop",
@@ -116,8 +133,8 @@ fake_patient_id = db.patient.insert(first_name="plop",
                                    creator=user_id,
 				   sample_set_id=fake_sample_set_id)
                                    
-db.auth_permission.insert(group_id = group_id,
-                        name = "read",
+db.auth_permission.insert(group_id = fake_group_id,
+                        name = "access",
                         table_name = "patient",
                         record_id = fake_patient_id
                         )
@@ -129,9 +146,9 @@ fake_run_id = db.run.insert(name="foobar",
                             creator=user_id,
                             sample_set_id=fake_sample_set_id)
 
-db.auth_permission.insert(group_id = group_id,
-                        name = 'read',
-                        table_name = "run",
+db.auth_permission.insert(group_id = fake_group_id,
+                        name = 'access',
+                        table_name = 'run',
                         record_id = fake_run_id)
 
 # and a fake file for this patient
@@ -173,9 +190,6 @@ fake_mail_preference_id = db.user_preference.insert(user_id =user_id,
                                                     preference='mail',
                                                     val=fake_notification_id
                                                     )
-
-# add a fake group and give it permissions on existing patient
-fake_group_id = db.auth_group.insert(role="test_group_0", description="test group")
 
 db.commit()
 

@@ -31,7 +31,7 @@ class VidjilauthModel(unittest.TestCase):
         # Load the to-be-tested file
         execfile("applications/vidjil/models/VidjilAuth.py", globals())
         # set up default session/request/auth/...
-        global auth, group, group_sec, group_admin_perm, my_user_id, user_id_sec, count, patient_id, patient_id_sec, admin_patient_id, parent_user_id, sample_set_id
+        global auth, group, group_sec, group_ter, my_user_id, user_id_sec, count, patient_id, patient_id_sec, parent_user_id, admin_patient_id, sample_set_id
         auth = VidjilAuth(globals(), db)
 
         my_user_id = db.auth_user.insert(
@@ -98,15 +98,19 @@ class VidjilauthModel(unittest.TestCase):
         group_sec = db.auth_group.insert(role="group2", description="second_group")
         db.auth_membership.insert(user_id=user_id_sec, group_id=group_sec)
 
-        group_admin_perm = db.auth_group.insert(role="group3", description="third group")
-        db.auth_membership.insert(user_id=my_user_id, group_id=group_admin_perm)
+        group_ter = db.auth_group.insert(role="group3", description="third group")
+        db.auth_membership.insert(user_id=my_user_id, group_id=group_ter)
 
-
-        db.group_assoc.insert(first_group_id = fake_group_id, second_group_id = group)
         db.group_assoc.insert(first_group_id = fake_group_id, second_group_id = group_sec)
-        db.auth_permission.insert(name='admin', table_name='sample_set', group_id=group_admin_perm, record_id=0)
-        db.auth_permission.insert(name='read', table_name='sample_set', group_id=group_admin_perm, record_id=0)
-        db.auth_permission.insert(name='access', table_name='patient', group_id=group_admin_perm, record_id=admin_patient_id)
+
+        db.auth_permission.insert(name='admin', table_name='sample_set', group_id=group_ter, record_id=0)
+        db.auth_permission.insert(name='read', table_name='sample_set', group_id=group_ter, record_id=0)
+        db.auth_permission.insert(name='access', table_name='patient', group_id=group_ter, record_id=admin_patient_id)
+
+        db.auth_permission.insert(name='admin', table_name='sample_set', group_id=group_sec, record_id=0)
+        db.auth_permission.insert(name='read', table_name='sample_set', group_id=group_sec, record_id=0)
+        db.auth_permission.insert(name='run', table_name='sample_set', group_id=group_sec, record_id=0)
+        db.auth_permission.insert(name='upload', table_name='sample_set', group_id=group_sec, record_id=0)
 
         db.auth_permission.insert(name='read', table_name='sample_set', group_id=fake_group_id, record_id=0)
         db.auth_permission.insert(name='access', table_name='patient', group_id=fake_group_id, record_id = patient_id)
@@ -138,16 +142,13 @@ class VidjilauthModel(unittest.TestCase):
         self.assertEqual(Counter(expected), Counter(result), msg="Expected: %s, but got: %s" % (str(expected), str(result)))
 
     def testGetPermission(self):
-        result = auth.get_permission('read', 'patient', patient_id, user=auth.user_id)
+        result = auth.get_permission('read', 'patient', patient_id, user=user_id_sec)
         self.assertTrue(result,
             "The user %d does not have the expected permission: read on patient for %d" % (auth.user_id, patient_id))
 
         result = auth.get_permission('read', 'config', fake_config_id, user=auth.user_id)
         self.assertFalse(result,
             "The user %d has some unexpected permissions: read on config for %d" % (auth.user_id, fake_config_id))
-        
-        result = auth.get_permission('read', 'config', fake_config_id, user=user_id)
-        self.assertTrue(result, "The user %d is missing permissions: read on config for %d" % (user_id, fake_config_id))
 
     def testIsAdmin(self):
         result = auth.is_admin(user=auth.user_id)
@@ -177,107 +178,167 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_modify_patient(fake_patient_id)
         self.assertFalse(result, "User %d should not be able to modify patient %d" % (auth.user_id, fake_patient_id))
 
+        result = auth.can_modify_patient(fake_patient_id, user_id_sec)
+        self.assertTrue(result, "User %d should be able to modify patient %d" % (user_id_sec, fake_patient_id))
+
         result = auth.can_modify_patient(fake_patient_id, user_id)
-        self.assertTrue(result, "User %d is missing permissions to modify patient %d" % (user_id, fake_patient_id))
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to modify patient %d" % (user_id, fake_patient_id))
 
     def testCanModifyRun(self):
         result = auth.can_modify_run(fake_run_id)
         self.assertFalse(result, "User %d should not be able to modify run %d" % (auth.user_id, fake_run_id))
 
+        result = auth.can_modify_run(fake_run_id, user_id_sec)
+        self.assertTrue(result, "User %d should be able to modify run %d" % (user_id_sec, fake_run_id))
+
         result = auth.can_modify_run(fake_run_id, user_id)
-        self.assertTrue(result, "User %d is missing permissions to modify run %d" % (user_id, fake_run_id))
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to modify run %d" % (user_id, fake_run_id))
 
     def testCanModifySampleSet(self):
         result = auth.can_modify_sample_set(fake_sample_set_id)
         self.assertFalse(result, "User %d should not be able to modify sample_set %d" % (auth.user_id, fake_sample_set_id))
 
+        result = auth.can_modify_sample_set(fake_sample_set_id, user_id_sec)
+        self.assertTrue(result, "User %d should be able to modify sample_set %d" % (user_id_sec, fake_sample_set_id))
+
         result = auth.can_modify_sample_set(fake_sample_set_id, user_id)
-        self.assertTrue(result, "User %d is missing permissions to modify sample_set %d" % (user_id, fake_sample_set_id))
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to modify sample_set %d" % (user_id, fake_sample_set_id))
 
     def testCanModifyFile(self):
         result = auth.can_modify_file(fake_file_id)
         self.assertFalse(result, "User %d should not be able to modify file %d" % (auth.user_id, fake_file_id))
 
+        result = auth.can_modify_file(fake_file_id, user_id_sec)
+        self.assertTrue(result, "User %d should be able to modify file %d" % (user_id_sec, fake_file_id))
+
         result = auth.can_modify_file(fake_file_id, user_id)
-        self.assertTrue(result, "User %d is missing permissions to modify file %d" % (user_id, fake_file_id))
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to modify file %d" % (user_id, fake_file_id))
 
     def testCanModifyConfig(self):
         result = auth.can_modify_config(fake_config_id)
         self.assertFalse(result, "User %d should not be able to modify config %d" % (auth.user_id, fake_config_id))
 
+        result = auth.can_modify_config(fake_config_id, user_id_sec)
+        self.assertTrue(result, "User %d should be able to modify config %d" % (user_id_sec, fake_config_id))
+
         result = auth.can_modify_config(fake_config_id, user_id)
-        self.assertTrue(result, "User %d is missing permissions to modify config %d" % (user_id, fake_config_id))
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to modify config %d" % (user_id, fake_config_id))
 
     def testCanModifyGroup(self):
         result = auth.can_modify_group(fake_group_id)
         self.assertFalse(result, "User %d should not be able to modify group %d" % (auth.user_id, fake_group_id))
 
+        result = auth.can_modify_group(fake_group_id, user_id_sec)
+        self.assertTrue(result, "User %d should be able to modify group %d" % (user_id_sec, fake_group_id))
+
         result = auth.can_modify_group(fake_group_id, user_id)
-        self.assertTrue(result, "User %d is missing permissions to modify group %d" % (user_id, fake_group_id))
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to modify group %d" % (user_id, fake_group_id))
 
     def testCanProcessFile(self):
         result = auth.can_process_file()
         self.assertFalse(result, "User %d should not be able to process files" % (auth.user_id))
 
+        result = auth.can_process_file(user_id_sec)
+        self.assertTrue(result, "User %d should be able to process files" % user_id_sec)
+
         result = auth.can_process_file(user_id)
-        self.assertTrue(result, "User %d is missing permissions to process file %d" % (user_id, fake_file_id))
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to process files" % user_id)
 
     def testCanUploadFile(self):
         result = auth.can_upload_file()
         self.assertFalse(result, "User %d should not have permission to upload files" % auth.user_id)
 
+        result = auth.can_upload_file(user_id_sec)
+        self.assertTrue(result, "User %d should be able to upload files" % user_id_sec)
+
         result = auth.can_upload_file(user_id)
-        self.assertTrue(result, "User %d is missing permissions to upload files" % user_id)
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to upload files" % user_id)
 
     def testCanUseConfig(self):
         result = auth.can_use_config(fake_config_id)
         self.assertFalse(result, "User %d should not have permission to use config %d" % (auth.user_id, fake_config_id))
 
+        result = auth.can_use_config(fake_config_id, user_id_sec)
+        self.assertTrue(result, "User %d should be able to use config %d" % (user_id_sec, fake_config_id))
+
         result = auth.can_use_config(fake_config_id, user_id)
-        self.assertTrue(result, "User %d is missing permission to use config %d" % (user_id, fake_config_id))
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to use config %d" % (user_id, fake_config_id))
 
     def testCanViewPatient(self):
         result = auth.can_view_patient(fake_patient_id)
         self.assertFalse(result, "User %d should not have permission to view patient %d" % (auth.user_id, fake_patient_id))
 
+        result = auth.can_view_patient(fake_patient_id, user_id_sec)
+        self.assertTrue(result, "User %d should be able to view patient %d" % (user_id_sec, fake_patient_id))
+
         result = auth.can_view_patient(fake_patient_id, user_id)
-        self.assertTrue(result, "User %d is missing permission to patient patient %d" % (user_id, fake_patient_id))
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to view patient %d" % (user_id, fake_patient_id))
 
     def testCanViewRun(self):
         result = auth.can_view_run(fake_run_id)
         self.assertFalse(result, "User %d should not have permission to view run %d" % (auth.user_id, fake_run_id))
 
+        result = auth.can_view_run(fake_run_id, user_id_sec)
+        self.assertTrue(result, "User %d should be able to view run %d" % (user_id_sec, fake_run_id))
+
         result = auth.can_view_run(fake_run_id, user_id)
-        self.assertTrue(result, "User %d is missing permission to run run %d" % (user_id, fake_run_id))
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to view run %d" % (user_id, fake_run_id))
 
     def testCanViewSampleSet(self):
         result = auth.can_view_sample_set(fake_sample_set_id)
         self.assertFalse(result, "User %d should not have permission to view sample_set %d" % (auth.user_id, fake_sample_set_id))
 
+        result = auth.can_view_sample_set(fake_sample_set_id, user_id_sec)
+        self.assertTrue(result, "User %d should be able to view sample_set %d" % (user_id_sec, fake_sample_set_id))
+
         result = auth.can_view_sample_set(fake_sample_set_id, user_id)
-        self.assertTrue(result, "User %d is missing permission to sample_set sample_set %d" % (user_id, fake_sample_set_id))
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to view sample_set %d" % (user_id, fake_sample_set_id))
 
     def testCanViewPatientInfo(self):
+        result = auth.can_view_patient_info(patient_id_sec, auth.user_id)
+        self.assertFalse(result, "User %d should not have permission anon for patient %d" % (auth.user_id, patient_id_sec))
+
         db.auth_permission.insert(group_id=group, name='anon', table_name='sample_set', record_id=0)
         db.commit()
-        result = auth.can_view_patient_info(patient_id)
-        self.assertTrue(result, "User %d is missing permission anon for patient: %d" % (auth.user_id, patient_id))
+        result = auth.can_view_patient_info(patient_id_sec, auth.user_id)
+        self.assertTrue(result, "User %d is missing permission anon for patient: %d" % (auth.user_id, patient_id_sec))
 
     def testGetGroupParent(self):
         expected = [fake_group_id]
-        result = auth.get_group_parent(group)
+        result = auth.get_group_parent(group_sec)
         self.assertEqual(Counter(expected), Counter(result), "Expected: %s, but got: %s" % (str(expected), str(result)))
 
     def testGetUserGroups(self):
-        expected = [fake_group_id, group, group_admin_perm]
+        expected = [group, group_ter]
         result = [g.id for g in auth.get_user_groups()]
         self.assertEqual(Counter(expected), Counter(result), "Expected: %s, but got: %s" % (str(expected), str(result)))
 
+        expected = [group_sec, fake_group_id]
+        result = [g.id for g in auth.get_user_groups(user_id_sec)]
+        self.assertEqual(Counter(expected), Counter(result), "Expected: %s, but got: %s" % (str(expected), str(result)))
+
     def testVidjilAccessibleQuery(self):
-        expected = [patient_id, patient_id_sec, admin_patient_id]
+        expected = [patient_id_sec, admin_patient_id]
         result = [p.id for p in db(auth.vidjil_accessible_query('read', 'patient', auth.user_id)).select()]
         self.assertEqual(Counter(expected), Counter(result),
                 "Expected: %s, but got: %s for user: %d" % (str(expected), str(result), auth.user_id))
+
+        expected = [patient_id, fake_patient_id]
+        result = [p.id for p in db(auth.vidjil_accessible_query('read', 'patient', user_id_sec)).select()]
+        self.assertEqual(Counter(expected), Counter(result),
+                "Expected: %s, but got: %s for user: %d" % (str(expected), str(result), user_id_sec))
 
         expected = [fake_patient_id, patient_id, patient_id_sec, admin_patient_id]
         result = [p.id for p in db(auth.vidjil_accessible_query('read', 'patient', user_id)).select()]
@@ -301,8 +362,8 @@ class VidjilauthModel(unittest.TestCase):
         parent_perm = auth.get_permission('read', 'patient', patient_id, user=parent_user_id)
         self.assertTrue(parent_perm, "User %d is missing permissions on patient %d" % (parent_user_id, patient_id))
 
-        child_perm = auth.get_permission('read', 'patient', patient_id, user=auth.user_id)
-        self.assertTrue(child_perm, "Parent group %d failed to pass permissions to child group %d" % (fake_group_id, group))
+        child_perm = auth.get_permission('read', 'patient', patient_id, user=user_id_sec)
+        self.assertTrue(child_perm, "Parent group %d failed to pass permissions to child group %d" % (fake_group_id, group_sec))
 
     def test_sibling_share(self):
         '''
@@ -342,11 +403,43 @@ class VidjilauthModel(unittest.TestCase):
         '''
         Tests that having admin permissions in one group will not share admin permissions to another
         '''
-        res = auth.can_modify_patient(admin_patient_id, auth.user_id)
-        self.assertTrue(res, "User %d is missing admin permissions on patient %d" % (auth.user_id, admin_patient_id))
+        res = auth.can_modify_patient(fake_patient_id, user_id_sec)
+        self.assertTrue(res, "User %d is missing admin permissions on patient %d" % (user_id_sec, fake_patient_id))
 
-        res = auth.can_view_patient(patient_id, auth.user_id)
-        self.assertTrue(res, "User %d is missing read permissions on patient %d" % (auth.user_id, patient_id))
+        res = auth.can_view_patient(patient_id, user_id_sec)
+        self.assertTrue(res, "User %d is missing read permissions on patient %d" % (user_id_sec, patient_id))
 
         res = auth.can_modify_patient(patient_id, auth.user_id)
         self.assertFalse(res, "User %d should not have admin permissions on patient %d" % (auth.user_id, patient_id))
+
+    def testGetPermissionCache(self):
+        res = auth.can_modify_patient(patient_id)
+        self.assertFalse(res, "User %d should not have admin permissions on patient %d" % (auth.user_id, patient_id))
+
+        db.auth_permission.insert(group_id=group, name='admin', table_name='sample_set', record_id=0)
+
+        res = auth.can_modify_patient(patient_id)
+        self.assertFalse(res, "User %d should not have admin permissions on patient %d" % (auth.user_id, patient_id))
+
+    def testGetPermissionGroups(self):
+        res = auth.get_permission_groups('admin', 'patient', user_id_sec)
+        expected = [group_sec]
+        self.assertEqual(Counter(expected), Counter(res),
+                "Expected: %s, but got %s for user %d" % (str(expected), str(res), auth.user_id))
+
+    def testGetAccessGroups(self):
+        res = auth.get_access_groups('patient', patient_id, user_id_sec)
+        expected = [group_sec]
+        self.assertEqual(Counter(expected), Counter(res),
+                "Expected: %s, but for %s for user %d" % (str(expected), str(res), user_id_sec))
+
+    def testLoadPermissions(self):
+        query = auth.load_permissions('admin', 'patient')
+        res = [p.id for p in query]
+        expected = [admin_patient_id]
+        self.assertEqual(Counter(expected), Counter(res),
+                "Expected %s, but got %s for user %d" % (str(expected), str(res), auth.user_id))
+
+        key = auth.get_cache_key('admin', 'patient')
+        cache_content = auth.permissions[key][admin_patient_id]
+        self.assertTrue(cache_content, "The results from load_permissions were not loaded into cache")
