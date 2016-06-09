@@ -149,3 +149,25 @@ def kick():
                "message" : "you don't have permission to kick people"}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+def rights():
+    if auth.is_admin():
+        group_id = request.vars["id"]
+        msg = ""
+
+        if request.vars["value"] == "true" :
+            auth.add_permission(group_id, request.vars["right"], request.vars["name"], 0)
+            msg += "add '" + request.vars["right"] + "' permission on '" + request.vars["name"] + "' for group " + db.auth_group[group_id].role
+        else :
+            auth.del_permission(group_id, request.vars["right"], request.vars["name"], 0)
+            msg += "remove '" + request.vars["right"] + "' permission on '" + request.vars["name"] + "' for group " + db.auth_group[group_id].role
+
+        res = { "redirect": "user/info",
+                "args" : {"id" : group_id },
+                "message": msg}
+        log.admin(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    else :
+        res = {"message": "admin only"}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))

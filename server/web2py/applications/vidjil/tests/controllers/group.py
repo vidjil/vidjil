@@ -100,8 +100,19 @@ class GroupController(unittest.TestCase):
         auth.has_permission('admin', 'auth_group', group_id)
         
         
-        
-        
+    def test4Rights(self):
+        group_id = db( db.auth_group.role == "test_group_1").select()[0].id
+        request.vars["id"] = group_id
+        request.vars["name"] = "patient"        #table name on which the right will aply
+        request.vars["right"] = "plouf"         #right name
+
+        request.vars["value"] = "true"          #add right
+        resp = rights()
+        self.assertNotEqual(resp.find("add 'plouf' permission on 'patient' for group test_group_1"), -1, "add permission failled")
+
+        request.vars["value"] = "false"         #remove right
+        resp = rights()
+        self.assertNotEqual(resp.find("remove 'plouf' permission on 'patient' for group test_group_1"), -1, "remove permission failled")
         
         
         

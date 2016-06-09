@@ -864,7 +864,7 @@ Database.prototype = {
         });
     },
     
-    user_rights: function (value, name, right, id) {
+    group_rights: function (value, name, right, id) {
         
         var arg = {}
         arg.value = value       //true > add right  || false > remove right
@@ -872,7 +872,7 @@ Database.prototype = {
         arg.right = right       //kind of write (create / delete / run)
         arg.id = id             //user id 
        
-        this.call('user/rights', arg)
+        this.call('group/rights', arg)
     },
     
     

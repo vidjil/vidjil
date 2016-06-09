@@ -46,16 +46,4 @@ class UserController(unittest.TestCase):
         self.assertTrue(resp.has_key('message'), "info() has returned an incomplete response")
         
         
-    def testRights(self):
-        request.vars["id"] = user_id            #user_id
-        request.vars["name"] = "patient"        #table name on which the right will aply
-        request.vars["right"] = "plouf"         #right name
-        
-        request.vars["value"] = "true"          #add right
-        resp = rights()
-        self.assertNotEqual(resp.find("add 'plouf' permission on 'patient' for user Testers Inc"), -1, "add permission failled")
-        
-        request.vars["value"] = "false"         #remove right
-        resp = rights()
-        self.assertNotEqual(resp.find("remove 'plouf' permission on 'patient' for user Testers Inc"), -1, "remove permission failled")
         
