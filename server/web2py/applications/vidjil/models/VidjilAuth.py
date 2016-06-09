@@ -344,7 +344,7 @@ class VidjilAuth(Auth):
                 cquery = table
             tablenames = db._adapter.tables(cquery)
             for tablename in tablenames:
-                cquery &= self.accessible_query(name, tablename,
+                cquery &= self.vidjil_accessible_query(name, tablename,
                                                 user_id=user_id)
             return cquery
         if not isinstance(table, str) and\
