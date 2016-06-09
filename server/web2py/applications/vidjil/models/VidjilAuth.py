@@ -86,9 +86,12 @@ class VidjilAuth(Auth):
         if not key in self.permissions and is_current_user:
             self.permissions[key] = {}
         if not is_current_user or not id in self.permissions[key]:
-            access_groups = self.get_access_groups(object_of_action, id, user)
             perm_groups = self.get_permission_groups(action, object_of_action, user)
-            intersection = set(access_groups).intersection(perm_groups)
+            if id > 0:
+                access_groups = self.get_access_groups(object_of_action, id, user)
+                intersection = set(access_groups).intersection(perm_groups)
+            else :
+                intersection = perm_groups
             if not is_current_user:
                 return len(intersection) > 0
             self.permissions[key][id] = len(intersection) > 0
