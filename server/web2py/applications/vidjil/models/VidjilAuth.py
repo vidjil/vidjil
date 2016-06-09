@@ -97,6 +97,21 @@ class VidjilAuth(Auth):
             self.permissions[key][id] = len(intersection) > 0
         return self.permissions[key][id]
 
+    def load_permissions(self, action, object_of_action):
+        '''
+        Loads the given permissions for the user into cache to allow for multiple calls to
+        "can" while reducing the database overhead.
+        '''
+        key = self.get_cache_key(action, object_of_action)
+        if key not in self.permissions:
+            self.permissions[key] = {}
+
+        query = db(self.vidjil_accessible_query(action, object_of_action)).select(self.db[object_of_action].ALL)
+        for row in query:
+            self.permissions[key][row.id] = True
+
+        return query
+
     def is_admin(self, user = None):
         '''Tells if the user is an admin.  If the user is None, the current
         user is taken into account'''
