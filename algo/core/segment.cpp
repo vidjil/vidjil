@@ -368,6 +368,9 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
   CDR3start = -1;
   CDR3end = -1;
 
+  JUNCTIONstart = -1;
+  JUNCTIONend = -1;
+
   label = seq.label ;
   sequence = seq.sequence ;
   info = "" ;
@@ -863,6 +866,9 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
   CDR3start = -1;
   CDR3end = -1;
+
+  JUNCTIONstart = -1;
+  JUNCTIONend = -1;
 
   bool reverse_V = false ;
   bool reverse_J = false ;
