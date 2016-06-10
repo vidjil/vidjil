@@ -139,7 +139,8 @@ def index():
         db.patient.ALL,
         orderby = ~db.patient.id
     )
-    has_admin = auth.can_modify()
+
+    auth.load_permissions('admin', 'patient')
     result = {}
     
     for i, row in enumerate(query) :
@@ -148,7 +149,7 @@ def index():
             "sample_set_id" : int(row.sample_set_id),
             "last_name" : row.last_name,
             "first_name" : row.first_name,
-            "has_permission" : has_admin,
+            "has_permission" : auth.can_modify_patient(row.id),
             "anon_allowed": False,
             "birth" : row.birth,
             "info" : row.info,
