@@ -1,4 +1,4 @@
-#+TITLE: .analysis and .vidjil format (2016a)
+#+TITLE: Encoding clones with V(D)J recombinations (2016a)
 #+AUTHOR: The Vidjil team
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/org-mode.css" />
 
@@ -86,7 +86,7 @@ or =clusters=, to further cluster some clones, see below).
 
 This a =.vidjil= file obtained by merging with =fuse.py= two =.vidjil= files corresponding to two samples.
 Clones that have a same =id= are gathered (see 'What is a clone?', above).
-It is the responsability of the program generating the initial =.vidjil= files to choose these =id= to
+It is the responsibility of the program generating the initial =.vidjil= files to choose these =id= to
 do a correct gathering.
 
 
@@ -297,7 +297,7 @@ In the =.analysis= file, this section is intended to describe some specific clon
                      // this will create a normalization option in the 
                      // settings browser menu
 
-    "seg":           // detailed V(D)J desigination/segmentation and other sequences features [optional]
+    "seg":           // detailed V(D)J designation/segmentation and other sequences features [optional]
                      // in the browser clones, that are not segmented will be shown on the grid with '?/?'
                      // positions are related to the 'sequence'
                      // names of V/D/J genes should match the ones in files referenced in germline/germline.data
@@ -308,7 +308,7 @@ In the =.analysis= file, this section is intended to describe some specific clon
                      // Recombination with several D may use "4a", "4b"...
          "3": {"name": "IGHJ3*02", "start": 136, "stop": 171},  // J (or 3') segment
 
-                     // any feature to be highligthed in the sequence
+                     // any feature to be highlighted in the sequence
                      // the optional "seq" element gives a sequence that corresponds to this feature
                      // JUNCTION//CDR3 should be stored that way (in fields called "junction" of "cdr3"),
                      // its productivity must be stored in a boolean field called "productive".
