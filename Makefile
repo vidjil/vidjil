@@ -52,7 +52,7 @@ should: all
 
 shouldvdj: all
 	@echo
-	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests shouldvdj_if_python
+	# $(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests shouldvdj_if_python
 
 shouldvdj_generate:
 	@echo
