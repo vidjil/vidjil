@@ -11,8 +11,8 @@ The =.vidjil= file represents the actual data on clones (and that can
 reach megabytes, or even more), usually produced by processing reads by some RepSeq software.
 (for example with detailed information on the 100 or 1000 top clones).
 The =.analysis= file describes customizations done by the user
-(or by some automatic pre-processing) on the Vidjil browser. The browser
-can load or save such files (and possibly from/to the patient database).
+(or by some automatic pre-processing) on the Vidjil web application. The web application
+can load or save such files (and possibly from/to the patient/sample database).
 It is intended to be very small (a few kilobytes).
 All settings in the =.analysis= file override the settings that could be
 present in the =.vidjil= file.
@@ -23,7 +23,7 @@ present in the =.vidjil= file.
 
 There are several definitions of what may be a clonotype,
 depending on different RepSeq software or studies.
-This format and the Vidjil browser both accept any kind of definition:
+This format accept any kind of definition:
 Clones are identified by a =id= string that may be an arbitrary identifier such as =clone-072a=.
 Software computing clones may choose some relevant identifiers:
  - =CGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTAC=, Vidjil algorithm, 50 nt window centered on the CDR3
@@ -149,13 +149,13 @@ do a correct gathering.
 
 ** =.analysis= file
 
-This file reflects the annotations a user could have done within the Vidjil browser or some other tool.
+This file reflects the annotations a user could have done within the Vidjil web application or some other tool.
 She has manually set sample names (=names=), tagged (=tag=, =tags=), named (=name=) and clustered (=clusters=) 
 some clones, and added external data (=data=).
 
 #+BEGIN_SRC js :tangle analysis-example2.analysis
     {
-        "producer": "user Bob, via browser",
+        "producer": "user Bob, via Vidjil webapp",
         "timestamp": "2014-10-01 12:00:11",
         "vidjil_json_version": "2016a",
 
@@ -287,7 +287,7 @@ In the =.analysis= file, this section is intended to describe some specific clon
                      // (the default name, in .vidjil, is computed from V/D/J information)
 
     "sequence": "",  // reference nt sequence [required for .vidjil]
-                     // (for .analysis, not really used now in the browser,
+                     // (for .analysis, not really used now in the web application,
                      //  for special clones/sequences that are known,
                      //  such as standard/spikes or know patient clones)
  
@@ -295,10 +295,10 @@ In the =.analysis= file, this section is intended to describe some specific clon
 
     "expected": ""   // expected abundance of this clone (between 0 and 1) [optional]
                      // this will create a normalization option in the 
-                     // settings browser menu
+                     // settings web application menu
 
     "seg":           // detailed V(D)J designation/segmentation and other sequences features [optional]
-                     // in the browser clones, that are not segmented will be shown on the grid with '?/?'
+                     // on the web application, clones that are not segmented will be shown on the grid with '?/?'
                      // positions are related to the 'sequence'
                      // names of V/D/J genes should match the ones in files referenced in germline/germline.data
                      // Positions on the sequence start at 1.
@@ -345,7 +345,7 @@ extend the =germline.data= default file with a custom germline
 ** Further clustering of clones: the =clusters= list [optional]
 
 Each element in the 'clusters' list describe a list of clones that are 'merged'.
-In the browser, it will be still possible to see them or to unmerge them.
+In the web application, it will be still possible to see them or to unmerge them.
 The first clone of each line is used as a representative for the cluster.
 
 
