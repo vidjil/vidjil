@@ -1927,8 +1927,6 @@ Model.prototype = {
         var self = this;
         var element = document.getElementById(elementID);
         
-        var myWindow = window.open("", "svg");
-        
         $(document).ready(function() {
 
             $.when($.get("css/svg.css"))
@@ -1942,12 +1940,11 @@ Model.prototype = {
                 textToWrite += element.innerHTML;
                 textToWrite += "</svg>";
                 
-                myWindow.document.write(textToWrite);
                 var textFileAsBlob = new Blob([textToWrite], {
                     type: 'text'
                 });
                 var filename = self.getPrintableAnalysisName().replace(/[ \/\\:]/,'_')
-                //saveAs(textFileAsBlob, filename + ".svg");
+                saveAs(textFileAsBlob, filename + ".svg");
                 
                 self.resize();
             });
