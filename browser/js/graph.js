@@ -136,6 +136,21 @@ Graph.prototype = {
                 })
 
             d3.select("#" + this.id + "_svg")
+                .append('svg:clipPath')
+                .attr('id', this.id+'_clip')
+                .append("svg:rect")
+                .attr('id', this.id+'_backclip')
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", 2500)
+                .attr("height", 2500)
+
+            d3.select("#" + this.id + "_svg")
+                .append('svg:g')
+                .attr('id', this.id+'_clipped')
+                .attr('style', 'clip-path: url(#'+this.id+'_clip);')
+
+            d3.select("#" + this.id + "_clipped")
                 .append("svg:rect")
                 .attr("id", this.id + "_back")
                 .attr("class", "background_graph")
@@ -153,7 +168,8 @@ Graph.prototype = {
                         .hide("fast")
                 })
 
-            d3.select("#" + this.id + "_svg")
+
+            d3.select("#" + this.id + "_clipped")
                 .append("svg:rect")
                 .attr("id", this.id + "_back2")
                 .attr("class", "background_graph2")
@@ -171,22 +187,22 @@ Graph.prototype = {
                         .hide("fast")
                 })
 
-            this.axis_container = d3.select("#" + this.id + "_svg")
+            this.axis_container = d3.select("#" + this.id + "_clipped")
                 .append("svg:g")
                 .attr("id", "axis_container")
-            this.reso_container = d3.select("#" + this.id + "_svg")
+            this.reso_container = d3.select("#" + this.id + "_clipped")
                 .append("svg:g")
                 .attr("id", "reso_container")
-            this.data_container = d3.select("#" + this.id + "_svg")
+            this.data_container = d3.select("#" + this.id + "_clipped")
                 .append("svg:g")
                 .attr("id", "data_container")
-            this.clones_container = d3.select("#" + this.id + "_svg")
+            this.clones_container = d3.select("#" + this.id + "_clipped")
                 .append("svg:g")
                 .attr("id", "clones_container")
-            this.date_container = d3.select("#" + this.id + "_svg")
+            this.date_container = d3.select("#" + this.id + "_clipped")
                 .append("svg:g")
                 .attr("id", "date_container")
-            this.text_container = d3.select("#" + this.id + "_svg")
+            this.text_container = d3.select("#" + this.id + "_clipped")
                 .append("svg:g")
                 .attr("id", "text_container")
 
@@ -284,6 +300,10 @@ Graph.prototype = {
             .attr("width", div_width)
             .attr("height", div_height)
             
+        d3.select("#" + this.id + "_backclip")
+            .attr("width", div_width)
+            .attr("height", div_height);
+
         d3.select("#" + this.id + "_back")
             .attr("width", div_width)
             .attr("height", div_height);
