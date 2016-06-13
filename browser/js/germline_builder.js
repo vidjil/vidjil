@@ -157,9 +157,9 @@ Germline.prototype = {
         
         if (typeof this.m.germlineList.list[system] != 'undefined'){
             
-            if (typeof this.m.germlineList.list[system][type2] != 'undefined' ){
-                for (var i=0; i<this.m.germlineList.list[system][type2].length; i++){
-                    var filename = this.m.germlineList.list[system][type2][i] 
+            if (typeof this.m.germlineList.list[system]['recombinations'][type2] != 'undefined' ){
+                for (var i=0; i<this.m.germlineList.list[system]['recombinations'][type2].length; i++){
+                    var filename = this.m.germlineList.list[system]['recombinations'][type2][i] 
                     filename = filename.split('/')[filename.split('/').length-1] //remove path
                     filename = filename.split('.')[0] //remove file extension 
                     
