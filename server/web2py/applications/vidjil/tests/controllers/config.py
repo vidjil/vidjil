@@ -116,9 +116,8 @@ class ConfigController(unittest.TestCase):
         
         request.vars["group_id"] = id_group
         request.vars["config_id"] = id_config
-        request.vars["permission"] = "popipo"
-        
-        #add permission to "popipo" a config
+
+        #add access to a config
         resp = change_permission()
         self.assertTrue( auth.get_group_access('config', id_config, id_group), "fail to add a permission")
         
