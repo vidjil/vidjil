@@ -266,7 +266,7 @@ class VidjilAuth(Auth):
         return self.get_permission(PermissionEnum.admin_group.value, 'auth_group', group_id, user = user)\
             or self.is_admin(user)
 
-    def can_process_file(self, user = None):
+    def can_process_file(self, object_of_action, id=0, user = None):
         '''
         Returns True if the current user can process results
 

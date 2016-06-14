@@ -94,7 +94,7 @@ def confirm():
                     &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
                 ).select(db.patient.id).first().id
     if (auth.can_modify_patient(patient_id)
-        & auth.can_process_file()):
+        & auth.can_process_file('patient', patient_id)):
         return dict(message=T('result confirm'))
     else :
         res = {"message": "acces denied"}
@@ -109,7 +109,7 @@ def delete():
     patient_id = db(db.patient.sample_set_id == db.sample_set_membership.sample_set_id).select(db.patient.id).first().id
 
     if (auth.can_modify_patient(patient_id)
-        & auth.can_process_file()):
+        & auth.can_process_file('patient', patient_id)):
         
         config_id = db.results_file[request.vars["results_file_id"]].config_id
 
