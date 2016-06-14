@@ -10,40 +10,27 @@
         <thead>
             <tr><td class="column1"></td>
                 <td class="column_200"> group / user</td>
+                <td class="column_200">permissions</td>
+                <td vlass="column_200">access from</td>
                 <td> </td>
                 <td class="column1"> read</td>
-                <td class="column1"> admin</td>
-                <td class="column1"> private info</td>
             </tr>
         </thead>
         {{admin = auth.can_modify_patient(request.vars["id"])}}
         {{ for row in query :}}
             <tr>
                 <td> {{=row.id}} </td><td> {{=row.owner}} </td>
+                <td>{{=row.perms}}</td>
+                <td>{{=row.parent_access}}</td>
                 <td></td>
                 {{if admin :}}
                     <td> <input type="checkbox" onclick="db.call('patient/change_permission', {
                                                                   'patient_id' : {{=request.vars["id"]}} ,
-                                                                  'group_id' : {{=row.id}} ,
-                                                                  'permission' : 'read' } )"
+                                                                  'group_id' : {{=row.id}}} )"
                                 {{if row.read :}} checked {{pass}}></td>
-                    <td> <input type="checkbox" onclick="db.call('patient/change_permission', {
-                                                                  'patient_id' : {{=request.vars["id"]}} ,
-                                                                  'group_id' : {{=row.id}} ,
-                                                                  'permission' : 'admin' } )"
-                                {{if row.admin :}} checked {{pass}}></td>
-                    <td> <input type="checkbox" onclick="db.call('patient/change_permission', {
-                                                                  'patient_id' : {{=request.vars["id"]}} ,
-                                                                  'group_id' : {{=row.id}} ,
-                                                                  'permission' : 'anon' } )"
-                                {{if row.anon :}} checked {{pass}}></td>  
                 {{else:}}
                     <td class="inactive"> <input type="checkbox" onclick="this.click()"
                                 {{if row.read :}} checked {{pass}}></td>
-                    <td class="inactive"> <input type="checkbox" onclick="this.click()"
-                                {{if row.admin :}} checked {{pass}}></td>
-                    <td class="inactive"> <input type="checkbox" onclick="this.click()"
-                                {{if row.anon :}} checked {{pass}}></td>  
                 {{pass}}
             </tr>
         {{pass}}

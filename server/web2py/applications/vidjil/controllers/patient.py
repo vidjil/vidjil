@@ -464,29 +464,14 @@ def permission():
                 id = int(row.owner[5:])
                 row.owner = db.auth_user[id].first_name + " " + db.auth_user[id].last_name 
 
-            row.admin = False
-            if db(   (db.auth_permission.name == "admin")
-                  & (db.auth_permission.record_id == request.vars["id"])
-                  & (db.auth_permission.group_id == row.id)
-                  & (db.auth_permission.table_name == db.patient)
-              ).count() > 0 :
-                row.admin = True
-                
-            row.anon = False
-            if db(   (db.auth_permission.name == "anon")
-                  & (db.auth_permission.record_id == request.vars["id"])
-                  & (db.auth_permission.group_id == row.id)
-                  & (db.auth_permission.table_name == db.patient)
-              ).count() > 0 :
-                row.anon = True
-                
-            row.read = False
-            if db(   (db.auth_permission.name == "read")
-                  & (db.auth_permission.record_id == request.vars["id"])
-                  & (db.auth_permission.group_id == row.id)
-                  & (db.auth_permission.table_name == db.patient)
-              ).count() > 0 :
-                row.read = True
+            permissions = db(
+                    (db.auth_permission.group_id == row.id) &
+                    (db.auth_permission.record_id == 0) &
+                    (db.auth_permission.table_name == 'sample_set')).select()
+            row.perms = ', '.join(map(lambda x: x.name, permissions))
+
+            row.parent_access = ', '.join(str(value) for value in auth.get_access_groups(db.patient, request.vars['id'], group=row.id))
+            row.read =  auth.get_group_access('patient', request.vars['id'], row.id)
         
         return dict(query=query)
     else :
@@ -503,20 +488,17 @@ def change_permission():
             error += "missing group_id, "
         if request.vars["patient_id"] == "" :
             error += "missing patient_id, "
-        if request.vars["permission"] == "" :
-            error += "missing permission, "
 
         if error=="":
-            if db(   (db.auth_permission.name == request.vars["permission"])
-                      & (db.auth_permission.record_id == request.vars["patient_id"])
-                      & (db.auth_permission.group_id == request.vars["group_id"])
-                      & (db.auth_permission.table_name == db.patient)
-                  ).count() > 0 :
-                auth.del_permission(request.vars["group_id"], request.vars["permission"], db.patient, request.vars["patient_id"])
-                res = {"message" : "access '%s' deleted to '%s'" % (request.vars["permission"], db.auth_group[request.vars["group_id"]].role)}
+            if auth.get_group_access('patient',
+                      int(request.vars["patient_id"]),
+                      int(request.vars["group_id"])):
+                auth.del_permission(request.vars["group_id"], PermissionEnum.access.value, db.patient, request.vars["patient_id"])
+                res = {"message" : "access '%s' deleted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
             else :
-                auth.add_permission(request.vars["group_id"], request.vars["permission"], db.patient, request.vars["patient_id"])
-                res = {"message" : "access '%s' granted to '%s'" % (request.vars["permission"], db.auth_group[request.vars["group_id"]].role)}
+
+                auth.add_permission(request.vars["group_id"], PermissionEnum.access.value, db.patient, request.vars["patient_id"])
+                res = {"message" : "access '%s' granted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
             
             log.info(res)
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
