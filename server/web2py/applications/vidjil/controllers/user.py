@@ -14,8 +14,6 @@ def index():
         
         row.access = ''
         if auth.can_create_patient(user=row.id): row.access += 'c'
-        if auth.can_upload_file(user=row.id): row.access += 'u'
-        if auth.can_process_file(user=row.id): row.access += 'r'
 
         q = [g.group_id for g in db(db.auth_membership.user_id==row.id).select()]
         q.sort()
