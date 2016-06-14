@@ -14,16 +14,17 @@ if request.env.http_origin:
     response.headers['Access-Control-Max-Age'] = 86400
 
     
-def add(): 
-    if not auth.can_upload_file():
+def add():
+    sample_set = db.sample_set[request.vars["id"]]
+    if not auth.can_upload_sample_set(sample_set.id):
         return error_message("you don't have right to upload files")
     else:
         
         patient_id = None
         run_id = None
-        if db.sample_set[request.vars["id"]].sample_type == "patient" :
+        if sample_set.sample_type == "patient" :
             patient_id = db( db.patient.sample_set_id == request.vars["id"]).select()[0].id
-        if db.sample_set[request.vars["id"]].sample_type == "run" :
+        if sample_set.sample_type == "run" :
             run_id = db( db.run.sample_set_id == request.vars["id"]).select()[0].id
         
 		

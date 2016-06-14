@@ -154,7 +154,7 @@ def index():
                 config_id=config_id,
                 info=info_file,
                 can_modify=auth.can_modify_sample_set(sample_set_id),
-                can_upload=auth.can_upload_file(),
+                can_upload=auth.can_upload_sample_set(sample_set_id),
                 fused_count=fused_count,
                 fused_file=fused_file,
                 fused_filename=fused_filename,

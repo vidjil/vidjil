@@ -131,7 +131,7 @@ def run_request():
         id_config = None
     else:
         id_config = request.vars["config_id"]
-    if not auth.can_process_file():
+    if not auth.can_process_sample_set(request.vars['sample_set_id']):
         error += "permission needed"
 
     id_sample_set = request.vars["sample_set_id"]
