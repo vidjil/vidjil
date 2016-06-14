@@ -88,7 +88,7 @@ class GroupController(unittest.TestCase):
         request.vars["group_id"] = group_id
         
         resp = remove_permission()
-        auth.has_permission('admin', 'auth_group', group_id)
+        auth.get_permission('admin', 'auth_group', group_id)
         
         
     def test3ChangePermission(self):
@@ -97,7 +97,7 @@ class GroupController(unittest.TestCase):
         request.vars["group_id"] = group_id
         
         resp = change_permission()
-        auth.has_permission('admin', 'auth_group', group_id)
+        auth.get_permission('admin', 'auth_group', group_id)
         
         
     def test4Rights(self):

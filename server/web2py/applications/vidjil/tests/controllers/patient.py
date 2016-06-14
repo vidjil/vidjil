@@ -54,6 +54,7 @@ class PatientController(unittest.TestCase):
         request.vars["birth"] = "2011-11-11"
         request.vars["info"] = "test patient kZtYnOipmAzZ"
         request.vars["id_label"] = "bob"
+        request.vars["patient_group"] = fake_group_id
         
         resp = add_form()
         print db(db.auth_permission.id>0).select()
@@ -105,14 +106,13 @@ class PatientController(unittest.TestCase):
     def test3ChangePermission(self):
         patient_id = db( db.patient.info == "test patient kZtYnOipmAzZ").select()[0].id
         request.vars["patient_id"] = patient_id
-        request.vars["group_id"] = 1
-        request.vars["permission"] = "popipo" 
+        request.vars["group_id"] = fake_group_id
         
         resp = change_permission()
-        self.assertTrue(auth.has_permission('popipo', 'patient', patient_id), "fail to add permission")
+        self.assertTrue(auth.get_group_access('patient', patient_id, fake_group_id), "fail to add permission")
         
         resp = change_permission()
-        self.assertFalse(auth.has_permission('popipo', 'patient', patient_id), "fail to remove permission")
+        self.assertFalse(auth.get_group_access('patient', patient_id, fake_group_id), "fail to remove permission")
         
         
         

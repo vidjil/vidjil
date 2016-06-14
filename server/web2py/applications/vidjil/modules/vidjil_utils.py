@@ -81,7 +81,7 @@ def anon_birth(patient_id, user_id):
 
     age = age_years_months(birth)
 
-    if auth.has_permission("anon", "patient", patient_id, user_id):
+    if auth.get_permission("anon", "patient", patient_id, user_id):
         return "%s (%s)" % (birth, age)
     else:
         return age

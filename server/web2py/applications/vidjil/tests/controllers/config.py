@@ -120,12 +120,12 @@ class ConfigController(unittest.TestCase):
         
         #add permission to "popipo" a config
         resp = change_permission()
-        self.assertTrue( auth.has_permission('popipo', 'config', id_config), "fail to add a permission")
+        self.assertTrue( auth.get_group_access('config', id_config, id_group), "fail to add a permission")
         
         
         #remove it
         resp = change_permission()
-        self.assertFalse( auth.has_permission('popipo', 'config', id_config), "fail to remove a permission")
+        self.assertFalse( auth.get_group_access('config', id_config, id_group), "fail to remove a permission")
         
         
         
