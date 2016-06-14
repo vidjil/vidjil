@@ -248,8 +248,17 @@ class VidjilauthModel(unittest.TestCase):
                 "User %d is a member of admin group and is missing permissions to modify group %d" % (user_id, fake_group_id))
 
     def testCanProcessFile(self):
-        result = auth.can_process_file()
-        self.assertFalse(result, "User %d should not be able to process files" % (auth.user_id))
+        result = auth.can_process_file('patient', patient_id_sec)
+        self.assertFalse(result,
+                "User %d should not be able to process files for patient %d" % (auth.user_id, patient_id_sec))
+
+        result = auth.can_process_file('patient', patient_id, user_id_sec)
+        self.assertTrue(result,
+                "User %d should be able to process files for patient %d" % (user_id_sec, patient_id))
+
+        result = auth.can_process_file('patient', patient_id, user_id)
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to process files" % user_id)
 
     def testCanProcessSampleSet(self):
         result = auth.can_process_sample_set(sample_set_id_sec)
