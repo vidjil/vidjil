@@ -450,3 +450,20 @@ class VidjilauthModel(unittest.TestCase):
         key = auth.get_cache_key(PermissionEnum.admin.value, 'patient')
         cache_content = auth.permissions[key][admin_patient_id]
         self.assertTrue(cache_content, "The results from load_permissions were not loaded into cache")
+
+    def testGetGroupPermission(self):
+        res = auth.get_group_permission(PermissionEnum.admin.value, 'sample_set', 0, group_sec)
+        self.assertTrue(res, "Group %d is missing admin permissions" % group_sec)
+
+        res = auth.get_group_permission(PermissionEnum.read.value, 'patient', patient_id, fake_group_id)
+        self.assertTrue(res, "Group %d is missing permission access on patient %d" % (fake_group_id, patient_id))
+
+        res = auth.get_group_permission(PermissionEnum.admin.value, 'patient', patient_id, group)
+        self.assertFalse(res, "Group %d should not have admin permission on patient %d" % (group, patient_id))
+
+    def testGetGroupAccess(self):
+        res = auth.get_group_access('patient', patient_id, fake_group_id)
+        self.assertTrue(res, "Group %d is missing access to patient %d" % (fake_group_id, patient_id))
+
+        res = auth.get_group_access('patient', patient_id, group_sec)
+        self.assertFalse(res, "Group %d should not have direct access to patient %d" % (group_sec, patient_id))

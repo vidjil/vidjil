@@ -46,7 +46,7 @@ class VidjilAuth(Auth):
     def get_cache_key(self, action, object_of_action):
         return action +  '/' + object_of_action
 
-    def get_access_groups(self, object_of_action, oid, user):
+    def get_user_access_groups(self, object_of_action, oid, user):
         membership = self.table_membership()
         permission = self.table_permission()
 
@@ -63,6 +63,29 @@ class VidjilAuth(Auth):
         group_list = [g.group_id for g in groups]
 
         return list(set(group_list))
+
+    def get_group_access_groups(self, object_of_action, oid, group):
+        permission = self.table_permission()
+
+        groups = db(
+                (permission.record_id == oid) &
+                (permission.name == PermissionEnum.access.value) &
+                (permission.table_name == object_of_action) &
+                ((group == permission.group_id) |
+                ((group == db.group_assoc.second_group_id) &
+                (db.group_assoc.first_group_id == permission.group_id)))
+            ).select(permission.group_id)
+
+        group_list = [g.group_id for g in groups]
+
+        return list(set(group_list))
+
+    def get_access_groups(self, object_of_action, oid, user=None, group=None):
+        if user is None and group is None:
+            user = auth.user_id
+        if user is not None:
+            return self.get_user_access_groups(object_of_action, oid, user)
+        return self.get_group_access_groups(object_of_action, oid, group)
 
     def get_permission_groups(self, action, object_of_action, user=None):
         '''
@@ -84,6 +107,23 @@ class VidjilAuth(Auth):
         group_list = [g.group_id for g in groups]
 
         return list(set(group_list))
+
+    def get_group_access(self, object_of_action, id, group):
+        perm = self.has_permission(PermissionEnum.access.value, object_of_action, id, group_id = group)
+        return perm
+
+    def get_group_permission(self, action, object_of_action, id = 0, group = None):
+        '''
+        Returns whether the group has the permission to
+        perform action on object_of_action
+        '''
+        if group is None:
+            group = auth.user_group
+
+        has_action = self.has_permission(action, 'sample_set', 0, group_id = group)
+        if id == 0:
+            return has_action
+        return has_action and self.get_group_access(object_of_action, id, group)
 
     def get_permission(self, action, object_of_action, id = 0, user = None):
         '''
