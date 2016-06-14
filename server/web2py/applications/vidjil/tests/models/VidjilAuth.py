@@ -259,11 +259,18 @@ class VidjilauthModel(unittest.TestCase):
                 "User %d is a member of admin group and is missing permissions to process files" % user_id)
 
     def testCanUploadFile(self):
-        result = auth.can_upload_file()
-        self.assertFalse(result, "User %d should not have permission to upload files" % auth.user_id)
+        result = auth.can_upload_file('patient', patient_id_sec)
+        self.assertFalse(result,
+                "User %d should not have permission to upload files for patient %d" % (auth.user_id, patient_id_sec))
 
-        result = auth.can_upload_file(user_id_sec)
-        self.assertTrue(result, "User %d should be able to upload files" % user_id_sec)
+        result = auth.can_upload_file('patient', patient_id, user_id_sec)
+        self.assertTrue(result,
+                "User %d should be able to upload files for patient %d" % (user_id_sec, patient_id))
+
+        result = auth.can_upload_file('patient', patient_id, user_id)
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to upload files" % user_id)
+
 
         result = auth.can_upload_file(user_id)
         self.assertTrue(result,

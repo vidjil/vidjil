@@ -275,7 +275,7 @@ class VidjilAuth(Auth):
         return self.get_permission(PermissionEnum.run.value, object_of_action, id, user=user)\
             or self.is_admin(user)
 
-    def can_upload_file(self, user = None):
+    def can_upload_file(self, object_of_action, id=0, user = None):
         '''
         Returns True iff the current user can upload a sequence file
 
