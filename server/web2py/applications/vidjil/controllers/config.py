@@ -15,7 +15,7 @@ def index():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 
-    query = db((auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) ).select(orderby=~db.config.name)
+    query = db((auth.vidjil_accessible_query('read', db.config) | auth.vidjil_accessible_query('admin', db.config) ) ).select(orderby=~db.config.name)
 
     return dict(message=T('Configs'),
                query=query,
