@@ -1,5 +1,19 @@
 from gluon.tools import Auth
 from pydal.objects import Row, Set, Query
+from enum import Enum
+
+class PermissionEnum(Enum):
+    admin = 'admin'
+    read = 'read'
+    access = 'access'
+    upload = 'upload'
+    create = 'create'
+    run = 'run'
+    admin_config = 'admin'
+    read_config = 'read'
+    admin_group = 'admin'
+    read_group = 'read'
+    anon = 'anon'
 
 class VidjilAuth(Auth):
     admin = None
@@ -38,7 +52,7 @@ class VidjilAuth(Auth):
 
         groups = db(
                 (permission.record_id == oid) &
-                (permission.name == 'access') &
+                (permission.name == PermissionEnum.access.value) &
                 (permission.table_name == object_of_action) &
                 ((membership.group_id == permission.group_id) |
                 ((membership.group_id == db.group_assoc.second_group_id) &
@@ -138,7 +152,7 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('create', 'sample_set', user = user)\
+        return self.get_permission(PermissionEnum.create.value, 'sample_set', user = user)\
             or self.is_admin(user)
 
     def can_modify_patient(self, patient_id, user = None):
@@ -149,7 +163,7 @@ class VidjilAuth(Auth):
         If the user is None, the current user is taken into account
         '''
 
-        return self.get_permission('admin', 'patient', patient_id, user=user)\
+        return self.get_permission(PermissionEnum.admin.value, 'patient', patient_id, user=user)\
             or self.is_admin(user)
         
     def can_modify_run(self, run_id, user = None):
@@ -159,13 +173,13 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('admin', 'run', run_id, user=user)\
+        return self.get_permission(PermissionEnum.admin.value, 'run', run_id, user=user)\
             or self.is_admin(user)
         
     def can_modify_sample_set(self, sample_set_id, user = None) :
         sample_set = db.sample_set[sample_set_id]
         
-        perm = self.get_permission('admin', 'sample_set', sample_set_id, user)\
+        perm = self.get_permission(PermissionEnum.admin.value, 'sample_set', sample_set_id, user)\
             or self.is_admin(user)
 
         if (sample_set.sample_type == "patient") :
@@ -200,7 +214,7 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('admin', 'config', config_id, user)\
+        return self.get_permission(PermissionEnum.admin_config.value, 'config', config_id, user)\
             or self.is_admin(user)
 
     def can_modify_group(self, group_id, user = None):
@@ -209,7 +223,7 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('admin', 'auth_group', group_id, user = user)\
+        return self.get_permission(PermissionEnum.admin_group.value, 'auth_group', group_id, user = user)\
             or self.is_admin(user)
 
     def can_process_file(self, user = None):
@@ -218,7 +232,7 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('run', 'sample_set', user=user)\
+        return self.get_permission(PermissionEnum.run.value, object_of_action, id, user=user)\
             or self.is_admin(user)
 
     def can_upload_file(self, user = None):
@@ -227,7 +241,7 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('upload', 'sample_set', user=user)\
+        return self.get_permission(PermissionEnum.upload.value, object_of_action, id, user=user)\
             or self.is_admin(user)
 
     def can_use_config(self, config_id, user = None):
@@ -237,7 +251,7 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('read', 'config', config_id, user)\
+        return self.get_permission(PermissionEnum.read_config.value, 'config', config_id, user)\
             or self.can_modify_config(config_id, user)\
             or self.is_admin(user)
 
@@ -248,7 +262,7 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('read', 'patient', patient_id ,user)\
+        return self.get_permission(PermissionEnum.read.value, 'patient', patient_id ,user)\
             or self.can_modify_patient(patient_id, user)\
             or self.is_admin(user)
             
@@ -259,14 +273,14 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('read', 'run', run_id ,user)\
+        return self.get_permission(PermissionEnum.read.value, 'run', run_id ,user)\
             or self.can_modify_run(run_id, user)\
             or self.is_admin(user)
             
     def can_view_sample_set(self, sample_set_id, user = None) :
         sample_set = db.sample_set[sample_set_id]
         
-        perm = self.get_permission('admin', 'sample_set', sample_set_id, user)\
+        perm = self.get_permission(PermissionEnum.admin.value, 'sample_set', sample_set_id, user)\
             or self.is_admin(user)
 
         if (sample_set.sample_type == "patient") :
@@ -288,7 +302,7 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('anon', 'patient', patient_id, user)
+        return self.get_permission(PermissionEnum.anon.value, 'patient', patient_id, user)
 
     def get_group_parent(self, group_id):
         parent_group_list = db(
@@ -359,7 +373,7 @@ class VidjilAuth(Auth):
                 ((membership.group_id == permission.group_id) |
                 ((membership.group_id == db.group_assoc.second_group_id) &
                 (db.group_assoc.first_group_id == permission.group_id)))
-                (permission.name == 'access')
+                (permission.name == PermissionEnum.access.value)
                 (permission.table_name == table)
                 ._select(permission.record_id))
         if self.settings.everybody_group_id:
