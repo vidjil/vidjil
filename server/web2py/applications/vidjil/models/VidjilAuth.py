@@ -275,6 +275,24 @@ class VidjilAuth(Auth):
         return self.get_permission(PermissionEnum.run.value, object_of_action, id, user=user)\
             or self.is_admin(user)
 
+    def can_process_sample_set(self, id, user = None):
+        '''
+        Returns if the user can process results for a sample_set
+        '''
+        sample_set = self.db.sample_set[id]
+
+        perm = self.get_permission(PermissionEnum.run.value, 'sample_set', id, user) \
+            or self.is_admin(user)
+
+        if perm:
+            return True
+
+        query = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select()
+        for row in query:
+            if self.can_process_file(sample_set.sample_type, row.id, user):
+                return True
+        return False
+
     def can_upload_file(self, object_of_action, id=0, user = None):
         '''
         Returns True iff the current user can upload a sequence file
@@ -283,6 +301,24 @@ class VidjilAuth(Auth):
         '''
         return self.get_permission(PermissionEnum.upload.value, object_of_action, id, user=user)\
             or self.is_admin(user)
+
+    def can_upload_sample_set(self, id, user = None):
+        '''
+        Returns if the user can upload files for a sample_set
+        '''
+        sample_set = db.sample_set[id]
+
+        perm = self.get_permission(PermissionEnum.upload.value, 'sample_set', id, user) \
+            or self.is_admin(user)
+
+        if perm:
+            return True
+
+        query = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select()
+        for row in query:
+            if self.can_upload_file(sample_set.sample_type, row.id, user):
+                return True
+        return False
 
     def can_use_config(self, config_id, user = None):
         '''

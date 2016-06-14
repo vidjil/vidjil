@@ -251,10 +251,24 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_process_file()
         self.assertFalse(result, "User %d should not be able to process files" % (auth.user_id))
 
-        result = auth.can_process_file(user_id_sec)
-        self.assertTrue(result, "User %d should be able to process files" % user_id_sec)
+    def testCanProcessSampleSet(self):
+        result = auth.can_process_sample_set(sample_set_id_sec)
+        self.assertFalse(result,
+                "User %d should not be able to process files for sample_set %d" % (auth.user_id, sample_set_id_sec))
 
-        result = auth.can_process_file(user_id)
+        result = auth.can_process_sample_set(sample_set_id_ter)
+        self.assertTrue(result,
+                "User %d should be able to process files for sample_set %d" % (auth.user_id, sample_set_id_ter))
+
+        result = auth.can_process_sample_set(sample_set_id, user_id_sec)
+        self.assertTrue(result,
+                "User %d should be able to process files for sample_set %d" % (user_id_sec, sample_set_id))
+
+        result = auth.can_process_sample_set(sample_set_id_ter, user_id_sec)
+        self.assertFalse(result,
+                "User %d should not be able to process files for sample_set %d" % (user_id_sec, sample_set_id_ter))
+
+        result = auth.can_process_sample_set(sample_set_id, user_id)
         self.assertTrue(result,
                 "User %d is a member of admin group and is missing permissions to process files" % user_id)
 
@@ -271,8 +285,16 @@ class VidjilauthModel(unittest.TestCase):
         self.assertTrue(result,
                 "User %d is a member of admin group and is missing permissions to upload files" % user_id)
 
+    def testCanUploadSampleSet(self):
+        result = auth.can_upload_sample_set(sample_set_id_sec)
+        self.assertFalse(result,
+                "User %d should not have permission to upload files for sample_set %d" % (auth.user_id, sample_set_id_sec))
 
-        result = auth.can_upload_file(user_id)
+        result = auth.can_upload_sample_set(sample_set_id, user_id_sec)
+        self.assertTrue(result,
+                "User %d should be able to upload files for sample_set %d" % (user_id_sec, sample_set_id))
+
+        result = auth.can_upload_sample_set(sample_set_id, user_id)
         self.assertTrue(result,
                 "User %d is a member of admin group and is missing permissions to upload files" % user_id)
 
