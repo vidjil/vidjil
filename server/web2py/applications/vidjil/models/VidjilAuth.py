@@ -443,15 +443,19 @@ class VidjilAuth(Auth):
         membership = self.table_membership()
         permission = self.table_permission()
         perm_groups = self.get_permission_groups(name, table, user_id)
-        query = table.id.belongs(
-            db(membership.user_id == user_id)
-                (membership.group_id.belongs(perm_groups))
-                ((membership.group_id == permission.group_id) |
-                ((membership.group_id == db.group_assoc.second_group_id) &
-                (db.group_assoc.first_group_id == permission.group_id)))
-                (permission.name == PermissionEnum.access.value)
-                (permission.table_name == table)
-                ._select(permission.record_id))
+        query = (table.id.belongs(
+                db(((membership.user_id == user_id) &
+                    (membership.group_id.belongs(perm_groups)) &
+                    (membership.group_id == permission.group_id) &
+                    (permission.name == PermissionEnum.access.value) &
+                    (permission.table_name == table)))._select(permission.record_id)) |
+            table.id.belongs(
+                db(((membership.user_id == user_id) &
+                    (membership.group_id.belongs(perm_groups)) &
+                    (membership.group_id == db.group_assoc.second_group_id) &
+                    (db.group_assoc.first_group_id == permission.group_id) &
+                    (permission.name == PermissionEnum.access.value) &
+                    (permission.table_name == table)))._select(permission.record_id)))
         if self.settings.everybody_group_id:
             query |= table.id.belongs(
                 db(permission.group_id == self.settings.everybody_group_id)
