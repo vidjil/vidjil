@@ -31,7 +31,7 @@ class VidjilauthModel(unittest.TestCase):
         # Load the to-be-tested file
         execfile("applications/vidjil/models/VidjilAuth.py", globals())
         # set up default session/request/auth/...
-        global auth, group, group_sec, group_ter, my_user_id, user_id_sec, count, patient_id, patient_id_sec, parent_user_id, admin_patient_id, sample_set_id
+        global auth, group, group_sec, group_ter, group_qua, my_user_id, user_id_sec, count, patient_id, patient_id_sec, parent_user_id, admin_patient_id, sample_set_id, sample_set_id_sec, sample_set_id_ter
         auth = VidjilAuth(globals(), db)
 
         my_user_id = db.auth_user.insert(
@@ -62,6 +62,7 @@ class VidjilauthModel(unittest.TestCase):
         # setup data used for tests
         sample_set_id = db.sample_set.insert(sample_type = 'patient')
         sample_set_id_sec = db.sample_set.insert(sample_type = 'patient')
+        sample_set_id_ter = db.sample_set.insert(sample_type = 'run')
 
         patient_id = db.patient.insert(
                 first_name="foo",
@@ -144,7 +145,7 @@ class VidjilauthModel(unittest.TestCase):
             (db.auth_user.id == parent_user_id)).delete()
 
     def testGetGroupNames(self):
-        expected = ["group1", "group3"]
+        expected = ["group1", "group3", "group4"]
         result = auth.get_group_names()
         self.assertEqual(Counter(expected), Counter(result), msg="Expected: %s, but got: %s" % (str(expected), str(result)))
 
@@ -366,7 +367,7 @@ class VidjilauthModel(unittest.TestCase):
         self.assertEqual(Counter(expected), Counter(result), "Expected: %s, but got: %s" % (str(expected), str(result)))
 
     def testGetUserGroups(self):
-        expected = [group, group_ter]
+        expected = [group, group_ter, group_qua]
         result = [g.id for g in auth.get_user_groups()]
         self.assertEqual(Counter(expected), Counter(result), "Expected: %s, but got: %s" % (str(expected), str(result)))
 
