@@ -48,7 +48,7 @@ def add():
 			))
 			
         query_patient = db(
-            auth.vidjil_accessible_query(PermissionEnum.admin.value, db.patient)
+            auth.vidjil_accessible_query(PermissionEnum.read.value, db.patient)
         ).select(
             db.patient.ALL,
             orderby = ~db.patient.id
@@ -65,7 +65,7 @@ def add():
                 patient = birth+name+id
             
         query_run = db(
-            auth.vidjil_accessible_query(PermissionEnum.admin.value, db.run)
+            auth.vidjil_accessible_query(PermissionEnum.read.value, db.run)
         ).select(
             db.run.ALL,
             orderby = ~db.run.id
