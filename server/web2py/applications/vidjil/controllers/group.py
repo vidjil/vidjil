@@ -40,17 +40,20 @@ def add_form():
         #group creator is a group member
         auth.add_membership(id, auth.user.id)
 
-        #group creator = group admin
-        auth.add_permission(user_group, 'admin', db.auth_group, id)
-
         # Associate group with parent group network
-        parent_list = db(db.group_assoc.second_group_id == request.vars["group_parent"]).select(db.group_assoc.ALL)
-        parent = None
-        if len(parent_list) > 0:
-            for parent in parent_list:
-                db.group_assoc.insert(first_group_id=parent.first_group_id, second_group_id=id)
+        group_parent = request.vars["group_parent"]
+        if group_parent != None:
+            parent_list = db(db.group_assoc.second_group_id == group_parent).select(db.group_assoc.ALL)
+            parent = None
+            if len(parent_list) > 0:
+                for parent in parent_list:
+                    db.group_assoc.insert(first_group_id=parent.first_group_id, second_group_id=id)
+                    auth.add_permission(parent.first_group_id, PermissionEnum.group_admin.value, id)
+            else:
+                db.group_assoc.insert(first_group_id=group_parent, second_group_id=id)
+                auth.add_permission(group_parent, PermissionEnum.admin_group.value, id)
         else:
-            db.group_assoc.insert(first_group_id=request.vars["group_parent"], second_group_id=id)
+            auth.add_permission(id, PermissionEnum.group_admin.value, id)
 
         res = {"redirect": "group/index",
                "message" : "group '%s' created" % id}
