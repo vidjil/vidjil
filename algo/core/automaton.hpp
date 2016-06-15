@@ -19,7 +19,15 @@ void AbstractACAutomaton<Info>::finish_building() {
 
 template<class Info>
 float AbstractACAutomaton<Info>::getIndexLoad(Info kmer) const {
-  float load = kmers_inserted.at(kmer) / pow(4.0, kmer.getLength());
+  float load = 0;
+  if (kmers_inserted.count(kmer) == 0) {
+    for(auto iter: kmers_inserted) {
+      load += getIndexLoad(iter.first);
+    }
+    return load;
+  } else {
+    load = kmers_inserted.at(kmer) / pow(4.0, kmer.getLength());
+  }
   return (kmer.isUnknown()) ? 1 - load : load;
 }
 
