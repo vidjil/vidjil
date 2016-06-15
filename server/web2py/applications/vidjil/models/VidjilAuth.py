@@ -54,15 +54,25 @@ class VidjilAuth(Auth):
                 (permission.record_id == oid) &
                 (permission.name == PermissionEnum.access.value) &
                 (permission.table_name == object_of_action) &
-                ((membership.group_id == permission.group_id) |
-                ((membership.group_id == db.group_assoc.second_group_id) &
-                (db.group_assoc.first_group_id == permission.group_id))) &
+                (membership.group_id == permission.group_id) &
+                (membership.user_id == user)
+            ).select(membership.group_id)
+
+        parent_groups = db(
+                (permission.record_id == oid) &
+                (permission.name == PermissionEnum.access.value) &
+                (permission.table_name == object_of_action) &
+                (membership.group_id == db.group_assoc.second_group_id) &
+                (db.group_assoc.first_group_id == permission.group_id) &
                 (membership.user_id == user)
             ).select(membership.group_id)
 
         group_list = [g.group_id for g in groups]
+        parent_list = [g.group_id for g in parent_groups]
 
-        return list(set(group_list))
+        final_list = group_list + parent_list
+
+        return list(set(final_list))
 
     def get_group_access_groups(self, object_of_action, oid, group):
         permission = self.table_permission()
@@ -71,14 +81,23 @@ class VidjilAuth(Auth):
                 (permission.record_id == oid) &
                 (permission.name == PermissionEnum.access.value) &
                 (permission.table_name == object_of_action) &
-                ((group == permission.group_id) |
-                ((group == db.group_assoc.second_group_id) &
-                (db.group_assoc.first_group_id == permission.group_id)))
+                (group == permission.group_id)
+            ).select(permission.group_id)
+
+        parent_groups = db(
+                (permission.record_id == oid) &
+                (permission.name == PermissionEnum.access.value) &
+                (permission.table_name == object_of_action) &
+                (group == db.group_assoc.second_group_id) &
+                (db.group_assoc.first_group_id == permission.group_id)
             ).select(permission.group_id)
 
         group_list = [g.group_id for g in groups]
+        parent_list = [g.group_id for g in parent_groups]
 
-        return list(set(group_list))
+        final_list = group_list + parent_list
+
+        return list(set(final_list))
 
     def get_access_groups(self, object_of_action, oid, user=None, group=None):
         if user is None and group is None:
