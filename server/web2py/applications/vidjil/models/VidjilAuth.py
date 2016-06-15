@@ -11,8 +11,13 @@ class PermissionEnum(Enum):
     run = 'run'
     admin_config = 'admin'
     read_config = 'read'
+    create_config = 'create'
     admin_group = 'admin'
     read_group = 'read'
+    create_group = 'create'
+    admin_pre_process = 'admin'
+    read_pre_process = 'read'
+    create_preprocess = 'create'
     anon = 'anon'
 
 class VidjilAuth(Auth):

@@ -85,18 +85,18 @@ def init_db(force=False):
 
         ## permission
         ## system admin have admin/read/create rights on all patients, groups and configs
-        auth.add_permission(id_admin_group, 'admin', db.patient, 0)
-        auth.add_permission(id_admin_group, 'admin', db.auth_group, 0)
-        auth.add_permission(id_admin_group, 'admin', db.config, 0)
-        auth.add_permission(id_admin_group, 'admin', db.pre_process, 0)
-        auth.add_permission(id_admin_group, 'read', db.patient, 0)
-        auth.add_permission(id_admin_group, 'read', db.auth_group, 0)
-        auth.add_permission(id_admin_group, 'read', db.config, 0)
-        auth.add_permission(id_admin_group, 'read', db.pre_process, 0)
-        auth.add_permission(id_admin_group, 'create', db.patient, 0)
-        auth.add_permission(id_admin_group, 'create', db.auth_group, 0)
-        auth.add_permission(id_admin_group, 'create', db.config, 0)
-        auth.add_permission(id_admin_group, 'create', db.pre_process, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.admin.value, db.sample_set, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.admin_group.value, db.auth_group, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.admin_config.value, db.config, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.admin_pre_process.value, db.pre_process, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.read.value, db.sample_set, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.read_group.value, db.auth_group, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.read_config.value, db.config, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.read_pre_process.value, db.pre_process, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.create.value, db.sample_set, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.create_group.value, db.auth_group, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.create_config.value, db.config, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.create_pre_process.value, db.pre_process, 0)
         auth.add_permission(id_admin_group, 'impersonate', db.auth_user, 0)
 
 def init_from_csv():

@@ -51,7 +51,7 @@ def add_form():
             if len(parent_list) > 0:
                 for parent in parent_list:
                     db.group_assoc.insert(first_group_id=parent.first_group_id, second_group_id=id)
-                    auth.add_permission(parent.first_group_id, PermissionEnum.group_admin.value, id)
+                    auth.add_permission(parent.first_group_id, PermissionEnum.admin_group.value, id)
             else:
                 db.group_assoc.insert(first_group_id=group_parent, second_group_id=id)
                 auth.add_permission(group_parent, PermissionEnum.admin_group.value, id)
@@ -110,7 +110,7 @@ def remove_permission():
         error += "missing user_id, "
 
     if error=="":
-        auth.del_permission(auth.user_group(request.vars["user_id"]), 'admin', db.auth_group, request.vars["group_id"])
+        auth.del_permission(auth.user_group(request.vars["user_id"]), PermissionEnum.admin_group.value, db.auth_group, request.vars["group_id"])
 
     res = {"redirect" : "group/permission" ,
            "args" : { "id" : request.vars["group_id"]} }
@@ -120,7 +120,7 @@ def remove_permission():
 ## give admin right to a group member
 ## need ["group_id", "user_id"]
 def change_permission():
-    auth.add_permission(auth.user_group(request.vars["user_id"]), 'admin', db.auth_group, request.vars["group_id"])
+    auth.add_permission(auth.user_group(request.vars["user_id"]), PermissionEnum.admin_group.value, db.auth_group, request.vars["group_id"])
 
     res = {"redirect" : "group/permission" , "args" : { "id" : request.vars["group_id"]} }
     log.info(res)

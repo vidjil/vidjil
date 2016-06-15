@@ -28,10 +28,10 @@ def next_sample_set():
             
             go_next = int(request.vars['next'])
             if go_next > 0:
-                res = db((db[sample_type].id > current_id) & (auth.vidjil_accessible_query('read', db[sample_type]))).select(
+                res = db((db[sample_type].id > current_id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db[sample_type]))).select(
                     db[sample_type].id, db[sample_type].sample_set_id, orderby=db[sample_type].id, limitby=(0,1))
             else:
-                res = db((db[sample_type].id < current_id) & (auth.vidjil_accessible_query('read', db[sample_type]))).select(
+                res = db((db[sample_type].id < current_id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db[sample_type]))).select(
                     db[sample_type].id, db[sample_type].sample_set_id, orderby=~db[sample_type].id, limitby=(0,1))
             if (len(res) > 0):
                 request.vars["id"] = str(res[0].sample_set_id)
@@ -204,7 +204,7 @@ def custom():
         
     myGroupBy = None
     if request.vars["id"] and auth.can_view_sample_set(request.vars["id"]):
-        q = ((auth.vidjil_accessible_query('read', db.config))
+        q = ((auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config))
                 & (db.sample_set.id == request.vars["id"])
                 & (db.sample_set.id == db.patient.sample_set_id)
                 & (db.sample_set_membership.sample_set_id == db.sample_set.id)
@@ -215,8 +215,8 @@ def custom():
             )
         
     else:
-        q = ((auth.vidjil_accessible_query('read', db.patient))
-                & (auth.vidjil_accessible_query('read', db.config))
+        q = ((auth.vidjil_accessible_query(PermissionEnum.read.value, db.patient))
+                & (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config))
                 & (db.sample_set.id == db.patient.sample_set_id)
                 & (db.sample_set_membership.sample_set_id == db.sample_set.id)
                 & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)

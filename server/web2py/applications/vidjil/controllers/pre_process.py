@@ -13,7 +13,7 @@ def index():
         res = {"redirect" : "default/user/login"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
-    query = db((auth.vidjil_accessible_query('read', db.pre_process) | auth.vidjil_accessible_query('admin', db.pre_process) ) ).select(orderby=~db.pre_process.name)
+    query = db((auth.vidjil_accessible_query(PermissionEnum.read_pre_process.value, db.pre_process) | auth.vidjil_accessible_query(PermissionEnum.admin_pre_process.value, db.pre_process) ) ).select(orderby=~db.pre_process.name)
 
     return dict(message=T('Pre-process list'),
                query=query,
@@ -39,7 +39,7 @@ def add_form():
                         command=request.vars['pre_process_command']
                         )
 
-	auth.add_permission(auth.user_group(), 'read', db.pre_process, pre_proc_id)
+	auth.add_permission(auth.user_group(), PermissionEnum.read_pre_process.value, db.pre_process, pre_proc_id)
 
         res = {"redirect": "pre_process/index",
                "message": "pre_process '%s' added" % request.vars['pre_process_name']}

@@ -15,7 +15,7 @@ def index():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 
-    query = db((auth.vidjil_accessible_query('read', db.config) | auth.vidjil_accessible_query('admin', db.config) ) ).select(orderby=~db.config.name)
+    query = db((auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) ) ).select(orderby=~db.config.name)
 
     return dict(message=T('Configs'),
                query=query,
@@ -52,7 +52,7 @@ def add_form():
                 break
 
         db.auth_permission.insert(group_id=user_group,
-                                name='create',
+                                name=PermissionEnum.create_config.value,
                                 table_name='config',
                                 record_id=config_id)
 

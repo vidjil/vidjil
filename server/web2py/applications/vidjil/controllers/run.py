@@ -26,13 +26,13 @@ def index():
     
     ##retrieve run list 
     query_run = db(
-        auth.vidjil_accessible_query('read', db.run)
+        auth.vidjil_accessible_query(PermissionEnum.read.value, db.run)
     ).select(
         db.run.ALL,
         orderby = ~db.run.id
     )
 
-    auth.load_permissions('admin', 'run')
+    auth.load_permissions(PermissionEnum.admin.value, 'run')
     result = {}
     
     for i, row in enumerate(query_run) :
@@ -85,7 +85,7 @@ def index():
     query3 = db(
         (db.run.sample_set_id == db.fused_file.sample_set_id) &
         (db.fused_file.config_id == db.config.id) &
-        (auth.vidjil_accessible_query('read', db.config) | auth.vidjil_accessible_query('admin', db.config) )
+        (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) )
     ).select(
         db.run.id, db.config.name, db.config.id, db.fused_file.fused_file
     )
@@ -99,7 +99,7 @@ def index():
     query4 = db(
         ((db.run.id == db.auth_permission.record_id) | (db.auth_permission.record_id == 0)) &
         (db.auth_permission.table_name == 'patient') &
-        (db.auth_permission.name == 'read') &
+        (db.auth_permission.name == PermissionEnum.read.value) &
         (db.auth_group.id == db.auth_permission.group_id)
     ).select(
         db.run.id, db.auth_group.role

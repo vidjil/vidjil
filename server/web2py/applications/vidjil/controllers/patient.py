@@ -134,13 +134,14 @@ def index():
     
     ##retrieve patient list 
     query = db(
-        auth.vidjil_accessible_query('read', db.patient)
+        auth.vidjil_accessible_query(PermissionEnum.read.value, db.patient)
     ).select(
         db.patient.ALL,
         orderby = ~db.patient.id
     )
 
-    auth.load_permissions('admin', 'patient')
+    auth.load_permissions(PermissionEnum.admin.value, 'patient')
+    auth.load_permissions(PermissionEnum.anon.value, 'patient')
     result = {}
     
     for i, row in enumerate(query) :
@@ -190,7 +191,7 @@ def index():
     query3 = db(
         (db.patient.sample_set_id == db.fused_file.sample_set_id) &
         (db.fused_file.config_id == db.config.id) &
-        (auth.vidjil_accessible_query('read', db.config) | auth.vidjil_accessible_query('admin', db.config) )
+        (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) )
     ).select(
         db.patient.id, db.config.name, db.config.id, db.fused_file.fused_file
     )
@@ -203,7 +204,7 @@ def index():
     query4 = db(
         ((db.patient.id == db.auth_permission.record_id) | (db.auth_permission.record_id == 0)) &
         (db.auth_permission.table_name == 'patient') &
-        (db.auth_permission.name == 'read') &
+        (db.auth_permission.name == PermissionEnum.access.value) &
         (db.auth_group.id == db.auth_permission.group_id)
     ).select(
         db.patient.id, db.auth_group.role
@@ -311,9 +312,7 @@ def add_form():
             admin_group = db(db.auth_group.role=='admin').select().first().id
             
             #patient creator automaticaly has all rights 
-            #auth.add_permission(user_group, 'admin', db.patient, id)
-            auth.add_permission(user_group, 'access', db.patient, id)
-            #auth.add_permission(user_group, 'anon', db.patient, id)
+            auth.add_permission(user_group, PermissionEnum.access.value, db.patient, id)
             
             patient_name = request.vars["first_name"] + ' ' + request.vars["last_name"]
 
