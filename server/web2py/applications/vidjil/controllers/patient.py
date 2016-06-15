@@ -256,7 +256,11 @@ def add():
             groups = db(db.auth_group).select(db.auth_group.id, db.auth_group.role)
         else:
             groups = auth.get_user_groups()
-        return dict(message=T('add patient'), groups=groups)
+        master_group = auth.user_group()
+        for row in groups:
+            if row.role == 'Lille':
+                master_group = row.id
+        return dict(message=T('add patient'), groups=groups, master_group=master_group)
     else :
         res = {"message": ACCESS_DENIED}
         log.error(res)
