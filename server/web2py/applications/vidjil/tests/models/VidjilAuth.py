@@ -455,8 +455,8 @@ class VidjilauthModel(unittest.TestCase):
         res = auth.can_view_patient(patient_id, user_id_sec)
         self.assertTrue(res, "User %d is missing read permissions on patient %d" % (user_id_sec, patient_id))
 
-        res = auth.can_modify_patient(patient_id, auth.user_id)
-        self.assertFalse(res, "User %d should not have admin permissions on patient %d" % (auth.user_id, patient_id))
+        res = auth.can_modify_patient(patient_id_sec, auth.user_id)
+        self.assertFalse(res, "User %d should not have admin permissions on patient %d" % (auth.user_id, patient_id_sec))
 
     def testGetPermissionCache(self):
         res = auth.can_modify_patient(patient_id)
