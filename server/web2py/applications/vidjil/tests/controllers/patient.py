@@ -109,10 +109,10 @@ class PatientController(unittest.TestCase):
         request.vars["group_id"] = fake_group_id
         
         resp = change_permission()
-        self.assertTrue(auth.get_group_access('patient', patient_id, fake_group_id), "fail to add permission")
+        self.assertFalse(auth.get_group_access('patient', patient_id, fake_group_id), "fail to remove permission")
         
         resp = change_permission()
-        self.assertFalse(auth.get_group_access('patient', patient_id, fake_group_id), "fail to remove permission")
+        self.assertTrue(auth.get_group_access('patient', patient_id, fake_group_id), "fail to add permission")
         
         
         
