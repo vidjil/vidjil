@@ -222,9 +222,7 @@ def add_form():
             admin_group = db(db.auth_group.role=='admin').select().first().id
             
             #patient creator automaticaly has all rights 
-            auth.add_permission(user_group, 'admin', db.run, id)
-            auth.add_permission(user_group, 'read', db.run, id)
-            auth.add_permission(user_group, 'anon', db.run, id)
+            auth.add_permission(user_group, 'access', db.run, id)
 
             res = {"redirect": "run/index",
                    "args" : { "id" : id },

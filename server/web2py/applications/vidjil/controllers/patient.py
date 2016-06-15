@@ -312,7 +312,7 @@ def add_form():
             
             #patient creator automaticaly has all rights 
             #auth.add_permission(user_group, 'admin', db.patient, id)
-            auth.add_permission(user_group, 'read', db.patient, id)
+            auth.add_permission(user_group, 'access', db.patient, id)
             #auth.add_permission(user_group, 'anon', db.patient, id)
             
             patient_name = request.vars["first_name"] + ' ' + request.vars["last_name"]
