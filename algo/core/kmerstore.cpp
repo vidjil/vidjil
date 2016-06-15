@@ -63,4 +63,27 @@ ostream &operator<<(ostream &os, const Kmer &kmer) {
   return os;
 }
 
+bool operator==(const Kmer &k1, const Kmer &k2) {
+  return k1.count == k2.count;
+}
+
+bool operator<(const Kmer &k1, const Kmer &k2) {
+  return k1.count < k2.count;
+}
+
+bool operator>(const Kmer &k1, const Kmer &k2) {
+  return k1.count > k2.count;
+}
+
+bool operator<=(const Kmer &k1, const Kmer &k2) {
+  return ! (k1 > k2);
+}
+
+bool operator>=(const Kmer &k1, const Kmer &k2) {
+  return ! (k1 < k2);
+}
+
+bool operator!=(const Kmer &k1, const Kmer &k2) {
+  return ! (k1 == k2);
+}
 

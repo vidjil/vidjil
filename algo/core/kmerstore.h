@@ -48,6 +48,13 @@ public:
   bool isUnknown() const;
 } ;
 ostream &operator<<(ostream &os, const Kmer &kmer);
+bool operator==(const Kmer &k1, const Kmer &k2);
+bool operator<(const Kmer &k1, const Kmer &k2);
+bool operator>(const Kmer &k1, const Kmer &k2);
+bool operator<=(const Kmer &k1, const Kmer &k2);
+bool operator>=(const Kmer &k1, const Kmer &k2);
+bool operator!=(const Kmer &k1, const Kmer &k2);
+
 
 
 /* K-mer indexing */
