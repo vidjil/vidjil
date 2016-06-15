@@ -45,7 +45,7 @@ def add_form():
 
         # Associate group with parent group network
         group_parent = request.vars["group_parent"]
-        if group_parent != None:
+        if group_parent != None and group_parent != 'None':
             parent_list = db(db.group_assoc.second_group_id == group_parent).select(db.group_assoc.ALL)
             parent = None
             if len(parent_list) > 0:
@@ -56,7 +56,7 @@ def add_form():
                 db.group_assoc.insert(first_group_id=group_parent, second_group_id=id)
                 auth.add_permission(group_parent, PermissionEnum.admin_group.value, id)
         else:
-            auth.add_permission(id, PermissionEnum.group_admin.value, id)
+            auth.add_permission(id, PermissionEnum.admin_group.value, id)
 
         res = {"redirect": "group/index",
                "message" : "group '%s' created" % id}
