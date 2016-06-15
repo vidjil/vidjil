@@ -913,10 +913,11 @@ int main (int argc, char **argv)
 
       // Should come after the initialization of regular (and possibly pseudo) germlines
     if (multi_germline_incomplete) {
-      multigermline->one_index_per_germline = true; // Starting from now, creates new indexes
-
       for (pair <string, string> path_file: multi_germline_paths_and_files)
         multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_INCOMPLETE, trim_sequences);
+      if (! multigermline->one_index_per_germline) {
+        multigermline->insert_in_one_index(multigermline->index, true);
+      }
     }
 
     if (multi_germline_mark)
