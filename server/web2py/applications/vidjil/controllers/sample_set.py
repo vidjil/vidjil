@@ -28,10 +28,10 @@ def next_sample_set():
             
             go_next = int(request.vars['next'])
             if go_next > 0:
-                res = db((db[sample_type].id > current_id) & (auth.accessible_query('read', db[sample_type]))).select(
+                res = db((db[sample_type].id > current_id) & (auth.vidjil_accessible_query('read', db[sample_type]))).select(
                     db[sample_type].id, db[sample_type].sample_set_id, orderby=db[sample_type].id, limitby=(0,1))
             else:
-                res = db((db[sample_type].id < current_id) & (auth.accessible_query('read', db[sample_type]))).select(
+                res = db((db[sample_type].id < current_id) & (auth.vidjil_accessible_query('read', db[sample_type]))).select(
                     db[sample_type].id, db[sample_type].sample_set_id, orderby=~db[sample_type].id, limitby=(0,1))
             if (len(res) > 0):
                 request.vars["id"] = str(res[0].sample_set_id)

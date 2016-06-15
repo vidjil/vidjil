@@ -26,7 +26,7 @@ def index():
     
     ##retrieve run list 
     query_run = db(
-        auth.accessible_query('read', db.run)
+        auth.vidjil_accessible_query('read', db.run)
     ).select(
         db.run.ALL,
         orderby = ~db.run.id

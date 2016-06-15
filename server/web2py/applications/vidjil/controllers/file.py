@@ -208,7 +208,7 @@ def edit():
 			))
 			
         query_patient = db(
-            auth.accessible_query('admin', db.patient)
+            auth.vidjil_accessible_query('admin', db.patient)
         ).select(
             db.patient.ALL,
             orderby = ~db.patient.id
@@ -225,7 +225,7 @@ def edit():
                 patient = birth+name+id
             
         query_run = db(
-            auth.accessible_query('admin', db.run)
+            auth.vidjil_accessible_query('admin', db.run)
         ).select(
             db.run.ALL,
             orderby = ~db.run.id

@@ -190,7 +190,7 @@ def index():
     query3 = db(
         (db.patient.sample_set_id == db.fused_file.sample_set_id) &
         (db.fused_file.config_id == db.config.id) &
-        (auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) )
+        (auth.vidjil_accessible_query('read', db.config) | auth.vidjil_accessible_query('admin', db.config) )
     ).select(
         db.patient.id, db.config.name, db.config.id, db.fused_file.fused_file
     )
