@@ -22,7 +22,7 @@
                         <label for="group_parent" id="group_parent__label"> Parent Group </label>
                     </td>
                     <td>
-                        {{= SELECT(*[OPTION(g.role, _value=g.id) for g in groups], _name="group_parent") }}
+                        {{= SELECT(*[OPTION('None', _value='None')] + [OPTION(g.role, _value=g.id) for g in groups], _name="group_parent") }}
                     </td>
                 </tr>
                 <tr>
