@@ -17,8 +17,11 @@ def index():
     return dict(message=T('Groups'), query=query, count=count)
 
 ## return an html form to add a group
-def add(): 
-    groups = auth.get_user_groups()
+def add():
+    if auth.is_admin():
+        groups = db(db.auth_group).select()
+    else:
+        groups = auth.get_user_groups()
     return dict(message=T('New group'), groups=groups)
 
 
