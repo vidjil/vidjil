@@ -327,10 +327,9 @@ void MultiGermline::build_with_one_index(string seed, bool set_index)
 void MultiGermline::finish() {
   if (index) {
     index->finish_building();
-  } else {
-    for (auto germline: germlines) {
-      germline->finish();
-    }
+  }
+  for (auto germline: germlines) {
+    germline->finish();
   }
 }
 
