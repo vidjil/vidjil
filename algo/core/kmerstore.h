@@ -61,6 +61,7 @@ protected:
   string seed ;
   size_t nb_kmers_inserted;
   size_t max_size_indexing;
+  bool finished_building;
 
 public:
 
@@ -189,6 +190,7 @@ template<class T>
 IKmerStore<T>::IKmerStore() {
   id = ++last_id;
   refs = 0;
+  finished_building = false;
 }
 
 template<class T> int IKmerStore<T>::last_id = 0;
@@ -330,7 +332,9 @@ void IKmerStore<T>::insert(const seqtype &sequence,
 }
 
 template<class T>
-void IKmerStore<T>::finish_building() {}
+void IKmerStore<T>::finish_building() {
+  finished_building = true;
+}
 
 template<class T>
 float IKmerStore<T>::getIndexLoad(const T kmer) const {

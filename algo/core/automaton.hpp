@@ -11,7 +11,10 @@ AbstractACAutomaton<Info>::AbstractACAutomaton():IKmerStore<Info>() {}
 
 template <class Info>
 void AbstractACAutomaton<Info>::finish_building() {
-  build_failure_functions();
+  if (! IKmerStore<Info>::finished_building) {
+    IKmerStore<Info>::finish_building();
+    build_failure_functions();
+  }
 }
 
 template<class Info>
