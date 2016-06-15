@@ -33,6 +33,9 @@ query = db(
             run vidjil
             <input type="checkbox" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'run', {{=group.id}});" {{if auth.has_permission('run', 'sample_set', group_id=group.id) :}}{{="checked"}}{{pass}}>
 
+            real info
+            <input type="checkbox" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'anon', {{=group.id}});" {{if auth.has_permission('anon', 'sample_set', group_id=group.id) :}}{{="checked"}}{{pass}}>
+
             </br>
             <!--create config <input type="checkbox" name="config" onclick="db.test(this.checked, this.name, {{request.vars["id"]}});"></br>-->
         </div>
