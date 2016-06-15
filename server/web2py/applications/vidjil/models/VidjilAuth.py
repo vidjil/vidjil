@@ -17,7 +17,7 @@ class PermissionEnum(Enum):
     create_group = 'create'
     admin_pre_process = 'admin'
     read_pre_process = 'read'
-    create_preprocess = 'create'
+    create_pre_process = 'create'
     anon = 'anon'
 
 class VidjilAuth(Auth):
