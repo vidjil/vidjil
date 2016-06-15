@@ -426,7 +426,7 @@ class VidjilAuth(Auth):
                 ).select(db.auth_group.id, db.auth_group.role, groupby=db.auth_group.id)
 
 
-        return group_list + parent_list
+        return group_list | parent_list
 
     def vidjil_accessible_query(self, name, table, user_id=None):
         """
