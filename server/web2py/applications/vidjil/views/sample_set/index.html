@@ -21,7 +21,7 @@
             <span>
                 <select id="choose_config" name="config" onchange="db.call('sample_set/index', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
                     <option value="-1" {{if not config :}}selected{{pass}}> --- </option>
-                    {{for row in db((auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) ).select(orderby=~db.config.name) :}}
+                    {{for row in db((auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=~db.config.name) :}}
                         <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} title="{{=row.info}}" >
                             {{=row.name}}
                         </option>
@@ -185,7 +185,7 @@
     <div class="db_block_right">
         see the result:
         {{for row in db( (db.fused_file.sample_set_id == request.vars["id"]) & 
-                         (auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) &
+                         (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) ) &
                          (db.config.id ==db.fused_file.config_id)
                        ).select() :}}
         
