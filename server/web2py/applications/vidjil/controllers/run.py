@@ -31,6 +31,8 @@ def index():
         db.run.ALL,
         orderby = ~db.run.id
     )
+
+    auth.load_permissions('admin', 'run')
     result = {}
     
     for i, row in enumerate(query_run) :
@@ -38,7 +40,7 @@ def index():
             "id" :int(row.id),
             "sample_set_id" : int(row.sample_set_id),
             "name" : row.name,
-            "has_admin_permission" : False,
+            "has_admin_permission" : auth.can_modify_run(row.id),
             "run_date" : row.run_date,
             "info" : row.info,
             "creator" : row.creator,
@@ -54,22 +56,6 @@ def index():
         
     keys = result.keys() 
     
-    
-    #retrieve admin permission
-    query_admin_permission = db(
-        (db.auth_permission.name == "admin") & 
-        (db.auth_permission.table_name == "run") &
-        (db.run.id == db.auth_permission.record_id ) &
-        (auth.user_group() == db.auth_permission.group_id )
-    ).select(
-        db.run.ALL, db.auth_permission.ALL
-    )
-
-    for i, row in enumerate(query_admin_permission) :
-        if row.run.id in keys :
-            result[row.run.id]['has_admin_permission'] = True
-            
-            
     #retrieve creator name
     query_creator = db(
         db.run.creator == db.auth_user.id
