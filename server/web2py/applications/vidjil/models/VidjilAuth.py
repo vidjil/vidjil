@@ -417,13 +417,16 @@ class VidjilAuth(Auth):
             user = self.user_id
         group_list = db(
                 (db.auth_membership.user_id == user) &
-                ((db.auth_membership.group_id == db.auth_group.id) |
-                ((db.auth_membership.group_id == db.group_assoc.second_group_id) &
-                (db.group_assoc.first_group_id == db.auth_group.id)))
+                (db.auth_membership.group_id == db.auth_group.id)
+                ).select(db.auth_group.id, db.auth_group.role, groupby=db.auth_group.id)
+        parent_list = db(
+                (db.auth_membership.user_id == user) &
+                (db.auth_membership.group_id == db.group_assoc.second_group_id) &
+                (db.group_assoc.first_group_id == db.auth_group.id)
                 ).select(db.auth_group.id, db.auth_group.role, groupby=db.auth_group.id)
 
 
-        return group_list
+        return group_list + parent_list
 
     def vidjil_accessible_query(self, name, table, user_id=None):
         """
