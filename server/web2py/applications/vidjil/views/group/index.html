@@ -3,14 +3,6 @@
 {{('message' in globals())}}
 {{if 'message' in globals():}}
 
-{{
-count = db.auth_group.id.count()
-
-query = db( 
-   db.auth_membership.group_id == db.auth_group.id
-).select(db.auth_group.ALL, count, groupby = db.auth_group.id)
-}}
-
     <h3>{{=message}}</h3>
     
     <div id="db_table_container">
@@ -19,20 +11,20 @@ query = db(
                 <tr><td class="column1"> group name</td>
                     <td class="column2"> member</td>
                     <td> info </td>
+                    <td> parents </td>
                     <td class="column5"> </td>
                     <td class="column5"> </td>
                 </tr>
             </thead>
            {{for row in query :}}
-                {{if row.auth_group.role[:5] != "user_" :}}
-                   <tr onclick="db.call('group/info', {'id' :'{{=row.auth_group.id}}'} )">
-                        <td> {{=row.auth_group.role}} </td>
-                        <td> {{=row[count]}}  </td>
-                        <td> {{=row.auth_group.description }} </td>
-                        <td onclick="db.call('group/permission', {'id' :'{{=row.auth_group.id}}'} )" > <i class="icon-key" title="set permissions"></i> </td>
-                        <td onclick="db.call('group/confirm', {'id' :'{{=row.auth_group.id}}'} )" > <i class="icon-erase" title="delete group"></i> </td>  
-                    </tr>
-                {{pass}}
+               <tr onclick="db.call('group/info', {'id' :'{{=row.auth_group.id}}'} )">
+                    <td> {{=row.auth_group.role}} </td>
+                    <td> {{=row[count]}}  </td>
+                    <td> {{=row.auth_group.description }} </td>
+                    <td> {{=row.parents}} </td>
+                    <td onclick="db.call('group/permission', {'id' :'{{=row.auth_group.id}}'} )" > <i class="icon-key" title="set permissions"></i> </td>
+                    <td onclick="db.call('group/confirm', {'id' :'{{=row.auth_group.id}}'} )" > <i class="icon-erase" title="delete group"></i> </td>
+                </tr>
            {{pass}}
         </table>
         <table class="db_table" id="db_fixed_header"></table>

@@ -6,7 +6,15 @@ if request.env.http_origin:
 
 ## return group list
 def index():
-    return dict(message=T('Groups'))
+    count = db.auth_group.id.count()
+    query = db(
+       db.auth_membership.group_id == db.auth_group.id
+    ).select(db.auth_group.ALL, count, groupby = db.auth_group.id, orderby=db.auth_group.role)
+
+    for row in query:
+        row.parents = ', '.join(str(value) for value in auth.get_group_parent(row.auth_group.id))
+
+    return dict(message=T('Groups'), query=query, count=count)
 
 ## return an html form to add a group
 def add(): 
