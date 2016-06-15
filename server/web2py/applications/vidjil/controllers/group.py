@@ -51,10 +51,10 @@ def add_form():
             if len(parent_list) > 0:
                 for parent in parent_list:
                     db.group_assoc.insert(first_group_id=parent.first_group_id, second_group_id=id)
-                    auth.add_permission(parent.first_group_id, PermissionEnum.admin_group.value, id)
+                    auth.add_permission(parent.first_group_id, PermissionEnum.admin_group.value, db.auth_group, id)
             else:
                 db.group_assoc.insert(first_group_id=group_parent, second_group_id=id)
-                auth.add_permission(group_parent, PermissionEnum.admin_group.value, id)
+                auth.add_permission(group_parent, PermissionEnum.admin_group.value, db.auth_group, id)
         else:
             auth.add_permission(id, PermissionEnum.admin_group.value, id)
 
