@@ -151,7 +151,7 @@ def index():
             "last_name" : row.last_name,
             "first_name" : row.first_name,
             "has_permission" : auth.can_modify_patient(row.id),
-            "anon_allowed": False,
+            "anon_allowed": auth.can_view_patient_info(row.id),
             "birth" : row.birth,
             "info" : row.info,
             "creator" : row.creator,
@@ -213,20 +213,6 @@ def index():
         if row.patient.id in keys :
             result[row.patient.id]['group_list'].append(row.auth_group.role.replace('user_','u'))
 
-    query5 = db(
-        (db.auth_permission.name == "anon") &
-        (db.auth_permission.table_name == "patient") &
-        (db.patient.id == db.auth_permission.record_id ) &
-        (db.auth_group.id == db.auth_permission.group_id ) &
-        (db.auth_membership.user_id == auth.user_id) &
-        (db.auth_membership.group_id == db.auth_group.id)
-    ).select(
-        db.patient.id
-    )
-    for i, row in enumerate(query5) :
-        if row.id in keys :
-            result[row.id]['anon_allowed'] = True
-        
     for key, row in result.iteritems():
         row['most_used_conf'] = max(set(row['conf_id_list']), key=row['conf_id_list'].count)
         #row['confs'] = ", ".join(list(set(row['conf_list']))) 
