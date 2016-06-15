@@ -13,7 +13,7 @@ def index():
         res = {"redirect" : "default/user/login"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
-    query = db((auth.accessible_query('read', db.pre_process) | auth.accessible_query('admin', db.pre_process) ) ).select(orderby=~db.pre_process.name)
+    query = db((auth.vidjil_accessible_query('read', db.pre_process) | auth.vidjil_accessible_query('admin', db.pre_process) ) ).select(orderby=~db.pre_process.name)
 
     return dict(message=T('Pre-process list'),
                query=query,

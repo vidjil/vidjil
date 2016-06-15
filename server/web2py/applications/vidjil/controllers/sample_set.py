@@ -204,7 +204,7 @@ def custom():
         
     myGroupBy = None
     if request.vars["id"] and auth.can_view_sample_set(request.vars["id"]):
-        q = ((auth.accessible_query('read', db.config)) 
+        q = ((auth.vidjil_accessible_query('read', db.config))
                 & (db.sample_set.id == request.vars["id"])
                 & (db.sample_set.id == db.patient.sample_set_id)
                 & (db.sample_set_membership.sample_set_id == db.sample_set.id)
@@ -215,8 +215,8 @@ def custom():
             )
         
     else:
-        q = ((auth.accessible_query('read', db.patient)) 
-                & (auth.accessible_query('read', db.config)) 
+        q = ((auth.vidjil_accessible_query('read', db.patient))
+                & (auth.vidjil_accessible_query('read', db.config))
                 & (db.sample_set.id == db.patient.sample_set_id)
                 & (db.sample_set_membership.sample_set_id == db.sample_set.id)
                 & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
