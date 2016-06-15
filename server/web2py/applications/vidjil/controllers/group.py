@@ -173,7 +173,7 @@ def rights():
             auth.del_permission(group_id, request.vars["right"], request.vars["name"], 0)
             msg += "remove '" + request.vars["right"] + "' permission on '" + request.vars["name"] + "' for group " + db.auth_group[group_id].role
 
-        res = { "redirect": "user/info",
+        res = { "redirect": "group/info",
                 "args" : {"id" : group_id },
                 "message": msg}
         log.admin(res)
