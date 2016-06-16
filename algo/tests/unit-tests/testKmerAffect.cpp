@@ -112,6 +112,7 @@ void testKmerAffectClass() {
   TAP_TEST(unknown.isAmbiguous(), TEST_KMERAFFECT_AMBIGUOUS, "");
   TAP_TEST(unknown.getLabel() == AFFECT_AMBIGUOUS_SYMBOL, TEST_KMERAFFECT_LABEL, "");
   TAP_TEST(unknown.getStrand() == 0, TEST_KMERAFFECT_STRAND, "");
+  TAP_TEST(unknown.getLength() == 4, TEST_KMERAFFECT_AMBIGUOUS, "");
 
   TAP_TEST(KAVp.getStrand() == 1, TEST_KMERAFFECT_STRAND, "");
   TAP_TEST(KAVm.getStrand() == -1, TEST_KMERAFFECT_STRAND, "");
