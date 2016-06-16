@@ -167,17 +167,11 @@ public:
    * @param seq: a sequence
    * @param no_revcomp: force not to revcomp the sequence, even if
    *                    the index was built with revcomp.
-   * @return a vector of length seq.length() - smallestAnalysableLength() + 1
+   * @return a vector of length seq.length() - d, where d is the span
+   *         of the seed (minus one) or is 0 when it doesn't apply.
    * containing for each position the corresponding value in the index.
    */
   virtual vector<T> getResults(const seqtype &seq, bool no_revcomp=false, string seed="") = 0;
-
-  /**
-   * @return the smallest analysable sequence length by the index. For an
-   * index just storing k-mers it will obviously be getK(). But for more
-   * sophisticated data structures it could be 1 for instance.
-   */
-  size_t smallestAnalysableLength() const;
 
   /**
    * @return true iff the revcomp is indexed
@@ -468,11 +462,6 @@ vector<T> ArrayKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp, str
 template<class T>
 bool IKmerStore<T>::isRevcomp() const {
   return revcomp_indexed;
-}
-
-template<class T>
-size_t IKmerStore<T>::smallestAnalysableLength() const {
-  return getK();
 }
 
 // MapKmerStore

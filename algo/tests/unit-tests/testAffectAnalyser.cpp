@@ -51,9 +51,9 @@ void testAffectAnalyser1() {
   TAP_TEST(ckaa.max() == KmerAffect::getUnknown(), 
            TEST_COUNT_AA_MAX, "max is " << ckaa.max());
 
-  TAP_TEST(kaa.getAffectation(6 - index->smallestAnalysableLength() + 1).isUnknown(), TEST_AA_PREDICATES, "");
-  TAP_TEST(kaa.getAffectation(11 - index->smallestAnalysableLength() + 1).isUnknown(), TEST_AA_PREDICATES, "");
-  TAP_TEST(kaa.getAffectation(3 - index->smallestAnalysableLength() + 1).isAmbiguous(), TEST_AA_PREDICATES, "");
+  TAP_TEST(kaa.getAffectation(6  - k + 1).isUnknown(), TEST_AA_PREDICATES, "");
+  TAP_TEST(kaa.getAffectation(11  - k + 1).isUnknown(), TEST_AA_PREDICATES, "");
+  TAP_TEST(kaa.getAffectation(3  - k + 1).isAmbiguous(), TEST_AA_PREDICATES, "");
   
   TAP_TEST(kaa.getDistinctAffectations().size() == 5, TEST_AA_GET_DISTINCT_AFFECT, "");
 
@@ -62,30 +62,30 @@ void testAffectAnalyser1() {
   TAP_TEST(ckaa.countBefore(cAffect, 0) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
   TAP_TEST(ckaa.countBefore(gAffect, 0) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
   TAP_TEST(ckaa.countAfter(cAffect, 10) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
-  TAP_TEST(ckaa.countAfter(gAffect, 13 - index->smallestAnalysableLength() + 1) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
+  TAP_TEST(ckaa.countAfter(gAffect, 13  - k + 1) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
 
-  TAP_TEST(ckaa.countBefore(cAffect, 7 - index->smallestAnalysableLength() + 1) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
-  TAP_TEST(ckaa.countBefore(cAffect, 8 - index->smallestAnalysableLength() + 1) == 1, TEST_COUNT_AA_COUNT_BEFORE, "");
-  TAP_TEST(ckaa.countAfter(cAffect, 7 - index->smallestAnalysableLength() + 1) == 1, TEST_COUNT_AA_COUNT_AFTER, "");
-  TAP_TEST(ckaa.countAfter(cAffect, 8 - index->smallestAnalysableLength() + 1) == 0, TEST_COUNT_AA_COUNT_AFTER, "");
+  TAP_TEST(ckaa.countBefore(cAffect, 7  - k + 1) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
+  TAP_TEST(ckaa.countBefore(cAffect, 8  - k + 1) == 1, TEST_COUNT_AA_COUNT_BEFORE, "");
+  TAP_TEST(ckaa.countAfter(cAffect, 7  - k + 1) == 1, TEST_COUNT_AA_COUNT_AFTER, "");
+  TAP_TEST(ckaa.countAfter(cAffect, 8  - k + 1) == 0, TEST_COUNT_AA_COUNT_AFTER, "");
 
-  TAP_TEST(ckaa.countAfter(gAffect, 7 - index->smallestAnalysableLength() + 1) == 2, TEST_COUNT_AA_COUNT_AFTER, "");
-  TAP_TEST(ckaa.countAfter(gAffect, 8 - index->smallestAnalysableLength() + 1) == 2, TEST_COUNT_AA_COUNT_AFTER, "");
-  TAP_TEST(ckaa.countBefore(gAffect, 7 - index->smallestAnalysableLength() + 1) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
-  TAP_TEST(ckaa.countBefore(gAffect, 8 - index->smallestAnalysableLength() + 1 ) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
+  TAP_TEST(ckaa.countAfter(gAffect, 7  - k + 1) == 2, TEST_COUNT_AA_COUNT_AFTER, "");
+  TAP_TEST(ckaa.countAfter(gAffect, 8  - k + 1) == 2, TEST_COUNT_AA_COUNT_AFTER, "");
+  TAP_TEST(ckaa.countBefore(gAffect, 7  - k + 1) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
+  TAP_TEST(ckaa.countBefore(gAffect, 8  - k + 1 ) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
 
-  TAP_TEST(ckaa.countBefore(cAffect, 12 - index->smallestAnalysableLength() + 1) == 2, TEST_COUNT_AA_COUNT_BEFORE, "");
-  TAP_TEST(ckaa.countBefore(cAffect, 13 - index->smallestAnalysableLength() + 1) == 2, TEST_COUNT_AA_COUNT_BEFORE, "");
-  TAP_TEST(ckaa.countAfter(cAffect, 12 - index->smallestAnalysableLength() + 1) == 0, TEST_COUNT_AA_COUNT_AFTER, "");
-  TAP_TEST(ckaa.countAfter(cAffect, 13 - index->smallestAnalysableLength() + 1) == 0, TEST_COUNT_AA_COUNT_AFTER, "");
+  TAP_TEST(ckaa.countBefore(cAffect, 12  - k + 1) == 2, TEST_COUNT_AA_COUNT_BEFORE, "");
+  TAP_TEST(ckaa.countBefore(cAffect, 13  - k + 1) == 2, TEST_COUNT_AA_COUNT_BEFORE, "");
+  TAP_TEST(ckaa.countAfter(cAffect, 12  - k + 1) == 0, TEST_COUNT_AA_COUNT_AFTER, "");
+  TAP_TEST(ckaa.countAfter(cAffect, 13  - k + 1) == 0, TEST_COUNT_AA_COUNT_AFTER, "");
 
-  TAP_TEST(ckaa.countAfter(gAffect, 12 - index->smallestAnalysableLength() + 1) == 1, TEST_COUNT_AA_COUNT_AFTER, "");
-  TAP_TEST(ckaa.countAfter(gAffect, 13 - index->smallestAnalysableLength() + 1) == 0, TEST_COUNT_AA_COUNT_AFTER, "");
-  TAP_TEST(ckaa.countBefore(gAffect, 12 - index->smallestAnalysableLength() + 1) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
-  TAP_TEST(ckaa.countBefore(gAffect, 13 - index->smallestAnalysableLength() + 1) == 1, TEST_COUNT_AA_COUNT_BEFORE, "");
+  TAP_TEST(ckaa.countAfter(gAffect, 12  - k + 1) == 1, TEST_COUNT_AA_COUNT_AFTER, "");
+  TAP_TEST(ckaa.countAfter(gAffect, 13  - k + 1) == 0, TEST_COUNT_AA_COUNT_AFTER, "");
+  TAP_TEST(ckaa.countBefore(gAffect, 12  - k + 1) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
+  TAP_TEST(ckaa.countBefore(gAffect, 13  - k + 1) == 1, TEST_COUNT_AA_COUNT_BEFORE, "");
 
-  TAP_TEST(ckaa.firstMax(cAffect, gAffect) == 9 - (int)index->smallestAnalysableLength() + 1, TEST_COUNT_AA_FIRST_MAX, "");
-  TAP_TEST(ckaa.lastMax(cAffect, gAffect) == 11 - (int)index->smallestAnalysableLength() + 1, TEST_COUNT_AA_LAST_MAX, ckaa.lastMax(cAffect, gAffect));
+  TAP_TEST(ckaa.firstMax(cAffect, gAffect) == 9 - k + 1, TEST_COUNT_AA_FIRST_MAX, "");
+  TAP_TEST(ckaa.lastMax(cAffect, gAffect) == 11 -  k + 1, TEST_COUNT_AA_LAST_MAX, ckaa.lastMax(cAffect, gAffect));
 
   // Test affectation with two affects that are not in the sequence
   KmerAffect aAffect = KmerAffect(seq[5], 1, k);
@@ -93,8 +93,8 @@ void testAffectAnalyser1() {
   TAP_TEST(ckaa.firstMax(aAffect, tAffect) == -1, TEST_COUNT_AA_FIRST_MAX, "");
   TAP_TEST(ckaa.lastMax(aAffect, tAffect) == - 1, 
            TEST_COUNT_AA_LAST_MAX, "");
-  TAP_TEST(ckaa.countAfter(tAffect, 7 - index->smallestAnalysableLength() + 1) == 0, TEST_COUNT_AA_COUNT_AFTER, "");
-  TAP_TEST(ckaa.countBefore(tAffect, 7 - index->smallestAnalysableLength() + 1) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
+  TAP_TEST(ckaa.countAfter(tAffect, 7  - k + 1) == 0, TEST_COUNT_AA_COUNT_AFTER, "");
+  TAP_TEST(ckaa.countBefore(tAffect, 7  - k + 1) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
 
   // Test affectation with one affect not in the sequence
 
@@ -125,14 +125,14 @@ void testAffectAnalyser2() {
   TAP_TEST(kaa.getSequence() == "TTTTTGGGGG", TEST_AA_GET_SEQUENCE, "actual: ");
   TAP_TEST(ckaa.getSequence() == "TTTTTGGGGG", TEST_AA_GET_SEQUENCE, "actual: " << ckaa.getSequence());
 
-  TAP_TEST(kaa.getAffectation(1+k - index->smallestAnalysableLength()) == KmerAffect(seq[2*(nb_seq-1)+1], -1, k), TEST_AA_GET_AFFECT, "");
-  TAP_TEST(kaa.count(kaa.getAffectation(1+k - index->smallestAnalysableLength())) == 1, TEST_AA_GET_AFFECT, "");
-  TAP_TEST(ckaa.count(kaa.getAffectation(1+k - index->smallestAnalysableLength())) == 1, TEST_COUNT_AA_COUNT, "");
-  TAP_TEST(kaa.getAffectation(0+k - index->smallestAnalysableLength()) == kaa.getAffectation(10 - index->smallestAnalysableLength()), TEST_AA_GET_AFFECT, "");
-  TAP_TEST(kaa.getAffectation(0+ k - index->smallestAnalysableLength()).isAmbiguous(), TEST_AA_PREDICATES, "");
+  TAP_TEST(kaa.getAffectation(1) == KmerAffect(seq[2*(nb_seq-1)+1], -1, k), TEST_AA_GET_AFFECT, "");
+  TAP_TEST(kaa.count(kaa.getAffectation(1)) == 1, TEST_AA_GET_AFFECT, "");
+  TAP_TEST(ckaa.count(kaa.getAffectation(1)) == 1, TEST_COUNT_AA_COUNT, "");
+  TAP_TEST(kaa.getAffectation(0) == kaa.getAffectation(10 - k), TEST_AA_GET_AFFECT, "");
+  TAP_TEST(kaa.getAffectation(0).isAmbiguous(), TEST_AA_PREDICATES, "");
 
   for (int i = 6; i < 14 - k; i++)
-    TAP_TEST(kaa.getAffectation(i - index->smallestAnalysableLength() + 1).isUnknown(), TEST_AA_PREDICATES, "");
+    TAP_TEST(kaa.getAffectation(i  - k + 1).isUnknown(), TEST_AA_PREDICATES, "");
 
   TAP_TEST(kaa.getDistinctAffectations().size() == 3, TEST_AA_GET_DISTINCT_AFFECT, "");
 
@@ -143,17 +143,13 @@ void testAffectAnalyser2() {
            TEST_COUNT_AA_MAX, "max is " << ckaa.max());
 
   for (int i = 4; i < 14 - k; i++)
-    TAP_TEST(kaa.getAffectation(i - index->smallestAnalysableLength() + 1) == kaa.getAllAffectations(AO_NONE)[i - index->smallestAnalysableLength() + 1], TEST_AA_GET_ALL_AO_NONE, "");
+    TAP_TEST(kaa.getAffectation(i  - k + 1) == kaa.getAllAffectations(AO_NONE)[i  - k + 1], TEST_AA_GET_ALL_AO_NONE, "");
 
   TAP_TEST(kaa.getAffectation(0) == kaa.getAllAffectations(AO_NO_CONSECUTIVE)[0], TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, "");
-  if (index->smallestAnalysableLength() == k) {
-    TAP_TEST(kaa.getAllAffectations(AO_NO_CONSECUTIVE).size() == 4, TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, "size = " << kaa.getAllAffectations(AO_NO_CONSECUTIVE).size());
-    TAP_TEST(kaa.getAffectation(1) == kaa.getAllAffectations(AO_NO_CONSECUTIVE)[1], TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, "actual: " << kaa.getAllAffectations(AO_NO_CONSECUTIVE)[1] << ", expected: " << kaa.getAffectation(1));
-    TAP_TEST(kaa.getAffectation(2) == kaa.getAllAffectations(AO_NO_CONSECUTIVE)[2], TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, kaa.getAllAffectations(AO_NO_CONSECUTIVE)[2] << ", expected: " << kaa.getAffectation(2));
-    TAP_TEST(kaa.getAllAffectations(AO_NO_CONSECUTIVE)[3] == kaa.getAffectation(10-k), TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, kaa.getAllAffectations(AO_NO_CONSECUTIVE)[3] << ", expected: " << kaa.getAffectation(10-k));
-  } else {
-    TAP_TEST(kaa.getAllAffectations(AO_NO_CONSECUTIVE).size() == 5, TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, "size = " << kaa.getAllAffectations(AO_NO_CONSECUTIVE).size());
-  }
+  TAP_TEST(kaa.getAllAffectations(AO_NO_CONSECUTIVE).size() == 4, TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, "size = " << kaa.getAllAffectations(AO_NO_CONSECUTIVE).size());
+  TAP_TEST(kaa.getAffectation(1) == kaa.getAllAffectations(AO_NO_CONSECUTIVE)[1], TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, "actual: " << kaa.getAllAffectations(AO_NO_CONSECUTIVE)[1] << ", expected: " << kaa.getAffectation(1));
+  TAP_TEST(kaa.getAffectation(2) == kaa.getAllAffectations(AO_NO_CONSECUTIVE)[2], TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, kaa.getAllAffectations(AO_NO_CONSECUTIVE)[2] << ", expected: " << kaa.getAffectation(2));
+  TAP_TEST(kaa.getAllAffectations(AO_NO_CONSECUTIVE)[3] == kaa.getAffectation(10-k), TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, kaa.getAllAffectations(AO_NO_CONSECUTIVE)[3] << ", expected: " << kaa.getAffectation(10-k));
 
   delete index;
 }
