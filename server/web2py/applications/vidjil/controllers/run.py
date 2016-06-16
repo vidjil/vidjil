@@ -177,10 +177,19 @@ def add():
 		db.run.pcr,
 		distinct=True
 	)
+
+        if (auth.is_admin()):
+            groups = db(db.auth_group).select(db.auth_group.id, db.auth_group.role)
+        else:
+            groups = auth.get_user_groups()
+        master_group = auth.user_group()
+        for row in groups:
+            if row.role == 'Lille':
+                master_group = row.id
 		
         return dict(message=T('add run'),
 				   sequencer_list = sequencer_list,
-				   pcr_list = pcr_list)
+				   pcr_list = pcr_list, groups=groups, master_group=master_group)
     else :
         res = {"message": ACCESS_DENIED}
         log.error(res)
@@ -218,11 +227,11 @@ def add_form():
                                    creator=auth.user_id)
 
 
-            user_group = auth.user_group(auth.user.id)
+            user_group = int(request.vars["run_group"])
             admin_group = db(db.auth_group.role=='admin').select().first().id
             
             #patient creator automaticaly has all rights 
-            auth.add_permission(user_group, 'access', db.run, id)
+            auth.add_permission(user_group, PermissionEnum.access.value, db.run, id)
 
             res = {"redirect": "run/index",
                    "args" : { "id" : id },
