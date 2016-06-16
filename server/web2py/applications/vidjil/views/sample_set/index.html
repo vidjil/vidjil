@@ -96,10 +96,14 @@
 
                     {{if can_modify:}}
                         <td class="pointer" onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}'} )" >  <i class="icon-pencil-2" title="edit sample information"></i> </td>
+                    {{else:}}
+                      <td></td>
+                    {{pass}}
                         <td> <a {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}
                                 {{else:}} href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" {{pass}}  >dl</a></td>
+                    {{if can_modify:}}
                         <td class="pointer" onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id }}', 'redirect_sample_set_id' : '{{=request.vars["id"]}}'} )" >  <i class="icon-erase" title="delete sample"></i> </td>
-                    {{else:}}<td></td><td></td><td></td>{{pass}}
+                    {{else:}}<td></td>{{pass}}
 
 
                     <td class="column_sep"></td>
@@ -145,7 +149,9 @@
     
     
    <br /><br />
+   {{if can_modify:}}
    <i class="icon-pencil-2" title="edit patient information" onclick="db.call('sample_set/edit', { 'id' : '{{=request.vars["id"]}}' } )" > </i>
+   {{pass}}
    {{=info["info"]}}
 
         {{if can_upload: }}
