@@ -40,6 +40,20 @@ void testAffect() {
   TAP_TEST(Vminus <= Vminus, TEST_AFFECT_COMPARISON, "");
   TAP_TEST(Vminus >= Vminus, TEST_AFFECT_COMPARISON, "");
 
+  affect_t Vminus_nolength = {'V', (unsigned char) ~0};
+  TAP_TEST(Vminus == Vminus_nolength, TEST_AFFECT_COMPARISON, "");
+  Vminus_nolength.length = 1;
+  TAP_TEST(Vminus == Vminus_nolength, TEST_AFFECT_COMPARISON, "");
+  Vminus_nolength.length = 2;
+  TAP_TEST(Vminus != Vminus_nolength, TEST_AFFECT_COMPARISON, "");
+
+  affect_t unknown = {AFFECT_UNKNOWN_CHAR, 1};
+  affect_t unknown2 = {AFFECT_UNKNOWN_CHAR, 2};
+  TAP_TEST(unknown == unknown2, TEST_AFFECT_COMPARISON, "");
+  affect_t ambiguous = {AFFECT_AMBIGUOUS_CHAR, 1};
+  affect_t ambiguous2 = {AFFECT_AMBIGUOUS_CHAR, 2};
+  TAP_TEST(ambiguous == ambiguous2, TEST_AFFECT_COMPARISON, "");
+
   TAP_TEST(toString(Vminus) == "-V", TEST_AFFECT_TO_STRING, toString(Vminus));
   TAP_TEST(toString(Vplus) == "+V", TEST_AFFECT_TO_STRING, toString(Vplus));
   TAP_TEST(toString(Jplus) == "+J", TEST_AFFECT_TO_STRING, toString(Jplus));

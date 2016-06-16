@@ -39,7 +39,9 @@ size_t affect_length(const affect_t &affect) {
 // KmerAffect class
 
 bool operator==(const affect_t &a1, const affect_t &a2) {
-  return a1.c == a2.c && a1.length == a2.length;
+  return a1.c == a2.c &&
+    (affect_char(a1) == AFFECT_AMBIGUOUS_CHAR || affect_char(a1) == AFFECT_UNKNOWN_CHAR
+     ||a1.length == a2.length);
 }
 bool operator<(const affect_t &a1, const affect_t &a2) {
   return a1.c < a2.c;
