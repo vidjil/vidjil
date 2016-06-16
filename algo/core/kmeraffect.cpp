@@ -53,7 +53,7 @@ bool operator!=(const affect_t &a1, const affect_t &a2) {
 }
 string toString(const affect_t &a) {
   string result;
-  if((a == AFFECT_UNKNOWN) || (a == AFFECT_AMBIGUOUS))
+  if((a == AFFECT_UNKNOWN.affect) || (a == AFFECT_AMBIGUOUS.affect))
     result = " ";
   else
     result = (affect_strand(a)==1 ? "+" : "-");
@@ -67,7 +67,7 @@ string toStringValues(const affect_t &a){
 }
 
 string toStringSigns(const affect_t &a){
-  if((a == AFFECT_UNKNOWN) || (a == AFFECT_AMBIGUOUS))
+  if((a == AFFECT_UNKNOWN.affect) || (a == AFFECT_AMBIGUOUS.affect))
     return " ";
   else
     return (affect_strand(a)==1 ? "+" : "-");
