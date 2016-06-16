@@ -1,5 +1,5 @@
 from gluon.tools import Auth
-from pydal.objects import Row, Set, Query
+from gluon.dal import Row, Set, Query
 from enum import Enum
 
 class PermissionEnum(Enum):
