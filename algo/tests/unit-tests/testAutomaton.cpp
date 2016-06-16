@@ -75,12 +75,12 @@ void testRCInsertAcAutomaton() {
   TAP_TEST(aho.goto_state("GAGTG")->transitions[A] == aho.goto_state("GA"), TEST_AC_TRANSITIONS, "");
 
   vector<KmerAffect> results = aho.getResults("ACCGTgaatgCATTCA");
-  vector<KmerAffect> expected = {AFFECT_UNKNOWN, AFFECT_UNKNOWN, AFFECT_UNKNOWN,
-                                 AFFECT_UNKNOWN, AFFECT_AMBIGUOUS,
+  vector<KmerAffect> expected = {AFFECT_AMBIGUOUS,
                                  AFFECT_UNKNOWN, AFFECT_UNKNOWN, AFFECT_UNKNOWN,
                                  AFFECT_UNKNOWN, AFFECT_V_BWD, AFFECT_UNKNOWN,
                                  AFFECT_UNKNOWN, AFFECT_UNKNOWN, AFFECT_UNKNOWN,
-                                 AFFECT_V, AFFECT_UNKNOWN};
+                                 AFFECT_V, AFFECT_UNKNOWN, AFFECT_UNKNOWN, AFFECT_UNKNOWN, AFFECT_UNKNOWN,
+                                 AFFECT_UNKNOWN };
 
   TAP_TEST(results.size() == expected.size(), TEST_AC_GET_RESULTS, "");
   TAP_TEST(results == expected, TEST_AC_GET_RESULTS, "");
