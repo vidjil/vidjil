@@ -6,7 +6,7 @@ LDLIBS=-lz
 SRC= unit-tests/tests.cpp
 EXEC=$(SRC:.cpp=)
 OBJ=$(SRC:.cpp=.o)
-OTHER_SRC=$(wildcard *.cpp)
+OTHER_SRC=$(wildcard unit-tests/*.cpp)
 LIB=../core/vidjil.a ../lib/lib.a
 SHOULD=$(wildcard should-get-tests/*.should-get)
 SHOULD_LOG=$(SHOULD:.should-get=.tap)
