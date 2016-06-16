@@ -339,7 +339,7 @@ void IKmerStore<T>::finish_building() {
 
 template<class T>
 float IKmerStore<T>::getIndexLoad(const T kmer) const {
-  float index_load = nb_kmers_inserted / pow(4.0, kmer.getLength());
+  float index_load = nb_kmers_inserted / pow(4.0, k);
   return (kmer.isUnknown()) ? 1 - index_load : index_load;
 }
 
