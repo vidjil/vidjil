@@ -7,14 +7,14 @@
 
 using namespace std;
 
-void testSegmentationBug1(int delta_min) {
+void testSegmentationBug1(IndexTypes index, int delta_min) {
   string buggy_sequences = "bugs/kmersegment.fa";
   Fasta seqV("../../germline/TRGV.fa");
   Fasta seqJ("../../germline/TRGJ.fa");
 
   Germline *germline ;
   germline = new Germline("custom", 'x', seqV, seqV, seqJ, delta_min, "##############");
-  germline->new_index();
+  germline->new_index(index);
   germline->finish();
   
   OnlineFasta input(buggy_sequences);
@@ -54,5 +54,6 @@ void testSegmentationBug1(int delta_min) {
 }
 
 void testBugs() {
-  testSegmentationBug1(-10);
+  testSegmentationBug1(KMER_INDEX, -10);
+  testSegmentationBug1(AC_AUTOMATON, -10);
 }

@@ -41,7 +41,7 @@ void testOverlap()
   delete box_C;
 }
 
-void testFineSegment()
+void testFineSegment(IndexTypes index)
 {
   Fasta seqV("../../germline/IGHV.fa", 2);
   Fasta seqD("../../germline/IGHD.fa", 2);
@@ -53,7 +53,7 @@ void testFineSegment()
 
   Germline *germline ;
   germline = new Germline("IGH", 'G', seqV, seqD, seqJ, 0, "########");
-  germline->new_index();
+  germline->new_index(index);
   germline->finish();
 
   Sequence seq = data.getSequence();
@@ -96,7 +96,7 @@ void testFineSegment()
 /**
  * Test segmentation when there is an overlap between V and J (and no N)
  */
-void testSegmentOverlap()
+void testSegmentOverlap(IndexTypes index)
 {
   Fasta seqV("../../germline/TRGV.fa", 2);
   Fasta seqJ("../../germline/TRGJ.fa", 2);
@@ -105,11 +105,11 @@ void testSegmentOverlap()
   
   Germline *germline1 ;
   germline1 = new Germline("TRG", 'G', seqV, Fasta(), seqJ, -50, "##########");
-  germline1->new_index();
+  germline1->new_index(index);
 
   Germline *germline2 ;
   germline2 = new Germline("TRG2", 'G', seqV, Fasta(), seqJ, -50, "##########");
-  germline2->new_index();
+  germline2->new_index(index);
 
   germline1->finish();
   germline2->finish();
@@ -133,7 +133,7 @@ void testSegmentOverlap()
   delete germline2;
 }
 
-void testSegmentationCause() {
+void testSegmentationCause(IndexTypes index) {
   Fasta seqV("../../germline/TRGV.fa", 2);
   Fasta seqJ("../../germline/TRGJ.fa", 2);
   
@@ -141,7 +141,7 @@ void testSegmentationCause() {
 
   Germline *germline ;
   germline = new Germline("TRG", 'G', seqV, Fasta(), seqJ, 0, "##########");
-  germline->new_index();
+  germline->new_index(index);
   germline->finish();
 
   int nb_checked = 0;
@@ -246,7 +246,7 @@ void testSegmentationCause() {
   delete germline;
 }
 
-void testExtractor() {
+void testExtractor(IndexTypes index) {
   Fasta seqV("../../germline/TRGV.fa", 2);
   Fasta seqJ("../../germline/TRGJ.fa", 2);
   
@@ -254,10 +254,10 @@ void testExtractor() {
 
   Germline *germline ;
   germline = new Germline("TRG", 'G', seqV, Fasta(), seqJ, 0, "##########");
-  germline->new_index();
+  germline->new_index(index);
 
   MultiGermline *multi ;
-  multi = new MultiGermline();
+  multi = new MultiGermline(index);
   multi->insert(germline);
   multi->finish();
 
@@ -303,7 +303,7 @@ void testExtractor() {
   delete multi;
 }
 
-void testProbability() {
+void testProbability(IndexTypes index) {
   string v_seq[] = {"AAAA", "AAAC", "AAAG", "AAAT", "AACA", "AACC",
                 "AACG", "AACT", "AAGA", "AAGC", "AAGG", "AAGT",
                     "AATA", "AATC", "AATG", "AATT", "ACAA", "ACAC",
@@ -335,7 +335,7 @@ void testProbability() {
     J.add(j);
   }
   Germline germline("Test", 'T', V, Fasta(), J, 0, "####");
-  germline.new_index();
+  germline.new_index(index);
   germline.finish();
 
   if (! germline.index->hasDifferentKmerTypes()) {
@@ -362,10 +362,15 @@ void testProbability() {
 }
 
 void testSegment() {
-  testSegmentOverlap();
-  testSegmentationCause();
-  testExtractor();
-  testProbability();
+  testSegmentOverlap(KMER_INDEX);
+  testSegmentOverlap(AC_AUTOMATON);
+  testSegmentationCause(KMER_INDEX);
+  testSegmentationCause(AC_AUTOMATON);
+  testExtractor(KMER_INDEX);
+  testExtractor(AC_AUTOMATON);
+  testProbability(KMER_INDEX);
+  testProbability(AC_AUTOMATON);
   testOverlap();
-  testFineSegment();
+  testFineSegment(KMER_INDEX);
+  testFineSegment(AC_AUTOMATON);
 }
