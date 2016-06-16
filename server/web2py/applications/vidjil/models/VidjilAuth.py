@@ -9,6 +9,7 @@ class PermissionEnum(Enum):
     upload = 'upload'
     create = 'create'
     run = 'run'
+    save = 'save'
     admin_config = 'admin'
     read_config = 'read'
     create_config = 'create'
@@ -403,6 +404,42 @@ class VidjilAuth(Auth):
         If the user is None, the current user is taken into account
         '''
         return self.get_permission(PermissionEnum.anon.value, 'patient', patient_id, user)
+
+    def can_save_patient(self, patient_id, user = None):
+        '''
+        Returns True if the user can save an analysis for the given patient
+
+        If the user is None, the current user is taken into account
+        '''
+        return self.get_permission(PermissionEnum.save.value, 'patient', patient_id, user)\
+            or self.is_admin(user)
+
+    def can_save_run(self, run_id, user = None):
+        '''
+        Returns True if the user can save an analysis for the given run
+
+        If the user is None, the current user is taken into account
+        '''
+        return self.get_permission(PermissionEnum.save.value, 'run', run_id, user)\
+            or self.is_admin(user)
+
+    def can_save_sample_set(self, sample_set_id, user = None) :
+        sample_set = db.sample_set[sample_set_id]
+
+        perm = self.get_permission(PermissionEnum.save.value, 'sample_set', sample_set_id, user)\
+            or self.is_admin(user)
+
+        if (sample_set.sample_type == "patient") :
+            for row in db( db.patient.sample_set_id == sample_set_id ).select() :
+                if self.can_save_patient(row.id, user):
+                    perm = True;
+
+        if (sample_set.sample_type == "run") :
+            for row in db( db.run.sample_set_id == sample_set_id ).select() :
+                if self.can_save_run(row.id, user):
+                    perm = True;
+
+        return perm
 
     def get_group_parent(self, group_id):
         parent_group_list = db(
