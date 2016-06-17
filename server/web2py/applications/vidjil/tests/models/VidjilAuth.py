@@ -31,7 +31,7 @@ class VidjilauthModel(unittest.TestCase):
         # Load the to-be-tested file
         execfile("applications/vidjil/models/VidjilAuth.py", globals())
         # set up default session/request/auth/...
-        global auth, group, group_sec, group_ter, group_qua, my_user_id, user_id_sec, count, patient_id, patient_id_sec, parent_user_id, admin_patient_id, sample_set_id, sample_set_id_sec, sample_set_id_ter
+        global auth, group, group_sec, group_ter, group_qua, group_qui, my_user_id, user_id_sec, count, patient_id, patient_id_sec, parent_user_id, admin_patient_id, sample_set_id, sample_set_id_sec, sample_set_id_ter
         auth = VidjilAuth(globals(), db)
 
         my_user_id = db.auth_user.insert(
@@ -105,7 +105,10 @@ class VidjilauthModel(unittest.TestCase):
         group_qua = db.auth_group.insert(role="group4", description="fourth group")
         db.auth_membership.insert(user_id=my_user_id, group_id=group_qua)
 
+        group_qui = db.auth_group.insert(role="group5", description="fifth group")
+
         db.group_assoc.insert(first_group_id = fake_group_id, second_group_id = group_sec)
+        db.group_assoc.insert(first_group_id = group_qui, second_group_id = group)
 
         db.auth_permission.insert(name=PermissionEnum.upload.value, table_name='sample_set', group_id=group_qua, record_id=0)
         db.auth_permission.insert(name=PermissionEnum.run.value, table_name='sample_set', group_id=group_qua, record_id=0)
@@ -406,8 +409,17 @@ class VidjilauthModel(unittest.TestCase):
         result = [g.id for g in auth.get_user_groups()]
         self.assertEqual(Counter(expected), Counter(result), "Expected: %s, but got: %s" % (str(expected), str(result)))
 
-        expected = [group_sec, fake_group_id]
+        expected = [group_sec]
         result = [g.id for g in auth.get_user_groups(user_id_sec)]
+        self.assertEqual(Counter(expected), Counter(result), "Expected: %s, but got: %s" % (str(expected), str(result)))
+
+    def testGetUserGroupParents(self):
+        expected = [group_qui]
+        result = [g.id for g in auth.get_user_group_parents()]
+        self.assertEqual(Counter(expected), Counter(result), "Expected: %s, but got: %s" % (str(expected), str(result)))
+
+        expected = [fake_group_id]
+        result = [g.id for g in auth.get_user_group_parents(user_id_sec)]
         self.assertEqual(Counter(expected), Counter(result), "Expected: %s, but got: %s" % (str(expected), str(result)))
 
     def testVidjilAccessibleQuery(self):
