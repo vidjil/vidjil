@@ -485,7 +485,7 @@ Clone.prototype = {
     }, //end getSize
 
     computeEValue: function () {
-        var e = this.getGene('_evalue');
+        var e = this.seg['_evalue'];
         if (typeof(e) != 'undefined')
             this.eValue = parseFloat(e)
         else

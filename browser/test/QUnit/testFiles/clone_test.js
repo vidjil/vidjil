@@ -9,6 +9,7 @@
         "seg" : {
             "3" : "IGHV4*01",
             "4" : "IGHD2*03",
+            '_evalue': 1e-2,
             "3start" : 15,
             "5end" : 5,
             "cdr3": {
@@ -116,7 +117,7 @@ test("clone : name, informations, getHtmlInfo", function() {
     includes(html, "<tr><td> clone size (n-reads (total reads) )</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td> clone size (%)</td><td>10.00%</td><td>20.00%</td><td>15.00%</td><td>30.00%</td>",
              "getHtmlInfo: clone information");
     
-    includes(html, "<tr><td class='header' colspan='5'> representative sequence</td></tr><tr><td> sequence name </td><td colspan='4'>hello</td></tr><tr><td> code </td><td colspan='4'>hello</td></tr><tr><td> length </td><td colspan='4'>19</td></tr><tr><td> size (n-reads (total reads) )</td><td>10  (200)</td><td>10  (100)</td><td>15  (200)</td><td>15  (100)</td></tr><tr><td> size (%)</td><td>5.000%</td><td>10.00%</td><td>7.500%</td><td>15.00%</td></tr>",
+    includes(html, "<tr><td class='header' colspan='5'> representative sequence</td></tr><tr><td> sequence name </td><td colspan='4'>hello</td></tr><tr><td> code </td><td colspan='4'>hello</td></tr><tr><td> length </td><td colspan='4'>19</td></tr><tr><td> e-value </td><td colspan='4'><span class='warning'>0.01</span></td><tr><td> size (n-reads (total reads) )</td><td>10  (200)</td><td>10  (100)</td><td>15  (200)</td><td>15  (100)</td></tr><tr><td> size (%)</td><td>5.000%</td><td>10.00%</td><td>7.500%</td><td>15.00%</td></tr>",
         "getHtmlInfo: representative sequence information");
 
     includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' onclick='m.clones[0].toggle()'>edit</button> </td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", 
@@ -188,6 +189,9 @@ test('clone: get info from seg', function() {
     pos_junction = c1.getSegStartStop('junction')
     equal(pos_junction['start'], 9, "start junction of c1")
     equal(pos_junction['stop'], 11, "stop junction of c1")
+
+    equal(c1.eValue, 1e-2, 'Evalue of clone 1 should be 1e-2')
+    equal(c2.eValue, undefined, 'e-value of clone should not be defined')
 
     equal(c1.getSegNtSequence('junction'), 'aat', 'junction c1')
     equal(c1.getSegAASequence('junction'), '', 'no AA junction for c1')
