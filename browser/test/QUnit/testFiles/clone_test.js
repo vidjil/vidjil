@@ -193,6 +193,9 @@ test('clone: get info from seg', function() {
     equal(c1.eValue, 1e-2, 'Evalue of clone 1 should be 1e-2')
     equal(c2.eValue, undefined, 'e-value of clone should not be defined')
 
+    c1.computeEValue()
+    equal(c1.eValue, 1e-2, 'Recomputing e-value should not change its value')
+
     equal(c1.getSegNtSequence('junction'), 'aat', 'junction c1')
     equal(c1.getSegAASequence('junction'), '', 'no AA junction for c1')
     equal(c1.getSegAASequence('cdr3'), 'ABCDE', 'AA CDR3 for c1')
