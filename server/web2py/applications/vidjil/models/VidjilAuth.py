@@ -461,14 +461,19 @@ class VidjilAuth(Auth):
                 (db.auth_membership.user_id == user) &
                 (db.auth_membership.group_id == db.auth_group.id)
                 ).select(db.auth_group.id, db.auth_group.role, groupby=db.auth_group.id)
+
+        return group_list
+
+    def get_user_group_parents(self, user = None):
+        is_current_user = user == None
+        if is_current_user:
+            user = self.user_id
         parent_list = db(
                 (db.auth_membership.user_id == user) &
                 (db.auth_membership.group_id == db.group_assoc.second_group_id) &
                 (db.group_assoc.first_group_id == db.auth_group.id)
                 ).select(db.auth_group.id, db.auth_group.role, groupby=db.auth_group.id)
-
-
-        return group_list | parent_list
+        return parent_list
 
     def vidjil_accessible_query(self, name, table, user_id=None):
         """
