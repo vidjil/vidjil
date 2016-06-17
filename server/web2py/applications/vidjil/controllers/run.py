@@ -181,15 +181,24 @@ def add():
         if (auth.is_admin()):
             groups = db(db.auth_group).select(db.auth_group.id, db.auth_group.role)
         else:
-            groups = auth.get_user_groups()
-        master_group = auth.user_group()
-        for row in groups:
-            if row.role == 'Lille':
-                master_group = row.id
+            groups = [{'name': 'Personnal Group', 'id': auth.user_group()}]
+            group_list = auth.get_user_group_parents()
+            max_elements = 0
+            max_group = auth.user_group()
+            for group in group_list:
+                groups.append({'id': group.id, 'name': group.role})
+                elements = db(
+                    (db.auth_permission.group_id == group.id) &
+                    (db.auth_permission.table_name.belongs('patient', 'run', 'sample_set')) &
+                    (db.auth_permission.record_id > 0)
+                ).count()
+                if (elements > max_elements):
+                    max_elements = elements
+                    max_group = group.id
 		
         return dict(message=T('add run'),
 				   sequencer_list = sequencer_list,
-				   pcr_list = pcr_list, groups=groups, master_group=master_group)
+				   pcr_list = pcr_list, groups=groups, master_group=max_group)
     else :
         res = {"message": ACCESS_DENIED}
         log.error(res)

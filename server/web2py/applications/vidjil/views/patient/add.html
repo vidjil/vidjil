@@ -11,7 +11,7 @@
             <tr class='devel-mode'>
                 <td><label for="patient_group" id="patient_group__label">Owner Group: </label></td>
                 <td>
-                    {{= SELECT(*[OPTION(g.role, _value=g.id) for g in groups], _name="patient_group", _value=master_group, value=master_group) }}
+                    {{= SELECT(*[OPTION(g['name'], _value=g['id']) for g in groups], _name="patient_group", _value=master_group, value=master_group) }}
                 </td>
                 <td></td>
             </tr>
