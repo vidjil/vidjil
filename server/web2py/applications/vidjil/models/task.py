@@ -720,6 +720,9 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
     log_file.close()
     for l in open(out_log):
         print l,
+
+    # Remove data file from disk to save space (it is now saved elsewhere)
+    os.remove(filepath)
     
     if clean_after:
         clean_cmd = "rm -rf " + out_folder 
