@@ -16,6 +16,7 @@ parser.add_argument("output_file", help="output file")
 parser.add_argument("-r1", "--keep_r1", help="keep unmerged reverse reads", action="store_true")
 parser.add_argument("-r2", "--keep_r2", help="keep unmerged forward reads", action="store_true")
 parser.add_argument("-p", "--pear-options", help="additional options passed to PEAR", default="")
+parser.add_argument("-k", "--keep", help="keep temporary files (may take lots of disk space in the end)", action = 'store_true')
 
 
 args = parser.parse_args()
@@ -43,6 +44,10 @@ try :
         if (args.keep_r2):
             with open(f_out+'.unassembled.forward.fastq', 'rb') as f3:
                 shutil.copyfileobj(f3, outFile)
+        if not args.keep:
+            os.remove(f_out+'.assembled.fastq')
+            os.remove(f_out+'.unassembled.reverse.fastq')
+            os.remove(f_out+'.unassembled.forward.fastq')
 except IOError :
     os.remove(f_out)
     raise IOError
