@@ -211,7 +211,6 @@ void PointerACAutomaton<Info>::insert(const seqtype &sequence, const string &lab
   if (seed.empty())
     seed = this->seed;
   size_t seed_span = seed.length();
-  size_t seed_w = seed_weight(seed);
 
   for(size_t i = start_indexing ; i + seed_span < end_indexing + 1 ; i++) {
     seqtype substr = sequence.substr(i, seed_span);
@@ -226,11 +225,11 @@ void PointerACAutomaton<Info>::insert(const seqtype &sequence, const string &lab
     }
 
     for (seqtype &seq: sequences) {
-      insert(seq, Info(label, 1, seed_w));
+      insert(seq, Info(label, 1, seed_span));
     }
     if (! Info::hasRevcompSymetry()) {
       for (seqtype &seq: sequences_rev) {
-        insert(seq, Info(label, -1, seed_w));
+        insert(seq, Info(label, -1, seed_span));
       }
     }
   }

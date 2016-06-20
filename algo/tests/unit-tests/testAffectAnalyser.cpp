@@ -198,6 +198,36 @@ void testAffectAnalyserMaxes() {
 }
 
 template<template <class> class T>
+void testAffectAnalyserSpaced() {
+  const string seed = "##-##";
+  const bool revcomp = false;
+
+  T<KmerAffect> *index = createIndex<T<KmerAffect> >(seed, revcomp);
+
+  string sequence = "AAAACCCCCGGGGG";
+  // AA-AC, AA-CC, AA-CC, AC-CC, CC-CC, CC-CG, CC-GG, CG-GG, GG-GG
+  KmerAffectAnalyser kaa(*index, sequence);
+  CountKmerAffectAnalyser ckaa(*index, sequence);
+
+  KmerAffect affect_AAAC(seq[11], 1, seed.size());
+  KmerAffect affect_AAAC_bad(seq[11], 1, seed_weight(seed));
+  KmerAffect affect_CCCC(seq[1], 1, seed.size());
+  KmerAffect affect_CCCC_bad(seq[1], 1, seed_weight(seed));
+  KmerAffect affect_GGGG(seq[3], 1, seed.size());
+  KmerAffect affect_GGGG_bad(seq[3], 1, seed_weight(seed));
+
+  TAP_TEST(kaa.toString().find("+V _ _ _+C _ _ _ _+G") != string::npos,
+           TEST_AA_TO_STRING, "");
+  TAP_TEST(kaa.count(affect_AAAC) == 1, TEST_AA_COUNT, "Expected 1, got " << kaa.count(affect_AAAC) << " in " << __PRETTY_FUNCTION__);
+  TAP_TEST(kaa.count(affect_CCCC) == 1, TEST_AA_COUNT, "Expected 1, got " << kaa.count(affect_CCCC) << " in " << __PRETTY_FUNCTION__);
+  TAP_TEST(kaa.count(affect_GGGG) == 1, TEST_AA_COUNT, "Expected 1, got " << kaa.count(affect_GGGG) << " in " << __PRETTY_FUNCTION__);
+
+  TAP_TEST(kaa.count(affect_AAAC_bad) == 0, TEST_AA_COUNT, "Expected 0, got " << kaa.count(affect_AAAC_bad) << " in " << __PRETTY_FUNCTION__);
+  TAP_TEST(kaa.count(affect_CCCC_bad) == 0, TEST_AA_COUNT, "Expected 0, got " << kaa.count(affect_CCCC_bad) << " in " << __PRETTY_FUNCTION__);
+  TAP_TEST(kaa.count(affect_GGGG_bad) == 0, TEST_AA_COUNT, "Expected 0, got " << kaa.count(affect_GGGG_bad) << " in " << __PRETTY_FUNCTION__);
+}
+
+template<template <class> class T>
 void testGetMaximum() {
   const int k = 4;
   const bool revcomp = true;
@@ -371,15 +401,19 @@ void testAffectAnalyser() {
   testAffectAnalyser2<MapKmerStore>();
   testBugAffectAnalyser<MapKmerStore>();
   testGetMaximum<MapKmerStore>();
+  testAffectAnalyserSpaced<MapKmerStore>();
 
   testAffectAnalyser1<ArrayKmerStore>();
   testAffectAnalyser2<ArrayKmerStore>();
   testAffectAnalyserMaxes<ArrayKmerStore>();
   testBugAffectAnalyser<ArrayKmerStore>();
   testGetMaximum<ArrayKmerStore>();
+  testAffectAnalyserSpaced<ArrayKmerStore>();
+
 
   testAffectAnalyser1<PointerACAutomaton>();
   testAffectAnalyser2<PointerACAutomaton>();
   testAffectAnalyserMaxes<PointerACAutomaton>();
   testBugAffectAnalyser<PointerACAutomaton>();
+  testAffectAnalyserSpaced<PointerACAutomaton>();
 }
