@@ -84,7 +84,7 @@ public:
    * @post affect_strand(affect) == strand AND affect_char(affect) == kmer[0] AND
    *       affect_length(affect) == length
    */
-  KmerAffect(const string &label, int strand, size_t length);
+  KmerAffect(const string &label, int strand, size_t length=~0);
 
   /**
    * Add another affectation to the current one.
@@ -192,11 +192,11 @@ const KmerAffect AFFECT_UNKNOWN = KmerAffect(AFFECT_UNKNOWN_SYMBOL, 0, 1);
  */
 const KmerAffect AFFECT_AMBIGUOUS = KmerAffect(AFFECT_AMBIGUOUS_SYMBOL, 1, 1);
 
-const KmerAffect AFFECT_V = KmerAffect("V", 1, 1);
-const KmerAffect AFFECT_J = KmerAffect("J", 1, 1);
+const KmerAffect AFFECT_V = KmerAffect("V", 1);
+const KmerAffect AFFECT_J = KmerAffect("J", 1);
 
-const KmerAffect AFFECT_V_BWD = KmerAffect("V", -1, 1);
-const KmerAffect AFFECT_J_BWD = KmerAffect("J", -1, 1);
+const KmerAffect AFFECT_V_BWD = KmerAffect("V", -1);
+const KmerAffect AFFECT_J_BWD = KmerAffect("J", -1);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

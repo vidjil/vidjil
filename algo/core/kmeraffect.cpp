@@ -41,7 +41,7 @@ size_t affect_length(const affect_t &affect) {
 bool operator==(const affect_t &a1, const affect_t &a2) {
   return a1.c == a2.c &&
     (affect_char(a1) == AFFECT_AMBIGUOUS_CHAR || affect_char(a1) == AFFECT_UNKNOWN_CHAR
-     ||a1.length == a2.length);
+     || a1.length == (unsigned char) ~0 || a2.length == (unsigned char)~0 || a1.length == a2.length);
 }
 bool operator<(const affect_t &a1, const affect_t &a2) {
   return a1.c < a2.c;
