@@ -103,7 +103,7 @@ string AlignBox::refToString(int from, int to) {
     if (i == start)
       s << color;
 
-    if (j > 0 && j <= ref.size())
+    if (j > 0 && (size_t)j <= ref.size())
       s << ref[j-1] ;
     else
       s << ".";
@@ -684,7 +684,7 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
       int trim_l[overlap+1];
       int trim_r[overlap+1];
 
-      for(int i=0; i<=overlap; i++) {
+      for(size_t i=0; i<=(size_t)overlap; i++) {
         score_l[i] = i < seq_left.size()  ? dp_l.best_score_on_i(seq_left.size()  - i, trim_l + i) : MINUS_INF ;
         score_r[i] = i < seq_right.size() ? dp_r.best_score_on_i(seq_right.size() - i, trim_r + i) : MINUS_INF ;
       }

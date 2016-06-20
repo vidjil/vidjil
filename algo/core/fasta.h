@@ -17,7 +17,7 @@ typedef struct read_t
   string sequence; // Sequence: original string representation
   string quality;
   int*   seq;      // Sequence: seq representation
-  int    marked_pos; // Some marked position in the sequence
+  size_t    marked_pos; // Some marked position in the sequence
 } Sequence;
 
 typedef enum {
@@ -32,9 +32,9 @@ unsigned long long filesize(const char* filename);
 
 class Fasta
 {
-        void init(int extract_field, string extract_separator, int mark_pos=0);
+        void init(int extract_field, string extract_separator, size_t mark_pos=0);
 
-        int total_size;
+        size_t total_size;
         int extract_field;
         int mark_pos;
 	string extract_separator;
@@ -59,7 +59,7 @@ public:
         string name;
         string basename;
 	int size() const;
-        int totalSize() const;
+        size_t totalSize() const;
 
         /**
          * Get all the sequences from the FASTA file
