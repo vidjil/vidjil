@@ -76,12 +76,11 @@ def run_all_patients():
 ## display run page result 
 ## need ["results_file_id"]
 def info():
-    patient_id = db((db.sequence_file.id == db.results_file.sequence_file_id)
+    sample_set_id = db((db.sequence_file.id == db.results_file.sequence_file_id)
                     &(db.results_file.id == request.vars["results_file_id"])
                     &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
-                    &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
-                ).select(db.patient.id).first().id
-    if (auth.can_modify_patient(patient_id)):
+                ).select(db.sample_set_membership.sample_set_id).first().sample_set_id
+    if (auth.can_modify_sample_set(sample_set_id)):
         return dict(message=T('result info'))
     else :
         res = {"message": "acces denied"}
