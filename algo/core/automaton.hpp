@@ -24,11 +24,15 @@ float AbstractACAutomaton<Info>::getIndexLoad(Info kmer) const {
     for(auto iter: kmers_inserted) {
       load += getIndexLoad(iter.first);
     }
-    return load;
+    return (kmer.isUnknown()) ? 1 - load : load;
   } else {
-    load = kmers_inserted.at(kmer) / pow(4.0, kmer.getLength());
+    return kmers_inserted.at(kmer) / pow(4.0, kmer.getLength());
   }
-  return (kmer.isUnknown()) ? 1 - load : load;
+}
+
+template<class T>
+bool AbstractACAutomaton<T>::hasDifferentKmerTypes() const {
+  return true;
 }
 
 template <class Info>

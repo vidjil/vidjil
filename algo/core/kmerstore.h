@@ -127,7 +127,10 @@ public:
   virtual T& get(seqtype &word) = 0;
 
   /**
-   * @return the percentage of kmers that are set in the index
+   * @return the percentage of kmers that are set in the index.
+   *         When ! hasDifferentKmerTypes(), the index load is always the same
+   *         (apart for the unknown kmer).
+   *         When kmer.isUnknown(), we return the load of all th other kmers.
    */
   virtual float getIndexLoad(T kmer) const;
 
@@ -162,6 +165,11 @@ public:
    * @return one label associated with the kmer
    */
   Fasta getLabel(T kmer) const;
+
+  /**
+   * @return whether the index differentiate kmer types
+   */
+  virtual bool hasDifferentKmerTypes() const;
 
   /**
    * @param seq: a sequence
@@ -393,6 +401,11 @@ Fasta IKmerStore<T>::getLabel(T kmer) const {
     if (it->first == kmer)
       return it->second ;
   return FASTA_AMBIGUOUS ;
+}
+
+template<class T>
+bool IKmerStore<T>::hasDifferentKmerTypes() const {
+  return false;
 }
 
 // .getResults()

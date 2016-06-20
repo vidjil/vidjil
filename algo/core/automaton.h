@@ -45,6 +45,11 @@ public:
   float getIndexLoad(Info kmer) const;
 
   /**
+   * @inherited from IKMerStore
+   */
+  bool hasDifferentKmerTypes() const;
+
+  /**
    * @return the information stored for this state
    */
   virtual list<Info> &getInfo(void *state) = 0;
