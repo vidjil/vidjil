@@ -139,7 +139,7 @@ int dna_to_int(const string &word, int size) {
 string nuc_to_aa(const string &word) {
   string aa;
   int index_word = 0;
-  int i = 0;
+  size_t i = 0;
 
   for (; i < word.length() ; i++) {
     index_word = (index_word << 2) | nuc_to_int(word[i]);

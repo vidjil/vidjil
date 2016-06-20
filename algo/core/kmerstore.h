@@ -44,7 +44,7 @@ protected:
   int s; // span of the seed (s >= k)
   string seed ;
   size_t nb_kmers_inserted;
-  int max_size_indexing;
+  size_t max_size_indexing;
 
 public:
 

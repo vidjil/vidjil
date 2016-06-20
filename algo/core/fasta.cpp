@@ -39,7 +39,7 @@ unsigned long long filesize(const char* filename)
     return in.tellg();
 }
 
-void Fasta::init(int extract_field, string extract_separator, int mark_pos)
+void Fasta::init(int extract_field, string extract_separator, size_t mark_pos)
 {
   this -> extract_field = extract_field ;
   this -> extract_separator = extract_separator ; 
@@ -108,7 +108,7 @@ void Fasta::add(Sequence seq) {
 }
 
 int Fasta::size() const{ return (int)reads.size(); }
-int Fasta::totalSize() const { return total_size ; }
+size_t Fasta::totalSize() const { return total_size ; }
 
 list<Sequence> Fasta::getAll() const {
   list<Sequence> reads;
@@ -235,7 +235,7 @@ void OnlineFasta::addLineToCurrentSequence(string line)
       current.sequence += c;
 
       if (mark_pos) {
-        if (current.sequence.length() + current_gaps == mark_pos)
+        if ((int) current.sequence.length() + current_gaps == mark_pos)
           current.marked_pos = current.sequence.length();
       }
     }

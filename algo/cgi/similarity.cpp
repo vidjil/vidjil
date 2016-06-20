@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
       reads = fa.getAll();
       
       list<string> labels;
-      for (int i=0; i < reads.size(); i++) {
+      for (size_t i=0; i < reads.size(); i++) {
         labels.push_back(fa.label(i));
       }
       
