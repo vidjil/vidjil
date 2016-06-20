@@ -38,6 +38,8 @@ string seed_contiguous(int k);
 
 int seed_weight(const string &seed);
 
+// https://stackoverflow.com/posts/3599170/revisions
+#define UNUSED(x) ((void)(x))
 
 /**
  * Return a spaced key from a contiguous key and a seed model

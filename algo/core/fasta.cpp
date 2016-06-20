@@ -51,6 +51,7 @@ void Fasta::init(int extract_field, string extract_separator, size_t mark_pos)
 
 Fasta::Fasta(bool virtualfasta, string name)
 {
+  UNUSED(virtualfasta);
   init(0, "");
   this -> name = name;
   basename = extract_basename(name);
