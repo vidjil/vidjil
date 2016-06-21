@@ -1356,6 +1356,11 @@ int main (int argc, char **argv)
         json_clone["_coverage_info"] = {repComp.getCoverageInfo()};
         //From KmerMultiSegmenter
         json_clone["seg"] = kseg->toJson();
+        json_clone["seg"]["quality"] = {
+            {"start", 0},
+            {"stop", kseg->getSequence().sequence.length()},
+            {"seq", repComp.getQuality()}
+        };
         
 
         //$$ If max_clones is reached, we stop here but still outputs the representative
