@@ -2,7 +2,7 @@
 #include "core/representative.h"
 
 void testRepresentative() {
-  list<Sequence> reads = Fasta("../../data/representative.fa").getAll();
+  list<Sequence> reads = Fasta("../../data/representative.fq").getAll();
 
   KmerRepresentativeComputer krc(reads, "##############");
 
@@ -35,8 +35,15 @@ void testRepresentative() {
   krc.setRequiredSequence("ATCGCGCCCT"); // revcomp 
   krc.compute();
   representative = krc.getRepresentative();
+  string quality = krc.getQuality();
   TAP_TEST(representative.label.find("seq2-[33,52]") == 0, TEST_KMER_REPRESENTATIVE_REQUIRED_SEQ,
            "When requiring sequence ATCGCGCCCT, we should have seq2 (" << representative.label << " instead)");
+
+  TAP_TEST(representative.sequence.length() == quality.length() ,TEST_KMER_REPRESENTATIVE_QUALITY,
+          "representative sequence length(" << representative.sequence.length() << ") and quality sequence length(" << quality.length() << ") must be equal");
+  TAP_TEST(quality == "!!!!!!!>--------<!!!" ,TEST_KMER_REPRESENTATIVE_QUALITY,
+          "representative quality sequence and seq2 quality must be the same for the required sequence");
+
 
   krc.setRevcomp(false);
   krc.compute();
@@ -52,7 +59,7 @@ void testRepresentative() {
 }
 
 void testRevcompRepresentative() {
-  list<Sequence> reads = Fasta("../../data/representative_revcomp.fa").getAll();
+  list<Sequence> reads = Fasta("../../data/representative_revcomp.fq").getAll();
 
   KmerRepresentativeComputer krc(reads, "##############");
   krc.setOptions(false, 3, 0.5);
