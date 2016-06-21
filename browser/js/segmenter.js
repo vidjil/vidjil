@@ -1134,7 +1134,7 @@ Sequence.prototype = {
                             highlightSpan.dataset.tooltip = h.tooltip;
                             highlightSpan.dataset.tooltip_position = "right";
                         }
-                        highlightSpan.appendChild(document.createTextNode(h.seq));
+                        highlightSpan.innerHTML = h.seq;
 
                         var highlightWrapper = document.createElement("span");
                         highlightWrapper.appendChild(highlightSpan);
@@ -1273,6 +1273,16 @@ Sequence.prototype = {
                 if (this.seq[k] != '-') {
                     var cc = raw_seq[j++]
                     if ((cc != '_') && (cc != ' ')) c = cc ;
+                    if (field == "quality") {
+                        var percent = (cc.charCodeAt(0)-this.m.min_quality)/(this.m.max_quality-this.m.min_quality)
+                        var color_hue = (percent * 100);
+                        var color = colorGenerator(color_hue);
+                        c = "<span style='height:"+(50+(percent*50))+"%;"
+                        c += "top:"+(100-(50+(percent*50)))+"%;"
+                        c += "position:relative;"
+                        c += "background-color:"+color+";"
+                        c += "'>\u00A0</span>"
+                    }
                 }
                 h.seq += c
             }

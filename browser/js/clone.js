@@ -36,7 +36,7 @@ function Clone(data, model, index, virtual) {
     this.segEdited = false
     this.virtual = typeof virtual !== 'undefined' ? virtual : false
     var key = Object.keys(data)
-    
+
     for (var i=0; i<key.length; i++ ){
         this[key[i]]=data[key[i]]
     }
