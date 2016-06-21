@@ -346,7 +346,8 @@ void testBugAffectAnalyser() {
   Fasta seqJ("../../germline/IGHJ.fa", 2);
   Fasta data("../../data/bug-revcomp.fa", 1, " ");
 
-  T<KmerAffect> index(9, true);
+  int k = 9;
+  T<KmerAffect> index(k, true);
   index.insert(seqV, "V");
   index.insert(seqJ, "J");
   index.finish_building();
@@ -362,7 +363,7 @@ void testBugAffectAnalyser() {
   KmerAffectAnalyser fwdAffect(index, data.read(0).sequence);
   KmerAffectAnalyser bwdAffect(index, data.read(1).sequence);
 
-  int total = fwdAffect.count();
+  int total = data.read(0).sequence.size() -k + 1;
 
   TAP_TEST(fwdAffect.getSequence() == data.read(0).sequence, TEST_AA_GET_SEQUENCE, "actual: " << fwdAffect.getSequence() << ", expected: " << data.read(0).sequence);
   TAP_TEST(bwdAffect.getSequence() == data.read(1).sequence, TEST_AA_GET_SEQUENCE, "actual: " << bwdAffect.getSequence() << ", expected: " << data.read(1).sequence);
