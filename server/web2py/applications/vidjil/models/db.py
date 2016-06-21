@@ -295,6 +295,7 @@ def _init_log():
 
         logger.addHandler(create_handler(defs.LOG_DEBUG, logging.DEBUG))
         logger.addHandler(create_handler(defs.LOG_INFO, logging.INFO))
+        logger.addHandler(UserLogHandler())
 
         logger.debug("Creating logger")
     return MsgUserAdapter(logger, {})
