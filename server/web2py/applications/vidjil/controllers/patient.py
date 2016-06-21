@@ -242,7 +242,7 @@ def index():
     for row in result :
         row['string'] = [row['last_name'], row['first_name'], row['confs'], row['groups'], str(row['birth']), str(row['info'])]
     result = filter(lambda row : vidjil_utils.advanced_filter(row['string'],request.vars["filter"]), result )
-    log.debug("patient list (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
+    log.debug("patient list (%.3fs) %s" % (time.time()-start, request.vars["filter"]), extra={'user_id':auth.user_id, 'table_name':'patient', 'record_id':0})
     return dict(query = result,
                 isAdmin = isAdmin,
                 reverse = reverse)
