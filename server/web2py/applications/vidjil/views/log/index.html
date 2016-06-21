@@ -1,0 +1,28 @@
+{{extend 'db_layout.html'}}
+{{import vidjil_utils}}
+
+<h3></h3>
+
+<div id="db_table_container">
+    <table class="db_table" id="table">
+        <thead>
+            <tr>
+            <td class='column_100 pointer'>user</td>
+            <td class='column_100 pointer'>table</td>
+            <td class='column_100 pointer'>message</td>
+            <td class='column_100 pointer'>record</td>
+            <td class='column_100 pointer'>created</td>
+            </tr>
+        </thead>
+        {{ for row in query: }}
+        <tr>
+            <td>{{=row.user_id}}</td>
+            <td>{{=row.table_name}}</td>
+            <td>{{=row.msg}}</td>
+            <td>{{=row.record_id}}</td>
+            <td>{{=row.created}}</td>
+        </tr>
+        {{ pass }}
+    </table>
+    <table class="db_table" id="db_fixed_header"></table>
+</div>
