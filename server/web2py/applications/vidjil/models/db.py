@@ -223,6 +223,13 @@ db.define_table('group_assoc',
                 Field('first_group_id', 'reference auth_group', ondelete='CASCADE'),
                 Field('second_group_id', 'reference auth_group', ondelete='CASCADE'))
 
+db.define_table('user_log',
+                Field('user_id', 'reference auth_user'),
+                Field('created', 'datetime'),
+                Field('msg', 'text'),
+                Field('table_name', 'string'),
+                Field('record_id', 'integer'))
+
 
 ## after defining tables, uncomment below to enable auditing
 auth.enable_record_versioning(db)
