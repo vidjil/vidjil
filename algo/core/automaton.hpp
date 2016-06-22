@@ -252,6 +252,7 @@ void *PointerACAutomaton<Info>::next(void *state, char c) {
 
 template <class Info>
 vector<Info> PointerACAutomaton<Info>::getResults(const seqtype &seq, bool no_revcomp) {
+  UNUSED(no_revcomp);
   // TODO: what should we do with several info at the same place?
   //       for now they are overwritten
 
