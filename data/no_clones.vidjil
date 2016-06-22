@@ -1,0 +1,82 @@
+{
+  "clones": null,
+  "diversity": {
+    "index_Ds_diversity": 1,
+    "index_E_equitability": -0,
+    "index_H_entropy": 0
+  },
+  "germlines": {
+    "custom": {
+      "3": [],
+      "4": [],
+      "5": [],
+      "shortcut": "X"
+    }
+  },
+  "reads": {
+    "germline": {
+      "IGH": [
+        0
+      ],
+      "IGH+": [
+        0
+      ],
+      "IGK": [
+        0
+      ],
+      "IGK+": [
+        0
+      ],
+      "IGL": [
+        0
+      ],
+      "TRA": [
+        0
+      ],
+      "TRA+D": [
+        0
+      ],
+      "TRB": [
+        0
+      ],
+      "TRB+": [
+        0
+      ],
+      "TRD": [
+        0
+      ],
+      "TRD+": [
+        0
+      ],
+      "TRG": [
+        0
+      ]
+    },
+    "segmented": [
+      0
+    ],
+    "total": [
+      1
+    ]
+  },
+  "samples": {
+    "commandline": [
+      "vidjil -w 50 -c clones -y all -z all -d -3 -r 10 -g /home/florian/vidjil/germline -i -e 0.0001 -o . small_V.fa "
+    ],
+    "log": [
+      "  ==> junction detected in 0 reads (0%)\n  ==> found 0 50-windows in 0 reads (0% of 1 reads)\n  ! There are not so many CDR3 windows found in this set of reads.\n  ! Please check the unsegmentation causes below and refer to the documentation.\n                          reads av. len     clones clo/rds\n  IGH               ->        0       -          0       -\n  IGH+              ->        0       -          0       -\n  IGK               ->        0       -          0       -\n  IGK+              ->        0       -          0       -\n  IGL               ->        0       -          0       -\n  TRA               ->        0       -          0       -\n  TRA+D             ->        0       -          0       -\n  TRB               ->        0       -          0       -\n  TRB+              ->        0       -          0       -\n  TRD               ->        0       -          0       -\n  TRD+              ->        0       -          0       -\n  TRG               ->        0       -          0       -\n\n  SEG               ->        0       -\n  SEG_+             ->        0       -\n  SEG_-             ->        0       -\n\n  UNSEG too short   ->        1    10.0\n  UNSEG strand      ->        0       -\n  UNSEG too few V/J ->        0       -\n  UNSEG only V/5'   ->        0       -\n  UNSEG only J/3'   ->        0       -\n  UNSEG < delta_min ->        0       -\n  UNSEG ambiguous   ->        0       -\n  UNSEG too short w ->        0       -\n"
+    ],
+    "number": 1,
+    "original_names": [
+      "small_V.fa"
+    ],
+    "producer": [
+      "vidjil dev 4bf557b (2016-03-18)"
+    ],
+    "run_timestamp": [
+      "2016-06-22 18:43:32"
+    ]
+  },
+  "similarity": null,
+  "vidjil_json_version": "2014.10"
+}
