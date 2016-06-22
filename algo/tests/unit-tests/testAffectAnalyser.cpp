@@ -147,9 +147,9 @@ void testAffectAnalyser2() {
     TAP_TEST(kaa.getAffectation(i  - k + 1) == kaa.getAllAffectations(AO_NONE)[i  - k + 1], TEST_AA_GET_ALL_AO_NONE, "");
 
   TAP_TEST(kaa.getAffectation(0) == kaa.getAllAffectations(AO_NO_CONSECUTIVE)[0], TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, "");
-  if (kaa.count() == sequence.length() - k + 1) {
+  if ((size_t)kaa.count() == sequence.length() - k + 1) {
     TAP_TEST(kaa.getAllAffectations(AO_NO_CONSECUTIVE).size() == 4, TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, "size = " << kaa.getAllAffectations(AO_NO_CONSECUTIVE).size());
-  } else if (kaa.count() == sequence.length()) {
+  } else if ((size_t) kaa.count() == sequence.length()) {
     TAP_TEST(kaa.getAllAffectations(AO_NO_CONSECUTIVE).size() == 5, TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, "size = " << kaa.getAllAffectations(AO_NO_CONSECUTIVE).size());
   }
   TAP_TEST(kaa.getAffectation(1) == kaa.getAllAffectations(AO_NO_CONSECUTIVE)[1], TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, "actual: " << kaa.getAllAffectations(AO_NO_CONSECUTIVE)[1] << ", expected: " << kaa.getAffectation(1));

@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void testSegmentationBug1(int delta_min, int delta_max) {
+void testSegmentationBug1(int delta_min) {
   string buggy_sequences = "bugs/kmersegment.fa";
   Fasta seqV("../../germline/TRGV.fa");
   Fasta seqJ("../../germline/TRGJ.fa");
@@ -54,5 +54,5 @@ void testSegmentationBug1(int delta_min, int delta_max) {
 }
 
 void testBugs() {
-  testSegmentationBug1(-10, 15);
+  testSegmentationBug1(-10);
 }
