@@ -19,11 +19,15 @@ def index():
         
         p = subprocess.Popen(["df", "-h"], stdout=subprocess.PIPE)
         disk_use, err = p.communicate()
+
+        p = subprocess.Popen(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE)
+	revision,  err = p.communicate()
         
         d = monitor()
         return dict(d,
                     uptime=uptime,
-                    disk_use=disk_use
+                    disk_use=disk_use,
+                    revision=revision,
                     )
 
 
