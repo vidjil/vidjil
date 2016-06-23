@@ -171,9 +171,14 @@ If you have an admin access, you can grant access to other users ('p').
 
 *** Runs
 
-*** Samples
+Runs can be manipulated the same way as patients, New runs can be added ('add run'), 
+edited ('e') or deleted ('X').
+Runs and Patients are both used to make set of samples who share a same patient or have been sequenced in the same run.
+A sample can be included in a patient sample set and a run sample set.
 
-Clicking on a patient or on a run gives acccess to the "samples" page. Each sample is
+*** Adding a sample
+
+Clicking on a patient or a on a run give acccess to the "samples" page. Each sample is
 a =.fasta=, =.fastq=, =.gz= or =.clntab= file that will be processed by one or several
 pipelines with one or several /configurations/ that set software options.
 
