@@ -194,6 +194,27 @@ The only thing you should not do is to close completely the browser while sequen
 
 *** Groups
 
+Each patient and run is assigned to at least one group. This determines which groups have access to a patient or run.
+Users are assigned to diffrent groups and therefore gain access to any patients and runs that said group has access to.
+
+There are also groups that may be clustered together. Usually this represents an organisation, such as a Hospital.
+The organisation has a group to which subgroups are associated. This allows users with different sets of permissions
+to gain access to files uploaded to the organisation's group automatically.
+
+Users may be a part of several groups. By default Users are assigned their personnal group to which they can upload files
+and be the sole possessor of an access to this file.
+Different groups implies different sets of permissions. A user may not have the same permissions on a file accessed
+from an organisation's group as (s)he does on files from her/his personnal group, or even from a group associated to
+another organisation.
+
+The different permissions that can be attributed are:
+  - Read: Permissions to sview patients/runs to which a group or organisation has access to
+  - Create: Permissions to create patients/runs
+  - Upload: Permissions to upload samples to the patients/runs of a group
+  - Run: Permissions to run vidjil on an uploaded samples to the patients/runs of a group
+  - View Details: Permissions to view patient/run data in an unencrypted manner for the patients/runs of a group
+  - Save: Permissions to save an analysis for the patients/runs of a group
+
 * Can I see all the clones ?
 
 
