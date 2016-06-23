@@ -140,7 +140,8 @@ The aligner display nucleotide sequences from selected clones.
    - You can further analyze the sequences with IMGT/V-QUEST and IgBlast on the selected sequences. This opens another window/tab.
    - You can unselect all sequences by clicking on the background of the grid.
 
-** The patient database and the server
+
+* The patient database and the server
 
 If a server with a patient/experiment database is configured with your
 installation of Vidjil (as on http://app.vidjil.org/), the
@@ -150,16 +151,20 @@ With authentication, you can add patients, then add either
 =.fasta=, =.fastq=, =.gz= or =.clntab= files, then process your
 runs and save the results of your analysis.
 
+** The different elements
+
 *** Patients
       
-Once you are authentified, this page show the patient list. Here you
+Once you are authenticated, this page show the patient list. Here you
 can see your patients and patients whose permission has been given to you.
 
 New patients can be added ('add patient'), edited ('e') or deleted ('X').
 By default, you are the only one who can see and update this new patient.
 If you have an admin access, you can grant access to other users ('p').
 
-*** Samples
+*** Runs
+
+*** Adding a sample
 
 Clicking on a patient give acccess the "samples" page. Each sample is
 a =.fasta=, =.fastq=, =.gz= or =.clntab= file that will be processed by one or several
@@ -175,7 +180,7 @@ Depending on your granted access, you can add a new sample to the list (=add fil
 download sequence files when they are available (=dl=) or delete sequence files (=X=).
 Note that sequence file may be deleted (in particular to save server disk space) while still keeping the results.
 
-*** Processing samples
+*** Processing samples, configs
 
 Depending on your granted accesses, you can schedule a processing for a sequence file (select a config and =run=).
 The processing can take a few seconds to a few hours, depending on the
@@ -186,6 +191,8 @@ It is possible to launch several process at the same time (some will wait in the
 are uploading data. Finally, you can safely close the window with the patient database (and even the browser) when some process are queued/launched.
 The only thing you should not do is to close completely the browser while sequences are uploading.
 
+
+*** Groups
 
 * Can I see all the clones ?
 
