@@ -105,9 +105,9 @@ Otherwise, such =.vidjil= files can be obtained:
 
 ** The time graph
 
-The time graph is hidden with there is only one timepoint.
+The time graph is hidden with there is only one timepoint. It shows the X most frequent clones of the sample (this number can be alter with the filter menu).
 
-- The current point is highlighted with a vertical gray bar, you can change that by clicking on another point.
+- The current point is highlighted with a vertical gray bar, you can change that by clicking on another point or using =←= and =→=.
 
 - The gray areas at the bottom of the graph show, for each point, the resolution (1 read / 5 reads).
 
@@ -118,6 +118,8 @@ The time graph is hidden with there is only one timepoint.
 
 
 ** The plot view
+
+The grid view show the clones of a selected germline. All the used germlines are on the right of the grid. You can change germline by clicking on it or by using the associated shortcuts (see the shortcuts section).
 
 - The "plot" menu allow to change the (grid plot, bar plot) as well as the X and Y axes of these plot
   Some presets are available.
