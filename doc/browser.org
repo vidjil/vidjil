@@ -107,9 +107,9 @@ Otherwise, such =.vidjil= files can be obtained:
 
 ** The time graph
 
-The time graph is hidden with there is only one timepoint.
+The time graph is hidden with there is only one timepoint. It shows the X most frequent clones of the sample (this number can be alter with the filter menu).
 
-- The current point is highlighted with a vertical gray bar, you can change that by clicking on another point.
+- The current point is highlighted with a vertical gray bar, you can change that by clicking on another point or using =←= and =→=.
 
 - The gray areas at the bottom of the graph show, for each point, the resolution (1 read / 5 reads).
 
@@ -120,6 +120,8 @@ The time graph is hidden with there is only one timepoint.
 
 
 ** The plot view
+
+The grid view show the clones of a selected germline. All the used germlines are on the right of the grid. You can change germline by clicking on it or by using the associated shortcuts (see the shortcuts section).
 
 - The "plot" menu allow to change the (grid plot, bar plot) as well as the X and Y axes of these plot
   Some presets are available.
@@ -142,7 +144,8 @@ The aligner display nucleotide sequences from selected clones.
    - You can further analyze the sequences with IMGT/V-QUEST and IgBlast on the selected sequences. This opens another window/tab.
    - You can unselect all sequences by clicking on the background of the grid.
 
-** The patient database and the server
+
+* The patient database and the server
 
 If a server with a patient/experiment database is configured with your
 installation of Vidjil (as on http://app.vidjil.org/), the
@@ -152,42 +155,99 @@ With authentication, you can add patients, then add either
 =.fasta=, =.fastq=, =.gz= or =.clntab= files, then process your
 runs and save the results of your analysis.
 
+** The different elements
+
 *** Patients
       
-Once you are authentified, this page show the patient list. Here you
+Once you are authenticated, this page show the patient list. Here you
 can see your patients and patients whose permission has been given to you.
 
 New patients can be added ('add patient'), edited ('e') or deleted ('X').
 By default, you are the only one who can see and update this new patient.
 If you have an admin access, you can grant access to other users ('p').
 
+*** Runs
+
 *** Samples
 
-Clicking on a patient give acccess the "samples" page. Each sample is
+Clicking on a patient or on a run gives acccess to the "samples" page. Each sample is
 a =.fasta=, =.fastq=, =.gz= or =.clntab= file that will be processed by one or several
 pipelines with one or several /configurations/ that set software options.
-The base configurations are « TRG », « IGH », « multi » (=-g germline=) and « multi+inc » (=-g germline -i=).
-See also https://github.com/vidjil/vidjil/blob/master/doc/locus.org.
-
-You can see which samples have been processed with the selected
-config, and access to the results (=See results=, bottom right).
-The first click on this button can take a few seconds.
 
 Depending on your granted access, you can add a new sample to the list (=add file=),
 download sequence files when they are available (=dl=) or delete sequence files (=X=).
-Note that sequence file may be deleted (in particular to save server disk space) while still keeping the results.
+Note that sequence files may be deleted (in particular to save server disk space),
+which is not the case for the results (unless the user wants so).
 
-*** Processing samples
+You can see which samples have been processed with the selected
+config, and access to the results (=See results=, bottom right).
+
+**** Adding a sample
+To add a sample, you must add at least one sample file. Each sample file must
+be linked to a patient or to a run. One of those fields will be automatically
+completed depending on whether you accessed the sample page from a patient or
+from a run. Both fields provide autocompletion to help you enter the correct
+patient or correct run.  It is advised to fill in both fields (when it makes
+sense). However please note that the correspondig patients and runs must have
+been created beforehand.
+
+**** Pre-processing
+The sample files may be preprocessed and this preprocess is chosen when adding
+samples. At the moment the only preprocess avalaible is the paired-end read
+merging.
+
+***** Read merging
+People using Illumina sequencers may sequence paired-end fragments. It is
+*highly* recommended to merge those reads in order to have a read that consists
+of the whole DNA fragment instead of split fragments.
+
+There are two configurations to merge reads. Indeed in case the merging is not
+possible for some reads we must keep one of the fragments (either R1 or
+R2). We cannot keep both because it would bias the quantification (as there
+would be two unmerged reads instead of one).  Depending on the sequencing
+strategy it could be better to keep R1 or R2 in such a case. Therefore it
+really depends on users. You must choose to keep the fragment that most
+probably contains both a part of the V and the J genes.
+
+
+
+*** Processing samples, configs
 
 Depending on your granted accesses, you can schedule a processing for a sequence file (select a config and =run=).
 The processing can take a few seconds to a few hours, depending on the
 software lauched, the options set in the config, the size of the sample and the server load.
+
+The base configurations are « TRG », « IGH », « multi » (=-g germline=) and « multi+inc » (=-g germline -i=).
+See also https://github.com/vidjil/vidjil/blob/master/doc/locus.org.
 
 The « reload » button (bottom left) updates the status of the task, that should do =QUEUED= → =ASSIGNED= → =RUNNING= → =COMPLETED=.
 It is possible to launch several process at the same time (some will wait in the =QUEUED= / =ASSIGNED= states), and also to launch process while you
 are uploading data. Finally, you can safely close the window with the patient database (and even the browser) when some process are queued/launched.
 The only thing you should not do is to close completely the browser while sequences are uploading.
 
+
+*** Groups
+
+Each patient and run is assigned to at least one group. This determines which groups have access to a patient or run.
+Users are assigned to diffrent groups and therefore gain access to any patients and runs that said group has access to.
+
+There are also groups that may be clustered together. Usually this represents an organisation, such as a Hospital.
+The organisation has a group to which subgroups are associated. This allows users with different sets of permissions
+to gain access to files uploaded to the organisation's group automatically.
+
+Users may be a part of several groups. By default Users are assigned their personnal group to which they can upload files
+and be the sole possessor of an access to this file.
+Different groups implies different sets of permissions. A user may not have the same permissions on a file accessed
+from an organisation's group as (s)he does on files from her/his personnal group, or even from a group associated to
+another organisation.
+
+The different permissions that can be attributed are:
+  - Read: Permissions to sview patients/runs to which a group or organisation has access to
+  - Create: Permissions to create patients/runs
+  - Upload: Permissions to upload samples to the patients/runs of a group
+  - Run: Permissions to run vidjil on an uploaded samples to the patients/runs of a group
+  - View Details: Permissions to view patient/run data in an unencrypted manner for the patients/runs of a group
+  - Save: Permissions to save an analysis for the patients/runs of a group
 
 * Can I see all the clones ?
 

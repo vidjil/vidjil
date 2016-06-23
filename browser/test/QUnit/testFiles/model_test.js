@@ -100,6 +100,23 @@ test("model : top clones", function() {
     equal(m.top, 0, "Top cannot be negative")
     m.displayTop(m.countRealClones() * 2 + 10)
     equal(m.top, m.countRealClones(), "Top cannot be greater than the number of real clones")
+
+    m.displayTop(1)
+
+    function count_active() {
+        var nb_active = 0
+        for (i = 0; i < m.clones.length; i++)
+            if (m.clones[i].isActive())
+                nb_active += 1
+        return nb_active
+    }
+    
+    equal(count_active(), 1, "With top 1, there should be one active clone")
+    m.changeTime(2)
+    equal(count_active(), 1, "With top 1, there should be one active clone")
+    m.displayTop(2)
+    equal(count_active(), 2, "With top 2, there should be two active clones")
+    
 });
 
 test("model : select/focus", function() {
