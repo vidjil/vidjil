@@ -29,7 +29,7 @@ class TestMultilocus < BrowserTest
   end
 
   def test_00_germline
-    assert ($b.div(:id => 'info').span(:class => 'systemBoxNameMenu').text.include? 'TRA'), 'missing system TRA'
+    assert ($b.div(:id => 'info').span(:class => 'systemBoxNameMenu', :index => 1).text.include? 'TRA'), 'missing system TRA'
   end
 
   def test_00_legend_scatterplot
