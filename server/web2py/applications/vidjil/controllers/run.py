@@ -179,7 +179,6 @@ def add():
 	)
 
         max_group = db.auth_group[auth.user_group()]
-        log.debug(max_group)
         groups = []
         if (auth.is_admin()):
             group_list = db(db.auth_group).select(db.auth_group.id, db.auth_group.role)
