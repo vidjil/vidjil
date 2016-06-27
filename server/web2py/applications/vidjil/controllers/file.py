@@ -167,7 +167,9 @@ def add_form():
                "redirect": "sample_set/index",
                "args" : redirect_args
                }
-        log.info(res)
+        log.info(res, extra={'user_id': auth.user.id,\
+                'record_id': run_id if run_id is not None else patient_id,\
+                'table_name': 'run' if run_id is not None else 'patient'})
 
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
@@ -313,7 +315,7 @@ def edit_form():
                "redirect": "sample_set/index",
                "args" : redirect_args
                }
-        log.info(res)
+        log.info(res, extra={'user_id': auth.user.id, 'record_id': redirect_args['id'], 'table_name': 'run' if run_id is not None else 'patient'})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         return error_message(error)
@@ -425,6 +427,12 @@ def delete():
     \param: delete_results: (optional) boolean stating if we also want to delete the results.
     '''
     delete_results = ('delete_results' in request.vars and request.vars['delete_results'] == 'True')
+    sample_set = db.sample_set[request.vars["redirect_sample_set_id"]]
+    associated_id = None
+    if sample_set.sample_type != 'sequence_file':
+        associated_elements = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select()
+        if len(associated_elements > 0):
+            associated_id = associated_elements[0].id
 
     if auth.can_modify_file(request.vars["id"]):
         if not(delete_results):
@@ -439,7 +447,10 @@ def delete():
         res = {"redirect": "sample_set/index",
                "args" : { "id" : request.vars["redirect_sample_set_id"]},
                "message": "sequence file deleted"}
-        log.info(res)
+        if associated_id is not None:
+            log.info(res, extra={'user_id': auth.user.id, 'record_id': associated_id, 'table_name': sampel_set.sample_type})
+        else:
+            log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
         return error_message("you need admin permission to delete this file")

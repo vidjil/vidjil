@@ -246,7 +246,7 @@ def add_form():
             res = {"redirect": "run/index",
                    "args" : { "id" : id },
                    "message": request.vars["name"] + ": run added"}
-            log.info(res)
+            log.info(res, extra={'user_id': auth.user.id, 'record_id': id, 'table_name': 'run'})
 
             if (id % 100) == 0:
                 mail.send(to=defs.ADMIN_EMAILS,
@@ -321,7 +321,7 @@ def edit_form():
 
             res = {"redirect": "back",
                    "message": "%s (%s): run edited" % (request.vars["name"], request.vars["id"])}
-            log.info(res)
+            log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars["id"], 'table_name': 'run'})
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
         else :
@@ -374,7 +374,7 @@ def delete():
         res = {"redirect": "run/index",
                "success": "true",
                "message": "run ("+str(request.vars["id"])+") deleted"}
-        log.info(res)
+        log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'run'})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"message": ACCESS_DENIED}

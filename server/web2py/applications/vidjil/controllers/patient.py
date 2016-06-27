@@ -242,7 +242,7 @@ def index():
     for row in result :
         row['string'] = [row['last_name'], row['first_name'], row['confs'], row['groups'], str(row['birth']), str(row['info'])]
     result = filter(lambda row : vidjil_utils.advanced_filter(row['string'],request.vars["filter"]), result )
-    log.debug("patient list (%.3fs) %s" % (time.time()-start, request.vars["filter"]), extra={'user_id':auth.user_id, 'table_name':'patient', 'record_id':0})
+    log.debug("patient list (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
     return dict(query = result,
                 isAdmin = isAdmin,
                 reverse = reverse)
@@ -319,7 +319,7 @@ def add_form():
             res = {"redirect": "sample_set/index",
                    "args" : { "id" : id_sample_set },
                    "message": "(%s) patient %s added" % (id_sample_set, patient_name) }
-            log.info(res)
+            log.info(res, extra={'user_id': auth.user.id, 'record_id': id, 'table_name': 'patient'})
 
             if (id % 100) == 0:
                 mail.send(to=defs.ADMIN_EMAILS,
@@ -381,7 +381,7 @@ def edit_form():
 
             res = {"redirect": "back",
                    "message": "%s %s (%s): patient edited" % (request.vars["first_name"], request.vars["last_name"], request.vars["id"])}
-            log.info(res)
+            log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'patient'})
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
         else :
@@ -443,7 +443,7 @@ def delete():
         res = {"redirect": "patient/index",
                "success": "true",
                "message": "patient ("+str(request.vars["id"])+") deleted"}
-        log.info(res)
+        log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars["id"], 'table_name': 'patient'})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"message": ACCESS_DENIED}
