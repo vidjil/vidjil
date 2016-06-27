@@ -97,6 +97,14 @@ try {
 
 console.log("=== main.js finished ===");
 
+$(document).ajaxStart(function () {
+    //show ajax indicator
+    db.ajax_indicator_start('loading data.. please wait..');
+}).ajaxStop(function () {
+    //hide ajax indicator
+    db.ajax_indicator_stop();
+});
+
 (function worker(){
 	db.loadNotifications();
 	setTimeout(worker, 300000);
