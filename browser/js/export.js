@@ -572,7 +572,7 @@ Report.prototype = {
         var clones = ''
         var list = m.getSelected()
         if (list.length>0){
-            clones += "clones selectionnes : \n" + list.length
+            clones += "Let's look on the following clones: \n" //  + list.length
             for (var i=0; i<list.length; i++){
                 clones += m.clone(list[i]).getFasta() + '\n'
             }
@@ -581,8 +581,10 @@ Report.prototype = {
 
         var link = "mailto:team@vidjil.org"
              + "?cc="
-             + "&subject=" + escape("Demande d'assistance Vidjil")
-             + "&body=" + escape("page actuelle : " + window.location.href + '\n' + clones)
+             + "&subject=" + escape("[Vidjil] Question")
+             + "&body=" + escape("Dear Vidjil team,"
+                                 + "\n\nI have a question on the results I obtain on the following sample: " + window.location.href
+                                 + "\n\n" + clones)
         ;
         window.location.href = link;
     }
