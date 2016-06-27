@@ -43,7 +43,6 @@ def index():
     if 'id' in request.vars and request.vars['id'] != 0:
         id_value = request.vars['id']
         query &= user_log.record_id == request.vars['id']
-    log.debug(db(query)._select(orderby=~db.user_log.created))
     return dict(query=db(query).select(user_log.ALL, orderby=~db.user_log.created),
                 id_list=id_list,
                 stable=table_name,
