@@ -56,6 +56,7 @@ Report.prototype = {
                 .addGraph()
                 .readsStat()
                 .cloneList()
+                .sampleLog()
                 
             self.m.resize()
             self.m.resume()
@@ -565,6 +566,31 @@ Report.prototype = {
         }
         
         return clone
+    },
+
+    sampleLog: function() {
+        var log = this.container("Report Log")
+
+        var table = $('<table/>', {'class': 'log-table flex'}).appendTo(log);
+        for (var i=0; i < this.m["logs"].length; i++ ){
+            line = this.logLine(m["logs"][i]);
+            if(i % 2 == 0)
+                line.addClass('even');
+            else
+                line.addClass('odd');
+            line.appendTo(table);
+        }
+        return this
+    },
+
+    logLine: function(log_line) {
+        var line = $('<tr/>', {'class': 'log-row'});
+        console.log(log_line)
+        console.log(log_line["message"])
+        $('<td/>', {'class': 'log-date', 'text': log_line['created']}).appendTo(line);
+        $('<td/>', {'class': 'log-message', 'text': log_line['message']}).appendTo(line);
+
+        return line;
     }
     
 }

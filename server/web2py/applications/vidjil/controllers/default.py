@@ -249,9 +249,11 @@ def get_data():
         run_name = ""
         config_name = db.config[request.vars["config"]].name
         command = db.config[request.vars["config"]].command
-        
+
+        log_reference_id = request.vars["sample_set_id"]
         if (sample_set.sample_type == "patient") :
             for row in db( db.patient.sample_set_id == request.vars["sample_set_id"] ).select() :
+                log_reference_id = row.id
                 patient_name = vidjil_utils.anon_ids(row.id)
                 data["dataFileName"] = patient_name + " (" + config_name + ")"
                 data["info"] = db.patient[row.id].info
@@ -260,11 +262,20 @@ def get_data():
 
         if (sample_set.sample_type == "run") :
             for row in db( db.run.sample_set_id == request.vars["sample_set_id"] ).select() :
+                log_reference_id = row.id
                 run_name = db.run[row.id].name
                 data["dataFileName"] = run_name + " (" + config_name + ")"
                 data["info"] = db.run[row.id].info
                 data["run_id"] = row.id
                 data["run_name"] = run_name
+
+        log_query = db(  ( db.user_log.record_id == log_reference_id )
+                       & ( db.user_log.table_name == sample_set.sample_type )
+                      ).select(db.user_log.ALL, orderby=db.user_log.created)
+
+        data["logs"] = []
+        for row in log_query:
+            data["logs"].append({'message': row.msg, 'created': str(row.created)})
 
         ## récupération des infos stockées sur la base de données
         query = db(  ( db.sample_set.id == request.vars["sample_set_id"] )
