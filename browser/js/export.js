@@ -565,6 +565,26 @@ Report.prototype = {
         }
         
         return clone
+    },
+
+
+    sendMail : function() {
+        var clones = ''
+        var list = m.getSelected()
+        if (list.length>0){
+            clones += "clones selectionnes : \n" + list.length
+            for (var i=0; i<list.length; i++){
+                clones += m.clone(list[i]).getFasta() + '\n'
+            }
+        }/**/
+
+
+        var link = "mailto:team@vidjil.org"
+             + "?cc="
+             + "&subject=" + escape("Demande d'assistance Vidjil")
+             + "&body=" + escape("page actuelle : " + window.location.href + '\n' + clones)
+        ;
+        window.location.href = link;
     }
     
 }

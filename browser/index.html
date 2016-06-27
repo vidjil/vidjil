@@ -242,7 +242,15 @@
 
             <div id="logo" style="float: right;" onclick="console.log({'type': 'popup', 'default':'welcome'})">Vidjil <span class='logo'>(beta)</span></div>
 
-            <div class="menu" style="float: right"> <a href="help" target="_blank">help</a></div>
+            <div class="menu" style="float: right" onmouseover="showSelector('helpSelector');"> help
+                <div id="helpSelector" class="selector"><div>
+                    <a class="buttonSelector" href="help" target="_blank">help</a>
+                    <a class="buttonSelector getHelp" onclick="report.sendMail()">send email</a>
+
+                    <!--
+                    <form action="mailto:tatiana.rocher@gmail.com?subject=Demande assistance" name="envoi" methode=POST enctype="text/plain"> !-->
+                </div></div>
+                </div>
 
             <div style="float: right" class="menu" onmouseover="showSelector('paletteSelector');"> palette 
                 <div id="paletteSelector" class="selector"><div>
