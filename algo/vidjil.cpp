@@ -331,6 +331,8 @@ int main (int argc, char **argv)
   int k = DEFAULT_K ;
   int w = DEFAULT_W ;
 
+  IndexTypes indexType = AC_AUTOMATON;
+
   int epsilon = DEFAULT_EPSILON ;
   int minPts = DEFAULT_MINPTS ;
   Cost cluster_cost = DEFAULT_CLUSTER_COST ;
@@ -860,7 +862,7 @@ int main (int argc, char **argv)
         multi_germline_paths_and_files.push_back(make_pair(DEFAULT_MULTI_GERMLINE_PATH, DEFAULT_MULTI_GERMLINE_FILE));
     }
 
-  MultiGermline *multigermline = new MultiGermline(multi_germline_one_index_per_germline);
+  MultiGermline *multigermline = new MultiGermline(indexType, multi_germline_one_index_per_germline);
 
     {
       cout << "Load germlines and build Kmer indexes" << endl ;
@@ -878,7 +880,7 @@ int main (int argc, char **argv)
                                   f_reps_V, f_reps_D, f_reps_J, 
                                   delta_min, seed, trim_sequences);
 
-          germline->new_index();
+          germline->new_index(indexType);
 
 	  multigermline->insert(germline);
 	}
