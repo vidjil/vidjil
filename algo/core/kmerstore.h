@@ -12,6 +12,9 @@
 
 using namespace std;
 
+typedef
+enum { KMER_INDEX, AC_AUTOMATON } IndexTypes;
+
 class Kmer {
 public:
   unsigned int count;
