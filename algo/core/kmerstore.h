@@ -588,35 +588,4 @@ T& ArrayKmerStore<T>::operator[](int word){
   return store[word];
 }
 
-
-/**
- * KmerStoreFactory is a factory that allows to create an index that best fits
- * your needs!
- */
-class KmerStoreFactory {
- public:
-  template<class T>
-    static IKmerStore<T> *createIndex(string seed, bool revcomp=false);
-  template<class T>
-    static IKmerStore<T> *createIndex(int k, bool revcomp=false);
-};
-
-template<class T>
-IKmerStore<T> *KmerStoreFactory::createIndex(string seed, bool revcomp) {
-  IKmerStore<T> *index;
-  try{
-    index = new ArrayKmerStore<T>(seed, revcomp);
-  }catch(exception e){
-    cout << "  (using a MapKmer to fit into memory)" << endl;
-    index = new MapKmerStore<T>(seed, revcomp);
-  }
-
-  return index;
-}
-
-template<class T>
-IKmerStore<T> *KmerStoreFactory::createIndex(int k, bool revcomp) {
-  return createIndex<T>(seed_contiguous(k), revcomp);
-}
-
 #endif
