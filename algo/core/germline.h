@@ -6,9 +6,11 @@
 #include <list>
 #include "kmeraffect.h"
 #include "kmerstore.h"
+#include "automaton.hpp"
 #include "stats.h"
 #include "tools.h"
 #include "../lib/json.hpp"
+#include "kmerstorefactory.hpp"
 
 enum SEGMENTATION_METHODS {
   SEG_METHOD_53,      // Regular or incomplete germlines, 5'-3'
@@ -80,7 +82,7 @@ class Germline {
    */
   void finish();
 
-  void new_index();
+  void new_index(IndexTypes type);
   void set_index(IKmerStore<KmerAffect> *index);
 
   void update_index(IKmerStore<KmerAffect> *_index = NULL);
@@ -114,7 +116,6 @@ class Germline {
   int delta_min;
 };
 
-
 ostream &operator<<(ostream &out, const Germline &germline);
 
 
@@ -125,7 +126,7 @@ enum GERMLINES_FILTER { GERMLINES_ALL,
 
 class MultiGermline {
  private:
-
+  IndexTypes indexType;
  public:
   bool one_index_per_germline;
   list <Germline*> germlines;
@@ -133,7 +134,7 @@ class MultiGermline {
   // A unique index can be used
   IKmerStore<KmerAffect> *index;
 
-  MultiGermline(bool one_index_per_germline = true);
+  MultiGermline(IndexTypes indexType, bool one_index_per_germline = true);
   ~MultiGermline();
 
   void insert(Germline *germline);

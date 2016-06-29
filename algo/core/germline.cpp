@@ -155,12 +155,12 @@ void Germline::finish() {
     index->finish_building();
 }
 
-void Germline::new_index()
+void Germline::new_index(IndexTypes type)
 {
   assert(! seed.empty());
 
   bool rc = true ;
-  index = new PointerACAutomaton<KmerAffect>(seed, rc);
+  index = KmerStoreFactory<KmerAffect>::createIndex(type, seed, rc);
   index->refs = 1;
 
   update_index();
@@ -191,7 +191,6 @@ void Germline::mark_as_ambiguous(Germline *other)
 
   index->insert(other->rep_3, AFFECT_AMBIGUOUS_SYMBOL, -max_indexing, seed);
 }
-
 
 void Germline::override_rep5_rep3_from_labels(KmerAffect left, KmerAffect right)
 {
@@ -230,7 +229,7 @@ ostream &operator<<(ostream &out, const Germline &germline)
 }
 
 
-MultiGermline::MultiGermline(bool _one_index_per_germline)
+MultiGermline::MultiGermline(IndexTypes indexType, bool _one_index_per_germline):indexType(indexType)
 {
   index = NULL;
   one_index_per_germline = _one_index_per_germline;
@@ -251,7 +250,7 @@ void MultiGermline::insert(Germline *germline)
 void MultiGermline::add_germline(Germline *germline)
 {
   if (one_index_per_germline)
-    germline->new_index();
+    germline->new_index(indexType);
   germlines.push_back(germline);
 }
 
@@ -300,7 +299,6 @@ void MultiGermline::build_from_json(string path, string json_filename, int filte
   
 }
 
-
 /* if 'one_index_per_germline' was not set, this should be called once all germlines have been loaded */
 void MultiGermline::insert_in_one_index(IKmerStore<KmerAffect> *_index, bool set_index)
 {
@@ -321,7 +319,7 @@ void MultiGermline::insert_in_one_index(IKmerStore<KmerAffect> *_index, bool set
 void MultiGermline::build_with_one_index(string seed, bool set_index)
 {
   bool rc = true ;
-  index = new PointerACAutomaton<KmerAffect>(seed, rc);
+  index = KmerStoreFactory<KmerAffect>::createIndex(indexType, seed, rc);
   insert_in_one_index(index, set_index);
 }
 
