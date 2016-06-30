@@ -1,6 +1,8 @@
 #ifndef TESTS_H
 #define TESTS_H
 
+#include <core/tools.h>
+
 enum {
   /* Tools tests */
   TEST_REVCOMP,
@@ -337,12 +339,16 @@ const int nb_seq = 6;
 
 
 template<typename Index>
-inline Index *createIndex(int k, bool revcomp) {
-  Index *index = new Index(k, revcomp);
+inline Index *createIndex(string seed, bool revcomp) {
+  Index *index = new Index(seed, revcomp);
   for (int i=0; i < nb_seq; i++)
     index->insert(seq[2*i], seq[2*i+1]);
   index->finish_building();
   return index;
 }
 
+template<typename Index>
+inline Index *createIndex(int k, bool revcomp) {
+  return createIndex<Index>(seed_contiguous(k), revcomp);
+}
 #endif
