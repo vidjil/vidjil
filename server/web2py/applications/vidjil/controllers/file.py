@@ -431,7 +431,7 @@ def delete():
     associated_id = None
     if sample_set.sample_type != 'sequence_file':
         associated_elements = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select()
-        if len(associated_elements > 0):
+        if len(associated_elements) > 0:
             associated_id = associated_elements[0].id
 
     if auth.can_modify_file(request.vars["id"]):
