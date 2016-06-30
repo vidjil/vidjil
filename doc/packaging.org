@@ -1,0 +1,45 @@
+*Packaging Vidjil into a Debian Package
+ **Requirements
+   - The release version of Vidjil you wish to package
+   - Knowledge of debian packaging
+   In this documentation we will not go over all the specifics of creating a
+   debian package. You can find the required information here:
+   https://wiki.debian.org/HowToPackageForDebian
+   and https://wiki.debian.org/Packaging/Intro?action=show&redirect=IntroDebianPackaging
+
+ ** Creating the orig archive
+ Debian packages use an orig archive to map a changelog. In order to create
+ this archive for vidjil you must:
+
+ Extract the release archive you wish to package:
+  $ tar -xf vidjil-<version>.tgz
+  $ cd vidjil-<version>/
+
+ Download the necessary germlines and data files:
+  $ mkdir browser # if it doesn't exist
+  $ make germline
+  $ make data
+
+ Archive the folder as follows:
+ Note that debian uses a different version annotation than vidjil, so it is
+ likely that you will need to determine the correct annotation to use.
+  $ cd ..
+  $ tar -cvzf vidjil_<debian-version-annotation>.orig.tar.gz
+
+ Make a standard compliant debian folder for the package (see documentation
+ in Requirements section) and add the 'missing-sources' file (this is a
+ workaround to the issue that Lintian cannot find the sources for some of the
+ binaries included) with the following content:
+  $ /browser/cgi/align.cgi
+  $ /browser/cgi/similarity.cgi
+  $ /algo/tools/similarity
+
+ Commit the source changes (for some reason the dep.mk files need to be
+ committed):
+  $ dpkg-source --commit
+
+ Build the package just like any debian package:
+  $ debuild -us -uc
+
+ You're done! You can now install the debian package with:
+  $ sudo ``dpkg -i path/to/package

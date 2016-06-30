@@ -181,6 +181,8 @@ distrib:
 		mkdir -p $$dir;	\
 		cp "$$file" $$dir;	\
 	done
+	make -C release/$(DIST_DIR)/doc html
+
 	cd release && tar cvzf  $(RELEASE_ARCHIVE) $(DIST_DIR) \
 	&& rm -rf $(DIST_DIR)
 

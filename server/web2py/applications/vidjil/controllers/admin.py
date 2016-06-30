@@ -103,6 +103,7 @@ def showlog():
                         line["user"] = ""
                         line["mes"] = " ".join(tmp[6:])
 
+                    line["mes"] = line["mes"].replace(" at ", "\nat ")
                     line["mes"] = vidjil_utils.log_links(line["mes"])
 
             if not parsed:

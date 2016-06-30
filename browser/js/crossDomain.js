@@ -307,11 +307,14 @@ function igBlastPost(data, system) {
         igBlastInput["germline_db_V"] = "IG_DB/imgt.Homo_sapiens.V.f.orf.p";
         igBlastInput["germline_db_D"] = "IG_DB/imgt.Homo_sapiens.D.f.orf";
         igBlastInput["germline_db_J"] = "IG_DB/imgt.Homo_sapiens.J.f.orf";
-    }
-    if (system[0] == "T") {
+        igBlastInput["SEARCH_TYPE"] = "IG";
+        igBlastInput["seqtype"] = "Ig";
+    } else if (system[0] == "T") {
         igBlastInput["germline_db_V"] = "IG_DB/imgt.TR.Homo_sapiens.V.f.orf.p";
         igBlastInput["germline_db_D"] = "IG_DB/imgt.TR.Homo_sapiens.D.f.orf";
         igBlastInput["germline_db_J"] = "IG_DB/imgt.TR.Homo_sapiens.J.f.orf.p";
+        igBlastInput["SEARCH_TYPE"] = "TCR";
+        igBlastInput["seqtype"] = "TCR";
     }
 
 

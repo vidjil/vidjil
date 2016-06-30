@@ -591,6 +591,26 @@ Report.prototype = {
         $('<td/>', {'class': 'log-message', 'text': log_line['message']}).appendTo(line);
 
         return line;
+
+    sendMail : function() {
+        var clones = ''
+        var list = m.getSelected()
+        if (list.length>0){
+            clones += "Let's look on the following clones: \n" //  + list.length
+            for (var i=0; i<list.length; i++){
+                clones += m.clone(list[i]).getFasta() + '\n'
+            }
+        }/**/
+
+
+        var link = "mailto:team@vidjil.org"
+             + "?cc="
+             + "&subject=" + escape("[Vidjil] Question")
+             + "&body=" + escape("Dear Vidjil team,"
+                                 + "\n\nI have a question on the results I obtain on the following sample: " + window.location.href
+                                 + "\n\n" + clones)
+        ;
+        window.location.href = link;
     }
     
 }

@@ -242,7 +242,12 @@
 
             <div id="logo" style="float: right;" onclick="console.log({'type': 'popup', 'default':'welcome'})">Vidjil <span class='logo'>(beta)</span></div>
 
-            <div class="menu" style="float: right"> <a href="help" target="_blank">help</a></div>
+            <div class="menu" style="float: right" onmouseover="showSelector('helpSelector');"> help
+                <div id="helpSelector" class="selector"><div>
+                    <a class="buttonSelector" href="help" target="_blank">help</a>
+                    <a class="buttonSelector getHelp" onclick="report.sendMail()">get support</a>
+                </div></div>
+                </div>
 
             <div style="float: right" class="menu" onmouseover="showSelector('paletteSelector');"> palette 
                 <div id="paletteSelector" class="selector"><div>
@@ -251,6 +256,7 @@
                     <a class="buttonSelector" onclick="changeStyle('solarizeD')">dark</a>
                 </div></div>
             </div>
+            <div style="float: right; margin: 5px;" id='live-ajax'></div>
 
             <div id="fps" style="float: right; display: none"> </div>
             <div id="header_messages" class="message_container header"></div>

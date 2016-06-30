@@ -981,6 +981,19 @@ Database.prototype = {
         return args
     },
 
+    ajax_indicator_start: function() {
+        var tgt = $('#live-ajax');
+        tgt.empty();
+        $('<img/>', {src: 'images/ajax-loader.gif'}).appendTo($('<div/>', {class: 'active-container'}).appendTo(tgt));
+        $('body').css('cursor', 'wait');
+    },
+
+    ajax_indicator_stop: function() {
+        var tgt = $('#live-ajax');
+        tgt.empty();
+        $('body').css('cursor', 'default');
+    },
+
     // Log functions, to server
     // 'quiet' is set to true to avoid infinite loops with timeouts
     log : function (lvl, msg) { this.request('default/logger', {'lvl': lvl, 'msg': msg}, true) },
