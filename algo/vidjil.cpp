@@ -331,7 +331,7 @@ int main (int argc, char **argv)
   int k = DEFAULT_K ;
   int w = DEFAULT_W ;
 
-  IndexTypes indexType = AC_AUTOMATON;
+  IndexTypes indexType = KMER_INDEX;
 
   int epsilon = DEFAULT_EPSILON ;
   int minPts = DEFAULT_MINPTS ;
@@ -398,7 +398,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHadiI124g:G:V:D:J:k:r:vw:e:E:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3=:t:#:")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHadiI124g:G:V:D:J:k:r:vw:e:E:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3E:t:#:q")) != EOF)
 
     switch (c)
       {
@@ -421,6 +421,10 @@ int main (int argc, char **argv)
           cerr << "Unknwown command " << optarg << endl;
 	  usage(argv[0], false);
         }
+        break;
+
+      case 'q':
+        indexType = AC_AUTOMATON;
         break;
 
       // Input
