@@ -591,6 +591,7 @@ Report.prototype = {
         $('<td/>', {'class': 'log-message', 'text': log_line['message']}).appendTo(line);
 
         return line;
+    },
 
     sendMail : function() {
         var clones = ''
