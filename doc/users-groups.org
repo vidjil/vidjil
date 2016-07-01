@@ -1,0 +1,52 @@
+* Users
+  Users can have various permissions which allow them to perform actions on
+  the site.
+  These actions are:
+   - Create patients
+   - Edit/Delete patients
+   - Upload sequences to patients
+   - Run Vidjil
+   - Save an Analysis
+   - View a patients data in full detail
+
+  These permissions are assigned to groups to which a user can belong. Upon
+  creation a user is automatically assigned a newly created group designed
+  to be the user's personnal group.
+  Belonging to multiple groups implies the user can have access to several
+  sets of patients and have different permissions on each set. (eg. one might
+  have the permissions necessary to edit the patients of one group, but not
+  the patients of another).
+
+* Groups
+  Groups can belong to a hierarchical structure. A group can have a parent
+  group. This means any patient assigned to a group is also accessible to
+  said group's children. Other permissions are not transfered from parents to
+  children and access is not transfered from a child to a parent.
+
+  Child groups should be considered as roles inside the parent group as they
+  should not possess any personnal access to parents.
+  They also cannot possess any children of their own. Assigning a new group
+  to a group which has a parent will automatically defer the parent-child
+  relationship to that parent.
+
+* Creation Procedure
+  When creating the groups for an organisation the parent group MUST be the
+  first group created. Assigning a parent to a group cannot be done after
+  creation. A group cannot change parents.
+  Users can be created at any point in the procedure. They can also be added
+  or removed from groups whenever it is convenient
+
+  ** Example: create organisation Foobar with sub groups/roles
+    - Create group Foobar (select None for parent group).
+    - Create roles (eg. Technician, Engineer, Doctor). be sure to select
+      Foobar as the parent group.
+    - Set the permissions for the newly created groups Technician, Engineer
+      and Doctor. You can do this from the group's detaild view (be sure to
+      assign at least the 'view patient' permission or members will not be able
+      to see any patients from the parent group)
+    - Invite users to the groups from the detailed view.
+
+    Users will now be able, if permissions allow it, to create patients for
+    these groups. Any patient created should automatically be assigned to the
+    parent group. Any patients created for the parent group will be
+    accessible by any member of one of the child groups.
