@@ -78,6 +78,7 @@ class BinReadStorage: public VirtualReadStorage {
   size_t nb_stored;
   size_t smallest_bin_not_empty;
   string label;
+  bool inited;
 public:
   BinReadStorage();
   
