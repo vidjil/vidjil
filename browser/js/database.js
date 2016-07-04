@@ -896,6 +896,8 @@ Database.prototype = {
 
         if (lastValue !== value && value.length>1) {
             that.list.innerHTML = options.filter(function (a) {
+                if (a == undefined)
+                    return 0
                 return ~a.toLowerCase().indexOf(value.toLowerCase());
             }).slice(0,10).map(function (a) {
                 return '<option value="' + value + '|' + a + '">' + a + '</option>';
