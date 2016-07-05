@@ -369,9 +369,9 @@ def get_custom_data():
                             & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                             & (db.sample_set.id == db.sample_set_membership.sample_set_id)
                             & (db.sample_set.sample_type.belongs(['patient', 'run']))
-                            ).select(db.sample_set.id, db.sample_set.sample_type).first().id
+                            ).select(db.sample_set.id, db.sample_set.sample_type).first()
 
-            patient_run = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select()
+            patient_run = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select().first()
             config_id = db.results_file[id].config_id
             name = vidjil_utils.anon_ids(patient_run.id) if sample_set.sample_type == 'patient' else patient_run.name
             filename = db.sequence_file[sequence_file_id].filename
