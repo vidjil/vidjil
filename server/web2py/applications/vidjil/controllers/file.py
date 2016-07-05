@@ -250,7 +250,8 @@ def edit():
                    patient = patient,
 				   pre_process_list = pre_process_list,
                    run = run,
-                   file = db.sequence_file[request.vars["id"]])
+                   file = db.sequence_file[request.vars["id"]],
+                   sample_type = request.vars['sample_type'])
     else:
         return error_message("you need admin permission to edit files")
         
@@ -261,7 +262,7 @@ def edit_form():
     error = ""
     patient_id = None
     run_id = None
-  
+
     if request.vars['patient_id'] != '' :
         patient_id = int(request.vars['patient_id'].split('(')[-1][:-1])
     if request.vars['run_id'] != '' :
@@ -301,15 +302,17 @@ def edit_form():
             run_sample_set_id = db.run[run_id].sample_set_id
             id_sample_set_membership_run = db.sample_set_membership.insert(sample_set_id=run_sample_set_id,
                                                                   sequence_file_id=request.vars["id"])
-            redirect_args = {"id" : run_sample_set_id}
             
         #add sequence_file to a patient sample_set
         if patient_id is not None :
             patient_sample_set_id = db.patient[patient_id].sample_set_id
             id_sample_set_membership_patient = db.sample_set_membership.insert(sample_set_id=patient_sample_set_id,
                                                                   sequence_file_id=request.vars["id"])
-            redirect_args = {"id" : patient_sample_set_id}
-        
+
+        originating_id = patient_sample_set_id
+        if request.vars['sample_type'] == 'run':
+            originating_id = run_sample_set_id
+        redirect_args = {"id" : originating_id}
         
         res = {"file_id" : request.vars["id"],
                "message": "file {%s}: metadata saved" % request.vars["id"],

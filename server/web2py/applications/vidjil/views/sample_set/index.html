@@ -95,7 +95,7 @@
 		    {{pass}}
 
                     {{if can_modify:}}
-                        <td class="pointer" onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}'} )" >  <i class="icon-pencil-2" title="edit sample information"></i> </td>
+                        <td class="pointer" onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'sample_type': '{{=sample_type}}'} )" >  <i class="icon-pencil-2" title="edit sample information"></i> </td>
                     {{else:}}
                       <td></td>
                     {{pass}}

@@ -161,6 +161,7 @@ def index():
                 analysis_count=analysis_count,
                 analysis_file = analysis_file,
                 analysis_filename = analysis_filename,
+                sample_type = db.sample_set[request.vars["id"]].sample_type,
                 config=config)
     
     """
