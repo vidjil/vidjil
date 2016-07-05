@@ -97,12 +97,14 @@ try {
 
 console.log("=== main.js finished ===");
 
+var timeout;
 $(document).ajaxStart(function () {
     //show ajax indicator
-    db.ajax_indicator_start('loading data.. please wait..');
+    timeout = setTimeout(db.ajax_indicator_start, 600);
 }).ajaxStop(function () {
     //hide ajax indicator
     db.ajax_indicator_stop();
+    clearTimeout(timeout);
 });
 
 (function worker(){
