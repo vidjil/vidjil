@@ -206,7 +206,8 @@ def edit():
 		pre_process_list.append(dict(
 				id = row.id,
 				name = row.name,
-				file = file
+				file = file,
+                                info = row.info
 			))
 			
         query_patient = db(
