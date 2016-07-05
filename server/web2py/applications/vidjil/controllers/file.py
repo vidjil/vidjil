@@ -449,7 +449,7 @@ def delete():
                "args" : { "id" : request.vars["redirect_sample_set_id"]},
                "message": "sequence file deleted"}
         if associated_id is not None:
-            log.info(res, extra={'user_id': auth.user.id, 'record_id': associated_id, 'table_name': sampel_set.sample_type})
+            log.info(res, extra={'user_id': auth.user.id, 'record_id': associated_id, 'table_name': sample_set.sample_type})
         else:
             log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
