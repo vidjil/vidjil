@@ -268,10 +268,13 @@ class VidjilAuth(Auth):
         if self.is_admin(user) :
             return True
         
-        sample_set_list = db(db.sample_set_membership.sequence_file_id == file_id).select(db.sample_set_membership.sample_set_id)
+        sample_set_list = db(
+                (db.sample_set_membership.sequence_file_id == file_id) &
+                (db.sample_set.id == db.sample_set_membership.sample_set_id)
+            ).select(db.sample_set.id)
         
         for row in sample_set_list : 
-            if self.can_modify_sample_set(row.sample_set_id, user=user) :
+            if self.can_modify_sample_set(row.id, user=user) :
                 return True
             
         return False
