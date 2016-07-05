@@ -365,16 +365,17 @@ def get_custom_data():
         
         for id in request.vars["custom"] :
             sequence_file_id = db.results_file[id].sequence_file_id
-            patient_id = db((db.sequence_file.id == sequence_file_id)
+            sample_set = db((db.sequence_file.id == sequence_file_id)
                             & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                             & (db.sample_set.id == db.sample_set_membership.sample_set_id)
-                            & (db.patient.sample_set_id == db.sample_set.id)
-                            ).select(db.patient.id).first().id
+                            & (db.sample_set.sample_type.belongs(['patient', 'run']))
+                            ).select(db.sample_set.id, db.sample_set.sample_type).first().id
 
+            patient_run = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select()
             config_id = db.results_file[id].config_id
-            patient_name = vidjil_utils.anon_ids(patient_id)
+            name = vidjil_utils.anon_ids(patient_run.id) if sample_set.sample_type == 'patient' else patient_run.name
             filename = db.sequence_file[sequence_file_id].filename
-            data["samples"]["original_names"].append(patient_name + "_" + filename)
+            data["samples"]["original_names"].append(name + "_" + filename)
             data["samples"]["timestamp"].append(str(db.sequence_file[sequence_file_id].sampling_date))
             data["samples"]["info"].append(db.sequence_file[sequence_file_id].info)
             data["samples"]["commandline"].append(db.config[config_id].command)
