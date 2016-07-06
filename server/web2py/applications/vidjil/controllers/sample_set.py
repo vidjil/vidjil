@@ -224,7 +224,7 @@ def custom():
                 & (db.results_file.data_file != '')
                 & (db.config.id==db.results_file.config_id)
             )
-        myGroupBy = db.sequence_file.id|db.results_file.config_id
+        myGroupBy = db.sequence_file.id|db.patient.id|db.run.id|db.results_file.config_id
 
     query = db(q).select(
                 db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name,
