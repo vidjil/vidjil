@@ -10,17 +10,30 @@ e1:"segmented": [13153]
 $ Most abundant window
 1:"id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC".*"reads": \\[8\\]
 
+$ Affect values are over all the sequence
+1: "affectValues": .[^}]*"start": 1, "stop": 128
+
 $ Segmentation
 1:"name": "IGHV3-23.05 6/ACCCGGGAGGAACAATAT/9 IGHD6-13.01 0//5 IGHJ4.02"
 
+#          1         2         3         4         5    *    6         7   *     8    **   9        10        11        12
+# 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678
+# 5-----------------------------------------------------5N----------------ND----------DJ-----------------------------------------J
+# GCTGTACCTGCAAATGAACAGCCTGCGAGCCGAGGACACGGCCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCCAGGGGATCCTGGTCACCGTCTCCTCAG
+#                                                        ACCCGGGAGGAACAATAT
+#                                                                          agcagctggtac
+# 5(V): 1 -> 55
+# 4(D): 74 -> 85
+# 3(J): 86 -> 128
+
 $ Segmentation details - V
-1:"5": ."delRight": 6, "end": 54, "name": "IGHV3-23.05".
+1:"5": ."delRight": 6, "end": 55, "name": "IGHV3-23.05".
 
 $ Segmentation details - D
-1:"4": ."delLeft": 9, "delRight": 0, "end": 84, "name": "IGHD6-13.01", "start": 73.
+1:"4": ."delLeft": 9, "delRight": 0, "end": 85, "name": "IGHD6-13.01", "start": 74.
 
 $ Segmentation details - J
-1:"3": ."delLeft": 5, "name": "IGHJ4.02", "start": 85.
+1:"3": ."delLeft": 5, "name": "IGHJ4.02", "start": 86.
 
 $ Segmentation details - N1, N2
 1:"N1": 18,
