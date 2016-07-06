@@ -57,13 +57,13 @@ void AlignBox::addToJson(json &seg) {
 
   if (key != "3") // no end information for J
     {
-      j["end"] = end;
+      j["end"] = end + 1;
       j["delRight"] = del_right;
     }
 
   if (key != "5") // no start information for V
     {
-      j["start"] = start;
+      j["start"] = start + 1;
       j["delLeft"] = del_left;
     }
 
