@@ -136,6 +136,7 @@ protected:
   string sequence;
   string sequence_or_rc;
 
+  // JUNCTIONstart/end and CDR3start/end are 1-based
   int JUNCTIONstart, JUNCTIONend;
   string JUNCTIONaa;
   bool JUNCTIONproductive;

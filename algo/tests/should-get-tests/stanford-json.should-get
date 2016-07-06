@@ -1,5 +1,5 @@
 !REQUIRES: python $VIDJIL_DIR/tools/check_python_version.py
-!LAUNCH: $VIDJIL_DIR/vidjil -z 1 -G $VIDJIL_DIR/germline/IGH -w 60 -r 5 -e 10 -b data  $VIDJIL_DIR/data/Stanford_S22.fasta > /dev/null ; cat out/data.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
+!LAUNCH: $VIDJIL_DIR/vidjil -3 -z 1 -G $VIDJIL_DIR/germline/IGH -w 60 -r 5 -e 10 -b data  $VIDJIL_DIR/data/Stanford_S22.fasta > /dev/null ; cat out/data.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
 
 $ Number of reads
 e1:"total": [13153]
@@ -16,7 +16,8 @@ $ Affect values are over all the sequence
 $ Segmentation
 1:"name": "IGHV3-23.05 6/ACCCGGGAGGAACAATAT/9 IGHD6-13.01 0//5 IGHJ4.02"
 
-#          1         2         3         4         5    *    6         7   *     8    **   9        10        11        12
+#                                                     Cys-T-=R=-E-=E=-Q-=Y=-S-=S=-W-=Y=-F-=D=-F-Trp
+#          1         2         3         4         5  | *|  6         7   *     8    **   9    |  |10        11        12
 # 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678
 # 5-----------------------------------------------------5N----------------ND----------DJ-----------------------------------------J
 # GCTGTACCTGCAAATGAACAGCCTGCGAGCCGAGGACACGGCCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCCAGGGGATCCTGGTCACCGTCTCCTCAG
@@ -25,6 +26,8 @@ $ Segmentation
 # 5(V): 1 -> 55
 # 4(D): 74 -> 85
 # 3(J): 86 -> 128
+# CDR3: 56 -> 94
+# JUNCTION: 53 -> 97
 
 $ Segmentation details - V
 1:"5": ."delRight": 6, "end": 55, "name": "IGHV3-23.05".
@@ -38,6 +41,10 @@ $ Segmentation details - J
 $ Segmentation details - N1, N2
 1:"N1": 18,
 1:"N2": 0,
+
+$ Segmentation details - CDR3, JUNCTION
+1:"cdr3": ."aa": "TREEQYSSWYFDF", "start": 56, "stop": 94.
+1:"junction": ."aa": "CTREEQYSSWYFDFW", .* "start": 53, "stop": 97.
 
 $ Second sequence has a DNA sequence provided
 1:"id": "CTGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTA".*"sequence": "[ACGT]+",
