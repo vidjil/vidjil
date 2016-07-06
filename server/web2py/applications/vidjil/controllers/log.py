@@ -5,12 +5,30 @@ if request.env.http_origin:
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Max-Age'] = 86400
     
+def anon_names(data):
+    for row in data:
+        if not auth.can_view_patient_info(row.id):
+            row.name = vidjil_utils.anon_ids(row.id)
+    return data
+
+def get_data_list(table):
+    data = db(auth.vidjil_accessible_query(PermissionEnum.read.value, table)).select()
+    log.debug(data)
+
+    if table == 'patient':
+        data = anon_names(data)
+    data_list = [(row.id, row.name) for row in data]
+    data_list.sort(key=lambda tup: tup[1])
+    return data_list
+
 def index():
     user_log = db.user_log
-    id_list = []
+    data_list = []
     groups = []
     table_name = 'all'
     id_value = 0
+
+    auth.load_permissions(PermissionEnum.anon.value, 'patient')
     if auth.is_admin():
         query = (user_log.id > 0)
     else:
@@ -28,22 +46,25 @@ def index():
         table_name = request.vars['table']
         table = db[table_name]
         query &= user_log.table_name == table_name
-        if auth.is_admin():
-            ids = db(table).select(table.id, orderby=table.id)
-        else:
-            ids = db(
-                (table.id == user_log.record_id) &
-                (table_name == user_log.table_name) &
-                (db.auth_permission.record_id == user_log.record_id) &
-                (db.auth_permission.name == PermissionEnum.access.value) &
-                (db.auth_permission.group_id.belongs(groups))
-            ).select(table.id, orderby=table.id)
-        id_list = [row.id for row in ids]
+        data_list = get_data_list(table_name)
 
     if 'id' in request.vars and request.vars['id'] != 0:
         id_value = request.vars['id']
         query &= user_log.record_id == request.vars['id']
-    return dict(query=db(query).select(user_log.ALL, orderby=~db.user_log.created),
-                id_list=id_list,
+
+    query &= (db.auth_user.id == user_log.user_id)
+    query = db(query).select(user_log.ALL, db.auth_user.first_name, db.auth_user.last_name, db.patient.first_name, db.patient.last_name, db.run.name,
+            left = [
+                db.patient.on((db.patient.id == db.user_log.record_id) & (db.user_log.table_name == 'patient')),
+                db.run.on((db.run.id == db.user_log.record_id) & (db.user_log.table_name == 'run'))
+            ],
+            orderby=~db.user_log.created)
+    for row in query:
+        if row.patient.first_name is not None:
+            row.names = vidjil_utils.anon_ids(row.user_log.record_id)
+        else:
+            row.names = row.run.name
+    return dict(query=query,
+                data_list=data_list,
                 stable=table_name,
                 sid=id_value)
