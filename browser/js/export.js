@@ -387,7 +387,7 @@ Report.prototype = {
                 
         var reads_stats = $('<div/>', {'class': 'flex'}).appendTo(container);
         
-        var head = $('<div/>', {'class': 'float-left'}).appendTo(reads_stats);
+        var head = $('<div/>', {'class': 'float-left', 'id': 'segmentation-report'}).appendTo(reads_stats);
         $('<div/>', {'class': 'case', 'text': ' '}).appendTo(head);
         $('<div/>', {'class': 'case', 'text': 'total'}).appendTo(head);
         $('<div/>', {'class': 'case', 'text': 'segmented'}).appendTo(head);
