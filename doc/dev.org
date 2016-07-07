@@ -24,7 +24,15 @@
       stored for a given window.
    6. The representative can then be segmented to determine what V, D and J
       genes are at play. This is done by the FineSegmenter (=core/segment.h=).
-
+** The xxx germline
+   - All germlines are inserted in one index using =build_with_one_index()= and
+     the segmentation method is set to =SEG_METHOD_MAX12= to tell that the
+     segmentation must somehow differ.
+   - So that the FineSegmenter correctly segments the sequence, the =rep_5= and
+     =rep_3= members (class =Fasta=) of the xxx germline are modified by the
+     FineSegmenter. The =override_rep5_rep3_from_labels()= method from the
+     Germline is the one that overwrites those members with the Fasta
+     corresponding to the affectation found by the KmerSegmenter.
 * Browser
 
 ** Installation
