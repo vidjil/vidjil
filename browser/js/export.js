@@ -591,6 +591,9 @@ Report.prototype = {
     },
 
     sampleLog: function() {
+        if (typeof this.m['logs'] == 'undefined')
+            return this
+
         var log = this.container("Report Log")
 
         var table = $('<table/>', {'class': 'log-table flex'}).appendTo(log);
