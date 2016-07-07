@@ -94,6 +94,7 @@ Report.prototype = {
             }
 
             self.sampleLog()
+                .softwareInfo(self.m.t)
             
             self.m.resize()
             self.m.resume()
@@ -220,8 +221,6 @@ Report.prototype = {
         var content = [
             {'label': "Filename:" , value : this.m.samples.original_names[time]},
             {'label': "Sample date:" , value : this.m.getSampleTime(time)},
-            {'label': "Software used:" , value : this.m.getSoftVersionTime(time)},
-            {'label': "Parameters:" , value : this.m.getCommandTime(time)},
             {'label': "Analysis date:" , value : this.m.getTimestampTime(time)}
         ]
         
@@ -242,6 +241,25 @@ Report.prototype = {
         
         return this
         
+    },
+
+    softwareInfo : function(time) {
+        var sinfo = this.container("Software info("+this.m.getStrTime(time)+")");
+         var div = $('<div/>', {'class': 'flex'}).appendTo(sinfo);
+         var content = [
+            {'label': "Software used:" , value : this.m.getSoftVersionTime(time)},
+            {'label': "Parameters:" , value : this.m.getCommandTime(time)}
+         ];
+
+         var table = $('<table/>', {'class': 'info-table'}).appendTo(div);
+         for ( var key in content ) {
+             var v = content[key];
+             var row = $('<tr/>').appendTo(table);
+            $('<td/>', {'class': 'label', 'text': v.label}).appendTo(row);
+            $('<td/>', {'text': v.value}).appendTo(row);
+         }
+
+         return this;
     },
     
     svg_graph : function(norm) {
