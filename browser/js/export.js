@@ -92,6 +92,8 @@ Report.prototype = {
                 var system = self.m.system_selected[i]
                 self.addScatterplot(system, self.m.t)
             }
+
+            self.sampleLog()
             
             self.m.resize()
             self.m.resume()
