@@ -65,7 +65,8 @@ Report.prototype = {
     
     reportHTMLdiag : function() {
         this.m.wait("Generating report...")
-        
+
+        var current_system = sp.system
         var self = this
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
         
@@ -95,7 +96,8 @@ Report.prototype = {
 
             self.sampleLog()
                 .softwareInfo(self.m.t)
-            
+
+            self.m.changeGermline(current_system)
             self.m.resize()
             self.m.resume()
         }
