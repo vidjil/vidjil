@@ -143,10 +143,14 @@ class VidjilBrowser < Watir::Browser
     return div(:id => 'settings_menu')
   end
 
-  def menu_item_export_fasta
+  def menu_item_export(id)
     menu = menu_import_export
     menu.click
-    return menu.a(:id => 'export_fasta')
+    return menu.a(:id => id)
+  end
+
+  def menu_item_export_fasta
+    return menu_item_export('export_fasta')
   end
 
   def merge
