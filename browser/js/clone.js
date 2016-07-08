@@ -488,7 +488,7 @@ Clone.prototype = {
     computeEValue: function () {
         var e = this.seg['_evalue'];
         if (typeof(e) != 'undefined')
-            this.eValue = parseFloat(e)
+            this.eValue = parseFloat(e['val'])
         else
             this.eValue = undefined
     },

@@ -594,16 +594,19 @@ Model_loader.prototype = {
         var newSeg = {};
         for (key in seg) {
             var firstChar = key.substring(0, 1);
-            if ((segMapping.indexOf(firstChar) != -1 && typeof seg[firstChar] != 'object')
-                    || typeof seg[key] != 'object') {
+            if (segMapping.indexOf(firstChar) != -1 && typeof seg[firstChar] != 'object') {
                 if (typeof newSeg[firstChar] == 'undefined') {
                     newSeg[firstChar] = this.getConvertedSeg(seg, firstChar);
                 }
+                key = firstChar
             } else {
                 newSeg[key] = seg[key];
             }
             if (typeof newSeg[key] == 'object') {
                 newSeg[key] = this.getConvertedSegNames(newSeg[key])
+            } else {
+                // We must have an object
+                newSeg[key] = {'val': newSeg[key]}
             }
         }
         return newSeg;
