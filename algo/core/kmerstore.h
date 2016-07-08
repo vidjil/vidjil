@@ -402,6 +402,12 @@ Fasta IKmerStore<T>::getLabel(T kmer) const {
   for (typename list< pair<T, Fasta> >::const_iterator it = labels.begin(); it != labels.end(); ++it)
     if (it->first == kmer)
       return it->second ;
+  // Nothing interesting found
+  // Try by ignoring length if the index is not able to deal with different lengths
+  if (! hasDifferentKmerTypes() && kmer.getLength() != (unsigned char)~0) {
+    kmer.setLength(~0);
+    return getLabel(kmer);
+  }
   return FASTA_AMBIGUOUS ;
 }
 
