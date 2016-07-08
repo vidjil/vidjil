@@ -7,8 +7,7 @@ if request.env.http_origin:
     
 def anon_names(data):
     for row in data:
-        if not auth.can_view_patient_info(row.id):
-            row.name = vidjil_utils.anon_ids(row.id)
+        row.name = vidjil_utils.anon_ids(row.id)
     return data
 
 def get_data_list(table):
