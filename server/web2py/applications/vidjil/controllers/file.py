@@ -87,6 +87,7 @@ def add():
                    run_list = run_list,
 				   pre_process_list = pre_process_list,
                    patient = patient,
+                   sample_type = sample_set.sample_type,
                    run = run)
 
 
@@ -151,7 +152,6 @@ def add_form():
             ids_sample_set += [run_sample_set_id] # for logging
             id_sample_set_membership_run = db.sample_set_membership.insert(sample_set_id=run_sample_set_id,
                                                                   sequence_file_id=id)
-            redirect_args = {"id" : run_sample_set_id}
             
         #add sequence_file to a patient sample_set
         if patient_id is not None :
@@ -159,7 +159,12 @@ def add_form():
             ids_sample_set += [patient_sample_set_id] # for logging
             id_sample_set_membership_patient = db.sample_set_membership.insert(sample_set_id=patient_sample_set_id,
                                                                   sequence_file_id=id)
-            redirect_args = {"id" : patient_sample_set_id}
+
+        originating_id = patient_sample_set_id
+        if request.vars['sample_type'] == 'run':
+            originating_id = run_sample_set_id
+
+        redirect_args = {"id" : originating_id}
         
         
         res = {"file_id" : id,
