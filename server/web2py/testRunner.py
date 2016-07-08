@@ -118,6 +118,10 @@ db.auth_permission.insert(group_id = fake_group_id,
                         table_name = "sample_set",
                         record_id = 0
                         )
+db.auth_permission.insert(group_id=fake_group_id,
+                        name=PermissionEnum.access.value,
+                        table_name="sample_set",
+                        record_id=0)
 db.auth_permission.insert(group_id = fake_group_id,
                         name = PermissionEnum.access.value,
                         table_name = "config",
