@@ -108,7 +108,7 @@ public:
    *                   of the sequence. if < 0 will keep at most the first
    *                   keep_only nucleotides of the sequence. if == 0,
    *                   will keep all the sequence.
-   * @param seed: the seed to use for indexing. By default it will be the seed of the index
+   * @param seed: the seed to use for indexing. By default it will be the seed of the index. Also note that when the index ! hasDifferentKmerTypes(), the seed of the index will always be used (and therefore the parameter will be ignored)
    * @post All the k-mers in the sequence have been indexed.
    */
   virtual void insert(const seqtype &sequence,
@@ -303,7 +303,7 @@ void IKmerStore<T>::insert(const seqtype &sequence,
     end_indexing = -keep_only;
   }
 
-  if (seed.empty())
+  if (seed.empty() || ! this->hasDifferentKmerTypes())
     seed = this->seed;
 
   size_t seed_span = seed.length();
