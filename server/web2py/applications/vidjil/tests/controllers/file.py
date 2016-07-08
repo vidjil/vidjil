@@ -138,6 +138,7 @@ class FileController(unittest.TestCase):
         self.assertTrue(db.sequence_file[test_file_id].filename == "babibou" , "file have been added")
         
         request.vars['id'] = test_file_id
+        request.vars['redirect_sample_set_id'] = fake_sample_set_id
         
         resp = delete()
         self.assertTrue(db.sequence_file[test_file_id].data_file == None , "file only should have been deleted")
