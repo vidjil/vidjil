@@ -606,6 +606,9 @@ Model_loader.prototype = {
         return newSeg;
     },
 
+    /**
+     * Convert (5|4|3)(start|end) to (5|4|3) : {'start', 'stop'}
+     */
     getConvertedSeg: function(seg, key) {
         var boundaryMapping = {'start': 'start', 'stop': 'end'};
         var newSeg = {};
