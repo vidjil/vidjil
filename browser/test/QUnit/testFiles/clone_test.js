@@ -11,10 +11,10 @@
             "4" : "IGHD2*03",
             '_evalue': 1e-2,
             "3start" : 15,
-            "5end" : 5,
+            "5" : {'start': 1, 'end': 5},
             "cdr3": {
                 "start": 10,
-                "stop": 15,
+                "end": 15,
                 "aa": "ABCDE"
             },
             "junction": {

@@ -9,10 +9,11 @@ test("model: convert", function () {
         "3": "J",
         "4": "D",
         "5": {"name": "V", "stop": 0},
-        "cdr3": {"start": 0, "stop": 3}
+        "cdr3": {"start": 0, "end": 3}
     };
     equal(m.getConvertedBoundary(json_clone3.seg, "5", "end"), 5, "getConvertedBoundary existant: Ok");
     equal(typeof m.getConvertedBoundary(json_clone3.seg, "5", "start"), 'undefined', "getConvertedBoundary non existant: Ok");
+    deepEqual(m.getConvertedSegNames(seg['cdr3']), {"start": 0, "stop": 3}, "getConvertedSegNames: ok")
 
     deepEqual(m.getConvertedSeg(seg, "3"), {"name": "J", "start": 3}, "getConvertedSeg: Ok");
 

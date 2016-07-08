@@ -602,6 +602,9 @@ Model_loader.prototype = {
             } else {
                 newSeg[key] = seg[key];
             }
+            if (typeof newSeg[key] == 'object') {
+                newSeg[key] = this.getConvertedSegNames(newSeg[key])
+            }
         }
         return newSeg;
     },
@@ -618,6 +621,23 @@ Model_loader.prototype = {
             if (typeof tmp != 'undefined') newSeg[boundary] = tmp;
         }
         return newSeg;
+    },
+
+    /**
+     * Convert fields from old names to new names.
+     * For instance some fields were called 'end', they now must be 'stop' (see bc32af9)
+     * We convert all of them.
+     */
+    getConvertedSegNames: function(seg) {
+        var renameFields = {'end': 'stop'}
+        for (field in renameFields) {
+            if (typeof seg[field] != 'undefined'
+                && typeof seg[renameFields[field]] == 'undefined') {
+                seg[renameFields[field]] = seg[field]
+                delete seg[field]
+            }
+        }
+        return seg
     },
 
     getConvertedBoundary: function(seg, key, bound) {
