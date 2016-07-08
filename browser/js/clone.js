@@ -40,6 +40,7 @@ function Clone(data, model, index, virtual) {
     for (var i=0; i<key.length; i++ ){
         this[key[i]]=data[key[i]]
     }
+    this.seg = this.m.convertSeg(this.seg)
     
     if (typeof (this.getSequence()) != 'undefined' && typeof (this.name) != 'undefined') {
         this.shortName = this.name.replace(new RegExp('IGHV', 'g'), "VH");
