@@ -13,6 +13,7 @@ install_web2py:
 install_unit_tests:
 	pip install unittest2
 	pip install unittest-xml-reporting
+	pip install enum34
 
 unit: clean_unit_tests
 	cd web2py; python web2py.py -S vidjil -M -R testRunner.py
