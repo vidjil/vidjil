@@ -160,9 +160,10 @@ def add_form():
             id_sample_set_membership_patient = db.sample_set_membership.insert(sample_set_id=patient_sample_set_id,
                                                                   sequence_file_id=id)
 
-        originating_id = patient_sample_set_id
         if request.vars['sample_type'] == 'run':
             originating_id = run_sample_set_id
+        else:
+            originating_id = patient_sample_set_id
 
         redirect_args = {"id" : originating_id}
         
