@@ -297,7 +297,7 @@ In the =.analysis= file, this section is intended to describe some specific clon
                      // this will create a normalization option in the 
                      // settings web application menu
 
-    "seg":           // detailed V(D)J designation/segmentation and other sequences features [optional]
+    "seg":           // detailed V(D)J designation/segmentation and other sequences features or values [optional]
                      // on the web application, clones that are not segmented will be shown on the grid with '?/?'
                      // positions are related to the 'sequence'
                      // names of V/D/J genes should match the ones in files referenced in germline/germline.data
@@ -309,11 +309,16 @@ In the =.analysis= file, this section is intended to describe some specific clon
          "3": {"name": "IGHJ3*02", "start": 136, "stop": 171},  // J (or 3') segment
 
                      // any feature to be highlighted in the sequence
-                     // the optional "seq" element gives a sequence that corresponds to this feature
+                     // the optional "seq" element gives a sequence that corresponds to this feature,
+                     // and the optional "val" element gives a numerical value.
                      // JUNCTION//CDR3 should be stored that way (in fields called "junction" of "cdr3"),
                      // its productivity must be stored in a boolean field called "productive".
                      // Positions also start at 1.
-         "somefeature": { "start": 56, "stop": 61, "seq": "ACTGTA" }
+         "somefeature": { "start": 56, "stop": 61, "seq": "ACTGTA", "val": 145.7 },
+
+                     // Numerical features concerning all the sequence or its analysis (such as 'evalue')
+                     // can be provided by omitting "start" and "stop" elements.
+         "someotherfeature": {"val": 0.004521},
       }
 
 
