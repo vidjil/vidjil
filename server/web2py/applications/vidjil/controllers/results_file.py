@@ -66,7 +66,7 @@ def run_all_patients():
                 ).select(db.sample_set.id, db.results_file.sequence_file_id, db.results_file.id)
 
         for row in query:
-            schedule_run(row.results_file.sequence_file_id, row.sample_set.id, row.results_file.config_id)
+            schedule_run(row.results_file.sequence_file_id, row.results_file.config_id)
 
         res = {"success" : "true",
                "message" : "rerun all"}

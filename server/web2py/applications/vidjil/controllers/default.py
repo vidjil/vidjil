@@ -154,7 +154,7 @@ def run_request():
             error += "you do not have permission to launch process for this config ("+str(id_config)+"), "
 
     if error == "" :
-        res = schedule_run(request.vars["sequence_file_id"], id_sample_set, id_config, grep_reads)
+        res = schedule_run(request.vars["sequence_file_id"], id_config, grep_reads)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :

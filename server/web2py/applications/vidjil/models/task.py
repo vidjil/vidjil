@@ -90,7 +90,7 @@ def compute_contamination(sequence_file_id, results_file_id, config_id):
     return result
     
 
-def schedule_run(id_sequence, id_sample_set, id_config, grep_reads=None):
+def schedule_run(id_sequence, id_config, grep_reads=None):
     from subprocess import Popen, PIPE, STDOUT, os
 
     #check results_file
@@ -103,21 +103,7 @@ def schedule_run(id_sequence, id_sample_set, id_config, grep_reads=None):
                                      run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                      config_id = id_config )
         
-    if grep_reads:
-        args = [id_sequence, id_config, data_id, None, grep_reads]
-    else:
-        ## check fused_file
-        row2 = db( ( db.fused_file.config_id == id_config ) &
-                   ( db.fused_file.sample_set_id == id_sample_set )
-               ).select()
-
-        if len(row2) > 0 : ## update
-            fuse_id = row2[0].id
-        else:             ## create
-            fuse_id = db.fused_file.insert(sample_set_id = id_sample_set,
-                                           config_id = id_config)
-
-        args = [id_sequence, id_config, data_id, fuse_id, None]
+    args = [id_sequence, id_config, data_id, grep_reads]
 
     err = assert_scheduler_task_does_not_exist(str(args))
     if err:
@@ -133,13 +119,13 @@ def schedule_run(id_sequence, id_sample_set, id_config, grep_reads=None):
     filename= db.sequence_file[id_sequence].filename
 
     res = {"redirect": "reload",
-           "message": "[%s] (%s) c%s: process requested - %s %s" % (data_id, id_sample_set, id_config, grep_reads, filename)}
+           "message": "[%s] c%s: process requested - %s %s" % (data_id, id_config, grep_reads, filename)}
 
     log.info(res)
     return res
 
 
-def run_vidjil(id_file, id_config, id_data, id_fuse, grep_reads,
+def run_vidjil(id_file, id_config, id_data, grep_reads,
                clean_before=False, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
     from datetime import timedelta as timed
@@ -149,7 +135,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, grep_reads,
         
         print "Pre-process is still pending, re-schedule"
     
-        args = [id_file, id_config, id_data, id_fuse, grep_reads]
+        args = [id_file, id_config, id_data, grep_reads]
         task = scheduler.queue_task("vidjil", args,
                         repeats = 1, timeout = defs.TASK_TIMEOUT,
                                start_time=request.now + timed(seconds=120))
@@ -282,11 +268,11 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, grep_reads,
         for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
 	    sample_set_id = row.sample_set_id
 	    print row.sample_set_id
-            run_fuse(id_file, id_config, id_data, id_fuse, sample_set_id, clean_before = False)
+            run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
 
     return "SUCCESS"
 
-def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_after=False):
+def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
     import time
     import json
@@ -396,12 +382,12 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
     for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
         sample_set_id = row.sample_set_id
         print row.sample_set_id
-        run_fuse(id_file, id_config, id_data, id_fuse, sample_set_id, clean_before = False)
+        run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
 
 
     return "SUCCESS"
 
-def run_copy(id_file, id_config, id_data, id_fuse, clean_before=False, clean_after=False):
+def run_copy(id_file, id_config, id_data, clean_before=False, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
@@ -459,14 +445,14 @@ def run_copy(id_file, id_config, id_data, id_fuse, clean_before=False, clean_aft
     for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
         sample_set_id = row.sample_set_id
         print row.sample_set_id
-        run_fuse(id_file, id_config, id_data, id_fuse, sample_set_id, clean_before = False)
+        run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
 
 
     return "SUCCESS"
 
 
 
-def run_fuse(id_file, id_config, id_data, id_fuse, sample_set_id, clean_before=True, clean_after=False):
+def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
     
     out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
@@ -526,6 +512,16 @@ def run_fuse(id_file, id_config, id_data, id_fuse, sample_set_id, clean_before=T
         raise IOError
 
     ts = time.time()
+
+    fused_files = db( ( db.fused_file.config_id == id_config ) &
+                     ( db.fused_file.sample_set_id == sample_set_id )
+                 ).select()
+    if len(fused_files) > 0:
+        id_fuse = fused_files[0].id
+    else:
+        id_fuse = db.fused_file.insert(sample_set_id = sample_set_id,
+                                       config_id = id_config)
+
     db.fused_file[id_fuse] = dict(fuse_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                  fused_file = stream,
                                  sequence_file_list = sequence_file_list)
