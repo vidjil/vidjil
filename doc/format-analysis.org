@@ -1,4 +1,4 @@
-#+TITLE: Encoding clones with V(D)J recombinations (2016a)
+#+TITLE: Encoding clones with V(D)J recombinations (2016b)
 #+AUTHOR: The Vidjil team
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/org-mode.css" />
 
@@ -47,7 +47,7 @@ or =clusters=, to further cluster some clones, see below).
     {
         "producer": "program xyz version xyz",
         "timestamp": "2014-10-01 12:00:11",
-        "vidjil_json_version": "2016a",
+        "vidjil_json_version": "2016b",
 
         "samples": {
              "number": 1, 
@@ -94,7 +94,7 @@ do a correct gathering.
     {
         "producer": "program xyz version xyz / fuse.py version xyz",
         "timestamp": "2014-10-01 14:00:11",
-        "vidjil_json_version": "2016a",
+        "vidjil_json_version": "2016b",
 
         "samples": {
              "number": 2, 
@@ -157,7 +157,7 @@ some clones, and added external data (=data=).
     {
         "producer": "user Bob, via Vidjil webapp",
         "timestamp": "2014-10-01 12:00:11",
-        "vidjil_json_version": "2016a",
+        "vidjil_json_version": "2016b",
 
         "samples": {
              "number": 2, 
@@ -221,7 +221,7 @@ representative clone of the cluster.
 #+BEGIN_SRC js
    "producer": "my-repseq-software -z -k (v. 123)",    // arbitrary string, user/software/version/options producing this file [required]
    "timestamp": "2014-10-01 12:00:11",                 // last modification date [required]
-   "vidjil_json_version": "2016a",                     // version of the .json format  [required]
+   "vidjil_json_version": "2016b",                     // version of the .json format  [required]
 #+END_SRC
 
 

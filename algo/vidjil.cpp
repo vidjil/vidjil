@@ -64,7 +64,7 @@
 // GIT_VERSION should be defined in "git-version.h", created by "create-git-version-h.sh", to be used outside of releases
 #include "git-version.h"
 
-#define VIDJIL_JSON_VERSION "2016a"
+#define VIDJIL_JSON_VERSION "2016b"
 
 //$$ #define (mainly default options)
 
