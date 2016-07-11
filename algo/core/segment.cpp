@@ -1195,16 +1195,20 @@ json FineSegmenter::toJson(){
   return seg;
 }
 
+json toJsonSegVal(string s) {
+  return {{"val", s}};
+}
+
 json KmerSegmenter::toJson() {
     json seg;
     int sequenceSize = sequence.size();
 
     if (evalue > NO_LIMIT_VALUE)
-        seg["_evalue"] = scientific_string_of_double(evalue);
+      seg["evalue"] = toJsonSegVal(scientific_string_of_double(evalue));
     if (evalue_left > NO_LIMIT_VALUE)
-      seg["_evalue_left"] = scientific_string_of_double(evalue_left);
+      seg["evalue_left"] = toJsonSegVal(scientific_string_of_double(evalue_left));
     if (evalue_right > NO_LIMIT_VALUE)
-      seg["_evalue_right"] = scientific_string_of_double(evalue_right);
+      seg["evalue_right"] = toJsonSegVal(scientific_string_of_double(evalue_right));
 
     seg["affectValues"] = {
         {"start", 1},
