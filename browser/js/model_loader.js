@@ -589,6 +589,9 @@ Model_loader.prototype = {
         return JSON.stringify(analysisData, undefined, 2);
     },
 
+    /**
+     * Convert 2014.03->2016a to 2016b json format
+     */
     convertSeg: function(seg) {
         var segMapping = ['5', '4', '3'];
         var newSeg = {};
