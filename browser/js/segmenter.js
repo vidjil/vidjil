@@ -34,6 +34,8 @@
 
 CGI_ADDRESS = ""
 
+SEGMENT_KEYS = ["4", "4a", "4b"]
+
 /** segment 
  * Segment is a view object to see the sequences of the selected clones in the model <br>
  * some function are provided to allow alignement / highlight / imgt request / ...
@@ -1084,12 +1086,20 @@ Sequence.prototype = {
                 // We first put the end positions
                 vdjArrayRev[vdjArray["5"]['stop']] = {'type':'N', 'color': ""};
                 vdjArrayRev[vdjArray["3"]['start']] = {'type':'N', 'color': ""};
-                if (typeof vdjArray["4"] != 'undefined' && typeof vdjArray["4"]['start']!= 'undefined' && typeof clone.seg["4"]['stop'] != 'undefined'){
-                    vdjArrayRev[vdjArray["4"]['stop']] = {'type':'N', 'color': ""};
 
-                    // We now put the start positions (that may override previous end positions)
-                    vdjArrayRev[vdjArray["4"]['start']] = {'type':'D', 'color': ""};
-                }
+                for (var i in SEGMENT_KEYS) {
+                    var key = SEGMENT_KEYS[i]
+                    if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key]['stop'] != 'undefined'){
+                        vdjArrayRev[vdjArray[key]['stop']] = {'type':'N', 'color': ""};
+                    }}
+
+                // We now put the start positions (that may override previous end positions)
+                for (var i in SEGMENT_KEYS) {
+                    var key = SEGMENT_KEYS[i]
+                    if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key]['start']!= 'undefined'){
+                        vdjArrayRev[vdjArray[key]['start']] = {'type':'D', 'color': ""};
+                    }}
+
                 vdjArrayRev[vdjArray["5"]['start']] = {'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : ""};
                 vdjArrayRev[vdjArray["3"]['start']] = {'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : ""};
             }
@@ -1188,10 +1198,16 @@ Sequence.prototype = {
         vdjArray["5"]["stop"] = this.pos[clone.seg["5"]["stop"]] + 1;
         vdjArray["3"]["start"] = this.pos[clone.seg["3"]["start"]];
         vdjArray["3"]["stop"] = this.seq.length;
-        if (typeof clone.seg["4"] != 'undefined' && typeof clone.seg["4"]["start"] != 'undefined' && typeof clone.seg["4"]["stop"] != 'undefined') {
-            vdjArray["4"] = {}
-            vdjArray["4"]["start"] = this.pos[clone.seg["4"]["start"]];
-            vdjArray["4"]["stop"] = this.pos[clone.seg["4"]["stop"]] + 1
+
+        for (var i in SEGMENT_KEYS)
+        {
+            var key = SEGMENT_KEYS[i]
+            vdjArray[key] = {}
+            if (typeof clone.seg[key] != 'undefined' && typeof clone.seg[key]["start"] != 'undefined' && typeof clone.seg[key]["stop"] != 'undefined') {
+                vdjArray[key] = {}
+                vdjArray[key]["start"] = this.pos[clone.seg[key]["start"]];
+                vdjArray[key]["stop"] = this.pos[clone.seg[key]["stop"]] + 1
+            }
         }
         return vdjArray;
     },
