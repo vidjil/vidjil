@@ -609,7 +609,8 @@ Model_loader.prototype = {
                 newSeg[key] = this.getConvertedSegNames(newSeg[key])
             } else {
                 // We must have an object
-                newSeg[key] = {'val': newSeg[key]}
+                var wkey = (key == '_evalue') ? 'evalue' : key
+                newSeg[wkey] = {'val': newSeg[key]}
             }
         }
         return newSeg;
