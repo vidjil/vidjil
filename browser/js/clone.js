@@ -486,7 +486,7 @@ Clone.prototype = {
     }, //end getSize
 
     computeEValue: function () {
-        var e = this.seg['_evalue'];
+        var e = this.seg['evalue'];
         if (typeof(e) != 'undefined')
             this.eValue = parseFloat(e['val'])
         else
@@ -802,9 +802,9 @@ Clone.prototype = {
         this.seg[segment]["stop"]  = 0
 
         // TODO : insert real value for stats (start, end, evalue, ...)
-        this.seg["_evalue"]       = 0
-        this.seg["_evalue_left"]  = 0
-        this.seg["_evalue_right"] = 0
+        this.seg["evalue"]       = 0
+        this.seg["evalue_left"]  = 0
+        this.seg["evalue_right"] = 0
         this.m.analysisHasChanged = true;
         this.segEdited = true;
         this.m.update();
