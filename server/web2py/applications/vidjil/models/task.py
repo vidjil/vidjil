@@ -456,7 +456,7 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
     from subprocess import Popen, PIPE, STDOUT, os
     
     out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
-    output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
+    output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data + '-%s' % sample_set_id
     
     if clean_before:
         cmd = "rm -rf "+out_folder 
