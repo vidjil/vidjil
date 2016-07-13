@@ -1,9 +1,9 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
-2016-07-XX  The Vidjil Team
-	* New json 2016a format, renamed fields 'seg.{5,4,3,_evalue}' and 'diversity', 1-based positions (core/segment.cpp)
-	* New tool to display and debug alignments between a read and selected V/J genes  (tools/vdj_assign.cpp)
+2016-07-13  The Vidjil Team
+	* New json 2016b format, renamed fields 'seg.{5,4,3,evalue}' and 'diversity', 1-based positions (core/segment.cpp)
+	* New tool to display and debug alignments between a read and selected V/J genes (tools/vdj_assign.cpp)
 	* Better test structure and process. The should-vdj tests will be soon moved to their own repository.
 	* Bugs closed (build process, affine gaps (core/dynprog.cpp), JUNCTION/CDR3 detection (core/segment.cpp))
 	* New and updated functional tests
