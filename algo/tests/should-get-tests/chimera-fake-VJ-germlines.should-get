@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil -A -g $VIDJIL_DIR/data/chimera-fake-VJ-germlines.data -i $VIDJIL_DIR/data/chimera-fake-VJ.fa
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -A -g $VIDJIL_DIR/data/chimera-fake-VJ-germlines.data -i $VIDJIL_DIR/data/chimera-fake-VJ.fa
 # Testing a custom (fake) germlines.data
 
 $ Loads from 'chimera-fake-VJ-germlines.data' a custom germline

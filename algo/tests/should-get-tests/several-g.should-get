@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil -g $VIDJIL_DIR/germline -g $VIDJIL_DIR/germline/isotypes.data -i $VIDJIL_DIR/data/isotypes.fa
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline -g $VIDJIL_DIR/germline/isotypes.data -i $VIDJIL_DIR/data/isotypes.fa
 
 $ Segment the three reads
 1: junction detected in 3 reads

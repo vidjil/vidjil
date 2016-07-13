@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil -g $VIDJIL_DIR/germline -u $VIDJIL_DIR/data/segmentation-2.fa ; cat out/segmentation-2.unsegmented.vdj.fa
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline -u $VIDJIL_DIR/data/segmentation-2.fa ; cat out/segmentation-2.unsegmented.vdj.fa
 
 $ Only one sequence is segmented, but it is too small for a window (too short w)
 1: junction detected in 1 reads

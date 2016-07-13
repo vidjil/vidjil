@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil -c segment -3 -g $VIDJIL_DIR/germline -i ../should-vdj-tests/Demo-X5.should-vdj.fa
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -c segment -3 -g $VIDJIL_DIR/germline -i ../should-vdj-tests/Demo-X5.should-vdj.fa
 
 $ Detects a CDR3 on regular V(D)J recombinations
 1: IGH SEG.* [{].*[}]

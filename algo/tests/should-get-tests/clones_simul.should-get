@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil -k 14 -w 50 -c clones -G $VIDJIL_DIR/germline/IGH -y 3 -z 1 -r 1 $VIDJIL_DIR/data/clones_simul.fa
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -k 14 -w 50 -c clones -G $VIDJIL_DIR/germline/IGH -y 3 -z 1 -r 1 $VIDJIL_DIR/data/clones_simul.fa
 
 $ Junction extractions
 1:found 25 50-windows in 66 reads
