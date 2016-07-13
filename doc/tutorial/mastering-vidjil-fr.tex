@@ -1,43 +1,13 @@
 \documentclass[11pt]{article}
 
-\usepackage[utf8x]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\usepackage{amsthm}
 \usepackage[frenchb]{babel}
-\usepackage{color}
-\usepackage{multirow}
-%\usepackage{fourier-orns}
-\usepackage{hyperref}
-\usepackage[margin=3.2cm, top=1.5cm, bottom=2cm,left=1.5cm,a4paper]{geometry}
-\usepackage{graphicx}
-\usepackage{caption}
-\usepackage{array}
+\input{common-headers}
 
-
-\setlength{\parskip}{2mm}
-\setlength{\parindent}{0pt}
-
-\usepackage{enumitem}
-\setlist[itemize]{noitemsep, topsep=0pt}
-
-\newcounter{questionum}
-\setcounter{questionum}{0}
-
-\newcommand\com[1]{\textsf{«~#1~»}}
-
-\newcommand\question[1]{\par\noindent\textbf{\thequestionum}.~#1\addtocounter{questionum}{1}}
-\let\oldmarginpar\marginpar
-\renewcommand\marginpar[1]{\oldmarginpar{\tiny#1}}
+\title{Maîtriser l'application web Vidjil:\\ Analyser et interagir avec les
+clones}
 
 \begin{document}
-
-\begin{minipage}[t]{.7\textwidth}
-\section*{Maîtriser l'application web Vidjil:\\ Analyser et interagir avec les
-clones}
-\end{minipage}
-\hfill
-\today
+\maketitle
 
 \textit{Le but de cette session pratique est d'apprendre les moyens usuels de
   visualiser, filtrer, analyser et regrouper les clones de l'application web

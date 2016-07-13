@@ -1,4 +1,4 @@
-TEX=$(wildcard *.tex)
+TEX=$(wildcard mastering*.tex)
 PDF=$(TEX:.tex=.pdf)
 HTML=$(TEX:.tex=.html)
 

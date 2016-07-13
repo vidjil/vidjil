@@ -1,42 +1,10 @@
 \documentclass[11pt]{article}
-
-\usepackage[utf8x]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\usepackage{amsthm}
 \usepackage[english]{babel}
-\usepackage{color}
-\usepackage{multirow}
-%\usepackage{fourier-orns}
-\usepackage{hyperref}
-\usepackage[margin=3.2cm, top=1.5cm, bottom=2cm,left=1.5cm,a4paper]{geometry}
-\usepackage{graphicx}
-\usepackage{caption}
-\usepackage{array}
+\input{common-headers}
 
-
-\setlength{\parskip}{2mm}
-\setlength{\parindent}{0pt}
-
-\usepackage{enumitem}
-\setlist[itemize]{noitemsep, topsep=0pt}
-
-\newcounter{questionum}
-\setcounter{questionum}{0}
-
-\newcommand\com[1]{\textsf{#1}}
-
-\newcommand\question[1]{\par\noindent\textbf{\thequestionum}.~#1\addtocounter{questionum}{1}}
-\let\oldmarginpar\marginpar
-\renewcommand\marginpar[1]{\oldmarginpar{\tiny#1}}
-
+\title{Mastering the Vidjil web application:\\ Browsing and analysing clones}
 \begin{document}
-
-\begin{minipage}[t]{.7\textwidth}
-\section*{Mastering the Vidjil web application:\\ Browsing and analysing clones}
-\end{minipage}
-\hfill
-\today
+\maketitle
 
 \textit{The goal of this practical session is to learn
 common ways to visualise, filter, analyse and merge clones
