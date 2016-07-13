@@ -6,3 +6,6 @@ all: $(PDF)
 
 $(PDF): %.pdf: %.tex
 	pdflatex $^ && pdflatex $^
+
+$(HTML): %.html: %.tex
+	htlatex $^
