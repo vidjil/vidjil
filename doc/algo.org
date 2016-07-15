@@ -232,6 +232,9 @@ Locus/recombinations
    To select a custom set of TR or Ig locus, you may copy =germline/germlines.data= into a new file,
    as for example =germline/custom-germlines.data=, and run Vidjil with =-g germline/custom-germlines.data -i -2=.
  - Several =-g= options can be used, as for instance =-g germline -g germline/isotypes.data=.
+ - One can use other germline sequences possibly bydefining another
+   =germlines.data= file that would refer to an alternative germline set or by
+   overwriting the existing germline sequences (in the FASTA file).
 
 ** Main algorithm parameters
 
