@@ -67,6 +67,9 @@ Otherwise, such =.vidjil= files can be obtained:
     - either with “patients”/“save analysis” if you are connected to a patient database
     - or with “file”/“export .analysis”
 
+You are advised to go through to the tutorial available from [[http://www.vidjil.org/doc]]
+to learn the essential features of Vidjil.
+
 * The elements of the Vidjil web application
 
 ** The info panel (upper left panel)
