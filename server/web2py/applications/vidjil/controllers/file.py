@@ -373,8 +373,11 @@ def upload():
             
         if data_file is not None and data_file2 is not None and request.vars['pre_process'] != '0':
             db.sequence_file[request.vars["id"]] = dict(pre_process_flag = "WAIT")
-            if db.scheduler_task[db.sequence_file[request.vars["id"]].pre_process_scheduler_task_id] != None:
-                scheduler.stop_task(db.sequence_file[request.vars["id"]].pre_process_scheduler_task_id)
+            old_task_id = db.sequence_file[request.vars["id"]].pre_process_scheduler_task_id
+            if db.scheduler_task[old_task_id] != None:
+                scheduler.stop_task(old_task_id)
+                db(db.scheduler_task.id == old_task_id).delete()
+                db.commit()
             schedule_pre_process(int(request.vars['id']), int(request.vars['pre_process']))
             mes += " | p%s start pre_process %s " % (request.vars['pre_process'], request.vars['id'] + "-" +request.vars['pre_process'])
 

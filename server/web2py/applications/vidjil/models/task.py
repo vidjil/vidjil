@@ -138,7 +138,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
         args = [id_file, id_config, id_data, grep_reads]
         task = scheduler.queue_task("vidjil", args,
                         repeats = 1, timeout = defs.TASK_TIMEOUT,
-                               start_time=request.now + timed(seconds=120))
+                               start_time=request.now + timed(seconds=1200))
         db.results_file[id_data] = dict(scheduler_task_id = task.id)
         db.commit()
         print task.id
