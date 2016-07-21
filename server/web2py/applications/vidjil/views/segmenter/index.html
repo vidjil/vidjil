@@ -1,0 +1,15 @@
+{{extend 'simple_layout.html'}}
+
+<h1>Vidjil online segmenter tool</h1>
+
+<div>
+    {{=form}}
+</div>
+
+<div>
+        {{if result != "":}}
+        <textarea class="text invalidinput" cols="40" name="result" rows="10" style="width: 100%; height: 2000px; font-family:monospace">
+            {{=result}}
+        </textarea>
+        {{pass}}
+</div>
