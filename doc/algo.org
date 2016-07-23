@@ -224,7 +224,7 @@ Locus/recombinations
    This allows in particular to select incomplete rearrangement using custom V or J repertoires with added sequences.
  - The =-g germline/= option launches the analysis on the seven germlines, selecting the best locus for each read.
    Using =-g germline/ -i= tests also some incomplete and unusual recombinations (locus with a =+= in their name),
-   and using =-g germline/ -i -2= further test unexpected recombinations.
+   and using =-g germline/ -i -2= further test unexpected recombinations (tagged as =xxx=).
    See [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]] for information on the analyzable locus.
  - Analyzed locus and parameters are configured through the =germline/germlines.data= file.
    A =germline/isotypes.data= file is provided to look for sequences with, on one side, IGHJ (or even IGHV) genes,

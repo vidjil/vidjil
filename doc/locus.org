@@ -36,4 +36,5 @@ require to have reads with fairly conserved D genes or up/downstream regions.
 
 Finally, the =-2= command line option and the =multi+inc+xxx= server configuration try to
 detect unexpected or chimeric recombinations between genes of different germlines or on different
-strands (such as +Vk/-Vk recombinations).
+strands (such as +V/-V recombinations).
+These recombinations, tagged as =xxx=, can be technological artefacts or unusual biological recombinations.
