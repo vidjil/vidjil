@@ -271,7 +271,7 @@ class KmerSegmenter : public Segmenter
    * @param seq: An object read from a FASTA/FASTQ file
    * @param germline: the germline
    */
-  KmerSegmenter(Sequence seq, Germline *germline, double threshold = THRESHOLD_NB_EXPECTED, int multiplier=1);
+  KmerSegmenter(Sequence seq, Germline *germline, double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0);
 
   KmerSegmenter(const KmerSegmenter &seg);
 
@@ -287,7 +287,7 @@ class KmerSegmenter : public Segmenter
 
  private:
   void computeSegmentation(int strand, KmerAffect left, KmerAffect right,
-                           double threshold, int multiplier);
+                           double threshold, double multiplier);
 };
 
 
@@ -326,7 +326,7 @@ class FineSegmenter : public Segmenter
    * @param germline: germline used
    */
    FineSegmenter(Sequence seq, Germline *germline, Cost segment_cost,
-                 double threshold = THRESHOLD_NB_EXPECTED, int multiplier=1);
+                 double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0);
 
    ~FineSegmenter();
 
@@ -335,13 +335,13 @@ class FineSegmenter : public Segmenter
   * @param germline: germline used
   */
   void FineSegmentD(Germline *germline, bool several_D,
-                    double threshold = THRESHOLD_NB_EXPECTED_D, int multiplier=1);
+                    double threshold = THRESHOLD_NB_EXPECTED_D, double multiplier=1.0);
 
   bool FineSegmentD(Germline *germline,
                     AlignBox *box_Y, AlignBox *box_DD, AlignBox *box_Z,
                     int forbidden_id,
                     int extend_DD_on_Y, int extend_DD_on_Z,
-                    double threshold = THRESHOLD_NB_EXPECTED_D, int multiplier=1);
+                    double threshold = THRESHOLD_NB_EXPECTED_D, double multiplier=1.0);
 
   /**
    * find JUNCTION/CDR3, by using marked Cys104 and Phe118/Trp118 positions

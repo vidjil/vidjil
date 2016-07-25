@@ -359,7 +359,7 @@ ostream &operator<<(ostream &out, const Segmenter &s)
 
 KmerSegmenter::KmerSegmenter() { kaa = 0 ; }
 
-KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold, int multiplier)
+KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold, double multiplier)
 {
   box_V = new AlignBox();
   box_D = new AlignBox();
@@ -512,7 +512,7 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
   threshold_nb_expected = threshold;
 
   // E-value multiplier
-  int multiplier = multi_germline->germlines.size() * nb_reads_for_evalue;
+  double multiplier = multi_germline->germlines.size() * nb_reads_for_evalue;
   
   // Iterate over the germlines
   for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
@@ -572,7 +572,7 @@ KmerMultiSegmenter::~KmerMultiSegmenter() {
 }
 
 void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffect after,
-                                        double threshold, int multiplier) {
+                                        double threshold, double multiplier) {
   // Try to segment, computing 'box_V->end' and 'box_J->start'
   // If not segmented, put the cause of unsegmentation in 'because'
 
@@ -844,7 +844,7 @@ string format_del(int deletions)
   return deletions ? *"(" + string_of_int(deletions) + " del)" : "" ;
 }
 
-FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  double threshold, int multiplier)
+FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  double threshold, double multiplier)
 {
   box_V = new AlignBox("5");
   box_D = new AlignBox("4");
@@ -984,7 +984,7 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
                                  AlignBox *box_Y, AlignBox *box_DD, AlignBox *box_Z,
                                  int forbidden_id,
                                  int extend_DD_on_Y, int extend_DD_on_Z,
-                                 double evalue_threshold, int multiplier){
+                                 double evalue_threshold, double multiplier){
 
     // Create a zone where to look for D, adding some nucleotides on both sides
     int l = box_Y->end - extend_DD_on_Y;
@@ -1047,7 +1047,7 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
 }
 
 void FineSegmenter::FineSegmentD(Germline *germline, bool several_D,
-                                 double evalue_threshold, int multiplier){
+                                 double evalue_threshold, double multiplier){
 
   if (segmented){
 
