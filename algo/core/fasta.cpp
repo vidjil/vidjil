@@ -383,13 +383,13 @@ ostream &operator<<(ostream &out, const Sequence &seq) {
   return out;
 }
 
-int nb_sequences_in_fasta(string f, bool approx)
+unsigned long long nb_sequences_in_fasta(string f, bool approx)
 {
   if (approx)
     return approx_nb_sequences_in_fasta(f);
 
   OnlineFasta *sequences = new OnlineFasta(f, 1, " ");
-  int nb_sequences = 0 ;
+  unsigned long long nb_sequences = 0 ;
 
   while (sequences->hasNext())
     {
@@ -406,7 +406,7 @@ int nb_sequences_in_fasta(string f, bool approx)
 
 #define SAMPLE_APPROX_NB_SEQUENCES 200
 
-int approx_nb_sequences_in_fasta(string f)
+unsigned long long approx_nb_sequences_in_fasta(string f)
 {
   OnlineFasta *sequences = new OnlineFasta(f, 1, " ");
   int nb_sequences = 0 ;
@@ -423,7 +423,7 @@ int approx_nb_sequences_in_fasta(string f)
     {
       cout << "approx. " ;
       float ratio = (float) filesize(f.c_str()) / (float) sequences->getPos();
-      nb_sequences = (int) (ratio * nb_sequences);
+      nb_sequences = (unsigned long long) (ratio * nb_sequences);
     }
 
   cout << nb_sequences << " sequences" << endl;

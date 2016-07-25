@@ -892,7 +892,7 @@ int main (int argc, char **argv)
     cout << endl ;
 
     // Number of reads for e-value computation
-    int nb_reads_for_evalue = (expected_value > NO_LIMIT_VALUE) ? nb_sequences_in_fasta(f_reads, true) : 1 ;
+    unsigned long long nb_reads_for_evalue = (expected_value > NO_LIMIT_VALUE) ? nb_sequences_in_fasta(f_reads, true) : 1 ;
 
     
   //////////////////////////////////

@@ -213,7 +213,7 @@ const Fasta FASTA_AMBIGUOUS = Fasta(true, "?");
  * Count the number of sequences in a Fasta file
  * @return the number of sequences
  */
-int nb_sequences_in_fasta(string f, bool approx = false);
-int approx_nb_sequences_in_fasta(string f);
+unsigned long long nb_sequences_in_fasta(string f, bool approx = false);
+unsigned long long approx_nb_sequences_in_fasta(string f);
 
 #endif
