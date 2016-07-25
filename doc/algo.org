@@ -190,7 +190,7 @@ make test                # run self-tests (can take 5 to 60 minutes)
 
 The main input file of Vidjil is a /set of reads/, given as a =.fasta=
 or =.fastq= file, possibly compressed with gzip (=.gz=).
-This set of reads can reach several gigabytes. It is
+This set of reads can reach several gigabytes and 2*10^9 reads. It is
 never loaded entirely in the memory, but reads are processed one by
 one by the Vidjil algorithm.
 
