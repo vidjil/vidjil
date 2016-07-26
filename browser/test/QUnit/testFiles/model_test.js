@@ -21,6 +21,9 @@ test("model: convert", function () {
 
     deepEqual(m.convertSeg(json_clone3.seg), {"5": {"stop": 5}, "4": {"name": "IGHD2*03"}, "3": {"name": "IGHV4*01", "start": 15}, "junction": {"productive": false, "start": 2, "stop": 13}}, "convertSeg: Ok");
     deepEqual(m.convertSeg(seg), {"3": {"name": "J", "start": 3}, "4": {"name": "D", "start": 1, "stop": 2}, "5": {"name": "V", "stop": 0}, "score": {"val": 42}, "cdr3": {"start": 0, "stop": 3}, "foo": {"start": 17, "stop": 42}}, "convertSeg: Ok");
+
+    deepEqual(m.convertSeg(json_clone1.seg)['5'], {"start": 1, "stop": 5}, "convertSeg on old 0-based 5/4/3 fields");
+    deepEqual(m.convertSeg(json_clone2.seg)['5'], {"start": 1, "stop": 5}, "convertSeg on current 1-based fields");
 });
 
 test("model : load", function() {

@@ -11,7 +11,7 @@
             "4" : "IGHD2*03",
             '_evalue': 1e-2,
             "3start" : 15,
-            "5" : {'start': 1, 'end': 5},
+            "5" : {'start': 1, 'end': 5}, // 0-based (old format, with 'end')
             "cdr3": {
                 "start": 11,
                 "stop": 16,
@@ -34,6 +34,10 @@
         "reads" : [10,10,15,15] ,
         "top" : 2,
         "germline" : "TRG",
+
+        "seg" : {
+            "5" : {'start': 2, 'stop': 6}, // 1-based (current format)
+        }
     }
     
     var json_clone3 = {
