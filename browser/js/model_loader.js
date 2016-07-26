@@ -591,8 +591,11 @@ Model_loader.prototype = {
 
     /**
      * Convert 2014.03->2016a to 2016b json format
+     * Convert 1-based positions (json, except old files for 5/4/3) to 0-based positions (js)
      */
     convertSeg: function(seg) {
+        var segMappingZeroBased = true;
+
         var segMapping = ['5', '4', '3'];
         var newSeg = {};
         for (key in seg) {
@@ -611,6 +614,21 @@ Model_loader.prototype = {
                 // We must have an object
                 var wkey = (key == '_evalue') ? 'evalue' : key
                 newSeg[wkey] = {'val': newSeg[key]}
+            }
+        }
+
+        // We must do another loop because some keys may have been merged (3 and 3start)
+        for (key in newSeg) {
+            // Convert to 0-based positions
+            this.shiftBoundary(newSeg, key, 'start', -1);
+            this.shiftBoundary(newSeg, key, 'stop', -1);
+        }
+
+        // Old files (5/4/3 positions were already 0-based)
+        if (segMappingZeroBased) {
+            for (key in segMapping) {
+                this.shiftBoundary(newSeg, segMapping[key], 'start', 1);
+                this.shiftBoundary(newSeg, segMapping[key], 'stop', 1);
             }
         }
         return newSeg;
@@ -645,6 +663,16 @@ Model_loader.prototype = {
             }
         }
         return seg
+    },
+
+
+    /**
+     * shift the given boundary (when it exists) by 'shift' positions
+     **/
+    shiftBoundary: function(seg, key, bound, shift) {
+        if (typeof seg[key] != 'undefined')
+            if (typeof seg[key][bound] != 'undefined')
+                seg[key][bound] += shift ;
     },
 
     getConvertedBoundary: function(seg, key, bound) {
