@@ -609,7 +609,7 @@ Model_loader.prototype = {
                 newSeg[key] = seg[key];
             }
             if (typeof newSeg[key] == 'object') {
-                newSeg[key] = this.getConvertedSegNames(newSeg[key])
+                newSeg[key] = this.getCopyConvertedSegNames(newSeg[key])
             } else {
                 // We must have an object
                 var wkey = (key == '_evalue') ? 'evalue' : key
@@ -652,6 +652,7 @@ Model_loader.prototype = {
      * Convert fields from old names to new names.
      * For instance some fields were called 'end', they now must be 'stop' (see bc32af9)
      * We convert all of them.
+     * NOT USED ANYMORE
      */
     getConvertedSegNames: function(seg) {
         var renameFields = {'end': 'stop'}
@@ -665,6 +666,20 @@ Model_loader.prototype = {
         return seg
     },
 
+    /**
+     * Copy object, whiled converting fields from old names to new names
+     * For instance some fields were called 'end', they now must be 'stop' (see bc32af9)
+     * We convert all of them.
+     */
+    getCopyConvertedSegNames: function(seg) {
+        var newSeg = {};
+        var renameFields = {'end': 'stop'}
+        for (field in seg) {
+            renamed = (typeof renameFields[field] != 'undefined') && (typeof seg[renameFields[field]] == 'undefined') ? renameFields[field] : field ;
+            newSeg[renamed] = seg[field]
+        }
+        return newSeg
+    },
 
     /**
      * shift the given boundary (when it exists) by 'shift' positions
