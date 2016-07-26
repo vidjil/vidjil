@@ -70,6 +70,7 @@ function processImgtContents(IMGTresponse,tag) {
 /**
  * Add start stop position for fields given in array according to
  * clone's sequence.
+ * Used in IMGT/V-QUEST post-processing.
  *
  * @param seuence
  * @param arrayToProcess
@@ -88,7 +89,7 @@ function processImgtContents(IMGTresponse,tag) {
                 fldVal=arrayToProcess["3'V-REGION"].toUpperCase();
                 tpVal = sequence.indexOf(fldVal);
                 if (tpVal>0){
-                    result["3'V-REGION"] = {seq:"", tooltip:arrayToProcess["V-GENE and allele"],start: tpVal, stop: tpVal+fldVal.length};
+                    result["3'V-REGION"] = {seq:"", tooltip:arrayToProcess["V-GENE and allele"],start: tpVal, stop: tpVal+fldVal.length-1};
                 }
                 break;
 
@@ -96,7 +97,7 @@ function processImgtContents(IMGTresponse,tag) {
                 fldVal=arrayToProcess["5'J-REGION"].toUpperCase();
                 tpVal = sequence.indexOf(fldVal);
                 if (tpVal>0){
-                    result["5'J-REGION"] = {seq:"", tooltip:arrayToProcess["J-GENE and allele"],start: tpVal, stop: tpVal+fldVal.length};
+                    result["5'J-REGION"] = {seq:"", tooltip:arrayToProcess["J-GENE and allele"],start: tpVal, stop: tpVal+fldVal.length-1};
                 }
                 break;
 
@@ -104,7 +105,7 @@ function processImgtContents(IMGTresponse,tag) {
                 fldVal=arrayToProcess["D-REGION"].toUpperCase();
                 tpVal = sequence.indexOf(fldVal);
                 if (tpVal>0){
-                    result["D-REGION"] = {seq:"", tooltip:arrayToProcess["D-GENE and allele"],start: tpVal, stop: tpVal+fldVal.length};
+                    result["D-REGION"] = {seq:"", tooltip:arrayToProcess["D-GENE and allele"],start: tpVal, stop: tpVal+fldVal.length-1};
                 }
                 break;
 
@@ -112,7 +113,7 @@ function processImgtContents(IMGTresponse,tag) {
                 fldVal=arrayToProcess["CDR3-IMGT"].toUpperCase();
                 tpVal = sequence.indexOf(fldVal);
                 if (tpVal>0){
-                    result["CDR3-IMGT"] = {seq:"", tooltip:"CDR3-IMGT",start: tpVal, stop: tpVal+fldVal.length};
+                    result["CDR3-IMGT"] = {seq:"", tooltip:"CDR3-IMGT",start: tpVal, stop: tpVal+fldVal.length-1};
                 }
                 break;
         }
