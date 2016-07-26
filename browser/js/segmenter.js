@@ -1244,9 +1244,10 @@ Sequence.prototype = {
         var raw_seq = ""
 
         // Build the highlight object from p        
+        // Both 'start' and 'stop' positions are included in the highlight
         if (p.constructor === String){
             h.start = this.pos[clone.sequence.indexOf(p)]
-            h.stop = this.pos[clone.sequence.indexOf(p)+p.length]
+            h.stop = this.pos[clone.sequence.indexOf(p)+p.length-1]
         }else if (p.constructor === Object & typeof p.start != 'undefined'){
             h.start = this.pos[p.start];
             h.stop = this.pos[p.stop];
@@ -1260,7 +1261,7 @@ Sequence.prototype = {
         // Build the (possibly invisible) sequence
         if (raw_seq == "") {
             h.css = "highlight_border"
-            for (var k=0; k<(h.stop - h.start); k++) h.seq += "\u00A0"
+            for (var k=0; k<(h.stop - h.start + 1); k++) h.seq += "\u00A0"
         } else {
             h.css = "highlight_seq"
             var j = 0
