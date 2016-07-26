@@ -594,7 +594,11 @@ Model_loader.prototype = {
      * Convert 1-based positions (json, except old files for 5/4/3) to 0-based positions (js)
      */
     convertSeg: function(seg) {
-        var segMappingZeroBased = true;
+
+        // Detects whether we have an old file (before 3e340e1/32aaa23)
+        var segMappingZeroBased =
+            ((typeof seg['5'] != 'undefined' && typeof seg['5']['end'] != 'undefined')) ||
+            (typeof seg['5end'] != 'undefined')
 
         var segMapping = ['5', '4', '3'];
         var newSeg = {};
