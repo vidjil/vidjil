@@ -65,19 +65,19 @@ test("computeStartStop(arrayToProcess,sequence)", function () {
                 "seq": "",
                 "tooltip": "Homsap TRGV3*01 F",
                 "start": 161,
-                "stop": 179
+                "stop": 178
             },
             "5'J-REGION": {
                 "seq": "",
                 "tooltip": "Homsap TRGJP2*01 F",
                 "start": 185,
-                "stop": 203
+                "stop": 202
             },
             "CDR3-IMGT": {
                 "seq": "",
                 "tooltip": "CDR3-IMGT",
                 "start": 164,
-                "stop": 200
+                "stop": 199
             }
 
         };
