@@ -1246,9 +1246,12 @@ Sequence.prototype = {
         // Build the highlight object from p        
         // Both 'start' and 'stop' positions are included in the highlight
         if (p.constructor === String){
+            // string-based fields ('id', ...).
+            // Should not exist anymore in the json, but populated by findPotentialField()
             h.start = this.pos[clone.sequence.indexOf(p)]
             h.stop = this.pos[clone.sequence.indexOf(p)+p.length-1]
         }else if (p.constructor === Object & typeof p.start != 'undefined'){
+            // object-based fields ('cdr3', ...)
             h.start = this.pos[p.start];
             h.stop = this.pos[p.stop];
 
