@@ -9,7 +9,7 @@ test("model: convert", function () {
         "3": "J",
         "4": "D",
         "score": 42,
-        "5": {"name": "V", "stop": 0},
+        "5": {"name": "V", "end": 0}, // getConvertedSeg knows that this is an old json (0-based for 5/4/3) by the presence of seg['5']['end']
         "cdr3": {"start": 1, "end": 4}, // 1-based
         "foo": {"start": 18, "stop": 43}
     };
