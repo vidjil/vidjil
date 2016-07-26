@@ -13,13 +13,13 @@
             "3start" : 15,
             "5" : {'start': 1, 'end': 5},
             "cdr3": {
-                "start": 10,
-                "end": 15,
+                "start": 11,
+                "stop": 16,
                 "aa": "ABCDE"
             },
             "junction": {
-                "start": 9,
-                "stop": 11,
+                "start": 10,
+                "stop": 12,
                 "productive": true
             }
         }
@@ -50,8 +50,8 @@
             "3start" : 15,
             "5end" : 5,
             "junction": {
-                "start": 2,
-                "stop": 13,
+                "start": 3,
+                "stop": 14,
                 "productive": false
             }
         }

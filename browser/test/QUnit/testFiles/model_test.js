@@ -3,23 +3,24 @@
 test("model: convert", function () {
     var m = new Model();
     var seg = {
-        "4start": 1,
+        "4start": 1,  // old format, 0-based
         "4end": 2,
         "3start": 3,
         "3": "J",
         "4": "D",
         "score": 42,
         "5": {"name": "V", "stop": 0},
-        "cdr3": {"start": 0, "end": 3}
+        "cdr3": {"start": 1, "end": 4}, // 1-based
+        "foo": {"start": 18, "stop": 43}
     };
     equal(m.getConvertedBoundary(json_clone3.seg, "5", "end"), 5, "getConvertedBoundary existant: Ok");
     equal(typeof m.getConvertedBoundary(json_clone3.seg, "5", "start"), 'undefined', "getConvertedBoundary non existant: Ok");
-    deepEqual(m.getConvertedSegNames(seg['cdr3']), {"start": 0, "stop": 3}, "getConvertedSegNames: ok")
+    deepEqual(m.getConvertedSegNames(seg['cdr3']), {"start": 1, "stop": 4}, "getConvertedSegNames (before 0-based conversion)")
 
     deepEqual(m.getConvertedSeg(seg, "3"), {"name": "J", "start": 3}, "getConvertedSeg: Ok");
 
     deepEqual(m.convertSeg(json_clone3.seg), {"5": {"stop": 5}, "4": {"name": "IGHD2*03"}, "3": {"name": "IGHV4*01", "start": 15}, "junction": {"productive": false, "start": 2, "stop": 13}}, "convertSeg: Ok");
-    deepEqual(m.convertSeg(seg), {"3": {"name": "J", "start": 3}, "4": {"name": "D", "start": 1, "stop": 2}, "5": {"name": "V", "stop": 0}, "score": {"val": 42}, "cdr3": {"start": 0, "stop": 3}}, "convertSeg: Ok");
+    deepEqual(m.convertSeg(seg), {"3": {"name": "J", "start": 3}, "4": {"name": "D", "start": 1, "stop": 2}, "5": {"name": "V", "stop": 0}, "score": {"val": 42}, "cdr3": {"start": 0, "stop": 3}, "foo": {"start": 17, "stop": 42}}, "convertSeg: Ok");
 });
 
 test("model : load", function() {
