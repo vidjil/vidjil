@@ -111,7 +111,8 @@ void KmerRepresentativeComputer::compute() {
   for (size_t seq = 1; seq <= sequences.size() && seq <= seq_index_longest_run + stability_limit ; seq++) {
     Sequence sequence = rc.getithBest(seq);
 
-    if (sequence.sequence.size() <= length_longest_run) {
+    // Break as soon as the sequences are too small
+    if (sequence.sequence.size() < required.size()) {
       break;
     }
     
@@ -129,6 +130,12 @@ void KmerRepresentativeComputer::compute() {
         window_quality_sum[i] += static_cast<int>(sequence.quality[i+pos_required]);
       }
       sequence_used_for_quality++;
+    }
+
+    // When sequences are smaller than length_longest_run,
+    // they are used only for the above quality computation
+    if (sequence.sequence.size() <= length_longest_run) {
+      continue;
     }
 
     size_t pos_end_required = pos_required + required.length();
