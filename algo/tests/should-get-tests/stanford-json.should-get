@@ -51,3 +51,6 @@ $ Second sequence has a DNA sequence provided
 
 $ Second sequence also has evalues
 1:"id": "CTGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTA".*"evalue": ."val": "[0-9\.e-]+"
+
+$ All 'start' fields are 1-based, they never equal to zero
+0: "start": 0
