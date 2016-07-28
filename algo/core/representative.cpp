@@ -125,7 +125,7 @@ void KmerRepresentativeComputer::compute() {
     
     //sum quality
     if (sequence.quality.length() > 0) {
-      for (int i = 0; i<required.length(); i++) {
+      for (size_t i = 0; i<required.length(); i++) {
         window_quality_sum[i] += static_cast<int>(sequence.quality[i+pos_required]);
       }
       sequence_used_for_quality++;
@@ -180,7 +180,7 @@ void KmerRepresentativeComputer::compute() {
     
     if (sequence_used_for_quality > 0) {
       //init default quality
-      for (int i = 0; i < representative.sequence.length(); i++)
+      for (size_t i = 0; i < representative.sequence.length(); i++)
           quality += "!";
     
       //add window quality
@@ -188,10 +188,10 @@ void KmerRepresentativeComputer::compute() {
       if (pos_required == string::npos && revcomp) {
           size_t pos_required_rev = ::revcomp(representative.sequence).find(required);
           size_t pos_end_required_rev = pos_required_rev+required.length();
-          for (int i = 0; i<required.length(); i++)
+          for (size_t i = 0; i<required.length(); i++)
             quality[pos_end_required_rev-i-1] = static_cast<char>(window_quality_sum[i]/sequence_used_for_quality);
       }else{
-          for (int i = 0; i<required.length(); i++)
+          for (size_t i = 0; i<required.length(); i++)
             quality[pos_required+i] = static_cast<char>(window_quality_sum[i]/sequence_used_for_quality);
       }
     }
