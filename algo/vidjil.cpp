@@ -1357,7 +1357,7 @@ int main (int argc, char **argv)
         //From KmerMultiSegmenter
         json_clone["seg"] = kseg->toJson();
         json_clone["seg"]["quality"] = {
-            {"start", 0},
+            {"start", 1},
             {"stop", kseg->getSequence().sequence.length()},
             {"seq", repComp.getQuality()}
         };
