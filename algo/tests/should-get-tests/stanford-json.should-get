@@ -13,6 +13,9 @@ $ Most abundant window
 $ Affect values are over all the sequence
 1: "affectValues": .[^}]*"start": 1, "stop": 128
 
+$ No quality information here
+0: "quality"
+
 $ Segmentation
 1:"name": "IGHV3-23.05 6/ACCCGGGAGGAACAATAT/9 IGHD6-13.01 0//5 IGHJ4.02"
 

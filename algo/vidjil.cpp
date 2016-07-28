@@ -1356,6 +1356,8 @@ int main (int argc, char **argv)
         json_clone["_coverage_info"] = {repComp.getCoverageInfo()};
         //From KmerMultiSegmenter
         json_clone["seg"] = kseg->toJson();
+
+        if (repComp.getQuality().length())
         json_clone["seg"]["quality"] = {
             {"start", 1},
             {"stop", kseg->getSequence().sequence.length()},
