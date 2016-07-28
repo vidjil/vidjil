@@ -103,7 +103,9 @@ void KmerRepresentativeComputer::compute() {
   size_t seq_index_longest_run = 1;
   Sequence sequence_longest_run;
   int sequence_used_for_quality = 0;
-  int window_quality_sum [required.length()] = {};
+  int window_quality_sum [required.length()];
+  memset(window_quality_sum, 0, required.length()*sizeof(int));
+  
   size_t k = getSeed().length();
 
   for (size_t seq = 1; seq <= sequences.size() && seq <= seq_index_longest_run + stability_limit ; seq++) {
