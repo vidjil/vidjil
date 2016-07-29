@@ -1,4 +1,4 @@
-#+TITLE: Vidjil -- Server Manual
+#+TITLE: Vidjil -- Server Manual -- Installation and Maintenance
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/org-mode.css" />
 
 This is the preliminary help of the Vidjil server.
@@ -46,7 +46,7 @@ Users should consult the web application manual.
 
 
 
-* Installing and running the vidjil server
+* Installing and running the Vidjil server
 
 These installation instruction are for Ubuntu server 14.04
 

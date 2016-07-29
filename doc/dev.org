@@ -11,8 +11,11 @@
 # at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
 # contact@vidjil.org
 
-This is the main developer documentation.
-It is not as stable as the user documentation.
+Here are aggregated notes forming the developer documentation on the Vidjil components, algorithm,
+web application client and server.
+This documentation is a work-in-progress, it is far not as polished as the user documentation
+Help can also be found in the source code and in the commit messages.
+
 
 * Algorithm
 ** Code organisation
@@ -287,6 +290,9 @@ The cache is stored for each user and is updated only when a change occurs (mess
 
 
 **** Installation
+
+The following instructions are for Ubuntu.
+For OS X, see https://github.com/watir/watirbook/blob/master/manuscript/installation/mac.md.
 
 ***** Install rvm
 
