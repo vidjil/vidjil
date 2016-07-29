@@ -1,4 +1,26 @@
-* Users
+#+TITLE: Vidjil -- Web Application Administration Manual
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/org-mode.css" />
+
+
+This is the preliminary help for administrators of the Vidjil web application.
+This helps covers administrative features accessible from the web application,
+and is complementary to the "Server Installation and Maintenance Manual".
+Users should consult the "Web Application Manual".
+
+
+* Configurations
+
+XXX TODO XXX
+This page will show you the config list, config are just parameters for Vidjil runs. Everybody can use config (no permission acces needed, TODO)
+
+
+* Pre-process configurations
+   
+XXX TODO XXX
+
+* Users, groups, and permissions
+
+** Users
   Users can have various permissions which allow them to perform actions on
   the site.
   These actions are:
@@ -17,7 +39,7 @@
   have the permissions necessary to edit the patients of one group, but not
   the patients of another).
 
-* Groups
+** Groups
   Groups can belong to a hierarchical structure. A group can have a parent
   group. This means any patient assigned to a group is also accessible to
   said group's children. Other permissions are not transfered from parents to
@@ -29,14 +51,14 @@
   to a group which has a parent will automatically defer the parent-child
   relationship to that parent.
 
-* Creation Procedure
+** Creation Procedure
   When creating the groups for an organisation the parent group MUST be the
   first group created. Assigning a parent to a group cannot be done after
   creation. A group cannot change parents.
   Users can be created at any point in the procedure. They can also be added
   or removed from groups whenever it is convenient
 
-  ** Example: create organisation Foobar with sub groups/roles
+*** Example: create organisation Foobar with sub groups/roles
     - Create group Foobar (select None for parent group).
     - Create roles (eg. Technician, Engineer, Doctor). be sure to select
       Foobar as the parent group.
@@ -50,3 +72,9 @@
     these groups. Any patient created should automatically be assigned to the
     parent group. Any patients created for the parent group will be
     accessible by any member of one of the child groups.
+
+
+* Server Monitoring
+
+Some monitoring features are accessible through the web application :
+XXX TODO XXX
