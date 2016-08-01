@@ -91,6 +91,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads,
         *out_unsegmented << *seg ;
       }
       if (out_unsegmented_detail && (seg->getSegmentationStatus() >= STATS_FIRST_UNSEG)) {
+        if (unsegmented_detail_full || (seg->getSegmentationStatus() != UNSEG_TOO_FEW_ZERO && seg->getSegmentationStatus() != UNSEG_TOO_SHORT))
         *out_unsegmented_detail[seg->getSegmentationStatus()] << *seg ;
       }
     }
@@ -153,8 +154,9 @@ void WindowExtractor::setUnsegmentedOutput(ostream *out) {
   out_unsegmented = out;
 }
 
-void WindowExtractor::setUnsegmentedDetailOutput(ofstream **outs) {
+void WindowExtractor::setUnsegmentedDetailOutput(ofstream **outs, bool unsegmented_detail_full) {
   out_unsegmented_detail = outs;
+  this->unsegmented_detail_full = unsegmented_detail_full;
 }
 
 void WindowExtractor::setAffectsOutput(ostream *out) {

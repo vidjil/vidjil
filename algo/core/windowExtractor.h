@@ -29,6 +29,7 @@ class WindowExtractor {
   ostream *out_segmented;
   ostream *out_unsegmented;
   ofstream **out_unsegmented_detail;
+  bool unsegmented_detail_full;
   ostream *out_affects;
 
   Stats stats[STATS_SIZE];
@@ -113,9 +114,10 @@ class WindowExtractor {
   /**
    * Defines the output streams where the unsegmented sequences will be output, split by unsegmentation cause.
    * Otherwise no output will be given.
-   * @param out: The output streams
+   * @param outs: The output streams
+   * @param unsegmented_detail_full: Whether we should output UNSEG_TOO_FEW_ZERO reads
    */
-  void setUnsegmentedDetailOutput(ofstream **outs);
+  void setUnsegmentedDetailOutput(ofstream **outs, bool unsegmented_detail_full=false);
 
   /**
    * Defines the output stream where the detailed affects will be output.

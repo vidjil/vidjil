@@ -240,7 +240,8 @@ void usage(char *progname, bool advanced)
   cerr << "Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)" << endl
        << "  -U            output segmented reads (in " << SEGMENTED_FILENAME << " file)" << endl
        << "  -u            output unsegmented reads (in " << UNSEGMENTED_FILENAME << " file)" << endl
-       << "  -uu           output unsegmented reads, gathered by unsegmentation cause (in *" << UNSEGMENTED_DETAIL_FILENAME << " files)" << endl
+       << "  -uu           output unsegmented reads, gathered by unsegmentation cause, except for very short and 'too few V/J' reads (in *" << UNSEGMENTED_DETAIL_FILENAME << " files)" << endl
+       << "  -uuu          output unsegmented reads, gathered by unsegmentation cause, all reads (in *" << UNSEGMENTED_DETAIL_FILENAME << " files) (use only for debug)" << endl
        << "  -K            output detailed k-mer affectation on all reads (in " << AFFECTS_FILENAME << " file) (use only for debug, for example -KX 100)" << endl
        << endl
  
@@ -361,6 +362,7 @@ int main (int argc, char **argv)
   bool output_segmented = false;
   bool output_unsegmented = false;
   bool output_unsegmented_detail = false;
+  bool output_unsegmented_detail_full = false;
   bool output_affects = false;
   bool keep_unsegmented_as_clone = false;
 
@@ -648,8 +650,9 @@ int main (int argc, char **argv)
         break;
 
       case 'u':
-        output_unsegmented_detail = output_unsegmented; // -uu
-        output_unsegmented = true;
+        output_unsegmented = output_unsegmented_detail_full ;       // -uuu
+        output_unsegmented_detail_full = output_unsegmented_detail; // -uu
+        output_unsegmented_detail = true;                           // -u
         break;
       case 'U':
         output_segmented = true;
@@ -1067,7 +1070,7 @@ int main (int argc, char **argv)
           out_unsegmented_detail[i] = new ofstream(f_unsegmented_detail.c_str());
         }
 
-      we.setUnsegmentedDetailOutput(out_unsegmented_detail);
+      we.setUnsegmentedDetailOutput(out_unsegmented_detail, output_unsegmented_detail_full);
     }
 
 
