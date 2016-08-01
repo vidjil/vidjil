@@ -1460,10 +1460,10 @@ int main (int argc, char **argv)
                                           representatives_labels);
     cout << RawOutputSimilarityMatrix(matrix, 90);
 
-    if (max_clones > 0) {
+    if (sort_clones.size() > 0 && max_clones > 0) {
     //Compute all the edges
     cout << "Compute distances" << endl ;
-    SimilarityMatrix matrixLevenshtein = compare_windows(*windowsStorage, Levenshtein, max_clones);
+    SimilarityMatrix matrixLevenshtein = compare_windows(*windowsStorage, Levenshtein, sort_clones.size());
     //Added distances matrix in the JsonTab
     jsonLevenshtein << JsonOutputWindowsMatrix(matrixLevenshtein);
     }
