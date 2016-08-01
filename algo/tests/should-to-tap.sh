@@ -197,7 +197,8 @@ while read line; do
                 fi
 
                 debug "Grepping \"$pattern\" in $FILE_TO_GREP"
-                if [ $(sed -rn "/$pattern/p" < $FILE_TO_GREP | wc -l) -eq $nb_hits -o $skip -eq 1 ]; then
+                nb_hits_found=$(sed -rn "/$pattern/p" < $FILE_TO_GREP | wc -l | sed "s/ //g")
+                if [ $nb_hits_found -eq $nb_hits -o $skip -eq 1 ]; then
                     if [ $know_to_fail -eq 1 ]; then
                         echo "Warning: test $test_nb should have failed, but has not!" >&2
                     fi
@@ -207,7 +208,7 @@ while read line; do
                     if [ $know_to_fail -eq 0 ]; then
                         error=1
 			echo >&2; echo >&2; echo $SEPARATOR_LINE >&2
-			echo "$file failed:" >&2
+			echo "$file failed ($nb_hits_found instead of $nb_hits)" >&2
 			echo "$line" >&2
 			echo $SEPARATOR_LINE >&2
 			cat $FILE_TO_GREP >&2
