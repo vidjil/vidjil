@@ -4,8 +4,21 @@ import datetime
 LAST_HOURS = 24
 
 def tmp_dir(scheduler_args):
-    data_id = int(scheduler_args.split(',')[2])
-    return defs.DIR_OUT_VIDJIL_ID % data_id
+    '''Recompute the tmp directory from scheduler_args'''
+    ll = scheduler_args.replace(']','').split(',')
+
+    try:
+        if len(ll) == 4:
+            # ["8443", "26", 10501, null]
+            return defs.DIR_OUT_VIDJIL_ID % int(ll[2])
+
+        if len(ll) == 2:
+            # [1, 8483]
+            return defs.DIR_PRE_VIDJIL_ID % int(ll[1])
+
+    except:
+        pass
+    return '?'
 
 def ellipsis(what, max_size=30):
     ell = ' ...'
