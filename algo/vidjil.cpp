@@ -121,6 +121,8 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define DEFAULT_TRIM 100
 
+#define MAX_CLONES_FOR_SIMILARITY 1000
+
 // warn
 #define WARN_MAX_CLONES 100
 #define WARN_PERCENT_SEGMENTED 40
@@ -1464,7 +1466,8 @@ int main (int argc, char **argv)
     if (sort_clones.size() > 0 && max_clones > 0) {
     //Compute all the edges
     cout << "Compute distances" << endl ;
-    SimilarityMatrix matrixLevenshtein = compare_windows(*windowsStorage, Levenshtein, sort_clones.size());
+    SimilarityMatrix matrixLevenshtein = compare_windows(*windowsStorage, Levenshtein,
+                                                         sort_clones.size() > MAX_CLONES_FOR_SIMILARITY ? MAX_CLONES_FOR_SIMILARITY : sort_clones.size());
     //Added distances matrix in the JsonTab
     jsonLevenshtein << JsonOutputWindowsMatrix(matrixLevenshtein);
     jsonLevenshteinComputed = true ;
