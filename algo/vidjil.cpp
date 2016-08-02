@@ -385,6 +385,7 @@ int main (int argc, char **argv)
 
   //json which contains the Levenshtein distances
   json jsonLevenshtein;
+  bool jsonLevenshteinComputed = false ;
 
   //$$ options: getopt
 
@@ -1466,6 +1467,7 @@ int main (int argc, char **argv)
     SimilarityMatrix matrixLevenshtein = compare_windows(*windowsStorage, Levenshtein, sort_clones.size());
     //Added distances matrix in the JsonTab
     jsonLevenshtein << JsonOutputWindowsMatrix(matrixLevenshtein);
+    jsonLevenshteinComputed = true ;
     }
     
      // delete scorer;
@@ -1541,6 +1543,7 @@ int main (int argc, char **argv)
     }
     
     //Added edges in the json output file
+    if (jsonLevenshteinComputed)
     j["similarity"] = jsonLevenshtein;
 
 
