@@ -1,6 +1,12 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
+2016-08-XX  The Vidjil Team
+	* New computation of average quality for each representative sequence, inside its window (core/representative.cpp)
+	* Raised capacity to 2*10^9 reads (core/segment.cpp, core/fasta.cpp)
+	* Better filtering/debug options (-u/-uu/-uuu), keeping interesting reads (vidjil.cpp, core/windowExtractor.cpp)
+	* Bugs closed (-u files, similarity in .vidjil)
+
 2016-07-13  The Vidjil Team
 	* New json 2016b format, renamed fields 'seg.{5,4,3,evalue}' and 'diversity', 1-based positions (core/segment.cpp)
 	* New tool to display and debug alignments between a read and selected V/J genes (tools/vdj_assign.cpp)
