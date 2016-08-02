@@ -1566,7 +1566,7 @@ int main (int argc, char **argv)
       delete out_unsegmented;
 
     if (output_unsegmented_detail)
-      for (int i=0; i<STATS_SIZE; i++)
+      for (int i=STATS_FIRST_UNSEG; i<STATS_SIZE; i++)
         delete out_unsegmented_detail[i];
 
 
