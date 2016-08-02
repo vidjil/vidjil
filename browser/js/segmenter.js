@@ -1059,7 +1059,7 @@ Sequence.prototype = {
     spanify_mutation: function (self, other) {
         if (segment.aligned && self != other) {
             var span = document.createElement('span');
-            span.className = 'substitution';
+            span.className = (self == '-' || other == '-' ? 'indel' : 'substitution');
             span.setAttribute('other', other + '-' + segment.first_clone);
             span.appendChild(document.createTextNode(self));
             return span;
