@@ -534,13 +534,17 @@ Runing Vidjil with =-U= gives a file =out/basename.unsegmented.vdj.fa=, with all
 On datasets generated with rather specific V(D)J primers, this is generally not recommended, as it may generate a large file.
 However, the =-U= option is very useful for whole RNA-Seq or capture datasets that contain few reads with V(D)J recombinations.
 
-Similarly, two options are available to get the unsegmented reads:
-   - =-u= gives a file =out/basename.segmented.vdj.fa=, with unsegmented reads.
-   - =-uu= gives a set of files =out/basename.UNSEG_*=, with unsegmented reads gathered by unsegmentation cause
+Similarly, options are available to get the unsegmented reads:
+   - =-u= gives a set of files =out/basename.UNSEG_*=, with unsegmented reads gathered by unsegmentation cause.
+     It outputs only reads sharing significantly sequences with V/J germline genes or with some ambiguity:
+     it may be interesting  to further study RNA-Seq datasets.
+
+   - =-uu= gives the same set of files, including *all* unsegmented reads (including =UNSEG too short= and =UNSEG too few V/J=),
+     and =-uuu= further outputs all these reads in a file =out/basename.segmented.vdj.fa=.
 
 Again, as these options may generate large files, they are generally not recommended.
 However, they are very useful in some situations, especially to understand why some dataset gives poor segmentation result.
-For example =-uu -X 1000= splits the unsegemented reads from the 1000 first reads.
+For example =-uu -X 1000= splits the unsegmented reads from the 1000 first reads.
 
 
 ** Segmentation and .vdj format
