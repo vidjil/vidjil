@@ -331,6 +331,8 @@ Model_loader.prototype = {
         for (var i=0 ; i<this.reads.segmented.length; i++){
             this.reads.segmented_all[i] = this.reads.segmented[i]
         }
+        
+        this.compute_average_quality();
 
         
         //extract germline
@@ -700,6 +702,29 @@ Model_loader.prototype = {
             newSeg = seg[key+bound];
         }
         return newSeg;
+    },
+    
+    compute_average_quality: function() {
+        this.min_quality = 255;
+        this.max_quality = 0;
+        this.average_quality = 0;
+        var count = 0;
+        
+        for (var i in this.clones){
+            if (typeof this.clones[i].seg != "undefined" && typeof this.clones[i].seg.quality != "undefined"){
+                var s = this.clones[i].seg.quality.seq;
+                for (var j in s){
+                    if (s[j] != "!"){
+                        var c = s[j].charCodeAt(0);
+                        if (c < this.min_quality) this.min_quality=c;
+                        if (c > this.max_quality) this.max_quality=c;
+                        this.average_quality += c;
+                        count++;
+                    }
+                }
+            }
+        }
+        this.average_quality = this.average_quality/count; 
     }
 
 };

@@ -1,0 +1,11 @@
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -c clones -A -G $VIDJIL_DIR/germline/TRG -A  $VIDJIL_DIR/data/segment_lec.fq > /dev/null ; cat out/segment_lec.vidjil
+
+$ Window
+1:"id": "GGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGAAACTCTTTGGCA"
+
+$ Average quality over the window
+1: !!!KLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOP@RSTUVWX!!!!
+
+$ All 'start' fields are 1-based, they never equal to zero
+0: "start": 0
+

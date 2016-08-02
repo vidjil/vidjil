@@ -24,6 +24,7 @@ protected:
   string required;
   float coverage_reference_length;
   float coverage;
+  string quality;
   string coverage_info;
 public:
   RepresentativeComputer(list<Sequence> &r);
@@ -105,6 +106,7 @@ public:
   // Getters, setters
   string getSeed() const;
   float getCoverage() const;
+  string getQuality() const;
   string getCoverageInfo() const;
 
   /**

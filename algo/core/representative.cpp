@@ -63,6 +63,10 @@ float KmerRepresentativeComputer::getCoverage() const{
   return coverage;
 }
 
+string KmerRepresentativeComputer::getQuality() const{
+  return quality;
+}
+
 string KmerRepresentativeComputer::getCoverageInfo() const{
   return coverage_info;
 }
@@ -98,19 +102,39 @@ void KmerRepresentativeComputer::compute() {
   size_t length_longest_run = 0;
   size_t seq_index_longest_run = 1;
   Sequence sequence_longest_run;
+  int sequence_used_for_quality = 0;
+  int window_quality_sum [required.length()];
+  memset(window_quality_sum, 0, required.length()*sizeof(int));
+  
   size_t k = getSeed().length();
 
   for (size_t seq = 1; seq <= sequences.size() && seq <= seq_index_longest_run + stability_limit ; seq++) {
     Sequence sequence = rc.getithBest(seq);
 
-    if (sequence.sequence.size() <= length_longest_run) {
+    // Break as soon as the sequences are too small
+    if (sequence.sequence.size() < required.size()) {
       break;
     }
+    
     size_t pos_required = sequence.sequence.find(required);
     if (pos_required == string::npos && revcomp)
       pos_required = sequence.sequence.find(::revcomp(required));
 
     if (pos_required == string::npos) {
+      continue;
+    }
+    
+    //sum quality
+    if (sequence.quality.length() > 0) {
+      for (size_t i = 0; i<required.length(); i++) {
+        window_quality_sum[i] += static_cast<int>(sequence.quality[i+pos_required]);
+      }
+      sequence_used_for_quality++;
+    }
+
+    // When sequences are smaller than length_longest_run,
+    // they are used only for the above quality computation
+    if (sequence.sequence.size() <= length_longest_run) {
       continue;
     }
 
@@ -159,8 +183,26 @@ void KmerRepresentativeComputer::compute() {
       + string_of_int(pos_longest_run + length_longest_run - 1) + "]"
       + "-#" + string_of_int(seq_index_longest_run);
 
-    representative.quality = "";
-
+    quality = "";
+    
+    if (sequence_used_for_quality > 0) {
+      //init default quality
+      for (size_t i = 0; i < representative.sequence.length(); i++)
+          quality += "!";
+    
+      //add window quality
+      size_t pos_required = representative.sequence.find(required);
+      if (pos_required == string::npos && revcomp) {
+          size_t pos_required_rev = ::revcomp(representative.sequence).find(required);
+          size_t pos_end_required_rev = pos_required_rev+required.length();
+          for (size_t i = 0; i<required.length(); i++)
+            quality[pos_end_required_rev-i-1] = static_cast<char>(window_quality_sum[i]/sequence_used_for_quality);
+      }else{
+          for (size_t i = 0; i<required.length(); i++)
+            quality[pos_required+i] = static_cast<char>(window_quality_sum[i]/sequence_used_for_quality);
+      }
+    }
+    
     coverage = (float) length_longest_run / coverage_reference_length;
 
     coverage_info  = string_of_int(length_longest_run) + " bp"

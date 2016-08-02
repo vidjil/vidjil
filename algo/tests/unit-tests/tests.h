@@ -103,6 +103,7 @@ enum {
   TEST_KMER_REPRESENTATIVE,
   TEST_KMER_REPRESENTATIVE_REQUIRED_SEQ,
   TEST_KMER_REPRESENTATIVE_REVCOMP,
+  TEST_KMER_REPRESENTATIVE_QUALITY,
 
   /* Kmer segmentation */
   TEST_KMER_IS_SEGMENTED,
@@ -292,6 +293,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE, "Test KmerRepresentativeComputer computations");
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE_REQUIRED_SEQ, "Test KmerRepresentativeComputer computations with a required sequence");
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE_REVCOMP, "Test KmerRepresentativeComputer computations on a dataset and its revcomp");
+  RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE_QUALITY, "Test KmerRepresentativeComputer quality computations");
   RECORD_TAP_TEST(TEST_BUG_SEGMENTATION, "Test segmentation bug");
   RECORD_TAP_TEST(TEST_SEGMENT_POSITION, "Test V,D,J position");
   RECORD_TAP_TEST(TEST_KMER_SEGMENT_OVERLAP, "Test kmer segmentation with an overlap");
