@@ -1386,7 +1386,7 @@ int main (int argc, char **argv)
         FineSegmenter seg(representative, segmented_germline, segment_cost);
 	
         if (segmented_germline->seg_method == SEG_METHOD_543)
-	  seg.FineSegmentD(segmented_germline, several_D, expected_value_D);
+	  seg.FineSegmentD(segmented_germline, several_D, expected_value_D, sort_clones.size());
 
         if (detect_CDR3)
           seg.findCDR3();
@@ -1603,7 +1603,7 @@ int main (int argc, char **argv)
             if (s.isSegmented()) 
               {
                 if (germline->seg_method == SEG_METHOD_543)
-                  s.FineSegmentD(germline, several_D, expected_value_D);
+                  s.FineSegmentD(germline, several_D, expected_value_D, nb_reads_for_evalue);
 
                 if (detect_CDR3)
                   s.findCDR3();
