@@ -229,7 +229,7 @@ void usage(char *progname, bool advanced)
 
   if (advanced)
   cerr << "Additional clustering (experimental)" << endl
-       << "  -E <file>     manual clustering -- a file used to force some specific edges" << endl
+       << "  -= <file>     manual clustering -- a file used to force some specific edges" << endl
        << "  -n <int>      maximum distance between neighbors for automatic clustering (default " << DEFAULT_EPSILON << "). No automatic clusterisation if =0." << endl
        << "  -N <int>      minimum required neighbors for automatic clustering (default " << DEFAULT_MINPTS << ")" << endl
        << "  -S            generate and save comparative matrix for clustering" << endl
@@ -394,7 +394,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHadiI124g:G:V:D:J:k:r:vw:e:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3E:t:#:")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHadiI124g:G:V:D:J:k:r:vw:e:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3=:t:#:")) != EOF)
 
     switch (c)
       {
@@ -616,7 +616,7 @@ int main (int argc, char **argv)
 
       // Clustering
 
-      case 'E':
+      case '=':
 	forced_edges = optarg;
 	break;
 	
