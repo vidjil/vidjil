@@ -194,7 +194,7 @@ void usage(char *progname, bool advanced)
        << "                (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)" << endl
 #endif
        << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ")" << endl
-       << "  -e <float>    maximal e-value for determining if a segmentation can be trusted (default: " << THRESHOLD_NB_EXPECTED << ")" << endl
+       << "  -e <float>    maximal e-value for determining if a V-J segmentation can be trusted (default: " << THRESHOLD_NB_EXPECTED << ")" << endl
        << "  -t <int>      trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt (default: " << DEFAULT_TRIM << ") (0: no trim)" << endl
        << endl
 
@@ -221,6 +221,7 @@ void usage(char *progname, bool advanced)
   cerr << "Fine segmentation options (second pass)" << endl
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
        << "  -m <int>      minimal admissible delta between the end of the V and the start of the J (default: " << DEFAULT_DELTA_MIN << ") (default with -D: " << DEFAULT_DELTA_MIN_D << ")" << endl
+       << "  -E <float>    maximal e-value for determining if a D segment can be trusted (default: " << THRESHOLD_NB_EXPECTED_D << ")" << endl
        << endl ;
 
   cerr << "Clone analysis (second pass)" << endl
@@ -386,6 +387,7 @@ int main (int argc, char **argv)
   int options_s_k = 0 ;
 
   double expected_value = THRESHOLD_NB_EXPECTED;
+  double expected_value_D = THRESHOLD_NB_EXPECTED_D;
 
   //json which contains the Levenshtein distances
   json jsonLevenshtein;
@@ -394,7 +396,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHadiI124g:G:V:D:J:k:r:vw:e:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3=:t:#:")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHadiI124g:G:V:D:J:k:r:vw:e:E:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3=:t:#:")) != EOF)
 
     switch (c)
       {
@@ -541,6 +543,10 @@ int main (int argc, char **argv)
 
       case 'e':
         expected_value = atof_NO_LIMIT(optarg);
+        break;
+
+      case 'E':
+        expected_value_D = atof_NO_LIMIT(optarg);
         break;
 
       // Output 
@@ -1380,7 +1386,7 @@ int main (int argc, char **argv)
         FineSegmenter seg(representative, segmented_germline, segment_cost);
 	
         if (segmented_germline->seg_method == SEG_METHOD_543)
-	  seg.FineSegmentD(segmented_germline, several_D);
+	  seg.FineSegmentD(segmented_germline, several_D, expected_value_D);
 
         if (detect_CDR3)
           seg.findCDR3();
@@ -1597,7 +1603,7 @@ int main (int argc, char **argv)
             if (s.isSegmented()) 
               {
                 if (germline->seg_method == SEG_METHOD_543)
-                  s.FineSegmentD(germline, several_D);
+                  s.FineSegmentD(germline, several_D, expected_value_D);
 
                 if (detect_CDR3)
                   s.findCDR3();
