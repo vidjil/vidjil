@@ -1009,6 +1009,13 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
 
     float evalue_D = multiplier * (r-l) * germline->rep_4.totalSize() * segment_cost.toPValue(box_DD->score[0].first);
 
+#ifdef DEBUG_EVALUE
+    cout << "multiplier " << multiplier
+         << ", length " << (r-l)
+         << ", D rep size " << germline->rep_4.totalSize()
+         << " ==> e-value (D) " << std::scientific << evalue_D << std::fixed << endl ;
+#endif
+
     if (evalue_D > evalue_threshold)
       return false;
 
@@ -1031,6 +1038,13 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
     int score_new = dp.compute();
 
     float evalue_DD_new = multiplier * (box_DD->end - box_DD->start + 1) * box_DD->ref.size() * segment_cost.toPValue(score_new);
+
+#ifdef DEBUG_EVALUE
+    cout << "multiplier " << multiplier
+         << ", length " << (box_DD->end - box_DD->start + 1)
+         << ", D size " << box_DD->ref.size()
+         << " ==> e-value (DD) " << std::scientific << evalue_DD_new << std::fixed << endl ;
+#endif
 
     if (evalue_DD_new > evalue_threshold)
       {

@@ -13,6 +13,8 @@
 #include "affectanalyser.h"
 #include "../lib/json.hpp"
 
+// #define DEBUG_EVALUE
+
 #define EXTEND_D_ZONE 5
 
 #define RATIO_STRAND 2          /* The ratio between the affectations in one

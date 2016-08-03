@@ -120,6 +120,13 @@ int Cost::homo2(char xa, char xb, char y)
 
 double Cost::toPValue(const int score)
 {
+#ifdef DEBUG_EVALUE
+  cout << *this
+       << " | score " << score
+       << ", matches " << (float) score / (float) match
+       << " ==> pvalue " << std::scientific << K * exp(-lambda * score) << std::fixed
+       << endl;
+#endif
   return K * exp(-lambda * score);
 }
 
