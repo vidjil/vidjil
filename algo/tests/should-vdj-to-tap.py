@@ -294,6 +294,9 @@ if __name__ == '__main__':
                                                            "(%d)" % sum(global_stats_todo.values()))
     print
 
+    if args.revcomp:
+        args.expected_fails *= 2
+
     if not global_failed == args.expected_fails:
         print "! We were expecting %s non-TODO failed tests, but there are %s such failures." % (args.expected_fails, global_failed)
         sys.exit(1)
