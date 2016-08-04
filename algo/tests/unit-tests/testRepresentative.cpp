@@ -41,8 +41,8 @@ void testRepresentative() {
 
   TAP_TEST(representative.sequence.length() == quality.length() ,TEST_KMER_REPRESENTATIVE_QUALITY,
           "representative sequence length(" << representative.sequence.length() << ") and quality sequence length(" << quality.length() << ") must be equal");
-  TAP_TEST(quality == "!!!!!!!>--------<!!!" ,TEST_KMER_REPRESENTATIVE_QUALITY,
-          "representative quality sequence and seq2 quality must be the same for the required sequence");
+  TAP_TEST(quality == "!!!!!!!>-3------<!!!" ,TEST_KMER_REPRESENTATIVE_QUALITY,
+           "representative quality sequence is average between seq2 and seq4 for the required sequence (" << quality << " instead)");
 
 
   krc.setRevcomp(false);
