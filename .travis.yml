@@ -39,9 +39,9 @@ script:
   - make COVERAGE=1 should
   - echo -en 'travis_fold:end:script.test-algo-functional\\r'
   ###
-  # - echo '"Tests, Algo (functional, .should-vdj.fa)..."'  && echo -en 'travis_fold:start:script.test-algo-functional-vdj\\r'
-  # - make shouldvdj
-  # - echo -en 'travis_fold:end:script.test-algo-functional-vdj\\r'
+  - echo '"Tests, Algo (functional, .should-vdj.fa)..."'  && echo -en 'travis_fold:start:script.test-algo-functional-vdj\\r'
+  - make shouldvdj
+  - echo -en 'travis_fold:end:script.test-algo-functional-vdj\\r'
   ###
   - echo '"Tests, Tools..."'  && echo -en 'travis_fold:start:script.test-tools\\r'
   - make test_tools

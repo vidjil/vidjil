@@ -10,6 +10,7 @@ OTHER_SRC=$(wildcard unit-tests/*.cpp)
 LIB=../core/vidjil.a ../lib/lib.a
 SHOULD=$(wildcard should-get-tests/*.should-get)
 SHOULD_LOG=$(SHOULD:.should-get=.tap)
+SHOULD_VDJ_EXPECTED_FAILS=--expected-fails 81
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
 SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
 REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
@@ -57,10 +58,10 @@ shouldlocus_and_vdj: vidjil
 	@echo "*** All .should-vdj.fa tests passed"
 
 shouldvdj:
-	python should-vdj-to-tap.py $(SHOULD_VDJ)
+	python should-vdj-to-tap.py $(SHOULD_VDJ_EXPECTED_FAILS) $(SHOULD_VDJ)
 
 shouldvdj_with_rc:
-	python should-vdj-to-tap.py -r $(SHOULD_VDJ)
+	python should-vdj-to-tap.py $(SHOULD_VDJ_EXPECTED_FAILS) -r $(SHOULD_VDJ)
 
 shouldvdj_with_rc_merged:
 	cat $(SHOULD_VDJ) > should-vdj-tests/should-vdj.merged.fa
