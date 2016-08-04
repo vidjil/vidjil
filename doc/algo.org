@@ -38,6 +38,9 @@ BMC Genomics 2014, 15:409
 http://dx.doi.org/10.1186/1471-2164-15-409
 
 Vidjil is open-source, released under GNU GPLv3 license.
+This is the help of the Vidjil algorithm, for command-line usage.
+Other documentation (users and administrators of the web application, developpers) can be found from http://www.vidjil.org/doc/.
+
 
 * Requirements and installation
 
