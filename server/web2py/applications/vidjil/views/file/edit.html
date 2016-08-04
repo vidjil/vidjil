@@ -46,7 +46,8 @@ info = db.sequence_file[request.vars["id"]]
                       <option value="{{=row}}">
                   {{pass}}
                   </datalist>
-                <td rowspan="2">* you must associate this upload with at least one patient or run</td>
+                <td rowspan="2">* You must associate this sample with at least one patient or run.
+		  <br/>You can also associate it with both a patient and a run.</td>
             </tr>
             <tr>
                 <td><label for="run_id" id="run_id__label">run: </label></td>
