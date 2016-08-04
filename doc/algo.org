@@ -215,6 +215,7 @@ Germline databases (at least one -V/(-D)/-J, or -G, or -g option must be given f
                 A different 'germlines.data' file can also be provided with -g <file>
 
 Locus/recombinations
+  -d            try to detect several D (experimental)
   -i            try to detect incomplete/unusual recombinations (locus with '+', must be used with -g)
   -2            try to detect unexpected recombinations (must be used with -g)
 #+END_EXAMPLE
@@ -644,10 +645,10 @@ require either the =-G germline/IGH= option, or the multi-germline =-g germline=
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -g germline -i -2 -3 data/reads.fasta
+./vidjil -g germline -i -2 -3 -d data/reads.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Gather the reads into clones, again based on windows overlapping the detected CDR3s.
-   # Assign the VDJ genes and try to detect the CDR3 of each clone.
+   # Assign the VDJ genes (including multiple D) and try to detect the CDR3 of each clone.
    # Summary of clones is available both on stdout, in out/reads.vdj.fa and in out/reads.vidjil.
 #+END_SRC
 
@@ -685,8 +686,8 @@ This file will be relatively small (a few kB or MB) and can be taken again as an
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -c segment -G germline/IGH -3 data/segment_S22.fa
-   # Detailed V(D)J designation and CDR3 detection on all reads, without clone gathering
+./vidjil -c segment -g germline -i -2 -3 -d data/segment_S22.fa
+   # Detailed V(D)J designation, including multiple D, and CDR3 detection on all reads, without clone gathering
    # (this is slow and should only be used for testing, or on a small file)
 #+END_SRC
 
