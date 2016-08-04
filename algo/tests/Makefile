@@ -11,6 +11,7 @@ LIB=../core/vidjil.a ../lib/lib.a
 SHOULD=$(wildcard should-get-tests/*.should-get)
 SHOULD_LOG=$(SHOULD:.should-get=.tap)
 SHOULD_VDJ_EXPECTED_FAILS=--expected-fails 81
+SHOULD_LOCUS_EXPECTED_FAILS=--expected-fails 3
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
 SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
 REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
@@ -53,7 +54,7 @@ shouldvdj_if_python:
 
 shouldlocus_and_vdj: vidjil
 	@echo "*** Launching .should-vdj-fa tests..."
-	python should-vdj-to-tap.py -2q -r $(SHOULD_VDJ) $(SHOULD_LOCUS)
+	python should-vdj-to-tap.py -2q -r $(SHOULD_LOCUS_EXPECTED_FAILS) $(SHOULD_VDJ) $(SHOULD_LOCUS)
 	$(MAKE) shouldvdj_with_rc
 	@echo "*** All .should-vdj.fa tests passed"
 
