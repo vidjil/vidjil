@@ -263,7 +263,7 @@ void usage(char *progname, bool advanced)
        << "Examples (see doc/algo.org)" << endl
        << "  " << progname << " -c clones   -G germline/IGH -3       data/Stanford_S22.fasta" << endl
        << "  " << progname << " -c clones   -g germline -i -2 -3     data/Stanford_S22.fasta   # (detect the locus for each read, including unusual/unexpected recombinations)" << endl
-       << "  " << progname << " -c windows  -g germline -i -2 -u -U  data/Stanford_S22.fasta   # (detect the locus, splits the reads into two (large) files)" << endl
+       << "  " << progname << " -c windows  -g germline -i -2 -uu -U data/Stanford_S22.fasta   # (detect the locus, splits all the reads into large files)" << endl
        << "  " << progname << " -c segment  -G germline/IGH -3       data/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing)" << endl
        << "  " << progname << " -c germlines                         data/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
     ;
