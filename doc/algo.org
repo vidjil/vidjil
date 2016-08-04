@@ -382,6 +382,9 @@ the clone sequence and the V(D)J germline genes. The default values should work.
    (meaning that V and J could overlap 10 bp). This is the default for VJ recombinations
    (except when using a =germlines.data= file).
 
+The e-value set by =-e= is also applied to the V/J designation.
+The =-E= option further sets the e-value for the detection of D segments.
+
 ** Further clustering (experimental)
 
 The following options are experimental and have no consequences on the =.vdj.fa= file,
@@ -394,7 +397,7 @@ being +1 for a match and -4 for a mismatch). However, more distant reads can als
 be clustered when there are more than 10 reads within the distance threshold.
 This behaviour can be controlled with the =-N= option.
 
-The =-E= option allows to specify a file for manually clustering two windows
+The =-== option allows to specify a file for manually clustering two windows
 considered as similar. Such a file may be automatically produced by vidjil
 (=out/edges=), depending on the option provided. Only the two first columns
 (separed by one space) are important to vidjil, they only consist of the 
