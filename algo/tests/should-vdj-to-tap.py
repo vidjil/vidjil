@@ -30,7 +30,7 @@ import os
 import argparse
 
 VIDJIL_FINE = '{directory}/vidjil -X 100 -# "#" -c segment -i -3 -d -g {directory}/germline %s >> %s'
-VIDJIL_KMER = '{directory}/vidjil -# "#" -b out -c windows -uU -2 -i -g {directory}/germline %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa >> %s'
+VIDJIL_KMER = '{directory}/vidjil -# "#" -b out -c windows -uuuU -2 -i -g {directory}/germline %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa >> %s'
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('--program', '-p', default=VIDJIL_FINE, help='program to launch on each file (%(default)s)')
