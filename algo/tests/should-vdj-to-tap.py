@@ -41,6 +41,8 @@ parser.add_argument('--ignore_D', '-D', action='store_true', help='ignore D gene
 parser.add_argument('--after-two', '-2', action='store_true', help='compare only the right part of the pattern after two underscores (locus code)')
 parser.add_argument('--revcomp', '-r', action='store_true', help='duplicate the tests on reverse-complemented files')
 parser.add_argument('--directory', '-d', default='../..', help='base directory where Vidjil is. This value is used by the default -p and -q values (%(default)s)')
+parser.add_argument('--expected-fails', '-e', type=int, default=0, help='number of expected non-TODO failed tests -- do not exit with error for this number')
+
 parser.add_argument('--verbose', '-v', action='store_true')
 
 parser.add_argument('file', nargs='+', help='''.should-vdj.fa files''')
@@ -58,7 +60,7 @@ if args.after_two:
     PROG_TAG = '.2'
 
 
-global_failed = False
+global_failed = 0
 global_stats = defaultdict(int)
 global_stats_failed = defaultdict(int)
 global_stats_todo = defaultdict(int)
@@ -224,7 +226,7 @@ def id_line_to_tap(l, tap_id):
         if 'TODO' in should:
             globals()['global_stats_todo'][locus] += 1
         else:
-            globals()['global_failed'] = True
+            globals()['global_failed'] += 1
 
         tap += 'not '
 
@@ -292,5 +294,6 @@ if __name__ == '__main__':
                                                            "(%d)" % sum(global_stats_todo.values()))
     print
 
-    if global_failed:
+    if not global_failed == args.expected_fails:
+        print "! We were expecting %s non-TODO failed tests, but there are %s such failures." % (args.expected_fails, global_failed)
         sys.exit(1)
