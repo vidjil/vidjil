@@ -90,6 +90,11 @@ class AlignBox
   void addToJson(json &seg);
 
   /**
+   * Returns 'V', 'D', 'J', or possibly '5', '4', '3', '?', depending on the ref_label and on the key
+   */
+  char getInitial();
+
+  /**
    * Returns the position in the reference string corresponding to the position in the read
    * Preliminary implementation, only works for the start of V and J boxes
    */

@@ -45,6 +45,18 @@ AlignBox::AlignBox(string _key, string _color) {
   ref_label = "";
 }
 
+char AlignBox::getInitial() {
+
+  // TRGV -> V, IGHD -> D...
+  if (ref_label.size() > 4)
+    return ref_label[3] ;
+
+  if (key.size())
+    return key[0] ;
+
+  return '?' ;
+}
+
 string AlignBox::getSequence(string sequence) {
   return sequence.substr(start, end-start+1);
 }
@@ -155,6 +167,24 @@ string codeFromBoxes(vector <AlignBox*> boxes, string sequence)
   }
 
   return code;
+}
+
+string posFromBoxes(vector <AlignBox*> boxes)
+{
+  string poss = "";
+  string initials = "";
+
+  int n = boxes.size();
+
+
+  for (int i=0; i<n; i++) {
+    initials += boxes[i]->getInitial() ;
+
+    poss += " " + string_of_int(boxes[i]->start + FIRST_POS) ;
+    poss += " " + string_of_int(boxes[i]->end + FIRST_POS) ;
+  }
+
+  return initials + "\t" + poss;
 }
 
 
