@@ -187,8 +187,10 @@ def id_line_to_tap(l, tap_id):
     '''
 
     l = l.strip()
+    pos = l.find(' + ') if ' + ' in l else l.find(' - ')
+    should = l[1:pos]
+
     pos = l.find('\t')
-    should = l[1:pos].replace(' + VJ','').replace(' + VDJ','').replace(' - VJ','').replace(' - VDJ','')
     result = l[pos+1:] + ' '
 
     should_pattern = should.replace('_', ' ')
