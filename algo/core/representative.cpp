@@ -4,6 +4,7 @@
 #include "read_chooser.h"
 #include "stats.h"
 
+#include <cstring>
 #include <iostream>
 using namespace std;
 
