@@ -1,11 +1,15 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
-2016-08-XX  The Vidjil Team
+2016-08-06  The Vidjil Team
 	* New computation of average quality for each representative sequence, inside its window (core/representative.cpp)
+	* New option (-E) to set the e-value for FineSegmenter D segment detection (vidjil.cpp)
+	* Safer e-value estimation for D segments (vidjil.cpp)
 	* Raised capacity to 2*10^9 reads (core/segment.cpp, core/fasta.cpp)
 	* Better filtering/debug options (-u/-uu/-uuu), keeping interesting reads (vidjil.cpp, core/windowExtractor.cpp)
+	* Better .vdj.fa header for irregular/incomplete recombinations, 1-based positions (core/segment.cpp)
 	* Bugs closed (-u files, similarity in .vidjil)
+	* New and updated unit and functional tests, checking again .should-vdj tests
 
 2016-07-13  The Vidjil Team
 	* New json 2016b format, renamed fields 'seg.{5,4,3,evalue}' and 'diversity', 1-based positions (core/segment.cpp)
