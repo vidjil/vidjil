@@ -592,11 +592,11 @@ with a > is of the following form:
 
         name          sequence name (include the number of occurrences in the read set and possibly other information)
         +             strand on which the sequence is mapped
-        VDJ           type of segmentation (can be "VJ", "VDJ", 
+        VDJ           type of segmentation (can be "VJ", "VDJ", "VDDJ", "53"...
     	              or shorter tags such as "V" for incomplete sequences).	
 		      The following line are for "VDJ" recombinations :
 
-        startV endV   start and end position of the V gene in the sequence (start at 0)
+        startV endV   start and end position of the V gene in the sequence (start at 1)
         startD endD                      ... of the D gene ...
         startJ endJ                      ... of the J gene ...
 
