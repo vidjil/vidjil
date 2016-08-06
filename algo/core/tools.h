@@ -11,7 +11,7 @@
 
 
 #define MAX_SEED_SIZE  50 // Spaced seed buffer
-#define FIRST_POS  0      // Numbering of the base pairs
+#define FIRST_POS  1      // Numbering of the base pairs for external output
 
 #include <sstream>
 #include <iostream>
