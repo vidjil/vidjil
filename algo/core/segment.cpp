@@ -295,10 +295,7 @@ bool Segmenter::finishSegmentation()
   box_D->start=0;
   box_D->end=0;
 
-  info = "VJ \t" + string_of_int(FIRST_POS) + " " + info + " " + string_of_int(seq.size() - 1 + FIRST_POS) ;
-  info += "\t" + code ;
-
-  info = (reversed ? "- " : "+ ") + info ;
+  info = (reversed ? "- " : "+ ") + info + "\t" + code ;
 
   return true ;
 }
@@ -311,16 +308,8 @@ bool Segmenter::finishSegmentationD()
   seg_J = seq.substr(box_J->start) ;
   seg_N = seq.substr(box_V->end+1, box_J->start-box_V->end-1) ;  // Twice computed for FineSegmenter, but only once in KmerSegmenter !
   seg_D  = seq.substr(box_D->start, box_D->end-box_D->start+1) ; // From Dstart to Dend
-  
-  info = "VDJ \t0 " + string_of_int(box_V->end) +
-                " " + string_of_int(box_D->start) +
-		" " + string_of_int(box_D->end) +
-		" " + string_of_int(box_J->start) +
-		" " + string_of_int(seq.size()-1+FIRST_POS) ;
-		
-  info += "\t" + code ;
-  
-  info = (reversed ? "- " : "+ ") + info ;
+
+  info = (reversed ? "- " : "+ ") + info + "\t" + code ;
 
   return true ;
 }
@@ -653,8 +642,13 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   segmented = true;
   because = reversed ? SEG_MINUS : SEG_PLUS ;
 
-  info = string_of_int(box_V->end + FIRST_POS) + " " + string_of_int(box_J->start + FIRST_POS)  ;
-
+  // TODO: this should also use possFromBoxes()... but 'boxes' is not defined here
+  info = "VJ \t"
+   + string_of_int(FIRST_POS) + " "
+   + string_of_int(box_V->end + FIRST_POS) + " "
+   + string_of_int(box_J->start + FIRST_POS) + " "
+   + string_of_int(sequence.size() - 1 + FIRST_POS) ;
+  
   // removeChevauchement is called once info was already computed: it is only to output info_extra
   info_extra += removeChevauchement();
   finishSegmentation();
@@ -995,6 +989,10 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   seg_N = check_and_resolve_overlap(sequence_or_rc, 0, sequence_or_rc.length(),
                                     box_V, box_J, segment_cost);
 
+  // Reset extreme positions
+  box_V->start = 0;
+  box_J->end = sequence.length()-1;
+
   // Why could this happen ?
       if (box_J->start>=(int) sequence.length())
 	  box_J->start=sequence.length()-1;
@@ -1005,8 +1003,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   boxes.push_back(box_V);
   boxes.push_back(box_J);
   code = codeFromBoxes(boxes, sequence_or_rc);
+  info = posFromBoxes(boxes);
 
-  info = string_of_int(box_V->end + FIRST_POS) + " " + string_of_int(box_J->start + FIRST_POS) ;
   finishSegmentation();
 }
 
@@ -1145,6 +1143,7 @@ void FineSegmenter::FineSegmentD(Germline *germline, bool several_D,
 
     boxes.push_back(box_J);
     code = codeFromBoxes(boxes, sequence_or_rc);
+    info = posFromBoxes(boxes);
 
     finishSegmentationD();
   }
