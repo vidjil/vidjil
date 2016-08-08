@@ -412,9 +412,11 @@ Model_loader.prototype = {
             if (this.analysis.samples) {
                 var s = this.analysis.samples
                 
+                // Hacky way of managing fields we do not want to copy without restructuring the whole JSON
+                var copy_exceptions = ['log', 'producer']
                 //replace names, timestamps, order...
                 for (var key in s)
-                    if (key != "log" && s[key].length == this.samples.number)
+                    if (!(key in copy_exceptions) && s[key].length == this.samples.number)
                         this.samples[key] = s[key]
             }
             
