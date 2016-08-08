@@ -416,7 +416,7 @@ Model_loader.prototype = {
                 var copy_exceptions = ['log', 'producer']
                 //replace names, timestamps, order...
                 for (var key in s)
-                    if (!(key in copy_exceptions) && s[key].length == this.samples.number)
+                    if ((copy_exceptions.indexOf(key) == -1) && s[key].length == this.samples.number)
                         this.samples[key] = s[key]
             }
             
