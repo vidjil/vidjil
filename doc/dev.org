@@ -361,7 +361,68 @@ make functional
 
 * Packaging
 
-** Packaging Vidjil into a Debian Package
+** Packaging Vidjil into a Debian Binary Package
+  In this section we will explain how to package a pre-compiled version of
+  Vidjil that will allow easy installation although it will not meet all the
+  requirements for a full Debian package and therefore cannot be added to the
+  default Debian repositories.
+
+  In this document we will not go over the fine details of debian packaging
+  and the use of each file. For more information you can refer to this page
+  from which this document was inspired:
+  http://www.tldp.org/HOWTO/html_single/Debian-Binary-Package-Building-HOWTO/
+
+  Being a binary package it will simply contain the vidjil binary which will
+  be copied to the chosen location on installation.
+
+*** Let's Get Started
+   You will first and foremost need to compile vidjil. Refer to #TODO for
+   more information.
+
+   Create a base directory for the package and the folders to which the binary
+   will be installed. Lets call our folder debian and copy the binary to /usr/bin/
+
+   $ mkdir -p debian/usr/bin
+
+   And copy the vidjil binary
+
+   $ cp vidjil debian/usr/bin
+
+   Now create the necessary control file. It should look something like this:
+
+   Package: vidjil
+   Version: <version> (ie. 2016.03-1)
+   Section: misc
+   Priority: optional
+   Architecture: all
+   Depends: bash (>= 2.05a-11)
+   Maintainer: Vidjil Team <team@vidjil.org>
+   Description: Count lymphocyte clones
+   vidjil parses a fasta or fastq file and produces an output with a list
+   of clones and meta-data concerning these clones
+
+   And place it in the correct folder.
+
+   $ mkdir -p debian/DEBIAN
+   $ cp control debian/DEBIAN/
+
+   Now build the package and rename it.
+
+   $ dpkg-deb --build debian
+   $ mv debian.deb vidjil_<version>_all.deb
+
+   It can be installed but running
+
+   $ sudo dpkg -i vidjil_<version>_all.deb
+
+   # TODO Add Changelog, copyright, etc.
+
+
+** Packaging Vidjil into a Debian Source Package
+
+  Note: This document is currently incomplete. This process will not produce a
+  working debian package. The package build will fail when attempting to
+  emulate `make install`
 
 *** Requirements
    - The release version of Vidjil you wish to package
