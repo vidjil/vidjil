@@ -114,6 +114,10 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     ##add task to scheduler
     task = scheduler.queue_task(program, args,
                                 repeats = 1, timeout = defs.TASK_TIMEOUT)
+    
+    if db.sequence_file[id_sequence].pre_process_flag == "WAIT" or db.sequence_file[id_sequence].pre_process_flag == "RUN" : 
+        db.scheduler_task[task.id] = dict(status ="STOPPED")
+    
     db.results_file[data_id] = dict(scheduler_task_id = task.id)
 
     filename= db.sequence_file[id_sequence].filename
@@ -710,6 +714,18 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
     db.sequence_file[sequence_file_id] = dict(data_file = stream,
                                               data_file2 = None,
                                               pre_process_flag = "DONE")
+    
+    #resume STOPPED task for this sequence file
+    stopped_task = db(
+        (db.results_file.sequence_file_id == sequence_file_id)
+        & (db.results_file.scheduler_task_id == db.scheduler_task.id)
+        & (db.scheduler_task.status == "STOPPED")
+    ).select()
+    
+    for row in stopped_task :
+        db.scheduler_task[row.scheduler_task.id] = dict(status = "QUEUED")
+        
+    
     db.commit()
 
     # Dump log in scheduler_run.run_output
