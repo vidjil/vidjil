@@ -953,10 +953,19 @@ Clone.prototype = {
         var exclude_seg_info = ['affectSigns', 'affectValues', '5', '4', '3']
         for (var key in this.seg) {
             if (exclude_seg_info.indexOf(key) == -1 && this.seg[key] instanceof Object) {
-                var nt_seq = this.getSegNtSequence(key);
-                if (nt_seq != '') {
-                    html += "<tr><td> "+key+" </td><td colspan='" + time_length + "'>" + this.getSegNtSequence(key) + "</td></tr>"
-                }
+		if ("info" in this.seg[key]) {
+		    // Textual field
+		    html += "<tr><td> "+key+" </td><td colspan='" + time_length + "'>"+ this.seg[key]["info"] + "</td></tr>"
+		} else if ("val" in this.seg[key]) {
+		    // Numerical field
+		    html += "<tr><td> "+key+" </td><td colspan='" + time_length + "'>"+ this.seg[key]["val"] + "</td></tr>"
+		} else {
+		    // Sequence field
+		    var nt_seq = this.getSegNtSequence(key);
+		    if (nt_seq != '') {
+			html += "<tr><td> "+key+" </td><td colspan='" + time_length + "'>" + this.getSegNtSequence(key) + "</td></tr>"
+		    }
+		}
             }
         }
         if (typeof this.seg['junction'] != 'undefined'
