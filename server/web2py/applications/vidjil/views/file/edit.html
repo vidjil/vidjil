@@ -7,7 +7,7 @@ info = db.sequence_file[request.vars["id"]]
 
 <h3>Edit sequence file</h3>    
 
-<form id="upload_form" action="DB_ADDRESS/file/edit_form" enctype="multipart/form-data" method="post">
+<form id="upload_form"  action="DB_ADDRESS/file/edit_form" enctype="multipart/form-data" method="post">
     <input type="hidden" id="filename" name="filename" type="text" value="">
     <input type="hidden" id="file_id" name="id" value="{{=request.vars["id"]}}" >
     <input type="hidden" id="sample_type" name="sample_type" value="{{=sample_type}}" />
@@ -17,9 +17,9 @@ info = db.sequence_file[request.vars["id"]]
             <tr>
                 <td><label for="pre_process" id="pre_process__label">pre-process scenario: </label></td>
 				<td><select id="pre_process" name="pre_process" onChange="db.pre_process_onChange()">
-                        <option data-file="1" value="0">no pre-process (1 file)</option>
+                        <option required_files="1" value="0">no pre-process (1 file)</option>
                         {{for row in pre_process_list :}}
-                                <option title="{{=row["info"]}}" data-file="{{=row["file"]}}" value="{{=row["id"]}}" {{if row["id"]==file.pre_process_id :}}selected{{pass}}>
+                                <option title="{{=row["info"]}}" required_files="{{=row["file"]}}" value="{{=row["id"]}}" {{if row["id"]==file.pre_process_id :}}selected{{pass}}>
                                     {{=row["id"]}} &ndash; {{=row["name"]}}
                                 </option> {{pass}}
                     </select>

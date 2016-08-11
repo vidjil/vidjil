@@ -997,18 +997,22 @@ Database.prototype = {
     },
     
     validate_fileform: function (form) { 
-        var pp_option = document.getElementById("pre_process").getElementsByTagName("option");
+        var pp_option = form.pre_process.getElementsByTagName("option");
         var pp = form.pre_process.value
         
         var required_files = 1;
-        for (var i in pp_option){
+        for (var i=0; i<pp_option.length; i++){
             if (pp == pp_option[i].value){
-                required_files = pp.option[i].getAttribute("required_files");
+                required_files = pp_option[i].getAttribute("required_files");
             }
         }
-
-
-        return false;
+        
+        if (required_files == 2 && document.getElementById("upload_file2").value ==""){
+            console.log({"type": "flash", "msg" : "2 files are required for the selected pre-process", "priority": 2});
+            return false
+        }
+        
+        return true;
     },
 
     // Log functions, to server
