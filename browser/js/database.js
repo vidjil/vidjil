@@ -257,7 +257,7 @@ Database.prototype = {
         for (var i=0; i<field.options.length; i++){
             var option = field.options[i];
             if (value == option.value){
-                if (option.getAttribute("data-file") == "1"){
+                if (option.getAttribute("required_files") == "1"){
                     document.getElementById("file2_field").style.display = 'none';
                     document.getElementById("upload_file2").value=""
                 }else{
@@ -994,6 +994,21 @@ Database.prototype = {
         var tgt = $('#live-ajax');
         tgt.empty();
         $('body').css('cursor', 'default');
+    },
+    
+    validate_fileform: function (form) { 
+        var pp_option = document.getElementById("pre_process").getElementsByTagName("option");
+        var pp = form.pre_process.value
+        
+        var required_files = 1;
+        for (var i in pp_option){
+            if (pp == pp_option[i].value){
+                required_files = pp.option[i].getAttribute("required_files");
+            }
+        }
+
+
+        return false;
     },
 
     // Log functions, to server
