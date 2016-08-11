@@ -433,38 +433,37 @@ make functional
    and https://wiki.debian.org/Packaging/Intro?action=show&redirect=IntroDebianPackaging
 
 *** Creating the orig archive
- Debian packages use an orig archive to map a changelog. In order to create
- this archive for vidjil you must:
+    In order to build a debian package, it is required to have a folder named
+    debian with serveral files required for the package which contain meta
+    data and permit users to have information on packages and updates for
+    packages.
 
- Extract the release archive you wish to package:
-  $ tar -xf vidjil-<version>.tgz
-  $ cd vidjil-<version>/
+    In order to generate this folder run the following from the source base
+    directory.
+    $ dh_make -n
 
- Download the necessary germlines and data files:
-  $ mkdir browser # if it doesn't exist
-  $ make germline
-  $ make data
+    Update debian/changelog, debian/control and debian/copyright to contain the correct
+    information to reflect the most recent changes and metadata of Vidjil.
 
- Archive the folder as follows:
- Note that debian uses a different version annotation than vidjil, so it is
- likely that you will need to determine the correct annotation to use.
-  $ cd ..
-  $ tar -cvzf vidjil_<debian-version-annotation>.orig.tar.gz
+    Vidjil has no install rule so we need to use a debian packaging feature.
+    Create a file named debian/install with the following line:
 
- Make a standard compliant debian folder for the package (see documentation
- in Requirements section) and add the 'missing-sources' file (this is a
- workaround to the issue that Lintian cannot find the sources for some of the
- binaries included) with the following content:
-  $ /browser/cgi/align.cgi
-  $ /browser/cgi/similarity.cgi
-  $ /algo/tools/similarity
+    vidjil usr/bin/
 
- Commit the source changes (for some reason the dep.mk files need to be
- committed):
-  $ dpkg-source --commit
+    Vidjil currently depends on some unpackaged files that need to be
+    downloaded before compiling.
+    $ mkdir browser
+    $ make germline
+    $ make data
 
- Build the package just like any debian package:
-  $ debuild -us -uc
+    Debian packaging also requires archives of the original source. This is
+    to manage people packaging software they haven't developed with changes
+    they have made. To make things simpler, we simply package the current
+    source as the reference archive and build the package with the script
+    that can be obtained here: https://people.debian.org/~wijnen/mkdeb (Thank
+    you to Bas Wijnen <wijnen@debian.org> for this script)
 
- You're done! You can now install the debian package with:
-  $ sudo ``dpkg -i path/to/package
+    From the source directory, run that script to create the package.
+
+    You're done! You can now install the debian package with:
+    $ sudo dpkg -i path/to/package
