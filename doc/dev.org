@@ -442,6 +442,8 @@ make functional
     directory.
     $ dh_make -n
 
+    You can remove all files from the debian folder that match the patterns *.ex, *.EX and README*
+
     Update debian/changelog, debian/control and debian/copyright to contain the correct
     information to reflect the most recent changes and metadata of Vidjil.
 
