@@ -46,7 +46,7 @@ from collections import defaultdict
 FUSE_VERSION = "vidjil fuse"
 
 TOOL_SIMILARITY = "../algo/tools/similarity"
-SIMILARITY_LIMIT = 500
+SIMILARITY_LIMIT = 100
 
 GERMLINES_ORDER = ['TRA', 'TRB', 'TRG', 'TRD', 'DD', 'IGH', 'DHJH', 'IJK', 'IJL'] 
 
