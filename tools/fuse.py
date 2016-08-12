@@ -752,12 +752,13 @@ def main():
             jlist_fused.d["similarity"] = json.loads(out)
         except OSError:
             print("! failed: %s" % TOOL_SIMILARITY)
+        finally:
+            os.unlink(fasta_file.name)
     else : 
         jlist_fused.d["similarity"] = [];
         
     print("### Save merged file")
     jlist_fused.save_json(args.output)
-    os.unlink(fasta_file.name)
     
     
     
