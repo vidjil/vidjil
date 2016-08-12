@@ -46,7 +46,7 @@ from collections import defaultdict
 FUSE_VERSION = "vidjil fuse"
 
 TOOL_SIMILARITY = "../algo/tools/similarity"
-SIMILARITY_LIMIT = 1000
+SIMILARITY_LIMIT = 500
 
 GERMLINES_ORDER = ['TRA', 'TRB', 'TRG', 'TRD', 'DD', 'IGH', 'DHJH', 'IJK', 'IJL'] 
 
@@ -752,7 +752,8 @@ def main():
             jlist_fused.d["similarity"] = json.loads(out)
         except OSError:
             print("! failed: %s" % TOOL_SIMILARITY)
-        
+    else : 
+        jlist_fused.d["similarity"] = [];
         
     print("### Save merged file")
     jlist_fused.save_json(args.output)
