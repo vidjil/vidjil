@@ -401,10 +401,17 @@ Segment.prototype = {
             if (this.m.clone(id).isSelected()) {
                 if (document.getElementById("seq" + id)) {
                     var spanF = document.getElementById("f" + id);
-                    this.div_elem(spanF, id);
-
+                    var clone = this.m.clone(list[i]);
+                    
+                    var namebox = spanF.getElementsByClassName("nameBox")[0];
+                    namebox.title = clone.getName();
+                    namebox.style.color = clone.color;
+                    spanF.getElementsByClassName("nameBox2")[0].innerHTML = clone.getShortName();
+                    spanF.getElementsByClassName("sizeBox")[0].innerHTML = clone.getStrSize();
+                
                     var spanM = document.getElementById("m" + id);
                     spanM.innerHTML = this.sequence[id].toString(this)
+
                 } else {
                     this.addToSegmenter(id);
                     this.show();
@@ -415,8 +422,8 @@ Segment.prototype = {
                     element.parentNode.removeChild(element);
                 }
             }
-            this.updateStats();
-        }    
+        }   
+        this.updateStats(); 
     },
 
     /**
@@ -442,7 +449,6 @@ Segment.prototype = {
             }
         }
         this.updateAlignmentButton()
-        this.updateStats();
         //this.updateSegmenterWithHighLighSelection();
 
     },
@@ -495,8 +501,11 @@ Segment.prototype = {
         }
 
         var clone = this.m.clone(cloneID)
-
-        seq_name.appendChild(document.createTextNode(clone.getShortName()));
+        
+        var span_name = document.createElement('span');
+        span_name.className = "nameBox2";
+        span_name.appendChild(document.createTextNode(clone.getShortName()));
+        seq_name.appendChild(span_name);
         seq_name.title = clone.getName();
         seq_name.style.color = clone.color;
 
