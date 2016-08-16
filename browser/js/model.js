@@ -237,12 +237,12 @@ Model.prototype = {
 
         // time_type to name_short if there is many samples
         if (this.samples.order.length > 6)
-            this.changeTimeFormat("short_name")
+            this.changeTimeFormat("short_name", false)
 
         // time_type to delta_date if we have enough different dates
         deltas = this.dateDiffMinMax()
         if (deltas.max > 1)
-            this.changeTimeFormat("delta_date")
+            this.changeTimeFormat("delta_date", false)
         
         //      NSIZE
         var n_max = 0;
@@ -279,7 +279,6 @@ Model.prototype = {
                 i++
             }
         }
-        this.update()
     },
     
     /**
@@ -983,18 +982,13 @@ Model.prototype = {
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].init();
         }
-        this.displayTop();
 
         var count = 0;
         for (var i = 0; i < this.clones.length; i++) {
             if (this.clone(i).isActive()) count++
         }
-
-        if (count < 5) {
-            this.top = 100
-            this.displayTop()
-        }
-
+        
+        this.displayTop();
     },
 
 

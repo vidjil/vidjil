@@ -476,7 +476,6 @@ Model_loader.prototype = {
                 }
             }
             m.toggle_all_systems(true);
-            m.update();
             
         }else{
             console.log({"type": "flash", "msg": "invalid version for this .analysis file" , "priority": 1});
