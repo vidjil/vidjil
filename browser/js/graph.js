@@ -88,7 +88,7 @@ function Graph(id, model, database) {
     this.marge2 = 0.05; //marge gauche derniere colonne/bord du graph
     this.marge3 = 70; //marge droite (non influencé par le resize)
     this.marge4 = 70; //marge gauche (non influencé par le resize)
-    this.marge5 = 30; //marge top (non influencé par le resize)
+    this.marge5 = 40; //marge top (non influencé par le resize)
 
     // maximum ratio between small and large time deltas for rescaling x axis
     // if set to 1.0, no rescaling
@@ -100,7 +100,8 @@ function Graph(id, model, database) {
     this.drag_on = false;
     this.dragged_time_point = 0;
     
-    this.text_position_y = 15;
+    this.text_position_y = 30
+    this.text_position_y2 = 15;
     this.text_position_x = 60;
 
     this.m.graph = this // TODO: find a better way to do this
@@ -313,7 +314,8 @@ Graph.prototype = {
             .attr("height", div_height);
 
             
-        this.text_position_y = 15;
+        this.text_position_y = 30;
+        this.text_position_y2 = 15;
         this.text_position_x = 60;
         this.text_position_x2 = div_width - 60;
     
@@ -920,12 +922,16 @@ Graph.prototype = {
             var t = this.m.samples.order.indexOf(i)
             d = {}
 
+            var maxchar = (this.resizeW/this.m.samples.order.length)/10;
             time_name = this.m.getStrTime(i);
+            if (time_name.length > maxchar+3) time_name = time_name.substring(0,maxchar)+" ..."
+            if (i == this.m.t) time_name = this.m.getStrTime(i);
 
             d.type = "axis_v";
             d.text = time_name;
-            d['class'] = "graph_time"
-            if ( i == this.m.t ) d['class'] = "graph_time2"
+            d['class'] = "graph_time";
+            if ( i == this.m.t ) d['class'] = "graph_time2";
+            if ( i == this.m.t ) d.type = "axis_v2";
 
             // Warns when there are very few segmented reads 
             var percent = (this.m.reads.segmented[i] / this.m.reads.total[i]) * 100;
@@ -1184,15 +1190,18 @@ Graph.prototype = {
             })
             .attr("class", function (d) {
                 if (d.type == "axis_v") return "axis_button";
+                if (d.type == "axis_v2") return "axis_button";
                 if (d.type == "axis_h") return "axis_leg";
                 if (d.type == "axis_h2") return "axis_leg";
             })
             .attr("id", function (d) {
                 if (d.type == "axis_v") return ("time" + d.time);
+                if (d.type == "axis_v2") return ("time" + d.time);
             })
             .attr("y", function (d) {
                 if (d.type == "axis_h" || d.type == "axis_h2") return Math.floor(self.resizeH * d.pos) + self.marge5;
-                else return self.text_position_y;
+                if (d.type == "axis_v2") return self.text_position_y2;
+                if (d.type == "axis_v") return self.text_position_y;
             })
             .attr("x", function (d) {
                 if (d.type == "axis_h") return self.text_position_x;
@@ -1205,10 +1214,10 @@ Graph.prototype = {
 
         this.text_container.selectAll("text")
             .on("click", function (d) {
-                if (d.type == "axis_v") return self.m.changeTime(d.time)
+                if (d.type == "axis_v" || d.type == "axis_v2") return self.m.changeTime(d.time)
             })
             .on("mousedown", function (d) {
-                if (d.type == "axis_v") return self.startDrag(d.time)
+                if (d.type == "axis_v" || d.type == "axis_v2") return self.startDrag(d.time)
             })
         
         return this
