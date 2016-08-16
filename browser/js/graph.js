@@ -729,7 +729,7 @@ Graph.prototype = {
             .initData()
             .initClones()
             .initRes()
-            .resize();
+            .build_path_events()
         
         return this
     },
@@ -1226,7 +1226,7 @@ Graph.prototype = {
     /* renderer function for clones
      *
      * */
-    drawClones: function (speed) {
+    drawClones: function (speed, list) {
         var self = this;
 
         var c = 0;
@@ -1251,7 +1251,15 @@ Graph.prototype = {
                 })
         }else{
             //courbes
-            this.g_clone
+            selected_clones = this.g_clone;
+            if (typeof list != "undefined"){
+                selected_clones = this.g_clone.filter(function(d, i) {
+                    if (list.indeOf(d.id) != -1) return true;
+                    return false
+                });
+            }
+            
+            selected_clones
                 .style("fill", "none")
                 .style("stroke", function (d) {
                     return self.m.clone(d.id).getColor();
@@ -1281,7 +1289,12 @@ Graph.prototype = {
         clone.attr("d", function (p) {
                 return p.path
             })
-        
+            
+        return this
+    },
+    
+    build_path_events : function (){
+        var self = this;
         this.clones_container.selectAll("path")
             .on("mouseover", function (d) {
                 self.m.focusIn(d.id);
@@ -1290,7 +1303,7 @@ Graph.prototype = {
                 self.clickGraph(d.id);
             });
             
-        return this
+        return this;
     },
 
     
