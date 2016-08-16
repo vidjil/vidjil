@@ -297,7 +297,6 @@ ScatterPlot.prototype = {
             this.changePreset();
             this.tsne_ready=false;
 
-            this.resize();
         } catch(err) {
             this.db.error(err.stack);
         }
@@ -397,8 +396,8 @@ ScatterPlot.prototype = {
             .map(Object);
         for (var i = 0; i < this.m.clones.length; i++) {
             this.nodes[i].id = i; //L'id d'un cercle vaut le nombre de i dans la boucle
-            this.nodes[i].r1 = 5; // longueur du rayon1
-            this.nodes[i].r2 = 5; // longueur du rayon2
+            this.nodes[i].r1 = 0; // longueur du rayon1
+            this.nodes[i].r2 = 0; // longueur du rayon2
             this.nodes[i].x = Math.random() * 500;
             this.nodes[i].old_x = [0, 0, 0, 0, 0]
             this.nodes[i].y = Math.random() * 250;
