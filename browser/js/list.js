@@ -127,7 +127,6 @@ List.prototype = {
         try {
             this.build_list()
             this.build_data_list()
-            this.update();
             this.resize();
         } catch(err) {
             this.db.error(err.stack);
@@ -157,6 +156,10 @@ List.prototype = {
 
             div_list_clones.appendChild(div);
             this.index[i] = div;
+        }
+        
+        for (var i = 0; i < this.m.clones.length; i++) {
+            this.buildElem(i);
         }
         
         div_parent.appendChild(div_list_menu)
@@ -268,15 +271,6 @@ List.prototype = {
             self.m.update()
         }
         
-        var a_sort = document.createElement('a')
-        a_sort.className = "button"
-        a_sort.appendChild(document.createTextNode("sort"))
-        a_sort.style['float'] = "right";
-        a_sort.style.marginRight = "75px";
-        a_sort.onclick = function () {
-            self.sortListBySize()
-        }
-        
         var sort_span = document.createElement('span')
         sort_span.className = "list_sort"
         
@@ -318,14 +312,16 @@ List.prototype = {
             .getTime();
         var elapsedTime = 0;
         
+        var list = [];
         for (var i = 0; i < this.m.clones.length; i++) {
-            this.updateElem([i]);
+            list.push(i);
         }
+        this.updateElem(list);
         this.update_data_list()
         
         elapsedTime = new Date()
             .getTime() - startTime;
-        // console.log("update List: " + elapsedTime + "ms");
+        //console.log("update List: " + elapsedTime + "ms");
         
         //TODO check order 
         document.getElementById("list_sort_select").selectedIndex = 0;
@@ -381,25 +377,20 @@ List.prototype = {
             self.m.focusIn(cloneID);
         }
         div_elem.className = "listElem";
+        
         div_elem.style.display = "block";
-
         
         var span_name = document.createElement('div');
         span_name.className = "nameBox";
-
         if (!this.m.clone(cloneID).isVirtual())
             span_name.className += " cloneName";
-
         span_name.ondblclick = function () {
             self.editName(cloneID, this);
         }
         span_name.onclick = function (e) {
             self.clickList(e, cloneID);
         }
-        span_name.appendChild(document.createTextNode(this.m.clone(cloneID).getShortName()));
-        span_name.title = this.m.clone(cloneID).getName();
-        span_name.style.color = this.m.clone(cloneID).getColor();
-
+        
         
         var span_star = document.createElement('div');
         span_star.className = "starBox";
@@ -408,7 +399,6 @@ List.prototype = {
         }
         span_star.appendChild(icon('icon-star-2', 'clone tag'))
         span_star.setAttribute('id', 'color' + cloneID);
-        span_star.style.color = this.m.tag[this.m.clone(cloneID).getTag()].color
 
         
         var span_size = document.createElement('span')
@@ -416,45 +406,29 @@ List.prototype = {
         span_size.onclick = function (e) {
             self.clickList(e, cloneID);
         }
-        span_size.style.color = this.m.clone(cloneID).getColor();
-        span_size.appendChild(document.createTextNode(this.m.clone(cloneID).getStrSize()));
         
         
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
-
         if (!this.m.clone(cloneID).isVirtual()) {
-        span_info.onclick = function () {
-            self.m.displayInfoBox(cloneID);
-        }
-
-        if (this.m.clone(cloneID).isWarned()) {
-            span_info.className += " warning" ;
-            span_info.appendChild(icon('icon-warning-1', 'clone information'));
-        } else {
-            span_info.appendChild(icon('icon-info', 'clone information'));
-        }
-        }
-        
-        var span_cluster = document.createElement('span')
-        span_cluster.className = "clusterBox";
-        if (this.m.clusters[cloneID].length > 1) {
-            if (this.m.clone(cloneID).split) {
-                span_cluster.onclick = function () {
-                    self.hideCluster(cloneID)
-                }
-                span_cluster.appendChild(icon('icon-minus', 'Hide the subclones'));
-            } else {
-                span_cluster.onclick = function () {
-                    self.showCluster(cloneID)
-                }
-                span_cluster.appendChild(icon('icon-plus', 'Show the subclones'));
+            span_info.onclick = function () {
+                self.m.displayInfoBox(cloneID);
             }
-        } else {
-            span_cluster.appendChild(document.createTextNode(' '));
-        }
 
+            if (this.m.clone(cloneID).isWarned()) {
+                span_info.className += " warning" ;
+                span_info.appendChild(icon('icon-warning-1', 'clone information'));
+            } else {
+                span_info.appendChild(icon('icon-info', 'clone information'));
+            }
+        }
         
+        
+        var span_cluster = document.createElement('span');
+        span_cluster.setAttribute("cloneID", cloneID);
+        span_cluster.className = "clusterBox";
+
+
         div_elem.appendChild(span_cluster);
         if (this.m.system=="multi") {
             var system = this.m.clone(cloneID).get('germline')
@@ -468,6 +442,62 @@ List.prototype = {
         div_elem.appendChild(span_size);
 
     },
+
+    updateElem: function (list) {
+        for (var i = 0; i < list.length; i++) {
+            var cloneID = list[i]
+                
+            if (typeof this.index[cloneID] == "undefined") return false;
+            var self = this;
+            var div_elem = this.index[cloneID];
+            
+            if (!this.m.clone(cloneID).isActive()){
+                div_elem.style.display = "none";
+                return;
+            }
+            div_elem.style.display = "block";
+            
+            //complete namebox/cloneName
+            var span_name = div_elem.getElementsByClassName("nameBox")[0];
+            if (!this.m.clone(cloneID).isVirtual())
+                span_name = div_elem.getElementsByClassName("cloneName")[0];
+            if (typeof span_name == "undefined") return false;
+            if (typeof span_name == "undefined") console.log(cloneID);
+            span_name.innerHTML = this.m.clone(cloneID).getShortName();
+            span_name.title = this.m.clone(cloneID).getName();
+            span_name.style.color = this.m.clone(cloneID).getColor();
+
+            //update star color
+            var span_star = div_elem.getElementsByClassName("starBox")[0];
+            span_star.style.color = this.m.tag[this.m.clone(cloneID).getTag()].color
+            
+            //update clone size
+            var span_size = div_elem.getElementsByClassName("sizeBox")[0];
+            span_size.style.color = this.m.clone(cloneID).getColor();
+            span_size.innerHTML = this.m.clone(cloneID).getStrSize();
+
+            //update cluster icon
+            var span_cluster = div_elem.getElementsByClassName("clusterBox")[0];
+            span_cluster.innerHTML="";
+            if (this.m.clusters[cloneID].length > 1) {
+                if (this.m.clone(cloneID).split) {
+                    span_cluster.onclick = function () {
+                        self.hideCluster(this)
+                    }
+                    span_cluster.appendChild(icon('icon-minus', 'Hide the subclones'));
+                } else {
+                    span_cluster.onclick = function () {
+                        self.showCluster(this)
+                    }
+                    span_cluster.appendChild(icon('icon-plus', 'Show the subclones'));
+                }
+                self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
+            } else {
+                span_cluster.appendChild(document.createTextNode(' '));
+            }
+        }
+    },
+    
 
     /** 
      * fill a div with cluster informations
@@ -606,52 +636,20 @@ List.prototype = {
     },
 
     /** 
-     * update(size/style/position) a list of selected clones
-     * @augments View
-     * param {integer[]} list - array of clone index
      * */
-    updateElem: function (list) {
-        for (var i = 0; i < list.length; i++) {
+    buildElem: function (cloneID) {
+        var div = this.index[cloneID];
+        div.style.display = "block";
+        if (!this.m.clone(cloneID).isActive()) div.style.display = "none";
+        div.innerHTML = '';
+        
+        var div2 = document.createElement('div');
+        this.div_elem(div2, cloneID);
+        div.appendChild(div2);
 
-            var div = this.index[list[i]];
-
-            if ((this.m.clone(list[i]).isActive() && this.m.clusters[list[i]].length != 0)
-                || (this.m.clone(list[i]).isVirtual() && this.m.system_selected.indexOf(this.m.clone(list[i]).germline) != -1)) {
-
-                div.innerHTML = '';
-                div.className = "list";
-                
-                if (this.m.clone(list[i]).isSelected()) {
-                    $(div).addClass("list_select");
-                }
-                if (this.m.focus ==list[i]) {
-                    $(div).addClass("list_focus");
-                }
-
-                var div2 = document.createElement('div');
-                this.div_elem(div2, list[i]);
-                div.appendChild(div2);
-
-                var div3 = document.createElement('div');
-                this.div_cluster(div3, list[i]);
-                div.appendChild(div3);
-                div.style.display = "";
-
-            } else {
-                div.style.display = "none";
-            }
-
-            var div4 = document.getElementById("_" + list[i]);
-            if (div4) {
-                if (this.m.clone(list[i]).isSelected()) {
-                    div4.className = "listElem selected";
-                } else {
-                    div4.className = "listElem";
-                }
-            }
-
-        }
-
+        var div3 = document.createElement('div');
+        this.div_cluster(div3, cloneID);
+        div.appendChild(div3);
     },
 
     /**
@@ -663,7 +661,13 @@ List.prototype = {
         for (var i = 0; i < list.length; i++) {
 
             var div = this.index[list[i]];
-
+            
+            if (!this.m.clone(list[i]).isActive()){
+                div.style.display = "none";
+                return;
+            }
+            div.style.display = "block";
+            
             //color
             var color = this.m.clone(list[i]).getColor();
 
@@ -849,7 +853,8 @@ List.prototype = {
      * toggle on the display for a given clone of all clones merged with it
      * @param {integer} cloneID - 
      * */
-    showCluster: function (cloneID) {
+    showCluster: function (div) {
+        var cloneID = div.getAttribute("cloneID");
         var self = this
         this.m.clone(cloneID).split = true
         $("#cluster" + cloneID)
@@ -862,7 +867,8 @@ List.prototype = {
      * toggle off the display for a given clone of all clones merged with it
      * @param {integer} cloneID - 
      * */
-    hideCluster: function (cloneID) {
+    hideCluster: function (div) {
+        var cloneID = div.getAttribute("cloneID");
         var self = this
         this.m.clone(cloneID).split = false
         $("#cluster" + cloneID)
