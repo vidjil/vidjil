@@ -49,9 +49,11 @@ View.prototype = {
      * @abstract
      * */
     update: function () {
+        list=[]
         for (var i = 0; i < this.m.clones.length; i++) {
-            this.updateElem([i]);   
+              list.push(i);
         }
+        this.updateElem(list); 
     },
     
     /**
