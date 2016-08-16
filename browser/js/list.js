@@ -57,7 +57,7 @@ function List(id_list, id_data, model, database) {
     
     this.sort_option = {
         "-" : function () {},
-        "size" : function(){self.sortListBySize()},
+        "size" : function(){self.sortListBy(function(id){return self.m.clone(id).getSize();})},
         "V/5'" : function(){self.sortListByV()},
         "J/3'" : function(){self.sortListByJ()}
     }
@@ -162,7 +162,7 @@ List.prototype = {
         div_parent.appendChild(div_list_menu)
         div_parent.appendChild(div_list_clones)
         
-        this.sortListBySize()
+        this.sortListBy(function(id){return self.m.clone(id).getSize();})
     },
     
     /** 
@@ -764,41 +764,24 @@ List.prototype = {
     
     /**
      * sort clone list by size (reorder html elements in the clone list/ no rebuild)
-     * TODO more generic function for sorting
      * */
-    sortListBySize: function () {
+    sortListBy:function(fct){
         self = this;
-        var list = jQuery('#list_clones').children()
+        var list = jQuery('.list')
+        var value = {};
+        for (var i=0; i<list.length; i++){
+            var id = list[i].getAttribute("id")
+            value[id]=fct(id);
+        }
         var sort = list.sort(function (a, b) {
-            var idA = $(a)
-                .attr("id");
-            var idB = $(b)
-                .attr("id");
-            if (idA == "list_data") return 1;
-            if (idB == "list_data") return -1;
-            return self.m.clone(idB).getSize() > self.m.clone(idA).getSize() ? 1 : -1;
+            var idA = a.getAttribute("id")
+            var idB = b.getAttribute("id")
+            return value[idB] > value[idA] ? 1 : -1;
         })
         $("#list_clones")
             .html(sort);
     },
     
-    /**
-     * sort clone list by Top (reorder html elements in the clone list/ no rebuild)
-     * TODO more generic function for sorting
-     * */
-    sortListByTop: function () {
-        self = this;
-        var list = jQuery('.list')
-        var sort = list.sort(function (a, b) {
-            var idA = $(a)
-                .attr("id");
-            var idB = $(b)
-                .attr("id");
-            return self.m.clone(idA).top > self.m.clone(idB).top ? 1 : -1;
-        })
-        $("#list_clones")
-            .html(sort);
-    },
 
     /**
      * sort clone list by V gene (reorder html elements in the clone list/ no rebuild)
@@ -808,10 +791,8 @@ List.prototype = {
         self = this;
         var list = jQuery('.list')
         var sort = list.sort(function (a, b) {
-            var idA = $(a)
-                .attr("id");
-            var idB = $(b)
-                .attr("id");
+            var idA = a.getAttribute("id");
+            var idB = b.getAttribute("id");
             
             var cloneA = self.m.clone(idA)
             var cloneB = self.m.clone(idB)
@@ -841,10 +822,8 @@ List.prototype = {
         self = this;
         var list = jQuery('.list')
         var sort = list.sort(function (a, b) {
-            var idA = $(a)
-                .attr("id");
-            var idB = $(b)
-                .attr("id");
+            var idA = a.getAttribute("id");
+            var idB = b.getAttribute("id");
 
             var cloneA = self.m.clone(idA)
             var cloneB = self.m.clone(idB)
