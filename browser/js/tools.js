@@ -76,48 +76,48 @@ function processImgtContents(IMGTresponse,tag) {
  * @param arrayToProcess
  * @returns {object}
  */
- function computeStartStop(arrayToProcess,sequence){
+function computeStartStop(arrayToProcess,sequence){
 
     var tpVal=0;
     var fldVal="";
     var result={};
+    var junction = sequence;//arrayToProcess["JUNCTION"].toUpperCase();
+    var junction_pos = 0; //sequence.indexOf(junction);
 
-    for(var i in arrayToProcess){
+    var fields = [{field: "V-REGION", tooltip:arrayToProcess["V-GENE and allele"]},
+                  {field: "J-REGION", tooltip:arrayToProcess["J-GENE and allele"]},
+                  {field: "D-REGION", tooltip:arrayToProcess["D-GENE and allele"]},
+                  {field: "CDR3-IMGT"}]
 
-        switch (i){
-            case "V-GENE and allele":
-                fldVal=arrayToProcess["3'V-REGION"].toUpperCase();
-                tpVal = sequence.indexOf(fldVal);
-                if (tpVal>0){
-                    result["3'V-REGION"] = {seq:"", tooltip:arrayToProcess["V-GENE and allele"],start: tpVal, stop: tpVal+fldVal.length-1};
-                }
-                break;
+    var start;
+    var stop;
 
-            case "J-GENE and allele":
-                fldVal=arrayToProcess["5'J-REGION"].toUpperCase();
-                tpVal = sequence.indexOf(fldVal);
-                if (tpVal>0){
-                    result["5'J-REGION"] = {seq:"", tooltip:arrayToProcess["J-GENE and allele"],start: tpVal, stop: tpVal+fldVal.length-1};
-                }
-                break;
-
-            case "D-GENE and allele":
-                fldVal=arrayToProcess["D-REGION"].toUpperCase();
-                tpVal = sequence.indexOf(fldVal);
-                if (tpVal>0){
-                    result["D-REGION"] = {seq:"", tooltip:arrayToProcess["D-GENE and allele"],start: tpVal, stop: tpVal+fldVal.length-1};
-                }
-                break;
-
-            case "CDR3-IMGT":
-                fldVal=arrayToProcess["CDR3-IMGT"].toUpperCase();
-                tpVal = sequence.indexOf(fldVal);
-                if (tpVal>0){
-                    result["CDR3-IMGT"] = {seq:"", tooltip:"CDR3-IMGT",start: tpVal, stop: tpVal+fldVal.length-1};
-                }
-                break;
+    for (var i = 0; i < fields.length; i++) {
+        start = -1;
+        // Search using the sequence or just get the start and end positions?
+        if (typeof arrayToProcess[fields[i].field+' start'] != 'undefined'
+            && typeof arrayToProcess[fields[i].field+' end'] != 'undefined') {
+            // IMGT positions start at 1
+            start = arrayToProcess[fields[i].field+' start'] - 1;
+            stop = arrayToProcess[fields[i].field+' end'] - 1;
+        } else {
+            sequence_to_search = arrayToProcess[fields[i].field].toUpperCase();
+            position = junction.indexOf(sequence_to_search);
+            if (position > -1 && sequence_to_search.length > 0) {
+                position += junction_pos;
+                start = position;
+                stop = position + sequence_to_search.length - 1;
+            }
+        }
+        if (start != -1) {
+            var tooltip = fields[i].tooltip
+            if (typeof fields[i].tooltip == 'undefined') {
+                tooltip = fields[i].field;
+            }
+            result[fields[i].field] = {seq: "", tooltip: tooltip, start: start, stop: stop };
         }
     }
+
     return result;
 }
 
