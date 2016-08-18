@@ -988,6 +988,7 @@ Model.prototype = {
             if (this.clone(i).isActive()) count++
         }
         
+        this.resize();
         this.displayTop();
     },
 

@@ -98,7 +98,6 @@ Builder.prototype = {
             .style.height = spSize + "%"
         document.getElementById("visu2")
             .style.height = graphSize + "%"
-        this.m.resize();
     },
 
     dropSeparator: function () {
@@ -107,6 +106,7 @@ Builder.prototype = {
 
             var sel = window.getSelection();
             sel.removeAllRanges();
+            this.m.resize();
         }
     },
     
