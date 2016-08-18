@@ -1,4 +1,4 @@
-var PROXY_ADDRESS = "https://dev.vidjil.org/proxy/imgt"
+var PROXY_ADDRESS = "https://rbx.vidjil.org/vidjil/proxy/imgt"
 
 //parametre IMGT par defaut
 function initImgtInput() {
