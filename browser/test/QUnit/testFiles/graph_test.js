@@ -9,11 +9,11 @@ test("graph: svg path builder", function() {
     graph.max_ratio_between_deltas = 1.0
     graph.init()
     
-    equal(graph.constructPath(0), " M 83.2,295.74364485223595 L 103,295.74364485223595 L 301,234.25635514776397 L 499,259.7758861041419 L 697,198.2885963996698 L 716.8,198.2885963996698", "path curve clone 0")
-    equal(graph.constructPathR(5), " M 70,547 L 70,357.23093455670795 L 103,357.23093455670795 L 301,295.74364485223595 L 499,357.23093455670795 L 697,295.74364485223595 L 730,295.74364485223595 L 730,547 Z ", "resolution curve 5 reads")
+    equal(graph.constructPath(0), " M 70.02,40.565412010323904 L 70.05,40.565412010323904 L 70.35,40.434587989676096 L 70.65,40.488884864051364 L 70.95,40.35806084340355 L 70.98,40.35806084340355")
+    equal(graph.constructPathR(5), " M 70,41.1 L 70,40.69623603097172 L 70.05,40.69623603097172 L 70.35,40.565412010323904 L 70.65,40.69623603097172 L 70.95,40.565412010323904 L 71,40.565412010323904 L 71,41.1 Z ", "resolution curve 5 reads")
     var stack = new Stack(m)
     stack.compute();
-    equal(graph.constructStack(1, stack), " M 103,476.5 L 301,453 L 499,464.75 L 697,429.5 L 697,382.5 L 499,441.25 L 301,359 L 103,429.5 Z", "path stack clone 1") 
+    equal(graph.constructStack(1, stack), " M 70.05,40.95 L 70.35,40.9 L 70.65,40.925 L 70.95,40.85 L 70.95,40.75 L 70.65,40.875 L 70.35,40.7 L 70.05,40.85 Z", "path stack clone 1") 
 });
 
 test("graph: init", function() {
@@ -35,28 +35,28 @@ test("graph: init", function() {
     
     graph.initClones()
     deepEqual(graph.data_clone[0], {
-                                    "id": 0,
-                                    "name": "line0",
-                                    "path": " M 83.2,295.74364485223595 L 103,295.74364485223595 L 301,234.25635514776397 L 499,259.7758861041419 L 697,198.2885963996698 L 716.8,198.2885963996698"
+                                      "id": 0,
+                                      "name": "line0",
+                                      "path": " M 70.02,40.565412010323904 L 70.05,40.565412010323904 L 70.35,40.434587989676096 L 70.65,40.488884864051364 L 70.95,40.35806084340355 L 70.98,40.35806084340355"
                                     },
         "initClones")
     
     graph.initRes()
-    deepEqual(graph.data_res[0], {
-                                    "id": 5,
-                                    "name": "resolution1",
-                                    "path": " M 70,547 L 70,500 L 103,500 L 301,438.512710295528 L 499,500 L 697,438.512710295528 L 730,438.512710295528 L 730,547 Z "
+    deepEqual(graph.data_res[0], 	{
+                                      "id": 5,
+                                      "name": "resolution1",
+                                      "path": " M 70,41.1 L 70,41 L 70.05,41 L 70.35,40.869175979352185 L 70.65,41 L 70.95,40.869175979352185 L 71,40.869175979352185 L 71,41.1 Z "
                                     },
         "initRes")
     
     graph.initAxis()
-    deepEqual(graph.data_axis[0], {
-                                    "class": "graph_time2",
-                                    "orientation": "vert",
-                                    "pos": 0.05,
-                                    "text": "2014-10-20",
-                                    "time": 0,
-                                    "type": "axis_v"
+    deepEqual(graph.data_axis[0],   {
+                                      "class": "graph_time2",
+                                      "orientation": "vert",
+                                      "pos": 0.05,
+                                      "text": "2014-10-20",
+                                      "time": 0,
+                                      "type": "axis_v2"
                                     },
         "initAxis")
 });
