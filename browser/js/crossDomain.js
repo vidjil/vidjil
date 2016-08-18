@@ -37,10 +37,10 @@ function initImgtInput() {
     imgtInput["l01p01c33"] = "Y";
     imgtInput["l01p01c34"] = "Y";
     imgtInput["l01p01c46"] = "N";
-    imgtInput["l01p01c47"] = "N";
+    imgtInput["l01p01c47"] = "Y"; // nt-sequences
     imgtInput["l01p01c48"] = "N";
     imgtInput["l01p01c49"] = "N";
-    imgtInput["l01p01c50"] = "Y";
+    imgtInput["l01p01c50"] = "N"; // Junction
     imgtInput["l01p01c51"] = "N";
     imgtInput["l01p01c52"] = "N";
     imgtInput["l01p01c53"] = "N";
@@ -254,11 +254,11 @@ function imgtPostForSegmenter(data, system) {
             input.id = 'imgt_vdj_input_check';
             $(input).on("click", function() {
                 if(this.checked) {
-                    segment.highlight[2].field = "3'V-REGION";
+                    segment.highlight[2].field = "V-REGION";
                     segment.highlight[2].color = "#4b4";
                     segment.highlight[3].field = "D-REGION";
                     segment.highlight[3].color = "#b44";
-                    segment.highlight[4].field = "5'J-REGION";
+                    segment.highlight[4].field = "J-REGION";
                     segment.highlight[4].color = "#aa2";
                 } else {
                     segment.highlight[2].field = "";

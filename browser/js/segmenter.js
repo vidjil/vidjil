@@ -861,9 +861,9 @@ Segment.prototype = {
 
         //Add external infos like IMGT's ... to selectbox values in a static way
         // as imgt info might not have been requested at the moment of menu buidling.
-        result.push("3'V-REGION");
-        result.push("5'J-REGION");
-        result.push("D Region");
+        result.push("V-REGION");
+        result.push("J-REGION");
+        result.push("D-REGION");
         result.push("CDR3-IMGT");
 
 
