@@ -453,47 +453,47 @@ List.prototype = {
             
             if (!this.m.clone(cloneID).isActive()){
                 div_elem.style.display = "none";
-                return;
-            }
-            div_elem.style.display = "block";
-            
-            //complete namebox/cloneName
-            var span_name = div_elem.getElementsByClassName("nameBox")[0];
-            if (!this.m.clone(cloneID).isVirtual())
-                span_name = div_elem.getElementsByClassName("cloneName")[0];
-            if (typeof span_name == "undefined") return false;
-            if (typeof span_name == "undefined") console.log(cloneID);
-            span_name.innerHTML = this.m.clone(cloneID).getShortName();
-            span_name.title = this.m.clone(cloneID).getName();
-            span_name.style.color = this.m.clone(cloneID).getColor();
+            }else{
+                div_elem.style.display = "block";
+                
+                //complete namebox/cloneName
+                var span_name = div_elem.getElementsByClassName("nameBox")[0];
+                if (!this.m.clone(cloneID).isVirtual())
+                    span_name = div_elem.getElementsByClassName("cloneName")[0];
+                if (typeof span_name == "undefined") return false;
+                if (typeof span_name == "undefined") console.log(cloneID);
+                span_name.innerHTML = this.m.clone(cloneID).getShortName();
+                span_name.title = this.m.clone(cloneID).getName();
+                span_name.style.color = this.m.clone(cloneID).getColor();
 
-            //update star color
-            var span_star = div_elem.getElementsByClassName("starBox")[0];
-            span_star.style.color = this.m.tag[this.m.clone(cloneID).getTag()].color
-            
-            //update clone size
-            var span_size = div_elem.getElementsByClassName("sizeBox")[0];
-            span_size.style.color = this.m.clone(cloneID).getColor();
-            span_size.innerHTML = this.m.clone(cloneID).getStrSize();
+                //update star color
+                var span_star = div_elem.getElementsByClassName("starBox")[0];
+                span_star.style.color = this.m.tag[this.m.clone(cloneID).getTag()].color
+                
+                //update clone size
+                var span_size = div_elem.getElementsByClassName("sizeBox")[0];
+                span_size.style.color = this.m.clone(cloneID).getColor();
+                span_size.innerHTML = this.m.clone(cloneID).getStrSize();
 
-            //update cluster icon
-            var span_cluster = div_elem.getElementsByClassName("clusterBox")[0];
-            span_cluster.innerHTML="";
-            if (this.m.clusters[cloneID].length > 1) {
-                if (this.m.clone(cloneID).split) {
-                    span_cluster.onclick = function () {
-                        self.hideCluster(this)
+                //update cluster icon
+                var span_cluster = div_elem.getElementsByClassName("clusterBox")[0];
+                span_cluster.innerHTML="";
+                if (this.m.clusters[cloneID].length > 1) {
+                    if (this.m.clone(cloneID).split) {
+                        span_cluster.onclick = function () {
+                            self.hideCluster(this)
+                        }
+                        span_cluster.appendChild(icon('icon-minus', 'Hide the subclones'));
+                    } else {
+                        span_cluster.onclick = function () {
+                            self.showCluster(this)
+                        }
+                        span_cluster.appendChild(icon('icon-plus', 'Show the subclones'));
                     }
-                    span_cluster.appendChild(icon('icon-minus', 'Hide the subclones'));
+                    self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
                 } else {
-                    span_cluster.onclick = function () {
-                        self.showCluster(this)
-                    }
-                    span_cluster.appendChild(icon('icon-plus', 'Show the subclones'));
+                    span_cluster.appendChild(document.createTextNode(' '));
                 }
-                self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
-            } else {
-                span_cluster.appendChild(document.createTextNode(' '));
             }
         }
     },
@@ -664,39 +664,39 @@ List.prototype = {
             
             if (!this.m.clone(list[i]).isActive()){
                 div.style.display = "none";
-                return;
-            }
-            div.style.display = "block";
-            
-            //color
-            var color = this.m.clone(list[i]).getColor();
+            }else{
+                div.style.display = "block";
+                
+                //color
+                var color = this.m.clone(list[i]).getColor();
 
-            $("#" + list[i] + " .nameBox:first")
-                .css("color", color)
-            $("#" + list[i] + " .sizeBox:first")
-                .css("color", color)
-            $("#_" + list[i] + " .nameBox:first")
-                .css("color", color)
-            $("#_" + list[i] + " .sizeBox:first")
-                .css("color", color)
+                $("#" + list[i] + " .nameBox:first")
+                    .css("color", color)
+                $("#" + list[i] + " .sizeBox:first")
+                    .css("color", color)
+                $("#_" + list[i] + " .nameBox:first")
+                    .css("color", color)
+                $("#_" + list[i] + " .sizeBox:first")
+                    .css("color", color)
 
-            //clone selected ?
-            div.className = "list";
-            
-            if (this.m.clone(list[i]).isSelected()) {
-                $(div).addClass("list_select");
-            } 
-            if (this.m.focus ==list[i]) {
-                $(div).addClass("list_focus");
-            } 
-
-            //cluster sequence selected?
-            var div2 = document.getElementById("_" + list[i]);
-            if (div2) {
+                //clone selected ?
+                div.className = "list";
+                
                 if (this.m.clone(list[i]).isSelected()) {
-                    div2.className = "listElem selected";
-                } else {
-                    div2.className = "listElem";
+                    $(div).addClass("list_select");
+                } 
+                if (this.m.focus ==list[i]) {
+                    $(div).addClass("list_focus");
+                } 
+
+                //cluster sequence selected?
+                var div2 = document.getElementById("_" + list[i]);
+                if (div2) {
+                    if (this.m.clone(list[i]).isSelected()) {
+                        div2.className = "listElem selected";
+                    } else {
+                        div2.className = "listElem";
+                    }
                 }
             }
         }
