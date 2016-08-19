@@ -87,11 +87,8 @@ def info():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 def confirm():
-    patient_id = db((db.sequence_file.id == db.results_file.sequence_file_id)
-                    &(db.results_file.id == request.vars["results_file_id"])
-                    &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
-                    &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
-                ).select(db.patient.id).first().id
+    sample_set_id = request.vars['sample_set_id']
+
     if (auth.can_modify_sample_set(sample_set_id)
         & auth.can_process_sample_set(sample_set_id)):
         return dict(message=T('result confirm'))
@@ -101,10 +98,7 @@ def confirm():
     
 #
 def delete():
-    sample_set_id = db((db.sequence_file.id == db.results_file.sequence_file_id)
-                    &(db.results_file.id == request.vars["results_file_id"])
-                    &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
-                    ).select(db.sample_set_membership.sample_set_id).first().sample_set_id
+    sample_set_id = request.vars['sample_set_id']
 
     if (auth.can_modify_sample_set(sample_set_id)
         & auth.can_process_sample_set(sample_set_id)):

@@ -121,7 +121,7 @@
                         {{pass}}
                      </td>
                     {{if can_modify and auth.can_process_sample_set(request.vars['id']):}}
-                     <td class="pointer" onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}'})" >  <i class="icon-erase" title="delete process"></i> </td>
+                     <td class="pointer" onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}', 'sample_set_id': '{{=request.vars["id"]}}'})" >  <i class="icon-erase" title="delete process"></i> </td>
                     {{else:}}
                      <td></td>
                     {{pass}}
