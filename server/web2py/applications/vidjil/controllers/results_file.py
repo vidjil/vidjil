@@ -92,8 +92,8 @@ def confirm():
                     &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                     &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
                 ).select(db.patient.id).first().id
-    if (auth.can_modify_patient(patient_id)
-        & auth.can_process_file('patient', patient_id)):
+    if (auth.can_modify_sample_set(sample_set_id)
+        & auth.can_process_sample_set(sample_set_id)):
         return dict(message=T('result confirm'))
     else :
         res = {"message": "acces denied"}
@@ -105,26 +105,17 @@ def delete():
                     &(db.results_file.id == request.vars["results_file_id"])
                     &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                     ).select(db.sample_set_membership.sample_set_id).first().sample_set_id
-    patient_id = db(db.patient.sample_set_id == db.sample_set_membership.sample_set_id).select(db.patient.id).first().id
 
-    if (auth.can_modify_patient(patient_id)
-        & auth.can_process_file('patient', patient_id)):
+    if (auth.can_modify_sample_set(sample_set_id)
+        & auth.can_process_sample_set(sample_set_id)):
         
         config_id = db.results_file[request.vars["results_file_id"]].config_id
-
-        # TODO is this necessary ?
-        patient_id = db((db.sequence_file.id == db.results_file.sequence_file_id)
-                    &(db.results_file.id == request.vars["results_file_id"])
-                    &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
-                    &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
-                ).select(db.patient.id).first().id
         
         #delete results_file
         db(db.results_file.id == request.vars["results_file_id"]).delete()
         
         #delete fused_file 
-        count = db((db.patient.id == patient_id) &
-                   (db.patient.sample_set_id == db.sample_set_membership.sample_set_id) &
+        count = db((sample_set_id == db.sample_set_membership.sample_set_id) &
                    (db.sequence_file.id == db.sample_set_membership.sequence_file_id) &
                    (db.sequence_file.id == db.results_file.sequence_file_id) &
                    (db.results_file.config_id == config_id)
@@ -135,11 +126,11 @@ def delete():
                (db.fused_file.config_id == config_id)
                ).delete()
         
-        res = {"redirect": "patient/info",
-               "args" : { "id" : patient_id,
+        res = {"redirect": "sample_set/index",
+               "args" : { "id" : sample_set_id,
                           "config_id" : config_id},
                "success": "true",
-               "message": "[%s] (%s) c%s: process deleted " % (request.vars["results_file_id"], patient_id, config_id)}
+               "message": "[%s] (%s) c%s: process deleted " % (request.vars["results_file_id"], sample_set_id, config_id)}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
