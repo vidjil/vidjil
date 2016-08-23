@@ -76,8 +76,8 @@ test("computeStartStop(arrayToProcess,sequence)", function () {
             "CDR3-IMGT": {
                 "seq": "",
                 "tooltip": "CDR3-IMGT",
-                "start": 164,
-                "stop": 199
+                "start": 124,
+                "stop": 111
             }
 
         };

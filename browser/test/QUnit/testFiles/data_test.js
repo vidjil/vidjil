@@ -173,6 +173,8 @@ json_data = {
                 "5'J-REGION accepted mut nb": "0",
                 "Accepted D-GENE nb": "0",
                 "CDR3-IMGT": "gccacctgggacaggctgaaggattggatcaagacg",
+                "CDR3-IMGT start": "125",
+                "CDR3-IMGT end": "112",
                 "CDR3-IMGT-nt nb": "36",
                 "CDR3-IMGT (with frameshift)": "",
                 "CDR3-IMGT (AA)": "ATWDRLKDWIKT",
