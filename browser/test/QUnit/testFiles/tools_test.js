@@ -61,13 +61,13 @@ asyncTest("processImgtContents", function () {
 test("computeStartStop(arrayToProcess,sequence)", function () {
 
         var imgt2displayCheck = {
-            "3'V-REGION": {
+            "V-REGION": {
                 "seq": "",
                 "tooltip": "Homsap TRGV3*01 F",
                 "start": 161,
                 "stop": 178
             },
-            "5'J-REGION": {
+            "J-REGION": {
                 "seq": "",
                 "tooltip": "Homsap TRGJP2*01 F",
                 "start": 185,
