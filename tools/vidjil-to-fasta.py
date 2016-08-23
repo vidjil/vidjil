@@ -72,8 +72,12 @@ if __name__ == '__main__':
 
     used_names = {}
     for vidjil in args.file:
-        data = fuse.ListWindows()
-        data.load(vidjil, "")
-        write_fuse_to_fasta(data, outfile, used_names, vidjil, args)
+        try:
+            data = fuse.ListWindows()
+            data.load(vidjil, "")
+        except Exception:
+            print "** Warning ** file %s could not be loaded" % vidjil
+        else:
+            write_fuse_to_fasta(data, outfile, used_names, vidjil, args)
 
     outfile.close()
