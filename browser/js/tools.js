@@ -100,7 +100,7 @@ function computeStartStop(arrayToProcess,sequence){
             // IMGT positions start at 1
             start = arrayToProcess[fields[i].field+' start'] - 1;
             stop = arrayToProcess[fields[i].field+' end'] - 1;
-        } else {
+        } else if (typeof arrayToProcess[fields[i].field] != 'undefined') {
             sequence_to_search = arrayToProcess[fields[i].field].toUpperCase();
             position = junction.indexOf(sequence_to_search);
             if (position > -1 && sequence_to_search.length > 0) {
