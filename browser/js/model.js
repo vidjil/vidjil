@@ -1163,6 +1163,7 @@ Model.prototype = {
 
         //le cluster retrouve sa liste de clones -1
         this.clusters[clusterID] = nlist;
+        if (this.clusters[clusterID].length <= 1) this.clone(clusterID).split = false;
         //le clone forme un cluster de 1 clone
         this.clusters[cloneID] = [cloneID];
 

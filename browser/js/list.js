@@ -451,7 +451,7 @@ List.prototype = {
             var self = this;
             var div_elem = this.index[cloneID];
             
-            if (!this.m.clone(cloneID).isActive()){
+            if (!this.m.clone(cloneID).isActive() || this.m.clusters[cloneID].length == 0){
                 div_elem.style.display = "none";
             }else{
                 div_elem.style.display = "block";
@@ -493,6 +493,10 @@ List.prototype = {
                     self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
                 } else {
                     span_cluster.appendChild(document.createTextNode(' '));
+                    //update cluster display
+                    var display = this.m.clone(cloneID).split
+                    if (this.m.clusters[cloneID].length < 2) display = false
+                    document.getElementById("cluster"+cloneID).style.display = "none";
                 }
             }
         }
@@ -662,7 +666,7 @@ List.prototype = {
 
             var div = this.index[list[i]];
             
-            if (!this.m.clone(list[i]).isActive()){
+            if (!this.m.clone(list[i]).isActive() || this.m.clusters[list[i]].length == 0){
                 div.style.display = "none";
             }else{
                 div.style.display = "block";
