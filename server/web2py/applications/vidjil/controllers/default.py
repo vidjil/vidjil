@@ -285,11 +285,11 @@ def get_data():
                    & ( db.results_file.config_id == request.vars["config"]  )
                    ).select(db.sequence_file.ALL,db.results_file.ALL, db.sample_set.id, orderby=db.sequence_file.id|~db.results_file.run_date)
 
-        query2 = []
+        query2 = {}
         sequence_file_id = 0
         for row in query : 
             if row.sequence_file.id != sequence_file_id :
-                query2.append(row)
+                query2[row.sequence_file.data_file]=row
                 sequence_file_id = row.sequence_file.id
         
         data["sample_set_id"] = sample_set.id
@@ -304,18 +304,26 @@ def get_data():
         data["samples"]["db_key"] = []
         data["samples"]["ids"] = []
         for i in range(len(data["samples"]["original_names"])) :
+            o_n = data["samples"]["original_names"][i].split('/')[-1]
             data["samples"]["original_names"][i] = data["samples"]["original_names"][i].split('/')[-1]
             data["samples"]["config_id"].append(request.vars['config'])
             data["samples"]["db_key"].append('')
             data["samples"]["commandline"].append(command)
-            if len(query2) > i:
-                row = query2[i]
+            if o_n in query2:
+                row = query2[o_n]
                 data["samples"]["info"].append(row.sequence_file.info)
                 data["samples"]["timestamp"].append(str(row.sequence_file.sampling_date))
                 data["samples"]["sequence_file_id"].append(row.sequence_file.id)
                 data["samples"]["results_file_id"].append(row.results_file.id)
                 data["samples"]["names"].append(row.sequence_file.filename.split('.')[0])
                 data["samples"]["ids"].append(row.sequence_file.id)
+            else :
+                data["samples"]["info"].append("this file has been deleted from the database, info relative to this sample are no longer available")
+                data["samples"]["timestamp"].append("deleted")
+                data["samples"]["sequence_file_id"].append("")
+                data["samples"]["results_file_id"].append("")
+                data["samples"]["names"].append("deleted")
+                data["samples"]["ids"].append("")
 
         log.debug("get_data (%s) c%s -> %s" % (request.vars["sample_set_id"], request.vars["config"], fused_file))
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
