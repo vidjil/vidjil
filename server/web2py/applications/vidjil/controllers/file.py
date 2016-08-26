@@ -440,7 +440,7 @@ def delete():
     \param: id (the sequence ID)
     \param: delete_results: (optional) boolean stating if we also want to delete the results.
     '''
-    delete_results = ('delete_results' in request.vars and request.vars['delete_results'] == 'True')
+    delete_results = ('delete_results' in request.vars and request.vars['delete_results'] == "True")
     sample_set = db.sample_set[request.vars["redirect_sample_set_id"]]
     associated_id = None
     if sample_set.sample_type != 'sequence_file':
@@ -452,9 +452,9 @@ def delete():
         if not(delete_results):
             delete_sequence_file(request.vars['id'])
         else:
-            db(db.sequence_file.id == request.vars["id"]).delete()
             db(db.results_file.sequence_file_id == request.vars["id"]).delete()
-            
+            db(db.sequence_file.id == request.vars["id"]).delete()
+
             for row in db( db.sample_set_membership.sequence_file_id == request.vars["id"]).select() :
                 db(db.sample_set_membership.id == row.id).delete()
 
