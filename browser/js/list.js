@@ -474,6 +474,7 @@ List.prototype = {
                 var span_size = div_elem.getElementsByClassName("sizeBox")[0];
                 span_size.style.color = this.m.clone(cloneID).getColor();
                 span_size.innerHTML = this.m.clone(cloneID).getStrSize();
+                span_size.setAttribute('title', this.m.clone(cloneID).getPrintableSize());
 
                 //update cluster icon
                 var span_cluster = div_elem.getElementsByClassName("clusterBox")[0];

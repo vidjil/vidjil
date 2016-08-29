@@ -530,6 +530,7 @@ Segment.prototype = {
         }
         seq_size.style.color = clone.color;
         seq_size.appendChild(document.createTextNode(clone.getStrSize()));
+        seq_size.setAttribute('title', clone.getPrintableSize())
 
         // Info
         var span_info = document.createElement('span')
