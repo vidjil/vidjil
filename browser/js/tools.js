@@ -121,7 +121,14 @@ function computeStartStop(arrayToProcess,sequence){
     return result;
 }
 
-
+/**
+ * Append (or overwrite) the data in array data into the array append_to.
+ */
+function append_to_object(data, append_to) {
+    for (var key in data) {
+        append_to[key] = data[key];
+    }
+}
 
 /**
  * Give a nice decimal number above the given number
