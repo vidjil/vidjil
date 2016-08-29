@@ -454,6 +454,13 @@ line {
 }
 .mutationBox {
   padding-right: 5px;
+  font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
+}
+.mutationBad {
+  color: #800;
+}
+.mutationGood {
+  color: #080;
 }
 .starBox {
   width: 16px;
