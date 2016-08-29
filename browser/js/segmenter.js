@@ -640,7 +640,12 @@ Segment.prototype = {
             }
         }
         if (address == 'IMGT') imgtPost(request, system);
-        if (address == 'IMGTSeg') imgtPostForSegmenter(request, system);
+        if (address == 'IMGTSeg') {
+            imgtPostForSegmenter(request, system);
+            var change_options = {'l01p01c47' : 'N', // Deactivate default output
+                                  'l01p01c45' : 'Y'}; // Activate Summary output
+            imgtPostForSegmenter(request, system, change_options);
+        }
         if (address == 'ARResT') arrestPost(request, system);
         if (address == 'igBlast') igBlastPost(request, system);
         if (address == 'blast') blastPost(request, system);

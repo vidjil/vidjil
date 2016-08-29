@@ -125,8 +125,11 @@ function imgtPost(data, system) {
  * @param data
  * @param system
  */
-function imgtPostForSegmenter(data, system) {
+function imgtPostForSegmenter(data, system, override_imgt_options) {
     var imgtInput = initImgtInput();
+    if (typeof override_imgt_options != 'undefined') {
+        append_to_object(override_imgt_options, imgtInput)
+    }
     var imgt4segButton= document.getElementById("toIMGTSeg");
     //limit #request to #
     var pos, nb = 1;
@@ -206,7 +209,9 @@ function imgtPostForSegmenter(data, system) {
                 logmsg += cloneIdx + ",";
                 //remove unneeded info coz relative to # of selected items
                 delete  imgtArray[i]["Sequence number"];
-                m.clones[cloneIdx].seg.imgt = imgtArray[i];
+                if (typeof m.clones[cloneIdx].seg.imgt == 'undefined')
+                    m.clones[cloneIdx].seg.imgt = {}
+                append_to_object(imgtArray[i], m.clones[cloneIdx].seg.imgt);
                 m.clones[cloneIdx].seg.imgt2display = computeStartStop(imgtArray[i],m.clones[cloneIdx].getSequence());
                 //toggle save in analysis file
                 m.clones[cloneIdx].segEdited = true;
