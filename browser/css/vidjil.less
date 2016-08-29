@@ -473,8 +473,6 @@ line {
 @width_listElem : (@width_left_container - @width_scrollbar);
 @margin : 6px;
 @margin_nameBox : 10px;
-@width_nameBox : (@width_listElem - @width_starBox - @width_infoBox - @width_sizeBox - @width_clusterBox - @margin_nameBox - @width_systemBox);
-
 
 .list:hover, .tagElem:hover, .data:hover{
   background :@border;
@@ -557,6 +555,10 @@ line {
   position: relative;
   float:left;
   white-space:nowrap;
+}
+
+.seq-fixed .nameBox {
+  width: 250px;
 }
 
 .sizeBox, .mutationBox {
