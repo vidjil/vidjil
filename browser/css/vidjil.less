@@ -467,7 +467,7 @@ line {
 @width_clusterBox :16px;
 @width_starBox : 16px;
 @width_thumbBox : 16px;
-@width_sizeBox : 60px;
+@width_sizeBox : 52px;
 @width_infoBox : 20px;
 @width_systemBox : 12px;
 @width_listElem : (@width_left_container - @width_scrollbar);
@@ -559,13 +559,17 @@ line {
   white-space:nowrap;
 }
 
-.sizeBox{
+.sizeBox, .mutationBox {
   width: @width_sizeBox;
   float: right;
   overflow: hidden;
   display: inline-block;
   height: 16px;
   position: relative;
+}
+
+.mutationBox {
+  padding-right: 5px;
 }
 
 .starBox{
