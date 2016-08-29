@@ -66,6 +66,9 @@ ul {
   z-index: 10;
   background-color: #ffffff;
 }
+.upload_field {
+  width: 100%;
+}
 #menu-container {
   background: inherit;
 }
@@ -437,13 +440,20 @@ line {
   float: left;
   white-space: nowrap;
 }
-.sizeBox {
-  width: 60px;
+.seq-fixed .nameBox {
+  width: 250px;
+}
+.sizeBox,
+.mutationBox {
+  width: 52px;
   float: right;
   overflow: hidden;
   display: inline-block;
   height: 16px;
   position: relative;
+}
+.mutationBox {
+  padding-right: 5px;
 }
 .starBox {
   width: 16px;
@@ -623,9 +633,13 @@ line {
   width: 0px;
   word-spacing: normal;
 }
-span .substitution {
+span .substitution,
+span .indel {
   font-weight: bold;
   color: #800;
+}
+span .substitution {
+  border-bottom: 1px solid #800;
 }
 /*tag*/
 .tagSelector {
@@ -1236,7 +1250,7 @@ span.warningReads {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.db_table td:hover {
+.table_compare td:hover {
   z-index: 999;
   position: relative;
   background: inherit;
@@ -1763,9 +1777,16 @@ label.highlight_label {
   pointer-events: none;
   opacity: 0.4;
 }
+.db_table td.pre-line {
+  white-space: pre-line;
+}
 #mid-container {
   font-size: 125%;
 }
 .sp_legend2 {
   opacity: 0.8;
+}
+.sp_system {
+  top: 0;
+  left: -0.5em;
 }

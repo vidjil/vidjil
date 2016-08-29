@@ -63,7 +63,10 @@ ul {
   position: relative;
   right: 200px;
   z-index: 10;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
+}
+.upload_field {
+  width: 100%;
 }
 #menu-container {
   background: inherit;
@@ -437,13 +440,20 @@ line {
   float: left;
   white-space: nowrap;
 }
-.sizeBox {
-  width: 60px;
+.seq-fixed .nameBox {
+  width: 250px;
+}
+.sizeBox,
+.mutationBox {
+  width: 52px;
   float: right;
   overflow: hidden;
   display: inline-block;
   height: 16px;
   position: relative;
+}
+.mutationBox {
+  padding-right: 5px;
 }
 .starBox {
   width: 16px;
@@ -624,9 +634,13 @@ line {
   width: 0px;
   word-spacing: normal;
 }
-span .substitution {
+span .substitution,
+span .indel {
   font-weight: bold;
   color: #800;
+}
+span .substitution {
+  border-bottom: 1px solid #800;
 }
 /*tag*/
 .tagSelector {
@@ -1770,6 +1784,9 @@ label.highlight_label {
 .disabledClass {
   pointer-events: none;
   opacity: 0.4;
+}
+.db_table td.pre-line {
+  white-space: pre-line;
 }
 #resolution5 {
   opacity: 0;

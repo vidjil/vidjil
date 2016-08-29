@@ -66,6 +66,9 @@ ul {
   z-index: 10;
   background-color: #000000;
 }
+.upload_field {
+  width: 100%;
+}
 #menu-container {
   background: inherit;
 }
@@ -438,13 +441,20 @@ line {
   float: left;
   white-space: nowrap;
 }
-.sizeBox {
-  width: 60px;
+.seq-fixed .nameBox {
+  width: 250px;
+}
+.sizeBox,
+.mutationBox {
+  width: 52px;
   float: right;
   overflow: hidden;
   display: inline-block;
   height: 16px;
   position: relative;
+}
+.mutationBox {
+  padding-right: 5px;
 }
 .starBox {
   width: 16px;
@@ -625,7 +635,8 @@ line {
   width: 0px;
   word-spacing: normal;
 }
-span .substitution, span .indel {
+span .substitution,
+span .indel {
   font-weight: bold;
   color: #800;
 }
@@ -1774,4 +1785,7 @@ label.highlight_label {
 .disabledClass {
   pointer-events: none;
   opacity: 0.4;
+}
+.db_table td.pre-line {
+  white-space: pre-line;
 }
