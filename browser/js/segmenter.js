@@ -562,6 +562,26 @@ Segment.prototype = {
         if (info)
             productive_info.appendChild(info);
 
+
+        // V mutation ratio
+        var Vmutation_info = document.createElement('span');
+        Vmutation_info.className = "mutationBox";
+
+        var info = '' ;
+
+        if (clone.seg.imgt!=null){
+            mutation = clone.seg.imgt["V-REGION identity %"]
+            if (mutation != NaN) {
+                info = document.createElement('span');
+                info.appendChild(document.createTextNode((100 - parseFloat(mutation)).toFixed(2) + "%"))
+                info.setAttribute('title', 'V-REGION mutation %, as computed by IMGT/V-QUEST')
+            }
+        }
+
+        if (info)
+            Vmutation_info.appendChild(info);
+
+
         // Gather all elements
 
         div_elem.appendChild(seq_name);
@@ -570,6 +590,7 @@ Segment.prototype = {
         div_elem.appendChild(productive_info);
         div_elem.appendChild(svg_star);
         div_elem.appendChild(seq_size);
+        div_elem.appendChild(Vmutation_info);
     },
 
     /**
