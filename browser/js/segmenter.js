@@ -36,7 +36,7 @@ CGI_ADDRESS = ""
 
 SEGMENT_KEYS = ["4", "4a", "4b"]
 
-V_MUTATION_THRESHOLD = 2.0
+V_MUTATION_THRESHOLD = 98.0
 
 /** segment 
  * Segment is a view object to see the sequences of the selected clones in the model <br>
@@ -575,10 +575,10 @@ Segment.prototype = {
         if (clone.seg.imgt!=null){
             mutation = clone.seg.imgt["V-REGION identity %"]
             if (mutation != NaN) {
-                var mutationRate = 100 - parseFloat(mutation)
+                var mutationRate = parseFloat(identity)
                 info = document.createElement('span');
                 if (V_MUTATION_THRESHOLD)
-                    info.className += mutationRate >= V_MUTATION_THRESHOLD ? ' mutationGood' : ' mutationBad'
+                    info.className += mutationRate < V_MUTATION_THRESHOLD ? ' mutationGood' : ' mutationBad'
                 info.appendChild(document.createTextNode(mutationRate.toFixed(2) + "%"))
                 info.setAttribute('title', 'V-REGION mutation %, as computed by IMGT/V-QUEST')
             }
