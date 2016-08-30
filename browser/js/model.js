@@ -48,7 +48,7 @@ function Model() {
         this[f] = Model_loader.prototype[f]
     }
     
-    this.reset();
+    this.setAll();
     this.view = [];
     this.checkBrowser();
     this.germlineList = new GermlineList()
@@ -111,7 +111,19 @@ Model.prototype = {
         
         document.body.appendChild(this.tagSelector);
     },
-    
+
+    /**
+     * Set all the properties. Called in the constructor.
+     */
+    setAll: function () {
+        this.reset();
+
+        this.system_selected = []
+        this.colorMethod = "Tag";
+        this.changeNotation("percent", false)
+        this.changeTimeFormat("name", false)
+        this.top = 50;
+    },
     /**
      * remove all elements from the previous .vidjil file but keep current user parameters and linked views
      * */
@@ -133,17 +145,12 @@ Model.prototype = {
         this.t = 0;          // Selected time/sample
         this.tOther = 0;  // Other (previously) selected time/sample
         this.focus = -1;
-        this.system_selected = []
 
-        this.colorMethod = "Tag";
-        this.changeNotation("percent", false)
-        this.changeTimeFormat("name", false)
 
         this.display_window = false
         this.isPlaying = false;
 
         this.mapID = {};
-        this.top = 50;
         this.precision = 1;
 
         this.germlineV = new Germline(this)
