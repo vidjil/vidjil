@@ -209,10 +209,13 @@ function imgtPostForSegmenter(data, system, override_imgt_options) {
                 logmsg += cloneIdx + ",";
                 //remove unneeded info coz relative to # of selected items
                 delete  imgtArray[i]["Sequence number"];
-                if (typeof m.clones[cloneIdx].seg.imgt == 'undefined')
+                if (typeof m.clones[cloneIdx].seg.imgt == 'undefined') {
                     m.clones[cloneIdx].seg.imgt = {}
+                    m.clones[cloneIdx].seg.imgt2display = {}
+                }
                 append_to_object(imgtArray[i], m.clones[cloneIdx].seg.imgt);
-                m.clones[cloneIdx].seg.imgt2display = computeStartStop(imgtArray[i],m.clones[cloneIdx].getSequence());
+                append_to_object(computeStartStop(imgtArray[i],m.clones[cloneIdx].getSequence()),
+                                 m.clones[cloneIdx].seg.imgt2display);
                 //toggle save in analysis file
                 m.clones[cloneIdx].segEdited = true;
             }
