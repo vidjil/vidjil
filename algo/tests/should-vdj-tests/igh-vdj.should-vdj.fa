@@ -3,3 +3,13 @@ actgtgcgagaga
 ggtacaactggaacgac
 gctgaatacttcc
 
+>IGHV1-18*01 0//0 IGHD3-16*01 0//0 IGHJ4*01
+agcctacatggagctgaggagcctgagatctgacgacacggccgtgtattactgtgcgagaga
+gtattatgattacgtttgggggagttatgcttatacc
+actactttgactactggggccaaggaaccctggtcaccgtctcctcag
+
+# Same sequence, but with only the 20bp start of J
+>IGHV1-18*01 0//0 IGHD3-16*01 0//0 IGHJ4*01
+agcctacatggagctgaggagcctgagatctgacgacacggccgtgtattactgtgcgagaga
+gtattatgattacgtttgggggagttatgcttatacc
+actactttgactactggggcc
