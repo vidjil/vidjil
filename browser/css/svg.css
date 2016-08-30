@@ -444,7 +444,7 @@ line {
   width: 250px;
 }
 .sizeBox,
-.mutationBox {
+.identityBox {
   width: 52px;
   float: right;
   overflow: hidden;
@@ -452,14 +452,14 @@ line {
   height: 16px;
   position: relative;
 }
-.mutationBox {
+.identityBox {
   padding-right: 5px;
   font-family: Arial;
 }
-.mutationBad {
+.identityBad {
   color: #800;
 }
-.mutationGood {
+.identityGood {
   color: #080;
 }
 .starBox {

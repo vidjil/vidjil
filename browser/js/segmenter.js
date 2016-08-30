@@ -36,7 +36,7 @@ CGI_ADDRESS = ""
 
 SEGMENT_KEYS = ["4", "4a", "4b"]
 
-V_MUTATION_THRESHOLD = 98.0
+V_IDENTITY_THRESHOLD = 98.0
 
 /** segment 
  * Segment is a view object to see the sequences of the selected clones in the model <br>
@@ -566,26 +566,26 @@ Segment.prototype = {
             productive_info.appendChild(info);
 
 
-        // V mutation ratio
-        var Vmutation_info = document.createElement('span');
-        Vmutation_info.className = "mutationBox";
+        // V identity ratio
+        var Videntity_info = document.createElement('span');
+        Videntity_info.className = "identityBox";
 
         var info = '' ;
 
         if (clone.seg.imgt!=null){
-            mutation = clone.seg.imgt["V-REGION identity %"]
-            if (mutation != NaN) {
-                var mutationRate = parseFloat(identity)
+            identity = clone.seg.imgt["V-REGION identity %"]
+            if (identity != NaN) {
+                var identityRate = parseFloat(identity)
                 info = document.createElement('span');
-                if (V_MUTATION_THRESHOLD)
-                    info.className += mutationRate < V_MUTATION_THRESHOLD ? ' mutationGood' : ' mutationBad'
-                info.appendChild(document.createTextNode(mutationRate.toFixed(2) + "%"))
-                info.setAttribute('title', 'V-REGION mutation %, as computed by IMGT/V-QUEST')
+                if (V_IDENTITY_THRESHOLD)
+                    info.className += identityRate < V_IDENTITY_THRESHOLD ? ' identityGood' : ' identityBad'
+                info.appendChild(document.createTextNode(identityRate.toFixed(2) + "%"))
+                info.setAttribute('title', 'V-REGION identity %, as computed by IMGT/V-QUEST')
             }
         }
 
         if (info)
-            Vmutation_info.appendChild(info);
+            Videntity_info.appendChild(info);
 
 
         // Gather all elements
@@ -596,7 +596,7 @@ Segment.prototype = {
         div_elem.appendChild(productive_info);
         div_elem.appendChild(svg_star);
         div_elem.appendChild(seq_size);
-        div_elem.appendChild(Vmutation_info);
+        div_elem.appendChild(Videntity_info);
     },
 
     /**
