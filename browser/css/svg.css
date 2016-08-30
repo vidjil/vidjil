@@ -453,8 +453,9 @@ line {
   position: relative;
 }
 .identityBox {
-  padding-right: 5px;
+  padding-right: 10px;
   font-family: Arial;
+  text-align: right;
 }
 .identityBad {
   color: #800;
