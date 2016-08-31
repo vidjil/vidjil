@@ -34,7 +34,11 @@ class ConfigController(unittest.TestCase):
         
         # rewrite info / error functions 
         # for some reasons we lost them between the testRunner and the testCase but we need them to avoid error so ...
+<<<<<<< aead2df5e43aca11a66cf41ef861493f7e1d389d
         def f(a, **kwargs):
+=======
+        def f(a, extra={}):
+>>>>>>> test server : update tests
             pass
         log.info = f
         log.error = f
