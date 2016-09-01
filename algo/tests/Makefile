@@ -68,13 +68,14 @@ shouldvdj_with_rc_merged:
 	cat $(SHOULD_VDJ) > should-vdj-tests/should-vdj.merged.fa
 	python should-vdj-to-tap.py -r should-vdj-tests/should-vdj.merged.fa
 
-shouldvdj_archive: should-vdj.zip
-should-vdj.zip: $(SHOULD_VDJ_ARCHIVE)
+curatedvdj_archive: curated-vdj.zip
+curated-vdj.zip: $(SHOULD_VDJ_ARCHIVE)
 	$(eval tmpdir := $(shell mktemp -d))
-	mkdir $(tmpdir)/should-vdj
-	cp --parents --preserve $(SHOULD_VDJ_ARCHIVE) $(tmpdir)
-	sed -ri 's/\s*BUG//' $(tmpdir)/should-vdj-tests/*
-	cwd=`pwd` && cd $(tmpdir) && zip $$cwd/$@ $(SHOULD_VDJ_ARCHIVE)
+	mkdir $(tmpdir)/curated-vdj
+	cp --preserve $(SHOULD_VDJ_ARCHIVE) $(tmpdir)/curated-vdj
+	sed -ri 's/\s*BUG//' $(tmpdir)/curated-vdj/*
+	for file in $(tmpdir)/curated-vdj/*; do mv $$file `echo $$file | sed 's/should/curated/'`; done
+	cwd=`pwd` && cd $(tmpdir) && zip $$cwd/$@ curated-vdj/*
 	rm -rf $(tmpdir)
 
 %.tap: %.should-get force
