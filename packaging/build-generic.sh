@@ -1,8 +1,7 @@
 #!/bin/bash
 
 copy_files() {
-    MY_PWD="$PWD"
-
+    DEBUG=false
     for var in "$@"
     do
         case $var in
@@ -11,6 +10,9 @@ copy_files() {
                 ;;
             -d=*|--destination=*)
                 DEST="$(pwd)/${var#*=}"
+                ;;
+            --debug)
+                DEBUG=true
                 ;;
             *)
                 echo "unknown arg: $var"
@@ -21,11 +23,14 @@ copy_files() {
     for src in $SRC
     do
         cp -R "$src" "$DEST"
-        #echo "copy $(pwd)/$src into $DEST"
+        if [ "$DEBUG" = true ] ; then
+            echo "copy $(pwd)/$src into $DEST"
+        fi
     done
 }
 
 remove_files() {
+    DEBUG=false
     for var in "$@"
     do
         case $var in
@@ -34,6 +39,9 @@ remove_files() {
                 ;;
             -d=*|--destination=*)
                 DEST="$(pwd)/${var#*=}"
+                ;;
+            --debug)
+                DEBUG=true
                 ;;
             *)
                 echo "unknown arg: $var"
@@ -44,6 +52,8 @@ remove_files() {
     for src in $SRC
     do
         rm -rf "$DEST/${src#*/}"
-        #echo "remove $DEST/${src#*/}"
+        if [ "$DEBUG" = true ] ; then
+            echo "remove $DEST/${src#*/}"
+        fi
     done
 }
