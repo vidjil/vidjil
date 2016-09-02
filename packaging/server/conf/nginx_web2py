@@ -1,6 +1,6 @@
 server {
     listen          80;
-    server_name     \$hostname;
+    server_name     $hostname;
 
     location /browser {
         root /var/www;
@@ -20,7 +20,7 @@ server {
 
     ###to enable correct use of response.static_version
     #location ~* ^/(\w+)/static(?:/_[\d]+\.[\d]+\.[\d]+)?/(.*)$ {
-        #    alias /usr/share/vidjil/server/web2py/applications/\$1/static/\$2;
+        #    alias /usr/share/vidjil/server/web2py/applications/$1/static/$2;
         #    expires max;
         #
     #}
@@ -39,8 +39,8 @@ server {
         #uwsgi_pass      127.0.0.1:9001;
         uwsgi_pass      unix:///tmp/web2py.socket;
         include         uwsgi_params;
-        uwsgi_param     UWSGI_SCHEME \$scheme;
-        uwsgi_param     SERVER_SOFTWARE    nginx/\$nginx_version;
+        uwsgi_param     UWSGI_SCHEME $scheme;
+        uwsgi_param     SERVER_SOFTWARE    nginx/$nginx_version;
 
         proxy_read_timeout 600;
         ###remove the comments to turn on if you want gzip compression of your pages
@@ -60,14 +60,14 @@ server {
         # Fastcgi parameters, include the standard ones
         include /etc/nginx/fastcgi_params;
         # Adjust non standard parameters (SCRIPT_FILENAME)
-        fastcgi_param SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;
+        fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
     
     }
 
 }
 server {
         listen 443 default_server ssl;
-        server_name     \$hostname;
+        server_name     $hostname;
         ssl_certificate         /etc/nginx/ssl/web2py.crt;
         ssl_certificate_key     /etc/nginx/ssl/web2py.key;
         ssl_prefer_server_ciphers on;
@@ -80,8 +80,8 @@ server {
             #uwsgi_pass      127.0.0.1:9001;
             uwsgi_pass      unix:///tmp/web2py.socket;
             include         uwsgi_params;
-            uwsgi_param     UWSGI_SCHEME \$scheme;
-            uwsgi_param     SERVER_SOFTWARE    nginx/\$nginx_version;
+            uwsgi_param     UWSGI_SCHEME $scheme;
+            uwsgi_param     SERVER_SOFTWARE    nginx/$nginx_version;
             ###remove the comments to turn on if you want gzip compression of your pages
             # include /etc/nginx/conf.d/web2py/gzip.conf;
             ### end gzip section
