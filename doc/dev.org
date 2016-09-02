@@ -469,3 +469,63 @@ make functional
 
     You're done! You can now install the debian package with:
     $ sudo dpkg -i path/to/package
+
+* Docker
+** Building the necessary images
+  The vidjil docker image is built on an Ubuntu image equipped with systemd.
+  This is a custom image for which the Dockerfile can be found in
+  docker/ubuntu_systemd.
+  In order to build the vidjil_ubuntu image, simply run
+    $ docker build -t ubuntu_systemd .
+
+  from the ubuntu_systemd directory. And then
+    $ docker build -t vidjil_ubuntu .
+
+
+** Starting a Vidjil docker environment
+   Traditionnally the Vidjil Team uses a MySQL database to store user data,
+   so in this guide we will cover setting up a MySQL Docker alongside the Vidjil Docker.
+   
+   Start the mysql container. If the tagged version is not available locally it will be pulled automatically:
+     $ docker run --name <mysql-name> -e MYSQL_ROOT_PASSWORD=<my-secret-pw> -d mysql/mysql-server:<tag>
+
+   Get the container's ip address:
+     $ docker inspect <mysql-name> | grep -i ip
+
+   Setup the vidjil databse:
+     $ mysql -h <container-ip> -u root -p
+     $ create database <vidjil-database>;
+     $ create user <vidjil-user>;
+     $ grant all on <vidjil-database>.* to '<vidjil-user>'@'%';
+     $ set password for '<vidjil-user>'@'%' = PASSWORD('<vidjil-user-password>');
+
+   Exit the MySQL interface and edit your local defs.py file to match the newly created database:
+     $ DB_ADDRESS = 'mysql://<vidjil-user>:<vidjil-user-password>@<mysql-conainer-ip>/<vidjil-database>'
+
+   Start the vidjil Docker:
+     $ docker run --name <vidjil-container-name>\
+                  --link <mysql-name>:mysql\
+                  --privileged\
+                  -d\
+                  -v /sys/fs/cgroup:/sys/fs/cgroup:ro\
+                  -v <path-to-defs>:/etc/vidjil/defs.py\
+                  -p 80:80\
+                  -p 443:443\
+                  vidjil_ubuntu
+
+   Make sure it works:
+     $ curl http://localhost/browser
+     $ curl https://localhost/vidjil
+
+** Configuring the Vidjil container
+   Should you wish to further customise your vidjil environment, most configuration files are located in /etc/vidjil/.
+   Here is a list of thos files:
+     apache_web2py                       configuration required when running vidjil with apache2
+     conf.js                             contains various variables for the vidjil browser
+     defs.py                             contains various variables for the vidjil server
+     nginx_gzip.conf                     configuration for gzip in nginx
+     nginx_gzip_static.conf              same as the previous but for static ressources
+     nginx_web2py                        configuration required when running vidjil with nginx
+     systemd_fuse_server.service         systemd service that starts the vidjil fuse server
+     systemd_web2py_scheduler.service    systemd service that starts the vidjil scheduler workers
+     uwsgi.ini                           configuration required to run vidjil with uwsgi
