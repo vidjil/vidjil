@@ -361,6 +361,21 @@ make functional
 
 * Packaging
 
+** Script driven building
+   In order to make packaging Vidjil simple and facilitate releases scripts
+   have been made and all meta data files required for the Debian packages
+   can be found in the packaging directory in each package's subdirectory.
+
+   In the packaging directory can be found the scripts for building each of
+   the vidjil packages: germline, algo (named vidjil) and server.
+   Note: build-generic.sh is a helper script that is used by the other
+   build-* scripts to build a package.
+
+   Executing one of the scripts will copy the necessary files to the
+   corresponding packaging subdirectory (germline, vidjil and server)
+   And build the package in the /tmp folder along with all the files needed
+   to add the package to a repository
+
 ** Packaging Vidjil into a Debian Binary Package
   In this section we will explain how to package a pre-compiled version of
   Vidjil that will allow easy installation although it will not meet all the
