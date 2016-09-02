@@ -1,0 +1,17 @@
+Source: vidjil-germline
+Section: misc
+Priority: optional
+Maintainer: Vidjil Team <team@vidjil.org>
+Build-Depends: debhelper (>=9)
+Standards-Version: 3.9.7
+Homepage: http://www.vidjil.org
+#Vcs-Git: git://anonscm.debian.org/collab-maint/vidjil-germline.git
+#Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/vidjil-germline.git
+
+Package: vidjil-germline
+Architecture: all
+Depends: ${misc:Depends}
+Description: Collection of useful germlines
+ Vidjil requires germlines to function. This is a Makefile that will download a
+ collection of germlines that we feel are essential for running Vidjil.
+ Be sure to read the license agreement when the files are downloaded.
