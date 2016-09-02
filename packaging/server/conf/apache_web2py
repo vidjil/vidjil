@@ -1,0 +1,69 @@
+WSGIDaemonProcess web2py user=www-data group=www-data processes=1 threads=1
+
+<VirtualHost *:80>
+
+    DocumentRoot /var/www
+    <Directory />
+      Options FollowSymLinks
+      AllowOverride None
+    </Directory>
+
+    <Directory /var/www/>
+      Options Indexes FollowSymLinks MultiViews
+      AllowOverride all
+      Order allow,deny
+      allow from all
+    </Directory>
+
+    ScriptAlias /cgi/ /usr/lib/cgi-bin/
+
+    <Directory /usr/lib/cgi-bin/>
+      Options Indexes FollowSymLinks
+      Options +ExecCGI
+      #AllowOverride None
+      Require all granted
+      AddHandler cgi-script cgi pl
+    </Directory>
+
+  <Directory /usr/share/vidjil/browser>
+    AllowOverride None
+  </Directory>
+
+  CustomLog /var/log/apache2/access.log common
+  ErrorLog /var/log/apache2/error.log
+</VirtualHost>
+
+<VirtualHost *:443>
+  SSLEngine on
+  SSLCertificateFile /etc/apache2/ssl/self_signed.cert
+  SSLCertificateKeyFile /etc/apache2/ssl/self_signed.key
+
+  WSGIProcessGroup web2py
+  WSGIScriptAlias / /usr/share/vidjil/server/web2py/wsgihandler.py
+  WSGIPassAuthorization On
+
+  <Directory /usr/share/vidjil/server/web2py>
+    AllowOverride None
+    Require all denied
+    <Files wsgihandler.py>
+      Require all granted
+    </Files>
+  </Directory>
+
+  <Directory /usr/share/vidjil/browser>
+    AllowOverride None
+  </Directory>
+
+  AliasMatch ^/([^/]+)/static/(?:_[\d]+.[\d]+.[\d]+/)?(.*) \\
+        /usr/share/vidjil/server/web2py/applications/\$1/static/\$2
+
+  <Directory /usr/share/vidjil/server/web2py/applications/*/static/>
+    Options -Indexes
+    ExpiresActive On
+    ExpiresDefault \"access plus 1 hour\"
+    Require all granted
+  </Directory>
+
+  CustomLog /var/log/apache2/ssl-access.log common
+  ErrorLog /var/log/apache2/error.log
+</VirtualHost> 

@@ -1,0 +1,74 @@
+Template: vidjil/reconfigure-webserver
+Type: select
+Choices: apache2, nginx
+Description: Web server to configure automatically
+ Any webserver can be configured to serve the vidjil webapp,
+ however we only supply files for Apache2 and Nginx.
+ .
+ Please select the web server that you would like to be
+ configured automatically for Vidjil.
+
+Template: vidjil/restart-webserver
+Type: boolean
+Default: true
+Description: Should the webserver(s) be restarted now?
+ The changes will only be applied after restarting the configured webserver(s).
+
+Template: vidjil/configure-startup
+Type: select
+Choices: init, systemd
+Description: Startup system to configure automatically
+ Vidjil Server uses a number of startup scripts to ensure the system will not be
+ down after rebooting.
+ .
+ Please select which one you would like to use.
+
+Template: vidjil/start-services
+Type: boolean
+Default: false
+Description: Should the services be started now ?
+ In some cases it may not be desirable to start services straight away.
+
+Template: vidjil/web2py-password
+Type: string
+Default: VidjilAdm1n
+Description: Web2py admin password:
+ Please enter the chosen password to access the Web2py admin interface.
+
+Template: vidjil/ssl-country
+Type: string
+Default: AU
+Description: Country Code (2 letter code)
+ We will now proceed to generate a temporary self-signed certificate.
+ Please enter your country code.
+
+Template: vidjil/ssl-state
+Type: string
+Default: Some-State
+Description: State or Province (full name)
+ Please enter your state or province.
+
+Template: vidjil/ssl-locality
+Type: string
+Description: Locality Name (eg city)
+ Please enter your locality name.
+
+Template: vidjil/ssl-organisation
+Type: string
+Default: Internet Widgits Pty Ltd
+Description: Organisation name (eg company)
+ Please enter the name of your organisation.
+
+Template: vidjil/ssl-section
+Type: string
+Description: Unit Name (eg section)
+ Please enter the name of your unit.
+
+Template: vidjil/ssl-name
+Type: string
+Description: Common Name (eg server FQDN or Your name)
+ Please enter a common name.
+
+Template: vidjil/ssl-email
+Type: string
+Description: Email Address

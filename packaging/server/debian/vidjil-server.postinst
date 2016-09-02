@@ -1,0 +1,357 @@
+#!/bin/sh
+# postinst script for vidjil
+#
+# see: dh_installdeb(1)
+
+set -e
+
+DIR='/usr/share/vidjil'
+
+# summary of how this script can be called:
+#        * <postinst> `configure' <most-recently-configured-version>
+#        * <old-postinst> `abort-upgrade' <new version>
+#        * <conflictor's-postinst> `abort-remove' `in-favour' <package>
+#          <new-version>
+#        * <postinst> `abort-remove'
+#        * <deconfigured's-postinst> `abort-deconfigure' `in-favour'
+#          <failed-install-package> <version> `removing'
+#          <conflicting-package> <version>
+# for details, see http://www.debian.org/doc/debian-policy/ or
+# the debian-policy package
+
+# source debconf library
+. /usr/share/debconf/confmodule
+
+pathfind() {
+    OLDIFS="$IFS"
+    IFS=:
+    for p in $PATH; do
+        if [ -x "$p/$*" ]; then
+            IFS="$OLDIFS"
+            return 0
+        fi
+    done
+    IFS="$OLDIFS"
+    return 1
+}
+
+ssl_install() {
+    ssl_dir="$1"
+    if [ ! -d "$ssl_dir" ] ; then
+        mkdir "$ssl_dir"
+    fi
+
+    db_get vidjil/ssl-country || true
+    country="${RET%\\n}"
+    if [ -z "$country" ] ; then
+        country='AU'
+    fi
+
+    db_get vidjil/ssl-state || true
+    state="${RET%\\n}"
+    if [ -z "$state" ] ; then
+        state='Some-State'
+    fi
+
+    db_get vidjil/ssl-locality || true
+    locality="${RET%\\n}"
+    if [ -z "$locality" ] ; then
+        locality='Some-locality'
+    fi
+
+    db_get vidjil/ssl-organisation || true
+    organisation="${RET%\\n}"
+    if [ -z "$organisation" ] ; then
+        organisation='Internet Widgits Pty Ltd'
+    fi
+
+    db_get vidjil/ssl-section || true
+    section="${RET%\\n}"
+    if [ -z "$section" ] ; then
+        section='Some-Section'
+    fi
+
+    db_get vidjil/ssl-name || true
+    name="${RET%\\n}"
+    if [ -z "$name" ] ; then
+        name='www.example.org'
+    fi
+
+    db_get vidjil/ssl-email || true
+    email="${RET%\\n}"
+
+    openssl req \
+            -new \
+            -newkey rsa:1024 \
+            -days 1780 \
+            -nodes \
+            -sha1 \
+            -x509 \
+            -subj "/C=$country/ST=$state/L=$locality/O=$organisation/CN=$name" \
+            -keyout "$ssl_dir/web2py.key" \
+            -out "$ssl_dir/web2py.crt"
+    chmod 400 "$ssl_dir/web2py.key"
+    openssl x509 -noout -fingerprint -text < "$ssl_dir/web2py.crt" > "$ssl_dir/web2py.info"
+}
+
+nginx_install() {
+    echo "configuring nginx"
+    if [ ! -d /etc/nginx/conf.d/web2py ] ; then
+        mkdir /etc/nginx/conf.d/web2py
+    fi
+
+    gzip_static='/etc/nginx/conf.d/web2py/gzip_static.conf'
+    if [ \( ! -e "$gzip_static" \) -a \( ! -L "$gzip_static" \) ] ; then
+        ln -s /etc/vidjil/nginx_gzip_static.conf "$gzip_static"
+    fi
+
+    gzip='/etc/nginx/conf.d/web2py/gzip.conf'
+    if [ \( ! -e "$gzip" \) -a \( ! -L "$gzip" \) ] ; then
+        ln -s /etc/vidjil/nginx_gzip.conf "$gzip"
+    fi
+
+    web2py='/etc/nginx/sites-available/web2py'
+    if [ \( ! -e "$web2py" \) -a \( ! -L "$web2py" \) ] ; then
+        ln -s /etc/vidjil/nginx_web2py "$web2py"
+        if [ -e /etc/nginx/sites-enabled/web2py ] ; then
+            rm -f /etc/nginx/sites-enabled/web2py
+        fi
+        ln -s /etc/nginx/sites-available/web2py /etc/nginx/sites-enabled/web2py
+    fi
+
+    if [ -e /etc/nginx/sites-enabled/default ] ; then
+        rm /etc/nginx/sites-enabled/default
+    fi
+
+    browser="/var/www/browser"
+    if [ \( ! -e "$browser" \) -a \( ! -L "$browser" \) ] ; then
+        ln -s "$DIR"/browser "$browser"
+    fi
+
+    ssl_install '/etc/nginx/ssl'
+}
+
+[ ! -e /usr/share/apache2/apache2-maintscript-helper  ] || \
+    . /usr/share/apache2/apache2-maintscript-helper
+apache_install() {
+    echo "configuring apache"
+    if [ -e /usr/share/apache2/apache2-maintscript-helper  ] ; then
+        if [ \( -d /etc/apache2/sites-available \) -a \( ! -e /etc/apache2/sites-available/web2py \) -a \( ! -L /etc/apache2/sites-available/web2py \) ]; then
+            ln -s /etc/vidjil/apache_web2py /etc/apache2/sites-available/default.conf
+
+            if [ \( -e /etc/apache2/sites-enabled/default.conf \) -o \( -L /etc/apache2/sites-enabled/default.conf \) ] ; then
+                rm /etc/apache2/sites-enabled/default.conf
+            fi
+            ln -s "$DIR"/browser /var/www/browser
+
+            a2enmod ssl
+            a2enmod proxy
+            a2enmod proxy_http
+            a2enmod headers
+            a2enmod expires
+            a2enmod wsgi
+            a2enmod rewrite  # for 14.04
+            a2ensite default
+            a2enmod cgi
+
+            ssl_install '/etc/apache2/ssl'
+        fi
+    fi
+}
+
+upstart_install() {
+    echo "configuring upstart"
+    if [ -d /etc/init ] ; then
+        server_conf='/etc/init.d/vidjil-server'
+        if [ \( ! -e "$server_conf" \) -a \( ! -L "$server_conf" ] ; then
+            ln -s /etc/vidjil/upstart_vidjil_server.conf "$server_conf"
+        fi
+
+        scheduler_conf='/etc/init.d/web2py-scheduler'
+        if [ \( ! -e "$scheduler_conf" \) -a \( ! -L "$scheduler_conf" \) ] ; then
+            ln -s /etc/vidjil/upstart_web2py_scheduler.conf "$scheduler_conf"
+        fi
+
+        fuse_conf='/etc/init.d/fuse-server'
+        if [ \( ! -e "$fuse_conf" \) -a \( ! -L "$fuse_conf" \) ] ; then
+            ln -s /etc/vidjil/upstart_fuse_server.conf "$fuse_conf"
+        fi
+
+        if [ $1 = true ] ; then
+            service vidjil-server start
+            service web2py-scheduler start
+            service fuse-server start
+        fi
+    else
+        echo "init was selected as startup manager but is not installed."
+        exit 1
+    fi
+}
+
+systemd_install() {
+    echo "configuring systemd"
+    if [ -d /etc/systemd ] ; then
+        etc_service='/etc/vidjil/systemd_web2py_scheduler.service'
+        scheduler_service='/etc/systemd/system/web2py.scheduler.service'
+        if [ \( ! -e "$scheduler_service" \) -a \( ! -L "$scheduler_service" \) ] ; then
+            mv  "$etc_service" "$scheduler_service"
+            ln -s "$scheduler_service" "$etc_service"
+        fi
+
+        etc_service='/etc/vidjil/systemd_fuse_server.service'
+        fuse_service='/etc/systemd/system/fuse.server.service'
+        if [ \( ! -e "$fuse_service" \) -a \( ! -L "$fuse_service" \) ] ; then
+            mv "$etc_service" "$fuse_service"
+            ln -s "$fuse_service" "$etc_service"
+        fi
+
+        if [ "$1" = true ] ; then
+            systemctl enable web2py.scheduler.service
+            systemctl start web2py.scheduler.service
+            systemctl enable web2py.scheduler.service
+            systemctl start fuse.server.service
+        fi
+    else
+        echo "systemd was selected as startup manager but is not installed."
+        exit 1
+    fi
+}
+
+uwsgi_install() {
+    echo "configuring uwsgi"
+    if [ ! -d /etc/uwsgi ] ; then
+        mkdir -p /etc/uwsgi/apps-available
+        mkdir /etc/uwsgi/apps-enabled
+    fi
+
+    if [ ! -d /var/log/uwsgi ] ; then
+        mkdir /var/log/uwsgi
+    fi
+
+    uwsgi_ini='/etc/uwsgi/apps-available/web2py.ini'
+    if [ \( ! -e "$uwsgi_ini" \) -a \( ! -L "$uwsgi_ini" \) ] ; then
+        ln -s /etc/vidjil/uwsgi.ini "$uwsgi_ini"
+        ln -s "$uwsgi_ini" /etc/uwsgi/apps-enabled/
+    fi
+}
+
+vidjil_logs_install() {
+    echo "configuring logs"
+    if [ ! -d /var/vidjil ] ; then
+        sudo mkdir /var/vidjil
+        sudo touch /var/vidjil/vidjil.log
+        sudo touch /var/vidjil/vidjil-debug.log
+        sudo chown -R www-data:www-data /var/vidjil
+    fi
+}
+
+case "$1" in
+
+    configure)
+        # Handle webserver config ; stolen from roundcude package
+        db_get vidjil/reconfigure-webserver || true
+        webservers="$RET"
+        restart=""
+
+        for webserver in $webservers; do
+            webserver=${webserver%,}
+            case "$webserver" in
+                "nginx")
+                    nginx_install
+                    ;;
+                "apache2")
+                    apache_install
+                    ;;
+            esac
+        done
+        
+        db_get vidjil/restart-webserver || true
+        res="$RET"
+        if [ "$res" = "true"  ]; then
+            for webserver in $restart; do
+                webserver=${webserver%,}
+                # Redirection of 3 is needed because Debconf uses it and it might
+                # be inherited by webserver. See bug #446324.
+                if pathfind invoke-rc.d; then
+                    invoke-rc.d "$webserver" reload 3>/dev/null || true
+                else
+                    /etc/init.d/"$webserver" reload 3>/dev/null || true
+                fi
+            done
+        fi
+
+        vidjil_logs_install
+        uwsgi_install
+
+        if [ ! -e "$DIR/server/web2py/web2py.py" ] ; then
+            cp -ans /usr/share/web2py/* "$DIR"/server/web2py/
+            ln -s /etc/vidjil/wsgihandler.py "$DIR"/server/web2py
+        fi
+
+        tools_utils="$DIR/server/web2py/applications/vidjil/modules/tools_utils.py"
+        if [ ! -e "$tools_utils" ] ; then
+            ln -s "$DIR/tools/utils.py" "$tools_utils"
+        fi
+
+        conf_js="$DIR"/browser/js/conf.js
+        if [ -e "$conf_js" ] ; then
+            rm -f "$conf_js"
+        fi
+        ln -s /etc/vidjil/conf.js "$conf_js"
+        chown -R www-data:www-data "$DIR"
+        
+        db_get vidjil/web2py-password
+        password="$RET"
+        cd "$DIR"/server/web2py
+
+        sudo -u www-data python -c "from gluon.main import save_password; save_password('$password',443)"
+
+        if [ ! -d /mnt/upload ] ; then
+            mkdir /mnt/upload
+            mkdir /mnt/upload/uploads
+            chown -R www-data:www-data /mnt/upload
+        fi
+
+        if [ ! -d /mnt/result ] ; then
+            mkdir /mnt/result
+            chown -R www-data:www-data /mnt/result
+        fi
+
+        if [ ! -e /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py ] ; then
+            ln -s /etc/vidjil/defs.py /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
+        fi
+
+        cd "$DIR"/browser/css
+        make
+        cd "$DIR"/browser/css/icons
+        make
+
+        chown -R www-data:www-data "$DIR"
+
+        db_get vidjil/configure-startup || true
+        startup="$RET"
+        db_stop || true
+        case "$startup" in
+            "upstart")
+                upstart_install
+                ;;
+            "systemd")
+                systemd_install
+                ;;
+        esac
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+        exit 0
+    ;;
+      
+    *)
+	echo "postinst called with unknown argument \`$1'" >&2
+	exit 1
+    ;;
+			  
+esac
+
+#DEBHELPER#
+
+exit 0

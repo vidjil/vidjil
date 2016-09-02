@@ -1,0 +1,19 @@
+Source: vidjil-server
+Section: misc
+Priority: optional
+Maintainer: Vidjil Team <team@vidjil.org>
+Build-Depends: debhelper (>=9), dh-python, dh-systemd (>= 1.5), python-all-dev
+Standards-Version: 3.9.7
+Homepage: http://www.vidjil.org
+#Vcs-Git: git://anonscm.debian.org/collab-maint/vidjil-server.git
+#Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/vidjil-server.git
+
+Package: vidjil-server
+Architecture: all
+Depends: vidjil, vidjil-germline, ssh, zip, unzip, tar (>=1.2), openssh-server, python,
+ ipython, python-enum34, postfix, wget, python-matplotlib, python-reportlab, build-essential,
+ uwsgi, uwsgi-plugin-python, python-requests, python-web2py, ${misc:Depends}
+Recommends: apache2, nginx-full, init, systemd
+Description: Vidjil visualisation server
+ A web2py-based webserver that utilises nginx to provide visualisation
+ tools and data storage for the vidjil application
