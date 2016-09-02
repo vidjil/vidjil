@@ -1,0 +1,101 @@
+#!/bin/bash -x
+# Copyright (C) 2005-2015  Bas Wijnen
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 3
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+if [ ! -d debian ] ; then
+	echo >&2 "No debian directory found.  Aborting."
+	exit 1
+fi
+
+# first check for cvs conflict files, otherwise you'll be notified by lintian,
+# which is very late.
+cvs_conflict_files="`find . -name '.#*'`"
+if [ "$cvs_conflict_files" ] ; then
+	echo >&2 "You still have cvs conflict files in your directory:"
+	for i in $cvs_conflict_files ; do echo $i ; done
+	exit 1
+fi
+
+dir="${dir:-/tmp}"
+changelog="`dpkg-parsechangelog`"
+name="`echo "$changelog" | grep '^Source: ' | cut -b9-`"
+fullversion="`echo "$changelog" | grep '^Version: ' | cut -b10-`"
+version="${fullversion%-*}"
+debversion="${fullversion##*-}"
+echo name=$name, version=$version
+
+rm -rf "$dir/$name-$version.orig"
+mkdir -p "$dir/$name-$version.orig"
+tar czf - . | tar -C "$dir/$name-$version.orig" -xzf -
+find "$dir/$name-$version.orig" -name CVS -print0 | xargs -0 rm -rf
+find "$dir/$name-$version.orig" -name .svn -print0 | xargs -0 rm -rf
+find "$dir/$name-$version.orig" -name .git -print0 | xargs -0 rm -rf
+find "$dir/$name-$version.orig" -name .fuse_hidden\* -print0 | xargs -0 rm -rf
+pushd . >/dev/null
+cd "$dir/$name-$version.orig"
+fakeroot debian/rules clean
+popd
+rm -rf "$dir/$name-$version.orig/debian"
+tar czf "$dir/${name}_$version.orig.tar.gz" -C "$dir" "$name-$version.orig"
+
+rm -rf "$dir/$name-$version.orig"
+rm -rf "$dir/$name-$version"
+mkdir -p "$dir/$name-$version"
+tar czf - . | tar xzf - -C "$dir/$name-$version"
+find "$dir/$name-$version" -name CVS -print0 | xargs -0 rm -rf
+find "$dir/$name-$version" -name .svn -print0 | xargs -0 rm -rf
+find "$dir/$name-$version" -name .git -print0 | xargs -0 rm -rf
+find "$dir/$name-$version" -name .fuse_hidden\* -print0 | xargs -0 rm -rf
+cd "$dir/$name-$version"
+dch -r -D unstable ''
+if [ "$1" = '-S' ] ; then
+	shift
+	pversion="$fullversion~stable"
+	sed -i -e '1s/^\(.*\) \+(.*)/\1 ('"$pversion)/" debian/changelog
+	dch -a -b -D stable ''
+fi
+test "$DEBUILD" || DEBUILD="debuild -uc -us"
+if [ "$1" = '-s' ] ; then
+	shift
+	$DEBUILD "$@"
+	pversion="$fullversion~stable"
+	sed -i -e '1s/^\(.*\) \+(.*)/\1 ('"$pversion)/" debian/changelog
+	dch -a -b -D stable ''
+	pdebuild
+	if [ "$DINSTALL" -a "$DINSTALL_DIR" -a "$DINSTALL_INCOMING" ] ; then
+		pushd .
+		cd /var/cache/pbuilder/result
+		changes="`ls "${name}_$pversion"_*.changes | head -n 1`"
+		rm -f "$DINSTALL_INCOMING/*"
+		tar czf - "$changes" `sed '0,/^Files:/d' < "$changes" | cut -f6 -d' '` | tar xzf - -C "$DINSTALL_INCOMING"
+		cd "$DINSTALL_DIR"
+		rm -f `find . | grep '\.db$'`
+		$DINSTALL
+		popd
+	fi
+else
+	$DEBUILD "$@"
+fi
+
+test "$DINSTALL" -a "$DINSTALL_DIR" -a "$DINSTALL_INCOMING" || exit 0
+cd ..
+changes="`ls "${name}_$fullversion"_*.changes | head -n 1`"
+rm -f "$DINSTALL_INCOMING/*"
+tar czf - "$changes" `sed '0,/^Files:/d' < "$changes" | cut -f6 -d' '` | tar xzf - -C "$DINSTALL_INCOMING"
+cd "$DINSTALL_DIR"
+rm -f `find . | grep '\.db$'`
+$DINSTALL
