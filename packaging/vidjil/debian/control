@@ -1,0 +1,17 @@
+Source: vidjil
+Section: misc
+Priority: optional
+Maintainer: Vidjil Team <team@vidjil.org>
+Build-Depends: debhelper (>=9)
+Standards-Version: 3.9.7
+Homepage: http://www.vidjil.org
+#Vcs-Git: git://anonscm.debian.org/collab-maint/vidjil.git
+#Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/vidjil.git
+
+Package: vidjil
+Architecture: all
+Depends: vidjil-germline (>=2016.08), zlib1g-dev, libstdc++6, ${misc:Depends}
+Description: Identify majority lymphocyte clones from fasta
+ Vidjil parses a fasta or fastq file in order to identify
+ the major lymphocyte clones in an effort to aid in diagnosis
+ and follow-up of leukaemia patients
