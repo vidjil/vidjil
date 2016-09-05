@@ -9,8 +9,8 @@ KmerAffectReadScore::KmerAffectReadScore(IKmerStore<KmerAffect> &idx,
 
 KmerAffectReadScore::~KmerAffectReadScore() {}
 
-float KmerAffectReadScore::getScore(const string &sequence) const {
-  vector<KmerAffect> answers = index.getResults(sequence);
+float KmerAffectReadScore::getScore(const Sequence &sequence) const {
+  vector<KmerAffect> answers = index.getResults(sequence.sequence);
   float score = 0;
   for (size_t i = 0; i < answers.size(); i++) {
     if (answers[i].affect == AFFECT_AMBIGUOUS)
@@ -62,6 +62,6 @@ void KmerAffectReadScore::setUnknownScore(float score) {
 ReadLengthScore::ReadLengthScore(){}
 ReadLengthScore::~ReadLengthScore(){}
 
-float ReadLengthScore::getScore(const string &sequence) const {
-  return sequence.size();
+float ReadLengthScore::getScore(const Sequence &sequence) const {
+  return sequence.sequence.size();
 }

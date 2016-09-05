@@ -44,7 +44,7 @@ BinReadStorage::~BinReadStorage() {
 }
 
 void BinReadStorage::addScore(Sequence &s) {
-  addScore(scorer->getScore(s.sequence));
+  addScore(scorer->getScore(s));
 }
 
 void BinReadStorage::addScore(float score) {
@@ -58,7 +58,7 @@ void BinReadStorage::addScore(size_t bin, float score) {
 }
 
 void BinReadStorage::add(Sequence &s) {
-  float score = scorer->getScore(s.sequence);
+  float score = scorer->getScore(s);
   size_t bin = scoreToBin(score);
   addScore(bin, score);
   if (nb_stored < getMaxNbReadsStored()) {
@@ -88,7 +88,7 @@ size_t BinReadStorage::getNbInserted() const {
 }
 
 double BinReadStorage::getAverageScoreBySeq(Sequence &s) {
-  return getAverageScoreByScore(scorer->getScore(s.sequence));
+  return getAverageScoreByScore(scorer->getScore(s));
 }
 
 double BinReadStorage::getAverageScoreByScore(float score) {
@@ -103,7 +103,7 @@ double BinReadStorage::getInvertedAverageScore(size_t bin) {
 }
 
 double BinReadStorage::getScoreBySeq(Sequence &s) {
-  return getScoreByScore(scorer->getScore(s.sequence));
+  return getScoreByScore(scorer->getScore(s));
 }
 
 double BinReadStorage::getScoreByScore(float score) {

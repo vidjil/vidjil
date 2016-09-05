@@ -18,7 +18,7 @@ class VirtualReadScore {
    * @return the score associated to the sequence.
    *         getScore(a) > getScore(b) ==> a is better than b
    */
-  virtual float getScore(const string &sequence)const = 0;
+  virtual float getScore(const Sequence &sequence)const = 0;
 };
 
 /**
@@ -42,7 +42,7 @@ public:
    * The score is computed using the affectation in the sequence and the scores
    * that have been attributed (or the default ones).
    */
-  float getScore(const string &sequence) const;
+  float getScore(const Sequence &sequence) const;
 
   // Getters
   float getAmbiguousScore() const;
@@ -69,6 +69,6 @@ class ReadLengthScore: public VirtualReadScore {
   /**
    * @return the sequence length
    */
-  float getScore(const string &sequence) const;
+  float getScore(const Sequence &sequence) const;
 };
 #endif
