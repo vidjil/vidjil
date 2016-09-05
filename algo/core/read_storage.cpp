@@ -79,6 +79,10 @@ void BinReadStorage::add(Sequence &s) {
   nb_inserted++;
 }
 
+list<Sequence> BinReadStorage::getBin(size_t bin) const{
+  return bins[bin];
+}
+
 size_t BinReadStorage::getNbBins() const {
   return nb_bins;
 }

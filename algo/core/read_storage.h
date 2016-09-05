@@ -86,6 +86,8 @@ public:
   
   void add(Sequence &s);
 
+  list<Sequence> getBin(size_t bin) const;
+
   /**
    * @return the number of bins requested by the used. Note that an additional
    * bin is created for the values greater than the provided max value.
