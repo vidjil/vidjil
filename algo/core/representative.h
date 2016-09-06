@@ -4,6 +4,7 @@
 #include <cassert>
 #include <list>
 #include "fasta.h"
+#include "kmerstore.h"
 
 using namespace std;
 
@@ -121,6 +122,20 @@ public:
    * @pre setCoverageReferenceLength() must have been called previously
    */
   void compute();
+ private:
+
+  /**
+   * Check if we can extend the representative to the left (direction == -1)
+   * or to the right (direction == 1), given the kmer counts, the seeds used
+   * and starting from position i.
+   * The cover is updated accordingly if the representative is extended.
+   */
+  bool tryToExtendRepresentative(const vector<Kmer> counts[],
+                                 string seeds[],
+                                 size_t nb_seeds,
+                                 size_t i,
+                                 bool *cover,
+                                 int direction);
 
 };
 
