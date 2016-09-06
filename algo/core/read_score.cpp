@@ -90,5 +90,7 @@ float ReadQualityScore::getScore(const Sequence &sequence) const {
     }
   }
   free(qualities);
+  if (! percent_quality)
+    percent_quality = GOOD_QUALITY;
   return percent_quality * sequence.sequence.size() / GOOD_QUALITY;
 }
