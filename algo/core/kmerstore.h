@@ -134,7 +134,7 @@ public:
    * @return a vector of length seq.length() - getK() + 1 containing
    * for each k-mer the corresponding value in the index.
    */
-  virtual vector<T> getResults(const seqtype &seq, bool no_revcomp=false) = 0;
+  virtual vector<T> getResults(const seqtype &seq, bool no_revcomp=false, string seed="") = 0;
 
   /**
    * @return true iff the revcomp is indexed
@@ -165,7 +165,7 @@ public:
   MapKmerStore(string seed, bool=false);
   MapKmerStore(int k, bool=false);
 
-  vector<T> getResults(const seqtype &seq, bool no_revcomp=false);
+  vector<T> getResults(const seqtype &seq, bool no_revcomp=false, string seed="");
   T& get(seqtype &word);
   T& operator[](seqtype & word);
 
@@ -196,7 +196,7 @@ public:
   ArrayKmerStore(int k, bool=false);
   ~ArrayKmerStore();
 
-  vector<T> getResults(const seqtype &seq, bool no_revcomp=false);	
+  vector<T> getResults(const seqtype &seq, bool no_revcomp=false, const string seed="");
   T& get(seqtype &word);
   T& operator[](seqtype & word);
   T& operator[](int word);
@@ -343,16 +343,18 @@ Fasta IKmerStore<T>::getLabel(T kmer) const {
 
 // .getResults()
 template<class T>
-vector<T> MapKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp) {
+vector<T> MapKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp, string seed) {
 
-  int s = IKmerStore<T>::getS();
+  if (! seed.size())
+    seed = IKmerStore<T>::seed;
+  int s = seed.size();
 
   if ((int)seq.length() < s - 1) {
     return vector<T>(0);
   }
   vector<T> result(seq.length() - s + 1);
   for (size_t i=0; i + s < seq.length() + 1; i++) {
-    seqtype kmer = spaced(seq.substr(i, s), IKmerStore<T>::seed);
+    seqtype kmer = spaced(seq.substr(i, s), seed);
     //    seqtype kmer = seq.substr(i, s);
     // cout << kmer << endl << kmer0 << endl << endl ;
     if (IKmerStore<T>::revcomp_indexed && no_revcomp) {
@@ -365,9 +367,11 @@ vector<T> MapKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp) {
 }
 
 template<class T>
-vector<T> ArrayKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp) {
+vector<T> ArrayKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp, string seed) {
   
-  int s = IKmerStore<T>::getS();
+  if (! seed.size())
+    seed = IKmerStore<T>::seed;
+  int s = seed.size();
 
   int N = (int)seq.length();
 
@@ -385,7 +389,7 @@ vector<T> ArrayKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp) {
 
   /* Compute results */
   for (size_t i=0; (int) i+s < N+1; i++) {
-    int kmer = spaced_int(intseq + i, IKmerStore<T>::seed);
+    int kmer = spaced_int(intseq + i, seed);
     if (IKmerStore<T>::revcomp_indexed && no_revcomp) {
       result[i] = store[kmer]; // getfromint(kmer); // store[kmer];
       // cout << i << "/" << N << "  " << kmer << result[i] << endl ;
