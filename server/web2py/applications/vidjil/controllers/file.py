@@ -343,10 +343,7 @@ def upload():
 
     if not error:
         mes += " file {%s} " % (request.vars['id'])
-        res = {"message": mes + "processing uploaded file",
-               "redirect": "patient/info",
-               "args" : {"id" : request.vars['id']}
-               }
+        res = {"message": mes + "processing uploaded file"}
         log.debug(res)
         if request.vars.file != None :
             f = request.vars.file
