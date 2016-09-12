@@ -17,6 +17,7 @@ BinReadStorage::BinReadStorage()
    nb_inserted(0), nb_stored(0), smallest_bin_not_empty(~0),label() {}
 
 void BinReadStorage::init(size_t nb_bins, size_t max_score, const VirtualReadScore *vrs, bool no_list) {
+  this->all_read_lengths = 0;
   this->nb_bins = nb_bins;
   this->max_score = max_score;
   if (no_list)
@@ -61,6 +62,7 @@ void BinReadStorage::add(Sequence &s) {
   float score = scorer->getScore(s);
   size_t bin = scoreToBin(score);
   addScore(bin, score);
+  all_read_lengths += s.sequence.length();
   if (nb_stored < getMaxNbReadsStored()) {
     bins[bin].push_back(s);
     nb_stored++;
@@ -97,6 +99,10 @@ double BinReadStorage::getAverageScoreBySeq(Sequence &s) {
 
 double BinReadStorage::getAverageScoreByScore(float score) {
   return getAverageScore(scoreToBin(score));
+}
+
+double BinReadStorage::getAverageLength() const{
+  return all_read_lengths *1. / getNbScores();
 }
 
 double BinReadStorage::getAverageScore(size_t bin) {

@@ -23,7 +23,7 @@ map<junction, BinReadStorage>::iterator WindowsStorage::end() {
 
 float WindowsStorage::getAverageLength(junction window) {
   assert(hasWindow(window));
-  return seqs_by_window[window].getAverageScore();
+  return seqs_by_window[window].getAverageLength();
 }
 
 Germline *WindowsStorage::getGermline(junction window) {

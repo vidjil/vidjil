@@ -14,7 +14,7 @@ class VirtualReadStorage {
  protected:
   size_t maxNbStored;
   const VirtualReadScore *scorer;
-
+  int64_t all_read_lengths;
  public:
 
   virtual ~VirtualReadStorage() {}
@@ -30,6 +30,11 @@ class VirtualReadStorage {
    * Sets how many reads should be stored in maximum.
    */
   void setMaxNbReadsStored(size_t nb);
+
+  /**
+   * @return the average read length of all the sequences that have been added
+   */
+  virtual double getAverageLength() const = 0;
 
   /**
    * @return the maximal number of reads stored
@@ -114,6 +119,11 @@ public:
    * This method should not be used, prefer the one with the score only.
    */
   void addScore(size_t bin, float score);
+
+  /**
+   * @inherited from VirtualReadScore
+   */
+  double getAverageLength() const;
 
   /**
    * @return the average score stored in the bin corresponding to the score
