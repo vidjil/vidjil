@@ -13,6 +13,12 @@
 #define MAX_SEED_SIZE  50 // Spaced seed buffer
 #define FIRST_POS  1      // Numbering of the base pairs for external output
 
+#define RATIO_TOO_MANY_N .3    /* Ratio above which we consider there are too
+                                  many Ns in the sequence and the
+                                  corresponding subsequence should be
+                                  trimmed */
+
+
 #include <sstream>
 #include <iostream>
 #include <iomanip>
@@ -193,6 +199,14 @@ extern double nChoosek_stored[NB_N_CHOOSE_K_STORED][NB_N_CHOOSE_K_STORED];
  * @see http://stackoverflow.com/a/9331125/1192742
  */
 double nChoosek(unsigned n, unsigned k);
+
+/**
+ * Remove the ends of the sequence if they contain too many N.
+ * The sequence will be considered starting at position start_pos
+ * for length letters.
+ * The values will be updated correspondingly after trimming.
+ */
+void trimSequence(string &sequence, size_t &start_pos, size_t &length);
 
 
 const Sequence NULL_SEQUENCE = create_sequence("", "", "NULL", "");

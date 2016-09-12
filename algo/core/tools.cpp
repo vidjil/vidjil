@@ -291,6 +291,43 @@ double nChoosek(unsigned n, unsigned k)
     return nChoosek_stored[n][k];
 }
 
+void trimSequence(string &sequence, size_t &start_pos, size_t &length) {
+  size_t n = length;
+  size_t number_of_N = 1;
+  size_t start;
+  size_t i = start = sequence.find('N', start_pos);
+  size_t previous_N = i;
+
+  // Remove N at the start
+  for (; i < start_pos+n
+         && number_of_N*1. / (i-start_pos+1) > RATIO_TOO_MANY_N;
+       i = sequence.find('N', i+1), number_of_N++) {
+    previous_N = i;
+  }
+
+  // We had at least one N fulfilling our conditions
+  if (previous_N != i) {
+    previous_N++;               // We ignore the N
+    length -= (previous_N - start_pos);
+    start_pos = previous_N;
+  }
+
+  // Remove N at the end
+  i = start = sequence.rfind('N', start_pos + length - 1);
+  number_of_N = 1;
+  previous_N = i;
+  for (; i > start_pos
+         && number_of_N * 1. / ((start_pos + length - 1) - i) > RATIO_TOO_MANY_N;
+       i = sequence.rfind('N', i-1), number_of_N++) {
+    previous_N = i;
+  }
+  if (previous_N != i) {
+    previous_N--;
+    length -= (start_pos + length - 1) - previous_N;
+  }
+}
+
+
 void output_label_average(ostream &out, string label, long long int nb, double average, int precision)
  {
   out << "  ";

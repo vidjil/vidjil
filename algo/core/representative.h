@@ -10,6 +10,9 @@ using namespace std;
 
 #define DEFAULT_STABILITY_LIMIT 30
 
+#define THRESHOLD_BAD_COVERAGE .5 /* Threshold below which the representatie
+                                     coverage is considered bad */
+
 /**
  * Compute a representative sequence from a list of sequences.
  * The sequences are supposed to share a common juction.
@@ -137,6 +140,11 @@ public:
                                  bool *cover,
                                  int direction);
 
+  /**
+   * Remove the ends of the representative if they contain too many N.
+   * The values of start_pos and length will be updated correspondingly.
+   */
+  void trimRepresentative(string &sequence, size_t &start_pos, size_t &length);
 };
 
 #endif

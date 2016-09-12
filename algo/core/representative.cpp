@@ -3,6 +3,7 @@
 #include "read_score.h"
 #include "read_chooser.h"
 #include "stats.h"
+#include "tools.h"
 
 #include <cstring>
 #include <iostream>
@@ -208,6 +209,7 @@ void KmerRepresentativeComputer::compute() {
         if (!cover_longest_run[i])
           representative.sequence[i] = 'N';
       }
+      trimSequence(representative.sequence, pos_longest_run, length_longest_run);
     }
     delete [] cover_longest_run;
     representative.sequence = representative.sequence.substr(pos_longest_run, length_longest_run);
@@ -273,3 +275,4 @@ bool KmerRepresentativeComputer::tryToExtendRepresentative(const vector<Kmer> co
   }
   return was_extended;
 }
+
