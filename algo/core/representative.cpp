@@ -81,7 +81,7 @@ KmerRepresentativeComputer::KmerRepresentativeComputer(list<Sequence> &r,
                                                        string seed)
   :RepresentativeComputer(r),seed(seed),stability_limit(DEFAULT_STABILITY_LIMIT){}
   
-void KmerRepresentativeComputer::compute() {
+void KmerRepresentativeComputer::compute(bool try_hard) {
   assert(coverage_reference_length > 0);
   is_computed = false;
 
@@ -94,6 +94,10 @@ void KmerRepresentativeComputer::compute() {
                     "-##-##-##-##-##",
                     "--#--#--#--#--#--#--#--#--#--#"};
   size_t nb_seeds = 5;
+
+  if (! try_hard)
+    nb_seeds = 1;
+
   // Add sequences to the index, allowing extended nucleotides (false)
   for (list<Sequence>::iterator it=sequences.begin(); it != sequences.end(); ++it) {
     for (size_t i = 0; i < nb_seeds; i++)
@@ -201,6 +205,13 @@ void KmerRepresentativeComputer::compute() {
       length_run = 0;
   }
 
+  coverage = (float) length_longest_run / coverage_reference_length;
+
+  if (coverage < THRESHOLD_BAD_COVERAGE && ! try_hard) {
+    compute(true);
+    return;
+  }
+
   if (length_longest_run) {
     is_computed = true;
     representative = sequence_longest_run;
@@ -237,12 +248,10 @@ void KmerRepresentativeComputer::compute() {
       }
     }
     
-    coverage = (float) length_longest_run / coverage_reference_length;
-
     coverage_info  = string_of_int(length_longest_run) + " bp"
       + " (" + string_of_int(100 * coverage) + "% of " + fixed_string_of_float(coverage_reference_length, 1) + " bp)";
 
-    representative.label += " - " + coverage_info ;
+    representative.label += " - " + coverage_info;
   }
   delete index;
 }

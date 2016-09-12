@@ -56,7 +56,7 @@ public:
   /**
    * Compute the representative depending on the parameters set by the functions
    */
-  virtual void compute() = 0;
+  virtual void compute(bool try_hard=false) = 0;
 
   /**
    * @param min_cover: minimal number of reads supporting each position of the 
@@ -124,7 +124,8 @@ public:
   /**
    * @pre setCoverageReferenceLength() must have been called previously
    */
-  void compute();
+  void compute(bool try_hard = false);
+
  private:
 
   /**
