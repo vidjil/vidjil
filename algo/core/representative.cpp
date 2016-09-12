@@ -196,8 +196,6 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
         memcpy(cover_longest_run, cover, sizeof(bool) * sequence.sequence.size());
       }
       // We have a requirement (ie. a non empty string). We reached it, exit.
-      if (pos_required != pos_end_required)
-        break;
       length_run = 0;
   }
 
