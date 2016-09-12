@@ -23,7 +23,7 @@
 #include "stats.h"
 #include "../lib/json.hpp"
 
-#define NB_BINS 15
+#define NB_BINS 30
 #define MAX_VALUE_BINS 500
 
 using namespace std;
@@ -40,7 +40,7 @@ class WindowsStorage {
   list<pair <junction, size_t> > sort_all_windows;
   map<junction, int> id_by_window;
   size_t max_reads_per_window;
-  ReadLengthScore scorer;
+  ReadQualityScore scorer;
 
   /* Parameters for the read storage */
   size_t nb_bins;

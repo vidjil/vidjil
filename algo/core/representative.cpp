@@ -94,7 +94,7 @@ void KmerRepresentativeComputer::compute() {
   
   size_t max = sequences.size();
   // Create a read chooser to have the sequences sorted by length
-  ReadLengthScore *rlc = new ReadLengthScore();
+  ReadQualityScore *rlc = new ReadQualityScore();
   ReadChooser rc(sequences, *rlc);
   delete rlc;
 

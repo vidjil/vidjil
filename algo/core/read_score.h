@@ -5,6 +5,9 @@
 #include "kmerstore.h"
 #include "kmeraffect.h"
 
+#define MAX_QUALITY 50          /* Maximal value for the quality */
+#define GOOD_QUALITY 30         /* Min value considered as a good quality */
+
 /**
  * This virtual class contains a single method that allows to compute a score
  * for a string.
@@ -68,6 +71,21 @@ class ReadLengthScore: public VirtualReadScore {
 
   /**
    * @return the sequence length
+   */
+  float getScore(const Sequence &sequence) const;
+};
+
+/**
+ * A simple implementation of VirtualReadScore.
+ * The score is a trade-off between quality and length of the read
+ */
+class ReadQualityScore: public VirtualReadScore {
+ public:
+  ReadQualityScore();
+  ~ReadQualityScore();
+
+  /**
+   * @return the sequence quality
    */
   float getScore(const Sequence &sequence) const;
 };

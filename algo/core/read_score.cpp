@@ -1,4 +1,5 @@
 #include "read_score.h"
+#include <cstdlib>
 
 KmerAffectReadScore::KmerAffectReadScore(IKmerStore<KmerAffect> &idx, 
                                          float unambiguous_score,
@@ -64,4 +65,30 @@ ReadLengthScore::~ReadLengthScore(){}
 
 float ReadLengthScore::getScore(const Sequence &sequence) const {
   return sequence.sequence.size();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////  ReadQualityScore  ///////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ReadQualityScore::ReadQualityScore(){}
+ReadQualityScore::~ReadQualityScore(){}
+
+float ReadQualityScore::getScore(const Sequence &sequence) const {
+  size_t *qualities = (size_t *)calloc(MAX_QUALITY, sizeof(size_t));
+  for (size_t i = 0; i < sequence.quality.size(); i++) {
+    qualities[(sequence.quality[i]) - '!']++;
+  }
+  int max_percentile = (int) round(sequence.quality.size()*1. / 100);
+  int percent_quality = 0;
+  // Computes the percentile of the quality
+  for (size_t i = 0; i < MAX_QUALITY; i++) {
+    max_percentile -= qualities[i];
+    if (max_percentile < 0) {
+      percent_quality = i;
+      break;
+    }
+  }
+  free(qualities);
+  return percent_quality * sequence.sequence.size() / GOOD_QUALITY;
 }
