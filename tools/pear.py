@@ -50,4 +50,4 @@ try :
             os.remove(f_out+'.unassembled.forward.fastq')
 except IOError :
     os.remove(f_out)
-    raise IOError
+    raise
