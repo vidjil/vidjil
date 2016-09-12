@@ -4,7 +4,10 @@ $ Short reads properly segmented
 1:SEG_+.* -> .* 4
 
 $ Window found
-2:^CACCCCCCCCCTTTTTTTCT$
+1:^CACCCCCCCCCTTTTTTTCT$
 
 $ Representative computation
-1:>clone-001--custom--0000004--100%--seq.-\\[11,30\\]
+1:>clone-001--custom--0000004--100%--seq.-\\[0,41\\]
+
+$ Representative sequence
+1: TATATGTATANCACCCCCCCCCTTTTTTTCTNGCGCGAGCGA
