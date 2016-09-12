@@ -39,6 +39,7 @@ BASENAME_OUT_VIDJIL_ID = '%06d'
 DIR_VIDJIL = '/usr/bin/vidjil'
 DIR_FUSE = '../../tools'
 DIR_MIXCR = '../../'
+DIR_GERMLINE = '/usr/share/vidjil/germline'
 ### Port on which to run the fuse server
 ### Used in models/task.py and in /server/fuse_server.py
 PORT_FUSE_SERVER = 12789
