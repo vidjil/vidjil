@@ -156,7 +156,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
         return "FAIL"
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
-    germline_folder = defs.DIR_VIDJIL + '/germline/'
+    germline_folder = defs.DIR_GERMLINE
     upload_folder = defs.DIR_SEQUENCES
     out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
     
