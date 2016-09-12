@@ -139,6 +139,7 @@ public:
                                  size_t nb_seeds,
                                  size_t i,
                                  bool *cover,
+                                 size_t &length_cover,
                                  int direction);
 
   /**

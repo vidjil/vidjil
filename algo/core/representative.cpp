@@ -113,6 +113,7 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
   size_t pos_longest_run = 0;
   size_t length_longest_run = 0;
   size_t seq_index_longest_run = 1;
+  size_t length_longest_cover = 0;
   Sequence sequence_longest_run;
   bool *cover_longest_run = NULL;
   int sequence_used_for_quality = 0;
@@ -121,7 +122,8 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
   
   for (size_t seq = 1; seq <= sequences.size() && seq <= seq_index_longest_run + stability_limit ; seq++) {
     Sequence sequence = rc.getithBest(seq);
-
+    size_t length_cover = 0;
+    
     // Break as soon as the sequences are too small
     if (sequence.sequence.size() < required.size()) {
       break;
@@ -145,7 +147,7 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
 
     // When sequences are smaller than length_longest_run,
     // they are used only for the above quality computation
-    if (sequence.sequence.size() <= length_longest_run) {
+    if (sequence.sequence.size() <= length_longest_cover) {
       continue;
     }
 
@@ -155,6 +157,7 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
     size_t pos_end_required = pos_required + required.length();
 
     memset(&cover[pos_required], true, required.length()*sizeof(bool));
+    length_cover = required.length();
 
     vector<Kmer> counts[nb_seeds];
     for (size_t i = 0; i < nb_seeds; i++)
@@ -166,7 +169,7 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
 
     // Extend to the left, starting from 'pos_required'
     while (i > 0 && was_extended) {
-      was_extended = tryToExtendRepresentative(counts, seeds, nb_seeds, i, cover, -1);
+      was_extended = tryToExtendRepresentative(counts, seeds, nb_seeds, i, cover, length_cover, -1);
       if (was_extended) {
         i--;
         length_run++;
@@ -178,17 +181,19 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
     length_run += pos_end_required - pos_required;
     was_extended = true;
     while (i < sequence.sequence.size() && was_extended) {
-      was_extended = tryToExtendRepresentative(counts, seeds, nb_seeds, i, cover, 1);
+      was_extended = tryToExtendRepresentative(counts, seeds, nb_seeds, i, cover, length_cover, 1);
       if (was_extended) {
         i++;
         length_run++;
       }
     }
 
-      if (length_run > length_longest_run) {
+      if (length_cover > length_longest_cover
+          || ((length_cover == length_longest_cover) && (length_run > length_longest_run))) {
         length_longest_run = length_run;
         pos_longest_run = i - (length_run - 1);
         sequence_longest_run = sequence;
+        length_longest_cover = length_cover;
         seq_index_longest_run = seq;
         if (cover_longest_run)
           delete [] cover_longest_run;
@@ -260,6 +265,7 @@ bool KmerRepresentativeComputer::tryToExtendRepresentative(const vector<Kmer> co
                                                            size_t nb_seeds,
                                                            size_t i,
                                                            bool *cover,
+                                                           size_t &length_cover,
                                                            int direction) {
   bool was_extended = false;
   for (size_t current_seed = 0; current_seed < nb_seeds && ! was_extended; current_seed++) {
@@ -282,11 +288,10 @@ bool KmerRepresentativeComputer::tryToExtendRepresentative(const vector<Kmer> co
             length_cover++;
         }
       } else {
-        if (direction == -1)
-          cover[pos_of_interest] = true;
-        else {
-          cover[i] = true;
-        }
+        int pos_modif = (direction == -1) ? pos_of_interest : i;
+        if (!cover[pos_modif])
+          length_cover++;
+        cover[pos_modif] = true;
       }
 
       was_extended = true;
