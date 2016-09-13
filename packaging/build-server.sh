@@ -17,5 +17,7 @@ cd "$MY_PWD/$dest_files/data"
 cd "$MY_PWD/$exec_dir"
 bash "$MY_PWD/mkdeb"
 
+cd "$MY_PWD"
+
 remove_files -s="$source_files" -d="$dest_files"
 exit 0
