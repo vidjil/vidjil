@@ -57,3 +57,12 @@ remove_files() {
         fi
     done
 }
+
+create_version_file() {
+    changelog="`dpkg-parsechangelog`"
+    name="`echo "$changelog" | grep '^Source: ' | cut -b9-`"
+    fullversion="`echo "$changelog" | grep '^Version: ' | cut -b10-`"
+    version="${fullversion%-*}"
+
+    echo "$version" > "$1/VERSION"
+}

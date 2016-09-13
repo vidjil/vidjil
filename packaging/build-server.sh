@@ -15,6 +15,7 @@ make
 cd "$MY_PWD/$dest_files/data"
 
 cd "$MY_PWD/$exec_dir"
+create_version_file "$MY_PWD/$dest_files/server"
 bash "$MY_PWD/mkdeb"
 
 cd "$MY_PWD"

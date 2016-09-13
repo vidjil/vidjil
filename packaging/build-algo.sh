@@ -12,9 +12,10 @@ copy_files -s="$source_files" -d="$dest_files"
 
 cd "$MY_PWD/$dest_files/germline"
 make
-cd "$MY_PWD/$dest_files/data"
 
 cd "$MY_PWD/$exec_dir"
+create_version_file "$MY_PWD/$dest_files/algo/VERSION"
+
 bash "$MY_PWD/mkdeb"
 
 cd "$MY_PWD"
