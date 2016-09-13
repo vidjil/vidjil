@@ -10,7 +10,7 @@ Homepage: http://www.vidjil.org
 
 Package: vidjil-server
 Architecture: all
-Depends: vidjil, vidjil-germline, ssh, zip, unzip, tar (>=1.2), openssh-server, python,
+Depends: vidjil, vidjil-germline, vidjil-browser, ssh, zip, unzip, tar (>=1.2), openssh-server, python,
  ipython, python-enum34, postfix, wget, python-matplotlib, python-reportlab, build-essential,
  uwsgi, uwsgi-plugin-python, python-requests, python-web2py, ${misc:Depends}
 Recommends: apache2, nginx-full, init, systemd
