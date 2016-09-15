@@ -1,5 +1,5 @@
-vidjil-server (2016.08.12) stable; urgency=medium
+vidjil-server (2016.08.15) stable; urgency=medium
 
-  * Added missing dependencies
+  * Ensure that no unwanted germlines are built into package
 
- -- Vidjil Team <team@vidjil.org>  Fri, 12 Aug 2016 15:14:02 +0200
+ -- Vidjil Team <team@vidjil.org>  Wed, 14 Sep 2016 14:07:00 +0200
