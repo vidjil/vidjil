@@ -1,5 +1,5 @@
-vidjil-browser (2016.08.1) stable; urgency=medium
+vidjil-browser (2016.08.2) stable; urgency=medium
 
-  * Initial Release
+  * Removing some germlines that should be added by manual make
 
  -- Vidjil Team <team@vidjil.org>  Tue, 13 Sep 2016 08:56:04 +0200

@@ -10,12 +10,6 @@ exec_dir="browser"
 
 copy_files -s="$source_files" -d="$dest_files"
 
-cd "$MY_PWD/$dest_files/germline"
-make
-
-cd "$MY_PWD/$dest_files/data"
-make
-
 cd "$MY_PWD/$exec_dir"
 create_version_file "$MY_PWD/$dest-files/browser/"
 bash "$MY_PWD/mkdeb"
