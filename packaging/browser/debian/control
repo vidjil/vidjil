@@ -10,7 +10,7 @@ Homepage: http://www.vidjil.org
 
 Package: vidjil-browser
 Architecture: all
-Depends: vidjil, vidjil-germline ${misc:Depends}
+Depends: vidjil, vidjil-germline, ${misc:Depends}
 Description: Vidjil visualisation tool
  A javascript based visualisation tool for the vidjil application and
  interfacing with the vidjil server.
