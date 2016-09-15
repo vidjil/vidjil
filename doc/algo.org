@@ -145,6 +145,7 @@ sudo apt-get install g++-4.8
 
 
 ** Installation
+*** Compiling
 
 #+BEGIN_SRC sh
 
@@ -173,6 +174,19 @@ If your build system does not use C++11 by default, you should replace the =make
 make CXXFLAGS='-std=c++11'                           ### gcc-4.8
 make CXXFLAGS='-std=c++11' LDFLAGS='-stdlib=libc++'  ### OS X Mavericks
 #+END_SRC
+
+*** Package
+If you use a Debian-based operating system you can simply add the Vidjil
+    repository to your sources.list:
+deb http://rby.vidjil.org:8080/archive sid/all/
+deb http://rby.vidjil.org:8080/archive sid/amd64/
+
+deb http://rby.vidjil.org:8080/archive wheezy/all/
+deb http://rby.vidjil.org:8080/archive wheezy/amd64/
+
+And install from he command line:
+apt-get update
+apt-get install vidjil
 
 ** Self-tests (optional)
 
