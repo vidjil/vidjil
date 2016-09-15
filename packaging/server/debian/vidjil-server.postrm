@@ -111,7 +111,7 @@ case "$1" in
         purge_apache
         purge_logs
         purge_configs
-        purge_upstart
+        #purge_upstart
         purge_systemd
         purge_uwsgi
 
