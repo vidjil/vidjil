@@ -25,7 +25,7 @@ f_r2 = args.file_R2
 f_out = args.output_file
 
 
-subprocess.call(["pear",
+exit_code = subprocess.call(["pear",
  "-f", f_r1,
  "-r", f_r2,
  "-o", f_out,
@@ -33,6 +33,8 @@ subprocess.call(["pear",
                 + shlex.split(args.pear_options)
 )
 
+if exit_code > 0:
+    raise EnvironmentError "Pear failed"
 
 try :
     with gzip.open(f_out, 'w') as outFile:
