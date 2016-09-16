@@ -231,10 +231,10 @@ def get_data():
     
     query = db( ( db.fused_file.sample_set_id == request.vars["sample_set_id"])
                & ( db.fused_file.config_id == request.vars["config"] )
-               ).select(db.fused_file.ALL)
-    for row in query :
-        fused_file = defs.DIR_RESULTS+'/'+row.fused_file
-        sequence_file_list = row.sequence_file_list
+               ).select(db.fused_file.ALL).first()
+    if query is not None:
+        fused_file = defs.DIR_RESULTS+'/'+query.fused_file
+        sequence_file_list = query.sequence_file_list
 
     if not 'fused_file' in locals():
         error += "file not found"
