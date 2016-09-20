@@ -57,7 +57,6 @@ class PatientController(unittest.TestCase):
         request.vars["patient_group"] = fake_group_id
         
         resp = add_form()
-        print db(db.auth_permission.id>0).select()
         self.assertNotEqual(resp.find('patient added'), -1, "add patient failled")
         
         
