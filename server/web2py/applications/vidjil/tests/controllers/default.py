@@ -26,7 +26,7 @@ class DefaultController(unittest.TestCase):
         
         # rewrite info / error functions 
         # for some reasons we lost them between the testRunner and the testCase but we need them to avoid error so ...
-        def f(a):
+        def f(a, **kwargs):
             pass
         log.info = f
         log.error = f
