@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -G $VIDJIL_DIR/germline/IGH -c segment $VIDJIL_DIR/data/segment_S22.fa | grep '^>'
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -G $VIDJIL_DIR/germline/IGH -c segment $VIDJIL_DIR/data/segment_S22.fa | grep '^>' ; cat out/segment_S22.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
 
 $ First sequence Stanford
 #                            164        175                 195     203
@@ -14,6 +14,7 @@ $ First sequence Stanford
 # N2: CCCAAAC
 # J: 8 del
 1:>lcl\\|FLN1FA002RWEZA.1\\|.*VDJ 1 165 176 196 204 243 IGHV3-48.0. 1/CGATCCCCCG/0 IGHD3-22.0. 10/CCCAAAC/8 IGHJ4.0.
+1: "name": "IGHV3-48.0. 1/CGATCCCCCG/0 IGHD3-22.0. 10/CCCAAAC/8 IGHJ4.0."
 
 $ Second sequence Stanford
 #                           165 169        180
@@ -29,6 +30,7 @@ $ Second sequence Stanford
 # N2: C
 # J: 0 del
 1:>lcl\\|FLN1FA001BLION.1\\|.*VDJ 1 166 170 181 183 233 IGHV1-3.01 1/TGG/7 IGHD6-13.0. 2/C/0 IGHJ3.0.
+1: "name": "IGHV1-3.01 1/TGG/7 IGHD6-13.0. 2/C/0 IGHJ3.0."
 
 $ Third sequence Stanford
 #                                 169     177                            208   214  
@@ -45,3 +47,7 @@ $ Third sequence Stanford
 # N2 : TGGGT
 # J : 10 del
 1:>lcl\\|FLN1FA002SGU3N.1\\|.*VDJ 1 170 178 209 215 252 IGHV3-9.0. 0/AAATTGG/0 IGHD3-16.0. 5/TGGGT/10 IGHJ4.0.
+1: "name": "IGHV3-9.0. 0/AAATTGG/0 IGHD3-16.0. 5/TGGGT/10 IGHJ4.0."
+
+$ Json output
+1: "reads": ."germline": ."IGH": .3.., "segmented": .3., "total": .3..
