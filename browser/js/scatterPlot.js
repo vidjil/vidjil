@@ -176,6 +176,12 @@ function ScatterPlot(id, model, database) {
             output : "percent", 
             log : true  
         },
+        "nbSamples" : {
+            label: "number of samples sharing each clone",
+            fct : function(cloneID){return self.m.clone(cloneID).getNumberNonZeroSamples()},
+            min : 1,
+            max : function(){ return self.m.samples.number }
+        },
         "tsneX": { 
             label: "distance (X)",
             fct: function(cloneID){
@@ -259,6 +265,7 @@ function ScatterPlot(id, model, database) {
         "plot by similarity and by locus" : { "mode": "plot", "x" : "tsneX_system", "y": "tsneY_system"},
         "clone consensus length / GC content " : { "mode": "plot", "x": "sequenceLength", "y" : "GCContent"},
         "clone consensus coverage / GC content " : { "mode": "plot", "x": "coverage", "y" : "GCContent"},
+        "number of samples sharing each clone" : { "mode": "plot", "x": "nbSamples", "y" : "locus"},
     };
     this.default_preset = 1
 
