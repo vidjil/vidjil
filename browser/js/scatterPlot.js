@@ -1115,7 +1115,7 @@ ScatterPlot.prototype = {
             this.gridSizeW = 0.8 * this.resizeW;
             this.gridSizeH = 1 * this.resizeH;
         } else {
-            this.gridSizeW = this.resizeW;
+            this.gridSizeW = 0.95 * this.resizeW;
             this.gridSizeH = this.resizeH;
         }
 
