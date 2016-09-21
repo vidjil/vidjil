@@ -283,6 +283,22 @@ Clone.prototype = {
         if (result == 0) return undefined;
         return result;
     }, 
+
+    /**
+     * compute the number of (displayed) samples in which this clone has a non-zero size
+     * @return {integer} number
+     * */
+    getNumberNonZeroSamples: function () {
+
+        var nb = 0;
+
+        for (var i in this.m.samples.order)
+            if (this.getReads(this.m.samples.order[i]) > 0)
+                nb += 1
+
+        return nb;
+
+    },
     
     /**
      * return the biggest size a clone can reach in the current samples
