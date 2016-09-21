@@ -824,6 +824,28 @@ int main (int argc, char **argv)
 	   << endl ;
     }
 
+
+  /////////////////////////////////////////
+  //            JSON OUTPUT              //
+  /////////////////////////////////////////
+
+  string f_json = out_dir + f_basename + JSON_SUFFIX ;
+
+  ostringstream stream_cmdline;
+  for (int i=0; i < argc; i++) stream_cmdline << argv[i] << " ";
+
+  json j = {
+    {"vidjil_json_version", VIDJIL_JSON_VERSION},
+    {"samples", {
+        {"number", 1},
+        {"original_names", {f_reads}},
+        {"run_timestamp", {time_buffer}},
+        {"producer", {soft_version}},
+        {"commandline", {stream_cmdline.str()}}
+      }}
+  };
+
+
   /////////////////////////////////////////
   //            LOAD GERMLINES           //
   /////////////////////////////////////////
@@ -1028,8 +1050,6 @@ int main (int argc, char **argv)
   //           CLONE ANALYSIS           //
   ////////////////////////////////////////
   if (command == CMD_CLONES || command == CMD_WINDOWS) {
-
-    string f_json = out_dir + f_basename + JSON_SUFFIX ;
 
     //////////////////////////////////
     //$$ Kmer Segmentation
@@ -1497,12 +1517,6 @@ int main (int argc, char **argv)
 
     //$$ .json output: json_data_segment
     cout << endl ;
-    cout << "  ==> " << f_json << "\t(data file for the web application)" << endl ;
-    ofstream out_json(f_json.c_str()) ;
-    
-    ostringstream stream_cmdline;
-    for (int i=0; i < argc; i++) stream_cmdline << argv[i] << " ";
-    
     
     //json custom germline
     json json_germlines;
@@ -1536,26 +1550,18 @@ int main (int argc, char **argv)
         Germline *germline = *it ;
         reads_germline[germline->code] = {we.getNbReadsGermline(germline->code)};
     }
-    
-    json j = {
-        {"vidjil_json_version", VIDJIL_JSON_VERSION},
-        {"samples", {
-            {"number", 1},
-            {"original_names", {f_reads}},
-            {"run_timestamp", {time_buffer}},
-            {"producer", {soft_version}},
-            {"log", {stream_segmentation_info.str()}},
-            {"commandline", {stream_cmdline.str()}},
-            {"diversity", {jsonDiversity}}
-        }},
-        {"reads", {
+
+
+    // Complete main json output
+    j["diversity"] = jsonDiversity ;
+    j["samples"]["log"] = { stream_segmentation_info.str() } ;
+    j["reads"] = {
             {"total", {nb_total_reads}},
             {"segmented", {nb_segmented}},
             {"germline", reads_germline}
-        }},
-        {"clones", jsonSortedWindows},
-        {"germlines", json_germlines}
-    };
+    } ;
+    j["clones"] = jsonSortedWindows ;
+    j["germlines"] = json_germlines ;
     
     if (epsilon || forced_edges.size()){
         j["clusters"] = comp.toJson(clones_windows);
@@ -1566,10 +1572,8 @@ int main (int argc, char **argv)
     j["similarity"] = jsonLevenshtein;
 
 
-    //$$ Output json, clean
+    //$$ Clean
 
-    out_json << j.dump(2);
-    delete multigermline ;
     delete windowsStorage;
 
 
@@ -1614,9 +1618,17 @@ int main (int argc, char **argv)
     
   } else {
     cerr << "Ooops... unknown command. I don't know what to do apart from exiting!" << endl;
+    exit(1);
   }
   
+  //$ Output json
+  cout << "  ==> " << f_json << "\t(data file for the web application)" << endl ;
+  ofstream out_json(f_json.c_str()) ;
 
+  out_json << j.dump(2);
+
+  //$$ Clean
+  delete multigermline ;
   delete reads;
 }
 
