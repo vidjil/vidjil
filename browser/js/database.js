@@ -1017,7 +1017,7 @@ Database.prototype = {
 
     // Log functions, to server
     // 'quiet' is set to true to avoid infinite loops with timeouts
-    log : function (lvl, msg) { this.request('default/logger', {'lvl': lvl, 'msg': msg}, true) },
+    log : function (lvl, msg) { console.log(msg);  this.request('default/logger', {'lvl': lvl, 'msg': msg}, true) },
     debug:    function(msg) { this.log(10, msg) },
     info:     function(msg) { this.log(20, msg) },
     warn:     function(msg) { this.log(30, msg) },
