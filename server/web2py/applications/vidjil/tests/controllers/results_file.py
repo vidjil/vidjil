@@ -48,6 +48,7 @@ class Results_fileController(unittest.TestCase):
         
     def testConfirm(self):
         request.vars["results_file_id"] = fake_result_id
+        request.vars["sample_set_id"] = fake_sample_set_id
         
         resp = confirm()
         self.assertTrue(resp.has_key('message'), "confirm() has returned an incomplete response")
@@ -59,6 +60,7 @@ class Results_fileController(unittest.TestCase):
                                     run_date = "2014-09-19 00:00:00")
         
         request.vars["results_file_id"] = fake_result_id2
+        request.vars["sample_set_id"] = fake_sample_set_id
     
         resp = delete()
         self.assertNotEqual(resp.find("process deleted"), -1, "delete result file failled")
