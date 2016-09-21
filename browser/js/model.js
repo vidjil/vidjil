@@ -823,6 +823,16 @@ Model.prototype = {
     },
 
     /**
+     * select all clones
+     * */
+    selectAll: function () {
+        for (var i=0; i<this.clones.length; i++){
+            this.clone(i).select = true;
+        }
+        this.updateStyle();
+    },
+
+    /**
      * kick all clones out of the selection
      * */
     unselectAll: function () {
