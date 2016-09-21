@@ -3,7 +3,7 @@
         "sequence" : "aaaaaaaaaattttttttt",
         "name" : "hello",
         "id" : "id1",
-        "reads" : [10,10,15,15] ,
+        "reads" : [10,10,0,30] ,
         "top" : 1,
         "germline" : "TRG",
         "seg" : {
@@ -31,7 +31,7 @@
         "sequence" : "AACGTACCAGG",
         "id" : "id2",
         "name" : some_name,
-        "reads" : [10,10,15,15] ,
+        "reads" : [10,10,30,0] ,
         "top" : 2,
         "germline" : "TRG",
 
@@ -98,6 +98,7 @@ test("clone : name, informations, getHtmlInfo", function() {
     c3.changeName("plop")
     equal(c3.getName(), "plop", "changename clone3 : plop");
     equal(c3.getSequenceName(), "plop", "changename clone3 : plop");
+    equal(c1.getNumberNonZeroSamples(), 3, "clone c1, getNumberNonZeroSamples");
     
     m.select(0)
     m.select(1)
@@ -109,6 +110,8 @@ test("clone : name, informations, getHtmlInfo", function() {
     
     equal(c1.get('reads'), 10, "clone c1 reads : 10");
     equal(c1.getSequenceSize(), "0.05", "clone c1 size : 0.05");
+    equal(c1.getNumberNonZeroSamples(), 4, "clustered clone c1, getNumberNonZeroSamples");
+
     console.log(m.samples.order);
 
     html = m.clones[0].getHtmlInfo();
@@ -121,7 +124,7 @@ test("clone : name, informations, getHtmlInfo", function() {
     includes(html, "<tr><td> clone size (n-reads (total reads) )</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td> clone size (%)</td><td>10.00%</td><td>20.00%</td><td>15.00%</td><td>30.00%</td>",
              "getHtmlInfo: clone information");
     
-    includes(html, "<tr><td class='header' colspan='5'> representative sequence</td></tr><tr><td> sequence name </td><td colspan='4'>hello</td></tr><tr><td> code </td><td colspan='4'>hello</td></tr><tr><td> length </td><td colspan='4'>19</td></tr><tr><td> e-value </td><td colspan='4'><span class='warning'>0.01</span></td><tr><td> size (n-reads (total reads) )</td><td>10  (200)</td><td>10  (100)</td><td>15  (200)</td><td>15  (100)</td></tr><tr><td> size (%)</td><td>5.000%</td><td>10.00%</td><td>7.500%</td><td>15.00%</td></tr>",
+    includes(html, "<tr><td class='header' colspan='5'> representative sequence</td></tr><tr><td> sequence name </td><td colspan='4'>hello</td></tr><tr><td> code </td><td colspan='4'>hello</td></tr><tr><td> length </td><td colspan='4'>19</td></tr><tr><td> e-value </td><td colspan='4'><span class='warning'>0.01</span></td><tr><td> size (n-reads (total reads) )</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td> size (%)</td><td>5.000%</td><td>10.00%</td><td>-</td><td>30.00%</td></tr>",
         "getHtmlInfo: representative sequence information");
 
     includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' onclick='m.clones[0].toggle()'>edit</button> </td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", 
