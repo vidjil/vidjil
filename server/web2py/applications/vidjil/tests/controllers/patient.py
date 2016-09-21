@@ -55,9 +55,11 @@ class PatientController(unittest.TestCase):
         request.vars["info"] = "test patient kZtYnOipmAzZ"
         request.vars["id_label"] = "bob"
         request.vars["patient_group"] = fake_group_id
+
+        name = "%s %s" % (request.vars["first_name"], request.vars["last_name"])
         
         resp = add_form()
-        self.assertNotEqual(resp.find('patient added'), -1, "add patient failled")
+        self.assertNotEqual(resp.find('patient %s added' % name), -1, "add patient failled")
         
         
     def testEdit(self):
