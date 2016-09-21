@@ -1593,8 +1593,15 @@ int main (int argc, char **argv)
     //       V(D)J SEGMENTATION           //
     ////////////////////////////////////////
 
+    json json_clones ;
+
+    int nb = 0;
+    int nb_segmented = 0 ;
+    map <string, int> nb_segmented_by_germline ;
+
     while (reads->hasNext()) 
       {
+        nb++;
         reads->next();
 
         Sequence seq = reads->getSequence() ;
@@ -1604,18 +1611,44 @@ int main (int argc, char **argv)
         
         FineSegmenter s(seq, germline, segment_cost, expected_value, nb_reads_for_evalue);
 
+        json json_clone;
+        json_clone["id"] = seq.label;
+        json_clone["sequence"] = seq.sequence;
+        json_clone["reads"] = { 1 };
+        json_clone["top"] = 0;
+
             if (s.isSegmented()) 
               {
+                nb_segmented++ ;
+
                 if (germline->seg_method == SEG_METHOD_543)
                   s.FineSegmentD(germline, several_D, expected_value_D, nb_reads_for_evalue);
 
                 if (detect_CDR3)
                   s.findCDR3();
+
+                json_clone["germline"] = germline->code;
+                nb_segmented_by_germline[germline->code]++ ;
+                json_clone["name"] = s.code;
+                json_clone["seg"] = s.toJson();
+
+                json_clones += json_clone;
               }
 
         cout << s << endl;        
       }
-    
+
+    // Finish .json preparation
+    j["clones"] = json_clones;
+    j["reads"]["segmented"] = { nb_segmented } ;
+    j["reads"]["total"] = { nb } ;
+
+    for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
+      Germline *germline = *it ;
+      if (nb_segmented_by_germline[germline->code])
+        j["reads"]["germline"][germline->code] = { nb_segmented_by_germline[germline->code] } ;
+    }
+
   } else {
     cerr << "Ooops... unknown command. I don't know what to do apart from exiting!" << endl;
     exit(1);
