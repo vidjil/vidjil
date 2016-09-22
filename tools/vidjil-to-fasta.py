@@ -15,6 +15,141 @@ def print_fasta_header(header, outfile, options):
         header = header.replace(' ', '_')
     outfile.write(header+"\n")
 
+def get_recombination_type(clone):
+    '''
+    >>> class tmp: d = {};
+    >>> clone = tmp()
+    >>> clone.d = {'seg': {'4': "D1", '4b': "D2"}}
+    >>> get_recombination_type(clone)
+    'VDDJ'
+
+    >>> clone.d = {'seg': {'4': "D1"}}
+    >>> get_recombination_type(clone)
+    'VDJ'
+
+    >>> clone.d = {'seg': {'5': "V", "3": "J"}}
+    >>> get_recombination_type(clone)
+    'VJ'
+
+    >>> clone.d = {'seg': {'4a': "D1", '4b': "D2", '4c': "D3"}}
+    >>> get_recombination_type(clone)
+    'VDDDJ'
+    '''
+    number_of_Ds = ['4c', '4b', '4']
+    i = 0
+    D_seq = ""
+    for d in number_of_Ds:
+        if clone.d['seg'].has_key(d):
+            D_seq = "D" * (len(number_of_Ds) - i)
+            break
+        i += 1
+    return "V"+D_seq+"J"
+
+def get_gene_positions(clone, end, gene_name):
+    '''
+    >>> class tmp: d = {};
+    >>> clone = tmp()
+    >>> clone.d = {'seg': {'5end': 10, '3start': 15}}
+    >>> get_gene_positions(clone, 'stop', '5')
+    10
+    >>> get_gene_positions(clone, 'start', '3')
+    15
+
+    >>> clone.d = {'seg': {'5': {'stop': 10}, '3': {'start': 15}}}
+    >>> get_gene_positions(clone, 'stop', '5')
+    10
+    >>> get_gene_positions(clone, 'start', '3')
+    15
+
+    >>> clone.d = {'seg': {'5': {'stop': 10}, '4': {'start': 11, 'stop': 12}, '3': {'start': 15}}}
+    >>> get_gene_positions(clone, 'stop', '5')
+    10
+    >>> get_gene_positions(clone, 'start', '3')
+    15
+    >>> get_gene_positions(clone, 'stop', '4')
+    12
+    >>> get_gene_positions(clone, 'start', '4')
+    11
+
+    >>> clone.d = {'seg': {'5': {'stop': 10}, '4': {'start': 11, 'stop': 12}, '4b': {'start': 13, 'stop': 14}, '3': {'start': 15}}}
+    >>> get_gene_positions(clone, 'stop', '5')
+    10
+    >>> get_gene_positions(clone, 'start', '3')
+    15
+    >>> get_gene_positions(clone, 'stop', '4')
+    12
+    >>> get_gene_positions(clone, 'start', '4')
+    11
+    >>> get_gene_positions(clone, 'stop', '4b')
+    14
+    >>> get_gene_positions(clone, 'start', '4b')
+    13
+    '''
+    if not clone.d.has_key('seg'):
+        return None
+    seg = clone.d['seg']
+    if seg.has_key(gene_name+end):
+        return seg[gene_name+end]
+    if end == 'stop' and seg.has_key(gene_name+'end'):
+        return seg[gene_name+'end']
+    elif seg.has_key(gene_name) \
+         and isinstance(seg[gene_name], dict) \
+         and seg[gene_name].has_key(end):
+        return seg[gene_name][end]
+    else:
+        return None
+
+def get_vdj_positions(recombination_type, clone):
+    '''
+    >>> class tmp: d = {};
+    >>> clone = tmp()
+    >>> clone.d = {'seg': {'5end': 10, '3start': 15, 'sequence': 'ATTAAAAAAAAAAAAAAAAA'}}
+    >>> get_vdj_positions('VJ', clone)
+    [1, 11, 16, 20]
+
+    >>> clone.d = {'seg': {'5': {'stop': 10}, '3': {'start': 15}, 'sequence': 'ATTAAAAAAAAAAAAAAAAA'}}
+    >>> get_vdj_positions('VJ', clone)
+    [1, 11, 16, 20]
+
+    >>> clone.d = {'seg': {'5': {'stop': 10}, '4': {'start': 11, 'stop': 12}, '3': {'start': 15}, 'sequence': 'ATTAAAAAAAAAAAAAAAAA'}}
+    >>> get_vdj_positions('VDJ', clone)
+    [1, 11, 12, 13, 16, 20]
+
+    >>> clone.d = {'seg': {'5': {'stop': 10}, '4': {'start': 11, 'stop': 12}, '4b': {'start': 13, 'stop': 14}, '3': {'start': 15}, 'sequence': 'ATTAAAAAAAAAAAAAAAAA'}}
+    >>> get_vdj_positions('VDDJ', clone)
+    [1, 11, 12, 13, 14, 15, 16, 20]
+    >>> get_vdj_positions('VDJ', clone)
+    [1, 11, 12, 13, 16, 20]
+    >>> get_vdj_positions('VJ', clone)
+    [1, 11, 16, 20]
+
+    '''
+    positions = [1]
+    if not clone.d.has_key('seg'):
+        return None
+    seg = clone.d['seg']
+    positions.append(get_gene_positions(clone, 'stop', '5')+1)
+    recombination_type = recombination_type[1:-1]
+    i = 0
+    for d in recombination_type:
+        if len(recombination_type) == 1:
+            d_name = '4'
+        else:
+            d_name = '4'+chr(ord('a')+i)
+        if not seg.has_key(d_name) and d_name == '4a':
+            d_name = '4'
+        positions.append(get_gene_positions(clone, 'start', d_name)+1)
+        positions.append(get_gene_positions(clone, 'stop', d_name)+1)
+        i+=1
+    positions.append(get_gene_positions(clone, 'start', '3')+1)
+    if (seg.has_key('sequence')):
+        positions.append(len(seg['sequence']))
+    else:
+        # Arbitrary end
+        positions.append(positions[-1] + 50)
+    return positions
+
+
 def write_fuse_to_fasta(data, outfile, used_names, current_filename, options):
     '''
     Write the top clones (if specified in options.top)
@@ -29,11 +164,18 @@ def write_fuse_to_fasta(data, outfile, used_names, current_filename, options):
 
     for clone in data:
         if clone.d.has_key('sequence') and isinstance(clone.d['sequence'], basestring)\
-        and len(clone.d['sequence']) > 0:
+        and len(clone.d['sequence']) > 0 and clone.d.has_key('seg'):
+            recombination = get_recombination_type(clone)
+            name = recombination+spacer
+            try:
+                positions = get_vdj_positions(recombination, clone)
+            except:
+                continue
+            name += spacer.join(map(str, positions))+spacer
             if not clone.d.has_key('name'):
-                name = "Anonymous"
+                name += "Anonymous"
             else:
-                name = clone.d['name']
+                name += clone.d['name'].replace(' ', spacer)
             additional_header_info = []
             if name in used_names:
                 used_names[name] += 1
