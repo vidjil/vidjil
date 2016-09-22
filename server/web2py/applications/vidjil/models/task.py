@@ -431,7 +431,7 @@ def run_copy(id_file, id_config, id_data, clean_before=False, clean_after=False)
     db.results_file[id_data] = dict(status = "ready",
                                  run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                  #data_file = row[0].data_file
-                                 data_file = stream
+                                 data_file = db.results_file.data_file.store(stream, row[0].filename)
                                 )
     db.commit()
     
