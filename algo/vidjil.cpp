@@ -1323,7 +1323,8 @@ int main (int argc, char **argv)
 
       //$$ If max_representatives is reached, we stop here but still outputs the window
 
-      if ((max_representatives >= 0) && (num_clone >= max_representatives + 1))
+      if ((max_representatives >= 0) && (num_clone >= max_representatives + 1)
+          && ! windowsStorage->isInterestingJunction(it->first))
 	{
 	  out_clones << window_str << endl ;
 	  continue;
@@ -1394,7 +1395,9 @@ int main (int argc, char **argv)
 
         //$$ If max_clones is reached, we stop here but still outputs the representative
 
-        if ((max_clones >= 0) && (num_clone >= max_clones + 1))
+        if ((max_clones >= 0) && (num_clone >= max_clones + 1)
+            && ! windowsStorage->isInterestingJunction(it->first))
+
           {
             cout << representative << endl ;
             out_clones << representative << endl ;
