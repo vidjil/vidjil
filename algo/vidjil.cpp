@@ -803,7 +803,7 @@ int main (int argc, char **argv)
   //////////////////////////////////
   // Warning for non-optimal use
 
-  if (max_clones == -1 || max_clones > WARN_MAX_CLONES)
+  if (max_clones == NO_LIMIT_VALUE || max_clones > WARN_MAX_CLONES)
     {
       cout << endl
 	   << "* WARNING: vidjil was run with '-A' option or with a large '-z' option" << endl ;
@@ -815,11 +815,12 @@ int main (int argc, char **argv)
 	   << "* WARNING: vidjil was run with '-c segment' option" << endl ;
     }
   
-  if (max_clones == -1 || max_clones > WARN_MAX_CLONES || command == CMD_SEGMENT)
+  if (max_clones == NO_LIMIT_VALUE || max_clones > WARN_MAX_CLONES || command == CMD_SEGMENT)
     {
-      cout << "* Vidjil purpose is to extract very quickly windows overlapping the CDR3" << endl
-	   << "* and to gather reads into clones (-c clones), and not to provide an accurate V(D)J segmentation." << endl
-	   << "* The full V(D)J designations are slow to compute and are provided only for convenience." << endl
+      cout << "* Vidjil's purpose is to efficiently extract windows overlapping the CDR3" << endl
+           << "* to gather reads into clones ('-c clones')." << endl
+           << "* Computing accurate V(D)J designations for many sequences ('-c segment' or large '-z' values)" << endl
+           << "* is slow and should be done only on small datasets or for testing purposes." << endl
 	   << "* More information is provided in the 'doc/algo.org' file." << endl 
 	   << endl ;
     }
