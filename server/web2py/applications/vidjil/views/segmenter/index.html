@@ -1,15 +1,20 @@
 {{extend 'simple_layout.html'}}
 
-<h1>Vidjil online segmenter tool</h1>
+<h2>V(D)J designation tool</h2>
+
+<p>This tool quickly checks the V(D)J designation of a small number of sequences with (possibly incomplete) V(D)J recombinations.
+To analyze complete NGS RepSeq datasets, use the <a href="http://app.vidjil.org/">full Vidjil platform</a>.
+</p>
 
 <div>
+  <p>Either enter up to 10 sequences in FASTA format or upload a FASTA file.</p>
     {{=form}}
 </div>
 
 <div>
         {{if result != "":}}
-        <textarea class="text invalidinput" cols="40" name="result" rows="10" style="width: 100%; height: 2000px; font-family:monospace">
-            {{=result}}
-        </textarea>
+	<h3>Result</h3>
+        <pre class="text invalidinput" cols="40" name="result" rows="10" style="width: 100%; height: 2000px; font-family:monospace">{{=result}}
+        </pre>
         {{pass}}
 </div>
