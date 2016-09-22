@@ -23,7 +23,7 @@ def index():
         Field('file', 'upload', uploadfolder=os.path.join(request.folder,'uploads')))
     form.element('textarea[name=sequences]')['_style'] = 'width:800px; height:200px;'
     
-    text_result = ""
+    t_result = ""
     
     if form.process(onvalidation=checkform_segmenter).accepted:
         with TemporaryDirectory() as folder_path:
@@ -57,6 +57,12 @@ def index():
             
             with open(result_path, 'r') as myfile:
                 text_result = myfile.read()
+
+            t_result = ''
+            for l in text_result.split('\n'):
+                pre, post = ('<span style="color: #090; font-weight:bold;">', '</span>') if l.startswith('>') else ('', '')
+                t_result += pre + l + post + '\n'
+
         response.flash = file_path
         
     elif form.errors:
@@ -64,7 +70,7 @@ def index():
         
     #form.errors.sequences = form.vars.sequences
     return dict(form=form,
-                result=text_result)
+                result=XML(t_result))
 
 
 
