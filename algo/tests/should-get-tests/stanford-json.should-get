@@ -5,7 +5,7 @@ $ Number of reads
 e1:"total": [13153]
 
 $ Number of segmented reads
-e1:"segmented": [13153]
+e1:"segmented": [13152]
 
 $ Most abundant window
 1:"id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC".*"reads": \\[8\\]
@@ -50,10 +50,10 @@ $ Segmentation details - CDR3, JUNCTION
 1:"junction": ."aa": "CTREEQYSSWYFDFW", .* "start": 53, "stop": 97.
 
 $ Second sequence has a DNA sequence provided
-1:"id": "CTGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTA".*"sequence": "[ACGT]+",
+1:"id": "TGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTAC".*"sequence": "[ACGT]+",
 
 $ Second sequence also has evalues
-1:"id": "CTGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTA".*"evalue": ."val": "[0-9\.e-]+"
+1:"id": "TGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTAC".*"evalue": ."val": "[0-9\.e-]+"
 
 $ All 'start' fields are 1-based, they never equal to zero
 0: "start": 0
