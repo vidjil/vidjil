@@ -365,9 +365,9 @@ used only for test and debug purposes, on very small datasets, and
 produce large file and takes huge computation times.
 
 
-** Labeled windows
+** Labeled windows and sequences of interest
 
-Vidjil allows to indicate that specific windows that must be followed
+Vidjil allows to indicate that specific windows must be followed
 (even if those windows are 'rare', below the =-r/-%= thresholds).
 
 Such windows can be provided either with =-W <window>=, or with =-l <file>=.
@@ -387,6 +387,10 @@ With the =-F= option, /only/ the labeld windows are kept. This allows
 to quickly filter a set of reads, looking for a known window,
 with the =-FaW <window>= options:
 All the reads with this windows will be extracted to =out/seq/clone.fa-1=.
+
+More generally when the provided sequence differs in length with the windows
+we will keep any windows that contain the sequence of interest or, conversely,
+we will keep any window that is contained in the sequence of interest.
 
 ** Clone analysis: VDJ assignation and CDR3 detection
 
