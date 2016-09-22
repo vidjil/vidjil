@@ -1,6 +1,6 @@
 Template: vidjil/reconfigure-webserver
 Type: select
-Choices: apache2, nginx
+Choices: apache2, nginx, none
 Description: Web server to configure automatically
  Any webserver can be configured to serve the vidjil webapp,
  however we only supply files for Apache2 and Nginx.
@@ -16,7 +16,7 @@ Description: Should the webserver(s) be restarted now?
 
 Template: vidjil/configure-startup
 Type: select
-Choices: init, systemd
+Choices: init, systemd, none
 Description: Startup system to configure automatically
  Vidjil Server uses a number of startup scripts to ensure the system will not be
  down after rebooting.

@@ -262,6 +262,8 @@ case "$1" in
                 "apache2")
                     apache_install
                     ;;
+                "none")
+                    ;;
             esac
         done
         
@@ -337,6 +339,8 @@ case "$1" in
                 ;;
             "systemd")
                 systemd_install
+                ;;
+            "none")
                 ;;
         esac
     ;;
