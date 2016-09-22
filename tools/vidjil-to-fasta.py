@@ -4,6 +4,7 @@ import os
 import base64
 
 MAX_TOP=99999999999
+REPLACEMENT_WHITESPACE='_'
 
 def print_fasta_header(header, outfile, options):
     '''
@@ -162,6 +163,11 @@ def write_fuse_to_fasta(data, outfile, used_names, current_filename, options):
     if options.top < MAX_TOP:
         data.filter(data.getTop(options.top))
 
+    if options.no_header_whitespace:
+        spacer = REPLACEMENT_WHITESPACE
+    else:
+        spacer = ' '
+
     for clone in data:
         if clone.d.has_key('sequence') and isinstance(clone.d['sequence'], basestring)\
         and len(clone.d['sequence']) > 0 and clone.d.has_key('seg'):
@@ -190,7 +196,7 @@ def write_fuse_to_fasta(data, outfile, used_names, current_filename, options):
                 additional_header_info.append('sample_name=%s' % sample_name)
 
             if len(additional_header_info) > 0:
-                additional_header_info = ' # '+' '.join(additional_header_info)
+                additional_header_info = spacer+'#'+spacer+spacer.join(additional_header_info)
             else:
                 additional_header_info = ''
             print_fasta_header('%s%s' % (name, additional_header_info),\
