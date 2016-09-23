@@ -112,7 +112,7 @@ clean:
 cleancoverage:
 	rm -f *.gcda *.gcno *.gcov
 cleantests:
-	rm -f *.tap *.log should-vdj-tests/*.tap should-vdj-tests/*.log
+	rm -f *.tap *.log should-vdj-tests/*.tap should-vdj-tests/*.log should-get-tests/*.tap should-get-tests/*.log
 	rm -rf out/
 
 cleanall: clean cleancoverage cleantests
