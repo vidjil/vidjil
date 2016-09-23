@@ -67,7 +67,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads,
     if (seg->isSegmented()) {
 
       // Filter
-      if (!only_labeled_windows || (windows_labels.find(junc) != windows_labels.end()))
+      if (!only_labeled_windows || windowsStorage->isInterestingJunction(junc))
 
       // Store the window
       windowsStorage->add(junc, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline);

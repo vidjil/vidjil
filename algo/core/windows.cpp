@@ -78,7 +78,7 @@ KmerRepresentativeComputer WindowsStorage::getRepresentativeComputer(junction wi
     = getSample(window,nb_sampled, nb_buckets);
   KmerRepresentativeComputer repComp(auditioned_sequences, seed);
   repComp.setRevcomp(true);
-  repComp.setMinCover((windows_labels.find(window) == windows_labels.end()) ? min_cover : 1);
+  repComp.setMinCover((! isInterestingJunction(window)) ? min_cover : 1);
   repComp.setPercentCoverage(percent_cover);
   repComp.setRequiredSequence(window);
   repComp.setCoverageReferenceLength(getAverageLength(window));
@@ -126,6 +126,23 @@ bool WindowsStorage::hasWindow(junction window) {
   return (result != germline_by_window.end());
 }
 
+bool WindowsStorage::isInterestingJunction(junction window) {
+  bool found = false;
+  for (auto it: windows_labels) {
+    string sequence_of_interest = it.first;
+    if (sequence_of_interest.size() < window.size()) {
+      found = window.find(sequence_of_interest) != string::npos
+        || window.find(revcomp(sequence_of_interest)) != string::npos;
+    } else {
+      found = sequence_of_interest.find(window) != string::npos
+        || sequence_of_interest.find(revcomp(window)) != string::npos;
+    }
+    if (found)
+      return true;
+  }
+  return false;
+}
+
 size_t WindowsStorage::size() {
   return seqs_by_window.size();
 }
@@ -170,7 +187,7 @@ pair <int, size_t> WindowsStorage::keepInterestingWindows(size_t min_reads_windo
       // Is it not supported by enough reads?
       if (!(nb_reads_this_window >= min_reads_window)
           // Is it not a labelled junction?
-          && (windows_labels.find(junc) == windows_labels.end()))
+          && ! isInterestingJunction(junc))
         {
           map <junction, BinReadStorage >::iterator toBeDeleted = it;
           it++;

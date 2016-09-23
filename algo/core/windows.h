@@ -122,6 +122,11 @@ class WindowsStorage {
   bool hasWindow(junction window);
 
   /**
+   * @return true iff the window is contained (or contains) a sequence of interest
+   */
+  bool isInterestingJunction(junction window);
+
+  /**
    * @return a list of windows together with the number of reads they appear in.
    * @pre sort() must have been called at least once and must have been called
    *      again after calling keepInterestingWindows()
