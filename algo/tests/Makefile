@@ -14,6 +14,7 @@ SHOULD_VDJ_EXPECTED_FAILS=--expected-fails 84
 SHOULD_LOCUS_EXPECTED_FAILS=--expected-fails 2
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
 SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
+SHOULD_VDJ_TO_TAP=python -u should-vdj-to-tap.py
 REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
 VALGRIND=valgrind -v --tool=memcheck --leak-check=full --show-reachable=yes --undef-value-errors=yes --track-origins=yes --xml=yes --xml-file="$$(mktemp "$(REPORTS_PATH)/valgrind.xml.XXXXXX")"
 
@@ -39,7 +40,7 @@ all: core $(EXEC)
 
 snapshot:
 	mkdir -p $(SNAPSHOTS_DIR)
-	grep . should-get-tests/*.log should-vdj-tests/*.log > $(SNAPSHOT)
+	grep . out-*.log should-get-tests/*.log should-vdj-tests/*.log > $(SNAPSHOT)
 	touch snapshot-last ; mv snapshot-last snapshot-prev
 	ln -s $(SNAPSHOT) snapshot-last
 	diff -I "20..-..-.." snapshot-prev snapshot-last | diffstat -cC
@@ -54,19 +55,19 @@ shouldvdj_if_python:
 
 shouldlocus_and_vdj: vidjil
 	@echo "*** Launching .should-vdj-fa tests..."
-	python should-vdj-to-tap.py -2q -r $(SHOULD_LOCUS_EXPECTED_FAILS) $(SHOULD_VDJ) $(SHOULD_LOCUS)
+	$(SHOULD_VDJ_TO_TAP) -2q -r $(SHOULD_LOCUS_EXPECTED_FAILS) $(SHOULD_VDJ) $(SHOULD_LOCUS)
 	$(MAKE) shouldvdj_with_rc
 	@echo "*** All .should-vdj.fa tests passed"
 
 shouldvdj:
-	python should-vdj-to-tap.py $(SHOULD_VDJ_EXPECTED_FAILS) $(SHOULD_VDJ)
+	$(SHOULD_VDJ_TO_TAP) $(SHOULD_VDJ_EXPECTED_FAILS) $(SHOULD_VDJ)
 
 shouldvdj_with_rc:
-	python should-vdj-to-tap.py $(SHOULD_VDJ_EXPECTED_FAILS) -r $(SHOULD_VDJ)
+	$(SHOULD_VDJ_TO_TAP) $(SHOULD_VDJ_EXPECTED_FAILS) -r $(SHOULD_VDJ)
 
 shouldvdj_with_rc_merged:
 	cat $(SHOULD_VDJ) > should-vdj-tests/should-vdj.merged.fa
-	python should-vdj-to-tap.py -r should-vdj-tests/should-vdj.merged.fa
+	$(SHOULD_VDJ_TO_TAP) -r should-vdj-tests/should-vdj.merged.fa
 
 curatedvdj_archive: curated-vdj.zip
 curated-vdj.zip: $(SHOULD_VDJ_ARCHIVE)

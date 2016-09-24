@@ -17,9 +17,9 @@ static:
 	$(MAKE) all LDFLAGS="-static -static-libstdc++"
 
 test:
-	$(MAKE) COVERAGE="$(COVERAGE)" unit
+	$(MAKE) COVERAGE="$(COVERAGE)" unit   2>&1 | tee algo/tests/out-unit.log
 	$(MAKE) functional
-	$(MAKE) test_tools_if_python
+	$(MAKE) test_tools_if_python          2>&1 | tee algo/tests/out-tools.log
 	@echo
 	@echo "*** All tests passed. Congratulations !"
 	@echo
@@ -41,8 +41,8 @@ unit: all
 	@echo "*** All unit tests passed"
 
 functional: all
-	$(MAKE) should
-	$(MAKE) shouldvdj
+	$(MAKE) should     2>&1 | tee algo/tests/out-should-get.log
+	$(MAKE) shouldvdj  2>&1 | tee algo/tests/out-should-vdj.log
 
 should: all
 	@echo
