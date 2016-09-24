@@ -10,6 +10,8 @@ else
 	COVERAGE_OPTION=
 endif
 
+TEE = python tools/tee.py -v
+
 all:
 	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)
 
@@ -18,9 +20,9 @@ static:
 
 test:
 	$(MAKE) -C algo/tests cleantests
-	$(MAKE) COVERAGE="$(COVERAGE)" unit   2>&1 | tee algo/tests/out-unit.log
+	$(TEE) '$(MAKE) COVERAGE="$(COVERAGE)" unit' algo/tests/out-unit.log
 	$(MAKE) functional
-	$(MAKE) test_tools_if_python          2>&1 | tee algo/tests/out-tools.log
+	$(TEE) '$(MAKE) test_tools_if_python'        algo/tests/out-tools.log
 	@echo
 	@echo "*** All tests passed. Congratulations !"
 	@echo
@@ -46,8 +48,8 @@ unit: all
 	@echo "*** All unit tests passed"
 
 functional: all
-	$(MAKE) should     2>&1 | tee algo/tests/out-should-get.log
-	$(MAKE) shouldvdj  2>&1 | tee algo/tests/out-should-vdj.log
+	$(TEE) '$(MAKE) should'      algo/tests/out-should-get.log
+	$(TEE) '$(MAKE) shouldvdj'   algo/tests/out-should-vdj.log
 
 should: all
 	@echo
