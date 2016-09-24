@@ -19,15 +19,22 @@ parser.add_argument('file', nargs='*', help='''output file(s)''')
 
 
 
+def unbuffered_read(f):
+    # see http://stackoverflow.com/a/1183654
+    l = f.readline()
+    while l:
+        yield l
+        l = f.readline()
 
 def tee(cmd, outputs):
     '''Runs 'cmd', pipe the output to 'outputs', and returns the exit code of 'cmd' '''
     argz = shlex.split(cmd)
     p = subprocess.Popen(argz,
                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                         bufsize=0,
                          close_fds=True)
-    
-    for l in p.stdout:
+
+    for l in unbuffered_read(p.stdout):
         for o in outputs:
             o.write(l)
 
