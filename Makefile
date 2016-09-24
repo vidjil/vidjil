@@ -26,6 +26,10 @@ test:
 	@echo
 	$(MAKE) -C algo/tests snapshot
 
+snapshot_diff:
+	$(MAKE) -C algo/tests snapshot_diff
+
+
 test_browser: unit_browser functional_browser
 
 test_server: unit_server
