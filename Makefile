@@ -17,6 +17,7 @@ static:
 	$(MAKE) all LDFLAGS="-static -static-libstdc++"
 
 test:
+	$(MAKE) -C algo/tests cleantests
 	$(MAKE) COVERAGE="$(COVERAGE)" unit   2>&1 | tee algo/tests/out-unit.log
 	$(MAKE) functional
 	$(MAKE) test_tools_if_python          2>&1 | tee algo/tests/out-tools.log
