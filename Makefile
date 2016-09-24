@@ -24,7 +24,7 @@ test:
 	@echo
 	@echo "*** All tests passed. Congratulations !"
 	@echo
-	-($(MAKE) -C algo/tests snapshot)
+	$(MAKE) -C algo/tests snapshot
 
 test_browser: unit_browser functional_browser
 

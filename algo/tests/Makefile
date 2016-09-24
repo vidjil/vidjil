@@ -43,7 +43,10 @@ snapshot:
 	grep . out-*.log should-get-tests/*.log should-vdj-tests/*.log > $(SNAPSHOT)
 	touch snapshot-last ; mv snapshot-last snapshot-prev
 	ln -s $(SNAPSHOT) snapshot-last
-	diff -I "20..-..-.." snapshot-prev snapshot-last | diffstat -cC
+	make snapshot_diff | diffstat -cC
+
+snapshot_diff:
+	-diff -u -I ".*20..-..-...*" snapshot-prev snapshot-last
 
 should: vidjil $(SHOULD_LOG)
 
