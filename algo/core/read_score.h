@@ -80,6 +80,8 @@ class ReadLengthScore: public VirtualReadScore {
  * The score is a trade-off between quality and length of the read
  */
 class ReadQualityScore: public VirtualReadScore {
+ private:
+  static size_t qualities[MAX_QUALITY];
  public:
   ReadQualityScore();
   ~ReadQualityScore();
