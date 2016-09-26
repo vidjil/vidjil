@@ -170,6 +170,10 @@ while read line; do
                 pattern=$(cut -d: -f2- <<< "$line")
                 nb_hits=$(cut -d: -f1 <<< "$line")
 
+                # Remove trailing whitespaces.
+                # Depending on Bash version they are not handled in the same way → uniformize
+                pattern=$(sed -e 's/^\s*//' <<< "$pattern")
+
                 # Escape special characters for sed
                 pattern=$(sed -e 's/[/&]/\\&/g' <<< $pattern)
 
