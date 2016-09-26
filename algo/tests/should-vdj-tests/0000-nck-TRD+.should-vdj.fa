@@ -13,8 +13,17 @@ GAAtcGAtAttGCAAAGAACCtGGCtGtACttAAGatACttGCACCAtCAGaGaGaGAtGAAGgGtCttACtACtGtGCC
 
 ############################
 # DDJ
->TRDD2*01 0/4/3 TRDD3 0/2/3 TRDJ1*01  [TRD+] TODO
-AgcgggtggtgatggcaaagtgccaaggaaagggaaaaaggaagaagagggtttttatactgatgTGTTTCATTGTGCCTTCCTACGTGAGGGGGATACGCCCCGATAAACTCATCTTTGGAAAAGGAACCCGTGTGACTGTGGAAC
+# seq      65  GTGTTTCATTGTGCCTTCCTACGTGAGGGGGATACGCCCCGATAAACTCATCTTTG
+#              ||||||||||||||||||||||
+# TRDD2*01     GTGTTTCATTGTGCCTTCCTAC    ||||||||||
+# TRDD3                               ACTGGGGGATACG  ||||||||||||||||||
+# TRDJ1*01                                        acaccgataaactcatctttg
+>TRDD2*01 0/GTGA/3 TRDD3 0/CC/3 TRDJ1*01  [TRD+] BUG
+AgcgggtggtgatggcaaagtgccaaggaaagggaaaaaggaagaagagggtttttatactgatgTGTTTCATTGTGCCTTCCTAC
+GTGA
+GGGGGATACG
+CC
+CCGATAAACTCATCTTTGGAAAAGGAACCCGTGTGACTGTGGAAC
 
 >TRDD2 18/6/0 TRDD3 5/5/0 TRDJ1  [TRD+] TODO
 AgcgggtggtgatggcaaagtgccaaggaaagggaaaaaggaagaagagggtttttatactgatgtgtCCAGGGACTGGGGGCCAGTACACCGATAAACTCATCTTTGGAAAAGGAACCCGTGTGACTGTGGAAC
