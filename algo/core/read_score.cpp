@@ -81,7 +81,10 @@ float ReadQualityScore::getScore(const Sequence &sequence) const {
   memset(qualities, 0, MAX_QUALITY * sizeof(size_t));
   for (size_t i = 0; i < sequence.quality.size(); i++) {
     int current_quality = (sequence.quality[i]) - '!';
-    assert(current_quality < MAX_QUALITY);
+    if(current_quality >= MAX_QUALITY)
+      current_quality = MAX_QUALITY - 1;
+    else if (current_quality < 0)
+      current_quality = 0;
     qualities[current_quality]++;
   }
   int max_percentile = (int) round(sequence.quality.size()*1. / 100);
