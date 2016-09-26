@@ -80,7 +80,7 @@ size_t ReadQualityScore::qualities[MAX_QUALITY];
 float ReadQualityScore::getScore(const Sequence &sequence) const {
   memset(qualities, 0, MAX_QUALITY * sizeof(size_t));
   for (size_t i = 0; i < sequence.quality.size(); i++) {
-    int current_quality = (sequence.quality[i]) - '!';
+    int current_quality = (sequence.quality[i]) - ' ';
     if(current_quality >= MAX_QUALITY)
       current_quality = MAX_QUALITY - 1;
     else if (current_quality < 0)
