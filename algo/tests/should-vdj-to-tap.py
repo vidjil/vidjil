@@ -59,6 +59,7 @@ PROG_TAG = '.1'
 if args.after_two:
     PROG_TAG = '.2'
 
+SPECIAL_KEYWORDS = ['TODO', 'BUG']
 
 global_failed = 0
 global_stats = defaultdict(int)
@@ -102,6 +103,9 @@ def should_pattern_to_regex(p):
 
         # Comment, stop parsing here
         if term.startswith('#'):
+            return []
+
+        if term in SPECIAL_KEYWORDS:
             return []
 
         # Ambiguous/alternate pattern
