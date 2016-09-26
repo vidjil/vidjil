@@ -77,7 +77,9 @@ ReadQualityScore::~ReadQualityScore(){}
 float ReadQualityScore::getScore(const Sequence &sequence) const {
   size_t *qualities = (size_t *)calloc(MAX_QUALITY, sizeof(size_t));
   for (size_t i = 0; i < sequence.quality.size(); i++) {
-    qualities[(sequence.quality[i]) - '!']++;
+    int current_quality = (sequence.quality[i]) - '!';
+    assert(current_quality < MAX_QUALITY);
+    qualities[current_quality]++;
   }
   int max_percentile = (int) round(sequence.quality.size()*1. / 100);
   int percent_quality = 0;
