@@ -22,7 +22,7 @@ $ First clone -- find the good number of reads
 2:clone-001--.*--0000008
 
 $ First clone -- find the good representative
-1:clone-001--.*--lcl.FLN1FA001CPAUQ.1.-.105,232.-.2
+1:clone-001--.*--lcl.FLN1FA001CPAUQ.1.-.106,232.-.2
 
 $ First clone -- find the good coverage
-1:clone-001--.* 128 bp .55. of 232.0 bp.
+1:clone-001--.* 127 bp .54. of 232.0 bp.
