@@ -225,6 +225,8 @@ def id_line_to_tap(l, tap_id):
 
     globals()['global_stats'][locus] += 1
 
+    ### Main output, .tap compliant, and main count
+
     tap = ''
 
     if not found:
@@ -238,14 +240,25 @@ def id_line_to_tap(l, tap_id):
 
     tap += 'ok %d ' % tap_id
 
-    if 'BUG' in should:
-        tap += '# BUG '
+    ### Additional output/warnings
 
-    if 'TODO' in should:
-        tap += '# TODO '
-    else:
-        if not found:
-            tap += ansi.Style.BRIGHT + ansi.Fore.RED + '# not ok ' + ansi.Style.RESET_ALL
+    special = False
+    warn = False
+
+    for kw in SPECIAL_KEYWORDS:
+        if kw in should:
+            tap += '# %s ' % kw
+            special = True
+
+    warn = not found ^ special
+
+    if warn:
+        tap += ansi.Style.BRIGHT \
+               + [ansi.Fore.RED, ansi.Fore.GREEN][found] \
+               + '#! %s ' % ['not ok', 'ok'][found] \
+               + ansi.Style.RESET_ALL
+
+    ### Pattern
 
     tap += '- ' + should_pattern
 
@@ -274,7 +287,7 @@ def should_to_tap_one_file(f_should):
 
         for tap_id, l in enumerate(id_lines):
             tap_line = id_line_to_tap(l, tap_id+1)
-            if args.verbose or 'not ok' in tap_line:
+            if args.verbose or '#!' in tap_line:
                 print tap_line
             ff.write(tap_line + '\n')
 
