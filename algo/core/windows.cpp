@@ -21,14 +21,6 @@ map<junction, BinReadStorage>::iterator WindowsStorage::end() {
   return seqs_by_window.end();
 }
 
-string WindowsStorage::getLabel(junction window) {
-  
-  if (windows_labels.find(window) == windows_labels.end())
-    return "" ;
-  
-  return windows_labels[window];   
-}
-
 float WindowsStorage::getAverageLength(junction window) {
   assert(hasWindow(window));
   return seqs_by_window[window].getAverageScore();
@@ -126,7 +118,8 @@ bool WindowsStorage::hasWindow(junction window) {
   return (result != germline_by_window.end());
 }
 
-bool WindowsStorage::isInterestingJunction(junction window) {
+string WindowsStorage::getLabel(junction window) {
+
   bool found = false;
   for (auto it: windows_labels) {
     string sequence_of_interest = it.first;
@@ -138,9 +131,13 @@ bool WindowsStorage::isInterestingJunction(junction window) {
         || sequence_of_interest.find(revcomp(window)) != string::npos;
     }
     if (found)
-      return true;
+      return it.second;
   }
-  return false;
+  return "";
+}
+
+bool WindowsStorage::isInterestingJunction(junction window) {
+  return (getLabel(window).length() != 0) ;
 }
 
 size_t WindowsStorage::size() {

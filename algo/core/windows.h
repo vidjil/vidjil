@@ -122,6 +122,11 @@ class WindowsStorage {
   bool hasWindow(junction window);
 
   /**
+   * @return the related label iff the window is contained (or contains) a sequence of interest
+   */
+  string getLabel(junction window);
+
+  /**
    * @return true iff the window is contained (or contains) a sequence of interest
    */
   bool isInterestingJunction(junction window);
@@ -180,13 +185,6 @@ class WindowsStorage {
    * @param germline: the germline where this sequence has been segmented
    */
   void add(junction window, Sequence sequence, int status, Germline *germline);
-
-
-  /**
-   * Return the label of a window, if it exists
-   */
-  string getLabel(junction window);
-
 
   /**
    * @pre should be called before keepInterestingWindows()
