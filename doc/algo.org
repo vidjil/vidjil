@@ -365,32 +365,36 @@ used only for test and debug purposes, on very small datasets, and
 produce large file and takes huge computation times.
 
 
-** Labeled windows and sequences of interest
+** Sequences of interest
 
-Vidjil allows to indicate that specific windows must be followed
-(even if those windows are 'rare', below the =-r/-%= thresholds).
-
-Such windows can be provided either with =-W <window>=, or with =-l <file>=.
-The file given by =-l= should have one window by line, as in the following example:
+Vidjil allows to indicate that specific sequences should be followed and output,
+even if those sequences are 'rare' (below the =-r/-%= thresholds).
+Such sequences can be provided either with =-W <sequence>=, or with =-l <file>=.
+The file given by =-l= should have one sequence by line, as in the following example:
 
 #+BEGIN_EXAMPLE
 GAGAGATGGACGGGATACGTAAAACGACATATGGTTCGGGGTTTGGTGCT my-clone-1
 GAGAGATGGACGGAATACGTTAAACGACATATGGTTCGGGGTATGGTGCT my-clone-2 foo
 #+END_EXAMPLE
 
-Windows and labels must be separed by one space.
-The first column of the file is the window to be followed
-while the remaining columns consist of the window's label.
-In Vidjil output, the labels are output alongside their windows.
+Sequences and labels must be separed by one space.
+The first column of the file is the sequence to be followed
+while the remaining columns consist of the sequence's label.
+In Vidjil output, the labels are output alongside their sequences.
 
-With the =-F= option, /only/ the labeld windows are kept. This allows
-to quickly filter a set of reads, looking for a known window,
-with the =-FaW <window>= options:
-All the reads with this windows will be extracted to =out/seq/clone.fa-1=.
-
-More generally when the provided sequence differs in length with the windows
+A sequence given =-W <sequence>= or with =-l <file>= can be exactly the size
+of the window (=-w=, that is 50 by default). In this case, it is guaranteed that
+such a window will be output if it is detected in the reads.
+More generally, when the provided sequence differs in length with the windows
 we will keep any windows that contain the sequence of interest or, conversely,
 we will keep any window that is contained in the sequence of interest.
+This filtering will work as expected when the provided sequence overlaps
+(at least partially) the CDR3 or its close neighborhood.
+
+With the =-F= option, /only/ the windows related to the given sequences are kept.
+This allows to quickly filter a set of reads, looking for a known sequence or window,
+with the =-FaW <sequence>= options:
+All the reads with the windows related to the sequence will be extracted to =out/seq/clone.fa-1=.
 
 ** Clone analysis: VDJ assignation and CDR3 detection
 

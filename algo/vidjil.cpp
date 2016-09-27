@@ -198,10 +198,10 @@ void usage(char *progname, bool advanced)
        << "  -t <int>      trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt (default: " << DEFAULT_TRIM << ") (0: no trim)" << endl
        << endl
 
-       << "Labeled windows (these windows will be kept even if -r/-% thresholds are not reached)" << endl
-       << "  -W <window>   label the given window" << endl
-       << "  -l <file>     label a set of windows given in <file>" << endl
-       << "  -F            filter -- keep only the labeled windows" << endl
+       << "Labeled sequences (windows related to these sequences will be kept even if -r/-% thresholds are not reached)" << endl
+       << "  -W <sequence> label the given sequence" << endl
+       << "  -l <file>     label a set of sequences given in <file>" << endl
+       << "  -F            filter -- keep only the windows related to the labeled sequences" << endl
        << endl ;
 
   cerr << "Limits to report a clone (or a window)" << endl
