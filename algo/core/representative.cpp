@@ -84,11 +84,17 @@ KmerRepresentativeComputer::KmerRepresentativeComputer(list<Sequence> &r,
 void KmerRepresentativeComputer::compute(bool try_hard) {
   assert(coverage_reference_length > 0);
   is_computed = false;
+  string seed = getSeed();
+
+  if (seed.size() == 0)
+    seed = "##########";
+
+  assert(seed.find('-') == string::npos);
 
   // First create an index on the set of reads
   IKmerStore<Kmer> *index = new MapKmerStore<Kmer>(getSeed(), revcomp);
 
-  string seeds[] = {"##########", // The first seed should be a contiguous seed.
+  string seeds[] = {seed, // The first seed should be a contiguous seed.
                     "##-##-##-##-##-",
                     "#-##-##-##-##-#",
                     "-##-##-##-##-##",

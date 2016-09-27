@@ -105,7 +105,11 @@ protected:
   string seed;
   int stability_limit;
 public:
-  KmerRepresentativeComputer(list<Sequence> &r, string seed);
+  /**
+   * The provided seed must be a contiguous seed. If not provided, the default
+   * one is used.
+   */
+  KmerRepresentativeComputer(list<Sequence> &r, string seed="");
 
   // Getters, setters
   string getSeed() const;

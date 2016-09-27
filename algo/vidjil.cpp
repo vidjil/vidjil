@@ -1358,7 +1358,7 @@ int main (int argc, char **argv)
 	}
 
         KmerRepresentativeComputer repComp
-          = windowsStorage->getRepresentativeComputer(it->first, seed,
+          = windowsStorage->getRepresentativeComputer(it->first, "",
                                              min_cover_representative,
                                              ratio_representative,
                                              max_auditionned);
