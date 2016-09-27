@@ -3,7 +3,6 @@
 #include "tools.h"
 #include "windows.h"
 #include "representative.h"
-#include "sequenceSampler.h"
 #include "segment.h"
 
 WindowsStorage::WindowsStorage(map<string, string> &labels)
@@ -88,10 +87,7 @@ KmerRepresentativeComputer WindowsStorage::getRepresentativeComputer(junction wi
 
 list<Sequence> WindowsStorage::getSample(junction window, size_t nb_sampled,
                                          size_t nb_buckets) {
-  list<Sequence> reads = getReads(window);
-  if (reads.size() <= nb_sampled)
-    return reads;
-  return SequenceSampler(reads).getLongest(nb_sampled, nb_buckets);
+  return seqs_by_window[window].getBestReads(nb_sampled);
 }
 
 set<Germline *> WindowsStorage::getTopGermlines(size_t top, size_t min_reads) {

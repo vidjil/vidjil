@@ -55,6 +55,12 @@ class VirtualReadStorage {
    * @return all the stored reads
    */
   virtual list<Sequence> getReads() const = 0;
+
+  /**
+   * @return at most max_nb reads whose score >= min_score
+   */
+  virtual list<Sequence> getBestReads(size_t max_nb, size_t min_score=0) const = 0;
+
 };
 
 /**
@@ -183,6 +189,14 @@ public:
   list<Sequence> getReads() const;
 
   /**
+   * @inherited from VirtualReadScore
+   * The implementation does not guarantee that no sequence will be below min_score.
+   * As the implementation relies on bins, the score will be inferred depending on the bin
+   * the sequence belongs to.
+   */
+  list<Sequence> getBestReads(size_t max_nb, size_t min_score=0) const;
+
+  /**
    * Set the label of the statistics
    */
   void setLabel(string &label);
@@ -193,7 +207,7 @@ public:
   /**
    * @return the bin a sequence of the given score must lie.
    */
-  size_t scoreToBin(float score);
+  size_t scoreToBin(float score) const;
 
   /**
    * Search for a largest value such that the bin is not empty.
