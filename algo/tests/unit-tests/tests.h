@@ -90,6 +90,7 @@ enum {
 
   /* Score */
   TEST_LENGTH_SCORE,
+  TEST_QUALITY_SCORE,
 
   /* Chooser */
   TEST_READ_CHOOSER_BEST,
@@ -243,6 +244,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_CLUSTER, "Test automatic clusterisation");
 
   RECORD_TAP_TEST(TEST_LENGTH_SCORE, "Test ReadLengthScore getScore()");
+  RECORD_TAP_TEST(TEST_QUALITY_SCORE, "Test ReadQualityScore getScore()");
 
   RECORD_TAP_TEST(TEST_READ_CHOOSER_BEST, "Test getBest() in ReadChooser");
   RECORD_TAP_TEST(TEST_READ_CHOOSER_SORTED, "Test getSorted() in ReadChooser");
