@@ -1319,7 +1319,8 @@ int main (int argc, char **argv)
       string clone_id_human = oss_human.str();
 
       // Window label
-      string window_str = ">" + clone_id + "--window" + " " + windowsStorage->getLabel(it->first) + '\n' + it->first + '\n' ;
+      string label = windowsStorage->getLabel(it->first);
+      string window_str = ">" + clone_id + "--window" + " " + label + '\n' + it->first + '\n' ;
 
       //$$ If max_representatives is reached, we stop here but still outputs the window
 
@@ -1392,6 +1393,8 @@ int main (int argc, char **argv)
             {"seq", repComp.getQuality()}
         };
         
+        if (label.length())
+          json_clone["label"] = label ;
 
         //$$ If max_clones is reached, we stop here but still outputs the representative
 
