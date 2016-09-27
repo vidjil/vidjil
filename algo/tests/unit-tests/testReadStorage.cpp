@@ -92,8 +92,19 @@ void testBinReadStorage() {
   TAP_TEST(it->sequence == "AGAGACAGTA", TEST_BRS_GET_READS, "");
   it++;
   TAP_TEST(it->sequence == "AATAAGAGTGAGACAGTA", TEST_BRS_GET_READS, "");
+  TAP_TEST(sequences.size() == 3, TEST_BRS_GET_READS, "");
+
   
-  
+  sequences = reads.getBestReads(1);
+  TAP_TEST(sequences.begin()->sequence == "AATAAGAGTGAGACAGTA", TEST_BRS_GET_BEST_READS, "");
+
+  sequences = reads.getBestReads(3);
+  TAP_TEST(sequences.size() == 3, TEST_BRS_GET_BEST_READS, "");
+
+  sequences = reads.getBestReads(3, 15);
+  TAP_TEST(sequences.size() == 1, TEST_BRS_GET_BEST_READS, "");
+  TAP_TEST(sequences.begin()->sequence == "AATAAGAGTGAGACAGTA", TEST_BRS_GET_BEST_READS, "");
+
   delete scorer;
 }
 
