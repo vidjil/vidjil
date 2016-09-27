@@ -767,7 +767,7 @@ int main (int argc, char **argv)
   out_dir += "/" ;
 
   /// Load labels ;
-  load_into_map(windows_labels, windows_labels_file);
+  load_into_map(windows_labels, windows_labels_file, "-l");
 
   switch(command) {
   case CMD_WINDOWS: cout << "Extracting windows" << endl; 

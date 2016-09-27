@@ -5,7 +5,7 @@
 #include "tools.h"
 
 
-void load_into_map(map <string, string> &the_map, string map_file)
+void load_into_map(map <string, string> &the_map, string map_file, string default_value)
 {
   // Loads a simple file with key, values into a map
   
@@ -34,8 +34,11 @@ void load_into_map(map <string, string> &the_map, string map_file)
 	  string key = line.substr(0, i);
 	  string value = line.substr(i+1, string::npos);
 	  
-	  nb_keys++ ;      
-	  the_map[key] = value + " " + the_map[key];
+	  nb_keys++ ;
+          if (!value.length())
+            value = default_value;
+
+	  the_map[key] = value + (the_map[key].length() ? " " : "") + the_map[key];
 	}
     }
 
