@@ -92,9 +92,6 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
 
   assert(seed.find('-') == string::npos);
 
-  // First create an index on the set of reads
-  IKmerStore<Kmer> *index = new MapKmerStore<Kmer>(getSeed(), revcomp);
-
   string seeds[] = {seed, // The first seed should be a contiguous seed.
                     "##-##-##-##-##-",
                     "#-##-##-##-##-#",
@@ -105,10 +102,16 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
   if (! try_hard)
     nb_seeds = 1;
 
+  // First create an index on the set of reads
+  IKmerStore<Kmer> *index[nb_seeds];
+  for (size_t i = 0; i < nb_seeds; i++) {
+    index[i] = new MapKmerStore<Kmer>(getSeed(), revcomp);
+  }
+
   // Add sequences to the index, allowing extended nucleotides (false)
   for (list<Sequence>::iterator it=sequences.begin(); it != sequences.end(); ++it) {
     for (size_t i = 0; i < nb_seeds; i++)
-      index->insert(it->sequence, it->label, false, 0, seeds[i]);
+      index[i]->insert(it->sequence, it->label, false, 0, seeds[i]);
   }
 
   // Create a read chooser to have the sequences sorted by length
@@ -168,7 +171,7 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
 
     vector<Kmer> counts[nb_seeds];
     for (size_t i = 0; i < nb_seeds; i++)
-      counts[i] = index->getResults(sequence.sequence, false, seeds[i]);
+      counts[i] = index[i]->getResults(sequence.sequence, false, seeds[i]);
 
     size_t length_run = 0;
     size_t i = pos_required;
@@ -215,6 +218,7 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
 
   if (coverage < THRESHOLD_BAD_COVERAGE && ! try_hard) {
     compute(true);
+    delete index[0];
     return;
   }
 
@@ -264,7 +268,8 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
 
     representative.label += " - " + coverage_info;
   }
-  delete index;
+  for (size_t i = 0; i < nb_seeds; i++)
+    delete index[i];
 }
 
 bool KmerRepresentativeComputer::tryToExtendRepresentative(const vector<Kmer> counts[],
