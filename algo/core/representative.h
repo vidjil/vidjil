@@ -55,6 +55,7 @@ public:
 
   /**
    * Compute the representative depending on the parameters set by the functions
+   * @pre setRequiredSequence() must have been called (with a non-empty string).
    */
   virtual void compute(bool try_hard=false) = 0;
 
@@ -86,7 +87,7 @@ public:
   /**
    * Sequence that the representative must contain absolutely.
    * This sequence should appear only once in a read.
-   * Setting the sequence is not required and it can be empty.
+   * Calling this method is mandatory.
    */
   void setRequiredSequence(string sequence);
 

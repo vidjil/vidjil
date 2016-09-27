@@ -83,6 +83,7 @@ KmerRepresentativeComputer::KmerRepresentativeComputer(list<Sequence> &r,
   
 void KmerRepresentativeComputer::compute(bool try_hard) {
   assert(coverage_reference_length > 0);
+  assert(required.length() > 0);
   is_computed = false;
   string seed = getSeed();
 
