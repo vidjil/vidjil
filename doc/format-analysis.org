@@ -174,7 +174,7 @@ some clones, and added external data (=data=).
             },
             {
                 "id": "spikeE",
-                "name": "spike",
+                "label": "spike",
                 "sequence": "ATGACTCTGGAGTCTATTACTGTGCCACCTGGGATGTGAGTATTATAAGAAAC",
                 "tag": "3",
                 "expected": "0.1"
@@ -285,6 +285,9 @@ In the =.analysis= file, this section is intended to describe some specific clon
 
     "name": "",      // clone custom name [optional]
                      // (the default name, in .vidjil, is computed from V/D/J information)
+
+    "label": "",     // clone labels, separed by spaces [optional]
+                     // These labels may add some information entered with a controled vocabulary
 
     "sequence": "",  // reference nt sequence [required for .vidjil]
                      // (for .analysis, not really used now in the web application,
