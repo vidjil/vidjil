@@ -26,10 +26,13 @@ test:
 	@echo
 	@echo "*** All tests passed. Congratulations !"
 	@echo
-	$(MAKE) -C algo/tests snapshot
+	$(MAKE) -C algo/tests snapshot_success
 
 snapshot_diff:
 	$(MAKE) -C algo/tests snapshot_diff
+
+snapshot_diff_current:
+	$(MAKE) -C algo/tests snapshot_diff_current
 
 
 test_browser: unit_browser functional_browser

@@ -25,6 +25,7 @@ SHOULD_VDJ_ARCHIVE:=$(filter-out $(addprefix should-vdj-tests/,$(EXCLUDE_SHOULD_
 DATE=$(shell date +%Y-%m-%d--%H:%M:%S)
 SNAPSHOTS_DIR=./snapshots
 SNAPSHOT=$(SNAPSHOTS_DIR)/snapshot-log--$(DATE)
+SNAPSHOT_CURRENT=$(SNAPSHOT)--current
 
 .PHONY: all force clean forcedep
 
@@ -40,13 +41,21 @@ all: core $(EXEC)
 
 snapshot:
 	mkdir -p $(SNAPSHOTS_DIR)
-	grep . out-*.log should-get-tests/*.log should-vdj-tests/*.log > $(SNAPSHOT)
+	grep --no-messages . out-*.log should-get-tests/*.log should-vdj-tests/*.log > $(SNAPSHOT)
+
+snapshot_success: snapshot
 	touch snapshot-last ; mv snapshot-last snapshot-prev
 	ln -s $(SNAPSHOT) snapshot-last
 	make snapshot_diff | diffstat -cC
 
+# Diff between the two last succeeded snasphots
 snapshot_diff:
 	-diff -u -I ".*20..-..-...*" snapshot-prev snapshot-last
+
+# Diff between the last succeeded snasphot and the (possibly failed) current snapshot
+snapshot_diff_current:
+	-make snapshot SNAPSHOT="$(SNAPSHOT_CURRENT)"
+	-diff -u -I ".*20..-..-...*" snapshot-last $(SNAPSHOT_CURRENT)
 
 should: vidjil $(SHOULD_LOG)
 
