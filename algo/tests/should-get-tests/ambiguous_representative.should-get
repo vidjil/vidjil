@@ -10,7 +10,7 @@ $ Representative computation
 1:>clone-001--custom--0000004--100%--seq.-\\[8,49\\]
 
 $ Representative sequence
-1: TATATGTATANCACCCCCCCCCTTTTTTTCTNGCGCGAGCGA
+1: TATTTGTATANCACCCCCCCCCTTTTTTTCTNGCGCGAGCGA
 
 $ Representative sequence has the good length, it does not extend towards noisy sequences
 2: 42 bp .... of 58.. bp.
