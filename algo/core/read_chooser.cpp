@@ -20,7 +20,7 @@ ReadChooser::ReadChooser(list<Sequence> &r, VirtualReadScore &scorer) {
 
   size_t i = 0;
   for (list <Sequence>::iterator it = r.begin(); it != r.end(); ++it) {
-    reads[i].score = scorer.getScore(it->sequence);
+    reads[i].score = scorer.getScore(*it);
     reads[i].seq = &(*it);
     i++;
   }

@@ -349,6 +349,100 @@ void testNChooseK() {
   TAP_TEST(nChoosek(8, 4) == 70, TEST_N_CHOOSE_K, "");
 }
 
+void testTrimSequence() {
+  string seq = "NNNNNAATAGTAGACTANNNNN";
+  size_t start = 0;
+  size_t length = seq.size();
+  trimSequence(seq, start, length);
+  string trimmed = seq.substr(start, length);
+
+  PRINT_VAR(start);
+  PRINT_VAR(length);
+  TAP_TEST(trimmed == "", TEST_TRIM_SEQUENCE,
+           "trimmed sequence was " << trimmed);
+
+  seq = "ANANANATAGAGTAGATGATANANANANA";
+  start = 0;
+  length = seq.size();
+  trimSequence(seq, start, length);
+  trimmed = seq.substr(start, length);
+
+  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
+           "obtained " << trimmed);
+
+  seq = "ANAANATAGAGTAGATGATANAANA";
+  start = 0;
+  length = seq.size();
+  trimSequence(seq, start, length);
+  trimmed = seq.substr(start, length);
+
+  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
+           "got " << trimmed);
+
+  seq = "ATAGAGTAGATGATANAANA";
+  start = 0;
+  length = seq.size();
+  trimSequence(seq, start, length);
+  trimmed = seq.substr(start, length);
+
+  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
+           "got " << trimmed);
+
+  seq = "ANAANATAGAGTAGATGATA";
+  start = 0;
+  length = seq.size();
+  trimSequence(seq, start, length);
+  trimmed = seq.substr(start, length);
+
+  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
+           "got " << trimmed);
+
+  seq = "NATAGAGTAGATGATA";
+  start = 0;
+  length = seq.size();
+  trimSequence(seq, start, length);
+  trimmed = seq.substr(start, length);
+
+  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
+           "got " << trimmed);
+
+  seq = "CCNCCNATAGAGTAGATGATANCCNCC";
+  start = 0;
+  length = seq.size();
+  trimSequence(seq, start, length);
+  trimmed = seq.substr(start, length);
+
+  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
+           "got " << trimmed);
+
+  seq = "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNATAGAGTAGATGATA";
+  start = 28;
+  length = 16;
+  trimSequence(seq, start, length);
+  trimmed = seq.substr(start, length);
+
+  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
+           "got " << trimmed);
+
+  seq = "ATAGAGTAGATGATANNNNNNNNNNNNNNNNNNNNNNNNNNNNN";
+  start = 0;
+  length = 16;
+  trimSequence(seq, start, length);
+  trimmed = seq.substr(start, length);
+
+  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
+           "got " << trimmed);
+
+  seq = "ATAGAGTAGATGATA";
+  start = 0;
+  length = seq.size();
+  trimSequence(seq, start, length);
+  trimmed = seq.substr(start, length);
+
+  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
+           "got " << trimmed);
+}
+
 void testTools() {
   testOnlineFasta1();
   testOnlineFastaMaxNth();
@@ -368,4 +462,5 @@ void testTools() {
   testExtendedNucleotides();
   testExtractBasename();
   testNChooseK();
+  testTrimSequence();
 }

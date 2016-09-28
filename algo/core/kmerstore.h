@@ -59,16 +59,18 @@ public:
   /**
    * @param input: A single FASTA file
    * @param label: label that must be associated to the given files
+   * @param seed: the seed to use for indexing. By default it will be the seed of the index
    * @post All the sequences in the FASTA files have been indexed, and the label is stored in the list of labels
    */
-  void insert(Fasta& input, const string& label="", int keep_only = 0);
+  void insert(Fasta& input, const string& label="", int keep_only = 0, string seed = "");
 
   /**
    * @param input: A list of FASTA files
    * @param label: label that must be associated to the given files
+   * @param seed: the seed to use for indexing. By default it will be the seed of the index
    * @post All the sequences in the FASTA files have been indexed, and the label is stored in the list of labels
    */
-  void insert(list<Fasta>& input, const string& label="", int keep_only = 0);
+  void insert(list<Fasta>& input, const string& label="", int keep_only = 0, string seed = "");
   
   /**
    * @param input: A sequence to be cut in k-mers
@@ -77,11 +79,13 @@ public:
    *                   of the sequence. if < 0 will keep at most the first
    *                   keep_only nucleotides of the sequence. if == 0,
    *                   will keep all the sequence.
+   * @param seed: the seed to use for indexing. By default it will be the seed of the index
    * @post All the k-mers in the sequence have been indexed.
    */
   void insert(const seqtype &sequence,
               const string &label,
-              bool ignore_extended_nucleotides=true, int keep_only = 0);
+              bool ignore_extended_nucleotides=true, int keep_only = 0,
+              string seed="");
 
   /**
    * @param word: a k-mer
@@ -134,7 +138,7 @@ public:
    * @return a vector of length seq.length() - getK() + 1 containing
    * for each k-mer the corresponding value in the index.
    */
-  virtual vector<T> getResults(const seqtype &seq, bool no_revcomp=false) = 0;
+  virtual vector<T> getResults(const seqtype &seq, bool no_revcomp=false, string seed="") = 0;
 
   /**
    * @return true iff the revcomp is indexed
@@ -165,7 +169,7 @@ public:
   MapKmerStore(string seed, bool=false);
   MapKmerStore(int k, bool=false);
 
-  vector<T> getResults(const seqtype &seq, bool no_revcomp=false);
+  vector<T> getResults(const seqtype &seq, bool no_revcomp=false, string seed="");
   T& get(seqtype &word);
   T& operator[](seqtype & word);
 
@@ -196,7 +200,7 @@ public:
   ArrayKmerStore(int k, bool=false);
   ~ArrayKmerStore();
 
-  vector<T> getResults(const seqtype &seq, bool no_revcomp=false);	
+  vector<T> getResults(const seqtype &seq, bool no_revcomp=false, const string seed="");
   T& get(seqtype &word);
   T& operator[](seqtype & word);
   T& operator[](int word);
@@ -211,18 +215,20 @@ IKmerStore<T>::~IKmerStore(){}
 template<class T> 
 void IKmerStore<T>::insert(list<Fasta>& input,
                            const string &label,
-                           int keep_only){
+                           int keep_only,
+                           string seed){
   for(list<Fasta>::iterator it = input.begin() ; it != input.end() ; it++){
-    insert(*it, label, keep_only);
+    insert(*it, label, keep_only, seed);
   }
 }
 
 template<class T> 
 void IKmerStore<T>::insert(Fasta& input,
                            const string &label,
-                           int keep_only){
+                           int keep_only,
+                           string seed){
   for (int r = 0; r < input.size(); r++) {
-    insert(input.sequence(r), label, true, keep_only);
+    insert(input.sequence(r), label, true, keep_only, seed);
   }
 
   labels.push_back(make_pair(T(label, 1), input)) ;
@@ -236,7 +242,8 @@ template<class T>
 void IKmerStore<T>::insert(const seqtype &sequence,
                            const string &label,
                            bool ignore_extended_nucleotides,
-                           int keep_only){
+                           int keep_only,
+                           string seed){
   size_t start_indexing = 0;
   size_t end_indexing = sequence.length();
   if (keep_only > 0 && sequence.length() > (size_t)keep_only) {
@@ -245,13 +252,17 @@ void IKmerStore<T>::insert(const seqtype &sequence,
     end_indexing = -keep_only;
   }
 
+  if (seed.empty())
+    seed = this->seed;
+
+  size_t seed_span = seed.length();
   size_t size_indexing = end_indexing - start_indexing;
   if (size_indexing > max_size_indexing) {
     max_size_indexing = size_indexing;
   }
 
-  for(size_t i = start_indexing ; i + s < end_indexing + 1 ; i++) {
-    seqtype substr = sequence.substr(i, s);
+  for(size_t i = start_indexing ; i + seed_span < end_indexing + 1 ; i++) {
+    seqtype substr = sequence.substr(i, seed_span);
     seqtype kmer = spaced(substr, seed);
 
     if (ignore_extended_nucleotides && has_extended_nucleotides(kmer))
@@ -343,16 +354,19 @@ Fasta IKmerStore<T>::getLabel(T kmer) const {
 
 // .getResults()
 template<class T>
-vector<T> MapKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp) {
+vector<T> MapKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp, string seed) {
 
-  int s = IKmerStore<T>::getS();
+  string local_seed = seed;
+  if (! seed.size())
+    local_seed = IKmerStore<T>::seed;
+  int s = local_seed.size();
 
   if ((int)seq.length() < s - 1) {
     return vector<T>(0);
   }
   vector<T> result(seq.length() - s + 1);
   for (size_t i=0; i + s < seq.length() + 1; i++) {
-    seqtype kmer = spaced(seq.substr(i, s), IKmerStore<T>::seed);
+    seqtype kmer = spaced(seq.substr(i, s), local_seed);
     //    seqtype kmer = seq.substr(i, s);
     // cout << kmer << endl << kmer0 << endl << endl ;
     if (IKmerStore<T>::revcomp_indexed && no_revcomp) {
@@ -365,9 +379,12 @@ vector<T> MapKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp) {
 }
 
 template<class T>
-vector<T> ArrayKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp) {
-  
-  int s = IKmerStore<T>::getS();
+vector<T> ArrayKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp, string seed) {
+
+  string local_seed = seed;
+  if (! seed.size())
+    local_seed = IKmerStore<T>::seed;
+  int s = local_seed.size();
 
   int N = (int)seq.length();
 
@@ -385,7 +402,7 @@ vector<T> ArrayKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp) {
 
   /* Compute results */
   for (size_t i=0; (int) i+s < N+1; i++) {
-    int kmer = spaced_int(intseq + i, IKmerStore<T>::seed);
+    int kmer = spaced_int(intseq + i, local_seed);
     if (IKmerStore<T>::revcomp_indexed && no_revcomp) {
       result[i] = store[kmer]; // getfromint(kmer); // store[kmer];
       // cout << i << "/" << N << "  " << kmer << result[i] << endl ;

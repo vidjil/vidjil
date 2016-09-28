@@ -17,6 +17,7 @@ BinReadStorage::BinReadStorage()
    nb_inserted(0), nb_stored(0), smallest_bin_not_empty(~0),label() {}
 
 void BinReadStorage::init(size_t nb_bins, size_t max_score, const VirtualReadScore *vrs, bool no_list) {
+  this->all_read_lengths = 0;
   this->nb_bins = nb_bins;
   this->max_score = max_score;
   if (no_list)
@@ -44,7 +45,7 @@ BinReadStorage::~BinReadStorage() {
 }
 
 void BinReadStorage::addScore(Sequence &s) {
-  addScore(scorer->getScore(s.sequence));
+  addScore(scorer->getScore(s));
 }
 
 void BinReadStorage::addScore(float score) {
@@ -58,9 +59,10 @@ void BinReadStorage::addScore(size_t bin, float score) {
 }
 
 void BinReadStorage::add(Sequence &s) {
-  float score = scorer->getScore(s.sequence);
+  float score = scorer->getScore(s);
   size_t bin = scoreToBin(score);
   addScore(bin, score);
+  all_read_lengths += s.sequence.length();
   if (nb_stored < getMaxNbReadsStored()) {
     bins[bin].push_back(s);
     nb_stored++;
@@ -79,6 +81,10 @@ void BinReadStorage::add(Sequence &s) {
   nb_inserted++;
 }
 
+list<Sequence> BinReadStorage::getBin(size_t bin) const{
+  return bins[bin];
+}
+
 size_t BinReadStorage::getNbBins() const {
   return nb_bins;
 }
@@ -88,11 +94,15 @@ size_t BinReadStorage::getNbInserted() const {
 }
 
 double BinReadStorage::getAverageScoreBySeq(Sequence &s) {
-  return getAverageScoreByScore(scorer->getScore(s.sequence));
+  return getAverageScoreByScore(scorer->getScore(s));
 }
 
 double BinReadStorage::getAverageScoreByScore(float score) {
   return getAverageScore(scoreToBin(score));
+}
+
+double BinReadStorage::getAverageLength() const{
+  return all_read_lengths *1. / getNbScores();
 }
 
 double BinReadStorage::getAverageScore(size_t bin) {
@@ -103,7 +113,7 @@ double BinReadStorage::getInvertedAverageScore(size_t bin) {
 }
 
 double BinReadStorage::getScoreBySeq(Sequence &s) {
-  return getScoreByScore(scorer->getScore(s.sequence));
+  return getScoreByScore(scorer->getScore(s));
 }
 
 double BinReadStorage::getScoreByScore(float score) {
@@ -143,6 +153,29 @@ list<Sequence> BinReadStorage::getReads() const {
   return results;
 }
 
+list<Sequence> BinReadStorage::getBestReads(size_t max_nb, size_t min_score) const {
+  list<Sequence>best_reads;
+  size_t smallest_interesting_bin = max(smallest_bin_not_empty, scoreToBin(min_score));
+
+  for (size_t i = nb_bins+1; i > smallest_interesting_bin; i--) {
+    size_t j = i-1;
+    if (bins[j].size() > 0) {
+      if (bins[j].size() <= max_nb) {
+        best_reads.insert(best_reads.end(), bins[j].begin(), bins[j].end());
+        max_nb -= bins[j].size();
+      } else {
+        for (list<Sequence>::iterator it = bins[j].begin(); max_nb > 0 && it != bins[j].end();
+             it++) {
+          best_reads.push_back(*it);
+          max_nb--;
+        }
+      }
+    }
+  }
+  return best_reads;
+
+}
+
 string BinReadStorage::getLabel() const {
   return label;
 }
@@ -159,7 +192,7 @@ void BinReadStorage::out_average_scores(ostream &out, bool inversed) {
   output_label_average(out, getLabel(), getNbScores(), inversed ? getInvertedAverageScore() : getAverageScore(), inversed ? 3 : 1);
 }
 
-size_t BinReadStorage::scoreToBin(float score) {
+size_t BinReadStorage::scoreToBin(float score) const{
   assert(score >= 0);
   if (score > max_score)
     return nb_bins;

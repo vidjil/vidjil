@@ -4,10 +4,14 @@
 #include <cassert>
 #include <list>
 #include "fasta.h"
+#include "kmerstore.h"
 
 using namespace std;
 
 #define DEFAULT_STABILITY_LIMIT 30
+
+#define THRESHOLD_BAD_COVERAGE .5 /* Threshold below which the representatie
+                                     coverage is considered bad */
 
 /**
  * Compute a representative sequence from a list of sequences.
@@ -51,8 +55,9 @@ public:
 
   /**
    * Compute the representative depending on the parameters set by the functions
+   * @pre setRequiredSequence() must have been called (with a non-empty string).
    */
-  virtual void compute() = 0;
+  virtual void compute(bool try_hard=false) = 0;
 
   /**
    * @param min_cover: minimal number of reads supporting each position of the 
@@ -82,7 +87,7 @@ public:
   /**
    * Sequence that the representative must contain absolutely.
    * This sequence should appear only once in a read.
-   * Setting the sequence is not required and it can be empty.
+   * Calling this method is mandatory.
    */
   void setRequiredSequence(string sequence);
 
@@ -101,7 +106,11 @@ protected:
   string seed;
   int stability_limit;
 public:
-  KmerRepresentativeComputer(list<Sequence> &r, string seed);
+  /**
+   * The provided seed must be a contiguous seed. If not provided, the default
+   * one is used.
+   */
+  KmerRepresentativeComputer(list<Sequence> &r, string seed="");
 
   // Getters, setters
   string getSeed() const;
@@ -120,8 +129,29 @@ public:
   /**
    * @pre setCoverageReferenceLength() must have been called previously
    */
-  void compute();
+  void compute(bool try_hard = false);
 
+ private:
+
+  /**
+   * Check if we can extend the representative to the left (direction == -1)
+   * or to the right (direction == 1), given the kmer counts, the seeds used
+   * and starting from position i.
+   * The cover is updated accordingly if the representative is extended.
+   */
+  bool tryToExtendRepresentative(const vector<Kmer> counts[],
+                                 string seeds[],
+                                 size_t nb_seeds,
+                                 size_t i,
+                                 bool *cover,
+                                 size_t &length_cover,
+                                 int direction);
+
+  /**
+   * Remove the ends of the representative if they contain too many N.
+   * The values of start_pos and length will be updated correspondingly.
+   */
+  void trimRepresentative(string &sequence, size_t &start_pos, size_t &length);
 };
 
 #endif

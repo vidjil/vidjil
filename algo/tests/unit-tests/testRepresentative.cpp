@@ -11,6 +11,7 @@ void testRepresentative() {
   krc.setMinCover(1);
   krc.setPercentCoverage(0.5);
   krc.setCoverageReferenceLength(50);
+  krc.setRequiredSequence("CCGGGGGGGGGGTTT");
 
   krc.compute();
   Sequence representative = krc.getRepresentative();
@@ -49,13 +50,6 @@ void testRepresentative() {
   krc.compute();
   TAP_TEST(! krc.hasRepresentative(), TEST_KMER_REPRESENTATIVE_REQUIRED_SEQ,
            "When requiring sequence AGGGCGCGAT and revcomp=false, we shouldn't find anything (the sequence is revcomp-ed)");
-
-  krc.setRequiredSequence("");
-
-  krc.setMinCover(4);
-  krc.compute();
-  TAP_TEST(! krc.hasRepresentative(), TEST_KMER_REPRESENTATIVE,
-           "When requiring 4 reads to support the representative, we should not find any solution.");
 }
 
 void testRevcompRepresentative() {
@@ -64,6 +58,7 @@ void testRevcompRepresentative() {
   KmerRepresentativeComputer krc(reads, "##############");
   krc.setOptions(false, 3, 0.5);
   krc.setCoverageReferenceLength(50);
+  krc.setRequiredSequence("ACATGGTATAACGACGG");
   krc.compute();
   Sequence representative = krc.getRepresentative();
 
@@ -75,6 +70,7 @@ void testRevcompRepresentative() {
   KmerRepresentativeComputer krc2(reads, "##############");
   krc2.setOptions(false, 3, 0.5);
   krc2.setCoverageReferenceLength(50);
+  krc2.setRequiredSequence("CCGTCGTTATACCATGT");
   krc2.compute();
   Sequence representative2 = krc2.getRepresentative();
 

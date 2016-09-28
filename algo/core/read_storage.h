@@ -14,7 +14,7 @@ class VirtualReadStorage {
  protected:
   size_t maxNbStored;
   const VirtualReadScore *scorer;
-
+  int64_t all_read_lengths;
  public:
 
   virtual ~VirtualReadStorage() {}
@@ -30,6 +30,11 @@ class VirtualReadStorage {
    * Sets how many reads should be stored in maximum.
    */
   void setMaxNbReadsStored(size_t nb);
+
+  /**
+   * @return the average read length of all the sequences that have been added
+   */
+  virtual double getAverageLength() const = 0;
 
   /**
    * @return the maximal number of reads stored
@@ -50,6 +55,12 @@ class VirtualReadStorage {
    * @return all the stored reads
    */
   virtual list<Sequence> getReads() const = 0;
+
+  /**
+   * @return at most max_nb reads whose score >= min_score
+   */
+  virtual list<Sequence> getBestReads(size_t max_nb, size_t min_score=0) const = 0;
+
 };
 
 /**
@@ -86,6 +97,8 @@ public:
   
   void add(Sequence &s);
 
+  list<Sequence> getBin(size_t bin) const;
+
   /**
    * @return the number of bins requested by the used. Note that an additional
    * bin is created for the values greater than the provided max value.
@@ -112,6 +125,11 @@ public:
    * This method should not be used, prefer the one with the score only.
    */
   void addScore(size_t bin, float score);
+
+  /**
+   * @inherited from VirtualReadScore
+   */
+  double getAverageLength() const;
 
   /**
    * @return the average score stored in the bin corresponding to the score
@@ -171,6 +189,14 @@ public:
   list<Sequence> getReads() const;
 
   /**
+   * @inherited from VirtualReadScore
+   * The implementation does not guarantee that no sequence will be below min_score.
+   * As the implementation relies on bins, the score will be inferred depending on the bin
+   * the sequence belongs to.
+   */
+  list<Sequence> getBestReads(size_t max_nb, size_t min_score=0) const;
+
+  /**
    * Set the label of the statistics
    */
   void setLabel(string &label);
@@ -181,7 +207,7 @@ public:
   /**
    * @return the bin a sequence of the given score must lie.
    */
-  size_t scoreToBin(float score);
+  size_t scoreToBin(float score) const;
 
   /**
    * Search for a largest value such that the bin is not empty.

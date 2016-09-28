@@ -1,8 +1,6 @@
 #ifndef WINDOWS_H
 #define WINDOWS_H
 
-#define HISTOGRAM_SIZE_AUDITIONED 500
-
 /** 
  * A window is associated to a list of sequences. We deal with a list of
  * windows. We'd like to sort it, to output it, to remove windows not appearing
@@ -23,7 +21,7 @@
 #include "stats.h"
 #include "../lib/json.hpp"
 
-#define NB_BINS 15
+#define NB_BINS 30
 #define MAX_VALUE_BINS 500
 
 using namespace std;
@@ -40,7 +38,7 @@ class WindowsStorage {
   list<pair <junction, size_t> > sort_all_windows;
   map<junction, int> id_by_window;
   size_t max_reads_per_window;
-  ReadLengthScore scorer;
+  ReadQualityScore scorer;
 
   /* Parameters for the read storage */
   size_t nb_bins;
@@ -99,15 +97,13 @@ class WindowsStorage {
    */
 
   KmerRepresentativeComputer getRepresentativeComputer(junction window, string seed, size_t min_cover,
-                             float percent_cover, size_t nb_sampled, 
-                             size_t nb_buckets=HISTOGRAM_SIZE_AUDITIONED);
+                             float percent_cover, size_t nb_sampled);
 
   /**
    * @return a sample of nb_sampled sequences sharing the same window. The
    *         returned sequences are among the longest ones but are not sorted.
    */
-  list<Sequence> getSample(junction window, size_t nb_sampled, 
-                           size_t nb_buckets=HISTOGRAM_SIZE_AUDITIONED);
+  list<Sequence> getSample(junction window, size_t nb_sampled);
 
 
   /**

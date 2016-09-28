@@ -11,13 +11,13 @@ $ Most abundant window
 1:"id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC".*"reads": \\[8\\]
 
 $ Affect values are over all the sequence
-1: "affectValues": .[^}]*"start": 1, "stop": 128
+1: "affectValues": .[^}]*"start": 1, "stop": 127
 
 $ No quality information here
 0: "quality"
 
 $ Segmentation
-1:"name": "IGHV3-23.05 6/ACCCGGGAGGAACAATAT/9 IGHD6-13.01 0//5 IGHJ4.02"
+1:"name": "IGHV3-11.03 6/ACCCGGGAGGAACAATAT/9 IGHD6-13.01 0//5 IGHJ4.02"
 
 #                                                     Cys-T-=R=-E-=E=-Q-=Y=-S-=S=-W-=Y=-F-=D=-F-Trp
 #          1         2         3         4         5  | *|  6         7   *     8    **   9    |  |10        11        12
@@ -33,21 +33,21 @@ $ Segmentation
 # JUNCTION: 53 -> 97
 
 $ Segmentation details - V
-1:"5": ."delRight": 6, "name": "IGHV3-23.05", "stop": 55.
+1:"5": ."delRight": 6, "name": "IGHV3-11.03", "stop": 54.
 
 $ Segmentation details - D
-1:"4": ."delLeft": 9, "delRight": 0, "name": "IGHD6-13.01", "start": 74, "stop": 85.
+1:"4": ."delLeft": 9, "delRight": 0, "name": "IGHD6-13.01", "start": 73, "stop": 84.
 
 $ Segmentation details - J
-1:"3": ."delLeft": 5, "name": "IGHJ4.02", "start": 86.
+1:"3": ."delLeft": 5, "name": "IGHJ4.02", "start": 85.
 
 $ Segmentation details - N1, N2
 1:"N1": 18,
 1:"N2": 0,
 
 $ Segmentation details - CDR3, JUNCTION
-1:"cdr3": ."aa": "TREEQYSSWYFDF", "start": 56, "stop": 94.
-1:"junction": ."aa": "CTREEQYSSWYFDFW", .* "start": 53, "stop": 97.
+1:"cdr3": ."aa": "TREEQYSSWYFDF", "start": 55, "stop": 93.
+1:"junction": ."aa": "CTREEQYSSWYFDFW", .* "start": 52, "stop": 96.
 
 $ Second sequence has a DNA sequence provided
 1:"id": "TGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTAC".*"sequence": "[ACGT]+",

@@ -3,7 +3,6 @@
 #include "tools.h"
 #include "windows.h"
 #include "representative.h"
-#include "sequenceSampler.h"
 #include "segment.h"
 
 WindowsStorage::WindowsStorage(map<string, string> &labels)
@@ -23,7 +22,7 @@ map<junction, BinReadStorage>::iterator WindowsStorage::end() {
 
 float WindowsStorage::getAverageLength(junction window) {
   assert(hasWindow(window));
-  return seqs_by_window[window].getAverageScore();
+  return seqs_by_window[window].getAverageLength();
 }
 
 Germline *WindowsStorage::getGermline(junction window) {
@@ -63,11 +62,10 @@ list<Sequence> WindowsStorage::getReads(junction window) {
 KmerRepresentativeComputer WindowsStorage::getRepresentativeComputer(junction window,
                                            string seed, size_t min_cover, 
                                            float percent_cover,
-                                           size_t nb_sampled, 
-                                           size_t nb_buckets) {
+                                           size_t nb_sampled) {
   assert(! hasLimitForReadsPerWindow() || nb_sampled <= getMaximalNbReadsPerWindow());
   list<Sequence> auditioned_sequences 
-    = getSample(window,nb_sampled, nb_buckets);
+    = getSample(window,nb_sampled);
   KmerRepresentativeComputer repComp(auditioned_sequences, seed);
   repComp.setRevcomp(true);
   repComp.setMinCover((! isInterestingJunction(window)) ? min_cover : 1);
@@ -86,12 +84,8 @@ KmerRepresentativeComputer WindowsStorage::getRepresentativeComputer(junction wi
   return repComp;
 }
 
-list<Sequence> WindowsStorage::getSample(junction window, size_t nb_sampled,
-                                         size_t nb_buckets) {
-  list<Sequence> reads = getReads(window);
-  if (reads.size() <= nb_sampled)
-    return reads;
-  return SequenceSampler(reads).getLongest(nb_sampled, nb_buckets);
+list<Sequence> WindowsStorage::getSample(junction window, size_t nb_sampled) {
+  return seqs_by_window[window].getBestReads(nb_sampled);
 }
 
 set<Germline *> WindowsStorage::getTopGermlines(size_t top, size_t min_reads) {

@@ -29,6 +29,7 @@ enum {
   TEST_EXTENDED_NUCL,
   TEST_EXTRACT_BASENAME,
   TEST_N_CHOOSE_K,
+  TEST_TRIM_SEQUENCE,
 
   /* Storage tests */
   TEST_ARRAY_KMERSTORE,
@@ -89,6 +90,7 @@ enum {
 
   /* Score */
   TEST_LENGTH_SCORE,
+  TEST_QUALITY_SCORE,
 
   /* Chooser */
   TEST_READ_CHOOSER_BEST,
@@ -149,6 +151,7 @@ enum {
   TEST_BRS_GET_SCORE,
   TEST_BRS_GET_AVG_SCORE,
   TEST_BRS_GET_NB_SCORES,
+  TEST_BRS_GET_BEST_READS,
 
   /* Bugs */
   TEST_BUG_SEGMENTATION,
@@ -186,6 +189,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_REVCOMP_INT, "revcomp_int()");
   RECORD_TAP_TEST(TEST_EXTRACT_BASENAME, "extractBasename()");
   RECORD_TAP_TEST(TEST_N_CHOOSE_K, "test nChooseK()");
+  RECORD_TAP_TEST(TEST_TRIM_SEQUENCE, "test trimSequence()");
 
   RECORD_TAP_TEST(TEST_ARRAY_KMERSTORE, "Testing ArrayKmerStore");
   RECORD_TAP_TEST(TEST_KMERSTORE_INSERT_ONE_SEQ, "Testing IKmerStore::insert() on one sequence");
@@ -241,6 +245,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_CLUSTER, "Test automatic clusterisation");
 
   RECORD_TAP_TEST(TEST_LENGTH_SCORE, "Test ReadLengthScore getScore()");
+  RECORD_TAP_TEST(TEST_QUALITY_SCORE, "Test ReadQualityScore getScore()");
 
   RECORD_TAP_TEST(TEST_READ_CHOOSER_BEST, "Test getBest() in ReadChooser");
   RECORD_TAP_TEST(TEST_READ_CHOOSER_SORTED, "Test getSorted() in ReadChooser");
@@ -289,6 +294,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_BRS_GET_SCORE, "Test BinReadStorage::getScore()");
   RECORD_TAP_TEST(TEST_BRS_GET_AVG_SCORE, "Test BinReadStorage::getAverageScore()");
   RECORD_TAP_TEST(TEST_BRS_GET_NB_SCORES, "Test BinReadStorage::getNbScores()");
+  RECORD_TAP_TEST(TEST_BRS_GET_BEST_READS, "Test the getBestReads() method in ReadStorage");
 
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE, "Test KmerRepresentativeComputer computations");
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE_REQUIRED_SEQ, "Test KmerRepresentativeComputer computations with a required sequence");
