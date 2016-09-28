@@ -169,7 +169,7 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
     memset(&cover[pos_required], true, required.length()*sizeof(bool));
     length_cover = required.length();
 
-    vector<Kmer> counts[nb_seeds];
+    vector<Kmer> *counts = new vector<Kmer>[nb_seeds];
     for (size_t i = 0; i < nb_seeds; i++)
       counts[i] = index[i]->getResults(sequence.sequence, false, seeds[i]);
 
@@ -212,9 +212,11 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
       }
       // We have a requirement (ie. a non empty string). We reached it, exit.
       length_run = 0;
+      delete [] counts;
   }
 
   coverage = (float) length_longest_run / coverage_reference_length;
+
 
   if (coverage < THRESHOLD_BAD_COVERAGE && ! try_hard) {
     compute(true);
