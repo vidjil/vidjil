@@ -47,7 +47,7 @@ snapshot:
 snapshot_success: snapshot
 	touch snapshot-last ; mv snapshot-last snapshot-prev
 	ln -s $(SNAPSHOT) snapshot-last
-	make snapshot_diff | diffstat -cC
+	(which diffstat && make snapshot_diff | diffstat -cC) || true
 
 # Diff between the two last succeeded snasphots
 snapshot_diff:
