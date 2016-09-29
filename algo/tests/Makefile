@@ -42,7 +42,7 @@ all: core $(EXEC)
 
 snapshot:
 	mkdir -p $(SNAPSHOTS_DIR)
-	grep --no-messages . out-*.log should-get-tests/*.log should-vdj-tests/*.log > $(SNAPSHOT)
+	grep --no-messages . out-*.log should-get-tests/*.log should-vdj-tests/*.log > $(SNAPSHOT) || true
 
 snapshot_success: snapshot
 	touch snapshot-last ; mv snapshot-last snapshot-prev
