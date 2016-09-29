@@ -85,7 +85,7 @@ shouldvdj_with_rc_merged:
 # When the global test suite is passing, individual failed tests (counted in SHOULD_*_EXPECTED_FAILS)
 # can be marked as 'TODO' to make continuous integration happy
 mark_failed_tests_as_todo:
-	sed "s/^\(not ok [0-9]*\) /\1 # TODO ##/" -i */*.tap
+	sed "s/^\(not ok [0-9]*\) /\1 # TODO ##/" -i */*.tap || true
 
 curatedvdj_archive: curated-vdj.zip
 curated-vdj.zip: $(SHOULD_VDJ_ARCHIVE)
