@@ -221,6 +221,10 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
   if (coverage < THRESHOLD_BAD_COVERAGE && ! try_hard) {
     compute(true);
     delete index[0];
+
+    if (cover_longest_run)
+      delete [] cover_longest_run;
+
     return;
   }
 
