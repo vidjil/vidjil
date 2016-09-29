@@ -42,12 +42,12 @@ all: core $(EXEC)
 
 snapshot:
 	mkdir -p $(SNAPSHOTS_DIR)
-	grep --no-messages . out-*.log should-get-tests/*.log should-vdj-tests/*.log > $(SNAPSHOT) || true
+	-grep --no-messages . out-*.log should-get-tests/*.log should-vdj-tests/*.log > $(SNAPSHOT)
 
 snapshot_success: snapshot
 	touch snapshot-last ; mv snapshot-last snapshot-prev
 	ln -s $(SNAPSHOT) snapshot-last
-	(which diffstat && make snapshot_diff | diffstat -cC) || true
+	-(which diffstat && make snapshot_diff | diffstat -cC)
 
 # Diff between the two last succeeded snasphots
 snapshot_diff:
@@ -85,7 +85,7 @@ shouldvdj_with_rc_merged:
 # When the global test suite is passing, individual failed tests (counted in SHOULD_*_EXPECTED_FAILS)
 # can be marked as 'TODO' to make continuous integration happy
 mark_failed_tests_as_todo:
-	sed "s/^\(not ok [0-9]*\) /\1 # TODO ##/" -i */*.tap || true
+	-sed "s/^\(not ok [0-9]*\) /\1 # TODO ##/" -i */*.tap
 
 curatedvdj_archive: curated-vdj.zip
 curated-vdj.zip: $(SHOULD_VDJ_ARCHIVE)
