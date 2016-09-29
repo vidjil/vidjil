@@ -23,7 +23,7 @@ EXCLUDE_SHOULD_VDJ=bug20151006-rc.should-vdj.fa cdr3-indels.should-vdj.fa ext-nu
 SHOULD_VDJ_ARCHIVE:=$(filter-out $(addprefix should-vdj-tests/,$(EXCLUDE_SHOULD_VDJ)), $(SHOULD_VDJ))
 
 DATE=$(shell date +%Y-%m-%d--%H:%M:%S)
-GIT_SHA1=`git rev-parse --short HEAD || echo 'nogit'`
+GIT_SHA1=$(shell git rev-parse --short HEAD || echo 'nogit')
 SNAPSHOTS_DIR=./snapshots
 SNAPSHOT=$(SNAPSHOTS_DIR)/snapshot-log--$(DATE)--$(GIT_SHA1)
 SNAPSHOT_CURRENT=$(SNAPSHOT)--current
