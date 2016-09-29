@@ -18,7 +18,7 @@ GAAtcGAtAttGCAAAGAACCtGGCtGtACttAAGatACttGCACCAtCAGaGaGaGAtGAAGgGtCttACtACtGtGCC
 # TRDD2*01     GTGTTTCATTGTGCCTTCCTAC    ||||||||||
 # TRDD3                               ACTGGGGGATACG  ||||||||||||||||||
 # TRDJ1*01                                        acaccgataaactcatctttg
->TRDD2*01 0/GTGA/3 TRDD3 0/CC/3 TRDJ1*01  [TRD+] BUG
+>TRDD2*01 0/GTGA/3 TRDD3 0/CC/3 TRDJ1*01  [TRD+]
 AgcgggtggtgatggcaaagtgccaaggaaagggaaaaaggaagaagagggtttttatactgatgTGTTTCATTGTGCCTTCCTAC
 GTGA
 GGGGGATACG

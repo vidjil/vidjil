@@ -94,6 +94,7 @@
             "3": ["TRDD3_downstream.fa"]
         }, {
             "5": ["TRDD2_upstream.fa"],
+            "4": ["TRDD.fa"],
             "3": ["TRDJ.fa"]
         }, {
             "5": ["TRDD2_upstream.fa"],
