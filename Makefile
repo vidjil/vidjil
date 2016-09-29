@@ -27,6 +27,7 @@ test:
 	@echo "*** All tests passed. Congratulations !"
 	@echo
 	$(MAKE) -C algo/tests snapshot_success
+	$(MAKE) -C algo/tests mark_failed_tests_as_todo
 
 snapshot_diff:
 	$(MAKE) -C algo/tests snapshot_diff
