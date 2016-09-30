@@ -109,12 +109,10 @@ def should_pattern_to_regex(p):
             return []
 
         # Ambiguous/alternate pattern
-        if term.startswith('('):
+        if term.startswith(','):
             choices = []
-            term_without_par = term[1:-1]
-            for t in term_without_par.split(','):
-                choices += process_term(t)
-            return ['(%s)' % '|'.join(choices)]
+            term_without_comma = term[1:]
+            return ['|' + ''.join(process_term(term_without_comma))]
 
         # (such as CDR3 / junction)
         if term.startswith('{'):
@@ -159,12 +157,21 @@ def should_pattern_to_regex(p):
 
 
     r = []
-    p = p.replace(', ', ',')
+    p = re.sub('\s*,\s*', ' ,', p)
 
-    for term in p.split():
-        r += process_term(term)
-        
-    regex_pattern = ' .*'.join(r)
+    m = re.search('^(.*)\s*\((.+)\)\s*(.*)$', p)
+    if m:
+        # We have parentheses
+        re1 = should_pattern_to_regex(m.group(1)).pattern
+        re2 = '('+should_pattern_to_regex(m.group(2)).pattern+')'
+        re3 = should_pattern_to_regex(m.group(3)).pattern
+        regex_pattern = '\s*'.join(x for x in [re1, re2, re3])
+    else:
+        # We have a parenthesis free expression
+        for term in p.split():
+            r += process_term(term)
+
+        regex_pattern = ' .*'.join(r)
 
     try:
         regex = re.compile(regex_pattern)

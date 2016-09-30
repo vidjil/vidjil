@@ -128,7 +128,12 @@ TGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGTT
 # TRGJ1*01 or TRGJ1*02
 >TRGV5*01 (TRGJ1*01, TRGJ1*02)  [TRG]
 ...
+
+# TRGJ1*01 or TRGJ1*02 but with different deletions
+>TRGV4*02 (4/4/4 TRGJ1*01, 4/4/1 TRGJ1*02) [TRG]
 #+END_EXAMPLE
+
+
 
 
 * Program-specific information
