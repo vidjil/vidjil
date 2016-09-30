@@ -66,9 +66,12 @@ shouldvdj_if_python:
 	else echo "!!! Bad python version, we skip .should-vdj.fa tests..." ; \
 	fi
 
+shouldlocus: vidjil
+	$(SHOULD_VDJ_TO_TAP) -2q -r $(SHOULD_LOCUS_EXPECTED_FAILS) $(SHOULD_VDJ) $(SHOULD_LOCUS)
+
 shouldlocus_and_vdj: vidjil
 	@echo "*** Launching .should-vdj-fa tests..."
-	$(SHOULD_VDJ_TO_TAP) -2q -r $(SHOULD_LOCUS_EXPECTED_FAILS) $(SHOULD_VDJ) $(SHOULD_LOCUS)
+	$(MAKE) shouldlocus
 	$(MAKE) shouldvdj_with_rc
 	@echo "*** All .should-vdj.fa tests passed"
 
