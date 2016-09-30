@@ -42,7 +42,7 @@ def index():
             germline_folder = defs.DIR_VIDJIL + '/germline/'
 
             ## config de vidjil
-            config = '-c segment -g germline'
+            config = '-c segment -i -2 -3 -g germline'
             config = config.replace( ' germline' ,germline_folder)
 
             ## commande complete
