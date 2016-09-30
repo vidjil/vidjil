@@ -1,11 +1,12 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
-2016-09-xx  The Vidjil Team
+2016-09-30  The Vidjil Team
 	* New default trim option (-t 0) for germlines, leading to better results on some special recombinations (vidjil.cpp)
 	* More flexible option to keep sequences of intereset (-W), accepting sequences of any size (core/windows.cpp)
+	* Better generation of consensus sequences, marking ambiguous positions with Ns (core/representative.cpp)
 	* Better recognition of standard recombinations by lowering incomplete germline attractiveness (core/segment.cpp)
-	* Better TRD locus analysis, including Dd-Dd-Jd recombinations (data/germlines.data)
+	* Better TRD locus analysis, including some Dd-Dd-Jd recombinations (data/germlines.data)
 	* Reduced unused similarity section of .json file output (vidjil.cpp)
 	* New json output with -c segment (vidjil.cpp)
 	* Updated help (doc/algo.org)
