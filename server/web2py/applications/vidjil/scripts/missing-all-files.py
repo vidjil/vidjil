@@ -45,6 +45,16 @@ def print_analysis_file(res):
     print_config_info(res.config_id)
     print rbx_link(res.patient_id, res.config_id)
 
+def print_orphan_files(directory, prefix_filename, db_field):
+    total_size = 0
+    nb_files = 0
+    for f in os.listdir(directory):
+        if f.startswith(prefix_filename) and os.path.isfile(directory+f)\
+           and db(db_field == f).count() == 0:
+            print f
+            total_size += os.path.getsize(directory+f)
+            nb_files += 1
+    print "%d bytes could be removed from %d files" % (total_size, nb_files)
 
 print "** Missing sequences **"
 for res in db(db.sequence_file).select():
@@ -52,14 +62,13 @@ for res in db(db.sequence_file).select():
         print_sequence_file(res)
 
 print "** Orphan sequence files **"
-total_size = 0
-nb_files = 0
-for f in os.listdir(defs.DIR_SEQUENCES):
-    if os.path.isfile(defs.DIR_SEQUENCES+f) and db(db.sequence_file.data_file == f).count() == 0:
-        print f
-        total_size += os.path.getsize(defs.DIR_SEQUENCES+f)
-        nb_files += 1
-print "%d bytes could be removed from %d files" % (total_size, nb_files)
+print_orphan_files(defs.DIR_SEQUENCES, "sequence_file.data_file", db.sequence_file.data_file)
+
+print "** Orphan result files **"
+print_orphan_files(defs.DIR_RESULTS, "results_file.data_file", db.results_file.data_file)
+
+print "** Orphan fused files **"
+print_orphan_files(defs.DIR_RESULTS, "fused_file.fused_file", db.fused_file.fused_file)
 
 print "** Missing results **"
 for res in db(db.results_file).select():
