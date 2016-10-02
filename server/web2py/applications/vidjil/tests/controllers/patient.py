@@ -23,11 +23,7 @@ class PatientController(unittest.TestCase):
         
         # rewrite info / error functions 
         # for some reasons we lost them between the testRunner and the testCase but we need them to avoid error so ...
-<<<<<<< aead2df5e43aca11a66cf41ef861493f7e1d389d
         def f(a, **kwargs):
-=======
-        def f(a, extra={}):
->>>>>>> test server : update tests
             pass
         log.info = f
         log.error = f
@@ -63,12 +59,8 @@ class PatientController(unittest.TestCase):
         name = "%s %s" % (request.vars["first_name"], request.vars["last_name"])
         
         resp = add_form()
-<<<<<<< aead2df5e43aca11a66cf41ef861493f7e1d389d
         self.assertNotEqual(resp.find('patient %s added' % name), -1, "add patient failled")
-=======
-        print db(db.auth_permission.id>0).select()
-        self.assertNotEqual(resp.find('patient bob bob added'), -1, "add patient failed")
->>>>>>> test server : update tests
+
         
         
     def testEdit(self):
