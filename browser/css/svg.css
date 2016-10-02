@@ -777,17 +777,19 @@ span .substitution {
 .popup_container {
   z-index: 20;
   border: solid;
-  position: fixed;
-  top: 250px;
-  left: 50% ;
-  width: 500px;
+  min-width: 500px;
+  max-width: 80%;
   font-size: 13px;
   padding: 10px;
   background: #ffffff;
   display: none;
-  left: -moz-calc(50% - 250px);
-  left: -webkit-calc(50% - 250px);
-  left: calc(50% - 250px);
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  -ms-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 /* Main style for <a> Used in particular in .popup_container, on login screen, in news, in links to results (for patient list and patient info)  */
 a {
