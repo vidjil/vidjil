@@ -326,9 +326,13 @@ Segment.prototype = {
             $('#'+this.id)
                 .mouseleave(function(e){
                     if (e.relatedTarget != null && self.is_open){
-                        var seg = $(self.div_segmenter)
-                        seg.stop().animate({height: 100}, 250);
-                        self.is_open = false
+                        setTimeout(function(){
+                            if (!$(".tagSelector").hasClass("hovered")){
+                                var seg = $(self.div_segmenter)
+                                seg.stop().animate({height: 100}, 250);
+                                self.is_open = false
+                            }
+                         }, 200);
                     }
                 });
         } catch(err) {
@@ -515,8 +519,8 @@ Segment.prototype = {
         // Tag
         var svg_star = document.createElement('span')
         svg_star.setAttribute('class', 'starBox');
-        svg_star.onclick = function () {
-            self.m.openTagSelector(cloneID);
+        svg_star.onclick = function (e) {
+            self.m.openTagSelector(cloneID, e);
         }
         svg_star.appendChild(icon('icon-star-2', 'clone tag'))
         svg_star.setAttribute('id', 'color' + cloneID);

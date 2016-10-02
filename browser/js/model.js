@@ -110,6 +110,11 @@ Model.prototype = {
         this.tagSelector.appendChild(this.tagSelectorList);
         
         document.body.appendChild(this.tagSelector);
+        $('.tagSelector').hover(function() { 
+          $(this).addClass('hovered');
+        }, function() {
+          $(this).removeClass('hovered');
+        });
     },
 
     /**
@@ -1728,11 +1733,12 @@ Model.prototype = {
      * open/build the tag/normalize menu for a clone
      * @param {integer} cloneID - clone index
      * */
-    openTagSelector: function (cloneID) {
+    openTagSelector: function (cloneID, e) {
         var self = this;
         cloneID = typeof cloneID !== 'undefined' ? cloneID : this.cloneID;
         this.tagSelectorList.innerHTML = "";
         this.cloneID=cloneID
+        
         
         for (var i = 0; i < this.tag.length; i++) {
             (function (i) {
@@ -1806,8 +1812,18 @@ Model.prototype = {
         
         
         if (cloneID[0] == "s") cloneID = cloneID.substr(3);
-        $(this.tagSelector).show("fast");
+        $(this.tagSelector).show();
         this.tagSelectorInfo.innerHTML = "tag for "+this.clone(cloneID).getName()+"("+cloneID+")"; 
+        
+        
+        //replace tagSeelector
+        var tagSelectorH = $(this.tagSelector).height()
+        var minTop = 40;
+        var maxTop = Math.max(40, $(window).height()-tagSelectorH);
+        var top = e.clientY - tagSelectorH/2;
+        if (top<minTop) top=minTop;
+        if (top>maxTop) top=maxTop;
+        this.tagSelector.style.top=top+"px";
     },
     
     /**
