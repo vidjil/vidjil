@@ -27,3 +27,37 @@ def update_name_of_sequence_file(id, filename, new_data_filename):
     db.sequence_file[id] = dict(filename = filename,\
                                 data_file = os.path.basename(new_data_filename),\
                                 size_file = os.path.getsize(new_data_filename))
+
+def get_patient_id(file_id):
+    ''' 
+    return patient id of the selected file
+    return -1 if no patient are associated with the sequence file
+    '''
+    query = db( ( db.sample_set.sample_type == "patient")
+           & ( db.sample_set.id == db.sample_set_membership.sample_set_id )
+           & ( db.sample_set_membership.sequence_file_id == file_id)
+           & ( db.sample_set.id == db.patient.sample_set_id)
+           ).select(db.patient.id)
+    
+    patient_id = -1
+    for row in query:
+        patient_id = row.id
+        
+    return patient_id
+
+def get_run_id(file_id):
+    ''' 
+    return run id of the selected file
+    return -1 if no run are associated with the sequence file
+    '''
+    query = db( ( db.sample_set.sample_type == "run")
+           & ( db.sample_set.id == db.sample_set_membership.sample_set_id )
+           & ( db.sample_set_membership.sequence_file_id == file_id)
+           & ( db.sample_set.id == db.run.sample_set_id)
+           ).select(db.run.id)
+    
+    run_id = -1
+    for row in query:
+        run_id = row.id
+        
+    return run_id

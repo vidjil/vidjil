@@ -302,7 +302,11 @@ def get_data():
         data["samples"]["config_id"] = []
         data["samples"]["names"] = []
         data["samples"]["db_key"] = []
-        data["samples"]["ids"] = []
+        data["samples"]["id"] = []
+        data["samples"]["patient_id"] = []
+        data["samples"]["patient_name"] = []
+        data["samples"]["run_id"] = []
+        data["samples"]["run_name"] = []
         for i in range(len(data["samples"]["original_names"])) :
             o_n = data["samples"]["original_names"][i].split('/')[-1]
             data["samples"]["original_names"][i] = data["samples"]["original_names"][i].split('/')[-1]
@@ -316,14 +320,18 @@ def get_data():
                 data["samples"]["sequence_file_id"].append(row.sequence_file.id)
                 data["samples"]["results_file_id"].append(row.results_file.id)
                 data["samples"]["names"].append(row.sequence_file.filename.split('.')[0])
-                data["samples"]["ids"].append(row.sequence_file.id)
+                data["samples"]["id"].append(row.sequence_file.id)
+                data["samples"]["patient_id"].append(get_patient_id(row.sequence_file.id))
+                data["samples"]["patient_name"].append(row.sequence_file.id)
+                data["samples"]["run_id"].append(row.sequence_file.id)
+                data["samples"]["run_name"].append(row.sequence_file.id)
             else :
                 data["samples"]["info"].append("this file has been deleted from the database, info relative to this sample are no longer available")
                 data["samples"]["timestamp"].append("deleted")
                 data["samples"]["sequence_file_id"].append("")
                 data["samples"]["results_file_id"].append("")
                 data["samples"]["names"].append("deleted")
-                data["samples"]["ids"].append("")
+                data["samples"]["id"].append("")
 
         log.debug("get_data (%s) c%s -> %s" % (request.vars["sample_set_id"], request.vars["config"], fused_file))
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
