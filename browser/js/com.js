@@ -291,6 +291,19 @@ Com.prototype = {
             .innerHTML = msg;
         $(this.popup_container).find('button').focus();
     },
+    
+    /**
+     * display a popup message in a small window
+     * @param {domElement} msg
+     * */
+    popupHTML: function (domElement) {
+        this.popup_container.style.display = "block";
+        this.popup_container.lastElementChild
+            .innerHTML = "";
+        this.popup_container.lastElementChild
+            .appendChild(domElement);
+        $(this.popup_container).find('button').focus();
+    },
 
     /**
      * close popup window 
