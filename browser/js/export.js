@@ -166,9 +166,12 @@ Report.prototype = {
         }
     },
     
-    reportHTML : function() {
-        this.m.wait("Generating report...")
+    reportHTML : function(system_list, sample_list) {
+        sample_list = typeof sample_list !== 'undefined' ? sample_list : this.m.samples.order;
+        system_list = typeof system_list !== 'undefined' ? system_list : this.m.system_selected;
         
+        this.m.wait("Generating report...")
+        this.switchstate(system_list, sample_list);
         var self = this
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
         
@@ -192,20 +195,26 @@ Report.prototype = {
             
             self.info()
                 .normalizeInfo()
-                .addGraph()
                 .readsStat()
+                .addGraph()
                 .cloneList()
+                .contamination()
                 .sampleLog()
+                .restorestate()
                 
             self.m.resize()
             self.m.resume()
         }
     },
     
-    reportHTMLdiag : function() {
+    reportHTMLdiag : function(system_list, sample_list) {
+        sample_list = typeof sample_list !== 'undefined' ? sample_list : this.m.samples.order;
+        system_list = typeof system_list !== 'undefined' ? system_list : this.m.system_selected;
+        console.log(sample_list);
+        console.log(system_list);
         this.m.wait("Generating report...")
-
-        var current_system = sp.system
+        this.switchstate(system_list, sample_list);
+        var current_system = sp.system;
         var self = this
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
         
@@ -235,6 +244,7 @@ Report.prototype = {
 
             self.sampleLog()
                 .softwareInfo(self.m.t)
+                .restorestate()
 
             self.m.changeGermline(current_system)
             self.m.resize()
@@ -247,7 +257,7 @@ Report.prototype = {
         
         //use taged clones 
         var tag=0
-        while (tag < 8 && list.length < 5) {
+        while (tag < 8 && list.length < 10) {
             for (var i = 0; i < this.m.clones.length; i++) {
                 var clone_tag = this.m.clone(i).getTag()
                 if (clone_tag == tag && this.m.clone(i).isActive && !this.m.clone(i).virtual) list.push(i)
