@@ -294,15 +294,7 @@ Segment.prototype = {
 
             parent.appendChild(this.div_segmenter)
 
-           /* $('#toClipBoard')
-                .zclip({
-                    path: 'js/lib/ZeroClipboard.swf',
-                    copy: function () {
-                        return self.toFasta()
-                    }
-                });
-            */
-
+            
             $(this.div_segmenter)
                 .scroll(function(){
                     var leftScroll = $(self.div_segmenter).scrollLeft();
