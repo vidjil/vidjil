@@ -655,9 +655,9 @@ Segment.prototype = {
             var c = this.m.clone(list[i])
             
             if (typeof (c.getSequence()) != 0){
-                request += ">" + c.getName() + "\n" + c.getSequence() + "\n";
+                request += ">" + c.index + "#" + c.getName() + "\n" + c.getSequence() + "\n";
             }else{
-                request += ">" + c.getName() + "\n" + c.id + "\n";
+                request += ">" + c.index + "#" + c.getName() + "\n" + c.id + "\n";
             }
             if (c.getSize()>max){
                 system=c.get('germline')

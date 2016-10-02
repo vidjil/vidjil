@@ -205,7 +205,8 @@ function imgtPostForSegmenter(data, system, override_imgt_options) {
             for (var i = 0; i < imgtArray.length; i++) {
                 //merge clone from segmenter and imgtinfo
                 //loop through the model maintained selection list
-                cloneIdx= m.orderedSelectedClones[i];
+                seq_id = imgtArray[i]["Sequence ID"]
+                cloneIdx= seq_id.substr(0,seq_id.indexOf('#'))
                 logmsg += cloneIdx + ",";
                 //remove unneeded info coz relative to # of selected items
                 delete  imgtArray[i]["Sequence number"];
