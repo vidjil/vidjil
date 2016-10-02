@@ -5,6 +5,145 @@ function Report(model) {
 
 Report.prototype = {
     
+    formValidate:function(f, report_type){
+        var f = document.forms["form_report"];
+        
+        var system_list = [];
+        var inputs= f.querySelectorAll('input[name=system]:checked');
+        for (var i=0; i<inputs.length; i++) system_list.push(inputs[i].value);
+        
+        var sample_list = [];
+        var inputs= f.querySelectorAll('input[name=sample]:checked');
+        var max_sample = f.getElementsByClassName("report_sample_select")[0].getAttribute("max_sample");
+        for (var i=0; i<inputs.length; i++) sample_list.push(inputs[i].value);
+        if (sample_list.length>max_sample){
+            console.log({"type": "flash", "msg": "too many samples selected (max "+max_sample+")", "priority": 2 })
+            return false;
+        }
+        
+        switch(report_type) {
+            case "monitor":
+                this.reportHTML(system_list, sample_list);
+                break;
+            case "diag":
+                this.reportHTMLdiag(system_list, sample_list);
+                break;
+            default:
+                console.log("what ?")
+        }
+        
+    },
+    
+    report : function(report_type){
+        var self=this;
+        
+        var r = document.createElement("div");
+        
+        var f = document.createElement("form");
+        f.setAttribute('name',"form_report");
+        f.onsubmit = function() {self.formValidate(this, report_type); return false};
+        
+        switch(report_type) {
+            case "monitor":
+                this.selectSample(f, 6)
+                .selectSystem(f);
+                break;
+            case "diag":
+                this.selectSample(f, 1)
+                .selectSystem(f);
+                break;
+            default:
+                console.log("what ?")
+        }
+        
+        var s = document.createElement("input");
+        s.setAttribute('type',"submit");
+        s.setAttribute('value',"make report");
+        f.appendChild(s);
+        
+        var h = document.createElement("h1");
+        h.appendChild(document.createTextNode("Report settings ("+report_type+")"));
+        r.appendChild(h);
+        r.appendChild(f);
+        
+        console.popupHTML(r);
+    },
+    
+    selectSample : function(f, max){
+        var d = document.createElement("div");
+        d.className = "report_sample_select";
+        d.setAttribute('max_sample', max);
+        
+        var sp = document.createElement("div");
+        sp.appendChild(document.createTextNode("Samples to include in report ("+max+" max)"));
+        d.appendChild(sp);
+        
+        for (var i in this.m.samples.order){ 
+            var t = this.m.samples.order[i];
+            var s = document.createElement("input");
+            s.setAttribute('type',"checkbox");
+            if (max==1) s.setAttribute('type',"radio");
+            s.setAttribute('name',"sample");
+            s.setAttribute('value',t);
+            if (i<max) s.checked = true;
+            
+            d.appendChild(s);
+            d.appendChild(document.createTextNode(m.getStrTime(t, "names")));
+            d.appendChild(document.createElement("br"));
+            f.appendChild(d);
+        }
+        
+        return this;
+    },
+    
+    selectSystem : function(f){
+        var d = document.createElement("div");
+        var sp = document.createElement("div");
+        sp.appendChild(document.createTextNode("Germlines selected"));
+        d.appendChild(sp);
+        
+        for (var i in this.m.system_available){ 
+            var system = this.m.system_available[i];
+            var s = document.createElement("input");
+            s.setAttribute('type',"checkbox");
+            s.setAttribute('name',"system");
+            s.setAttribute('value',system);
+            if (this.m.system_selected.indexOf(system) != -1) s.checked = true;
+            
+            d.appendChild(s);
+            d.appendChild(this.m.systemBox(system));
+            d.appendChild(document.createTextNode(system));    
+        }
+        
+        f.appendChild(d);
+        
+        return this;
+    },
+    
+    savestate: function(){
+        this.save_system = [];
+        for (var i in this.m.system_selected) this.save_system.push(this.m.system_selected[i]);
+        
+        this.save_sample = [];
+        for (var i in this.m.samples.order) this.save_sample.push(this.m.samples.order[i]);
+        
+        return this;
+    },
+    
+    switchstate: function(system_list, sample_list){
+        this.savestate();
+        this.m.system_selected = system_list;
+        this.m.samples.order = sample_list;
+        return this;
+    },
+    
+    restorestate: function(){
+        this.m.system_selected = this.save_system;
+        this.m.samples.order = this.save_sample;
+        this.m.update();
+        return this;
+    },
+    
     reportcontamination : function() {
         this.m.wait("Generating report...")
         
