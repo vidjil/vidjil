@@ -394,8 +394,8 @@ List.prototype = {
         
         var span_star = document.createElement('div');
         span_star.className = "starBox";
-        span_star.onclick = function () {
-            self.m.openTagSelector(cloneID);
+        span_star.onclick = function (e) {
+            self.m.openTagSelector(cloneID, e);
         }
         span_star.appendChild(icon('icon-star-2', 'clone tag'))
         span_star.setAttribute('id', 'color' + cloneID);

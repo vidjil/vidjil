@@ -368,7 +368,7 @@ Report.prototype = {
     },
     
     sampleInfo : function(time) {
-        var sinfo = this.container("Sample info ("+this.m.getStrTime(time)+")")
+        var sinfo = this.container("Sample info ("+this.m.getStrTime(time, "short_name")+")")
         var left = $('<div/>', {'class': 'flex'}).appendTo(sinfo);
         
         var content = [
@@ -385,7 +385,7 @@ Report.prototype = {
             $('<td/>', {'text': v.value}).appendTo(row);
         }
         
-        var note = $('<div/>', {'class': 'float-left'}).appendTo(left);
+        var note = $('<div/>', {'class': 'info-note float-left'}).appendTo(left);
         $('<div/>', {'class': 'case label', 'text': "User note" }).appendTo(note);
         
         var info = "..."
@@ -397,7 +397,7 @@ Report.prototype = {
     },
 
     softwareInfo : function(time) {
-        var sinfo = this.container("Software info("+this.m.getStrTime(time)+")");
+        var sinfo = this.container("Software info("+this.m.getStrTime(time, "short_name")+")");
          var div = $('<div/>', {'class': 'flex'}).appendTo(sinfo);
          var content = [
             {'label': "Software used:" , value : this.m.getSoftVersionTime(time)},
@@ -501,7 +501,7 @@ Report.prototype = {
         sp.resize(791,250)
         sp.fastForward()
         
-        var w_sp = this.container(this.m.getStrTime(this.m.t) + ' – ' + system)
+        var w_sp = this.container(this.m.getStrTime(this.m.t, "short_name") + ' – ' + system)
         w_sp.addClass("scatterplot");
         
         var svg_sp = document.getElementById(sp.id+"_svg").cloneNode(true);
@@ -546,7 +546,7 @@ Report.prototype = {
         $('<div/>', {'class': 'case', 'text': 'segmented'}).appendTo(head);
 
         if (this.m.system_selected.length < this.m.system_available.length) {
-            $('<div/>', {'class': 'case', 'text': 'segmented (selected systems)'}).appendTo(head); 
+            $('<div/>', {'class': 'case', 'text': 'selected locus'}).appendTo(head); 
         }
         
         if (this.m.system_available.length>1){
@@ -573,7 +573,7 @@ Report.prototype = {
     
     readsStat2: function (time){
         var box = $('<div/>', {'class': 'float-left'})
-        $('<div/>', {'class': 'case centered', 'text': this.m.getStrTime(time)}).appendTo(box);
+        $('<div/>', {'class': 'case centered', 'text': this.m.getStrTime(time, "short_name")}).appendTo(box);
         $('<div/>', {'class': 'case centered', 'text': this.m.toStringThousands(this.m.reads.total[time])}).appendTo(box);
         
         var segmented = ((this.m.reads.segmented_all[time]/this.m.reads.total[time])*100).toFixed(0) + "%"
@@ -704,7 +704,7 @@ Report.prototype = {
             var reads_stats = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
             for (var i=0; i<this.m.samples.order.length; i++){
                 var t = this.m.samples.order[i]
-                $('<span/>', {'text': this.m.clone(cloneID).getPrintableSize(t)+'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
+                $('<span/>', {'text': this.m.clone(cloneID).getStrSize(t)+'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
             }
         }else{
             $('<span/>', {'text': this.m.clone(cloneID).getPrintableSize(time)+'\u00a0', 'class': 'float-right'}).appendTo(head);
