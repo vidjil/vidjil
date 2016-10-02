@@ -572,8 +572,8 @@ Segment.prototype = {
             identity = clone.seg.imgt["V-REGION identity % (with ins/del events)"]
             if (identity.length == 0)
                 identity = clone.seg.imgt["V-REGION identity %"]
-            if (identity != NaN) {
-                var identityRate = parseFloat(identity)
+            var identityRate = parseFloat(identity)
+            if (identityRate != NaN) {
                 info = document.createElement('span');
                 if (V_IDENTITY_THRESHOLD)
                     info.className += identityRate < V_IDENTITY_THRESHOLD ? ' identityGood' : ' identityBad'
