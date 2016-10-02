@@ -569,14 +569,16 @@ Segment.prototype = {
         var info = '' ;
 
         if (clone.seg.imgt!=null){
-            identity = clone.seg.imgt["V-REGION identity %"]
+            identity = clone.seg.imgt["V-REGION identity % (with ins/del events)"]
+            if (identity.length == 0)
+                identity = clone.seg.imgt["V-REGION identity %"]
             if (identity != NaN) {
                 var identityRate = parseFloat(identity)
                 info = document.createElement('span');
                 if (V_IDENTITY_THRESHOLD)
                     info.className += identityRate < V_IDENTITY_THRESHOLD ? ' identityGood' : ' identityBad'
                 info.appendChild(document.createTextNode(identityRate.toFixed(2) + "%"))
-                info.setAttribute('title', 'V-REGION identity %, as computed by IMGT/V-QUEST')
+                info.setAttribute('title', 'V-REGION identity % (with indel), as computed by IMGT/V-QUEST')
             }
         }
 
