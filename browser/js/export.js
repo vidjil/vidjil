@@ -298,12 +298,26 @@ Report.prototype = {
 
     contamination : function(){
         var self = this;
+        if (typeof this.m.contamination == "undefined") return this;
         
         var contamination = this.container("Report run contamination")
         var left = $('<div/>', {'class': 'flex'}).appendTo(contamination);
         
+        var sample_names = [];
+        var reads = [];
+        var percent = [];
+        
+        for (var i=0; i<this.m.samples.order.length; i++) {
+            var time = this.m.samples.order[i];
+            sample_names.push(this.m.getStrTime(time, "short_name"));
+            reads.push(""+this.m.contamination[time].total_reads);
+            percent.push( ""+(self.m.contamination[time].total_reads/self.m.reads.segmented[time]*100).toFixed(3)+"%)");
+        }
+        
         var content = [
-            {'label': "sample name" , 'value' : self.m.samples.names}
+            {'label': "sample name" , 'value' : sample_names},
+            {'label': "reads" , 'value' : reads},
+            {'label': "(%)" , 'value' : percent}
         ]
         
         var table = $('<table/>', {'class': 'info-table2 float-left'}).appendTo(left);
@@ -313,19 +327,7 @@ Report.prototype = {
             $('<td/>', {'class': 'label', 'text': v.label}).appendTo(row);
             for (var i in v.value) $('<td/>', {'text': v.value[i].replace("_L001__001", "")}).appendTo(row);
         }
-        var row0 = $('<tr/>').appendTo(table);
-        $('<td/>', {'class': 'label', 'text': " "}).appendTo(row0);
-        var row1 = $('<tr/>').appendTo(table);
-        $('<td/>', {'class': 'label', 'text': "reads "}).appendTo(row1);
-        for (var i in self.m.contamination) $('<td/>', {
-            'text': self.m.contamination[i].total_reads }).appendTo(row1);
         
-        var row2 = $('<tr/>').appendTo(table);
-        $('<td/>', {'class': 'label', 'text': "(%) "}).appendTo(row2);
-        for (var i in self.m.contamination) $('<td/>', {
-            'text': " (" +(self.m.contamination[i].total_reads/self.m.reads.segmented[i]*100).toFixed(3)+"%)"}).appendTo(row2);
-        
-
         return this
     },
     
@@ -358,7 +360,7 @@ Report.prototype = {
             $('<td/>', {'text': v.value}).appendTo(row);
         }
         
-        var note = $('<div/>', {'class': 'float-left'}).appendTo(left);
+        var note = $('<div/>', {'class': 'info-note float-left'}).appendTo(left);
         $('<div/>', {'class': 'case label', 'text' : "User note" }).appendTo(note);
         $('<div/>', {'class': 'note', 'text' : this.m.info }).appendTo(note);
         
