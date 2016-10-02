@@ -426,15 +426,14 @@ Report.prototype = {
             var color = this.m.tag[tag].color
             
             if (i == norm) {
-                polyline.setAttribute("style", "stroke-width:12px");
+                polyline.setAttribute("style", "stroke-width:12px; stroke:"+color);
             }else if (this.list.indexOf(i) != -1){
-                polyline.setAttribute("style", "stroke-width:3px");
+                polyline.setAttribute("style", "stroke-width:3px; stroke:"+color);
             }else if (tag != 8){
-                polyline.setAttribute("style", "stroke-width:1.5px");
+                polyline.setAttribute("style", "stroke-width:1.5px; stroke:"+color);
             }else{
-                polyline.setAttribute("style", "stroke-width:0.5px; opacity:0.5");
+                polyline.setAttribute("style", "stroke-width:0.5px; opacity:0.5; stroke:"+color);
             }
-            polyline.setAttribute("stroke", color);
             
             //remove virtual and disabled clones
             if (i != norm && (this.m.clone(i).isVirtual() || !this.m.clone(i).isActive())) {
@@ -684,8 +683,7 @@ Report.prototype = {
             var icon = $('<span/>', {'class': 'icon'}).appendTo(head);
             var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             var polyline = document.getElementById("polyline" + cloneID).cloneNode(true)
-            polyline.setAttribute("stroke", color);
-            polyline.setAttribute("style", "stroke-width:30px");
+            polyline.setAttribute("style", "stroke-width:30px; stroke:"+color);
             svg.appendChild(polyline)
             svg.setAttribute("viewBox","0 0 791 300");
             svg.setAttribute("width","80px");
