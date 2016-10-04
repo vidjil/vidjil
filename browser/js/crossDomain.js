@@ -331,7 +331,7 @@ function igBlastPost(data, system) {
     var form = document.getElementById("form");
     form.innerHTML = "";
     form.target = "_blank";
-    form.action = "http://www.ncbi.nlm.nih.gov/igblast/igblast.cgi";
+    form.action = "https://www.ncbi.nlm.nih.gov/igblast/igblast.cgi";
     form.method = "POST";
 
     for (var k in igBlastInput) {
