@@ -13,6 +13,12 @@ if request.env.http_origin:
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Max-Age'] = 86400
 
+def extract_id(target, error):
+    try:
+        id = int(target.split('(')[-1][:-1])
+        return id
+    except:
+        raise ValueError('invalid input %s' % target)
     
 def add():
     sample_set = db.sample_set[request.vars["id"]]
@@ -108,7 +114,7 @@ def add_form():
         error += " missing patient or run"
         
     if request.vars['patient_id'] != '' :
-        patient_id = int(request.vars['patient_id'].split('(')[-1][:-1])
+        patient_id = extract_id(request.vars['patient_id'], error)
         if not auth.can_modify_patient(patient_id) :
             error += " missing permission for patient "+str(patient_id)
             
@@ -121,7 +127,7 @@ def add_form():
                 error += " this sequence file already exists for this patient"
             
     if request.vars['run_id'] != '' :
-        run_id = int(request.vars['run_id'].split('(')[-1][:-1])
+        run_id = extract_id(request.vars['run_id'], error)
         if not auth.can_modify_run(run_id) :
             error += " missing permission for run "+str(run_id)
     pre_process = None
