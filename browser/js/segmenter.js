@@ -570,7 +570,7 @@ Segment.prototype = {
 
         if (clone.seg.imgt!=null){
             identity = clone.seg.imgt["V-REGION identity % (with ins/del events)"]
-            if (identity.length == 0)
+            if (typeof identity != 'undefined' && identity.length == 0)
                 identity = clone.seg.imgt["V-REGION identity %"]
             var identityRate = parseFloat(identity)
             if (identityRate != NaN) {
