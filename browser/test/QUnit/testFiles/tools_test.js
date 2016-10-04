@@ -58,6 +58,25 @@ asyncTest("processImgtContents", function () {
     }
 );
 
+test("correctIMGTPositionsForInsertions", function() {
+    data = {
+        'V-REGION identity % (with ins/del events)': "98.2%",
+        "Sequence": "taggctagctagctaAgcgctaTcgcaTcagcagAagcagcat",
+        // "taggctagctagctagcgctacgcacagcagagcagcat",
+                "V-REGION end": "13",
+                "CDR1-IMGT start": "16", // 17 when accounting for insertion
+                "CDR1-IMGT end": "22", // 24 when accounting for insertion
+                "CDR2-IMGT start": "25", // 27 when accounting for insertion
+                "CDR2-IMGT end": "26" // 29 when accounting for insertion
+    }
+    correctIMGTPositionsForInsertions(data)
+    equal(data["V-REGION end"], "13", "V-REGION end should not change")
+    equal(data["CDR1-IMGT start"], "17", "CDR1-IMGT should be 17 ("+data["CDR1-IMGT start"]+")")
+    equal(data["CDR1-IMGT end"], "24", "CDR1-IMGT should be 24 ("+data["CDR1-IMGT end"]+")")
+    equal(data["CDR2-IMGT start"], "27", "CDR2-IMGT should be 27 ("+data["CDR2-IMGT start"]+")")
+    equal(data["CDR2-IMGT end"], "29", "CDR2-IMGT should be 29 ("+data["CDR2-IMGT end"]+")")
+});
+
 test("computeStartStop(arrayToProcess,sequence)", function () {
 
         var imgt2displayCheck = {

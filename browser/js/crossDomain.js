@@ -214,6 +214,7 @@ function imgtPostForSegmenter(data, system, override_imgt_options) {
                     m.clones[cloneIdx].seg.imgt = {}
                     m.clones[cloneIdx].seg.imgt2display = {}
                 }
+                correctIMGTPositionsForInsertions(imgtArray[i]);
                 append_to_object(imgtArray[i], m.clones[cloneIdx].seg.imgt);
                 append_to_object(computeStartStop(imgtArray[i],m.clones[cloneIdx].getSequence()),
                                  m.clones[cloneIdx].seg.imgt2display);

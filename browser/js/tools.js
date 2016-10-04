@@ -44,6 +44,48 @@ function tsvToArray(allText) {
 }
 
 /**
+ * With insertions, IMGT positions must be understood with the insertions
+ * removed. As we display the original sequence and not the corrected one, we
+ * have to correct the positions so that they reflect the displayed sequence
+ * rather than the corrected one.
+ */
+function correctIMGTPositionsForInsertions(data) {
+    if (typeof data['V-REGION identity % (with ins/del events)'] != 'undefined'
+        && data['V-REGION identity % (with ins/del events)'].length > 0
+        && typeof data['V-REGION end'] != 'undefined') {
+
+        // Ok we may have insertions and we have positions.
+
+        // 1. Find position of insertions
+        var positions_of_insertion = []
+        // Insertions are capital letters in the sequence
+        var ins_regexp = /[A-Z]/g;
+        while ((match = ins_regexp.exec(data['Sequence'])) != null) {
+            positions_of_insertion.push(match.index + 1) // +1 to take into
+                                                         // account positions
+                                                         // starting at 1 for
+                                                         // IMGT
+        }
+
+        if (positions_of_insertion.length == 0)
+            return;
+
+        // Shift all positions that are after insertions
+        for (var item in data) {
+            if (item.endsWith(' end') || item.endsWith(' start')) {
+                var seq_position = parseInt(data[item])
+                var after_insertions = 0;
+                var i = 0
+                while (after_insertions < positions_of_insertion.length
+                       && positions_of_insertion[after_insertions] <= seq_position + after_insertions)
+                    after_insertions += 1
+                data[item] = (seq_position + after_insertions).toString()
+            }
+        }
+    }
+}
+
+/**
  * extract information from htlm page
  *
  * @param HTML code for a complete webpage
