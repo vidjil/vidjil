@@ -282,7 +282,7 @@ function imgtPostForSegmenter(data, system, override_imgt_options) {
             input.click();
             var label = document.createElement('label');
             label.setAttribute("for", 'imgt_vdj_input_check');
-            label.innerHTML = "5'V/D/3'J-IMGT";
+            label.innerHTML = "V/D/J-IMGT";
             input.setAttribute("title", "Display 5'V-REGION, D-REGION and 3'J-REGION computed by IMGT/V-QUEST");
             label.setAttribute("title", "Display 5'V-REGION, D-REGION and 3'J-REGION computed by IMGT/V-QUEST");
 
