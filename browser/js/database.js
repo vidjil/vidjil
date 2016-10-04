@@ -898,7 +898,7 @@ Database.prototype = {
             that.list.innerHTML = options.filter(function (a) {
                 if (a == undefined)
                     return 0
-                return ~a.toLowerCase().indexOf(value.toLowerCase());
+                return a.toLowerCase().indexOf(value.toLowerCase()) != -1;
             }).slice(0,10).map(function (a) {
                 return '<option value="' + value + '|' + a + '">' + a + '</option>';
             }).join();
@@ -913,7 +913,7 @@ Database.prototype = {
             start = that.selectionStart,
             end = that.selectionEnd;
 
-        if (~pos) {
+        if (pos != -1) {
             value = value.slice(pos + 1);
         }
         that.value = value;
