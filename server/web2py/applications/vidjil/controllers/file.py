@@ -114,9 +114,12 @@ def add_form():
         error += " missing patient or run"
         
     if request.vars['patient_id'] != '' :
-        patient_id = extract_id(request.vars['patient_id'], error)
-        if not auth.can_modify_patient(patient_id) :
-            error += " missing permission for patient "+str(patient_id)
+        try:
+            patient_id = extract_id(request.vars['patient_id'], error)
+            if not auth.can_modify_patient(patient_id) :
+                error += " missing permission for patient "+str(patient_id)
+        except ValueError:
+            error += " Invalid patient %s" % request.vars['patient_id']
             
         query = db((db.patient.id == patient_id)
                 &(db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
@@ -127,9 +130,12 @@ def add_form():
                 error += " this sequence file already exists for this patient"
             
     if request.vars['run_id'] != '' :
-        run_id = extract_id(request.vars['run_id'], error)
-        if not auth.can_modify_run(run_id) :
-            error += " missing permission for run "+str(run_id)
+        try:
+            run_id = extract_id(request.vars['run_id'], error)
+            if not auth.can_modify_run(run_id) :
+                error += " missing permission for run "+str(run_id)
+        except ValueError:
+            error += " invalid run %s" % request.vars['run_id']
     pre_process = None
     pre_process_flag = "DONE"
     if request.vars['pre_process'] != "0":
