@@ -62,8 +62,32 @@ gzip_types text/plain text/css application/json application/x-javascript text/xm
 
 # Create configuration file /etc/nginx/sites-available/web2py
 echo "server {
-        listen          80;
+        listen 443 default_server ssl;
         server_name     \$hostname;
+        ssl_certificate         /etc/nginx/ssl/web2py.crt;
+        ssl_certificate_key     /etc/nginx/ssl/web2py.key;
+        ssl_prefer_server_ciphers on;
+        ssl_session_cache shared:SSL:10m;
+        ssl_session_timeout 10m;
+        ssl_ciphers ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-DSS-AES256-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        keepalive_timeout    70;
+        location / {
+            #uwsgi_pass      127.0.0.1:9001;
+            uwsgi_pass      unix:///tmp/web2py.socket;
+            include         uwsgi_params;
+            uwsgi_param     UWSGI_SCHEME \$scheme;
+            uwsgi_param     SERVER_SOFTWARE    nginx/\$nginx_version;
+            ###remove the comments to turn on if you want gzip compression of your pages
+            # include /etc/nginx/conf.d/web2py/gzip.conf;
+            ### end gzip section
+
+            proxy_read_timeout 600;
+            client_max_body_size 20G;
+            ###
+        }
+        ## if you serve static files through https, copy here the section
+        ## from the previous server instance to manage static files
 
         location /browser {
             root $CWD/../;
@@ -94,20 +118,6 @@ echo "server {
             # include /etc/nginx/conf.d/web2py/gzip_static.conf;
             ###
         }
-        location / {
-            #uwsgi_pass      127.0.0.1:9001;
-            uwsgi_pass      unix:///tmp/web2py.socket;
-            include         uwsgi_params;
-            uwsgi_param     UWSGI_SCHEME \$scheme;
-            uwsgi_param     SERVER_SOFTWARE    nginx/\$nginx_version;
-
-            proxy_read_timeout 600;
-            ###remove the comments to turn on if you want gzip compression of your pages
-            include /etc/nginx/conf.d/web2py/gzip.conf;
-            ### end gzip section
-
-            client_max_body_size 20G;
-        }
 
         client_max_body_size 20G;
 
@@ -121,36 +131,6 @@ echo "server {
             # Adjust non standard parameters (SCRIPT_FILENAME)
             fastcgi_param SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;
         }
-
-
-}
-server {
-        listen 443 default_server ssl;
-        server_name     \$hostname;
-        ssl_certificate         /etc/nginx/ssl/web2py.crt;
-        ssl_certificate_key     /etc/nginx/ssl/web2py.key;
-        ssl_prefer_server_ciphers on;
-        ssl_session_cache shared:SSL:10m;
-        ssl_session_timeout 10m;
-        ssl_ciphers ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-DSS-AES256-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA;
-        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-        keepalive_timeout    70;
-        location / {
-            #uwsgi_pass      127.0.0.1:9001;
-            uwsgi_pass      unix:///tmp/web2py.socket;
-            include         uwsgi_params;
-            uwsgi_param     UWSGI_SCHEME \$scheme;
-            uwsgi_param     SERVER_SOFTWARE    nginx/\$nginx_version;
-            ###remove the comments to turn on if you want gzip compression of your pages
-            # include /etc/nginx/conf.d/web2py/gzip.conf;
-            ### end gzip section
-
-            proxy_read_timeout 600;
-            client_max_body_size 20G;
-            ###
-        }
-        ## if you serve static files through https, copy here the section
-        ## from the previous server instance to manage static files
 
 }" >/etc/nginx/sites-available/web2py
 
