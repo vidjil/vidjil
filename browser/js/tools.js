@@ -56,6 +56,8 @@ function endsWith(sequence, end) {
  * rather than the corrected one.
  */
 function correctIMGTPositionsForInsertions(data) {
+    if (typeof data == 'undefined')
+        return;
     if (typeof data['V-REGION identity % (with ins/del events)'] != 'undefined'
         && data['V-REGION identity % (with ins/del events)'].length > 0
         && typeof data['V-REGION end'] != 'undefined') {
