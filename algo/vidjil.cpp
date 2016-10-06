@@ -1410,7 +1410,7 @@ int main (int argc, char **argv)
 
 
         // FineSegmenter
-        FineSegmenter seg(representative, segmented_germline, segment_cost);
+        FineSegmenter seg(representative, segmented_germline, segment_cost, expected_value, sort_clones.size());
 	
         if (segmented_germline->seg_method == SEG_METHOD_543)
 	  seg.FineSegmentD(segmented_germline, several_D, expected_value_D, sort_clones.size());
