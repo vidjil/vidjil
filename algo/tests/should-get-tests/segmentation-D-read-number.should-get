@@ -1,0 +1,28 @@
+
+# We launch three times a sequence of interest (buggy-D.fa) with a various
+# number of distinct reads (mutations randomly inserted in the middle).
+
+# The segmentation of one sequence should not depend on the number of the
+# other reads. This is what is tested, we first put 10 sequences, then 5 and
+# finally just the sequence of interest alone.
+
+!LAUNCH: (file1=$(mktemp); \
+(for i in {1..10}; do \
+  echo '>seq'\\$i; echo ggctggagtgggtttcatacattagtagtaatagtggtgccatatactacgcagactctgtgaagggccgattcaccatctccagaaacaatgccaaggactcactgtatctgcaaatgaacagcctgagagccgaggacacggctgtgtattactgtgcgagagcgatcccccggtattactatgatact\\$(cat /dev/urandom | tr -dc 'acgt' | head -c 4)ggcccaaacgactactggggccagggaaccctggtcaccgtctcctcag; \
+done;\
+cat $VIDJIL_DIR/data/buggy-D.fa) > \\$file1; \
+$VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -d -r 1 -w 60 -z 100 -G $VIDJIL_DIR/germline/IGH \\$file1; \
+file2=$(mktemp); \
+(for i in {1..5}; do \
+  echo '>seq'\\$i; echo ggctggagtgggtttcatacattagtagtaatagtggtgccatatactacgcagactctgtgaagggccgattcaccatctccagaaacaatgccaaggactcactgtatctgcaaatgaacagcctgagagccgaggacacggctgtgtattactgtgcgagagcgatcccccggtattactatgatact\\$(cat /dev/urandom | tr -dc 'acgt' | head -c 4)ggcccaaacgactactggggccagggaaccctggtcaccgtctcctcag; \
+done;\
+cat $VIDJIL_DIR/data/buggy-D.fa) > \\$file2; \
+$VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -d -r 1 -w 60 -z 100 -G $VIDJIL_DIR/germline/IGH \\$file2;\
+$VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -d -r 1 -w 60 -z 100 -G $VIDJIL_DIR/germline/IGH $VIDJIL_DIR/data/buggy-D.fa) | \
+sort | uniq -c
+
+$ Three times the same window
+1: 3 TGTGCGGGATCTTCGTCCTCTTATCATAATAATGGTTTTTTGGCGGGGGAGTCATGGGGC
+
+$ Three times the same segmentation
+1: 3 IGHV4-34.*IGHD.*IGHJ4
