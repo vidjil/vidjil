@@ -43,6 +43,12 @@ function tsvToArray(allText) {
     return lines;
 }
 
+function endsWith(sequence, end) {
+    if (sequence.length < end.length)
+        return false;
+    return sequence.substr(sequence.length - end.length, end.length) == end
+}
+
 /**
  * With insertions, IMGT positions must be understood with the insertions
  * removed. As we display the original sequence and not the corrected one, we
@@ -72,7 +78,7 @@ function correctIMGTPositionsForInsertions(data) {
 
         // Shift all positions that are after insertions
         for (var item in data) {
-            if (item.endsWith(' end') || item.endsWith(' start')) {
+            if (endsWith(item, ' end') || endsWith(item, ' start')) {
                 var seq_position = parseInt(data[item])
                 var after_insertions = 0;
                 var i = 0

@@ -58,6 +58,14 @@ asyncTest("processImgtContents", function () {
     }
 );
 
+test("endsWith", function() {
+    equal(endsWith("toto", "o"), true, "toto finishes with o")
+    equal(endsWith("tota", "o"), false, "tota doesn't finish with o")
+    equal(endsWith("o", "toto"), false, "o doesn't finish with toto")
+    equal(endsWith("toto", ""), true, "toto finishes with empty string")
+    equal(endsWith("tota", "to"), false, "tota doesn't finish with to")
+})
+
 test("correctIMGTPositionsForInsertions", function() {
     data = {
         'V-REGION identity % (with ins/del events)': "98.2%",
