@@ -602,6 +602,7 @@ List.prototype = {
             this.update();
         }
         var divParent = elem;
+        var old_event = divParent.onclick;
         divParent.innerHTML = "";
 
         if (cloneID[0] == 's')
@@ -623,6 +624,7 @@ List.prototype = {
         }
         $(input).focusout(function() {
             setTimeout(function(){self.m.update()},500)
+            divParent.onclick = old_event;
         })
         divParent.appendChild(input);
         divParent.onclick = "";
