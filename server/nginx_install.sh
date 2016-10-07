@@ -62,6 +62,12 @@ gzip_types text/plain text/css application/json application/x-javascript text/xm
 
 # Create configuration file /etc/nginx/sites-available/web2py
 echo "server {
+    listen 80;
+    server_name \$hostname;
+    return 301 https://\$hostname$request_uri;
+
+}
+server {
         listen 443 default_server ssl;
         server_name     \$hostname;
         ssl_certificate         /etc/nginx/ssl/web2py.crt;
