@@ -1,0 +1,2 @@
+* * * * * root /usr/bin/python /opt/reporter/reporter.py >> /var/log/cron.log 2>&1
+

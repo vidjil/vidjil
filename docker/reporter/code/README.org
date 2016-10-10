@@ -1,0 +1,43 @@
+*Reporter
+ The reporter is designed to connect to a machine on the same network (or remotely when possible) via ssh and execute a list of scripts on the target system. The results are then posted via HTTP to a monitorserv instance.
+
+**Configuration
+
+***Basic
+   The reporter script is has a series of parameters that can be configured that range from the setting of a cron task for repeat execution to the configuration of users that should be executing the scripts.
+   The script takes the following parameters:
+	     --init       Set following arguments as default and start cron
+	     --delete     Unset all cron jobs created by this script
+	     --set        Set values in config file without setting a cron
+	     --reset      Reset config file to default values
+	     --start      Launch Cron with current settings
+	-tgt --host       Host name
+	-c   --cron       Cron expression
+	-u   --username   SSH Username
+	-p   --path       Path to Vidjil installation
+	-py  --python     Path to the python installation
+	-m   --monitor    host of the monitor that will receive the report
+	-s   --servername ID of the server entry in the monitor database
+	     --cron-user  User that will be executing the cron task on this machine
+
+	Using the set or init parameters will write the parameters to the =config= file with the following format:
+	<param_name> <param_value>
+	The config file is read at each execution of the monitoring process.
+
+***Scripts
+   Upon starting the reporter process reads thre =script_map= file in order to determine what will be executed on the remote machine.
+   A =key= =value= pair is used to in this file where the =key= is the name of the field that will be sent to the monitorserv instance and the =value= is the path to the script (relative to the scripts folder)
+   The order in which scripts are added represents the order in which the fields will be placed and numbered in the form that will be sent. This can be an important detail when using the reporter in conjunction with monitorserv because it will define the order in which the fields are displayed in the webapp.
+
+***Dependencies
+  On the local system: ssh, crontab and python are necessary. Bash or shell are highly recommended for script testing.
+  On the remote system: Bash or shell and ssh are necessary
+
+***SSH Authentication
+   Given that the Reporter uses ssh tunneling to execute scripts on the remote system, it is important that the username parameter be set to a user that has the correct permissions on the remote system.
+   It is also necessary to have the a public key on the remote system in order to connect automatically or the deamonized execution during the crontab task will fail as the ssh connection will require a manually entered password.
+   For one-time execution the password prompt will be displayed in the terminal.
+
+**Usage
+  For single execution, one can simply run the script with of without parameters. In the absence of a parameter the value included in the =config= file will be applied to the execution.
+  For repeat execution it is necessary to use the =--init= parameter which will not only set any given parameter as default in the config file but also start a crontab task with the cron expression in the =config= file (giving a cron expression as parameter will also work since it will be set in the =config= file before initialising the crontab task).

@@ -1,0 +1,85 @@
+version: '2'
+services:
+    mysql:
+        image: mysql:5.7
+        environment:
+            - MYSQL_ROOT_PASSWORD=MySRPimSRP
+        volumes:
+            - ./mysql/:/docker-entrypoint-initdb.d/
+            - /var/lib/mysql:/var/lib/mysql
+    postfix:
+        image: catatnight/postfix
+        environment:
+            - maildomain=mail.example.com
+            - smtp_user=user:pwd
+        ports:
+                - "25:25"
+    uwsgi:
+        build: ./vidjil
+        image: vidjil:test
+        command: bash /entrypoints/uwsgi-entrypoint.sh
+        volumes:
+            - /opt/vidjil/databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
+            - /opt/vidjil/result/results:/mnt/result/results
+            - /opt/vidjil/result/tmp:/mnt/result/tmp
+            - /opt/vidjil/upload/uploads:/mnt/upload/uploads
+            - /var/vidjil:/var/vidjil
+            - /home/ryan/vidjil:/usr/share/vidjil
+        depends_on:
+            - mysql
+            - postfix
+            - fuse
+        links:
+            - mysql:mysql
+            - postfix:postfix
+            - fuse:fuse
+    fuse:
+        image: vidjil:test
+        volumes:
+            - /home/user/vidjil:/usr/share/vidjil
+    nginx:
+        image: vidjil:test
+        volumes:
+            - /home/user/vidjil:/usr/share/vidjil
+            #- /home/user/ssl:/etc/nginx/ssl
+        depends_on:
+            - uwsgi
+        links:
+                - uwsgi:uwsgi
+        ports:
+            - "80:80"
+            - "443:443"
+        #command: bash /entrypoints/nginx-entrypoint.sh
+        command: nginx -g 'daemon off;'
+
+    workers:
+        image: vidjil:test
+        command: /usr/local/bin/gosu www-data python /usr/share/vidjil/server/web2py/web2py.py -K vidjil,vidjil,vidjil
+        volumes:
+            - /opt/vidjil/databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
+            - /opt/vidjil/result:/mnt/result
+            - /opt/vidjil/result/tmp:/mnt/result/tmp
+            - /opt/vidjil/upload:/mnt/upload
+            - /var/vidjil:/var/vidjil
+            - /home/ryan/vidjil:/usr/share/vidjil
+        depends_on:
+            - uwsgi
+            - mysql
+        links:
+            - mysql
+    reporter:
+        build: ./reporter
+        image: reporter:test
+        volumes:
+            - /opt/vidjil/databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
+            - /opt/vidjil/result/results:/mnt/result/results
+            - /opt/vidjil/result/tmp:/mnt/result/tmp
+            - /opt/vidjil/upload/uploads:/mnt/upload/uploads
+            - /var/vidjil:/var/vidjil
+            - /home/ryan/vidjil:/usr/share/vidjil
+            - ./reporter/code:/opt/reporter
+        depends_on:
+            - uwsgi
+        links:
+            - postfix:postfix
+            - uwsgi:uwsgi

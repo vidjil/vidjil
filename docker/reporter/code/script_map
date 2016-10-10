@@ -1,0 +1,8 @@
+revision git_rev.sh
+patients count-patients.sh
+samples count-samples.sh
+uptime uptime.sh
+workers workers.sh
+#stats bash_stats.sh
+algo vidjil-algo-version.sh
+
