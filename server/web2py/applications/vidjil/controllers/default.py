@@ -47,10 +47,13 @@ def logger():
         lvl = logging.INFO
     log.log(lvl, res)
 
-def init_db(force=False):
+def init_db():
+    init_db_helper()
+
+def init_db_helper(force=False):
     if (force) or (db(db.auth_user.id > 0).count() == 0) : 
-        for table in db :
-            table.truncate()
+        #for table in db :
+            #table.truncate()
         
         id_first_user=""
 
