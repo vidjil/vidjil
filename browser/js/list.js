@@ -814,6 +814,14 @@ List.prototype = {
             if (typeof systemB == "undefined") systemB = "";
             if (systemA != systemB) return systemA.localeCompare(systemB);
             
+            // sort by (un)defined
+            if (cloneA.isVirtual()) {
+                if (cloneB.isVirtual())
+                    return cloneA.getName().localeCompare(cloneB.getName())
+                return 1
+            } else if (cloneB.isVirtual())
+                return -1
+
             //sort by gene
             var geneA = cloneA.getGene(gene_type,true)
             var geneB = cloneB.getGene(gene_type,true)
