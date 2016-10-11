@@ -797,11 +797,7 @@ List.prototype = {
     },
     
 
-    /**
-     * sort clone list by V gene (reorder html elements in the clone list/ no rebuild)
-     * TODO more generic function for sorting
-     * */
-    sortListByV: function () {
+    sortListByGene: function(gene_type) {
         self = this;
         var list = jQuery('.list')
         var sort = list.sort(function (a, b) {
@@ -818,10 +814,10 @@ List.prototype = {
             if (typeof systemB == "undefined") systemB = "";
             if (systemA != systemB) return systemA.localeCompare(systemB);
             
-            //sort by V
-            var vA = cloneA.getGene("5",true)
-            var vB = cloneB.getGene("5",true)
-            return vA.localeCompare(vB);
+            //sort by gene
+            var geneA = cloneA.getGene(gene_type,true)
+            var geneB = cloneB.getGene(gene_type,true)
+            return geneA.localeCompare(geneB);
             
         })
         $("#list_clones")
@@ -829,34 +825,17 @@ List.prototype = {
     },
 
     /**
+     * sort clone list by V gene (reorder html elements in the clone list/ no rebuild)
+     * */
+    sortListByV: function () {
+        this.sortListByGene("5")
+    },
+
+    /**
      * sort clone list by J gene (reorder html elements in the clone list/ no rebuild)
-     * TODO more generic function for sorting
      * */
     sortListByJ: function () {
-        self = this;
-        var list = jQuery('.list')
-        var sort = list.sort(function (a, b) {
-            var idA = a.getAttribute("id");
-            var idB = b.getAttribute("id");
-
-            var cloneA = self.m.clone(idA)
-            var cloneB = self.m.clone(idB)
-            
-            //sort by system
-            var systemA = cloneA.get('germline')
-            if (typeof systemA == "undefined") systemA = "";
-            var systemB = cloneB.get('germline')
-            if (typeof systemB == "undefined") systemB = "";
-            if (systemA != systemB) return systemA.localeCompare(systemB);
-            
-            //sort by J
-            var jA = cloneA.getGene("3",true)
-            var jB = cloneB.getGene("3",true)
-            return jA.localeCompare(jB);
-                
-        })
-        $("#list_clones")
-            .html(sort);
+        this.sortListByGene("3")
     },
 
     /**
