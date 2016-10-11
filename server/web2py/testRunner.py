@@ -54,7 +54,7 @@ execfile("applications/vidjil/controllers/default.py", globals())
 test_db = DAL('sqlite://testing1234.sqlite')
 
 # build default database if doesn't exist
-init_db()
+init_db_helper()
 
 for tablename in db.tables:  # Copy tables!
     table_copy = [copy(f) for f in db[tablename]]
@@ -64,7 +64,7 @@ db = test_db
 auth.db = test_db
 
 
-init_db(True)
+init_db_helper(True)
 
 fake_sample_set_id = db.sample_set.insert(sample_type = 'patient')
 
