@@ -189,7 +189,7 @@ json_data = {
     {
         "sequence" : "catcatcatgatgctacgatcttac",
         "name" : "test5",
-        "id" : "id5",
+        "id" : "catgat",
         "reads" : [4,4,4,4],
         "top" : 5,
         "name": "unseg sequence",
