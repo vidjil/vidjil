@@ -100,8 +100,9 @@ test("model : time control", function() {
 test("model : top clones", function() {
     var m = new Model();
     m.parseJsonData(json_data,100)
+    m.initClones()
 
-    equal(m.countRealClones(), 3, "Real clones, expected 3")
+    equal(m.countRealClones(), 5, "Real clones, expected 5")
     m.displayTop(-10)
     equal(m.top, 0, "Top cannot be negative")
     m.displayTop(m.countRealClones() * 2 + 10)
@@ -171,13 +172,13 @@ test("model : cluster", function() {
     equal(m.clone(0).getSize(), 0.175, "cluster [0,2] : getsize = 0.175");
     
     m.clusterBy(function(id){return m.clone(id).germline})
-    deepEqual(m.clusters[0], [0,1], "clusterBy germline");
+    deepEqual(m.clusters[0], [0,1,3], "clusterBy germline");
     
     m.restoreClusters()
     deepEqual(m.clusters[0], [0,2], "restore previous clusters (made by user with merge whithout using clusterby function)");
     
     m.resetClusters()
-    deepEqual(m.clusters, [[0],[1],[2],[3],[4]], "resetClusters");
+    deepEqual(m.clusters, [[0],[1],[2],[3],[4],[5],[6]], "resetClusters");
     
     var m = new Model();
     m.parseJsonData(json_data,100)

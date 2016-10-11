@@ -78,8 +78,8 @@ test("Axis : ", function() {
             },
             0,25)
     
-    equal(axis.pos(0).toPrecision(3), 0.00, "custom  : clone 0 (nlength = 0) position -> 0.00")
-    equal(axis.pos(1).toPrecision(3), 0.30, "custom  : clone 1 (nlength = 9) position -> 0.30")
+    equal(axis.pos(0).toPrecision(3), 0.143, "custom  : clone 0 (nlength = 0) position -> 0.00")
+    equal(axis.pos(1).toPrecision(3), 0.40, "custom  : clone 1 (nlength = 9) position -> 0.30")
 
     
     //gc
@@ -101,5 +101,5 @@ test("Axis : ", function() {
     axis.custom(function(cloneID) {
                 return m.clone(cloneID).getName();
             }, undefined, undefined, 'string')
-    equal(axis.pos(0).toPrecision(3), 0.0833, "custom (name : clone 0 ")
+    equal(axis.pos(0).toPrecision(3), 0.0625, "custom (name : clone 0 ")
 });

@@ -11,7 +11,7 @@ test("List : edit", function() {
     list.init();
     
     var clone_list = document.getElementById('list').lastChild
-    equal(clone_list.childNodes.length, 5, "clone list length = 5 -> 3 clones+ 2 others (TRG & IGH) : Ok")
+    equal(clone_list.childNodes.length, 7, "clone list length = 7 -> 5 clones+ 2 others (TRG & IGH) : Ok")
 
 
     list.editName(1, list.index[1])
@@ -52,21 +52,34 @@ test("List : sort", function() {
     notEqual(clone_list[1].innerHTML.indexOf("TRG smaller"), -1, "sortBySize: Ok");
     notEqual(clone_list[2].innerHTML.indexOf("test1"),       -1, "sortBySize: Ok");
     notEqual(clone_list[3].innerHTML.indexOf("test2"),       -1, "sortBySize: Ok");
-    notEqual(clone_list[4].innerHTML.indexOf("test3"),       -1, "sortBySize: Ok");
+    notEqual(clone_list[4].innerHTML.indexOf("test4"),       -1, "sortBySize: Ok");
+    notEqual(clone_list[5].innerHTML.indexOf("unseg sequence"), -1, "sortBySize: Ok");
+    notEqual(clone_list[6].innerHTML.indexOf("test3"),       -1, "sortBySize: Ok");
 
     list.sortListByV();
     notEqual(clone_list[0].innerHTML.indexOf("test3"),       -1, "sortByV: Ok");
-    notEqual(clone_list[1].innerHTML.indexOf("IGH smaller"), -1, "sortByV: Ok");
-    notEqual(clone_list[2].innerHTML.indexOf("test1"),       -1, "sortByV: Ok");
-    notEqual(clone_list[3].innerHTML.indexOf("test2"),       -1, "sortByV: Ok");
-    notEqual(clone_list[4].innerHTML.indexOf("TRG smaller"), -1, "sortByV: Ok");
+
+    notEqual(clone_list[1].innerHTML.indexOf("unseg sequence"), -1, "sortByV: Ok");
+    notEqual(clone_list[2].innerHTML.indexOf("IGH smaller"), -1, "sortByV: Ok");
+    // test1 and test4 both have the same V
+    ok(clone_list[3].innerHTML.indexOf("test1") != -1
+             || clone_list[3].innerHTML.indexOf("test4") != -1, "sortByV: Ok");
+    ok(clone_list[4].innerHTML.indexOf("test1") != -1
+             || clone_list[4].innerHTML.indexOf("test4") != -1, "sortByV: Ok");
+    notEqual(clone_list[5].innerHTML.indexOf("test2"),       -1, "sortByV: Ok");
+    notEqual(clone_list[6].innerHTML.indexOf("TRG smaller"), -1, "sortByV: Ok");
 
     list.sortListByJ();
     notEqual(clone_list[0].innerHTML.indexOf("test3"),       -1, "sortByJ: Ok");
-    notEqual(clone_list[1].innerHTML.indexOf("IGH smaller"), -1, "sortByJ: Ok");
-    notEqual(clone_list[2].innerHTML.indexOf("test2"),       -1, "sortByJ: Ok");
-    notEqual(clone_list[3].innerHTML.indexOf("test1"),       -1, "sortByJ: Ok");
-    notEqual(clone_list[4].innerHTML.indexOf("TRG smaller"), -1, "sortByJ: Ok");
+    notEqual(clone_list[1].innerHTML.indexOf("unseg sequence"), -1, "sortByJ: Ok");
+    notEqual(clone_list[2].innerHTML.indexOf("IGH smaller"), -1, "sortByJ: Ok");
+    // test2 and test4 both have the same J
+    ok(clone_list[3].innerHTML.indexOf("test2") != -1
+             || clone_list[3].innerHTML.indexOf("test4") != -1, "sortByJ: Ok");
+    ok(clone_list[4].innerHTML.indexOf("test2") != -1
+             || clone_list[4].innerHTML.indexOf("test4") != -1, "sortByJ: Ok");
+    notEqual(clone_list[5].innerHTML.indexOf("test1"),       -1, "sortByJ: Ok");
+    notEqual(clone_list[6].innerHTML.indexOf("TRG smaller"), -1, "sortByJ: Ok");
 
     list.sortListBy(function(id){return -m.clone(id).top});
     notEqual(clone_list[0].innerHTML.indexOf("smaller"), -1, "sortByTop: Ok"); // TRG or IGH

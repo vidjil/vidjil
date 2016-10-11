@@ -9,7 +9,7 @@ test("scatterplot : grid", function() {
     var sp = new ScatterPlot("visu",m);
     sp.init();
     
-    equal(sp.returnActiveclones(), 3, "returnActiveClones -> 3");
+    equal(sp.returnActiveclones(), 5, "returnActiveClones -> 5");
     
     sp.buildSystemGrid()
     deepEqual(sp.systemGrid,  {"IGH": {"x": 0.92,"y": 0.75},
@@ -19,7 +19,7 @@ test("scatterplot : grid", function() {
                                     {"enabled": true,"text": "IGH","x": 0.80,"y": 0.75}]}, 
             "buildSystemGrid()");
     
-    equal(sp.nodes.length, 5 , "check nodes");
+    equal(sp.nodes.length, 7 , "check nodes");
     
     sp.changeSplitMethod("gene_v", "gene_v", "plot");
     sp.update()

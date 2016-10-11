@@ -87,9 +87,11 @@ json_data = {
         "sequence": "GGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA",
         "name": "test4",
         "germline": "TRG",
+        "top": 4,
+        "reads": [5, 5, 5, 5],
         "seg": {
-            "3": "TRGJP2*01",
-            "5": "TRGV3*01",
+            "3": "TRGJ2*02",
+            "5": "TRGV4*01",
             "3del": 5,
             "3start": 183,
             "5del": 0,
@@ -183,6 +185,15 @@ json_data = {
                 "JUNCTION (AA) (with frameshift)": ""
             },
         }
+    },
+    {
+        "sequence" : "catcatcatgatgctacgatcttac",
+        "name" : "test5",
+        "id" : "id5",
+        "reads" : [4,4,4,4],
+        "top" : 5,
+        "name": "unseg sequence",
+        "germline" : "IGH",
     }
   ]
 };

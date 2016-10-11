@@ -43,7 +43,7 @@ test("graph: init", function() {
     
     graph.initRes()
     deepEqual(graph.data_res[0], 	{
-                                      "id": 5,
+                                      "id": 7,
                                       "name": "resolution1",
                                       "path": " M 70,41.1 L 70,41 L 70.05,41 L 70.35,40.869175979352185 L 70.65,41 L 70.95,40.869175979352185 L 71,40.869175979352185 L 71,41.1 Z "
                                     },

@@ -28,7 +28,7 @@ test("Segmenter : ", function() {
     equal(document.getElementById("f2"), null, "unselect : Ok")
     
     //
-    deepEqual(segment.findPotentialField(), ["","m","cdr3","fr1","V-REGION","J-REGION","D-REGION","CDR3-IMGT"], "potentialField : Ok")
+    deepEqual(segment.findPotentialField(), ["","m","cdr3","fr1", "5", "V-REGION","J-REGION","D-REGION","CDR3-IMGT"], "potentialField : Ok")
     
 
     m.select(0)
