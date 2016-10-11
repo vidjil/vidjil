@@ -863,13 +863,6 @@ Segment.prototype = {
         // Guess fields for the highlight menu
         result = [""];
 
-        // What looks likes DNA everywhere
-        for (var i in this.m) {
-            if (this.isDNA(this.m[i])){
-                if (result.indexOf(i) == -1) result.push(i);
-            }
-        }
-
         for (var j=0; (j<10 & j<this.m.clones.length) ; j++){
             var clone = this.m.clone(j);
 
