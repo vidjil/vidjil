@@ -862,12 +862,13 @@ Segment.prototype = {
     findPotentialField : function () {
         // Guess fields for the highlight menu
         result = [""];
+        forbidden_fields = ['m', 'sequence']
 
         for (var j=0; (j<10 & j<this.m.clones.length) ; j++){
             var clone = this.m.clone(j);
 
             for (var i in clone) {
-                if (this.isDNA(clone[i]) || this.isPos(clone[i]) ){
+                if (! forbidden_fields.includes(i) &&(this.isDNA(clone[i]) || this.isPos(clone[i]) )){
                     if (result.indexOf(i) == -1) result.push(i);
                 }
             }
@@ -875,7 +876,7 @@ Segment.prototype = {
             // In the .seg element, What looks like DNA sequence or what is a Pos field
             if (typeof clone.seg != 'undefined'){
                 for (var i in clone.seg) {
-                    if (this.isDNA(clone.seg[i]) || this.isPos(clone.seg[i]) ){
+                    if (! forbidden_fields.includes(i) &&(this.isDNA(clone.seg[i]) || this.isPos(clone.seg[i])) ){
                         if (result.indexOf(i) == -1) result.push(i);
                     }
                 }
