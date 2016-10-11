@@ -936,7 +936,7 @@ Segment.prototype = {
         if (string == null) {
             return false;
         }else if (string.constructor === String) {
-            var reg = new RegExp("^[ACGT]+$")
+            var reg = new RegExp("^[ACGTacgt]+$")
             return reg.test(string);
         }else if (string.constructor === Array & string.length>0) {
             return this.isDNA(string[0]);
