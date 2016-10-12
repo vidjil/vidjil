@@ -1,7 +1,7 @@
 load 'vidjil_browser.rb'
 load 'browser_test.rb'
 
-class TestSimple < BrowserTest
+class TestLoadingAnalysis < BrowserTest
 
   def setup
     super
