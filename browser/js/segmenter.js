@@ -328,7 +328,11 @@ Segment.prototype = {
                     }
                 });
         } catch(err) {
-            this.db.error(err.stack);
+            if (typeof this.db == 'undefined') {
+                throw err
+            } else {
+                this.db.error(err.stack);
+            }
         }
     },
 
