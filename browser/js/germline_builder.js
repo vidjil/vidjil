@@ -178,7 +178,7 @@ Germline.prototype = {
         //and add undetected genes (missing from germline)
         var g = {}
         for (var i=0; i<this.m.clones.length; i++){
-            if (typeof this.m.clone(i).seg != "undefined" &&
+            if (typeof this.m.clone(i).hasSeg() != "undefined" &&
                 typeof this.m.clone(i).seg[type2] != "undefined" &&
                 typeof this.m.clone(i).seg[type2]["name"] != "undefined"
             ){

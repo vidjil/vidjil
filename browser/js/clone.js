@@ -142,7 +142,7 @@ Clone.prototype = {
      * Get the amino-acid sequence of the provided field (in the seg part)
      */
     getSegAASequence: function(field_name) {
-        if (typeof this.seg != 'undefined'
+        if (this.hasSeg()
             && typeof this.seg[field_name] != 'undefined'
             && typeof this.seg[field_name].aa != 'undefined') {
             return this.seg[field_name].aa;
@@ -180,7 +180,7 @@ Clone.prototype = {
      * If it does not exist return null
      */
     getSegStartStop: function(field_name) {
-        if (typeof this.seg != 'undefined'
+        if (this.hasSeg()
             && typeof this.seg[field_name] != 'undefined'
             && typeof this.seg[field_name].start != 'undefined'
             && typeof this.seg[field_name].stop != 'undefined') {
@@ -501,6 +501,10 @@ Clone.prototype = {
 
     }, //end getSize
 
+    hasSeg: function() {
+        return typeof(this.seg) != 'undefined' && ! $.isEmptyObject(this.seg)
+    },
+
     computeEValue: function () {
         var e = this.seg['evalue'];
         if (typeof(e) != 'undefined')
@@ -511,7 +515,7 @@ Clone.prototype = {
 
     getGene: function (type, withAllele) {
         withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
-        if (typeof (this.seg) != 'undefined' && typeof (this.seg[type]) != 'undefined' && typeof this.seg[type]["name"] != 'undefined') {
+        if (this.hasSeg() && typeof (this.seg[type]) != 'undefined' && typeof this.seg[type]["name"] != 'undefined') {
             if (withAllele) {
                 return this.seg[type]["name"];
             }else{
@@ -530,7 +534,7 @@ Clone.prototype = {
     },
     
     getNlength: function () {
-        if (typeof this.seg != 'undefined' && typeof this.seg['3'] != 'undefined' && typeof this.seg['5'] != 'undefined'){
+        if (this.hasSeg() && typeof this.seg['3'] != 'undefined' && typeof this.seg['5'] != 'undefined'){
             return this.seg['3']['start']-this.seg['5']['stop']-1
         }else{
             return 'undefined'
@@ -566,7 +570,7 @@ Clone.prototype = {
     },
     
     getPrintableSegSequence: function () {
-        if (typeof this.seg == 'undefined' || typeof this.seg['5'] == 'undefined' || typeof this.seg['3'] == 'undefined') {
+        if (! this.hasSeg() || typeof this.seg['5'] == 'undefined' || typeof this.seg['3'] == 'undefined') {
             return this.getSequence()
         }
 
@@ -696,7 +700,7 @@ Clone.prototype = {
         }else if (this.m.colorMethod == "system") {
             this.color = this.m.germlineList.getColor(this.germline)
         } else if (this.m.colorMethod == 'productive') {
-            if (typeof this.seg != 'undefined'
+            if (this.hasSeg()
                 && typeof this.seg.junction != 'undefined'
                 && typeof this.seg.junction.productive != 'undefined') {
                 this.color = colorProductivity(this.seg.junction.productive)
