@@ -872,7 +872,7 @@ Segment.prototype = {
             var clone = this.m.clone(j);
 
             for (var i in clone) {
-                if (! forbidden_fields.includes(i) &&(this.isDNA(clone[i]) || this.isPos(clone[i]) )){
+                if (forbidden_fields.indexOf(i) == -1 &&(this.isDNA(clone[i]) || this.isPos(clone[i]) )){
                     if (result.indexOf(i) == -1) result.push(i);
                 }
             }
@@ -880,7 +880,7 @@ Segment.prototype = {
             // In the .seg element, What looks like DNA sequence or what is a Pos field
             if (clone.hasSeg()){
                 for (var i in clone.seg) {
-                    if (! forbidden_fields.includes(i) &&(this.isDNA(clone.seg[i]) || this.isPos(clone.seg[i])) ){
+                    if (forbidden_fields.indexOf(i) == -1 &&(this.isDNA(clone.seg[i]) || this.isPos(clone.seg[i])) ){
                         if (result.indexOf(i) == -1) result.push(i);
                     }
                 }
