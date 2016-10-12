@@ -58,3 +58,18 @@ test("Segmenter : ", function() {
     m.changeTime(3)
     equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 3 reads ", "stats (1 clone with few reads) : Ok")
 });
+
+test("Sequence : ", function() {
+    var m = new Model();
+    m.parseJsonData(json_data,100)
+    m.initClones()
+    var segment = new Segment("segment", m);
+    segment.init()
+
+    segment.addToSegmenter(4)
+    seq1 = new Sequence(4, m)
+    seq1.load()
+    notEqual(seq1.toString(segment).indexOf("catcatcatgatgctacgatcttac"),-1, "unsegmented sequence")
+
+
+});

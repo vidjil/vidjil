@@ -1154,6 +1154,10 @@ Sequence.prototype = {
             
             // Build the sequence, adding VDJ and highlight spans
             var result = document.createElement('span');
+            if (typeof vdjArrayRev == 'undefined') {
+                currentSpan = document.createElement('span');
+                result.appendChild(currentSpan);
+            }
             for (var i = 0; i < this.seq.length; i++) {
 
                 // Highlight spans
@@ -1185,7 +1189,8 @@ Sequence.prototype = {
 
 
                 // VDJ spans - begin
-                if (typeof vdjArrayRev[i] != 'undefined') {
+                if (typeof vdjArrayRev != 'undefined'
+                    && typeof vdjArrayRev[i] != 'undefined') {
                     currentSpan = document.createElement('span');
                     currentSpan.className = vdjArrayRev[i]['type'];
                     currentSpan.style = "color: " + vdjArrayRev[i]['color'];
