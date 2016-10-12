@@ -86,14 +86,14 @@ test("Axis : ", function() {
     axis.custom('GCContent', 0, 1, 'percent')
     
     equal(axis.pos(0).toPrecision(3), 0.0476, "custom (percent) : clone 0 (gc = 1/21) position -> 0.0476")
-    equal(axis.pos(1).toPrecision(3), 0.944, "custom (percent) : clone 1 (gc = 17/18) position -> 0.944")
+    equal(axis.pos(1).toPrecision(3), 0.778, "custom (percent) : clone 1 (gc = 14/18) position -> 0.944")
     deepEqual(axis.labels[0].text,  "0.0%", "custom (percent) : check label 0.0%")
     
     //gc + log
     axis.custom('GCContent', 0.001, 1, 'percent', true)
     
     equal(axis.pos(0).toPrecision(3), 0.559, "custom (percent+log) : clone 0 (gc = 1/21) position -> 0.559")
-    equal(axis.pos(1).toPrecision(3), 0.992, "custom (percent+log) : clone 1 (gc = 17/18) position -> 0.992")
+    equal(axis.pos(1).toPrecision(3), 0.964, "custom (percent+log) : clone 1 (gc = 14/18) position -> 0.992")
     deepEqual(axis.labels[0].text,  "100%", "custom (percent+log) : check label 100%")
     deepEqual(axis.labels[1].text,  "10%", "custom (percent+log) : check label 10%")
     

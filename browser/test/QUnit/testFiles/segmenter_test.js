@@ -71,5 +71,14 @@ test("Sequence : ", function() {
     seq1.load()
     notEqual(seq1.toString(segment).indexOf("catcatcatgatgctacgatcttac"),-1, "unsegmented sequence")
 
-
+    segment.updateElemStyle([4]) /* Will remove sequence 4 from the segmenter
+                                  * as it is not really selected
+                                  */
+    segment.addToSegmenter(1)
+    seq1 = new Sequence(1, m)
+    seq1.load()
+    seq1_string = seq1.toString(segment)
+    notEqual(seq1_string.indexOf(">cccccg<"), -1, "v part of segmented sequence")
+    notEqual(seq1_string.indexOf(">tccccccca<"), -1, "n part of segmented sequence")
+    notEqual(seq1_string.indexOf(">tca<"), -1, "j part of segmented sequence")
 });

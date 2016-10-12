@@ -53,7 +53,7 @@ json_data = {
         }
     },
     {
-        "sequence" : "ccccccccccccccccca",
+        "sequence" : "cccccgtcccccccatca",
         "name" : "test2",
         "id" : "id2",
         "reads" : [20,20,10,10] ,
