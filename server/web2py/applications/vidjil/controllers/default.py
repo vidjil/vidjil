@@ -68,10 +68,11 @@ def init_db_helper(force=False):
         ## création des groupes de base
         id_admin_group=db.auth_group.insert(role='admin')
         id_sa_group=db.auth_group.insert(role='user_1')
-        db.auth_group.insert(role="public")
+        id_public_group=db.auth_group.insert(role="public")
 
         db.auth_membership.insert(user_id=id_first_user, group_id=id_admin_group)
         db.auth_membership.insert(user_id=id_first_user, group_id=id_sa_group)
+        db.auth_membership.insert(user_id=id_first_user, group_id=id_public_group)
 
         ##création des configs de base
         id_config_TRG = db.config.insert(
