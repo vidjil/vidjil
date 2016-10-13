@@ -308,15 +308,16 @@ case "$1" in
 
         sudo -u www-data python -c "from gluon.main import save_password; save_password('$password',443)"
 
-        if [ ! -d /mnt/upload ] ; then
-            mkdir /mnt/upload
-            mkdir /mnt/upload/uploads
-            chown -R www-data:www-data /mnt/upload
+        if [ ! -d /mnt/vidjil_data/upload ] ; then
+            mkdir /mnt/vidjil_data/upload
+            mkdir /mnt/vidjil_data/upload/uploads
+            chown -R www-data:www-data /mnt/vidjil_data/upload
         fi
 
-        if [ ! -d /mnt/result ] ; then
-            mkdir /mnt/result
-            chown -R www-data:www-data /mnt/result
+        if [ ! -d /mnt/vidjil_data/result ] ; then
+            mkdir /mnt/vidjil_data/result
+            mkdir /mnt/vidjil_data/result/results
+            chown -R www-data:www-data /mnt/vidjil_data/result
         fi
 
         if [ ! -e /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py ] ; then
