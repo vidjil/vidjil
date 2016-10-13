@@ -12,7 +12,7 @@ Package: vidjil-server
 Architecture: all
 Depends: vidjil, vidjil-germline, vidjil-browser, ssh, zip, unzip, tar (>=1.2), openssh-server, python,
  ipython, python-enum34, postfix, wget, python-matplotlib, python-reportlab, build-essential,
- uwsgi, uwsgi-plugin-python, python-requests, python-web2py, ${misc:Depends}
+ uwsgi, uwsgi-plugin-python, python-requests, python-web2py, curl, ${misc:Depends}
 Recommends: apache2, nginx-full, init, systemd
 Description: Vidjil visualisation server
  A web2py-based webserver that utilises nginx to provide visualisation
