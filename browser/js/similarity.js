@@ -1,8 +1,9 @@
 
 function Similarity (model) {
     //default var for tsne
-    this.e = 10;
-    this.p = 80;
+    this.e = 10;                // epsilon value (learning rate)
+    this.p = 80;                // perplexity (balance between local and
+                                // global aspects of the data)
     this.po = 1.5;
 
     this.m = model;
