@@ -25,6 +25,9 @@ def add():
     if not auth.can_upload_sample_set(sample_set.id):
         return error_message("you don't have right to upload files")
     else:
+        enough_space = check_enough_space(def.DIR_SEQUENCES)
+        if not enough_space:
+            return error_message("Uploads are temporarily disabled. System admins have been made aware of the situation.")
         
         patient_id = None
         run_id = None
