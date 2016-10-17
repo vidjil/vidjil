@@ -129,6 +129,19 @@ def safe_encoding(string):
     except UnicodeDecodeError:
         return string
 
+def prevent_none(value, replacement_value):
+    '''
+    Return value if it is not None otherwise
+    replacement_value
+
+    >>> prevent_none(None, 2)
+    2
+    >>> prevent_none('toto', 2)
+    'toto'
+    '''
+    if value is not None:
+        return value
+    return replacement_value
 
 # take a list of strings to check and a filter_str (list of word to find (or not)) 
 # return true if the string respect the filter list 
