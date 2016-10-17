@@ -2,6 +2,7 @@
 import gluon.contrib.simplejson, datetime
 import vidjil_utils
 import time
+import datetime
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -231,7 +232,7 @@ def index():
     elif request.vars["sort"] == "files" :
         result = sorted(result, key = lambda row : row['file_count'], reverse=reverse)
     elif "sort" in request.vars:
-        result = sorted(result, key = lambda row : row[request.vars["sort"]], reverse=reverse)
+        result = sorted(result, key = lambda row : vidjil_utils.prevent_none(row[request.vars["sort"]], datetime.date.min), reverse=reverse)
     else:
         result = sorted(result, key = lambda row : row['id'], reverse=not reverse)
 
