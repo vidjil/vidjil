@@ -410,3 +410,17 @@ def log_links(s):
         s = '%s<a class="loglink pointer" %s>%s</a>%s' % (s[:start], link, s[start:end], s[end:])
 
     return s
+
+def check_enough_space(directory):
+    import subprocess
+    df = subprocess.Popen(["df", directory], stdout=subprocess.PIPE)
+    output = df.communicate()[0]
+    device, size, used, available, percent, mountpoint = output.split("\n")[1].split()
+    available = int(available)
+    size = int(size)
+    result = available < (size * (defs.FS_LOCK_THRESHHOLD/100))
+    if not result:
+        mail.send(to=defs.ADMIN_EMAILS,
+            subject="[Vidjil] Server space",
+            message="The space in directory %s has passed below %d\%." % directory, defs.FS_LOCK_THRESHHOLD)
+    return result
