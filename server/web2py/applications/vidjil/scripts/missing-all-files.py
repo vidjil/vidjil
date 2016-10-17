@@ -8,7 +8,8 @@ def rbx_link(patient_id, config_id):
 def print_patient_info(patient_id):
     patient = db.patient[patient_id]
     print "%3s" % patient_id,
-    print "%-25s" % (patient.first_name + ' ' + patient.last_name),
+    if patient is not None:
+        print "%-25s" % (patient.first_name + ' ' + patient.last_name),
 
 def print_config_info(config_id):
     config = db.config[config_id]
