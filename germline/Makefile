@@ -2,8 +2,7 @@ DATA=IGHV.fa IGHD.fa IGHJ.fa IGKV.fa IGKJ.fa IGLV.fa IGLJ.fa TRAV.fa TRAJ.fa TRD
 OTHER_DATA=$(wildcard IGHC=*.fa) $(wildcard mus-musculus/*.fa) $(wildcard rattus-norvegicus/*.fa) # Only for make clean
 GERMLINE_JS=../browser/js/germline.js
 
-germline:
-	sh get-saved-germline
+germline: $(GERMLINE_JS) $(DATA)
 
 js: $(GERMLINE_JS)
 
