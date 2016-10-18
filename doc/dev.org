@@ -56,10 +56,11 @@ Help can also be found in the source code and in the commit messages.
 
 ** Installation
 
-Opening the =browser/index.html= file is enough to get a functionning browser,
-able to open =.vidjil= files with the =import/export= menu.
+Run a =make= into =browser/= to get the necessary files.
+This will in particular get the germline files as well as the icon files.
 
-(XXX TODO: explain germlines XXX)
+Opening the =browser/index.html= file is then enough to get a functionning browser,
+able to open =.vidjil= files with the =import/export= menu.
 
 To work with actual data, the easiest way is to copy =js/conf.js.sample= to =js/conf.js=.
 This will unlock the =patients= menu and allow your local browser
