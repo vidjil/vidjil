@@ -1,25 +1,44 @@
 import json
 import sys
 
-    
-if len(sys.argv) < 3:
-    print("Usage: %s <FASTA input files> [JSON/DATA germline file] [JSON output file]" % sys.argv[0])
-    sys.exit()
-input_name = sys.argv[1]
-output_name = ""
+def get_required_files(germlines_data):
+    '''
+    Parse the germlines data and get all the files that are required by that
+    file.
 
-if len(sys.argv) >= 4:
-    output_name = sys.argv[-1]
-    data_file = sys.argv[-2]
+    The function returns a list of the files (uniqueness is guaranteed)
+    '''
+    germlines_json = json.load(open(germlines_data, 'r'))
+
+    files = []
+    for germline in germlines_json.keys():
+        for recombination in germlines_json[germline]['recombinations']:
+            for gene in ['5', '4', '3']:
+                if gene in recombination:
+                    for file in recombination[gene]:
+                        if file not in files:
+                            files.append(file)
+    return files
+    
+if len(sys.argv) < 2:
+    print("Usage: %s JSON/DATA germline file [JSON output file]" % sys.argv[0])
+    sys.exit()
+
+data_file = sys.argv[1]
+
+if len(sys.argv) > 2:
+    output_name = sys.argv[2]
 
 
 table = {}
 identifiant = ""
 sequence = ""
-  
-for i in range(1, len(sys.argv)-2) :
-    fasta = open(sys.argv[i], "r")
-    system = sys.argv[i].split('/')[-1].split('.')[0]
+
+germline_files = get_required_files(data_file)
+
+for current_file in germline_files:
+    fasta = open(current_file, "r")
+    system = current_file.split('/')[-1].split('.')[0]
 
     table[system] = {}
     

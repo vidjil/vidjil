@@ -9,7 +9,7 @@ germline: $(GERMLINE_JS) $(DATA)
 js: $(GERMLINE_JS)
 
 $(GERMLINE_JS): $(DATA) germlines.data
-	python buildBrowserGermline.py $^ $@
+	python buildBrowserGermline.py germlines.data $@
 
 get-all-data: clean $(DATA)
 	sh get-germline
