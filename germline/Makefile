@@ -2,6 +2,8 @@ DATA=IGHV.fa IGHD.fa IGHJ.fa IGKV.fa IGKJ.fa IGLV.fa IGLJ.fa TRAV.fa TRAJ.fa TRD
 OTHER_DATA=$(wildcard IGHC=*.fa) $(wildcard mus-musculus/*.fa) $(wildcard rattus-norvegicus/*.fa) # Only for make clean
 GERMLINE_JS=../browser/js/germline.js
 
+all: germline
+
 germline: $(GERMLINE_JS) $(DATA)
 
 js: $(GERMLINE_JS)
@@ -24,3 +26,5 @@ diff-from-saved:
 	cd saved-germline ; sh ../get-saved-germline
 	echo
 	diff -r -u -x "*[.][^f][^a]" -x "germline*" -x "get*" -x "Makefile" -x "saved-*" saved-germline/ .
+
+.PHONY: all germline js get-all-data clean diff-from-saved
