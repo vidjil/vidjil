@@ -35,7 +35,14 @@ sequence = ""
 germline_files = get_required_files(data_file)
 
 for current_file in germline_files:
-    fasta = open(current_file, "r")
+    try:
+        fasta = open(current_file, "r")
+    except IOError as e:
+        raise type(e),\
+            type(e)(str(e) + '\nDid you forget to run ``make\'\' in the germline directory?\n'\
+                    +'Otherwise, please tell us about the problem at contact@vidjil.org'),\
+            sys.exc_info()[2]
+    
     system = current_file.split('/')[-1].split('.')[0]
 
     table[system] = {}
