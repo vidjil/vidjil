@@ -10,10 +10,10 @@ $(GERMLINE_JS): $(DATA) germlines.data
 	python buildBrowserGermline.py $^ $@
 
 get-all-data: clean $(DATA)
-
-$(DATA):
 	sh get-germline
-	$(MAKE) js
+
+$(DATA): germline_id
+	sh get-saved-germline
 
 clean:
 	rm -f $(DATA) $(GERMLINE_JS) $(OTHER_DATA)
