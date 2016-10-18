@@ -48,7 +48,7 @@ can manage, upload, analyze and annotate their runs directly on the web applicai
 
 ** The web application
 
-- Access at https://app.vidjil.org/ (demo login: demo@vidjil, password: vidjil)
+- Access at https://app.vidjil.org/ (demo login: demo@vidjil.org, password: vidjil)
 - Please contact us if you would like to test your data and have a full account on the web server
 - Development code is under [[browser/]] and [[server/]] (a =make= in those directories
   will get the necessary files)
