@@ -536,8 +536,11 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
         p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
         p.wait()
     
-    res = {"message": "[%s] c%s: 'fuse' finished - %s" % (id_data, id_config, output_file)}
+    res = {"message": "[%s] c%s: 'fuse' finished - %s" % (id_data, id_config, db.fused_file[id_fuse].fused_file)}
     log.info(res)
+
+    # Remove temporary fused file
+    os.remove(output_file)
 
     return "SUCCESS"
 
