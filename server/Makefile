@@ -1,4 +1,6 @@
 
+install: install_web2py install_unit_tests
+
 install_web2py:
 	wget http://web2py.com/examples/static/web2py_src.zip
 	unzip web2py_src.zip
@@ -32,3 +34,5 @@ clean_unit_tests:
 	rm -f web2py/test-reports/*.xml
 
 cleanall: clean_unit_tests
+
+.PHONY: install install_web2py install_unit_tests unit install_web2py_standalone launch_web2py_localhost launch_fuse_server kill_fuse_server clean_unit_tests cleanall
