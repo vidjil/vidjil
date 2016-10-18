@@ -1,4 +1,5 @@
-DATA=$(wildcard ???[VDJ].fa ???[VDJ]_upstream.fa ???[VDJ]_downstream.fa {IG,TR}*=*.fa) IGK-INTRON.fa IGK-KDE.fa TRDD2_upstream.fa TRDD3_downstream.fa
+DATA=IGHV.fa IGHD.fa IGHJ.fa IGKV.fa IGKJ.fa IGLV.fa IGLJ.fa TRAV.fa TRAJ.fa TRDV.fa TRDD.fa TRDJ.fa TRGV.fa TRGJ.fa IGHD_upstream.fa  TRBD_upstream.fa  TRDD2_upstream.fa  TRDD_upstream.fa IGHJ_downstream.fa  IGKJ_downstream.fa  IGLJ_downstream.fa  TRAJ_downstream.fa  TRBJ_downstream.fa  TRDD3_downstream.fa  TRDJ_downstream.fa  TRGJ_downstream.fa IGK-INTRON.fa IGK-KDE.fa
+OTHER_DATA=$(wildcard IGHC=*.fa) $(wildcard mus-musculus/*.fa) $(wildcard rattus-norvegicus/*.fa) # Only for make clean
 GERMLINE_JS=../browser/js/germline.js
 
 germline:
@@ -16,7 +17,7 @@ $(DATA):
 	$(MAKE) js
 
 clean:
-	rm -f $(DATA) $(GERMLINE_JS)
+	rm -f $(DATA) $(GERMLINE_JS) $(OTHER_DATA)
 
 diff-from-saved:
 	rm -rf saved-germline
