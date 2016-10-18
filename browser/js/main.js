@@ -63,12 +63,6 @@ try {
      */
     var sim = new Similarity(m);
 
-    /* [outdated] PDF
-     * This is an outdated module, replaced by report. It will be removed in a future release
-     */
-    var pdf = new PDF(m, "visu2_svg")
-
-
     /* [WIP] report module (optional)
      * This module provides html report functions for a given model
      * [WARNING] Views access are currently hard-coded, this will be soon corrected.

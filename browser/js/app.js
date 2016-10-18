@@ -45,7 +45,6 @@ function loadAfterConf() {
                  "../com",
                  "../vidjil-style",
                  "../crossDomain",
-                 "../pdf",
                  "../database",
                  "../shortcut",
                  "../export",
