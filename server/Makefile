@@ -1,8 +1,4 @@
 
-data:
-	sh nginx_install.sh
-
-
 install_web2py:
 	wget http://web2py.com/examples/static/web2py_src.zip
 	unzip web2py_src.zip
