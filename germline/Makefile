@@ -1,11 +1,12 @@
 DATA=$(wildcard ???[VDJ].fa ???[VDJ]_upstream.fa ???[VDJ]_downstream.fa {IG,TR}*=*.fa) IGK-INTRON.fa IGK-KDE.fa TRDD2_upstream.fa TRDD3_downstream.fa
+GERMLINE_JS=../browser/js/germline.js
 
 germline:
 	sh get-saved-germline
 
-js: ../browser/js/germline.js
+js: $(GERMLINE_JS)
 
-../browser/js/germline.js: $(DATA) germlines.data
+$(GERMLINE_JS): $(DATA) germlines.data
 	python buildBrowserGermline.py $^ $@
 
 get-all-data: clean $(DATA)
@@ -15,7 +16,7 @@ $(DATA):
 	$(MAKE) js
 
 clean:
-	rm -f $(DATA) ../browser/js/germline.js
+	rm -f $(DATA) $(GERMLINE_JS)
 
 diff-from-saved:
 	rm -rf saved-germline
