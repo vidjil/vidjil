@@ -20,14 +20,12 @@ def get_required_files(germlines_data):
                             files.append(file)
     return files
     
-if len(sys.argv) < 2:
-    print("Usage: %s JSON/DATA germline file [JSON output file]" % sys.argv[0])
+if len(sys.argv) != 3:
+    print("Usage: %s <JSON/DATA germline file> <JSON output file>" % sys.argv[0])
     sys.exit()
 
 data_file = sys.argv[1]
-
-if len(sys.argv) > 2:
-    output_name = sys.argv[2]
+output_name = sys.argv[2]
 
 
 table = {}
@@ -67,12 +65,11 @@ for current_file in germline_files:
 
 
 
-if output_name:
-    with open(output_name, "w") as file :
-        file.write("germline = ")
-        json.dump(table, file, indent=2, sort_keys=True)
-        
-        data = open(data_file, "r")
-        file.write( "\n\n" )
-        file.write("germline_data = ")
-        file.write( data.read() )
+with open(output_name, "w") as file :
+    file.write("germline = ")
+    json.dump(table, file, indent=2, sort_keys=True)
+
+    data = open(data_file, "r")
+    file.write( "\n\n" )
+    file.write("germline_data = ")
+    file.write( data.read() )
