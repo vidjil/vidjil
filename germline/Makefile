@@ -1,5 +1,5 @@
 DATA=IGHV.fa IGHD.fa IGHJ.fa IGKV.fa IGKJ.fa IGLV.fa IGLJ.fa TRAV.fa TRAJ.fa TRDV.fa TRDD.fa TRDJ.fa TRGV.fa TRGJ.fa IGHD_upstream.fa  TRBD_upstream.fa  TRDD2_upstream.fa  TRDD_upstream.fa IGHJ_downstream.fa  IGKJ_downstream.fa  IGLJ_downstream.fa  TRAJ_downstream.fa  TRBJ_downstream.fa  TRDD3_downstream.fa  TRDJ_downstream.fa  TRGJ_downstream.fa IGK-INTRON.fa IGK-KDE.fa
-OTHER_DATA=$(wildcard IGHC=*.fa) $(wildcard mus-musculus/*.fa) $(wildcard rattus-norvegicus/*.fa) # Only for make clean
+OTHER_DATA=$(wildcard IGHC=*.fa) $(wildcard mus-musculus/*.fa) $(wildcard rattus-norvegicus/*.fa) $(wildcard ???[VDJ].fa) # Only for make clean
 GERMLINE_JS=../browser/js/germline.js
 
 all: germline
