@@ -139,7 +139,7 @@ cppcheck:
 
 ###
 
-data germline: %:
+data germline browser server: %:
 	$(MAKE) -C $@
 
 clean:
