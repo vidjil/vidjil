@@ -106,7 +106,7 @@ class Window:
                                  myList)
                     
         #keep other data who don't need to be concat
-        if other.d["top"] < self.d["top"] :
+        if other.d["reads"][0] > self.d["reads"][0] :
             for key in other.d :
                 if key in myList :
                     obj.d[key] = other.d[key]
