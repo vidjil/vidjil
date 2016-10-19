@@ -131,7 +131,7 @@ def init_from_csv():
 # need patient admin permission
 def run_request():
     error = ""
-    enough_space = check_enough_space(def.DIR_RESULTS)
+    enough_space = check_enough_space(defs.DIR_RESULTS)
     if not enough_space:
         return error_message("Uploads are temporarily disabled. System admins have been made aware of the situation.")
 
