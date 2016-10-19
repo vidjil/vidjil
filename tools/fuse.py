@@ -664,6 +664,8 @@ def main():
     group_options.add_argument('--output', '-o', type=str, default='fused.vidjil', help='output file (%(default)s)')
     group_options.add_argument('--top', '-t', type=int, default=50, help='keep only clones in the top TOP of some point (%(default)s)')
 
+    group_options.add_argument('--first', '-f', type=int, default=16, help='take only into account the first FIRST files (0 for all) (%(default)s)')
+
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
   
     args = parser.parse_args()
@@ -679,16 +681,22 @@ def main():
     print("### fuse.py -- " + DESCRIPTION)
     print()
 
+    files = args.file
+    if args.first:
+        if len(files) > args.first:
+            print("! %d files were given. We take into account the first %d files." % (len(files), args.first))
+        files = files[:args.first]
+
     #filtre
     f = []
-    for path_name in args.file:
+    for path_name in files:
         jlist = ListWindows()
         jlist.load(path_name, args.pipeline)
         f += jlist.getTop(args.top)
     f = sorted(set(f))
     
     if args.multi:
-        for path_name in args.file:
+        for path_name in files:
             jlist = ListWindows()
             jlist.load(path_name, args.pipeline)
             jlist.build_stat()
@@ -705,7 +713,7 @@ def main():
         
     else:
         print("### Read and merge input files")
-        for path_name in args.file:
+        for path_name in files:
             jlist = ListWindows()
             jlist.load(path_name, args.pipeline)
             jlist.build_stat()
