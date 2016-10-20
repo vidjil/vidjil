@@ -415,6 +415,7 @@ def check_enough_space(directory):
     import subprocess
     df = subprocess.Popen(["df", directory], stdout=subprocess.PIPE)
     output = df.communicate()[0]
+    print output
     device, size, used, available, percent, mountpoint = output.split("\n")[1].split()
     available = int(available)
     size = int(size)
