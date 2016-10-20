@@ -21,7 +21,7 @@ def get_default_creation_group(auth):
             else:
                 tgt_group = group
             group_dict[tgt_group.id] = {'id': tgt_group.id,
-                    'name': 'Personnal Group' if tgt_group.id == auth.user_group() else tgt_group.role}
+                    'name': 'Personal Group' if tgt_group.id == auth.user_group() else tgt_group.role}
             elements = db(
                 (db.auth_permission.group_id == tgt_group.id) &
                 (db.auth_permission.table_name.belongs('patient', 'run', 'sample_set')) &
