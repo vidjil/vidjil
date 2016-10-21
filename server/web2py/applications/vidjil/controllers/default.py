@@ -135,7 +135,7 @@ def run_request():
     if not enough_space:
         mail.send(to=defs.ADMIN_EMAILS,
             subject="[Vidjil] Server space",
-            message="The space in directory %s has passed below %d\%." % (defs.DIR_RESULTS, defs.FS_LOCK_THRESHHOLD))
+            message="The space in directory %s has passed below %d%%." % (defs.DIR_RESULTS, defs.FS_LOCK_THRESHHOLD))
         return error_message("Runs are temporarily disabled. System admins have been made aware of the situation.")
 
     ##TODO check
