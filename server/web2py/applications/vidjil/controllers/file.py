@@ -29,7 +29,7 @@ def add():
         if not enough_space:
             mail.send(to=defs.ADMIN_EMAILS,
                 subject="[Vidjil] Server space",
-                message="The space in directory %s has passed below %d\%." % (defs.DIR_SEQUENCES, defs.FS_LOCK_THRESHHOLD))
+                message="The space in directory %s has passed below %d%%." % (defs.DIR_SEQUENCES, defs.FS_LOCK_THRESHHOLD))
             return error_message("Uploads are temporarily disabled. System admins have been made aware of the situation.")
         
         patient_id = None
