@@ -420,8 +420,4 @@ def check_enough_space(directory):
     available = int(available)
     size = int(size)
     result = available >= (size * (defs.FS_LOCK_THRESHHOLD/100))
-    #if not result:
-    #    mail.send(to=defs.ADMIN_EMAILS,
-    #        subject="[Vidjil] Server space",
-    #        message="The space in directory %s has passed below %d\%." % (directory, defs.FS_LOCK_THRESHHOLD))
     return result
