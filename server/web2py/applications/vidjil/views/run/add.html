@@ -18,15 +18,13 @@
                 <td><input class="date" id="run_date" name="run_date" type="text" value=""><span>(format: yyyy-mm-dd)</span></td>
                 <td></td>
             </tr>
-            {{ if len(groups) > 1: }}
-            <tr>
+            <tr {{ if len(groups) <= 1: }} class="hiddenCheckBox" {{pass}}>
                 <td><label for="run_group" id="run_group__label">Owner Group: </label></td>
                 <td>
                     {{= SELECT(*[OPTION(g['name'], _value=g['id']) for g in groups], _name="run_group", _value=master_group, value=master_group) }}
                 </td>
                 <td></td>
             </tr>
-            {{ pass }}
             <tr>
                 <td><label for="run_info" id="run_info__label">Info: </label></td>
                 <td><textarea class="text" cols="60" id="run_info" name="info" rows="10"></textarea></td>

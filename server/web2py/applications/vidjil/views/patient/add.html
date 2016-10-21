@@ -8,15 +8,13 @@
                 <td><input class="date" id="patient_id_label" name="id_label" type="text" value=""><span></span></td>
                 <td></td>
             </tr>
-            {{ if len(groups) > 1: }}
-            <tr>
+            <tr {{ if len(groups) <= 1: }} class="hiddenCheckBox" {{pass}}>
                 <td><label for="patient_group" id="patient_group__label">Owner Group: </label></td>
                 <td>
                     {{= SELECT(*[OPTION(g['name'], _value=g['id']) for g in groups], _name="patient_group", _value=master_group, value=master_group) }}
                 </td>
                 <td></td>
             </tr>
-            {{ pass }}
             <tr>
                 <td ><label for="patient_first_name" id="patient_first_name__label">First Name: </label></td>
                 <td ><input class="string" id="patient_first_name" name="first_name" type="text" value=""><span>*</span></td>
