@@ -714,7 +714,7 @@ Segment.prototype = {
      * */
     align: function () {
         var self = this
-        var list = this.m.getSelected()
+        var list = this.m.orderedSelectedClones;
         var request = "";
         this.memTab = list;
 
