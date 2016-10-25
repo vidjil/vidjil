@@ -45,6 +45,12 @@ def get_patient_id(file_id):
         
     return patient_id
 
+def get_sequences_from_uploaders(user_ids):
+    '''
+    user_ids is a list of user who have uploaded the sequence files we are interested in
+    '''
+    return db(db.sequence_file.provider.belongs(user_ids)).select(db.sequence_file.ALL)
+
 def get_run_id(file_id):
     ''' 
     return run id of the selected file
