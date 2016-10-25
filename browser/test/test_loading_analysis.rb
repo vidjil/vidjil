@@ -124,7 +124,6 @@ end
 
     clustered = $b.clone_info('1')
     assert (clustered[:name].text == 'clone2')
-    clustered[:cluster].click # Close the cluster
     assert ($b.clone_in_scatterplot('1').visible?)
     assert (not $b.clone_in_scatterplot('2').visible?)
   end
