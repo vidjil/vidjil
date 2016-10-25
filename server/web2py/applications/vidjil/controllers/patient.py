@@ -166,26 +166,26 @@ def index():
             "size" : 0
         }
         
-    keys = result.keys() 
+    patient_ids = result.keys()
     
     query1 = db(
-        db.patient.creator == db.auth_user.id
+        (db.patient.creator == db.auth_user.id)
+        & (db.patient.id.belongs(patient_ids))
     ).select(
         db.patient.id, db.auth_user.last_name
     )
     for i, row in enumerate(query1) :
-        if row.patient.id in keys :
             result[row.patient.id]['creator'] = row.auth_user.last_name
        
     query2 = db(
         (db.patient.sample_set_id == db.sample_set.id)
         &(db.sample_set_membership.sample_set_id == db.sample_set.id)
         &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+        & (db.patient.id.belongs(patient_ids))
     ).select(
         db.patient.id, db.sequence_file.size_file
     )
     for i, row in enumerate(query2) :
-        if row.patient.id in keys :
             result[row.patient.id]['file_count'] += 1
             result[row.patient.id]['size'] += row.sequence_file.size_file
     
@@ -193,11 +193,11 @@ def index():
         (db.patient.sample_set_id == db.fused_file.sample_set_id) &
         (db.fused_file.config_id == db.config.id) &
         (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) )
+        & (db.patient.id.belongs(patient_ids))
     ).select(
         db.patient.id, db.config.name, db.config.id, db.fused_file.fused_file
     )
     for i, row in enumerate(query3) :
-        if row.patient.id in keys :
             result[row.patient.id]['conf_list'].append({'id': row.config.id, 'name': row.config.name, 'fused_file': row.fused_file.fused_file})
             #result[row.patient.id]['conf_list'].append(row.config.name)
             result[row.patient.id]['conf_id_list'].append(row.config.id)
@@ -207,11 +207,11 @@ def index():
         (db.auth_permission.table_name == 'patient') &
         (db.auth_permission.name == PermissionEnum.access.value) &
         (db.auth_group.id == db.auth_permission.group_id)
+        & (db.patient.id.belongs(patient_ids))
     ).select(
         db.patient.id, db.auth_group.role
     )
     for i, row in enumerate(query4) :
-        if row.patient.id in keys :
             result[row.patient.id]['group_list'].append(row.auth_group.role.replace('user_','u'))
 
     for key, row in result.iteritems():
