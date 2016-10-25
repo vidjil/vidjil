@@ -185,11 +185,11 @@ class VidjilAuth(Auth):
         if key not in self.permissions:
             self.permissions[key] = {}
 
-        query = db(self.vidjil_accessible_query(PermissionEnum.read.value, object_of_action)).select(self.db[object_of_action].ALL)
+        query = db(self.vidjil_accessible_query(PermissionEnum.read.value, object_of_action)).select(self.db[object_of_action].id)
         for row in query:
             self.permissions[key][row.id] = False
 
-        query = db(self.vidjil_accessible_query(action, object_of_action)).select(self.db[object_of_action].ALL)
+        query = db(self.vidjil_accessible_query(action, object_of_action)).select(self.db[object_of_action].id)
         for row in query:
             self.permissions[key][row.id] = True
 
