@@ -175,7 +175,7 @@ def index():
         db.patient.id, db.auth_user.last_name
     )
     for i, row in enumerate(query1) :
-            result[row.patient.id]['creator'] = row.auth_user.last_name
+        result[row.patient.id]['creator'] = row.auth_user.last_name
        
     query2 = db(
         (db.patient.sample_set_id == db.sample_set.id)
@@ -186,8 +186,8 @@ def index():
         db.patient.id, db.sequence_file.size_file
     )
     for i, row in enumerate(query2) :
-            result[row.patient.id]['file_count'] += 1
-            result[row.patient.id]['size'] += row.sequence_file.size_file
+        result[row.patient.id]['file_count'] += 1
+        result[row.patient.id]['size'] += row.sequence_file.size_file
     
     query3 = db(
         (db.patient.sample_set_id == db.fused_file.sample_set_id) &
@@ -198,9 +198,9 @@ def index():
         db.patient.id, db.config.name, db.config.id, db.fused_file.fused_file
     )
     for i, row in enumerate(query3) :
-            result[row.patient.id]['conf_list'].append({'id': row.config.id, 'name': row.config.name, 'fused_file': row.fused_file.fused_file})
-            #result[row.patient.id]['conf_list'].append(row.config.name)
-            result[row.patient.id]['conf_id_list'].append(row.config.id)
+        result[row.patient.id]['conf_list'].append({'id': row.config.id, 'name': row.config.name, 'fused_file': row.fused_file.fused_file})
+        #result[row.patient.id]['conf_list'].append(row.config.name)
+        result[row.patient.id]['conf_id_list'].append(row.config.id)
     
     query4 = db(
         ((db.patient.id == db.auth_permission.record_id) | (db.auth_permission.record_id == 0)) &
@@ -212,7 +212,7 @@ def index():
         db.patient.id, db.auth_group.role
     )
     for i, row in enumerate(query4) :
-            result[row.patient.id]['group_list'].append(row.auth_group.role.replace('user_','u'))
+        result[row.patient.id]['group_list'].append(row.auth_group.role.replace('user_','u'))
 
     for key, row in result.iteritems():
         row['most_used_conf'] = max(set(row['conf_id_list']), key=row['conf_id_list'].count)
