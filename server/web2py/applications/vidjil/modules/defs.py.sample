@@ -61,3 +61,5 @@ LOCUS = ['TRA', 'TRA+D', 'TRB', 'TRG', 'TRD', 'TRD+',
 
 # Preventu upload and run when 1% space is left in target disk
 FS_LOCK_THRESHHOLD = 1
+
+SCHEDULER_HEARTBEAT = 5

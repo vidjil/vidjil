@@ -755,4 +755,5 @@ scheduler = Scheduler(db, dict(vidjil=run_vidjil,
                                compute_contamination=compute_contamination,
                                mixcr=run_mixcr,
                                none=run_copy,
-                               pre_process=run_pre_process))
+                               pre_process=run_pre_process),
+                        heartbeat=defs.HEARTBEAT)
