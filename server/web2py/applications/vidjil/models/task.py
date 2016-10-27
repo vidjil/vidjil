@@ -756,4 +756,4 @@ scheduler = Scheduler(db, dict(vidjil=run_vidjil,
                                mixcr=run_mixcr,
                                none=run_copy,
                                pre_process=run_pre_process),
-                        heartbeat=defs.HEARTBEAT)
+                        heartbeat=defs.SCHEDULER_HEARTBEAT)
