@@ -520,8 +520,11 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
     fused_files = db( ( db.fused_file.config_id == id_config ) &
                      ( db.fused_file.sample_set_id == sample_set_id )
                  ).select()
+    existing_fused_file = None
     if len(fused_files) > 0:
-        id_fuse = fused_files[0].id
+        fused_file = fused_files[0]
+        id_fuse = fused_file.id
+        existing_fused_file = fused_file.fused_file
     else:
         id_fuse = db.fused_file.insert(sample_set_id = sample_set_id,
                                        config_id = id_config)
@@ -535,6 +538,11 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
         clean_cmd = "rm -rf " + out_folder 
         p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
         p.wait()
+        # remove previous fused_file if it exists
+        if existing_fused_file is not None:
+            clean_cmd = "rm -rf %s/%s" % (out_folder, existing_fused_file)
+            p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+            p.wait()
     
     res = {"message": "[%s] c%s: 'fuse' finished - %s" % (id_data, id_config, db.fused_file[id_fuse].fused_file)}
     log.info(res)
