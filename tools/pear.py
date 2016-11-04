@@ -34,7 +34,7 @@ exit_code = subprocess.call(["pear",
 )
 
 if exit_code > 0:
-    raise EnvironmentError "Pear failed"
+    raise EnvironmentError("Pear failed")
 
 try :
     with gzip.open(f_out, 'w') as outFile:
