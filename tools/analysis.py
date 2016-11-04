@@ -62,7 +62,7 @@ class Analysis(VidjilJson):
         if i:
             try:
                 return i['tag']
-            except:
+            except KeyError:
                 return None
         return None
 

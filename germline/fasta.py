@@ -20,7 +20,7 @@ def revcomp(seq):
     for nucl in seq[::-1]:
         try:
             rc += COMPLEMENT_NUCLEOTIDE[nucl.upper()]
-        except:
+        except KeyError:
             sys.stderr.write("! Unknown nucleotide : '%s' " % nucl + seq)
             rc += 'N'
     return rc

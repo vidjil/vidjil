@@ -98,7 +98,7 @@ def compare(data1, data2, args):
             try:
                 w = o[clone]
                 other_clones += [w]
-            except:
+            except KeyError:
                 continue
             if not w:
                 continue
