@@ -230,7 +230,7 @@ def cleanup_json_sample(json_string):
                 corresponding_delimiter = start_delimiters[end_delimiters.index(char)]
             except ValueError:
                 corresponding_delimiter = None
-            if len(delimiter_stack) == 0 or delimiter_stack[-1][0] <> corresponding_delimiter:
+            if len(delimiter_stack) == 0 or delimiter_stack[-1][0] != corresponding_delimiter:
                 delimiter_stack.append(char)
             else:
                 delimiter_stack.pop()
@@ -238,7 +238,7 @@ def cleanup_json_sample(json_string):
         elif char == ',':
             pos_isolated_comma = i
 
-    if pos_isolated_comma <> None:
+    if pos_isolated_comma != None:
         json_string = json_string[:pos_isolated_comma]
     json_string = json_string.strip()
 
@@ -255,7 +255,7 @@ def cleanup_json_sample(json_string):
         if last_colon == len(json_string)-1\
            or property_start > last_colon:
             json_string = json_string[:property_start+1]
-            if len(end_delimiter_stack) > 1 and end_delimiter_stack[0] <> '}':
+            if len(end_delimiter_stack) > 1 and end_delimiter_stack[0] != '}':
                 end_delimiter_stack.pop(0)
 
 
