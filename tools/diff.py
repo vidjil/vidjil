@@ -128,8 +128,8 @@ def compare(data1, data2, args):
 
     ids_1_cut = ids_1[:args.nb] if args.nb else ids_1
 
-    for id in ids_1_cut:
-        print_clone_in_self_and_others(id)
+    for cid in ids_1_cut:
+        print_clone_in_self_and_others(cid)
 
     ### Display clones of other ListWindows not present in this ListWindows
     if args.verbose:
@@ -137,10 +137,10 @@ def compare(data1, data2, args):
         print("==== Other clones in the top %d of other files" % args.nb_others)
 
     for o in [ids_2]:
-        for id in o[:args.nb_others]:
-            if id in ids_1[:args.nb]:
+        for cid in o[:args.nb_others]:
+            if cid in ids_1[:args.nb]:
                 continue
-            print_clone_in_self_and_others(id)
+            print_clone_in_self_and_others(cid)
 
 
 

@@ -13,9 +13,9 @@ parser.add_argument('file', nargs='?', type=argparse.FileType('r'), default=sys.
 args = parser.parse_args()
 
 def export_tangle(filename, content):
-    file = open(filename, "w")
-    file.write(content)
-    file.close()
+    f = open(filename, "w")
+    f.write(content)
+    f.close()
                 
 def extract_tangle(content, names=None):
     r'''
@@ -41,10 +41,10 @@ def extract_tangle(content, names=None):
             tangles.append(current_tangle)
     return tangles
 
-def extract_tangle_and_output(content, dir, names=None):
+def extract_tangle_and_output(content, dirname, names=None):
     tangles = extract_tangle(content, names)
     for result in tangles:
-        export_tangle(dir + os.sep + result['filename'],
+        export_tangle(dirname + os.sep + result['filename'],
                       result['content'])
 
 if args.test:

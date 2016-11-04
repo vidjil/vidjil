@@ -206,9 +206,9 @@ def get_gene_name(allele):
     return allele.name[:allele.name.find('*')]
 
 
-def write_seq_to_file(seq, code, file):
+def write_seq_to_file(seq, code, f):
     seq.header = seq.header.replace(' ', '_')+"__"+code
-    file.write(str(seq))
+    f.write(str(seq))
 
 def generate_to_file(repertoire, recombination, code, f, nb_recomb):
     print("  ==>", f)
@@ -223,9 +223,9 @@ def generate_to_file(repertoire, recombination, code, f, nb_recomb):
 
 def list_random_tuple(s):
     try:
-        list = s.split(':')
+        list_r = s.split(':')
         result_list = []
-        for item in list:
+        for item in list_r:
             one, two = map(float, item.split(','))
             result_list.append((lambda: random_pos_int(one, two)))
         return result_list

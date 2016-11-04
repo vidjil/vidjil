@@ -94,7 +94,7 @@ def store_data_if_updownstream(fasta_header, path, data, genes):
             data[path+'/'+gene][gene_name].append(gene_coord)
     
 def retrieve_genes(filename, genes, additional_length):
-    file = verbose_open_w(filename)
+    f = verbose_open_w(filename)
     for gene in genes:
         for coord in genes[gene]:
             start = coord['from']
@@ -103,7 +103,7 @@ def retrieve_genes(filename, genes, additional_length):
                 end += additional_length
             elif additional_length < 0:
                 start = max(1, start + additional_length)
-            file.write(get_gene_sequence(gene, coord['imgt_name'], start, end))
+            f.write(get_gene_sequence(gene, coord['imgt_name'], start, end))
 
 
 #                  Phe

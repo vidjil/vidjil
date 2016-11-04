@@ -15,9 +15,9 @@ def get_required_files(germlines_data):
         for recombination in germlines_json[germline]['recombinations']:
             for gene in ['5', '4', '3']:
                 if gene in recombination:
-                    for file in recombination[gene]:
-                        if file not in files:
-                            files.append(file)
+                    for f in recombination[gene]:
+                        if f not in files:
+                            files.append(f)
     return files
     
 if len(sys.argv) != 3:

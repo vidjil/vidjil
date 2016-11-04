@@ -52,8 +52,8 @@ def parse(fasta, endline=''):
     if header or sequence:
         yield (header, sequence)
 
-def extract_field_if_exists(str, separator, field_number):
-    fields = str.split(separator)
+def extract_field_if_exists(s, separator, field_number):
+    fields = s.split(separator)
     if len(fields) > field_number:
         return fields[field_number]
     return str

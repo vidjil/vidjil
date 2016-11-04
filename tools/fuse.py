@@ -117,8 +117,8 @@ class Window:
         
         return obj
         
-    def get_nb_reads(self, id, point=0):
-        return self[id]["reads"][point]
+    def get_nb_reads(self, cid, point=0):
+        return self[cid]["reads"][point]
 
     def latex(self, point=0, base_germline=10000, base=10000, tag=''):
         reads = self.d["reads"][point]
@@ -309,8 +309,8 @@ class ListWindows(VidjilJson):
     def save_json(self, output):
         '''save ListWindows in .json format''' 
         print("==>", output)
-        with open(output, "w") as file:
-            json.dump(self, file, indent=2, default=self.toJson)
+        with open(output, "w") as f:
+            json.dump(self, f, indent=2, default=self.toJson)
 
     def load(self, file_path, *args, **kwargs):
         if not '.clntab' in file_path:
@@ -328,8 +328,8 @@ class ListWindows(VidjilJson):
         if verbose:
             print("<==", file_path, "\t", end=' ')
         
-        with open(file_path, "r") as file:
-                tmp = json.load(file, object_hook=self.toPython)     
+        with open(file_path, "r") as f:
+                tmp = json.load(f, object_hook=self.toPython)
                 self.d=tmp.d
                 # Be robust against 'null' values for clones
                 if not self.d["clones"]:
