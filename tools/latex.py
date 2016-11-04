@@ -26,7 +26,6 @@ def main():
 
     print('%%%%', ' '.join(sys.argv))
     args = parser.parse_args()
-    datas = []
 
     for i in args.file:
         data = fuse.ListWindows()

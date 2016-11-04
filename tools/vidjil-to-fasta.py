@@ -1,6 +1,5 @@
 import fuse
 import argparse
-import os
 import base64
 
 MAX_TOP=99999999999

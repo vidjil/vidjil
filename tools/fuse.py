@@ -31,8 +31,6 @@ import check_python_version
 import sys
 import json
 import argparse
-import time
-import copy
 import os.path
 import os
 import datetime
@@ -462,7 +460,6 @@ class ListWindows(VidjilJson):
     def cut(self, limit, nb_points):
         '''Remove information from sequence/windows who never enter in the most represented sequences. Put this information in 'other' windows.'''
 
-        length = len(self)
         w=[]
 
         others = OtherWindows(nb_points)
