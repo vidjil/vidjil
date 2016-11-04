@@ -81,8 +81,8 @@ The research is supported by SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), by R
 If you use Vidjil for your research, please cite the following references:
 
 Marc Duez et al.,
-“Vidjil: High-throughput analysis of immune repertoire”,
-submitted
+“Vidjil: A web platform for analysis of high-throughput repertoire sequencing”,
+PLOS ONE, in press
 
 Mathieu Giraud, Mikaël Salson, et al.,
 “Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing”,
