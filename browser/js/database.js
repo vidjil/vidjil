@@ -717,7 +717,7 @@ Database.prototype = {
             fd.append("fileToUpload", blob);
             fd.append("info", self.m.info);
             fd.append("samples_info", self.m.samples.info);
-            fd.append("samples_id", self.m.samples.ids);
+            fd.append("samples_id", self.m.samples.id);
             
             $.ajax({
                 type: "POST",
