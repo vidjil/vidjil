@@ -454,7 +454,10 @@ List.prototype = {
             var self = this;
             var div_elem = this.index[cloneID];
             
-            if (!clone.isActive() || this.m.clusters[cloneID].length == 0){
+            if (!((clone.isActive() && this.m.clusters[cloneID].length != 0)
+                  ||
+                  (clone.isVirtual() && this.m.system_selected.indexOf(clone.germline) != -1)))
+            {
                 div_elem.style.display = "none";
             }else{
                 div_elem.style.display = "block";
