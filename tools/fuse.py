@@ -661,7 +661,7 @@ def main():
     group_options.add_argument('--output', '-o', type=str, default='fused.vidjil', help='output file (%(default)s)')
     group_options.add_argument('--top', '-t', type=int, default=50, help='keep only clones in the top TOP of some point (%(default)s)')
 
-    group_options.add_argument('--first', '-f', type=int, default=16, help='take only into account the first FIRST files (0 for all) (%(default)s)')
+    group_options.add_argument('--first', '-f', type=int, default=0, help='take only into account the first FIRST files (0 for all) (%(default)s)')
 
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
   
