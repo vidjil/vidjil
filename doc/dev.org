@@ -360,6 +360,23 @@ make functional
    make headless
    #+END_SRC
 
+**** Interactive mode
+     For debugging purposes, it may be useful to launch Watir in interactive
+     mode. In that case, you should launch =irb= in the =browser/tests= directory.
+
+     Then load the file =browser_test.rb= and create a =BrowserTest=:
+     #+BEGIN_SRC ruby
+       load 'browser_test.rb'
+       bt = BrowserTest.new "toto"
+
+       # Load the Vidjil browser with the given .vidjil file
+       bt.set_browser("/doc/analysis-example.vidjil")
+     #+END_SRC
+
+     Finally you can directly interact with the =VidjilBrowser= using the =$b=
+     variable.
+
+
 * Packaging
 
 ** Script driven building
