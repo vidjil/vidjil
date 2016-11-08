@@ -2,6 +2,7 @@
 import gluon.contrib.simplejson, datetime
 import vidjil_utils
 import time
+from model_factory import ModelFactory
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -170,6 +171,193 @@ def index():
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     """
+
+## return a list of generic sample_sets
+def all():
+    start = time.time()
+    if not auth.user :
+        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
+                            vars=dict(_next=URL('run', 'index', scheme=True, host=True)))
+            }
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+    isAdmin = auth.is_admin()
+
+
+    ##retrieve run list
+    query_gss = db(
+        (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)) &
+        (db.sample_set.sample_type == request.vars['type'])
+    ).select(
+        db.sample_set.ALL,
+        orderby = ~db.sample_set.id
+    )
+
+    auth.load_permissions(PermissionEnum.admin.value, 'sample_set')
+    result = {}
+    factory = ModelFactory()
+    for i, row in enumerate(query_gss) :
+        result[row.id] = factory.get_instance('sample_set', data=row, auth=auth)
+    sample_set_ids = result.keys()
+
+    #retrieve creator name
+    query_creator = db(
+        (db.sample_set.creator == db.auth_user.id)
+        & (db.sample_set.id.belongs(sample_set_ids))
+    ).select(
+        db.sample_set.id, db.auth_user.last_name
+    )
+    for i, row in enumerate(query_creator) :
+        result[row.sample_set.id].creator = row.auth_user.last_name
+
+    #retrieve samples informations
+    query_sample = db(
+        (db.sample_set_membership.sample_set_id == db.sample_set.id)
+        &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+        &(db.sample_set.id.belongs(sample_set_ids))
+    ).select(
+        db.sample_set.id, db.sequence_file.size_file
+    )
+
+    for i, row in enumerate(query_sample) :
+        result[row.sample_set.id].file_count += 1
+        result[row.sample_set.id].size += row.sequence_file.size_file
+
+    #retrieve configs
+    query3 = db(
+        (db.sample_set.id == db.fused_file.sample_set_id) &
+        (db.fused_file.config_id == db.config.id) &
+        (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) ) &
+        (db.sample_set.id.belongs(sample_set_ids))
+    ).select(
+        db.sample_set.id, db.config.name, db.config.id, db.fused_file.fused_file
+    )
+
+    for i, row in enumerate(query3) :
+        result[row.sample_set.id].conf_list.append(
+                {'id': row.config.id, 'name': row.config.name, 'fused_file': row.fused_file.fused_file})
+        result[row.sample_set.id].conf_id_list.append(row.config.id)
+
+    #retrieve list of users with read permission
+    query4 = db(
+        ((db.sample_set.id == db.auth_permission.record_id) | (db.auth_permission.record_id == 0)) &
+        (db.auth_permission.table_name == 'sample_set') &
+        (db.auth_permission.name == PermissionEnum.read.value) &
+        (db.auth_group.id == db.auth_permission.group_id) &
+        (db.sample_set.id.belongs(sample_set_ids))
+    ).select(
+        db.sample_set.id, db.auth_group.role
+    )
+    for i, row in enumerate(query4) :
+        result[row.sample_set.id].group_list.append(row.auth_group.role.replace('user_','u'))
+
+    #retrieve anon permissions
+    query5 = db(
+        (db.auth_permission.name == "anon") &
+        (db.auth_permission.table_name == "sample_set") &
+        (db.sample_set.id == db.auth_permission.record_id ) &
+        (db.auth_group.id == db.auth_permission.group_id ) &
+        (db.auth_membership.user_id == auth.user_id) &
+        (db.auth_membership.group_id == db.auth_group.id) &
+        (db.sample_set.id.belongs(sample_set_ids))
+    ).select(
+        db.sample_set.id
+    )
+    for i, row in enumerate(query5) :
+        result[row.id].anon_allowed = True
+
+
+    for key, row in result.iteritems():
+        row.most_used_conf = max(set(row.conf_id_list), key=row.conf_id_list.count)
+        row.groups = ", ".join(filter(lambda g: g != 'admin', set(row.group_list)))
+
+    result = result.values()
+
+    ##sort result
+    reverse = False
+    if request.vars["reverse"] == "true" :
+        reverse = True
+    if request.vars["sort"] == "configs" :
+        result = sorted(result, key = lambda row : row.confs, reverse=reverse)
+    elif request.vars["sort"] == "groups" :
+        result = sorted(result, key = lambda row : row.groups, reverse=reverse)
+    elif request.vars["sort"] == "files" :
+        result = sorted(result, key = lambda row : row.file_count, reverse=reverse)
+    elif "sort" in request.vars:
+        result = sorted(result, key = lambda row : row[request.vars["sort"]], reverse=reverse)
+    else:
+        result = sorted(result, key = lambda row : row.id, reverse=not reverse)
+
+    ##filter
+    if "filter" not in request.vars :
+        request.vars["filter"] = ""
+
+
+    log.debug("run list (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
+
+
+    return dict(query = result,
+                isAdmin = isAdmin,
+                reverse = False)
+
+
+## return form to create new generic sample_set
+def add():
+    if (auth.can_create_patient()):
+        creation_group_tuple =  get_default_creation_group(auth)
+        groups = creation_group_tuple[0]
+        max_group = creation_group_tuple[1]
+        return dict(message=T('add sample_set'), groups=groups, master_group=max_group)
+    else :
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+
+
+## create a generic sample_set if the html form is complete
+## needs ["name", "info"]
+## redirect to generic sample_set list if success
+## return a flash error message if fail
+def add_form():
+    if (auth.can_create_patient()):
+
+        error = ""
+        if request.vars["name"] == "" :
+            error += "name needed, "
+
+        if error=="" :
+            id_sample_set = db.sample_set.insert(sample_type="sample_set")
+
+            id = db.sample_set.insert(name=request.vars["name"],
+                                   info=request.vars["info"],
+                                   creator=auth.user_id,
+                                   sample_type = 'sample_set')
+
+
+            user_group = int(request.vars["sample_set_group"])
+            admin_group = db(db.auth_group.role=='admin').select().first().id
+
+            #sample_set creator automaticaly has all rights
+            auth.add_permission(user_group, PermissionEnum.access.value, db.sample_set, id)
+
+            res = {"redirect": "sample_set/index",
+                   "args" : { "id" : id_sample_set },
+                   "message": "(%s) sample_set %s added" % (id_sample_set, request.vars["name"]) }
+            log.info(res, extra={'user_id': auth.user.id, 'record_id': id, 'table_name': 'sample_set'})
+
+            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+        else :
+            res = {"success" : "false",
+                   "message" : error}
+            log.error(res)
+            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+    else :
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def edit():
     sample_type = db.sample_set[request.vars["id"]].sample_type
