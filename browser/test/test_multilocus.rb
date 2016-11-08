@@ -313,6 +313,20 @@ class TestMultilocus < BrowserTest
     assert (not $b.element(:class => 'waiting_msg').present?), "The ``generating report'' message should not be present anymore"
   end
 
+  def test_15_smaller_clones
+    for i in 0..3
+      smaller = $b.list.li(:index => i)
+
+      assert (smaller.text.include?("smaller clones")), "We should have smaller clones at index %d of the list, instead we have %s " % [i, smaller.text]
+
+      assert (smaller.visible?), "Smaller clones #%d should be visible, it is not" % [i]
+      smaller.hover
+      assert (smaller.visible?), "Smaller clones #%d should still be visible after hovering it" % [i]
+
+      assert (not $b.clone_in_scatterplot(smaller.id).visible?), "Smaller clone %d should not be visible in scatterplot" % [i]
+    end
+  end
+
   
 
   def TODO_test_14_edit_tag
