@@ -3,6 +3,7 @@
     <div id="db_menu">
         <a class="button" onclick="db.call('patient/index');">patients</a>
         <a class="button" onclick="db.call('run/index');">runs</a>
+	<a class="button" onclick="db.call('sample_set/all', {'type': 'sample_set'} );">sample sets</a>
         <a class="button" onclick="db.call('notification/index');">news</a>
         <a class="button" onclick="db.call('log/index');">log</a>
         {{if auth.is_admin():}}
