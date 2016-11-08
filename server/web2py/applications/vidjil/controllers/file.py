@@ -34,6 +34,9 @@ def add():
         
         patient_id = None
         run_id = None
+        sample_set_id = None
+        if sample_set.sample_type == "sample_set":
+            sample_set_id = sample_set.id
         if sample_set.sample_type == "patient" :
             patient_id = db( db.patient.sample_set_id == request.vars["id"]).select()[0].id
         if sample_set.sample_type == "run" :
@@ -58,7 +61,25 @@ def add():
 				file = file,
                                 info = row.info
 			))
-			
+
+	query_sample_set = db(
+                auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)
+        ).select(
+            db.sample_set.id,
+            db.sample_set.name,
+            orderby = ~db.sample_set.id
+        )
+        sample_set_list = []
+        sample_set_name = ""
+
+        for row in query_sample_set :
+            name = row.name if row.name is not None else "Unnamed Sample Set"
+            id = "  (%d)" % row.id
+            tmp = name+id
+            sample_set_list.append(tmp)
+            if sample_set_id == row.id:
+                sample_set_name = tmp
+
         query_patient = db(
             auth.vidjil_accessible_query(PermissionEnum.read.value, db.patient)
         ).select(
@@ -95,9 +116,11 @@ def add():
 				
 				
         return dict(message = T('add file'),
+                   sample_set_list = sample_set_list,
                    patient_list = patient_list,
                    run_list = run_list,
 				   pre_process_list = pre_process_list,
+                   sample_set = sample_set_name,
                    patient = patient,
                    sample_type = sample_set.sample_type,
                    run = run)
@@ -116,7 +139,7 @@ def add_form():
             
     if request.vars['filename'] == None :
         error += " missing file"
-    if request.vars['patient_id'] == '' and request.vars['run_id'] == "" :
+    if request.vars['patient_id'] == '' and request.vars['run_id'] == "" and request.vars['sample_set_id'] == "":
         error += " missing patient or run"
         
     if request.vars['patient_id'] != '' :
@@ -142,6 +165,14 @@ def add_form():
                 error += " missing permission for run "+str(run_id)
         except ValueError:
             error += " invalid run %s" % request.vars['run_id']
+
+    if request.vars['sample_set_id'] != '' :
+        try:
+            sample_set_id = extract_id(request.vars['sample_set_id'], error)
+            if not auth.can_modify_sample_set(sample_set_id) :
+                error += " missing permissions for sample_set %d" % sample_set_id
+        except ValueError:
+            error += " invalid sample_set %s" % request.vars['sample_set_id']
     pre_process = None
     pre_process_flag = "DONE"
     if request.vars['pre_process'] != "0":
@@ -172,10 +203,16 @@ def add_form():
             id_sample_set_membership_patient = db.sample_set_membership.insert(sample_set_id=patient_sample_set_id,
                                                                   sequence_file_id=id)
 
+        if sample_set_id is not None:
+            ids_sample_set += [sample_set_id]
+            id_sample_set_membership = db.sample_set_membership.insert(sample_set_id=sample_set_id, sequence_file_id=id)
+
         if request.vars['sample_type'] == 'run':
             originating_id = run_sample_set_id
-        else:
+        elif request.vars['sample_type'] == 'patient':
             originating_id = patient_sample_set_id
+        else :
+            originating_id = sample_set_id
 
         redirect_args = {"id" : originating_id}
         
