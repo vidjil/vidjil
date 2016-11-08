@@ -1,0 +1,92 @@
+{{extend 'db_layout.html'}}
+{{import vidjil_utils}}
+
+{{total_file_count = 0 ; total_size = 0}}
+
+<h3></h3>
+
+<div class="db_block">
+    <div class="db_block_left">
+        search
+        <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}"  onchange="db.call('sample_set/list', {'filter' : this.value} )">
+    </div>
+</div>
+
+<div id="db_table_container">
+    <table class="db_table" id="table">
+
+
+        <thead>
+            <tr><td class="column_200 pointer" onclick="db.call('sample_set/list', {'sort' :'last_name', 'filter' : '{{=request.vars["filter"]}}'"
+                  {{if not reverse and request.vars["sort"]=="name" :}} , 'reverse' : true {{pass}} })"> name </td>
+                <td class="pointer" onclick="db.call('sample_set/list', {'sort' :'info', 'filter' : '{{=request.vars["filter"]}}'
+                  {{if not reverse and request.vars["sort"]=="info" :}} , 'reverse' : true {{pass}} })"> info </td>
+                <td class="pointer" onclick="db.call('sample_set/list', {'sort' :'configs', 'filter' : '{{=request.vars["filter"]}}'
+                  {{if not reverse and request.vars["sort"]=="configs" :}} , 'reverse' : true {{pass}} })"> results </td>
+{{if isAdmin:}} <td class="column_100 pointer" onclick="db.call('sample_set/list', {'sort' :'groups', 'filter' : '{{=request.vars["filter"]}}'
+                  {{if not reverse and request.vars["sort"]=="groups" :}} , 'reverse' : true {{pass}} })"> groups </td> {{pass}}
+{{if isAdmin:}} <td class="column_100 pointer" onclick="db.call('sample_set/list', {'sort' :'creator', 'filter' : '{{=request.vars["filter"]}}'
+                  {{if not reverse and request.vars["sort"]=="creator" :}} , 'reverse' : true {{pass}} })"> creator </td> {{pass}}
+                <td class="column_100 pointer" onclick="db.call('sample_set/list', {'sort' :'files', 'filter' : '{{=request.vars["filter"]}}'
+                  {{if not reverse and request.vars["sort"]=="files" :}} , 'reverse' : true {{pass}} })"> files </td>
+                
+                
+                <td class="column5"> </td>
+                <td class="column5"> </td>
+                <td class="column5"> </td>
+            </tr>
+        </thead>
+        
+        
+       {{for data in query :}}
+           <tr class="pointer" onclick="db.call('sample_set/index', {'id' :'{{=data.id}}' , 'config_id' : {{=data.most_used_conf}} } )" >
+                <td>
+		     {{= data.get_name()}}
+                </td>
+                <td> {{=data.get_info()}} </td>
+                <td>
+                  {{ configs = [] }}
+                  {{for conf in data.conf_list :}}
+                    {{filename = patient_name + " (" + conf['name'] + ")"}}
+                    {{if conf['fused_file'] is not None :}}
+                      {{ configs.append(str(A(conf['name'], _href="index.html?sample_set=" + str(row['id']) + "&config=" + str(conf['id']), _type="text/html",
+                            _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { db.load_data( { 'sample_set' : '" + str(data.id) + "' , 'config' : " + str(conf['id']) + " }, '" + filename + "' ); }"))) }}
+                    {{else:}}
+                      {{ configs.append(conf['name']) }}
+                    {{pass}}
+                  {{pass}}
+                  {{= XML(", ".join(configs)) }}
+                </td>
+{{if isAdmin:}} <td> {{=data.groups}}</td>{{pass}}
+{{if isAdmin:}} <td> {{=data.creator}}</td>{{pass}}
+                <td> {{=data.file_count}} ({{=vidjil_utils.format_size(data.size)}}) </td>
+            {{ total_file_count += data.file_count ; total_size += data.size }}
+               
+{{if isAdmin:}} <td onclick="db.call('sample_set/permission', {'id' :'{{=data.id}}'} )" > <i class="icon-key" title="set permissions"></i> </td> {{else:}} <td></td> {{pass}}
+                {{if data.has_permission:}}
+		<td onclick="db.call('sample_set/edit', {'id' :'{{=data.id}}'} )" > <i class="icon-pencil-2" title="{{='edit %s information' % 'sample_set'}}"></i> </td>
+		<td onclick="db.call('sample_set/confirm', {'id' :'{{=data.id}}'} )" > <i class="icon-erase" title="{{='delete %s' % 'sample_set'}}"></i> </td>
+                {{else:}}  <td></td><td></td>{{pass}}
+            </tr>
+        {{pass}}
+
+    </table>
+    <table class="db_table" id="db_fixed_header"></table>
+</div>
+
+<div class="db_block">
+    <div class="db_block_left">
+
+{{if auth.can_create_patient():}}
+<span class="button2" onclick="db.call('sample_set/add')"> + new sample_set </span>
+<span class="button2" onclick="db.call('sample_set/custom', {'filter': '{{=request.vars['filter']}}' })"> compare samples/patients </span>
+{{else:}}
+<!-- <span class="button2 inactive" onclick="db.call('sample_set/add')" title="you don't have permission to create new patient"> add sample_set </span> -->
+{{pass}}
+
+  </div>
+  <div class="db_block_right">
+  <br />
+  {{ =len(query) }} sample_set, {{ =total_file_count }} files ({{ =vidjil_utils.format_size(total_size) }})
+  </div>
+</div>
