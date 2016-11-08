@@ -74,17 +74,32 @@ def init_db_helper(force=False):
         db.auth_membership.insert(user_id=id_first_user, group_id=id_sa_group)
         db.auth_membership.insert(user_id=id_first_user, group_id=id_public_group)
 
-        ##création des configs de base
-        id_config_TRG = db.config.insert(
-            name = 'TRG',
-            command = '-c clones -z 100 -R 1 -r 1 -G germline/TRG ',
-            info = 'default trg config'
-        )
+        ## base Vidjil configs
 
-        id_config_IGH = db.config.insert(
+        db.config.insert(
+            name = 'multi+inc+xxx',
+            command = '-c clones -3 -z 100 -r 1 -g germline -i -e 1 -2 -d -w 50 ',
+            info = 'multi-locus, with some incomplete/unusual/unexpected recombinations'
+        )
+        db.config.insert(
+            name = 'multi+inc',
+            command = '-c clones -3 -z 100 -r 1 -g germline -e 1 -w 50 ',
+            info = 'multi-locus, with some incomplete/unusual recombinations'
+        )
+        db.config.insert(
+            name = 'multi',
+            command = '-c clones -3 -z 100 -r 1 -g germline -i -e 1 -d -w 50 ',
+            info = 'multi-locus'
+        )
+        db.config.insert(
+            name = 'TRG',
+            command = '-c clones -3 -z 100 -r 1 -G germline/TRG ',
+            info = 'TRG, VgJg'
+        )
+        db.config.insert(
             name = 'IGH',
-            command = '-c clones -d -z 100 -R 1 -r 1 -G germline/IGH ',
-            info = 'default igh config'
+            command = '-c clones -w 60 -d -3 -z 100 -r 1 -G germline/IGH ',
+            info = 'IGH, Vh(Dh)Jh'
         )
 
         ## permission
