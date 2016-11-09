@@ -3,7 +3,7 @@ import argparse
 import base64
 
 MAX_TOP=99999999999
-REPLACEMENT_WHITESPACE='_'
+REPLACEMENT_WHITESPACE='~'
 
 def print_fasta_header(header, outfile, options):
     '''
