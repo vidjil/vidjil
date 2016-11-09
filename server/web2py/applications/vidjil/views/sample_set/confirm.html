@@ -1,0 +1,24 @@
+{{extend 'db_layout.html'}}
+
+{{('message' in globals())}}
+{{if 'message' in globals():}}
+
+<div>
+    <h3>{{=message}}: {{=data.get_name()}}
+    </h3>
+    
+    Are you sure you want to delete the {{=data.get_type()}} {{=data.get_name()}} ?</br>
+    This will delete {{=data.get_sequence_count()}} sequence file(s) and {{=data.get_data_count()}} result files.</br>
+    This action cannot be undone.
+
+    <div class="center"> 
+        <button onclick="db.call('sample_set/delete', {'id' :'{{=data.id}}'} )">delete</button>
+	<button onclick="db.call('sample_set/index', {'id' :'{{=data.id}}'})">cancel</button>
+    </div>
+</div>
+    
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}
