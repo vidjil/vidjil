@@ -150,7 +150,7 @@ def get_vdj_positions(recombination_type, clone):
     return positions
 
 
-def write_fuse_to_fasta(data, outfile, used_names, current_filename, options):
+def write_fuse_to_fasta(data, outfile, used_names, current_filename, options, metadata=''):
     '''
     Write the top clones (if specified in options.top)
     in the fasta file opened in the outfile.
@@ -194,6 +194,9 @@ def write_fuse_to_fasta(data, outfile, used_names, current_filename, options):
                 sample_name = eval(options.sample_name)
                 additional_header_info.append('sample_name=%s' % sample_name)
 
+            if len(metadata) > 0:
+                additional_header_info.append(metadata.replace(' ', spacer))
+
             if len(additional_header_info) > 0:
                 additional_header_info = spacer+'#'+spacer+spacer.join(additional_header_info)
             else:
@@ -209,6 +212,12 @@ if __name__ == '__main__':
     outfile = open(args.output, 'w')
 
     used_names = {}
+    current_file = 0
+
+    if len(args.metadata) != len(args.file):
+        # Not of the same length: ignore metadata
+        args.metadata = ['' for i in range(len(args.file))]
+
     for vidjil in args.file:
         try:
             data = fuse.ListWindows()
@@ -216,7 +225,8 @@ if __name__ == '__main__':
         except Exception:
             print "** Warning ** file %s could not be loaded" % vidjil
         else:
-            write_fuse_to_fasta(data, outfile, used_names, vidjil, args)
+            write_fuse_to_fasta(data, outfile, used_names, vidjil, args, args.metadata[current_file])
+        current_file += 1
 
     outfile.close()
 
@@ -227,6 +237,7 @@ parser.add_argument('--top', '-t', type=int, default=MAX_TOP, help = 'Keep only 
 parser.add_argument('--no-header-whitespace', '-w', action='store_true', help='Replace all whitespaces in the fasta header with '+REPLACEMENT_WHITESPACE)
 parser.add_argument('--output', '-o', help='Name of the output FASTA file [REQUIRED]', required=True)
 parser.add_argument('--sample-name', '-n', default='', help = 'Provide the sample name in the fasta header. Some Python code can be provided as soon as it returns a string')
+parser.add_argument('--metadata', '-d', action='append', help = 'Provide metadata for each file. The option must be called each time for each file, in the same order as the files are given')
 parser.add_argument('--germline', '-g', action='store_true', help = 'When set, provide the germline of the sequence in the additional header informations')
 parser.add_argument('file', nargs='+', help='Input (.vidjil/.clntab) files')
 
