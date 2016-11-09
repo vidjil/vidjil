@@ -196,7 +196,7 @@ def all():
     result = {}
     factory = ModelFactory()
     for i, row in enumerate(query_gss) :
-        result[row.id] = factory.get_instance('sample_set', data=row, auth=auth)
+        result[row.id] = factory.get_instance('sample_set', data=row)
     sample_set_ids = result.keys()
 
     #retrieve creator name
