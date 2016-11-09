@@ -1,9 +1,12 @@
 '''
-Takes a .fa file, a _Summary.txt file as produced by IMGT/V-QUEST,
+Takes either:
+  - a .fa file, a _Summary.txt file as produced by IMGT/V-QUEST
+  - or a results file produced by MiXCR
 and creates a .vdj file to be checked by should-vdj-to-tap.py
 
-python imgt-to-vdj.py data-curated/curated_IG.fa data-curated/curated_ig_Summary.txt > data-curated/curated_IG.vdj
-python imgt-to-vdj.py data-curated/curated_TR.fa data-curated/curated_tr_Summary.txt > data-curated/curated_TR.vdj
+python imgt-to-vdj.py data-curated/curated_IG.fa data-curated/curated_ig_Summary.txt > data-curated/imgt-IG.vdj
+python imgt-to-vdj.py data-curated/curated_TR.fa data-curated/curated_tr_Summary.txt > data-curated/imgt-TR.vdj
+python imgt-to-vdj.py data-curated/mixcr.results > data-curated/mixcr.vdj
 '''
 
 import sys
@@ -31,6 +34,10 @@ def parse_gene_and_allele_to_vdj(s):
     return '(%s)' % ','.join(genes)
 
 
+def N_to_vdj(s):
+    return '/%s/' % s
+
+
 class Result():
     '''Stores a tabulated result'''
 
@@ -48,6 +55,35 @@ class Result():
     def __str__(self):
         return str(self.d)
 
+
+class MiXCR_Result(Result):
+
+    def parse(self, l):
+        self.labels = mixcr_labels
+        return ('\t' in l.strip())
+
+    def to_vdj(self):
+
+        if not self.result:
+            return 'no result'
+
+        s = ''
+        s += self['Best V hit']
+        s += ' '
+
+        if self['Best D hit']:
+            s += N_to_vdj(self['N. Seq. VDJunction'])
+            s += ' '
+            s += self['Best D hit']
+            s += ' '
+            s += N_to_vdj(self['N. Seq. DJJunction'])
+        else:
+            s += N_to_vdj(self['N. Seq. VJJunction'])
+
+        s += ' '
+        s += self['Best J hit']
+
+        return s
 
 
 class IMGT_VQUEST_Result(Result):
@@ -96,7 +132,28 @@ def header_vquest_results(ff_fasta, ff_vquest):
         yield (fasta, vquest)
 
 
+def header_mixcr_results(ff_mixcr):
+
+    f = open(ff_mixcr).__iter__()
+
+    mixcr_first_line = f.next()
+    globals()['mixcr_labels'] = mixcr_first_line.split('\t')
+
+    while True:
+        l = f.next()
+        result = MiXCR_Result(l)
+        yield result['Description R1'], result.to_vdj()
+
+
 if __name__ == '__main__':
+
+    if 'mixcr' in sys.argv[1]:
+        for (header, result) in header_mixcr_results(sys.argv[1]):
+            print "#%s" % header
+            print ">%s" % result
+            print
+
+        sys.exit(0)
 
     for (header, result) in header_vquest_results(sys.argv[1], sys.argv[2]):
         # print "=========="
