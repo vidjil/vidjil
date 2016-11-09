@@ -358,7 +358,7 @@ def add_form():
 
 def edit():
     sample_set = db.sample_set[request.vars["id"]]
-    sample_type = samle_set.sample_type
+    sample_type = sample_set.sample_type
     
     if sample_type == "patient" : 
         patient = db((db.patient.sample_set_id == request.vars["id"])).select()[0]
