@@ -487,3 +487,49 @@ def custom():
     return dict(query=query,
                 config_id=config_id,
                 config=config)
+
+def confirm():
+    if auth.can_modify_sample_set(request.vars["id"]):
+        data = get_sample_set(request.vars["id"])
+        log.debug('request sample_set deletion')
+        return dict(message=T('confirm sample_set deletion'),
+                    data=data)
+    else :
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+def delete():
+    if (auth.can_modify_sample_set(request.vars["id"]) ):
+        sample_set = get_sample_set(request.vars["id"])
+        if sample_set is None:
+            res = {"message": 'An error occured. This sample_set may have already been deleted'}
+            log.error(res)
+            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+        #delete data file
+        query = db( (db.sample_set_membership.sample_set_id == sample_set.id)
+                    & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+                ).select(db.sequence_file.id)
+        for row in query :
+            db(db.results_file.sequence_file_id == row.id).delete()
+
+        #delete sequence file
+        query = db((db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+            & (db.sample_set_membership.sample_set_id == sample_set.id)
+            ).select(db.sequence_file.id)
+        for row in query :
+            db(db.sequence_file.id == row.id).delete()
+
+        #delete patient sample_set
+        db(db.sample_set.id == sample_set.id).delete()
+
+        res = {"redirect": "sample_set/all",
+               "success": "true",
+               "message": "sample set ("+str(request.vars["id"])+") deleted"}
+        log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars["id"], 'table_name': 'sample_set'})
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    else :
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
