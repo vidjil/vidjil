@@ -18,7 +18,7 @@ def parse_gene_and_allele_to_vdj(s):
 
     genes = []
     for term in s.replace(',', '').split():
-        if term in ['Homsap', '[F]', '(F)', 'F', 'P', 'or', 'and', '(see', 'comment)', 'ORF']:
+        if term in ['Homsap', '[F]', '(F)', 'F', 'P', 'or', 'and', '(see', 'comment)', 'ORF', '[ORF]']:
             continue
         genes += [term]
 
