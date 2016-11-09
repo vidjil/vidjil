@@ -522,7 +522,7 @@ def delete():
     delete_results = ('delete_results' in request.vars and request.vars['delete_results'] == "True")
     sample_set = db.sample_set[request.vars["redirect_sample_set_id"]]
     associated_id = None
-    if sample_set.sample_type != 'sequence_file':
+    if sample_set.sample_type not in ['sequence_file', 'sample_set']:
         associated_elements = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select()
         if len(associated_elements) > 0:
             associated_id = associated_elements[0].id
