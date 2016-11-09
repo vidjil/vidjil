@@ -206,9 +206,7 @@ def write_fuse_to_fasta(data, outfile, used_names, current_filename, options, me
             outfile.write(clone.d['sequence']+"\n")
 
 
-if __name__ == '__main__':
-    args = parser.parse_args()
-
+def process_files(args):
     outfile = open(args.output, 'w')
 
     used_names = {}
@@ -241,3 +239,7 @@ parser.add_argument('--metadata', '-d', action='append', help = 'Provide metadat
 parser.add_argument('--germline', '-g', action='store_true', help = 'When set, provide the germline of the sequence in the additional header informations')
 parser.add_argument('file', nargs='+', help='Input (.vidjil/.clntab) files')
 
+if __name__ == '__main__':
+    args = parser.parse_args()
+
+    process_files(args)
