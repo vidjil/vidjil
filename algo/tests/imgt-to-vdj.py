@@ -129,7 +129,8 @@ def header_vquest_results(ff_fasta, ff_vquest):
         while not vquest:
             vquest = f_vquest.next().strip()
 
-        yield (fasta, vquest)
+        r = IMGT_VQUEST_Result(result)
+        yield (fasta.replace('>', ''), r.to_vdj())
 
 
 def header_mixcr_results(ff_mixcr):
@@ -148,17 +149,12 @@ def header_mixcr_results(ff_mixcr):
 if __name__ == '__main__':
 
     if 'mixcr' in sys.argv[1]:
-        for (header, result) in header_mixcr_results(sys.argv[1]):
-            print "#%s" % header
-            print ">%s" % result
-            print
+        gen = header_mixcr_results(sys.argv[1])
+    else:
+        gen = header_vquest_results(sys.argv[1], sys.argv[2])
 
-        sys.exit(0)
-
-    for (header, result) in header_vquest_results(sys.argv[1], sys.argv[2]):
-        # print "=========="
-        print header.replace('>', '#')
-        r = IMGT_VQUEST_Result(result)
-        # print r
-        print ">%s" % r.to_vdj()
+    # output .vdj data
+    for (header, result) in gen:
+        print "#%s" % header
+        print ">%s" % result
         print
