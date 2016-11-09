@@ -10,11 +10,11 @@ def create_clone_db_for_sequences(sequences, output_file):
     vtf_metadata = []
     vtf_result_files = []
     for sequence in sequences:
-        sample_sets = db(db.sample_set_membership.sequence_file_id == sequence.id).select(db.sample_set_membership.id)
+        sample_sets = db(db.sample_set_membership.sequence_file_id == sequence.id).select(db.sample_set_membership.sample_set_id)
         last_results = get_last_results(sequence.id)
         for result in last_results:
             if result.data_file is not None:
-                vtf_metadata.append('-d "'+' '.join(['sample_set='+str(s.id) for s in sample_sets])+' '+'config_id='+str(result.config_id)+'"')
+                vtf_metadata.append('-d "'+' '.join(['sample_set='+str(s.sample_set_id) for s in sample_sets])+' '+'config_id='+str(result.config_id)+'"')
                 vtf_result_files.append(defs.DIR_RESULTS+result.data_file)
 
     command = 'python %s/vidjil-to-fasta.py %s -w -o %s %s ' % (vidjil_to_fasta_path, ' '.join(vtf_metadata), output_file, ' '.join(vtf_result_files))
