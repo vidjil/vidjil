@@ -339,8 +339,8 @@ def add_form():
             auth.add_permission(user_group, PermissionEnum.access.value, db.sample_set, id)
 
             res = {"redirect": "sample_set/index",
-                   "args" : { "id" : id_sample_set },
-                   "message": "(%s) sample_set %s added" % (id_sample_set, request.vars["name"]) }
+                   "args" : { "id" : id },
+                   "message": "(%s) sample_set %s added" % (id, request.vars["name"]) }
             log.info(res, extra={'user_id': auth.user.id, 'record_id': id, 'table_name': 'sample_set'})
 
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
