@@ -204,15 +204,6 @@ def write_fuse_to_fasta(data, outfile, used_names, current_filename, options):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description = 'Converts one or several .vidjil file to a .fasta file. The resulting .fasta file can notably be indexed',
-                                     epilog = 'Example: python %(prog)s -o output.fasta in1.vidjil in2.vidjil in3.vidjil')
-
-    parser.add_argument('--top', '-t', type=int, default=MAX_TOP, help = 'Keep only the top most clones. By default keep all the clones for which we have enough information.')
-    parser.add_argument('--no-header-whitespace', '-w', action='store_true', help='Replace all whitespaces in the fasta header with _')
-    parser.add_argument('--output', '-o', help='Name of the output FASTA file [REQUIRED]', required=True)
-    parser.add_argument('--sample-name', '-n', default='', help = 'Provide the sample name in the fasta header. Some Python code can be provided as soon as it returns a string')
-    parser.add_argument('--germline', '-g', action='store_true', help = 'When set, provide the germline of the sequence in the additional header informations')
-    parser.add_argument('file', nargs='+', help='Input (.vidjil/.clntab) files')
     args = parser.parse_args()
 
     outfile = open(args.output, 'w')
@@ -228,3 +219,14 @@ if __name__ == '__main__':
             write_fuse_to_fasta(data, outfile, used_names, vidjil, args)
 
     outfile.close()
+
+parser = argparse.ArgumentParser(description = 'Converts one or several .vidjil file to a .fasta file. The resulting .fasta file can notably be indexed',
+                                     epilog = 'Example: python %(prog)s -o output.fasta in1.vidjil in2.vidjil in3.vidjil')
+
+parser.add_argument('--top', '-t', type=int, default=MAX_TOP, help = 'Keep only the top most clones. By default keep all the clones for which we have enough information.')
+parser.add_argument('--no-header-whitespace', '-w', action='store_true', help='Replace all whitespaces in the fasta header with '+REPLACEMENT_WHITESPACE)
+parser.add_argument('--output', '-o', help='Name of the output FASTA file [REQUIRED]', required=True)
+parser.add_argument('--sample-name', '-n', default='', help = 'Provide the sample name in the fasta header. Some Python code can be provided as soon as it returns a string')
+parser.add_argument('--germline', '-g', action='store_true', help = 'When set, provide the germline of the sequence in the additional header informations')
+parser.add_argument('file', nargs='+', help='Input (.vidjil/.clntab) files')
+
