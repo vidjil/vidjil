@@ -2,7 +2,6 @@
 import gluon.contrib.simplejson, datetime
 import vidjil_utils
 import time
-from model_factory import ModelFactory
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
