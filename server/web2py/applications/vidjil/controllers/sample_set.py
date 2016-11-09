@@ -181,96 +181,19 @@ def all():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     isAdmin = auth.is_admin()
+    try :
+        type = request.vars['type']
+    except KeyError:
+        type = 'sample_set'
 
-
-    ##retrieve run list
-    query_gss = db(
-        (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)) &
-        (db.sample_set.sample_type == request.vars['type'])
-    ).select(
-        db.sample_set.ALL,
-        orderby = ~db.sample_set.id
-    )
-
-    auth.load_permissions(PermissionEnum.admin.value, 'sample_set')
-    result = {}
-    factory = ModelFactory()
-    for i, row in enumerate(query_gss) :
-        result[row.id] = factory.get_instance('sample_set', data=row)
-    sample_set_ids = result.keys()
-
-    #retrieve creator name
-    query_creator = db(
-        (db.sample_set.creator == db.auth_user.id)
-        & (db.sample_set.id.belongs(sample_set_ids))
-    ).select(
-        db.sample_set.id, db.auth_user.last_name
-    )
-    for i, row in enumerate(query_creator) :
-        result[row.sample_set.id].creator = row.auth_user.last_name
-
-    #retrieve samples informations
-    query_sample = db(
-        (db.sample_set_membership.sample_set_id == db.sample_set.id)
-        &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-        &(db.sample_set.id.belongs(sample_set_ids))
-    ).select(
-        db.sample_set.id, db.sequence_file.size_file
-    )
-
-    for i, row in enumerate(query_sample) :
-        result[row.sample_set.id].file_count += 1
-        result[row.sample_set.id].size += row.sequence_file.size_file
-
-    #retrieve configs
-    query3 = db(
-        (db.sample_set.id == db.fused_file.sample_set_id) &
-        (db.fused_file.config_id == db.config.id) &
-        (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) ) &
-        (db.sample_set.id.belongs(sample_set_ids))
-    ).select(
-        db.sample_set.id, db.config.name, db.config.id, db.fused_file.fused_file
-    )
-
-    for i, row in enumerate(query3) :
-        result[row.sample_set.id].conf_list.append(
-                {'id': row.config.id, 'name': row.config.name, 'fused_file': row.fused_file.fused_file})
-        result[row.sample_set.id].conf_id_list.append(row.config.id)
-
-    #retrieve list of users with read permission
-    query4 = db(
-        ((db.sample_set.id == db.auth_permission.record_id) | (db.auth_permission.record_id == 0)) &
-        (db.auth_permission.table_name == 'sample_set') &
-        (db.auth_permission.name == PermissionEnum.read.value) &
-        (db.auth_group.id == db.auth_permission.group_id) &
-        (db.sample_set.id.belongs(sample_set_ids))
-    ).select(
-        db.sample_set.id, db.auth_group.role
-    )
-    for i, row in enumerate(query4) :
-        result[row.sample_set.id].group_list.append(row.auth_group.role.replace('user_','u'))
-
-    #retrieve anon permissions
-    query5 = db(
-        (db.auth_permission.name == "anon") &
-        (db.auth_permission.table_name == "sample_set") &
-        (db.sample_set.id == db.auth_permission.record_id ) &
-        (db.auth_group.id == db.auth_permission.group_id ) &
-        (db.auth_membership.user_id == auth.user_id) &
-        (db.auth_membership.group_id == db.auth_group.id) &
-        (db.sample_set.id.belongs(sample_set_ids))
-    ).select(
-        db.sample_set.id
-    )
-    for i, row in enumerate(query5) :
-        result[row.id].anon_allowed = True
-
-
-    for key, row in result.iteritems():
-        row.most_used_conf = max(set(row.conf_id_list), key=row.conf_id_list.count)
-        row.groups = ", ".join(filter(lambda g: g != 'admin', set(row.group_list)))
-
-    result = result.values()
+    list = SampleSetList(type)
+    print list.sample_sets
+    list.load_creator_names()
+    list.load_sample_information()
+    list.load_config_information()
+    list.load_permitted_groups()
+    list.load_anon_permissions()
+    result = list.get_values()
 
     ##sort result
     reverse = False
