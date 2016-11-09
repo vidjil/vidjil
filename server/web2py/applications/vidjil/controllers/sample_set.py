@@ -187,7 +187,6 @@ def all():
         type = 'sample_set'
 
     list = SampleSetList(type)
-    print list.sample_sets
     list.load_creator_names()
     list.load_sample_information()
     list.load_config_information()
