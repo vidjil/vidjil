@@ -66,7 +66,33 @@ global_stats = defaultdict(int)
 global_stats_failed = defaultdict(int)
 global_stats_todo = defaultdict(int)
 
-def fasta_id_lines_from_program(f_should):
+
+def should_result_from_vidjil(l):
+    '''
+    Return a (should, result) couple from a Vidjil output line in the form of:
+    >TRDD2*01_1/AGG/1_TRDD3*01__TRD+ + VJ 	0 84 88 187	TRDD2*01 1/AGG/1 TRDD3*01  TRD+
+    or
+    >TRDV3*01_0//0_TRDJ4*01 ! + VJ	0 49 50 97       TRD UNSEG noisy
+    '''
+
+    l = l.strip()
+    pos = l.find(' + ') if ' + ' in l else l.find(' - ')
+    should = l[1:pos].replace('_', ' ')
+
+    pos = l.find('\t')
+    result = l[pos+1:] + ' '
+
+    return (should, result)
+
+
+def should_results_from_program(f_should):
+    '''
+    Launch the program on f_should
+    Yields (#, >) couples of V(D)J designations, such as in:
+    #TRDD2*01 1/AGG/1 TRDD3*01  TRD+
+    >TRDD2*01  TRDD3*01
+    '''
+
     f_log = f_should + PROG_TAG + LOG_SUFFIX
     f_log = f_log.replace(SHOULD_SUFFIX, '')
 
@@ -85,7 +111,7 @@ def fasta_id_lines_from_program(f_should):
         if not l:
             continue
         if l[0] == '>':
-            yield l
+            yield should_result_from_vidjil(l)
 
 def should_pattern_to_regex(p):
     '''
@@ -188,23 +214,15 @@ def should_pattern_to_regex(p):
 
 r_locus = re.compile('\[\S+\]')
 
-def id_line_to_tap(l, tap_id):
+def should_result_to_tap(should_pattern, result, tap_id):
     '''
-    Parses lines such as:
-    >TRDD2*01_1/AGG/1_TRDD3*01__TRD+ + VJ 	0 84 88 187	TRDD2*01 1/AGG/1 TRDD3*01  TRD+
+    Parses (should, result) couples such as:
+    'TRDD2*01 1/AGG/1 TRDD3*01  TRD+', 'TRDD2*01 1/AGG/1 TRDD3*01  TRD+'
     or
-    >TRDV3*01_0//0_TRDJ4*01 ! + VJ	0 49 50 97       TRD UNSEG noisy
+    'TRDV3*01 0//0 TRDJ4*01, 'TRD UNSEG noisy'
     and return a .tap line
     '''
 
-    l = l.strip()
-    pos = l.find(' + ') if ' + ' in l else l.find(' - ')
-    should = l[1:pos]
-
-    pos = l.find('\t')
-    result = l[pos+1:] + ' '
-
-    should_pattern = should.replace('_', ' ')
     m_locus = r_locus.search(should_pattern)
 
     if m_locus:
@@ -238,7 +256,7 @@ def id_line_to_tap(l, tap_id):
 
     if not found:
         globals()['global_stats_failed'][locus] += 1
-        if 'TODO' in should:
+        if 'TODO' in should_pattern:
             globals()['global_stats_todo'][locus] += 1
         else:
             globals()['global_failed'] += 1
@@ -253,7 +271,7 @@ def id_line_to_tap(l, tap_id):
     warn = False
 
     for kw in SPECIAL_KEYWORDS:
-        if kw in should:
+        if kw in should_pattern:
             tap += '# %s ' % kw
             special = True
 
@@ -281,7 +299,7 @@ def should_to_tap_one_file(f_should):
     f_tap = f_tap.replace(SHOULD_SUFFIX, '')
 
     print "<== %s" % f_should
-    id_lines = list(fasta_id_lines_from_program(f_should))
+    id_lines = list(should_results_from_program(f_should))
 
     if not(id_lines):
         print "Error. There is no '>' line in this file."
@@ -292,8 +310,8 @@ def should_to_tap_one_file(f_should):
     with open(f_tap, 'w') as ff:
         ff.write("1..%d\n" % len(id_lines))
 
-        for tap_id, l in enumerate(id_lines):
-            tap_line = id_line_to_tap(l, tap_id+1)
+        for tap_id, (should, result) in enumerate(id_lines):
+            tap_line = should_result_to_tap(should, result, tap_id+1)
             if args.verbose or '#!' in tap_line:
                 print tap_line
             ff.write(tap_line + '\n')
