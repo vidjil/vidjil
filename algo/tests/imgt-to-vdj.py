@@ -31,25 +31,31 @@ def parse_gene_and_allele_to_vdj(s):
     return '(%s)' % ','.join(genes)
 
 
-class IMGT_VQUEST_Result():
-
-    '''Stores a IMGT/V-QUEST result'''
+class Result():
+    '''Stores a tabulated result'''
 
     def __init__(self, l):
 
         self.d = {}
-
-        if 'No result' in l:
-            self.result = False
-            return
-
-        self.result = True
+        self.result = self.parse(l)
 
         for i, data in enumerate(l.split('\t')):
-            self.d[vquest_labels[i]] = data
+            self.d[self.labels[i]] = data
 
     def __getitem__(self, key):
         return self.d[key]
+
+    def __str__(self):
+        return str(self.d)
+
+
+
+class IMGT_VQUEST_Result(Result):
+    '''Stores a IMGT/V-QUEST result'''
+
+    def parse(self, l):
+        self.labels = vquest_labels
+        return ('No result' not in l)
 
     def to_vdj(self):
 
@@ -64,9 +70,6 @@ class IMGT_VQUEST_Result():
         s += parse_gene_and_allele_to_vdj(self['J-GENE and allele'])
         return s
 
-
-    def __str__(self):
-        return str(self.d)
 
 
 def header_vquest_results(ff_fasta, ff_vquest):
