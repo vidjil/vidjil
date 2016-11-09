@@ -326,8 +326,6 @@ def add_form():
             error += "name needed, "
 
         if error=="" :
-            id_sample_set = db.sample_set.insert(sample_type="sample_set")
-
             id = db.sample_set.insert(name=request.vars["name"],
                                    info=request.vars["info"],
                                    creator=auth.user_id,
