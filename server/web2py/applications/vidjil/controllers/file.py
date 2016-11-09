@@ -130,6 +130,7 @@ def add_form():
     error = ""
     patient_id = None
     run_id = None
+    sample_set_id = None
     
     if request.vars['sampling_date'] != '' :
         try:
@@ -237,10 +238,13 @@ def edit():
     if auth.can_modify_file(request.vars['id']):
         patient_id = None
         run_id = None
+        sample_set_id = None
         
         sample_set_list = db(db.sample_set_membership.sequence_file_id == request.vars['id']).select(db.sample_set_membership.sample_set_id)
-        
+        # TODO TOO MANY DB QUERIES HERE
         for row in sample_set_list :
+            if db.sample_set[row.sample_set_id].sample_type == "sample_set":
+                sample_set_id = db( db.sample_set.id == row.sample_set_id).select()[0].id
             if db.sample_set[row.sample_set_id].sample_type == "patient" :
                 patient_id = db( db.patient.sample_set_id == row.sample_set_id).select()[0].id
             if db.sample_set[row.sample_set_id].sample_type == "run" :
@@ -264,6 +268,24 @@ def edit():
 				file = file,
                                 info = row.info
 			))
+
+	query_sample_set = db(
+                auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)
+        ).select(
+            db.sample_set.id,
+            db.sample_set.name,
+            orderby = ~db.sample_set.id
+        )
+        sample_set_list = []
+        sample_set_name = ""
+
+        for row in query_sample_set :
+            name = row.name if row.name is not None else "Unnamed Sample Set"
+            id = "  (%d)" % row.id
+            tmp = name+id
+            sample_set_list.append(tmp)
+            if sample_set_id == row.id:
+                sample_set_name = tmp
 			
         query_patient = db(
             auth.vidjil_accessible_query(PermissionEnum.admin.value, db.patient)
@@ -300,11 +322,13 @@ def edit():
                 run = run_date+name+id
         
         return dict(message = T('edit file'),
+                   sample_set_list = sample_set_list,
                    patient_list = patient_list,
                    run_list = run_list,
                    patient = patient,
 				   pre_process_list = pre_process_list,
                    run = run,
+                   sample_set = sample_set_name,
                    file = db.sequence_file[request.vars["id"]],
                    sample_type = request.vars['sample_type'])
     else:
@@ -317,11 +341,14 @@ def edit_form():
     error = ""
     patient_id = None
     run_id = None
+    sample_set_id = None
 
     if request.vars['patient_id'] != '' :
         patient_id = int(request.vars['patient_id'].split('(')[-1][:-1])
     if request.vars['run_id'] != '' :
         run_id = int(request.vars['run_id'].split('(')[-1][:-1])
+    if request.vars['sample_set_id'] != '' :
+        sample_set_id = int(request.vars['sample_set_id'].split('(')[-1][:-1])
     if request.vars['id'] == None :
         error += "missing id"
     if request.vars['filename'] == None :
@@ -364,10 +391,16 @@ def edit_form():
             id_sample_set_membership_patient = db.sample_set_membership.insert(sample_set_id=patient_sample_set_id,
                                                                   sequence_file_id=request.vars["id"])
 
+        if sample_set_id is not None :
+            id_sample_set_membership = db.sample_set_membership.insert(sample_set_id=sample_set_id,
+                                                                  sequence_file_id=request.vars["id"])
+
         if request.vars['sample_type'] == 'run':
             originating_id = run_sample_set_id
-        else:
+        elif request.vars['sample_type'] == 'patient':
             originating_id = patient_sample_set_id
+        else :
+            originating_id = sample_set_id
         redirect_args = {"id" : originating_id}
         
         res = {"file_id" : request.vars["id"],
