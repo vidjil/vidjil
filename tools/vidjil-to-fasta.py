@@ -192,7 +192,9 @@ def write_fuse_to_fasta(data, outfile, used_names, current_filename, options, me
                 additional_header_info.append('germline=%s'%clone.d['germline'])
             if len(options.sample_name) > 0:
                 sample_name = eval(options.sample_name)
-                additional_header_info.append('sample_name=%s' % sample_name)
+            else:
+                sample_name = current_filename
+            additional_header_info.append('sample_name=%s' % sample_name)
 
             if len(metadata) > 0:
                 additional_header_info.append(metadata.replace(' ', spacer))
