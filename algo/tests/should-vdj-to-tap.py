@@ -28,13 +28,11 @@ from collections import defaultdict
 
 import os
 import argparse
-
-VIDJIL_FINE = '{directory}/vidjil -X 100 -# "#" -c segment -i -3 -d -g {directory}/germline %s >> %s'
-VIDJIL_KMER = '{directory}/vidjil -w 20 -# "#" -b out -c windows -uuuU -2 -i -g {directory}/germline %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa >> %s'
+import repseq_vdj
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
-parser.add_argument('--program', '-p', default=VIDJIL_FINE, help='program to launch on each file (%(default)s)')
-parser.add_argument('-q', dest='program', action='store_const', const=VIDJIL_KMER, help='shortcut for -p (VIDJIL_KMER), to be used with -2')
+parser.add_argument('--program', '-p', default=repseq_vdj.VIDJIL_FINE, help='program to launch on each file (%(default)s)')
+parser.add_argument('-q', dest='program', action='store_const', const=repseq_vdj.VIDJIL_KMER, help='shortcut for -p (VIDJIL_KMER), to be used with -2')
 parser.add_argument('--ignore_N', '-N', action='store_true', help='ignore N patterns, checking only gene and allele names')
 parser.add_argument('--ignore_allele', '-A', action='store_true', help='ignore allele, checking only gene names')
 parser.add_argument('--ignore_D', '-D', action='store_true', help='ignore D gene names and alleles')
@@ -65,53 +63,6 @@ global_failed = 0
 global_stats = defaultdict(int)
 global_stats_failed = defaultdict(int)
 global_stats_todo = defaultdict(int)
-
-
-def should_result_from_vidjil(l):
-    '''
-    Return a (should, result) couple from a Vidjil output line in the form of:
-    >TRDD2*01_1/AGG/1_TRDD3*01__TRD+ + VJ 	0 84 88 187	TRDD2*01 1/AGG/1 TRDD3*01  TRD+
-    or
-    >TRDV3*01_0//0_TRDJ4*01 ! + VJ	0 49 50 97       TRD UNSEG noisy
-    '''
-
-    l = l.strip()
-    pos = l.find(' + ') if ' + ' in l else l.find(' - ')
-    should = l[1:pos].replace('_', ' ')
-
-    pos = l.find('\t')
-    result = l[pos+1:] + ' '
-
-    return (should, result)
-
-
-def should_results_from_program(f_should):
-    '''
-    Launch the program on f_should
-    Yields (#, >) couples of V(D)J designations, such as in:
-    #TRDD2*01 1/AGG/1 TRDD3*01  TRD+
-    >TRDD2*01  TRDD3*01
-    '''
-
-    f_log = f_should + PROG_TAG + LOG_SUFFIX
-    f_log = f_log.replace(SHOULD_SUFFIX, '')
-
-    program = args.program.replace('{directory}',args.directory)
-    cmd = program % (f_should, f_log)
-
-    with open(f_log, 'w') as f:
-        f.write('# %s\n\n' % cmd)
-
-    exit_code = os.system(cmd)
-    if exit_code:
-        print "Error. The program halted with exit code %s." % exit_code
-        sys.exit(3)
-
-    for l in open(f_log):
-        if not l:
-            continue
-        if l[0] == '>':
-            yield should_result_from_vidjil(l)
 
 
 def should_results_from_vdj(f_vdj):
@@ -321,8 +272,11 @@ def should_to_tap_one_file(f_should):
     f_tap = f_should + PROG_TAG + TAP_SUFFIX
     f_tap = f_tap.replace(SHOULD_SUFFIX, '')
 
+    f_log = f_should + PROG_TAG + LOG_SUFFIX
+    f_log = f_log.replace(SHOULD_SUFFIX, '')
+
     print "<== %s" % f_should
-    should_results = list(should_results_from_program(f_should))
+    should_results = list(repseq_vdj.should_results_from_vidjil(args.program.replace('{directory}',args.directory), f_should, f_log))
 
     write_should_results_to_tap(should_results, f_tap)
 

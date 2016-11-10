@@ -10,8 +10,9 @@ python repsep_vdj.py data-curated/curated_TR.fa data-curated/curated_tr_Summary.
 python repseq_vdj.py data-curated/mixcr.results > data-curated/mixcr.vdj
 '''
 
-import sys
 
+import sys
+import os
 
 V = 'V'
 D = 'D'
@@ -184,6 +185,58 @@ def header_vquest_results(ff_fasta, ff_vquest):
 
         r = IMGT_VQUEST_Result(vquest)
         yield (fasta.replace('>', ''), r.to_vdj())
+
+
+
+### Vidjil
+
+VIDJIL_FINE = '{directory}/vidjil -X 100 -# "#" -c segment -i -3 -d -g {directory}/germline %s >> %s'
+VIDJIL_KMER = '{directory}/vidjil -w 20 -# "#" -b out -c windows -uuuU -2 -i -g {directory}/germline %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa >> %s'
+
+def should_results_from_vidjil_output(f_log):
+    '''
+    Yield (should, result) couples from a Vidjil output including lines in the form of:
+    >TRDD2*01_1/AGG/1_TRDD3*01__TRD+ + VJ 	0 84 88 187	TRDD2*01 1/AGG/1 TRDD3*01  TRD+
+    or
+    >TRDV3*01_0//0_TRDJ4*01 ! + VJ	0 49 50 97       TRD UNSEG noisy
+    '''
+
+    for l in open(f_log):
+        if not l:
+            continue
+        if l[0] == '>':
+            l = l.strip()
+            pos = l.find(' + ') if ' + ' in l else l.find(' - ')
+            should = l[1:pos].replace('_', ' ')
+
+            pos = l.find('\t')
+            result = l[pos+1:] + ' '
+
+            yield (should, result)
+
+def should_results_from_vidjil(program, f_should, f_log):
+    '''
+    Launch the program on f_should
+    Yields (#, >) couples of V(D)J designations, such as in:
+    #TRDD2*01 1/AGG/1 TRDD3*01  TRD+
+    >TRDD2*01  TRDD3*01
+    '''
+
+    cmd = program % (f_should, f_log)
+
+    with open(f_log, 'w') as f:
+        f.write('# %s\n\n' % cmd)
+
+    exit_code = os.system(cmd)
+    if exit_code:
+        print "Error. The program halted with exit code %s." % exit_code
+        sys.exit(3)
+
+    return should_results_from_vidjil_output(f_log)
+
+
+
+### Main
 
 if __name__ == '__main__':
 
