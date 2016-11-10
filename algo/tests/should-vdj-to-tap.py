@@ -134,7 +134,10 @@ def should_pattern_to_regex(p):
             if args.ignore_allele:
                 allele = '\d*'
 
-            term = gene + '[*]' + allele
+            allele_separator = '[*]'
+            if args.ignore_D or args.ignore_allele:
+                allele_separator += '?'
+            term = gene + allele_separator + allele
 
         return [term]
 
