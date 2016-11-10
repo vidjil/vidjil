@@ -37,6 +37,8 @@ def parse_gene_and_allele_to_vdj(s):
 def N_to_vdj(s):
     return '/%s/' % s
 
+def CDR3_to_vdj(s):
+    return '{%s}' % s if s else ''
 
 class Result():
     '''Stores a tabulated result'''
@@ -83,6 +85,9 @@ class MiXCR_Result(Result):
         s += ' '
         s += self['Best J hit']
 
+        s += ' '
+        s += CDR3_to_vdj(self['AA. Seq. CDR3'])
+
         return s
 
 
@@ -104,6 +109,10 @@ class IMGT_VQUEST_Result(Result):
         s += parse_gene_and_allele_to_vdj(self['D-GENE and allele'])
         s += ' '
         s += parse_gene_and_allele_to_vdj(self['J-GENE and allele'])
+
+        s += ' '
+        s += CDR3_to_vdj(self['AA JUNCTION'])
+
         return s
 
 
