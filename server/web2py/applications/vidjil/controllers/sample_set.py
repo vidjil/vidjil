@@ -181,9 +181,9 @@ def all():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     isAdmin = auth.is_admin()
-    try :
+    if request.vars['type']:
         type = request.vars['type']
-    except KeyError:
+    else :
         type = 'sample_set'
 
     list = SampleSetList(type)
