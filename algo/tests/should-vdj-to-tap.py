@@ -38,6 +38,7 @@ parser.add_argument('--ignore_del', '-s', action='store_true', help='ignore numb
 parser.add_argument('--ignore_allele', '-A', action='store_true', help='ignore allele, checking only gene names')
 parser.add_argument('--ignore_D', '-D', action='store_true', help='ignore D gene names and alleles')
 parser.add_argument('--ignore_incomplete', '-+', action='store_true', help='ignore incomplete/unusual germlines')
+parser.add_argument('--ignore_cdr3', '-3', action='store_true', help='ignore CDR3')
 parser.add_argument('--after-two', '-2', action='store_true', help='compare only the right part of the pattern after two underscores (locus code)')
 parser.add_argument('--revcomp', '-r', action='store_true', help='duplicate the tests on reverse-complemented files')
 parser.add_argument('--directory', '-d', default='../..', help='base directory where Vidjil is. This value is used by the default -p and -q values (%(default)s)')
@@ -98,6 +99,8 @@ def should_pattern_to_regex(p):
         if term.startswith('{'):
             term = term.replace('*','[*]').replace('!','#')
             term = term.replace('{', '.*[{].*').replace('}', '.*[}]')
+            if args.ignore_cdr3:
+                term = '('+term+')?'
             return [term]
 
         # deletion/insertion/deletion
