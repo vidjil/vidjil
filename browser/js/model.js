@@ -1100,7 +1100,7 @@ Model.prototype = {
     getPointHtmlInfo: function (timeID) {
         var html = ""
 
-        html = "<h2>Sample " + this.getStrTime(timeID, "name") + " ("+m.getSampleTime(timeID)+")</h2>"
+        html = "<h2>Sample " + this.getStrTime(timeID, "name") + " ("+ this.getSampleTime(timeID)+")</h2>"
         html += "<div id='info_timepoint'><table><tr><th></th>"
         html += "<tr><td> reads </td><td>" + this.reads.total[timeID] + "</td></tr>"
         html += "<tr><td> analyzed reads </td><td>" + this.reads.segmented_all[timeID] +

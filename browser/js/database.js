@@ -318,20 +318,20 @@ Database.prototype = {
         
         //the json result look like a .vidjil file so we load it
         if (res.reads){
-            m.parseJsonData(result, 100)
-            m.initClones()
-            m.loadGermline();
+            this.m.parseJsonData(result, 100)
+            this.m.initClones()
+            this.m.loadGermline();
             this.load_analysis(args)
             this.last_file = args
             this.close()
-            m.db_key = args
+            this.m.db_key = args
             return;
         }
         
         //the json result look like a .analysis file so we load it
         if (typeof res.clones != "undefined" && typeof res.reads == "undefined" ){
-            m.parseJsonAnalysis(result)
-            m.initClones()
+            this.m.parseJsonAnalysis(result)
+            this.m.initClones()
         }
 
         //the json result contain a flash message
@@ -586,8 +586,8 @@ Database.prototype = {
                     list.appendChild(a);
         }
         
-        if (m.analysisHasChanged){
-            m.analysisHasChanged = false;
+        if (this.m.analysisHasChanged){
+            this.m.analysisHasChanged = false;
             console.log({"type": "popup",
                         "default" : "save_analysis",
                         "msg": "<div class=\'center\'> <button onclick=\'db.load_data("+JSON.stringify(args)+",\""+filename+"\")\'>Continue</button> "
@@ -637,8 +637,8 @@ Database.prototype = {
     
     load_custom_data: function(args) {
         var self=this;
-        if (m.analysisHasChanged){
-            m.analysisHasChanged = false;
+        if (this.m.analysisHasChanged){
+            this.m.analysisHasChanged = false;
             console.log({"type": "popup", 
                         "default" : "save_analysis", 
                         "msg": "<div class=\'center\'> <button onclick=\'db.load_data("+JSON.stringify(args)+",\""+filename+"\")\'>Continue</button> "
@@ -707,9 +707,9 @@ Database.prototype = {
     save_analysis: function () {
         var self = this;
         
-        if (self.last_file == m.db_key){
+        if (self.last_file == self.m.db_key){
             
-            var analysis = m.strAnalysis()
+            var analysis = self.m.strAnalysis()
             var blob = new Blob([analysis], {
                 type: 'json'
             });

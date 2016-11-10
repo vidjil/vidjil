@@ -447,35 +447,35 @@ Model_loader.prototype = {
                 for (var i = 0; i < clones.length; i++){
                     var clone = clones[i];
                     if (clone.segEdited) {
-                    for (var n=0; n < m.clones.length; n++){
-                        if (clone.id == m.clones[n].id){
-                            m.clones[n].segEdited = true;
-                            // Apply m.reads.germline changment 
-                            for (var time =0; time< m.reads.segmented.length; time ++) {
-                                var oldGermline = m.clones[n].germline;
+                    for (var n=0; n < this.clones.length; n++){
+                        if (clone.id == this.clones[n].id){
+                            this.clones[n].segEdited = true;
+                            // Apply this.reads.germline changment 
+                            for (var time =0; time< this.reads.segmented.length; time ++) {
+                                var oldGermline = this.clones[n].germline;
                                 var newGermline = clone.germline; 
-                                if(oldGermline != "custom") {m.reads.germline[oldGermline][time] -= m.clones[n].reads[time];};
-                                if(newGermline != "custom") {m.reads.germline[newGermline][time] += m.clones[n].reads[time];};
+                                if(oldGermline != "custom") {this.reads.germline[oldGermline][time] -= this.clones[n].reads[time];};
+                                if(newGermline != "custom") {this.reads.germline[newGermline][time] += this.clones[n].reads[time];};
                                 if (newGermline == "custom" && newGermline != oldGermline) {
-                                    m.reads.segmented_all[time] -= m.clones[n].reads[time];
+                                    this.reads.segmented_all[time] -= this.clones[n].reads[time];
                                 } else if (oldGermline == "custom" && newGermline != "custom"){
-                                    m.reads.segmented_all[time] += m.clones[n].reads[time];
+                                    this.reads.segmented_all[time] += this.clones[n].reads[time];
                                 }
                             }
-                            m.clones[n].germline = clone.germline;
-                            m.clones[n].eValue   = clone.eValue;
-                            m.clones[n].seg = clone.seg;
+                            this.clones[n].germline = clone.germline;
+                            this.clones[n].eValue   = clone.eValue;
+                            this.clones[n].seg = clone.seg;
                             
                         }
                     }
                     // load germline in system_available
-                    if (jQuery.inArray( clone.germline, m.system_available ) == -1) {
-                        m.system_available.push(clone.germline);
+                    if (jQuery.inArray( clone.germline, this.system_available ) == -1) {
+                        this.system_available.push(clone.germline);
                     }
                 }
                 }
             }
-            m.toggle_all_systems(true);
+            this.toggle_all_systems(true);
             
         }else{
             console.log({"type": "flash", "msg": "invalid version for this .analysis file" , "priority": 1});
