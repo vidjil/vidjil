@@ -13,6 +13,7 @@ SHOULD_LOG=$(SHOULD:.should-get=.tap)
 SHOULD_VDJ_EXPECTED_FAILS=--expected-fails 83
 SHOULD_LOCUS_EXPECTED_FAILS=--expected-fails 3
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
+SHOULD_VDJ_VDJ=$(SHOULD_VDJ:.should-vdj.fa=.1.vdj)
 SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
 SHOULD_VDJ_TO_TAP=python -u should-vdj-to-tap.py
 REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
@@ -74,6 +75,9 @@ shouldlocus_and_vdj: vidjil
 	$(MAKE) shouldlocus
 	$(MAKE) shouldvdj_with_rc
 	@echo "*** All .should-vdj.fa tests passed"
+
+shouldvdj_no_relaunch:
+	$(SHOULD_VDJ_TO_TAP) $(SHOULD_VDJ_EXPECTED_FAILS) $(SHOULD_VDJ_VDJ)
 
 shouldvdj:
 	$(SHOULD_VDJ_TO_TAP) $(SHOULD_VDJ_EXPECTED_FAILS) $(SHOULD_VDJ)
