@@ -32,6 +32,20 @@ class SampleSet(object):
 
     def render(self):
         return '<tr><td>foobar</td></tr>'
+    def get_configs(self):
+        return self.conf_list
+
+    def get_groups(self):
+        return self.group_list
+
+    def get_groups_string(self):
+        return ', '.join([group for group in self.group_list if group != 'admin'])
+
+    def get_creator(self):
+        return self.creator
+
+    def get_files(self):
+        return '%d (%s)' % (self.file_count, vidjil_utils.format_size(self.size))
 
     def get_sequence_count(self):
         if self.sequence_count is None:
