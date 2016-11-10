@@ -12,20 +12,7 @@ python repseq_vdj.py data-curated/mixcr.results > data-curated/mixcr.vdj
 
 import sys
 
-
-def parse_gene_and_allele_to_vdj(s):
-    '''
-    Parse lines such as:
-    Homsap IGHV3-30*03 F, or Homsap IGHV3-30*18 F or Homsap IGHV3-30-5*01 F'
-    and produce a .vdj line
-    '''
-
-    genes = []
-    for term in s.replace(',', '').split():
-        if term in ['Homsap', '[F]', '(F)', 'F', 'P', 'or', 'and', '(see', 'comment)', 'ORF', '[ORF]']:
-            continue
-        genes += [term]
-
+def genes_to_vdj(genes):
     if not genes:
         return ''
 
@@ -71,20 +58,20 @@ class MiXCR_Result(Result):
             return 'no result'
 
         s = ''
-        s += self['Best V hit']
+        s += genes_to_vdj([self['Best V hit']])
         s += ' '
 
         if self['Best D hit']:
             s += N_to_vdj(self['N. Seq. VDJunction'])
             s += ' '
-            s += self['Best D hit']
+            s += genes_to_vdj([self['Best D hit']])
             s += ' '
             s += N_to_vdj(self['N. Seq. DJJunction'])
         else:
             s += N_to_vdj(self['N. Seq. VJJunction'])
 
         s += ' '
-        s += self['Best J hit']
+        s += genes_to_vdj([self['Best J hit']])
 
         s += ' '
         s += CDR3_to_vdj(self['AA. Seq. CDR3'])
@@ -99,17 +86,30 @@ class IMGT_VQUEST_Result(Result):
         self.labels = vquest_labels
         return ('No result' not in l)
 
+    def parse_gene_and_allele(self, s):
+        '''
+        Parse IMGT/V-QUEST fields such as:
+        Homsap IGHV3-30*03 F, or Homsap IGHV3-30*18 F or Homsap IGHV3-30-5*01 F'
+        '''
+
+        genes = []
+        for term in s.replace(',', '').split():
+            if term in ['Homsap', '[F]', '(F)', 'F', 'P', 'or', 'and', '(see', 'comment)', 'ORF', '[ORF]']:
+                continue
+            genes += [term]
+        return genes
+
     def to_vdj(self):
 
         if not self.result:
             return 'no result'
 
         s = ''
-        s += parse_gene_and_allele_to_vdj(self['V-GENE and allele'])
+        s += genes_to_vdj(self.parse_gene_and_allele(self['V-GENE and allele']))
         s += ' '
-        s += parse_gene_and_allele_to_vdj(self['D-GENE and allele'])
+        s += genes_to_vdj(self.parse_gene_and_allele(self['D-GENE and allele']))
         s += ' '
-        s += parse_gene_and_allele_to_vdj(self['J-GENE and allele'])
+        s += genes_to_vdj(self.parse_gene_and_allele(self['J-GENE and allele']))
 
         s += ' '
         s += CDR3_to_vdj(self['AA JUNCTION'])
