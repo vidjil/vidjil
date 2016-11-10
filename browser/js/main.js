@@ -86,7 +86,7 @@ try {
     //TODO
     initMenu();
 } catch(err) {
-    this.db.error(err.stack);
+    this.db.log_error(err)
 }
 
 console.log("=== main.js finished ===");

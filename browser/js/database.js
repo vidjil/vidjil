@@ -1022,7 +1022,10 @@ Database.prototype = {
     info:     function(msg) { this.log(20, msg) },
     warn:     function(msg) { this.log(30, msg) },
     error:    function(msg) { this.log(40, msg) },
-    critical: function(msg) { this.log(50, msg) }
+    critical: function(msg) { this.log(50, msg) },
+
+    // Log catched error to server
+    log_error: function(err) { this.error(err.name + ': ' + err.description + ' ' + err.stack) }
     
 }
 
