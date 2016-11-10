@@ -115,7 +115,10 @@ def should_pattern_to_regex(p):
             if args.ignore_N:
                 n_region = '[ACGT]*'
 
-            return ['/'.join((trim_left, n_region, trim_right))]
+            separator = '/'
+            if args.ignore_N:
+                separator='/?'
+            return [separator.join((trim_left, n_region, trim_right))]
 
         # Gene name, possibly without allele information
         if not '*' in term:
