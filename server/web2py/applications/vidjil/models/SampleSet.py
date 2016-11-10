@@ -14,7 +14,7 @@ class SampleSet(object):
         self.group_list = []
         self.file_count = 0
         self.size = 0
-        self.sample_type = 'sample_set'
+        self.sample_type = data.sample_type
         self.sequence_count = None
         self.data_count = None
 
