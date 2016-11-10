@@ -1,4 +1,4 @@
-class SampleSet():
+class SampleSet(object):
     def __init__(self, data):
 
         self.id = data.id
