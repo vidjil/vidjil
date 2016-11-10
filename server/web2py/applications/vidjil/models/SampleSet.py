@@ -33,6 +33,19 @@ class SampleSet(object):
     def get_configs(self):
         return self.conf_list
 
+    def get_config_urls(self):
+        configs = []
+        for conf in self.conf_list:
+            filename =  "(%s %s)" % (self.get_name(), conf['name'])
+            if conf['fused_file'] is not None :
+                configs.append(
+                    str(A(conf['name'],
+                        _href="index.html?sample_set=%d&config=%d" % (self.id, conf['id']), _type="text/html",
+                        _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { db.load_data( { 'sample_set' : '%d', 'config' :  %d }, '%s' ); }" % (self.id, conf['id'], filename))))
+            else:
+                configs.append(conf['name'])
+        return XML(", ".join(configs))
+
     def get_groups(self):
         return self.group_list
 
