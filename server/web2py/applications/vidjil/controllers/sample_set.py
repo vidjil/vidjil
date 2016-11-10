@@ -219,6 +219,7 @@ def all():
 
 
     return dict(query = result,
+                type = type,
                 isAdmin = isAdmin,
                 reverse = False)
 
