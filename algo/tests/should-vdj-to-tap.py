@@ -34,6 +34,7 @@ parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('--program', '-p', default=repseq_vdj.VIDJIL_FINE, help='program to launch on each file (%(default)s)')
 parser.add_argument('-q', dest='program', action='store_const', const=repseq_vdj.VIDJIL_KMER, help='shortcut for -p (VIDJIL_KMER), to be used with -2')
 parser.add_argument('--ignore_N', '-N', action='store_true', help='ignore N patterns, checking only gene and allele names')
+parser.add_argument('--ignore_del', '-s', action='store_true', help='ignore number of deletions at breakpoints')
 parser.add_argument('--ignore_allele', '-A', action='store_true', help='ignore allele, checking only gene names')
 parser.add_argument('--ignore_D', '-D', action='store_true', help='ignore D gene names and alleles')
 parser.add_argument('--after-two', '-2', action='store_true', help='compare only the right part of the pattern after two underscores (locus code)')
@@ -108,10 +109,11 @@ def should_pattern_to_regex(p):
             except ValueError: # already /ACGTG/
                 pass
 
-            if args.ignore_N:
+            if args.ignore_N or args.ignore_del:
                 trim_left = '\d*'
-                n_region = '[ACGT]*'
                 trim_right = '\d*'
+            if args.ignore_N:
+                n_region = '[ACGT]*'
 
             return ['/'.join((trim_left, n_region, trim_right))]
 
