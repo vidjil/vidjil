@@ -30,8 +30,6 @@ class SampleSet(object):
     def get_info(self):
         return self.info
 
-    def render(self):
-        return '<tr><td>foobar</td></tr>'
     def get_configs(self):
         return self.conf_list
 
