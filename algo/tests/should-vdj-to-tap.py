@@ -109,9 +109,9 @@ def should_pattern_to_regex(p):
                 pass
 
             if args.ignore_N:
-                trim_left = '\d+'
+                trim_left = '\d*'
                 n_region = '[ACGT]*'
-                trim_right = '\d+'
+                trim_right = '\d*'
 
             return ['/'.join((trim_left, n_region, trim_right))]
 
