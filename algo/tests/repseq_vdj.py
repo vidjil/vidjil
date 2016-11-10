@@ -12,32 +12,81 @@ python repseq_vdj.py data-curated/mixcr.results > data-curated/mixcr.vdj
 
 import sys
 
-def genes_to_vdj(genes):
-    if not genes:
-        return ''
 
-    if len(genes) == 1:
-        return genes[0]
+V = 'V'
+D = 'D'
+J = 'J'
 
-    return '(%s)' % ','.join(genes)
+N1 = 'N1'
+N2 = 'N2'
+N = 'N'
+
+JUNCTION = 'JUNCTION'
 
 
-def N_to_vdj(s):
-    return '/%s/' % s
+class VDJ_Formatter():
+    '''Stores fields and outputs a .vdj line'''
 
-def CDR3_to_vdj(s):
-    return '{%s}' % s if s else ''
+    def genes_to_vdj(self, genes):
+        if not genes:
+            return ''
 
-class Result():
+        if len(genes) == 1:
+            return genes[0]
+
+        return '(%s)' % ','.join(genes)
+
+
+    def N_to_vdj(self, s):
+        return '/%s/' % s
+
+    def CDR3_to_vdj(self, s):
+        return '{%s}' % s if s else ''
+
+    def to_vdj(self):
+        if not self.result:
+            return 'no result'
+
+        s = ''
+        s += self.genes_to_vdj(self.vdj[V])
+        s += ' '
+
+        if D in self.vdj:
+            if N1 in self.vdj:
+                s += self.N_to_vdj(self.vdj[N1])
+                s += ' '
+            s += self.genes_to_vdj(self.vdj[D])
+            if N2 in self.vdj:
+                s += ' '
+                s += self.N_to_vdj(self.vdj[N2])
+        else:
+            if N in self.vdj:
+                s += self.N_to_vdj(self.vdj[N])
+
+        s += ' '
+        s += self.genes_to_vdj(self.vdj[J])
+
+        if JUNCTION in self.vdj:
+            s += ' '
+            s += self.CDR3_to_vdj(self.vdj[JUNCTION])
+
+        return s
+
+
+class Result(VDJ_Formatter):
     '''Stores a tabulated result'''
 
     def __init__(self, l):
 
         self.d = {}
+        self.vdj = {}
         self.result = self.parse(l)
 
         for i, data in enumerate(l.split('\t')):
             self.d[self.labels[i]] = data
+
+        if self.result:
+            self.populate()
 
     def __getitem__(self, key):
         return self.d[key]
@@ -52,31 +101,18 @@ class MiXCR_Result(Result):
         self.labels = mixcr_labels
         return ('\t' in l.strip())
 
-    def to_vdj(self):
-
-        if not self.result:
-            return 'no result'
-
-        s = ''
-        s += genes_to_vdj([self['Best V hit']])
-        s += ' '
-
+    def populate(self):
+        self.vdj[V] = [self['Best V hit']]
         if self['Best D hit']:
-            s += N_to_vdj(self['N. Seq. VDJunction'])
-            s += ' '
-            s += genes_to_vdj([self['Best D hit']])
-            s += ' '
-            s += N_to_vdj(self['N. Seq. DJJunction'])
-        else:
-            s += N_to_vdj(self['N. Seq. VJJunction'])
+            self.vdj[D] = [self['Best D hit']]
+        self.vdj[J] = [self['Best J hit']]
 
-        s += ' '
-        s += genes_to_vdj([self['Best J hit']])
+        self.vdj[N1] = self['N. Seq. VDJunction']
+        self.vdj[N2] = self['N. Seq. DJJunction']
+        self.vdj[N] = self['N. Seq. VJJunction']
 
-        s += ' '
-        s += CDR3_to_vdj(self['AA. Seq. CDR3'])
+        self.vdj[JUNCTION] = self['AA. Seq. CDR3']
 
-        return s
 
 
 class IMGT_VQUEST_Result(Result):
@@ -99,22 +135,14 @@ class IMGT_VQUEST_Result(Result):
             genes += [term]
         return genes
 
-    def to_vdj(self):
+    def populate(self):
+        self.vdj[V] = self.parse_gene_and_allele(self['V-GENE and allele'])
+        self.vdj[D] = self.parse_gene_and_allele(self['D-GENE and allele'])
+        self.vdj[J] = self.parse_gene_and_allele(self['J-GENE and allele'])
 
-        if not self.result:
-            return 'no result'
+        self.vdj[JUNCTION] = self['AA JUNCTION']
 
-        s = ''
-        s += genes_to_vdj(self.parse_gene_and_allele(self['V-GENE and allele']))
-        s += ' '
-        s += genes_to_vdj(self.parse_gene_and_allele(self['D-GENE and allele']))
-        s += ' '
-        s += genes_to_vdj(self.parse_gene_and_allele(self['J-GENE and allele']))
 
-        s += ' '
-        s += CDR3_to_vdj(self['AA JUNCTION'])
-
-        return s
 
 
 
