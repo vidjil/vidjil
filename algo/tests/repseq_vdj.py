@@ -95,6 +95,9 @@ class Result(VDJ_Formatter):
         return str(self.d)
 
 
+
+### MiXCR
+
 class MiXCR_Result(Result):
 
     def parse(self, l):
@@ -114,6 +117,21 @@ class MiXCR_Result(Result):
         self.vdj[JUNCTION] = self['AA. Seq. CDR3']
 
 
+def header_mixcr_results(ff_mixcr):
+
+    f = open(ff_mixcr).__iter__()
+
+    mixcr_first_line = f.next()
+    globals()['mixcr_labels'] = mixcr_first_line.split('\t')
+
+    while True:
+        l = f.next()
+        result = MiXCR_Result(l)
+        yield result['Description R1'], result.to_vdj()
+
+
+
+### IMGT/V-QUEST
 
 class IMGT_VQUEST_Result(Result):
     '''Stores a IMGT/V-QUEST result'''
@@ -143,9 +161,6 @@ class IMGT_VQUEST_Result(Result):
         self.vdj[JUNCTION] = self['AA JUNCTION']
 
 
-
-
-
 def header_vquest_results(ff_fasta, ff_vquest):
     f_fasta = open(ff_fasta).__iter__()
     f_vquest = open(ff_vquest).__iter__()
@@ -169,20 +184,6 @@ def header_vquest_results(ff_fasta, ff_vquest):
 
         r = IMGT_VQUEST_Result(vquest)
         yield (fasta.replace('>', ''), r.to_vdj())
-
-
-def header_mixcr_results(ff_mixcr):
-
-    f = open(ff_mixcr).__iter__()
-
-    mixcr_first_line = f.next()
-    globals()['mixcr_labels'] = mixcr_first_line.split('\t')
-
-    while True:
-        l = f.next()
-        result = MiXCR_Result(l)
-        yield result['Description R1'], result.to_vdj()
-
 
 if __name__ == '__main__':
 
