@@ -131,6 +131,9 @@ def should_pattern_to_regex(p):
         else:
             gene, allele = term.split('*')
 
+            if '/' in gene:
+                gene = gene.replace('/', '/?')
+
             if args.ignore_D and ('IGHD' in gene or 'TRBD' in gene or 'TRDD' in gene):
                 gene = '\S*'
                 allele = '\d*'
