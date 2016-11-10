@@ -125,7 +125,7 @@ function imgtPost(data, system) {
  * @param data
  * @param system
  */
-function imgtPostForSegmenter(data, system, override_imgt_options) {
+function imgtPostForSegmenter(data, system, segmenter, override_imgt_options) {
     var imgtInput = initImgtInput();
     if (typeof override_imgt_options != 'undefined') {
         append_to_object(override_imgt_options, imgtInput)
@@ -239,13 +239,13 @@ function imgtPostForSegmenter(data, system, override_imgt_options) {
             input.id = 'imgt_input_check';
             $(input).on("click", function() {
                 if(this.checked) {
-                    segment.highlight[1].field = "CDR3-IMGT";
-                    segment.highlight[1].color = "red";
+                    segmenter.highlight[1].field = "CDR3-IMGT";
+                    segmenter.highlight[1].color = "red";
 
                 } else {
-                    segment.highlight[1].field = "";
+                    segmenter.highlight[1].field = "";
                 }
-                    segment.update();
+                    segmenter.update();
 
             });
             input.click();
@@ -264,19 +264,19 @@ function imgtPostForSegmenter(data, system, override_imgt_options) {
             input.id = 'imgt_vdj_input_check';
             $(input).on("click", function() {
                 if(this.checked) {
-                    segment.highlight[2].field = "V-REGION";
-                    segment.highlight[2].color = "#4b4";
-                    segment.highlight[3].field = "D-REGION";
-                    segment.highlight[3].color = "#b44";
-                    segment.highlight[4].field = "J-REGION";
-                    segment.highlight[4].color = "#aa2";
+                    segmenter.highlight[2].field = "V-REGION";
+                    segmenter.highlight[2].color = "#4b4";
+                    segmenter.highlight[3].field = "D-REGION";
+                    segmenter.highlight[3].color = "#b44";
+                    segmenter.highlight[4].field = "J-REGION";
+                    segmenter.highlight[4].color = "#aa2";
                 } else {
-                    segment.highlight[2].field = "";
-                    segment.highlight[3].field = "";
-                    segment.highlight[4].field = "";
+                    segmenter.highlight[2].field = "";
+                    segmenter.highlight[3].field = "";
+                    segmenter.highlight[4].field = "";
 
                 }
-                    segment.update();
+                    segmenter.update();
 
             });
             input.click();

@@ -370,8 +370,8 @@ Segment.prototype = {
 
             input.onchange = function () {
                 var id = this.id.replace("highlight_", "");
-                segment.highlight[id].field = this.options[this.selectedIndex].text;
-                segment.update();
+                self.highlight[id].field = this.options[this.selectedIndex].text;
+                self.update();
             };
 
             div_highlight.appendChild(input);
@@ -383,8 +383,8 @@ Segment.prototype = {
             var aaCheckbox = document.createElement('input');
             aaCheckbox.type = "checkbox";
             aaCheckbox.onclick = function () {
-                segment.amino = this.checked;
-                segment.update();
+                self.amino = this.checked;
+                self.update();
             }
             div_highlight.appendChild(aaCheckbox);
             div_highlight.appendChild(document.createTextNode("AA"));
@@ -610,7 +610,7 @@ Segment.prototype = {
         var self = this;
 
         this.aligned = false ;
-        this.sequence[cloneID] = new Sequence(cloneID, this.m)
+        this.sequence[cloneID] = new Sequence(cloneID, this.m, this)
         
         var divParent = document.getElementById("listSeq");
 
@@ -670,10 +670,10 @@ Segment.prototype = {
         }
         if (address == 'IMGT') imgtPost(request, system);
         if (address == 'IMGTSeg') {
-            imgtPostForSegmenter(request, system);
+            imgtPostForSegmenter(request, system, this);
             var change_options = {'l01p01c47' : 'N', // Deactivate default output
                                   'l01p01c45' : 'Y'}; // Activate Summary output
-            imgtPostForSegmenter(request, system, change_options);
+            imgtPostForSegmenter(request, system, this, change_options);
         }
         if (address == 'ARResT') arrestPost(request, system);
         if (address == 'igBlast') igBlastPost(request, system);
@@ -913,8 +913,8 @@ Segment.prototype = {
                 while (thisNode) {
                     var id = thisNode.id.replace("highlight_", "");
                     if (typeof thisNode.id != 'undefined' && typeof thisNode.selectedIndex != 'undefined' && typeof thisNode.selectedIndex !='undefined') {
-                        segment.highlight[id].field = thisNode.options[thisNode.selectedIndex].text;
-                        segment.update();
+                        self.highlight[id].field = thisNode.options[thisNode.selectedIndex].text;
+                        self.update();
                     }
                     thisNode = iterator.iterateNext();
                 }
@@ -994,9 +994,10 @@ Segment.prototype = $.extend(Object.create(View.prototype), Segment.prototype);
  * @param {Model} model 
  * @constructor
  * */
-function Sequence(id, model) {
+function Sequence(id, model, segmenter) {
     this.id = id; //clone ID
     this.m = model; //Model utilisé
+    this.segmenter = segmenter;
     this.seq = [];
     this.pos = [];
     this.use_marge = true;
@@ -1095,10 +1096,10 @@ Sequence.prototype = {
      * @return {string}  
      * */
     spanify_mutation: function (self, other) {
-        if (segment.aligned && self != other) {
+        if (this.segmenter.aligned && self != other) {
             var span = document.createElement('span');
             span.className = (self == '-' || other == '-' ? 'indel' : 'substitution');
-            span.setAttribute('other', other + '-' + segment.first_clone);
+            span.setAttribute('other', other + '-' + this.segmenter.first_clone);
             span.appendChild(document.createTextNode(self));
             return span;
         }else {
@@ -1110,7 +1111,7 @@ Sequence.prototype = {
      * return sequence completed with html tag <br>
      * @return {string}
      * */
-    toString: function (segment) {
+    toString: function () {
         var clone = this.m.clone(this.id)
 
         if (typeof clone.sequence != 'undefined' && clone.sequence != 0) {
@@ -1152,8 +1153,9 @@ Sequence.prototype = {
             }
             
             var highlights = [];
-            for (var i in segment.highlight){
-                highlights.push(this.get_positionned_highlight(segment.highlight[i].field, segment.highlight[i].color));
+            for (var i in this.segmenter.highlight){
+                highlights.push(this.get_positionned_highlight(this.segmenter.highlight[i].field,
+                                                               this.segmenter.highlight[i].color));
             }
             
             // Build the sequence, adding VDJ and highlight spans
@@ -1203,10 +1205,10 @@ Sequence.prototype = {
                 }
 
                 // one character
-                if (segment.amino) {
-                    currentSpan.appendChild(this.spanify_mutation(this.seqAA[i], segment.sequence[segment.first_clone].seqAA[i]));
+                if (this.segmenter.amino) {
+                    currentSpan.appendChild(this.spanify_mutation(this.seqAA[i], this.segmenter.sequence[this.segmenter.first_clone].seqAA[i]));
                 }else{
-                    currentSpan.appendChild(this.spanify_mutation(this.seq[i], segment.sequence[segment.first_clone].seq[i]));
+                    currentSpan.appendChild(this.spanify_mutation(this.seq[i], this.segmenter.sequence[this.segmenter.first_clone].seq[i]));
                 }
                     
             }
