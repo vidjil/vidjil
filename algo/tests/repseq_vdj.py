@@ -236,17 +236,59 @@ def should_results_from_vidjil(program, f_should, f_log):
 
 
 
+
+### VDJ File
+
+class VDJ_File():
+    '''
+    Handle .vdj files
+    These files contain (#, >) couples of V(D)J designations, such as in:
+    #TRDD2*01 1/AGG/1 TRDD3*01  TRD+
+    >TRDD2*01  TRDD3*01
+    '''
+
+    def __init__(self):
+        self.hr = []
+
+    def __iter__(self):
+        return self.hr.__iter__()
+
+    def __len__(self):
+        return len(self.hr)
+
+    def write(self, f):
+        for (header, result) in self.hr:
+            f.write("#%s\n" % header)
+            f.write(">%s\n" % result)
+            f.write("\n")
+
+    def parse_from_gen(self, gen):
+        self.hr = list(gen)
+
+    def parse_from_file(self, f):
+        should = ''
+        for l in f:
+
+            l = l.strip()
+            if not l:
+                continue
+
+            if l[0] == '#':
+                should = l[1:]
+
+            elif l[0] == '>':
+                self.hr += [ (should, l[1:]) ]
+
+
 ### Main
 
 if __name__ == '__main__':
 
-    if 'mixcr' in sys.argv[1]:
-        gen = header_mixcr_results(sys.argv[1])
-    else:
-        gen = header_vquest_results(sys.argv[1], sys.argv[2])
+    vdj = VDJ_File()
 
-    # output .vdj data
-    for (header, result) in gen:
-        print "#%s" % header
-        print ">%s" % result
-        print
+    if 'mixcr' in sys.argv[1]:
+        vdj.parse_from_gen(header_mixcr_results(sys.argv[1]))
+    else:
+        vdj.parse_from_gen(header_vquest_results(sys.argv[1], sys.argv[2]))
+
+    vdj.write(sys.stdout)

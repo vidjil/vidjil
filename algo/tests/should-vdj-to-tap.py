@@ -65,28 +65,6 @@ global_stats_failed = defaultdict(int)
 global_stats_todo = defaultdict(int)
 
 
-def should_results_from_vdj(f_vdj):
-    '''
-    Parses a .vdj file
-    Yields (#, >) couples of V(D)J designations, such as in:
-    #TRDD2*01 1/AGG/1 TRDD3*01  TRD+
-    >TRDD2*01  TRDD3*01
-    '''
-
-    should = ''
-    for l in open(f_vdj):
-
-        l = l.strip()
-        if not l:
-            continue
-
-        if l[0] == '#':
-            should = l[1:]
-
-        elif l[0] == '>':
-            yield should, l[1:]
-
-
 def should_pattern_to_regex(p):
     '''
     Converts patterns such as the following ones into a Python regex.
@@ -306,7 +284,10 @@ if __name__ == '__main__':
         if '.vdj' in f_should:
             f_vdj = f_should
             f_tap = f_vdj + TAP_SUFFIX
-            write_should_results_to_tap(list(should_results_from_vdj(f_vdj)), f_tap)
+
+            vdj = repseq_vdj.VDJ_File()
+            vdj.parse_from_file(open(f_vdj))
+            write_should_results_to_tap(vdj, f_tap)
             continue
 
         should_to_tap_one_file(f_should)
