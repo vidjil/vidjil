@@ -299,18 +299,22 @@ def should_to_tap_one_file(f_should):
     f_tap = f_tap.replace(SHOULD_SUFFIX, '')
 
     print "<== %s" % f_should
-    id_lines = list(should_results_from_program(f_should))
+    should_results = list(should_results_from_program(f_should))
 
-    if not(id_lines):
-        print "Error. There is no '>' line in this file."
-        sys.exit(2)
+    write_should_results_to_tap(should_results, f_tap)
 
+
+def write_should_results_to_tap(should_results, f_tap):
     print "==> %s" % f_tap
 
-    with open(f_tap, 'w') as ff:
-        ff.write("1..%d\n" % len(id_lines))
+    if not(should_results):
+        print "Error. There is no results in this file."
+        sys.exit(2)
 
-        for tap_id, (should, result) in enumerate(id_lines):
+    with open(f_tap, 'w') as ff:
+        ff.write("1..%d\n" % len(should_results))
+
+        for tap_id, (should, result) in enumerate(should_results):
             tap_line = should_result_to_tap(should, result, tap_id+1)
             if args.verbose or '#!' in tap_line:
                 print tap_line
