@@ -138,7 +138,7 @@ def header_vquest_results(ff_fasta, ff_vquest):
         while not vquest:
             vquest = f_vquest.next().strip()
 
-        r = IMGT_VQUEST_Result(result)
+        r = IMGT_VQUEST_Result(vquest)
         yield (fasta.replace('>', ''), r.to_vdj())
 
 
