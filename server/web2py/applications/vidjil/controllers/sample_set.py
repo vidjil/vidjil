@@ -195,6 +195,11 @@ def all():
     list.load_anon_permissions()
     result = list.get_values()
 
+    try:
+        headers = result[0].get_fields()
+    except IndexError:
+        headers = get_default_fields()
+
     ##sort result
     reverse = False
     if request.vars["reverse"] == "true" :
@@ -219,6 +224,7 @@ def all():
 
 
     return dict(query = result,
+                headers = headers,
                 type = type,
                 isAdmin = isAdmin,
                 reverse = False)

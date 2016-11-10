@@ -58,6 +58,16 @@ class SampleSet(object):
     def get_files(self):
         return '%d (%s)' % (self.file_count, vidjil_utils.format_size(self.size))
 
+    def get_fields(self):
+        fields = []
+        fields.append({'name': 'name', 'sort': 'name', 'call': self.get_name, 'width': 200, 'public': True})
+        fields.append({'name': 'info', 'sort': 'info', 'call': self.get_info, 'width': None, 'public': True})
+        fields.append({'name': 'results', 'sort': 'configs', 'call': self.get_config_urls, 'width': None, 'public': True})
+        fields.append({'name': 'groups', 'sort': 'groups', 'call': self.get_groups_string, 'width': 100, 'public': False})
+        fields.append({'name': 'creator', 'sort': 'creator', 'call': self.get_creator, 'width': 100, 'public': False})
+        fields.append({'name': 'files', 'sort': 'files', 'call': self.get_files, 'width': 100, 'public': True})
+        return fields
+
     def get_sequence_count(self):
         if self.sequence_count is None:
             self.sequence_count = db( (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
@@ -76,3 +86,13 @@ class SampleSet(object):
 def get_sample_set(id):
     data = db.sample_set[id]
     return SampleSet(data)
+
+def get_default_fields():
+    fields = []
+    fields.append({'name': 'name', 'sort': 'name', 'width': 200, 'public': True})
+    fields.append({'name': 'info', 'sort': 'info', 'width': None, 'public': True})
+    fields.append({'name': 'results', 'sort': 'configs', 'width': None, 'public': True})
+    fields.append({'name': 'groups', 'sort': 'groups', 'width': 100, 'public': False})
+    fields.append({'name': 'creator', 'sort': 'creator', 'width': 100, 'public': False})
+    fields.append({'name': 'files', 'sort': 'files', 'width': 100, 'public': True})
+    return fields

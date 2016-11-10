@@ -17,19 +17,15 @@
 
 
         <thead>
-            <tr><td class="column_200 pointer" onclick="db.call('sample_set/list', {'sort' :'last_name', 'filter' : '{{=request.vars["filter"]}}'"
-                  {{if not reverse and request.vars["sort"]=="name" :}} , 'reverse' : true {{pass}} })"> name </td>
-                <td class="pointer" onclick="db.call('sample_set/list', {'sort' :'info', 'filter' : '{{=request.vars["filter"]}}'
-                  {{if not reverse and request.vars["sort"]=="info" :}} , 'reverse' : true {{pass}} })"> info </td>
-                <td class="pointer" onclick="db.call('sample_set/list', {'sort' :'configs', 'filter' : '{{=request.vars["filter"]}}'
-                  {{if not reverse and request.vars["sort"]=="configs" :}} , 'reverse' : true {{pass}} })"> results </td>
-{{if isAdmin:}} <td class="column_100 pointer" onclick="db.call('sample_set/list', {'sort' :'groups', 'filter' : '{{=request.vars["filter"]}}'
-                  {{if not reverse and request.vars["sort"]=="groups" :}} , 'reverse' : true {{pass}} })"> groups </td> {{pass}}
-{{if isAdmin:}} <td class="column_100 pointer" onclick="db.call('sample_set/list', {'sort' :'creator', 'filter' : '{{=request.vars["filter"]}}'
-                  {{if not reverse and request.vars["sort"]=="creator" :}} , 'reverse' : true {{pass}} })"> creator </td> {{pass}}
-                <td class="column_100 pointer" onclick="db.call('sample_set/list', {'sort' :'files', 'filter' : '{{=request.vars["filter"]}}'
-                  {{if not reverse and request.vars["sort"]=="files" :}} , 'reverse' : true {{pass}} })"> files </td>
-                
+		{{ for header in headers: }}
+		    {{if isAdmin or header['public']:}}
+		        <td class="{{if header['width']:}}column_{{=header['width']}}{{pass}} pointer"
+	 	            onclick="db.call('sample_set/all', {'sort' : '{{=header['sort']}}', 'filter' : '{{=request.vars["filter"]}}'
+		            {{if not reverse and request.vars["sort"]==header['sort'] :}} , 'reverse' : true {{pass}} })">
+			        {{=header['name']}}
+		        </td>
+		    {{ pass }}
+		{{ pass }}
                 
                 <td class="column5"> </td>
                 <td class="column5"> </td>
@@ -40,26 +36,11 @@
         
        {{for data in query :}}
            <tr class="pointer" onclick="db.call('sample_set/index', {'id' :'{{=data.id}}' , 'config_id' : {{=data.most_used_conf}} } )" >
-                <td>
-		     {{= data.get_name()}}
-                </td>
-                <td> {{=data.get_info()}} </td>
-                <td>
-                  {{ configs = [] }}
-                  {{for conf in data.conf_list :}}
-                    {{filename = patient_name + " (" + conf['name'] + ")"}}
-                    {{if conf['fused_file'] is not None :}}
-                      {{ configs.append(str(A(conf['name'], _href="index.html?sample_set=" + str(row['id']) + "&config=" + str(conf['id']), _type="text/html",
-                            _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { db.load_data( { 'sample_set' : '" + str(data.id) + "' , 'config' : " + str(conf['id']) + " }, '" + filename + "' ); }"))) }}
-                    {{else:}}
-                      {{ configs.append(conf['name']) }}
-                    {{pass}}
-                  {{pass}}
-                  {{= XML(", ".join(configs)) }}
-                </td>
-{{if isAdmin:}} <td> {{=data.groups}}</td>{{pass}}
-{{if isAdmin:}} <td> {{=data.creator}}</td>{{pass}}
-                <td> {{=data.file_count}} ({{=vidjil_utils.format_size(data.size)}}) </td>
+               {{ for field in data.get_fields(): }}
+  		   <td>
+		       {{= field['call']()}}
+                   </td>
+               {{ pass }}
             {{ total_file_count += data.file_count ; total_size += data.size }}
                
 {{if isAdmin:}} <td onclick="db.call('sample_set/permission', {'id' :'{{=data.id}}'} )" > <i class="icon-key" title="set permissions"></i> </td> {{else:}} <td></td> {{pass}}
