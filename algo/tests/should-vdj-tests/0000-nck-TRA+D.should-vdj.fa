@@ -2,14 +2,14 @@
 # VDDJ detection
 
 # /9 TRDD3 1/ -> 13-9-1 = 3nt, too short
->TRDV2 7/2/4 TRDD2 0/0/9 TRDD3 1/1/31 TRAJ29 [TRD] TODO
+>TRDV2 7/2/4 TRDD2 0/0/9 TRDD3 1/1/31 TRAJ29 [TRA+D] TODO
 AcgagaaaaggacatctatgGCCCTGGTTTCAAagacAATTTCCAAGGTGACATTGATATTGCAAAGAACCTGGCTGTACTTAAGATACTTGCACCATCAGAGAGAGATGAAGGGTCTTACTACTGTGCCTGGGCCTACTACCaaagggcacaagactttctgtgattgcaagtaagtgtttctagccatccttgattttgatcagcaatggcttcttcccttgaattatttttcagtgtacctagaatgccttttgcccccaagaaaggtttggaaggagctgggtcattagcattgcgcaggaaattacaggttattctgttataattcgaagccactggacagtcatgatgcacacagatctggcctgcattgcacctggctagtgctcagtgtgtagctatctgagctctgatgtaagt
 
 # /3 TRDD2 3/ -> 9-3-3 = 3nt, too short
->TRDV2 3/0/3 TRDD2 3/2/0 TRDD3 1/2/3 TRAJ29 [TRD] TODO
+>TRDV2 3/0/3 TRDD2 3/2/0 TRDD3 1/2/3 TRAJ29 [TRA+D] TODO
 TGGTTTNAAgacaaTTTCcaAGGTGACATTGATATTGCAAAGAACCTGGCTGTACTtaAgATACTTGCaCCATCAgAgAGAGATgAaGGGTCTtACtaCTGTGCCTGTGACtCCCCACtGGGGGATACCTATTCAGGAAACACACCTcTTGTcTTTGGAAaGGGCACAAgAcTTTCTGTGATTGCAAGTAAgTGTTTCTAgCcaTCCTTGATTTTGATcagCAatGGCTTCTTCCCTTGAATTATTTTTCaGTGTACCTAgaATGCtTTTgCCA
 
->TRDV1 0/AGTGCGGAGGGGCGGAACT/2 TRDD2 0/GTTTT/0 TRDD3 4/ACCCAGC/11 TRAJ29 [TRD] BUG
+>TRDV1 0/AGTGCGGAGGGGCGGAACT/2 TRDD2 0/GTTTT/0 TRDD3 4/ACCCAGC/11 TRAJ29 [TRA+D] BUG
 CAAAAAGTGGTCGCTATTCTGTCAACTTCAAGAAAGCAGCGAAATCCGTCGCCTTAACCATTTCAGCCTTACAGCTAGAAGATTCAGCAAAGTACTTTTGTGCTCTTGGGGAACTAGtGCGGAGGGGCGGAACTTTCCTACGTTTTACTGGGGGAACCCAgCaacacacctcttgtctttggaaagggcacaagactttctgtgattgcaagtaagtgtttctagccatccttgattttgatcagcaatggcttcttcccttgaattatttttcagtgtacctagaatgccttttgcccccaagaaaggtttggaaggagctgggtcattagcattgcgcaggaaattacaggttattctgttataattcgaagccactggacagtcatgatgcacacagatctggcctgcattgcacctggctagtgctcagtgtgtagctatctgagctctgatgtaagt
 
 >TRAV29/DV5*01 3/CACCGAGA/3 TRDD2 1/0/3 TRDD3 0/0/2 TRDJ1  [TRD+] BUG
