@@ -190,7 +190,8 @@ def all():
     list.load_creator_names()
     list.load_sample_information()
     list.load_config_information()
-    list.load_permitted_groups()
+    if isAdmin:
+        list.load_permitted_groups()
     list.load_anon_permissions()
     result = list.get_values()
 
