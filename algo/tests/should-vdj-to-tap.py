@@ -253,10 +253,18 @@ def should_to_tap_one_file(f_should):
     f_log = f_should + PROG_TAG + LOG_SUFFIX
     f_log = f_log.replace(SHOULD_SUFFIX, '')
 
-    print "<== %s" % f_should
-    should_results = list(repseq_vdj.should_results_from_vidjil(args.program.replace('{directory}',args.directory), f_should, f_log))
+    f_vdj = f_should + PROG_TAG + '.vdj'
+    f_vdj = f_vdj.replace(SHOULD_SUFFIX, '')
 
-    write_should_results_to_tap(should_results, f_tap)
+    print "<== %s" % f_should
+
+    vdj = repseq_vdj.VDJ_File()
+    vdj.parse_from_gen(repseq_vdj.should_results_from_vidjil(args.program.replace('{directory}',args.directory), f_should, f_log))
+
+    print "==> %s" % f_vdj
+    vdj.write(open(f_vdj, 'w'))
+
+    write_should_results_to_tap(vdj, f_tap)
 
 
 def write_should_results_to_tap(should_results, f_tap):
