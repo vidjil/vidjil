@@ -1,12 +1,13 @@
 '''
+Parses output of various RepSeq programs.
 Takes either:
   - a .fa file, a _Summary.txt file as produced by IMGT/V-QUEST
   - or a results file produced by MiXCR
 and creates a .vdj file to be checked by should-vdj-to-tap.py
 
-python imgt-to-vdj.py data-curated/curated_IG.fa data-curated/curated_ig_Summary.txt > data-curated/imgt-IG.vdj
-python imgt-to-vdj.py data-curated/curated_TR.fa data-curated/curated_tr_Summary.txt > data-curated/imgt-TR.vdj
-python imgt-to-vdj.py data-curated/mixcr.results > data-curated/mixcr.vdj
+python repseq_vdj.py data-curated/curated_IG.fa data-curated/curated_ig_Summary.txt > data-curated/imgt-IG.vdj
+python repsep_vdj.py data-curated/curated_TR.fa data-curated/curated_tr_Summary.txt > data-curated/imgt-TR.vdj
+python repseq_vdj.py data-curated/mixcr.results > data-curated/mixcr.vdj
 '''
 
 import sys
