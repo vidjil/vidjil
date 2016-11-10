@@ -37,6 +37,7 @@ parser.add_argument('--ignore_N', '-N', action='store_true', help='ignore N patt
 parser.add_argument('--ignore_del', '-s', action='store_true', help='ignore number of deletions at breakpoints')
 parser.add_argument('--ignore_allele', '-A', action='store_true', help='ignore allele, checking only gene names')
 parser.add_argument('--ignore_D', '-D', action='store_true', help='ignore D gene names and alleles')
+parser.add_argument('--ignore_incomplete', '-+', action='store_true', help='ignore incomplete/unusual germlines')
 parser.add_argument('--after-two', '-2', action='store_true', help='compare only the right part of the pattern after two underscores (locus code)')
 parser.add_argument('--revcomp', '-r', action='store_true', help='duplicate the tests on reverse-complemented files')
 parser.add_argument('--directory', '-d', default='../..', help='base directory where Vidjil is. This value is used by the default -p and -q values (%(default)s)')
@@ -195,6 +196,9 @@ def should_result_to_tap(should_pattern, result, tap_id):
     else:
         locus = None
 
+    if locus is not None and '+' in locus and args.ignore_incomplete:
+        return None
+
     if args.after_two:
         # Testing only the locus code
         if not locus:
@@ -287,9 +291,10 @@ def write_should_results_to_tap(should_results, f_tap):
 
         for tap_id, (should, result) in enumerate(should_results):
             tap_line = should_result_to_tap(should, result, tap_id+1)
-            if args.verbose or '#!' in tap_line:
-                print tap_line
-            ff.write(tap_line + '\n')
+            if tap_line is not None:
+                if args.verbose or '#!' in tap_line:
+                    print tap_line
+                ff.write(tap_line + '\n')
 
 
 
