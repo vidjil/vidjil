@@ -18,6 +18,9 @@ class SampleSet():
         self.sequence_count = None
         self.data_count = None
 
+    def __getitem__(self, key):
+        return getattr(self, key, None)
+
     def get_name(self):
         return 'sample set: %s' % self.name
 
