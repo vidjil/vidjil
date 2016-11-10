@@ -14,18 +14,17 @@
 
 <div id="db_table_container">
     <table class="db_table" id="table">
-
-
         <thead>
-		{{ for header in headers: }}
-		    {{if isAdmin or header['public']:}}
-		        <td class="{{if header['width']:}}column_{{=header['width']}}{{pass}} pointer"
-	 	            onclick="db.call('sample_set/all', {'sort' : '{{=header['sort']}}', 'filter' : '{{=request.vars["filter"]}}'
+	    <tr>
+            {{ for header in headers: }}
+	        {{if isAdmin or header['public']:}}
+	            <td class="{{if header['width']:}}column_{{=header['width']}}{{pass}} pointer"
+                            onclick="db.call('sample_set/all', {'sort' : '{{=header['sort']}}', 'filter' : '{{=request.vars["filter"]}}'
 		            {{if not reverse and request.vars["sort"]==header['sort'] :}} , 'reverse' : true {{pass}} })">
-			        {{=header['name']}}
-		        </td>
-		    {{ pass }}
-		{{ pass }}
+                        {{=header['name']}}
+                    </td>
+                {{ pass }}
+            {{ pass }}
                 
                 <td class="column5"> </td>
                 <td class="column5"> </td>
