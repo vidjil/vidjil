@@ -45,7 +45,7 @@ parser.add_argument('--expected-fails', '-e', type=int, default=0, help='number 
 
 parser.add_argument('--verbose', '-v', action='store_true')
 
-parser.add_argument('file', nargs='+', help='''.should-vdj.fa files''')
+parser.add_argument('file', nargs='+', help='''.should-vdj.fa or .vdj files''')
 
 args = parser.parse_args()
 
@@ -112,6 +112,29 @@ def should_results_from_program(f_should):
             continue
         if l[0] == '>':
             yield should_result_from_vidjil(l)
+
+
+def should_results_from_vdj(f_vdj):
+    '''
+    Parses a .vdj file
+    Yields (#, >) couples of V(D)J designations, such as in:
+    #TRDD2*01 1/AGG/1 TRDD3*01  TRD+
+    >TRDD2*01  TRDD3*01
+    '''
+
+    should = ''
+    for l in open(f_vdj):
+
+        l = l.strip()
+        if not l:
+            continue
+
+        if l[0] == '#':
+            should = l[1:]
+
+        elif l[0] == '>':
+            yield should, l[1:]
+
 
 def should_pattern_to_regex(p):
     '''
@@ -325,6 +348,13 @@ def write_should_results_to_tap(should_results, f_tap):
 if __name__ == '__main__':
 
     for f_should in args.file:
+
+        if '.vdj' in f_should:
+            f_vdj = f_should
+            f_tap = f_vdj + TAP_SUFFIX
+            write_should_results_to_tap(list(should_results_from_vdj(f_vdj)), f_tap)
+            continue
+
         should_to_tap_one_file(f_should)
 
         if args.revcomp:
