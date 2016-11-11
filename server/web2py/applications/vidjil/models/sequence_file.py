@@ -1,6 +1,31 @@
 import defs
 import base64
 
+class SequenceFile():
+    def __init__(self, data):
+        self.id = data.id
+        self.info = data.info
+        self.sampling_date = data.date
+        self.filename = data.filename
+        self.pcr = data.pcr
+        self.sequencer = data.sequencer
+        self.producer = data.producer
+        self.size_file = data.size_file
+        self.size_file2 = data.size_file2
+        self.provider = data.provider
+        self.pre_process = data.pre_process
+        self.pre_process_result = data.pre_process_result
+        self.pre_process_flag = data.pre_process_flag
+        self.pre_process_scheduler_task_id = data.pre_process_scheduler_task_id
+        self.data_file = data.data_file
+        self.data_file2 = data.data_file2
+        self.original_filename = None
+        self.original_filename2 = None
+
+def get_sequence_file(id):
+    data = db.sequence_file[id]
+    return SequenceFile(data)
+
 def get_original_filename(data_file):
     return db.sequence_file.data_file.retrieve_file_properties(data_file)['filename']
 
