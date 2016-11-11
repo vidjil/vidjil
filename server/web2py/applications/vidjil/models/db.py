@@ -100,7 +100,10 @@ use_janrain(auth, filename='private/janrain.key')
 
 db.define_table('sample_set',
                 Field('name', 'string'),
+                Field('last_name','string'),
+                Field('birth','date'),
                 Field('info', 'text'),
+                Field('id_label','string'),
                 Field('creator', 'reference auth_user'),
                Field('sample_type', 'string', ondelete='SET NULL'))
 

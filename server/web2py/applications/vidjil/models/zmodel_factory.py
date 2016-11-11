@@ -2,6 +2,7 @@ from enum import Enum
 
 class FactoryEnum(Enum):
     sample_set = SampleSet
+    patient = Patient
 
 class ModelFactory():
 
