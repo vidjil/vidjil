@@ -3,6 +3,7 @@ from enum import Enum
 class FactoryEnum(Enum):
     sample_set = SampleSet
     patient = Patient
+    run = Run
 
 class ModelFactory():
 
