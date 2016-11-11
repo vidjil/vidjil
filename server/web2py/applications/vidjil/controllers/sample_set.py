@@ -204,13 +204,7 @@ def all():
     reverse = False
     if request.vars["reverse"] == "true" :
         reverse = True
-    if request.vars["sort"] == "configs" :
-        result = sorted(result, key = lambda row : row.confs, reverse=reverse)
-    elif request.vars["sort"] == "groups" :
-        result = sorted(result, key = lambda row : row.groups, reverse=reverse)
-    elif request.vars["sort"] == "files" :
-        result = sorted(result, key = lambda row : row.file_count, reverse=reverse)
-    elif "sort" in request.vars:
+    if "sort" in request.vars:
         result = sorted(result, key = lambda row : row[request.vars["sort"]], reverse=reverse)
     else:
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)

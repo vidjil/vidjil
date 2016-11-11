@@ -62,10 +62,10 @@ class SampleSet(object):
         fields = []
         fields.append({'name': 'name', 'sort': 'name', 'call': self.get_name, 'width': 200, 'public': True})
         fields.append({'name': 'info', 'sort': 'info', 'call': self.get_info, 'width': None, 'public': True})
-        fields.append({'name': 'results', 'sort': 'configs', 'call': self.get_config_urls, 'width': None, 'public': True})
+        fields.append({'name': 'results', 'sort': 'confs', 'call': self.get_config_urls, 'width': None, 'public': True})
         fields.append({'name': 'groups', 'sort': 'groups', 'call': self.get_groups_string, 'width': 100, 'public': False})
         fields.append({'name': 'creator', 'sort': 'creator', 'call': self.get_creator, 'width': 100, 'public': False})
-        fields.append({'name': 'files', 'sort': 'files', 'call': self.get_files, 'width': 100, 'public': True})
+        fields.append({'name': 'files', 'sort': 'file_count', 'call': self.get_files, 'width': 100, 'public': True})
         return fields
 
     def get_sequence_count(self):
