@@ -30,7 +30,8 @@ The method is described in the following references:
 
 Marc Duez et al.,
 “Vidjil: A web platform for analysis of high-throughput repertoire sequencing”,
-PLOS ONE, in press
+PLOS ONE 2016, 11(11):e0166126
+http://dx.doi.org/10.1371/journal.pone.0166126
 
 Mathieu Giraud, Mikaël Salson, et al.,
 "Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing",
