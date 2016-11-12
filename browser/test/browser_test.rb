@@ -40,11 +40,15 @@ class BrowserTest < MiniTest::Test
       index_path = ENV['LIVE_SERVER'] + '/?data='
     end
       
-    print "Testing Vidjil browser at " + index_path + "\n"
-
+    print "Open browser\n"
+    #$b = VidjilBrowser.new :safari
     $b = VidjilBrowser.new :firefox
     #$b = VidjilBrowser.new :chrome
+
+    print "Resize\n"
     $b.window.resize_to(1500, 800)
+
+    print "Testing Vidjil browser at " + index_path + "\n"
     $b.goto index_path
 
     # check that the browser loaded correctly
@@ -60,6 +64,8 @@ class BrowserTest < MiniTest::Test
     
     if not ENV['LIVE_SERVER']
 
+      print "Welcome popup.\n"
+
       # check the welcoming popup
       assert ($b.div(:class => 'popup_msg').present?), "Popup message is not present at the opening of Vidjil"
     
@@ -67,10 +73,14 @@ class BrowserTest < MiniTest::Test
       $b.div(:class => 'popup_msg').button(:text => 'ok').click
       assert (not $b.div(:class => 'popup_msg').present?), "Popup message still present after trying to close it"
     end
+
+    print "Import data.\n"
     
     # check the 'import data' menu element, and click on it
+    assert ($b.div(:id => 'demo_file_menu').present?), "File menu is not present"
+    # $b.div(:id => 'demo_file_menu').hover
     $b.div(:id => 'demo_file_menu').click
-    assert ($b.div(:id => 'demo_file_menu').a(:id => 'import_data_anchor')), "'import data' not present"
+    assert ($b.div(:id => 'demo_file_menu').a(:id => 'import_data_anchor').present?), "'import data' not present"
     $b.div(:id => 'demo_file_menu').a(:id => 'import_data_anchor').click
     
     # select data file
