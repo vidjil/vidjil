@@ -674,8 +674,10 @@ List.prototype = {
         for (var i = 0; i < list.length; i++) {
 
             var div = this.index[list[i]];
-            
-            if (!this.m.clone(list[i]).isActive() || this.m.clusters[list[i]].length == 0){
+
+            if (!((clone.isActive() && this.m.clusters[cloneID].length != 0)
+                  ||
+                  (clone.isVirtual() && this.m.system_selected.indexOf(clone.germline) != -1))){
                 div.style.display = "none";
             }else{
                 div.style.display = "block";
