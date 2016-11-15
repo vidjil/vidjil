@@ -645,7 +645,7 @@ Clone.prototype = {
     },
     
     getColor: function () {
-        if (this.color) {
+        if (typeof this.color != "undefined") {
             return this.color;
         } else {
             "";
