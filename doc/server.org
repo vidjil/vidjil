@@ -55,6 +55,7 @@ These installation instruction are for Ubuntu server 14.04
     apt-get install g++
     apt-get install make
     apt-get install unzip
+    apt-get install enum34
 
 ** Vidjil server installation and initialization
    Enter in the =server/= directory.
@@ -71,7 +72,7 @@ These installation instruction are for Ubuntu server 14.04
 	Requirements:
 		ssh, zip unzip, tar, openssh-server, build-essential, python, python-dev,
 		mysql, apache2, libapache2-mod-wsgi, python2.5-psycopg2, postfix, wget,
-		python-matplotlib, python-reportlab, mercurial, git
+		python-matplotlib, python-reportlab, python-enum34, mercurial, git
 
 
 	For simplicity this guide will assume you are installing to /home/www-data
