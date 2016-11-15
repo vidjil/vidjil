@@ -164,7 +164,7 @@ def should_pattern_to_regex(p):
         for term in p.split():
             r += process_term(term)
 
-        regex_pattern = ' .*'.join(r)
+        regex_pattern = '.*'.join(r)
 
     try:
         regex = re.compile(regex_pattern)
