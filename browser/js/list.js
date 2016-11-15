@@ -675,7 +675,9 @@ List.prototype = {
 
             var div = this.index[list[i]];
 
-            if (!((clone.isActive() && this.m.clusters[cloneID].length != 0)
+            var clone = this.m.clone(list[i])
+
+            if (!((clone.isActive() && this.m.clusters[list[i]].length != 0)
                   ||
                   (clone.isVirtual() && this.m.system_selected.indexOf(clone.germline) != -1))){
                 div.style.display = "none";
@@ -683,7 +685,7 @@ List.prototype = {
                 div.style.display = "block";
                 
                 //color
-                var color = this.m.clone(list[i]).getColor();
+                var color = clone.getColor();
 
                 $("#" + list[i] + " .nameBox:first")
                     .css("color", color)
@@ -697,7 +699,7 @@ List.prototype = {
                 //clone selected ?
                 div.className = "list";
                 
-                if (this.m.clone(list[i]).isSelected()) {
+                if (clone.isSelected()) {
                     $(div).addClass("list_select");
                 } 
                 if (this.m.focus ==list[i]) {
@@ -707,7 +709,7 @@ List.prototype = {
                 //cluster sequence selected?
                 var div2 = document.getElementById("_" + list[i]);
                 if (div2) {
-                    if (this.m.clone(list[i]).isSelected()) {
+                    if (clone.isSelected()) {
                         div2.className = "listElem selected";
                     } else {
                         div2.className = "listElem";
