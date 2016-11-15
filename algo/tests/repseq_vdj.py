@@ -8,6 +8,8 @@ and creates a .vdj file to be checked by should-vdj-to-tap.py
 python repseq_vdj.py data-curated/curated_IG.fa data-curated/curated_ig_Summary.txt > data-curated/imgt-IG.vdj
 python repsep_vdj.py data-curated/curated_TR.fa data-curated/curated_tr_Summary.txt > data-curated/imgt-TR.vdj
 python repseq_vdj.py data-curated/mixcr.results > data-curated/mixcr.vdj
+python repseq_vdj.py data-curated/curated_IG.fa data-curated/igblast/IG/*.aln > data-curated/igblast-IG.vdj > data-curated/igblast-IG.vdj
+python repseq_vdj.py data-curated/curated_TR.fa data-curated/igblast/TR/*.aln > data-curated/igblast-TR.vdj > data-curated/igblast-TR.vdj
 '''
 
 
@@ -193,6 +195,57 @@ def header_vquest_results(ff_fasta, ff_vquest):
         yield (fasta.replace('>', ''), r.to_vdj())
 
 
+### igBlast
+
+igblast_labels = [V, D, J, "Chain", None, None, None, None, None, None]
+igblast_VJ_labels = [V, J, "Chain", None, None, None, None, None, None]
+
+class igBlast_Result(Result):
+    '''Stores a igBlast result (.aln)'''
+
+    def parse(self, ll):
+        self.labels = igblast_labels
+
+        go = False
+        for l in ll:
+            if "V-(D)-J rearrangement summary" in l:
+                if "Top V gene match, Top J gene match" in l:
+                    self.labels = igblast_VJ_labels
+                go = True
+                continue
+            if go:
+                return l
+
+        return None
+
+    def parse_gene_and_allele(self, s):
+        if s == 'N/A':
+            return []
+        return s.split(',')
+
+    def populate(self):
+        self.vdj[V] = self.parse_gene_and_allele(self[V])
+        if D in self.d:
+            self.vdj[D] = self.parse_gene_and_allele(self[D])
+        self.vdj[J] = self.parse_gene_and_allele(self[J])
+
+
+
+def header_igblast_results(ff_fasta, ff_igblast):
+
+    f_fasta = open(ff_fasta).__iter__()
+
+    for f in ff_igblast:
+        fasta = ''
+        # Advance until header line
+        while not '>' in fasta:
+            fasta = f_fasta.next().strip()
+
+        igblast = open(f).readlines()
+
+        r = igBlast_Result(igblast)
+        yield (fasta.replace('>', ''), r.to_vdj())
+
 
 ### Vidjil
 
@@ -294,6 +347,8 @@ if __name__ == '__main__':
 
     if 'mixcr' in sys.argv[1]:
         vdj.parse_from_gen(header_mixcr_results(sys.argv[1]))
+    elif 'igblast' in sys.argv[2]:
+        vdj.parse_from_gen(header_igblast_results(sys.argv[1], sys.argv[2:]))
     else:
         vdj.parse_from_gen(header_vquest_results(sys.argv[1], sys.argv[2]))
 
