@@ -83,10 +83,10 @@ class Result(VDJ_Formatter):
         self.vdj = {}
         self.result = self.parse(l)
 
-        for i, data in enumerate(l.split('\t')):
-            self.d[self.labels[i]] = data
-
         if self.result:
+            for i, data in enumerate(self.result.split('\t')):
+                self.d[self.labels[i]] = data
+
             self.populate()
 
     def __getitem__(self, key):
@@ -103,7 +103,10 @@ class MiXCR_Result(Result):
 
     def parse(self, l):
         self.labels = mixcr_labels
-        return ('\t' in l.strip())
+        if ('\t' in l.strip()):
+            return l
+        else:
+            return None
 
     def populate(self):
         self.vdj[V] = [self['Best V hit']]
@@ -139,7 +142,10 @@ class IMGT_VQUEST_Result(Result):
 
     def parse(self, l):
         self.labels = vquest_labels
-        return ('No result' not in l)
+        if ('No result' not in l):
+            return l
+        else:
+            return None
 
     def parse_gene_and_allele(self, s):
         '''
