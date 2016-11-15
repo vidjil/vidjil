@@ -114,8 +114,8 @@ def should_pattern_to_regex(p):
                 pass
 
             if args.ignore_N or args.ignore_del:
-                trim_left = '\d*'
-                trim_right = '\d*'
+                trim_left = '[[:digit:]]*'
+                trim_right = '[[:digit:]]*'
             if args.ignore_N:
                 n_region = '[ACGT]*'
 
@@ -127,7 +127,7 @@ def should_pattern_to_regex(p):
         # Gene name, possibly without allele information
         if not '*' in term:
             # Some 'genes', such as KDE, do not have allele information
-            term += '([*]\d*)?'
+            term += '([*][[:digit:]]*)?'
         else:
             gene, allele = term.split('*')
 
@@ -136,10 +136,10 @@ def should_pattern_to_regex(p):
 
             if args.ignore_D and ('IGHD' in gene or 'TRBD' in gene or 'TRDD' in gene):
                 gene = '\S*'
-                allele = '\d*'
+                allele = '[[:digit:]]*'
 
             if args.ignore_allele:
-                allele = '\d*'
+                allele = '[[:digit:]]*'
 
             allele_separator = '[*]'
             if args.ignore_D or args.ignore_allele:
@@ -215,8 +215,11 @@ def should_result_to_tap(should_pattern, result, tap_id):
     else:
         # Testing the should pattern
         should_regex = should_pattern_to_regex(should_pattern)
-        match = should_regex.search(result)
-        found = (match is not None)
+        # match = should_regex.search(result)
+        match = os.system("echo '%s' | grep -E '%s' > /dev/null 2>&1" \
+                          % (result.replace("'", "\\'"),
+                             should_regex.pattern.replace("'", "\\'")))
+        found = (match == 0)
 
     globals()['global_stats'][locus] += 1
 
