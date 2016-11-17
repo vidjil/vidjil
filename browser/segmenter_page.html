@@ -2,8 +2,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" type="text/css" href="../../static/css/bootstrap.min.css" />
-  <link rel="stylesheet" type="text/css" href="segmenter.css" />
+  <link rel="stylesheet" type="text/css" href="../server/web2py/applications/vidjil/static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="segmenter_page.css" />
   <title>Vidjil</title>
 </head>
 <body>
@@ -17,13 +17,13 @@
     </p>
   </header>
 
-  <div id="form_panel" class="container">
+  <div id="form_panel" class="container" action="">
     <form>
       <textarea autofocus id="form_sequences" name="sequences" rows="10" cols="80" placeholder="Enter up to 10 sequences in FASTA format..."></textarea>
       <p>or</p>
       <input name="sequences_file" type="file" />
-      <input id="form_submit" type="submit" />
     </form>
+    <input id="form_submit" type="submit"  />
   </div>
 
   <div id="results_panel" class="container">
@@ -33,13 +33,13 @@
     </pre>
   </div>
 
-  <div id="segmenter_panel" class="container">
+  <div id="segmenter_panel">
 
   </div>
 
   <footer id="footer_panel" class="container">
     <p>Copyright Vidjil © 2016</p>
   </footer>
-  <script src="segmenter.js"></script>
-  <script data-main="../../../../../../browser/js/app.js" src="../../../../../../browser/js/lib/require.js"></script>
+  <script src="segmenter_page.js"></script>
+  <script data-main="js/app.js" src="js/lib/require.js"></script>
 </body>

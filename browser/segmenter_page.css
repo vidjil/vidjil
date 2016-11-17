@@ -1,0 +1,18 @@
+#form_panel {
+  padding: 2em;
+}
+
+#form_sequences {
+  width: 100%;
+}
+
+#results_panel {
+  display: none;
+}
+
+#segmenter_panel {
+  border: 1px solid grey;
+  border-radius: 3px;
+  /*height: 100%;*/
+  /*width: 100%;*/
+}
