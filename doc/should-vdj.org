@@ -1,6 +1,6 @@
 #+TITLE: should-vdj.fa -- Sequences with manually curated V(D)J designations
 #+AUTHOR: The Vidjil team
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/org-mode.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="org-mode.css" />
 # contact@vidjil.org
 
 

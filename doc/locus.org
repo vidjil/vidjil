@@ -1,6 +1,6 @@
 #+TITLE: Vidjil -- Analyzed locus
 #+AUTHOR: The Vidjil team (Florian, Mathieu, Mikaël, Marc and Tatiana)
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/org-mode.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="org-mode.css" />
 #+OPTIONS: toc:nil
 
 The Vidjil web application is able to display multi-locus data, as long as this information

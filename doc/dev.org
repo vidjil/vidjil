@@ -1,6 +1,6 @@
 #+TITLE: Vidjil -- Developer Documentation
 #+AUTHOR: The Vidjil team (Florian, Marc, Mathieu, Mikaël, Ryan and Tatiana)
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/org-mode.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="org-mode.css" />
 
 # This manual can be browsed online:
 #     http://www.vidjil.org/doc/dev.html               (last stable release)

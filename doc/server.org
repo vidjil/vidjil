@@ -1,5 +1,5 @@
 #+TITLE: Vidjil -- Server Manual -- Installation and Maintenance
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/org-mode.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="org-mode.css" />
 
 This is the preliminary help of the Vidjil server.
 This help is intended for server administrators. 

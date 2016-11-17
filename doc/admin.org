@@ -1,5 +1,5 @@
 #+TITLE: Vidjil -- Web Application Administration Manual
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/org-mode.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="org-mode.css" />
 
 
 This is the preliminary help for administrators of the Vidjil web application.

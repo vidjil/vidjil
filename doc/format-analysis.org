@@ -1,6 +1,6 @@
 #+TITLE: Encoding clones with V(D)J recombinations (2016b)
 #+AUTHOR: The Vidjil team
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/org-mode.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="org-mode.css" />
 
 The following [[http://en.wikipedia.org/wiki/JSON][.json]] format allows to
 encode a set of clones with V(D)J immune recombinations,

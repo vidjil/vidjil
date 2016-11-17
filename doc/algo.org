@@ -1,6 +1,6 @@
 #+TITLE: Vidjil Algorithm -- Command-line Manual
 #+AUTHOR: The Vidjil team (Mathieu, Mikaël, Marc, Tatiana and Rayan)
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/org-mode.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="org-mode.css" />
 
 # This manual can be browsed online:
 #     http://www.vidjil.org/doc/algo.html               (last stable release)
