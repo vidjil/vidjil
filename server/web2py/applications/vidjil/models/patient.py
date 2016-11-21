@@ -1,4 +1,6 @@
 class Patient(SampleSet):
+    __slots__ = ('id', 'first_name', 'has_permission', 'info', 'creator', 'confs', 'conf_list', 'conf_id_list', 'most_used_conf', 'groups', 'group_list', 'file_count', 'size', 'sample_type', 'sequence_count', 'data_count', 'last_name', 'birth', 'anon_allowed')
+
     def __init__(self, data):
         super(Patient, self).__init__(data)
         self.last_name = data.last_name

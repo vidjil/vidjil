@@ -1,4 +1,5 @@
 class SampleSet(object):
+    __slots__ = ('id', 'has_permission', 'info', 'creator', 'confs', 'conf_list', 'conf_id_list', 'most_used_conf', 'groups', 'group_list', 'file_count', 'size', 'sample_type', 'sequence_count', 'data_count')
     def __init__(self, data):
 
         self.id = data.id
