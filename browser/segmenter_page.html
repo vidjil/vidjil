@@ -2,12 +2,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="shortcut icon" href="./images/favicon-v.ico" type="image/x-icon">
   <link rel="stylesheet" type="text/css" href="../server/web2py/applications/vidjil/static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/light.css" />
+  <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu/stylesheet.css" />
+  <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu-mono/stylesheet.css" />
+  <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/fontello.css" />
+  <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/animation.css" />
+  <link id="seg_highlight" rel="stylesheet" type="text/css" href="css/segmenter_highlight.css" />
   <link rel="stylesheet" type="text/css" href="segmenter_page.css" />
   <title>Vidjil</title>
 </head>
 <body>
-  <header id="header_panel" class="container">
+  <header id="header_panel" class="panel">
     <h1>Vidjil</h1>
 
     <h2>V(D)J designation tool</h2>
@@ -17,7 +24,7 @@
     </p>
   </header>
 
-  <div id="form_panel" class="container" action="">
+  <div id="form_panel" class="panel" action="">
     <form>
       <textarea autofocus id="form_sequences" name="sequences" rows="10" cols="80" placeholder="Enter up to 10 sequences in FASTA format..."></textarea>
       <p>or</p>
@@ -26,18 +33,18 @@
     <input id="form_submit" type="submit"  />
   </div>
 
-  <div id="results_panel" class="container">
+  <div id="results_panel" class="panel">
     <!-- <h3>Result</h3> -->
     <pre id="results">
 
     </pre>
   </div>
 
-  <div id="segmenter_panel">
+  <div id="segmenter_panel" class="panel">
 
   </div>
 
-  <footer id="footer_panel" class="container">
+  <footer id="footer_panel" class="panel">
     <p>Copyright Vidjil © 2016</p>
   </footer>
   <script src="segmenter_page.js"></script>
