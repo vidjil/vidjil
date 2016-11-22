@@ -195,10 +195,9 @@ def all():
     list.load_anon_permissions()
     result = list.get_values()
 
-    try:
-        headers = result[0].get_fields()
-    except IndexError:
-        headers = get_default_fields()
+    factory = ModelFactory()
+    helper = factory.get_instance(type=type)
+    fields = helper.get_fields()
 
     ##sort result
     reverse = False
@@ -218,7 +217,7 @@ def all():
 
 
     return dict(query = result,
-                headers = headers,
+                fields = fields,
                 type = type,
                 isAdmin = isAdmin,
                 reverse = False)

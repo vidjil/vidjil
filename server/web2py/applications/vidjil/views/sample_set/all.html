@@ -16,7 +16,7 @@
     <table class="db_table" id="table">
         <thead>
 	    <tr>
-            {{ for header in headers: }}
+            {{ for header in fields: }}
 	        {{if isAdmin or header['public']:}}
 	            <td class="{{if header['width']:}}column_{{=header['width']}}{{pass}} pointer"
                             onclick="db.call('sample_set/all', {'sort' : '{{=header['sort']}}', 'filter' : '{{=request.vars["filter"]}}'
@@ -34,10 +34,10 @@
         
         
        {{for data in query :}}
-           <tr class="pointer" onclick="db.call('sample_set/index', {'id' :'{{=data.id}}' , 'config_id' : {{=data.most_used_conf}} } )" >
-               {{ for field in data.get_fields(): }}
+           <tr class="pointer" onclick="db.call('sample_set/index', {'id' :'{{=data.sample_set_id}}' , 'config_id' : {{=data.most_used_conf}} } )" >
+               {{ for field in fields: }}
   		   <td>
-		       {{= field['call']()}}
+		       {{= field['call'](data)}}
                    </td>
                {{ pass }}
             {{ total_file_count += data.file_count ; total_size += data.size }}

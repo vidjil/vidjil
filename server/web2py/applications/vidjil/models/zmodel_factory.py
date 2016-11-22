@@ -11,5 +11,5 @@ class ModelFactory():
         #filler constructor, do we need a class here ?
         self.id = 0
 
-    def get_instance(self, type, **kwargs):
-        return FactoryEnum[type].value(**kwargs)
+    def get_instance(self, type):
+        return FactoryEnum[type].value(type)
