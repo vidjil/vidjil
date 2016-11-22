@@ -1,7 +1,7 @@
 from enum import Enum
 
 class FactoryEnum(Enum):
-    sample_set = SampleSet
+    generic = SampleSet
     patient = Patient
     run = Run
 

@@ -184,7 +184,7 @@ def all():
     if request.vars['type']:
         type = request.vars['type']
     else :
-        type = 'sample_set'
+        type = 'generic'
 
     list = SampleSetList(type)
     list.load_creator_names()
@@ -249,17 +249,19 @@ def add_form():
             error += "name needed, "
 
         if error=="" :
-            id = db.sample_set.insert(name=request.vars["name"],
+            id_sample_set = db.sample_set.insert(sample_type='generic')
+
+            id = db.generic.insert(name=request.vars["name"],
                                    info=request.vars["info"],
                                    creator=auth.user_id,
-                                   sample_type = 'sample_set')
+                                   sample_set_id=id_sample_set)
 
 
             user_group = int(request.vars["sample_set_group"])
             admin_group = db(db.auth_group.role=='admin').select().first().id
 
             #sample_set creator automaticaly has all rights
-            auth.add_permission(user_group, PermissionEnum.access.value, db.sample_set, id)
+            auth.add_permission(user_group, PermissionEnum.access.value, db.generic, id)
 
             res = {"redirect": "sample_set/index",
                    "args" : { "id" : id },
@@ -292,7 +294,9 @@ def edit():
         redirect(URL('run', 'edit', vars=dict(id=run.id)), headers=response.headers)
 
     else :
-        if (auth.can_modify_sample_set(sample_set.id)):
+        generic = db((db.generic.sample_set_id == request.vars["id"])).select()[0]
+        if (auth.can_modify('generic', generic.id)):
+            request.vars["id"] = generic.id
             return dict(message=T('edit sample_set'))
         else :
             res = {"message": ACCESS_DENIED}
@@ -300,7 +304,7 @@ def edit():
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def edit_form():
-    if (auth.can_modify_sample_set(request.vars["id"]) ):
+    if (auth.can_modify('generic', request.vars["id"]) ):
         error = ""
         if request.vars["name"] == "" :
             error += "name needed, "
@@ -308,13 +312,13 @@ def edit_form():
             error += "sample set id needed, "
 
         if error=="" :
-            db.sample_set[request.vars["id"]] = dict(first_name=request.vars["name"],
+            db.generic[request.vars["id"]] = dict(name=request.vars["name"],
                                                    info=request.vars["info"],
                                                    )
 
             res = {"redirect": "back",
                    "message": "%s (%s): sample_set edited" % (request.vars["name"], request.vars["id"])}
-            log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'sample_set'})
+            log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'generic'})
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
         else :

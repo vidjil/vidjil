@@ -104,7 +104,7 @@ db.define_table('sample_set',
                 Field('birth','date'),
                 Field('info', 'text'),
                 Field('id_label','string'),
-                Field('creator', 'reference auth_user'),
+                Field('creator','reference auth_user'),
                Field('sample_type', 'string', ondelete='SET NULL'))
 
 
@@ -134,6 +134,11 @@ db.define_table('run',
 				Field('pcr','string'),
                 Field('sample_set_id','reference sample_set', ondelete='SET NULL'))
 
+db.define_table('generic',
+                Field('name', 'string'),
+                Field('info', 'text'),
+                Field('creator', 'reference auth_user'),
+                Field('sample_set_id','reference sample_set', ondelete='SET NULL'))
 
 db.define_table('pre_process',
                 Field('name', 'string'),
