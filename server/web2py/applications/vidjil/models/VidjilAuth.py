@@ -262,7 +262,12 @@ class VidjilAuth(Auth):
                     perm = True;
 
         return perm
-    
+
+    def can_modify(self, type, id, user = None):
+        perm =  self.get_permission(PermissionEnum.admin.value, type, id, user)\
+            or self.is_admin(user)
+        return perm
+
     def can_modify_file(self, file_id, user = None) :
         
         if self.is_admin(user) :
@@ -411,6 +416,15 @@ class VidjilAuth(Auth):
         If the user is None, the current user is taken into account
         '''
         return self.get_permission(PermissionEnum.anon.value, 'patient', patient_id, user)
+
+    def can_view_info(self, type, id, user = None):
+        '''
+        Return True if user can see the information contained within
+        a given sample_set
+
+        If the user is None, the current userr is taken into account
+        '''
+        return self.get_permission(PermissionEnum.anon.value, type, id, user)
 
     def can_save_patient(self, patient_id, user = None):
         '''
