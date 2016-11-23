@@ -13,3 +13,8 @@ class Patient(SampleSet):
 
     def get_birth(self, data):
         return "%s" % str(data.birth) if data.birth is not None else ''
+
+    def filter(self, filter_str, data):
+        for row in data:
+            row['string'] = [row['last_name'], row['first_name'], row['confs'], row['groups'], str(row['birth']), str(row['info'])]
+        return filter(lambda row : vidjil_utils.advanced_filter(row['string'], filter_str), data)

@@ -212,7 +212,7 @@ def all():
     if "filter" not in request.vars :
         request.vars["filter"] = ""
 
-
+    result = helper.filter(request.vars['filter'], result)
     log.debug("run list (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
 
 

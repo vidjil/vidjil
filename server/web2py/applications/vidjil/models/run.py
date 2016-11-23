@@ -15,3 +15,8 @@ class Run(SampleSet):
 
     def get_run_date(self, data):
         return data.run_date
+
+    def filter(self, filter_str, data):
+        for row in data:
+            row['string'] = [row['name'], row['confs'], row['groups'], str(row['run_date']), str(row['info'])]
+        return filter(lambda row : vidjil_utils.advanced_filter(row['string'], filter_str), data)

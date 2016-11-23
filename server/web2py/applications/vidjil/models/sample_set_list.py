@@ -66,6 +66,7 @@ class SampleSetList():
 
         for key, row in self.elements.iteritems():
             row.most_used_conf = max(set(row.conf_id_list), key=row.conf_id_list.count)
+            row.confs = ", ".join(list(set(map(lambda elem: elem['name'], row.conf_list)))) 
 
     def load_permitted_groups(self):
         query = db(
