@@ -158,7 +158,14 @@ def all():
     else :
         type = 'generic'
 
-    list = SampleSetList(type)
+    step = None
+    page = None
+    is_not_filtered = "sort" not in request.vars and "filter" not in request.vars
+    if request.vars['page'] is not None and is_not_filtered:
+        page = int(request.vars['page'])
+        step = 50
+
+    list = SampleSetList(type, page, step)
     list.load_creator_names()
     list.load_sample_information()
     list.load_config_information()
@@ -192,7 +199,9 @@ def all():
                 fields = fields,
                 type = type,
                 isAdmin = isAdmin,
-                reverse = False)
+                reverse = False,
+                step = step,
+                page = page)
 
 
 ## return form to create new generic sample_set

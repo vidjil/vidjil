@@ -1,10 +1,16 @@
 class SampleSetList():
-    def __init__(self, type):
+    def __init__(self, type, page=None, step=None):
         self.type = type
+
+        limitby = None
+        if page is not None and step is not None:
+            limitby = (page*step, (page+1)*step+1) # one more element to indicate if another page exists
+
         query_gss = db(
             (auth.vidjil_accessible_query(PermissionEnum.read.value, db[type]))
         ).select(
             db[type].ALL,
+            limitby = limitby,
             orderby = ~db[type].id
         )
 
