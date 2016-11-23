@@ -174,6 +174,9 @@ def all():
     list.load_anon_permissions()
     result = list.get_values()
 
+    # failsafe if filtered display all results
+    step = len(list) if step is None else step
+
     factory = ModelFactory()
     helper = factory.get_instance(type=type)
     fields = helper.get_fields()
