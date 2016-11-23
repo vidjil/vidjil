@@ -176,6 +176,7 @@ def all():
 
     # failsafe if filtered display all results
     step = len(list) if step is None else step
+    page = 0 if page is None else page
 
     factory = ModelFactory()
     helper = factory.get_instance(type=type)
