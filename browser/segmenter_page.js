@@ -5,44 +5,50 @@
 **/
 function loadVidjilFile() {
   var vidjilObj = {
-    "vidjil_json_version": ["2014.09"],
-    "reads": {
-      "segmented": [105, 32],
-      "total": [110, 40],
-      "germline": {"TRG": [100, 30], "IGH": [10, 7]}
+    "vidjil_json_version" : "2014.10",
+
+    "samples" :  {
+  	"number" : 1,
+  	"original_names" :  [ "/some/file" ] ,
+  	"run_timestamp" :  [ "2015-02-19 16:37:06" ] ,
+  	"producer" :  [ "vidjil dev 0cf35de (2015-02-17)" ] ,
+  	"log" :  [ "Some log" ],
+  	"commandline" :  [ "Some commandline" ]
+    } ,
+
+    "reads" :  {
+    	"total" :  [ 2000 ] ,
+    	"segmented" :  [ 1000 ] ,
+    	"germline" :  {
+    	    "IGH" :  [ 950 ]
+    	}
     },
-    "samples": {
-      "timestamp": ["2014-10-20 13:59:02", "2014-10-25 14:00:32"],
-      "number": 2,
-      "original_names": ["Diag.fa", "Fu-1.fa"]},
-      "clones": [
-        { "id" : "clone-001",
-        "sequence" : "AGCTGGACGACTCGGCCCTGTATCTCTGTGCCAGCACCCGAGGGGACAGTAGAAACTAATGAAAAACTGTTTTTTGGCAGT",
-        "name" : "CASTRGDSRN**KTVF TRBV5-4 TRBJ1-4",
-        "reads" : [10, 5],
-        "top" : 1,
-        "germline" : "TRB",
-        "seg" : { "5" : "TRBV5-4", "3" : "TRBJ1-4" }
-        },
-        { "id" : "clone-002",
-        "sequence" : "GATACAGATCAGATCAGTACAGATACAGATACAGATACA",
-        "name" : "Test 2",
-        "reads" : [20, 20],
-        "top" : 2,
-        "germline" : "TRG"
-        },
-        { "id": "clone-003",
-        "sequence": "CTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGAAACTCTTTGGCAGTGGAAC",
-        "reads" : [ 75, 5],
-        "germline": "TRG",
-        "top": 3,
-        "seg": {
-            "5": "TRGV5*01",  "5start": 0,   "5end": 86,
-            "3": "TRGJ1*02",  "3start": 89,  "3end": 118,
-            "cdr3": { "start": 77, "stop": 104, "seq": "gccacctgggccttattataagaaactc" }
-          }
+      "clones" :  [{
+  	    "id" : "id-1",
+  	    "name": "name-1",
+    "sequence": "ACGCTGGACGACTTGTATCTCTGTGCCAGCCGACCCGAAAAAGACAGTAGAAACTAATGAAAAACTGTTTTTTGGCAGT",
+
+  	    "reads" :  [ 800 ] ,
+  	    "top" : 1,
+  	    "germline" : "IGH"
+  	}, {
+  	    "id" : "id-2",
+  	    "name" : "name-2",
+    "sequence" : "AGCTGGACGACTCGGCCCTGTATCTCTGTGCCAGCACCCGAGGGGACAGTAGAAACTAATGAAAAACTGTTTTTTGGCAGT",
+
+  	    "reads" :  [ 100 ] ,
+  	    "top" : 2,
+  	    "germline" : "IGH"
+  	}
+    ] ,
+      "germlines" :  {
+  	     "custom" :  {
+  	        "shortcut" : "X",
+      	    "3" :  [ "/some/IGHV.fa" ],
+      	    "4" :  [ "/some/IGHD.fa" ],
+      	    "5" :  [ "/some/IGHJ.fa" ]
+  	      }
         }
-      ]
     };
     return vidjilObj;
 }
@@ -54,15 +60,14 @@ function main() {
   // Prepare Vidjil model
   var model = new Model();
   // model.loadGermline();
-  var segmenter = new ScatterPlot("segmenter_panel", model);
+  var segmenter = new Segment("segmenter_panel", model);
 
 
   // Parse sequences and add to segmenter
   submitNode.addEventListener("click", function () {
     var vidjil = loadVidjilFile();
-    model.parseJsonData(vidjil);
+    model.parseJsonData(vidjil, 100);
     model.initClones();
-    // segmenter.init();
     model.selectAll();
   });
 }
