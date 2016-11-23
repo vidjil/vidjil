@@ -58,7 +58,7 @@ class SampleSet(object):
                     &(db[self.type].id == data.id)).count()
         return data.sequence_count
 
-    def get_data_count(selfi, data):
+    def get_data_count(self, data):
         if data.data_count is None:
             data.data_count = db( (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                 &(db.sample_set_membership.sample_set_id == db[self.type].sample_set_id)
