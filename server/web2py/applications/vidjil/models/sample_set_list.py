@@ -14,10 +14,12 @@ class SampleSetList():
             orderby = ~db[type].id
         )
 
+        step = len(query_gss) if step is None else step
         auth.load_permissions(PermissionEnum.admin.value, type)
         auth.load_permissions(PermissionEnum.anon.value, type)
         self.elements = {}
-        for row in query_gss:
+        for i in range(0, min(len(query_gss), step)):
+            row = query_gss[i]
             self.elements[row.id] = row
             self.elements[row.id].file_count = 0
             self.elements[row.id].size = 0
@@ -107,3 +109,6 @@ class SampleSetList():
 
     def get_values(self):
         return self.elements.values()
+
+    def __len__(self):
+        return len(self.element_ids)

@@ -43,7 +43,8 @@
         </thead>
         
         
-       {{for data in query :}}
+       {{for i in range(0, min(len(query), step)) :}}
+           {{data = query[i]}}
            <tr class="pointer" onclick="db.call('sample_set/index', {'id' :'{{=data.sample_set_id}}' , 'config_id' : {{=data.most_used_conf}} } )" >
                {{ for field in fields: }}
   		   <td>
