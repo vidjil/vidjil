@@ -183,6 +183,18 @@ class VidjilBrowser < Watir::Browser
     return scatterplot_legend('y', index)
   end
 
+  def segmenter_checkbox_aa
+    return element(:id => 'segmenter_aa')
+  end
+
+  def segmenter_checkbox_imgt_cdr3
+    return element(:id => 'imgt_cdr3_input_check')
+  end
+
+  def segmenter_checkbox_imgt_vdj
+    return element(:id => 'imgt_vdj_input_check')
+  end
+
   # Return the span containing elements of the sequence in the scatterplot
   def sequence(id)
     return element(:id => 'm'+id)
