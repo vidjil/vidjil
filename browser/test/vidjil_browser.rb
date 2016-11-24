@@ -48,7 +48,9 @@ class VidjilBrowser < Watir::Browser
   def clone_info_segmenter(id, extra={})
     item = clone_in_segmenter(id, extra)
     return {name: item.element(:class => 'nameBox'), star: item.element(:class => 'starBox'),
-            size: item.element(:class => 'sizeBox')}
+            size: item.element(:class => 'sizeBox'), identity: item.element(:class => 'identityBox'),
+            info: item.elements(:class => 'infoBox')
+    }
   end
 
 
