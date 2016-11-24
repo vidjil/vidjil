@@ -236,7 +236,7 @@ function imgtPostForSegmenter(data, system, segmenter, override_imgt_options) {
             span.innerHTML = "";
             var input = document.createElement('input');
             input.type = 'checkbox';
-            input.id = 'imgt_input_check';
+            input.id = 'imgt_cdr3_input_check';
             $(input).on("click", function() {
                 if(this.checked) {
                     segmenter.highlight[1].field = "CDR3-IMGT";
@@ -250,7 +250,7 @@ function imgtPostForSegmenter(data, system, segmenter, override_imgt_options) {
             });
             input.click();
             var label = document.createElement('label');
-            label.setAttribute("for", 'imgt_input_check');
+            label.setAttribute("for", 'imgt_cdr3_input_check');
             label.innerHTML = 'CDR3-IMGT';
 
             input.setAttribute("title", 'Display CDR3 computed by IMGT/V-QUEST');

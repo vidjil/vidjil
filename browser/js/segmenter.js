@@ -381,6 +381,7 @@ Segment.prototype = {
         if (fields.indexOf("cdr3") != -1) {
 
             var aaCheckbox = document.createElement('input');
+            aaCheckbox.id = "segmenter_aa"
             aaCheckbox.type = "checkbox";
             aaCheckbox.onclick = function () {
                 self.amino = this.checked;
