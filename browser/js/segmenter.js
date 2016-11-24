@@ -343,7 +343,7 @@ Segment.prototype = {
      *
      */
     updateHighLightMenu: function () {
-
+        var self = this;
         var div_highlight = document.createElement('div');
         div_highlight.className = "menu-highlight devel-mode";
         div_highlight.onmouseover = function () {
