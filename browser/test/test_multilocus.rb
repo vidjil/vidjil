@@ -213,6 +213,31 @@ class TestMultilocus < BrowserTest
 
     end
   end
+
+  def test_10bis_imgt_post
+    begin
+      $b.clone_in_scatterplot('25').click
+      $b.span(:id => "toIMGTSeg" ).click
+      $b.segmenter_checkbox_imgt_vdj.wait_until_present
+
+      clone_info = $b.clone_info_segmenter('25')
+      productive_html = clone_info[:info].map(&:html)
+      assert (productive_html.grep(/productive/).any?), "IMGT should tell us the productivity of the sequence"
+
+      clone_segmenter = $b.clone_in_segmenter('25')
+      $b.segmenter_checkbox_imgt_vdj.click
+      highlights = clone_segmenter.spans(:class => 'highlight_border')
+      assert (highlights.size >= 2 && highlights.size <= 3), "We should have the V(D)J genes highlighted, we had %d highlights" % highlights.size
+      for h in highlights
+        assert (h.style('width').to_i >= 100), "Highlights should have a reasonable width, found to be %s" % h.style('width')
+      end
+
+      clone_info[:identity].element(:text => "NaN%").wait_while_present
+      assert ((clone_info[:identity].text =~ /^[0-9\.]+%$/) == 0 ), "We should have identity rate (found: %s)" % clone_info[:identity].text
+
+      $b.unselect
+    end
+  end
   
   
   def test_11_igBlast
