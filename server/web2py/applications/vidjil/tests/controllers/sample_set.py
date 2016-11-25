@@ -36,6 +36,9 @@ class Sample_setController(unittest.TestCase):
 
     def testAll(self):
         request.vars["type"] = 'generic'
+        request.vars["id"] = fake_patient_id
+
+        resp = all()
         self.assertTrue(resp.has_key('query'), "all() has returned an incomplete response" )
 
     def testIndex(self):

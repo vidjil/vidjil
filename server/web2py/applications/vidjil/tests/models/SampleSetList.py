@@ -2,7 +2,7 @@
 
 import unittest
 
-class SampleSetListModel(unittest.TestCase):
+class SamplesetlistModel(unittest.TestCase):
         
     def __init__(self, p):
         global auth
@@ -11,6 +11,9 @@ class SampleSetListModel(unittest.TestCase):
     def setUp(self):
         # Load the to-be-tested file
         execfile("applications/vidjil/models/sample_set_list.py", globals())
+        global auth
+        auth = VidjilAuth(globals(), db)
+        auth.login_bare("test@vidjil.org", "1234")
 
     def testInit(self):
         slist = SampleSetList('patient')
@@ -25,20 +28,20 @@ class SampleSetListModel(unittest.TestCase):
         self.assertFalse(name == "", "load_creator_names failed to retrieve a username")
 
     def testPermittedGroups(self):
-        slits = SampleSetList('patient')
-        slitst.load_permitted_groups()
+        slist = SampleSetList('patient')
+        slist.load_permitted_groups()
         value = slist.get_values()[0]
         groups = value.groups
         group_list = value.group_list
 
-        self.assertFalse(groups == "", "load_permitted_groups didn't load ay groups"
-        self.assertFalse(group_list == [], "load_permitted_groups found groups although the group_list is empty"
+        self.assertFalse(groups == "", "load_permitted_groups didn't load ay groups")
+        self.assertFalse(group_list == [], "load_permitted_groups found groups although the group_list is empty")
 
     def testAnonPermissions(self):
-        slits = SampleSetList('patient')
-        slitst.load_anon_permissions()
+        slist = SampleSetList('patient')
+        slist.load_anon_permissions()
         value = slist.get_values()[0]
 
-        self.assertTrue(value.anon_allowed, "Was expecting anon to be allowed but it was not"
+        self.assertFalse(value.anon_allowed, "Anon was allowed, when it was not expected to be")
 
 
