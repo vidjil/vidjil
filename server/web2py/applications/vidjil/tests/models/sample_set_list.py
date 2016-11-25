@@ -1,0 +1,44 @@
+#!/usr/bin/python
+
+import unittest
+
+class SampleSetListModel(unittest.TestCase):
+        
+    def __init__(self, p):
+        global auth
+        unittest.TestCase.__init__(self, p)
+        
+    def setUp(self):
+        # Load the to-be-tested file
+        execfile("applications/vidjil/models/sample_set_list.py", globals())
+
+    def testInit(self):
+        slist = SampleSetList('patient')
+        self.assertTrue(len(slist.element_ids) > 0, "The sample set list was not expected to be empty")
+
+    def testCreatorNames(self):
+        slist = SampleSetList('patient')
+        slist.load_creator_names()
+        values = slist.get_values() 
+        first = values[0]
+        name = first.creator
+        self.assertFalse(name == "", "load_creator_names failed to retrieve a username")
+
+    def testPermittedGroups(self):
+        slits = SampleSetList('patient')
+        slitst.load_permitted_groups()
+        value = slist.get_values()[0]
+        groups = value.groups
+        group_list = value.group_list
+
+        self.assertFalse(groups == "", "load_permitted_groups didn't load ay groups"
+        self.assertFalse(group_list == [], "load_permitted_groups found groups although the group_list is empty"
+
+    def testAnonPermissions(self):
+        slits = SampleSetList('patient')
+        slitst.load_anon_permissions()
+        value = slist.get_values()[0]
+
+        self.assertTrue(value.anon_allowed, "Was expecting anon to be allowed but it was not"
+
+

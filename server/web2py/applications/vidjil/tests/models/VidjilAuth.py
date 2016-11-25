@@ -31,7 +31,7 @@ class VidjilauthModel(unittest.TestCase):
         # Load the to-be-tested file
         execfile("applications/vidjil/models/VidjilAuth.py", globals())
         # set up default session/request/auth/...
-        global auth, parent_group, group, group_sec, group_ter, group_qua, group_qui, my_user_id, user_id_sec, count, patient_id, patient_id_sec, parent_user_id, admin_user_id, patient_id_ter, patient_id_qua, first_sample_set_id, sample_set_id, sample_set_id_sec, sample_set_id_ter, config_id, file_id, fused_file_id, run_id
+        global auth, parent_group, group, group_sec, group_ter, group_qua, group_qui, my_user_id, user_id_sec, count, patient_id, patient_id_sec, parent_user_id, admin_user_id, patient_id_ter, patient_id_qua, first_sample_set_id, sample_set_id, sample_set_id_sec, sample_set_id_ter, generic_sample_set_id, config_id, file_id, fused_file_id, run_id
         auth = VidjilAuth(globals(), db)
 
         my_user_id = db.auth_user.insert(
@@ -71,6 +71,7 @@ class VidjilauthModel(unittest.TestCase):
         sample_set_id = db.sample_set.insert(sample_type = 'patient')
         sample_set_id_sec = db.sample_set.insert(sample_type = 'patient')
         sample_set_id_ter = db.sample_set.insert(sample_type = 'run')
+        generic_sample_set_id = db.sample_set.insert(sample_type = 'generic')
 
         patient_id = db.patient.insert(
                 first_name="foo",
@@ -114,6 +115,12 @@ class VidjilauthModel(unittest.TestCase):
                 id_label="run",
                 creator=user_id,
                 sample_set_id=first_sample_set_id)
+
+        generic_id = db.generic.insert(name="generic",
+                name="generic one",
+                info="generic",
+                creator=user_id,
+                sample_set_id=generic_sample_set_id)
 
         config_id = db.config.insert(name="config_test_popipo",
                 info="popapipapo",
@@ -302,6 +309,40 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_modify_sample_set(first_sample_set_id, user_id)
         self.assertTrue(result,
                 "User %d is a member of admin group and is missing permissions to modify sample_set %d" % (user_id, first_sample_set_id))
+
+    def testCanModifyGeneric(self):
+        # patient data
+        result = auth.can_modify('patient', patient_id_qua)
+        self.assertFalse(result, "User %d should not be able to modify patient %d" % (auth.user_id, patient_id_qua))
+
+        result = auth.can_modify('patient', patient_id_qua, user_id_sec)
+        self.assertTrue(result, "User %d should be able to modify patient %d" % (user_id_sec, patient_id_qua))
+
+        result = auth.can_modify('patient', patient_id_qua, user_id)
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to modify patient %d" % (user_id, patient_id_qua))
+
+        # run data
+        result = auth.can_modify('run', run_id)
+        self.assertFalse(result, "User %d should not be able to modify run %d" % (auth.user_id, run_id))
+
+        result = auth.can_modify('run', run_id, user_id_sec)
+        self.assertTrue(result, "User %d should be able to modify run %d" % (user_id_sec, run_id))
+
+        result = auth.can_modify('run', run_id, user_id)
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to modify run %d" % (user_id, run_id))
+
+        # generic data
+        result = auth.can_modify('generic', generic_id)
+        self.assertFalse(result, "User %d should not be able to modify generic %d" % (auth.user_id, generic_id))
+
+        result = auth.can_modify('generic', generic_id, user_id_sec)
+        self.assertTrue(result, "User %d should be able to modify generic %d" % (user_id_sec, generic_id))
+
+        result = auth.can_modify('generic', generic_id, user_id)
+        self.assertTrue(result,
+                "User %d is a member of admin group and is missing permissions to modify generic %d" % (user_id, generic_id))
 
     def testCanModifyFile(self):
         result = auth.can_modify_file(file_id)

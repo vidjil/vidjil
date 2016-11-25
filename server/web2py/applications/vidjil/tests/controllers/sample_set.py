@@ -33,7 +33,11 @@ class Sample_setController(unittest.TestCase):
         current.db = db
         current.auth = auth
         
-        
+
+    def testAll(self):
+        request.vars["type"] = 'generic'
+        self.assertTrue(resp.has_key('query'), "all() has returned an incomplete response" )
+
     def testIndex(self):
         request.vars["id"] = fake_sample_set_id
         
