@@ -1214,7 +1214,8 @@ Sequence.prototype = {
                     
             }
         }else{
-            var window_start = 0
+            var window_start = 0;
+            var result = document.createElement('span');
             result.appendChild(document.createTextNode(clone.id));
         }
 
