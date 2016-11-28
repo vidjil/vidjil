@@ -22,6 +22,7 @@ def extract_id(target, error):
     
 def add():
     sample_set = db.sample_set[request.vars["id"]]
+    sample_type = sample_set.sample_type
     if not auth.can_upload_sample_set(sample_set.id):
         return error_message("you don't have right to upload files")
     else:
@@ -35,8 +36,8 @@ def add():
         patient_id = None
         run_id = None
         sample_set_id = None
-        if sample_set.sample_type == "sample_set":
-            sample_set_id = sample_set.id
+        if sample_set.sample_type == "generic":
+            sample_set_id = db( db.generic.sample_set_id == request.vars["id"]).select()[0].id
         if sample_set.sample_type == "patient" :
             patient_id = db( db.patient.sample_set_id == request.vars["id"]).select()[0].id
         if sample_set.sample_type == "run" :
