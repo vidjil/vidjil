@@ -157,13 +157,7 @@ def add_form():
                             pre_process_id=pre_process,
                             pre_process_flag=pre_process_flag,
                             provider=auth.user_id)
-        
-        #add a default sample_set for this sequence file
-        id_sample_set = db.sample_set.insert(sample_type="sequence_file")
         ids_sample_set = []
-        
-        id_sample_set_membership = db.sample_set_membership.insert(sample_set_id=id_sample_set,
-                                                                  sequence_file_id=id)
         #add sequence_file to a run sample_set
         if run_id is not None :
             run_sample_set_id = db.run[run_id].sample_set_id
