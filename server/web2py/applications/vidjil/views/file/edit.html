@@ -73,7 +73,7 @@ info = db.sequence_file[request.vars["id"]]
 			<tr class='db_table_split' ><td colspan="2"> sample information </td></tr>
             <tr>
                 <td><label for="sampling_date" id="sampling_date__label">sampling date: </label></td>
-                <td><input class="date" id="sampling_date" name="sampling_date" type="text" size="20" value="{{if file.sampling_date is not None:}}{{=file.sampling_date}}{{pass}}"></td>
+                <td><input class="date" id="sampling_date" name="sampling_date" type="text" size="20" value="{{if info.sampling_date is not None:}}{{=info.sampling_date}}{{pass}}"></td>
                 <td>(format: yyyy-mm-dd)</td>
             </tr>
             <tr>
