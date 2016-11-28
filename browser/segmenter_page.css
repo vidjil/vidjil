@@ -1,25 +1,87 @@
+h1, h2, div, p {
+  margin: 0;
+  padding: 0;
+}
+
+header, footer {
+  display: block;
+}
+
+.flexbox {
+  display: -ms-Flexbox;
+	-ms-box-orient: horizontal;
+
+	display: -webkit-flex;
+	display: -moz-flex;
+	display: -ms-flex;
+	display: flex;
+
+	-webkit-flex-flow: row wrap;
+	-moz-flex-flow: row wrap;
+	-ms-flex-flow: row wrap;
+	flex-flow: row wrap;
+}
+
+.panel {
+  background: white;
+  border-radius: 0.1em;
+  margin: 0.1em 0.2em;
+  padding: 1em;
+}
+
+.twopanels_left {
+  margin-right: 0.1em;
+}
+
+.twopanels_right {
+  margin-left: 0.1em;
+}
+
+#header_panel {
+  padding-top: 0.2em;
+}
+
+#app_title {
+  font-size: 1.7em;
+  float: right;
+}
+
+#tool_title {
+  font-size: 1.2em;
+}
+
 #form_panel {
+  -webkit-flex: 1 60%;
+  -moz-flex: 1 60%;
+  -ms-flex: 1 60%;
+  flex: 1 60%;
   padding: 2em;
+}
+
+.vidjil_view {
+  display: none;
 }
 
 #form_sequences {
   width: 100%;
 }
 
-#results_panel {
-  display: none;
+#scatter_panel {
+  -webkit-flex: 2 32%;
+  -moz-flex: 2 32%;
+  -ms-flex: 2 32%;
+  flex: 2 32%;
 }
 
-/*#segmenter_panel {
-  border: 1px solid grey;
-  border-radius: 3px;
-  height: 100%;
-  width: 100%;
-}*/
+#footer_panel {
+  padding: 0.2em;
+  margin: 0;
+  position: absolute;
+  bottom: -0.2em;
+  left: 0;
+  right: 0;
+}
 
-.panel {
-  background: white;
-  border-radius: 0.1em;
-  margin: 0.5em;
-  padding: 1em;
+#footer_copyright {
+  text-align: right;
 }

@@ -14,39 +14,40 @@
   <title>Vidjil</title>
 </head>
 <body>
-  <header id="header_panel" class="panel">
-    <h1>Vidjil</h1>
+  <div id="body">
+    <header id="header_panel" class="panel">
+      <h1 id="app_title">Vidjil</h1>
 
-    <h2>V(D)J designation tool</h2>
+      <h2 id="tool_title">V(D)J designation tool</h2>
 
-    <p>This tool quickly checks the V(D)J designation of a small number of sequences with (possibly incomplete) V(D)J recombinations.
-      To analyze complete NGS RepSeq datasets, use the <a href="http://app.vidjil.org/">full Vidjil platform</a>.
-    </p>
-  </header>
+      <p>This tool quickly checks the V(D)J designation of a small number of sequences with (possibly incomplete) V(D)J recombinations.
+        To analyze complete NGS RepSeq datasets, use the <a href="http://app.vidjil.org/">full Vidjil platform</a>.
+      </p>
+    </header>
 
-  <div id="form_panel" class="panel" action="">
-    <form>
-      <textarea autofocus id="form_sequences" name="sequences" rows="10" cols="80" placeholder="Enter up to 10 sequences in FASTA format..."></textarea>
-      <p>or</p>
-      <input name="sequences_file" type="file" />
-    </form>
-    <input id="form_submit" type="submit"  />
+    <div class="flexbox">
+      <div id="form_panel" class="panel" action="">
+        <form>
+          <textarea autofocus id="form_sequences" name="sequences" rows="10" cols="80" placeholder="Enter up to 10 sequences in FASTA format..."></textarea>
+          <p>or</p>
+          <input name="sequences_file" type="file" />
+        </form>
+        <input id="form_submit" type="submit"  />
+      </div>
+
+      <div id="scatter_panel" class="panel twopanels_right vidjil_view">
+
+      </div>
+    </div>
+
+    <div id="segmenter_panel" class="panel vidjil_view">
+
+    </div>
+
+    <footer id="footer_panel" class="panel">
+      <p id="footer_copyright">Copyright Vidjil © 2016</p>
+    </footer>
   </div>
-
-  <div id="results_panel" class="panel">
-    <!-- <h3>Result</h3> -->
-    <pre id="results">
-
-    </pre>
-  </div>
-
-  <div id="segmenter_panel" class="panel">
-
-  </div>
-
-  <footer id="footer_panel" class="panel">
-    <p>Copyright Vidjil © 2016</p>
-  </footer>
   <script src="segmenter_page.js"></script>
   <script data-main="js/app.js" src="js/lib/require.js"></script>
 </body>
