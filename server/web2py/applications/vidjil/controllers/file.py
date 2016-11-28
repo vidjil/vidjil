@@ -64,11 +64,11 @@ def add():
 			))
 
 	query_sample_set = db(
-                auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)
+                auth.vidjil_accessible_query(PermissionEnum.read.value, db.generic)
         ).select(
-            db.sample_set.id,
-            db.sample_set.name,
-            orderby = ~db.sample_set.id
+            db.generic.id,
+            db.generic.name,
+            orderby = ~db.generic.id
         )
         sample_set_list = []
         sample_set_name = ""
