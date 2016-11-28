@@ -237,19 +237,16 @@ def add_form():
     
 def edit(): 
     if auth.can_modify_file(request.vars['id']):
-        patient_id = None
-        run_id = None
-        sample_set_id = None
-        
-        sample_set_list = db(db.sample_set_membership.sequence_file_id == request.vars['id']).select(db.sample_set_membership.sample_set_id)
-        # TODO TOO MANY DB QUERIES HERE
+        relevant_ids = {'patient': None, 'run': None, 'generic': None}
+
+        sample_set_list = db(
+                (db.sample_set_membership.sequence_file_id == request.vars['id'])
+                & (db.sample_set_membership.sample_set_id != None)
+            ).select(db.sample_set_membership.sample_set_id)
         for row in sample_set_list :
-            if db.sample_set[row.sample_set_id].sample_type == "sample_set":
-                sample_set_id = db( db.sample_set.id == row.sample_set_id).select()[0].id
-            if db.sample_set[row.sample_set_id].sample_type == "patient" :
-                patient_id = db( db.patient.sample_set_id == row.sample_set_id).select()[0].id
-            if db.sample_set[row.sample_set_id].sample_type == "run" :
-                run_id = db( db.run.sample_set_id == row.sample_set_id).select()[0].id
+            sample_type = db.sample_set[row.sample_set_id].sample_type
+            print sample_type
+            relevant_ids[sample_type] = db(db[sample_type].sample_set_id == row.sample_set_id).select()[0].id
         
 	query_pre_process = db(
             db.pre_process>0
@@ -270,23 +267,23 @@ def edit():
                                 info = row.info
 			))
 
-	query_sample_set = db(
-                auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)
+	query_generic = db(
+                auth.vidjil_accessible_query(PermissionEnum.read.value, db.generic)
         ).select(
-            db.sample_set.id,
-            db.sample_set.name,
-            orderby = ~db.sample_set.id
+            db.generic.id,
+            db.generic.name,
+            orderby = ~db.generic.id
         )
-        sample_set_list = []
-        sample_set_name = ""
+        generic_list = []
+        generic_name = ""
 
-        for row in query_sample_set :
+        for row in query_generic :
             name = row.name if row.name is not None else "Unnamed Sample Set"
             id = "  (%d)" % row.id
             tmp = name+id
-            sample_set_list.append(tmp)
-            if sample_set_id == row.id:
-                sample_set_name = tmp
+            generic_list.append(tmp)
+            if relevant_ids['generic'] == row.id:
+                generic_name = tmp
 			
         query_patient = db(
             auth.vidjil_accessible_query(PermissionEnum.admin.value, db.patient)
@@ -302,7 +299,7 @@ def edit():
             birth = "[" + str(row.birth) + "]   "
             id = "   ("+str(row.id)+")"
             patient_list.append(birth+name+id)
-            if patient_id == row.id :
+            if relevant_ids['patient'] == row.id :
                 patient = birth+name+id
             
         query_run = db(
@@ -319,17 +316,17 @@ def edit():
             run_date = "[" + str(row.run_date) + "]   "
             id = "   ("+str(row.id)+")"
             run_list.append(run_date+name+id)
-            if run_id == row.id :
+            if relevant_ids['run'] == row.id :
                 run = run_date+name+id
         
         return dict(message = T('edit file'),
-                   sample_set_list = sample_set_list,
+                   sample_set_list = generic_list,
                    patient_list = patient_list,
                    run_list = run_list,
                    patient = patient,
 				   pre_process_list = pre_process_list,
                    run = run,
-                   sample_set = sample_set_name,
+                   sample_set = generic_name,
                    file = db.sequence_file[request.vars["id"]],
                    sample_type = request.vars['sample_type'])
     else:
