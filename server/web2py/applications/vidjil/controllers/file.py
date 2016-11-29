@@ -35,7 +35,7 @@ def add():
         
         patient_id = None
         run_id = None
-        sample_set_id = None
+        generic_id = None
         if sample_set.sample_type == "generic":
             sample_set_id = db( db.generic.sample_set_id == request.vars["id"]).select()[0].id
         if sample_set.sample_type == "patient" :
@@ -63,23 +63,23 @@ def add():
                                 info = row.info
 			))
 
-	query_sample_set = db(
+	query_generic = db(
                 auth.vidjil_accessible_query(PermissionEnum.read.value, db.generic)
         ).select(
             db.generic.id,
             db.generic.name,
             orderby = ~db.generic.id
         )
-        sample_set_list = []
-        sample_set_name = ""
+        generic_list = []
+        generic = ""
 
-        for row in query_sample_set :
+        for row in query_generic :
             name = row.name if row.name is not None else "Unnamed Sample Set"
             id = "  (%d)" % row.id
             tmp = name+id
-            sample_set_list.append(tmp)
-            if sample_set_id == row.id:
-                sample_set_name = tmp
+            generic_list.append(tmp)
+            if generic_id == row.id:
+                generic = tmp
 
         query_patient = db(
             auth.vidjil_accessible_query(PermissionEnum.read.value, db.patient)
@@ -117,11 +117,11 @@ def add():
 				
 				
         return dict(message = T('add file'),
-                   sample_set_list = sample_set_list,
+                   generic_list = generic_list,
                    patient_list = patient_list,
                    run_list = run_list,
 				   pre_process_list = pre_process_list,
-                   sample_set = sample_set_name,
+                   generic = generic,
                    patient = patient,
                    sample_type = sample_set.sample_type,
                    run = run)
@@ -131,7 +131,7 @@ def add_form():
     error = ""
     patient_id = None
     run_id = None
-    sample_set_id = None
+    generic_id = None
     
     if request.vars['sampling_date'] != '' :
         try:
@@ -141,8 +141,8 @@ def add_form():
             
     if request.vars['filename'] == None :
         error += " missing file"
-    if request.vars['patient_id'] == '' and request.vars['run_id'] == "" and request.vars['sample_set_id'] == "":
-        error += " missing patient or run"
+    if request.vars['patient_id'] == '' and request.vars['run_id'] == "" and request.vars['generic_id'] == "":
+        error += " missing patient or run or sample_set"
         
     if request.vars['patient_id'] != '' :
         try:
@@ -163,15 +163,15 @@ def add_form():
     if request.vars['run_id'] != '' :
         try:
             run_id = extract_id(request.vars['run_id'], error)
-            if not auth.can_modify_run(run_id) :
+            if not auth.can_modify('run', run_id) :
                 error += " missing permission for run "+str(run_id)
         except ValueError:
             error += " invalid run %s" % request.vars['run_id']
 
-    if request.vars['sample_set_id'] != '' :
+    if request.vars['generic_id'] != '' :
         try:
-            sample_set_id = extract_id(request.vars['sample_set_id'], error)
-            if not auth.can_modify_sample_set(sample_set_id) :
+            generic_id = extract_id(request.vars['generic_id'], error)
+            if not auth.can_modify('generic', generic_id) :
                 error += " missing permissions for sample_set %d" % sample_set_id
         except ValueError:
             error += " invalid sample_set %s" % request.vars['sample_set_id']
@@ -205,16 +205,17 @@ def add_form():
             id_sample_set_membership_patient = db.sample_set_membership.insert(sample_set_id=patient_sample_set_id,
                                                                   sequence_file_id=id)
 
-        if sample_set_id is not None:
-            ids_sample_set += [sample_set_id]
-            id_sample_set_membership = db.sample_set_membership.insert(sample_set_id=sample_set_id, sequence_file_id=id)
+        if generic_id is not None:
+            generic_sample_set_id = db.generic[generic_id].sample_set_id
+            ids_sample_set += [generic_sample_set_id]
+            id_sample_set_membership_generic = db.sample_set_membership.insert(sample_set_id=generic_sample_set_id, sequence_file_id=id)
 
         if request.vars['sample_type'] == 'run':
             originating_id = run_sample_set_id
         elif request.vars['sample_type'] == 'patient':
             originating_id = patient_sample_set_id
         else :
-            originating_id = sample_set_id
+            originating_id = generic_sample_set_id
 
         redirect_args = {"id" : originating_id}
         
@@ -275,7 +276,7 @@ def edit():
             orderby = ~db.generic.id
         )
         generic_list = []
-        generic_name = ""
+        generic = ""
 
         for row in query_generic :
             name = row.name if row.name is not None else "Unnamed Sample Set"
@@ -283,7 +284,7 @@ def edit():
             tmp = name+id
             generic_list.append(tmp)
             if relevant_ids['generic'] == row.id:
-                generic_name = tmp
+                generic = tmp
 			
         query_patient = db(
             auth.vidjil_accessible_query(PermissionEnum.admin.value, db.patient)
@@ -320,13 +321,13 @@ def edit():
                 run = run_date+name+id
         
         return dict(message = T('edit file'),
-                   sample_set_list = generic_list,
+                   generic_list = generic_list,
                    patient_list = patient_list,
                    run_list = run_list,
                    patient = patient,
 				   pre_process_list = pre_process_list,
                    run = run,
-                   sample_set = generic_name,
+                   generic = generic,
                    file = db.sequence_file[request.vars["id"]],
                    sample_type = request.vars['sample_type'])
     else:
