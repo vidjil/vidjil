@@ -18,8 +18,7 @@ class SampleSetList():
         auth.load_permissions(PermissionEnum.admin.value, type)
         auth.load_permissions(PermissionEnum.anon.value, type)
         self.elements = {}
-        for i in range(0, min(len(query_gss), step)):
-            row = query_gss[i]
+        for row in query_gss:
             self.elements[row.id] = row
             self.elements[row.id].file_count = 0
             self.elements[row.id].size = 0
