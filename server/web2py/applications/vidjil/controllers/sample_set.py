@@ -38,43 +38,17 @@ def next_sample_set():
         except:
             pass
 
-# return name to associate with the sample_set
-# patient name if it's a patient sample set
-# run name if it's run sample_set
-def info(sample_set_id):
-    sample_type = db.sample_set[request.vars["id"]].sample_type
-    
-    
-    if sample_type == "patient" : 
-        patient = db((db.patient.sample_set_id == request.vars["id"])).select()[0]
-        name = vidjil_utils.anon_names(patient.id, patient.first_name, patient.last_name)
-        return dict(name = name,
-                    filename = name,
-                    label = patient.id_label + " (" + str(patient.birth) + ")",
-                    info = patient.info
-                    )
-    
-    
-    if sample_type == "run" : 
-        run = db((db.run.sample_set_id == request.vars["id"])).select()[0]
-        return dict(name = "run : " + run.name + " (" + str(run.run_date) + ")",
-                    filename = "run : " + run.name + "_" + str(run.run_date),
-                    label = run.id_label + " (" + str(run.run_date) + ")",
-                    info = run.info
-                    )
-    
-    return dict(name = "sample_set : " +db.sample_set[request.vars["id"]].sample_type,
-                filename = "sample_set_" + request.vars["id"],
-                label = "",
-                info = ""
-                )
-
 ## return patient file list
 ##
 def index():
 
     next_sample_set()
-    sample_set_id = request.vars["id"]
+    sample_set = db.sample_set[request.vars["id"]]
+    sample_set_id = sample_set.id
+    factory = ModelFactory()
+    helper = factory.get_instance(type=sample_set.sample_type)
+    data = helper.get_data(sample_set_id)
+    info_file = helper.get_info_dict(data)
 
     if request.vars["config_id"] and request.vars["config_id"] != "-1" and request.vars["config_id"] != "None":
         config_id = long(request.vars["config_id"])
@@ -91,7 +65,6 @@ def index():
         
         
         config = True
-        info_file = info(request.vars["id"])
         fused_count = fused.count()
         fused_file = fused.select()
         fused_filename = info_file["filename"] +"_"+ config_name + ".data"
@@ -102,7 +75,6 @@ def index():
     else:
         config_id = -1
         config = False
-        info_file = info(request.vars["id"])
         fused_count = 0
         fused_file = ""
         fused_filename = ""

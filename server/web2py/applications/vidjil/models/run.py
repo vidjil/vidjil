@@ -20,3 +20,13 @@ class Run(SampleSet):
         for row in data:
             row['string'] = [row['name'], row['confs'], row['groups'], str(row['run_date']), str(row['info'])]
         return filter(lambda row : vidjil_utils.advanced_filter(row['string'], filter_str), data)
+
+    def get_info_dict(self, data):
+        return dict(name = "run : " + data.name + " (" + str(data.run_date) + ")",
+                    filename = "run : " + run.name + "_" + str(data.run_date),
+                    label = data.id_label + " (" + str(data.run_date) + ")",
+                    info = data.info
+                    )
+
+    def get_data(self, sample_set_id):
+        return db(db.run.sample_set_id == sample_set_id).select()[0]

@@ -70,3 +70,13 @@ class SampleSet(object):
         for row in data:
             row['string'] = [row['name'], row['confs'], row['groups'], str(row['info'])]
         return filter(lambda row : vidjil_utils.advanced_filter(row['string'], filter_str), data)
+
+    def get_info_dict(self, data):
+        return dict(name = "sample_set : %s" % db.sample_set[data.sample_set_id].sample_type,
+                filename = "sample_set_%d" % data.id,
+                label = "",
+                info = ""
+                )
+
+    def get_data(self, sample_set_id):
+        return db(db.generic.sample_set_id == sample_set_id).select()[0]
