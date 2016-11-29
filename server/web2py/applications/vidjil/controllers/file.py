@@ -346,8 +346,8 @@ def edit_form():
         patient_id = int(request.vars['patient_id'].split('(')[-1][:-1])
     if request.vars['run_id'] != '' :
         run_id = int(request.vars['run_id'].split('(')[-1][:-1])
-    if request.vars['sample_set_id'] != '' :
-        sample_set_id = int(request.vars['sample_set_id'].split('(')[-1][:-1])
+    if request.vars['generic_id'] != '' :
+        generic_id = int(request.vars['generic_id'].split('(')[-1][:-1])
     if request.vars['id'] == None :
         error += "missing id"
     if request.vars['filename'] == None :
@@ -390,8 +390,9 @@ def edit_form():
             id_sample_set_membership_patient = db.sample_set_membership.insert(sample_set_id=patient_sample_set_id,
                                                                   sequence_file_id=request.vars["id"])
 
-        if sample_set_id is not None :
-            id_sample_set_membership = db.sample_set_membership.insert(sample_set_id=sample_set_id,
+        if generic_id is not None :
+            generic_sample_set_id = db.generic[generic_id].sample_set_id
+            id_sample_set_membership_generic = db.sample_set_membership.insert(sample_set_id=generic_sample_set_id,
                                                                   sequence_file_id=request.vars["id"])
 
         if request.vars['sample_type'] == 'run':
