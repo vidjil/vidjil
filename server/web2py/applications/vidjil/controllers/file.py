@@ -214,7 +214,7 @@ def add_form():
             originating_id = run_sample_set_id
         elif request.vars['sample_type'] == 'patient':
             originating_id = patient_sample_set_id
-        else :
+        elif request.vars['sample_type'] == 'generic' :
             originating_id = generic_sample_set_id
 
         redirect_args = {"id" : originating_id}
@@ -340,7 +340,7 @@ def edit_form():
     error = ""
     patient_id = None
     run_id = None
-    sample_set_id = None
+    generic_id = None
 
     if request.vars['patient_id'] != '' :
         patient_id = int(request.vars['patient_id'].split('(')[-1][:-1])
@@ -399,8 +399,8 @@ def edit_form():
             originating_id = run_sample_set_id
         elif request.vars['sample_type'] == 'patient':
             originating_id = patient_sample_set_id
-        else :
-            originating_id = sample_set_id
+        elif request.vars['sample_type'] == 'generic':
+            originating_id = generic_sample_set_id
         redirect_args = {"id" : originating_id}
         
         res = {"file_id" : request.vars["id"],
