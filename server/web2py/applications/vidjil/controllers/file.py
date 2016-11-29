@@ -147,7 +147,7 @@ def add_form():
     if request.vars['patient_id'] != '' :
         try:
             patient_id = extract_id(request.vars['patient_id'], error)
-            if not auth.can_modify_patient(patient_id) :
+            if not auth.can_modify('patient', patient_id) :
                 error += " missing permission for patient "+str(patient_id)
         except ValueError:
             error += " Invalid patient %s" % request.vars['patient_id']
