@@ -246,7 +246,6 @@ def edit():
             ).select(db.sample_set_membership.sample_set_id)
         for row in sample_set_list :
             sample_type = db.sample_set[row.sample_set_id].sample_type
-            print sample_type
             relevant_ids[sample_type] = db(db[sample_type].sample_set_id == row.sample_set_id).select()[0].id
         
 	query_pre_process = db(
