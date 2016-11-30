@@ -82,6 +82,11 @@ function main() {
     var vidjil = loadVidjilFile();
     model.parseJsonData(vidjil, 100);
     model.initClones();
-    model.selectAll();
+    // model.selectAll();
+    var cloneIds = [];
+    for (var i = 0; i < model.clones.length - 1; i++) {
+      cloneIds.push(i);
+    }
+    model.multiSelect(cloneIds);
   });
 }
