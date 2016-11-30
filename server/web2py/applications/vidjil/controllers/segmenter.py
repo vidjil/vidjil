@@ -65,8 +65,11 @@ def segment_sequences(sequences):
             ## execute la commande vidjil
             os.system(cmd)
 
-            with open(result_path, 'r') as myfile:
-                text_result = myfile.read()
+            if os.path.isfile(result_path):
+                with open(result_path, 'r') as myfile:
+                    text_result = myfile.read()
+            else:
+                return response.json({'error': 'Error while processing the file'})
 
     return response.json(gluon.contrib.simplejson.loads(text_result))
 
