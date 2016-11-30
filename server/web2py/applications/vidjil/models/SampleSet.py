@@ -3,6 +3,9 @@ class SampleSet(object):
     def __init__(self, type):
         self.type = type
 
+    def get_type(self):
+        return self.type
+
     def __getitem__(self, key):
         return getattr(self, key, None)
 
@@ -70,6 +73,9 @@ class SampleSet(object):
         for row in data:
             row['string'] = [row['name'], row['confs'], row['groups'], str(row['info'])]
         return filter(lambda row : vidjil_utils.advanced_filter(row['string'], filter_str), data)
+
+    def get_add_route(self):
+        return 'sample_set/add'
 
     def get_info_dict(self, data):
         return dict(name = "sample_set : %s" % db.sample_set[data.sample_set_id].sample_type,

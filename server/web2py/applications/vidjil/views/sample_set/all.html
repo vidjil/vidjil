@@ -8,16 +8,16 @@
 <div class="db_block">
     <div class="db_block_left">
         search
-        <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}"  onchange="db.call('sample_set/all', {'type': '{{=type}}', 'filter' : this.value} )">
+        <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}"  onchange="db.call('sample_set/all', {'type': '{{=helper.get_type()}}', 'filter' : this.value} )">
     </div>
     <div class="db_block_right">
         page:
         {{ if page > 0: }}
-            <div class="button" onclick="db.call('sample_set/all', {'type': '{{=type}}', 'page': {{=page-1}}})"><</div>
+            <div class="button" onclick="db.call('sample_set/all', {'type': '{{=helper.get_type()}}', 'page': {{=page-1}}})"><</div>
         {{ pass }}
 	{{= page + 1 }}
         {{if len(query) > step : }}
-            <div class="button" onclick="db.call('sample_set/all', {'type': '{{=type}}', 'page': {{=page+1}}})">></div>
+            <div class="button" onclick="db.call('sample_set/all', {'type': '{{=helper.get_type()}}', 'page': {{=page+1}}})">></div>
         {{ pass }}
     </div>
 </div>
@@ -56,7 +56,7 @@
 {{if isAdmin:}} <td onclick="db.call('sample_set/permission', {'id' :'{{=data.id}}'} )" > <i class="icon-key" title="set permissions"></i> </td> {{else:}} <td></td> {{pass}}
                 {{if data.has_permission:}}
 		<td onclick="db.call('sample_set/edit', {'id' :'{{=data.id}}'} )" > <i class="icon-pencil-2" title="{{='edit %s information' % 'sample_set'}}"></i> </td>
-		<td onclick="db.call('sample_set/confirm', {'id' :'{{=data.id}}'} )" > <i class="icon-erase" title="{{='delete %s' % type}}"></i> </td>
+		<td onclick="db.call('sample_set/confirm', {'id' :'{{=data.id}}'} )" > <i class="icon-erase" title="{{='delete %s' % helper.get_type()}}"></i> </td>
                 {{else:}}  <td></td><td></td>{{pass}}
             </tr>
         {{pass}}
@@ -69,7 +69,7 @@
     <div class="db_block_left">
 
 {{if auth.can_create_patient():}}
-<span class="button2" onclick="db.call('sample_set/add')"> + new {{=type}} </span>
+<span class="button2" onclick="db.call('{{=helper.get_add_route()}}')"> + new {{=helper.get_type()}} </span>
 <span class="button2" onclick="db.call('sample_set/custom', {'filter': '{{=request.vars['filter']}}' })"> compare samples/patients </span>
 {{else:}}
 <!-- <span class="button2 inactive" onclick="db.call('sample_set/add')" title="you don't have permission to create new {{=type}}"> add sample_set </span> -->

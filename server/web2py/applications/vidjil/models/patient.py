@@ -29,5 +29,8 @@ class Patient(SampleSet):
                     info = data.info
                     )
 
+    def get_add_route(self):
+        return 'patient/add'
+
     def get_data(self, sample_set_id):
         return db(db.patient.sample_set_id == sample_set_id).select()[0]

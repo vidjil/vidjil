@@ -201,7 +201,7 @@ def all():
 
     return dict(query = result,
                 fields = fields,
-                type = type,
+                helper = helper,
                 isAdmin = isAdmin,
                 reverse = False,
                 step = step,
