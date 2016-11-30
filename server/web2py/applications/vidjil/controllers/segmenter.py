@@ -4,6 +4,7 @@ import tempfile
 import shutil
 import defs
 from subprocess import Popen, PIPE, STDOUT, os
+import gluon
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin
@@ -23,24 +24,33 @@ limit_max = 10 #max sequence per request
         
 
 def index():
-    form = SQLFORM.factory(
-        Field('sequences', 'text'),
-        Field('file', 'upload', uploadfolder=os.path.join(request.folder,'uploads')))
-    form.element('textarea[name=sequences]')['_style'] = 'width:800px; height:200px;'
+    if request.vars['sequences'] == None or request.vars['sequences'] == '':
+        return None
+
+    sequences = request.vars['sequences']
+    return segment_sequences(sequences)
+
+def segment_sequences(sequences):
+    '''
+    Segment the sequences given in parameter (FASTA format)
+    and return a JSON of the result
+    '''
+    text_result = "{}"
     
-    t_result = ""
-    
-    if form.process(onvalidation=checkform_segmenter).accepted:
+    check = check_sequences(sequences)
+    if check is not None:
+        text_result = '{"error": "%s"}' % check
+    else:
         with TemporaryDirectory() as folder_path:
             
             #store sequences in a tmp file
             file_path = folder_path + "/sequences.txt"
             file = open(file_path, 'w')
-            file.write(form.vars.sequences)
+            file.write(sequences)
             file.close()
             
             #store result in a tmp file
-            result_path = folder_path + "/result.txt"
+            result_path = folder_path + "/sequences.vidjil"
             result = open(result_path, 'w')
             
             ## les chemins d'acces a vidjil / aux fichiers de sequences
@@ -63,47 +73,20 @@ def index():
             with open(result_path, 'r') as myfile:
                 text_result = myfile.read()
 
-            t_result = ''
-            for l in text_result.split('\n'):
-                pre, post = ('<span style="color: #090; font-weight:bold;">', '</span>') if l.startswith('>') else ('', '')
-                t_result += pre + l + post + '\n'
+    return response.json(gluon.contrib.simplejson.loads(text_result))
 
-        response.flash = file_path
-        
-    elif form.errors:
-        response.flash = 'form has errors'
-        
-    #form.errors.sequences = form.vars.sequences
-    return dict(form=form,
-                result=XML(t_result))
-
-
-
-
-
-
-def checkform_segmenter(form):
-    
-    #copy file content into form.vars.sequences
-    if  hasattr(form.vars.file, 'file') :
-        with TemporaryDirectory() as folder_path:
-            file=request.vars.file.file 
-            shutil.copyfileobj(file,open(folder_path+"/sequences.txt",'wb')) 
-            with open(folder_path+"/sequences.txt", 'r') as myfile:
-                form.vars.sequences = myfile.read()
-        form.vars.sequences+= "\n"
-    
-    
+def check_sequences(sequences):
     #fasta format ?
-    if form.vars.sequences[0] is '>':
-        if len(form.vars.sequences.split('>')) > limit_max+1 :
-            form.errors.sequences = "too much sequences (limit : " + str(limit_max) + ")"
-            
+    if sequences[0] is '>':
+        if len(sequences.split('>')) > limit_max+1 :
+            return "too many sequences (limit : " + str(limit_max) + ")"
+
     #fastq format ?
-    elif form.vars.sequences[0] is '@':
-        if len(form.vars.sequences.split('\n')) > 4*(limit_max+1) :
-            form.errors.sequences = "too much sequences (limit : " + str(limit_max) + ")"
-    
+    elif sequences[0] is '@':
+        if len(sequences.split('\n')) > 4*(limit_max+1) :
+            return "too many sequences (limit : " + str(limit_max) + ")"
+
     #unknow format ?
     else :
-        form.errors.sequences = "invalid sequences, please use fasta or fastq format"
+        return "invalid sequences, please use fasta or fastq format"
+    return None
