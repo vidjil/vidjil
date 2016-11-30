@@ -56,6 +56,7 @@ header, footer {
   -ms-flex: 1 60%;
   flex: 1 60%;
   padding: 2em;
+  position: relative;
 }
 
 .vidjil_view {
@@ -74,14 +75,15 @@ header, footer {
 }
 
 #footer_panel {
-  padding: 0.2em;
-  margin: 0;
-  position: absolute;
-  bottom: -0.2em;
-  left: 0;
-  right: 0;
+  display: inline-block;
+  float: right;
+  padding: 0.2em 0.7em;
 }
 
-#footer_copyright {
+#copyright {
+  font-size: 0.7em;
+  position: absolute;
+  bottom: 0.2em;
+  right: 0.2em;
   text-align: right;
 }
