@@ -45,9 +45,9 @@ def segment_sequences(sequences):
             
             #store sequences in a tmp file
             file_path = folder_path + "/sequences.txt"
-            file = open(file_path, 'w')
-            file.write(sequences)
-            file.close()
+            fasta = open(file_path, 'w')
+            fasta.write(sequences)
+            fasta.close()
             
             #store result in a tmp file
             result_path = folder_path + "/sequences.vidjil"
