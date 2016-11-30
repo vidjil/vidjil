@@ -26,7 +26,7 @@ class SampleSet(object):
                 configs.append(
                     str(A(conf['name'],
                         _href="index.html?sample_set=%d&config=%d" % (data.sample_set_id, conf['id']), _type="text/html",
-                        _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { db.load_data( { 'sample_set' : '%d', 'config' :  %d }, '%s' ); }" % (data.id, conf['id'], filename))))
+                        _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { db.load_data( { 'sample_set_id' : '%d', 'config' :  %d }, '%s' ); }" % (data.sample_set_id, conf['id'], filename))))
             else:
                 configs.append(conf['name'])
         return XML(", ".join(configs))
