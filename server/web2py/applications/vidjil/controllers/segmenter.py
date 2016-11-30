@@ -3,7 +3,6 @@ from contextlib import contextmanager
 import tempfile
 import shutil
 import defs
-from subprocess import Popen, PIPE, STDOUT, os
 import gluon
 
 if request.env.http_origin:
@@ -51,7 +50,6 @@ def segment_sequences(sequences):
             
             #store result in a tmp file
             result_path = folder_path + "/sequences.vidjil"
-            result = open(result_path, 'w')
             
             ## les chemins d'acces a vidjil / aux fichiers de sequences
             germline_folder = defs.DIR_VIDJIL + '/germline/'
@@ -65,11 +63,8 @@ def segment_sequences(sequences):
             cmd += ' ' + config + ' ' + file_path
 
             ## execute la commande vidjil
-            sys.stdout.flush()
-            p = Popen(cmd, shell=True, stdin=PIPE, stdout=result, stderr=STDOUT, close_fds=True)
-            p.wait()
-            result.close()
-            
+            os.system(cmd)
+
             with open(result_path, 'r') as myfile:
                 text_result = myfile.read()
 
