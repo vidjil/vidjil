@@ -17,7 +17,7 @@
                                   many Ns in the sequence and the
                                   corresponding subsequence should be
                                   trimmed */
-
+#define MIN(x,y) ((x) < (y) ? (x) : (y))
 
 #include <sstream>
 #include <iostream>

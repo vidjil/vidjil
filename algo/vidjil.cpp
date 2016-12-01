@@ -1410,10 +1410,12 @@ int main (int argc, char **argv)
 
 
         // FineSegmenter
-        FineSegmenter seg(representative, segmented_germline, segment_cost, expected_value, sort_clones.size());
+        size_t nb_fine_segmented = (size_t) max_clones; // When -1, it will become the max value.
+        nb_fine_segmented = MIN(nb_fine_segmented, sort_clones.size());
+        FineSegmenter seg(representative, segmented_germline, segment_cost, expected_value, nb_fine_segmented);
 	
         if (segmented_germline->seg_method == SEG_METHOD_543)
-	  seg.FineSegmentD(segmented_germline, several_D, expected_value_D, sort_clones.size());
+	  seg.FineSegmentD(segmented_germline, several_D, expected_value_D, nb_fine_segmented);
 
         if (detect_CDR3)
           seg.findCDR3();
