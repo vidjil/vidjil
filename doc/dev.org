@@ -219,6 +219,22 @@ The cache is stored for each user and is updated only when a change occurs (mess
    Permissions are handled by Web2py's authentication mechanism which is
    specialised to Vidjil's characteristics through the =VidjilAuth= class.
 
+** Database
+*** Export
+    mysqldump -u <user> -p <database> --no-create-info > <file>
+*** Import
+    In order to import the data from another you server, you need to ensure
+    there will be no key collision, or the import will fail.
+    If the database contains data, the easiest is to drop the database and
+    create a new empty database.
+    This will require you to delete the .table file in web2py/applications/vidjil/databases
+    In order to create the tables you should then load a page from the
+    webapp, but DO NOT init the database, because this will raise the problem
+    of colliding primary keys again.
+
+    Then run:
+    mysql -u <user> -p <database> < file
+
 *** VidjilAuth
    One VidjilAuth is launched for a given user when a controller is called.
    During that call, we cache as much as possible the calls to the DB.  For
