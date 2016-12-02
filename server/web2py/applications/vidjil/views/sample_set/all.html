@@ -78,6 +78,6 @@
   </div>
   <div class="db_block_right">
   <br />
-  {{ =min(step, len(query)) }} {{=type}}s, {{ =total_file_count }} files ({{ =vidjil_utils.format_size(total_size) }})
+  {{ =min(step, len(query)) }} {{=helper.get_type()}}s, {{ =total_file_count }} files ({{ =vidjil_utils.format_size(total_size) }})
   </div>
 </div>
