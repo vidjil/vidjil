@@ -80,6 +80,11 @@ function processResult(data) {
     cloneIds.push(i);
   }
   model.multiSelect(cloneIds);
+
+  // Delete merge button
+  var menuSegmenter = document.getElementsByClassName('menu-segmenter')[0];
+  var mergeButt = document.getElementById('merge');
+  menuSegmenter.removeChild(mergeButt);
 }
 
 function displayVidjilViews(visible) {
