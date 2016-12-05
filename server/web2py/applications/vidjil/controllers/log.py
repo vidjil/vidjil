@@ -12,7 +12,6 @@ def anon_names(data):
 
 def get_data_list(table):
     data = db(auth.vidjil_accessible_query(PermissionEnum.read.value, table)).select()
-    log.debug(data)
 
     if table == 'patient':
         data = anon_names(data)
