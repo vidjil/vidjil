@@ -649,7 +649,7 @@ Builder.prototype = {
         if (typeof m.sample_set_id != 'undefined') {
             var open_patient = document.createElement('a');
             open_patient.className = "buttonSelector";
-            open_patient.appendChild(document.createTextNode("open patient"));
+            open_patient.appendChild(document.createTextNode("open"));
 	    open_patient.onclick = function() {
 	        db.call('sample_set/index', {'id' : m.sample_set_id});
 	    }
@@ -657,7 +657,7 @@ Builder.prototype = {
 
             var save_analysis = document.createElement("a");
             save_analysis.className = "buttonSelector"
-            save_analysis.appendChild(document.createTextNode("save patient"));
+            save_analysis.appendChild(document.createTextNode("save"));
             save_analysis.onclick = function() {
                 db.save_analysis();
             }
