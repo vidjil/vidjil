@@ -40,5 +40,7 @@ var config = {
     // "autoload_analysis" : "data/Stanford-S22.analysis"
 
     // Proxy config for IMGT querying
-    "proxy": "http://test.vidjil.org/proxy"
+    /*
+    "proxy": "https://app.vidjil.org/vidjil/proxy/imgt"
+    */
 }
