@@ -352,6 +352,12 @@ class TestMultilocus < BrowserTest
     end
   end
 
+  def test_16_select_unsegmented
+    clone_id = '10'
+    $b.clone_in_scatterplot(clone_id).click
+
+    assert ($b.clone_in_segmenter(clone_id).exists?), "Clone %s is not in segmenter" % clone_id
+  end
   
 
   def TODO_test_14_edit_tag
