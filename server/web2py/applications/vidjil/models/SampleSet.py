@@ -10,7 +10,7 @@ class SampleSet(object):
         return getattr(self, key, None)
 
     def get_name(self, data):
-        return 'sample set: %s' % data.name
+        return data.name
 
     def get_info(self, data):
         return data.info
