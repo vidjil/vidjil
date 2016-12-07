@@ -33,7 +33,11 @@ def help():
 #########################################################################
 ## default home page
 def home():
-    res = {"redirect" : URL('admin' if auth.is_admin() else 'patient', 'index', scheme=True, host=True)}
+    if auth.is_admin():
+        redirect = URL('admin', 'index', scheme=True, host=True)
+    else:
+        redirect = URL('sample_set', 'all', vars={'type': 'patient'}, scheme=True, host=True)
+    res = {"redirect" : redirect}
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def logger():
