@@ -8,7 +8,7 @@ var config = {
     /* Used for the 'align' script 
      * If this is not defined, the 'align' button is not available
      */    
-    "cgi_address" : "http://rbx.vidjil.org/cgi/", // Public test server
+    "cgi_address" : "http://app.vidjil.org/cgi/", // Public test server
     // "cgi_address" : "http://127.0.1.1/cgi-bin/",
 
     /* The following options control how the user may have access to .vidjil files.
@@ -17,7 +17,7 @@ var config = {
 
     /* 1) Patient database */
     "use_database" : true,
-    "db_address" : "https://rbx.vidjil.org/vidjil/", // Public test server
+    "db_address" : "https://app.vidjil.org/vidjil/", // Public test server
     "login" : "",
     "password" : "",
 
