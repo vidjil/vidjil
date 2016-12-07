@@ -196,7 +196,7 @@ def all():
         request.vars["filter"] = ""
 
     result = helper.filter(request.vars['filter'], result)
-    log.debug("run list (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
+    log.debug("%s list (%.3fs) %s" % (request.vars["type"], time.time()-start, request.vars["filter"]))
 
 
     return dict(query = result,
