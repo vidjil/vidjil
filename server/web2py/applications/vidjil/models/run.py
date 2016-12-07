@@ -23,7 +23,7 @@ class Run(SampleSet):
 
     def get_info_dict(self, data):
         return dict(name = "run : " + data.name + " (" + str(data.run_date) + ")",
-                    filename = "run : " + run.name + "_" + str(data.run_date),
+                    filename = "run : " + data.name + "_" + str(data.run_date),
                     label = data.id_label + " (" + str(data.run_date) + ")",
                     info = data.info
                     )
