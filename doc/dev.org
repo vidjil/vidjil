@@ -13,7 +13,7 @@
 
 Here are aggregated notes forming the developer documentation on the Vidjil components, algorithm,
 web application client and server.
-This documentation is a work-in-progress, it is far not as polished as the user documentation
+This documentation is a work-in-progress, it is far from being as polished as the user documentation
 Help can also be found in the source code and in the commit messages.
 
 
