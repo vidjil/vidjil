@@ -34,6 +34,7 @@ apt-get -y install python-matplotlib
 apt-get -y install python-reportlab
 apt-get -y install mercurial
 apt-get -y install nginx-full
+apt-get -y install fcgiwrap
 apt-get -y install build-essential python-dev libxml2-dev python-pip
 pip install setuptools --no-use-wheel --upgrade
 PIPPATH=`which pip`
