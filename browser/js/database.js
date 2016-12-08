@@ -1121,7 +1121,7 @@ Uploader.prototype = {
                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                 } else {
                     if (status !== "abort"){
-                        db.warning("upload may have failed - " + self.queue[id].filename)
+                        db.warn("upload may have failed - " + self.queue[id].filename)
                         self.queue[id].status = "upload_error"
                         console.log({"type": "flash", "msg": "upload " + self.queue[id].filename + " : " + status , "priority": 2});
                     }
@@ -1132,7 +1132,7 @@ Uploader.prototype = {
     },
     
     cancel: function (id) {
-        db.warning("upload canceled - " + this.queue[id].filename)
+        db.warn("upload canceled - " + this.queue[id].filename)
         console.log({"type": "flash", "msg": "upload canceled : " + this.queue[id].filename, "priority": 1});
         this.queue[id].jqXHR.abort()
         this.queue[id].status = "canceled"
