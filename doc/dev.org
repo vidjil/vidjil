@@ -221,7 +221,7 @@ The cache is stored for each user and is updated only when a change occurs (mess
 
 ** Database
 *** Export
-    mysqldump -u <user> -p <database> --no-create-info > <file>
+    mysqldump -u <user> -p <database> -c --no-create-info > <file>
 *** Import
     In order to import the data from another you server, you need to ensure
     there will be no key collision, or the import will fail.
