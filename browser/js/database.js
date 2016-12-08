@@ -686,7 +686,7 @@ Database.prototype = {
 
         $.ajax({
             type: "POST",
-            timeout: 15000,
+            timeout: DB_TIMEOUT_GET_DATA,
             crossDomain: true,
             url: self.db_address + "default/get_analysis" + "?" + this.argsToStr(args),
             xhrFields: {withCredentials: true},
@@ -721,7 +721,7 @@ Database.prototype = {
             
             $.ajax({
                 type: "POST",
-                timeout: 15000,
+                timeout: DB_TIMEOUT_GET_DATA,
                 crossDomain: true,
                 url: self.db_address + "default/save_analysis" + "?" + this.argsToStr(self.last_file),
                 data     : fd,
