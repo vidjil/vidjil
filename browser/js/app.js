@@ -27,10 +27,19 @@ function loadAfterConf() {
     // Then load views (otherwise that could generate some errors if
     // some files are loaded before the views)
     require(["../view"], function() {
+
+        require(["../germline"],
+                function() { },
+                function(err)
+                {
+                    alert("The Vidjil web application client may not properly installed: 'germline.js' is not found. Please run 'make germline'.");
+                    exit()
+                }
+               )
+
         require(["../compare",
                  "../menu",
                  "../dbscan",
-                 "../germline",
                  "../germline_builder",
                  "../segmenter",
                  "../model_loader",
