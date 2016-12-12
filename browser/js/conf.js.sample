@@ -27,6 +27,7 @@ var config = {
      */
 
     /* 2) Menu with a list of static files */
+    /*
     "file_menu" : {
         "path" : "/browser/data/",
         "file" : [
@@ -34,9 +35,10 @@ var config = {
             "L2-LIL-2.vidjil"
         ]
     },
+    */
     
     /* 3) Static file autoload, possibly with an .analysis file */
-    "autoload" : "data/Stanford-S22.vidjil",
+    // "autoload" : "data/Stanford-S22.vidjil",
     // "autoload_analysis" : "data/Stanford-S22.analysis"
 
     // Proxy config for IMGT querying
