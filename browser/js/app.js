@@ -32,7 +32,7 @@ function loadAfterConf() {
                 function() { },
                 function(err)
                 {
-                    alert("The Vidjil web application client may not properly installed: 'germline.js' is not found. Please run 'make germline'.");
+                    alert("The Vidjil web application client may not be properly installed: 'germline.js' is not found. Please run 'make browser'.");
                     exit()
                 }
                )
