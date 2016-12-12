@@ -5,6 +5,11 @@ import shutil
 import defs
 from subprocess import Popen, PIPE, STDOUT, os
 
+if request.env.http_origin:
+    response.headers['Access-Control-Allow-Origin'] = request.env.http_origin
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    response.headers['Access-Control-Max-Age'] = 86400
+
 @contextmanager
 def TemporaryDirectory():
     name = tempfile.mkdtemp()
