@@ -1,8 +1,11 @@
 import gluon.contrib.simplejson
+import re
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Max-Age'] = 86400
+
+ACCESS_DENIED = 'access denied'
         
 ## return user list
 def index():
@@ -51,6 +54,42 @@ def index():
             
     return dict(query=query,
     			reverse=reverse)
+
+def edit():
+    if auth.is_admin():
+        user = db.auth_user[request.vars["id"]]
+        return dict(message=T("Edit user"), user=user)
+    return error_message(ACCESS_DENIED)
+
+def edit_form():
+    if auth.is_admin():
+        error = ""
+        if request.vars["first_name"] == "" :
+            error += "first name needed, "
+        if request.vars["last_name"] == "" :
+            error += "last name needed, "
+        if request.vars["email"] == "":
+            error += "email cannot be empty"
+        elif not re.match(r"[^@]+@[^@]+\.[^@]+", request.vars["email"]):
+            error += "incorrect email format"
+
+        if error == "":
+            db.auth_user[request.vars['id']] = dict(first_name = request.vars["first_name"],
+                                                    last_name = request.vars["last_name"],
+                                                    email = request.vars["email"])
+            res = {"redirect": "back",
+                    "message": "%s (%s) user edited" % (request.vars["email"], request.vars["id"])}
+            log.info(res)
+            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+        else :
+            res = {"success" : "false", "message" : error}
+            log.error(res)
+            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    else :
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 ## return user information
 ## need ["id"]

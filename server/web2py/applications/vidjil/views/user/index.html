@@ -18,6 +18,7 @@
                   {{if not reverse and request.vars["sort"]=="patients" :}} , 'reverse' : true {{pass}} })">patients created </td>
                     <td class="column_100" onclick="db.call('user/index', {'sort' :'files'
                   {{if not reverse and request.vars["sort"]=="files" :}} , 'reverse' : true {{pass}} })">files uploaded </td>
+                    <td class="column5"> </td>
                 </tr>
             </thead>
             
@@ -32,6 +33,7 @@
                     <td> {{=row.last_login}} </td>
                     <td> {{=row.created}}  </td>
                     <td> {{=row.files}} ({{=vidjil_utils.format_size(row.size)}}) </td>
+                    <td onclick="db.call('user/edit', {'id' :'{{=row.id}}'} )" > <i class="icon-pencil-2" title="edit user information"></i> </td>
                 </tr>
            {{pass}}
         
