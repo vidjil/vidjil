@@ -128,11 +128,11 @@ function ScatterPlot(id, model, database) {
         },
         "sequenceLength" : { 
             label: "clone consensus length",
-            fct: function(cloneID) {return self.m.clone(cloneID).getSequenceLength()}
+            fct: function(clone) {return clone.getSequenceLength()}
         },
         "readLength" : {
             label: "clone average read length",
-            fct: function(cloneID) {return self.m.clone(cloneID).getAverageReadLength()}
+            fct: function(clone) {return clone.getAverageReadLength()}
         },
         "GCContent" : { 
             label: "GC content",
@@ -141,25 +141,25 @@ function ScatterPlot(id, model, database) {
         },
         "n": {
             label: "N length",
-            fct: function(cloneID) {return self.m.clone(cloneID).getNlength()} 
+            fct: function(clone) {return clone.getNlength()}
         },
         "lengthCDR3": {
             label: "CDR3 length",
-            fct: function(cloneID) {return self.m.clone(cloneID).getSegLength('cdr3')}
+            fct: function(clone) {return clone.getSegLength('cdr3')}
         },
         "productivity": {
             label: "productivity",
-            fct: function(cloneID) {return self.m.clone(cloneID).getProductivityName()},
+            fct: function(clone) {return clone.getProductivityName()},
             output: "string-sorted"
         },
         "tag": {
             label: "tag",
-            fct: function(cloneID) {return self.m.clone(cloneID).getTagName()},
+            fct: function(clone) {return clone.getTagName()},
             output: "string-sorted"
         },
         "coverage": { 
             label: "clone consensus coverage",
-            fct: function(cloneID){return self.m.clone(cloneID).coverage},
+            fct: function(clone){return clone.coverage},
             min: 0,
             max: 1, 
             output: "float-2", 
@@ -167,12 +167,12 @@ function ScatterPlot(id, model, database) {
         },
         "locus" : { 
             label: "locus",
-            fct: function(cloneID){return self.m.clone(cloneID).germline},
+            fct: function(clone){return clone.germline},
             output: "string-sorted"
         },
         "Size" : { 
             label: "size",
-            fct : function(cloneID){return self.m.clone(cloneID).getSizeZero()}, 
+            fct : function(clone){return clone.getSizeZero()},
             min : function(){return self.m.min_size},
             max : 1, 
             output : "percent", 
@@ -180,7 +180,7 @@ function ScatterPlot(id, model, database) {
         },
         "otherSize" : { 
             label: "size (other point)",
-            fct : function(cloneID){return self.m.clone(cloneID).getSizeZero(m.tOther)}, 
+            fct : function(clone){return clone.getSizeZero(m.tOther)},
             min : function(){return self.m.min_size}, 
             max : 1, 
             output : "percent", 
@@ -188,18 +188,18 @@ function ScatterPlot(id, model, database) {
         },
         "nbSamples" : {
             label: "number of samples sharing each clone",
-            fct : function(cloneID){return self.m.clone(cloneID).getNumberNonZeroSamples()},
+            fct : function(clone){return clone.getNumberNonZeroSamples()},
             min : 1,
             max : function(){ return self.m.samples.number }
         },
         "tsneX": { 
             label: "distance (X)",
-            fct: function(cloneID){
+            fct: function(clone){
                 var r = self.gridSizeH/self.gridSizeW;
                 var k=1;
                 var yMax = self.m.similarity_builder.yMax
                 if (yMax > r) k = r/yMax
-                return k*self.m.clone(cloneID).tsne[0] + (1-k)/2
+                return k*clone.tsne[0] + (1-k)/2
             },
             output: "float-2", 
             log: false,
@@ -210,12 +210,12 @@ function ScatterPlot(id, model, database) {
         },
         "tsneY": { 
             label: "distance (Y)",
-            fct: function(cloneID){
+            fct: function(clone){
                 var r = self.gridSizeH/self.gridSizeW;
                 var k=1;
                 var yMax = self.m.similarity_builder.yMax
                 if (yMax > r) k = r/yMax
-                return k*self.m.clone(cloneID).tsne[1]
+                return k*clone.tsne[1]
             },
             output: "float-2", 
             log: false,
@@ -226,12 +226,12 @@ function ScatterPlot(id, model, database) {
         },
         "tsneX_system": { 
             label: "distance (X), by locus",
-            fct: function(cloneID){
+            fct: function(clone){
                 var r = self.gridSizeH/self.gridSizeW;
                 var k=1;
-                var yMax = self.m.similarity_builder.system_yMax[self.m.clone(cloneID).get("germline")]
+                var yMax = self.m.similarity_builder.system_yMax[clone.get("germline")]
                 if (yMax > r) k = r/yMax
-                return k*self.m.clone(cloneID).tsne_system[0] + (1-k)/2
+                return k*clone.tsne_system[0] + (1-k)/2
             },
             output: "float-2", 
             log: false,
@@ -242,12 +242,12 @@ function ScatterPlot(id, model, database) {
         },
         "tsneY_system": { 
             label: "distance (Y), by locus",
-            fct: function(cloneID){
+            fct: function(clone){
                 var r = self.gridSizeH/self.gridSizeW;
                 var k=1;
-                var yMax = self.m.similarity_builder.system_yMax[self.m.clone(cloneID).get("germline")]
+                var yMax = self.m.similarity_builder.system_yMax[clone.get("germline")]
                 if (yMax > r) k = r/yMax
-                return k*self.m.clone(cloneID).tsne_system[1]
+                return k*clone.tsne_system[1]
             },
             output: "float-2", 
             log: false,
@@ -750,8 +750,8 @@ ScatterPlot.prototype = {
         
         if (typeof fct == "string"){
             var tmp = fct 
-            fct = function(id){ 
-                return self.m.clone(id).get(tmp)
+            fct = function(clone){
+                return clone.get(tmp)
             }
         }
         
@@ -762,7 +762,7 @@ ScatterPlot.prototype = {
                     && clone.isActive()){
                     var v;
                     try{
-                        var v = fct(i);
+                        var v = fct(self.m.clone(i));
                     }catch(e){}
                     if (typeof v != "undefined" && v!= 'undefined'){
                         if (v<min || typeof min == "undefined") min = v;
@@ -791,7 +791,7 @@ ScatterPlot.prototype = {
                && clone.isActive()){
                 var v;
                 try{
-                    var v = fct(i);
+                    var v = fct(self.m.clone(i));
                     if (typeof v == 'number')
                         v = Math.round(v)
                 }catch(e){}
@@ -814,8 +814,8 @@ ScatterPlot.prototype = {
         console.log(fct)
         if (typeof fct == "string"){
             var tmp = fct 
-            fct = function(id){ 
-                return self.m.clone(id).get(tmp)
+            fct = function(clone){
+                return clone.get(tmp)
             }
         }
         

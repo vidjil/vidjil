@@ -155,8 +155,8 @@ Axis.prototype = {
         
         this.fct = fct;
         if (typeof fct == "string"){
-            this.fct = function(id){ 
-                return self.m.clone(id).get(fct)
+            this.fct = function(clone){
+                return clone.get(fct)
             }
         }
         
@@ -170,7 +170,7 @@ Axis.prototype = {
                 if (! this.m.clones[i].isVirtual()) {
                     var tmp;
                     try{
-                        tmp = this.fct(i);
+                        tmp = this.fct(this.m.clones[i]);
                     }catch(e){
                         tmp = undefined;
                     }
@@ -215,7 +215,7 @@ Axis.prototype = {
             this.pos = function(cloneID) {
                 var value, pos;
                 try{
-                    value = self.fct(cloneID);
+                    value = self.fct(self.m.clone(cloneID));
                 }catch(e){}
                 
                 if (typeof value != "undefined" && value != 'undefined'){
@@ -230,7 +230,7 @@ Axis.prototype = {
             this.values = {};
             for (var i in this.m.clones){
                 try{
-                    var tmp = this.fct(i);
+                    var tmp = this.fct(self.m.clone(i));
                     console.log(tmp)
                     if (typeof tmp != 'undefined') this.values[tmp] = 0;
                 }catch(e){}
@@ -252,7 +252,7 @@ Axis.prototype = {
             this.values["?"] = pos;
             
             this.pos = function(cloneID) {
-                result = this.values[this.fct(cloneID)]
+                result = this.values[this.fct(self.m.clone(cloneID))]
                 
                 if (typeof result == 'undefined') return "?"
                 return result
