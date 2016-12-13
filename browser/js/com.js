@@ -99,7 +99,7 @@ function Com(default_console) {
 	    + "<br/>" 
 	    + "<br>Vidjil is free software, and you are welcome to redistribute it under <a href='http://git.vidjil.org/blob/master/doc/LICENSE'>certain conditions</a>. This software is for research use only and comes with no warranty." 
 	    + "<br>" 
-	    + "Please cite <a href='http://www.biomedcentral.com/1471-2164/15/409'>BMC Genomics 2014, 15:409</a> or/and <a href='http://dx.doi.org/10.1111/bjh.13981'>BJH 2016</a> if you use Vidjil for your research."
+	    + "Please cite <a href='http://dx.doi.org/10.1371/journal.pone.0166126'>(Duez et al., 2016)</a> if you use the Vidjil web application for your research."
 	    + BUTTON_CLOSE_POPUP,
 
         "browser_error": "The web browser you are using has not been tested with Vidjil." 
