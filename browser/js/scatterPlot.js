@@ -152,6 +152,11 @@ function ScatterPlot(id, model, database) {
             fct: function(cloneID) {return self.m.clone(cloneID).getProductivityName()},
             output: "string-sorted"
         },
+        "tag": {
+            label: "tag",
+            fct: function(cloneID) {return self.m.clone(cloneID).getTagName()},
+            output: "string-sorted"
+        },
         "coverage": { 
             label: "clone consensus coverage",
             fct: function(cloneID){return self.m.clone(cloneID).coverage},
