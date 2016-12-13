@@ -664,6 +664,12 @@ Clone.prototype = {
         return this.m.tag[this.getTag()].name
     }, 
     
+    getProductivityName: function () {
+        if (typeof this.seg.junction == "undefined")
+            return "no CDR3"
+
+        return (this.seg.junction.productive ? "productive" : "not productive")
+    },
     
     /* compute clone color
      *
