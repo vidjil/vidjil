@@ -4,6 +4,8 @@ if request.env.http_origin:
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Max-Age'] = 86400
 
+ACCESS_DENIED = "access denied"
+
 ## return group list
 def index():
     count = db.auth_group.id.count()
@@ -76,6 +78,31 @@ def add_form():
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+def edit():
+    if auth.is_admin() or auth.has_permission(PermissionsEnum.admin.value, db.auth_group, request.vars["id"]):
+        group = db.auth_group[request.vars["id"]]
+        return dict(message=T('Edit group'), group=group)
+    return error_message(ACCESS_DENIED)
+
+def edit_form():
+    error = ""
+
+    if request.vars["group_name"] == "" :
+        error += "group name needed, "
+
+    if error=="" :
+        db.auth_group[request.vars["id"]] = dict(role=request.vars["group_name"],
+                                               description=request.vars["info"])
+
+        res = {"redirect": "group/index",
+               "message" : "group '%s' modified" % id}
+        log.info(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+    else :
+        res = {"success" : "false", "message" : error}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 ## confirm page before group deletion
 ## need ["id"]

@@ -14,6 +14,7 @@
                     <td> parents </td>
                     <td class="column5"> </td>
                     <td class="column5"> </td>
+                    <td class="column5"> </td>
                 </tr>
             </thead>
            {{for row in query :}}
@@ -23,6 +24,7 @@
                     <td> {{=row.access}} // {{=row.auth_group.description }} </td>
                     <td> {{=row.parents}} </td>
                     <td onclick="db.call('group/permission', {'id' :'{{=row.auth_group.id}}'} )" > <i class="icon-key" title="set permissions"></i> </td>
+                    <td onclick="db.call('group/edit', {'id' :'{{=row.auth_group.id}}'} )" > <i class="icon-pencil-2" title="edit group"></i> </td>
                     <td onclick="db.call('group/confirm', {'id' :'{{=row.auth_group.id}}'} )" > <i class="icon-erase" title="delete group"></i> </td>
                 </tr>
            {{pass}}
