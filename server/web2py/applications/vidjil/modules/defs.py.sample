@@ -39,6 +39,7 @@ BASENAME_OUT_VIDJIL_ID = '%06d'
 DIR_VIDJIL = '../../'
 DIR_FUSE = '../../tools'
 DIR_MIXCR = '../../'
+DIR_PEAR = '../../'
 
 ### Directory that store the germlines used by Vidjil
 DIR_GERMLINE = DIR_VIDJIL + 'germline/'

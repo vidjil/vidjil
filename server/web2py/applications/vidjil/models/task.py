@@ -688,7 +688,7 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
     pre_process = db.pre_process[pre_process_id]
     
     
-    cmd = pre_process.command.replace( "&file1&", defs.DIR_SEQUENCES + sequence_file.data_file)
+    cmd = 'python ' + defs.DIR_PEAR + pre_process.command.replace( "&file1&", defs.DIR_SEQUENCES + sequence_file.data_file)
     if sequence_file.data_file2:
         cmd = cmd.replace( "&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
     cmd = cmd.replace( "&result&", output_file)
