@@ -10,6 +10,7 @@ import os
 
 parser = argparse.ArgumentParser(description='Use PEAR read merger to make a new fastq file and keep unmerged reads')
 
+parser.add_argument("pear_dir", help="path to pear executable")
 parser.add_argument("file_R1", help="reverse read file")
 parser.add_argument("file_R2", help="forward read file")
 parser.add_argument("output_file", help="output file")
@@ -25,7 +26,7 @@ f_r2 = args.file_R2
 f_out = args.output_file
 
 
-exit_code = subprocess.call(["pear",
+exit_code = subprocess.call(['%s/pear' % args.pear_dir,
  "-f", f_r1,
  "-r", f_r2,
  "-o", f_out,
