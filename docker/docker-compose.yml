@@ -24,7 +24,6 @@ services:
             - /opt/vidjil/result/tmp:/mnt/result/tmp
             - /opt/vidjil/upload/uploads:/mnt/upload/uploads
             - /var/vidjil:/var/vidjil
-            - /home/ryan/vidjil:/usr/share/vidjil
         depends_on:
             - mysql
             - postfix
@@ -39,9 +38,6 @@ services:
             - /home/user/vidjil:/usr/share/vidjil
     nginx:
         image: vidjil:test
-        volumes:
-            - /home/user/vidjil:/usr/share/vidjil
-            #- /home/user/ssl:/etc/nginx/ssl
         depends_on:
             - uwsgi
         links:
@@ -61,7 +57,6 @@ services:
             - /opt/vidjil/result/tmp:/mnt/result/tmp
             - /opt/vidjil/upload:/mnt/upload
             - /var/vidjil:/var/vidjil
-            - /home/ryan/vidjil:/usr/share/vidjil
         depends_on:
             - uwsgi
             - mysql
@@ -76,7 +71,6 @@ services:
             - /opt/vidjil/result/tmp:/mnt/result/tmp
             - /opt/vidjil/upload/uploads:/mnt/upload/uploads
             - /var/vidjil:/var/vidjil
-            - /home/ryan/vidjil:/usr/share/vidjil
             - ./reporter/code:/opt/reporter
         depends_on:
             - uwsgi
