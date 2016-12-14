@@ -72,6 +72,7 @@ function processResult(data) {
   console.log(data);
   displayVidjilViews();
   model.parseJsonData(data, 100);
+  model.loadGermline();
   model.initClones();
 
   // Do not select virtual clones
