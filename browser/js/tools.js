@@ -222,3 +222,17 @@ function nice_floor(x)
         return x;
     }
 }
+
+/**
+ * Sends error to the specified database reference.
+ * If database is undefined, throws the specified error.
+ * @param {Error} err - the error to send
+ * @param {Database} db - the database reference
+ */
+function sendErrorToDb(err, db) {
+    if (db) {
+        db.error(err.stack);
+    } else {
+        throw err;
+    }
+}

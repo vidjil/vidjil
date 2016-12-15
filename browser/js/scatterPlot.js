@@ -315,7 +315,7 @@ ScatterPlot.prototype = {
             this.tsne_ready=false;
 
         } catch(err) {
-            this.db.error(err.stack);
+            sendErrorToDb(err, this.db);
         }
     },
 
@@ -1338,7 +1338,7 @@ ScatterPlot.prototype = {
                 .getTime() - startTime;
             //console.log("update sp: " + elapsedTime + "ms");
         } catch(err) {
-            this.db.error(err.stack);
+            sendErrorToDb(err, this.db);
         }
     },
 

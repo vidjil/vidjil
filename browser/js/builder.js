@@ -47,7 +47,7 @@ Builder.prototype = {
             else this.resizeGraph(50)
 
         } catch (err) {
-            this.db.error(err.stack)
+            sendErrorToDb(err, this.db);
         }
     },
 
@@ -57,7 +57,7 @@ Builder.prototype = {
             this.build_info_container()
             this.updateTagBox();
         } catch(err) {
-            this.db.error(err.stack)
+            sendErrorToDb(err, this.db);
         }
     },
     
@@ -595,7 +595,11 @@ Builder.prototype = {
 
             this.initTag();
         } catch(err) {
-            this.db.error(err.stack);
+            if (this.db == undefined) {
+                throw err;
+            } else {
+                this.db.error(err.stack);
+            }
         }
 
     },

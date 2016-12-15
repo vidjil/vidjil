@@ -115,7 +115,7 @@ List.prototype = {
 
             document.body.appendChild(this.dataMenu);
         } catch(err) {
-            this.db.error(err.stack);
+            sendErrorToDb(err, this.db);
         }
     },
     
@@ -129,7 +129,7 @@ List.prototype = {
             this.build_data_list()
             this.resize();
         } catch(err) {
-            this.db.error(err.stack);
+            sendErrorToDb(err, this.db);
         }
     },
 
