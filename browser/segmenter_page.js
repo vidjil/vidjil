@@ -1,7 +1,7 @@
 var model;
-// model.loadGermline();
 var segmenter;
 var scatter;
+var console;
 
 /**
  * Validates the form, and returns the data if it was successfully validated.
@@ -31,9 +31,10 @@ function validateForm(form) {
  * @param {exception} exc - (optional) the exception that caused the error.
  */
 function displayError(error, rawError, exc) {
-  console.log(error);
-  console.log(rawError);
-  console.log(exc);
+  console.log({msg: error, type: 'flash', priority: 2});
+  if (rawError) {
+    console.log({msg: rawError, type: 'flash', priority: 2});
+  }
 }
 
 /**
@@ -113,6 +114,7 @@ function main() {
   model = new Model();
   segmenter = new Segment('segmenter_panel', model);
   scatter = new ScatterPlot('scatter_panel', model);
+  console = new Com(window.console);
   setCrossDomainModel(model);
 
   // Parse sequences and add to segmenter

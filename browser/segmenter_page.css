@@ -58,7 +58,7 @@ textarea {
 #header_panel {
   padding-top: 0.4%;
   position: fixed;
-  height: 55px;
+  height: 75px;
   width: 97.5%
 }
 
@@ -75,7 +75,7 @@ textarea {
   bottom: 175px;
   max-height: 65%;
   position: fixed;
-  top: 80px;
+  top: 100px;
   width: 100%;
 }
 
