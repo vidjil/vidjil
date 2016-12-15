@@ -17,14 +17,14 @@ using namespace std;
 #define NO_COLOR "\033[0m"
 
 void usage(int argc, const char **argv) {
-  if (argc != 5) {
-    cerr << "Usage: " << argv[0] << " <sequence> <germline> <V gene pattern> <J gene pattern>" << endl << endl
+  if (argc != 7) {
+    cerr << "Usage: " << argv[0] << " <sequence> <germline> <5> <3> <V gene pattern> <J gene pattern>" << endl << endl
          << "Align a sequence against V/J genes specified by their exact name or by a matching pattern" << endl;
     cerr << "If <sequence> is - the sequence is read on STDIN, until a blank line." << endl << endl ;
     cerr << "Examples: " << endl
-         << argv[0] << " CCGAGGACACAGCCGTGTATTTTTTCCCCTAGTGGTTGCCCCTTTGACTACTGGGGCCAGGGAACC ../../germline/IGH IGHV3-15*01 IGHJ4*02" << endl
-         << argv[0] << " CCGAGGACACAGCCGTGTATTTTTTCCCCTAGTGGTTGCCCCTTTGACTACTGGGGCCAGGGAACC ../../germline/IGH IGHV IGHJ" << endl
-         << argv[0] << " - ../../germline/IGH \"IGHV3-15*01\" \"IGHJ4*02\" <<< \"CGCCTGGATGAGCTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTTGGCCGTATTA" << endl << "AAAGCAAAACTGATGGTGGGACAACAGACTACGCTGCACCCGTGAAAGGCAGATTCACCATCTCAAGAGATGATTCAAAAAACACGCTGTATCTGCAAATGAACAGCCTGAAAA" << endl << "CCGAGGACACAGCCGTGTATTTTTTCCCCTAGTGGTTGCCCCTTTGACTACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGTAAGCCCTATAGTGAGTCGTATTA\"" << endl;
+         << argv[0] << " CCGAGGACACAGCCGTGTATTTTTTCCCCTAGTGGTTGCCCCTTTGACTACTGGGGCCAGGGAACC ../../germline/IGH V J IGHV3-15*01 IGHJ4*02" << endl
+         << argv[0] << " CCGAGGACACAGCCGTGTATTTTTTCCCCTAGTGGTTGCCCCTTTGACTACTGGGGCCAGGGAACC ../../germline/IGH V J IGHV IGHJ" << endl
+         << argv[0] << " - ../../germline/IGH V J \"IGHV3-15*01\" \"IGHJ4*02\" <<< \"CGCCTGGATGAGCTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTTGGCCGTATTA" << endl << "AAAGCAAAACTGATGGTGGGACAACAGACTACGCTGCACCCGTGAAAGGCAGATTCACCATCTCAAGAGATGATTCAAAAAACACGCTGTATCTGCAAATGAACAGCCTGAAAA" << endl << "CCGAGGACACAGCCGTGTATTTTTTCCCCTAGTGGTTGCCCCTTTGACTACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGTAAGCCCTATAGTGAGTCGTATTA\"" << endl;
     exit(1);
   }
 }
@@ -59,19 +59,23 @@ int main(int argc, const char** argv)
 
   string read = argv[1];
   string germline = argv[2];
+  string gene5 = argv[3];
+  string gene3 = argv[4];
 
-  Fasta Vgenes(germline+"V.fa", 2, "|");
-  Fasta Jgenes(germline+"J.fa", 2, "|");
+  if (gene5 == "D")
+    gene5 += "_upstream";
+  Fasta Vgenes(germline+gene5+".fa", 2, "|");
+  Fasta Jgenes(germline+gene3+".fa", 2, "|");
 
-  Fasta interestingV = extractInterestingGenes(Vgenes, argv[3]);
-  Fasta interestingJ = extractInterestingGenes(Jgenes, argv[4]);
+  Fasta interestingV = extractInterestingGenes(Vgenes, argv[5]);
+  Fasta interestingJ = extractInterestingGenes(Jgenes, argv[6]);
 
   if (interestingV.size() == 0) {
-    cerr << "No interesting V found" << endl;
+    cerr << "No interesting 5' found" << endl;
     exit(2);
   }
   if (interestingJ.size() == 0) {
-    cerr << "No interesting J found" << endl;
+    cerr << "No interesting 3' found" << endl;
     exit(2);
   }
 
