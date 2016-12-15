@@ -23,7 +23,7 @@ services:
             - /opt/vidjil/result/results:/mnt/result/results
             - /opt/vidjil/result/tmp:/mnt/result/tmp
             - /opt/vidjil/upload/uploads:/mnt/upload/uploads
-            - /var/vidjil:/var/vidjil
+            - /opt/vidjil/log:/var/vidjil
         depends_on:
             - mysql
             - postfix
@@ -56,7 +56,7 @@ services:
             - /opt/vidjil/result:/mnt/result
             - /opt/vidjil/result/tmp:/mnt/result/tmp
             - /opt/vidjil/upload:/mnt/upload
-            - /var/vidjil:/var/vidjil
+            - /opt/vidjil/log:/var/vidjil
         depends_on:
             - uwsgi
             - mysql
@@ -70,7 +70,7 @@ services:
             - /opt/vidjil/result/results:/mnt/result/results
             - /opt/vidjil/result/tmp:/mnt/result/tmp
             - /opt/vidjil/upload/uploads:/mnt/upload/uploads
-            - /var/vidjil:/var/vidjil
+            - /opt/vidjil/log:/var/vidjil
             - ./reporter/code:/opt/reporter
         depends_on:
             - uwsgi
