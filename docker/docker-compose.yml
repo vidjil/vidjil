@@ -6,7 +6,7 @@ services:
             - MYSQL_ROOT_PASSWORD=MySRPimSRP
         volumes:
             - ./mysql/:/docker-entrypoint-initdb.d/
-            - /var/lib/mysql:/var/lib/mysql
+            - /opt/vidjil/mysql:/var/lib/mysql
     postfix:
         image: catatnight/postfix
         environment:
