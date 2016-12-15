@@ -124,6 +124,7 @@ textarea {
   display: none;
   height: 144px;
   position: fixed;
+  width: 100%;
 }
 
 #footer_panel {
