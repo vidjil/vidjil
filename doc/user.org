@@ -230,8 +230,8 @@ See https://github.com/vidjil/vidjil/blob/master/doc/locus.org for information o
 
 The « reload » button (bottom left) updates the status of the task, that should do =QUEUED= → =ASSIGNED= → =RUNNING= → =COMPLETED=.
 It is possible to launch several process at the same time (some will wait in the =QUEUED= / =ASSIGNED= states), and also to launch process while you
-are uploading data. Finally, you can safely close the window with the patient database (and even the browser) when some process are queued/launched.
-The only thing you should not do is to close completely the browser while sequences are uploading.
+are uploading data. Finally, you can safely close the window with the patient/experiment database (and even your web browser) when some process are queued/launched.
+The only thing you should not do is to close completely your web browser while sequences are uploading.
 
 
 *** Groups
