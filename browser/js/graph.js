@@ -210,7 +210,7 @@ Graph.prototype = {
             this.build_menu()
                 .build_list();
         } catch(err) {
-            this.db.error(err.stack);
+            sendErrorToDb(err, this.db);
         }
         
         return this

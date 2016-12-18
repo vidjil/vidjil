@@ -328,11 +328,7 @@ Segment.prototype = {
                     }
                 });
         } catch(err) {
-            if (typeof this.db == 'undefined') {
-                throw err
-            } else {
-                this.db.error(err.stack);
-            }
+            sendErrorToDb(err, this.db);
         }
     },
 
