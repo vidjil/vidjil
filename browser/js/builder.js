@@ -595,11 +595,7 @@ Builder.prototype = {
 
             this.initTag();
         } catch(err) {
-            if (this.db == undefined) {
-                throw err;
-            } else {
-                this.db.error(err.stack);
-            }
+            sendErrorToDb(err, this.db);
         }
 
     },
