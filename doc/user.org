@@ -81,8 +81,8 @@ to learn the essential features of Vidjil.
    #The name can be edited (“edit”).
    - date :: indicate the date of the run of the current sample point (edit with the database, on the patient tab). 
              You can change the point viewed by clickong on the =←= and =→= buttons. A cycling view is available by the fix button.
-   - segmented :: number of reads where Vidjil found a CDR3, for that sample point
-                  See [[Number of segmented reads]] below.
+   - analyzed reads :: number of reads where Vidjil found a CDR3, for that sample point
+                  See [[Number of analyzed reads]] below.
    - total :: total number of reads for that sample point
 
 ** The list of clones (left panel)
@@ -205,7 +205,7 @@ samples. At the moment the only preprocess avalaible is the paired-end read
 merging.
 
 ***** Read merging
-People using Illumina sequencers may sequence paired-end fragments. It is
+People using Illumina sequencers may sequence paired-end R1/R2 fragments. It is
 *highly* recommended to merge those reads in order to have a read that consists
 of the whole DNA fragment instead of split fragments.
 
@@ -262,7 +262,7 @@ The different permissions that can be attributed are:
 
 The interest of NGS/Rep-Seq studies is to provide a deep view of any
 V(D)J repertoire. The underlying analysis softwares (such as Vidjil)
-try to analyze as much reads as possible (see below 'Number of segmented reads').
+try to analyze as much reads as possible (see [[Number of analyzed reads]] below).
 One often wants to "see all clones", but a complete list is difficult
 to see in itself. In a typical dataset with about 10^6 reads, even in
 the presence of a dominant clone, there can be 10^4 or 10^5 different
@@ -324,36 +324,41 @@ of the reads. The consensus sequence can thus be shorter than some reads.
 
 To make sure that the PCR, the sequencing and the Vidjil analysis went well, several elements can be controlled.
 
-** Number of segmented reads
-A first control is to check the number of “segmented reads” in the info panel (top left box).
-For each point, this shows the number of reads where Vidjil found a CDR3.
+** Number of analyzed reads
+A first control is to check the number of “analyzed reads” in the info panel (top left box).
+This shows the number of reads where Vidjil found some V(D)J recombination in the selected sample.
      
-Ratios above 90% usually mean very good results. Smaller ratios, especially under 60%, often mean that something went wrong.
-The “info“ button further detail the causes of non-segmentation (=UNSEG=, see detail on [[http://git.vidjil.org/blob/master/doc/algo.org][algo.org]]).
+With DNA-Seq sequencing with specific V(D)J primers,
+ratios above 90% usually mean very good results. Smaller ratios, especially under 60%, often mean that something went wrong.
+On the other side, capture with many probes or RNA-Seq strategies usually lead to datasets with less than 0.1% V(D)J recombinations.
+
+The “info“ button further detail the causes of non-analysis (=UNSEG=, see detail on [[http://git.vidjil.org/blob/master/doc/algo.org][algo.org]]).
 There can be several causes leading to bad ratios: 
 
 *** Analysis or biological causes
 
    - The data actually contains other germline/locus that what was searched for
       (solution: relauch Vidjil, or ask that we relaunch Vidjil, with the correct germline sequences).
-      See [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]] for information on the analyzable locus.
+      See [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]] for information on the analyzable human locus,
+     and contact us if you would like to analyze data from species that are not currently available.
 
    - There are incomplete/exceptional recombinations
-     (Vidjil can process some of them, config =multi+inc= or command-line option =-i=).
+     (Vidjil can process some of them, config =multi+inc= or command-line option =-i=, see [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]] for details)
 
    - There are too many hypersomatic mutations
      (usually Vidjil can process mutations until 10% mutation rate... above that threshold, some sequences may be lost).
 
    - There are chimeric sequences or translocations
-     (Vidjil does not process these sequences).
+     (Vidjil does not process all of these sequences).
 
 *** PCR or sequencing causes
 
-   - the read length is too short, the reads do not span the junction zone (UNSEG too few V/J or UNSEG only V/J).
-      (Vidjil detects a “window” including the CDR3. By default this window is 40–60bp long, so the read needs be that long centered on the junction).
+   - The read length is too short and the reads do not span the junction zone (=UNSEG too few V/J= or =UNSEG only V/J=).
+      (Vidjil detects a “window” including the CDR3. By default this window is 50bp long, so the read needs be that long centered on the junction).
 
-   - In particular, for paired-end sequencing, one of the ends can lead to reads not fully containing the CDR3 region
-      (solution: ignore this end, or extend the read length, or merge the ends with very conservative parameters).
+   - In particular, for paired-end sequencing, one of the ends can lead to reads not fully containing the CDR3 region.
+     Solutions are to merge the ends with very conservative parameters (see "Read merging", above),
+     to ignore this end, or to extend the read length.
 
    - There were too many PCR or sequencing errors
       (this can be asserted by inspecting the related clones, checking if there is a large dispersion around the main clone)
@@ -367,10 +372,10 @@ There can be several causes leading to bad ratios:
    - You can (de)activate normalization in the settings menu.
 
 ** Steadiness verification
-   - When assessing different PCR primers, PCR enzymes, PCR cycles, one may want to see how regular the concentrations are among the points.
+   - When assessing different PCR primers, PCR enzymes, PCR cycles, one may want to see how regular the concentrations are among the samples.
    - When following a patient one may want to identify any clone that is emerging.
-   - To do so, you may want to change the color system, in the “color” menu
-     select “by abundance at selected timepoint”.  The color ranges from red
+   - To do so, you may want to change the color system, in the “color by” menu
+     select “abundance”.  The color ranges from red
      (high concentration) to purple (low concentration) and allows to easily
      spot on the graph any large change in concentration.
 
