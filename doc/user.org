@@ -28,7 +28,7 @@ The Vidjil web application runs in any modern browser. It has been successfully 
 The vidjil web application displays =.vidjil= files that summarize the V(D)J
 recombinations and the sequences found in a run. 
 
-The easiest way to get these files is to [[http://rbx.vidjil.org/browser][request an account]] on the public Vidjil test server.
+The easiest way to get these files is to [[http://app.vidjil.org/][request an account]] on the public Vidjil test server.
 You will then be able to upload,
 manage, process your runs (=.fasta=, =.fastq=, =.gz= or =.clntab= files) directly on the web application
 (see [[The patient/experiment database and the server]]), and the server behind the patient/experiment
