@@ -31,7 +31,7 @@ recombinations and the sequences found in a run.
 The easiest way to get these files is to [[http://rbx.vidjil.org/browser][request an account]] on the public Vidjil test server.
 You will then be able to upload,
 manage, process your runs (=.fasta=, =.fastq=, =.gz= or =.clntab= files) directly on the web application
-(see below 'patient database'), and the server behind the patient
+(see [[The patient/experiment database and the server]]), and the server behind the patient/experiment
 database computes these =.vidjil= files.
 Otherwise, such =.vidjil= files can be obtained:
  - from the command-line version of Vidjil (starting from
@@ -45,13 +45,13 @@ Otherwise, such =.vidjil= files can be obtained:
 * First aid
 
 - Open data by:
-    - either with “patients”/“open patient”  if you are connected to a patient database, such as on http://app.vidjil.org/
+    - either with “patients”/“open patient”  if you are connected to a patient/experiment database, such as on http://app.vidjil.org/
       (in this case, there are always some "Demo" datasets for demonstration purposes),
     - or with “file”/“import/export”, manually selecting a =.vidjil= file
 
 - You can change the number of displayed clones by moving the slider “number of clones” (menu “filter”).
   The maximal number of clones that can be displayed depends on the processing step before.
-  See below ("Can I see all the clones ?").
+  See below "Can I see all the clones ?" ([[Can I see all the clones ?]]).
 
 - Clones can be selected by clicking on them either in the list, on the time graph,
   or the grid (simple selection or rectangle selection).
@@ -64,7 +64,7 @@ Otherwise, such =.vidjil= files can be obtained:
      Once several clones are merged, you can still visualize them by clicking on “+” in the list of clones.
 
 - Your analysis (clone tagging, renaming, merging) can be saved:
-    - either with “patients”/“save analysis” if you are connected to a patient database
+    - either with “patients”/“save analysis” if you are connected to a patient/experiment database
     - or with “file”/“export .analysis”
 
 You are advised to go through to the tutorial available from [[http://www.vidjil.org/doc]]
@@ -73,7 +73,7 @@ to learn the essential features of Vidjil.
 * The elements of the Vidjil web application
 
 ** The info panel (upper left panel)
-   - patient information :: useer can put some informations in this case to retain about the patient. 
+   - patient information :: user can put some informations in this case to retain about the patient. 
    - locus :: germline used for analyzing the data. In case of multi-locus 
               data, you can select what locus should be displayed (see [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]])
    - analysis :: name (without extension) of the loaded file used for displaying the data
@@ -124,7 +124,7 @@ The time graph is hidden with there is only one timepoint. It shows the X most f
 
 ** The plot view
 
-The grid view show the clones of a selected germline. All the used germlines are on the right of the grid. You can change germline by clicking on it or by using the associated shortcuts (see the shortcuts section).
+The grid view show the clones of a selected germline. All the used germlines are on the right of the grid. You can change germline by clicking on it or by using the associated shortcuts (see [[Keyboard shortcuts]] below).
 
 - The "plot" menu allow to change the (grid plot, bar plot) as well as the X and Y axes of these plot
   Some presets are available.
@@ -141,14 +141,14 @@ or their “N length” (that is N1-D-N2 in the case of VDJ recombinations)
 ** The aligner (bottom panel)
 
 The aligner display nucleotide sequences from selected clones.
-   - See "What is the sequence displayed for each clone ?" below
+   - See "What is the sequence displayed for each clone ?" ([[What is the sequence displayed for each clone ?]]) below
    - Sequences can be aligned together (“align” button), identifying substitutions, insertions and deletions.
    - You can remove sequences from the aligner (and the selection) by clicking on their name
    - You can further analyze the sequences with IMGT/V-QUEST and IgBlast on the selected sequences. This opens another window/tab.
    - You can unselect all sequences by clicking on the background of the grid.
 
 
-* The patient database and the server
+* The patient/experiment database and the server
 
 If a server with a patient/experiment database is configured with your
 installation of Vidjil (as on http://app.vidjil.org/), the
@@ -357,7 +357,7 @@ There can be several causes leading to bad ratios:
       (Vidjil detects a “window” including the CDR3. By default this window is 50bp long, so the read needs be that long centered on the junction).
 
    - In particular, for paired-end sequencing, one of the ends can lead to reads not fully containing the CDR3 region.
-     Solutions are to merge the ends with very conservative parameters (see "Read merging", above),
+     Solutions are to merge the ends with very conservative parameters (see [[Read merging]] above),
      to ignore this end, or to extend the read length.
 
    - There were too many PCR or sequencing errors
@@ -418,8 +418,8 @@ There can be several causes leading to bad ratios:
   Note: You can select just one locus by holding the Shift key while pressing
   the letter corresponding to the locus of interest.
 
- | =Ctrl-s=  | save the analysis         (when connected to a patient database)  |
- | =Shift-p= | open the 'patient' window (when connected to a patient database) |
+ | =Ctrl-s=  | save the analysis         (when connected to a database)    |
+ | =Shift-p= | open the 'patient' window (when connected to a database)         |
 
 
 
