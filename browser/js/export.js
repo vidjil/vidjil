@@ -778,7 +778,7 @@ Report.prototype = {
         }/**/
 
 
-        var link = "mailto:team@vidjil.org"
+        var link = "mailto:support@vidjil.org"
              + "?cc="
              + "&subject=" + escape("[Vidjil] Question")
              + "&body=" + escape("Dear Vidjil team,"
