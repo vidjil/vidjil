@@ -30,7 +30,6 @@ query = db(
             </thead>
             <tbody>
                 {{for row in query :}}
-                    {{if row.auth_group.role[:5] != "user_" :}}
                          <tr>
                             <td>{{=row.auth_group.role}}</td>
                             <td>{{if auth.can_modify_group(row.auth_group.id, request.vars["id"]) :}}
@@ -41,7 +40,6 @@ query = db(
                             </td>
                             <td> X </td>
                         </tr>
-                    {{pass}}
                 {{pass}}
             </tbody>
         </table>
