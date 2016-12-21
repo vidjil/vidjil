@@ -1,51 +1,52 @@
 <!DOCTYPE html>
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="shortcut icon" href="./images/favicon-v.ico" type="image/x-icon">
-  <link rel="stylesheet" type="text/css" href="css/light.css" />
-  <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu/stylesheet.css" />
-  <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu-mono/stylesheet.css" />
-  <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/fontello.css" />
-  <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/animation.css" />
-  <link id="seg_highlight" rel="stylesheet" type="text/css" href="css/segmenter_highlight.css" />
-  <link rel="stylesheet" type="text/css" href="segmenter_page.css" />
-  <title>Segmenter Tool — Vidjil</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="./images/favicon-v.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="css/light.css" />
+    <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu/stylesheet.css" />
+    <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu-mono/stylesheet.css" />
+    <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/fontello.css" />
+    <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/animation.css" />
+    <link id="seg_highlight" rel="stylesheet" type="text/css" href="css/segmenter_highlight.css" />
+    <link rel="stylesheet" type="text/css" href="segmenter_page.css" />
+    <title>Segmenter Tool — Vidjil</title>
 </head>
+
 <body>
-  <div id="body">
-    <header id="header_panel" class="panel">
-      <h1 id="app_title">Vidjil</h1>
-      <h2 id="tool_title">V(D)J designation tool</h2>
+    <div id="body">
+        <header id="header_panel" class="panel">
+            <h1 id="app_title">Vidjil</h1>
+            <h2 id="tool_title">V(D)J designation tool</h2>
 
-      <p>This tool quickly checks the V(D)J designation of a small number of sequences with (possibly incomplete) V(D)J recombinations.
-        To analyze complete NGS RepSeq datasets, use the <a href="http://app.vidjil.org/">full Vidjil platform</a>.
-      </p>
-    </header>
+            <p>This tool quickly checks the V(D)J designation of a small number of sequences with (possibly incomplete) V(D)J recombinations. To analyze complete NGS RepSeq datasets, use the <a href="http://app.vidjil.org/">full Vidjil platform</a>.
+            </p>
+        </header>
 
-    <div id="body_panel" class="flexbox">
-      <div id="form_panel" class="panel twopanels_left">
-        <form id="form_block" name="form_sequences">
-          <textarea autofocus id="form_sequences" name="sequences" rows="10" cols="80" placeholder="Enter up to 10 sequences in FASTA format..."></textarea>
-          <div id="bottom_form">
-              <p>or</p>
-              <input id="form_sequences_file" name="sequences_file" type="file" />
-              <input id="form_submit" type="button" value="Submit" />
-          </div>
-      </form>
-        <p id="copyright">Copyright Vidjil © 2016</p>
-      </div>
+        <div id="body_panel" class="flexbox">
+            <div id="form_panel" class="panel twopanels_left">
+                <form id="form_block" name="form_sequences">
+                    <textarea autofocus id="form_sequences" name="sequences" rows="10" cols="80" placeholder="Enter up to 10 sequences in FASTA format..."></textarea>
+                    <div id="bottom_form">
+                        <p>or</p>
+                        <input id="form_sequences_file" name="sequences_file" type="file" />
+                        <input id="form_submit" type="button" value="Submit" />
+                    </div>
+                </form>
+                <p id="copyright">Copyright Vidjil © 2016</p>
+            </div>
 
-      <div id="scatter_panel" class="panel twopanels_right vidjil_view">
+            <div id="scatter_panel" class="panel twopanels_right vidjil_view">
 
-      </div>
+            </div>
+        </div>
+
+        <div id="segmenter_panel" class="panel vidjil_view">
+
+        </div>
+        <form id="form"></form>
     </div>
-
-    <div id="segmenter_panel" class="panel vidjil_view">
-
-    </div>
-  <form id="form"></form>
-  </div>
-  <script data-main="js/app.js" src="js/lib/require.js"></script>
-  <script src="segmenter_page.js"></script>
+    <script data-main="js/app.js" src="js/lib/require.js"></script>
+    <script src="segmenter_page.js"></script>
 </body>

@@ -11,16 +11,16 @@ var console;
  * @return {undefined} if the form is invalid.
  */
 function validateForm(form) {
-  var data = form['sequences'].value;
-  if (!data) {
-    data = form['sequences_file'].files[0];
+    var data = form['sequences'].value;
     if (!data) {
-      data = undefined;
-      displayError('No sequences provided.');
+        data = form['sequences_file'].files[0];
+        if (!data) {
+            data = undefined;
+            displayError('No sequences provided.');
+        }
     }
-  }
 
-  return data;
+    return data;
 }
 
 /**
@@ -31,10 +31,10 @@ function validateForm(form) {
  * @param {exception} exc - (optional) the exception that caused the error.
  */
 function displayError(error, rawError, exc) {
-  console.log({msg: error, type: 'flash', priority: 2});
-  if (rawError) {
-    console.log({msg: rawError, type: 'flash', priority: 2});
-  }
+    console.log({msg: error, type: 'flash', priority: 2});
+    if (rawError) {
+        console.log({msg: rawError, type: 'flash', priority: 2});
+    }
 }
 
 /**
@@ -44,25 +44,25 @@ function displayError(error, rawError, exc) {
  * @param {function} error - the function to call when an error occurs.
  **/
 function requestVidjilFile(sequences, callback, error) {
-  var urlController = 'https://dev.vidjil.org/vidjil/segmenter';
-  var dataToSend = new FormData();
-  dataToSend.append('sequences', sequences);
+    var urlController = 'https://dev.vidjil.org/vidjil/segmenter';
+    var dataToSend = new FormData();
+    dataToSend.append('sequences', sequences);
 
-  // Prepare request
-  var xhr = new XMLHttpRequest();
-  xhr.overrideMimeType("application/json");
-  xhr.addEventListener('readystatechange', function() {
-    if (this.readyState == 4 && this.status == 200) {
-      callback(this.responseText);
-    }
-  });
+    // Prepare request
+    var xhr = new XMLHttpRequest();
+    xhr.overrideMimeType("application/json");
+    xhr.addEventListener('readystatechange', function() {
+        if (this.readyState == 4 && this.status == 200) {
+            callback(this.responseText);
+        }
+    });
 
-  xhr.addEventListener('error', function() {
-    displayError('We had a problem processing your request.', this.stateText);
-  });
+    xhr.addEventListener('error', function() {
+        displayError('We had a problem processing your request.', this.stateText);
+    });
 
-  xhr.open('POST', urlController, true);
-  xhr.send(dataToSend);
+    xhr.open('POST', urlController, true);
+    xhr.send(dataToSend);
 }
 
 /**
@@ -70,60 +70,60 @@ function requestVidjilFile(sequences, callback, error) {
  * @param {string} data - the data from the request.
  */
 function processResult(data) {
-  console.log(data);
-  displayVidjilViews();
-  model.parseJsonData(data, 100);
-  model.loadGermline();
-  model.initClones();
+    console.log(data);
+    displayVidjilViews();
+    model.parseJsonData(data, 100);
+    model.loadGermline();
+    model.initClones();
 
-  // Do not select virtual clones
-  var cloneIds = [];
-  for (var i = 0; i < model.clones.length - 1; i++) {
-    cloneIds.push(i);
-  }
-  model.multiSelect(cloneIds);
+    // Do not select virtual clones
+    var cloneIds = [];
+    for (var i = 0; i < model.clones.length - 1; i++) {
+        cloneIds.push(i);
+    }
+    model.multiSelect(cloneIds);
 
-  // Delete merge button
-  var menuSegmenter = document.getElementsByClassName('menu-segmenter')[0];
-  var mergeButt = document.getElementById('merge');
-  menuSegmenter.removeChild(mergeButt);
+    // Delete merge button
+    var menuSegmenter = document.getElementsByClassName('menu-segmenter')[0];
+    var mergeButt = document.getElementById('merge');
+    menuSegmenter.removeChild(mergeButt);
 }
 
 function displayVidjilViews(visible) {
-  var views = document.getElementsByClassName('vidjil_view');
+    var views = document.getElementsByClassName('vidjil_view');
 
-  for (var i = 0; i < views.length; i++) {
-    var view = views[i];
-    view.style.display = 'block';
-    view.style.visibility = 'visible';
-  }
+    for (var i = 0; i < views.length; i++) {
+        var view = views[i];
+        view.style.display = 'block';
+        view.style.visibility = 'visible';
+    }
 
-  var formPanel = document.getElementById('form_panel');
-  formPanel.className = 'panel twopanels_left';
+    var formPanel = document.getElementById('form_panel');
+    formPanel.className = 'panel twopanels_left';
 }
 
 /**
  * Main function called by Vidjil.
  */
 function main() {
-  // Get DOM elements
-  var submitNode = document.getElementById('form_submit');
-  var formNode = document.forms['form_sequences'];
+    // Get DOM elements
+    var submitNode = document.getElementById('form_submit');
+    var formNode = document.forms['form_sequences'];
 
-  // Prepare Vidjil model
-  model = new Model();
-  segmenter = new Segment('segmenter_panel', model);
-  scatter = new ScatterPlot('scatter_panel', model);
-  console = new Com(window.console);
-  setCrossDomainModel(model);
+    // Prepare Vidjil model
+    model = new Model();
+    segmenter = new Segment('segmenter_panel', model);
+    scatter = new ScatterPlot('scatter_panel', model);
+    console = new Com(window.console);
+    setCrossDomainModel(model);
 
-  // Parse sequences and add to segmenter
-  submitNode.addEventListener('click', function () {
-    var data = validateForm(formNode);
-    if (data) {
-      requestVidjilFile(data, processResult, function(xhr, textStatus, exc) {
-        displayError('We had a problem processing your request.', textStatus, exc);
-      });
-    }
-  });
+    // Parse sequences and add to segmenter
+    submitNode.addEventListener('click', function () {
+        var data = validateForm(formNode);
+        if (data) {
+            requestVidjilFile(data, processResult, function(xhr, textStatus, exc) {
+                displayError('We had a problem processing your request.', textStatus, exc);
+            });
+        }
+    });
 }
