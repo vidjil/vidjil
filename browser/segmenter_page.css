@@ -107,8 +107,9 @@ textarea {
 
 #form_sequences {
   resize: none;
-  height: 70%;
-  width: 100%;
+  margin-top: 2%;
+  height: 65%;
+  width: 98%;
 }
 
 #scatter_panel {
