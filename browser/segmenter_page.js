@@ -24,7 +24,6 @@ function validateForm(form) {
 }
 
 /**
- * TODO implement this function
  * Display the specified error message on the page.
  * @param {string} error - the error message to display.
  * @param {string} rawError - (optional) the raw error text.
