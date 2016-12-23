@@ -433,6 +433,10 @@ Model_loader.prototype = {
                     this.tag[s.hide[i]].display = false;
                 }
             }
+
+            if (this.analysis.info) {
+               m.info = this.analysis.info
+            }
             
             if (this.analysis.data) {
                 for (var key in this.analysis.data)
