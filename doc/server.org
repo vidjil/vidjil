@@ -6,49 +6,85 @@ This help is intended for server administrators.
 Users should consult the web application manual.
 
 
+* Roadmap: plain installation / Docker containers
+
+There are two ways to install and run a Vidjil server:
+
+ - The *plain installation of the server* should run on any Linux/Unix server with Nginx (recommanded) or Apache.
+   We provide below detailed instructions for Ubuntu 14.04 LTS.
+   This is now the recommended installation.
+   We use this installation on the public server ([[https://app.vidjil.org]]) since October 2014.
+
+ - We are developping Debian packages as well as *Docker containers* to ease the installation and the maintenance.
+   The Docker containers are currently tested in some partner hospitals,
+   and we intend to release ready-to-use Docker containers in Q3 2017.
+   This will then be the recommanded way to install and use Vidjil.
+
+We recommand to people interested in installing a Vidjil server to wait until Q3 2017
+and to use meanwhile the public test server.
+
 * Requirements
 
-** Hardware
+** CPU, RAM
 
 *** Minimal
-   The minimal requirement for running Vidjil is quite low. For a single run,
-   a single core processor with 2GB of RAM will suffice (Vidjil Typically uses
-   approx. 1.2GB of RAM to run on a 1GB fastq and will take approx. 5 minutes+).
-   Therefore in order to maintain a stable service of the server with a single
-   worker for running Vidjil, any standard multi-core processor will do.
+   The Vidjil algorithm typically uses
+   approx. 1.2GB of RAM to run on a 1GB =.fastq= and will take approx. 5+ minutes.
+   Therefore in order to process requests from a single user with a few samples,
+   any standard multi-core processor with 2GB RAM will be enough.
+
 
 *** Recommended
    When choosing hardware for your server it is important to know the scale
    of usage you require.
    If you have many users that use the app on a daily basis, you will need to
    have multiple cores to ensure the worker queues don't build up.
-   One worker will occupy one core completely when running Vidjil (Vidjil is
+   One worker will occupy one core completely when running the Vidjil algorithm (which is
    currently single-threaded).
 
-   For reference, here is the current Vidjil setup we use on our public
-   testing server:
+   For reference, here is the current Vidjil setup we used on our public
+   testing server [[https://app.vidjil.org]] during two years (40+ users, including 15 regular users):
       - Processor: Quad core Intel 2.4MHz
       - RAM: 16GB
 
-   This configuration currently serves 15 regular users (~40 total).
-   Given that the CPU is quad-core, we have 3 workers for executing Vidjil.
-   This way the webserver can always have a dedicated cpu core and
-   running the workers at full capacity has no adverse effects on the
-   web server's response times.
+   Given that the CPU is quad-core, we have 3 workers for executing Vidjil,
+   keeping always one CPU core dedicated to the web server,
+   even when the workers run at full capacity.
+
+   As of the end of 2016, we use for the public server a virtual machine with similar capabilities.
+
+   Running other RepSeq programs through the Vidjil server may require additional CPU and RAM.
 
 ** Storage
-  The main limitation of Vidjil is the amount of data involved. Files can
-  sometimes weigh several GB, so a full installation's total storage should
-  be be serveral hundred GB, or even several TB.
 
-  We recommend a RAID setup of at least 2x2TB to allow for user files and at
-  least one backup.
+   As for many high-throughput sequencing pipeline, *disk storage to store input data (=.fastq=, =.fasta=, =.fastq.gz= or =.fasta.gz=)
+   is now the main constraint* in our environment.
 
+   Depending on the sequencer, files can weigh several GB.
+   Depending of the number of users, a full installation's total storage should thus be serveral hundred GB, or even several TB.
+   We recommend a RAID setup of at least 2x2TB to allow for user files and at least one backup.
 
+   User files (results, annotations) as well as the metadata database are quite smaller (as of the end of 2016, on the public server, 3 GB for all user files of 40+ users).
+   Note that even when the input sequences are deleted, the server is still able to display the results of previous analyses.
+   Moreover, a future release at some point of 2017 will allow to access =.fastq= files on a mounted filesystem.
+
+** Network
+
+Once installed, the server can run on a private network.
+However, the following network access are recommended:
+
+ - outbound access
+    - for users: several features using external platforms (IgBlast, IMGT/V-QUEST...)
+    - for server mainteners: upgrades and reports to a monitor server
+
+ - inbound access
+    - The team in Lille may help local server mainteners in some monitoring, maintenance and upgrade tasks,
+      provided a SSH access can be arranged, possibly over VPN.
 
 * Installing and running the Vidjil server
 
 These installation instruction are for Ubuntu server 14.04
+These instructions are preliminary, other documentation can also be found in [[http://git.vidjil.org/blob/dev/doc/dev.org][dev.org]].
 
 ** Requirements
    #+BEGIN_SRC sh
