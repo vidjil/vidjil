@@ -73,13 +73,13 @@ to learn the essential features of Vidjil.
 * The elements of the Vidjil web application
 
 ** The info panel (upper left panel)
-   - patient information :: user can put some informations in this case to retain about the patient. 
+   - patient/run information :: user can put some informations in this case to retain about the patient or the run.
    - locus :: germline used for analyzing the data. In case of multi-locus 
               data, you can select what locus should be displayed (see [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]])
    - analysis :: name (without extension) of the loaded file used for displaying the data
    - sample :: name of the current sample point. You can also change the current point by clicking directly on his name in the graph panel (when available).
    #The name can be edited (“edit”).
-   - date :: indicate the date of the run of the current sample point (edit with the database, on the patient tab). 
+   - date :: indicate the date of the run of the current sample point (edit with the database, on the patient/run tab).
              You can change the point viewed by clickong on the =←= and =→= buttons. A cycling view is available by the fix button.
    - analyzed reads :: number of reads where Vidjil found a CDR3, for that sample point
                   See [[Number of analyzed reads]] below.
@@ -154,9 +154,9 @@ If a server with a patient/experiment database is configured with your
 installation of Vidjil (as on http://app.vidjil.org/), the
 'patient' menu gives you access to the server.
 
-With authentication, you can add patients, then add either
-=.fasta=, =.fastq=, =.gz= or =.clntab= files, then process your
-runs and save the results of your analysis.
+With authentication, you can add patients or runs,
+then add "samples" (=.fasta=, =.fastq=, =.gz= or =.clntab= files), possibly pre-processed,
+then process your data and save the results of your analysis.
 
 ** The different elements
 
@@ -228,6 +228,7 @@ software lauched, the options set in the config, the size of the sample and the 
 
 The base configurations are « TRG », « IGH », « multi » (=-g germline=), « multi+inc » (=-g germline -i=), « multi+inc+xxx » (=-g germline -i -2=, default advised configuration).
 See https://github.com/vidjil/vidjil/blob/master/doc/locus.org for information on these configurations.
+The server mainteners can add new configurations tailored to specific needs.
 
 The « reload » button (bottom left) updates the status of the task, that should do =QUEUED= → =ASSIGNED= → =RUNNING= → =COMPLETED=.
 It is possible to launch several process at the same time (some will wait in the =QUEUED= / =ASSIGNED= states), and also to launch process while you
