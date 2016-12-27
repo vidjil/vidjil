@@ -182,16 +182,16 @@ Clicking on a patient or a on a run give acccess to the "samples" page. Each sam
 a =.fasta=, =.fastq=, =.gz= or =.clntab= file that will be processed by one or several
 pipelines with one or several /configurations/ that set software options.
 
-Depending on your granted access, you can add a new sample to the list (=add file=),
-download sequence files when they are available (=dl=) or delete sequence files (=X=).
-Note that sequence files may be deleted (in particular to save server disk space),
+Depending on your granted access, you can add a new sample to the list (=+ sample=),
+download sample files when they are available (=dl=) or delete sequence files (=X=).
+Note that sample files may be deleted (in particular to save server disk space),
 which is not the case for the results (unless the user wants so).
 
 You can see which samples have been processed with the selected
 config, and access to the results (=See results=, bottom right).
 
 **** Adding a sample
-To add a sample, you must add at least one sample file. Each sample file must
+To add a sample (=+ sample=), you must add at least one sample file. Each sample file must
 be linked to a patient or to a run. One of those fields will be automatically
 completed depending on whether you accessed the sample page from a patient or
 from a run. Both fields provide autocompletion to help you enter the correct
