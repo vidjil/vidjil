@@ -68,6 +68,11 @@ and to use meanwhile the public test server.
    Note that even when the input sequences are deleted, the server is still able to display the results of previous analyses.
    Moreover, a future release at some point of 2017 will allow to access =.fastq= files on a mounted filesystem.
 
+** Authentication
+
+   The accounts are now local to the Vidjil server.
+   We intend to implement some LDAP access at some point of 2017.
+
 ** Network
 
 Once installed, the server can run on a private network.
