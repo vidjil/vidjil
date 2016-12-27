@@ -158,9 +158,7 @@ With authentication, you can add patients or runs,
 then add "samples" (=.fasta=, =.fastq=, =.gz= or =.clntab= files), possibly pre-processed,
 then process your data and save the results of your analysis.
 
-** The different elements
-
-*** Patients
+** Patients
       
 Once you are authenticated, this page show the patient list. Here you
 can see your patients and patients whose permission has been given to you.
@@ -169,14 +167,14 @@ New patients can be added ('add patient'), edited ('e') or deleted ('X').
 By default, you are the only one who can see and update this new patient.
 If you have an admin access, you can grant access to other users ('p').
 
-*** Runs
+** Runs
 
 Runs can be manipulated the same way as patients, New runs can be added ('add run'), 
 edited ('e') or deleted ('X').
 Runs and Patients are both used to make set of samples who share a same patient or have been sequenced in the same run.
 A sample can be included in a patient sample set and a run sample set.
 
-*** Adding a sample
+** Samples and pre-processes
 
 Clicking on a patient or a on a run give acccess to the "samples" page. Each sample is
 a =.fasta=, =.fastq=, =.gz= or =.clntab= file that will be processed by one or several
@@ -220,7 +218,7 @@ probably contains both a part of the V and the J genes.
 
 
 
-*** Processing samples, configs
+** Processing samples, configs
 
 Depending on your granted accesses, you can schedule a processing for a sequence file (select a config and =run=).
 The processing can take a few seconds to a few hours, depending on the
@@ -236,7 +234,7 @@ are uploading data. Finally, you can safely close the window with the patient/ex
 The only thing you should not do is to close completely your web browser while sequences are uploading.
 
 
-*** Groups
+** Groups
 
 Each patient and run is assigned to at least one group. This determines which groups have access to a patient or run.
 Users are assigned to diffrent groups and therefore gain access to any patients and runs that said group has access to.
