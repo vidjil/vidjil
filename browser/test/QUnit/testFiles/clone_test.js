@@ -183,6 +183,12 @@ test('clone: get info from seg', function() {
     var c3 = new Clone(json_clone3, m, 2)
     m.initClones()
 
+    ok(c1.hasSeg('cdr3'), "clone1 has CDR3")
+    ok(c1.hasSeg('junction'), "clone1 has juction")
+    ok(c1.hasSeg('cdr3', 'junction'), "clone1 has both CDR3 and junction")
+    notOk(c1.hasSeg('toto'), "clone1 doesn't have toto")
+    notOk(c1.hasSeg('junction', 'toto'), "clone1 has junction but doesn't have toto")
+
     equal(c1.getSegLength('cdr3'), 6, "CDR3 length");
     equal(c2.getSegLength('cdr3'), 'undefined', "no cdr3 in c2");
     var pos_cdr3 = c1.getSegStartStop('cdr3')
