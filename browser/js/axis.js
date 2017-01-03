@@ -99,7 +99,7 @@ Axis.prototype = {
         //clone position
         this.pos = function(cloneID) {
             var clone = self.m.clone(cloneID) 
-            if (clone.hasSeg('type2')
+            if (clone.hasSeg(type2)
                 && typeof clone.seg[type2]["name"] != 'undefined'
                 && typeof gene_list[clone.seg[type2]["name"].split("*")[0]] != "undefined")
             {
