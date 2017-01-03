@@ -875,13 +875,11 @@ Segment.prototype = {
             }
             
             // In the .seg element, What looks like DNA sequence or what is a Pos field
-            if (clone.hasSeg()){
                 for (var i in clone.seg) {
                     if (forbidden_fields.indexOf(i) == -1 &&(this.isDNA(clone.seg[i]) || this.isPos(clone.seg[i])) ){
                         if (result.indexOf(i) == -1) result.push(i);
                     }
                 }
-            }
         }
 
         //Add external infos like IMGT's ... to selectbox values in a static way
@@ -1046,7 +1044,7 @@ Sequence.prototype = {
         var stop = -1;
                 
         var clone = this.m.clone(this.id);
-        if (clone.hasSeg() && typeof clone.seg["cdr3"] != "undefined"){
+        if (clone.hasSeg('cdr3')){
             if (typeof clone.seg["cdr3"].start != "undefined") {
                 start = this.pos[clone.seg["cdr3"].start];
                 stop = this.pos[clone.seg["cdr3"].stop];
@@ -1114,7 +1112,7 @@ Sequence.prototype = {
         if (typeof clone.sequence != 'undefined' && clone.sequence != 0) {
 
             //find V, D, J position
-            if (clone.hasSeg()){
+            if (clone.hasSeg('5', '3')){
 
                 var vdjArray = this.getVdjStartEnd(clone);
                 var vdjArrayRev = {};
@@ -1141,8 +1139,8 @@ Sequence.prototype = {
             }
 
             var window_start = this.pos[clone.sequence.indexOf(clone.id)];
-            if (clone.hasSeg() && typeof clone.seg["cdr3"] != "undefined"){
-                if (clone.seg["cdr3"].start != "undefined"){
+            if (clone.hasSeg('cdr3')){
+                if (typeof clone.seg["cdr3"].start != "undefined"){
                     window_start = this.pos[clone.seg["cdr3"].start];
                 }else if (clone.seg["cdr3"].constructor === String){
                     window_start = this.pos[clone.sequence.indexOf(clone.seg["cdr3"])];
@@ -1269,7 +1267,7 @@ Sequence.prototype = {
         // Find the good object p
         if (typeof clone[field] != 'undefined'){
             p = clone[field];                   //check clone meta-data
-        }else if (clone.hasSeg() && typeof clone.seg[field] != 'undefined'){
+        }else if (clone.hasSeg(field)){
             p = clone.seg[field];               //check clone seg data
         }else if (typeof this.m[field] != 'undefined'){
             p = this.m[field];               //check model

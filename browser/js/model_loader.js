@@ -716,7 +716,7 @@ Model_loader.prototype = {
         var count = 0;
         
         for (var i in this.clones){
-            if (typeof this.clones[i].hasSeg() && typeof this.clones[i].seg.quality != "undefined"){
+            if (this.clones[i].hasSeg('quality')){
                 var s = this.clones[i].seg.quality.seq;
                 for (var j in s){
                     if (s[j] != "!"){

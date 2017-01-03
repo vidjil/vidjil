@@ -710,7 +710,7 @@ Report.prototype = {
         
         //colorized clone sequence
         var sequence = $('<div/>', {'class': 'sequence'}).appendTo(clone);
-        if (typeof this.m.clone(cloneID).hasSeg()){
+        if (typeof this.m.clone(cloneID).hasSeg('5', '3')){
             var seg = this.m.clone(cloneID).seg
             var seq = this.m.clone(cloneID).getSequence()
             var seqV = seq.substring(0, seg['5']['stop'] + 1)

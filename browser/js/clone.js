@@ -142,8 +142,7 @@ Clone.prototype = {
      * Get the amino-acid sequence of the provided field (in the seg part)
      */
     getSegAASequence: function(field_name) {
-        if (this.hasSeg()
-            && typeof this.seg[field_name] != 'undefined'
+        if (this.hasSeg(field_name)
             && typeof this.seg[field_name].aa != 'undefined') {
             return this.seg[field_name].aa;
         }
@@ -180,8 +179,7 @@ Clone.prototype = {
      * If it does not exist return null
      */
     getSegStartStop: function(field_name) {
-        if (this.hasSeg()
-            && typeof this.seg[field_name] != 'undefined'
+        if (this.hasSeg(field_name)
             && typeof this.seg[field_name].start != 'undefined'
             && typeof this.seg[field_name].stop != 'undefined') {
             return {'start': this.seg[field_name].start,
@@ -501,8 +499,15 @@ Clone.prototype = {
 
     }, //end getSize
 
-    hasSeg: function() {
-        return typeof(this.seg) != 'undefined' && ! $.isEmptyObject(this.seg)
+    /**
+     * @param: A variable number of arguments which consists of property names that should be found in seg.
+     * @return true iff all of the property are found in seg.
+     */ 
+    hasSeg: function(/* some arguments */) {
+        for (i = 0; i < arguments.length; i++)
+            if (typeof(this.seg[arguments[i]]) == 'undefined')
+                return false
+        return true
     },
 
     computeEValue: function () {
@@ -515,7 +520,7 @@ Clone.prototype = {
 
     getGene: function (type, withAllele) {
         withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
-        if (this.hasSeg() && typeof (this.seg[type]) != 'undefined' && typeof this.seg[type]["name"] != 'undefined') {
+        if (this.hasSeg(type) && typeof this.seg[type]["name"] != 'undefined') {
             if (withAllele) {
                 return this.seg[type]["name"];
             }else{
@@ -534,7 +539,7 @@ Clone.prototype = {
     },
     
     getNlength: function () {
-        if (this.hasSeg() && typeof this.seg['3'] != 'undefined' && typeof this.seg['5'] != 'undefined'){
+        if (this.hasSeg('3', '5')){
             return this.seg['3']['start']-this.seg['5']['stop']-1
         }else{
             return 'undefined'
@@ -570,7 +575,7 @@ Clone.prototype = {
     },
     
     getPrintableSegSequence: function () {
-        if (! this.hasSeg() || typeof this.seg['5'] == 'undefined' || typeof this.seg['3'] == 'undefined') {
+        if (! this.hasSeg('3', '5')) {
             return this.getSequence()
         }
 
@@ -706,8 +711,7 @@ Clone.prototype = {
         }else if (this.m.colorMethod == "system") {
             this.color = this.m.germlineList.getColor(this.germline)
         } else if (this.m.colorMethod == 'productive') {
-            if (this.hasSeg()
-                && typeof this.seg.junction != 'undefined'
+            if (this.hasSeg('junction')
                 && typeof this.seg.junction.productive != 'undefined') {
                 this.color = colorProductivity(this.seg.junction.productive)
             }
