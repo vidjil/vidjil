@@ -59,3 +59,8 @@ REVERSE_IP = '/home/vidjil/ips.txt'
 ### Locus (should be parsed from germlines.data)
 LOCUS = ['TRA', 'TRA+D', 'TRB', 'TRG', 'TRD', 'TRD+',
          'IGH', 'IGH+', 'IGK', 'IGK+', 'IGL']
+
+# Preventu upload and run when 1% space is left in target disk
+FS_LOCK_THRESHHOLD = 1
+
+SCHEDULER_HEARTBEAT = 5
