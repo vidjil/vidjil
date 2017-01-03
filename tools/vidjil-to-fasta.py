@@ -237,7 +237,7 @@ parser.add_argument('--top', '-t', type=int, default=MAX_TOP, help = 'Keep only 
 parser.add_argument('--no-header-whitespace', '-w', action='store_true', help='Replace all whitespaces in the fasta header with '+REPLACEMENT_WHITESPACE)
 parser.add_argument('--output', '-o', help='Name of the output FASTA file [REQUIRED]', required=True)
 parser.add_argument('--sample-name', '-n', default='', help = 'Provide the sample name in the fasta header. Some Python code can be provided as soon as it returns a string')
-parser.add_argument('--metadata', '-d', action='append', help = 'Provide metadata for each file. The option must be called each time for each file, in the same order as the files are given')
+parser.add_argument('--metadata', '-d', default = [], action='append', help = 'Provide metadata for each file. The option must be called each time for each file, in the same order as the files are given')
 parser.add_argument('--germline', '-g', action='store_true', help = 'When set, provide the germline of the sequence in the additional header informations')
 parser.add_argument('file', nargs='+', help='Input (.vidjil/.clntab) files')
 
