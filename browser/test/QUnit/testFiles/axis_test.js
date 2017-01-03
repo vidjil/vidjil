@@ -15,7 +15,7 @@ test("Axis : ", function() {
     deepEqual(axis.labels,  [], "default axis");
     
     //abundance
-    axis.custom(function(cloneID){return m.clone(cloneID).getSizeZero()}, 
+    axis.custom(function(clone){return clone.getSizeZero()},
                 function(){return m.min_size},
                 1,
                 true,
@@ -73,8 +73,8 @@ test("Axis : ", function() {
     
     
     //Nlength
-    axis.custom(function(cloneID) {
-                return m.clone(cloneID).getNlength();
+    axis.custom(function(clone) {
+                return clone.getNlength();
             },
             0,25)
     
@@ -98,8 +98,8 @@ test("Axis : ", function() {
     deepEqual(axis.labels[1].text,  "10%", "custom (percent+log) : check label 10%")
     
     //output string
-    axis.custom(function(cloneID) {
-                return m.clone(cloneID).getName();
+    axis.custom(function(clone) {
+                return clone.getName();
             }, undefined, undefined, 'string')
     equal(axis.pos(0).toPrecision(3), 0.0625, "custom (name : clone 0 ")
 });
