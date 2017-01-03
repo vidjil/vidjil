@@ -875,11 +875,11 @@ Segment.prototype = {
             }
             
             // In the .seg element, What looks like DNA sequence or what is a Pos field
-                for (var i in clone.seg) {
-                    if (forbidden_fields.indexOf(i) == -1 &&(this.isDNA(clone.seg[i]) || this.isPos(clone.seg[i])) ){
-                        if (result.indexOf(i) == -1) result.push(i);
-                    }
+            for (var i in clone.seg) {
+                if (forbidden_fields.indexOf(i) == -1 &&(this.isDNA(clone.seg[i]) || this.isPos(clone.seg[i])) ){
+                    if (result.indexOf(i) == -1) result.push(i);
                 }
+            }
         }
 
         //Add external infos like IMGT's ... to selectbox values in a static way
