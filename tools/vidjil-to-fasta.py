@@ -103,19 +103,19 @@ def get_vdj_positions(recombination_type, clone):
     '''
     >>> class tmp: d = {};
     >>> clone = tmp()
-    >>> clone.d = {'seg': {'5end': 10, '3start': 15, 'sequence': 'ATTAAAAAAAAAAAAAAAAA'}}
+    >>> clone.d = {'seg': {'5end': 10, '3start': 15}, 'sequence': 'ATTAAAAAAAAAAAAAAAAA'}
     >>> get_vdj_positions('VJ', clone)
     [1, 11, 16, 20]
 
-    >>> clone.d = {'seg': {'5': {'stop': 10}, '3': {'start': 15}, 'sequence': 'ATTAAAAAAAAAAAAAAAAA'}}
+    >>> clone.d = {'seg': {'5': {'stop': 10}, '3': {'start': 15}}, 'sequence': 'ATTAAAAAAAAAAAAAAAAA'}
     >>> get_vdj_positions('VJ', clone)
     [1, 11, 16, 20]
 
-    >>> clone.d = {'seg': {'5': {'stop': 10}, '4': {'start': 11, 'stop': 12}, '3': {'start': 15}, 'sequence': 'ATTAAAAAAAAAAAAAAAAA'}}
+    >>> clone.d = {'seg': {'5': {'stop': 10}, '4': {'start': 11, 'stop': 12}, '3': {'start': 15}}, 'sequence': 'ATTAAAAAAAAAAAAAAAAA'}
     >>> get_vdj_positions('VDJ', clone)
     [1, 11, 12, 13, 16, 20]
 
-    >>> clone.d = {'seg': {'5': {'stop': 10}, '4': {'start': 11, 'stop': 12}, '4b': {'start': 13, 'stop': 14}, '3': {'start': 15}, 'sequence': 'ATTAAAAAAAAAAAAAAAAA'}}
+    >>> clone.d = {'seg': {'5': {'stop': 10}, '4': {'start': 11, 'stop': 12}, '4b': {'start': 13, 'stop': 14}, '3': {'start': 15}}, 'sequence': 'ATTAAAAAAAAAAAAAAAAA'}
     >>> get_vdj_positions('VDDJ', clone)
     [1, 11, 12, 13, 14, 15, 16, 20]
     >>> get_vdj_positions('VDJ', clone)
@@ -142,8 +142,8 @@ def get_vdj_positions(recombination_type, clone):
         positions.append(get_gene_positions(clone, 'stop', d_name)+1)
         i+=1
     positions.append(get_gene_positions(clone, 'start', '3')+1)
-    if (seg.has_key('sequence')):
-        positions.append(len(seg['sequence']))
+    if (clone.d.has_key('sequence')):
+        positions.append(len(clone.d['sequence']))
     else:
         # Arbitrary end
         positions.append(positions[-1] + 50)
