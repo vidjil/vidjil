@@ -101,6 +101,9 @@ def get_gene_positions(clone, end, gene_name):
 
 def get_vdj_positions(recombination_type, clone):
     '''
+    Return the start and end positions of all the genes in order.
+    Or None if the clone doesn't have information on gene positions.
+
     >>> class tmp: d = {};
     >>> clone = tmp()
     >>> clone.d = {'seg': {'5end': 10, '3start': 15}, 'sequence': 'ATTAAAAAAAAAAAAAAAAA'}
@@ -123,12 +126,17 @@ def get_vdj_positions(recombination_type, clone):
     >>> get_vdj_positions('VJ', clone)
     [1, 11, 16, 20]
 
+    >>> clone.d = {'seg': {'foo': 'bar'}}
+    >>> get_vdj_positions('VDJ', clone)
     '''
     positions = [1]
     if not clone.d.has_key('seg'):
         return None
     seg = clone.d['seg']
-    positions.append(get_gene_positions(clone, 'stop', '5')+1)
+    gene_pos_stop_5 = get_gene_positions(clone, 'stop', '5')
+    if gene_pos_stop_5 is None:
+        return None
+    positions.append(gene_pos_stop_5+1)
     recombination_type = recombination_type[1:-1]
     i = 0
     for d in recombination_type:
@@ -176,6 +184,8 @@ def write_fuse_to_fasta(data, outfile, used_names, current_filename, options, me
             positions = get_vdj_positions(recombination, clone)
             # except:
             #     continue
+            if positions is None:
+                continue
             name += spacer.join(map(str, positions))+spacer
             if not clone.d.has_key('name'):
                 name += "Anonymous"
