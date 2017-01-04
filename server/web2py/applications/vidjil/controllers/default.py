@@ -82,27 +82,37 @@ def init_db_helper(force=False):
 
         db.config.insert(
             name = 'multi+inc+xxx',
+            program = 'vidjil',
             command = '-c clones -3 -z 100 -r 1 -g germline -i -e 1 -2 -d -w 50 ',
+            fuse = '-t 100',
             info = 'multi-locus, with some incomplete/unusual/unexpected recombinations'
         )
         db.config.insert(
             name = 'multi+inc',
+            program = 'vidjil',
             command = '-c clones -3 -z 100 -r 1 -g germline -e 1 -w 50 ',
+            fuse = '-t 100',
             info = 'multi-locus, with some incomplete/unusual recombinations'
         )
         db.config.insert(
             name = 'multi',
+            program = 'vidjil',
             command = '-c clones -3 -z 100 -r 1 -g germline -i -e 1 -d -w 50 ',
+            fuse = '-t 100',
             info = 'multi-locus'
         )
         db.config.insert(
             name = 'TRG',
+            program = 'vidjil',
             command = '-c clones -3 -z 100 -r 1 -G germline/TRG ',
+            fuse = '-t 100',
             info = 'TRG, VgJg'
         )
         db.config.insert(
             name = 'IGH',
+            program = 'vidjil',
             command = '-c clones -w 60 -d -3 -z 100 -r 1 -G germline/IGH ',
+            fuse = '-t 100',
             info = 'IGH, Vh(Dh)Jh'
         )
 
