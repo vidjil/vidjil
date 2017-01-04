@@ -19,9 +19,12 @@ def index():
         
         p = subprocess.Popen(["df", "-h"], stdout=subprocess.PIPE)
         disk_use, err = p.communicate()
-
-        p = subprocess.Popen(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE)
-	revision,  err = p.communicate()
+        revision = 'not versioned'
+        try:
+            p = subprocess.Popen(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE)
+            revision,  err = p.communicate()
+        except:
+            pass
         
         d = monitor()
         return dict(d,
