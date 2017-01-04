@@ -180,10 +180,7 @@ def write_fuse_to_fasta(data, outfile, used_names, current_filename, options, me
         and len(clone.d['sequence']) > 0 and clone.d.has_key('seg'):
             recombination = get_recombination_type(clone)
             name = recombination+spacer
-            # try:
             positions = get_vdj_positions(recombination, clone)
-            # except:
-            #     continue
             if positions is None:
                 continue
             name += spacer.join(map(str, positions))+spacer
