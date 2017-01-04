@@ -34,8 +34,11 @@ services:
             - fuse:fuse
     fuse:
         image: vidjil:test
+        command: bash /entrypoints/fuse-entrypoint.sh
         volumes:
-            - /home/user/vidjil:/usr/share/vidjil
+            - /opt/vidjil/result/results:/mnt/result/results
+            - /opt/vidjil/result/tmp:/mnt/result/tmp
+            - /opt/vidjil/upload/uploads:/mnt/upload/uploads
     nginx:
         image: vidjil:test
         depends_on:
