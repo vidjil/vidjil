@@ -1,5 +1,5 @@
 #+TITLE: Vidjil Algorithm -- Command-line Manual
-#+AUTHOR: The Vidjil team (Mathieu, Mikaël, Marc, Tatiana and Rayan)
+#+AUTHOR: The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="org-mode.css" />
 
 # This manual can be browsed online:
@@ -7,7 +7,7 @@
 #     http://git.vidjil.org/blob/master/doc/algo.org    (development version)
 
 # Vidjil -- High-throughput Analysis of V(D)J Immune Repertoire -- [[http://www.vidjil.org]]
-# Copyright (C) 2011, 2012, 2013, 2014, 2015, 2016 by Bonsai bioinformatics
+# Copyright (C) 2011-2017 by Bonsai bioinformatics
 # at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
 # contact@vidjil.org
 

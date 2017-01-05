@@ -1,5 +1,5 @@
 #+TITLE: Vidjil -- Analyzed locus
-#+AUTHOR: The Vidjil team (Florian, Mathieu, Mikaël, Marc and Tatiana)
+#+AUTHOR: The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Ryan and Tatiana)
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="org-mode.css" />
 #+OPTIONS: toc:nil
 

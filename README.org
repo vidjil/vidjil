@@ -1,5 +1,5 @@
 #+TITLE: Vidjil -- High-throughput Analysis of V(D)J Immune Repertoire
-#+AUTHOR: The Vidjil team (Mathieu, Mikaël and Marc)
+#+AUTHOR: The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Ryan and Tatiana)
 
 [[https://travis-ci.org/vidjil/vidjil][https://img.shields.io/travis/vidjil/vidjil/master.svg]]
 [[http://opensource.org/licenses/GPL-3.0][http://img.shields.io/badge/license-GPLv3+-green.svg]]
@@ -7,7 +7,7 @@
 # https://coveralls.io/r/vidjil/vidjil http://img.shields.io/coveralls/vidjil/vidjil.svg
 
 # Vidjil -- V(D)J recombinations analysis -- [[http://www.vidjil.org]]
-# Copyright (C) 2011-2016 by Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
+# Copyright (C) 2011-2017 by Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
 # [[contact@vidjil.org]]
 
 V(D)J recombinations in lymphocytes are essential for immunological
