@@ -1,6 +1,6 @@
 /*
   This file is part of Vidjil <http://www.vidjil.org>
-  Copyright (C) 2011, 2012, 2013, 2014, 2015, 2016 by Bonsai bioinformatics
+  Copyright (C) 2011-2017 by Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
       Mathieu Giraud <mathieu.giraud@vidjil.org>
@@ -283,7 +283,7 @@ double atof_NO_LIMIT(char *optarg)
 int main (int argc, char **argv)
 {
   cout << "# Vidjil -- V(D)J recombinations analysis <http://www.vidjil.org/>" << endl
-       << "# Copyright (C) 2011, 2012, 2013, 2014, 2015, 2016 by the Vidjil team" << endl
+       << "# Copyright (C) 2011-2017 by the Vidjil team" << endl
        << "# Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille" << endl 
        << endl
        << "# Vidjil is free software, and you are welcome to redistribute it" << endl

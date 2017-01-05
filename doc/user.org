@@ -1,5 +1,5 @@
 #+TITLE: Vidjil -- Web Application Manual
-#+AUTHOR: The Vidjil team (Mathieu, Mikaël, Florian, Marc, Ryan and Tatiana)
+#+AUTHOR: The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Ryan and Tatiana)
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="org-mode.css" />
 
 Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes.
@@ -10,7 +10,7 @@ High-throughput sequencing (NGS/HTS) now enables the deep sequencing of a lympho
 This is the help of the [[http://app.vidjil.org/browser/][Vidjil web application]].
 Further help can always be asked to [[mailto:contact@vidjil.org][contact@vidjil.org]]. We can also arrange phone or Skype meeting.
 
-The Vidjil team (Mathieu, Mikaël, Florian, Marc, Ryan and Tatiana)
+The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Ryan and Tatiana)
 
 * Requirements
 

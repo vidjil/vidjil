@@ -1,6 +1,6 @@
 /*
   This file is part of Vidjil <http://www.vidjil.org>
-  Copyright (C) 2011, 2012, 2013, 2014, 2015 by Bonsai bioinformatics 
+  Copyright (C) 2011-2017 by Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
       Mathieu Giraud <mathieu.giraud@vidjil.org>

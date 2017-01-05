@@ -6,11 +6,13 @@ developed by the Bonsai bioinformatics lab, at CRIStAL (UMR CNRS 9189, Universit
 Contact: Mathieu Giraud and Mikaël Salson <contact@vidjil.org>
 
 * Vidjil core development
- - Mathieu Giraud, 2011-2016
- - Mikaël Salson, 2011-2016
+ - Mathieu Giraud, 2011-2017
+ - Mikaël Salson, 2011-2017
  - Marc Duez, 2012-2016
- - Tatiana Rocher, 2014-2016
- - Florian Thonier, 2015-2016
+ - Tatiana Rocher, 2014-2017
+ - Florian Thonier, 2015-2017
+ - Ryan Herbert, 2015-2017
+ - Aurélien Béliard, 2016-2017
 
 * Other contributors
  - David Chatel, 2011-2012
@@ -44,12 +46,18 @@ Vidjil is developed in collaboration or in connection with the following groups:
 * Funding
 
 The development of Vidjil is funded by:
- - Région Nord-Pas-de-Calais, 2012-2017
+ - Région Nord-Pas-de-Calais/Hauts-de-France, 2012-2017
  - Université Lille 1, 2014-2017
- - SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), 2014-2016
+ - SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), 2014-2017
  - Inria Lille, 2015-2017
+ - InCA, 2016-2017
 
 * Reference
+
+Marc Duez et al.,
+“Vidjil: A web platform for analysis of high-throughput repertoire sequencing”,
+PLOS ONE 2016, 11(11):e0166126
+http://dx.doi.org/10.1371/journal.pone.0166126
 
 Mathieu Giraud, Mikaël Salson, et al.,
 "Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing",
