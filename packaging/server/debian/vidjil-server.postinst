@@ -314,7 +314,7 @@ case "$1" in
         fi
 
         if [ ! -d /mnt/vidjil_data/result ] ; then
-            mkdir -p/mnt/vidjil_data/result/results
+            mkdir -p /mnt/vidjil_data/result/results
             chown -R www-data:www-data /mnt/vidjil_data/result
         fi
 
