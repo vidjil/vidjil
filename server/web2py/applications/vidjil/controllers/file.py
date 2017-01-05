@@ -341,6 +341,9 @@ def edit_form():
     run_id = None
     generic_id = None
 
+    if request.vars['patient_id'] == '' and request.vars['run_id'] == "" and request.vars['generic_id'] == "":
+        error += " missing patient or run or sample_set"
+
     if request.vars['patient_id'] != '' :
         patient_id = int(request.vars['patient_id'].split('(')[-1][:-1])
     if request.vars['run_id'] != '' :
