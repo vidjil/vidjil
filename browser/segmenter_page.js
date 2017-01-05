@@ -70,7 +70,6 @@ function requestVidjilFile(sequences, callback, error) {
  */
 function processResult(data) {
     console.log(data);
-    displayVidjilViews();
     model.parseJsonData(data, 100);
     model.loadGermline();
     model.initClones();
@@ -88,17 +87,79 @@ function processResult(data) {
     menuSegmenter.removeChild(mergeButt);
 }
 
+/**
+ * Displays or hides the Vidjil views with a nice transition.
+ * @param {bool} visible - 'true' to display, 'false' to hide.
+ */
 function displayVidjilViews(visible) {
+    var views = document.getElementsByClassName('vidjil_view');
+    for (var i = 0; i < views.length; i++) {
+        var view = views[i];
+        if (visible) {
+            view.classList.add('visible');
+            view.classList.remove('invisible');
+        } else {
+            view.classList.add('invisible');
+            view.classList.remove('visible');
+        }
+    }
+}
+
+/**
+ * Enables or disables the display of a waiting for callback feedback.
+ * @param {bool} waiting - 'true' to enable, 'false' to disable.
+ */
+function displayWaitingForCallback(waiting) {
     var views = document.getElementsByClassName('vidjil_view');
 
     for (var i = 0; i < views.length; i++) {
         var view = views[i];
-        view.style.display = 'block';
-        view.style.visibility = 'visible';
+        // Update class depending on whether the page is waiting for response or not
+        if (waiting) {
+            view.classList.add('waitingResponse');
+            view.classList.remove('notWaitingResponse');
+
+            // Create loader image
+            var imgLoading = document.createElement('img');
+            imgLoading.src = 'images/ajax-loader.gif';
+            imgLoading.classList.add('imgAjaxLoading');
+            view.appendChild(imgLoading);
+        } else {
+            var imgLoading = view.getElementsByClassName('imgAjaxLoading');
+            if (imgLoading.length != 0) {
+              view.removeChild(imgLoading[0]);
+            }
+            view.classList.add('notWaitingResponse');
+            view.classList.remove('waitingResponse');
+        }
     }
 
-    var formPanel = document.getElementById('form_panel');
-    formPanel.className = 'panel twopanels_left';
+    var body = document.getElementById('body');
+    body.style.cursor = waiting
+                      ? 'wait'
+                      : 'auto';
+
+}
+
+/**
+ * Enables or disables the submit button.
+ * @param {bool} disabled - 'true' to enable, 'false' to disable.
+ */
+function disableSubmitButt(disabled) {
+    var submitButt = document.getElementById('form_submit');
+    submitButt.disabled = disabled;
+}
+
+/**
+ * Removes all children from Vidjil views.
+ */
+function cleanVidjilViews() {
+    var views = document.getElementsByClassName('vidjil_view');
+    for (var i = 0; i < views.length; i++) {
+        while (views[i].lastChild) {
+            views[i].removeChild(views[i].lastChild);
+        }
+    }
 }
 
 /**
@@ -111,18 +172,48 @@ function main() {
 
     // Prepare Vidjil model
     model = new Model();
-    segmenter = new Segment('segmenter_panel', model);
-    scatter = new ScatterPlot('scatter_panel', model);
+    segmenter = new Segment('segmenter_container', model);
+    scatter = new ScatterPlot('scatter_container', model);
     console = new Com(window.console);
     setCrossDomainModel(model);
 
     // Parse sequences and add to segmenter
+    // displayVidjilViews(false);
     submitNode.addEventListener('click', function () {
         var data = validateForm(formNode);
         if (data) {
-            requestVidjilFile(data, processResult, function(xhr, textStatus, exc) {
-                displayError('We had a problem processing your request.', textStatus, exc);
-            });
+            disableSubmitButt(true);
+            // Clean views with transition
+            var segContainer = document.getElementById(segmenter.id);
+            displayVidjilViews(false);
+            var funct = function () {
+                console.log('Transition end 1')
+                removePrefixedEvent(segContainer, 'TransitionEnd', funct);
+                cleanVidjilViews();
+                displayVidjilViews(true);
+
+                requestVidjilFile(data,
+                    function (response) { // On success return
+                        // Hide the views to load them, then display them.
+                        displayVidjilViews(false);
+                        var funct = function () {
+                            console.log('Transition end 2')
+                            removePrefixedEvent(segContainer, 'TransitionEnd', funct);
+                            processResult(result);
+                            displayVidjilViews(true);
+                        };
+                        addPrefixedEvent(segContainer, 'TransitionEnd', funct);
+                        displayWaitingForCallback(false);
+                        disableSubmitButt(false);
+                    },
+                    function (xhr, textStatus, exc) { // On error return
+                        displayError('We had a problem processing your request.', textStatus, exc);
+                        displayWaitingForCallback(false);
+                        disableSubmitButt(false);
+                });
+                displayWaitingForCallback(true);
+            };
+            addPrefixedEvent(segContainer, 'TransitionEnd', funct);
         }
     });
 }

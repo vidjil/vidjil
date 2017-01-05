@@ -37,16 +37,19 @@
                 <p id="copyright">Copyright Vidjil © 2016</p>
             </div>
 
-            <div id="scatter_panel" class="panel twopanels_right vidjil_view">
+            <div id="scatter_panel" class="panel twopanels_right">
+                <div id="scatter_container" class="vidjil_view visible">
 
+                </div>
             </div>
         </div>
 
-        <div id="segmenter_panel" class="panel vidjil_view">
+        <div id="segmenter_panel" class="panel">
+            <div id="segmenter_container" class="vidjil_view visible">
 
+            </div>
         </div>
-        <form id="form"></form>
-    </div>
-    <script data-main="js/app.js" src="js/lib/require.js"></script>
-    <script src="segmenter_page.js"></script>
+        <script data-main="js/app.js" src="js/lib/require.js"></script>
+        <script src="js/eventListenerComp.js"></script>
+        <script src="segmenter_page.js"></script>
 </body>
