@@ -151,7 +151,7 @@ cleanall: clean
 	$(MAKE) -C $(VIDJIL_ALGO_SRC) cleanall
 	$(MAKE) -C server cleanall
 
-.PHONY: all test should clean cleanall distrib data germline unit_coverage should_coverage coverage
+.PHONY: all test should clean cleanall distrib data germline unit_coverage should_coverage coverage data germline browser server doc
 
 RELEASE_TAG="notag"
 RELEASE_H = $(VIDJIL_ALGO_SRC)/release.h
