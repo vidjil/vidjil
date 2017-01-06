@@ -20,7 +20,7 @@ def fuse(cmd, output_dir, filename):
     return fuse_filepath
 
 def main():
-    server = SimpleXMLRPCServer(("localhost", defs.PORT_FUSE_SERVER))
+    server = SimpleXMLRPCServer((defs.FUSE_SERVER, defs.PORT_FUSE_SERVER))
     server.register_function(fuse, "fuse")
     while True:
         server.handle_request()
