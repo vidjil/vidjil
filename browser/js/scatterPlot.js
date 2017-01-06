@@ -2088,11 +2088,15 @@ ScatterPlot.prototype = {
                 for (var i = 0; i < this.nodes.length; i++) {
                     var node = this.nodes[i]
                     var clone = this.m.clone(i)
-                    if (this.mode != "bar"){
+                    if (this.mode != "bar") {
                         var node_x = node.x + this.margin[3]
                         var node_y = node.y + this.margin[0]
-                    }else{
-                        //TODO bar multi-selector
+                    } else {
+                        // bar_x and bar_y are both ratio values (between 0 and 1), need to multiply by the size of the grid
+                        var node_x = node.bar_x * this.gridSizeW + this.margin[3];
+                        var mid_y = node.bar_y - node.bar_h / 2; // bar_x represents the middle of the rectangle, but not bar_y
+                        // bar_y starts from bottom, so we need to substract the y value from the height of the grid
+                        var node_y = this.gridSizeH - mid_y * this.gridSizeH + this.margin[0];
                     }
 
                     if (clone.isActive() && (clone.getSize() || clone.getSequenceSize()) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
