@@ -199,7 +199,7 @@ function main() {
                         var funct = function () {
                             console.log('Transition end 2')
                             removePrefixedEvent(segContainer, 'TransitionEnd', funct);
-                            processResult(result);
+                            processResult(response);
                             displayVidjilViews(true);
                         };
                         addPrefixedEvent(segContainer, 'TransitionEnd', funct);
