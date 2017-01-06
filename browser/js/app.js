@@ -29,7 +29,37 @@ function loadAfterConf() {
     require(["../view"], function() {
 
         require(["../germline"],
-                function() { },
+                function() {
+                    require(["../compare",
+                             "../menu",
+                             "../dbscan",
+                             "../germline_builder",
+                             "../segmenter",
+                             "../model_loader",
+                             "../model",
+                             "../clone",
+                             "../dynprog",
+                             "../list",
+                             "../axis",
+                             "../graph",
+                             "../scatterPlot",
+                             "../builder",
+                             "../com",
+                             "../vidjil-style",
+                             "../crossDomain",
+                             "../database",
+                             "../shortcut",
+                             "../export",
+                             "../similarity",
+                             "../tools"
+                            ], function(){
+                                if (typeof main == "undefined"){
+                                    require(["../main"]);
+                                }else{
+                                    main();
+                                }
+                            })
+                },
                 function(err)
                 {
                     alert("The Vidjil web application client may not be properly installed: 'germline.js' is not found. Please run 'make browser'.");
@@ -37,34 +67,5 @@ function loadAfterConf() {
                 }
                )
 
-        require(["../compare",
-                 "../menu",
-                 "../dbscan",
-                 "../germline_builder",
-                 "../segmenter",
-                 "../model_loader",
-                 "../model",
-                 "../clone",
-                 "../dynprog",
-                 "../list",
-                 "../axis",
-                 "../graph",
-                 "../scatterPlot",
-                 "../builder",
-                 "../com",
-                 "../vidjil-style",
-                 "../crossDomain",
-                 "../database",
-                 "../shortcut",
-                 "../export",
-                 "../similarity",
-                 "../tools"
-                ], function(){
-                    if (typeof main == "undefined"){
-                        require(["../main"]);
-                    }else{
-                        main();
-                    }
-                })
     })
 }
