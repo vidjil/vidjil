@@ -100,6 +100,7 @@ $(document).ajaxStart(function () {
     db.ajax_indicator_stop();
     clearTimeout(timeout);
 });
+db.ajax_indicator_stop()
 
 (function worker(){
 	db.loadNotifications();
