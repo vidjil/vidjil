@@ -29,9 +29,17 @@ test("scatterplot : grid", function() {
     
     
     sp.changeSplitMethod("gene_v", "gene_v", "bar");
-    
+    sp.update()
+
     equal(document.getElementById("bar1").className.baseVal, "", "check splitMethod V/V /plot : check if bar are displayed")
-    
+
+    equal(sp.axisX.labels[0].text, "IGHV4", "first label for 'gene_v' axis is 'IGVH4'")
+    equal(sp.axisX.labels[1].text, "?", "second label for 'gene_v' axis is '?'")
+
+    equal(m.clone(2).getGene('5'), "IGHV4*01", "clone 2 is 'IGVH4*01'")
+    equal(sp.nodes[2].bar_x, sp.axisX.labels[0].pos, "node 2, bar x position is on 'IGVH4'")
+
+
     $(document.getElementsByClassName("sp_legend")[0]).d3Click() //click label ighv4
     deepEqual(m.getSelected(), [2], "check click label");
     
