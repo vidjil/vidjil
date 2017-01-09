@@ -691,16 +691,16 @@ ScatterPlot.prototype = {
         //split clones into bar (axisX)
         switch (this.splitX) {
             case "allele_v" :
-                this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getGene("5")}, Object.keys(self.m.germlineV.allele))
+                this.makeBarTab(function(clone){return clone.getGene("5")}, Object.keys(self.m.germlineV.allele))
                 break;
             case "gene_v" :
-                this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getGene("5",false)}, Object.keys(self.m.germlineV.gene))
+                this.makeBarTab(function(clone){return clone.getGene("5",false)}, Object.keys(self.m.germlineV.gene))
                 break;
             case "allele_j" :
-                this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getGene("3")}, Object.keys(self.m.germlineJ.allele))
+                this.makeBarTab(function(clone){return clone.getGene("3")}, Object.keys(self.m.germlineJ.allele))
                 break;
             case "gene_j" :
-                this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getGene("3",false)}, Object.keys(self.m.germlineJ.gene))
+                this.makeBarTab(function(clone){return clone.getGene("3",false)}, Object.keys(self.m.germlineJ.gene))
                 break;
             default :
                 if (typeof this.available_axis[this.splitX])
@@ -712,22 +712,22 @@ ScatterPlot.prototype = {
         
         switch (this.splitY) {
             case "allele_v" :
-                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getGene("5")});
+                this.sortBarTab(function(clone){return clone.getGene("5")});
                 break;
             case "gene_v" :
-                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getGene("5",false)});
+                this.sortBarTab(function(clone){return clone.getGene("5",false)});
                 break;
             case "allele_j" :
-                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getGene("3")});
+                this.sortBarTab(function(clone){return clone.getGene("3")});
                 break;
             case "gene_j" :
-                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getGene("3",false)});
+                this.sortBarTab(function(clone){return clone.getGene("3",false)});
                 break;
             default :
                 if (typeof this.available_axis[this.splitY]){
                     this.sortBarTab(this.available_axis[this.splitY].fct);
                 }else{
-                    this.sortBarTab(function(a){return self.m.clone(a).getGene("3")});
+                    this.sortBarTab(function(clone){return clone.getGene("3")});
                 }
             break;
         }
@@ -823,12 +823,12 @@ ScatterPlot.prototype = {
             this.barTab[i].sort(function (a,b) {
                 var va;
                 try{
-                    var va = fct(a);
+                    var va = fct(this.m.clone(a));
                 }catch(e){
                 }
                 var vb;
                 try{
-                    var vb = fct(b);
+                    var vb = fct(this.m.clone(b));
                 }catch(e){}
                 
                 if (typeof va == "undefined") return (typeof vb == "undefined")  ? 0 :  -1;
