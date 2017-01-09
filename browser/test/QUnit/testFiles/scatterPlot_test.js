@@ -47,10 +47,10 @@ test("scatterplot : grid", function() {
     sp.changeSplitMethod("n", "Size", "bar");
     sp.update()
     
-    equal(sp.nodes[1].bar_h , 0.3333333333333333, "bar position : Ok")
-    equal(sp.nodes[1].bar_x , sp.axisX.labels[9].pos ,"bar position : Ok")
-    equal(sp.axisX.labels[9].text, "9", "bar position : Ok")
-    equal(sp.nodes[1].bar_y , 0.3333333333333333, "bar position : Ok")
+    equal(sp.nodes[1].bar_h , 0.3333333333333333, "node 1, bar h position")
+    equal(sp.nodes[1].bar_x , sp.axisX.labels[9].pos ,"node 1, bar x position is on '9'")
+    equal(sp.axisX.labels[9].text, "9", "10th label for 'n' axis' is '9'")
+    equal(sp.nodes[1].bar_y , 0.3333333333333333, "node 1, bar y position")
     
 });
 
