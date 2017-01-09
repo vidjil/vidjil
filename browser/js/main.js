@@ -94,7 +94,9 @@ console.log("=== main.js finished ===");
 var timeout;
 $(document).ajaxStart(function () {
     //show ajax indicator
-    timeout = setTimeout(db.ajax_indicator_start, 600);
+    timeout = setTimeout(function(){
+        db.ajax_indicator_start()
+    }, 600);
 }).ajaxStop(function () {
     //hide ajax indicator
     db.ajax_indicator_stop();

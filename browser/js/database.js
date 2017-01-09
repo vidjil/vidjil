@@ -984,7 +984,7 @@ Database.prototype = {
     },
 
     ajax_indicator_start: function() {
-        if (!self.uploader.is_uploading()) {
+        if (!(this.uploader.is_uploading())) {
             var tgt = $('#live-ajax');
             tgt.empty();
             $('<img/>', {src: 'images/ajax-loader.gif'}).appendTo($('<div/>', {class: 'active-container'}).appendTo(tgt));
