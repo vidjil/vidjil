@@ -984,10 +984,12 @@ Database.prototype = {
     },
 
     ajax_indicator_start: function() {
-        var tgt = $('#live-ajax');
-        tgt.empty();
-        $('<img/>', {src: 'images/ajax-loader.gif'}).appendTo($('<div/>', {class: 'active-container'}).appendTo(tgt));
-        $('body').css('cursor', 'wait');
+        if (!self.uploader.is_uploading()) {
+            var tgt = $('#live-ajax');
+            tgt.empty();
+            $('<img/>', {src: 'images/ajax-loader.gif'}).appendTo($('<div/>', {class: 'active-container'}).appendTo(tgt));
+            $('body').css('cursor', 'wait');
+        }
     },
 
     ajax_indicator_stop: function() {
