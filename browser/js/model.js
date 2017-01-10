@@ -1844,11 +1844,6 @@ changeCloneNotation: function(cloneNotationType) {
         }
         
         this.update()
-        
-        var radio = document.getElementsByName("normalize_method");
-        for(var elem in radio){
-            if(radio[elem].value == this.normalization.method) radio[elem].checked=true;
-        }
     },
     
     /**
@@ -1885,11 +1880,6 @@ changeCloneNotation: function(cloneNotationType) {
     changeNotation: function (notation, update) {
         this.notation_type = notation
         if (update) this.update()
-                
-        var radio = document.getElementsByName("show_name");
-        for(var elem in radio){
-            if(radio[elem].value == notation) radio[elem].checked=true;
-        }
     },
     
     /**
@@ -1900,11 +1890,6 @@ changeCloneNotation: function(cloneNotationType) {
     changeTimeFormat: function (time, update) {
         this.time_type = time
         if (update) this.update()
-        
-        var radio = document.getElementsByName("time");
-        for(var elem in radio){
-            if(radio[elem].value == time) radio[elem].checked=true;
-        }
     },
     
     /**
