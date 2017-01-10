@@ -173,29 +173,29 @@
 
                         <div class="menu_box">
                             normalization method</br>
-                            <div class="buttonSelector" onclick="m.changeNormMethod('constant')" ><input type="radio" name="normalize_method" value="constant" checked >constant</input></div>
-                            <div class="buttonSelector" onclick="m.changeNormMethod('to-100')" ><input type="radio" name="normalize_method" value="to-100">to 100%</input></div>
+                            <div class="buttonSelector" onclick="m.changeNormMethod('constant')" ><input id="menuNormMethConstant" type="radio" name="normalize_method" value="constant" checked /><label for="menuNormMethConstant">constant</label></div>
+                            <div class="buttonSelector" onclick="m.changeNormMethod('to-100')" ><input id="menuNormMethPercent" type="radio" name="normalize_method" value="to-100" /><label for="menuNormMethPercent">to 100%</label></div>
 
                         </div>
 
                         <div class="menu_box">
                             size display</br>
-                            <div class="buttonSelector" onclick="m.changeNotation('scientific', true)"><input type="radio" name="notation" value="scientific" >scientific notation</input></div>
-                            <div class="buttonSelector" onclick="m.changeNotation('percent', true)"><input type="radio" name="notation" value="percent" checked>percent</input></div>
+                            <div class="buttonSelector" onclick="m.changeNotation('scientific', true)"><input id="menuNotationScientific" type="radio" name="notation" value="scientific" /><label for="menuNotationScientific">scientific notation</label></div>
+                            <div class="buttonSelector" onclick="m.changeNotation('percent', true)"><input id="menuNotationPercent" type="radio" name="notation" value="percent" checked /><label for="menuNotationPercent">percent</label></div>
                         </div>
 
                         <div class="menu_box">
                             sample key</br>
-                            <div class="buttonSelector" onclick="m.changeTimeFormat('name', true)"><input type="radio" name="time" value="name" checked>name</input></div>
-                            <div class="buttonSelector" onclick="m.changeTimeFormat('short_name', true)"><input type="radio" name="time" value="short_name" checked>name (short)</input></div>
-                            <div class="buttonSelector" onclick="m.changeTimeFormat('sampling_date', true)"><input type="radio" name="time" value="sampling_date" >sampling date</input></div>
-                            <div class="buttonSelector" onclick="m.changeTimeFormat('delta_date', true)"><input type="radio" name="time" value="delta_date">day after first sample</input></div>
+                            <div class="buttonSelector" onclick="m.changeTimeFormat('name', true)"><input id="menuTimeFormName" type="radio" name="time" value="name" checked /><label for="menuTimeFormName">name</label></div>
+                            <div class="buttonSelector" onclick="m.changeTimeFormat('short_name', true)"><input id="menuTimeFormShort" type="radio" name="time" value="short_name" checked /><label for="menuTimeFormShort">name (short)</label></div>
+                            <div class="buttonSelector" onclick="m.changeTimeFormat('sampling_date', true)"><input id="menuTimeFormSample" type="radio" name="time" value="sampling_date" /><label for="menuTimeFormSample">sampling date</label></div>
+                            <div class="buttonSelector" onclick="m.changeTimeFormat('delta_date', true)"><input id="menuTimeFormSamplePlus" type="radio" name="time" value="delta_date" /><label for="menuTimeFormSamplePlus">day after first sample</label></div>
                         </div>
                         <div class="menu_box">
                              N regions in clone names</br>
-                            <div class="buttonSelector" onclick="m.changeCloneNotation('nucleotide_number', true)"><input type="radio" name="show_name" value="nucleotide_number">length</input></div>
-                            <div class="buttonSelector" onclick="m.changeCloneNotation('short_sequence', true)"><input type="radio" name="show_name" value="short_sequence" checked>sequence (when short)</input></div>
-                            <div class="buttonSelector" onclick="m.changeCloneNotation('full_sequence', true)"><input type="radio" name="show_name" value="full_sequence" >sequence (always)</input></div>
+                             <div class="buttonSelector" onclick="m.changeCloneNotation('nucleotide_number', true)"><input id="menuCloneNotNucNum" type="radio" name="show_name" value="nucleotide_number" /><label for="menuCloneNotNucNum">length</label></div>
+                             <div class="buttonSelector" onclick="m.changeCloneNotation('short_sequence', true)"><input id="menuCloneNotSeqShort" type="radio" name="show_name" value="short_sequence" checked /><label for="menuCloneNotSeqShort">sequence (when short)</label></div>
+                             <div class="buttonSelector" onclick="m.changeCloneNotation('full_sequence', true)"><input id="menuCloneNotSeq" type="radio" name="show_name" value="full_sequence" /><label for="menuCloneNotSeq">sequence (always)</label></div>
                         </div>
 
                         <!--
