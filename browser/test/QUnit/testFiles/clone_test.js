@@ -90,7 +90,7 @@ test("clone : name, informations, getHtmlInfo", function() {
     equal(c2.getSequenceName(), some_name, "clone2, .getSequenceName()");
     equal(c2.getCode(), some_name, "clone2, .getCode()");
     equal(c2.getName(), some_name, "clone2, .getName()");
-    equal(c2.getShortName(), "IGHV3-23 6/5/4 D1-1 5/12/4 J5", "clone2, .getShortName()");
+    equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/12/4 J5", "clone2, .getShortName()");
     
     equal(c3.getSequenceName(), "custom name", "get name clone3 : custom name");
     equal(c3.getCode(), "id3", "get code clone3 : id3");
