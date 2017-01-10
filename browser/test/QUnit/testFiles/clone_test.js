@@ -25,7 +25,7 @@
         }
     }
 
-    var some_name = "IGHV3-23*01 6//4 IGHD1-1*01 5/CCCACGTGGGGG/4 IGHJ5*02"
+    var some_name = "IGHV3-23*01 6/ACGTG/4 IGHD1-1*01 5/CCCACGTGGGGG/4 IGHJ5*02"
 
     var json_clone2 = {
         "sequence" : "AACGTACCAGG",
@@ -90,7 +90,7 @@ test("clone : name, informations, getHtmlInfo", function() {
     equal(c2.getSequenceName(), some_name, "clone2, .getSequenceName()");
     equal(c2.getCode(), some_name, "clone2, .getCode()");
     equal(c2.getName(), some_name, "clone2, .getName()");
-    equal(c2.getShortName(), "IGHV3-23 6//4 D1-1 5/12/4 J5", "clone2, .getShortName()");
+    equal(c2.getShortName(), "IGHV3-23 6/5/4 D1-1 5/12/4 J5", "clone2, .getShortName()");
     
     equal(c3.getSequenceName(), "custom name", "get name clone3 : custom name");
     equal(c3.getCode(), "id3", "get code clone3 : id3");
@@ -342,3 +342,19 @@ test("clone : changeLocus/Segment", function() {
     // TODO tests : reads, system_available, 
     
 });
+
+test("clone : changeNameNotation", function() {
+    var m = new Model();
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone1, m, 0)
+    var c2 = new Clone(json_clone2, m, 1)
+    var c3 = new Clone(json_clone3, m, 2)
+    m.initClones()
+    m.changeCloneNotation('short_sequence')
+    equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/12/4 J5", "clone2, .getShortName()");
+
+    m.changeCloneNotation('full_sequence')
+    equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/CCCACGTGGGGG/4 J5", "clone2, .getShortName()");
+    m.changeCloneNotation('nucleotide_number')
+    equal(c2.getShortName(), "IGHV3-23 6/5/4 D1-1 5/12/4 J5", "clone2, .getShortName()");
+    });

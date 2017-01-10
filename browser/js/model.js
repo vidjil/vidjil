@@ -165,7 +165,8 @@ Model.prototype = {
         this.dataFileName = '';
         this.analysisFileName = '';
         this.db_key = "" //for file who came from the database
-        
+        this.cloneNotationType="short_sequence";
+
         this.norm = false;
         this.normalization = { 
             "method" : "constant",
@@ -275,6 +276,12 @@ Model.prototype = {
         this.applyAnalysis(this.analysis);
         this.initData();
     }, //end initClones
+
+changeCloneNotation: function(cloneNotationType) {
+    this.cloneNotationType = cloneNotationType;
+    this.update();
+},
+
     
     /**
      * compute data_info who contain some meta-data for each "data"
@@ -1879,7 +1886,7 @@ Model.prototype = {
         this.notation_type = notation
         if (update) this.update()
                 
-        var radio = document.getElementsByName("notation");
+        var radio = document.getElementsByName("show_name");
         for(var elem in radio){
             if(radio[elem].value == notation) radio[elem].checked=true;
         }
