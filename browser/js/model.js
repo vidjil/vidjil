@@ -165,7 +165,8 @@ Model.prototype = {
         this.dataFileName = '';
         this.analysisFileName = '';
         this.db_key = "" //for file who came from the database
-        
+        this.cloneNotationType="nucleotide_number";
+
         this.norm = false;
         this.normalization = { 
             "method" : "constant",

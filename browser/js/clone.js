@@ -120,7 +120,20 @@ Clone.prototype = {
             z = s.match(this.REGEX_N);
             if (z)
             {
-                short_name_items.push(Math.abs(z[1]) + '/' + nullIfZero(z[2].length) + '/' + Math.abs(z[3]))
+                if (this.m.cloneNotationType == 'nucleotide_number'){
+                    short_name_items.push(Math.abs(z[1]) + '/' + nullIfZero(z[2].length) + '/' + Math.abs(z[3]));
+                }
+                else if(this.m.cloneNotationType == 'short_sequence'){
+                    if (z[2].length <= 6){
+                         short_name_items.push(s);
+                    } else{
+                        short_name_items.push(Math.abs(z[1]) + '/' + nullIfZero(z[2].length) + '/' + Math.abs(z[3]));
+                    }
+                }
+                else{
+                     short_name_items.push(s);
+                }
+
                 continue
             }
 
