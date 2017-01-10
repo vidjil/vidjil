@@ -191,6 +191,14 @@
                             <div class="buttonSelector" onclick="m.changeTimeFormat('sampling_date', true)"><input type="radio" name="time" value="sampling_date" >sampling date</input></div>
                             <div class="buttonSelector" onclick="m.changeTimeFormat('delta_date', true)"><input type="radio" name="time" value="delta_date">day after first sample</input></div>
                         </div>
+                        <div class="menu_box">
+                              name notation</br>
+                            <div class="buttonSelector" onclick="m.changeCloneNotation('nucleotide_number')"><input type="radio" name="show_name" value="nucleotide_number" checked>number of nucelotide</input>
+                            </div>
+                            <div class="buttonSelector" onclick="m.changeCloneNotation('short_sequence')"><input type="radio" name="show_name" value="short_sequence" >short sequence</input> </div>
+                           <div class="buttonSelector" onclick="m.changeCloneNotation('full_sequence')"><input type="radio" name="show_name" value="full_sequence" >full sequence</input></div>
+
+                        </div>
 
                         <!--
                         <div class="submenu" id="system_menu" style="display:none">

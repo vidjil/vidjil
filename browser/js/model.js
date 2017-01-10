@@ -276,6 +276,12 @@ Model.prototype = {
         this.applyAnalysis(this.analysis);
         this.initData();
     }, //end initClones
+
+changeCloneNotation: function(cloneNotationType) {
+    this.cloneNotationType = cloneNotationType;
+    this.update();
+},
+
     
     /**
      * compute data_info who contain some meta-data for each "data"
