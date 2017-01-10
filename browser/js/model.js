@@ -1886,7 +1886,7 @@ changeCloneNotation: function(cloneNotationType) {
         this.notation_type = notation
         if (update) this.update()
                 
-        var radio = document.getElementsByName("notation");
+        var radio = document.getElementsByName("show_name");
         for(var elem in radio){
             if(radio[elem].value == notation) radio[elem].checked=true;
         }
