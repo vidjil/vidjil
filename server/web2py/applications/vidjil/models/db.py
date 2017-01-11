@@ -39,7 +39,7 @@ request.requires_https()
 
 if not request.env.web2py_runtime_gae:
     ## if NOT running on Google App Engine use SQLite or other DB
-    db = DAL(defs.DB_ADDRESS,pool_size=1,check_reserved=['all'])
+    db = DAL(defs.DB_ADDRESS,pool_size=defs.DB_POOL_SIZE,check_reserved=['all'])
     ## db = DAL('mysql://root:password@localhost/vidjil5',pool_size=1,check_reserved=['all'])
 else:
     ## connect to Google BigTable (optional 'google:datastore://namespace')
