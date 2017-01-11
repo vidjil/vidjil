@@ -16,10 +16,10 @@ run set -x \
 	&& chmod +x /usr/local/bin/gosu \
 	&& apt-get purge -y --auto-remove ca-certificates wget
 
-run echo deb http://app.vidjil.org:8080/archive sid/all/ >> /etc/apt/sources.list
-run echo deb http://app.vidjil.org:8080/archive sid/amd64/ >> /etc/apt/sources.list
-run echo deb http://app.vidjil.org:8080/archive wheezy/all/ >> /etc/apt/sources.list
-run echo deb http://app.vidjil.org:8080/archive wheezy/amd64/ >> /etc/apt/sources.list
+run echo deb http://vda.vidjil.org:8080/archive sid/all/ >> /etc/apt/sources.list
+run echo deb http://vda.vidjil.org:8080/archive sid/amd64/ >> /etc/apt/sources.list
+run echo deb http://vda.vidjil.org:8080/archive wheezy/all/ >> /etc/apt/sources.list
+run echo deb http://vda.vidjil.org:8080/archive wheezy/amd64/ >> /etc/apt/sources.list
 
 run echo "vidjil-server vidjil/reconfigure-webserver string nginx" > preseed.txt
 run echo "vidjil-server vidjil/restart-webserver boolean false" >> preseed.txt
