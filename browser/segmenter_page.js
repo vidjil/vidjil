@@ -143,11 +143,34 @@ function displayWaitingForCallback(waiting) {
 
 /**
  * Enables or disables the submit button.
- * @param {bool} disabled - 'true' to enable, 'false' to disable.
+ * @param {bool} disabled - 'true' to disable, 'false' to enable.
  */
 function disableSubmitButt(disabled) {
     var submitButt = document.getElementById('form_submit');
     submitButt.disabled = disabled;
+}
+
+/**
+ * Enables or disables the feature buttons.
+ * @param {bool} disabled - 'true' to disable, 'false' to enable.
+ */
+function disableFeatures(disabled) {
+    var featuresBtn = document.getElementsByClassName('btn_feature');
+
+    for (var i = 0; i < featuresBtn.length; i++) {
+        featuresBtn[i].disabled = disabled;
+    }
+}
+
+/**
+ * Prepares the button listeners.
+ */
+function prepareButtons() {
+    var exportFastaBtn = document.getElementById('btn_exportfasta');
+
+    exportFastaBtn.addEventListener('click', function () {
+        model.exportFasta();
+    });
 }
 
 /**
@@ -177,6 +200,9 @@ function main() {
     console = new Com(window.console);
     setCrossDomainModel(model);
 
+    prepareButtons();
+    disableFeatures(true);
+
     // Parse sequences and add to segmenter
     // displayVidjilViews(false);
     submitNode.addEventListener('click', function () {
@@ -205,6 +231,7 @@ function main() {
                         addPrefixedEvent(segContainer, 'TransitionEnd', funct);
                         displayWaitingForCallback(false);
                         disableSubmitButt(false);
+                        disableFeatures(false);
                     },
                     function (xhr, textStatus, exc) { // On error return
                         displayError('We had a problem processing your request.', textStatus, exc);
