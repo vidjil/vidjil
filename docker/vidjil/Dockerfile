@@ -36,7 +36,7 @@ run echo "vidjil-server vidjil/ssl-email string team@vidjil.org" >> preseed.txt
 
 run debconf-set-selections preseed.txt
 run gpg --recv-keys --keyserver rby.vidjil.org 9187987418E1A625
-run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y -q sudo curl apt-utils uwsgi-plugin-python nginx-full
+run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y -q sudo curl apt-utils uwsgi-plugin-python nginx-full fcgiwrap
 run apt-get update ; DEBIAN_FRONTEND=noninteractive apt-get -y -q --allow-unauthenticated install vidjil-archive-keyring
 run apt-get update ; DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests -y -q --allow-unauthenticated vidjil-server
 
