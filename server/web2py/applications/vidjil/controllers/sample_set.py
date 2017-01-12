@@ -67,7 +67,7 @@ def index():
         config = True
         fused_count = fused.count()
         fused_file = fused.select()
-        fused_filename = info_file["filename"] +"_"+ config_name + ".data"
+        fused_filename = info_file["filename"] +"_"+ config_name + ".vidjil"
         analysis_count = len(analysis)
         analysis_file = analysis
         analysis_filename = info_file["filename"]+"_"+ config_name + ".analysis"
