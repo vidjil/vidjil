@@ -318,17 +318,18 @@ Segment.prototype = {
                 })
                 .mouseenter(function(){
                     if (! $("#fix-segmenter").prop('checked')){
-                    if (!self.is_open){
-                        var seg = $(self.div_segmenter),
-                        curH = seg.height(),
-                        autoH = seg.css('height', 'auto').height();
-                        if (autoH > 100){
-                            if (autoH > 500) autoH = 500
-                            seg.stop().height(curH).animate({height: autoH+5}, 250);
-                        }else{
-                            seg.stop().height(curH)
-                        }
-                        self.is_open = true
+                        if (!self.is_open){
+                            var seg = $(self.div_segmenter),
+                            curH = seg.height(),
+                            autoH = seg.css('height', 'auto').height();
+                            if (autoH > 100){
+                                if (autoH > 500) autoH = 500
+                                seg.stop().height(curH).animate({height: autoH+5}, 250);
+                            }else{
+                                seg.stop().height(curH)
+
+                            }
+                            self.is_open = true
                         }
                     }
                 });
@@ -339,12 +340,12 @@ Segment.prototype = {
                         setTimeout(function(){
                             if (!$(".tagSelector").hasClass("hovered")){
                                 if (! $("#fix-segmenter").prop('checked')){
-                                var seg = $(self.div_segmenter)
-                                seg.stop().animate({height: 100}, 250);
+                                    var seg = $(self.div_segmenter)
+                                    seg.stop().animate({height: 100}, 250);
                                 }else{
                                     seg.stop();
                                 }
-                                self.is_open = false
+                            self.is_open = false
                             }
                          }, 200);
                     }
