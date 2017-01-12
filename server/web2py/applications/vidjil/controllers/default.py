@@ -11,6 +11,7 @@
 
 import defs
 import vidjil_utils
+import StringIO
 import logging
 from controller_utils import error_message
 
@@ -260,6 +261,10 @@ def get_data():
     if "patient" in request.vars :
         request.vars["sample_set_id"] = db.patient[request.vars["patient"]].sample_set_id
 
+    download = False
+    if "filename" in request.vars:
+        download = True
+
     if "run" in request.vars :
         request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
     
@@ -378,9 +383,14 @@ def get_data():
                 data["samples"]["names"].append("deleted")
                 data["samples"]["id"].append("")
 
-        log.debug("get_data (%s) c%s -> %s" % (request.vars["sample_set_id"], request.vars["config"], fused_file))
-        return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
+        log.debug("get_data (%s) c%s -> %s (%s)" % (request.vars["sample_set_id"], request.vars["config"], fused_file, "downloaded" if download else "streamed"))
 
+        dumped_json = gluon.contrib.simplejson.dumps(data, separators=(',',':'))
+
+        if download:
+             return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.vars['filename'])
+
+        return dumped_json
     else :
         res = {"success" : "false",
                "message" : "get_data (%s) c%s : %s " % (request.vars["sample_set_id"], request.vars["config"], error)}
@@ -463,6 +473,10 @@ def get_analysis():
     if "patient" in request.vars :
         request.vars["sample_set_id"] = db.patient[request.vars["patient"]].sample_set_id
 
+    download = False
+    if "filename" in request.vars:
+        download = True
+
     if "run" in request.vars :
         request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
     
@@ -479,7 +493,12 @@ def get_analysis():
         ## récupération des infos se trouvant dans le fichier .analysis
         analysis_data = get_analysis_data(request.vars['sample_set_id'])
         #analysis_data["info_patient"] = db.patient[request.vars["patient"]].info
-        return gluon.contrib.simplejson.dumps(analysis_data, separators=(',',':'))
+        dumped_json = gluon.contrib.simplejson.dumps(analysis_data, separators=(',',':'))
+
+        if download:
+            return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.vars['filename'])
+
+        return dumped_json
 
     else :
         res = {"success" : "false",
