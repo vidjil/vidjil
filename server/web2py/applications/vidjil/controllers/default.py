@@ -372,7 +372,7 @@ def get_data():
                 data["samples"]["run_name"].append(row.sequence_file.id)
             else :
                 data["samples"]["info"].append("this file has been deleted from the database, info relative to this sample are no longer available")
-                data["samples"]["timestamp"].append("deleted")
+                data["samples"]["timestamp"].append("None")
                 data["samples"]["sequence_file_id"].append("")
                 data["samples"]["results_file_id"].append("")
                 data["samples"]["names"].append("deleted")
