@@ -1433,6 +1433,10 @@ changeCloneNotation: function(cloneNotationType) {
             for (var i = 1; i < this.samples.order.length; i++) {
                 t =  this.samples.timestamp[this.samples.order[i]]                    
                 delta = this.dateDiffInDays(previous_t, t)
+
+                if (isNaN(delta)) {
+                    throw TypeError("Are "+previous_t+" and "+t+" really dates?")
+                }
                 
                 if (delta > delta_max)
                     delta_max = delta

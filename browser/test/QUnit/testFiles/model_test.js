@@ -93,6 +93,14 @@ test("model : time control", function() {
     equal(m.getStrTime(0, "sampling_date"), "2014-10-20", "get sampling date")
     equal(m.getStrTime(0, "name"), "Diag", "get time original name")
     equal(m.dateDiffInDays("2014-10-05", "2014-10-10"), "+5", "datediffindays")
+    ok(isNaN(m.dateDiffInDays("2014-10-05", "toto")), "datediffindays with a string")
+    deepEqual(m.dateDiffMinMax(), {'min': 5 , 'max': 30}, "dateDiffMinMax (min = " + m.dateDiffMinMax()['min']+", max = " + m.dateDiffMinMax()['max']+")")
+
+    var second_timestamp = m.samples.timestamp[1]
+    m.samples.timestamp[1] = 'toto'
+    deepEqual(m.dateDiffMinMax(), {'min': -1, 'max': -1}, 'dateDiffMinMax with undefined timestamp')
+    m.samples.timestamp[1] = second_timestamp
+
     equal(m.getStrTime(1, "delta_date"), "+5", "get day since diag")
     
 });
