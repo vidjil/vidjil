@@ -203,6 +203,22 @@ Segment.prototype = {
             span.appendChild(document.createTextNode("❯ to clipBoard"));
             // div_menu.appendChild(span)
 
+            //checkbox to fix the segmenter
+            span = document.createElement('span')
+            span.id = "fixsegmenter"
+            span.className = "checkbox"
+            span.setAttribute("title", 'fix the segmenter in his position');
+            var input = document.createElement('input');
+            var label = document.createElement('label');
+            input.type = 'checkbox';
+            input.id = 'fix-segmenter';
+            label.setAttribute("for", 'fix-segmenter');
+            label.appendChild(document.createTextNode("fix segmenter windows"));
+            span.appendChild(input);
+            span.appendChild(label)
+            div_menu.appendChild(span)
+
+
             div.appendChild(div_menu);
 
 
@@ -301,6 +317,7 @@ Segment.prototype = {
                     $('.seq-fixed').css({'left':+leftScroll});
                 })
                 .mouseenter(function(){
+                    if (! $("#fix-segmenter").prop('checked')){
                     if (!self.is_open){
                         var seg = $(self.div_segmenter),
                         curH = seg.height(),
@@ -312,6 +329,7 @@ Segment.prototype = {
                             seg.stop().height(curH)
                         }
                         self.is_open = true
+                        }
                     }
                 });
 
@@ -320,8 +338,12 @@ Segment.prototype = {
                     if (e.relatedTarget != null && self.is_open){
                         setTimeout(function(){
                             if (!$(".tagSelector").hasClass("hovered")){
+                                if (! $("#fix-segmenter").prop('checked')){
                                 var seg = $(self.div_segmenter)
                                 seg.stop().animate({height: 100}, 250);
+                                }else{
+                                    seg.stop();
+                                }
                                 self.is_open = false
                             }
                          }, 200);
