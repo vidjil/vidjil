@@ -520,61 +520,84 @@ make functional
     $ sudo dpkg -i path/to/package
 
 * Docker
-** Building the necessary images
-  The vidjil docker image is built on an Ubuntu image equipped with systemd.
-  This is a custom image for which the Dockerfile can be found in
-  docker/ubuntu_systemd.
-  In order to build the vidjil_ubuntu image, simply run
-    $ docker build -t ubuntu_systemd .
-
-  from the ubuntu_systemd directory. And then
-    $ docker build -t vidjil_ubuntu .
-
-
-** Starting a Vidjil docker environment
-   Traditionnally the Vidjil Team uses a MySQL database to store user data,
-   so in this guide we will cover setting up a MySQL Docker alongside the Vidjil Docker.
-   
-   Start the mysql container. If the tagged version is not available locally it will be pulled automatically:
-     $ docker run --name <mysql-name> -e MYSQL_ROOT_PASSWORD=<my-secret-pw> -d mysql/mysql-server:<tag>
-
-   Get the container's ip address:
-     $ docker inspect <mysql-name> | grep -i ip
-
-   Setup the vidjil databse:
-     $ mysql -h <container-ip> -u root -p
-     $ create database <vidjil-database>;
-     $ create user <vidjil-user>;
-     $ grant all on <vidjil-database>.* to '<vidjil-user>'@'%';
-     $ set password for '<vidjil-user>'@'%' = PASSWORD('<vidjil-user-password>');
-
-   Exit the MySQL interface and edit your local defs.py file to match the newly created database:
-     $ DB_ADDRESS = 'mysql://<vidjil-user>:<vidjil-user-password>@<mysql-conainer-ip>/<vidjil-database>'
-
-   Start the vidjil Docker:
-     $ docker run --name <vidjil-container-name>\
-                  --link <mysql-name>:mysql\
-                  --privileged\
-                  -d\
-                  -v /sys/fs/cgroup:/sys/fs/cgroup:ro\
-                  -v <path-to-defs>:/etc/vidjil/defs.py\
-                  -p 80:80\
-                  -p 443:443\
-                  vidjil_ubuntu
-
-   Make sure it works:
-     $ curl http://localhost/browser
-     $ curl https://localhost/vidjil
+ The vidjil Docker environment is managed by Docker Compose since it is
+ composed of several different services this allows us to easily start and
+ stop individual services.
+ The services are as follows:
+   - mysql        The database
+   - postfix      The mailing server
+   - uwsgi        The Web2py backend server
+   - fuse         The XmlRPCServer that handles custom fuses (for comparing
+     samples)
+   - nginx        The web server
+   - workers      The Web2py Scheduler workers in charge of executing vidjil
+     users' samples
+   - reporter     A monitoring utility that can be configured to send
+     monitoring information to a remote server
 
 ** Configuring the Vidjil container
-   Should you wish to further customise your vidjil environment, most configuration files are located in /etc/vidjil/.
-   Here is a list of thos files:
-     apache_web2py                       configuration required when running vidjil with apache2
-     conf.js                             contains various variables for the vidjil browser
-     defs.py                             contains various variables for the vidjil server
-     nginx_gzip.conf                     configuration for gzip in nginx
-     nginx_gzip_static.conf              same as the previous but for static ressources
-     nginx_web2py                        configuration required when running vidjil with nginx
-     systemd_fuse_server.service         systemd service that starts the vidjil fuse server
-     systemd_web2py_scheduler.service    systemd service that starts the vidjil scheduler workers
-     uwsgi.ini                           configuration required to run vidjil with uwsgi
+   If you are using this environment for use on localhost, everything should
+   work out of the box, simply skip ahead to the section about building the
+   image and running the services.
+
+   However you may need to further configure the setup in order to make it
+   available to a whole network.
+   Here is a list of the configuration files found in the vidjil directory:
+     conf/conf.js                             contains various variables for the vidjil browser
+     conf/defs.py                             contains various variables for the vidjil server
+     conf/gzip.conf                           configuration for gzip in nginx
+     conf/gzip_static.conf                    same as the previous but for static ressources
+     conf/uwsgi.ini                           configuration required to run vidjil with uwsgi
+     sites/nginx                              configuration required when running vidjil with nginx
+     scripts/nginx-entrypoint.sh              entrypoint for the nginx
+     service (not currently in use)
+     scripts/uwsgi-entrypoint.sh              entrypoint for the uwsgi
+     service. Ensures the owner of some relevant volumes are correct within
+     the container and starts uwsgi
+
+  Here are some notable configuration changes you should consider:
+    - Change the mysql user/password in docker-compose.yml. You will also
+      need to change the DB_ADDRESS in conf/defs.py to match it.
+
+    - Change the hostname in the nginx configuration vidjil/sites/nginx_conf
+      . If you are using vidjil on a network, then this might be required.
+
+    - Change the default admin password. Login as plop@plop.com password 1234
+      and go to the following URL: https://<your
+      hostname>/vidjil/default/user/change_password
+
+    - Change the ssl certificates. When building the image vidjil-server
+      which creates a self-signed certificate for the sake of convenience to
+      ensure the HTTPS queries work from the start, but this may not be
+      acceptable for a production environment.
+      In order to replace certificates the current method is to mount the
+      certificates to /etc/nginx/ssl with docker volumes in
+      docker-compose.yml.
+
+    - Change the FROM_EMAIL and ADMIN_EMAILS variables in conf/defs.py. These
+      represent the sender email address and the destination email addresses,
+      used in reporting patient milestones and server errors.
+
+    - Change the volumes in docker-compose.yml. By default all files that
+      require saving outside of the containers (the database, uploads, vidjil
+      results and log files) are stored in /opt/vidjil , but  you can change
+      this by editing the paths in the volumes.
+
+    - Configure the reporter. Ideally this container should be posistionned
+      on a remote server in order to be able to report on a down server, but we have packed it here for convenience.
+
+** Building and starting the environment
+   Building the image is simple and can be done prior to editing the
+   configuration files if you so wish although it is not necessary.
+   The docker image is not on the DockerHub and therefore needs to be built
+   before it can be used.
+
+   $ docker-compose build
+
+   Running the services:
+
+   $ docker-compose up
+
+   Shorthand for the two previous commands:
+
+   $ docker-compose up --build

@@ -1,6 +1,6 @@
 from vidjil:test
 
-run apt-get update && apt-get install -y cron python python-pip iputils-ping
+run apt-get clean && rm -rf /var/lib/apt/lists/* && apt-get update && apt-get install -y cron python python-pip iputils-ping
 
 run pip install crontab requests
 

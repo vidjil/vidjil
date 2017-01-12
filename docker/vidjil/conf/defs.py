@@ -42,6 +42,7 @@ DIR_MIXCR = '/usr/bin'
 DIR_GERMLINE = '/usr/share/vidjil/germline'
 ### Port on which to run the fuse server
 ### Used in models/task.py and in /server/fuse_server.py
+FUSE_SERVER = 'fuse'
 PORT_FUSE_SERVER = 12789
 
 ### Log files
@@ -59,3 +60,8 @@ REVERSE_IP = '/home/vidjil/ips.txt'
 ### Locus (should be parsed from germlines.data)
 LOCUS = ['TRA', 'TRA+D', 'TRB', 'TRG', 'TRD', 'TRD+',
          'IGH', 'IGH+', 'IGK', 'IGK+', 'IGL']
+
+# Preventu upload and run when 1% space is left in target disk
+FS_LOCK_THRESHHOLD = 1
+
+SCHEDULER_HEARTBEAT = 5

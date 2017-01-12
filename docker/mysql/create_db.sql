@@ -1,4 +1,4 @@
-CREATE USER vidjil_user;
-SET PASSWORD FOR vidjil_user = PASSWORD('rootpass');
+CREATE USER vidjil;
+SET PASSWORD FOR vidjil = PASSWORD('rootpass');
 CREATE DATABASE vidjil;
-GRANT ALL ON vidjil.* TO 'vidjil_user'@'%'; 
+GRANT ALL ON vidjil.* TO 'vidjil'@'%';

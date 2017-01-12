@@ -16,10 +16,10 @@ run set -x \
 	&& chmod +x /usr/local/bin/gosu \
 	&& apt-get purge -y --auto-remove ca-certificates wget
 
-run echo deb http://rby.vidjil.org:8080/archive sid/all/ >> /etc/apt/sources.list
-run echo deb http://rby.vidjil.org:8080/archive sid/amd64/ >> /etc/apt/sources.list
-run echo deb http://rby.vidjil.org:8080/archive wheezy/all/ >> /etc/apt/sources.list
-run echo deb http://rby.vidjil.org:8080/archive wheezy/amd64/ >> /etc/apt/sources.list
+run echo deb http://vda.vidjil.org:8080/archive sid/all/ >> /etc/apt/sources.list
+run echo deb http://vda.vidjil.org:8080/archive sid/amd64/ >> /etc/apt/sources.list
+run echo deb http://vda.vidjil.org:8080/archive wheezy/all/ >> /etc/apt/sources.list
+run echo deb http://vda.vidjil.org:8080/archive wheezy/amd64/ >> /etc/apt/sources.list
 
 run echo "vidjil-server vidjil/reconfigure-webserver string nginx" > preseed.txt
 run echo "vidjil-server vidjil/restart-webserver boolean false" >> preseed.txt
@@ -36,7 +36,7 @@ run echo "vidjil-server vidjil/ssl-email string team@vidjil.org" >> preseed.txt
 
 run debconf-set-selections preseed.txt
 run gpg --recv-keys --keyserver rby.vidjil.org 9187987418E1A625
-run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y -q sudo curl apt-utils uwsgi-plugin-python nginx-full
+run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y -q sudo curl apt-utils uwsgi-plugin-python nginx-full fcgiwrap
 run apt-get update ; DEBIAN_FRONTEND=noninteractive apt-get -y -q --allow-unauthenticated install vidjil-archive-keyring
 run apt-get update ; DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests -y -q --allow-unauthenticated vidjil-server
 
@@ -56,5 +56,6 @@ copy ./conf/defs.py /etc/vidjil/defs.py
 copy ./conf/conf.js /etc/vidjil/conf.js
 copy ./scripts/nginx-entrypoint.sh /entrypoints/nginx-entrypoint.sh
 copy ./scripts/uwsgi-entrypoint.sh /entrypoints/uwsgi-entrypoint.sh
+copy ./scripts/fuse-entrypoint.sh /entrypoints/fuse-entrypoint.sh
 run mkdir /usr/share/vidjil/server/web2py/applications/vidjil/databases && touch /usr/share/vidjil/server/web2py/applications/vidjil/databases/sql.log
 run adduser vidjil && usermod -aG sudo vidjil

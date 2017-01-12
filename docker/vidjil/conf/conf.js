@@ -40,5 +40,5 @@ var config = {
     // "autoload_analysis" : "data/Stanford-S22.analysis"
 
     // Proxy config for IMGT querying
-    "proxy": "http://localhost/proxy"
+    "proxy": "https://localhost/vidjil/proxy/imgt"
 }

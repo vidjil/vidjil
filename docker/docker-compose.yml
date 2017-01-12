@@ -6,7 +6,7 @@ services:
             - MYSQL_ROOT_PASSWORD=MySRPimSRP
         volumes:
             - ./mysql/:/docker-entrypoint-initdb.d/
-            - /var/lib/mysql:/var/lib/mysql
+            - /opt/vidjil/mysql:/var/lib/mysql
     postfix:
         image: catatnight/postfix
         environment:
@@ -23,8 +23,7 @@ services:
             - /opt/vidjil/result/results:/mnt/result/results
             - /opt/vidjil/result/tmp:/mnt/result/tmp
             - /opt/vidjil/upload/uploads:/mnt/upload/uploads
-            - /var/vidjil:/var/vidjil
-            - /home/ryan/vidjil:/usr/share/vidjil
+            - /opt/vidjil/log:/var/vidjil
         depends_on:
             - mysql
             - postfix
@@ -35,13 +34,13 @@ services:
             - fuse:fuse
     fuse:
         image: vidjil:test
+        command: bash /entrypoints/fuse-entrypoint.sh
         volumes:
-            - /home/user/vidjil:/usr/share/vidjil
+            - /opt/vidjil/result/results:/mnt/result/results
+            - /opt/vidjil/result/tmp:/mnt/result/tmp
+            - /opt/vidjil/upload/uploads:/mnt/upload/uploads
     nginx:
         image: vidjil:test
-        volumes:
-            - /home/user/vidjil:/usr/share/vidjil
-            #- /home/user/ssl:/etc/nginx/ssl
         depends_on:
             - uwsgi
         links:
@@ -50,7 +49,7 @@ services:
             - "80:80"
             - "443:443"
         #command: bash /entrypoints/nginx-entrypoint.sh
-        command: nginx -g 'daemon off;'
+        command: bash -c "spawn-fcgi -u www-data -s /var/run/fcgiwrap.socket /usr/sbin/fcgiwrap ; nginx -g 'daemon off;'"
 
     workers:
         image: vidjil:test
@@ -60,8 +59,7 @@ services:
             - /opt/vidjil/result:/mnt/result
             - /opt/vidjil/result/tmp:/mnt/result/tmp
             - /opt/vidjil/upload:/mnt/upload
-            - /var/vidjil:/var/vidjil
-            - /home/ryan/vidjil:/usr/share/vidjil
+            - /opt/vidjil/log:/var/vidjil
         depends_on:
             - uwsgi
             - mysql
@@ -75,8 +73,7 @@ services:
             - /opt/vidjil/result/results:/mnt/result/results
             - /opt/vidjil/result/tmp:/mnt/result/tmp
             - /opt/vidjil/upload/uploads:/mnt/upload/uploads
-            - /var/vidjil:/var/vidjil
-            - /home/ryan/vidjil:/usr/share/vidjil
+            - /opt/vidjil/log:/var/vidjil
             - ./reporter/code:/opt/reporter
         depends_on:
             - uwsgi

@@ -135,7 +135,7 @@ def run_scripts(params):
     for key in scripts:
         #remove file extensions
         new_key = key.split('.')[0]
-        if params['local'] != 'False':
+        if params['local'] == 'False':
             results[new_key] = tunnel(params['host'], params['username'], params['key'], params['path'], scripts[key])
         else:
             results[new_key] = execute(params['path'], scripts[key])
