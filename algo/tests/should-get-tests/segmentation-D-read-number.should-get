@@ -18,11 +18,10 @@ file2=$(mktemp); \
 done;\
 cat $VIDJIL_DIR/data/buggy-D.fa) > \\$file2; \
 $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -d -r 1 -w 60 -z 100 -G $VIDJIL_DIR/germline/IGH \\$file2;\
-$VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -d -r 1 -w 60 -z 100 -G $VIDJIL_DIR/germline/IGH $VIDJIL_DIR/data/buggy-D.fa) | \
-sort | uniq -c
+$VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -d -r 1 -w 60 -z 100 -G $VIDJIL_DIR/germline/IGH $VIDJIL_DIR/data/buggy-D.fa)
 
 $ Three times the same window
-1: 3 TGTGCGGGATCTTCGTCCTCTTATCATAATAATGGTTTTTTGGCGGGGGAGTCATGGGGC
+3: TGTGCGGGATCTTCGTCCTCTTATCATAATAATGGTTTTTTGGCGGGGGAGTCATGGGGC
 
 $ Three times the same segmentation
-1: 3 IGHV4-34.*IGHD.*IGHJ4
+3: IGHV4-34.*IGHD.*IGHJ4
