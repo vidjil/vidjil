@@ -70,6 +70,7 @@ function Segment(id, model, database) {
     this.is_open = false;
     this.amino = false;
     this.aligned = false;
+    this.fixed = false;         // whether the segmenter is fixed
     
     //elements to be highlited in sequences
     this.highlight = [
@@ -209,6 +210,9 @@ Segment.prototype = {
             span_fixsegmenter.className = "button"
             var i = document.createElement('i');
             i.setAttribute("title", 'fix the segmenter in his position');
+            i.onclick = function() {
+                self.switchFixed();
+            }
             span_fixsegmenter.appendChild(i);
 
             div.appendChild(div_menu);
@@ -311,7 +315,7 @@ Segment.prototype = {
                     $('.seq-fixed').css({'left':+leftScroll});
                 })
                 .mouseenter(function(){
-                    if (! $("#fix-segmenter").prop('checked')){
+                    if (! self.fixed){
                         if (!self.is_open){
                             var seg = $(self.div_segmenter),
                             curH = seg.height(),
@@ -333,7 +337,7 @@ Segment.prototype = {
                     if (e.relatedTarget != null && self.is_open){
                         setTimeout(function(){
                             if (!$(".tagSelector").hasClass("hovered")){
-                                if (! $("#fix-segmenter").prop('checked')){
+                                if (! self.fixed){
                                     var seg = $(self.div_segmenter)
                                     seg.stop().animate({height: 100}, 250);
                                 }else{
@@ -344,6 +348,8 @@ Segment.prototype = {
                          }, 200);
                     }
                 });
+            this.setFixed(this.fixed);
+
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -987,6 +993,35 @@ Segment.prototype = {
             return false;
         }
     },
+
+    /**
+     * Switch the fixed status of the segmenter.
+     * @post old this.fixed == ! this.fixed
+     */
+    switchFixed: function() {
+        this.setFixed(! this.fixed);
+    },
+
+    /**
+     * Set the fixed status of the segmenter.
+     * Should be used rather than directly modifying the fixe property
+     */
+    setFixed: function(fixed) {
+        this.fixed = fixed
+        this.updateFixedPicture()
+    },
+
+    updateFixedPicture: function() {
+        fix_icons = $('#fixsegmenter i')
+        if (fix_icons.length > 0) {
+            fix_icons = fix_icons[0]
+            if (this.fixed) {
+                fix_icons.className = 'icon-pin';
+            } else {
+                fix_icons.className = 'icon-pin-outline';
+            }
+        }
+    }
 
 }; //fin prototype Segment
 Segment.prototype = $.extend(Object.create(View.prototype), Segment.prototype);
