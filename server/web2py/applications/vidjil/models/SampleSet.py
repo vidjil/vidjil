@@ -78,7 +78,7 @@ class SampleSet(object):
         return 'sample_set/add'
 
     def get_info_dict(self, data):
-        return dict(name = "sample_set : %s" % db.sample_set[data.sample_set_id].sample_type,
+        return dict(name = "sample_set : %s" % self.get_name(data),
                 filename = "sample_set_%d" % data.id,
                 label = "",
                 info = ""
