@@ -249,7 +249,7 @@ def add_form():
             auth.add_permission(user_group, PermissionEnum.access.value, db.generic, id)
 
             res = {"redirect": "sample_set/index",
-                   "args" : { "id" : id },
+                   "args" : { "id" : id_sample_set },
                    "message": "(%s) sample_set %s added" % (id, request.vars["name"]) }
             log.info(res, extra={'user_id': auth.user.id, 'record_id': id, 'table_name': 'sample_set'})
 
