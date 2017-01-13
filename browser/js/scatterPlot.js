@@ -1679,7 +1679,7 @@ ScatterPlot.prototype = {
         leg.on("click", function(d){
             if (self.mode !="bar"){
                 // Multi-selection by clicking on a legend
-                this.m.unselectAllUnlessKey(d3.event)
+                self.m.unselectAllUnlessKey(d3.event)
                 var listToSelect = [];
                 var halfRangeLine = 0.5;
                 if (self.axisY.labels.length>1)
