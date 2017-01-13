@@ -9,6 +9,7 @@
 ## - call exposes all registered services (none by default)
 #########################################################################
 
+from gluon.main import save_password
 import defs
 import vidjil_utils
 import StringIO
@@ -93,6 +94,9 @@ def init_db_helper(force=False, admin_email="plop@plop.com", admin_password="123
             first_name = 'System',
             last_name = 'Administrator'
         )
+
+        # set web2py administration interface password to the same as vidjil admin password
+        save_password(admin_password, 443)
 
         ## création des groupes de base
         id_admin_group=db.auth_group.insert(role='admin')
