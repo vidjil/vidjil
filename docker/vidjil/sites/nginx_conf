@@ -3,6 +3,15 @@ upstream uwsgi {
 }
 
 server {
+        listen 80;
+        server_name     $hostname;
+
+        location / {
+                return 301 https://$host/browser;
+        }
+}
+
+server {
         listen 443 default_server ssl;
         server_name     $hostname;
         ssl_certificate         /etc/nginx/ssl/web2py.crt;
