@@ -55,7 +55,7 @@ def logger():
 
 def init_db():
     if (db(db.auth_user.id > 0).count() == 0) :
-        return dict(message=T('initialise database'))
+        return dict(message=T('create admin user and initialise database'))
     res = {"redirect" : "default/user/login"}
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
