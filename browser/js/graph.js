@@ -227,7 +227,7 @@ Graph.prototype = {
         var div = document.createElement('div')
         div.id = "" + this.id + "_menu"
         div.className = "graph_menu"
-        div.appendChild(icon('icon-pin', 'Drag here samples to hide them'))
+        div.appendChild(icon('icon-dot-3', 'Drag here samples to hide them'))
         
         var list = document.createElement('div')
         list.id = "" + this.id + "_list"
