@@ -37,7 +37,7 @@ def add():
         run_id = None
         generic_id = None
         if sample_set.sample_type == "generic":
-            sample_set_id = db( db.generic.sample_set_id == request.vars["id"]).select()[0].id
+            generic_id = db( db.generic.sample_set_id == request.vars["id"]).select()[0].id
         if sample_set.sample_type == "patient" :
             patient_id = db( db.patient.sample_set_id == request.vars["id"]).select()[0].id
         if sample_set.sample_type == "run" :
