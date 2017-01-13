@@ -13,6 +13,7 @@ ADMIN_EMAILS = ['notifications@vidjil.org']
 ###
 DB_ADDRESS = 'sqlite://storage.sqlite'
 DB_ADDRESS = 'mysql://vidjil:rootpass@mysql/vidjil'
+DB_POOL_SIZE = 4
 
 ### Backup file
 DB_BACKUP_FILE = 'backup.csv'
