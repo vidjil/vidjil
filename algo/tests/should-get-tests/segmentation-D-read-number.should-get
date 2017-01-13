@@ -8,13 +8,13 @@
 
 !LAUNCH: (file1=$(mktemp); \
 (for i in {1..10}; do \
-  echo '>seq'\\$i; echo ggctggagtgggtttcatacattagtagtaatagtggtgccatatactacgcagactctgtgaagggccgattcaccatctccagaaacaatgccaaggactcactgtatctgcaaatgaacagcctgagagccgaggacacggctgtgtattactgtgcgagagcgatcccccggtattactatgatact\\$(cat /dev/urandom | tr -dc 'acgt' | head -c 4)ggcccaaacgactactggggccagggaaccctggtcaccgtctcctcag; \
+  echo '>seq'\\$i; echo ggctggagtgggtttcatacattagtagtaatagtggtgccatatactacgcagactctgtgaagggccgattcaccatctccagaaacaatgccaaggactcactgtatctgcaaatgaacagcctgagagccgaggacacggctgtgtattactgtgcgagagcgatcccccggtattactatgatact\\$(cat /dev/urandom | LC_CTYPE=C tr -dc 'acgt' | head -c 4)ggcccaaacgactactggggccagggaaccctggtcaccgtctcctcag; \
 done;\
 cat $VIDJIL_DIR/data/buggy-D.fa) > \\$file1; \
 $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -d -r 1 -w 60 -z 100 -G $VIDJIL_DIR/germline/IGH \\$file1; \
 file2=$(mktemp); \
 (for i in {1..5}; do \
-  echo '>seq'\\$i; echo ggctggagtgggtttcatacattagtagtaatagtggtgccatatactacgcagactctgtgaagggccgattcaccatctccagaaacaatgccaaggactcactgtatctgcaaatgaacagcctgagagccgaggacacggctgtgtattactgtgcgagagcgatcccccggtattactatgatact\\$(cat /dev/urandom | tr -dc 'acgt' | head -c 4)ggcccaaacgactactggggccagggaaccctggtcaccgtctcctcag; \
+  echo '>seq'\\$i; echo ggctggagtgggtttcatacattagtagtaatagtggtgccatatactacgcagactctgtgaagggccgattcaccatctccagaaacaatgccaaggactcactgtatctgcaaatgaacagcctgagagccgaggacacggctgtgtattactgtgcgagagcgatcccccggtattactatgatact\\$(cat /dev/urandom | LC_CTYPE=C tr -dc 'acgt' | head -c 4)ggcccaaacgactactggggccagggaaccctggtcaccgtctcctcag; \
 done;\
 cat $VIDJIL_DIR/data/buggy-D.fa) > \\$file2; \
 $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -d -r 1 -w 60 -z 100 -G $VIDJIL_DIR/germline/IGH \\$file2;\
