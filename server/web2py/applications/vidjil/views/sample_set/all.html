@@ -53,10 +53,10 @@
                {{ pass }}
             {{ total_file_count += data.file_count ; total_size += data.size }}
                
-{{if isAdmin:}} <td onclick="db.call('sample_set/permission', {'id' :'{{=data.id}}'} )" > <i class="icon-key" title="set permissions"></i> </td> {{else:}} <td></td> {{pass}}
+{{if isAdmin:}} <td onclick="db.call('sample_set/permission', {'id' :'{{=data.sample_set_id}}'} )" > <i class="icon-key" title="set permissions"></i> </td> {{else:}} <td></td> {{pass}}
                 {{if data.has_permission:}}
-		<td onclick="db.call('sample_set/edit', {'id' :'{{=data.id}}'} )" > <i class="icon-pencil-2" title="{{='edit %s information' % 'sample_set'}}"></i> </td>
-		<td onclick="db.call('sample_set/confirm', {'id' :'{{=data.id}}'} )" > <i class="icon-erase" title="{{='delete %s' % helper.get_type()}}"></i> </td>
+		<td onclick="db.call('sample_set/edit', {'id' :'{{=data.sample_set_id}}'} )" > <i class="icon-pencil-2" title="{{='edit %s information' % 'sample_set'}}"></i> </td>
+		<td onclick="db.call('sample_set/confirm', {'id' :'{{=data.sample_set_id}}'} )" > <i class="icon-erase" title="{{='delete %s' % helper.get_type()}}"></i> </td>
                 {{else:}}  <td></td><td></td>{{pass}}
             </tr>
         {{pass}}
