@@ -105,7 +105,7 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
   // First create an index on the set of reads
   IKmerStore<Kmer> *index[nb_seeds];
   for (size_t i = 0; i < nb_seeds; i++) {
-    index[i] = new MapKmerStore<Kmer>(getSeed(), revcomp);
+    index[i] = new MapKmerStore<Kmer>(seeds[i], revcomp);
   }
 
   // Add sequences to the index, allowing extended nucleotides (false)
