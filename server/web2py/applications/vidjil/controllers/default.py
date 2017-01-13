@@ -53,9 +53,33 @@ def logger():
     log.log(lvl, res)
 
 def init_db():
-    init_db_helper()
+    if (db(db.auth_user.id > 0).count() == 0) :
+        return dict(message=T('initialise database'))
+    res = {"redirect" : "default/user/login"}
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
-def init_db_helper(force=False):
+
+def init_db_form():
+    if (db(db.auth_user.id > 0).count() == 0) :
+        error = ""
+        if request.vars['email'] == "":
+            error += "You must specify an admin email address, "
+        if len(request.vars['password']) < 8:
+            error += "Password must be at least 8 characters long, "
+        if request.vars['confirm_password'] != request.vars['password']:
+            error += "Passwords didn't match"
+        if error == "":
+            init_db_helper(admin_email=request.vars['email'], admin_password=request.vars['password'])
+        else :
+            res = {"success" : "false",
+                   "message" : error}
+            log.error(res)
+            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+    res = {"redirect" : "default/user/login"}
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+def init_db_helper(force=False, admin_email="plop@plop.com", admin_password="1234"):
     if (force) or (db(db.auth_user.id > 0).count() == 0) : 
         #for table in db :
             #table.truncate()
@@ -64,8 +88,8 @@ def init_db_helper(force=False):
 
         ## création du premier user
         id_first_user=db.auth_user.insert(
-            password = db.auth_user.password.validate('1234')[0],
-            email = 'plop@plop.com',
+            password = db.auth_user.password.validate(admin_password)[0],
+            email = admin_email,
             first_name = 'System',
             last_name = 'Administrator'
         )
