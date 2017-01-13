@@ -204,20 +204,12 @@ Segment.prototype = {
             // div_menu.appendChild(span)
 
             //checkbox to fix the segmenter
-            span = document.createElement('span')
-            span.id = "fixsegmenter"
-            span.className = "checkbox"
-            span.setAttribute("title", 'fix the segmenter in his position');
-            var input = document.createElement('input');
-            var label = document.createElement('label');
-            input.type = 'checkbox';
-            input.id = 'fix-segmenter';
-            label.setAttribute("for", 'fix-segmenter');
-            label.appendChild(document.createTextNode("fix segmenter windows"));
-            span.appendChild(input);
-            span.appendChild(label)
-            div_menu.appendChild(span)
-
+            span_fixsegmenter = document.createElement('span')
+            span_fixsegmenter.id = "fixsegmenter"
+            span_fixsegmenter.className = "button"
+            var i = document.createElement('i');
+            i.setAttribute("title", 'fix the segmenter in his position');
+            span_fixsegmenter.appendChild(i);
 
             div.appendChild(div_menu);
 
@@ -298,6 +290,8 @@ Segment.prototype = {
             div_stats.appendChild(focus_selected)
 
             div.appendChild(div_stats)
+            div_stats.appendChild(span_fixsegmenter);
+
 
             parent.appendChild(div)
 
