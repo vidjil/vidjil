@@ -150,6 +150,7 @@ def init_db_helper(force=False, admin_email="plop@plop.com", admin_password="123
         auth.add_permission(id_admin_group, PermissionEnum.access.value, db.sample_set, 0)
         auth.add_permission(id_admin_group, PermissionEnum.access.value, db.patient, 0)
         auth.add_permission(id_admin_group, PermissionEnum.access.value, db.run, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.access.value, db.generic, 0)
         auth.add_permission(id_admin_group, PermissionEnum.access.value, db.config, 0)
         auth.add_permission(id_admin_group, PermissionEnum.access.value, db.auth_group, 0)
         auth.add_permission(id_admin_group, PermissionEnum.admin.value, db.sample_set, 0)
