@@ -182,7 +182,7 @@ public:
 
   // From IKmerStore
 
-  vector<Info> getResults(const seqtype &seq, bool no_revcomp=false);
+  vector<Info> getResults(const seqtype &seq, bool no_revcomp=false, string seed = "");
   Info& get(seqtype &word) ;
 
    Info& operator[](seqtype& word);
