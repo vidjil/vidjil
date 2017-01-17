@@ -84,7 +84,7 @@
                 <div class="menu" id="db_menu" onmouseover="showSelector('dbSelector');" style="display : none">patients
                     <div id="dbSelector" class="selector"><div>
                         <div class="menu_box">
-                            <a class="buttonSelector" onclick="javascript:db.call('patient/index')">open patient list</a>
+                            <a class="buttonSelector" onclick="javascript:db.call('sample_set/all', {'type': 'patient', 'page': 0})">open patient list</a>
                         </div>
                         <div class="menu_box">
                             <div id="last_loaded_file">
