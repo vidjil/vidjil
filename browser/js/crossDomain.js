@@ -100,7 +100,7 @@ function imgtPost(data, system) {
         imgtInput["l01p01c04"] = "TR";
     }
     var form = document.getElementById("form");
-    form.innerHTML = "";
+    form.removeAllChildren();
     form.target = "_blank";
     form.action = "http://www.imgt.org/IMGT_vquest/vquest";
     form.method = "POST";
@@ -140,7 +140,7 @@ function imgtPostForSegmenter(data, system, segmenter, override_imgt_options) {
 
     //update imgt button according to request processing
     if (typeof imgt4segButton != "undefined"){
-        imgt4segButton.innerHTML = '';
+        imgt4segButton.removeAllChildren();
         imgt4segButton.appendChild(icon('icon-spin4 animate-spin', 'Sequences sent to IMGT/V-QUEST'));
     }
 
@@ -169,7 +169,7 @@ function imgtPostForSegmenter(data, system, segmenter, override_imgt_options) {
         imgtInput["l01p01c04"] = "TR";
     }
     var form = document.getElementById("form");
-    form.innerHTML = "";
+    form.removeAllChildren();
     form.target = "";
     //disabled due to security concerns
     //form.action = "http://www.imgt.org/IMGT_vquest/vquest";
@@ -233,7 +233,7 @@ function imgtPostForSegmenter(data, system, segmenter, override_imgt_options) {
             });
 
             var span = document.getElementById('highlightCheckboxes');
-            span.innerHTML = "";
+            span.removeAllChildren();
             var input = document.createElement('input');
             input.type = 'checkbox';
             input.id = 'imgt_cdr3_input_check';
@@ -329,7 +329,7 @@ function igBlastPost(data, system) {
 
 
     var form = document.getElementById("form");
-    form.innerHTML = "";
+    form.removeAllChildren();
     form.target = "_blank";
     form.action = "https://www.ncbi.nlm.nih.gov/igblast/igblast.cgi";
     form.method = "POST";
@@ -359,7 +359,7 @@ function arrestPost(data, system) {
     arrestInput["args"] = data;
 
     var form = document.getElementById("form");
-    form.innerHTML = "";
+    form.removeAllChildren();
     form.target = "_blank";
     form.action = "http://tools.bat.infspire.org/cgi-bin/arrest/compile.junctions.online.pl";
     form.method = "POST";
@@ -402,7 +402,7 @@ function blastPost(data, system) {
     blastInput["query_sequence"] = data;
 
     var form = document.getElementById("form");
-    form.innerHTML = "";
+    form.removeAllChildren();
     form.target = "_blank";
     form.action = "http://www.ensembl.org/Multi/Tools/Blast?db=core";
     form.method = "POST";
