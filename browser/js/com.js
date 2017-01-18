@@ -299,7 +299,7 @@ Com.prototype = {
     popupHTML: function (domElement) {
         this.popup_container.style.display = "block";
         this.popup_container.lastElementChild
-            .innerHTML = "";
+            .removeAllChildren();
         this.popup_container.lastElementChild
             .appendChild(domElement);
         $(this.popup_container).find('button').focus();
@@ -311,7 +311,7 @@ Com.prototype = {
     closePopupMsg: function () {
         this.popup_container.style.display = "none";
         this.popup_container.lastElementChild
-            .innerHTML = "";
+            .removeAllChildren();
     },
 
     /**
@@ -328,7 +328,7 @@ Com.prototype = {
      * */
     closeDataBox: function() {
         this.div_dataBox.style.display = "none";
-        this.div_dataBox.lastElementChild.innerHTML = "";
+        this.div_dataBox.lastElementChild.removeAllChildren();
     }
     
 }
