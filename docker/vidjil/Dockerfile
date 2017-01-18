@@ -58,4 +58,5 @@ copy ./scripts/nginx-entrypoint.sh /entrypoints/nginx-entrypoint.sh
 copy ./scripts/uwsgi-entrypoint.sh /entrypoints/uwsgi-entrypoint.sh
 copy ./scripts/fuse-entrypoint.sh /entrypoints/fuse-entrypoint.sh
 run mkdir /usr/share/vidjil/server/web2py/applications/vidjil/databases && touch /usr/share/vidjil/server/web2py/applications/vidjil/databases/sql.log
+run touch /var/vidjil/vidjil.log && touch /var/vidjil/vidjil-debug.log
 run adduser vidjil && usermod -aG sudo vidjil
