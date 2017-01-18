@@ -239,10 +239,10 @@ vidjil_logs_install() {
     echo "configuring logs"
     if [ ! -d /var/vidjil ] ; then
         sudo mkdir /var/vidjil
-        sudo touch /var/vidjil/vidjil.log
-        sudo touch /var/vidjil/vidjil-debug.log
-        sudo chown -R www-data:www-data /var/vidjil
     fi
+    sudo touch /var/vidjil/vidjil.log
+    sudo touch /var/vidjil/vidjil-debug.log
+    sudo chown -R www-data:www-data /var/vidjil
 }
 
 case "$1" in
