@@ -142,7 +142,7 @@ List.prototype = {
         this.index = []
 
         var div_parent = document.getElementById(this.id);
-        div_parent.innerHTML = "";
+        div_parent.removeAllChildren();
 
         var div_list_menu = this.build_list_menu()
 
@@ -177,8 +177,8 @@ List.prototype = {
         this.index_data = {}
         
         var div_parent = document.getElementById(this.id_data);
-        div_parent.innerHTML = "";
-        
+        div_parent.removeAllChildren();
+
         var div_list_data = document.createElement('div');
         div_list_data.id = "list_data";
         for (var key in this.m.data_info) {
@@ -372,7 +372,7 @@ List.prototype = {
     div_elem: function (div_elem, cloneID) {
 
         var self = this;
-        div_elem.innerHTML = '';
+        div_elem.removeAllChildren();
         div_elem.onmouseover = function () {
             self.m.focusIn(cloneID);
         }
@@ -484,7 +484,7 @@ List.prototype = {
 
                 //update cluster icon
                 var span_cluster = div_elem.getElementsByClassName("clusterBox")[0];
-                span_cluster.innerHTML="";
+                span_cluster.removeAllChildren();
                 if (this.m.clusters[cloneID].length > 1) {
                     if (clone.split) {
                         span_cluster.onclick = function () {
@@ -518,7 +518,7 @@ List.prototype = {
     div_cluster: function (div_cluster, cloneID) {
 
         var self = this;
-        div_cluster.innerHTML = '';
+        div_cluster.removeAllChildren();
 
         div_cluster.id = "cluster" + cloneID;
         div_cluster.id2 = cloneID;
@@ -606,7 +606,7 @@ List.prototype = {
         }
         var divParent = elem;
         var old_event = divParent.onclick;
-        divParent.innerHTML = "";
+        divParent.removeAllChildren();
 
         if (cloneID[0] == 's')
             cloneID = cloneID.substr(3);
@@ -654,8 +654,8 @@ List.prototype = {
         var div = this.index[cloneID];
         div.style.display = "block";
         if (!this.m.clone(cloneID).isActive()) div.style.display = "none";
-        div.innerHTML = '';
-        
+        div.removeAllChildren();
+
         var div2 = document.createElement('div');
         this.div_elem(div2, cloneID);
         div.appendChild(div2);
