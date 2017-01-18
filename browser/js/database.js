@@ -848,7 +848,7 @@ Database.prototype = {
     //efface et ferme la fenetre de dialogue avec le serveur
     close: function () {
         this.div.style.display = "none";
-        this.msg.innerHTML = "";
+        this.msg.removeAllChildren();
         $('#menu-container').removeClass('disabledClass');
     },
     
