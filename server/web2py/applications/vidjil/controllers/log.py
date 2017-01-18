@@ -20,6 +20,13 @@ def get_data_list(table):
     return data_list
 
 def index():
+    if not auth.user:
+        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
+                            vars=dict(_next=URL('patient', 'index', scheme=True, host=True)))
+            }
+
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
     user_log = db.user_log
     data_list = []
     groups = []
