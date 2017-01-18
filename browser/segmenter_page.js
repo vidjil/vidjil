@@ -167,9 +167,16 @@ function disableFeatures(disabled) {
  */
 function prepareButtons() {
     var exportFastaBtn = document.getElementById('btn_exportfasta');
+    var form = document.getElementById('form_block');
 
     exportFastaBtn.addEventListener('click', function () {
         model.exportFasta();
+    });
+
+    // Prevent submitting form
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
     });
 }
 
