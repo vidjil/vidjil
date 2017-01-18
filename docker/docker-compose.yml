@@ -24,6 +24,7 @@ services:
             - /opt/vidjil/result/tmp:/mnt/result/tmp
             - /opt/vidjil/upload/uploads:/mnt/upload/uploads
             - /opt/vidjil/log:/var/vidjil
+            - /opt/vidjil/log/nginx:/var/log/nginx
         depends_on:
             - mysql
             - postfix
