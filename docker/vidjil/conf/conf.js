@@ -36,7 +36,7 @@ var config = {
     },
     
     /* 3) Static file autoload, possibly with an .analysis file */
-    "autoload" : "data/Stanford-S22.vidjil",
+    // "autoload" : "data/Stanford-S22.vidjil",
     // "autoload_analysis" : "data/Stanford-S22.analysis"
 
     // Proxy config for IMGT querying
