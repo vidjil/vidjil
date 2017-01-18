@@ -36,10 +36,8 @@ services:
     fuse:
         image: vidjil:test
         command: bash /entrypoints/fuse-entrypoint.sh
-        volumes:
-            - /opt/vidjil/result/results:/mnt/result/results
-            - /opt/vidjil/result/tmp:/mnt/result/tmp
-            - /opt/vidjil/upload/uploads:/mnt/upload/uploads
+        volumes_from:
+            - uwsgi
     nginx:
         image: vidjil:test
         depends_on:
@@ -55,12 +53,8 @@ services:
     workers:
         image: vidjil:test
         command: /usr/local/bin/gosu www-data python /usr/share/vidjil/server/web2py/web2py.py -K vidjil,vidjil,vidjil
-        volumes:
-            - /opt/vidjil/databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
-            - /opt/vidjil/result:/mnt/result
-            - /opt/vidjil/result/tmp:/mnt/result/tmp
-            - /opt/vidjil/upload:/mnt/upload
-            - /opt/vidjil/log:/var/vidjil
+        volumes_from:
+            - uwsgi
         depends_on:
             - uwsgi
             - mysql
@@ -69,12 +63,9 @@ services:
     reporter:
         build: ./reporter
         image: reporter:test
+        volumes_from:
+            - uwsgi
         volumes:
-            - /opt/vidjil/databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
-            - /opt/vidjil/result/results:/mnt/result/results
-            - /opt/vidjil/result/tmp:/mnt/result/tmp
-            - /opt/vidjil/upload/uploads:/mnt/upload/uploads
-            - /opt/vidjil/log:/var/vidjil
             - ./reporter/code:/opt/reporter
         depends_on:
             - uwsgi
