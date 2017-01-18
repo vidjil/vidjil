@@ -318,7 +318,7 @@ ScatterPlot.prototype = {
         try {
 
             document.getElementById(this.id)
-                .innerHTML = "";
+                .removeAllChildren();
 
             this.initMenu();
             this.initSVG();
