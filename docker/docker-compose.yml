@@ -49,6 +49,8 @@ services:
             - "443:443"
         #command: bash /entrypoints/nginx-entrypoint.sh
         command: bash -c "spawn-fcgi -u www-data -s /var/run/fcgiwrap.socket /usr/sbin/fcgiwrap ; nginx -g 'daemon off;'"
+        volumes_from:
+            - uwsgi
 
     workers:
         image: vidjil:test
