@@ -18,13 +18,8 @@ services:
         build: ./vidjil
         image: vidjil:test
         command: bash /entrypoints/uwsgi-entrypoint.sh
-        volumes:
-            - /opt/vidjil/databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
-            - /opt/vidjil/result/results:/mnt/result/results
-            - /opt/vidjil/result/tmp:/mnt/result/tmp
-            - /opt/vidjil/upload/uploads:/mnt/upload/uploads
-            - /opt/vidjil/log:/var/vidjil
-            - /opt/vidjil/log/nginx:/var/log/nginx
+        volumes_from:
+            - fuse
         depends_on:
             - mysql
             - postfix
@@ -36,8 +31,13 @@ services:
     fuse:
         image: vidjil:test
         command: bash /entrypoints/fuse-entrypoint.sh
-        volumes_from:
-            - uwsgi
+        volumes:
+            - /opt/vidjil/databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
+            - /opt/vidjil/result/results:/mnt/result/results
+            - /opt/vidjil/result/tmp:/mnt/result/tmp
+            - /opt/vidjil/upload/uploads:/mnt/upload/uploads
+            - /opt/vidjil/log:/var/vidjil
+            - /opt/vidjil/log/nginx:/var/log/nginx
     nginx:
         image: vidjil:test
         depends_on:
