@@ -115,36 +115,45 @@ function ScatterPlot(id, model, database) {
     // Plot axis
     this.available_axis = {
         "gene_v": { 
+            doc: "V gene (or 5' segment), gathering all alleles",
             label:"V/5' gene"
         },
         "gene_j": { 
+            doc: "J gene (or 3' segment), gathering all alleles",
             label:"J/3' gene"
         },
         "allele_v": { 
+            doc: "V gene (or 5' segment), with allele",
             label:"V allele"
         },
         "allele_j": { 
+            doc: "J gene (or 3' segment), with allele",
             label:"J allele"
         },
         "sequenceLength" : { 
+            doc: "length of the consensus sequence",
             label: "clone consensus length",
             fct: function(clone) {return clone.getSequenceLength()}
         },
         "readLength" : {
+            doc: "average length of the reads belonging to each clone",
             label: "clone average read length",
             fct: function(clone) {return clone.getAverageReadLength()}
         },
         "GCContent" : { 
+            doc: "%GC content of the consensus sequence of each clone",
             label: "GC content",
             fct: "GCContent", 
             output: "percent"
         },
         "n": {
+            doc: "N length, from the end of the V/5' segment to the start of the J/3' segment (excluded)",
             label: "N length",
             fct: function(clone) {return clone.getNlength()}
         },
         "lengthCDR3": {
-            label: "CDR3 length",
+            doc: "CDR3 length, in nucleotides, from Cys104 and Phe118/Trp118 (excluded)",
+            label: "CDR3 length (nt)",
             fct: function(clone) {return clone.getSegLength('cdr3')}
         },
         "productivity": {
@@ -153,11 +162,14 @@ function ScatterPlot(id, model, database) {
             output: "string-sorted"
         },
         "tag": {
+            doc: "tag, as defined by the user",
             label: "tag",
             fct: function(clone) {return clone.getTagName()},
             output: "string-sorted"
         },
         "coverage": { 
+            doc: "ratio of the length of the clone consensus sequence to the median read length of the clone",
+            // "Coverage between .85 and 1.0 (or more) are good values",
             label: "clone consensus coverage",
             fct: function(clone){return clone.coverage},
             min: 0,
@@ -166,11 +178,13 @@ function ScatterPlot(id, model, database) {
             log: false 
         },
         "locus" : { 
+            doc: "locus or recombination system",
             label: "locus",
             fct: function(clone){return clone.germline},
             output: "string-sorted"
         },
         "Size" : { 
+            doc: "ratio of the number of reads of each clone to the total number of reads in the selected locus",
             label: "size",
             fct : function(clone){return clone.getSizeZero()},
             min : function(){return self.m.min_size},
@@ -179,7 +193,8 @@ function ScatterPlot(id, model, database) {
             log : true  
         },
         "otherSize" : { 
-            label: "size (other point)",
+            doc: "ratio of the number of reads of each clone to the total number of reads in the selected locus, on a second sample",
+            label: "size (other sample)",
             fct : function(clone){return clone.getSizeZero(m.tOther)},
             min : function(){return self.m.min_size}, 
             max : 1, 
