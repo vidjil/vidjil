@@ -381,7 +381,9 @@ There can be several causes leading to bad ratios:
 
 
 ** Clone coverage
-   The clone coverage is computed over the consensus sequence which is
+   The clone coverage is the ratio of the length of the clone consensus sequence
+   to the median read length in the clone.
+   A consensus sequence is
    displayed for each clone (see [[representative][What is the sequence displayed for each clone?]]). 
    Its length should be representative of the read lengths among that clone. A
    clone can be constituted of thousands of reads of various lengths. We
