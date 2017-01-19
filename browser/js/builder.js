@@ -302,11 +302,11 @@ Builder.prototype = {
 
         var displaySelector = document.getElementById("displaySelector")
         var listTag = document.getElementById("tagList")
-        var listGermline = document.getElementById("germline_list")
+        // var listGermline = document.getElementById("germline_list")
         
         //reset
         listTag.innerHTML = "";
-        listGermline.innerHTML = "";
+        // listGermline.innerHTML = "";
 
         //init tag list
         for (var i = 0; i < this.m.tag.length; i++) {
@@ -380,7 +380,7 @@ Builder.prototype = {
                     
                     li = document.createElement('li');
                     li.appendChild(div)
-                    listGermline.appendChild(li);
+                    // listGermline.appendChild(li);
                 })(system)
             }
              
