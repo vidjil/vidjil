@@ -684,7 +684,7 @@ Clone.prototype = {
     
     getProductivityName: function () {
         if (typeof this.seg.junction == "undefined")
-            return "no CDR3"
+            return "no CDR3 detected"
 
         return (this.seg.junction.productive ? "productive" : "not productive")
     },
