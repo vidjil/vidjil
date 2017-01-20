@@ -456,8 +456,10 @@ def get_custom_data():
         except IOError, error:
             return error_message(str(error))
         
-        data["dataFileName"] = "Compare patients"
-        data["info"] = "Compare patients"
+        generic_info = "Compare sample sets"
+        data["patient_name"] = generic_info
+        data["dataFileName"] = generic_info
+        data["info"] = generic_info
         data["samples"]["original_names"] = []
         data["samples"]["timestamp"] = []
         data["samples"]["info"] = []
