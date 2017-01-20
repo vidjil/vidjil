@@ -337,7 +337,7 @@ def get_data():
                 data["dataFileName"] = patient_name + " (" + config_name + ")"
                 data["info"] = db.patient[row.id].info
                 data["patient_id"] = row.id
-                data["patient_name"] = patient_name
+                data["sample_name"] = patient_name
 
         if (sample_set.sample_type == "run") :
             for row in db( db.run.sample_set_id == request.vars["sample_set_id"] ).select() :
@@ -346,7 +346,7 @@ def get_data():
                 data["dataFileName"] = run_name + " (" + config_name + ")"
                 data["info"] = db.run[row.id].info
                 data["run_id"] = row.id
-                data["run_name"] = run_name
+                data["sample_name"] = run_name
 
         log_query = db(  ( db.user_log.record_id == log_reference_id )
                        & ( db.user_log.table_name == sample_set.sample_type )
@@ -383,9 +383,8 @@ def get_data():
         data["samples"]["db_key"] = []
         data["samples"]["id"] = []
         data["samples"]["patient_id"] = []
-        data["samples"]["patient_name"] = []
+        data["samples"]["sample_name"] = []
         data["samples"]["run_id"] = []
-        data["samples"]["run_name"] = []
         for i in range(len(data["samples"]["original_names"])) :
             o_n = data["samples"]["original_names"][i].split('/')[-1]
             data["samples"]["original_names"][i] = data["samples"]["original_names"][i].split('/')[-1]
@@ -401,9 +400,8 @@ def get_data():
                 data["samples"]["names"].append(row.sequence_file.filename.split('.')[0])
                 data["samples"]["id"].append(row.sequence_file.id)
                 data["samples"]["patient_id"].append(get_patient_id(row.sequence_file.id))
-                data["samples"]["patient_name"].append(row.sequence_file.id)
+                data["samples"]["sample_name"].append(row.sequence_file.id)
                 data["samples"]["run_id"].append(row.sequence_file.id)
-                data["samples"]["run_name"].append(row.sequence_file.id)
             else :
                 data["samples"]["info"].append("this file has been deleted from the database, info relative to this sample are no longer available")
                 data["samples"]["timestamp"].append("None")
@@ -457,7 +455,7 @@ def get_custom_data():
             return error_message(str(error))
         
         generic_info = "Compare sample sets"
-        data["patient_name"] = generic_info
+        data["sample_name"] = generic_info
         data["dataFileName"] = generic_info
         data["info"] = generic_info
         data["samples"]["original_names"] = []

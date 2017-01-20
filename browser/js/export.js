@@ -151,8 +151,8 @@ Report.prototype = {
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
     
         var text = "contamination report: "
-        if (typeof this.m.patient_name != 'undefined')
-            text += this.m.patient_name
+        if (typeof this.m.sample_name != 'undefined')
+            text += this.m.sample_name
             
         this.w.onload = function(){
             self.w.document.title = text
@@ -182,8 +182,8 @@ Report.prototype = {
         date_min = this.m.dateMin()
         date_max = this.m.dateMax()
         
-        if (typeof this.m.patient_name != 'undefined')
-            text += this.m.patient_name
+        if (typeof this.m.sample_name != 'undefined')
+            text += this.m.sample_name
         else
             text += this.m.dataFileName
         if (date_max != "0" && date_min != "0")
@@ -219,8 +219,8 @@ Report.prototype = {
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
         
         var text = ""
-        if (typeof this.m.patient_name != 'undefined')
-            text += this.m.patient_name
+        if (typeof this.m.sample_name != 'undefined')
+            text += this.m.sample_name
         else
             text += this.m.dataFileName
         text += " – "+ this.m.getStrTime(this.m.t, "name")
