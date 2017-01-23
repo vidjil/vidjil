@@ -346,10 +346,17 @@ def edit_form():
 
     if request.vars['patient_id'] != '' :
         patient_id = int(request.vars['patient_id'].split('(')[-1][:-1])
+        if not auth.can_modify_patient(patient_id):
+            error += "permission denied to edit patient %d" % patient_id
     if request.vars['run_id'] != '' :
         run_id = int(request.vars['run_id'].split('(')[-1][:-1])
+        if not auth.can_modify_run(run_id):
+            error += "permission denied to edit run %d" % run_id
     if request.vars['generic_id'] != '' :
         generic_id = int(request.vars['generic_id'].split('(')[-1][:-1])
+        generic = db.generic[generic_id]
+        if not auth.can_modify_sample_set(generic.sample_set_id):
+            error += "permission denied to edit sample_set %d" % generic_id
     if request.vars['id'] == None :
         error += "missing id"
     if request.vars['filename'] == None :
