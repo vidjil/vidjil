@@ -365,6 +365,8 @@ def edit_form():
         filename = db.sequence_file[request.vars['id']].filename
         if request.vars['filename'] != "":
             filename = request.vars['filename']
+            # file is being reuploaded, remove all existing results_files
+            db(db.results_file.sequence_file_id == request.vars["id"]).delete()
         pre_process = None
         if request.vars['pre_process'] != "0":
             pre_process = int(request.vars['pre_process'])
