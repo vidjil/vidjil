@@ -725,7 +725,7 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
     db.sequence_file[sequence_file_id] = dict(data_file = stream,
                                               data_file2 = None,
                                               pre_process_flag = "DONE")
-    
+    db.commit()
     #resume STOPPED task for this sequence file
     stopped_task = db(
         (db.results_file.sequence_file_id == sequence_file_id)
