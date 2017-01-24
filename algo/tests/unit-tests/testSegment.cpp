@@ -35,6 +35,7 @@ void testOverlap()
   TAP_TEST(box_C->del_left == 1, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides : " << box_C);
 
   TAP_TEST(box_A->end == 6, TEST_FINE_SEGMENT_OVERLAP, "end position of left region : " << box_A);
+  TAP_TEST(box_A->getLength() == 7, TEST_FINE_SEGMENT_OVERLAP, "length of left region : " << box_A->getLength());
   TAP_TEST(box_C->start == 7,  TEST_FINE_SEGMENT_OVERLAP, "start position of right region : " << box_C);
 
   delete box_A;
