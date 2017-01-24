@@ -498,6 +498,17 @@ Database.prototype = {
         }  
         
     },
+
+    load_jstree: function(){
+        $('#jstree').jstree({
+            'core' : {
+                'data' : {
+                    'url' : DB_ADDRESS + '/file/filesystem',
+                    'dataType' : 'json'
+                }
+            }
+        });
+    },
     
     /**
      * reload the current db page
