@@ -45,6 +45,10 @@ AlignBox::AlignBox(string _key, string _color) {
   ref_label = "";
 }
 
+int AlignBox::getLength() {
+  return end - start + 1 ;
+}
+
 char AlignBox::getInitial() {
 
   // TRGV -> V, IGHD -> D...
@@ -1070,11 +1074,11 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
                          DynProg::SemiGlobal, segment_cost, false, false);
     int score_new = dp.compute();
 
-    float evalue_DD_new = multiplier * (box_DD->end - box_DD->start + 1) * box_DD->ref.size() * segment_cost.toPValue(score_new);
+    float evalue_DD_new = multiplier * box_DD->getLength() * box_DD->ref.size() * segment_cost.toPValue(score_new);
 
 #ifdef DEBUG_EVALUE
     cout << "multiplier " << multiplier
-         << ", length " << (box_DD->end - box_DD->start + 1)
+         << ", length " << box_DD->getLength()
          << ", D size " << box_DD->ref.size()
          << " ==> e-value (DD) " << std::scientific << evalue_DD_new << std::fixed << endl ;
 #endif

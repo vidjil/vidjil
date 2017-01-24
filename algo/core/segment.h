@@ -95,6 +95,11 @@ class AlignBox
   char getInitial();
 
   /**
+   * Returns the length
+   */
+  int getLength();
+
+  /**
    * Returns the position in the reference string corresponding to the position in the read
    * Preliminary implementation, only works for the start of V and J boxes
    */
