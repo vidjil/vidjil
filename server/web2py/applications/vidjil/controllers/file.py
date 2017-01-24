@@ -6,6 +6,8 @@ import os
 import os.path
 import datetime
 from controller_utils import error_message
+from glob import glob
+import jstree
 
 
 if request.env.http_origin:
@@ -596,4 +598,14 @@ def restart_pre_process():
     db.sequence_file[sequence_file.id] = dict(pre_process_flag = 'WAIT')
     db.commit()
     res = schedule_pre_process(sequence_file.id, pre_process.id)
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+def filesystem():
+    paths = []
+    for dest in os.walk(defs.FILE_SOURCE):
+        for filetype in defs.FILE_TYPES:
+            for idx, f in enumerate(glob(os.path.join(dest[0], '*.%s' % filetype))):
+                paths.append(jstree.Path(f, idx))
+    res = jstree.JSTree(paths).jsonData()
+    #res = [{ "text" : "Root 1", "children" : []  },{ "text" : "Root 2", "children" : []  }]
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
