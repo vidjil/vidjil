@@ -257,6 +257,27 @@ The different permissions that can be attributed are:
   - View Details: Permissions to view patient/run data in an unencrypted manner for the patients/runs of a group
   - Save: Permissions to save an analysis for the patients/runs of a group
 
+* How do you define a clone? How are gathered clones?
+   Each software has its own definition of what a clone is (or, more precisely
+  a clonotype). Knowing how clones are defined is important to be aware of the
+  potential biases that could affect your analysis.
+
+  In Vidjil sequences are gathered into a same clone as long as they share the
+  same 50bp DNA sequence around the CDR3 sequence.
+
+  In a first step, Vidjil has a quick heuristic which detects approximatively
+  where the CDR3 lies and extracts a 50bp nucleotide sequence centered on that
+  region. This region is called a window in Vidjil's algorithm. When two
+  sequences share the same window, they belong to the same clone.  Therefore
+  in Vidjil clones are only defined based on the exact match of a long DNA
+  sequence. This explains why some little clones can be seen around larger
+  clones: they may be due to sequencing error that lead to different windows.
+  However those small differences can also be due to a real biological process
+  inside the cells. Therefore we let the user choose whether the clones should
+  be manually merged or not.
+
+  In MiXCR clones are defined based on the amino-acid CDR3 sequence, on the V
+  gene used and on the hypermutations.
 * Can I see all the clones ?
 
 
