@@ -503,6 +503,7 @@ Database.prototype = {
         $('#jstree').jstree({
             "plugins" : ["sort"],
             'core' : {
+                'multiple': false,
                 'data' : {
                     'url' : function(node){
                         var address = DB_ADDRESS + '/file/filesystem'
