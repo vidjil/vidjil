@@ -500,6 +500,14 @@ Database.prototype = {
     },
 
     load_jstree: function(){
+        var elem = $('.upload_field');
+        elem.prop('disabled', true);
+        elem.parents("tr").hide();
+
+        var pre_process = $('#pre_process');
+        pre_process.prop('disabled', true);
+        pre_process.parents("tr").hide();
+
         var tree = $('#jstree');
         tree.jstree({
             "plugins" : ["sort"],
