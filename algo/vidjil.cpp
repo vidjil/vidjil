@@ -1577,6 +1577,9 @@ int main (int argc, char **argv)
 
 
     // Complete main json output
+    j["species"] = multigermline->species ;
+    j["species_taxon_id"] = multigermline->species_taxon_id ;
+
     j["diversity"] = jsonDiversity ;
     j["samples"]["log"] = { stream_segmentation_info.str() } ;
     j["reads"] = {
