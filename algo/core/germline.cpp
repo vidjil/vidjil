@@ -231,6 +231,7 @@ ostream &operator<<(ostream &out, const Germline &germline)
 
 MultiGermline::MultiGermline(IndexTypes indexType, bool _one_index_per_germline):indexType(indexType)
 {
+  species = "custom germlines" ;
   index = NULL;
   one_index_per_germline = _one_index_per_germline;
 }
@@ -261,7 +262,12 @@ void MultiGermline::build_from_json(string path, string json_filename, int filte
   string content( (std::istreambuf_iterator<char>(germline_data) ),
                   (std::istreambuf_iterator<char>()    ) );
 
-  json j = json::parse(content);
+  json germlines = json::parse(content);
+
+  species = germlines["species"].get<std::string>();
+  species_taxon_id = germlines["species_taxon_id"];
+
+  json j = germlines["systems"];
   
   //for each germline
   for (json::iterator it = j.begin(); it != j.end(); ++it) {
@@ -370,6 +376,8 @@ void MultiGermline::mark_cross_germlines_as_ambiguous()
 
 ostream &operator<<(ostream &out, const MultiGermline &multigermline)
 {
+  out << multigermline.species << " (" << multigermline.species_taxon_id << ")" << endl ;
+
   for (list<Germline*>::const_iterator it = multigermline.germlines.begin(); it != multigermline.germlines.end(); ++it)
     {
       Germline *germline = *it ;
