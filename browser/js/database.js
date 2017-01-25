@@ -515,6 +515,9 @@ Database.prototype = {
                 },
             }
         });
+        tree.on('select_node.jstree', function(event, data){
+            $('#filename').val(data.selected);
+        });
     },
     
     /**
