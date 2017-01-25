@@ -1,5 +1,10 @@
 {
 
+    "species": "Homo sapiens",
+    "species_taxon_id": 9606,
+
+    "systems": {
+
     "IgVC": {
         "shortcut": "C",
         "color" : "#6c71c4",
@@ -46,5 +51,6 @@
         "parameters": {
             "seed": "12s"
         }
+      }
       }
 }
