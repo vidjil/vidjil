@@ -503,9 +503,13 @@ Database.prototype = {
         $('#jstree').jstree({
             'core' : {
                 'data' : {
-                    'url' : DB_ADDRESS + '/file/filesystem',
-                    'dataType' : 'json'
-                }
+                    'url' : function(node){
+                        var address = DB_ADDRESS + '/file/filesystem'
+                        return node.id === '#' ? address
+                                               : address + '?node=' + node.id
+                    },
+                    'dataType' : 'json',
+                },
             }
         });
     },

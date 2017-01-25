@@ -602,10 +602,24 @@ def restart_pre_process():
 
 def filesystem():
     paths = []
-    for dest in os.walk(defs.FILE_SOURCE):
-        for filetype in defs.FILE_TYPES:
-            for idx, f in enumerate(glob(os.path.join(dest[0], '*.%s' % filetype))):
-                paths.append(jstree.Path(f, idx))
-    res = jstree.JSTree(paths).jsonData()
-    #res = [{ "text" : "Root 1", "children" : []  },{ "text" : "Root 2", "children" : []  }]
+    id = "" if request.vars["node"] is None else request.vars["node"] + '/'
+    root_folder = defs.FILE_SOURCE + id
+    log.debug(id)
+    #for dest in os.walk(root_folder):
+    #    for filetype in defs.FILE_TYPES:
+    #        for idx, f in enumerate(glob(os.path.join(dest[0], '*.%s' % filetype))):
+    #            paths.append(jstree.Path(f, f + str(idx)))
+    json = []
+    for idx, f in enumerate(os.listdir(root_folder)):
+        if os.path.isdir(root_folder + f):
+            json_node = jstree.Node(f, id + f).jsonData()
+            json_node['children'] = True
+            json.append(json_node)
+        elif f.split('.')[-1] in defs.FILE_TYPES:
+            json_node = jstree.Node(f, id + f).jsonData()
+            json_node['icon'] = 'jstree-file'
+            json.append(json_node)
+    res = json
+    #res = jstree.JSTree(paths).jsonData()
+    #res = [{ "text" : "Root 1", "children" : True  },{ "text" : "Root 2", "children" : True  }]
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
