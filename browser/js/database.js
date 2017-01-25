@@ -501,6 +501,7 @@ Database.prototype = {
 
     load_jstree: function(){
         $('#jstree').jstree({
+            "plugins" : ["sort"],
             'core' : {
                 'data' : {
                     'url' : function(node){
