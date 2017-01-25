@@ -69,7 +69,7 @@
 //$$ #define (mainly default options)
 
 #define DEFAULT_MULTI_GERMLINE_PATH "germline/"
-#define DEFAULT_MULTI_GERMLINE_FILE "germlines.data"
+#define DEFAULT_MULTI_GERMLINE_FILE "homo-sapiens.germlines"
 
 #define DEFAULT_READ_HEADER_SEPARATOR " "
 #define DEFAULT_READS  "./data/Stanford_S22.fasta"
@@ -163,9 +163,9 @@ void usage(char *progname, bool advanced)
        << "  -D <file>     D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)" << endl
-       << "  -g <path>     multiple locus/germlines. In the path <path>, takes 'germlines.data' to select locus and parameters" << endl
-       << "                Selecting '-g germline' processes TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations" << endl
-       << "                A different 'germlines.data' file can also be provided with -g <file>" << endl
+       << "  -g <path>     multiple locus/germlines. In the path <path>, takes '" << DEFAULT_MULTI_GERMLINE_FILE << "' to select locus and parameters" << endl
+       << "                Selecting '-g germline' processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations" << endl
+       << "                Files different than '" << DEFAULT_MULTI_GERMLINE_FILE << "', for example for other species, can also be provided with -g <file>" << endl
        << endl
 
        << "Locus/recombinations" << endl
