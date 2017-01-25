@@ -1,4 +1,9 @@
 {
+
+    "species": "Homo sapiens",
+    "species_taxon_id": 9606,
+
+    "systems": {
     
     "TRA": {
         "shortcut": "A",
@@ -171,4 +176,5 @@
         }
     }
 
+    }
 }
