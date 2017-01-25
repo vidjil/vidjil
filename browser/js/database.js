@@ -500,7 +500,8 @@ Database.prototype = {
     },
 
     load_jstree: function(){
-        $('#jstree').jstree({
+        var tree = $('#jstree');
+        tree.jstree({
             "plugins" : ["sort"],
             'core' : {
                 'multiple': false,
