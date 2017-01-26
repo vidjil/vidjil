@@ -1166,8 +1166,11 @@ void FineSegmenter::findCDR3(){
   // There are two cases when we can not detect a JUNCTION/CDR3:
   // - Germline V or J gene has no 'marked_pos'
   // - Sequence may be too short on either side, and thus the backtrack did not find a suitable 'marked_pos'
-  if (JUNCTIONstart == 0 || JUNCTIONend == 0)
+  if (JUNCTIONstart == 0 || JUNCTIONend == 0) {
+    JUNCTIONstart = -1 ;
+    JUNCTIONend = -1 ;    
     return;
+  }
 
   // We require at least two codons
   if (JUNCTIONend - JUNCTIONstart + 1 < 6) {
