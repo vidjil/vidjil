@@ -611,13 +611,12 @@ def filesystem():
     #            paths.append(jstree.Path(f, f + str(idx)))
     json = []
     for idx, f in enumerate(os.listdir(root_folder)):
-        if os.path.isdir(root_folder + f):
+        correct_type = f.split('.')[-1] in defs.FILE_TYPES
+        is_dir = os.path.isdir(root_folder + f)
+        if correct_type or is_dir:
             json_node = jstree.Node(f, id + f).jsonData()
-            json_node['children'] = True
-            json.append(json_node)
-        elif f.split('.')[-1] in defs.FILE_TYPES:
-            json_node = jstree.Node(f, id + f).jsonData()
-            json_node['icon'] = 'jstree-file'
+            if is_dir : json_node['children'] = True
+            if correct_type: json_node['icon'] = 'jstree-file'
             json.append(json_node)
     res = json
     #res = jstree.JSTree(paths).jsonData()
