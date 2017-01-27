@@ -288,6 +288,20 @@ int revcomp_int(int word, int size) {
   return revcomp;
 }
 
+bool hasInFrameStopCodon(const string &sequence, int frame) {
+  list<string> stop_codons {"TAG", "TAA", "TGA"};
+
+  for (auto codon: stop_codons) {
+    size_t pos_codon = sequence.find(codon);
+    while (pos_codon != string::npos) {
+      if (pos_codon % 3 == (size_t) frame)
+        return true;
+      pos_codon = sequence.find(codon, pos_codon+1);
+    }
+  }
+  return false;
+}
+
 string reverse(const string &text) {
   return string(text.rbegin(), text.rend());
 }

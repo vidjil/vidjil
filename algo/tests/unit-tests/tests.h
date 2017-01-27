@@ -18,6 +18,7 @@ enum {
   TEST_FASTA_OUT,
   TEST_FASTA_NB_SEQUENCES,
   TEST_FASTA_MARK,
+  TEST_IS_STOP_CODON,
 
   TEST_CREATE_SEQUENCE_LABEL_FULL,
   TEST_CREATE_SEQUENCE_LABEL,
@@ -191,6 +192,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_FASTA_INVALID_FILE, "Fasta with invalid file");
   RECORD_TAP_TEST(TEST_FASTA_OUT, "Test operator<< with Fasta");
   RECORD_TAP_TEST(TEST_FASTA_NB_SEQUENCES, "Nb sequences in Fasta");
+  RECORD_TAP_TEST(TEST_IS_STOP_CODON, "Check if is stop codon");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_LABEL_FULL, "create_sequence: label_full field");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_LABEL, "create_sequence: label field");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_SEQUENCE, "create_sequence: sequence field");

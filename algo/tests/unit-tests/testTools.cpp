@@ -379,6 +379,36 @@ void testNChooseK() {
   TAP_TEST(nChoosek(8, 4) == 70, TEST_N_CHOOSE_K, "");
 }
 
+void testIsStopCodon() {
+  TAP_TEST(hasInFrameStopCodon("CATCATCATTAGCATCG", 0), TEST_IS_STOP_CODON, "");
+  TAP_TEST(hasInFrameStopCodon("CATCATCATTAACATCG", 0), TEST_IS_STOP_CODON, "");
+  TAP_TEST(hasInFrameStopCodon("CATCATCATTGACATCG", 0), TEST_IS_STOP_CODON, "");
+  TAP_TEST(hasInFrameStopCodon("TAGCATCATCATCATCG", 0), TEST_IS_STOP_CODON, "");
+  TAP_TEST(hasInFrameStopCodon("TAACATCATCATCATCG", 0), TEST_IS_STOP_CODON, "");
+  TAP_TEST(hasInFrameStopCodon("TGACATCATCATCATCG", 0), TEST_IS_STOP_CODON, "");
+
+  TAP_TEST(! hasInFrameStopCodon("ACATCATCATTAGCATCG", 0), TEST_IS_STOP_CODON, "");
+  TAP_TEST(! hasInFrameStopCodon("ACATCATCATTAACATCG", 0), TEST_IS_STOP_CODON, "");
+  TAP_TEST(! hasInFrameStopCodon("ACATCATCATTGACATCG", 0), TEST_IS_STOP_CODON, "");
+  TAP_TEST(! hasInFrameStopCodon("ATAGCATCATCATCATCG", 0), TEST_IS_STOP_CODON, "");
+  TAP_TEST(! hasInFrameStopCodon("ATAACATCATCATCATCG", 0), TEST_IS_STOP_CODON, "");
+
+  TAP_TEST(hasInFrameStopCodon("ACATCATCATTAGCATCG", 1), TEST_IS_STOP_CODON, "");
+  TAP_TEST(hasInFrameStopCodon("ACATCATCATTAACATCG", 1), TEST_IS_STOP_CODON, "");
+  TAP_TEST(hasInFrameStopCodon("ACATCATCATTGACATCG", 1), TEST_IS_STOP_CODON, "");
+  TAP_TEST(hasInFrameStopCodon("ATAGCATCATCATCATCG", 1), TEST_IS_STOP_CODON, "");
+  TAP_TEST(hasInFrameStopCodon("ATAACATCATCATCATCG", 1), TEST_IS_STOP_CODON, "");
+  TAP_TEST(hasInFrameStopCodon("ATGACATCATCATCATCG", 1), TEST_IS_STOP_CODON, "");
+
+  TAP_TEST(hasInFrameStopCodon("AACATCATCATTAGCATCG", 2), TEST_IS_STOP_CODON, "");
+  TAP_TEST(hasInFrameStopCodon("AACATCATCATTAACATCG", 2), TEST_IS_STOP_CODON, "");
+  TAP_TEST(hasInFrameStopCodon("AACATCATCATTGACATCG", 2), TEST_IS_STOP_CODON, "");
+  TAP_TEST(hasInFrameStopCodon("AATAGCATCATCATCATCG", 2), TEST_IS_STOP_CODON, "");
+  TAP_TEST(hasInFrameStopCodon("AATAACATCATCATCATCG", 2), TEST_IS_STOP_CODON, "");
+  TAP_TEST(hasInFrameStopCodon("AATGACATCATCATCATCG", 2), TEST_IS_STOP_CODON, "");
+
+}
+
 void testTrimSequence() {
   string seq = "NNNNNAATAGTAGACTANNNNN";
   size_t start = 0;
@@ -494,4 +524,5 @@ void testTools() {
   testNChooseK();
   testGenerateAllSeeds();
   testTrimSequence();
+  testIsStopCodon();
 }

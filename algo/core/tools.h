@@ -196,6 +196,15 @@ int revcomp_int(int word, int size);
 string reverse(const string &text);
 
 /**
+ * @param sequence is a DNA sequence in the correct orientation in uppercase
+ *      (ie. no revcomp will be tried)
+ * @param frame (0, 1 or 2) depending on where the position of the first codon
+ *        in the sequence starts
+ * @return true iff a stop codon is in-frame.
+ */ 
+bool hasInFrameStopCodon(const string &sequence, int frame);
+
+/**
  * @return a Sequence whose fields are given by the parameters
  */
 Sequence create_sequence(string label_full, string label, string sequence, string quality);
