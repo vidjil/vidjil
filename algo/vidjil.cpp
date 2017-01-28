@@ -69,7 +69,7 @@
 //$$ #define (mainly default options)
 
 #define DEFAULT_MULTI_GERMLINE_PATH "germline/"
-#define DEFAULT_MULTI_GERMLINE_FILE "homo-sapiens.germlines"
+#define DEFAULT_MULTI_GERMLINE_FILE "homo-sapiens.g"
 
 #define DEFAULT_READ_HEADER_SEPARATOR " "
 #define DEFAULT_READS  "./data/Stanford_S22.fasta"

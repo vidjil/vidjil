@@ -228,9 +228,9 @@ Germline databases (at least one -V/(-D)/-J, or -G, or -g option must be given f
   -D <file>     D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components
   -J <file>     J germline multi-fasta file
   -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)
-  -g <path>     multiple locus/germlines. In the path <path>, takes 'homo-sapiens.germlines' to select locus and parameters
+  -g <path>     multiple locus/germlines. In the path <path>, takes 'homo-sapiens.g' to select locus and parameters
                 Selecting '-g germline' processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations
-                Files different than 'homo-sapiens.germlines', for example for other species, can also be provided with -g <file>
+                Files different than 'homo-sapiens.g', for example for other species, can also be provided with -g <file>
 
 Locus/recombinations
   -d            try to detect several D (experimental)
@@ -245,14 +245,14 @@ Locus/recombinations
    Using =-g germline/ -i= tests also some incomplete and unusual recombinations (locus with a =+= in their name),
    and using =-g germline/ -i -2= further test unexpected recombinations (tagged as =xxx=).
    See [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]] for information on the analyzable locus.
- - Analyzed locus and parameters are configured through the =germline/homo-sapiens.germlines= file.
+ - Analyzed locus and parameters are configured through the =germline/homo-sapiens.g= file.
    A =germline/isotypes.data= file is provided to look for sequences with, on one side, IGHJ (or even IGHV) genes,
    and, on the other side, an IGH constant chain.
-   To select a custom set of TR or Ig locus, you may copy =germline/homo-sapiens.germlines= into a new file,
-   as for example =germline/custom.germlines=, and run Vidjil with =-g germline/custom.germlines -i -2=.
- - Several =-g= options can be used, as for instance =-g germline -g germline/isotypes.germlines=.
+   To select a custom set of TR or Ig locus, you may copy =germline/homo-sapiens.g= into a new file,
+   as for example =germline/custom.g=, and run Vidjil with =-g germline/custom.g -i -2=.
+ - Several =-g= options can be used, as for instance =-g germline -g germline/isotypes.g=.
  - One can use other germline sequences possibly by defining another
-   =.germlines= file that would refer to an alternative germline set or by
+   =.g= file that would refer to an alternative germline set or by
    overwriting the existing germline sequences (in the FASTA file).
 
 ** Main algorithm parameters
