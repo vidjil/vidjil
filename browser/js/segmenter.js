@@ -1124,7 +1124,7 @@ Sequence.prototype = {
             while (code.length<3 & i<=stop){
                 if (this.seq[i] != "-") {
                     code += this.seq[i];
-                    this.seqAA[i] = "&nbsp";
+                    this.seqAA[i] = "&nbsp;";
                 }
                 if(code.length == 2) pos = i;
                 i++;
