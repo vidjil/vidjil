@@ -13,6 +13,16 @@ info = db.sequence_file[request.vars["id"]]
     <input type="hidden" id="sample_type" name="sample_type" value="{{=sample_type}}" />
     <table>
         <tbody>
+                        <tr class='db_table_split' ><td colspan="2"> file source </td></tr>
+            <tr>
+                <td>file source</td>
+                <td>
+                    <label for="file_source_computer">my computer</label>
+                    <input type="radio" id="file_source_computer" name="file_source" value="computer" onchange="db.toggle_file_source()" checked="checked"/>
+                    <label for="file_source_nfs">network</label>
+                    <input type="radio" id="file_source_nfs" name="file_source" value="nfs" onchange="db.toggle_file_source()"/>
+                </td>
+            </tr>
 			<tr class='db_table_split' ><td colspan="2"> sequence file(s) </td></tr>
             <tr>
                 <td><label for="pre_process" id="pre_process__label">pre-process scenario: </label></td>
@@ -35,6 +45,10 @@ info = db.sequence_file[request.vars["id"]]
                 <td><label for="file2" id="file2__label"> file 2 </label></td>
                 <td><input class="upload_field" id="upload_file2" type="file" ></td>
                 <td>* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
+            </tr>
+            <tr hidden>
+                <td >file</td>
+                <td><div id="jstree"></div></td>
             </tr>
 			
 			<tr class='db_table_split' ><td colspan="2"> patient and run </td></tr>
