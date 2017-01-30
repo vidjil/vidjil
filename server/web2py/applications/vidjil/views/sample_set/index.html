@@ -83,7 +83,9 @@
                     <td> {{=row.sequence_file.info}} </td>
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} >
                         {{=vidjil_utils.format_size(row.sequence_file.size_file)}} </td>
-                    <td onclick="db.call('pre_process/info', {'sequence_file_id' :'{{=row.sequence_file.id }}', 'sample_set_id' : '{{=request.vars["id"]}}'} )"
+                    <td {{if row.sequence_file.pre_process_id != None:}} class="pointer"
+                        title="View more information on the pre-process {{=pre_process_list[row.sequence_file.pre_process_id]}}"{{pass}}
+                       onclick="db.call('pre_process/info', {'sequence_file_id' :'{{=row.sequence_file.id }}', 'sample_set_id' : '{{=request.vars["id"]}}'} )"
                         >{{if row.sequence_file.pre_process_id != None :}} {{=pre_process_list[row.sequence_file.pre_process_id]}} {{pass}}
                         {{if row.sequence_file.pre_process_flag == "RUN" :}}<i class="icon-spin4" style="animation: spin 2s 1000 linear;
     display: inline-block;" title="running pre_processs"></i>{{pass}} 
