@@ -403,9 +403,14 @@ def edit_form():
         if request.vars['sampling_date'] != None and request.vars['file_info'] != None :
             db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'],
                                                         info=request.vars['file_info'],
-                                                        filename=filename,
                                                         pre_process_id=pre_process,
                                                         provider=auth.user_id)
+
+        if request.vars['filename'] != "":
+            data, filepath = manage_filename(request.vars["filename"], request.vars["id"])
+            if 'data_file' in data:
+                os.symlink(filepath, defs.DIR_SEQUENCES + data['data_file'])
+            db.sequence_file[request.vars["id"]] = data
             
         #remove previous membership
         for row in db( db.sample_set_membership.sequence_file_id == request.vars["id"]).select() :
