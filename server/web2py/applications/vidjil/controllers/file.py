@@ -200,6 +200,14 @@ def add_form():
                             pre_process_id=pre_process,
                             pre_process_flag=pre_process_flag,
                             provider=auth.user_id)
+
+        if len(name_list) > 1:
+            filepath = defs.FILE_SOURCE + '/' + request.vars['filename']
+            split_file = filename.split('.')
+            data_file = "%s_%d.%s" % ('.'.join(split_file[0:-1]), id, split_file[-1])
+            os.symlink(filepath, defs.DIR_SEQUENCES + data_file)
+            db.sequence_file[id] = dict(data_file=data_file)
+
         ids_sample_set = []
         #add sequence_file to a run sample_set
         if run_id is not None :
