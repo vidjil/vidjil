@@ -617,16 +617,18 @@ def restart_pre_process():
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def filesystem():
-    id = "" if request.vars["node"] is None else request.vars["node"] + '/'
-    root_folder = defs.FILE_SOURCE + id
     json = []
-    for idx, f in enumerate(os.listdir(root_folder)):
-        correct_type = f.split('.')[-1] in defs.FILE_TYPES
-        is_dir = os.path.isdir(root_folder + f)
-        if correct_type or is_dir:
-            json_node = jstree.Node(f, id + f).jsonData()
-            if is_dir : json_node['children'] = True
-            if correct_type: json_node['icon'] = 'jstree-file'
-            json.append(json_node)
-    res = json
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    id = "" if request.vars["node"] is None else request.vars["node"] + '/'
+    if id == "":
+        json = [{"text": "/", "id": "/",  "children": True}]
+    else:
+        root_folder = defs.FILE_SOURCE + id
+        for idx, f in enumerate(os.listdir(root_folder)):
+            correct_type = f.split('.')[-1] in defs.FILE_TYPES
+            is_dir = os.path.isdir(root_folder + f)
+            if correct_type or is_dir:
+                json_node = jstree.Node(f, id + f).jsonData()
+                if is_dir : json_node['children'] = True
+                if correct_type: json_node['icon'] = 'jstree-file'
+                json.append(json_node)
+    return gluon.contrib.simplejson.dumps(json, separators=(',',':'))
