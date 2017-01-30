@@ -504,6 +504,10 @@ Database.prototype = {
         var disable = !elem.prop('disabled');
         elem.prop('disabled', disable);
         elem.parents("tr").prop('hidden', disable);
+        if (disable) {
+            elem.val(undefined);
+            $('#filename').val(undefined);
+        }
 
         var pre_process = $('#pre_process');
         pre_process.prop('disabled', disable);
