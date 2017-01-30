@@ -185,10 +185,18 @@ def add_form():
 
     if error=="" :
             
+        filename = request.vars['filename']
+        data_file = None
+        filepath = ""
+        name_list = []
+        if request.vars['filename'] != "":
+            name_list = request.vars['filename'].split('/')
+            filename = name_list[-1]
+
         #add sequence_file to the db
         id = db.sequence_file.insert(sampling_date=request.vars['sampling_date'],
                             info=request.vars['file_info'],
-                            filename=request.vars['filename'],
+                            filename=filename,
                             pre_process_id=pre_process,
                             pre_process_flag=pre_process_flag,
                             provider=auth.user_id)
