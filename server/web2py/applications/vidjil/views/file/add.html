@@ -8,6 +8,16 @@
     <input type="hidden" id="sample_type" name="sample_type" value="{{=sample_type}}" />
     <table>
         <tbody>
+                        <tr class='db_table_split' ><td colspan="2"> file source </td></tr>
+            <tr>
+                <td>file source</td>
+                <td>
+                    <label for="file_source_computer">my computer</label>
+                    <input type="radio" id="file_source_computer" name="file_source" value="computer" onchange="db.toggle_file_source()" checked="checked"/>
+                    <label for="file_source_nfs">network</label>
+                    <input type="radio" id="file_source_nfs" name="file_source" value="nfs" onchange="db.toggle_file_source()"/>
+                </td>
+            </tr>
 			<tr class='db_table_split' ><td colspan="2"> sequence file(s) </td></tr>
             <tr>
                 <td><label for="pre_process" id="pre_process__label">pre-process scenario: </label></td>
