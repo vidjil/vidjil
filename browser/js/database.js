@@ -519,7 +519,6 @@ Database.prototype = {
         var enable = tree.parents("tr").prop('hidden');
         tree.parents("tr").prop('hidden', !enable);
         if (enable) {
-            console.log("enable");
             tree.jstree({
                 "plugins" : ["sort"],
                 'core' : {
@@ -538,7 +537,6 @@ Database.prototype = {
                 $('#filename').val(data.selected);
             });
         } else {
-            console.log('disable')
             $.jstree.destroy();
             tree.off('select_node.jstree');
             $('#filename').val(undefined);
