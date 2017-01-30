@@ -128,6 +128,20 @@ def add():
                    sample_type = sample_set.sample_type,
                    run = run)
 
+def manage_filename(filename, sequence_file_id):
+    filepath = ""
+    name_list = []
+    name_list = request.vars['filename'].split('/')
+    filename = name_list[-1]
+    data = dict(filename=filename)
+
+    if len(name_list) > 1:
+        filepath = defs.FILE_SOURCE + '/' + request.vars['filename']
+        split_file = filename.split('.')
+        data_file = "%s_%d.%s" % ('.'.join(split_file[0:-1]), sequence_file_id, split_file[-1])
+        data['data_file'] = data_file
+
+    return (data, filepath)
 
 def add_form(): 
     error = ""
@@ -179,34 +193,25 @@ def add_form():
             error += " invalid sample_set %s" % request.vars['sample_set_id']
     pre_process = None
     pre_process_flag = "DONE"
-    if request.vars['pre_process'] != "0":
+    if request.vars['pre_process'] is not None and request.vars['pre_process'] != "0":
         pre_process = request.vars['pre_process']
         pre_process_flag = "WAIT"
 
     if error=="" :
-            
-        filename = request.vars['filename']
-        data_file = None
-        filepath = ""
-        name_list = []
-        if request.vars['filename'] != "":
-            name_list = request.vars['filename'].split('/')
-            filename = name_list[-1]
 
         #add sequence_file to the db
         id = db.sequence_file.insert(sampling_date=request.vars['sampling_date'],
                             info=request.vars['file_info'],
-                            filename=filename,
                             pre_process_id=pre_process,
                             pre_process_flag=pre_process_flag,
                             provider=auth.user_id)
 
-        if len(name_list) > 1:
-            filepath = defs.FILE_SOURCE + '/' + request.vars['filename']
-            split_file = filename.split('.')
-            data_file = "%s_%d.%s" % ('.'.join(split_file[0:-1]), id, split_file[-1])
-            os.symlink(filepath, defs.DIR_SEQUENCES + data_file)
-            db.sequence_file[id] = dict(data_file=data_file)
+        if request.vars['filename'] != "":
+            data, filepath = manage_filename(request.vars["filename"], id)
+            if data['data_file'] is not None:
+                os.symlink(filepath, defs.DIR_SEQUENCES + data['data_file'])
+            db.sequence_file[id] = data
+
 
         ids_sample_set = []
         #add sequence_file to a run sample_set
