@@ -617,14 +617,8 @@ def restart_pre_process():
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def filesystem():
-    paths = []
     id = "" if request.vars["node"] is None else request.vars["node"] + '/'
     root_folder = defs.FILE_SOURCE + id
-    log.debug(id)
-    #for dest in os.walk(root_folder):
-    #    for filetype in defs.FILE_TYPES:
-    #        for idx, f in enumerate(glob(os.path.join(dest[0], '*.%s' % filetype))):
-    #            paths.append(jstree.Path(f, f + str(idx)))
     json = []
     for idx, f in enumerate(os.listdir(root_folder)):
         correct_type = f.split('.')[-1] in defs.FILE_TYPES
@@ -635,6 +629,4 @@ def filesystem():
             if correct_type: json_node['icon'] = 'jstree-file'
             json.append(json_node)
     res = json
-    #res = jstree.JSTree(paths).jsonData()
-    #res = [{ "text" : "Root 1", "children" : True  },{ "text" : "Root 2", "children" : True  }]
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
