@@ -1,4 +1,8 @@
 {
+"species": "Fake",
+"species_taxon_id": 123,
+"systems": {
+
     "Y-Vb/Jg": {
         "shortcut": "y",
         "description": "Fake chimera locus",
@@ -25,5 +29,6 @@
         "parameters": {
             "seed": "12s"
         }
+    }
     }
  }

@@ -131,6 +131,9 @@ class MultiGermline {
   bool one_index_per_germline;
   list <Germline*> germlines;
 
+  string species;
+  int species_taxon_id;
+
   // A unique index can be used
   IKmerStore<KmerAffect> *index;
 
