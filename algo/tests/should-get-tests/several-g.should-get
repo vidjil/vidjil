@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline -g $VIDJIL_DIR/germline/isotypes.g -i $VIDJIL_DIR/data/isotypes.fa
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline -g $VIDJIL_DIR/germline/homo-sapiens-isotypes.g -i $VIDJIL_DIR/data/isotypes.fa
 
 $ Report the correct species
 1: Homo sapiens .9606.
