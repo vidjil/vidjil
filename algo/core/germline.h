@@ -142,7 +142,15 @@ class MultiGermline {
 
   void insert(Germline *germline);
   void add_germline(Germline *germline);
-  void build_from_json(string path, string json_filename, int filter, int max_indexing);
+
+  /**
+   * Build from a json .g germline file
+   *   path: path, such as 'germline/'
+   *   json_filename_and_filter: filename, optionally embedding a filter, such as 'homo-sapiens.g:IGH,TRG'
+   *   filter: see GERMLINES_FILTER
+   *   max_indexing:
+   */
+  void build_from_json(string path, string json_filename_and_filter, int filter, int max_indexing);
 
   /**
    * Finishes the construction of the multi germline so that it can be used

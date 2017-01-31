@@ -256,9 +256,20 @@ void MultiGermline::add_germline(Germline *germline)
   germlines.push_back(germline);
 }
 
-void MultiGermline::build_from_json(string path, string json_filename, int filter, int max_indexing)
+void MultiGermline::build_from_json(string path, string json_filename_and_filter, int filter, int max_indexing)
 {
-  //parse germlines.data
+
+  //extract json_filename and systems_filter
+  string json_filename = json_filename_and_filter;
+  string systems_filter = "";
+
+  size_t pos_lastcolon = json_filename_and_filter.find_last_of(':');
+  if (pos_lastcolon != std::string::npos) {
+    json_filename = json_filename_and_filter.substr(0, pos_lastcolon);
+    systems_filter = "," + json_filename_and_filter.substr(pos_lastcolon+1) + "," ;
+  }
+
+  //parse .g file
   ifstream germline_data(path + "/" + json_filename);
   string content( (std::istreambuf_iterator<char>(germline_data) ),
                   (std::istreambuf_iterator<char>()    ) );
@@ -279,6 +290,14 @@ void MultiGermline::build_from_json(string path, string json_filename, int filte
     char shortcut = it.value()["shortcut"].dump()[1];
     string code = it.key();
     string seed = it.value()["parameters"]["seed"];
+
+    if (systems_filter.size())
+      {
+        // match 'TRG' inside 'IGH,TRG'
+        // TODO: code a more flexible match, regex ?
+        if (systems_filter.find("," + code + ",") == string::npos)
+          continue ;
+      }
 
     switch (filter) {
     case GERMLINES_REGULAR:
