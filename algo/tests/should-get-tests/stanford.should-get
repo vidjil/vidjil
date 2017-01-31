@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -e 10 -z 0 -V $VIDJIL_DIR/germline/IGHV.fa -D $VIDJIL_DIR/germline/IGHD.fa -J $VIDJIL_DIR/germline/IGHJ.fa -s \\\\#\\\\#\\\\#\\\\#\\\\#\\\\#-\\\\#\\\\#\\\\#\\\\#\\\\#\\\\# $VIDJIL_DIR/data/Stanford_S22.fasta
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -e 10 -z 0 -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -D $VIDJIL_DIR/germline/homo-sapiens/IGHD.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa -s \\\\#\\\\#\\\\#\\\\#\\\\#\\\\#-\\\\#\\\\#\\\\#\\\\#\\\\#\\\\# $VIDJIL_DIR/data/Stanford_S22.fasta
 
 $ Germlines are custom
 1: custom germlines
@@ -9,7 +9,7 @@ $ Parses IGHV.fa germline
 $ Parses IGHD.fa germline
 1: 1070 bp in  44 sequences
 
-$ Parses germline/IGHJ.fa
+$ Parses germline/homo-sapiens/IGHJ.fa
 1: 701 bp in  13 sequences
 
 $ Find the good index load

@@ -1,5 +1,5 @@
 !NO_LAUNCHER:
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -z 200 -G $VIDJIL_DIR/germline/IGH $VIDJIL_DIR/data/trd-dd2-dd3.fa
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -z 200 -G $VIDJIL_DIR/germline/homo-sapiens/IGH $VIDJIL_DIR/data/trd-dd2-dd3.fa
 
 $ Warning, -z
 1:WARNING

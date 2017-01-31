@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -c segment -G $VIDJIL_DIR/germline/IGH -A $VIDJIL_DIR/data/overlap-d-j.fa | grep -v web | tail -4 | tr -d '\\\\n' | wc -c
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -c segment -G $VIDJIL_DIR/germline/homo-sapiens/IGH -A $VIDJIL_DIR/data/overlap-d-j.fa | grep -v web | tail -4 | tr -d '\\\\n' | wc -c
 
 $ Exported sequence has all the bases
 1:116

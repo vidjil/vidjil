@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -A -G $VIDJIL_DIR/germline/TRB $VIDJIL_DIR/data/trb-only-VJ.fa ; cat out/trb-only-VJ.vidjil
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -A -G $VIDJIL_DIR/germline/homo-sapiens/TRB $VIDJIL_DIR/data/trb-only-VJ.fa ; cat out/trb-only-VJ.vidjil
 
 $ Segments the read on TRB (the information is given twice, stdout + .vidjil)
 2: TRB .* -> .* 1

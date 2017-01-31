@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -y 0 -x 100 -G $VIDJIL_DIR/germline/IGH $VIDJIL_DIR/data/Stanford_S22.fasta
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -y 0 -x 100 -G $VIDJIL_DIR/germline/homo-sapiens/IGH $VIDJIL_DIR/data/Stanford_S22.fasta
 
 $ Analyze the good number of sequences in Stanford S22 
 1: found .* of 100 reads

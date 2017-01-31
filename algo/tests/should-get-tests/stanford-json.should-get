@@ -1,5 +1,5 @@
 !REQUIRES: python $VIDJIL_DIR/tools/check_python_version.py
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -3 -z 1 -G $VIDJIL_DIR/germline/IGH -w 60 -r 5 -e 10 -b data  $VIDJIL_DIR/data/Stanford_S22.fasta > /dev/null ; cat out/data.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -3 -z 1 -G $VIDJIL_DIR/germline/homo-sapiens/IGH -w 60 -r 5 -e 10 -b data  $VIDJIL_DIR/data/Stanford_S22.fasta > /dev/null ; cat out/data.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
 
 $ Custom germlines
 1:"species": "custom germlines"
