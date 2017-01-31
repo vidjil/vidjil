@@ -269,12 +269,22 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
     systems_filter = "," + json_filename_and_filter.substr(pos_lastcolon+1) + "," ;
   }
 
-  //parse .g file
-  ifstream germline_data(path + "/" + json_filename);
-  string content( (std::istreambuf_iterator<char>(germline_data) ),
-                  (std::istreambuf_iterator<char>()    ) );
 
-  json germlines = json::parse(content);
+  //open and parse .g file
+  json germlines ;
+
+  try {
+    ifstream germline_data(path + "/" + json_filename);
+
+    string content( (std::istreambuf_iterator<char>(germline_data) ),
+                    (std::istreambuf_iterator<char>()    ) );
+
+    germlines = json::parse(content);
+
+  } catch (const invalid_argument e) {
+    cerr << ERROR_STRING << "Vidjil cannot open .g file " << path + "/" + json_filename << ": " << e.what() << endl;
+    exit(1);
+  }
 
   species = germlines["species"].get<std::string>();
   species_taxon_id = germlines["species_taxon_id"];

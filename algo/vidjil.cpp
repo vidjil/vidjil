@@ -451,6 +451,7 @@ int main (int argc, char **argv)
 
       case 'g':
 	multi_germline = true;
+        germline_system = "multi" ;
         {
           string arg = string(optarg);
           struct stat buffer;
@@ -460,20 +461,14 @@ int main (int argc, char **argv)
                 {
                   // argument is a directory
                   multi_germline_paths_and_files.push_back(make_pair(arg, DEFAULT_MULTI_GERMLINE_FILE)) ;
-                }
-              else
-                {
-                  multi_germline_paths_and_files.push_back(make_pair(extract_dirname(arg), extract_basename(arg, false)));
+                  break ;
                 }
             }
-          else
-             {
-               cerr << ERROR_STRING << "A path or a file must be given with -g" << endl ;
-               exit(1);
-             }
+
+          // argument is not a directory (and basename can include ':' with a filter)
+          multi_germline_paths_and_files.push_back(make_pair(extract_dirname(arg), extract_basename(arg, false)));
+          break ;
         }
-	germline_system = "multi" ;
-	break;
 
       case 'd':
         several_D = true;
