@@ -1,4 +1,7 @@
-DATA=IGHV.fa IGHD.fa IGHJ.fa IGKV.fa IGKJ.fa IGLV.fa IGLJ.fa TRAV.fa TRAJ.fa TRDV.fa TRDD.fa TRDJ.fa TRGV.fa TRGJ.fa IGHD_upstream.fa  TRBD_upstream.fa  TRDD2_upstream.fa  TRDD_upstream.fa IGHJ_downstream.fa  IGKJ_downstream.fa  IGLJ_downstream.fa  TRAJ_downstream.fa  TRBJ_downstream.fa  TRDD3_downstream.fa  TRDJ_downstream.fa  TRGJ_downstream.fa IGK-INTRON.fa IGK-KDE.fa
+
+DEFAULT_G=homo-sapiens.g
+
+DATA=$(wildcard homo-sapiens/*.fa)
 OTHER_DATA=$(wildcard IGHC=*.fa) $(wildcard mus-musculus/*.fa) $(wildcard rattus-norvegicus/*.fa) $(wildcard ???[VDJ].fa) # Only for make clean
 GERMLINE_JS=../browser/js/germline.js
 
@@ -8,8 +11,8 @@ germline: $(GERMLINE_JS) $(DATA)
 
 js: $(GERMLINE_JS)
 
-$(GERMLINE_JS): $(DATA) germlines.data
-	python buildBrowserGermline.py germlines.data $@
+$(GERMLINE_JS): $(DATA) $(DEFAULT_G)
+	python buildBrowserGermline.py $(DEFAULT_G) $@
 
 get-all-data: clean $(DATA)
 	sh get-germline
