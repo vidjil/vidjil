@@ -44,9 +44,9 @@ void testOverlap()
 
 void testFineSegment(IndexTypes index)
 {
-  Fasta seqV("../../germline/IGHV.fa", 2);
-  Fasta seqD("../../germline/IGHD.fa", 2);
-  Fasta seqJ("../../germline/IGHJ.fa", 2);
+  Fasta seqV("../../germline/homo-sapiens/IGHV.fa", 2);
+  Fasta seqD("../../germline/homo-sapiens/IGHD.fa", 2);
+  Fasta seqJ("../../germline/homo-sapiens/IGHJ.fa", 2);
   
   OnlineFasta data("../../data/Stanford_S22.fasta", 1, " ");
   data.next();
@@ -99,8 +99,8 @@ void testFineSegment(IndexTypes index)
  */
 void testSegmentOverlap(IndexTypes index)
 {
-  Fasta seqV("../../germline/TRGV.fa", 2);
-  Fasta seqJ("../../germline/TRGJ.fa", 2);
+  Fasta seqV("../../germline/homo-sapiens/TRGV.fa", 2);
+  Fasta seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
   
   Fasta data("../../data/bug-segment-overlap.fa", 1, " ");
   
@@ -135,8 +135,8 @@ void testSegmentOverlap(IndexTypes index)
 }
 
 void testSegmentationCause(IndexTypes index) {
-  Fasta seqV("../../germline/TRGV.fa", 2);
-  Fasta seqJ("../../germline/TRGJ.fa", 2);
+  Fasta seqV("../../germline/homo-sapiens/TRGV.fa", 2);
+  Fasta seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
   
   Fasta data("../../data/segmentation.fasta", 1, " ");
 
@@ -248,8 +248,8 @@ void testSegmentationCause(IndexTypes index) {
 }
 
 void testExtractor(IndexTypes index) {
-  Fasta seqV("../../germline/TRGV.fa", 2);
-  Fasta seqJ("../../germline/TRGJ.fa", 2);
+  Fasta seqV("../../germline/homo-sapiens/TRGV.fa", 2);
+  Fasta seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
   
   OnlineFasta data("../../data/segmentation.fasta", 1, " ");
 

@@ -342,8 +342,8 @@ void testGetMaximum() {
  */
 template<template <class> class T>
 void testBugAffectAnalyser() {
-  Fasta seqV("../../germline/IGHV.fa", 2);
-  Fasta seqJ("../../germline/IGHJ.fa", 2);
+  Fasta seqV("../../germline/homo-sapiens/IGHV.fa", 2);
+  Fasta seqJ("../../germline/homo-sapiens/IGHJ.fa", 2);
   Fasta data("../../data/bug-revcomp.fa", 1, " ");
 
   int k = 9;

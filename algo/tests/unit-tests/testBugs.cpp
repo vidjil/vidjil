@@ -9,8 +9,8 @@ using namespace std;
 
 void testSegmentationBug1(IndexTypes index, int delta_min) {
   string buggy_sequences = "bugs/kmersegment.fa";
-  Fasta seqV("../../germline/TRGV.fa");
-  Fasta seqJ("../../germline/TRGJ.fa");
+  Fasta seqV("../../germline/homo-sapiens/TRGV.fa");
+  Fasta seqJ("../../germline/homo-sapiens/TRGJ.fa");
 
   Germline *germline ;
   germline = new Germline("custom", 'x', seqV, seqV, seqJ, delta_min, "##############");
