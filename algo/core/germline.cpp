@@ -232,6 +232,7 @@ ostream &operator<<(ostream &out, const Germline &germline)
 MultiGermline::MultiGermline(IndexTypes indexType, bool _one_index_per_germline):indexType(indexType)
 {
   species = "custom germlines" ;
+  species_taxon_id = 0 ;
   index = NULL;
   one_index_per_germline = _one_index_per_germline;
 }
