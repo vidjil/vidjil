@@ -8,7 +8,9 @@ def get_required_files(germlines_data):
 
     The function returns a list of the files (uniqueness is guaranteed)
     '''
-    germlines_json = json.load(open(germlines_data, 'r'))
+    g_json = json.load(open(germlines_data, 'r'))
+    path = g_json['path']
+    germlines_json = g_json['systems']
 
     files = []
     for germline in germlines_json.keys():
@@ -16,6 +18,7 @@ def get_required_files(germlines_data):
             for gene in ['5', '4', '3']:
                 if gene in recombination:
                     for f in recombination[gene]:
+                        f = path + '/' + f
                         if f not in files:
                             files.append(f)
     return files
