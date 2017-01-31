@@ -267,6 +267,8 @@ void MultiGermline::build_from_json(string path, string json_filename, int filte
   species = germlines["species"].get<std::string>();
   species_taxon_id = germlines["species_taxon_id"];
 
+  path += "/" + germlines["path"].get<std::string>();
+
   json j = germlines["systems"];
   
   //for each germline
