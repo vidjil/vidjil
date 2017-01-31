@@ -178,7 +178,7 @@ UPSTREAM_REGIONS=['IGHD', 'TRDD', 'TRBD', 'TRDD2']
 # Be careful, 'IGHD' regex for UPSTREAM_REGIONS also matches IGHD*0? constant regions.
 
 SPECIES = {
-    "Homo sapiens": './', 
+    "Homo sapiens": 'homo-sapiens/',
     "Mus musculus": 'mus-musculus/',
     "Rattus norvegicus": 'rattus-norvegicus/',
     "Rattus norvegicus_BN/SsNHsdMCW": 'rattus-norvegicus/',
