@@ -158,14 +158,16 @@ void usage(char *progname, bool advanced)
        << "  -# <string>   separator for headers in the reads file (default: '" << DEFAULT_READ_HEADER_SEPARATOR << "')" << endl
        << endl ;
 
-  cerr << "Germline databases (at least one -V/(-D)/-J, or -G, or -g option must be given for all commands except -c " << COMMAND_GERMLINES << ")" << endl
-       << "  -V <file>     V germline multi-fasta file" << endl
-       << "  -D <file>     D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components" << endl
-       << "  -J <file>     J germline multi-fasta file" << endl
-       << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)" << endl
-       << "  -g <path>     multiple locus/germlines. In the path <path>, takes '" << DEFAULT_MULTI_GERMLINE_FILE << "' to select locus and parameters" << endl
-       << "                Selecting '-g germline' processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations" << endl
-       << "                Files different than '" << DEFAULT_MULTI_GERMLINE_FILE << "', for example for other species, can also be provided with -g <file>" << endl
+  cerr << "Germline databases (at least one -g or -V/(-D)/-J option must be given for all commands except -c " << COMMAND_GERMLINES << ")" << endl
+       << "  -g <.g file>(:filter)" << endl
+       << "                multiple locus/germlines, with tuned parameters." << endl
+       << "                Common values are '-g germline/homo-sapiens.g'    '-g germline/mus-musculus.g'" << endl
+       << "                The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'" << endl
+       << "  -g <path>     multiple locus/germlines, shortcut for '-g <path>/" << DEFAULT_MULTI_GERMLINE_FILE << "'" << endl
+       << "                processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations" << endl
+       << "  -V <file>     custom V germline multi-fasta file" << endl
+       << "  -D <file>     custom D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components" << endl
+       << "  -J <file>     custom J germline multi-fasta file" << endl
        << endl
 
        << "Locus/recombinations" << endl
@@ -261,11 +263,12 @@ void usage(char *progname, bool advanced)
 
        << endl 
        << "Examples (see doc/algo.org)" << endl
-       << "  " << progname << " -c clones   -G germline/IGH -3       data/Stanford_S22.fasta" << endl
-       << "  " << progname << " -c clones   -g germline -i -2 -3     data/Stanford_S22.fasta   # (detect the locus for each read, including unusual/unexpected recombinations)" << endl
-       << "  " << progname << " -c windows  -g germline -i -2 -uu -U data/Stanford_S22.fasta   # (detect the locus, splits all the reads into large files)" << endl
-       << "  " << progname << " -c segment  -G germline/IGH -3       data/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing)" << endl
-       << "  " << progname << " -c germlines                         data/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
+       << "  " << progname << " -c clones   -g germline/homo-sapiens.g     -2 -3     data/Stanford_S22.fasta   # (basic usage, detect the locus for each read, including unusual/unexpected recombinations)" << endl
+       << "  " << progname << " -c clones   -g germline/homo-sapiens.g:IGH    -3     data/Stanford_S22.fasta   # (restrict to IGH complete locus)" << endl
+       << "  " << progname << " -c clones   -g germline/homo-sapiens.g     -2 -3     data/Stanford_S22.fasta   # (detect the locus for each read, including unusual/unexpected recombinations)" << endl
+       << "  " << progname << " -c windows  -g germline/homo-sapiens.g     -2 -uu -U data/Stanford_S22.fasta   # (detect the locus, splits all the reads into large files)" << endl
+       << "  " << progname << " -c segment  -g germline/homo-sapiens.g     -2 -3     data/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing)" << endl
+       << "  " << progname << " -c germlines                                         data/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
     ;
   exit(1);
 }
@@ -659,7 +662,7 @@ int main (int argc, char **argv)
 
   if (!germline_system.size() && (command != CMD_GERMLINES))
     {
-      cerr << ERROR_STRING << "At least one germline must be given with -V/(-D)/-J, or -G, or -g." << endl ;
+      cerr << ERROR_STRING << "At least one germline must be given with -g or -V/(-D)/-J." << endl ;
       exit(1);
     }
 
