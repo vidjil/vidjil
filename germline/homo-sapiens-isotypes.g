@@ -2,6 +2,8 @@
     "species": "Homo sapiens",
     "species_taxon_id": 9606,
 
+    "path": "homo-sapiens",
+
     "systems": {
 
         "IgVC": {
