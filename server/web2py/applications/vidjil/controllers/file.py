@@ -7,6 +7,7 @@ import os.path
 import datetime
 from controller_utils import error_message
 import jstree
+import base64
 
 
 if request.env.http_origin:
@@ -127,7 +128,7 @@ def add():
                    sample_type = sample_set.sample_type,
                    run = run)
 
-def manage_filename(filename, sequence_file_id):
+def manage_filename(filename):
     filepath = ""
     name_list = []
     name_list = request.vars['filename'].split('/')
@@ -137,7 +138,11 @@ def manage_filename(filename, sequence_file_id):
     if len(name_list) > 1:
         filepath = defs.FILE_SOURCE + '/' + request.vars['filename']
         split_file = filename.split('.')
-        data_file = "%s_%d.%s" % ('.'.join(split_file[0:-1]), sequence_file_id, split_file[-1])
+        uuid_key = db.uuid().replace('-', '')[-16:]
+        encoded_filename = base64.b16encode('.'.join(split_file[0:-1])).lower()
+        data_file = "sf.%s.%s.%s" % (
+                uuid_key, encoded_filename, split_file[-1]
+            )
         data['data_file'] = data_file
 
     return (data, filepath)
@@ -207,7 +212,7 @@ def add_form():
                             provider=auth.user_id)
 
         if request.vars['filename'] != "":
-            data, filepath = manage_filename(request.vars["filename"], id)
+            data, filepath = manage_filename(request.vars["filename"])
             if data['data_file'] is not None:
                 os.symlink(filepath, defs.DIR_SEQUENCES + data['data_file'])
             db.sequence_file[id] = data
@@ -407,7 +412,7 @@ def edit_form():
                                                         provider=auth.user_id)
 
         if request.vars['filename'] != "":
-            data, filepath = manage_filename(request.vars["filename"], int(request.vars["id"]))
+            data, filepath = manage_filename(request.vars["filename"])
             if 'data_file' in data:
                 os.symlink(filepath, defs.DIR_SEQUENCES + data['data_file'])
             db.sequence_file[request.vars["id"]] = data
