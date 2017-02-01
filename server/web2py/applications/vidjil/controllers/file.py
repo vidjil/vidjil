@@ -161,6 +161,10 @@ def add_form():
             
     if request.vars['filename'] == None :
         error += " missing file"
+    else:
+        data, filepath = manage_filename(request.vars["filename"])
+        filename = data['filename']
+
     if request.vars['patient_id'] == '' and request.vars['run_id'] == "" and request.vars['generic_id'] == "":
         error += " missing patient or run or sample_set"
         
@@ -177,7 +181,7 @@ def add_form():
                 &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
             ).select(db.sequence_file.ALL)
         for row in query :
-            if row.filename == request.vars['filename'] :
+            if row.filename == filename :
                 error += " this sequence file already exists for this patient"
                 break
             
@@ -212,7 +216,6 @@ def add_form():
                             provider=auth.user_id)
 
         if request.vars['filename'] != "":
-            data, filepath = manage_filename(request.vars["filename"])
             if data['data_file'] is not None:
                 os.symlink(filepath, defs.DIR_SEQUENCES + data['data_file'])
             db.sequence_file[id] = data
