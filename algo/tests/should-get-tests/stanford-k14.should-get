@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -y 0 -k 14 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DIR/data/Stanford_S22.fasta
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -y 0 -k 14 -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa $VIDJIL_DIR/data/Stanford_S22.fasta
 !LOG: stanford-k14.log
 
 $ Find the good number of windows in Stanford S22 (contiguous seed 14)
