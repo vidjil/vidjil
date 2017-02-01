@@ -155,8 +155,8 @@ Germline.prototype = {
         if (type=="D") type2="4"
         if (type=="J") type2="3"
         
-        if (typeof this.m.germlineList.list[system] != 'undefined'){
-            
+        if (typeof this.m.germlineList.list[system] != 'undefined'
+            && typeof this.m.germlineList.list[system]['recombinations'] != 'undefined'){
             if (typeof this.m.germlineList.list[system]['recombinations'][type2] != 'undefined' ){
                 for (var i=0; i<this.m.germlineList.list[system]['recombinations'][type2].length; i++){
                     var filename = this.m.germlineList.list[system]['recombinations'][type2][i] 
