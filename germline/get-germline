@@ -5,5 +5,5 @@ wget -O - http://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fas
 
 wget -O IMGT_RELEASE http://www.imgt.org/download/GENE-DB/RELEASE
 
-wget -N -P homo-sapiens http://rbx.vidjil.org/browser/germline/IGK-INTRON.fa
-wget -N -P homo-sapiens http://rbx.vidjil.org/browser/germline/IGK-KDE.fa
+wget -N -P homo-sapiens http://vidjil.org/germline/IGK-INTRON.fa
+wget -N -P homo-sapiens http://vidjil.org/germline/IGK-KDE.fa
