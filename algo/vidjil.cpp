@@ -398,7 +398,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHadiI124g:G:V:D:J:k:r:vw:e:E:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3E:t:#:q")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHadiI124g:V:D:J:k:r:vw:e:E:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3E:t:#:q")) != EOF)
 
     switch (c)
       {
@@ -493,22 +493,6 @@ int main (int argc, char **argv)
       case '4':
         multi_germline_unexpected_recombinations_1U = true ;
         break;
-
-      case 'G':
-	germline_system = string(optarg);
-	f_reps_V.push_back((germline_system + "V.fa").c_str()) ;
-        // Takes D only if it exists
-        {
-          struct stat buffer; 
-          string putative_f_rep_D = germline_system + "D.fa" ;
-          if (stat(putative_f_rep_D.c_str(), &buffer) == 0)
-            {
-              f_reps_D.push_back(putative_f_rep_D.c_str()) ;
-              delta_min = DEFAULT_DELTA_MIN_D ;
-            }
-        }
-	f_reps_J.push_back((germline_system + "J.fa").c_str()) ;
-	germline_system = extract_basename(germline_system);
 
 	break;
 
