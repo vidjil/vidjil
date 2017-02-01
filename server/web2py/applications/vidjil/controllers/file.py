@@ -214,9 +214,10 @@ def add_form():
                             pre_process_id=pre_process,
                             pre_process_flag=pre_process_flag,
                             provider=auth.user_id)
-
+        log_message = "upload started"
         if request.vars['filename'] != "":
             if data['data_file'] is not None:
+                log_message = "registered"
                 os.symlink(filepath, defs.DIR_SEQUENCES + data['data_file'])
             db.sequence_file[id] = data
 
@@ -252,7 +253,7 @@ def add_form():
         
         
         res = {"file_id" : id,
-               "message": "(%s) file {%s} : upload started: %s" % (','.join(map(str,ids_sample_set)), id, request.vars['filename']),
+               "message": "(%s) file {%s} : %s: %s" % (','.join(map(str,ids_sample_set)), id, log_message, request.vars['filename']),
                "redirect": "sample_set/index",
                "args" : redirect_args
                }
