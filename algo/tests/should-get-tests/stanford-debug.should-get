@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -\# FA -k 16 -z 0 -w 60 -r 5 -o out2 -uuu -U -v -G $VIDJIL_DIR/germline/homo-sapiens/IGH $VIDJIL_DIR/data/Stanford_S22.fasta ; tail out2/Stanford_S22.segmented.vdj.fa ; grep UNSEG out2/Stanford_S22.unsegmented.vdj.fa
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -\# FA -k 16 -z 0 -w 60 -r 5 -o out2 -uuu -U -v -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DIR/data/Stanford_S22.fasta ; tail out2/Stanford_S22.segmented.vdj.fa ; grep UNSEG out2/Stanford_S22.unsegmented.vdj.fa
 # Testing uncommon and debug options 
 
 $ verbose (-v)

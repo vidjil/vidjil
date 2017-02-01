@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -t 0 -G $VIDJIL_DIR/germline/homo-sapiens/IGH -FaW GAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACT $VIDJIL_DIR/data/Stanford_S22.fasta ; cat out/seq/clone.fa-1
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -t 0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -FaW GAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACT $VIDJIL_DIR/data/Stanford_S22.fasta ; cat out/seq/clone.fa-1
 
 $ Keep only one windows, the one given by -W, with only 5 reads (it is actually the second clone in Stanford_S22.fasta)
 1: keep 1 windows in 5 reads
