@@ -3,7 +3,7 @@ import os
 import os.path
 
 def rbx_link(patient_id, config_id):
-    return 'http://rbx.vidjil.org/browser/?patient=%d&config=%d' % (patient_id,config_id)
+    return 'http://app.vidjil.org/browser/?patient=%d&config=%d' % (patient_id,config_id)
 
 def print_patient_info(patient_id):
     patient = db.patient[patient_id]

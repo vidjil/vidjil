@@ -6,7 +6,7 @@
 DIR_BACKUP=/mnt/data/backup/vidjil/
 
 # Remote server
-VIDJIL_SERVER=vidjil-bak@rbx.vidjil.org
+VIDJIL_SERVER=vidjil-bak@db.vidjil.org
 
 options=$1
 filename=$(ssh ${VIDJIL_SERVER} "cd /home/vidjil/server; sh ./backup.sh ${options} ~" | tail -1)

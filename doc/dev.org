@@ -64,7 +64,7 @@ able to open =.vidjil= files with the =import/export= menu.
 
 To work with actual data, the easiest way is to copy =js/conf.js.sample= to =js/conf.js=.
 This will unlock the =patients= menu and allow your local browser
-to access the public server at http://rbx.vidjil.org/.
+to access the public server at http://app.vidjil.org/.
 
 
 ** Browser API
@@ -73,9 +73,9 @@ The browser can be opened on a data file specified from a =data= attribute,
 and optionally on an analysis file specified from a =analysis= attribute,
 as in the following URLs on our test server:
 
-- http://rbx.vidjil.org/browser/?data=test.vidjil
-- http://rbx.vidjil.org/browser/?data=test.vidjil&analysis=test.analysis
-- http://rbx.vidjil.org/browser/?data=http://rbx.vidjil.org/browser/test.vidjil
+- http://app.vidjil.org/browser/?data=test.vidjil
+- http://app.vidjil.org/browser/?data=test.vidjil&analysis=test.analysis
+- http://app.vidjil.org/browser/?data=http://app.vidjil.org/browser/test.vidjil
 
 Both GET and POST requests are accepted.
 Note that the =browser/index.html= file and the =.vidjil/.analysis= files should be hosted on the same server.

@@ -35,7 +35,7 @@ def print_fuse_files(fused_files):
         else:
             results = ' '.join([defs.DIR_RESULTS+'{0}'.format(f) for f in result_filenames])
             comments = ' '.join(sequence_filenames)
-            print ("python %s/fuse.py -o %s/%s -t 100 %s # %s http://rbx.vidjil.org/browser/index.html?sample_set_id=%d&config=%d"
+            print ("python %s/fuse.py -o %s/%s -t 100 %s # %s http://app.vidjil.org/browser/index.html?sample_set_id=%d&config=%d"
                    % (os.path.abspath(defs.DIR_FUSE), defs.DIR_RESULTS,
                       fused.fused_file, results, comments,
                       fused.sample_set_id, fused.config_id))

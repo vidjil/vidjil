@@ -6,7 +6,7 @@
 ### Email notifications for server errors
 SMTP_SERVER = 'localhost'
 # SMTP_SERVER = 'logging' # no mail
-FROM_EMAIL = 'rbx@vidjil.org'
+FROM_EMAIL = 'notifications@vidjil.org'
 ADMIN_EMAILS = ['notifications@vidjil.org']
 
 ### address for the sql database
