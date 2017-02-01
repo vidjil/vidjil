@@ -2,5 +2,5 @@
 !EXIT_CODE: 1
 
 $ Error, incorrect *.g
-1:error.* cannot properly read
+1:error.* cannot open .g file
 

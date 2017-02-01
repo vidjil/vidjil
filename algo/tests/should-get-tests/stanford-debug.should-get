@@ -5,7 +5,7 @@ $ verbose (-v)
 2:auditioned sequences
 
 $ segmented.fa (-U)
-2:>lcl.FLN1.* VJ .* seed IGH SEG_[+]
+2:>lcl.FLN1.* VJ .* seed custom SEG_[+]
 
 $ unsegmented.fa (-u)
 4:>lcl.FLN1.* UNSEG
