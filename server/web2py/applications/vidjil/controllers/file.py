@@ -174,6 +174,7 @@ def add_form():
         for row in query :
             if row.filename == request.vars['filename'] :
                 error += " this sequence file already exists for this patient"
+                break
             
     if request.vars['run_id'] != '' :
         try:
