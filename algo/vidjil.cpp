@@ -172,7 +172,6 @@ void usage(char *progname, bool advanced)
 
        << "Locus/recombinations" << endl
        << "  -d            try to detect several D (experimental)" << endl
-       << "  -i            try to detect incomplete/unusual recombinations (locus with '+', must be used with -g)" << endl
        << "  -2            try to detect unexpected recombinations (must be used with -g)" << endl
        << endl ;
 
@@ -375,7 +374,6 @@ int main (int argc, char **argv)
   bool several_D = false;
 
   bool multi_germline = false;
-  bool multi_germline_incomplete = false;
   bool multi_germline_mark = false;
   bool multi_germline_one_index_per_germline = true;
   bool multi_germline_unexpected_recombinations_12 = false;
@@ -401,7 +399,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHadiI124g:V:D:J:k:r:vw:e:E:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3E:t:#:q")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHadI124g:V:D:J:k:r:vw:e:E:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3E:t:#:q")) != EOF)
 
     switch (c)
       {
@@ -476,10 +474,6 @@ int main (int argc, char **argv)
       case 'd':
         several_D = true;
         break;
-
-      case 'i':
-	multi_germline_incomplete = true;
-	break;
 
       case 'I':
         multi_germline_mark = true;
@@ -907,7 +901,7 @@ int main (int argc, char **argv)
     }
 
       // Should come after the initialization of regular (and possibly pseudo) germlines
-    if (multi_germline_incomplete) {
+    {
       for (pair <string, string> path_file: multi_germline_paths_and_files)
         multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_INCOMPLETE, trim_sequences);
       if (! multigermline->one_index_per_germline) {
