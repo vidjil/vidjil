@@ -267,7 +267,7 @@ void usage(char *progname, bool advanced)
        << "  " << progname << " -c clones   -g germline/homo-sapiens.g     -2 -3     data/Stanford_S22.fasta   # (detect the locus for each read, including unusual/unexpected recombinations)" << endl
        << "  " << progname << " -c windows  -g germline/homo-sapiens.g     -2 -uu -U data/Stanford_S22.fasta   # (detect the locus, splits all the reads into large files)" << endl
        << "  " << progname << " -c segment  -g germline/homo-sapiens.g     -2 -3     data/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing)" << endl
-       << "  " << progname << " -c germlines                                         data/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
+       << "  " << progname << " -c germlines -g germline/homo-sapiens.g              data/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
     ;
   exit(1);
 }
@@ -654,7 +654,7 @@ int main (int argc, char **argv)
   //$$ options: post-processing+display
 
 
-  if (!germline_system.size() && (command != CMD_GERMLINES))
+  if (!germline_system.size())
     {
       cerr << ERROR_STRING << "At least one germline must be given with -g or -V/(-D)/-J." << endl ;
       exit(1);
@@ -837,9 +837,6 @@ int main (int argc, char **argv)
     {
       multi_germline = true ;
       multi_germline_one_index_per_germline = false ;
-
-      if (multi_germline_paths_and_files.size() == 0)
-        multi_germline_paths_and_files.push_back(make_pair(DEFAULT_MULTI_GERMLINE_PATH, DEFAULT_MULTI_GERMLINE_FILE));
     }
 
   MultiGermline *multigermline = new MultiGermline(indexType, multi_germline_one_index_per_germline);
@@ -904,7 +901,7 @@ int main (int argc, char **argv)
     {
       for (pair <string, string> path_file: multi_germline_paths_and_files)
         multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_INCOMPLETE, trim_sequences);
-      if (! multigermline->one_index_per_germline) {
+      if ((! multigermline->one_index_per_germline) && (command != CMD_GERMLINES)) {
         multigermline->insert_in_one_index(multigermline->index, true);
       }
     }
