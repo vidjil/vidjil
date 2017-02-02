@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline -u $VIDJIL_DIR/data/segmentation-2.fa ; cat ./out///segmentation-2.UNSEG_ambiguous.fa ; cat ./out///segmentation-2.UNSEG_too_few_V_J.fa
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRD,TRG,IGH,IGK,IGL -u $VIDJIL_DIR/data/segmentation-2.fa ; cat ./out///segmentation-2.UNSEG_ambiguous.fa ; cat ./out///segmentation-2.UNSEG_too_few_V_J.fa
 
 $ The proper unsegmentation cause is given
 1: UNSEG too short   -> .* 1

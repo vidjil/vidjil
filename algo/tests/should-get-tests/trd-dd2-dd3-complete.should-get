@@ -1,6 +1,6 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -A -g $VIDJIL_DIR/germline $VIDJIL_DIR/data/trd-dd2-dd3.fa
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -A -g $VIDJIL_DIR/germline/homo-sapiens.g:TRD $VIDJIL_DIR/data/trd-dd2-dd3.fa
 
-$ Segment only 2 reads, because there is no -i
+$ Segment only 2 reads, because we do not look for incomplete recombinations
 1:junction detected in 2 reads
 
 $ TRDV3*01-TRDD3*01 reported as "UNSEG only V/5'"
