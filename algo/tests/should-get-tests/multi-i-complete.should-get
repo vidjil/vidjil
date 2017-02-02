@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline -i $VIDJIL_DIR/data/multi-complete.fa
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline $VIDJIL_DIR/data/multi-complete.fa
 
 $ Segment all the seven reads
 1:junction detected in 7 reads
