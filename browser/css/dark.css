@@ -1825,7 +1825,7 @@ label.highlight_label {
   white-space: pre-line;
 }
 #jstree {
-  max-height: 500px;
+  max-height: 300px;
   overflow-y: auto;
 }
 .jstree-anchor {
