@@ -133,7 +133,7 @@ def manage_filename(filename):
     name_list = []
     name_list = request.vars['filename'].split('/')
     filename = name_list[-1]
-    data = dict(filename=filename)
+    data = dict(filename=filename, data_file=None)
 
     if len(name_list) > 1:
         filepath = defs.FILE_SOURCE + '/' + request.vars['filename']
