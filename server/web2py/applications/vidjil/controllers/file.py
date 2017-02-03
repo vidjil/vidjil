@@ -651,5 +651,6 @@ def filesystem():
                 json_node = jstree.Node(f, id + f).jsonData()
                 if is_dir : json_node['children'] = True
                 if correct_type: json_node['icon'] = 'jstree-file'
+                json_node['li_attr']['title'] = f
                 json.append(json_node)
     return gluon.contrib.simplejson.dumps(json, separators=(',',':'))
