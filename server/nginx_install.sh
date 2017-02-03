@@ -220,6 +220,7 @@ sudo -u www-data python -c "from gluon.main import save_password; save_password(
 mkdir /mnt/upload
 mkdir /mnt/upload/uploads
 mkdir /mnt/result
+mkdir -p /mnt/data/tmp
 chown -R www-data:www-data /mnt/upload
 chown -R www-data:www-data /mnt/result
 start uwsgi-emperor
