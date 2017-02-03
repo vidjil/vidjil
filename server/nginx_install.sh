@@ -79,6 +79,9 @@ server {
         ssl_ciphers ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-DSS-AES256-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA;
         ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
         keepalive_timeout    70;
+
+        uwsgi_read_timeout 10m;
+
         location / {
             #uwsgi_pass      127.0.0.1:9001;
             uwsgi_pass      unix:///tmp/web2py.socket;
