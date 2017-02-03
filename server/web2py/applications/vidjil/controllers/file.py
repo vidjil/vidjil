@@ -118,6 +118,7 @@ def add():
                 run = run_date+name+id
 				
 				
+        source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
         return dict(message = T('add file'),
                    generic_list = generic_list,
                    patient_list = patient_list,
@@ -126,7 +127,8 @@ def add():
                    generic = generic,
                    patient = patient,
                    sample_type = sample_set.sample_type,
-                   run = run)
+                   run = run,
+                   source_module_active = source_module_active)
 
 def manage_filename(filename):
     filepath = ""
