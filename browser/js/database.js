@@ -499,6 +499,26 @@ Database.prototype = {
         
     },
 
+    set_jstree: function(elem) {
+        elem.jstree({
+            "plugins" : ["sort"],
+            'core' : {
+                'multiple': false,
+                'data' : {
+                    'url' : function(node){
+                        var address = DB_ADDRESS + '/file/filesystem'
+                        return node.id === '#' ? address
+                                               : address + '?node=' + node.id
+                    },
+                    'dataType' : 'json',
+                },
+            }
+        });
+        elem.on('select_node.jstree', function(event, data){
+            $('#filename').val(data.selected);
+        });
+    },
+
     toggle_upload_fields: function() {
         var elem = $('.upload_field');
         var disable = !elem.prop('disabled');
@@ -519,23 +539,7 @@ Database.prototype = {
         var enable = tree.parents("tr").prop('hidden');
         tree.parents("tr").prop('hidden', !enable);
         if (enable) {
-            tree.jstree({
-                "plugins" : ["sort"],
-                'core' : {
-                    'multiple': false,
-                    'data' : {
-                        'url' : function(node){
-                            var address = DB_ADDRESS + '/file/filesystem'
-                            return node.id === '#' ? address
-                                                   : address + '?node=' + node.id
-                        },
-                        'dataType' : 'json',
-                    },
-                }
-            });
-            tree.on('select_node.jstree', function(event, data){
-                $('#filename').val(data.selected);
-            });
+            this.set_jstree(tree);
         } else {
             $.jstree.destroy();
             tree.off('select_node.jstree');
