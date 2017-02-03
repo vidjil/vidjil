@@ -80,7 +80,9 @@ server {
         ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
         keepalive_timeout    70;
 
+        client_body_temp_path /mnt/data/tmp;
         uwsgi_max_temp_file_size 20480m;
+        uwsgi_temp_path /mnt/data/tmp;
         uwsgi_read_timeout 10m;
 
         location / {
@@ -187,6 +189,7 @@ gid = www-data
 cron = 0 0 -1 -1 -1 python $CWD/web2py/web2py.py -Q -S welcome -M -R scripts/sessions2trash.py -A -o
 no-orphans = true
 ignore-sigpipe = true
+env = TMPDIR=/mnt/data/tmp
 " >/etc/uwsgi/web2py.ini
 
 #Create a configuration file for uwsgi in emperor-mode
