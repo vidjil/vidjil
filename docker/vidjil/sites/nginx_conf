@@ -23,6 +23,7 @@ server {
         ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
         keepalive_timeout    70;
 
+        uwsgi_max_temp_file_size 20480m;
         uwsgi_read_timeout 10m;
 
         location / {
