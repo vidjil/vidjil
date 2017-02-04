@@ -1,0 +1,9 @@
+# Fake chimera sequences, (somewhat unprobable) recombinations involving D genes
+
+>IGHD1-1*01--TRBJ1-1*01 (D with upstream)
+GGGCGCCGGGGCAGATTCTGAACAGCCCCGAGTCACGGTGGGTACAACTGGAACGAC
+tgaacactgaagctttctttggacaaggcaccagactcacagttgtag
+
+>TRAV1-1*01--TRDD3*01 (D with downstream)
+ggagctccagatgaaagactctgcctcttacttctgcgctgtgagaga
+ACTGGGGGATACGCACAGTGCTACAAAACCTACAGAGACCTGTACAAAAACTG
