@@ -220,7 +220,6 @@ function main() {
             var segContainer = document.getElementById(segmenter.id);
             displayVidjilViews(false);
             var funct = function () {
-                console.log('Transition end 1')
                 removePrefixedEvent(segContainer, 'TransitionEnd', funct);
                 cleanVidjilViews();
                 displayVidjilViews(true);
@@ -230,7 +229,6 @@ function main() {
                         // Hide the views to load them, then display them.
                         displayVidjilViews(false);
                         var funct = function () {
-                            console.log('Transition end 2')
                             removePrefixedEvent(segContainer, 'TransitionEnd', funct);
                             processResult(response);
                             displayVidjilViews(true);
