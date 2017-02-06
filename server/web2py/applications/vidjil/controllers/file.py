@@ -593,4 +593,6 @@ def restart_pre_process():
     pre_process = db.pre_process[request.vars["pre_process_id"]]
     if sequence_file is None or not auth.can_modify_file(sequence_file.id):
         return error_message("Permission denied")
+    db.sequence_file[sequence_file.id] = dict(pre_process_flag = 'WAIT')
+    db.commit()
     return schedule_pre_process(sequence_file.id, pre_process.id)
