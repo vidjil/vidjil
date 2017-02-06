@@ -587,10 +587,10 @@ def producer_list():
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def restart_pre_process():
-    if "sequence_file_id" not in request.vars or "pre_process_id" not in request.vars:
+    if "sequence_file_id" not in request.vars:
         return error_message("missing parameter")
     sequence_file = db.sequence_file[request.vars["sequence_file_id"]]
-    pre_process = db.pre_process[request.vars["pre_process_id"]]
+    pre_process = db.pre_process[sequence_file.pre_process_id]
     if sequence_file is None or not auth.can_modify_file(sequence_file.id):
         return error_message("Permission denied")
     db.sequence_file[sequence_file.id] = dict(pre_process_flag = 'WAIT')
