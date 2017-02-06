@@ -346,6 +346,10 @@ of the reads. The consensus sequence can thus be shorter than some reads.
 To make sure that the PCR, the sequencing and the Vidjil analysis went well, several elements can be controlled.
 
 ** Number of analyzed reads
+   :PROPERTIES:
+   :CUSTOM_ID: analyzed-reads
+   :END:
+
 A first control is to check the number of “analyzed reads” in the info panel (top left box).
 This shows the number of reads where Vidjil found some V(D)J recombination in the selected sample.
      
@@ -385,6 +389,9 @@ There can be several causes leading to bad ratios:
       (this can be asserted by inspecting the related clones, checking if there is a large dispersion around the main clone)
 
 ** Control with standard/spike
+   :PROPERTIES:
+   :CUSTOM_ID: spike
+   :END:
 
    - If your sample included a standard/spike control, you should first
      identify the main standard sequence (if that is not already done) and
@@ -393,6 +400,10 @@ There can be several causes leading to bad ratios:
    - You can (de)activate normalization in the settings menu.
 
 ** Steadiness verification
+   :PROPERTIES:
+   :CUSTOM_ID: steadiness
+   :END:
+
    - When assessing different PCR primers, PCR enzymes, PCR cycles, one may want to see how regular the concentrations are among the samples.
    - When following a patient one may want to identify any clone that is emerging.
    - To do so, you may want to change the color system, in the “color by” menu
@@ -402,6 +413,10 @@ There can be several causes leading to bad ratios:
 
 
 ** Clone coverage
+   :PROPERTIES:
+   :CUSTOM_ID: coverage
+   :END:
+
    The clone coverage is the ratio of the length of the clone consensus sequence
    to the median read length in the clone.
    A consensus sequence is
