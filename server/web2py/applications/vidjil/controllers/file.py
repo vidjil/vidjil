@@ -595,4 +595,5 @@ def restart_pre_process():
         return error_message("Permission denied")
     db.sequence_file[sequence_file.id] = dict(pre_process_flag = 'WAIT')
     db.commit()
-    return schedule_pre_process(sequence_file.id, pre_process.id)
+    res = schedule_pre_process(sequence_file.id, pre_process.id)
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
