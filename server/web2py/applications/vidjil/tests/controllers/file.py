@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import unittest
+from mock import MagicMock, Mock, patch
 from gluon.globals import Request, Session, Storage, Response
 from gluon.contrib.test_helpers import form_postvars
 from gluon import current
@@ -43,6 +44,7 @@ class FileController(unittest.TestCase):
                                        sequencer="plop",
                                        producer="plop",
                                        patient_id=fake_patient_id,
+                                       pre_process_id=fake_pre_process_id,
                                        filename="babibou",
                                        provider=user_id,
                                        data_file =  db.sequence_file.data_file.store(open("../../doc/analysis-example.vidjil", 'rb'), "babibou"))
@@ -191,3 +193,22 @@ class FileController(unittest.TestCase):
 
         self.assertEquals(filename[-4:], ".def")
         self.assertTrue(filename.find(base64.b16encode('truc.def').lower() + ".def") > -1)
+
+    def testRestartPreProcess(self):
+        fake_task = db.scheduler_task[fake_task_id]
+        res = dict()
+        with patch.object(Scheduler, 'queue_task', return_value=fake_task) as mock_queue_task:
+            sequence_id = self.createDumbSequenceFile()
+            request.vars['sequence_file_id'] = sequence_id
+            res = restart_pre_process()
+            print res
+        self.assertNotEqual(res.find('message'), -1, 'missing message in response')
+
+    def testRestartPreProcessInexistantFile(self):
+        fake_task = db.scheduler_task[fake_task_id]
+        res = dict()
+        with patch.object(Scheduler, 'queue_task', return_value=fake_task) as mock_queue_task:
+            request.vars['sequence_file_id'] = 666
+            res = restart_pre_process()
+            print res
+        self.assertNotEqual(res.find('"success":"false"'), -1, 'missing message in response')

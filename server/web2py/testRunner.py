@@ -195,6 +195,8 @@ fake_mail_preference_id = db.user_preference.insert(user_id =user_id,
                                                     val=fake_notification_id
                                                     )
 
+fake_task_id = db.scheduler_task.insert(application_name='vidjil_test',
+                                        task_name='test_task')
 db.commit()
 
 
