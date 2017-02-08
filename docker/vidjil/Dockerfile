@@ -48,6 +48,7 @@ run cd /usr/share/web2py && chown -R www-data:www-data .
 
 copy ./conf/gzip_static.conf /etc/nginx/conf.d/web2py/gzip_static.conf
 copy ./conf/gzip.conf /etc/nginx/conf.d/web2py/gzip.conf
+copy ./conf/uwsgi.conf /etc/nginx/conf.d/web2py/uwsgi.conf
 copy ./sites/nginx_conf /etc/nginx/sites-enabled/web2py
 copy ./sites/nginx_conf /etc/nginx/sites-available/web2py
 

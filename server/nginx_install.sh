@@ -61,6 +61,17 @@ gzip_http_version 1.1;
 gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
 ' > /etc/nginx/conf.d/web2py/gzip.conf
 
+echo '
+#uwsgi_pass      127.0.0.1:9001;
+uwsgi_pass      unix:///tmp/web2py.socket;
+include         uwsgi_params;
+uwsgi_param     UWSGI_SCHEME \$scheme;
+uwsgi_param     SERVER_SOFTWARE    nginx/\$nginx_version;
+###remove the comments to turn on if you want gzip compression of your pages
+# include /etc/nginx/conf.d/web2py/gzip.conf;
+### end gzip section
+' > /etc/nginx/conf.d/web2py/uwsgi.conf
+
 # Create configuration file /etc/nginx/sites-available/web2py
 echo "server {
     listen 80;
@@ -83,18 +94,9 @@ server {
         client_body_temp_path /mnt/data/tmp;
         uwsgi_max_temp_file_size 20480m;
         uwsgi_temp_path /mnt/data/tmp;
-        uwsgi_read_timeout 10m;
 
         location / {
-            #uwsgi_pass      127.0.0.1:9001;
-            uwsgi_pass      unix:///tmp/web2py.socket;
-            include         uwsgi_params;
-            uwsgi_param     UWSGI_SCHEME \$scheme;
-            uwsgi_param     SERVER_SOFTWARE    nginx/\$nginx_version;
-            ###remove the comments to turn on if you want gzip compression of your pages
-            # include /etc/nginx/conf.d/web2py/gzip.conf;
-            ### end gzip section
-
+            include /etc/nginx/conf.d/web2py/uwsgi.conf
             proxy_read_timeout 600;
             client_max_body_size 20G;
             ###
@@ -143,6 +145,12 @@ server {
             include /etc/nginx/fastcgi_params;
             # Adjust non standard parameters (SCRIPT_FILENAME)
             fastcgi_param SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;
+        }
+
+        location /vidjil/file/upload {
+            include /etc/nginx/conf.d/web2py/uwsgi.conf
+            uwsgi_read_timeout 10m;
+            client_max_body_size 20G;
         }
 
 }" >/etc/nginx/sites-available/web2py
