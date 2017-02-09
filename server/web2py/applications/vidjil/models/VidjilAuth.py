@@ -33,6 +33,9 @@ class VidjilAuth(Auth):
         self.groups = self.get_group_names()
         self.admin = 'admin' in self.groups
 
+    def exists(self, object_of_action, object_id):
+        return db[object_of_action][object_id] is not None
+
     def get_group_names(self):
         '''
         Return a list of group names.
@@ -249,9 +252,10 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-
-        return self.get_permission(PermissionEnum.admin.value, 'patient', patient_id, user=user)\
-            or self.is_admin(user)
+        exists = self.exists('patient', patient_id)
+        return exists\
+            and (self.get_permission(PermissionEnum.admin.value, 'patient', patient_id, user=user)\
+            or self.is_admin(user))
         
     def can_modify_run(self, run_id, user = None):
         '''
@@ -260,12 +264,16 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission(PermissionEnum.admin.value, 'run', run_id, user=user)\
-            or self.is_admin(user)
+        exists = self.exists('run', run_id)
+        return exists\
+            and (self.get_permission(PermissionEnum.admin.value, 'run', run_id, user=user)\
+            or self.is_admin(user))
         
     def can_modify_sample_set(self, sample_set_id, user = None) :
         sample_set = db.sample_set[sample_set_id]
-        
+
+        if sample_set is None:
+            return False
         perm = self.get_permission(PermissionEnum.admin.value, 'sample_set', sample_set_id, user)\
             or self.is_admin(user)
 
@@ -300,7 +308,9 @@ class VidjilAuth(Auth):
         return perm
 
     def can_modify_file(self, file_id, user = None) :
-        
+        if not self.exists('sequence_file', file_id):
+            return False
+
         if self.is_admin(user) :
             return True
         
@@ -322,8 +332,10 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission(PermissionEnum.admin_config.value, 'config', config_id, user)\
-            or self.is_admin(user)
+        exists = self.exists('config', config_id)
+        return exists\
+            and (self.get_permission(PermissionEnum.admin_config.value, 'config', config_id, user)\
+            or self.is_admin(user))
 
     def can_modify_group(self, group_id, user = None):
         '''
@@ -331,8 +343,10 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission(PermissionEnum.admin_group.value, 'auth_group', group_id, user = user)\
-            or self.is_admin(user)
+        exists = self.exists('auth_group', group_id)
+        return exists\
+            and (self.get_permission(PermissionEnum.admin_group.value, 'auth_group', group_id, user = user)\
+            or self.is_admin(user))
 
     def can_process_file(self, object_of_action, id=0, user = None):
         '''
@@ -340,14 +354,18 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission(PermissionEnum.run.value, object_of_action, id, user=user)\
-            or self.is_admin(user)
+        exists = self.exists(object_of_action, id) if id > 0 else True
+        return exists\
+            and (self.get_permission(PermissionEnum.run.value, object_of_action, id, user=user)\
+            or self.is_admin(user))
 
     def can_process_sample_set(self, id, user = None):
         '''
         Returns if the user can process results for a sample_set
         '''
         sample_set = self.db.sample_set[id]
+        if sample_set is None:
+            return False
 
         perm = self.get_permission(PermissionEnum.run.value, 'sample_set', id, user) \
             or self.is_admin(user)
@@ -367,14 +385,18 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission(PermissionEnum.upload.value, object_of_action, id, user=user)\
-            or self.is_admin(user)
+        exists = self.exists(object_of_action, id) if id > 0 else True
+        return exists\
+            and (self.get_permission(PermissionEnum.upload.value, object_of_action, id, user=user)\
+            or self.is_admin(user))
 
     def can_upload_sample_set(self, id, user = None):
         '''
         Returns if the user can upload files for a sample_set
         '''
         sample_set = db.sample_set[id]
+        if sample_set is None:
+            return False
 
         perm = self.get_permission(PermissionEnum.upload.value, 'sample_set', id, user) \
             or self.is_admin(user)
@@ -395,9 +417,11 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission(PermissionEnum.read_config.value, 'config', config_id, user)\
+        exists = self.exists('config', config_id)
+        return exists\
+            and (self.get_permission(PermissionEnum.read_config.value, 'config', config_id, user)\
             or self.can_modify_config(config_id, user)\
-            or self.is_admin(user)
+            or self.is_admin(user))
 
     def can_view_patient(self, patient_id, user = None):
         '''
@@ -406,9 +430,11 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission(PermissionEnum.read.value, 'patient', patient_id ,user)\
+        exists = self.exists('patient', patient_id)
+        return exists\
+            and (self.get_permission(PermissionEnum.read.value, 'patient', patient_id ,user)\
             or self.can_modify_patient(patient_id, user)\
-            or self.is_admin(user)
+            or self.is_admin(user))
             
     def can_view_run(self, run_id, user = None):
         '''
@@ -417,12 +443,16 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission(PermissionEnum.read.value, 'run', run_id ,user)\
+        exists = self.exists('run', run_id)
+        return exists\
+            and (self.get_permission(PermissionEnum.read.value, 'run', run_id ,user)\
             or self.can_modify_run(run_id, user)\
-            or self.is_admin(user)
+            or self.is_admin(user))
             
     def can_view_sample_set(self, sample_set_id, user = None) :
         sample_set = db.sample_set[sample_set_id]
+        if sample_set is None:
+            return False
         
         perm = self.get_permission(PermissionEnum.admin.value, 'sample_set', sample_set_id, user)\
             or self.is_admin(user)
@@ -457,7 +487,8 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission(PermissionEnum.anon.value, 'patient', patient_id, user)
+        exists = self.exists('patient', patient_id)
+        return exists and self.get_permission(PermissionEnum.anon.value, 'patient', patient_id, user)
 
     def can_view_info(self, type, id, user = None):
         '''
@@ -466,7 +497,8 @@ class VidjilAuth(Auth):
 
         If the user is None, the current userr is taken into account
         '''
-        return self.get_permission(PermissionEnum.anon.value, type, id, user)
+        exists = self.exists(type, id)
+        return exists and self.get_permission(PermissionEnum.anon.value, type, id, user)
 
     def can_save_patient(self, patient_id, user = None):
         '''
@@ -474,8 +506,10 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission(PermissionEnum.save.value, 'patient', patient_id, user)\
-            or self.is_admin(user)
+        exists = self.exists('patient', patient_id)
+        return exists\
+            and (self.get_permission(PermissionEnum.save.value, 'patient', patient_id, user)\
+            or self.is_admin(user))
 
     def can_save_run(self, run_id, user = None):
         '''
@@ -483,11 +517,15 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission(PermissionEnum.save.value, 'run', run_id, user)\
-            or self.is_admin(user)
+        exists = self.exists('run', run_id)
+        return exists\
+            and (self.get_permission(PermissionEnum.save.value, 'run', run_id, user)\
+            or self.is_admin(user))
 
     def can_save_sample_set(self, sample_set_id, user = None) :
         sample_set = db.sample_set[sample_set_id]
+        if sample_set is None:
+            return False
 
         perm = self.get_permission(PermissionEnum.save.value, 'sample_set', sample_set_id, user)\
             or self.is_admin(user)
