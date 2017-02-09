@@ -85,7 +85,7 @@ def get_gene_sequence(gene, other_gene_name, start, end):
     Return the gene sequences between positions start and end (included).
     '''
     fasta_string = urllib.urlopen(NCBI_API % (gene, start, end)).read()
-    return re.sub('(>g.\|)', r'\1'+other_gene_name+'|', fasta_string)
+    return re.sub('(>\S*) ', r'\1|'+other_gene_name+'|', fasta_string)
 
 def store_data_if_updownstream(fasta_header, path, data, genes):
     for gene in gene_matches(fasta_header, genes):
