@@ -1,27 +1,26 @@
 
 DEFAULT_G=homo-sapiens.g
 
-DATA=$(wildcard homo-sapiens/*.fa)
-OTHER_DATA=$(wildcard IGHC=*.fa) $(wildcard mus-musculus/*.fa) $(wildcard rattus-norvegicus/*.fa) $(wildcard ???[VDJ].fa) # Only for make clean
+DIRS=homo-sapiens/ mus-musculus/ rattus-norvegicus/
 GERMLINE_JS=../browser/js/germline.js
 
 all: germline
 
-germline: $(GERMLINE_JS) $(DATA)
+germline: get-saved-data $(GERMLINE_JS)
 
 js: $(GERMLINE_JS)
 
-$(GERMLINE_JS): $(DATA) $(DEFAULT_G)
+$(GERMLINE_JS): $(DEFAULT_G)
 	python buildBrowserGermline.py $(DEFAULT_G) $@
 
-get-all-data: clean $(DATA)
+get-all-data: clean
 	sh get-germline
 
-$(DATA): germline_id
+get-saved-data: germline_id
 	sh get-saved-germline
 
 clean:
-	rm -f $(DATA) $(GERMLINE_JS) $(OTHER_DATA)
+	rm -f $(DIRS) $(GERMLINE_JS) 
 
 diff-from-saved:
 	rm -rf saved-germline
