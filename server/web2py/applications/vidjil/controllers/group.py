@@ -39,7 +39,10 @@ def add():
 ## need ["group_name", "info"]
 ## redirect to group list if success
 ## return a flash error message if error
-def add_form(): 
+def add_form():
+    if not auth.is_admin():
+        return error_message(ACCESS_DENIED)
+
     error = ""
 
     if request.vars["group_name"] == "" :
