@@ -113,7 +113,9 @@ def edit_form():
 ## confirm page before group deletion
 ## need ["id"]
 def confirm():
-    return dict(message=T('confirm group deletion'))
+    if auth.can_modify_group(request.vars["id"]):
+        return dict(message=T('confirm group deletion'))
+    return error_message(ACCESS_DENIED)
 
 
 ## delete group
@@ -134,13 +136,17 @@ def delete():
 ## return list of group member
 ## need ["id"]
 def info():
-    return dict(message=T('group info'))
+    if auth.can_view_group(request.vars["id"]):
+        return dict(message=T('group info'))
+    return error_message(ACCESS_DENIED)
 
 
 ## return list of group admin
 ## need ["id"]
-def permission(): 
-    return dict(message=T('permission'))
+def permission():
+    if auth.can_modify_group(request.vars["id"]):
+        return dict(message=T('permission'))
+    return error_message(ACCESS_DENIED)
 
 ## remove admin right
 ## need ["group_id", "user_id"]
