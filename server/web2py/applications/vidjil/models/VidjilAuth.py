@@ -12,7 +12,7 @@ class PermissionEnum(Enum):
     save = 'save'
     admin_config = 'admin'
     read_config = 'read'
-    create_config = 'create'
+    create_config = 'create_config'
     admin_group = 'admin'
     read_group = 'read'
     create_group = 'create'
@@ -223,6 +223,15 @@ class VidjilAuth(Auth):
         '''
         return self.get_permission(PermissionEnum.create.value, 'sample_set', user = user)\
             or self.is_admin(user)
+
+    def can_create_config(self, user = None):
+        '''
+        Returns True is the user can create new configs.
+
+        If the user is None, the current user is taken into account
+        '''
+        return self.get_permission(PermissionEnum.create_config, 'config', user = user)\
+            or self.id_admin(user)
 
     def can_modify_patient(self, patient_id, user = None):
         '''
