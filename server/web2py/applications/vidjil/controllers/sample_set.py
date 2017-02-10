@@ -271,11 +271,11 @@ def edit():
     if sample_set is not None:
 
         sample_type = sample_set.sample_type
-
-        if sample_type == "patient" :
+        
+        if sample_type == "patient" : 
             patient = db((db.patient.sample_set_id == request.vars["id"])).select()[0]
             redirect(URL('patient', 'edit', vars=dict(id=patient.id)), headers=response.headers)
-
+        
         elif sample_type == "run" :
             run = db((db.run.sample_set_id == request.vars["id"])).select()[0]
             redirect(URL('run', 'edit', vars=dict(id=run.id)), headers=response.headers)
