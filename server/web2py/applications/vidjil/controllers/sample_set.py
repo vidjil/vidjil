@@ -268,25 +268,26 @@ def add_form():
 
 def edit():
     sample_set = db.sample_set[request.vars["id"]]
-    sample_type = sample_set.sample_type
-    
-    if sample_type == "patient" : 
-        patient = db((db.patient.sample_set_id == request.vars["id"])).select()[0]
-        redirect(URL('patient', 'edit', vars=dict(id=patient.id)), headers=response.headers)
-    
-    elif sample_type == "run" :
-        run = db((db.run.sample_set_id == request.vars["id"])).select()[0]
-        redirect(URL('run', 'edit', vars=dict(id=run.id)), headers=response.headers)
+    if sample_set is not None:
 
-    else :
-        generic = db((db.generic.sample_set_id == request.vars["id"])).select()[0]
-        if (auth.can_modify('generic', generic.id)):
-            request.vars["id"] = generic.id
-            return dict(message=T('edit sample_set'))
+        sample_type = sample_set.sample_type
+
+        if sample_type == "patient" :
+            patient = db((db.patient.sample_set_id == request.vars["id"])).select()[0]
+            redirect(URL('patient', 'edit', vars=dict(id=patient.id)), headers=response.headers)
+
+        elif sample_type == "run" :
+            run = db((db.run.sample_set_id == request.vars["id"])).select()[0]
+            redirect(URL('run', 'edit', vars=dict(id=run.id)), headers=response.headers)
+
         else :
-            res = {"message": ACCESS_DENIED}
-            log.error(res)
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+            generic = db((db.generic.sample_set_id == request.vars["id"])).select()[0]
+            if (auth.can_modify('generic', generic.id)):
+                request.vars["id"] = generic.id
+                return dict(message=T('edit sample_set'))
+    res = {"message": ACCESS_DENIED}
+    log.error(res)
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def edit_form():
     if (auth.can_modify('generic', request.vars["id"]) ):

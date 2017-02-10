@@ -22,10 +22,10 @@ def extract_id(target, error):
     
 def add():
     sample_set = db.sample_set[request.vars["id"]]
-    sample_type = sample_set.sample_type
     if not auth.can_upload_sample_set(sample_set.id):
         return error_message("you don't have right to upload files")
     else:
+        sample_type = sample_set.sample_type
         enough_space = vidjil_utils.check_enough_space(defs.DIR_SEQUENCES)
         if not enough_space:
             mail.send(to=defs.ADMIN_EMAILS,

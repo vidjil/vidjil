@@ -4,6 +4,7 @@ import os.path, subprocess
 import vidjil_utils
 
 MAX_LOG_LINES = 500
+ACCESS_DENIED = "access denied"
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  

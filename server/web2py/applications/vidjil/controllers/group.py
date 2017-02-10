@@ -88,6 +88,9 @@ def edit():
     return error_message(ACCESS_DENIED)
 
 def edit_form():
+    if not auth.can_modify_group(request.vars['id']):
+        return error_message(ACCESS_DENIED)
+
     error = ""
 
     if request.vars["group_name"] == "" :
@@ -117,6 +120,8 @@ def confirm():
 ## need ["id"]
 ## redirect to group list if success
 def delete():
+    if not auth.can_modify_group(request.vars["id"]):
+        return error_message(ACCESS_DENIED)
     #delete group
     db(db.auth_group.id == request.vars["id"]).delete()
     
@@ -140,6 +145,8 @@ def permission():
 ## remove admin right
 ## need ["group_id", "user_id"]
 def remove_permission():
+    if not auth.can_modify_group(request.vars["group_id"]):
+        return error_message(ACCESS_DENIED)
     error = ""
 
     if request.vars["group_id"] == "" :
@@ -158,6 +165,8 @@ def remove_permission():
 ## give admin right to a group member
 ## need ["group_id", "user_id"]
 def change_permission():
+    if not auth.can_modify_group(request.vars["group_id"]):
+        return error_message("ACCESS_DENIED")
     auth.add_permission(auth.user_group(request.vars["user_id"]), PermissionEnum.admin_group.value, db.auth_group, request.vars["group_id"])
 
     res = {"redirect" : "group/permission" , "args" : { "id" : request.vars["group_id"]} }
