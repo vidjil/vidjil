@@ -75,6 +75,16 @@
             </div></div>
         </div>
 
+        <div id="add_clone_menu">
+            <span class="closeButton" onclick="cancel();">X</span>
+            <h2>add a clone</h2>
+
+            <textarea id="addclone_input" placeholder="clone sequence (fasta format)"></textarea>
+
+            <button onclick="document.getElementById('add_clone_menu').style.display = 'none';
+                m.addManualClones('addclone_input');">Add</button>
+        </div>
+
         <!-- TOP-CONTAINER -->
         <div id="top-container" onmouseout="hideSelector()">
             <div id="menu-container">
@@ -113,6 +123,9 @@
                         <div class="menu_box">
                           <a class="buttonSelector" id="export_sample_report" onclick="javascript:report.reportHTMLdiag()">export report (sample)</a>
                           <a class="buttonSelector" id="export_monitor_report" onclick="javascript:report.reportHTML()">export report (monitor)</a>
+                        </div>
+                        <div class="menu_box">
+                            <a class="buttonSelector" id ="add_clone" onclick="javascript:addManualClone()">add a clone</a>
                         </div>
                         <div class="menu_box">
                             <a class="buttonSelector" id="export_analysis" onclick="javascript:m.saveAnalysis()">export analysis</a>

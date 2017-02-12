@@ -743,7 +743,8 @@ span .substitution {
   border-radius: 2px;
 }
 #file_menu,
-#axis_choice {
+#axis_choice,
+#add_clone_menu {
   z-index: 2;
   border: solid;
   position: fixed;
@@ -755,6 +756,26 @@ span .substitution {
   padding: 10px;
   background: #000000;
   display: none;
+}
+#addclone_input {
+  margin-bottom: 10px;
+  resize: none;
+  height: 8em;
+  width: 98%;
+  border: 1px solid silver;
+  border-radius: 0.1em;
+  padding: 1%;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+  -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+  -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+  transition: border linear 0.2s, box-shadow linear 0.2s;
+  transition-property: border, box-shadow;
+  transition-duration: 0.2s, 0.2s;
+  transition-timing-function: linear, linear;
+  transition-delay: 0s, 0s;
 }
 .buttonSelector {
   background: #000000;

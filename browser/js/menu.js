@@ -108,6 +108,8 @@ function cancel() {
         .style.display = "none";
     document.getElementById("file_menu")
         .style.display = "none";
+    document.getElementById("add_clone_menu")
+        .style.display = "none";
 }
 
 function showSelector(elem) {
@@ -136,4 +138,11 @@ function showDisplayMenu() {
         .stop
     $('#display-menu')
         .toggle("fast");
+}
+
+function addManualClone() {
+    document.getElementById("add_clone_menu")
+        .style.display = "block";
+    document.getElementById("axis_choice")
+        .style.display = "none";
 }
