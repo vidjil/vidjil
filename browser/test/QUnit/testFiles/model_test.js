@@ -227,8 +227,7 @@ test("model: analysis sample data application", function() {
     var m = new Model();
     m.parseJsonData(json_data, 100);
     m.parseJsonAnalysis(analysis_data);
-    console.log("###############################################");
-    console.log("samples: " + m.samples.names);
+
     notEqual(m.samples.names[1], "fu0", "missing sample successfully ignored");
     equal(m.samples.names[1], "fu1", "correctly shifted samples");
 });
