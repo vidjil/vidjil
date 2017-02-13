@@ -1,3 +1,4 @@
+var DEFAULT_SEGMENTER_ADDRESS = 'https://dev.vidjil.org/vidjil/segmenter';
 var model;
 var segmenter;
 var scatter;
@@ -43,7 +44,9 @@ function displayError(error, rawError, exc) {
  * @param {function} error - the function to call when an error occurs.
  **/
 function requestVidjilFile(sequences, callback, error) {
-    var urlController = 'https://dev.vidjil.org/vidjil/segmenter';
+    var urlController = config && config.segmenter_address
+                      ? config.segmenter_address
+                      : DEFAULT_SEGMENTER_ADDRESS;
     var dataToSend = new FormData();
     dataToSend.append('sequences', sequences);
 
