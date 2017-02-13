@@ -1101,7 +1101,7 @@ Clone.prototype = {
 
     isQuantifiable: function() {
         return this.quantifiable;
-    }
+    },
 
     isFocus: function () {
         return this.index == this.m.focus
