@@ -27,22 +27,25 @@
  * @param {object} data - json style object, come directly from .vidjil file
  * @param {Model} model
  * @param {integer} index - clone index, it's just the clone position in the model's clone array
- * @param {boolean} quantifiable - represents whethere the clone is quantifiable or not.
  * */
-function Clone(data, model, index, virtual, quantifiable) {
+function Clone(data, model, index, virtual) {
     this.m = model
     this.index = index
     this.split = false
     this.seg = {};
     this.segEdited = false
     this.virtual = typeof virtual !== 'undefined' ? virtual : false
-    this.quantifiable = quantifiable == true;
 
     var key = Object.keys(data)
 
     for (var i=0; i<key.length; i++ ){
         this[key[i]]=data[key[i]]
     }
+
+    if (this.quantifiable == undefined) {
+        this.quantifiable = true;
+    }
+
     this.seg = this.m.convertSeg(this.seg)
     
     if (typeof (this.getSequence()) != 'undefined' && typeof (this.name) != 'undefined') {

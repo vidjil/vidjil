@@ -3,7 +3,7 @@
  * High-throughput Analysis of V(D)J Immune Repertoire.
  * Copyright (C) 2013-2017 by Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
- * Contributors: 
+ * Contributors:
  *     Marc Duez <marc.duez@vidjil.org>
  *     The Vidjil Team <contact@vidjil.org>
  *
@@ -2304,7 +2304,48 @@ changeCloneNotation: function(cloneNotationType) {
         return this.getName(edge.source)+" -- "+this.getName(edge.target)+" == "+edge.len;
     },
 
+    DEFAULT_SEGMENTER_URL: "https://dev.vidjil.org/vidjil/segmenter",
+
+    /**
+     * sends an ajax request to manually add special clones
+     * @param {string} input - the id of the input to extract the sequences from
+     */
+    addManualClones: function(input) {
+        var url = config && config.segmenter_address ? config.segmenter_address : this.DEFAULT_SEGMENTER_URL;
+
+        var inputNode = document.getElementById(input);
+        if (!inputNode) {
+            console.log("[model] could not find '" + input + "' input node");
+            return;
+        }
+
+        if (inputNode) {
+            var sequences = inputNode.value;
+
+            // When empty, show error
+            if (!sequences) {
+                showAddManualCloneMenu(true);
+            } else {
+                var self = this;
+                $.ajax(url, {
+                    method: "POST",
+                    data: {
+                        sequences: sequences
+                    },
+                    // dataType: "json",
+                    success: function (data) {
+                        data.clones.forEach(function (clone) {
+                            clone.quantifiable = false;
+                        });
+                        self.parseJsonData(data, 100);
+                        console.log({ msg: "Clone(s) added!", type: "flash", priority: 1 })
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.log({ msg: textStatus + " " + errorThrown, type: "flash", priority: 2 });
+                    }
+                });
+            }
+        }
+    }
+
 }; //end prototype Model
-
-
-
