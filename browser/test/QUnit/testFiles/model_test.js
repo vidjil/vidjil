@@ -223,6 +223,16 @@ QUnit.test("system selection", function(assert) {
     assert.notEqual(m.system_selected.indexOf("IGH"), 1, "IGH selected")
 });
 
+test("model: analysis sample data application", function() {
+    var m = new Model();
+    m.parseJsonData(json_data, 100);
+    m.parseJsonAnalysis(analysis_data);
+    console.log("###############################################");
+    console.log("samples: " + m.samples.names);
+    notEqual(m.samples.names[1], "fu0", "missing sample successfully ignored");
+    equal(m.samples.names[1], "fu1", "correctly shifted samples");
+});
+
 
 
 
