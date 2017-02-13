@@ -386,6 +386,39 @@ Model_loader.prototype = {
     
     },
 
+    getFilteredFields: function(src) {
+        // Hacky way of managing fields we do not want to copy without restructuring the whole JSON
+        var exceptions = ['id', 'log', 'producer'];
+        var fields = [];
+        for (key in src)
+            if (exceptions.indexOf(key) == -1){
+                fields.push(key);
+            }
+        return fields;
+    },
+
+    copySampleFields: function(analysis_samples) {
+        if ('id' in analysis_samples) {
+            //replace names, timestamps, order...
+            var keys = this.getFilteredFields(analysis_samples);
+            for (var tmp = 0; tmp < keys.length; tmp++) {
+                var key = keys[tmp];
+                var i = 0;
+                for (var j = 0; j < analysis_samples[key].length; j++ ){
+                    value = analysis_samples[key][j];
+                    if (analysis_samples.id[j] == this.samples.original_names[i]) {
+                        // TODO This is really hacky
+                        if (key == 'order') {
+                            value = value + (this.samples.original_names.length - analysis_samples.id.length);
+                        }
+                        this.samples[key][i] = value;
+                        i = i+1;
+                    }
+                }
+            }
+        }
+    },
+
     /**
      * parse a json or a json_text and complete the model with it's content
      * @param {string} analysis - json_text / content of .analysis file
@@ -411,13 +444,7 @@ Model_loader.prototype = {
             //samples
             if (this.analysis.samples) {
                 var s = this.analysis.samples
-                
-                // Hacky way of managing fields we do not want to copy without restructuring the whole JSON
-                var copy_exceptions = ['log', 'producer']
-                //replace names, timestamps, order...
-                for (var key in s)
-                    if ((copy_exceptions.indexOf(key) == -1) && s[key].length == this.samples.number)
-                        this.samples[key] = s[key]
+                this.copySampleFields(s);
             }
             
             //tags
@@ -533,6 +560,7 @@ Model_loader.prototype = {
             timestamp : timestamp,
             vidjil_json_version : VIDJIL_JSON_VERSION,
             samples : {
+                id: this.samples.original_names,
                 info: this.samples.info,
                 order: this.samples.order,
                 names: this.samples.names},
