@@ -3,6 +3,11 @@
   "timestamp": "2015-4-30 11:22:40",
   "vidjil_json_version": "2014.09",
   "samples": {
+    "id": [
+      "Diag.fa",
+      "Fu-1.fa",
+      "Fu-2.fa",
+    ],
     "timestamp": [
       "2014-10-20 13:59:02",
       "2014-10-25 14:00:32",
