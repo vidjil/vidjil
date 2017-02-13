@@ -43,6 +43,11 @@ def next_sample_set():
 def index():
 
     next_sample_set()
+    if not auth.can_view_sample_set(request.vars["id"]):
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
     sample_set = db.sample_set[request.vars["id"]]
     sample_set_id = sample_set.id
     factory = ModelFactory()
@@ -135,13 +140,6 @@ def index():
                 analysis_filename = analysis_filename,
                 sample_type = db.sample_set[request.vars["id"]].sample_type,
                 config=config)
-    
-    """
-    else :
-        res = {"message": ACCESS_DENIED}
-        log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-    """
 
 ## return a list of generic sample_sets
 def all():
