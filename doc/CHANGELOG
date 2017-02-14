@@ -1,6 +1,18 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
+2017-02-XX  The Vidjil Team
+	* Better e-value estimation for D genes (core/segment.cpp) #1879
+	* Better support for germlines from several species (germlines/*.g) #1987 #2132
+	* Streamlined option -g, including filtering, removed old -i/-G options (vidjil.cpp, core/germline.cpp) #2134
+	* Better productivity estimation, handling in-frame stop codons (core/segment.cpp) #1824
+	* New experimental faster heuristic with Aho-Corasick automaton (core/automaton.hpp)
+	* Updated germline genes from IMGT/GENE-DB
+	* Bugs closed (json output)
+	* Refactored test structure for should-vdj tests (tests/should-vdj-to-tap.py, tests/repseq_vdj.py)
+	* New and updated unit and functional tests
+	* Moved code to gitlab, better project management, commit messages are now linked to issues
+
 2016-09-30  The Vidjil Team
 	* New default trim option (-t 0) for germlines, leading to better results on some special recombinations (vidjil.cpp)
 	* More flexible option to keep sequences of intereset (-W), accepting sequences of any size (core/windows.cpp)
