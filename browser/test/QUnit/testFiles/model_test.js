@@ -231,7 +231,7 @@ test("model: analysis sample data application", function() {
     notEqual(m.samples.names[1], "fu0", "missing sample successfully ignored");
     equal(m.samples.names[1], "fu1", "correctly shifted samples");
 
-    equal(m.samples.order, [0,3,1,2], "order converted");
+    deepEqual(m.samples.order, [0,3,1,2], "order converted");
 });
 
 
