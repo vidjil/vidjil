@@ -180,8 +180,11 @@ UPSTREAM_REGIONS=['IGHD', 'TRDD', 'TRBD', 'TRDD2']
 SPECIES = {
     "Homo sapiens": 'homo-sapiens/',
     "Mus musculus": 'mus-musculus/',
+    "Mus musculus_BALB/c": 'mus-musculus/',
+    "Mus musculus_C57BL/6": 'mus-musculus/',
     "Rattus norvegicus": 'rattus-norvegicus/',
     "Rattus norvegicus_BN/SsNHsdMCW": 'rattus-norvegicus/',
+    "Rattus norvegicus_BN; Sprague-Dawley": 'rattus-norvegicus/'
 }
 
 downstream_data = defaultdict(lambda: defaultdict(list))
