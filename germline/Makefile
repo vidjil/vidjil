@@ -20,7 +20,7 @@ get-saved-data: germline_id
 	sh get-saved-germline
 
 clean:
-	rm -f $(DIRS) $(GERMLINE_JS) 
+	rm -rf $(DIRS) $(GERMLINE_JS) 
 
 diff-from-saved:
 	rm -rf saved-germline
