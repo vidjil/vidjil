@@ -1,7 +1,7 @@
 
 LESSC=lessc
 
-all: dark.css light.css svg.css talk.css segmenter.css
+all: dark.css light.css svg.css talk.css segmenter_page.css
 
 dark.css: dark.less vidjil.less
 	$(LESSC) dark.less dark.css
