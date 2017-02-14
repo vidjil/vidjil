@@ -225,6 +225,7 @@ void testAffectAnalyserSpaced() {
   TAP_TEST(kaa.count(affect_AAAC_bad) == 0, TEST_AA_COUNT, "Expected 0, got " << kaa.count(affect_AAAC_bad) << " in " << __PRETTY_FUNCTION__);
   TAP_TEST(kaa.count(affect_CCCC_bad) == 0, TEST_AA_COUNT, "Expected 0, got " << kaa.count(affect_CCCC_bad) << " in " << __PRETTY_FUNCTION__);
   TAP_TEST(kaa.count(affect_GGGG_bad) == 0, TEST_AA_COUNT, "Expected 0, got " << kaa.count(affect_GGGG_bad) << " in " << __PRETTY_FUNCTION__);
+  delete index;
 }
 
 template<template <class> class T>
