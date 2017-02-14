@@ -233,6 +233,15 @@ class VidjilAuth(Auth):
         return self.get_permission(PermissionEnum.create_config, 'config', user = user)\
             or self.id_admin(user)
 
+    def can_create_pre_process(self, user = None):
+        '''
+        Returns True is the user can create new pre_processes.
+
+        If the user is None, the current user is taken into account
+        '''
+        return self.get_permission(PermissionEnum.create_pre_process, 'pre_process', user = user)\
+            or self.id_admin(user)
+
     def can_modify_patient(self, patient_id, user = None):
         '''
         Returns True iff the current user can administrate
@@ -271,6 +280,19 @@ class VidjilAuth(Auth):
                     perm = True;
 
         return perm
+
+    def can_modify_pre_process(self, pre_process_id, user = None):
+        '''
+        Returns True if the current user can administrate
+        the pre_process whose ID is pre_process_id
+        If the pre_process does not exists, returns False
+
+        If the user is None, the current user is taken into account
+        '''
+        exists = self.exists('pre_process', pre_process_id)
+        return exists\
+            and (self.get_permission(PermissionEnum.admin_pre_process.value, 'pre_process', pre_process_id, user)\
+            or self.is_admin(user))
 
     def can_modify(self, type, id, user = None):
         perm =  self.get_permission(PermissionEnum.admin.value, type, id, user)\
