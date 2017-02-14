@@ -11,7 +11,7 @@ LIB=../core/vidjil.a ../lib/lib.a
 SHOULD=$(wildcard should-get-tests/*.should-get)
 SHOULD_LOG=$(SHOULD:.should-get=.tap)
 SHOULD_VDJ_EXPECTED_FAILS=--expected-fails 84
-SHOULD_LOCUS_EXPECTED_FAILS=--expected-fails 3
+SHOULD_LOCUS_EXPECTED_FAILS=--expected-fails 2
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
 SHOULD_VDJ_VDJ=$(SHOULD_VDJ:.should-vdj.fa=.1.vdj)
 SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
