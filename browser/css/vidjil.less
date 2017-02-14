@@ -908,10 +908,15 @@ span .substitution {
   display:none;
 }
 
+#add_clone_menu {
+  margin-left: -325px;
+  min-width: 600px;
+}
+
 #add_clone_menu > #addclone_input {
   margin-bottom: 10px;
   resize: none;
-  height: 8em;
+  height: 12em;
   width: 98%;
   border: 1px solid silver;
   border-radius: 0.1em;
@@ -1785,7 +1790,7 @@ select>option:hover {
     background : @highlight;
 }
 
-input:focus, textarea:focus {
+input:focus, textarea:focus, #add_clone_menu > #addclone_input:focus {
     border-color: @border;
     -webkit-box-shadow: inset 0 1px 1px @background, 0 0 8px @border;
     -moz-box-shadow: inset 0 1px 1px @background, 0 0 8px @border;
