@@ -397,6 +397,26 @@ Model_loader.prototype = {
         return fields;
     },
 
+    calculateOrder: function(arr) {
+        tmp = arr.slice();
+        res = arr.slice();
+        previous = -1;
+        while(tmp.length > 0) {
+            min = tmp[0];
+            min_idx = 0;
+            for(var i = 0; i < tmp.length; i++) {
+                if (tmp[i] < min) {
+                    min = tmp[i];
+                    min_idx = i;
+                }
+            }
+            idx = arr.indexOf(min);
+            tmp.splice(min_idx, 1);
+            res[idx] = ++previous;
+        }
+        return res;
+    },
+
     copySampleFields: function(analysis_samples) {
         if ('id' in analysis_samples) {
             //replace names, timestamps, order...
@@ -408,14 +428,14 @@ Model_loader.prototype = {
                     value = analysis_samples[key][j];
                     if (analysis_samples.id[j] == this.samples.original_names[i]) {
                         // TODO This is really hacky
-                        if (key == 'order') {
-                            value = value + (this.samples.original_names.length - analysis_samples.id.length);
-                        }
                         this.samples[key][i] = value;
                         i = i+1;
                     }
                 }
             }
+        }
+        if ('order' in analysis_samples) {
+            this.samples['order'] = this.calculateOrder(this.samples['order']);
         }
     },
 
