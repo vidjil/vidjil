@@ -158,10 +158,10 @@ void usage(char *progname, bool advanced)
        << "  -# <string>   separator for headers in the reads file (default: '" << DEFAULT_READ_HEADER_SEPARATOR << "')" << endl
        << endl ;
 
-  cerr << "Germline databases (at least one -g or -V/(-D)/-J option must be given for all commands except -c " << COMMAND_GERMLINES << ")" << endl
+  cerr << "Germline presets (at least one -g or -V/(-D)/-J option must be given for all commands except -c " << COMMAND_GERMLINES << ")" << endl
        << "  -g <.g file>(:filter)" << endl
        << "                multiple locus/germlines, with tuned parameters." << endl
-       << "                Common values are '-g germline/homo-sapiens.g'    '-g germline/mus-musculus.g'" << endl
+       << "                Common values are '-g germline/homo-sapiens.g' or '-g germline/mus-musculus.g'" << endl
        << "                The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'" << endl
        << "  -g <path>     multiple locus/germlines, shortcut for '-g <path>/" << DEFAULT_MULTI_GERMLINE_FILE << "'" << endl
        << "                processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations" << endl

@@ -1,4 +1,4 @@
-#+TITLE: Vidjil -- Analyzed locus
+#+TITLE: Vidjil -- Analyzed human locus
 #+AUTHOR: The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Ryan and Tatiana)
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="org-mode.css" />
 #+OPTIONS: toc:nil
@@ -7,7 +7,7 @@ The Vidjil web application is able to display multi-locus data, as long as this 
 is provided in the =.vidjil= file computed by the analysis program.
 The Vidjil algorithm currently analyzes the following locus,
 selecting the best locus for each read.
-The configuration of analyzed locus is done in the =germline/germlines.data= file.
+The configuration of analyzed locus is done in the =germline/homo-sapiens.g= preset.
 
 |----------------------+-------+-------------------------+--------+-----------------------------------|
 |                      |       | complete recombinations |        | incomplete/special recombinations |
@@ -22,7 +22,7 @@ The configuration of analyzed locus is done in the =germline/germlines.data= fil
 |                      | *IGL* | Vl-Jl                   |        |                                   |
 |                      | *IGK* | Vk-Jk                   | *IGK+* | Vk-KDE, INTRON-KDE                |
 |----------------------+-------+-------------------------+--------+-----------------------------------|
-| command-line option  |       | =-g germline=           |        | =-g germline -i=                  |
+| command-line option  |       | =-g germline/homo-sapiens.g:TRA,TRB,TRD,TRG,IGH,IGL,IGK= |   | =-g germline/homo-sapiens.g=    |
 | server configuration |       | =multi=                 |        | =multi+inc=                       |
 |----------------------+-------+-------------------------+--------+-----------------------------------|
 

@@ -220,40 +220,49 @@ automatic clusterization, see below), leaving the user or other
 software making detailed analysis and decisions on the final
 clustering.
 
-** Germline selection
+** Recombination / locus selection
 
 #+BEGIN_EXAMPLE
-Germline databases (at least one -V/(-D)/-J, or -G, or -g option must be given for all commands except -c germlines)
-  -V <file>     V germline multi-fasta file
-  -D <file>     D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components
-  -J <file>     J germline multi-fasta file
-  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)
-  -g <path>     multiple locus/germlines. In the path <path>, takes 'homo-sapiens.g' to select locus and parameters
-                Selecting '-g germline' processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations
-                Files different than 'homo-sapiens.g', for example for other species, can also be provided with -g <file>
+Germline presets (at least one -g or -V/(-D)/-J option must be given for all commands except -c germlines)
+  -g <.g file>(:filter)
+                multiple locus/germlines, with tuned parameters.
+                Common values are '-g germline/homo-sapiens.g'    '-g germline/mus-musculus.g'
+                The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
+  -g <path>     multiple locus/germlines, shortcut for '-g <path>/homo-sapiens.g'
+                processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations
+  -V <file>     custom V germline multi-fasta file
+  -D <file>     custom D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components
+  -J <file>     custom J germline multi-fasta file
 
 Locus/recombinations
   -d            try to detect several D (experimental)
-  -i            try to detect incomplete/unusual recombinations (locus with '+', must be used with -g)
   -2            try to detect unexpected recombinations (must be used with -g)
 #+END_EXAMPLE
 
- - Options such as =-G germline/IGH= or =-G germline/TRG= select one germline system.
- - The =-V/(-D)/-J= options enable to select individual V, (D) and J repertoires (fasta files).
-   This allows in particular to select incomplete rearrangement using custom V or J repertoires with added sequences.
- - The =-g germline/= option launches the analysis on the seven germlines, selecting the best locus for each read.
-   Using =-g germline/ -i= tests also some incomplete and unusual recombinations (locus with a =+= in their name),
-   and using =-g germline/ -i -2= further test unexpected recombinations (tagged as =xxx=).
-   See [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]] for information on the analyzable locus.
- - Analyzed locus and parameters are configured through the =germline/homo-sapiens.g= file.
-   A =germline/isotypes.data= file is provided to look for sequences with, on one side, IGHJ (or even IGHV) genes,
+The =germline/*.g= presets configure the analyzed recombinations.
+The following presets are provided:
+
+ - =germline/homo-sapiens.g=: Homo sapiens, TR (=TRA=, =TRB=, =TRG=, =TRD=) and Ig (=IGH=, =IGK=, =IGL=) locus,
+   including incomplete/unusal recombinations (=TRA+D=, =TRB+=, =TRD+=, =IGH+=, =IGK+=, see [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]])
+ - =germline/homo-sapiens-isotypes.g=: Homo sapiens heavy chain locus, looking for sequences with, on one side, IGHJ (or even IGHV) genes,
    and, on the other side, an IGH constant chain.
-   To select a custom set of TR or Ig locus, you may copy =germline/homo-sapiens.g= into a new file,
-   as for example =germline/custom.g=, and run Vidjil with =-g germline/custom.g -i -2=.
- - Several =-g= options can be used, as for instance =-g germline -g germline/isotypes.g=.
- - One can use other germline sequences possibly by defining another
-   =.g= file that would refer to an alternative germline set or by
-   overwriting the existing germline sequences (in the FASTA file).
+ - =germline/mus-musculus.g=: Mus musculus (strains BALB/c and C57BL/6)
+ - =germline/rattus-norvegicus.g=: Rattus norvegicus (strains BN/SsNHsdMCW and Sprague-Dawley)
+
+New =germline/*.g= presets for other species or for custom recombinations can be created, possibly referring to other =.fasta= files.
+Please contact us if you need help in configuring other germlines.
+
+ - Recombinations can be filtered, such as in
+   =-g germline/homo-sapiens.g:IGH= (only IGH, complete recombinations),
+   =-g germline/homo-sapiens.g:IGH,IGH+=  (only IGH, as well with incomplete recombinations)
+   or =-g germline/homo-sapiens.g:TRA,TRB,TRG= (only TR locus, complete recombinations).
+
+ - Several presets can be loaded at the same time, as for instance =-g germline/homo-sapiens.g -g germline/germline/homo-sapiens-isotypes.g=.
+
+ - Using =-2= further test unexpected recombinations (tagged as =xxx=), as in =-g germline/homo-sapiens.g -2=.
+
+Finally, the advanced =-V/(-D)/-J= options enable to select custom V, (D) and J repertoires given as =.fasta= files.
+
 
 ** Main algorithm parameters
 
@@ -411,7 +420,7 @@ the clone sequence and the V(D)J germline genes. The default values should work.
    The advanced =-m= option controls the minimum difference of positions between the end
    of the V and the start of the J. Note that it is even possible to set =-m -10=
    (meaning that V and J could overlap 10 bp). This is the default for VJ recombinations
-   (except when using a =germlines.data= file).
+   (except when using a =germline/*.g= file).
 
 The e-value set by =-e= is also applied to the V/J designation.
 The =-E= option further sets the e-value for the detection of D segments.
