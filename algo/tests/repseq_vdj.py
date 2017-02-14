@@ -249,8 +249,8 @@ def header_igblast_results(ff_fasta, ff_igblast):
 
 ### Vidjil
 
-VIDJIL_FINE = '{directory}/vidjil -X 100 -# "#" -c segment -i -3 -d -g {directory}/germline %s >> %s'
-VIDJIL_KMER = '{directory}/vidjil -w 20 -# "#" -b out -c windows -uuuU -2 -i -g {directory}/germline %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa >> %s'
+VIDJIL_FINE = '{directory}/vidjil -X 100 -# "#" -c segment -3 -d -g {directory}/germline/homo-sapiens.g %s >> %s'
+VIDJIL_KMER = '{directory}/vidjil -w 20 -# "#" -b out -c windows -uuuU -2 -g {directory}/germline/homo-sapiens.g %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa >> %s'
 
 def should_results_from_vidjil_output(f_log):
     '''
