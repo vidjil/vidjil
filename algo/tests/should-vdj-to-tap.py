@@ -217,8 +217,8 @@ def should_result_to_tap(should_pattern, result, tap_id):
         should_regex = should_pattern_to_regex(should_pattern)
         # match = should_regex.search(result)
         match = os.system("echo '%s' | grep -E '%s' > /dev/null 2>&1" \
-                          % (result.replace("'", "\\'"),
-                             should_regex.pattern.replace("'", "\\'")))
+                          % (result.replace("'", "'\\''"),
+                             should_regex.pattern.replace("'", "'\\''")))
         found = (match == 0)
 
     globals()['global_stats'][locus] += 1
