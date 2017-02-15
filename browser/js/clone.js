@@ -42,6 +42,7 @@ function Clone(data, model, index, virtual) {
         this[key[i]]=data[key[i]]
     }
 
+    // Default value just in case
     if (this.quantifiable == undefined) {
         this.quantifiable = true;
     }

@@ -2332,12 +2332,13 @@ changeCloneNotation: function(cloneNotationType) {
                     data: {
                         sequences: sequences
                     },
-                    // dataType: "json",
                     success: function (data) {
                         data.clones.forEach(function (clone) {
                             clone.quantifiable = false;
                         });
                         self.parseJsonData(data, 100);
+                        self.loadGermline();
+                        self.initClones();
                         console.log({ msg: "Clone(s) added!", type: "flash", priority: 1 })
                     },
                     error: function (xhr, textStatus, errorThrown) {
