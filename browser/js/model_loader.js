@@ -417,26 +417,50 @@ Model_loader.prototype = {
         return res;
     },
 
-    copySampleFields: function(analysis_samples) {
-        if ('id' in analysis_samples) {
-            //replace names, timestamps, order...
-            var keys = this.getFilteredFields(analysis_samples);
-            for (var tmp = 0; tmp < keys.length; tmp++) {
-                var key = keys[tmp];
-                var i = 0;
-                for (var j = 0; j < analysis_samples[key].length; j++ ){
-                    value = analysis_samples[key][j];
-                    if (analysis_samples.id[j] == this.samples.original_names[i]) {
-                        // TODO This is really hacky
-                        this.samples[key][i] = value;
-                        i = i+1;
-                    }
-                }
+    buildDict: function(first, second) {
+        dict = {};
+        for (var i = 0; i < first.length; i++){
+            dict[first[i]] = {};
+        }
+        for(var j = 0; j < second.length; j++) {
+            dict[second[j]] = {};
+        }
+        return dict;
+    },
+
+    copyField: function(dest, src, key) {
+        for (var i = 0; i < src[key].length; i++) {
+            if (typeof dest[src.id[i]] != 'undefined') {
+                if (typeof dest[src.id[i]][key] == 'undefined')
+                    dest[src.id[i]][key] = [];
+                dest[src.id[i]][key] = src[key][i];
             }
         }
-        if ('order' in analysis_samples) {
-            this.samples['order'] = this.calculateOrder(this.samples['order']);
+        return dest;
+    },
+
+    copySampleFields: function(samples, analysis) {
+        var clone = $.extend({}, samples);
+        if ('id' in analysis) {
+            //replace names, timestamps, order...
+            dict = this.buildDict(analysis.id, clone.original_names);
+            var keys = this.getFilteredFields(analysis);
+            for (var tmp = 0; tmp < keys.length; tmp++)
+                dict = this.copyField(dict, analysis, keys[tmp]);
+
+            for (id in dict) {
+                idx = clone.original_names.indexOf(id);
+                if (idx > -1)
+                    for (key in dict[id]) {
+                        clone[key][idx] = dict[id][key];
+                    }
+
+            }
         }
+        if ('order' in analysis) {
+            clone['order'] = this.calculateOrder(clone['order']);
+        }
+        return clone;
     },
 
     /**
@@ -464,7 +488,7 @@ Model_loader.prototype = {
             //samples
             if (this.analysis.samples) {
                 var s = this.analysis.samples
-                this.copySampleFields(s);
+                this.samples = this.copySampleFields(this.samples, s);
             }
             
             //tags
