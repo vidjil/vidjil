@@ -225,6 +225,29 @@ QUnit.test("system selection", function(assert) {
 
 test("model: analysis sample data application", function() {
     var m = new Model();
+
+    var ff = m.getFilteredFields({'log':[], 'producer':[], 'foobar':[], 'id': [], 'barfoo':[]});
+    var bool = ff.indexOf('log') == -1 && ff.indexOf('producer') == -1 && ff.indexOf('id') == -1;
+    equal(bool, true, "sample fields filtered");
+    equal(ff.length, 2, "remaining sample fields");
+
+    var order = m.calculateOrder([0, 1, 5, 2, 3]);
+    deepEqual(order, [0, 1, 4, 2, 3], "reorder array of order values");
+
+    var dict = m.buildDict(["1", "3", "4", "6"], ["1", "3", "4", "5"]);
+    deepEqual(dict, {"1":{}, "3":{}, "4":{}, "5":{}, "6":{}}, "build a dict of all present ids");
+
+    var dest = {"1": {}, "2": {}};
+    var src = {"id": ["1", "2", "3"], "val": ["f", "o", "o"]};
+    var field = m.copyField(dest, src, "val");
+    deepEqual(field, {"1": {"val": "f"}, "2": {"val": "o"}}, "copy the contents of analysis sample fields");
+
+    dest = {"original_names": ["1", "4", "2"], "val": ["a", "b", "c"], "lav": ["c", "b", "a"]};
+    src = {"id": ["1", "2", "3"], "val": ["f", "o", "o"]};
+    var res = m.copySampleFields(dest, src);
+    var expected = {"original_names": ["1", "4", "2"], "val": ["f", "b", "o"], "lav": ["c", "b", "a"]};
+    deepEqual(res, expected, "copy all relevant fields from analysis to samples");
+
     m.parseJsonData(json_data, 100);
     m.parseJsonAnalysis(analysis_data);
 
