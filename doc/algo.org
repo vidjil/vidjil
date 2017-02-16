@@ -410,7 +410,10 @@ All the reads with the windows related to the sequence will be extracted to =out
 
 The =-3= option launches a CDR3/JUNCTION detection based on the position
 of Cys104 and Phe118/Trp118 amino acids. This detection relies on alignment
-with gapped V and J sequences, as for instance, for V genes, IMGT/GENE-DB sequences.
+with gapped V and J sequences, as for instance, for V genes, IMGT/GENE-DB sequences,
+as provided by =make germline=.
+The CDR3/JUNCTION detection won't work with custom non-gapped V/J repertoires.
+
 CDR3 are reported as productive when they come from an in-frame recombination
 and when the sequence does not contain any in-frame stop codons.
 
