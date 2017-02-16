@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -c segment -g $VIDJIL_DIR/germline/mus-musculus.g $VIDJIL_DIR/data/example_mouse.fa
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -3 -c segment -g $VIDJIL_DIR/germline/mus-musculus.g $VIDJIL_DIR/data/example_mouse.fa
 
 $ Segment sequence on IGK
 1:segIGK.*IGKV.*IGKJ
@@ -8,3 +8,8 @@ $ Segment sequence on IGH
 
 $ Segment sequence on IGL
 1:segIGL.*IGLV.*IGLJ
+
+$ Find the good CDR3
+1:IGK.*CLQYDNLWTF
+1:IGH.*CARYDYYGSSYFDYW
+1:IGL.*CALWYSNH#IF
