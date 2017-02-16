@@ -124,6 +124,8 @@ CUSTOM_118 = { '': 0    # custom position of 118 in sequences without the Trp-Gl
     ,    'ggtaccgggttaataggaaactgacatttggagccaacactagaggaatcatgaaactca':    27 # TRAJ61*01
     ,       'ataccactggttggttcaagatatttgctgaagggactaagctcatagtaacttcacctg': 24 # TRGJP1*01
     ,       'atagtagtgattggatcaagacgtttgcaaaagggactaggctcatagtaacttcgcctg': 24 # TRGJP2*01
+  #                                 t..gg....gg.                               # Regexp
+  #  .....ggaaggaaggaaacaggaaatttacatttggaatggggacgcaagtgagagtga               # TRAJ59*01 (ok)
   #  ,         'ctgagaggcgctgctgggcgtctgggcggaggactcctggttctgg':               # TRBJ2-2P*01 ?
   #  ,        'ctcctacgagcagtacgtcgggccgggcaccaggctcacggtcacag':               # TRBJ2-7*02 ?
 }
