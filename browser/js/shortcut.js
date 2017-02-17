@@ -43,8 +43,8 @@ Shortcut.prototype = {
         var self = this
         
         this.system_shortcuts = {}
-        for (var system in germline_data){
-            var keycode = germline_data[system].shortcut.toUpperCase().charCodeAt(0)
+        for (var system in germline_data['systems']){
+            var keycode = germline_data['systems'][system].shortcut.toUpperCase().charCodeAt(0)
 
             if (typeof this.system_shortcuts[keycode] == "undefined")
                 this.system_shortcuts[keycode] = []

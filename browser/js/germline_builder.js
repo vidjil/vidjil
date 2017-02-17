@@ -49,7 +49,7 @@ GermlineList.prototype = {
                     var json = result.replace(/ *\/\/[^\n]*\n */g , "")
                     //convert from js to json (json begin with { or [, never with a var name)
                     json = json.replace("germline_data = " , "")
-                    self.list = jQuery.parseJSON(json);
+                    self.list = jQuery.parseJSON(json)['systems'];
                 }
                 catch(err){
                     console.log({"type": "flash", "msg": "germlines.data malformed, use local js file instead (can be outdated) " , "priority": 2});
@@ -70,7 +70,7 @@ GermlineList.prototype = {
     * */
     fallbackLoad : function () {
         try {
-            this.list = germline_data
+            this.list = germline_data['systems']
         }
         catch(err){
             console.log({"type": "popup", "msg": "Incorrect browser installation, 'js/germline.js' is not found<br />please run 'make' in 'germline/'"});
