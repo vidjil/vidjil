@@ -354,7 +354,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
     align_report = get_file_content(align_report)
     assembly_report = get_file_content(assembly_report)
     reports = align_report + assembly_report
-    original_name = row[0].filename
+    original_name = row[0].data_file
     totalReads = extract_total_reads(assembly_report)
     with open(results_filepath, 'r') as json_file:
         my_json = json.load(json_file)
