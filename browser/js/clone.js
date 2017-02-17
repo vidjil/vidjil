@@ -741,9 +741,9 @@ Clone.prototype = {
         var content = "<form name='germ'><select class='menu-selector' NAME='LocusForm' id='germSelector', onChange='m.clones["+ this.index +"].changeLocus(this.form.LocusForm.value);'  style='width: 80px' >";
         content += "<option value="+ this.germline + ">" + this.germline + "</option>";
         
-        for (var i in germline_data['systems']) {
-            if (i.indexOf("_") ==-1 ){
-                content += "<option value=" + i +">" + i + "</option>";
+        for (var germline in germline_data['systems']) {
+            if (germline.indexOf("_") ==-1 ){
+                content += "<option value=" + germline +">" + germline + "</option>";
             }
         }
         content += "</select></form>";
