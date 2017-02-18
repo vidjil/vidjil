@@ -110,24 +110,24 @@ QUnit.test("clone : name, informations, getHtmlInfo", function(assert) {
     console.log(m.samples.order);
 
     html = m.clones[0].getHtmlInfo();
-    includes(html, "<h2>Cluster info : hello</h2><div id='info_window'><table><tr><th></th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
+    assert.includes(html, "<h2>Cluster info : hello</h2><div id='info_window'><table><tr><th></th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
              "getHtmlInfo: cluster info");
 
-    includes(html, "<tr><td> clone name </td><td colspan='4'>hello</td></tr><tr><td> clone short name </td><td colspan='4'>hello</td></tr>",
+    assert.includes(html, "<tr><td> clone name </td><td colspan='4'>hello</td></tr><tr><td> clone short name </td><td colspan='4'>hello</td></tr>",
              "getHtmlInfo: clone names")
 
-    includes(html, "<tr><td> clone size (n-reads (total reads) )</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td> clone size (%)</td><td>10.00%</td><td>20.00%</td><td>15.00%</td><td>30.00%</td>",
+    assert.includes(html, "<tr><td> clone size (n-reads (total reads) )</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td> clone size (%)</td><td>10.00%</td><td>20.00%</td><td>15.00%</td><td>30.00%</td>",
              "getHtmlInfo: clone information");
     
-    includes(html, "<tr><td class='header' colspan='5'> representative sequence</td></tr><tr><td> sequence name </td><td colspan='4'>hello</td></tr><tr><td> code </td><td colspan='4'>hello</td></tr><tr><td> length </td><td colspan='4'>19</td></tr><tr><td> e-value </td><td colspan='4'><span class='warning'>0.01</span></td><tr><td> size (n-reads (total reads) )</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td> size (%)</td><td>5.000%</td><td>10.00%</td><td>-</td><td>30.00%</td></tr>",
+    assert.includes(html, "<tr><td class='header' colspan='5'> representative sequence</td></tr><tr><td> sequence name </td><td colspan='4'>hello</td></tr><tr><td> code </td><td colspan='4'>hello</td></tr><tr><td> length </td><td colspan='4'>19</td></tr><tr><td> e-value </td><td colspan='4'><span class='warning'>0.01</span></td><tr><td> size (n-reads (total reads) )</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td> size (%)</td><td>5.000%</td><td>10.00%</td><td>-</td><td>30.00%</td></tr>",
         "getHtmlInfo: representative sequence information");
 
-    includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' onclick='m.clones[0].toggle()'>edit</button> </td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", 
+    assert.includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' onclick='m.clones[0].toggle()'>edit</button> </td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", 
         "getHtmlInfo: segmentation information + modification button");
     // Test icon 
     m.clones[0].segEdited = true;
     html = m.clones[0].getHtmlInfo();
-    includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' onclick='m.clones[0].toggle()'>edit</button>  <img src='images/icon_fav_on.png' alt='This clone has been edited by a user'></td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>",
+    assert.includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' onclick='m.clones[0].toggle()'>edit</button>  <img src='images/icon_fav_on.png' alt='This clone has been edited by a user'></td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>",
         "getHtmlInfo: segmentation information + modification button + manuallyChanged icon");
     
     // <tr><td> locus </td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG</td></tr> // not tested (order of title/class)
@@ -135,36 +135,36 @@ QUnit.test("clone : name, informations, getHtmlInfo", function(assert) {
 
     // locus/genes content tests
     // TODO correct this locus test/function for chromium/firefox (inversion des balises)
-    /*includes(html, "<tr><td> locus </td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG<div class='div-menu-selector' id='listLocus' style='display: none'>",
+    /*assert.includes(html, "<tr><td> locus </td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG<div class='div-menu-selector' id='listLocus' style='display: none'>",
         "getHtmlInfo: segmentation information (Locus)");*/
 
-    includes(html, "<tr><td> V gene (or 5') </td><td colspan='4'>undefined V<div class='div-menu-selector' id='listVsegment' style='display: none'>",
+    assert.includes(html, "<tr><td> V gene (or 5') </td><td colspan='4'>undefined V<div class='div-menu-selector' id='listVsegment' style='display: none'>",
         "getHtmlInfo: segmentation information (V gene)");
-    includes(html, "<tr><td> (D gene) </td><td colspan='4'>IGHD2*03<div class='div-menu-selector' id='listDsegment' style='display: none'>",
+    assert.includes(html, "<tr><td> (D gene) </td><td colspan='4'>IGHD2*03<div class='div-menu-selector' id='listDsegment' style='display: none'>",
         "getHtmlInfo: segmentation information (D gene)");
-    includes(html, "<tr><td> J gene (or 3') </td><td colspan='4'>IGHV4*01<div class='div-menu-selector' id='listJsegment' style='display: none'>",
+    assert.includes(html, "<tr><td> J gene (or 3') </td><td colspan='4'>IGHV4*01<div class='div-menu-selector' id='listJsegment' style='display: none'>",
         "getHtmlInfo: segmentation information (J gene)");
 
     // forms tests
-    includes(html, 
+    assert.includes(html, 
         "<form name='germ'><select class='menu-selector' NAME='LocusForm' id='germSelector', onChange='m.clones[0].changeLocus(this.form.LocusForm.value);'  style='width: 80px' >",
         "getHtmlInfo: Locus form");
-    includes(html, 
+    assert.includes(html, 
         "<form name=Vsegment><select class='menu-selector' NAME=Vsegment onChange='m.clones[0].changeSegment(this.form.Vsegment.value, 5);'  style='width: 100px' >",
         "getHtmlInfo: V gene form");
 
     // first options tests
-    includes(html, "<option value=TRG>TRG</option><option value=TRA>TRA</option>","getHtmlInfo: first options in select Locus");
-    includes(html, "<option value=undefined V>undefined V</option><option value=TRGV1*01>TRGV1*01</option>",  "getHtmlInfo:  first options in select Vgene");
+    assert.includes(html, "<option value=TRG>TRG</option><option value=TRA>TRA</option>","getHtmlInfo: first options in select Locus");
+    assert.includes(html, "<option value=undefined V>undefined V</option><option value=TRGV1*01>TRGV1*01</option>",  "getHtmlInfo:  first options in select Vgene");
        
     // Test after germline/segment manual changement
     m.clones[0].changeLocus("IGH"); 
     m.clones[0].changeSegment("testV5", "5");
     html = m.clones[0].getHtmlInfo();
-    includes(html, 
+    assert.includes(html, 
         "<option value=IGH>IGH</option><option value=TRA>TRA</option>",
         "getHtmlInfo:  first options in select locus (after changment)"); // after germline changment
-    includes(html, 
+    assert.includes(html, 
         "<tr><td> V gene (or 5') </td><td colspan='4'>testV5<div class='div-menu-selector' id='listVsegment' style='display: none'>",
         "getHtmlInfo: segmentation information (V gene) after changment");
 
