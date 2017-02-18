@@ -62,17 +62,12 @@
     }
 
 
-function includes(result, pattern, message) {
+QUnit.assert.includes = function(result, pattern, message ) {
     // Checks that the result includes the pattern
     // TODO: see and use qunit-regexp !
     var res = result.indexOf(pattern) > -1
 
-    if (res) {
-        assert.ok(res, message)
-    }
-    else { // Only for easy debug
-        assert.equal(result, "{includes} " + pattern, message)
-    }
+    this.push(res, res, "{includes} " + pattern, message);
 }
 
 QUnit.test("clone : name, informations, getHtmlInfo", function(assert) {
