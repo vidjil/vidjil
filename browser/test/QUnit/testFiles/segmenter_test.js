@@ -1,5 +1,5 @@
 
-test("Segmenter : ", function() {
+QUnit.test("Segmenter : ", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data,100)
@@ -12,54 +12,54 @@ test("Segmenter : ", function() {
     //select test
     m.select(0)
     var div0 = document.getElementById("f0");
-    notEqual(div0.innerHTML.indexOf("test1"), -1, "select : Ok")
+    assert.notEqual(div0.innerHTML.indexOf("test1"), -1, "select : Ok")
 
     m.select(1)
     var div1 = document.getElementById("f1");
-    notEqual(div1.innerHTML.indexOf("test2"), -1, "select : Ok")
+    assert.notEqual(div1.innerHTML.indexOf("test2"), -1, "select : Ok")
     
     m.select(2)
     var div2 = document.getElementById("f2");
-    notEqual(div2.innerHTML.indexOf("test3"), -1, "select : Ok")
+    assert.notEqual(div2.innerHTML.indexOf("test3"), -1, "select : Ok")
     
     m.unselectAll()
-    equal(document.getElementById("f0"), null, "unselect : Ok")
-    equal(document.getElementById("f1"), null, "unselect : Ok")
-    equal(document.getElementById("f2"), null, "unselect : Ok")
+    assert.equal(document.getElementById("f0"), null, "unselect : Ok")
+    assert.equal(document.getElementById("f1"), null, "unselect : Ok")
+    assert.equal(document.getElementById("f2"), null, "unselect : Ok")
     
     //
-    deepEqual(segment.findPotentialField(), ["","cdr3","fr1", "5", "id","V-REGION","J-REGION","D-REGION","CDR3-IMGT"], "potentialField : Ok")
+    assert.deepEqual(segment.findPotentialField(), ["","cdr3","fr1", "5", "id","V-REGION","J-REGION","D-REGION","CDR3-IMGT"], "potentialField : Ok")
     
 
     m.select(0)
-    deepEqual(segment.toFasta(), "> test1 // 5.000%\naaaaaaaaaaaaaaaaaaaAG\n","toFasta :Ok")
+    assert.deepEqual(segment.toFasta(), "> test1 // 5.000%\naaaaaaaaaaaaaaaaaaaAG\n","toFasta :Ok")
     
     
     m.focusIn(0)
     m.updateElem([0])
-    equal($("#f0").css("background-color"), "rgb(204, 204, 204)", "focus : Ok")
+    assert.equal($("#f0").css("background-color"), "rgb(204, 204, 204)", "focus : Ok")
 
     m.focusOut()
     m.updateElem([0])
-    notEqual($("#f0").css("background-color"), "rgb(204, 204, 204)", "focusOut : Ok")
+    assert.notEqual($("#f0").css("background-color"), "rgb(204, 204, 204)", "focusOut : Ok")
     
     //stats
     m.unselectAll()
-    equal(document.getElementsByClassName("stats_content")[0].innerHTML, "", "stats (empty) : Ok")
+    assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "", "stats (empty) : Ok")
 
     m.select(0)
-    equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 10 reads (5.000%) ", "stats (1 clone) : Ok")
+    assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 10 reads (5.000%) ", "stats (1 clone) : Ok")
 
     m.multiSelect([0,1])
-    equal(document.getElementsByClassName("stats_content")[0].innerHTML, "2 clones, 30 reads (15.00%) ", "stats (several clones) : Ok")
+    assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "2 clones, 30 reads (15.00%) ", "stats (several clones) : Ok")
 
     m.unselectAll()
     m.select(2)
     m.changeTime(3)
-    equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 3 reads ", "stats (1 clone with few reads) : Ok")
+    assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 3 reads ", "stats (1 clone with few reads) : Ok")
 });
 
-test("Sequence : ", function() {
+QUnit.test("Sequence : ", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data,100)
     m.initClones()
@@ -69,7 +69,7 @@ test("Sequence : ", function() {
     segment.addToSegmenter(4)
     seq1 = new Sequence(4, m, segment)
     seq1.load()
-    notEqual(seq1.toString().indexOf("catcatcatgatgctacgatcttac"),-1, "unsegmented sequence")
+    assert.notEqual(seq1.toString().indexOf("catcatcatgatgctacgatcttac"),-1, "unsegmented sequence")
 
     segment.updateElemStyle([4]) /* Will remove sequence 4 from the segmenter
                                   * as it is not really selected
@@ -78,7 +78,7 @@ test("Sequence : ", function() {
     seq1 = new Sequence(1, m, segment)
     seq1.load()
     seq1_string = seq1.toString()
-    notEqual(seq1_string.indexOf(">cccccg<"), -1, "v part of segmented sequence")
-    notEqual(seq1_string.indexOf(">tccccccca<"), -1, "n part of segmented sequence")
-    notEqual(seq1_string.indexOf(">tca<"), -1, "j part of segmented sequence")
+    assert.notEqual(seq1_string.indexOf(">cccccg<"), -1, "v part of segmented sequence")
+    assert.notEqual(seq1_string.indexOf(">tccccccca<"), -1, "n part of segmented sequence")
+    assert.notEqual(seq1_string.indexOf(">tca<"), -1, "j part of segmented sequence")
 });

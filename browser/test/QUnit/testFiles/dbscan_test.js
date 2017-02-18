@@ -10,7 +10,7 @@ var sp = {
 /*
 Test existing DBSCAN object
 */
-test("existingDBSCANObject", function() {
+QUnit.test("existingDBSCANObject", function(assert) {
     //Creation of nodes & edges objects
     var nodesTab = [0,1];
     var firstEdge = {
@@ -25,7 +25,7 @@ test("existingDBSCANObject", function() {
     sp.allEdges = edgesTab;
     //DBSCAN object creation
     var dbscan = new DBSCAN(sp, 3, 0);
-    notEqual(dbscan, null, "verification: dbscan is not null");
+    assert.notEqual(dbscan, null, "verification: dbscan is not null");
 });
 
 /*
@@ -35,7 +35,7 @@ Test good clustering
 /*
 EPSILON
 */
-test("goodClusteringTwoNodes-Epsilon", function() {
+QUnit.test("goodClusteringTwoNodes-Epsilon", function(assert) {
     //Creation of nodes & edges objects
     var nodesTab = [0,1];
     var firstEdge = {
@@ -51,18 +51,18 @@ test("goodClusteringTwoNodes-Epsilon", function() {
     //First testset
     var dbscan = new DBSCAN(sp, 3, 0);
     dbscan.runAlgorithm();
-    equal(dbscan.clusters.length, 1, "verification[0-Epsilon]: good clustering for two nodes");
+    assert.equal(dbscan.clusters.length, 1, "verification[0-Epsilon]: good clustering for two nodes");
     //Second testset
     var dbscan = new DBSCAN(sp, 2, 0);
     dbscan.runAlgorithm();
-    notEqual(dbscan.clusters.length, 1, "verification[1-Epsilon]: good clustering for two nodes");
-    equal(dbscan.clusters.length, 2, "verification[2-Epsilon]: good clustering for two nodes");
+    assert.notEqual(dbscan.clusters.length, 1, "verification[1-Epsilon]: good clustering for two nodes");
+    assert.equal(dbscan.clusters.length, 2, "verification[2-Epsilon]: good clustering for two nodes");
 });
 
 /*
 MINPTS
 */
-test("goodClusteringTwoNodes-MinPts", function() {
+QUnit.test("goodClusteringTwoNodes-MinPts", function(assert) {
     //Creation of nodes & edges objects
     var nodesTab = [0,1];
     var firstEdge = {
@@ -78,18 +78,18 @@ test("goodClusteringTwoNodes-MinPts", function() {
     //First testset
     var dbscan = new DBSCAN(sp, 3, 10);
     dbscan.runAlgorithm();
-    equal(dbscan.clusters.length, 2, "verification[0-MinPts]: good clustering for two nodes");
+    assert.equal(dbscan.clusters.length, 2, "verification[0-MinPts]: good clustering for two nodes");
     //Second testset
     var dbscan = new DBSCAN(sp, 3, 2);
     dbscan.runAlgorithm();
-    notEqual(dbscan.clusters.length, 2, "verification[1-MinPts]: good clustering for two nodes");
-    equal(dbscan.clusters.length, 1, "verification[2-MinPts]: good clustering for two nodes");
+    assert.notEqual(dbscan.clusters.length, 2, "verification[1-MinPts]: good clustering for two nodes");
+    assert.equal(dbscan.clusters.length, 1, "verification[2-MinPts]: good clustering for two nodes");
 });
 
 /*
 BOTH - WITH BIGGER NUMBER OF NODES
 */
-test("goodClusteringMultipleNodes", function() {
+QUnit.test("goodClusteringMultipleNodes", function(assert) {
     var nodesTab = [0,1,2,3,4];
     var edge1 = {
         source: 0,
@@ -158,34 +158,34 @@ test("goodClusteringMultipleNodes", function() {
     //First testset
     var dbscan = new DBSCAN(sp, 3, 4);
     dbscan.runAlgorithm();
-    equal(dbscan.clusters.length, 2, "verification[0-Both]: good clustering for multiple nodes");
-    ok(dbscan.clusters[0].indexOf(0), "verification[1-Both(0)]: good clustering for multiple nodes");
-    ok(dbscan.clusters[0].indexOf(1), "verification[1-Both(1)]: good clustering for multiple nodes");
-    ok(dbscan.clusters[0].indexOf(3), "verification[1-Both(3)]: good clustering for multiple nodes");
-    ok(dbscan.clusters[0].indexOf(4), "verification[1-Both(4)]: good clustering for multiple nodes");
-    ok(dbscan.clusters[1].indexOf(2), "verification[1-Both(2)]: good clustering for multiple nodes");
+    assert.equal(dbscan.clusters.length, 2, "verification[0-Both]: good clustering for multiple nodes");
+    assert.ok(dbscan.clusters[0].indexOf(0), "verification[1-Both(0)]: good clustering for multiple nodes");
+    assert.ok(dbscan.clusters[0].indexOf(1), "verification[1-Both(1)]: good clustering for multiple nodes");
+    assert.ok(dbscan.clusters[0].indexOf(3), "verification[1-Both(3)]: good clustering for multiple nodes");
+    assert.ok(dbscan.clusters[0].indexOf(4), "verification[1-Both(4)]: good clustering for multiple nodes");
+    assert.ok(dbscan.clusters[1].indexOf(2), "verification[1-Both(2)]: good clustering for multiple nodes");
     //Second testset
     var dbscan = new DBSCAN(sp, 3, 2);
     dbscan.runAlgorithm();
-    equal(dbscan.clusters.length, 1, "verification[2-Both]: good clustering for multiple nodes");
+    assert.equal(dbscan.clusters.length, 1, "verification[2-Both]: good clustering for multiple nodes");
     //Third testset
     var dbscan = new DBSCAN(sp, 3, 10);
     dbscan.runAlgorithm();
-    equal(dbscan.clusters.length, 5, "verification[3-Both]: good clustering for multiple nodes");
+    assert.equal(dbscan.clusters.length, 5, "verification[3-Both]: good clustering for multiple nodes");
     //4th testset
     var dbscan = new DBSCAN(sp, 5, 6);
     dbscan.runAlgorithm();
-    equal(dbscan.clusters.length, 5, "verification[3-Both]: good clustering for multiple nodes");
+    assert.equal(dbscan.clusters.length, 5, "verification[3-Both]: good clustering for multiple nodes");
     //5th testset
     var dbscan = new DBSCAN(sp, 5, 2);
     dbscan.runAlgorithm();
-    equal(dbscan.clusters.length, 1, "verification[4-Both]: good clustering for multiple nodes");
+    assert.equal(dbscan.clusters.length, 1, "verification[4-Both]: good clustering for multiple nodes");
     //6th testset
     var dbscan = new DBSCAN(sp, 5, 3);
     dbscan.runAlgorithm();
-    equal(dbscan.clusters.length, 1, "verification[4-Both]: good clustering for multiple nodes");
+    assert.equal(dbscan.clusters.length, 1, "verification[4-Both]: good clustering for multiple nodes");
     //7th testset
     var dbscan = new DBSCAN(sp, 5, 4);
     dbscan.runAlgorithm();
-    equal(dbscan.clusters.length, 2, "verification[4-Both]: good clustering for multiple nodes");
+    assert.equal(dbscan.clusters.length, 2, "verification[4-Both]: good clustering for multiple nodes");
 });
