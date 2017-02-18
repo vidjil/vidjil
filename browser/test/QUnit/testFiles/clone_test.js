@@ -68,14 +68,14 @@ function includes(result, pattern, message) {
     var res = result.indexOf(pattern) > -1
 
     if (res) {
-        ok(res, message)
+        assert.ok(res, message)
     }
     else { // Only for easy debug
-        equal(result, "{includes} " + pattern, message)
+        assert.equal(result, "{includes} " + pattern, message)
     }
 }
 
-test("clone : name, informations, getHtmlInfo", function() {
+QUnit.test("clone : name, informations, getHtmlInfo", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
@@ -84,33 +84,33 @@ test("clone : name, informations, getHtmlInfo", function() {
     var c3 = new Clone(json_clone3, m, 2)
     m.initClones()
     
-    equal(c1.getSequenceName(), "hello", "get name clone1 : hello");
-    equal(c1.getCode(), "hello", "get code clone1 : hello");
+    assert.equal(c1.getSequenceName(), "hello", "get name clone1 : hello");
+    assert.equal(c1.getCode(), "hello", "get code clone1 : hello");
 
-    equal(c2.getSequenceName(), some_name, "clone2, .getSequenceName()");
-    equal(c2.getCode(), some_name, "clone2, .getCode()");
-    equal(c2.getName(), some_name, "clone2, .getName()");
-    equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/12/4 J5", "clone2, .getShortName()");
+    assert.equal(c2.getSequenceName(), some_name, "clone2, .getSequenceName()");
+    assert.equal(c2.getCode(), some_name, "clone2, .getCode()");
+    assert.equal(c2.getName(), some_name, "clone2, .getName()");
+    assert.equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/12/4 J5", "clone2, .getShortName()");
     
-    equal(c3.getSequenceName(), "custom name", "get name clone3 : custom name");
-    equal(c3.getCode(), "id3", "get code clone3 : id3");
+    assert.equal(c3.getSequenceName(), "custom name", "get name clone3 : custom name");
+    assert.equal(c3.getCode(), "id3", "get code clone3 : id3");
     
     c3.changeName("plop")
-    equal(c3.getName(), "plop", "changename clone3 : plop");
-    equal(c3.getSequenceName(), "plop", "changename clone3 : plop");
-    equal(c1.getNumberNonZeroSamples(), 3, "clone c1, getNumberNonZeroSamples");
+    assert.equal(c3.getName(), "plop", "changename clone3 : plop");
+    assert.equal(c3.getSequenceName(), "plop", "changename clone3 : plop");
+    assert.equal(c1.getNumberNonZeroSamples(), 3, "clone c1, getNumberNonZeroSamples");
     
     m.select(0)
     m.select(1)
     m.merge()
     
-    equal(c1.getReads(), 20, "cluster c1+c2 reads : 20");
-    equal(c1.getSize(), 0.10, "cluster c1+c2 size : 0.10");
-    equal(c1.getStrSize(), "10.00%", "cluster c1+c2 size (%) : 10%");
+    assert.equal(c1.getReads(), 20, "cluster c1+c2 reads : 20");
+    assert.equal(c1.getSize(), 0.10, "cluster c1+c2 size : 0.10");
+    assert.equal(c1.getStrSize(), "10.00%", "cluster c1+c2 size (%) : 10%");
     
-    equal(c1.get('reads'), 10, "clone c1 reads : 10");
-    equal(c1.getSequenceSize(), "0.05", "clone c1 size : 0.05");
-    equal(c1.getNumberNonZeroSamples(), 4, "clustered clone c1, getNumberNonZeroSamples");
+    assert.equal(c1.get('reads'), 10, "clone c1 reads : 10");
+    assert.equal(c1.getSequenceSize(), "0.05", "clone c1 size : 0.05");
+    assert.equal(c1.getNumberNonZeroSamples(), 4, "clustered clone c1, getNumberNonZeroSamples");
 
     console.log(m.samples.order);
 
@@ -175,7 +175,7 @@ test("clone : name, informations, getHtmlInfo", function() {
 
 });
 
-test('clone: get info from seg', function() {
+QUnit.test('clone: get info from seg', function(assert) {
     var m = new Model();
     m.parseJsonData(json_data)
     var c1 = new Clone(json_clone1, m, 0)
@@ -183,38 +183,38 @@ test('clone: get info from seg', function() {
     var c3 = new Clone(json_clone3, m, 2)
     m.initClones()
 
-    ok(c1.hasSeg('cdr3'), "clone1 has CDR3")
-    ok(c1.hasSeg('junction'), "clone1 has juction")
-    ok(c1.hasSeg('cdr3', 'junction'), "clone1 has both CDR3 and junction")
-    notOk(c1.hasSeg('toto'), "clone1 doesn't have toto")
-    notOk(c1.hasSeg('junction', 'toto'), "clone1 has junction but doesn't have toto")
+    assert.ok(c1.hasSeg('cdr3'), "clone1 has CDR3")
+    assert.ok(c1.hasSeg('junction'), "clone1 has juction")
+    assert.ok(c1.hasSeg('cdr3', 'junction'), "clone1 has both CDR3 and junction")
+    assert.notOk(c1.hasSeg('toto'), "clone1 doesn't have toto")
+    assert.notOk(c1.hasSeg('junction', 'toto'), "clone1 has junction but doesn't have toto")
 
-    equal(c1.getSegLength('cdr3'), 6, "CDR3 length");
-    equal(c2.getSegLength('cdr3'), 'undefined', "no cdr3 in c2");
+    assert.equal(c1.getSegLength('cdr3'), 6, "CDR3 length");
+    assert.equal(c2.getSegLength('cdr3'), 'undefined', "no cdr3 in c2");
     var pos_cdr3 = c1.getSegStartStop('cdr3')
-    equal(pos_cdr3['start'], 10, "CDR3 length")
-    equal(pos_cdr3['stop'], 15, "CDR3 length")
-    equal(c1.getSegStartStop('toto'), null, "no toto record")
+    assert.equal(pos_cdr3['start'], 10, "CDR3 length")
+    assert.equal(pos_cdr3['stop'], 15, "CDR3 length")
+    assert.equal(c1.getSegStartStop('toto'), null, "no toto record")
     var pos_junction = c3.getSegStartStop('junction')
-    equal(pos_junction['start'], 2, "junction of c3")
-    equal(pos_junction['stop'], 13, "junction of c3")
+    assert.equal(pos_junction['start'], 2, "junction of c3")
+    assert.equal(pos_junction['stop'], 13, "junction of c3")
 
     pos_junction = c1.getSegStartStop('junction')
-    equal(pos_junction['start'], 9, "start junction of c1")
-    equal(pos_junction['stop'], 11, "stop junction of c1")
+    assert.equal(pos_junction['start'], 9, "start junction of c1")
+    assert.equal(pos_junction['stop'], 11, "stop junction of c1")
 
-    equal(c1.eValue, 1e-2, 'Evalue of clone 1 should be 1e-2')
-    equal(c2.eValue, undefined, 'e-value of clone should not be defined')
+    assert.equal(c1.eValue, 1e-2, 'Evalue of clone 1 should be 1e-2')
+    assert.equal(c2.eValue, undefined, 'e-value of clone should not be defined')
 
     c1.computeEValue()
-    equal(c1.eValue, 1e-2, 'Recomputing e-value should not change its value')
+    assert.equal(c1.eValue, 1e-2, 'Recomputing e-value should not change its value')
 
-    equal(c1.getSegNtSequence('junction'), 'aat', 'junction c1')
-    equal(c1.getSegAASequence('junction'), '', 'no AA junction for c1')
-    equal(c1.getSegAASequence('cdr3'), 'ABCDE', 'AA CDR3 for c1')
+    assert.equal(c1.getSegNtSequence('junction'), 'aat', 'junction c1')
+    assert.equal(c1.getSegAASequence('junction'), '', 'no AA junction for c1')
+    assert.equal(c1.getSegAASequence('cdr3'), 'ABCDE', 'AA CDR3 for c1')
 });
 
-test("clone : getSequence/RevComp", function() {
+QUnit.test("clone : getSequence/RevComp", function(assert) {
 
     var m = new Model();
     m.parseJsonData(json_data)
@@ -224,14 +224,14 @@ test("clone : getSequence/RevComp", function() {
     m.initClones()
 
     //fix test sequence et revcomp
-    equal(c2.getSequence(), "AACGTACCAGG", "C2 getSequence()");
-    equal(c2.getRevCompSequence(), "CCTGGTACGTT", "C2 getRevCompSequence()");
-    equal(c3.getSequence(), "AAAAAAAAAATTTTTTTTT", "C3 (min case) getSequence()");
-    equal(c3.getRevCompSequence(), "AAAAAAAAATTTTTTTTTT", "C3 (min case) getRevCompSequence()");
+    assert.equal(c2.getSequence(), "AACGTACCAGG", "C2 getSequence()");
+    assert.equal(c2.getRevCompSequence(), "CCTGGTACGTT", "C2 getRevCompSequence()");
+    assert.equal(c3.getSequence(), "AAAAAAAAAATTTTTTTTT", "C3 (min case) getSequence()");
+    assert.equal(c3.getRevCompSequence(), "AAAAAAAAATTTTTTTTTT", "C3 (min case) getRevCompSequence()");
 });
 
 
-test("clone : size", function() {
+QUnit.test("clone : size", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
@@ -240,26 +240,26 @@ test("clone : size", function() {
     var c3 = new Clone(json_clone3, m, 2)
     m.initClones()
 
-    equal(c1.getSystemSize(), "0.1", "clone c1 system size : 0.1");
+    assert.equal(c1.getSystemSize(), "0.1", "clone c1 system size : 0.1");
     sizes = c1.getStrAllSystemSize(m.t, true);
-    equal(m.getStrAnySize(0, c1.getSystemSize()), "10.00%", "clone c1 system size : 10%");
-    equal(sizes.system, "10.00% of TRG", "clone c1 system size: 10%")
-    equal(sizes.systemGroup, undefined, "clone c1 system group size: undefined")
+    assert.equal(m.getStrAnySize(0, c1.getSystemSize()), "10.00%", "clone c1 system size : 10%");
+    assert.equal(sizes.system, "10.00% of TRG", "clone c1 system size: 10%")
+    assert.equal(sizes.systemGroup, undefined, "clone c1 system group size: undefined")
     m.select(0)
     m.select(1)
     m.merge()
     
-    equal(c1.getReads(), 20, "cluster c1+c2 reads : 20");
-    equal(c1.getSize(), 0.10, "cluster c1+c2 size : 0.10");
-    equal(c1.getStrSize(), "10.00%", "cluster c1+c2 size (%) : 10%");
+    assert.equal(c1.getReads(), 20, "cluster c1+c2 reads : 20");
+    assert.equal(c1.getSize(), 0.10, "cluster c1+c2 size : 0.10");
+    assert.equal(c1.getStrSize(), "10.00%", "cluster c1+c2 size (%) : 10%");
     
-    equal(c1.get('reads'), 10, "clone c1 reads : 10");
-    equal(c1.getSequenceSize(), "0.05", "clone c1 size : 0.05");
+    assert.equal(c1.get('reads'), 10, "clone c1 reads : 10");
+    assert.equal(c1.getSequenceSize(), "0.05", "clone c1 size : 0.05");
     
     
 });
 
-test("clone : system", function() {
+QUnit.test("clone : system", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
@@ -267,55 +267,55 @@ test("clone : system", function() {
     m.initClones()
 
 
-    equal(c3.get('germline'), "TRG", "getSystem() >> clone system : TRG");
-    equal(c3.getGene('5'), "undefined V", "getV() >> V : undefined");
-    equal(c3.getGene('4'), "IGHD2*03", "getD()  >> D (+allele): IGHD2*03");
-    equal(c3.getGene('3'), "IGHV4*01", "getJ() >> J (+alelele): IGHV4*01");
-    equal(c3.getGene('4', false), "IGHD2", "getD() >> D : IGHD2");
-    equal(c3.getGene('3', false), "IGHV4", "getJ() >>J : IGHV4");
-    equal(c3.getGene("4"), "IGHD2*03", "getGene() >> D (+allele): IGHD2*03");
-    equal(c3.getNlength(), 9, "getNlength() >> 9");
+    assert.equal(c3.get('germline'), "TRG", "getSystem() >> clone system : TRG");
+    assert.equal(c3.getGene('5'), "undefined V", "getV() >> V : undefined");
+    assert.equal(c3.getGene('4'), "IGHD2*03", "getD()  >> D (+allele): IGHD2*03");
+    assert.equal(c3.getGene('3'), "IGHV4*01", "getJ() >> J (+alelele): IGHV4*01");
+    assert.equal(c3.getGene('4', false), "IGHD2", "getD() >> D : IGHD2");
+    assert.equal(c3.getGene('3', false), "IGHV4", "getJ() >>J : IGHV4");
+    assert.equal(c3.getGene("4"), "IGHD2*03", "getGene() >> D (+allele): IGHD2*03");
+    assert.equal(c3.getNlength(), 9, "getNlength() >> 9");
     
 });
 
 
-test("clone : tag / color", function() {
+QUnit.test("clone : tag / color", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
     var c1 = new Clone(json_clone1, m, 0)
     m.initClones()
 
-    equal(c1.getTag(), 8, "getTag() >> default tag : 8");
+    assert.equal(c1.getTag(), 8, "getTag() >> default tag : 8");
     c1.updateColor()
-    equal(c1.getColor(), "", "getColor() >> default tag color : ");
+    assert.equal(c1.getColor(), "", "getColor() >> default tag color : ");
     
     c1.changeTag(5)
     c1.updateColor()
-    equal(c1.getTag(), 5, "changeTag() >> tag : 5");
-    equal(c1.getColor(), "#2aa198", "getColor() >> default tag color : ");
+    assert.equal(c1.getTag(), 5, "changeTag() >> tag : 5");
+    assert.equal(c1.getColor(), "#2aa198", "getColor() >> default tag color : ");
     
     m.changeColorMethod("abundance")
     c1.updateColor()
-    equal(c1.getColor(), "rgb(36,183,88)", "getColor() >> abundance color : ");
+    assert.equal(c1.getColor(), "rgb(36,183,88)", "getColor() >> abundance color : ");
     
 });
 
-test("clone : export", function() {
+QUnit.test("clone : export", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
     var c3 = new Clone(json_clone3, m, 0)
     m.initClones()
 
-    equal(c3.getPrintableSegSequence(), "aaaaa\naaaaatttt\nttttt", "getPrintableSegSequence() : Ok");
+    assert.equal(c3.getPrintableSegSequence(), "aaaaa\naaaaatttt\nttttt", "getPrintableSegSequence() : Ok");
     console.log(c3.getFasta())
-    equal(c3.getFasta(), ">id3    19 nt, 10 reads (5.000%)\naaaaa\naaaaatttt\nttttt\n", "getFasta() : Ok");
+    assert.equal(c3.getFasta(), ">id3    19 nt, 10 reads (5.000%)\naaaaa\naaaaatttt\nttttt\n", "getFasta() : Ok");
     
 });
 
 
-test("clone : changeLocus/Segment", function() {
+QUnit.test("clone : changeLocus/Segment", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
@@ -328,22 +328,22 @@ test("clone : changeLocus/Segment", function() {
     m.clones[0].reads = [25,25,25,25]; 
     console.log(m.reads.germline.IGH);
     
-    equal(m.reads.germline.IGH.toString(), "100,50,100,50", "m.reads.IGH adaptation (init state)");
+    assert.equal(m.reads.germline.IGH.toString(), "100,50,100,50", "m.reads.IGH adaptation (init state)");
     m.clones[0].changeLocus("IGH"); 
     //console.log(m.reads.germline.TRG);
     
-    equal(m.reads.germline.IGH.toString(), "125,75,125,75", "m.reads.IGH adaptation (TRG -> IGH)");
-    equal(m.reads.germline.TRG.toString(), "75,25,75,25",   "m.reads.TRG adaptation (TRG -> IGH)");
+    assert.equal(m.reads.germline.IGH.toString(), "125,75,125,75", "m.reads.IGH adaptation (TRG -> IGH)");
+    assert.equal(m.reads.germline.TRG.toString(), "75,25,75,25",   "m.reads.TRG adaptation (TRG -> IGH)");
     
     m.clones[0].changeLocus("IGH"); 
-    equal(m.reads.germline.IGH.toString(), "125,75,125,75", "m.reads.IGH adaptation (IGH -> IGH)");
+    assert.equal(m.reads.germline.IGH.toString(), "125,75,125,75", "m.reads.IGH adaptation (IGH -> IGH)");
     m.clones[0].changeLocus("TRG"); 
-    equal(m.reads.germline.IGH.toString(), "100,50,100,50", "m.reads.IGH adaptation (IGH -> TRG)");
+    assert.equal(m.reads.germline.IGH.toString(), "100,50,100,50", "m.reads.IGH adaptation (IGH -> TRG)");
     // TODO tests : reads, system_available, 
     
 });
 
-test("clone : changeNameNotation", function() {
+QUnit.test("clone : changeNameNotation", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data)
     var c1 = new Clone(json_clone1, m, 0)
@@ -351,10 +351,10 @@ test("clone : changeNameNotation", function() {
     var c3 = new Clone(json_clone3, m, 2)
     m.initClones()
     m.changeCloneNotation('short_sequence')
-    equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/12/4 J5", "clone2, .getShortName()");
+    assert.equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/12/4 J5", "clone2, .getShortName()");
 
     m.changeCloneNotation('full_sequence')
-    equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/CCCACGTGGGGG/4 J5", "clone2, .getShortName()");
+    assert.equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/CCCACGTGGGGG/4 J5", "clone2, .getShortName()");
     m.changeCloneNotation('nucleotide_number')
-    equal(c2.getShortName(), "IGHV3-23 6/5/4 D1-1 5/12/4 J5", "clone2, .getShortName()");
+    assert.equal(c2.getShortName(), "IGHV3-23 6/5/4 D1-1 5/12/4 J5", "clone2, .getShortName()");
     });
