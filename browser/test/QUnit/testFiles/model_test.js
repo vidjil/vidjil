@@ -34,15 +34,15 @@ QUnit.test("model : load", function(assert) {
     assert.equal(m.samples.number, m.samples.original_names.length, "parse_json > timepoint : check if array have the expected length");
 
     return
-    
+
+    var ready = assert.async(2)
     // TODO: not working with phantomjs without localhost server
     curdir = "http://localhost/browser/test/QUnit"
 
-    stop()
     m.loadDataUrl(curdir + "/testFiles/test.vidjil")
     setTimeout( function() {
-        QUnit.start()
         assert.equal(m.samples.number, 3, "loadDataUrl from " + curdir + " > timepoint : number==3")
+        ready()
     }, 100)
     
     
@@ -50,12 +50,12 @@ QUnit.test("model : load", function(assert) {
     stop()
     m.loadAnalysisUrl(curdir + "/testFiles/test.analysis")
     setTimeout( function() {
-        QUnit.start()
         assert.equal(m.clone(0).tag, 0, "loadAnalysisUrl() : OK")
         assert.equal(m.getPrintableAnalysisName() , "test", "getPrintableAnalysisName : Ok")
         assert.deepEqual(jQuery.parseJSON(m.strAnalysis()).producer, "browser" , "strAnalysis() : OK")
         m.resetAnalysis();
         assert.equal(m.clone(0).tag, 8, "resetAnalysis() : OK")
+        ready()
     }, 100)
     
 });
