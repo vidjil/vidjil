@@ -1,4 +1,5 @@
 {
+"ref": "Fake",
 "species": "Fake",
 "species_taxon_id": 123,
 "path": "../germline/homo-sapiens",
