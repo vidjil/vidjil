@@ -1550,9 +1550,6 @@ int main (int argc, char **argv)
 
 
     // Complete main json output
-    j["species"] = multigermline->species ;
-    j["species_taxon_id"] = multigermline->species_taxon_id ;
-
     j["diversity"] = jsonDiversity ;
     j["samples"]["log"] = { stream_segmentation_info.str() } ;
     j["reads"] = {
@@ -1562,7 +1559,11 @@ int main (int argc, char **argv)
     } ;
     j["clones"] = jsonSortedWindows ;
     j["germlines"] = json_germlines ;
-    
+
+    j["germlines"]["ref"] = multigermline->ref ;
+    j["germlines"]["species"] = multigermline->species ;
+    j["germlines"]["species_taxon_id"] = multigermline->species_taxon_id ;
+
     if (epsilon || forced_edges.size()){
         j["clusters"] = comp.toJson(clones_windows);
     }
