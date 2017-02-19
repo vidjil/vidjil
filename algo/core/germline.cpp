@@ -231,6 +231,7 @@ ostream &operator<<(ostream &out, const Germline &germline)
 
 MultiGermline::MultiGermline(IndexTypes indexType, bool _one_index_per_germline):indexType(indexType)
 {
+  ref = "custom germlines" ;
   species = "custom germlines" ;
   species_taxon_id = 0 ;
   index = NULL;
@@ -286,6 +287,7 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
     exit(1);
   }
 
+  ref = germlines["ref"].get<std::string>();
   species = germlines["species"].get<std::string>();
   species_taxon_id = germlines["species_taxon_id"];
 

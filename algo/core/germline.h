@@ -131,6 +131,7 @@ class MultiGermline {
   bool one_index_per_germline;
   list <Germline*> germlines;
 
+  string ref;
   string species;
   int species_taxon_id;
 
