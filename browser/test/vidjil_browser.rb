@@ -116,7 +116,7 @@ class VidjilBrowser < Watir::Browser
 
   # Return the div containing the information (status bar)
   def infoline
-    return div(:id => 'bot-container').div(:class => 'focus')
+    return div(:id => segmenter_id).div(:class => 'focus')
   end
 
   # Return the span of the locus
@@ -234,7 +234,7 @@ class VidjilBrowser < Watir::Browser
 
   # Return the div containing stats information on selected clone(s)
   def statsline
-    div(:id => 'bot-container').div(:class => 'stats')
+    div(:id => segmenter_id).div(:class => 'stats')
   end
 
   # Return an item from a tag selector split in a hash.
@@ -292,10 +292,18 @@ class VidjilBrowser < Watir::Browser
     return div(:id => 'list_clones')
   end
   
-  private
-  
+  protected
+
+  def scatterplot_id
+    return 'visu_axis'
+  end
+
+  def segmenter_id
+    return 'bot-container'
+  end
+
   def scatterplot(axis)
-    return element(:id => 'visu_axis_'+axis+'_container')
+    return element(:id => scatterplot_id+'_'+axis+'_container')
   end
 
   def scatterplot_legend(axis, index)
