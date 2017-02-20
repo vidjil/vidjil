@@ -8,11 +8,12 @@ var elapsedTime = 0;
 
 var m = new Model();
 
-var graph = new Graph("visu2",m);
-var list = new List("list",m);
-var sp = new ScatterPlot("visu",m);
-var segment = new Segment("bot-container",m, CGI_ADDRESS);
+var db = new Database(m);
 
+var graph = new Graph("visu2", m, db);
+var list = new List("list", "data", m, db);
+var sp = new ScatterPlot("visu", m, db);
+var segment = new Segment("bot-container", m, db);
 
 for (var i = 20; i < 101; i = i + 20) {
 
