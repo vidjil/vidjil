@@ -31,10 +31,6 @@ page.open(curdir+"/test_Qunit.html", function() {
             console.log(e);
         }
 
-        // Some error ?
-        if (tap.indexOf("not ok") > -1)
-            phantom.exit(1);
-
         phantom.exit();
         
     }, 5000);
