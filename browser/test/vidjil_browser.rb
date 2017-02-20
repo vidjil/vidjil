@@ -172,7 +172,7 @@ class VidjilBrowser < Watir::Browser
 
   # Return the element corresponding to the x axis of the scatterplot
   def scatterplot_x
-    return scatterplot('x')
+    return scatterplot_axis('x')
   end
 
   # Return the element corresponding to the legend of the x axis of the scatterplot
@@ -182,7 +182,7 @@ class VidjilBrowser < Watir::Browser
 
   # Return the element corresponding to the x axis of the scatterplot
   def scatterplot_y
-    return scatterplot('y')
+    return scatterplot_axis('y')
   end
 
   # Return the element corresponding to the legend of the y axis of the scatterplot
@@ -302,12 +302,12 @@ class VidjilBrowser < Watir::Browser
     return 'bot-container'
   end
 
-  def scatterplot(axis)
+  def scatterplot_axis(axis)
     return element(:id => scatterplot_id+'_'+axis+'_container')
   end
 
   def scatterplot_legend(axis, index)
-    return scatterplot(axis).element(:class => 'sp_legend', :index => index)
+    return scatterplot_axis(axis).element(:class => 'sp_legend', :index => index)
   end
 
 
