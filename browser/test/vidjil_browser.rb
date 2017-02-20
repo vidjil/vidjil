@@ -170,6 +170,22 @@ class VidjilBrowser < Watir::Browser
     return element(extra.merge(:id => 'fastTag'+id))
   end
 
+  # Return the div of the scatterplot
+  def scatterplot
+    return element(:id => scatterplot_id)
+  end
+
+  def scatterplot_menu
+    return scatterplot.element(:class => 'sp_menu')
+  end
+
+  # Select a preset in the scatterplot menu
+  # (String or Regex)
+  def scatterplot_select_preset(axis)
+    scatterplot_menu.hover
+    preset_selector.select axis
+  end
+
   # Return the element corresponding to the x axis of the scatterplot
   def scatterplot_x
     return scatterplot_axis('x')
@@ -180,6 +196,11 @@ class VidjilBrowser < Watir::Browser
     return scatterplot_legend('x', index)
   end
 
+  # Return the x axis label of the scatterplot
+  def scatterplot_x_label
+    return scatterplot_labels[0]
+  end
+
   # Return the element corresponding to the x axis of the scatterplot
   def scatterplot_y
     return scatterplot_axis('y')
@@ -188,6 +209,11 @@ class VidjilBrowser < Watir::Browser
   # Return the element corresponding to the legend of the y axis of the scatterplot
   def scatterplot_y_legend(index)
     return scatterplot_legend('y', index)
+  end
+
+  # Return the y axis label of the scatterplot
+  def scatterplot_y_label
+    return scatterplot_labels[1]
   end
 
   def segmenter_checkbox_aa
@@ -304,6 +330,10 @@ class VidjilBrowser < Watir::Browser
 
   def scatterplot_axis(axis)
     return element(:id => scatterplot_id+'_'+axis+'_container')
+  end
+
+  def scatterplot_labels
+    return element(:id => scatterplot_id+'_axis_container').elements(:class => 'sp_legend2')
   end
 
   def scatterplot_legend(axis, index)
