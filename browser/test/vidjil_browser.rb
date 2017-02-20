@@ -57,7 +57,14 @@ class VidjilBrowser < Watir::Browser
   # Return the clone on the scatterplot
   # Beware the id must be a string
   def clone_in_scatterplot(id, extra={})
-    return element(extra.merge(:id => "circle"+id))
+    circle = element(extra.merge(:id => "circle"+id))
+    if circle.exists? and not circle.visible?
+      bar = element(extra.merge(:id => "bar"+id))
+      if bar.exists? and bar.visible?
+        return bar
+      end
+    end
+    return circle
   end
 
   # Return the clone in the graph
