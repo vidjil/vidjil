@@ -263,7 +263,8 @@ class VidjilBrowser < Watir::Browser
     div(:id => segmenter_id).div(:class => 'stats')
   end
 
-  # Return an item from a tag selector split in a hash.
+  # Return an item from a tag selector (the menu to select the tag
+  # for a clone) split in a hash.
   # The hash contains the following keys:
   def tag_item(id)
     ts = tag_selector
