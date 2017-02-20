@@ -79,8 +79,10 @@ function processResult(data) {
 
     // Do not select virtual clones
     var cloneIds = [];
-    for (var i = 0; i < model.clones.length - 1; i++) {
-        cloneIds.push(i);
+    for (var i = 0; i < model.clones.length; i++) {
+        if (! model.clones[i].isVirtual()) {
+            cloneIds.push(i);
+        }
     }
     model.multiSelect(cloneIds);
 
