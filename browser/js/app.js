@@ -51,7 +51,10 @@ function loadAfterConf() {
                              "../shortcut",
                              "../export",
                              "../similarity",
-                             "../tools"
+                             "../tools",
+                             // Speed test
+                             "../test",
+                             "../../test/QUnit/testFiles/data_test",
                             ], function(){
                                 if (typeof main == "undefined"){
                                     require(["../main"]);

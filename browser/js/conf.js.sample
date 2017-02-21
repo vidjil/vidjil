@@ -45,4 +45,7 @@ var config = {
     /*
     "proxy": "https://db.vidjil.org/vidjil/proxy/imgt"
     */
+
+    /* 4) Debug and test options */
+    "speed_test": false,
 }
