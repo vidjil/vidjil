@@ -53,7 +53,7 @@ function loadAfterConf() {
                              "../similarity",
                              "../tools",
                              // Speed test
-                             "../test",
+                             "../speed_test",
                              "../../test/QUnit/testFiles/data_test",
                             ], function(){
                                 if (typeof main == "undefined"){
