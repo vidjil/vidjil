@@ -1736,7 +1736,7 @@ changeCloneNotation: function(cloneNotationType) {
         $(".listSeq").find(".infoBox").removeClass("infoBox-open")
         this.clone_info = -1;
         this.infoBox.style.display = "none";
-        this.infoBox.lastElementChild.innerHTML = "";
+        this.infoBox.lastElementChild.removeAllChildren();
     },
 
  
@@ -1747,7 +1747,7 @@ changeCloneNotation: function(cloneNotationType) {
     openTagSelector: function (cloneID, e) {
         var self = this;
         cloneID = typeof cloneID !== 'undefined' ? cloneID : this.cloneID;
-        this.tagSelectorList.innerHTML = "";
+        this.tagSelectorList.removeAllChildren();
         this.cloneID=cloneID
         
         
@@ -2124,7 +2124,7 @@ changeCloneNotation: function(cloneNotationType) {
     
     resume: function(){
         this.waiting_screen.style.display = "none";
-        this.waiting_msg.innerHTML= "";
+        this.waiting_msg.removeAllChildren();
         if (typeof shortcut != 'undefined') shortcut.on = true;
     },
     

@@ -120,8 +120,8 @@ Graph.prototype = {
     build_graph : function () {
         try {
             document.getElementById(this.id)
-                .innerHTML = "";
-            
+                .removeAllChildren();
+
             this.mode = "curve";
 
             var self = this;
@@ -260,8 +260,8 @@ Graph.prototype = {
         var self = this;
         
         var list = document.getElementById("" + this.id + "_list")
-        list.innerHTML = ""
-        
+        list.removeAllChildren();
+
         for (var i=0; i<this.m.samples.number; i++){
             if ( this.m.samples.order.indexOf(i) == -1){
                 $("<div/>", {

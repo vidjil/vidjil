@@ -113,8 +113,8 @@ Builder.prototype = {
     build_settings: function () {
         var self = this;
         var normalize_list = document.getElementById("normalize_list");
-        normalize_list.innerHTML="";
-        
+        normalize_list.removeAllChildren();
+
         var input = document.createElement("input");
         input.type = "radio";
         input.value= -1;
@@ -182,7 +182,7 @@ Builder.prototype = {
     editTagName: function (tagID, elem) {
         var self = this;
         var divParent = elem.parentNode;
-        divParent.innerHTML = "";
+        divParent.removeAllChildren();
 
         var input = this.setupInput("new_tag_name", "", "text", this.m.tag[tagID].name);
         input.style.width = "100px";
@@ -233,7 +233,7 @@ Builder.prototype = {
     //TODO rename
     build_edit: function (input, id, elem, callback) {
         var divParent = elem.parentNode;
-        divParent.innerHTML = "";
+        divParent.removeAllChildren();
 
         divParent.appendChild(input);
         divParent.onclick = "";
@@ -305,8 +305,8 @@ Builder.prototype = {
         // var listGermline = document.getElementById("germline_list")
         
         //reset
-        listTag.innerHTML = "";
-        // listGermline.innerHTML = "";
+        listTag.removeAllChildren();
+        // listGermline.removeAllChildren();
 
         //init tag list
         for (var i = 0; i < this.m.tag.length; i++) {
@@ -437,7 +437,7 @@ Builder.prototype = {
         var self = this
         try {
             var parent = document.getElementById("info")
-            parent.innerHTML = "";
+            parent.removeAllChildren();
 
             var patient_info = typeof this.m.info != 'undefined' ? this.m.info : "";
             var div_patient_info = this.create_generic_info_container(
@@ -633,7 +633,7 @@ Builder.prototype = {
     build_top_container: function () {
         var self = this;
         var parent = document.getElementById("top_info");
-        parent.innerHTML = "";
+        parent.removeAllChildren();
         parent.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
 
         var selector = document.createElement('div');

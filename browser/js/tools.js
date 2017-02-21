@@ -236,3 +236,20 @@ function sendErrorToDb(err, db) {
         throw err;
     }
 }
+
+/*
+ * Removes all children from the specified node.
+ * This function should be more efficient and faster than `innerHTML = ''`.
+ * @param {Node} node - the node to clean from its children.
+ */
+function remove_all_children(node)
+{
+    while (node.lastChild) {
+      node.removeChild(node.lastChild);
+    }
+}
+
+// Add the clean_nodes function to the Node prototype
+Node.prototype.removeAllChildren = function removeAllChildren() {
+    remove_all_children(this);
+}
