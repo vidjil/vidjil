@@ -91,10 +91,6 @@ try {
 
 console.log("=== main.js finished ===");
 
-if (typeof config.speed_test != 'undefined')
-    if (config.speed_test)
-        speedTest(m);
-
 var timeout;
 $(document).ajaxStart(function () {
     //show ajax indicator
