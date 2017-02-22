@@ -1,17 +1,20 @@
 from gluon import current
 
+def get_group_list(auth):
+    if (auth.is_admin()):
+        return db(db.auth_group).select(db.auth_group.id, db.auth_group.role)
+    else:
+        return db((db.auth_group.id == db.auth_membership.group_id) &
+                        (db.auth_membership.user_id == auth.user_id) &
+                        (db.auth_group.role != 'public')
+                    ).select(db.auth_group.id, db.auth_group.role)
+
 def get_default_creation_group(auth):
     db = auth.db
     max_group = auth.user_group()
     group_dict = {}
-    if (auth.is_admin()):
-        group_list = db(db.auth_group).select(db.auth_group.id, db.auth_group.role)
-    else:
-        group_list = db((db.auth_group.id == db.auth_membership.group_id) &
-                        (db.auth_membership.user_id == auth.user_id) &
-                        (db.auth_group.role != 'public')
-                    ).select(db.auth_group.id, db.auth_group.role)
     max_elements = 0
+    group_list = get_group_list(auth)
     for group in group_list:
         if (auth.is_admin()
                 or auth.has_permission(PermissionEnum.create.value, 'sample_set', 0, group_id = group.id)):
