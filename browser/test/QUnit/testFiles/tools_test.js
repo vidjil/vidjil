@@ -1,7 +1,4 @@
-//Framework assertion example
-QUnit.module("tools", {
-//	setup:function(){alert("setup money individual test");},
-//	teardown:function(){alert("teardown money individual test");}
+QUnit.module("Tools", {
 });
 
 QUnit.test("test nth_ocurrence", function(assert) {

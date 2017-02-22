@@ -1,3 +1,5 @@
+QUnit.module("Clone", {
+});
 
     var json_clone1 = {
         "sequence" : "aaaaaaaaaattttttttt",
@@ -61,7 +63,7 @@
         }
     }
 
-QUnit.test("clone : name, informations, getHtmlInfo", function(assert) {
+QUnit.test("name, informations, getHtmlInfo", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
@@ -200,7 +202,7 @@ QUnit.test('clone: get info from seg', function(assert) {
     assert.equal(c1.getSegAASequence('cdr3'), 'ABCDE', 'AA CDR3 for c1')
 });
 
-QUnit.test("clone : getSequence/RevComp", function(assert) {
+QUnit.test("getSequence/RevComp", function(assert) {
 
     var m = new Model();
     m.parseJsonData(json_data)
@@ -217,7 +219,7 @@ QUnit.test("clone : getSequence/RevComp", function(assert) {
 });
 
 
-QUnit.test("clone : size", function(assert) {
+QUnit.test("size", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
@@ -245,7 +247,7 @@ QUnit.test("clone : size", function(assert) {
     
 });
 
-QUnit.test("clone : system", function(assert) {
+QUnit.test("system", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
@@ -264,8 +266,7 @@ QUnit.test("clone : system", function(assert) {
     
 });
 
-
-QUnit.test("clone : tag / color", function(assert) {
+QUnit.test("tag / color", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
@@ -287,7 +288,7 @@ QUnit.test("clone : tag / color", function(assert) {
     
 });
 
-QUnit.test("clone : export", function(assert) {
+QUnit.test("export", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
@@ -301,7 +302,7 @@ QUnit.test("clone : export", function(assert) {
 });
 
 
-QUnit.test("clone : changeLocus/Segment", function(assert) {
+QUnit.test("changeLocus/Segment", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
@@ -329,7 +330,7 @@ QUnit.test("clone : changeLocus/Segment", function(assert) {
     
 });
 
-QUnit.test("clone : changeNameNotation", function(assert) {
+QUnit.test("changeNameNotation", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data)
     var c1 = new Clone(json_clone1, m, 0)

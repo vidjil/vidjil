@@ -1,13 +1,16 @@
 
+QUnit.module("Speed", {
+});
 
-QUnit.test("Speed: many clones", function(assert) {
+
+QUnit.test("many clones", function(assert) {
     
     var data = dataWithManyClones(42);
     assert.equal(data["clones"].length, 42, "dataWithManyClones -> 42");
 });
 
 
-QUnit.test("Speed: without views", function(assert) {
+QUnit.test("without views", function(assert) {
     
     var m = new Model();
 
@@ -15,7 +18,7 @@ QUnit.test("Speed: without views", function(assert) {
     assert.equal(m.clones.length, 101, "");
 });
 
-QUnit.test("Speed: with views", function(assert) {
+QUnit.test("with views", function(assert) {
 
     var m = new Model();
     

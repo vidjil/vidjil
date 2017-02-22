@@ -1,3 +1,6 @@
+QUnit.module("DBScan", {
+});
+
 /*
 ScatterPlot object
 */

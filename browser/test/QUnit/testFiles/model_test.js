@@ -1,6 +1,8 @@
 
-   
-QUnit.test("model: convert", function(assert) {
+QUnit.module("Model", {
+});
+
+QUnit.test("convert", function(assert) {
     var m = new Model();
     var seg = {
         "4start": 1,  // old format, 0-based
@@ -26,7 +28,7 @@ QUnit.test("model: convert", function(assert) {
     assert.deepEqual(m.convertSeg(json_clone2.seg)['5'], {"start": 1, "stop": 5}, "convertSeg on current 1-based fields");
 });
 
-QUnit.test("model : load", function(assert) {
+QUnit.test("load", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data)
     
@@ -60,7 +62,7 @@ QUnit.test("model : load", function(assert) {
     
 });
 
-QUnit.test("model : time control", function(assert) {
+QUnit.test("time control", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data)
     
@@ -105,7 +107,7 @@ QUnit.test("model : time control", function(assert) {
     
 });
 
-QUnit.test("model : top clones", function(assert) {
+QUnit.test("top clones", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data,100)
     m.initClones()
@@ -134,7 +136,7 @@ QUnit.test("model : top clones", function(assert) {
     
 });
 
-QUnit.test("model : select/focus", function(assert) {
+QUnit.test("select/focus", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data,100)
     
@@ -154,7 +156,7 @@ QUnit.test("model : select/focus", function(assert) {
     m.focusIn(0)
 });
 
-QUnit.test("model : cluster", function(assert) {
+QUnit.test("cluster", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data,100)
 
@@ -195,7 +197,7 @@ QUnit.test("model : cluster", function(assert) {
     
 });
 
-QUnit.test("model: system selection", function(assert) {
+QUnit.test("system selection", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data, 100)
 

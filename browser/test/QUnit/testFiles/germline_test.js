@@ -1,3 +1,7 @@
+
+QUnit.module("Germline", {
+});
+
 QUnit.test("germline_data : ", function(assert) {
 
     // Those tests should fail whenever we change the structure of germline.js

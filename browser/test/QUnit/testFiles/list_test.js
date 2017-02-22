@@ -1,5 +1,8 @@
 
-QUnit.test("List : edit", function(assert) {
+QUnit.module("List", {
+});
+
+QUnit.test("edit", function(assert) {
 
     assert.expect(2)
     var ready = assert.async()
@@ -36,7 +39,7 @@ QUnit.test("List : edit", function(assert) {
     
 });
 
-QUnit.test("List : sort", function(assert) {
+QUnit.test("sort", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data,100)
@@ -91,7 +94,7 @@ QUnit.test("List : sort", function(assert) {
     assert.notEqual(clone_list[4].innerHTML.indexOf("test3"),       -1, "sortByTop: Ok");
 });
 
-QUnit.test("List : filters", function(assert) {
+QUnit.test("filters", function(assert) {
 
     assert.expect(10);
     var ready = assert.async(5);
@@ -141,7 +144,7 @@ QUnit.test("List : filters", function(assert) {
 
 });
 
-QUnit.test("List : tag/norm", function(assert) {
+QUnit.test("tag/norm", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data,100)
     m.loadGermline()

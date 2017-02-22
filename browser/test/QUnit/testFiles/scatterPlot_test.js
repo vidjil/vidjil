@@ -1,6 +1,8 @@
 
+QUnit.module("Scatterplot", {
+});
 
-QUnit.test("scatterplot : grid", function(assert) {
+QUnit.test("grid", function(assert) {
     var m = new Model(m);
     m.parseJsonData(json_data,100)
     m.loadGermline()
