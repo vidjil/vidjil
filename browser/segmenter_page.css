@@ -1,3 +1,12 @@
+body {
+  line-height: 20px;
+}
+
+h1, h2, h3 {
+  font-weight: bold;
+  line-height: 40px;
+}
+
 h1, h2, div, p {
   margin: 0;
   padding: 0;
@@ -5,6 +14,23 @@ h1, h2, div, p {
 
 header, footer {
   display: block;
+}
+
+textarea {
+  border: 1px solid silver;
+  border-radius: 0.1em;
+  padding: 0.5em;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+  -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+  -webkit-transition: border linear .2s,box-shadow linear .2s;
+  -moz-transition: border linear .2s,box-shadow linear .2s;
+  -o-transition: border linear .2s,box-shadow linear .2s;
+  transition: border linear .2s,box-shadow linear .2s;
+  transition-property: border, box-shadow;
+  transition-duration: 0.2s, 0.2s;
+  transition-timing-function: linear, linear;
+  transition-delay: 0s, 0s;
 }
 
 .flexbox {
@@ -37,6 +63,10 @@ header, footer {
   margin-left: 0.1em;
 }
 
+#form_submit, #form_sequences_file {
+  display: inline;
+}
+
 #header_panel {
   padding-top: 0.2em;
 }
@@ -59,11 +89,8 @@ header, footer {
   position: relative;
 }
 
-.vidjil_view {
-  display: none;
-}
-
 #form_sequences {
+  resize: none;
   width: 100%;
 }
 
@@ -72,6 +99,11 @@ header, footer {
   -moz-flex: 2 32%;
   -ms-flex: 2 32%;
   flex: 2 32%;
+  visibility: hidden;
+}
+
+#segmenter_panel {
+  display: none;
 }
 
 #footer_panel {
@@ -84,6 +116,6 @@ header, footer {
   font-size: 0.7em;
   position: absolute;
   bottom: 0.2em;
-  right: 0.2em;
+  right: 0.6em;
   text-align: right;
 }
