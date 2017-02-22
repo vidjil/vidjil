@@ -1,5 +1,9 @@
 
-QUnit.test("Segmenter : ", function(assert) {
+QUnit.module("Segmenter", {
+});
+
+
+QUnit.test("segmenter", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data,100)
@@ -59,7 +63,7 @@ QUnit.test("Segmenter : ", function(assert) {
     assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 3 reads ", "stats (1 clone with few reads) : Ok")
 });
 
-QUnit.test("Sequence : ", function(assert) {
+QUnit.test("sequence", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data,100)
     m.initClones()

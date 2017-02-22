@@ -1,5 +1,8 @@
 
-QUnit.test("graph: svg path builder", function(assert) {
+QUnit.module("Graph", {
+});
+
+QUnit.test("svg path builder", function(assert) {
     var m = new Model(m);
     m.parseJsonData(json_data,100)
     m.loadGermline()
@@ -16,7 +19,7 @@ QUnit.test("graph: svg path builder", function(assert) {
     assert.equal(graph.constructStack(1, stack), " M 70.05,40.95 L 70.35,40.9 L 70.65,40.925 L 70.95,40.85 L 70.95,40.75 L 70.65,40.875 L 70.35,40.7 L 70.05,40.85 Z", "path stack clone 1") 
 });
 
-QUnit.test("graph: init", function(assert) {
+QUnit.test("init", function(assert) {
     var m = new Model(m);
     m.parseJsonData(json_data,100)
     m.loadGermline()

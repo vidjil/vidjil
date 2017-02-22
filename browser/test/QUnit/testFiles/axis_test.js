@@ -1,5 +1,10 @@
 
-QUnit.test("Axis : ", function(assert) {
+
+QUnit.module("Axis", {
+});
+
+
+QUnit.test("axis", function(assert) {
     
     var m = new Model(m);
     m.parseJsonData(json_data,100)

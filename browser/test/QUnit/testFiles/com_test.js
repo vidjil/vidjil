@@ -1,4 +1,8 @@
-QUnit.test("console : ", function(assert) {
+
+QUnit.module("Console", {
+});
+
+QUnit.test("console", function(assert) {
     console = new Com(console)
 
     assert.expect(6);
