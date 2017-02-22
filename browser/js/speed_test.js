@@ -2,9 +2,27 @@
 
 function dataWithManyClones(many) {
 
-    // json_data from test/QUnit/testFiles/data_test
-
-    json_data.clones = []
+    var json_data = {
+        "vidjil_json_version": ["2014.09"],
+        "reads": {
+            "segmented": [200,100,200,100],
+            "total": [200,100,200,100],
+            "germline": {
+                "TRG": [100,50,100,50],
+                "IGH": [100,50,100,50]
+            },
+        },
+        "samples": {
+            "number": 4,
+            "commandline": ["a", "b", "c", "d"],
+            "original_names": ["a", "b", "c", "d"],
+            "log": [ "a", "b", "c", "d"],
+            "producer": [ "a", "b", "c", "d"],
+            "timestamp": ["2014-10-20 13:59:02", "2014-10-25 14:00:32", "2014-11-20 14:03:13", "2014-12-20 14:04:48"],
+            "run_timestamp": ["2015-10-20 13:59:02", "2015-10-25 14:00:32", "2015-11-20 14:03:13", "2015-12-20 14:04:48"]
+        },
+        "clones": []
+    }
 
     // Fill some clones
     for (var i = 0; i < many; i += 1)
