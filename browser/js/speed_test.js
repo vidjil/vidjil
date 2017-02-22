@@ -44,18 +44,18 @@ function speedTest(m) {
     
     for (var i = 20; i < 101; i = i + 20) {
 
-        log += "<br/> ==== .parseJsonData, " + i + " clones <br />"
+        log += "\n==== .parseJsonData, " + i + " clones\n"
         startTime = new Date()
             .getTime();
         elapsedTime = 0;
-                
+
         m.parseJsonData(dataWithManyClones(100), i)
             .loadGermline();
         m.initClones()
         
         elapsedTime = new Date()
             .getTime() - startTime;
-        log += "init+load time : " + elapsedTime + "ms</br>";
+        log += "init+load time : " + elapsedTime + "ms\n";
         
         for (var j = 20; j < i + 1; j = j + 20) {
             m.displayTop(j);
@@ -74,10 +74,10 @@ function speedTest(m) {
             m.updateElem([1, 2, 3, 5, 8, 13, 14, 15, 16, 17]);
             elapsedTime = new Date()
                 .getTime() - startTime;
-            log += "  //10 clones update time (display :" + j + ") : " + elapsedTime + "ms</br>";
+            log += "  //10 clones update time (display :" + j + ") : " + elapsedTime + "ms\n";
             
         }
     }
 
-    console.dataBox(log)
+    return log;
 }
