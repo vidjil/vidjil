@@ -1,4 +1,13 @@
 var PROXY_ADDRESS = "https://db.vidjil.org/vidjil/proxy/imgt"
+var modelRef;
+
+/**
+ * Sets the model reference for the cross domain functions to use.
+ * @param {object} model - the model reference to pass to the cross domain functions.
+ */
+function setCrossDomainModel(model) {
+  modelRef = model;
+}
 
 //parametre IMGT par defaut
 function initImgtInput() {
@@ -210,18 +219,18 @@ function imgtPostForSegmenter(data, system, segmenter, override_imgt_options) {
                 logmsg += cloneIdx + ",";
                 //remove unneeded info coz relative to # of selected items
                 delete  imgtArray[i]["Sequence number"];
-                if (typeof m.clones[cloneIdx].seg.imgt == 'undefined') {
-                    m.clones[cloneIdx].seg.imgt = {}
-                    m.clones[cloneIdx].seg.imgt2display = {}
+                if (typeof modelRef.clones[cloneIdx].seg.imgt == 'undefined') {
+                    modelRef.clones[cloneIdx].seg.imgt = {}
+                    modelRef.clones[cloneIdx].seg.imgt2display = {}
                 }
                 correctIMGTPositionsForInsertions(imgtArray[i]);
-                append_to_object(imgtArray[i], m.clones[cloneIdx].seg.imgt);
-                append_to_object(computeStartStop(imgtArray[i],m.clones[cloneIdx].getSequence()),
-                                 m.clones[cloneIdx].seg.imgt2display);
+                append_to_object(imgtArray[i], modelRef.clones[cloneIdx].seg.imgt);
+                append_to_object(computeStartStop(imgtArray[i],modelRef.clones[cloneIdx].getSequence()),
+                                 modelRef.clones[cloneIdx].seg.imgt2display);
                 //toggle save in analysis file
-                m.clones[cloneIdx].segEdited = true;
+                modelRef.clones[cloneIdx].segEdited = true;
             }
-            m.updateElemStyle(m.getSelected());
+            modelRef.updateElemStyle(modelRef.getSelected());
 
             var imgt4segButton= document.getElementById("toIMGTSeg");
             if (typeof imgt4segButton != "undefined"){
