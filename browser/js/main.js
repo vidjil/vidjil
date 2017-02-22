@@ -38,7 +38,7 @@ console = new Com(console)
  * It keeps all the views in sync.
  */
 var m = new Model();
-
+setCrossDomainModel(m);
 
 /* Database (optional)
  * This links the model to a patient database (possibly the one defined in config.js)

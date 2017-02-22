@@ -1,0 +1,173 @@
+@import "light.less";
+
+body {
+    line-height: 20px;
+}
+
+h1, h2, h3 {
+    font-weight: bold;
+    line-height: 40px;
+}
+
+h1, h2, div, p {
+    margin: 0;
+    padding: 0;
+}
+
+header, footer {
+    display: block;
+}
+
+textarea {
+    border: 1px solid silver;
+    border-radius: 0.1em;
+    padding: 1%;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border linear .2s, box-shadow linear .2s;
+    -moz-transition: border linear .2s, box-shadow linear .2s;
+    -o-transition: border linear .2s, box-shadow linear .2s;
+    transition: border linear .2s, box-shadow linear .2s;
+    transition-property: border, box-shadow;
+    transition-duration: 0.2s, 0.2s;
+    transition-timing-function: linear, linear;
+    transition-delay: 0s, 0s;
+}
+
+.flexbox {
+    display: -ms-Flexbox;
+    -ms-box-orient: horizontal;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: flex;
+    -webkit-flex-flow: row wrap;
+    -moz-flex-flow: row wrap;
+    -ms-flex-flow: row wrap;
+    flex-flow: row wrap;
+}
+
+.panel {
+    background: white;
+    border-radius: 0.1em;
+    margin: 0.2% 0.4%;
+    padding: 1%;
+}
+
+#header_panel {
+    padding-top: 0.4%;
+    position: fixed;
+    height: 75px;
+    width: 97.5%
+}
+
+#app_title {
+    font-size: 1.7em;
+    float: right;
+}
+
+#tool_title {
+    font-size: 1.2em;
+}
+
+#body_panel {
+    bottom: 175px;
+    max-height: 65%;
+    position: fixed;
+    top: 100px;
+    width: 100%;
+}
+
+.twopanels_left {
+    margin-right: 0.2%;
+}
+
+.twopanels_right {
+    margin-left: 0.2%;
+}
+
+#form_submit, #form_sequences_file {
+    display: inline;
+}
+
+#form_block {
+    height: 100%
+}
+
+#form_panel {
+    -webkit-flex: 1 60%;
+    -moz-flex: 1 60%;
+    -ms-flex: 1 60%;
+    flex: 1 60%;
+    height: 95%;
+    padding: 2%;
+    position: relative;
+}
+
+#form_sequences {
+    resize: none;
+    margin-top: 2%;
+    height: 65%;
+    width: 98%;
+}
+
+#scatter_panel {
+  -webkit-flex: 2 32%;
+  -moz-flex: 2 32%;
+  -ms-flex: 2 32%;
+  flex: 2 32%;
+}
+
+#segmenter_panel {
+  bottom: 0;
+  height: 144px;
+  position: fixed;
+  width: 97.2%;
+}
+
+#footer_panel {
+    display: inline-block;
+    float: right;
+    padding: 0.4% 1.4%;
+}
+
+#copyright {
+    font-size: 0.7em;
+    position: absolute;
+    bottom: 0.4%;
+    right: 1.2%;
+    text-align: right;
+}
+
+.vidjil_view {
+    border-radius: 0.1em;
+    /*border: 1px solid silver;*/
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.invisible, .visible, .waitingResponse, .notWaitingResponse {
+    -moz-transition: opacity 1s, background 1s;
+    -webkit-transition: opacity 1s, background 1s;
+    transition: opacity 1s, background 1s;
+}
+
+.invisible {
+    opacity: 0;
+}
+
+.visible {
+    opacity: 1;
+}
+
+.waitingResponse {
+    background: whitesmoke;
+}
+
+.imgAjaxLoading {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+}

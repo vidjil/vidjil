@@ -57,7 +57,14 @@ class VidjilBrowser < Watir::Browser
   # Return the clone on the scatterplot
   # Beware the id must be a string
   def clone_in_scatterplot(id, extra={})
-    return element(extra.merge(:id => "circle"+id))
+    circle = element(extra.merge(:id => "circle"+id))
+    if circle.exists? and not circle.visible?
+      bar = element(extra.merge(:id => "bar"+id))
+      if bar.exists? and bar.visible?
+        return bar
+      end
+    end
+    return circle
   end
 
   # Return the clone in the graph
@@ -109,7 +116,7 @@ class VidjilBrowser < Watir::Browser
 
   # Return the div containing the information (status bar)
   def infoline
-    return div(:id => 'bot-container').div(:class => 'focus')
+    return div(:id => segmenter_id).div(:class => 'focus')
   end
 
   # Return the span of the locus
@@ -163,9 +170,25 @@ class VidjilBrowser < Watir::Browser
     return element(extra.merge(:id => 'fastTag'+id))
   end
 
+  # Return the div of the scatterplot
+  def scatterplot
+    return element(:id => scatterplot_id)
+  end
+
+  def scatterplot_menu
+    return scatterplot.element(:class => 'sp_menu')
+  end
+
+  # Select a preset in the scatterplot menu
+  # (String or Regex)
+  def scatterplot_select_preset(axis)
+    scatterplot_menu.hover
+    preset_selector.select axis
+  end
+
   # Return the element corresponding to the x axis of the scatterplot
   def scatterplot_x
-    return scatterplot('x')
+    return scatterplot_axis('x')
   end
 
   # Return the element corresponding to the legend of the x axis of the scatterplot
@@ -173,14 +196,24 @@ class VidjilBrowser < Watir::Browser
     return scatterplot_legend('x', index)
   end
 
+  # Return the x axis label of the scatterplot
+  def scatterplot_x_label
+    return scatterplot_labels[0]
+  end
+
   # Return the element corresponding to the x axis of the scatterplot
   def scatterplot_y
-    return scatterplot('y')
+    return scatterplot_axis('y')
   end
 
   # Return the element corresponding to the legend of the y axis of the scatterplot
   def scatterplot_y_legend(index)
     return scatterplot_legend('y', index)
+  end
+
+  # Return the y axis label of the scatterplot
+  def scatterplot_y_label
+    return scatterplot_labels[1]
   end
 
   def segmenter_checkbox_aa
@@ -227,10 +260,11 @@ class VidjilBrowser < Watir::Browser
 
   # Return the div containing stats information on selected clone(s)
   def statsline
-    div(:id => 'bot-container').div(:class => 'stats')
+    div(:id => segmenter_id).div(:class => 'stats')
   end
 
-  # Return an item from a tag selector split in a hash.
+  # Return an item from a tag selector (the menu to select the tag
+  # for a clone) split in a hash.
   # The hash contains the following keys:
   def tag_item(id)
     ts = tag_selector
@@ -285,14 +319,26 @@ class VidjilBrowser < Watir::Browser
     return div(:id => 'list_clones')
   end
   
-  private
-  
-  def scatterplot(axis)
-    return element(:id => 'visu_axis_'+axis+'_container')
+  protected
+
+  def scatterplot_id
+    return 'visu_axis'
+  end
+
+  def segmenter_id
+    return 'bot-container'
+  end
+
+  def scatterplot_axis(axis)
+    return element(:id => scatterplot_id+'_'+axis+'_container')
+  end
+
+  def scatterplot_labels
+    return element(:id => scatterplot_id+'_axis_container').elements(:class => 'sp_legend2')
   end
 
   def scatterplot_legend(axis, index)
-    return scatterplot(axis).element(:class => 'sp_legend', :index => index)
+    return scatterplot_axis(axis).element(:class => 'sp_legend', :index => index)
   end
 
 

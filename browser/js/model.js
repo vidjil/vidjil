@@ -1828,7 +1828,7 @@ changeCloneNotation: function(cloneNotationType) {
         
         
         //replace tagSeelector
-        var tagSelectorH = $(this.tagSelector).height()
+        var tagSelectorH = $(this.tagSelector).outerHeight()
         var minTop = 40;
         var maxTop = Math.max(40, $(window).height()-tagSelectorH);
         var top = e.clientY - tagSelectorH/2;
