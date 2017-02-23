@@ -138,9 +138,9 @@ To further analyze a set of clones sharing a same V and J, it is often useful
 to focus on the clones, then to display them ones according to either their “clone length”
 or their “N length” (that is N1-D-N2 in the case of VDJ recombinations)
 
-** The aligner (bottom panel)
+** The sequence view (bottom panel)
 
-The aligner display nucleotide sequences from selected clones.
+The sequence view display nucleotide sequences from selected clones.
    - See "What is the sequence displayed for each clone ?" ([[What is the sequence displayed for each clone ?]]) below
    - Sequences can be aligned together (“align” button), identifying substitutions, insertions and deletions.
    - You can remove sequences from the aligner (and the selection) by clicking on their name
