@@ -261,15 +261,21 @@ The different permissions that can be attributed are:
   - View Details: Permissions to view patient/run data in an unencrypted manner for the patients/runs of a group
   - Save: Permissions to save an analysis for the patients/runs of a group
 
-* How do you define a clone? How are gathered clones?
-   Each software has its own definition of what a clone is (or, more precisely
-  a clonotype). Knowing how clones are defined is important to be aware of the
+
+* How do you define clones, their sequences, and their V(D)J designation?
+
+  The Vidjil web application allows to run several RepSeq algorithms.
+  Each RepSeq algorithm (selected by « config », see above)
+  has its own definition of what a clone is (or, more precisely
+  a clonotype), how to output its sequence and how to assign a V(D)J designation.
+  Knowing how clones are defined is important to be aware of the
   potential biases that could affect your analysis.
 
-  In Vidjil sequences are gathered into a same clone as long as they share the
+** How do you define a clone? How are gathered clones?
+  In the *built-in Vidjil algorithm*,
+  sequences are gathered into a same clone as long as they share the
   same 50bp DNA sequence around the CDR3 sequence.
-
-  In a first step, Vidjil has a quick heuristic which detects approximatively
+  In a first step, the algorithm has a quick heuristic which detects approximatively
   where the CDR3 lies and extracts a 50bp nucleotide sequence centered on that
   region. This region is called a window in Vidjil's algorithm. When two
   sequences share the same window, they belong to the same clone.  Therefore
@@ -280,8 +286,25 @@ The different permissions that can be attributed are:
   inside the cells. Therefore we let the user choose whether the clones should
   be manually merged or not.
 
-  In MiXCR clones are defined based on the amino-acid CDR3 sequence, on the V
+  In *MiXCR*, clones are defined based on the amino-acid CDR3 sequence, on the V
   gene used and on the hypermutations.
+
+** What is the sequence displayed for each clone ?
+<<representative>>
+The sequences displayed for each clone are not individual reads.  
+The clones may gather thousands of reads, and all these reads can have
+some differences. Depending on the sequencing technology, the reads
+inside a clone can have different lengths or can be shifted,
+especially in the case of overlapping paired-end sequencing. There can be also
+some sequencing errors.
+The =.vidjil= file has to give one consensus sequence per clone, and
+Rep-Seq algorithms have to deal with great care to these difference in
+order not to gather reads from different clones.
+
+For the *built-in Vidjil algorithm*, it is required that the window centered on
+the CDR3 is /exactly/ shared by all the reads. The other positions in
+the consensus sequence are guaranteed to be present in /at least half/
+of the reads. The consensus sequence can thus be shorter than some reads.
 
 
 
@@ -333,22 +356,6 @@ analyzed reads, including the hidden clones.
 
 
 
-* What is the sequence displayed for each clone ?
-<<representative>>
-The sequences displayed for each clone are not individual reads.  
-The clones may gather thousands of reads, and all these reads can have
-some differences. Depending on the sequencing technology, the reads
-inside a clone can have different lengths or can be shifted,
-especially in the case of overlapping paired-end sequencing. There can be also
-some sequencing errors.
-The =.vidjil= file has to give one consensus sequence per clone, and
-Rep-Seq algorithms have to deal with great care to these difference in
-order not to gather reads from different clones.
-
-For the Vidjil algorithm, it is required that the window centered on
-the CDR3 is /exactly/ shared by all the reads. The other positions in
-the consensus sequence are guaranteed to be present in /at least half/
-of the reads. The consensus sequence can thus be shorter than some reads.
 
 
 * How can I assess the quality of the data and the analysis ?
