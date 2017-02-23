@@ -306,6 +306,16 @@ the CDR3 is /exactly/ shared by all the reads. The other positions in
 the consensus sequence are guaranteed to be present in /at least half/
 of the reads. The consensus sequence can thus be shorter than some reads.
 
+** How are computed the V(D)J designations?
+
+In the *built-in Vidjil algorithm*, V(D)J designations are computed /after the clone clustering/ by dynamic programming,
+finding the most similar V (or 5') and J (or 3') gene, then trying to match a D gene.
+Note that the algorithm also detects some VDDJ or VDDDJ recombinations that may happen in the TRD locus.
+Some incomplete or unusual rearrangements (Dh/Jh, Dd2/Dd3, KDE-Intron, mixed TRA-TRD recombinations) are also detected.
+
+Once clones are selected, you can send their sequence to *IMGT/V-QUEST* and *IgBlast*
+by clicking on the links just above the sequence view (bottom left).
+This opens another window/tab.
 
 
 
