@@ -81,7 +81,7 @@ to learn the essential features of Vidjil.
    #The name can be edited (“edit”).
    - date :: indicate the date of the run of the current sample point (edit with the database, on the patient/run tab).
              You can change the point viewed by clickong on the =←= and =→= buttons. A cycling view is available by the fix button.
-   - analyzed reads :: number of reads where Vidjil found a CDR3, for that sample point
+   - analyzed reads :: number of reads where the underlying RepSeq algorithm found a V(D)J recombination, for that sample point
                   See [[Number of analyzed reads]] below.
    - total :: total number of reads for that sample point
 
@@ -370,7 +370,7 @@ analyzed reads, including the hidden clones.
 
 * How can I assess the quality of the data and the analysis ?
 
-To make sure that the PCR, the sequencing and the Vidjil analysis went well, several elements can be controlled.
+To make sure that the PCR, the sequencing and the RepSeq analysis went well, several elements can be controlled.
 
 ** Number of analyzed reads
    :PROPERTIES:
@@ -378,24 +378,24 @@ To make sure that the PCR, the sequencing and the Vidjil analysis went well, sev
    :END:
 
 A first control is to check the number of “analyzed reads” in the info panel (top left box).
-This shows the number of reads where Vidjil found some V(D)J recombination in the selected sample.
+This shows the number of reads where the underlying RepSeq algorithm found some V(D)J recombination in the selected sample.
      
 With DNA-Seq sequencing with specific V(D)J primers,
 ratios above 90% usually mean very good results. Smaller ratios, especially under 60%, often mean that something went wrong.
 On the other side, capture with many probes or RNA-Seq strategies usually lead to datasets with less than 0.1% V(D)J recombinations.
 
-The “info“ button further detail the causes of non-analysis (=UNSEG=, see detail on [[http://git.vidjil.org/blob/master/doc/algo.org][algo.org]]).
+The “info“ button further detail the causes of non-analysis (for the built-in Vidjil algorithm, =UNSEG=, see detail on [[http://git.vidjil.org/blob/master/doc/algo.org][algo.org]]).
 There can be several causes leading to bad ratios: 
 
 *** Analysis or biological causes
 
    - The data actually contains other germline/locus that what was searched for
-      (solution: relauch Vidjil, or ask that we relaunch Vidjil, with the correct germline sequences).
-      See [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]] for information on the analyzable human locus,
+      (solution: relauch the processing, or ask that we relaunch it, with the correct germline sequences).
+      See [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]] for information on the analyzable human locus with the built-in Vidjil algorithm,
      and contact us if you would like to analyze data from species that are not currently available.
 
    - There are incomplete/exceptional recombinations
-     (Vidjil can process some of them, config =multi+inc= or command-line option =-i=, see [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]] for details)
+     (Vidjil can process some of them, config =multi+inc=, see [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]] for details)
 
    - There are too many hypersomatic mutations
      (usually Vidjil can process mutations until 10% mutation rate... above that threshold, some sequences may be lost).
@@ -406,7 +406,7 @@ There can be several causes leading to bad ratios:
 *** PCR or sequencing causes
 
    - The read length is too short and the reads do not span the junction zone (=UNSEG too few V/J= or =UNSEG only V/J=).
-      (Vidjil detects a “window” including the CDR3. By default this window is 50bp long, so the read needs be that long centered on the junction).
+      (the built-in Vidjil algorithm detects a “window” including the CDR3. By default this window is 50bp long, so the read needs be that long centered on the junction).
 
    - In particular, for paired-end sequencing, one of the ends can lead to reads not fully containing the CDR3 region.
      Solutions are to merge the ends with very conservative parameters (see [[Read merging]] above),
@@ -444,7 +444,10 @@ There can be several causes leading to bad ratios:
    :CUSTOM_ID: coverage
    :END:
 
-   The clone coverage is the ratio of the length of the clone consensus sequence
+
+
+   In the built-in Vidjil algorithm,
+   the clone coverage is the ratio of the length of the clone consensus sequence
    to the median read length in the clone.
    A consensus sequence is
    displayed for each clone (see [[representative][What is the sequence displayed for each clone?]]). 
