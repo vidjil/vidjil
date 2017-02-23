@@ -219,14 +219,18 @@ probably contains both a part of the V and the J genes.
 
 
 ** Processing samples, configs
+   :PROPERTIES:
+   :CUSTOM_ID: configs
+   :END:
 
 Depending on your granted accesses, you can schedule a processing for a sequence file (select a config and =run=).
 The processing can take a few seconds to a few hours, depending on the
 software lauched, the options set in the config, the size of the sample and the server load.
 
-The base configurations are « TRG », « IGH », « multi » (=-g germline=), « multi+inc » (=-g germline -i=), « multi+inc+xxx » (=-g germline -i -2=, default advised configuration).
+The base human configurations with the Vidjil built-in algorithm are « TRG », « IGH », « multi » (=-g germline=), « multi+inc » (=-g germline -i=), « multi+inc+xxx » (=-g germline -i -2=, default advised configuration).
 See https://github.com/vidjil/vidjil/blob/master/doc/locus.org for information on these configurations.
-The server mainteners can add new configurations tailored to specific needs.
+There are also configuration for other species and for other RepSeq algorithms, such as « MiXCR ».
+The server mainteners can add new configurations tailored to specific needs, contact us if you have other needs.
 
 The « reload » button (bottom left) updates the status of the task, that should do =QUEUED= → =ASSIGNED= → =RUNNING= → =COMPLETED=.
 It is possible to launch several process at the same time (some will wait in the =QUEUED= / =ASSIGNED= states), and also to launch process while you
