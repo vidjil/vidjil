@@ -282,10 +282,16 @@ The different permissions that can be attributed are:
 
   In MiXCR clones are defined based on the amino-acid CDR3 sequence, on the V
   gene used and on the hypermutations.
+
+
+
+
 * Can I see all the clones ?
+   :PROPERTIES:
+   :CUSTOM_ID: smaller-clones
+   :END:
 
-
-The interest of NGS/Rep-Seq studies is to provide a deep view of any
+The interest of NGS/RepSeq studies is to provide a deep view of any
 V(D)J repertoire. The underlying analysis softwares (such as Vidjil)
 try to analyze as much reads as possible (see [[Number of analyzed reads]] below).
 One often wants to "see all clones", but a complete list is difficult
