@@ -2341,8 +2341,7 @@ changeCloneNotation: function(cloneNotationType) {
                         bodyNode.style.cursor = "default";
                     }
                 };
-
-                $.ajax(url, {
+                var params = {
                     method: "POST",
                     data: {
                         sequences: sequences
@@ -2353,12 +2352,16 @@ changeCloneNotation: function(cloneNotationType) {
                             console.log({ msg: data.error, type: "flash", priority: 2 });
                             return;
                         }
+
+                        var index = self.clones.length;
                         data.clones.forEach(function (clone) {
                             clone.quantifiable = false;
+                            var clone = new Clone(clone, self, index);
+                            self.mapID[clone.id] = index;
+                            index++;
                         });
-                        self.parseJsonData(data, 100);
-                        self.loadGermline();
-                        self.initClones();
+
+                        self.shouldRefresh();
                         console.log({ msg: "Clone(s) added!", type: "flash", priority: 1 })
                     },
                     error: function (xhr, textStatus, errorThrown) {
@@ -2366,10 +2369,19 @@ changeCloneNotation: function(cloneNotationType) {
                         console.log({ msg: textStatus + " " + errorThrown, type: "flash", priority: 2 });
                     },
                     timeout: 60000
-                });
+                };
+                $.ajax(url, params);
                 displayAjax(true);
             }
         }
-    }
+    },
+
+    shouldRefresh: function () {
+        this.view.forEach(function (view) {
+            if (view.shouldRefresh) {
+                view.shouldRefresh();
+            }
+        });
+    },
 
 }; //end prototype Model

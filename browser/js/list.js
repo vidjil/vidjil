@@ -900,6 +900,10 @@ List.prototype = {
     },
     
 
+    shouldRefresh: function () {
+        this.init();
+        this.update();
+    }
 
 } //fin prototype
 List.prototype = $.extend(Object.create(View.prototype), List.prototype);

@@ -2160,5 +2160,10 @@ ScatterPlot.prototype = {
     },
     
 
+    shouldRefresh: function () {
+        this.init();
+        this.update();
+        this.resize();
+    }
 }
 ScatterPlot.prototype = $.extend(Object.create(View.prototype), ScatterPlot.prototype);
