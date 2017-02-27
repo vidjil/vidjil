@@ -2327,12 +2327,32 @@ changeCloneNotation: function(cloneNotationType) {
                 showAddManualCloneMenu(true);
             } else {
                 var self = this;
+                var displayAjax = function (display) {
+                    var liveAjaxNode = document.getElementById("live-ajax");
+                    var bodyNode = document.getElementsByTagName("body")[0];
+                    if (display) {
+                        // var imgNode = document.createElement("img");
+                        liveAjaxNode.appendChild(icon('icon-spin4 animate-spin', 'Sequences sent to controller segmenter'));
+                        bodyNode.style.cursor = "wait";
+                    } else {
+                        while (liveAjaxNode.lastChild) {
+                            liveAjaxNode.removeChild(liveAjaxNode.lastChild);
+                        }
+                        bodyNode.style.cursor = "default";
+                    }
+                };
+
                 $.ajax(url, {
                     method: "POST",
                     data: {
                         sequences: sequences
                     },
                     success: function (data) {
+                        displayAjax(false);
+                        if (data.error) {
+                            console.log({ msg: data.error, type: "flash", priority: 2 });
+                            return;
+                        }
                         data.clones.forEach(function (clone) {
                             clone.quantifiable = false;
                         });
@@ -2342,9 +2362,12 @@ changeCloneNotation: function(cloneNotationType) {
                         console.log({ msg: "Clone(s) added!", type: "flash", priority: 1 })
                     },
                     error: function (xhr, textStatus, errorThrown) {
+                        displayAjax(false);
                         console.log({ msg: textStatus + " " + errorThrown, type: "flash", priority: 2 });
-                    }
+                    },
+                    timeout: 60000
                 });
+                displayAjax(true);
             }
         }
     }
