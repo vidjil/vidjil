@@ -2368,6 +2368,7 @@ changeCloneNotation: function(cloneNotationType) {
                         });
 
                         self.shouldRefresh();
+                        self.update();
                         console.log({ msg: "Clone(s) added!", type: "flash", priority: 1 })
                     },
                     error: function (xhr, textStatus, errorThrown) {
