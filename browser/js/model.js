@@ -33,6 +33,8 @@
 
 VIDJIL_JSON_VERSION = '2014.09';
 
+SIZE_MANUALLY_ADDED_CLONE = 100000; // Default size of a manually added clone.
+
 /** Model constructor
  * Used to parse a .vidjil file (local file or from url) and store his content in a more convenient way, <br>
  * provide manipulation function, <br>
@@ -2357,6 +2359,10 @@ changeCloneNotation: function(cloneNotationType) {
                         data.clones.forEach(function (clone) {
                             clone.quantifiable = false;
                             var clone = new Clone(clone, self, index);
+                            // Array with self.sample.number times the same value
+                            clone.reads = Array.apply(null, Array(self.samples.number))
+                                .map(function(){return SIZE_MANUALLY_ADDED_CLONE})
+                            clone.top = 1
                             self.mapID[clone.id] = index;
                             index++;
                         });
