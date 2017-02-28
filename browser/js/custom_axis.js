@@ -30,112 +30,17 @@
  * @param {Model} model 
  * @reverse {boolean} reverse - by default axis go from low to high but can be revsersed
  * */
-function Axis (model, reverse) {
-    this.m = model
+function CustomAxis (model, reverse) {
+    this.m = model;
     this.labels = [];
     this.reverse = reverse;
+    GenericAxis.call(this);
 }
 
 const NB_STEPS_IN_AXIS = 6; // Number (max) of labels per numerical axis
 const NB_STEPS_BAR = 30; // Number (max) of labels per numerical axis in histograms
 
-Axis.prototype = {
-    
-    /**
-     * init/reset Axis
-     * */
-    init: function() {
-        this.labels = [];
-    },
-    
-    /**
-     * for a clone's index will return a value between 0 and 1 representing the clone's position on this axis. <br>
-     * this function is empty and will be overided depending on what the axis must represent.
-     * @param {integer} cloneID - clone index
-     * @return {float} pos - clone's position
-     * */
-    pos : function(cloneID) {
-        return 0;
-    },
-    
-    /**
-     * build a label descriptor
-     * @param {string} type - 'line' or 'subline'
-     * @param {float} pos - position on axis between 0 and 1
-     * @param {string} text - text label
-     * @param {string} color - label color
-     * @return {object} label
-     * */
-    label: function (type, pos, text, color) {
-        result = {};
-        result.type = type;
-        result.pos = pos;
-        result.text = text;
-        result.geneColor = color;
-
-        return result;
-    },
-
-    /**
-     * init axis with a germline object
-     * @param {Germline} germline
-     * @param {string} genetype - "V" "D" or "J"
-     * @param {boolean} displayAllele - (show/hide allele)
-     * */
-    useGermline: function (germline, geneType, displayAllele) {
-        this.init()
-        this.germline = germline;
-        var self = this;
-        
-        var gene_list = self.germline.gene
-        var allele_list = self.germline.allele
-        var total_gene = Object.keys(gene_list).length
-        
-        var type2
-        if (geneType=="V") type2="5"
-        if (geneType=="D") type2="4"
-        if (geneType=="J") type2="3"
-        
-        //clone position
-        this.pos = function(cloneID) {
-            var clone = self.m.clone(cloneID) 
-            if (clone.hasSeg(type2)
-                && typeof clone.seg[type2]["name"] != 'undefined'
-                && typeof gene_list[clone.seg[type2]["name"].split("*")[0]] != "undefined")
-            {
-                var allele = clone.seg[type2]["name"]
-                var gene = clone.seg[type2]["name"].split("*")[0]
-                var pos = ((gene_list[gene].rank+0.5)/(total_gene+1))
-                
-                if (displayAllele){
-                    var total_allele = gene_list[gene].n
-                    pos += (1/(total_gene+1)) * ((allele_list[allele].rank+0.5)/total_allele) - (0.5/(total_gene+1))
-                }
-                return pos
-            }else{
-                return ((total_gene+0.5)/(total_gene+1))
-            }
-        }
-        
-        //labels
-        for (var key in gene_list){
-            self.labels.push(self.label("line", ((gene_list[key].rank+0.5)/(total_gene+1)), key, this.germline.gene[key].color));
-        }
-        
-        if (displayAllele){
-            for (var key in allele_list){
-                var gene = key.split("*")[0]
-                var allele = key.split("*")[1]
-                var total_allele = gene_list[gene].n
-                var pos = ((gene_list[gene].rank+0.5)/(total_gene+1))
-                pos += (1/(total_gene+1)) * ((allele_list[key].rank+0.5)/total_allele) - (0.5/(total_gene+1))
-                self.labels.push(self.label("subline", pos, "*"+allele, this.germline.allele[key].color));
-            }
-        }
-        
-        self.labels.push(self.label("line", ((total_gene+0.5)/(total_gene+1)), "?", ""));
-    },
-    
+CustomAxis.prototype {
     /**
      * compute axis using a given function <br>
      * find min/max value possible with the given function and use them as range <br>
@@ -146,7 +51,7 @@ Axis.prototype = {
      * @param {boolean} percent - display label as percent ( value 1 => 100%)
      * @param {boolean} use_log - use a logarithmic scale instead of a linear
      * */
-    custom: function(fct, default_min, default_max, output, use_log, display_label){
+    init: function(fct, default_min, default_max, output, use_log, display_label){
         output = typeof output !== 'undefined' ? output : 'float';
         use_log = typeof use_log !== 'undefined' ? use_log : false;
         display_label = typeof display_label !== 'undefined' ? display_label : true;
@@ -259,7 +164,7 @@ Axis.prototype = {
             }
         }
         
-        this.computeCustomLabels(min, max, output, use_log, display_label, has_undefined)
+        this.computeLabels(output, use_log, display_label, has_undefined)
     },
     
     /**
@@ -271,8 +176,10 @@ Axis.prototype = {
      * @param {boolean} use_log - use a logarithmic scale instead of a linear
      * @param {boolean} has_undefined - Should we include an undefined value ?
      * */
-    computeCustomLabels: function(min, max, output, use_log, display_label, has_undefined){
+    computeLabels: function(output, use_log, display_label, has_undefined){
         this.labels = [];
+        var min = this.min;
+        var max = this.max;
         if (typeof has_undefined == 'undefined')
             has_undefined = false
         
@@ -332,12 +239,12 @@ Axis.prototype = {
             }
         }
     },
-    
+
     /**
      * add labels for barplot <br>
      * @param {Array} tab - barplot descriptor like the one made by Model.computeBarTab()
      * */
-    computeCustomBarLabels : function (tab) {
+    computeBarLabels : function (tab) {
         this.labels = [];
         var length = Object.keys(tab).length;
         
@@ -358,5 +265,4 @@ Axis.prototype = {
     posBarLabel : function (i, length) {
         return (i-0.5)/length ;
     }
-
 }
