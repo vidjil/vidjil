@@ -40,9 +40,7 @@ function CustomAxis (model, reverse) {
 const NB_STEPS_IN_AXIS = 6; // Number (max) of labels per numerical axis
 const NB_STEPS_BAR = 30; // Number (max) of labels per numerical axis in histograms
 
-CustomAxis.prototype = Object.create(GenericAxis.prototype);
-
-Object.assign(CustomAxis.prototype, {
+CustomAxis.prototype {
     /**
      * compute axis using a given function <br>
      * find min/max value possible with the given function and use them as range <br>
@@ -53,81 +51,120 @@ Object.assign(CustomAxis.prototype, {
      * @param {boolean} percent - display label as percent ( value 1 => 100%)
      * @param {boolean} use_log - use a logarithmic scale instead of a linear
      * */
-    init: function(fct, default_min, default_max, use_log, display_label){
+    init: function(fct, default_min, default_max, output, use_log, display_label){
+        output = typeof output !== 'undefined' ? output : 'float';
         use_log = typeof use_log !== 'undefined' ? use_log : false;
         display_label = typeof display_label !== 'undefined' ? display_label : true;
         var self = this;
         var has_undefined = false
         
         this.fct = fct;
-        
-        var min = default_min;
-        var max = default_max;
-        if (typeof min === 'function') min = min();
-        if (typeof max === 'function') max = max();
-
-        for (var i in this.m.clones){
-            if (! this.m.clones[i].isVirtual()) {
-                var tmp;
-                try{
-                    tmp = this.fct(this.m.clones[i]);
-                }catch(e){
-                    tmp = undefined;
-                }
-
-                if ( typeof tmp != "undefined" && !isNaN(tmp)){
-                    if ( tmp > max || typeof max == "undefined") max = tmp;
-                    if ( tmp < min || typeof min == "undefined") min = tmp;
-                } else {
-                    has_undefined = true
-                }
+        if (typeof fct == "string"){
+            this.fct = function(clone){
+                return clone.get(fct)
             }
         }
+        
+        if ( (output != "string") && (output != "string-sorted")){
+            var min = default_min;
+            var max = default_max;
+            if (typeof min === 'function') min = min();
+            if (typeof max === 'function') max = max();
+        
+            for (var i in this.m.clones){
+                if (! this.m.clones[i].isVirtual()) {
+                    var tmp;
+                    try{
+                        tmp = this.fct(this.m.clones[i]);
+                    }catch(e){
+                        tmp = undefined;
+                    }
 
-        if (typeof min == "undefined"){
-            min = 0;
-            max = 1;
-        }
-        else {
-            min = nice_floor(min)
-            max = nice_ceil(max)
-        }
+                    if ( typeof tmp != "undefined" && !isNaN(tmp)){
+                        if ( tmp > max || typeof max == "undefined") max = tmp;
+                        if ( tmp < min || typeof min == "undefined") min = tmp;
+                    } else {
+                        has_undefined = true
+                    }
+                }
+            }
+            
+            if (typeof min == "undefined"){ 
+                min = 0;
+                max = 1;
+            }
+            else {
+                min = nice_floor(min)
+                max = nice_ceil(max)
+            }
 
-        if (has_undefined && ! use_log) {
-            min = min - (max - min)/NB_STEPS_IN_AXIS
-        }
-
-        var range = [0,1]
-        if (self.reverse) range = [1,0]
-        if (use_log){
-            this.sizeScale = d3.scale.log()
-            .domain([min, max])
-            .range(range);
-        }else{
-            this.sizeScale = d3.scale.linear()
+            if (has_undefined && ! use_log) {
+                min = min - (max - min)/NB_STEPS_IN_AXIS
+            }
+            
+            var range = [0,1]
+            if (self.reverse) range = [1,0]
+            if (use_log){
+                this.sizeScale = d3.scale.log()
                 .domain([min, max])
                 .range(range);
-        }
+            }else{
+                this.sizeScale = d3.scale.linear()
+                    .domain([min, max])
+                    .range(range);
+            }
+                
+            this.min = min;
+            this.max = max;
             
-        this.min = min;
-        this.max = max;
-
-        this.computeLabels(use_log, display_label, has_undefined)
-    },
-
-    pos: function(cloneID) {
-        var value, pos;
-        try{
-            value = this.fct(this.m.clone(cloneID));
-        }catch(e){}
-
-        if (typeof value != "undefined" && value != 'undefined'){
-            pos = this.sizeScale(value);
+            this.pos = function(cloneID) {
+                var value, pos;
+                try{
+                    value = self.fct(self.m.clone(cloneID));
+                }catch(e){}
+                
+                if (typeof value != "undefined" && value != 'undefined'){
+                    pos = self.sizeScale(value);
+                }else{
+                    pos = self.sizeScale(self.min);
+                }
+                
+                return pos;
+            }
         }else{
-            pos = this.sizeScale(this.min);
+            this.values = {};
+            for (var i in this.m.clones){
+                try{
+                    var tmp = this.fct(self.m.clone(i));
+                    console.log(tmp)
+                    if (typeof tmp != 'undefined') this.values[tmp] = 0;
+                }catch(e){}
+            }
+            
+            var key = Object.keys(this.values)
+
+            if (output == "string-sorted") {
+                key.sort()
+            }
+
+            var step = 1/(key.length+1);
+            pos = step/2;
+            for (var i in key){
+                this.values[key[i]] = pos;
+                pos += step;
+            }
+            
+            this.values["?"] = pos;
+            
+            this.pos = function(cloneID) {
+                result = this.values[this.fct(self.m.clone(cloneID))]
+                
+                if (typeof result == 'undefined') return "?"
+                return result
+            }
         }
         
-        return {'pos': pos};
+        this.computeLabels(output, use_log, display_label, has_undefined)
     },
     
     /**
@@ -139,54 +176,93 @@ Object.assign(CustomAxis.prototype, {
      * @param {boolean} use_log - use a logarithmic scale instead of a linear
      * @param {boolean} has_undefined - Should we include an undefined value ?
      * */
-    computeLabels: function(use_log, display_label, has_undefined){
+    computeLabels: function(output, use_log, display_label, has_undefined){
         this.labels = [];
         var min = this.min;
         var max = this.max;
         if (typeof has_undefined == 'undefined')
             has_undefined = false
-
-        if (use_log){
-            var h=1
-            for (var i = 0; i < 10; i++) {
-                var pos = this.sizeScale(h); // pos is possibly already reversed
-                var text = this.m.formatSize(h, false)
+        
+        if ((output == "string") || (output == "string-sorted")) {
+            var key = Object.keys(this.values)
+            for (var i in key){
+                var text = key[i];
                 if (!display_label) text = "";
-                if (pos >= 0 && pos <= 1)
-                    this.labels.push(this.label("line", pos, text));
-                h = h / 10;
+                this.labels.push(this.label("line", this.values[key[i]], text));
             }
         }else{
-            var nb_steps = NB_STEPS_IN_AXIS-1
-            undefined_min = min
-            // Recover the initial min value
-            if (has_undefined) {
-                min = (min*NB_STEPS_IN_AXIS + max)/(NB_STEPS_IN_AXIS + 1)
-            }
+            if (use_log){
+                var h=1
+                for (var i = 0; i < 10; i++) {
+                    var pos = this.sizeScale(h); // pos is possibly already reversed
+                    var text = this.m.formatSize(h, false)
+                    if (!display_label) text = "";
+                    if (pos >= 0 && pos <= 1)
+                        this.labels.push(this.label("line", pos, text));
+                    h = h / 10;
+                }
+            }else{
+                var nb_steps = NB_STEPS_IN_AXIS-1
+                undefined_min = min
+                // Recover the initial min value
+                if (has_undefined) {
+                    min = (min*NB_STEPS_IN_AXIS + max)/(NB_STEPS_IN_AXIS + 1)
+                }
 
-            if (Math.abs(max - min) < nb_steps) {
-                nb_steps = Math.abs(max - min)
-            }
-
-            var h = (max-min)/nb_steps
-            // Computed so that pos <= 1 (in the loop below)
-            var delta = (min - max)/((min - undefined_min)/(max-undefined_min) - 1)
-            if (has_undefined)
-                this.labels.push(this.label("line", (this.reverse) ? 1 : 0, "?"))
-            // Shift the start when there is an undefined value
-            var start_shift = (min - undefined_min)/(max-undefined_min)
-            for (var i = 0; i <= nb_steps; i++) {
-                pos = start_shift + (h*i)*(1/delta);
-
-                var text = this.getLabelText(min, h, i);
-                if (this.reverse) pos = 1 - pos;
-                if (!display_label) text = "";
-                this.labels.push(this.label("line", pos, text));
+                if (output == 'float' || output == 'undefined') {
+                    if (Math.abs(max - min) < nb_steps) {
+                        nb_steps = Math.abs(max - min)
+                    }
+                }
+                var h = (max-min)/nb_steps
+                // Computed so that pos <= 1 (in the loop below)
+                var delta = (min - max)/((min - undefined_min)/(max-undefined_min) - 1)
+                if (has_undefined)
+                    this.labels.push(this.label("line", (this.reverse) ? 1 : 0, "?"))
+                // Shift the start when there is an undefined value
+                var start_shift = (min - undefined_min)/(max-undefined_min)
+                for (var i = 0; i <= nb_steps; i++) {
+                    pos = start_shift + (h*i)*(1/delta);
+                    
+                    var text = Math.round(min+(h*i))
+                    if (output=="percent"){
+                        text = ((min+(h*i))*100).toFixed(1) + "%"
+                    }
+                    if (output=="float-2"){
+                        text = (min+(h*i)).toFixed(2)
+                    }
+                    
+                    if (this.reverse) pos = 1 - pos; 
+                    if (!display_label) text = "";
+                    this.labels.push(this.label("line", pos, text));
+                }
             }
         }
     },
 
-    getLabelText(min_value, value, index) {
-        return Math.round(min_value+(value*index));
+    /**
+     * add labels for barplot <br>
+     * @param {Array} tab - barplot descriptor like the one made by Model.computeBarTab()
+     * */
+    computeBarLabels : function (tab) {
+        this.labels = [];
+        var length = Object.keys(tab).length;
+        
+        var step = 1 + Math.floor(length / NB_STEPS_BAR)
+        
+        var i=1
+        for (var e in tab){
+            if (i%step == 0 || (e == '?' && tab[e].length > 0)){
+                var pos = this.posBarLabel(i, length);
+                if (this.reverse) pos = 1 - pos; 
+                this.labels.push(this.label("line", pos, e));
+            }
+            i++;
+        }
+
+    },
+
+    posBarLabel : function (i, length) {
+        return (i-0.5)/length ;
     }
-})
+}

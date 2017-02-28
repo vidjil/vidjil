@@ -39,7 +39,6 @@ function GermlineAxis (model, reverse) {
 }
 
 GermlineAxis.prototype = Object.create(GenericAxis.prototype);
-
 Object.assign(GermlineAxis.prototype, {
     
     /**
