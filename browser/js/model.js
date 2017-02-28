@@ -1074,27 +1074,29 @@ changeCloneNotation: function(cloneNotationType) {
         }
 
         // compute size for each germlines of newOthers
-        lenSA = this.system_available.length;
-        for (var pos = 0; pos < this.clones.length - lenSA; pos++) {
-            if (this.clone(pos).isActive()) {
+        virtual_clones = [];
+        for (var pos = 0; pos < this.clones.length; pos++) {
+            if (this.clone(pos).isVirtual()) {
+                virtual_clones.push(pos);
+            } else if (this.clone(pos).isActive()) {
                 for (var sample = 0; sample < this.samples.number ; sample++) {
                     for (var k = 0; k < this.clusters[pos].length; k++) {
-                        if (this.clusters[pos][k] != this.clones.length - lenSA) {
-                            newOthers[this.clone(pos).germline][sample] -= this.clone(this.clusters[pos][k]).get('reads', sample);}
-                        else { break; }
+                            newOthers[this.clone(pos).germline][sample] -= this.clone(this.clusters[pos][k]).get('reads', sample);
                     }
                 }
             }
         }
 
         // values assignation of other
-        for (var pos = this.clones.length -lenSA; pos < this.clones.length ; pos++) { 
-            var c = this.clone(pos);
+        //for (var pos = this.clones.length -lenSA; pos < this.clones.length ; pos++) {
+        var self = this;
+        virtual_clones.forEach(function(pos) {
+            var c = self.clone(pos);
             c.reads = newOthers[c.germline];
             c.name = c.germline + " smaller clones";
-            if (this.someClonesFiltered)
+            if (self.someClonesFiltered)
                 c.name += " + filtered clones";
-        }
+        })
     },
     
     /**
