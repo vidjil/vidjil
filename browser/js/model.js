@@ -1076,8 +1076,8 @@ changeCloneNotation: function(cloneNotationType) {
         // compute size for each germlines of newOthers
         lenSA = this.system_available.length;
         for (var pos = 0; pos < this.clones.length - lenSA; pos++) {
-            for (var sample = 0; sample < this.samples.number ; sample++) {
-                if (this.clone(pos).isActive()) {
+            if (this.clone(pos).isActive()) {
+                for (var sample = 0; sample < this.samples.number ; sample++) {
                     for (var k = 0; k < this.clusters[pos].length; k++) {
                         if (this.clusters[pos][k] != this.clones.length - lenSA) {
                             newOthers[this.clone(pos).germline][sample] -= this.clone(this.clusters[pos][k]).get('reads', sample);}
