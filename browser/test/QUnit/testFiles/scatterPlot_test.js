@@ -56,3 +56,22 @@ QUnit.test("grid", function(assert) {
     
 });
 
+
+
+QUnit.test("node sizes", function(assert) {
+
+    var m = new Model(m);
+    m.parseJsonData(json_data, 100)
+    m.loadGermline()
+    m.initClones()
+
+    var sp = new ScatterPlot("visu", m);
+    sp.init();
+
+    assert.equal(sp.nodes[0].s, 0.05, "node 0, size")
+
+    m.clone(0).quantifiable = false;
+    sp.updateClone(0)
+
+    assert.equal(sp.nodes[0].s, 0.10, "node 0 (not quantifiable), size")
+})
