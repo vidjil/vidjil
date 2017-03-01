@@ -35,11 +35,18 @@ function Clone(data, model, index, virtual) {
     this.seg = {};
     this.segEdited = false
     this.virtual = typeof virtual !== 'undefined' ? virtual : false
+
     var key = Object.keys(data)
 
     for (var i=0; i<key.length; i++ ){
         this[key[i]]=data[key[i]]
     }
+
+    // Default value just in case
+    if (this.quantifiable == undefined) {
+        this.quantifiable = true;
+    }
+
     this.seg = this.m.convertSeg(this.seg)
     
     if (typeof (this.getSequence()) != 'undefined' && typeof (this.name) != 'undefined') {
@@ -62,6 +69,7 @@ function nullIfZero(x) { return x == 0 ? '' : x }
 
 Clone.prototype = {
 
+    NOT_QUANTIFIABLE_SIZE: -1, // should be < 0 to behave correcty with getMaxSize() and other comparisons
     COVERAGE_WARN: 0.5,
     EVALUE_WARN: 0.001,
     
@@ -271,6 +279,10 @@ Clone.prototype = {
      * @return {float} size
      * */
     getSize: function (time) {
+
+        if (!this.quantifiable)
+            return this.NOT_QUANTIFIABLE_SIZE
+
         time = this.m.getTime(time);
         
         if (this.m.reads.segmented[time] == 0 ) return 0;
@@ -329,6 +341,10 @@ Clone.prototype = {
      * @return {float} size
      * */
     getSize2: function (time) {
+
+        if (!this.quantifiable)
+            return this.NOT_QUANTIFIABLE_SIZE
+
         time = this.m.getTime(time)
         
         if (this.m.reads.segmented[time] == 0 ) return 0
@@ -433,8 +449,12 @@ Clone.prototype = {
     getPrintableSize: function (time) {
 
         var reads = this.getReads(time)
-        s = this.getSequenceLength() + ' nt, '
+        s = this.getSequenceLength() + ' nt'
 
+        if (!this.quantifiable)
+            return s
+
+        s += ', '
         s += this.m.toStringThousands(reads) + ' read' + (reads > 1 ? 's' : '') + ' '
 
         if (reads < this.m.NB_READS_THRESHOLD_QUANTIFIABLE)
@@ -1095,7 +1115,11 @@ Clone.prototype = {
     isVirtual: function () {
         return this.virtual
     },
-    
+
+    isQuantifiable: function() {
+        return this.quantifiable;
+    },
+
     isFocus: function () {
         return this.index == this.m.focus
     },

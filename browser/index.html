@@ -75,6 +75,16 @@
             </div></div>
         </div>
 
+        <div id="add_clone_menu">
+            <span class="closeButton" onclick="cancel();">X</span>
+            <h2>Add clones from sequences</h2>
+
+            <textarea id="addclone_input" placeholder="Sequence(s) (Fasta)"></textarea>
+
+            <button onclick="document.getElementById('add_clone_menu').style.display = 'none';
+                m.addManualClones('addclone_input');">Add</button>
+        </div>
+
         <!-- TOP-CONTAINER -->
         <div id="top-container" onmouseout="hideSelector()">
             <div id="menu-container">
@@ -107,6 +117,9 @@
                         <div class="menu_box">
                             <a id="import_data_anchor" id="import_data" class="buttonSelector" onclick="javascript:loadData()">import data (.vidjil)</a>
                             <a id="import_data_analysis" id="import_analysis" class="buttonSelector" onclick="javascript:loadAnalysis()">import analysis</a>
+                        </div>
+                        <div class="menu_box devel-mode">
+                            <a class="buttonSelector" id ="add_clones" onclick="javascript:showAddManualCloneMenu()">add clones from sequences</a>
                         </div>
                         <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
                         <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->

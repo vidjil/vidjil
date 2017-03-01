@@ -1398,30 +1398,49 @@ ScatterPlot.prototype = {
         return this.resizeCoef * Math.pow((size + this.resizeMinSize), (1 / 3)) / 25
     },
 
+
     /**
-     * update color/style/position of a single clone
+     * Update the size of a single clone
+     * @param {integer} cloneID - clone index
+     * @param {float} size
+     * */
+    updateCloneSize: function(cloneID, size)
+    {
+        if (this.otherVisibility) {
+            var otherSize = this.m.clone(cloneID).getSequenceSize(this.m.tOther)
+            if (otherSize > size) size = otherSize
+        }
+
+        if (size == Clone.prototype.NOT_QUANTIFIABLE_SIZE)
+            size = 0.1
+
+        this.nodes[cloneID].s = size
+        this.nodes[cloneID].r1 = this.radiusClone(size)
+    },
+
+    /**
+     * Update color/style/position of a single clone
      * @param {integer} cloneID - clone index 
      * */
     updateClone: function(cloneID) {
+
+        // Clone size
+
         if (this.m.clone(cloneID)
             .isActive()) {
 
             if (this.m.clone(cloneID)
                 .split) {
+                // Display merged sub-clones
                 for (var i = 0; i < this.m.clusters[cloneID].length; i++) {
                     var seqID = this.m.clusters[cloneID][i]
                     var size = this.m.clone(seqID)
                         .getSequenceSize();
 
-                    if (this.otherVisibility) {
-                        var otherSize = this.m.clone(seqID).getSequenceSize(this.m.tOther)
-                        if (otherSize > size) size = otherSize
-                    }
-
-                    this.nodes[seqID].s = size
-                    this.nodes[seqID].r1 = this.radiusClone(size)
+                    this.updateCloneSize(seqID, size)
                 }
             } else {
+                // Do not display merged sub-clones
                 for (var i = 0; i < this.m.clusters[cloneID].length; i++) {
                     var seqID = this.m.clusters[cloneID][i]
                     this.nodes[seqID].s = 0
@@ -1432,19 +1451,16 @@ ScatterPlot.prototype = {
                 if (this.m.clusters[cloneID].length == 0) size = this.m.clone(cloneID)
                     .getSequenceSize();
 
-                if (this.otherVisibility) {
-                    var otherSize = this.m.clone(seqID).getSequenceSize(this.m.tOther)
-                    if (otherSize > size) size = otherSize
-                }
-
-                this.nodes[cloneID].s = size
-                this.nodes[cloneID].r1 = this.radiusClone(size)
+                this.updateCloneSize(cloneID, size)
             }
 
         } else {
             this.nodes[cloneID].r1 = 0
             this.nodes[cloneID].s = 0
         }
+
+        // Clone position
+
         var sys = this.m.clone(cloneID)
             .get('germline')
         if (this.use_system_grid && this.m.system == "multi" && typeof sys != 'undefined' && sys != this.m.germlineV.system) {
@@ -2160,5 +2176,10 @@ ScatterPlot.prototype = {
     },
     
 
+    shouldRefresh: function () {
+        this.init();
+        this.update();
+        this.resize();
+    }
 }
 ScatterPlot.prototype = $.extend(Object.create(View.prototype), ScatterPlot.prototype);

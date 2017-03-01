@@ -3,7 +3,7 @@
  * High-throughput Analysis of V(D)J Immune Repertoire.
  * Copyright (C) 2013-2017 by Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
- * Contributors: 
+ * Contributors:
  *     Marc Duez <marc.duez@vidjil.org>
  *     The Vidjil Team <contact@vidjil.org>
  *
@@ -32,6 +32,8 @@
  * */
 
 VIDJIL_JSON_VERSION = '2014.09';
+
+SIZE_MANUALLY_ADDED_CLONE = 100000; // Default size of a manually added clone.
 
 /** Model constructor
  * Used to parse a .vidjil file (local file or from url) and store his content in a more convenient way, <br>
@@ -773,11 +775,9 @@ changeCloneNotation: function(cloneNotationType) {
         console.log("select() (clone " + cloneID + ")");
 
         // others shouldn't be selectable
-        var posOthers = {}; 
-        for (var i = this.clones.length - this.system_available.length; i <= this.clones.length - 1; i++) {
-            posOthers[i]='';
-            }
-        if (cloneID in posOthers) {return 0;};
+        if (this.clones[cloneID].isVirtual()) {
+            return 0;
+        }
 
         if (this.clone(cloneID).isSelected()) {
             this.clone(cloneID).select = false;
@@ -1076,27 +1076,30 @@ changeCloneNotation: function(cloneNotationType) {
         }
 
         // compute size for each germlines of newOthers
-        lenSA = this.system_available.length;
-        for (var pos = 0; pos < this.clones.length - lenSA; pos++) {
-            for (var sample = 0; sample < this.samples.number ; sample++) {
-                if (this.clone(pos).isActive()) {
+        other_quantifiable_clones = [];
+        for (var pos = 0; pos < this.clones.length; pos++) {
+            var c = this.clone(pos)
+            if (c.isVirtual()) {
+                other_quantifiable_clones.push(pos);
+            } else if (c.isActive() && c.quantifiable) {
+                for (var sample = 0; sample < this.samples.number ; sample++) {
                     for (var k = 0; k < this.clusters[pos].length; k++) {
-                        if (this.clusters[pos][k] != this.clones.length - lenSA) {
-                            newOthers[this.clone(pos).germline][sample] -= this.clone(this.clusters[pos][k]).get('reads', sample);}
-                        else { break; }
+                        newOthers[c.germline][sample] -= this.clone(this.clusters[pos][k]).get('reads', sample);
                     }
                 }
             }
         }
 
         // values assignation of other
-        for (var pos = this.clones.length -lenSA; pos < this.clones.length ; pos++) { 
-            var c = this.clone(pos);
+        //for (var pos = this.clones.length -lenSA; pos < this.clones.length ; pos++) {
+        var self = this;
+        other_quantifiable_clones.forEach(function(pos) {
+            var c = self.clone(pos);
             c.reads = newOthers[c.germline];
             c.name = c.germline + " smaller clones";
-            if (this.someClonesFiltered)
+            if (self.someClonesFiltered)
                 c.name += " + filtered clones";
-        }
+        })
     },
     
     /**
@@ -2304,7 +2307,89 @@ changeCloneNotation: function(cloneNotationType) {
         return this.getName(edge.source)+" -- "+this.getName(edge.target)+" == "+edge.len;
     },
 
+    DEFAULT_SEGMENTER_URL: "https://dev.vidjil.org/vidjil/segmenter",
+
+    /**
+     * sends an ajax request to manually add special clones
+     * @param {string} input - the id of the input to extract the sequences from
+     */
+    addManualClones: function(input) {
+        var url = config && config.segmenter_address ? config.segmenter_address : this.DEFAULT_SEGMENTER_URL;
+
+        var inputNode = document.getElementById(input);
+        if (!inputNode) {
+            console.log("[model] could not find '" + input + "' input node");
+            return;
+        }
+
+        if (inputNode) {
+            var sequences = inputNode.value;
+
+            // When empty, show error
+            if (!sequences) {
+                showAddManualCloneMenu(true);
+            } else {
+                var self = this;
+                var displayAjax = function (display) {
+                    var liveAjaxNode = document.getElementById("live-ajax");
+                    var bodyNode = document.getElementsByTagName("body")[0];
+                    if (display) {
+                        // var imgNode = document.createElement("img");
+                        liveAjaxNode.appendChild(icon('icon-spin4 animate-spin', 'Sequences are being analyzed'));
+                        bodyNode.style.cursor = "wait";
+                    } else {
+                        while (liveAjaxNode.lastChild) {
+                            liveAjaxNode.removeChild(liveAjaxNode.lastChild);
+                        }
+                        bodyNode.style.cursor = "default";
+                    }
+                };
+                var params = {
+                    method: "POST",
+                    data: {
+                        sequences: sequences
+                    },
+                    success: function (data) {
+                        displayAjax(false);
+                        if (data.error) {
+                            console.log({ msg: data.error, type: "flash", priority: 2 });
+                            return;
+                        }
+
+                        var index = self.clones.length;
+                        data.clones.forEach(function (clone) {
+                            clone.quantifiable = false;
+                            var clone = new Clone(clone, self, index);
+                            // Array with self.sample.number times the same value
+                            clone.reads = Array.apply(null, Array(self.samples.number))
+                                .map(function(){return SIZE_MANUALLY_ADDED_CLONE})
+                            clone.top = 1
+                            self.mapID[clone.id] = index;
+                            index++;
+                        });
+
+                        self.shouldRefresh();
+                        self.update();
+                        console.log({ msg: "Clone(s) added!", type: "flash", priority: 1 })
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        displayAjax(false);
+                        console.log({ msg: textStatus + " " + errorThrown, type: "flash", priority: 2 });
+                    },
+                    timeout: 60000
+                };
+                $.ajax(url, params);
+                displayAjax(true);
+            }
+        }
+    },
+
+    shouldRefresh: function () {
+        this.view.forEach(function (view) {
+            if (view.shouldRefresh) {
+                view.shouldRefresh();
+            }
+        });
+    },
+
 }; //end prototype Model
-
-
-

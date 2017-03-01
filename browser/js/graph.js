@@ -1377,6 +1377,12 @@ Graph.prototype = {
             })
             
         return this
+    },
+
+    shouldRefresh: function() {
+        this.init();
+        this.update();
+        this.resize();
     }
 
 
@@ -1440,38 +1446,13 @@ Stack.prototype = {
                 }
             }
         }
-        
+
         //other
         for (j=0; j<this.m.samples.number; j++){
             this.min[this.m.clones.length-1][j] = this.sum[j]
             this.sum[this.m.clones.length-1] += this.m.clone(this.m.clones.length-1).getSize(j)
             this.max[this.m.clones.length-1][j] = this.sum[j]
         }
-        
+
     }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

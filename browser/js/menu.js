@@ -81,18 +81,20 @@ function changeStyle(newStyle){
 }
 
 function loadData() {
-    
+
     if (m.analysisHasChanged){
         m.analysisHasChanged = false;
-        console.log({"type": "popup", "default": "save_analysis", 
+        console.log({"type": "popup", "default": "save_analysis",
                     "msg": "<div class=\'center\'> <button onclick=\'loadData()\'>Continue</button> "
                     + " <button onclick='console.closePopupMsg()'>Cancel</button> </div>"});
         return
     }
-    
+
     document.getElementById("file_menu")
         .style.display = "block";
     document.getElementById("axis_choice")
+        .style.display = "none";
+    document.getElementById("add_clone_menu")
         .style.display = "none";
 }
 
@@ -101,12 +103,16 @@ function loadAnalysis() {
         .style.display = "block";
     document.getElementById("file_menu")
         .style.display = "none";
+    document.getElementById("add_clone_menu")
+        .style.display = "none";
 }
 
 function cancel() {
     document.getElementById("axis_choice")
         .style.display = "none";
     document.getElementById("file_menu")
+        .style.display = "none";
+    document.getElementById("add_clone_menu")
         .style.display = "none";
 }
 
@@ -136,4 +142,31 @@ function showDisplayMenu() {
         .stop
     $('#display-menu')
         .toggle("fast");
+}
+
+/**
+ * Shows the "add manual clone" menu.
+ * @param {boolean} error - represents whether the input should be showed in error style.
+ */
+function showAddManualCloneMenu(error) {
+    var addCloneMenuNode = document.getElementById("add_clone_menu");
+    addCloneMenuNode.style.display = "block";
+
+    var inputNode = document.getElementById("addclone_input");
+
+    if (error) {
+        inputNode.classList.add("error");
+        var onFocus = function(evt) {
+            evt.target.removeEventListener("focus", onFocus);
+            evt.target.classList.remove("error");
+        }
+        inputNode.addEventListener("focus", onFocus);
+    } else {
+        inputNode.classList.remove("error");
+    }
+
+    document.getElementById("axis_choice")
+        .style.display = "none";
+    document.getElementById("file_menu")
+        .style.display = "none";
 }
