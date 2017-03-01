@@ -723,6 +723,8 @@ Clone.prototype = {
             }else{
                 this.color = colorGenerator(this.m.scale_color(size * this.m.precision));
             }
+        } else if (this.m.colorMethod == 'clone') {
+            this.color = colorGeneratorIndex(this.index)
         }else if (this.m.colorMethod == "Tag"){
             this.color =  this.m.tag[this.getTag()].color;
         }else if (this.m.colorMethod == "dbscan"){
