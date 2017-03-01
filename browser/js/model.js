@@ -1078,12 +1078,13 @@ changeCloneNotation: function(cloneNotationType) {
         // compute size for each germlines of newOthers
         virtual_clones = [];
         for (var pos = 0; pos < this.clones.length; pos++) {
-            if (this.clone(pos).isVirtual()) {
+            var c = this.clone(pos)
+            if (c.isVirtual()) {
                 virtual_clones.push(pos);
-            } else if (this.clone(pos).isActive()) {
+            } else if (c.isActive()) {
                 for (var sample = 0; sample < this.samples.number ; sample++) {
                     for (var k = 0; k < this.clusters[pos].length; k++) {
-                            newOthers[this.clone(pos).germline][sample] -= this.clone(this.clusters[pos][k]).get('reads', sample);
+                        newOthers[c.germline][sample] -= this.clone(this.clusters[pos][k]).get('reads', sample);
                     }
                 }
             }
