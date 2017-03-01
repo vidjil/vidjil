@@ -54,6 +54,16 @@
     }
   }
 
+
+function colorGeneratorIndex(i) {
+    var z = 6
+    var h = (i % z) / (z - 1)
+    var s = [0.6, 0.9, 0.75, 0.45][Math.floor(i / z) % 4]
+    var vv = [1.0, 1.1, 0.9][Math.floor(i / (z*z)) % 3]
+
+    return colorGenerator(h*300, s, s*vv)
+}
+
 // Get the color for a productive or non productive clone
 
 function colorProductivity(is_productive) {
