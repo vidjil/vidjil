@@ -440,8 +440,12 @@ Clone.prototype = {
     getPrintableSize: function (time) {
 
         var reads = this.getReads(time)
-        s = this.getSequenceLength() + ' nt, '
+        s = this.getSequenceLength() + ' nt'
 
+        if (!this.quantifiable)
+            return s
+
+        s += ', '
         s += this.m.toStringThousands(reads) + ' read' + (reads > 1 ? 's' : '') + ' '
 
         if (reads < this.m.NB_READS_THRESHOLD_QUANTIFIABLE)
