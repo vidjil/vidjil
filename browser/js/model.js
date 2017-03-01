@@ -1076,11 +1076,11 @@ changeCloneNotation: function(cloneNotationType) {
         }
 
         // compute size for each germlines of newOthers
-        virtual_clones = [];
+        other_quantifiable_clones = [];
         for (var pos = 0; pos < this.clones.length; pos++) {
             var c = this.clone(pos)
             if (c.isVirtual()) {
-                virtual_clones.push(pos);
+                other_quantifiable_clones.push(pos);
             } else if (c.isActive()) {
                 for (var sample = 0; sample < this.samples.number ; sample++) {
                     for (var k = 0; k < this.clusters[pos].length; k++) {
@@ -1093,7 +1093,7 @@ changeCloneNotation: function(cloneNotationType) {
         // values assignation of other
         //for (var pos = this.clones.length -lenSA; pos < this.clones.length ; pos++) {
         var self = this;
-        virtual_clones.forEach(function(pos) {
+        other_quantifiable_clones.forEach(function(pos) {
             var c = self.clone(pos);
             c.reads = newOthers[c.germline];
             c.name = c.germline + " smaller clones";
