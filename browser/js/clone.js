@@ -69,6 +69,7 @@ function nullIfZero(x) { return x == 0 ? '' : x }
 
 Clone.prototype = {
 
+    NOT_QUANTIFIABLE_SIZE: -1, // should be < 0 to behave correcty with getMaxSize() and other comparisons
     COVERAGE_WARN: 0.5,
     EVALUE_WARN: 0.001,
     
@@ -278,6 +279,10 @@ Clone.prototype = {
      * @return {float} size
      * */
     getSize: function (time) {
+
+        if (!this.quantifiable)
+            return this.NOT_QUANTIFIABLE_SIZE
+
         time = this.m.getTime(time);
         
         if (this.m.reads.segmented[time] == 0 ) return 0;
@@ -336,6 +341,10 @@ Clone.prototype = {
      * @return {float} size
      * */
     getSize2: function (time) {
+
+        if (!this.quantifiable)
+            return this.NOT_QUANTIFIABLE_SIZE
+
         time = this.m.getTime(time)
         
         if (this.m.reads.segmented[time] == 0 ) return 0
