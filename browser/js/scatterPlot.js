@@ -1411,6 +1411,9 @@ ScatterPlot.prototype = {
             if (otherSize > size) size = otherSize
         }
 
+        if (size == Clone.prototype.NOT_QUANTIFIABLE_SIZE)
+            size = 0.1
+
         this.nodes[cloneID].s = size
         this.nodes[cloneID].r1 = this.radiusClone(size)
     },
