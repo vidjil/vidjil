@@ -1081,7 +1081,7 @@ changeCloneNotation: function(cloneNotationType) {
             var c = this.clone(pos)
             if (c.isVirtual()) {
                 other_quantifiable_clones.push(pos);
-            } else if (c.isActive()) {
+            } else if (c.isActive() && c.quantifiable) {
                 for (var sample = 0; sample < this.samples.number ; sample++) {
                     for (var k = 0; k < this.clusters[pos].length; k++) {
                         newOthers[c.germline][sample] -= this.clone(this.clusters[pos][k]).get('reads', sample);
