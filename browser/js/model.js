@@ -775,7 +775,7 @@ changeCloneNotation: function(cloneNotationType) {
         console.log("select() (clone " + cloneID + ")");
 
         // others shouldn't be selectable
-        if (m.clones[cloneID].isVirtual()) {
+        if (this.clones[cloneID].isVirtual()) {
             return 0;
         }
 
