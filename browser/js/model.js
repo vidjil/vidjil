@@ -2335,7 +2335,7 @@ changeCloneNotation: function(cloneNotationType) {
                     var bodyNode = document.getElementsByTagName("body")[0];
                     if (display) {
                         // var imgNode = document.createElement("img");
-                        liveAjaxNode.appendChild(icon('icon-spin4 animate-spin', 'Sequences sent to controller segmenter'));
+                        liveAjaxNode.appendChild(icon('icon-spin4 animate-spin', 'Sequences are being analyzed'));
                         bodyNode.style.cursor = "wait";
                     } else {
                         while (liveAjaxNode.lastChild) {
