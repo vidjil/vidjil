@@ -792,7 +792,7 @@ Database.prototype = {
 		                console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
 		            } else {
 		                console.log("unable to get notifications");
-		                console.log(DB_ADDRESS + url + ": " + error);
+		                console.log(DB_ADDRESS + ": " + error);
 		            }
 		        }
 		    });
