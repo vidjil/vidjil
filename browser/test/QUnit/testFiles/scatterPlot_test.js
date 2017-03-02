@@ -23,14 +23,14 @@ QUnit.test("grid", function(assert) {
     
     assert.equal(sp.nodes.length, 7 , "check nodes");
     
-    sp.changeSplitMethod("gene_v", "gene_v", "plot");
+    sp.changeSplitMethod("gene_v", "gene_v", sp.MODE_GRID);
     sp.update()
     assert.equal(sp.axisX.pos(1), sp.axisY.pos(1), "check splitMethod V/V /plot : xpos = ypos");
     assert.equal(sp.axisX.pos(1), sp.axisY.pos(1), "check splitMethod V/V /plot : xpos = ypos");
     assert.equal(document.getElementById("circle1").className.baseVal, "circle", "check splitMethod V/V /plot : check if plot are displayed")
     
     
-    sp.changeSplitMethod("gene_v", "gene_v", "bar");
+    sp.changeSplitMethod("gene_v", "gene_v", sp.MODE_BAR);
     sp.update()
 
     assert.equal(document.getElementById("bar1").className.baseVal, "", "check splitMethod V/V /plot : check if bar are displayed")
@@ -46,7 +46,7 @@ QUnit.test("grid", function(assert) {
     assert.deepEqual(m.getSelected(), [2], "check click label");
     
     
-    sp.changeSplitMethod("n", "Size", "bar");
+    sp.changeSplitMethod("n", "Size", sp.MODE_BAR);
     sp.update()
     
     assert.equal(sp.nodes[1].bar_h , 0.3333333333333333, "node 1, bar h position")
