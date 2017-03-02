@@ -44,7 +44,7 @@ function displayError(error, rawError, exc) {
  * @param {function} error - the function to call when an error occurs.
  **/
 function requestVidjilFile(sequences, callback, error) {
-    var urlController = config && config.segmenter_address
+    var urlController = (typeof config != 'undefined' && typeof config.segmenter_address != 'undefined')
                       ? config.segmenter_address
                       : DEFAULT_SEGMENTER_ADDRESS;
     var dataToSend = new FormData();
