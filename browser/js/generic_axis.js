@@ -100,6 +100,16 @@ GenericAxis.prototype = {
         return val;
     },
 
+    applyConverter: function(value) {
+        var val;
+        try {
+            val = this.converter(value);
+        } catch(e) {
+            val = "?";
+        }
+        return val;
+    },
+
     label: function (type, pos, text) {
         result = {};
         result.type = type;
