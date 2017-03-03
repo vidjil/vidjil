@@ -136,7 +136,9 @@ GermlineAxis.prototype = {
         }
         var pos = self.getPos(total_gene, total_gene);
         self.addLabel("line", pos, "?", "");
+        self.gene_list = gene_list;
+        self.allele_list = allele_list;
+        self.total_gene = total_gene;
+        self.displayAllele = displayAllele;
     }
-    
-    
 }
