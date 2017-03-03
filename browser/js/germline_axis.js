@@ -119,10 +119,6 @@ GermlineAxis.prototype = {
         if (geneType=="D") self.type2="4"
         if (geneType=="J") self.type2="3"
         
-        //clone position
-        this.pos = function(cloneID) {
-        }
-        
         //labels
         for (var key in gene_list){
             self.labels.push(self.label("line", ((gene_list[key].rank+0.5)/(total_gene+1)), key, this.germline.gene[key].color));
