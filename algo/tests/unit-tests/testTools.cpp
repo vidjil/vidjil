@@ -418,7 +418,7 @@ void testTrimSequence() {
 
   PRINT_VAR(start);
   PRINT_VAR(length);
-  TAP_TEST(trimmed == "", TEST_TRIM_SEQUENCE,
+  TAP_TEST(trimmed == "AATAGTAGACTA", TEST_TRIM_SEQUENCE,
            "trimmed sequence was " << trimmed);
 
   seq = "ANANANATAGAGTAGATGATANANANANA";
