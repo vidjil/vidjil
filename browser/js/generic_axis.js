@@ -37,9 +37,13 @@ function GenericAxis () {
 
 GenericAxis.prototype = {
 
+<<<<<<< 43d5b558618f9e6e780274a14f6b763665168852
     init : function (values, key, labels, sort) {
         this.values = values;
         if (sort == undefined) {sort = false;}
+=======
+    init : function (values, key, labels, sorter) {
+>>>>>>> generic_axis.js remove more useless references
 
         if (typeof key === 'function') {
             this.converter = key;
@@ -71,7 +75,10 @@ GenericAxis.prototype = {
                     label_mapping[convert] = this.label("line", convert, labels.indexOf(convert), convert);
             }
         }
+<<<<<<< 43d5b558618f9e6e780274a14f6b763665168852
     },
+=======
+>>>>>>> generic_axis.js remove more useless references
 
     populateValueMapping: function() {
         var values = this.values;
