@@ -129,13 +129,13 @@ GermlineAxis.prototype = {
                 var gene = key.split("*")[0]
                 var allele = key.split("*")[1]
                 var total_allele = gene_list[gene].n
-                var pos = ((gene_list[gene].rank+0.5)/(total_gene+1))
+                var pos = self.getPos(gene_list[gene].rank, total_gene);
                 pos += (1/(total_gene+1)) * ((allele_list[key].rank+0.5)/total_allele) - (0.5/(total_gene+1))
-                self.labels.push(self.label("subline", pos, "*"+allele, this.germline.allele[key].color));
+                self.addLabel("subline", pos, "*"+allele, this.germline.allele[key].color);
             }
         }
-        
-        self.labels.push(self.label("line", ((total_gene+0.5)/(total_gene+1)), "?", ""));
+        var pos = self.getPos(total_gene, total_gene);
+        self.addLabel("line", pos, "?", "");
     }
     
     
