@@ -41,17 +41,24 @@ GenericAxis.prototype = {
         var self = this;
         var vals = {};
         var my_labels;
-        if (labels == undefined)
-            my_labels = self.computeLabels(values);
-        else
-            my_labels = labels;
 
-        var tmp;
-        for (var i=0; i < values.length; i++) {
-            tmp = values[i];
-            if (vals[tmp[key]] == undefined)
-                val[tmp[key]] = [];
-            vals[tmp[key]].push(tmp);
+        if (typeof key === 'function') {
+            self.converter = key;
+        } else {
+            self.converter = function(elem) {
+                return elem[key];
+            }
+        }
+
+        if (labels == undefined)
+            self.computeLabels(values);
+        else {
+            for (var i=0; i < values.length; i++) {
+                var value = values[i];
+                var convert = this.applyConverter(value);
+                if (labels.indexOf(convert) != -1 && label_mapping[convert] == undefined)
+                    label_mapping[convert] = this.label("line", convert, labels.indexOf(convert), convert);
+            }
         }
         if (sorter != undefined)
             my_labels = sorter.sort(my_labels);
@@ -64,6 +71,16 @@ GenericAxis.prototype = {
         return self;
     },
 
+    applyConverter: function(value) {
+        var val;
+        try {
+            val = this.converter(value);
+        } catch(e) {
+            val = "?";
+        }
+        return val;
+    },
+
     label: function (type, pos, text) {
         result = {};
         result.type = type;
@@ -73,20 +90,29 @@ GenericAxis.prototype = {
         return result;
     },
 
+    addLabel: function(type, value, pos, text) {
+        var label = this.label(type, pos, text);
+        this.label_mapping[value] = label;
+        this.labels.push(label);
+    },
+
     reset: function() {
         this.labels = {};
         this.sorting_key = null;
     },
     
     pos : function(element) {
-        return this.labels[element[key]];
+        console.log("GENERIC");
+        return this.label_mapping[self.applyConverter(element)];
     },
 
     computeLabels(values, key) {
         var labels = {}
         for (var i = 0; i < values.length; i++) {
-            labels[value[i]] = this.label("line", i, values[key]);
+            var value = values[i];
+            var key = this.applyConverter(value);
+            if (this.label_mapping[key] == undefined)
+                this.addLabel("line", key, i, key);
         }
-        return labels;
     },
 }
