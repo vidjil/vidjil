@@ -38,14 +38,13 @@ function GenericAxis () {
 GenericAxis.prototype = {
 
     init : function (values, key, labels, sorter) {
-        var self = this;
         var vals = {};
         var my_labels;
 
         if (typeof key === 'function') {
-            self.converter = key;
+            this.converter = key;
         } else {
-            self.converter = function(elem) {
+            this.converter = function(elem) {
                 return elem[key];
             }
         }
@@ -63,12 +62,7 @@ GenericAxis.prototype = {
         if (sorter != undefined)
             my_labels = sorter.sort(my_labels);
 
-        self.label_mapping = my_labels;
-        for (var key in label_mapping) {
-            self.labels.push(label_mapping[key]);
-        }
-        self.values = vals;
-        return self;
+        return this;
     },
 
     applyConverter: function(value) {
