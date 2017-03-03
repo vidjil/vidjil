@@ -354,7 +354,7 @@ void trimSequence(string &sequence, size_t &start_pos, size_t &length) {
   i = start = sequence.rfind('N', start_pos + length - 1);
   number_of_N = 1;
   previous_N = i;
-  for (; i > start_pos
+  for (; i > start_pos && i != string::npos
          && number_of_N * 1. / ((start_pos + length - 1) - i) > RATIO_TOO_MANY_N;
        i = sequence.rfind('N', i-1), number_of_N++) {
     previous_N = i;
