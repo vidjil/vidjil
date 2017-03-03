@@ -10,4 +10,4 @@ fi
 
 script_name=$1
 shift
-sudo -u www-data python ../../../web2py.py -S vidjil -M -R "applications/vidjil/scripts/$script_name" -A $*
+python ../../../web2py.py -S vidjil -M -R "applications/vidjil/scripts/$script_name" -A $*
