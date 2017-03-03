@@ -37,7 +37,8 @@ function GenericAxis () {
 
 GenericAxis.prototype = {
 
-    init : function (values, key, labels, sorter) {
+    init : function (values, key, labels, sort) {
+        if (sort == undefined) {sort = false;}
 
         if (typeof key === 'function') {
             this.converter = key;
@@ -57,6 +58,9 @@ GenericAxis.prototype = {
                     label_mapping[convert] = this.label("line", convert, labels.indexOf(convert), convert);
             }
         }
+
+        if (sort)
+            this.labels.sort();
 
         return this;
     },
