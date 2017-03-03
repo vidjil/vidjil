@@ -96,8 +96,7 @@ GenericAxis.prototype = {
     },
     
     pos : function(element) {
-        console.log("GENERIC");
-        return this.label_mapping[self.applyConverter(element)];
+        return this.label_mapping[this.applyConverter(element)];
     },
 
     computeLabels(values, key) {
