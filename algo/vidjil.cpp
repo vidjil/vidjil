@@ -1600,6 +1600,8 @@ int main (int argc, char **argv)
     int nb_segmented = 0 ;
     map <string, int> nb_segmented_by_germline ;
 
+    Germline *not_segmented = new Germline("zzz", 'z', 0);
+
     while (reads->hasNext()) 
       {
         nb++;
@@ -1617,6 +1619,7 @@ int main (int argc, char **argv)
         json_clone["sequence"] = seq.sequence;
         json_clone["reads"] = { 1 };
         json_clone["top"] = 0;
+        Germline *g ;
 
             if (s.isSegmented()) 
               {
@@ -1628,13 +1631,19 @@ int main (int argc, char **argv)
                 if (detect_CDR3)
                   s.findCDR3();
 
-                json_clone["germline"] = germline->code;
-                nb_segmented_by_germline[germline->code]++ ;
                 json_clone["name"] = s.code;
                 json_clone["seg"] = s.toJson();
-
-                json_clones += json_clone;
+                g = germline ;
               }
+        else
+          {
+            g = not_segmented ;
+          }
+
+        json_clone["germline"] = g->code;
+        nb_segmented_by_germline[g->code]++ ;
+
+        json_clones += json_clone;
 
         cout << s << endl;        
       }
@@ -1644,6 +1653,7 @@ int main (int argc, char **argv)
     j["reads"]["segmented"] = { nb_segmented } ;
     j["reads"]["total"] = { nb } ;
 
+    multigermline->insert(not_segmented);
     for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
       Germline *germline = *it ;
       if (nb_segmented_by_germline[germline->code])
