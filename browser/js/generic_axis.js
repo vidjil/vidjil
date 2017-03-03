@@ -30,7 +30,8 @@
  * @param {Model} model 
  * */
 function GenericAxis () {
-    this.labels = {};
+    this.labels = [];
+    this.label_mapping = {};
     this.sorting_key; // Object attribute to sort elements by
 }
 
@@ -55,7 +56,10 @@ GenericAxis.prototype = {
         if (sorter != undefined)
             my_labels = sorter.sort(my_labels);
 
-        self.labels = my_labels;
+        self.label_mapping = my_labels;
+        for (var key in label_mapping) {
+            self.labels.push(label_mapping[key]);
+        }
         self.values = vals;
         return self;
     },
