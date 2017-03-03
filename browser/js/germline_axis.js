@@ -87,6 +87,10 @@ GermlineAxis.prototype = {
         return result;
     },
 
+    getPos: function(rank, total) {
+        return ((rank+0.5)/(total+1));
+    },
+
     /**
      * init axis with a germline object
      * @param {Germline} germline
