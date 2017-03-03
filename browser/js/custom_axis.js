@@ -196,9 +196,9 @@ CustomAxis.prototype = {
     computeBarLabels : function (tab) {
         this.labels = [];
         var length = Object.keys(tab).length;
-        
+
         var step = 1 + Math.floor(length / NB_STEPS_BAR)
-        
+
         var i=1
         for (var e in tab){
             if (i%step == 0 || (e == '?' && tab[e].length > 0)){
