@@ -345,8 +345,8 @@ void trimSequence(string &sequence, size_t &start_pos, size_t &length) {
       prefix_score -= 100;
       suffix_score -= 100;
     } else {
-      prefix_score += RATIO_TOO_MANY_N;
-      suffix_score += RATIO_TOO_MANY_N;
+      prefix_score += PERCENT_TOO_MANY_N;
+      suffix_score += PERCENT_TOO_MANY_N;
     }
 
     if (suffix_score >= 0) {
