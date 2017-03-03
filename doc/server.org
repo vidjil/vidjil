@@ -404,6 +404,17 @@ These instructions are preliminary, other documentation can also be found in [[h
 ** Restarting web2py
    Just touch the file =/etc/uwsgi/web2py.ini=.
 
+   Another of restarting it is by touching the file
+   =server/web2py/applications/vidjil/modules/defs.py=.
+   This will tell =uwsgi= to restart web2py (including the workers).
+
+** Restarting uwsgi
+   When one modifies an uwsgi config file (usually in =/etc/uwsgi= directory, it
+   may be necessary to restart uwsgi so that the modifications are taken into
+   account. This can be done using
+   #+BEGIN_SRC sh
+   initctl restart uwsgi-emperor
+   #+END_SRC
 
 * Running the server in a production environment
 
