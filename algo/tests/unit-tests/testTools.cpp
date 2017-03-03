@@ -410,113 +410,36 @@ void testIsStopCodon() {
 }
 
 void testTrimSequence() {
-  string seq = "NNNNNAATAGTAGACTANNNNN";
-  size_t start = 0;
-  size_t length = seq.size();
-  trimSequence(seq, start, length);
-  string trimmed = seq.substr(start, length);
+  size_t start, length;
+  string trimmed;
+  list<pair<string, string> > sequences =
+    { {"NNNNNAATAGTAGACTANNNNN", "AATAGTAGACTA"},
+      {"ANANANATAGAGTAGATGATANANANANA", "ATAGAGTAGATGATA"} ,
+      {"ANAANATAGAGTAGATGATANAANA", "ATAGAGTAGATGATA"},
+      {"ATAGAGTAGATGATANAANA", "ATAGAGTAGATGATA"},
+      {"ANAANATAGAGTAGATGATA", "ATAGAGTAGATGATA"},
+      {"NATAGAGTAGATGATA", "ATAGAGTAGATGATA"},
+      {"CCNCCNATAGAGTAGATGATANCCNCC", "ATAGAGTAGATGATA"},
+      {"NNNNNNNNNNNNNNNNNNNNNNNNNNNNNATAGAGTAGATGATA",
+       "ATAGAGTAGATGATA"},
+      {"ATAGAGTAGATGATANNNNNNNNNNNNNNNNNNNNNNNNNNNNN",
+       "ATAGAGTAGATGATA"},
+      {"ATAGAGTAGATGATA", "ATAGAGTAGATGATA"},
+      {"ACCTGAGGAGACGGTGACCAGGGTTCCCTGGCCCCAGTTGATAACCACTCCAAAAATCGTAATAGTATTCTCAGCNCCGTGGCTCGGCTCTCAGGCTGTTCNNNNNNNGATACAGTGANNNNTTGGCGTNNNNNNNGGAGATGGTGAATCNNNNNNNCACTGAGTCNNNNNAGTATATNNNNNNNCTACTACNNNNANNGGATGAGNNNNNNNCCAGCCCNNNNNNNGGAGCCTNNNNNNNCCAGTTCNNNNNNNAGCTACTNNNNNNNAATCCAGNNNNNNNACAGGAGNNNNNNNGGG",
+       "ACCTGAGGAGACGGTGACCAGGGTTCCCTGGCCCCAGTTGATAACCACTCCAAAAATCGTAATAGTATTCTCAGCNCCGTGGCTCGGCTCTCAGGCTGTTC"},
+      {"CCCNNNNNNNCTCCTGTNNNNNNNCTGGATTNNNNNNNAGTAGCTNNNNNNNGAACTGGNNNNNNNAGGCTCCNNNNNNNGGGCTGGNNNNNNNCTCATCCNNTNNNNGTAGTAGNNNNNNNATATACTNNNNNGACTCAGTGNNNNNNNGATTCACCATCTCCNNNNNNNACGCCAANNNNTCACTGTATCNNNNNNNGAACAGCCTGAGAGCCGAGCCACGGNGCTGAGAATACTATTACGATTTTTGGAGTGGTTATCAACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGT",
+       "GAACAGCCTGAGAGCCGAGCCACGGNGCTGAGAATACTATTACGATTTTTGGAGTGGTTATCAACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGT"}
+    };
 
-  PRINT_VAR(start);
-  PRINT_VAR(length);
-  TAP_TEST(trimmed == "AATAGTAGACTA", TEST_TRIM_SEQUENCE,
-           "trimmed sequence was " << trimmed);
-
-  seq = "ANANANATAGAGTAGATGATANANANANA";
-  start = 0;
-  length = seq.size();
-  trimSequence(seq, start, length);
-  trimmed = seq.substr(start, length);
-
-  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
-           "obtained " << trimmed);
-
-  seq = "ANAANATAGAGTAGATGATANAANA";
-  start = 0;
-  length = seq.size();
-  trimSequence(seq, start, length);
-  trimmed = seq.substr(start, length);
-
-  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
-           "got " << trimmed);
-
-  seq = "ATAGAGTAGATGATANAANA";
-  start = 0;
-  length = seq.size();
-  trimSequence(seq, start, length);
-  trimmed = seq.substr(start, length);
-
-  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
-           "got " << trimmed);
-
-  seq = "ANAANATAGAGTAGATGATA";
-  start = 0;
-  length = seq.size();
-  trimSequence(seq, start, length);
-  trimmed = seq.substr(start, length);
-
-  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
-           "got " << trimmed);
-
-  seq = "NATAGAGTAGATGATA";
-  start = 0;
-  length = seq.size();
-  trimSequence(seq, start, length);
-  trimmed = seq.substr(start, length);
-
-  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
-           "got " << trimmed);
-
-  seq = "CCNCCNATAGAGTAGATGATANCCNCC";
-  start = 0;
-  length = seq.size();
-  trimSequence(seq, start, length);
-  trimmed = seq.substr(start, length);
-
-  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
-           "got " << trimmed);
-
-  seq = "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNATAGAGTAGATGATA";
-  start = 28;
-  length = 16;
-  trimSequence(seq, start, length);
-  trimmed = seq.substr(start, length);
-
-  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
-           "got " << trimmed);
-
-  seq = "ATAGAGTAGATGATANNNNNNNNNNNNNNNNNNNNNNNNNNNNN";
-  start = 0;
-  length = 16;
-  trimSequence(seq, start, length);
-  trimmed = seq.substr(start, length);
-
-  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
-           "got " << trimmed);
-
-  seq = "ATAGAGTAGATGATA";
-  start = 0;
-  length = seq.size();
-  trimSequence(seq, start, length);
-  trimmed = seq.substr(start, length);
-
-  TAP_TEST(trimmed == "ATAGAGTAGATGATA", TEST_TRIM_SEQUENCE,
-           "got " << trimmed);
-
-  seq = "ACCTGAGGAGACGGTGACCAGGGTTCCCTGGCCCCAGTTGATAACCACTCCAAAAATCGTAATAGTATTCTCAGCNCCGTGGCTCGGCTCTCAGGCTGTTCNNNNNNNGATACAGTGANNNNTTGGCGTNNNNNNNGGAGATGGTGAATCNNNNNNNCACTGAGTCNNNNNAGTATATNNNNNNNCTACTACNNNNANNGGATGAGNNNNNNNCCAGCCCNNNNNNNGGAGCCTNNNNNNNCCAGTTCNNNNNNNAGCTACTNNNNNNNAATCCAGNNNNNNNACAGGAGNNNNNNNGGG";
-  start = 0;
-  length = seq.size();
-  trimSequence(seq, start, length);
-  trimmed = seq.substr(start, length);
-  TAP_TEST(trimmed == "ACCTGAGGAGACGGTGACCAGGGTTCCCTGGCCCCAGTTGATAACCACTCCAAAAATCGTAATAGTATTCTCAGCNCCGTGGCTCGGCTCTCAGGCTGTTC", TEST_TRIM_SEQUENCE,
-           "got " << trimmed);
-
-  seq = "CCCNNNNNNNCTCCTGTNNNNNNNCTGGATTNNNNNNNAGTAGCTNNNNNNNGAACTGGNNNNNNNAGGCTCCNNNNNNNGGGCTGGNNNNNNNCTCATCCNNTNNNNGTAGTAGNNNNNNNATATACTNNNNNGACTCAGTGNNNNNNNGATTCACCATCTCCNNNNNNNACGCCAANNNNTCACTGTATCNNNNNNNGAACAGCCTGAGAGCCGAGCCACGGNGCTGAGAATACTATTACGATTTTTGGAGTGGTTATCAACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGT";
-  start = 0;
-  length = seq.size();
-  trimSequence(seq, start, length);
-  trimmed = seq.substr(start, length);
-  TAP_TEST(trimmed == "GAACAGCCTGAGAGCCGAGCCACGGNGCTGAGAATACTATTACGATTTTTGGAGTGGTTATCAACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGT", TEST_TRIM_SEQUENCE,
-           "got " << trimmed);
+    for (auto seq_pair: sequences) {
+      start = 0;
+      length = seq_pair.first.length();
+      trimSequence(seq_pair.first, start, length);
+      trimmed = seq_pair.first.substr(start, length);
+      TAP_TEST(trimmed == seq_pair.second, TEST_TRIM_SEQUENCE,
+               "got " << trimmed << " instead of " << seq_pair.second << " (original sequence: " << seq_pair.first
+      << ")");
+    }
 }
 
 void testTools() {
