@@ -1,0 +1,22 @@
+!LAUNCH: $VIDJIL_DIR/vidjil -c segment $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH,IGK,IGL $VIDJIL_DIR/data/multi-complete.fa ; cat out/multi-complete.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
+
+$ Segment the Ig recombinations
+1:IGH SEG
+1:IGK SEG
+1:IGL SEG
+
+$ Do not segment the TR recombinations
+4:TR.* UNSEG
+
+$ Report the unsegmented sequences in the json output
+1: "germline": "zzz", "id": "TRA
+1: "germline": "zzz", "id": "TRB
+1: "germline": "zzz", "id": "TRG
+1: "germline": "zzz", "id": "TRD
+
+$ Count the unsegmented sequences in the json output
+1: "zzz": .4.
+
+$ Count the segmented sequences in the json output
+1: "segmented": .3.
+
