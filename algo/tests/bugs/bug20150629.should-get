@@ -1,7 +1,7 @@
-!LAUNCH: ../../../vidjil -c clones -r 1 -g ../../../germline/homo-sapiens.g:IGH bug20150629.fa >/dev/null && python ../../../tools/format_json.py out/bug20150629.vidjil| grep '\\"name\\"'
+!LAUNCH: ../../../vidjil -c clones -r 1 -g ../../../germline/homo-sapiens.g:IGH bug20150629.fa >/dev/null && python ../../../tools/format_json.py out/bug20150629.vidjil| sed -n '/\\"name\\"/p'
 
 $ The sequence is not segmented
 0:IGHV
 
-$ The sequence should have a name
+$ The sequence should have a non-empty name (if any)
 0:"\\s*"

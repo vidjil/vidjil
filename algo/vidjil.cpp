@@ -1417,7 +1417,8 @@ int main (int argc, char **argv)
     
         
         // From FineSegmenter
-        json_clone["name"] = seg.code;
+        if (seg.code.length() > 0)
+          json_clone["name"] = seg.code;
         json json_fseg = seg.toJson();
         for (json::iterator it = json_fseg.begin(); it != json_fseg.end(); ++it) {
           json_clone["seg"][it.key()] = it.value();
