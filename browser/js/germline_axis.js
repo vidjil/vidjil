@@ -121,7 +121,8 @@ GermlineAxis.prototype = {
         
         //labels
         for (var key in gene_list){
-            self.labels.push(self.label("line", ((gene_list[key].rank+0.5)/(total_gene+1)), key, this.germline.gene[key].color));
+            pos = self.getPos(gene_list[key].rank, total_gene)
+            self.addLabel("line", pos, key, this.germline.gene[key].color);
         }
         
         if (displayAllele){
