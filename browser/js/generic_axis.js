@@ -99,8 +99,7 @@ GenericAxis.prototype = {
         return this.label_mapping[this.applyConverter(element)];
     },
 
-    computeLabels(values, key) {
-        var labels = {}
+    computeLabels(values) {
         for (var i = 0; i < values.length; i++) {
             var value = values[i];
             var key = this.applyConverter(value);
