@@ -89,6 +89,12 @@ GermlineAxis.prototype = {
         return result;
     },
 
+    addLabel: function(type, pos, text, color) {
+        var label = this.label(type, pos, text, color);
+        this.label_mapping[pos] = label;
+        this.labels.push(label);
+    },
+
     getPos: function(rank, total) {
         return ((rank+0.5)/(total+1));
     },
