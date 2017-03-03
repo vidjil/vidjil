@@ -54,24 +54,32 @@ GermlineAxis.prototype = {
      * @param {integer} cloneid - clone index
      * @return {float} pos - clone's position
      * */
-    pos : function(cloneid) {
-        var clone = self.m.clone(cloneID) 
-        if (clone.hasSeg(type2)
-            && typeof clone.seg[type2]["name"] != 'undefined'
-            && typeof gene_list[clone.seg[type2]["name"].split("*")[0]] != "undefined")
-        {
-            var allele = clone.seg[type2]["name"]
-            var gene = clone.seg[type2]["name"].split("*")[0]
-            var pos = ((gene_list[gene].rank+0.5)/(total_gene+1))
-            
-            if (displayAllele){
-                var total_allele = gene_list[gene].n
-                pos += (1/(total_gene+1)) * ((allele_list[allele].rank+0.5)/total_allele) - (0.5/(total_gene+1))
+    pos : function(cloneID) {
+        var gene_list = this.gene_list;
+        var allele_list = this.allele_list;
+        var total_gene = this.total_gene;
+        var clone = this.m.clone(cloneID)
+        var pos;
+        if (clone.hasSeg(this.type2)) {
+            var name = clone.seg[this.type2]["name"];
+            if (typeof name != 'undefined'
+                && typeof gene_list[name.split("*")[0]] != "undefined")
+            {
+                var allele = name
+                var gene = name.split("*")[0]
+                var pos = this.getPos(this.gene_list[gene].rank, total_gene)
+
+                if (this.displayAllele){
+                    var total_allele = gene_list[gene].n
+                    pos += (1/(total_gene+1)) * ((allele_list[allele].rank+0.5)/total_allele) - (0.5/(total_gene+1))
+                }
+            } else {
+                pos = this.getPos(total_gene, total_gene);
             }
-            return pos
         }else{
-            return ((total_gene+0.5)/(total_gene+1))
+            pos = this.getPos(total_gene, total_gene)
         }
+        return this.label_mapping[pos];
     },
     
     /**
