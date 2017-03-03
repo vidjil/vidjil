@@ -631,7 +631,7 @@ ScatterPlot.prototype = {
                 $(span_icon_bar).empty().append(svg);
             }, 'xml');
         span_icon_bar.onclick = function(){
-                self.changeMode(this.MODE_BAR);
+                self.changeMode(self.MODE_BAR);
             };
         
         span_icon_plot = document.createElement('div');
@@ -642,7 +642,7 @@ ScatterPlot.prototype = {
                 $(span_icon_plot).empty().append(svg);
             }, 'xml');
         span_icon_plot.onclick = function(){
-                self.changeMode(this.MODE_GRID);
+                self.changeMode(self.MODE_GRID);
             };
         
         var div_mode = document.createElement('div');
