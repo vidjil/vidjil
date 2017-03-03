@@ -308,8 +308,8 @@ function ScatterPlot(id, model, database) {
         ["graph", "Edit dist. graph"]
     ];
 
-    this.axisX = new Axis(this.m, false)
-    this.axisY = new Axis(this.m, true)
+    this.axisX = new GermlineAxis(this.m, false)
+    this.axisY = new GermlineAxis(this.m, true)
     this.use_system_grid = false
 
     this.m.sp = this
@@ -332,8 +332,8 @@ ScatterPlot.prototype = {
 
             this.initMenu();
             this.initSVG();
-            this.axisX.useGermline(this.m.germlineV, "V")
-            this.axisY.useGermline(this.m.germlineJ, "J")
+            this.axisX.init(this.m.germlineV, "V")
+            this.axisY.init(this.m.germlineJ, "J")
 
             this.select_preset.selectedIndex = this.default_preset
             this.changePreset();
@@ -1935,16 +1935,16 @@ ScatterPlot.prototype = {
     updateAxis: function(axis, splitMethod) {
         switch (splitMethod) {
             case "allele_v" :
-                axis.useGermline(this.m.germlineV, "V", true)
+                axis.init(this.m.germlineV, "V", true)
                 break;
             case "gene_v" :
-                axis.useGermline(this.m.germlineV, "V", false)
+                axis.init(this.m.germlineV, "V", false)
                 break;
             case "allele_j" :
-                axis.useGermline(this.m.germlineJ, "J", true)
+                axis.init(this.m.germlineJ, "J", true)
                 break;
             case "gene_j" :
-                axis.useGermline(this.m.germlineJ, "J", false)
+                axis.init(this.m.germlineJ, "J", false)
                 break;
             default :
                 if (typeof this.available_axis[splitMethod]){
