@@ -40,7 +40,7 @@ function CustomAxis (model, reverse) {
 const NB_STEPS_IN_AXIS = 6; // Number (max) of labels per numerical axis
 const NB_STEPS_BAR = 30; // Number (max) of labels per numerical axis in histograms
 
-CustomAxis.prototype {
+CustomAxis.prototype = {
     /**
      * compute axis using a given function <br>
      * find min/max value possible with the given function and use them as range <br>
