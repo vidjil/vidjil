@@ -330,39 +330,56 @@ double nChoosek(unsigned n, unsigned k)
 }
 
 void trimSequence(string &sequence, size_t &start_pos, size_t &length) {
-  size_t n = length;
-  size_t number_of_N = 1;
-  size_t start;
-  size_t i = start = sequence.find('N', start_pos);
-  size_t previous_N = i;
+  float prefix_score = 0;
+  float suffix_score = 0;
+  size_t start_bad_suffix = 0;
+  size_t start_prefix = start_pos;
+  size_t max_factor_length = 0;
+  size_t max_start_factor = 0;
+  bool is_bad_suffix = false;
+  size_t end_pos = start_prefix + length ; // first position outside our
+                                           // substring of interest
 
-  // Remove N at the start
-  for (; i < start_pos+n
-         && number_of_N*1. / (i-start_pos+1) > RATIO_TOO_MANY_N;
-       i = sequence.find('N', i+1), number_of_N++) {
-    previous_N = i;
+  for (size_t i = start_prefix; i < end_pos; i++) {
+    if (sequence[i] == 'N') {
+      prefix_score -= 100;
+      suffix_score -= 100;
+    } else {
+      prefix_score += RATIO_TOO_MANY_N;
+      suffix_score += RATIO_TOO_MANY_N;
+    }
+
+    if (suffix_score >= 0) {
+      is_bad_suffix = false;
+      suffix_score = 0;
+    } else if (! is_bad_suffix) {
+      is_bad_suffix = true;
+      start_bad_suffix = i;
+    }
+
+    // As soon as a prefix doesn't reach our criteria we must cut the factor
+    // here, and then we will see if another one will meet the criteria again
+    if (prefix_score < 0 || i == end_pos - 1) {
+      size_t length_factor = i - start_prefix;
+      if (i == end_pos - 1)
+        length_factor++;
+      if (is_bad_suffix) {
+        length_factor = start_bad_suffix - start_prefix;
+      }
+      if (length_factor > max_factor_length) {
+        max_factor_length = length_factor;
+        max_start_factor = start_prefix;
+      }
+      // Restart for a new factor
+      start_prefix = i+1;
+      is_bad_suffix = false;
+      suffix_score = 0;
+      prefix_score = 0;
+    }
   }
 
-  // We had at least one N fulfilling our conditions
-  if (previous_N != i) {
-    previous_N++;               // We ignore the N
-    length -= (previous_N - start_pos);
-    start_pos = previous_N;
-  }
-
-  // Remove N at the end
-  i = start = sequence.rfind('N', start_pos + length - 1);
-  number_of_N = 1;
-  previous_N = i;
-  for (; i > start_pos && i != string::npos
-         && number_of_N * 1. / ((start_pos + length - 1) - i) > RATIO_TOO_MANY_N;
-       i = sequence.rfind('N', i-1), number_of_N++) {
-    previous_N = i;
-  }
-  if (previous_N != i) {
-    previous_N--;
-    length -= (start_pos + length - 1) - previous_N;
-  }
+  start_pos = max_start_factor;
+  length = max_factor_length;
 }
 
 

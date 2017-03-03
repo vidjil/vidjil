@@ -221,6 +221,10 @@ double nChoosek(unsigned n, unsigned k);
  * The sequence will be considered starting at position start_pos
  * for length letters.
  * The values will be updated correspondingly after trimming.
+ *
+ * More precisely, the purpose of the function is to find the longest
+ * substring whose prefixes and suffixes all have a ratio of N that
+ * is less than or equal to RATIO_TOO_MANY_N
  */
 void trimSequence(string &sequence, size_t &start_pos, size_t &length);
 
