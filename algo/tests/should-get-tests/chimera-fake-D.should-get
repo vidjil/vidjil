@@ -1,7 +1,7 @@
 !LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -A -g $VIDJIL_DIR/germline -2 $VIDJIL_DIR/data/chimera-fake-D.fa
 
 $ The KmerSegmenter segments the chimera reads on PSEUDO_MAX12 germline (-2)
-f1:xxx .* -> .* 2
+f1:unexpected .* -> .* 2
 
 $ The FineSegmenter gives the locus information (-2)
 f1:Unexpected [+]IGHD/[+]TRBJ

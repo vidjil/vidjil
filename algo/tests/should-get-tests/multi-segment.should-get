@@ -9,13 +9,13 @@ $ Do not segment the TR recombinations
 4:TR.* UNSEG
 
 $ Report the unsegmented sequences in the json output
-1: "germline": "zzz", "id": "TRA
-1: "germline": "zzz", "id": "TRB
-1: "germline": "zzz", "id": "TRG
-1: "germline": "zzz", "id": "TRD
+1: "germline": "not analyzed", "id": "TRA
+1: "germline": "not analyzed", "id": "TRB
+1: "germline": "not analyzed", "id": "TRG
+1: "germline": "not analyzed", "id": "TRD
 
 $ Count the unsegmented sequences in the json output
-1: "zzz": .4.
+1: "not analyzed": .4.
 
 $ Count the segmented sequences in the json output
 1: "segmented": .3.
