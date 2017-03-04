@@ -883,16 +883,16 @@ int main (int argc, char **argv)
       }
 
       if (multi_germline_unexpected_recombinations_12) {
-        Germline *pseudo = new Germline("xxx", 'x', -10, "", trim_sequences);
+        Germline *pseudo = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, -10, "", trim_sequences);
         pseudo->seg_method = SEG_METHOD_MAX12 ;
         pseudo->index = multigermline->index ;
         multigermline->germlines.push_back(pseudo);
       }
 
       if (multi_germline_unexpected_recombinations_1U) {
-        Germline *pseudo_u = new Germline("xxx", 'x', -10, "", trim_sequences);
+        Germline *pseudo_u = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, -10, "", trim_sequences);
         pseudo_u->seg_method = SEG_METHOD_MAX1U ;
-        // TODO: there should be more up/downstream regions for the 'yyy' germline. And/or smaller seeds ?
+        // TODO: there should be more up/downstream regions for the PSEUDO_UNEXPECTED germline. And/or smaller seeds ?
         pseudo_u->index = multigermline->index ;
         multigermline->germlines.push_back(pseudo_u);
     }
@@ -1601,7 +1601,7 @@ int main (int argc, char **argv)
     int nb_segmented = 0 ;
     map <string, int> nb_segmented_by_germline ;
 
-    Germline *not_segmented = new Germline("zzz", 'z', 0);
+    Germline *not_segmented = new Germline(PSEUDO_NOT_ANALYZED, PSEUDO_NOT_ANALYZED_CODE, 0);
 
     while (reads->hasNext()) 
       {

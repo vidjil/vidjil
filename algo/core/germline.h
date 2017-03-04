@@ -24,6 +24,11 @@ enum SEGMENTATION_METHODS {
 #define        CYS104_IN_GAPPED_V  310   // First nucleotide of Cys104
 #define PHE118_TRP118_IN_GAPPED_J   38   // Last nucleotide of Phe118/Trp118
 
+#define PSEUDO_UNEXPECTED         "unexpected"
+#define PSEUDO_UNEXPECTED_CODE    'x'
+#define PSEUDO_NOT_ANALYZED       "not analyzed"
+#define PSEUDO_NOT_ANALYZED_CODE  'z'
+
 
 using namespace std;
 using json = nlohmann::json;
