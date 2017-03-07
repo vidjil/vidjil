@@ -52,6 +52,7 @@ Url.prototype= {
      * @param {integer[]} list - array of clone index
      * */
     updateElem : function (list) {
+	this.update();
     },
     
     /**
@@ -61,6 +62,7 @@ Url.prototype= {
      * @param {integer[]} list - array of clone index
      * */
     updateElemStyle : function () {
+        this.update();
     },
     
     /**
