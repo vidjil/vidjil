@@ -50,6 +50,7 @@ GenericAxis.prototype = {
         }
 
         this.populateLabels(labels);
+        this.populateValueMapping();
         if (sort)
             this.labels.sort();
 
@@ -72,10 +73,21 @@ GenericAxis.prototype = {
         }
     },
 
-        if (sort)
-            this.labels.sort();
+    populateValueMapping: function() {
+        var values = this.values;
+        var value_mapping = this.value_mapping;
+        var label_mapping = this.label_mapping;
 
-        return this;
+        for (var i = 0; i < values.length; i++) {
+            var value = values[i];
+            var convert = this.applyConverter(value);
+            if (label_mapping[convert] != undefined) {
+                if (value_mapping[convert] == undefined) {
+                    value_mapping[convert] = [];
+                }
+                value_mapping[convert].push(value);
+            }
+        }
     },
 
     applyConverter: function(value) {
