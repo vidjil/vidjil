@@ -1266,6 +1266,7 @@ json KmerSegmenter::toJson() {
     if (evalue_right > NO_LIMIT_VALUE)
       seg["evalue_right"] = toJsonSegVal(scientific_string_of_double(evalue_right));
 
+    if (getKmerAffectAnalyser() != NULL) {
     seg["affectValues"] = {
         {"start", 1},
         {"stop", sequenceSize},
@@ -1277,6 +1278,7 @@ json KmerSegmenter::toJson() {
         {"stop", sequenceSize},
         {"seq", getKmerAffectAnalyser()->toStringSigns()}
     };
+    }
     return seg;
 }
 
