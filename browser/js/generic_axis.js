@@ -49,6 +49,17 @@ GenericAxis.prototype = {
             }
         }
 
+        this.populateLabels(labels);
+        if (sort)
+            this.labels.sort();
+
+        return this;
+    },
+
+    populateLabels: function(labels) {
+        var values = this.values;
+        var label_mapping = this.label_mapping;
+
         if (labels == undefined)
             this.computeLabels(values);
         else {
@@ -59,6 +70,7 @@ GenericAxis.prototype = {
                     label_mapping[convert] = this.label("line", convert, labels.indexOf(convert), convert);
             }
         }
+    },
 
         if (sort)
             this.labels.sort();
