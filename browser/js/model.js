@@ -2463,4 +2463,17 @@ changeCloneNotation: function(cloneNotationType) {
         });
     },
 
+    applyUrlParams:function(params_dict) {
+        if (typeof params_dict["clone"]!= "undefined" && params_dict["clone"] != '') {
+            this.multiSelect(params_dict["clone"]);
+        }
+
+        if (typeof params_dict["plot"]!= "undefined" && params_dict["plot"] != '') {
+            this.sp.splitX = params_dict["plot"][0];
+            this.sp.splitY = params_dict["plot"][1];
+            this.sp.mode = params_dict["plot"][2];
+        }
+    },
+
+
 }; //end prototype Model
