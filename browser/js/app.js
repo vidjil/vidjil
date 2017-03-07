@@ -56,7 +56,8 @@ function loadAfterConf() {
                              "../similarity",
                              "../tools",
                              "../url",
-
+                             "../percent_custom_axis",
+                             "../float_custom_axis",
                              // Speed test
                              "../speed_test",
                              "../../test/QUnit/testFiles/data_test",
