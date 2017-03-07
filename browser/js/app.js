@@ -53,6 +53,8 @@ function loadAfterConf() {
                              "../export",
                              "../similarity",
                              "../tools",
+                             "../url",
+
                              // Speed test
                              "../speed_test",
                              "../../test/QUnit/testFiles/data_test",
