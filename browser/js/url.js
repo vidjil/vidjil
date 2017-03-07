@@ -2,7 +2,7 @@ function Url(model) {
     View.call(this, model);
     this.m = model;
     this.url = window.location.toString().split('?')[0];
-    this.sp = sp
+    this.sp = this.m.sp
 }
 
 Url.prototype= {
