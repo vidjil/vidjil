@@ -31,11 +31,14 @@
 function GenericAxis () {
     this.labels = [];
     this.label_mapping = {};
+    this.values = [];
+    this.value_mapping = {};
 }
 
 GenericAxis.prototype = {
 
     init : function (values, key, labels, sort) {
+        this.values = values;
         if (sort == undefined) {sort = false;}
 
         if (typeof key === 'function') {
@@ -90,6 +93,9 @@ GenericAxis.prototype = {
 
     reset: function() {
         this.labels = [];
+        this.label_mapping = {};
+        this.value = [];
+        this.value_mapping = {};
     },
     
     pos : function(element) {
