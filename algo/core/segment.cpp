@@ -1267,17 +1267,17 @@ json KmerSegmenter::toJson() {
       seg["evalue_right"] = toJsonSegVal(scientific_string_of_double(evalue_right));
 
     if (getKmerAffectAnalyser() != NULL) {
-    seg["affectValues"] = {
+      seg["affectValues"] = {
         {"start", 1},
         {"stop", sequenceSize},
         {"seq", getKmerAffectAnalyser()->toStringValues()}
-    };
+      };
     
-    seg["affectSigns"] = {
+      seg["affectSigns"] = {
         {"start", 1},
         {"stop", sequenceSize},
         {"seq", getKmerAffectAnalyser()->toStringSigns()}
-    };
+      };
     }
     return seg;
 }
