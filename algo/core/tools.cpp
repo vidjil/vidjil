@@ -341,13 +341,17 @@ void trimSequence(string &sequence, size_t &start_pos, size_t &length) {
                                            // substring of interest
 
   for (size_t i = start_prefix; i < end_pos; i++) {
+
+    // prefix_score = PERCENT_TOO_MANY_N * |p| - 100 * (number of N in p),
+    // where p = sequence[start_prefix..i]
+    
     if (sequence[i] == 'N') {
       prefix_score -= 100;
       suffix_score -= 100;
-    } else {
-      prefix_score += PERCENT_TOO_MANY_N;
-      suffix_score += PERCENT_TOO_MANY_N;
     }
+    
+    prefix_score += PERCENT_TOO_MANY_N;
+    suffix_score += PERCENT_TOO_MANY_N;
 
     if (suffix_score >= 0) {
       is_bad_suffix = false;
