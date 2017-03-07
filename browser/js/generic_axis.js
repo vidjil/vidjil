@@ -49,7 +49,7 @@ GenericAxis.prototype = {
         }
 
         if (labels == undefined)
-            self.computeLabels(values);
+            this.computeLabels(values);
         else {
             for (var i=0; i < values.length; i++) {
                 var value = values[i];

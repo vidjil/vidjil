@@ -116,13 +116,13 @@ CustomAxis.prototype = {
     pos: function(cloneID) {
         var value, pos;
         try{
-            value = self.fct(self.m.clone(cloneID));
+            value = this.fct(this.m.clone(cloneID));
         }catch(e){}
 
         if (typeof value != "undefined" && value != 'undefined'){
-            pos = self.sizeScale(value);
+            pos = this.sizeScale(value);
         }else{
-            pos = self.sizeScale(self.min);
+            pos = this.sizeScale(this.min);
         }
         
         return pos;
