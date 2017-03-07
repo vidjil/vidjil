@@ -13,10 +13,11 @@
 #define MAX_SEED_SIZE  50 // Spaced seed buffer
 #define FIRST_POS  1      // Numbering of the base pairs for external output
 
-#define RATIO_TOO_MANY_N .3    /* Ratio above which we consider there are too
+#define PERCENT_TOO_MANY_N 30    /* Percent above which we consider there are too
                                   many Ns in the sequence and the
                                   corresponding subsequence should be
-                                  trimmed */
+                                  trimmed. The constant *must* be an integer.
+                                   */
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
 
 #include <sstream>
@@ -221,6 +222,10 @@ double nChoosek(unsigned n, unsigned k);
  * The sequence will be considered starting at position start_pos
  * for length letters.
  * The values will be updated correspondingly after trimming.
+ *
+ * More precisely, the purpose of the function is to find the longest
+ * substring whose prefixes and suffixes all have a ratio of N that
+ * is less than or equal to RATIO_TOO_MANY_N
  */
 void trimSequence(string &sequence, size_t &start_pos, size_t &length);
 
