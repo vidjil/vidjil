@@ -31,7 +31,6 @@
 function GenericAxis () {
     this.labels = [];
     this.label_mapping = {};
-    this.sorting_key; // Object attribute to sort elements by
 }
 
 GenericAxis.prototype = {
@@ -90,7 +89,6 @@ GenericAxis.prototype = {
     },
 
     reset: function() {
-        this.sorting_key = null;
         this.labels = [];
     },
     
