@@ -178,12 +178,7 @@ Object.assign(CustomAxis.prototype, {
             for (var i = 0; i <= nb_steps; i++) {
                 pos = start_shift + (h*i)*(1/delta);
 
-                var text = Math.round(min+(h*i))
-                if (output=="percent"){
-                    text = ((min+(h*i))*100).toFixed(1) + "%"
-                }
-                }
-
+                var text = this.getLabelText(min, h, i);
                 if (this.reverse) pos = 1 - pos;
                 if (!display_label) text = "";
                 this.labels.push(this.label("line", pos, text));
@@ -191,5 +186,7 @@ Object.assign(CustomAxis.prototype, {
         }
     },
 
+    getLabelText(min_value, value, index) {
+        return Math.round(min_value+(value*index));
     }
 })
