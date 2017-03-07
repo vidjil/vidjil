@@ -1,6 +1,8 @@
 function Url(model) {
     View.call(this, model);
     this.m = model;
+    this.url = window.location.toString().split('?')[0];
+    this.sp = sp
 }
 
 Url.prototype= {
@@ -18,6 +20,28 @@ Url.prototype= {
      * @abstract
      * */
     update: function () {
+
+        var selectedList = this.m.getSelected();
+        var params_dict = {};
+        
+        params_dict["clone"] = selectedList.join();
+
+        if (this.sp.select_preset.selectedIndex!=this.sp.default_preset) {
+            params_dict["plot"] = this.sp.splitX+','+this.sp.splitY+','+this.sp.mode;
+        } else {
+    	    delete params_dict[sp.mode];
+    	}
+
+        var params_list = [];       
+        for (var key in params_dict){
+            if ((typeof key != "undefined" && key != "") && (typeof params_dict[key]!= "undefined" && params_dict[key] != '')) {
+                params_list.push(key+"="+params_dict[key])
+            }
+        }
+        
+        new_url = "?" + params_list.join("&");
+        window.history.pushState('plop', 'plop', new_url);
+ 	this.updateModel()
     },
     
     /**
