@@ -721,9 +721,9 @@ int main (int argc, char **argv)
 #endif
 
 
-  if (w < seed_weight(seed))
+  if (w < 0)
     {
-      cerr << ERROR_STRING << "Too small -w. The window size should be at least equal to the seed size (" << seed_weight(seed) << ")." << endl;
+      cerr << ERROR_STRING << "Too small -w. The window size should be positive" << endl;
       exit(1);
     }
 
