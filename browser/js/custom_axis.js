@@ -140,7 +140,7 @@ Object.assign(CustomAxis.prototype, {
      * @param {boolean} has_undefined - Should we include an undefined value ?
      * */
     computeLabels: function(use_log, display_label, has_undefined){
-        this.labels = {};
+        this.labels = [];
         var min = this.min;
         var max = this.max;
         if (typeof has_undefined == 'undefined')
@@ -172,7 +172,7 @@ Object.assign(CustomAxis.prototype, {
             // Computed so that pos <= 1 (in the loop below)
             var delta = (min - max)/((min - undefined_min)/(max-undefined_min) - 1)
             if (has_undefined)
-                this.labels["?"] = this.label("line", (this.reverse) ? 1 : 0, "?")
+                this.labels.push(this.label("line", (this.reverse) ? 1 : 0, "?"))
             // Shift the start when there is an undefined value
             var start_shift = (min - undefined_min)/(max-undefined_min)
             for (var i = 0; i <= nb_steps; i++) {

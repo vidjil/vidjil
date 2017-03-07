@@ -91,8 +91,8 @@ GenericAxis.prototype = {
     },
 
     reset: function() {
-        this.labels = {};
         this.sorting_key = null;
+        this.labels = [];
     },
     
     pos : function(element) {
