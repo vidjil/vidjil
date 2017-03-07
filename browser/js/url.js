@@ -1,6 +1,7 @@
 function Url(model) {
     View.call(this, model);
     this.m = model;
+    this.url_dict = this.parseUrlParams(window.location.search)
     this.url = window.location.toString().split('?')[0];
     this.sp = this.m.sp
 }
@@ -22,7 +23,7 @@ Url.prototype= {
     update: function () {
 
         var selectedList = this.m.getSelected();
-        var params_dict = {};
+        var params_dict = this.url_dict;
         
         params_dict["clone"] = selectedList.join();
 
@@ -73,6 +74,19 @@ Url.prototype= {
 
     updateModel:function() {
 
+    },
+
+    parseUrlParams:function (urlparams) {
+        params={}
+        if (urlparams.length == 0) {
+            return params;
+        }
+        url_param = urlparams.substr(1).split("&");
+        for (var i = 0; i < url_param.length; i++) {
+            var tmparr = url_param[i].split("=");
+	    params[tmparr[0]] = tmparr[1];
+        }
+        return params
     },
 
 };
