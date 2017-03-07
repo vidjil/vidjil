@@ -44,7 +44,7 @@ Model_loader.prototype = {
         var run = -1;
         var dbconfig = -1;
         var custom_list = [];
-        
+        paramsDict={}
         /** Process arguments in conf.js */
         if (typeof config != 'undefined' && typeof config.autoload != 'undefined')
             dataURL = config.autoload
@@ -73,16 +73,32 @@ Model_loader.prototype = {
                     console.log(custom_list.join('+'))
                 }
 
-            }
-        }    
+                // Arguments for applyUrlParams()
+                if (tmp2[0] == "clone") {
+                    var clonestmp = tmp2[1].split(',');
+                    paramsDict["clone"] = [];
 
+                    for (var j=0; j<clonestmp.length; j++) {
+                        paramsDict["clone"].push(clonestmp[j]);
+                    }
+                }
+
+                if (tmp2[0] == "plot") {
+                    var plottmp = tmp2[1].split(',');
+                    paramsDict["plot"] = [];
+                    for (var j=0; j<plottmp.length; j++) {
+                        paramsDict["plot"].push(plottmp[j])
+                    }
+                }
+        }
+        }
         /** load the default vidjil file, open the database or display the welcome popup depending on the case*/
         if (dataURL != "") {
             if (analysisURL != ""){
                 var callback = function() {self.loadAnalysisUrl(analysisURL)}
-                this.loadDataUrl(dataURL, callback)
+                this.loadDataUrl(dataURL, paramsDict, callback);
             }else{
-                this.loadDataUrl(dataURL)
+                this.loadDataUrl(dataURL, paramsDict);
             }
         }
             
@@ -191,7 +207,7 @@ Model_loader.prototype = {
      * @param {string} url - url of the vidjil file
      * @param {function} [callback=loadAnalysisUrl()] - function called onsuccess
      * */
-    loadDataUrl: function (url, callback) {
+    loadDataUrl: function (url,paramsDict, callback) {
         var self = this;
         callback = typeof callback !== 'undefined' ? callback : function(){self.loadAnalysisUrl(url)}
         
@@ -210,6 +226,7 @@ Model_loader.prototype = {
                     .initClones()
                 self.update_selected_system()
                 self.dataFileName = url_split[url_split.length-1]
+                self.applyUrlParams(paramsDict);
                 callback()
             },                
             error: function (request, status, error) {
