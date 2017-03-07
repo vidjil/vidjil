@@ -27,7 +27,6 @@
  * GenericAxis object contain labels and their position on an axis (from 0 to 1)
  * can provide the position of an element on it
  * @constructor
- * @param {Model} model 
  * */
 function GenericAxis () {
     this.labels = [];
