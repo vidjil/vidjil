@@ -127,7 +127,7 @@ Object.assign(CustomAxis.prototype, {
             pos = this.sizeScale(this.min);
         }
         
-        return pos;
+        return {'pos': pos};
     },
     
     /**
