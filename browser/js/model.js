@@ -832,6 +832,7 @@ changeCloneNotation: function(cloneNotationType) {
         }
 
         this.updateElemStyle(list);
+        this.update();
     },
 
     /**
