@@ -38,7 +38,9 @@ function GermlineAxis (model, reverse) {
     GenericAxis.call(this);
 }
 
-GermlineAxis.prototype = {
+GermlineAxis.prototype = Object.create(GenericAxis.prototype);
+
+Object.assign(GermlineAxis.prototype, {
     
     /**
      * reset Axis
@@ -150,4 +152,4 @@ GermlineAxis.prototype = {
         self.total_gene = total_gene;
         self.displayAllele = displayAllele;
     }
-}
+})
