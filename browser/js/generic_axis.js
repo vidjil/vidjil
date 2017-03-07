@@ -107,4 +107,30 @@ GenericAxis.prototype = {
                 this.addLabel("line", key, i, key);
         }
     },
+
+    /**
+     * add labels for barplot <br>
+     * @param {Array} tab - barplot descriptor like the one made by Model.computeBarTab()
+     * */
+    computeBarLabels : function (tab) {
+        this.labels = [];
+        var length = Object.keys(tab).length;
+
+        var step = 1 + Math.floor(length / NB_STEPS_BAR)
+
+        var i=1
+        for (var e in tab){
+            if (i%step == 0 || (e == '?' && tab[e].length > 0)){
+                var pos = this.posBarLabel(i, length);
+                if (this.reverse) pos = 1 - pos;
+                this.labels.push(this.label("line", pos, e));
+            }
+            i++;
+        }
+
+    },
+
+    posBarLabel : function (i, length) {
+        return (i-0.5)/length ;
+    }
 }
