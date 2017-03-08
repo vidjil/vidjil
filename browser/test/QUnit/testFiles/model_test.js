@@ -156,6 +156,37 @@ QUnit.test("select/focus", function(assert) {
     m.focusIn(0)
 });
 
+
+QUnit.test("focus/hide/reset_filter", function(assert) {
+
+    var m = new Model();
+    m.parseJsonData(json_data,100)
+    
+    m.multiSelect([0,2,3])
+    assert.equal(m.someClonesFiltered, false, "no clones are filtered")
+
+    m.focus()
+    assert.equal(m.someClonesFiltered, true, "some clones are filtered")
+    assert.equal(m.clone(0).isFiltered, false, "clone 0 is not filtered")
+    assert.equal(m.clone(1).isFiltered, true, "clone 1 is filtered")
+
+    m.unselectAll()
+    m.select(2)
+    assert.equal(m.clone(2).isFiltered, false, "clone 2 is not filtered")
+
+    m.hide()
+    assert.equal(m.clone(2).isFiltered, true, "clone 2 is filtered")
+
+    assert.equal(m.clone(0).isFiltered, false, "clone 0 is not filtered")
+    assert.equal(m.clone(1).isFiltered, true, "clone 1 is filtered")
+
+    m.reset_filter(false)
+    assert.equal(m.clone(2).isFiltered, false, "clone 2 is not filtered")
+    m.update()
+    assert.equal(m.someClonesFiltered, false, "no clones are filtered")
+
+});
+
 QUnit.test("cluster", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data,100)
