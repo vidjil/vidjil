@@ -6,11 +6,19 @@ before_script:
 
 stages:
   - test_unit
+  - test_functional
   - deploy
 
 test_browser_unit:
   stage: test_unit
   script: make unit_browser
+  artifacts:
+    paths:
+    - browser/
+
+test_browser-functional:
+  stage: test_functional
+  script: make functional_browser
   artifacts:
     paths:
     - browser/
