@@ -8,8 +8,8 @@ stages:
   - test_browser-unit
 
 test_browser_unit:
-  - stage: test_browser_unit
-  - make unit_browser
+  stage: test_browser_unit
+  script: make unit_browser
 
 
 
