@@ -18,7 +18,11 @@ test_browser_unit:
 
 test_browser-functional:
   stage: test_functional
-  script: make functional_browser
+  script:
+    - make -C browser
+    - source /etc/profile.d/rvm.sh
+    - rvm use 2.1.1
+    - make headless_browser
   artifacts:
     paths:
     - browser/
