@@ -782,6 +782,18 @@ List.prototype = {
         $("#filter_input").val("(focus on some clones)")
         this.m.update()
     },
+
+    /**
+     * hide selected clones
+     * */
+    hide: function () {
+        var list = this.m.getSelected();
+        for (var i=0; i < list.length; i++) {
+            this.m.clone(list[i]).isFiltered = true
+        }
+        $("#filter_input").val("(focus on some clones)")
+        this.m.update()
+    },
     
     /**
      * sort clone list by size (reorder html elements in the clone list/ no rebuild)
