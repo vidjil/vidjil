@@ -287,12 +287,22 @@ Segment.prototype = {
             stats_content.className = "stats_content"
             div_stats.appendChild(stats_content)
 
+            // Focus and hide
             var focus_selected = document.createElement('a');
             focus_selected.appendChild(document.createTextNode("(focus)"))
             focus_selected.className = "focus_selected"
             focus_selected.onclick = function () { list_clones.focus() }
             div_stats.appendChild(focus_selected)
 
+            div_stats.appendChild(document.createTextNode(' '))
+
+            var hide_selected = document.createElement('a');
+            hide_selected.appendChild(document.createTextNode("(hide)"))
+            hide_selected.className = "focus_selected"
+            hide_selected.onclick = function () { list_clones.hide() }
+            div_stats.appendChild(hide_selected)
+
+            //
             div.appendChild(div_stats)
             div_stats.appendChild(span_fixsegmenter);
 
