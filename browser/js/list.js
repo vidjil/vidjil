@@ -259,7 +259,7 @@ List.prototype = {
         filter_input.type = 'text'
         filter_input.setAttribute('placeholder', 'search');
         filter_input.onchange = function () {
-            self.filter(this.value)
+            self.m.filter(this.value)
         }
         
         var filter_reset = document.createElement('span')
@@ -267,7 +267,7 @@ List.prototype = {
         filter_reset.className = "button"
         filter_reset.onclick = function () {
             document.getElementById('filter_input').value = ''
-            self.reset_filter(false)
+            self.m.reset_filter(false)
             self.m.update()
         }
         
