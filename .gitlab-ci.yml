@@ -22,4 +22,4 @@ deploy:
     - scp doc/analysis-example.vidjil vidjil-ci@vda.vidjil.org:ci/environments/review/$CI_BUILD_REF_SLUG/browser/
   environment:
     name: $CI_BUILD_REF_NAME
-    url: https://$CI_BUILD_REF_SLUG.ci.vidjil.org/browser/?data=analysis-example.vidjil
+    url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
