@@ -20,11 +20,15 @@ def index():
                isAdmin = auth.is_admin())
 
 
-def add(): 
-    return dict(message=T('Add pre-process'))
+def add():
+    if auth.can_create_pre_process():
+        return dict(message=T('Add pre-process'))
+    return error_message(ACCESS_DENIED)
 
 
-def add_form(): 
+def add_form():
+    if not auth.can_create_pre_process():
+        return error_message(ACCESS_DENIED)
     error =""
 
     required_fields = ['pre_process_name', 'pre_process_command']
@@ -53,10 +57,14 @@ def add_form():
 
 
 def edit(): 
-    return dict(message=T('edit config'))
+    if auth.can_modify_pre_process(request.vars['id']):
+        return dict(message=T('edit config'))
+    return error_message(ACCESS_DENIED)
 
 
 def edit_form(): 
+    if not auth.can_modify_pre_process(request.vars['id']):
+        return error_message(ACCESS_DENIED)
     error =""
 
     required_fields = ['pre_process_name', 'pre_process_command']
@@ -83,10 +91,14 @@ def edit_form():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def confirm():
-    return dict(message=T('confirm pre_process deletion'))
+    if auth.can_modify_pre_process(request.vars['id']):
+        return dict(message=T('confirm pre_process deletion'))
+    return error_message(ACCESS_DENIES)
 
 def delete():
     
+    if not auth.can_modify_pre_process(request.vars['id']):
+        return error_message(ACCESS_DENIED)
     #delete pre_process
     db(db.pre_process.id==request.vars["id"]).delete() 
     

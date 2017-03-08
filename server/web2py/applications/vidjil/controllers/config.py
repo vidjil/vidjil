@@ -22,13 +22,17 @@ def index():
                isAdmin = auth.is_admin())
 
 
-def add(): 
-    return dict(message=T('Add config'))
+def add():
+    if (auth.can_create_config()):
+        return dict(message=T('Add config'))
+    return error_message(ACCESS_DENIED)
 
 
 #TODO check data
 def add_form(): 
     error =""
+    if (not auth.can_create_config()):
+        return error_message(ACCESS_DENIED)
 
     required_fields = ['config_name', 'config_command', 'config_fuse_command', 'config_program']
     for field in required_fields:

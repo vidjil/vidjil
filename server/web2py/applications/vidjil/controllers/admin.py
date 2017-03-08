@@ -4,6 +4,7 @@ import os.path, subprocess
 import vidjil_utils
 
 MAX_LOG_LINES = 500
+ACCESS_DENIED = "access denied"
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -41,7 +42,8 @@ def monitor():
     
     """
     # External monitor
-
+    if not auth.is_admin():
+        return error_message(ACCESS_DENIED)
     last_results = ''
     for res in db(db.scheduler_task.id == db.results_file.scheduler_task_id).select(orderby=~db.results_file.id,
                                                                                     limitby=(0,10)):
