@@ -1,16 +1,17 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
-2017-02-XX  The Vidjil Team
-	* Better e-value estimation for D genes (core/segment.cpp) #1879
+2017-03-14  The Vidjil Team
 	* Better support for germlines from several species (germlines/*.g) #1987 #2132
 	* Streamlined option -g, including filtering, removed old -i/-G options (vidjil.cpp, core/germline.cpp) #2134
-	* Better productivity estimation, handling in-frame stop codons (core/segment.cpp) #1824
-	* New experimental faster heuristic with Aho-Corasick automaton (core/automaton.hpp)
+	* Better productivity estimation, handling in-frame stop codons (core/segment.cpp) #2220
+	* Better unsegmentation causes, 'UNSEG only V/J' needs really significant V/J fragments (core/segment.cpp) #2107
+	* New experimental faster heuristic with Aho-Corasick automaton (core/automaton.hpp) #1366
+	* New option to disable window clustering (-w all) (core/windowExtractor.cpp) #1642
 	* Updated germline genes from IMGT/GENE-DB
-	* Bugs closed (json output)
+	* Bugs closed (json output, consensus computation, -y option) #2214 #2217 #2224 #2239
 	* Refactored test structure for should-vdj tests (tests/should-vdj-to-tap.py, tests/repseq_vdj.py)
-	* New and updated unit and functional tests
+	* New and updated unit and functional tests, including more solved former bugs
 	* Moved code to gitlab, better project management, commit messages are now linked to issues
 
 2016-09-30  The Vidjil Team
