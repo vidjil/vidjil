@@ -11,8 +11,14 @@ stages:
 test_browser_unit:
   stage: test_unit
   script: make unit_browser
+  artifacts:
+    paths:
+    - browser/
 
 deploy:
   stage: deploy
   script:
-    - scp README.org vidjil-ci@vda.vidjil.org:/tmp
+    - rsync -av --delete browser vidjil-ci@vda.vidjil.org:ci/environments/review/$CI_BUILD_REF_SLUG/
+  environment:
+    name: $CI_BUILD_REF_NAME
+    url: https://$CI_BUILD_REF_SLUG.ci.vidjil.org
