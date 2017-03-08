@@ -6,12 +6,13 @@ before_script:
 
 stages:
   - test_unit
+  - deploy
 
 test_browser_unit:
   stage: test_unit
   script: make unit_browser
 
-
-
-
-
+deploy:
+  stage: deploy
+  script:
+    - scp README.org vidjil-ci@vda.vidjil.org:/tmp
