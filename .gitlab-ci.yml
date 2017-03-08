@@ -41,5 +41,17 @@ deploy:
   environment:
     name: $CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
+    on_stop: stop_deploy
   only:
     - /^feature-c\/.*$/
+
+stop_deploy:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - ssh $DEPLOY_SERVER "rm -rf $DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG"
+  when: manual
+  environment:
+    name: $CI_BUILD_REF_NAME
+    action: stop
