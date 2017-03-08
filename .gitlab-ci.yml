@@ -26,8 +26,8 @@ test_browser-functional:
 deploy:
   stage: deploy
   script:
-    - rsync -av --delete browser vidjil-ci@vda.vidjil.org:ci/environments/review/$CI_BUILD_REF_SLUG
-    - scp doc/analysis-example.vidjil vidjil-ci@vda.vidjil.org:ci/environments/review/$CI_BUILD_REF_SLUG/browser/
+    - rsync -av --delete browser $DEPLOY_SERVER:$DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG
+    - scp doc/analysis-example.vidjil $DEPLOY_SERVER:$DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG/browser/
   environment:
     name: $CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
