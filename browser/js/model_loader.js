@@ -386,6 +386,83 @@ Model_loader.prototype = {
     
     },
 
+    getFilteredFields: function(src) {
+        // Hacky way of managing fields we do not want to copy without restructuring the whole JSON
+        var exceptions = ['id', 'log', 'producer'];
+        var fields = [];
+        for (key in src)
+            if (exceptions.indexOf(key) == -1){
+                fields.push(key);
+            }
+        return fields;
+    },
+
+    calculateOrder: function(arr) {
+        tmp = arr.slice();
+        res = arr.slice();
+        previous = -1;
+        while(tmp.length > 0) {
+            min = tmp[0];
+            min_idx = 0;
+            for(var i = 0; i < tmp.length; i++) {
+                if (tmp[i] < min) {
+                    min = tmp[i];
+                    min_idx = i;
+                }
+            }
+            idx = arr.indexOf(min);
+            tmp.splice(min_idx, 1);
+            res[idx] = ++previous;
+        }
+        return res;
+    },
+
+    buildDict: function(first, second) {
+        dict = {};
+        for (var i = 0; i < first.length; i++){
+            dict[first[i]] = {};
+        }
+        for(var j = 0; j < second.length; j++) {
+            dict[second[j]] = {};
+        }
+        return dict;
+    },
+
+    copyField: function(dest, src, key) {
+        for (var i = 0; i < src[key].length; i++) {
+            if (typeof dest[src.id[i]] != 'undefined') {
+                if (typeof dest[src.id[i]][key] == 'undefined')
+                    dest[src.id[i]][key] = [];
+                dest[src.id[i]][key] = src[key][i];
+            }
+        }
+        return dest;
+    },
+
+    copySampleFields: function(samples, analysis) {
+        var clone = $.extend({}, samples);
+        if ('id' in analysis) {
+            //replace names, timestamps, order...
+            dict = this.buildDict(analysis.id, clone.original_names);
+            var keys = this.getFilteredFields(analysis);
+            for (var tmp = 0; tmp < keys.length; tmp++)
+                dict = this.copyField(dict, analysis, keys[tmp]);
+
+            for (id in dict) {
+                idx = clone.original_names.indexOf(id);
+                if (idx > -1)
+                    for (key in dict[id]) {
+                        clone[key][idx] = dict[id][key];
+                    }
+
+            }
+        }
+        if ('order' in analysis) {
+            clone['order'] = this.calculateOrder(clone['order']);
+        }
+        return clone;
+    },
+
     /**
      * parse a json or a json_text and complete the model with it's content
      * @param {string} analysis - json_text / content of .analysis file
@@ -411,13 +488,7 @@ Model_loader.prototype = {
             //samples
             if (this.analysis.samples) {
                 var s = this.analysis.samples
-                
-                // Hacky way of managing fields we do not want to copy without restructuring the whole JSON
-                var copy_exceptions = ['log', 'producer']
-                //replace names, timestamps, order...
-                for (var key in s)
-                    if ((copy_exceptions.indexOf(key) == -1) && s[key].length == this.samples.number)
-                        this.samples[key] = s[key]
+                this.samples = this.copySampleFields(this.samples, s);
             }
             
             //tags
@@ -533,6 +604,7 @@ Model_loader.prototype = {
             timestamp : timestamp,
             vidjil_json_version : VIDJIL_JSON_VERSION,
             samples : {
+                id: this.samples.original_names,
                 info: this.samples.info,
                 order: this.samples.order,
                 names: this.samples.names},
