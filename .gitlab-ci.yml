@@ -1,0 +1,17 @@
+
+
+before_script:
+  - make data
+  - make germline
+
+stages:
+  - test_browser-unit
+
+test_browser_unit:
+  - stage: test_browser_unit
+  - make unit_browser
+
+
+
+
+
