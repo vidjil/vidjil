@@ -1286,6 +1286,7 @@ span.warningReads {
 .db_msg {
   margin: 15px;
   height: calc(100% - 30px);
+  overflow-y: auto;
 }
 #db_content {
   height: calc(100% - 160px);
@@ -1830,6 +1831,15 @@ label.highlight_label {
 }
 .db_table td.pre-line {
   white-space: pre-line;
+}
+#jstree {
+  max-height: 300px;
+  overflow-y: auto;
+}
+.jstree-anchor {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #mid-container {
   font-size: 125%;

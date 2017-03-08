@@ -498,6 +498,59 @@ Database.prototype = {
         }  
         
     },
+
+    set_jstree: function(elem) {
+        elem.jstree({
+            "plugins" : ["sort"],
+            'core' : {
+                'multiple': false,
+                'data' : {
+                    'url' : function(node){
+                        var address = DB_ADDRESS + '/file/filesystem'
+                        return node.id === '#' ? address
+                                               : address + '?node=' + node.id
+                    },
+                    'dataType' : 'json',
+                },
+            }
+        });
+        elem.on('select_node.jstree', function(event, data){
+            $('#filename').val(data.selected);
+        });
+    },
+
+    toggle_upload_fields: function() {
+        var elem = $('.upload_field');
+        var disable = !elem.prop('disabled');
+        elem.prop('disabled', disable);
+        elem.parents("tr").prop('hidden', disable);
+        if (disable) {
+            elem.val(undefined);
+            $('#filename').val(undefined);
+        }
+
+        var pre_process = $('#pre_process');
+        pre_process.prop('disabled', disable);
+        pre_process.parents("tr").prop('hidden', disable);
+    },
+
+    toggle_jstree: function(){
+        var tree = $('#jstree');
+        var enable = tree.parents("tr").prop('hidden');
+        tree.parents("tr").prop('hidden', !enable);
+        if (enable) {
+            this.set_jstree(tree);
+        } else {
+            $.jstree.destroy();
+            tree.off('select_node.jstree');
+            $('#filename').val(undefined);
+        }
+    },
+
+    toggle_file_source: function() {
+        this.toggle_upload_fields();
+        this.toggle_jstree()
+    },
     
     /**
      * reload the current db page

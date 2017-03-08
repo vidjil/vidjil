@@ -14,7 +14,8 @@ require(["jquery",
          "underscore",
          "rgbcolor",
          "file",
-         "tsne"], function() {
+         "tsne",
+         "jstree.min"], function() {
              // Then config file (needed by Vidjil)
              require(['../conf'], function() {
                  loadAfterConf()

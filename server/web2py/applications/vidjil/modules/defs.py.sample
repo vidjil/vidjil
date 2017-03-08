@@ -71,3 +71,7 @@ LOCUS = ['TRA', 'TRA+D', 'TRB', 'TRG', 'TRD', 'TRD+',
 FS_LOCK_THRESHHOLD = 1
 
 SCHEDULER_HEARTBEAT = 5
+
+# Directory to search for files
+FILE_SOURCE = '/mnt/data/src'
+FILE_TYPES = ['fasta', 'fastq', 'fastq.gz']

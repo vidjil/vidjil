@@ -6,6 +6,8 @@ import os
 import os.path
 import datetime
 from controller_utils import error_message
+import jstree
+import base64
 
 
 if request.env.http_origin:
@@ -116,6 +118,7 @@ def add():
                 run = run_date+name+id
 				
 				
+        source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
         return dict(message = T('add file'),
                    generic_list = generic_list,
                    patient_list = patient_list,
@@ -124,8 +127,27 @@ def add():
                    generic = generic,
                    patient = patient,
                    sample_type = sample_set.sample_type,
-                   run = run)
+                   run = run,
+                   source_module_active = source_module_active)
 
+def manage_filename(filename):
+    filepath = ""
+    name_list = []
+    name_list = request.vars['filename'].split('/')
+    filename = name_list[-1]
+    data = dict(filename=filename, data_file=None)
+
+    if len(name_list) > 1:
+        filepath = defs.FILE_SOURCE + '/' + request.vars['filename']
+        split_file = filename.split('.')
+        uuid_key = db.uuid().replace('-', '')[-16:]
+        encoded_filename = base64.b16encode('.'.join(split_file[0:-1])).lower()
+        data_file = "sf.%s.%s.%s" % (
+                uuid_key, encoded_filename, split_file[-1]
+            )
+        data['data_file'] = data_file
+
+    return (data, filepath)
 
 def add_form(): 
     error = ""
@@ -141,6 +163,10 @@ def add_form():
             
     if request.vars['filename'] == None :
         error += " missing file"
+    else:
+        data, filepath = manage_filename(request.vars["filename"])
+        filename = data['filename']
+
     if request.vars['patient_id'] == '' and request.vars['run_id'] == "" and request.vars['generic_id'] == "":
         error += " missing patient or run or sample_set"
         
@@ -157,8 +183,9 @@ def add_form():
                 &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
             ).select(db.sequence_file.ALL)
         for row in query :
-            if row.filename == request.vars['filename'] :
+            if row.filename == filename :
                 error += " this sequence file already exists for this patient"
+                break
             
     if request.vars['run_id'] != '' :
         try:
@@ -177,19 +204,26 @@ def add_form():
             error += " invalid sample_set %s" % request.vars['sample_set_id']
     pre_process = None
     pre_process_flag = "DONE"
-    if request.vars['pre_process'] != "0":
+    if request.vars['pre_process'] is not None and request.vars['pre_process'] != "0":
         pre_process = request.vars['pre_process']
         pre_process_flag = "WAIT"
 
     if error=="" :
-            
+
         #add sequence_file to the db
         id = db.sequence_file.insert(sampling_date=request.vars['sampling_date'],
                             info=request.vars['file_info'],
-                            filename=request.vars['filename'],
                             pre_process_id=pre_process,
                             pre_process_flag=pre_process_flag,
                             provider=auth.user_id)
+        log_message = "upload started"
+        if request.vars['filename'] != "":
+            if data['data_file'] is not None:
+                log_message = "registered"
+                os.symlink(filepath, defs.DIR_SEQUENCES + data['data_file'])
+            db.sequence_file[id] = data
+
+
         ids_sample_set = []
         #add sequence_file to a run sample_set
         if run_id is not None :
@@ -221,7 +255,7 @@ def add_form():
         
         
         res = {"file_id" : id,
-               "message": "(%s) file {%s} : upload started: %s" % (','.join(map(str,ids_sample_set)), id, request.vars['filename']),
+               "message": "(%s) file {%s} : %s: %s" % (','.join(map(str,ids_sample_set)), id, log_message, request.vars['filename']),
                "redirect": "sample_set/index",
                "args" : redirect_args
                }
@@ -375,14 +409,19 @@ def edit_form():
             # file is being reuploaded, remove all existing results_files
             db(db.results_file.sequence_file_id == request.vars["id"]).delete()
         pre_process = None
-        if request.vars['pre_process'] != "0":
+        if request.vars['pre_process'] is not None and request.vars['pre_process'] != "0":
             pre_process = int(request.vars['pre_process'])
         if request.vars['sampling_date'] != None and request.vars['file_info'] != None :
             db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'],
                                                         info=request.vars['file_info'],
-                                                        filename=filename,
                                                         pre_process_id=pre_process,
                                                         provider=auth.user_id)
+
+        if request.vars['filename'] != "":
+            data, filepath = manage_filename(request.vars["filename"])
+            if 'data_file' in data:
+                os.symlink(filepath, defs.DIR_SEQUENCES + data['data_file'])
+            db.sequence_file[request.vars["id"]] = data
             
         #remove previous membership
         for row in db( db.sample_set_membership.sequence_file_id == request.vars["id"]).select() :
@@ -597,3 +636,21 @@ def restart_pre_process():
     db.commit()
     res = schedule_pre_process(sequence_file.id, pre_process.id)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+def filesystem():
+    json = []
+    id = "" if request.vars["node"] is None else request.vars["node"] + '/'
+    if id == "":
+        json = [{"text": "/", "id": "/",  "children": True}]
+    else:
+        root_folder = defs.FILE_SOURCE + id
+        for idx, f in enumerate(os.listdir(root_folder)):
+            correct_type = f.split('.')[-1] in defs.FILE_TYPES
+            is_dir = os.path.isdir(root_folder + f)
+            if correct_type or is_dir:
+                json_node = jstree.Node(f, id + f).jsonData()
+                if is_dir : json_node['children'] = True
+                if correct_type: json_node['icon'] = 'jstree-file'
+                json_node['li_attr']['title'] = f
+                json.append(json_node)
+    return gluon.contrib.simplejson.dumps(json, separators=(',',':'))
