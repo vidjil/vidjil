@@ -165,7 +165,7 @@ QUnit.test("focus/hide/reset_filter", function(assert) {
     m.multiSelect([0,2,3])
     assert.equal(m.someClonesFiltered, false, "no clones are filtered")
 
-    m.focus()
+    m.focusSelected()
     assert.equal(m.someClonesFiltered, true, "some clones are filtered")
     assert.equal(m.clone(0).isFiltered, false, "clone 0 is not filtered")
     assert.equal(m.clone(1).isFiltered, true, "clone 1 is filtered")
@@ -174,7 +174,7 @@ QUnit.test("focus/hide/reset_filter", function(assert) {
     m.select(2)
     assert.equal(m.clone(2).isFiltered, false, "clone 2 is not filtered")
 
-    m.hide()
+    m.hideSelected()
     assert.equal(m.clone(2).isFiltered, true, "clone 2 is filtered")
 
     assert.equal(m.clone(0).isFiltered, false, "clone 0 is not filtered")

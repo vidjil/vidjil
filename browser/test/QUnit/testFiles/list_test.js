@@ -110,29 +110,29 @@ QUnit.test("filters", function(assert) {
     var clone_list = document.getElementById('list').lastChild.childNodes
     m.updateElemStyle([0,1,2,3]);
 
-    list.filter("test1");
+    m.filter("test1");
     setTimeout( function() {
         assert.ok(  $(clone_list[4]).is(':visible'), "filter id ('test1') : test1 is visible : Ok");
         assert.ok( !$(clone_list[3]).is(':visible'), "filter id ('test1') : test2 is not visible : Ok");
-        list.filter("aAaaaAAA");
+        m.filter("aAaaaAAA");
         ready()
     }, 100);
     setTimeout( function() {
         assert.ok(  $(clone_list[4]).is(':visible'), "filter seq ('aAaaaAAA') : test1 is  visible : Ok");
         assert.ok( !$(clone_list[3]).is(':visible'), "filter seq ('aAaaaAAA') : test2 is not visible : Ok");
-        list.filter("TGGGGGGg");
+        m.filter("TGGGGGGg");
         ready()
     }, 200);
     setTimeout( function() {
         assert.ok( !$(clone_list[4]).is(':visible'), "filter revComp ('TGGGGGGg') : test1 is not visible : Ok");
         assert.ok(  $(clone_list[3]).is(':visible'), "filter revComp ('TGGGGGGg') : test2 is visible : Ok");
-        list.filter("CCCCa");
+        m.filter("CCCCa");
         ready()
     }, 300);
     setTimeout( function() {
         assert.ok( !$(clone_list[4]).is(':visible'), "filter seq ('CCCCa') : test1 is not visible : Ok");
         assert.ok(  $(clone_list[3]).is(':visible'), "filter seq ('CCCCa') : test2 is visible : Ok");
-        list.reset_filter(false);
+        m.reset_filter(false);
         m.update();
         ready()
     }, 400);
