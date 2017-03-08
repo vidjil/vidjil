@@ -15,6 +15,9 @@ test_browser_unit:
   artifacts:
     paths:
     - browser/
+  only:
+    - /^feature-c\/.*$/
+    - prod-browser
 
 test_browser-functional:
   stage: test_functional
@@ -26,6 +29,9 @@ test_browser-functional:
   artifacts:
     paths:
     - browser/
+  only:
+    - /^feature-c\/.*$/
+    - prod-browser
 
 deploy:
   stage: deploy
@@ -35,3 +41,5 @@ deploy:
   environment:
     name: $CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
+  only:
+    - /^feature-c\/.*$/
