@@ -210,6 +210,11 @@ Sequence Segmenter::getSequence() const {
 string Segmenter::getJunction(int l) const {
   assert(isSegmented());
 
+  // '-w all'
+  if (l == NO_LIMIT_VALUE)
+    return getSequence().sequence;
+
+  // Regular '-w'
   int start = (getLeft() + getRight())/2 - l/2;
   
   if (start < 0 or start + l > (int)sequence.size())  // TODO: +l ou +l-1 ?
