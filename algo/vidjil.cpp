@@ -262,9 +262,9 @@ void usage(char *progname, bool advanced)
 
        << endl 
        << "Examples (see doc/algo.org)" << endl
-       << "  " << progname << " -c clones   -g germline/homo-sapiens.g     -2 -3     data/Stanford_S22.fasta   # (basic usage, detect the locus for each read, including unusual/unexpected recombinations)" << endl
-       << "  " << progname << " -c clones   -g germline/homo-sapiens.g:IGH    -3     data/Stanford_S22.fasta   # (restrict to IGH complete locus)" << endl
-       << "  " << progname << " -c clones   -g germline/homo-sapiens.g     -2 -3     data/Stanford_S22.fasta   # (detect the locus for each read, including unusual/unexpected recombinations)" << endl
+       << "  " << progname << " -c clones   -g germline/homo-sapiens.g     -2 -3     data/Stanford_S22.fasta   # (basic usage, detect the locus for each read," << endl
+       << "                                                                                          #  including unexpected recombinations, analyzes CDR3)" << endl
+       << "  " << progname << " -c clones   -g germline/homo-sapiens.g:IGH    -3     data/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
        << "  " << progname << " -c windows  -g germline/homo-sapiens.g     -2 -uu -U data/Stanford_S22.fasta   # (detect the locus, splits all the reads into large files)" << endl
        << "  " << progname << " -c segment  -g germline/homo-sapiens.g     -2 -3     data/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing)" << endl
        << "  " << progname << " -c germlines -g germline/homo-sapiens.g              data/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
