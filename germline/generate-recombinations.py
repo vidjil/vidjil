@@ -151,6 +151,7 @@ class vdj_recombination:
             nb_deletions_start = 0
             nb_deletions_end = 0
             N_insertions = ''
+            sequence.seq = sequence.seq.translate(None, '.')
 
             if i > 0:
                 # Start deletion
