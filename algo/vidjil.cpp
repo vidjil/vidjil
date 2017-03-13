@@ -211,7 +211,7 @@ void usage(char *progname, bool advanced)
        << endl
 
        << "Limits to further analyze some clones" << endl
-       << "  -y <nb>       maximal number of clones computed with a representative ('" << NO_LIMIT << "': no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
+       << "  -y <nb>       maximal number of clones computed with a consensus sequence ('" << NO_LIMIT << "': no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
        << "  -z <nb>       maximal number of clones to be analyzed with a full V(D)J designation ('" << NO_LIMIT << "': no limit, do not use) (default: " << DEFAULT_MAX_CLONES << ")" << endl
        << "  -A            reports and segments all clones (-r 0 -% 0 -y " << NO_LIMIT << " -z " << NO_LIMIT << "), to be used only on very small datasets (for example -AX 20)" << endl
        << "  -x <nb>       maximal number of reads to process ('" << NO_LIMIT << "': no limit, default), only first reads" << endl
@@ -1490,7 +1490,7 @@ int main (int argc, char **argv)
         cout << "Please review the " << nb_edges << " suggested edge(s) in " << out_dir+EDGES_FILENAME << endl ;
       }
 
-    cout << "Comparing clone representatives 2 by 2" << endl ;
+    cout << "Comparing clone consensus sequences 2 by 2" << endl ;
     list<Sequence> first_representatives = keep_n_first<Sequence>(representatives,
                                                                   LIMIT_DISPLAY);
     SimilarityMatrix matrix = compare_all(first_representatives,

@@ -22,7 +22,7 @@ from a set of reads and detects "windows" overlapping the actual CDR3.
 This is based on an fast and reliable seed-based heuristic and allows
 to output all sequenced clones. The analysis is extremely fast
 because, in the first phase, no alignment is performed with database
-germline sequences. At the end, only the representative sequences 
+germline sequences. At the end, only the consensus sequences
 of each clone have to be analyzed. Vidjil can also cluster similar
 clones, or leave this to the user after a manual review in the web application.
 
@@ -332,7 +332,7 @@ Limits to report a clone (or a window)
   -% <ratio>    minimal percentage of reads supporting a clone (default: 0)
 
 Limits to further analyze some clones
-  -y <nb>       maximal number of clones computed with a representative ('all': no limit) (default: 100)
+  -y <nb>       maximal number of clones computed with a consensus sequence ('all': no limit) (default: 100)
   -z <nb>       maximal number of clones to be analyzed with a full V(D)J designation ('all': no limit, do not use) (default: 100)
   -A            reports and segments all clones (-r 1 -% 0 -y all -z all), to be used only on very small datasets
 #+END_EXAMPLE
@@ -345,10 +345,10 @@ have a significant read support. *You should use* =-r 1= *if you
 want to detect all clones starting from the first read* (especially for
 MRD detection).
 
-The =-y= option limits the number of clones for which a representative
+The =-y= option limits the number of clones for which a consensus
 sequence is computed. Usually you do not need to have more
-representatives (see below), but you can safely put =-y all= if you want
-to compute all representative sequences.
+consensus (see below), but you can safely put =-y all= if you want
+to compute all consensus sequences.
 
 The =-z= option limits the number of clones that are fully analyzed,
 /with their V(D)J designation and possibly a CDR3 detection/,
@@ -365,7 +365,7 @@ Note that even if a clone is not in the top 100 (or 200, or 500) but
 still passes the =-r=, =-%= options, it is still reported in both the =.vidjil=
 and =.vdj.fa= files. If the clone is at some MRD point in the top 100 (or 200, or 500),
 it will be fully analyzed/segmented by this other point (and then
-collected by the =fuse.py= script, using representatives computed at this
+collected by the =fuse.py= script, using consensus sequences computed at this
 other point, and then, on the web application, correctly displayed on the grid).
 *Thus is advised to leave the default* =-z 100= *option
 for the majority of uses.*
@@ -456,7 +456,7 @@ The main output of Vidjil (with the default =-c clones= command) are two followi
 
  - The =.vidjil= file is /the file for the Vidjil web application/.
    The file is in a =.json= format (detailed in [[file:format-analysis.org][format-analysis.org]])
-   describing the windows and their count, the representatives (=-y=),
+   describing the windows and their count, the consensus sequences (=-y=),
    the detailed V(D)J and CDR3 designation (=-z=, see warning below), and possibly
    the results of the further clustering.
 
@@ -468,7 +468,7 @@ The main output of Vidjil (with the default =-c clones= command) are two followi
 
  - The =.vdj.fa= file is /a FASTA file for further processing by other bioinformatics tools/.
    The sequences are at least the windows (and their count in the headers) or
-   the representatives (=-y=) when they have been computed.
+   the consensus sequences (=-y=) when they have been computed.
    The headers include the count of each window, and further includes the
    detailed V(D)J and CDR3 designation (=-z=, see warning below), given in a '.vdj' format, see below.
    The further clustering is not output in this file.
@@ -500,7 +500,7 @@ Windows of size 50 (modifiable by =-w=) have been extracted.
 The first window has 8 occurrences, the second window has 5 occurrences.
 
 The =out/seq/clone.fa-*= contains the detailed analysis by clone, with
-the window, the representative sequence, as well as with the most similar V, (D) and J germline genes:
+the window, the consensus sequence, as well as with the most similar V, (D) and J germline genes:
 
 #+BEGIN_EXAMPLE
 >clone-001--IGH--0000008--0.0608%--window
