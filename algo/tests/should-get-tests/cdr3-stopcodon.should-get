@@ -1,0 +1,8 @@
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -c segment -3 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG $VIDJIL_DIR/data/cdr3-stopcodon.fa
+!LOG: out/cdr3-stopcodon.vidjil
+
+$ Two identical junctions in JSON
+2: "CATWDRKNYYKKLF"
+
+$ But only one productive
+1: "productive": true
