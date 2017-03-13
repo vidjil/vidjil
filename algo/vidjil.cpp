@@ -576,8 +576,8 @@ int main (int argc, char **argv)
       case 'A': // --all
 	ratio_reads_clone = 0 ;
 	min_reads_clone = 1 ;
-	max_representatives = -1 ;
-	max_clones = -1 ;
+	max_representatives = NO_LIMIT_VALUE ;
+	max_clones = NO_LIMIT_VALUE ;
 	break ;
 
       case 'X':
