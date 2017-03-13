@@ -65,16 +65,17 @@ Bug reports, issues and patches are welcome.
 
 * The Vidjil team
 
-Vidjil is developed by [[http://cristal.univ-lille.fr/~giraud][Mathieu Giraud]], Ryan Herbert, Tatiana Rocher and  [[http://cristal.univ-lille.fr/~salson][Mikaël Salson]]
+Vidjil is developed by Aurélien Béliard, [[http://cristal.univ-lille.fr/~giraud][Mathieu Giraud]], Ryan Herbert, Tatiana Rocher and [[http://cristal.univ-lille.fr/~salson][Mikaël Salson]]
 from the [[http://cristal.univ-lille.fr/bonsai][Bonsai bioinformatics team]] (CRIStAL, CNRS, U. Lille, Inria Lille).
 Vidjil is also developed by external colleagues:
 Marc Duez located in Bristol (School of Social and Community Medicine, University of Bristol)
-and Florian Thonier located in Paris (department of hematology, Necker hospital)
+and Florian Thonier located in Rennes (department of hematology)
 Vidjil is developed in collaboration with 
 the [[http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html][department of Hematology]] of CHRU Lille, 
 the [[http://www.ircl.org/plate-forme-genomique.html][Functional and Structural Genomic Platform]] (U. Lille 2, IFR-114, IRCL), 
 and the [[http://www.euroclonality.org/][EuroClonality-NGS]] working group.
-The research is supported by SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), by Région Nord-Pas-de-Calais (ABILES) and by Inria.
+The research is supported by SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), by Région Nord-Pas-de-Calais/Hauts-de-France (ABILES),
+by Inria and by InCA.
 
 * References
 
