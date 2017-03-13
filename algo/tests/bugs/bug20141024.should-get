@@ -6,5 +6,5 @@ $ No invalid read with short sequences
 e1:ERROR SUMMARY: 0 errors from 0 contexts
 
 $ No memory leak
-0:still reachable: [1-9][0-9]+ bytes in .* blocks
+0:still reachable: [1-9][0-9]* bytes in .* blocks
 
