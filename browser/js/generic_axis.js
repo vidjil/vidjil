@@ -80,7 +80,8 @@ GenericAxis.prototype = {
             for (var i=0; i < values.length; i++) {
                 var value = values[i];
                 var convert = this.applyConverter(value);
-                if (labels.indexOf(convert) != -1 && label_mapping[convert] == undefined)
+                if (labels.indexOf(convert) != -1) {
+                    if (typeof label_mapping[convert] === 'undefined') {
                         this.addLabel("line", convert, labels.indexOf(convert), convert);
                     }
                 } else {
