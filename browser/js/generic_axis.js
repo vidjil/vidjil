@@ -51,9 +51,23 @@ GenericAxis.prototype = {
         this.populateLabels(labels);
         this.populateValueMapping();
         if (sort)
-            this.labels.sort();
+            this.labels.sort(this.compareLabels);
 
         return this;
+    },
+
+    compareLabels: function(lab1, lab2) {
+        var a = lab1.text;
+        var b = lab2.text;
+        if (typeof a === 'undefined') return (typeof b === 'undefined')  ? 0 :  -1;
+        if (typeof b === 'undefined') return (typeof a === 'undefined')  ? 0 :  1;
+  
+        if (a.constructor === String) {
+            if (b.constructor === String) return va.localeCompare(vb);
+            if (b.constructor === Number ) return 1
+        }
+ 
+        if (a.constructor === Number) return (b.constructor === Number ) ? (a-b) : -1;
     },
 
     populateLabels: function(labels) {
