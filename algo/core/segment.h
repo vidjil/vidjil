@@ -197,7 +197,7 @@ protected:
    *         The junction is revcomp-ed if the original string comes from reverse
    *         strand.
    */
-  string getJunction(int l) const;
+  string getJunction(int l, int shift=0) const;
 
   /**
    * @return the left position (on forward strand) of the segmentation.
