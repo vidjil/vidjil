@@ -147,7 +147,7 @@ void usage(char *progname, bool advanced)
 
   cerr << "Command selection" << endl
        << "  -c <command>"
-       << "\t"     << COMMAND_CLONES    << "  \t locus detection, window extraction, clone gathering (default command, most efficient, all outputs)" << endl
+       << "\t"     << COMMAND_CLONES    << "  \t locus detection, window extraction, clone clustering (default command, most efficient, all outputs)" << endl
        << "  \t\t" << COMMAND_WINDOWS   << "  \t locus detection, window extraction" << endl
        << "  \t\t" << COMMAND_SEGMENT   << "  \t detailed V(D)J designation (not recommended)" << endl
        << "  \t\t" << COMMAND_GERMLINES << "  \t statistics on k-mers in different germlines" << endl
@@ -800,7 +800,7 @@ int main (int argc, char **argv)
   if (max_clones == NO_LIMIT_VALUE || max_clones > WARN_MAX_CLONES || command == CMD_SEGMENT)
     {
       cout << "* Vidjil's purpose is to efficiently extract windows overlapping the CDR3" << endl
-           << "* to gather reads into clones ('-c clones')." << endl
+           << "* to cluster reads into clones ('-c clones')." << endl
            << "* Computing accurate V(D)J designations for many sequences ('-c segment' or large '-z' values)" << endl
            << "* is slow and should be done only on small datasets or for testing purposes." << endl
 	   << "* More information is provided in the 'doc/algo.org' file." << endl 

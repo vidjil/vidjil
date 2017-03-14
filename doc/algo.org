@@ -284,8 +284,8 @@ explanation can be found in (Giraud, Salson and al., 2014).
 The =-s= or =-k= option selects the seed used for the k-mer V/J affectation.
 
 The =-w= option fixes the size of the "window" that is the main
-identifier to gather clones. The default value (=-w 50=) was selected
-to ensure a high-quality clone gathering: reads are clustered when
+identifier to cluster clones. The default value (=-w 50=) was selected
+to ensure a high-quality clone clustering: reads are clustered when
 they /exactly/ share, at the nucleotide level, a 50 bp-window centered
 on the CDR3. No sequencing errors are corrected inside this window.
 The center of the "window", predicted by the high-throughput heuristic, may
@@ -295,7 +295,7 @@ in >99% of cases). The extracted window should be large enough to
 fully contain the CDR3 as well as some part of the end of the V and
 the start of the J, or at least some specific N region, to uniquely identify a clone.
 
-Setting =-w= to higher values (such as =-w 60= or =-w 100=) makes the clone gathering
+Setting =-w= to higher values (such as =-w 60= or =-w 100=) makes the clone clustering
 even more conservative, enabling to split clones with low specificity (such as IGH with very
 large D, short or no N regions and almost no somatic hypermutations). However, such settings
 may "segment" (analyze) less reads, depending on the read length of your data, and may also
@@ -533,7 +533,7 @@ Several [[https://en.wikipedia.org/wiki/Diversity_index][diversity indices]] are
 - E  (=index_E_equitability=): Shannon's equitability
 - Ds (=index_Ds_diversity=): Simpson's diversity
 
-E ans Ds values are between 0 (no diversity, one clone gathers all analyzed reads)
+E ans Ds values are between 0 (no diversity, one clone clusters all analyzed reads)
 and 1 (full diversity, each analyzed read belongs to a different clone).
 These values are now computed on the windows, before any further clustering.
 PCR and sequencing errors can thus lead to slighlty over-estimate the diversity.
@@ -620,7 +620,7 @@ in the following situations:
 
       Note that these designations are relatively slow to compute, especially
       for the IGH locus. However, they
-      are not at the core of the Vidjil clone gathering method (which
+      are not at the core of the Vidjil clone clustering method (which
       relies only on the 'window', see above).
       To check the quality of these designations, the automated test suite include
       sequences with manually curated V(D)J designations (see [[http://git.vidjil.org/blob/master/doc/should-vdj.org][should-vdj.org]]).
@@ -685,7 +685,7 @@ require either the =-G germline/IGH= option, or the multi-germline =-g germline=
 
 #+BEGIN_SRC sh
 ./vidjil -G germline/IGH -3 data/Stanford_S22.fasta
-   # Gather the reads into clones, based on windows overlapping IGH CDR3s.
+   # Cluster the reads into clones, based on windows overlapping IGH CDR3s.
    # Assign the VDJ genes and try to detect the CDR3 of each clone.
    # Summary of clones is available both on stdout, in out/Stanford_S22.vdj.fa and in out/Stanford_S22.vidjil.
 #+END_SRC
@@ -693,7 +693,7 @@ require either the =-G germline/IGH= option, or the multi-germline =-g germline=
 #+BEGIN_SRC sh
 ./vidjil -g germline -i -2 -3 -d data/reads.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
-   # Gather the reads into clones, again based on windows overlapping the detected CDR3s.
+   # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
    # Assign the VDJ genes (including multiple D) and try to detect the CDR3 of each clone.
    # Summary of clones is available both on stdout, in out/reads.vdj.fa and in out/reads.vidjil.
 #+END_SRC
@@ -704,7 +704,7 @@ require either the =-G germline/IGH= option, or the multi-germline =-g germline=
 #+BEGIN_SRC sh
 ./vidjil -g germline -i -2 -U data/reads.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
-   # Gather the reads into clones, again based on windows overlapping the detected CDR3s.
+   # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
    # Assign the VDJ genes and try to detect the CDR3 of each clone.
    # The out/reads.segmented.vdj.fa include all reads where a V(D)J recombination was found
 #+END_SRC
@@ -720,12 +720,12 @@ This file will be relatively small (a few kB or MB) and can be taken again as an
 #+BEGIN_SRC sh
 ./vidjil -c clones -G germline/IGH -r 1 ./data/clones_simul.fa
    # Extracts the windows with at least 1 read each (-r 1, the default being -r 5)
-   # then gather them into clones
+   # then cluster them into clones
 #+END_SRC
 
 #+BEGIN_SRC sh
 ./vidjil -c clones -G germline/IGH -r 1 -n 5 ./data/clones_simul.fa
-   # Window extraction + clone gathering,
+   # Window extraction + clone clustering,
    # with automatic clustering, distance five (-n 5)
    # The result of the automatic clustering is in the .vidjil file
    # and can been seen/edited in the web application.
@@ -733,7 +733,7 @@ This file will be relatively small (a few kB or MB) and can be taken again as an
 
 #+BEGIN_SRC sh
 ./vidjil -c segment -g germline -i -2 -3 -d data/segment_S22.fa
-   # Detailed V(D)J designation, including multiple D, and CDR3 detection on all reads, without clone gathering
+   # Detailed V(D)J designation, including multiple D, and CDR3 detection on all reads, without clone clustering
    # (this is slow and should only be used for testing, or on a small file)
 #+END_SRC
 
