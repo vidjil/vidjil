@@ -45,7 +45,7 @@ enum SEGMENTED { NOT_PROCESSED,
 		 TOTAL_SEG_AND_WINDOW,
                  SEG_PLUS, SEG_MINUS,
                  UNSEG_TOO_SHORT, UNSEG_STRAND_NOT_CONSISTENT,
-		 UNSEG_TOO_FEW_ZERO,  UNSEG_TOO_FEW_J, UNSEG_TOO_FEW_V,
+		 UNSEG_TOO_FEW_ZERO,  UNSEG_ONLY_V, UNSEG_ONLY_J,
                  UNSEG_BAD_DELTA_MIN, UNSEG_AMBIGUOUS,
 		 UNSEG_TOO_SHORT_FOR_WINDOW,
 
@@ -156,7 +156,7 @@ protected:
 
   /**
    * Compares evalue_left, evalue_right and evalue against the provided threshold
-   * @post some evalue is above the threshold ==> because is set to UNSEG_TOO_FEW_ZERO, UNSEG_TOO_FEW_V or UNSEG_TOO_FEW_J
+   * @post some evalue is above the threshold ==> because is set to UNSEG_TOO_FEW_ZERO, UNSEG_ONLY_J or UNSEG_ONLY_V
    */
   void checkLeftRightEvaluesThreshold(double threshold, int strand);
 

@@ -262,9 +262,9 @@ void Segmenter::checkLeftRightEvaluesThreshold(double threshold, int strand)
   if (evalue_left >= threshold && evalue_right >= threshold)
     because = UNSEG_TOO_FEW_ZERO ;
   else if ((strand == 1 ? evalue_left : evalue_right) >= threshold)
-    because = UNSEG_TOO_FEW_V ;
+    because = UNSEG_ONLY_J ;
   else if ((strand == 1 ? evalue_right : evalue_left) >= threshold)
-    because = UNSEG_TOO_FEW_J ;
+    because = UNSEG_ONLY_V ;
   else if (evalue >= threshold) // left and right are <= threshold, but their sum is > threshold
     because = UNSEG_TOO_FEW_ZERO ;
 }
@@ -618,7 +618,7 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   evalue_right = pvalues.second * multiplier ;
   evalue = evalue_left + evalue_right ;
 
-  // This can lead to UNSEG_TOO_FEW_ZERO or UNSEG_TOO_FEW_V/J
+  // This can lead to UNSEG_TOO_FEW_ZERO or UNSEG_ONLY_V/J
   checkLeftRightEvaluesThreshold(threshold, strand);
 
   if (because != NOT_PROCESSED)
