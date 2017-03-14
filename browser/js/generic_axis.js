@@ -82,6 +82,10 @@ GenericAxis.prototype = {
                 var convert = this.applyConverter(value);
                 if (labels.indexOf(convert) != -1 && label_mapping[convert] == undefined)
                         this.addLabel("line", convert, labels.indexOf(convert), convert);
+                    }
+                } else {
+                    this.addLabel("line", "?", labels.length, "?");
+                }
             }
         }
     },
@@ -107,6 +111,8 @@ GenericAxis.prototype = {
         var val;
         try {
             val = this.converter(value);
+            if (typeof val === 'undefined' || val == "undefined")
+                val = "?";
         } catch(e) {
             val = "?";
         }
@@ -144,8 +150,11 @@ GenericAxis.prototype = {
         this.value_mapping = {};
     },
     
-    pos : function(element) {
-        return this.label_mapping[this.applyConverter(element)];
+    pos: function(element) {
+        var value = this.label_mapping[this.applyConverter(element)];
+        if (typeof value === 'undefined')
+            value = this.label_mapping["?"];
+        return value;
     },
 
     computeLabels(values) {
