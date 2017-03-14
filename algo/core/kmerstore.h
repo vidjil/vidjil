@@ -364,6 +364,8 @@ int IKmerStore<T>::atMostMaxSizeIndexing(int n) const {
 template<class T>
 double IKmerStore<T>::getProbabilityAtLeastOrAbove(const T kmer, int at_least, int length) const {
 
+  if (at_least == 0) return 1.0; // even if 'length' is very small
+  
   // n: number of kmers in the sequence
   int n = length - getS() + 1;
   float index_load = getIndexLoad(kmer) ;
