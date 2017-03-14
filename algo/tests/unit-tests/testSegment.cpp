@@ -228,6 +228,14 @@ void testSegmentationCause(IndexTypes index) {
       TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       TAP_TEST(ks.getJunction(21) == "GGCAGTTGGAACAACACTTGT",
                TEST_KMER_JUNCTION, "window: " << ks.getJunction(21));
+
+      TAP_TEST(ks.getJunction(21, -5) == "ACTTGGGCAGTTGGAACAACA",
+               TEST_KMER_JUNCTION, "window (-7): " << ks.getJunction(21, -7));
+      TAP_TEST(ks.getJunction(21, 9) == "AACAACACTTGTTGTCACAGG",
+               TEST_KMER_JUNCTION, "window (+9): " << ks.getJunction(21, 9));
+      TAP_TEST(ks.getJunction(21, 140) == "",
+               TEST_KMER_JUNCTION, "window (+140): " << ks.getJunction(21, 9));
+
       TAP_TEST(ks.getJunction(NO_LIMIT_VALUE) == "TCTTCCAACTTGGAAGGGAGAACGAAGTCAGTCACCAGGCTGACTGGGTCATCTGCTGAACTTGGGCAGTTGGAACAACACTTGTTGTCACAGGAATTATTATAAGAAACTCTTTGGCAGTGGAACAACACTGGTTGTCAC",
                TEST_KMER_JUNCTION, "window: " << ks.getJunction(NO_LIMIT_VALUE));
       TAP_TEST(ks.getLeft() == 69, TEST_KMER_LEFT, "left = " << ks.getLeft() << ", " << ks.getInfoLineWithAffects());
