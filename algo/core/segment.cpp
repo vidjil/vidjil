@@ -612,35 +612,24 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   affect_infos max;
   max = kaa->getMaximum(before, after);
 
-  // We did not find a good segmentation point
-  if (!max.max_found) {
-    // We labeled it detected if there were both enough affect_5 and enough affect_3
-    bool detected_before = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD);
-    bool detected_after = (max.nb_after_left + max.nb_after_right >= DETECT_THRESHOLD);
-
-    if (detected_before && detected_after)
-      because = UNSEG_AMBIGUOUS ;
-    else if ((strand == 1 && detected_before) || (strand == -1 && detected_after))
-      because = UNSEG_TOO_FEW_J ;
-    else if ((strand == 1 && detected_after) || (strand == -1 && detected_before))
-      because = UNSEG_TOO_FEW_V ;
-    else
-      because = UNSEG_TOO_FEW_ZERO ;
-
-    return ;
-  }
-
-
   // E-values
   pair <double, double> pvalues = kaa->getLeftRightProbabilityAtLeastOrAbove();
   evalue_left = pvalues.first * multiplier ;
   evalue_right = pvalues.second * multiplier ;
   evalue = evalue_left + evalue_right ;
 
+  // This can lead to UNSEG_TOO_FEW_ZERO or UNSEG_TOO_FEW_V/J
   checkLeftRightEvaluesThreshold(threshold, strand);
 
   if (because != NOT_PROCESSED)
     return ;
+
+  if (!max.max_found) {
+    // The 'ratioMin' checks at the end of kaa->getMaximum() failed
+    because = UNSEG_AMBIGUOUS;
+    return ;
+  }
+  
 
    // There was a good segmentation point
 

@@ -23,13 +23,7 @@
 
 #define DETECT_THRESHOLD_STRAND 5   /* If the number of total affectations
                                        is above this threshold, then a sequence with no clearly attributed
-                                       stranf will be marked as STRAND_NOT_CONSISTEN */
-
-#define DETECT_THRESHOLD 5      /* This threshold only affects the classification of unsegmented sequences.
-                                   If the numbers of both V and J affectations are above this threshold,
-                                   then the unsegmented sequence will be marked as AMBIGUOUS.
-                                   Otherwise, if the number of either V or J affectations if above this threshold,
-                                   then the unsegmented sequence will be marked as either ONLY V or ONLY J. */
+                                       strand will be marked as STRAND_NOT_CONSISTENT */
 
 #define JSON_REMEMBER_BEST  4   /* The number of V/D/J predictions to keep  */
 
