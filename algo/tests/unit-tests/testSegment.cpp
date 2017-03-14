@@ -148,7 +148,7 @@ void testSegmentationCause(IndexTypes index) {
   int nb_checked = 0;
 
   for (int i = 0; i < data.size(); i++) {
-    KmerSegmenter ks(data.read(i), germline);
+    KmerSegmenter ks(data.read(i), germline, 0.01);
     
     if (data.read(i).label == "seq-seg+") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "seq is " << data.label(i));
@@ -269,7 +269,9 @@ void testExtractor(IndexTypes index) {
   we.setSegmentedOutput(&out_seg);
   we.setUnsegmentedOutput(&out_unseg);
 
-  WindowsStorage *ws = we.extract(&data, 30, labels);
+  WindowsStorage *ws = we.extract(&data, 30, labels,
+                                  false, false,
+                                  0.01);
   // we.out_stats(cout);
 
   TAP_TEST(we.getNbReads() == 15, TEST_EXTRACTOR_NB_READS, "");
