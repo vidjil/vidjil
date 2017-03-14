@@ -54,7 +54,7 @@ Object.assign(CustomAxis.prototype, {
      * @param {boolean} percent - display label as percent ( value 1 => 100%)
      * @param {boolean} use_log - use a logarithmic scale instead of a linear
      * */
-    init: function(fct, default_min, default_max, use_log, display_label){
+    init: function(fct, labels, sort, default_min, default_max, use_log, display_label){
         use_log = typeof use_log !== 'undefined' ? use_log : false;
         display_label = typeof display_label !== 'undefined' ? display_label : true;
         var self = this;
