@@ -194,7 +194,7 @@ void usage(char *progname, bool advanced)
 #ifndef NO_SPACED_SEEDS
        << "                (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)" << endl
 #endif
-       << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ")" << endl
+       << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ") ('" << NO_LIMIT << "': use all the read, no window clustering)" << endl
        << "  -e <float>    maximal e-value for determining if a V-J segmentation can be trusted (default: " << THRESHOLD_NB_EXPECTED << ")" << endl
        << "  -t <int>      trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt (default: " << DEFAULT_TRIM << ") (0: no trim)" << endl
        << endl
@@ -512,7 +512,7 @@ int main (int argc, char **argv)
         break;
 
       case 'w':
-	wmer_size = atoi(optarg);
+	wmer_size = atoi_NO_LIMIT(optarg);
         break;
 
       case 'm':
@@ -721,7 +721,7 @@ int main (int argc, char **argv)
 #endif
 
 
-  if (wmer_size < 0)
+  if ((wmer_size< 0) && (wmer_size!= NO_LIMIT_VALUE))
     {
       cerr << ERROR_STRING << "Too small -w. The window size should be positive" << endl;
       exit(1);
@@ -1120,8 +1120,12 @@ int main (int argc, char **argv)
     int nb_segmented = we.getNbSegmented(TOTAL_SEG_AND_WINDOW);
     float ratio_segmented = 100 * (float) nb_segmented / nb_total_reads ;
 
-    stream_segmentation_info << "  ==> found " << windowsStorage->size() << " " << wmer_size << "-windows"
-	<< " in " << nb_segmented << " reads"
+    if (wmer_size != NO_LIMIT_VALUE)
+      stream_segmentation_info << "  ==> found " << windowsStorage->size() << " " << wmer_size<< "-windows in " ;
+    else
+      stream_segmentation_info << "  ==> consider as windows these " ;
+
+    stream_segmentation_info << nb_segmented << " reads"
 	<< " (" << setprecision(3) << ratio_segmented << "% of " <<  nb_total_reads << " reads)" << endl ;
   
     // warn if there are too few segmented sequences
