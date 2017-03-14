@@ -330,8 +330,8 @@ int main (int argc, char **argv)
   
   string comp_filename = COMP_FILENAME;
 
-  int k = DEFAULT_K ;
-  int w = DEFAULT_W ;
+  int kmer_size = DEFAULT_K ;
+  int wmer_size = DEFAULT_W ;
 
   IndexTypes indexType = KMER_INDEX;
 
@@ -498,7 +498,7 @@ int main (int argc, char **argv)
       case 's':
 #ifndef NO_SPACED_SEEDS
 	seed = string(optarg);
-	k = seed_weight(seed);
+	kmer_size = seed_weight(seed);
 	options_s_k++ ;
 #else
         cerr << "To enable the option -s, please compile without NO_SPACED_SEEDS" << endl;
@@ -506,13 +506,13 @@ int main (int argc, char **argv)
         break;
 
       case 'k':
-	k = atoi(optarg);
-	seed = seed_contiguous(k);
+	kmer_size = atoi(optarg);
+	seed = seed_contiguous(kmer_size);
 	options_s_k++ ;
         break;
 
       case 'w':
-	w = atoi(optarg);
+	wmer_size = atoi(optarg);
         break;
 
       case 'm':
@@ -690,7 +690,7 @@ int main (int argc, char **argv)
   // Default seeds
 
 #ifndef NO_SPACED_SEEDS
-  if (k == DEFAULT_K)
+  if (kmer_size == DEFAULT_K)
     {
       if (germline_system.find("TRA") != string::npos)
 	seed = SEED_S13 ;
@@ -701,7 +701,7 @@ int main (int argc, char **argv)
       else // TRD, TRG, IGK, IGL, custom, multi
 	seed = SEED_S10 ;
 
-      k = seed_weight(seed);
+      kmer_size = seed_weight(seed);
     }
 #else
   {
@@ -721,7 +721,7 @@ int main (int argc, char **argv)
 #endif
 
 
-  if (w < 0)
+  if (wmer_size < 0)
     {
       cerr << ERROR_STRING << "Too small -w. The window size should be positive" << endl;
       exit(1);
@@ -996,7 +996,7 @@ int main (int argc, char **argv)
           delete kaa;
 
 	  CountKmerAffectAnalyser ckaa(*index, seq);
-	  ckaa.setAllowedOverlap(k-1);
+	  ckaa.setAllowedOverlap(kmer_size-1);
 
 	  stats_max[affect_char(ckaa.max(forbidden).affect)]++ ;
 
@@ -1096,7 +1096,7 @@ int main (int argc, char **argv)
       we.setAffectsOutput(out_affects);
     }
 
-    WindowsStorage *windowsStorage = we.extract(reads, w,
+    WindowsStorage *windowsStorage = we.extract(reads, wmer_size,
                                                 windows_labels, only_labeled_windows,
                                                 keep_unsegmented_as_clone,
                                                 expected_value, nb_reads_for_evalue);
@@ -1120,7 +1120,7 @@ int main (int argc, char **argv)
     int nb_segmented = we.getNbSegmented(TOTAL_SEG_AND_WINDOW);
     float ratio_segmented = 100 * (float) nb_segmented / nb_total_reads ;
 
-    stream_segmentation_info << "  ==> found " << windowsStorage->size() << " " << w << "-windows"
+    stream_segmentation_info << "  ==> found " << windowsStorage->size() << " " << wmer_size << "-windows"
 	<< " in " << nb_segmented << " reads"
 	<< " (" << setprecision(3) << ratio_segmented << "% of " <<  nb_total_reads << " reads)" << endl ;
   
@@ -1215,7 +1215,7 @@ int main (int argc, char **argv)
 	    comp.save(( out_dir+f_basename + "." + comp_filename).c_str());
 	  }
        
-	clones_windows  = comp.cluster(forced_edges, w, cout, epsilon, minPts) ;
+	clones_windows  = comp.cluster(forced_edges, wmer_size, cout, epsilon, minPts) ;
 	comp.stat_cluster(clones_windows, cout );
 	comp.del();
 	cout << "  ==> " << clones_windows.size() << " clusters (" << f_json << ")" << endl ;
