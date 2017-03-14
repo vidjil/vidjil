@@ -273,7 +273,7 @@ Window prediction
                 (default: #####-#####, ######-######, #######-#######, depends on germline)
   -k <int>      k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)
                 (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)
-  -w <int>      w-mer size used for the length of the extracted window (default: 50)
+  -w <int>      w-mer size used for the length of the extracted window (default: 50) ('all': use all the read, no window clustering)
   -e <float>    maximal e-value for determining if a segmentation can be trusted (default: 'all', no limit)
   -t <int>      trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt (default: 0) (0: no trim)
 #+END_EXAMPLE
@@ -300,6 +300,10 @@ even more conservative, enabling to split clones with low specificity (such as I
 large D, short or no N regions and almost no somatic hypermutations). However, such settings
 may "segment" (analyze) less reads, depending on the read length of your data, and may also
 return more clones, as any sequencing error in the window is not corrected.
+
+The special =-w all= option takes all the read as the windows, completely disabling
+the clustering by windows and generally returning more clones. This should only be used on
+datasets where reads of the same clone do have exactly the same length.
 
 Setting =-w= to lower values than 50 may "segment" (analyze) a few more reads, depending
 on the read length of your data, but may in some cases falsely cluster reads from
