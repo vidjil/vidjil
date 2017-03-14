@@ -217,9 +217,11 @@ string Segmenter::getJunction(int l) const {
   // Regular '-w'
   int start = (getLeft() + getRight())/2 - l/2;
   
+  // Yield UNSEG_TOO_SHORT_FOR_WINDOW into windowExtractor
   if (start < 0 or start + l > (int)sequence.size())  // TODO: +l ou +l-1 ?
     return "" ;
 
+  // Window succesfully extracted
   return getSequence().sequence.substr(start, l);
 }
 
