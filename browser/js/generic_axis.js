@@ -81,7 +81,7 @@ GenericAxis.prototype = {
                 var value = values[i];
                 var convert = this.applyConverter(value);
                 if (labels.indexOf(convert) != -1 && label_mapping[convert] == undefined)
-                    label_mapping[convert] = this.label("line", convert, labels.indexOf(convert), convert);
+                        this.addLabel("line", convert, labels.indexOf(convert), convert);
             }
         }
     },
