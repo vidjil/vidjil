@@ -30,9 +30,10 @@
  * @param {Model} model 
  * @reverse {boolean} reverse - by default axis go from low to high but can be revsersed
  * */
-function CustomAxis (model, reverse) {
+function CustomAxis (model, clones, reverse) {
     this.m = model;
     this.labels = [];
+    this.clones = clones;
     this.reverse = reverse;
     GenericAxis.call(this);
 }
@@ -66,11 +67,11 @@ Object.assign(CustomAxis.prototype, {
         if (typeof min === 'function') min = min();
         if (typeof max === 'function') max = max();
 
-        for (var i in this.m.clones){
-            if (! this.m.clones[i].isVirtual()) {
+        for (var i in this.clones){
+            if (! this.clones[i].isVirtual()) {
                 var tmp;
                 try{
-                    tmp = this.fct(this.m.clones[i]);
+                    tmp = this.fct(this.clones[i]);
                 }catch(e){
                     tmp = undefined;
                 }

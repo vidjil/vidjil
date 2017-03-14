@@ -28,17 +28,16 @@
  * can provide the position of an element on it
  * @constructor
  * */
-function GenericAxis () {
+function GenericAxis (values) {
     this.labels = [];
     this.label_mapping = {};
-    this.values = [];
+    this.values = values;
     this.value_mapping = {};
 }
 
 GenericAxis.prototype = {
 
-    init : function (values, key, labels, sort) {
-        this.values = values;
+    init : function (key, labels, sort) {
         if (typeof sort === 'undefined') {sort = false;}
 
         if (typeof key === 'function') {
@@ -128,7 +127,6 @@ GenericAxis.prototype = {
     reset: function() {
         this.labels = [];
         this.label_mapping = {};
-        this.value = [];
         this.value_mapping = {};
     },
     
