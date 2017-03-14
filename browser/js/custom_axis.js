@@ -116,10 +116,10 @@ Object.assign(CustomAxis.prototype, {
         this.computeLabels(use_log, display_label, has_undefined)
     },
 
-    pos: function(cloneID) {
+    pos: function(clone) {
         var value, pos;
         try{
-            value = this.fct(this.m.clone(cloneID));
+            value = this.fct(clone);
         }catch(e){}
 
         if (typeof value != "undefined" && value != 'undefined'){
