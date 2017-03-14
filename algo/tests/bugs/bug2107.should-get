@@ -1,8 +1,11 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -r 1 -y 0 -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g ./bug2107.fa
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -e 1e-3 -r 1 -y 0 -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g ./bug2107.fa
 
+# No sequences are segmented
+1: junction detected in 0 reads
 
-# Sequences are not reported as 'only V', but as 'too few V/J'
-1: UNSEG only V .* 0
-1: UNSEG too few V/J .* 15
+# Most sequences are not reported as 'only V', but as 'too few V/J'
+1: UNSEG only V/.* 1
+1: UNSEG too few V/J .* 11
+
 
 
