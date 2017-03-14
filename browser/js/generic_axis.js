@@ -39,7 +39,7 @@ GenericAxis.prototype = {
 
     init : function (values, key, labels, sort) {
         this.values = values;
-        if (sort == undefined) {sort = false;}
+        if (typeof sort === 'undefined') {sort = false;}
 
         if (typeof key === 'function') {
             this.converter = key;
@@ -61,7 +61,7 @@ GenericAxis.prototype = {
         var values = this.values;
         var label_mapping = this.label_mapping;
 
-        if (labels == undefined)
+        if (typeof labels === 'undefined')
             this.computeLabels(values);
         else {
             for (var i=0; i < values.length; i++) {
@@ -81,8 +81,8 @@ GenericAxis.prototype = {
         for (var i = 0; i < values.length; i++) {
             var value = values[i];
             var convert = this.applyConverter(value);
-            if (label_mapping[convert] != undefined) {
-                if (value_mapping[convert] == undefined) {
+            if (label_mapping[convert] !== 'undefined') {
+                if (value_mapping[convert] === 'undefined') {
                     value_mapping[convert] = [];
                 }
                 value_mapping[convert].push(value);
