@@ -181,9 +181,9 @@ GenericAxis.prototype = {
      * add labels for barplot <br>
      * @param {Array} tab - barplot descriptor like the one made by Model.computeBarTab()
      * */
-    computeBarLabels : function (tab) {
+    computeBarLabels : function () {
         this.labels = [];
-        var length = Object.keys(tab).length;
+        var length = Object.keys(this.label_mapping).length;
 
         var step = 1 + Math.floor(length / NB_STEPS_BAR)
 
