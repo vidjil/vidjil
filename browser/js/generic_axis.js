@@ -149,6 +149,7 @@ GenericAxis.prototype = {
     reset: function() {
         this.labels = [];
         this.label_mapping = {};
+        this.values = [];
         this.value_mapping = {};
     },
     
