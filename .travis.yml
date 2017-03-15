@@ -38,6 +38,7 @@ script:
   - echo '"Tests, Algo (functional, .should_get)..."'  && echo -en 'travis_fold:start:script.test-algo-functional\\r'
   - make COVERAGE=1 should
   - echo -en 'travis_fold:end:script.test-algo-functional\\r'
+  - make clean
   ###
   - echo '"Tests, Algo (functional, .should-vdj.fa)..."'  && echo -en 'travis_fold:start:script.test-algo-functional-vdj\\r'
   - make shouldvdj
