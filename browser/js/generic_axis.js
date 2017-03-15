@@ -100,8 +100,8 @@ GenericAxis.prototype = {
         for (var i = 0; i < values.length; i++) {
             var value = values[i];
             var convert = this.applyConverter(value);
-            if (label_mapping[convert] !== 'undefined') {
-                if (value_mapping[convert] === 'undefined') {
+            if (typeof label_mapping[convert] !== 'undefined') {
+                if (typeof value_mapping[convert] === 'undefined') {
                     value_mapping[convert] = [];
                 }
                 value_mapping[convert].push(value);
