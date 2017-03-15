@@ -161,16 +161,22 @@ GenericAxis.prototype = {
 
     computeLabels(values) {
         var cursor = 0;
+        var labels = {};
         for (var i = 0; i < values.length; i++) {
             var value = values[i];
             var key = this.applyConverter(value);
             var has_undefined
             if (typeof key == 'undefined') {
                 has_undefined = true;
-            } else if (typeof this.label_mapping[key] === 'undefined') {
-                this.addLabel("line", key, cursor, key);
+            } else if (typeof labels[key] === 'undefined') {
+                labels[key] = this.label("line", cursor, key);
+                cursor++;
             }
-            cursor++;
+        }
+
+        for (var key in labels) {
+            var label = labels[key];
+            this.addLabel(label.type, label.text, label.pos/cursor, label.text);
         }
         if (has_undefined) {
             if (typeof this.label_mapping["?"] === 'undefined')
