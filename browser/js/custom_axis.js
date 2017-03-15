@@ -30,10 +30,10 @@
  * @param {Model} model 
  * @reverse {boolean} reverse - by default axis go from low to high but can be revsersed
  * */
-function CustomAxis (model, clones, reverse) {
+function CustomAxis (model, reverse) {
     this.m = model;
     this.labels = [];
-    this.clones = clones;
+    this.clones = [];
     this.reverse = reverse;
     GenericAxis.call(this);
 }
@@ -54,7 +54,8 @@ Object.assign(CustomAxis.prototype, {
      * @param {boolean} percent - display label as percent ( value 1 => 100%)
      * @param {boolean} use_log - use a logarithmic scale instead of a linear
      * */
-    init: function(fct, labels, sort, default_min, default_max, use_log, display_label){
+    init: function(clones, fct, labels, sort, default_min, default_max, use_log, display_label){
+        this.clones = clones;
         use_log = typeof use_log !== 'undefined' ? use_log : false;
         display_label = typeof display_label !== 'undefined' ? display_label : true;
         var self = this;
