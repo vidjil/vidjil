@@ -1491,14 +1491,14 @@ ScatterPlot.prototype = {
 
         // Clone position
 
-        var sys = this.m.clone(cloneID)
-            .get('germline')
+        var clone = this.m.clone(cloneID);
+        var sys = clone.get('germline');
         if (this.use_system_grid && this.m.system == "multi" && typeof sys != 'undefined' && sys != this.m.germlineV.system) {
             this.nodes[cloneID].x2 = this.systemGrid[sys].x * this.resizeW;
             this.nodes[cloneID].y2 = this.systemGrid[sys].y * this.resizeH;
         } else {
-            this.nodes[cloneID].x2 = this.axisX.pos(cloneID).pos * this.gridSizeW
-            this.nodes[cloneID].y2 = this.axisY.pos(cloneID).pos * this.gridSizeH
+            this.nodes[cloneID].x2 = this.axisX.pos(clone).pos * this.gridSizeW
+            this.nodes[cloneID].y2 = this.axisY.pos(clone).pos * this.gridSizeH
         }
 
     },
