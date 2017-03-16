@@ -34,7 +34,7 @@ function PercentCustomAxis (model, reverse) {
     this.m = model;
     this.labels = [];
     this.reverse = reverse;
-    CustomAxis.call(this);
+    CustomAxis.call(this, model, reverse);
 }
 
 PercentCustomAxis.prototype = Object.create(CustomAxis.prototype);
