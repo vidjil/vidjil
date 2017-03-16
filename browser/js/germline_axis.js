@@ -34,6 +34,8 @@ function GermlineAxis (model, reverse) {
     this.m = model
     this.labels = [];
     this.label_mapping = {};
+    this.values = [];
+    this.value_mapping = {};
     this.reverse = reverse;
     GenericAxis.call(this);
 }
@@ -47,6 +49,8 @@ Object.assign(GermlineAxis.prototype, {
     reset: function() {
         this.labels = [];
         this.label_mapping = {};
+        this.values = [];
+        this.value_mapping = {};
     },
     
     /**
