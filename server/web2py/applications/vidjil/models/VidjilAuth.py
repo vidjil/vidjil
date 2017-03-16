@@ -233,8 +233,8 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission(PermissionEnum.create_config, 'config', user = user)\
-            or self.id_admin(user)
+        return self.get_permission(PermissionEnum.create_config.value, 'config', user = user)\
+            or self.is_admin(user)
 
     def can_create_pre_process(self, user = None):
         '''
@@ -242,8 +242,7 @@ class VidjilAuth(Auth):
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission(PermissionEnum.create_pre_process, 'pre_process', user = user)\
-            or self.id_admin(user)
+        return self.get_permission(PermissionEnum.create_pre_process.value, 'pre_process', user = user)\
 
     def can_modify_patient(self, patient_id, user = None):
         '''
