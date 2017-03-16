@@ -31,7 +31,7 @@ class VidjilauthModel(unittest.TestCase):
         # Load the to-be-tested file
         execfile("applications/vidjil/models/VidjilAuth.py", globals())
         # set up default session/request/auth/...
-        global auth, parent_group, group, group_sec, group_ter, group_qua, group_qui, my_user_id, user_id_sec, count, patient_id, patient_id_sec, parent_user_id, admin_user_id, patient_id_ter, patient_id_qua, first_sample_set_id, sample_set_id, sample_set_id_sec, sample_set_id_ter, generic_sample_set_id, config_id, file_id, fused_file_id, run_id, generic_id
+        global auth, parent_group, group, group_sec, group_ter, group_qua, group_qui, my_user_id, user_id_sec, count, patient_id, patient_id_sec, parent_user_id, admin_user_id, patient_id_ter, patient_id_qua, first_sample_set_id, sample_set_id, sample_set_id_sec, sample_set_id_ter, generic_sample_set_id, config_id, file_id, fused_file_id, run_id, generic_id, pre_process_id
         auth = VidjilAuth(globals(), db)
 
         my_user_id = db.auth_user.insert(
