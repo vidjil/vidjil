@@ -112,35 +112,35 @@ def init_db_helper(force=False, admin_email="plop@plop.com", admin_password="123
         db.config.insert(
             name = 'multi+inc+xxx',
             program = 'vidjil',
-            command = '-c clones -3 -z 100 -r 1 -g germline -i -e 1 -2 -d -w 50 ',
+            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 ',
             fuse_command = '-t 100',
             info = 'multi-locus, with some incomplete/unusual/unexpected recombinations'
         )
         db.config.insert(
             name = 'multi+inc',
             program = 'vidjil',
-            command = '-c clones -3 -z 100 -r 1 -g germline -e 1 -w 50 ',
+            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -w 50 ',
             fuse_command = '-t 100',
             info = 'multi-locus, with some incomplete/unusual recombinations'
         )
         db.config.insert(
             name = 'multi',
             program = 'vidjil',
-            command = '-c clones -3 -z 100 -r 1 -g germline -i -e 1 -d -w 50 ',
+            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD -i -e 1 -d -w 50 ',
             fuse_command = '-t 100',
-            info = 'multi-locus'
+            info = 'multi-locus, only complete recombinations'
         )
         db.config.insert(
             name = 'TRG',
             program = 'vidjil',
-            command = '-c clones -3 -z 100 -r 1 -G germline/TRG ',
+            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:TRG ',
             fuse_command = '-t 100',
             info = 'TRG, VgJg'
         )
         db.config.insert(
             name = 'IGH',
             program = 'vidjil',
-            command = '-c clones -w 60 -d -3 -z 100 -r 1 -G germline/IGH ',
+            command = '-c clones -w 60 -d -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH ',
             fuse_command = '-t 100',
             info = 'IGH, Vh(Dh)Jh'
         )
