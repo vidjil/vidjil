@@ -62,6 +62,9 @@ Object.assign(GermlineAxis.prototype, {
     pos : function(clone) {
         var pos = this.applyConverter(clone);
         return this.label_mapping[pos];
+    },
+
+    converter: function(clone) {
         var gene_list = this.gene_list;
         var allele_list = this.allele_list;
         var total_gene = this.total_gene;
