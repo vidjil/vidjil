@@ -105,6 +105,10 @@ GenericAxis.prototype = {
                     value_mapping[convert] = [];
                 }
                 value_mapping[convert].push(value);
+            } else {
+                if (typeof value_mapping["?"] === 'undefined')
+                    value_mapping["?"] = [];
+                value_mapping["?"].push(value);
             }
         }
     },
