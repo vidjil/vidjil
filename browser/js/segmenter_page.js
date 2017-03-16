@@ -1,4 +1,4 @@
-var DEFAULT_SEGMENTER_ADDRESS = 'https://dev.vidjil.org/vidjil/segmenter';
+var DEFAULT_SEGMENTER_ADDRESS = 'https://db.vidjil.org/vidjil/segmenter';
 var model;
 var segmenter;
 var scatter;
