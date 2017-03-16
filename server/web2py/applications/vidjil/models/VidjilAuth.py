@@ -243,6 +243,7 @@ class VidjilAuth(Auth):
         If the user is None, the current user is taken into account
         '''
         return self.get_permission(PermissionEnum.create_pre_process.value, 'pre_process', user = user)\
+            or self.is_admin(user)
 
     def can_modify_patient(self, patient_id, user = None):
         '''
