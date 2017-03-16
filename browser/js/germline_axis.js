@@ -122,21 +122,20 @@ Object.assign(GermlineAxis.prototype, {
     init: function (germline, geneType, displayAllele) {
         this.reset()
         this.germline = germline;
-        var self = this;
         
-        var gene_list = self.germline.gene
-        var allele_list = self.germline.allele
+        var gene_list = this.germline.gene
+        var allele_list = this.germline.allele
         var total_gene = Object.keys(gene_list).length
         
-        self.type2;
-        if (geneType=="V") self.type2="5"
-        if (geneType=="D") self.type2="4"
-        if (geneType=="J") self.type2="3"
+        this.type2;
+        if (geneType=="V") this.type2="5"
+        if (geneType=="D") this.type2="4"
+        if (geneType=="J") this.type2="3"
         
         //labels
         for (var key in gene_list){
-            pos = self.getPos(gene_list[key].rank, total_gene)
-            self.addLabel("line", pos, key, this.germline.gene[key].color);
+            pos = this.getPos(gene_list[key].rank, total_gene)
+            this.addLabel("line", pos, key, this.germline.gene[key].color);
         }
         
         if (displayAllele){
@@ -144,16 +143,19 @@ Object.assign(GermlineAxis.prototype, {
                 var gene = key.split("*")[0]
                 var allele = key.split("*")[1]
                 var total_allele = gene_list[gene].n
-                var pos = self.getPos(gene_list[gene].rank, total_gene);
+                var pos = this.getPos(gene_list[gene].rank, total_gene);
                 pos += (1/(total_gene+1)) * ((allele_list[key].rank+0.5)/total_allele) - (0.5/(total_gene+1))
-                self.addLabel("subline", pos, "*"+allele, this.germline.allele[key].color);
+                this.addLabel("subline", pos, "*"+allele, this.germline.allele[key].color);
             }
         }
-        var pos = self.getPos(total_gene, total_gene);
-        self.addLabel("line", pos, "?", "");
-        self.gene_list = gene_list;
-        self.allele_list = allele_list;
-        self.total_gene = total_gene;
-        self.displayAllele = displayAllele;
+
+        this.populateValueMapping();
+
+        var pos = this.getPos(total_gene, total_gene);
+        this.addLabel("line", pos, "?", "");
+        this.gene_list = gene_list;
+        this.allele_list = allele_list;
+        this.total_gene = total_gene;
+        this.displayAllele = displayAllele;
     }
 })
