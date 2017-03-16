@@ -83,10 +83,10 @@ GenericAxis.prototype = {
                 var convert = this.applyConverter(value);
                 if (labels.indexOf(convert) != -1) {
                     if (typeof label_mapping[convert] === 'undefined') {
-                        this.addLabel("line", convert, labels.indexOf(convert), convert);
+                        this.addLabel("line", convert, labels.indexOf(convert)/labels.length, convert);
                     }
                 } else {
-                    this.addLabel("line", "?", labels.length, "?");
+                    this.addLabel("line", "?", 1, "?");
                 }
             }
         }
