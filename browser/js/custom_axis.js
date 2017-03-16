@@ -34,6 +34,7 @@ function CustomAxis (model, reverse) {
     this.m = model;
     this.labels = [];
     this.clones = [];
+    this.value_mapping = {};
     this.reverse = reverse;
     GenericAxis.call(this);
 }
@@ -68,20 +69,47 @@ Object.assign(CustomAxis.prototype, {
         if (typeof min === 'function') min = min();
         if (typeof max === 'function') max = max();
 
-        for (var i in this.clones){
-            if (! this.clones[i].isVirtual()) {
-                var tmp;
-                try{
-                    tmp = this.fct(this.clones[i]);
-                }catch(e){
-                    tmp = undefined;
-                }
+        if (typeof labels == "undefined") {
+            for (var i in this.clones){
+                if (! this.clones[i].isVirtual()) {
+                    var tmp;
+                    try{
+                        tmp = this.fct(this.clones[i]);
+                    }catch(e){
+                        tmp = undefined;
+                    }
 
-                if ( typeof tmp != "undefined" && !isNaN(tmp)){
-                    if ( tmp > max || typeof max == "undefined") max = tmp;
-                    if ( tmp < min || typeof min == "undefined") min = tmp;
-                } else {
-                    has_undefined = true
+                    if ( typeof tmp != "undefined" && !isNaN(tmp)){
+                        if ( tmp > max || typeof max == "undefined") max = tmp;
+                        if ( tmp < min || typeof min == "undefined") min = tmp;
+                    } else {
+                        has_undefined = true;
+                        this.value_mapping["?"] = [];
+                    }
+                }
+            }
+            for (var i=min; i<=max; i++){
+                this.value_mapping[i]=[];
+            }
+        } else {
+            for (var i in labels) {
+                this.value_mapping[i] = [];
+            }
+        }
+
+        for(var i in this.clones) {
+            var clone = clones[i];
+            if(!clone.isVirtual()) {
+                var value;
+                try{
+                    value = this.fct(clone);
+                }catch(e){
+                    value = undefined;
+                }
+                if (typeof value == "undefined" || typeof this.value_mapping[value] == "undefined" ) {
+                    this.value_mapping["?"].push(clone);
+                }else{
+                    this.value_mapping[value].push(clone);
                 }
             }
         }
