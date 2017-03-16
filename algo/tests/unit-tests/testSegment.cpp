@@ -277,6 +277,8 @@ void testBug2224(IndexTypes index) {
   TAP_TEST(json_output.count("affectValues") == 0, TEST_BUG2224, "");
   TAP_TEST(json_output.count("affectSigns") == 0, TEST_BUG2224, "");
   TAP_TEST(json_output.count("affectevalue") == 0, TEST_BUG2224, "");
+
+  delete germline;
 }
 
 
