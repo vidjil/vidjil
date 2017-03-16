@@ -174,6 +174,9 @@ enum {
   TEST_KMER_SEGMENT_OVERLAP,
   TEST_FINE_SEGMENT_OVERLAP,
 
+  /* Bugs */
+  TEST_BUG2224,
+
   NB_TESTS
 };
 
@@ -328,6 +331,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_KMER_SEGMENT_OVERLAP, "Test kmer segmentation with an overlap");
   RECORD_TAP_TEST(TEST_FINE_SEGMENT_OVERLAP, "Test fine segmentation with an overlap");
   RECORD_TAP_TEST(TEST_SEGMENT_REVCOMP, "Test segmentation on a sequence and its revcomp");
+  RECORD_TAP_TEST(TEST_BUG2224, "Test issue #2224 (seed longer than sequence)");
 }
 
 TAP_DECLARATIONS

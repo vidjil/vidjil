@@ -257,6 +257,29 @@ void testSegmentationCause(IndexTypes index) {
   delete germline;
 }
 
+void testBug2224(IndexTypes index) {
+  Fasta seqV("../../germline/homo-sapiens/TRGV.fa", 2);
+  Fasta seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
+
+  Fasta data(true, "virtual");
+  Sequence s = {">label", ">label", "ATTATATA", "", NULL, 0};
+  data.add(s);
+
+
+  Germline *germline ;
+  germline = new Germline("TRG", 'G', seqV, Fasta(), seqJ, 0, "###########");
+  germline->new_index(index);
+  germline->finish();
+
+  KmerSegmenter ks(data.read(0), germline);
+  TAP_TEST(ks.getKmerAffectAnalyser() == NULL, TEST_BUG2224, "");
+  json json_output = ks.toJson();
+  TAP_TEST(json_output.count("affectValues") == 0, TEST_BUG2224, "");
+  TAP_TEST(json_output.count("affectSigns") == 0, TEST_BUG2224, "");
+  TAP_TEST(json_output.count("affectevalue") == 0, TEST_BUG2224, "");
+}
+
+
 void testExtractor(IndexTypes index) {
   Fasta seqV("../../germline/homo-sapiens/TRGV.fa", 2);
   Fasta seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
@@ -386,4 +409,6 @@ void testSegment() {
   testOverlap();
   testFineSegment(KMER_INDEX);
   testFineSegment(AC_AUTOMATON);
+  testBug2224(KMER_INDEX);
+  testBug2224(AC_AUTOMATON);
 }

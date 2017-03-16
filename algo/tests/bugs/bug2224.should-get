@@ -1,5 +1,0 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -r 1 -z 0 -w 10 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DIR/data/Stanford_S22.fasta 2>&1
-
-# No test: we should just exit normally without segmentation fault
-$end of the program without error
-1:data file for the web application
