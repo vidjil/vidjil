@@ -928,10 +928,10 @@ ScatterPlot.prototype = {
             var x_pos = this.axisX.posBarLabel(k, tab_length)
             
             for (var j in this.barTab[i]){
-                var cloneID = this.barTab[i][j]
+                var clone = this.barTab[i][j]
                 height = 0;
-                if ( (!this.m.clone(cloneID).isVirtual()) & this.m.clone(cloneID).isActive() ) {
-                    height = this.m.clone(cloneID).getSize()/bar_max;
+                if ( (!clone.isVirtual()) & clone.isActive() ) {
+                    height = clone.getSize()/bar_max;
                 }
 
                 // Minimal height (does not affect y_pos)
@@ -948,8 +948,8 @@ ScatterPlot.prototype = {
             }
             k++;
         }
-        this.axisY.computeCustomLabels(0, bar_max, "percent", false, true);
-        this.axisX.computeCustomBarLabels(this.barTab)
+        //this.axisY.computeCustomLabels(0, bar_max);
+        //this.axisX.computeBarLabels(this.barTab)
         this.initGrid();
         this.drawBarTab(500);
         
