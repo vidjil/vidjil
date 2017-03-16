@@ -722,24 +722,31 @@ ScatterPlot.prototype = {
         self = this
         
         //split clones into bar (axisX)
+        var fct;
         switch (this.splitX) {
             case "allele_v" :
-                this.makeBarTab(function(clone){return clone.getGene("5")}, Object.keys(self.m.germlineV.allele))
+                fct = function(clone){return clone.getGene("5")}
+                this.axisX.init(this.m.clones, fct, Object.keys(self.m.germlineV.allele))
                 break;
             case "gene_v" :
-                this.makeBarTab(function(clone){return clone.getGene("5",false)}, Object.keys(self.m.germlineV.gene))
+                fct = function(clone){return clone.getGene("5",false)}
+                this.axisX.init(this.m.clones, fct, Object.keys(self.m.germlineV.gene))
                 break;
             case "allele_j" :
-                this.makeBarTab(function(clone){return clone.getGene("3")}, Object.keys(self.m.germlineJ.allele))
+                fct = function(clone){return clone.getGene("3")}
+                this.axisX.init(this.m.clones, fct, Object.keys(self.m.germlineJ.allele))
                 break;
             case "gene_j" :
-                this.makeBarTab(function(clone){return clone.getGene("3",false)}, Object.keys(self.m.germlineJ.gene))
+                fct = function(clone){return clone.getGene("3",false)}
+                this.axisX.init(this.m.clones, fct, Object.keys(self.m.germlineJ.gene))
                 break;
             default :
                 if (typeof this.available_axis[this.splitX])
-                    this.makeBarTab(this.available_axis[this.splitX].fct);
+                    this.axisX.init(this.m.clones, this.available_axis[this.splitX].fct);
             break;
         }
+
+        this.barTab = Object.assign({}, this.axisX.value_mapping);
         
         //sort each bar (axisY)
         
