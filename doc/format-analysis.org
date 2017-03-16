@@ -162,6 +162,10 @@ some clones, and added external data (=data=).
         "vidjil_json_version": "2016b",
 
         "samples": {
+        "id": [
+          "T8045-BC081-Diag.fastq",
+          "T8045-BC082-fu1.fastq"
+        ],
              "number": 2, 
              "names": ["diag", "fu1"],
              "original_names": ["file1.fastq", "file2.fastq"],
