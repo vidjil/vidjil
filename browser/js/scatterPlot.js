@@ -895,8 +895,8 @@ ScatterPlot.prototype = {
         for (var i in this.barTab) {
             var tmp = 0;
             for (var j in this.barTab[i]) {
-                var cloneID = this.barTab[i][j]
-                if (!this.m.clone(cloneID).isVirtual()) tmp += this.m.clone(cloneID).getSize();
+                var clone = this.barTab[i][j]
+                if (!clone.isVirtual()) tmp += clone.getSize();
             }
             if (tmp > bar_max) bar_max = tmp;
         }
