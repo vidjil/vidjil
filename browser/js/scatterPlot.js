@@ -1918,8 +1918,8 @@ ScatterPlot.prototype = {
         this.mode = mode;
         this.compute_size();
 
-        this.updateAxis(this.axisX, this.splitX);
-        this.updateAxis(this.axisY, this.splitY);
+        this.axisX = this.updateAxis(this.splitX);
+        this.axisY = this.updateAxis(this.splitY);
         
         if (this.mode == this.MODE_BAR){
             this.updateBar();
@@ -1947,7 +1947,12 @@ ScatterPlot.prototype = {
      * @param {Axis} axis
      * @param {string} splitMethod
      * */
-    updateAxis: function(axis, splitMethod) {
+    updateAxis: function(splitMethod) {
+        var axis;
+        var aa = this.available_axis[splitMethod] 
+        if (aa != undefined) {
+            axis = aa.axis;
+        }
         switch (splitMethod) {
             case "allele_v" :
                 axis.init(this.m.germlineV, "V", true)
@@ -1962,12 +1967,10 @@ ScatterPlot.prototype = {
                 axis.init(this.m.germlineJ, "J", false)
                 break;
             default :
-                if (typeof this.available_axis[splitMethod]){
-                    var a = this.available_axis[splitMethod];
-                    axis.custom(a.fct, a.min, a.max, a.output, a.log, a.display_label)
-                }
+                axis.init(this.m.clones, aa.fct, aa.labels, aa.sort, aa.min, aa.max, aa.use_log, aa.display_label);
             break;
         }
+        return axis;
     },
 
     /**
