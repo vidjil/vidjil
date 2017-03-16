@@ -55,11 +55,12 @@ Object.assign(GermlineAxis.prototype, {
      * @param {integer} cloneid - clone index
      * @return {float} pos - clone's position
      * */
-    pos : function(cloneID) {
+    pos : function(clone) {
+        var pos = this.applyConverter(clone);
+        return this.label_mapping[pos];
         var gene_list = this.gene_list;
         var allele_list = this.allele_list;
         var total_gene = this.total_gene;
-        var clone = this.m.clone(cloneID)
         var pos;
         if (clone.hasSeg(this.type2)) {
             var name = clone.seg[this.type2]["name"];
