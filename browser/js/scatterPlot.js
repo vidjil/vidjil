@@ -119,89 +119,97 @@ function ScatterPlot(id, model, database) {
     this.available_axis = {
         "gene_v": { 
             doc: "V gene (or 5' segment), gathering all alleles",
-            label:"V/5' gene"
+            label:"V/5' gene",
+            axis: new GermlineAxis(this.m)
         },
         "gene_j": { 
             doc: "J gene (or 3' segment), gathering all alleles",
-            label:"J/3' gene"
+            label:"J/3' gene",
+            axis: new GermlineAxis(this.m)
         },
         "allele_v": { 
             doc: "V gene (or 5' segment), with allele",
-            label:"V allele"
+            label:"V allele",
+            axis: new GermlineAxis(this.m)
         },
         "allele_j": { 
             doc: "J gene (or 3' segment), with allele",
-            label:"J allele"
+            label:"J allele",
+            axis: new GermlineAxis(this.m)
         },
         "sequenceLength" : { 
             doc: "length of the consensus sequence",
             label: "clone consensus length",
+            axis: new CustomAxis(this.m),
             fct: function(clone) {return clone.getSequenceLength()}
         },
         "readLength" : {
             doc: "average length of the reads belonging to each clone",
             label: "clone average read length",
+            axis: new CustomAxis(this.m),
             fct: function(clone) {return clone.getAverageReadLength()}
         },
         "GCContent" : { 
             doc: "%GC content of the consensus sequence of each clone",
             label: "GC content",
-            fct: "GCContent", 
-            output: "percent"
+            axis: new PercentCustomAxis(this.m),
+            fct: "GCContent"
         },
         "n": {
             doc: "N length, from the end of the V/5' segment to the start of the J/3' segment (excluded)",
             label: "N length",
+            axis: new CustomAxis(this.m),
             fct: function(clone) {return clone.getNlength()}
         },
         "lengthCDR3": {
             doc: "CDR3 length, in nucleotides, from Cys104 and Phe118/Trp118 (excluded)",
             label: "CDR3 length (nt)",
+            axis: new CustomAxis(this.m),
             fct: function(clone) {return clone.getSegLength('cdr3')}
         },
         "productivity": {
             label: "productivity",
+            axis: new GenericAxis(),
             fct: function(clone) {return clone.getProductivityName()},
-            output: "string-sorted"
         },
         "tag": {
             doc: "tag, as defined by the user",
             label: "tag",
+            axis: new GenericAxis(),
             fct: function(clone) {return clone.getTagName()},
-            output: "string-sorted"
         },
         "coverage": { 
             doc: "ratio of the length of the clone consensus sequence to the median read length of the clone",
             // "Coverage between .85 and 1.0 (or more) are good values",
             label: "clone consensus coverage",
+            axis: new FloatCustomAxis(this.m),
             fct: function(clone){return clone.coverage},
             min: 0,
             max: 1, 
-            output: "float-2", 
             log: false 
         },
         "locus" : { 
             doc: "locus or recombination system",
             label: "locus",
+            axis: new GenericAxis(),
             fct: function(clone){return clone.germline},
-            output: "string-sorted"
         },
         "Size" : { 
             doc: "ratio of the number of reads of each clone to the total number of reads in the selected locus",
             label: "size",
+            axis: new PercentCustomAxis(this.m),
             fct : function(clone){return clone.getSizeZero()},
             min : function(){return self.m.min_size},
             max : 1, 
-            output : "percent", 
             log : true  
         },
         "otherSize" : { 
             doc: "ratio of the number of reads of each clone to the total number of reads in the selected locus, on a second sample",
             label: "size (other sample)",
+            axis: new PercentCustomAxis(this.m),
             fct : function(clone){return clone.getSizeZero(m.tOther)},
             min : function(){return self.m.min_size}, 
             max : 1, 
-            output : "percent", 
             log : true  
         },
         "nbSamples" : {
@@ -212,6 +220,7 @@ function ScatterPlot(id, model, database) {
         },
         "tsneX": { 
             label: "distance (X)",
+            axis: new FloatCustomAxis(this.m),
             fct: function(clone){
                 var r = self.gridSizeH/self.gridSizeW;
                 var k=1;
@@ -219,7 +228,6 @@ function ScatterPlot(id, model, database) {
                 if (yMax > r) k = r/yMax
                 return k*clone.tsne[0] + (1-k)/2
             },
-            output: "float-2", 
             log: false,
             min: 0,
             max: 1, 
@@ -228,6 +236,7 @@ function ScatterPlot(id, model, database) {
         },
         "tsneY": { 
             label: "distance (Y)",
+            axis: new FloatCustomAxis(this.m),
             fct: function(clone){
                 var r = self.gridSizeH/self.gridSizeW;
                 var k=1;
@@ -235,7 +244,6 @@ function ScatterPlot(id, model, database) {
                 if (yMax > r) k = r/yMax
                 return k*clone.tsne[1]
             },
-            output: "float-2", 
             log: false,
             min: 0,
             max: function(){return self.gridSizeH/self.gridSizeW},
@@ -244,6 +252,7 @@ function ScatterPlot(id, model, database) {
         },
         "tsneX_system": { 
             label: "distance (X), by locus",
+            axis: new FloatCustomAxis(this.m),
             fct: function(clone){
                 var r = self.gridSizeH/self.gridSizeW;
                 var k=1;
@@ -251,7 +260,6 @@ function ScatterPlot(id, model, database) {
                 if (yMax > r) k = r/yMax
                 return k*clone.tsne_system[0] + (1-k)/2
             },
-            output: "float-2", 
             log: false,
             min: 0,
             max: 1, 
@@ -260,6 +268,7 @@ function ScatterPlot(id, model, database) {
         },
         "tsneY_system": { 
             label: "distance (Y), by locus",
+            axis: new FloatCustomAxis(this.m),
             fct: function(clone){
                 var r = self.gridSizeH/self.gridSizeW;
                 var k=1;
@@ -267,7 +276,6 @@ function ScatterPlot(id, model, database) {
                 if (yMax > r) k = r/yMax
                 return k*clone.tsne_system[1]
             },
-            output: "float-2", 
             log: false,
             min: 0,
             max: function(){return self.gridSizeH/self.gridSizeW},
