@@ -66,6 +66,7 @@ Object.assign(GermlineAxis.prototype, {
         var allele_list = this.allele_list;
         var total_gene = this.total_gene;
         var pos;
+        pos = this.getPos(total_gene, total_gene);
         if (clone.hasSeg(this.type2)) {
             var name = clone.seg[this.type2]["name"];
             if (typeof name != 'undefined'
@@ -79,13 +80,9 @@ Object.assign(GermlineAxis.prototype, {
                     var total_allele = gene_list[gene].n
                     pos += (1/(total_gene+1)) * ((allele_list[allele].rank+0.5)/total_allele) - (0.5/(total_gene+1))
                 }
-            } else {
-                pos = this.getPos(total_gene, total_gene);
             }
-        }else{
-            pos = this.getPos(total_gene, total_gene)
         }
-        return this.label_mapping[pos];
+        return pos;
     },
     
     /**
