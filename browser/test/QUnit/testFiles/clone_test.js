@@ -59,7 +59,35 @@ QUnit.module("Clone", {
                 "start": 3,
                 "stop": 14,
                 "productive": false
-            }
+            },
+            "somefeature":
+            {
+                "seq": "aaaattt"
+            },
+        }
+    }
+
+    var json_clone4 = {
+        "sequence" : "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGTATTACC",
+        "c_name" : "custom name",
+        "name": "",
+        "id" : "id4",
+        "reads" : [10,10,15,15] ,
+        "top" : 4,
+        "germline" : "TRG",
+        "seg" : {
+            "3" : "IGHV4*01",
+            "4" : "IGHD2*03",
+            "3start" : 25,
+            "5end" : 15,
+	    "primer5": {
+	      "start": 2,
+	      "stop": 10
+	    },
+	    "primer3": {
+	      "start": 26,
+	      "stop": 34
+	    }
         }
     }
 
