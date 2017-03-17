@@ -2380,6 +2380,33 @@ changeCloneNotation: function(cloneNotationType) {
 
     DEFAULT_SEGMENTER_URL: "https://dev.vidjil.org/vidjil/segmenter",
 
+    /*
+     * Load the default primers sets into the model.
+     * TODO : Should load data directly from primers files from germline or other dict
+     * TODO : Give the posibility to user to load his own primer set
+     */
+    populatePrimerSet : function () {
+        this.primersSetData = {"biomed2" : {}, "primer_fictif": {}, "primer_test": {} }
+
+
+      // Seq de primer biomed2 des TCRD
+      this.primersSetData["biomed2"]["TRD"] = {}; // TODO : init by defaultdict equivalent
+      this.primersSetData["biomed2"]["TRD"]["primer5"] = [];
+      this.primersSetData["biomed2"]["TRD"]["primer3"] = [];
+      // Seq de primer biomed2 des IGH
+      this.primersSetData["biomed2"]["IGH"] = {}; // TODO : init by defaultdict equivalent
+      this.primersSetData["biomed2"]["IGH"]["primer5"] = ["GGCCTCAGTGAAGGTCTCCTGCAAG", "GTCTGGTCCTACGCTGGTGAAACCC", "CTGGGGGGTCCCTGAGACTCTCCTG", "CTTCGGAGACCCTGTCCCTCACCTG", "CGGGGAGTCTCTGAAGATCTCCTGC", "TCGCAGACCCTCTCACTCACCTGTG", "CTGGGTGCGACAGGCCCCTGGACAA", "TGGATCCGTCAGCCCCCAGGGAAGG", "GGTCCGCCAGGCTCCAGGGAA", "TGGATCCGCCAGCCCCCAGGGAAGG", "GGGTGCGCCAGATGCCCGGGAAAGG", "TGGATCAGGCAGTCCCCATCGAGAG", "TTGGGTGCGACAGGCCCCTGGACAA", "TGGAGCTGAGCAGCCTGAGATCTGA", "CAATGACCAACATGGACCCTGTGGA", "TCTGCAAATGAACAGCCTGAGAGCC", "GAGCTCTGTGACCGCCGCGGACACG", "CAGCACCGCCTACCTGCAGTGGAGC", "GTTCTCCCTGCAGCTGAACTCTGTG", "CAGCACGGCATATCTGCAGATCAG"] ;
+      this.primersSetData["biomed2"]["IGH"]["primer3"] = ["CCAGTGGCAGAGGAGTCCATTC", "GTCACCGTCTCCTCAGGTA"]; // GTCACCGTCTCCTCAGGTA is a consensus sequence use because official one (CCAGTGGCAGAGGAGTCCATTC) doesn't work properly
+
+      // Test qunits
+      this.primersSetData["primer_test"]["IGH"] = {};
+      this.primersSetData["primer_test"]["IGH"]["primer5"] = [] // IGH seq from model_test.js
+      this.primersSetData["primer_test"]["IGH"]["primer3"] = []
+      this.primersSetData["primer_test"]["TRG"] = {};
+      this.primersSetData["primer_test"]["TRG"]["primer5"] = ["GGAAGGCCCCACAGCG"] // TRG seq from model_test.js
+      this.primersSetData["primer_test"]["TRG"]["primer3"] = ["AACTTCGCCTGGTAA"]
+    },
+
     /**
      * sends an ajax request to manually add special clones
      * @param {string} input - the id of the input to extract the sequences from
