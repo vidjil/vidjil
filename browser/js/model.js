@@ -2440,6 +2440,59 @@ changeCloneNotation: function(cloneNotationType) {
         }
     },
 
+
+    /*
+     * Add to each clones the primer sequence and positions for seg 5 and 3
+     * Insert into the primer field the name of the primer set used
+     * Replace/erase the value of primer field if this one already exist
+     */
+    switchPrimers : function () {
+        if (typeof this.primerSetCurrent == "undefined") {
+            console.log("Primer set unknow")
+            return -1
+        }
+        primersSet = this.primerSetCurrent
+
+        this.cleanPreviousFeature("primer5")
+        this.cleanPreviousFeature("primer3")
+        for (var i = 0; i < this.system_available.length; i++) {
+            germline = this.system_available[i].replace("+", "")
+
+            primer5 = this.primersSetData[this.primerSetCurrent][germline]["primer5"]
+            primer3 = this.primersSetData[this.primerSetCurrent][germline]["primer3"]
+
+            for (var p = 0; p < primer5.length; p++) {
+                this.addSegFeatureFromSeq("primer5", primer5[p])
+            }
+            for (var p = 0; p < primer3.length; p++) {
+                this.addSegFeatureFromSeq("primer3", primer3[p])
+            }
+        }
+    },
+
+
+    /*
+     * Set the current primer set of the model
+     * Compute the positions of these primers inside each clones
+     */
+    switchPrimersSet : function(primersSet){
+        if (typeof this.primersSetData == "undefined") {
+            this.populatePrimerSet();
+            console.log("Primer set have been loaded")
+        }
+        if (typeof this.primersSetData[primersSet] == "undefined") {
+            console.log("Primer set unknow")
+        } else {
+            this.primerSetCurrent = primersSet;
+            console.log("Current primer set : "+ this.primerSetCurrent)
+            this.switchPrimers();
+            this.update();
+            return 0
+        }
+        this.update();
+    },
+
+    
     /**
      * sends an ajax request to manually add special clones
      * @param {string} input - the id of the input to extract the sequences from
