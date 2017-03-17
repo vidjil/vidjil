@@ -444,7 +444,7 @@ def get_custom_data():
                 sequence_file_id = db.results_file[id].sequence_file_id
                 patient_id = db((db.sample_set_membership.sequence_file_id == sequence_file_id)
                             & (db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
-                ).select(db.patient.id).first()
+                ).select(db.patient.id).first().id
                 if not auth.can_view_patient(patient_id):
                     error += "you do not have permission to consult this patient ("+str(patient_id)+")"
             
