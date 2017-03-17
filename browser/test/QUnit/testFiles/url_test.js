@@ -5,6 +5,7 @@ QUnit.module("Url", {
 /* ------------------------------------ */
 var current_url = "mock://"
 var windowMock = {
+    mocked: true,
     location: {
         search: {
             toString: function() { var search = current_url.split('?')[1] ; return (search == "" ? "" : '?' + search) }
