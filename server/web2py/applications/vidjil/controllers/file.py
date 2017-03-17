@@ -419,7 +419,7 @@ def edit_form():
 
         if request.vars['filename'] != "":
             data, filepath = manage_filename(request.vars["filename"])
-            if 'data_file' in data:
+            if 'data_file' in data and data['data_file'] is not None:
                 os.symlink(filepath, defs.DIR_SEQUENCES + data['data_file'])
             db.sequence_file[request.vars["id"]] = data
             
