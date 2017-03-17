@@ -401,10 +401,14 @@ def custom():
 
 def confirm():
     if auth.can_modify_sample_set(request.vars["id"]):
-        data = get_sample_set(request.vars["id"])
+        sample_set = db.sample_set[request.vars["id"]]
+        data = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select().first()
+        factory = ModelFactory()
+        helper = factory.get_instance(type=sample_set.sample_type)
         log.debug('request sample_set deletion')
         return dict(message=T('confirm sample_set deletion'),
-                    data=data)
+                    data=data,
+                    helper=helper)
     else :
         res = {"message": ACCESS_DENIED}
         log.error(res)
@@ -412,7 +416,7 @@ def confirm():
 
 def delete():
     if (auth.can_modify_sample_set(request.vars["id"]) ):
-        sample_set = get_sample_set(request.vars["id"])
+        sample_set = db.sample_set[request.vars["id"]]
         if sample_set is None:
             res = {"message": 'An error occured. This sample_set may have already been deleted'}
             log.error(res)
