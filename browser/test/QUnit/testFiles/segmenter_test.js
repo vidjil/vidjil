@@ -32,8 +32,7 @@ QUnit.test("segmenter", function(assert) {
     assert.equal(document.getElementById("f2"), null, "unselect : Ok")
     
     //
-    assert.deepEqual(segment.findPotentialField(), ["","cdr3","fr1", "5", "id","V-REGION","J-REGION","D-REGION","CDR3-IMGT"], "potentialField : Ok")
-    
+    assert.deepEqual(segment.findPotentialField(), ["","cdr3","fr1", "5", "id", "f1", "V-REGION","J-REGION","D-REGION","CDR3-IMGT"], "potentialField : Ok")
 
     m.select(0)
     assert.deepEqual(segment.toFasta(), "> test1 // 5.000%\naaaaaaaaaaaaaaaaaaaAG\n","toFasta :Ok")
