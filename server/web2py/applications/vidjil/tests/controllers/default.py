@@ -93,8 +93,7 @@ class DefaultController(unittest.TestCase):
         self.assertNotEqual(resp['message'].find('select several files'), -1)
 
     def testCustomData(self):
-        request.vars['custom'] = [str(fake_result_id), str(fake_result_id)]
-        
+        request.vars['custom'] = [str(fake_result_id2), str(fake_result_id2)]
         resp = gluon.contrib.simplejson.loads(get_custom_data())
         print resp
         if resp.has_key('success') and resp['success'] == 'false':

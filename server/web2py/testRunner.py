@@ -168,6 +168,18 @@ fake_sample_set_membership = db.sample_set_membership.insert(sample_set_id = fak
 				    sequence_file_id = fake_file_id
 )
 
+fake_file_id2 = db.sequence_file.insert(sampling_date="1903-02-02",
+                                    info="plop2",
+                                    pcr="plop2",
+                                    sequencer="plop2",
+                                    producer="plop2",
+                                    filename="plop2",
+                                    provider=user_id)
+
+fake_sample_set_membership2 = db.sample_set_membership.insert(sample_set_id = fake_sample_set_id,
+				    sequence_file_id = fake_file_id2
+)
+
 # and a fake result for this file
 stream = open("../../doc/analysis-example.vidjil", 'rb')
 fake_result_id = db.results_file.insert(sequence_file_id = fake_file_id,
@@ -175,6 +187,13 @@ fake_result_id = db.results_file.insert(sequence_file_id = fake_file_id,
                                     run_date = "2014-09-19 00:00:00",
                                     data_file = db.results_file.data_file.store(stream, "plop.data")
                                     )
+
+fake_result_id2 = db.results_file.insert(sequence_file_id = fake_file_id2,
+                                    config_id = fake_config_id,
+                                    run_date = "2014-09-19 00:00:00",
+                                    data_file = db.results_file.data_file.store(stream, "plop.data")
+                                    )
+
 stream.seek(0)
 fake_fused_id = db.fused_file.insert(sample_set_id = fake_sample_set_id,
                                     config_id = fake_config_id,

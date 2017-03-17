@@ -40,7 +40,7 @@ class Results_fileController(unittest.TestCase):
         
         
     def testInfo(self):
-        request.vars["results_file_id"] = fake_result_id
+        request.vars["results_file_id"] = fake_result_id2
         
         resp = info()
         self.assertTrue(resp.has_key('message'), "info() has returned an incomplete response")
@@ -55,11 +55,11 @@ class Results_fileController(unittest.TestCase):
         
         
     def testDelete(self):
-        fake_result_id2 = db.results_file.insert(sequence_file_id = fake_file_id,
+        fake_result_id3 = db.results_file.insert(sequence_file_id = fake_file_id,
                                     config_id = fake_config_id,
                                     run_date = "2014-09-19 00:00:00")
         
-        request.vars["results_file_id"] = fake_result_id2
+        request.vars["results_file_id"] = fake_result_id3
         request.vars["sample_set_id"] = fake_sample_set_id
     
         resp = delete()
