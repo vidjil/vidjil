@@ -244,6 +244,47 @@ Clone.prototype = {
         return null;
     },
 
+    /**
+     * Return a SegFeature given a field name
+     * Can all these magic things be removed and replaced by a simple this.seg[field_name] ?
+     */
+    getSegFeature: function(field_name) {
+
+        var p ;
+
+        // Find the good object p
+        if (typeof this[field_name] != 'undefined'){
+            p = this[field_name];                    // check clone meta-data
+        } else if (this.hasSeg() && typeof this.seg[field_name] != 'undefined'){
+            p = this.seg[field_name];                // check clone seg data
+        } else if (typeof this.m[field_name] != 'undefined'){
+            p = this.m[field_name];                  // check model
+        } else if (typeof this.seg.imgt2display != 'undefined' && typeof this.seg.imgt2display[field_name] != 'undefined') {
+            p = this.seg.imgt2display[field_name];
+        } else {
+            return { }
+        }
+
+        // Process p
+        if (p.constructor === Array ) {
+            p = p[this.m.t];
+        }
+
+        if (p.constructor === String) {
+            // string-based fields ('id', ...).
+            // Should not exist anymore in the json, but populated by findPotentialField()
+            p = { 'seq': p }
+        }
+
+        if ((typeof p.seq != 'undefined') && (typeof p.start == 'undefined')) {
+            // sequence, we compute the start position
+            this.addSegFeatureFromSeq(field, p.seq)
+            p = this.seg[field]
+        }
+
+        return p
+    },
+
     /** 
      * return clone's most important name <br>
      * cluster name > custom_name > segmentation name > window

@@ -1323,58 +1323,31 @@ Sequence.prototype = {
      * */
     get_positionned_highlight : function (field, color) {
         var clone = this.m.clone(this.id);
-        var h = {'start' : -1, 'stop' : -1, 'seq': '', 'color' : color};
-        var p;
+        var h = {'color' : color};
+        var p = clone.getSegFeature(field)
 
-        // Find the good object p
-        if (typeof clone[field] != 'undefined'){
-            p = clone[field];                   //check clone meta-data
-        }else if (clone.hasSeg(field)){
-            p = clone.seg[field];               //check clone seg data
-        }else if (typeof this.m[field] != 'undefined'){
-            p = this.m[field];               //check model
-        }else if (typeof clone.seg.imgt2display != 'undefined' && typeof clone.seg.imgt2display[field] != 'undefined' )
-        {
-            p = clone.seg.imgt2display[field];
-        } else {
-            return h
-        }
-        
-        if (p.constructor === Array ){
-            p = p[this.m.t];
-        }
-
-        var raw_seq = ""
+        if (typeof p.start == 'undefined')
+            return {'start' : -1, 'stop' : -1, 'seq': '', 'color' : color}
 
         // Build the highlight object from p        
         // Both 'start' and 'stop' positions are included in the highlight
-        if (p.constructor === String){
-            // string-based fields ('id', ...).
-            // Should not exist anymore in the json, but populated by findPotentialField()
-            h.start = this.pos[clone.sequence.indexOf(p)]
-            h.stop = this.pos[clone.sequence.indexOf(p)+p.length-1]
-        }else if (p.constructor === Object & typeof p.start != 'undefined'){
-            // object-based fields ('cdr3', ...)
+        {
             h.start = this.pos[p.start];
             h.stop = this.pos[p.stop];
-
-            if (typeof p.seq != 'undefined') {
-                raw_seq = p.seq
-            }
             h.tooltip = typeof p.tooltip != 'undefined'? p.tooltip:"";
         }
 
         // Build the (possibly invisible) sequence
-        if (raw_seq == "") {
+        if (typeof p.seq == 'undefined') {
             h.css = "highlight_border"
             for (var k=0; k<(h.stop - h.start + 1); k++) h.seq += "\u00A0"
         } else {
             h.css = "highlight_seq"
             var j = 0
-            for (var k=h.start; j<raw_seq.length; k++) { // End condition on j, not on k
+            for (var k=h.start; j<p.seq.length; k++) { // End condition on j, not on k
                 var c = "\u00A0";
                 if (this.seq[k] != '-') {
-                    var cc = raw_seq[j++]
+                    var cc = p.seq[j++]
                     if ((cc != '_') && (cc != ' ')) c = cc ;
                     if (field == "quality") {
                         var percent = (cc.charCodeAt(0)-this.m.min_quality)/(this.m.max_quality-this.m.min_quality)
