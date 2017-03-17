@@ -72,7 +72,7 @@ def add_form():
 
 
 def edit():
-    if (auth.can_modify_config(request.vars['config_id'])):
+    if (auth.can_modify_config(request.vars['id'])):
         return dict(message=T('edit config'))
     return error_message(ACCESS_DENIED)
 
@@ -80,7 +80,7 @@ def edit():
 def edit_form(): 
     error =""
 
-    if (not auth.can_modify_config(request.vars['config_id'])):
+    if (not auth.can_modify_config(request.vars['id'])):
         error += "ACCESS_DENIED"
 
     required_fields = ['id', 'config_name', 'config_command', 'config_fuse_command', 'config_program']
