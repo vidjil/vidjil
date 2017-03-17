@@ -290,11 +290,29 @@ QUnit.test("model: analysis sample data application", function(assert) {
 
 
 
+QUnit.test("model: primer detection", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100)
+
+    // primer set loading
+    assert.equal(typeof m.primersSetData, "undefined", "primers sets are initialy unset")
+    m.populatePrimerSet();
+    assert.equal(typeof m.primersSetData, 'object', "primers are loaded inside model")
+
+    // model primer setting
+    assert.equal(m.switchPrimersSet("no set"), 1, "primer set doesn't exist")
+    assert.equal(m.switchPrimersSet("primer_test"), 0, "primer set exist & are set")
+
+    // primer found inside clones
+    assert.equal(typeof m.clones[2]["seg"]["primer5"], "undefined", "Control neg primer 5 not in sequence")
+    assert.equal(typeof m.clones[2]["seg"]["primer3"], "undefined", "Control neg primer 3 not in sequence")
+    assert.deepEqual(m.clones[3]["seg"]["primer5"], { seq: "GGAAGGCCCCACAGCG", start: 1, stop: 16 },    "Found primer 5")
+    assert.deepEqual(m.clones[3]["seg"]["primer3"], { seq: "AACTTCGCCTGGTAA",  start: 227, stop: 241 }, "Found primer 3")
 
 
-
-
-
+    m.cleanPreviousFeature("primer3")
+    assert.equal(typeof m.clones[3]["seg"]["primer3"], "undefined", "Feature has been deleted before new attribution")
+});
 
 
 
