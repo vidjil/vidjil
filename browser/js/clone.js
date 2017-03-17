@@ -231,6 +231,23 @@ Clone.prototype = {
     },
 
     /**
+     * Return the length between two features
+     * (difference between the start of the first feature and the end of the second).
+     * Feature1 must be placed before feature2
+     * If no start and stop are given, return 0
+     */
+    getSegLengthDoubleFeature: function(field_name1, field_name2) {
+	positions1 = this.getSegStartStop(field_name1)
+	positions2 = this.getSegStartStop(field_name2)
+
+	if (positions1 != null && positions2 != null) {
+	    return positions2['stop'] - positions1['start'] + 1
+	} else {
+	    return 'undefined';
+        }
+    },
+
+    /**
      * Get the start and stop position of a given field (e.g. cdr3)
      * If it does not exist return null
      */
