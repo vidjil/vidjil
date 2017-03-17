@@ -23,6 +23,9 @@ Url.prototype= {
      * */
     update: function () {
 
+        if (!$(".devel-mode:visible").length && typeof this.window.mocked == "undefined")
+            return ;
+
         var selectedList = this.m.getSelected();
         var params_dict = this.url_dict;
         
