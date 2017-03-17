@@ -230,8 +230,21 @@ QUnit.test('clone: get info from seg', function(assert) {
     assert.equal(c1.getSegAASequence('cdr3'), 'ABCDE', 'AA CDR3 for c1')
 });
 
-QUnit.test("getSequence/RevComp", function(assert) {
+QUnit.test("clone : feature defined by a nucleotide sequence", function(assert) {
+    var m = new Model()
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone1, m, 0)
+    var c2 = new Clone(json_clone2, m, 1)
+    var c3 = new Clone(json_clone3, m, 2)
+    m.initClones()
 
+    assert.deepEqual(c3.getSegStartStop('somefeature'), null, "start/stop positions are not present")
+    c3.computeSegFeatureFromSeq('somefeature')
+    assert.deepEqual(c3.getSegStartStop('somefeature'), {"start": 7, "stop": 13}, "start/stop positions, computed from sequence")
+    assert.equal(c3.getSegLength('somefeature'), 7, "length of the feature");
+});
+
+QUnit.test("getSequence/RevComp", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data)
     var c1 = new Clone(json_clone1, m, 0)
