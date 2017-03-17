@@ -387,10 +387,10 @@ class VidjilauthModel(unittest.TestCase):
 
     def testCanModifyPreProcess(self):
         result = auth.can_modify_pre_process(pre_process_id, user_id)
-        self.assertFalse(result, "User %d should not be able to modify pre process %d" % (user_id, pre_process_id))
+        self.assertTrue(result, "User %d should be able to modify pre process %d" % (user_id, pre_process_id))
 
         result = auth.can_modify_pre_process(pre_process_id, user_id_sec)
-        self.assertTrue(result, "User %d should be able to modify pre process %d" % (user_id_sec, pre_process_id))
+        self.assertFalse(result, "User %d should be able to modify pre process %d" % (user_id_sec, pre_process_id))
 
     def testCanProcessFile(self):
         result = auth.can_process_file('patient', patient_id_sec)
