@@ -2407,6 +2407,39 @@ changeCloneNotation: function(cloneNotationType) {
       this.primersSetData["primer_test"]["TRG"]["primer3"] = ["AACTTCGCCTGGTAA"]
     },
 
+
+    /*
+     * Generic function to add a feature based on sequence for each clones
+     */
+    addSegFeatureFromSeq : function (feature, sequence) {
+        if (this.clones.length > 100 ) {
+            numberToProcess = 100
+        } else {
+            numberToProcess = this.clones.length
+        }
+
+        for (var i = 0; i < numberToProcess; i++) {
+            if ( !this.clones[i].isVirtual() ) {
+                if (this.clones[i]["sequence"].indexOf(sequence) != -1) {
+                    this.clones[i].addSegFeatureFromSeq(feature, sequence)
+                }
+            }
+        }
+    },
+
+
+    /*
+     * Delete all previous entries for a seg feature for all clones
+     * Start the adding of primers on a clean base
+     */
+    cleanPreviousFeature : function (feature) {
+        for (var i = 0; i < this.clones.length; i++) {
+            if ( !this.clones[i].isVirtual() ) {
+                    delete this.clones[i]["seg"][feature]
+            }
+        }
+    },
+
     /**
      * sends an ajax request to manually add special clones
      * @param {string} input - the id of the input to extract the sequences from
