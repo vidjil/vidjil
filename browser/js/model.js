@@ -2398,6 +2398,12 @@ changeCloneNotation: function(cloneNotationType) {
       this.primersSetData["biomed2"]["IGH"]["primer5"] = ["GGCCTCAGTGAAGGTCTCCTGCAAG", "GTCTGGTCCTACGCTGGTGAAACCC", "CTGGGGGGTCCCTGAGACTCTCCTG", "CTTCGGAGACCCTGTCCCTCACCTG", "CGGGGAGTCTCTGAAGATCTCCTGC", "TCGCAGACCCTCTCACTCACCTGTG", "CTGGGTGCGACAGGCCCCTGGACAA", "TGGATCCGTCAGCCCCCAGGGAAGG", "GGTCCGCCAGGCTCCAGGGAA", "TGGATCCGCCAGCCCCCAGGGAAGG", "GGGTGCGCCAGATGCCCGGGAAAGG", "TGGATCAGGCAGTCCCCATCGAGAG", "TTGGGTGCGACAGGCCCCTGGACAA", "TGGAGCTGAGCAGCCTGAGATCTGA", "CAATGACCAACATGGACCCTGTGGA", "TCTGCAAATGAACAGCCTGAGAGCC", "GAGCTCTGTGACCGCCGCGGACACG", "CAGCACCGCCTACCTGCAGTGGAGC", "GTTCTCCCTGCAGCTGAACTCTGTG", "CAGCACGGCATATCTGCAGATCAG"] ;
       this.primersSetData["biomed2"]["IGH"]["primer3"] = ["CCAGTGGCAGAGGAGTCCATTC", "GTCACCGTCTCCTCAGGTA"]; // GTCACCGTCTCCTCAGGTA is a consensus sequence use because official one (CCAGTGGCAGAGGAGTCCATTC) doesn't work properly
 
+
+      // test fictif; sequence inclut dans les sequences de clones
+      this.primersSetData["primer_fictif"]["TRD"] = {};
+      this.primersSetData["primer_fictif"]["TRD"]["primer5"] = ["GATTTTACTCAAGGACGGTT", "GCAAAGAACCTGGCTGT", "AGATTTTACTCAAGGAC"] // V3, V2,
+      this.primersSetData["primer_fictif"]["TRD"]["primer3"] = ["AGGAACCCGTGTGACT", "GAACACAACTCATCGTGGA", "GAACTGGCATCAAACTCTTC"] // J1, J2, J3
+
       // Test qunits
       this.primersSetData["primer_test"]["IGH"] = {};
       this.primersSetData["primer_test"]["IGH"]["primer5"] = [] // IGH seq from model_test.js
