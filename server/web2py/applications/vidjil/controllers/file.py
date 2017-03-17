@@ -404,7 +404,7 @@ def edit_form():
     if error=="" :
         mes = "file {%s}: " % request.vars['id']
         filename = db.sequence_file[request.vars['id']].filename
-        if request.vars['filename'] != "":
+        if 'filename' in request.vars and request.vars['filename'] != "":
             filename = request.vars['filename']
             # file is being reuploaded, remove all existing results_files
             db(db.results_file.sequence_file_id == request.vars["id"]).delete()
