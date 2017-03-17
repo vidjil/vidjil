@@ -55,14 +55,14 @@ class SampleSet(object):
         return fields
 
     def get_sequence_count(self, data):
-        if data.sequence_count is None:
+        if not hasattr(data, 'sequence_count'):
             data.sequence_count = db( (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                     &(db.sample_set_membership.sample_set_id == db[self.type].sample_set_id)
                     &(db[self.type].id == data.id)).count()
         return data.sequence_count
 
     def get_data_count(self, data):
-        if data.data_count is None:
+        if not hasattr(data, 'data_count'):
             data.data_count = db( (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                 &(db.sample_set_membership.sample_set_id == db[self.type].sample_set_id)
                 &(db[self.type].id == data.id)
