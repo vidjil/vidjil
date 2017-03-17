@@ -1,6 +1,6 @@
 CXX?=g++
 INCLUDE=-I ..
-OPTIM=-g -O0 $(COVERAGE)
+OPTIM=-g -O2 $(COVERAGE)
 override CXXFLAGS += -std=c++11 -W -Wall $(OPTIM)
 LDLIBS=-lz
 SRC= unit-tests/tests.cpp
