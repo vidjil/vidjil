@@ -1,8 +1,9 @@
-function Url(model) {
+function Url(model, win) {
     View.call(this, model);
     this.m = model;
-    this.url_dict = this.parseUrlParams(window.location.search)
-    this.url = window.location.toString().split('?')[0];
+    this.window = (typeof win != "undefined") ? win : window
+    this.url_dict = this.parseUrlParams(this.window.location.search.toString())
+    this.url = this.window.location.toString().split('?')[0];
     this.sp = this.m.sp
 }
 
@@ -41,7 +42,7 @@ Url.prototype= {
         }
         
         new_url = "?" + params_list.join("&");
-        window.history.pushState('plop', 'plop', new_url);
+        this.window.history.pushState('plop', 'plop', new_url);
  	this.updateModel()
     },
     
