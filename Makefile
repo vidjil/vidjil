@@ -5,7 +5,7 @@ VIDJIL_BROWSER_SRC = browser/
 VIDJIL_SERVER_SRC = server/
 
 ifeq (${COVERAGE},1)
-	COVERAGE_OPTION=-O0 --coverage
+	COVERAGE_OPTION=--coverage
 else
 	COVERAGE_OPTION=
 endif
