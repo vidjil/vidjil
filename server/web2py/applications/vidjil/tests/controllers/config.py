@@ -71,6 +71,7 @@ class ConfigController(unittest.TestCase):
         
         
     def test3Edit(self):
+        request.vars["config_id"] = fake_config_id
         resp = edit()
         self.assertTrue(resp.has_key('message'), "edit() has returned an incomplete response")
         
@@ -87,6 +88,7 @@ class ConfigController(unittest.TestCase):
         
         
     def testConfirm(self):
+        request.vars["id"] = fake_config_id
         resp = confirm()
         self.assertTrue(resp.has_key('message'), "confirm() has returned an incomplete response")
         

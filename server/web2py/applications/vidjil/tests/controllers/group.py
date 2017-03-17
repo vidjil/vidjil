@@ -60,6 +60,7 @@ class GroupController(unittest.TestCase):
             
             
     def testConfirm(self):      
+        request.vars['id'] = fake_group_id
         resp = confirm()
         self.assertTrue(resp.has_key('message'), "confirm() has returned an incomplete response")
         
@@ -73,11 +74,13 @@ class GroupController(unittest.TestCase):
         
         
     def testInfo(self):      
+        request.vars['id'] = fake_group_id
         resp = info()
         self.assertTrue(resp.has_key('message'), "info() has returned an incomplete response")
         
         
-    def testPermission(self):      
+    def testPermission(self):
+        request.vars['id'] = fake_group_id
         resp = permission()
         self.assertTrue(resp.has_key('message'), "permission() has returned an incomplete response")
         
