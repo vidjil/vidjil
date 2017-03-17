@@ -2,13 +2,27 @@
 QUnit.module("Url", {
 });
 
+/* ------------------------------------ */
+var current_url = "mock://"
+var windowMock = {
+    location: {
+        search: {
+            toString: function() { var search = current_url.split('?')[1] ; return (search == "" ? "" : '?' + search) }
+        }},
+    history: {
+        pushState: function(x, y, url) { current_url = url }
+    }
+};
+windowMock.window = windowMock
+/* ------------------------------------ */
 
-QUnit.test("clone : modifyURL", function(assert) {
+QUnit.test("clone : modifyURL", function(assert) { with (windowMock) {
+
     var m = new Model();
     m.parseJsonData(json_data,100)
     var sp = new ScatterPlot("visu",m);
     sp.init();
-    var url= new Url(m);
+    var url= new Url(m, window);
     url.init();
     sp.init();
     // assert.equal(sp.select_preset.selectedIndex,1, "test selected index");
@@ -33,14 +47,16 @@ QUnit.test("clone : modifyURL", function(assert) {
     sp.changeSplitMethod("n", "Size", "bar");
     sp.update()
     assert.equal(window.location.search.toString(),"", "test if plot is in url");
-});
 
-QUnit.test("plot : modifyURL",function (assert) {
+}});
+
+QUnit.test("plot : modifyURL",function (assert) { with (windowMock) {
+
     var m = new Model();
     m.parseJsonData(json_data,100)
     var sp = new ScatterPlot("visu",m);
     sp.init();
-    var url= new Url(m);
+    var url= new Url(m, window);
     url.init();
     // sp.changeSplitMethod("n", "Size", "bar");
     sp.changeXaxis()
@@ -52,6 +68,6 @@ QUnit.test("plot : modifyURL",function (assert) {
         }, "test plot url_dict")
     assert.equal(window.location.search.toString(),"?plot=gene_v,gene_j,grid", "test if plot is in url");
 
-});
+}});
 
 
