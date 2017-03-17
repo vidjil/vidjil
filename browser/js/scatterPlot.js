@@ -306,6 +306,8 @@ function ScatterPlot(id, model, database) {
     this.axisX = new Axis(this.m, false)
     this.axisY = new Axis(this.m, true)
     this.use_system_grid = false
+
+    this.m.sp = this
 }
 
 

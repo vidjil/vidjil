@@ -645,8 +645,8 @@ Segment.prototype = {
         var divParent = document.getElementById("listSeq");
 
         // Am I the first clone in this segmenter ?
-        var previous_li = document.getElementById("listSeq").getElementsByTagName("li");
-        if (previous_li.length == 0) {
+        var previous_li = divParent.getElementsByTagName("li");
+        if (previous_li && previous_li.length == 0) {
             this.first_clone = cloneID
         }
 
