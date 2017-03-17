@@ -160,6 +160,41 @@ Clone.prototype = {
     },
 
     /**
+     * Add a new feature from a nucleotide sequence
+     */
+
+    addSegFeatureFromSeq: function(field_name, seq)
+    {
+        this.seg[field_name] = {};
+        this.seg[field_name]['seq'] = seq;
+        this.computeSegFeatureFromSeq(field_name);
+    },
+
+    /**
+     * Compute feature positions (start/stop) from its sequence, unless they are already present
+     */
+    computeSegFeatureFromSeq: function(field_name)
+    {
+        positions = this.getSegStartStop(field_name)
+
+	if (positions != null)
+            // Start/stop do already exist
+            return ;
+
+        seq = this.seg[field_name]['seq']
+
+        var pos = this.sequence.indexOf(seq)
+
+        if (pos < 0)
+            // No feature here
+            return;
+
+        this.seg[field_name]['start'] = pos + 1
+        this.seg[field_name]['stop'] = pos + seq.length
+    },
+
+
+    /**
      * Get the amino-acid sequence of the provided field (in the seg part)
      */
     getSegAASequence: function(field_name) {
