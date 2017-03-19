@@ -2488,6 +2488,7 @@ changeCloneNotation: function(cloneNotationType) {
         }
         if (typeof this.primersSetData[primersSet] == "undefined") {
             console.log("Primer set unknow")
+            return 1
         } else {
             this.primerSetCurrent = primersSet;
             console.log("Current primer set : "+ this.primerSetCurrent)
