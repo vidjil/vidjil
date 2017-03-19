@@ -273,8 +273,12 @@ function ScatterPlot(id, model, database) {
             max: function(){return self.gridSizeH/self.gridSizeW},
             hide : true,
             display_label : false
-        }
-    }
+        },
+	"primers": {
+            label: "interpolated length, between BIOMED2 primers (inclusive)",
+            fct: function(cloneID) {return self.m.clone(cloneID).getSegLengthDoubleFeature('primer5', 'primer3')}
+        },
+    };
 
     // Plot Presets
     this.preset = {
@@ -294,6 +298,7 @@ function ScatterPlot(id, model, database) {
         "clone consensus length / GC content " : { "mode": this.MODE_GRID, "x": "sequenceLength", "y" : "GCContent"},
         "clone consensus coverage / GC content " : { "mode": this.MODE_GRID, "x": "coverage", "y" : "GCContent"},
         "number of samples sharing each clone" : { "mode": this.MODE_GRID, "x": "nbSamples", "y" : "locus"},
+        // "interpolated length between BIOMED2 primers (inclusive)" : { "mode": this.MODE_BAR, "x": "primers", "y" : "Size"},
     };
     this.default_preset = 1
 

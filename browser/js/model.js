@@ -2380,6 +2380,126 @@ changeCloneNotation: function(cloneNotationType) {
 
     DEFAULT_SEGMENTER_URL: "https://dev.vidjil.org/vidjil/segmenter",
 
+    /*
+     * Load the default primers sets into the model.
+     * TODO : Should load data directly from primers files from germline or other dict
+     * TODO : Give the posibility to user to load his own primer set
+     */
+    populatePrimerSet : function () {
+        this.primersSetData = {"biomed2" : {}, "primer_fictif": {}, "primer_test": {} }
+
+
+      // Seq de primer biomed2 des TCRD
+      this.primersSetData["biomed2"]["TRD"] = {}; // TODO : init by defaultdict equivalent
+      this.primersSetData["biomed2"]["TRD"]["primer5"] = [];
+      this.primersSetData["biomed2"]["TRD"]["primer3"] = [];
+      // Seq de primer biomed2 des IGH
+      this.primersSetData["biomed2"]["IGH"] = {}; // TODO : init by defaultdict equivalent
+      this.primersSetData["biomed2"]["IGH"]["primer5"] = ["GGCCTCAGTGAAGGTCTCCTGCAAG", "GTCTGGTCCTACGCTGGTGAAACCC", "CTGGGGGGTCCCTGAGACTCTCCTG", "CTTCGGAGACCCTGTCCCTCACCTG", "CGGGGAGTCTCTGAAGATCTCCTGC", "TCGCAGACCCTCTCACTCACCTGTG", "CTGGGTGCGACAGGCCCCTGGACAA", "TGGATCCGTCAGCCCCCAGGGAAGG", "GGTCCGCCAGGCTCCAGGGAA", "TGGATCCGCCAGCCCCCAGGGAAGG", "GGGTGCGCCAGATGCCCGGGAAAGG", "TGGATCAGGCAGTCCCCATCGAGAG", "TTGGGTGCGACAGGCCCCTGGACAA", "TGGAGCTGAGCAGCCTGAGATCTGA", "CAATGACCAACATGGACCCTGTGGA", "TCTGCAAATGAACAGCCTGAGAGCC", "GAGCTCTGTGACCGCCGCGGACACG", "CAGCACCGCCTACCTGCAGTGGAGC", "GTTCTCCCTGCAGCTGAACTCTGTG", "CAGCACGGCATATCTGCAGATCAG"] ;
+      this.primersSetData["biomed2"]["IGH"]["primer3"] = ["CCAGTGGCAGAGGAGTCCATTC", "GTCACCGTCTCCTCAGGTA"]; // GTCACCGTCTCCTCAGGTA is a consensus sequence use because official one (CCAGTGGCAGAGGAGTCCATTC) doesn't work properly
+
+
+      // test fictif; sequence inclut dans les sequences de clones
+      this.primersSetData["primer_fictif"]["TRD"] = {};
+      this.primersSetData["primer_fictif"]["TRD"]["primer5"] = ["GATTTTACTCAAGGACGGTT", "GCAAAGAACCTGGCTGT", "AGATTTTACTCAAGGAC"] // V3, V2,
+      this.primersSetData["primer_fictif"]["TRD"]["primer3"] = ["AGGAACCCGTGTGACT", "GAACACAACTCATCGTGGA", "GAACTGGCATCAAACTCTTC"] // J1, J2, J3
+
+      // Test qunits
+      this.primersSetData["primer_test"]["IGH"] = {};
+      this.primersSetData["primer_test"]["IGH"]["primer5"] = [] // IGH seq from model_test.js
+      this.primersSetData["primer_test"]["IGH"]["primer3"] = []
+      this.primersSetData["primer_test"]["TRG"] = {};
+      this.primersSetData["primer_test"]["TRG"]["primer5"] = ["GGAAGGCCCCACAGCG"] // TRG seq from model_test.js
+      this.primersSetData["primer_test"]["TRG"]["primer3"] = ["AACTTCGCCTGGTAA"]
+    },
+
+
+    /*
+     * Generic function to add a feature based on sequence for each clones
+     */
+    addSegFeatureFromSeq : function (feature, sequence) {
+        if (this.clones.length > 100 ) {
+            numberToProcess = 100
+        } else {
+            numberToProcess = this.clones.length
+        }
+
+        for (var i = 0; i < numberToProcess; i++) {
+            if ( !this.clones[i].isVirtual() ) {
+                if (this.clones[i]["sequence"].indexOf(sequence) != -1) {
+                    this.clones[i].addSegFeatureFromSeq(feature, sequence)
+                }
+            }
+        }
+    },
+
+
+    /*
+     * Delete all previous entries for a seg feature for all clones
+     * Start the adding of primers on a clean base
+     */
+    cleanPreviousFeature : function (feature) {
+        for (var i = 0; i < this.clones.length; i++) {
+            if ( !this.clones[i].isVirtual() ) {
+                    delete this.clones[i]["seg"][feature]
+            }
+        }
+    },
+
+
+    /*
+     * Add to each clones the primer sequence and positions for seg 5 and 3
+     * Insert into the primer field the name of the primer set used
+     * Replace/erase the value of primer field if this one already exist
+     */
+    switchPrimers : function () {
+        if (typeof this.primerSetCurrent == "undefined") {
+            console.log("Primer set unknow")
+            return -1
+        }
+        primersSet = this.primerSetCurrent
+
+        this.cleanPreviousFeature("primer5")
+        this.cleanPreviousFeature("primer3")
+        for (var i = 0; i < this.system_available.length; i++) {
+            germline = this.system_available[i].replace("+", "")
+
+            primer5 = this.primersSetData[this.primerSetCurrent][germline]["primer5"]
+            primer3 = this.primersSetData[this.primerSetCurrent][germline]["primer3"]
+
+            for (var p = 0; p < primer5.length; p++) {
+                this.addSegFeatureFromSeq("primer5", primer5[p])
+            }
+            for (var p = 0; p < primer3.length; p++) {
+                this.addSegFeatureFromSeq("primer3", primer3[p])
+            }
+        }
+    },
+
+
+    /*
+     * Set the current primer set of the model
+     * Compute the positions of these primers inside each clones
+     */
+    switchPrimersSet : function(primersSet){
+        if (typeof this.primersSetData == "undefined") {
+            this.populatePrimerSet();
+            console.log("Primer set have been loaded")
+        }
+        if (typeof this.primersSetData[primersSet] == "undefined") {
+            console.log("Primer set unknow")
+            return 1
+        } else {
+            this.primerSetCurrent = primersSet;
+            console.log("Current primer set : "+ this.primerSetCurrent)
+            this.switchPrimers();
+            this.update();
+            return 0
+        }
+        this.update();
+    },
+
+    
     /**
      * sends an ajax request to manually add special clones
      * @param {string} input - the id of the input to extract the sequences from

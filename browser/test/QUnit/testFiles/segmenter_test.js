@@ -32,8 +32,7 @@ QUnit.test("segmenter", function(assert) {
     assert.equal(document.getElementById("f2"), null, "unselect : Ok")
     
     //
-    assert.deepEqual(segment.findPotentialField(), ["","cdr3","fr1", "5", "id","V-REGION","J-REGION","D-REGION","CDR3-IMGT"], "potentialField : Ok")
-    
+    assert.deepEqual(segment.findPotentialField(), ["","cdr3","fr1", "5", "id", "f1", "V-REGION","J-REGION","D-REGION","CDR3-IMGT"], "potentialField : Ok")
 
     m.select(0)
     assert.deepEqual(segment.toFasta(), "> test1 // 5.000%\naaaaaaaaaaaaaaaaaaaAG\n","toFasta :Ok")
@@ -74,6 +73,14 @@ QUnit.test("sequence", function(assert) {
     seq1 = new Sequence(4, m, segment)
     seq1.load()
     assert.notEqual(seq1.toString().indexOf("catcatcatgatgctacgatcttac"),-1, "unsegmented sequence")
+
+    h = seq1.get_positionned_highlight('f1', '')
+    assert.equal(h.start, 3, '"f1" feature, start')
+    assert.equal(h.stop, 6, '"f1" feature, stop')
+
+    h = seq1.get_positionned_highlight('f2', '')
+    assert.equal(h.start, 15, '"f2" feature, start')
+    assert.equal(h.stop, 20, '"f2" feature, stop')
 
     segment.updateElemStyle([4]) /* Will remove sequence 4 from the segmenter
                                   * as it is not really selected

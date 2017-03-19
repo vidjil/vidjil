@@ -194,6 +194,10 @@ json_data = {
         "top" : 5,
         "name": "unseg sequence",
         "germline" : "IGH",
+        "seg" : {
+            "f1" : {"start": 4, "stop": 7},
+            "f2" : {"seq": "tacgat"}, // 15 -> 20
+        }
     }
   ]
 };

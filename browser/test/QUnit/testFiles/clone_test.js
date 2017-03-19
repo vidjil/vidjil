@@ -59,7 +59,35 @@ QUnit.module("Clone", {
                 "start": 3,
                 "stop": 14,
                 "productive": false
-            }
+            },
+            "somefeature":
+            {
+                "seq": "aaaattt"
+            },
+        }
+    }
+
+    var json_clone4 = {
+        "sequence" : "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGTATTACC",
+        "c_name" : "custom name",
+        "name": "",
+        "id" : "id4",
+        "reads" : [10,10,15,15] ,
+        "top" : 4,
+        "germline" : "TRG",
+        "seg" : {
+            "3" : "IGHV4*01",
+            "4" : "IGHD2*03",
+            "3start" : 25,
+            "5end" : 15,
+	    "primer5": {
+	      "start": 2,
+	      "stop": 10
+	    },
+	    "primer3": {
+	      "start": 26,
+	      "stop": 34
+	    }
         }
     }
 
@@ -202,8 +230,21 @@ QUnit.test('clone: get info from seg', function(assert) {
     assert.equal(c1.getSegAASequence('cdr3'), 'ABCDE', 'AA CDR3 for c1')
 });
 
-QUnit.test("getSequence/RevComp", function(assert) {
+QUnit.test("clone : feature defined by a nucleotide sequence", function(assert) {
+    var m = new Model()
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone1, m, 0)
+    var c2 = new Clone(json_clone2, m, 1)
+    var c3 = new Clone(json_clone3, m, 2)
+    m.initClones()
 
+    assert.deepEqual(c3.getSegStartStop('somefeature'), null, "start/stop positions are not present")
+    c3.computeSegFeatureFromSeq('somefeature')
+    assert.deepEqual(c3.getSegStartStop('somefeature'), {"start": 7, "stop": 13}, "start/stop positions, computed from sequence")
+    assert.equal(c3.getSegLength('somefeature'), 7, "length of the feature");
+});
+
+QUnit.test("getSequence/RevComp", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data)
     var c1 = new Clone(json_clone1, m, 0)
@@ -344,4 +385,19 @@ QUnit.test("changeNameNotation", function(assert) {
     assert.equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/CCCACGTGGGGG/4 J5", "clone2, .getShortName()");
     m.changeCloneNotation('nucleotide_number')
     assert.equal(c2.getShortName(), "IGHV3-23 6/5/4 D1-1 5/12/4 J5", "clone2, .getShortName()");
-    });
+});
+
+
+QUnit.test("clone : getLengthDoubleFeature", function(assert) {
+
+    var m = new Model();
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone1, m, 0)
+    var c2 = new Clone(json_clone2, m, 1)
+    var c3 = new Clone(json_clone3, m, 2)
+    var c4 = new Clone(json_clone4, m, 3)
+    m.initClones()
+
+    assert.equal(c2.getSegLengthDoubleFeature('primer5','primer3'), "undefined", "C2 getSegLengthDoubleFeature('primer5','primer3')");
+    assert.equal(c4.getSegLengthDoubleFeature('primer5','primer3'), "33", "C4 'getSegLengthDoubleFeature'('primer5','primer3')");
+});
