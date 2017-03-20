@@ -36,12 +36,6 @@ class PatientController(unittest.TestCase):
         auth.add_permission(group_id, 'admin', db.patient, 0)
         auth.add_permission(group_id, 'read', db.patient, 0)
         auth.add_permission(group_id, 'create', db.patient, 0)
-    
-        
-    def testIndex(self):
-        resp = index()
-        self.assertTrue(resp.has_key('query'), "index() has returned an incomplete response")
-        
         
     def testAdd(self):
         resp = add()
