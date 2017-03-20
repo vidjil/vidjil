@@ -188,6 +188,7 @@ fake_result_id = db.results_file.insert(sequence_file_id = fake_file_id,
                                     data_file = db.results_file.data_file.store(stream, "plop.data")
                                     )
 
+stream.seek(0)
 fake_result_id2 = db.results_file.insert(sequence_file_id = fake_file_id2,
                                     config_id = fake_config_id,
                                     run_date = "2014-09-19 00:00:00",
