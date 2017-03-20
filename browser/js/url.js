@@ -34,7 +34,7 @@ Url.prototype= {
         if (this.sp.select_preset.selectedIndex!=this.sp.default_preset) {
             params_dict["plot"] = this.sp.splitX+','+this.sp.splitY+','+this.sp.mode;
         } else {
-    	    delete params_dict[sp.mode];
+	    delete params_dict[this.sp.mode];
     	}
 
         var params_list = [];       
