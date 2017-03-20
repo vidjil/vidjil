@@ -51,8 +51,7 @@ or =clusters=, to further cluster some clones, see below).
 
         "samples": {
              "number": 1, 
-             "original_names": ["T8045-BC081-Diag.fastq"],
-	     "id": [""]
+             "original_names": ["T8045-BC081-Diag.fastq"]
         },
 
         "reads" : {
@@ -99,8 +98,7 @@ do a correct gathering.
 
         "samples": {
              "number": 2, 
-             "original_names": ["T8045-BC081-Diag.fastq", "T8045-BC082-fu1.fastq"],
-             "id": ["", ""]
+             "original_names": ["T8045-BC081-Diag.fastq", "T8045-BC082-fu1.fastq"]
         },
 
         "reads" : {
