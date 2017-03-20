@@ -8,7 +8,8 @@ var windowMock = {
     mocked: true,
     location: {
         search: {
-            toString: function() { var search = current_url.split('?')[1] ; return (search == "" ? "" : '?' + search) }
+            toString: function() { var search = (current_url + '?').split('?')[1] ;
+                                   return (search == "" ? "" : '?' + search) }
         }},
     history: {
         pushState: function(x, y, url) { current_url = url }
