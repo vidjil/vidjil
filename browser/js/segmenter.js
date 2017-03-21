@@ -1329,6 +1329,9 @@ Sequence.prototype = {
         if (typeof p.start == 'undefined')
             return {'start' : -1, 'stop' : -1, 'seq': '', 'color' : color}
 
+        if (typeof p.seq == 'undefined')
+            p.seq = ''
+
         // Build the highlight object from p        
         // Both 'start' and 'stop' positions are included in the highlight
         {
@@ -1338,7 +1341,7 @@ Sequence.prototype = {
         }
 
         // Build the (possibly invisible) sequence
-        if (typeof p.seq == 'undefined') {
+        if (p.seq == '') {
             h.css = "highlight_border"
             for (var k=0; k<(h.stop - h.start + 1); k++) h.seq += "\u00A0"
         } else {
