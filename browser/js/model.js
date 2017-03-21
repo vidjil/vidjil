@@ -2462,7 +2462,7 @@ changeCloneNotation: function(cloneNotationType) {
         this.cleanPreviousFeature("primer5")
         this.cleanPreviousFeature("primer3")
         for (var i = 0; i < this.system_available.length; i++) {
-            germline = this.system_available[i].replace("+", "")
+            var germline = this.system_available[i].replace("+", "")
 
             primer5 = this.primersSetData[this.primerSetCurrent][germline]["primer5"]
             primer3 = this.primersSetData[this.primerSetCurrent][germline]["primer3"]
