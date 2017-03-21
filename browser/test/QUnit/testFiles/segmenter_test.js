@@ -93,3 +93,18 @@ QUnit.test("sequence", function(assert) {
     assert.notEqual(seq1_string.indexOf(">tccccccca<"), -1, "n part of segmented sequence")
     assert.notEqual(seq1_string.indexOf(">tca<"), -1, "j part of segmented sequence")
 });
+QUnit.test("segt", function (assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100);
+    m.initClones();
+    var segment = new Segment("segment",m)
+    segment.init();
+    segment.addToSegmenter(3);
+    assert.notEqual(segment.sequence[3].toString(),"ATCCT", "unsegmented sequence");
+    assert.equal(segment.sequence[3].toString().indexOf(">cattcta<"),-1, "part of segmented seq");
+    var clone3 = m.clone(3);
+    assert.deepEqual(segment.sequence[3].getVdjStartEnd(clone3), {"3": {"start": 183,"stop": 241}, "4": {}, "4a": {}, "4b": {}, "5": {"start": 0, "stop": 179}}, "vdj start end");
+    h = segment.sequence[3].get_positionned_highlight('f1','')
+    assert.equal(h,"", "feature value")
+
+})
