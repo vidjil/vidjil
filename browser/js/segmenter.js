@@ -1323,7 +1323,7 @@ Sequence.prototype = {
      * */
     get_positionned_highlight : function (field, color) {
         var clone = this.m.clone(this.id);
-        var h = {'color' : color};
+        var h = {'color' : color, 'seq': ''};
         var p = clone.getSegFeature(field)
 
         if (typeof p.start == 'undefined')
