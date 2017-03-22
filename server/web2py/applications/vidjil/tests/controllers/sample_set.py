@@ -35,7 +35,7 @@ class Sample_setController(unittest.TestCase):
         
 
     def testAll(self):
-        request.vars["type"] = 'generic'
+        request.vars["type"] = defs.SET_TYPE_GENERIC
         request.vars["id"] = fake_patient_id
 
         resp = all()

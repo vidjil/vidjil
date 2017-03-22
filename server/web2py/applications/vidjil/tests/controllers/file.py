@@ -73,7 +73,7 @@ class FileController(unittest.TestCase):
         request.vars['run_id'] = ""
         request.vars['generic_id'] = ""
         request.vars['filename'] = "plopapi"
-        request.vars["sample_type"] = 'patient'
+        request.vars["sample_type"] = defs.SET_TYPE_PATIENT
 
         resp = add_form()
         self.assertNotEqual(resp.find('"redirect":"sample_set/index"'), -1, "add_form() failed")
@@ -100,7 +100,7 @@ class FileController(unittest.TestCase):
         request.vars['run_id']=""
         request.vars['generic_id']=""
 	request.vars['pre_process'] = fake_pre_process_id
-        request.vars["sample_type"] = "patient"
+        request.vars["sample_type"] = defs.SET_TYPE_PATIENT
         
         
         resp = edit_form()
