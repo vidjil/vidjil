@@ -330,6 +330,15 @@ def get_data():
         command = db.config[request.vars["config"]].command
 
         log_reference_id = request.vars["sample_set_id"]
+        if (sample_set.sample_type == "generic") :
+            for row in db( db.generic.sample_set_id == request.vars["sample_set_id"] ).select() :
+                log_reference_id = row.id
+                generic_name = db.generic[row.id].name
+                data["dataFileName"] = generic_name + " (" + config_name + ")"
+                data["info"] = db.generic[row.id].info
+                data["generic_id"] = row.id
+                data["sample_name"] = generic_name
+
         if (sample_set.sample_type == "patient") :
             for row in db( db.patient.sample_set_id == request.vars["sample_set_id"] ).select() :
                 log_reference_id = row.id
