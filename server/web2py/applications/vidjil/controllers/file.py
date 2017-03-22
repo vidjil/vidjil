@@ -353,6 +353,7 @@ def edit():
             if relevant_ids['run'] == row.id :
                 run = run_date+name+id
         
+        source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
         return dict(message = T('edit file'),
                    generic_list = generic_list,
                    patient_list = patient_list,
@@ -362,7 +363,9 @@ def edit():
                    run = run,
                    generic = generic,
                    file = db.sequence_file[request.vars["id"]],
-                   sample_type = request.vars['sample_type'])
+                   sample_type = request.vars['sample_type'],
+                   source_module_active = source_module_active)
+
     else:
         return error_message("you need admin permission to edit files")
         
