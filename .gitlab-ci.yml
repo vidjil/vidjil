@@ -39,7 +39,7 @@ deploy:
     - rsync -av --delete browser $DEPLOY_SERVER:$DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG
     - scp doc/analysis-example.vidjil $DEPLOY_SERVER:$DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG/browser/
   environment:
-    name: $CI_BUILD_REF_NAME
+    name: review/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
     on_stop: stop_deploy
   only:
@@ -53,5 +53,5 @@ stop_deploy:
     - ssh $DEPLOY_SERVER "rm -rf $DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG"
   when: manual
   environment:
-    name: $CI_BUILD_REF_NAME
+    name: review/$CI_BUILD_REF_NAME
     action: stop
