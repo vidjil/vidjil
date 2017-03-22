@@ -1360,6 +1360,11 @@ span.warningReads {
 .db_block_right {
   float: right;
 }
+.db_block_center {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100px;
+}
 .db_table th {
   border-bottom: solid;
   border-color: #333333;
@@ -1756,10 +1761,6 @@ table.log textarea {
   max-height: 32px;
   width: 100%;
   background-color: #ffffff;
-}
-.info_container:hover {
-  max-height: 400px;
-  z-index: 2;
 }
 .patient_info_text {
   margin-bottom: 5px;
