@@ -67,11 +67,11 @@ class VidjilauthModel(unittest.TestCase):
         count = count + 1
 
         # setup data used for tests
-        first_sample_set_id = db.sample_set.insert(sample_type = 'run')
-        sample_set_id = db.sample_set.insert(sample_type = 'patient')
-        sample_set_id_sec = db.sample_set.insert(sample_type = 'patient')
-        sample_set_id_ter = db.sample_set.insert(sample_type = 'run')
-        generic_sample_set_id = db.sample_set.insert(sample_type = 'generic')
+        first_sample_set_id = db.sample_set.insert(sample_type = defs.SET_TYPE_RUN)
+        sample_set_id = db.sample_set.insert(sample_type = defs.SET_TYPE_PATIENT)
+        sample_set_id_sec = db.sample_set.insert(sample_type = defs.SET_TYPE_PATIENT)
+        sample_set_id_ter = db.sample_set.insert(sample_type = defs.SET_TYPE_RUN)
+        generic_sample_set_id = db.sample_set.insert(sample_type = defs.SET_TYPE_GENERIC)
 
         patient_id = db.patient.insert(
                 first_name="foo",
