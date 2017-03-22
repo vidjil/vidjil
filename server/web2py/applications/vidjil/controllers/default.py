@@ -38,7 +38,7 @@ def home():
     if auth.is_admin():
         redirect = URL('admin', 'index', scheme=True, host=True)
     else:
-        redirect = URL('sample_set', 'all', vars={'type': 'patient'}, scheme=True, host=True)
+        redirect = URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT}, scheme=True, host=True)
     res = {"redirect" : redirect}
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
@@ -330,7 +330,8 @@ def get_data():
         command = db.config[request.vars["config"]].command
 
         log_reference_id = request.vars["sample_set_id"]
-        if (sample_set.sample_type == "generic") :
+
+        if (sample_set.sample_type == defs.SET_TYPE_GENERIC) :
             for row in db( db.generic.sample_set_id == request.vars["sample_set_id"] ).select() :
                 log_reference_id = row.id
                 generic_name = db.generic[row.id].name
@@ -339,7 +340,7 @@ def get_data():
                 data["generic_id"] = row.id
                 data["sample_name"] = generic_name
 
-        if (sample_set.sample_type == "patient") :
+        if (sample_set.sample_type == defs.SET_TYPE_PATIENT):
             for row in db( db.patient.sample_set_id == request.vars["sample_set_id"] ).select() :
                 log_reference_id = row.id
                 patient_name = vidjil_utils.anon_ids(row.id)
@@ -348,7 +349,7 @@ def get_data():
                 data["patient_id"] = row.id
                 data["sample_name"] = patient_name
 
-        if (sample_set.sample_type == "run") :
+        if (sample_set.sample_type == defs.SET_TYPE_RUN) :
             for row in db( db.run.sample_set_id == request.vars["sample_set_id"] ).select() :
                 log_reference_id = row.id
                 run_name = db.run[row.id].name
@@ -477,12 +478,12 @@ def get_custom_data():
             sample_set = db((db.sequence_file.id == sequence_file_id)
                             & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                             & (db.sample_set.id == db.sample_set_membership.sample_set_id)
-                            & (db.sample_set.sample_type.belongs(['patient', 'run']))
+                            & (db.sample_set.sample_type.belongs([defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN])) #### SET_TYPE_GENERIC ?
                             ).select(db.sample_set.id, db.sample_set.sample_type).first()
 
             patient_run = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select().first()
             config_id = db.results_file[id].config_id
-            name = vidjil_utils.anon_ids(patient_run.id) if sample_set.sample_type == 'patient' else patient_run.name
+            name = vidjil_utils.anon_ids(patient_run.id) if sample_set.sample_type == defs.SET_TYPE_PATIENT else patient_run.name
             filename = db.sequence_file[sequence_file_id].filename
             data["samples"]["original_names"].append(name + "_" + filename)
             data["samples"]["timestamp"].append(str(db.sequence_file[sequence_file_id].sampling_date))
@@ -553,16 +554,16 @@ def save_analysis():
     error = ""
 
     initial_id = request.vars["sample_set_id"] if "sample_set_id" in request.vars else None
-    initial_type = 'sample_set'
+    initial_type = 'sample_set' ### defs.SET_TYPE_GENERIC ?
     if "patient" in request.vars :
         request.vars["sample_set_id"] = db.patient[request.vars["patient"]].sample_set_id
         initial_id = request.vars['patient']
-        initial_type = 'patient'
+        initial_type = defs.SET_TYPE_PATIENT
 
     if "run" in request.vars :
         request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
         initial_id = request.vars["run"]
-        initial_type = "run"
+        initial_type = defs.SET_TYPE_RUN
 
     if not "sample_set_id" in request.vars :
         error += "It is currently not possible to save an analysis on a comparison of samples, "
@@ -582,10 +583,10 @@ def save_analysis():
 
         sample_type = db.sample_set[sample_set_id].sample_type
         if (request.vars['info'] is not None):
-            if (sample_type == "patient") :
+            if (sample_type == defs.SET_TYPE_PATIENT) :
                 db(db.patient.sample_set_id == sample_set_id).update(info = request.vars['info']);
-            
-            if (sample_type == "run") :
+
+            if (sample_type == defs.SET_TYPE_RUN) :
                 db(db.run.sample_set_id == sample_set_id).update(info = request.vars['info']);
 
         if (request.vars['samples_id'] is not None and request.vars['samples_info'] is not None):

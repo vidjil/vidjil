@@ -154,7 +154,7 @@ def add_form():
                 error += "date (wrong format)"
 
         if error=="" :
-            id_sample_set = db.sample_set.insert(sample_type="patient")
+            id_sample_set = db.sample_set.insert(sample_type=defs.SET_TYPE_PATIENT)
             
             id = db.patient.insert(first_name=request.vars["first_name"],
                                    last_name=request.vars["last_name"],

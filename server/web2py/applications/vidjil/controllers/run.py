@@ -59,7 +59,7 @@ def add_form():
                 error += "date (wrong format)"
 
         if error=="" :
-            id_sample_set = db.sample_set.insert(sample_type="run")
+            id_sample_set = db.sample_set.insert(sample_type=defs.SET_TYPE_RUN)
             
             id = db.run.insert(name=request.vars["name"],
                                    sample_set_id=id_sample_set,

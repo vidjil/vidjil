@@ -38,11 +38,11 @@ def add():
         patient_id = None
         run_id = None
         generic_id = None
-        if sample_set.sample_type == "generic":
+        if sample_set.sample_type == defs.SET_TYPE_GENERIC:
             generic_id = db( db.generic.sample_set_id == request.vars["id"]).select()[0].id
-        if sample_set.sample_type == "patient" :
+        if sample_set.sample_type == defs.SET_TYPE_PATIENT:
             patient_id = db( db.patient.sample_set_id == request.vars["id"]).select()[0].id
-        if sample_set.sample_type == "run" :
+        if sample_set.sample_type == defs.SET_TYPE_RUN:
             run_id = db( db.run.sample_set_id == request.vars["id"]).select()[0].id
         
 		
@@ -244,11 +244,11 @@ def add_form():
             ids_sample_set += [generic_sample_set_id]
             id_sample_set_membership_generic = db.sample_set_membership.insert(sample_set_id=generic_sample_set_id, sequence_file_id=id)
 
-        if request.vars['sample_type'] == 'run':
+        if request.vars['sample_type'] == defs.SET_TYPE_RUN:
             originating_id = run_sample_set_id
-        elif request.vars['sample_type'] == 'patient':
+        elif request.vars['sample_type'] == defs.SET_TYPE_PATIENT:
             originating_id = patient_sample_set_id
-        elif request.vars['sample_type'] == 'generic' :
+        elif request.vars['sample_type'] == defs.SET_TYPE_GENERIC:
             originating_id = generic_sample_set_id
 
         redirect_args = {"id" : originating_id}
@@ -445,11 +445,11 @@ def edit_form():
             id_sample_set_membership_generic = db.sample_set_membership.insert(sample_set_id=generic_sample_set_id,
                                                                   sequence_file_id=request.vars["id"])
 
-        if request.vars['sample_type'] == 'run':
+        if request.vars['sample_type'] == defs.SET_TYPE_RUN:
             originating_id = run_sample_set_id
-        elif request.vars['sample_type'] == 'patient':
+        elif request.vars['sample_type'] == defs.SET_TYPE_PATIENT:
             originating_id = patient_sample_set_id
-        elif request.vars['sample_type'] == 'generic':
+        elif request.vars['sample_type'] == defs.SET_TYPE_GENERIC:
             originating_id = generic_sample_set_id
         redirect_args = {"id" : originating_id}
         

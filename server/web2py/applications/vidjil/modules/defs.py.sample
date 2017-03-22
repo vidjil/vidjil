@@ -67,6 +67,13 @@ REVERSE_IP = '/home/vidjil/ips.txt'
 LOCUS = ['TRA', 'TRA+D', 'TRB', 'TRG', 'TRD', 'TRD+',
          'IGH', 'IGH+', 'IGK', 'IGK+', 'IGL']
 
+### Sample sets types
+SET_TYPE_GENERIC = 'generic'
+SET_TYPE_PATIENT = 'patient'
+SET_TYPE_RUN = 'run'
+
+
+
 # Preventu upload and run when 1% space is left in target disk
 FS_LOCK_THRESHHOLD = 1
 

@@ -154,7 +154,7 @@ def all():
     if request.vars['type']:
         type = request.vars['type']
     else :
-        type = 'generic'
+        type = defs.SET_TYPE_GENERIC
 
     step = None
     page = None
@@ -232,7 +232,7 @@ def add_form():
             error += "name needed, "
 
         if error=="" :
-            id_sample_set = db.sample_set.insert(sample_type='generic')
+            id_sample_set = db.sample_set.insert(sample_type=defs.SET_TYPE_GENERIC)
 
             id = db.generic.insert(name=request.vars["name"],
                                    info=request.vars["info"],
@@ -270,11 +270,11 @@ def edit():
 
         sample_type = sample_set.sample_type
         
-        if sample_type == "patient" : 
+        if sample_type == defs.SET_TYPE_PATIENT:
             patient = db((db.patient.sample_set_id == request.vars["id"])).select()[0]
             redirect(URL('patient', 'edit', vars=dict(id=patient.id)), headers=response.headers)
         
-        elif sample_type == "run" :
+        elif sample_type == defs.SET_TYPE_RUN:
             run = db((db.run.sample_set_id == request.vars["id"])).select()[0]
             redirect(URL('run', 'edit', vars=dict(id=run.id)), headers=response.headers)
 

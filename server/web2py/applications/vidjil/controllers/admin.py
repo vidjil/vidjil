@@ -168,13 +168,13 @@ def sample_set_fixer():
         db(db.sample_set_membership.id>0).delete()
         
         for row in db(db.sequence_file.id>0).select() :
-            sample_set_id = db.sample_set.insert(sample_type="sequence_file")
+            sample_set_id = db.sample_set.insert(sample_type="sequence_file") ### defs.SET_TYPE ?
 
             db.sample_set_membership.insert(sample_set_id=sample_set_id,
                                            sequence_file_id=row.id)
         
         for row in db(db.patient.id>0).select() :
-            sample_set_id = db.sample_set.insert(sample_type="patient")
+            sample_set_id = db.sample_set.insert(sample_type=defs.SET_TYPE_PATIENT)
             db.patient[row.id] = dict(sample_set_id=sample_set_id)
             
             for row2 in db(db.sequence_file.patient_id==row.id).select() :
@@ -184,7 +184,7 @@ def sample_set_fixer():
             db(db.fused_file.patient_id==row.id).update(sample_set_id=sample_set_id)
             db(db.analysis_file.patient_id==row.id).update(sample_set_id=sample_set_id)
                 
-        db(db.sample_set.sample_type=="old").delete()
+        db(db.sample_set.sample_type=="old").delete()  ### defs.SET_TYPE ?
                 
     
 def repair():
