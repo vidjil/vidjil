@@ -53,14 +53,14 @@ info = db.sequence_file[request.vars["id"]]
 			
 			<tr class='db_table_split' ><td colspan="2"> patient and run </td></tr>
             <tr>
-                <td><label for="generic_id" id="generic_id__label">sample_set: </label></td>
+                <td><label for="generic_id" id="generic_id__label">set: </label></td>
                 <td><input list="generics" id="generic_list" name="generic_id" type="text" size="80" value="{{=generic}}"></td>
                   <datalist id="generics">
                   {{for row in generic_list :}}
                       <option value="{{=row}}">
                   {{pass}}
                   </datalist>
-                <td rowspan="2">* You must associate this sample with at least one patient, run or sample_set.
+                <td rowspan="2">* You must associate this sample with at least one patient, run or set.
 		  <br/>You can also associate it with any combination of the three.</td>
             </tr>
             <tr>
