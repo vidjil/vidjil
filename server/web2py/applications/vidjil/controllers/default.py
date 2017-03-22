@@ -464,7 +464,7 @@ def get_custom_data():
         except IOError, error:
             return error_message(str(error))
         
-        generic_info = "Compare sample sets"
+        generic_info = "Compare samples"
         data["sample_name"] = generic_info
         data["dataFileName"] = generic_info
         data["info"] = generic_info
