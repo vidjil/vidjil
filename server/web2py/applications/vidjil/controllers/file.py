@@ -277,6 +277,8 @@ def edit():
         sample_set_list = db(
                 (db.sample_set_membership.sequence_file_id == request.vars['id'])
                 & (db.sample_set_membership.sample_set_id != None)
+                & (db.sample_set.id == db.sample_set_membership.sample_set_id)
+                & (db.sample_set.sample_type != 'sequence_file')
             ).select(db.sample_set_membership.sample_set_id)
         for row in sample_set_list :
             sample_type = db.sample_set[row.sample_set_id].sample_type
