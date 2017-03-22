@@ -236,13 +236,21 @@ function main() {
                 requestVidjilFile(data,
                     function (response) { // On success return
                         // Hide the views to load them, then display them.
+                        var json_response = undefined
+                        try {
+                            json_response = jQuery.parseJSON(response);
+                        } catch(e) {}
+                        if (json_response == undefined || "error" in json_response) {
+                            error_callback(undefined, json_response['error']);
+                        } else {
                         displayVidjilViews(false);
                         var funct = function () {
                             removePrefixedEvent(segContainer, 'TransitionEnd', funct);
-                            processResult(response);
+                            processResult(json_response);
                             displayVidjilViews(true);
                         };
                         addPrefixedEvent(segContainer, 'TransitionEnd', funct);
+                        }
                         displayWaitingForCallback(false);
                         disableSubmitButt(false);
                         disableFeatures(false);
