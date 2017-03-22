@@ -227,25 +227,35 @@ function main() {
                 cleanVidjilViews();
                 displayVidjilViews(true);
 
+                var error_callback =  function (xhr, textStatus, exc) { // On error return
+                    displayError('We had a problem processing your request.', textStatus, exc);
+                    displayWaitingForCallback(false);
+                    disableSubmitButt(false);
+                };
+                
                 requestVidjilFile(data,
                     function (response) { // On success return
                         // Hide the views to load them, then display them.
+                        var json_response = undefined
+                        try {
+                            json_response = jQuery.parseJSON(response);
+                        } catch(e) {}
+                        if (json_response == undefined || "error" in json_response) {
+                            error_callback(undefined, json_response['error']);
+                        } else {
                         displayVidjilViews(false);
                         var funct = function () {
                             removePrefixedEvent(segContainer, 'TransitionEnd', funct);
-                            processResult(response);
+                            processResult(json_response);
                             displayVidjilViews(true);
                         };
                         addPrefixedEvent(segContainer, 'TransitionEnd', funct);
+                        }
                         displayWaitingForCallback(false);
                         disableSubmitButt(false);
                         disableFeatures(false);
                     },
-                    function (xhr, textStatus, exc) { // On error return
-                        displayError('We had a problem processing your request.', textStatus, exc);
-                        displayWaitingForCallback(false);
-                        disableSubmitButt(false);
-                });
+                    error_callback);
                 displayWaitingForCallback(true);
             };
             addPrefixedEvent(segContainer, 'TransitionEnd', funct);
