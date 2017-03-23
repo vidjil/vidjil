@@ -1,0 +1,59 @@
+
+
+before_script:
+  - make data
+  - make germline
+
+stages:
+  - test_unit
+  - test_functional
+  - deploy
+
+test_browser_unit:
+  stage: test_unit
+  script: make unit_browser
+  artifacts:
+    paths:
+    - browser/
+  only:
+    - /^feature-c\/.*$/
+    - prod-browser
+
+test_browser-functional:
+  stage: test_functional
+  script:
+    - make -C browser
+    - source /etc/profile.d/rvm.sh
+    - rvm use 2.1.1
+    - make headless_browser
+  artifacts:
+    paths:
+    - browser/
+  only:
+    - /^feature-c\/.*$/
+    - prod-browser
+
+deploy:
+  stage: deploy
+  script:
+    - rsync -av --delete browser $DEPLOY_SERVER:$DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG
+    - scp doc/analysis-example.vidjil $DEPLOY_SERVER:$DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG/browser/
+  environment:
+    name: review/$CI_BUILD_REF_NAME
+    url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
+    on_stop: stop_deploy
+  only:
+    - /^feature-c\/.*$/
+
+stop_deploy:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - ssh $DEPLOY_SERVER "rm -rf $DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG"
+  when: manual
+  environment:
+    name: review/$CI_BUILD_REF_NAME
+    action: stop
+  only:
+    - /^feature-c\/.*$/
