@@ -55,3 +55,5 @@ stop_deploy:
   environment:
     name: review/$CI_BUILD_REF_NAME
     action: stop
+  only:
+    - /^feature-c\/.*$/
