@@ -243,13 +243,13 @@ function main() {
                         if (json_response == undefined || "error" in json_response) {
                             error_callback(undefined, json_response['error']);
                         } else {
-                        displayVidjilViews(false);
-                        var funct = function () {
-                            removePrefixedEvent(segContainer, 'TransitionEnd', funct);
-                            processResult(json_response);
-                            displayVidjilViews(true);
-                        };
-                        addPrefixedEvent(segContainer, 'TransitionEnd', funct);
+                            displayVidjilViews(false);
+                            var funct = function () {
+                                removePrefixedEvent(segContainer, 'TransitionEnd', funct);
+                                processResult(json_response);
+                                displayVidjilViews(true);
+                            };
+                            addPrefixedEvent(segContainer, 'TransitionEnd', funct);
                         }
                         displayWaitingForCallback(false);
                         disableSubmitButt(false);
