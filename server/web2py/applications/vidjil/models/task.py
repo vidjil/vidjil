@@ -183,32 +183,32 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
     vidjil_log_file = open(out_log, 'w')
 
     try:
-    ## commande complete
-    cmd = defs.DIR_VIDJIL + '/vidjil ' + ' -o  ' + out_folder + " -b " + output_filename
-    cmd += ' ' + vidjil_cmd + ' '+ seq_file
-    
-    ## execute la commande vidjil
-    print "=== Launching Vidjil ==="
-    print cmd    
-    print "========================"
-    sys.stdout.flush()
+        ## commande complete
+        cmd = defs.DIR_VIDJIL + '/vidjil ' + ' -o  ' + out_folder + " -b " + output_filename
+        cmd += ' ' + vidjil_cmd + ' '+ seq_file
 
-    p = Popen(cmd, shell=True, stdin=PIPE, stdout=vidjil_log_file, stderr=STDOUT, close_fds=True)
+        ## execute la commande vidjil
+        print "=== Launching Vidjil ==="
+        print cmd    
+        print "========================"
+        sys.stdout.flush()
 
-    (stdoutdata, stderrdata) = p.communicate()
+        p = Popen(cmd, shell=True, stdin=PIPE, stdout=vidjil_log_file, stderr=STDOUT, close_fds=True)
 
-    print "Output log in " + out_log
-    sys.stdout.flush()
-    db.commit()
+        (stdoutdata, stderrdata) = p.communicate()
 
-    ## Get result file
-    if grep_reads:
-        out_results = out_folder + '/seq/clone.fa-1'
-    else:
-        out_results = out_folder + '/' + output_filename + '.vidjil'
+        print "Output log in " + out_log
+        sys.stdout.flush()
+        db.commit()
 
-    print "===>", out_results
-    results_filepath = os.path.abspath(out_results)
+        ## Get result file
+        if grep_reads:
+            out_results = out_folder + '/seq/clone.fa-1'
+        else:
+            out_results = out_folder + '/' + output_filename + '.vidjil'
+
+        print "===>", out_results
+        results_filepath = os.path.abspath(out_results)
 
         stream = open(results_filepath, 'rb')
     except:
@@ -320,29 +320,29 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
 
     ## commande complete
     try:
-    mixcr = defs.DIR_MIXCR + 'mixcr'
-    cmd = mixcr + ' align --save-reads -t 1 -r ' + align_report + ' ' + args_1 + ' ' + seq_file  + ' ' + out_alignments
-    cmd += ' && '
-    cmd += mixcr + ' assemble -t 1 -r ' + assembly_report + ' ' + args_2 + ' ' + out_alignments + ' ' + out_clones
-    cmd += ' && rm ' + out_alignments
-    cmd += ' && '
-    cmd += mixcr + ' exportClones --format vidjil -germline -id -name -reads -sequence -top -seg -s ' + args_3 + ' ' + out_clones + ' ' + out_results
+        mixcr = defs.DIR_MIXCR + 'mixcr'
+        cmd = mixcr + ' align --save-reads -t 1 -r ' + align_report + ' ' + args_1 + ' ' + seq_file  + ' ' + out_alignments
+        cmd += ' && '
+        cmd += mixcr + ' assemble -t 1 -r ' + assembly_report + ' ' + args_2 + ' ' + out_alignments + ' ' + out_clones
+        cmd += ' && rm ' + out_alignments
+        cmd += ' && '
+        cmd += mixcr + ' exportClones --format vidjil -germline -id -name -reads -sequence -top -seg -s ' + args_3 + ' ' + out_clones + ' ' + out_results
 
-    ## execute la commande MiXCR
-    print "=== Launching MiXCR ==="
-    print cmd
-    print "========================"
-    sys.stdout.flush()
+        ## execute la commande MiXCR
+        print "=== Launching MiXCR ==="
+        print cmd
+        print "========================"
+        sys.stdout.flush()
 
-    p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=STDOUT, close_fds=True)
-    p.wait()
+        p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=STDOUT, close_fds=True)
+        p.wait()
 
-    print "Output log in " + out_log
-    sys.stdout.flush()
+        print "Output log in " + out_log
+        sys.stdout.flush()
 
-    ## Get result file
-    print "===>", out_results
-    results_filepath = os.path.abspath(out_results)
+        ## Get result file
+        print "===>", out_results
+        results_filepath = os.path.abspath(out_results)
         stream = open(results_filepath, 'rb')
         stream.close()
     except:
@@ -493,20 +493,20 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
             sequence_file_list += str(row.results_file.sequence_file_id) + "_"
             
     try:
-    fuse_cmd = db.config[id_config].fuse_command
-    cmd = "python "+defs.DIR_FUSE+"/fuse.py -o "+ output_file + " " + fuse_cmd + " " + files
+        fuse_cmd = db.config[id_config].fuse_command
+        cmd = "python "+defs.DIR_FUSE+"/fuse.py -o "+ output_file + " " + fuse_cmd + " " + files
 
 
-    print "=== fuse.py ==="
-    print cmd
-    print "==============="
-    sys.stdout.flush()
+        print "=== fuse.py ==="
+        print cmd
+        print "==============="
+        sys.stdout.flush()
 
-    p = Popen(cmd, shell=True, stdin=PIPE, stdout=fuse_log_file, stderr=STDOUT, close_fds=True)
-    (stdoutdata, stderrdata) = p.communicate()
-    print "Output log in "+out_folder+'/'+output_filename+'.fuse.log'
+        p = Popen(cmd, shell=True, stdin=PIPE, stdout=fuse_log_file, stderr=STDOUT, close_fds=True)
+        (stdoutdata, stderrdata) = p.communicate()
+        print "Output log in "+out_folder+'/'+output_filename+'.fuse.log'
 
-    fuse_filepath = os.path.abspath(output_file)
+        fuse_filepath = os.path.abspath(output_file)
 
         stream = open(fuse_filepath, 'rb')
     except:
@@ -577,9 +577,9 @@ def custom_fuse(file_list):
             files += os.path.abspath(defs.DIR_RESULTS + db.results_file[id].data_file) + " "
     
     try:
-    cmd = "python "+ os.path.abspath(defs.DIR_FUSE) +"/fuse.py -o "+output_file+" -t 100 "+files
-    proc_srvr = xmlrpclib.ServerProxy("http://%s:%d" % (defs.FUSE_SERVER, defs.PORT_FUSE_SERVER))
-    fuse_filepath = proc_srvr.fuse(cmd, out_folder, output_filename)
+        cmd = "python "+ os.path.abspath(defs.DIR_FUSE) +"/fuse.py -o "+output_file+" -t 100 "+files
+        proc_srvr = xmlrpclib.ServerProxy("http://%s:%d" % (defs.FUSE_SERVER, defs.PORT_FUSE_SERVER))
+        fuse_filepath = proc_srvr.fuse(cmd, out_folder, output_filename)
     
         f = open(fuse_filepath, 'rb')
         data = gluon.contrib.simplejson.loads(f.read())
@@ -688,26 +688,26 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
     pre_process = db.pre_process[pre_process_id]
 
     try:
-    cmd = pre_process.command.replace( "&file1&", defs.DIR_SEQUENCES + sequence_file.data_file)
-    if sequence_file.data_file2:
-        cmd = cmd.replace( "&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
-    cmd = cmd.replace( "&result&", output_file)
-    cmd = cmd.replace("&pear&", defs.DIR_PEAR)
+        cmd = pre_process.command.replace( "&file1&", defs.DIR_SEQUENCES + sequence_file.data_file)
+        if sequence_file.data_file2:
+            cmd = cmd.replace( "&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
+        cmd = cmd.replace( "&result&", output_file)
+        cmd = cmd.replace("&pear&", defs.DIR_PEAR)
 
-    print "=== Pre-process %s ===" % pre_process_id
-    print cmd
-    print "==============="
-    sys.stdout.flush()
+        print "=== Pre-process %s ===" % pre_process_id
+        print cmd
+        print "==============="
+        sys.stdout.flush()
 
-    out_log = out_folder+'/'+output_filename+'.pre.log'
-    log_file = open(out_log, 'w')
-    
-    os.chdir(defs.DIR_FUSE)
-    p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=log_file, close_fds=True)
-    (stdoutdata, stderrdata) = p.communicate()
-    print "Output log in " + out_log
+        out_log = out_folder+'/'+output_filename+'.pre.log'
+        log_file = open(out_log, 'w')
 
-    filepath = os.path.abspath(output_file)
+        os.chdir(defs.DIR_FUSE)
+        p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=log_file, close_fds=True)
+        (stdoutdata, stderrdata) = p.communicate()
+        print "Output log in " + out_log
+
+        filepath = os.path.abspath(output_file)
 
         stream = open(filepath, 'rb')
     except:
