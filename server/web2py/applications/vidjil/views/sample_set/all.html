@@ -46,7 +46,7 @@
 {{if isAdmin:}} <td onclick="db.call('sample_set/permission', {'id' :'{{=data.sample_set_id}}'} )" > <i class="icon-key" title="set permissions"></i> </td> {{else:}} <td></td> {{pass}}
                 {{if data.has_permission:}}
 		<td onclick="db.call('sample_set/edit', {'id' :'{{=data.sample_set_id}}'} )" > <i class="icon-pencil-2" title="{{='edit %s information' % 'sample_set'}}"></i> </td>
-		<td onclick="db.call('sample_set/confirm', {'id' :'{{=data.sample_set_id}}'} )" > <i class="icon-erase" title="{{='delete %s' % helper.get_type()}}"></i> </td>
+		<td onclick="db.call('sample_set/confirm', {'id' :'{{=data.sample_set_id}}'} )" > <i class="icon-erase" title="{{='delete %s' % helper.get_type_display()}}"></i> </td>
                 {{else:}}  <td></td><td></td>{{pass}}
             </tr>
         {{pass}}
@@ -59,16 +59,16 @@
     <div class="db_block_left">
 
 {{if auth.can_create_patient():}}
-<span class="button2" onclick="db.call('{{=helper.get_add_route()}}')"> + new {{=helper.get_type()}} </span>
+<span class="button2" onclick="db.call('{{=helper.get_add_route()}}')"> + new {{=helper.get_type_display()}} </span>
 <span class="button2" onclick="db.call('sample_set/custom', {'filter': '{{=request.vars['filter']}}' })"> compare samples/patients </span>
 {{else:}}
-<!-- <span class="button2 inactive" onclick="db.call('sample_set/add')" title="you don't have permission to create new {{=type}}"> add sample_set </span> -->
+<!-- <span class="button2 inactive" onclick="db.call('sample_set/add')" title="you don't have permission to create new {{=helper.get_type_display()}}s"> add sample_set </span> -->
 {{pass}}
 
   </div>
   <div class="db_block_right">
   <br />
-  {{ =min(step, len(query)) }} {{=helper.get_type()}}s, {{ =total_file_count }} files ({{ =vidjil_utils.format_size(total_size) }})
+  {{ =min(step, len(query)) }} {{=helper.get_type_display()}}s, {{ =total_file_count }} files ({{ =vidjil_utils.format_size(total_size) }})
   </div>
 </div>
 <div class="db_block_center">

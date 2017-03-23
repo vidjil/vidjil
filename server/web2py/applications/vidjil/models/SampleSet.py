@@ -6,6 +6,9 @@ class SampleSet(object):
     def get_type(self):
         return self.type
 
+    def get_type_display(self):
+        return 'set' if self.type == defs.SET_TYPE_GENERIC else self.type
+
     def __getitem__(self, key):
         return getattr(self, key, None)
 
