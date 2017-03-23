@@ -13,7 +13,7 @@ void testSegmentationBug1(IndexTypes index, int delta_min) {
   Fasta seqJ("../../germline/homo-sapiens/TRGJ.fa");
 
   Germline *germline ;
-  germline = new Germline("custom", 'x', seqV, seqV, seqJ, delta_min, "##############");
+  germline = new Germline("custom", 'x', seqV, seqV, seqJ, delta_min, "#############");
   germline->new_index(index);
   germline->finish();
   
