@@ -7,8 +7,6 @@
    fun:_ZN11gzstreambuf4openEPKci
    fun:_ZN12gzstreambase4openEPKci
    fun:_ZN12gzstreambaseC2EPKci
-   fun:_ZN9igzstreamC1EPKci
-   fun:_ZN5Fasta3addERKSsb
    ...
    fun:_ZN13MultiGermline15build_from_jsonESsSsii
    fun:main
