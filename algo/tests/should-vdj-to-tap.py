@@ -135,7 +135,7 @@ def should_pattern_to_regex(p):
                 gene = gene.replace('/', '/?')
 
             if args.ignore_D and ('IGHD' in gene or 'TRBD' in gene or 'TRDD' in gene):
-                gene = '\S*'
+                gene = '[^[:space]]*'
                 allele = '[[:digit:]]*'
 
             if args.ignore_allele:
@@ -158,7 +158,7 @@ def should_pattern_to_regex(p):
         re1 = should_pattern_to_regex(m.group(1)).pattern
         re2 = '('+should_pattern_to_regex(m.group(2)).pattern+')'
         re3 = should_pattern_to_regex(m.group(3)).pattern
-        regex_pattern = '\s*'.join(x for x in [re1, re2, re3])
+        regex_pattern = '[[:space:]]*'.join(x for x in [re1, re2, re3])
     else:
         # We have a parenthesis free expression
         for term in p.split():
