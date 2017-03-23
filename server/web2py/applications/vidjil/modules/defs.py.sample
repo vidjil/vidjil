@@ -68,6 +68,8 @@ LOCUS = ['TRA', 'TRA+D', 'TRB', 'TRG', 'TRD', 'TRD+',
          'IGH', 'IGH+', 'IGK', 'IGK+', 'IGL']
 
 ### Sample sets types
+### Tables are defined with these names:
+### do not change these values once the server is set
 SET_TYPE_GENERIC = 'set'
 SET_TYPE_PATIENT = 'patient'
 SET_TYPE_RUN = 'run'

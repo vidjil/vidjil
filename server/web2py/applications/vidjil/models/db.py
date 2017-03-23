@@ -122,7 +122,7 @@ db.define_table('sample_set',
                Field('sample_type', 'string', ondelete='SET NULL'))
 
 
-db.define_table('patient',
+db.define_table(defs.SET_TYPE_PATIENT,
                 Field('first_name','string'),
                 Field('last_name','string'),
                 Field('birth','date'),
@@ -138,7 +138,7 @@ db.patient.birth.requires = IS_DATE(format=T('%Y-%m-%d'),
                    error_message='must be YYYY-MM-DD!')
 '''
 
-db.define_table('run',
+db.define_table(defs.SET_TYPE_RUN,
                 Field('name','string'),
                 Field('run_date','date'),
                 Field('info','text'),
@@ -148,7 +148,7 @@ db.define_table('run',
 				Field('pcr','string'),
                 Field('sample_set_id','reference sample_set', ondelete='SET NULL'))
 
-db.define_table('generic',
+db.define_table(defs.SET_TYPE_GENERIC,
                 Field('name', 'string'),
                 Field('info', 'text'),
                 Field('creator', 'reference auth_user'),
