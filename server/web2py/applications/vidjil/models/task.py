@@ -182,6 +182,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
     out_log = out_folder+'/'+output_filename+'.vidjil.log'
     vidjil_log_file = open(out_log, 'w')
 
+    try:
     ## commande complete
     cmd = defs.DIR_VIDJIL + '/vidjil ' + ' -o  ' + out_folder + " -b " + output_filename
     cmd += ' ' + vidjil_cmd + ' '+ seq_file
@@ -209,13 +210,12 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
     print "===>", out_results
     results_filepath = os.path.abspath(out_results)
 
-    try:
         stream = open(results_filepath, 'rb')
-    except IOError:
+    except:
         print "!!! Vidjil failed, no result file"
         res = {"message": "[%s] c%s: Vidjil FAILED - %s" % (id_data, id_config, out_folder)}
         log.error(res)
-        raise IOError
+        raise
     
     ## Parse some info in .log
     vidjil_log_file.close()
@@ -319,6 +319,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
         print "! Bad arguments, we expect args_align | args_assemble | args_exportClones"
 
     ## commande complete
+    try:
     mixcr = defs.DIR_MIXCR + 'mixcr'
     cmd = mixcr + ' align --save-reads -t 1 -r ' + align_report + ' ' + args_1 + ' ' + seq_file  + ' ' + out_alignments
     cmd += ' && '
@@ -342,14 +343,13 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
     ## Get result file
     print "===>", out_results
     results_filepath = os.path.abspath(out_results)
-    try:
         stream = open(results_filepath, 'rb')
         stream.close()
-    except IOError:
+    except:
         print "!!! MiXCR failed, no result file"
         res = {"message": "[%s] c%s: MiXCR FAILED - %s" % (id_data, id_config, out_folder)}
         log.error(res)
-        raise IOError
+        raise
 
     align_report = get_file_content(align_report)
     assembly_report = get_file_content(assembly_report)
@@ -492,6 +492,7 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
             files += defs.DIR_RESULTS + row.results_file.data_file + " "
             sequence_file_list += str(row.results_file.sequence_file_id) + "_"
             
+    try:
     fuse_cmd = db.config[id_config].fuse_command
     cmd = "python "+defs.DIR_FUSE+"/fuse.py -o "+ output_file + " " + fuse_cmd + " " + files
 
@@ -507,13 +508,12 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
 
     fuse_filepath = os.path.abspath(output_file)
 
-    try:
         stream = open(fuse_filepath, 'rb')
-    except IOError:
+    except:
         print "!!! Fuse failed, no .fused file"
         res = {"message": "[%s] c%s: 'fuse' FAILED - %s" % (id_data, id_config, output_file)}
         log.error(res)
-        raise IOError
+        raise
 
     ts = time.time()
 
@@ -576,17 +576,17 @@ def custom_fuse(file_list):
         if db.results_file[id].data_file is not None :
             files += os.path.abspath(defs.DIR_RESULTS + db.results_file[id].data_file) + " "
     
+    try:
     cmd = "python "+ os.path.abspath(defs.DIR_FUSE) +"/fuse.py -o "+output_file+" -t 100 "+files
     proc_srvr = xmlrpclib.ServerProxy("http://%s:%d" % (defs.FUSE_SERVER, defs.PORT_FUSE_SERVER))
     fuse_filepath = proc_srvr.fuse(cmd, out_folder, output_filename)
     
-    try:
         f = open(fuse_filepath, 'rb')
         data = gluon.contrib.simplejson.loads(f.read())
-    except IOError, e:
+    except:
         res = {"message": "'custom fuse' -> IOError"}
         log.error(res)
-        raise e
+        raise
 
     clean_cmd = "rm -rf " + out_folder 
     p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
@@ -687,6 +687,7 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
             
     pre_process = db.pre_process[pre_process_id]
 
+    try:
     cmd = pre_process.command.replace( "&file1&", defs.DIR_SEQUENCES + sequence_file.data_file)
     if sequence_file.data_file2:
         cmd = cmd.replace( "&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
@@ -708,15 +709,14 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
 
     filepath = os.path.abspath(output_file)
 
-    try:
         stream = open(filepath, 'rb')
-    except IOError:
+    except:
         print "!!! Pre-process failed, no result file"
         res = {"message": "{%s} p%s: 'pre_process' FAILED - %s" % (sequence_file_id, pre_process_id, output_file)}
         log.error(res)
         db.sequence_file[sequence_file_id] = dict(pre_process_flag = "FAILED")
         db.commit()
-        raise IOError
+        raise
 
         
 
