@@ -145,7 +145,7 @@ def edit_form():
             error += "patient id needed, "
 
         if error=="" :
-            db.patient[request.vars["id"]] = dict(name=request.vars["name"],
+            db.run[request.vars["id"]] = dict(name=request.vars["name"],
                                                    run_date=request.vars["run_date"],
                                                    info=request.vars["info"],
 												   sequencer=request.vars["sequencer"],
