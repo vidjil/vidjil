@@ -100,11 +100,14 @@ QUnit.test("segt", function (assert) {
     var segment = new Segment("segment",m)
     segment.init();
     segment.addToSegmenter(3);
+    assert.equal(m.clone(3).getSequenceName(), "test4", "clone")
+    assert.equal(m.clone(3).getSequence(),"GGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA","sequence")
+    m.clone(3).addSegFeatureFromSeq('test_feature','CACCCAGGAGGTGGAGCTGGATATTGAGACT')
     assert.notEqual(segment.sequence[3].toString(),"ATCCT", "unsegmented sequence");
     assert.equal(segment.sequence[3].toString().indexOf(">cattcta<"),-1, "part of segmented seq");
     var clone3 = m.clone(3);
     assert.deepEqual(segment.sequence[3].getVdjStartEnd(clone3), {"3": {"start": 183,"stop": 241}, "4": {}, "4a": {}, "4b": {}, "5": {"start": 0, "stop": 179}}, "vdj start end");
-    h = segment.sequence[3].get_positionned_highlight('f1','')
+    var h = segment.sequence[3].get_positionned_highlight('f1','')
     assert.equal(h,"", "feature value")
-
+    assert.equal(segment.sequence[3].get_positionned_highlight("test_feature", " ", "test feature value"))
 })
