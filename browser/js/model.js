@@ -2030,7 +2030,7 @@ changeCloneNotation: function(cloneNotationType) {
                 html: fasta
             }).appendTo(w.document.body);
         }else{
-            console.log("exportFasta: select clones to export before")
+            console.log({msg: "Export FASTA: please select clones to be exported", type: 'flash', priority: 2});
         }
         
     },
