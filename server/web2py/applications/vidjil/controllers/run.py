@@ -77,8 +77,8 @@ def add_form():
             #patient creator automaticaly has all rights 
             auth.add_permission(user_group, PermissionEnum.access.value, db.run, id)
 
-            res = {"redirect": "run/index",
-                   "args" : { "id" : id },
+            res = {"redirect": "sample_set/all",
+                   "args" : { "type" : 'run' },
                    "message": request.vars["name"] + ": run added"}
             log.info(res, extra={'user_id': auth.user.id, 'record_id': id, 'table_name': 'run'})
 
@@ -205,7 +205,8 @@ def delete():
         #delete patient sample_set
         db(db.sample_set.id == sample_set_id).delete()
 
-        res = {"redirect": "run/index",
+        res = {"redirect": "sample_set/all",
+               "args" : { "type" : 'run' },
                "success": "true",
                "message": "run ("+str(request.vars["id"])+") deleted"}
         log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'run'})
