@@ -132,7 +132,7 @@ def edit():
 ## redirect to run list if success
 ## return a flash error message if fail
 def edit_form(): 
-    if (auth.can_modify_patient(request.vars["id"]) ):
+    if (auth.can_modify_run(request.vars["id"]) ):
         error = ""
         if request.vars["name"] == "" :
             error += "name needed, "
