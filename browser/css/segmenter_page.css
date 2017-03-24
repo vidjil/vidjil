@@ -1952,13 +1952,6 @@ textarea {
   float: right;
   padding: 0.4% 1.4%;
 }
-#copyright {
-  font-size: 0.7em;
-  position: absolute;
-  bottom: 0.4%;
-  right: 1.2%;
-  text-align: right;
-}
 .vidjil_view {
   border-radius: 0.1em;
   /*border: 1px solid silver;*/
