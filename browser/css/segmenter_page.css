@@ -1933,7 +1933,7 @@ textarea {
   resize: none;
   margin-top: 2%;
   height: 65%;
-  width: 98%;
+  width: 100%;
 }
 #scatter_panel {
   -webkit-flex: 2 32%;
@@ -1991,4 +1991,9 @@ textarea {
 
 .big-icon {
   font-size: 250%;
+}
+
+#btn_exportfasta {
+  position: absolute;
+  right: 10px;
 }
