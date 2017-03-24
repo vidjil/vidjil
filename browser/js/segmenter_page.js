@@ -125,7 +125,7 @@ function displayWaitingForCallback(waiting) {
             view.classList.remove('notWaitingResponse');
 
             // Create loader image
-            var imgLoading = icon('icon-spin4 animate-spin imgAjaxLoading', '');
+            var imgLoading = icon('icon-spin4 animate-spin imgAjaxLoading big-icon', '');
             view.appendChild(imgLoading);
         } else {
             var imgLoading = view.getElementsByClassName('imgAjaxLoading');

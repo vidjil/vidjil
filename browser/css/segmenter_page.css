@@ -1988,3 +1988,7 @@ textarea {
   left: 50%;
   top: 50%;
 }
+
+.big-icon {
+  font-size: 250%;
+}
