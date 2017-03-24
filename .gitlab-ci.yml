@@ -17,7 +17,7 @@ test_browser_unit:
     - browser/
   only:
     - /^feature-c\/.*$/
-    - prod-browser
+    - prod-client
 
 test_browser-functional:
   stage: test_functional
@@ -31,7 +31,7 @@ test_browser-functional:
     - browser/
   only:
     - /^feature-c\/.*$/
-    - prod-browser
+    - prod-client
 
 deploy:
   stage: deploy
