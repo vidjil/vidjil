@@ -77,8 +77,8 @@ def add_form():
             #patient creator automaticaly has all rights 
             auth.add_permission(user_group, PermissionEnum.access.value, db.run, id)
 
-            res = {"redirect": "run/index",
-                   "args" : { "id" : id },
+            res = {"redirect": "sample_set/all",
+                   "args" : { "type" : 'run' },
                    "message": request.vars["name"] + ": run added"}
             log.info(res, extra={'user_id': auth.user.id, 'record_id': id, 'table_name': 'run'})
 
@@ -132,7 +132,7 @@ def edit():
 ## redirect to run list if success
 ## return a flash error message if fail
 def edit_form(): 
-    if (auth.can_modify_patient(request.vars["id"]) ):
+    if (auth.can_modify_run(request.vars["id"]) ):
         error = ""
         if request.vars["name"] == "" :
             error += "name needed, "
@@ -145,7 +145,7 @@ def edit_form():
             error += "patient id needed, "
 
         if error=="" :
-            db.patient[request.vars["id"]] = dict(name=request.vars["name"],
+            db.run[request.vars["id"]] = dict(name=request.vars["name"],
                                                    run_date=request.vars["run_date"],
                                                    info=request.vars["info"],
 												   sequencer=request.vars["sequencer"],
@@ -205,7 +205,8 @@ def delete():
         #delete patient sample_set
         db(db.sample_set.id == sample_set_id).delete()
 
-        res = {"redirect": "run/index",
+        res = {"redirect": "sample_set/all",
+               "args" : { "type" : 'run' },
                "success": "true",
                "message": "run ("+str(request.vars["id"])+") deleted"}
         log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'run'})
