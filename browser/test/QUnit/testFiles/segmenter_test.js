@@ -93,6 +93,7 @@ QUnit.test("sequence", function(assert) {
     assert.notEqual(seq1_string.indexOf(">tccccccca<"), -1, "n part of segmented sequence")
     assert.notEqual(seq1_string.indexOf(">tca<"), -1, "j part of segmented sequence")
 });
+
 QUnit.test("segt", function (assert) {
     var m = new Model();
     m.parseJsonData(json_data, 100);
@@ -103,11 +104,22 @@ QUnit.test("segt", function (assert) {
     assert.equal(m.clone(3).getSequenceName(), "test4", "clone")
     assert.equal(m.clone(3).getSequence(),"GGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA","sequence")
     m.clone(3).addSegFeatureFromSeq('test_feature','CACCCAGGAGGTGGAGCTGGATATTGAGACT')
+    f1 = segment.sequence[3].get_positionned_highlight('test_feature','')
+    assert.equal(f1.start, 94 , "feature start")
+    assert.equal(f1.stop, 124, "feature stop")
+    assert.equal(f1.seq,'CACCCAGGAGGTGGAGCTGGATATTGAGACT', "feature sequence")
+
     assert.notEqual(segment.sequence[3].toString(),"ATCCT", "unsegmented sequence");
     assert.equal(segment.sequence[3].toString().indexOf(">cattcta<"),-1, "part of segmented seq");
     var clone3 = m.clone(3);
     assert.deepEqual(segment.sequence[3].getVdjStartEnd(clone3), {"3": {"start": 183,"stop": 241}, "4": {}, "4a": {}, "4b": {}, "5": {"start": 0, "stop": 179}}, "vdj start end");
     var h = segment.sequence[3].get_positionned_highlight('f1','')
-    assert.equal(h,"", "feature value")
-    assert.equal(segment.sequence[3].get_positionned_highlight("test_feature", " ", "test feature value"))
+    assert.equal(h.start,-1, " start feature value")
+    assert.equal(h.stop, -1, "stop feature value")
+    assert.deepEqual(segment.sequence[3].get_positionned_highlight("test_feature",""),{"color": "", "css": "highlight_seq", "seq": "undefinedCACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 94, "stop": 124, "tooltip": ""}, "test feature value")
+    assert.equal(m.clone(3).getSegLength('test_feature'),31, "feature length")
+    m.select(3)
+    assert.equal(segment.toFasta(), "> test4 // 2.500%\nGGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA", "fasta seq ")
+    assert.ok(segment.isDNA('CACCCAGGAGGTGGAGCTGGATATTGAGACT'), "test dna")
+    assert.ok(segment.isAA('CACCCAGGAGGTGGAGCTGGATATTGAGACT'), "test AA")
 })
