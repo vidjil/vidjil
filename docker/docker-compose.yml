@@ -38,6 +38,7 @@ services:
             - /opt/vidjil/upload/uploads:/mnt/upload/uploads
             - /opt/vidjil/log:/var/vidjil
             - /opt/vidjil/log/nginx:/var/log/nginx
+            - /opt/vidjil/backup:/mnt/backup
     nginx:
         image: vidjil:test
         depends_on:
@@ -60,6 +61,13 @@ services:
         depends_on:
             - uwsgi
             - mysql
+        links:
+            - mysql
+    backup:
+        image: vidjil:test
+        command: bash -c "echo '0 5 * * * cd /usr/share/vidjil/server; sh backup.sh /mnt/backup 2>1&' > /etc/cron.d/backup-cron && cron"
+        volumes_from:
+            - uwsgi
         links:
             - mysql
     reporter:
