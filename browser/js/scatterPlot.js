@@ -923,9 +923,10 @@ ScatterPlot.prototype = {
         
         k=1 ;
         for (var i in this.barTab) {
+            val = this.barTab[i];
 
             var y_pos = 0
-            var x_pos = this.axisX.posBarLabel(k, tab_length)
+            var x_pos = this.axisX.pos(val[0]).pos;
             
             for (var j in this.barTab[i]){
                 var clone = this.barTab[i][j]
