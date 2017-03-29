@@ -84,7 +84,6 @@ Object.assign(CustomAxis.prototype, {
                         if ( tmp < min || typeof min == "undefined") min = tmp;
                     } else {
                         has_undefined = true;
-                        this.value_mapping["?"] = [];
                     }
                 }
             }
@@ -96,6 +95,7 @@ Object.assign(CustomAxis.prototype, {
                 this.value_mapping[i] = [];
             }
         }
+        this.value_mapping["?"] = [];
 
         for(var i in this.clones) {
             var clone = clones[i];
