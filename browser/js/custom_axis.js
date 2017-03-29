@@ -92,7 +92,8 @@ Object.assign(CustomAxis.prototype, {
             }
         } else {
             for (var i in labels) {
-                this.value_mapping[i] = [];
+                var val = labels[i];
+                this.value_mapping[val] = [];
             }
         }
         this.value_mapping["?"] = [];
