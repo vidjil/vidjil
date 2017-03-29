@@ -585,10 +585,14 @@ class VidjilAuth(Auth):
         This is an adaptation of accessible_query that better fits
         the current auth system with group associations
 
+        :param: name: The name of the query (eg. 'read')
+        :param: table: The table for accessibility
+        :param: user_id: ID of the user
+
         Example:
             Use as::
 
-                db(auth.accessible_query('read', db.mytable)).select(db.mytable.ALL)
+                db(auth.vidjil_accessible_query('read', db.mytable, 1)).select(db.mytable.ALL)
 
         """
         if not user_id:
