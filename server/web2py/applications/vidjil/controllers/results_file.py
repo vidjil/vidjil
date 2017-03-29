@@ -80,7 +80,6 @@ def info():
                     &(db.results_file.id == request.vars["results_file_id"])
                     &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                     &(db.sample_set.id == db.sample_set_membership.sample_set_id)
-                    &(db.sample_set.sample_type != 'sequence_file') #### defs.SET_TYPE ???
                 ).select(db.sample_set_membership.sample_set_id).first().sample_set_id
     if (auth.can_modify_sample_set(sample_set_id)):
         return dict(message=T('result info'))
