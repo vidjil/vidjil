@@ -726,19 +726,19 @@ ScatterPlot.prototype = {
         switch (this.splitX) {
             case "allele_v" :
                 fct = function(clone){return clone.getGene("5")}
-                this.axisX.init(this.m.clones, fct, Object.keys(self.m.germlineV.allele))
+                this.axisX.init(this.m.germlineV, "V", true)
                 break;
             case "gene_v" :
                 fct = function(clone){return clone.getGene("5",false)}
-                this.axisX.init(this.m.clones, fct, Object.keys(self.m.germlineV.gene))
+                this.axisX.init(this.m.germlineV, "V", false)
                 break;
             case "allele_j" :
                 fct = function(clone){return clone.getGene("3")}
-                this.axisX.init(this.m.clones, fct, Object.keys(self.m.germlineJ.allele))
+                this.axisX.init(this.m.germlineJ, "J", true)
                 break;
             case "gene_j" :
                 fct = function(clone){return clone.getGene("3",false)}
-                this.axisX.init(this.m.clones, fct, Object.keys(self.m.germlineJ.gene))
+                this.axisX.init(this.m.germlineJ, "J", false)
                 break;
             default :
                 if (typeof this.available_axis[this.splitX])
