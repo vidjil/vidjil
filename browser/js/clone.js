@@ -1156,7 +1156,10 @@ Clone.prototype = {
                 && this.seg[external_tool] != null) {
                 html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> Results of "+other_infos[external_tool]+ "</td></tr>";
                 for (var item in this.seg[external_tool]) {
-                    html += "<tr><td> " + item + "</td><td> " + this.seg[external_tool][item] + "</td></tr>";
+                    if (! (this.seg[external_tool][item] instanceof Object)
+			&& ! (this.seg[external_tool][item] instanceof Array)) {
+                        html += "<tr><td> " + item + "</td><td> " + this.seg[external_tool][item] + "</td></tr>";
+                    }
                 }
             }
         }
