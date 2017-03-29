@@ -22,6 +22,20 @@ class SequenceFile():
         self.original_filename = None
         self.original_filename2 = None
 
+def get_accessible_sequence_files_in_set_type(group_id, set_type):
+    '''
+    Get all the sequence files that can be accessed by a group.
+    The sequence files must be saved in one type of set
+    (defs.SET_TYPE_PATIENT, defs.SET_TYPE_GENERIC, defs.SET_TYPE_RUN)
+    '''
+    return db((db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+              & (db.sample_set_membership.sample_set_id == db.sample_set.id)
+              & (db[set_type].id == db.auth_permission.record_id)
+              & (db[set_type].sample_set_id == db.sample_set.id)
+              & (db.sample_set.sample_type == set_type)
+              & (db.auth_permission.table_name == set_type)
+              & (db.auth_permission.group_id == group_id)).select(db.sequence_file.ALL)
+
 def get_sequence_file(id):
     data = db.sequence_file[id]
     return SequenceFile(data)
