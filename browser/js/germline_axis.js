@@ -121,6 +121,7 @@ Object.assign(GermlineAxis.prototype, {
      * */
     init: function (germline, geneType, displayAllele) {
         this.reset()
+        this.values = this.m.clones;
         this.germline = germline;
         
         var gene_list = this.germline.gene
