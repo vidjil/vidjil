@@ -16,7 +16,7 @@ test_browser_unit:
     paths:
     - browser/
   only:
-    - /^feature-c\/.*$/
+    - /^feature-[cw]\/.*$/
     - prod-client
 
 test_browser-functional:
@@ -30,7 +30,7 @@ test_browser-functional:
     paths:
     - browser/
   only:
-    - /^feature-c\/.*$/
+    - /^feature-[cw]\/.*$/
     - prod-client
 
 deploy:
@@ -43,7 +43,8 @@ deploy:
     url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
     on_stop: stop_deploy
   only:
-    - /^feature-c\/.*$/
+    - /^feature-[cw]\/.*$/
+    - /^feature-w\/.*$/
 
 stop_deploy:
   stage: deploy
@@ -56,4 +57,4 @@ stop_deploy:
     name: review/$CI_BUILD_REF_NAME
     action: stop
   only:
-    - /^feature-c\/.*$/
+    - /^feature-[cw]\/.*$/
