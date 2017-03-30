@@ -129,7 +129,7 @@ db.define_table(defs.SET_TYPE_PATIENT,
                 Field('info','text'),
                 Field('id_label','string'),
                 Field('creator','reference auth_user'),
-                Field('sample_set_id','reference sample_set', ondelete='SET NULL'))
+                Field('sample_set_id','reference sample_set', ondelete='CASCADE'))
 
 '''
 db.patient.first_name.requires = IS_NOT_EMPTY( error_message='input needed' )
@@ -146,13 +146,13 @@ db.define_table(defs.SET_TYPE_RUN,
                 Field('creator','reference auth_user'),
 				Field('sequencer','string'),
 				Field('pcr','string'),
-                Field('sample_set_id','reference sample_set', ondelete='SET NULL'))
+                Field('sample_set_id','reference sample_set', ondelete='CASCADE'))
 
 db.define_table(defs.SET_TYPE_GENERIC,
                 Field('name', 'string'),
                 Field('info', 'text'),
                 Field('creator', 'reference auth_user'),
-                Field('sample_set_id','reference sample_set', ondelete='SET NULL'))
+                Field('sample_set_id','reference sample_set', ondelete='CASCADE'))
 
 db.define_table('pre_process',
                 Field('name', 'string'),
