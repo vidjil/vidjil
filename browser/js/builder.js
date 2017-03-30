@@ -397,7 +397,7 @@ Builder.prototype = {
         var self = this;
     /*
         var clusterSelector = document.getElementById("cluster_menu")
-        clusterSelector.innerHTML = "";
+        clusterSelector.removeAllChildren();
         
         if (self.m.clones[0]._target){
         
@@ -805,7 +805,7 @@ Builder.prototype = {
     build_named_info_line: function (id, name, value, className) {
         var div = this.build_info_line(id, value, className);
         var inner_span = div.firstChild;
-        div.innerHTML = null;
+        div.removeAllChildren();
 
         var info_row = document.createElement("span");
         info_row.className = "info_row";

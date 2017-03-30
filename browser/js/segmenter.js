@@ -100,7 +100,7 @@ Segment.prototype = {
         var self = this
         try {
             var parent = document.getElementById(this.id)
-            parent.innerHTML = "";
+            parent.removeAllChildren();
 
             //bot-bar
             var div = document.createElement('div');
@@ -514,7 +514,7 @@ Segment.prototype = {
     div_elem: function (div_elem, cloneID) {
         var self = this;
 
-        div_elem.innerHTML = '';
+        div_elem.removeAllChildren();
         div_elem.className = "seq-fixed cloneName";
         if (this.m.focus == cloneID) {
             $(div_elem).addClass("list_focus");
