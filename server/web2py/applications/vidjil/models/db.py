@@ -118,7 +118,7 @@ use_janrain(auth, filename='private/janrain.key')
 
 
 db.define_table('sample_set',
-                Field('creator','reference auth_user'),
+                Field('creator','reference auth_user', ondelete='SET NULL'),
                Field('sample_type', 'string', ondelete='SET NULL'))
 
 
@@ -128,7 +128,7 @@ db.define_table(defs.SET_TYPE_PATIENT,
                 Field('birth','date'),
                 Field('info','text'),
                 Field('id_label','string'),
-                Field('creator','reference auth_user'),
+                Field('creator','reference auth_user', ondelete='SET NULL'),
                 Field('sample_set_id','reference sample_set', ondelete='CASCADE'))
 
 '''
@@ -143,7 +143,7 @@ db.define_table(defs.SET_TYPE_RUN,
                 Field('run_date','date'),
                 Field('info','text'),
                 Field('id_label','string'),
-                Field('creator','reference auth_user'),
+                Field('creator','reference auth_user', ondelete='SET NULL'),
 				Field('sequencer','string'),
 				Field('pcr','string'),
                 Field('sample_set_id','reference sample_set', ondelete='CASCADE'))
@@ -151,7 +151,7 @@ db.define_table(defs.SET_TYPE_RUN,
 db.define_table(defs.SET_TYPE_GENERIC,
                 Field('name', 'string'),
                 Field('info', 'text'),
-                Field('creator', 'reference auth_user'),
+                Field('creator', 'reference auth_user', ondelete='SET NULL'),
                 Field('sample_set_id','reference sample_set', ondelete='CASCADE'))
 
 db.define_table('pre_process',
@@ -171,7 +171,7 @@ db.define_table('sequence_file',
                 Field('size_file','bigint', default=0),
                 Field('size_file2','bigint', default=0),
                 Field('provider','reference auth_user'),
-                Field('pre_process_id', 'reference pre_process'),
+                Field('pre_process_id', 'reference pre_process', ondelete='SET NULL'),
                 Field('pre_process_result', 'text'),
                 Field('pre_process_flag', 'text'),
                 Field('pre_process_scheduler_task_id', 'integer'),
@@ -196,7 +196,7 @@ db.define_table('config',
 
 db.define_table('results_file',
                 Field('sequence_file_id', 'reference sequence_file'),
-                Field('config_id', 'reference config'),
+                Field('config_id', 'reference config', ondelete='SET NULL'),
                 Field('run_date','datetime'),
                 Field('scheduler_task_id', 'integer'),
                 Field('data_file', 'upload', 
@@ -205,8 +205,8 @@ db.define_table('results_file',
 
 
 db.define_table('fused_file',
-                Field('patient_id', 'reference patient'),
-                Field('config_id', 'reference config'),
+                Field('patient_id', 'reference patient', ondelete='SET NULL'),
+                Field('config_id', 'reference config', ondelete='SET NULL'),
                 Field('sample_set_id', 'reference sample_set', ondelete='SET NULL'),
                 Field('fuse_date','datetime', default="1970-01-01 00:00:00"),
                 Field('status', 'string'),
@@ -216,8 +216,8 @@ db.define_table('fused_file',
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
 db.define_table('analysis_file',
-                Field('patient_id', 'reference patient'),
-                Field('config_id', 'reference config'),
+                Field('patient_id', 'reference patient', ondelete='SET NULL'),
+                Field('config_id', 'reference config', ondelete='SET NULL'),
                 Field('sample_set_id', 'reference sample_set', ondelete='SET NULL'),
                 Field('analyze_date','datetime'),
                 Field('status', 'string'),
