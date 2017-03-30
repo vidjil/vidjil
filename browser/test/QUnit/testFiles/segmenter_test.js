@@ -101,25 +101,34 @@ QUnit.test("segt", function (assert) {
     var segment = new Segment("segment",m)
     segment.init();
     segment.addToSegmenter(3);
-    assert.equal(m.clone(3).getSequenceName(), "test4", "clone")
+    segment.addToSegmenter(1);
+    assert.equal(m.clone(3).getSequenceName(), "test4", "clone");
     assert.equal(m.clone(3).getSequence(),"GGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA","sequence")
-    m.clone(3).addSegFeatureFromSeq('test_feature','CACCCAGGAGGTGGAGCTGGATATTGAGACT')
-    f1 = segment.sequence[3].get_positionned_highlight('test_feature','')
-    assert.equal(f1.start, 94 , "feature start")
-    assert.equal(f1.stop, 124, "feature stop")
-    assert.equal(f1.seq,'CACCCAGGAGGTGGAGCTGGATATTGAGACT', "feature sequence")
-
+    m.clone(3).addSegFeatureFromSeq('test_feature','CACCCAGGAGGTGGAGCTGGATATTGAGACT');
+    f1 = segment.sequence[3].get_positionned_highlight('test_feature','');
+    assert.equal(f1.start, 94 , "feature start");
+    assert.equal(f1.stop, 124, "feature stop");
+    assert.equal(f1.seq,'CACCCAGGAGGTGGAGCTGGATATTGAGACT', "feature sequence");
+    assert.equal(m.clone(3).getSegNtSequence("test_feature"), "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "feature sequence 3");
+    assert.deepEqual(m.clone(3).getSegFeature("test_feature"),{"seq": "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 94, "stop": 124}, "feature sequence 4");
+    
+    // segment.sequence[3].computeAAseq()
+    // assert.equal(m.clone(3).getSegAASequence("cdr3"),"AKDILKSLKQQLATPNWFDP","feature sequence 2")
+    // assert.deepEqual(m.clone(3).getSegFeature("cdr3"),{"seq": "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 94, "stop": 124}, "feature sequence 4")
     assert.notEqual(segment.sequence[3].toString(),"ATCCT", "unsegmented sequence");
     assert.equal(segment.sequence[3].toString().indexOf(">cattcta<"),-1, "part of segmented seq");
     var clone3 = m.clone(3);
     assert.deepEqual(segment.sequence[3].getVdjStartEnd(clone3), {"3": {"start": 183,"stop": 241}, "4": {}, "4a": {}, "4b": {}, "5": {"start": 0, "stop": 179}}, "vdj start end");
-    var h = segment.sequence[3].get_positionned_highlight('f1','')
-    assert.equal(h.start,-1, " start feature value")
-    assert.equal(h.stop, -1, "stop feature value")
+    var h = segment.sequence[3].get_positionned_highlight('f1','');
+    assert.equal(h.start,-1, " start feature value");
+    assert.equal(h.stop, -1, "stop feature value");
     assert.deepEqual(segment.sequence[3].get_positionned_highlight("test_feature",""),{"color": "", "css": "highlight_seq", "seq": "undefinedCACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 94, "stop": 124, "tooltip": ""}, "test feature value")
-    assert.equal(m.clone(3).getSegLength('test_feature'),31, "feature length")
-    m.select(3)
+    assert.equal(m.clone(3).getSegLength('test_feature'),31, "feature length");
+    m.select(3);
     assert.equal(segment.toFasta(), "> test4 // 2.500%\nGGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA", "fasta seq ")
     assert.ok(segment.isDNA('CACCCAGGAGGTGGAGCTGGATATTGAGACT'), "test dna")
     assert.ok(segment.isAA('CACCCAGGAGGTGGAGCTGGATATTGAGACT'), "test AA")
+    assert.ok(segment.isPos(h), "test if an object contain pos")
+    assert.deepEqual(segment.findPotentialField(),["", "cdr3", "fr1", "5", "test_feature", "id", "f1", "V-REGION", "J-REGION",  "D-REGION", "CDR3-IMGT"], "find field to highlight")
+
 })
