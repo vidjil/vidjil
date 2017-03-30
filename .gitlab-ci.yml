@@ -17,6 +17,7 @@ test_browser_unit:
     - browser/
   only:
     - /^feature-[cw]\/.*$/
+    - /^hotfix-[cw]\/.*$/
     - prod-client
 
 test_browser-functional:
@@ -31,6 +32,7 @@ test_browser-functional:
     - browser/
   only:
     - /^feature-[cw]\/.*$/
+    - /^hotfix-[cw]\/.*$/
     - prod-client
 
 deploy:
@@ -44,7 +46,7 @@ deploy:
     on_stop: stop_deploy
   only:
     - /^feature-[cw]\/.*$/
-    - /^feature-w\/.*$/
+    - /^hotfix-[cw]\/.*$/
 
 stop_deploy:
   stage: deploy
@@ -58,3 +60,4 @@ stop_deploy:
     action: stop
   only:
     - /^feature-[cw]\/.*$/
+    - /^hotfix-[cw]\/.*$/
