@@ -113,6 +113,10 @@ def get_vdj_positions(recombination_type, clone):
     >>> clone.d = {'seg': {'5': {'stop': 10}, '3': {'start': 15}}, 'sequence': 'ATTAAAAAAAAAAAAAAAAA'}
     >>> get_vdj_positions('VJ', clone)
     [1, 11, 16, 20]
+    >>> get_vdj_positions('VDJ', clone)
+    [1, 11, 16, 20]
+    >>> get_vdj_positions('VDDJ', clone)
+    [1, 11, 16, 20]
 
     >>> clone.d = {'seg': {'5': {'stop': 10}, '4': {'start': 11, 'stop': 12}, '3': {'start': 15}}, 'sequence': 'ATTAAAAAAAAAAAAAAAAA'}
     >>> get_vdj_positions('VDJ', clone)
@@ -157,9 +161,12 @@ def get_vdj_positions(recombination_type, clone):
             d_name = '4'+chr(ord('a')+i)
         if not seg.has_key(d_name) and d_name == '4a':
             d_name = '4'
-        positions.append(get_gene_positions(clone, 'start', d_name)+1)
-        positions.append(get_gene_positions(clone, 'stop', d_name)+1)
-        i+=1
+        gene_pos_start_4 = get_gene_positions(clone, 'start', d_name)
+        gene_pos_stop_4 = get_gene_positions(clone, 'stop', d_name)
+        if gene_pos_start_4 is not None and gene_pos_stop_4 is not None:
+            positions.append(gene_pos_start_4+1)
+            positions.append(gene_pos_stop_4+1)
+            i+=1
     positions.append(gene_pos_start_3+1)
     if (clone.d.has_key('sequence')):
         positions.append(len(clone.d['sequence']))
