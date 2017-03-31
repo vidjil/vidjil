@@ -553,17 +553,11 @@ def get_analysis():
 def save_analysis():
     error = ""
 
-    initial_id = request.vars["sample_set_id"] if "sample_set_id" in request.vars else None
-    initial_type = 'sample_set' ### defs.SET_TYPE_GENERIC ?
     if "patient" in request.vars :
         request.vars["sample_set_id"] = db.patient[request.vars["patient"]].sample_set_id
-        initial_id = request.vars['patient']
-        initial_type = defs.SET_TYPE_PATIENT
 
     if "run" in request.vars :
         request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
-        initial_id = request.vars["run"]
-        initial_type = defs.SET_TYPE_RUN
 
     if not "sample_set_id" in request.vars :
         error += "It is currently not possible to save an analysis on a comparison of samples, "
@@ -603,7 +597,7 @@ def save_analysis():
 
         res = {"success" : "true",
                "message" : "(%s): analysis saved" % (sample_set_id)}
-        log.info(res, extra={'user_id': auth.user.id, 'record_id': initial_id, 'table_name': initial_type})
+        log.info(res, extra={'user_id': auth.user.id})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"success" : "false",
