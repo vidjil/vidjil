@@ -1,11 +1,12 @@
 import defs
 
 import os, sys
-
+import imp
 
 def create_clone_db_for_sequences(sequences, output_file):
     vidjil_to_fasta_path = os.path.dirname(os.path.realpath(sys.argv[0]))
     vidjil_to_fasta_path = os.path.join(vidjil_to_fasta_path, '..', '..', '..', '..', '..', 'tools')
+    sys.path.insert(1, vidjil_to_fasta_path)
 
     vtf_metadata = []
     vtf_result_files = []
@@ -14,11 +15,13 @@ def create_clone_db_for_sequences(sequences, output_file):
         last_results = get_last_results(sequence.id)
         for result in last_results:
             if result.data_file is not None:
-                vtf_metadata.append('-d "'+' '.join(['sample_set='+str(s.sample_set_id) for s in sample_sets])+' '+'config_id='+str(result.config_id)+'"')
+                vtf_metadata += ['-d', ' '.join(['sample_set='+str(s.sample_set_id) for s in sample_sets])+' '+'config_id='+str(result.config_id)]
                 vtf_result_files.append(defs.DIR_RESULTS+result.data_file)
 
-    command = 'python %s/vidjil-to-fasta.py %s -w -o %s %s ' % (vidjil_to_fasta_path, ' '.join(vtf_metadata), output_file, ' '.join(vtf_result_files))
-    os.system(command)
+    vidjil2fasta = imp.load_source('vidjil_to_fasta', vidjil_to_fasta_path+os.path.sep+'vidjil-to-fasta.py')
+    args = vidjil2fasta.parser.parse_args(vtf_metadata + ['-w', '-o', output_file] + vtf_result_files)
+    vidjil2fasta.process_files(args)
+
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
