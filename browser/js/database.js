@@ -721,6 +721,7 @@ Database.prototype = {
                 self.display_result(result, "", args);
                 console.log('=== load_data: success ===');
                 self.connected = true;
+                // self.callCloneDB(_.range(self.m.clones.length));
             },
             error: function (request, status, error) {
                 self.connected = false;
