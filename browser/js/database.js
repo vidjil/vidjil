@@ -86,8 +86,19 @@ Database.prototype = {
         
         this.div.appendChild(close_popup)
         this.div.appendChild(this.msg)
+
+        this.connected = undefined;
         
         document.body.appendChild(this.div);
+    },
+
+    /**
+     * @return - true iff the last connection was successful
+     *         - false if not
+     *         - undefined if no connection was attempted yet
+     */
+    is_connected: function() {
+        return this.connected;
     },
     
     /**
@@ -143,8 +154,10 @@ Database.prototype = {
              success: function (result) {
                  result = jQuery.parseJSON(result)
                  setTimeout(function(){ self.waitProcess(result.processId, 5000, callback)}, 5000);
+                 self.connected = true;
              }, 
              error: function (request, status, error) {
+                 self.connected = false;
                  if (status === "timeout") {
                      console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                  } else {
@@ -172,6 +185,7 @@ Database.prototype = {
              timeout: DB_TIMEOUT_CALL,
              xhrFields: {withCredentials: true},
              success: function (result) {
+                 self.connected = true;
                  result = jQuery.parseJSON(result)
                  if (result.status == "COMPLETED"){
                      callback(result.data);
@@ -183,6 +197,7 @@ Database.prototype = {
                  
              }, 
              error: function (request, status, error) {
+                 self.connected = false;
                  if (status === "timeout") {
                      console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                  } else {
@@ -237,8 +252,10 @@ Database.prototype = {
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.display_result(result, url, args)
+                self.connected = true;
             }, 
             error: function (request, status, error) {
+                self.connected = false;
                 if (status === "timeout") {
                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                 } else {
@@ -404,8 +421,10 @@ Database.prototype = {
                 xhrFields: {withCredentials: true},
                 success: function (result) {
                     self.display_result(result, $(this).attr('action'))
+                    self.connected = true;
                 },
                 error: function (request, status, error) {
+                    self.connected = false;
                     if (status === "timeout") {
                         console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                     } else {
@@ -701,8 +720,10 @@ Database.prototype = {
             success: function (result) {
                 self.display_result(result, "", args);
                 console.log('=== load_data: success ===');
+                self.connected = true;
             },
             error: function (request, status, error) {
+                self.connected = false;
                 if (status === "timeout") {
                     console.log({"type": "flash", "default" : "database_timeout", "msg" : " - unable to access patient data" , "priority": 2});
                 } else {
@@ -757,8 +778,10 @@ Database.prototype = {
             success: function (result) {
                 self.m.resume()
                 self.display_result(result, "", args);
+                self.connected = true;
             },
             error: function (request, status, error) {
+                self.connected = false;
                 self.m.resume()
                 if (status === "timeout") {
                     console.log({"type": "flash", "default" : "database_timeout", "msg": " - unable to access patient data" , "priority": 2});
