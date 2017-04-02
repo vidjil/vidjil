@@ -14,7 +14,7 @@ The configuration of analyzed locus is done in the =germline/homo-sapiens.g= pre
 |----------------------+-------+-------------------------+--------+-----------------------------------|
 |                      | *TRA* | Va-Ja                   |        |                                   |
 |                      | *TRB* | Vb-(Db)-Jb              | *TRB+* | Db-Jb                             |
-|                      | *TRD* | Vd-(Dd)-Jd              | *TRD+* | Vd-Dd3, Dd2-Jd, Dd2-Dd3           |
+|                      | *TRD* | Vd-(Dd)-Jd              | *TRD+* | Vd-Dd3, Dd2-(Dd)-Jd, Dd2-Dd3      |
 |                      |       |                         | *TRA+D*| Vd-(Dd)-Ja, Dd-Ja                 |
 |                      | *TRG* | Vg-Jg                   |        |                                   |
 |----------------------+-------+-------------------------+--------+-----------------------------------|
