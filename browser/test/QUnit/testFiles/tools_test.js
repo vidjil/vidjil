@@ -34,6 +34,77 @@ QUnit.test("test rounding functions", function(assert) {
     }
 );
 
+QUnit.test("processCloneDBContents", function(assert) {
+    var emptyResult = [];
+    assert.deepEqual(processCloneDBContents(emptyResult), {'original': []},
+                     "processing empty result");
+    
+    var singleResult = [{'tags': {'sample_set_viewable': [true, true],
+                                  'sample_set_name': ['patient', null],
+                                  'sample_set': ["15", "152"],
+                                  'config_id': ['1024'],
+                                  'config_name': ['config'],
+                                  'sample_name': ['toto']},
+                         'occ': 3,
+                         'V' : 'IGHV1*02',
+                         'J' : 'IGHJ3*01'}];
+    assert.deepEqual(processCloneDBContents(singleResult),
+                     {'<a href="?sample_set_id=15&config=1024">patient</a> (config)': "3 clones",
+                      '<a href="?sample_set_id=152&config=1024">152</a> (config)': "3 clones",
+                      'original': singleResult}, "processing one result");
+
+    var multipleResults = [{'tags': {'sample_set_viewable': [true, true],
+                                  'sample_set_name': ['patient', null],
+                                  'sample_set': ["15", "152"],
+                                  'config_id': ['1024'],
+                                  'config_name': ['config'],
+                                  'sample_name': ['toto']},
+                         'occ': 3,
+                         'V' : 'IGHV1*02',
+                         'J' : 'IGHJ3*01'},
+                        // Different clone from the previous one but a common sample set
+                        {'tags': {'sample_set_viewable': [true],
+                                  'sample_set_name': [null],
+                                  'sample_set': ["152"],
+                                  'config_id': ['1024'],
+                                  'config_name': ['config'],
+                                  'sample_name': ['toto']},
+                         'occ': 2,
+                         'V' : 'IGHV1*01',
+                         'J' : 'IGHJ2*01'},
+                           // Test that the not viewable are not taken into account
+                       {'tags': {'sample_set_viewable': [false],
+                                  'sample_set_name': ['secret'],
+                                  'sample_set': ["666"],
+                                  'config_id': ['10'],
+                                  'config_name': ['[old] config'],
+                                  'sample_name': ['toto']},
+                         'occ': 100,
+                         'V' : 'IGHV1*02',
+                        'J' : 'IGHJ3*01'}];
+    var results = processCloneDBContents(multipleResults);
+    assert.equal(results['<a href="?sample_set_id=152&config=1024">152</a> (config)'], '5 clones', "multiple results");
+    assert.equal(results['<a href="?sample_set_id=15&config=1024">patient</a> (config)'], '3 clones', "multiple results, one entry");
+    var count = 0;
+    for (var item in results) {
+        count += 1;
+    }
+    assert.equal(count, 3, "Two results plus original entry");
+
+    // Test missing viewable property
+    var missingViewable = [{'tags': {'sample_set_name': ['patient', null],
+                                  'sample_set': ["15", "152"],
+                                  'config_id': ['1024'],
+                                  'config_name': ['config'],
+                                  'sample_name': ['toto']},
+                         'occ': 3,
+                         'V' : 'IGHV1*02',
+                         'J' : 'IGHJ3*01'}];
+    assert.deepEqual(processCloneDBContents(missingViewable), {'original': missingViewable},
+                     "processing missingViewable");
+
+});
+
 QUnit.test("processImgtContents", function(assert) {
     var ready = assert.async();
     assert.expect(5);
