@@ -12,9 +12,10 @@ functional: ../../doc/analysis-example1.vidjil
 functional-rbx: ../../doc/analysis-example1.vidjil
 	LIVE_SERVER=http://app.vidjil.org/browser/ ruby test_browser.rb
 
+phantomjs: SHELL:=/bin/bash
 phantomjs:
 	cd QUnit ; \
-	[ `phantomjs phantom_test.js | tee >( cat >&2 ) | grep -c '^not ok'` -eq 0 ]
+	[ `phantomjs phantom_test.js | tee >(cat >&2) | grep -c '^not ok'` -eq 0 ]
 
 ../../doc/%:
 	$(MAKE) -C ../../doc $@
