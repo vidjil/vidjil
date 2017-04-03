@@ -140,10 +140,7 @@ Object.assign(CustomAxis.prototype, {
                 .range(range);
         }
             
-        this.min = min;
-        this.max = max;
-
-        this.computeLabels(use_log, display_label, has_undefined)
+        this.computeLabels(min, max, use_log, display_label, has_undefined)
     },
 
     pos: function(clone) {
@@ -170,10 +167,8 @@ Object.assign(CustomAxis.prototype, {
      * @param {boolean} use_log - use a logarithmic scale instead of a linear
      * @param {boolean} has_undefined - Should we include an undefined value ?
      * */
-    computeLabels: function(use_log, display_label, has_undefined){
+    computeLabels: function(min, max, use_log, display_label, has_undefined){
         this.labels = [];
-        var min = this.min;
-        var max = this.max;
         if (typeof has_undefined == 'undefined')
             has_undefined = false
 
