@@ -48,6 +48,15 @@ deploy:
     - /^feature-[cw]\/.*$/
     - /^hotfix-[cw]\/.*$/
 
+deploy:
+  stage: deploy
+  script:
+    - ssh $PROD_CLIENT_SERVER "cd $PROD_CLIENT_PATH; git fetch ; git reset --hard origin/prod-client"
+  environment:
+    name: production
+  only:
+    - prod-client
+    
 stop_deploy:
   stage: deploy
   variables:
