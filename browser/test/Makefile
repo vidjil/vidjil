@@ -14,7 +14,7 @@ functional-rbx: ../../doc/analysis-example1.vidjil
 
 phantomjs:
 	cd QUnit ; \
-	[ `phantomjs phantom_test.js | tee /dev/stderr | grep -c '^not ok'` -eq 0 ]
+	[ `phantomjs phantom_test.js | tee >( cat >&2 ) | grep -c '^not ok'` -eq 0 ]
 
 ../../doc/%:
 	$(MAKE) -C ../../doc $@
