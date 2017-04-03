@@ -194,9 +194,7 @@ Object.assign(CustomAxis.prototype, {
                 min = (min*NB_STEPS_IN_AXIS + max)/(NB_STEPS_IN_AXIS + 1)
             }
 
-            if (Math.abs(max - min) < nb_steps) {
-                nb_steps = Math.abs(max - min)
-            }
+            nb_step = this.computeSteps(min, max, nb_steps);
 
             var h = (max-min)/nb_steps
             // Computed so that pos <= 1 (in the loop below)
@@ -216,6 +214,14 @@ Object.assign(CustomAxis.prototype, {
         }
     },
 
+    computeSteps: function(min, max, nb_steps) {
+        var steps = nb_steps;
+        if (Math.abs(max - min) < nb_steps) {
+            steps = Math.abs(max - min)
+        }
+        return steps;
+    },
+
     getLabelText(min_value, value, index) {
         return Math.round(min_value+(value*index));
     }
@@ -231,6 +237,10 @@ function PercentCustomAxis (model, reverse) {
 PercentCustomAxis.prototype = Object.create(CustomAxis.prototype);
 
 Object.assign(PercentCustomAxis.prototype, {
+    computeSteps: function(min, max, nb_steps) {
+        return nb_steps;
+    },
+
     getLabelText: function(min_value, value, index) {
         return ((min_value+(value*index))*100).toFixed(1) + "%";
     }
