@@ -220,4 +220,42 @@ Object.assign(CustomAxis.prototype, {
     getLabelText(min_value, value, index) {
         return Math.round(min_value+(value*index));
     }
+});
+
+function PercentCustomAxis (model, reverse) {
+    this.m = model;
+    this.labels = [];
+    this.reverse = reverse;
+    CustomAxis.call(this, model, reverse);
+}
+
+PercentCustomAxis.prototype = Object.create(CustomAxis.prototype);
+
+Object.assign(PercentCustomAxis.prototype, {
+    getLabelText: function(min_value, value, index) {
+        return ((min_value+(value*index))*100).toFixed(1) + "%";
+    }
+});
+
+/**
+ * Axis object contain labels and their position on an axis (from 0 to 1) <br>
+ * can provide the position of a clone on it
+ * @constructor
+ * @param {Model} model
+ * @reverse {boolean} reverse - by default axis go from low to high but can be revsersed
+ * */
+function FloatCustomAxis (model, reverse) {
+    this.m = model;
+    this.labels = [];
+    this.reverse = reverse;
+    CustomAxis.call(this);
+}
+
+FloatCustomAxis.prototype = Object.create(CustomAxis.prototype);
+
+Object.assign(FloatCustomAxis.prototype, {
+
+    getLabel: function(min_value, value, index) {
+        return (min_value+(value*index)).toFixed(2)
+    }
 })
