@@ -750,25 +750,37 @@ ScatterPlot.prototype = {
         
         //sort each bar (axisY)
         
+        this.axisY = new PercentCustomAxis(this.m, true);
+        var yFct;
         switch (this.splitY) {
             case "allele_v" :
-                this.sortBarTab(function(clone){return clone.getGene("5")});
+                yFct = function(clone){return clone.getGene("5")};
+                this.axisY.init(this.m.clones, yFct);
+                this.sortBarTab(fct);
                 break;
             case "gene_v" :
-                this.sortBarTab(function(clone){return clone.getGene("5",false)});
+                yFct = function(clone){return clone.getGene("5",false)};
+                this.axisY.init(this.m.clones, yFct);
+                this.sortBarTab(fct);
                 break;
             case "allele_j" :
-                this.sortBarTab(function(clone){return clone.getGene("3")});
+                var yFct = function(clone){return clone.getGene("3")};
+                this.axisY.init(this.m.clones, yFct);
+                this.sortBarTab(yFct);
                 break;
             case "gene_j" :
-                this.sortBarTab(function(clone){return clone.getGene("3",false)});
+                yFct = function(clone){return clone.getGene("3",false)};
+                this.axisY.init(this.m.clones, yFct);
+                this.sortBarTab(yFct);
                 break;
             default :
+                yFct = function(clone){return clone.getGene("3")};
                 if (typeof this.available_axis[this.splitY]){
-                    this.sortBarTab(this.available_axis[this.splitY].fct);
-                }else{
-                    this.sortBarTab(function(clone){return clone.getGene("3")});
+                    yFct = this.available_axis[this.splitY].fct;
                 }
+
+                this.axisY.init(this.m.clones, yFct);
+                this.sortBarTab(yFct);
             break;
         }
         
