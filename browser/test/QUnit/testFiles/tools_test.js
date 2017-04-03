@@ -85,11 +85,12 @@ QUnit.test("processCloneDBContents", function(assert) {
     var results = processCloneDBContents(multipleResults);
     assert.equal(results['<a href="?sample_set_id=152&config=1024">152</a> (config)'], '5 clones', "multiple results");
     assert.equal(results['<a href="?sample_set_id=15&config=1024">patient</a> (config)'], '3 clones', "multiple results, one entry");
+    assert.equal(results['Non viewable samples'], 1, "One non viewable sample");
     var count = 0;
     for (var item in results) {
         count += 1;
     }
-    assert.equal(count, 3, "Two results plus original entry");
+    assert.equal(count, 4, "Two results plus one non-viewable plus original entry");
 
     // Test missing viewable property
     var missingViewable = [{'tags': {'sample_set_name': ['patient', null],
@@ -100,7 +101,7 @@ QUnit.test("processCloneDBContents", function(assert) {
                          'occ': 3,
                          'V' : 'IGHV1*02',
                          'J' : 'IGHJ3*01'}];
-    assert.deepEqual(processCloneDBContents(missingViewable), {'original': missingViewable},
+    assert.deepEqual(processCloneDBContents(missingViewable), {'Non viewable samples': 1, 'original': missingViewable},
                      "processing missingViewable");
 
 });

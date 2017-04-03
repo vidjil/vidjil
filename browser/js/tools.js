@@ -102,6 +102,7 @@ function correctIMGTPositionsForInsertions(data) {
 function processCloneDBContents(results) {
     var existing_urls = {};
     var final_results = {};
+    var count_non_viewable = 0;
     for (var clone in results) {
         if (typeof results[clone]['tags'] != 'undefined'
             && typeof results[clone]['tags']['sample_set'] != 'undefined'
@@ -127,13 +128,19 @@ function processCloneDBContents(results) {
 			final_results[msg] += results[clone]['occ'];
 		    }
 
+                } else {
+                    count_non_viewable += 1;
                 }
             }
+        } else {
+            count_non_viewable += 1;
         }
     }
     for (msg in final_results) {
 	final_results[msg] = final_results[msg]+' clone'+((final_results[msg] == 1) ? '' : 's');
     }
+    if (count_non_viewable > 0)
+        final_results['Non viewable samples'] = count_non_viewable;
     final_results['original'] = results;
     return final_results;
 }
