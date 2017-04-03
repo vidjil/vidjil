@@ -169,6 +169,10 @@ Object.assign(CustomAxis.prototype, {
      * */
     computeLabels: function(min, max, use_log, display_label, has_undefined){
         this.labels = [];
+        if (typeof use_log === 'undefined')
+            use_log = false;
+        if (typeof display_label === 'undefined')
+            display_label = true;
         if (typeof has_undefined == 'undefined')
             has_undefined = false
 
