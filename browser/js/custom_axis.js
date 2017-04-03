@@ -222,7 +222,7 @@ Object.assign(CustomAxis.prototype, {
         return steps;
     },
 
-    getLabelText(min_value, value, index) {
+    getLabelText: function (min_value, value, index) {
         return Math.round(min_value+(value*index));
     }
 });
