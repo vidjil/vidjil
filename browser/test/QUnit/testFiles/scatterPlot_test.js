@@ -53,7 +53,11 @@ QUnit.test("grid", function(assert) {
     assert.equal(sp.nodes[1].bar_x , sp.axisX.labels[9].pos ,"node 1, bar x position is on '9'")
     assert.equal(sp.axisX.labels[9].text, "9", "10th label for 'n' axis' is '9'")
     assert.equal(sp.nodes[1].bar_y , 0.3333333333333333, "node 1, bar y position")
-    
+
+    assert.approx(sp.nodes[2].bar_h, 0.40, 0.05, "node 2, bar h is about 0.40")
+    m.clone(0).reads = [10000,1,1,1]
+    m.update()
+    assert.equal(sp.nodes[2].bar_h, 0.01, "node 2, bar h is small, but not too much")
 });
 
 
