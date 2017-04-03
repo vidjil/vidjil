@@ -918,11 +918,16 @@ ScatterPlot.prototype = {
                 if ( (!this.m.clone(cloneID).isVirtual()) & this.m.clone(cloneID).isActive() ) {
                     height = this.m.clone(cloneID).getSize()/bar_max;
                 }
+
+                // Minimal height (does not affect y_pos)
+                var height_for_display = Math.max(height, 0.01)
+                var y_pos_for_display = y_pos + height_for_display ;
+
                 y_pos += height;
-                
-                this.nodes[cloneID].bar_y = y_pos;
+
+                this.nodes[cloneID].bar_y = y_pos_for_display;
                 this.nodes[cloneID].bar_x = x_pos;
-                this.nodes[cloneID].bar_h = height;
+                this.nodes[cloneID].bar_h = height_for_display;
                 this.nodes[cloneID].bar_w = width;
 
             }
