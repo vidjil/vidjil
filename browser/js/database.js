@@ -4,6 +4,7 @@ DB_TIMEOUT_GET_DATA = 20000           // Get patient/sample .data
 DB_TIMEOUT_GET_CUSTOM_DATA = 1200000  // Launch custum fused sample .data
 NOTIFICATION_PERIOD = 30000			  // Time interval to check for notifications periodically
 
+var SEQ_LENGTH_CLONEDB = 40; // Length of the sequence retrieved for CloneDB
 
 /**
  * 
@@ -85,8 +86,19 @@ Database.prototype = {
         
         this.div.appendChild(close_popup)
         this.div.appendChild(this.msg)
+
+        this.connected = undefined;
         
         document.body.appendChild(this.div);
+    },
+
+    /**
+     * @return - true iff the last connection was successful
+     *         - false if not
+     *         - undefined if no connection was attempted yet
+     */
+    is_connected: function() {
+        return this.connected;
     },
     
     /**
@@ -142,8 +154,10 @@ Database.prototype = {
              success: function (result) {
                  result = jQuery.parseJSON(result)
                  setTimeout(function(){ self.waitProcess(result.processId, 5000, callback)}, 5000);
+                 self.connected = true;
              }, 
              error: function (request, status, error) {
+                 self.connected = false;
                  if (status === "timeout") {
                      console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                  } else {
@@ -171,6 +185,7 @@ Database.prototype = {
              timeout: DB_TIMEOUT_CALL,
              xhrFields: {withCredentials: true},
              success: function (result) {
+                 self.connected = true;
                  result = jQuery.parseJSON(result)
                  if (result.status == "COMPLETED"){
                      callback(result.data);
@@ -182,6 +197,7 @@ Database.prototype = {
                  
              }, 
              error: function (request, status, error) {
+                 self.connected = false;
                  if (status === "timeout") {
                      console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                  } else {
@@ -236,8 +252,10 @@ Database.prototype = {
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.display_result(result, url, args)
+                self.connected = true;
             }, 
             error: function (request, status, error) {
+                self.connected = false;
                 if (status === "timeout") {
                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                 } else {
@@ -247,6 +265,41 @@ Database.prototype = {
 		self.warn("callUrl: " + status + " - " + url.replace(self.db_address, '') + "?" + this.argsToStr(args))
             }
             
+        });
+    },
+
+    callCloneDB: function(clones) {
+        var windows = [];
+	var self = this;
+	var kept_clones = [];
+        for (var i = 0; i < clones.length; i++) {
+            var clone = this.m.clones[clones[i]];
+            if (clone.hasSeg('5', '3')) {
+                var middle_pos = Math.round((clone.seg['5']['stop'] + clone.seg['3']['start'])/2);
+                windows.push(clone.sequence.substr(middle_pos - Math.round(SEQ_LENGTH_CLONEDB/2), SEQ_LENGTH_CLONEDB));
+		kept_clones.push(clones[i]);
+            }
+        }
+
+        $.ajax({
+            type: "POST",
+            url: self.db_address+"clonedb",
+            data: "sequences="+windows.join()+"&sample_set_id="+self.m.sample_set_id,
+            xhrFields: {withCredentials: true},
+            success: function (result) {
+                self.connected = true;
+	        for (var i = 0; i < kept_clones.length; i++) {
+		    self.m.clones[kept_clones[i]].seg.clonedb = processCloneDBContents(result[i]);
+	        }
+            },
+            error: function() {
+                self.connected = false;
+                console.log({
+                    "type": "flash",
+                    "msg": "Error while requesting CloneDB",
+                    "priority": 2
+                });
+            }
         });
     },
     
@@ -368,8 +421,10 @@ Database.prototype = {
                 xhrFields: {withCredentials: true},
                 success: function (result) {
                     self.display_result(result, $(this).attr('action'))
+                    self.connected = true;
                 },
                 error: function (request, status, error) {
+                    self.connected = false;
                     if (status === "timeout") {
                         console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                     } else {
@@ -665,8 +720,11 @@ Database.prototype = {
             success: function (result) {
                 self.display_result(result, "", args);
                 console.log('=== load_data: success ===');
+                self.connected = true;
+                // self.callCloneDB(_.range(self.m.clones.length));
             },
             error: function (request, status, error) {
+                self.connected = false;
                 if (status === "timeout") {
                     console.log({"type": "flash", "default" : "database_timeout", "msg" : " - unable to access patient data" , "priority": 2});
                 } else {
@@ -721,8 +779,10 @@ Database.prototype = {
             success: function (result) {
                 self.m.resume()
                 self.display_result(result, "", args);
+                self.connected = true;
             },
             error: function (request, status, error) {
+                self.connected = false;
                 self.m.resume()
                 if (status === "timeout") {
                     console.log({"type": "flash", "default" : "database_timeout", "msg": " - unable to access patient data" , "priority": 2});

@@ -94,6 +94,58 @@ function correctIMGTPositionsForInsertions(data) {
 }
 
 /**
+ * Take in parameter the JSON result of CloneDB for one clone
+ * Return a hash whose keys are URLs to sample sets and configs.
+ * An additional key (termed 'original') corresponds to the original
+ * results as returned by CloneDB.
+ */
+function processCloneDBContents(results) {
+    var existing_urls = {};
+    var final_results = {};
+    var count_non_viewable = 0;
+    for (var clone in results) {
+        if (typeof results[clone]['tags'] != 'undefined'
+            && typeof results[clone]['tags']['sample_set'] != 'undefined'
+            && typeof results[clone]['tags']['sample_set_viewable'] != 'undefined') {
+            var nb_samples = results[clone]['tags']['sample_set'].length;
+            for (var i = 0; i < nb_samples; i++) {
+                if (results[clone]['tags']['sample_set_viewable'][i]) {
+                    var name = results[clone]['tags']['sample_set_name'][i];
+                    if (name == null)
+                        name = results[clone]['tags']['sample_set'][i];
+                    var config_name = results[clone]['tags']['config_name'];
+                    if (typeof config_name != 'undefined'
+                        && typeof config_name[0] != 'undefined')
+                        config_name = config_name[0];
+                    else
+                        config_name = 'unknown';
+		    url = '?sample_set_id='+results[clone]['tags']['sample_set'][i]+'&config='+results[clone]['tags']['config_id'][0];
+		    var msg = '<a href="'+url+'">'+name+'</a> ('+config_name+')';
+		    if (! (url in existing_urls)) {
+			existing_urls[url] = true;
+			final_results[msg] = results[clone]['occ'];
+		    } else{
+			final_results[msg] += results[clone]['occ'];
+		    }
+
+                } else {
+                    count_non_viewable += 1;
+                }
+            }
+        } else {
+            count_non_viewable += 1;
+        }
+    }
+    for (msg in final_results) {
+	final_results[msg] = final_results[msg]+' clone'+((final_results[msg] == 1) ? '' : 's');
+    }
+    if (count_non_viewable > 0)
+        final_results['Non viewable samples'] = count_non_viewable;
+    final_results['original'] = results;
+    return final_results;
+}
+
+/**
  * extract information from htlm page
  *
  * @param HTML code for a complete webpage

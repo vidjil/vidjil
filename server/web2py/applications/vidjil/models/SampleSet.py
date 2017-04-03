@@ -89,3 +89,23 @@ class SampleSet(object):
 
     def get_data(self, sample_set_id):
         return db(db.generic.sample_set_id == sample_set_id).select()[0]
+
+
+def get_sample_name(sample_set_id):
+    '''
+    Return the name associated with a sample set (eg. a run or a
+    patient) if any
+    '''
+    sample = db.sample_set[sample_set_id]
+    if sample is None or (sample.sample_type != defs.SET_TYPE_PATIENT \
+                          and sample.sample_type != defs.SET_TYPE_RUN):
+        return None
+
+    sample_type = sample.sample_type
+    patient_or_run = db[sample_type](db[sample_type].sample_set_id == sample_set_id)
+    if patient_or_run is None:
+        return None
+    if sample.sample_type == defs.SET_TYPE_PATIENT:
+        return vidjil_utils.anon_ids(patient_or_run.id)
+    return patient_or_run.name
+

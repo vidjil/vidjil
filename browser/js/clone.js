@@ -1149,10 +1149,18 @@ Clone.prototype = {
         }
         
         //IMGT info
-        if (this.seg.imgt != null) {
-            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> Results of <a href='http://www.imgt.org/IMGT_vquest/share/textes/'>IMGT/V-QUEST</a> " + "</td></tr>";
-            for (var item in this.seg.imgt) {
-                    html += "<tr><td> " + item + "</td><td> " + this.seg.imgt[item] + "</td></tr>";
+        var other_infos = {"imgt": "<a href='http://www.imgt.org/IMGT_vquest/share/textes/'>IMGT/V-QUEST</a>",
+                       "clonedb": "<a href='http://ecngs.vidjil.org/clonedb'>CloneDB</a>"};
+        for (var external_tool in other_infos) {
+            if (typeof this.seg[external_tool] != 'undefined'
+                && this.seg[external_tool] != null) {
+                html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> Results of "+other_infos[external_tool]+ "</td></tr>";
+                for (var item in this.seg[external_tool]) {
+                    if (! (this.seg[external_tool][item] instanceof Object)
+			&& ! (this.seg[external_tool][item] instanceof Array)) {
+                        html += "<tr><td> " + item + "</td><td> " + this.seg[external_tool][item] + "</td></tr>";
+                    }
+                }
             }
         }
 
