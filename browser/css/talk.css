@@ -1132,6 +1132,18 @@ span.logo {
   border-width: 2px;
   background-color: #cccccc;
 }
+span.ok {
+  color: green;
+}
+text.ok {
+  color: green;
+}
+span.info {
+  color: blue;
+}
+text.info {
+  color: blue;
+}
 span.warning {
   color: orange;
 }
