@@ -584,7 +584,7 @@ Segment.prototype = {
         }
 
         if (clone.isWarned()) {
-            span_info.className += " warning" ;
+            span_info.className += " " + clone.isWarned() ;
             span_info.appendChild(icon('icon-warning-1', 'clone information'));
         } else {
             span_info.appendChild(icon('icon-info', 'clone information'));

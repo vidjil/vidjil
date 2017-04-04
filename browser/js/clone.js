@@ -75,10 +75,10 @@ Clone.prototype = {
     
     isWarned: function () {
     /**
-     * @return {bool} a warning is set on this clone
+     * @return {string} a warning class is set on this clone
      */
-        if (this.coverage < this.COVERAGE_WARN) return true;
-        if (typeof(this.eValue) != undefined && this.eValue > this.EVALUE_WARN) return true;
+        if (this.coverage < this.COVERAGE_WARN) return 'warning';
+        if (typeof(this.eValue) != undefined && this.eValue > this.EVALUE_WARN) return 'warning';
         return false;
     },
 
