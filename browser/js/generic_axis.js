@@ -28,11 +28,12 @@
  * can provide the position of an element on it
  * @constructor
  * */
-function GenericAxis () {
+function GenericAxis (can_undefined) {
     this.labels = [];
     this.label_mapping = {};
     this.values = []
     this.value_mapping = {};
+    this.can_undefined = can_undefined;
 }
 
 GenericAxis.prototype = {
@@ -86,7 +87,10 @@ GenericAxis.prototype = {
                         this.addLabel("line", convert, labels.indexOf(convert)/labels.length, convert);
                     }
                 } else {
-                    this.addLabel("line", "?", 1, "?");
+                    if (this.can_undefined) {
+                        this.addLabel("line", "?", 1, "?");
+                    }
+
                 }
             }
         }
@@ -105,7 +109,7 @@ GenericAxis.prototype = {
                     value_mapping[convert] = [];
                 }
                 value_mapping[convert].push(value);
-            } else {
+            } else if (this.can_undefined){
                 if (typeof value_mapping["?"] === 'undefined')
                     value_mapping["?"] = [];
                 value_mapping["?"].push(value);

@@ -30,14 +30,14 @@
  * @param {Model} model 
  * @reverse {boolean} reverse - by default axis go from low to high but can be revsersed
  * */
-function GermlineAxis (model, reverse) {
+function GermlineAxis (model, reverse, can_undefined) {
     this.m = model
     this.labels = [];
     this.label_mapping = {};
     this.values = [];
     this.value_mapping = {};
     this.reverse = reverse;
-    GenericAxis.call(this);
+    GenericAxis.call(this, can_undefined);
 }
 
 GermlineAxis.prototype = Object.create(GenericAxis.prototype);
@@ -153,7 +153,9 @@ Object.assign(GermlineAxis.prototype, {
         this.populateValueMapping();
 
         var pos = this.getPos(total_gene, total_gene);
-        this.addLabel("line", pos, "?", "");
+
+        if (this.can_undefined)
+            this.addLabel("line", pos, "?", "");
         this.gene_list = gene_list;
         this.allele_list = allele_list;
         this.total_gene = total_gene;

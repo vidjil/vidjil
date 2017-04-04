@@ -30,13 +30,13 @@
  * @param {Model} model 
  * @reverse {boolean} reverse - by default axis go from low to high but can be revsersed
  * */
-function CustomAxis (model, reverse) {
+function CustomAxis (model, reverse, can_undefined) {
     this.m = model;
     this.labels = [];
     this.clones = [];
     this.value_mapping = {};
     this.reverse = reverse;
-    GenericAxis.call(this);
+    GenericAxis.call(this, can_undefined);
 }
 
 const NB_STEPS_IN_AXIS = 6; // Number (max) of labels per numerical axis
@@ -60,7 +60,6 @@ Object.assign(CustomAxis.prototype, {
         use_log = typeof use_log !== 'undefined' ? use_log : false;
         display_label = typeof display_label !== 'undefined' ? display_label : true;
         var self = this;
-        var has_undefined = false
         
         this.fct = fct;
         
@@ -82,8 +81,6 @@ Object.assign(CustomAxis.prototype, {
                     if ( typeof tmp != "undefined" && !isNaN(tmp)){
                         if ( tmp > max || typeof max == "undefined") max = tmp;
                         if ( tmp < min || typeof min == "undefined") min = tmp;
-                    } else {
-                        has_undefined = true;
                     }
                 }
             }
@@ -96,7 +93,8 @@ Object.assign(CustomAxis.prototype, {
                 this.value_mapping[val] = [];
             }
         }
-        this.value_mapping["?"] = [];
+        if(this.can_undefined)
+            this.value_mapping["?"] = [];
 
         for(var i in this.clones) {
             var clone = clones[i];
@@ -108,7 +106,8 @@ Object.assign(CustomAxis.prototype, {
                     value = undefined;
                 }
                 if (typeof value == "undefined" || typeof this.value_mapping[value] == "undefined" ) {
-                    this.value_mapping["?"].push(clone);
+                    if (this.can_undefined)
+                        this.value_mapping["?"].push(clone);
                 }else{
                     this.value_mapping[value].push(clone);
                 }
@@ -124,7 +123,7 @@ Object.assign(CustomAxis.prototype, {
             max = nice_ceil(max)
         }
 
-        if (has_undefined && ! use_log) {
+        if (this.can_undefined && ! use_log) {
             min = min - (max - min)/NB_STEPS_IN_AXIS
         }
 
@@ -140,7 +139,7 @@ Object.assign(CustomAxis.prototype, {
                 .range(range);
         }
             
-        this.computeLabels(min, max, use_log, display_label, has_undefined)
+        this.computeLabels(min, max, use_log, display_label, this.can_undefined)
     },
 
     pos: function(clone) {
