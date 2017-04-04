@@ -1158,7 +1158,7 @@ Clone.prototype = {
                 for (var item in this.seg[external_tool]) {
                     if (! (this.seg[external_tool][item] instanceof Object)
 			&& ! (this.seg[external_tool][item] instanceof Array)) {
-                        html += "<tr><td> " + item + "</td><td> " + this.seg[external_tool][item] + "</td></tr>";
+                        html += "<tr><td> " + item + "</td><td colspan='" + time_length + "'> " + this.seg[external_tool][item] + "</td></tr>";
                     }
                 }
             }
