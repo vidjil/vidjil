@@ -291,6 +291,8 @@ Database.prototype = {
 	        for (var i = 0; i < kept_clones.length; i++) {
 		    self.m.clones[kept_clones[i]].seg.clonedb = processCloneDBContents(result[i]);
 	        }
+                m.shouldRefresh()
+                m.update()
             },
             error: function() {
                 self.connected = false;
