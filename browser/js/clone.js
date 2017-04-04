@@ -77,6 +77,13 @@ Clone.prototype = {
     /**
      * @return {string} a warning class is set on this clone
      */
+        if (this.hasSeg('clonedb')) {
+            if (typeof(this.seg['clonedb']['–']) != 'undefined') // TODO: use a stored number of occurrences
+                return 'ok'
+            else
+                return 'info'
+        }
+
         if (this.coverage < this.COVERAGE_WARN) return 'warning';
         if (typeof(this.eValue) != undefined && this.eValue > this.EVALUE_WARN) return 'warning';
         return false;
