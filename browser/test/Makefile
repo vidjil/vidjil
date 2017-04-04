@@ -17,6 +17,9 @@ phantomjs:
 	cd QUnit ; \
 	[ `phantomjs phantom_test.js | tee >(cat >&2) | grep -c '^not ok'` -eq 0 ]
 
+quality:
+	jshint ../js/*.js
+
 ../../doc/%:
 	$(MAKE) -C ../../doc $@
 
