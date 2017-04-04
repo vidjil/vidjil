@@ -1042,6 +1042,10 @@ Segment.prototype = {
                 fix_icons.className = 'icon-pin-outline';
             }
         }
+    },
+
+    shouldRefresh: function() {
+        this.init()
     }
 
 }; //fin prototype Segment
