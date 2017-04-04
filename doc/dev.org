@@ -97,7 +97,7 @@ as well with the locus selection.
 
 - Each of the views (=Graph=, =ScatterPlot=, =List=, =Segment=) is rendered inside one or several =<div>= elements,
   and kept sync with the model. All the views are optional, and several views of the same type can be added.
-  See =js/main.js= for the invovcation
+  See =js/main.js= for the invocation
 
 - The link with the patient database/server is done with the =Database= object (=js/database.js=)
 
@@ -129,14 +129,14 @@ Clone lists can be passed to the model through several ways:
   - trough the API (see below)
   - or by directly providing data through Javascript (as in =small_example.html=)
 
-The first three solutions needs some further elements from the full =index.html=.
+The first three solutions need some further elements from the full =index.html=.
 
 
 ** Notifications
 *** Priority
 #<<browser:priority>>
     The priority determines how the notification are shown and what action the
-    used should do. The priorities can be between 0 and 3.
+    user should do. The priorities can be between 0 and 3.
     - 0 :: The notification is not shown
     - 1 :: The notification is shown (usually on green background) and
          automatically disappears
@@ -200,7 +200,7 @@ The cache is stored for each user and is updated only when a change occurs (mess
 *** Priority
     The priority determines how the notification is shown (see [[browser:priority][here for more
     details]]). From the server we have two ways of modifiying the priority.
-    Either by defining the =success= field to ='true'= or to ='false'=, either
+    Either by defining the =success= field to ='true'= or to ='false'=, or
     by explicitly specifying the priority in the field =priority=.
 
     For more details see 35054e4
@@ -223,7 +223,7 @@ The cache is stored for each user and is updated only when a change occurs (mess
 *** Export
     mysqldump -u <user> -p <database> -c --no-create-info > <file>
 *** Import
-    In order to import the data from another you server, you need to ensure
+    In order to import the data from another server, you need to ensure
     there will be no key collision, or the import will fail.
     If the database contains data, the easiest is to drop the database and
     create a new empty database.
@@ -253,8 +253,8 @@ The cache is stored for each user and is updated only when a change occurs (mess
     [[../algo/tests][algo/tests]].
 
     All the tests are defined in the [[../algo/tests/tests.cpp][tests.cpp]] file. But, for the sake of
-    clarity, this file includes other =cpp= files that incorporates all the
-    tests. A call to =make= compiles and launched the =tests.cpp= file, which
+    clarity, this file includes other =cpp= files that incorporate all the
+    tests. A call to =make= compiles and launches the =tests.cpp= file, which
     outputs a TAP file (in case of total success) and creates a =tests.cpp.tap=
     file (in every case).
 **** Tap test library
@@ -301,7 +301,7 @@ The cache is stored for each user and is updated only when a change occurs (mess
          file will extend this class (as can be seen in test_multilocus.rb)
 
     The tests are in the files whose name matches the pattern =test*.rb=. The
-    tests are launched by the script in =launch_functional_tests= which launch
+    tests are launched by the script in =launch_functional_tests= which launches
     all the files matching the previous pattern. It also backs up the test
     reports as =ci_reporter= removes them before each file is run.
 
@@ -432,7 +432,7 @@ make functional
    more information.
 
    Create a base directory for the package and the folders to which the binary
-   will be installed. Lets call our folder debian and copy the binary to /usr/bin/
+   will be installed. Let's call our folder debian and copy the binary to /usr/bin/
 
    $ mkdir -p debian/usr/bin
 
@@ -486,7 +486,7 @@ make functional
 
 *** Creating the orig archive
     In order to build a debian package, it is required to have a folder named
-    debian with serveral files required for the package which contain meta
+    debian with several files required for the package which contain meta
     data and permit users to have information on packages and updates for
     packages.
 
@@ -514,8 +514,8 @@ make functional
     to manage people packaging software they haven't developed with changes
     they have made. To make things simpler, we simply package the current
     source as the reference archive and build the package with the script
-    that can be obtained here: https://people.debian.org/~wijnen/mkdeb (Thank
-    you to Bas Wijnen <wijnen@debian.org> for this script)
+    that can be obtained here: https://people.debian.org/~wijnen/mkdeb (Thanks
+    to Bas Wijnen <wijnen@debian.org> for this script)
 
     From the source directory, run that script to create the package.
 
@@ -550,7 +550,7 @@ make functional
      conf/conf.js                             contains various variables for the vidjil browser
      conf/defs.py                             contains various variables for the vidjil server
      conf/gzip.conf                           configuration for gzip in nginx
-     conf/gzip_static.conf                    same as the previous but for static ressources
+     conf/gzip_static.conf                    same as the previous but for static resources
      conf/uwsgi.ini                           configuration required to run vidjil with uwsgi
      sites/nginx                              configuration required when running vidjil with nginx
      scripts/nginx-entrypoint.sh              entrypoint for the nginx
@@ -563,8 +563,8 @@ make functional
     - Change the mysql user/password in docker-compose.yml. You will also
       need to change the DB_ADDRESS in conf/defs.py to match it.
 
-    - Change the hostname in the nginx configuration vidjil/sites/nginx_conf
-      . If you are using vidjil on a network, then this might be required.
+    - Change the hostname in the nginx configuration vidjil/sites/nginx_conf.
+      If you are using vidjil on a network, then this might be required.
 
     - Change the default admin password. Login as plop@plop.com password 1234
       and go to the following URL: https://<your
@@ -593,12 +593,12 @@ make functional
       results and log files) are stored in /opt/vidjil , but  you can change
       this by editing the paths in the volumes.
 
-    - Configure the reporter. Ideally this container should be posistionned
+    - Configure the reporter. Ideally this container should be positioned
       on a remote server in order to be able to report on a down server, but we have packed it here for convenience.
 
 ** Building and starting the environment
    Building the image is simple and can be done prior to editing the
-   configuration files if you so wish although it is not necessary.
+   configuration files if you wish, although it is not necessary.
    The docker image is not on the DockerHub and therefore needs to be built
    before it can be used.
 
@@ -645,7 +645,7 @@ make functional
 ** Files
    Files can simply be copied over to the new installation, their filenames
    are stored in the database and should therefore be accessible as long as
-   the they are in the correct directories.
+   they are in the correct directories.
 
 ** Filtering data
    When extracting data for a given user, the whole database should not be
@@ -670,7 +670,7 @@ make functional
     LINES TERMINATED BY '\n'
 
   Note: We are managing filenames here which should not contain any
-  characters such as quotes or commas so we can afford to refrain from
+  character such as quotes or commas so we can afford to refrain from
   enclosing the data with quotes.
 
   This query will output a csv file containing a filename on each line.
