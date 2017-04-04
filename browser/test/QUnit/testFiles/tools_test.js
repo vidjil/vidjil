@@ -36,7 +36,8 @@ QUnit.test("test rounding functions", function(assert) {
 
 QUnit.test("processCloneDBContents", function(assert) {
     var emptyResult = [];
-    assert.deepEqual(processCloneDBContents(emptyResult), {'original': []},
+    assert.deepEqual(processCloneDBContents(emptyResult), {'original': [],
+                                                           '–': 'No occurrence of this clone in CloneDB'},
                      "processing empty result");
     
     var singleResult = [{'tags': {'sample_set_viewable': [true, true],
