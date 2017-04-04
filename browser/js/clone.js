@@ -85,7 +85,8 @@ Clone.prototype = {
         }
 
         if (this.coverage < this.COVERAGE_WARN) return 'warning';
-        if (typeof(this.eValue) != undefined && this.eValue > this.EVALUE_WARN) return 'warning';
+        if (typeof(this.eValue) != 'undefined' && this.eValue > this.EVALUE_WARN) return 'warning';
+
         return false;
     },
 
