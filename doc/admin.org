@@ -3,7 +3,7 @@
 
 
 This is the preliminary help for administrators of the Vidjil web application.
-This helps covers administrative features accessible from the web application,
+This help covers administrative features accessible from the web application,
 and is complementary to the "Server Installation and Maintenance Manual".
 Users should consult the "Web Application Manual".
 
@@ -15,7 +15,7 @@ This page will show you the config list, config are just parameters for Vidjil r
 
 
 * Pre-process configurations
-   
+
 XXX TODO XXX
 
 * Users, groups, and permissions
@@ -33,7 +33,7 @@ XXX TODO XXX
 
   These permissions are assigned to groups to which a user can belong. Upon
   creation a user is automatically assigned a newly created group designed
-  to be the user's personnal group.
+  to be the user's personal group.
   Belonging to multiple groups implies the user can have access to several
   sets of patients and have different permissions on each set. (eg. one might
   have the permissions necessary to edit the patients of one group, but not
@@ -46,7 +46,7 @@ XXX TODO XXX
   children and access is not transfered from a child to a parent.
 
   Child groups should be considered as roles inside the parent group as they
-  should not possess any personnal access to parents.
+  should not possess any personal access to parents.
   They also cannot possess any children of their own. Assigning a new group
   to a group which has a parent will automatically defer the parent-child
   relationship to that parent.
@@ -60,17 +60,17 @@ XXX TODO XXX
 
 *** Example: create organisation Foobar with sub groups/roles
     - Create group Foobar (select None for parent group).
-    - Create roles (eg. Technician, Engineer, Doctor). be sure to select
+    - Create roles (eg. Technician, Engineer, Doctor). Be sure to select
       Foobar as the parent group.
     - Set the permissions for the newly created groups Technician, Engineer
-      and Doctor. You can do this from the group's detaild view (be sure to
+      and Doctor. You can do this from the group's detailed view (be sure to
       assign at least the 'view patient' permission or members will not be able
       to see any patients from the parent group)
     - Invite users to the groups from the detailed view.
 
     Users will now be able, if permissions allow it, to create patients for
     these groups. Any patient created should automatically be assigned to the
-    parent group. Any patients created for the parent group will be
+    parent group. Any patient created for the parent group will be
     accessible by any member of one of the child groups.
 
 
