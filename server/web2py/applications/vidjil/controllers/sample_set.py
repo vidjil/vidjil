@@ -417,6 +417,7 @@ def confirm():
 def delete():
     if (auth.can_modify_sample_set(request.vars["id"]) ):
         sample_set = db.sample_set[request.vars["id"]]
+        sample_type = sample_set.sample_type
         if sample_set is None:
             res = {"message": 'An error occured. This sample_set may have already been deleted'}
             log.error(res)
@@ -440,6 +441,7 @@ def delete():
         db(db.sample_set.id == sample_set.id).delete()
 
         res = {"redirect": "sample_set/all",
+               "args": {"type": sample_type},
                "success": "true",
                "message": "sample set ("+str(request.vars["id"])+") deleted"}
         log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars["id"], 'table_name': 'sample_set'})
