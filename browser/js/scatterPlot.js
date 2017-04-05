@@ -1980,7 +1980,7 @@ ScatterPlot.prototype = {
                 axis.init(this.m.germlineJ, "J", false)
                 break;
             default :
-                axis.init(this.m.clones, aa.fct, aa.labels, aa.sort, aa.min, aa.max, aa.use_log, aa.display_label);
+                axis.init(this.m.clones, aa.fct, aa.labels, aa.sort, aa.min, aa.max, aa.log, aa.display_label);
             break;
         }
         return axis;
