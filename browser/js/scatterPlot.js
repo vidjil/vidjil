@@ -915,7 +915,9 @@ ScatterPlot.prototype = {
             var tmp = 0;
             for (var j in this.barTab[i]) {
                 var clone = this.barTab[i][j]
-                if (!clone.isVirtual()) tmp += clone.getSize();
+                if (this.includeBar(clone)){
+                    tmp += clone.getSize();
+                }
             }
             if (tmp > bar_max) bar_max = tmp;
         }
@@ -949,22 +951,21 @@ ScatterPlot.prototype = {
             
             for (var j in this.barTab[i]){
                 var clone = this.barTab[i][j]
-                height = 0;
-                if ( (!clone.isVirtual()) & clone.isActive() ) {
+                if (this.includeBar(clone)){
+                    height = 0;
                     height = clone.getSize()/bar_max;
+
+                    // Minimal height (does not affect y_pos)
+                    var height_for_display = Math.max(height, 0.01)
+                    var y_pos_for_display = y_pos + height_for_display ;
+
+                    y_pos += height;
+
+                    this.nodes[cloneID].bar_y = y_pos_for_display;
+                    this.nodes[cloneID].bar_x = x_pos;
+                    this.nodes[cloneID].bar_h = height_for_display;
+                    this.nodes[cloneID].bar_w = width;
                 }
-
-                // Minimal height (does not affect y_pos)
-                var height_for_display = Math.max(height, 0.01)
-                var y_pos_for_display = y_pos + height_for_display ;
-
-                y_pos += height;
-
-                this.nodes[cloneID].bar_y = y_pos_for_display;
-                this.nodes[cloneID].bar_x = x_pos;
-                this.nodes[cloneID].bar_h = height_for_display;
-                this.nodes[cloneID].bar_w = width;
-
             }
             k++;
         }
