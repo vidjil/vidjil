@@ -352,7 +352,9 @@ QUnit.test("export", function(assert) {
         0.05, 0.1, 0.075, 0.15,
         "19 nt; 10 reads (5.000%)", "19 nt; 10 reads (10.00%)", "19 nt; 15 reads (7.500%)", "19 nt; 15 reads (15.00%)"
     ]
-    assert.equal(c3.toCSV(), res3.join(","), ".toCSV()")
+    assert.deepEqual(c3.toCSV(), res3, ".toCSV()")
+
+    assert.equal(c3.toCSVheader(m).length, c3.toCSV().length, ".toCSVheader() length")
 });
 
 
