@@ -5,7 +5,7 @@ QUnit.assert.includes = function(result, pattern, message ) {
     // TODO: see and use qunit-regexp !
     var res = result.indexOf(pattern) > -1
 
-    this.push(res, res, "{includes} " + pattern, message);
+    this.push(res, result, "{includes} " + pattern, message);
 }
 
 QUnit.assert.approx = function(result, expected, margin, message ) {
