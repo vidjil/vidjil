@@ -143,6 +143,7 @@ Model.prototype = {
 
         this.orderedSelectedClones=[];
         this.clusters = [];
+        this.clusters_copy = [];
         this.clones = [];
         this.data = {}; // external data
         this.data_info = {};
@@ -1217,7 +1218,7 @@ changeCloneNotation: function(cloneNotationType) {
         
         //save user cluster
         if ( this.cluster_key==""){
-            this.clusters_copy = this.clusters
+            this.saveClusters()
             this.clusters = []
         }
         
@@ -1279,14 +1280,22 @@ changeCloneNotation: function(cloneNotationType) {
 
         this.update()
     },
-    
+
+
     /**
-     * restore clusters made by user
+     * save clusters
+     * */
+    saveClusters: function () {
+        this.clusters_copy.push(this.clusters.slice())
+    },
+
+    /**
+     * restore previously saved clusters
      * */
     restoreClusters: function () {
         this.cluster_key = ""
-        if ( typeof this.clusters_copy != 'undefined'){
-            this.clusters = this.clusters_copy
+        if (this.clusters_copy.length > 0){
+            this.clusters = this.clusters_copy.pop()
             this.update()
         }
         
