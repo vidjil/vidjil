@@ -342,7 +342,17 @@ QUnit.test("export", function(assert) {
     assert.equal(c3.getPrintableSegSequence(), "aaaaa\naaaaatttt\nttttt", "getPrintableSegSequence() : Ok");
     console.log(c3.getFasta())
     assert.equal(c3.getFasta(), ">id3    19 nt, 10 reads (5.000%)\naaaaa\naaaaatttt\nttttt\n", "getFasta() : Ok");
-    
+
+    var res3 = [
+        "custom name", "id3",
+        "TRG", "-/-",
+        "undefined V", "IGHD2*03", "IGHV4*01",
+        "AAAAAAAAAATTTTTTTTT",
+        10, 10, 15, 15,
+        0.05, 0.1, 0.075, 0.15,
+        "19 nt; 10 reads (5.000%)", "19 nt; 10 reads (10.00%)", "19 nt; 15 reads (7.500%)", "19 nt; 15 reads (15.00%)"
+    ]
+    assert.equal(c3.toCSV(), res3.join(","), ".toCSV()")
 });
 
 
