@@ -1202,7 +1202,7 @@ Clone.prototype = {
 
     toCSVheader: function (m) {
         var csv = [
-            "name", "id",
+            "cluster", "name", "id",
             "system", "tag",
             "v", "d", "j",
             "sequence"
@@ -1217,7 +1217,7 @@ Clone.prototype = {
 
     toCSV: function () {
         var csv = [
-            this.getName(), this.id,
+            this.getCluster().join("+"), this.getName(), this.id,
             this.get('germline'), this.getTagName(),
             this.getGene("5"), this.getGene("4"), this.getGene("3"),
             this.getSequence()
