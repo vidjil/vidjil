@@ -222,14 +222,16 @@ Database.prototype = {
         {}
         
         var self = this;
-        var arg = "";
-        if (typeof args != "undefined" && Object.keys(args).length) 
-            var arg = this.argsToStr(args)
-        
-        var url = self.db_address + page + "?" + arg
+        var url = self.db_address + page
         if (page.substr(0,4).toLowerCase() == "http") {
-            url = page + arg
+            url = page
         }
+        var arg = "";
+        if (typeof args != "undefined" && Object.keys(args).length) {
+            var arg = this.argsToStr(args)
+            url += "?" + arg;
+        }
+
         
         this.callUrl(url, args)
     },
