@@ -1030,7 +1030,7 @@ Clone.prototype = {
             html += row_1("clone name", this.getName())
             html += row_1("clone short name", this.getShortName())
 
-            html += "<tr><td> clone size (n-reads (total reads) )</td>"
+            html += "<tr><td>clone size (n-reads (total reads))</td>"
             for (var i = 0; i < time_length; i++) {
                 html += "<td>"
                 html += this.getReads(this.m.samples.order[i]) + "  (" + this.m.reads.segmented[this.m.samples.order[i]] + ")"
@@ -1045,7 +1045,7 @@ Clone.prototype = {
                 }
                 html += "</td>"
             }
-            html += "</tr><tr><td> clone size (%)</td>"
+            html += "</tr><tr><td>clone size (%)</td>"
             for (var i = 0; i < time_length; i++) {
                 html += "<td>" + this.getStrSize(this.m.samples.order[i]) + "</td>"
             }
@@ -1073,19 +1073,19 @@ Clone.prototype = {
         if (typeof this.eValue != 'undefined') {
             html += row_1("e-value",
                           "<span "
-                          + (this.eValue < this.EVALUE_WARN ? "class='warning'" : "")
+                          + (this.eValue > this.EVALUE_WARN ? "class='warning'" : "")
                           + ">"
                           + this.eValue + "</span>")
         }
 
         // abundance info
-        html += "<tr><td> size (n-reads (total reads) )</td>"
+        html += "<tr><td>size (n-reads (total reads))</td>"
         for (var i = 0; i < time_length; i++) {
             html += "<td>" + this.get('reads',this.m.samples.order[i]) + 
                     "  (" + this.m.reads.segmented[this.m.samples.order[i]] + ")</td>"
         }
         html += "</tr>"
-        html += "<tr><td> size (%)</td>"
+        html += "<tr><td>size (%)</td>"
         for (var i = 0; i < time_length; i++) {
             html += "<td>" + this.getStrSequenceSize(this.m.samples.order[i]) + "</td>"
         }
