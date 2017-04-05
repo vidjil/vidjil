@@ -897,6 +897,13 @@ ScatterPlot.prototype = {
         
         return this;
     },
+
+    includeBar: function(clone) {
+        return ((!this.use_system_grid ||
+                (this.use_system_grid && this.m.germlineV.system == clone.get('germline') )) &&
+                clone.isActive() &&
+                !clone.isVirtual());
+    },
     
     /**
      * return the size of the biggest bar
