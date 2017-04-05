@@ -316,8 +316,8 @@ Clone.prototype = {
      * @return {string} name
      * */
     getName: function () {
-        if (this.m.clusters[this.index].name){
-            return this.m.clusters[this.index].name;
+        if (this.getCluster().name){
+            return this.getCluster().name;
         }else if (this.c_name) {
             return this.c_name;
         } else if (this.name) {
@@ -382,10 +382,12 @@ Clone.prototype = {
     }, //fin changeName,
 
     
-    
-    
-    
-
+    /**
+     * @return {integer} cluster number
+     */
+    getCluster: function () {
+        return this.m.clusters[this.index]
+    },
 
     /**
      * compute the clone size ( ratio of all clones clustered ) at a given time
@@ -637,7 +639,7 @@ Clone.prototype = {
         time = this.m.getTime(time)
         var result = 0;
 
-        var cluster = this.m.clusters[this.index]
+        var cluster = this.getCluster()
         for (var j = 0; j < cluster.length; j++) {
             result += this.m.clone(cluster[j]).reads[time];
         }
@@ -831,7 +833,7 @@ Clone.prototype = {
             this.color = "";
         }else if (this.m.colorMethod == "abundance") {
             var size = this.getSize()
-            if (this.m.clusters[this.index].length==0){ size = this.getSequenceSize() }
+            if (this.getCluster().length==0){ size = this.getSequenceSize() }
             if (size == 0){
                 this.color = "";
             }else{
@@ -1016,7 +1018,7 @@ Clone.prototype = {
      *
      * */
     getHtmlInfo: function () {
-        var isCluster = this.m.clusters[this.index].length
+        var isCluster = this.getCluster().length
         var time_length = this.m.samples.order.length
         var html = ""
 
