@@ -1915,10 +1915,7 @@ changeCloneNotation: function(cloneNotationType) {
      * */
     toCSV: function () {
         //header
-        var csv = "name,id,system,tag,v,d,j,sequence"
-        for (var i=0; i<this.samples.order.length; i++) csv += ",reads_"+i
-        for (var i=0; i<this.samples.order.length; i++) csv += ",ratio_"+i
-        for (var i=0; i<this.samples.order.length; i++) csv += ",ratios_"+i
+        var csv = Clone.prototype.toCSVheader(this)
         csv += "\n"
         
         //only non-empty active clones and virtual clones

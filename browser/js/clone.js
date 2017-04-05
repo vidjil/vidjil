@@ -1200,6 +1200,15 @@ Clone.prototype = {
         return html
     },
 
+    toCSVheader: function (m) {
+        var csv = "name,id,system,tag,v,d,j,sequence"
+        for (var i=0; i<m.samples.order.length; i++) csv += ",reads_"+i
+        for (var i=0; i<m.samples.order.length; i++) csv += ",ratio_"+i
+        for (var i=0; i<m.samples.order.length; i++) csv += ",ratios_"+i
+
+        return csv
+    },
+
     toCSV: function () {
         var csv = this.getName() + "," + this.id + "," + this.get('germline') + "," + this.getTagName() + ","
                 + this.getGene("5") + "," + this.getGene("4") + "," + this.getGene("3") + "," + this.getSequence()
