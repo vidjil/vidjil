@@ -337,6 +337,7 @@ QUnit.test("export", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data)
     var c3 = new Clone(json_clone3, m, 0)
+    var c4 = new Clone(json_clone4, m, 1)
     m.initClones()
 
     assert.equal(c3.getPrintableSegSequence(), "aaaaa\naaaaatttt\nttttt", "getPrintableSegSequence() : Ok");
@@ -353,8 +354,13 @@ QUnit.test("export", function(assert) {
         "19 nt; 10 reads (5.000%)", "19 nt; 10 reads (10.00%)", "19 nt; 15 reads (7.500%)", "19 nt; 15 reads (15.00%)"
     ]
     assert.deepEqual(c3.toCSV(), res3, ".toCSV()")
-
     assert.equal(c3.toCSVheader(m).length, c3.toCSV().length, ".toCSVheader() length")
+
+    m.select(0)
+    m.select(1)
+    m.merge()
+
+    assert.equal(c3.toCSV()[0], "0+1", ".toCSV(), merged clone")
 });
 
 
