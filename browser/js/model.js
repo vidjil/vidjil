@@ -1167,9 +1167,12 @@ changeCloneNotation: function(cloneNotationType) {
                 top = this.clone(list[i]).top;
             }
             new_cluster = new_cluster.concat(this.clusters[list[i]]);
+
+            // All cluster lists of these clones are now empty...
             this.clusters[list[i]] = [];
         }
 
+        // ... except for the leader, who takes the list of all clones
         this.clusters[leader] = new_cluster;
         this.unselectAll()
         this.updateElem(list)
@@ -1194,10 +1197,11 @@ changeCloneNotation: function(cloneNotationType) {
 
         nlist.splice(index, 1);
 
-        //le cluster retrouve sa liste de clones -1
+        // The cluster has now a list with one less clone
         this.clusters[clusterID] = nlist;
         if (this.clusters[clusterID].length <= 1) this.clone(clusterID).split = false;
-        //le clone forme un cluster de 1 clone
+
+        // The unmerged clone has now its own 1-clone cluster
         this.clusters[cloneID] = [cloneID];
 
         this.updateElem([cloneID, clusterID]);
@@ -1263,7 +1267,7 @@ changeCloneNotation: function(cloneNotationType) {
 
 
     /**
-     * reset clusters to default
+     * reset clusters to default 1-clones clusters
      * */
     resetClusters: function () {
         //reset cluster
