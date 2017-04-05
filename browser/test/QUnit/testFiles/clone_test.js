@@ -348,6 +348,7 @@ QUnit.test("export", function(assert) {
         "0", "custom name", "id3",
         "TRG", "-/-",
         "undefined V", "IGHD2*03", "IGHV4*01",
+        "not productive",
         "AAAAAAAAAATTTTTTTTT",
         10, 10, 15, 15,
         0.05, 0.1, 0.075, 0.15,
