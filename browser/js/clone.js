@@ -1026,9 +1026,10 @@ Clone.prototype = {
 
         //cluster info
         if (isCluster) {
-            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> clone </td></tr>"
-            html += "<tr><td> clone name </td><td colspan='" + time_length + "'>" + this.getName() + "</td></tr>"
-            html += "<tr><td> clone short name </td><td colspan='" + time_length + "'>" + this.getShortName() + "</td></tr>"
+            html += header("clone")
+            html += row_1("clone name", this.getName())
+            html += row_1("clone short name", this.getShortName())
+
             html += "<tr><td> clone size (n-reads (total reads) )</td>"
             for (var i = 0; i < time_length; i++) {
                 html += "<td>"
@@ -1048,31 +1049,33 @@ Clone.prototype = {
             for (var i = 0; i < time_length; i++) {
                 html += "<td>" + this.getStrSize(this.m.samples.order[i]) + "</td>"
             }
-            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> representative sequence</td></tr>"
+            html += header("representative sequence")
         }else{
-            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> sequence</td></tr>"
+            html += header("sequence")
         }
 
         
         //sequence info (or cluster main sequence info)
-        html += "<tr><td> sequence name </td><td colspan='" + time_length + "'>" + this.getSequenceName() + "</td></tr>"
-        html += "<tr><td> code </td><td colspan='" + time_length + "'>" + this.getCode() + "</td></tr>"
-        html += "<tr><td> length </td><td colspan='" + time_length + "'>" + this.getSequenceLength() + "</td></tr>"
+        html += row_1("sequence name", this.getSequenceName())
+        html += row_1("code", this.getCode())
+        html += row_1("length", this.getSequenceLength())
 
         //coverage info
         if (typeof this.coverage != 'undefined') {
-            html += "<tr><td> average coverage </td><td colspan='" + time_length + "'><span "
-            if (this.coverage < this.COVERAGE_WARN)
-                html += "class='warning'"
-            html += ">" + this.coverage.toFixed(3) + "</span></td>"
+            html += row_1("average coverage",
+                          "<span "
+                          + (this.coverage < this.COVERAGE_WARN ? "class='warning'" : "")
+                          + ">"
+                          + this.coverage.toFixed(3) + "</span>")
         }
 
         // e-value
         if (typeof this.eValue != 'undefined') {
-            html += "<tr><td> e-value </td><td colspan='" + time_length + "'><span "
-            if (this.eValue > this.EVALUE_WARN)
-                html += "class='warning'"
-            html += ">" + this.eValue + "</span></td>"
+            html += row_1("e-value",
+                          "<span "
+                          + (this.eValue < this.EVALUE_WARN ? "class='warning'" : "")
+                          + ">"
+                          + this.eValue + "</span>")
         }
 
         // abundance info
@@ -1090,10 +1093,9 @@ Clone.prototype = {
 
         
         //segmentation info
-        html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> segmentation "
-        html += " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>edit</button> "; //Use to hide/display lists
-        html += this.getHTMLModifState() // icon if manual changement 
-        html += "</td></tr>"
+        html += header("segmentation"
+                       + " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>edit</button>" //Use to hide/display lists
+                       + this.getHTMLModifState()) // icon if manual changement
         
         if (typeof this.stats != 'undefined'){
             var total_stat = [];
@@ -1111,12 +1113,16 @@ Clone.prototype = {
             }
         }
         
-        html += "<tr><td> sequence </td><td colspan='" + time_length + "'>" + this.sequence + "</td></tr>"
-        html += "<tr><td> id </td><td colspan='" + time_length + "'>" + this.id + "</td></tr>"
-        html += "<tr><td> locus </td><td colspan='" + time_length + "'>" + this.m.systemBox(this.germline).outerHTML + this.germline + "<div class='div-menu-selector' id='listLocus' style='display: none'>" + this.createLocusList() + "</div></td></tr>"
-        html += "<tr><td> V gene (or 5') </td><td colspan='" + time_length + "'>" + this.getGene("5") + "<div class='div-menu-selector' id='listVsegment' style='display: none'>" + this.createSegmentList("Vsegment") + "</div></td></tr>"
-        html += "<tr><td> (D gene) </td><td colspan='" + time_length + "'>" + this.getGene("4") +       "<div class='div-menu-selector' id='listDsegment' style='display: none'>" + this.createSegmentList("Dsegment") + "</div></td></tr>"
-        html += "<tr><td> J gene (or 3') </td><td colspan='" + time_length + "'>" + this.getGene("3") + "<div class='div-menu-selector' id='listJsegment' style='display: none'>" + this.createSegmentList("Jsegment") + "</div></td></tr>"
+        html += row_1("sequence", this.sequence)
+        html += row_1("id", this.id)
+        html += row_1("locus", this.m.systemBox(this.germline).outerHTML + this.germline
+                      + "<div class='div-menu-selector' id='listLocus' style='display: none'>" + this.createLocusList() + "</div>")
+        html += row_1("V gene (or 5')", this.getGene("5")
+                      + "<div class='div-menu-selector' id='listVsegment' style='display: none'>" + this.createSegmentList("Vsegment") + "</div>")
+        html += row_1("(D gene)", this.getGene("4")
+                      + "<div class='div-menu-selector' id='listDsegment' style='display: none'>" + this.createSegmentList("Dsegment") + "</div>")
+        html += row_1("J gene (or 3')", this.getGene("3")
+                      + "<div class='div-menu-selector' id='listJsegment' style='display: none'>" + this.createSegmentList("Jsegment") + "</div>")
 
         // Other seg info
         var exclude_seg_info = ['affectSigns', 'affectValues', '5', '4', '3']
@@ -1124,27 +1130,27 @@ Clone.prototype = {
             if (exclude_seg_info.indexOf(key) == -1 && this.seg[key] instanceof Object) {
 		if ("info" in this.seg[key]) {
 		    // Textual field
-		    html += "<tr><td> "+key+" </td><td colspan='" + time_length + "'>"+ this.seg[key]["info"] + "</td></tr>"
+		    html += row_1(key, this.seg[key]["info"])
 		} else if ("val" in this.seg[key]) {
 		    // Numerical field
-		    html += "<tr><td> "+key+" </td><td colspan='" + time_length + "'>"+ this.seg[key]["val"] + "</td></tr>"
+		    html += row_1(key, this.seg[key]["val"])
 		} else {
 		    // Sequence field
 		    var nt_seq = this.getSegNtSequence(key);
 		    if (nt_seq != '') {
-			html += "<tr><td> "+key+" </td><td colspan='" + time_length + "'>" + this.getSegNtSequence(key) + "</td></tr>"
+			html += row_1(key, this.getSegNtSequence(key))
 		    }
 		}
             }
         }
         if (typeof this.seg['junction'] != 'undefined'
            && this.seg.junction.productive == true) {
-            html += "<tr><td> Junction (AA seq) </td><td colspan='" + time_length + "'>" + this.getSegAASequence('junction') + "</td></tr>"
+            html += header("Junction (AA seq)", this.getSegAASequence('junction'))
         }
 
         
         //other info (clntab)
-        html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> &nbsp; </td></tr>"
+        html += header("&nbsp")
         for (var key in this) {
             if (key[0] == "_") {
                 html += "<tr><td>" + key + "</td>"
@@ -1165,11 +1171,11 @@ Clone.prototype = {
         for (var external_tool in other_infos) {
             if (typeof this.seg[external_tool] != 'undefined'
                 && this.seg[external_tool] != null) {
-                html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> Results of "+other_infos[external_tool]+ "</td></tr>";
+                html += header("Results of "+other_infos[external_tool])
                 for (var item in this.seg[external_tool]) {
                     if (! (this.seg[external_tool][item] instanceof Object)
 			&& ! (this.seg[external_tool][item] instanceof Array)) {
-                        html += "<tr><td> " + item + "</td><td colspan='" + time_length + "'> " + this.seg[external_tool][item] + "</td></tr>";
+                        html += row_1(item, this.seg[external_tool][item])
                     }
                 }
             }
