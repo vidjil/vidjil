@@ -183,7 +183,6 @@ Model.prototype = {
         this.nbr = 0;
         this.nodes = null;
         this.edges = null;
-        this.cluster_key = ""
         
         //segmented status
         this.segmented_mesg = ["?", 
@@ -1162,6 +1161,8 @@ changeCloneNotation: function(cloneNotationType) {
         
         console.log("merge clones " + list)
 
+        this.saveClusters()
+
         for (var i = 0; i < list.length; i++) {
             if (this.clone(list[i]).top < top) {
                 leader = list[i];
@@ -1198,6 +1199,8 @@ changeCloneNotation: function(cloneNotationType) {
 
         nlist.splice(index, 1);
 
+        this.saveClusters()
+
         // The cluster has now a list with one less clone
         this.clusters[clusterID] = nlist;
         if (this.clusters[clusterID].length <= 1) this.clone(clusterID).split = false;
@@ -1210,17 +1213,12 @@ changeCloneNotation: function(cloneNotationType) {
     
     /** 
      * cluster clones who produce the same result with the function given in parameter <br>
-     * save a copy of clusters made by user 
      * @param {function} fct 
      * */
     clusterBy: function (fct) {
         var self = this;
         
-        //save user cluster
-        if ( this.cluster_key==""){
-            this.saveClusters()
-            this.clusters = []
-        }
+        this.saveClusters()
         
         var tmp = {}
         for (var i = 0; i < this.clones.length - this.system_available.length; i++) {
@@ -1262,7 +1260,6 @@ changeCloneNotation: function(cloneNotationType) {
                 this.clusters[tmp[i][j]] = []
             }
         }
-        this.cluster_key = fct
         this.update()
     },
 
@@ -1271,9 +1268,8 @@ changeCloneNotation: function(cloneNotationType) {
      * reset clusters to default 1-clones clusters
      * */
     resetClusters: function () {
-        //reset cluster
-        this.cluster_key = ""
-        
+        this.saveClusters()
+
         for (var i = 0; i < this.clones.length; i++) {
             this.clusters[i] = [i]
         }
@@ -1293,7 +1289,6 @@ changeCloneNotation: function(cloneNotationType) {
      * restore previously saved clusters
      * */
     restoreClusters: function () {
-        this.cluster_key = ""
         if (this.clusters_copy.length > 0){
             this.clusters = this.clusters_copy.pop()
             this.update()
