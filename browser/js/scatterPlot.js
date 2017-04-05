@@ -120,27 +120,27 @@ function ScatterPlot(id, model, database) {
         "gene_v": { 
             doc: "V gene (or 5' segment), gathering all alleles",
             label:"V/5' gene",
-            axis: new GermlineAxis(this.m)
+            axis: new GermlineAxis(this.m, false, true)
         },
         "gene_j": { 
             doc: "J gene (or 3' segment), gathering all alleles",
             label:"J/3' gene",
-            axis: new GermlineAxis(this.m)
+            axis: new GermlineAxis(this.m, false, true)
         },
         "allele_v": { 
             doc: "V gene (or 5' segment), with allele",
             label:"V allele",
-            axis: new GermlineAxis(this.m)
+            axis: new GermlineAxis(this.m, false, true)
         },
         "allele_j": { 
             doc: "J gene (or 3' segment), with allele",
             label:"J allele",
-            axis: new GermlineAxis(this.m)
+            axis: new GermlineAxis(this.m, false, true)
         },
         "sequenceLength" : { 
             doc: "length of the consensus sequence",
             label: "clone consensus length",
-            axis: new CustomAxis(this.m),
+            axis: new CustomAxis(this.m, false, true),
             fct: function(clone) {return clone.getSequenceLength()}
         },
         "readLength" : {
