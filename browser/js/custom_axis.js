@@ -226,11 +226,11 @@ Object.assign(CustomAxis.prototype, {
     }
 });
 
-function PercentCustomAxis (model, reverse) {
+function PercentCustomAxis (model, reverse, can_undefined) {
     this.m = model;
     this.labels = [];
     this.reverse = reverse;
-    CustomAxis.call(this, model, reverse);
+    CustomAxis.call(this, model, reverse, can_undefined);
 }
 
 PercentCustomAxis.prototype = Object.create(CustomAxis.prototype);
@@ -252,11 +252,11 @@ Object.assign(PercentCustomAxis.prototype, {
  * @param {Model} model
  * @reverse {boolean} reverse - by default axis go from low to high but can be revsersed
  * */
-function FloatCustomAxis (model, reverse) {
+function FloatCustomAxis (model, reverse, can_undefined) {
     this.m = model;
     this.labels = [];
     this.reverse = reverse;
-    CustomAxis.call(this);
+    CustomAxis.call(this, model, reverse, can_undefined);
 }
 
 FloatCustomAxis.prototype = Object.create(CustomAxis.prototype);
