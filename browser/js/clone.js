@@ -1007,6 +1007,9 @@ Clone.prototype = {
         var time_length = this.m.samples.order.length
         var html = ""
 
+        var header = function(content) { return "<tr><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; }
+        var row_1  = function(item, content) { return "<tr><td>" + item + "</td><td colspan='" + time_length + "'>" + content + "</td></tr>" ; }
+
         if (isCluster) {
             html = "<h2>Cluster info : " + this.getName() + "</h2>"
         } else {
