@@ -33,7 +33,9 @@ function GenericAxis (can_undefined) {
     this.label_mapping = {};
     this.values = []
     this.value_mapping = {};
-    this.can_undefined = can_undefined;
+    this.can_undefined = true;
+    if(typeof can_undefined !== "undefined")
+        this.can_undefined = can_undefined;
 }
 
 GenericAxis.prototype = {
