@@ -344,7 +344,7 @@ QUnit.test("export", function(assert) {
     assert.equal(c3.getFasta(), ">id3    19 nt, 10 reads (5.000%)\naaaaa\naaaaatttt\nttttt\n", "getFasta() : Ok");
 
     var res3 = [
-        "custom name", "id3",
+        "0", "custom name", "id3",
         "TRG", "-/-",
         "undefined V", "IGHD2*03", "IGHV4*01",
         "AAAAAAAAAATTTTTTTTT",
