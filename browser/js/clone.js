@@ -1201,21 +1201,31 @@ Clone.prototype = {
     },
 
     toCSVheader: function (m) {
-        var csv = "name,id,system,tag,v,d,j,sequence"
-        for (var i=0; i<m.samples.order.length; i++) csv += ",reads_"+i
-        for (var i=0; i<m.samples.order.length; i++) csv += ",ratio_"+i
-        for (var i=0; i<m.samples.order.length; i++) csv += ",ratios_"+i
+        var csv = [
+            "name", "id",
+            "system", "tag",
+            "v", "d", "j",
+            "sequence"
+        ]
+
+        for (var i=0; i<m.samples.order.length; i++) csv.push("reads_"+i)
+        for (var i=0; i<m.samples.order.length; i++) csv.push(",ratio_"+i)
+        for (var i=0; i<m.samples.order.length; i++) csv.push(",ratios_"+i)
 
         return csv
     },
 
     toCSV: function () {
-        var csv = this.getName() + "," + this.id + "," + this.get('germline') + "," + this.getTagName() + ","
-                + this.getGene("5") + "," + this.getGene("4") + "," + this.getGene("3") + "," + this.getSequence()
+        var csv = [
+            this.getName(), this.id,
+            this.get('germline'), this.getTagName(),
+            this.getGene("5"), this.getGene("4"), this.getGene("3"),
+            this.getSequence()
+        ]
 
-        for (var i=0; i<this.m.samples.order.length; i++) csv += "," + this.getReads(this.m.samples.order[i])
-        for (var i=0; i<this.m.samples.order.length; i++) csv += "," + this.getSize(this.m.samples.order[i])
-        for (var i=0; i<this.m.samples.order.length; i++) csv += "," + this.getPrintableSize(this.m.samples.order[i]).replace(/,/g, ';')
+        for (var i=0; i<this.m.samples.order.length; i++) csv.push(this.getReads(this.m.samples.order[i]))
+        for (var i=0; i<this.m.samples.order.length; i++) csv.push(this.getSize(this.m.samples.order[i]))
+        for (var i=0; i<this.m.samples.order.length; i++) csv.push(this.getPrintableSize(this.m.samples.order[i]).replace(/,/g, ';'))
 
         return csv
     },

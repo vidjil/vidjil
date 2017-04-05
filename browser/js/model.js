@@ -1915,13 +1915,13 @@ changeCloneNotation: function(cloneNotationType) {
      * */
     toCSV: function () {
         //header
-        var csv = Clone.prototype.toCSVheader(this)
+        var csv = Clone.prototype.toCSVheader(this).join(',')
         csv += "\n"
         
         //only non-empty active clones and virtual clones
         for (var i=0; i<this.clusters.length; i++){
             if ( (this.clusters[i].length != 0 && this.clone(i).isActive()) || this.clone(i).isVirtual() ){
-                csv += this.clone(i).toCSV()
+                csv += this.clone(i).toCSV().join(',')
                 csv += "\n"
             }
         }
