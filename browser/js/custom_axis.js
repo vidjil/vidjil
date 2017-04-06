@@ -61,7 +61,13 @@ Object.assign(CustomAxis.prototype, {
         display_label = typeof display_label !== 'undefined' ? display_label : true;
         var self = this;
         
-        this.fct = fct;
+        if (typeof fct === 'function') {
+            this.fct = fct;
+        } else {
+            this.fct = function(elem) {
+                return elem[fct];
+            }
+        }
         
         var min = default_min;
         var max = default_max;
