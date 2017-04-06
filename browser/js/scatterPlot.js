@@ -1583,7 +1583,7 @@ ScatterPlot.prototype = {
             if (self.axisX.labels.length>1)
                 halfRangeColumn = Math.abs((self.axisX.labels[1].pos - self.axisX.labels[0].pos)/2);
             for (n=0; n<self.nodes.length; n++){
-                if (Math.abs(self.axisX.pos(self.nodes[n]).pos - d.pos) < halfRangeColumn)
+                if (Math.abs(self.axisX.pos(self.m.clone(n)).pos - d.pos) < halfRangeColumn)
                     if (self.nodes[n].r1>0){
                         console.log("splitX : " + (self.splitX == "gene_v") + ", " + (self.splitX));
                         console.log("germline : " + (self.m.clones[n].germline == self.m.germlineV.system));
@@ -1700,7 +1700,7 @@ ScatterPlot.prototype = {
                 if (self.axisY.labels.length>1)
                     halfRangeLine = Math.abs((self.axisY.labels[0].pos - self.axisY.labels[1].pos)/2);
                 for (n=0; n<self.nodes.length; n++){
-                        if (Math.abs(self.axisY.pos(n).pos - d.pos) < halfRangeLine)
+                        if (Math.abs(self.axisY.pos(self.m.clone(n)).pos - d.pos) < halfRangeLine)
                             if (self.nodes[n].r1>0){
                                 if (self.splitX == "allele_v" || self.splitX == "gene_v" || self.splitX == "allele_j" || self.splitX == "gene_j" || (self.mode == this.MODE_GRID & (self.splitY == "allele_v" || self.splitY == "gene_v" || self.splitY == "allele_j" || self.splitY == "gene_j"))){
                                     if (self.m.clones[n].germline == self.m.germlineV.system)
