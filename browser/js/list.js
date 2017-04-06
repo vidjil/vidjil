@@ -469,7 +469,7 @@ List.prototype = {
                 if (typeof span_name == "undefined") return false;
                 if (typeof span_name == "undefined") console.log(cloneID);
                 span_name.innerHTML = clone.getShortName();
-                span_name.title = clone.getName();
+                span_name.title = clone.getCode();
                 span_name.style.color = clone.getColor();
 
                 //update star color
@@ -844,11 +844,3 @@ List.prototype = {
 
 } //fin prototype
 List.prototype = $.extend(Object.create(View.prototype), List.prototype);
-
-
-
-
-
-
-
-
