@@ -1125,8 +1125,10 @@ Database.prototype = {
                 required_files = pp_option[i].getAttribute("required_files");
             }
         }
-        
-        if (required_files == 2 && document.getElementById("upload_file2").value ==""){
+
+        var upload1 = document.getElementById("upload_file").value;
+        var upload2 = document.getElementById("upload_file2").value;
+        if (required_files == 2 &&  (upload1 === "" || upload2 === "")){
             console.log({"type": "flash", "msg" : "2 files are required for the selected pre-process", "priority": 2});
             return false
         }
