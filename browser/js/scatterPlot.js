@@ -883,6 +883,7 @@ ScatterPlot.prototype = {
             
             for (var j in this.barTab[i]){
                 var clone = this.barTab[i][j]
+                var cloneID = clone.index;
                 if (this.includeBar(clone)){
                     height = 0;
                     height = clone.getSize()/bar_max;
