@@ -737,7 +737,7 @@ changeCloneNotation: function(cloneNotationType) {
         }
 
         $(".focus")
-            .text(this.clone(cloneID).getName())
+            .text(this.clone(cloneID).getNameAndCode())
 
     },
 
