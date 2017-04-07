@@ -358,6 +358,19 @@ Clone.prototype = {
     }, //end getCode
 
     /**
+     * return custom name and segmentation name "<c_name> ( <seg name> )" <br>
+     * return segmentation name only if there is no custom name
+     * @return {string} custom name and segmentation name
+     * */
+    getNameAndCode: function () {
+        if (this.c_name) {
+            return this.c_name + " (" + this.getCode() + ")";
+        } else {
+            return this.getCode();
+        }
+    }, //end getNameAndCode
+
+    /**
      * change/add custom name
      * @param {string} name
      * */
