@@ -116,6 +116,9 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.equal(c3.getSequenceName(), "plop", "changename clone3 : plop");
     assert.equal(c1.getNumberNonZeroSamples(), 3, "clone c1, getNumberNonZeroSamples");
     
+    assert.equal(c2.getNameAndCode(), some_name, "clone2, .getNameAndCode()");
+    assert.equal(c3.getNameAndCode(), "plop (id3)", "clone3, .getNameAndCode()");
+    
     m.select(0)
     m.select(1)
     m.merge()
