@@ -93,7 +93,7 @@ function ScatterPlot(id, model, database) {
     this.time1 = this.time0; //Frames computed
     this.fpsqueue = []; //Numbers of frames computed, according to the 20th last values
 
-    //Booléen pour le sélecteur de nodes
+    //Boolean for the nodes selector
     this.active_selector = false
 
     //axis X text position
