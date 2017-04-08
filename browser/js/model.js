@@ -1263,9 +1263,35 @@ changeCloneNotation: function(cloneNotationType) {
         this.update()
     },
 
+    /**
+     * break the given clusters into 1-clone clusters
+     * @param {integer list} clusters
+     * */
+    break: function (clusters) {
+        console.log("break(" + clusters+ ")")
+
+        if (clusters == undefined)
+            clusters = this.getSelected();
+
+        console.log("break(" + clusters+ ")")
+
+        this.saveClusters()
+
+        for (var i = 0; i < clusters.length; i++) {
+            var list = this.clusters[clusters[i]]
+
+            console.log("b " + list)
+
+            for (var j = 0; j < list.length; j++) {
+                this.clusters[list[j]] = [list[j]]
+            }
+
+            this.updateElem(list);
+        }
+    },
 
     /**
-     * reset clusters to default 1-clones clusters
+     * break all clusters to default 1-clone clusters
      * */
     resetClusters: function () {
         this.saveClusters()
