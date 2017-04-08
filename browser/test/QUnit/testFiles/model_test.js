@@ -220,7 +220,11 @@ QUnit.test("cluster", function(assert) {
     
     m.clusterBy(function(id){return m.clone(id).germline})
     assert.deepEqual(m.clusters[0], [0,1,3], "clusterBy germline");
-    
+
+    m.break([0])
+    assert.deepEqual(m.clusters[1], [1], "break [0] -> [1] is alone");
+
+    m.restoreClusters()
     m.restoreClusters()
     assert.deepEqual(m.clusters[0], [0,2], "restore previous clusters -> [0,2]");
     
