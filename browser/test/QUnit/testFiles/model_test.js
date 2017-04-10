@@ -207,6 +207,12 @@ QUnit.test("cluster", function(assert) {
     m.merge()
     assert.deepEqual(m.clusters[0], [0,1,2], "merge [0,1] and 2: build cluster [0,1,2]");
     assert.equal(m.clone(0).getSize(), 0.275, "cluster [0,1,2] : getsize = 0.275");
+
+    m.merge([0,4])
+    assert.deepEqual(m.clusters[0], [0,1,2,4], "merge [0,1,2] and 4 -> [0,1,2,4]");
+
+    m.restoreClusters()
+    assert.deepEqual(m.clusters[0], [0,1,2], "restore previous clusters -> [0,1,2]");
     
     m.split(0,1)
     assert.deepEqual(m.clusters[0], [0,2], "remove clone 1 from cluster [0,1,2]: build cluster [0,2]");
@@ -214,9 +220,13 @@ QUnit.test("cluster", function(assert) {
     
     m.clusterBy(function(id){return m.clone(id).germline})
     assert.deepEqual(m.clusters[0], [0,1,3], "clusterBy germline");
-    
+
+    m.break([0])
+    assert.deepEqual(m.clusters[1], [1], "break [0] -> [1] is alone");
+
     m.restoreClusters()
-    assert.deepEqual(m.clusters[0], [0,2], "restore previous clusters (made by user with merge whithout using clusterby function)");
+    m.restoreClusters()
+    assert.deepEqual(m.clusters[0], [0,2], "restore previous clusters -> [0,2]");
     
     m.resetClusters()
     assert.deepEqual(m.clusters, [[0],[1],[2],[3],[4],[5],[6]], "resetClusters");

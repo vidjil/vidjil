@@ -7,7 +7,7 @@
 \maketitle
 
 \textit{The goal of this practical session is to learn
-common ways to visualise, filter, analyse and merge clones
+common ways to visualise, filter, analyse and cluster clones
 on the Vidjil web application.
 %
 These clones may have been computed by the Vidjil algorithm or by any other algorithm.}
@@ -108,11 +108,11 @@ After this rename, you can see that the clone is still selected.
 
 \section{Analysing clone populations}
 
-\subsection{Merging clones through inspection of their sequences}
+\subsection{Clustering clones through inspection of their sequences}
 
-The first thing to be done is to see if some clones should be merged (because
+The first thing to be done is to see if some clones should be clustered (because
 of sequencing or PCR errors for instance). This step could be automatised
-but, in any case, the automatic merge would need to be checked by an expert
+but, in any case, the automatic clustering would need to be checked by an expert
 eye.
 
 By default in the bottom plot (the \textit{grid}), the clones
@@ -144,18 +144,18 @@ differences should be due to sequencing or PCR errors.
 These artifacts (mutations, homopolymers, insertions, deletions)
 depend on the sequencer and the PCR technique.
 
-\question{Merge all those clones in a single clone by clicking on the merge
-  button, next to the align button.}
+\question{Cluster all those clones in a single clone by clicking on the ``cluster''
+  button, next to the ``align'' button.}
 
 All the clustered sequences now appear within a same clone. That can be seen
 in the list: the clone which hosts the subclones appears with a $+$ on its
-left. You can click on the $+$ to see the subclones that have been merged in
+left. You can click on the $+$ to see the subclones that have been clustered in
 the main one.
 \question{Click on the $+$ and observe the changes in the grid.}
 
 As you may have noticed the subclones appear again in the grid. You can
 compare their sequences again if you'd like (for example to double check that
-you were right to merge them). You can also remove some subclones from the
+you were right to cluster them). You can also remove some subclones from the
 cluster by clicking on the cross at their left in the list.
 \question{For the sake of the exercise, remove the last clone of the cluster.}
 
@@ -171,7 +171,7 @@ insertions.
 \question{Go to the \com{plot} menu (in the upper left corner of the grid),
   and in the preset box choose \com{V/N length}.}
 
-Then you can continue aligning and merging clones if necessary.
+Then you can continue aligning and clustering clones if necessary.
 
 \question{You can also try the preset \com{clone consensus length/GC content}
   which tends to separate quite nicely the distinct clones.}
@@ -344,8 +344,8 @@ You can also change the designation shown on the web application.
   want to change the designation. In the segmentation part, click the edit
   button. Choose what you would like to modify.}
 
-Beware: none of the modification you made (name changes, clone merges, clone
-tagging, samplê reordering\dots) will be automatically saved. You have to save
+Beware: none of the modification you made (name changes, clusters, clone
+tagging, sample reordering\dots) will be automatically saved. You have to save
 your changes by yourself either by clicking on \com{save patient} in the top left menu (where the
 ``patient'' name is written) or by using the \texttt{Ctrl+S} keyboard
 shortcut.

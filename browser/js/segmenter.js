@@ -116,12 +116,12 @@ Segment.prototype = {
             //merge button
             var span = document.createElement('span');
             span.id = "merge"
-            span.setAttribute('title', 'Merge the clones into a unique clone')
+            span.setAttribute('title', 'Merge the selected clones into a unique cluster')
             span.className = "button"
             span.onclick = function () {
                 self.m.merge()
             }
-            span.appendChild(document.createTextNode("merge"));
+            span.appendChild(document.createTextNode("cluster"));
             div_menu.appendChild(span)
 
             //align button

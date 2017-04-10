@@ -143,6 +143,7 @@ Model.prototype = {
 
         this.orderedSelectedClones=[];
         this.clusters = [];
+        this.clusters_copy = [];
         this.clones = [];
         this.data = {}; // external data
         this.data_info = {};
@@ -182,7 +183,6 @@ Model.prototype = {
         this.nbr = 0;
         this.nodes = null;
         this.edges = null;
-        this.cluster_key = ""
         
         //segmented status
         this.segmented_mesg = ["?", 
@@ -1161,15 +1161,20 @@ changeCloneNotation: function(cloneNotationType) {
         
         console.log("merge clones " + list)
 
+        this.saveClusters()
+
         for (var i = 0; i < list.length; i++) {
             if (this.clone(list[i]).top < top) {
                 leader = list[i];
                 top = this.clone(list[i]).top;
             }
             new_cluster = new_cluster.concat(this.clusters[list[i]]);
+
+            // All cluster lists of these clones are now empty...
             this.clusters[list[i]] = [];
         }
 
+        // ... except for the leader, who takes the list of all clones
         this.clusters[leader] = new_cluster;
         this.unselectAll()
         this.updateElem(list)
@@ -1194,10 +1199,13 @@ changeCloneNotation: function(cloneNotationType) {
 
         nlist.splice(index, 1);
 
-        //le cluster retrouve sa liste de clones -1
+        this.saveClusters()
+
+        // The cluster has now a list with one less clone
         this.clusters[clusterID] = nlist;
         if (this.clusters[clusterID].length <= 1) this.clone(clusterID).split = false;
-        //le clone forme un cluster de 1 clone
+
+        // The unmerged clone has now its own 1-clone cluster
         this.clusters[cloneID] = [cloneID];
 
         this.updateElem([cloneID, clusterID]);
@@ -1205,17 +1213,12 @@ changeCloneNotation: function(cloneNotationType) {
     
     /** 
      * cluster clones who produce the same result with the function given in parameter <br>
-     * save a copy of clusters made by user 
      * @param {function} fct 
      * */
     clusterBy: function (fct) {
         var self = this;
         
-        //save user cluster
-        if ( this.cluster_key==""){
-            this.clusters_copy = this.clusters
-            this.clusters = []
-        }
+        this.saveClusters()
         
         var tmp = {}
         for (var i = 0; i < this.clones.length - this.system_available.length; i++) {
@@ -1257,32 +1260,63 @@ changeCloneNotation: function(cloneNotationType) {
                 this.clusters[tmp[i][j]] = []
             }
         }
-        this.cluster_key = fct
         this.update()
     },
 
+    /**
+     * break the given clusters into 1-clone clusters
+     * @param {integer list} clusters
+     * */
+    break: function (clusters) {
+        console.log("break(" + clusters+ ")")
+
+        if (clusters == undefined)
+            clusters = this.getSelected();
+
+        console.log("break(" + clusters+ ")")
+
+        this.saveClusters()
+
+        for (var i = 0; i < clusters.length; i++) {
+            var list = this.clusters[clusters[i]]
+
+            console.log("b " + list)
+
+            for (var j = 0; j < list.length; j++) {
+                this.clusters[list[j]] = [list[j]]
+            }
+
+            this.updateElem(list);
+        }
+    },
 
     /**
-     * reset clusters to default
+     * break all clusters to default 1-clone clusters
      * */
     resetClusters: function () {
-        //reset cluster
-        this.cluster_key = ""
-        
+        this.saveClusters()
+
         for (var i = 0; i < this.clones.length; i++) {
             this.clusters[i] = [i]
         }
 
         this.update()
     },
-    
+
+
     /**
-     * restore clusters made by user
+     * save clusters
+     * */
+    saveClusters: function () {
+        this.clusters_copy.push(this.clusters.slice())
+    },
+
+    /**
+     * restore previously saved clusters
      * */
     restoreClusters: function () {
-        this.cluster_key = ""
-        if ( typeof this.clusters_copy != 'undefined'){
-            this.clusters = this.clusters_copy
+        if (this.clusters_copy.length > 0){
+            this.clusters = this.clusters_copy.pop()
             this.update()
         }
         
@@ -1915,16 +1949,13 @@ changeCloneNotation: function(cloneNotationType) {
      * */
     toCSV: function () {
         //header
-        var csv = "name,id,system,tag,v,d,j,sequence"
-        for (var i=0; i<this.samples.order.length; i++) csv += ",reads_"+i
-        for (var i=0; i<this.samples.order.length; i++) csv += ",ratio_"+i
-        for (var i=0; i<this.samples.order.length; i++) csv += ",ratios_"+i
+        var csv = Clone.prototype.toCSVheader(this).join(',')
         csv += "\n"
         
         //only non-empty active clones and virtual clones
         for (var i=0; i<this.clusters.length; i++){
             if ( (this.clusters[i].length != 0 && this.clone(i).isActive()) || this.clone(i).isVirtual() ){
-                csv += this.clone(i).toCSV()
+                csv += this.clone(i).toCSV().join(',')
                 csv += "\n"
             }
         }

@@ -337,12 +337,31 @@ QUnit.test("export", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data)
     var c3 = new Clone(json_clone3, m, 0)
+    var c4 = new Clone(json_clone4, m, 1)
     m.initClones()
 
     assert.equal(c3.getPrintableSegSequence(), "aaaaa\naaaaatttt\nttttt", "getPrintableSegSequence() : Ok");
     console.log(c3.getFasta())
     assert.equal(c3.getFasta(), ">id3    19 nt, 10 reads (5.000%)\naaaaa\naaaaatttt\nttttt\n", "getFasta() : Ok");
-    
+
+    var res3 = [
+        "0", "custom name", "id3",
+        "TRG", "-/-",
+        "undefined V", "IGHD2*03", "IGHV4*01",
+        "not productive",
+        "AAAAAAAAAATTTTTTTTT",
+        10, 10, 15, 15,
+        0.05, 0.1, 0.075, 0.15,
+        "19 nt; 10 reads (5.000%)", "19 nt; 10 reads (10.00%)", "19 nt; 15 reads (7.500%)", "19 nt; 15 reads (15.00%)"
+    ]
+    assert.deepEqual(c3.toCSV(), res3, ".toCSV()")
+    assert.equal(c3.toCSVheader(m).length, c3.toCSV().length, ".toCSVheader() length")
+
+    m.select(0)
+    m.select(1)
+    m.merge()
+
+    assert.equal(c3.toCSV()[0], "0+1", ".toCSV(), merged clone")
 });
 
 
