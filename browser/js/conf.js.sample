@@ -49,4 +49,10 @@ var config = {
     /* Used for the standalone segmenter page */
     "segmenter_address" : "//db.vidjil.org/vidjil/segmenter",
 
+
+    /****************
+     * Static alerts
+     */
+
+    // "alert": "Rescue server",
 }

@@ -90,6 +90,11 @@ try {
     this.db.log_error(err)
 }
 
+if (typeof config.alert !== 'undefined') {
+    $("#top-container").addClass("alert")
+    $("#alert").append(config.alert)
+}
+
 console.log("=== main.js finished ===");
 
 var timeout;
