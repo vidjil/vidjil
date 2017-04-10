@@ -48,7 +48,7 @@ deploy:
     - /^feature-[cw]\/.*$/
     - /^hotfix-[cw]\/.*$/
 
-deploy:
+deploy_prod:
   stage: deploy
   script:
     - ssh $PROD_CLIENT_SERVER "cd $PROD_CLIENT_PATH; git fetch ; git reset --hard origin/prod-client"
