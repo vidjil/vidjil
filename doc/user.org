@@ -60,10 +60,10 @@ Otherwise, such =.vidjil= files can be obtained:
   You can select such clones (for example those sharing a same V and a same J), then:
    - inspect the sequences in the lower panel (possibly using the “align” function),
    - remove some of these sequences from the selection (clicking on their name in the lower panel)
-   - merge them (button “merge”) in a unique clone.
-     Once several clones are merged, you can still visualize them by clicking on “+” in the list of clones.
+   - cluster them (button “cluster”) in a unique clone.
+     Once several clones are clustered, you can still visualize them by clicking on “+” in the list of clones.
 
-- Your analysis (clone tagging, renaming, merging) can be saved:
+- Your analysis (clone tagging, renaming, clustering) can be saved:
     - either with “patients”/“save analysis” if you are connected to a patient/experiment database
     - or with “file”/“export .analysis”
 
@@ -96,8 +96,8 @@ to learn the essential features of Vidjil.
 - The “i” button displays additional information on each clone.
 
 - The list can be sorted on V genes, J genes or clone abundance.
-  The “+” and “-” allow respectively to un-merge or re-merge all clones that have
-  already been merged.
+  The “+” and “-” allow respectively to un-cluster or re-cluster all clones that have
+  already been clustered.
 
 - Clones can be searched (“search” box) by either their name, their custom name, 
   or their DNA sequence.
@@ -284,7 +284,7 @@ The different permissions that can be attributed are:
   clones: they may be due to sequencing error that lead to different windows.
   However those small differences can also be due to a real biological process
   inside the cells. Therefore we let the user choose whether the clones should
-  be manually merged or not.
+  be manually clustered or not.
 
   In *MiXCR*, clones are defined based on the amino-acid CDR3 sequence, on the V
   gene used and on the hypermutations.
