@@ -99,7 +99,7 @@ class TestMultilocus < BrowserTest
     assert ( $b.clone_in_graph('25', :class => "graph_focus").exists?), ">> fail to focus correct graphLine after hovering a clone in the list"
 
     clone_name = $b.clone_info('25')[:name]
-    assert ( $b.infoline.text == clone_name.text), ">> Clone name is not correct in focus div"
+    assert ( $b.infoline.text == clone_name.title), ">> Clone name is not correct in focus div"
   end
 
   def test_05_focus_in_list
