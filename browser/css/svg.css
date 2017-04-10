@@ -56,6 +56,13 @@ ul {
   position: fixed;
   z-index: 1;
 }
+#top-container.alert {
+  background: yellow;
+}
+#alert {
+  font-weight: bold;
+  color: red;
+}
 #upload_summary {
   float: right;
   display: none;
