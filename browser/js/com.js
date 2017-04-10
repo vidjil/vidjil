@@ -114,7 +114,12 @@ function Com(default_console) {
     
         "save_analysis": "You made some changes in the analysis of the previous patient"
 	    + "</br>that were not saved (patients → save analysis)."
-            + "</br>These changes will now be lost, do you want to proceed anyway? "
+            + "</br>These changes will now be lost, do you want to proceed anyway? ",
+
+        "Rescue server": "You are connected here to the <b>rescue server</b>. We apologize for this inconvenience."
+            + "</br>Depending on your account, you may access to your previous analyses, upload data and/or run news analyses."
+            + "</br>Please note that all what you are doing there (uploading/analyzing) <b>will not be saved</b> in the main database."
+            + "</br>Do not hesitate to contact us if you have any question.",
     }
     
     

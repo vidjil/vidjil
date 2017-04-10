@@ -93,6 +93,7 @@ try {
 if (typeof config.alert !== 'undefined') {
     $("#top-container").addClass("alert")
     $("#alert").append(config.alert)
+    $("#alert").click(function () { console.log({'type': 'popup', 'default': config.alert}) })
 }
 
 console.log("=== main.js finished ===");
