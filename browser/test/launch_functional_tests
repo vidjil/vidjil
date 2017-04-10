@@ -1,5 +1,11 @@
 rm -f test/*.xml
+EXIT=0
 for file in test_*rb; do
     ruby $file;
+    TMP_EXIT=$?
+    if [ $TMP_EXIT -ne 0 ]; then
+       EXIT=$TMP_EXIT
+    fi
     mv test/reports/*.xml test/
 done
+exit $EXIT
