@@ -622,8 +622,10 @@ List.prototype = {
             e = e || window.event;
             var key = e.keyCode
             if (key == 0) key = e.which 
-            if (key == 13) $('#btnSave')
-                .click();
+            if (key == 13) {
+                $('#btnSave').click();
+                $(input).blur();
+            }
         }
         $(input).focusout(function() {
             setTimeout(function(){self.m.update()},500)
