@@ -1814,36 +1814,10 @@ ScatterPlot.prototype = {
      * start drawing a selector at this position
      * */
     activeSelector: function() {
-        var self = this;
-        this.coordinates = d3.mouse(d3.select("#" + this.id + "_svg")
-            .node());
-
-        if (this.active_move) {
-
-            //Initialisation of the movement
-            this.positionToMove.x = this.coordinates[0];
-            this.positionToMove.y = this.coordinates[1];
-            this.positionToMove.originx = this.coordinates[0];
-            this.positionToMove.originy = this.coordinates[1];
-
-            //Simple modification to the CSS of the mouse
-            document.body.style.cursor = "move";
-
-        } else {
-
-            //Initialisation du sélecteur
-            this.selector
-                .attr("originx", this.coordinates[0])
-                .attr("originy", this.coordinates[1])
-                .attr("x", this.coordinates[0])
-                .attr("y", this.coordinates[1])
-                .attr("width", 0)
-                .attr("height", 0)
-                .style("display", "");
-
-        }
-
-        this.active_selector = true;
+        this.activeSelectorAt(
+            d3.mouse(d3.select("#" + this.id + "_svg")
+                        .node())
+        );
     },
     
     /**
@@ -1851,7 +1825,6 @@ ScatterPlot.prototype = {
      * @param {integer[]} coord - the [x,y] coordinates at which start the selection
      * */
     activeSelectorAt: function(coord) {
-        var self = this;
         this.coordinates = coord;
 
         if (this.active_move) {
