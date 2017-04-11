@@ -450,3 +450,74 @@ def delete():
         res = {"message": ACCESS_DENIED}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+#
+def permission():
+    if (auth.can_modify_sample_set(request.vars["id"]) ):
+        sample_set = db.sample_set[request.vars["id"]]
+        stype = sample_set.sample_type
+        factory = ModelFactory()
+        helper = factory.get_instance(type=stype)
+
+        data = db(db[stype].sample_set_id == sample_set.id).select().first()
+
+        query = db( db.auth_group.role != 'admin' ).select()
+
+        for row in query :
+            row.owner = row.role
+            if row.owner[:5] == "user_" :
+                id = int(row.owner[5:])
+                row.owner = db.auth_user[id].first_name + " " + db.auth_user[id].last_name
+
+            permissions = db(
+                    (db.auth_permission.group_id == row.id) &
+                    (db.auth_permission.record_id == 0) &
+                    (db.auth_permission.table_name == db.sample_set)).select()
+            row.perms = ', '.join(map(lambda x: x.name, permissions))
+
+            row.parent_access = ', '.join(str(value) for value in auth.get_access_groups(db[stype], request.vars['id'], group=row.id))
+            row.read =  auth.get_group_access(sample_set.sample_type, data.id, row.id)
+
+        return dict(query=query,
+                    helper=helper,
+                    data=data)
+    else :
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+#
+def change_permission():
+    if (auth.can_modify_sample_set(request.vars["sample_set_id"]) ):
+        ssid = request.vars["sample_set_id"]
+        sample_set = db.sample_set[ssid]
+        sample_type = sample_set.sample_type
+        data_id = db(db[sample_type].sample_set_id == ssid).select().first().id
+
+        error = ""
+        if request.vars["group_id"] == "" :
+            error += "missing group_id, "
+        if ssid == "" :
+            error += "missing sample_set_id, "
+
+        if error=="":
+            if auth.get_group_access(sample_type,
+                      data_id,
+                      int(request.vars["group_id"])):
+                auth.del_permission(request.vars["group_id"], PermissionEnum.access.value, db[sample_type], data_id)
+                res = {"message" : "access '%s' deleted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
+            else :
+
+                auth.add_permission(request.vars["group_id"], PermissionEnum.access.value, db[sample_type], data_id)
+                res = {"message" : "access '%s' granted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
+
+            log.info(res)
+            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        else :
+            res = {"message": "incomplete request : "+error }
+            log.error(res)
+            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    else :
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
