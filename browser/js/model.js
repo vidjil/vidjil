@@ -169,7 +169,7 @@ Model.prototype = {
         this.analysisFileName = '';
         this.db_key = "" //for file who came from the database
         this.cloneNotationType="short_sequence";
-        this.alleleNotation = "never";
+        this.alleleNotation = "when_not_01";
 
         this.norm = false;
         this.normalization = { 
