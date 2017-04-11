@@ -188,7 +188,7 @@ Object.assign(CustomAxis.prototype, {
                 var text = this.m.formatSize(h, false)
                 if (!display_label) text = "";
                 if (pos >= 0 && pos <= 1)
-                    this.labels.push(this.label("line", pos, text));
+                    this.addLabel("line", text, pos, text);
                 h = h / 10;
             }
         }else{
@@ -214,7 +214,7 @@ Object.assign(CustomAxis.prototype, {
                 var text = this.getLabelText(min, h, i);
                 if (this.reverse) pos = 1 - pos;
                 if (!display_label) text = "";
-                this.labels.push(this.label("line", pos, text));
+                this.addLabel("line", text, pos, text);
             }
         }
     },
