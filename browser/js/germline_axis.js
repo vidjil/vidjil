@@ -149,13 +149,13 @@ Object.assign(GermlineAxis.prototype, {
                 this.addLabel("subline", pos, "*"+allele, this.germline.allele[key].color);
             }
         }
-
-        this.populateValueMapping();
-
         var pos = this.getPos(total_gene, total_gene);
 
         if (this.can_undefined)
             this.addLabel("line", pos, "?", "");
+
+        this.populateValueMapping();
+
         this.gene_list = gene_list;
         this.allele_list = allele_list;
         this.total_gene = total_gene;
