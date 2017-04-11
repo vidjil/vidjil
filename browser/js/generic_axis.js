@@ -204,13 +204,14 @@ GenericAxis.prototype = {
         var length = Object.keys(this.label_mapping).length;
 
         var step = 1 + Math.floor(length / NB_STEPS_BAR)
-
+        var text;
         var i=1
-        for (var e in tab){
+        for (var e in this.value_mapping){
             if (i%step == 0 || (e == '?' && tab[e].length > 0)){
                 var pos = this.posBarLabel(i, length);
                 if (this.reverse) pos = 1 - pos;
-                this.labels.push(this.label("line", pos, e));
+                text = this.applyConverter(this.value_mapping[e]);
+                this.labels.push(this.label("line", pos, text));
             }
             i++;
         }
