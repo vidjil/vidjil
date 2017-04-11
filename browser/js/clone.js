@@ -98,7 +98,7 @@ Clone.prototype = {
     REGEX_N: /^(-?\d*)\/([ACGT]*)\/(-?\d*)$/,                                    // 6/ACCAT/
     REGEX_N_SIZE: /^(-?\d*)\/(\d*)\/(-?\d*)$/,                                   // 6/5/
     REGEX_GENE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD)([\w-*]*)$/,                       // IGHV3-11*03
-    REGEX_GENE_IGNORE_ALLELE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD)([\w-]*)[\w-*]*$/,   // IGHV3-11*03  (ignore *03)
+    REGEX_GENE_IGNORE_ALLELE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD)([\w-]*)([\w-*]*)$/,   // IGHV3-11*03  (ignore *03)
 
     getAverageReadLength: function(time) {
         if (this._average_read_length == 'undefined')
@@ -126,10 +126,18 @@ Clone.prototype = {
             z = s.match(this.REGEX_GENE_IGNORE_ALLELE);
             if (z)
             {
-                locus = (z[1] == last_locus) ? '' : z[1]
-                short_name_items.push(locus + z[2])
-                last_locus = z[1]
-                continue
+                if ((this.m.alleleNotation == 'always')||((this.m.alleleNotation == 'when_not_01')&&(z[3]!='*01'))){
+                    locus = (z[1] == last_locus) ? '' : z[1]
+                    short_name_items.push(locus + z[2]+z[3])
+                    last_locus = z[1]
+                     continue
+                }
+                else{
+                    locus = (z[1] == last_locus) ? '' : z[1]
+                    short_name_items.push(locus + z[2])
+                    last_locus = z[1]
+                     continue
+                }
             }
 
             // Shorten -6/ACCAT/ into 6/5/0

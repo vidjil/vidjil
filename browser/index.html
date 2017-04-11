@@ -220,6 +220,12 @@
                              <div class="buttonSelector" onclick="m.changeCloneNotation('short_sequence', true)"><input id="menuCloneNotSeqShort" type="radio" name="show_name" value="short_sequence" checked /><label for="menuCloneNotSeqShort">sequence (when short)</label></div>
                              <div class="buttonSelector" onclick="m.changeCloneNotation('full_sequence', true)"><input id="menuCloneNotSeq" type="radio" name="show_name" value="full_sequence" /><label for="menuCloneNotSeq">sequence (always)</label></div>
                         </div>
+                        <div class="menu_box">
+                             alleles in clone names</br>
+                             <div class="buttonSelector" onclick="m.changeAlleleNotation('never', true)"><input id="menu_allele_never" type="radio" name="menu_allele" value="never" /><label for="menu_allele_never">never</label></div>
+                             <div class="buttonSelector" onclick="m.changeAlleleNotation('when_not_01', true)"><input id="menu_allele_when_not_01" type="radio" name="menu_allele" value="when_not_01" checked /><label for="menu_allele_when_not_01">when not *01</label></div>
+                             <div class="buttonSelector" onclick="m.changeAlleleNotation('always', true)"><input id="menu_allele_always" type="radio" name="menu_allele" value="always" /><label for="menu_allele_always">always</label></div>
+                        </div>
 
 
                         <div class="menu_box devel-mode">
