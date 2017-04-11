@@ -169,6 +169,7 @@ Model.prototype = {
         this.analysisFileName = '';
         this.db_key = "" //for file who came from the database
         this.cloneNotationType="short_sequence";
+        this.alleleNotation = "never";
 
         this.norm = false;
         this.normalization = { 
@@ -284,6 +285,11 @@ changeCloneNotation: function(cloneNotationType) {
     this.update();
 },
 
+
+changeAlleleNotation: function(alleleNotation) {
+    this.alleleNotation = alleleNotation;
+    this.update();
+},
     
     /**
      * compute data_info who contain some meta-data for each "data"
