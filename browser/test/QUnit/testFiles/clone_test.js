@@ -423,3 +423,21 @@ QUnit.test("clone : getLengthDoubleFeature", function(assert) {
     assert.equal(c2.getSegLengthDoubleFeature('primer5','primer3'), "undefined", "C2 getSegLengthDoubleFeature('primer5','primer3')");
     assert.equal(c4.getSegLengthDoubleFeature('primer5','primer3'), "33", "C4 'getSegLengthDoubleFeature'('primer5','primer3')");
 });
+
+
+test("clone : changealleleNotation", function() {
+    var m = new Model();
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone1, m, 0)
+    var c2 = new Clone(json_clone2, m, 1)
+    var c3 = new Clone(json_clone3, m, 2)
+
+    m.initClones()
+    m.changeAlleleNotation('always')
+    assert.equal(c2.getShortName(), "IGHV3-23*01 6/ACGTG/4 D1-1*01 5/12/4 J5*02", "clone2, .getShortName()");
+
+    m.changeAlleleNotation('when_not_01')
+    assert.equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/12/4 J5*02", "clone2, .getShortName()");
+    m.changeAlleleNotation('never')
+    assert.equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/12/4 J5", "clone2, .getShortName()");
+});
