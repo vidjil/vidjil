@@ -91,24 +91,7 @@ class PatientController(unittest.TestCase):
         self.assertNotEqual(resp.find('patient ('+str(patient_id)+') deleted'), -1, "delete patient failed")
         
         
-    def test2Permission(self):
-        patient_id = db( db.patient.info == "test patient kZtYnOipmAzZ").select()[0].id
-        request.vars["id"] = patient_id
         
-        resp = permission()
-        self.assertTrue(resp.has_key('query'), "permission() has returned an incomplete response")
-        
-        
-    def test3ChangePermission(self):
-        patient_id = db( db.patient.info == "test patient kZtYnOipmAzZ").select()[0].id
-        request.vars["patient_id"] = patient_id
-        request.vars["group_id"] = fake_group_id
-        
-        resp = change_permission()
-        self.assertFalse(auth.get_group_access('patient', patient_id, fake_group_id), "fail to remove permission")
-        
-        resp = change_permission()
-        self.assertTrue(auth.get_group_access('patient', patient_id, fake_group_id), "fail to add permission")
         
         
         

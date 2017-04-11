@@ -136,12 +136,25 @@ fake_patient_id = db.patient.insert(first_name="plop",
                                    id_label="plop",
                                    creator=user_id,
 				   sample_set_id=fake_sample_set_id)
-                                   
+
 db.auth_permission.insert(group_id = fake_group_id,
                         name = PermissionEnum.access.value,
                         table_name = "patient",
                         record_id = fake_patient_id
                         )
+
+# for permission testing
+permission_sample_set = db.sample_set.insert(sample_type="patient")
+permission_patient = db.patient.insert(first_name="foo",
+                                      last_name="bar",
+                                      info="permission",
+                                      sample_set_id=permission_sample_set)
+
+db.auth_permission.insert(group_id = fake_group_id,
+                          name = PermissionEnum.access.value,
+                          table_name = "patient",
+                          record_id = permission_patient
+                          )
 
 fake_run_id = db.run.insert(name="foobar",
                             run_date="2010-10-25",
