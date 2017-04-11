@@ -160,5 +160,8 @@ Object.assign(GermlineAxis.prototype, {
         this.allele_list = allele_list;
         this.total_gene = total_gene;
         this.displayAllele = displayAllele;
+    },
+
+    computeBarLabels : function () {
     }
 })
