@@ -425,7 +425,7 @@ QUnit.test("getLengthDoubleFeature", function(assert) {
 });
 
 
-QUnit.test("changealleleNotation", function() {
+QUnit.test("changealleleNotation", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data)
     var c1 = new Clone(json_clone1, m, 0)
