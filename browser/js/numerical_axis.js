@@ -78,12 +78,7 @@ Object.assign(NumericalAxis.prototype, {
         if (typeof labels == "undefined") {
             for (var i in this.clones){
                 if (! this.clones[i].isVirtual()) {
-                    var tmp;
-                    try{
-                        tmp = this.applyConverter(this.clones[i]);
-                    }catch(e){
-                        tmp = undefined;
-                    }
+                    var tmp = this.applyConverter(this.clones[i]);
 
                     if ( typeof tmp != "undefined" && !isNaN(tmp)){
                         if ( tmp > max || typeof max == "undefined") max = tmp;
@@ -106,12 +101,7 @@ Object.assign(NumericalAxis.prototype, {
         for(var i in this.clones) {
             var clone = clones[i];
             if(!clone.isVirtual()) {
-                var value;
-                try{
-                    value = this.applyConverter(clone);
-                }catch(e){
-                    value = undefined;
-                }
+                var value = this.applyConverter(clone);
                 if (typeof value == "undefined" || typeof this.value_mapping[value] == "undefined" ) {
                     if (this.can_undefined)
                         this.value_mapping["?"].push(clone);
@@ -154,9 +144,7 @@ Object.assign(NumericalAxis.prototype, {
 
     pos: function(clone) {
         var value, pos;
-        try{
-            value = this.applyConverter(clone);
-        }catch(e){}
+        value = this.applyConverter(clone);
 
         if (typeof value != "undefined" && value != 'undefined'){
             pos = this.sizeScale(value);
@@ -233,6 +221,16 @@ Object.assign(NumericalAxis.prototype, {
 
     getLabelText: function (min_value, value, index) {
         return Math.round(min_value+(value*index));
+    },
+
+    applyConverter: function (element) {
+        var value;
+        try{
+            value = this.converter(element);
+        }catch(e){
+            value = undefined;
+        }
+        return value;
     }
 });
 
