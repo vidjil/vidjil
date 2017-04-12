@@ -11,7 +11,7 @@ QUnit.test("axis", function(assert) {
     m.loadGermline()
     m.initClones()
 
-    var axis = new CustomAxis(m);
+    var axis = new NumericalAxis(m);
 
     /* Axis object give you label list(with position/color/...)
      * and a pos(cloneID) function to place a clone on it
@@ -81,7 +81,7 @@ QUnit.test("axis", function(assert) {
     
     
     //Nlength
-    axis = new CustomAxis(m)
+    axis = new NumericalAxis(m)
     axis.init(m.clones,
             function(clone) {
                 return clone.getNlength();
@@ -95,7 +95,7 @@ QUnit.test("axis", function(assert) {
 
     
     //gc
-    axis = new PercentCustomAxis(m, false, false);
+    axis = new PercentAxis(m, false, false);
     axis.init(m.clones, 'GCContent', undefined, false, 0, 1)
     
     assert.equal(axis.pos(m.clone(0)).pos.toPrecision(3), 0.0476, "custom (percent) : clone 0 (gc = 1/21) position -> 0.0476")
