@@ -56,6 +56,7 @@ Object.assign(NumericalAxis.prototype, {
      * @param {boolean} use_log - use a logarithmic scale instead of a linear
      * */
     init: function(clones, fct, labels, sort, default_min, default_max, use_log, display_label){
+        this.reset();
         this.clones = clones;
         use_log = typeof use_log !== 'undefined' ? use_log : false;
         display_label = typeof display_label !== 'undefined' ? display_label : true;

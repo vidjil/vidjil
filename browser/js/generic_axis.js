@@ -41,6 +41,7 @@ function GenericAxis (can_undefined) {
 GenericAxis.prototype = {
 
     init : function (values, key, labels, sort) {
+        this.reset();
         this.values = values;
         if (typeof sort === 'undefined') {sort = false;}
 
