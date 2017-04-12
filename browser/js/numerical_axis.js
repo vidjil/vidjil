@@ -30,7 +30,7 @@
  * @param {Model} model 
  * @reverse {boolean} reverse - by default axis go from low to high but can be revsersed
  * */
-function CustomAxis (model, reverse, can_undefined) {
+function NumericalAxis (model, reverse, can_undefined) {
     this.m = model;
     this.labels = [];
     this.clones = [];
@@ -42,9 +42,9 @@ function CustomAxis (model, reverse, can_undefined) {
 const NB_STEPS_IN_AXIS = 6; // Number (max) of labels per numerical axis
 const NB_STEPS_BAR = 30; // Number (max) of labels per numerical axis in histograms
 
-CustomAxis.prototype = Object.create(GenericAxis.prototype);
+NumericalAxis.prototype = Object.create(GenericAxis.prototype);
 
-Object.assign(CustomAxis.prototype, {
+Object.assign(NumericalAxis.prototype, {
     /**
      * compute axis using a given function <br>
      * find min/max value possible with the given function and use them as range <br>
@@ -232,16 +232,16 @@ Object.assign(CustomAxis.prototype, {
     }
 });
 
-function PercentCustomAxis (model, reverse, can_undefined) {
+function PercentAxis (model, reverse, can_undefined) {
     this.m = model;
     this.labels = [];
     this.reverse = reverse;
-    CustomAxis.call(this, model, reverse, can_undefined);
+    NumericalAxis.call(this, model, reverse, can_undefined);
 }
 
-PercentCustomAxis.prototype = Object.create(CustomAxis.prototype);
+PercentAxis.prototype = Object.create(NumericalAxis.prototype);
 
-Object.assign(PercentCustomAxis.prototype, {
+Object.assign(PercentAxis.prototype, {
     computeSteps: function(min, max, nb_steps) {
         return nb_steps;
     },
@@ -258,16 +258,16 @@ Object.assign(PercentCustomAxis.prototype, {
  * @param {Model} model
  * @reverse {boolean} reverse - by default axis go from low to high but can be revsersed
  * */
-function FloatCustomAxis (model, reverse, can_undefined) {
+function FloatAxis (model, reverse, can_undefined) {
     this.m = model;
     this.labels = [];
     this.reverse = reverse;
-    CustomAxis.call(this, model, reverse, can_undefined);
+    NumericalAxis.call(this, model, reverse, can_undefined);
 }
 
-FloatCustomAxis.prototype = Object.create(CustomAxis.prototype);
+FloatAxis.prototype = Object.create(NumericalAxis.prototype);
 
-Object.assign(FloatCustomAxis.prototype, {
+Object.assign(FloatAxis.prototype, {
 
     getLabel: function(min_value, value, index) {
         return (min_value+(value*index)).toFixed(2)

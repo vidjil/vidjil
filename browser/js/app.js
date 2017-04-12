@@ -43,7 +43,7 @@ function loadAfterConf() {
                              "../list",
                              "../generic_axis",
                              "../germline_axis",
-                             "../custom_axis",
+                             "../numerical_axis",
                              "../graph",
                              "../scatterPlot",
                              "../builder",
