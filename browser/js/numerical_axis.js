@@ -134,6 +134,9 @@ Object.assign(NumericalAxis.prototype, {
             min = min - (max - min)/NB_STEPS_IN_AXIS
         }
 
+        this.min = min;
+        this.max = max;
+
         var range = [0,1]
         if (self.reverse) range = [1,0]
         if (use_log){
