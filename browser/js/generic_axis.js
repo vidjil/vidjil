@@ -97,6 +97,12 @@ GenericAxis.prototype = {
                 }
             }
         }
+
+        var step = 1/(this.labels.length+1);
+        offset = step/2;
+        for (var i in this.labels){
+            this.labels[i].pos += offset;
+        }
     },
 
     populateValueMapping: function() {
