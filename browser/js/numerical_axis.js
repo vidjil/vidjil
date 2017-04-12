@@ -63,9 +63,9 @@ Object.assign(NumericalAxis.prototype, {
         var self = this;
         
         if (typeof fct === 'function') {
-            this.fct = fct;
+            this.converter = fct;
         } else {
-            this.fct = function(elem) {
+            this.converter = function(elem) {
                 return elem[fct];
             }
         }
@@ -80,7 +80,7 @@ Object.assign(NumericalAxis.prototype, {
                 if (! this.clones[i].isVirtual()) {
                     var tmp;
                     try{
-                        tmp = this.fct(this.clones[i]);
+                        tmp = this.applyConverter(this.clones[i]);
                     }catch(e){
                         tmp = undefined;
                     }
@@ -108,7 +108,7 @@ Object.assign(NumericalAxis.prototype, {
             if(!clone.isVirtual()) {
                 var value;
                 try{
-                    value = this.fct(clone);
+                    value = this.applyConverter(clone);
                 }catch(e){
                     value = undefined;
                 }
@@ -155,7 +155,7 @@ Object.assign(NumericalAxis.prototype, {
     pos: function(clone) {
         var value, pos;
         try{
-            value = this.fct(clone);
+            value = this.applyConverter(clone);
         }catch(e){}
 
         if (typeof value != "undefined" && value != 'undefined'){
