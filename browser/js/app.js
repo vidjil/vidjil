@@ -44,6 +44,7 @@ function loadAfterConf() {
                              "../generic_axis",
                              "../germline_axis",
                              "../numerical_axis",
+                             "../axes",
                              "../graph",
                              "../scatterPlot",
                              "../builder",
