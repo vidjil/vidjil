@@ -207,8 +207,7 @@ GenericAxis.prototype = {
             if (i%step == 0 || (e == '?' && tab[e].length > 0)){
                 var pos = this.posBarLabel(i, length);
                 if (this.reverse) pos = 1 - pos;
-                text = this.applyConverter(this.value_mapping[e]);
-                this.labels.push(this.label("line", pos, text));
+                this.labels.push(this.label("line", pos, e));
             }
             i++;
         }
