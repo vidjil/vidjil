@@ -3,6 +3,7 @@ import gluon.contrib.simplejson
 import vidjil_utils
 from controller_utils import error_message
 import os
+import StringIO
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -106,7 +107,15 @@ def output():
 
 @cache.action()
 def download():
-    return response.download(request, db, download_filename=request.vars.filename)
+    sample_set_id = get_sample_set_id(request.vars["results_file_id"])
+    if auth.can_view_sample_set(sample_set_id):
+        results_id = int(request.vars["results_file_id"])
+        directory = defs.DIR_OUT_VIDJIL_ID % results_id
+        filepath = directory + request.vars['filename']
+        with open(filepath) as f:
+            file_content = f.read()
+        return response.stream(StringIO.StringIO(file_content), attachment = True, filename = request.vars['filename'])
+    return error_message("access denied")
     
 def confirm():
     sample_set_id = request.vars['sample_set_id']
