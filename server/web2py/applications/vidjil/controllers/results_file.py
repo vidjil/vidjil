@@ -8,7 +8,15 @@ if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Max-Age'] = 86400
-    
+
+def get_sample_set_id(results_file_id):
+    sample_set_id = db((db.sequence_file.id == db.results_file.sequence_file_id)
+                    &(db.results_file.id == results_file_id)
+                    &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
+                    &(db.sample_set.id == db.sample_set_membership.sample_set_id)
+                ).select(db.sample_set_membership.sample_set_id).first().sample_set_id
+    return sample_set_id
+
 ## return admin_panel
 def index():
     if auth.is_admin():
@@ -77,11 +85,7 @@ def run_all_patients():
 ## display run page result 
 ## need ["results_file_id"]
 def info():
-    sample_set_id = db((db.sequence_file.id == db.results_file.sequence_file_id)
-                    &(db.results_file.id == request.vars["results_file_id"])
-                    &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
-                    &(db.sample_set.id == db.sample_set_membership.sample_set_id)
-                ).select(db.sample_set_membership.sample_set_id).first().sample_set_id
+    sample_set_id = get_sample_set_id(request.vars["results_file_id"])
     if (auth.can_modify_sample_set(sample_set_id)):
         return dict(message=T('result info'))
     else :
@@ -89,11 +93,7 @@ def info():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def output():
-    sample_set_id = db((db.sequence_file.id == db.results_file.sequence_file_id)
-                    &(db.results_file.id == request.vars["results_file_id"])
-                    &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
-                    &(db.sample_set.id == db.sample_set_membership.sample_set_id)
-                ).select(db.sample_set_membership.sample_set_id).first().sample_set_id
+    sample_set_id = get_sample_set_id(request.vars["results_file_id"])
     if (auth.can_view_sample_set(sample_set_id)):
         results_id = int(request.vars["results_file_id"])
         output_directory = defs.DIR_OUT_VIDJIL_ID % results_id
