@@ -1314,7 +1314,10 @@ changeAlleleNotation: function(alleleNotation) {
      * save clusters
      * */
     saveClusters: function () {
-        this.clusters_copy.push(this.clusters.slice())
+        var l = this.clusters_copy.push(this.clusters.slice())
+
+        if (l > 20)
+            this.clusters_copy.shift()
     },
 
     /**
