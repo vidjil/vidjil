@@ -89,6 +89,20 @@
             }
         },
 
+        "IGH+": {
+            "shortcut": "h",
+            "color" : "#6c71c4",
+            "description": "Mouse immunoglobulin, heavy locus (12F2),  incomplete Dh-Jh recombinations",
+            "follows": "IGH",
+            "recombinations": [ {
+                "5": ["IGHD.fa"],
+                "3": ["IGHJ.fa"]
+            } ],
+            "parameters": {
+                "seed": "10s"
+            }
+        },
+
         "IGK": {
             "shortcut": "K",
             "color" : "#2aa198",
