@@ -29,7 +29,7 @@ def format_size(n, unit='B'):
         return '0'
 
     size = float(n)
-    PREFIXES = ['', 'k', 'M', 'G', 'T', 'P']
+    PREFIXES = ['', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
 
     for prefix in PREFIXES:
         if size < 1000:

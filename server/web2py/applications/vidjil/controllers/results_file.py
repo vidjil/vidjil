@@ -19,15 +19,6 @@ def get_sample_set_id(results_file_id):
                 ).select(db.sample_set_membership.sample_set_id).first().sample_set_id
     return sample_set_id
 
-def convert_size(size_bytes):
-    if (size_bytes == 0):
-        return '0B'
-    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-    i = int(math.floor(math.log(size_bytes, 1024)))
-    p = math.pow(1024, i)
-    s = round(size_bytes/p, 2)
-    return '%s %s' % (s, size_name[i])
-
 ## return admin_panel
 def index():
     if auth.is_admin():
@@ -113,7 +104,7 @@ def output():
         file_dicts = []
 
         for f in files:
-            file_size = convert_size(os.stat(output_directory + f).st_size)
+            file_size = vidjil_utils.format_size(os.stat(output_directory + f).st_size)
             file_dicts.append({'filename': f, 'size': file_size})
 
         return dict(message="output files",
