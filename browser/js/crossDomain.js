@@ -10,12 +10,12 @@ function setCrossDomainModel(model) {
 }
 
 //parametre IMGT par defaut
-function initImgtInput() {
+function initImgtInput(species) {
     var imgtInput = {};
     imgtInput["callback"] = "jQuery17106713638880755752_1378825832820";
     imgtInput["livret"] = "1";
     imgtInput["Session"] = "&lt;session code=Â¤0Â¤ appliName=Â¤IMGTvquestÂ¤ time=Â¤3625396897Â¤/&gt;";
-    imgtInput["l01p01c02"] = "Homo sapiens";
+    imgtInput["l01p01c02"] = species;
     imgtInput["l01p01c04"] = "TR";
     imgtInput["l01p01c03"] = "inline";
     imgtInput["l01p01c10"] = "";
@@ -99,8 +99,8 @@ function initIgBlastInput() {
 }
 
 
-function imgtPost(data, system) {
-    var imgtInput = initImgtInput();
+function imgtPost(species, data, system) {
+    var imgtInput = initImgtInput(species);
     imgtInput["l01p01c10"] = data;
     if (system[0] == "I") {
         imgtInput["l01p01c04"] = "IG";
@@ -134,8 +134,8 @@ function imgtPost(data, system) {
  * @param data
  * @param system
  */
-function imgtPostForSegmenter(data, system, segmenter, override_imgt_options) {
-    var imgtInput = initImgtInput();
+function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_options) {
+    var imgtInput = initImgtInput(species);
     if (typeof override_imgt_options != 'undefined') {
         append_to_object(override_imgt_options, imgtInput)
     }

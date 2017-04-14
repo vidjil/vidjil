@@ -709,12 +709,12 @@ Segment.prototype = {
                 max=c.getSize()
             }
         }
-        if (address == 'IMGT') imgtPost(request, system);
+        if (address == 'IMGT') imgtPost(this.m.species, request, system);
         if (address == 'IMGTSeg') {
-            imgtPostForSegmenter(request, system, this);
+            imgtPostForSegmenter(this.m.species, request, system, this);
             var change_options = {'l01p01c47' : 'N', // Deactivate default output
                                   'l01p01c45' : 'Y'}; // Activate Summary output
-            imgtPostForSegmenter(request, system, this, change_options);
+            imgtPostForSegmenter(this.m.species, request, system, this, change_options);
         }
         if (address == 'ARResT') arrestPost(request, system);
         if (address == 'igBlast') igBlastPost(request, system);
