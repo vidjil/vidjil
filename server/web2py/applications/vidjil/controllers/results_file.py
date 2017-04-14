@@ -4,6 +4,7 @@ import vidjil_utils
 from controller_utils import error_message
 import os
 import StringIO
+import math
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -17,6 +18,15 @@ def get_sample_set_id(results_file_id):
                     &(db.sample_set.id == db.sample_set_membership.sample_set_id)
                 ).select(db.sample_set_membership.sample_set_id).first().sample_set_id
     return sample_set_id
+
+def convert_size(size_bytes):
+    if (size_bytes == 0):
+        return '0B'
+    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+    i = int(math.floor(math.log(size_bytes, 1024)))
+    p = math.pow(1024, i)
+    s = round(size_bytes/p, 2)
+    return '%s %s' % (s, size_name[i])
 
 ## return admin_panel
 def index():
@@ -100,9 +110,15 @@ def output():
         output_directory = defs.DIR_OUT_VIDJIL_ID % results_id
         files = os.listdir(output_directory)
 
+        file_dicts = []
+
+        for f in files:
+            file_size = convert_size(os.stat(output_directory + f).st_size)
+            file_dicts.append({'filename': f, 'size': file_size})
+
         return dict(message="output files",
                     results_file_id = results_id,
-                    files=files)
+                    files=file_dicts)
     return error_message("access denied")
 
 @cache.action()

@@ -9,11 +9,13 @@
         <thead>
             <tr>
                 <td class="column1">file_name</td>
+                <td class="column4">file_size</td>
             </tr>
         </thead>
        {{for file in files :}}
            <tr>
-               <td><a href={{=URL('results_file', 'download', scheme='https', vars=dict(results_file_id=results_file_id, filename=file))}}> {{=file}} </a></td>
+               <td><a href={{=URL('results_file', 'download', scheme='https', vars=dict(results_file_id=results_file_id, filename=file['filename']))}}> {{=file['filename']}} </a></td>
+               <td>{{=file['size']}}</td>
             </tr>
         {{pass}}
     </table>
