@@ -1,6 +1,7 @@
 # coding: utf8
 import gluon.contrib.simplejson
 import vidjil_utils
+from controller_utils import error_message
 import os
 
 if request.env.http_origin:
@@ -101,6 +102,7 @@ def output():
         return dict(message="output files",
                     output_dir = output_directory,
                     files=files)
+    return error_message("access denied")
 
 @cache.action()
 def download():
