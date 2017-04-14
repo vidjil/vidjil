@@ -1,0 +1,21 @@
+{{extend 'db_layout.html'}}
+
+<div class="db_block">
+    Tmp files
+</div>
+
+<div id="db_table_container">
+    <table class="db_table" id="table">
+        <thead>
+            <tr>
+                <td class="column1">file_name</td>
+            </tr>
+        </thead>
+       {{for file in files :}}
+           <tr>
+               <td><a href={{=URL('results_file', 'download', scheme='https', vars=dict(results_file_id=results_file_id, filename=file))}}> {{=file}} </a></td>
+            </tr>
+        {{pass}}
+    </table>
+    <table class="db_table" id="db_fixed_header"></table>
+</div>

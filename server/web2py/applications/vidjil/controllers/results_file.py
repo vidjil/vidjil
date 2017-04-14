@@ -101,7 +101,7 @@ def output():
         files = os.listdir(output_directory)
 
         return dict(message="output files",
-                    output_dir = output_directory,
+                    results_file_id = results_id,
                     files=files)
     return error_message("access denied")
 
