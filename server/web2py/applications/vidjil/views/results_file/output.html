@@ -1,15 +1,16 @@
 {{extend 'db_layout.html'}}
 
+<h3>Output files for process #{{=results_file_id}}</h3>
+
 <div class="db_block">
-    Tmp files
 </div>
 
 <div id="db_table_container">
     <table class="db_table" id="table">
         <thead>
             <tr>
-                <td class="column1">file_name</td>
-                <td class="column4">file_size</td>
+                <td class="column1">file</td>
+                <td class="column4">size</td>
             </tr>
         </thead>
        {{for file in files :}}
