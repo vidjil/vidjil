@@ -353,8 +353,13 @@ Model_loader.prototype = {
 
         
         //extract germline
+
+        self.species = "Homo sapiens"
         if (typeof self.germlines != 'undefined'){
             self.germlineList.add(self.germlines)
+            if (typeof self.germlines.species != 'undefined'){
+                self.species = self.germlines.species
+            }
         }
         self.system_selected = [];
         self.system_available = [];
