@@ -41,7 +41,10 @@ function loadAfterConf() {
                              "../clone",
                              "../dynprog",
                              "../list",
-                             "../axis",
+                             "../generic_axis",
+                             "../germline_axis",
+                             "../numerical_axis",
+                             "../axes",
                              "../graph",
                              "../scatterPlot",
                              "../builder",
@@ -54,7 +57,6 @@ function loadAfterConf() {
                              "../similarity",
                              "../tools",
                              "../url",
-
                              // Speed test
                              "../speed_test",
                              "../../test/QUnit/testFiles/data_test",

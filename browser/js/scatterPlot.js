@@ -116,169 +116,8 @@ function ScatterPlot(id, model, database) {
     this.coordinates = [0, 0];
 
     // Plot axis
-    this.available_axis = {
-        "gene_v": { 
-            doc: "V gene (or 5' segment), gathering all alleles",
-            label:"V/5' gene"
-        },
-        "gene_j": { 
-            doc: "J gene (or 3' segment), gathering all alleles",
-            label:"J/3' gene"
-        },
-        "allele_v": { 
-            doc: "V gene (or 5' segment), with allele",
-            label:"V allele"
-        },
-        "allele_j": { 
-            doc: "J gene (or 3' segment), with allele",
-            label:"J allele"
-        },
-        "sequenceLength" : { 
-            doc: "length of the consensus sequence",
-            label: "clone consensus length",
-            fct: function(clone) {return clone.getSequenceLength()}
-        },
-        "readLength" : {
-            doc: "average length of the reads belonging to each clone",
-            label: "clone average read length",
-            fct: function(clone) {return clone.getAverageReadLength()}
-        },
-        "GCContent" : { 
-            doc: "%GC content of the consensus sequence of each clone",
-            label: "GC content",
-            fct: "GCContent", 
-            output: "percent"
-        },
-        "n": {
-            doc: "N length, from the end of the V/5' segment to the start of the J/3' segment (excluded)",
-            label: "N length",
-            fct: function(clone) {return clone.getNlength()}
-        },
-        "lengthCDR3": {
-            doc: "CDR3 length, in nucleotides, from Cys104 and Phe118/Trp118 (excluded)",
-            label: "CDR3 length (nt)",
-            fct: function(clone) {return clone.getSegLength('cdr3')}
-        },
-        "productivity": {
-            label: "productivity",
-            fct: function(clone) {return clone.getProductivityName()},
-            output: "string-sorted"
-        },
-        "tag": {
-            doc: "tag, as defined by the user",
-            label: "tag",
-            fct: function(clone) {return clone.getTagName()},
-            output: "string-sorted"
-        },
-        "coverage": { 
-            doc: "ratio of the length of the clone consensus sequence to the median read length of the clone",
-            // "Coverage between .85 and 1.0 (or more) are good values",
-            label: "clone consensus coverage",
-            fct: function(clone){return clone.coverage},
-            min: 0,
-            max: 1, 
-            output: "float-2", 
-            log: false 
-        },
-        "locus" : { 
-            doc: "locus or recombination system",
-            label: "locus",
-            fct: function(clone){return clone.germline},
-            output: "string-sorted"
-        },
-        "Size" : { 
-            doc: "ratio of the number of reads of each clone to the total number of reads in the selected locus",
-            label: "size",
-            fct : function(clone){return clone.getSizeZero()},
-            min : function(){return self.m.min_size},
-            max : 1, 
-            output : "percent", 
-            log : true  
-        },
-        "otherSize" : { 
-            doc: "ratio of the number of reads of each clone to the total number of reads in the selected locus, on a second sample",
-            label: "size (other sample)",
-            fct : function(clone){return clone.getSizeZero(m.tOther)},
-            min : function(){return self.m.min_size}, 
-            max : 1, 
-            output : "percent", 
-            log : true  
-        },
-        "nbSamples" : {
-            label: "number of samples sharing each clone",
-            fct : function(clone){return clone.getNumberNonZeroSamples()},
-            min : 1,
-            max : function(){ return self.m.samples.number }
-        },
-        "tsneX": { 
-            label: "distance (X)",
-            fct: function(clone){
-                var r = self.gridSizeH/self.gridSizeW;
-                var k=1;
-                var yMax = self.m.similarity_builder.yMax
-                if (yMax > r) k = r/yMax
-                return k*clone.tsne[0] + (1-k)/2
-            },
-            output: "float-2", 
-            log: false,
-            min: 0,
-            max: 1, 
-            hide : true,
-            display_label : false
-        },
-        "tsneY": { 
-            label: "distance (Y)",
-            fct: function(clone){
-                var r = self.gridSizeH/self.gridSizeW;
-                var k=1;
-                var yMax = self.m.similarity_builder.yMax
-                if (yMax > r) k = r/yMax
-                return k*clone.tsne[1]
-            },
-            output: "float-2", 
-            log: false,
-            min: 0,
-            max: function(){return self.gridSizeH/self.gridSizeW},
-            hide : true,
-            display_label : false
-        },
-        "tsneX_system": { 
-            label: "distance (X), by locus",
-            fct: function(clone){
-                var r = self.gridSizeH/self.gridSizeW;
-                var k=1;
-                var yMax = self.m.similarity_builder.system_yMax[clone.get("germline")]
-                if (yMax > r) k = r/yMax
-                return k*clone.tsne_system[0] + (1-k)/2
-            },
-            output: "float-2", 
-            log: false,
-            min: 0,
-            max: 1, 
-            hide : true,
-            display_label : false
-        },
-        "tsneY_system": { 
-            label: "distance (Y), by locus",
-            fct: function(clone){
-                var r = self.gridSizeH/self.gridSizeW;
-                var k=1;
-                var yMax = self.m.similarity_builder.system_yMax[clone.get("germline")]
-                if (yMax > r) k = r/yMax
-                return k*clone.tsne_system[1]
-            },
-            output: "float-2", 
-            log: false,
-            min: 0,
-            max: function(){return self.gridSizeH/self.gridSizeW},
-            hide : true,
-            display_label : false
-        },
-	"primers": {
-            label: "interpolated length, between BIOMED2 primers (inclusive)",
-            fct: function(cloneID) {return self.m.clone(cloneID).getSegLengthDoubleFeature('primer5', 'primer3')}
-        },
-    };
+    var axes = new Axes(this.m);
+    this.available_axis = axes.available();
 
     // Plot Presets
     this.preset = {
@@ -308,8 +147,8 @@ function ScatterPlot(id, model, database) {
         ["graph", "Edit dist. graph"]
     ];
 
-    this.axisX = new Axis(this.m, false)
-    this.axisY = new Axis(this.m, true)
+    this.axisX = new GermlineAxis(this.m, false)
+    this.axisY = new GermlineAxis(this.m, true)
     this.use_system_grid = false
 
     this.m.sp = this
@@ -332,8 +171,8 @@ ScatterPlot.prototype = {
 
             this.initMenu();
             this.initSVG();
-            this.axisX.useGermline(this.m.germlineV, "V")
-            this.axisY.useGermline(this.m.germlineJ, "J")
+            this.axisX.init(this.m.germlineV, "V")
+            this.axisY.init(this.m.germlineJ, "J")
 
             this.select_preset.selectedIndex = this.default_preset
             this.changePreset();
@@ -714,120 +553,71 @@ ScatterPlot.prototype = {
         self = this
         
         //split clones into bar (axisX)
+        var fct;
         switch (this.splitX) {
             case "allele_v" :
-                this.makeBarTab(function(clone){return clone.getGene("5")}, Object.keys(self.m.germlineV.allele))
+                fct = function(clone){return clone.getGene("5")}
+                this.axisX.init(this.m.germlineV, "V", true)
                 break;
             case "gene_v" :
-                this.makeBarTab(function(clone){return clone.getGene("5",false)}, Object.keys(self.m.germlineV.gene))
+                fct = function(clone){return clone.getGene("5",false)}
+                this.axisX.init(this.m.germlineV, "V", false)
                 break;
             case "allele_j" :
-                this.makeBarTab(function(clone){return clone.getGene("3")}, Object.keys(self.m.germlineJ.allele))
+                fct = function(clone){return clone.getGene("3")}
+                this.axisX.init(this.m.germlineJ, "J", true)
                 break;
             case "gene_j" :
-                this.makeBarTab(function(clone){return clone.getGene("3",false)}, Object.keys(self.m.germlineJ.gene))
+                fct = function(clone){return clone.getGene("3",false)}
+                this.axisX.init(this.m.germlineJ, "J", false)
                 break;
             default :
                 if (typeof this.available_axis[this.splitX])
-                    this.makeBarTab(this.available_axis[this.splitX].fct);
+                    this.axisX.init(this.m.clones, this.available_axis[this.splitX].fct);
             break;
         }
+
+        this.barTab = Object.assign({}, this.axisX.value_mapping);
         
         //sort each bar (axisY)
         
+        this.axisY = new PercentAxis(this.m, true);
+        var yFct;
         switch (this.splitY) {
             case "allele_v" :
-                this.sortBarTab(function(clone){return clone.getGene("5")});
+                yFct = function(clone){return clone.getGene("5")};
+                this.axisY.init(this.m.clones, yFct);
+                this.sortBarTab(fct);
                 break;
             case "gene_v" :
-                this.sortBarTab(function(clone){return clone.getGene("5",false)});
+                yFct = function(clone){return clone.getGene("5",false)};
+                this.axisY.init(this.m.clones, yFct);
+                this.sortBarTab(fct);
                 break;
             case "allele_j" :
-                this.sortBarTab(function(clone){return clone.getGene("3")});
+                var yFct = function(clone){return clone.getGene("3")};
+                this.axisY.init(this.m.clones, yFct);
+                this.sortBarTab(yFct);
                 break;
             case "gene_j" :
-                this.sortBarTab(function(clone){return clone.getGene("3",false)});
+                yFct = function(clone){return clone.getGene("3",false)};
+                this.axisY.init(this.m.clones, yFct);
+                this.sortBarTab(yFct);
                 break;
             default :
+                yFct = function(clone){return clone.getGene("3")};
                 if (typeof this.available_axis[this.splitY]){
-                    this.sortBarTab(this.available_axis[this.splitY].fct);
-                }else{
-                    this.sortBarTab(function(clone){return clone.getGene("3")});
+                    yFct = this.available_axis[this.splitY].fct;
                 }
+
+                this.axisY.init(this.m.clones, yFct);
+                this.sortBarTab(yFct);
             break;
         }
         
         //compute position for each clones
         this.computeBarTab();
         
-    },
-    
-    /**
-     * sort clones in different bar using a distribution function and a list of potential values <br>
-     * the values list length is the minimum number of bar we will get<br>
-     * if the distribution function return a value outside the list of given potential values, a new bar will be created for this value
-     * param {function} fct - distribution function
-     * param {string[]} values - a list of potential values
-     * */
-    makeBarTab: function (fct, values) {
-        var min, max;
-        this.barTab = {};
-        
-        if (typeof fct == "string"){
-            var tmp = fct 
-            fct = function(clone){
-                return clone.get(tmp)
-            }
-        }
-        
-        if (typeof values == "undefined"){
-            for (var i in this.m.clones) {
-                var clone = this.m.clone(i)
-                if ((!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.get('germline') ))
-                    && clone.isActive()){
-                    var v;
-                    try{
-                        var v = fct(self.m.clone(i));
-                    }catch(e){}
-                    if (typeof v != "undefined" && v!= 'undefined'){
-                        if (v<min || typeof min == "undefined") min = v;
-                        if (v>max || typeof max == "undefined") max = v;
-                    }
-                }
-            }
-            min = Math.floor(min)
-            max = Math.ceil(max)
-            console.log("min : " + min)
-            console.log("max : " + max)
-            for (var i=min; i<=max; i++){ 
-                this.barTab[i]=[];
-            }
-        }else{
-            for (var i in values) {
-                this.barTab[values[i]]=[];
-            }
-        }
-
-        this.barTab["?"]=[];
-        
-        for (var i in this.m.clones) {
-            var clone = this.m.clone(i)
-            if ((!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.get('germline') ))
-               && clone.isActive()){
-                var v;
-                try{
-                    var v = fct(self.m.clone(i));
-                    if (typeof v == 'number')
-                        v = Math.round(v)
-                }catch(e){}
-                if (typeof v == "undefined" || typeof this.barTab[v] == "undefined" ) {
-                    this.barTab["?"].push(i);
-                }else{
-                    this.barTab[v].push(i);
-                }
-            }
-        }
-        return this;
     },
     
     /**
@@ -870,6 +660,13 @@ ScatterPlot.prototype = {
         
         return this;
     },
+
+    includeBar: function(clone) {
+        return ((!this.use_system_grid ||
+                (this.use_system_grid && this.m.germlineV.system == clone.get('germline') )) &&
+                clone.isActive() &&
+                !clone.isVirtual());
+    },
     
     /**
      * return the size of the biggest bar
@@ -880,8 +677,10 @@ ScatterPlot.prototype = {
         for (var i in this.barTab) {
             var tmp = 0;
             for (var j in this.barTab[i]) {
-                var cloneID = this.barTab[i][j]
-                if (!this.m.clone(cloneID).isVirtual()) tmp += this.m.clone(cloneID).getSize();
+                var clone = this.barTab[i][j]
+                if (this.includeBar(clone)){
+                    tmp += clone.getSize();
+                }
             }
             if (tmp > bar_max) bar_max = tmp;
         }
@@ -908,33 +707,34 @@ ScatterPlot.prototype = {
         
         k=1 ;
         for (var i in this.barTab) {
+            val = this.barTab[i];
 
             var y_pos = 0
-            var x_pos = this.axisX.posBarLabel(k, tab_length)
+            var x_pos = this.axisX.pos(val[0]).pos;
             
             for (var j in this.barTab[i]){
-                var cloneID = this.barTab[i][j]
-                height = 0;
-                if ( (!this.m.clone(cloneID).isVirtual()) & this.m.clone(cloneID).isActive() ) {
-                    height = this.m.clone(cloneID).getSize()/bar_max;
+                var clone = this.barTab[i][j]
+                var cloneID = clone.index;
+                if (this.includeBar(clone)){
+                    height = 0;
+                    height = clone.getSize()/bar_max;
+
+                    // Minimal height (does not affect y_pos)
+                    var height_for_display = Math.max(height, 0.01)
+                    var y_pos_for_display = y_pos + height_for_display ;
+
+                    y_pos += height;
+
+                    this.nodes[cloneID].bar_y = y_pos_for_display;
+                    this.nodes[cloneID].bar_x = x_pos;
+                    this.nodes[cloneID].bar_h = height_for_display;
+                    this.nodes[cloneID].bar_w = width;
                 }
-
-                // Minimal height (does not affect y_pos)
-                var height_for_display = Math.max(height, 0.01)
-                var y_pos_for_display = y_pos + height_for_display ;
-
-                y_pos += height;
-
-                this.nodes[cloneID].bar_y = y_pos_for_display;
-                this.nodes[cloneID].bar_x = x_pos;
-                this.nodes[cloneID].bar_h = height_for_display;
-                this.nodes[cloneID].bar_w = width;
-
             }
             k++;
         }
-        this.axisY.computeCustomLabels(0, bar_max, "percent", false, true);
-        this.axisX.computeCustomBarLabels(this.barTab)
+        this.axisY.computeLabels(0, bar_max);
+        this.axisX.computeBarLabels(this.barTab)
         this.initGrid();
         this.drawBarTab(500);
         
@@ -1476,14 +1276,14 @@ ScatterPlot.prototype = {
 
         // Clone position
 
-        var sys = this.m.clone(cloneID)
-            .get('germline')
+        var clone = this.m.clone(cloneID);
+        var sys = clone.get('germline');
         if (this.use_system_grid && this.m.system == "multi" && typeof sys != 'undefined' && sys != this.m.germlineV.system) {
             this.nodes[cloneID].x2 = this.systemGrid[sys].x * this.resizeW;
             this.nodes[cloneID].y2 = this.systemGrid[sys].y * this.resizeH;
         } else {
-            this.nodes[cloneID].x2 = this.axisX.pos(cloneID) * this.gridSizeW
-            this.nodes[cloneID].y2 = this.axisY.pos(cloneID) * this.gridSizeH
+            this.nodes[cloneID].x2 = this.axisX.pos(clone).pos * this.gridSizeW
+            this.nodes[cloneID].y2 = this.axisY.pos(clone).pos * this.gridSizeH
         }
 
     },
@@ -1614,7 +1414,7 @@ ScatterPlot.prototype = {
             if (self.axisX.labels.length>1)
                 halfRangeColumn = Math.abs((self.axisX.labels[1].pos - self.axisX.labels[0].pos)/2);
             for (n=0; n<self.nodes.length; n++){
-                if (Math.abs(self.axisX.pos(self.nodes[n]) - d.pos) < halfRangeColumn)
+                if (Math.abs(self.axisX.pos(self.m.clone(n)).pos - d.pos) < halfRangeColumn)
                     if (self.nodes[n].r1>0){
                         console.log("splitX : " + (self.splitX == "gene_v") + ", " + (self.splitX));
                         console.log("germline : " + (self.m.clones[n].germline == self.m.germlineV.system));
@@ -1731,7 +1531,7 @@ ScatterPlot.prototype = {
                 if (self.axisY.labels.length>1)
                     halfRangeLine = Math.abs((self.axisY.labels[0].pos - self.axisY.labels[1].pos)/2);
                 for (n=0; n<self.nodes.length; n++){
-                        if (Math.abs(self.axisY.pos(n) - d.pos) < halfRangeLine)
+                        if (Math.abs(self.axisY.pos(self.m.clone(n)).pos - d.pos) < halfRangeLine)
                             if (self.nodes[n].r1>0){
                                 if (self.splitX == "allele_v" || self.splitX == "gene_v" || self.splitX == "allele_j" || self.splitX == "gene_j" || (self.mode == this.MODE_GRID & (self.splitY == "allele_v" || self.splitY == "gene_v" || self.splitY == "allele_j" || self.splitY == "gene_j"))){
                                     if (self.m.clones[n].germline == self.m.germlineV.system)
@@ -1903,8 +1703,8 @@ ScatterPlot.prototype = {
         this.mode = mode;
         this.compute_size();
 
-        this.updateAxis(this.axisX, this.splitX);
-        this.updateAxis(this.axisY, this.splitY);
+        this.axisX = this.updateAxis(this.splitX);
+        this.axisY = this.updateAxis(this.splitY);
         
         if (this.mode == this.MODE_BAR){
             this.updateBar();
@@ -1932,27 +1732,30 @@ ScatterPlot.prototype = {
      * @param {Axis} axis
      * @param {string} splitMethod
      * */
-    updateAxis: function(axis, splitMethod) {
+    updateAxis: function(splitMethod) {
+        var axis;
+        var aa = this.available_axis[splitMethod] 
+        if (aa != undefined) {
+            axis = aa.axis;
+        }
         switch (splitMethod) {
             case "allele_v" :
-                axis.useGermline(this.m.germlineV, "V", true)
+                axis.init(this.m.germlineV, "V", true)
                 break;
             case "gene_v" :
-                axis.useGermline(this.m.germlineV, "V", false)
+                axis.init(this.m.germlineV, "V", false)
                 break;
             case "allele_j" :
-                axis.useGermline(this.m.germlineJ, "J", true)
+                axis.init(this.m.germlineJ, "J", true)
                 break;
             case "gene_j" :
-                axis.useGermline(this.m.germlineJ, "J", false)
+                axis.init(this.m.germlineJ, "J", false)
                 break;
             default :
-                if (typeof this.available_axis[splitMethod]){
-                    var a = this.available_axis[splitMethod];
-                    axis.custom(a.fct, a.min, a.max, a.output, a.log, a.display_label)
-                }
+                axis.init(this.m.clones, aa.fct, aa.labels, aa.sort, aa.min, aa.max, aa.log, aa.display_label);
             break;
         }
+        return axis;
     },
 
     /**
