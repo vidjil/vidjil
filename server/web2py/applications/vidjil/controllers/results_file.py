@@ -1,12 +1,23 @@
 # coding: utf8
 import gluon.contrib.simplejson
 import vidjil_utils
+from controller_utils import error_message
+import os
+import StringIO
+import math
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Max-Age'] = 86400
-    
+
+def get_sample_set_id(results_file_id):
+    sample_set_id = db((db.sequence_file.id == db.results_file.sequence_file_id)
+                    &(db.results_file.id == results_file_id)
+                    &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
+                    &(db.sample_set.id == db.sample_set_membership.sample_set_id)
+                ).select(db.sample_set_membership.sample_set_id).first().sample_set_id
+    return sample_set_id
 
 ## return admin_panel
 def index():
@@ -76,16 +87,42 @@ def run_all_patients():
 ## display run page result 
 ## need ["results_file_id"]
 def info():
-    sample_set_id = db((db.sequence_file.id == db.results_file.sequence_file_id)
-                    &(db.results_file.id == request.vars["results_file_id"])
-                    &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
-                    &(db.sample_set.id == db.sample_set_membership.sample_set_id)
-                ).select(db.sample_set_membership.sample_set_id).first().sample_set_id
+    sample_set_id = get_sample_set_id(request.vars["results_file_id"])
     if (auth.can_modify_sample_set(sample_set_id)):
         return dict(message=T('result info'))
     else :
         res = {"message": "acces denied"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+def output():
+    sample_set_id = get_sample_set_id(request.vars["results_file_id"])
+    if (auth.can_view_sample_set(sample_set_id)):
+        results_id = int(request.vars["results_file_id"])
+        output_directory = defs.DIR_OUT_VIDJIL_ID % results_id
+        files = os.listdir(output_directory)
+
+        file_dicts = []
+
+        for f in files:
+            file_size = vidjil_utils.format_size(os.stat(output_directory + f).st_size)
+            file_dicts.append({'filename': f, 'size': file_size})
+
+        return dict(message="output files",
+                    results_file_id = results_id,
+                    files=file_dicts)
+    return error_message("access denied")
+
+@cache.action()
+def download():
+    sample_set_id = get_sample_set_id(request.vars["results_file_id"])
+    if auth.can_view_sample_set(sample_set_id):
+        results_id = int(request.vars["results_file_id"])
+        directory = defs.DIR_OUT_VIDJIL_ID % results_id
+        filepath = directory + request.vars['filename']
+        with open(filepath) as f:
+            file_content = f.read()
+        return response.stream(StringIO.StringIO(file_content), attachment = True, filename = request.vars['filename'])
+    return error_message("access denied")
     
 def confirm():
     sample_set_id = request.vars['sample_set_id']

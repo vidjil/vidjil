@@ -19,7 +19,7 @@ run = db(db.scheduler_run.task_id == results_file.scheduler_task_id).select().fi
 
 <div>
 
-    <h3>info run {{=sequence_file.filename}} ({{=config.name }}) ({{=results_file.run_date}}) </h3>
+    <h3>Information for process #{{=results_file_id}} {{=sequence_file.filename}} ({{=config.name }}) ({{=results_file.run_date}}) </h3>
 
     <div class="db_block">
         <div class="db_block_left">
