@@ -1208,6 +1208,56 @@ Clone.prototype = {
         return html
     },
 
+    /**
+      * start to fill a node with clone informations common between segmenter and list
+      * @param {dom_object} div_elem - html element to complete
+      * */
+    div_elem: function (div_elem) {
+
+        div_elem.removeAllChildren();
+        
+        var self = this;
+
+        // Tag/Star
+        var span_star = document.createElement('span')
+        span_star.setAttribute('class', 'starBox');
+        span_star.onclick = function (e) {
+            self.m.openTagSelector(self.index, e);
+        }
+        span_star.appendChild(icon('icon-star-2', 'clone tag'))
+        span_star.setAttribute('id', 'color' + this.index);
+        if (typeof this.tag != 'undefined')
+            span_star.style.color = this.m.tag[this.getTag()].color
+
+        // Size
+        var span_size = document.createElement('span')
+        span_size.className = "sizeBox";
+        span_size.style.color = this.getColor();
+        span_size.innerHTML = this.getStrSize();
+        span_size.setAttribute('title', this.getPrintableSize());
+
+        // Info
+        var span_info = document.createElement('span')
+        span_info.className = "infoBox";
+        if (!this.isVirtual()) {
+            span_info.onclick = function () {
+                self.m.displayInfoBox(self.index);
+            }
+
+            if (this.isWarned()) {
+                span_info.className += " " + this.isWarned() ;
+                span_info.appendChild(icon('icon-warning-1', 'clone information'));
+            } else {
+                span_info.appendChild(icon('icon-info', 'clone information'));
+            }
+        }
+
+        // Gather all elements
+        div_elem.appendChild(span_info);
+        div_elem.appendChild(span_star);
+        div_elem.appendChild(span_size);
+    },
+
     toCSVheader: function (m) {
         var csv = [
             "cluster", "name", "id",
