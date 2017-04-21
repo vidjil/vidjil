@@ -146,6 +146,11 @@ sudo apt-get install g++-4.8
 
 
 
+*** OS X
+
+Xcode should be installed first.
+
+
 ** Installation
 *** Compiling
 
