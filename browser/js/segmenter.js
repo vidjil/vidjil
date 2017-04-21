@@ -518,14 +518,17 @@ Segment.prototype = {
 
 
     /**
-     * complete a div with a clone information/sequence
-     * @param {dom} div_elem - the dom element to complete
-     * @param {intger} cloneID - clone index 
+     * complete a node with a clone information/sequence
+     * @param {dom_object} div_elem - html element to complete
+     * @param {integer} cloneID - clone index 
      * */
     div_elem: function (div_elem, cloneID) {
-        var self = this;
 
-        div_elem.removeAllChildren();
+        var self = this;
+        var clone = this.m.clone(cloneID)
+
+        clone.div_elem(div_elem);
+
         div_elem.className = "seq-fixed cloneName";
         if (this.m.focus == cloneID) {
             $(div_elem).addClass("list_focus");
@@ -537,15 +540,12 @@ Segment.prototype = {
         var del = document.createElement('span')
         del.className = "delBox"
         del.appendChild(icon('icon-cancel', 'Unselect this clone'));
-        seq_name.appendChild(del);
-
         del.onclick = function () {
-            self.m.clone(cloneID).unselect();
+            clone.unselect();
             self.aligned = false;
         }
+        seq_name.appendChild(del);
 
-        var clone = this.m.clone(cloneID)
-        
         var span_name = document.createElement('span');
         span_name.className = "nameBox2";
         span_name.appendChild(document.createTextNode(clone.getShortName()));
@@ -553,66 +553,34 @@ Segment.prototype = {
         seq_name.title = clone.getName();
         seq_name.style.color = clone.color;
 
-        // Tag
-        var svg_star = document.createElement('span')
-        svg_star.setAttribute('class', 'starBox');
-        svg_star.onclick = function (e) {
-            self.m.openTagSelector(cloneID, e);
+        div_elem.getElementsByClassName("sizeBox")[0]
+            .onclick = function (e) {
+                clone.unselect();
+            }
+
+        if (this.m.clone_info == cloneID) {
+            div_elem.getElementsByClassName("infoBox")[0]
+                .className += " infoBox-open"
         }
-        svg_star.appendChild(icon('icon-star-2', 'clone tag'))
-        svg_star.setAttribute('id', 'color' + cloneID);
-        if (typeof clone.tag != 'undefined')
-            svg_star.style.color = this.m.tag[clone.getTag()].color
-
-
-        // Size
-        var seq_size = document.createElement('span')
-        seq_size.className = "sizeBox";
-        seq_size.onclick = function () {
-            self.m.clone(cloneID).unselect();
-        }
-        seq_size.style.color = clone.color;
-        seq_size.appendChild(document.createTextNode(clone.getStrSize()));
-        seq_size.setAttribute('title', clone.getPrintableSize())
-
-        // Info
-        var span_info = document.createElement('span')
-        span_info.className = "infoBox";
-        if (cloneID == this.m.clone_info) span_info.className = "infoBox infoBox-open";
-        span_info.onclick = function () {
-            self.m.displayInfoBox(cloneID);
-        }
-
-        if (clone.isWarned()) {
-            span_info.className += " " + clone.isWarned() ;
-            span_info.appendChild(icon('icon-warning-1', 'clone information'));
-        } else {
-            span_info.appendChild(icon('icon-info', 'clone information'));
-        }
-
 
         // Productive/unproductive
         var productive_info = document.createElement('span');
         productive_info.className = "infoBox";
 
         var info = '' ;
-
         if (clone.seg.imgt!=null && typeof clone.seg.imgt['V-DOMAIN Functionality'] != 'undefined'){
             info = (clone.seg.imgt["V-DOMAIN Functionality"].toLowerCase().indexOf("unproductive") < 0)
                 ? icon('icon-plus-squared', 'productive, as computed by IMGT/V-QUEST')
                 : icon('icon-minus-squared', 'unproductive, as computed by IMGT/V-QUEST') ;
         }
-
         if (info)
             productive_info.appendChild(info);
-
 
         // V identity ratio
         var Videntity_info = document.createElement('span');
         Videntity_info.className = "identityBox";
 
         var info = '' ;
-
         if (clone.seg.imgt!=null){
             identity = clone.seg.imgt["V-REGION identity % (with ins/del events)"]
             if (typeof identity != 'undefined' && identity.length == 0)
@@ -626,19 +594,11 @@ Segment.prototype = {
                 info.setAttribute('title', 'V-REGION identity % (with indel), as computed by IMGT/V-QUEST')
             }
         }
-
         if (info)
             Videntity_info.appendChild(info);
 
-
-        // Gather all elements
-
-        div_elem.appendChild(seq_name);
-        //div_elem.appendChild(span_funct);
-        div_elem.appendChild(span_info);
-        div_elem.appendChild(productive_info);
-        div_elem.appendChild(svg_star);
-        div_elem.appendChild(seq_size);
+        div_elem.insertBefore(productive_info, div_elem.childNodes[1]);
+        div_elem.insertBefore(seq_name, div_elem.childNodes[0]);
         div_elem.appendChild(Videntity_info);
     },
 
