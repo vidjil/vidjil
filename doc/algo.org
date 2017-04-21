@@ -56,6 +56,7 @@ The Vidjil algorithm has been successfully tested on the following platforms :
  - FreeBSD 9.2
  - Ubuntu 12.04 LTS amd64
  - Ubuntu 14.04 LTS amd64
+ - OS X 10.9, 10.10, 10.11
 
 Vidjil is developed with continuous integration using systematic unit and functional testing.
 The development team internally uses [[https://jenkins-ci.org/][Jenkins]] for that.
