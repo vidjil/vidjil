@@ -64,7 +64,11 @@ Builder.prototype = {
             this.build_clusterSelector()
             this.initTag();
 
-            if (this.m.samples.order.length == 1) this.resizeGraph(0) 
+            // if (this.m.samples.order.length == 1) this.resizeGraph(0)
+            if (this.m.samples.order.length == 1) {
+                var sp2 = new ScatterPlot("visu2", this.m, this.db);
+                sp2.default_preset = 4;
+            }
             else this.resizeGraph(50)
 
         } catch (err) {
