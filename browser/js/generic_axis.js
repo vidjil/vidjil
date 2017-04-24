@@ -28,7 +28,7 @@
  * can provide the position of an element on it
  * @constructor
  * */
-function GenericAxis (can_undefined) {
+function GenericAxis (reverse, can_undefined) {
     this.labels = [];
     this.label_mapping = {};
     this.values = []
@@ -38,6 +38,9 @@ function GenericAxis (can_undefined) {
     this.NB_STEPS_BAR = 30; // Number (max) of labels per numerical axis in histograms
     if(typeof can_undefined !== "undefined")
         this.can_undefined = can_undefined;
+    this.reverse = false;
+    if(typeof reverse !== "undefined")
+        this.reverse = reverse
 }
 
 GenericAxis.prototype = {
@@ -89,11 +92,17 @@ GenericAxis.prototype = {
                 var convert = this.applyConverter(value);
                 if (labels.indexOf(convert) != -1) {
                     if (typeof label_mapping[convert] === 'undefined') {
-                        this.addLabel("line", convert, labels.indexOf(convert)/labels.length, convert);
+                        var pos = labels.indexOf(convert)/labels.length;
+                        if (this.reverse)
+                            pas = 1 - pos;
+                        this.addLabel("line", convert, pos, convert);
                     }
                 } else {
                     if (this.can_undefined) {
-                        this.addLabel("line", "?", 1, "?");
+                        var pos = 1;
+                        if (this.reverse)
+                            pos = 0;
+                        this.addLabel("line", "?", pos, "?");
                     }
 
                 }

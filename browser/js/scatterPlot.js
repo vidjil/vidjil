@@ -736,6 +736,7 @@ ScatterPlot.prototype = {
             }
             k++;
         }
+        this.axisY.reverse = true;
         this.axisY.computeLabels(0, bar_max);
         this.axisX.computeBarLabels(this.barTab)
         this.initGrid();
@@ -1709,8 +1710,8 @@ ScatterPlot.prototype = {
         this.mode = mode;
         this.compute_size();
 
-        this.axisX = this.updateAxis(this.splitX);
-        this.axisY = this.updateAxis(this.splitY);
+        this.axisX = this.updateAxis(this.splitX, false);
+        this.axisY = this.updateAxis(this.splitY, true);
         
         if (this.mode == this.MODE_BAR){
             this.updateBar();
@@ -1738,7 +1739,8 @@ ScatterPlot.prototype = {
      * @param {Axis} axis
      * @param {string} splitMethod
      * */
-    updateAxis: function(splitMethod) {
+    updateAxis: function(splitMethod, reverse) {
+        if (typeof reverse === "undefined") reverse = false;
         var axis;
         var aa = this.available_axis[splitMethod] 
         if (aa !== undefined) {
@@ -1758,6 +1760,7 @@ ScatterPlot.prototype = {
                 axis.init(this.m.germlineJ, "J", false)
                 break;
             default :
+                axis.reverse = reverse;
                 axis.init(this.m.clones, aa.fct, aa.labels, aa.sort, aa.min, aa.max, aa.log, aa.display_label);
             break;
         }
