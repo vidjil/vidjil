@@ -209,7 +209,7 @@ GenericAxis.prototype = {
      * */
     computeBarLabels : function () {
         this.labels = [];
-        var length = Object.keys(this.label_mapping).length;
+        var length = Object.keys(this.value_mapping).length;
 
         var step = 1 + Math.floor(length / this.NB_STEPS_BAR)
         var text;
