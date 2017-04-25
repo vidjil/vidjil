@@ -365,24 +365,26 @@ List.prototype = {
     },
 
     /** 
-     * fill a div with clone informations
+     * fill a node with clone informations
      * @param {dom_object} div_elem - html element to complete
-     * @pram {integer} cloneID - clone index
+     * @param {integer} cloneID - clone index
      * */
     div_elem: function (div_elem, cloneID) {
 
         var self = this;
-        div_elem.removeAllChildren();
+        var clone = this.m.clone(cloneID)
+
+        clone.div_elem(div_elem);
+
         div_elem.onmouseover = function () {
             self.m.focusIn(cloneID);
         }
         div_elem.className = "listElem";
-        
         div_elem.style.display = "block";
-        
-        var span_name = document.createElement('div');
+
+        var span_name = document.createElement('span');
         span_name.className = "nameBox";
-        if (!this.m.clone(cloneID).isVirtual())
+        if (!clone.isVirtual())
             span_name.className += " cloneName";
         span_name.ondblclick = function () {
             self.editName(cloneID, this);
@@ -390,57 +392,27 @@ List.prototype = {
         span_name.onclick = function (e) {
             self.clickList(e, cloneID);
         }
-        
-        
-        var span_star = document.createElement('div');
-        span_star.className = "starBox";
-        span_star.onclick = function (e) {
-            self.m.openTagSelector(cloneID, e);
-        }
-        span_star.appendChild(icon('icon-star-2', 'clone tag'))
-        span_star.setAttribute('id', 'color' + cloneID);
 
-        
-        var span_size = document.createElement('span')
-        span_size.className = "sizeBox";
-        span_size.onclick = function (e) {
-            self.clickList(e, cloneID);
-        }
-        
-        
-        var span_info = document.createElement('span')
-        span_info.className = "infoBox";
-        if (!this.m.clone(cloneID).isVirtual()) {
-            span_info.onclick = function () {
-                self.m.displayInfoBox(cloneID);
+        div_elem.getElementsByClassName("sizeBox")[0]
+            .onclick = function (e) {
+                self.clickList(e, cloneID);
             }
 
-            if (this.m.clone(cloneID).isWarned()) {
-                span_info.className += " " + this.m.clone(cloneID).isWarned() ;
-                span_info.appendChild(icon('icon-warning-1', 'clone information'));
-            } else {
-                span_info.appendChild(icon('icon-info', 'clone information'));
-            }
-        }
-        
-        
         var span_cluster = document.createElement('span');
         span_cluster.setAttribute("cloneID", cloneID);
         span_cluster.className = "clusterBox";
 
+        var firstChild = div_elem.childNodes[0];
+        div_elem.insertBefore(span_cluster, firstChild);
 
-        div_elem.appendChild(span_cluster);
-        if (this.m.system=="multi") {
-            var system = this.m.clone(cloneID).get('germline')
+        if (this.m.system == "multi") {
+            var system = clone.get('germline')
             var span_systemBox = this.m.systemBox(system);
             span_systemBox.className = "systemBox";
-            div_elem.appendChild(span_systemBox);
+            div_elem.insertBefore(span_systemBox, firstChild);
         }
-        div_elem.appendChild(span_name);
-        div_elem.appendChild(span_info);
-        div_elem.appendChild(span_star);
-        div_elem.appendChild(span_size);
 
+        div_elem.insertBefore(span_name, firstChild);
     },
 
     updateElem: function (list) {
