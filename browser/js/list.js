@@ -297,6 +297,30 @@ List.prototype = {
         sort_span.appendChild(document.createTextNode("sort by "));
         sort_span.appendChild(sort);
 
+        var axis_span = document.createElement('span');
+        axis_span.className = "list_axis";
+
+        var axis = document.createElement('select');
+        axis.setAttribute('name', 'axis_list[]');
+        axis.id = "list_axis_select";
+        axis.className = "list_axis_select";
+
+        var axOpts = Clone.prototype.axisOptions();
+        for (var i in axOpts) {
+            var axis_option = document.createElement("option");
+            axis_option.setAttribute('value', axOpts[i]);
+            axis_option.appendChild(document.createTextNode(axOpts[i]));
+            axis.appendChild(axis_option);
+        }
+        axis.value = "Size";
+        axis.onchange = function() {
+            self.update()
+        }
+
+        axis_span.appendChild(document.createTextNode("display "));
+        axis_span.appendChild(axis);
+
+
         div_list_menu.appendChild(a_split)
         div_list_menu.appendChild(a_unsplit)
 
@@ -304,6 +328,7 @@ List.prototype = {
         div_list_menu.appendChild(filter_input)
         div_list_menu.appendChild(filter_reset)
         div_list_menu.appendChild(sort_span)
+        div_list_menu.appendChild(axis_span)
         
         return div_list_menu
     },
