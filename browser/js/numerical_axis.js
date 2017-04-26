@@ -36,7 +36,7 @@ function NumericalAxis (model, reverse, can_undefined) {
     this.clones = [];
     this.value_mapping = {};
     this.reverse = reverse;
-    GenericAxis.call(this, can_undefined);
+    GenericAxis.call(this, reverse, can_undefined);
 }
 
 
