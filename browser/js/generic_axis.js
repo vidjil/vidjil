@@ -118,14 +118,10 @@ GenericAxis.prototype = {
 
     populateValueMapping: function() {
         var values = this.values;
-        var labels = this.labels;
         var value_mapping = this.value_mapping;
         var label_mapping = this.label_mapping;
 
-        var label_array = [];
-        for (l in labels) {
-            label_array.push(labels[l].text);
-        }
+        var label_array = Object.keys(label_mapping);
         for (var i = 0; i < values.length; i++) {
             var value = values[i];
             var convert = this.applyConverter(value);
