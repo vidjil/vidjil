@@ -215,6 +215,7 @@ GenericAxis.prototype = {
      * */
     computeBarLabels : function () {
         this.labels = [];
+        this.label_mapping = {};
         var length = Object.keys(this.value_mapping).length;
 
         var step = 1 + Math.floor(length / this.NB_STEPS_BAR)
@@ -224,7 +225,7 @@ GenericAxis.prototype = {
             if (i%step === 0 || (e == '?' && this.value_mapping[e].length > 0)){
                 var pos = this.posBarLabel(i, length);
                 if (this.reverse) pos = 1 - pos;
-                this.labels.push(this.label("line", pos, e));
+                this.addLabel("line", e, pos, e);
             }
             i++;
         }
