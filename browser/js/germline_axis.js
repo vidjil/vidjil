@@ -44,6 +44,55 @@ GermlineAxis.prototype = Object.create(GenericAxis.prototype);
 Object.assign(GermlineAxis.prototype, {
     
     /**
+     * init axis with a germline object
+     * @param {Germline} germline
+     * @param {string} genetype - "V" "D" or "J"
+     * @param {boolean} displayAllele - (show/hide allele)
+     * */
+    init: function (germline, geneType, displayAllele) {
+        this.reset()
+        this.values = this.m.clones;
+        this.germline = germline;
+
+        var gene_list = this.germline.gene
+        var allele_list = this.germline.allele
+        var total_gene = Object.keys(gene_list).length
+
+        if (geneType=="V") this.type2="5"
+        if (geneType=="D") this.type2="4"
+        if (geneType=="J") this.type2="3"
+
+        var pos;
+        //labels
+        for (var key in gene_list){
+            pos = this.getPos(gene_list[key].rank, total_gene)
+            this.addLabel("line", pos, key, this.germline.gene[key].color);
+        }
+
+        if (displayAllele){
+            for (var al in allele_list){
+                var gene = al.split("*")[0]
+                var allele = al.split("*")[1]
+                var total_allele = gene_list[gene].n
+                pos = this.getPos(gene_list[gene].rank, total_gene);
+                pos += (1/(total_gene+1)) * ((allele_list[al].rank+0.5)/total_allele) - (0.5/(total_gene+1))
+                this.addLabel("subline", pos, "*"+allele, this.germline.allele[al].color);
+            }
+        }
+        pos = this.getPos(total_gene, total_gene);
+
+        if (this.can_undefined)
+            this.addLabel("line", pos, "?", "");
+
+        this.populateValueMapping();
+
+        this.gene_list = gene_list;
+        this.allele_list = allele_list;
+        this.total_gene = total_gene;
+        this.displayAllele = displayAllele;
+    },
+
+    /**
      * reset Axis
      * */
     reset: function() {
@@ -111,55 +160,6 @@ Object.assign(GermlineAxis.prototype, {
 
     getPos: function(rank, total) {
         return ((rank+0.5)/(total+1));
-    },
-
-    /**
-     * init axis with a germline object
-     * @param {Germline} germline
-     * @param {string} genetype - "V" "D" or "J"
-     * @param {boolean} displayAllele - (show/hide allele)
-     * */
-    init: function (germline, geneType, displayAllele) {
-        this.reset()
-        this.values = this.m.clones;
-        this.germline = germline;
-        
-        var gene_list = this.germline.gene
-        var allele_list = this.germline.allele
-        var total_gene = Object.keys(gene_list).length
-        
-        if (geneType=="V") this.type2="5"
-        if (geneType=="D") this.type2="4"
-        if (geneType=="J") this.type2="3"
-       
-        var pos; 
-        //labels
-        for (var key in gene_list){
-            pos = this.getPos(gene_list[key].rank, total_gene)
-            this.addLabel("line", pos, key, this.germline.gene[key].color);
-        }
-        
-        if (displayAllele){
-            for (var al in allele_list){
-                var gene = al.split("*")[0]
-                var allele = al.split("*")[1]
-                var total_allele = gene_list[gene].n
-                pos = this.getPos(gene_list[gene].rank, total_gene);
-                pos += (1/(total_gene+1)) * ((allele_list[al].rank+0.5)/total_allele) - (0.5/(total_gene+1))
-                this.addLabel("subline", pos, "*"+allele, this.germline.allele[al].color);
-            }
-        }
-        pos = this.getPos(total_gene, total_gene);
-
-        if (this.can_undefined)
-            this.addLabel("line", pos, "?", "");
-
-        this.populateValueMapping();
-
-        this.gene_list = gene_list;
-        this.allele_list = allele_list;
-        this.total_gene = total_gene;
-        this.displayAllele = displayAllele;
     },
 
     computeBarLabels : function () {
