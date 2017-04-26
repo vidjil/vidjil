@@ -152,9 +152,9 @@ Object.assign(GermlineAxis.prototype, {
         return result;
     },
 
-    addLabel: function(type, pos, text, color) {
+    addLabel: function(type, value, pos, text, color) {
         var label = this.label(type, pos, text, color);
-        this.label_mapping[pos] = label;
+        this.label_mapping[value] = label;
         this.labels.push(label);
     },
 
