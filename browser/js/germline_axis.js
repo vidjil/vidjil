@@ -117,24 +117,20 @@ Object.assign(GermlineAxis.prototype, {
         var gene_list = this.gene_list;
         var allele_list = this.allele_list;
         var total_gene = this.total_gene;
-        var pos;
-        pos = this.getPos(total_gene, total_gene);
+        var value;
         if (clone.hasSeg(this.type2)) {
             var name = clone.seg[this.type2].name;
             if (typeof name != 'undefined' &&
                 typeof gene_list[name.split("*")[0]] != "undefined")
             {
-                var allele = name
-                var gene = name.split("*")[0]
-                pos = this.getPos(this.gene_list[gene].rank, total_gene)
-
                 if (this.displayAllele){
-                    var total_allele = gene_list[gene].n
-                    pos += (1/(total_gene+1)) * ((allele_list[allele].rank+0.5)/total_allele) - (0.5/(total_gene+1))
+                    return value;
+                }else {
+                    return name.split("*")[0]
                 }
             }
         }
-        return pos;
+        return undefined;
     },
     
     /**
