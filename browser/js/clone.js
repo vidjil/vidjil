@@ -1237,12 +1237,16 @@ Clone.prototype = {
         if (typeof this.tag != 'undefined')
             span_star.style.color = this.m.tag[this.getTag()].color
 
+        // Axis
+        var span_axis = document.createElement('span');
+        span_axis.className = "sizeBox";
+
         // Size
-        var span_size = document.createElement('span')
-        span_size.className = "sizeBox";
-        span_size.style.color = this.getColor();
-        span_size.innerHTML = this.getStrSize();
-        span_size.setAttribute('title', this.getPrintableSize());
+        // var span_size = document.createElement('span')
+        // span_size.className = "sizeBox";
+        // span_size.style.color = this.getColor();
+        // span_size.innerHTML = (new Axes(this.m)).available()["Size"].fct(this);
+        // span_size.setAttribute('title', this.getPrintableSize());
 
         // Info
         var span_info = document.createElement('span')
@@ -1263,7 +1267,8 @@ Clone.prototype = {
         // Gather all elements
         div_elem.appendChild(span_info);
         div_elem.appendChild(span_star);
-        div_elem.appendChild(span_size);
+        // div_elem.appendChild(span_size);
+        div_elem.appendChild(span_axis);
     },
 
     toCSVheader: function (m) {
