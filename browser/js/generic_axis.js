@@ -118,17 +118,23 @@ GenericAxis.prototype = {
 
     populateValueMapping: function() {
         var values = this.values;
+        var labels = this.labels;
         var value_mapping = this.value_mapping;
         var label_mapping = this.label_mapping;
 
+        var label_array = [];
+        for (l in labels) {
+            label_array.push(labels[l].text);
+        }
         for (var i = 0; i < values.length; i++) {
             var value = values[i];
             var convert = this.applyConverter(value);
             if (typeof label_mapping[convert] !== 'undefined') {
-                if (typeof value_mapping[convert] === 'undefined') {
-                    value_mapping[convert] = [];
+                var index = label_array.indexOf(convert);
+                if (typeof value_mapping[index] === 'undefined') {
+                    value_mapping[index] = [];
                 }
-                value_mapping[convert].push(value);
+                value_mapping[index].push(value);
             } else if (this.can_undefined){
                 if (typeof value_mapping["?"] === 'undefined')
                     value_mapping["?"] = [];
