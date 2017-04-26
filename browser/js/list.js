@@ -485,11 +485,12 @@ List.prototype = {
                 var span_star = div_elem.getElementsByClassName("starBox")[0];
                 span_star.style.color = this.m.tag[clone.getTag()].color
                 
-                //update clone size
-                var span_size = div_elem.getElementsByClassName("sizeBox")[0];
-                span_size.style.color = clone.getColor();
-                span_size.innerHTML = clone.getStrSize();
-                span_size.setAttribute('title', clone.getPrintableSize());
+                //update clone axis
+                var span_axis = div_elem.getElementsByClassName("sizeBox")[0];
+                span_axis.style.color = clone.getColor();
+                var axis = document.getElementById("list_axis_select");
+                span_axis.innerHTML = (new Axes(this.m)).available()[axis.value].fct(clone);
+                // span_axis.setAttribute('title', clone.getPrintableSize());
 
                 //update cluster icon
                 var span_cluster = div_elem.getElementsByClassName("clusterBox")[0];
