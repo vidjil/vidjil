@@ -1209,6 +1209,13 @@ Clone.prototype = {
         return html
     },
 
+    axisOptions: function() {
+        return [
+            "sequenceLength", "readLength", "n", "lengthCDR3", "productivity",
+            "tag", "coverage", "locus", "Size", "nbSamples"
+        ];
+    },
+
     /**
       * start to fill a node with clone informations common between segmenter and list
       * @param {dom_object} div_elem - html element to complete
