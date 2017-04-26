@@ -124,13 +124,13 @@ Object.assign(GermlineAxis.prototype, {
                 typeof gene_list[name.split("*")[0]] != "undefined")
             {
                 if (this.displayAllele){
-                    return value;
+                    value = name;
                 }else {
-                    return name.split("*")[0]
+                    value = name.split("*")[0];
                 }
             }
         }
-        return undefined;
+        return value;
     },
     
     /**
