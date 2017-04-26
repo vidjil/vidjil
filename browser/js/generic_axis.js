@@ -232,7 +232,8 @@ GenericAxis.prototype = {
 
     },
 
-    posBarLabel : function (i, length) {
+    posBarLabel : function (i) {
+        var length = Object.keys(this.value_mapping).length;
         return (i-0.5)/length ;
     }
 }

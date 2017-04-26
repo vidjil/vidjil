@@ -159,5 +159,15 @@ Object.assign(GermlineAxis.prototype, {
     },
 
     computeBarLabels : function () {
+    },
+
+    posBarLabel: function(i) {
+        var key = Object.keys(this.value_mapping)[i-1];
+        var map = this.value_mapping[key];
+        if (map.length > 0) {
+            var clone = map[0];
+            return this.pos(clone).pos;
+        }
+        return 0;
     }
 })
