@@ -303,7 +303,6 @@ List.prototype = {
         var axis = document.createElement('select');
         axis.setAttribute('name', 'axis_list[]');
         axis.id = "list_axis_select";
-        axis.className = "list_axis_select";
 
         var axOpts = Clone.prototype.axisOptions();
         for (var i in axOpts) {

@@ -1241,13 +1241,6 @@ Clone.prototype = {
         var span_axis = document.createElement('span');
         span_axis.className = "axisBox";
 
-        // Size
-        // var span_size = document.createElement('span')
-        // span_size.className = "axisBox";
-        // span_size.style.color = this.getColor();
-        // span_size.innerHTML = (new Axes(this.m)).available()["Size"].fct(this);
-        // span_size.setAttribute('title', this.getPrintableSize());
-
         // Info
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
@@ -1267,7 +1260,6 @@ Clone.prototype = {
         // Gather all elements
         div_elem.appendChild(span_info);
         div_elem.appendChild(span_star);
-        // div_elem.appendChild(span_size);
         div_elem.appendChild(span_axis);
     },
 
