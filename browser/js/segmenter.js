@@ -498,18 +498,8 @@ Segment.prototype = {
 
                     var axisBox = spanF.getElementsByClassName("sizeBox")[0];
                     axisBox.style.color = clone.getColor();
+                    this.fillAxisBox(axisBox, clone);
 
-                    axisBox.removeAllChildren();
-
-                    var axOpts = Clone.prototype.axisOptions();
-                    for (var j in axOpts) {
-                        if (document.getElementById("sai"+j).checked) {
-                            var span = document.createElement('span');
-                            span.innerHTML = ((new Axes(this.m)).available())[axOpts[j]].fct(clone);
-                            axisBox.appendChild(span);
-                        }
-                    }
-                
                     var spanM = document.getElementById("m" + id);
                     spanM.innerHTML = this.sequence[id].toString(this)
 
@@ -611,8 +601,10 @@ Segment.prototype = {
         seq_name.title = clone.getName();
         seq_name.style.color = clone.color;
 
-        div_elem.getElementsByClassName("sizeBox")[0]
-            .onclick = function (e) {
+        var span_axis = div_elem.getElementsByClassName("sizeBox")[0];
+        span_axis.style.color = clone.getColor();
+        this.fillAxisBox(span_axis, clone);
+        span_axis.onclick = function (e) {
                 clone.unselect();
             }
 
