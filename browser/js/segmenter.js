@@ -661,6 +661,7 @@ Segment.prototype = {
             if (document.getElementById("sai"+i).checked) {
                 var span = document.createElement('span');
                 span.innerHTML = ((new Axes(this.m)).available())[axOpts[i]].fct(clone);
+                span.setAttribute('title', axOpts[i]);
                 axisBox.appendChild(span);
             }
         }
