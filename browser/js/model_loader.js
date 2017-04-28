@@ -53,7 +53,7 @@ Model_loader.prototype = {
             analysisURL = config.autoload_analysis
 
         /** Process arguments given on the URL (overrides conf.js) */
-        if (location.search != '') {
+        if (location.search !== '') {
             var tmp = location.search.substring(1).split('&')
 
             for (var i=0; i<tmp.length; i++){
@@ -76,25 +76,25 @@ Model_loader.prototype = {
                 // Arguments for applyUrlParams()
                 if (tmp2[0] == "clone") {
                     var clonestmp = tmp2[1].split(',');
-                    paramsDict["clone"] = [];
+                    paramsDict.clone = [];
 
-                    for (var j=0; j<clonestmp.length; j++) {
-                        paramsDict["clone"].push(clonestmp[j]);
+                    for (var k=0; k<clonestmp.length; k++) {
+                        paramsDict.clone.push(clonestmp[k]);
                     }
                 }
 
                 if (tmp2[0] == "plot") {
                     var plottmp = tmp2[1].split(',');
-                    paramsDict["plot"] = [];
-                    for (var j=0; j<plottmp.length; j++) {
-                        paramsDict["plot"].push(plottmp[j])
+                    paramsDict.plot = [];
+                    for (var l=0; l<plottmp.length; l++) {
+                        paramsDict.plot.push(plottmp[l])
                     }
                 }
         }
         }
         /** load the default vidjil file, open the database or display the welcome popup depending on the case*/
-        if (dataURL != "") {
-            if (analysisURL != ""){
+        if (dataURL !== "") {
+            if (analysisURL !== ""){
                 var callback = function() {self.loadAnalysisUrl(analysisURL)}
                 this.loadDataUrl(dataURL, paramsDict, callback);
             }else{
@@ -175,7 +175,7 @@ Model_loader.prototype = {
         var input = document.getElementById(analysis)
         
         console.log("loadAnalysis()");
-        if (input.files.length != 0) {
+        if (input.files.length !== 0) {
             var oFReader = new FileReader();
             var oFile = input
                 .files[0];
@@ -278,7 +278,7 @@ Model_loader.prototype = {
         if (typeof data == "string") {
             var json_text = data
             try {
-                var data = jQuery.parseJSON(json_text)
+                data = jQuery.parseJSON(json_text)
             } catch (e) {
                 console.log({"type": "popup", "default": "file_error"});
                 return 0
@@ -320,7 +320,7 @@ Model_loader.prototype = {
         }
         if (typeof self.samples.order == 'undefined'){
             self.samples.order = []
-            for (var i = 0; i < self.samples.number; i++) self.samples.order.push(i);
+            for (var j = 0; j < self.samples.number; j++) self.samples.order.push(j);
         }
         if (self.samples.order.length >= 2) {
             self.tOther = 1
@@ -328,25 +328,25 @@ Model_loader.prototype = {
 
         if (typeof self.samples.names =='undefined'){
             self.samples.names = []
-            for (var i = 0; i < self.samples.number; i++) self.samples.names.push("");
+            for (var l = 0; l < self.samples.number; l++) self.samples.names.push("");
         }
         
         //search for min_size (used to compute the
         var min_sizes = [];
         for (var k = 0; k < self.samples.number; k++) min_sizes[k] = 0.01;
         
-        for (var i = 0; i < this.clones.length; i++) {
-            for (var k = 0; k < self.samples.number; k++) {
-                var size = (self.clone(i).reads[k] / data.reads.segmented[k])
-                if (min_sizes[k] > size && data.clones[i].reads[k] != 0)min_sizes[k] = size;
+        for (var m = 0; m < this.clones.length; m++) {
+            for (var n = 0; n < self.samples.number; n++) {
+                var size = (self.clone(m).reads[n] / data.reads.segmented[n])
+                if (min_sizes[n] > size && data.clones[m].reads[n] !== 0)min_sizes[n] = size;
             }
         }
         self.min_sizes = min_sizes;
 
         // save reads.segmented     
         this.reads.segmented_all = []                                                                                                                                                                                     
-        for (var i=0 ; i<this.reads.segmented.length; i++){
-            this.reads.segmented_all[i] = this.reads.segmented[i]
+        for (var o=0 ; o<this.reads.segmented.length; o++){
+            this.reads.segmented_all[o] = this.reads.segmented[o]
         }
         
         this.compute_average_quality();
@@ -363,14 +363,15 @@ Model_loader.prototype = {
         }
         self.system_selected = [];
         self.system_available = [];
-        for (var i = 0; i < this.clones.length; i++) {
-            var system = this.clone(i).get('germline')
+        var system;
+        for (var p = 0; p < this.clones.length; p++) {
+            system = this.clone(p).get('germline')
             if (typeof system != "undefined" && self.system_available.indexOf(system) ==-1){
                 self.system_available.push(system)
             }
         }
-        for (var key in self.system_available){
-            var system = this.system_available[key]
+        for (var sa in self.system_available){
+            system = this.system_available[sa]
             self.system_selected.push(system)
         }
         
@@ -382,15 +383,15 @@ Model_loader.prototype = {
         }
 
         // add virtuals clones (ex-others)
-        for (var i = 0; i < this.system_available.length; i++) {
+        for (var q = 0; q < this.system_available.length; q++) {
             var other = {
                 "sequence": 0,
-                "id": "other"+this.system_available[i],
+                "id": "other"+this.system_available[q],
                 "top": 0,
                 "reads": [],
-                "germline" : this.system_available[i],
+                "germline" : this.system_available[q],
             };
-            var clone = new Clone(other, self, index, true);
+            new Clone(other, self, index, true);
             index++ ;
         }
         
@@ -403,7 +404,6 @@ Model_loader.prototype = {
     catch (e) {
             console.log({"type": "popup", "default": "parse_error"});
             throw e; 
-            return 0
         }
     
     },
@@ -412,7 +412,7 @@ Model_loader.prototype = {
         // Hacky way of managing fields we do not want to copy without restructuring the whole JSON
         var exceptions = ['id', 'log', 'producer'];
         var fields = [];
-        for (key in src)
+        for (var key in src)
             if (exceptions.indexOf(key) == -1){
                 fields.push(key);
             }
@@ -470,17 +470,17 @@ Model_loader.prototype = {
             for (var tmp = 0; tmp < keys.length; tmp++)
                 dict = this.copyField(dict, analysis, keys[tmp]);
 
-            for (id in dict) {
+            for (var id in dict) {
                 idx = clone.original_names.indexOf(id);
                 if (idx > -1)
-                    for (key in dict[id]) {
+                    for (var key in dict[id]) {
                         clone[key][idx] = dict[id][key];
                     }
 
             }
         }
         if ('order' in analysis) {
-            clone['order'] = this.calculateOrder(clone['order']);
+            clone.order = this.calculateOrder(clone.order);
         }
         return clone;
     },
@@ -507,23 +507,24 @@ Model_loader.prototype = {
         //check version
         if (typeof self.analysis.vidjil_json_version != 'undefined' && self.analysis.vidjil_json_version >= "2014.09"){
 
+            var s;
             //samples
             if (this.analysis.samples) {
-                var s = this.analysis.samples
+                s = this.analysis.samples
                 this.samples = this.copySampleFields(this.samples, s);
             }
             
             //tags
             if (this.analysis.tags && this.analysis.tags.names) {
-                var s = this.analysis.tags
+                s = this.analysis.tags
                 
                 var keys = Object.keys(s.names);
                 for (var i=0; i<keys.length; i++){
                     this.tag[parseInt(keys[i])].name = s.names[keys[i]]
                 }
                
-                for (var i=0; i<s.hide.length; i++){
-                    this.tag[s.hide[i]].display = false;
+                for (var j=0; j<s.hide.length; j++){
+                    this.tag[s.hide[j]].display = false;
                 }
             }
 
@@ -541,8 +542,8 @@ Model_loader.prototype = {
             //clones
             if (this.analysis.clones) {
                 var clones = this.analysis.clones;
-                for (var i = 0; i < clones.length; i++){
-                    var clone = clones[i];
+                for (var k = 0; k < clones.length; k++){
+                    var clone = clones[k];
                     if (clone.segEdited) {
                     for (var n=0; n < this.clones.length; n++){
                         if (clone.id == this.clones[n].id){
@@ -551,8 +552,8 @@ Model_loader.prototype = {
                             for (var time =0; time< this.reads.segmented.length; time ++) {
                                 var oldGermline = this.clones[n].germline;
                                 var newGermline = clone.germline; 
-                                if(oldGermline != "custom") {this.reads.germline[oldGermline][time] -= this.clones[n].reads[time];};
-                                if(newGermline != "custom") {this.reads.germline[newGermline][time] += this.clones[n].reads[time];};
+                                if(oldGermline != "custom") {this.reads.germline[oldGermline][time] -= this.clones[n].reads[time];}
+                                if(newGermline != "custom") {this.reads.germline[newGermline][time] += this.clones[n].reads[time];}
                                 if (newGermline == "custom" && newGermline != oldGermline) {
                                     this.reads.segmented_all[time] -= this.clones[n].reads[time];
                                 } else if (oldGermline == "custom" && newGermline != "custom"){
@@ -616,9 +617,9 @@ Model_loader.prototype = {
      * @return {string} analysis - analysis string in json format
      * */
     strAnalysis: function() {
-        var date = new Date;
-        var timestamp = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() 
-                    + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+        var date = new Date();
+        var timestamp = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() +
+            " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
         
         var analysisData = {
             producer : "browser",
@@ -635,6 +636,7 @@ Model_loader.prototype = {
             tags : {}
         }
 
+        var elem;
         for (var i = 0; i < this.clones.length; i++) {
             var clone = this.clone(i)
 
@@ -644,7 +646,7 @@ Model_loader.prototype = {
                  typeof clone.expected != "undefined" || 
                 (typeof clone.segEdited != "undefined"  && clone.segEdited)) {
 
-                var elem = {};
+                elem = {};
                 elem.id = clone.id;
                 elem.sequence = clone.sequence;
 
@@ -662,13 +664,13 @@ Model_loader.prototype = {
                     //remove unneeded elements sometimes left after IMGT interrogation
                     if (typeof clone.seg.imgt != 'undefined' && clone.seg.imgt["Sequence number"]!==null){
                         delete clone.seg.imgt["Sequence number"];} //m.clones[i].seg.imgt["Sequence number"]
-                };
+                }
                  
                 analysisData.clones.push(elem);
             }
             //clones / cluster
             if (this.clusters[i].length > 1) {
-                var elem = [];
+                elem = [];
                 for (var j = 0; j < this.clusters[i].length; j++) {
                     elem.push(this.clone(this.clusters[i][j]).id);
                 }
@@ -679,9 +681,9 @@ Model_loader.prototype = {
         //tags
         analysisData.tags.names = {}
         analysisData.tags.hide = []
-        for (var i=0; i<this.tag.length; i++){
-            analysisData.tags.names[""+i] = this.tag[i].name
-            if (!this.tag[i].display) analysisData.tags.hide.push(i)
+        for (var k=0; k<this.tag.length; k++){
+            analysisData.tags.names[""+k] = this.tag[k].name
+            if (!this.tag[k].display) analysisData.tags.hide.push(k)
         }
         
         
@@ -698,12 +700,12 @@ Model_loader.prototype = {
 
         // Detects whether we have an old file (before 3e340e1/32aaa23)
         var segMappingZeroBased =
-            ((typeof seg['5'] != 'undefined' && typeof seg['5']['end'] != 'undefined')) ||
+            ((typeof seg['5'] != 'undefined' && typeof seg['5'].end != 'undefined')) ||
             (typeof seg['5end'] != 'undefined')
 
         var segMapping = ['5', '4', '3'];
         var newSeg = {};
-        for (key in seg) {
+        for (var key in seg) {
             var firstChar = key.substring(0, 1);
             if (segMapping.indexOf(firstChar) != -1 && typeof seg[firstChar] != 'object') {
                 if (typeof newSeg[firstChar] == 'undefined') {
@@ -745,8 +747,8 @@ Model_loader.prototype = {
     getConvertedSeg: function(seg, key) {
         var boundaryMapping = {'start': 'start', 'stop': 'end'};
         var newSeg = {};
-        if (typeof seg[key] != 'undefined') newSeg["name"] = seg[key];
-        for(boundary in boundaryMapping) {
+        if (typeof seg[key] != 'undefined') newSeg.name = seg[key];
+        for(var boundary in boundaryMapping) {
             var tmp = this.getConvertedBoundary(seg, key, boundaryMapping[boundary]);
             if (typeof tmp != 'undefined') newSeg[boundary] = tmp;
         }
@@ -761,9 +763,9 @@ Model_loader.prototype = {
      */
     getConvertedSegNames: function(seg) {
         var renameFields = {'end': 'stop'}
-        for (field in renameFields) {
-            if (typeof seg[field] != 'undefined'
-                && typeof seg[renameFields[field]] == 'undefined') {
+        for (var field in renameFields) {
+            if (typeof seg[field] != 'undefined' &&
+                typeof seg[renameFields[field]] == 'undefined') {
                 seg[renameFields[field]] = seg[field]
                 delete seg[field]
             }
@@ -778,8 +780,8 @@ Model_loader.prototype = {
      */
     getCopyConvertedSegNames: function(seg) {
         var newSeg = {};
-        var renameFields = {'end': 'stop'}
-        for (field in seg) {
+        var renameFields = {'end': 'stop'};
+        for (var field in seg) {
             renamed = (typeof renameFields[field] != 'undefined') && (typeof seg[renameFields[field]] == 'undefined') ? renameFields[field] : field ;
             newSeg[renamed] = seg[field]
         }
