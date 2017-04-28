@@ -662,6 +662,18 @@ Segment.prototype = {
         div_elem.appendChild(Videntity_info);
     },
 
+    fillAxisBox: function (axisBox, clone) {
+        axisBox.removeAllChildren();
+        var axOpts = Clone.prototype.axisOptions();
+        for (var i in axOpts) {
+            if (document.getElementById("sai"+i).checked) {
+                var span = document.createElement('span');
+                span.innerHTML = ((new Axes(this.m)).available())[axOpts[i]].fct(clone);
+                axisBox.appendChild(span);
+            }
+        }
+    },
+
     /**
      * add a clone in the segmenter<br>
      * build a div with clone information and sequence
