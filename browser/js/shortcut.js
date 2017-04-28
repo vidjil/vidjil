@@ -43,8 +43,8 @@ Shortcut.prototype = {
         var self = this
         
         this.system_shortcuts = {}
-        for (var system in germline_data['systems']){
-            var keycode = germline_data['systems'][system].shortcut.toUpperCase().charCodeAt(0)
+        for (var system in germline_data.systems){
+            var keycode = germline_data.systems[system].shortcut.toUpperCase().charCodeAt(0)
 
             if (typeof this.system_shortcuts[keycode] == "undefined")
                 this.system_shortcuts[keycode] = []
@@ -65,10 +65,11 @@ Shortcut.prototype = {
     checkKey : function (e) {
         if (this.on){
             e = e || window.event;
-            if (document.activeElement.id == ""){
+            var key;
+            if (document.activeElement.id === ""){
                     
-                var key = e.keyCode;
-                if (key==0) key = e.which
+                key = e.keyCode;
+                if (key===0) key = e.which
                 console.log(e)
                 console.log(key)
                 switch(key) {
@@ -129,7 +130,7 @@ Shortcut.prototype = {
             if (typeof this.system_shortcuts[key] != "undefined") {
 
                     var germlines = this.system_shortcuts[key].filter(function(g) {return m.system_available.indexOf(g) != -1})
-                    if (germlines.length == 0)
+                    if (germlines.length === 0)
                         return ;
 
                     console.log("Germlines with key " + key + ": " + germlines)
