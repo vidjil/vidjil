@@ -71,13 +71,13 @@ Object.assign(GermlineAxis.prototype, {
         var pos;
         pos = this.getPos(total_gene, total_gene);
         if (clone.hasSeg(this.type2)) {
-            var name = clone.seg[this.type2]["name"];
-            if (typeof name != 'undefined'
-                && typeof gene_list[name.split("*")[0]] != "undefined")
+            var name = clone.seg[this.type2].name;
+            if (typeof name != 'undefined' &&
+                typeof gene_list[name.split("*")[0]] != "undefined")
             {
                 var allele = name
                 var gene = name.split("*")[0]
-                var pos = this.getPos(this.gene_list[gene].rank, total_gene)
+                pos = this.getPos(this.gene_list[gene].rank, total_gene)
 
                 if (this.displayAllele){
                     var total_allele = gene_list[gene].n
@@ -128,11 +128,11 @@ Object.assign(GermlineAxis.prototype, {
         var allele_list = this.germline.allele
         var total_gene = Object.keys(gene_list).length
         
-        this.type2;
         if (geneType=="V") this.type2="5"
         if (geneType=="D") this.type2="4"
         if (geneType=="J") this.type2="3"
-        
+       
+        var pos; 
         //labels
         for (var key in gene_list){
             pos = this.getPos(gene_list[key].rank, total_gene)
@@ -140,16 +140,16 @@ Object.assign(GermlineAxis.prototype, {
         }
         
         if (displayAllele){
-            for (var key in allele_list){
-                var gene = key.split("*")[0]
-                var allele = key.split("*")[1]
+            for (var al in allele_list){
+                var gene = al.split("*")[0]
+                var allele = al.split("*")[1]
                 var total_allele = gene_list[gene].n
-                var pos = this.getPos(gene_list[gene].rank, total_gene);
-                pos += (1/(total_gene+1)) * ((allele_list[key].rank+0.5)/total_allele) - (0.5/(total_gene+1))
-                this.addLabel("subline", pos, "*"+allele, this.germline.allele[key].color);
+                pos = this.getPos(gene_list[gene].rank, total_gene);
+                pos += (1/(total_gene+1)) * ((allele_list[al].rank+0.5)/total_allele) - (0.5/(total_gene+1))
+                this.addLabel("subline", pos, "*"+allele, this.germline.allele[al].color);
             }
         }
-        var pos = this.getPos(total_gene, total_gene);
+        pos = this.getPos(total_gene, total_gene);
 
         if (this.can_undefined)
             this.addLabel("line", pos, "?", "");
