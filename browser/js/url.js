@@ -29,17 +29,17 @@ Url.prototype= {
         var selectedList = this.m.getSelected();
         var params_dict = this.url_dict;
         
-        params_dict["clone"] = selectedList.join();
+        params_dict.clone = selectedList.join();
 
         if (this.sp.select_preset.selectedIndex!=this.sp.default_preset) {
-            params_dict["plot"] = this.sp.splitX+','+this.sp.splitY+','+this.sp.mode;
+            params_dict.plot = this.sp.splitX+','+this.sp.splitY+','+this.sp.mode;
         } else {
 	    delete params_dict[this.sp.mode];
     	}
 
         var params_list = [];       
         for (var key in params_dict){
-            if ((typeof key != "undefined" && key != "") && (typeof params_dict[key]!= "undefined" && params_dict[key] != '')) {
+            if ((typeof key != "undefined" && key !== "") && (typeof params_dict[key]!= "undefined" && params_dict[key] !== '')) {
                 params_list.push(key+"="+params_dict[key])
             }
         }
@@ -84,7 +84,7 @@ Url.prototype= {
 
     parseUrlParams:function (urlparams) {
         params={}
-        if (urlparams.length == 0) {
+        if (urlparams.length === 0) {
             return params;
         }
         url_param = urlparams.substr(1).split("&");
