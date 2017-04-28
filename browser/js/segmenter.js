@@ -494,7 +494,21 @@ Segment.prototype = {
                     namebox.title = clone.getName();
                     namebox.style.color = clone.color;
                     spanF.getElementsByClassName("nameBox2")[0].innerHTML = clone.getShortName();
-                    spanF.getElementsByClassName("sizeBox")[0].innerHTML = clone.getStrSize();
+                    // spanF.getElementsByClassName("sizeBox")[0].innerHTML = clone.getStrSize();
+
+                    var axisBox = spanF.getElementsByClassName("sizeBox")[0];
+                    axisBox.style.color = clone.getColor();
+
+                    axisBox.removeAllChildren();
+
+                    var axOpts = Clone.prototype.axisOptions();
+                    for (var j in axOpts) {
+                        if (document.getElementById("sai"+j).checked) {
+                            var span = document.createElement('span');
+                            span.innerHTML = ((new Axes(this.m)).available())[axOpts[j]].fct(clone);
+                            axisBox.appendChild(span);
+                        }
+                    }
                 
                     var spanM = document.getElementById("m" + id);
                     spanM.innerHTML = this.sequence[id].toString(this)
