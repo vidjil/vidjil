@@ -572,13 +572,17 @@ line {
   width: 250px;
 }
 
-.axisBox, .identityBox {
-  width: @width_axisBox;
+.list .axisBox, .axisBox span, .identityBox {
+  max-width: @width_axisBox;
   float: right;
   overflow: hidden;
   display: inline-block;
   height: 16px;
   position: relative;
+}
+
+.segmenter .axisBox span {
+  margin : 0 3px;
 }
 
 .identityBox {
@@ -719,7 +723,8 @@ line {
 .seq-fixed {
   position: relative;
   display: inline-block;
-  width: (@width_left_container - @width_scrollbar);
+//  width: (@width_left_container - @width_scrollbar);
+  width : auto;
   margin: -2px;
   padding: 2px;
   padding-left: 5px;
