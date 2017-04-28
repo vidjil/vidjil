@@ -74,10 +74,21 @@ def edit_form():
         elif not re.match(r"[^@]+@[^@]+\.[^@]+", request.vars["email"]):
             error += "incorrect email format"
 
+        if request.vars["password"] != "":
+            if request.vars["confirm_password"] != request.vars["password"]:
+                error += "password fields must match"
+            else:
+                password = db.auth_user.password.validate(request.vars["password"])[0]
+
         if error == "":
-            db.auth_user[request.vars['id']] = dict(first_name = request.vars["first_name"],
+            data = dict(first_name = request.vars["first_name"],
                                                     last_name = request.vars["last_name"],
                                                     email = request.vars["email"])
+            if 'password' in vars():
+                data["password"] = password
+
+            db.auth_user[request.vars['id']] = data
+            db.commit()
             res = {"redirect": "back",
                     "message": "%s (%s) user edited" % (request.vars["email"], request.vars["id"])}
             log.info(res)
