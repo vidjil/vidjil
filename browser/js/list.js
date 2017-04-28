@@ -423,7 +423,7 @@ List.prototype = {
             self.clickList(e, cloneID);
         }
 
-        div_elem.getElementsByClassName("sizeBox")[0]
+        div_elem.getElementsByClassName("axisBox")[0]
             .onclick = function (e) {
                 self.clickList(e, cloneID);
             }
@@ -486,7 +486,7 @@ List.prototype = {
                 span_star.style.color = this.m.tag[clone.getTag()].color
                 
                 //update clone axis
-                var span_axis = div_elem.getElementsByClassName("sizeBox")[0];
+                var span_axis = div_elem.getElementsByClassName("axisBox")[0];
                 span_axis.style.color = clone.getColor();
                 var axis = document.getElementById("list_axis_select");
                 span_axis.innerHTML = (new Axes(this.m)).available()[axis.value].fct(clone);
@@ -580,7 +580,7 @@ List.prototype = {
             img.className = "delBox";
 
             var span_stat = document.createElement('span');
-            span_stat.className = "sizeBox";
+            span_stat.className = "axisBox";
 
             var r = 100
             if (clusterSize !== 0) {
@@ -698,11 +698,11 @@ List.prototype = {
 
                 $("#" + list[i] + " .nameBox:first")
                     .css("color", color)
-                $("#" + list[i] + " .sizeBox:first")
+                $("#" + list[i] + " .axisBox:first")
                     .css("color", color)
                 $("#_" + list[i] + " .nameBox:first")
                     .css("color", color)
-                $("#_" + list[i] + " .sizeBox:first")
+                $("#_" + list[i] + " .axisBox:first")
                     .css("color", color)
 
                 //clone selected ?

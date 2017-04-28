@@ -1239,11 +1239,11 @@ Clone.prototype = {
 
         // Axis
         var span_axis = document.createElement('span');
-        span_axis.className = "sizeBox";
+        span_axis.className = "axisBox";
 
         // Size
         // var span_size = document.createElement('span')
-        // span_size.className = "sizeBox";
+        // span_size.className = "axisBox";
         // span_size.style.color = this.getColor();
         // span_size.innerHTML = (new Axes(this.m)).available()["Size"].fct(this);
         // span_size.setAttribute('title', this.getPrintableSize());

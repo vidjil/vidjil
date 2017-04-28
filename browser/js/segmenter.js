@@ -496,7 +496,7 @@ Segment.prototype = {
                     spanF.getElementsByClassName("nameBox2")[0].innerHTML = clone.getShortName();
                     // spanF.getElementsByClassName("sizeBox")[0].innerHTML = clone.getStrSize();
 
-                    var axisBox = spanF.getElementsByClassName("sizeBox")[0];
+                    var axisBox = spanF.getElementsByClassName("axisBox")[0];
                     axisBox.style.color = clone.getColor();
                     this.fillAxisBox(axisBox, clone);
 
@@ -601,7 +601,7 @@ Segment.prototype = {
         seq_name.title = clone.getName();
         seq_name.style.color = clone.color;
 
-        var span_axis = div_elem.getElementsByClassName("sizeBox")[0];
+        var span_axis = div_elem.getElementsByClassName("axisBox")[0];
         span_axis.style.color = clone.getColor();
         this.fillAxisBox(span_axis, clone);
         span_axis.onclick = function (e) {
