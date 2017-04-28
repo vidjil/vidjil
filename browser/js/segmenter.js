@@ -138,6 +138,47 @@ Segment.prototype = {
             div_menu.appendChild(span)
             }
 
+            span = document.createElement('span');
+            span.id = "segmenter_axis_menu";
+            span.onmouseover = function() {showSelector('segmenter_axis_select')};
+            span.appendChild(document.createTextNode("axis"));
+
+            var axis = document.createElement('span');
+            axis.id = "segmenter_axis_select";
+            axis.className = "selector";
+            axis.style.position = "absolute";
+            axis.style.top = "-230px";
+            axis.onmouseout = function() {hideSelector('segmenter_axis_select')};
+
+            var tmp = document.createElement('div');
+
+            var axOpts = Clone.prototype.axisOptions();
+            for (var i in axOpts) {
+                var axis_option = document.createElement('div');
+
+                var input = document.createElement('input');
+                input.setAttribute('type', "checkbox");
+                input.setAttribute('value', axOpts[i]);
+                input.setAttribute('id', "sai"+i); // segmenter axis input
+                if (axOpts[i] == "Size") input.setAttribute('checked', "");
+                input.onchange = function() {
+                    self.update();
+                };
+
+                var label = document.createElement('label');
+                label.setAttribute('for', "sai"+i);
+                label.appendChild(document.createTextNode(axOpts[i]));
+
+                axis_option.appendChild(input);
+                axis_option.appendChild(label);
+                tmp.appendChild(axis_option);
+            }
+
+            axis.appendChild(tmp);
+            span.appendChild(axis);
+
+            div_menu.appendChild(span)
+
             //toIMGT button
             span = document.createElement('span');
             span.id = "toIMGT"
