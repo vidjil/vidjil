@@ -45,7 +45,7 @@ function dataWithManyClones(many) {
                 }
             }
 
-        json_data['clones'].push(clone);
+        json_data.clones.push(clone);
     }
 
     return json_data
