@@ -311,8 +311,8 @@ Clone.prototype = {
 
         if ((typeof p.seq != 'undefined') && (typeof p.start == 'undefined')) {
             // sequence, we compute the start position
-            this.addSegFeatureFromSeq(field, p.seq)
-            p = this.seg[field]
+            this.addSegFeatureFromSeq(field_name, p.seq)
+            p = this.seg[field_name]
         }
 
         return p
