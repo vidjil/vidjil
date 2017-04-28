@@ -34,22 +34,22 @@
     var t =Math.floor(( v * ( 1 - ( s * (1-f) ) ) )*255);
     v=Math.floor(v*255);
     
-    if (i==0){
+    if (i===0){
       return "rgb("+v+","+t+","+p+")";
     }
-    if (i==1){
+    if (i===1){
       return "rgb("+q+","+v+","+p+")";
     }
-    if (i==2){
+    if (i===2){
       return "rgb("+p+","+v+","+t+")";
     }
-    if (i==3){
+    if (i===3){
       return "rgb("+p+","+q+","+v+")";
     }
-    if (i==4){
+    if (i===4){
       return "rgb("+t+","+p+","+v+")";
     }
-    if (i==5){
+    if (i===5){
       return "rgb("+v+","+p+","+q+")";
     }
   }
@@ -69,11 +69,11 @@ function colorGeneratorIndex(i) {
 function colorProductivity(is_productive) {
     if (typeof is_productive == 'undefined') {
         return '';
-    } else if (is_productive == true || is_productive == 'true'
-               || is_productive == 'TRUE') {
+    } else if (is_productive === true || is_productive == 'true' ||
+            is_productive == 'TRUE') {
         return '#2aa198';
-    } else if (is_productive == false || is_productive == 'false'
-               || is_productive == 'FALSE'){
+    } else if (is_productive === false || is_productive == 'false' ||
+            is_productive == 'FALSE'){
         return '#d33682';
     }
     return '';
