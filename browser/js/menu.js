@@ -33,7 +33,7 @@ Menu.prototype = {
 function initMenu () {
     if (typeof config != 'undefined') {
 
-        if (config.file_menu && config.file_menu.file.length != 0){
+        if (config.file_menu && config.file_menu.file.length !== 0){
             
             //detect if files are available
             $.ajax({
@@ -85,8 +85,8 @@ function loadData() {
     if (m.analysisHasChanged){
         m.analysisHasChanged = false;
         console.log({"type": "popup", "default": "save_analysis",
-                    "msg": "<div class=\'center\'> <button onclick=\'loadData()\'>Continue</button> "
-                    + " <button onclick='console.closePopupMsg()'>Cancel</button> </div>"});
+                    "msg": "<div class=\'center\'> <button onclick=\'loadData()\'>Continue</button> " +
+                    " <button onclick='console.closePopupMsg()'>Cancel</button> </div>"});
         return
     }
 
