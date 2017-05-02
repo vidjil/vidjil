@@ -158,8 +158,8 @@ List.prototype = {
             this.index[i] = div;
         }
         
-        for (var i = 0; i < this.m.clones.length; i++) {
-            this.buildElem(i);
+        for (var j = 0; j < this.m.clones.length; j++) {
+            this.buildElem(j);
         }
         
         div_parent.appendChild(div_list_menu)
@@ -426,9 +426,8 @@ List.prototype = {
             var self = this;
             var div_elem = this.index[cloneID];
             
-            if (!((clone.isActive() && this.m.clusters[cloneID].length != 0)
-                  ||
-                  (clone.isVirtual() && this.m.system_selected.indexOf(clone.germline) != -1)))
+            if (!((clone.isActive() && this.m.clusters[cloneID].length !== 0) ||
+                  (clone.isVirtual() && this.m.system_selected.indexOf(clone.germline) !== -1)))
             {
                 div_elem.style.display = "none";
             }else{
@@ -550,7 +549,7 @@ List.prototype = {
                 span_stat.className = "sizeBox";
                 
                 var r = 100
-                if (clusterSize != 0) {
+                if (clusterSize !== 0) {
                     span_stat.appendChild(document.createTextNode( (clone.get('reads', self.m.t)*100/clusterReads).toFixed(1) + "%"));
                 } else {
                     span_stat.appendChild(document.createTextNode("0%"))
@@ -593,7 +592,7 @@ List.prototype = {
         input.onkeydown = function (e) {
             e = e || window.event;
             var key = e.keyCode
-            if (key == 0) key = e.which 
+            if (key === 0) key = e.which
             if (key == 13) {
                 $('#btnSave').click();
                 $(input).blur();
@@ -651,8 +650,7 @@ List.prototype = {
 
             var clone = this.m.clone(list[i])
 
-            if (!((clone.isActive() && this.m.clusters[list[i]].length != 0)
-                  ||
+            if (!((clone.isActive() && this.m.clusters[list[i]].length !== 0) ||
                   (clone.isVirtual() && this.m.system_selected.indexOf(clone.germline) != -1))){
                 div.style.display = "none";
             }else{
