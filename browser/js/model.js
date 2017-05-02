@@ -1702,7 +1702,7 @@ changeAlleleNotation: function(alleleNotation) {
     formatSize: function (size, fixed, sizeQ) {
         var result = "-"
 
-        if (size === 0) return result
+        if (size === 0 || typeof size == 'undefined') return result
 
         if (typeof sizeQ !== 'undefined') {
             if (size < sizeQ) {
