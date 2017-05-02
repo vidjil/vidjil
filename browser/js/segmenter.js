@@ -604,9 +604,6 @@ Segment.prototype = {
         var span_axis = div_elem.getElementsByClassName("axisBox")[0];
         span_axis.style.color = clone.getColor();
         this.fillAxisBox(span_axis, clone);
-        span_axis.onclick = function (e) {
-                clone.unselect();
-            }
 
         if (this.m.clone_info == cloneID) {
             div_elem.getElementsByClassName("infoBox")[0]
