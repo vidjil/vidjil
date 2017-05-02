@@ -139,7 +139,7 @@ function hideSelector() {
 
 function showDisplayMenu() {
     $('#display-menu')
-        .stop
+        .stop()
     $('#display-menu')
         .toggle("fast");
 }
