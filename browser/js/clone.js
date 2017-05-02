@@ -1216,6 +1216,14 @@ Clone.prototype = {
         ];
     },
 
+    /** return the clone's value from a specified axis
+      * @param {string} axis - axis exact string name
+      * @return {object} axis value, usually a number or string
+      **/
+    getAxisValue: function (axis) {
+        return ((new Axes(this.m)).available())[axis].fct(this);
+    },
+
     /**
       * start to fill a node with clone informations common between segmenter and list
       * @param {dom_object} div_elem - html element to complete
