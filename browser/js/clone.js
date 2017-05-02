@@ -1217,11 +1217,14 @@ Clone.prototype = {
     },
 
     /** return the clone's value from a specified axis
-      * @param {string} axis - axis exact string name
+      * @param {string} axisName - axis exact string name
       * @return {object} axis value, usually a number or string
       **/
-    getAxisValue: function (axis) {
-        return ((new Axes(this.m)).available())[axis].fct(this);
+    getAxisValue: function (axisName) {
+        var axis = (new Axes(this.m)).available()[axisName];
+        var ret = axis.fct(this);
+        if (axis.pretty) return axis.pretty(ret);
+        else return ret;
     },
 
     /**
