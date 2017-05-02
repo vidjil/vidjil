@@ -100,8 +100,8 @@ GenericAxis.prototype = {
 
         var step = 1/(this.labels.length+1);
         offset = step/2;
-        for (var i in this.labels){
-            this.labels[i].pos += offset;
+        for (var idx in this.labels){
+            this.labels[idx].pos += offset;
         }
     },
 
@@ -167,13 +167,13 @@ GenericAxis.prototype = {
         return value;
     },
 
-    computeLabels(values) {
+    computeLabels: function(values) {
         var cursor = 0;
         var labels = {};
+        var has_undefined;
         for (var i = 0; i < values.length; i++) {
             var value = values[i];
             var key = this.applyConverter(value);
-            var has_undefined
             if (typeof key == 'undefined') {
                 has_undefined = true;
             } else if (typeof labels[key] === 'undefined') {
@@ -182,8 +182,8 @@ GenericAxis.prototype = {
             }
         }
 
-        for (var key in labels) {
-            var label = labels[key];
+        for (var idx in labels) {
+            var label = labels[idx];
             this.addLabel(label.type, label.text, label.pos/cursor, label.text);
         }
         if (has_undefined) {
@@ -204,7 +204,7 @@ GenericAxis.prototype = {
         var text;
         var i=1
         for (var e in this.value_mapping){
-            if (i%step == 0 || (e == '?' && tab[e].length > 0)){
+            if (i%step === 0 || (e == '?' && tab[e].length > 0)){
                 var pos = this.posBarLabel(i, length);
                 if (this.reverse) pos = 1 - pos;
                 this.labels.push(this.label("line", pos, e));

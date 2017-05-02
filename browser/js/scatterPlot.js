@@ -60,9 +60,9 @@ function ScatterPlot(id, model, database) {
     */
     this.mouseZoom = 1; //Zoom (scroll wheel)
     this['continue'] = false; //Boolean used for the nodes movements
-    this.allEdges = new Array(); //Initial edges array
-    this.edgeSaved = new Array(); //Edges array saved for the Edit Distance visualization
-    this.edge = new Array(); //Edges array given to the engine
+    this.allEdges = []; //Initial edges array
+    this.edgeSaved = []; //Edges array saved for the Edit Distance visualization
+    this.edge = []; //Edges array given to the engine
     this.edgeContainer = null; //SVG element to save the container of graph distribution
     this.active_move = false; //Boolean given to the nodes movements
     this.reloadCharge = true; //Boolean allowing to reload the physic engine charge (reject)
@@ -89,7 +89,7 @@ function ScatterPlot(id, model, database) {
     this.splitY = "gene_j"; //Distribution method, for the Y axis
     this.splitX = "gene_v"; //Distribution method, for the X axis
 
-    this.time0 = Date.now(), //Initial date saved
+    this.time0 = Date.now(); //Initial date saved
     this.time1 = this.time0; //Frames computed
     this.fpsqueue = []; //Numbers of frames computed, according to the 20th last values
 
@@ -283,7 +283,7 @@ ScatterPlot.prototype = {
             this.nodes[i].old_x = [0, 0, 0, 0, 0]
             this.nodes[i].y = Math.random() * 250;
             this.nodes[i].old_y = [0, 0, 0, 0, 0]
-        };
+        }
 
         //Initialisation of the D3JS physic engine
         this.force = d3.layout.force();
@@ -397,9 +397,10 @@ ScatterPlot.prototype = {
         }
         
         //Ajout de chaque méthode de répartition dans les menus pour l'axe des X/Y
+        var element;
         for (var key in this.available_axis) {
             if (typeof this.available_axis[key].hide == "undefined" || !this.available_axis[key].hide){
-                var element = document.createElement("option");
+                element = document.createElement("option");
                 element.setAttribute('value', key);
                 var text = document.createTextNode(this.available_axis[key].label);
                 element.appendChild(text);
@@ -419,14 +420,14 @@ ScatterPlot.prototype = {
             self.changePreset();
         }
         
-        var element = document.createElement("option");
+        element = document.createElement("option");
         element.setAttribute('value', "custom");
         element.appendChild(document.createTextNode("–"));
         this.select_preset.appendChild(element);
 
         var p = 0
         for (var i in this.preset) {
-            var element = document.createElement("option");
+            element = document.createElement("option");
             element.setAttribute('value', i);
             element.appendChild(document.createTextNode('[' + (p < 10 ? p : '⇧' + (p-10)) + '] ' + i));
             this.select_preset.appendChild(element);
@@ -595,7 +596,7 @@ ScatterPlot.prototype = {
                 this.sortBarTab(fct);
                 break;
             case "allele_j" :
-                var yFct = function(clone){return clone.getGene("3")};
+                yFct = function(clone){return clone.getGene("3")};
                 this.axisY.init(this.m.clones, yFct);
                 this.sortBarTab(yFct);
                 break;
@@ -638,12 +639,12 @@ ScatterPlot.prototype = {
             this.barTab[i].sort(function (a,b) {
                 var va;
                 try{
-                    var va = fct(this.m.clone(a));
+                    va = fct(this.m.clone(a));
                 }catch(e){
                 }
                 var vb;
                 try{
-                    var vb = fct(this.m.clone(b));
+                    vb = fct(this.m.clone(b));
                 }catch(e){}
                 
                 if (typeof va == "undefined") return (typeof vb == "undefined")  ? 0 :  -1;
@@ -698,11 +699,11 @@ ScatterPlot.prototype = {
         
         
         //reset (TODO improve default position )
-        for (var i in this.nodes) {
-            this.nodes[i].bar_y = 0.5;
-            this.nodes[i].bar_x = 1;
-            this.nodes[i].bar_h = 0;
-            this.nodes[i].bar_w = 0;
+        for (var n in this.nodes) {
+            this.nodes[n].bar_y = 0.5;
+            this.nodes[n].bar_x = 1;
+            this.nodes[n].bar_h = 0;
+            this.nodes[n].bar_w = 0;
         }
         
         k=1 ;
@@ -852,9 +853,10 @@ ScatterPlot.prototype = {
         var h = this.resizeH
         var w = this.resizeW * 0.2
 
+        var system
         //compute hidden position for unactivated germline (to avoid firework effect)
-        for (var key in this.m.system_available) {
-            var system = this.m.system_available[key]
+        for (var sa in this.m.system_available) {
+            system = this.m.system_available[sa]
             this.systemGrid[system] = {
                 'x': 0.99,
                 'y': 0.99
@@ -865,7 +867,7 @@ ScatterPlot.prototype = {
         var i = 0;
         for (var key in this.m.system_available) {
 
-            var system = this.m.system_available[key]
+            system = this.m.system_available[key]
 
             var enabled = false
             if (this.m.system_selected.indexOf(system) != -1) enabled = true
@@ -873,14 +875,14 @@ ScatterPlot.prototype = {
             var xpos = 0.8
 
             if (system != this.m.germlineV.system) {
-                this.systemGrid["label"].push({
+                this.systemGrid.label.push({
                     "text": system,
                     "enabled": enabled,
                     "x": xpos + 0.01,
                     "y": ((i * 2) + 1) / (n * 2)
                 })
             } else {
-                this.systemGrid["label"].push({
+                this.systemGrid.label.push({
                     "text": system,
                     "enabled": enabled,
                     "x": xpos,
@@ -902,8 +904,8 @@ ScatterPlot.prototype = {
         var print = true
         if (typeof div_height == 'undefined') {
             var div = document.getElementById(this.id)
-            var div_height = div.offsetHeight
-            var div_width = div.offsetWidth
+            div_height = div.offsetHeight
+            div_width = div.offsetWidth
             print = false
         }
         this.compute_size(div_width, div_height, print)
@@ -934,8 +936,8 @@ ScatterPlot.prototype = {
     compute_size: function(div_width, div_height, print) {
         if (typeof div_height == 'undefined') {
             var div = document.getElementById(this.id)
-            var div_height = div.offsetHeight
-            var div_width = div.offsetWidth
+            div_height = div.offsetHeight
+            div_width = div.offsetWidth
         }
         //On prend la largeur de la div
         this.resizeW = div_width - this.margin[3] - this.margin[1];
@@ -1023,9 +1025,9 @@ ScatterPlot.prototype = {
 
         var quad = d3.geom.quadtree(this.nodes)
 
-        for (var i = 0; i < this.nodes.length; i++) {
-            if (this.nodes[i].r1 > 0.1) {
-                quad.visit(this.collide(this.nodes[i]));
+        for (var j = 0; j < this.nodes.length; j++) {
+            if (this.nodes[j].r1 > 0.1) {
+                quad.visit(this.collide(this.nodes[j]));
             }
         }
         this.active_node.each(this.debugNaN())
@@ -1071,16 +1073,17 @@ ScatterPlot.prototype = {
             }
             d.old_x.push(d.x);
             d.old_x.shift();
+            var delta, s;
             if (d.x != d.x2) {
-                var delta = d.x2 - d.x;
-                var s = ((d.r1 / self.resizeCoef))
+                delta = d.x2 - d.x;
+                s = ((d.r1 / self.resizeCoef))
                 d.x += 0.015 * delta
             }
             d.old_y.push(d.y);
             d.old_y.shift();
             if (d.y != d.y2) {
-                var delta = d.y2 - d.y;
-                var s = ((d.r1 / self.resizeCoef))
+                delta = d.y2 - d.y;
+                s = ((d.r1 / self.resizeCoef))
                 d.y += 0.015 * delta
             }
         }
@@ -1129,7 +1132,7 @@ ScatterPlot.prototype = {
         return function(quad, x1, y1, x2, y2) {
             var node2 = quad.point
             
-            if (node2 && (node2 !== node) && node2.r1 != 0) {
+            if (node2 && (node2 !== node) && node2.r1 !== 0) {
                 var delta_x = node.x - node2.x,
                     delta_y = node.y - node2.y,
                     delta = Math.sqrt( (delta_x * delta_x) + (delta_y * delta_y) ),
@@ -1207,7 +1210,7 @@ ScatterPlot.prototype = {
      * @param {float} size - clone ratio size, between 0.0 and 1.0
      * */
     radiusClone: function(size) {
-        if (size == 0)
+        if (size === 0)
             return 0 ;
         //Math.pow(x,y) -> x**y
         return this.resizeCoef * Math.pow((size + this.resizeMinSize), (1 / 3)) / 25
@@ -1244,26 +1247,27 @@ ScatterPlot.prototype = {
         if (this.m.clone(cloneID)
             .isActive()) {
 
+            var seqID, size;
             if (this.m.clone(cloneID)
                 .split) {
                 // Display merged sub-clones
                 for (var i = 0; i < this.m.clusters[cloneID].length; i++) {
-                    var seqID = this.m.clusters[cloneID][i]
-                    var size = this.m.clone(seqID)
+                    seqID = this.m.clusters[cloneID][i]
+                    size = this.m.clone(seqID)
                         .getSequenceSize();
 
                     this.updateCloneSize(seqID, size)
                 }
             } else {
                 // Do not display merged sub-clones
-                for (var i = 0; i < this.m.clusters[cloneID].length; i++) {
-                    var seqID = this.m.clusters[cloneID][i]
+                for (var j = 0; j < this.m.clusters[cloneID].length; j++) {
+                    seqID = this.m.clusters[cloneID][j]
                     this.nodes[seqID].s = 0
                     this.nodes[seqID].r1 = 0
                 }
-                var size = this.m.clone(cloneID)
+                size = this.m.clone(cloneID)
                     .getSize2();
-                if (this.m.clusters[cloneID].length == 0) size = this.m.clone(cloneID)
+                if (this.m.clusters[cloneID].length === 0) size = this.m.clone(cloneID)
                     .getSequenceSize();
 
                 this.updateCloneSize(cloneID, size)
@@ -1623,7 +1627,7 @@ ScatterPlot.prototype = {
             .text(function(d) {return d.text})
             .attr("class", "sp_legend2")
             .attr("transform", function(d) {
-                if (d.rotate != 0) return "rotate(" + d.rotation + " " + d.x + " " + d.y + ")"
+                if (d.rotate !== 0) return "rotate(" + d.rotation + " " + d.x + " " + d.y + ")"
             })
     },
 
@@ -1735,7 +1739,7 @@ ScatterPlot.prototype = {
     updateAxis: function(splitMethod) {
         var axis;
         var aa = this.available_axis[splitMethod] 
-        if (aa != undefined) {
+        if (aa !== undefined) {
             axis = aa.axis;
         }
         switch (splitMethod) {
@@ -1840,14 +1844,15 @@ ScatterPlot.prototype = {
         //Active selector -> activeSelector() function
         if (this.active_selector) {
 
+            var width, height;
             /*Movement of all nodes, with mouse move*/
             if (this.active_move) {
 
                 this.positionToMove.x = this.coordinates[0];
                 this.positionToMove.y = this.coordinates[1];
 
-                var width = this.positionToMove.originx - this.positionToMove.x;
-                var height = this.positionToMove.originy - this.positionToMove.y;
+                width = this.positionToMove.originx - this.positionToMove.x;
+                height = this.positionToMove.originy - this.positionToMove.y;
 
                 this.fixedAllClones(false);
 
@@ -1873,8 +1878,8 @@ ScatterPlot.prototype = {
                 var x = this.selector.attr("originx");
                 var y = this.selector.attr("originy");
 
-                var width = this.coordinates[0] - x;
-                var height = this.coordinates[1] - y;
+                width = this.coordinates[0] - x;
+                height = this.coordinates[1] - y;
 
                 if (width > 5) {
                     this.selector.attr("width", width - 3)
@@ -1937,15 +1942,16 @@ ScatterPlot.prototype = {
                 for (var i = 0; i < this.nodes.length; i++) {
                     var node = this.nodes[i]
                     var clone = this.m.clone(i)
+                    var node_x, node_y;
                     if (this.mode != this.MODE_BAR) {
-                        var node_x = node.x + this.margin[3]
-                        var node_y = node.y + this.margin[0]
+                        node_x = node.x + this.margin[3]
+                        node_y = node.y + this.margin[0]
                     } else {
                         // bar_x and bar_y are both ratio values (between 0 and 1), need to multiply by the size of the grid
-                        var node_x = node.bar_x * this.gridSizeW + this.margin[3];
+                        node_x = node.bar_x * this.gridSizeW + this.margin[3];
                         var mid_y = node.bar_y - node.bar_h / 2; // bar_x represents the middle of the rectangle, but not bar_y
                         // bar_y starts from bottom, so we need to substract the y value from the height of the grid
-                        var node_y = this.gridSizeH - mid_y * this.gridSizeH + this.margin[0];
+                        node_y = this.gridSizeH - mid_y * this.gridSizeH + this.margin[0];
                     }
 
                     if (clone.isActive() && (clone.getSize() || clone.getSequenceSize()) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)

@@ -12,9 +12,9 @@ var console;
  * @return {undefined} if the form is invalid.
  */
 function validateForm(form) {
-    var data = form['sequences'].value;
+    var data = form.sequences.value;
     if (!data) {
-        data = form['sequences_file'].files[0];
+        data = form.sequences_file.files[0];
         if (!data) {
             data = undefined;
             displayError('No sequences provided.');
@@ -44,9 +44,9 @@ function displayError(error, rawError, exc) {
  * @param {function} error - the function to call when an error occurs.
  **/
 function requestVidjilFile(sequences, callback, error) {
-    var urlController = (typeof config != 'undefined' && typeof config.segmenter_address != 'undefined')
-                      ? config.segmenter_address
-                      : DEFAULT_SEGMENTER_ADDRESS;
+    var urlController = (typeof config != 'undefined' && typeof config.segmenter_address != 'undefined')?
+                        config.segmenter_address :
+                        DEFAULT_SEGMENTER_ADDRESS;
     var dataToSend = new FormData();
     dataToSend.append('sequences', sequences);
 
@@ -119,17 +119,18 @@ function displayWaitingForCallback(waiting) {
 
     for (var i = 0; i < views.length; i++) {
         var view = views[i];
+        var imgLoading
         // Update class depending on whether the page is waiting for response or not
         if (waiting) {
             view.classList.add('waitingResponse');
             view.classList.remove('notWaitingResponse');
 
             // Create loader image
-            var imgLoading = icon('icon-spin4 animate-spin imgAjaxLoading big-icon', '');
+            imgLoading = icon('icon-spin4 animate-spin imgAjaxLoading big-icon', '');
             view.appendChild(imgLoading);
         } else {
-            var imgLoading = view.getElementsByClassName('imgAjaxLoading');
-            if (imgLoading.length != 0) {
+            imgLoading = view.getElementsByClassName('imgAjaxLoading');
+            if (imgLoading.length !== 0) {
               view.removeChild(imgLoading[0]);
             }
             view.classList.add('notWaitingResponse');
@@ -138,9 +139,9 @@ function displayWaitingForCallback(waiting) {
     }
 
     var body = document.getElementById('body');
-    body.style.cursor = waiting
-                      ? 'wait'
-                      : 'auto';
+    body.style.cursor = waiting ?
+                        'wait' :
+                        'auto';
 
 }
 
@@ -201,7 +202,7 @@ function cleanVidjilViews() {
 function main() {
     // Get DOM elements
     var submitNode = document.getElementById('form_submit');
-    var formNode = document.forms['form_sequences'];
+    var formNode = document.forms.form_sequences;
 
     // Prepare Vidjil model
     model = new Model();
@@ -236,12 +237,12 @@ function main() {
                 requestVidjilFile(data,
                     function (response) { // On success return
                         // Hide the views to load them, then display them.
-                        var json_response = undefined
+                        var json_response;
                         try {
                             json_response = jQuery.parseJSON(response);
                         } catch(e) {}
-                        if (json_response == undefined || "error" in json_response) {
-                            error_callback(undefined, json_response['error']);
+                        if (json_response === undefined || "error" in json_response) {
+                            error_callback(undefined, json_response.error);
                         } else {
                             displayVidjilViews(false);
                             var funct = function () {

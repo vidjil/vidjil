@@ -38,7 +38,7 @@ Similarity.prototype = {
         var request = "";
 
         for (var i = 0; i < this.m.clones.length; i++) {
-            if (m.clone(i).sequence!=0) request += ">" + i + "\n" + this.m.clone(i).id + "\n";
+            if (m.clone(i).sequence!==0) request += ">" + i + "\n" + this.m.clone(i).id + "\n";
         }
 
         $.ajax({
@@ -92,10 +92,10 @@ Similarity.prototype = {
         var yMax = 0;
         var xMax = 0;
 
-        for (var i in result){
-            if (result[i][1] > yMax) yMax = result[i][1];
-            if (result[i][0] > xMax) xMax = result[i][0];
-            m.clone(i).tsne = result[i]
+        for (var r in result){
+            if (result[r][1] > yMax) yMax = result[r][1];
+            if (result[r][0] > xMax) xMax = result[r][0];
+            m.clone(r).tsne = result[r]
         }
         this.yMax = yMax;
         this.xMax = xMax;
@@ -124,29 +124,30 @@ Similarity.prototype = {
         
         var deltaX = xMax-xMin;
         var deltaY = yMax-yMin;
-        
+
         //replace origin on 0/0
-        for (var i in result){
-            result[i][0] = result[i][0] - xMin;
-            result[i][1] = result[i][1] - yMin;
+        for (var j in result){
+            result[j][0] = result[j][0] - xMin;
+            result[j][1] = result[j][1] - yMin;
         }
         
         //rotate result 
         if (deltaY > deltaX) {
-            for (var i in result){
-                var tmp = result[i][0];
-                result[i][0] = result[i][1];
-                result[i][1] = tmp;
+            var tmp;
+            for (var k in result){
+                tmp = result[k][0];
+                result[k][0] = result[k][1];
+                result[k][1] = tmp;
             }
-            var tmp = deltaX;
+            tmp = deltaX;
             deltaX = deltaY;
             deltaY = tmp;
         }
 
         //rescale
-        for (var i in result){
-            result[i][0] = result[i][0]/deltaX
-            result[i][1] = result[i][1]/deltaX
+        for (var l in result){
+            result[l][0] = result[l][0]/deltaX
+            result[l][1] = result[l][1]/deltaX
         }
 
         return result;
@@ -166,10 +167,10 @@ Similarity.prototype = {
             var tsne = new tsnejs.tSNE(opt);
 
             var list = []
-            for (var i=0; i<this.m.similarity.length; i++) if (this.m.clone(i).get("germline") == locus) list.push(i)
+            for (var idx=0; idx<this.m.similarity.length; idx++) if (this.m.clone(idx).get("germline") == locus) list.push(idx)
 
             var dists = []
-            for (var i in list) dists[i] = []
+            for (var l1 in list) dists[l1] = []
 
             for (var i in list) {
                 for (var j in list) {
@@ -188,9 +189,9 @@ Similarity.prototype = {
             result = this.rescale(result);
             var yMax = 0;
 
-            for (var i in result){
-                if (result[i][1] > yMax) yMax = result[i][1];
-                m.clone(list[i]).tsne_system = result[i];
+            for (var r in result){
+                if (result[r][1] > yMax) yMax = result[r][1];
+                m.clone(list[r]).tsne_system = result[r];
             }
 
             this.system_yMax[locus] = yMax;
@@ -221,13 +222,13 @@ Similarity.prototype = {
             cluster_flag[i]=false;
         } 
         
-        for (var i in this.m.similarity) {
+        for (var sim in this.m.similarity) {
             //search for an unvisited node
-            if (!visit_flag[i]){
-                visit_flag[i]=true;
+            if (!visit_flag[sim]){
+                visit_flag[sim]=true;
                 
                 //compute neighborhood of the unvisited node
-                var tmp = this.compute_neighborhood(i, eps);
+                var tmp = this.compute_neighborhood(sim, eps);
                 var neighborhood = tmp[0];
                 var neighborhood_size = tmp[1];
                 
@@ -310,7 +311,7 @@ Similarity.prototype = {
             
             if (flag){
                 clone_list.push(i);
-                for (var j in n) if (clone_list.indexOf(n[j])==-1) clone_list.push(n[j]);
+                for (var k in n) if (clone_list.indexOf(n[k])==-1) clone_list.push(n[k]);
             } 
         }
         
@@ -333,7 +334,7 @@ Similarity.prototype = {
         
         var cluster_list = [];
         var cluster_flag = []
-        for (var i in this.m.similarity) cluster_flag[i] = false; 
+        for (var sim in this.m.similarity) cluster_flag[sim] = false; 
         
         for (var i in c) {
             var cluster = [c[i]];
@@ -348,7 +349,7 @@ Similarity.prototype = {
             if (cluster.length>1) cluster_list.push(cluster); 
         }
         
-        for (var c in cluster_list) this.m.merge(cluster_list[c]);
+        for (var cl in cluster_list) this.m.merge(cluster_list[cl]);
         return cluster_list;
     }
 

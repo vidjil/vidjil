@@ -33,7 +33,7 @@ function tsvToArray(allText) {
         if (data.length == headers.length) {
             var tarr = {};
             for (var j = 0; j < headers.length; j++) {
-                if (headers[j] != "") {
+                if (headers[j] !== "") {
                     tarr[headers[j]] = data[j];
                 }
             }
@@ -58,9 +58,9 @@ function endsWith(sequence, end) {
 function correctIMGTPositionsForInsertions(data) {
     if (typeof data == 'undefined')
         return;
-    if (typeof data['V-REGION identity % (with ins/del events)'] != 'undefined'
-        && data['V-REGION identity % (with ins/del events)'].length > 0
-        && typeof data['V-REGION end'] != 'undefined') {
+    if (typeof data['V-REGION identity % (with ins/del events)'] != 'undefined' &&
+        data['V-REGION identity % (with ins/del events)'].length > 0 &&
+        typeof data['V-REGION end'] != 'undefined') {
 
         // Ok we may have insertions and we have positions.
 
@@ -68,14 +68,14 @@ function correctIMGTPositionsForInsertions(data) {
         var positions_of_insertion = []
         // Insertions are capital letters in the sequence
         var ins_regexp = /[A-Z]/g;
-        while ((match = ins_regexp.exec(data['Sequence'])) != null) {
+        while ((match = ins_regexp.exec(data.Sequence)) !== null) {
             positions_of_insertion.push(match.index + 1) // +1 to take into
                                                          // account positions
                                                          // starting at 1 for
                                                          // IMGT
         }
 
-        if (positions_of_insertion.length == 0)
+        if (positions_of_insertion.length === 0)
             return;
 
         // Shift all positions that are after insertions
@@ -84,8 +84,8 @@ function correctIMGTPositionsForInsertions(data) {
                 var seq_position = parseInt(data[item])
                 var after_insertions = 0;
                 var i = 0
-                while (after_insertions < positions_of_insertion.length
-                       && positions_of_insertion[after_insertions] <= seq_position + after_insertions)
+                while (after_insertions < positions_of_insertion.length &&
+                        positions_of_insertion[after_insertions] <= seq_position + after_insertions)
                     after_insertions += 1
                 data[item] = (seq_position + after_insertions).toString()
             }
@@ -104,28 +104,28 @@ function processCloneDBContents(results) {
     var final_results = {};
     var count_non_viewable = 0;
     for (var clone in results) {
-        if (typeof results[clone]['tags'] != 'undefined'
-            && typeof results[clone]['tags']['sample_set'] != 'undefined'
-            && typeof results[clone]['tags']['sample_set_viewable'] != 'undefined') {
-            var nb_samples = results[clone]['tags']['sample_set'].length;
+        if (typeof results[clone].tags != 'undefined' &&
+            typeof results[clone].tags.sample_set != 'undefined' &&
+            typeof results[clone].tags.sample_set_viewable !== 'undefined') {
+            var nb_samples = results[clone].tags.sample_set.length;
             for (var i = 0; i < nb_samples; i++) {
-                if (results[clone]['tags']['sample_set_viewable'][i]) {
-                    var name = results[clone]['tags']['sample_set_name'][i];
-                    if (name == null)
-                        name = results[clone]['tags']['sample_set'][i];
-                    var config_name = results[clone]['tags']['config_name'];
-                    if (typeof config_name != 'undefined'
-                        && typeof config_name[0] != 'undefined')
+                if (results[clone].tags.sample_set_viewable[i]) {
+                    var name = results[clone].tags.sample_set_name[i];
+                    if (name === null)
+                        name = results[clone].tags.sample_set[i];
+                    var config_name = results[clone].tags.config_name;
+                    if (typeof config_name !== 'undefined' &&
+                        typeof config_name[0] !== 'undefined')
                         config_name = config_name[0];
                     else
                         config_name = 'unknown';
-		    url = '?sample_set_id='+results[clone]['tags']['sample_set'][i]+'&config='+results[clone]['tags']['config_id'][0];
+		    url = '?sample_set_id='+results[clone].tags.sample_set[i]+'&config='+results[clone].tags.config_id[0];
 		    var msg = '<a href="'+url+'">'+name+'</a> ('+config_name+')';
 		    if (! (url in existing_urls)) {
 			existing_urls[url] = true;
-			final_results[msg] = results[clone]['occ'];
+			final_results[msg] = results[clone].occ;
 		    } else{
-			final_results[msg] += results[clone]['occ'];
+			final_results[msg] += results[clone].occ;
 		    }
 
                 } else {
@@ -136,16 +136,16 @@ function processCloneDBContents(results) {
             count_non_viewable += 1;
         }
     }
-    for (msg in final_results) {
-	final_results[msg] = final_results[msg]+' clone'+((final_results[msg] == 1) ? '' : 's');
+    for (var fr in final_results) {
+	final_results[fr] = final_results[fr]+' clone'+((final_results[fr] === 1) ? '' : 's');
     }
     if (count_non_viewable > 0)
         final_results['Non viewable samples'] = count_non_viewable;
 
-    if (Object.keys(final_results).length == 0)
+    if (Object.keys(final_results).length === 0)
         final_results['–'] = "No occurrence of this clone in CloneDB"
 
-    final_results['original'] = results;
+    final_results.original = results;
     return final_results;
 }
 
@@ -201,8 +201,8 @@ function computeStartStop(arrayToProcess,sequence){
     for (var i = 0; i < fields.length; i++) {
         start = -1;
         // Search using the sequence or just get the start and end positions?
-        if (typeof arrayToProcess[fields[i].field+' start'] != 'undefined'
-            && typeof arrayToProcess[fields[i].field+' end'] != 'undefined') {
+        if (typeof arrayToProcess[fields[i].field+' start'] !== 'undefined' &&
+            typeof arrayToProcess[fields[i].field+' end'] !== 'undefined') {
             // IMGT positions start at 1
             start = arrayToProcess[fields[i].field+' start'] - 1;
             stop = arrayToProcess[fields[i].field+' end'] - 1;

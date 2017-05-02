@@ -46,7 +46,7 @@ function Model() {
     var self=this;
     console.log("creation Model")
     
-    for (f in Model_loader.prototype) {
+    for (var f in Model_loader.prototype) {
         this[f] = Model_loader.prototype[f]
     }
     
@@ -227,7 +227,7 @@ Model.prototype = {
         console.log("loadGermline : " + system)
         system = typeof system !== 'undefined' ? system : this.system;
         if (system == "multi" || typeof system == 'undefined'){
-            var system = this.system_available[0]
+            system = this.system_available[0]
             var max = 0;
             for (var i=0; i<this.clones.length; i++){
                 var clone_size = this.clone(i).getSize()
@@ -262,16 +262,17 @@ Model.prototype = {
         
         //      NSIZE
         var n_max = 0;
+        var clone;
         for (var i = 0; i < this.clones.length; i++) {
-            var clone = this.clone(i)
+            clone = this.clone(i)
             var n = clone.getNlength();
             if (n > n_max) {n_max = n; }
         }
         this.n_max = n_max
         
         //      COLOR_N
-        for (var i = 0; i < this.clones.length; i++) {
-            var clone = this.clone(i)
+        for (var j = 0; j < this.clones.length; j++) {
+            clone = this.clone(j)
             clone.colorN = colorGenerator((((clone.getNlength() / n_max) - 1) * (-250)));
             clone.tag = this.default_tag;
         }
@@ -297,7 +298,7 @@ changeAlleleNotation: function(alleleNotation) {
     initData: function () {
         this.data_info = {}
         var i=1;
-        for (key in this.data){
+        for (var key in this.data){
             if (this.data[key].length == this.samples.number){
                 this.data_info[key] = {
                     "color" : this.tag[i].color,
@@ -402,21 +403,21 @@ changeAlleleNotation: function(alleleNotation) {
                 }
             }
             
-            if (new_cluster.length != 0){
+            if (new_cluster.length !== 0){
                 var l = new_cluster[0]
-                for (var j=0; j<new_cluster.length;j++){
-                    if (this.clone(new_cluster[j]).top < this.clone(l).top) l = new_cluster[j]
+                for (var k=0; k<new_cluster.length;k++){
+                    if (this.clone(new_cluster[k]).top < this.clone(l).top) l = new_cluster[k]
                 }
                 this.clusters[l] = new_cluster;
                 
-                if (tmp.length != 0){
+                if (tmp.length !== 0){
                     tmp.push(this.clone(l).id)
                     this.analysis_clusters.push(tmp);
                 }
                 
             }else{
                 
-                if (tmp.length != 0){
+                if (tmp.length !== 0){
                     this.analysis_clusters.push(tmp);
                 }
             }
@@ -429,7 +430,7 @@ changeAlleleNotation: function(alleleNotation) {
      * @return {integer} clone_id - index of the clone in the clone list (or -1 if not found)
      * */
     findWindow: function (sequence) {
-        if (sequence != 0){
+        if (sequence !== 0){
             for ( var i=0; i<this.clones.length; i++ ){
                 if ( sequence.indexOf(this.clone(i).id) != -1 ) return i
             }
@@ -464,7 +465,7 @@ changeAlleleNotation: function(alleleNotation) {
      * @return {string} timestamp - sample date
      * */
     getSampleTime: function(time) {
-        var time = typeof time !== 'undefined' ? time : this.t
+        time = typeof time !== 'undefined' ? time : this.t
         var value = "–"
         if (typeof this.samples.timestamp != 'undefined'){
             if (typeof this.samples.timestamp[time] != 'undefined'){
@@ -479,7 +480,7 @@ changeAlleleNotation: function(alleleNotation) {
      * @return {string} soft - name of the software used 
      * */
     getSoftVersionTime: function(time) { 
-        var time = typeof time !== 'undefined' ? time : this.t
+        time = typeof time !== 'undefined' ? time : this.t
         var soft_version = "–"
         if (typeof this.samples.producer != 'undefined')
             soft_version = this.samples.producer[time]
@@ -491,7 +492,7 @@ changeAlleleNotation: function(alleleNotation) {
      * @return {string} command - sample command
      * */
     getCommandTime: function(time) {
-        var time = typeof time !== 'undefined' ? time : this.t
+        time = typeof time !== 'undefined' ? time : this.t
         var command = "–"
         if (typeof this.samples.commandline != 'undefined')
             command = this.samples.commandline[time]
@@ -503,7 +504,7 @@ changeAlleleNotation: function(alleleNotation) {
      * @return {string} command - sample command
      * */
     getTimestampTime: function(time) {
-        var time = typeof time !== 'undefined' ? time : this.t
+        time = typeof time !== 'undefined' ? time : this.t
         var timestamp = "–"
         if (typeof this.samples.run_timestamp != 'undefined')
             timestamp = this.samples.run_timestamp[time]
@@ -511,9 +512,9 @@ changeAlleleNotation: function(alleleNotation) {
     },
 
     getInfoTime: function(time) {
-        var time = typeof time !== 'undefined' ? time : this.t
+        time = typeof time !== 'undefined' ? time : this.t
         var info = "-"
-        if (typeof this.samples.info != 'undefined' && this.samples.info != null)
+        if (typeof this.samples.info != 'undefined' && this.samples.info !== null)
             info = this.samples.info[time]
         return info
     },
@@ -575,8 +576,8 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     update_selected_system: function(){
         //reset reads.segmented
-        for (var i=0 ; i<this.reads.segmented.length; i++){
-            this.reads.segmented[i]=0
+        for (var h=0 ; h<this.reads.segmented.length; h++){
+            this.reads.segmented[h]=0
         }
 
         //compute new reads.segmented value (sum of reads.segmented of selected system)
@@ -605,7 +606,7 @@ changeAlleleNotation: function(alleleNotation) {
     normalize: function (original_size, time) {
         var normalized_size = 0;
         
-        if (this.normalization.A.length != 0 && this.normalization.A[time] != 0) {
+        if (this.normalization.A.length !== 0 && this.normalization.A[time] !== 0) {
             var A = this.normalization.A[time] /* standard/spike at point time */
             var B = this.normalization.B       /* standard/spike expected value */
             
@@ -678,7 +679,7 @@ changeAlleleNotation: function(alleleNotation) {
      * clones sizes can change depending the parameters so it's neccesary to recompute normalization from time to time
      * */
     update_normalization: function () {
-        if ((this.normalization.B != 0 && this.normalization.type=="clone" )) {
+        if ((this.normalization.B !== 0 && this.normalization.type=="clone" )) {
             this.compute_normalization( this.normalization.id, this.normalization.B);
         }
     },
@@ -700,8 +701,8 @@ changeAlleleNotation: function(alleleNotation) {
         this.max_size = 1
         this.min_size = min_size
         if (this.norm && this.normalization.method=="constant"){
-            for (var i=0; i<this.samples.order.length; i++){
-                var max = this.normalization.B/this.normalization.A[i]
+            for (var j=0; j<this.samples.order.length; j++){
+                var max = this.normalization.B/this.normalization.A[j]
                 if (max>this.max_size) this.max_size=max;
             }
         }
@@ -831,10 +832,10 @@ changeAlleleNotation: function(alleleNotation) {
             return -1;
         })
 
-        for (var i = 0; i < tmp.length; i++) {
-            this.clone(tmp[i].id).select = true;
-            this.orderedSelectedClones.push(tmp[i].id);
-            list[i] = tmp[i].id
+        for (var j = 0; j < tmp.length; j++) {
+            this.clone(tmp[j].id).select = true;
+            this.orderedSelectedClones.push(tmp[j].id);
+            list[j] = tmp[j].id
         }
 
         this.updateElemStyle(list);
@@ -906,16 +907,17 @@ changeAlleleNotation: function(alleleNotation) {
 
         for (var i = 0; i < this.clusters.length; i++) {
             // compute only non empty clones
-            if (this.clusters[i].length != 0) {
+            var seq;
+            if (this.clusters[i].length !== 0) {
                 if (!this.clone(i).split) {
                     for (var j = 0; j < this.clusters[i].length; j++) {
-                        var seq = this.clusters[i][j]
+                        seq = this.clusters[i][j]
                         this.clone(seq).disable();
                     }
                     this.clone(i).enable(this.top)
                 } else {
-                    for (var j = 0; j < this.clusters[i].length; j++) {
-                        var seq = this.clusters[i][j]
+                    for (var k = 0; k < this.clusters[i].length; k++) {
+                        seq = this.clusters[i][k]
                         this.clone(seq).enable(this.top)
                     }
                 }
@@ -924,26 +926,26 @@ changeAlleleNotation: function(alleleNotation) {
         
         // unactive clones from unselected system
         if (this.system == "multi") {
-            for (var i = 0; i < this.clones.length; i++) {
-                if (this.system_selected.indexOf(this.clone(i).get('germline')) == -1) {
-                    this.clones[i].disable()
+            for (var l = 0; l < this.clones.length; l++) {
+                if (this.system_selected.indexOf(this.clone(l).get('germline')) == -1) {
+                    this.clones[l].disable()
                     this.someClonesFiltered = true
                 }
             }
         }
         
         //unactive filtered clone
-        for (var i = 0; i < this.clones.length; i++) {
-            if (this.clone(i).isFiltered) {
-                this.clone(i).disable();
+        for (var m = 0; m < this.clones.length; m++) {
+            if (this.clone(m).isFiltered) {
+                this.clone(m).disable();
                 this.someClonesFiltered = true
             }
         }
         
         this.computeOtherSize();
 
-        for (var i = 0; i < this.clones.length; i++) {
-            this.clone(i).updateColor()
+        for (var n = 0; n < this.clones.length; n++) {
+            this.clone(n).updateColor()
         }
 
     },
@@ -1004,8 +1006,8 @@ changeAlleleNotation: function(alleleNotation) {
     updateStyle: function () {
         var list = []
         for (var i=0; i<this.clones.length; i++) list[i]=i
-        for (var i = 0; i < this.view.length; i++) {
-            this.view[i].updateElemStyle(list);
+        for (var j = 0; j < this.view.length; j++) {
+            this.view[j].updateElemStyle(list);
         }
         this.updateModel()
     },
@@ -1020,8 +1022,8 @@ changeAlleleNotation: function(alleleNotation) {
         }
 
         var count = 0;
-        for (var i = 0; i < this.clones.length; i++) {
-            if (this.clone(i).isActive()) count++
+        for (var j = 0; j < this.clones.length; j++) {
+            if (this.clone(j).isActive()) count++
         }
         
         this.resize();
@@ -1043,12 +1045,12 @@ changeAlleleNotation: function(alleleNotation) {
         this.top = top;
 
         var html_slider = document.getElementById('top_slider');
-        if (html_slider != null) {
+        if (html_slider !== null) {
             html_slider.value = top;
         }
         
         var html_label = document.getElementById('top_label');
-        if (html_label != null) {
+        if (html_label !== null) {
             var count = 0;
             for (var i=0; i<this.clones.length; i++){
                 if (this.clone(i).top < top) count++;
@@ -1074,7 +1076,7 @@ changeAlleleNotation: function(alleleNotation) {
         var newOthers = {};
 
         // Creation of newOthers dict by germlines & timestamp
-        for (elt in this.system_available){
+        for (var elt in this.system_available){
             var locus = this.system_available[elt];
             newOthers[locus] = [];
             for (var sample = 0; sample < this.samples.number; sample++) {
@@ -1089,9 +1091,9 @@ changeAlleleNotation: function(alleleNotation) {
             if (c.isVirtual()) {
                 other_quantifiable_clones.push(pos);
             } else if (c.isActive() && c.quantifiable) {
-                for (var sample = 0; sample < this.samples.number ; sample++) {
+                for (var s = 0; s < this.samples.number ; s++) {
                     for (var k = 0; k < this.clusters[pos].length; k++) {
-                        newOthers[c.germline][sample] -= this.clone(this.clusters[pos][k]).get('reads', sample);
+                        newOthers[c.germline][s] -= this.clone(this.clusters[pos][k]).get('reads', s);
                     }
                 }
             }
@@ -1137,8 +1139,8 @@ changeAlleleNotation: function(alleleNotation) {
 
         if ( typeof this.samples.diversity != 'undefined' && typeof this.samples.diversity[timeID] != 'undefined') {
             html += "<tr><td class='header' colspan='2'> diversity </td></tr>"
-            for (var key in this.samples.diversity[timeID]) {
-                html += "<tr><td> " + key.replace('index_', '') + "</td><td>" + this.samples.diversity[timeID][key].toFixed(3) + '</td></tr>'
+            for (var k in this.samples.diversity[timeID]) {
+                html += "<tr><td> " + k.replace('index_', '') + "</td><td>" + this.samples.diversity[timeID][k].toFixed(3) + '</td></tr>'
             }
         }
 
@@ -1156,7 +1158,7 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     merge: function (list) {
         var select_lead = false;
-        if (list==undefined){
+        if (list===undefined){
             list = this.getSelected();
             select_lead = true;
         } 
@@ -1235,7 +1237,7 @@ changeAlleleNotation: function(alleleNotation) {
             key = fct(i)
 
             //store clones with same key together
-            if (key == "") key = "undefined"
+            if (key === "") key = "undefined"
             if (tmp[key]) {
                 tmp[key].push(i)
             } else {
@@ -1246,24 +1248,24 @@ changeAlleleNotation: function(alleleNotation) {
 
         //order clones with same key
         var keys = Object.keys(tmp)
-        for (var i in tmp) {
-            tmp[i].sort(function(a, b) {
+        for (var j in tmp) {
+            tmp[j].sort(function(a, b) {
                 return self.clone(a).top - self.clone(b).top;
             });
         }
 
         //reset cluster
-        for (var i = 0; i < this.clones.length; i++) {
-            this.clusters[i] = []
+        for (var k = 0; k < this.clones.length; k++) {
+            this.clusters[k] = []
         }
 
         //new cluster
-        for (var i in tmp) {
-            this.clusters[tmp[i][0]] = tmp[i]
-            this.clusters[tmp[i][0]].name = i
+        for (var l in tmp) {
+            this.clusters[tmp[l][0]] = tmp[l]
+            this.clusters[tmp[l][0]].name = l
 
-            for (var j = 1; j < tmp[i].length; j++) {
-                this.clusters[tmp[i][j]] = []
+            for (var m = 1; j < tmp[l].length; j++) {
+                this.clusters[tmp[l][m]] = []
             }
         }
         this.update()
@@ -1276,7 +1278,7 @@ changeAlleleNotation: function(alleleNotation) {
     break: function (clusters) {
         console.log("break(" + clusters+ ")")
 
-        if (clusters == undefined)
+        if (clusters === undefined)
             clusters = this.getSelected();
 
         console.log("break(" + clusters+ ")")
@@ -1394,7 +1396,7 @@ changeAlleleNotation: function(alleleNotation) {
         var current_pos = this.samples.order.indexOf(this.t)
         
         if (current_pos != -1){
-            if (current_pos == 0){
+            if (current_pos === 0){
                 //teleport to the end
                 return this.changeTime(this.samples.order[this.samples.order.length-1])
             }else{
@@ -1477,8 +1479,8 @@ changeAlleleNotation: function(alleleNotation) {
         {
             previous_t = this.samples.timestamp[0]
 
-            for (var i = 1; i < this.samples.order.length; i++) {
-                t =  this.samples.timestamp[this.samples.order[i]]                    
+            for (var j = 1; j < this.samples.order.length; j++) {
+                t =  this.samples.timestamp[this.samples.order[j]]
                 delta = this.dateDiffInDays(previous_t, t)
 
                 if (isNaN(delta)) {
@@ -1531,7 +1533,7 @@ changeAlleleNotation: function(alleleNotation) {
     dateMax: function () {
         var date_max = "0"
         try{
-            var date_max = this.samples.timestamp[this.samples.order[0]] 
+            date_max = this.samples.timestamp[this.samples.order[0]]
         
             for (var i = 1; i < this.samples.order.length; i++) {
                 var date = this.samples.timestamp[this.samples.order[i]] 
@@ -1559,7 +1561,7 @@ changeAlleleNotation: function(alleleNotation) {
             case "names":
                 //TODO resolve thid hack
             case "short_name":
-                if (typeof this.samples.names != 'undefined' && this.samples.names[timeID] != ""){
+                if (typeof this.samples.names !== 'undefined' && this.samples.names[timeID] !== ""){
                     result = this.samples.names[timeID]
                 }else{
                     result = this.samples.original_names[timeID]
@@ -1670,7 +1672,7 @@ changeAlleleNotation: function(alleleNotation) {
     getSizeThresholdQ: function (time) {
         time = this.getTime(time);
 
-        if (this.reads.segmented[time] == 0 ) return 0;
+        if (this.reads.segmented[time] === 0 ) return 0;
         var result = this.NB_READS_THRESHOLD_QUANTIFIABLE / this.reads.segmented[time];
 
         if (this.norm) result = this.normalize(result, time);
@@ -1699,7 +1701,7 @@ changeAlleleNotation: function(alleleNotation) {
     formatSize: function (size, fixed, sizeQ) {
         var result = "-"
 
-        if (size == 0) return result
+        if (size === 0) return result
 
         if (typeof sizeQ !== 'undefined') {
             if (size < sizeQ) {
@@ -1963,7 +1965,7 @@ changeAlleleNotation: function(alleleNotation) {
         
         //only non-empty active clones and virtual clones
         for (var i=0; i<this.clusters.length; i++){
-            if ( (this.clusters[i].length != 0 && this.clone(i).isActive()) || this.clone(i).isVirtual() ){
+            if ( (this.clusters[i].length !== 0 && this.clone(i).isActive()) || this.clone(i).isVirtual() ){
                 csv += this.clone(i).toCSV().join(',')
                 csv += "\n"
             }
@@ -2037,32 +2039,32 @@ changeAlleleNotation: function(alleleNotation) {
             //V D J
 
             var listGene = []
-            for (var i=0; i<list.length; i++){
-                var geneV = this.clone(list[i]).getGene(5)     
-                var geneD = this.clone(list[i]).getGene(4)
-                var geneJ = this.clone(list[i]).getGene(3) 
+            for (var j=0; j<list.length; j++){
+                var geneV = this.clone(list[j]).getGene(5)
+                var geneD = this.clone(list[j]).getGene(4)
+                var geneJ = this.clone(list[j]).getGene(3)
 
-                if ((geneV != undefined) && listGene.indexOf(geneV) == -1)     
+                if ((geneV !== undefined) && listGene.indexOf(geneV) == -1)
                     listGene.push(geneV)
-                if ((geneD != undefined) && listGene.indexOf(geneD) == -1)     
+                if ((geneD !== undefined) && listGene.indexOf(geneD) == -1)
                     listGene.push(geneD)
-                if ((geneJ != undefined) && listGene.indexOf(geneJ) == -1)     
+                if ((geneJ !== undefined) && listGene.indexOf(geneJ) == -1)
                     listGene.push(geneJ)     
             }
 
-            for (var i=0; i<listGene.length; i++){
-                if (listGene[i].charAt(0) == 'K'){
+            for (var k=0; k<listGene.length; k++){
+                if (listGene[k].charAt(0) == 'K'){
                     germName = "IGK-KDE"
                 }
                 else{
-                    if (listGene[i].charAt(1) == 'n') 
+                    if (listGene[k].charAt(1) == 'n')
                         germName = "IGK-INTRON" 
                     else
-                        germName = listGene[i].slice(0, 4);                              
+                        germName = listGene[k].slice(0, 4);
                 }
-                if (typeof germline[germName][listGene[i]] != 'undefined') {
-                    fasta += ">" + listGene[i] + '\n';
-                    fasta += germline[germName][listGene[i]].toUpperCase() + '\n'
+                if (typeof germline[germName][listGene[k]] != 'undefined') {
+                    fasta += ">" + listGene[k] + '\n';
+                    fasta += germline[germName][listGene[k]].toUpperCase() + '\n'
                 }
             }
 
@@ -2262,8 +2264,8 @@ changeAlleleNotation: function(alleleNotation) {
     loadRandomTab: function() {
         this.tabRandomColor = [];
         /*Initialisation du tableau de couleurs*/
-        for (var i = 0; i < this.clones.length; i++) {
-            this.tabRandomColor.push(i);
+        for (var h = 0; h < this.clones.length; h++) {
+            this.tabRandomColor.push(h);
         }
         /*Fisher yates algorithm to shuffle the array*/
         for (var i = this.clones.length - 1; i >= 1; i--) {
@@ -2373,7 +2375,7 @@ changeAlleleNotation: function(alleleNotation) {
     /* Fonction permettant de changer dynamiquement la valeur d'affichage, à côté du slider Epsilon/MinPts dans le menu Display
     */
     changeSliderValue: function(bool, div, name, value) {
-        var div = document.getElementById(div);
+        div = document.getElementById(div);
         var text = document.createTextNode(name + value);
         if (bool) {
             //Suppression du précédent noeud
@@ -2430,27 +2432,27 @@ changeAlleleNotation: function(alleleNotation) {
 
 
       // Seq de primer biomed2 des TCRD
-      this.primersSetData["biomed2"]["TRD"] = {}; // TODO : init by defaultdict equivalent
-      this.primersSetData["biomed2"]["TRD"]["primer5"] = [];
-      this.primersSetData["biomed2"]["TRD"]["primer3"] = [];
+      this.primersSetData.biomed2.TRD = {}; // TODO : init by defaultdict equivalent
+      this.primersSetData.biomed2.TRD.primer5 = [];
+      this.primersSetData.biomed2.TRD.primer3 = [];
       // Seq de primer biomed2 des IGH
-      this.primersSetData["biomed2"]["IGH"] = {}; // TODO : init by defaultdict equivalent
-      this.primersSetData["biomed2"]["IGH"]["primer5"] = ["GGCCTCAGTGAAGGTCTCCTGCAAG", "GTCTGGTCCTACGCTGGTGAAACCC", "CTGGGGGGTCCCTGAGACTCTCCTG", "CTTCGGAGACCCTGTCCCTCACCTG", "CGGGGAGTCTCTGAAGATCTCCTGC", "TCGCAGACCCTCTCACTCACCTGTG", "CTGGGTGCGACAGGCCCCTGGACAA", "TGGATCCGTCAGCCCCCAGGGAAGG", "GGTCCGCCAGGCTCCAGGGAA", "TGGATCCGCCAGCCCCCAGGGAAGG", "GGGTGCGCCAGATGCCCGGGAAAGG", "TGGATCAGGCAGTCCCCATCGAGAG", "TTGGGTGCGACAGGCCCCTGGACAA", "TGGAGCTGAGCAGCCTGAGATCTGA", "CAATGACCAACATGGACCCTGTGGA", "TCTGCAAATGAACAGCCTGAGAGCC", "GAGCTCTGTGACCGCCGCGGACACG", "CAGCACCGCCTACCTGCAGTGGAGC", "GTTCTCCCTGCAGCTGAACTCTGTG", "CAGCACGGCATATCTGCAGATCAG"] ;
-      this.primersSetData["biomed2"]["IGH"]["primer3"] = ["CCAGTGGCAGAGGAGTCCATTC", "GTCACCGTCTCCTCAGGTA"]; // GTCACCGTCTCCTCAGGTA is a consensus sequence use because official one (CCAGTGGCAGAGGAGTCCATTC) doesn't work properly
+      this.primersSetData.biomed2.IGH = {}; // TODO : init by defaultdict equivalent
+      this.primersSetData.biomed2.IGH.primer5 = ["GGCCTCAGTGAAGGTCTCCTGCAAG", "GTCTGGTCCTACGCTGGTGAAACCC", "CTGGGGGGTCCCTGAGACTCTCCTG", "CTTCGGAGACCCTGTCCCTCACCTG", "CGGGGAGTCTCTGAAGATCTCCTGC", "TCGCAGACCCTCTCACTCACCTGTG", "CTGGGTGCGACAGGCCCCTGGACAA", "TGGATCCGTCAGCCCCCAGGGAAGG", "GGTCCGCCAGGCTCCAGGGAA", "TGGATCCGCCAGCCCCCAGGGAAGG", "GGGTGCGCCAGATGCCCGGGAAAGG", "TGGATCAGGCAGTCCCCATCGAGAG", "TTGGGTGCGACAGGCCCCTGGACAA", "TGGAGCTGAGCAGCCTGAGATCTGA", "CAATGACCAACATGGACCCTGTGGA", "TCTGCAAATGAACAGCCTGAGAGCC", "GAGCTCTGTGACCGCCGCGGACACG", "CAGCACCGCCTACCTGCAGTGGAGC", "GTTCTCCCTGCAGCTGAACTCTGTG", "CAGCACGGCATATCTGCAGATCAG"] ;
+      this.primersSetData.biomed2.IGH.primer3 = ["CCAGTGGCAGAGGAGTCCATTC", "GTCACCGTCTCCTCAGGTA"]; // GTCACCGTCTCCTCAGGTA is a consensus sequence use because official one (CCAGTGGCAGAGGAGTCCATTC) doesn't work properly
 
 
       // test fictif; sequence inclut dans les sequences de clones
-      this.primersSetData["primer_fictif"]["TRD"] = {};
-      this.primersSetData["primer_fictif"]["TRD"]["primer5"] = ["GATTTTACTCAAGGACGGTT", "GCAAAGAACCTGGCTGT", "AGATTTTACTCAAGGAC"] // V3, V2,
-      this.primersSetData["primer_fictif"]["TRD"]["primer3"] = ["AGGAACCCGTGTGACT", "GAACACAACTCATCGTGGA", "GAACTGGCATCAAACTCTTC"] // J1, J2, J3
+      this.primersSetData.primer_fictif.TRD = {};
+      this.primersSetData.primer_fictif.TRD.primer5 = ["GATTTTACTCAAGGACGGTT", "GCAAAGAACCTGGCTGT", "AGATTTTACTCAAGGAC"] // V3, V2,
+      this.primersSetData.primer_fictif.TRD.primer3 = ["AGGAACCCGTGTGACT", "GAACACAACTCATCGTGGA", "GAACTGGCATCAAACTCTTC"] // J1, J2, J3
 
       // Test qunits
-      this.primersSetData["primer_test"]["IGH"] = {};
-      this.primersSetData["primer_test"]["IGH"]["primer5"] = [] // IGH seq from model_test.js
-      this.primersSetData["primer_test"]["IGH"]["primer3"] = []
-      this.primersSetData["primer_test"]["TRG"] = {};
-      this.primersSetData["primer_test"]["TRG"]["primer5"] = ["GGAAGGCCCCACAGCG"] // TRG seq from model_test.js
-      this.primersSetData["primer_test"]["TRG"]["primer3"] = ["AACTTCGCCTGGTAA"]
+      this.primersSetData.primer_test.IGH = {};
+      this.primersSetData.primer_test.IGH.primer5 = [] // IGH seq from model_test.js
+      this.primersSetData.primer_test.IGH.primer3 = []
+      this.primersSetData.primer_test.TRG = {};
+      this.primersSetData.primer_test.TRG.primer5 = ["GGAAGGCCCCACAGCG"] // TRG seq from model_test.js
+      this.primersSetData.primer_test.TRG.primer3 = ["AACTTCGCCTGGTAA"]
     },
 
 
@@ -2466,7 +2468,7 @@ changeAlleleNotation: function(alleleNotation) {
 
         for (var i = 0; i < numberToProcess; i++) {
             if ( !this.clones[i].isVirtual() ) {
-                if (this.clones[i]["sequence"].indexOf(sequence) != -1) {
+                if (this.clones[i].sequence.indexOf(sequence) != -1) {
                     this.clones[i].addSegFeatureFromSeq(feature, sequence)
                 }
             }
@@ -2481,7 +2483,7 @@ changeAlleleNotation: function(alleleNotation) {
     cleanPreviousFeature : function (feature) {
         for (var i = 0; i < this.clones.length; i++) {
             if ( !this.clones[i].isVirtual() ) {
-                    delete this.clones[i]["seg"][feature]
+                    delete this.clones[i].seg[feature]
             }
         }
     },
@@ -2504,14 +2506,14 @@ changeAlleleNotation: function(alleleNotation) {
         for (var i = 0; i < this.system_available.length; i++) {
             var germline = this.system_available[i].replace("+", "")
 
-            primer5 = this.primersSetData[this.primerSetCurrent][germline]["primer5"]
-            primer3 = this.primersSetData[this.primerSetCurrent][germline]["primer3"]
+            primer5 = this.primersSetData[this.primerSetCurrent][germline].primer5
+            primer3 = this.primersSetData[this.primerSetCurrent][germline].primer3
 
             for (var p = 0; p < primer5.length; p++) {
                 this.addSegFeatureFromSeq("primer5", primer5[p])
             }
-            for (var p = 0; p < primer3.length; p++) {
-                this.addSegFeatureFromSeq("primer3", primer3[p])
+            for (var q = 0; q < primer3.length; q++) {
+                this.addSegFeatureFromSeq("primer3", primer3[q])
             }
         }
     },
@@ -2590,7 +2592,7 @@ changeAlleleNotation: function(alleleNotation) {
                         var index = self.clones.length;
                         data.clones.forEach(function (clone) {
                             clone.quantifiable = false;
-                            var clone = new Clone(clone, self, index);
+                            clone = new Clone(clone, self, index);
                             // Array with self.sample.number times the same value
                             clone.reads = Array.apply(null, Array(self.samples.number))
                                 .map(function(){return SIZE_MANUALLY_ADDED_CLONE})
@@ -2624,14 +2626,14 @@ changeAlleleNotation: function(alleleNotation) {
     },
 
     applyUrlParams:function(params_dict) {
-        if (typeof params_dict["clone"]!= "undefined" && params_dict["clone"] != '') {
-            this.multiSelect(params_dict["clone"]);
+        if (typeof params_dict.clone!== "undefined" && params_dict.clone !== '') {
+            this.multiSelect(params_dict.clone);
         }
 
-        if (typeof params_dict["plot"]!= "undefined" && params_dict["plot"] != '') {
-            this.sp.splitX = params_dict["plot"][0];
-            this.sp.splitY = params_dict["plot"][1];
-            this.sp.mode = params_dict["plot"][2];
+        if (typeof params_dict.plot!== "undefined" && params_dict.plot !== '') {
+            this.sp.splitX = params_dict.plot[0];
+            this.sp.splitY = params_dict.plot[1];
+            this.sp.mode = params_dict.plot[2];
         }
     },
 

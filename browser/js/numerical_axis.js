@@ -86,20 +86,20 @@ Object.assign(NumericalAxis.prototype, {
                     }
                 }
             }
-            for (var i=min; i<=max; i++){
-                this.value_mapping[i]=[];
+            for (var j=min; j<=max; j++){
+                this.value_mapping[j]=[];
             }
         } else {
-            for (var i in labels) {
-                var val = labels[i];
+            for (var k in labels) {
+                var val = labels[k];
                 this.value_mapping[val] = [];
             }
         }
         if(this.can_undefined)
             this.value_mapping["?"] = [];
 
-        for(var i in this.clones) {
-            var clone = clones[i];
+        for(var idx in this.clones) {
+            var clone = clones[idx];
             if(!clone.isVirtual()) {
                 var value = this.applyConverter(clone);
                 if (typeof value == "undefined" || typeof this.value_mapping[value] == "undefined" ) {
@@ -172,12 +172,13 @@ Object.assign(NumericalAxis.prototype, {
             display_label = true;
         if (typeof has_undefined == 'undefined')
             has_undefined = false
-
+        
+        var text, pos, h;
         if (use_log){
-            var h=1
+            h=1
             for (var i = 0; i < 10; i++) {
-                var pos = this.sizeScale(h); // pos is possibly already reversed
-                var text = this.m.formatSize(h, false)
+                pos = this.sizeScale(h); // pos is possibly already reversed
+                text = this.m.formatSize(h, false)
                 if (!display_label) text = "";
                 if (pos >= 0 && pos <= 1)
                     this.addLabel("line", text, pos, text);
@@ -193,17 +194,17 @@ Object.assign(NumericalAxis.prototype, {
 
             nb_step = this.computeSteps(min, max, nb_steps);
 
-            var h = (max-min)/nb_steps
+            h = (max-min)/nb_steps
             // Computed so that pos <= 1 (in the loop below)
             var delta = (min - max)/((min - undefined_min)/(max-undefined_min) - 1)
             if (has_undefined)
                 this.labels.push(this.label("line", (this.reverse) ? 1 : 0, "?"))
             // Shift the start when there is an undefined value
             var start_shift = (min - undefined_min)/(max-undefined_min)
-            for (var i = 0; i <= nb_steps; i++) {
-                pos = start_shift + (h*i)*(1/delta);
+            for (var j = 0; j <= nb_steps; j++) {
+                pos = start_shift + (h*j)*(1/delta);
 
-                var text = this.getLabelText(min, h, i);
+                text = this.getLabelText(min, h, j);
                 if (this.reverse) pos = 1 - pos;
                 if (!display_label) text = "";
                 this.addLabel("line", text, pos, text);

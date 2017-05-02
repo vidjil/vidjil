@@ -6,16 +6,16 @@ function Report(model) {
 Report.prototype = {
     
     formValidate:function(f, report_type){
-        var f = document.forms["form_report"];
+        f = document.forms.form_report;
         
         var system_list = [];
         var inputs= f.querySelectorAll('input[name=system]:checked');
         for (var i=0; i<inputs.length; i++) system_list.push(inputs[i].value);
         
         var sample_list = [];
-        var inputs= f.querySelectorAll('input[name=sample]:checked');
+        inputs= f.querySelectorAll('input[name=sample]:checked');
         var max_sample = f.getElementsByClassName("report_sample_select")[0].getAttribute("max_sample");
-        for (var i=0; i<inputs.length; i++) sample_list.push(inputs[i].value);
+        for (var j=0; j<inputs.length; j++) sample_list.push(inputs[j].value);
         if (sample_list.length>max_sample){
             console.log({"type": "flash", "msg": "too many samples selected (max "+max_sample+")", "priority": 2 })
             return false;
@@ -125,7 +125,7 @@ Report.prototype = {
         for (var i in this.m.system_selected) this.save_system.push(this.m.system_selected[i]);
         
         this.save_sample = [];
-        for (var i in this.m.samples.order) this.save_sample.push(this.m.samples.order[i]);
+        for (var j in this.m.samples.order) this.save_sample.push(this.m.samples.order[j]);
         
         return this;
     },
@@ -176,7 +176,7 @@ Report.prototype = {
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
         
         this.list = this.m.getSelected()
-        if (this.list.length==0) this.list = this.defaultList()
+        if (this.list.length===0) this.list = this.defaultList()
         
         var text = ""
         date_min = this.m.dateMin()
@@ -228,7 +228,7 @@ Report.prototype = {
             text += " – "+this.m.samples.timestamp[this.m.t].split(" ")[0]
         
         this.list = this.m.getSelected()
-        if (this.list.length==0) this.list = this.defaultList()
+        if (this.list.length===0) this.list = this.defaultList()
             
         this.w.onload = function(){
             self.w.document.title = text
@@ -268,8 +268,8 @@ Report.prototype = {
         //add best two clones from each system
         if (list.length <5){
             for (var k=0; k<2; k++){
-                for (var i=0; i<this.m.system_available.length; i++){
-                    var system = this.m.system_available[i]
+                for (var l=0; l<this.m.system_available.length; l++){
+                    var system = this.m.system_available[l]
                     
                     var clone = -1
                     for (var j=0; j<this.m.clones.length; j++) {
@@ -325,7 +325,7 @@ Report.prototype = {
             var v = content[key]
             var row = $('<tr/>').appendTo(table);
             $('<td/>', {'class': 'label', 'text': v.label}).appendTo(row);
-            for (var i in v.value) $('<td/>', {'text': v.value[i].replace("_L001__001", "")}).appendTo(row);
+            for (var idx in v.value) $('<td/>', {'text': v.value[idx].replace("_L001__001", "")}).appendTo(row);
         }
         
         return this
@@ -335,7 +335,7 @@ Report.prototype = {
         var info = this.container("Report info")
         var left = $('<div/>', {'class': 'flex'}).appendTo(info);
         
-        var date = new Date;
+        var date = new Date();
         var report_timestamp = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() 
         
         var analysis_timestamp = "–"
@@ -478,7 +478,7 @@ Report.prototype = {
             this.m.compute_normalization(norm_id, norm_value)
             graph.resize(791,300)
             graph.draw(0)
-            var svg_graph = this.svg_graph(norm_id)
+            svg_graph = this.svg_graph(norm_id)
             svg_graph.setAttribute("width", "395px")
             svg_graph.setAttribute("height", "150px")
             container.append(svg_graph)
@@ -525,8 +525,8 @@ Report.prototype = {
         w_sp.append(svg_sp)
         sp.resize();
 
-        for (var i=0; i<this.list.length; i++){
-            var cloneID = this.list[i]
+        for (var j=0; j<this.list.length; j++){
+            var cloneID = this.list[j]
             if (this.m.clone(cloneID).germline == system) this.clone(cloneID, time).appendTo(this.w.document.body);
         }
         
@@ -555,15 +555,16 @@ Report.prototype = {
                 $('<span/>', {'class': 'system_colorbox', style:'background-color:'+this.m.germlineList.getColor(system)}).appendTo(system_label);
             }
         }
-        
+
+        var box;
         if (time == -1){
-            for (var i=0; i<this.m.samples.order.length; i++){
-                var t = this.m.samples.order[i]
-                var box=this.readsStat2(t)
+            for (var j=0; j<this.m.samples.order.length; j++){
+                var t = this.m.samples.order[j]
+                box=this.readsStat2(t)
                 box.appendTo(reads_stats);
             }
         }else{
-            var box=this.readsStat2(time)
+            box=this.readsStat2(time)
             box.appendTo(reads_stats);
         }
         
@@ -582,8 +583,8 @@ Report.prototype = {
         
         if (this.m.system_selected.length < this.m.system_available.length) {
 
-            var segmented = ((this.m.reads.segmented[time]/this.m.reads.total[time])*100).toFixed(0) + "%"
-            var seg_box = $('<div/>', {'class': 'case centered', 'text': segmented}).appendTo(box);
+            segmented = ((this.m.reads.segmented[time]/this.m.reads.total[time])*100).toFixed(0) + "%"
+            seg_box = $('<div/>', {'class': 'case centered', 'text': segmented}).appendTo(box);
             $('<div/>', {'class': 'background1'}).appendTo(seg_box);
             $('<div/>', {'class': 'background2', style: 'width:'+segmented}).appendTo(seg_box);
         }
@@ -621,9 +622,10 @@ Report.prototype = {
             var value = this.m.systemSize(system,time)
             var angle = Math.PI*2*(value)
             var stop = start+angle
-            
+
+            var slice;
             if (value <1){
-                var slice = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                slice = document.createElementNS("http://www.w3.org/2000/svg", "path");
                     
                 var x1 = radius * Math.sin(start);
                 var y1 = -radius * Math.cos(start);
@@ -640,7 +642,7 @@ Report.prototype = {
                 slice.setAttribute('fill', this.m.germlineList.getColor(system));
                 pie.appendChild(slice)
             }else{
-                var slice = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                slice = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                     
                 slice.setAttribute('r', radius)
                 slice.setAttribute('cx', radius)
@@ -649,7 +651,7 @@ Report.prototype = {
                 pie.appendChild(slice)
             }
             
-            var start = stop;
+            start = stop;
         }
 
         return pie
@@ -713,15 +715,15 @@ Report.prototype = {
         if (this.m.clone(cloneID).hasSeg('5', '3')){
             var seg = this.m.clone(cloneID).seg
             var seq = this.m.clone(cloneID).getSequence()
-            var seqV = seq.substring(0, seg['5']['stop'] + 1)
-            var seqN = seq.substring(seg['5']['stop'] + 1, seg['3']['start'])
-            var seqJ = seq.substring(seg['3']['start'])
+            var seqV = seq.substring(0, seg['5'].stop + 1)
+            var seqN = seq.substring(seg['5'].stop + 1, seg['3'].start)
+            var seqJ = seq.substring(seg['3'].start)
 
             $('<span/>', {'class': 'v_gene', 'text': seqV}).appendTo(sequence);
             if (this.m.clone(cloneID).getGene("4") != "undefined D"){
-                var seqN1 = seq.substring(seg['5']['stop'] + 1, seg['4']['start'])
-                var seqD = seq.substring(seg['4']['start'] , seg['4']['stop'] + 1)
-                var seqN2 = seq.substring(seg['4']['stop'] + 1, seg['3']['start'])
+                var seqN1 = seq.substring(seg['5'].stop + 1, seg['4'].start)
+                var seqD = seq.substring(seg['4'].start , seg['4'].stop + 1)
+                var seqN2 = seq.substring(seg['4'].stop + 1, seg['3'].start)
                 $('<span/>', {'class': 'n_gene', 'text': seqN1}).appendTo(sequence);
                 $('<span/>', {'class': 'd_gene', 'text': seqD}).appendTo(sequence);
                 $('<span/>', {'class': 'n_gene', 'text': seqN2}).appendTo(sequence);
@@ -740,15 +742,15 @@ Report.prototype = {
     },
 
     sampleLog: function() {
-        if (typeof this.m['logs'] == 'undefined')
+        if (typeof this.m.logs == 'undefined')
             return this
 
         var log = this.container("Report Log")
 
         var table = $('<table/>', {'class': 'log-table flex'}).appendTo(log);
-        for (var i=0; i < this.m["logs"].length; i++ ){
-            line = this.logLine(m["logs"][i]);
-            if(i % 2 == 0)
+        for (var i=0; i < this.m.logs.length; i++ ){
+            line = this.logLine(m.logs[i]);
+            if(i % 2 === 0)
                 line.addClass('even');
             else
                 line.addClass('odd');
@@ -760,9 +762,9 @@ Report.prototype = {
     logLine: function(log_line) {
         var line = $('<tr/>', {'class': 'log-row'});
         console.log(log_line)
-        console.log(log_line["message"])
-        $('<td/>', {'class': 'log-date', 'text': log_line['created']}).appendTo(line);
-        $('<td/>', {'class': 'log-message', 'text': log_line['message']}).appendTo(line);
+        console.log(log_line.message)
+        $('<td/>', {'class': 'log-date', 'text': log_line.created}).appendTo(line);
+        $('<td/>', {'class': 'log-message', 'text': log_line.message}).appendTo(line);
 
         return line;
     },
@@ -778,12 +780,12 @@ Report.prototype = {
         }/**/
 
 
-        var link = "mailto:support@vidjil.org"
-             + "?cc="
-             + "&subject=" + escape("[Vidjil] Question")
-             + "&body=" + escape("Dear Vidjil team,"
-                                 + "\n\nI have a question on the results I obtain on the following sample: " + window.location.href
-                                 + "\n\n" + clones)
+        var link = "mailto:support@vidjil.org" +
+            "?cc=" +
+            "&subject=" + escape("[Vidjil] Question") +
+            "&body=" + escape("Dear Vidjil team," +
+                              "\n\nI have a question on the results I obtain on the following sample: " + window.location.href +
+                              "\n\n" + clones)
         ;
         window.location.href = link;
     }

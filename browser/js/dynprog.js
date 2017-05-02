@@ -1,7 +1,7 @@
 function distanceLevenshtein (sequence, pattern){
 
-	if(sequence.length == 0) return sequence.length; 
-	if(pattern.length == 0) return pattern.length; 
+	if(sequence.length === 0) return sequence.length;
+	if(pattern.length === 0) return pattern.length;
 
 	var mat = [];
 

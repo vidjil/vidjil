@@ -5,6 +5,7 @@ before_script:
   - make germline
 
 stages:
+  - test_quality
   - test_unit
   - test_functional
   - deploy
@@ -34,6 +35,15 @@ test_browser-functional:
     - /^feature-[cw]\/.*$/
     - /^hotfix-[cw]\/.*$/
     - prod-client
+
+code_quality:
+  stage: test_quality
+  script: jshint browser/js/
+  only:
+    - /^feature-[cw]\/.*$/
+    - /^hotfix-[cw]\/.*$/
+    - prod-client
+  allow_failure: true
 
 deploy:
   stage: deploy

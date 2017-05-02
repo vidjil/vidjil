@@ -355,11 +355,12 @@ Segment.prototype = {
 
             $('#'+this.id)
                 .mouseleave(function(e){
-                    if (e.relatedTarget != null && self.is_open){
+                    if (e.relatedTarget !== null && self.is_open){
                         setTimeout(function(){
                             if (!$(".tagSelector").hasClass("hovered")){
+                                var seg;
                                 if (! self.fixed){
-                                    var seg = $(self.div_segmenter)
+                                    seg = $(self.div_segmenter)
                                     seg.stop().animate({height: 100}, 250);
                                 }else{
                                     seg.stop();
@@ -400,10 +401,10 @@ Segment.prototype = {
             input.style.width = "60px";
             input.id = "highlight_" + i;
 
-            for (var i in fields) {
-                if (filter.indexOf(fields[i]) == -1) {
+            for (var j in fields) {
+                if (filter.indexOf(fields[j]) == -1) {
                     var option = document.createElement('option');
-                    option.appendChild(document.createTextNode(fields[i]));
+                    option.appendChild(document.createTextNode(fields[j]));
                     input.appendChild(option);
                 }
             }
@@ -503,7 +504,7 @@ Segment.prototype = {
     updateAlignmentButton: function() {
         var self = this;
         var align = document.getElementById("align");
-        if (align != null) {
+        if (align !== null) {
             if (this.m.getSelected().length > 1) {
                 align.className = "button";
                 align.onclick = function() {self.toggleAlign();};
@@ -569,9 +570,9 @@ Segment.prototype = {
 
         var info = '' ;
         if (clone.seg.imgt!=null && typeof clone.seg.imgt['V-DOMAIN Functionality'] != 'undefined'){
-            info = (clone.seg.imgt["V-DOMAIN Functionality"].toLowerCase().indexOf("unproductive") < 0)
-                ? icon('icon-plus-squared', 'productive, as computed by IMGT/V-QUEST')
-                : icon('icon-minus-squared', 'unproductive, as computed by IMGT/V-QUEST') ;
+            info = (clone.seg.imgt["V-DOMAIN Functionality"].toLowerCase().indexOf("unproductive") < 0) ?
+                icon('icon-plus-squared', 'productive, as computed by IMGT/V-QUEST') :
+                icon('icon-minus-squared', 'unproductive, as computed by IMGT/V-QUEST') ;
         }
         if (info)
             productive_info.appendChild(info);
@@ -580,13 +581,13 @@ Segment.prototype = {
         var Videntity_info = document.createElement('span');
         Videntity_info.className = "identityBox";
 
-        var info = '' ;
+        info = '' ;
         if (clone.seg.imgt!=null){
             identity = clone.seg.imgt["V-REGION identity % (with ins/del events)"]
-            if (typeof identity != 'undefined' && identity.length == 0)
+            if (typeof identity != 'undefined' && identity.length === 0)
                 identity = clone.seg.imgt["V-REGION identity %"]
             var identityRate = parseFloat(identity)
-            if (identityRate != NaN) {
+            if (isNaN(identityRate)) {
                 info = document.createElement('span');
                 if (V_IDENTITY_THRESHOLD)
                     info.className += identityRate < V_IDENTITY_THRESHOLD ? ' identityGood' : ' identityBad'
@@ -617,7 +618,7 @@ Segment.prototype = {
 
         // Am I the first clone in this segmenter ?
         var previous_li = divParent.getElementsByTagName("li");
-        if (previous_li && previous_li.length == 0) {
+        if (previous_li && previous_li.length === 0) {
             this.first_clone = cloneID
         }
 
@@ -659,7 +660,7 @@ Segment.prototype = {
         for (var i = 0; i < list.length; i++) {
             var c = this.m.clone(list[i])
             
-            if (typeof (c.getSequence()) != 0){
+            if (typeof (c.getSequence()) !== 0){
                 request += ">" + c.index + "#" + c.getName() + "\n" + c.getSequence() + "\n";
             }else{
                 request += ">" + c.index + "#" + c.getName() + "\n" + c.id + "\n";
@@ -719,10 +720,10 @@ Segment.prototype = {
         var request = "";
         this.memTab = list;
 
-        if (list.length == 0) return;
+        if (list.length === 0) return;
 
         for (var i = 0; i < list.length; i++) {
-            if (typeof (this.m.clone(list[i]).sequence) != 'undefined' && this.m.clone(list[i]).sequence != 0)
+            if (typeof (this.m.clone(list[i]).sequence) != 'undefined' && this.m.clone(list[i]).sequence !== 0)
                 request += ">" + list[i] + "\n" + this.m.clone(list[i]).sequence + "\n";
             else
                 request += ">" + list[i] + "\n" + this.m.clone(list[i]).id + "\n";
@@ -793,11 +794,11 @@ Segment.prototype = {
 	}
 
 	// Render all (aligned) sequences
-        for (var i = 0; i < json.seq.length; i++) {
+        for (var j = 0; j < json.seq.length; j++) {
 
             // global container
-            var spanM = document.getElementById("m" + this.memTab[i]);
-            var seq = this.sequence[this.memTab[i]]
+            var spanM = document.getElementById("m" + this.memTab[j]);
+            var seq = this.sequence[this.memTab[j]]
             spanM.innerHTML = seq.toString(this)
         }
 
@@ -844,12 +845,12 @@ Segment.prototype = {
         $(".stats_content").text(t)
         if (length == 1) {
             s = ''
-            if (extra_info_system.systemGroup != undefined) {
+            if (extra_info_system.systemGroup !== undefined) {
                 s = extra_info_system.systemGroup
-                if (extra_info_system.system != undefined)
+                if (extra_info_system.system !== undefined)
                     s += ', '
             }
-            if (extra_info_system.system != undefined) {
+            if (extra_info_system.system !== undefined) {
                 s += extra_info_system.system
             }
             $(".stats_content").prop('title', s)
@@ -879,9 +880,9 @@ Segment.prototype = {
             }
             
             // In the .seg element, What looks like DNA sequence or what is a Pos field
-            for (var i in clone.seg) {
-                if (forbidden_fields.indexOf(i) == -1 &&(this.isDNA(clone.seg[i]) || this.isPos(clone.seg[i])) ){
-                    if (result.indexOf(i) == -1) result.push(i);
+            for (var k in clone.seg) {
+                if (forbidden_fields.indexOf(k) == -1 &&(this.isDNA(clone.seg[k]) || this.isPos(clone.seg[k])) ){
+                    if (result.indexOf(k) == -1) result.push(k);
                 }
             }
         }
@@ -1046,7 +1047,7 @@ Sequence.prototype = {
         if (typeof str !== 'undefined') this.use_marge = false
         str = typeof str !== 'undefined' ? str : this.m.clone(this.id).sequence;
 
-        if (typeof this.m.clone(this.id).sequence == 'undefined' || this.m.clone(this.id).sequence == 0) {
+        if (typeof this.m.clone(this.id).sequence == 'undefined' || this.m.clone(this.id).sequence === 0) {
             str = this.m.clone(this.id).id
         }
         
@@ -1082,16 +1083,16 @@ Sequence.prototype = {
                 
         var clone = this.m.clone(this.id);
         if (clone.hasSeg('cdr3')){
-            if (typeof clone.seg["cdr3"].start != "undefined") {
-                start = this.pos[clone.seg["cdr3"].start];
-                stop = this.pos[clone.seg["cdr3"].stop];
-            }else if (clone.seg["cdr3"].constructor === String){
-                start = this.pos[clone.sequence.indexOf(clone.seg["cdr3"])];
-                stop = this.pos[clone.sequence.indexOf(clone.seg["cdr3"]) + clone.seg["cdr3"].length -1];
+            if (typeof clone.seg.cdr3.start != "undefined") {
+                start = this.pos[clone.seg.cdr3.start];
+                stop = this.pos[clone.seg.cdr3.stop];
+            }else if (clone.seg.cdr3.constructor === String){
+                start = this.pos[clone.sequence.indexOf(clone.seg.cdr3)];
+                stop = this.pos[clone.sequence.indexOf(clone.seg.cdr3) + clone.seg.cdr3.length -1];
             }
         }
         
-        for (var i=0; i<this.seq.length; i++) this.seqAA[i] =this.seq[i]; // "&nbsp";
+        for (var h=0; h<this.seq.length; h++) this.seqAA[h] =this.seq[h]; // "&nbsp";
         
         var i = 0
 
@@ -1146,63 +1147,65 @@ Sequence.prototype = {
     toString: function () {
         var clone = this.m.clone(this.id)
 
-        if (typeof clone.sequence != 'undefined' && clone.sequence != 0) {
+        var vdjArrayRev, window_start, result;
+        if (typeof clone.sequence != 'undefined' && clone.sequence !== 0) {
 
             //find V, D, J position
             if (clone.hasSeg('5', '3')){
 
                 var vdjArray = this.getVdjStartEnd(clone);
-                var vdjArrayRev = {};
+                vdjArrayRev = {};
 
                 // We first put the end positions
-                vdjArrayRev[vdjArray["5"]['stop']] = {'type':'N', 'color': ""};
-                vdjArrayRev[vdjArray["3"]['start']] = {'type':'N', 'color': ""};
+                vdjArrayRev[vdjArray["5"].stop] = {'type':'N', 'color': ""};
+                vdjArrayRev[vdjArray["3"].start] = {'type':'N', 'color': ""};
 
+                var key;
                 for (var i in SEGMENT_KEYS) {
-                    var key = SEGMENT_KEYS[i]
-                    if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key]['stop'] != 'undefined'){
-                        vdjArrayRev[vdjArray[key]['stop']] = {'type':'N', 'color': ""};
+                    key = SEGMENT_KEYS[i]
+                    if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key].stop != 'undefined'){
+                        vdjArrayRev[vdjArray[key].stop] = {'type':'N', 'color': ""};
                     }}
 
                 // We now put the start positions (that may override previous end positions)
-                for (var i in SEGMENT_KEYS) {
-                    var key = SEGMENT_KEYS[i]
-                    if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key]['start']!= 'undefined'){
-                        vdjArrayRev[vdjArray[key]['start']] = {'type':'D', 'color': ""};
+                for (var j in SEGMENT_KEYS) {
+                    key = SEGMENT_KEYS[j]
+                    if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key].start!= 'undefined'){
+                        vdjArrayRev[vdjArray[key].start] = {'type':'D', 'color': ""};
                     }}
 
-                vdjArrayRev[vdjArray["5"]['start']] = {'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : ""};
-                vdjArrayRev[vdjArray["3"]['start']] = {'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : ""};
+                vdjArrayRev[vdjArray["5"].start] = {'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : ""};
+                vdjArrayRev[vdjArray["3"].start] = {'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : ""};
             }
 
-            var window_start = this.pos[clone.sequence.indexOf(clone.id)];
+            window_start = this.pos[clone.sequence.indexOf(clone.id)];
             if (clone.hasSeg('cdr3')){
-                if (typeof clone.seg["cdr3"].start != "undefined"){
-                    window_start = this.pos[clone.seg["cdr3"].start];
-                }else if (clone.seg["cdr3"].constructor === String){
-                    window_start = this.pos[clone.sequence.indexOf(clone.seg["cdr3"])];
+                if (typeof clone.seg.cdr3.start != "undefined"){
+                    window_start = this.pos[clone.seg.cdr3.start];
+                }else if (clone.seg.cdr3.constructor === String){
+                    window_start = this.pos[clone.sequence.indexOf(clone.seg.cdr3)];
                 }
             }
             
             var highlights = [];
-            for (var i in this.segmenter.highlight){
-                highlights.push(this.get_positionned_highlight(this.segmenter.highlight[i].field,
-                                                               this.segmenter.highlight[i].color));
+            for (var k in this.segmenter.highlight){
+                highlights.push(this.get_positionned_highlight(this.segmenter.highlight[k].field,
+                                                               this.segmenter.highlight[k].color));
             }
             
             // Build the sequence, adding VDJ and highlight spans
-            var result = document.createElement('span');
+            result = document.createElement('span');
             if (typeof vdjArrayRev == 'undefined') {
                 currentSpan = document.createElement('span');
                 result.appendChild(currentSpan);
             }
-            for (var i = 0; i < this.seq.length; i++) {
+            for (var l = 0; l < this.seq.length; l++) {
 
                 // Highlight spans
-                for (var j in highlights){
-                    var h = highlights[j];
+                for (var m in highlights){
+                    var h = highlights[m];
 
-                    if (i == h.start){
+                    if (l == h.start){
                         var highlightSpan = document.createElement('span');
                         highlightSpan.style = "color: " + h.color;
                         highlightSpan.className = h.css;
@@ -1227,26 +1230,26 @@ Sequence.prototype = {
 
 
                 // VDJ spans - begin
-                if (typeof vdjArrayRev != 'undefined'
-                    && typeof vdjArrayRev[i] != 'undefined') {
+                if (typeof vdjArrayRev != 'undefined' &&
+                    typeof vdjArrayRev[l] != 'undefined') {
                     currentSpan = document.createElement('span');
-                    currentSpan.className = vdjArrayRev[i]['type'];
-                    currentSpan.style = "color: " + vdjArrayRev[i]['color'];
+                    currentSpan.className = vdjArrayRev[l].type;
+                    currentSpan.style = "color: " + vdjArrayRev[l].color;
                     result.appendChild(currentSpan);
 
                 }
 
                 // one character
                 if (this.segmenter.amino) {
-                    currentSpan.appendChild(this.spanify_mutation(this.seqAA[i], this.segmenter.sequence[this.segmenter.first_clone].seqAA[i]));
+                    currentSpan.appendChild(this.spanify_mutation(this.seqAA[l], this.segmenter.sequence[this.segmenter.first_clone].seqAA[l]));
                 }else{
-                    currentSpan.appendChild(this.spanify_mutation(this.seq[i], this.segmenter.sequence[this.segmenter.first_clone].seq[i]));
+                    currentSpan.appendChild(this.spanify_mutation(this.seq[l], this.segmenter.sequence[this.segmenter.first_clone].seq[l]));
                 }
                     
             }
         }else{
-            var window_start = 0;
-            var result = document.createElement('span');
+            window_start = 0;
+            result = document.createElement('span');
             result.appendChild(document.createTextNode(clone.id));
         }
 
@@ -1256,7 +1259,7 @@ Sequence.prototype = {
             marge += "<span class='seq-marge'>";
             var size_marge = 300 - window_start;
             if (size_marge > 0) {
-                for (var i = 0; i < size_marge; i++) marge += "\u00A0";
+                for (var n = 0; n < size_marge; n++) marge += "\u00A0";
             }
             marge += "</span>"
         }
@@ -1272,19 +1275,19 @@ Sequence.prototype = {
     getVdjStartEnd: function (clone) {
 
         var vdjArray ={"5": {}, "3": {}} ;
-        vdjArray["5"]["start"] = 0;
-        vdjArray["5"]["stop"] = this.pos[clone.seg["5"]["stop"]] + 1;
-        vdjArray["3"]["start"] = this.pos[clone.seg["3"]["start"]];
-        vdjArray["3"]["stop"] = this.seq.length;
+        vdjArray["5"].start = 0;
+        vdjArray["5"].stop = this.pos[clone.seg["5"].stop] + 1;
+        vdjArray["3"].start = this.pos[clone.seg["3"].start];
+        vdjArray["3"].stop = this.seq.length;
 
         for (var i in SEGMENT_KEYS)
         {
             var key = SEGMENT_KEYS[i]
             vdjArray[key] = {}
-            if (typeof clone.seg[key] != 'undefined' && typeof clone.seg[key]["start"] != 'undefined' && typeof clone.seg[key]["stop"] != 'undefined') {
+            if (typeof clone.seg[key] != 'undefined' && typeof clone.seg[key].start != 'undefined' && typeof clone.seg[key].stop != 'undefined') {
                 vdjArray[key] = {}
-                vdjArray[key]["start"] = this.pos[clone.seg[key]["start"]];
-                vdjArray[key]["stop"] = this.pos[clone.seg[key]["stop"]] + 1
+                vdjArray[key].start = this.pos[clone.seg[key].start];
+                vdjArray[key].stop = this.pos[clone.seg[key].stop] + 1
             }
         }
         return vdjArray;
@@ -1316,9 +1319,9 @@ Sequence.prototype = {
         }
 
         // Build the (possibly invisible) sequence
-        if (p.seq == '') {
+        if (p.seq === '') {
             h.css = "highlight_border"
-            for (var k=0; k<(h.stop - h.start + 1); k++) h.seq += "\u00A0"
+            for (var l=0; l<(h.stop - h.start + 1); l++) h.seq += "\u00A0"
         } else {
             h.css = "highlight_seq"
             var j = 0
@@ -1330,11 +1333,11 @@ Sequence.prototype = {
                     if (field == "quality") {
                         var percent = (cc.charCodeAt(0)-this.m.min_quality)/(this.m.max_quality-this.m.min_quality)
                         var color_hue = (percent * 100);
-                        var color = colorGenerator(color_hue);
+                        var col = colorGenerator(color_hue);
                         c = "<span style='height:"+(50+(percent*50))+"%;"
                         c += "top:"+(100-(50+(percent*50)))+"%;"
                         c += "position:relative;"
-                        c += "background-color:"+color+";"
+                        c += "background-color:"+col+";"
                         c += "'>\u00A0</span>"
                     }
                 }

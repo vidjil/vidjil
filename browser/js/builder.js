@@ -191,8 +191,8 @@ Builder.prototype = {
         input.onkeydown = function (e) {
             e = e || window.event;
             var key = e.keyCode;
-            if (key == 0) key = e.which ;
-            if (key == 13) document.getElementById('btnSaveTag')
+            if (key === 0) key = e.which ;
+            if (key === 13) document.getElementById('btnSaveTag')
                 .click();
         };
         divParent.appendChild(input);
@@ -260,7 +260,7 @@ Builder.prototype = {
         input.onkeydown = function (e) {
             e = e || window.event;
             var key = e.keyCode
-            if (key == 0) key = e.which 
+            if (key === 0) key = e.which
     //        if (key == 13) $(input).trigger("save");
             else if (key == 27) m.update()
         }
@@ -343,9 +343,9 @@ Builder.prototype = {
 
         //init slider
         var max_top = 0;
-        for (var i = 0; i < this.m.clones.length; i++) {
-            if (this.m.clone(i).top > max_top)
-                max_top = this.m.clone(i).top
+        for (var j = 0; j < this.m.clones.length; j++) {
+            if (this.m.clone(j).top > max_top)
+                max_top = this.m.clone(j).top
         }
         max_top = (Math.ceil(max_top / 5)) * 5
         document.getElementById("top_slider")
@@ -466,7 +466,7 @@ Builder.prototype = {
             sample_div.className = "sample_details"
 
             var point_value = this.m.getStrTime(this.m.t, "name")
-            point_value = point_value != "" ? point_value : "-/-"
+            point_value = point_value !== "" ? point_value : "-/-"
             var point_name_container = document.createElement("div")
             point_name_container.className += "inline-block_90 centered ellipsis"
             point_name_container.title = point_value
@@ -572,7 +572,7 @@ Builder.prototype = {
 
             // Segmented reads, on the selected system(s)
             if (this.m.system == "multi") {
-                var div_segmented = this.build_line_read_number("info_selected_locus", "selected locus", "on selected locus", this.m.reads.segmented)
+                div_segmented = this.build_line_read_number("info_selected_locus", "selected locus", "on selected locus", this.m.reads.segmented)
                 reads_div.appendChild(div_segmented)
             }
 
@@ -621,7 +621,7 @@ Builder.prototype = {
         }
         div = this.build_named_info_line(id, label, val, false);
 
-        if (warning_class != "") {
+        if (warning_class !== "") {
             var warning_span = document.createElement('span')
             warning_span.className = "warningReads " + warning_class;
             warning_span.appendChild(icon('icon-warning-1', warning_title));
@@ -772,9 +772,9 @@ Builder.prototype = {
     },
     
     build_info_line: function (id, value, className) {
-        var val = value != ""? value : "-/-"
+        var val = value !== ""? value : "-/-"
         var span = document.createElement('span');
-	if (!(typeof(className) === "undefined"))
+	if (typeof(className) !== "undefined")
 	    {
 		if (className)
 		{
@@ -918,9 +918,9 @@ Builder.prototype = {
     // Build an html input tag
     setupInput: function(id, name, type, value) {
         var input = document.createElement("input");
-        if(id != "") input.id = id;
-        if(name != "") input.name = name;
-        if(value != "") input.value = value;
+        if(id !== "") input.id = id;
+        if(name !== "") input.name = name;
+        if(value !== "") input.value = value;
         input.type = type;
         return input;
     },
@@ -950,8 +950,8 @@ Builder.prototype = {
 
         for (var i = 0; i < children.length; ++i)
             element.appendChild(children[i]);
-        if (id != "" && typeof id != "undefined") element.id = id;
-        if(className != "" && typeof className != "undefined") element.className = className;
+        if (id !== "" && typeof id !== "undefined") element.id = id;
+        if(className !== "" && typeof className !== "undefined") element.className = className;
 
         if (typeof onclick === "function")
             element.onclick = onclick;

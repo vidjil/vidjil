@@ -287,8 +287,8 @@ Graph.prototype = {
         
         var speed = 0
         if (typeof div_height == 'undefined'){
-            var div_height = div.offsetHeight
-            var div_width = div.offsetWidth
+            div_height = div.offsetHeight
+            div_width = div.offsetWidth
             speed = 500
         }
         
@@ -385,7 +385,7 @@ Graph.prototype = {
             }
         }else{
             var list = []
-            for (var i = 0; i < this.m.clones.length; i++) list.push(i)
+            for (var j = 0; j < this.m.clones.length; j++) list.push(j)
             this.updateElem(list)
         }
         
@@ -478,8 +478,8 @@ Graph.prototype = {
 
             var result = [];
             //save new time point order
-            for (var i = 0; i < list.length; i++) {
-                result[i] = list[i][0]
+            for (var j = 0; j < list.length; j++) {
+                result[j] = list[j][0]
             }
 
             this.m.changeTimeOrder(result)
@@ -533,31 +533,31 @@ Graph.prototype = {
      * */
     constructPathR: function (r) {
         var res = []
-        for (i = 0; i < this.m.samples.number; i++) {
+        for (var i = 0; i < this.m.samples.number; i++) {
             res[i] = (r / this.m.reads.segmented[i])
         }
         
-        if (typeof res != "undefined" && res.length != 0) {
+        if (typeof res !== "undefined" && res.length !== 0) {
             var p;
             p = [
                 [0, 1 + 0.1]
             ];
             
             var size = []
-            if (this.m.norm == true){
-                for (var i = 0; i < res.length; i++) {
-                    size[i] = this.m.normalize(res[i], i)
+            if (this.m.norm === true){
+                for (var j = 0; j < res.length; j++) {
+                    size[j] = this.m.normalize(res[j], j)
                 }
             }else{
-                for (var i = 0; i < res.length; i++) {
-                    size[i] = res[i]
+                for (var k = 0; k < res.length; k++) {
+                    size[k] = res[k]
                 }
             }
                 
             p.push([0, (1 - this.scale_x(size[0] * this.m.precision))]);
 
-            for (var i = 0; i < this.graph_col.length; i++) {
-                p.push([(this.graph_col[i]), (1 - this.scale_x(size[this.m.samples.order[i]] * this.m.precision))]);
+            for (var l = 0; l < this.graph_col.length; l++) {
+                p.push([(this.graph_col[l]), (1 - this.scale_x(size[this.m.samples.order[l]] * this.m.precision))]);
             }
             p.push([1, (1 - this.scale_x(size[this.m.samples.order[this.graph_col.length - 1]] * this.m.precision))]);
             p.push([1, 1 + 0.1]);
@@ -565,9 +565,9 @@ Graph.prototype = {
             var x = (p[0][0] * this.resizeW + this.marge4)
             var y = (p[0][1] * this.resizeH + this.marge5)
             var che = ' M ' + x + ',' + y;
-            for (var i = 1; i < p.length; i++) {
-                x = (p[i][0] * this.resizeW + this.marge4)
-                y = (p[i][1] * this.resizeH + this.marge5)
+            for (var m = 1; m < p.length; m++) {
+                x = (p[m][0] * this.resizeW + this.marge4)
+                y = (p[m][1] * this.resizeH + this.marge5)
                 che += ' L ' + x + ',' + y;
             }
             che += ' Z ';
@@ -596,7 +596,7 @@ Graph.prototype = {
 
         //cas avec un seul point de suivi
         if (this.graph_col.length == 1) {
-            if (size[0] == 0) {
+            if (size[0] === 0) {
                 p = [];
             } else {
                 p = [
@@ -611,10 +611,10 @@ Graph.prototype = {
         else {
 
             var to = 0;
-            for (var k = 0; k < this.graph_col.length; k++) to += size[k];
+            for (var j = 0; j < this.graph_col.length; j++) to += size[j];
 
             //premier point de suivi 
-            if (size[0] == 0) {
+            if (size[0] === 0) {
                 p = [];
             } else {
                 p = [
@@ -628,29 +628,29 @@ Graph.prototype = {
             }
 
             //points suivants
-            for (var i = 1; i < this.graph_col.length; i++) {
+            for (var k = 1; k < this.graph_col.length; k++) {
                 to = 0;
-                for (var k = i; k < this.graph_col.length; k++) to += size[k]
+                for (var l = k; l < this.graph_col.length; l++) to += size[l]
 
-                if (to != 0) {
-                    x = this.graph_col[i];
-                    y = this.scale_x(size[i] * this.m.precision)
+                if (to !== 0) {
+                    x = this.graph_col[k];
+                    y = this.scale_x(size[k] * this.m.precision)
 
-                    if (size[i] == 0) {
-                        if (p.length != 0) {
+                    if (size[k] === 0) {
+                        if (p.length !== 0) {
                             p.push([(x), (1 + 0.03)]);
                         }
                     } else {
 
                         //si premiere apparition du clone sur le graphique
-                        if (p.length == 0) {
+                        if (p.length === 0) {
                             p.push([(x - 0.03), (1 - y)]);
                         }
 
                         p.push([(x), (1 - y)]);
 
                         //si derniere apparition du clone sur le graphique
-                        if (to == size[i]) {
+                        if (to == size[k]) {
                             p.push([(x + 0.03), (1 - y)]);
                         }
 
@@ -661,13 +661,13 @@ Graph.prototype = {
 
         }
         
-        if (p.length != 0){
-            var x = (p[0][0] * self.resizeW + self.marge4)
-            var y = (p[0][1] * self.resizeH + self.marge5)
+        if (p.length !== 0){
+            x = (p[0][0] * self.resizeW + self.marge4)
+            y = (p[0][1] * self.resizeH + self.marge5)
             var che = ' M ' + x + ',' + y;
-            for (var i = 1; i < p.length; i++) {
-                x = (p[i][0] * self.resizeW + self.marge4)
-                y = (p[i][1] * self.resizeH + self.marge5)
+            for (var m = 1; m < p.length; m++) {
+                x = (p[m][0] * self.resizeW + self.marge4)
+                y = (p[m][1] * self.resizeH + self.marge5)
                 che += ' L ' + x + ',' + y;
             }
             return che;
@@ -685,26 +685,26 @@ Graph.prototype = {
         if (typeof stack.min[id] == 'undefined'){
             return []
         }
-        
+        var x, y;
         for (var i=0; i<this.graph_col.length; i++){
-            var x = this.graph_col[i];
-            var y = stack.min[id][this.m.samples.order[i]]
+            x = this.graph_col[i];
+            y = stack.min[id][this.m.samples.order[i]]
             p.push([x,y])
         }
         
-        for (var i=this.graph_col.length-1; i>=0; i--){
-            var x = this.graph_col[i];
-            var y = stack.max[id][this.m.samples.order[i]]
+        for (var j=this.graph_col.length-1; j>=0; j--){
+            x = this.graph_col[j];
+            y = stack.max[id][this.m.samples.order[j]]
             p.push([x,y])
         }
         
-        if (p.length != 0){
-            var x = (p[0][0] * this.resizeW + this.marge4)
-            var y = (p[0][1] * this.resizeH + this.marge5)
+        if (p.length !== 0){
+            x = (p[0][0] * this.resizeW + this.marge4)
+            y = (p[0][1] * this.resizeH + this.marge5)
             var che = ' M ' + x + ',' + y;
-            for (var i = 1; i < p.length; i++) {
-                x = (p[i][0] * this.resizeW + this.marge4)
-                y = (p[i][1] * this.resizeH + this.marge5)
+            for (var k = 1; k < p.length; k++) {
+                x = (p[k][0] * this.resizeW + this.marge4)
+                y = (p[k][1] * this.resizeH + this.marge5)
                 che += ' L ' + x + ',' + y;
             }
             return che + ' Z';
@@ -888,6 +888,7 @@ Graph.prototype = {
             this.graph_col[1] = 3 / 4;
         }
 
+        var t;
         /* x-rescaling taking into account time deltas */
         if (this.m.samples.order.length >= 3) {
 
@@ -900,48 +901,48 @@ Graph.prototype = {
                     total_col = 0
                     this.graph_col[0] = total_col ;
 
-                    for (var i = 1; i < this.m.samples.order.length; i++) {
-                        t =  this.m.samples.timestamp[this.m.samples.order[i]]
+                    for (var j = 1; j < this.m.samples.order.length; j++) {
+                        t =  this.m.samples.timestamp[this.m.samples.order[j]]
                         delta = this.m.dateDiffInDays(previous_t, t)
                         total_col += 1 + (this.max_ratio_between_deltas - 1) * (delta - deltas.min) / (deltas.max - deltas.min)
                         
-                        this.graph_col[i] = total_col
+                        this.graph_col[j] = total_col
                         previous_t = t
                     }
 
                     /* re-normalizing */
-                    for (var i = 0; i < this.m.samples.order.length; i++) {
-                        t =  this.m.samples.timestamp[i] // pas i
-                        this.graph_col[i] = this.marge1 + this.graph_col[i] * ((1 - (this.marge1 + this.marge2)) / total_col);
+                    for (var k = 0; k < this.m.samples.order.length; k++) {
+                        t =  this.m.samples.timestamp[k] // pas i
+                        this.graph_col[k] = this.marge1 + this.graph_col[k] * ((1 - (this.marge1 + this.marge2)) / total_col);
                     }
                 }            
         }
         
         /* Init the axis */
-        for (var i = 0; i < this.m.samples.number; i++) {
-            var t = this.m.samples.order.indexOf(i)
+        for (var l = 0; l < this.m.samples.number; l++) {
+            t = this.m.samples.order.indexOf(l)
             d = {}
 
             var maxchar = (this.resizeW/this.m.samples.order.length)/10;
-            time_name = this.m.getStrTime(i);
+            time_name = this.m.getStrTime(l);
             if (time_name.length > maxchar+3) time_name = time_name.substring(0,maxchar)+" ..."
-            if (i == this.m.t) time_name = this.m.getStrTime(i);
+            if (l == this.m.t) time_name = this.m.getStrTime(l);
 
             d.type = "axis_v";
             d.text = time_name;
             d['class'] = "graph_time";
-            if ( i == this.m.t ) d['class'] = "graph_time2";
-            if ( i == this.m.t ) d.type = "axis_v2";
+            if ( l == this.m.t ) d['class'] = "graph_time2";
+            if ( l == this.m.t ) d.type = "axis_v2";
 
             // Warns when there are very few segmented reads 
-            var percent = (this.m.reads.segmented[i] / this.m.reads.total[i]) * 100;
+            var percent = (this.m.reads.segmented[l] / this.m.reads.total[l]) * 100;
             if (percent < 50)
                 d['class'] += " warning" ;
             if (percent < 10)
                 d['class'] += " alert" ;
 
             d.orientation = "vert";
-            if (this.drag_on && i == this.dragged_time_point) {
+            if (this.drag_on && l == this.dragged_time_point) {
                 var coordinates = [0, 0];
                 coordinates = d3.mouse(d3.select("#" + this.id + "_svg")
                     .node());
@@ -956,7 +957,7 @@ Graph.prototype = {
                     d.pos = this.graph_col[t];
                 }
             }
-            d.time = i;
+            d.time = l;
             this.data_axis.push(d);
         }  
         
@@ -1018,8 +1019,8 @@ Graph.prototype = {
      * */
     initOrdinateData : function () {
         
-        var g_min = undefined
-        var g_max = undefined
+        var g_min;
+        var g_max;
         var enabled = false
         
         // find min / max for
@@ -1046,7 +1047,7 @@ Graph.prototype = {
         }
         
         //choose the best scale (linear/log) depending of the space between min/max
-        if ( g_min!=0 && (g_min*100)<g_max){
+        if ( g_min!==0 && (g_min*100)<g_max){
             this.scale_data = d3.scale.log()
                 .domain([g_max, g_min])
                 .range([0, 1]);
@@ -1151,7 +1152,7 @@ Graph.prototype = {
 
         //axes
         var axis = this.g_axis
-        if (speed != 0){
+        if (speed !== 0){
             axis = axis
             .transition()
             .duration(speed)
@@ -1179,7 +1180,7 @@ Graph.prototype = {
 
         //legendes
         var label = this.g_text
-        if (speed != 0){
+        if (speed !== 0){
             label = label
             .transition()
             .duration(speed)
@@ -1281,7 +1282,7 @@ Graph.prototype = {
         }
         
         var clone = this.g_clone
-        if (speed != 0){
+        if (speed !== 0){
             clone = clone
             .transition()
             .duration(speed)
@@ -1314,17 +1315,17 @@ Graph.prototype = {
         var self = this;
         
         var data = this.g_data
-        if (speed != 0){
+        if (speed !== 0){
             data = data
             .transition()
             .duration(speed)
         }
         data.attr("d", function (p) {
-                var x,y;
-                if (p.tab.length != 0 && p.active){
+                var x,y,che;
+                if (p.tab.length !== 0 && p.active){
                     x = (self.graph_col[0] * self.resizeW + self.marge4);
                     y=(self.scale_data(p.tab[0]) * self.resizeH + self.marge5)
-                    var che = ' M ' + x + ',' + y;
+                    che = ' M ' + x + ',' + y;
                     for (var i = 1; i < p.tab.length; i++) {
                         x = (self.graph_col[i] * self.resizeW + self.marge4);
                         y=(self.scale_data(p.tab[i]) * self.resizeH + self.marge5)
@@ -1332,9 +1333,9 @@ Graph.prototype = {
                     }
                     return che;
                 }else{
-                    var che = ' M ' + (self.graph_col[0] * self.resizeW + self.marge4) + ',' + self.resizeH;
-                    for (var i = 1; i < p.tab.length; i++) {
-                        che += ' L ' + (self.graph_col[i] * self.resizeW + self.marge4) + ',' + self.resizeH;
+                    che = ' M ' + (self.graph_col[0] * self.resizeW + self.marge4) + ',' + self.resizeH;
+                    for (var j = 1; j < p.tab.length; j++) {
+                        che += ' L ' + (self.graph_col[j] * self.resizeW + self.marge4) + ',' + self.resizeH;
                     }
                     return che;
                 }
@@ -1366,7 +1367,7 @@ Graph.prototype = {
         var self = this;
         
         var res = this.g_res.selectAll("path")
-        if (speed != 0){
+        if (speed !== 0){
             res = res 
             .transition()
             .duration(speed)
