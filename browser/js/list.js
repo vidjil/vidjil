@@ -488,7 +488,7 @@ List.prototype = {
                 var span_axis = div_elem.getElementsByClassName("axisBox")[0];
                 span_axis.style.color = clone.getColor();
                 var axis = document.getElementById("list_axis_select");
-                span_axis.innerHTML = (new Axes(this.m)).available()[axis.value].fct(clone);
+                span_axis.innerHTML = clone.getAxisValue(axis.value);
                 // span_axis.setAttribute('title', clone.getPrintableSize());
 
                 //update cluster icon

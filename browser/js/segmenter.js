@@ -660,7 +660,7 @@ Segment.prototype = {
         for (var i in axOpts) {
             if (document.getElementById("sai"+i).checked) {
                 var span = document.createElement('span');
-                span.innerHTML = ((new Axes(this.m)).available())[axOpts[i]].fct(clone);
+                span.innerHTML = clone.getAxisValue(axOpts[i]);
                 span.setAttribute('title', axOpts[i]);
                 axisBox.appendChild(span);
             }
