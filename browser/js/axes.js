@@ -112,7 +112,7 @@ Axes.prototype = {
                 label: "size",
                 axis: new PercentAxis(this.m),
                 fct : function(clone){return clone.getSizeZero()},
-                pretty: function(size){return self.m.getStrAnySize(undefined, size)},
+                pretty: function(size){return (self.m ? self.m : self).getStrAnySize(undefined, size)},
                 min : function(){return self.m.min_size},
                 max : 1,
                 log : true
