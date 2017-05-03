@@ -305,10 +305,11 @@ List.prototype = {
         axis.id = "list_axis_select";
 
         var axOpts = Clone.prototype.axisOptions();
+        var available_axis = (new Axes(this.m)).available();
         for (var i in axOpts) {
             var axis_option = document.createElement("option");
             axis_option.setAttribute('value', axOpts[i]);
-            axis_option.appendChild(document.createTextNode(axOpts[i]));
+            axis_option.appendChild(document.createTextNode(available_axis[axOpts[i]].label));
             axis.appendChild(axis_option);
         }
         axis.value = "Size";

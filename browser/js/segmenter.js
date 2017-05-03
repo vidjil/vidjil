@@ -153,9 +153,9 @@ Segment.prototype = {
             var tmp = document.createElement('div');
 
             var axOpts = Clone.prototype.axisOptions();
+            var available_axis = (new Axes(this.m)).available();
             for (var i in axOpts) {
                 var axis_option = document.createElement('div');
-
                 var input = document.createElement('input');
                 input.setAttribute('type', "checkbox");
                 input.setAttribute('value', axOpts[i]);
@@ -167,7 +167,7 @@ Segment.prototype = {
 
                 var label = document.createElement('label');
                 label.setAttribute('for', "sai"+i);
-                label.appendChild(document.createTextNode(axOpts[i]));
+                label.appendChild(document.createTextNode(available_axis[axOpts[i]].label));
 
                 axis_option.appendChild(input);
                 axis_option.appendChild(label);
