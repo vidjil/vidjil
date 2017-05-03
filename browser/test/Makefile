@@ -1,7 +1,7 @@
 
 all: unit functional
 
-unit: phantomjs
+unit: nightmare
 
 headless:
 	HEADLESS=1 $(MAKE) functional
