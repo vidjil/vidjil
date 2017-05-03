@@ -654,11 +654,12 @@ Segment.prototype = {
     fillAxisBox: function (axisBox, clone) {
         axisBox.removeAllChildren();
         var axOpts = Clone.prototype.axisOptions();
+        var available_axis = (new Axes(this.m)).available();
         for (var i in axOpts) {
             if (document.getElementById("sai"+i).checked) {
                 var span = document.createElement('span');
                 span.innerHTML = clone.getAxisValue(axOpts[i]);
-                span.setAttribute('title', axOpts[i]);
+                span.setAttribute('title', available_axis[axOpts[i]].label);
                 axisBox.appendChild(span);
             }
         }
