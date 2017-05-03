@@ -34,6 +34,8 @@ function GenericAxis (can_undefined) {
     this.values = []
     this.value_mapping = {};
     this.can_undefined = true;
+    this.NB_STEPS_IN_AXIS = 6; // Number (max) of labels per numerical axis
+    this.NB_STEPS_BAR = 30; // Number (max) of labels per numerical axis in histograms
     if(typeof can_undefined !== "undefined")
         this.can_undefined = can_undefined;
 }
@@ -200,7 +202,7 @@ GenericAxis.prototype = {
         this.labels = [];
         var length = Object.keys(this.label_mapping).length;
 
-        var step = 1 + Math.floor(length / NB_STEPS_BAR)
+        var step = 1 + Math.floor(length / this.NB_STEPS_BAR)
         var text;
         var i=1
         for (var e in this.value_mapping){
