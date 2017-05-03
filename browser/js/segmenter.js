@@ -571,7 +571,9 @@ Segment.prototype = {
         productive_info.className = "infoBox";
 
         var info = '' ;
-        if (clone.seg.imgt!=null && typeof clone.seg.imgt['V-DOMAIN Functionality'] != 'undefined'){
+        if (typeof clone.seg.imgt !== 'undefined' &&
+            clone.seg.imgt!==null &&
+            typeof clone.seg.imgt['V-DOMAIN Functionality'] != 'undefined'){
             info = (clone.seg.imgt["V-DOMAIN Functionality"].toLowerCase().indexOf("unproductive") < 0) ?
                 icon('icon-plus-squared', 'productive, as computed by IMGT/V-QUEST') :
                 icon('icon-minus-squared', 'unproductive, as computed by IMGT/V-QUEST') ;
@@ -584,7 +586,7 @@ Segment.prototype = {
         Videntity_info.className = "identityBox";
 
         info = '' ;
-        if (clone.seg.imgt!=null){
+        if (typeof clone.seg.imgt !== 'undefined' && clone.seg.imgt!==null){
             identity = clone.seg.imgt["V-REGION identity % (with ins/del events)"]
             if (typeof identity != 'undefined' && identity.length === 0)
                 identity = clone.seg.imgt["V-REGION identity %"]
@@ -933,7 +935,7 @@ Segment.prototype = {
      * @return {bool}
      * */
     isDNA : function (string) {
-        if (string == null) {
+        if (typeof string === 'undefined' || string === null) {
             return false;
         }else if (string.constructor === String) {
             var reg = new RegExp("^[ACGTacgt]+$")
@@ -951,7 +953,7 @@ Segment.prototype = {
      * @return {bool}
      * */
     isPos : function (obj) {
-        if (obj == null) {
+        if (typeof obj === 'undefined' || obj === null) {
             return false;
         }else if (typeof obj.start != 'undefined' && typeof obj.stop != 'undefined') {
             return true;
@@ -966,7 +968,7 @@ Segment.prototype = {
      * @return {bool}
      * */
     isAA : function (string) {
-        if (string == null) {
+        if (typeof string === 'undefined' || string === null) {
             return false;
         }else if (string.constructor === String) {
             var reg = new RegExp("^[ACDEFGHIKLMNOPQRSTUVWY]+$")
