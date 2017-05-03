@@ -20,7 +20,7 @@ phantomjs:
 nightmare: SHELL:=/bin/bash
 nightmare:
 	cd QUnit ; \
-	[ `node nightmare.js | tee >(cat >&2) | grep -c '^not ok'` -eq 0 ]
+	[ `xvfb-run node nightmare.js | tee >(cat >&2) | grep -c '^not ok'` -eq 0 ]
 
 quality:
 	jshint ../js/*.js
