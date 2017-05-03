@@ -29,7 +29,7 @@ function newObject(i) {
         this.index = i;
         this.visited = false;
         this.mark = null;
-};
+}
 
 /*
 Enum object which contains three states of a node
@@ -54,13 +54,13 @@ function DBSCAN(sp, eps, nbr) {
     this.epsilon = eps;
     this.min = nbr;
     //Clusters array
-    this.clusters = new Array();
+    this.clusters = [];
     //Array which contains all the newObject objects
-    this.visitedTab = new Array();
+    this.visitedTab = [];
     //Creation of the newObject objects
     for (var i = 0; i < this.D.length; i++)
         this.visitedTab.push(new newObject(i));
-};
+}
 
 /*
 Function which permits to create a double-entries edges array
@@ -73,14 +73,14 @@ function addTabOfEdges(nbrNodes, allEdges) {
         tabOfEdges[i] = new Array(nbrNodes);
     //End of the creation of the double-entries edges array
     if (typeof allEdges != 'undefined'){
-        for (var i = 0; i < allEdges.length; i++) {
+        for (var j = 0; j < allEdges.length; j++) {
             //Added length/distance
-            tabOfEdges[allEdges[i].source][allEdges[i].target] = allEdges[i].len;
-            tabOfEdges[allEdges[i].target][allEdges[i].source] = allEdges[i].len;
+            tabOfEdges[allEdges[j].source][allEdges[j].target] = allEdges[j].len;
+            tabOfEdges[allEdges[j].target][allEdges[j].source] = allEdges[j].len;
         }
     }
     return tabOfEdges;
-};
+}
 
 DBSCAN.prototype = {
 
@@ -88,6 +88,7 @@ DBSCAN.prototype = {
     Init algorithm
     */
     runAlgorithm: function() {
+        var nextCluster;
         for (var P in this.D) {
             if (!this.visitedTab[P].visited) {
                 //Node visited
@@ -100,18 +101,18 @@ DBSCAN.prototype = {
                 }
                 //Core -> expandCluster
                 else {
-                    var nextCluster = this.clusters.length;
-                    this.clusters[nextCluster] = new Array();
+                    nextCluster = this.clusters.length;
+                    this.clusters[nextCluster] = [];
                     this.expandCluster(P, neighborPts, nextCluster);
                 }
             }
         }
         //Added NOISE clone in a single cluster
-        for (var P in this.D)
-            if (this.visitedTab[P].mark == markEnum.NOISE) {
-                var nextCluster = this.clusters.length;
-                this.clusters[nextCluster] = new Array();
-                this.clusters[nextCluster].push(P);
+        for (var Q in this.D)
+            if (this.visitedTab[Q].mark == markEnum.NOISE) {
+                nextCluster = this.clusters.length;
+                this.clusters[nextCluster] = [];
+                this.clusters[nextCluster].push(Q);
             }
     },
 
@@ -150,7 +151,7 @@ DBSCAN.prototype = {
     @param P: currentpoint
     */
     regionQuery: function(P) {
-        var neighbors = new Array();
+        var neighbors = [];
         for (var j = 0; j < this.D.length; j++) {
             var i = this.D[j];
             //Push only if the distance between P and i is <= epsilon
