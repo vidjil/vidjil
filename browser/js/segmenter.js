@@ -395,6 +395,12 @@ Segment.prototype = {
         var fields = this.findPotentialField();
         var filter = ["sequence", "_sequence.trimmed nt seq"]; // Fields that are ignored
 
+        var input_onchange = function () {
+            var id = this.id.replace("highlight_", "");
+            self.highlight[id].field = this.options[this.selectedIndex].text;
+            self.update();
+        };
+
         for (var i in this.highlight) {
             var input = document.createElement('select');
             input.style.borderColor = this.highlight[i].color;
@@ -409,11 +415,7 @@ Segment.prototype = {
                 }
             }
 
-            input.onchange = function () {
-                var id = this.id.replace("highlight_", "");
-                self.highlight[id].field = this.options[this.selectedIndex].text;
-                self.update();
-            };
+            input.onchange = input_onchange;
 
             div_highlight.appendChild(input);
         }

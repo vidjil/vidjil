@@ -181,6 +181,24 @@ List.prototype = {
 
         var div_list_data = document.createElement('div');
         div_list_data.id = "list_data";
+
+        var name_onclick = function () {
+            var k = this.parentNode.id.replace("data_", "")
+            if (self.m.data_info[k].isActive){
+                self.m.data_info[k].isActive = false
+            }else{
+                self.m.data_info[k].isActive = true
+            }
+            self.build_data_list()
+            graph.updateData();
+        }
+
+        var star_onclick = function (key, star) {
+            star.onclick = function () {
+                self.openDataMenu(key);
+            }
+        }
+
         for (var key in this.m.data_info) {
             
             var div = document.createElement('div');
@@ -192,16 +210,7 @@ List.prototype = {
             var name = document.createElement('span');
             name.appendChild(document.createTextNode(key))
             name.className = "data_name";
-            name.onclick = function () {
-                var k = this.parentNode.id.replace("data_", "")
-                if (self.m.data_info[k].isActive){
-                    self.m.data_info[k].isActive = false
-                }else{
-                    self.m.data_info[k].isActive = true
-                }
-                self.build_data_list()
-                graph.updateData();
-            }
+            name.onclick = name_onclick;
             div.appendChild(name)
             
             var value = document.createElement('span');
@@ -210,11 +219,7 @@ List.prototype = {
             
             var star = document.createElement('span');
             star.className = "starBox";
-            (function (key) {
-                star.onclick = function () {
-                    self.openDataMenu(key);
-                }
-            })(key);
+            star_onclick(key, star);
 
             star.appendChild(icon('icon-star-2', 'clone tag'))
             div.appendChild(star)
@@ -416,6 +421,14 @@ List.prototype = {
     },
 
     updateElem: function (list) {
+        var cluster_hide = function () {
+            self.hideCluster(this)
+        }
+
+        var cluster_show = function () {
+            self.showCluster(this)
+        }
+
         for (var i = 0; i < list.length; i++) {
             var cloneID = list[i]
                 
@@ -458,14 +471,10 @@ List.prototype = {
                 span_cluster.removeAllChildren();
                 if (this.m.clusters[cloneID].length > 1) {
                     if (clone.split) {
-                        span_cluster.onclick = function () {
-                            self.hideCluster(this)
-                        }
+                        span_cluster.onclick = cluster_hide;
                         span_cluster.appendChild(icon('icon-minus', 'Hide the subclones'));
                     } else {
-                        span_cluster.onclick = function () {
-                            self.showCluster(this)
-                        }
+                        span_cluster.onclick = cluster_show;
                         span_cluster.appendChild(icon('icon-plus', 'Show the subclones'));
                     }
                     self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
@@ -502,65 +511,67 @@ List.prototype = {
         var clusterSize = this.m.clone(cloneID).getSize()
         var clusterReads = this.m.clone(cloneID).getReads()
 
+        var buildDivClone = function (i) {
+            var id = self.m.clusters[cloneID][i]
+            var clone = self.m.clone(id)
+            var color = clone.getColor();
+            var div_clone = document.createElement('div');
+            div_clone.id = "_" + id;
+            div_clone.id2 = id;
+            div_clone.style.color = color;
+            div_clone.className = "listElem";
+            div_clone.onmouseover = function () {
+                self.m.focusIn(id);
+            }
+            if (clone.isSelected) div_clone.className = "listElem selected";
+
+            var span_name = document.createElement('span');
+            span_name.className = "nameBox";
+
+            if (!self.m.clone(cloneID).isVirtual())
+                span_name.className += " cloneName";
+
+            span_name.onclick = function (e) {
+                self.clickList(e, id);
+            }
+            span_name.appendChild(document.createTextNode(clone.getCode()));
+            span_name.title = clone.getCode();
+
+            var span_info = document.createElement('span')
+            span_info.className = "infoBox";
+            span_info.onclick = function () {
+                self.m.displayInfoBox(id);
+            }
+            span_info.appendChild(icon('icon-info', 'clone information'));
+
+            var img = document.createElement('span');
+            img.onclick = function () {
+                self.m.split(cloneID, this.parentNode.id2);
+            }
+            if (id != parseInt(cloneID)) {
+                img.appendChild(icon('icon-cancel', 'Remove this subclone from the clone'));
+            }
+            img.className = "delBox";
+
+            var span_stat = document.createElement('span');
+            span_stat.className = "sizeBox";
+
+            var r = 100
+            if (clusterSize !== 0) {
+                span_stat.appendChild(document.createTextNode( (clone.get('reads', self.m.t)*100/clusterReads).toFixed(1) + "%"));
+            } else {
+                span_stat.appendChild(document.createTextNode("0%"))
+            }
+
+            div_clone.appendChild(img);
+            div_clone.appendChild(span_info);
+            div_clone.appendChild(span_name);
+            div_clone.appendChild(span_stat);
+            div_cluster.appendChild(div_clone);
+        }
+
         for (var i = 0; i < self.m.clusters[cloneID].length; i++) {
-            (function (i) {
-                var id = self.m.clusters[cloneID][i]
-                var clone = self.m.clone(id)
-                var color = clone.getColor();
-                var div_clone = document.createElement('div');
-                div_clone.id = "_" + id;
-                div_clone.id2 = id;
-                div_clone.style.color = color;
-                div_clone.className = "listElem";
-                div_clone.onmouseover = function () {
-                    self.m.focusIn(id);
-                }
-                if (clone.isSelected) div_clone.className = "listElem selected";
-
-                var span_name = document.createElement('span');
-                span_name.className = "nameBox";
-
-                if (!self.m.clone(cloneID).isVirtual())
-                    span_name.className += " cloneName";
-
-                span_name.onclick = function (e) {
-                    self.clickList(e, id);
-                }
-                span_name.appendChild(document.createTextNode(clone.getCode()));
-                span_name.title = clone.getCode();
-
-                var span_info = document.createElement('span')
-                span_info.className = "infoBox";
-                span_info.onclick = function () {
-                    self.m.displayInfoBox(id);
-                }
-                span_info.appendChild(icon('icon-info', 'clone information'));
-
-                var img = document.createElement('span');
-                img.onclick = function () {
-                    self.m.split(cloneID, this.parentNode.id2);
-                }
-                if (id != parseInt(cloneID)) {
-                    img.appendChild(icon('icon-cancel', 'Remove this subclone from the clone'));
-                }
-                img.className = "delBox";
-
-                var span_stat = document.createElement('span');
-                span_stat.className = "sizeBox";
-                
-                var r = 100
-                if (clusterSize !== 0) {
-                    span_stat.appendChild(document.createTextNode( (clone.get('reads', self.m.t)*100/clusterReads).toFixed(1) + "%"));
-                } else {
-                    span_stat.appendChild(document.createTextNode("0%"))
-                }
-
-                div_clone.appendChild(img);
-                div_clone.appendChild(span_info);
-                div_clone.appendChild(span_name);
-                div_clone.appendChild(span_stat);
-                div_cluster.appendChild(div_clone);
-            })(i)
+            buildDivClone(i);
         }
     },
 
