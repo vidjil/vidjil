@@ -193,7 +193,7 @@ Clone.prototype = {
     {
         positions = this.getSegStartStop(field_name)
 
-	if (positions != null)
+	if (positions !== null)
             // Start/stop do already exist
             return ;
 
@@ -226,7 +226,7 @@ Clone.prototype = {
      */
     getSegNtSequence: function(field_name) {
         positions = this.getSegStartStop(field_name)
-        if (positions != null) {
+        if (positions !== null) {
             return this.sequence.substr(positions.start-1, positions.stop - positions.start+1)
         }
         return '';
@@ -239,7 +239,7 @@ Clone.prototype = {
      */
     getSegLength: function(field_name) {
         positions = this.getSegStartStop(field_name)
-        if (positions != null) {
+        if (positions !== null) {
             return positions.stop - positions.start + 1
         } else {
             return 'undefined';
@@ -256,7 +256,7 @@ Clone.prototype = {
 	positions1 = this.getSegStartStop(field_name1)
 	positions2 = this.getSegStartStop(field_name2)
 
-	if (positions1 != null && positions2 != null) {
+	if (positions1 !== null && positions2 !== null) {
 	    return positions2.stop - positions1.start + 1
 	} else {
 	    return 'undefined';
@@ -1194,7 +1194,7 @@ Clone.prototype = {
                        "clonedb": "<a href='http://ecngs.vidjil.org/clonedb'>CloneDB</a>"};
         for (var external_tool in other_infos) {
             if (typeof this.seg[external_tool] != 'undefined' &&
-                this.seg[external_tool] != null) {
+                this.seg[external_tool] !== null) {
                 html += header("Results of "+other_infos[external_tool])
                 for (var item in this.seg[external_tool]) {
                     if (! (this.seg[external_tool][item] instanceof Object) &&
