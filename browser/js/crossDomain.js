@@ -12,101 +12,101 @@ function setCrossDomainModel(model) {
 //parametre IMGT par defaut
 function initImgtInput(species) {
     var imgtInput = {};
-    imgtInput["callback"] = "jQuery17106713638880755752_1378825832820";
-    imgtInput["livret"] = "1";
-    imgtInput["Session"] = "&lt;session code=Â¤0Â¤ appliName=Â¤IMGTvquestÂ¤ time=Â¤3625396897Â¤/&gt;";
-    imgtInput["l01p01c02"] = species;
-    imgtInput["l01p01c04"] = "TR";
-    imgtInput["l01p01c03"] = "inline";
-    imgtInput["l01p01c10"] = "";
-    imgtInput["l01p01c07"] = "2. Synthesis";
-    imgtInput["l01p01c05"] = "HTML";
-    imgtInput["l01p01c09"] = "60";
-    imgtInput["l01p01c60"] = "5";
-    imgtInput["l01p01c12"] = "Y";
-    imgtInput["l01p01c13"] = "Y";
-    imgtInput["l01p01c06"] = "Y";
-    imgtInput["l01p01c24"] = "N";
-    imgtInput["l01p01c14"] = "Y";
-    imgtInput["l01p01c15"] = "Y";
-    imgtInput["l01p01c16"] = "Y";
-    imgtInput["l01p01c41"] = "Y";
-    imgtInput["l01p01c22"] = "Y";
-    imgtInput["l01p01c17"] = "Y";
-    imgtInput["l01p01c23"] = "Y";
-    imgtInput["l01p01c19"] = "Y";
-    imgtInput["l01p01c18"] = "Y";
-    imgtInput["l01p01c20"] = "Y";
-    imgtInput["l01p01c27"] = "Y";
-    imgtInput["l01p01c28"] = "Y";
-    imgtInput["l01p01c29"] = "Y";
-    imgtInput["l01p01c30"] = "Y";
-    imgtInput["l01p01c31"] = "Y";
-    imgtInput["l01p01c32"] = "Y";
-    imgtInput["l01p01c33"] = "Y";
-    imgtInput["l01p01c34"] = "Y";
-    imgtInput["l01p01c46"] = "N";
-    imgtInput["l01p01c47"] = "Y"; // nt-sequences
-    imgtInput["l01p01c48"] = "N";
-    imgtInput["l01p01c49"] = "N";
-    imgtInput["l01p01c50"] = "N"; // Junction
-    imgtInput["l01p01c51"] = "N";
-    imgtInput["l01p01c52"] = "N";
-    imgtInput["l01p01c53"] = "N";
-    imgtInput["l01p01c54"] = "N";
-    imgtInput["l01p01c55"] = "NO";
-    imgtInput["l01p01c35"] = "F+ORF+ in-frame P";
-    imgtInput["l01p01c36"] = "0";
-    imgtInput["l01p01c40"] = "1";
-    imgtInput["l01p01c25"] = "default";
-    imgtInput["l01p01c37"] = "default";
-    imgtInput["l01p01c38"] = "default";
-    imgtInput["l01p01c39"] = "default";
-    imgtInput["l01p01c08"] = "";
-    imgtInput["l01p01c26"] = "";
-    imgtInput["l01p01c10"] = ">a\nATGCGCAGATGC\n";
+    imgtInput.callback = "jQuery17106713638880755752_1378825832820";
+    imgtInput.livret = "1";
+    imgtInput.Session = "&lt;session code=Â¤0Â¤ appliName=Â¤IMGTvquestÂ¤ time=Â¤3625396897Â¤/&gt;";
+    imgtInput.l01p01c02 = species;
+    imgtInput.l01p01c04 = "TR";
+    imgtInput.l01p01c03 = "inline";
+    imgtInput.l01p01c10 = "";
+    imgtInput.l01p01c07 = "2. Synthesis";
+    imgtInput.l01p01c05 = "HTML";
+    imgtInput.l01p01c09 = "60";
+    imgtInput.l01p01c60 = "5";
+    imgtInput.l01p01c12 = "Y";
+    imgtInput.l01p01c13 = "Y";
+    imgtInput.l01p01c06 = "Y";
+    imgtInput.l01p01c24 = "N";
+    imgtInput.l01p01c14 = "Y";
+    imgtInput.l01p01c15 = "Y";
+    imgtInput.l01p01c16 = "Y";
+    imgtInput.l01p01c41 = "Y";
+    imgtInput.l01p01c22 = "Y";
+    imgtInput.l01p01c17 = "Y";
+    imgtInput.l01p01c23 = "Y";
+    imgtInput.l01p01c19 = "Y";
+    imgtInput.l01p01c18 = "Y";
+    imgtInput.l01p01c20 = "Y";
+    imgtInput.l01p01c27 = "Y";
+    imgtInput.l01p01c28 = "Y";
+    imgtInput.l01p01c29 = "Y";
+    imgtInput.l01p01c30 = "Y";
+    imgtInput.l01p01c31 = "Y";
+    imgtInput.l01p01c32 = "Y";
+    imgtInput.l01p01c33 = "Y";
+    imgtInput.l01p01c34 = "Y";
+    imgtInput.l01p01c46 = "N";
+    imgtInput.l01p01c47 = "Y"; // nt-sequences
+    imgtInput.l01p01c48 = "N";
+    imgtInput.l01p01c49 = "N";
+    imgtInput.l01p01c50 = "N"; // Junction
+    imgtInput.l01p01c51 = "N";
+    imgtInput.l01p01c52 = "N";
+    imgtInput.l01p01c53 = "N";
+    imgtInput.l01p01c54 = "N";
+    imgtInput.l01p01c55 = "NO";
+    imgtInput.l01p01c35 = "F+ORF+ in-frame P";
+    imgtInput.l01p01c36 = "0";
+    imgtInput.l01p01c40 = "1";
+    imgtInput.l01p01c25 = "default";
+    imgtInput.l01p01c37 = "default";
+    imgtInput.l01p01c38 = "default";
+    imgtInput.l01p01c39 = "default";
+    imgtInput.l01p01c08 = "";
+    imgtInput.l01p01c26 = "";
+    imgtInput.l01p01c10 = ">a\nATGCGCAGATGC\n";
     return imgtInput;
 }
 
 //parametre igBlast par defaut
 function initIgBlastInput() {
     var igBlastInput = {};
-    igBlastInput["queryseq"] = "GAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTTCTGACATAAGAAACCCTTTGGCAGTGGAACAACAC"
-    igBlastInput["organism"] = "human"
-    igBlastInput["germline_db_V"] = "IG_DB/imgt.TR.Homo_sapiens.V.f.orf.p";
-    igBlastInput["germline_db_D"] = "IG_DB/imgt.TR.Homo_sapiens.D.f.orf";
-    igBlastInput["germline_db_J"] = "IG_DB/imgt.TR.Homo_sapiens.J.f.orf.p";
-    igBlastInput["program"] = "blastn";
-    igBlastInput["min_D_match"] = 5;
-    igBlastInput["D_penalty"] = -4;
-    igBlastInput["num_alignments_V"] = 3;
-    igBlastInput["num_alignments_D"] = 3;
-    igBlastInput["num_alignments_J"] = 3;
-    igBlastInput["translation="] = true;
-    igBlastInput["domain"] = "imgt";
-    igBlastInput["outfmt"] = 3;
-    igBlastInput["additional_db"] = "";
-    igBlastInput["v_focus"] = true;
-    igBlastInput["num_alignments_additional"] = 10;
-    igBlastInput["evalue"] = 1;
-    igBlastInput["LINK_LOC"] = "";
-    igBlastInput["SEARCH_TYPE"] = "TCR";
-    igBlastInput["igsource"] = "new";
-    igBlastInput["analyze"] = "on";
-    igBlastInput["CMD"] = "request";
-    igBlastInput["seqtype"] = "TCR";
+    igBlastInput.queryseq = "GAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTTCTGACATAAGAAACCCTTTGGCAGTGGAACAACAC"
+    igBlastInput.organism = "human"
+    igBlastInput.germline_db_V = "IG_DB/imgt.TR.Homo_sapiens.V.f.orf.p";
+    igBlastInput.germline_db_D = "IG_DB/imgt.TR.Homo_sapiens.D.f.orf";
+    igBlastInput.germline_db_J = "IG_DB/imgt.TR.Homo_sapiens.J.f.orf.p";
+    igBlastInput.program = "blastn";
+    igBlastInput.min_D_match = 5;
+    igBlastInput.D_penalty = -4;
+    igBlastInput.num_alignments_V = 3;
+    igBlastInput.num_alignments_D = 3;
+    igBlastInput.num_alignments_J = 3;
+    igBlastInput.translation = true;
+    igBlastInput.domain = "imgt";
+    igBlastInput.outfmt = 3;
+    igBlastInput.additional_db = "";
+    igBlastInput.v_focus = true;
+    igBlastInput.num_alignments_additional = 10;
+    igBlastInput.evalue = 1;
+    igBlastInput.LINK_LOC = "";
+    igBlastInput.SEARCH_TYPE = "TCR";
+    igBlastInput.igsource = "new";
+    igBlastInput.analyze = "on";
+    igBlastInput.CMD = "request";
+    igBlastInput.seqtype = "TCR";
     return igBlastInput;
 }
 
 
 function imgtPost(species, data, system) {
     var imgtInput = initImgtInput(species);
-    imgtInput["l01p01c10"] = data;
+    imgtInput.l01p01c10 = data;
     if (system[0] == "I") {
-        imgtInput["l01p01c04"] = "IG";
+        imgtInput.l01p01c04 = "IG";
     }
     if (system[0] == "T") {
-        imgtInput["l01p01c04"] = "TR";
+        imgtInput.l01p01c04 = "TR";
     }
     var form = document.getElementById("form");
     form.removeAllChildren();
@@ -167,15 +167,15 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
         });
     }
 
-    imgtInput["l01p01c07"] = "3. Excel";
-    imgtInput["l01p01c10"] = data;
-    imgtInput["l01p01c62"] = 2;
+    imgtInput.l01p01c07 = "3. Excel";
+    imgtInput.l01p01c10 = data;
+    imgtInput.l01p01c62 = 2;
 
     if (system[0] == "I") {
-        imgtInput["l01p01c04"] = "IG";
+        imgtInput.l01p01c04 = "IG";
     }
     if (system[0] == "T") {
-        imgtInput["l01p01c04"] = "TR";
+        imgtInput.l01p01c04 = "TR";
     }
     var form = document.getElementById("form");
     form.removeAllChildren();
@@ -289,7 +289,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
 
             });
             input.click();
-            var label = document.createElement('label');
+            label = document.createElement('label');
             label.setAttribute("for", 'imgt_vdj_input_check');
             label.innerHTML = "V/D/J-IMGT";
             input.setAttribute("title", "Display 5'V-REGION, D-REGION and 3'J-REGION computed by IMGT/V-QUEST");
@@ -321,19 +321,19 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
 
 function igBlastPost(data, system) {
     var igBlastInput = initIgBlastInput();
-    igBlastInput["queryseq"] = data;
+    igBlastInput.queryseq = data;
     if (system[0] == "I") {
-        igBlastInput["germline_db_V"] = "IG_DB/imgt.Homo_sapiens.V.f.orf.p";
-        igBlastInput["germline_db_D"] = "IG_DB/imgt.Homo_sapiens.D.f.orf";
-        igBlastInput["germline_db_J"] = "IG_DB/imgt.Homo_sapiens.J.f.orf";
-        igBlastInput["SEARCH_TYPE"] = "IG";
-        igBlastInput["seqtype"] = "Ig";
+        igBlastInput.germline_db_V = "IG_DB/imgt.Homo_sapiens.V.f.orf.p";
+        igBlastInput.germline_db_D = "IG_DB/imgt.Homo_sapiens.D.f.orf";
+        igBlastInput.germline_db_J = "IG_DB/imgt.Homo_sapiens.J.f.orf";
+        igBlastInput.SEARCH_TYPE = "IG";
+        igBlastInput.seqtype = "Ig";
     } else if (system[0] == "T") {
-        igBlastInput["germline_db_V"] = "IG_DB/imgt.TR.Homo_sapiens.V.f.orf.p";
-        igBlastInput["germline_db_D"] = "IG_DB/imgt.TR.Homo_sapiens.D.f.orf";
-        igBlastInput["germline_db_J"] = "IG_DB/imgt.TR.Homo_sapiens.J.f.orf.p";
-        igBlastInput["SEARCH_TYPE"] = "TCR";
-        igBlastInput["seqtype"] = "TCR";
+        igBlastInput.germline_db_V = "IG_DB/imgt.TR.Homo_sapiens.V.f.orf.p";
+        igBlastInput.germline_db_D = "IG_DB/imgt.TR.Homo_sapiens.D.f.orf";
+        igBlastInput.germline_db_J = "IG_DB/imgt.TR.Homo_sapiens.J.f.orf.p";
+        igBlastInput.SEARCH_TYPE = "TCR";
+        igBlastInput.seqtype = "TCR";
     }
 
 
@@ -359,13 +359,13 @@ function igBlastPost(data, system) {
 // ARReST / CompileJunction
 
 var arrestInput = {};
-arrestInput["fname"] = "exported_func" ;
-arrestInput["pjxrand"] = ".0033328778554" ;
-arrestInput["elite"] = "" ;
+arrestInput.fname = "exported_func" ;
+arrestInput.pjxrand = ".0033328778554" ;
+arrestInput.elite = "" ;
 
 function arrestPost(data, system) {
 
-    arrestInput["args"] = data;
+    arrestInput.args = data;
 
     var form = document.getElementById("form");
     form.removeAllChildren();
@@ -388,27 +388,27 @@ function arrestPost(data, system) {
 
 //parametre blast par defaut
 var blastInput = {};
-blastInput["query_sequence"]          = "";
-blastInput["query_type"]              = "dna";
+blastInput.query_sequence          = "";
+blastInput.query_type              = "dna";
 blastInput["filterable-dropdown-tag"] = "Human (Homo sapiens)";
-blastInput["db_type"]                 = "dna";
-blastInput["source_dna"]              = "LATESTGP";
-blastInput["search_type"]             = "NCBIBLAST_BLASTN";
-blastInput["config_set_NCBIBLAST_BLASTN"]       = "normal";
-blastInput["description"]                       = "";
-blastInput["NCBIBLAST_BLASTN__max_target_seqs"] = "100";
-blastInput["NCBIBLAST_BLASTN__culling_limit"]   = "5";
-blastInput["NCBIBLAST_BLASTN__evalue"]          = "10";
-blastInput["NCBIBLAST_BLASTN__word_size"]       = "11";
-blastInput["NCBIBLAST_BLASTN__score"]           = "1_3";
-blastInput["NCBIBLAST_BLASTN__gap_dna"]         = "5n2";
-blastInput["NCBIBLAST_BLASTN__ungapped"]        = 0;
-blastInput["NCBIBLAST_BLASTN__dust"]            = 1;
-blastInput["NCBIBLAST_BLASTN__repeat_mask"]     = 1;
+blastInput.db_type                 = "dna";
+blastInput.source_dna              = "LATESTGP";
+blastInput.search_type             = "NCBIBLAST_BLASTN";
+blastInput.config_set_NCBIBLAST_BLASTN       = "normal";
+blastInput.description                       = "";
+blastInput.NCBIBLAST_BLASTN__max_target_seqs = "100";
+blastInput.NCBIBLAST_BLASTN__culling_limit   = "5";
+blastInput.NCBIBLAST_BLASTN__evalue          = "10";
+blastInput.NCBIBLAST_BLASTN__word_size       = "11";
+blastInput.NCBIBLAST_BLASTN__score           = "1_3";
+blastInput.NCBIBLAST_BLASTN__gap_dna         = "5n2";
+blastInput.NCBIBLAST_BLASTN__ungapped        = 0;
+blastInput.NCBIBLAST_BLASTN__dust            = 1;
+blastInput.NCBIBLAST_BLASTN__repeat_mask     = 1;
 
 function blastPost(data, system) {
 
-    blastInput["query_sequence"] = data;
+    blastInput.query_sequence = data;
 
     var form = document.getElementById("form");
     form.removeAllChildren();
