@@ -49,7 +49,7 @@ GermlineList.prototype = {
                     var json = result.replace(/ *\/\/[^\n]*\n */g , "")
                     //convert from js to json (json begin with { or [, never with a var name)
                     json = json.replace("germline_data = " , "")
-                    self.list = jQuery.parseJSON(json)['systems'];
+                    self.list = jQuery.parseJSON(json).systems;
                 }
                 catch(err){
                     console.log({"type": "flash", "msg": "germlines.data malformed, use local js file instead (can be outdated) " , "priority": 2});
@@ -70,7 +70,7 @@ GermlineList.prototype = {
     * */
     fallbackLoad : function () {
         try {
-            this.list = germline_data['systems']
+            this.list = germline_data.systems
         }
         catch(err){
             console.log({"type": "popup", "msg": "Incorrect browser installation, 'js/germline.js' is not found<br />please run 'make' in 'germline/'"});
@@ -155,11 +155,11 @@ Germline.prototype = {
         if (type=="D") type2="4"
         if (type=="J") type2="3"
         
-        if (typeof this.m.germlineList.list[system] != 'undefined'
-            && typeof this.m.germlineList.list[system]['recombinations'] != 'undefined'){
-            if (typeof this.m.germlineList.list[system]['recombinations'][type2] != 'undefined' ){
-                for (var i=0; i<this.m.germlineList.list[system]['recombinations'][type2].length; i++){
-                    var filename = this.m.germlineList.list[system]['recombinations'][type2][i] 
+        if (typeof this.m.germlineList.list[system] !== 'undefined' &&
+            typeof this.m.germlineList.list[system].recombinations !== 'undefined'){
+            if (typeof this.m.germlineList.list[system].recombinations[type2] !== 'undefined' ){
+                for (var i=0; i<this.m.germlineList.list[system].recombinations[type2].length; i++){
+                    var filename = this.m.germlineList.list[system].recombinations[type2][i]
                     filename = filename.split('/')[filename.split('/').length-1] //remove path
                     filename = filename.split('.')[0] //remove file extension 
                     
@@ -177,12 +177,12 @@ Germline.prototype = {
         //reduce germline size (keep only detected genes)
         //and add undetected genes (missing from germline)
         var g = {}
-        for (var i=0; i<this.m.clones.length; i++){
-            if (this.m.clone(i).hasSeg(type2) &&
-                typeof this.m.clone(i).seg[type2]["name"] != "undefined"
+        for (var j=0; j<this.m.clones.length; j++){
+            if (this.m.clone(j).hasSeg(type2) &&
+                typeof this.m.clone(j).seg[type2].name != "undefined"
             ){
-                var gene=this.m.clone(i).seg[type2]["name"];
-                if (this.m.system != "multi" || this.m.clone(i).get('germline') == system){
+                var gene=this.m.clone(j).seg[type2].name;
+                if (this.m.system != "multi" || this.m.clone(j).get('germline') == system){
                     if ( typeof this.allele[gene] != "undefined"){
                         g[gene] = this.allele[gene]
                     }else{
@@ -199,43 +199,43 @@ Germline.prototype = {
         mySortedArray(tmp1);
         var list1 = {};
         //Pour chaque objet, on fait un push sur this.allele
-        for (var i = 0; i<tmp1.length; i++) {
-            list1[tmp1[i]] = this.allele[tmp1[i]];
+        for (var k = 0; k<tmp1.length; k++) {
+            list1[tmp1[k]] = this.allele[tmp1[k]];
         }
         this.allele = list1;
         // console.log(system +"  "+ type)
         
         
         //color
-        var key = Object.keys(list1);
-        if (key.length != 0){
+        var keys = Object.keys(list1);
+        if (keys.length !== 0){
             var n = 0,
                 n2 = 0;
-            var elem2 = key[0].split('*')[0];
-            for (var i = 0; i < key.length; i++) {
-                var tmp = this.allele[key[i]];
-                this.allele[key[i]] = {};
-                this.allele[key[i]].seq = tmp;
-                this.allele[key[i]].color = colorGenerator((30 + (i / key.length) * 290));
+            var elem2 = keys[0].split('*')[0];
+            for (var l = 0; l < keys.length; l++) {
+                var tmp = this.allele[keys[l]];
+                this.allele[keys[l]] = {};
+                this.allele[keys[l]].seq = tmp;
+                this.allele[keys[l]].color = colorGenerator((30 + (l / keys.length) * 290));
 
-                var elem = key[i].split('*')[0];
+                var elem = keys[l].split('*')[0];
                 if (elem != elem2) {
                     this.gene[elem2] = {};
                     this.gene[elem2].n = n2;
-                    this.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290));
+                    this.gene[elem2].color = colorGenerator((30 + ((l - 1) / keys.length) * 290));
                     this.gene[elem2].rank = n;
                     n++;
                     n2 = 0;
                 }
                 elem2 = elem;
-                this.allele[key[i]].gene = n
-                this.allele[key[i]].rank = n2
+                this.allele[keys[l]].gene = n
+                this.allele[keys[l]].rank = n2
                 n2++;
             }
             this.gene[elem2] = {};
             this.gene[elem2].n = n2;
             this.gene[elem2].rank = n
-            this.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290));
+            this.gene[elem2].color = colorGenerator((30 + ((l - 1) / keys.length) * 290));
         }
         
         return callback

@@ -1248,10 +1248,11 @@ changeAlleleNotation: function(alleleNotation) {
 
         //order clones with same key
         var keys = Object.keys(tmp)
+        var compare = function(a, b) {
+            return self.clone(a).top - self.clone(b).top;
+        }
         for (var j in tmp) {
-            tmp[j].sort(function(a, b) {
-                return self.clone(a).top - self.clone(b).top;
-            });
+            tmp[j].sort(compare);
         }
 
         //reset cluster
@@ -1624,7 +1625,7 @@ changeAlleleNotation: function(alleleNotation) {
         
         for (var i=l-1; i >= 0; i--) {
             ss += s[l-1-i]
-            if (i && !(i % 3))
+            if (i && (i % 3) > 0)
                 ss += DECIMAL_SEPARATOR
         }
 
@@ -1798,35 +1799,36 @@ changeAlleleNotation: function(alleleNotation) {
         cloneID = typeof cloneID !== 'undefined' ? cloneID : this.cloneID;
         this.tagSelectorList.removeAllChildren();
         this.cloneID=cloneID
-        
-        
+
+        var buildTagSelector = function (i) {
+            var span1 = document.createElement('span');
+            span1.className = "tagColorBox tagColor" + i
+            span1.onclick = function () {
+                self.clone(cloneID).changeTag(i)
+                $(self.tagSelector).hide('fast')
+            }
+
+            var span2 = document.createElement('span');
+            span2.className = "tagName" + i + " tn"
+            span2.appendChild(document.createTextNode(self.tag[i].name))
+            span2.onclick = function () {
+                self.clone(cloneID).changeTag(i)
+                $(self.tagSelector).hide('fast')
+            }
+
+            var div = document.createElement('div');
+            div.className = "tagElem"
+            div.appendChild(span1)
+            div.appendChild(span2)
+
+            var li = document.createElement('li');
+            li.appendChild(div)
+
+            self.tagSelectorList.appendChild(li);
+        }
+
         for (var i = 0; i < this.tag.length; i++) {
-            (function (i) {
-                var span1 = document.createElement('span');
-                span1.className = "tagColorBox tagColor" + i
-                span1.onclick = function () {
-                    self.clone(cloneID).changeTag(i)
-                    $(self.tagSelector).hide('fast')
-                }
-                
-                var span2 = document.createElement('span');
-                span2.className = "tagName" + i + " tn"
-                span2.appendChild(document.createTextNode(self.tag[i].name))
-                span2.onclick = function () {
-                    self.clone(cloneID).changeTag(i)
-                    $(self.tagSelector).hide('fast')
-                }
-
-                var div = document.createElement('div');
-                div.className = "tagElem"
-                div.appendChild(span1)
-                div.appendChild(span2)
-
-                var li = document.createElement('li');
-                li.appendChild(div)
-
-                self.tagSelectorList.appendChild(li);
-            })(i)
+            buildTagSelector(i);
         }
         
         var span1 = document.createElement('span');

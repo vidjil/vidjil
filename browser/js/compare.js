@@ -60,21 +60,21 @@ function compare(string1, string2) {
 	charS2 = string2_lower.charAt(1);
 	boolTerm = true;
     }
-    if (boolTerm == true) i = 1;
+    if (boolTerm === true) i = 1;
     //On va trier les noms qui, pour l'instant, ne contiennent aucun nombre
     var value_compare_ascii = 0;
-    while (value_compare_ascii == 0 && isNaN(charS1) && isNaN(charS2) && i<string1.length && i<string2.length) {
+    while (value_compare_ascii === 0 && isNaN(charS1) && isNaN(charS2) && i<string1.length && i<string2.length) {
 	value_compare_ascii = compare_ascii(charS1, charS2);
 	i++;
 	charS1 = string1_lower.charAt(i);
 	charS2 = string2_lower.charAt(i);
     }
-    if (value_compare_ascii != 0)
+    if (value_compare_ascii !== 0)
       return value_compare_ascii;
     //Si l'on arrive ici, c'est qu'il n'y avait rien à comparer sur les chaînes de caractères précédemment données
     //Vérification si l'un ou/et l'autre est/sont nul(s)
     var value_compare_length = compare_length(string1_lower, string2_lower, i);
-    if (value_compare_length == undefined)
+    if (value_compare_length === undefined)
 	return compare_numbers(string1_lower.substring(i,string1.length), string2_lower.substring(i, string2.length));
     else return value_compare_length;
 }
@@ -125,10 +125,10 @@ function compare_length(string1, string2, i) {
     if (i == string1.length && string1.length == string2.length)
 	return 0;
     //Si le i ne correspond seulement qu'à la longueur de la première chaîne, on renvoie -1
-    if ((i == string1.length && string2.length != 0) || string1.length == 0)
+    if ((i == string1.length && string2.length !== 0) || string1.length === 0)
 	return -1;
     //Si le i ne correspond seulement qu'à la longueur de la deuxième chaîne, on renvoie 1
-    if ((i == string2.length && string1.length != 0) || string2.length == 0)
+    if ((i == string2.length && string1.length !== 0) || string2.length === 0)
 	return 1;
 }
 
@@ -141,8 +141,8 @@ function compare_length(string1, string2, i) {
  */
 function compare_numbers(nbr1, nbr2) {
     //Si les deux paramètres sont des nombres ("123", "45")
+    var i;
     if (!isNaN(nbr1) && !isNaN(nbr2)) {
-	var i;
 	var nbr1Int;
 	var nbr2Int;
 	//Pour chaque nombre, on va vouloir les différencier le plus rapidement possible, par une lecture de chaque caractère numérique de gauche à droite
@@ -175,7 +175,7 @@ function compare_numbers(nbr1, nbr2) {
     }
     //Si les deux ne sont pas des nombres ("123", "456A" ; "123A", "456" ; "123A", "456B")
     else {
-	var i = 0;
+        i = 0;
 	var boolnbr1 = false;
 	var subnbr1 = nbr1;
 	var j = 0;
@@ -203,10 +203,10 @@ function compare_numbers(nbr1, nbr2) {
 	    subnbr2 = nbr2.substring(0, j-1);
 	}
 	//Si les chaînes ne sont pas vides, alors on va comparer ces deux sous-nombres entre eux
-	if (subnbr1.length != 0 && subnbr2.length != 0) {
+	if (subnbr1.length !== 0 && subnbr2.length !== 0) {
 	    var result = compare_numbers(subnbr1, subnbr2);
 	    //S'il y a cas d'égalité
-	    if (result == 0)
+	    if (result === 0)
 		//On refait une comparaison afin de comparer les chaînes par ce qui suivait le nombre contenu dans la sous-chaîne comparée de chacune
 		return compare(nbr1.substring(i-1, nbr1.length), nbr2.substring(i-1, nbr2.length));
 	    //Sinon, on retourne directement result, qui vaut -1 ou 1 selon le retour de la fonction compare_numbers sur les sous-chaînes
@@ -258,7 +258,7 @@ function compareString(str1, str2) {
         if (type1=="string" && type2=="number") return 1
         if (type1=="number" && type2=="string") return -1
         
-        if (result !=0) return result
+        if (result !==0) return result
     }
     return 0
 }

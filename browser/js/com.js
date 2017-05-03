@@ -61,7 +61,7 @@ function Com(default_console) {
     this.min_priority_console = this.DEBUG
     this.build()
     
-    BUTTON_CLOSE_POPUP = "</br></br> <div class='center' > <button onclick='console.closePopupMsg()'>ok</button></div> ",
+    BUTTON_CLOSE_POPUP = "</br></br> <div class='center' > <button onclick='console.closePopupMsg()'>ok</button></div> ";
 
     this.msg = {
         "align_error": "Error &ndash; connection to align server ("+return_URL_CGI()+") failed" +

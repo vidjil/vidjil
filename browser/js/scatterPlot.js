@@ -634,29 +634,31 @@ ScatterPlot.prototype = {
                 return clone.get(tmp)
             }
         }
+
+        var compare = function (a,b) {
+            var va;
+            try{
+                va = fct(this.m.clone(a));
+            }catch(e){
+            }
+            var vb;
+            try{
+                vb = fct(this.m.clone(b));
+            }catch(e){}
+            
+            if (typeof va == "undefined") return (typeof vb == "undefined")  ? 0 :  -1;
+            if (typeof vb == "undefined") return (typeof va == "undefined")  ? 0 :  1;
+                    
+            if (va.constructor === String) {
+                if (vb.constructor === String) return va.localeCompare(vb);
+                if (vb.constructor === Number ) return 1
+            }
+            
+            if (va.constructor === Number) return (vb.constructor === Number ) ? (va-vb) : -1;
+        }
         
         for (var i in this.barTab) {
-            this.barTab[i].sort(function (a,b) {
-                var va;
-                try{
-                    va = fct(this.m.clone(a));
-                }catch(e){
-                }
-                var vb;
-                try{
-                    vb = fct(this.m.clone(b));
-                }catch(e){}
-                
-                if (typeof va == "undefined") return (typeof vb == "undefined")  ? 0 :  -1;
-                if (typeof vb == "undefined") return (typeof va == "undefined")  ? 0 :  1;
-                        
-                if (va.constructor === String) {
-                    if (vb.constructor === String) return va.localeCompare(vb);
-                    if (vb.constructor === Number ) return 1
-                }
-                
-                if (va.constructor === Number) return (vb.constructor === Number ) ? (va-vb) : -1;
-            });
+            this.barTab[i].sort(compare);
         }
         
         return this;

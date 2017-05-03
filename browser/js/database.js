@@ -17,7 +17,7 @@ function Database(model, address) {
     var self = this;
     
     //check if a default address is available in config.js
-    if (typeof config != 'undefined' && config.use_database != undefined && config.use_database) {
+    if (typeof config !== 'undefined' && config.use_database !== undefined && config.use_database) {
         if (config.db_address) { DB_ADDRESS = config.db_address}
         
         //if adress is set to default => use the same location as the browser
@@ -28,7 +28,7 @@ function Database(model, address) {
     if (typeof address != "undefined"){ DB_ADDRESS = address }
     
     
-    if (DB_ADDRESS != ""){
+    if (DB_ADDRESS !== ""){
         var fileref=document.createElement('script')
         fileref.setAttribute("type","text/javascript")
         fileref.setAttribute("src", DB_ADDRESS + "static/js/checkSSL.js")
@@ -106,10 +106,10 @@ Database.prototype = {
      * */
     check_cert: function () {
         if (typeof sslCertTrusted == 'undefined' || !sslCertTrusted){
-            var msg = " Welcome to Vidjil! </br>"
-                    + "Your browser currently does not recognize our SSL certificate. </br>"
-                    + "To use the sample database, you need to accept this certificate and/or tag this website as a trusted one. </br>"
-                    + "<a href='"+DB_ADDRESS+"'>Follow this link<a/>"
+            var msg = " Welcome to Vidjil! </br>" +
+                "Your browser currently does not recognize our SSL certificate. </br>" +
+                "To use the sample database, you need to accept this certificate and/or tag this website as a trusted one. </br>" +
+                "<a href='"+DB_ADDRESS+"'>Follow this link<a/>"
             console.log({"type": "popup", "msg": msg})
         }
     },
@@ -136,7 +136,7 @@ Database.prototype = {
          
          var arg = "";
          if (typeof args != "undefined" && Object.keys(args).length) 
-             var arg = this.argsToStr(args)
+             arg = this.argsToStr(args)
          
          var url = self.db_address + page + "?" + arg
          if (page.substr(0,4).toLowerCase() == "http") {
@@ -228,7 +228,7 @@ Database.prototype = {
         }
         var arg = "";
         if (typeof args != "undefined" && Object.keys(args).length) {
-            var arg = this.argsToStr(args)
+            arg = this.argsToStr(args)
             url += "?" + arg;
         }
 
@@ -277,7 +277,7 @@ Database.prototype = {
         for (var i = 0; i < clones.length; i++) {
             var clone = this.m.clones[clones[i]];
             if (clone.hasSeg('5', '3')) {
-                var middle_pos = Math.round((clone.seg['5']['stop'] + clone.seg['3']['start'])/2);
+                var middle_pos = Math.round((clone.seg['5'].stop + clone.seg['3'].start)/2);
                 windows.push(clone.sequence.substr(middle_pos - Math.round(SEQ_LENGTH_CLONEDB/2), SEQ_LENGTH_CLONEDB));
 		kept_clones.push(clones[i]);
             }
@@ -335,9 +335,10 @@ Database.prototype = {
         //rétablissement de l'adresse pour les futures requetes
         result = result.replace("DB_ADDRESS/", this.db_address);
         result = result.replace("action=\"#\"", "action=\""+url+"\"");
-        
+
+        var res;
         try {
-            var res = jQuery.parseJSON(result);
+            res = jQuery.parseJSON(result);
         }
         catch(err)//it's not a json so we just display the result as an html page
         {
@@ -510,32 +511,33 @@ Database.prototype = {
                 data     : $(this).serialize(),
                 success  : function(result) {
                     var js = self.display_result(result)
+                    var fileSelect, files, file, filename;
                     if (typeof js.file_id != 'undefined'){
                             $(this).attr("action", "0")
                             var id = js.file_id
-                            if( document.getElementById("upload_file").files.length != 0 ){
-                            var fileSelect = document.getElementById('upload_file');
-                            var files = fileSelect.files;
+                            if( document.getElementById("upload_file").files.length !== 0 ){
+                            fileSelect = document.getElementById('upload_file');
+                            files = fileSelect.files;
                             var data = new FormData();
                             
                             for (var i = 0; i < files.length; i++) {
-                                var file = files[i];
+                                file = files[i];
                                 data.append('file', file, file.name);
                             }
                             data.append('id', id);
                             data.append('file_number', 1)
                             data.append('pre_process', document.getElementById('pre_process').value)
-                            var filename = $('#filename').val()
+                            filename = $('#filename').val()
                             self.uploader.add(id, data, filename, 1)
                         }
                         
-                        if( document.getElementById("upload_file2").files.length != 0 ){
-                            var fileSelect = document.getElementById('upload_file2');
-                            var files = fileSelect.files;
+                        if( document.getElementById("upload_file2").files.length !== 0 ){
+                            fileSelect = document.getElementById('upload_file2');
+                            files = fileSelect.files;
                             var data2 = new FormData();
                             
-                            for (var i = 0; i < files.length; i++) {
-                                var file = files[i];
+                            for (var j = 0; j < files.length; j++) {
+                                file = files[j];
                                 data2.append('file', file, file.name);
                             }
                             data2.append('id', id);
@@ -615,7 +617,7 @@ Database.prototype = {
      * reload the current db page
      * */
     reload: function(){
-        if (this.url.length==0){
+        if (this.url.length===0){
             this.call('default/home')
         }else{
             url = this.url[this.url.length-1]
@@ -702,17 +704,18 @@ Database.prototype = {
             this.m.analysisHasChanged = false;
             console.log({"type": "popup",
                         "default" : "save_analysis",
-                        "msg": "<div class=\'center\'> <button onclick=\'db.load_data("+JSON.stringify(args)+",\""+filename+"\")\'>Continue</button> "
-                        +" <button onclick='console.closePopupMsg()'>Cancel</button> </div>",
+                        "msg": "<div class=\'center\'> <button onclick=\'db.load_data("+JSON.stringify(args)+",\""+filename+"\")\'>Continue</button> " +
+                        "<button onclick='console.closePopupMsg()'>Cancel</button> </div>",
                         "priority": 2});
             return
         }
         
         var url = document.documentURI.split('?')[0]
+        var new_location;
         if (typeof args.sample_set_id != "undefined")
-            var new_location = url+"?sample_set_id="+args.sample_set_id+"&config="+args.config
+            new_location = url+"?sample_set_id="+args.sample_set_id+"&config="+args.config
         if (typeof args.patient != "undefined")
-            var new_location = url+"?patient="+args.patient+"&config="+args.config
+            new_location = url+"?patient="+args.patient+"&config="+args.config
         window.history.pushState('plop', 'plop', new_location);
         
         $.ajax({
@@ -756,14 +759,14 @@ Database.prototype = {
             this.m.analysisHasChanged = false;
             console.log({"type": "popup", 
                         "default" : "save_analysis", 
-                        "msg": "<div class=\'center\'> <button onclick=\'db.load_data("+JSON.stringify(args)+",\""+filename+"\")\'>Continue</button> "
-                        +" <button onclick='console.closePopupMsg()'>Cancel</button> </div>"});
+                        "msg": "<div class=\'center\'> <button onclick=\'db.load_data("+JSON.stringify(args)+",\""+filename+"\")\'>Continue</button> " +
+                        " <button onclick='console.closePopupMsg()'>Cancel</button> </div>"});
             return
         }
         
         if (typeof args == 'undefined'){
             args={}
-            args["custom"] = this.getListInput("custom_result[]")
+            args.custom = this.getListInput("custom_result[]")
         }
         
         console.log("db : custom data "+list)
@@ -871,7 +874,7 @@ Database.prototype = {
 	// TODO : Tidy up
     loadNotifications: function() {
     	var self = this;
-		if (DB_ADDRESS != "") {
+		if (DB_ADDRESS !== "") {
 			$.ajax({
 		        type: "GET",
 		        crossDomain: true,
@@ -885,9 +888,9 @@ Database.prototype = {
 		        		var header_messages = [];
 		        		var login_messages = [];
 		        		for (var i = 0; i < messages.length; ++i) {
-		        			if (messages[i]['notification']['message_type'] == 'header') {
+                                               if (messages[i].notification.message_type == 'header') {
 		        				header_messages.push(messages[i]);
-		        			} else if (messages[i]['notification']['message_type'] == 'login') {
+                                               } else if (messages[i].notification.message_type == 'login') {
 		        				login_messages.push(messages[i]);
 		        			}
 		        		}
@@ -931,15 +934,15 @@ Database.prototype = {
 			for (var i=0; i < messages.length; ++i) {
 
                                 display_title = ""
-                                if (messages[i]['notification']['message_type'] == 'login')
+                                if (messages[i].notification.message_type == 'login')
                                 {
-                                    display_title += messages[i]['notification']['creation_datetime'].split(' ')[0] + ' : '
+                                    display_title += messages[i].notification.creation_datetime.split(' ')[0] + ' : '
                                 }
-                                display_title += messages[i]['notification']['title']
+                                display_title += messages[i].notification.title
 
 				message = document.createElement('div');
-				message.className = classNames[messages[i]['notification']['priority']] + " notification";
-				$(message).attr('onclick', "db.call('notification/index', {'id': '" + messages[i]['notification']['id'] + "'})");
+				message.className = classNames[messages[i].notification.priority] + " notification";
+				$(message).attr('onclick', "db.call('notification/index', {'id': '" + messages[i].notification.id + "'})");
 
 				$(message).append(
 					// message is sanitized by the server so we unescape the string to include links and formatting
@@ -1013,7 +1016,7 @@ Database.prototype = {
 
         if (lastValue !== value && value.length>1) {
             that.list.innerHTML = options.filter(function (a) {
-                if (a == undefined)
+                if (a === undefined)
                     return 0
                 return a.toLowerCase().indexOf(value.toLowerCase()) != -1;
             }).slice(0,10).map(function (a) {
@@ -1035,7 +1038,11 @@ Database.prototype = {
         }
         that.value = value;
         if (that.lastValue !== value){
-            that.options.indexOf(value)!= -1 ? that.style.color = "green" : that.style.color = "red";
+            if (that.options.indexOf(value)!= -1) {
+                that.style.color = "green";
+            } else {
+                that.style.color = "red";
+            }
         }
         that.setSelectionRange(start, end);
     },

@@ -295,6 +295,56 @@ Builder.prototype = {
         this.post_save(this);
     },
 
+    buildListTab: function(i) {
+        var span3 = document.createElement('span');
+        span3.onclick = function (tag) {
+            self.editTagName(i, this);
+        }
+        span3.className = "edit_button"
+        span3.appendChild(document.createTextNode("..."))
+
+        var span1 = document.createElement('span');
+        span1.className = "tagColorBox tagColor" + i
+
+        var span2 = document.createElement('span');
+        span2.className = "tagName" + i + " tn"
+
+        var div = document.createElement('div');
+        div.className = "tagElem"
+        div.id = "tagDisplay" + i
+        div.onclick = function () {
+            self.nextDisplayTag(this)
+        }
+        div.appendChild(span1)
+        div.appendChild(span2)
+        div.appendChild(span3)
+
+        var li = document.createElement('li');
+        li.appendChild(div)
+
+        listTag.appendChild(li);
+    },
+
+    buildSystemSelector: function (system){
+        var radio=document.createElement("input");
+            radio.type="radio";
+            radio.name="germline";
+            radio.value=system
+            if (this.m.germlineV.system==system) radio.checked=true
+
+        div = document.createElement('div');
+        div.onclick = function(){
+            m.changeGermline(system, false)
+        }
+        div.className="buttonSelector"
+        div.appendChild(radio)
+        div.appendChild(document.createTextNode(system))
+
+        li = document.createElement('li');
+        li.appendChild(div)
+        // listGermline.appendChild(li);
+    },
+
     /*complete displaySelector menu with correct info about current tagname / top
      * */
     build_displaySelector: function () {
@@ -310,35 +360,7 @@ Builder.prototype = {
 
         //init tag list
         for (var i = 0; i < this.m.tag.length; i++) {
-            (function (i) {
-                var span3 = document.createElement('span');
-                span3.onclick = function (tag) {
-                    self.editTagName(i, this);
-                }
-                span3.className = "edit_button"
-                span3.appendChild(document.createTextNode("..."))
-
-                var span1 = document.createElement('span');
-                span1.className = "tagColorBox tagColor" + i
-
-                var span2 = document.createElement('span');
-                span2.className = "tagName" + i + " tn"
-
-                var div = document.createElement('div');
-                div.className = "tagElem"
-                div.id = "tagDisplay" + i
-                div.onclick = function () {
-                    self.nextDisplayTag(this)
-                }
-                div.appendChild(span1)
-                div.appendChild(span2)
-                div.appendChild(span3)
-
-                var li = document.createElement('li');
-                li.appendChild(div)
-
-                listTag.appendChild(li);
-            })(i)
+            this.buildListTab(i);
         }
 
         //init slider
@@ -363,25 +385,7 @@ Builder.prototype = {
             
             for (var key in this.m.system_available) {
                 var system = this.m.system_available[key];
-                (function (system){
-                    var radio=document.createElement("input");
-                        radio.type="radio";
-                        radio.name="germline";
-                        radio.value=system
-                        if (this.m.germlineV.system==system) radio.checked=true
-                        
-                    div = document.createElement('div');
-                    div.onclick = function(){
-                        m.changeGermline(system, false)
-                    }
-                    div.className="buttonSelector"
-                    div.appendChild(radio)
-                    div.appendChild(document.createTextNode(system))
-                    
-                    li = document.createElement('li');
-                    li.appendChild(div)
-                    // listGermline.appendChild(li);
-                })(system)
+                this.buildSystemSelector(system);
             }
              
         }else{
@@ -718,6 +722,18 @@ Builder.prototype = {
 
         var last_key = "";
 
+        var checkbox_onchange = function () {
+            m.toggle_system(this.id.replace("checkbox_system_",""))
+        }
+
+        var span_onclick = function (e) {
+            if (e.shiftKey) {
+                m.keep_one_active_system(this.firstChild.nextSibling.textContent)
+            } else {
+                this.firstChild.nextSibling.click();
+            }
+        }
+
         for (var k in key_list) {
     	    key = key_list[k];
 
@@ -742,10 +758,7 @@ Builder.prototype = {
             if (this.m.system_selected.indexOf(key) != -1)
                 checkbox.checked=true
 
-            checkbox.onchange = function () {
-                m.toggle_system(this.id.replace("checkbox_system_",""))
-            }
-            
+            checkbox.onchange = checkbox_onchange;
             var span_system = this.m.systemBox(key)
                 
             var span = document.createElement('span');
@@ -755,14 +768,7 @@ Builder.prototype = {
             span.appendChild(span_system)
             span.appendChild(checkbox)
             span.appendChild(document.createTextNode(key))
-            span.onclick = function (e) {
-                if (e.shiftKey) {
-                    m.keep_one_active_system(this.firstChild.nextSibling.textContent)
-                } else {
-                    this.firstChild.nextSibling.click();
-                }
-            }
-            
+            span.onclick = span_onclick;
             span2.appendChild(span)
         }
         
@@ -840,14 +846,15 @@ Builder.prototype = {
             break;
         case "Tag":
 
+            var span_onclick = function () {
+                self.nextDisplayTag(this)
+            }
+
             for (var i = 0; i < this.m.tag.length; i++) {
                 var spantag = document.createElement('span');
                 spantag.className = "tagColorBox tagColor" + i
                 spantag.id = "fastTag" + i
-                spantag.onclick = function () {
-                    self.nextDisplayTag(this)
-                }
-
+                spantag.onclick = span_onclick;
                 span2.appendChild(spantag);
             }
             break;

@@ -39,8 +39,6 @@ function NumericalAxis (model, reverse, can_undefined) {
     GenericAxis.call(this, can_undefined);
 }
 
-const NB_STEPS_IN_AXIS = 6; // Number (max) of labels per numerical axis
-const NB_STEPS_BAR = 30; // Number (max) of labels per numerical axis in histograms
 
 NumericalAxis.prototype = Object.create(GenericAxis.prototype);
 
@@ -121,7 +119,7 @@ Object.assign(NumericalAxis.prototype, {
         }
 
         if (this.can_undefined && ! use_log) {
-            min = min - (max - min)/NB_STEPS_IN_AXIS
+            min = min - (max - min)/this.NB_STEPS_IN_AXIS
         }
 
         this.min = min;
@@ -185,11 +183,11 @@ Object.assign(NumericalAxis.prototype, {
                 h = h / 10;
             }
         }else{
-            var nb_steps = NB_STEPS_IN_AXIS-1
+            var nb_steps = this.NB_STEPS_IN_AXIS-1
             undefined_min = min
             // Recover the initial min value
             if (has_undefined) {
-                min = (min*NB_STEPS_IN_AXIS + max)/(NB_STEPS_IN_AXIS + 1)
+                min = (min*this.NB_STEPS_IN_AXIS + max)/(this.NB_STEPS_IN_AXIS + 1)
             }
 
             nb_step = this.computeSteps(min, max, nb_steps);

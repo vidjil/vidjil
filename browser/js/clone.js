@@ -43,7 +43,7 @@ function Clone(data, model, index, virtual) {
     }
 
     // Default value just in case
-    if (this.quantifiable == undefined) {
+    if (this.quantifiable === undefined) {
         this.quantifiable = true;
     }
 
@@ -65,7 +65,7 @@ function Clone(data, model, index, virtual) {
     this.computeEValue()
 }
 
-function nullIfZero(x) { return x == 0 ? '' : x }
+function nullIfZero(x) { return x === 0 ? '' : x }
 
 Clone.prototype = {
 
@@ -78,7 +78,7 @@ Clone.prototype = {
      * @return {string} a warning class is set on this clone
      */
         if (this.hasSeg('clonedb')) {
-            if (typeof(this.seg['clonedb']['–']) != 'undefined') // TODO: use a stored number of occurrences
+            if (typeof(this.seg.clonedb['–']) != 'undefined') // TODO: use a stored number of occurrences
                 return 'ok'
             else
                 return 'info'
@@ -105,7 +105,7 @@ Clone.prototype = {
             return 'undefined';
         time = this.m.getTime(time);
         var size = this._average_read_length[time];
-        if (size == 0)
+        if (size === 0)
             return 'undefined';
         return size;
     },
@@ -182,7 +182,7 @@ Clone.prototype = {
     addSegFeatureFromSeq: function(field_name, seq)
     {
         this.seg[field_name] = {};
-        this.seg[field_name]['seq'] = seq;
+        this.seg[field_name].seq = seq;
         this.computeSegFeatureFromSeq(field_name);
     },
 
@@ -193,11 +193,11 @@ Clone.prototype = {
     {
         positions = this.getSegStartStop(field_name)
 
-	if (positions != null)
+	if (positions !== null)
             // Start/stop do already exist
             return ;
 
-        seq = this.seg[field_name]['seq']
+        seq = this.seg[field_name].seq
 
         var pos = this.sequence.indexOf(seq)
 
@@ -205,8 +205,8 @@ Clone.prototype = {
             // No feature here
             return;
 
-        this.seg[field_name]['start'] = pos + 1
-        this.seg[field_name]['stop'] = pos + seq.length
+        this.seg[field_name].start = pos + 1
+        this.seg[field_name].stop = pos + seq.length
     },
 
 
@@ -214,8 +214,8 @@ Clone.prototype = {
      * Get the amino-acid sequence of the provided field (in the seg part)
      */
     getSegAASequence: function(field_name) {
-        if (this.hasSeg(field_name)
-            && typeof this.seg[field_name].aa != 'undefined') {
+        if (this.hasSeg(field_name) &&
+            typeof this.seg[field_name].aa !== 'undefined') {
             return this.seg[field_name].aa;
         }
         return '';
@@ -226,8 +226,8 @@ Clone.prototype = {
      */
     getSegNtSequence: function(field_name) {
         positions = this.getSegStartStop(field_name)
-        if (positions != null) {
-            return this.sequence.substr(positions['start']-1, positions['stop'] - positions['start']+1)
+        if (positions !== null) {
+            return this.sequence.substr(positions.start-1, positions.stop - positions.start+1)
         }
         return '';
     },
@@ -239,8 +239,8 @@ Clone.prototype = {
      */
     getSegLength: function(field_name) {
         positions = this.getSegStartStop(field_name)
-        if (positions != null) {
-            return positions['stop'] - positions['start'] + 1
+        if (positions !== null) {
+            return positions.stop - positions.start + 1
         } else {
             return 'undefined';
         }
@@ -256,8 +256,8 @@ Clone.prototype = {
 	positions1 = this.getSegStartStop(field_name1)
 	positions2 = this.getSegStartStop(field_name2)
 
-	if (positions1 != null && positions2 != null) {
-	    return positions2['stop'] - positions1['start'] + 1
+	if (positions1 !== null && positions2 !== null) {
+	    return positions2.stop - positions1.start + 1
 	} else {
 	    return 'undefined';
         }
@@ -268,9 +268,9 @@ Clone.prototype = {
      * If it does not exist return null
      */
     getSegStartStop: function(field_name) {
-        if (this.hasSeg(field_name)
-            && typeof this.seg[field_name].start != 'undefined'
-            && typeof this.seg[field_name].stop != 'undefined') {
+        if (this.hasSeg(field_name) &&
+            typeof this.seg[field_name].start !== 'undefined' &&
+            typeof this.seg[field_name].stop !== 'undefined') {
             return {'start': this.seg[field_name].start,
                     'stop': this.seg[field_name].stop}
         }
@@ -354,7 +354,7 @@ Clone.prototype = {
      * @return {string} segmentation name
      * */
     getCode: function () {
-        if (typeof (this.sequence) != 'undefined' && typeof (this.name) != 'undefined' && this.name != "") {
+        if (typeof (this.sequence) !== 'undefined' && typeof (this.name) !== 'undefined' && this.name !== "") {
             if (this.length > 100 && typeof (this.shortName) != 'undefined') {
                 return this.shortName;
             } else {
@@ -409,7 +409,7 @@ Clone.prototype = {
 
         time = this.m.getTime(time);
         
-        if (this.m.reads.segmented[time] == 0 ) return 0;
+        if (this.m.reads.segmented[time] === 0 ) return 0;
         var result = this.getReads(time) / this.m.reads.segmented[time];
         
         if (this.m.norm) result = this.m.normalize(result, time);
@@ -427,7 +427,7 @@ Clone.prototype = {
         time = this.m.getTime(time);
         
         result = this.getSize(time);
-        if (result == 0) return undefined;
+        if (result === 0) return undefined;
         return result;
     }, 
 
@@ -471,7 +471,7 @@ Clone.prototype = {
 
         time = this.m.getTime(time)
         
-        if (this.m.reads.segmented[time] == 0 ) return 0
+        if (this.m.reads.segmented[time] === 0 ) return 0
         var result = this.getReads(time) / this.m.reads.segmented[time]
         
         if (this.m.norm && this.m.normalization.method!="constant") result = this.m.normalize(result, time)
@@ -498,7 +498,7 @@ Clone.prototype = {
         var system_reads = this.m.reads.segmented[time]
         if (this.germline in this.m.reads.germline) system_reads = this.m.reads.germline[this.germline][time]
         
-        if (system_reads == 0 ) return 0
+        if (system_reads === 0 ) return 0
         var result = this.getReads(time) / system_reads
         
         if (this.m.norm) result = this.m.normalize(result, time)
@@ -532,17 +532,17 @@ Clone.prototype = {
 
         sizes = this.getAllSystemSize(time)
 
-        if (sizes.systemGroup == 0
-            || this.m.systemGroup(this.germline) == this.germline)
+        if (sizes.systemGroup === 0 ||
+            this.m.systemGroup(this.germline) == this.germline)
             systemGroupStr = undefined
         else
-            systemGroupStr = this.m.getStrAnySize(time, sizes.systemGroup)
-            + (extra_info ? ' of ' + this.m.systemGroup(this.germline) : '')
+            systemGroupStr = this.m.getStrAnySize(time, sizes.systemGroup) +
+            (extra_info ? ' of ' + this.m.systemGroup(this.germline) : '')
 
         systemStr = this.m.getStrAnySize(time, sizes.system)
         if (systemStr != "+")
-            systemStr = this.m.getStrAnySize(time, sizes.system)
-            + (extra_info ? ' of ' + this.germline : '')
+            systemStr = this.m.getStrAnySize(time, sizes.system) +
+            (extra_info ? ' of ' + this.germline : '')
         else
             systemStr = undefined
 
@@ -556,7 +556,7 @@ Clone.prototype = {
     getSystemGroupSize: function (time) {
         var group_reads = this.m.systemGroupSize(this.germline, this.m.getTime(time))
 
-        if (group_reads == 0 ) return 0 ;
+        if (group_reads === 0 ) return 0 ;
         var result = this.getReads(time) / group_reads
         if (this.norm) result = this.normalize(result, time)
         return result
@@ -590,12 +590,12 @@ Clone.prototype = {
         s += sizes.global
 
         if (this.m.system_available.length>1) {
-            if (sizes.systemGroup != undefined) // if the system group has more than one germline
+            if (sizes.systemGroup !== undefined) // if the system group has more than one germline
             {
                 s += ', '
                 s += sizes.systemGroup
             }
-            if (sizes.system != undefined) {
+            if (sizes.system !== undefined) {
                 s += ', '
                 s += sizes.system
             }
@@ -622,7 +622,7 @@ Clone.prototype = {
     getSequenceSize: function (time) {
         time = this.m.getTime(time)
         
-        if (this.m.reads.segmented[time] == 0 ) return 0
+        if (this.m.reads.segmented[time] === 0 ) return 0
         var result = this.get('reads',time) / this.m.reads.segmented[time]
         
         if (this.norm) {
@@ -668,20 +668,20 @@ Clone.prototype = {
     },
 
     computeEValue: function () {
-        var e = this.seg['evalue'];
+        var e = this.seg.evalue;
         if (typeof(e) != 'undefined')
-            this.eValue = parseFloat(e['val'])
+            this.eValue = parseFloat(e.val)
         else
             this.eValue = undefined
     },
 
     getGene: function (type, withAllele) {
         withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
-        if (this.hasSeg(type) && typeof this.seg[type]["name"] != 'undefined') {
+        if (this.hasSeg(type) && typeof this.seg[type].name !== 'undefined') {
             if (withAllele) {
-                return this.seg[type]["name"];
+                return this.seg[type].name;
             }else{
-                return this.seg[type]["name"].split('*')[0];
+                return this.seg[type].name.split('*')[0];
             }
         }
         switch (type) {
@@ -697,14 +697,14 @@ Clone.prototype = {
     
     getNlength: function () {
         if (this.hasSeg('3', '5')){
-            return this.seg['3']['start']-this.seg['5']['stop']-1
+            return this.seg['3'].start-this.seg['5'].stop-1
         }else{
             return 'undefined'
         }
     },
     
     getSequence : function () {
-        if (typeof (this.sequence) != 'undefined' && this.sequence != 0){
+        if (typeof (this.sequence) != 'undefined' && this.sequence !== 0){
             return this.sequence.toUpperCase()
         }else{
             return "0";
@@ -712,7 +712,7 @@ Clone.prototype = {
     },
 
     getRevCompSequence : function () {
-        if (typeof (this.sequence) != 'undefined' && this.sequence != 0){
+        if (typeof (this.sequence) != 'undefined' && this.sequence !== 0){
             var dict_comp  = {
           'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C',
           'Y': 'R', 'R': 'Y', // pyrimidine (CT) / purine (AG)
@@ -737,13 +737,13 @@ Clone.prototype = {
         }
 
         var s = ''
-        s += this.sequence.substring(0,  this.seg['5']['stop'])
+        s += this.sequence.substring(0,  this.seg['5'].stop)
         s += '\n'
-        if (this.seg['5']['stop'] < this.seg['3']['start'] - 1) {
-            s += this.sequence.substring(this.seg['5']['stop'], this.seg['3']['start'] - 1)
+        if (this.seg['5'].stop < this.seg['3'].start - 1) {
+            s += this.sequence.substring(this.seg['5'].stop, this.seg['3'].start - 1)
             s += '\n'
         }
-        s += this.sequence.substring(this.seg['3']['start'] - 1)
+        s += this.sequence.substring(this.seg['3'].start - 1)
         return s
     },
 
@@ -784,7 +784,7 @@ Clone.prototype = {
     },
 
     getSequenceLength : function () {
-        if (typeof (this.sequence) != 'undefined' && this.sequence != 0){
+        if (typeof (this.sequence) != 'undefined' && this.sequence !== 0){
             return this.sequence.length
         }else{
             return 0;
@@ -810,7 +810,7 @@ Clone.prototype = {
         if (typeof this.color != "undefined") {
             return this.color;
         } else {
-            "";
+            return "";
         }
     }, 
     
@@ -837,12 +837,13 @@ Clone.prototype = {
      *
      * */
     updateColor: function () {
+        var allele;
         if (this.m.focus == this.index){
             this.color = "";
         }else if (this.m.colorMethod == "abundance") {
             var size = this.getSize()
-            if (this.getCluster().length==0){ size = this.getSequenceSize() }
-            if (size == 0){
+            if (this.getCluster().length===0){ size = this.getSequenceSize() }
+            if (size === 0){
                 this.color = "";
             }else{
                 this.color = colorGenerator(this.m.scale_color(size * this.m.precision));
@@ -855,23 +856,23 @@ Clone.prototype = {
             this.color =  this.colorDBSCAN;
         }else if (this.m.colorMethod == "V" && this.getGene("5") != "undefined V"){
             this.color = "";
-            var allele = this.m.germlineV.allele[this.getGene("5")]
+            allele = this.m.germlineV.allele[this.getGene("5")]
             if (typeof allele != 'undefined' ) this.color = allele.color;
         }else if (this.m.colorMethod == "D" && this.getGene("4") != "undefined D"){
             this.color = "";
-            var allele = this.m.germlineD.allele[this.getGene("4")]
+            allele = this.m.germlineD.allele[this.getGene("4")]
             if (typeof allele != 'undefined' ) this.color = allele.color;
         }else if (this.m.colorMethod == "J" && this.getGene("3") != "undefined J"){
             this.color = "";
-            var allele = this.m.germlineJ.allele[this.getGene("3")]
+            allele = this.m.germlineJ.allele[this.getGene("3")]
             if (typeof allele != 'undefined' ) this.color = allele.color;
         }else if (this.m.colorMethod == "N"){
             this.color =  this.colorN;
         }else if (this.m.colorMethod == "system") {
             this.color = this.m.germlineList.getColor(this.germline)
         } else if (this.m.colorMethod == 'productive') {
-            if (this.hasSeg('junction')
-                && typeof this.seg.junction.productive != 'undefined') {
+            if (this.hasSeg('junction') &&
+                typeof this.seg.junction.productive != 'undefined') {
                 this.color = colorProductivity(this.seg.junction.productive)
             }
         }else{
@@ -887,7 +888,7 @@ Clone.prototype = {
         var content = "<form name='germ'><select class='menu-selector' NAME='LocusForm' id='germSelector', onChange='m.clones["+ this.index +"].changeLocus(this.form.LocusForm.value);'  style='width: 80px' >";
         content += "<option value="+ this.germline + ">" + this.germline + "</option>";
         
-        for (var germline in germline_data['systems']) {
+        for (var germline in germline_data.systems) {
             if (germline.indexOf("_") ==-1 ){
                 content += "<option value=" + germline +">" + germline + "</option>";
             }
@@ -913,8 +914,8 @@ Clone.prototype = {
         // change reads segmented/germline values in model
         try {
             for (var i =0; i< this.m.reads.segmented.length; i++) {
-                if(oldGermline != "custom") {this.m.reads.germline[oldGermline][i] -= this.reads[i]};
-                if(newGermline != "custom") {this.m.reads.germline[newGermline][i] += this.reads[i]};
+                if(oldGermline != "custom") {this.m.reads.germline[oldGermline][i] -= this.reads[i]}
+                if(newGermline != "custom") {this.m.reads.germline[newGermline][i] += this.reads[i]}
                 if (newGermline == "custom" && newGermline != oldGermline) {
                     this.m.reads.segmented_all[i] -= this.reads[i]
                 } else if (oldGermline == "custom" && newGermline != "custom"){
@@ -928,13 +929,13 @@ Clone.prototype = {
 
         var segments  = ["Vsegment", "Dsegment", "Jsegment"];
 
-        for (var i = 0; i < segments.length; i++) {
-            if (document.getElementById('list'+segments[i])) {
-                var myDiv = document.getElementById('list'+segments[i]);
-                var content = this.createSegmentList(segments[i], formValue);
+        for (var j = 0; j < segments.length; j++) {
+            if (document.getElementById('list'+segments[j])) {
+                var myDiv = document.getElementById('list'+segments[j]);
+                var content = this.createSegmentList(segments[j], formValue);
                 myDiv.innerHTML = content;
             }
-        };
+        }
         this.m.analysisHasChanged = true;
         this.segEdited = true;
 
@@ -960,14 +961,14 @@ Clone.prototype = {
 
         if( typeof(locus) == 'undefined' ){
             nLocus = this.germline + segments[segment][1];
-        };
+        }
         for (var i in germline) {
             if (i.indexOf(nLocus) !=-1 ){
-                for (seg in germline[i]) {
+                for (var seg in germline[i]) {
                     content += "<option value=" + seg +">" + seg + "</option>";
-                };
-            };
-        };
+                }
+            }
+        }
         content += "</select></form>";
         return content;
     },
@@ -986,14 +987,14 @@ Clone.prototype = {
         delete this.seg[segment+"end"]
 
         this.seg[segment] = {}
-        this.seg[segment]["name"]  = formValue
-        this.seg[segment]["start"] = 0
-        this.seg[segment]["stop"]  = 0
+        this.seg[segment].name  = formValue
+        this.seg[segment].start = 0
+        this.seg[segment].stop  = 0
 
         // TODO : insert real value for stats (start, end, evalue, ...)
-        this.seg["evalue"]       = 0
-        this.seg["evalue_left"]  = 0
-        this.seg["evalue_right"] = 0
+        this.seg.evalue       = 0
+        this.seg.evalue_left  = 0
+        this.seg.evalue_right = 0
         this.m.analysisHasChanged = true;
         this.segEdited = true;
         this.m.update();
@@ -1009,7 +1010,7 @@ Clone.prototype = {
             // TODO find a better icon
             content += " <img src='images/icon_fav_on.png' alt='This clone has been edited by a user'>"
             
-        };
+        }
         return content;
     },
     /**
@@ -1017,9 +1018,9 @@ Clone.prototype = {
      */
     toggle: function() {
         var listDiv = ["#listLocus", "#listVsegment", "#listDsegment", "#listJsegment"]
-        for (elt in listDiv) {
+        for (var elt in listDiv) {
             $( listDiv[elt] ).toggle();
-        };
+        }
     },
     
     /* return info about a sequence/clone in html 
@@ -1054,13 +1055,13 @@ Clone.prototype = {
             html += row_1("clone short name", this.getShortName())
 
             html += "<tr><td>clone size (n-reads (total reads))</td>"
-            for (var i = 0; i < time_length; i++) {
+            for (var j = 0; j < time_length; j++) {
                 html += "<td>"
-                html += this.getReads(this.m.samples.order[i]) + "  (" + this.m.reads.segmented[this.m.samples.order[i]] + ")"
+                html += this.getReads(this.m.samples.order[j]) + "  (" + this.m.reads.segmented[this.m.samples.order[j]] + ")"
                 if ($('#debug_menu').is(':visible') && (typeof this.m.db_key.config != 'undefined' )) {
                 html += "<br/>"
                 call_reads = "db.call('default/run_request', { "
-                call_reads += "'sequence_file_id': '" + this.m.samples.db_key[this.m.samples.order[i]] + "', "
+                call_reads += "'sequence_file_id': '" + this.m.samples.db_key[this.m.samples.order[j]] + "', "
                 call_reads += "'config_id' : '" + this.m.db_key.config + "', "
                 call_reads += "'grep_reads' : '" + this.id + "' })"
                 console.log(call_reads)
@@ -1069,8 +1070,8 @@ Clone.prototype = {
                 html += "</td>"
             }
             html += "</tr><tr><td>clone size (%)</td>"
-            for (var i = 0; i < time_length; i++) {
-                html += "<td>" + this.getStrSize(this.m.samples.order[i]) + "</td>"
+            for (var k = 0; k < time_length; k++) {
+                html += "<td>" + this.getStrSize(this.m.samples.order[k]) + "</td>"
             }
             html += header("representative sequence")
         }else{
@@ -1086,103 +1087,103 @@ Clone.prototype = {
         //coverage info
         if (typeof this.coverage != 'undefined') {
             html += row_1("average coverage",
-                          "<span "
-                          + (this.coverage < this.COVERAGE_WARN ? "class='warning'" : "")
-                          + ">"
-                          + this.coverage.toFixed(3) + "</span>")
+                          "<span " +
+                          (this.coverage < this.COVERAGE_WARN ? "class='warning'" : "") +
+                          ">" +
+                          this.coverage.toFixed(3) + "</span>")
         }
 
         // e-value
         if (typeof this.eValue != 'undefined') {
             html += row_1("e-value",
-                          "<span "
-                          + (this.eValue > this.EVALUE_WARN ? "class='warning'" : "")
-                          + ">"
-                          + this.eValue + "</span>")
+                          "<span " +
+                          (this.eValue > this.EVALUE_WARN ? "class='warning'" : "") +
+                          ">" +
+                          this.eValue + "</span>")
         }
 
         // abundance info
         html += "<tr><td>size (n-reads (total reads))</td>"
-        for (var i = 0; i < time_length; i++) {
-            html += "<td>" + this.get('reads',this.m.samples.order[i]) + 
-                    "  (" + this.m.reads.segmented[this.m.samples.order[i]] + ")</td>"
+        for (var l = 0; l < time_length; l++) {
+            html += "<td>" + this.get('reads',this.m.samples.order[l]) + 
+                    "  (" + this.m.reads.segmented[this.m.samples.order[l]] + ")</td>"
         }
         html += "</tr>"
         html += "<tr><td>size (%)</td>"
-        for (var i = 0; i < time_length; i++) {
-            html += "<td>" + this.getStrSequenceSize(this.m.samples.order[i]) + "</td>"
+        for (var m = 0; m < time_length; m++) {
+            html += "<td>" + this.getStrSequenceSize(this.m.samples.order[m]) + "</td>"
         }
         html += "</tr>"
 
         
         //segmentation info
-        html += header("segmentation"
-                       + " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>edit</button>" //Use to hide/display lists
-                       + this.getHTMLModifState()) // icon if manual changement
-        
+        html += header("segmentation" +
+                " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>edit</button>" + //Use to hide/display lists 
+                this.getHTMLModifState()) // icon if manual changement
+
         if (typeof this.stats != 'undefined'){
             var total_stat = [];
-            for (var i=0; i<this.stats.length; i++) total_stat[i] = 0
-            for (var i=0; i<this.stats.length; i++){
-                for (var key in this.stats[i]) total_stat[i] +=  this.stats[i][key]
+            for (var n=0; n<this.stats.length; n++) total_stat[n] = 0
+            for (var o=0; o<this.stats.length; o++){
+                for (var key in this.stats[o]) total_stat[o] +=  this.stats[o][key]
             }
             
-            for (var key in this.stats[0]){
-                html += "<tr><td> "+this.m.segmented_mesg[key]+"</td>"
-                for (var i = 0; i < time_length; i++) {
-                html += "<td>"+this.stats[i][key] 
-                        + " (" + ((this.stats[i][key]/total_stat[i]) * 100).toFixed(1) + " %)</td>"
+            for (var idx in this.stats[0]){
+                html += "<tr><td> "+this.m.segmented_mesg[idx]+"</td>"
+                for (var p = 0; p < time_length; p++) {
+                html += "<td>"+this.stats[p][idx] +
+                    " (" + ((this.stats[p][idx]/total_stat[p]) * 100).toFixed(1) + " %)</td>"
                 }
             }
         }
         
         html += row_1("sequence", this.sequence)
         html += row_1("id", this.id)
-        html += row_1("locus", this.m.systemBox(this.germline).outerHTML + this.germline
-                      + "<div class='div-menu-selector' id='listLocus' style='display: none'>" + this.createLocusList() + "</div>")
-        html += row_1("V gene (or 5')", this.getGene("5")
-                      + "<div class='div-menu-selector' id='listVsegment' style='display: none'>" + this.createSegmentList("Vsegment") + "</div>")
-        html += row_1("(D gene)", this.getGene("4")
-                      + "<div class='div-menu-selector' id='listDsegment' style='display: none'>" + this.createSegmentList("Dsegment") + "</div>")
-        html += row_1("J gene (or 3')", this.getGene("3")
-                      + "<div class='div-menu-selector' id='listJsegment' style='display: none'>" + this.createSegmentList("Jsegment") + "</div>")
+        html += row_1("locus", this.m.systemBox(this.germline).outerHTML + this.germline +
+                "<div class='div-menu-selector' id='listLocus' style='display: none'>" + this.createLocusList() + "</div>")
+        html += row_1("V gene (or 5')", this.getGene("5") +
+                "<div class='div-menu-selector' id='listVsegment' style='display: none'>" + this.createSegmentList("Vsegment") + "</div>")
+        html += row_1("(D gene)", this.getGene("4") +
+                "<div class='div-menu-selector' id='listDsegment' style='display: none'>" + this.createSegmentList("Dsegment") + "</div>")
+        html += row_1("J gene (or 3')", this.getGene("3") +
+                "<div class='div-menu-selector' id='listJsegment' style='display: none'>" + this.createSegmentList("Jsegment") + "</div>")
 
         // Other seg info
         var exclude_seg_info = ['affectSigns', 'affectValues', '5', '4', '3']
-        for (var key in this.seg) {
-            if (exclude_seg_info.indexOf(key) == -1 && this.seg[key] instanceof Object) {
-		if ("info" in this.seg[key]) {
+        for (var s in this.seg) {
+            if (exclude_seg_info.indexOf(s) == -1 && this.seg[s] instanceof Object) {
+		if ("info" in this.seg[s]) {
 		    // Textual field
-		    html += row_1(key, this.seg[key]["info"])
-		} else if ("val" in this.seg[key]) {
+		    html += row_1(s, this.seg[s].info)
+		} else if ("val" in this.seg[s]) {
 		    // Numerical field
-		    html += row_1(key, this.seg[key]["val"])
+		    html += row_1(s, this.seg[s].val)
 		} else {
 		    // Sequence field
-		    var nt_seq = this.getSegNtSequence(key);
-		    if (nt_seq != '') {
-			html += row_1(key, this.getSegNtSequence(key))
+		    var nt_seq = this.getSegNtSequence(s);
+		    if (nt_seq !== '') {
+			html += row_1(s, this.getSegNtSequence(s))
 		    }
 		}
             }
         }
-        if (typeof this.seg['junction'] != 'undefined'
-           && this.seg.junction.productive == true) {
+        if (typeof this.seg.junction != 'undefined' &&
+            this.seg.junction.productive === true) {
             html += header("Junction (AA seq)", this.getSegAASequence('junction'))
         }
 
         
         //other info (clntab)
         html += header("&nbsp")
-        for (var key in this) {
-            if (key[0] == "_") {
-                html += "<tr><td>" + key + "</td>"
-                if (this[key] instanceof Array) {
-                    for (var i = 0; i < time_length; i++) {
-                        html += "<td>" + this[key][this.m.samples.order[i]] + "</td>"
+        for (var t in this) {
+            if (t[0] == "_") {
+                html += "<tr><td>" + t + "</td>"
+                if (this[t] instanceof Array) {
+                    for (var q = 0; q < time_length; q++) {
+                        html += "<td>" + this[t][this.m.samples.order[q]] + "</td>"
                     }
                 } else {
-                    html += "<td>" + this[key] + "</td>"
+                    html += "<td>" + this[t] + "</td>"
                 }
                 html += "</tr>"
             }
@@ -1192,12 +1193,12 @@ Clone.prototype = {
         var other_infos = {"imgt": "<a href='http://www.imgt.org/IMGT_vquest/share/textes/'>IMGT/V-QUEST</a>",
                        "clonedb": "<a href='http://ecngs.vidjil.org/clonedb'>CloneDB</a>"};
         for (var external_tool in other_infos) {
-            if (typeof this.seg[external_tool] != 'undefined'
-                && this.seg[external_tool] != null) {
+            if (typeof this.seg[external_tool] != 'undefined' &&
+                this.seg[external_tool] !== null) {
                 html += header("Results of "+other_infos[external_tool])
                 for (var item in this.seg[external_tool]) {
-                    if (! (this.seg[external_tool][item] instanceof Object)
-			&& ! (this.seg[external_tool][item] instanceof Array)) {
+                    if (! (this.seg[external_tool][item] instanceof Object) &&
+                        ! (this.seg[external_tool][item] instanceof Array)) {
                         html += row_1(item, this.seg[external_tool][item])
                     }
                 }
@@ -1268,8 +1269,8 @@ Clone.prototype = {
         ]
 
         for (var i=0; i<m.samples.order.length; i++) csv.push("reads_"+i)
-        for (var i=0; i<m.samples.order.length; i++) csv.push(",ratio_"+i)
-        for (var i=0; i<m.samples.order.length; i++) csv.push(",ratios_"+i)
+        for (var j=0; j<m.samples.order.length; j++) csv.push(",ratio_"+j)
+        for (var k=0; k<m.samples.order.length; k++) csv.push(",ratios_"+k)
 
         return csv
     },
@@ -1284,8 +1285,8 @@ Clone.prototype = {
         ]
 
         for (var i=0; i<this.m.samples.order.length; i++) csv.push(this.getReads(this.m.samples.order[i]))
-        for (var i=0; i<this.m.samples.order.length; i++) csv.push(this.getSize(this.m.samples.order[i]))
-        for (var i=0; i<this.m.samples.order.length; i++) csv.push(this.getPrintableSize(this.m.samples.order[i]).replace(/,/g, ';'))
+        for (var j=0; j<this.m.samples.order.length; j++) csv.push(this.getSize(this.m.samples.order[j]))
+        for (var k=0; k<this.m.samples.order.length; k++) csv.push(this.getPrintableSize(this.m.samples.order[k]).replace(/,/g, ';'))
 
         return csv
     },
@@ -1339,10 +1340,11 @@ Clone.prototype = {
     },
     
     get: function (field_name, time) {
+        var field;
         if (typeof this[field_name] != 'undefined'){
-            var field = this[field_name]
+            field = this[field_name]
         }else if (typeof this.seg[field_name] != 'undefined'){
-            var field = this.seg[field_name]
+            field = this.seg[field_name]
         }
         
         if (typeof field != 'object'){

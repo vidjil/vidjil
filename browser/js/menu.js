@@ -45,19 +45,21 @@ function initMenu () {
                     $('#static_file_menu').css("display", "")
                     var demo_file = document.getElementById("fileSelector").firstChild
 
+                    var buildConfigLink = function (i) {
+
+                        var a = document.createElement('a');
+                        a.className = "buttonSelector"
+                        a.onclick = function () {
+                            m.loadDataUrl(config.file_menu.path + config.file_menu.file[i])
+                        }
+
+                        a.appendChild(document.createTextNode(config.file_menu.file[i]))
+
+                        demo_file.appendChild(a);
+                    }
+
                     for (var i = 0; i < config.file_menu.file.length; i++) {
-                        (function (i) {
-
-                            var a = document.createElement('a');
-                            a.className = "buttonSelector"
-                            a.onclick = function () {
-                                m.loadDataUrl(config.file_menu.path + config.file_menu.file[i])
-                            }
-                            
-                            a.appendChild(document.createTextNode(config.file_menu.file[i]))
-
-                            demo_file.appendChild(a);
-                        })(i)
+                        buildConfigLink(i);
                     }
                 },
                 error: function() {
