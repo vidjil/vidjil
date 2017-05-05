@@ -203,17 +203,21 @@ The sample files may be preprocessed, by selecting a /pre-process scenario/ when
 At the moment the only preprocess avalaible on the public http://app.vidjil.org/ server are the paired-end read merging.
 
 ***** Read merging
+      :PROPERTIES:
+      :CUSTOM_ID: read_merging
+      :END:
+
 People using Illumina sequencers may sequence paired-end R1/R2 fragments. It is
 *highly* recommended to merge those reads in order to have a read that consists
 of the whole DNA fragment instead of split fragments.
 To merge R1/R2 fragments, select an adapted /pre-process scenario/ and provide both R1/R2 files at once when adding a sample.
 
 There are two scenarios to merge reads. Indeed in case the merging is not
-possible for some reads we must keep one of the fragments (either R1 or
+possible for some paired-end reads we must keep only one of the fragments (either R1 or
 R2). We cannot keep both because it would bias the quantification (as there
 would be two unmerged reads instead of one).  Depending on the sequencing
 strategy it could be better to keep R1 or R2 in such a case. Therefore it
-really depends on users. You must choose to keep the fragment that most
+really depends on users and their sequencing protocols. You must choose to keep the fragment that most
 probably contains both a part of the V and the J genes.
 
 
