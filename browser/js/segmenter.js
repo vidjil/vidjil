@@ -157,21 +157,19 @@ Segment.prototype = {
             var available_axis = (new Axes(this.m)).available();
             for (var i in axOpts) {
                 var axis_option = document.createElement('div');
-                var input = document.createElement('input');
-                input.setAttribute('type', "checkbox");
-                input.setAttribute('value', axOpts[i]);
-                input.setAttribute('id', "sai"+i); // segmenter axis input
-                if (axOpts[i] == "Size") input.setAttribute('checked', "");
-                input.onchange = function() {
-                    self.update();
-                };
+                var axis_input = document.createElement('input');
+                axis_input.setAttribute('type', "checkbox");
+                axis_input.setAttribute('value', axOpts[i]);
+                axis_input.setAttribute('id', "sai"+i); // segmenter axis input
+                if (axOpts[i] == "Size") axis_input.setAttribute('checked', "");
+                axis_input.onchange = self.update();
 
-                var label = document.createElement('label');
-                label.setAttribute('for', "sai"+i);
-                label.appendChild(document.createTextNode(available_axis[axOpts[i]].label));
+                var axis_label = document.createElement('label');
+                axis_label.setAttribute('for', "sai"+i);
+                axis_label.appendChild(document.createTextNode(available_axis[axOpts[i]].label));
 
-                axis_option.appendChild(input);
-                axis_option.appendChild(label);
+                axis_option.appendChild(axis_input);
+                axis_option.appendChild(axis_label);
                 tmp.appendChild(axis_option);
             }
 
@@ -261,12 +259,12 @@ Segment.prototype = {
             span_fixsegmenter = document.createElement('span')
             span_fixsegmenter.id = "fixsegmenter"
             span_fixsegmenter.className = "button"
-            var i = document.createElement('i');
-            i.setAttribute("title", 'fix the segmenter in his position');
-            i.onclick = function() {
+            var i_elem = document.createElement('i');
+            i_elem.setAttribute("title", 'fix the segmenter in his position');
+            i_elem.onclick = function() {
                 self.switchFixed();
             }
-            span_fixsegmenter.appendChild(i);
+            span_fixsegmenter.appendChild(i_elem);
 
             div.appendChild(div_menu);
 
