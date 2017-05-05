@@ -65,7 +65,7 @@ Object.assign(GermlineAxis.prototype, {
         //labels
         for (var key in gene_list){
             pos = this.getPos(gene_list[key].rank, total_gene)
-            this.addLabel("line", pos, key, this.germline.gene[key].color);
+            this.addLabel("line", key, pos, key, this.germline.gene[key].color);
         }
 
         if (displayAllele){
@@ -75,13 +75,13 @@ Object.assign(GermlineAxis.prototype, {
                 var total_allele = gene_list[gene].n
                 pos = this.getPos(gene_list[gene].rank, total_gene);
                 pos += (1/(total_gene+1)) * ((allele_list[al].rank+0.5)/total_allele) - (0.5/(total_gene+1))
-                this.addLabel("subline", pos, "*"+allele, this.germline.allele[al].color);
+                this.addLabel("subline", al, pos, "*"+allele, this.germline.allele[al].color);
             }
         }
         pos = this.getPos(total_gene, total_gene);
 
         if (this.can_undefined)
-            this.addLabel("line", pos, "?", "");
+            this.addLabel("line", "?", pos, "?", "");
 
         this.populateValueMapping();
 
