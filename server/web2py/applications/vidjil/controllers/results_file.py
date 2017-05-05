@@ -118,7 +118,7 @@ def download():
     if auth.can_view_sample_set(sample_set_id):
         results_id = int(request.vars["results_file_id"])
         directory = defs.DIR_OUT_VIDJIL_ID % results_id
-        filepath = directory + request.vars['filename']
+        filepath = directory + os.path.basename(request.vars['filename'])
         with open(filepath) as f:
             file_content = f.read()
         return response.stream(StringIO.StringIO(file_content), attachment = True, filename = request.vars['filename'])
