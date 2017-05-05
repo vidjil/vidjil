@@ -119,7 +119,7 @@ Object.assign(NumericalAxis.prototype, {
         }
 
         if (this.can_undefined && ! use_log) {
-            min = min - (max - min)/this.NB_STEPS_IN_AXIS
+            max = max + (max - min)/NB_STEPS_IN_AXIS
         }
 
         this.min = min;
@@ -147,7 +147,7 @@ Object.assign(NumericalAxis.prototype, {
         if (typeof value != "undefined" && value != 'undefined'){
             pos = this.sizeScale(value);
         }else{
-            pos = this.sizeScale(this.min);
+            pos = this.sizeScale(this.max);
         }
         
         return {'pos': pos};
@@ -190,7 +190,7 @@ Object.assign(NumericalAxis.prototype, {
                 min = (min*this.NB_STEPS_IN_AXIS + max)/(this.NB_STEPS_IN_AXIS + 1)
             }
 
-            nb_step = this.computeSteps(min, max, nb_steps);
+            nb_step = this.computeSteps(max, nb_steps);
 
             h = (max-min)/nb_steps
             // Computed so that pos <= 1 (in the loop below)
@@ -218,8 +218,8 @@ Object.assign(NumericalAxis.prototype, {
         return steps;
     },
 
-    getLabelText: function (min_value, value, index) {
-        return Math.round(min_value+(value*index));
+    getLabelText: function (value, index) {
+        return Math.round(value*index);
     },
 
     applyConverter: function (element) {
@@ -247,8 +247,8 @@ Object.assign(PercentAxis.prototype, {
         return nb_steps;
     },
 
-    getLabelText: function(min_value, value, index) {
-        return ((min_value+(value*index))*100).toFixed(1) + "%";
+    getLabelText: function(value, index) {
+        return ((value*index)*100).toFixed(1) + "%";
     }
 });
 
@@ -270,7 +270,7 @@ FloatAxis.prototype = Object.create(NumericalAxis.prototype);
 
 Object.assign(FloatAxis.prototype, {
 
-    getLabel: function(min_value, value, index) {
-        return (min_value+(value*index)).toFixed(2)
+    getLabel: function(value, index) {
+        return (value*index).toFixed(2)
     }
 })
