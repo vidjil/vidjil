@@ -1218,13 +1218,22 @@ Clone.prototype = {
 
     /** return the clone's value from a specified axis
       * @param {string} axisName - axis exact string name
+      * @param {bool} pretty - true to return 'pretty' value, false or undefined otherwise
       * @return {object} axis value, usually a number or string
       **/
-    getAxisValue: function (axisName) {
+    getAxisValue: function (axisName, pretty) {
         var axis = (new Axes(this.m)).available()[axisName];
         var ret = axis.fct(this);
-        if (axis.pretty) return axis.pretty(ret);
+        if (pretty && axis.pretty) return axis.pretty(ret);
         else return ret;
+    },
+
+    /** return the clone's 'pretty' value from a specified axis
+      * @param {string} axisName - axis exact string name
+      * @return {object} 'pretty' axis value, usually a number or string ; contains html in some cases
+      **/
+    getPrettyAxisValue: function (axisName) {
+        return this.getAxisValue(axisName, true);
     },
 
     /**
