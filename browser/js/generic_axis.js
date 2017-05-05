@@ -90,16 +90,17 @@ GenericAxis.prototype = {
             for (var i=0; i < values.length; i++) {
                 var value = values[i];
                 var convert = this.applyConverter(value);
+                var pos;
                 if (labels.indexOf(convert) != -1) {
                     if (typeof label_mapping[convert] === 'undefined') {
-                        var pos = labels.indexOf(convert)/labels.length;
+                        pos = labels.indexOf(convert)/labels.length;
                         if (this.reverse)
                             pas = 1 - pos;
                         this.addLabel("line", convert, pos, convert);
                     }
                 } else {
                     if (this.can_undefined) {
-                        var pos = 1;
+                        pos = 1;
                         if (this.reverse)
                             pos = 0;
                         this.addLabel("line", "?", pos, "?");
