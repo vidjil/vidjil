@@ -119,7 +119,7 @@ Object.assign(NumericalAxis.prototype, {
         }
 
         if (this.can_undefined && ! use_log) {
-            max = max + (max - min)/NB_STEPS_IN_AXIS
+            max = max + (max - min)/this.NB_STEPS_IN_AXIS
         }
 
         this.min = min;
