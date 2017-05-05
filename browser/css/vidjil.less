@@ -581,7 +581,7 @@ line {
   position: relative;
 }
 
-.segmenter .axisBox span {
+.segmenter .axisBox>span {
   margin : 0 3px;
 }
 
@@ -2100,4 +2100,23 @@ label.highlight_label {
     max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.threeDigits {
+  min-width: 21px;
+  text-align: right;
+}
+
+.twoDigits {
+  min-width: 14px;
+  text-align: right;
+}
+
+.sixChars {
+  min-width: 50px;
+  text-align: left;
+}
+
+.widestBox {
+  min-width: @width_axisBox;
 }
