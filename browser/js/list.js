@@ -298,7 +298,7 @@ List.prototype = {
         sort_span.appendChild(sort);
 
         var axis_span = document.createElement('span');
-        axis_span.className = "list_axis";
+        axis_span.className = "list_axis devel-mode";
 
         var axis = document.createElement('select');
         axis.setAttribute('name', 'axis_list[]');

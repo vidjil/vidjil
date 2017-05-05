@@ -140,7 +140,7 @@ Segment.prototype = {
 
             span = document.createElement('span');
             span.id = "segmenter_axis_menu";
-            span.className = "pointer";
+            span.className = "pointer devel-mode";
             span.onmouseover = function() {showSelector('segmenter_axis_select')};
             span.appendChild(document.createTextNode("axis"));
 
