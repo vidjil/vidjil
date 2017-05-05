@@ -659,7 +659,7 @@ Segment.prototype = {
         for (var i in axOpts) {
             if (document.getElementById("sai"+i).checked) {
                 var span = document.createElement('span');
-                span.innerHTML = clone.getAxisValue(axOpts[i]);
+                span.innerHTML = clone.getPrettyAxisValue(axOpts[i]);
                 span.setAttribute('title', available_axis[axOpts[i]].label);
                 axisBox.appendChild(span);
             }
