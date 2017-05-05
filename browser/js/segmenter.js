@@ -628,7 +628,7 @@ Segment.prototype = {
 
         // V identity ratio
         var Videntity_info = document.createElement('span');
-        Videntity_info.className = "identityBox";
+        Videntity_info.className = "identityBox widestBox";
 
         info = '' ;
         if (typeof clone.seg.imgt !== 'undefined' && clone.seg.imgt!==null){
