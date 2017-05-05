@@ -127,6 +127,7 @@ Axes.prototype = {
             },
             "nbSamples" : {
                 label: "number of samples sharing each clone",
+                axis : new NumericalAxis(this.m),
                 fct : function(clone){return clone.getNumberNonZeroSamples()},
                 min : 1,
                 max : function(){ return self.m.samples.number }
