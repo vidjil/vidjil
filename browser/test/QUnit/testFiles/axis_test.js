@@ -90,8 +90,8 @@ QUnit.test("axis", function(assert) {
             false,
             0,25)
     
-    assert.equal(axis.pos(m.clone(0)).pos.toPrecision(3), 0.143, "custom  : clone 0 (nlength = 0) position -> 0.00")
-    assert.equal(axis.pos(m.clone(1)).pos.toPrecision(3), 0.40, "custom  : clone 1 (nlength = 9) position -> 0.30")
+    assert.equal(axis.pos(m.clone(0)).pos.toPrecision(3), 0.00, "custom  : clone 0 (nlength = 0) position -> 0.00")
+    assert.equal(axis.pos(m.clone(1)).pos.toPrecision(3), 0.257, "custom  : clone 1 (nlength = 9) position -> 0.30")
 
     
     //gc
