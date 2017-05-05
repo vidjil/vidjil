@@ -6,4 +6,6 @@ germline:
 icons:
 	$(MAKE) -C css/icons
 
+quality:
+	jshint js/*.js
 .PHONY: all germline icons
