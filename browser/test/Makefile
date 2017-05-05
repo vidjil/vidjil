@@ -12,11 +12,6 @@ functional: ../../doc/analysis-example1.vidjil
 functional-rbx: ../../doc/analysis-example1.vidjil
 	LIVE_SERVER=http://app.vidjil.org/browser/ ruby test_browser.rb
 
-phantomjs: SHELL:=/bin/bash
-phantomjs:
-	cd QUnit ; \
-	[ `phantomjs phantom_test.js | tee >(cat >&2) | grep -c '^not ok'` -eq 0 ]
-
 nightmare: SHELL:=/bin/bash
 nightmare:
 	cd QUnit ; \
@@ -28,4 +23,4 @@ quality:
 ../../doc/%:
 	$(MAKE) -C ../../doc $@
 
-.PHONY: phantomjs unit functional headless all
+.PHONY: unit functional headless all
