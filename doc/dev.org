@@ -273,6 +273,9 @@ The cache is stored for each user and is updated only when a change occurs (mess
 
 
 ** Browser
+*** Code Quality
+    Quality of code is checked using [[http://jshint.com/][JSHint]], by
+    running =make quality= from the =browser= directory.
 *** Unit
     The unit tests in the browser are managed by QUnit and launched using
     [[http://www.nightmarejs.org/][nightmare]], by launching =make unit= from the =browser/test= directory.
