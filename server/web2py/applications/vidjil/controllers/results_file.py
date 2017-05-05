@@ -120,9 +120,9 @@ def download():
         directory = defs.DIR_OUT_VIDJIL_ID % results_id
         filepath = directory + os.path.basename(request.vars['filename'])
         try:
-        with open(filepath) as f:
-            file_content = f.read()
-        return response.stream(StringIO.StringIO(file_content), attachment = True, filename = request.vars['filename'])
+            with open(filepath) as f:
+                file_content = f.read()
+            return response.stream(StringIO.StringIO(file_content), attachment = True, filename = request.vars['filename'])
         except IOError:
             return error_message("File could not be read")
     return error_message("access denied")
