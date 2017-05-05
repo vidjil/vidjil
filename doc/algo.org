@@ -470,8 +470,8 @@ The main output of Vidjil (with the default =-c clones= command) are two followi
    the detailed V(D)J and CDR3 designation (=-z=, see warning below), and possibly
    the results of the further clustering.
 
-   The web application takes this =.vidjil= file (possibly merged with
-   =fuse.py=) for the /visualization and analysis/ of clones and their
+   The web application takes this =.vidjil= file ([[#fuse_py][possibly merged with
+   =fuse.py=]]) for the /visualization and analysis/ of clones and their
    tracking along different samples (for example time points in a MRD
    setup or in a immunological study).
    Please see [[file:browser.org][browser]].org for more information on the web application.
@@ -747,3 +747,33 @@ This file will be relatively small (a few kB or MB) and can be taken again as an
 ./vidjil -c germlines file.fastq
    # Output statistics on the number of occurrences of k-mers of the different germlines
 #+END_SRC
+
+** Following clones in several samples
+   :PROPERTIES:
+   :CUSTOM_ID: fuse_py
+   :END:
+
+   In a minimal residual disease setup, for instance, we are interested in
+   following the main clones identified at diagnosis in the following samples.
+
+   In its output files, Vidjil keeps track of all the clones, even if it
+   provides a V(D)J assignation only for the main ones. Therefore the
+   meaningful information is already in the files (for instance in the =.vidjil=
+   files).  However we have one =.vidjil= per sample which may not be very
+   convenient.  All the more since the web client only takes one =.vidjil= file
+   as input and cannot take several ones.
+
+   Therefore we need to merge all the =.vidjil= files into a single one. That is
+   the purpose of the [[../tools/fuse.py][tools/fuse.py]] script.
+
+   Let assume that four =.vidjil= files have been produced for each sample
+   (namely =diag.vidjil=, =fu1.vidjil=, =fu2.vidjil=, =fu3.vidjil=), merging them will
+   be done in the following way:
+   #+BEGIN_SRC sh
+   python tools/fuse.py --output mrd.vidjil --top 100 diag.vidjil fu1.vidjil fu2.vidjil fu3.vidjil
+   #+END_SRC
+
+   The =--top= parameter allows to choose how many top clones per sample should
+   be kept. 100 means that for each sample, the top 100 clones are kept and
+   followed in the other samples. In this example the output file is stored in
+   =mrd.vidjil= which can then be fed to the web client.
