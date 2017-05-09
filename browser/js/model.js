@@ -1714,16 +1714,7 @@ changeAlleleNotation: function(alleleNotation) {
         switch (this.notation_type) {
         case "percent":
             if (fixed) {
-                if (size < 0.0001) {
-                    result = (100 * size)
-                        .toFixed(4) + "%";
-                } else if (size >= 0.1) {
-                    result = (100 * size)
-                        .toFixed(2) + "%";
-                } else {
-                    result = (100 * size)
-                        .toFixed(3) + "%";
-                }
+                result = floatToFixed(100*size, 5) + "%";
             } else {
                 //hack to avoid approximation due to javascript way to handle Number
                 result = parseFloat((100 * size)

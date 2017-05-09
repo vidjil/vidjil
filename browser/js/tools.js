@@ -49,6 +49,23 @@ function endsWith(sequence, end) {
     return sequence.substr(sequence.length - end.length, end.length) == end
 }
 
+
+
+/**
+ * format float
+ * @param {float} value
+ * @param {bool} fixed - use a fixed total size
+ * @returns {string}
+ */
+
+function floatToFixed(val, fixed) {
+    var result = val.toFixed(10).slice(0, fixed)
+
+    // Remove the last character when it is a '.'
+    return result.slice(-1) !== "." ? result : result.slice(0, -1)
+}
+
+
 /**
  * With insertions, IMGT positions must be understood with the insertions
  * removed. As we display the original sequence and not the corrected one, we
