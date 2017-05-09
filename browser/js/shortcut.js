@@ -121,6 +121,24 @@ Shortcut.prototype = {
                         m.restoreClusters()
                         break;
 
+                    // Filter/zoom
+                    case 90:
+                        e.preventDefault()
+
+                        if (m.getSelected().length == 0) {
+                            // z, no clone selected: reset filters
+                            m.reset_filter(false)
+                            m.update()
+                        } else {
+                            if (!e.shiftKey)
+                                // z, some clone selected: focus (zoom) on these clones
+                                m.focusSelected()
+                            else
+                                // shift+z, some clone selected: hide these clones
+                                m.hideSelected()
+                        }
+                        break;
+
                     // Scatterplot
                     case 192:   // #: switch grid/bar mode
                         e.preventDefault()
