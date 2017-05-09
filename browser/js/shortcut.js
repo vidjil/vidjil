@@ -110,6 +110,18 @@ Shortcut.prototype = {
                         e.preventDefault()
                         if(e.shiftKey || e.metakey) db.reload()
                         break;
+
+                    // Cluster clones
+                    case 187:   // +: cluster clones
+                        e.preventDefault()
+                        m.merge()
+                        break;
+                    case 8:     // Backward: revert to previous clusters (and thus undo cluster)
+                        e.preventDefault()
+                        m.restoreClusters()
+                        break;
+
+                    // Scatterplot
                     case 192:   // #: switch grid/bar mode
                         e.preventDefault()
                         sp.switchMode()
