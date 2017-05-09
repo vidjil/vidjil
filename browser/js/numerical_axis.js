@@ -196,13 +196,13 @@ Object.assign(NumericalAxis.prototype, {
             // Computed so that pos <= 1 (in the loop below)
             var delta = (min - max)/((min - undefined_min)/(max-undefined_min) - 1)
             if (has_undefined)
-                this.labels.push(this.label("line", (this.reverse) ? 1 : 0, "?"))
+                this.labels.push(this.label("line", (this.reverse) ? 0 : 1, "?"))
             // Shift the start when there is an undefined value
             var start_shift = (min - undefined_min)/(max-undefined_min)
             for (var j = 0; j <= nb_steps; j++) {
-                pos = start_shift + (h*j)*(1/delta);
+                pos = (h*j)*(1/delta);
 
-                text = this.getLabelText(min, h, j);
+                text = this.getLabelText(h, j);
                 if (this.reverse) pos = 1 - pos;
                 if (!display_label) text = "";
                 this.addLabel("line", text, pos, text);
