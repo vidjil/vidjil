@@ -110,6 +110,11 @@ Shortcut.prototype = {
                         e.preventDefault()
                         if(e.shiftKey || e.metakey) db.reload()
                         break;
+                    case 192:   // #: switch grid/bar mode
+                        e.preventDefault()
+                        sp.switchMode()
+                        break;
+
                     default:
                         if ( ((key >= 96) && (key <= 105)) || ((key >= 48) && (key <= 57)) ) { // Numeric keypad, 0-9
                             var select_preset = document.getElementsByClassName("axis_select_preset_select")[0]
