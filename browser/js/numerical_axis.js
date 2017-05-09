@@ -248,7 +248,7 @@ Object.assign(PercentAxis.prototype, {
     },
 
     getLabelText: function(value, index) {
-        return ((value*index)*100).toFixed(1) + "%";
+        return floatToFixed(value*index*100, 4) + "%"
     }
 });
 
