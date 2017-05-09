@@ -1209,6 +1209,33 @@ Clone.prototype = {
         return html
     },
 
+    axisOptions: function() {
+        return [
+            "sequenceLength", "readLength", "n", "lengthCDR3", "productivity",
+            "tag", "coverage", "locus", "Size", "nbSamples"
+        ];
+    },
+
+    /** return the clone's value from a specified axis
+      * @param {string} axisName - axis exact string name
+      * @param {bool} pretty - true to return 'pretty' value, false or undefined otherwise
+      * @return {object} axis value, usually a number or string
+      **/
+    getAxisValue: function (axisName, pretty) {
+        var axis = (new Axes(this.m)).available()[axisName];
+        var ret = axis.fct(this);
+        if (pretty && axis.pretty) return axis.pretty(ret);
+        else return ret;
+    },
+
+    /** return the clone's 'pretty' value from a specified axis
+      * @param {string} axisName - axis exact string name
+      * @return {object} 'pretty' axis value, usually a number or string ; contains html in some cases
+      **/
+    getPrettyAxisValue: function (axisName) {
+        return this.getAxisValue(axisName, true);
+    },
+
     /**
       * start to fill a node with clone informations common between segmenter and list
       * @param {dom_object} div_elem - html element to complete
@@ -1230,12 +1257,9 @@ Clone.prototype = {
         if (typeof this.tag != 'undefined')
             span_star.style.color = this.m.tag[this.getTag()].color
 
-        // Size
-        var span_size = document.createElement('span')
-        span_size.className = "sizeBox";
-        span_size.style.color = this.getColor();
-        span_size.innerHTML = this.getStrSize();
-        span_size.setAttribute('title', this.getPrintableSize());
+        // Axis
+        var span_axis = document.createElement('span');
+        span_axis.className = "axisBox";
 
         // Info
         var span_info = document.createElement('span')
@@ -1256,7 +1280,7 @@ Clone.prototype = {
         // Gather all elements
         div_elem.appendChild(span_info);
         div_elem.appendChild(span_star);
-        div_elem.appendChild(span_size);
+        div_elem.appendChild(span_axis);
     },
 
     toCSVheader: function (m) {

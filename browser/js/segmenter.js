@@ -138,6 +138,46 @@ Segment.prototype = {
             div_menu.appendChild(span)
             }
 
+            span = document.createElement('span');
+            span.id = "segmenter_axis_menu";
+            span.className = "pointer devel-mode";
+            span.onmouseover = function() {showSelector('segmenter_axis_select')};
+            span.appendChild(document.createTextNode("axis"));
+
+            var axis = document.createElement('span');
+            axis.id = "segmenter_axis_select";
+            axis.className = "selector";
+            axis.style.position = "absolute";
+            axis.style.top = "-230px";
+            axis.onmouseout = function() {hideSelector('segmenter_axis_select')};
+
+            var tmp = document.createElement('div');
+
+            var axOpts = Clone.prototype.axisOptions();
+            var available_axis = (new Axes(this.m)).available();
+            for (var i in axOpts) {
+                var axis_option = document.createElement('div');
+                var axis_input = document.createElement('input');
+                axis_input.setAttribute('type', "checkbox");
+                axis_input.setAttribute('value', axOpts[i]);
+                axis_input.setAttribute('id', "sai"+i); // segmenter axis input
+                if (axOpts[i] == "Size") axis_input.setAttribute('checked', "");
+                axis_input.onchange = self.update();
+
+                var axis_label = document.createElement('label');
+                axis_label.setAttribute('for', "sai"+i);
+                axis_label.appendChild(document.createTextNode(available_axis[axOpts[i]].label));
+
+                axis_option.appendChild(axis_input);
+                axis_option.appendChild(axis_label);
+                tmp.appendChild(axis_option);
+            }
+
+            axis.appendChild(tmp);
+            span.appendChild(axis);
+
+            div_menu.appendChild(span)
+
             //toIMGT button
             span = document.createElement('span');
             span.id = "toIMGT"
@@ -219,12 +259,12 @@ Segment.prototype = {
             span_fixsegmenter = document.createElement('span')
             span_fixsegmenter.id = "fixsegmenter"
             span_fixsegmenter.className = "button"
-            var i = document.createElement('i');
-            i.setAttribute("title", 'fix the segmenter in his position');
-            i.onclick = function() {
+            var i_elem = document.createElement('i');
+            i_elem.setAttribute("title", 'fix the segmenter in his position');
+            i_elem.onclick = function() {
                 self.switchFixed();
             }
-            span_fixsegmenter.appendChild(i);
+            span_fixsegmenter.appendChild(i_elem);
 
             div.appendChild(div_menu);
 
@@ -453,8 +493,12 @@ Segment.prototype = {
                     namebox.title = clone.getName();
                     namebox.style.color = clone.color;
                     spanF.getElementsByClassName("nameBox2")[0].innerHTML = clone.getShortName();
-                    spanF.getElementsByClassName("sizeBox")[0].innerHTML = clone.getStrSize();
-                
+                    // spanF.getElementsByClassName("sizeBox")[0].innerHTML = clone.getStrSize();
+
+                    var axisBox = spanF.getElementsByClassName("axisBox")[0];
+                    axisBox.style.color = clone.getColor();
+                    this.fillAxisBox(axisBox, clone);
+
                     var spanM = document.getElementById("m" + id);
                     spanM.innerHTML = this.sequence[id].toString(this)
 
@@ -556,10 +600,9 @@ Segment.prototype = {
         seq_name.title = clone.getName();
         seq_name.style.color = clone.color;
 
-        div_elem.getElementsByClassName("sizeBox")[0]
-            .onclick = function (e) {
-                clone.unselect();
-            }
+        var span_axis = div_elem.getElementsByClassName("axisBox")[0];
+        span_axis.style.color = clone.getColor();
+        this.fillAxisBox(span_axis, clone);
 
         if (this.m.clone_info == cloneID) {
             div_elem.getElementsByClassName("infoBox")[0]
@@ -583,7 +626,7 @@ Segment.prototype = {
 
         // V identity ratio
         var Videntity_info = document.createElement('span');
-        Videntity_info.className = "identityBox";
+        Videntity_info.className = "identityBox widestBox";
 
         info = '' ;
         if (typeof clone.seg.imgt !== 'undefined' && clone.seg.imgt!==null){
@@ -605,6 +648,20 @@ Segment.prototype = {
         div_elem.insertBefore(productive_info, div_elem.childNodes[1]);
         div_elem.insertBefore(seq_name, div_elem.childNodes[0]);
         div_elem.appendChild(Videntity_info);
+    },
+
+    fillAxisBox: function (axisBox, clone) {
+        axisBox.removeAllChildren();
+        var axOpts = Clone.prototype.axisOptions();
+        var available_axis = (new Axes(this.m)).available();
+        for (var i in axOpts) {
+            if (document.getElementById("sai"+i).checked) {
+                var span = document.createElement('span');
+                span.innerHTML = clone.getPrettyAxisValue(axOpts[i]);
+                span.setAttribute('title', available_axis[axOpts[i]].label);
+                axisBox.appendChild(span);
+            }
+        }
     },
 
     /**

@@ -87,6 +87,7 @@ GenericAxis.prototype = {
         if (typeof labels === 'undefined')
             this.computeLabels(values);
         else {
+            var pos;
             for (var i=0; i < values.length; i++) {
                 var value = values[i];
                 var convert = this.applyConverter(value);

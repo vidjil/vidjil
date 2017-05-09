@@ -478,7 +478,7 @@ line {
 @width_clusterBox :16px;
 @width_starBox : 16px;
 @width_thumbBox : 16px;
-@width_sizeBox : 52px;
+@width_axisBox : 52px;
 @width_infoBox : 20px;
 @width_systemBox : 12px;
 @width_listElem : (@width_left_container - @width_scrollbar);
@@ -572,13 +572,17 @@ line {
   width: 250px;
 }
 
-.sizeBox, .identityBox {
-  width: @width_sizeBox;
+.list .axisBox, .axisBox span, .identityBox {
+  max-width: @width_axisBox;
   float: right;
   overflow: hidden;
   display: inline-block;
-  height: 16px;
+  max-height: 16px;
   position: relative;
+}
+
+.segmenter .axisBox>span {
+  margin : 0 3px;
 }
 
 .identityBox {
@@ -719,7 +723,8 @@ line {
 .seq-fixed {
   position: relative;
   display: inline-block;
-  width: (@width_left_container - @width_scrollbar);
+//  width: (@width_left_container - @width_scrollbar);
+  width : auto;
   margin: -2px;
   padding: 2px;
   padding-left: 5px;
@@ -1022,7 +1027,7 @@ a:hover {
   width : 100%;
 }
 
-#file_menu, #menu, #list_clones, #tagSelector, #display-menu, #bot-container, .seq-fixed{
+#file_menu, #menu, #list_clones, #tagSelector, #display-menu, #bot-container, #segmenter_axis_menu, .seq-fixed{
  background : @background;
 }
 
@@ -2095,4 +2100,23 @@ label.highlight_label {
     max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.threeDigits {
+  min-width: 21px;
+  text-align: right;
+}
+
+.twoDigits {
+  min-width: 14px;
+  text-align: right;
+}
+
+.sixChars {
+  min-width: 50px;
+  text-align: left;
+}
+
+.widestBox {
+  min-width: @width_axisBox;
 }
