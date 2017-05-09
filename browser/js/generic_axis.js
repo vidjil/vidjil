@@ -221,13 +221,20 @@ GenericAxis.prototype = {
         var i=1
         for (var e in this.value_mapping){
             if (i%step === 0 || (e == '?' && this.value_mapping[e].length > 0)){
+                text = this.getLabelText(e, i);
+                if (e == '?')
+                    text = e;
                 var pos = this.posBarLabel(i, length);
                 if (this.reverse) pos = 1 - pos;
-                this.addLabel("line", e, pos, e);
+                this.addLabel("line", text, pos, text);
             }
             i++;
         }
 
+    },
+
+    getLabelText: function(value, index) {
+        return value;
     },
 
     posBarLabel : function (i) {
