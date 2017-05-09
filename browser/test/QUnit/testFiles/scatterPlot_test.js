@@ -29,8 +29,8 @@ QUnit.test("grid", function(assert) {
     assert.equal(sp.axisX.pos(1), sp.axisY.pos(1), "check splitMethod V/V /plot : xpos = ypos");
     assert.equal(document.getElementById("circle1").className.baseVal, "circle", "check splitMethod V/V /plot : check if plot are displayed")
     
-    
-    sp.changeSplitMethod("gene_v", "gene_v", sp.MODE_BAR);
+    sp.switchMode()
+    assert.equal(sp.mode, sp.MODE_BAR)
     sp.update()
 
     assert.equal(document.getElementById("bar1").className.baseVal, "", "check splitMethod V/V /plot : check if bar are displayed")
