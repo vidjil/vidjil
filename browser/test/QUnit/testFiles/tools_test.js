@@ -22,6 +22,16 @@ QUnit.test("test tsvToArray", function(assert) {
     }
     );
 
+
+QUnit.test("floatToFixed", function(assert) {
+    assert.equal(floatToFixed(0, 4), "0.00");
+    assert.equal(floatToFixed(0.1, 4), "0.10");
+    assert.equal(floatToFixed(0.1234, 5), "0.123");
+    assert.equal(floatToFixed(12.345, 3), "12");
+    assert.equal(floatToFixed(12.345, 4), "12.3");
+});
+
+
 QUnit.test("test rounding functions", function(assert) {
     assert.equal(nice_ceil(0.072), 0.08, "rounding 0.08");
     assert.equal(nice_ceil(1.2), 1.5, "rounding 1.2");
