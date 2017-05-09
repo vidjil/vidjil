@@ -477,6 +477,7 @@ There can be several causes leading to bad ratios:
   | =←= and =→=             | navigate between samples                            |
   | =Shift-←= and =Shift-→= | decrease or increase the number of displayed clones |
   | numeric keypad, =0-9=   | switch between available plot presets               |
+  | =#=                     | switch between grid and bar modes                   |
 
 
   | =a=: TRA        |                                    |
@@ -487,7 +488,7 @@ There can be several causes leading to bad ratios:
   | =l=: IGL        |                                    |
   | =k=: IGK, IGK+  |                                    |
   | =x=: xxx        |                                    |
-  Note: You can select just one locus by holding the Shift key while pressing
+  Note: You can select just one locus by holding the =Shift= key while pressing
   the letter corresponding to the locus of interest.
 
  | =Ctrl-s=  | save the analysis         (when connected to a database)    |
