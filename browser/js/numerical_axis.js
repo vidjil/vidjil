@@ -270,7 +270,7 @@ FloatAxis.prototype = Object.create(NumericalAxis.prototype);
 
 Object.assign(FloatAxis.prototype, {
 
-    getLabel: function(value, index) {
+    getLabelText: function(value, index) {
         return (value*index).toFixed(2)
     }
 })
