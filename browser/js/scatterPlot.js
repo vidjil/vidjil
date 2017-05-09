@@ -839,10 +839,18 @@ ScatterPlot.prototype = {
     },
     
     /**
-     * switch mode between bar and plot
+     * select a mode
+     * @param {mode} new mode, this.MODE_*
      * */
     changeMode : function (mode) {
         this.changeSplitMethod(this.splitX, this.splitY, mode);
+    },
+
+    /**
+     * switch between available modes
+     */
+    switchMode: function () {
+        this.changeMode(this.mode === this.MODE_GRID ? this.MODE_BAR : this.MODE_GRID)
     },
     
     /**
