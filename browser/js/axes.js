@@ -60,7 +60,7 @@ Axes.prototype = {
             "readLength" : {
                 doc: "average length of the reads belonging to each clone",
                 label: "clone average read length",
-                axis: new NumericalAxis(this.m),
+                axis: new FloatAxis(this.m),
                 fct: function(clone) {return clone.getAverageReadLength()},
                 pretty: function(len) {return '<span class="widestBox">' + (len == 'undefined' ? '?' : len) + '</span>'}
             },
