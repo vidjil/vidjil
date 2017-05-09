@@ -450,14 +450,18 @@ line {
 .seq-fixed .nameBox {
   width: 250px;
 }
-.sizeBox,
+.list .axisBox,
+.axisBox span,
 .identityBox {
-  width: 52px;
+  max-width: 52px;
   float: right;
   overflow: hidden;
   display: inline-block;
-  height: 16px;
+  max-height: 16px;
   position: relative;
+}
+.segmenter .axisBox > span {
+  margin: 0 3px;
 }
 .identityBox {
   padding-right: 10px;
@@ -579,7 +583,7 @@ line {
 .seq-fixed {
   position: relative;
   display: inline-block;
-  width: 445px;
+  width: auto;
   margin: -2px;
   padding: 2px;
   padding-left: 5px;
@@ -863,6 +867,7 @@ a:hover {
 #tagSelector,
 #display-menu,
 #bot-container,
+#segmenter_axis_menu,
 .seq-fixed {
   background: #ffffff;
 }
@@ -1129,6 +1134,18 @@ span.logo {
 #info_timepoint table .header {
   border-width: 2px;
   background-color: #cccccc;
+}
+span.ok {
+  color: green;
+}
+text.ok {
+  color: green;
+}
+span.info {
+  color: blue;
+}
+text.info {
+  color: blue;
 }
 span.warning {
   color: orange;
@@ -1840,6 +1857,21 @@ label.highlight_label {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.threeDigits {
+  min-width: 21px;
+  text-align: right;
+}
+.twoDigits {
+  min-width: 14px;
+  text-align: right;
+}
+.sixChars {
+  min-width: 50px;
+  text-align: left;
+}
+.widestBox {
+  min-width: 52px;
+}
 body {
   line-height: 20px;
 }
@@ -1940,7 +1972,7 @@ textarea {
   resize: none;
   margin-top: 2%;
   height: 65%;
-  width: 100%;
+  width: 98%;
 }
 #scatter_panel {
   -webkit-flex: 2 32%;

@@ -451,14 +451,18 @@ line {
 .seq-fixed .nameBox {
   width: 250px;
 }
-.sizeBox,
+.list .axisBox,
+.axisBox span,
 .identityBox {
-  width: 52px;
+  max-width: 52px;
   float: right;
   overflow: hidden;
   display: inline-block;
-  height: 16px;
+  max-height: 16px;
   position: relative;
+}
+.segmenter .axisBox > span {
+  margin: 0 3px;
 }
 .identityBox {
   padding-right: 10px;
@@ -580,7 +584,7 @@ line {
 .seq-fixed {
   position: relative;
   display: inline-block;
-  width: 445px;
+  width: auto;
   margin: -2px;
   padding: 2px;
   padding-left: 5px;
@@ -865,6 +869,7 @@ a:hover {
 #tagSelector,
 #display-menu,
 #bot-container,
+#segmenter_axis_menu,
 .seq-fixed {
   background: #ffffff;
 }
@@ -1860,4 +1865,19 @@ label.highlight_label {
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.threeDigits {
+  min-width: 21px;
+  text-align: right;
+}
+.twoDigits {
+  min-width: 14px;
+  text-align: right;
+}
+.sixChars {
+  min-width: 50px;
+  text-align: left;
+}
+.widestBox {
+  min-width: 52px;
 }
