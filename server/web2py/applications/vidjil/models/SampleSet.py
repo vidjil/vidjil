@@ -1,4 +1,7 @@
+from abc import ABCMeta, abstractmethod
+
 class SampleSet(object):
+    __metaclass__ = ABCMeta
 
     def __init__(self, type):
         self.type = type
@@ -77,19 +80,17 @@ class SampleSet(object):
             row['string'] = [row['name'], row['confs'], row['groups'], str(row['info'])]
         return filter(lambda row : vidjil_utils.advanced_filter(row['string'], filter_str), data)
 
+    @abstractmethod
     def get_add_route(self):
-        return 'sample_set/add'
+        pass
 
+    @abstractmethod
     def get_info_dict(self, data):
-        return dict(name = "set : %s" % self.get_name(data),
-                filename = "sample_set_%d" % data.id,
-                label = "",
-                info = ""
-                )
+        pass
 
+    @abstractmethod
     def get_data(self, sample_set_id):
-        return db(db.generic.sample_set_id == sample_set_id).select()[0]
-
+        pass
 
 def get_sample_name(sample_set_id):
     '''
