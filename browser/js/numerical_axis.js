@@ -202,7 +202,7 @@ Object.assign(NumericalAxis.prototype, {
             for (var j = 0; j <= nb_steps; j++) {
                 pos = (h*j)*(1/delta);
 
-                text = this.getLabelText(h, j);
+                text = this.getLabelText(h*j);
                 if (this.reverse) pos = 1 - pos;
                 if (!display_label) text = "";
                 this.addLabel("line", text, pos, text);
@@ -218,8 +218,8 @@ Object.assign(NumericalAxis.prototype, {
         return steps;
     },
 
-    getLabelText: function (value, index) {
-        return Math.round(value*index);
+    getLabelText: function (value) {
+        return Math.round(value);
     },
 
     applyConverter: function (element) {
@@ -247,8 +247,8 @@ Object.assign(PercentAxis.prototype, {
         return nb_steps;
     },
 
-    getLabelText: function(value, index) {
-        return floatToFixed(value*index*100, 4) + "%"
+    getLabelText: function(value) {
+        return floatToFixed(value*100, 4) + "%"
     }
 });
 
@@ -270,7 +270,7 @@ FloatAxis.prototype = Object.create(NumericalAxis.prototype);
 
 Object.assign(FloatAxis.prototype, {
 
-    getLabelText: function(value, index) {
-        return (value*index).toFixed(2)
+    getLabelText: function(value) {
+        return (value).toFixed(2)
     }
 })
