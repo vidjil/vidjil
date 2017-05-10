@@ -35,4 +35,4 @@ Tools
     * @version	 	RequireJS 2.3.3
     * @author 		The Dojo Foundation All Rights Reserved. 
     * @link 		http://jrburke.com / http://requirejs.org/
-    * @license 		MIT or new BSD license 
+    * @license 		MIT
