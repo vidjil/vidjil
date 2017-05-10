@@ -79,3 +79,73 @@ QUnit.test("node sizes", function(assert) {
 
     assert.equal(sp.nodes[0].s, 0.10, "node 0 (not quantifiable), size")
 })
+
+
+QUnit.test("multiple selection", function(assert) {
+
+    var m = new Model(m);
+    m.parseJsonData(json_data, 100);
+    m.loadGermline();
+    m.initClones();
+
+    var sp = new ScatterPlot("visu", m);
+    sp.shouldRefresh();
+
+    /* Expected clones distribution in the scatterplot (numbers are ratios for width en height) :
+
+                0-0.5     0.5-0.8                   0.8-1
+        0-0.5   test3       x                         test{1,2,4}
+        0.5-1     x         unseg sequence            x
+    */
+
+    var done = assert.async();
+
+    var sp_svg;
+    var sp_width;
+    var sp_height;
+
+    setTimeout(function() {
+        /*
+            NB: .getComputedStyle() is not the way used by the actual selection functions.
+            If one (ever) gets different values, causing the tests to fail,
+            it may come frome here.
+        */
+        sp_style = window.getComputedStyle(d3.select("#"+ sp.id).node());
+        sp_width = parseInt(sp_style.width);
+        sp_height = parseInt(sp_style.height);
+
+        // This 'event' is created to save m.unselectAllUnlessKey from failing (called by .stopSelectorAt)
+        // There might be a better solution
+        d3.event = new Event("");
+
+        test1();
+        test2();
+
+        done();
+    });
+
+    function test1() {
+        sp.activeSelectorAt([sp_width*0.5, sp_height*0.5]);
+        sp.updateSelectorAt([sp_width*0.8, sp_height]);
+        sp.stopSelectorAt([sp_width*0.8, sp_height]);
+
+        assert.equal(m.getSelected().length, 1, "only one clone is selected");
+        assert.equal(m.clone(m.getSelected()[0]).name, "unseg sequence", "the selected clone is 'unseg sequence' (test5)");
+    }
+
+    function test2() {
+        sp.activeSelectorAt([sp_width*0.8, 0]);
+        sp.updateSelectorAt([sp_width, sp_height*0.5]);
+        sp.stopSelectorAt([sp_width, sp_height*0.5]);
+
+        assert.equal(m.getSelected().length, 3, "three clones are selected");
+
+        var expected_cloneIDs = [];
+        for (var index in m.clones) {
+            if (["test1","test2","test4"].includes(m.clone(index).name))
+            expected_cloneIDs.push(parseInt(index));
+        }
+
+        assert.deepEqual(m.getSelected().sort(), expected_cloneIDs.sort(), "the selected clones are test{1,2,4}");
+    }
+})

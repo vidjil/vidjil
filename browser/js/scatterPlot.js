@@ -93,7 +93,7 @@ function ScatterPlot(id, model, database) {
     this.time1 = this.time0; //Frames computed
     this.fpsqueue = []; //Numbers of frames computed, according to the 20th last values
 
-    //Booléen pour le sélecteur de nodes
+    //Boolean for the nodes selector
     this.active_selector = false
 
     //axis X text position
@@ -1814,9 +1814,18 @@ ScatterPlot.prototype = {
      * start drawing a selector at this position
      * */
     activeSelector: function() {
-        var self = this;
-        this.coordinates = d3.mouse(d3.select("#" + this.id + "_svg")
-            .node());
+        this.activeSelectorAt(
+            d3.mouse(d3.select("#" + this.id + "_svg")
+                        .node())
+        );
+    },
+    
+    /**
+     * start drawing a selector at this position
+     * @param {integer[]} coord - the [x,y] coordinates at which start the selection
+     * */
+    activeSelectorAt: function(coord) {
+        this.coordinates = coord;
 
         if (this.active_move) {
 
@@ -1846,13 +1855,25 @@ ScatterPlot.prototype = {
         this.active_selector = true;
     },
 
+
     /**
      * onmousemove event <br>
      * redraw the selector every time the mouse move till the click release
      * */
     updateSelector: function() {
-        this.coordinates = d3.mouse(d3.select("#" + this.id + "_svg")
-            .node());
+        this.updateSelectorAt(
+            d3.mouse(d3.select("#" + this.id + "_svg")
+                    .node())
+        );
+    },
+    
+    
+    /**
+     * redraw the selector every time the mouse move till the click release
+     * @param {integer[]} coord - the [x,y] coordinates at which update the selector
+     * */
+    updateSelectorAt: function(coord) {
+        this.coordinates = coord;
 
         //Active selector -> activeSelector() function
         if (this.active_selector) {
@@ -1923,6 +1944,9 @@ ScatterPlot.prototype = {
         }
     },
 
+
+
+
     /**
      * onmouserelease event<br>
      * detect and select all clones under the selector
@@ -1930,58 +1954,77 @@ ScatterPlot.prototype = {
      * */
     stopSelector: function(e) {
         if (this.active_selector) {
-
-            this.coordinates = d3.mouse(d3.select("#" + this.id + "_svg")
-                .node());
-
-            if (this.active_move) {
-
-                //Selector disabled
-                this.cancelSelector();
-
-                //Set the CSS of the mouse to "default"
-                document.body.style.cursor = "default";
-
-            }
-            /*Sélection*/
-            else {
-                var nodes_selected = []
-                var x1 = parseInt(this.selector.attr("x"))
-                var x2 = x1 + parseInt(this.selector.attr("width"))
-                var y1 = parseInt(this.selector.attr("y"))
-                var y2 = y1 + parseInt(this.selector.attr("height"))
-
-
-                for (var i = 0; i < this.nodes.length; i++) {
-                    var node = this.nodes[i]
-                    var clone = this.m.clone(i)
-                    var node_x, node_y;
-                    if (this.mode != this.MODE_BAR) {
-                        node_x = node.x + this.margin[3]
-                        node_y = node.y + this.margin[0]
-                    } else {
-                        // bar_x and bar_y are both ratio values (between 0 and 1), need to multiply by the size of the grid
-                        node_x = node.bar_x * this.gridSizeW + this.margin[3];
-                        var mid_y = node.bar_y - node.bar_h / 2; // bar_x represents the middle of the rectangle, but not bar_y
-                        // bar_y starts from bottom, so we need to substract the y value from the height of the grid
-                        node_y = this.gridSizeH - mid_y * this.gridSizeH + this.margin[0];
-                    }
-
-                    if (clone.isActive() && (clone.getSize() || clone.getSequenceSize()) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
-                        nodes_selected.push(i);
-                }
-
-                this.selector
-                    .style("display", "none")
-                    .attr("width", 0)
-                    .attr("height", 0)
-                this.active_selector = false;
-
-                this.m.unselectAllUnlessKey(d3.event)
-                this.m.multiSelect(nodes_selected)
-            }
+            this.stopSelectorAt(
+                d3.mouse(d3.select("#" + this.id + "_svg")
+                            .node())
+            );
         }
     },
+
+    /**
+     * detect and select all clones under the selector
+     * @param {integer[]} coord - the [x,y] coordinates at which stop the selector
+     * */
+    stopSelectorAt: function(coord) {
+
+        this.coordinates = coord;
+        
+        if (this.active_move) {
+            
+            //Selector disabled
+            this.cancelSelector();
+            
+            //Set the CSS of the mouse to "default"
+            document.body.style.cursor = "default";
+            
+        }
+        /*Selection*/
+        else {
+            var nodes_selected = []
+            var x1 = parseInt(this.selector.attr("x"))
+            var x2 = x1 + parseInt(this.selector.attr("width"))
+            var y1 = parseInt(this.selector.attr("y"))
+            var y2 = y1 + parseInt(this.selector.attr("height"))
+            
+            
+            for (var i = 0; i < this.nodes.length; i++) {
+                var node = this.nodes[i]
+                var clone = this.m.clone(i)
+                var node_x, node_y;
+                if (this.mode != this.MODE_BAR) {
+                    node_x = node.x + this.margin[3]
+                    node_y = node.y + this.margin[0]
+                } else {
+                    // bar_x and bar_y are both ratio values (between 0 and 1), need to multiply by the size of the grid
+                    node_x = node.bar_x * this.gridSizeW + this.margin[3];
+                    var mid_y = node.bar_y - node.bar_h / 2; // bar_x represents the middle of the rectangle, but not bar_y
+                    // bar_y starts from bottom, so we need to substract the y value from the height of the grid
+                    node_y = this.gridSizeH - mid_y * this.gridSizeH + this.margin[0];
+                }
+                
+                if (clone.isActive() && (clone.getSize() || clone.getSequenceSize()) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
+                nodes_selected.push(i);
+            }
+            
+            this.selector
+            .style("display", "none")
+            .attr("width", 0)
+            .attr("height", 0)
+            this.active_selector = false;
+            
+            this.m.unselectAllUnlessKey(d3.event)
+            this.m.multiSelect(nodes_selected)
+        }
+        
+    },
+
+
+
+
+
+
+
+
 
     /**
      * click event, select/unselect clones <br>

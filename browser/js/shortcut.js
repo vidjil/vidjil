@@ -133,8 +133,8 @@ Shortcut.prototype = {
             }
             
             //system shortcuts
-            if (! e.ctrlKey && ! e.metaKey
-                && typeof this.system_shortcuts[key] != "undefined") {
+            if (! e.ctrlKey && ! e.metaKey &&
+                typeof this.system_shortcuts[key] != "undefined") {
 
                     var germlines = this.system_shortcuts[key].filter(function(g) {return m.system_available.indexOf(g) != -1})
                     if (germlines.length === 0)
