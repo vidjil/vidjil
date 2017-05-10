@@ -1878,14 +1878,15 @@ ScatterPlot.prototype = {
         //Active selector -> activeSelector() function
         if (this.active_selector) {
 
+            var width, height;
             /*Movement of all nodes, with mouse move*/
             if (this.active_move) {
 
                 this.positionToMove.x = this.coordinates[0];
                 this.positionToMove.y = this.coordinates[1];
 
-                var width = this.positionToMove.originx - this.positionToMove.x;
-                var height = this.positionToMove.originy - this.positionToMove.y;
+                width = this.positionToMove.originx - this.positionToMove.x;
+                height = this.positionToMove.originy - this.positionToMove.y;
 
                 this.fixedAllClones(false);
 
@@ -1911,8 +1912,8 @@ ScatterPlot.prototype = {
                 var x = this.selector.attr("originx");
                 var y = this.selector.attr("originy");
 
-                var width = this.coordinates[0] - x;
-                var height = this.coordinates[1] - y;
+                width = this.coordinates[0] - x;
+                height = this.coordinates[1] - y;
 
                 if (width > 5) {
                     this.selector.attr("width", width - 3)
@@ -1989,15 +1990,16 @@ ScatterPlot.prototype = {
             for (var i = 0; i < this.nodes.length; i++) {
                 var node = this.nodes[i]
                 var clone = this.m.clone(i)
+                var node_x, node_y;
                 if (this.mode != this.MODE_BAR) {
-                    var node_x = node.x + this.margin[3]
-                    var node_y = node.y + this.margin[0]
+                    node_x = node.x + this.margin[3]
+                    node_y = node.y + this.margin[0]
                 } else {
                     // bar_x and bar_y are both ratio values (between 0 and 1), need to multiply by the size of the grid
-                    var node_x = node.bar_x * this.gridSizeW + this.margin[3];
+                    node_x = node.bar_x * this.gridSizeW + this.margin[3];
                     var mid_y = node.bar_y - node.bar_h / 2; // bar_x represents the middle of the rectangle, but not bar_y
                     // bar_y starts from bottom, so we need to substract the y value from the height of the grid
-                    var node_y = this.gridSizeH - mid_y * this.gridSizeH + this.margin[0];
+                    node_y = this.gridSizeH - mid_y * this.gridSizeH + this.margin[0];
                 }
                 
                 if (clone.isActive() && (clone.getSize() || clone.getSequenceSize()) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
