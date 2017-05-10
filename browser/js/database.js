@@ -727,6 +727,7 @@ Database.prototype = {
             success: function (result) {
                 self.display_result(result, "", args);
                 console.log('=== load_data: success ===');
+                self.info("[load_data ok] [ua] " + window.navigator.userAgent)
                 self.connected = true;
                 // self.callCloneDB(_.range(self.m.clones.length));
             },
