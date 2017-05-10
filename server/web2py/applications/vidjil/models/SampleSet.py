@@ -99,7 +99,8 @@ def get_sample_name(sample_set_id):
     '''
     sample = db.sample_set[sample_set_id]
     if sample is None or (sample.sample_type != defs.SET_TYPE_PATIENT \
-                          and sample.sample_type != defs.SET_TYPE_RUN):
+                          and sample.sample_type != defs.SET_TYPE_RUN \
+                          and sample.sample_type != defs.SET_TYPE_GENERIC):
         return None
 
     sample_type = sample.sample_type
