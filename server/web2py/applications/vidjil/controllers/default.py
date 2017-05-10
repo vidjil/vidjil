@@ -452,11 +452,10 @@ def get_custom_data():
             for id in request.vars["custom"] :
                 log.debug("id = '%s'" % str(id))
                 sequence_file_id = db.results_file[id].sequence_file_id
-                patient_id = db((db.sample_set_membership.sequence_file_id == sequence_file_id)
-                            & (db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
-                ).select(db.patient.id).first().id
-                if not auth.can_view_patient(patient_id):
-                    error += "you do not have permission to consult this patient ("+str(patient_id)+")"
+                sample_set_id = db((db.sample_set_membership.sequence_file_id == sequence_file_id)
+                ).select(db.sample_set_membership.sample_set_id).first().sample_set_id
+                if not auth.can_view_sample_set(sample_set_id):
+                    error += "you do not have permission to consult this element ("+str(sample_set_id)+")"
             
     if error == "" :
         try:
