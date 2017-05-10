@@ -122,10 +122,10 @@ QUnit.test("segt", function (assert) {
     var h = segment.sequence[3].get_positionned_highlight('f1','');
     assert.equal(h.start,-1, " start feature value");
     assert.equal(h.stop, -1, "stop feature value");
-    assert.deepEqual(segment.sequence[3].get_positionned_highlight("test_feature",""),{"color": "", "css": "highlight_seq", "seq": "undefinedCACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 94, "stop": 124, "tooltip": ""}, "test feature value")
+    assert.deepEqual(segment.sequence[3].get_positionned_highlight("test_feature",""),{"color": "", "css": "highlight_seq", "seq": "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 94, "stop": 124, "tooltip": ""}, "test feature value")
     assert.equal(m.clone(3).getSegLength('test_feature'),31, "feature length");
     m.select(3);
-    assert.equal(segment.toFasta(), "> test4 // 2.500%\nGGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA", "fasta seq ")
+    assert.equal(segment.toFasta(), "> test4 // 2.500%\nGGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA\n", "fasta seq ")
     assert.ok(segment.isDNA('CACCCAGGAGGTGGAGCTGGATATTGAGACT'), "test dna")
     assert.ok(segment.isAA('CACCCAGGAGGTGGAGCTGGATATTGAGACT'), "test AA")
     assert.ok(segment.isPos(h), "test if an object contain pos")
