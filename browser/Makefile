@@ -7,5 +7,5 @@ icons:
 	$(MAKE) -C css/icons
 
 quality:
-	jshint js/*.js
+	jshint --config jshintrc js/*.js
 .PHONY: all germline icons
