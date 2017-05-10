@@ -116,7 +116,8 @@ Shortcut.prototype = {
                         break;
 
                     default:
-                        if ( ((key >= 96) && (key <= 105)) || ((key >= 48) && (key <= 57)) ) { // Numeric keypad, 0-9
+                        if ( ! e.ctrlKey && ! e.metaKey &&
+                         (((key >= 96) && (key <= 105)) || ((key >= 48) && (key <= 57))) ) { // Numeric keypad, 0-9
                             var select_preset = document.getElementsByClassName("axis_select_preset_select")[0]
                             var shift = 95;
                             if (key<58) shift = 47
@@ -132,7 +133,8 @@ Shortcut.prototype = {
             }
             
             //system shortcuts
-            if (typeof this.system_shortcuts[key] != "undefined") {
+            if (! e.ctrlKey && ! e.metaKey
+                && typeof this.system_shortcuts[key] != "undefined") {
 
                     var germlines = this.system_shortcuts[key].filter(function(g) {return m.system_available.indexOf(g) != -1})
                     if (germlines.length === 0)
