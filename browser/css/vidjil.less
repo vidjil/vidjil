@@ -1339,22 +1339,44 @@ span.warningReads {
     position: relative;
     top: 0px;
     left: 0px;
-    width: 0px;
-    height: 0px;
 }
+
+.visu2_menu_anchor {
+  position: absolute;
+  bottom: @margin;
+  right: 0px;
+}
+
+.sp_menu_anchor, .visu2_menu_anchor {
+  width: 0px;
+  height: 0px;
+}
+
 
 .sp_menu{
-    min-width: 22px;
-    min-height: 18px;
     border-bottom: solid;
     border-right: solid;
-    border-color: @border;
-    background : @background;
-    display: inline-block;
-    padding : 2px;
 }
 
-.sp_menu_content{
+.visu2_menu {
+  border-top: solid;
+  border-left: solid;
+  text-align: right;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}
+
+.sp_menu, .visu2_menu {
+    min-width: 22px;
+    min-height: 18px;
+    border-color: @border;
+    background: @background;
+    display: inline-block;
+    padding: 2px;
+}
+
+.sp_menu_content, .visu2_menu_content {
     padding: 0px;
     width: 0px; 
     height: 0px; 
@@ -1370,6 +1392,18 @@ span.warningReads {
     padding: 8px 0px 0px 0px;
     width: 180px; 
     height: 130px;
+}
+
+.visu2_menu:hover .visu2_menu_content,
+.visu2_menu_content:focus {
+  width: 90px;
+  height: 45px;
+}
+
+.sp_menu:hover .sp_menu_content,
+.visu2_menu:hover .visu2_menu_content,
+.sp_menu_content:focus,
+.visu2_menu_content:focus {
     font-size: 100%;
     opacity: 1;
 }
@@ -1439,6 +1473,7 @@ span.warningReads {
 }
 
 #visu-separator {
+    position: relative;
     height: @margin;
     cursor: move;
     cursor: -webkit-grab;
