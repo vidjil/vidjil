@@ -1861,80 +1861,14 @@ ScatterPlot.prototype = {
      * redraw the selector every time the mouse move till the click release
      * */
     updateSelector: function() {
-        this.coordinates = d3.mouse(d3.select("#" + this.id + "_svg")
-            .node());
-
-        //Active selector -> activeSelector() function
-        if (this.active_selector) {
-
-            var width, height;
-            /*Movement of all nodes, with mouse move*/
-            if (this.active_move) {
-
-                this.positionToMove.x = this.coordinates[0];
-                this.positionToMove.y = this.coordinates[1];
-
-                width = this.positionToMove.originx - this.positionToMove.x;
-                height = this.positionToMove.originy - this.positionToMove.y;
-
-                this.fixedAllClones(false);
-
-                var movementWidth = -(Math.abs(0.5 * width / 100) * width);
-                var movementHeight = -(Math.abs(0.5 * height / 100) * height);
-
-                for (var i = 0; i < this.nodes.length; i++) {
-                    this.nodes[i].x += movementWidth;
-                    this.nodes[i].px += movementWidth;
-                    this.nodes[i].y += movementHeight;
-                    this.nodes[i].py += movementHeight;
-                }
-
-                if (this.dbscanActive) this.addNextPositionsToClones(movementWidth, movementHeight);
-
-                this.positionToMove.originx += movementWidth;
-                this.positionToMove.originy += movementHeight;
-
-            }
-            /*Nodes selection*/
-            else {
-
-                var x = this.selector.attr("originx");
-                var y = this.selector.attr("originy");
-
-                width = this.coordinates[0] - x;
-                height = this.coordinates[1] - y;
-
-                if (width > 5) {
-                    this.selector.attr("width", width - 3)
-                        .attr("x", x)
-                } else
-                if (width < -5) {
-                    this.selector
-                        .attr("width", -width)
-                        .attr("x", this.coordinates[0] + 3)
-                } else {
-                    this.selector.attr("width", 0)
-                        .attr("x", x)
-                }
-
-                if (height > 5) {
-                    this.selector.attr("height", height - 3)
-                        .attr("y", y)
-                } else
-                if (height < -5) {
-                    this.selector
-                        .attr("height", -height)
-                        .attr("y", this.coordinates[1] + 3)
-                } else {
-                    this.selector.attr("height", 0)
-                        .attr("y", y)
-                }
-            }
-        }
+        this.updateSelectorAt(
+            d3.mouse(d3.select("#" + this.id + "_svg")
+                    .node())
+        );
     },
-
+    
+    
     /**
-     * onmousemove event <br>
      * redraw the selector every time the mouse move till the click release
      * @param {integer[]} coord - the [x,y] coordinates at which update the selector
      * */
