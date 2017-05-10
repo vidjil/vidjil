@@ -477,7 +477,7 @@ def get_custom_data():
             sample_set = db((db.sequence_file.id == sequence_file_id)
                             & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                             & (db.sample_set.id == db.sample_set_membership.sample_set_id)
-                            & (db.sample_set.sample_type.belongs([defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN])) #### SET_TYPE_GENERIC ?
+                            & (db.sample_set.sample_type.belongs([defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC]))
                             ).select(db.sample_set.id, db.sample_set.sample_type).first()
 
             patient_run = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select().first()
