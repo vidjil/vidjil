@@ -43,7 +43,6 @@ code_quality:
     - /^feature-[cw]\/.*$/
     - /^hotfix-[cw]\/.*$/
     - prod-client
-  allow_failure: true
 
 deploy:
   stage: deploy
