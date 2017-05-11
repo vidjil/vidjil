@@ -31,41 +31,43 @@ function loadAfterConf() {
 
         require(["../germline"],
                 function() {
-                    require(["../compare",
-                             "../menu",
-                             "../dbscan",
-                             "../germline_builder",
-                             "../segmenter",
-                             "../model_loader",
-                             "../model",
-                             "../clone",
-                             "../dynprog",
-                             "../list",
-                             "../generic_axis",
-                             "../germline_axis",
-                             "../numerical_axis",
-                             "../axes",
-                             "../graph",
-                             "../scatterPlot",
-                             "../builder",
-                             "../com",
-                             "../vidjil-style",
-                             "../crossDomain",
-                             "../database",
-                             "../shortcut",
-                             "../export",
-                             "../similarity",
-                             "../tools",
-                             "../url",
-                             // Speed test
-                             "../speed_test",
-                             "../../test/QUnit/testFiles/data_test",
-                            ], function(){
-                                if (typeof main == "undefined"){
-                                    require(["../main"]);
-                                }else{
-                                    main();
-                                }
+                    require(["../generic_axis"],
+                            function() {
+                                require(["../compare",
+                                         "../menu",
+                                         "../dbscan",
+                                         "../germline_builder",
+                                         "../segmenter",
+                                         "../model_loader",
+                                         "../model",
+                                         "../clone",
+                                         "../dynprog",
+                                         "../list",
+                                         "../germline_axis",
+                                         "../numerical_axis",
+                                         "../axes",
+                                         "../graph",
+                                         "../scatterPlot",
+                                         "../builder",
+                                         "../com",
+                                         "../vidjil-style",
+                                         "../crossDomain",
+                                         "../database",
+                                         "../shortcut",
+                                         "../export",
+                                         "../similarity",
+                                         "../tools",
+                                         "../url",
+                                         // Speed test
+                                         "../speed_test",
+                                         "../../test/QUnit/testFiles/data_test",
+                                        ], function(){
+                                            if (typeof main == "undefined"){
+                                                require(["../main"]);
+                                            }else{
+                                                main();
+                                            }
+                                        })
                             })
                 },
                 function(err)
