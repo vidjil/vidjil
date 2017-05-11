@@ -6,11 +6,6 @@ Views
     * @link 		http://d3js.org/
     * @license 		BSD Licensed
     
-    r2d3 		: fallback d3 pour internet-explorer IE8- (a tester)	
-    * @version	 	v0.1.0
-    * @author 		Michael Hemesath
-    * @link 		github.com/mhemesath/r2d3/ (dead project)
-    * @license 		MIT Licensed
 
 Tools
 
