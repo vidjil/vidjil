@@ -19,6 +19,10 @@ Tools
     * @author 		John Resig and jQuery team
     * @link 		jquery.org
     * @license 		MIT Licensed
+    * @compatibility    IE 9+, Chrome (x-1)+, Firefox (x-1)+, Safari (x-1)+, Opera x+
+                        x is "current version" at time of release
+                        => 2.1.1: 
+                        => 3.x: 
 
     file.js  		: load/save cross-navigator
     * @author 		Eli Grey
