@@ -1169,7 +1169,7 @@ Clone.prototype = {
         }
         if (typeof this.seg.junction != 'undefined' &&
             this.seg.junction.productive === true) {
-            html += header("Junction (AA seq)", this.getSegAASequence('junction'))
+            html += row_1("Junction (AA seq)", this.getSegAASequence('junction'))
         }
 
         
