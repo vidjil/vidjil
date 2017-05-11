@@ -1293,8 +1293,8 @@ Clone.prototype = {
         ]
 
         for (var i=0; i<m.samples.order.length; i++) csv.push("reads_"+i)
-        for (var j=0; j<m.samples.order.length; j++) csv.push(",ratio_"+j)
-        for (var k=0; k<m.samples.order.length; k++) csv.push(",ratios_"+k)
+        for (var j=0; j<m.samples.order.length; j++) csv.push("ratio_"+j)
+        for (var k=0; k<m.samples.order.length; k++) csv.push("ratios_"+k)
 
         return csv
     },
