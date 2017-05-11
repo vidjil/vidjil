@@ -172,3 +172,21 @@ function showAddManualCloneMenu(error) {
     document.getElementById("file_menu")
         .style.display = "none";
 }
+/**
+ * Switch visu2 content between graph and scatterplot
+ * @param {string} view - either 'graph' or 'scatterplot', the view to which switch
+ */
+function switch_visu2(view) {
+    var tmp;
+    if (view == "graph") {
+        graph = new Graph("visu2", m, db);
+        tmp = graph;
+    }
+    else if (view == "scatterplot") {
+        var sp2 = new ScatterPlot("visu2", m, db);
+        sp2.default_preset = 5;
+        tmp = sp2;
+    }
+    tmp.init();
+    tmp.resize();
+}
