@@ -1289,6 +1289,7 @@ Clone.prototype = {
             "system", "tag",
             "v", "d", "j",
             "productivity",
+            "junction", "junction(AA)",
             "sequence"
         ]
 
@@ -1305,6 +1306,8 @@ Clone.prototype = {
             this.get('germline'), this.getTagName(),
             this.getGene("5"), this.getGene("4"), this.getGene("3"),
             this.getProductivityName(),
+            this.getSegNtSequence("junction"),
+            this.getSegAASequence('junction'),
             this.getSequence()
         ]
 
