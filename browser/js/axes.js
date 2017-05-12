@@ -96,6 +96,11 @@ Axes.prototype = {
                 fct: function(clone) { return clone.getProductivityIMGT() },
                 pretty: function(tag) { return icon_pm(tag, "productive", "not productive").outerHTML },
             },
+            "VIdentity-IMGT": {
+                label: "V identity (as computed by IMGT/V-QUEST)",
+                axis: new NumericalAxis(this.m),
+                fct: function(clone) { return clone.getVIdentityIMGT() },
+            },
             "tag": {
                 doc: "tag, as defined by the user",
                 label: "tag",
