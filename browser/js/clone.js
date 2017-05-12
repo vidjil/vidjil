@@ -1222,7 +1222,8 @@ Clone.prototype = {
 
     axisOptions: function() {
         return [
-            "sequenceLength", "readLength", "n", "lengthCDR3", "productivity",
+            "sequenceLength", "readLength", "n", "lengthCDR3",
+            "productivity", "productivity-IMGT",
             "tag", "coverage", "locus", "Size", "nbSamples"
         ];
     },
