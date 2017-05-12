@@ -100,6 +100,21 @@ Axes.prototype = {
                 label: "V identity (as computed by IMGT/V-QUEST)",
                 axis: new NumericalAxis(this.m),
                 fct: function(clone) { return clone.getVIdentityIMGT() },
+                pretty: function(val) {
+                    var Videntity_info = document.createElement('span');
+                    Videntity_info.className = "identityBox widestBox";
+
+                    var identityRate = parseFloat(val)
+                    if (!isNaN(identityRate)) {
+                        var info = document.createElement('span');
+                        if (V_IDENTITY_THRESHOLD)
+                            info.className += identityRate < V_IDENTITY_THRESHOLD ? ' identityGood' : ' identityBad'
+                        info.appendChild(document.createTextNode(identityRate.toFixed(2) + "%"))
+                        info.setAttribute('title', 'V-REGION identity %, as computed by IMGT/V-QUEST')  // with indel or not ?
+                        Videntity_info.appendChild(info)
+                    }
+                    return Videntity_info.outerHTML
+                },
             },
             "tag": {
                 doc: "tag, as defined by the user",
