@@ -9,9 +9,6 @@ void testOnlineFasta1() {
   OnlineFasta fq("../../data/test1.fq");
   int nb_seq = 0;
 
-  TAP_TEST(fa.getLineNb() == 1, TEST_O_FASTA_LINE_NB, "");
-  TAP_TEST(fq.getLineNb() == 1, TEST_O_FASTA_LINE_NB, "");
-
   while (fa.hasNext()) {
     TAP_TEST(fq.hasNext(), TEST_O_FASTA_HAS_NEXT, "");
     fa.next();
@@ -22,7 +19,6 @@ void testOnlineFasta1() {
              && s1.sequence == s2.sequence, TEST_O_FASTA_GET_SEQUENCE, "fa: " << fa.getSequence() << endl << "fq: " << fq.getSequence());
     nb_seq++;
   }
-  TAP_TEST(fq.getLineNb() == 20, TEST_O_FASTA_LINE_NB, "");
   TAP_TEST(! fq.hasNext(), TEST_O_FASTA_HAS_NEXT, "");
   TAP_TEST(nb_seq == 5, TEST_O_FASTA_HAS_NEXT, "");
 }
