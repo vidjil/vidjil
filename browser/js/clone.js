@@ -846,9 +846,13 @@ Clone.prototype = {
 
     getVIdentityIMGT: function () {
         if (typeof this.seg.imgt !== 'undefined'
-            && this.seg.imgt !== null
-            && typeof this.seg.imgt['V-REGION identity % (with ins/del events)'] != 'undefined') {
-            return this.seg.imgt["V-REGION identity % (with ins/del events)"]
+            && this.seg.imgt !== null) {
+
+            if (typeof this.seg.imgt['V-REGION identity %'] != 'undefined')
+                return this.seg.imgt["V-REGION identity %"];
+
+            if (typeof this.seg.imgt['V-REGION identity % (with ins/del events)'] != 'undefined')
+                return this.seg.imgt["V-REGION identity % (with ins/del events)"];
         }
         return "unknown"
     },
