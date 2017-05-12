@@ -87,3 +87,11 @@ function icon(name, title) {
     i.setAttribute('title', title)
     return i
 }
+
+/* Get a positive/negative/neutral icon, according to the value */
+
+function icon_pm(val, plus, minus) {
+    if (val === plus) return icon('icon-plus-squared', val)
+    if (val === minus) return icon('icon-minus-squared', val)
+    return icon('icon-dot', val)
+}
