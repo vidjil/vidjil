@@ -56,7 +56,7 @@ QUnit.module("Clone", {
             "3start" : 15,
             "5end" : 5,
             "junction": {
-                "aa" : "ACGT",
+                "aa" : "WKIC",
                 "start": 3,
                 "stop": 14,
                 "productive": false
@@ -351,7 +351,7 @@ QUnit.test("export", function(assert) {
         "undefined V", "IGHD2*03", "IGHV4*01",
         "not productive",
         "aaaaaaaaattt",
-        "ACGT",
+        "WKIC",
         "AAAAAAAAAATTTTTTTTT",
         10, 10, 15, 15,
         0.05, 0.1, 0.075, 0.15,
