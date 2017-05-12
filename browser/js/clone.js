@@ -1233,6 +1233,7 @@ Clone.prototype = {
         return [
             "sequenceLength", "readLength", "n", "lengthCDR3",
             "productivity", "productivity-IMGT",
+            "VIdentity-IMGT",
             "tag", "coverage", "locus", "Size", "nbSamples"
         ];
     },
