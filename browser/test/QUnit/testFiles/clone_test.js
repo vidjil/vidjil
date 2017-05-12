@@ -99,6 +99,7 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     var c1 = new Clone(json_clone1, m, 0)
     var c2 = new Clone(json_clone2, m, 1)
     var c3 = new Clone(json_clone3, m, 2)
+    var c4 = new Clone(json_clone4, m, 3)
     m.initClones()
     
     assert.equal(c1.getSequenceName(), "hello", "get name clone1 : hello");
@@ -192,6 +193,15 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.includes(html, 
         "<tr><td>V gene (or 5')</td><td colspan='4'>testV5<div class='div-menu-selector' id='listVsegment' style='display: none'>",
         "getHtmlInfo: segmentation information (V gene) after changment");
+
+    // Test junction in html export
+    assert.includes(html, "<tr><td>junction</td><td colspan='4'>aat</td></tr>",
+                 "getHtmlInfo c1: junction info for productive clone");   
+    html = c3.getHtmlInfo();
+    assert.includes(html, "<tr><td>junction</td><td colspan='4'>aaaaaaaaattt</td></tr>",
+                 "getHtmlInfo c3: junction info for non productive clone");   
+    assert.includes(html, "<tr><td>junction (AA seq)</td><td colspan='4'>WKIC</td></tr>",
+                 "getHtmlInfo c3: junction (AAseq) info for non productive clone"); 
 
 });
 

@@ -1168,8 +1168,8 @@ Clone.prototype = {
             }
         }
         if (typeof this.seg.junction != 'undefined' &&
-            this.seg.junction.productive === true) {
-            html += row_1("Junction (AA seq)", this.getSegAASequence('junction'))
+            this.seg.junction.aa != "undefined") {
+            html += row_1("junction (AA seq)", this.getSegAASequence('junction'))
         }
 
         
