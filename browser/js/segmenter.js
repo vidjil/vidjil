@@ -36,8 +36,6 @@ CGI_ADDRESS = ""
 
 SEGMENT_KEYS = ["4", "4a", "4b"]
 
-V_IDENTITY_THRESHOLD = 98.0
-
 /** segment 
  * Segment is a view object to see the sequences of the selected clones in the model <br>
  * some function are provided to allow alignement / highlight / imgt request / ...

@@ -26,6 +26,8 @@ function Axes (model) {
   this.m = model;
 }
 
+V_IDENTITY_THRESHOLD = 98.0
+
 Axes.prototype = {
 
     available: function(){
