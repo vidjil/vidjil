@@ -1625,7 +1625,7 @@ changeAlleleNotation: function(alleleNotation) {
         
         for (var i=l-1; i >= 0; i--) {
             ss += s[l-1-i]
-            if (i && (i % 3) == 0)
+            if (i && (i % 3) === 0)
                 ss += DECIMAL_SEPARATOR
         }
 
