@@ -609,45 +609,7 @@ Segment.prototype = {
                 .className += " infoBox-open"
         }
 
-        // Productive/unproductive
-        var productive_info = document.createElement('span');
-        productive_info.className = "infoBox";
-
-        var info = '' ;
-        if (typeof clone.seg.imgt !== 'undefined' &&
-            clone.seg.imgt!==null &&
-            typeof clone.seg.imgt['V-DOMAIN Functionality'] != 'undefined'){
-            info = (clone.seg.imgt["V-DOMAIN Functionality"].toLowerCase().indexOf("unproductive") < 0) ?
-                icon('icon-plus-squared', 'productive, as computed by IMGT/V-QUEST') :
-                icon('icon-minus-squared', 'unproductive, as computed by IMGT/V-QUEST') ;
-        }
-        if (info)
-            productive_info.appendChild(info);
-
-        // V identity ratio
-        var Videntity_info = document.createElement('span');
-        Videntity_info.className = "identityBox widestBox";
-
-        info = '' ;
-        if (typeof clone.seg.imgt !== 'undefined' && clone.seg.imgt!==null){
-            identity = clone.seg.imgt["V-REGION identity % (with ins/del events)"]
-            if (typeof identity != 'undefined' && identity.length === 0)
-                identity = clone.seg.imgt["V-REGION identity %"]
-            var identityRate = parseFloat(identity)
-            if (isNaN(identityRate)) {
-                info = document.createElement('span');
-                if (V_IDENTITY_THRESHOLD)
-                    info.className += identityRate < V_IDENTITY_THRESHOLD ? ' identityGood' : ' identityBad'
-                info.appendChild(document.createTextNode(identityRate.toFixed(2) + "%"))
-                info.setAttribute('title', 'V-REGION identity % (with indel), as computed by IMGT/V-QUEST')
-            }
-        }
-        if (info)
-            Videntity_info.appendChild(info);
-
-        div_elem.insertBefore(productive_info, div_elem.childNodes[1]);
         div_elem.insertBefore(seq_name, div_elem.childNodes[0]);
-        div_elem.appendChild(Videntity_info);
     },
 
     fillAxisBox: function (axisBox, clone) {

@@ -832,6 +832,30 @@ Clone.prototype = {
 
         return (this.seg.junction.productive ? "productive" : "not productive")
     },
+
+    getProductivityIMGT: function () {
+        if (typeof this.seg.imgt !== 'undefined'
+            && this.seg.imgt !== null
+            && typeof this.seg.imgt['V-DOMAIN Functionality'] != 'undefined') {
+            var pro = this.seg.imgt["V-DOMAIN Functionality"].toLowerCase().split(" ")[0]
+
+            return pro === "unproductive" ? "not productive" : pro
+        }
+        return "unknown"
+    },
+
+    getVIdentityIMGT: function () {
+        if (typeof this.seg.imgt !== 'undefined'
+            && this.seg.imgt !== null) {
+
+            if (typeof this.seg.imgt['V-REGION identity %'] != 'undefined')
+                return this.seg.imgt["V-REGION identity %"];
+
+            if (typeof this.seg.imgt['V-REGION identity % (with ins/del events)'] != 'undefined')
+                return this.seg.imgt["V-REGION identity % (with ins/del events)"];
+        }
+        return "unknown"
+    },
     
     /* compute clone color
      *
@@ -1211,7 +1235,9 @@ Clone.prototype = {
 
     axisOptions: function() {
         return [
-            "sequenceLength", "readLength", "n", "lengthCDR3", "productivity",
+            "sequenceLength", "readLength", "n", "lengthCDR3",
+            "productivity", "productivity-IMGT",
+            "VIdentity-IMGT",
             "tag", "coverage", "locus", "Size", "nbSamples"
         ];
     },
