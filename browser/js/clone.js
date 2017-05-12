@@ -832,6 +832,17 @@ Clone.prototype = {
 
         return (this.seg.junction.productive ? "productive" : "not productive")
     },
+
+    getProductivityIMGT: function () {
+        if (typeof this.seg.imgt !== 'undefined'
+            && this.seg.imgt !== null
+            && typeof this.seg.imgt['V-DOMAIN Functionality'] != 'undefined') {
+            var pro = this.seg.imgt["V-DOMAIN Functionality"].toLowerCase().split(" ")[0]
+
+            return pro === "unproductive" ? "not productive" : pro
+        }
+        return "unknown"
+    },
     
     /* compute clone color
      *
