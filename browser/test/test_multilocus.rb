@@ -57,7 +57,7 @@ class TestMultilocus < BrowserTest
       assert ( $b.clone_in_list('25').exists?), ">>fail init : clone 0 missing in list"
       assert ( $b.clone_in_scatterplot('25').exists?), ">>fail init : clone 0 missing in scatterplot"
       #assert ( $b.clone_in_graph('25').exists?), ">>fail init : clone 0 missing in graph"
-      assert ( $b.clone_in_list('25').text.include? '0.130%' ) , ">>fail init : wrong clone size "
+      assert ( $b.clone_in_list('25').text.include? '0.129%' ) , ">>fail init : wrong clone size "
 
   end
 
@@ -134,7 +134,7 @@ class TestMultilocus < BrowserTest
     stats = $b.statsline
     assert (stats.text.include? '1 clone'), ">> Incorrect stats, should have one clone"
     assert (stats.text.include? '962 reads'), ">> Incorrect stats, should have 962 reads"
-    assert (stats.text.include? '0.130%'), ">> Incorrect stats, should be at 0.130%"
+    assert (stats.text.include? '0.129%'), ">> Incorrect stats, should be at 0.129%"
   end
 
   def test_08_click_in_list
@@ -168,7 +168,7 @@ class TestMultilocus < BrowserTest
     
     $b.menu_settings.click 
     $b.radio(:id => 'reset_norm').click
-    assert ( $b.clone_info('25')[:size].text == '0.130%' ) , ">> fail normalize off : wrong clone size "
+    assert ( $b.clone_info('25')[:size].text == '0.129%' ) , ">> fail normalize off : wrong clone size "
 
     $b.unselect
   end
