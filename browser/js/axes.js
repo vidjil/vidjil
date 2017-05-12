@@ -88,11 +88,13 @@ Axes.prototype = {
                 label: "productivity",
                 axis: new GenericAxis(),
                 fct: function(clone) {return clone.getProductivityName()},
+                pretty: function(tag) { return icon_pm(tag, "productive", "not productive").outerHTML },
             },
             "productivity-IMGT": {
                 label: "productivity (as computed by IMGT/V-QUEST)",
                 axis: new GenericAxis(),
                 fct: function(clone) { return clone.getProductivityIMGT() },
+                pretty: function(tag) { return icon_pm(tag, "productive", "not productive").outerHTML },
             },
             "tag": {
                 doc: "tag, as defined by the user",
