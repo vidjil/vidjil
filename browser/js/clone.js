@@ -843,6 +843,15 @@ Clone.prototype = {
         }
         return "unknown"
     },
+
+    getVIdentityIMGT: function () {
+        if (typeof this.seg.imgt !== 'undefined'
+            && this.seg.imgt !== null
+            && typeof this.seg.imgt['V-REGION identity % (with ins/del events)'] != 'undefined') {
+            return this.seg.imgt["V-REGION identity % (with ins/del events)"]
+        }
+        return "unknown"
+    },
     
     /* compute clone color
      *
