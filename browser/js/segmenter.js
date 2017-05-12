@@ -609,21 +609,6 @@ Segment.prototype = {
                 .className += " infoBox-open"
         }
 
-        // Productive/unproductive
-        var productive_info = document.createElement('span');
-        productive_info.className = "infoBox";
-
-        var info = '' ;
-        if (typeof clone.seg.imgt !== 'undefined' &&
-            clone.seg.imgt!==null &&
-            typeof clone.seg.imgt['V-DOMAIN Functionality'] != 'undefined'){
-            info = (clone.seg.imgt["V-DOMAIN Functionality"].toLowerCase().indexOf("unproductive") < 0) ?
-                icon('icon-plus-squared', 'productive, as computed by IMGT/V-QUEST') :
-                icon('icon-minus-squared', 'unproductive, as computed by IMGT/V-QUEST') ;
-        }
-        if (info)
-            productive_info.appendChild(info);
-
         // V identity ratio
         var Videntity_info = document.createElement('span');
         Videntity_info.className = "identityBox widestBox";
@@ -645,7 +630,6 @@ Segment.prototype = {
         if (info)
             Videntity_info.appendChild(info);
 
-        div_elem.insertBefore(productive_info, div_elem.childNodes[1]);
         div_elem.insertBefore(seq_name, div_elem.childNodes[0]);
         div_elem.appendChild(Videntity_info);
     },
