@@ -623,7 +623,7 @@ Segment.prototype = {
             }
         }
     },
-
+        
     /**
      * add a clone in the segmenter<br>
      * build a div with clone information and sequence
@@ -664,6 +664,57 @@ Segment.prototype = {
         divParent.appendChild(li);
 
     },
+
+
+    div_element:function(div_elem, id) {
+
+        var self = this; 
+        div_elem.removeAllChildren(); 
+        div_elem.className = "seq-fixed cloneName";
+        if (this.m.focus == id) { 
+        $(span).addClass("list_focus");         } 
+        var seq_name = document.createElement('span');
+        seq_name.className = "nameBox";
+        var del = document.createElement('span')
+        del.className = "delBox"        
+        del.appendChild(icon('icon-cancel', 'Unselect this clone'));
+        seq_name.appendChild(del);
+        var span_name = document.createElement('span'); 
+        span_name.className = "nameBox2";
+        span_name.appendChild(document.createTextNode(id));
+        seq_name.appendChild(span_name);
+        seq_name.title = id;
+        div_elem.appendChild(seq_name);
+    },
+
+
+
+
+    addSequenceTosegmenter : function(id, str){
+        var self =this
+        this.aligned = false ;
+        this.sequence[id] = new genSeq(id, this.m, this)          
+        this.sequence[id].load("str")
+        var divParent = document.getElementById("listSeq");       
+        var previous_li = divParent.getElementsByTagName("li");
+        var li = document.createElement('li');
+        li.id = "seq" + id;        
+        li.className = "sequence-line";
+        var spanF = document.createElement('span');         
+        spanF.id = "f" + id;         
+        this.div_element(spanF, id);
+        var spanM = document.createElement('span');
+        spanM.id = "m" + id;
+
+        spanM.className = "seq-mobil";
+        spanM.innerHTML = this.sequence[id].load(str).toString(this);
+        li.appendChild(spanF);
+        li.appendChild(spanM);
+        divParent.appendChild(li);
+
+
+    },
+
 
 
     /**
@@ -1031,16 +1082,91 @@ Segment.prototype = {
     }
 
 }; //fin prototype Segment
-Segment.prototype = $.extend(Object.create(View.prototype), Segment.prototype);
+Segment.prototype = $.extend(Object.create(View.
+    prototype), Segment.prototype);
+
+function genSeq(id, model, segmenter) {     
+    this.id = id; //clone ID     
+    this.m = model; //Model utilisé     
+    this.segmenter = segmenter;     
+    this.seq = [];     
+    this.pos = [];     
+    this.use_marge = true; 
+    }
+
+genSeq.prototype= {
+    // body...
+      /**
+     * load the clone sequence <br>
+     * retrieve the one in the model or use the one given in parameter <br>
+     * @param {string} str
+     * */
+    load: function (str) {
+        if (typeof str !== 'undefined') this.use_marge = false
+        str = typeof str !== 'undefined' ? str : this.m.germlineV.allele[this.id].seq["seq"];
+        
+        this.seq = str.split("")
+        this.seqAA = str.split("")
+        this.computePos()
+        return this;
+    },
 
 
+    /**
+     * compare sequence with another string and surround change
+     * @param {char} self
+     * @param {char} other
+     * @return {string}  
+     * */
+    spanify_mutation: function (self, other) {
+        if (this.segmenter.aligned && self != other) {
+            var span = document.createElement('span');
+            span.className = (self == '-' || other == '-' ? 'indel' : 'substitution');
+            span.setAttribute('other', other + '-' + this.segmenter.first_clone);
+            span.appendChild(document.createTextNode(self));
+            return span;
+        }else {
+            console.log(self)
+            return document.createTextNode(self);
+        }
+    },
 
 
+    /**
+     * save the position of each nucleotide in an array <br>
+     * */
+    computePos: function () {
+        this.pos = [];
+        var j = 0
+        for (var i = 0; i < this.seq.length; i++) {
+            if (this.seq[i] != "-") {
+                this.pos.push(i)
+            }
+        }
+        this.pos.push(this.seq.length)
+        return this;
+    },
 
 
+    toString: function() {
+        result = document.createElement('span');
+        currentSpan = document.createElement('span');
+        for (var i = 0; i < this.seq.length; i++) {
+             currentSpan.appendChild(this.spanify_mutation(this.seq[i], this.segmenter.sequence[this.segmenter.first_clone].seq[i])) }
+        result.appendChild(currentSpan);
+        var marge = ""
+        if (this.use_marge){
+            marge += "<span class='seq-marge'>";
+            var size_marge = 300 - window_start;
+            if (size_marge > 0) {
+                for (var n = 0; n < size_marge; n++) marge += "\u00A0";
+            }
+            marge += "</span>"
+        }
+        return marge + result.innerHTML;
+    },
 
-
-
+};
 
 /**
  * Sequence object contain a dna sequence and various functions to manipulate them
@@ -1057,7 +1183,7 @@ function Sequence(id, model, segmenter) {
     this.use_marge = true;
 }
 
-Sequence.prototype = {
+Sequence.prototype = Object.create(genSeq.prototype); Object.assign(Sequence.prototype, {
 
     /**
      * load the clone sequence <br>
@@ -1077,21 +1203,6 @@ Sequence.prototype = {
         this.computePos()
         this.computeAAseq()
 
-        return this;
-    },
-
-    /**
-     * save the position of each nucleotide in an array <br>
-     * */
-    computePos: function () {
-        this.pos = [];
-        var j = 0
-        for (var i = 0; i < this.seq.length; i++) {
-            if (this.seq[i] != "-") {
-                this.pos.push(i)
-            }
-        }
-        this.pos.push(this.seq.length)
         return this;
     },
 
@@ -1143,23 +1254,6 @@ Sequence.prototype = {
         }
     },
 
-    /**
-     * compare sequence with another string and surround change
-     * @param {char} self
-     * @param {char} other
-     * @return {string}  
-     * */
-    spanify_mutation: function (self, other) {
-        if (this.segmenter.aligned && self != other) {
-            var span = document.createElement('span');
-            span.className = (self == '-' || other == '-' ? 'indel' : 'substitution');
-            span.setAttribute('other', other + '-' + this.segmenter.first_clone);
-            span.appendChild(document.createTextNode(self));
-            return span;
-        }else {
-            return document.createTextNode(self);
-        }
-    },
 
     /**
      * return sequence completed with html tag <br>
@@ -1369,7 +1463,7 @@ Sequence.prototype = {
 
         return h
     }
-};
+});
 
 
 
