@@ -10,9 +10,6 @@ requirejs.config({
 require(["jquery",
          "d3.v3",
          "jquery.form",
-         "StackBlur",
-         "underscore",
-         "rgbcolor",
          "file",
          "tsne",
          "jstree.min"], function() {

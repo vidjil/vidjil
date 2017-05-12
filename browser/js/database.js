@@ -270,7 +270,19 @@ Database.prototype = {
         });
     },
 
+
+    /**
+     * Send the given clones to CloneDB
+     * @param {int list} clones - list of clones (if undefined, call on all clones)
+     * */
     callCloneDB: function(clones) {
+
+        if (typeof clones === 'undefined')
+        {
+            clones = Array.apply(null, Array(this.m.clones.length)).map(function (_, i) {return i;});
+        }
+
+        console.log("Send to cloneDB: " + clones)
         var windows = [];
 	var self = this;
 	var kept_clones = [];
@@ -729,7 +741,7 @@ Database.prototype = {
                 console.log('=== load_data: success ===');
                 self.info("[load_data ok] [ua] " + window.navigator.userAgent)
                 self.connected = true;
-                // self.callCloneDB(_.range(self.m.clones.length));
+                // self.callCloneDB()
             },
             error: function (request, status, error) {
                 self.connected = false;
