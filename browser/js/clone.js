@@ -65,7 +65,7 @@ function Clone(data, model, index, virtual) {
     this.computeEValue()
 }
 
-function nullIfZero(x) { return x === 0 ? '' : x }
+function nullIfZero(x) { return (x === 0 || x === '0') ? '' : x }
 
 Clone.prototype = {
 
