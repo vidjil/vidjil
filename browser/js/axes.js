@@ -89,6 +89,11 @@ Axes.prototype = {
                 axis: new GenericAxis(),
                 fct: function(clone) {return clone.getProductivityName()},
             },
+            "productivity-IMGT": {
+                label: "productivity (as computed by IMGT/V-QUEST)",
+                axis: new GenericAxis(),
+                fct: function(clone) { return clone.getProductivityIMGT() },
+            },
             "tag": {
                 doc: "tag, as defined by the user",
                 label: "tag",
