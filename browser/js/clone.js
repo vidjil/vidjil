@@ -1169,7 +1169,7 @@ Clone.prototype = {
         }
         if (typeof this.seg.junction != 'undefined' &&
             this.seg.junction.productive === true) {
-            html += header("Junction (AA seq)", this.getSegAASequence('junction'))
+            html += row_1("Junction (AA seq)", this.getSegAASequence('junction'))
         }
 
         
@@ -1289,12 +1289,13 @@ Clone.prototype = {
             "system", "tag",
             "v", "d", "j",
             "productivity",
+            "junction", "junction(AA)",
             "sequence"
         ]
 
         for (var i=0; i<m.samples.order.length; i++) csv.push("reads_"+i)
-        for (var j=0; j<m.samples.order.length; j++) csv.push(",ratio_"+j)
-        for (var k=0; k<m.samples.order.length; k++) csv.push(",ratios_"+k)
+        for (var j=0; j<m.samples.order.length; j++) csv.push("ratio_"+j)
+        for (var k=0; k<m.samples.order.length; k++) csv.push("ratios_"+k)
 
         return csv
     },
@@ -1305,6 +1306,8 @@ Clone.prototype = {
             this.get('germline'), this.getTagName(),
             this.getGene("5"), this.getGene("4"), this.getGene("3"),
             this.getProductivityName(),
+            this.getSegNtSequence("junction"),
+            this.getSegAASequence('junction'),
             this.getSequence()
         ]
 

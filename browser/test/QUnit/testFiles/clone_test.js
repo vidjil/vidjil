@@ -56,6 +56,7 @@ QUnit.module("Clone", {
             "3start" : 15,
             "5end" : 5,
             "junction": {
+                "aa" : "WKIC",
                 "start": 3,
                 "stop": 14,
                 "productive": false
@@ -349,6 +350,8 @@ QUnit.test("export", function(assert) {
         "TRG", "-/-",
         "undefined V", "IGHD2*03", "IGHV4*01",
         "not productive",
+        "aaaaaaaaattt",
+        "WKIC",
         "AAAAAAAAAATTTTTTTTT",
         10, 10, 15, 15,
         0.05, 0.1, 0.075, 0.15,
@@ -356,6 +359,22 @@ QUnit.test("export", function(assert) {
     ]
     assert.deepEqual(c3.toCSV(), res3, ".toCSV()")
     assert.equal(c3.toCSVheader(m).length, c3.toCSV().length, ".toCSVheader() length")
+
+    var res4 = [
+        "1", "custom name", "id4",
+        "TRG", "-/-",
+        "undefined V", "IGHD2*03", "IGHV4*01",
+        "no CDR3 detected",
+        "",
+        "",
+        "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGTATTACC",
+        10, 10, 15, 15,
+        0.05, 0.1, 0.075, 0.15,
+        "57 nt; 10 reads (5.000%)", "57 nt; 10 reads (10.00%)", "57 nt; 15 reads (7.500%)", "57 nt; 15 reads (15.00%)"
+    ]
+    assert.deepEqual(c4.toCSV(), res4, "c4.toCSV() - no junctionAA")
+
+
 
     m.select(0)
     m.select(1)
