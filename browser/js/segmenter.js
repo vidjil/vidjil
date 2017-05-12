@@ -682,6 +682,10 @@ Segment.prototype = {
         var del = document.createElement('span')
         del.className = "delBox"        
         del.appendChild(icon('icon-cancel', 'Unselect this clone'));
+        del.onclick = function () {
+            delete self.sequence[id];
+            self.aligned = false;
+        }
         seq_name.appendChild(del);
         var span_name = document.createElement('span'); 
         span_name.className = "nameBox2";
@@ -705,6 +709,10 @@ Segment.prototype = {
         this.sequence[id].load("str")
         var divParent = document.getElementById("listSeq");       
         var previous_li = divParent.getElementsByTagName("li");
+        if (previous_li && previous_li.length === 0) {
+            this.first_clone = id
+        }
+
         var li = document.createElement('li');
         li.id = "seq" + id;        
         li.className = "sequence-line";
