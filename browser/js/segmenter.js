@@ -665,7 +665,11 @@ Segment.prototype = {
 
     },
 
-
+    /**
+    * complete a node with a clone information/sequence
+    * @param {dom_object} div_elem - html element to complete
+    * @param {integer} id - sequence id 
+    **/
     div_element:function(div_elem, id) {
 
         var self = this; 
@@ -686,9 +690,13 @@ Segment.prototype = {
         seq_name.title = id;
         div_elem.appendChild(seq_name);
     },
-
-
-
+    
+    /**
+    * add a sequence to the segmenter
+    * build a div with sequence information and sequence
+    * @param {str} id sequence id
+    * @param {str} sequence 
+    **/
 
     addSequenceTosegmenter : function(id, str){
         var self =this
@@ -1095,14 +1103,15 @@ function genSeq(id, model, segmenter) {
     }
 
 genSeq.prototype= {
-    // body...
+
       /**
-     * load the clone sequence <br>
+     * load the sequence <br>
      * retrieve the one in the model or use the one given in parameter <br>
      * @param {string} str
      * */
     load: function (str) {
         if (typeof str !== 'undefined') this.use_marge = false
+        // console.log(typeof str)    
         str = typeof str !== 'undefined' ? str : this.m.germlineV.allele[this.id].seq["seq"];
         
         this.seq = str.split("")
@@ -1126,7 +1135,7 @@ genSeq.prototype= {
             span.appendChild(document.createTextNode(self));
             return span;
         }else {
-            console.log(self)
+
             return document.createTextNode(self);
         }
     },
@@ -1134,6 +1143,7 @@ genSeq.prototype= {
 
     /**
      * save the position of each nucleotide in an array <br>
+     * return {array}
      * */
     computePos: function () {
         this.pos = [];
@@ -1147,7 +1157,10 @@ genSeq.prototype= {
         return this;
     },
 
-
+    /**
+    *return sequence completed with html tag <br>
+    * @return {string}
+    **/
     toString: function() {
         result = document.createElement('span');
         currentSpan = document.createElement('span');
