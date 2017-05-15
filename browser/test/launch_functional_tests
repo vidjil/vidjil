@@ -1,11 +1,19 @@
 rm -f test/*.xml
 EXIT=0
-for file in functional/test_*rb; do
-    ruby $file;
-    TMP_EXIT=$?
-    if [ $TMP_EXIT -ne 0 ]; then
-       EXIT=$TMP_EXIT
-    fi
-    mv test/reports/*.xml test/
+if [ -z "$FUNCTIONAL_CLIENT_BROWSER_PATH" ]; then
+    FUNCTIONAL_CLIENT_BROWSER_PATH="."
+fi
+for browser in $FUNCTIONAL_CLIENT_BROWSER_PATH; do
+    for file in functional/test_*rb; do
+        if [ ${#browser} -gt 1 ]; then
+            export WATIR_BROWSER_PATH="$browser"
+        fi
+        ruby -I functional $file;
+        TMP_EXIT=$?
+        if [ $TMP_EXIT -ne 0 ]; then
+            EXIT=$TMP_EXIT
+        fi
+        mv test/reports/*.xml test/
+    done
 done
 exit $EXIT
