@@ -70,8 +70,7 @@ Shortcut.prototype = {
                     
                 key = e.keyCode;
                 if (key===0) key = e.which
-                console.log(e)
-                console.log(key)
+                console.log("Event:" + e + " keyCode:" + key + " key:" + e.key)
                 switch(key) {
                     case 37 :   //left arrow
                         e.preventDefault()
