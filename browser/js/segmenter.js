@@ -1120,7 +1120,7 @@ genSeq.prototype= {
     load: function (str) {
         if (typeof str !== 'undefined') this.use_marge = false
         // console.log(typeof str)    
-        str = typeof str !== 'undefined' ? str : this.m.germlineV.allele[this.id].seq["seq"];
+        str = typeof str !== 'undefined' ? str : this.m.germlineV.allele[this.id].seq.seq;
         
         this.seq = str.split("")
         this.seqAA = str.split("")
