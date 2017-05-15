@@ -41,9 +41,7 @@ class BrowserTest < MiniTest::Test
     end
       
     print "Open browser\n"
-    #$b = VidjilBrowser.new :safari
-    $b = VidjilBrowser.new :firefox
-    #$b = VidjilBrowser.new :chrome
+    $b = VidjilBrowser.new
 
     print "Resize\n"
     $b.window.resize_to(1500, 800)

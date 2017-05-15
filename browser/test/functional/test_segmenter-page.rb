@@ -113,7 +113,7 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
 
     assert (right_coord_of_textarea < left_coord_of_scatterplot), "Textarea should be left of scatterplot"
   end
-  
+
   def test_zz_close
     close_everything
   end

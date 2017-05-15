@@ -10,9 +10,7 @@ class SegmenterTest < BrowserTest
     index_path = 'file://' + folder_path + '/browser/segmenter_page.html'
 
     print "Open browser\n"
-    #$b = VidjilBrowser.new :safari
-    $b = SegmenterBrowser.new :firefox
-    #$b = VidjilBrowser.new :chrome
+    $b = SegmenterBrowser.new
 
     print "Resize\n"
     $b.window.resize_to(1500, 800)
