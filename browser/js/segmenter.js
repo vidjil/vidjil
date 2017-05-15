@@ -153,6 +153,7 @@ Segment.prototype = {
 
             var axOpts = Clone.prototype.axisOptions();
             var available_axis = (new Axes(this.m)).available();
+            var self_update = function() {self.update()};
             for (var i in axOpts) {
                 var axis_option = document.createElement('div');
                 var axis_input = document.createElement('input');
@@ -160,7 +161,7 @@ Segment.prototype = {
                 axis_input.setAttribute('value', axOpts[i]);
                 axis_input.setAttribute('id', "sai"+i); // segmenter axis input
                 if (axOpts[i] == "Size") axis_input.setAttribute('checked', "");
-                axis_input.onchange = self.update();
+                axis_input.onchange = self_update;
 
                 var axis_label = document.createElement('label');
                 axis_label.setAttribute('for', "sai"+i);
