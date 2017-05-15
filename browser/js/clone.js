@@ -834,9 +834,9 @@ Clone.prototype = {
     },
 
     getProductivityIMGT: function () {
-        if (typeof this.seg.imgt !== 'undefined'
-            && this.seg.imgt !== null
-            && typeof this.seg.imgt['V-DOMAIN Functionality'] != 'undefined') {
+        if (typeof this.seg.imgt !== 'undefined' &&
+            this.seg.imgt !== null &&
+            typeof this.seg.imgt['V-DOMAIN Functionality'] != 'undefined') {
             var pro = this.seg.imgt["V-DOMAIN Functionality"].toLowerCase().split(" ")[0]
 
             return pro === "unproductive" ? "not productive" : pro
@@ -845,8 +845,8 @@ Clone.prototype = {
     },
 
     getVIdentityIMGT: function () {
-        if (typeof this.seg.imgt !== 'undefined'
-            && this.seg.imgt !== null) {
+        if (typeof this.seg.imgt !== 'undefined' &&
+            this.seg.imgt !== null) {
 
             if (typeof this.seg.imgt['V-REGION identity %'] != 'undefined')
                 return this.seg.imgt["V-REGION identity %"];
