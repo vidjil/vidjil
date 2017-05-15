@@ -102,6 +102,7 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
     begin
       $b.span(:id => "toIMGTSeg" ).click
       $b.segmenter_checkbox_imgt_vdj.wait_until_present
+      Watir::Wait.until(timeout=10) { $b.span(:class => "identityBad").exists? }
 
       clone_info = $b.clone_info_segmenter('0')
       productive_html = clone_info[:info].map(&:html)

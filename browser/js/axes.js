@@ -150,7 +150,7 @@ Axes.prototype = {
                 label: "size",
                 axis: new PercentAxis(this.m),
                 fct : function(clone){return clone.getSizeZero()},
-                pretty: function(size) {return '<span class="sixChars">'+(self.m ? self.m : self).getStrAnySize(undefined, size)+'</span>'},
+                pretty: function(size) {return '<span class="sizeBox sixChars">'+(self.m ? self.m : self).getStrAnySize(undefined, size)+'</span>'},
                 min : function(){return self.m.min_size},
                 max : 1,
                 log : true

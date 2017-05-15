@@ -57,7 +57,7 @@ class TestMultilocus < BrowserTest
       assert ( $b.clone_in_list('25').exists?), ">>fail init : clone 0 missing in list"
       assert ( $b.clone_in_scatterplot('25').exists?), ">>fail init : clone 0 missing in scatterplot"
       #assert ( $b.clone_in_graph('25').exists?), ">>fail init : clone 0 missing in graph"
-      assert ( $b.clone_in_list('25').text.include? '0.130%' ) , ">>fail init : wrong clone size "
+      assert ( $b.clone_in_list('25').text.include? '0.129%' ) , ">>fail init : wrong clone size "
 
   end
 
@@ -134,7 +134,7 @@ class TestMultilocus < BrowserTest
     stats = $b.statsline
     assert (stats.text.include? '1 clone'), ">> Incorrect stats, should have one clone"
     assert (stats.text.include? '962 reads'), ">> Incorrect stats, should have 962 reads"
-    assert (stats.text.include? '0.130%'), ">> Incorrect stats, should be at 0.130%"
+    assert (stats.text.include? '0.129%'), ">> Incorrect stats, should be at 0.129%"
   end
 
   def test_08_click_in_list
@@ -168,7 +168,7 @@ class TestMultilocus < BrowserTest
     
     $b.menu_settings.click 
     $b.radio(:id => 'reset_norm').click
-    assert ( $b.clone_info('25')[:size].text == '0.130%' ) , ">> fail normalize off : wrong clone size "
+    assert ( $b.clone_info('25')[:size].text == '0.129%' ) , ">> fail normalize off : wrong clone size "
 
     $b.unselect
   end
@@ -232,6 +232,7 @@ class TestMultilocus < BrowserTest
         assert (h.style('width').to_i >= 100), "Highlights should have a reasonable width, found to be %s" % h.style('width')
       end
 
+      Watir::Wait.until(timeout=10) { clone_info[:identity].span.exists? }
       clone_info[:identity].element(:text => "NaN%").wait_while_present
       assert ((clone_info[:identity].text =~ /^[0-9\.]+%$/) == 0 ), "We should have identity rate (found: %s)" % clone_info[:identity].text
 
