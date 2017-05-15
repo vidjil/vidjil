@@ -114,7 +114,7 @@ Axes.prototype = {
                         info.appendChild(document.createTextNode(identityRate.toFixed(2) + "%"))
                         info.setAttribute('title', 'V-REGION identity %, as computed by IMGT/V-QUEST')  // with indel or not ?
                         Videntity_info.appendChild(info)
-                    }
+                    } else Videntity_info.innerHTML = "?";
                     return Videntity_info.outerHTML
                 },
             },
