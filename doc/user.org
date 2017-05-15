@@ -490,10 +490,20 @@ There can be several causes leading to bad ratios:
   coverage/GC content” in the preset menu of the “plot” box.
 * Keyboard shortcuts
 
+Note that some shortcuts may not work on some systems or on on some web browsers.
+
   | =←= and =→=             | navigate between samples                            |
   | =Shift-←= and =Shift-→= | decrease or increase the number of displayed clones |
   | numeric keypad, =0-9=   | switch between available plot presets               |
   | =#=                     | switch between grid and bar modes                   |
+
+
+  | =z=                                     | zoom/focus on selected clones |
+  | =Shift-z=                               | hide the selected clones      |
+  | =z= or =Shift-z= with no clone selected | reset the zoom/focus          |
+
+  | =+=                     | cluster selected clones                             |
+  | =Backspace=             | revert to previous clusters                         |
 
 
   | =a=: TRA        |                                    |
