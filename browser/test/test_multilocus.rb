@@ -232,6 +232,7 @@ class TestMultilocus < BrowserTest
         assert (h.style('width').to_i >= 100), "Highlights should have a reasonable width, found to be %s" % h.style('width')
       end
 
+      Watir::Wait.until(timeout=10) { clone_info[:identity].span.exists? }
       clone_info[:identity].element(:text => "NaN%").wait_while_present
       assert ((clone_info[:identity].text =~ /^[0-9\.]+%$/) == 0 ), "We should have identity rate (found: %s)" % clone_info[:identity].text
 
