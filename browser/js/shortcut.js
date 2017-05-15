@@ -152,20 +152,20 @@ Shortcut.prototype = {
                         break;
                  }
 
-                 // Preset shortcuts
-                        if ( ! e.ctrlKey && ! e.metaKey &&
-                         (((key >= 96) && (key <= 105)) || ((key >= 48) && (key <= 57))) ) { // Numeric keypad, 0-9
-                            var select_preset = document.getElementsByClassName("axis_select_preset_select")[0]
-                            var shift = 95;
-                            if (key<58) shift = 47
-                            if (e.shiftKey) shift -= 10
+                // Preset shortcuts
+                if ( ! e.ctrlKey && ! e.metaKey &&
+                     (((key >= 96) && (key <= 105)) || ((key >= 48) && (key <= 57))) ) { // Numeric keypad, 0-9
+                        var select_preset = document.getElementsByClassName("axis_select_preset_select")[0]
+                    var shift = 95;
+                    if (key<58) shift = 47
+                    if (e.shiftKey) shift -= 10
 
-                            select_preset.selectedIndex = key - shift;
-                            try {
-                                sp.changePreset(select_preset)
-                            }
-                            catch (err) { } // There can be an error if the preset does not exist
-                        }
+                    select_preset.selectedIndex = key - shift;
+                    try {
+                        sp.changePreset(select_preset)
+                    }
+                    catch (err) { } // There can be an error if the preset does not exist
+                }
             }
             
             //system shortcuts
