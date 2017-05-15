@@ -71,6 +71,8 @@ Shortcut.prototype = {
                 key = e.keyCode;
                 if (key===0) key = e.which
                 console.log("Event:" + e + " keyCode:" + key + " key:" + e.key)
+
+                // e.which is deprecated, see #2448
                 switch(key) {
                     case 37 :   //left arrow
                         e.preventDefault()
@@ -110,18 +112,23 @@ Shortcut.prototype = {
                         if(e.shiftKey || e.metakey) db.reload()
                         break;
 
+                    default:
+                }
+
+                switch(e.key) {
                     // Cluster clones
-                    case 187:   // +: cluster clones
+                    case '+':   // cluster clones
                         e.preventDefault()
                         m.merge()
                         break;
-                    case 8:     // Backward: revert to previous clusters (and thus undo cluster)
+                    case 'Backspace': // Revert to previous clusters (and thus undo cluster)
                         e.preventDefault()
                         m.restoreClusters()
                         break;
 
                     // Filter/zoom
-                    case 90:
+                    case 'z':
+                    case 'Z':
                         e.preventDefault()
 
                         if (m.getSelected().length == 0) {
@@ -139,12 +146,13 @@ Shortcut.prototype = {
                         break;
 
                     // Scatterplot
-                    case 192:   // #: switch grid/bar mode
+                    case '#':   // switch grid/bar mode
                         e.preventDefault()
                         sp.switchMode()
                         break;
+                 }
 
-                    default:
+                 // Preset shortcuts
                         if ( ! e.ctrlKey && ! e.metaKey &&
                          (((key >= 96) && (key <= 105)) || ((key >= 48) && (key <= 57))) ) { // Numeric keypad, 0-9
                             var select_preset = document.getElementsByClassName("axis_select_preset_select")[0]
@@ -158,7 +166,6 @@ Shortcut.prototype = {
                             }
                             catch (err) { } // There can be an error if the preset does not exist
                         }
-                }
             }
             
             //system shortcuts
