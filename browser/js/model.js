@@ -1162,6 +1162,9 @@ changeAlleleNotation: function(alleleNotation) {
             list = this.getSelected();
             select_lead = true;
         } 
+
+        if (list.length === 0)
+            return ;
         
         var new_cluster = [];
         var leader;
