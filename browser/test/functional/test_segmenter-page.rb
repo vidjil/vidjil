@@ -7,7 +7,7 @@ class TestSegmenterPage < BrowserTest
     # Redefine set_browser as the tested webpage is totally different
 
     folder_path = Dir.pwd
-    folder_path.sub! '/browser/test', ''
+    folder_path.sub! '/browser/test/functional', ''
     index_path = 'file://' + folder_path + '/browser/segmenter_page.html'
 
     print "Open browser\n"

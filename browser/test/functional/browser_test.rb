@@ -28,7 +28,7 @@ class BrowserTest < MiniTest::Test
 
   def set_browser(vidjil_file, analysis_file=nil)
     folder_path = Dir.pwd
-    folder_path.sub! '/browser/test', ''
+    folder_path.sub! '/browser/test/functional', ''
     index_path = 'file://' + folder_path + '/browser/index.html'
     data_path = folder_path + vidjil_file
     analysis_path = nil
