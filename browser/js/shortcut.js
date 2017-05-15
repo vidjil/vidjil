@@ -131,7 +131,7 @@ Shortcut.prototype = {
                     case 'Z':
                         e.preventDefault()
 
-                        if (m.getSelected().length == 0) {
+                        if (m.getSelected().length === 0) {
                             // z, no clone selected: reset filters
                             m.reset_filter(false)
                             m.update()
