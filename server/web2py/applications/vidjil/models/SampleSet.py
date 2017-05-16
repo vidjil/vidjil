@@ -75,10 +75,9 @@ class SampleSet(object):
                 &(db.results_file.sequence_file_id == db.sequence_file.id)).count()
         return data.data_count
 
+    @abstractmethod
     def filter(self, filter_str, data):
-        for row in data:
-            row['string'] = [row['name'], row['confs'], row['groups'], str(row['info'])]
-        return filter(lambda row : vidjil_utils.advanced_filter(row['string'], filter_str), data)
+        pass
 
     @abstractmethod
     def get_add_route(self):
