@@ -722,13 +722,10 @@ ScatterPlot.prototype = {
                 var clone = this.barTab[i][j]
                 var cloneID = clone.index;
                 if (this.includeBar(clone)){
-                    height = 0;
                     height = clone.getSize()/bar_max;
 
                     // Minimal height (does not affect y_pos)
-                    // A clone without reads is not displayed
-                    // A clone with a small number of reads is displayed and has a minimal height
-                    var height_for_display = height === 0 ? 0 : Math.max(height, 0.01)
+                    var height_for_display = this.heightClone(height)
                     var y_pos_for_display = y_pos + height_for_display ;
 
                     y_pos += height;
@@ -1222,14 +1219,21 @@ ScatterPlot.prototype = {
     },
 
     /** 
-     * return the actual radius of the clone
-     * @param {float} size - clone ratio size, between 0.0 and 1.0
+     * return the actual radius (for MODE_GRID) or height (for MODE_BAR) of the clone
+     * A clone without reads is not displayed
+     * A clone with a small number of reads is displayed and has a minimal size
+     * @param {float} size/height - clone ratio size, between 0.0 and 1.0
+     * @return {float} size - clone display size
      * */
     radiusClone: function(size) {
         if (size === 0)
             return 0 ;
-        //Math.pow(x,y) -> x**y
         return this.resizeCoef * Math.pow((size + this.resizeMinSize), (1 / 3)) / 25
+    },
+    heightClone: function(height) {
+        if (height === 0)
+            return 0 ;
+        return Math.max(height, 0.01)
     },
 
 
