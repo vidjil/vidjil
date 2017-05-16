@@ -19,7 +19,7 @@ QUnit.test("shortcuts on scatterplot", function(assert) {
     var sp = new ScatterPlot("visu", m)
     sp.init()
 
-    var shortcut = new Shortcut()
+    var shortcut = new Shortcut(m)
     
     assert.equal(sp.mode, sp.MODE_GRID)
     shortcut.checkKey(keyMock({'key': '#'}))
