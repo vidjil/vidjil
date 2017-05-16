@@ -72,9 +72,9 @@ Shortcut.prototype = {
             return ;
                     
         var key = e.keyCode;
+        if (key===0) key = e.which
 
-                if (key===0) key = e.which
-                console.log("Event:" + e + " keyCode:" + key + " key:" + e.key)
+        console.log("Event:" + e + " keyCode:" + key + " key:" + e.key)
 
         // Preset shortcuts
         if (! e.ctrlKey && ! e.metaKey &&
@@ -119,88 +119,92 @@ Shortcut.prototype = {
         }
 
         // Other shortcuts
-                // e.which is deprecated, see #2448
-                switch(key) {
-                    case 37 :   //left arrow
-                        e.preventDefault()
-                        if (e.shiftKey || e.metakey)
-                            m.displayTop(m.top - NB_CLONES_CHANGE)
-                        else
-                            m.previousTime();
-                        break;
-                    case 39 :   //right arrow
-                        e.preventDefault()
-                        if (e.shiftKey || e.metakey) 
-                            m.displayTop(m.top + NB_CLONES_CHANGE)
-                        else
-                            m.nextTime();
-                        break;
-                    case 83 :   //ctrl+s
-                        e.preventDefault()
-                        if (e.ctrlKey || e.metakey) db.save_analysis()
-                        break;
-                    case 65 :   //ctrl+a
-                        e.preventDefault()
-                        if (e.ctrlKey || e.metakey){
-                            var d_m = $("#debug_menu")
-                            if (d_m.css("display") == "none"){
-                                $("#debug_menu").css("display", "");
-                                $(".devel-mode").show();
-                                $(".beta-mode").show();
-                            }else{
-                                $("#debug_menu").css("display", "none");
-                                $(".devel-mode").hide();
-                                $(".beta-mode").hide();
-                            }
-                        }
-                        break;
-                    case 80 :   //shift+p : open patient
-                        e.preventDefault()
-                        if(e.shiftKey || e.metakey) db.reload()
-                        break;
 
-                    default:
+        // e.which is deprecated, see #2448
+        switch(key) {
+
+        case 37 :   // Left arrow
+            e.preventDefault()
+            if (e.shiftKey || e.metakey)
+                m.displayTop(m.top - NB_CLONES_CHANGE)
+            else
+                m.previousTime();
+            break;
+        case 39 :   // Right arrow
+            e.preventDefault()
+            if (e.shiftKey || e.metakey)
+                m.displayTop(m.top + NB_CLONES_CHANGE)
+            else
+                m.nextTime();
+            break;
+
+        case 83 :   // Ctrl+s
+            e.preventDefault()
+            if (e.ctrlKey || e.metakey) db.save_analysis()
+            break;
+
+        case 65 :   // Ctrl+a
+            e.preventDefault()
+            if (e.ctrlKey || e.metakey){
+                var d_m = $("#debug_menu")
+                if (d_m.css("display") == "none"){
+                    $("#debug_menu").css("display", "");
+                    $(".devel-mode").show();
+                    $(".beta-mode").show();
+                }else{
+                    $("#debug_menu").css("display", "none");
+                    $(".devel-mode").hide();
+                    $(".beta-mode").hide();
                 }
-
-                switch(e.key) {
-                    // Cluster clones
-                    case '+':   // cluster clones
-                        e.preventDefault()
-                        m.merge()
-                        break;
-                    case 'Backspace': // Revert to previous clusters (and thus undo cluster)
-                        e.preventDefault()
-                        m.restoreClusters()
-                        break;
-
-                    // Filter/zoom
-                    case 'z':
-                    case 'Z':
-                        e.preventDefault()
-
-                        if (m.getSelected().length === 0) {
-                            // z, no clone selected: reset filters
-                            m.reset_filter(false)
-                            m.update()
-                        } else {
-                            if (!e.shiftKey)
-                                // z, some clone selected: focus (zoom) on these clones
-                                m.focusSelected()
-                            else
-                                // shift+z, some clone selected: hide these clones
-                                m.hideSelected()
-                        }
-                        break;
-
-                    // Scatterplot
-                    case '#':   // switch grid/bar mode
-                        e.preventDefault()
-                        sp.switchMode()
-                        break;
-                 }
-            
-            if (e.altKey && sp.reinit) {
-                sp.active_move = true;
             }
+            break;
+        case 80 :   //shift+p : open patient
+            e.preventDefault()
+            if(e.shiftKey || e.metakey) db.reload()
+            break;
+
+        default:
+        }
+
+        switch(e.key) {
+
+            // Cluster clones
+        case '+':   // cluster clones
+            e.preventDefault()
+            m.merge()
+            break;
+        case 'Backspace': // Revert to previous clusters (and thus undo cluster)
+            e.preventDefault()
+            m.restoreClusters()
+            break;
+
+            // Filter/zoom
+        case 'z':
+        case 'Z':
+            e.preventDefault()
+            if (m.getSelected().length === 0) {
+                // z, no clone selected: reset filters
+                m.reset_filter(false)
+                m.update()
+            } else {
+                if (!e.shiftKey)
+                    // z, some clone selected: focus (zoom) on these clones
+                    m.focusSelected()
+                else
+                    // shift+z, some clone selected: hide these clones
+                    m.hideSelected()
+            }
+            break;
+            
+            // Scatterplot
+        case '#':   // switch grid/bar mode
+            e.preventDefault()
+            sp.switchMode()
+            break;
+        }
+
+        if (e.altKey && sp.reinit) {
+            sp.active_move = true;
+        }
     }
 }
