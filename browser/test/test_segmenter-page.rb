@@ -105,8 +105,8 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
       Watir::Wait.until(timeout=10) { $b.span(:class => "identityBad").exists? }
 
       clone_info = $b.clone_info_segmenter('0')
-      productive_html = clone_info[:axis].element(:class => 'productivity-IMGT').title
-      assert (productive_html.include? 'productivity'), "IMGT should tell us the productivity of the sequence"
+      productive_title = clone_info[:axis].element(:class => 'productivity-IMGT').title
+      assert (productive_title.include? 'productivity'), "IMGT should tell us the productivity of the sequence"
 
       clone_segmenter = $b.clone_in_segmenter('0')
       $b.segmenter_checkbox_imgt_vdj.click
