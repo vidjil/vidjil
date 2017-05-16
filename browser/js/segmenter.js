@@ -620,6 +620,7 @@ Segment.prototype = {
                 var span = document.createElement('span');
                 span.innerHTML = clone.getPrettyAxisValue(axOpts[i]);
                 span.setAttribute('title', available_axis[axOpts[i]].label);
+                span.className = axOpts[i];
                 axisBox.appendChild(span);
             }
         }
