@@ -452,8 +452,7 @@ line {
   width: 250px;
 }
 .list .axisBox,
-.axisBox span,
-.identityBox {
+.axisBox span {
   max-width: 52px;
   float: right;
   overflow: hidden;
@@ -465,7 +464,6 @@ line {
   margin: 0 3px;
 }
 .identityBox {
-  padding-right: 10px;
   font-family: ubuntulight, Arial, Helvetica, Sans-serif;
   text-align: right;
 }
