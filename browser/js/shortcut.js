@@ -76,6 +76,49 @@ Shortcut.prototype = {
                 if (key===0) key = e.which
                 console.log("Event:" + e + " keyCode:" + key + " key:" + e.key)
 
+        // Preset shortcuts
+        if (! e.ctrlKey && ! e.metaKey &&
+             (((key >= 96) && (key <= 105)) || ((key >= 48) && (key <= 57))) ) { // Numeric keypad, 0-9
+                var select_preset = document.getElementsByClassName("axis_select_preset_select")[0]
+            var shift = 95;
+            if (key<58) shift = 47
+            if (e.shiftKey) shift -= 10
+
+            select_preset.selectedIndex = key - shift
+            try {
+                sp.changePreset(select_preset)
+            }
+            catch (err) { } // There can be an error if the preset does not exist
+
+            return
+        }
+
+        // System/locus shortcuts
+        if (! e.ctrlKey && ! e.metaKey &&
+            typeof this.system_shortcuts[key] != "undefined") {
+
+            var germlines = this.system_shortcuts[key].filter(function(g) {return m.system_available.indexOf(g) != -1})
+            if (germlines.length === 0)
+                return
+
+            console.log("Germlines with key " + key + ": " + germlines)
+
+            // Find current germline
+            var current = -1 ;
+            for (var i = 0; i < germlines.length; i++)
+            {
+                if (germlines[i] == m.germlineV.system)
+                    current = i
+            }
+
+            // Cycle to next germline
+            next_germline = germlines[(current+1) % germlines.length]
+            m.changeGermline(next_germline, e.shiftKey)
+
+            return
+        }
+
+        // Other shortcuts
                 // e.which is deprecated, see #2448
                 switch(key) {
                     case 37 :   //left arrow
@@ -155,44 +198,6 @@ Shortcut.prototype = {
                         sp.switchMode()
                         break;
                  }
-
-                // Preset shortcuts
-                if ( ! e.ctrlKey && ! e.metaKey &&
-                     (((key >= 96) && (key <= 105)) || ((key >= 48) && (key <= 57))) ) { // Numeric keypad, 0-9
-                        var select_preset = document.getElementsByClassName("axis_select_preset_select")[0]
-                    var shift = 95;
-                    if (key<58) shift = 47
-                    if (e.shiftKey) shift -= 10
-
-                    select_preset.selectedIndex = key - shift;
-                    try {
-                        sp.changePreset(select_preset)
-                    }
-                    catch (err) { } // There can be an error if the preset does not exist
-                }
-            
-            //system shortcuts
-            if (! e.ctrlKey && ! e.metaKey &&
-                typeof this.system_shortcuts[key] != "undefined") {
-
-                    var germlines = this.system_shortcuts[key].filter(function(g) {return m.system_available.indexOf(g) != -1})
-                    if (germlines.length === 0)
-                        return ;
-
-                    console.log("Germlines with key " + key + ": " + germlines)
-
-                    // Find current germline
-                    var current = -1 ;
-                    for (var i = 0; i < germlines.length; i++) 
-                        {
-                            if (germlines[i] == m.germlineV.system)
-                                current = i ;
-                        }
-
-                    // Cycle to next germline
-                    next_germline = germlines[(current+1) % germlines.length]
-                    m.changeGermline(next_germline, e.shiftKey)
-            }
             
             if (e.altKey && sp.reinit) {
                 sp.active_move = true;
