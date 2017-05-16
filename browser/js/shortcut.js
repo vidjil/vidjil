@@ -63,12 +63,16 @@ Shortcut.prototype = {
      * @param {event} e - onkeydown event
      * */
     checkKey : function (e) {
-        if (this.on){
-            e = e || window.event;
-            var key;
-            if (document.activeElement.id === ""){
+        if (!this.on)
+            return ;
+
+        e = e || window.event;
+
+        if (document.activeElement.id !== "")
+            return ;
                     
-                key = e.keyCode;
+        var key = e.keyCode;
+
                 if (key===0) key = e.which
                 console.log("Event:" + e + " keyCode:" + key + " key:" + e.key)
 
@@ -166,7 +170,6 @@ Shortcut.prototype = {
                     }
                     catch (err) { } // There can be an error if the preset does not exist
                 }
-            }
             
             //system shortcuts
             if (! e.ctrlKey && ! e.metaKey &&
@@ -189,7 +192,6 @@ Shortcut.prototype = {
                     // Cycle to next germline
                     next_germline = germlines[(current+1) % germlines.length]
                     m.changeGermline(next_germline, e.shiftKey)
-                } 
             }
             
             if (e.altKey && sp.reinit) {
