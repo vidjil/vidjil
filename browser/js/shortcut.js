@@ -202,9 +202,5 @@ Shortcut.prototype = {
             sp.switchMode()
             break;
         }
-
-        if (e.altKey && sp.reinit) {
-            sp.active_move = true;
-        }
     }
 }
