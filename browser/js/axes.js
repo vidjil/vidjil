@@ -111,7 +111,7 @@ Axes.prototype = {
                         var info = document.createElement('span');
                         if (V_IDENTITY_THRESHOLD)
                             info.className += identityRate < V_IDENTITY_THRESHOLD ? ' identityGood' : ' identityBad'
-                        info.appendChild(document.createTextNode(identityRate.toFixed(2) + "%"))
+                        info.appendChild(document.createTextNode(floatToFixed(identityRate,5) + "%"))
                         info.setAttribute('title', 'V-REGION identity %, as computed by IMGT/V-QUEST')  // with indel or not ?
                         Videntity_info.appendChild(info)
                     } else Videntity_info.innerHTML = "&nbsp;";
