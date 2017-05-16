@@ -816,31 +816,6 @@ ScatterPlot.prototype = {
     },
 
     /**
-     * compute the height of a bar representing a given clone in the bar graph mode
-     * @param {integer} cloneID - clone index
-     * @return {float} height
-     * */
-    getBarHeight: function(cloneID) {
-        var size = this.m.clone(cloneID)
-            .getSize();
-        return size / this.bar_max;
-    },
-
-    /**
-     * compute the x pos of a bar representing a given clone in the bar graph mode
-     * @param {integer} cloneID - clone index
-     * @return {float} pos
-     * */
-    getBarPosition: function(cloneID) {
-        for (var i = 0; i < this.vKey.length; i++) {
-            for (var j = 0; j < this.bar_v[this.vKey[i]].clones.length; j++) {
-                if (this.bar_v[this.vKey[i]].clones[j].id == cloneID)
-                    return this.bar_v[this.vKey[i]].clones[j].pos;
-            }
-        }
-    },
-    
-    /**
      * select a mode
      * @param {mode} new mode, this.MODE_*
      * */
