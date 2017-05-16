@@ -1,4 +1,7 @@
+from abc import ABCMeta, abstractmethod
+
 class SampleSet(object):
+    __metaclass__ = ABCMeta
 
     def __init__(self, type):
         self.type = type
@@ -7,7 +10,7 @@ class SampleSet(object):
         return self.type
 
     def get_type_display(self):
-        return 'set' if self.type == defs.SET_TYPE_GENERIC else self.type
+        return self.type
 
     def __getitem__(self, key):
         return getattr(self, key, None)
@@ -72,24 +75,21 @@ class SampleSet(object):
                 &(db.results_file.sequence_file_id == db.sequence_file.id)).count()
         return data.data_count
 
+    @abstractmethod
     def filter(self, filter_str, data):
-        for row in data:
-            row['string'] = [row['name'], row['confs'], row['groups'], str(row['info'])]
-        return filter(lambda row : vidjil_utils.advanced_filter(row['string'], filter_str), data)
+        pass
 
+    @abstractmethod
     def get_add_route(self):
-        return 'sample_set/add'
+        pass
 
+    @abstractmethod
     def get_info_dict(self, data):
-        return dict(name = "set : %s" % self.get_name(data),
-                filename = "sample_set_%d" % data.id,
-                label = "",
-                info = ""
-                )
+        pass
 
+    @abstractmethod
     def get_data(self, sample_set_id):
-        return db(db.generic.sample_set_id == sample_set_id).select()[0]
-
+        pass
 
 def get_sample_name(sample_set_id):
     '''
@@ -98,7 +98,8 @@ def get_sample_name(sample_set_id):
     '''
     sample = db.sample_set[sample_set_id]
     if sample is None or (sample.sample_type != defs.SET_TYPE_PATIENT \
-                          and sample.sample_type != defs.SET_TYPE_RUN):
+                          and sample.sample_type != defs.SET_TYPE_RUN \
+                          and sample.sample_type != defs.SET_TYPE_GENERIC):
         return None
 
     sample_type = sample.sample_type
