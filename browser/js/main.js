@@ -80,7 +80,7 @@ try {
     /* [WIP] Shortcut (optional)
      * This provides keyboard shortcuts to interact with the browser.
      */
-    var shortcut = new Shortcut()
+    var shortcut = new Shortcut(m)
 
     var url = new Url(m);
 

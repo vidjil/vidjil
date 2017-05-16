@@ -27,7 +27,8 @@
  * @class Shortcut
  * @constructor
  * */
-function Shortcut () {
+function Shortcut (model) {
+    this.m = model
     this.init()
     this.on = true
 }
@@ -53,7 +54,7 @@ Shortcut.prototype = {
         }
         
         document.onkeydown = function (e) { self.checkKey(e); }
-        document.onkeyup = function (e) { sp.active_move = false; }
+        document.onkeyup = function (e) { self.m.sp.active_move = false; }
     },
     
     
@@ -86,7 +87,7 @@ Shortcut.prototype = {
 
             select_preset.selectedIndex = key - shift
             try {
-                sp.changePreset(select_preset)
+                this.m.sp.changePreset(select_preset)
             }
             catch (err) { } // There can be an error if the preset does not exist
 
@@ -97,7 +98,8 @@ Shortcut.prototype = {
         if (! e.ctrlKey && ! e.metaKey &&
             typeof this.system_shortcuts[key] != "undefined") {
 
-            var germlines = this.system_shortcuts[key].filter(function(g) {return m.system_available.indexOf(g) != -1})
+            var self = this
+            var germlines = this.system_shortcuts[key].filter(function(g) {return self.m.system_available.indexOf(g) != -1})
             if (germlines.length === 0)
                 return
 
@@ -107,13 +109,13 @@ Shortcut.prototype = {
             var current = -1 ;
             for (var i = 0; i < germlines.length; i++)
             {
-                if (germlines[i] == m.germlineV.system)
+                if (germlines[i] == this.m.germlineV.system)
                     current = i
             }
 
             // Cycle to next germline
             next_germline = germlines[(current+1) % germlines.length]
-            m.changeGermline(next_germline, e.shiftKey)
+            this.m.changeGermline(next_germline, e.shiftKey)
 
             return
         }
@@ -126,7 +128,7 @@ Shortcut.prototype = {
         case 37 :   // Left arrow
             e.preventDefault()
             if (e.shiftKey || e.metakey)
-                m.displayTop(m.top - NB_CLONES_CHANGE)
+                m.displayTop(this.m.top - NB_CLONES_CHANGE)
             else
                 m.previousTime();
             break;
@@ -199,7 +201,7 @@ Shortcut.prototype = {
             // Scatterplot
         case '#':   // switch grid/bar mode
             e.preventDefault()
-            sp.switchMode()
+            this.m.sp.switchMode()
             break;
         }
     }
