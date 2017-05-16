@@ -726,7 +726,9 @@ ScatterPlot.prototype = {
                     height = clone.getSize()/bar_max;
 
                     // Minimal height (does not affect y_pos)
-                    var height_for_display = Math.max(height, 0.01)
+                    // A clone without reads is not displayed
+                    // A clone with a small number of reads is displayed and has a minimal height
+                    var height_for_display = height === 0 ? 0 : Math.max(height, 0.01)
                     var y_pos_for_display = y_pos + height_for_display ;
 
                     y_pos += height;
