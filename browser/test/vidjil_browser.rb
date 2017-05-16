@@ -19,13 +19,14 @@ class VidjilBrowser < Watir::Browser
   end
 
   # Return the info on the clone in the list (one item of a list)
-  # A hash with keys cluster, system, name, info, star and size defined with
+  # A hash with keys cluster, system, name, info, star, axis and size defined with
   # the corresponding elements in the list.
   def clone_info(id, extra={})
     clone = clone_in_list(id, extra)
     return {cluster: clone.element(:class => 'clusterBox'), system: clone.element(:class => "systemBox"),
             name: clone.element(:class => 'nameBox'), info: clone.element(:class => 'infoBox'),
-            star: clone.element(:class => 'starBox'), size: clone.element(:class => 'sizeBox')}
+            star: clone.element(:class => 'starBox'), size: clone.element(:class => 'sizeBox'),
+            axis: clone.element(:class => 'axisBox')}
   end
 
   # Return the clone cluster for clone ID
@@ -43,13 +44,13 @@ class VidjilBrowser < Watir::Browser
   end
 
   # Return a hash with information on the sequence in the segmenter
-  # A hash with keys name, star and size defined with
+  # A hash with keys name, star, axis and size defined with
   # the corresponding elements in the segmenter.
   def clone_info_segmenter(id, extra={})
     item = clone_in_segmenter(id, extra)
     return {name: item.element(:class => 'nameBox'), star: item.element(:class => 'starBox'),
             size: item.element(:class => 'sizeBox'), identity: item.element(:class => 'identityBox'),
-            info: item.elements(:class => 'infoBox')
+            info: item.elements(:class => 'infoBox'), axis: item.element(:class => 'axisBox')
     }
   end
 
