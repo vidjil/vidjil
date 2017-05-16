@@ -6,19 +6,6 @@ class Generic(SampleSet):
     def get_type_display(self):
         return 'set'
 
-    def get_config_urls(self, data):
-        configs = []
-        for conf in data.conf_list:
-            filename =  "(%s %s)" % (self.get_name(data), conf['name'])
-            if conf['fused_file'] is not None :
-                configs.append(
-                    str(A(conf['name'],
-                        _href="index.html?sample_set_id=%d&config=%d" % (data.sample_set_id, conf['id']), _type="text/html",
-                        _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { db.load_data( { 'sample_set_id' : '%d', 'config' :  %d }, '%s' ); }" % (data.sample_set_id, conf['id'], filename))))
-            else:
-                configs.append(conf['name'])
-        return XML(", ".join(configs))
-
     def filter(self, filter_str, data):
         for row in data:
             row['string'] = [row['name'], row['confs'], row['groups'], str(row['info'])]
