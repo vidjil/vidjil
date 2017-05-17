@@ -40,7 +40,6 @@ function GermlineAxis (model, reverse, can_undefined) {
 }
 
 GermlineAxis.prototype = Object.create(GenericAxis.prototype);
-Object.assign(GermlineAxis.prototype, {
     
     /**
      * init axis with a germline object
@@ -48,7 +47,7 @@ Object.assign(GermlineAxis.prototype, {
      * @param {string} genetype - "V" "D" or "J"
      * @param {boolean} displayAllele - (show/hide allele)
      * */
-    init: function (germline, geneType, displayAllele) {
+    GermlineAxis.prototype.init = function (germline, geneType, displayAllele) {
         this.reset()
         this.values = this.m.clones;
         this.germline = germline;
@@ -89,17 +88,17 @@ Object.assign(GermlineAxis.prototype, {
         this.allele_list = allele_list;
         this.total_gene = total_gene;
         this.displayAllele = displayAllele;
-    },
+    }
 
     /**
      * reset Axis
      * */
-    reset: function() {
+    GermlineAxis.prototype.reset = function() {
         this.labels = [];
         this.label_mapping = {};
         this.values = [];
         this.value_mapping = {};
-    },
+    }
     
     /**
      * for a clone's index will return a value between 0 and 1 representing the clone's position on this axis. <br>
@@ -107,12 +106,12 @@ Object.assign(GermlineAxis.prototype, {
      * @param {integer} cloneid - clone index
      * @return {float} pos - clone's position
      * */
-    pos : function(clone) {
+    GermlineAxis.prototype.pos = function(clone) {
         var pos = this.applyConverter(clone);
         return this.label_mapping[pos];
-    },
+    }
 
-    converter: function(clone) {
+    GermlineAxis.prototype.converter = function(clone) {
         var gene_list = this.gene_list;
         var allele_list = this.allele_list;
         var total_gene = this.total_gene;
@@ -130,7 +129,7 @@ Object.assign(GermlineAxis.prototype, {
             }
         }
         return value;
-    },
+    }
     
     /**
      * build a label descriptor
@@ -140,27 +139,28 @@ Object.assign(GermlineAxis.prototype, {
      * @param {string} color - label color
      * @return {object} label
      * */
-    label: function (type, pos, text, color) {
+    GermlineAxis.prototype.label = function (type, pos, text, color) {
         result = GenericAxis.prototype.label.call(this, type, pos, text)
         result.geneColor = color;
 
         return result;
-    },
+    }
 
-    addLabel: function(type, value, pos, text, color) {
+    GermlineAxis.prototype.addLabel = function(type, value, pos, text, color) {
         var label = this.label(type, pos, text, color);
         this.label_mapping[value] = label;
         this.labels.push(label);
-    },
+    }
 
-    getPos: function(rank, total) {
+    GermlineAxis.prototype.getPos = function(rank, total) {
         return ((rank+0.5)/(total+1));
-    },
+    }
 
-    computeBarLabels : function () {
-    },
+    GermlineAxis.prototype.computeBarLabels = function () {
+    }
 
-    posBarLabel: function(i) {
+    GermlineAxis.prototype.posBarLabel = function(i) {
+        Object.assign({}, {})
         var key = Object.keys(this.value_mapping)[i-1];
         var map = this.value_mapping[key];
         if (map.length > 0) {
@@ -169,4 +169,3 @@ Object.assign(GermlineAxis.prototype, {
         }
         return 0;
     }
-})

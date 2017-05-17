@@ -1206,14 +1206,14 @@ function Sequence(id, model, segmenter) {
     this.use_marge = true;
 }
 
-Sequence.prototype = Object.create(genSeq.prototype); Object.assign(Sequence.prototype, {
+Sequence.prototype = Object.create(genSeq.prototype);
 
     /**
      * load the clone sequence <br>
      * retrieve the one in the model or use the one given in parameter <br>
      * @param {string} str
      * */
-    load: function (str) {
+    Sequence.prototype.load = function (str) {
         if (typeof str !== 'undefined') this.use_marge = false
         str = typeof str !== 'undefined' ? str : this.m.clone(this.id).sequence;
 
@@ -1227,12 +1227,12 @@ Sequence.prototype = Object.create(genSeq.prototype); Object.assign(Sequence.pro
         this.computeAAseq()
 
         return this;
-    },
+    }
 
     /**
      * use the cdr3 (if available) to compute the amino acid sequence <br>
      * */
-    computeAAseq : function () {
+    Sequence.prototype.computeAAseq = function () {
         var start = -1;
         var stop = -1;
                 
@@ -1275,14 +1275,14 @@ Sequence.prototype = Object.create(genSeq.prototype); Object.assign(Sequence.pro
                 this.seqAA[pos] = tableAAdefault(code);
             }
         }
-    },
+    }
 
 
     /**
      * return sequence completed with html tag <br>
      * @return {string}
      * */
-    toString: function () {
+    Sequence.prototype.toString = function () {
         var clone = this.m.clone(this.id)
 
         var vdjArrayRev, window_start, result;
@@ -1402,7 +1402,7 @@ Sequence.prototype = Object.create(genSeq.prototype); Object.assign(Sequence.pro
             marge += "</span>"
         }
         return marge + result.innerHTML;
-    },
+    }
 
     /**
      * get V D J start end position in a reusable way...
@@ -1410,7 +1410,7 @@ Sequence.prototype = Object.create(genSeq.prototype); Object.assign(Sequence.pro
      * @param cloneinfo
      * @return {object}
      */
-    getVdjStartEnd: function (clone) {
+    Sequence.prototype.getVdjStartEnd = function (clone) {
 
         var vdjArray ={"5": {}, "3": {}} ;
         vdjArray["5"].start = 0;
@@ -1429,7 +1429,7 @@ Sequence.prototype = Object.create(genSeq.prototype); Object.assign(Sequence.pro
             }
         }
         return vdjArray;
-    },
+    }
 
     /**
      * build a highlight descriptor (start/stop/color/...)
@@ -1437,7 +1437,7 @@ Sequence.prototype = Object.create(genSeq.prototype); Object.assign(Sequence.pro
      * @param {string} color
      * @return {object}
      * */
-    get_positionned_highlight : function (field, color) {
+    Sequence.prototype.get_positionned_highlight = function (field, color) {
         var clone = this.m.clone(this.id);
         var h = {'color' : color, 'seq': ''};
         var p = clone.getSegFeature(field)
@@ -1486,7 +1486,6 @@ Sequence.prototype = Object.create(genSeq.prototype); Object.assign(Sequence.pro
 
         return h
     }
-});
 
 
 
