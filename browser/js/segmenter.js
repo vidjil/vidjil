@@ -78,6 +78,8 @@ function Segment(id, model, database) {
         {'field' : "", 'color': "green"},
         {'field' : "", 'color': "yellow"}
     ];
+
+    this.selectedAxis = [];
 }
 
 
