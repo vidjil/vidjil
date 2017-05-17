@@ -179,6 +179,7 @@ Segment.prototype = {
                 axis_option.appendChild(axis_label);
                 tmp.appendChild(axis_option);
             }
+            this.selectedAxis[10] = available_axis.Size;
 
             axis.appendChild(tmp);
             span.appendChild(axis);
