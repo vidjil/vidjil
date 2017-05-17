@@ -122,21 +122,26 @@ The sample graph is hidden with there is only one sample. It shows the X most fr
 - If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between sample keys and dates in “settings > sample key”
 
 
-** The plot view
+** The plot view and the plot presets
 
-The grid view show the clones of a selected germline. All the used germlines are on the right of the grid. You can change germline by clicking on it or by using the associated shortcuts (see [[Keyboard shortcuts]] below).
+The grid view show the clones scattered according to some axes.
 
-- The "plot" menu allow to change the (grid plot, bar plot) as well as the X and Y axes of these plot
+- The default view, by V/J genes, focus on one recombination system within one locus.
+  All the analyzes locus are on the right of the grid. You can select another locus by clicking on it or by using the associated shortcuts (see [[Keyboard shortcuts]] below).
+
+- The “plot“ menu allow to customize the plots, by selecting the X and Y axes and also by switching between grid and bar plots.
   Some presets are available.
+  For example, the preset 4, similar to a "Genescan analysis", shows a bar plot of the clones according to the length of their consensus sequence,
+  and the preset 7 show the distribution of CDR3 lengths.
 
-- In the bar plot mode, the Y axis corresponds to the order of clones inside each bar.
+- On the bar plots, the Y axis corresponds to the order of clones inside each bar.
 
-- The “focus“ button (bottom right) allows to further analyze a selection of clones.
+- The “focus“ button (bottom right) allows to further analyze a selection of clones, and the “hide” button allows to hide some clones.
   To exit the focus mode, click on the “X” near the search box.
   
 To further analyze a set of clones sharing a same V and J, it is often useful
 to focus on the clones, then to display them ones according to either their “clone length”
-or their “N length” (that is N1-D-N2 in the case of VDJ recombinations)
+or their “N length” (that is N1-D-N2 in the case of VDJ recombinations).
 
 ** The sequence view (bottom panel)
 
