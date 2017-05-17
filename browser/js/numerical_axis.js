@@ -42,7 +42,6 @@ function NumericalAxis (model, reverse, can_undefined) {
 
 NumericalAxis.prototype = Object.create(GenericAxis.prototype);
 
-Object.assign(NumericalAxis.prototype, {
     /**
      * compute axis using a given function <br>
      * find min/max value possible with the given function and use them as range <br>
@@ -53,7 +52,7 @@ Object.assign(NumericalAxis.prototype, {
      * @param {boolean} percent - display label as percent ( value 1 => 100%)
      * @param {boolean} use_log - use a logarithmic scale instead of a linear
      * */
-    init: function(clones, fct, labels, sort, default_min, default_max, use_log, display_label){
+    NumericalAxis.prototype.init = function(clones, fct, labels, sort, default_min, default_max, use_log, display_label){
         this.reset();
         this.clones = clones;
         use_log = typeof use_log !== 'undefined' ? use_log : false;
@@ -138,9 +137,9 @@ Object.assign(NumericalAxis.prototype, {
         }
             
         this.computeLabels(min, max, use_log, display_label, this.can_undefined)
-    },
+    }
 
-    pos: function(clone) {
+    NumericalAxis.prototype.pos = function(clone) {
         var value, pos;
         value = this.applyConverter(clone);
 
@@ -151,7 +150,7 @@ Object.assign(NumericalAxis.prototype, {
         }
         
         return {'pos': pos};
-    },
+    }
     
     /**
      * reset and build labels <br>
@@ -162,7 +161,7 @@ Object.assign(NumericalAxis.prototype, {
      * @param {boolean} use_log - use a logarithmic scale instead of a linear
      * @param {boolean} has_undefined - Should we include an undefined value ?
      * */
-    computeLabels: function(min, max, use_log, display_label, has_undefined){
+    NumericalAxis.prototype.computeLabels = function(min, max, use_log, display_label, has_undefined){
         this.labels = [];
         if (typeof use_log === 'undefined')
             use_log = false;
@@ -208,21 +207,21 @@ Object.assign(NumericalAxis.prototype, {
                 this.addLabel("line", text, pos, text);
             }
         }
-    },
+    }
 
-    computeSteps: function(min, max, nb_steps) {
+    NumericalAxis.prototype.computeSteps = function(min, max, nb_steps) {
         var steps = nb_steps;
         if (Math.abs(max - min) < nb_steps) {
             steps = Math.abs(max - min)
         }
         return steps;
-    },
+    }
 
-    getLabelText: function (value) {
+    NumericalAxis.prototype.getLabelText = function (value) {
         return Math.round(value);
-    },
+    }
 
-    applyConverter: function (element) {
+    NumericalAxis.prototype.applyConverter = function (element) {
         var value;
         try{
             value = this.converter(element);
@@ -231,7 +230,6 @@ Object.assign(NumericalAxis.prototype, {
         }
         return value;
     }
-});
 
 function PercentAxis (model, reverse, can_undefined) {
     this.m = model;
@@ -242,15 +240,13 @@ function PercentAxis (model, reverse, can_undefined) {
 
 PercentAxis.prototype = Object.create(NumericalAxis.prototype);
 
-Object.assign(PercentAxis.prototype, {
-    computeSteps: function(min, max, nb_steps) {
+    PercentAxis.prototype.computeSteps = function(min, max, nb_steps) {
         return nb_steps;
-    },
+    }
 
-    getLabelText: function(value) {
+    PercentAxis.prototype.getLabelText = function(value) {
         return floatToFixed(value*100, 4) + "%"
     }
-});
 
 /**
  * Axis object contain labels and their position on an axis (from 0 to 1) <br>
@@ -268,9 +264,6 @@ function FloatAxis (model, reverse, can_undefined) {
 
 FloatAxis.prototype = Object.create(NumericalAxis.prototype);
 
-Object.assign(FloatAxis.prototype, {
-
-    getLabelText: function(value) {
+    FloatAxis.prototype.getLabelText = function(value) {
         return (value).toFixed(2)
     }
-})
