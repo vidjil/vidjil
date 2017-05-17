@@ -119,7 +119,7 @@ The time graph is hidden with there is only one timepoint. It shows the X most f
 - You can reorder the points by dragging them, and hide some points by dragging them on the “+” mark at the right of the points.
   If you want to recover some hidden points, you need to drag them from the “+” mark to the graph.
 
-- If your dataset contains sampling dates (for example in a MRD setup), you can switch between point keys and dates in “settings > point key”
+- If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between point keys and dates in “settings > point key”
 
 
 ** The plot view
@@ -335,6 +335,9 @@ One often wants to "see all clones", but a complete list is difficult
 to see in itself. In a typical dataset with about 10^6 reads, even in
 the presence of a dominant clone, there can be 10^4 or 10^5 different
 clones detected.
+There are ways to retrieve the full list of clones (for example by launching
+the command-line program), but, for most of the cases, one may want to focus on some clones.
+
 
 ** The "top" slider in the "filter" menu
 
@@ -342,6 +345,9 @@ The "top 50" clones are the clones that are in the first 50 ones
 in *at least one* sample. As soon as one clone is in this "top 50"
 list, it is displayed for every sample, even if its concentration is
 very low in other samples.
+This is the case for clones tracked in follow-up samples
+(for example checking minimal residual disease, MRD) after a diagnosis sample.
+
 Most of the time, a "top 50" is enough. The hidden clones are thus the
 one that never reach the 50 first clones. With a default installation,
 the slider can be set to display clones until the "top 100" on the grid 
@@ -350,7 +356,7 @@ the slider can be set to display clones until the "top 100" on the grid
 However, in some cames, one may want to track some known clones that are
 never in the "top 100", as for example:
   - a standard/spike with low concentration
-  - a clone in a MRD following of a patient without the diagnostic point
+  - a clone tracked in a follow-up sample of a patient without the diagnosis sample
 
 In these situations, a solution is to create a =.fasta= file with this sequences to be tracked
 and upload it as another sample in the same patient / run / sample set.
