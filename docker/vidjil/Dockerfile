@@ -46,8 +46,8 @@ run cd /usr/share/web2py && chown -R www-data:www-data .
 #run ln -sf /dev/stdout /var/log/nginx/access.log \
 #	&& ln -sf /dev/stderr /var/log/nginx/error.log
 
-copy ./conf/gzip_static.conf /etc/nginx/conf.d/web2py/gzip_static.conf
-copy ./conf/gzip.conf /etc/nginx/conf.d/web2py/gzip.conf
+copy ./conf/nginx_gzip_static.conf /etc/nginx/conf.d/web2py/gzip_static.conf
+copy ./conf/nginx_gzip.conf /etc/nginx/conf.d/web2py/gzip.conf
 copy ./conf/uwsgi.conf /etc/nginx/conf.d/web2py/uwsgi.conf
 copy ./conf/nginx_web2py /etc/nginx/sites-enabled/web2py
 copy ./conf/nginx_web2py /etc/nginx/sites-available/web2py
