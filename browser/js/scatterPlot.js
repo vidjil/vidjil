@@ -578,7 +578,10 @@ ScatterPlot.prototype = {
             break;
         }
 
-        this.barTab = Object.assign({}, this.axisX.value_mapping);
+        this.barTab = {};
+        for (var key in this.axisX.value_mapping) {
+            this.barTab[key] = this.axisX.value_mapping[key];
+        }
         
         //sort each bar (axisY)
         
