@@ -77,13 +77,13 @@ to learn the essential features of Vidjil.
    - locus :: germline used for analyzing the data. In case of multi-locus 
               data, you can select what locus should be displayed (see [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]])
    - analysis :: name (without extension) of the loaded file used for displaying the data
-   - sample :: name of the current sample point. You can also change the current point by clicking directly on his name in the graph panel (when available).
+   - sample :: name of the current sample. You can also change the current sample by clicking directly on his name in the graph panel (when available).
    #The name can be edited (“edit”).
-   - date :: indicate the date of the run of the current sample point (edit with the database, on the patient/run tab).
-             You can change the point viewed by clickong on the =←= and =→= buttons. A cycling view is available by the fix button.
-   - analyzed reads :: number of reads where the underlying RepSeq algorithm found a V(D)J recombination, for that sample point
+   - date :: indicate the date of the run of the current sample (edit with the database, on the patient/run/sample set tab).
+             You can change the sample viewed by clicking on the =←= and =→= buttons. A cycling view is available by the fix button.
+   - analyzed reads :: number of reads where the underlying RepSeq algorithm found a V(D)J recombination, for that sample 
                   See [[Number of analyzed reads]] below.
-   - total :: total number of reads for that sample point
+   - total :: total number of reads for that sample
 
 ** The list of clones (left panel)
 
@@ -105,21 +105,21 @@ to learn the essential features of Vidjil.
   either a =+= symbol or a =-= symbol. In the former case that means the clone has
   been detected (positive) but in few reads (typically less than five). In the
   latter case it means that the clone has not been detected (negative) in the
-  sample but has been detected in another time point that is not currently
+  sample but has been detected in another sample that is not currently
   displayed.
 
-** The time graph
+** The sample graph
 
-The time graph is hidden with there is only one timepoint. It shows the X most frequent clones of the sample (this number can be alter with the filter menu).
+The sample graph is hidden with there is only one sample. It shows the X most frequent clones of the sample (this number can be alter with the filter menu).
 
-- The current point is highlighted with a vertical gray bar, you can change that by clicking on another point or using =←= and =→=.
+- The current sample is highlighted with a vertical gray bar, you can change that by clicking on another sample or using =←= and =→=.
 
-- The gray areas at the bottom of the graph show, for each point, the resolution (1 read / 5 reads).
+- The gray areas at the bottom of the graph show, for each sample, the resolution (1 read / 5 reads).
 
-- You can reorder the points by dragging them, and hide some points by dragging them on the “+” mark at the right of the points.
-  If you want to recover some hidden points, you need to drag them from the “+” mark to the graph.
+- You can reorder the samples by dragging them, and hide some samples by dragging them on the “...” mark at the right of the ps.
+  If you want to recover some hidden sample, you need to drag them from the “...” mark to the graph.
 
-- If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between point keys and dates in “settings > point key”
+- If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between sample keys and dates in “settings > sample key”
 
 
 ** The plot view
