@@ -624,14 +624,13 @@ Segment.prototype = {
         axisBox.removeAllChildren();
         var axOpts = Clone.prototype.axisOptions();
         var available_axis = (new Axes(this.m)).available();
-        for (var i in axOpts) {
-            if (document.getElementById("sai"+i).checked) {
-                var span = document.createElement('span');
-                span.innerHTML = clone.getPrettyAxisValue(axOpts[i]);
-                span.setAttribute('title', available_axis[axOpts[i]].label);
-                span.className = axOpts[i];
-                axisBox.appendChild(span);
-            }
+        for (var i in this.selectedAxis) {
+            var span = document.createElement('span');
+            var axis = this.selectedAxis[i];
+            span.innerHTML = axis.pretty ? axis.pretty(axis.fct(clone)) : axis.fct(clone);
+            span.setAttribute('title', this.selectedAxis[i].label);
+            span.className = axOpts[i];
+            axisBox.appendChild(span);
         }
     },
         
