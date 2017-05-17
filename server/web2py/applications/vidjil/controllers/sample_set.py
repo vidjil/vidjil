@@ -346,7 +346,8 @@ def custom():
         
     else:
         q = ((auth.vidjil_accessible_query(PermissionEnum.read.value, db.patient)
-                | auth.vidjil_accessible_query(PermissionEnum.read.value, db.run))
+                | auth.vidjil_accessible_query(PermissionEnum.read.value, db.run)
+                | auth.vidjil_accessible_query(PermissionEnum.read.value, db.generic))
                 & (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config))
                 & (db.sample_set_membership.sample_set_id == db.sample_set.id)
                 & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
@@ -354,20 +355,22 @@ def custom():
                 & (db.results_file.data_file != '')
                 & (db.config.id==db.results_file.config_id)
             )
-        myGroupBy = db.sequence_file.id|db.patient.id|db.run.id|db.results_file.config_id
+        myGroupBy = db.sequence_file.id|db.patient.id|db.run.id|db.generic.id|db.results_file.config_id
 
     query = db(q).select(
                 db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name,
                 db.run.id, db.run.info, db.run.name,
+                db.generic.id, db.generic.info, db.generic.name,
                 db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
                 db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
                 db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
                 db.sequence_file.size_file,
                 left = [
                     db.patient.on(db.patient.sample_set_id == db.sample_set.id),
-                    db.run.on(db.run.sample_set_id == db.sample_set.id)
+                    db.run.on(db.run.sample_set_id == db.sample_set.id),
+                    db.generic.on(db.generic.sample_set_id == db.sample_set.id)
                     ],
-                orderby = ~db.patient.id|db.sequence_file.id|db.results_file.run_date,
+                orderby = db.sequence_file.id|db.results_file.run_date,
                 groupby = myGroupBy
             )
 
@@ -383,9 +386,12 @@ def custom():
         if row.patient.id is not None:
             row.names = vidjil_utils.anon_names(row.patient.id, row.patient.first_name, row.patient.last_name)
             info = row.patient.info
-        else:
+        elif row.run.id is not None:
             row.names = row.run.name
             info = row.run.info
+        elif row.generic.id is not None:
+            row.names = row.generic.name
+            info = row.generic.info
         row.string = [row.names, row.sequence_file.filename, str(row.sequence_file.sampling_date), str(row.sequence_file.pcr), str(row.config.name), str(row.results_file.run_date), info]
     query = query.find(lambda row : ( vidjil_utils.advanced_filter(row.string,request.vars["filter"]) or row.checked) )
 
