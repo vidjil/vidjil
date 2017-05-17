@@ -370,7 +370,7 @@ def custom():
                     db.run.on(db.run.sample_set_id == db.sample_set.id),
                     db.generic.on(db.generic.sample_set_id == db.sample_set.id)
                     ],
-                orderby = ~db.patient.id|db.sequence_file.id|db.results_file.run_date,
+                orderby = db.sequence_file.id|db.results_file.run_date,
                 groupby = myGroupBy
             )
 
