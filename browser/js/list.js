@@ -315,7 +315,9 @@ List.prototype = {
             axis.appendChild(axis_option);
         }
         axis.value = "Size";
+        this.selectedAxis = available_axis.Size;
         axis.onchange = function() {
+            self.selectedAxis = available_axis[axis.value];
             self.update()
         }
 
