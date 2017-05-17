@@ -61,6 +61,8 @@ function List(id_list, id_data, model, database) {
         "V/5'" : function(){self.sortListByV()},
         "J/3'" : function(){self.sortListByJ()}
     }
+
+    this.selectedAxis = {};
 }
 
 List.prototype = {
