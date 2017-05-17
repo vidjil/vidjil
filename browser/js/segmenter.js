@@ -138,6 +138,7 @@ Segment.prototype = {
             div_menu.appendChild(span)
             }
 
+            //axis menu
             span = document.createElement('span');
             span.id = "segmenter_axis_menu";
             span.className = "pointer devel-mode";
