@@ -53,7 +53,7 @@ Otherwise, such =.vidjil= files can be obtained:
   The maximal number of clones that can be displayed depends on the processing step before.
   See below "Can I see all the clones ?" ([[Can I see all the clones ?]]).
 
-- Clones can be selected by clicking on them either in the list, on the time graph,
+- Clones can be selected by clicking on them either in the list, on the sample graph,
   or the grid (simple selection or rectangle selection).
 
 - There are often very similar clones, coming from either somatic hypermutations or from sequencing errors.
@@ -110,9 +110,10 @@ to learn the essential features of Vidjil.
 
 ** The sample graph
 
-The sample graph is hidden with there is only one sample. It shows the X most frequent clones of the sample (this number can be alter with the filter menu).
+The sample graph is hidden with there is only one sample. It shows the most frequent clones of each sample, tracked into every sample.
+The number of displayed clones can be changed with the filter menu.
 
-- The current sample is highlighted with a vertical gray bar, you can change that by clicking on another sample or using =←= and =→=.
+- The current sample is highlighted with a vertical gray bar. You can select on another sample by clicking on it or using =←= and =→=.
 
 - The gray areas at the bottom of the graph show, for each sample, the resolution (1 read / 5 reads).
 
@@ -148,8 +149,8 @@ or their “N length” (that is N1-D-N2 in the case of VDJ recombinations).
 The sequence view display nucleotide sequences from selected clones.
    - See "What is the sequence displayed for each clone ?" ([[What is the sequence displayed for each clone ?]]) below
    - Sequences can be aligned together (“align” button), identifying substitutions, insertions and deletions.
-   - You can remove sequences from the aligner (and the selection) by clicking on their name
-   - You can further analyze the sequences with IMGT/V-QUEST and IgBlast on the selected sequences. This opens another window/tab.
+   - You can remove sequences from the aligner (and the selection) by clicking on the “X” at the left.
+   - You can further analyze the sequences with IMGT/V-QUEST, IgBlast or Blast. This opens another window/tab.
    - You can unselect all sequences by clicking on the background of the grid.
 
 
@@ -281,7 +282,7 @@ The different permissions that can be attributed are:
   potential biases that could affect your analysis.
 
 ** How do you define a clone? How are gathered clones?
-  In the *built-in Vidjil algorithm*,
+  In the *built-in Vidjil algorithm* (Giraud, Salson, BMC Genomics 2014),
   sequences are gathered into a same clone as long as they share the
   same 50bp DNA sequence around the CDR3 sequence.
   In a first step, the algorithm has a quick heuristic which detects approximatively
