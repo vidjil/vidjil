@@ -347,10 +347,14 @@ one that never reach the 50 first clones. With a default installation,
 the slider can be set to display clones until the "top 100" on the grid 
 (and, on the graph, until "top 20").
 
-However, in some cames, one may want to track some clones that are
+However, in some cames, one may want to track some known clones that are
 never in the "top 100", as for example:
   - a standard/spike with low concentration
   - a clone in a MRD following of a patient without the diagnostic point
+
+In these situations, a solution is to create a =.fasta= file with this sequences to be tracked
+and upload it as another sample in the same patient / run / sample set.
+It should then show up in any sample.
 
 (Upcoming feature). If clone is "tagged" in the =.vidjil= or
 in the =.analysis= file, it will always be shown even if it does not
