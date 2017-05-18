@@ -244,8 +244,8 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
             // sai : segmenter axis inputs ; activate productivity-IMGT and VIdentity-IMGT
             var sai = document.getElementById('segmenter_axis_select').getElementsByTagName('input');
             for (var index in sai) {
-                if (sai[index].value == "productivity-IMGT" || sai[index].value == "VIdentity-IMGT")
-                    sai[index].checked = true;
+                if (!sai[index].checked && (sai[index].value == "productivity-IMGT" || sai[index].value == "VIdentity-IMGT"))
+                    sai[index].click();
             }
 
             var span = document.getElementById('highlightCheckboxes');
