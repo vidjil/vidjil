@@ -157,7 +157,7 @@ Segment.prototype = {
             var axOpts = Clone.prototype.axisOptions();
             var available_axis = (new Axes(this.m)).available();
             var self_update = function() {
-                var index = parseInt(this.id.charAt(3)); // ex: "sai5" -> index = 5
+                var index = parseInt(this.id.substring(3)); // ex: "sai5" -> index = 5
                 if (this.checked) self.selectedAxis[index] = available_axis[this.value];
                 else delete self.selectedAxis[index];
                 self.update();
