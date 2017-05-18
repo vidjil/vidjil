@@ -402,6 +402,17 @@ make functional
      Finally you can directly interact with the =VidjilBrowser= using the =$b=
      variable.
 
+     Another way of debugging interactively is by using (and installing) the
+     =ripl= gem. Then you should add, in the =.rb= file to debug:
+     #+BEGIN_SRC ruby
+     require 'ripl'
+     #+END_SRC
+     Then if you want to stop launch an =irb= arrived at a given point in the
+     code, the following command must be inserted in the code:
+     #+BEGIN_SRC ruby
+     Ripl.start :binding => binding
+     #+END_SRC
+
 
 * Packaging
 
