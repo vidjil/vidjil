@@ -382,6 +382,10 @@ make functional
    make headless
    #+END_SRC
 
+   It is possible to view the framebuffer content of =Xvfb= using =vnc=. To do so,
+   launch:
+   1. =x11vnc -display :99 -localhost=
+   2. =vncviewer :0=
 **** Interactive mode
      For debugging purposes, it may be useful to launch Watir in interactive
      mode. In that case, you should launch =irb= in the =browser/tests= directory.
