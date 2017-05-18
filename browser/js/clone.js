@@ -770,7 +770,7 @@ Clone.prototype = {
     },
 
     computeGCContent: function () {
-        if (typeof (this.sequence) == 'undefined') {
+        if (this.getSequenceLength() === 0) {
             this.GCContent = '?'
             return
         }
