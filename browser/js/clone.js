@@ -784,7 +784,8 @@ Clone.prototype = {
     },
 
     getSequenceLength : function () {
-        if (typeof (this.sequence) != 'undefined' && this.sequence !== 0){
+        if (typeof (this.sequence) != 'undefined' &&
+            typeof (this.sequence.length) != 'undefined'){
             return this.sequence.length
         }else{
             return 0;
