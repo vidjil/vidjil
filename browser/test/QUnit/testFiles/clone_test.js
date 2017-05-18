@@ -92,6 +92,14 @@ QUnit.module("Clone", {
         }
     }
 
+// Clone with undefined sequence
+var json_clone5 = {
+    "sequence": 0,
+    "name": "undefined clone",
+    reads: [1, 5, 2, 0],
+    "top": 5,
+};
+
 QUnit.test("name, informations, getHtmlInfo", function(assert) {
     
     var m = new Model();
@@ -100,6 +108,7 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     var c2 = new Clone(json_clone2, m, 1)
     var c3 = new Clone(json_clone3, m, 2)
     var c4 = new Clone(json_clone4, m, 3)
+    var c5 = new Clone(json_clone5, m, 4)
     m.initClones()
     
     assert.equal(c1.getSequenceName(), "hello", "get name clone1 : hello");
@@ -107,6 +116,8 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
 
     assert.equal(c1.getSequenceLength(), 19, "clone1 sequence: 19nt");
     assert.equal(c2.getSequenceLength(), 11, "clone2 sequence: 11nt");
+    assert.equal(c5.getSequenceLength(), 0, "clone5 sequence: 0nt");
+
     assert.equal(c2.getSequenceName(), some_name, "clone2, .getSequenceName()");
     assert.equal(c2.getCode(), some_name, "clone2, .getCode()");
     assert.equal(c2.getName(), some_name, "clone2, .getName()");
@@ -124,6 +135,8 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.equal(c3.getNameAndCode(), "plop (id3)", "clone3, .getNameAndCode()");
 
     assert.equal(c1.GCContent, 0, "clone1 0% GC content");
+    assert.equal(typeof(c5.GCContent), 'undefined', "clone5, no GC content for c5: no consensus sequence");
+    assert.equal(typeof(c5.coverage), 'undefined', "clone5, no GC content for c5: no consensus sequence");
     
     m.select(0)
     m.select(1)
