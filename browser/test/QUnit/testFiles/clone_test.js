@@ -105,6 +105,8 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.equal(c1.getSequenceName(), "hello", "get name clone1 : hello");
     assert.equal(c1.getCode(), "hello", "get code clone1 : hello");
 
+    assert.equal(c1.getSequenceLength(), 19, "clone1 sequence: 19nt");
+    assert.equal(c2.getSequenceLength(), 11, "clone2 sequence: 11nt");
     assert.equal(c2.getSequenceName(), some_name, "clone2, .getSequenceName()");
     assert.equal(c2.getCode(), some_name, "clone2, .getCode()");
     assert.equal(c2.getName(), some_name, "clone2, .getName()");
@@ -120,6 +122,8 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     
     assert.equal(c2.getNameAndCode(), some_name, "clone2, .getNameAndCode()");
     assert.equal(c3.getNameAndCode(), "plop (id3)", "clone3, .getNameAndCode()");
+
+    assert.equal(c1.GCContent, 0, "clone1 0% GC content");
     
     m.select(0)
     m.select(1)
