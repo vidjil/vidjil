@@ -78,6 +78,8 @@ function Segment(id, model, database) {
         {'field' : "", 'color': "green"},
         {'field' : "", 'color': "yellow"}
     ];
+
+    this.selectedAxis = [];
 }
 
 
@@ -136,6 +138,7 @@ Segment.prototype = {
             div_menu.appendChild(span)
             }
 
+            //axis menu
             span = document.createElement('span');
             span.id = "segmenter_axis_menu";
             span.className = "pointer devel-mode";
@@ -153,7 +156,12 @@ Segment.prototype = {
 
             var axOpts = Clone.prototype.axisOptions();
             var available_axis = (new Axes(this.m)).available();
-            var self_update = function() {self.update()};
+            var self_update = function() {
+                var index = parseInt(this.id.substring(3)); // ex: "sai5" -> index = 5
+                if (this.checked) self.selectedAxis[index] = available_axis[this.value];
+                else delete self.selectedAxis[index];
+                self.update();
+            }
             for (var i in axOpts) {
                 var axis_option = document.createElement('div');
                 var axis_input = document.createElement('input');
@@ -171,6 +179,7 @@ Segment.prototype = {
                 axis_option.appendChild(axis_label);
                 tmp.appendChild(axis_option);
             }
+            this.selectedAxis[axOpts.indexOf("Size")] = available_axis.Size;
 
             axis.appendChild(tmp);
             span.appendChild(axis);
@@ -615,14 +624,13 @@ Segment.prototype = {
         axisBox.removeAllChildren();
         var axOpts = Clone.prototype.axisOptions();
         var available_axis = (new Axes(this.m)).available();
-        for (var i in axOpts) {
-            if (document.getElementById("sai"+i).checked) {
-                var span = document.createElement('span');
-                span.innerHTML = clone.getPrettyAxisValue(axOpts[i]);
-                span.setAttribute('title', available_axis[axOpts[i]].label);
-                span.className = axOpts[i];
-                axisBox.appendChild(span);
-            }
+        for (var i in this.selectedAxis) {
+            var span = document.createElement('span');
+            var axis = this.selectedAxis[i];
+            span.innerHTML = axis.pretty ? axis.pretty(axis.fct(clone)) : axis.fct(clone);
+            span.setAttribute('title', this.selectedAxis[i].label);
+            span.className = axOpts[i];
+            axisBox.appendChild(span);
         }
     },
         

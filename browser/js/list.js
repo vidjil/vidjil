@@ -61,6 +61,8 @@ function List(id_list, id_data, model, database) {
         "V/5'" : function(){self.sortListByV()},
         "J/3'" : function(){self.sortListByJ()}
     }
+
+    this.selectedAxis = {};
 }
 
 List.prototype = {
@@ -313,7 +315,9 @@ List.prototype = {
             axis.appendChild(axis_option);
         }
         axis.value = "Size";
+        this.selectedAxis = available_axis.Size;
         axis.onchange = function() {
+            self.selectedAxis = available_axis[axis.value];
             self.update()
         }
 
@@ -488,8 +492,7 @@ List.prototype = {
                 //update clone axis
                 var span_axis = div_elem.getElementsByClassName("axisBox")[0];
                 span_axis.style.color = clone.getColor();
-                var axis = document.getElementById("list_axis_select");
-                span_axis.innerHTML = clone.getPrettyAxisValue(axis.value);
+                span_axis.innerHTML = this.selectedAxis.pretty ? this.selectedAxis.pretty(this.selectedAxis.fct(clone)) : this.selectedAxis.fct(clone);
                 // span_axis.setAttribute('title', clone.getPrintableSize());
 
                 //update cluster icon
