@@ -459,6 +459,9 @@ two windows that must be clustered.
 
 
 * Output
+   :PROPERTIES:
+   :CUSTOM_ID: output
+   :END:
 
 ** Main output files
 
