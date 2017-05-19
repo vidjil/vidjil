@@ -178,15 +178,23 @@ function showAddManualCloneMenu(error) {
  */
 function switch_visu2(view) {
     var tmp;
+    var index;
+
+    index = m.view.indexOf(sp2);
+    if (index > -1) m.view.splice(index, 1);
+    index = m.view.indexOf(graph);
+    if (index > -1) m.view.splice(index, 1);
+
     if (view == "graph") {
-        graph = new Graph("visu2", m, db);
+        m.view.push(graph);
         tmp = graph;
     }
     else if (view == "scatterplot") {
-        var sp2 = new ScatterPlot("visu2", m, db);
+        sp2 = new ScatterPlot("visu2", m, db);
         sp2.default_preset = 5;
         tmp = sp2;
     }
+
     tmp.init();
     tmp.resize();
 }
