@@ -663,7 +663,11 @@ def filesystem():
     else:
         root_folder = defs.FILE_SOURCE + id
         for idx, f in enumerate(os.listdir(root_folder)):
-            correct_type = f.split('.')[-1] in defs.FILE_TYPES
+            correct_type = False
+            for ext in defs.FILE_TYPES:
+                correct_type = match_filetype(f, ext)
+                if correct_type:
+                    break
             is_dir = os.path.isdir(root_folder + f)
             if correct_type or is_dir:
                 json_node = jstree.Node(f, id + f).jsonData()
