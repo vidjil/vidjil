@@ -401,7 +401,6 @@ line {
   overflow-x: hidden;
   height: calc(100% - 30px);
   /*100% - list_menu height */
-
   padding: 2px;
 }
 #list_data {
@@ -644,7 +643,6 @@ line {
   font-size: 70%;
   letter-spacing: .428em;
   /* (1-.7) / .7 */
-
   left: .214em;
 }
 .highlight {
@@ -791,7 +789,7 @@ span .substitution {
   transition-delay: 0s, 0s;
 }
 #add_clone_menu > #addclone_input.error {
-  border: 1px solid #8b0000;
+  border: 1px solid darkred;
 }
 .buttonSelector {
   background: #ffffff;
@@ -1063,25 +1061,18 @@ span.logo {
   background: #3d24b6;
   background: -moz-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* FF3.6+ */
-
   background: -webkit-gradient(linear, left top, right top, color-stop(0%, #3d24b6), color-stop(10%, #2448b5), color-stop(20%, #2487b8), color-stop(30%, #24b7ab), color-stop(40%, #24b86e), color-stop(50%, #24b730), color-stop(60%, #55b824), color-stop(70%, #92b724), color-stop(80%, #b89f24), color-stop(90%, #b25f23), color-stop(100%, #b82424));
   /* Chrome,Safari4+ */
-
   background: -webkit-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* Chrome10+,Safari5.1+ */
-
   background: -o-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* Opera 11.10+ */
-
   background: -ms-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* IE10+ */
-
   background: linear-gradient(to right, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* W3C */
-
   filter: "progid:DXImageTransform.Microsoft.gradient( startColorstr='#3d24b6', endColorstr='#b82424',GradientType=1 )";
   /* IE6-9 */
-
   width: 180px;
   height: 8px;
   margin-top: 4px;
@@ -1185,20 +1176,40 @@ span.warningReads {
   position: relative;
   top: 0px;
   left: 0px;
+}
+.visu2_menu_anchor {
+  position: absolute;
+  bottom: 6px;
+  right: 0px;
+}
+.sp_menu_anchor,
+.visu2_menu_anchor {
   width: 0px;
   height: 0px;
 }
 .sp_menu {
-  min-width: 22px;
-  min-height: 18px;
   border-bottom: solid;
   border-right: solid;
+}
+.visu2_menu {
+  border-top: solid;
+  border-left: solid;
+  text-align: right;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}
+.sp_menu,
+.visu2_menu {
+  min-width: 22px;
+  min-height: 18px;
   border-color: #cccccc;
   background: #ffffff;
   display: inline-block;
   padding: 2px;
 }
-.sp_menu_content {
+.sp_menu_content,
+.visu2_menu_content {
   padding: 0px;
   width: 0px;
   height: 0px;
@@ -1213,6 +1224,16 @@ span.warningReads {
   padding: 8px 0px 0px 0px;
   width: 180px;
   height: 130px;
+}
+.visu2_menu:hover .visu2_menu_content,
+.visu2_menu_content:focus {
+  width: 90px;
+  height: 45px;
+}
+.sp_menu:hover .sp_menu_content,
+.visu2_menu:hover .visu2_menu_content,
+.sp_menu_content:focus,
+.visu2_menu_content:focus {
   font-size: 100%;
   opacity: 1;
 }
@@ -1270,6 +1291,7 @@ span.warningReads {
   color: #002b36;
 }
 #visu-separator {
+  position: relative;
   height: 6px;
   cursor: move;
   cursor: -webkit-grab;
@@ -1573,18 +1595,18 @@ span.warningReads {
 .flash_1,
 .log_1 {
   font-weight: bold;
-  background-color: #dff0d8;
+  background-color: #DFF0D8;
 }
 .flash_2,
 .log_2 {
   font-weight: bold;
-  background-color: #f2deae;
+  background-color: #F2DEAE;
 }
 .flash_3,
 .log_3 {
   font-weight: bold;
   border-color: darkred;
-  background-color: #f2dede;
+  background-color: #F2DEDE;
 }
 select > option:hover {
   background-color: #cccccc;
@@ -1685,7 +1707,7 @@ table.log textarea {
   flex-grow: 1;
 }
 .tagColor0 {
-  background: #dc322f;
+  background: #DC322F;
 }
 .tagColor1 {
   background: #cb4b16;
@@ -1722,15 +1744,15 @@ table.log textarea {
   text-align: center;
 }
 .urgent_message {
-  border: 2px solid #8b0000;
+  border: 2px solid darkred;
   margin: 3px;
   font-weight: bold;
-  background-color: #f2dede;
+  background-color: #F2DEDE;
 }
 .info_message {
   border: 1px solid #cccccc;
   margin: 4px;
-  background-color: #dff0d8;
+  background-color: #DFF0D8;
 }
 .notification {
   padding: 3px;

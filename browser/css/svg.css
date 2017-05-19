@@ -47,12 +47,12 @@ ul {
   height: 100%;
   margin: auto;
   overflow: hidden;
-  background: #ffffff;
+  background: #FFFFFF;
 }
 #top-container {
   height: 32px;
   width: 100%;
-  background: #ffffff;
+  background: #FFFFFF;
   position: fixed;
   z-index: 1;
 }
@@ -70,7 +70,7 @@ ul {
   position: relative;
   right: 200px;
   z-index: 10;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
 }
 .upload_field {
   width: 100%;
@@ -95,7 +95,7 @@ ul {
   width: -webkit-calc(100% - 12px);
   width: calc(100% - 12px);
   overflow: hidden;
-  background: #ffffff;
+  background: #FFFFFF;
   margin: 6px;
 }
 #right-container {
@@ -139,7 +139,7 @@ line {
 #info {
   font-size: 13px;
   padding: 3px;
-  background: #ffffff;
+  background: #FFFFFF;
   display: table-cell;
 }
 .info_line {
@@ -168,10 +168,10 @@ line {
 }
 /*Style polyline / graph*/
 .background_graph {
-  fill: #ffffff;
+  fill: #FFFFFF;
 }
 .background_graph2 {
-  fill: #ffffff;
+  fill: #FFFFFF;
 }
 .graph_line {
   stroke-width: 2.5px;
@@ -229,7 +229,7 @@ line {
   fill: #777777;
 }
 #resolution1 {
-  fill: #ffffff;
+  fill: #FFFFFF;
   opacity: 1;
 }
 #resolution5 {
@@ -271,7 +271,7 @@ line {
   border-bottom: solid;
   border-left: solid;
   border-color: #333333;
-  background: #ffffff;
+  background: #FFFFFF;
 }
 .graph_list {
   display: none;
@@ -284,7 +284,7 @@ line {
 }
 /*style scatterPlot element*/
 .background_sp {
-  fill: #ffffff;
+  fill: #FFFFFF;
 }
 .circle {
   cursor: pointer;
@@ -400,7 +400,6 @@ line {
   overflow-x: hidden;
   height: calc(100% - 30px);
   /*100% - list_menu height */
-
   padding: 2px;
 }
 #list_data {
@@ -498,7 +497,7 @@ line {
   text-align: center;
   border: solid;
   border-width: 1px;
-  border-color: #ffffff;
+  border-color: #FFFFFF;
   border-radius: 5px;
   margin: 0px 1px;
 }
@@ -643,7 +642,6 @@ line {
   font-size: 70%;
   letter-spacing: .428em;
   /* (1-.7) / .7 */
-
   left: .214em;
 }
 .highlight {
@@ -668,7 +666,7 @@ span .substitution {
   width: 220px;
   border: solid;
   display: none;
-  background: #ffffff;
+  background: #FFFFFF;
 }
 .dataMenu {
   padding: 5px;
@@ -678,7 +676,7 @@ span .substitution {
   width: 220px;
   border: solid;
   display: none;
-  background: #ffffff;
+  background: #FFFFFF;
 }
 .tagElem {
   margin: 1px;
@@ -741,7 +739,7 @@ span .substitution {
   margin: -2px 0px 0px 5px;
 }
 .menu-selector {
-  background: #ffffff;
+  background: #FFFFFF;
   color: #657B83;
   height: 18px;
   width: 60px;
@@ -762,7 +760,7 @@ span .substitution {
   left: 50%;
   font-size: 13px;
   padding: 10px;
-  background: #ffffff;
+  background: #FFFFFF;
   display: none;
 }
 #add_clone_menu {
@@ -790,10 +788,10 @@ span .substitution {
   transition-delay: 0s, 0s;
 }
 #add_clone_menu > #addclone_input.error {
-  border: 1px solid #8b0000;
+  border: 1px solid darkred;
 }
 .buttonSelector {
-  background: #ffffff;
+  background: #FFFFFF;
   cursor: pointer;
   font-size: 13px;
   margin: 2px;
@@ -818,7 +816,7 @@ span .substitution {
   max-width: 80%;
   font-size: 13px;
   padding: 10px;
-  background: #ffffff;
+  background: #FFFFFF;
   display: none;
   position: fixed;
   left: 50%;
@@ -853,7 +851,7 @@ a.tag-link {
   left: 495px;
   font-size: 13px;
   padding: 10px;
-  background: #ffffff;
+  background: #FFFFFF;
   display: none;
   max-width: -moz-calc(100% - 535px);
   max-width: -webkit-calc(100% - 535px);
@@ -876,7 +874,7 @@ a.tag-link {
 #bot-container,
 #segmenter_axis_menu,
 .seq-fixed {
-  background: #ffffff;
+  background: #FFFFFF;
 }
 .closeButton {
   position: absolute;
@@ -1062,25 +1060,18 @@ span.logo {
   background: #3d24b6;
   background: -moz-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* FF3.6+ */
-
   background: -webkit-gradient(linear, left top, right top, color-stop(0%, #3d24b6), color-stop(10%, #2448b5), color-stop(20%, #2487b8), color-stop(30%, #24b7ab), color-stop(40%, #24b86e), color-stop(50%, #24b730), color-stop(60%, #55b824), color-stop(70%, #92b724), color-stop(80%, #b89f24), color-stop(90%, #b25f23), color-stop(100%, #b82424));
   /* Chrome,Safari4+ */
-
   background: -webkit-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* Chrome10+,Safari5.1+ */
-
   background: -o-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* Opera 11.10+ */
-
   background: -ms-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* IE10+ */
-
   background: linear-gradient(to right, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* W3C */
-
   filter: "progid:DXImageTransform.Microsoft.gradient( startColorstr='#3d24b6', endColorstr='#b82424',GradientType=1 )";
   /* IE6-9 */
-
   width: 180px;
   height: 8px;
   margin-top: 4px;
@@ -1184,20 +1175,40 @@ span.warningReads {
   position: relative;
   top: 0px;
   left: 0px;
+}
+.visu2_menu_anchor {
+  position: absolute;
+  bottom: 6px;
+  right: 0px;
+}
+.sp_menu_anchor,
+.visu2_menu_anchor {
   width: 0px;
   height: 0px;
 }
 .sp_menu {
-  min-width: 22px;
-  min-height: 18px;
   border-bottom: solid;
   border-right: solid;
+}
+.visu2_menu {
+  border-top: solid;
+  border-left: solid;
+  text-align: right;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}
+.sp_menu,
+.visu2_menu {
+  min-width: 22px;
+  min-height: 18px;
   border-color: #333333;
-  background: #ffffff;
+  background: #FFFFFF;
   display: inline-block;
   padding: 2px;
 }
-.sp_menu_content {
+.sp_menu_content,
+.visu2_menu_content {
   padding: 0px;
   width: 0px;
   height: 0px;
@@ -1212,6 +1223,16 @@ span.warningReads {
   padding: 8px 0px 0px 0px;
   width: 180px;
   height: 130px;
+}
+.visu2_menu:hover .visu2_menu_content,
+.visu2_menu_content:focus {
+  width: 90px;
+  height: 45px;
+}
+.sp_menu:hover .sp_menu_content,
+.visu2_menu:hover .visu2_menu_content,
+.sp_menu_content:focus,
+.visu2_menu_content:focus {
   font-size: 100%;
   opacity: 1;
 }
@@ -1225,7 +1246,7 @@ span.warningReads {
   border-width: 2px;
   border-radius: 5px;
   margin: 5px auto;
-  border-color: #ffffff;
+  border-color: #FFFFFF;
 }
 .sp_menu_icon:hover {
   background: #333333;
@@ -1251,7 +1272,7 @@ span.warningReads {
   white-space: nowrap;
 }
 .axis_select select {
-  background: #ffffff;
+  background: #FFFFFF;
   color: #777777;
   height: 20px;
   width: 120px;
@@ -1269,6 +1290,7 @@ span.warningReads {
   color: #777777;
 }
 #visu-separator {
+  position: relative;
   height: 6px;
   cursor: move;
   cursor: -webkit-grab;
@@ -1308,7 +1330,7 @@ span.warningReads {
   width: 100%;
   height: calc(100% - 35px);
   font-size: 14px;
-  background: #ffffff;
+  background: #FFFFFF;
   display: none;
   left: 0%;
 }
@@ -1341,7 +1363,7 @@ span.warningReads {
   background-color: #777777;
 }
 .db_table_split td {
-  border-top: 2ex solid #ffffff;
+  border-top: 2ex solid #FFFFFF;
 }
 .db_table .column_200 {
   width: 200px;
@@ -1371,8 +1393,8 @@ span.warningReads {
   width: 50px;
   border: solid;
   border-width: 1px;
-  border-color: #ffffff;
-  background: #ffffff;
+  border-color: #FFFFFF;
+  background: #FFFFFF;
 }
 .db_block {
   width: 100%;
@@ -1547,7 +1569,7 @@ span.warningReads {
   border-radius: 5px;
   padding: 5px;
   margin: 5px;
-  background: #ffffff;
+  background: #FFFFFF;
   border-color: #333333;
   -webkit-transition: background 1s linear;
   -moz-transition: background 1s linear;
@@ -1563,27 +1585,27 @@ span.warningReads {
   min-height: 20px;
   display: block;
   margin: 5px;
-  background: #ffffff;
+  background: #FFFFFF;
   border: solid;
   border-width: 2px;
   border-radius: 2px;
-  border-color: #ffffff;
+  border-color: #FFFFFF;
 }
 .flash_1,
 .log_1 {
   font-weight: bold;
-  background-color: #dff0d8;
+  background-color: #DFF0D8;
 }
 .flash_2,
 .log_2 {
   font-weight: bold;
-  background-color: #f2deae;
+  background-color: #F2DEAE;
 }
 .flash_3,
 .log_3 {
   font-weight: bold;
   border-color: darkred;
-  background-color: #f2dede;
+  background-color: #F2DEDE;
 }
 select > option:hover {
   background-color: #333333;
@@ -1600,7 +1622,7 @@ select > option:hover {
   border: solid;
   border-width: 1px;
   min-height: 20px;
-  background: #ffffff;
+  background: #FFFFFF;
   border-color: #333333;
   max-height: 100px;
   display: none;
@@ -1626,9 +1648,9 @@ input:focus,
 textarea:focus,
 #add_clone_menu > #addclone_input:focus {
   border-color: #333333;
-  -webkit-box-shadow: inset 0 1px 1px #ffffff, 0 0 8px #333333;
-  -moz-box-shadow: inset 0 1px 1px #ffffff, 0 0 8px #333333;
-  box-shadow: inset 0 1px 1px #ffffff, 0 0 8px #333333;
+  -webkit-box-shadow: inset 0 1px 1px #FFFFFF, 0 0 8px #333333;
+  -moz-box-shadow: inset 0 1px 1px #FFFFFF, 0 0 8px #333333;
+  box-shadow: inset 0 1px 1px #FFFFFF, 0 0 8px #333333;
   outline: 0;
   outline: thin dotted \9;
 }
@@ -1684,7 +1706,7 @@ table.log textarea {
   flex-grow: 1;
 }
 .tagColor0 {
-  background: #dc322f;
+  background: #DC322F;
 }
 .tagColor1 {
   background: #cb4b16;
@@ -1711,7 +1733,7 @@ table.log textarea {
   background: #777777;
 }
 .inactiveTag {
-  background-image: linear-gradient(45deg, transparent -25%, #ffffff 100%, #ffffff 100%, transparent 0%);
+  background-image: linear-gradient(45deg, transparent -25%, #FFFFFF 100%, #FFFFFF 100%, transparent 0%);
 }
 .message_container {
   display: none;
@@ -1721,15 +1743,15 @@ table.log textarea {
   text-align: center;
 }
 .urgent_message {
-  border: 2px solid #8b0000;
+  border: 2px solid darkred;
   margin: 3px;
   font-weight: bold;
-  background-color: #f2dede;
+  background-color: #F2DEDE;
 }
 .info_message {
   border: 1px solid #333333;
   margin: 4px;
-  background-color: #dff0d8;
+  background-color: #DFF0D8;
 }
 .notification {
   padding: 3px;
@@ -1790,7 +1812,7 @@ table.log textarea {
   min-height: 32px;
   max-height: 32px;
   width: 100%;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
 }
 .patient_info_text {
   margin-bottom: 5px;
