@@ -631,8 +631,8 @@ ScatterPlot.prototype = {
      * param {function} fct - distribution function
      * */
     sortBarTab: function (fct) {
-        console.log('sort')
-        console.log(fct)
+        // console.log('sort')
+        // console.log(fct)
         if (typeof fct == "string"){
             var tmp = fct 
             fct = function(clone){
