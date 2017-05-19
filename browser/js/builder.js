@@ -23,8 +23,7 @@
 
 function Builder(model, database) {
     if (typeof model != "undefined"){
-        this.m = model; //Model utilisé
-        this.m.view.push(this); //synchronisation au Model
+        View.call(this, model);
     }
 
     if(typeof database != 'undefined') {
