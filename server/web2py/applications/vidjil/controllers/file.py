@@ -585,8 +585,6 @@ def delete():
             associated_id = associated_elements[0].id
 
     if auth.can_modify_file(request.vars["id"]):
-        for row in db( db.sample_set_membership.sequence_file_id == request.vars["id"] ).select() :
-            db(db.sample_set_membership.id == row.id).delete()
         if not(delete_results):
             delete_sequence_file(request.vars['id'])
         else:
