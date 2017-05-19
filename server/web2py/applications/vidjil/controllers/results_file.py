@@ -158,6 +158,8 @@ def delete():
             db((db.fused_file.sample_set_id == sample_set_id) &
                (db.fused_file.config_id == config_id)
                ).delete()
+        else:
+            schedule_fuse(sample_set_id, config_id)
         
         res = {"redirect": "sample_set/index",
                "args" : { "id" : sample_set_id,
