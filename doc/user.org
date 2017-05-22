@@ -300,7 +300,7 @@ The different permissions that can be attributed are:
   gene used and on the hypermutations.
 
 ** What is the sequence displayed for each clone ?
-<<representative>>
+<<Representative>>
 The sequences displayed for each clone are not individual reads.  
 The clones may gather thousands of reads, and all these reads can have
 some differences. Depending on the sequencing technology, the reads
@@ -329,7 +329,7 @@ This opens another window/tab.
 
 
 
-* Can I see all the clones ?
+* Can I see all the clones and all the reads ?
    :PROPERTIES:
    :CUSTOM_ID: smaller-clones
    :END:
@@ -337,12 +337,13 @@ This opens another window/tab.
 The interest of NGS/RepSeq studies is to provide a deep view of any
 V(D)J repertoire. The underlying analysis softwares (such as Vidjil)
 try to analyze as much reads as possible (see [[Number of analyzed reads]] below).
-One often wants to "see all clones", but a complete list is difficult
+One often wants to "see all clones and reads", but a complete list is difficult
 to see in itself. In a typical dataset with about 10^6 reads, even in
 the presence of a dominant clone, there can be 10^4 or 10^5 different
-clones detected.
-There are ways to retrieve the full list of clones (for example by launching
-the command-line program), but, for most of the cases, one may want to focus on some clones.
+clones detected. A dominant clone can have thousands or even more reads.
+There are ways to retrieve the full list of clones and reads (for example by launching
+the command-line program), but, for most of the cases, one may want to focus on some clones
+with their consensus sequences.
 
 
 ** The "top" slider in the "filter" menu
@@ -385,6 +386,26 @@ analyzed reads, including the hidden clones.
 
 
 
+
+
+
+** Going back to the analyzed reads
+   :PROPERTIES:
+   :CUSTOM_ID: reads
+   :END:
+
+The web application displays one consensus sequence per clone (see [[Representative]] above).
+In some situations, one may want to go back to the reads.
+
+For the *built-in Vidjil algorithm*, analyzing a dataset with the /default + extract reads/ config enables
+to retrieve back the analyzed reads in the =.segmented.vdj.fa= file that can be downloaded through the =out= link near each sample.
+This =.vdj.fa= output enables to use Vidjil as a /filtering tool/,
+shrinking a large read set into a manageable number of (pre-)clones
+that will be deeply analyzed and possibly further clustered by
+other software.
+
+Other custom configs are possible, in particular to retrieve reads for a particular clone.
+Contact us if you are interested.
 
 
 
