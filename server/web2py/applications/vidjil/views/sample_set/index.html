@@ -195,7 +195,7 @@
 
 
     <div class="db_block_right">
-        see the result:
+        see results:
         {{for row in db( (db.fused_file.sample_set_id == request.vars["id"]) & 
                          (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) ) &
                          (db.config.id ==db.fused_file.config_id)
