@@ -128,6 +128,20 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     log.info(res)
     return res
 
+def schedule_fuse(id_sample_set, id_config):
+    sample_set = db.sample_set[id_sample_set]
+
+    sequence_file_id = db((db.sample_set_membership.sample_set_id == sample_set.id)
+                        &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
+                        ).select(db.sequence_file.id).first().id
+
+    results_file_id = db((db.results_file.sequence_file_id == sequence_file_id)
+                        & (db.results_file.config_id == id_config)
+                        ).select(db.results_file.id).first().id
+
+    args = [sequence_file_id, id_config, results_file_id, id_sample_set, False]
+    task = scheduler.queue_task('fuse', args,
+                                repeats = 1, timeout = defs.TASK_TIMEOUT)
 
 def run_vidjil(id_file, id_config, id_data, grep_reads,
                clean_before=False, clean_after=False):
@@ -763,5 +777,6 @@ scheduler = Scheduler(db, dict(vidjil=run_vidjil,
                                compute_contamination=compute_contamination,
                                mixcr=run_mixcr,
                                none=run_copy,
-                               pre_process=run_pre_process),
+                               pre_process=run_pre_process,
+                               fuse=run_fuse),
                         heartbeat=defs.SCHEDULER_HEARTBEAT)

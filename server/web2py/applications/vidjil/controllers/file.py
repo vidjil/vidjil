@@ -588,11 +588,11 @@ def delete():
         if not(delete_results):
             delete_sequence_file(request.vars['id'])
         else:
+            results_file = db(db.results_file.sequence_file_id == request.vars["id"]).select().first()
+            config_id = results_file.config_id
             db(db.results_file.sequence_file_id == request.vars["id"]).delete()
             db(db.sequence_file.id == request.vars["id"]).delete()
-
-            for row in db( db.sample_set_membership.sequence_file_id == request.vars["id"]).select() :
-                db(db.sample_set_membership.id == row.id).delete()
+            schedule_fuse(sample_set.id, config_id)
 
         res = {"redirect": "sample_set/index",
                "args" : { "id" : request.vars["redirect_sample_set_id"]},
