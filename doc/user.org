@@ -45,8 +45,10 @@ Otherwise, such =.vidjil= files can be obtained:
 * First aid
 
 - Open data by:
-    - either with “patients”/“open patient”  if you are connected to a patient/experiment database, such as on http://app.vidjil.org/
-      (in this case, there are always some "Demo" datasets for demonstration purposes),
+    - either with “patients”/“open patient”  if you are connected to a patient/experiment database, such as on http://app.vidjil.org/.
+      In this case, there are always some "Demo" datasets for demonstration purposes.
+      Once a patient/run/set is selected, you can access the results by clicking on the link near =See results= (bottom right).
+
     - or with “file”/“import/export”, manually selecting a =.vidjil= file
 
 - You can change the number of displayed clones by moving the slider “number of clones” (menu “filter”).
@@ -246,6 +248,9 @@ The « reload » button (bottom left) updates the status of the task, that shoul
 It is possible to launch several process at the same time (some will wait in the =QUEUED= / =ASSIGNED= states), and also to launch process while you
 are uploading data. Finally, you can safely close the window with the patient/experiment database (and even your web browser) when some process are queued/launched.
 The only thing you should not do is to close completely your web browser while sequences are uploading.
+
+Once a task is completed, a click on the =See results= link (bottom right) will open the main window to browse the clones.
+A click on the =out= link at the right of every sample give access to the raw output file of the RepSeq software.
 
 
 ** Groups
