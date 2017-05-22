@@ -646,14 +646,7 @@ def restart_pre_process():
 
 def match_filetype(filename, extension):
     ext_len = len(extension)
-    if len(filename) < ext_len:
-        return False
-    i = -1
-    while (abs(i) < ext_len):
-        if filename[i] != extension[i]:
-            return False
-        i = i - 1
-    return True
+    return filename[-ext_len:] == extension
 
 def filesystem():
     json = []
