@@ -45,11 +45,11 @@ class VidjilAuth(Auth):
         result_groups = []
         if self.user is not None:
             memberships = self.db(
-                self.table_membership().user_id == self.user.id).select()
-            for member in memberships:
-                groups = self.db(self.table_group().id == member.group_id).select()
-                if groups and len(groups) > 0:
-                    result_groups.append(groups[0].role)
+                self.table_membership().user_id == self.user.id).select(self.table_membership().group_id)
+            membership_group_ids = [x.group_id for x in memberships]
+            groups = self.db(self.table_group().id.belongs(membership_group_ids)).select()
+            for group in groups:
+                result_groups.append(group.role)
         return result_groups
 
     def get_cache_key(self, action, object_of_action):
