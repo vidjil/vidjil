@@ -27,7 +27,8 @@
  * @class Shortcut
  * @constructor
  * */
-function Shortcut () {
+function Shortcut (model) {
+    this.m = model
     this.init()
     this.on = true
 }
@@ -53,7 +54,7 @@ Shortcut.prototype = {
         }
         
         document.onkeydown = function (e) { self.checkKey(e); }
-        document.onkeyup = function (e) { sp.active_move = false; }
+        document.onkeyup = function (e) { self.m.sp.active_move = false; }
     },
     
     
@@ -63,101 +64,145 @@ Shortcut.prototype = {
      * @param {event} e - onkeydown event
      * */
     checkKey : function (e) {
-        if (this.on){
-            e = e || window.event;
-            var key;
-            if (document.activeElement.id === ""){
+        if (!this.on)
+            return ;
+
+        e = e || window.event;
+
+        if (document.activeElement.id !== "")
+            return ;
                     
-                key = e.keyCode;
-                if (key===0) key = e.which
-                console.log(e)
-                console.log(key)
-                switch(key) {
-                    case 37 :   //left arrow
-                        e.preventDefault()
-                        if (e.shiftKey || e.metakey)
-                            m.displayTop(m.top - NB_CLONES_CHANGE)
-                        else
-                            m.previousTime();
-                        break;
-                    case 39 :   //right arrow
-                        e.preventDefault()
-                        if (e.shiftKey || e.metakey) 
-                            m.displayTop(m.top + NB_CLONES_CHANGE)
-                        else
-                            m.nextTime();
-                        break;
-                    case 83 :   //ctrl+s
-                        e.preventDefault()
-                        if (e.ctrlKey || e.metakey) db.save_analysis()
-                        break;
-                    case 65 :   //ctrl+a
-                        e.preventDefault()
-                        if (e.ctrlKey || e.metakey){
-                            var d_m = $("#debug_menu")
-                            if (d_m.css("display") == "none"){
-                                $("#debug_menu").css("display", "");
-                                $(".devel-mode").show();
-                                $(".beta-mode").show();
-                            }else{
-                                $("#debug_menu").css("display", "none");
-                                $(".devel-mode").hide();
-                                $(".beta-mode").hide();
-                            }
-                        }
-                        break;
-                    case 80 :   //shift+p : open patient
-                        e.preventDefault()
-                        if(e.shiftKey || e.metakey) db.reload()
-                        break;
-                    case 192:   // #: switch grid/bar mode
-                        e.preventDefault()
-                        sp.switchMode()
-                        break;
+        var key = e.keyCode;
+        if (key===0) key = e.which
 
-                    default:
-                        if ( ! e.ctrlKey && ! e.metaKey &&
-                         (((key >= 96) && (key <= 105)) || ((key >= 48) && (key <= 57))) ) { // Numeric keypad, 0-9
-                            var select_preset = document.getElementsByClassName("axis_select_preset_select")[0]
-                            var shift = 95;
-                            if (key<58) shift = 47
-                            if (e.shiftKey) shift -= 10
+        console.log("Event:" + e + " keyCode:" + key + " key:" + e.key)
 
-                            select_preset.selectedIndex = key - shift;
-                            try {
-                                sp.changePreset(select_preset)
-                            }
-                            catch (err) { } // There can be an error if the preset does not exist
-                        }
+        // Preset shortcuts
+        if (! e.ctrlKey && ! e.metaKey &&
+             (((key >= 96) && (key <= 105)) || ((key >= 48) && (key <= 57))) ) { // Numeric keypad, 0-9
+                var select_preset = document.getElementsByClassName("axis_select_preset_select")[0]
+            var shift = 95;
+            if (key<58) shift = 47
+            if (e.shiftKey) shift -= 10
+
+            select_preset.selectedIndex = key - shift
+            try {
+                this.m.sp.changePreset(select_preset)
+            }
+            catch (err) { } // There can be an error if the preset does not exist
+
+            return
+        }
+
+        // System/locus shortcuts
+        if (! e.ctrlKey && ! e.metaKey &&
+            typeof this.system_shortcuts[key] != "undefined") {
+
+            var self = this
+            var germlines = this.system_shortcuts[key].filter(function(g) {return self.m.system_available.indexOf(g) != -1})
+            if (germlines.length === 0)
+                return
+
+            console.log("Germlines with key " + key + ": " + germlines)
+
+            // Find current germline
+            var current = -1 ;
+            for (var i = 0; i < germlines.length; i++)
+            {
+                if (germlines[i] == this.m.germlineV.system)
+                    current = i
+            }
+
+            // Cycle to next germline
+            next_germline = germlines[(current+1) % germlines.length]
+            this.m.changeGermline(next_germline, e.shiftKey)
+
+            return
+        }
+
+        // Other shortcuts
+
+        // e.which is deprecated, see #2448
+        switch(key) {
+
+        case 37 :   // Left arrow
+            e.preventDefault()
+            if (e.shiftKey || e.metakey)
+                m.displayTop(this.m.top - NB_CLONES_CHANGE)
+            else
+                m.previousTime();
+            break;
+        case 39 :   // Right arrow
+            e.preventDefault()
+            if (e.shiftKey || e.metakey)
+                m.displayTop(m.top + NB_CLONES_CHANGE)
+            else
+                m.nextTime();
+            break;
+
+        case 83 :   // Ctrl+s
+            e.preventDefault()
+            if (e.ctrlKey || e.metakey) db.save_analysis()
+            break;
+
+        case 65 :   // Ctrl+a
+            e.preventDefault()
+            if (e.ctrlKey || e.metakey){
+                var d_m = $("#debug_menu")
+                if (d_m.css("display") == "none"){
+                    $("#debug_menu").css("display", "");
+                    $(".devel-mode").show();
+                    $(".beta-mode").show();
+                }else{
+                    $("#debug_menu").css("display", "none");
+                    $(".devel-mode").hide();
+                    $(".beta-mode").hide();
                 }
             }
-            
-            //system shortcuts
-            if (! e.ctrlKey && ! e.metaKey &&
-                typeof this.system_shortcuts[key] != "undefined") {
+            break;
+        case 80 :   //shift+p : open patient
+            e.preventDefault()
+            if(e.shiftKey || e.metakey) db.reload()
+            break;
 
-                    var germlines = this.system_shortcuts[key].filter(function(g) {return m.system_available.indexOf(g) != -1})
-                    if (germlines.length === 0)
-                        return ;
+        default:
+        }
 
-                    console.log("Germlines with key " + key + ": " + germlines)
+        switch(e.key) {
 
-                    // Find current germline
-                    var current = -1 ;
-                    for (var i = 0; i < germlines.length; i++) 
-                        {
-                            if (germlines[i] == m.germlineV.system)
-                                current = i ;
-                        }
+            // Cluster clones
+        case '+':   // cluster clones
+            e.preventDefault()
+            m.merge()
+            break;
+        case 'Backspace': // Revert to previous clusters (and thus undo cluster)
+            e.preventDefault()
+            m.restoreClusters()
+            break;
 
-                    // Cycle to next germline
-                    next_germline = germlines[(current+1) % germlines.length]
-                    m.changeGermline(next_germline, e.shiftKey)
-                } 
+            // Filter/zoom
+        case 'z':
+        case 'Z':
+            e.preventDefault()
+            if (m.getSelected().length === 0) {
+                // z, no clone selected: reset filters
+                m.reset_filter(false)
+                m.update()
+            } else {
+                if (!e.shiftKey)
+                    // z, some clone selected: focus (zoom) on these clones
+                    m.focusSelected()
+                else
+                    // shift+z, some clone selected: hide these clones
+                    m.hideSelected()
             }
+            break;
             
-            if (e.altKey && sp.reinit) {
-                sp.active_move = true;
-            }
+            // Scatterplot
+        case '#':   // switch grid/bar mode
+            e.preventDefault()
+            this.m.sp.switchMode()
+            break;
+        }
     }
 }
