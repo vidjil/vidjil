@@ -140,8 +140,9 @@ def schedule_fuse(sample_set_ids, config_ids):
             if row:
                 args.append([row.sample_set_membership.sequence_file_id, row.results_file.config_id,
                 row.results_file.id, row.sample_set_membership.sample_set_id, False])
-    task = scheduler.queue_task('refuse', [args],
-                                repeats = 1, timeout = defs.TASK_TIMEOUT)
+    if len(args) > 0:
+        task = scheduler.queue_task('refuse', [args],
+                                    repeats = 1, timeout = defs.TASK_TIMEOUT)
 
 def run_vidjil(id_file, id_config, id_data, grep_reads,
                clean_before=False, clean_after=False):
