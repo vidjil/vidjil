@@ -570,20 +570,6 @@ def delete_sequence_file(seq_id):
     else:
         return error_message('you need admin permission to delete this file')
 
-def get_sequence_file_sample_sets(sequence_file_id):
-    query = db((db.sample_set_membership.sequence_file_id == sequence_file_id)).select(db.sample_set_membership.sample_set_id)
-    sample_set_ids = []
-    for row in query:
-        sample_set_ids.append(row.sample_set_id)
-    return sample_set_ids
-
-def get_sequence_file_config_ids(sequence_file_id):
-    query = db((db.results_file.sequence_file_id == sequence_file_id)).select(db.results_file.config_id)
-    config_ids = []
-    for row in query:
-        config_ids.append(row.config_id)
-    return config_ids
-
 def delete():
     '''
     Called (via request) with:
