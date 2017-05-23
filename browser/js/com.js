@@ -90,7 +90,9 @@ function Com(default_console) {
             BUTTON_CLOSE_POPUP,
 
         "welcome": " <h2>Vidjil <span class='logo'>(beta)</span></h2>" +
-            "(c) 2011-2016, the Vidjil team" + "<br />Marc Duez, Mathieu Giraud, Ryan Herbert, Mikaël Salson, Tatiana Rocher and Florian Thonier" +
+            "(c) 2011-2017, the Vidjil team " +
+            (typeof git_sha1 !== "undefined" ? "&ndash; " + git_sha1 : "") + "</br>" +
+            "<br />Aurélien Béliard, Marc Duez, Mathieu Giraud, Ryan Herbert, Mikaël Salson, Tatiana Rocher and Florian Thonier" +
             " &ndash; <a href='http://www.vidjil.org'>http://www.vidjil.org/</a>" + "</br>" +
             "</br>Vidjil is developed by the <a href='http://cristal.univ-lille.fr/bonsai'>Bonsai bioinformatics team</a> (CRIStAL, CNRS, Univ. Lille, Inria Lille), " +
             "in collaboration with the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille, " +
