@@ -22,7 +22,7 @@ def index():
         disk_use, err = p.communicate()
         revision = 'not versioned'
         try:
-            p = subprocess.Popen(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE)
+            p = subprocess.Popen(["git", "log", "-1", "--pretty=format:'%h (%cd)'", "--date=short", "--abbrev-commit"], stdout=subprocess.PIPE)
             revision,  err = p.communicate()
         except:
             pass
