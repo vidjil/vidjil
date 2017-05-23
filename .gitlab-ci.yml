@@ -3,6 +3,7 @@
 before_script:
   - make data
   - make germline
+  - make -C browser sha1
 
 stages:
   - test_quality
