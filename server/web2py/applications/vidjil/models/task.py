@@ -128,19 +128,19 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     log.info(res)
     return res
 
-def schedule_fuse(id_sample_set, id_config):
-    sample_set = db.sample_set[id_sample_set]
-
-    sequence_file_id = db((db.sample_set_membership.sample_set_id == sample_set.id)
-                        &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
-                        ).select(db.sequence_file.id).first().id
-
-    results_file_id = db((db.results_file.sequence_file_id == sequence_file_id)
-                        & (db.results_file.config_id == id_config)
-                        ).select(db.results_file.id).first().id
-
-    args = [sequence_file_id, id_config, results_file_id, id_sample_set, False]
-    task = scheduler.queue_task('fuse', args,
+def schedule_fuse(sample_set_ids, config_ids):
+    args = []
+    for sample_set_id in sample_set_ids:
+        for config_id in config_ids:
+            row = db((db.sample_set_membership.sample_set_id == sample_set_id)
+                   & (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id)
+                   & (db.results_file.config_id == config_id)
+                ).select(db.sample_set_membership.sample_set_id, db.sample_set_membership.sequence_file_id,
+                        db.results_file.id, db.results_file.config_id).first()
+            if row:
+                args.append([row.sample_set_membership.sequence_file_id, row.results_file.config_id,
+                row.results_file.id, row.sample_set_membership.sample_set_id, False])
+    task = scheduler.queue_task('refuse', [args],
                                 repeats = 1, timeout = defs.TASK_TIMEOUT)
 
 def run_vidjil(id_file, id_config, id_data, grep_reads,
@@ -469,6 +469,10 @@ def run_copy(id_file, id_config, id_data, clean_before=False, clean_after=False)
     return "SUCCESS"
 
 
+def run_refuse(args):
+    for arg in args:
+        run_fuse(arg[0], arg[1], arg[2], arg[3], arg[4])
+    return "SUCCESS"
 
 def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
@@ -778,5 +782,5 @@ scheduler = Scheduler(db, dict(vidjil=run_vidjil,
                                mixcr=run_mixcr,
                                none=run_copy,
                                pre_process=run_pre_process,
-                               fuse=run_fuse),
+                               refuse=run_refuse),
                         heartbeat=defs.SCHEDULER_HEARTBEAT)
