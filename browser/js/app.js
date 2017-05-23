@@ -21,6 +21,10 @@ require(["jquery",
          });
 
 
+// Show git_sha1, when it exists
+require(["../git-sha1"], function () { console.log("Vidjil client " + git_sha1) }, function(err) { })
+
+
 function loadAfterConf() {
     // Then load views (otherwise that could generate some errors if
     // some files are loaded before the views)
