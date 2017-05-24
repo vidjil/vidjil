@@ -64,6 +64,7 @@ deploy_prod:
     - rsync -av --delete browser $PROD_CLIENT_SERVER:$PROD_CLIENT_PATH
   environment:
     name: production
+    url: http://app.vidjil.org/?data=analysis-example.vidjil
   only:
     - prod-client
     
