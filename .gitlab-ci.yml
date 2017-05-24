@@ -4,6 +4,7 @@ before_script:
   - make data
   - make germline
   - make -C browser sha1
+  - cp -p doc/analysis-example.vidjil browser/
 
 stages:
   - test_quality
@@ -49,7 +50,6 @@ deploy:
   stage: deploy
   script:
     - rsync -av --delete browser $DEPLOY_SERVER:$DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG
-    - scp doc/analysis-example.vidjil $DEPLOY_SERVER:$DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG/browser/
   environment:
     name: review/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
