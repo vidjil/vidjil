@@ -34,6 +34,9 @@ class VidjilAuth(Auth):
         self.admin = 'admin' in self.groups
 
     def exists(self, object_of_action, object_id):
+        if (object_of_action in self.permissions \
+            and object_id in self.permissions[object_of_action]):
+            return True
         return db[object_of_action][object_id] is not None
 
     def get_group_names(self):
