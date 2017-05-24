@@ -61,7 +61,7 @@ deploy:
 deploy_prod:
   stage: deploy
   script:
-    - ssh $PROD_CLIENT_SERVER "cd $PROD_CLIENT_PATH; git fetch ; git reset --hard origin/prod-client"
+    - rsync -av --delete browser $PROD_CLIENT_SERVER:$PROD_CLIENT_PATH
   environment:
     name: production
   only:
