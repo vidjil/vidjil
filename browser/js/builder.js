@@ -61,7 +61,6 @@ Builder.prototype = {
                 });
 
             this.build_top_container()
-            this.build_info_container()
             this.build_clusterSelector()
             this.initTag();
 
@@ -76,7 +75,6 @@ Builder.prototype = {
     update: function () {
         try {
             this.build_top_container()
-            this.build_info_container()
             this.updateTagBox();
         } catch(err) {
             sendErrorToDb(err, this.db);
