@@ -52,9 +52,6 @@ class VidjilAuth(Auth):
                 result_groups.append(group.role)
         return result_groups
 
-    def get_cache_key(self, action, object_of_action):
-        return action +  '/' + object_of_action
-
     def get_user_access_groups(self, object_of_action, oid, user):
         membership = self.table_membership()
         permission = self.table_permission()
@@ -160,14 +157,20 @@ class VidjilAuth(Auth):
 
         The result is cached to avoid DB calls.
         '''
-        key = self.get_cache_key(action, object_of_action)
         is_current_user = user == None
         if is_current_user:
             user = self.user_id
 
-        if not key in self.permissions and is_current_user:
-            self.permissions[key] = {}
-        if not is_current_user or not id in self.permissions[key]:
+        missing_value = False
+        if is_current_user:
+            if not object_of_action in self.permissions:
+                self.permissions[object_of_action] = {}
+            if not id in self.permissions[object_of_action]:
+                self.permissions[object_of_action][id] = {}
+                missing_value = True
+            if not action in self.permissions[object_of_action][id]:
+                missing_value = True
+        if not is_current_user or missing_value:
             perm_groups = self.get_permission_groups(action, object_of_action, user)
             if id > 0:
                 access_groups = self.get_access_groups(object_of_action, id, user)
@@ -176,25 +179,28 @@ class VidjilAuth(Auth):
                 intersection = perm_groups
             if not is_current_user:
                 return len(intersection) > 0
-            self.permissions[key][id] = len(intersection) > 0
-        return self.permissions[key][id]
+            self.permissions[object_of_action][id][action] = len(intersection) > 0
+        return self.permissions[object_of_action][id][action]
 
     def load_permissions(self, action, object_of_action):
         '''
         Loads the given permissions for the user into cache to allow for multiple calls to
         "can" while reducing the database overhead.
         '''
-        key = self.get_cache_key(action, object_of_action)
-        if key not in self.permissions:
-            self.permissions[key] = {}
+        if object_of_action not in self.permissions:
+            self.permissions[object_of_action] = {}
 
         query = db(self.vidjil_accessible_query(PermissionEnum.read.value, object_of_action)).select(self.db[object_of_action].id)
         for row in query:
-            self.permissions[key][row.id] = False
+            if row.id not in self.permissions[object_of_action]:
+                self.permissions[object_of_action][row.id] = {}
+            self.permissions[object_of_action][row.id][action] = False
 
         query = db(self.vidjil_accessible_query(action, object_of_action)).select(self.db[object_of_action].id)
         for row in query:
-            self.permissions[key][row.id] = True
+            if row.id not in self.permissions[object_of_action]:
+                self.permissions[object_of_action][row.id] = {}
+            self.permissions[object_of_action][row.id][action] = True
 
         return query
 
