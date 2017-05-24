@@ -62,6 +62,7 @@ deploy_prod:
   stage: deploy
   script:
     - rsync -av --delete browser $PROD_CLIENT_SERVER:$PROD_CLIENT_PATH
+    - ssh $PROD_CLIENT_SERVER "cp -pr $PROD_CLIENT_PATH_TEMPLATE/browser $PROD_CLIENT_PATH"
   environment:
     name: production
     url: http://app.vidjil.org/?data=analysis-example.vidjil
