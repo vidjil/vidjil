@@ -21,8 +21,9 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
-function Info(model) {
+function Info(model, builder) {
     View.call(this, model);
+    this.builder = builder;
 }
 
 Info.prototype = {
