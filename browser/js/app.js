@@ -50,6 +50,7 @@ function loadAfterConf() {
                                          "../graph",
                                          "../scatterPlot",
                                          "../builder",
+                                         "../info",
                                          "../com",
                                          "../vidjil-style",
                                          "../crossDomain",
