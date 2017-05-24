@@ -188,7 +188,7 @@ Info.prototype = {
                     'info');
             parent.appendChild(div_sequence_info);
 
-            this.initTag();
+            this.builder.initTag();
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -233,7 +233,7 @@ Info.prototype = {
     },
 
     create_edit_input: function (id, value) {
-        var input = this.setupInput(id, "", "text", value);
+        var input = this.builder.setupInput(id, "", "text", value);
         this.setup_edit_input(input);
         input.style.width = "200px";
         input.style.border = "0px";
@@ -258,8 +258,8 @@ Info.prototype = {
     },
 
     post_save: function(self) {
-        self.build_top_container();
-        self.build_info_container();
+        self.builder.build_top_container();
+        self.init();
         self.m.update();
         self.m.analysisHasChanged = true;
     },
@@ -298,7 +298,6 @@ Info.prototype = {
         return container;
     },
 
-    // TODO ambiguous with build_info_container => find another name ?
     create_info_container: function (info, className, id, placeholder, target) {
         var self = this;
         var container = document.createElement('div');
@@ -358,7 +357,7 @@ Info.prototype = {
 
             keys += 1 ;
 
-            var checkbox = this.setupInput("checkbox_system_" + key, "", "checkbox", "");
+            var checkbox = this.builder.setupInput("checkbox_system_" + key, "", "checkbox", "");
             checkbox.className = "hiddenCheckBox";
             checkbox.appendChild(document.createTextNode(key));
             if (this.m.system_selected.indexOf(key) != -1)
@@ -477,7 +476,7 @@ Info.prototype = {
         case "Tag":
 
             var span_onclick = function () {
-                self.nextDisplayTag(this);
+                self.builder.nextDisplayTag(this);
             }
 
             for (var i = 0; i < this.m.tag.length; i++) {
