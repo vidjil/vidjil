@@ -210,7 +210,7 @@ deploy_prod:
     - ssh $PROD_CLIENT_SERVER "cp -pr $PROD_CLIENT_PATH_TEMPLATE/browser $PROD_CLIENT_PATH"
   environment:
     name: production
-    url: http://app.vidjil.org/?data=analysis-example.vidjil
+    url: http://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil
   only:
     - prod-client
   tags:
