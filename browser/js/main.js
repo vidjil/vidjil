@@ -75,6 +75,7 @@ try {
      * TODO replace with a menu and info view
      */
     var builder = new Builder(m, db);
+    var info = new Info(m, builder);
 
 
     /* [WIP] Shortcut (optional)
