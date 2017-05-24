@@ -194,6 +194,14 @@ Info.prototype = {
         }
     },
 
+    update: function () {
+        try {
+            this.init();
+        } catch(err) {
+            sendErrorToDb(err, this.db);
+        }
+    },
+
     updateElem : function (list) {},
 
     updateElemStyle : function () {},
