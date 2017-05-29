@@ -66,7 +66,10 @@ Builder.prototype = {
 
             // if (this.m.samples.order.length == 1) this.resizeGraph(0)
             if (this.m.samples.order.length == 1) {
-                document.getElementById('right-container').style.width = "500px";
+                var rc = document.getElementById('right-container')
+                rc.style.width = "500px";
+                rc.style.zIndex = -10;
+                rc.style.position = "absolute";
                 var sp3 = new ScatterPlot('right-container', m, db);
             }
                 // setTimeout(function() {
