@@ -28,6 +28,13 @@ function Axes (model) {
 
 V_IDENTITY_THRESHOLD = 98.0
 
+function createClassedSpan (className, innerText) {
+    var span = document.createElement('span');
+    span.className = className;
+    span.innerText = innerText;
+    return span;
+}
+
 Axes.prototype = {
 
     available: function(){
