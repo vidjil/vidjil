@@ -64,14 +64,14 @@ Axes.prototype = {
                 label: "clone consensus length",
                 axis: new NumericalAxis(this.m, false, true),
                 fct: function(clone) {return clone.getSequenceLength()},
-                pretty: function(len) {return '<span class="threeDigits">'+len+'</span>'}
+                pretty: function(len) { return createClassedSpan('threeDigits', len) }
             },
             "readLength" : {
                 doc: "average length of the reads belonging to each clone",
                 label: "clone average read length",
                 axis: new FloatAxis(this.m),
                 fct: function(clone) {return clone.getAverageReadLength()},
-                pretty: function(len) {return '<span class="widestBox">' + (len == 'undefined' ? '?' : len) + '</span>'}
+                pretty: function(len) { return createClassedSpan('widestBox', (len == 'undefined' ? '?' : len)) }
             },
             "GCContent" : {
                 doc: "%GC content of the consensus sequence of each clone",
@@ -84,14 +84,14 @@ Axes.prototype = {
                 label: "N length",
                 axis: new NumericalAxis(this.m),
                 fct: function(clone) {return clone.getNlength()},
-                pretty: function(len) {return '<span class="threeDigits">'+len+'</span>'}
+                pretty: function(len) { return createClassedSpan('threeDigits', len) }
             },
             "lengthCDR3": {
                 doc: "CDR3 length, in nucleotides, from Cys104 and Phe118/Trp118 (excluded)",
                 label: "CDR3 length (nt)",
                 axis: new NumericalAxis(this.m),
                 fct: function(clone) {return clone.getSegLength('cdr3')},
-                pretty: function(len) {return '<span class="threeDigits">' + (len == 'undefined' ? '?' : len) + '</span>'}
+                pretty: function(len) { return createClassedSpan('threeDigits', (len == 'undefined' ? '?' : len)) }
             },
             "productivity": {
                 label: "productivity",
@@ -132,7 +132,7 @@ Axes.prototype = {
                 label: "tag",
                 axis: new GenericAxis(),
                 fct: function(clone) {return clone.getTagName()},
-                pretty: function(tag) {return '<span class="widestBox">'+tag+'</span>'}
+                pretty: function(tag) { return createClassedSpan('widestBox', tag) }
             },
             "coverage": {
                 doc: "ratio of the length of the clone consensus sequence to the median read length of the clone",
@@ -149,17 +149,14 @@ Axes.prototype = {
                 label: "locus",
                 axis: new GenericAxis(),
                 fct: function(clone){return clone.germline},
-                pretty: function(system){
-                    var ret = self.m.systemBox(system);
-                    return (ret instanceof Element ? ret.outerHTML : ret);
-                }
+                pretty: function(system) { return self.m.systemBox(system) }
             },
             "Size" : {
                 doc: "ratio of the number of reads of each clone to the total number of reads in the selected locus",
                 label: "size",
                 axis: new PercentAxis(this.m),
                 fct : function(clone){return clone.getSizeZero()},
-                pretty: function(size) {return '<span class="sizeBox sixChars">'+(self.m ? self.m : self).getStrAnySize(undefined, size)+'</span>'},
+                pretty: function(size) { return createClassedSpan("sizeBox sixChars", (self.m ? self.m : self).getStrAnySize(undefined, size)) },
                 min : function(){return self.m.min_size},
                 max : 1,
                 log : true
@@ -177,7 +174,7 @@ Axes.prototype = {
                 label: "number of samples sharing each clone",
                 axis : new NumericalAxis(this.m),
                 fct : function(clone){return clone.getNumberNonZeroSamples()},
-                pretty: function(nb) {return '<span class="twoDigits">'+nb+'</span>'},
+                pretty: function(nb) { return createClassedSpan('twoDigits', nb) },
                 min : 1,
                 max : function(){ return self.m.samples.number }
             },
