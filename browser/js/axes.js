@@ -97,13 +97,13 @@ Axes.prototype = {
                 label: "productivity",
                 axis: new GenericAxis(),
                 fct: function(clone) {return clone.getProductivityName()},
-                pretty: function(tag) { return icon_pm(tag, "productive", "not productive").outerHTML },
+                pretty: function(tag) { return icon_pm(tag, "productive", "not productive") },
             },
             "productivity-IMGT": {
                 label: "productivity (as computed by IMGT/V-QUEST)",
                 axis: new GenericAxis(),
                 fct: function(clone) { return clone.getProductivityIMGT() },
-                pretty: function(tag) { return icon_pm(tag, "productive", "not productive").outerHTML },
+                pretty: function(tag) { return icon_pm(tag, "productive", "not productive") },
                 hide: true
             },
             "VIdentity-IMGT": {
@@ -123,7 +123,7 @@ Axes.prototype = {
                         info.setAttribute('title', 'V-REGION identity %, as computed by IMGT/V-QUEST')  // with indel or not ?
                         Videntity_info.appendChild(info)
                     } else Videntity_info.innerHTML = "&nbsp;";
-                    return Videntity_info.outerHTML
+                    return Videntity_info;
                 },
                 hide: true
             },
