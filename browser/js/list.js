@@ -493,6 +493,7 @@ List.prototype = {
                 var span_axis = div_elem.getElementsByClassName("axisBox")[0];
                 span_axis.style.color = clone.getColor();
                 var axis = this.selectedAxis;
+                span_axis.removeAllChildren();
                 span_axis.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
                 // span_axis.setAttribute('title', clone.getPrintableSize());
 

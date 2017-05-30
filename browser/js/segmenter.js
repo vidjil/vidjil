@@ -627,6 +627,7 @@ Segment.prototype = {
         for (var i in this.selectedAxis) {
             var span = document.createElement('span');
             var axis = this.selectedAxis[i];
+            span.removeAllChildren();
             span.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
             span.setAttribute('title', this.selectedAxis[i].label);
             span.className = axOpts[i];
