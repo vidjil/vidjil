@@ -65,17 +65,11 @@ Builder.prototype = {
             this.initTag();
 
             // if (this.m.samples.order.length == 1) this.resizeGraph(0)
-            if (this.m.samples.order.length == 1) {
-                var rc = document.getElementById('right-container')
-                // rc.style.width = "500px";
-                rc.style.zIndex = -10;
-                rc.style.position = "absolute";
-                var sp3 = new ScatterPlot('right-container', m, db);
-            }
-                // setTimeout(function() {
-                //     switch_visu2('scatterplot');
-                //     document.getElementById("visu2_mode_sp").checked = true;
-                // })
+            if (this.m.samples.order.length == 1)
+                setTimeout(function() {
+                    switch_visu2('scatterplot');
+                    document.getElementById("visu2_mode_sp").checked = true;
+                })
             else this.resizeGraph(50)
 
         } catch (err) {

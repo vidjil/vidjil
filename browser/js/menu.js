@@ -190,12 +190,11 @@ function switch_visu2(view) {
         tmp = graph;
     }
     else if (view == "scatterplot") {
-        // sp2 = new ScatterPlot("visu2", m, db);
-        // sp2.default_preset = 5;
+        sp2 = new ScatterPlot("visu2", m, db);
+        sp2.default_preset = 5;
         tmp = sp2;
     }
 
-    document.getElementById('visu2').removeAllChildren();
-    // tmp.init();
-    // tmp.resize();
+    tmp.init();
+    tmp.resize();
 }
