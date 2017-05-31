@@ -17,8 +17,8 @@ class TestSimple < BrowserTest
 
   def test_00_double_scatterplot
     # analysis-example has only one sample, second scatterplot expected
-    assert ( $b.div(:id => 'visu', :class => 'scatterplot').exists?), "First scatterplot should be found"
-    assert ( $b.div(:id => 'visu2', :class => 'scatterplot').exists?), "Second scatterplot should be found"
+    assert ( $b.div(:id => 'visu', :class => 'scatterplot').visible?), "First scatterplot should be found"
+    assert ( $b.div(:id => 'visu2', :class => 'scatterplot').visible?), "Second scatterplot should be found"
   end
 
   def test_01_legend_scatterplot
