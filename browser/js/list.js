@@ -492,7 +492,9 @@ List.prototype = {
                 //update clone axis
                 var span_axis = div_elem.getElementsByClassName("axisBox")[0];
                 span_axis.style.color = clone.getColor();
-                span_axis.innerHTML = this.selectedAxis.pretty ? this.selectedAxis.pretty(this.selectedAxis.fct(clone)) : this.selectedAxis.fct(clone);
+                var axis = this.selectedAxis;
+                span_axis.removeAllChildren();
+                span_axis.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
                 // span_axis.setAttribute('title', clone.getPrintableSize());
 
                 //update cluster icon
