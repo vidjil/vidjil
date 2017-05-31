@@ -15,6 +15,12 @@ class TestSimple < BrowserTest
     assert ($b.graph().style('height')=='0px'), "Graph should be hidden"
   end
 
+  def test_00_double_scatterplot
+    # analysis-example has only one sample, second scatterplot expected
+    assert ( $b.div(:id => 'visu', :class => 'scatterplot').exists?), "First scatterplot should be found"
+    assert ( $b.div(:id => 'visu2', :class => 'scatterplot').exists?), "Second scatterplot should be found"
+  end
+
   def test_01_legend_scatterplot
     assert ($b.scatterplot_x_legend(0).text == "TRGV5"), "First legend should be TRGV5"
     assert ($b.scatterplot_y_legend(0).text == "TRGJ1"), "First legend should be TRGJ1"
