@@ -52,9 +52,10 @@
     "commandline": [
       "/home/vidjil//vidjil -o /mnt/result/tmp/out-000653/ -b 000653 -g germline/mus-musculus/ /mnt/upload/uploads/sequence_file.data_file.8e82b58dd8f6ccd0.5754322e66712e617373656d626c65642e66617374712e677a.gz "
     ], 
-    "number": 1, 
+    "number": 2, 
     "original_names": [
-      "helloworld"
+      "helloworld",
+      "nothingtoseehere"
     ], 
     "log": [
       "  ==> segmented 742386 reads (94.3%)\n  ==> found 318962 40-windows in 742377 segments (94.3%) inside 786861 sequences\n                                  #      av. length\n   TRG                  ->      521      166.0\n   IGH                  ->     1632      174.6\n   TRD                  ->    22239      173.1\n   IGK                  ->      509      163.7\n   TRA                  ->     1415      174.3\n   TRB                  ->   716036      176.6\n   IGL                  ->       34      192.5\n\n   ?                    ->        0\n   SEG_+                ->   233333      178.8\n   SEG_-                ->   509053      175.4\n   UNSEG too short      ->        0\n   UNSEG strand         ->     7588      221.8\n   UNSEG too few (zero) ->    19482      174.2\n   UNSEG too few V      ->     2012      182.6\n   UNSEG too few J      ->    14993      202.1\n   UNSEG < delta_min    ->        0\n   UNSEG > delta_max    ->      385      197.4\n   UNSEG ambiguous      ->       15      208.6\n\n   = SEG, with window   ->   742377      176.5\n   = SEG, but no window ->        9      131.7\n"
