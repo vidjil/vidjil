@@ -2,7 +2,7 @@
 rename_reports_in() {
     dir="$1"
     b="$2"
-    if [ "$b" == "." ]; then
+    if [ "$b" = "." ]; then
         b="default"
     else
         b=$(echo "$b" | tr '/' '-')
