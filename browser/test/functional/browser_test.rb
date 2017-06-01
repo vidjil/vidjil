@@ -64,8 +64,8 @@ class BrowserTest < MiniTest::Test
 
       print "Welcome popup.\n"
 
-      # check the welcoming popup
-      assert ($b.div(:class => 'popup_msg').present?), "Popup message is not present at the opening of Vidjil"
+      # wait for the welcoming popup
+      $b.div(:class => 'popup_msg').wait_until_present(2)
     
       # close the welcoming popup
       $b.div(:class => 'popup_msg').button(:text => 'ok').click
