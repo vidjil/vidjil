@@ -10,6 +10,8 @@ class VidjilBrowser < Watir::Browser
     end
     # :chrome or :safari
     super :firefox
+
+    print "Running "+driver.capabilities.browser_name+" "+driver.capabilities.version+"\n"
   end
 
   # Return the text field that allows to edit a clone name
