@@ -294,7 +294,7 @@ The cache is stored for each user and is updated only when a change occurs (mess
 
 **** Architecture
     The browser functional testing is done in the directory
-    =browser/tests=, with Watir.
+    =browser/tests/functional=, with Watir.
     The functional tests are built using two base files:
     - vidjil_browser.rb :: abstracts the vidjil browser (avoid using IDs or
          class names that could change in the test). The tests must rely as
@@ -303,11 +303,13 @@ The cache is stored for each user and is updated only when a change occurs (mess
     - browser_test.rb :: prepares the environment for the tests. Each test
          file will extend this class (as can be seen in test_multilocus.rb)
 
+    The file =segmenter_test.rb= extends the class in =browser_test.rb= to adapt
+    it to the purpose of testing the analyze autonomous app.
+
     The tests are in the files whose name matches the pattern =test*.rb=. The
-    tests are launched by the script in =launch_functional_tests= which launches
+    tests are launched by the script in =../launch_functional_tests= which launches
     all the files matching the previous pattern. It also backs up the test
     reports as =ci_reporter= removes them before each file is run.
-
 
 **** Installation
 
@@ -358,6 +360,14 @@ the webdriver may not work with recent versions of Firefox (> 45).
 make functional
 #+END_SRC
 
+    By default the tests are launched on the Firefox installed on the system.
+    This can be modified by providing the =FUNCTIONAL_CLIENT_BROWSER_PATH=
+    environment variable (which can contain several pathes, separated with
+    spaces) to the =launch_functional_tests= script.  Or, if one wants to launch
+    individual test scripts, to set the =WATIR_BROWSER_PATH= environment
+    variable.
+
+
 **** Headless mode
 
    On servers without a X server the browser tests can be launched in headless
@@ -388,7 +398,8 @@ make functional
    2. =vncviewer :0=
 **** Interactive mode
      For debugging purposes, it may be useful to launch Watir in interactive
-     mode. In that case, you should launch =irb= in the =browser/tests= directory.
+     mode. In that case, you should launch =irb= in the =browser/tests/functional=
+     directory.
 
      Then load the file =browser_test.rb= and create a =BrowserTest=:
      #+BEGIN_SRC ruby

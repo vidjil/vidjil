@@ -27,8 +27,8 @@ class BrowserTest < MiniTest::Test
   end
 
   def set_browser(vidjil_file, analysis_file=nil)
-    folder_path = Dir.pwd
-    folder_path.sub! '/browser/test', ''
+    folder_path = File.expand_path(File.dirname(__FILE__))
+    folder_path.sub! '/browser/test/functional', ''
     index_path = 'file://' + folder_path + '/browser/index.html'
     data_path = folder_path + vidjil_file
     analysis_path = nil
@@ -41,9 +41,7 @@ class BrowserTest < MiniTest::Test
     end
       
     print "Open browser\n"
-    #$b = VidjilBrowser.new :safari
-    $b = VidjilBrowser.new :firefox
-    #$b = VidjilBrowser.new :chrome
+    $b = VidjilBrowser.new
 
     print "Resize\n"
     $b.window.resize_to(1500, 800)
@@ -66,8 +64,8 @@ class BrowserTest < MiniTest::Test
 
       print "Welcome popup.\n"
 
-      # check the welcoming popup
-      assert ($b.div(:class => 'popup_msg').present?), "Popup message is not present at the opening of Vidjil"
+      # wait for the welcoming popup
+      $b.div(:class => 'popup_msg').wait_until_present(2)
     
       # close the welcoming popup
       $b.div(:class => 'popup_msg').button(:text => 'ok').click

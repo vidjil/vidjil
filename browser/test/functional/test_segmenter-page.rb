@@ -1,42 +1,7 @@
 load 'segmenter_browser.rb'
-load 'browser_test.rb'
+load 'segmenter_test.rb'
 
-class TestSegmenterPage < BrowserTest
-
-  def set_browser
-    # Redefine set_browser as the tested webpage is totally different
-
-    folder_path = Dir.pwd
-    folder_path.sub! '/browser/test', ''
-    index_path = 'file://' + folder_path + '/browser/segmenter_page.html'
-
-    print "Open browser\n"
-    #$b = VidjilBrowser.new :safari
-    $b = SegmenterBrowser.new :firefox
-    #$b = VidjilBrowser.new :chrome
-
-    print "Resize\n"
-    $b.window.resize_to(1500, 800)
-
-    print "Testing segmenter page at " + index_path + "\n"
-    $b.goto index_path
-
-    # check that the segmenter loaded correctly
-    if not $b.textarea(:id => 'form_sequences').present?
-      print "Loading of segmenter page failed. Do not execute remaining tests."
-      exit
-    end
-
-    print "Segmenter page loaded, launching tests.\n"
-    
-  end
-  
-  def setup
-    super
-    if not defined? $b
-      set_browser
-    end
-  end
+class TestSegmenterPage < SegmenterTest
 
   def test_00_launch_query
     sequences = $b.textarea(:id => 'form_sequences')
@@ -148,7 +113,7 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
 
     assert (right_coord_of_textarea < left_coord_of_scatterplot), "Textarea should be left of scatterplot"
   end
-  
+
   def test_zz_close
     close_everything
   end

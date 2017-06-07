@@ -40,7 +40,7 @@ Info.prototype = {
                     patient_info,
                     'patient_info',
                     'patient_info_text',
-                    'patient information',
+                    'information',
                     'info');
             parent.appendChild(div_patient_info);
 
