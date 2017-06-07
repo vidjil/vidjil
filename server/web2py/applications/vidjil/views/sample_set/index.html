@@ -156,7 +156,7 @@
     
    <br /><br />
    {{if can_modify:}}
-   <i class="icon-pencil-2" title="edit patient information" onclick="db.call('sample_set/edit', { 'id' : '{{=request.vars["id"]}}' } )" > </i>
+   <i class="icon-pencil-2" title="edit information" onclick="db.call('sample_set/edit', { 'id' : '{{=request.vars["id"]}}' } )" > </i>
    {{pass}}
    {{=info["info"]}}
 
@@ -190,7 +190,7 @@
         <span class="button2" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )"> + add sample </span>
 
         {{pass}}
-        <span class="button2" onclick="db.call('sample_set/custom', {'id': '{{=request.vars['id']}}', 'filter': ''} )">compare samples for this patient</span>
+        <span class="button2" onclick="db.call('sample_set/custom', {'id': '{{=request.vars['id']}}', 'filter': ''} )">compare some of these samples</span>
     </div>
 
 
