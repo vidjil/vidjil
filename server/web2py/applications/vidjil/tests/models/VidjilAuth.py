@@ -672,8 +672,7 @@ class VidjilauthModel(unittest.TestCase):
         self.assertEqual(Counter(expected), Counter(res),
                 "Expected %s, but got %s for user %d" % (str(expected), str(res), auth.user_id))
 
-        key = auth.get_cache_key(PermissionEnum.admin.value, 'patient')
-        cache_content = auth.permissions[key][patient_id_ter]
+        cache_content = auth.permissions['patient'][patient_id_ter]['admin']
         self.assertTrue(cache_content, "The results from load_permissions were not loaded into cache")
 
     def testGetGroupPermission(self):
