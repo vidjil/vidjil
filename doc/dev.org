@@ -165,7 +165,7 @@ The first three solutions need some further elements from the full =index.html=.
      The variable =this.color= must contain a color (either in HTML or RGB, or…).
 
      Then a legend must be displayed to understand what the color represents.
-     For this sake, modify the =build_info_color= method in [[file:../browser/js/builder.js][builder.js]] file. By
+     For this sake, modify the =build_info_color= method in [[file:../browser/js/info.js][info.js]] file. By
      default four spans are defined (that can be used) to display the legend:
      =span0=, ..., =span3=.
 
