@@ -21,8 +21,9 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
-function Info(model, builder) {
+function Info(id, model, builder) {
     View.call(this, model);
+    this.id = id;
     this.builder = builder;
 }
 
@@ -31,7 +32,7 @@ Info.prototype = {
     init : function () {
         var self = this
         try {
-            var parent = document.getElementById("info");
+            var parent = document.getElementById(this.id);
             parent.removeAllChildren();
 
             var patient_info = typeof this.m.info != 'undefined' ? this.m.info : "";
