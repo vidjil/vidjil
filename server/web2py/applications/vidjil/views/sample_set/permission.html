@@ -38,5 +38,5 @@
 </div>
 
 {{if not auth.can_modify_patient(request.vars["id"]) :}}
-    <div>you need admin access on this patient if you want to change permission </div>
+    <div>you need admin access on this {{=helper.get_type_display()}} if you want to change permission </div>
 {{pass}}
