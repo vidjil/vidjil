@@ -266,6 +266,7 @@ Builder.prototype = {
     },
 
     buildSystemSelector: function (system){
+        var self = this
         var radio=document.createElement("input");
             radio.type="radio";
             radio.name="germline";
@@ -274,7 +275,7 @@ Builder.prototype = {
 
         div = document.createElement('div');
         div.onclick = function(){
-            m.changeGermline(system, false)
+            self.m.changeGermline(system, false)
         }
         div.className="buttonSelector"
         div.appendChild(radio)
@@ -393,12 +394,12 @@ Builder.prototype = {
         menu_box.className = "menu_box";
         interm.appendChild(menu_box);
 
-        if (typeof m.sample_set_id != 'undefined') {
+        if (typeof this.m.sample_set_id != 'undefined') {
             var open_patient = document.createElement('a');
             open_patient.className = "buttonSelector";
             open_patient.appendChild(document.createTextNode("open"));
 	    open_patient.onclick = function() {
-	        db.call('sample_set/index', {'id' : m.sample_set_id});
+	        db.call('sample_set/index', {'id' : self.m.sample_set_id});
 	    }
             menu_box.appendChild(open_patient);
 
