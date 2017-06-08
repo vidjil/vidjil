@@ -654,7 +654,7 @@ class VidjilauthModel(unittest.TestCase):
         self.assertFalse(res, "User %d should not have admin permissions on patient %d" % (auth.user_id, patient_id))
 
     def testGetPermissionGroups(self):
-        res = auth.get_permission_groups(PermissionEnum.admin.value, 'patient', user_id_sec)
+        res = auth.get_permission_groups(PermissionEnum.admin.value, user_id_sec)
         expected = [group_sec]
         self.assertEqual(Counter(expected), Counter(res),
                 "Expected: %s, but got %s for user %d" % (str(expected), str(res), auth.user_id))

@@ -115,7 +115,7 @@ class VidjilAuth(Auth):
             return self.get_user_access_groups(object_of_action, oid, user)
         return self.get_group_access_groups(object_of_action, oid, group)
 
-    def get_permission_groups(self, action, object_of_action, user=None):
+    def get_permission_groups(self, action, user=None):
         '''
         Returns all the groups for which a user has a given permission
         '''
@@ -174,7 +174,7 @@ class VidjilAuth(Auth):
             if not action in self.permissions[object_of_action][id]:
                 missing_value = True
         if not is_current_user or missing_value:
-            perm_groups = self.get_permission_groups(action, object_of_action, user)
+            perm_groups = self.get_permission_groups(action, user)
             if id > 0:
                 access_groups = self.get_access_groups(object_of_action, id, user)
                 intersection = set(access_groups).intersection(perm_groups)
@@ -625,7 +625,7 @@ class VidjilAuth(Auth):
             return table.id > 0
         membership = self.table_membership()
         permission = self.table_permission()
-        perm_groups = self.get_permission_groups(name, table, user_id)
+        perm_groups = self.get_permission_groups(name, user_id)
         query = (table.id.belongs(
                 db(((membership.user_id == user_id) &
                     (membership.group_id.belongs(perm_groups)) &
