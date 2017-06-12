@@ -222,6 +222,7 @@ def add_form():
                 log_message = "registered"
                 os.symlink(filepath, defs.DIR_SEQUENCES + data['data_file'])
                 data['size_file'] = os.path.getsize(filepath)
+                data['network'] = True
             db.sequence_file[id] = data
 
 
