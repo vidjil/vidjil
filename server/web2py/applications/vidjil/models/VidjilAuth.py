@@ -462,16 +462,6 @@ class VidjilAuth(Auth):
         the group whose ID is group_id
         '''
         return self.can_view('auth_group', group_id, user)
-        
-    def can_view_patient_info(self, patient_id, user = None):
-        '''
-        Returns True iff the current user can see the personal information
-        of the patient whose ID is given in parameter.
-
-        If the user is None, the current user is taken into account
-        '''
-        exists = self.exists('patient', patient_id)
-        return exists and self.get_permission(PermissionEnum.anon.value, 'patient', patient_id, user)
 
     def can_view_info(self, type, id, user = None):
         '''
