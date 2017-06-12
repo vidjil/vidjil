@@ -142,7 +142,7 @@ def manage_filename(filename):
         split_file = filename.split('.')
         uuid_key = db.uuid().replace('-', '')[-16:]
         encoded_filename = base64.b16encode('.'.join(split_file[0:-1])).lower()
-        data_file = "sf.%s.%s.%s" % (
+        data_file = "sequence_file.data_file.%s.%s.%s" % (
                 uuid_key, encoded_filename, split_file[-1]
             )
         data['data_file'] = data_file
