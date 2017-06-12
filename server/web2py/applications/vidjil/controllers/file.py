@@ -221,6 +221,7 @@ def add_form():
             if data['data_file'] is not None:
                 log_message = "registered"
                 os.symlink(filepath, defs.DIR_SEQUENCES + data['data_file'])
+                data['size_file'] = os.path.getsize(filepath)
             db.sequence_file[id] = data
 
 
