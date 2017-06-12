@@ -461,11 +461,7 @@ class VidjilAuth(Auth):
         Returns Trie if the current user can view
         the group whose ID is group_id
         '''
-        exists = self.exists('auth_group', group_id)
-        return exists\
-            and (self.get_permission(PermissionEnum.read_group.value, 'auth_group', group_id, user)\
-            or self.can_modify_group(group_id, user)\
-            or self.is_admin(user))
+        return self.can_view('auth_group', group_id, user)
         
     def can_view_patient_info(self, patient_id, user = None):
         '''
