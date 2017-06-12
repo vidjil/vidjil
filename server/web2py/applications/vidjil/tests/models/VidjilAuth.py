@@ -523,13 +523,18 @@ class VidjilauthModel(unittest.TestCase):
         self.assertTrue(result,
                 "User %d is a member of admin group and is missing permissions to save sample_set %d" % (user_id, first_sample_set_id))
 
-    def testCanViewPatientInfo(self):
-        result = auth.can_view_patient_info(patient_id_sec, auth.user_id)
+    def testCanViewInfo(self):
+        result = auth.can_view_info('patient', patient_id_sec, auth.user_id)
         self.assertFalse(result, "User %d should not have permission anon for patient %d" % (auth.user_id, patient_id_sec))
 
+        # give anon permission to user
         db.auth_permission.insert(group_id=group, name=PermissionEnum.anon.value, table_name='sample_set', record_id=0)
         db.commit()
-        result = auth.can_view_patient_info(patient_id_sec, auth.user_id)
+
+        # clear the cache (or else the new permission will be ignored)
+        auth.permissions = {}
+
+        result = auth.can_view_info('patient', patient_id_sec, auth.user_id)
         self.assertTrue(result, "User %d is missing permission anon for patient: %d" % (auth.user_id, patient_id_sec))
 
     def testGetGroupParent(self):
