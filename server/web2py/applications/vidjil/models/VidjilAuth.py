@@ -280,21 +280,16 @@ class VidjilAuth(Auth):
         
     def can_modify_sample_set(self, sample_set_id, user = None) :
         sample_set = db.sample_set[sample_set_id]
+        sample_type = sample_set.sample_type
 
         if sample_set is None:
             return False
         perm = self.get_permission(PermissionEnum.admin.value, 'sample_set', sample_set_id, user)\
             or self.is_admin(user)
 
-        if (sample_set.sample_type == "patient") :
-            for row in db( db.patient.sample_set_id == sample_set_id ).select() :
-                if self.can_modify_patient(row.id, user):
-                    perm = True;
-
-        if (sample_set.sample_type == "run") :
-            for row in db( db.run.sample_set_id == sample_set_id ).select() :
-                if self.can_modify_run(row.id, user):
-                    perm = True;
+        for row in db( db[sample_type].sample_set_id == sample_set_id ).select() :
+            if self.can_modify(sample_type, row.id, user):
+                perm = True;
 
         return perm
 
@@ -446,49 +441,18 @@ class VidjilAuth(Auth):
             or self.can_modify_config(config_id, user)\
             or self.is_admin(user))
 
-    def can_view_patient(self, patient_id, user = None):
-        '''
-        Returns True iff the current user can view
-        the patient whose ID is patient_id
-
-        If the user is None, the current user is taken into account
-        '''
-        exists = self.exists('patient', patient_id)
-        return exists\
-            and (self.get_permission(PermissionEnum.read.value, 'patient', patient_id ,user)\
-            or self.can_modify_patient(patient_id, user)\
-            or self.is_admin(user))
-            
-    def can_view_run(self, run_id, user = None):
-        '''
-        Returns True iff the current user can view
-        the patient whose ID is patient_id
-
-        If the user is None, the current user is taken into account
-        '''
-        exists = self.exists('run', run_id)
-        return exists\
-            and (self.get_permission(PermissionEnum.read.value, 'run', run_id ,user)\
-            or self.can_modify_run(run_id, user)\
-            or self.is_admin(user))
-            
     def can_view_sample_set(self, sample_set_id, user = None) :
         sample_set = db.sample_set[sample_set_id]
+        sample_type = sample_set.sample_type
         if sample_set is None:
             return False
-        
-        perm = self.get_permission(PermissionEnum.admin.value, 'sample_set', sample_set_id, user)\
+
+        perm = self.get_permission(PermissionEnum.read.value, 'sample_set', sample_set_id, user)\
             or self.is_admin(user)
 
-        if (sample_set.sample_type == "patient") :
-            for row in db( db.patient.sample_set_id == sample_set_id ).select() :
-                if self.can_view_patient(row.id, user):
-                    perm = True;
-
-        if (sample_set.sample_type == "run") :
-            for row in db( db.run.sample_set_id == sample_set_id ).select() :
-                if self.can_view_run(row.id, user):
-                    perm = True;
+        for row in db( db[sample_type].sample_set_id == sample_set_id ).select() :
+            if self.can_view(sample_type, row.id, user):
+                perm = True;
 
         return perm
 
