@@ -468,27 +468,16 @@ class VidjilauthModel(unittest.TestCase):
         self.assertTrue(result,
                 "User %d is a member of admin group and is missing permissions to use config %d" % (user_id, config_id))
 
-    def testCanViewPatient(self):
-        result = auth.can_view_patient(patient_id_qua)
+    def testCanView(self):
+        result = auth.can_view('patient', patient_id_qua)
         self.assertFalse(result, "User %d should not have permission to view patient %d" % (auth.user_id, patient_id_qua))
 
-        result = auth.can_view_patient(patient_id_qua, user_id_sec)
+        result = auth.can_view('patient', patient_id_qua, user_id_sec)
         self.assertTrue(result, "User %d should be able to view patient %d" % (user_id_sec, patient_id_qua))
 
-        result = auth.can_view_patient(patient_id_qua, user_id)
+        result = auth.can_view('patient', patient_id_qua, user_id)
         self.assertTrue(result,
                 "User %d is a member of admin group and is missing permissions to view patient %d" % (user_id, patient_id_qua))
-
-    def testCanViewRun(self):
-        result = auth.can_view_run(run_id)
-        self.assertFalse(result, "User %d should not have permission to view run %d" % (auth.user_id, run_id))
-
-        result = auth.can_view_run(run_id, user_id_sec)
-        self.assertTrue(result, "User %d should be able to view run %d" % (user_id_sec, run_id))
-
-        result = auth.can_view_run(run_id, user_id)
-        self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to view run %d" % (user_id, run_id))
 
     def testCanViewSampleSet(self):
         result = auth.can_view_sample_set(first_sample_set_id)
@@ -630,7 +619,7 @@ class VidjilauthModel(unittest.TestCase):
 
         res_can = []
         for p in full_patient_list:
-            if auth.can_view_patient(p, auth.user_id):
+            if auth.can_view('patient', p, auth.user_id):
                 res_can.append(p)
 
         self.assertEqual(Counter(res_accessible), Counter(res_can),
@@ -643,7 +632,7 @@ class VidjilauthModel(unittest.TestCase):
         res = auth.can_modify_patient(patient_id_qua, user_id_sec)
         self.assertTrue(res, "User %d is missing admin permissions on patient %d" % (user_id_sec, patient_id_qua))
 
-        res = auth.can_view_patient(patient_id, user_id_sec)
+        res = auth.can_view('patient', patient_id, user_id_sec)
         self.assertTrue(res, "User %d is missing read permissions on patient %d" % (user_id_sec, patient_id))
 
         res = auth.can_modify_patient(patient_id_sec, auth.user_id)
