@@ -261,6 +261,11 @@ class VidjilauthModel(unittest.TestCase):
         self.assertFalse(result,
             "The user %d has some unexpected permissions: read on config for %d" % (auth.user_id, config_id))
 
+        # ensure cache is appropriately set
+        cached_value = auth.permissions['config'][config_id]['read']
+        self.assertFalse(cached_value,
+            "Expected read permission on config_id(%d) to be False" % config_id)
+
     def testIsAdmin(self):
         result = auth.is_admin(user=auth.user_id)
         self.assertFalse(result, "User %d should not have admin permissions" % auth.user_id)
