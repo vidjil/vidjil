@@ -160,7 +160,7 @@ class VidjilAuth(Auth):
 
         The result is cached to avoid DB calls.
         '''
-        is_current_user = user == None
+        is_current_user = (user == None) or (user == self.user_id)
         if is_current_user:
             user = self.user_id
 
