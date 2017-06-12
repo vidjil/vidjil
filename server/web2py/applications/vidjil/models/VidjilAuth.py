@@ -311,10 +311,24 @@ class VidjilAuth(Auth):
             and (self.get_permission(PermissionEnum.admin_pre_process.value, 'pre_process', pre_process_id, user)\
             or self.is_admin(user))
 
-    def can_modify(self, type, id, user = None):
-        perm =  self.get_permission(PermissionEnum.admin.value, type, id, user)\
-            or self.is_admin(user)
-        return perm
+    def can_modify(self, object_of_action, id, user = None):
+        '''
+        Returns True if the user can modify the object of action whose ID id id
+        '''
+        exists = self.exists(object_of_action, id)
+        return exists\
+            and (self.get_permission(PermissionEnum.admin.value, object_of_action, id, user)\
+            or self.is_admin(user))
+
+    def can_view(self, object_of_action, id, user = None):
+        '''
+        Returns True if the user can view the object of action whose ID is id
+        '''
+        exists = self.exists(object_of_action, id)
+        return exists\
+            and (self.get_permission(PermissionEnum.read.value, object_of_action, id, user)\
+            or self.can_modify(object_of_action, id, user)\
+            or self.is_admin(user))
 
     def can_modify_file(self, file_id, user = None) :
         if not self.exists('sequence_file', file_id):
