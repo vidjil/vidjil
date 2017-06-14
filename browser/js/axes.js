@@ -246,6 +246,16 @@ Axes.prototype = {
             "primers": {
                 label: "interpolated length, between BIOMED2 primers (inclusive)",
                 fct: function(cloneID) {return self.m.clone(cloneID).getSegLengthDoubleFeature('primer5', 'primer3')}
+            }, 
+            "delRight": {
+                label: "number of deletions for the segment V/5 in 3",
+                axis: new NumericalAxis(this.m),
+                fct: function(clone) { return clone.getDeletion('5', 'delRight') }
+            },
+            "delLeft": {
+                label: "number of deletions for the segment J/3 in 5",
+                axis: new NumericalAxis(this.m),
+                fct: function(clone) {return clone.getDeletion('3', 'delLeft')}
             },
         };
     }
