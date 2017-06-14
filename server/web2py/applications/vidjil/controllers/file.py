@@ -165,39 +165,29 @@ def add_form():
 
     if request.vars['patient_id'] == '' and request.vars['run_id'] == "" and request.vars['generic_id'] == "":
         error += " missing patient or run or sample_set"
-        
-    if request.vars['patient_id'] != '' :
-        try:
-            patient_id = extract_id(request.vars['patient_id'], error)
-            if not auth.can_modify('patient', patient_id) :
-                error += " missing permission for patient "+str(patient_id)
-        except ValueError:
-            error += " Invalid patient %s" % request.vars['patient_id']
-            
-        query = db((db.patient.id == patient_id)
-                &(db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
-                &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-            ).select(db.sequence_file.ALL)
-        for row in query :
-            if row.filename == filename :
-                error += " this sequence file already exists for this patient"
-                break
-            
-    if request.vars['run_id'] != '' :
-        try:
-            run_id = extract_id(request.vars['run_id'], error)
-            if not auth.can_modify('run', run_id) :
-                error += " missing permission for run "+str(run_id)
-        except ValueError:
-            error += " invalid run %s" % request.vars['run_id']
 
-    if request.vars['generic_id'] != '' :
-        try:
-            generic_id = extract_id(request.vars['generic_id'], error)
-            if not auth.can_modify('generic', generic_id) :
-                error += " missing permissions for sample_set %d" % sample_set_id
-        except ValueError:
-            error += " invalid sample_set %s" % request.vars['sample_set_id']
+    set_ids = filter_set_ids(request.vars)
+
+    id_dict = {}
+    for key in set_ids:
+        if set_ids[key] != '':
+            try:
+                set_id = extract_id(set_ids[key], error)
+                id_dict[key] = set_id
+                if not auth.can_modify(key, set_id) :
+                    error += " missing permission for %s %d" % (key, set_id)
+
+                query = db((db[key].id == set_id)
+                        &(db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
+                        &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+                    ).select(db.sequence_file.ALL)
+                for row in query :
+                    if row.filename == filename :
+                        error += " this sequence file already exists for this %s" % key
+                        break
+            except ValueError:
+                error += " Invalid %s %s" % (key, set_ids[key])
+
     pre_process = None
     pre_process_flag = "DONE"
     if request.vars['pre_process'] is not None and request.vars['pre_process'] != "0":
@@ -308,19 +298,6 @@ def edit_form():
     if request.vars['patient_id'] == '' and request.vars['run_id'] == "" and request.vars['generic_id'] == "":
         error += " missing patient or run or sample_set"
 
-    if request.vars['patient_id'] != '' :
-        patient_id = int(request.vars['patient_id'].split('(')[-1][:-1])
-        if not auth.can_modify_patient(patient_id):
-            error += "permission denied to edit patient %d" % patient_id
-    if request.vars['run_id'] != '' :
-        run_id = int(request.vars['run_id'].split('(')[-1][:-1])
-        if not auth.can_modify_run(run_id):
-            error += "permission denied to edit run %d" % run_id
-    if request.vars['generic_id'] != '' :
-        generic_id = int(request.vars['generic_id'].split('(')[-1][:-1])
-        generic = db.generic[generic_id]
-        if not auth.can_modify_sample_set(generic.sample_set_id):
-            error += "permission denied to edit sample_set %d" % generic_id
     if request.vars['id'] == None :
         error += "missing id"
     if request.vars['filename'] == None :
@@ -331,6 +308,21 @@ def edit_form():
         except ValueError:
             error += "date (wrong format), "
             
+    # TODO I wanted to make an associative array straight in the HTML form
+    # but I couldn't get it working...
+    set_ids = filter_set_ids(request.vars)
+
+    id_dict = {}
+    for key in set_ids:
+        if set_ids[key] != '':
+            try:
+                set_id = extract_id(set_ids[key], error)
+                id_dict[key] = set_id
+                if not auth.can_modify(key, set_id) :
+                    error += " missing permission for %s %d" % (key, set_id)
+            except ValueError:
+                error += " Invalid %s %s" % (key, set_ids[key])
+
     if error=="" :
         mes = "file {%s}: " % request.vars['id']
         filename = db.sequence_file[request.vars['id']].filename
