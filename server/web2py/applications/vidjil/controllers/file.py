@@ -223,34 +223,9 @@ def add_form():
 
 
         ids_sample_set = []
-        #add sequence_file to a run sample_set
-        if run_id is not None :
-            run_sample_set_id = db.run[run_id].sample_set_id
-            ids_sample_set += [run_sample_set_id] # for logging
-            id_sample_set_membership_run = db.sample_set_membership.insert(sample_set_id=run_sample_set_id,
-                                                                  sequence_file_id=id)
-            
-        #add sequence_file to a patient sample_set
-        if patient_id is not None :
-            patient_sample_set_id = db.patient[patient_id].sample_set_id
-            ids_sample_set += [patient_sample_set_id] # for logging
-            id_sample_set_membership_patient = db.sample_set_membership.insert(sample_set_id=patient_sample_set_id,
-                                                                  sequence_file_id=id)
 
-        if generic_id is not None:
-            generic_sample_set_id = db.generic[generic_id].sample_set_id
-            ids_sample_set += [generic_sample_set_id]
-            id_sample_set_membership_generic = db.sample_set_membership.insert(sample_set_id=generic_sample_set_id, sequence_file_id=id)
-
-        if request.vars['sample_type'] == defs.SET_TYPE_RUN:
-            originating_id = run_sample_set_id
-        elif request.vars['sample_type'] == defs.SET_TYPE_PATIENT:
-            originating_id = patient_sample_set_id
-        elif request.vars['sample_type'] == defs.SET_TYPE_GENERIC:
-            originating_id = generic_sample_set_id
-
-        redirect_args = {"id" : originating_id}
-        
+        ssid_dict = link_to_sample_sets(id, id_dict)
+        redirect_args = {"id" : ssid_dict[request.vars["sample_type"]]}
         
         res = {"file_id" : id,
                "message": "(%s) file {%s} : %s: %s" % (','.join(map(str,ids_sample_set)), id, log_message, request.vars['filename']),
@@ -383,30 +358,8 @@ def edit_form():
             if db.sample_set[row.sample_set_id].sample_type != "sequence_file" :
                 db(db.sample_set_membership.id == row.id).delete()
         
-        #add sequence_file to a run sample_set
-        if run_id is not None :
-            run_sample_set_id = db.run[run_id].sample_set_id
-            id_sample_set_membership_run = db.sample_set_membership.insert(sample_set_id=run_sample_set_id,
-                                                                  sequence_file_id=request.vars["id"])
-            
-        #add sequence_file to a patient sample_set
-        if patient_id is not None :
-            patient_sample_set_id = db.patient[patient_id].sample_set_id
-            id_sample_set_membership_patient = db.sample_set_membership.insert(sample_set_id=patient_sample_set_id,
-                                                                  sequence_file_id=request.vars["id"])
-
-        if generic_id is not None :
-            generic_sample_set_id = db.generic[generic_id].sample_set_id
-            id_sample_set_membership_generic = db.sample_set_membership.insert(sample_set_id=generic_sample_set_id,
-                                                                  sequence_file_id=request.vars["id"])
-
-        if request.vars['sample_type'] == defs.SET_TYPE_RUN:
-            originating_id = run_sample_set_id
-        elif request.vars['sample_type'] == defs.SET_TYPE_PATIENT:
-            originating_id = patient_sample_set_id
-        elif request.vars['sample_type'] == defs.SET_TYPE_GENERIC:
-            originating_id = generic_sample_set_id
-        redirect_args = {"id" : originating_id}
+        ssid_dict = link_to_sample_sets(id, id_dict)
+        redirect_args = {"id" : ssid_dict[request.vars["sample_type"]]}
         
         res = {"file_id" : request.vars["id"],
                "message": "file {%s}: metadata saved" % request.vars["id"],
