@@ -84,58 +84,9 @@ def add():
                                 info = row.info
 			))
 
-	query_generic = db(
-                auth.vidjil_accessible_query(PermissionEnum.read.value, db.generic)
-        ).select(
-            db.generic.id,
-            db.generic.name,
-            orderby = ~db.generic.id
-        )
-        generic_list = []
-        generic = ""
-
-        for row in query_generic :
-            name = row.name if row.name is not None else "Unnamed Sample Set"
-            id = "  (%d)" % row.id
-            tmp = name+id
-            generic_list.append(tmp)
-            if generic_id == row.id:
-                generic = tmp
-
-        query_patient = db(
-            auth.vidjil_accessible_query(PermissionEnum.read.value, db.patient)
-        ).select(
-            db.patient.ALL,
-            orderby = ~db.patient.id
-        )
-        patient_list = []
-        patient = ""
-
-        for row in query_patient :
-            name = row.first_name + " " + row.last_name
-            birth = "[" + str(row.birth) + "]   "
-            id = "   ("+str(row.id)+")"
-            patient_list.append(birth+name+id)
-            if patient_id == row.id :
-                patient = birth+name+id
-            
-        query_run = db(
-            auth.vidjil_accessible_query(PermissionEnum.read.value, db.run)
-        ).select(
-            db.run.ALL,
-            orderby = ~db.run.id
-        )
-        run_list = []
-        run = ""
-
-        for row in query_run :
-            name = row.name
-            run_date = "[" + str(row.run_date) + "]   "
-            id = "   ("+str(row.id)+")"
-            run_list.append(run_date+name+id)
-            if run_id == row.id :
-                run = run_date+name+id
-				
+        generic_list, generic = get_sample_set_list(defs.SET_TYPE_GENERIC, generic_id)
+        patient_list, patient = get_sample_set_list(defs.SET_TYPE_PATIENT, patient_id)
+        run_list, run = get_sample_set_list(defs.SET_TYPE_RUN, run_id)
 				
         source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
         return dict(message = T('add file'),
@@ -324,58 +275,10 @@ def edit():
                                 info = row.info
 			))
 
-	query_generic = db(
-                auth.vidjil_accessible_query(PermissionEnum.read.value, db.generic)
-        ).select(
-            db.generic.id,
-            db.generic.name,
-            orderby = ~db.generic.id
-        )
-        generic_list = []
-        generic = ""
+        generic_list, generic = get_sample_set_list(defs.SET_TYPE_GENERIC, relevant_ids['generic'])
+        patient_list, patient = get_sample_set_list(defs.SET_TYPE_PATIENT, relevant_ids['patient'])
+        run_list, run = get_sample_set_list(defs.SET_TYPE_RUN, relevant_ids['run'])
 
-        for row in query_generic :
-            name = row.name if row.name is not None else "Unnamed Sample Set"
-            id = "  (%d)" % row.id
-            tmp = name+id
-            generic_list.append(tmp)
-            if relevant_ids['generic'] == row.id:
-                generic = tmp
-			
-        query_patient = db(
-            auth.vidjil_accessible_query(PermissionEnum.admin.value, db.patient)
-        ).select(
-            db.patient.ALL,
-            orderby = ~db.patient.id
-        )
-        patient_list = []
-        patient = ""
-
-        for row in query_patient :
-            name = row.first_name + " " + row.last_name
-            birth = "[" + str(row.birth) + "]   "
-            id = "   ("+str(row.id)+")"
-            patient_list.append(birth+name+id)
-            if relevant_ids['patient'] == row.id :
-                patient = birth+name+id
-            
-        query_run = db(
-            auth.vidjil_accessible_query(PermissionEnum.admin.value, db.run)
-        ).select(
-            db.run.ALL,
-            orderby = ~db.run.id
-        )
-        run_list = []
-        run = ""
-
-        for row in query_run :
-            name = row.name
-            run_date = "[" + str(row.run_date) + "]   "
-            id = "   ("+str(row.id)+")"
-            run_list.append(run_date+name+id)
-            if relevant_ids['run'] == row.id :
-                run = run_date+name+id
-        
         source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
         return dict(message = T('edit file'),
                    generic_list = generic_list,
