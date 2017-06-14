@@ -324,17 +324,18 @@ def edit_form():
                 error += " Invalid %s %s" % (key, set_ids[key])
 
     if error=="" :
-        mes = "file {%s}: " % request.vars['id']
-        filename = db.sequence_file[request.vars['id']].filename
+        id = int(request.vars["id"])
+        mes = "file {%d}: " % id
+        filename = db.sequence_file[id].filename
         if 'filename' in request.vars and request.vars['filename'] != "":
             filename = request.vars['filename']
             # file is being reuploaded, remove all existing results_files
-            db(db.results_file.sequence_file_id == request.vars["id"]).delete()
+            db(db.results_file.sequence_file_id == id).delete()
         pre_process = None
         if request.vars['pre_process'] is not None and request.vars['pre_process'] != "0":
             pre_process = int(request.vars['pre_process'])
         if request.vars['sampling_date'] != None and request.vars['file_info'] != None :
-            db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'],
+            db.sequence_file[id] = dict(sampling_date=request.vars['sampling_date'],
                                                         info=request.vars['file_info'],
                                                         pre_process_id=pre_process,
                                                         provider=auth.user_id)
@@ -343,18 +344,18 @@ def edit_form():
             data, filepath = manage_filename(request.vars["filename"])
             if 'data_file' in data and data['data_file'] is not None:
                 os.symlink(filepath, defs.DIR_SEQUENCES + data['data_file'])
-            db.sequence_file[request.vars["id"]] = data
+            db.sequence_file[id] = data
             
         #remove previous membership
-        for row in db( db.sample_set_membership.sequence_file_id == request.vars["id"]).select() :
+        for row in db( db.sample_set_membership.sequence_file_id == id).select() :
             if db.sample_set[row.sample_set_id].sample_type != "sequence_file" :
                 db(db.sample_set_membership.id == row.id).delete()
         
         ssid_dict = link_to_sample_sets(id, id_dict)
         redirect_args = {"id" : ssid_dict[request.vars["sample_type"]]}
         
-        res = {"file_id" : request.vars["id"],
-               "message": "file {%s}: metadata saved" % request.vars["id"],
+        res = {"file_id" : id,
+               "message": "file {%d}: metadata saved" % id,
                "redirect": "sample_set/index",
                "args" : redirect_args
                }
