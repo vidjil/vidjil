@@ -119,6 +119,20 @@ def manage_filename(filename):
 
     return (data, filepath)
 
+def link_to_sample_sets(seq_file_id, id_dict):
+    '''
+    Create sample set memberships and return a dict of the sample set ids.
+    The keys to the dict are thee same as the ones passed in id_dict
+    '''
+    ssid_dict = {}
+    for key in id_dict:
+        oid = id_dict[key]
+        sample_set_id = db[key][oid].sample_set_id
+        ssid_dict[key] = sample_set_id
+        id_sample_set_membership_run = db.sample_set_membership.insert(sample_set_id=sample_set_id,
+                                                                  sequence_file_id=seq_file_id)
+    return ssid_dict
+
 def add_form(): 
     error = ""
     patient_id = None
