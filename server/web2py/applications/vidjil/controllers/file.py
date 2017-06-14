@@ -133,6 +133,18 @@ def link_to_sample_sets(seq_file_id, id_dict):
                                                                   sequence_file_id=seq_file_id)
     return ssid_dict
 
+def filter_set_ids(req_vars):
+    '''
+    Create a dict with the patient, run etc.. id strings as sent by the form
+    '''
+    # TODO I wanted to make an associative array straight in the HTML form
+    # but I couldn't get it working...
+    set_ids = {}
+    set_ids[defs.SET_TYPE_GENERIC] = req_vars['generic_id']
+    set_ids[defs.SET_TYPE_PATIENT] = req_vars['patient_id']
+    set_ids[defs.SET_TYPE_RUN] = req_vars['run_id']
+    return set_ids
+
 def add_form(): 
     error = ""
     patient_id = None
