@@ -801,15 +801,14 @@ Clone.prototype = {
         if (this.hasSeg(field_name) ) {
             if ( typeof this.seg[field_name][deletion_name] !== 'undefined' )
             {
-                console.log("got it ! ", this.seg[field_name][deletion_name] )
                 return this.seg[field_name][deletion_name]
             } else {
                 // has segment, but no deletion field
-                return -1
+                return 'undefined'
             }
         } else {
             // haven't the segment
-            return -1
+            return 'undefined'
         }
     },
 
