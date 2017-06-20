@@ -237,3 +237,57 @@ OnlineBioReader *OnlineBioReaderFactory::create(const string &filename,
                                                 int nb_sequences_max, int only_nth_sequence) {
   return new OnlineFasta(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence);
 }
+
+// http://stackoverflow.com/a/5840160/4475279
+unsigned long long filesize(const char* filename)
+{
+    std::ifstream in(filename, std::ifstream::ate | std::ifstream::binary);
+    return in.tellg();
+}
+
+unsigned long long nb_sequences_in_file(string f, bool approx)
+{
+  if (approx)
+    return approx_nb_sequences_in_file(f);
+
+  OnlineBioReader *sequences = OnlineBioReaderFactory::create(f, 1, " ");
+  unsigned long long nb_sequences = 0 ;
+
+  while (sequences->hasNext())
+    {
+      sequences->next();
+      nb_sequences++ ;
+    }
+
+  cout << "  ==> " << nb_sequences << " sequences" << endl;
+
+  delete sequences ;
+  return nb_sequences ;
+}
+
+
+unsigned long long approx_nb_sequences_in_file(string f)
+{
+  OnlineBioReader *sequences = OnlineBioReaderFactory::create(f, 1, " ");
+  int nb_sequences = 0 ;
+
+  while (nb_sequences < SAMPLE_APPROX_NB_SEQUENCES && sequences->hasNext())
+    {
+      sequences->next();
+      nb_sequences++ ;
+    }
+
+  cout << "  ==> " ;
+
+  if (sequences->hasNext())
+    {
+      cout << "approx. " ;
+      float ratio = (float) filesize(f.c_str()) / (float) sequences->getPos();
+      nb_sequences = (unsigned long long) (ratio * nb_sequences);
+    }
+
+  cout << nb_sequences << " sequences" << endl;
+
+  delete sequences ;
+  return nb_sequences ;
+}

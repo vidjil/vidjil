@@ -32,13 +32,6 @@
 #include "../lib/gzstream.h"
 
 
-// http://stackoverflow.com/a/5840160/4475279
-unsigned long long filesize(const char* filename)
-{
-    std::ifstream in(filename, std::ifstream::ate | std::ifstream::binary);
-    return in.tellg();
-}
-
 // OnlineFasta
 
 OnlineFasta::OnlineFasta(int extract_field, string extract_separator,
@@ -175,52 +168,4 @@ void OnlineFasta::unexpectedEOF() {
   throw invalid_argument("Unexpected EOF while reading FASTA/FASTQ file");
 }
 
-unsigned long long nb_sequences_in_fasta(string f, bool approx)
-{
-  if (approx)
-    return approx_nb_sequences_in_fasta(f);
-
-  OnlineFasta *sequences = new OnlineFasta(f, 1, " ");
-  unsigned long long nb_sequences = 0 ;
-
-  while (sequences->hasNext())
-    {
-      sequences->next();
-      nb_sequences++ ;
-    }
-
-  cout << "  ==> " << nb_sequences << " sequences" << endl;
-
-  delete sequences ;
-  return nb_sequences ;
-}
-
-
-#define SAMPLE_APPROX_NB_SEQUENCES 200
-
-unsigned long long approx_nb_sequences_in_fasta(string f)
-{
-  OnlineFasta *sequences = new OnlineFasta(f, 1, " ");
-  int nb_sequences = 0 ;
-
-  while (nb_sequences < SAMPLE_APPROX_NB_SEQUENCES && sequences->hasNext())
-    {
-      sequences->next();
-      nb_sequences++ ;
-    }
-
-  cout << "  ==> " ;
-
-  if (sequences->hasNext())
-    {
-      cout << "approx. " ;
-      float ratio = (float) filesize(f.c_str()) / (float) sequences->getPos();
-      nb_sequences = (unsigned long long) (ratio * nb_sequences);
-    }
-
-  cout << nb_sequences << " sequences" << endl;
-
-  delete sequences ;
-  return nb_sequences ;
-}
 

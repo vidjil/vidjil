@@ -10,9 +10,6 @@ using namespace std;
 
 #include "bioreader.hpp"
 
-unsigned long long filesize(const char* filename);
-
-
 /**
  * Read a FASTA/FASTQ file.
  * Space complexity: constant. Only one sequence is stored at most in memory.
@@ -78,13 +75,4 @@ protected:
    */
   string getInterestingLine(int state = FASTX_UNINIT);
 };
-
-/**
- * Count the number of sequences in a Fasta file
- * @return the number of sequences
- */
-unsigned long long nb_sequences_in_fasta(string f, bool approx = false);
-unsigned long long approx_nb_sequences_in_fasta(string f);
-
-
 #endif

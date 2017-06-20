@@ -916,7 +916,7 @@ int main (int argc, char **argv)
     cout << endl ;
 
     // Number of reads for e-value computation
-    unsigned long long nb_reads_for_evalue = (expected_value > NO_LIMIT_VALUE) ? nb_sequences_in_fasta(f_reads, true) : 1 ;
+    unsigned long long nb_reads_for_evalue = (expected_value > NO_LIMIT_VALUE) ? nb_sequences_in_file(f_reads, true) : 1 ;
 
     
   //////////////////////////////////
@@ -925,7 +925,7 @@ int main (int argc, char **argv)
     int only_nth_read = 1 ;
     if (max_reads_processed_sample != NO_LIMIT_VALUE)
       {
-        only_nth_read = nb_sequences_in_fasta(f_reads) / max_reads_processed_sample;
+        only_nth_read = nb_sequences_in_file(f_reads) / max_reads_processed_sample;
         if (only_nth_read == 0)
           only_nth_read = 1 ;
 

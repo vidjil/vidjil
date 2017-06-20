@@ -28,6 +28,8 @@
 #include <vector>
 #include <list>
 
+#define SAMPLE_APPROX_NB_SEQUENCES 200
+
 using namespace std;
 
 typedef string seqtype ;
@@ -223,6 +225,21 @@ ostream &operator<<(ostream &out, const Sequence &seq);
 const BioReader BIOREADER_UNKNOWN = BioReader(true, "_");
 const BioReader BIOREADER_AMBIGUOUS = BioReader(true, "?");
 
+unsigned long long filesize(const char* filename);
+
+/**
+ * Count the number of sequences in a Fasta file.
+ * @complexity Linear in the file size
+ * @return the number of sequences
+ */
+unsigned long long nb_sequences_in_file(string f, bool approx = false);
+
+/**
+ * Give an approximate count of the number of sequences in the file
+ * @complexity linear in SAMPLE_APPROX_NB_SEQUENCES
+ * @return the approximate number of sequences
+ */
+unsigned long long approx_nb_sequences_in_file(string f);
 
 class OnlineBioReaderFactory {
 public:
