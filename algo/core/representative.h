@@ -3,7 +3,7 @@
 #include <string>
 #include <cassert>
 #include <list>
-#include "fasta.h"
+#include "bioreader.hpp"
 #include "kmerstore.h"
 
 using namespace std;

@@ -5,7 +5,7 @@
 #include "core/germline.h"
 #include "core/kmerstore.h"
 #include "core/dynprog.h"
-#include "core/fasta.h"
+#include "core/bioreader.hpp"
 #include "core/segment.h"
 #include "core/windowExtractor.h"
 
@@ -44,9 +44,9 @@ void testOverlap()
 
 void testFineSegment(IndexTypes index)
 {
-  Fasta seqV("../../germline/homo-sapiens/IGHV.fa", 2);
-  Fasta seqD("../../germline/homo-sapiens/IGHD.fa", 2);
-  Fasta seqJ("../../germline/homo-sapiens/IGHJ.fa", 2);
+  BioReader seqV("../../germline/homo-sapiens/IGHV.fa", 2);
+  BioReader seqD("../../germline/homo-sapiens/IGHD.fa", 2);
+  BioReader seqJ("../../germline/homo-sapiens/IGHJ.fa", 2);
   
   OnlineFasta data("../../data/Stanford_S22.fasta", 1, " ");
   data.next();
@@ -99,17 +99,17 @@ void testFineSegment(IndexTypes index)
  */
 void testSegmentOverlap(IndexTypes index)
 {
-  Fasta seqV("../../germline/homo-sapiens/TRGV.fa", 2);
-  Fasta seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
+  BioReader seqV("../../germline/homo-sapiens/TRGV.fa", 2);
+  BioReader seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
   
-  Fasta data("../../data/bug-segment-overlap.fa", 1, " ");
+  BioReader data("../../data/bug-segment-overlap.fa", 1, " ");
   
   Germline *germline1 ;
-  germline1 = new Germline("TRG", 'G', seqV, Fasta(), seqJ, -50, "##########");
+  germline1 = new Germline("TRG", 'G', seqV, BioReader(), seqJ, -50, "##########");
   germline1->new_index(index);
 
   Germline *germline2 ;
-  germline2 = new Germline("TRG2", 'G', seqV, Fasta(), seqJ, -50, "##########");
+  germline2 = new Germline("TRG2", 'G', seqV, BioReader(), seqJ, -50, "##########");
   germline2->new_index(index);
 
   germline1->finish();
@@ -135,13 +135,13 @@ void testSegmentOverlap(IndexTypes index)
 }
 
 void testSegmentationCause(IndexTypes index) {
-  Fasta seqV("../../germline/homo-sapiens/TRGV.fa", 2);
-  Fasta seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
+  BioReader seqV("../../germline/homo-sapiens/TRGV.fa", 2);
+  BioReader seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
   
-  Fasta data("../../data/segmentation.fasta", 1, " ");
+  BioReader data("../../data/segmentation.fasta", 1, " ");
 
   Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, Fasta(), seqJ, 0, "##########");
+  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ, 0, "##########");
   germline->new_index(index);
   germline->finish();
 
@@ -258,16 +258,16 @@ void testSegmentationCause(IndexTypes index) {
 }
 
 void testBug2224(IndexTypes index) {
-  Fasta seqV("../../germline/homo-sapiens/TRGV.fa", 2);
-  Fasta seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
+  BioReader seqV("../../germline/homo-sapiens/TRGV.fa", 2);
+  BioReader seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
 
-  Fasta data(true, "virtual");
+  BioReader data(true, "virtual");
   Sequence s = {">label", ">label", "ATTATATA", "", NULL, 0};
   data.add(s);
 
 
   Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, Fasta(), seqJ, 0, "###########");
+  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ, 0, "###########");
   germline->new_index(index);
   germline->finish();
 
@@ -283,13 +283,13 @@ void testBug2224(IndexTypes index) {
 
 
 void testExtractor(IndexTypes index) {
-  Fasta seqV("../../germline/homo-sapiens/TRGV.fa", 2);
-  Fasta seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
+  BioReader seqV("../../germline/homo-sapiens/TRGV.fa", 2);
+  BioReader seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
   
   OnlineFasta data("../../data/segmentation.fasta", 1, " ");
 
   Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, Fasta(), seqJ, 0, "##########");
+  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ, 0, "##########");
   germline->new_index(index);
 
   MultiGermline *multi ;
@@ -365,14 +365,14 @@ void testProbability(IndexTypes index) {
                 "CTAG", "CTAT", "CTCA", "CTCC", "CTCG", "CTCT",
                 "CTGA", "CTGC", "CTGG", "CTGT", "CTTA", "CTTC",
                 "CTTG", "CTTT"};
-  Fasta V, J;
+  BioReader V, J;
   for (int i = 0; i < 64; i++) {
     Sequence v = {"V_" + string_of_int(i+33), "V" + string_of_int(i+33), v_seq[i], "", NULL, 0};
     Sequence j = {"J_" + string_of_int(i+33), "J" + string_of_int(i+33), j_seq[i], "", NULL, 0};
     V.add(v);
     J.add(j);
   }
-  Germline germline("Test", 'T', V, Fasta(), J, 0, "####");
+  Germline germline("Test", 'T', V, BioReader(), J, 0, "####");
   germline.new_index(index);
   germline.finish();
 

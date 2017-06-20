@@ -1,6 +1,6 @@
 #include "core/tools.h"
 #include "core/windows.h"
-#include "core/fasta.h"
+#include "core/bioreader.hpp"
 #include "core/segment.h"
 #include "core/cluster-junctions.h"
 #include "core/read_score.h"

@@ -26,7 +26,7 @@
 #include <string>
 #include <cassert>
 #include <vector>
-#include "fasta.h"
+#include "bioreader.hpp"
 using namespace std;
 
 #define PRINT_VAR(v) cerr << #v << " = " << v << endl

@@ -1,9 +1,9 @@
 #include "core/read_chooser.h"
 #include "core/read_score.h"
-#include "core/fasta.h"
+#include "core/bioreader.hpp"
 
 void testChooser() {
-  list<Sequence> reads = Fasta("../../data/test1.fa").getAll();
+  list<Sequence> reads = BioReader("../../data/test1.fa").getAll();
 
   ReadLengthScore rls;
   ReadChooser rc(reads, rls);

@@ -343,9 +343,9 @@ void testGetMaximum() {
  */
 template<template <class> class T>
 void testBugAffectAnalyser() {
-  Fasta seqV("../../germline/homo-sapiens/IGHV.fa", 2);
-  Fasta seqJ("../../germline/homo-sapiens/IGHJ.fa", 2);
-  Fasta data("../../data/bug-revcomp.fa", 1, " ");
+  BioReader seqV("../../germline/homo-sapiens/IGHV.fa", 2);
+  BioReader seqJ("../../germline/homo-sapiens/IGHJ.fa", 2);
+  BioReader data("../../data/bug-revcomp.fa", 1, " ");
 
   int k = 9;
   T<KmerAffect> index(k, true);

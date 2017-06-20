@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#include "fasta.h"
+#include "bioreader.hpp"
 #include "dynprog.h"
 #include "tools.h"
 #include "germline.h"
@@ -360,7 +360,7 @@ class FineSegmenter : public Segmenter
 };
 
 
-void align_against_collection(string &read, Fasta &rep, int forbidden_rep_id,
+void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id,
                               bool reverse_ref, bool reverse_both, bool local,
                               AlignBox *box, Cost segment_cost);
 

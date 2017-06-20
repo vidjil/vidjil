@@ -1,7 +1,7 @@
 #ifndef READ_FINDER_H
 #define READ_FINDER_H
 #include <list>
-#include "fasta.h"
+#include "bioreader.hpp"
 #include "read_score.h"
 #include <map>
 

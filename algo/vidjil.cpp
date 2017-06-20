@@ -40,6 +40,7 @@
 #include "core/germline.h"
 #include "core/kmerstore.h"
 #include "core/fasta.h"
+#include "core/bioreader.hpp"
 #include "core/segment.h"
 #include "core/windows.h"
 #include "core/cluster-junctions.h"
@@ -936,10 +937,10 @@ int main (int argc, char **argv)
                << " read" << endl ;
       }
 
-  OnlineFasta *reads;
+  OnlineBioReader *reads;
 
   try {
-    reads = new OnlineFasta(f_reads, 1, read_header_separator, max_reads_processed, only_nth_read);
+    reads = OnlineBioReaderFactory::create(f_reads, 1, read_header_separator, max_reads_processed, only_nth_read);
   } catch (const invalid_argument e) {
     cerr << ERROR_STRING << "Vidjil cannot open reads file " << f_reads << ": " << e.what() << endl;
     exit(1);
@@ -957,10 +958,10 @@ int main (int argc, char **argv)
       IKmerStore<KmerAffect> *index = multigermline->index ;
 
       // Initialize statistics, with two additional categories
-      index->labels.push_back(make_pair(KmerAffect::getAmbiguous(), FASTA_AMBIGUOUS));
-      index->labels.push_back(make_pair(KmerAffect::getUnknown(), FASTA_UNKNOWN));
+      index->labels.push_back(make_pair(KmerAffect::getAmbiguous(), BIOREADER_AMBIGUOUS));
+      index->labels.push_back(make_pair(KmerAffect::getUnknown(), BIOREADER_UNKNOWN));
       
-      for (list< pair <KmerAffect, Fasta> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
+      for (list< pair <KmerAffect, BioReader> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
 	{
 	  char key = affect_char(it->first.affect) ;
 	  stats_kmer[key] = 0 ;
@@ -1012,7 +1013,7 @@ int main (int argc, char **argv)
 	   << endl ;
       cout << "\t" << " max" << "\t\t" << "        kmers" << "\n" ;
 
-      for (list< pair <KmerAffect, Fasta> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
+      for (list< pair <KmerAffect, BioReader> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
 	{
           if (it->first.getStrand() == -1)
             continue ;
