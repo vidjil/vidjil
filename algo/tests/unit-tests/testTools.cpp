@@ -63,12 +63,17 @@ void testFastaNbSequences() {
 void testFasta1() {
   BioReader fa("../../data/test1.fa");
   BioReader fq("../../data/test1.fq");
+  BioReader bam("../../data/test1.bam");
 
   TAP_TEST(fa.size() == fq.size(), TEST_FASTA_SIZE, "");
+  TAP_TEST(fa.size() == bam.size(), TEST_BAM_SIZE, fa.size() << " " << bam.size());
   for (int i=0; i < fa.size(); i++) {
     TAP_TEST(fa.label(i) == fq.label(i), TEST_FASTA_LABEL, "");
     TAP_TEST(fa.label_full(i) == fq.label_full(i), TEST_FASTA_LABEL_FULL, "");
     TAP_TEST(fa.sequence(i) == fq.sequence(i), TEST_FASTA_SEQUENCE, "");
+    TAP_TEST(fa.label(i) == bam.label(i), TEST_BAM_LABEL, "");
+    TAP_TEST(fa.label_full(i) == bam.label_full(i), TEST_BAM_LABEL_FULL, fa.label_full(i) << " " << bam.label_full(i));
+    TAP_TEST(fa.sequence(i) == bam.sequence(i), TEST_BAM_SEQUENCE, fa.sequence(i) << " " << bam.sequence(i));
   }
   TAP_TEST(fa.label(2) == "seq3", TEST_FASTA_LABEL, "");
   TAP_TEST(fa.sequence(2) == "A", TEST_FASTA_SEQUENCE, "");
