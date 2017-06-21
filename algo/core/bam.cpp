@@ -74,7 +74,7 @@ bool OnlineBAM::hasNext() {
 }
 
 void OnlineBAM::next() {
-  //assert((bam_entry->core.flag & (BAM_FPAIRED | BAM_FREAD1 | BAM_FREAD2)) == 0);
+  assert((bam_entry->core.flag & (BAM_FPAIRED | BAM_FREAD1 | BAM_FREAD2)) == 0);
   assert(hasNext());
 
   char *qualities = get_quality(bam_entry);
