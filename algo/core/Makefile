@@ -1,6 +1,7 @@
 CXX?=g++
 OPTIM=-O2 
 override CXXFLAGS += -W -Wall -std=c++11 $(OPTIM)
+INC=-I ../
 SRCCORE=$(wildcard *.cpp)
 OBJCORE=$(SRCCORE:.cpp=.o)
 LIBCORE=vidjil.a
@@ -11,6 +12,9 @@ all: $(LIBCORE)
 
 $(LIBCORE): $(OBJCORE)
 	ar rc $@ $^
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(INC) -c $<
 
 clean:
 	rm -f $(OBJCORE) $(LIBCORE)
