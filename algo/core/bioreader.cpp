@@ -21,8 +21,12 @@
   along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
 */
 
+#include <algorithm>
+#include <string>
+#include <fstream>
 #include "bioreader.hpp"
 #include "fasta.h"
+#include "bam.h"
 
 OnlineBioReader::OnlineBioReader(int extract_field, string extract_separator,
                      int nb_sequences_max, int only_nth_sequence):
@@ -235,7 +239,12 @@ ostream &operator<<(ostream &out, const Sequence &seq) {
 OnlineBioReader *OnlineBioReaderFactory::create(const string &filename,
                                                 int extract_field, string extract_separator,
                                                 int nb_sequences_max, int only_nth_sequence) {
-  return new OnlineFasta(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence);
+  string extension = filename.substr(filename.find_last_of(".") + 1);
+  transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+  if (extension == "bam")
+    return new OnlineBAM(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence);
+  else
+    return new OnlineFasta(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence);
 }
 
 // http://stackoverflow.com/a/5840160/4475279
