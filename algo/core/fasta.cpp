@@ -56,8 +56,6 @@ void OnlineFasta::init() {
       delete this->input;
       throw invalid_argument("!! Error in opening file "+filename);
     }
-
-    cout << "  <== " << filename << endl ;
   }
 
   line = getInterestingLine();
