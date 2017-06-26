@@ -292,6 +292,9 @@ def main():
 
     args = parser.parse_args()
 
+    if args.debug:
+        log.log.setLevel(logging.DEBUG)
+
     if args.command == 'export':
         if args.mode == 'group':
             export_group_data(args.filename, args.groupid)
