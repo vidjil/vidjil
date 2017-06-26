@@ -142,7 +142,6 @@ class Importer():
         self.db = db
         self.mappings = {}
         self.mappings['sample_set'] = {}
-        self.mappings['sequence_file'] = {}
 
     def importSampleSets(self, stype, sets):
         log.debug("import sets")
