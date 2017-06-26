@@ -162,17 +162,7 @@ class Importer():
                                       record_id=nid)
             log.debug("associated set %d to group %d" % (nid, self.groupid))
 
-    def importSequenceFiles(self, sequence_files):
-        log.debug("import sequence_files")
-        for sid in sequence_files:
-            log.debug("importing sequence file: %s" % sid)
-            seqf = sequence_files[sid]
-            seqfid = db.sequence_file.insert(**seqf)
-            log.debug("new sequence file: %d" % seqfid)
-            self.mappings['sequence_file'][long(sid)] = seqfid
-            log.debug("mapped: %d to %d" % (long(sid), seqfid))
-
-    def importTable(self, table, ref_fields, values):
+    def importTable(self, table, values, ref_fields=[], map_val=False):
         log.debug("import %ss" % table)
         for vid in values:
             log.debug("importing %s: %s" % (table, vid))
@@ -183,6 +173,11 @@ class Importer():
                 val[ref_key] = self.mappings[ref][val[ref_key]]
             oid = db[table].insert(**val)
             log.debug("new %s: %d" % (table, oid))
+            if map_val:
+                if table not in self.mappings:
+                    self.mappings[table] = {}
+                self.mappings[table][long(vid)] = oid
+                log.debug("mapped: %d to %d" % (long(vid), oid))
 
 def export_peripheral_data(extractor, data_dict, sample_set_ids):
     sequence_rows = extractor.getSequenceFiles(sample_set_ids)
@@ -254,12 +249,11 @@ def import_data(filename, groupid, dry_run=False):
             if key in data:
                 imp.importSampleSets(stype, data[key])
 
-        imp.importSequenceFiles(data['sequence_files'])
-
-        imp.importTable('sample_set_membership', ['sample_set', 'sequence_file'], data['memberships'])
-        imp.importTable('results_file', ['sample_set'], data['results_files'])
-        imp.importTable('analysis_file', ['sample_set'], data['analysis_files'])
-        imp.importTable('fused_file', ['sample_set'], data['fused_files'])
+        imp.importTable('sequence_file', data['sequence_file'], map_val=True)
+        imp.importTable('sample_set_membership', data['membership'], ['sample_set', 'sequence_file'])
+        imp.importTable('results_file', data['results_file'], ['sequence_file', 'scheduler_task'])
+        imp.importTable('analysis_file', data['analysis_file'], ['sample_set'])
+        imp.importTable('fused_file', data['fused_file'], ['sample_set'])
 
         if dry_run:
             db.rollback()
