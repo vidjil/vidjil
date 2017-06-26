@@ -180,16 +180,16 @@ class Importer():
 
 def export_peripheral_data(extractor, data_dict, sample_set_ids):
     sequence_rows = extractor.getSequenceFiles(sample_set_ids)
-    data_dict['sequence_files'], data_dict['memberships'] = extractor.populateSequenceFiles(sequence_rows)
+    data_dict['sequence_file'], data_dict['membership'] = extractor.populateSequenceFiles(sequence_rows)
 
-    results_rows = extractor.getTableEntries('results_file', 'sequence_file_id', data_dict['sequence_files'].keys())
-    data_dict['results_files'] = extractor.populateEntries(results_rows, 'results_file')
+    results_rows = extractor.getTableEntries('results_file', 'sequence_file_id', data_dict['sequence_file'].keys())
+    data_dict['results_file'] = extractor.populateEntries(results_rows, 'results_file')
 
     analysis_rows = extractor.getTableEntries('analysis_file', 'sample_set_id', sample_set_ids)
-    data_dict['analysis_files'] = extractor.populateEntries(analysis_rows, 'analysis_file')
+    data_dict['analysis_file'] = extractor.populateEntries(analysis_rows, 'analysis_file')
 
     fused_rows = extractor.getTableEntries('fused_file', 'sample_set_id', sample_set_ids)
-    data_dict['fused_files'] = extractor.populateEntries(fused_rows, 'fused_file')
+    data_dict['fused_file'] = extractor.populateEntries(fused_rows, 'fused_file')
 
     return data_dict
 
@@ -200,13 +200,13 @@ def export_group_data(filename, groupid):
     tables = {}
 
     patient_rows = ext.getAccessible('patient', groupid)
-    tables['patients'], patient_ssids = ext.populateSets(patient_rows)
+    tables['patient'], patient_ssids = ext.populateSets(patient_rows)
 
     run_rows = ext.getAccessible('run', groupid)
-    tables['runs'], run_ssids = ext.populateSets(run_rows)
+    tables['run'], run_ssids = ext.populateSets(run_rows)
 
     generic_rows = ext.getAccessible('generic', groupid)
-    tables['generics'], generic_ssids = ext.populateSets(generic_rows)
+    tables['generic'], generic_ssids = ext.populateSets(generic_rows)
     
     sample_set_ids = patient_ssids + run_ssids + generic_ssids
 
@@ -223,8 +223,7 @@ def export_sample_set_data(filename, sample_type, sample_ids):
     tables = {}
 
     rows = ext.getAccessible(sample_type, sample_ids)
-    key = "%ss" % sample_type
-    tables[key], sample_set_ids = ext.populateSets(rows)
+    tables[sample_type], sample_set_ids = ext.populateSets(rows)
 
     tables = export_peripheral_data(ext, tables, sample_set_ids)
 
@@ -244,9 +243,8 @@ def import_data(filename, groupid, dry_run=False):
     try:
         set_types = ['patient', 'run', 'generic']
         for stype in set_types:
-            key = "%ss" % stype
-            if key in data:
-                imp.importSampleSets(stype, data[key])
+            if stype in data:
+                imp.importSampleSets(stype, data[stype])
 
         imp.importTable('sequence_file', data['sequence_file'], map_val=True)
         imp.importTable('sample_set_membership', data['membership'], ['sample_set', 'sequence_file'])
