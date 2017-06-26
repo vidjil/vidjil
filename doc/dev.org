@@ -706,3 +706,72 @@ make functional
   Copying the files is now just a matter of running the following script:
 
   $ sh copy_files <file source> <file destination> <input file>
+
+** Exporting sample sets
+   The migrator script allows the export and import of data, whether it be a
+   single patient/run/set or a list of them, or even all the sample sets
+   associated to a group.
+
+   #+BEGIN_EXAMPLE
+    usage: migrator.py [-h] [-f FILENAME] [--debug] {export,import} ...
+
+    Export and import data
+
+    positional arguments:
+    {export,import}  Select operation mode
+      export         Export data from the DB into a JSON file
+      import         Import data from JSON into the DB
+
+    optional arguments:
+      -h, --help       show this help message and exit
+      -f FILENAME      Select the file to be read or written to
+      --debug          Output debug information
+   #+END_EXAMPLE
+
+   Export:
+   #+BEGIN_EXAMPLE
+    usage: migrator.py export [-h] {sample_set,group} ...
+
+    positional arguments:
+      {sample_set,group}  Select data selection method
+        sample_set        Export data by sample-set ids
+        group             Extract data by groupid
+
+    optional arguments:
+      -h, --help          show this help message and exit
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+    usage: migrator.py export sample_set [-h] {patient,run,generic} ID [ID
+    ...]
+
+    positional arguments:
+      {patient,run,generic}
+                              Type of sample
+        ID                    Ids of sample sets to be extracted
+
+      optional arguments:
+        -h, --help            show this help message and exit
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+    usage: migrator.py export group [-h] groupid
+
+    positional arguments:
+      groupid     The long ID of the group
+
+    optional arguments:
+      -h, --help  show this help message and exit
+   #+END_EXAMPLE
+
+   Import:
+   #+BEGIN_EXAMPLE
+    usage: migrator.py import [-h] [--dry-run] groupid
+
+    positional arguments:
+      groupid     The long ID of the group
+
+    optional arguments:
+      -h, --help  show this help message and exit
+      --dry-run   With a dry run, the data will not be saved to the database
+   #+END_EXAMPLE
