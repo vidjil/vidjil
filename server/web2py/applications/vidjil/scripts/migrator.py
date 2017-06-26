@@ -115,7 +115,7 @@ class Extractor():
 class GroupExtractor(Extractor):
 
     def __init__(self, db):
-        Extractor.__init__(self, db, level)
+        Extractor.__init__(self, db)
 
     def getAccessible(self, table, groupid):
         rows = db((db[table].id == db.auth_permission.record_id)
@@ -128,7 +128,7 @@ class GroupExtractor(Extractor):
 class SampleSetExtractor(Extractor):
 
     def __init__(self, db):
-        Extractor.__init__(self, db, level)
+        Extractor.__init__(self, db)
 
     def getAccessible(self, table, ids):
         rows = db(db[table].id.belongs(ids)).select(db[table].ALL)
@@ -242,7 +242,7 @@ def import_data(filename, groupid, dry_run=False):
         tmp = json.load(infile, encoding='utf-8')
         data = reencode_dict(tmp)
 
-    imp = Importer(groupid, db, logging.INFO)
+    imp = Importer(groupid, db)
 
     try:
         set_types = ['patient', 'run', 'generic']
