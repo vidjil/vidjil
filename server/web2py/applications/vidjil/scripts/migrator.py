@@ -1,6 +1,8 @@
 import json, argparse
 import logging
 import sys
+from pydal.helpers.classes import RecordDeleter, RecordUpdater
+from pydal.objects import LazySet
 
 class MigrateLogger():
 
@@ -34,12 +36,12 @@ def get_dict_from_row(row):
     Create a dict element from a Row element
     while filtering out some key pydal helper fields
     '''
-    ex_fields = ['id', 'uuid', 'analysis_file', 'results_file', 'fused_file',
-            'sequence_file', 'sample_set_membership', 'delete_record',
-            'update_record', 'scheduler_task_deps', 'scheduler_run']
+    ex_fields = ['id', 'uuid']
+    ex_types = [RecordDeleter, RecordUpdater, LazySet]
+
     my_dict = {}
     for key in row.keys():
-        if key not in ex_fields:
+        if ((key not in ex_fields) and (type(row[key]) not in ex_types)):
             tmp = row[key]
             if isinstance(tmp, datetime.datetime):
                 tmp = tmp.__str__()
