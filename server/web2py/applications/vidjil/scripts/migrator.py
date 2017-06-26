@@ -65,7 +65,7 @@ def reencode_dict(data):
 
 class Extractor():
 
-    def __init__(self, db, level=logging.INFO):
+    def __init__(self, db):
         log.info("initialising extractor")
         self.db = db
 
@@ -114,7 +114,7 @@ class Extractor():
 
 class GroupExtractor(Extractor):
 
-    def __init__(self, db, level=logging.INFO):
+    def __init__(self, db):
         Extractor.__init__(self, db, level)
 
     def getAccessible(self, table, groupid):
@@ -127,7 +127,7 @@ class GroupExtractor(Extractor):
 
 class SampleSetExtractor(Extractor):
 
-    def __init__(self, db, level=logging.INFO):
+    def __init__(self, db):
         Extractor.__init__(self, db, level)
 
     def getAccessible(self, table, ids):
@@ -136,7 +136,7 @@ class SampleSetExtractor(Extractor):
 
 class Importer():
 
-    def __init__(self, groupid, db, level=logging.INFO):
+    def __init__(self, groupid, db):
         log.info("initialising importer")
         self.groupid = groupid
         self.db = db
