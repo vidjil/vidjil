@@ -34,9 +34,9 @@ def get_dict_from_row(row):
     Create a dict element from a Row element
     while filtering out some key pydal helper fields
     '''
-    ex_fields = ['id', 'analysis_file', 'results_file', 'fused_file',
+    ex_fields = ['id', 'uuid', 'analysis_file', 'results_file', 'fused_file',
             'sequence_file', 'sample_set_membership', 'delete_record',
-            'update_record']
+            'update_record', 'scheduler_task_deps', 'scheduler_run']
     my_dict = {}
     for key in row.keys():
         if key not in ex_fields:
@@ -185,6 +185,10 @@ def export_peripheral_data(extractor, data_dict, sample_set_ids):
     results_rows = extractor.getTableEntries('results_file', 'sequence_file_id', data_dict['sequence_file'].keys())
     data_dict['results_file'] = extractor.populateEntries(results_rows, 'results_file')
 
+    task_ids = [r['scheduler_task_id'] for k, r in data_dict['results_file'].iteritems()]
+    task_rows = extractor.getTableEntries('scheduler_task', 'id', task_ids)
+    data_dict['scheduler_task'] = extractor.populateEntries(task_rows, 'scheduler_task')
+
     analysis_rows = extractor.getTableEntries('analysis_file', 'sample_set_id', sample_set_ids)
     data_dict['analysis_file'] = extractor.populateEntries(analysis_rows, 'analysis_file')
 
@@ -248,6 +252,7 @@ def import_data(filename, groupid, dry_run=False):
 
         imp.importTable('sequence_file', data['sequence_file'], map_val=True)
         imp.importTable('sample_set_membership', data['membership'], ['sample_set', 'sequence_file'])
+        imp.importTable('scheduler_task', data['scheduler_task'], map_val=True)
         imp.importTable('results_file', data['results_file'], ['sequence_file', 'scheduler_task'])
         imp.importTable('analysis_file', data['analysis_file'], ['sample_set'])
         imp.importTable('fused_file', data['fused_file'], ['sample_set'])
