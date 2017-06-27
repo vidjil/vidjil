@@ -2,6 +2,7 @@
 
 import unittest
 from mock import MagicMock, Mock
+from applications.vidjil.scripts.migrator import *
 
 class Migrator(unittest.TestCase):
         
@@ -10,7 +11,6 @@ class Migrator(unittest.TestCase):
         
     def setUp(self):
         # Load the to-be-tested file
-        execfile("applications/vidjil/scripts/migrator.py", globals())
         global log, exp
         log = Mock(return_value=None)
         exp = Extractor(db, log)
