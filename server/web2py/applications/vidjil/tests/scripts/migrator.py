@@ -100,7 +100,7 @@ class MigratorScript(unittest.TestCase):
             self.assertTrue(smid in memberships, 'Missing id %d in memberships' % smid)
 
     def testPopulateEntries(self):
-        rows = exp.getTableEntries('results_file', ['sequence_file'], test_sequence_file_ids)
+        rows = exp.getTableEntries('results_file', 'sequence_file_id', test_sequence_file_ids)
         results = exp.populateEntries(rows)
 
         for rid in test_results_file_ids:
