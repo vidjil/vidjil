@@ -67,16 +67,17 @@ def reencode_dict(data):
 
 class Extractor():
 
-    def __init__(self, db):
-        log.info("initialising extractor")
+    def __init__(self, db, log):
+        self.log = log
+        self.log.info("initialising extractor")
         self.db = db
 
     def populateSets(self, rows):
-        log.debug("populate sets")
+        self.log.debug("populate sets")
         sets = {}
         sample_set_ids = []
         for row in rows:
-            log.debug("populating : %d, sample_set: %d" % (row.id, row.sample_set_id))
+            self.log.debug("populating : %d, sample_set: %d" % (row.id, row.sample_set_id))
             sets[row.id] = get_dict_from_row(row)
             sample_set_ids.append(row.sample_set_id)
         return sets, sample_set_ids
@@ -89,13 +90,13 @@ class Extractor():
         return rows
 
     def populateSequenceFiles(self, rows):
-        log.debug("populate sequence_files")
+        self.log.debug("populate sequence_files")
         memberships = {}
         sequence_files = {}
         for row in rows:
             ssm_id = row.sample_set_membership.id
             sf_id = row.sequence_file.id
-            log.debug("populating sequence file: %d, membership: %d" % (sf_id, ssm_id))
+            self.log.debug("populating sequence file: %d, membership: %d" % (sf_id, ssm_id))
             memberships[ssm_id] = get_dict_from_row(row.sample_set_membership)
             sequence_files[sf_id] = get_dict_from_row(row.sequence_file)
         return sequence_files, memberships
@@ -106,18 +107,18 @@ class Extractor():
         return rows
 
     def populateEntries(self, rows, etype=''):
-        log.debug("populate %ss" % etype)
+        self.log.debug("populate %ss" % etype)
         data = {}
         for row in rows:
             my_dict = get_dict_from_row(row)
-            log.debug("populating entry: %s" % str(my_dict))
+            self.log.debug("populating entry: %s" % str(my_dict))
             data[row.id] = my_dict
         return data
 
 class GroupExtractor(Extractor):
 
-    def __init__(self, db):
-        Extractor.__init__(self, db)
+    def __init__(self, db, log):
+        Extractor.__init__(self, db, log)
 
     def getAccessible(self, table, groupid):
         rows = db((db[table].id == db.auth_permission.record_id)
@@ -129,8 +130,8 @@ class GroupExtractor(Extractor):
 
 class SampleSetExtractor(Extractor):
 
-    def __init__(self, db):
-        Extractor.__init__(self, db)
+    def __init__(self, db, log):
+        Extractor.__init__(self, db, log)
 
     def getAccessible(self, table, ids):
         rows = db(db[table].id.belongs(ids)).select(db[table].ALL)
@@ -138,47 +139,48 @@ class SampleSetExtractor(Extractor):
 
 class Importer():
 
-    def __init__(self, groupid, db):
-        log.info("initialising importer")
+    def __init__(self, groupid, db, log):
+        self.log = log
+        self.log.info("initialising importer")
         self.groupid = groupid
         self.db = db
         self.mappings = {}
         self.mappings['sample_set'] = {}
 
     def importSampleSets(self, stype, sets):
-        log.debug("import sets")
+        self.log.debug("import sets")
         for sid in sets:
-            log.debug("Importing set: %s" % sid)
+            self.log.debug("Importing set: %s" % sid)
             sset = sets[sid]
             ssid = db.sample_set.insert(sample_type = stype)
-            log.debug("New sample_set %d" % ssid)
+            self.log.debug("New sample_set %d" % ssid)
             self.mappings['sample_set'][sset['sample_set_id']] = ssid
-            log.debug("Mapped: %d to %d" % (sset['sample_set_id'], ssid))
+            self.log.debug("Mapped: %d to %d" % (sset['sample_set_id'], ssid))
             sset['sample_set_id'] = ssid
             nid = db[stype].insert(**sset)
-            log.debug("New %s: %d" % (stype, nid))
+            self.log.debug("New %s: %d" % (stype, nid))
             db.auth_permission.insert(group_id=self.groupid,
                                       name=PermissionEnum.access.value,
                                       table_name=stype,
                                       record_id=nid)
-            log.debug("associated set %d to group %d" % (nid, self.groupid))
+            self.log.debug("associated set %d to group %d" % (nid, self.groupid))
 
     def importTable(self, table, values, ref_fields=[], map_val=False):
-        log.debug("import %ss" % table)
+        self.log.debug("import %ss" % table)
         for vid in values:
-            log.debug("importing %s: %s" % (table, vid))
+            self.log.debug("importing %s: %s" % (table, vid))
             val = values[vid]
             for ref in ref_fields:
                 ref_key = "%s_id" % ref
-                log.debug("replacing %s: %d with %d" % (ref_key, val[ref_key], self.mappings[ref][val[ref_key]]))
+                self.log.debug("replacing %s: %d with %d" % (ref_key, val[ref_key], self.mappings[ref][val[ref_key]]))
                 val[ref_key] = self.mappings[ref][val[ref_key]]
             oid = db[table].insert(**val)
-            log.debug("new %s: %d" % (table, oid))
+            self.log.debug("new %s: %d" % (table, oid))
             if map_val:
                 if table not in self.mappings:
                     self.mappings[table] = {}
                 self.mappings[table][long(vid)] = oid
-                log.debug("mapped: %d to %d" % (long(vid), oid))
+                self.log.debug("mapped: %d to %d" % (long(vid), oid))
 
 def export_peripheral_data(extractor, data_dict, sample_set_ids):
     sequence_rows = extractor.getSequenceFiles(sample_set_ids)
@@ -201,7 +203,7 @@ def export_peripheral_data(extractor, data_dict, sample_set_ids):
 
 def export_group_data(filename, groupid):
     log.info("exporting group data")
-    ext = GroupExtractor(db)
+    ext = GroupExtractor(db, log)
 
     tables = {}
 
@@ -224,7 +226,7 @@ def export_group_data(filename, groupid):
 
 def export_sample_set_data(filename, sample_type, sample_ids):
     log.info("exporting sample set data")
-    ext = SampleSetExtractor(db)
+    ext = SampleSetExtractor(db, log)
 
     tables = {}
 
@@ -244,7 +246,7 @@ def import_data(filename, groupid, dry_run=False):
         tmp = json.load(infile, encoding='utf-8')
         data = reencode_dict(tmp)
 
-    imp = Importer(groupid, db)
+    imp = Importer(groupid, db, log)
 
     try:
         set_types = ['patient', 'run', 'generic']
