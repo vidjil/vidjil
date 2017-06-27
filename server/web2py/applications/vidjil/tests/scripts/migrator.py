@@ -11,9 +11,40 @@ class MigratorScript(unittest.TestCase):
         
     def setUp(self):
         # Load the to-be-tested file
-        global log, exp
+        global log, exp, test_patient_ids, test_sample_set_ids, test_sequence_file_ids, test_sample_set_membership_ids, test_results_file_ids
         log = Mock(return_value=None)
         exp = Extractor(db, log)
+
+        test_patient_ids = []
+        test_sample_set_ids = []
+        test_sequence_file_ids = []
+        test_sample_set_membership_ids = []
+        test_results_file_ids = []
+
+        test_sample_set_ids.append(db.sample_set.insert(sample_type='patient'))
+        test_sample_set_ids.append(db.sample_set.insert(sample_type='patient'))
+
+        test_patient_ids.append(db.patient.insert(first_name='foo',
+                                                  last_name='bar',
+                                                  sample_set_id = test_sample_set_ids[0]))
+        test_patient_ids.append(db.patient.insert(first_name='bar',
+                                                  last_name='foo',
+                                                  sample_set_id = test_sample_set_ids[1]))
+
+        test_sequence_file_ids.append(db.sequence_file.insert(filename='foobar.fastq'))
+        test_sequence_file_ids.append(db.sequence_file.insert(filename='barfoo.fastq'))
+
+        test_sample_set_membership_ids.append(
+                db.sample_set_membership.insert(sample_set_id=test_sample_set_ids[0],
+                                                sequence_file_id=test_sequence_file_ids[0])
+                )
+        test_sample_set_membership_ids.append(
+                db.sample_set_membership.insert(sample_set_id=test_sample_set_ids[1],
+                                                sequence_file_id=test_sequence_file_ids[1])
+                )
+
+        test_results_file_ids.append(db.results_file.insert(sequence_file_id=test_sequence_file_ids[0]))
+        test_results_file_ids.append(db.results_file.insert(sequence_file_id=test_sequence_file_ids[1]))
 
     def testReencodeDict(self):
         data = {}
