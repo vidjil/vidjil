@@ -4,7 +4,7 @@ import unittest
 from mock import MagicMock, Mock
 from applications.vidjil.scripts.migrator import *
 
-class Migrator(unittest.TestCase):
+class MigratorScript(unittest.TestCase):
         
     def __init__(self, p):
         unittest.TestCase.__init__(self, p)
