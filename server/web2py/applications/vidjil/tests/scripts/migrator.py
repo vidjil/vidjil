@@ -90,7 +90,7 @@ class MigratorScript(unittest.TestCase):
 
     def testPopulateSequenceFiles(self):
         rows = exp.getSequenceFiles(test_sample_set_ids)
-        sequence_files, memberships = exp.populateSequence_files(rows)
+        sequence_files, memberships = exp.populateSequenceFiles(rows)
 
         for sfid in test_sequence_file_ids:
             assertTrue(sfid in sequence_files, 'Missing id %d in sequence_files' % sfid)
