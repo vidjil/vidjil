@@ -47,15 +47,32 @@ class Migrator(unittest.TestCase):
 
 
     def testPopulateSets(self):
+        rows = db(db.patient.id.belongs(test_patient_ids)).select()
+        sets, sample_set_ids = exp.populateSets(rows)
+
+        expected = test_sample_set_ids
+        assertEqual(sample_set_ids, expected, 'Incorrect sample_set_ids returned. Expected %s, but got %s' % (str(expected), str(sample_set_ids)))
+
+        for pid in test_patient_ids:
+            assertTrue(pid in sets, 'Missing id %d in sets' % pid)
 
 
     def testPopulateSequenceFiles(self):
-        # TODO
-        self.assertTrue(False, "Test isn't implemented yet")
+        rows = exp.getSequenceFiles(test_sample_set_ids)
+        sequence_files, memberships = exp.populateSequence_files(rows)
+
+        for sfid in test_sequence_file_ids:
+            assertTrue(sfid in sequence_files, 'Missing id %d in sequence_files' % sfid)
+
+        for smid in test_sample_set_membership_ids:
+            assertTrue(smid in memberships, 'Missing id %d in memberships' % smid)
 
     def testPopulateEntries(self):
-        # TODO
-        self.assertTrue(False, "Test isn't implemented yet")
+        rows = exp.getTableEntries('results_file', ['sequence_file'], test_sequence_file_ids)
+        results = exp.populateEntries(rows)
+
+        for rid in test_results_file_ids:
+            assertTrue(rid in results, 'Missing id %d in results' % rid)
 
     def testImportSampleSets(self):
         # TODO
