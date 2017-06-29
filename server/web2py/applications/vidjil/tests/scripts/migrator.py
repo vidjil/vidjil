@@ -11,9 +11,13 @@ class MigratorScript(unittest.TestCase):
         
     def setUp(self):
         # Load the to-be-tested file
-        global log, exp, test_patient_ids, test_sample_set_ids, test_sequence_file_ids, test_sample_set_membership_ids, test_results_file_ids
+        global log, exp, imp, test_patient_ids, test_sample_set_ids, test_sequence_file_ids, test_sample_set_membership_ids, test_results_file_ids, test_group
         log = Mock(return_value=None)
+
+        test_group = db.auth_group.insert(role='testy')
         exp = Extractor(db, log)
+        config_mapper = ConfigMapper(log)
+        imp = Importer(test_group, db, log, config_mapper)
 
         test_patient_ids = []
         test_sample_set_ids = []
@@ -107,9 +111,48 @@ class MigratorScript(unittest.TestCase):
             self.assertTrue(rid in results, 'Missing id %d in results' % rid)
 
     def testImportSampleSets(self):
-        # TODO
-        self.assertTrue(False, "Test isn't implemented yet")
+        patient = {}
+        patient['first_name'] = 'impo'
+        patient['last_name'] = 'rted'
+        patient['sample_set_id'] = 4
+        sets = {}
+        sets[4] = patient
+
+        imp.importSampleSets('patient', sets)
+
+        res = db((db.patient.first_name == 'impo')
+                &(db.patient.last_name == 'rted')
+             ).select()
+        self.assertEqual(len(res), 1, 'Incorrect number of patients. expected 1, but got %d' % len(res))
+
+        p = res.first()
+        sample_set = db.sample_set[p.sample_set_id]
+
+        self.assertTrue(sample_set is not None, 'Missing sample set after import')
+
+        perm = db((db.auth_permission.name == 'access')
+                &(db.auth_permission.table_name == 'patient')
+                &(db.auth_permission.record_id == p.id)
+            ).select()
+        self.assertEqual(len(res), 1, 'Incorrect number of permissions. expected 1, but got %d' % len(res))
 
     def testImportTable(self):
-        # TODO
-        self.assertTrue(False, "Test isn't implemented yet")
+        sequence_file = db.sequence_file.insert(filename='test_file')
+        config = db.config.insert(command='foobar test')
+        old_seq_id = 45
+        imp.mappings['sequence_file'] = IdMapper(log)
+        imp.mappings['sequence_file'].setMatchingId(old_seq_id, sequence_file)
+        results_file = {'sequence_file_id': old_seq_id,
+                        'config_id': config,
+                        'data_file': 'foobar.txt',
+                        'run_date': '1970-01-01 00:00:00'}
+        results = {10: results_file}
+
+        imp.importTable('results_file', results, ['sequence_file'], True)
+        res = db((db.results_file.data_file == 'foobar.txt')
+                &(db.results_file.run_date == '1970-01-01 00:00:00')
+            ).select()
+        self.assertEqual(len(res), 1, 'Incorrect number of permissions. expected 1, but got %d' % len(res))
+
+        result = res.first()
+        self.assertEqual(result.sequence_file_id, sequence_file, 'sequence_file_id field was not remapped')
