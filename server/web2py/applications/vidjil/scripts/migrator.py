@@ -287,7 +287,7 @@ def import_data(filename, groupid, config=None, dry_run=False):
         imp.importTable('sequence_file', data['sequence_file'], map_val=True)
         imp.importTable('sample_set_membership', data['membership'], ['sample_set', 'sequence_file'])
         imp.importTable('scheduler_task', data['scheduler_task'], map_val=True)
-        imp.importTable('results_file', data['results_file'], ['sequence_file', 'scheduler_task'])
+        imp.importTable('results_file', data['results_file'], ['sequence_file', 'scheduler_task', 'config'])
         imp.importTable('analysis_file', data['analysis_file'], ['sample_set'])
         imp.importTable('fused_file', data['fused_file'], ['sample_set'])
 
