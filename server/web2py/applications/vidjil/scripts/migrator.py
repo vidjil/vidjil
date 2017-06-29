@@ -149,6 +149,7 @@ class GroupExtractor(Extractor):
         Extractor.__init__(self, db, log)
 
     def getAccessible(self, table, groupid):
+        db = self.db
         rows = db((db[table].id == db.auth_permission.record_id)
                 & (db.auth_permission.table_name == table)
                 & (db.auth_permission.name == PermissionEnum.access.value)
@@ -162,6 +163,7 @@ class SampleSetExtractor(Extractor):
         Extractor.__init__(self, db, log)
 
     def getAccessible(self, table, ids):
+        db = self.db
         rows = db(db[table].id.belongs(ids)).select(db[table].ALL)
         return rows
 
@@ -176,6 +178,7 @@ class Importer():
         self.mappings['sample_set'] = IdMapper(self.log)
 
     def importSampleSets(self, stype, sets):
+        db = self.db
         self.log.debug("import sets")
         for sid in sets:
             self.log.debug("importing set: %s" % sid)
@@ -193,6 +196,7 @@ class Importer():
             self.log.debug("associated set %d to group %d" % (nid, self.groupid))
 
     def importTable(self, table, values, ref_fields=[], map_val=False):
+        db = self.db
         self.log.debug("import %ss" % table)
         for vid in values:
             self.log.debug("importing %s: %s" % (table, vid))
