@@ -2,6 +2,7 @@ import json, argparse
 import logging, sys, datetime
 from pydal.helpers.classes import RecordDeleter, RecordUpdater
 from pydal.objects import LazySet
+from applications.vidjil.models.VidjilAuth import PermissionEnum
 
 class MigrateLogger():
 
