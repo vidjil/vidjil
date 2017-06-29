@@ -167,13 +167,13 @@ class SampleSetExtractor(Extractor):
 
 class Importer():
 
-    def __init__(self, groupid, db, log):
+    def __init__(self, groupid, db, log, config_mapper):
         self.log = log
         self.log.info("initialising importer")
         self.groupid = groupid
         self.db = db
-        self.mappings = {}
-        self.mappings['sample_set'] = {}
+        self.mappings = {'config': config_mapper}
+        self.mappings['sample_set'] = IdMapper(self.log)
 
     def importSampleSets(self, stype, sets):
         self.log.debug("import sets")
@@ -182,8 +182,7 @@ class Importer():
             sset = sets[sid]
             ssid = db.sample_set.insert(sample_type = stype)
             self.log.debug("New sample_set %d" % ssid)
-            self.mappings['sample_set'][sset['sample_set_id']] = ssid
-            self.log.debug("Mapped: %d to %d" % (sset['sample_set_id'], ssid))
+            self.mappings['sample_set'].setMatchingId(sset['sample_set_id'], ssid)
             sset['sample_set_id'] = ssid
             nid = db[stype].insert(**sset)
             self.log.debug("New %s: %d" % (stype, nid))
@@ -200,15 +199,15 @@ class Importer():
             val = values[vid]
             for ref in ref_fields:
                 ref_key = "%s_id" % ref
-                self.log.debug("replacing %s: %d with %d" % (ref_key, val[ref_key], self.mappings[ref][val[ref_key]]))
-                val[ref_key] = self.mappings[ref][val[ref_key]]
+                matching_id = self.mappings[ref].getMatchingId(val[ref_key])
+                self.log.debug("replacing %s: %d with %d" % (ref_key, val[ref_key], matching_id))
+                val[ref_key] = matching_id
             oid = db[table].insert(**val)
             self.log.debug("new %s: %d" % (table, oid))
             if map_val:
                 if table not in self.mappings:
-                    self.mappings[table] = {}
-                self.mappings[table][long(vid)] = oid
-                self.log.debug("mapped: %d to %d" % (long(vid), oid))
+                    self.mappings[table] = IdMapper(log)
+                self.mappings[table].setMatchingId(long(vid), oid)
 
 def export_peripheral_data(extractor, data_dict, sample_set_ids):
     sequence_rows = extractor.getSequenceFiles(sample_set_ids)
@@ -267,14 +266,17 @@ def export_sample_set_data(filename, sample_type, sample_ids):
         json.dump(tables, outfile, ensure_ascii=False, encoding='utf-8')
     log.info("done")
 
-def import_data(filename, groupid, dry_run=False):
+def import_data(filename, groupid, config=None, dry_run=False):
     log.info("importing data")
     data = {}
     with open(filename, 'r') as infile:
         tmp = json.load(infile, encoding='utf-8')
         data = reencode_dict(tmp)
 
-    imp = Importer(groupid, db, log)
+    config_mapper = ConfigMapper(log)
+    if config:
+        config_mapper.load(config)
+    imp = Importer(groupid, db, log, config_mapper)
 
     try:
         set_types = ['patient', 'run', 'generic']
@@ -317,6 +319,7 @@ def main():
 
     import_parser = subparsers.add_parser('import', help='Import data from JSON into the DB')
     import_parser.add_argument('--dry-run', dest='dry', action='store_true', help='With a dry run, the data will not be saved to the database')
+    import_parser.add_argument('--config', type=str, dest='config', help='Select the config mapping file')
     import_parser.add_argument('groupid', type=long, help='The long ID of the group')
 
     parser.add_argument('-f', type=str, dest='filename', default='./export.txt', help='Select the file to be read or written to')
@@ -335,7 +338,7 @@ def main():
     elif args.command == 'import':
         if args.dry:
             log.log.setLevel(logging.DEBUG)
-        import_data(args.filename, args.groupid, args.dry)
+        import_data(args.filename, args.groupid, args.config, args.dry)
 
 if __name__ == '__main__':
     main()
