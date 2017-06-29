@@ -178,14 +178,14 @@ class Importer():
     def importSampleSets(self, stype, sets):
         self.log.debug("import sets")
         for sid in sets:
-            self.log.debug("Importing set: %s" % sid)
+            self.log.debug("importing set: %s" % sid)
             sset = sets[sid]
             ssid = db.sample_set.insert(sample_type = stype)
-            self.log.debug("New sample_set %d" % ssid)
+            self.log.debug("new sample_set %d" % ssid)
             self.mappings['sample_set'].setMatchingId(sset['sample_set_id'], ssid)
             sset['sample_set_id'] = ssid
             nid = db[stype].insert(**sset)
-            self.log.debug("New %s: %d" % (stype, nid))
+            self.log.debug("new %s: %d" % (stype, nid))
             db.auth_permission.insert(group_id=self.groupid,
                                       name=PermissionEnum.access.value,
                                       table_name=stype,
