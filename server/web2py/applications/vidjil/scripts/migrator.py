@@ -64,6 +64,35 @@ def reencode_dict(data):
     else:
         return data 
 
+class IdMapper():
+
+    def __init__(self, log):
+        self.log = log
+        self.mapping = {}
+
+    def getMatchingId(self, oid):
+        if oid not in self.mapping:
+            self.log.debug('id %d not in mapping, returning it' % oid)
+            return oid
+        return self.mapping[oid]
+
+    def setMatchingId(self, old_id, new_id):
+        self.mapping[old_id] = new_id
+        self.log.debug("mapped: %d to %d" % (old_id, new_id))
+
+class ConfigMapper(IdMapper):
+
+    def __init__(self, log, cfile=None):
+        IdMapper.__init__(self, log)
+        if cfile is not None:
+            self.load(cfile)
+
+    def load(self, cfile):
+        with open(cfile, 'r') as cfg:
+            self.mapping = json.load(cfg, encoding='utf-8')
+            self.log.info("mapping loaded")
+            selg.log.debug("mapping values: %s" % str(self.config))
+
 class Extractor():
 
     def __init__(self, db, log):
