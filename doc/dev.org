@@ -691,12 +691,14 @@ make functional
   obtained from sequence_file, fused_file, results_file and analysis_file
   with the following query:
 
-  $ SELECT <filename field>
+  #+BEGIN_SRC sql
+    SELECT <filename field>
     FROM <table name>
     INTO OUTFILE 'filepath'
     FIELDS TERMINATED BY ','
     ENCLOSED BY ''
     LINES TERMINATED BY '\n'
+  #+END_SRC
 
   Note: We are managing filenames here which should not contain any
   character such as quotes or commas so we can afford to refrain from
@@ -705,4 +707,6 @@ make functional
   This query will output a csv file containing a filename on each line.
   Copying the files is now just a matter of running the following script:
 
-  $ sh copy_files <file source> <file destination> <input file>
+  #+BEGIN_SRC sh
+    sh copy_files <file source> <file destination> <input file>
+  #+END_SRC
