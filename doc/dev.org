@@ -463,38 +463,50 @@ make functional
    Create a base directory for the package and the folders to which the binary
    will be installed. Let's call our folder debian and copy the binary to /usr/bin/
 
-   $ mkdir -p debian/usr/bin
+   #+BEGIN_SRC sh
+     mkdir -p debian/usr/bin
+   #+END_SRC
 
    And copy the vidjil binary
 
-   $ cp vidjil debian/usr/bin
+   #+BEGIN_SRC sh
+     cp vidjil debian/usr/bin
+   #+END_SRC
 
    Now create the necessary control file. It should look something like this:
 
-   Package: vidjil
-   Version: <version> (ie. 2016.03-1)
-   Section: misc
-   Priority: optional
-   Architecture: all
-   Depends: bash (>= 2.05a-11)
-   Maintainer: Vidjil Team <team@vidjil.org>
-   Description: Count lymphocyte clones
-   vidjil parses a fasta or fastq file and produces an output with a list
-   of clones and meta-data concerning these clones
+   #+BEGIN_EXAMPLE
+     Package: vidjil
+     Version: <version> (ie. 2016.03-1)
+     Section: misc
+     Priority: optional
+     Architecture: all
+     Depends: bash (>= 2.05a-11)
+     Maintainer: Vidjil Team <team@vidjil.org>
+     Description: Count lymphocyte clones
+     vidjil parses a fasta or fastq file and produces an output with a list
+     of clones and meta-data concerning these clones
+   #+END_EXAMPLE
 
    And place it in the correct folder.
 
-   $ mkdir -p debian/DEBIAN
-   $ cp control debian/DEBIAN/
+   #+BEGIN_SRC sh
+     mkdir -p debian/DEBIAN
+     cp control debian/DEBIAN/
+   #+END_SRC
 
    Now build the package and rename it.
 
-   $ dpkg-deb --build debian
-   $ mv debian.deb vidjil_<version>_all.deb
+   #+BEGIN_SRC sh
+     dpkg-deb --build debian
+     mv debian.deb vidjil_<version>_all.deb
+   #+END_SRC
 
    It can be installed but running
 
-   $ sudo dpkg -i vidjil_<version>_all.deb
+   #+BEGIN_SRC sh
+     sudo dpkg -i vidjil_<version>_all.deb
+   #+END_SRC
 
    # TODO Add Changelog, copyright, etc.
 
@@ -521,7 +533,9 @@ make functional
 
     In order to generate this folder run the following from the source base
     directory.
-    $ dh_make -n
+    #+BEGIN_SRC sh
+      dh_make -n
+    #+END_SRC
 
     You can remove all files from the debian folder that match the patterns *.ex, *.EX and README*
 
@@ -531,13 +545,18 @@ make functional
     Vidjil has no install rule so we need to use a debian packaging feature.
     Create a file named debian/install with the following line:
 
-    vidjil usr/bin/
+    #+BEGIN_EXAMPLE
+      vidjil usr/bin/
+    #+END_EXAMPLE
 
     Vidjil currently depends on some unpackaged files that need to be
     downloaded before compiling.
-    $ mkdir browser
-    $ make germline
-    $ make data
+
+    #+BEGIN_SRC sh
+      mkdir browser
+      make germline
+      make data
+    #+END_SRC
 
     Debian packaging also requires archives of the original source. This is
     to manage people packaging software they haven't developed with changes
@@ -549,7 +568,10 @@ make functional
     From the source directory, run that script to create the package.
 
     You're done! You can now install the debian package with:
-    $ sudo dpkg -i path/to/package
+
+    #+BEGIN_SRC sh
+      sudo dpkg -i path/to/package
+    #+END_SRC
 
 * Docker
  The vidjil Docker environment is managed by Docker Compose since it is
@@ -631,22 +653,30 @@ make functional
    The docker image is not on the DockerHub and therefore needs to be built
    before it can be used.
 
-   $ docker-compose build
+   #+BEGIN_SRC sh
+     docker-compose build
+   #+END_SRC
 
    Running the services:
 
-   $ docker-compose up
+   #+BEGIN_SRC sh
+     docker-compose up
+   #+END_SRC
 
    Shorthand for the two previous commands:
 
-   $ docker-compose up --build
+   #+BEGIN_SRC sh
+     docker-compose up --build
+   #+END_SRC
 
 * Migrating Data
 ** Database
    The easiest way to perform a database migration is to first extract the
    data with the following command:
 
-   $ mysqldump -u <user> -p <db> -c --no-create-info > <file>
+   #+BEGIN_SRC sh
+     mysqldump -u <user> -p <db> -c --no-create-info > <file>
+   #+END_SRC
 
    An important element to note here is the --no-create-info we add this
    parameter because web2py needs to be allowed to create tables itself
@@ -663,7 +693,9 @@ make functional
 
    Once the tables have been created, the data can be imported as follows:
 
-   $ mysql -u <user> -p <db> < <file>
+   #+BEGIN_SRC sh
+     mysql -u <user> -p <db> < <file>
+   #+END_SRC
 
    Please note that with this method you should have at least one admin user
    that is accessible in the imported data. Since the initialisation is being
@@ -676,7 +708,7 @@ make functional
    are stored in the database and should therefore be accessible as long as
    they are in the correct directories.
 
-** Filtering data
+** Filtering data (soon deprecated)
    When extracting data for a given user, the whole database should not be
    copied over.
    There are two courses of action:
@@ -710,3 +742,4 @@ make functional
   #+BEGIN_SRC sh
     sh copy_files <file source> <file destination> <input file>
   #+END_SRC
+
