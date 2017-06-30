@@ -766,7 +766,7 @@ make functional
 
    Import:
    #+BEGIN_EXAMPLE
-    usage: migrator.py import [-h] [--dry-run] groupid
+    usage: migrator.py import [-h] [--dry-run] [--config CONFIG] groupid
 
     positional arguments:
       groupid     The long ID of the group
@@ -774,4 +774,5 @@ make functional
     optional arguments:
       -h, --help  show this help message and exit
       --dry-run   With a dry run, the data will not be saved to the database
+      --config CONFIG  Select the config mapping file
    #+END_EXAMPLE
