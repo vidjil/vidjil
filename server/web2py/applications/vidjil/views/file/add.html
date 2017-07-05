@@ -43,6 +43,10 @@
                 <td><input class="upload_field" id="upload_file2" type="file" {{if source_module_active:}} disabled {{pass}}></td>
                 <td>* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
             </tr>
+            <tr  {{if not source_module_active:}} hidden {{pass}}>
+                <td>selected</td>
+                <td id="file_indicator"></td>
+            </tr>
             <tr {{if not source_module_active:}} hidden {{else:}} onmouseover="db.set_jstree($('#jstree'))" {{pass}}>
                 <td >file</td>
                 <td><div id="jstree"></div></td>
