@@ -115,15 +115,19 @@ def confirm():
 
 def delete():
     if (auth.can_modify_config(request.vars['id'])):
-        #delete results_file using this config
-        db(db.results_file.config_id==request.vars["id"]).delete()
+        count = db(db.results_file.config_id==request.vars["id"]).count()
 
-        #delete config
-        db(db.config.id==request.vars["id"]).delete()
+        if (count == 0):
+            #delete config
+            db(db.config.id==request.vars["id"]).delete()
 
-        res = {"redirect": "config/index",
-               "message": "config '%s' deleted" % request.vars["id"]}
-        log.admin(res)
+            res = {"redirect": "config/index",
+                   "message": "config '%s' deleted" % request.vars["id"]}
+            log.admin(res)
+        else:
+            res = {"redirect": "config/index",
+                    "success": "false",
+                    "message": "cannot delete a config that has been used"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     return error_message(ACCESS_DENIED)
 
