@@ -76,6 +76,11 @@ def add_form():
         else:
             auth.add_permission(id, PermissionEnum.admin_group.value, id)
 
+        auth.add_permission(id, PermissionEnum.create.value, 'sample_set', 0);
+        auth.add_permission(id, PermissionEnum.admin.value, 'sample_set', 0);
+        auth.add_permission(id, PermissionEnum.upload.value, 'sample_set', 0);
+        auth.add_permission(id, PermissionEnum.save.value, 'sample_set', 0);
+
         res = {"redirect": "group/index",
                "message" : "group '%s' created" % id}
         log.info(res)
