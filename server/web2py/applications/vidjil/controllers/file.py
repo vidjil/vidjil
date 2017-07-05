@@ -165,6 +165,14 @@ def add_form():
             except ValueError:
                 error += " Invalid %s %s" % (key, set_ids[key])
 
+
+    if request.vars['generic_id'] != '' :
+        try:
+            generic_id = extract_id(request.vars['generic_id'], error)
+            if not auth.can_modify('generic', generic_id) :
+                error += " missing permissions for sample_set %d" % generic_id
+        except ValueError:
+            error += " invalid sample_set %s" % request.vars['sample_set_id']
     pre_process = None
     pre_process_flag = "DONE"
     if request.vars['pre_process'] is not None and request.vars['pre_process'] != "0":
