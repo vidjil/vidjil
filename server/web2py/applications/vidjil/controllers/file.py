@@ -199,7 +199,7 @@ def add_form():
         try:
             generic_id = extract_id(request.vars['generic_id'], error)
             if not auth.can_modify('generic', generic_id) :
-                error += " missing permissions for sample_set %d" % sample_set_id
+                error += " missing permissions for sample_set %d" % generic_id
         except ValueError:
             error += " invalid sample_set %s" % request.vars['sample_set_id']
     pre_process = None
