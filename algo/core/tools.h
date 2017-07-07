@@ -26,7 +26,7 @@
 #include <string>
 #include <cassert>
 #include <vector>
-#include "fasta.h"
+#include "bioreader.hpp"
 using namespace std;
 
 #define PRINT_VAR(v) cerr << #v << " = " << v << endl
@@ -149,6 +149,14 @@ int dna_to_int(const string &, int size);
  */
 string nuc_to_aa(const string &nuc);
 
+/**
+ * Extract a field from a separated string
+ * @param field: number of the field to be extracted (starts at 1,
+ *               if 0: returns the whole string)
+ * @param separator: the separator used in the string
+ * @param str
+ * @return the field to be extracted from the string
+ */
 string extract_from_label(string str, int field, string separator);
 
 /**

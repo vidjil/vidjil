@@ -29,8 +29,8 @@ void usage(int argc, const char **argv) {
   }
 }
 
-Fasta extractInterestingGenes(Fasta &repertoire, string name) {
-  Fasta interesting;
+BioReader extractInterestingGenes(BioReader &repertoire, string name) {
+  BioReader interesting;
   
   int size = repertoire.size();
   for (int i = 0; i < size; i++) {
@@ -64,11 +64,11 @@ int main(int argc, const char** argv)
 
   if (gene5 == "D")
     gene5 += "_upstream";
-  Fasta Vgenes(germline+gene5+".fa", 2, "|");
-  Fasta Jgenes(germline+gene3+".fa", 2, "|");
+  BioReader Vgenes(germline+gene5+".fa", 2, "|");
+  BioReader Jgenes(germline+gene3+".fa", 2, "|");
 
-  Fasta interestingV = extractInterestingGenes(Vgenes, argv[5]);
-  Fasta interestingJ = extractInterestingGenes(Jgenes, argv[6]);
+  BioReader interestingV = extractInterestingGenes(Vgenes, argv[5]);
+  BioReader interestingJ = extractInterestingGenes(Jgenes, argv[6]);
 
   if (interestingV.size() == 0) {
     cerr << "No interesting 5' found" << endl;

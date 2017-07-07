@@ -11,6 +11,7 @@
 #include "tools.h"
 #include "../lib/json.hpp"
 #include "kmerstorefactory.hpp"
+#include "bioreader.hpp"
 
 enum SEGMENTATION_METHODS {
   SEG_METHOD_53,      // Regular or incomplete germlines, 5'-3'
@@ -60,7 +61,7 @@ class Germline {
             int max_indexing=0);
 
   Germline(string _code, char _shortcut, 
-      Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
+      BioReader _rep_5, BioReader _rep_4, BioReader _rep_3,
 	   int _delta_min, string seed="",
             int max_indexing=0);
 
@@ -113,9 +114,9 @@ class Germline {
   string affect_4 ;
   string affect_3 ;
   
-  Fasta  rep_5 ;
-  Fasta  rep_4 ;
-  Fasta  rep_3 ;
+  BioReader  rep_5 ;
+  BioReader  rep_4 ;
+  BioReader  rep_3 ;
   IKmerStore<KmerAffect> *index;
 
   int delta_min;

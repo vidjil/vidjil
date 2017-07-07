@@ -1,4 +1,4 @@
-#include <core/fasta.h>
+#include <core/bioreader.hpp>
 #include <core/kmerstore.h>
 #include <core/kmeraffect.h>
 #include <core/affectanalyser.h>
@@ -9,8 +9,8 @@ using namespace std;
 
 void testSegmentationBug1(IndexTypes index, int delta_min) {
   string buggy_sequences = "bugs/kmersegment.fa";
-  Fasta seqV("../../germline/homo-sapiens/TRGV.fa");
-  Fasta seqJ("../../germline/homo-sapiens/TRGJ.fa");
+  BioReader seqV("../../germline/homo-sapiens/TRGV.fa");
+  BioReader seqJ("../../germline/homo-sapiens/TRGJ.fa");
 
   Germline *germline ;
   germline = new Germline("custom", 'x', seqV, seqV, seqJ, delta_min, "#############");

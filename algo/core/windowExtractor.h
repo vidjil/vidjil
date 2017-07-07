@@ -10,6 +10,7 @@
 #include "kmeraffect.h"
 #include "windows.h"
 #include "read_storage.h"
+#include "bioreader.hpp"
 
 #define NB_BINS_CLONES 10
 #define MAX_VALUE_BINS_CLONES 1000
@@ -17,7 +18,7 @@
 using namespace std;
 
 /**
- * This takes an OnlineFasta reader as input and extract windows from the
+ * This takes an OnlineBioReader reader as input and extract windows from the
  * sequences given in the input.
  */
 class WindowExtractor {
@@ -55,7 +56,7 @@ class WindowExtractor {
    * @post Statistics on segmentation will be provided through the getSegmentationStats() methods
    *       and getAverageSegmentationLength().
    */
-  WindowsStorage *extract(OnlineFasta *reads,
+  WindowsStorage *extract(OnlineBioReader *reads,
                           size_t w,
                           map<string, string> &windows_labels, bool only_labeled_windows=false,
                           bool keep_unsegmented_as_clone=false,

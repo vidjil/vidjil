@@ -4,7 +4,7 @@
 #include <string.h>
 #include <cstdlib>
 #include "../core/dynprog.h"
-#include "../core/fasta.h"
+#include "../core/bioreader.hpp"
 #include "../core/lazy_msa.h"
 #include "../lib/json.hpp"
 
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
     if (!cgi_mode) cout <<endl;
 
     if (! error) {
-      Fasta fa(fdata, 1, " ", !cgi_mode);
+      BioReader fa(fdata, 1, " ", 0, !cgi_mode);
     
     
       string seq0 = fa.sequence(0);

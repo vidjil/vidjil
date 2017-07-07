@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <stdlib.h>   
 #include <core/dynprog.h>
-#include <core/fasta.h>
+#include <core/bioreader.hpp>
 #include "docopt.h"
 
 using namespace std;
@@ -96,8 +96,8 @@ int main(int argc, const char** argv)
   const char* file1 = files.front().c_str();
   const char* file2 = files.back().c_str();
   
-  Fasta fasta1(file1, 1, " ");
-  Fasta fasta2(file2, 1, " ");
+  BioReader fasta1(file1, 1, " ");
+  BioReader fasta2(file2, 1, " ");
   
   // Sequences
   int i = atoi(args["-i"].asString().c_str());

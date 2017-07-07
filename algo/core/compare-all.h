@@ -4,7 +4,7 @@
 #include <iomanip>
 
 #include "dynprog.h"
-#include "fasta.h"
+#include "bioreader.hpp"
 #include "similarityMatrix.h"
 #include "windows.h"
 
