@@ -304,9 +304,9 @@ int main (int argc, char **argv)
 
   int options_s_k = 0 ;
 
-  IndexTypes indexType = KMER_INDEX;
+  IndexTypes indexType = AC_AUTOMATON;
   app.add_flag_function("-q",
-                        [&](size_t n) { UNUSED(n); indexType = AC_AUTOMATON; },
+                        [&](size_t n) { UNUSED(n); indexType = KMER_INDEX; },
                         "use Aho-Corasick-like automaton (experimental)")
     -> group(group) -> level();
 
