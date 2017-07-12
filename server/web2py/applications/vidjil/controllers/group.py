@@ -76,6 +76,8 @@ def add_form():
         else:
             auth.add_permission(id, PermissionEnum.admin_group.value, id)
 
+        add_default_group_permissions(auth, id)
+
         res = {"redirect": "group/index",
                "message" : "group '%s' created" % id}
         log.info(res)
