@@ -1,29 +1,38 @@
-#ifndef FASTA_H
-#define FASTA_H
+#ifndef BAM_H
+#define BAM_H
 
 #include <istream>
 #include <string>
 #include <vector>
 #include <list>
 
+extern "C" {
+#include "lib/unbam/bamopen.h"
+#include "lib/unbam/bgzf.h"
+}
+
 using namespace std;
 
 #include "bioreader.hpp"
 
 /**
- * Read a FASTA/FASTQ file.
+ * Read a BAM file.
  * Space complexity: constant. Only one sequence is stored at most in memory.
  * The file is read online meaning that we cannot access a random sequence.
  */
-class OnlineFasta: public OnlineBioReader {
-  istream *input;
+class OnlineBAM: public OnlineBioReader {
+  BGZF *input;
+  bam1_t *bam_entry;
+  int bytes_read;
+  bam_hdr_t *header;
+
  public:
 
   /**
    * Default constructor
    */
-  OnlineFasta(int extract_field=0, string extract_separator="|",
-              int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
+  OnlineBAM(int extract_field=0, string extract_separator="|",
+            int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
 
   /**
    * Open the file. No sequence is read at first.
@@ -32,11 +41,11 @@ class OnlineFasta: public OnlineBioReader {
    * @throws invalid_argument if file cannot be opened or is not
    *         well-formed
    */
-  OnlineFasta(const string &input_filename, 
-              int extract_field=0, string extract_separator="|",
-              int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
+  OnlineBAM(const string &input_filename, 
+            int extract_field=0, string extract_separator="|",
+            int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
 
-  virtual ~OnlineFasta();
+  virtual ~OnlineBAM();
 
   /**
    * @return true iff we did not reach yet the end of the file.
@@ -65,14 +74,5 @@ protected:
    * @inherited
    */
   void unexpectedEOF();  
-
- private:
-
-  /**
-   * Reads line in the input stream until we have a line with at least one
-   * non-whitespace character.
-   * @return A non-empty string whose trailing whitespaces have been removed
-   */
-  string getInterestingLine(int state = FASTX_UNINIT);
 };
 #endif

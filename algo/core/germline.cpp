@@ -47,9 +47,9 @@ Germline::Germline(string _code, char _shortcut,
   f_reps_3.push_back(f_rep_3);
 
   /// no CYS104_IN_GAPPED_V / PHE118_TRP118_IN_GAPPED_J here ?
-  rep_5 = Fasta(f_rep_5, 2, "|");
-  rep_4 = Fasta(f_rep_4, 2, "|");
-  rep_3 = Fasta(f_rep_3, 2, "|");
+  rep_5 = BioReader(f_rep_5, 2, "|");
+  rep_4 = BioReader(f_rep_4, 2, "|");
+  rep_3 = BioReader(f_rep_3, 2, "|");
 
   if (rep_4.size())
     seg_method = SEG_METHOD_543 ;
@@ -69,9 +69,9 @@ Germline::Germline(string _code, char _shortcut,
 
   bool regular = (code.find("+") == string::npos);
 
-  rep_5 = Fasta(2, "|", regular ? CYS104_IN_GAPPED_V : 0);
-  rep_4 = Fasta(2, "|") ;
-  rep_3 = Fasta(2, "|", regular ? PHE118_TRP118_IN_GAPPED_J : 0);
+  rep_5 = BioReader(2, "|", regular ? CYS104_IN_GAPPED_V : 0);
+  rep_4 = BioReader(2, "|") ;
+  rep_3 = BioReader(2, "|", regular ? PHE118_TRP118_IN_GAPPED_J : 0);
 
   for (list<string>::const_iterator it = f_reps_5.begin(); it != f_reps_5.end(); ++it)
     rep_5.add(*it);
@@ -88,7 +88,7 @@ Germline::Germline(string _code, char _shortcut,
 
 
 Germline::Germline(string _code, char _shortcut, 
-           Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
+           BioReader _rep_5, BioReader _rep_4, BioReader _rep_3,
 		   int _delta_min, string seed,
                     int max_indexing)
 {
@@ -116,9 +116,9 @@ Germline::Germline(string code, char shortcut, string path, json json_recom,
 
   bool regular = (code.find("+") == string::npos);
   
-  rep_5 = Fasta(2, "|", regular ? CYS104_IN_GAPPED_V : 0) ;
-  rep_4 = Fasta(2, "|") ;
-  rep_3 = Fasta(2, "|", regular ? PHE118_TRP118_IN_GAPPED_J : 0) ;
+  rep_5 = BioReader(2, "|", regular ? CYS104_IN_GAPPED_V : 0) ;
+  rep_4 = BioReader(2, "|") ;
+  rep_3 = BioReader(2, "|", regular ? PHE118_TRP118_IN_GAPPED_J : 0) ;
 
   for (json::iterator it = json_recom["5"].begin();
        it != json_recom["5"].end(); ++it) 

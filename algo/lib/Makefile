@@ -1,8 +1,9 @@
 CXX?=g++
 OPTIM=-O2
 override CXXFLAGS += -W -Wall -std=c++11 $(OPTIM)
-SRCCORE=$(wildcard *.cpp)
-OBJCORE=$(SRCCORE:.cpp=.o)
+SRCCORE=$(wildcard *.cpp unbam/*.c)
+TMP_OBJCORE=$(SRCCORE:.cpp=.o)
+OBJCORE=$(TMP_OBJCORE:.c=.o)
 LIBCORE=lib.a
 
 .PHONY: all clean forcedep
@@ -11,6 +12,9 @@ all: $(LIBCORE)
 
 $(LIBCORE): $(OBJCORE)
 	ar rc $@ $^
+
+unbam/%.o: %.c
+	make -C unbam $<
 
 clean:
 	rm -f $(OBJCORE) $(LIBCORE)

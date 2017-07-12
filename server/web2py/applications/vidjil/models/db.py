@@ -293,7 +293,8 @@ class MsgUserAdapter(logging.LoggerAdapter):
                 if ip.startswith(ip_prefix):
                     ip = "%s/%s" % (ip, ips[ip_prefix])
 
-        usern = auth.user.first_name.replace(' ','-') if auth.user else ''
+        usern = (auth.user.first_name + '_' + auth.user.last_name) if auth.user else ''
+        usern = usern.replace(' ','-')
         if auth.is_impersonating():
             usern = 'team!' + usern
         new_msg =  '%30s %12s %s' % (ip, ('<%s>' % usern), msg)

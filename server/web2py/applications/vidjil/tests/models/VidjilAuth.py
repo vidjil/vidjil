@@ -261,6 +261,11 @@ class VidjilauthModel(unittest.TestCase):
         self.assertFalse(result,
             "The user %d has some unexpected permissions: read on config for %d" % (auth.user_id, config_id))
 
+        # ensure cache is appropriately set
+        cached_value = auth.permissions['config'][config_id]['read']
+        self.assertFalse(cached_value,
+            "Expected read permission on config_id(%d) to be False" % config_id)
+
     def testIsAdmin(self):
         result = auth.is_admin(user=auth.user_id)
         self.assertFalse(result, "User %d should not have admin permissions" % auth.user_id)
@@ -463,27 +468,16 @@ class VidjilauthModel(unittest.TestCase):
         self.assertTrue(result,
                 "User %d is a member of admin group and is missing permissions to use config %d" % (user_id, config_id))
 
-    def testCanViewPatient(self):
-        result = auth.can_view_patient(patient_id_qua)
+    def testCanView(self):
+        result = auth.can_view('patient', patient_id_qua)
         self.assertFalse(result, "User %d should not have permission to view patient %d" % (auth.user_id, patient_id_qua))
 
-        result = auth.can_view_patient(patient_id_qua, user_id_sec)
+        result = auth.can_view('patient', patient_id_qua, user_id_sec)
         self.assertTrue(result, "User %d should be able to view patient %d" % (user_id_sec, patient_id_qua))
 
-        result = auth.can_view_patient(patient_id_qua, user_id)
+        result = auth.can_view('patient', patient_id_qua, user_id)
         self.assertTrue(result,
                 "User %d is a member of admin group and is missing permissions to view patient %d" % (user_id, patient_id_qua))
-
-    def testCanViewRun(self):
-        result = auth.can_view_run(run_id)
-        self.assertFalse(result, "User %d should not have permission to view run %d" % (auth.user_id, run_id))
-
-        result = auth.can_view_run(run_id, user_id_sec)
-        self.assertTrue(result, "User %d should be able to view run %d" % (user_id_sec, run_id))
-
-        result = auth.can_view_run(run_id, user_id)
-        self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to view run %d" % (user_id, run_id))
 
     def testCanViewSampleSet(self):
         result = auth.can_view_sample_set(first_sample_set_id)
@@ -529,13 +523,18 @@ class VidjilauthModel(unittest.TestCase):
         self.assertTrue(result,
                 "User %d is a member of admin group and is missing permissions to save sample_set %d" % (user_id, first_sample_set_id))
 
-    def testCanViewPatientInfo(self):
-        result = auth.can_view_patient_info(patient_id_sec, auth.user_id)
+    def testCanViewInfo(self):
+        result = auth.can_view_info('patient', patient_id_sec, auth.user_id)
         self.assertFalse(result, "User %d should not have permission anon for patient %d" % (auth.user_id, patient_id_sec))
 
+        # give anon permission to user
         db.auth_permission.insert(group_id=group, name=PermissionEnum.anon.value, table_name='sample_set', record_id=0)
         db.commit()
-        result = auth.can_view_patient_info(patient_id_sec, auth.user_id)
+
+        # clear the cache (or else the new permission will be ignored)
+        auth.permissions = {}
+
+        result = auth.can_view_info('patient', patient_id_sec, auth.user_id)
         self.assertTrue(result, "User %d is missing permission anon for patient: %d" % (auth.user_id, patient_id_sec))
 
     def testGetGroupParent(self):
@@ -625,7 +624,7 @@ class VidjilauthModel(unittest.TestCase):
 
         res_can = []
         for p in full_patient_list:
-            if auth.can_view_patient(p, auth.user_id):
+            if auth.can_view('patient', p, auth.user_id):
                 res_can.append(p)
 
         self.assertEqual(Counter(res_accessible), Counter(res_can),
@@ -638,7 +637,7 @@ class VidjilauthModel(unittest.TestCase):
         res = auth.can_modify_patient(patient_id_qua, user_id_sec)
         self.assertTrue(res, "User %d is missing admin permissions on patient %d" % (user_id_sec, patient_id_qua))
 
-        res = auth.can_view_patient(patient_id, user_id_sec)
+        res = auth.can_view('patient', patient_id, user_id_sec)
         self.assertTrue(res, "User %d is missing read permissions on patient %d" % (user_id_sec, patient_id))
 
         res = auth.can_modify_patient(patient_id_sec, auth.user_id)
@@ -654,7 +653,7 @@ class VidjilauthModel(unittest.TestCase):
         self.assertFalse(res, "User %d should not have admin permissions on patient %d" % (auth.user_id, patient_id))
 
     def testGetPermissionGroups(self):
-        res = auth.get_permission_groups(PermissionEnum.admin.value, 'patient', user_id_sec)
+        res = auth.get_permission_groups(PermissionEnum.admin.value, user_id_sec)
         expected = [group_sec]
         self.assertEqual(Counter(expected), Counter(res),
                 "Expected: %s, but got %s for user %d" % (str(expected), str(res), auth.user_id))
@@ -672,8 +671,7 @@ class VidjilauthModel(unittest.TestCase):
         self.assertEqual(Counter(expected), Counter(res),
                 "Expected %s, but got %s for user %d" % (str(expected), str(res), auth.user_id))
 
-        key = auth.get_cache_key(PermissionEnum.admin.value, 'patient')
-        cache_content = auth.permissions[key][patient_id_ter]
+        cache_content = auth.permissions['patient'][patient_id_ter]['admin']
         self.assertTrue(cache_content, "The results from load_permissions were not loaded into cache")
 
     def testGetGroupPermission(self):

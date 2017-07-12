@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <math.h>
-#include "fasta.h"
+#include "bioreader.hpp"
 #include "tools.h"
 
 using namespace std;
@@ -81,7 +81,7 @@ public:
   int id; // id of this index
   int refs; // number of germlines using this index
 
-  list< pair <T, Fasta> > labels;
+  list< pair <T, BioReader> > labels;
 
   IKmerStore();
 
@@ -91,7 +91,7 @@ public:
    * @param seed: the seed to use for indexing. By default it will be the seed of the index
    * @post All the sequences in the FASTA files have been indexed, and the label is stored in the list of labels
    */
-  void insert(Fasta& input, const string& label="", int keep_only = 0, string seed = "");
+  void insert(BioReader& input, const string& label="", int keep_only = 0, string seed = "");
 
   /**
    * @param input: A list of FASTA files
@@ -99,7 +99,7 @@ public:
    * @param seed: the seed to use for indexing. By default it will be the seed of the index
    * @post All the sequences in the FASTA files have been indexed, and the label is stored in the list of labels
    */
-  void insert(list<Fasta>& input, const string& label="", int keep_only = 0, string seed = "");
+  void insert(list<BioReader>& input, const string& label="", int keep_only = 0, string seed = "");
   
   /**
    * @param input: A sequence to be cut in k-mers
@@ -167,7 +167,7 @@ public:
    * @param kmer: a kmer
    * @return one label associated with the kmer
    */
-  Fasta getLabel(T kmer) const;
+  BioReader getLabel(T kmer) const;
 
   /**
    * @return whether the index differentiate kmer types
@@ -264,17 +264,17 @@ template<class T>
 IKmerStore<T>::~IKmerStore(){}
 
 template<class T> 
-void IKmerStore<T>::insert(list<Fasta>& input,
+void IKmerStore<T>::insert(list<BioReader>& input,
                            const string &label,
                            int keep_only,
                            string seed){
-  for(list<Fasta>::iterator it = input.begin() ; it != input.end() ; it++){
+  for(list<BioReader>::iterator it = input.begin() ; it != input.end() ; it++){
     insert(*it, label, keep_only, seed);
   }
 }
 
 template<class T> 
-void IKmerStore<T>::insert(Fasta& input,
+void IKmerStore<T>::insert(BioReader& input,
                            const string &label,
                            int keep_only,
                            string seed){
@@ -400,8 +400,8 @@ string IKmerStore<T>::getSeed() const {
 }
 
 template<class T>
-Fasta IKmerStore<T>::getLabel(T kmer) const {
-  for (typename list< pair<T, Fasta> >::const_iterator it = labels.begin(); it != labels.end(); ++it)
+BioReader IKmerStore<T>::getLabel(T kmer) const {
+  for (typename list< pair<T, BioReader> >::const_iterator it = labels.begin(); it != labels.end(); ++it)
     if (it->first == kmer)
       return it->second ;
   // Nothing interesting found
@@ -410,7 +410,7 @@ Fasta IKmerStore<T>::getLabel(T kmer) const {
     kmer.setLength(~0);
     return getLabel(kmer);
   }
-  return FASTA_AMBIGUOUS ;
+  return BIOREADER_AMBIGUOUS ;
 }
 
 template<class T>

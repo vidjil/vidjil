@@ -16,7 +16,7 @@ WindowExtractor::WindowExtractor(MultiGermline *multigermline): out_segmented(NU
     }
 }
                                     
-WindowsStorage *WindowExtractor::extract(OnlineFasta *reads,
+WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
 					 size_t w,
                                          map<string, string> &windows_labels, bool only_labeled_windows,
                                          bool keep_unsegmented_as_clone,

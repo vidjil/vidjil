@@ -12,7 +12,7 @@
 #include <set>
 #include <utility>
 #include <string>
-#include "fasta.h"
+#include "bioreader.hpp"
 #include "segment.h"
 #include "germline.h"
 #include "read_storage.h"

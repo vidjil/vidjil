@@ -38,8 +38,8 @@
                 <td onclick="db.call('config/edit', {'id' :'{{=row.id}}'} )" >
                     <i class="icon-pencil-2" title="edit config"></i>
                 </td>
-                <td onclick="db.call('config/confirm', {'id' :'{{=row.id}}'} )" >
-                    <i class="icon-erase" title="delete config"></i>
+                <td {{ if (row.id not in used_configs): }}onclick="db.call('config/confirm', {'id' :'{{=row.id}}'} )" {{pass}}>
+                    <i class="icon-erase" title="delete config" {{ if (row.id in used_configs): }} style="opacity: 0.4" {{pass}}></i>
                 </td>
             {{else:}}
                 <td></td>
