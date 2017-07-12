@@ -589,6 +589,9 @@ Database.prototype = {
         });
         elem.on('select_node.jstree', function(event, data){
             $('#filename').val(data.selected);
+            var split_file = data.selected.toString().split('/');
+            var file = split_file[split_file.length - 1];
+            $('#file_indicator').text(file);
         });
     },
 
