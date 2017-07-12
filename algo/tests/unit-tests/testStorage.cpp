@@ -1,4 +1,4 @@
-#include <core/fasta.h>
+#include <core/bioreader.hpp>
 #include <core/kmerstore.h>
 #include <core/automaton.hpp>
 #include "tests.h"
@@ -46,7 +46,7 @@ template<template <class> class T>
 void testKmerStoreWithKmer(int k, int test_id) {
   T<Kmer> *index = new T<Kmer>(k, true);
   T<Kmer> *index2 = new T<Kmer>(k, true);
-  Fasta reads("../../data/representative_revcomp.fq");
+  BioReader reads("../../data/representative_revcomp.fq");
 
   index->insert(reads);
   list<Sequence> readCollection = reads.getAll();

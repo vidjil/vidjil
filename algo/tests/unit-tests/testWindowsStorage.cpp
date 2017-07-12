@@ -1,6 +1,6 @@
 #include <core/windows.h>
 #include <core/germline.h>
-#include <core/fasta.h>
+#include <core/bioreader.hpp>
 #include <map>
 
 void testWSAdd() {

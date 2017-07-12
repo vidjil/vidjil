@@ -2,7 +2,7 @@
 #define SEQUENCE_SAMPLER_H
 
 #include <list>
-#include "fasta.h"
+#include "bioreader.hpp"
 
 using namespace std;
 

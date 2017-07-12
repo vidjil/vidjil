@@ -1,4 +1,4 @@
-#include <core/fasta.h>
+#include <core/bioreader.hpp>
 #include <iostream>
 #include <cstdlib>
 #include <stdexcept>
@@ -15,12 +15,13 @@ int main(int argc, char **argv) {
   for (int i = 1; i < argc; i++) {
     try {
       unsigned long long int nb_sequences_current_file = 0;
-      OnlineFasta fasta(argv[i]);
-      while (fasta.hasNext()) {
+      OnlineBioReader *fasta = OnlineBioReaderFactory::create(argv[i]);
+      while (fasta->hasNext()) {
 	nb_sequences_current_file++;
-	fasta.next();
+	fasta->next();
       }
       nb_sequences += nb_sequences_current_file;
+      delete fasta;
     } catch (invalid_argument e) {
       cerr << "\tError at sequence " << nb_sequences << ": " << e.what() << endl;
     }

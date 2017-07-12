@@ -784,7 +784,7 @@ bool comp_pair (pair<int,int> i,pair<int,int> j)
  * @post  box is filled
  */
 
-void align_against_collection(string &read, Fasta &rep, int forbidden_rep_id,
+void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id,
                               bool reverse_ref, bool reverse_both, bool local,
                              AlignBox *box, Cost segment_cost)
 {

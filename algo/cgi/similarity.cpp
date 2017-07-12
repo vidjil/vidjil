@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include "../core/dynprog.h"
-#include "../core/fasta.h"
+#include "../core/bioreader.hpp"
 #include "../core/lazy_msa.h"
 #include "../core/similarityMatrix.h"
 #include "../core/compare-all.h"
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
     if (!cgi_mode) cout <<endl;
 
     if (! error) {
-      Fasta fa(fdata, 1, " ", !output_json);
+      BioReader fa(fdata, 1, " ", 0, !output_json);
     
       list<Sequence> reads;
       reads = fa.getAll();

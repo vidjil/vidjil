@@ -34,6 +34,9 @@ class VidjilAuth(Auth):
         self.admin = 'admin' in self.groups
 
     def exists(self, object_of_action, object_id):
+        if (object_of_action in self.permissions \
+            and object_id in self.permissions[object_of_action]):
+            return True
         return db[object_of_action][object_id] is not None
 
     def get_group_names(self):
@@ -45,15 +48,12 @@ class VidjilAuth(Auth):
         result_groups = []
         if self.user is not None:
             memberships = self.db(
-                self.table_membership().user_id == self.user.id).select()
-            for member in memberships:
-                groups = self.db(self.table_group().id == member.group_id).select()
-                if groups and len(groups) > 0:
-                    result_groups.append(groups[0].role)
+                self.table_membership().user_id == self.user.id).select(self.table_membership().group_id)
+            membership_group_ids = [x.group_id for x in memberships]
+            groups = self.db(self.table_group().id.belongs(membership_group_ids)).select()
+            for group in groups:
+                result_groups.append(group.role)
         return result_groups
-
-    def get_cache_key(self, action, object_of_action):
-        return action +  '/' + object_of_action
 
     def get_user_access_groups(self, object_of_action, oid, user):
         membership = self.table_membership()
@@ -115,7 +115,7 @@ class VidjilAuth(Auth):
             return self.get_user_access_groups(object_of_action, oid, user)
         return self.get_group_access_groups(object_of_action, oid, group)
 
-    def get_permission_groups(self, action, object_of_action, user=None):
+    def get_permission_groups(self, action, user=None):
         '''
         Returns all the groups for which a user has a given permission
         '''
@@ -160,15 +160,21 @@ class VidjilAuth(Auth):
 
         The result is cached to avoid DB calls.
         '''
-        key = self.get_cache_key(action, object_of_action)
-        is_current_user = user == None
+        is_current_user = (user == None) or (user == self.user_id)
         if is_current_user:
             user = self.user_id
 
-        if not key in self.permissions and is_current_user:
-            self.permissions[key] = {}
-        if not is_current_user or not id in self.permissions[key]:
-            perm_groups = self.get_permission_groups(action, object_of_action, user)
+        missing_value = False
+        if is_current_user:
+            if not object_of_action in self.permissions:
+                self.permissions[object_of_action] = {}
+            if not id in self.permissions[object_of_action]:
+                self.permissions[object_of_action][id] = {}
+                missing_value = True
+            if not action in self.permissions[object_of_action][id]:
+                missing_value = True
+        if not is_current_user or missing_value:
+            perm_groups = self.get_permission_groups(action, user)
             if id > 0:
                 access_groups = self.get_access_groups(object_of_action, id, user)
                 intersection = set(access_groups).intersection(perm_groups)
@@ -176,25 +182,28 @@ class VidjilAuth(Auth):
                 intersection = perm_groups
             if not is_current_user:
                 return len(intersection) > 0
-            self.permissions[key][id] = len(intersection) > 0
-        return self.permissions[key][id]
+            self.permissions[object_of_action][id][action] = len(intersection) > 0
+        return self.permissions[object_of_action][id][action]
 
     def load_permissions(self, action, object_of_action):
         '''
         Loads the given permissions for the user into cache to allow for multiple calls to
         "can" while reducing the database overhead.
         '''
-        key = self.get_cache_key(action, object_of_action)
-        if key not in self.permissions:
-            self.permissions[key] = {}
+        if object_of_action not in self.permissions:
+            self.permissions[object_of_action] = {}
 
         query = db(self.vidjil_accessible_query(PermissionEnum.read.value, object_of_action)).select(self.db[object_of_action].id)
         for row in query:
-            self.permissions[key][row.id] = False
+            if row.id not in self.permissions[object_of_action]:
+                self.permissions[object_of_action][row.id] = {}
+            self.permissions[object_of_action][row.id][action] = False
 
         query = db(self.vidjil_accessible_query(action, object_of_action)).select(self.db[object_of_action].id)
         for row in query:
-            self.permissions[key][row.id] = True
+            if row.id not in self.permissions[object_of_action]:
+                self.permissions[object_of_action][row.id] = {}
+            self.permissions[object_of_action][row.id][action] = True
 
         return query
 
@@ -271,21 +280,16 @@ class VidjilAuth(Auth):
         
     def can_modify_sample_set(self, sample_set_id, user = None) :
         sample_set = db.sample_set[sample_set_id]
+        sample_type = sample_set.sample_type
 
         if sample_set is None:
             return False
         perm = self.get_permission(PermissionEnum.admin.value, 'sample_set', sample_set_id, user)\
             or self.is_admin(user)
 
-        if (sample_set.sample_type == "patient") :
-            for row in db( db.patient.sample_set_id == sample_set_id ).select() :
-                if self.can_modify_patient(row.id, user):
-                    perm = True;
-
-        if (sample_set.sample_type == "run") :
-            for row in db( db.run.sample_set_id == sample_set_id ).select() :
-                if self.can_modify_run(row.id, user):
-                    perm = True;
+        for row in db( db[sample_type].sample_set_id == sample_set_id ).select() :
+            if self.can_modify(sample_type, row.id, user):
+                perm = True;
 
         return perm
 
@@ -302,10 +306,24 @@ class VidjilAuth(Auth):
             and (self.get_permission(PermissionEnum.admin_pre_process.value, 'pre_process', pre_process_id, user)\
             or self.is_admin(user))
 
-    def can_modify(self, type, id, user = None):
-        perm =  self.get_permission(PermissionEnum.admin.value, type, id, user)\
-            or self.is_admin(user)
-        return perm
+    def can_modify(self, object_of_action, id, user = None):
+        '''
+        Returns True if the user can modify the object of action whose ID id id
+        '''
+        exists = self.exists(object_of_action, id)
+        return exists\
+            and (self.get_permission(PermissionEnum.admin.value, object_of_action, id, user)\
+            or self.is_admin(user))
+
+    def can_view(self, object_of_action, id, user = None):
+        '''
+        Returns True if the user can view the object of action whose ID is id
+        '''
+        exists = self.exists(object_of_action, id)
+        return exists\
+            and (self.get_permission(PermissionEnum.read.value, object_of_action, id, user)\
+            or self.can_modify(object_of_action, id, user)\
+            or self.is_admin(user))
 
     def can_modify_file(self, file_id, user = None) :
         if not self.exists('sequence_file', file_id):
@@ -423,49 +441,18 @@ class VidjilAuth(Auth):
             or self.can_modify_config(config_id, user)\
             or self.is_admin(user))
 
-    def can_view_patient(self, patient_id, user = None):
-        '''
-        Returns True iff the current user can view
-        the patient whose ID is patient_id
-
-        If the user is None, the current user is taken into account
-        '''
-        exists = self.exists('patient', patient_id)
-        return exists\
-            and (self.get_permission(PermissionEnum.read.value, 'patient', patient_id ,user)\
-            or self.can_modify_patient(patient_id, user)\
-            or self.is_admin(user))
-            
-    def can_view_run(self, run_id, user = None):
-        '''
-        Returns True iff the current user can view
-        the patient whose ID is patient_id
-
-        If the user is None, the current user is taken into account
-        '''
-        exists = self.exists('run', run_id)
-        return exists\
-            and (self.get_permission(PermissionEnum.read.value, 'run', run_id ,user)\
-            or self.can_modify_run(run_id, user)\
-            or self.is_admin(user))
-            
     def can_view_sample_set(self, sample_set_id, user = None) :
         sample_set = db.sample_set[sample_set_id]
+        sample_type = sample_set.sample_type
         if sample_set is None:
             return False
-        
-        perm = self.get_permission(PermissionEnum.admin.value, 'sample_set', sample_set_id, user)\
+
+        perm = self.get_permission(PermissionEnum.read.value, 'sample_set', sample_set_id, user)\
             or self.is_admin(user)
 
-        if (sample_set.sample_type == "patient") :
-            for row in db( db.patient.sample_set_id == sample_set_id ).select() :
-                if self.can_view_patient(row.id, user):
-                    perm = True;
-
-        if (sample_set.sample_type == "run") :
-            for row in db( db.run.sample_set_id == sample_set_id ).select() :
-                if self.can_view_run(row.id, user):
-                    perm = True;
+        for row in db( db[sample_type].sample_set_id == sample_set_id ).select() :
+            if self.can_view(sample_type, row.id, user):
+                perm = True;
 
         return perm
 
@@ -474,21 +461,7 @@ class VidjilAuth(Auth):
         Returns Trie if the current user can view
         the group whose ID is group_id
         '''
-        exists = self.exists('auth_group', group_id)
-        return exists\
-            and (self.get_permission(PermissionEnum.read_group.value, 'auth_group', group_id, user)\
-            or self.can_modify_group(group_id, user)\
-            or self.is_admin(user))
-        
-    def can_view_patient_info(self, patient_id, user = None):
-        '''
-        Returns True iff the current user can see the personal information
-        of the patient whose ID is given in parameter.
-
-        If the user is None, the current user is taken into account
-        '''
-        exists = self.exists('patient', patient_id)
-        return exists and self.get_permission(PermissionEnum.anon.value, 'patient', patient_id, user)
+        return self.can_view('auth_group', group_id, user)
 
     def can_view_info(self, type, id, user = None):
         '''
@@ -616,7 +589,7 @@ class VidjilAuth(Auth):
             return table.id > 0
         membership = self.table_membership()
         permission = self.table_permission()
-        perm_groups = self.get_permission_groups(name, table, user_id)
+        perm_groups = self.get_permission_groups(name, user_id)
         query = (table.id.belongs(
                 db(((membership.user_id == user_id) &
                     (membership.group_id.belongs(perm_groups)) &
