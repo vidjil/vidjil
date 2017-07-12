@@ -107,7 +107,7 @@ def anon_names(patient_id, first_name, last_name, can_view=None):
 
     ln = safe_encoding(last_name)
     fn = safe_encoding(first_name)
-    if can_view or (can_view == None and auth.can_view_patient_info(patient_id)):
+    if can_view or (can_view == None and auth.can_view_info('patient', patient_id)):
         name = ln + " " + fn
     else:
         ln = safe_encoding(last_name)
