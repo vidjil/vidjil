@@ -33,3 +33,9 @@ class Run(SampleSet):
 
     def get_data(self, sample_set_id):
         return db(db.run.sample_set_id == sample_set_id).select()[0]
+
+    def get_id_string(self, data):
+        name = data.name
+        run_date = "[%s]" % str(data.run_date)
+        id = "(%d)" % data.id
+        return "%s  %s  %s" % (run_date, name, id)

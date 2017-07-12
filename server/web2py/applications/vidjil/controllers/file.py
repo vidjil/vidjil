@@ -22,6 +22,25 @@ def extract_id(target, error):
     except:
         raise ValueError('invalid input %s' % target)
     
+def get_sample_set_list(type, reference):
+    query = db(
+        auth.vidjil_accessible_query(PermissionEnum.read.value, db[type])
+    ).select(
+        db[type].ALL, # sub optimal, use helpers to reduce ?
+        orderby = ~db[type].id
+    )
+    ss_list = []
+    ref = ""
+
+    factory = ModelFactory()
+    helper = factory.get_instance(type=type)
+    for row in query :
+        tmp = helper.get_id_string(row)
+        ss_list.append(tmp)
+        if reference == row.id:
+            ref = tmp
+    return ss_list, ref
+
 def add():
     sample_set = db.sample_set[request.vars["id"]]
     if not auth.can_upload_sample_set(sample_set.id):
@@ -65,58 +84,9 @@ def add():
                                 info = row.info
 			))
 
-	query_generic = db(
-                auth.vidjil_accessible_query(PermissionEnum.read.value, db.generic)
-        ).select(
-            db.generic.id,
-            db.generic.name,
-            orderby = ~db.generic.id
-        )
-        generic_list = []
-        generic = ""
-
-        for row in query_generic :
-            name = row.name if row.name is not None else "Unnamed Sample Set"
-            id = "  (%d)" % row.id
-            tmp = name+id
-            generic_list.append(tmp)
-            if generic_id == row.id:
-                generic = tmp
-
-        query_patient = db(
-            auth.vidjil_accessible_query(PermissionEnum.read.value, db.patient)
-        ).select(
-            db.patient.ALL,
-            orderby = ~db.patient.id
-        )
-        patient_list = []
-        patient = ""
-
-        for row in query_patient :
-            name = row.first_name + " " + row.last_name
-            birth = "[" + str(row.birth) + "]   "
-            id = "   ("+str(row.id)+")"
-            patient_list.append(birth+name+id)
-            if patient_id == row.id :
-                patient = birth+name+id
-            
-        query_run = db(
-            auth.vidjil_accessible_query(PermissionEnum.read.value, db.run)
-        ).select(
-            db.run.ALL,
-            orderby = ~db.run.id
-        )
-        run_list = []
-        run = ""
-
-        for row in query_run :
-            name = row.name
-            run_date = "[" + str(row.run_date) + "]   "
-            id = "   ("+str(row.id)+")"
-            run_list.append(run_date+name+id)
-            if run_id == row.id :
-                run = run_date+name+id
-				
+        generic_list, generic = get_sample_set_list(defs.SET_TYPE_GENERIC, generic_id)
+        patient_list, patient = get_sample_set_list(defs.SET_TYPE_PATIENT, patient_id)
+        run_list, run = get_sample_set_list(defs.SET_TYPE_RUN, run_id)
 				
         source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
         return dict(message = T('add file'),
@@ -149,6 +119,32 @@ def manage_filename(filename):
 
     return (data, filepath)
 
+def link_to_sample_sets(seq_file_id, id_dict):
+    '''
+    Create sample set memberships and return a dict of the sample set ids.
+    The keys to the dict are thee same as the ones passed in id_dict
+    '''
+    ssid_dict = {}
+    for key in id_dict:
+        oid = id_dict[key]
+        sample_set_id = db[key][oid].sample_set_id
+        ssid_dict[key] = sample_set_id
+        id_sample_set_membership_run = db.sample_set_membership.insert(sample_set_id=sample_set_id,
+                                                                  sequence_file_id=seq_file_id)
+    return ssid_dict
+
+def filter_set_ids(req_vars):
+    '''
+    Create a dict with the patient, run etc.. id strings as sent by the form
+    '''
+    # TODO I wanted to make an associative array straight in the HTML form
+    # but I couldn't get it working...
+    set_ids = {}
+    set_ids[defs.SET_TYPE_GENERIC] = req_vars['generic_id']
+    set_ids[defs.SET_TYPE_PATIENT] = req_vars['patient_id']
+    set_ids[defs.SET_TYPE_RUN] = req_vars['run_id']
+    return set_ids
+
 def add_form(): 
     error = ""
     patient_id = None
@@ -169,39 +165,29 @@ def add_form():
 
     if request.vars['patient_id'] == '' and request.vars['run_id'] == "" and request.vars['generic_id'] == "":
         error += " missing patient or run or sample_set"
-        
-    if request.vars['patient_id'] != '' :
-        try:
-            patient_id = extract_id(request.vars['patient_id'], error)
-            if not auth.can_modify('patient', patient_id) :
-                error += " missing permission for patient "+str(patient_id)
-        except ValueError:
-            error += " Invalid patient %s" % request.vars['patient_id']
-            
-        query = db((db.patient.id == patient_id)
-                &(db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
-                &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-            ).select(db.sequence_file.ALL)
-        for row in query :
-            if row.filename == filename :
-                error += " this sequence file already exists for this patient"
-                break
-            
-    if request.vars['run_id'] != '' :
-        try:
-            run_id = extract_id(request.vars['run_id'], error)
-            if not auth.can_modify('run', run_id) :
-                error += " missing permission for run "+str(run_id)
-        except ValueError:
-            error += " invalid run %s" % request.vars['run_id']
 
-    if request.vars['generic_id'] != '' :
-        try:
-            generic_id = extract_id(request.vars['generic_id'], error)
-            if not auth.can_modify('generic', generic_id) :
-                error += " missing permissions for sample_set %d" % generic_id
-        except ValueError:
-            error += " invalid sample_set %s" % request.vars['sample_set_id']
+    set_ids = filter_set_ids(request.vars)
+
+    id_dict = {}
+    for key in set_ids:
+        if set_ids[key] != '':
+            try:
+                set_id = extract_id(set_ids[key], error)
+                id_dict[key] = set_id
+                if not auth.can_modify(key, set_id) :
+                    error += " missing permission for %s %d" % (key, set_id)
+
+                query = db((db[key].id == set_id)
+                        &(db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
+                        &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+                    ).select(db.sequence_file.ALL)
+                for row in query :
+                    if row.filename == filename :
+                        error += " this sequence file already exists for this %s" % key
+                        break
+            except ValueError:
+                error += " Invalid %s %s" % (key, set_ids[key])
+
     pre_process = None
     pre_process_flag = "DONE"
     if request.vars['pre_process'] is not None and request.vars['pre_process'] != "0":
@@ -227,34 +213,9 @@ def add_form():
 
 
         ids_sample_set = []
-        #add sequence_file to a run sample_set
-        if run_id is not None :
-            run_sample_set_id = db.run[run_id].sample_set_id
-            ids_sample_set += [run_sample_set_id] # for logging
-            id_sample_set_membership_run = db.sample_set_membership.insert(sample_set_id=run_sample_set_id,
-                                                                  sequence_file_id=id)
-            
-        #add sequence_file to a patient sample_set
-        if patient_id is not None :
-            patient_sample_set_id = db.patient[patient_id].sample_set_id
-            ids_sample_set += [patient_sample_set_id] # for logging
-            id_sample_set_membership_patient = db.sample_set_membership.insert(sample_set_id=patient_sample_set_id,
-                                                                  sequence_file_id=id)
 
-        if generic_id is not None:
-            generic_sample_set_id = db.generic[generic_id].sample_set_id
-            ids_sample_set += [generic_sample_set_id]
-            id_sample_set_membership_generic = db.sample_set_membership.insert(sample_set_id=generic_sample_set_id, sequence_file_id=id)
-
-        if request.vars['sample_type'] == defs.SET_TYPE_RUN:
-            originating_id = run_sample_set_id
-        elif request.vars['sample_type'] == defs.SET_TYPE_PATIENT:
-            originating_id = patient_sample_set_id
-        elif request.vars['sample_type'] == defs.SET_TYPE_GENERIC:
-            originating_id = generic_sample_set_id
-
-        redirect_args = {"id" : originating_id}
-        
+        ssid_dict = link_to_sample_sets(id, id_dict)
+        redirect_args = {"id" : ssid_dict[request.vars["sample_type"]]}
         
         res = {"file_id" : id,
                "message": "(%s) file {%s} : %s: %s" % (','.join(map(str,ids_sample_set)), id, log_message, request.vars['filename']),
@@ -305,58 +266,10 @@ def edit():
                                 info = row.info
 			))
 
-	query_generic = db(
-                auth.vidjil_accessible_query(PermissionEnum.read.value, db.generic)
-        ).select(
-            db.generic.id,
-            db.generic.name,
-            orderby = ~db.generic.id
-        )
-        generic_list = []
-        generic = ""
+        generic_list, generic = get_sample_set_list(defs.SET_TYPE_GENERIC, relevant_ids['generic'])
+        patient_list, patient = get_sample_set_list(defs.SET_TYPE_PATIENT, relevant_ids['patient'])
+        run_list, run = get_sample_set_list(defs.SET_TYPE_RUN, relevant_ids['run'])
 
-        for row in query_generic :
-            name = row.name if row.name is not None else "Unnamed Sample Set"
-            id = "  (%d)" % row.id
-            tmp = name+id
-            generic_list.append(tmp)
-            if relevant_ids['generic'] == row.id:
-                generic = tmp
-			
-        query_patient = db(
-            auth.vidjil_accessible_query(PermissionEnum.admin.value, db.patient)
-        ).select(
-            db.patient.ALL,
-            orderby = ~db.patient.id
-        )
-        patient_list = []
-        patient = ""
-
-        for row in query_patient :
-            name = row.first_name + " " + row.last_name
-            birth = "[" + str(row.birth) + "]   "
-            id = "   ("+str(row.id)+")"
-            patient_list.append(birth+name+id)
-            if relevant_ids['patient'] == row.id :
-                patient = birth+name+id
-            
-        query_run = db(
-            auth.vidjil_accessible_query(PermissionEnum.admin.value, db.run)
-        ).select(
-            db.run.ALL,
-            orderby = ~db.run.id
-        )
-        run_list = []
-        run = ""
-
-        for row in query_run :
-            name = row.name
-            run_date = "[" + str(row.run_date) + "]   "
-            id = "   ("+str(row.id)+")"
-            run_list.append(run_date+name+id)
-            if relevant_ids['run'] == row.id :
-                run = run_date+name+id
-        
         source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
         return dict(message = T('edit file'),
                    generic_list = generic_list,
@@ -385,19 +298,6 @@ def edit_form():
     if request.vars['patient_id'] == '' and request.vars['run_id'] == "" and request.vars['generic_id'] == "":
         error += " missing patient or run or sample_set"
 
-    if request.vars['patient_id'] != '' :
-        patient_id = int(request.vars['patient_id'].split('(')[-1][:-1])
-        if not auth.can_modify_patient(patient_id):
-            error += "permission denied to edit patient %d" % patient_id
-    if request.vars['run_id'] != '' :
-        run_id = int(request.vars['run_id'].split('(')[-1][:-1])
-        if not auth.can_modify_run(run_id):
-            error += "permission denied to edit run %d" % run_id
-    if request.vars['generic_id'] != '' :
-        generic_id = int(request.vars['generic_id'].split('(')[-1][:-1])
-        generic = db.generic[generic_id]
-        if not auth.can_modify_sample_set(generic.sample_set_id):
-            error += "permission denied to edit sample_set %d" % generic_id
     if request.vars['id'] == None :
         error += "missing id"
     if request.vars['filename'] == None :
@@ -408,18 +308,34 @@ def edit_form():
         except ValueError:
             error += "date (wrong format), "
             
+    # TODO I wanted to make an associative array straight in the HTML form
+    # but I couldn't get it working...
+    set_ids = filter_set_ids(request.vars)
+
+    id_dict = {}
+    for key in set_ids:
+        if set_ids[key] != '':
+            try:
+                set_id = extract_id(set_ids[key], error)
+                id_dict[key] = set_id
+                if not auth.can_modify(key, set_id) :
+                    error += " missing permission for %s %d" % (key, set_id)
+            except ValueError:
+                error += " Invalid %s %s" % (key, set_ids[key])
+
     if error=="" :
-        mes = "file {%s}: " % request.vars['id']
-        filename = db.sequence_file[request.vars['id']].filename
+        id = int(request.vars["id"])
+        mes = "file {%d}: " % id
+        filename = db.sequence_file[id].filename
         if 'filename' in request.vars and request.vars['filename'] != "":
             filename = request.vars['filename']
             # file is being reuploaded, remove all existing results_files
-            db(db.results_file.sequence_file_id == request.vars["id"]).delete()
+            db(db.results_file.sequence_file_id == id).delete()
         pre_process = None
         if request.vars['pre_process'] is not None and request.vars['pre_process'] != "0":
             pre_process = int(request.vars['pre_process'])
         if request.vars['sampling_date'] != None and request.vars['file_info'] != None :
-            db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'],
+            db.sequence_file[id] = dict(sampling_date=request.vars['sampling_date'],
                                                         info=request.vars['file_info'],
                                                         pre_process_id=pre_process,
                                                         provider=auth.user_id)
@@ -428,40 +344,18 @@ def edit_form():
             data, filepath = manage_filename(request.vars["filename"])
             if 'data_file' in data and data['data_file'] is not None:
                 os.symlink(filepath, defs.DIR_SEQUENCES + data['data_file'])
-            db.sequence_file[request.vars["id"]] = data
+            db.sequence_file[id] = data
             
         #remove previous membership
-        for row in db( db.sample_set_membership.sequence_file_id == request.vars["id"]).select() :
+        for row in db( db.sample_set_membership.sequence_file_id == id).select() :
             if db.sample_set[row.sample_set_id].sample_type != "sequence_file" :
                 db(db.sample_set_membership.id == row.id).delete()
         
-        #add sequence_file to a run sample_set
-        if run_id is not None :
-            run_sample_set_id = db.run[run_id].sample_set_id
-            id_sample_set_membership_run = db.sample_set_membership.insert(sample_set_id=run_sample_set_id,
-                                                                  sequence_file_id=request.vars["id"])
-            
-        #add sequence_file to a patient sample_set
-        if patient_id is not None :
-            patient_sample_set_id = db.patient[patient_id].sample_set_id
-            id_sample_set_membership_patient = db.sample_set_membership.insert(sample_set_id=patient_sample_set_id,
-                                                                  sequence_file_id=request.vars["id"])
-
-        if generic_id is not None :
-            generic_sample_set_id = db.generic[generic_id].sample_set_id
-            id_sample_set_membership_generic = db.sample_set_membership.insert(sample_set_id=generic_sample_set_id,
-                                                                  sequence_file_id=request.vars["id"])
-
-        if request.vars['sample_type'] == defs.SET_TYPE_RUN:
-            originating_id = run_sample_set_id
-        elif request.vars['sample_type'] == defs.SET_TYPE_PATIENT:
-            originating_id = patient_sample_set_id
-        elif request.vars['sample_type'] == defs.SET_TYPE_GENERIC:
-            originating_id = generic_sample_set_id
-        redirect_args = {"id" : originating_id}
+        ssid_dict = link_to_sample_sets(id, id_dict)
+        redirect_args = {"id" : ssid_dict[request.vars["sample_type"]]}
         
-        res = {"file_id" : request.vars["id"],
-               "message": "file {%s}: metadata saved" % request.vars["id"],
+        res = {"file_id" : id,
+               "message": "file {%d}: metadata saved" % id,
                "redirect": "sample_set/index",
                "args" : redirect_args
                }
