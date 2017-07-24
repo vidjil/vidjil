@@ -39,6 +39,7 @@ XXX TODO XXX
   have the permissions necessary to edit the patients of one group, but not
   the patients of another).
 
+
 ** Groups
   Groups can belong to a hierarchical structure. A group can have a parent
   group. This means any patient assigned to a group is also accessible to
@@ -73,6 +74,10 @@ XXX TODO XXX
     parent group. Any patient created for the parent group will be
     accessible by any member of one of the child groups.
 
+** Deletion Procedure
+  The way to delete a user from a group is to open the corresponding group and to click on the cross at the end of the line to remove the corresponding user.
+  Datas will still be accessible for other users of this group. 
+  If the user should no longer have access to an account, you can after that delete the user or simply remove acces by changing his password and/or restrain rights for his personnal group.
 
 * Server Monitoring
 
