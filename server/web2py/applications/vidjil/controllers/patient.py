@@ -1,6 +1,7 @@
 # coding: utf8
 import gluon.contrib.simplejson, datetime
 import vidjil_utils
+from tag import *
 import time
 import datetime
 
@@ -164,6 +165,7 @@ def add_form():
                                    id_label=request.vars["id_label"],
                                    creator=auth.user_id)
 
+            register_tags(db, defs.SET_TYPE_PATIENT, id, request.vars["info"])
 
             user_group = int(request.vars["patient_group"])
             admin_group = db(db.auth_group.role=='admin').select().first().id
@@ -229,12 +231,16 @@ def edit_form():
             error += "patient id needed, "
 
         if error=="" :
+            patient = db.patient[request.vars["id"]]
             db.patient[request.vars["id"]] = dict(first_name=request.vars["first_name"],
                                                    last_name=request.vars["last_name"],
                                                    birth=request.vars["birth"],
                                                    info=request.vars["info"],
                                                    id_label=request.vars["id_label"]
                                                    )
+
+            if (patient.info != request.vars["info"]):
+                register_tags(db, defs.SET_TYPE_PATIENT, request.vars["id"], request.vars["info"], reset=True)
 
             res = {"redirect": "back",
                    "message": "%s %s (%s): patient edited" % (request.vars["first_name"], request.vars["last_name"], request.vars["id"])}

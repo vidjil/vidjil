@@ -1,6 +1,7 @@
 # coding: utf8
 import gluon.contrib.simplejson, datetime
 import vidjil_utils
+from tag import *
 import time
 
 if request.env.http_origin:
@@ -239,6 +240,7 @@ def add_form():
                                    creator=auth.user_id,
                                    sample_set_id=id_sample_set)
 
+            register_tags(db, defs.SET_TYPE_GENERIC, id, request.vars["info"])
 
             user_group = int(request.vars["sample_set_group"])
             admin_group = db(db.auth_group.role=='admin').select().first().id
@@ -296,9 +298,13 @@ def edit_form():
             error += "sample set id needed, "
 
         if error=="" :
+            generic = db.generic[request.vars["id"]]
             db.generic[request.vars["id"]] = dict(name=request.vars["name"],
                                                    info=request.vars["info"],
                                                    )
+
+            if (generic.info != request.vars["info"]):
+                register_tags(db, defs.SET_TYPE_GENERIC, request.vars["id"], request.vars["info"], reset=True)
 
             res = {"redirect": "back",
                    "message": "%s (%s): sample_set edited" % (request.vars["name"], request.vars["sample_set_id"])}

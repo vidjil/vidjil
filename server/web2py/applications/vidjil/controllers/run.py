@@ -1,6 +1,7 @@
 # coding: utf8
 import gluon.contrib.simplejson, datetime
 import vidjil_utils
+from tag import *
 import time
 
 if request.env.http_origin:
@@ -70,6 +71,7 @@ def add_form():
 								   pcr=request.vars["pcr"],
                                    creator=auth.user_id)
 
+            register_tags(db, defs.SET_TYPE_RUN, id, request.vars["info"])
 
             user_group = int(request.vars["run_group"])
             admin_group = db(db.auth_group.role=='admin').select().first().id
@@ -145,6 +147,7 @@ def edit_form():
             error += "patient id needed, "
 
         if error=="" :
+            run = db.run[request.vars["id"]]
             db.run[request.vars["id"]] = dict(name=request.vars["name"],
                                                    run_date=request.vars["run_date"],
                                                    info=request.vars["info"],
@@ -152,6 +155,9 @@ def edit_form():
 												   pcr=request.vars["pcr"],
                                                    id_label=request.vars["id_label"]
                                                    )
+
+            if (run.info != request.vars["info"]):
+                register_tags(db, defs.SET_TYPE_RUN, request.vars["id"], request.vars["info"], reset=True)
 
             res = {"redirect": "back",
                    "message": "%s (%s): run edited" % (request.vars["name"], request.vars["id"])}
