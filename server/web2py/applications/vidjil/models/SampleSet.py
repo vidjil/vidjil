@@ -1,10 +1,13 @@
 from abc import ABCMeta, abstractmethod
+from tag import *
 
 class SampleSet(object):
     __metaclass__ = ABCMeta
 
     def __init__(self, type):
         self.type = type
+        prefix = get_tag_prefix()
+        self.tag_decorator = TagDecorator(prefix)
 
     def get_type(self):
         return self.type
@@ -19,7 +22,10 @@ class SampleSet(object):
         return data.name
 
     def get_info(self, data):
-        return data.info
+        return XML(self.tag_decorator.decorate_text(data.info),
+                sanitize=True,
+                permitted_tags=['a'],
+                allowed_attributes={'a':['data-linkable-type', 'data-linkable-name']})
 
     def get_configs(self, data):
         return data.conf_list
