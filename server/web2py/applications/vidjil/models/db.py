@@ -256,6 +256,13 @@ db.define_table('user_log',
                 Field('table_name', 'string'),
                 Field('record_id', 'integer'))
 
+db.define_table('tag',
+                Field('name', 'string', unique=True))
+
+db.define_table('tag_ref',
+                Field('tag_id', 'reference tag'),
+                Field('table_name', 'string'),
+                Field('record_id', 'integer'))
 
 ## after defining tables, uncomment below to enable auditing
 auth.enable_record_versioning(db)
