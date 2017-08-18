@@ -22,13 +22,19 @@ class SampleSet(object):
         return data.name
 
     def get_info(self, data):
-        return XML(self.tag_decorator.decorate_text(data.info),
+        return data.info
+
+    def get_tagged_info(self, data):
+        return XML(self.tag_decorator.decorate_text(data.info, 'tag', self.type, self.get_list_path()),
                 sanitize=True,
                 permitted_tags=['a'],
-                allowed_attributes={'a':['data-linkable-type', 'data-linkable-name']})
+                allowed_attributes={'a':['class', 'href', 'onclick', 'data-linkable-type', 'data-linkable-name']})
 
     def get_configs(self, data):
         return data.conf_list
+
+    def get_list_path(self):
+        return '/sample_set/all'
 
     def get_config_urls(self, data):
         configs = []
@@ -58,7 +64,7 @@ class SampleSet(object):
     def get_fields(self):
         fields = []
         fields.append({'name': 'name', 'sort': 'name', 'call': self.get_name, 'width': 200, 'public': True})
-        fields.append({'name': 'info', 'sort': 'info', 'call': self.get_info, 'width': None, 'public': True})
+        fields.append({'name': 'info', 'sort': 'info', 'call': self.get_tagged_info, 'width': None, 'public': True})
         fields.append({'name': 'results', 'sort': 'confs', 'call': self.get_config_urls, 'width': None, 'public': True})
         if auth.is_admin() or len(get_group_list(auth)) > 1:
             fields.append({'name': 'groups', 'sort': 'groups', 'call': self.get_groups_string, 'width': 100, 'public': True})

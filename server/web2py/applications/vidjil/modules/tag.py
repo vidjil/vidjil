@@ -57,13 +57,14 @@ class TagDecorator(TagManager):
     def __init__(self, prefix):
         super(TagDecorator, self).__init__(prefix)
 
-    def decoration(self):
-        return r'<a href="#" class="tag-link" data-linkable-type="tag" data-linkable-name="\1">%s\1</a>' % self.prefix
+    def decoration(self, ltype, stype, target):
+        this = "$(this)" # hack to solve some character escaping issues
+        return r'<a onclick="event.preventDefault();event.stopPropagation();db.callLinkable(%s)" href="%s" class="%s-link" data-sample-type="%s" data-linkable-type="%s" data-linkable-name="\1">%s\1</a>' % (this, target, ltype, stype, ltype, self.prefix)
 
-    def decorate_text(self, text):
+    def decorate_text(self, text, ltype, stype, target):
         if (text is None):
             return None
-        return re.sub(self.expression(), self.decoration(), text)
+        return re.sub(self.expression(), self.decoration(ltype, stype, target), text)
 
 def get_tag_prefix():
     try:

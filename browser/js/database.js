@@ -270,6 +270,15 @@ Database.prototype = {
         });
     },
 
+    callLinkable: function (linkable) {
+        var href = linkable.attr('href');
+        var type = linkable.data('linkable-type');
+        var name = linkable.data('linkable-name');
+        var args = {};
+        args[type] = name;
+        this.call(href, args);
+    },
+
 
     /**
      * Send the given clones to CloneDB
