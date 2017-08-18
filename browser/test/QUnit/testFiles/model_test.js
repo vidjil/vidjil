@@ -329,3 +329,21 @@ QUnit.test("model: primer detection", function(assert) {
 
 
 
+QUnit.test("normalization: test", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100)
+    var c1 = new Clone(json_clone1, m, 0)
+    var c2 = new Clone(json_clone2, m, 1)
+    var c3 = new Clone(json_clone3, m, 2)
+    var c4 = new Clone(json_clone4, m, 3)
+    var c5 = new Clone(json_clone5, m, 4)
+    m.initClones()
+    assert.equal(c2.getSize(),0.05,"clone1 size")
+
+    m.compute_normalization(0,0.20)
+    assert.equal(m.normalization.B,0.20, "expected")
+    assert.equal(c1.getSize(),0.20000000000000004,"clone1 size")
+    assert.equal(m.normalize(c2.getSize(),0),0.8000000000000002,"normalize")
+
+   // m.compute_data_normalization()
+});
