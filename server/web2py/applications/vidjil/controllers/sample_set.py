@@ -164,7 +164,7 @@ def all():
         page = int(request.vars['page'])
         step = 50
 
-    list = SampleSetList(type, page, step)
+    list = SampleSetList(type, page, step, tag=request.vars['tag'])
     list.load_creator_names()
     list.load_sample_information()
     list.load_config_information()
