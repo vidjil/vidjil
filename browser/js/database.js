@@ -274,8 +274,10 @@ Database.prototype = {
         var href = linkable.attr('href');
         var type = linkable.data('linkable-type');
         var name = linkable.data('linkable-name');
+        var sample_type = linkable.data('sample-type');
         var args = {};
         args[type] = name;
+        args['type'] = sample_type;
         this.call(href, args);
     },
 
