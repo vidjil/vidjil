@@ -168,7 +168,7 @@ then process your data and save the results of your analysis.
 
 ** Patients
       
-Once you are authenticated, this page show the patient list. Here you
+Once you are authenticated, this page shows the patient list. Here you
 can see your patients and patients whose permission has been given to you.
 
 New patients can be added ('add patient'), edited ('e') or deleted ('X').
@@ -208,7 +208,7 @@ been created beforehand.
 **** Pre-processing
 
 The sample files may be preprocessed, by selecting a /pre-process scenario/ when adding a sample.
-At the moment the only preprocess avalaible on the public http://app.vidjil.org/ server are the paired-end read merging.
+At the moment the only preprocess avalaible on the public server (http://app.vidjil.org) are the paired-end read merging.
 
 ***** Read merging
       :PROPERTIES:
@@ -246,7 +246,7 @@ The server mainteners can add new configurations tailored to specific needs, con
 
 The « reload » button (bottom left) updates the view. It is useful to see if the status of the task changed.
 It should do =QUEUED= → =ASSIGNED= → =RUNNING= → =COMPLETED=.
-It is possible to launch several process at the same time (some will wait in the =QUEUED= / =ASSIGNED= states), and also to launch process while you
+It is possible to launch several processes at the same time (some will wait in the =QUEUED= / =ASSIGNED= states), and also to launch processes while you
 are uploading data. Finally, you can safely close the window with the patient/experiment database (and even your web browser) when some process are queued/launched.
 The only thing you should not do is to close completely your web browser while sequences are uploading.
 
