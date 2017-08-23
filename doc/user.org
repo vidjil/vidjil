@@ -102,7 +102,7 @@ to learn the essential features of Vidjil.
   already been clustered.
 
 - Clones can be searched (“search” box) by either their name, their custom name, 
-  or their DNA sequence.
+  their DNA sequence, their (partial) CDR3 amino acid sequence.
 - The concentration of some clones may not be displayed. Instead you can have
   either a =+= symbol or a =-= symbol. In the former case that means the clone has
   been detected (positive) but in few reads (typically less than five). In the
