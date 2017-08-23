@@ -8,7 +8,7 @@ They are also useful markers of pathologies, and in leukemia, are used to quanti
 High-throughput sequencing (NGS/HTS) now enables the deep sequencing of a lymphoid population with dedicated [[http://omictools.com/rep-seq-c424-p1.html][Rep-Seq]] methods and software.
 
 This is the help of the [[http://app.vidjil.org/browser/][Vidjil web application]].
-Further help can always be asked to [[mailto:contact@vidjil.org][contact@vidjil.org]]. We can also arrange phone or Skype meeting.
+Further help can always be asked to [[mailto:support@vidjil.org][support@vidjil.org]]. We can also arrange phone or Skype meeting.
 
 The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Ryan and Tatiana)
 
