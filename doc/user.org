@@ -53,7 +53,7 @@ Otherwise, such =.vidjil= files can be obtained:
 
 - You can change the number of displayed clones by moving the slider “number of clones” (menu “filter”).
   The maximal number of clones that can be displayed depends on the processing step before.
-  See below "Can I see all the clones ?" ([[Can I see all the clones ?]]).
+  See below "[[#smaller-clones][Can I see all the clones ?]]".
 
 - Clones can be selected by clicking on them either in the list, on the sample graph,
   or the grid (simple selection or rectangle selection).
@@ -148,8 +148,8 @@ or their “N length” (that is N1-D-N2 in the case of VDJ recombinations).
 
 ** The sequence view (bottom panel)
 
-The sequence view display nucleotide sequences from selected clones.
-   - See "What is the sequence displayed for each clone ?" ([[What is the sequence displayed for each clone ?]]) below
+The sequence view displays nucleotide sequences from selected clones.
+   - See "[[#Representative][What is the sequence displayed for each clone ?]]" below
    - Sequences can be aligned together (“align” button), identifying substitutions, insertions and deletions.
    - You can remove sequences from the aligner (and the selection) by clicking on the “X” at the left.
    - You can further analyze the sequences with IMGT/V-QUEST, IgBlast or Blast. This opens another window/tab.
@@ -305,7 +305,9 @@ The different permissions that can be attributed are:
   gene used and on the hypermutations.
 
 ** What is the sequence displayed for each clone ?
-<<Representative>>
+   :PROPERTIES:
+   :CUSTOM_ID: Representative
+   :END:
 The sequences displayed for each clone are not individual reads.  
 The clones may gather thousands of reads, and all these reads can have
 some differences. Depending on the sequencing technology, the reads
@@ -399,7 +401,7 @@ analyzed reads, including the hidden clones.
    :CUSTOM_ID: reads
    :END:
 
-The web application displays one consensus sequence per clone (see [[Representative]] above).
+The web application displays one consensus sequence per clone (see [[#Representative][Representative]] above).
 In some situations, one may want to go back to the reads.
 
 For the *built-in Vidjil algorithm*, analyzing a dataset with the /default + extract reads/ config enables
@@ -496,7 +498,7 @@ There can be several causes leading to bad ratios:
    the clone coverage is the ratio of the length of the clone consensus sequence
    to the median read length in the clone.
    A consensus sequence is
-   displayed for each clone (see [[representative][What is the sequence displayed for each clone?]]). 
+   displayed for each clone (see [[#Representative][What is the sequence displayed for each clone?]]). 
    Its length should be representative of the read lengths among that clone. A
    clone can be constituted of thousands of reads of various lengths. We
    expect the consensus sequence to be close to the median read length of the
