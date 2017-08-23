@@ -112,14 +112,14 @@ to learn the essential features of Vidjil.
 
 ** The sample graph
 
-The sample graph is hidden with there is only one sample. It shows the most frequent clones of each sample, tracked into every sample.
+The sample graph is hidden when there is only one sample. It shows the most frequent clones of each sample, tracked into every sample.
 The number of displayed clones can be changed with the filter menu.
 
-- The current sample is highlighted with a vertical gray bar. You can select on another sample by clicking on it or using =←= and =→=.
+- The current sample is highlighted with a vertical gray bar. You can select another sample by clicking on it or using =←= and =→=.
 
 - The gray areas at the bottom of the graph show, for each sample, the resolution (1 read / 5 reads).
 
-- You can reorder the samples by dragging them, and hide some samples by dragging them on the “...” mark at the right of the ps.
+- You can reorder the samples by dragging them, and hide some samples by dragging them on the “...” mark at the right of the graph.
   If you want to recover some hidden sample, you need to drag them from the “...” mark to the graph.
 
 - If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between sample keys and dates in “settings > sample key”
@@ -127,7 +127,7 @@ The number of displayed clones can be changed with the filter menu.
 
 ** The plot view and the plot presets
 
-The grid view show the clones scattered according to some axes.
+The grid view shows the clones scattered according to some axes.
 
 - The default view, by V/J genes, focus on one recombination system within one locus.
   All the analyzes locus are on the right of the grid. You can select another locus by clicking on it or by using the associated shortcuts (see [[Keyboard shortcuts]] below).
@@ -135,15 +135,15 @@ The grid view show the clones scattered according to some axes.
 - The “plot“ menu allow to customize the plots, by selecting the X and Y axes and also by switching between grid and bar plots.
   Some presets are available.
   For example, the preset 4, similar to a "Genescan analysis", shows a bar plot of the clones according to the length of their consensus sequence,
-  and the preset 7 show the distribution of CDR3 lengths.
+  and the preset 7 shows the distribution of CDR3 lengths.
 
 - On the bar plots, the Y axis corresponds to the order of clones inside each bar.
 
 - The “focus“ button (bottom right) allows to further analyze a selection of clones, and the “hide” button allows to hide some clones.
-  To exit the focus mode, click on the “X” near the search box.
+  To exit the focus/hide mode, click on the “X” near the search box.
   
 To further analyze a set of clones sharing a same V and J, it is often useful
-to focus on the clones, then to display them ones according to either their “clone length”
+to focus on the clones, then to display them according either to their “clone length”
 or their “N length” (that is N1-D-N2 in the case of VDJ recombinations).
 
 ** The sequence view (bottom panel)
