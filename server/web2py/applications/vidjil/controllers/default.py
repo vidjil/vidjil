@@ -114,7 +114,7 @@ def init_db_helper(force=False, admin_email="plop@plop.com", admin_password="123
             program = 'vidjil',
             command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -U ',
             fuse_command = '-t 100',
-            info = 'Same than than the default "multi+inc+xxx" (multi-locus, with some incomplete/unusual/unexpected recombinations), and extract analyzed reads in the "out" temporary directory.'
+            info = 'Same as the default "multi+inc+xxx" (multi-locus, with some incomplete/unusual/unexpected recombinations), and extract analyzed reads in the "out" temporary directory.'
         )
         db.config.insert(
             name = 'multi+inc+xxx',
