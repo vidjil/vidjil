@@ -518,6 +518,9 @@ There can be several causes leading to bad ratios:
   according to their clone coverage by selecting for example “clone
   coverage/GC content” in the preset menu of the “plot” box.
 * Keyboard shortcuts
+   :PROPERTIES:
+   :CUSTOM_ID: Shortcuts
+   :END:
 
 Note that some shortcuts may not work on some systems or on on some web browsers.
 
