@@ -517,6 +517,17 @@ There can be several causes leading to bad ratios:
   the list with an orange I on the right. You can also visualize the clones
   according to their clone coverage by selecting for example “clone
   coverage/GC content” in the preset menu of the “plot” box.
+** E-value
+   :PROPERTIES:
+   :CUSTOM_ID: evalue
+   :END:
+   Vidjil built-in algorithm computes an e-value of the found
+   recombination. An e-value is the number of times such a recombination is
+   expected to be found by chance. The lower the e-value the more robust the
+   detection is.
+
+   Whenever the e-value is too large, a warning sign will be shown next to the
+   clone, instead of the info icon.
 * Keyboard shortcuts
    :PROPERTIES:
    :CUSTOM_ID: Shortcuts
