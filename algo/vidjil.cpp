@@ -639,9 +639,9 @@ int main (int argc, char **argv)
         break;
 
       case 'u':
-        output_unsegmented = output_unsegmented_detail_full ;       // -uuu
-        output_unsegmented_detail_full = output_unsegmented_detail; // -uu
-        output_unsegmented_detail = true;                           // -u
+        output_unsegmented_detail_full = output_unsegmented_detail; // -uuu
+        output_unsegmented_detail = output_unsegmented;             // -uu
+        output_unsegmented = true ;                                 // -u
         break;
       case 'U':
         output_segmented = true;
