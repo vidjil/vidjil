@@ -24,15 +24,39 @@ Tools
     * @link 		http://eligrey.com
     * @license 		MIT Licensed
 
+    jstree              : distant file explorator
+    * @version          3.3.3
+    * @author           Ivan Bozhanov
+    * @link             https://www.jstree.com/
+    * @license          MIT
+
     less.js  		: dynamic stylesheet 
     * @version	 	less-1.5.0 
     * @author 		Alexis Sellier 
     * @link 		<self@cloudhead.net> / http://lesscss.org/
     * @license 		apache v2 
 
-  require.js  		: JavaScript file and module loader
+    qunit.js            : Unit testing
+    * @version          2.1.1
+    * @author           QUnit team (Trent Willis et al)
+    * @link             http://qunitjs.com/
+    * @license          MIT
+
+    qunit-tap.js        : TAP Output Producer Plugin for QUnit
+    * @version          1.5.0
+    * @author           Takuto Wada
+    * @link             https://github.com/twada/qunit-tap
+    * @license          MIT/GPLv2
+    
+    require.js  	: JavaScript file and module loader
     * @version	 	RequireJS 2.3.3
     * @author 		The Dojo Foundation All Rights Reserved. 
     * @link 		http://jrburke.com / http://requirejs.org/
     * @license 		MIT
     * @compatibility    IE 6+, Firefox 2+, Safari 3.2+, Chrome 3+, Opera 10+
+
+    tsne.js             : Implementation of TSNE algorithm
+    * @version          2d62a1c4
+    * @author           Andrej Karpathy
+    * @link             https://github.com/karpathy/tsnejs
+    * @license          MIT
