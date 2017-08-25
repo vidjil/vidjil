@@ -20,7 +20,7 @@ $ Find approximately the good number of sequences for e-value computation
 1: approx. 131.. sequences
 
 $ Find the good number of windows in Stanford S22
-1: found 10766 windows in 13152 reads
+1: found 10767 windows in 13153 reads
 
 $ First clone -- find the good number of reads
 2:clone-001--.*--0000008
