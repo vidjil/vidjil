@@ -7,13 +7,13 @@
 
 using namespace std;
 
-void testSegmentationBug1(IndexTypes index, int delta_min) {
+void testSegmentationBug1(IndexTypes index) {
   string buggy_sequences = "bugs/kmersegment.fa";
   BioReader seqV("../../germline/homo-sapiens/TRGV.fa");
   BioReader seqJ("../../germline/homo-sapiens/TRGJ.fa");
 
   Germline *germline ;
-  germline = new Germline("custom", 'x', seqV, seqV, seqJ, delta_min, "#############");
+  germline = new Germline("custom", 'x', seqV, seqV, seqJ, "#############");
   germline->new_index(index);
   germline->finish();
   
@@ -54,6 +54,6 @@ void testSegmentationBug1(IndexTypes index, int delta_min) {
 }
 
 void testBugs() {
-  testSegmentationBug1(KMER_INDEX, -10);
-  testSegmentationBug1(AC_AUTOMATON, -10);
+  testSegmentationBug1(KMER_INDEX);
+  testSegmentationBug1(AC_AUTOMATON);
 }
