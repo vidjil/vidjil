@@ -13,7 +13,7 @@ go: vdj_assign align
 all: $(EXEC)
 
 $(EXEC): %: %.o 
-	$(MAKE) -C .. OPTIM="$(OPTIM)"
+	$(MAKE) -C .. base OPTIM="$(OPTIM)"
 	$(CC) -I .. -o $@ $^ $(LIBCORE) $(LDLIBS)
 
 clean:

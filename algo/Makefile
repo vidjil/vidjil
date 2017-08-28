@@ -42,6 +42,9 @@ CREATE_VERSION_GIT_H := $(shell test -x ./create-git-version-h.sh && ./create-gi
 .PHONY: all core lib clean forcedep
 
 all: $(VIDJIL) $(ALIGN_CGI) $(SIMILARITY_CGI) $(SIMILARITY_TOOL)
+	$(MAKE) -C $(TOOLDIR)
+
+base: $(VIDJIL)
 
 ###
 
