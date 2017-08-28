@@ -218,7 +218,6 @@ void usage(char *progname, bool advanced)
   if (advanced)
   cerr << "Fine segmentation options (second pass)" << endl
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
-       << "  -m <int>      minimal admissible delta between the end of the V and the start of the J (default: " << DEFAULT_DELTA_MIN << ") (default with -D: " << DEFAULT_DELTA_MIN_D << ")" << endl
        << "  -E <float>    maximal e-value for determining if a D segment can be trusted (default: " << THRESHOLD_NB_EXPECTED_D << ")" << endl
        << endl ;
 
@@ -355,11 +354,8 @@ int main (int argc, char **argv)
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
   unsigned int max_auditionned = DEFAULT_MAX_AUDITIONED;
 
-  // Admissible delta between left and right segmentation points
-  int delta_min = DEFAULT_DELTA_MIN ; // Kmer+Fine
   int trim_sequences = DEFAULT_TRIM;
 
-  bool delta_min_changed = false;
   bool trim_sequences_changed = false;
   
   bool output_sequences_by_cluster = false;
@@ -398,7 +394,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHadI124g:V:D:J:k:r:vw:e:E:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3E:t:#:q")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHadI124g:V:D:J:k:r:vw:e:E:C:f:W:l:Fc:N:s:b:Sn:o:L%:y:z:uUK3E:t:#:q")) != EOF)
 
     switch (c)
       {
@@ -440,7 +436,6 @@ int main (int argc, char **argv)
 
       case 'D':
 	f_reps_D.push_back(optarg);
-	delta_min = DEFAULT_DELTA_MIN_D ;
 	break;
         
       case 'J':
@@ -512,11 +507,6 @@ int main (int argc, char **argv)
 
       case 'w':
 	wmer_size = atoi_NO_LIMIT(optarg);
-        break;
-
-      case 'm':
-	delta_min = atoi(optarg);
-        delta_min_changed = true;
         break;
 
       case '!':
@@ -838,7 +828,6 @@ int main (int argc, char **argv)
             {
               try {
                 multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_REGULAR,
-                                               FIRST_IF_UNCHANGED(UNSET_DELTA_MIN, delta_min, delta_min_changed),
                                                FIRST_IF_UNCHANGED("", seed, seed_changed),
                                                FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed));
               } catch (std::exception& e) {
@@ -853,7 +842,7 @@ int main (int argc, char **argv)
 	  Germline *germline;
 	  germline = new Germline("custom", 'X',
                                   f_reps_V, f_reps_D, f_reps_J, 
-                                  delta_min, seed, trim_sequences);
+                                  seed, trim_sequences);
 
           germline->new_index(indexType);
 
@@ -874,14 +863,14 @@ int main (int argc, char **argv)
       }
 
       if (multi_germline_unexpected_recombinations_12) {
-        Germline *pseudo = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, DEFAULT_DELTA_MIN, "", trim_sequences);
+        Germline *pseudo = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", trim_sequences);
         pseudo->seg_method = SEG_METHOD_MAX12 ;
         pseudo->index = multigermline->index ;
         multigermline->germlines.push_back(pseudo);
       }
 
       if (multi_germline_unexpected_recombinations_1U) {
-        Germline *pseudo_u = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, DEFAULT_DELTA_MIN, "", trim_sequences);
+        Germline *pseudo_u = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", trim_sequences);
         pseudo_u->seg_method = SEG_METHOD_MAX1U ;
         // TODO: there should be more up/downstream regions for the PSEUDO_UNEXPECTED germline. And/or smaller seeds ?
         pseudo_u->index = multigermline->index ;
@@ -892,7 +881,6 @@ int main (int argc, char **argv)
     {
       for (pair <string, string> path_file: multi_germline_paths_and_files)
         multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_INCOMPLETE,
-                                       FIRST_IF_UNCHANGED(UNSET_DELTA_MIN, delta_min, delta_min_changed),
                                        FIRST_IF_UNCHANGED("", seed, seed_changed),
                                        FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed));
       if ((! multigermline->one_index_per_germline) && (command != CMD_GERMLINES)) {
