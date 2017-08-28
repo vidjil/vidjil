@@ -298,6 +298,8 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
   
   //for each germline
   for (json::iterator it = j.begin(); it != j.end(); ++it) {
+    int delta_min = default_delta_min;
+    int max_indexing = default_max_indexing;
       
     json recom = it.value()["recombinations"];
     char shortcut = it.value()["shortcut"].dump()[1];
@@ -307,12 +309,12 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
 
     if (default_delta_min == ~0) {
       if (json_parameters.count("delta_min") > 0) {
-        default_delta_min = json_parameters["delta_min"];
+        delta_min = json_parameters["delta_min"];
       }
     }
     if (default_max_indexing == 0) {
       if (json_parameters.count("max_indexing") > 0) {
-        default_max_indexing = json_parameters["max_indexing"];
+        max_indexing = json_parameters["max_indexing"];
       }
     }
 
@@ -343,13 +345,12 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
     seedMap["10s"] = SEED_S10;
     seedMap["9s"] = SEED_9;
 
-    if (default_seed.size() == 0)
-      default_seed = seedMap[seed];
+    seed = (default_seed.size() == 0) ? seedMap[seed] : default_seed;
     
     //for each set of recombination 3/4/5
     for (json::iterator it2 = recom.begin(); it2 != recom.end(); ++it2) {
-      add_germline(new Germline(code, shortcut, path + "/", *it2 , default_delta_min, default_seed,
-                                default_max_indexing));
+      add_germline(new Germline(code, shortcut, path + "/", *it2 , delta_min, seed,
+                                max_indexing));
     }
   }
   
