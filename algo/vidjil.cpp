@@ -320,6 +320,7 @@ int main (int argc, char **argv)
   string read_header_separator = DEFAULT_READ_HEADER_SEPARATOR ;
   string f_reads = DEFAULT_READS ;
   string seed = DEFAULT_SEED ;
+  bool seed_changed = false;
   string f_basename = "";
 
   string out_dir = DEFAULT_OUT_DIR;
@@ -358,6 +359,9 @@ int main (int argc, char **argv)
   int delta_min = DEFAULT_DELTA_MIN ; // Kmer+Fine
   int trim_sequences = DEFAULT_TRIM;
 
+  bool delta_min_changed = false;
+  bool trim_sequences_changed = false;
+  
   bool output_sequences_by_cluster = false;
   bool output_segmented = false;
   bool output_unsegmented = false;
@@ -490,6 +494,7 @@ int main (int argc, char **argv)
       case 's':
 #ifndef NO_SPACED_SEEDS
 	seed = string(optarg);
+        seed_changed = true;
 	options_s_k++ ;
 #else
         cerr << "To enable the option -s, please compile without NO_SPACED_SEEDS" << endl;
@@ -500,6 +505,7 @@ int main (int argc, char **argv)
         {
           int kmer_size = atoi(optarg);
           seed = seed_contiguous(kmer_size);
+          seed_changed = true;
         }
 	options_s_k++ ;
         break;
@@ -510,6 +516,7 @@ int main (int argc, char **argv)
 
       case 'm':
 	delta_min = atoi(optarg);
+        delta_min_changed = true;
         break;
 
       case '!':
@@ -540,6 +547,7 @@ int main (int argc, char **argv)
 
       case 't':
         trim_sequences = atoi(optarg);
+        trim_sequences_changed = true;
         break;
 
       case 'v':
@@ -683,7 +691,7 @@ int main (int argc, char **argv)
   // Default seeds
 
 #ifdef NO_SPACED_SEEDS
-  if (seed.size() == 0)
+  if (! seed_changed)
     {
     cerr << ERROR_STRING << "Vidjil was compiled with NO_SPACED_SEEDS: please provide a -k option." << endl;
     exit(1) ;
@@ -830,7 +838,9 @@ int main (int argc, char **argv)
             {
               try {
                 multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_REGULAR,
-                                               delta_min, seed, trim_sequences);
+                                               FIRST_IF_UNCHANGED(UNSET_DELTA_MIN, delta_min, delta_min_changed),
+                                               FIRST_IF_UNCHANGED("", seed, seed_changed),
+                                               FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed));
               } catch (std::exception& e) {
                 cerr << ERROR_STRING << "Vidjil cannot properly read " << path_file.first << "/" << path_file.second << ": " << e.what() << endl;
                 exit(1);
@@ -882,7 +892,9 @@ int main (int argc, char **argv)
     {
       for (pair <string, string> path_file: multi_germline_paths_and_files)
         multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_INCOMPLETE,
-                                       delta_min, seed, trim_sequences);
+                                       FIRST_IF_UNCHANGED(UNSET_DELTA_MIN, delta_min, delta_min_changed),
+                                       FIRST_IF_UNCHANGED("", seed, seed_changed),
+                                       FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed));
       if ((! multigermline->one_index_per_germline) && (command != CMD_GERMLINES)) {
         multigermline->insert_in_one_index(multigermline->index, true);
       }
