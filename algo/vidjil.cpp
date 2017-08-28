@@ -833,7 +833,8 @@ int main (int argc, char **argv)
           for (pair <string, string> path_file: multi_germline_paths_and_files)
             {
               try {
-                multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_REGULAR, trim_sequences);
+                multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_REGULAR,
+                                               delta_min, seed, trim_sequences);
               } catch (std::exception& e) {
                 cerr << ERROR_STRING << "Vidjil cannot properly read " << path_file.first << "/" << path_file.second << ": " << e.what() << endl;
                 exit(1);
