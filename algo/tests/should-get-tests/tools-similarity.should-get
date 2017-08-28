@@ -1,0 +1,9 @@
+!LAUNCH: $VIDJIL_DIR/algo/tools/similarity $VIDJIL_DIR/data/msa.fa
+
+$ Read 3 sequences
+1: 54 bp in .* 3 sequences
+
+$ Compute table of similarities
+1: seq1 .* 100 .* 76 .* 82 
+
+
