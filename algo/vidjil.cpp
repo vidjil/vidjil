@@ -885,7 +885,8 @@ int main (int argc, char **argv)
       // Should come after the initialization of regular (and possibly pseudo) germlines
     {
       for (pair <string, string> path_file: multi_germline_paths_and_files)
-        multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_INCOMPLETE, trim_sequences);
+        multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_INCOMPLETE,
+                                       delta_min, seed, trim_sequences);
       if ((! multigermline->one_index_per_germline) && (command != CMD_GERMLINES)) {
         multigermline->insert_in_one_index(multigermline->index, true);
       }
