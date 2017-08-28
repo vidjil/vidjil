@@ -315,8 +315,6 @@ int main (int argc, char **argv)
 
   //$$ options: defaults
 
-  string germline_system = "" ;
-  
   list <string> f_reps_V ;
   list <string> f_reps_D ;
   list <string> f_reps_J ;
@@ -438,7 +436,6 @@ int main (int argc, char **argv)
 
       case 'V':
 	f_reps_V.push_back(optarg);
-	germline_system = "custom" ;
 	break;
 
       case 'D':
@@ -448,12 +445,10 @@ int main (int argc, char **argv)
         
       case 'J':
 	f_reps_J.push_back(optarg);
-	germline_system = "custom" ;
 	break;
 
       case 'g':
 	multi_germline = true;
-        germline_system = "multi" ;
         {
           string arg = string(optarg);
           struct stat buffer;
@@ -655,7 +650,7 @@ int main (int argc, char **argv)
   //$$ options: post-processing+display
 
 
-  if (!germline_system.size())
+  if (!multi_germline && (!f_reps_V.size() || !f_reps_J.size()))
     {
       cerr << ERROR_STRING << "At least one germline must be given with -g or -V/(-D)/-J." << endl ;
       exit(1);
@@ -693,15 +688,7 @@ int main (int argc, char **argv)
 #ifndef NO_SPACED_SEEDS
   if (kmer_size == DEFAULT_K)
     {
-      if (germline_system.find("TRA") != string::npos)
-	seed = SEED_S13 ;
-
-      else if ((germline_system.find("TRB") != string::npos)
-	       || (germline_system.find("IGH") != string::npos))
-	seed = SEED_S12 ;
-      else // TRD, TRG, IGK, IGL, custom, multi
-	seed = SEED_S10 ;
-
+      seed = SEED_S10 ;
       kmer_size = seed_weight(seed);
     }
 #else
@@ -861,7 +848,7 @@ int main (int argc, char **argv)
 	{
 	  // Custom germline
 	  Germline *germline;
-	  germline = new Germline(germline_system, 'X',
+	  germline = new Germline("custom", 'X',
                                   f_reps_V, f_reps_D, f_reps_J, 
                                   delta_min, seed, trim_sequences);
 
