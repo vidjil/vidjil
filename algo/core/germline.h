@@ -15,7 +15,7 @@
 
 #define DEFAULT_DELTA_MIN  -10
 #define DEFAULT_DELTA_MIN_D  0
-
+#define DEFAULT_GERMLINE_SEED SEED_S10
 
 enum SEGMENTATION_METHODS {
   SEG_METHOD_53,      // Regular or incomplete germlines, 5'-3'

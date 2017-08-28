@@ -14,6 +14,8 @@ void Germline::init(string _code, char _shortcut,
   index = 0 ;
   this->max_indexing = max_indexing;
   this->seed = seed;
+  if (this->seed.size() == 0)
+    this->seed = DEFAULT_GERMLINE_SEED;
 
   affect_5 = "V" ;
   affect_4 = "" ;
