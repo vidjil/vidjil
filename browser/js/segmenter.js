@@ -834,10 +834,10 @@ updateElem: function (list) {
     * @param {str} sequence 
     **/
 
-    addSequenceTosegmenter : function(id, str){
+    addSequenceTosegmenter : function(id, locus, str){
         var self =this
         this.aligned = false ;
-        this.sequence[id] = new genSeq(id, this.m, this)          
+        this.sequence[id] = new genSeq(id, locus, this.m, this) 
         this.sequence[id].load("str")
         var divParent = document.getElementById("listSeq");       
         var previous_li = divParent.getElementsByTagName("li");
