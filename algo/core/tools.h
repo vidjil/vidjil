@@ -49,6 +49,8 @@ int seed_weight(const string &seed);
 // https://stackoverflow.com/posts/3599170/revisions
 #define UNUSED(x) ((void)(x))
 
+#define FIRST_IF_UNCHANGED(first, second, changed) ((changed) ? (second) : (first))
+
 /**
  * Return a spaced key from a contiguous key and a seed model
  * @param input: contiguous key

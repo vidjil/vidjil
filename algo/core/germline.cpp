@@ -14,6 +14,8 @@ void Germline::init(string _code, char _shortcut,
   index = 0 ;
   this->max_indexing = max_indexing;
   this->seed = seed;
+  if (this->seed.size() == 0)
+    this->seed = DEFAULT_GERMLINE_SEED;
 
   affect_5 = "V" ;
   affect_4 = "" ;
@@ -103,13 +105,14 @@ Germline::Germline(string _code, char _shortcut,
 }
 
 Germline::Germline(string code, char shortcut, string path, json json_recom,
-                   string seed, int max_indexing)
+                   int delta_min, string seed, int max_indexing)
 {
-    
-  int delta_min = -10;
+  if (delta_min == UNSET_DELTA_MIN) {
+    delta_min = DEFAULT_DELTA_MIN;
   
-  if (json_recom.find("4") != json_recom.end()) {
-      delta_min = 0;
+    if (json_recom.find("4") != json_recom.end()) {
+      delta_min = DEFAULT_DELTA_MIN_D;
+    }
   }
   
   init(code, shortcut, delta_min, seed, max_indexing);
@@ -257,7 +260,8 @@ void MultiGermline::add_germline(Germline *germline)
   germlines.push_back(germline);
 }
 
-void MultiGermline::build_from_json(string path, string json_filename_and_filter, int filter, int max_indexing)
+void MultiGermline::build_from_json(string path, string json_filename_and_filter, int filter, int default_delta_min,
+                                    string default_seed, int default_max_indexing)
 {
 
   //extract json_filename and systems_filter
@@ -297,11 +301,26 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
   
   //for each germline
   for (json::iterator it = j.begin(); it != j.end(); ++it) {
+    int delta_min = default_delta_min;
+    int max_indexing = default_max_indexing;
       
-    json recom = it.value()["recombinations"];
-    char shortcut = it.value()["shortcut"].dump()[1];
+    json json_value = it.value();
+    json recom = json_value["recombinations"];
+    char shortcut = json_value["shortcut"].dump()[1];
     string code = it.key();
-    string seed = it.value()["parameters"]["seed"];
+    json json_parameters = json_value["parameters"];
+    string seed = json_parameters["seed"];
+
+    if (default_delta_min == UNSET_DELTA_MIN) {
+      if (json_parameters.count("delta_min") > 0) {
+        delta_min = json_parameters["delta_min"];
+      }
+    }
+    if (default_max_indexing == 0) {
+      if (json_parameters.count("max_indexing") > 0) {
+        max_indexing = json_parameters["max_indexing"];
+      }
+    }
 
     if (systems_filter.size())
       {
@@ -329,10 +348,12 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
     seedMap["12s"] = SEED_S12;
     seedMap["10s"] = SEED_S10;
     seedMap["9s"] = SEED_9;
+
+    seed = (default_seed.size() == 0) ? seedMap[seed] : default_seed;
     
     //for each set of recombination 3/4/5
     for (json::iterator it2 = recom.begin(); it2 != recom.end(); ++it2) {
-      add_germline(new Germline(code, shortcut, path + "/", *it2 , seedMap[seed],
+      add_germline(new Germline(code, shortcut, path + "/", *it2 , delta_min, seed,
                                 max_indexing));
     }
   }

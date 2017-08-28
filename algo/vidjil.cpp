@@ -105,11 +105,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define DEFAULT_K      0
 #define DEFAULT_W      50
-#define DEFAULT_SEED   ""
-
-#define DEFAULT_DELTA_MIN  -10
-
-#define DEFAULT_DELTA_MIN_D  0
+#define DEFAULT_SEED   DEFAULT_GERMLINE_SEED
 
 #define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
@@ -242,9 +238,10 @@ void usage(char *progname, bool advanced)
 
   cerr << "Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)" << endl
        << "  -U            output segmented reads (in " << SEGMENTED_FILENAME << " file)" << endl
-       << "  -u            output unsegmented reads (in " << UNSEGMENTED_FILENAME << " file)" << endl
-       << "  -uu           output unsegmented reads, gathered by unsegmentation cause, except for very short and 'too few V/J' reads (in *" << UNSEGMENTED_DETAIL_FILENAME << " files)" << endl
-       << "  -uuu          output unsegmented reads, gathered by unsegmentation cause, all reads (in *" << UNSEGMENTED_DETAIL_FILENAME << " files) (use only for debug)" << endl
+       << "  -u            output unsegmented reads, gathered by unsegmentation cause, except for very short and 'too few V/J' reads (in *" << UNSEGMENTED_DETAIL_FILENAME << " files)" << endl
+       << "  -uu           output unsegmented reads, gathered by unsegmentation cause, all reads (in *" << UNSEGMENTED_DETAIL_FILENAME << " files) (use only for debug)" << endl
+       << "  -uuu          output unsegmented reads, all reads, including a " << UNSEGMENTED_FILENAME << " file (use only for debug)" << endl
+
        << "  -K            output detailed k-mer affectation on all reads (in " << AFFECTS_FILENAME << " file) (use only for debug, for example -KX 100)" << endl
        << endl
  
@@ -315,8 +312,6 @@ int main (int argc, char **argv)
 
   //$$ options: defaults
 
-  string germline_system = "" ;
-  
   list <string> f_reps_V ;
   list <string> f_reps_D ;
   list <string> f_reps_J ;
@@ -325,13 +320,13 @@ int main (int argc, char **argv)
   string read_header_separator = DEFAULT_READ_HEADER_SEPARATOR ;
   string f_reads = DEFAULT_READS ;
   string seed = DEFAULT_SEED ;
+  bool seed_changed = false;
   string f_basename = "";
 
   string out_dir = DEFAULT_OUT_DIR;
   
   string comp_filename = COMP_FILENAME;
 
-  int kmer_size = DEFAULT_K ;
   int wmer_size = DEFAULT_W ;
 
   IndexTypes indexType = KMER_INDEX;
@@ -364,6 +359,9 @@ int main (int argc, char **argv)
   int delta_min = DEFAULT_DELTA_MIN ; // Kmer+Fine
   int trim_sequences = DEFAULT_TRIM;
 
+  bool delta_min_changed = false;
+  bool trim_sequences_changed = false;
+  
   bool output_sequences_by_cluster = false;
   bool output_segmented = false;
   bool output_unsegmented = false;
@@ -438,7 +436,6 @@ int main (int argc, char **argv)
 
       case 'V':
 	f_reps_V.push_back(optarg);
-	germline_system = "custom" ;
 	break;
 
       case 'D':
@@ -448,12 +445,10 @@ int main (int argc, char **argv)
         
       case 'J':
 	f_reps_J.push_back(optarg);
-	germline_system = "custom" ;
 	break;
 
       case 'g':
 	multi_germline = true;
-        germline_system = "multi" ;
         {
           string arg = string(optarg);
           struct stat buffer;
@@ -499,7 +494,7 @@ int main (int argc, char **argv)
       case 's':
 #ifndef NO_SPACED_SEEDS
 	seed = string(optarg);
-	kmer_size = seed_weight(seed);
+        seed_changed = true;
 	options_s_k++ ;
 #else
         cerr << "To enable the option -s, please compile without NO_SPACED_SEEDS" << endl;
@@ -507,8 +502,11 @@ int main (int argc, char **argv)
         break;
 
       case 'k':
-	kmer_size = atoi(optarg);
-	seed = seed_contiguous(kmer_size);
+        {
+          int kmer_size = atoi(optarg);
+          seed = seed_contiguous(kmer_size);
+          seed_changed = true;
+        }
 	options_s_k++ ;
         break;
 
@@ -518,6 +516,7 @@ int main (int argc, char **argv)
 
       case 'm':
 	delta_min = atoi(optarg);
+        delta_min_changed = true;
         break;
 
       case '!':
@@ -548,6 +547,7 @@ int main (int argc, char **argv)
 
       case 't':
         trim_sequences = atoi(optarg);
+        trim_sequences_changed = true;
         break;
 
       case 'v':
@@ -639,9 +639,9 @@ int main (int argc, char **argv)
         break;
 
       case 'u':
-        output_unsegmented_detail_full = output_unsegmented_detail; // -uuu
-        output_unsegmented_detail = output_unsegmented;             // -uu
-        output_unsegmented = true ;                                 // -u
+        output_unsegmented = output_unsegmented_detail_full ;       // -uuu
+        output_unsegmented_detail_full = output_unsegmented_detail; // -uu
+        output_unsegmented_detail = true;                           // -u
         break;
       case 'U':
         output_segmented = true;
@@ -655,7 +655,7 @@ int main (int argc, char **argv)
   //$$ options: post-processing+display
 
 
-  if (!germline_system.size())
+  if (!multi_germline && (!f_reps_V.size() || !f_reps_J.size()))
     {
       cerr << ERROR_STRING << "At least one germline must be given with -g or -V/(-D)/-J." << endl ;
       exit(1);
@@ -690,22 +690,9 @@ int main (int argc, char **argv)
 
   // Default seeds
 
-#ifndef NO_SPACED_SEEDS
-  if (kmer_size == DEFAULT_K)
+#ifdef NO_SPACED_SEEDS
+  if (! seed_changed)
     {
-      if (germline_system.find("TRA") != string::npos)
-	seed = SEED_S13 ;
-
-      else if ((germline_system.find("TRB") != string::npos)
-	       || (germline_system.find("IGH") != string::npos))
-	seed = SEED_S12 ;
-      else // TRD, TRG, IGK, IGL, custom, multi
-	seed = SEED_S10 ;
-
-      kmer_size = seed_weight(seed);
-    }
-#else
-  {
     cerr << ERROR_STRING << "Vidjil was compiled with NO_SPACED_SEEDS: please provide a -k option." << endl;
     exit(1) ;
   }
@@ -850,7 +837,10 @@ int main (int argc, char **argv)
           for (pair <string, string> path_file: multi_germline_paths_and_files)
             {
               try {
-                multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_REGULAR, trim_sequences);
+                multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_REGULAR,
+                                               FIRST_IF_UNCHANGED(UNSET_DELTA_MIN, delta_min, delta_min_changed),
+                                               FIRST_IF_UNCHANGED("", seed, seed_changed),
+                                               FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed));
               } catch (std::exception& e) {
                 cerr << ERROR_STRING << "Vidjil cannot properly read " << path_file.first << "/" << path_file.second << ": " << e.what() << endl;
                 exit(1);
@@ -861,7 +851,7 @@ int main (int argc, char **argv)
 	{
 	  // Custom germline
 	  Germline *germline;
-	  germline = new Germline(germline_system, 'X',
+	  germline = new Germline("custom", 'X',
                                   f_reps_V, f_reps_D, f_reps_J, 
                                   delta_min, seed, trim_sequences);
 
@@ -884,14 +874,14 @@ int main (int argc, char **argv)
       }
 
       if (multi_germline_unexpected_recombinations_12) {
-        Germline *pseudo = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, -10, "", trim_sequences);
+        Germline *pseudo = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, DEFAULT_DELTA_MIN, "", trim_sequences);
         pseudo->seg_method = SEG_METHOD_MAX12 ;
         pseudo->index = multigermline->index ;
         multigermline->germlines.push_back(pseudo);
       }
 
       if (multi_germline_unexpected_recombinations_1U) {
-        Germline *pseudo_u = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, -10, "", trim_sequences);
+        Germline *pseudo_u = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, DEFAULT_DELTA_MIN, "", trim_sequences);
         pseudo_u->seg_method = SEG_METHOD_MAX1U ;
         // TODO: there should be more up/downstream regions for the PSEUDO_UNEXPECTED germline. And/or smaller seeds ?
         pseudo_u->index = multigermline->index ;
@@ -901,7 +891,10 @@ int main (int argc, char **argv)
       // Should come after the initialization of regular (and possibly pseudo) germlines
     {
       for (pair <string, string> path_file: multi_germline_paths_and_files)
-        multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_INCOMPLETE, trim_sequences);
+        multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_INCOMPLETE,
+                                       FIRST_IF_UNCHANGED(UNSET_DELTA_MIN, delta_min, delta_min_changed),
+                                       FIRST_IF_UNCHANGED("", seed, seed_changed),
+                                       FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed));
       if ((! multigermline->one_index_per_germline) && (command != CMD_GERMLINES)) {
         multigermline->insert_in_one_index(multigermline->index, true);
       }
@@ -978,6 +971,8 @@ int main (int argc, char **argv)
       int nb_reads = 0 ;
       int total_length = 0 ;
       int s = index->getS();
+
+      int kmer_size = seed_weight(seed);
 
       while (reads->hasNext())
 	{
