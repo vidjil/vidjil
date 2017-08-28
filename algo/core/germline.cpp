@@ -107,7 +107,7 @@ Germline::Germline(string _code, char _shortcut,
 Germline::Germline(string code, char shortcut, string path, json json_recom,
                    int delta_min, string seed, int max_indexing)
 {
-  if (delta_min == ~0) {
+  if (delta_min == UNSET_DELTA_MIN) {
     delta_min = DEFAULT_DELTA_MIN;
   
     if (json_recom.find("4") != json_recom.end()) {
@@ -311,7 +311,7 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
     json json_parameters = json_value["parameters"];
     string seed = json_parameters["seed"];
 
-    if (default_delta_min == ~0) {
+    if (default_delta_min == UNSET_DELTA_MIN) {
       if (json_parameters.count("delta_min") > 0) {
         delta_min = json_parameters["delta_min"];
       }

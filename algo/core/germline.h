@@ -12,9 +12,11 @@
 #include "../lib/json.hpp"
 #include "kmerstorefactory.hpp"
 #include "bioreader.hpp"
+#include <climits>
 
 #define DEFAULT_DELTA_MIN  -10
 #define DEFAULT_DELTA_MIN_D  0
+#define UNSET_DELTA_MIN INT_MAX
 #define DEFAULT_GERMLINE_SEED SEED_S10
 
 enum SEGMENTATION_METHODS {
@@ -74,7 +76,7 @@ class Germline {
             int max_indexing=0);
   
   Germline(string _code, char shortcut, string path, json json_recom,
-           int delta_min=~0, string seed="", int max_indexing=0);
+           int delta_min=UNSET_DELTA_MIN, string seed="", int max_indexing=0);
 
   ~Germline();
 
@@ -161,7 +163,7 @@ class MultiGermline {
    *   filter: see GERMLINES_FILTER
    *   max_indexing:
    */
-  void build_from_json(string path, string json_filename_and_filter, int filter, int default_delta_min=~0,
+  void build_from_json(string path, string json_filename_and_filter, int filter, int default_delta_min=UNSET_DELTA_MIN,
                        string default_seed="", int default_max_indexing=0);
 
   /**
