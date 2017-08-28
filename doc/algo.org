@@ -217,6 +217,10 @@ or =.fastq= file, possibly compressed with gzip (=.gz=).
 This set of reads can reach several gigabytes and 2*10^9 reads. It is
 never loaded entirely in the memory, but reads are processed one by
 one by the Vidjil algorithm.
+Vidjil can also process BAM files, but please note that:
+1. The reads don't need to be aligned beforehand.
+2. In case of paired-end sequencing, the reads must have already been merged
+   in the BAM file.
 
 The =-h= and =-H= help options provide the list of parameters that can be
 used. We detail here the options of the main =-c clones= command.
