@@ -5,7 +5,7 @@
 #include <ctype.h>
 
 void Germline::init(string _code, char _shortcut,
-                    int _delta_min, string seed,
+                    string seed,
                     int max_indexing)
 {
   seg_method = SEG_METHOD_53 ;
@@ -24,25 +24,21 @@ void Germline::init(string _code, char _shortcut,
   affect_5 = string(1, toupper(shortcut)) + "-" + code + "V";
   affect_4 = string(1, 14 + shortcut) + "-" + code + "D";
   affect_3 = string(1, tolower(shortcut)) + "-" + code + "J";
-     
-  delta_min = _delta_min ;
 }
 
 
 Germline::Germline(string _code, char _shortcut,
-		   int _delta_min, string seed,
-                    int max_indexing)
+		   string seed, int max_indexing)
 {
-  init(_code, _shortcut, _delta_min, seed, max_indexing);
+  init(_code, _shortcut, seed, max_indexing);
 }
 
 
 Germline::Germline(string _code, char _shortcut,
 		   string f_rep_5, string f_rep_4, string f_rep_3,
-		   int _delta_min, string seed,
-                    int max_indexing)
+		   string seed, int max_indexing)
 {
-  init(_code, _shortcut, _delta_min, seed, max_indexing);
+  init(_code, _shortcut, seed, max_indexing);
 
   f_reps_5.push_back(f_rep_5);
   f_reps_4.push_back(f_rep_4);
@@ -60,10 +56,9 @@ Germline::Germline(string _code, char _shortcut,
 
 Germline::Germline(string _code, char _shortcut,
 		   list <string> _f_reps_5, list <string> _f_reps_4, list <string> _f_reps_3,
-		   int _delta_min, string seed,
-                    int max_indexing)
+		   string seed, int max_indexing)
 {
-  init(_code, _shortcut, _delta_min, seed, max_indexing);
+  init(_code, _shortcut, seed, max_indexing);
 
   f_reps_5 = _f_reps_5 ;
   f_reps_4 = _f_reps_4 ;
@@ -91,10 +86,9 @@ Germline::Germline(string _code, char _shortcut,
 
 Germline::Germline(string _code, char _shortcut, 
            BioReader _rep_5, BioReader _rep_4, BioReader _rep_3,
-		   int _delta_min, string seed,
-                    int max_indexing)
+                   string seed, int max_indexing)
 {
-  init(_code, _shortcut, _delta_min, seed, max_indexing);
+  init(_code, _shortcut, seed, max_indexing);
 
   rep_5 = _rep_5 ;
   rep_4 = _rep_4 ;
@@ -105,17 +99,9 @@ Germline::Germline(string _code, char _shortcut,
 }
 
 Germline::Germline(string code, char shortcut, string path, json json_recom,
-                   int delta_min, string seed, int max_indexing)
+                   string seed, int max_indexing)
 {
-  if (delta_min == UNSET_DELTA_MIN) {
-    delta_min = DEFAULT_DELTA_MIN;
-  
-    if (json_recom.find("4") != json_recom.end()) {
-      delta_min = DEFAULT_DELTA_MIN_D;
-    }
-  }
-  
-  init(code, shortcut, delta_min, seed, max_indexing);
+  init(code, shortcut, seed, max_indexing);
 
   bool regular = (code.find("+") == string::npos);
   
@@ -213,7 +199,6 @@ Germline::~Germline()
 ostream &operator<<(ostream &out, const Germline &germline)
 {
   out << setw(5) << left << germline.code << right << " '" << germline.shortcut << "' "
-      << setw(3) << germline.delta_min
       << " ";
 
   size_t seed_span = germline.seed.size();
@@ -260,7 +245,7 @@ void MultiGermline::add_germline(Germline *germline)
   germlines.push_back(germline);
 }
 
-void MultiGermline::build_from_json(string path, string json_filename_and_filter, int filter, int default_delta_min,
+void MultiGermline::build_from_json(string path, string json_filename_and_filter, int filter,
                                     string default_seed, int default_max_indexing)
 {
 
@@ -301,7 +286,6 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
   
   //for each germline
   for (json::iterator it = j.begin(); it != j.end(); ++it) {
-    int delta_min = default_delta_min;
     int max_indexing = default_max_indexing;
       
     json json_value = it.value();
@@ -311,11 +295,6 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
     json json_parameters = json_value["parameters"];
     string seed = json_parameters["seed"];
 
-    if (default_delta_min == UNSET_DELTA_MIN) {
-      if (json_parameters.count("delta_min") > 0) {
-        delta_min = json_parameters["delta_min"];
-      }
-    }
     if (default_max_indexing == 0) {
       if (json_parameters.count("trim_sequences") > 0) {
         max_indexing = json_parameters["trim_sequences"];
@@ -353,8 +332,8 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
     
     //for each set of recombination 3/4/5
     for (json::iterator it2 = recom.begin(); it2 != recom.end(); ++it2) {
-      add_germline(new Germline(code, shortcut, path + "/", *it2 , delta_min, seed,
-                                max_indexing));
+      add_germline(new Germline(code, shortcut, path + "/", *it2,
+                                seed, max_indexing));
     }
   }
   
