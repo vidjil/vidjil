@@ -496,8 +496,10 @@ int main (int argc, char **argv)
         break;
 
       case 'k':
-	int kmer_size = atoi(optarg);
-	seed = seed_contiguous(kmer_size);
+        {
+          int kmer_size = atoi(optarg);
+          seed = seed_contiguous(kmer_size);
+        }
 	options_s_k++ ;
         break;
 
