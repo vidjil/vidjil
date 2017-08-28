@@ -302,10 +302,11 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
     int delta_min = default_delta_min;
     int max_indexing = default_max_indexing;
       
-    json recom = it.value()["recombinations"];
-    char shortcut = it.value()["shortcut"].dump()[1];
+    json json_value = it.value();
+    json recom = json_value["recombinations"];
+    char shortcut = json_value["shortcut"].dump()[1];
     string code = it.key();
-    json json_parameters = it.value()["parameters"];
+    json json_parameters = json_value["parameters"];
     string seed = json_parameters["seed"];
 
     if (default_delta_min == ~0) {
