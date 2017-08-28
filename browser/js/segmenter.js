@@ -1421,8 +1421,7 @@ function Sequence(id, model, segmenter) {
     this.locus = this.m.clone(id).germline;
 }
 
-Sequence.prototype = Object.create(genSeq.prototype); Object.assign(Sequence.prototype, {
-
+Sequence.prototype = Object.create(genSeq.prototype); 
     /**
      * load the clone sequence <br>
      * retrieve the one in the model or use the one given in parameter <br>
@@ -1642,8 +1641,6 @@ Sequence.prototype = Object.create(genSeq.prototype); Object.assign(Sequence.pro
 
         return h
     }
-});
-
 
 tableAA = {
  'TTT' : 'F',
