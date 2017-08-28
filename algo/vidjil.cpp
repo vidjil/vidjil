@@ -238,9 +238,10 @@ void usage(char *progname, bool advanced)
 
   cerr << "Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)" << endl
        << "  -U            output segmented reads (in " << SEGMENTED_FILENAME << " file)" << endl
-       << "  -u            output unsegmented reads (in " << UNSEGMENTED_FILENAME << " file)" << endl
-       << "  -uu           output unsegmented reads, gathered by unsegmentation cause, except for very short and 'too few V/J' reads (in *" << UNSEGMENTED_DETAIL_FILENAME << " files)" << endl
-       << "  -uuu          output unsegmented reads, gathered by unsegmentation cause, all reads (in *" << UNSEGMENTED_DETAIL_FILENAME << " files) (use only for debug)" << endl
+       << "  -u            output unsegmented reads, gathered by unsegmentation cause, except for very short and 'too few V/J' reads (in *" << UNSEGMENTED_DETAIL_FILENAME << " files)" << endl
+       << "  -uu           output unsegmented reads, gathered by unsegmentation cause, all reads (in *" << UNSEGMENTED_DETAIL_FILENAME << " files) (use only for debug)" << endl
+       << "  -uuu          output unsegmented reads, all reads, including a " << UNSEGMENTED_FILENAME << " file (use only for debug)" << endl
+
        << "  -K            output detailed k-mer affectation on all reads (in " << AFFECTS_FILENAME << " file) (use only for debug, for example -KX 100)" << endl
        << endl
  
