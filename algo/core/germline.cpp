@@ -105,11 +105,12 @@ Germline::Germline(string _code, char _shortcut,
 Germline::Germline(string code, char shortcut, string path, json json_recom,
                    int delta_min, string seed, int max_indexing)
 {
-    
-  int delta_min = -10;
+  if (delta_min == ~0) {
+    delta_min = DEFAULT_DELTA_MIN;
   
-  if (json_recom.find("4") != json_recom.end()) {
-      delta_min = 0;
+    if (json_recom.find("4") != json_recom.end()) {
+      delta_min = DEFAULT_DELTA_MIN_D;
+    }
   }
   
   init(code, shortcut, delta_min, seed, max_indexing);

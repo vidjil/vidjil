@@ -13,6 +13,10 @@
 #include "kmerstorefactory.hpp"
 #include "bioreader.hpp"
 
+#define DEFAULT_DELTA_MIN  -10
+#define DEFAULT_DELTA_MIN_D  0
+
+
 enum SEGMENTATION_METHODS {
   SEG_METHOD_53,      // Regular or incomplete germlines, 5'-3'
   SEG_METHOD_543,     // Regular or incomplete germlines, 5'-3', with an additional middle gene (such a D gene)
