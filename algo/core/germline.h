@@ -70,7 +70,7 @@ class Germline {
             int max_indexing=0);
   
   Germline(string _code, char shortcut, string path, json json_recom,
-           string seed="", int max_indexing=0);
+           int delta_min=~0, string seed="", int max_indexing=0);
 
   ~Germline();
 
@@ -157,7 +157,8 @@ class MultiGermline {
    *   filter: see GERMLINES_FILTER
    *   max_indexing:
    */
-  void build_from_json(string path, string json_filename_and_filter, int filter, int max_indexing);
+  void build_from_json(string path, string json_filename_and_filter, int filter, int default_delta_min=~0,
+                       string default_seed="", int default_max_indexing=0);
 
   /**
    * Finishes the construction of the multi germline so that it can be used

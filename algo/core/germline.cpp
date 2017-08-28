@@ -103,7 +103,7 @@ Germline::Germline(string _code, char _shortcut,
 }
 
 Germline::Germline(string code, char shortcut, string path, json json_recom,
-                   string seed, int max_indexing)
+                   int delta_min, string seed, int max_indexing)
 {
     
   int delta_min = -10;
@@ -257,7 +257,8 @@ void MultiGermline::add_germline(Germline *germline)
   germlines.push_back(germline);
 }
 
-void MultiGermline::build_from_json(string path, string json_filename_and_filter, int filter, int max_indexing)
+void MultiGermline::build_from_json(string path, string json_filename_and_filter, int filter, int default_delta_min,
+                                    string default_seed, int default_max_indexing)
 {
 
   //extract json_filename and systems_filter
@@ -301,7 +302,19 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
     json recom = it.value()["recombinations"];
     char shortcut = it.value()["shortcut"].dump()[1];
     string code = it.key();
-    string seed = it.value()["parameters"]["seed"];
+    json json_parameters = it.value()["parameters"];
+    string seed = json_parameters["seed"];
+
+    if (default_delta_min == ~0) {
+      if (json_parameters.count("delta_min") > 0) {
+        default_delta_min = json_parameters["delta_min"];
+      }
+    }
+    if (default_max_indexing == 0) {
+      if (json_parameters.count("max_indexing") > 0) {
+        default_max_indexing = json_parameters["max_indexing"];
+      }
+    }
 
     if (systems_filter.size())
       {
@@ -329,11 +342,14 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
     seedMap["12s"] = SEED_S12;
     seedMap["10s"] = SEED_S10;
     seedMap["9s"] = SEED_9;
+
+    if (default_seed.size() == 0)
+      default_seed = seedMap[seed];
     
     //for each set of recombination 3/4/5
     for (json::iterator it2 = recom.begin(); it2 != recom.end(); ++it2) {
-      add_germline(new Germline(code, shortcut, path + "/", *it2 , seedMap[seed],
-                                max_indexing));
+      add_germline(new Germline(code, shortcut, path + "/", *it2 , default_delta_min, default_seed,
+                                default_max_indexing));
     }
   }
   
