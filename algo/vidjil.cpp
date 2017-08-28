@@ -325,7 +325,6 @@ int main (int argc, char **argv)
   
   string comp_filename = COMP_FILENAME;
 
-  int kmer_size = DEFAULT_K ;
   int wmer_size = DEFAULT_W ;
 
   IndexTypes indexType = KMER_INDEX;
@@ -490,7 +489,6 @@ int main (int argc, char **argv)
       case 's':
 #ifndef NO_SPACED_SEEDS
 	seed = string(optarg);
-	kmer_size = seed_weight(seed);
 	options_s_k++ ;
 #else
         cerr << "To enable the option -s, please compile without NO_SPACED_SEEDS" << endl;
@@ -498,7 +496,7 @@ int main (int argc, char **argv)
         break;
 
       case 'k':
-	kmer_size = atoi(optarg);
+	int kmer_size = atoi(optarg);
 	seed = seed_contiguous(kmer_size);
 	options_s_k++ ;
         break;
@@ -681,14 +679,9 @@ int main (int argc, char **argv)
 
   // Default seeds
 
-#ifndef NO_SPACED_SEEDS
-  if (kmer_size == DEFAULT_K)
+#ifdef NO_SPACED_SEEDS
+  if (seed.size() == 0)
     {
-      seed = SEED_S10 ;
-      kmer_size = seed_weight(seed);
-    }
-#else
-  {
     cerr << ERROR_STRING << "Vidjil was compiled with NO_SPACED_SEEDS: please provide a -k option." << endl;
     exit(1) ;
   }
@@ -963,6 +956,8 @@ int main (int argc, char **argv)
       int nb_reads = 0 ;
       int total_length = 0 ;
       int s = index->getS();
+
+      int kmer_size = seed_weight(seed);
 
       while (reads->hasNext())
 	{
