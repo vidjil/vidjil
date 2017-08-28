@@ -15,6 +15,7 @@ $(GERMLINE_JS): $(DEFAULT_G)
 
 get-all-data: clean
 	sh get-germline
+	python get-CD.py
 
 get-saved-data: germline_id
 	sh get-saved-germline
