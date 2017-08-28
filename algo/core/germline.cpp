@@ -317,8 +317,8 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
       }
     }
     if (default_max_indexing == 0) {
-      if (json_parameters.count("max_indexing") > 0) {
-        max_indexing = json_parameters["max_indexing"];
+      if (json_parameters.count("trim_sequences") > 0) {
+        max_indexing = json_parameters["trim_sequences"];
       }
     }
 
