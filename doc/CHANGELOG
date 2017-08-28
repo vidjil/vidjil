@@ -1,6 +1,14 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
+2017-08-XX  The Vidjil Team
+	* New BAM input parser, refactored input parsers (core/bioreader.cpp, core/bam.cpp) #2016
+	* Streamlined seed options (-m, -k, -s), overriding -g presets (vidjil.cpp, core/germlines.cpp) #1673 #2156
+	* New and updated unit and functional tests #2016 #2552
+	* Faster tests (tests/Makefile, tests/*) #2254
+	* Bug closed (halting when a representative is too short) #2224
+	* Documented dependencies and libraries (lib/info.txt)
+
 2017-03-14  The Vidjil Team
 	* Better support for germlines from several species (germlines/*.g) #1987 #2132
 	* Streamlined option -g, including filtering, removed old -i/-G options (vidjil.cpp, core/germline.cpp) #2134
