@@ -1,0 +1,16 @@
+!LAUNCH: $VIDJIL_DIR/algo/tools/vdj_assign CCGAGGACACAGCCGTGTATTTTTTCCCCTAGTGGTTGCCCCTTTGACTACTGGGGCCAGGGAACC $VIDJIL_DIR/germline/homo-sapiens/IGH V J IGHV IGHJ
+
+$ Compute correct coordinates
+1: read        .*   1 .*  60
+1: IGHV3-15.01 .* 270 .* 330
+1: IGHJ4.02    .* -35 .*  25
+
+$ V is green, two times
+2: 42mCGAGGACACAGCCGTGTATT
+
+$ J is yellow, two times
+2: 43mCTTTGACTACTGGGGCCAGG
+
+$ N is not colored
+1: TTTTCCCCTAGTGGTTGCCC
+

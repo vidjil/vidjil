@@ -1,0 +1,8 @@
+!LAUNCH: $VIDJIL_DIR/algo/tools/vdj_assign - $VIDJIL_DIR/germline/homo-sapiens/IGH V J "IGHV3-15*01" "IGHJ4*02" <<< "CGCCTGGATGAGCTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTTGGCCGTATTA"
+
+
+$ Compute correct coordinates
+1: read        .*  42 .*  47
+1: IGHV3-15.01 .* 271 .* 277
+1: IGHJ4.02    .*  34 .*  40
+
