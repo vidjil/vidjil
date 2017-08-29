@@ -684,7 +684,7 @@ Segment.prototype = {
 
     add_all_germline_to_segmenter : function() {
        for (var id in this.sequence) {
-            if ((typeof this.m.clone(id) != "undefined") && this.m.clone(id).isSelected()){
+           if (this.isClone(id)) {
                 var c = this.m.clone(id)
                 this.addGermlineToSegmenter(c.getGene("3"),c.germline)
                 this.addGermlineToSegmenter(c.getGene("4"),c.germline)
@@ -806,7 +806,7 @@ Segment.prototype = {
         var max=0;
 
         for (var i = 0; i < list.length; i++) {
-            if (typeof this.m.clone(list[i])!="undefined") {
+            if (this.isClone(list[i])) {
             var c = this.m.clone(list[i])
             
             if (typeof (c.getSequence()) !== 0){
@@ -876,7 +876,7 @@ Segment.prototype = {
         if (list.length === 0) return;
 
         for (var i = 0; i < list.length; i++) {
-            if (typeof this.m.clone(list[i])!="undefined" && !(this.m.clone(list[i]).sequence).match("undefined") && this.m.clone(list[i]).sequence !== 0 && this.m.clone(list[i]).isSelected()){
+            if (this.isClone(list[i]) && !(this.m.clone(list[i]).sequence).match("undefined") && this.m.clone(list[i]).sequence !== 0) { /// why '.match' ? why 0 ?
                 request += ">" + list[i] + "\n" + this.m.clone(list[i]).sequence + "\n";
 
                }
