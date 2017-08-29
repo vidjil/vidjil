@@ -540,6 +540,14 @@ Segment.prototype = {
         this.updateStats();         
     },
 
+    isClone: function (id) {
+        return ((typeof this.m.clone(id) != "undefined") && this.m.clone(id).isSelected())
+    },
+    
+    isGermline: function (id) {
+        return (typeof this.germline[this.sequence[id].locus] != "undefined")
+    },
+
     /**
      * enable/disable align button if their is currently enough sequences selected
      * */
@@ -1309,16 +1317,6 @@ genSeq.prototype= {
         }
         return marge + result.innerHTML;
     },
-
-    getType: function () {
-        if (typeof this.m.germline[this.locus][this.id] != "undefined"){
-            return "germline"
-        }
-        else{
-            return "not germline"
-        }
-    },
-
 };
 
 /**
