@@ -775,12 +775,11 @@ Segment.prototype = {
     /**
     * get the germline from the germline object
     * and use add germline to the segmenter
-    * now work with IGH
     * @param {str} id sequence id
     **/
     addGermlineToSegmenter: function(id, locus) {
         if (typeof this.germline[locus][id]==="undefined"){
-            return "this germline doesn't exist";
+            console.log("addGermlineToSegmenter: no germline, " + locus + ", " + id)
         }else{
             this.addSequenceTosegmenter(id , locus, this.germline[locus][id])
         }
