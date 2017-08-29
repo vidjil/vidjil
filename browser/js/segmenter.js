@@ -1481,14 +1481,14 @@ Sequence.prototype = Object.create(genSeq.prototype);
                 for (var i in SEGMENT_KEYS) {
                     key = SEGMENT_KEYS[i]
                     if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key].stop != 'undefined'){
-                        vdjArrayRev[vdjArray[key].stop] = {'type':'N', 'color': ""};
+                        highlights.push({'type':'N', 'color': "", 'start': vdjArray[key].stop});
                     }}
 
                 // We now put the start positions (that may override previous end positions)
                 for (var j in SEGMENT_KEYS) {
                     key = SEGMENT_KEYS[j]
                     if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key].start!= 'undefined'){
-                        vdjArrayRev[vdjArray[key].start] = {'type':'D', 'color': ""};
+                        highlights.push({'type':'D', 'color': "", 'start': vdjArray[key].start});
                     }}
 
                 highlights.push({'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : "", 'start': vdjArray["5"].start});
