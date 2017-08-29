@@ -72,11 +72,11 @@ function Segment(id, model, database) {
     this.germline = this.m.germline;
     //elements to be highlited in sequences
     this.highlight = [
-        {'field' : "", 'color': "red"},
-        {'field': "", 'color': "orange"},
-        {'field' : "", 'color': "blue"},
-        {'field' : "", 'color': "green"},
-        {'field' : "", 'color': "yellow"}
+        {'field' : "", 'color': "red", 'type': 'highlight'},
+        {'field': "", 'color': "orange", 'type': 'highlight'},
+        {'field' : "", 'color': "blue", 'type': 'highlight'},
+        {'field' : "", 'color': "green", 'type': 'highlight'},
+        {'field' : "", 'color': "yellow", 'type': 'highlight'}
     ];
 
     this.selectedAxis = [];
@@ -507,6 +507,8 @@ updateElem: function (list) {
                 if (document.getElementById("seq" + list[i])) {
                     var spanF = document.getElementById("f" + list[i]);
                     this.div_elem(spanF, list[i]);
+                    var spanM = document.getElementById("m" + list[i]);
+                    spanM.innerHTML = this.sequence[list[i]].toString(this);
                 } else {
                     this.addToSegmenter(list[i]);
                     this.show();
@@ -1318,13 +1320,18 @@ genSeq.prototype= {
                     var h = highlights[m];
 
                     if (i == h.start){
+                    result.appendChild(currentSpan);
                         var highlightSpan = document.createElement('span');
                         highlightSpan.style = "color: " + h.color;
-                        highlightSpan.className = h.css;
+                    highlightSpan.className = h.css ? h.css : h.type;
                         if(typeof h.tooltipe != 'undefined') {
                             highlightSpan.dataset.tooltip = h.tooltip;
                             highlightSpan.dataset.tooltip_position = "right";
                         }
+
+                    if (typeof h.seq !== "undefined") {
+                        // highlight is designed to underline the sequence
+                        // or add information underneath the sequence
                         highlightSpan.innerHTML = h.seq;
 
                         var highlightWrapper = document.createElement("span");
@@ -1464,7 +1471,7 @@ Sequence.prototype = Object.create(genSeq.prototype);
     Sequence.prototype.toString = function () {
         var clone = this.m.clone(this.id)
 
-        var vdjArrayRev, window_start, result;
+        var window_start, result;
         var highlights = [];
 
         if (typeof clone.sequence != 'undefined' && clone.sequence !== 0) {
@@ -1473,11 +1480,10 @@ Sequence.prototype = Object.create(genSeq.prototype);
             if (clone.hasSeg('5', '3')){
 
                 var vdjArray = this.getVdjStartEnd(clone);
-                vdjArrayRev = {};
 
                 // We first put the end positions
-                vdjArrayRev[vdjArray["5"].stop] = {'type':'N', 'color': ""};
-                vdjArrayRev[vdjArray["3"].start] = {'type':'N', 'color': ""};
+                highlights.push({'type':'N', 'color': "", 'start': vdjArray["5"].stop});
+                highlights.push({'type':'N', 'color': "", 'start': vdjArray["3"].start});
 
                 var key;
                 for (var i in SEGMENT_KEYS) {
@@ -1493,8 +1499,8 @@ Sequence.prototype = Object.create(genSeq.prototype);
                         vdjArrayRev[vdjArray[key].start] = {'type':'D', 'color': ""};
                     }}
 
-                vdjArrayRev[vdjArray["5"].start] = {'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : ""};
-                vdjArrayRev[vdjArray["3"].start] = {'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : ""};
+                highlights.push({'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : "", 'start': vdjArray["5"].start});
+                highlights.push({'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : "", 'start': vdjArray["3"]});
             }
 
             window_start = this.pos[clone.sequence.indexOf(clone.id)];
@@ -1510,10 +1516,8 @@ Sequence.prototype = Object.create(genSeq.prototype);
                 highlights.push(this.get_positionned_highlight(this.segmenter.highlight[k].field,
                                                                this.segmenter.highlight[k].color));
             }
-
         }
-            // g = new genSeq(this.id,this.locus,this.m, this)
-            return this.highlightToString(highlights,window_start)
+        return this.highlightToString(highlights, window_start)
     }
 
     /**
