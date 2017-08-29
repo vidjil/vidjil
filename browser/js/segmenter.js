@@ -62,7 +62,6 @@ function Segment(id, model, database) {
     this.cgi_address = CGI_ADDRESS
     this.m = model
     this.first_clone = 0 ; // id of sequence at the top of the segmenter
-    this.sequenceList=[];
     this.memtab = [];
     this.sequence = {};
     this.is_open = false;
@@ -593,20 +592,7 @@ Segment.prototype = {
     },
 
     sequenceListInSegmenter: function() {
-        var sequenceList = []
-        for (var seq in this.sequence) {
-
-            if (typeof this.m.clone(seq)!="undefined" && typeof (this.m.clone(seq).sequence) != 'undefined' && this.m.clone(seq).sequence !== 0 && this.m.clone(seq).isSelected()){
-                sequenceList.push(seq)
-            }
-            else if ((typeof this.germline[this.sequence[seq].locus]!="undefined")){
-                sequenceList.push(seq)
-            }
-            else{
-                console.log("error")
-            }
-        }
-        return sequenceList
+        return Object.keys(this.sequence);
     },
 
 
