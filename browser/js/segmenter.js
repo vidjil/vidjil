@@ -693,7 +693,7 @@ Segment.prototype = {
                 this.addGermlineToSegmenter(c.getGene("5"),c.germline)
             }
         }
-
+        this.show();
     },
 
     /**
