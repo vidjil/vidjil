@@ -509,19 +509,6 @@ Segment.prototype = {
         delete this.sequence[id];
     },
 
-
-
-    checkGermline : function (id) {
-
-
-      if (typeof this.germline[id]!="undefined"){
-
-        return true
-      }
-      else{
-        return false
-      }
-    },
    /**
      * update(style only) a list of selected clones
      * @param {integer[]} list - array of clone index
@@ -796,10 +783,8 @@ Segment.prototype = {
             return "this germline doesn't exist";
         }else{
             this.addSequenceTosegmenter(id , locus, this.germline[locus][id])
-
         }
     },
-
 
     /**
      * build a request with currently selected clones to send to IMGT or igblast <br>
@@ -1506,14 +1491,6 @@ Sequence.prototype = Object.create(genSeq.prototype);
         }
         return vdjArray;
     }
-
-    Sequence.prototype.getType = function() {
-
-        if(this.m.clone(this.id).isSelected()){
-            return "clone"
-        }
-    }
-
 
     /**
      * build a highlight descriptor (start/stop/color/...)
