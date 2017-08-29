@@ -798,31 +798,6 @@ Segment.prototype = {
         }
     },
 
-    div_element:function(div_elem, id) {
-
-        var self = this;
-        div_elem.removeAllChildren();
-        div_elem.className = "seq-fixed cloneName";
-        if (this.m.focus == id) {
-        $(span).addClass("list_focus");         }
-        var seq_name = document.createElement('span');
-        seq_name.className = "nameBox";
-        var del = document.createElement('span')
-        del.className = "delBox"
-        del.appendChild(icon('icon-cancel', 'Unselect this clone'));
-        del.onclick = function () {
-            delete self.sequence[id];
-            self.aligned = false;
-        }
-        seq_name.appendChild(del);
-        var span_name = document.createElement('span'); 
-        span_name.className = "nameBox2";
-        span_name.appendChild(document.createTextNode(id));
-        seq_name.appendChild(span_name);
-        seq_name.title = id;
-        div_elem.appendChild(seq_name);
-    },
-
     /**
     * get the germline from the germline object
     * and use add germline to the segmenter
