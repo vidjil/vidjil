@@ -496,11 +496,11 @@ Segment.prototype = {
     },
 
 
-/**
+    /**
      * update(size/style/position) a list of selected clones <br>
      * @param {integer[]} list - array of clone index
      * */
-updateElem: function (list) {
+    updateElem: function (list) {
 
         for (var i = 0; i < list.length; i++) {
             if (this.m.clone(list[i]).isSelected()) {
@@ -721,18 +721,15 @@ updateElem: function (list) {
 
     add_all_germline_to_segmenter : function() {
        for (var id in this.sequence) {
-            if ((typeof this.m.clone(id)!="undefined")&&(this.m.clone(id).isSelected())){
-            var c = this.m.clone(id)
-            this.addGermlineToSegmenter(c.getGene("3"),c.germline)
-            this.addGermlineToSegmenter(c.getGene("4"),c.germline)
-            this.addGermlineToSegmenter(c.getGene("5"),c.germline)
-
-        }
+            if ((typeof this.m.clone(id) != "undefined") && this.m.clone(id).isSelected()){
+                var c = this.m.clone(id)
+                this.addGermlineToSegmenter(c.getGene("3"),c.germline)
+                this.addGermlineToSegmenter(c.getGene("4"),c.germline)
+                this.addGermlineToSegmenter(c.getGene("5"),c.germline)
+            }
         }
 
     },
-
-
 
     /**
     * complete a node with a clone information/sequence
@@ -776,33 +773,30 @@ updateElem: function (list) {
         var self =this
         this.aligned = false ;
         if ( typeof this.sequence[id]=="undefined"){
-        this.sequence[id] = new genSeq(id, locus, this.m, this)
-        this.sequence[id].load("str")
-        var divParent = document.getElementById("listSeq");
-        var previous_li = divParent.getElementsByTagName("li");
-        if (previous_li && previous_li.length === 0) {
-            this.first_clone = id
+            this.sequence[id] = new genSeq(id, locus, this.m, this)
+            this.sequence[id].load("str")
+            var divParent = document.getElementById("listSeq");
+            var previous_li = divParent.getElementsByTagName("li");
+            if (previous_li && previous_li.length === 0) {
+                this.first_clone = id
+            }
+
+            var li = document.createElement('li');
+            li.id = "seq" + id;
+            li.className = "sequence-line";
+            var spanF = document.createElement('span');
+            spanF.id = "f" + id;
+            this.div_element(spanF, id);
+            var spanM = document.createElement('span');
+            spanM.id = "m" + id;
+
+            spanM.className = "seq-mobil";
+            spanM.innerHTML = this.sequence[id].load(str).toString(this);
+            li.appendChild(spanF);
+            li.appendChild(spanM);
+            divParent.appendChild(li);
         }
-
-        var li = document.createElement('li');
-        li.id = "seq" + id;
-        li.className = "sequence-line";
-        var spanF = document.createElement('span');
-        spanF.id = "f" + id;
-        this.div_element(spanF, id);
-        var spanM = document.createElement('span');
-        spanM.id = "m" + id;
-
-        spanM.className = "seq-mobil";
-        spanM.innerHTML = this.sequence[id].load(str).toString(this);
-        li.appendChild(spanF);
-        li.appendChild(spanM);
-        divParent.appendChild(li);
-    }
-
     },
-
-
 
     div_element:function(div_elem, id) {
 
@@ -1311,23 +1305,22 @@ genSeq.prototype= {
     * @return {string}
     **/
     highlightToString: function(highlights, window_start) {
-
-         result = document.createElement('span');
+        result = document.createElement('span');
         currentSpan = document.createElement('span');
 
         for (var i = 0; i < this.seq.length; i++) {
             for (var m in highlights){
-                    var h = highlights[m];
+                var h = highlights[m];
 
-                    if (i == h.start){
+                if (i == h.start){
                     result.appendChild(currentSpan);
-                        var highlightSpan = document.createElement('span');
-                        highlightSpan.style = "color: " + h.color;
+                    var highlightSpan = document.createElement('span');
+                    highlightSpan.style.color = h.color;
                     highlightSpan.className = h.css ? h.css : h.type;
-                        if(typeof h.tooltipe != 'undefined') {
-                            highlightSpan.dataset.tooltip = h.tooltip;
-                            highlightSpan.dataset.tooltip_position = "right";
-                        }
+                    if(typeof h.tooltipe != 'undefined') {
+                        highlightSpan.dataset.tooltip = h.tooltip;
+                        highlightSpan.dataset.tooltip_position = "right";
+                    }
 
                     if (typeof h.seq !== "undefined") {
                         // highlight is designed to underline the sequence
@@ -1339,20 +1332,25 @@ genSeq.prototype= {
                         highlightWrapper.className = "highlight";
                         result.appendChild(highlightWrapper);
 
-                        // split the current span to fit the highlight span
+                        // create a new currentSpan
                         var oldCurSpan = currentSpan;
                         currentSpan = document.createElement('span');
                         currentSpan.className = oldCurSpan.className;
                         result.appendChild(currentSpan);
+                        console.log("results: " + result.innerHTML);
+                    } else {
+                        currentSpan = highlightSpan;
                     }
                 }
+            }
 
-
-           if (this.segmenter.amino){
-            currentSpan.appendChild(this.spanify_mutation(this.seqAA[l], this.segmenter.sequence[this.segmenter.first_clone].seqAA[l]));
-           }else{
-            currentSpan.appendChild(this.spanify_mutation(this.seq[i], this.segmenter.sequence[this.segmenter.first_clone].seq[i])) }
-           }
+            // one character
+            if (this.segmenter.amino){
+                currentSpan.appendChild(this.spanify_mutation(this.seqAA[l], this.segmenter.sequence[this.segmenter.first_clone].seqAA[l]));
+            }else{
+                currentSpan.appendChild(this.spanify_mutation(this.seq[i], this.segmenter.sequence[this.segmenter.first_clone].seq[i]))
+            }
+        }
         result.appendChild(currentSpan);
         var marge = ""
         if (this.use_marge){
