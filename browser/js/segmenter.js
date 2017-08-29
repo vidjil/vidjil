@@ -851,6 +851,10 @@ Segment.prototype = {
             var mid = 999999
             $(this.div_segmenter)
                 .animate({
+                    scrollLeft: 0
+                }, 0);
+            $(this.div_segmenter)
+                .animate({
                     scrollLeft: mid
                 }, 0);
         }
