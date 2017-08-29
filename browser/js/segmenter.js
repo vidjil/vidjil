@@ -826,42 +826,7 @@ updateElem: function (list) {
         seq_name.title = id;
         div_elem.appendChild(seq_name);
     },
-    
-    /**
-    * add a sequence to the segmenter
-    * build a div with sequence information and sequence
-    * @param {str} id sequence id
-    * @param {str} sequence 
-    **/
 
-    addSequenceTosegmenter : function(id, locus, str){
-        var self =this
-        this.aligned = false ;
-        this.sequence[id] = new genSeq(id, locus, this.m, this) 
-        this.sequence[id].load("str")
-        var divParent = document.getElementById("listSeq");       
-        var previous_li = divParent.getElementsByTagName("li");
-        if (previous_li && previous_li.length === 0) {
-            this.first_clone = id
-        }
-
-        var li = document.createElement('li');
-        li.id = "seq" + id;        
-        li.className = "sequence-line";
-        var spanF = document.createElement('span');         
-        spanF.id = "f" + id;         
-        this.div_element(spanF, id);
-        var spanM = document.createElement('span');
-        spanM.id = "m" + id;
-
-        spanM.className = "seq-mobil";
-        spanM.innerHTML = this.sequence[id].load(str).toString(this);
-        li.appendChild(spanF);
-        li.appendChild(spanM);
-        divParent.appendChild(li);
-
-
-    },
     /**
     * get the germline from the germline object
     * and use add germline to the segmenter
