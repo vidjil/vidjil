@@ -1492,7 +1492,7 @@ Sequence.prototype = Object.create(genSeq.prototype);
                     }}
 
                 highlights.push({'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : "", 'start': vdjArray["5"].start});
-                highlights.push({'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : "", 'start': vdjArray["3"]});
+                highlights.push({'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : "", 'start': vdjArray["3"].start});
             }
 
             window_start = this.pos[clone.sequence.indexOf(clone.id)];
