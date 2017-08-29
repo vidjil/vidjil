@@ -516,6 +516,7 @@ Segment.prototype = {
                 if (document.getElementById("seq" + list[i])) {
                     var element = document.getElementById("seq" + list[i]);
                     element.parentNode.removeChild(element);
+                    delete this.sequence[list[i]];
                 }
             }
         }
@@ -528,6 +529,7 @@ Segment.prototype = {
     removeGermline:function(id){
         elem = document.getElementById("seq"+id);
         elem.parentNode.removeChild(elem)
+        delete this.sequence[id];
     },
 
 
