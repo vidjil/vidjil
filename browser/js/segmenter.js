@@ -500,30 +500,7 @@ Segment.prototype = {
      * @param {integer[]} list - array of clone index
      * */
     updateElem: function (list) {
-
-        for (var i = 0; i < list.length; i++) {
-            if (this.m.clone(list[i]).isSelected()) {
-                if (document.getElementById("seq" + list[i])) {
-                    var spanF = document.getElementById("f" + list[i]);
-                    this.div_elem(spanF, list[i]);
-                    var spanM = document.getElementById("m" + list[i]);
-                    spanM.innerHTML = this.sequence[list[i]].toString(this);
-                } else {
-                    this.addToSegmenter(list[i]);
-                    this.show();
-                }
-            } else {
-                if (document.getElementById("seq" + list[i])) {
-                    var element = document.getElementById("seq" + list[i]);
-                    element.parentNode.removeChild(element);
-                    delete this.sequence[list[i]];
-                }
-            }
-        }
-
-        this.updateAlignmentButton()
-        //this.updateSegmenterWithHighLighSelection();
-        this.updateStats(); 
+        this.updateElemStyle(list);
     },
 
     removeGermline:function(id){
@@ -550,12 +527,14 @@ Segment.prototype = {
      * @param {integer[]} list - array of clone index
      * */
     updateElemStyle: function (list) {
-        
+
         for (var i = 0; i < list.length; i++) {
             if (this.m.clone(list[i]).isSelected()) {
                 if (document.getElementById("seq" + list[i])) {
                     var spanF = document.getElementById("f" + list[i]);
                     this.div_elem(spanF, list[i]);
+                    var spanM = document.getElementById("m" + list[i]);
+                    spanM.innerHTML = this.sequence[list[i]].toString(this);
                 } else {
                     this.addToSegmenter(list[i]);
                     this.show();
@@ -564,13 +543,14 @@ Segment.prototype = {
                 if (document.getElementById("seq" + list[i])) {
                     var element = document.getElementById("seq" + list[i]);
                     element.parentNode.removeChild(element);
+                    delete this.sequence[list[i]];
                 }
             }
         }
+
         this.updateAlignmentButton()
         //this.updateSegmenterWithHighLighSelection();
-        this.updateStats(); 
-
+        this.updateStats();         
     },
 
     /**
