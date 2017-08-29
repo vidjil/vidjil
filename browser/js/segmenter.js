@@ -263,6 +263,7 @@ Segment.prototype = {
             // div_menu.appendChild(span)
 
             //germline button
+            /*
             span = document.createElement('span');
             span.id = "germline"
             span.setAttribute('title', 'add germline')
@@ -272,6 +273,7 @@ Segment.prototype = {
             }
             span.appendChild(document.createTextNode("germline"));
             div_menu.appendChild(span)
+            */
 
             //checkbox to fix the segmenter
             span_fixsegmenter = document.createElement('span')
