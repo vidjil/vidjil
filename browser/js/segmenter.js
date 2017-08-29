@@ -760,6 +760,24 @@ Segment.prototype = {
         seq_name.appendChild(span_name);
         seq_name.title = id;
         div_elem.appendChild(seq_name);
+
+        // create some elements to fill out the space, ideally refactor this method.
+        var fake_info = document.createElement('span');
+        fake_info.className = "infoBox";
+        var fake_star = document.createElement('span');
+        fake_star.className = "starBox";
+        var fake_axis = document.createElement('span');
+        fake_axis.className = "axisBox";
+        var fake_size = document.createElement('span');
+        fake_size.className = 'Size';
+        var fake_size_box = document.createElement('span');
+        fake_size_box.className = "sizeBox sixChars";
+
+        fake_size.appendChild(fake_size_box);
+        fake_axis.appendChild(fake_size);
+        div_elem.appendChild(fake_info);
+        div_elem.appendChild(fake_star);
+        div_elem.appendChild(fake_axis);
     },
 
     /**
