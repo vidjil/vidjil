@@ -824,10 +824,10 @@ Segment.prototype = {
     * @param {str} id sequence id
     **/
     addGermlineToSegmenter: function(id, locus) {
-            if (typeof this.germline[locus][id]==="undefined"){
+        if (typeof this.germline[locus][id]==="undefined"){
             return "this germline doesn't exist";
         }else{
-        this.addSequenceTosegmenter(id , locus, this.germline[locus][id])
+            this.addSequenceTosegmenter(id , locus, this.germline[locus][id])
 
         }
     },
