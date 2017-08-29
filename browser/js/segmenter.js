@@ -736,6 +736,7 @@ Segment.prototype = {
     * @param {dom_object} div_elem - html element to complete
     * @param {integer} id - sequence id 
     **/
+    // TODO rename this method, or refactor this into the div_elem method
     div_element:function(div_elem, id) {
 
         var self = this; 
