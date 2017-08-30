@@ -60,23 +60,22 @@ function Segment(id, model, database) {
     this.id = id; //ID de la div contenant le segmenteur
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z";
     this.cgi_address = CGI_ADDRESS
-
+    this.m = model
     this.first_clone = 0 ; // id of sequence at the top of the segmenter
-    
     this.memtab = [];
     this.sequence = {};
     this.is_open = false;
     this.amino = false;
     this.aligned = false;
     this.fixed = false;         // whether the segmenter is fixed
-    
+    this.germline = this.m.germline;
     //elements to be highlited in sequences
     this.highlight = [
-        {'field' : "", 'color': "red"},
-        {'field': "", 'color': "orange"},
-        {'field' : "", 'color': "blue"},
-        {'field' : "", 'color': "green"},
-        {'field' : "", 'color': "yellow"}
+        {'field' : "", 'color': "red", 'type': 'highlight'},
+        {'field': "", 'color': "orange", 'type': 'highlight'},
+        {'field' : "", 'color': "blue", 'type': 'highlight'},
+        {'field' : "", 'color': "green", 'type': 'highlight'},
+        {'field' : "", 'color': "yellow", 'type': 'highlight'}
     ];
 
     this.selectedAxis = [];
@@ -262,6 +261,19 @@ Segment.prototype = {
             span.className = "button";
             span.appendChild(document.createTextNode("❯ to clipBoard"));
             // div_menu.appendChild(span)
+
+            //germline button
+            /*
+            span = document.createElement('span');
+            span.id = "germline"
+            span.setAttribute('title', 'add germline')
+            span.className = "button"
+            span.onclick = function () {
+                self.add_all_germline_to_segmenter()
+            }
+            span.appendChild(document.createTextNode("germline"));
+            div_menu.appendChild(span)
+            */
 
             //checkbox to fix the segmenter
             span_fixsegmenter = document.createElement('span')
@@ -484,57 +496,34 @@ Segment.prototype = {
         return div_highlight;
     },
 
+
     /**
      * update(size/style/position) a list of selected clones <br>
      * @param {integer[]} list - array of clone index
      * */
     updateElem: function (list) {
-
-        for (var i = 0; i < list.length; i++) {
-            var id = list[i]
-            if (this.m.clone(id).isSelected()) {
-                if (document.getElementById("seq" + id)) {
-                    var spanF = document.getElementById("f" + id);
-                    var clone = this.m.clone(list[i]);
-                    
-                    var namebox = spanF.getElementsByClassName("nameBox")[0];
-                    namebox.title = clone.getName();
-                    namebox.style.color = clone.color;
-                    spanF.getElementsByClassName("nameBox2")[0].innerHTML = clone.getShortName();
-                    // spanF.getElementsByClassName("sizeBox")[0].innerHTML = clone.getStrSize();
-
-                    var axisBox = spanF.getElementsByClassName("axisBox")[0];
-                    axisBox.style.color = clone.getColor();
-                    this.fillAxisBox(axisBox, clone);
-
-                    var spanM = document.getElementById("m" + id);
-                    spanM.innerHTML = this.sequence[id].toString(this)
-
-                } else {
-                    this.addToSegmenter(id);
-                    this.show();
-                }
-            } else {
-                if (document.getElementById("seq" + id)) {
-                    var element = document.getElementById("seq" + id);
-                    element.parentNode.removeChild(element);
-                }
-            }
-        }   
-        this.updateStats(); 
+        this.updateElemStyle(list);
     },
 
-    /**
+    removeGermline:function(id){
+        elem = document.getElementById("seq"+id);
+        elem.parentNode.removeChild(elem)
+        delete this.sequence[id];
+    },
+
+   /**
      * update(style only) a list of selected clones
      * @param {integer[]} list - array of clone index
      * */
     updateElemStyle: function (list) {
-        
+
         for (var i = 0; i < list.length; i++) {
             if (this.m.clone(list[i]).isSelected()) {
                 if (document.getElementById("seq" + list[i])) {
                     var spanF = document.getElementById("f" + list[i]);
                     this.div_elem(spanF, list[i]);
+                    var spanM = document.getElementById("m" + list[i]);
+                    spanM.innerHTML = this.sequence[list[i]].toString(this);
                 } else {
                     this.addToSegmenter(list[i]);
                     this.show();
@@ -543,13 +532,22 @@ Segment.prototype = {
                 if (document.getElementById("seq" + list[i])) {
                     var element = document.getElementById("seq" + list[i]);
                     element.parentNode.removeChild(element);
+                    delete this.sequence[list[i]];
                 }
             }
         }
+
         this.updateAlignmentButton()
         //this.updateSegmenterWithHighLighSelection();
-        this.updateStats(); 
+        this.updateStats();         
+    },
 
+    isClone: function (id) {
+        return ((typeof this.m.clone(id) != "undefined") && this.m.clone(id).isSelected())
+    },
+    
+    isGermline: function (id) {
+        return (typeof this.germline[this.sequence[id].locus] != "undefined")
     },
 
     /**
@@ -558,8 +556,9 @@ Segment.prototype = {
     updateAlignmentButton: function() {
         var self = this;
         var align = document.getElementById("align");
+        list = this.sequenceListInSegmenter()
         if (align !== null) {
-            if (this.m.getSelected().length > 1) {
+            if (list.length > 1) {
                 align.className = "button";
                 align.onclick = function() {self.toggleAlign();};
             }
@@ -569,6 +568,10 @@ Segment.prototype = {
                 align.onclick = function() {};
             }
         }
+    },
+
+    sequenceListInSegmenter: function() {
+        return Object.keys(this.sequence);
     },
 
 
@@ -668,7 +671,7 @@ Segment.prototype = {
         var spanM = document.createElement('span');
         spanM.id = "m" + cloneID;
         spanM.className = "seq-mobil";
-        spanM.innerHTML = this.sequence[cloneID].load().toString(this)
+        spanM.innerHTML = this.sequence[cloneID].load().toString()
 
         li.appendChild(spanF);
         li.appendChild(spanM);
@@ -677,10 +680,28 @@ Segment.prototype = {
     },
 
     /**
+    * select all the germline of a clone .
+    * add them to the segmenter
+    **/
+
+    add_all_germline_to_segmenter : function() {
+       for (var id in this.sequence) {
+           if (this.isClone(id)) {
+                var c = this.m.clone(id)
+                this.addGermlineToSegmenter(c.getGene("3"),c.germline)
+                this.addGermlineToSegmenter(c.getGene("4"),c.germline)
+                this.addGermlineToSegmenter(c.getGene("5"),c.germline)
+            }
+        }
+        this.show();
+    },
+
+    /**
     * complete a node with a clone information/sequence
     * @param {dom_object} div_elem - html element to complete
     * @param {integer} id - sequence id 
     **/
+    // TODO rename this method, or refactor this into the div_elem method
     div_element:function(div_elem, id) {
 
         var self = this; 
@@ -696,53 +717,83 @@ Segment.prototype = {
         del.onclick = function () {
             delete self.sequence[id];
             self.aligned = false;
+            self.removeGermline(id)
         }
         seq_name.appendChild(del);
-        var span_name = document.createElement('span'); 
+        var span_name = document.createElement('span');
         span_name.className = "nameBox2";
         span_name.appendChild(document.createTextNode(id));
         seq_name.appendChild(span_name);
         seq_name.title = id;
         div_elem.appendChild(seq_name);
+
+        // create some elements to fill out the space, ideally refactor this method.
+        var fake_info = document.createElement('span');
+        fake_info.className = "infoBox";
+        var fake_star = document.createElement('span');
+        fake_star.className = "starBox";
+        var fake_axis = document.createElement('span');
+        fake_axis.className = "axisBox";
+        var fake_size = document.createElement('span');
+        fake_size.className = 'Size';
+        var fake_size_box = document.createElement('span');
+        fake_size_box.className = "sizeBox sixChars";
+
+        fake_size.appendChild(fake_size_box);
+        fake_axis.appendChild(fake_size);
+        div_elem.appendChild(fake_info);
+        div_elem.appendChild(fake_star);
+        div_elem.appendChild(fake_axis);
     },
-    
+
     /**
     * add a sequence to the segmenter
     * build a div with sequence information and sequence
     * @param {str} id sequence id
-    * @param {str} sequence 
+    * @param {str} sequence
     **/
 
-    addSequenceTosegmenter : function(id, str){
+    addSequenceTosegmenter : function(id, locus, str){
         var self =this
         this.aligned = false ;
-        this.sequence[id] = new genSeq(id, this.m, this)          
-        this.sequence[id].load("str")
-        var divParent = document.getElementById("listSeq");       
-        var previous_li = divParent.getElementsByTagName("li");
-        if (previous_li && previous_li.length === 0) {
-            this.first_clone = id
+        if ( typeof this.sequence[id]=="undefined"){
+            this.sequence[id] = new genSeq(id, locus, this.m, this)
+            this.sequence[id].load("str")
+            var divParent = document.getElementById("listSeq");
+            var previous_li = divParent.getElementsByTagName("li");
+            if (previous_li && previous_li.length === 0) {
+                this.first_clone = id
+            }
+
+            var li = document.createElement('li');
+            li.id = "seq" + id;
+            li.className = "sequence-line";
+            var spanF = document.createElement('span');
+            spanF.id = "f" + id;
+            this.div_element(spanF, id);
+            var spanM = document.createElement('span');
+            spanM.id = "m" + id;
+
+            spanM.className = "seq-mobil";
+            spanM.innerHTML = this.sequence[id].load(str).toString(this);
+            li.appendChild(spanF);
+            li.appendChild(spanM);
+            divParent.appendChild(li);
         }
-
-        var li = document.createElement('li');
-        li.id = "seq" + id;        
-        li.className = "sequence-line";
-        var spanF = document.createElement('span');         
-        spanF.id = "f" + id;         
-        this.div_element(spanF, id);
-        var spanM = document.createElement('span');
-        spanM.id = "m" + id;
-
-        spanM.className = "seq-mobil";
-        spanM.innerHTML = this.sequence[id].load(str).toString(this);
-        li.appendChild(spanF);
-        li.appendChild(spanM);
-        divParent.appendChild(li);
-
-
     },
 
-
+    /**
+    * get the germline from the germline object
+    * and use add germline to the segmenter
+    * @param {str} id sequence id
+    **/
+    addGermlineToSegmenter: function(id, locus) {
+        if (typeof this.germline[locus][id]==="undefined"){
+            console.log("addGermlineToSegmenter: no germline, " + locus + ", " + id)
+        }else{
+            this.addSequenceTosegmenter(id , locus, this.germline[locus][id])
+        }
+    },
 
     /**
      * build a request with currently selected clones to send to IMGT or igblast <br>
@@ -751,12 +802,13 @@ Segment.prototype = {
      * */
     sendTo: function (address) {
 
-        var list = this.m.getSelected()
+        var list = this.sequenceListInSegmenter()
         var request = ""
         var system;
         var max=0;
 
         for (var i = 0; i < list.length; i++) {
+            if (this.isClone(list[i])) {
             var c = this.m.clone(list[i])
             
             if (typeof (c.getSequence()) !== 0){
@@ -768,6 +820,10 @@ Segment.prototype = {
                 system=c.get('germline')
                 max=c.getSize()
             }
+        }
+        else if (typeof this.germline[list[i]]) {
+            request += ">" +list[i] + "\n" +this.germline[this.sequence[list[i]].locus][list[i]] + "\n";
+        }
         }
         if (address == 'IMGT') imgtPost(this.m.species, request, system);
         if (address == 'IMGTSeg') {
@@ -795,6 +851,10 @@ Segment.prototype = {
             var mid = 999999
             $(this.div_segmenter)
                 .animate({
+                    scrollLeft: 0
+                }, 0);
+            $(this.div_segmenter)
+                .animate({
                     scrollLeft: mid
                 }, 0);
         }
@@ -815,17 +875,24 @@ Segment.prototype = {
      * */
     align: function () {
         var self = this
-        var list = this.m.orderedSelectedClones;
+        var list = this.sequenceListInSegmenter()
         var request = "";
         this.memTab = list;
 
         if (list.length === 0) return;
 
         for (var i = 0; i < list.length; i++) {
-            if (typeof (this.m.clone(list[i]).sequence) != 'undefined' && this.m.clone(list[i]).sequence !== 0)
+            if (this.isClone(list[i]) && !(this.m.clone(list[i]).sequence).match("undefined") && this.m.clone(list[i]).sequence !== 0) { /// why '.match' ? why 0 ?
                 request += ">" + list[i] + "\n" + this.m.clone(list[i]).sequence + "\n";
-            else
+
+               }
+                else if(typeof this.germline[this.sequence[list[i]].locus]!="undefined"){
+                    request += ">" + list[i] + "\n" + this.germline[this.sequence[list[i]].locus][list[i]] + "\n";
+
+               }
+            else{
                 request += ">" + list[i] + "\n" + this.m.clone(list[i]).id + "\n";
+            }
         }
 
 
@@ -854,21 +921,28 @@ Segment.prototype = {
      * @return {string} fasta 
      * */
     toFasta: function () {
-        var selected = this.m.getSelected();
+        var selected = this.sequenceListInSegmenter();
         var result = "";
 
         for (var i = 0; i < selected.length; i++) {
+            if (typeof this.m.clone(selected[i])!="undefined" && typeof (this.m.clone(selected[i]).sequence) != 'undefined' && this.m.clone(selected[i]).sequence !== 0 && this.m.clone(selected[i]).isSelected()){
             result += "> " + this.m.clone(selected[i]).getName() + " // " + this.m.clone(selected[i]).getStrSize() + "\n";
             result += this.m.clone(selected[i]).sequence + "\n";
+            }
+            else if(typeof this.germline[this.sequence[selected[i]].locus]!="undefined"){
+                result+= ">" + selected[i] + "\n" + this.germline[this.sequence[selected[i]].locus][selected[i]] + "\n";
         }
+    }
         return result
     },
+
+
 
     /**
      * remove alignement
      * */
     resetAlign: function() {
-        var selected = this.m.getSelected();
+        var selected = this.sequenceListInSegmenter();
 
         this.aligned = false
 
@@ -1112,30 +1186,33 @@ Segment.prototype = {
 Segment.prototype = $.extend(Object.create(View.
     prototype), Segment.prototype);
 
-function genSeq(id, model, segmenter) {     
+function genSeq(id, locus, model, segmenter) {
     this.id = id; //clone ID     
     this.m = model; //Model utilisé     
     this.segmenter = segmenter;     
     this.seq = [];     
     this.pos = [];     
+    this.locus = locus
     this.use_marge = true; 
     }
 
 genSeq.prototype= {
 
-      /**
+
+
+    /**
      * load the sequence <br>
      * retrieve the one in the model or use the one given in parameter <br>
      * @param {string} str
      * */
     load: function (str) {
         if (typeof str !== 'undefined') this.use_marge = false
-        // console.log(typeof str)    
-        str = typeof str !== 'undefined' ? str : this.m.germlineV.allele[this.id].seq.seq;
-        
-        this.seq = str.split("")
-        this.seqAA = str.split("")
-        this.computePos()
+        str = typeof str !== 'undefined' ? str : this.m.germline[this.locus][this.id];
+
+        str = str.replace(/\./g, "");
+        this.seq = str.split("");
+        this.seqAA = str.split("");
+        this.computePos();
         return this;
     },
 
@@ -1176,15 +1253,64 @@ genSeq.prototype= {
         return this;
     },
 
+    toString:function(){
+        var highlights=[];
+
+       return this.highlightToString(highlights);
+
+    },
+
     /**
     *return sequence completed with html tag <br>
     * @return {string}
     **/
-    toString: function() {
+    highlightToString: function(highlights, window_start) {
         result = document.createElement('span');
         currentSpan = document.createElement('span');
+
         for (var i = 0; i < this.seq.length; i++) {
-             currentSpan.appendChild(this.spanify_mutation(this.seq[i], this.segmenter.sequence[this.segmenter.first_clone].seq[i])) }
+            for (var m in highlights){
+                var h = highlights[m];
+
+                if (i == h.start){
+                    result.appendChild(currentSpan);
+                    var highlightSpan = document.createElement('span');
+                    highlightSpan.style.color = h.color;
+                    highlightSpan.className = h.css ? h.css : h.type;
+                    if(typeof h.tooltipe != 'undefined') {
+                        highlightSpan.dataset.tooltip = h.tooltip;
+                        highlightSpan.dataset.tooltip_position = "right";
+                    }
+
+                    if (typeof h.seq !== "undefined") {
+                        // highlight is designed to underline the sequence
+                        // or add information underneath the sequence
+                        highlightSpan.innerHTML = h.seq;
+
+                        var highlightWrapper = document.createElement("span");
+                        highlightWrapper.appendChild(highlightSpan);
+                        highlightWrapper.className = "highlight";
+                        result.appendChild(highlightWrapper);
+
+                        // create a new currentSpan
+                        var oldCurSpan = currentSpan;
+                        currentSpan = document.createElement('span');
+                        currentSpan.className = oldCurSpan.className;
+                        result.appendChild(currentSpan);
+                        console.log("results: " + result.innerHTML);
+                    } else {
+                        currentSpan = highlightSpan;
+                    }
+                }
+            }
+
+            // one character
+            if (this.segmenter.amino){
+                currentSpan.appendChild(this.spanify_mutation(this.seqAA[l], this.segmenter.sequence[this.segmenter.first_clone].seqAA[l]));
+            }else{
+                currentSpan.appendChild(this.spanify_mutation(this.seq[i], this.segmenter.sequence[this.segmenter.first_clone].seq[i]))
+            }
+        }
         result.appendChild(currentSpan);
         var marge = ""
         if (this.use_marge){
@@ -1197,7 +1323,6 @@ genSeq.prototype= {
         }
         return marge + result.innerHTML;
     },
-
 };
 
 /**
@@ -1213,10 +1338,10 @@ function Sequence(id, model, segmenter) {
     this.seq = [];
     this.pos = [];
     this.use_marge = true;
+    this.locus = this.m.clone(id).germline;
 }
 
-Sequence.prototype = Object.create(genSeq.prototype);
-
+Sequence.prototype = Object.create(genSeq.prototype); 
     /**
      * load the clone sequence <br>
      * retrieve the one in the model or use the one given in parameter <br>
@@ -1236,7 +1361,7 @@ Sequence.prototype = Object.create(genSeq.prototype);
         this.computeAAseq()
 
         return this;
-    }
+    },
 
     /**
      * use the cdr3 (if available) to compute the amino acid sequence <br>
@@ -1294,35 +1419,36 @@ Sequence.prototype = Object.create(genSeq.prototype);
     Sequence.prototype.toString = function () {
         var clone = this.m.clone(this.id)
 
-        var vdjArrayRev, window_start, result;
+        var window_start, result;
+        var highlights = [];
+
         if (typeof clone.sequence != 'undefined' && clone.sequence !== 0) {
 
             //find V, D, J position
             if (clone.hasSeg('5', '3')){
 
                 var vdjArray = this.getVdjStartEnd(clone);
-                vdjArrayRev = {};
 
                 // We first put the end positions
-                vdjArrayRev[vdjArray["5"].stop] = {'type':'N', 'color': ""};
-                vdjArrayRev[vdjArray["3"].start] = {'type':'N', 'color': ""};
+                highlights.push({'type':'N', 'color': "", 'start': vdjArray["5"].stop});
+                highlights.push({'type':'N', 'color': "", 'start': vdjArray["3"].start});
 
                 var key;
                 for (var i in SEGMENT_KEYS) {
                     key = SEGMENT_KEYS[i]
                     if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key].stop != 'undefined'){
-                        vdjArrayRev[vdjArray[key].stop] = {'type':'N', 'color': ""};
+                        highlights.push({'type':'N', 'color': "", 'start': vdjArray[key].stop});
                     }}
 
                 // We now put the start positions (that may override previous end positions)
                 for (var j in SEGMENT_KEYS) {
                     key = SEGMENT_KEYS[j]
                     if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key].start!= 'undefined'){
-                        vdjArrayRev[vdjArray[key].start] = {'type':'D', 'color': ""};
+                        highlights.push({'type':'D', 'color': "", 'start': vdjArray[key].start});
                     }}
 
-                vdjArrayRev[vdjArray["5"].start] = {'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : ""};
-                vdjArrayRev[vdjArray["3"].start] = {'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : ""};
+                highlights.push({'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : "", 'start': vdjArray["5"].start});
+                highlights.push({'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : "", 'start': vdjArray["3"].start});
             }
 
             window_start = this.pos[clone.sequence.indexOf(clone.id)];
@@ -1334,83 +1460,12 @@ Sequence.prototype = Object.create(genSeq.prototype);
                 }
             }
             
-            var highlights = [];
             for (var k in this.segmenter.highlight){
                 highlights.push(this.get_positionned_highlight(this.segmenter.highlight[k].field,
                                                                this.segmenter.highlight[k].color));
             }
-            
-            // Build the sequence, adding VDJ and highlight spans
-            result = document.createElement('span');
-            if (typeof vdjArrayRev == 'undefined') {
-                currentSpan = document.createElement('span');
-                result.appendChild(currentSpan);
-            }
-            for (var l = 0; l < this.seq.length; l++) {
-
-                // Highlight spans
-                for (var m in highlights){
-                    var h = highlights[m];
-
-                    if (l == h.start){
-                        var highlightSpan = document.createElement('span');
-                        highlightSpan.style = "color: " + h.color;
-                        highlightSpan.className = h.css;
-                        if(typeof h.tooltipe != 'undefined') {
-                            highlightSpan.dataset.tooltip = h.tooltip;
-                            highlightSpan.dataset.tooltip_position = "right";
-                        }
-                        highlightSpan.innerHTML = h.seq;
-
-                        var highlightWrapper = document.createElement("span");
-                        highlightWrapper.appendChild(highlightSpan);
-                        highlightWrapper.className = "highlight";
-                        result.appendChild(highlightWrapper);
-
-                        // split the current span to fit the highlight span            
-                        var oldCurSpan = currentSpan;
-                        currentSpan = document.createElement('span');
-                        currentSpan.className = oldCurSpan.className;
-                        result.appendChild(currentSpan);
-                    }
-                }
-
-
-                // VDJ spans - begin
-                if (typeof vdjArrayRev != 'undefined' &&
-                    typeof vdjArrayRev[l] != 'undefined') {
-                    currentSpan = document.createElement('span');
-                    currentSpan.className = vdjArrayRev[l].type;
-                    currentSpan.style = "color: " + vdjArrayRev[l].color;
-                    result.appendChild(currentSpan);
-
-                }
-
-                // one character
-                if (this.segmenter.amino) {
-                    currentSpan.appendChild(this.spanify_mutation(this.seqAA[l], this.segmenter.sequence[this.segmenter.first_clone].seqAA[l]));
-                }else{
-                    currentSpan.appendChild(this.spanify_mutation(this.seq[l], this.segmenter.sequence[this.segmenter.first_clone].seq[l]));
-                }
-                    
-            }
-        }else{
-            window_start = 0;
-            result = document.createElement('span');
-            result.appendChild(document.createTextNode(clone.id));
         }
-
-        //marge
-        var marge = ""
-        if (this.use_marge){
-            marge += "<span class='seq-marge'>";
-            var size_marge = 300 - window_start;
-            if (size_marge > 0) {
-                for (var n = 0; n < size_marge; n++) marge += "\u00A0";
-            }
-            marge += "</span>"
-        }
-        return marge + result.innerHTML;
+        return this.highlightToString(highlights, window_start)
     }
 
     /**
@@ -1495,8 +1550,6 @@ Sequence.prototype = Object.create(genSeq.prototype);
 
         return h
     }
-
-
 
 tableAA = {
  'TTT' : 'F',

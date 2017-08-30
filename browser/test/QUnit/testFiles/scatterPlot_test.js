@@ -35,10 +35,10 @@ QUnit.test("grid", function(assert) {
 
     assert.equal(document.getElementById("bar1").className.baseVal, "", "check splitMethod V/V /plot : check if bar are displayed")
 
-    assert.equal(sp.axisX.labels[0].text, "IGHV4", "first label for 'gene_v' axis is 'IGVH4'")
+    assert.equal(sp.axisX.labels[0].text, "IGHV1-2", "first label for 'gene_v' axis is 'IGHV1-2'")
     assert.equal(sp.axisX.labels[1].text, "?", "second label for 'gene_v' axis is '?'")
 
-    assert.equal(m.clone(2).getGene('5'), "IGHV4*01", "clone 2 is 'IGVH4*01'")
+    assert.equal(m.clone(2).getGene('5'), "IGHV1-2*01", "clone 2 is 'IGHV1-2*01'")
     assert.equal(sp.nodes[2].bar_x, sp.axisX.labels[0].pos, "node 2, bar x position is on 'IGVH4'")
 
 

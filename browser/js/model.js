@@ -49,7 +49,8 @@ function Model() {
     for (var f in Model_loader.prototype) {
         this[f] = Model_loader.prototype[f]
     }
-    
+    this.germline = {};
+    this.create_germline_obj();
     this.setAll();
     this.view = [];
     this.checkBrowser();
@@ -218,6 +219,21 @@ Model.prototype = {
     },
     
     
+    create_germline_obj: function() {
+        for (var locus in germline){
+            germl = locus.substring(0,3)
+            if (typeof this.germline[germl]==="undefined") {
+             this.germline[germl]={};
+            }
+            for (var allele in germline[locus]) {
+                    this.germline[germl][allele]="";
+                    this.germline [germl][allele]+=germline[locus][allele];
+                    }
+                }
+
+
+        return this.germline;
+    },
     
     /**
      * load a germline / attribute a color for each genes / and compute some info

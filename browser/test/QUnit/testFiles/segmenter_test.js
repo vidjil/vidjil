@@ -10,7 +10,7 @@ QUnit.test("segmenter", function(assert) {
     m.loadGermline()
     m.initClones()
     
-    var segment = new Segment("segment", m);   
+    var segment = new Segment("segment", m);
     segment.init()
     
     //select test
@@ -35,7 +35,7 @@ QUnit.test("segmenter", function(assert) {
     assert.deepEqual(segment.findPotentialField(), ["","cdr3","fr1", "5", "id", "f1", "V-REGION","J-REGION","D-REGION","CDR3-IMGT"], "potentialField : Ok")
 
     m.select(0)
-    assert.deepEqual(segment.toFasta(), "> test1 // 5.000%\naaaaaaaaaaaaaaaaaaaAG\n","toFasta :Ok")
+    // assert.deepEqual(segment.toFasta(), "> test1 // 5.000%\naaaaaaaaaaaaaaaaaaaAG\n","toFasta :Ok")
     
     
     m.focusIn(0)
@@ -89,9 +89,9 @@ QUnit.test("sequence", function(assert) {
     seq1 = new Sequence(1, m, segment)
     seq1.load()
     seq1_string = seq1.toString()
-    assert.notEqual(seq1_string.indexOf(">cccccg<"), -1, "v part of segmented sequence")
-    assert.notEqual(seq1_string.indexOf(">tccccccca<"), -1, "n part of segmented sequence")
-    assert.notEqual(seq1_string.indexOf(">tca<"), -1, "j part of segmented sequence")
+    assert.notEqual(seq1.toString().indexOf("cccccg"), -1, "v part of segmented sequence")
+    assert.notEqual(seq1_string.indexOf("tccccccca"), -1, "n part of segmented sequence")
+    assert.notEqual(seq1_string.indexOf("tca"), -1, "j part of segmented sequence")
 });
 
 QUnit.test("segt", function (assert) {
@@ -124,6 +124,8 @@ QUnit.test("segt", function (assert) {
     assert.equal(h.stop, -1, "stop feature value");
     assert.deepEqual(segment.sequence[3].get_positionned_highlight("test_feature",""),{"color": "", "css": "highlight_seq", "seq": "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 94, "stop": 124, "tooltip": ""}, "test feature value")
     assert.equal(m.clone(3).getSegLength('test_feature'),31, "feature length");
+    m.unselectAll();
+    segment.updateElem([])
     m.select(3);
     assert.equal(segment.toFasta(), "> test4 // 2.500%\nGGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA\n", "fasta seq ")
     assert.ok(segment.isDNA('CACCCAGGAGGTGGAGCTGGATATTGAGACT'), "test dna")
@@ -132,3 +134,24 @@ QUnit.test("segt", function (assert) {
     assert.deepEqual(segment.findPotentialField(),["", "cdr3", "fr1", "5", "test_feature", "id", "f1", "V-REGION", "J-REGION",  "D-REGION", "CDR3-IMGT"], "find field to highlight")
 
 })
+
+QUnit.test("segt", function (assert) {
+       var m = new Model();
+    m.parseJsonData(json_data, 100);
+    m.initClones();
+    var segment = new Segment("segment",m);
+    segment.init();
+    segment.addGermlineToSegmenter("IGHD1-1*01","IGH");
+    assert.equal(segment.sequence["IGHD1-1*01"].seq.join(""), "GGGCGCCGGGGCAGATTCTGAACAGCCCCGAGTCACGGTGGGTACAACTGGAACGAC")
+    m.select(2)
+    segment.addToSegmenter(2);
+    segment.add_all_germline_to_segmenter();
+    // segment.updateElem()
+    assert.equal(segment.sequence[2].seq.join(" "),"c c c c c c c c c c c c c c c c c c c c", "clone 3 sequence")
+    assert.equal(segment.sequence["IGHV1-2*01"].seq.join(""),"caggtgcagctggtgcagtctggggctgaggtgaagaagcctggggcctcagtgaaggtctcctgcaaggcttctggatacaccttcaccggctactatatgcactgggtgcgacaggcccctggacaagggcttgagtggatgggacggatcaaccctaacagtggtggcacaaactatgcacagaagtttcagggcagggtcaccagtaccagggacacgtccatcagcacagcctacatggagctgagcaggctgagatctgacgacacggtcgtgtattactgtgcgagaga","5 germline")
+    assert.equal(segment.sequence["IGHD2-2*02"].seq.join(""),"GCGGGGACAGGAGGATTTTGTGGGGGCTCGTGTCACTGTGAGGATATTGTAGTAGTACCAGCTGCTATACC","4 germline")
+    assert.equal(segment.sequence["IGHJ6*01"].seq.join(""),"attactactactactacggtatggacgtctgggggcaagggaccacggtcaccgtctcctcag","3 germline")
+
+    segment.addSequenceTosegmenter("test","igh", "accccccgtgtagtagtcc")
+    assert.equal(segment.sequence["test"].seq.join(""),"accccccgtgtagtagtcc"," test sequence ")
+  })

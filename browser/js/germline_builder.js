@@ -39,43 +39,11 @@ GermlineList.prototype = {
     * germline.js contain a copy of the germline list used if the server is unavailable
     * */
     load : function () {
-        this.fallbackLoad() //just in case
-        
-        $.ajax({
-            url: window.location.origin + "/germline/germlines.data",
-            success: function (result) {
-                try {
-                    //remove comment (json don't have comment)
-                    var json = result.replace(/ *\/\/[^\n]*\n */g , "")
-                    //convert from js to json (json begin with { or [, never with a var name)
-                    json = json.replace("germline_data = " , "")
-                    self.list = jQuery.parseJSON(json).systems;
-                }
-                catch(err){
-                    console.log({"type": "flash", "msg": "germlines.data malformed, use local js file instead (can be outdated) " , "priority": 2});
-                }
-            },
-            error: function (request, status, error) {
-                console.log({"type": "flash", "msg": "impossible to retrieve germline.data, using local germline.js", "priority": 0});
-            },
-            dataType: "text"
-        });
-        
+        this.list = germline_data.systems
         
     },
     
-    /**
-    * retrieve the default germline list from germline.js <br>
-    * germline.js should be rebuild from time to time to keep thegermlines up to date (if you want to use the browser in offline mode)
-    * */
-    fallbackLoad : function () {
-        try {
-            this.list = germline_data.systems
-        }
-        catch(err){
-            console.log({"type": "popup", "msg": "Incorrect browser installation, 'js/germline.js' is not found<br />please run 'make' in 'germline/'"});
-        }
-    },
+
     
     /**
     * add a list of germlines to the default germline list<br>
@@ -154,18 +122,18 @@ Germline.prototype = {
         if (type=="V") type2="5"
         if (type=="D") type2="4"
         if (type=="J") type2="3"
-        
         if (typeof this.m.germlineList.list[system] !== 'undefined' &&
-            typeof this.m.germlineList.list[system].recombinations !== 'undefined'){
-            if (typeof this.m.germlineList.list[system].recombinations[type2] !== 'undefined' ){
-                for (var i=0; i<this.m.germlineList.list[system].recombinations[type2].length; i++){
-                    var filename = this.m.germlineList.list[system].recombinations[type2][i]
-                    filename = filename.split('/')[filename.split('/').length-1] //remove path
+            typeof this.m.germlineList.list[system].recombinations[0] !== 'undefined'){
+            if (typeof this.m.germlineList.list[system].recombinations[0][type2] !== 'undefined' ){
+                for (var i=0; i<this.m.germlineList.list[system].recombinations[0][type2].length; i++){
+                    var filename = this.m.germlineList.list[system].recombinations[0][type2][i]
+
+
                     filename = filename.split('.')[0] //remove file extension 
-                    
+
                     if (typeof germline[filename] != 'undefined'){
                         for (var key in germline[filename]){
-                            this.allele[key] = germline[filename][key]
+                            this.allele[key] = germline[filename][key].replace(/\./g,"")
                         }
                     }else{
                         console.log({"type": "flash", "msg": "warning : this browser version doesn't have the "+filename+" germline file", "priority": 2});

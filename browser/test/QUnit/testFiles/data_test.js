@@ -75,9 +75,9 @@ json_data = {
         "top" : 3,
         "germline" : "IGH",
         "seg" : {
-            "5" : "IGHV4*01",
-            "4" : "IGHD2*03",
-            "3" : "IGHJ8*01",
+            "5" : "IGHV1-2*01",
+            "4" : "IGHD2-2*02",
+            "3" : "IGHJ6*01",
             "3start" : 15,
             "5end" : 5
         }
