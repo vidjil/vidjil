@@ -259,6 +259,10 @@ db.define_table('user_log',
 db.define_table('tag',
                 Field('name', 'string', unique=True))
 
+db.define_table('group_tag',
+                Field('group_id', 'reference auth_group'),
+                Field('tag_id', 'reference tag'))
+
 db.define_table('tag_ref',
                 Field('tag_id', 'reference tag'),
                 Field('table_name', 'string'),
