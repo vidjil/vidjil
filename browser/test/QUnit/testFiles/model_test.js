@@ -341,7 +341,10 @@ QUnit.test("normalization: test", function(assert) {
     assert.equal(c2.getSize(),0.05,"clone3 size")
     m.compute_normalization(0,0.20)
     assert.equal(m.normalization.B,0.20, "expected value")
-    assert.equal(c1.getSize(),0.20000000000000004,"clone1 size")
+    assert.equal(c1.getSize().toFixed(2),m.normalization.B,"clone1 normalized size")
+    assert.equal(c1.getSize(1).toFixed(2),m.normalization.B,"clone1 normalized size")
+    assert.equal(c1.getSize(2),0.20000000000000004,"clone1 normalized size")
+
     assert.equal(m.normalize(c2.getSize(),0),0.8000000000000002,"normalize")
     m.compute_normalization(-1,0)
     assert.equal(c2.getSize(), 0.05, "clone3 size ")
