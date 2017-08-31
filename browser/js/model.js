@@ -977,6 +977,12 @@ changeAlleleNotation: function(alleleNotation) {
         for (var n = 0; n < this.clones.length; n++) {
             this.clone(n).updateColor()
         }
+        if(this.norm){
+
+        $("#"+this.normalization.id+" i.icon-star-2").toggleClass('icon-star-2 icon-lock-1')     
+           }else{
+             $("i.icon-lock-1").toggleClass('icon-lock-1 icon-star-2') 
+           }
 
     },
 
