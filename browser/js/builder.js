@@ -148,8 +148,7 @@ Builder.prototype = {
         input.value= -1;
         input.name = "normalize_list";
         input.id = "reset_norm";
-        input.checked=true;
-        
+        input.checked=false;
         var div = document.createElement("div");
         div.onclick = function () {
             self.m.compute_normalization(-1) ;
@@ -157,9 +156,16 @@ Builder.prototype = {
             self.m.update();
         };
         div.className="buttonSelector";
-        div.appendChild(input);
+        div.id = "normalizetest"
+        if (m.norm){
+            input.checked=true;
+            text= m.clone(m.normalization.id).getShortName()
+            div.appendChild(document.createTextNode(text))
+        }else{
         div.appendChild(document.createTextNode("none"));
-        
+        }
+        div.appendChild(input);
+
         normalize_list.appendChild(div);
         
         // Regroup Clones and Data into a single array with only critical data
