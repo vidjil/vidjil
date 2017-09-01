@@ -203,7 +203,8 @@ def add_form():
 ## return edit form 
 def edit(): 
     if (auth.can_modify_patient(request.vars["id"]) ):
-        return dict(message=T('edit patient'))
+        group_id = get_set_group(defs.SET_TYPE_PATIENT, request.vars["id"])
+        return dict(message=T('edit patient'), group_id=group_id)
     else :
         res = {"message": ACCESS_DENIED}
         log.error(res)

@@ -284,7 +284,8 @@ def edit():
             generic = db((db.generic.sample_set_id == request.vars["id"])).select()[0]
             if (auth.can_modify('generic', generic.id)):
                 request.vars["id"] = generic.id
-                return dict(message=T('edit sample_set'))
+                group_id = get_set_group(defs.SET_TYPE_GENERIC, request.vars["id"])
+                return dict(message=T('edit sample_set'), group_id=group_id)
     res = {"message": ACCESS_DENIED}
     log.error(res)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))

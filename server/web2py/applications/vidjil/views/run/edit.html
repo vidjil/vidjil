@@ -25,7 +25,7 @@ info = db.run[request.vars["id"]]
             </tr>
             <tr>
                 <td> <label for="run_info" id="run_info__label">Info: </label> </td> 
-                <td> <textarea onfocus="init_autocomplete(this);" class="text" cols="60" id="run_info" name="info" rows="10">{{=info.info}}</textarea> </td>
+                <td> <textarea onfocus="init_autocomplete(this, {{=group_id}});" class="text" cols="60" id="run_info" name="info" rows="10">{{=info.info}}</textarea> </td>
                 <td></td>
             </tr>
 			<tr>

@@ -30,7 +30,7 @@ info = db.patient[request.vars["id"]]
             </tr>
             <tr>
                 <td> <label for="patient_info" id="patient_info__label">Info: </label> </td> 
-                <td> <textarea onfocus="init_autocomplete(this);" class="text" cols="40" id="patient_info" name="info" rows="10">{{=info.info}}</textarea> </td>
+                <td> <textarea onfocus="init_autocomplete(this, {{=group_id}});" class="text" cols="40" id="patient_info" name="info" rows="10">{{=info.info}}</textarea> </td>
                 <td></td>
             </tr>
             <tr>

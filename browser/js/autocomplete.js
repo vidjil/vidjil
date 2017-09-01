@@ -21,12 +21,12 @@
  */
 
 
-function init_autocomplete(elem) {
+function init_autocomplete(elem, group_id) {
     var service = 'tag/auto_complete';
     var address = db.db_address + service;
     $(elem).autocomplete({'serviceUrl': address,
         'dataType': 'json',
-        'params': {'group_id': 10},
+        'params': {'group_id': group_id},
         'delimiter': /[,\.-_=+()$%^&*!@\[\]\{\}\"|'?\\\/><\s]/
     }); 
 }

@@ -119,9 +119,11 @@ def edit():
 		distinct=True
 	)
 		
+        group_id = get_set_group(defs.SET_TYPE_RUN, request.vars["id"])
         return dict(message=T('edit run'),
 				   sequencer_list = sequencer_list,
-				   pcr_list = pcr_list)
+				   pcr_list = pcr_list,
+                                   group_id = group_id)
     else :
         res = {"message": ACCESS_DENIED}
         log.error(res)
