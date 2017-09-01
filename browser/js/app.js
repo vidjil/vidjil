@@ -12,7 +12,8 @@ require(["jquery",
          "jquery.form",
          "file",
          "tsne",
-         "jstree.min"], function() {
+         "jstree.min",
+         "jquery.autocomplete"], function() {
              // Then config file (needed by Vidjil)
              require(['../conf'], function() {
                  loadAfterConf()
