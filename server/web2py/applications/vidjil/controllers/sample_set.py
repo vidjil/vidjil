@@ -240,10 +240,10 @@ def add_form():
                                    creator=auth.user_id,
                                    sample_set_id=id_sample_set)
 
-            register_tags(db, defs.SET_TYPE_GENERIC, id, request.vars["info"])
-
             user_group = int(request.vars["sample_set_group"])
             admin_group = db(db.auth_group.role=='admin').select().first().id
+
+            register_tags(db, defs.SET_TYPE_GENERIC, id, request.vars["info"], user_group)
 
             #sample_set creator automaticaly has all rights
             auth.add_permission(user_group, PermissionEnum.access.value, db.generic, id)
@@ -303,8 +303,9 @@ def edit_form():
                                                    info=request.vars["info"],
                                                    )
 
+            group_id = get_set_group(defs.SET_TYPE_GENERIC, request.vars["id"])
             if (generic.info != request.vars["info"]):
-                register_tags(db, defs.SET_TYPE_GENERIC, request.vars["id"], request.vars["info"], reset=True)
+                register_tags(db, defs.SET_TYPE_GENERIC, request.vars["id"], request.vars["info"], group_id, reset=True)
 
             res = {"redirect": "back",
                    "message": "%s (%s): sample_set edited" % (request.vars["name"], request.vars["sample_set_id"])}

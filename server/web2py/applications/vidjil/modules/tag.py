@@ -23,13 +23,19 @@ class TagExtractor(TagManager):
         except:
             tid = db(db.tag.name == name).select(db.tag.id).first()
         return tid
-            
-    def link_to_record(self, tag_name, table, record_id):
+
+    def link_to_group(self, tag_id, group_id):
         db = self.db
-        tag_entry = db(db.tag.name == tag_name).select(db.tag.id).first()
-        if (tag_entry is None):
-            tag_entry = self.create(tag_name)
-        db.tag_ref.insert(tag_id=tag_entry,
+        assocs = db((db.group_tag.tag_id == tag_id) &
+                    (db.group_tag.group_id == group_id)
+                ).select()
+        if len(assocs) == 0:
+            db.group_tag.insert(group_id=group_id, tag_id=tag_id)
+            db.commit()
+
+    def link_to_record(self, tag_id, table, record_id):
+        db = self.db
+        db.tag_ref.insert(tag_id=tag_id,
                           table_name=table,
                           record_id=record_id)
         db.commit()
@@ -44,12 +50,14 @@ class TagExtractor(TagManager):
     def parse_text(self, text):
         return re.findall(self.expression(), text)
 
-    def execute(self, table, record_id, text, reset=False):
+    def execute(self, table, record_id, text, group_id, reset=False):
         if (reset):
             self.remove_tags(table, record_id)
         tags = self.parse_text(text)
         for tag in tags:
-            self.link_to_record(tag, table, record_id)
+            tag_id = self.create(tag)
+            self.link_to_group(tag_id, group_id)
+            self.link_to_record(tag_id, table, record_id)
         return tags
 
 class TagDecorator(TagManager):
@@ -73,8 +81,7 @@ def get_tag_prefix():
         tag_prefix = '#'
     return tag_prefix
 
-def register_tags(db, table, record_id, text, reset=False):
+def register_tags(db, table, record_id, text, group_id, reset=False):
     tag_prefix = get_tag_prefix()
     tag_extractor = TagExtractor(tag_prefix, db)
-    tags = tag_extractor.execute(table, record_id, text, reset)
-    #log.debug("registered tags %s to %s (%d)" % (str(tags), table, record_id))
+    tags = tag_extractor.execute(table, record_id, text, group_id, reset)

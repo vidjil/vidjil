@@ -71,10 +71,10 @@ def add_form():
 								   pcr=request.vars["pcr"],
                                    creator=auth.user_id)
 
-            register_tags(db, defs.SET_TYPE_RUN, id, request.vars["info"])
-
             user_group = int(request.vars["run_group"])
             admin_group = db(db.auth_group.role=='admin').select().first().id
+
+            register_tags(db, defs.SET_TYPE_RUN, id, request.vars["info"], user_group)
             
             #patient creator automaticaly has all rights 
             auth.add_permission(user_group, PermissionEnum.access.value, db.run, id)
@@ -156,8 +156,9 @@ def edit_form():
                                                    id_label=request.vars["id_label"]
                                                    )
 
+            group_id = get_set_group(defs.SET_TYPE_RUN, request.vars["id"])
             if (run.info != request.vars["info"]):
-                register_tags(db, defs.SET_TYPE_RUN, request.vars["id"], request.vars["info"], reset=True)
+                register_tags(db, defs.SET_TYPE_RUN, request.vars["id"], request.vars["info"], group_id, reset=True)
 
             res = {"redirect": "back",
                    "message": "%s (%s): run edited" % (request.vars["name"], request.vars["id"])}
