@@ -1589,7 +1589,7 @@ int main (int argc, char **argv)
     int nb_segmented = 0 ;
     map <string, int> nb_segmented_by_germline ;
 
-    Germline *not_segmented = new Germline(PSEUDO_NOT_ANALYZED, PSEUDO_NOT_ANALYZED_CODE, 0);
+    Germline *not_segmented = new Germline(PSEUDO_NOT_ANALYZED, PSEUDO_NOT_ANALYZED_CODE);
 
     while (reads->hasNext()) 
       {
