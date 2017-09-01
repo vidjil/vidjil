@@ -96,10 +96,11 @@ def get_tags(db, group_id, query):
 
 def tags_to_json(tags):
     tag_list = []
+    prefix = get_tag_prefix()
     for tag in tags:
         tag_dict = {}
         tag_dict['id'] = tag.id
-        tag_dict['value'] = tag.name
+        tag_dict['value'] = '%s%s' % (prefix, tag.name)
         tag_list.append(tag_dict)
 
     suggestions = {'suggestions': tag_list}
