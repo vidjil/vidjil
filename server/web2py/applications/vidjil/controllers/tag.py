@@ -13,6 +13,7 @@ def auto_complete():
     if "query" not in request.vars or request.vars["query"][0] != "#":
         tags = []
     else:
-        tags = get_tags(db, request.vars["group_id"], request.vars["query"][1:])
+        prefix = get_tag_prefix()
+        tags = get_tags(db, request.vars["group_id"], request.vars["query"][len(prefix):])
 
     return tags_to_json(tags)
