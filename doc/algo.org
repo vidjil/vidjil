@@ -434,11 +434,6 @@ and when the sequence does not contain any in-frame stop codons.
 The advanced =-f= option sets the parameters used in the comparisons between
 the clone sequence and the V(D)J germline genes. The default values should work.
 
-   The advanced =-m= option controls the minimum difference of positions between the end
-   of the V and the start of the J. Note that it is even possible to set =-m -10=
-   (meaning that V and J could overlap 10 bp). This is the default for VJ recombinations
-   (except when using a =germline/*.g= file).
-
 The e-value set by =-e= is also applied to the V/J designation.
 The =-E= option further sets the e-value for the detection of D segments.
 

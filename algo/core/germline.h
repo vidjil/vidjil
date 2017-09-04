@@ -14,9 +14,6 @@
 #include "bioreader.hpp"
 #include <climits>
 
-#define DEFAULT_DELTA_MIN  -10
-#define DEFAULT_DELTA_MIN_D  0
-#define UNSET_DELTA_MIN INT_MAX
 #define DEFAULT_GERMLINE_SEED SEED_S10
 
 enum SEGMENTATION_METHODS {
@@ -45,38 +42,30 @@ class Germline {
   int max_indexing;
 
   void init(string _code, char _shortcut,
-            int _delta_min, string seed,
-            int max_indexing);
+            string seed, int max_indexing);
 
  public:
   /*
-   * @param delta_min: the minimal distance between the right bound and the left bound
-   *        so that the segmentation is accepted
-   *        (left bound: end of V, right bound : start of J)
    * @param max_indexing: maximal length of the sequence to be indexed (0: all)
    */
 
   Germline(string _code, char _shortcut,
            list <string> f_rep_5, list <string> f_rep_4, list <string> f_rep_3,
-           int _delta_min, string seed="",
-            int max_indexing=0);
+           string seed="", int max_indexing=0);
 
   Germline(string _code, char _shortcut, 
   	   string f_rep_5, string f_rep_4, string f_rep_3,
-	   int _delta_min, string seed="",
-            int max_indexing=0);
+	   string seed="", int max_indexing=0);
 
   Germline(string _code, char _shortcut, 
       BioReader _rep_5, BioReader _rep_4, BioReader _rep_3,
-	   int _delta_min, string seed="",
-            int max_indexing=0);
+	   string seed="", int max_indexing=0);
 
   Germline(string _code, char _shortcut,
-	   int _delta_min, string seed="",
-            int max_indexing=0);
+	   string seed="", int max_indexing=0);
   
   Germline(string _code, char shortcut, string path, json json_recom,
-           int delta_min=UNSET_DELTA_MIN, string seed="", int max_indexing=0);
+           string seed="", int max_indexing=0);
 
   ~Germline();
 
@@ -124,8 +113,6 @@ class Germline {
   BioReader  rep_4 ;
   BioReader  rep_3 ;
   IKmerStore<KmerAffect> *index;
-
-  int delta_min;
 };
 
 ostream &operator<<(ostream &out, const Germline &germline);
@@ -163,7 +150,7 @@ class MultiGermline {
    *   filter: see GERMLINES_FILTER
    *   max_indexing:
    */
-  void build_from_json(string path, string json_filename_and_filter, int filter, int default_delta_min=UNSET_DELTA_MIN,
+  void build_from_json(string path, string json_filename_and_filter, int filter,
                        string default_seed="", int default_max_indexing=0);
 
   /**
