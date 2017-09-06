@@ -83,7 +83,6 @@ VidjilAutoComplete.prototype = {
     },
 
     setupTags : function($input) {
-        console.log("setup");
         var self = this;
         var at = '#';
         this.initCache(at);
