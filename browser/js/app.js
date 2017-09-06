@@ -13,7 +13,8 @@ require(["jquery",
          "file",
          "tsne",
          "jstree.min",
-         "jquery.autocomplete"], function() {
+         "jquery.caret",
+         "jquery.atwho"], function() {
              // Then config file (needed by Vidjil)
              require(['../conf'], function() {
                  loadAfterConf()

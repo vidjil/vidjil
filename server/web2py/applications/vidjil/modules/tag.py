@@ -87,11 +87,9 @@ def register_tags(db, table, record_id, text, group_id, reset=False):
     tag_extractor = TagExtractor(tag_prefix, db)
     tags = tag_extractor.execute(table, record_id, text, group_id, reset)
 
-def get_tags(db, group_id, query):
-    like = '%s%%' % query
+def get_tags(db, group_id):
     return db((db.tag.id == db.group_tag.tag_id) &
-              (db.group_tag.group_id == group_id) &
-              (db.tag.name.like(like, case_sensitive=False))
+              (db.group_tag.group_id == group_id)
             ).select(db.tag.ALL)
 
 def tags_to_json(tags):
@@ -100,8 +98,7 @@ def tags_to_json(tags):
     for tag in tags:
         tag_dict = {}
         tag_dict['id'] = tag.id
-        tag_dict['value'] = '%s%s' % (prefix, tag.name)
+        tag_dict['name'] = tag.name
         tag_list.append(tag_dict)
 
-    suggestions = {'suggestions': tag_list}
-    return json.dumps(suggestions)
+    return json.dumps(tag_list)

@@ -15,7 +15,7 @@ info = db.generic[request.vars["id"]]
             </tr>
             <tr>
                 <td> <label for="sample_set_info" id="sample_set_info__label">Info: </label> </td> 
-                <td> <textarea onfocus="init_autocomplete(this, {{=group_id}});" class="text" cols="60" id="sample_set_info" name="info" rows="10">{{=info.info}}</textarea> </td>
+                <td> <textarea onfocus="new VidjilAutoComplete().setupAtWho(this);" data-needs-atwho="true" data-group-id="{{=group_id}}" class="text" cols="40" id="sample_set_info" name="info" rows="10">{{=info.info}}</textarea> </td>
                 <td></td>
             </tr>
             <tr>

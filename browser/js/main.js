@@ -87,6 +87,8 @@ try {
 
     //TODO
     initMenu();
+
+    new VidjilAutoComplete(db.db_address + 'tag/auto_complete');
 } catch(err) {
     this.db.log_error(err)
 }

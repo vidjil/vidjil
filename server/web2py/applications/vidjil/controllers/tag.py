@@ -10,10 +10,7 @@ def auto_complete():
     if "group_id" not in request.vars:
         return error_message("missing group id")
 
-    if "query" not in request.vars or request.vars["query"][0] != "#":
-        tags = []
-    else:
-        prefix = get_tag_prefix()
-        tags = get_tags(db, request.vars["group_id"], request.vars["query"][len(prefix):])
+    prefix = get_tag_prefix()
+    tags = get_tags(db, request.vars["group_id"])
 
     return tags_to_json(tags)

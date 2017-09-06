@@ -17,7 +17,7 @@
             </tr>
             <tr>
                 <td><label for="sample_set_info" id="sample_set_info__label">Info: </label></td>
-                <td><textarea onfocus="init_autocomplete(this, $('#group_select option:selected').val());" class="text" cols="60" id="sample_set_info" name="info" rows="10"></textarea></td>
+                <td><textarea onfocus="$(this).data('group-id', $('#group_select option:selected').val()); new VidjilAutoComplete().setupAtWho(this);" data-needs-atwho="true" class="text" cols="40" id="sample_set_info" name="info" rows="10"></textarea></td>
                 <td></td>
             </tr>
             <tr>
