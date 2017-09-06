@@ -40,7 +40,7 @@ test_browser-functional:
 
 code_quality:
   stage: test_quality
-  script: jshint browser/js/*.js
+  script: make -C browser quality
   only:
     - /^feature-[cw]\/.*$/
     - /^hotfix-[cw]\/.*$/
