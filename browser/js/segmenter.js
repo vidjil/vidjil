@@ -1361,7 +1361,7 @@ Sequence.prototype = Object.create(genSeq.prototype);
         this.computeAAseq()
 
         return this;
-    },
+    }
 
     /**
      * use the cdr3 (if available) to compute the amino acid sequence <br>
