@@ -39,7 +39,6 @@ test_algo_shouldvdj:
 algo_valgrind_unit:
   stage: valgrind_unit
   script: make valgrind_unit
-  when: manual
   only:
     - /^feature-a\/.*$/
 
