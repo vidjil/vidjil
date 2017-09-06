@@ -10,7 +10,30 @@ stages:
   - test_quality
   - test_unit
   - test_functional
+  - test_shouldvdj
   - deploy
+
+
+
+test_algo_unit:
+  stage: test_unit
+  script: make unit
+  only:
+    - /^feature-a\/.*$/
+
+test_algo_should:
+  stage: test_functional
+  script: make should
+  only:
+    - /^feature-a\/.*$/
+
+test_algo_shouldvdj:
+  stage: test_shouldvdj
+  script: make shouldvdj
+  only:
+    - /^feature-a\/.*$/
+
+
 
 test_browser_unit:
   stage: test_unit
