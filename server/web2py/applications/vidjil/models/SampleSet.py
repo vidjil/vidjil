@@ -28,7 +28,7 @@ class SampleSet(object):
         return XML(self.tag_decorator.decorate_text(data.info, 'tag', self.type, self.get_list_path()),
                 sanitize=True,
                 permitted_tags=['a'],
-                allowed_attributes={'a':['class', 'href', 'onclick', 'data-linkable-type', 'data-linkable-name']})
+                allowed_attributes={'a':['class', 'href', 'onclick', 'data-sample-type', 'data-linkable-type', 'data-linkable-name']})
 
     def get_configs(self, data):
         return data.conf_list
