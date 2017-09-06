@@ -11,9 +11,12 @@ stages:
   - test_unit
   - test_functional
   - test_shouldvdj
+  - valgrind_unit
+  - valgrind_functional
   - deploy
 
 
+# Algorithm
 
 test_algo_unit:
   stage: test_unit
@@ -33,7 +36,23 @@ test_algo_shouldvdj:
   only:
     - /^feature-a\/.*$/
 
+algo_valgrind_unit:
+  stage: valgrind_unit
+  script: make valgrind_unit
+  when: manual
+  only:
+    - /^feature-a\/.*$/
 
+algo_valgrind_functional:
+  stage: valgrind_functional
+  script: make valgrind_should
+  when: manual
+  only:
+    - /^feature-a\/.*$/
+
+
+
+# Client
 
 test_browser_unit:
   stage: test_unit
