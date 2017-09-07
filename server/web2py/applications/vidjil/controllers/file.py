@@ -6,6 +6,7 @@ import os
 import os.path
 import datetime
 from controller_utils import error_message
+from tag import *
 import jstree
 import base64
 
@@ -202,6 +203,13 @@ def add_form():
                             pre_process_id=pre_process,
                             pre_process_flag=pre_process_flag,
                             provider=auth.user_id)
+
+        group_id = None
+        for key in id_dict:
+            group_id = get_set_group(key, id_dict[key])
+
+        register_tags(db, 'sequence_file', id, request.vars["file_info"], group_id)
+
         log_message = "upload started"
         if request.vars['filename'] != "":
             if data['data_file'] is not None:
@@ -335,10 +343,18 @@ def edit_form():
         if request.vars['pre_process'] is not None and request.vars['pre_process'] != "0":
             pre_process = int(request.vars['pre_process'])
         if request.vars['sampling_date'] != None and request.vars['file_info'] != None :
+            sequence_file = db.sequence_file[id]
             db.sequence_file[id] = dict(sampling_date=request.vars['sampling_date'],
                                                         info=request.vars['file_info'],
                                                         pre_process_id=pre_process,
                                                         provider=auth.user_id)
+
+            if sequence_file.info != request.vars['file_info']:
+                group_id = None
+                for key in id_dict:
+                    group_id = get_set_group(key, id_dict[key])
+                    break
+                register_tags(db, 'sequence_file', id, request.vars["file_info"], group_id, reset=True)
 
         if request.vars['filename'] != "":
             data, filepath = manage_filename(request.vars["filename"])
