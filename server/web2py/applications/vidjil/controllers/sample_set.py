@@ -120,6 +120,7 @@ def index():
                 )
             )
 
+    tag_decorator = TagDecorator(get_tag_prefix())
     query_pre_process = db( db.pre_process.id >0 ).select()
     pre_process_list = {}
     for row in query_pre_process:
@@ -140,7 +141,8 @@ def index():
                 analysis_file = analysis_file,
                 analysis_filename = analysis_filename,
                 sample_type = db.sample_set[request.vars["id"]].sample_type,
-                config=config)
+                config=config,
+                tag_decorator=tag_decorator)
 
 ## return a list of generic sample_sets
 def all():
