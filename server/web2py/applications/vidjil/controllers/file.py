@@ -58,12 +58,16 @@ def add():
         patient_id = None
         run_id = None
         generic_id = None
+        group_id = None
         if sample_set.sample_type == defs.SET_TYPE_GENERIC:
             generic_id = db( db.generic.sample_set_id == request.vars["id"]).select()[0].id
+            group_id = get_set_group(sample_set.sample_type, generic_id)
         if sample_set.sample_type == defs.SET_TYPE_PATIENT:
             patient_id = db( db.patient.sample_set_id == request.vars["id"]).select()[0].id
+            group_id = get_set_group(sample_set.sample_type, patient_id)
         if sample_set.sample_type == defs.SET_TYPE_RUN:
             run_id = db( db.run.sample_set_id == request.vars["id"]).select()[0].id
+            group_id = get_set_group(sample_set.sample_type, run_id)
         
 		
 	query_pre_process = db(
@@ -99,7 +103,8 @@ def add():
                    patient = patient,
                    sample_type = sample_set.sample_type,
                    run = run,
-                   source_module_active = source_module_active)
+                   source_module_active = source_module_active,
+                   group_id = group_id)
 
 def manage_filename(filename):
     filepath = ""
@@ -278,6 +283,12 @@ def edit():
         patient_list, patient = get_sample_set_list(defs.SET_TYPE_PATIENT, relevant_ids['patient'])
         run_list, run = get_sample_set_list(defs.SET_TYPE_RUN, relevant_ids['run'])
 
+        group_id = None
+        for key in relevant_ids:
+            if (relevant_ids[key] is not None):
+                group_id = get_set_group(key, relevant_ids[key])
+                break
+
         source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
         return dict(message = T('edit file'),
                    generic_list = generic_list,
@@ -289,7 +300,8 @@ def edit():
                    generic = generic,
                    file = db.sequence_file[request.vars["id"]],
                    sample_type = request.vars['sample_type'],
-                   source_module_active = source_module_active)
+                   source_module_active = source_module_active,
+                   group_id = group_id)
 
     else:
         return error_message("you need admin permission to edit files")
