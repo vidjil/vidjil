@@ -334,7 +334,11 @@ def custom():
         request.vars["custom_list"] = [request.vars["custom_list"]]
         
     myGroupBy = None
+    helper = None
     if request.vars["id"] and auth.can_view_sample_set(request.vars["id"]):
+        sample_set = db.sample_set[request.vars["id"]]
+        factory = ModelFactory()
+        helper = factory.get_instance(type=sample_set.sample_type)
         q = ((auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config))
                 & (db.sample_set.id == request.vars["id"])
                 & (db.sample_set_membership.sample_set_id == db.sample_set.id)
@@ -403,7 +407,8 @@ def custom():
 
     return dict(query=query,
                 config_id=config_id,
-                config=config)
+                config=config,
+                helper=helper)
 
 def confirm():
     if auth.can_modify_sample_set(request.vars["id"]):

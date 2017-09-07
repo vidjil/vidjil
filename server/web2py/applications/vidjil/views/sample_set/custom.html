@@ -6,7 +6,7 @@
 <div>
 
 	{{ if request.vars['id']: }}
-		<h3>Compare samples from {{=helper.get_type_display()}} {{=helper.get_name(request.vars['id'])}}</h3>
+		<h3>Compare samples from {{=helper.get_type_display()}} {{=get_sample_name(request.vars["id"])}}</h3>
 	{{ else: }}
 	        <h3>Compare samples</h3>
     {{pass}}
@@ -50,7 +50,7 @@
     <table class="db_table table_compare" id="table">
         <thead>
             <tr><td class="column5"> </td>
-                <td class="column_200"> {{=helper.get_type_display()}} </td>
+                <td class="column_200"> {{=helper.get_type_display() if helper is not None else "name"}} </td>
                 <td class="column_200"> file name </td>
                 <td class="column_100"> sampling date </td>
                 <td> info </td>
