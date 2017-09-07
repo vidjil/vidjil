@@ -240,8 +240,8 @@ def edit_form():
                                                    id_label=request.vars["id_label"]
                                                    )
 
-            group_id = get_set_group(defs.SET_TYPE_PATIENT, request.vars["id"])
             if (patient.info != request.vars["info"]):
+                group_id = get_set_group(defs.SET_TYPE_PATIENT, request.vars["id"])
                 register_tags(db, defs.SET_TYPE_PATIENT, request.vars["id"], request.vars["info"], group_id, reset=True)
 
             res = {"redirect": "back",
