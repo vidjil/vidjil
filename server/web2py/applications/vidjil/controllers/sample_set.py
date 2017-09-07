@@ -371,6 +371,13 @@ def custom():
             )
         myGroupBy = db.sequence_file.id|db.patient.id|db.run.id|db.generic.id|db.results_file.config_id
 
+    if "tag" in request.vars:
+        q = (q
+            & (db.tag.name == request.vars["tag"])
+            & (db.tag_ref.tag_id == db.tag.id)
+            & (db.tag_ref.table_name == 'sequence_file')
+            & (db.tag_ref.record_id == db.sequence_file.id))
+
     query = db(q).select(
                 db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name,
                 db.run.id, db.run.info, db.run.name,
