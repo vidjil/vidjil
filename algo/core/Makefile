@@ -23,7 +23,7 @@ cleancoverage:
 	rm -f *.gcda *.gcno *.gcov
 
 forcedep:
-	$(CXX) $(CXXFLAGS) -M $(SRCCORE) > dep.mk
+	$(CXX) $(CXXFLAGS) $(INC) -M $(SRCCORE) > dep.mk
 
 DEP=$(wildcard dep.mk)
 
