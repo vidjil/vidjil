@@ -1,4 +1,3 @@
-from tag import *
 from controller_utils import error_message
 
 if request.env.http_origin:

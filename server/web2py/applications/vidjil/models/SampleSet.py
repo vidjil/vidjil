@@ -1,5 +1,4 @@
 from abc import ABCMeta, abstractmethod
-from tag import *
 
 class SampleSet(object):
     __metaclass__ = ABCMeta

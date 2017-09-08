@@ -1,7 +1,6 @@
 # coding: utf8
 import gluon.contrib.simplejson, datetime
 import vidjil_utils
-from tag import *
 import time
 import datetime
 

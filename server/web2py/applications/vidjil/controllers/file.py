@@ -6,7 +6,6 @@ import os
 import os.path
 import datetime
 from controller_utils import error_message
-from tag import *
 import jstree
 import base64
 
