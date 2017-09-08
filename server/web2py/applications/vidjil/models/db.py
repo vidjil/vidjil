@@ -257,7 +257,7 @@ db.define_table('user_log',
                 Field('record_id', 'integer'))
 
 db.define_table('tag',
-                Field('name', 'string', unique=True))
+                Field('name', 'string', length=255, unique=True))
 
 db.define_table('group_tag',
                 Field('group_id', 'reference auth_group'),
