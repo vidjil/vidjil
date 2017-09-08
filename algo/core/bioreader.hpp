@@ -27,6 +27,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <stdexcept>
 
 #define SAMPLE_APPROX_NB_SEQUENCES 200
 
