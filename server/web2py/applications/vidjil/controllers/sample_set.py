@@ -195,6 +195,9 @@ def all():
     if "filter" not in request.vars :
         request.vars["filter"] = ""
 
+    if "tag" not in request.vars:
+        request.vars["tag"] = ""
+
     result = helper.filter(request.vars['filter'], result)
     log.debug("%s list (%.3fs) %s" % (request.vars["type"], time.time()-start, request.vars["filter"]))
 
