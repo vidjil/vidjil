@@ -75,6 +75,12 @@ class TagDecorator(TagManager):
             return None
         return re.sub(self.expression(), self.decoration(ltype, stype, target), text)
 
+    def sanitize(self, text):
+        return XML(text,
+                sanitize=True,
+                permitted_tags=['a'],
+                allowed_attributes={'a':['class', 'href', 'onclick', 'data-sample-type', 'data-linkable-type', 'data-linkable-name']})
+
 def get_tag_prefix():
     try:
         tag_prefix = defs.TAG_PREFIX
