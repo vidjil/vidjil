@@ -70,7 +70,7 @@ class TagDecorator(TagManager):
         this = "$(this)" # hack to solve some character escaping issues
         return r'<a onclick="event.preventDefault();event.stopPropagation();db.callLinkable(%s)" href="%s" class="%s-link" data-sample-type="%s" data-linkable-type="%s" data-linkable-name="\1">%s\1</a>' % (this, target, ltype, stype, ltype, self.prefix)
 
-    def decorate_text(self, text, ltype, stype, target):
+    def decorate(self, text, ltype, stype, target):
         if (text is None):
             return None
         return re.sub(self.expression(), self.decoration(ltype, stype, target), text)

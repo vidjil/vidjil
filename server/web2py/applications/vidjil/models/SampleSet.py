@@ -24,7 +24,7 @@ class SampleSet(object):
         return data.info
 
     def get_tagged_info(self, data):
-        return XML(self.tag_decorator.decorate_text(data.info, 'tag', self.type, self.get_list_path()),
+        return XML(self.tag_decorator.decorate(data.info, 'tag', self.type, self.get_list_path()),
                 sanitize=True,
                 permitted_tags=['a'],
                 allowed_attributes={'a':['class', 'href', 'onclick', 'data-sample-type', 'data-linkable-type', 'data-linkable-name']})
