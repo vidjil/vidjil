@@ -419,12 +419,14 @@ def custom():
     if config :
         query = query.find(lambda row : ( row.results_file.config_id==config_id or (str(row.results_file.id) in request.vars["custom_list"])) )
     
+    tag_decorator = TagDecorator(get_tag_prefix())
     log.debug("sample_set/custom (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
 
     return dict(query=query,
                 config_id=config_id,
                 config=config,
-                helper=helper)
+                helper=helper,
+                tag_decorator=tag_decorator)
 
 def confirm():
     if auth.can_modify_sample_set(request.vars["id"]):
