@@ -97,7 +97,7 @@ These instructions are preliminary, other documentation can also be found in [[h
     apt-get install g++
     apt-get install make
     apt-get install unzip
-    apt-get install enum34
+    apt-get install python-pip python-enum34
    #+END_SRC
 
 ** Vidjil server installation and initialization
