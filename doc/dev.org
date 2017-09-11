@@ -360,7 +360,10 @@ gem uninstall selenium-webdriver
 gem install selenium-webdriver -v 2.53.4
 #+END_SRC
 
-However the webdriver may not work with recent versions of Firefox (> 45).
+However the webdriver may not work with recent versions of Firefox (> 45).  In
+such a case you would like to downgrade your Firefox version or use a former
+version. The Firefox version used can be set with an environment variable (see
+below). All Firefox releases are [[https://download-installer.cdn.mozilla.net/pub/firefox/releases/ ][available here]].
 
 **** Launch browser tests
 
