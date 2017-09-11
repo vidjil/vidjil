@@ -283,13 +283,24 @@ The cache is stored for each user and is updated only when a change occurs (mess
     [[../browser/test/QUnit/testFiles][browser/test/QUnit/testFiles]]. The file [[../browser/test/QUnit/testFiles/data_test.js][data_test.js]] contains a toy
     dataset that is used in the tests.
 
-    Unit tests can be launched using a real browser (instead of phantomjs). It
+    Unit tests can be launched using a real browser (instead of nightmare). It
     suffices to open the file [[../browser/test/QUnit/test_Qunit.html][test_Qunit.html]]. In this HTML webpage it is
     possible to see the coverage. It is important that all possible functions
     are covered by unit tests. Having the coverage displayed under Firefox
     needs to display the webpage using a web server for security
     reasons. Under Chromium/Chrome this should work fine by just opening the
     webpage.
+
+**** Installation
+     Nightmare is distributed withing =node= and can therefore be installed with it.
+
+     #+BEGIN_SRC sh
+     apt-get install nodejs-legacy npm
+     npm install nightmare
+     #+END_SRC
+
+     Note that using =nightmare= for our unit testing
+     requires the installation of =xvfb=.
 *** Functional
 
 **** Architecture
