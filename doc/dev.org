@@ -351,8 +351,16 @@ gem install test-unit
 #+END_SRC
 
 This may install a =selenium-webdriver= gem whose version is ≥ 3. We highly
-recommend that you force an install to a version < 3 (/e.g./ 2.53.4). However
-the webdriver may not work with recent versions of Firefox (> 45).
+recommend that you force an install to a version < 3 (/e.g./ 2.53.4).
+
+#+BEGIN_SRC sh
+# Removing a new version of selenium-webdriver
+gem uninstall selenium-webdriver
+# Installing an older version
+gem install selenium-webdriver -v 2.53.4
+#+END_SRC
+
+However the webdriver may not work with recent versions of Firefox (> 45).
 
 **** Launch browser tests
 
