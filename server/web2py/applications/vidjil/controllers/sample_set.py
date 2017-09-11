@@ -165,7 +165,13 @@ def all():
         page = int(request.vars['page'])
         step = 50
 
-    list = SampleSetList(type, page, step, tag=request.vars['tag'])
+    ##filter
+    if "filter" not in request.vars :
+        request.vars["filter"] = ""
+
+    search, tags = parse_search(request.vars["filter"])
+
+    list = SampleSetList(type, page, step, tags=tags)
     list.load_creator_names()
     list.load_sample_information()
     list.load_config_information()
@@ -191,15 +197,8 @@ def all():
     else:
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
 
-    ##filter
-    if "filter" not in request.vars :
-        request.vars["filter"] = ""
-
-    if "tag" not in request.vars:
-        request.vars["tag"] = ""
-
-    result = helper.filter(request.vars['filter'], result)
-    log.debug("%s list (%.3fs) %s" % (request.vars["type"], time.time()-start, request.vars["filter"]))
+    result = helper.filter(search, result)
+    log.debug("%s list (%.3fs) %s" % (request.vars["type"], time.time()-start, search))
 
 
     return dict(query = result,
@@ -373,12 +372,12 @@ def custom():
             )
         myGroupBy = db.sequence_file.id|db.patient.id|db.run.id|db.generic.id|db.results_file.config_id
 
-    if "tag" in request.vars:
-        q = (q
-            & (db.tag.name == request.vars["tag"])
-            & (db.tag_ref.tag_id == db.tag.id)
-            & (db.tag_ref.table_name == 'sequence_file')
-            & (db.tag_ref.record_id == db.sequence_file.id))
+    ##filter
+    if "filter" not in request.vars :
+        request.vars["filter"] = ""
+
+    search, tags = parse_search(request.vars["filter"])
+    q = filter_by_tags(q, 'sequence_file', tags)
 
     query = db(q).select(
                 db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name,
@@ -397,10 +396,6 @@ def custom():
                 groupby = myGroupBy
             )
 
-    ##filter
-    if "filter" not in request.vars :
-        request.vars["filter"] = ""
-        
     for row in query :
         row.checked = False
         if (str(row.results_file.id) in request.vars["custom_list"]) :
@@ -416,14 +411,14 @@ def custom():
             row.names = row.generic.name
             info = row.generic.info
         row.string = [row.names, row.sequence_file.filename, str(row.sequence_file.sampling_date), str(row.sequence_file.pcr), str(row.config.name), str(row.results_file.run_date), info]
-    query = query.find(lambda row : ( vidjil_utils.advanced_filter(row.string,request.vars["filter"]) or row.checked) )
+    query = query.find(lambda row : ( vidjil_utils.advanced_filter(row.string,search) or row.checked) )
 
     
     if config :
         query = query.find(lambda row : ( row.results_file.config_id==config_id or (str(row.results_file.id) in request.vars["custom_list"])) )
     
     tag_decorator = TagDecorator(get_tag_prefix())
-    log.debug("sample_set/custom (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
+    log.debug("sample_set/custom (%.3fs) %s" % (time.time()-start, search))
 
     return dict(query=query,
                 config_id=config_id,

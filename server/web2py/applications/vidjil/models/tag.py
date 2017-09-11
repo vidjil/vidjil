@@ -68,7 +68,7 @@ class TagDecorator(TagManager):
 
     def decoration(self, ltype, stype, target):
         this = "$(this)" # hack to solve some character escaping issues
-        return r'<a onclick="event.preventDefault();event.stopPropagation();db.callLinkable(%s)" href="%s" class="%s-link" data-sample-type="%s" data-linkable-type="%s" data-linkable-name="\1">%s\1</a>' % (this, target, ltype, stype, ltype, self.prefix)
+        return r'<a onclick="event.preventDefault();event.stopPropagation();db.callLinkable(%s)" href="%s" class="%s-link" data-sample-type="%s" data-linkable-type="%s" data-linkable-target-param="%s" data-linkable-name="%s\1">%s\1</a>' % (this, target, ltype, stype, ltype, "filter", self.prefix, self.prefix)
 
     def decorate(self, text, ltype, stype, target):
         if (text is None):
@@ -79,7 +79,7 @@ class TagDecorator(TagManager):
         return XML(text,
                 sanitize=True,
                 permitted_tags=['a'],
-                allowed_attributes={'a':['class', 'href', 'onclick', 'data-sample-type', 'data-linkable-type', 'data-linkable-name']})
+                allowed_attributes={'a':['class', 'href', 'onclick', 'data-sample-type', 'data-linkable-type', 'data-linkable-target-param', 'data-linkable-name']})
 
 def get_tag_prefix():
     try:

@@ -1,5 +1,5 @@
 class SampleSetList():
-    def __init__(self, type, page=None, step=None, tag=None):
+    def __init__(self, type, page=None, step=None, tags=None):
         self.type = type
 
         limitby = None
@@ -7,12 +7,7 @@ class SampleSetList():
             limitby = (page*step, (page+1)*step+1) # one more element to indicate if another page exists
 
         query = (auth.vidjil_accessible_query(PermissionEnum.read.value, db[type]))
-        if tag is not None:
-            query = (query
-                & (db.tag.name == tag)
-                & (db.tag_ref.tag_id == db.tag.id)
-                & (db.tag_ref.table_name == self.type)
-                & (db.tag_ref.record_id == db[type].id))
+        query = filter_by_tags(query, self.type, tags)
 
         query_gss = db(
             query
@@ -119,3 +114,12 @@ class SampleSetList():
 
     def __len__(self):
         return len(self.element_ids)
+
+def filter_by_tags(query, table, tags):
+    if tags is not None and len(tags) > 0:
+        return (query
+            & (db.tag.name.belongs(tags))
+            & (db.tag_ref.tag_id == db.tag.id)
+            & (db.tag_ref.table_name == table)
+            & (db.tag_ref.record_id == db[table].id))
+    return query
