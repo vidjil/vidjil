@@ -108,3 +108,12 @@ def tags_to_json(tags):
         tag_list.append(tag_dict)
 
     return json.dumps(tag_list)
+
+def parse_search(search_string):
+    split = search_string.split()
+    tag_prefix = get_tag_prefix()
+    plen = len(tag_prefix)
+    tags = [t[plen:] for t in split if t[:plen] == tag_prefix]
+    searches = [s for s in split if s[:plen] != tag_prefix]
+    search_string = " ".join(searches)
+    return search_string, tags
