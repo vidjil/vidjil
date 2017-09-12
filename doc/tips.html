@@ -43,9 +43,15 @@
 
     <script>
       var divtips = document.getElementById('tips');
+
+      var oldkey = 'x'
       
       for (var key in tips) 
       {
+        if (oldkey[0] != key[0])
+          divtips.appendChild(document.createElement('br'))
+        oldkey = key
+
         tip = document.createElement('li')
         tip.innerHTML = '<b>' + key + '</b> ' + tips[key]
         divtips.appendChild(tip)
