@@ -318,6 +318,12 @@ Info.prototype = {
         textarea.innerHTML = info ;
         textarea.setAttribute('placeholder', placeholder);
 
+        $(textarea).data('group-id', this.m.group_id);
+        $(textarea).data('needs-atwho', true);
+        $(textarea).on('focus', function() {
+            new VidjilAutoComplete().setupAtWho(this);
+        })
+
         container.appendChild(textarea);
 
         return container;
