@@ -58,17 +58,13 @@ GenericAxis.prototype = {
             }
         }
 
-        this.populateLabels(labels);
+        this.populateLabels(labels, sort);
         this.populateValueMapping();
-        if (sort)
-            this.labels.sort(this.compareLabels);
 
         return this;
     },
 
-    compareLabels: function(lab1, lab2) {
-        var a = lab1.text;
-        var b = lab2.text;
+    compareLabels: function(a, b) {
         if (typeof a === 'undefined') return (typeof b === 'undefined')  ? 0 :  -1;
         if (typeof b === 'undefined') return (typeof a === 'undefined')  ? 0 :  1;
   
@@ -80,12 +76,12 @@ GenericAxis.prototype = {
         if (a.constructor === Number) return (b.constructor === Number ) ? (a-b) : -1;
     },
 
-    populateLabels: function(labels) {
+    populateLabels: function(labels, sort) {
         var values = this.values;
         var label_mapping = this.label_mapping;
 
         if (typeof labels === 'undefined')
-            this.computeLabels(values);
+            this.computeLabels(values, sort);
         else {
             for (var i=0; i < values.length; i++) {
                 var value = values[i];
@@ -181,28 +177,29 @@ GenericAxis.prototype = {
         return value;
     },
 
-    computeLabels: function(values) {
-        var cursor = 0;
-        var labels = {};
+    computeLabels: function(values, sort) {
+        var label_list = [];
         var has_undefined;
         for (var i = 0; i < values.length; i++) {
             var value = values[i];
             var key = this.applyConverter(value);
             if (typeof key == 'undefined') {
                 has_undefined = true;
-            } else if (typeof labels[key] === 'undefined') {
-                labels[key] = this.label("line", cursor, key);
-                cursor++;
+            } else if (label_list.indexOf(key) == -1) {
+                label_list.push(key);
             }
         }
 
-        for (var idx in labels) {
-            var label = labels[idx];
-            this.addLabel(label.type, label.text, label.pos/cursor, label.text);
+        if (sort)
+            label_list.sort(this.compareLabels);
+
+        for (var idx = 0; idx < label_list.length; idx++) {
+            var label = label_list[idx];
+            this.addLabel("line", label, idx/label_list.length, label);
         }
         if (has_undefined) {
             if (typeof this.label_mapping["?"] === 'undefined')
-                this.addLabel("line", "?", cursor, "?");
+                this.addLabel("line", "?", label_list.length + 1, "?");
         }
     },
 
