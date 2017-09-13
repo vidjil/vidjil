@@ -747,8 +747,8 @@ This file will be relatively small (a few kB or MB) and can be taken again as an
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -c segment -g germline/homo-sapiens.g -2 -3 -d demo/segment_S22.fa
-   # Detailed V(D)J designation, including multiple D, and CDR3 detection on all reads, without clone clustering
+./vidjil -c segment -g germline/homo-sapiens.g -2 -3 -d -x 50 demo/Stanford_S22.fasta
+   # Detailed V(D)J designation, including multiple D, and CDR3 detection on the first 50 reads, without clone clustering
    # (this is slow and should only be used for testing, or on a small file)
 #+END_SRC
 
