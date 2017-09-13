@@ -73,7 +73,7 @@ GenericAxis.prototype = {
         if (typeof b === 'undefined') return (typeof a === 'undefined')  ? 0 :  1;
   
         if (a.constructor === String) {
-            if (b.constructor === String) return va.localeCompare(vb);
+            if (b.constructor === String) return a.localeCompare(b);
             if (b.constructor === Number ) return 1
         }
  
