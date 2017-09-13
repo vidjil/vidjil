@@ -699,14 +699,14 @@ require either the =-g germline/homo-sapiens-g:IGH= option, or the multi-germlin
 ** Basic usage: PCR-based datasets, with primers in the V(D)J regions (such as BIOMED-2 primers)
 
 #+BEGIN_SRC sh
-./vidjil -g germline/homo-sapiens.g:IGH -3 data/Stanford_S22.fasta
+./vidjil -g germline/homo-sapiens.g:IGH -3 demo/Stanford_S22.fasta
    # Cluster the reads into clones, based on windows overlapping IGH CDR3s.
    # Assign the VDJ genes and try to detect the CDR3 of each clone.
    # Summary of clones is available both on stdout, in out/Stanford_S22.vdj.fa and in out/Stanford_S22.vidjil.
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -g germline -2 -3 -d data/Stanford_S22.fasta
+./vidjil -g germline -2 -3 -d demo/Stanford_S22.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
    # Assign the VDJ genes (including multiple D) and try to detect the CDR3 of each clone.
@@ -717,7 +717,7 @@ require either the =-g germline/homo-sapiens-g:IGH= option, or the multi-germlin
 ** Basic usage: Whole RNA-Seq or capture datasets
 
 #+BEGIN_SRC sh
-./vidjil -g germline -2 -U data/Stanford_S22.fasta
+./vidjil -g germline -2 -U demo/Stanford_S22.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
    # Assign the VDJ genes and try to detect the CDR3 of each clone.
@@ -733,13 +733,13 @@ This file will be relatively small (a few kB or MB) and can be taken again as an
 ** Advanced usage
 
 #+BEGIN_SRC sh
-./vidjil -c clones -g germline/homo-sapiens.g:IGH -r 1 ./data/clones_simul.fa
+./vidjil -c clones -g germline/homo-sapiens.g:IGH -r 1 ./algo/tests/data/clones_simul.fa
    # Extracts the windows with at least 1 read each (-r 1, the default being -r 5)
    # then cluster them into clones
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -c clones -g germline/homo-sapiens.g:IGH -r 1 -n 5 ./data/clones_simul.fa
+./vidjil -c clones -g germline/homo-sapiens.g:IGH -r 1 -n 5 ./algo/tests/data/clones_simul.fa
    # Window extraction + clone clustering,
    # with automatic clustering, distance five (-n 5)
    # The result of the automatic clustering is in the .vidjil file
@@ -747,13 +747,13 @@ This file will be relatively small (a few kB or MB) and can be taken again as an
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -c segment -g germline/homo-sapiens.g -2 -3 -d data/segment_S22.fa
+./vidjil -c segment -g germline/homo-sapiens.g -2 -3 -d demo/segment_S22.fa
    # Detailed V(D)J designation, including multiple D, and CDR3 detection on all reads, without clone clustering
    # (this is slow and should only be used for testing, or on a small file)
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -c germlines -g germline/homo-sapiens.g data/Stanford_S22.fasta
+./vidjil -c germlines -g germline/homo-sapiens.g demo/Stanford_S22.fasta
    # Output statistics on the number of occurrences of k-mers of the different germlines
 #+END_SRC
 
