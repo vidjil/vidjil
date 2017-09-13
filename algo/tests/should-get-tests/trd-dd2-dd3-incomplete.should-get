@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -w 10 -e 10 -A -g $VIDJIL_DIR/germline $VIDJIL_DIR/data/trd-dd2-dd3.fa
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -w 10 -e 10 -A -g $VIDJIL_DIR/germline $VIDJIL_DATA/trd-dd2-dd3.fa
 
 $ Segment 5 reads, thanks to -i
 1:junction detected in 5 reads

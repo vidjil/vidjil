@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -A -uU -g $VIDJIL_DIR/germline $VIDJIL_DIR/data/chimera-trg.fa
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -A -uU -g $VIDJIL_DIR/germline $VIDJIL_DATA/chimera-trg.fa
 
 $ Do not segment on IGL by chance
 f1:IGL .* -> .* 0
