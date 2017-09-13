@@ -48,7 +48,7 @@ void testFineSegment(IndexTypes index)
   BioReader seqD("../../germline/homo-sapiens/IGHD.fa", 2);
   BioReader seqJ("../../germline/homo-sapiens/IGHJ.fa", 2);
   
-  OnlineFasta data("../../data/Stanford_S22.fasta", 1, " ");
+  OnlineFasta data("data/Stanford_S22.fasta", 1, " ");
   data.next();
   data.next();
 
@@ -102,7 +102,7 @@ void testSegmentOverlap(IndexTypes index)
   BioReader seqV("../../germline/homo-sapiens/TRGV.fa", 2);
   BioReader seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
   
-  BioReader data("../../data/bug-segment-overlap.fa", 1, " ");
+  BioReader data("data/bug-segment-overlap.fa", 1, " ");
   
   Germline *germline1 ;
   germline1 = new Germline("TRG", 'G', seqV, BioReader(), seqJ, "##########");
@@ -138,7 +138,7 @@ void testSegmentationCause(IndexTypes index) {
   BioReader seqV("../../germline/homo-sapiens/TRGV.fa", 2);
   BioReader seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
   
-  BioReader data("../../data/segmentation.fasta", 1, " ");
+  BioReader data("data/segmentation.fasta", 1, " ");
 
   Germline *germline ;
   germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ, "##########");
@@ -286,7 +286,7 @@ void testExtractor(IndexTypes index) {
   BioReader seqV("../../germline/homo-sapiens/TRGV.fa", 2);
   BioReader seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
   
-  OnlineFasta data("../../data/segmentation.fasta", 1, " ");
+  OnlineFasta data("data/segmentation.fasta", 1, " ");
 
   Germline *germline ;
   germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ, "##########");

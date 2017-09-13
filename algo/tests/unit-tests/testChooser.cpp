@@ -3,7 +3,7 @@
 #include "core/bioreader.hpp"
 
 void testChooser() {
-  list<Sequence> reads = BioReader("../../data/test1.fa").getAll();
+  list<Sequence> reads = BioReader("data/test1.fa").getAll();
 
   ReadLengthScore rls;
   ReadChooser rc(reads, rls);

@@ -5,8 +5,8 @@
 #include <vector>
 
 void testOnlineBioReader1() {
-  OnlineBioReader *fa = OnlineBioReaderFactory::create("../../data/test1.fa");
-  OnlineBioReader *fq = OnlineBioReaderFactory::create("../../data/test1.fq");
+  OnlineBioReader *fa = OnlineBioReaderFactory::create("data/test1.fa");
+  OnlineBioReader *fq = OnlineBioReaderFactory::create("data/test1.fq");
   int nb_seq = 0;
 
   while (fa->hasNext()) {
@@ -27,7 +27,7 @@ void testOnlineBioReader1() {
 }
 
 void testOnlineBioReaderMaxNth() {
-  OnlineBioReader *fa = OnlineBioReaderFactory::create("../../data/test1.fa", 0, "|", 2, 2);
+  OnlineBioReader *fa = OnlineBioReaderFactory::create("data/test1.fa", 0, "|", 2, 2);
 
   // First sequence is 'seq2', because only_nth_sequence = 2
   TAP_TEST(fa->hasNext(), TEST_O_FASTA_HAS_NEXT, "");
@@ -55,15 +55,15 @@ void testFastaNbSequences() {
   int a1 = approx_nb_sequences_in_file("../../germline/homo-sapiens/IGHV.fa");
   TAP_TEST(a1 >= 345 && a1 <= 355, TEST_FASTA_NB_SEQUENCES, "");
 
-  int a2 = nb_sequences_in_file("../../data/Stanford_S22.fasta", true);
+  int a2 = nb_sequences_in_file("data/Stanford_S22.fasta", true);
   TAP_TEST(a2 >= 13100 && a2 <= 13200, TEST_FASTA_NB_SEQUENCES, "");
 }
 
 
 void testFasta1() {
-  BioReader fa("../../data/test1.fa");
-  BioReader fq("../../data/test1.fq");
-  BioReader bam("../../data/test1.bam");
+  BioReader fa("data/test1.fa");
+  BioReader fq("data/test1.fq");
+  BioReader bam("data/test1.bam");
 
   TAP_TEST(fa.size() == fq.size(), TEST_FASTA_SIZE, "");
   TAP_TEST(fa.size() == bam.size(), TEST_BAM_SIZE, fa.size() << " " << bam.size());
@@ -82,9 +82,9 @@ void testFasta1() {
 }
 
 void testFastaAdd() {
-  BioReader fa1("../../data/test1.fa");
-  BioReader fa2("../../data/test1.fa");
-  fa2.add("../../data/test1.fa");
+  BioReader fa1("data/test1.fa");
+  BioReader fa2("data/test1.fa");
+  fa2.add("data/test1.fa");
 
   TAP_TEST(fa1.size() * 2 == fa2.size(), TEST_FASTA_ADD, "");
   for (int i=0; i < fa1.size(); i++) {
@@ -109,7 +109,7 @@ void testFastaAddThrows() {
   }
   TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
 
-  BioReader fa1("../../data/test1.fa");
+  BioReader fa1("data/test1.fa");
 
   caught = false;
   try {
@@ -141,7 +141,7 @@ void testFastaAddThrows() {
 
   caught = false;
   try {
-    BioReader fa1("../../data/malformed1.fq");
+    BioReader fa1("data/malformed1.fq");
   } catch (invalid_argument e) {
     TAP_TEST(string(e.what()).find("Expected line starting with +") != string::npos, TEST_FASTA_INVALID_FILE, "");
     caught = true;
@@ -149,7 +149,7 @@ void testFastaAddThrows() {
   TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
   caught = false;
   try {
-    BioReader fa1("../../data/malformed2.fq");
+    BioReader fa1("data/malformed2.fq");
   } catch (invalid_argument e) {
     TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
@@ -157,7 +157,7 @@ void testFastaAddThrows() {
   TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
   caught = false;
   try {
-    BioReader fa1("../../data/malformed3.fq");
+    BioReader fa1("data/malformed3.fq");
   } catch (invalid_argument e) {
     TAP_TEST(string(e.what()).find("Quality and sequence don't have the same length") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
@@ -165,7 +165,7 @@ void testFastaAddThrows() {
   TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
   caught = false;
   try {
-    BioReader fa1("../../data/malformed4.fq");
+    BioReader fa1("data/malformed4.fq");
   } catch (invalid_argument e) {
     TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
@@ -173,7 +173,7 @@ void testFastaAddThrows() {
   TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
   caught = false;
   try {
-    BioReader fa1("../../data/malformed5.fq");
+    BioReader fa1("data/malformed5.fq");
   } catch (invalid_argument e) {
     TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
@@ -184,7 +184,7 @@ void testFastaAddThrows() {
   try {
     // Can't test empty file with BioReader since we
     // don't complain for empty files explicitly in BioReader constructor.
-    fa_read = OnlineBioReaderFactory::create("../../data/malformed6.fq");
+    fa_read = OnlineBioReaderFactory::create("data/malformed6.fq");
     fa_read->next();
   } catch (invalid_argument e) {
     delete fa_read;
@@ -195,7 +195,7 @@ void testFastaAddThrows() {
 
   caught = false;
   try {
-    BioReader fa1("../../data/malformed7.fq");
+    BioReader fa1("data/malformed7.fq");
   } catch(invalid_argument e) {
     TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
@@ -205,7 +205,7 @@ void testFastaAddThrows() {
 
 void testFastaLabelAndMark() {
 
-  BioReader fa("../../data/testMarks.fa", 1, "=", 9);
+  BioReader fa("data/testMarks.fa", 1, "=", 9);
 
   TAP_TEST(fa.read(0).label == "tic", TEST_FASTA_LABEL, "");
   TAP_TEST(fa.read(0).marked_pos == 9, TEST_FASTA_MARK, "");
@@ -231,7 +231,7 @@ void testSequenceOutputOperator() {
 
 void testFastaOutputOperator(){
   ostringstream oss;
-  BioReader fa("../../data/test1.fa");
+  BioReader fa("data/test1.fa");
   oss << fa;
   TAP_TEST(oss.str() == ">seq1\nACAAC\n>seq2\nCGACCCCCAA\n>seq3\nA\n>seq4\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n>\nAATN\n", TEST_FASTA_OUT, oss.str());
 }
