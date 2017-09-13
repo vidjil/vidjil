@@ -1,0 +1,19 @@
+!LAUNCH: (cd $VIDJIL_DIR ; ./vidjil -h 2> out/vidjil-h.txt ; grep 'vidjil -c' out/vidjil-h.txt > out/vidjil-h.sh ; sh out/vidjil-h.sh)
+
+# Test examples embedded in './vidjil -h'
+
+# Run 6 times (-h + 5 examples)
+6:Vidjil -- V.D.J recombinations analysis
+
+# '-c clone', two times
+2: end of clones
+
+# '-c windows'
+1:Extracting windows
+
+# '-c segment'
+1:Segmenting V.D.J
+
+# '-c germlines'
+1:Discovering germlines
+1:max.*kmer
