@@ -149,7 +149,8 @@ Axes.prototype = {
                 label: "locus",
                 axis: new GenericAxis(),
                 fct: function(clone){return clone.germline},
-                pretty: function(system) { return self.m.systemBox(system) }
+                pretty: function(system) { return self.m.systemBox(system) },
+                sort: true
             },
             "Size" : {
                 doc: "ratio of the number of reads of each clone to the total number of reads in the selected locus",
