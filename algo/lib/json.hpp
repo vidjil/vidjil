@@ -1831,7 +1831,10 @@ class lexer
         for (auto range = ranges.begin(); range != ranges.end(); ++range)
         {
             get();
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunsequenced"
             if (JSON_LIKELY(*range <= current and current <= *(++range)))
+#pragma clang diagnostic pop
             {
                 add(current);
             }
