@@ -35,6 +35,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "core/check-compiler.h"
 #include "core/tools.h"
 #include "core/json.h"
 #include "core/germline.h"
