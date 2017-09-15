@@ -29,4 +29,7 @@ diff-from-saved:
 	echo
 	diff -r -u -x "*[.][^f][^a]" -x "germline*" -x "get*" -x "Makefile" -x "saved-*" saved-germline/ .
 
+distrib: get-all-data js
+	cd .. ; tar cvzf germline-`cat germline/germline_id`.tar.gz germline/germline_id germline/*/*.fa germline/IMGT_RELEASE browser/js/germline.js
+
 .PHONY: all germline js get-all-data clean diff-from-saved
