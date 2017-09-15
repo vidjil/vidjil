@@ -93,21 +93,24 @@ def register_tags(db, table, record_id, text, group_id, reset=False):
     tag_extractor = TagExtractor(tag_prefix, db)
     tags = tag_extractor.execute(table, record_id, text, group_id, reset)
 
-def get_tags(db, group_id):
+def get_tags(db, group_ids):
     return db((db.tag.id == db.group_tag.tag_id) &
-              (db.group_tag.group_id == group_id)
-            ).select(db.tag.ALL)
+              (db.group_tag.group_id.belongs(group_ids))
+            ).select(db.group_tag.group_id, db.tag.ALL)
 
 def tags_to_json(tags):
-    tag_list = []
+    tag_map = {}
     prefix = get_tag_prefix()
-    for tag in tags:
+    for row in tags:
+        group_id = row.group_tag.group_id
+        if group_id not in tag_map:
+            tag_map[group_id] = []
         tag_dict = {}
-        tag_dict['id'] = tag.id
-        tag_dict['name'] = tag.name
-        tag_list.append(tag_dict)
+        tag_dict['id'] = row.tag.id
+        tag_dict['name'] = row.tag.name
+        tag_map[group_id].append(tag_dict)
 
-    return json.dumps(tag_list)
+    return json.dumps(tag_map)
 
 def parse_search(search_string):
     split = search_string.split()

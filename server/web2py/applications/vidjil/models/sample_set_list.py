@@ -86,7 +86,7 @@ class SampleSetList():
             (db.auth_group.id == db.auth_permission.group_id)
             & (db[self.type].id.belongs(self.element_ids))
         ).select(
-            db[self.type].id, db.auth_group.role
+            db[self.type].id, db.auth_group.role, db.auth_group.id
         )
         for i, row in enumerate(query) :
             self.elements[row[self.type].id].group_list.append(row.auth_group.role.replace('user_','u'))

@@ -170,6 +170,9 @@ def all():
         request.vars["filter"] = ""
 
     search, tags = parse_search(request.vars["filter"])
+    group_ids = [int(g.id) for g in get_group_list(auth)]
+    parent_group_ids = [int(g.id) for f in auth.get_user_group_parents()]
+    group_ids = group_ids + parent_group_ids
 
     list = SampleSetList(type, page, step, tags=tags)
     list.load_creator_names()
@@ -204,6 +207,7 @@ def all():
     return dict(query = result,
                 fields = fields,
                 helper = helper,
+                group_ids = group_ids,
                 isAdmin = isAdmin,
                 reverse = False,
                 step = step,
