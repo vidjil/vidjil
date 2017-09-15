@@ -138,7 +138,6 @@ def gap_j(seq):
     if seqs in CUSTOM_118:
         print "# Custom 118 position in %s" % seq
         pos = CUSTOM_118[seqs]
-        seq =  seq.replace('\n', " # Custom\n")
 
     else:
         m = j118.search(seq)
