@@ -345,7 +345,7 @@ template<template <class> class T>
 void testBugAffectAnalyser() {
   BioReader seqV("../../germline/homo-sapiens/IGHV.fa", 2);
   BioReader seqJ("../../germline/homo-sapiens/IGHJ.fa", 2);
-  BioReader data("../../data/bug-revcomp.fa", 1, " ");
+  BioReader data("data/bug-revcomp.fa", 1, " ");
 
   int k = 9;
   T<KmerAffect> index(k, true);

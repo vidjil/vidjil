@@ -2,7 +2,7 @@
 #include "core/representative.h"
 
 void testRepresentative() {
-  list<Sequence> reads = BioReader("../../data/representative.fq").getAll();
+  list<Sequence> reads = BioReader("data/representative.fq").getAll();
 
   KmerRepresentativeComputer krc(reads, "##############");
 
@@ -53,7 +53,7 @@ void testRepresentative() {
 }
 
 void testRevcompRepresentative() {
-  list<Sequence> reads = BioReader("../../data/representative_revcomp.fq").getAll();
+  list<Sequence> reads = BioReader("data/representative_revcomp.fq").getAll();
 
   KmerRepresentativeComputer krc(reads, "##############");
   krc.setOptions(false, 3, 0.5);

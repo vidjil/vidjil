@@ -74,7 +74,7 @@
 #define DEFAULT_MULTI_GERMLINE_FILE "homo-sapiens.g"
 
 #define DEFAULT_READ_HEADER_SEPARATOR " "
-#define DEFAULT_READS  "./data/Stanford_S22.fasta"
+#define DEFAULT_READS  "./demo/Stanford_S22.fasta"
 #define DEFAULT_MIN_READS_CLONE 5
 #define DEFAULT_MAX_REPRESENTATIVES 100
 #define DEFAULT_MAX_CLONES 100
@@ -101,8 +101,6 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define EDGES_FILENAME ".edges"
 #define COMP_FILENAME "comp.vidjil"
 #define JSON_SUFFIX ".vidjil"
-
-// "tests/data/leukemia.fa" 
 
 #define DEFAULT_K      0
 #define DEFAULT_W      50
@@ -260,12 +258,12 @@ void usage(char *progname, bool advanced)
 
        << endl 
        << "Examples (see doc/algo.org)" << endl
-       << "  " << progname << " -c clones   -g germline/homo-sapiens.g     -2 -3     data/Stanford_S22.fasta   # (basic usage, detect the locus for each read," << endl
+       << "  " << progname << " -c clones   -g germline/homo-sapiens.g     -2 -3     demo/Stanford_S22.fasta   # (basic usage, detect the locus for each read," << endl
        << "                                                                                          #  including unexpected recombinations, analyzes CDR3)" << endl
-       << "  " << progname << " -c clones   -g germline/homo-sapiens.g:IGH    -3     data/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
-       << "  " << progname << " -c windows  -g germline/homo-sapiens.g     -2 -uu -U data/Stanford_S22.fasta   # (detect the locus, splits all the reads into large files)" << endl
-       << "  " << progname << " -c segment  -g germline/homo-sapiens.g   -2 -3 -X 50 data/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing, here on first 50 reads)" << endl
-       << "  " << progname << " -c germlines -g germline/homo-sapiens.g              data/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
+       << "  " << progname << " -c clones   -g germline/homo-sapiens.g:IGH    -3     demo/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
+       << "  " << progname << " -c windows  -g germline/homo-sapiens.g     -2 -uu -U demo/Stanford_S22.fasta   # (detect the locus, splits all the reads into large files)" << endl
+       << "  " << progname << " -c segment  -g germline/homo-sapiens.g   -2 -3 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing, here on first 50 reads)" << endl
+       << "  " << progname << " -c germlines -g germline/homo-sapiens.g              demo/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
     ;
   exit(1);
 }

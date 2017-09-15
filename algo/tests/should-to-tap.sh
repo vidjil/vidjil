@@ -75,7 +75,7 @@ cd "$DIR"
 
 VIDJIL_DIR=../../../
 VIDJIL_DEFAULT_OPTIONS=""
-DATA_DIR=../../../data/
+VIDJIL_DATA=../data/
 OUTPUT_DIR=.
 TAP_FILE=${BASE%.*}.tap
 LOG_FILE=${BASE%.*}.log

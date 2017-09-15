@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/algo/tools/align -m 6 -i 0 -j 1 $VIDJIL_DIR/data/msa.fa
+!LAUNCH: $VIDJIL_DIR/algo/tools/align -m 6 -i 0 -j 1 $VIDJIL_DATA/msa.fa
 
 $ Default cost and parameters
 1: (4, -6/-10/-10, -9999-9999/-9999-9999, -1, -2)

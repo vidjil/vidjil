@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG -c clones -A -3 $VIDJIL_DIR/data/segment_lec.fa
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG -c clones -A -3 $VIDJIL_DATA/segment_lec.fa
 
 $ Extract 50bp windows (TRG)
 1:found . 50-windows

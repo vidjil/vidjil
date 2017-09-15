@@ -139,14 +139,17 @@ cppcheck:
 
 ###
 
-data germline browser server: %:
+data:
+	$(MAKE) -C algo/tests/data
+
+germline browser server: %:
 	$(MAKE) -C $@
 
 clean:
 	$(MAKE) -C $(VIDJIL_ALGO_SRC) clean
 
 cleanall: clean
-	$(MAKE) -C data $^
+	$(MAKE) -C algo/tests/data $^
 	$(MAKE) -C germline $^
 	$(MAKE) -C $(VIDJIL_ALGO_SRC) cleanall
 	$(MAKE) -C server cleanall
