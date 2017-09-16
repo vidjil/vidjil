@@ -148,6 +148,11 @@ class KmerAffectAnalyser: public AffectAnalyser {
 
   int count(const KmerAffect &affect) const;
 
+  /**
+   * @return a minimizing position in the sequence, computed on the matching affectations
+   */
+  int minimize(const KmerAffect &affect) const;
+
   const KmerAffect &getAffectation(int i) const;
 
   vector<KmerAffect> getAllAffectations(affect_options_t options) const;
