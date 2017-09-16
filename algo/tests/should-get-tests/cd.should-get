@@ -6,6 +6,9 @@ $ Load CD-sorting.fa
 $ KmerSegmenter, map reads
 1: found 6 50-windows in 8 reads
 
+$ KmerSegmenter, cluster trimmed reads with original ones
+2:Clone .* 2 reads
+
 $ FineSegmenter, find 3 clones with CD4 and 3 with CD19
 3:clone-00.* CD4 .* SEG
 3:clone-00.* CD19 .* SEG
