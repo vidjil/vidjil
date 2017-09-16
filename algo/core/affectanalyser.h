@@ -151,7 +151,7 @@ class KmerAffectAnalyser: public AffectAnalyser {
   /**
    * @return a minimizing position in the sequence, computed on the matching affectations
    */
-  int minimize(const KmerAffect &affect) const;
+  int minimize(const KmerAffect &affect, int margin, int width) const;
 
   const KmerAffect &getAffectation(int i) const;
 
