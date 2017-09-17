@@ -1,5 +1,5 @@
 {
-    "ref": "http://www.vidjil.org/germlines/germline-46.tar.gz",
+    "ref": "http://www.vidjil.org/germlines/germline-49.tar.gz",
 
     "species": "Rattus norvegicus",
     "species_taxon_id": 10116,
