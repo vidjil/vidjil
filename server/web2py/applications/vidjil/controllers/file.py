@@ -209,11 +209,11 @@ def add_form():
                             pre_process_flag=pre_process_flag,
                             provider=auth.user_id)
 
-        group_id = None
+        group_ids = set()
         for key in id_dict:
-            group_id = get_set_group(key, id_dict[key])
-
-        register_tags(db, 'sequence_file', id, request.vars["file_info"], group_id)
+            group_ids.add(get_set_group(key, id_dict[key]))
+        for group_id in group_ids:
+            register_tags(db, 'sequence_file', id, request.vars["file_info"], group_id)
 
         log_message = "upload started"
         if request.vars['filename'] != "":
@@ -363,11 +363,11 @@ def edit_form():
                                                         provider=auth.user_id)
 
             if sequence_file.info != request.vars['file_info']:
-                group_id = None
+                group_ids = set()
                 for key in id_dict:
-                    group_id = get_set_group(key, id_dict[key])
-                    break
-                register_tags(db, 'sequence_file', id, request.vars["file_info"], group_id, reset=True)
+                    group_ids.add(get_set_group(key, id_dict[key]))
+                for group_id in group_ids:
+                    register_tags(db, 'sequence_file', id, request.vars["file_info"], group_id, reset=True)
 
         if request.vars['filename'] != "":
             data, filepath = manage_filename(request.vars["filename"])
