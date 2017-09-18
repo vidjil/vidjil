@@ -230,6 +230,13 @@ fake_mail_preference_id = db.user_preference.insert(user_id =user_id,
 
 fake_task_id = db.scheduler_task.insert(application_name='vidjil_test',
                                         task_name='test_task')
+
+first_fake_tag_id = db.tag.insert(name="first_fake_tag")
+sec_fake_tag_id = db.tag.insert(name="sec_fake_tag")
+
+db.group_tag.insert(group_id=unique_group, tag_id=first_fake_tag_id)
+db.group_tag.insert(group_id=fake_group_id, tag_id=sec_fake_tag_id)
+
 db.commit()
 
 
