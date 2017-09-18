@@ -170,9 +170,7 @@ def all():
         request.vars["filter"] = ""
 
     search, tags = parse_search(request.vars["filter"])
-    group_ids = [int(g.id) for g in get_group_list(auth)]
-    parent_group_ids = [int(g.id) for f in auth.get_user_group_parents()]
-    group_ids = group_ids + parent_group_ids
+    group_ids = get_involved_groups()
 
     list = SampleSetList(type, page, step, tags=tags)
     list.load_creator_names()
@@ -376,6 +374,8 @@ def custom():
             )
         myGroupBy = db.sequence_file.id|db.patient.id|db.run.id|db.generic.id|db.results_file.config_id
 
+    group_ids = get_involved_groups()
+
     ##filter
     if "filter" not in request.vars :
         request.vars["filter"] = ""
@@ -428,7 +428,8 @@ def custom():
                 config_id=config_id,
                 config=config,
                 helper=helper,
-                tag_decorator=tag_decorator)
+                tag_decorator=tag_decorator,
+                group_ids=group_ids)
 
 def confirm():
     if auth.can_modify_sample_set(request.vars["id"]):
