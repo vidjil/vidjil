@@ -37,3 +37,11 @@ def get_default_creation_group(auth):
     groups = [{'id': group_dict[key]['id'], 'name': group_dict[key]['name']} for key in group_dict]
     return (groups, max_group)
 
+def get_involved_groups():
+    '''
+    Returns all the groups that are related to the user. This includes all groups
+    that the user is a member of, as well as any of their parents
+    '''
+    group_ids = [int(g.id) for g in get_group_list()]
+    parent_group_ids = [int(g.id) for f in auth.get_user_group_parents()]
+    return group_ids + parent_group_ids
