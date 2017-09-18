@@ -178,7 +178,7 @@ def all():
     list.load_creator_names()
     list.load_sample_information()
     list.load_config_information()
-    if isAdmin or len(get_group_list(auth)) > 1:
+    if isAdmin or len(get_group_list()) > 1:
         list.load_permitted_groups()
     list.load_anon_permissions()
     result = list.get_values()
