@@ -42,6 +42,6 @@ def get_involved_groups():
     Returns all the groups that are related to the user. This includes all groups
     that the user is a member of, as well as any of their parents
     '''
-    group_ids = [int(g.id) for g in get_group_list()]
+    group_ids = [int(i) for i in auth.user_groups]
     parent_group_ids = [int(g.id) for f in auth.get_user_group_parents()]
     return group_ids + parent_group_ids
