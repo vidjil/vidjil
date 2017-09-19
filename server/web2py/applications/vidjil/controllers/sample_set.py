@@ -381,9 +381,33 @@ def custom():
         request.vars["filter"] = ""
 
     search, tags = parse_search(request.vars["filter"])
-    q = filter_by_tags(q, 'sequence_file', tags)
 
-    query = db(q).select(
+    if (tags is not None and len(tags) > 0):
+        q = filter_by_tags(q, 'sequence_file', tags)
+        count = db.tag.name.count()
+        query = db(q).select(
+                db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name,
+                db.run.id, db.run.info, db.run.name,
+                db.generic.id, db.generic.info, db.generic.name,
+                db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
+                db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
+                db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
+                db.sequence_file.size_file,
+                db.tag_ref.record_id,
+                db.tag_ref.table_name,
+                count,
+                left = [
+                    db.patient.on(db.patient.sample_set_id == db.sample_set.id),
+                    db.run.on(db.run.sample_set_id == db.sample_set.id),
+                    db.generic.on(db.generic.sample_set_id == db.sample_set.id)
+                    ],
+                orderby = db.sequence_file.id|db.results_file.run_date,
+                groupby = db.tag_ref.table_name|db.tag_ref.record_id,
+                having = count >= len(tags)
+            )
+
+    else:
+        query = db(q).select(
                 db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name,
                 db.run.id, db.run.info, db.run.name,
                 db.generic.id, db.generic.info, db.generic.name,
