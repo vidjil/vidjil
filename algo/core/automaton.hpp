@@ -183,16 +183,12 @@ void PointerACAutomaton<Info>::insert(const seqtype &seq, Info info) {
     }
   }
   state->is_final = true;
-  if (state->informations.front().isNull()) {
-    this->nb_kmers_inserted++;
-    this->kmers_inserted[info]++;
+  this->nb_kmers_inserted++;
+  this->kmers_inserted[info]++;
+  if (state->informations.front().isNull() || ! this->multiple_info)
     state->informations.front() += info;
-  } else {
-    if (this->multiple_info)
-      state->informations.push_back(info);
-    else
-      state->informations.front() += info;
-  }
+  else
+    state->informations.push_back(info);
 }
 
 template <class Info>
