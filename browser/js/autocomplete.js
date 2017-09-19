@@ -102,9 +102,7 @@ VidjilAutoComplete.prototype = {
             at: at,
             alias: 'tags',
             data: VidjilAutoComplete.defaultLoadingData,
-            callbacks: {
-                ...self.getDefaultCallbacks()
-            },
+            callbacks: self.getDefaultCallbacks(),
             searchKey: 'search',
         });
     },
