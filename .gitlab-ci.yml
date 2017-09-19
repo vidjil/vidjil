@@ -20,7 +20,7 @@ stages:
 
 test_algo_unit:
   stage: test_unit
-  script: make unit
+  script: make -C algo unit
   only:
     - /^feature-a\/.*$/
 
@@ -32,25 +32,25 @@ test_tools_unit:
 
 test_algo_should:
   stage: test_functional
-  script: make should
+  script: make -C algo should
   only:
     - /^feature-a\/.*$/
 
 test_algo_shouldvdj:
   stage: test_shouldvdj
-  script: make shouldvdj
+  script: make -C algo shouldvdj
   only:
     - /^feature-a\/.*$/
 
 algo_valgrind_unit:
   stage: valgrind_unit
-  script: make valgrind_unit
+  script: make -C algo valgrind_unit
   only:
     - /^feature-a\/.*$/
 
 algo_valgrind_functional:
   stage: valgrind_functional
-  script: make valgrind_should
+  script: make -C algo valgrind_should
   when: manual
   only:
     - /^feature-a\/.*$/
