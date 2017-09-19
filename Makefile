@@ -12,30 +12,6 @@ endif
 
 TEE = python tools/tee.py -v
 
-all:
-	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)
-
-static:
-	$(MAKE) all LDFLAGS="-static -static-libstdc++"
-
-test:
-	$(MAKE) -C algo/tests cleantests
-	$(TEE) '$(MAKE) COVERAGE="$(COVERAGE)" unit' algo/tests/out-unit.log
-	$(MAKE) functional
-	$(TEE) '$(MAKE) test_tools_if_python'        algo/tests/out-tools.log
-	@echo
-	@echo "*** All tests passed. Congratulations !"
-	@echo
-	$(MAKE) -C algo/tests snapshot_success
-	$(MAKE) -C algo/tests mark_failed_tests_as_todo
-
-snapshot_diff:
-	$(MAKE) -C algo/tests snapshot_diff
-
-snapshot_diff_current:
-	$(MAKE) -C algo/tests snapshot_diff_current
-
-
 test_browser: unit_browser functional_browser
 
 test_server: unit_server
@@ -46,52 +22,14 @@ test_tools_if_python:
 test_tools:
 	$(MAKE) -C tools/tests
 
-unit: all
-	@echo "*** Launching unit tests..."
-	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests
-	@echo "*** All unit tests passed"
-
-functional: all
-	$(TEE) '$(MAKE) should'      algo/tests/out-should-get.log
-	$(TEE) '$(MAKE) shouldvdj'   algo/tests/out-should-vdj.log
-
-should: all
-	@echo
-	@echo "*** Launching .should_get tests..."
-	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests should
-	@echo "*** All .should_get tests passed"
-
-shouldvdj: all
-	@echo
-	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests shouldvdj_if_python
-
 shouldvdj_generate:
 	@echo
 	rm -rf data/gen
 	mkdir -p data/gen
 	cd germline ; python generate-recombinations.py --random-deletions 8,4:3,1:5,3 --random-insertions 5,4 -e .01
 
-shouldvdj_generated_kmer: all
-	@echo
-	@echo "*** Launching generated .should-vdj-fa tests (and accepts errors) -- Kmer"
-	-cd data/gen ; python ../../algo/tests/should-vdj-to-tap.py -2q *.should-vdj.fa
-	@echo "*** Generated .should-vdj.fa tests finished -- Kmer"
-	python algo/tests/tap-stats.py data/gen/0-*.2.tap
-	python algo/tests/tap-stats.py data/gen/5-*.2.tap
 
-shouldvdj_generated_fine: all
-	@echo
-	@echo "*** Launching generated .should-vdj-fa tests (and accepts errors) -- Fine"
-	-cd data/gen ; python ../../algo/tests/should-vdj-to-tap.py *.should-vdj.fa
-	@echo "*** Generated .should-vdj.fa tests finished -- Fine"
-	python algo/tests/tap-stats.py data/gen/0-*.1.tap
-	python algo/tests/tap-stats.py data/gen/5-*.1.tap
-
-valgrind_unit:
-	$(MAKE) -C algo/tests valgrind_tests
-
-valgrind_should:
-	$(MAKE) -C algo/tests valgrind_should
+### Browser tests
 
 unit_browser:
 	$(MAKE) -C browser/test unit
@@ -105,38 +43,6 @@ headless_browser:
 unit_server:
 	$(MAKE) -C server/ unit
 
-### Code coverage
-
-coverage: unit_coverage should_coverage
-
-unit_coverage: clean
-	$(MAKE) COVERAGE=1 unit
-should_coverage: clean
-	$(MAKE) COVERAGE=1 functional
-
-### Reports with gcovr
-
-unit_gcovr: unit_coverage
-	mkdir -p reports
-	which gcovr > /dev/null && (cd algo;  gcovr -r . -e tests/ --xml > ../reports/unit_coverage.xml) || echo "gcovr is needed to generate a full report"
-should_gcovr: should_coverage
-	mkdir -p reports
-	which gcovr > /dev/null && (cd algo; gcovr -r . -e tests/ --xml > ../reports/should_coverage.xml) || echo "gcovr is needed to generate a full report"
-
-### Upload to coveralls.io
-
-unit_coveralls:
-	coveralls $(COVERALLS_OPTIONS) --exclude release --exclude algo/lib --exclude algo/tests --exclude algo/tools --exclude tests --exclude tools --exclude lib --gcov-options '\-lp'
-should_coveralls:
-	coveralls $(COVERALLS_OPTIONS) --exclude release --exclude algo/lib --exclude algo/tests --exclude algo/tools --exclude tests --exclude tools --exclude lib --gcov-options '\-lp' -r algo
-
-
-### cppcheck
-
-cppcheck:
-	mkdir -p reports
-	cppcheck --enable=all --xml . 2>! reports/cppcheck.xml
-
 ###
 
 data:
@@ -144,9 +50,6 @@ data:
 
 germline browser server: %:
 	$(MAKE) -C $@
-
-clean:
-	$(MAKE) -C $(VIDJIL_ALGO_SRC) clean
 
 cleanall: clean
 	$(MAKE) -C algo/tests/data $^
