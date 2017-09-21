@@ -716,12 +716,17 @@ changeAlleleNotation: function(alleleNotation) {
         this.min_size = min_size
         if (this.norm && this.normalization.method=="constant"){
             for (var j=0; j<this.samples.order.length; j++){
+                if(this.normalization.A[j]==0){
+                var max = this.normalization.B
+                }else{
                 var max = this.normalization.B/this.normalization.A[j]
+                }
                 if (max>this.max_size) this.max_size=max;
             }
         }
         
         //*2 pour avoir une marge minimum d'un demi-log
+        // 1/0 == infinity
         this.precision=(1/this.min_size)*2
         
         this.scale_color = d3.scale.log()
