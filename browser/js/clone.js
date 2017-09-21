@@ -1277,7 +1277,9 @@ Clone.prototype = {
         span_star.onclick = function (e) {
             self.m.openTagSelector(self.index, e);
         }
+        span_star.id = self.index
         span_star.appendChild(icon('icon-star-2', 'clone tag'))
+
         span_star.setAttribute('id', 'color' + this.index);
         if (typeof this.tag != 'undefined')
             span_star.style.color = this.m.tag[this.getTag()].color
