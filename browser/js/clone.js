@@ -1278,8 +1278,12 @@ Clone.prototype = {
             self.m.openTagSelector(self.index, e);
         }
         span_star.id = self.index
-        span_star.appendChild(icon('icon-star-2', 'clone tag'))
+        if ((m.norm)&&(self.index==m.normalization.id)){
+        span_star.appendChild(icon('icon-lock-1', 'clone tag'))
 
+        }else{
+        span_star.appendChild(icon('icon-star-2', 'clone tag'))
+        }
         span_star.setAttribute('id', 'color' + this.index);
         if (typeof this.tag != 'undefined')
             span_star.style.color = this.m.tag[this.getTag()].color
