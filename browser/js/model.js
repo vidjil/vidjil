@@ -717,11 +717,11 @@ changeAlleleNotation: function(alleleNotation) {
         if (this.norm && this.normalization.method=="constant"){
             for (var j=0; j<this.samples.order.length; j++){
                 if(this.normalization.A[j]==0){
-                var tmp_max = this.normalization.B
+                var tmp_max_value = this.normalization.B
                 }else{
-                var tmp_max = this.normalization.B/this.normalization.A[j]
+                var tmp_max_value = this.normalization.B/this.normalization.A[j]
                 }
-                if (tmp_max>this.max_size) this.max_size=tmp_max;
+                if (tmp_max_value>this.max_size) this.max_size=tmp_max_value;
             }
         }
         
