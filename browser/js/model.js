@@ -613,6 +613,7 @@ changeAlleleNotation: function(alleleNotation) {
     
     /**
      * normalize a size to match the normalization done on a given time/sample
+     * normalization is done when update is 
      * @param {float} original_size - size before normalization
      * @param {integer} time - time/sample index of the timepoint where happen the normalization
      * @return {float} normalized_size - size after normalization
@@ -669,6 +670,7 @@ changeAlleleNotation: function(alleleNotation) {
     
     /**
      * compute normalization factor needed to give a data an expected size
+     * first function called when normalization button is clicked
      * @param {integer} data - index of the data used as pivot for normalization
      * @param {float} expected_size - the size the should have the clone after normalization
      * */
