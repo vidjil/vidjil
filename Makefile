@@ -111,7 +111,7 @@ distrib:
 	cd release/$(DIST_DIR) && $(MAKE)
 	cd release/$(DIST_DIR) && $(MAKE) germline
 	cd release/$(DIST_DIR) && $(MAKE) data
-	cd release/$(DIST_DIR) && $(MAKE) test
+	cd release/$(DIST_DIR) && $(MAKE) -C algo test
 	cd release/$(DIST_DIR) && $(MAKE) clean && $(MAKE) static && mv vidjil vidjil-$(RELEASE_TAG)_`uname -m`
 
 
