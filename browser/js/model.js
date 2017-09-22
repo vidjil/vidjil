@@ -704,7 +704,7 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     update_precision: function () {
         var min_size = 1
-        
+        var max
         for (var i=0; i<this.samples.order.length; i++){
             var t = this.samples.order[i]
             var size = this.min_sizes[t]
@@ -717,11 +717,11 @@ changeAlleleNotation: function(alleleNotation) {
         if (this.norm && this.normalization.method=="constant"){
             for (var j=0; j<this.samples.order.length; j++){
                 if(this.normalization.A[j]==0){
-                var tmp_max_value = this.normalization.B
+                max = this.normalization.B
                 }else{
-                var tmp_max_value = this.normalization.B/this.normalization.A[j]
+                max = this.normalization.B/this.normalization.A[j]
                 }
-                if (tmp_max_value>this.max_size) this.max_size=tmp_max_value;
+                if (max>this.max_size) this.max_size=max;
             }
         }
         
@@ -982,6 +982,7 @@ changeAlleleNotation: function(alleleNotation) {
         for (var n = 0; n < this.clones.length; n++) {
             this.clone(n).updateColor()
         }
+        // update icon if normalisation is setup 
         if(this.norm){
         $("i.icon-lock-1").toggleClass('icon-lock-1 icon-star-2')
         $("#"+this.normalization.id+" i.icon-star-2").toggleClass('icon-star-2 icon-lock-1')
