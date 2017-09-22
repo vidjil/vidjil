@@ -368,9 +368,10 @@ QUnit.test("export", function(assert) {
     var c4 = new Clone(json_clone4, m, 1)
     m.initClones()
 
-    assert.equal(c3.getPrintableSegSequence(), "aaaaa\naaaaatttt\nttttt", "getPrintableSegSequence() : Ok");
+    assert.equal(c3.getPrintableSegSequence(), "aaaaaa\naaaattttt\ntttt", "c3.getPrintableSegSequence() : Ok");
+    assert.equal(c4.getPrintableSegSequence(), "ATGGGTCCAGTCGTGA\nACTGTGCAT\nGCCGATAGACGAGTACGATGCCAGGTATTACC", "c4.getPrintableSegSequence() : Ok");
     console.log(c3.getFasta())
-    assert.equal(c3.getFasta(), ">id3    19 nt, 10 reads (5.000%)\naaaaa\naaaaatttt\nttttt\n", "getFasta() : Ok");
+    assert.equal(c3.getFasta(), ">id3    19 nt, 10 reads (5.000%)\naaaaaa\naaaattttt\ntttt\n", "getFasta() : Ok");
 
     var res3 = [
         "0", "custom name", "id3",
