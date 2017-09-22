@@ -101,7 +101,7 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
     $b.window(:title => "").use do
       assert ($b.text.index(/TRGV5.*200 nt/) > 0), "header name"
       assert ($b.text.index(/IGHV3-13.*374 nt/) > 0), "header name"
-      assert ($b.text.include? "CCTGG\nGGGGCCA\nGATT"), "sequence"
+      assert ($b.text.include? "CCTGGG\nGGGCCAG\nATT"), "sequence"
     end
   end
   

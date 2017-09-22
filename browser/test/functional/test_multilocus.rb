@@ -294,7 +294,7 @@ class TestMultilocus < BrowserTest
     assert ( $b.window(:title => "").exists? ) , ">> fail opening fasta export "
     $b.window(:title => "").use do
       assert ($b.text.include? ">TRBV29*01 -1/0/-0 TRBD1*01 -2/0/-5 TRBJ2-5*01"), "header name"
-      assert ($b.text.include? "YYGGGYYACGYAYAGCGGYGYTTYYCCTYTYTGYTYTGCYAAAYAACYYYYTGTGYCTYTGTGCYGYGTTYCCCGGYYYAAACYCYCYYCCTYG\nGCYAGGYCYGG"), "sequence"
+      assert ($b.text.include? "YYGGGYYACGYAYAGCGGYGYTTYYCCTYTYTGYTYTGCYAAAYAACYYYYTGTGYCTYTGTGCYGYGTTYCCCGGYYYAAACYCYCYYCCTYGG\nCYAGGYCYGG"), "sequence"
     end
   end
 
