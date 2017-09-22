@@ -737,13 +737,13 @@ Clone.prototype = {
         }
 
         var s = ''
-        s += this.sequence.substring(0,  this.seg['5'].stop)
+        s += this.sequence.substring(0,  this.seg['5'].stop+1)
         s += '\n'
-        if (this.seg['5'].stop < this.seg['3'].start - 1) {
-            s += this.sequence.substring(this.seg['5'].stop, this.seg['3'].start - 1)
+        if (this.seg['5'].stop+1 < this.seg['3'].start ) {
+            s += this.sequence.substring(this.seg['5'].stop+1, this.seg['3'].start)
             s += '\n'
         }
-        s += this.sequence.substring(this.seg['3'].start - 1)
+        s += this.sequence.substring(this.seg['3'].start)
         return s
     },
 
