@@ -50,7 +50,13 @@ json_data = {
             "3start" : 6,
             "5end" : 5,
             "cdr3" : {"start": 5, "stop": 6, aa: "AG"}
-        }
+        },
+        "_average_read_length": [
+            21
+        ], 
+        "_coverage": [
+            1
+        ]
     },
     {
         "sequence" : "cccccgtcccccccatca",
@@ -65,7 +71,13 @@ json_data = {
             "3start" : 15,
             "5end" : 5,
             "fr1" : {"start" :2, "stop":5}
-        }
+        },
+        "_average_read_length": [
+            18
+        ], 
+        "_coverage": [
+            1
+        ]
     },
     {
         "sequence" : "cccccccccccccccccccc",
@@ -80,7 +92,13 @@ json_data = {
             "3" : "IGHJ6*01",
             "3start" : 15,
             "5end" : 5
-        }
+        },
+        "_average_read_length": [
+            20
+        ], 
+        "_coverage": [
+            1
+        ]
     },
     {
         "id": "id4",
@@ -184,7 +202,13 @@ json_data = {
                 "JUNCTION (AA)": "CATWDRLKDWIKTF",
                 "JUNCTION (AA) (with frameshift)": ""
             },
-        }
+        },
+        "_average_read_length": [
+            241
+        ], 
+        "_coverage": [
+            1
+        ]
     },
     {
         "sequence" : "catcatcatgatgctacgatcttac",
@@ -197,7 +221,10 @@ json_data = {
         "seg" : {
             "f1" : {"start": 4, "stop": 7},
             "f2" : {"seq": "tacgat"}, // 15 -> 20
-        }
+        },
+         "_average_read_length": [
+            undefined
+        ],
     }
   ]
 };
