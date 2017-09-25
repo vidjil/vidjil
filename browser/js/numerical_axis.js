@@ -185,11 +185,12 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
             var nb_steps = this.NB_STEPS_IN_AXIS-1
             undefined_min = min
             // Recover the initial min value
-            if (has_undefined) {
-                min = (min*this.NB_STEPS_IN_AXIS + max)/(this.NB_STEPS_IN_AXIS + 1)
-            }
 
-            nb_step = this.computeSteps(max, nb_steps);
+            nb_step = this.computeSteps(min, max, nb_steps);
+ 
+            if (has_undefined) {
+                nb_steps = nb_steps -1 
+            }
 
             h = (max-min)/nb_steps
             // Computed so that pos <= 1 (in the loop below)
@@ -201,7 +202,7 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
             for (var j = 0; j <= nb_steps; j++) {
                 pos = (h*j)*(1/delta);
 
-                text = this.getLabelText(h*j);
+                text = this.getLabelText(min + h*j);
                 if (this.reverse) pos = 1 - pos;
                 if (!display_label) text = "";
                 this.addLabel("line", text, pos, text);
@@ -210,7 +211,7 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
     }
 
     NumericalAxis.prototype.computeSteps = function(min, max, nb_steps) {
-        var steps = nb_steps;
+        var steps = nb_steps+1;
         if (Math.abs(max - min) < nb_steps) {
             steps = Math.abs(max - min)
         }
