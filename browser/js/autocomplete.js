@@ -128,10 +128,21 @@ VidjilAutoComplete.prototype = {
                     return {
                         id: i.id,
                         name: i.name,
-                        search: `${i.id} ${i.name}`,
+                        search: `${i.name} ${i.id}`,
                     };
                 });
             },
+            sorter(query, items, searchKey) {
+                return items.sort(function(a, b){
+                    console.log("a: " + a[searchKey] + " b: " + b[searchKey]);
+                    if(a[searchKey] < b[searchKey]) {
+                        return -1;
+                    } else if (a[searchKey] == b[searchKey]) {
+                        return 0;
+                    }
+                    return 1;
+                });
+            }
         }
         return callbacks;
     },
