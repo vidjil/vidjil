@@ -724,10 +724,14 @@ Report.prototype = {
                 var seqN1 = "\u00A0" + seq.substring(seg['5'].stop + 1, seg['4'].start) + "\u00A0"
                 var seqD  = "\u00A0" +seq.substring(seg['4'].start , seg['4'].stop + 1) + "\u00A0"
                 var seqN2 = "\u00A0" +seq.substring(seg['4'].stop + 1, seg['3'].start)  + "\u00A0"
+                seqN1 = (seqN1 == "\u00A0\u00A0") ? "" : seqN1
+                seqD  = (seqD  == "\u00A0\u00A0") ? "" : seqD
+                seqN2 = (seqN2 == "\u00A0\u00A0") ? "" : seqN2
                 $('<span/>', {'class': 'n_gene', 'text': seqN1}).appendTo(sequence);
                 $('<span/>', {'class': 'd_gene', 'text': seqD}).appendTo(sequence);
                 $('<span/>', {'class': 'n_gene', 'text': seqN2}).appendTo(sequence);
             } else {
+                seqN = (seqN == "\u00A0\u00A0") ? "" : seqN
                 $('<span/>', {'class': 'n_gene', 'text': seqN}).appendTo(sequence);
             }
             $('<span/>', {'class': 'j_gene', 'text': seqJ}).appendTo(sequence);
