@@ -1278,7 +1278,7 @@ Clone.prototype = {
             self.m.openTagSelector(self.index, e);
         }
         span_star.id = self.index
-        if ((m.norm)&&(self.index==m.normalization.id)){
+        if ((self.m.norm)&&(self.index==self.m.normalization.id)){
         span_star.appendChild(icon('icon-lock-1', 'clone tag'))
 
         }else{
