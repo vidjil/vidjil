@@ -192,11 +192,15 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
                 nb_steps = nb_steps -1 
             }
 
-            h = (max-min)/nb_steps
+            if (has_undefined){
+                this.labels.push(this.label("line", (this.reverse) ? 0 : 1, "?"))
+                h = (max-min)/(nb_steps+1)
+            } else {
+                h = (max-min)/(nb_steps)
+            }
+
             // Computed so that pos <= 1 (in the loop below)
             var delta = (min - max)/((min - undefined_min)/(max-undefined_min) - 1)
-            if (has_undefined)
-                this.labels.push(this.label("line", (this.reverse) ? 0 : 1, "?"))
             // Shift the start when there is an undefined value
             var start_shift = (min - undefined_min)/(max-undefined_min)
             for (var j = 0; j <= nb_steps; j++) {
