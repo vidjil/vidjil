@@ -322,13 +322,13 @@ class TestMultilocus < BrowserTest
       n_gene = $b.element(:class => 'n_gene', :index => 0)
       # This is true with a 0-based index, which is the case for the vidjil
       # JSON version used
-      assert (n_gene.text == ' A '), ("N1 should be A, it is '" + n_gene.text + "'")
+      assert (n_gene.text == 'A'), ("N1 should be A, it is '" + n_gene.text + "'")
 
       n_gene = $b.element(:class => 'n_gene', :index => 1)
       assert (n_gene.text == ''), ("N2 should be empty, it is '" + n_gene.text + "'")
 
-      assert($b.element(:class => 'j_gene').text == ' YYGYYTYYAATGTYCYYCCYAG')
-      assert($b.element(:class => 'v_gene').text == 'YTYTYAYTGGTGCTGGYACCTYAAAYGYYTGYCCTYTGGGYYAGGCYCYYAYACGYAYAYCTYTYCYCTGCTGYATTGGCTYYCCYYAYYYTTTGYCTYTGTGCYGYGTYTGCGGYYTYTGYAAYCGCYYTTTTGYYAGYAGCCGGCY ')
+      assert($b.element(:class => 'j_gene').text == 'YYGYYTYYAATGTYCYYCCYAG')
+      assert($b.element(:class => 'v_gene').text == 'YTYTYAYTGGTGCTGGYACCTYAAAYGYYTGYCCTYTGGGYYAGGCYCYYAYACGYAYAYCTYTYCYCTGCTGYATTGGCTYYCCYYAYYYTTTGYCTYTGTGCYGYGTYTGCGGYYTYTGYAAYCGCYYTTTTGYYAGYAGCCGGCY')
     end
     $b.window(:title => "analysis-example.vidjil – helloworld").close
 
