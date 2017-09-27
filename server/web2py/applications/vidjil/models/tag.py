@@ -18,11 +18,10 @@ class TagExtractor(TagManager):
 
     def create(self, name):
         db = self.db
-        try:
+        tid = db(db.tag.name.upper() == name.upper()).select(db.tag.id).first()
+        if (tid is None):
             tid = db.tag.insert(name=name)
             db.commit()
-        except:
-            tid = db(db.tag.name == name).select(db.tag.id).first()
         return tid
 
     def link_to_group(self, tag_id, group_id):

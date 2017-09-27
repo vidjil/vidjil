@@ -138,7 +138,7 @@ class SampleSetList():
 def filter_by_tags(query, table, tags):
     if tags is not None and len(tags) > 0:
         return (query
-            & (db.tag.name.belongs(tags))
+            & (db.tag.name.upper().belongs([t.upper() for t in tags]))
             & (db.tag_ref.tag_id == db.tag.id)
             & (db.tag_ref.table_name == table)
             & (db.tag_ref.record_id == db[table].id))
