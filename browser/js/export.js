@@ -712,6 +712,7 @@ Report.prototype = {
         
         //colorized clone sequence
         var sequence = $('<div/>', {'class': 'sequence'}).appendTo(clone);
+        var nbsp = "\u00A0"
         if (this.m.clone(cloneID).hasSeg('5', '3')){
             var seg = this.m.clone(cloneID).seg
             var seq = this.m.clone(cloneID).getSequence()
@@ -720,15 +721,20 @@ Report.prototype = {
             var seqJ = seq.substring(seg['3'].start)
 
             $('<span/>', {'class': 'v_gene', 'text': seqV}).appendTo(sequence);
+            $('<span/>', {'class': 'space', 'text': nbsp}).appendTo(sequence);
             if (this.m.clone(cloneID).getGene("4") != "undefined D"){
                 var seqN1 = seq.substring(seg['5'].stop + 1, seg['4'].start)
-                var seqD = seq.substring(seg['4'].start , seg['4'].stop + 1)
+                var seqD  = seq.substring(seg['4'].start , seg['4'].stop + 1)
                 var seqN2 = seq.substring(seg['4'].stop + 1, seg['3'].start)
                 $('<span/>', {'class': 'n_gene', 'text': seqN1}).appendTo(sequence);
+                $('<span/>', {'class': 'space', 'text': nbsp}).appendTo(sequence);
                 $('<span/>', {'class': 'd_gene', 'text': seqD}).appendTo(sequence);
+                $('<span/>', {'class': 'space', 'text': nbsp}).appendTo(sequence);
                 $('<span/>', {'class': 'n_gene', 'text': seqN2}).appendTo(sequence);
-            }else{
+                $('<span/>', {'class': 'space', 'text': nbsp}).appendTo(sequence);
+            } else {
                 $('<span/>', {'class': 'n_gene', 'text': seqN}).appendTo(sequence);
+                $('<span/>', {'class': 'space', 'text': nbsp}).appendTo(sequence);
             }
             $('<span/>', {'class': 'j_gene', 'text': seqJ}).appendTo(sequence);
         }
