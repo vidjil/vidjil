@@ -62,7 +62,7 @@ Axes.prototype = {
             "sequenceLength" : {
                 doc: "length of the consensus sequence",
                 label: "clone consensus length",
-                axis: new NumericalAxis(this.m, false, true),
+                axis: new NumericalAxis(this.m, false, false),
                 fct: function(clone) {return clone.getSequenceLength()},
                 pretty: function(len) { return createClassedSpan('threeDigits', len) }
             },

@@ -92,8 +92,39 @@ QUnit.test("axis", function(assert) {
     
     assert.equal(axis.pos(m.clone(0)).pos.toPrecision(3), 0.00, "custom  : clone 0 (nlength = 0) position -> 0.00")
     assert.equal(axis.pos(m.clone(1)).pos.toPrecision(3), 0.257, "custom  : clone 1 (nlength = 9) position -> 0.30")
-
+  
+    //sequenceLength
+    axis = new NumericalAxis(m)
+    axis.init(m.clones,
+            function(clone) {
+                return clone.getSequenceLength();
+            },
+            undefined,
+            false)
     
+    assert.equal(axis.pos(m.clone(0)).pos.toPrecision(3), 0.0325, "custom 2 : clone 0 (sequenceLength = 21)  position -> 0.0325")
+    assert.equal(axis.pos(m.clone(1)).pos.toPrecision(3), 0.0236, "custom 2 : clone 1 (sequenceLength = 18)  position -> 0.0236")
+    assert.equal(axis.pos(m.clone(3)).pos.toPrecision(3), 0.683,  "custom 2 : clone 3 (sequenceLength = 241) position -> 0.683")
+    assert.equal(axis.label_mapping.hasOwnProperty('0'),  false, "axis have not label 0")
+    assert.equal(axis.label_mapping.hasOwnProperty('10'), true,  "axis have label 10")
+    assert.equal(axis.label_mapping.hasOwnProperty('281'), true, "axis have label 281")
+    assert.equal(axis.label_mapping['10'].pos.toPrecision(3), 0, "pos of axis.label 10 is 0")
+    assert.equal(axis.label_mapping['281'].pos.toPrecision(3), 0.800, "pos of axis.label 281 is 0.800")
+    assert.equal(axis.labels[0].pos, 1, "pos of axis label 0 ('?' value) is 1")
+    assert.equal(axis.labels[axis.labels.length-1].pos, 1, "pos of last axis label is 1")
+    assert.equal( (axis.labels.length != axis.label_mapping.length), true, "axis.labels length != axis.label_mapping length (du to '?')")
+
+    // sequenceLength with undefined
+    axis = new NumericalAxis(m)
+    axis.init(m.clones,
+            function(clone) {
+                return clone.getSequenceLength();
+            },
+            undefined,
+            true)
+    assert.notEqual(axis.labels[axis.labels.length-2].pos, 1, "pos of last axis label is not 1")
+    assert.equal( (axis.labels.length != axis.label_mapping.length), true, "axis.labels length != axis.label_mapping length (du to '?')")
+
     //gc
     axis = new PercentAxis(m, false, false);
     axis.init(m.clones, 'GCContent', undefined, false, 0, 1)
