@@ -971,7 +971,7 @@ Graph.prototype = {
         
         var max = this.m.precision*this.m.max_size
         //get ready for something really dirty
-        if (this.m.norm && this.m.normalization.method == "constant"){
+        if (this.m.norm){
             for (var i=0; i<this.m.samples.order.length; i++) {
                 for (var j=0; j<this.m.clones.length; j++){
                     var size = this.m.precision*this.m.clone(j).getSize()

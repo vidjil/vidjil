@@ -625,11 +625,12 @@ changeAlleleNotation: function(alleleNotation) {
             var A = this.normalization.A[time] /* standard/spike at point time */
             var B = this.normalization.B       /* standard/spike expected value */
             
-            if (this.normalization.method=="constant" || original_size <= A){
+            if (original_size <= A){
                 normalized_size = (original_size * B) / A
-            }else{
-                normalized_size = B + ( (original_size - A) * ( (1 - B) / (1 - A) ) )
             }
+            // }else{
+            //     normalized_size = B + ( (original_size - A) * ( (1 - B) / (1 - A) ) )
+            // }
             
         }else{
             normalized_size = original_size
@@ -716,7 +717,7 @@ changeAlleleNotation: function(alleleNotation) {
         
         this.max_size = 1
         this.min_size = min_size
-        if (this.norm && this.normalization.method=="constant"){
+        if (this.norm){
             for (var j=0; j<this.samples.order.length; j++){
                 if(this.normalization.A[j]==0){
                 max = this.normalization.B
@@ -1932,20 +1933,8 @@ changeAlleleNotation: function(alleleNotation) {
         if (top>maxTop) top=maxTop;
         this.tagSelector.style.top=top+"px";
     },
-    
-    /**
-     * change the strategy for normalization
-     * @param {string} method - can be 'constant' or 'to-100'
-     * */
-    changeNormMethod : function (method){
-        this.normalization.method=method;
-        if (this.normalization.type=="data" && method !="constant"){
-            this.normalization.method="constant";
-        }
-        
-        this.update()
-    },
-    
+
+
     /**
      * load a new germline and update 
      * @param {string} system - system string to load

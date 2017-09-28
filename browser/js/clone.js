@@ -474,7 +474,7 @@ Clone.prototype = {
         if (this.m.reads.segmented[time] === 0 ) return 0
         var result = this.getReads(time) / this.m.reads.segmented[time]
         
-        if (this.m.norm && this.m.normalization.method!="constant") result = this.m.normalize(result, time)
+        if (this.m.norm ) result = this.m.normalize(result, time)
 
         return result
     },
