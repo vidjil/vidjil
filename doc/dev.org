@@ -305,6 +305,17 @@ The cache is stored for each user and is updated only when a change occurs (mess
 
      Note that using =nightmare= for our unit testing
      requires the installation of =xvfb=.
+
+**** Debugging
+     If there is a problem with the nightmare or electron (nightmare
+     dependency), you may encounter a lack of output or error messages.
+     To address this issue, run:
+
+     #+BEGIN_SRC sh
+     cd browser/test/QUnit
+     DEBUG=nightmare*,electron:* node nightmare.js
+     #+END_SRC
+
 *** Functional
 
 **** Architecture
