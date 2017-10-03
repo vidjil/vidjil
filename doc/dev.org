@@ -299,7 +299,8 @@ The cache is stored for each user and is updated only when a change occurs (mess
 
      #+BEGIN_SRC sh
      apt-get install nodejs-legacy npm
-     npm install nightmare
+     npm install nightmare -g # make -C browser/test unit will automatically
+     link to global nightmare installation
      #+END_SRC
 
      Note that using =nightmare= for our unit testing
