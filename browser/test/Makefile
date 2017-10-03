@@ -15,6 +15,7 @@ functional-rbx: ../../doc/analysis-example1.vidjil
 nightmare: SHELL:=/bin/bash
 nightmare:
 	cd QUnit ; \
+	npm link nightmare ; \
 	[ `xvfb-run -a node nightmare.js | tee >(cat >&2) | grep -c '^not ok'` -eq 0 ]
 
 quality:
