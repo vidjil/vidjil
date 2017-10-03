@@ -8,7 +8,7 @@ class TagManager(object):
         self.prefix = prefix
 
     def expression(self):
-        return r'%s(\w+)' % self.prefix
+        return ur'%s(\w+)' % self.prefix
 
 class TagExtractor(TagManager):
 
@@ -48,7 +48,7 @@ class TagExtractor(TagManager):
         db.commit()
 
     def parse_text(self, text):
-        return list(set(re.findall(self.expression(), text)))
+        return list(set(re.findall(self.expression(), unicode(text, 'utf-8'), re.UNICODE)))
 
     def execute(self, table, record_id, text, group_id, reset=False):
         if (reset):
@@ -67,12 +67,12 @@ class TagDecorator(TagManager):
 
     def decoration(self, ltype, stype, target):
         this = "$(this)" # hack to solve some character escaping issues
-        return r'<a onclick="event.preventDefault();event.stopPropagation();db.callLinkable(%s)" href="%s" class="%s-link" data-sample-type="%s" data-linkable-type="%s" data-linkable-target-param="%s" data-linkable-name="%s\1">%s\1</a>' % (this, target, ltype, stype, ltype, "filter", self.prefix, self.prefix)
+        return ur'<a onclick="event.preventDefault();event.stopPropagation();db.callLinkable(%s)" href="%s" class="%s-link" data-sample-type="%s" data-linkable-type="%s" data-linkable-target-param="%s" data-linkable-name="%s\1">%s\1</a>' % (this, target, ltype, stype, ltype, "filter", self.prefix, self.prefix)
 
     def decorate(self, text, ltype, stype, target):
         if (text is None):
             return None
-        return re.sub(self.expression(), self.decoration(ltype, stype, target), text)
+        return re.sub(self.expression(), self.decoration(ltype, stype, target), unicode(text, 'utf-8'), flags=re.UNICODE)
 
     def sanitize(self, text):
         return XML(text,
