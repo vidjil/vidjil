@@ -16,7 +16,7 @@ nightmare: SHELL:=/bin/bash
 nightmare:
 	cd QUnit ; \
 	npm link nightmare ; \
-	[ `xvfb-run -a node nightmare.js | tee >(cat >&2) | grep -c '^not ok'` -eq 0 ]
+	[ `xvfb-run -a node nightmare.js | tee >(cat >&2) | grep -c '^not ok'` -eq 0 ] && [ -f tap_output ]
 
 quality:
 	make -C .. quality
