@@ -662,10 +662,13 @@ changeAlleleNotation: function(alleleNotation) {
             this.norm = false
             
             for (var i=0; i<this.samples.number; i++){
-                this.normalization.A[i] = this.clone(cloneID).getSize(i)
+                this.normalization.size_list[i] = this.clone(cloneID).getSize(i)
             }
             
             this.norm = tmp
+        norm_hash = jQuery.extend(true, {}, this.normalization)     
+        this.normalization_list.push(norm_hash)
+    
         }
     },
     
@@ -679,16 +682,16 @@ changeAlleleNotation: function(alleleNotation) {
         expected_size = typeof expected_size !== 'undefined' ? expected_size : this.data[data].expected;
         this.norm = true
         
-        this.normalization.A = []
-        this.normalization.B = expected_size
+        this.normalization.size_list = []
+        this.normalization.expected_size = expected_size
         this.normalization.id = data
-        this.normalization.type = "data"
         this.data[data].expected = expected_size
         
         for (var i=0; i<this.samples.number; i++){
-            this.normalization.A[i] = this.data[data][i]
+            this.normalization.size_list[i] = this.data[data][i]
         }
-        this.changeNormMethod("constant")
+         norm_hash = jQuery.extend(true, {}, this.normalization)
+        this.normalization_list.push(norm_hash)
     },
     
     /**
