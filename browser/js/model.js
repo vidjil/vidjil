@@ -173,11 +173,11 @@ Model.prototype = {
         this.norm = false;
         this.normalization = { 
             "method" : "constant",
-            "A" : [],
-            "B" : 0,
+            "size_list" : [],
+            "expected_size" : 0,
             "id" : -1
         };
-
+        this.normalization_list=[]
         /*Variables pour DBSCAN*/
         this.eps = 0;
         this.nbr = 0;
@@ -621,9 +621,9 @@ changeAlleleNotation: function(alleleNotation) {
     normalize: function (original_size, time) {
         var normalized_size = 0;
         
-        if (this.normalization.A.length !== 0 && this.normalization.A[time] !== 0) {
-            var A = this.normalization.A[time] /* standard/spike at point time */
-            var B = this.normalization.B       /* standard/spike expected value */
+        if (this.normalization.size_list.length !== 0 && this.normalization.size_list[time] !== 0) {
+            var A = this.normalization.size_list[time] /* standard/spike at point time */
+            var B = this.normalization.expected_size       /* standard/spike expected value */
             
             if (original_size <= A){
                 normalized_size = (original_size * B) / A
@@ -653,8 +653,8 @@ changeAlleleNotation: function(alleleNotation) {
             this.norm = true
             expected_size = typeof expected_size !== 'undefined' ? expected_size : this.clone(cloneID).expected;
             
-            this.normalization.A = []
-            this.normalization.B = expected_size
+            this.normalization.size_list = []
+            this.normalization.expected_size = expected_size
             this.normalization.id = cloneID
             this.normalization.type = "clone"
             
@@ -696,8 +696,8 @@ changeAlleleNotation: function(alleleNotation) {
      * clones sizes can change depending the parameters so it's neccesary to recompute normalization from time to time
      * */
     update_normalization: function () {
-        if ((this.normalization.B !== 0 && this.normalization.type=="clone" )) {
-            this.compute_normalization( this.normalization.id, this.normalization.B);
+        if ((this.normalization.expected_size !== 0 && this.normalization.type=="clone" )) {
+            this.compute_normalization( this.normalization.id, this.normalization.expected_size);
         }
     },
     
@@ -719,10 +719,10 @@ changeAlleleNotation: function(alleleNotation) {
         this.min_size = min_size
         if (this.norm){
             for (var j=0; j<this.samples.order.length; j++){
-                if(this.normalization.A[j]==0){
-                max = this.normalization.B
+                if(this.normalization.size_list[j]==0){
+                max = this.normalization.expected_size
                 }else{
-                max = this.normalization.B/this.normalization.A[j]
+                max = this.normalization.expected_size/this.normalization.size_list[j]
                 }
                 if (max>this.max_size) this.max_size=max;
             }
