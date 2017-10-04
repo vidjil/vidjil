@@ -159,7 +159,8 @@
    {{if can_modify:}}
    <i class="icon-pencil-2" title="edit information" onclick="db.call('sample_set/edit', { 'id' : '{{=request.vars["id"]}}' } )" > </i>
    {{pass}}
-   {{=info["info"]}}
+   {{ text = tag_decorator.decorate(info["info"], 'tag', sample_type, '/sample_set/all') }}
+   {{=tag_decorator.sanitize(text)}}
 
         {{if can_upload: }}
         {{if not auth.can_process_sample_set(request.vars['id']) :}}
