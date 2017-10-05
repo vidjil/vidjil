@@ -70,9 +70,10 @@ def add_form():
 								   pcr=request.vars["pcr"],
                                    creator=auth.user_id)
 
-
             user_group = int(request.vars["run_group"])
             admin_group = db(db.auth_group.role=='admin').select().first().id
+
+            register_tags(db, defs.SET_TYPE_RUN, id, request.vars["info"], user_group)
             
             #patient creator automaticaly has all rights 
             auth.add_permission(user_group, PermissionEnum.access.value, db.run, id)
@@ -117,9 +118,11 @@ def edit():
 		distinct=True
 	)
 		
+        group_id = get_set_group(defs.SET_TYPE_RUN, request.vars["id"])
         return dict(message=T('edit run'),
 				   sequencer_list = sequencer_list,
-				   pcr_list = pcr_list)
+				   pcr_list = pcr_list,
+                                   group_id = group_id)
     else :
         res = {"message": ACCESS_DENIED}
         log.error(res)
@@ -145,6 +148,7 @@ def edit_form():
             error += "patient id needed, "
 
         if error=="" :
+            run = db.run[request.vars["id"]]
             db.run[request.vars["id"]] = dict(name=request.vars["name"],
                                                    run_date=request.vars["run_date"],
                                                    info=request.vars["info"],
@@ -152,6 +156,10 @@ def edit_form():
 												   pcr=request.vars["pcr"],
                                                    id_label=request.vars["id_label"]
                                                    )
+
+            group_id = get_set_group(defs.SET_TYPE_RUN, request.vars["id"])
+            if (run.info != request.vars["info"]):
+                register_tags(db, defs.SET_TYPE_RUN, request.vars["id"], request.vars["info"], group_id, reset=True)
 
             res = {"redirect": "back",
                    "message": "%s (%s): run edited" % (request.vars["name"], request.vars["id"])}

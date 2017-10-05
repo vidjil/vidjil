@@ -82,7 +82,7 @@
                        {{if row.sequence_file.network:}}(N){{pass}}
                     </td>
                     <td> {{if row.sequence_file.sampling_date <> None:}} {{=row.sequence_file.sampling_date}} {{pass}}</td>
-                    <td> {{=row.sequence_file.info}} </td>
+                    <td> {{=tag_decorator.sanitize(tag_decorator.decorate(row.sequence_file.info, 'tag', 'sequence_file', '/sample_set/custom'))}} </td>
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} >
                         {{=vidjil_utils.format_size(row.sequence_file.size_file)}} </td>
                     {{ has_pre_process = row.sequence_file.pre_process_id != None}}
@@ -159,7 +159,8 @@
    {{if can_modify:}}
    <i class="icon-pencil-2" title="edit information" onclick="db.call('sample_set/edit', { 'id' : '{{=request.vars["id"]}}' } )" > </i>
    {{pass}}
-   {{=info["info"]}}
+   {{ text = tag_decorator.decorate(info["info"], 'tag', sample_type, '/sample_set/all') }}
+   {{=tag_decorator.sanitize(text)}}
 
         {{if can_upload: }}
         {{if not auth.can_process_sample_set(request.vars['id']) :}}

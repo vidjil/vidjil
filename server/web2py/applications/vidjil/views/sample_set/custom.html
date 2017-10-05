@@ -20,7 +20,9 @@
             <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}" 
                    onchange="db.call('sample_set/custom', {'config_id' : '{{=request.vars["config_id"]}}', 
                                                       'filter' : this.value, 
-                                                      'custom_list' : db.getListInput('custom_result[]')} )"  >
+                                                      'custom_list' : db.getListInput('custom_result[]')} )"
+                   onfocus="new VidjilAutoComplete().setupAtWho(this);"
+                   data-needs-atwho="true" data-group-ids="{{=group_ids}}">
         </div>
 
 
@@ -74,7 +76,7 @@
                          {{=row.sequence_file.filename}}
                     </td>
                     <td> {{=row.sequence_file.sampling_date}} </td>
-                    <td> {{=row.sequence_file.info}} </td>
+                    <td> {{=tag_decorator.sanitize(tag_decorator.decorate(row.sequence_file.info, 'tag', 'sequence_file', '/sample_set/custom'))}} </td>
                     <td> {{=row.sequence_file.pcr}} </td>
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} >
                         {{=vidjil_utils.format_size(row.sequence_file.size_file)}} </td>

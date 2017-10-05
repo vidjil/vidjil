@@ -12,7 +12,9 @@ require(["jquery",
          "jquery.form",
          "file",
          "tsne",
-         "jstree.min"], function() {
+         "jstree.min",
+         "jquery.caret",
+         "jquery.atwho"], function() {
              // Then config file (needed by Vidjil)
              require(['../conf'], function() {
                  loadAfterConf()
@@ -60,6 +62,7 @@ function loadAfterConf() {
                                          "../similarity",
                                          "../tools",
                                          "../url",
+                                         "../autocomplete",
                                          // Speed test
                                          "../speed_test",
                                          "../../test/QUnit/testFiles/data_test",

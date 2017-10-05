@@ -5,6 +5,8 @@ class SampleSet(object):
 
     def __init__(self, type):
         self.type = type
+        prefix = get_tag_prefix()
+        self.tag_decorator = TagDecorator(prefix)
 
     def get_type(self):
         return self.type
@@ -21,8 +23,15 @@ class SampleSet(object):
     def get_info(self, data):
         return data.info
 
+    def get_tagged_info(self, data):
+        text = self.tag_decorator.decorate(data.info, 'tag', self.type, self.get_list_path())
+        return self.tag_decorator.sanitize(text)
+
     def get_configs(self, data):
         return data.conf_list
+
+    def get_list_path(self):
+        return '/sample_set/all'
 
     def get_config_urls(self, data):
         configs = []
@@ -52,9 +61,9 @@ class SampleSet(object):
     def get_fields(self):
         fields = []
         fields.append({'name': 'name', 'sort': 'name', 'call': self.get_name, 'width': 200, 'public': True})
-        fields.append({'name': 'info', 'sort': 'info', 'call': self.get_info, 'width': None, 'public': True})
+        fields.append({'name': 'info', 'sort': 'info', 'call': self.get_tagged_info, 'width': None, 'public': True})
         fields.append({'name': 'results', 'sort': 'confs', 'call': self.get_config_urls, 'width': None, 'public': True})
-        if auth.is_admin() or len(get_group_list(auth)) > 1:
+        if auth.is_admin() or len(get_group_list()) > 1:
             fields.append({'name': 'groups', 'sort': 'groups', 'call': self.get_groups_string, 'width': 100, 'public': True})
             fields.append({'name': 'creator', 'sort': 'creator', 'call': self.get_creator, 'width': 100, 'public': True})
         fields.append({'name': 'files', 'sort': 'file_count', 'call': self.get_files, 'width': 100, 'public': True})
@@ -114,3 +123,12 @@ def get_sample_name(sample_set_id):
         return vidjil_utils.anon_ids(patient_or_run.id)
     return patient_or_run.name
 
+def get_set_group(stype, sid):
+    '''
+    Return the group associated with the set
+    '''
+    perm = db((db.auth_permission.table_name == stype) &
+              (db.auth_permission.record_id == sid) &
+              (db.auth_permission.name == PermissionEnum.access.value)
+            ).select().first()
+    return perm.group_id

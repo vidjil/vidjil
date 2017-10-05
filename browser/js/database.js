@@ -270,6 +270,19 @@ Database.prototype = {
         });
     },
 
+    callLinkable: function (linkable) {
+        var href = linkable.attr('href');
+        var type = linkable.data('linkable-type');
+        var param = linkable.data('linkable-target-param');
+        var name = linkable.data('linkable-name');
+        var sample_type = linkable.data('sample-type');
+        var args = {};
+        args[type] = name;
+        args[param] = name;
+        args['type'] = sample_type;
+        this.call(href, args);
+    },
+
 
     /**
      * Send the given clones to CloneDB
@@ -1090,10 +1103,10 @@ Database.prototype = {
         for (var key in args) {
             if (args[key] instanceof Array){
                 for (var i=0; i<args[key].length; i++){
-                    str += key + "=" + args[key][i] + "&";
+                    str += key + "=" + encoreURIComponent(args[key][i]) + "&";
                 }
             }else{
-                str += "" + key + "=" + args[key] + "&";
+                str += "" + key + "=" + encodeURIComponent(args[key]) + "&";
             }
         }
         

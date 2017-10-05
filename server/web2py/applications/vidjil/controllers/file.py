@@ -57,13 +57,18 @@ def add():
         patient_id = None
         run_id = None
         generic_id = None
+        group_ids = []
         if sample_set.sample_type == defs.SET_TYPE_GENERIC:
             generic_id = db( db.generic.sample_set_id == request.vars["id"]).select()[0].id
+            group_ids.append(get_set_group(sample_set.sample_type, generic_id))
         if sample_set.sample_type == defs.SET_TYPE_PATIENT:
             patient_id = db( db.patient.sample_set_id == request.vars["id"]).select()[0].id
+            group_ids.append(get_set_group(sample_set.sample_type, patient_id))
         if sample_set.sample_type == defs.SET_TYPE_RUN:
             run_id = db( db.run.sample_set_id == request.vars["id"]).select()[0].id
-        
+            group_ids.append(get_set_group(sample_set.sample_type, run_id))
+
+        group_ids = [int(gid) for gid in group_ids]
 		
 	query_pre_process = db(
             db.pre_process>0
@@ -98,7 +103,8 @@ def add():
                    patient = patient,
                    sample_type = sample_set.sample_type,
                    run = run,
-                   source_module_active = source_module_active)
+                   source_module_active = source_module_active,
+                   group_ids = group_ids)
 
 def manage_filename(filename):
     filepath = ""
@@ -202,6 +208,13 @@ def add_form():
                             pre_process_id=pre_process,
                             pre_process_flag=pre_process_flag,
                             provider=auth.user_id)
+
+        group_ids = set()
+        for key in id_dict:
+            group_ids.add(get_set_group(key, id_dict[key]))
+        for group_id in group_ids:
+            register_tags(db, 'sequence_file', id, request.vars["file_info"], group_id)
+
         log_message = "upload started"
         if request.vars['filename'] != "":
             if data['data_file'] is not None:
@@ -270,6 +283,13 @@ def edit():
         patient_list, patient = get_sample_set_list(defs.SET_TYPE_PATIENT, relevant_ids['patient'])
         run_list, run = get_sample_set_list(defs.SET_TYPE_RUN, relevant_ids['run'])
 
+        group_ids = []
+        for key in relevant_ids:
+            if (relevant_ids[key] is not None):
+                group_ids.append(get_set_group(key, relevant_ids[key]))
+
+        group_ids = [int(gid) for gid in group_ids]
+
         source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
         return dict(message = T('edit file'),
                    generic_list = generic_list,
@@ -281,7 +301,8 @@ def edit():
                    generic = generic,
                    file = db.sequence_file[request.vars["id"]],
                    sample_type = request.vars['sample_type'],
-                   source_module_active = source_module_active)
+                   source_module_active = source_module_active,
+                   group_ids = group_ids)
 
     else:
         return error_message("you need admin permission to edit files")
@@ -335,10 +356,18 @@ def edit_form():
         if request.vars['pre_process'] is not None and request.vars['pre_process'] != "0":
             pre_process = int(request.vars['pre_process'])
         if request.vars['sampling_date'] != None and request.vars['file_info'] != None :
+            sequence_file = db.sequence_file[id]
             db.sequence_file[id] = dict(sampling_date=request.vars['sampling_date'],
                                                         info=request.vars['file_info'],
                                                         pre_process_id=pre_process,
                                                         provider=auth.user_id)
+
+            if sequence_file.info != request.vars['file_info']:
+                group_ids = set()
+                for key in id_dict:
+                    group_ids.add(get_set_group(key, id_dict[key]))
+                for group_id in group_ids:
+                    register_tags(db, 'sequence_file', id, request.vars["file_info"], group_id, reset=True)
 
         if request.vars['filename'] != "":
             data, filepath = manage_filename(request.vars["filename"])

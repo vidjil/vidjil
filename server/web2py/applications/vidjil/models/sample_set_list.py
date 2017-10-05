@@ -1,34 +1,57 @@
 class SampleSetList():
-    def __init__(self, type, page=None, step=None):
+    def __init__(self, type, page=None, step=None, tags=None):
         self.type = type
 
         limitby = None
         if page is not None and step is not None:
             limitby = (page*step, (page+1)*step+1) # one more element to indicate if another page exists
 
-        query_gss = db(
-            (auth.vidjil_accessible_query(PermissionEnum.read.value, db[type]))
-        ).select(
-            db[type].ALL,
-            limitby = limitby,
-            orderby = ~db[type].id
-        )
+        query = (auth.vidjil_accessible_query(PermissionEnum.read.value, db[type]))
+
+        if (tags is not None and len(tags) > 0):
+            query = filter_by_tags(query, self.type, tags)
+            count = db.tag.name.count()
+            query_gss = db(
+                query
+            ).select(
+                db[type].ALL,
+                db.tag_ref.record_id,
+                db.tag_ref.table_name,
+                count,
+                limitby = limitby,
+                orderby = ~db[type].id,
+                groupby = db.tag_ref.record_id|db.tag_ref.table_name,
+                having = count >= len(tags)
+            )
+        else:
+            query_gss = db(
+                query
+            ).select(
+                db[type].ALL,
+                limitby = limitby,
+                orderby = ~db[type].id
+            )
+
 
         step = len(query_gss) if step is None else step
         auth.load_permissions(PermissionEnum.admin.value, type)
         auth.load_permissions(PermissionEnum.anon.value, type)
         self.elements = {}
         for row in query_gss:
-            self.elements[row.id] = row
-            self.elements[row.id].file_count = 0
-            self.elements[row.id].size = 0
-            self.elements[row.id].conf_list = []
-            self.elements[row.id].conf_id_list = [-1]
-            self.elements[row.id].most_used_conf = ""
-            self.elements[row.id].groups = ""
-            self.elements[row.id].group_list = []
-            self.elements[row.id].has_permission = auth.can_modify(type, row.id)
-            self.elements[row.id].anon_allowed = auth.can_view_info(type, row.id)
+            if (tags is not None and len(tags) > 0):
+                key = row[type]
+            else:
+                key = row
+            self.elements[key.id] = key
+            self.elements[key.id].file_count = 0
+            self.elements[key.id].size = 0
+            self.elements[key.id].conf_list = []
+            self.elements[key.id].conf_id_list = [-1]
+            self.elements[key.id].most_used_conf = ""
+            self.elements[key.id].groups = ""
+            self.elements[key.id].group_list = []
+            self.elements[key.id].has_permission = auth.can_modify(type, key.id)
+            self.elements[key.id].anon_allowed = auth.can_view_info(type, key.id)
 
         self.element_ids = self.elements.keys()
 
@@ -83,7 +106,7 @@ class SampleSetList():
             (db.auth_group.id == db.auth_permission.group_id)
             & (db[self.type].id.belongs(self.element_ids))
         ).select(
-            db[self.type].id, db.auth_group.role
+            db[self.type].id, db.auth_group.role, db.auth_group.id
         )
         for i, row in enumerate(query) :
             self.elements[row[self.type].id].group_list.append(row.auth_group.role.replace('user_','u'))
@@ -111,3 +134,12 @@ class SampleSetList():
 
     def __len__(self):
         return len(self.element_ids)
+
+def filter_by_tags(query, table, tags):
+    if tags is not None and len(tags) > 0:
+        return (query
+            & (db.tag.name.upper().belongs([t.upper() for t in tags]))
+            & (db.tag_ref.tag_id == db.tag.id)
+            & (db.tag_ref.table_name == table)
+            & (db.tag_ref.record_id == db[table].id))
+    return query

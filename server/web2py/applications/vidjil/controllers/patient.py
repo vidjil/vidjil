@@ -164,9 +164,10 @@ def add_form():
                                    id_label=request.vars["id_label"],
                                    creator=auth.user_id)
 
-
             user_group = int(request.vars["patient_group"])
             admin_group = db(db.auth_group.role=='admin').select().first().id
+
+            register_tags(db, defs.SET_TYPE_PATIENT, id, request.vars["info"], user_group)
             
             #patient creator automaticaly has all rights 
             auth.add_permission(user_group, PermissionEnum.access.value, db.patient, id)
@@ -201,7 +202,8 @@ def add_form():
 ## return edit form 
 def edit(): 
     if (auth.can_modify_patient(request.vars["id"]) ):
-        return dict(message=T('edit patient'))
+        group_id = get_set_group(defs.SET_TYPE_PATIENT, request.vars["id"])
+        return dict(message=T('edit patient'), group_id=group_id)
     else :
         res = {"message": ACCESS_DENIED}
         log.error(res)
@@ -229,12 +231,17 @@ def edit_form():
             error += "patient id needed, "
 
         if error=="" :
+            patient = db.patient[request.vars["id"]]
             db.patient[request.vars["id"]] = dict(first_name=request.vars["first_name"],
                                                    last_name=request.vars["last_name"],
                                                    birth=request.vars["birth"],
                                                    info=request.vars["info"],
                                                    id_label=request.vars["id_label"]
                                                    )
+
+            if (patient.info != request.vars["info"]):
+                group_id = get_set_group(defs.SET_TYPE_PATIENT, request.vars["id"])
+                register_tags(db, defs.SET_TYPE_PATIENT, request.vars["id"], request.vars["info"], group_id, reset=True)
 
             res = {"redirect": "back",
                    "message": "%s %s (%s): patient edited" % (request.vars["first_name"], request.vars["last_name"], request.vars["id"])}

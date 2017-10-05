@@ -1,6 +1,7 @@
 from gluon import current
 
-def get_group_list(auth):
+def get_group_list():
+    auth = current.auth
     if (auth.is_admin()):
         return db(db.auth_group).select(db.auth_group.id, db.auth_group.role)
     else:
@@ -14,7 +15,7 @@ def get_default_creation_group(auth):
     max_group = auth.user_group()
     group_dict = {}
     max_elements = 0
-    group_list = get_group_list(auth)
+    group_list = get_group_list()
     for group in group_list:
         if (auth.is_admin()
                 or auth.has_permission(PermissionEnum.create.value, 'sample_set', 0, group_id = group.id)):
@@ -36,3 +37,13 @@ def get_default_creation_group(auth):
     groups = [{'id': group_dict[key]['id'], 'name': group_dict[key]['name']} for key in group_dict]
     return (groups, max_group)
 
+def get_involved_groups():
+    '''
+    Returns all the groups that are related to the user. This includes all groups
+    that the user is a member of, as well as any of their parents
+    '''
+    if (auth.is_admin()):
+        return [int(g.id) for g in db(db.auth_group).select(db.auth_group.id)]
+    group_ids = [int(i) for i in auth.user_groups]
+    parent_group_ids = [int(g.id) for f in auth.get_user_group_parents()]
+    return group_ids + parent_group_ids

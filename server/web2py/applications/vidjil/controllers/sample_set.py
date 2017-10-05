@@ -119,6 +119,7 @@ def index():
                 )
             )
 
+    tag_decorator = TagDecorator(get_tag_prefix())
     query_pre_process = db( db.pre_process.id >0 ).select()
     pre_process_list = {}
     for row in query_pre_process:
@@ -139,7 +140,8 @@ def index():
                 analysis_file = analysis_file,
                 analysis_filename = analysis_filename,
                 sample_type = db.sample_set[request.vars["id"]].sample_type,
-                config=config)
+                config=config,
+                tag_decorator=tag_decorator)
 
 ## return a list of generic sample_sets
 def all():
@@ -163,11 +165,18 @@ def all():
         page = int(request.vars['page'])
         step = 50
 
-    list = SampleSetList(type, page, step)
+    ##filter
+    if "filter" not in request.vars :
+        request.vars["filter"] = ""
+
+    search, tags = parse_search(request.vars["filter"])
+    group_ids = get_involved_groups()
+
+    list = SampleSetList(type, page, step, tags=tags)
     list.load_creator_names()
     list.load_sample_information()
     list.load_config_information()
-    if isAdmin or len(get_group_list(auth)) > 1:
+    if isAdmin or len(get_group_list()) > 1:
         list.load_permitted_groups()
     list.load_anon_permissions()
     result = list.get_values()
@@ -189,17 +198,14 @@ def all():
     else:
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
 
-    ##filter
-    if "filter" not in request.vars :
-        request.vars["filter"] = ""
-
-    result = helper.filter(request.vars['filter'], result)
-    log.debug("%s list (%.3fs) %s" % (request.vars["type"], time.time()-start, request.vars["filter"]))
+    result = helper.filter(search, result)
+    log.debug("%s list (%.3fs) %s" % (request.vars["type"], time.time()-start, search))
 
 
     return dict(query = result,
                 fields = fields,
                 helper = helper,
+                group_ids = group_ids,
                 isAdmin = isAdmin,
                 reverse = False,
                 step = step,
@@ -239,9 +245,10 @@ def add_form():
                                    creator=auth.user_id,
                                    sample_set_id=id_sample_set)
 
-
             user_group = int(request.vars["sample_set_group"])
             admin_group = db(db.auth_group.role=='admin').select().first().id
+
+            register_tags(db, defs.SET_TYPE_GENERIC, id, request.vars["info"], user_group)
 
             #sample_set creator automaticaly has all rights
             auth.add_permission(user_group, PermissionEnum.access.value, db.generic, id)
@@ -282,7 +289,8 @@ def edit():
             generic = db((db.generic.sample_set_id == request.vars["id"])).select()[0]
             if (auth.can_modify('generic', generic.id)):
                 request.vars["id"] = generic.id
-                return dict(message=T('edit sample_set'))
+                group_id = get_set_group(defs.SET_TYPE_GENERIC, request.vars["id"])
+                return dict(message=T('edit sample_set'), group_id=group_id)
     res = {"message": ACCESS_DENIED}
     log.error(res)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
@@ -296,9 +304,14 @@ def edit_form():
             error += "sample set id needed, "
 
         if error=="" :
+            generic = db.generic[request.vars["id"]]
             db.generic[request.vars["id"]] = dict(name=request.vars["name"],
                                                    info=request.vars["info"],
                                                    )
+
+            group_id = get_set_group(defs.SET_TYPE_GENERIC, request.vars["id"])
+            if (generic.info != request.vars["info"]):
+                register_tags(db, defs.SET_TYPE_GENERIC, request.vars["id"], request.vars["info"], group_id, reset=True)
 
             res = {"redirect": "back",
                    "message": "%s (%s): sample_set edited" % (request.vars["name"], request.vars["sample_set_id"])}
@@ -361,7 +374,40 @@ def custom():
             )
         myGroupBy = db.sequence_file.id|db.patient.id|db.run.id|db.generic.id|db.results_file.config_id
 
-    query = db(q).select(
+    group_ids = get_involved_groups()
+
+    ##filter
+    if "filter" not in request.vars :
+        request.vars["filter"] = ""
+
+    search, tags = parse_search(request.vars["filter"])
+
+    if (tags is not None and len(tags) > 0):
+        q = filter_by_tags(q, 'sequence_file', tags)
+        count = db.tag.name.count()
+        query = db(q).select(
+                db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name,
+                db.run.id, db.run.info, db.run.name,
+                db.generic.id, db.generic.info, db.generic.name,
+                db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
+                db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
+                db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
+                db.sequence_file.size_file,
+                db.tag_ref.record_id,
+                db.tag_ref.table_name,
+                count,
+                left = [
+                    db.patient.on(db.patient.sample_set_id == db.sample_set.id),
+                    db.run.on(db.run.sample_set_id == db.sample_set.id),
+                    db.generic.on(db.generic.sample_set_id == db.sample_set.id)
+                    ],
+                orderby = db.sequence_file.id|db.results_file.run_date,
+                groupby = db.tag_ref.table_name|db.tag_ref.record_id,
+                having = count >= len(tags)
+            )
+
+    else:
+        query = db(q).select(
                 db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name,
                 db.run.id, db.run.info, db.run.name,
                 db.generic.id, db.generic.info, db.generic.name,
@@ -378,10 +424,6 @@ def custom():
                 groupby = myGroupBy
             )
 
-    ##filter
-    if "filter" not in request.vars :
-        request.vars["filter"] = ""
-        
     for row in query :
         row.checked = False
         if (str(row.results_file.id) in request.vars["custom_list"]) :
@@ -397,18 +439,21 @@ def custom():
             row.names = row.generic.name
             info = row.generic.info
         row.string = [row.names, row.sequence_file.filename, str(row.sequence_file.sampling_date), str(row.sequence_file.pcr), str(row.config.name), str(row.results_file.run_date), info]
-    query = query.find(lambda row : ( vidjil_utils.advanced_filter(row.string,request.vars["filter"]) or row.checked) )
+    query = query.find(lambda row : ( vidjil_utils.advanced_filter(row.string,search) or row.checked) )
 
     
     if config :
         query = query.find(lambda row : ( row.results_file.config_id==config_id or (str(row.results_file.id) in request.vars["custom_list"])) )
     
-    log.debug("sample_set/custom (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
+    tag_decorator = TagDecorator(get_tag_prefix())
+    log.debug("sample_set/custom (%.3fs) %s" % (time.time()-start, search))
 
     return dict(query=query,
                 config_id=config_id,
                 config=config,
-                helper=helper)
+                helper=helper,
+                tag_decorator=tag_decorator,
+                group_ids=group_ids)
 
 def confirm():
     if auth.can_modify_sample_set(request.vars["id"]):
