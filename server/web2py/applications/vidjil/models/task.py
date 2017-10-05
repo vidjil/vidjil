@@ -66,7 +66,7 @@ def compute_contamination(sequence_file_id, results_file_id, config_id):
                     sfi = row.sequence_file.id
             
             for row in query2 :
-                print defs.DIR_RESULTS+row.results_file.data_file
+                print(defs.DIR_RESULTS+row.results_file.data_file)
                 result[i]["sample"][row.results_file.id] = {}
                 result[i]["sample"][row.results_file.id]["clones"] = 0
                 result[i]["sample"][row.results_file.id]["reads"] = 0
@@ -82,8 +82,8 @@ def compute_contamination(sequence_file_id, results_file_id, config_id):
                                     result[i]["sample"][row.results_file.id]["clones"] += 1
                                     result[i]["sample"][row.results_file.id]["reads"] += list1[clone["id"]]
                             
-                    except ValueError, e:
-                        print 'invalid_json'
+                    except ValueError as e:
+                        print('invalid_json')
                     json_data2.close()
 
 
@@ -152,7 +152,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
     ## re schedule if pre_process is still pending
     if db.sequence_file[id_file].pre_process_flag == "WAIT" or db.sequence_file[id_file].pre_process_flag == "RUN" :
         
-        print "Pre-process is still pending, re-schedule"
+        print("Pre-process is still pending, re-schedule")
     
         args = [id_file, id_config, id_data, grep_reads]
         task = scheduler.queue_task("vidjil", args,
@@ -160,13 +160,13 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
                                start_time=request.now + timed(seconds=1200))
         db.results_file[id_data] = dict(scheduler_task_id = task.id)
         db.commit()
-        print task.id
+        print(task.id)
         sys.stdout.flush()
         
         return "SUCCESS"
     
     if db.sequence_file[id_file].pre_process_flag == "FAILED" :
-        print "Pre-process has failed"
+        print("Pre-process has failed")
         raise ValueError('pre-process has failed')
         return "FAIL"
     
@@ -203,16 +203,16 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
         cmd += ' ' + vidjil_cmd + ' '+ seq_file
 
         ## execute la commande vidjil
-        print "=== Launching Vidjil ==="
-        print cmd    
-        print "========================"
+        print("=== Launching Vidjil ===")
+        print(cmd)    
+        print("========================")
         sys.stdout.flush()
 
         p = Popen(cmd, shell=True, stdin=PIPE, stdout=vidjil_log_file, stderr=STDOUT, close_fds=True)
 
         (stdoutdata, stderrdata) = p.communicate()
 
-        print "Output log in " + out_log
+        print("Output log in " + out_log)
         sys.stdout.flush()
         db.commit()
 
@@ -222,12 +222,12 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
         else:
             out_results = out_folder + '/' + output_filename + '.vidjil'
 
-        print "===>", out_results
+        print("===>", out_results)
         results_filepath = os.path.abspath(out_results)
 
         stream = open(results_filepath, 'rb')
     except:
-        print "!!! Vidjil failed, no result file"
+        print("!!! Vidjil failed, no result file")
         res = {"message": "[%s] c%s: Vidjil FAILED - %s" % (id_data, id_config, out_folder)}
         log.error(res)
         raise
@@ -245,14 +245,14 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
     for l in open(out_log):
         m = segmented.search(l)
         if m:
-            print l,
+            print(l, end=' ')
             segs = int(m.group(1))
             ratio = m.group(2)
             info = "%d segmented (%s%%)" % (segs, ratio)
             continue
         m = windows.search(l)
         if m:
-            print l,
+            print(l, end=' ')
             wins = int(m.group(1))
             reads = int(m.group(2))
             info = "%d reads, " % reads + info + ", %d windows" % wins
@@ -286,7 +286,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
     if not grep_reads:
         for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
 	    sample_set_id = row.sample_set_id
-	    print row.sample_set_id
+	    print(row.sample_set_id)
             run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
 
     return "SUCCESS"
@@ -330,8 +330,8 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
     try:
         args_1, args_2, args_3 = arg_cmds
     except:
-        print arg_cmd
-        print "! Bad arguments, we expect args_align | args_assemble | args_exportClones"
+        print(arg_cmd)
+        print("! Bad arguments, we expect args_align | args_assemble | args_exportClones")
 
     ## commande complete
     try:
@@ -344,24 +344,24 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
         cmd += mixcr + ' exportClones --format vidjil -germline -id -name -reads -sequence -top -seg -s ' + args_3 + ' ' + out_clones + ' ' + out_results
 
         ## execute la commande MiXCR
-        print "=== Launching MiXCR ==="
-        print cmd
-        print "========================"
+        print("=== Launching MiXCR ===")
+        print(cmd)
+        print("========================")
         sys.stdout.flush()
 
         p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=STDOUT, close_fds=True)
         p.wait()
 
-        print "Output log in " + out_log
+        print("Output log in " + out_log)
         sys.stdout.flush()
 
         ## Get result file
-        print "===>", out_results
+        print("===>", out_results)
         results_filepath = os.path.abspath(out_results)
         stream = open(results_filepath, 'rb')
         stream.close()
     except:
-        print "!!! MiXCR failed, no result file"
+        print("!!! MiXCR failed, no result file")
         res = {"message": "[%s] c%s: MiXCR FAILED - %s" % (id_data, id_config, out_folder)}
         log.error(res)
         raise
@@ -400,7 +400,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
 
     for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
         sample_set_id = row.sample_set_id
-        print row.sample_set_id
+        print(row.sample_set_id)
         run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
 
 
@@ -425,7 +425,7 @@ def run_copy(id_file, id_config, id_data, clean_before=False, clean_after=False)
     os.makedirs(out_folder)
     vidjil_log_file = open(out_folder+'/'+output_filename+'.vidjil.log', 'w')
 
-    print "Output log in "+out_folder+'/'+output_filename+'.vidjil.log'
+    print("Output log in "+out_folder+'/'+output_filename+'.vidjil.log')
     sys.stdout.flush()
     db.commit()
     
@@ -435,7 +435,7 @@ def run_copy(id_file, id_config, id_data, clean_before=False, clean_after=False)
     try:
         stream = open(results_filepath, 'rb')
     except IOError:
-        print "!!! 'copy' failed, no file"
+        print("!!! 'copy' failed, no file")
         res = {"message": "[%s] c%s: 'copy' FAILED - %s - %s" % (id_data, id_config, info, out_folder)}
         log.error(res)
         raise IOError
@@ -463,7 +463,7 @@ def run_copy(id_file, id_config, id_data, clean_before=False, clean_after=False)
 
     for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
         sample_set_id = row.sample_set_id
-        print row.sample_set_id
+        print(row.sample_set_id)
         run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
 
 
@@ -516,20 +516,20 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
         cmd = "python "+defs.DIR_FUSE+"/fuse.py -o "+ output_file + " " + fuse_cmd + " " + files
 
 
-        print "=== fuse.py ==="
-        print cmd
-        print "==============="
+        print("=== fuse.py ===")
+        print(cmd)
+        print("===============")
         sys.stdout.flush()
 
         p = Popen(cmd, shell=True, stdin=PIPE, stdout=fuse_log_file, stderr=STDOUT, close_fds=True)
         (stdoutdata, stderrdata) = p.communicate()
-        print "Output log in "+out_folder+'/'+output_filename+'.fuse.log'
+        print("Output log in "+out_folder+'/'+output_filename+'.fuse.log')
 
         fuse_filepath = os.path.abspath(output_file)
 
         stream = open(fuse_filepath, 'rb')
     except:
-        print "!!! Fuse failed, no .fused file"
+        print("!!! Fuse failed, no .fused file")
         res = {"message": "[%s] c%s: 'fuse' FAILED - %s" % (id_data, id_config, output_file)}
         log.error(res)
         raise
@@ -597,7 +597,7 @@ def custom_fuse(file_list):
     
     try:
         cmd = "python "+ os.path.abspath(defs.DIR_FUSE) +"/fuse.py -o "+output_file+" -t 100 "+files
-        proc_srvr = xmlrpclib.ServerProxy("http://%s:%d" % (defs.FUSE_SERVER, defs.PORT_FUSE_SERVER))
+        proc_srvr = xmlrpc.client.ServerProxy("http://%s:%d" % (defs.FUSE_SERVER, defs.PORT_FUSE_SERVER))
         fuse_filepath = proc_srvr.fuse(cmd, out_folder, output_filename)
     
         f = open(fuse_filepath, 'rb')
@@ -713,9 +713,9 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         cmd = cmd.replace( "&result&", output_file)
         cmd = cmd.replace("&pear&", defs.DIR_PEAR)
 
-        print "=== Pre-process %s ===" % pre_process_id
-        print cmd
-        print "==============="
+        print("=== Pre-process %s ===" % pre_process_id)
+        print(cmd)
+        print("===============")
         sys.stdout.flush()
 
         out_log = out_folder+'/'+output_filename+'.pre.log'
@@ -724,13 +724,13 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         os.chdir(defs.DIR_FUSE)
         p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=log_file, close_fds=True)
         (stdoutdata, stderrdata) = p.communicate()
-        print "Output log in " + out_log
+        print("Output log in " + out_log)
 
         filepath = os.path.abspath(output_file)
 
         stream = open(filepath, 'rb')
     except:
-        print "!!! Pre-process failed, no result file"
+        print("!!! Pre-process failed, no result file")
         res = {"message": "{%s} p%s: 'pre_process' FAILED - %s" % (sequence_file_id, pre_process_id, output_file)}
         log.error(res)
         db.sequence_file[sequence_file_id] = dict(pre_process_flag = "FAILED")
@@ -761,7 +761,7 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
     # Dump log in scheduler_run.run_output
     log_file.close()
     for l in open(out_log):
-        print l,
+        print(l, end=' ')
 
     # Remove data file from disk to save space (it is now saved elsewhere)
     os.remove(filepath)
