@@ -107,6 +107,7 @@ server {
         location /browser {
             root $CWD/../;
             expires 1h;
+            add_header Cache-Control must-revalidate;
 
             error_page 405 = $uri;
         }
@@ -114,6 +115,7 @@ server {
         location /germline {
             root $CWD/../;
             expires 1h;
+            add_header Cache-Control must-revalidate;
 
             error_page 405 = $uri;
         }

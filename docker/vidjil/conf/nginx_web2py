@@ -38,6 +38,7 @@ server {
     location /browser {
         root /var/www;
         expires 1h;
+        add_header Cache-Control must-revalidate;
 
         error_page 405 = $uri;
     
@@ -46,6 +47,7 @@ server {
     location /germline {
         root /usr/share/vidjil/;
         expires 1h;
+        add_header Cache-Control must-revalidate;
 
         error_page 405 = $uri;
     
