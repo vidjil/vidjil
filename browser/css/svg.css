@@ -835,6 +835,14 @@ a {
 a:hover {
   color: #777777;
 }
+a.tag-link {
+  color: black;
+  background-color: #eee;
+  border-radius: 5px;
+  padding: 2px;
+  font-size: 85%;
+  text-decoration: none;
+}
 /* ----------------- */
 .data-container,
 .info-container {
