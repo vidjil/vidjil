@@ -317,7 +317,7 @@ In the =.analysis= file, this section is intended to describe some specific clon
 
                      // any feature to be highlighted in the sequence, with optional fields related to this feature:
                      //  - "start"/"stop" : positions on the clone sequence (starting at 1)
-                     //  - "delLeft/delRight" : a numerical value . It is the numbers of nucleotides deleted during the rearangment. DelRight are compatible with V/5 and D/4 segments, delLeft is compatible with D/4 and J/3 segments.
+                     //  - "delLeft/delRight" : a numerical value . It is the numbers of nucleotides deleted during the rearrangment. DelRight are compatible with V/5 and D/4 segments, delLeft is compatible with D/4 and J/3 segments.
                      //  - "seq" : a sequence
                      //  - "val" : a numerical value
                      //  - "info" : a textual vlaue
