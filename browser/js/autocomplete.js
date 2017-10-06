@@ -122,7 +122,7 @@ VidjilAutoComplete.prototype = {
             },
             beforeSave(tags) {
                 return $.map(tags, (i) => {
-                    if (i.name == null) {
+                    if (i.name === null) {
                         return i;
                     }
                     return {
@@ -210,7 +210,7 @@ VidjilAutoComplete.prototype = {
             return res;
         })
 
-        $input.atwho('load', at, loaded_data);;
+        $input.atwho('load', at, loaded_data);
         // This trigger at.js again
         // otherwise we would be stuck with loading until the user types
         return $input.trigger('keyup');
