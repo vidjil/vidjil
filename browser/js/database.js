@@ -279,7 +279,7 @@ Database.prototype = {
         var args = {};
         args[type] = name;
         args[param] = name;
-        args['type'] = sample_type;
+        args.type = sample_type;
         this.call(href, args);
     },
 

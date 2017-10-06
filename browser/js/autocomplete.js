@@ -203,12 +203,12 @@ VidjilAutoComplete.prototype = {
         // remove duplicates
         var seen = [];
         loaded_data = loaded_data.filter(function(elem) {
-            var res = seen.indexOf(elem['name']);
+            var res = seen.indexOf(elem.name);
             if (res < 0) {
-                seen.push(elem['name']);
+                seen.push(elem.name);
             }
             return res;
-        });
+        })
 
         $input.atwho('load', at, loaded_data);;
         // This trigger at.js again
