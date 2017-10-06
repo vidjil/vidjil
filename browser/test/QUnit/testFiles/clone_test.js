@@ -260,7 +260,7 @@ QUnit.test('clone: get info from seg', function(assert) {
     assert.equal(c1.getSegAASequence('junction'), '', 'no AA junction for c1')
     assert.equal(c1.getSegAASequence('cdr3'), 'ABCDE', 'AA CDR3 for c1')
 
-    assert.equal(c1.getDeletion('5', 'delRight'), "undefined", 'return -1, no deletion informed for c1')
+    assert.equal(c1.getDeletion('5', 'delRight'), undefined, 'return -1, no deletion informed for c1')
     assert.equal(c2.getDeletion('5', 'delRight'), 18, 'return length of the deletion for c2')
 });
 
