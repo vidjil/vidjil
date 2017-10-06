@@ -8,7 +8,7 @@ class TagManager(object):
         self.prefix = prefix
 
     def expression(self):
-        return ur'%s(\w+)' % self.prefix
+        return ur'%s([\w-]+)' % self.prefix
 
 class TagExtractor(TagManager):
 
