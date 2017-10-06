@@ -793,8 +793,26 @@ Clone.prototype = {
     },    
     
     
-    
-    
+    /**
+     * Give th length of the deletion if clone have segment and corresponding deletion
+     */
+    getDeletion: function(field_name, deletion_name)
+    {
+        if (this.hasSeg(field_name) ) {
+            if ( typeof (this.seg[field_name][deletion_name]) !== 'undefined' )
+            {
+                return this.seg[field_name][deletion_name]
+            } else {
+                // has segment, but no deletion field
+                return undefined
+            }
+        } else {
+            // haven't the segment
+            return undefined
+        }
+    },
+
+
     /* give a new custom tag to a clone
      *
      * */

@@ -138,6 +138,8 @@ function ScatterPlot(id, model, database) {
         "clone consensus coverage / GC content " : { "mode": this.MODE_GRID, "x": "coverage", "y" : "GCContent"},
         "number of samples sharing each clone" : { "mode": this.MODE_GRID, "x": "nbSamples", "y" : "locus"},
         // "interpolated length between BIOMED2 primers (inclusive)" : { "mode": this.MODE_BAR, "x": "primers", "y" : "Size"},
+        "number of deletions for the segment V/5 in 3" : { "mode": this.MODE_BAR, "x": "delRight", "y" : "Size"},
+        "number of deletions for the segment J/3 in 5" : { "mode": this.MODE_BAR, "x": "delLeft",  "y" : "Size"},
     };
     this.default_preset = 1
 
