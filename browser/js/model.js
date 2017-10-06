@@ -624,14 +624,7 @@ changeAlleleNotation: function(alleleNotation) {
         if (this.normalization.size_list.length !== 0 && this.normalization.size_list[time] !== 0) {
             var A = this.normalization.size_list[time] /* standard/spike at point time */
             var B = this.normalization.expected_size       /* standard/spike expected value */
-            
-            if (original_size <= A){
-                normalized_size = (original_size * B) / A
-            }
-            // }else{
-            //     normalized_size = B + ( (original_size - A) * ( (1 - B) / (1 - A) ) )
-            // }
-            
+            normalized_size = (original_size * B) / A           
         }else{
             normalized_size = original_size
         }
