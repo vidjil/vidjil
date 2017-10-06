@@ -9,7 +9,7 @@ class SegmenterBrowser < VidjilBrowser
   
   protected
   
-  def scatterplot_id
+  def scatterplot_id(number=1)
     return 'scatter_container'
   end
 

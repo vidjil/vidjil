@@ -183,49 +183,50 @@ class VidjilBrowser < Watir::Browser
   end
 
   # Return the div of the scatterplot
-  def scatterplot
-    return element(:id => scatterplot_id)
+  # The number gives the number of the scatterplot
+  def scatterplot(number=1)
+    return element(:id => scatterplot_id(number))
   end
 
-  def scatterplot_menu
-    return scatterplot.element(:class => 'sp_menu')
+  def scatterplot_menu(number=1)
+    return scatterplot(number).element(:class => 'sp_menu')
   end
 
   # Select a preset in the scatterplot menu
   # (String or Regex)
-  def scatterplot_select_preset(axis)
-    scatterplot_menu.hover
+  def scatterplot_select_preset(axis, number = 1)
+    scatterplot_menu(number).hover
     preset_selector.select axis
   end
 
   # Return the element corresponding to the x axis of the scatterplot
-  def scatterplot_x
-    return scatterplot_axis('x')
+  def scatterplot_x(number = 1)
+    return scatterplot_axis('x', number)
   end
 
   # Return the element corresponding to the legend of the x axis of the scatterplot
-  def scatterplot_x_legend(index)
-    return scatterplot_legend('x', index)
+  def scatterplot_x_legend(index, number = 1)
+    return scatterplot_legend('x', index, number)
   end
 
   # Return the x axis label of the scatterplot
-  def scatterplot_x_label
-    return scatterplot_labels[0]
+  def scatterplot_x_label(number = 1)
+    return scatterplot_labels(number)[0]
   end
 
   # Return the element corresponding to the x axis of the scatterplot
-  def scatterplot_y
-    return scatterplot_axis('y')
+  def scatterplot_y(number)
+    return scatterplot_axis('y', number)
   end
 
   # Return the element corresponding to the legend of the y axis of the scatterplot
-  def scatterplot_y_legend(index)
-    return scatterplot_legend('y', index)
+  def scatterplot_y_legend(index, number = 1)
+    return scatterplot_legend('y', index, number)
   end
 
   # Return the y axis label of the scatterplot
-  def scatterplot_y_label
-    return scatterplot_labels[1]
+  def scatterplot_y_label(number)
+    return scatterplot_labels(number)[1]
   end
 
   def segmenter_checkbox_aa
@@ -333,24 +334,27 @@ class VidjilBrowser < Watir::Browser
   
   protected
 
-  def scatterplot_id
-    return 'visu_axis'
+  def scatterplot_id(number=1)
+    if number <= 1
+      return 'visu'
+    end
+    return 'visu' + number.to_s
   end
 
   def segmenter_id
     return 'bot-container'
   end
 
-  def scatterplot_axis(axis)
-    return element(:id => scatterplot_id+'_'+axis+'_container')
+  def scatterplot_axis(axis, number = 1)
+    return element(:id => scatterplot_id(number)+'_axis_'+axis+'_container')
   end
 
-  def scatterplot_labels
-    return element(:id => scatterplot_id+'_axis_container').elements(:class => 'sp_legend2')
+  def scatterplot_labels(number = 1)
+    return element(:id => scatterplot_id(number)+'_axis_container').elements(:class => 'sp_legend2')
   end
 
-  def scatterplot_legend(axis, index)
-    return scatterplot_axis(axis).element(:class => 'sp_legend', :index => index)
+  def scatterplot_legend(axis, index, number=1)
+    return scatterplot_axis(axis, number).element(:class => 'sp_legend', :index => index)
   end
 
 
