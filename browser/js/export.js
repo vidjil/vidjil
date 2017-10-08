@@ -509,7 +509,7 @@ Report.prototype = {
         svg_sp.setAttribute("viewBox","0 0 791 250");
         
         for (var i = 0; i < this.m.clones.length; i++) {
-            var circle = svg_sp.querySelectorAll('[id="circle'+i+'"]')[0]
+            var circle = svg_sp.querySelectorAll('[id="'+sp.id+'_circle'+i+'"]')[0]
             var color = this.m.tag[this.m.clone(i).getTag()].color
             circle.setAttribute("stroke", color);
             

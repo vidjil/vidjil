@@ -306,7 +306,7 @@ ScatterPlot.prototype = {
         this.plot_container.selectAll("circle")
             .attr("stroke", "")
             .attr("id", function(d) {
-                return "circle" + d.id;
+                return self.id + "_circle" + d.id;
             })
             //Attribution de l'activité des cercles (inactif, sélectionné, demande d'info ou autre)
             .attr("class", function(p) {
@@ -529,7 +529,7 @@ ScatterPlot.prototype = {
             .remove()
         this.bar_container.selectAll("rect")
             .attr("id", function(d) {
-                return "bar" + d.id;
+                return self.id + "_bar" + d.id;
             })
 
             //use clone circle position to init the clone bar position
@@ -762,7 +762,7 @@ ScatterPlot.prototype = {
             .transition()
             .duration(speed)
             .attr("id", function(d) {
-                return "bar" + d.id;
+                return self.id + "_bar" + d.id;
             })
             .attr("width", function(d) { return d.bar_w*self.gridSizeW })
             .attr("x", function(d) { return (d.bar_x - d.bar_w/2)*self.gridSizeW + self.margin[3] })
