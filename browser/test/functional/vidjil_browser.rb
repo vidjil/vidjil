@@ -288,7 +288,7 @@ class VidjilBrowser < Watir::Browser
   
   # Return the select containing the preset selector in the graph
   def preset_selector
-    return select_list(:class => 'axis_select_preset_select')
+    return scatterplot.select_list(:class => 'axis_select_preset_select')
   end
 
   # Return the div containing the tag selector
