@@ -24,6 +24,8 @@ class TestSimple < BrowserTest
   def test_01_legend_scatterplot
     assert ($b.scatterplot_x_legend(0).text == "TRGV5"), "First legend should be TRGV5"
     assert ($b.scatterplot_y_legend(0).text == "TRGJ1"), "First legend should be TRGJ1"
+    assert ($b.scatterplot_x_legend(0, 2).text == "119"), "First legend should be 119"
+    assert ($b.scatterplot_y_legend(0, 2).text == "0.00%"), "First legend sould be 0.00%"
   end
 
   def test_02_deactivate_locus
