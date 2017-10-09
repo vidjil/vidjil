@@ -27,13 +27,13 @@ QUnit.test("grid", function(assert) {
     sp.update()
     assert.equal(sp.axisX.pos(1), sp.axisY.pos(1), "check splitMethod V/V /plot : xpos = ypos");
     assert.equal(sp.axisX.pos(1), sp.axisY.pos(1), "check splitMethod V/V /plot : xpos = ypos");
-    assert.equal(document.getElementById("circle1").className.baseVal, "circle", "check splitMethod V/V /plot : check if plot are displayed")
+    assert.equal(document.getElementById("visu_circle1").className.baseVal, "circle", "check splitMethod V/V /plot : check if plot are displayed")
     
     sp.switchMode()
     assert.equal(sp.mode, sp.MODE_BAR)
     sp.update()
 
-    assert.equal(document.getElementById("bar1").className.baseVal, "", "check splitMethod V/V /plot : check if bar are displayed")
+    assert.equal(document.getElementById("visu_bar1").className.baseVal, "", "check splitMethod V/V /plot : check if bar are displayed")
 
     assert.equal(sp.axisX.labels[0].text, "IGHV1-2", "first label for 'gene_v' axis is 'IGHV1-2'")
     assert.equal(sp.axisX.labels[1].text, "?", "second label for 'gene_v' axis is '?'")
