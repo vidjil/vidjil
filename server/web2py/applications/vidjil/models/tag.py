@@ -76,7 +76,7 @@ class TagDecorator(TagManager):
 
     def sanitize(self, text):
         return XML(text,
-                sanitize=True,
+                sanitize=False,
                 permitted_tags=['a'],
                 allowed_attributes={'a':['class', 'href', 'onclick', 'data-sample-type', 'data-linkable-type', 'data-linkable-target-param', 'data-linkable-name']})
 
