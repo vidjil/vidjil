@@ -191,8 +191,7 @@ function switch_visu2(view) {
         builder.resizeGraph(50)
     }
     else if (view == "scatterplot") {
-        sp2 = new ScatterPlot("visu2", m, db);
-        sp2.default_preset = 5;
+        sp2 = new ScatterPlot("visu2", m, db, 5);
         tmp = sp2;
         builder.resizeGraph(40)
     }
