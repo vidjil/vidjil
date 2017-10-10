@@ -26,11 +26,11 @@ The Vidjil web application runs in any modern browser. It has been successfully 
 ** The .vidjil files
 
 The vidjil web application displays =.vidjil= files that summarize the V(D)J
-recombinations and the sequences found in a run. 
+recombinations and the sequences found in one or several samples.
 
 The easiest way to get these files is to [[http://app.vidjil.org/][request an account]] on the public Vidjil test server.
 You will then be able to upload,
-manage, process your runs (=.fasta=, =.fastq=, =.gz= or =.clntab= files) directly on the web application
+manage, process your samples (=.fasta=, =.fastq=, =.gz= or =.clntab= files) directly on the web application
 (see [[The patient/experiment database and the server]]), and the server behind the patient/experiment
 database computes these =.vidjil= files.
 Otherwise, such =.vidjil= files can be obtained:
@@ -75,7 +75,7 @@ to learn the essential features of Vidjil.
 * The elements of the Vidjil web application
 
 ** The info panel (upper left panel)
-   - patient/run information :: user can put some informations in this case to retain about the patient or the run.
+   - patient/run/set information :: user can put some informations in this case to retain about the set of samples
    - locus :: germline used for analyzing the data. In case of multi-locus 
               data, you can select what locus should be displayed (see [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]])
    - analysis :: name (without extension) of the loaded file used for displaying the data
@@ -163,9 +163,10 @@ If a server with a patient/experiment database is configured with your
 installation of Vidjil (as on http://app.vidjil.org/), the
 'patient' menu gives you access to the server.
 
-With authentication, you can add patients or runs,
-then add "samples" (=.fasta=, =.fastq=, =.gz= or =.clntab= files), possibly pre-processed,
-then process your data and save the results of your analysis.
+With authentication, you can add 'patients', 'runs', or 'sets', they are just three different ways to group 'samples'.
+Samples are =.fasta=, =.fastq=, =.gz= or =.clntab= files, possibly pre-processed.
+Once you uploaded samples (either in 'patients', 'runs', or 'sets'),
+you can process your data and save the results of your analysis.
 
 ** Patients
       
@@ -176,16 +177,19 @@ New patients can be added ('add patient'), edited ('e') or deleted ('X').
 By default, you are the only one who can see and update this new patient.
 If you have an admin access, you can grant access to other users ('p').
 
-** Runs
+** Runs and sets
 
-Runs can be manipulated the same way as patients, New runs can be added ('add run'), 
+Runs and sets can be manipulated the same way as patients. They can be added ('add run/set'), 
 edited ('e') or deleted ('X').
-Runs and Patients are both used to make set of samples who share a same patient or have been sequenced in the same run.
-A sample can be included in a patient sample set and a run sample set.
+They are just different ways to group samples. 
+Sets can for example gather a set of samples of a same experiment.
+Runs can be used to gather samples that have been sequenced in the same run.
+
+
 
 ** Samples and pre-processes
 
-Clicking on a patient or a on a run give acccess to the "samples" page. Each sample is
+Clicking on a patient, a run or a set give acccess to the "samples" page. Each sample is
 a =.fasta=, =.fastq=, =.gz= or =.clntab= file that will be processed by one or several
 pipelines with one or several /configurations/ that set software options.
 
@@ -199,11 +203,11 @@ config, and access to the results (=See results=, bottom right).
 
 **** Adding a sample
 To add a sample (=+ sample=), you must add at least one sample file. Each sample file must
-be linked to a patient or to a run. One of those fields will be automatically
-completed depending on whether you accessed the sample page from a patient or
-from a run. Both fields provide autocompletion to help you enter the correct
-patient or correct run.  It is advised to fill in both fields (when it makes
-sense). However please note that the correspondig patients and runs must have
+be linked to a patient, a run or a set. One of those fields will be automatically
+completed depending on whether you accessed the sample page. 
+These fields provide autocompletion to help you enter the correct
+patient, run or sets.  It is advised to fill in both fields (when it makes
+sense). However please note that the correspondig patients, runs and sets must have
 been created beforehand.
 
 **** Pre-processing
@@ -257,8 +261,8 @@ A click on the =out= link at the right of every sample give access to the raw ou
 
 ** Groups
 
-Each patient and run is assigned to at least one group. This determines which groups have access to a patient or run.
-Users are assigned to diffrent groups and therefore gain access to any patients and runs that said group has access to.
+Each patient, run or set is assigned to at least one group.
+Users are assigned to diffrent groups and therefore gain access to any patients, runs or sets that said group has access to.
 
 There are also groups that may be clustered together. Usually this represents an organisation, such as a Hospital.
 The organisation has a group to which subgroups are associated. This allows users with different sets of permissions
@@ -271,12 +275,12 @@ from an organisation's group as (s)he does on files from her/his personnal group
 another organisation.
 
 The different permissions that can be attributed are:
-  - Read: Permissions to sview patients/runs to which a group or organisation has access to
-  - Create: Permissions to create patients/runs
-  - Upload: Permissions to upload samples to the patients/runs of a group
-  - Run: Permissions to run vidjil on an uploaded samples to the patients/runs of a group
-  - View Details: Permissions to view patient/run data in an unencrypted manner for the patients/runs of a group
-  - Save: Permissions to save an analysis for the patients/runs of a group
+  - Read: Permissions to sview patients/runs/sets to which a group or organisation has access to
+  - Create: Permissions to create patients/runs/sets
+  - Upload: Permissions to upload samples to the patients/runs/sets of a group
+  - Run: Permissions to run vidjil on an uploaded samples to the patients/runs/sets of a group
+  - View Details: Permissions to view patient/run/set data in an unencrypted manner for the patients/runs/sets of a group
+  - Save: Permissions to save an analysis for the patients/runs/sets of a group
 
 
 * How do you define clones, their sequences, and their V(D)J designation?
@@ -375,7 +379,7 @@ never in the "top 100", as for example:
   - a clone tracked in a follow-up sample of a patient without the diagnosis sample
 
 In these situations, a solution is to create a =.fasta= file with this sequences to be tracked
-and upload it as another sample in the same patient / run / sample set.
+and upload it as another sample in the same patient/run/set.
 It should then show up in any sample.
 
 (Upcoming feature). If clone is "tagged" in the =.vidjil= or
