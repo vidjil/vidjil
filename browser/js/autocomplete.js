@@ -134,7 +134,6 @@ VidjilAutoComplete.prototype = {
             },
             sorter: function(query, items, searchKey) {
                 return items.sort(function(a, b){
-                    console.log("a: " + a[searchKey] + " b: " + b[searchKey]);
                     if(a[searchKey] < b[searchKey]) {
                         return -1;
                     } else if (a[searchKey] == b[searchKey]) {
