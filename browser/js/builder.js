@@ -65,12 +65,15 @@ Builder.prototype = {
             this.initTag();
 
             // if (this.m.samples.order.length == 1) this.resizeGraph(0)
+            /*
             if (this.m.samples.order.length == 1)
                 setTimeout(function() {
                     switch_visu2('scatterplot');
                     document.getElementById("visu2_mode_sp").checked = true;
                 })
-            else this.resizeGraph(50)
+                else */
+            this.resizeGraph(50)
+
 
         } catch (err) {
             sendErrorToDb(err, this.db);
