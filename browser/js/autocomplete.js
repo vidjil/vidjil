@@ -79,14 +79,14 @@ VidjilAutoComplete.prototype = {
     },
 
     setupAtWho: function(input) {
-        const $input = $(input);
+        var $input = $(input);
         if ($input.data('needs-atwho')) {
             $input.off('focus.setupAtWho').on('focus.setupAtWho', this.setupTags.bind(this, $input));
-            $input.on('change.atwho', () => input.dispatchEvent(new Event('input')));
+            $input.on('change.atwho', function() { input.dispatchEvent(new Event('input'))});
             // This triggers at.js again
             // Needed for quick actions with suffixes (ex: /label ~)
             $input.on('inserted-commands.atwho', $input.trigger.bind($input, 'keyup'));
-            $input.on('clear-commands-cache.atwho', () => this.clearCache());
+            $input.on('clear-commands-cache.atwho', function() { this.clearCache()});
             $input.data('needs-atwho', false);
 
             // hackiness to get the autocompletion ready right away
@@ -108,8 +108,8 @@ VidjilAutoComplete.prototype = {
     },
 
     getDefaultCallbacks : function() {
-        const fetchData = this.fetchData.bind(this);
-        const isLoaded = this.isLoaded.bind(this);
+        var fetchData = this.fetchData.bind(this);
+        var isLoaded = this.isLoaded.bind(this);
         var callbacks = {
             filter : function(query, data, searchKey) {
                 var group_ids = this.$inputor.data('group-ids');
@@ -120,19 +120,19 @@ VidjilAutoComplete.prototype = {
                 }
                 return $.fn.atwho.default.callbacks.filter(query, data, searchKey);
             },
-            beforeSave(tags) {
-                return $.map(tags, (i) => {
+            beforeSave: function(tags) {
+                return $.map(tags, function(i) {
                     if (i.name === null) {
                         return i;
                     }
                     return {
                         id: i.id,
                         name: i.name,
-                        search: `${i.name} ${i.id}`,
+                        search: i.name + " " + i.id,
                     };
                 });
             },
-            sorter(query, items, searchKey) {
+            sorter: function(query, items, searchKey) {
                 return items.sort(function(a, b){
                     console.log("a: " + a[searchKey] + " b: " + b[searchKey]);
                     if(a[searchKey] < b[searchKey]) {
