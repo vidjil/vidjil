@@ -111,7 +111,7 @@ QUnit.test("axis", function(assert) {
     assert.equal(axis.label_mapping['10'].pos.toPrecision(3), 0, "pos of axis.label 10 is 0")
     assert.equal(axis.label_mapping['281'].pos.toPrecision(3), 0.800, "pos of axis.label 281 is 0.800")
     assert.equal(axis.labels[0].pos, 1, "pos of axis label 0 ('?' value) is 1")
-    assert.equal(axis.labels[axis.labels.length-1].pos, 1, "pos of last axis label is 1")
+    assert.approx(axis.labels[axis.labels.length-1].pos, 0.8, 0.01, "pos of last axis label is about 0.80")
     assert.equal( (axis.labels.length != axis.label_mapping.length), true, "axis.labels length != axis.label_mapping length (du to '?')")
 
     // sequenceLength with undefined
