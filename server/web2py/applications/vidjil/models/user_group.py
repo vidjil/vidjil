@@ -45,5 +45,5 @@ def get_involved_groups():
     if (auth.is_admin()):
         return [int(g.id) for g in db(db.auth_group).select(db.auth_group.id)]
     group_ids = [int(i) for i in auth.user_groups]
-    parent_group_ids = [int(g.id) for f in auth.get_user_group_parents()]
+    parent_group_ids = [int(f.id) for f in auth.get_user_group_parents()]
     return group_ids + parent_group_ids
