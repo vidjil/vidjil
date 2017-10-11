@@ -121,6 +121,9 @@ VidjilAutoComplete.prototype = {
                 return $.fn.atwho.default.callbacks.filter(query, data, searchKey);
             },
             beforeSave: function(tags) {
+                if (tags.length == 1 && tags[0] == VidjilAutoComplete.defaultLoadingData[0]) {
+                    return tags;
+                }
                 return $.map(tags, function(i) {
                     if (i.name === null) {
                         return i;
