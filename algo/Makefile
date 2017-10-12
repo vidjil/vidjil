@@ -39,12 +39,17 @@ SIMILARITY_TOOL=$(TOOLDIR)similarity
 
 CREATE_VERSION_GIT_H := $(shell test -x ./create-git-version-h.sh && ./create-git-version-h.sh)
 
+TEE = python ../tools/tee.py -v
+
 .PHONY: all core lib clean forcedep
 
 all: $(VIDJIL) $(ALIGN_CGI) $(SIMILARITY_CGI) $(SIMILARITY_TOOL)
 	$(MAKE) -C $(TOOLDIR)
 
 base: $(VIDJIL)
+
+static:
+	$(MAKE) all LDFLAGS="-static -static-libstdc++"
 
 ###
 
@@ -125,6 +130,111 @@ cleancoverage: clean
 
 cleanall: cleancoverage
 	$(MAKE) -C tests cleanall
+
+###
+# Tests
+###
+
+test:
+	$(MAKE) -C tests cleantests
+	$(TEE) '$(MAKE) COVERAGE="$(COVERAGE)" unit' tests/out-unit.log
+	$(MAKE) functional
+	$(TEE) '$(MAKE) -C .. test_tools_if_python'        tests/out-tools.log
+	@echo
+	@echo "*** All tests passed. Congratulations !"
+	@echo
+	$(MAKE) -C tests snapshot_success
+	$(MAKE) -C tests mark_failed_tests_as_todo
+
+snapshot_diff:
+	$(MAKE) -C tests snapshot_diff
+
+snapshot_diff_current:
+	$(MAKE) -C tests snapshot_diff_current
+
+unit: all
+	@echo "*** Launching unit tests..."
+	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C tests
+	@echo "*** All unit tests passed"
+
+functional: all
+	$(TEE) '$(MAKE) should'      tests/out-should-get.log
+	$(TEE) '$(MAKE) shouldvdj'   tests/out-should-vdj.log
+
+should: all
+	@echo
+	@echo "*** Launching .should_get tests..."
+	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C tests should
+	@echo "*** All .should_get tests passed"
+
+shouldvdj: all
+	@echo
+	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C tests shouldvdj_if_python
+
+
+valgrind_unit:
+	$(MAKE) -C tests valgrind_tests
+
+valgrind_should:
+	$(MAKE) -C tests valgrind_should
+
+
+
+### Code coverage
+
+coverage: unit_coverage should_coverage
+
+unit_coverage: clean
+	$(MAKE) COVERAGE=1 unit
+should_coverage: clean
+	$(MAKE) COVERAGE=1 functional
+
+### Reports with gcovr
+
+unit_gcovr: unit_coverage
+	mkdir -p reports
+	which gcovr > /dev/null && (gcovr -r . -e tests/ --xml > ../reports/unit_coverage.xml) || echo "gcovr is needed to generate a full report"
+should_gcovr: should_coverage
+	mkdir -p reports
+	which gcovr > /dev/null && (gcovr -r . -e tests/ --xml > ../reports/should_coverage.xml) || echo "gcovr is needed to generate a full report"
+
+### Upload to coveralls.io
+
+unit_coveralls:
+	coveralls $(COVERALLS_OPTIONS) --exclude release --exclude lib --exclude tests --exclude tools --exclude tests --exclude ../tools --exclude lib --gcov-options '\-lp'
+should_coveralls:
+	coveralls $(COVERALLS_OPTIONS) --exclude release --exclude lib --exclude tests --exclude tools --exclude tests --exclude ../tools --exclude lib --gcov-options '\-lp' -r algo
+
+
+### cppcheck
+
+cppcheck:
+	mkdir -p reports
+	cppcheck --enable=all --xml . 2>! reports/cppcheck.xml
+
+###
+# Tests - generated
+###
+
+shouldvdj_generated_kmer: base
+	@echo
+	@echo "*** Launching generated .should-vdj-fa tests (and accepts errors) -- Kmer"
+	-cd tests/data/gen ; python ../../should-vdj-to-tap.py -2q *.should-vdj.fa
+	@echo "*** Generated .should-vdj.fa tests finished -- Kmer"
+	python tests/tap-stats.py tests/data/gen/0-*.2.tap
+	python tests/tap-stats.py tests/data/gen/5-*.2.tap
+
+shouldvdj_generated_fine: base
+	@echo
+	@echo "*** Launching generated .should-vdj-fa tests (and accepts errors) -- Fine"
+	-cd tests/data/gen ; python ../../should-vdj-to-tap.py *.should-vdj.fa
+	@echo "*** Generated .should-vdj.fa tests finished -- Fine"
+	python tests/tap-stats.py tests/data/gen/0-*.1.tap
+	python tests/tap-stats.py tests/data/gen/5-*.1.tap
+
+###
+# dep.mk
+###
 
 forcedep:
 	$(CXX) $(CXXFLAGS) -M $(MAINCORE) > dep.mk
