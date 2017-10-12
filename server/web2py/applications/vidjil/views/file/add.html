@@ -90,9 +90,6 @@
             </tr>
             <tr>
                 <td><label for="file_info" id="file_info__label">info: </label></td>
-                {{ if 3 not in group_ids:}}
-                    {{group_ids.append(3)}}
-                {{pass}}
                 <td><textarea onfocus="new VidjilAutoComplete().setupAtWho(this);" data-needs-atwho="true" data-group-ids="{{=group_ids}}" class="text" id="file_info" name="file_info" cols="60" rows="8"></textarea></td>
                 <td></td>
             </tr>
