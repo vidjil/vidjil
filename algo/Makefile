@@ -1,5 +1,13 @@
 CXX?=g++
-OPTIM=-O2 -DNDEBUG  $(COVERAGE) $(DEBUG)
+
+ifeq (${COVERAGE},1)
+	COVERAGE_OPTION=--coverage
+else
+	COVERAGE_OPTION=
+endif
+
+
+OPTIM=-O2 -DNDEBUG  $(COVERAGE_OPTION) $(DEBUG)
 override CXXFLAGS += -W -Wall -std=c++11 $(OPTIM)
 
 ## inspired from http://stackoverflow.com/questions/399850/best-compiler-warning-level-for-c-c-compilers/401276

@@ -1,14 +1,7 @@
 
-COVERAGE=
 VIDJIL_ALGO_SRC = algo/
 VIDJIL_BROWSER_SRC = browser/
 VIDJIL_SERVER_SRC = server/
-
-ifeq (${COVERAGE},1)
-	COVERAGE_OPTION=--coverage
-else
-	COVERAGE_OPTION=
-endif
 
 TEE = python tools/tee.py -v
 
