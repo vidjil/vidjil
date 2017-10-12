@@ -241,6 +241,60 @@ shouldvdj_generated_fine: base
 	python tests/tap-stats.py tests/data/gen/0-*.1.tap
 	python tests/tap-stats.py tests/data/gen/5-*.1.tap
 
+
+
+###
+# Release
+###
+
+# $(MAKE) release RELEASE_TAG=2013.04alpha
+
+RELEASE_TAG = notag
+RELEASE_H = ./release.h
+
+RELEASES_DIR = releases/
+RELEASE_NAME = vidjil-$(RELEASE_TAG)
+RELEASE_ARCHIVE_TAR = $(RELEASE_NAME).tar
+RELEASE_ARCHIVE_TGZ = $(RELEASE_NAME).tar.gz
+
+release:
+	$(info ==== Release $(RELEASE_NAME) ====)
+
+	# Prepare directories
+	mkdir -p $(RELEASES_DIR)
+	rm -rf $(RELEASES_DIR)/$(RELEASE_ARCHIVE_TAR) $(RELEASES_DIR)/$(RELEASE_ARCHIVE_TGZ)
+
+	# Do the archive
+	git archive --format=tar --prefix $(RELEASE_NAME)/ -o $(RELEASES_DIR)/$(RELEASE_ARCHIVE_TAR) HEAD .
+
+	# Tag the release
+	if test "$(RELEASE_TAG)" != "notag"; then \
+		git tag -f $(RELEASE_NAME); \
+		echo '#define RELEASE_TAG "$(RELEASE_TAG)"' > $(RELEASE_H); \
+	fi
+
+	# TODO: put in the $(RELEASE_NAME) dir
+	tar rf $(RELEASES_DIR)/$(RELEASE_ARCHIVE_TAR) $(RELEASE_H)
+
+	# TODO: create-git-sha1.sh
+
+	# TODO: make -C release/$(RELEASE_NAME)/doc html || true
+	cd $(RELEASES_DIR) && gzip $(RELEASE_ARCHIVE_TAR)
+
+	# Untag the source
+	rm -f $(RELEASE_H) ; touch $(RELEASE_H)
+
+	# Check archive
+	cd $(RELEASES_DIR) && tar xvfz $(RELEASE_ARCHIVE_TGZ)
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE)
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) germline
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) data
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) -C algo test
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) clean && $(MAKE) static && mv vidjil vidjil-$(RELEASE_TAG)_`uname -m`
+
+
+
+
 ###
 # dep.mk
 ###
