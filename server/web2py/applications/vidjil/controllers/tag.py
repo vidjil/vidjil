@@ -14,4 +14,4 @@ def auto_complete():
     group_ids = json.loads(request.vars["group_ids"])
     tags = get_tags(db, group_ids)
 
-    return tags_to_json(tags)
+    return tags_to_json(tags, group_ids)
