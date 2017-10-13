@@ -150,13 +150,14 @@ Builder.prototype = {
         input.id = "reset_norm";
        
         var div = document.createElement("div");
+        div.appendChild(input);
+
         div.appendChild(document.createTextNode("none"))
         div.onclick = function () {
         self.m.compute_normalization(-1) ;
-        this.firstChild.checked=false;
+        this.firstChild.checked=true;
         self.m.update();
         };
-        div.appendChild(input);
         normalize_list.appendChild(div);
         tmp_norm_list =[]
         if(m.normalization_list.length>=1){ 
@@ -167,7 +168,6 @@ Builder.prototype = {
                     if (tmp_norm_list[div] == m.normalization_list[norm].id){
                         check=true
                     }
-
                 }
                 if (check==false) {
                 var id=m.normalization_list[norm].id
