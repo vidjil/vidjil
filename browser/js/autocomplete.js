@@ -28,6 +28,7 @@ function VidjilAutoComplete(datasource) {
     }
 
     this.datasource = datasource;
+    this.dataUrls = {};
     this.isLoadingData = {};
     this.cachedData = {};
     this.loadedGroups = [];
@@ -64,24 +65,28 @@ VidjilAutoComplete.prototype = {
         this.cachedData = {};
     },
 
-    isLoaded : function(group_ids) {
-        // this.loadedGroups is sorted on assignment
-        if (this.loadedGroups.length !== group_ids.length) {
+    isLoaded : function(keys) {
+        // this.loadedData is sorted on assignment
+        if (this.loadedData.length !== group_ids.length) {
             return false;
         }
-        var sorted_groups = group_ids.sort();
-        for (var i = 0; i < this.loadedGroups.length; i++) {
-            if (this.loadedGroups[i] !== sorted_groups[i]) {
+        var sorted_keys = keys.sort();
+        for (var i = 0; i < this.loadedData.length; i++) {
+            if (this.loadedData[i] !== sorted_keys[i]) {
                 return false;
             }
         }
         return true;
     },
 
-    setupAtWho: function(input) {
+    setupTags: function(input) {
+        this.setupAtWho(input, this.atWhoTags);
+    },
+
+    setupAtWho: function(input, callback) {
         var $input = $(input);
         if ($input.data('needs-atwho')) {
-            $input.off('focus.setupAtWho').on('focus.setupAtWho', this.setupTags.bind(this, $input));
+            $input.off('focus.setupAtWho').on('focus.setupAtWho', callback.bind(this, $input));
             $input.on('change.atwho', function() { input.dispatchEvent(new Event('input'))});
             // This triggers at.js again
             // Needed for quick actions with suffixes (ex: /label ~)
@@ -94,10 +99,11 @@ VidjilAutoComplete.prototype = {
         }
     },
 
-    setupTags : function($input) {
+    atWhoTags : function($input) {
         var self = this;
         var at = '#';
         this.initCache(at);
+        this.dataUrls[at] = this.datasource.db_address + 'tag/auto_complete';
         $input.atwho({
             at: at,
             alias: 'tags',
@@ -113,19 +119,19 @@ VidjilAutoComplete.prototype = {
         var isLoaded = this.isLoaded.bind(this);
         var callbacks = {
             filter : function(query, data, searchKey) {
-                var group_ids = this.$inputor.data('group-ids');
-                if (VidjilAutoComplete.isLoading(data) || !isLoaded(group_ids)) {
+                var keys = this.$inputor.data('keys');
+                if (VidjilAutoComplete.isLoading(data) || !isLoaded(keys)) {
                     this.$inputor.atwho('load', this.at, VidjilAutoComplete.defaultLoadingData);
-                    fetchData(this.$inputor, this.at, group_ids);
+                    fetchData(this.$inputor, this.at, keys);
                     return data;
                 }
                 return $.fn.atwho.default.callbacks.filter(query, data, searchKey);
             },
-            beforeSave: function(tags) {
-                if (tags.length == 1 && tags[0] == VidjilAutoComplete.defaultLoadingData[0]) {
-                    return tags;
+            beforeSave: function(data) {
+                if (data.length == 1 && data[0] == VidjilAutoComplete.defaultLoadingData[0]) {
+                    return data;
                 }
-                return $.map(tags, function(i) {
+                return $.map(data, function(i) {
                     if (i.name === null) {
                         return i;
                     }
@@ -150,17 +156,17 @@ VidjilAutoComplete.prototype = {
         return callbacks;
     },
 
-    fetchData : function($input, at, group_ids) {
+    fetchData : function($input, at, keys) {
         var self = this;
         if (this.isLoadingData[at]) return;
         this.isLoadingData[at] = true;
 
         var uncached = [];
-        for (var i = 0; i < group_ids.length; i++) {
-            var group_id = group_ids[i];
-            if (!this.cachedData[at][group_id]) {
-                uncached.push(group_id);
-                //this.loadData($input, at, this.cachedData[at][group_id], group_id);
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            if (!this.cachedData[at][key]) {
+                uncached.push(key);
+                //this.loadData($input, at, this.cachedData[at][key], key);
             }
         }
 
@@ -168,39 +174,39 @@ VidjilAutoComplete.prototype = {
             $.ajax({
                 type: "GET",
                 data: {
-                    group_ids: JSON.stringify(uncached)
+                    keys: JSON.stringify(uncached)
                 },
                 timeout: 5000,
                 crossDomain: true,
-                url: self.datasource,
+                url: self.dataUrls[at],
                 success: function (data) {
                     var my_data = JSON.parse(data);
                     self.cacheData(at, my_data, uncached);
-                    self.loadData($input, at, group_ids);
+                    self.loadData($input, at, keys);
                 },
                 error: function (request, status, error) {
                     self.isLoadingData[at] = false;
                 }
             });
         } else {
-            this.loadData($input, at, group_ids);
+            this.loadData($input, at, keys);
         }
     },
 
-    cacheData : function(at, data, group_ids) {
-        for (var i = 0; i < group_ids.length; i++) {
-            var group_id = group_ids[i];
-            this.cachedData[at][group_id] = data[group_id] ? data[group_id] : [];
+    cacheData : function(at, data, keys) {
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            this.cachedData[at][key] = data[key] ? data[key] : [];
         }
     },
 
-    loadData : function($input, at, group_ids) {
+    loadData : function($input, at, keys) {
         this.isLoadingData[at] = false;
-        this.loadedGroups = group_ids.sort();
+        this.loadedData = keys.sort();
 
         var loaded_data = [];
-        for (var i = 0; i < this.loadedGroups.length; i++) {
-            loaded_data = loaded_data.concat(this.cachedData[at][this.loadedGroups[i]]);
+        for (var i = 0; i < this.loadedData.length; i++) {
+            loaded_data = loaded_data.concat(this.cachedData[at][this.loadedData[i]]);
         }
 
         // remove duplicates

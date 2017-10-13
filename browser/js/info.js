@@ -321,7 +321,7 @@ Info.prototype = {
         $(textarea).data('group-ids', [this.m.group_id]);
         $(textarea).data('needs-atwho', true);
         $(textarea).on('focus', function() {
-            new VidjilAutoComplete().setupAtWho(this);
+            new VidjilAutoComplete().setupTags(this);
         })
 
         container.appendChild(textarea);

@@ -21,7 +21,7 @@
                    onchange="db.call('sample_set/custom', {'config_id' : '{{=request.vars["config_id"]}}', 
                                                       'filter' : this.value, 
                                                       'custom_list' : db.getListInput('custom_result[]')} )"
-                   onfocus="new VidjilAutoComplete().setupAtWho(this);"
+                   onfocus="new VidjilAutoComplete().setupTags(this);"
                    data-needs-atwho="true" data-group-ids="{{=group_ids}}">
         </div>
 
