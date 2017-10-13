@@ -1900,7 +1900,7 @@ changeAlleleNotation: function(alleleNotation) {
                 console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
             }
         }
-        this.norm_input.onkeydown = function () {
+        this.norm_input.onkeydown = function (event) {
             if (event.keyCode == 13) self.norm_button.click();
         }
         
