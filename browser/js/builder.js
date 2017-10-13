@@ -176,70 +176,37 @@ Builder.prototype = {
                 input.type = "radio";
                 input.value= -1;
                 input.name = "normalize_list";
-                input.data =id,expected_size
                 input.id = "reset_norm"+m.normalization_list[norm].id;
 
                 console.log(m.normalization_list[norm].id)
                 var div = document.createElement("div");
                 div.className="buttonSelector";
                 div.id = "normalizetest"+id
+                div.dataset.id =id
+                div.dataset.expected_size=expected_size
                 if (m.normalization.id==id){
                     input.checked=true;
-
                 }
 
-                text= m.clone(m.normalization_list[norm].id).getShortName()
+                text= m.clone(m.normalization_list[norm].id).getShortName()+" "+ m.clone(m.normalization_list[norm].id).getStrSize()
+                div.appendChild(input);
+
                 div.appendChild(document.createTextNode(text))
 
-                div.onclick = this.get_old_normalization(id, expected_size)
-                        div.appendChild(input);
+                div.onclick = function() {
+                     self.m.norm_input.value = ""
+
+                    self.m.clone(this.dataset.id).expected= this.dataset.expected_size;
+                    self.m.compute_normalization(this.dataset.id, this.dataset.expected_size)
+                    self.m.update()
+                }
             normalize_list.appendChild(div);
             tmp_norm_list.push(m.normalization_list[norm].id)
             }
         }
         }
-
-        
-        // Regroup Clones and Data into a single array with only critical data
-        var divElements = [];
-        for (var i = 0; i < self.m.clones.length; ++i) {
-            if (typeof self.m.clone(i).expected != "undefined") {
-                divElements.push({
-                    id: i,
-                    name: self.m.clone(i).getName(),
-                    expected: self.m.clone(i).expected
-                });
-            }
-        }
-        
-        for (var key in self.m.data) {
-            if (typeof self.m.data[key].expected != "undefined") {
-                divElements.push({
-                    id: key,
-                    name: self.m.data[key],
-                    expected: self.m.data[key].expected
-                });
-            }
-        }
-
-        // Create clickable div for each Clone and Data Entry
-        for (var j = 0; j < divElements.length; ++j) {
-            var elem = self.setupNormalizeDiv(divElements[i], "buttonSelector");
-            console.log(elem);
-            normalize_list.appendChild(elem);
-        }
         
     },
-
-    get_old_normalization(id,expected_value){
-        self.m.norm_input.value = ""
-
-        console.log("id = "+id)
-        self.m.clone(id).expected= expected_value;
-        self.m.compute_normalization(id, expected_value)
-        console.log("compute"+id)
-        self.m.update()
-            },
     
     /* Fonction servant à "déverouiller" l'appel de la fonction compute_normalization(), ainsi qu'à apposer le 'check' au checkBox 'normalize'
      * */
