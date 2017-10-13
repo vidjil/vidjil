@@ -67,7 +67,7 @@ VidjilAutoComplete.prototype = {
 
     isLoaded : function(keys) {
         // this.loadedData is sorted on assignment
-        if (this.loadedData.length !== group_ids.length) {
+        if (this.loadedData.length !== keys.length) {
             return false;
         }
         var sorted_keys = keys.sort();
