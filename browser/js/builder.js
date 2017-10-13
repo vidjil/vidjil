@@ -163,44 +163,44 @@ Builder.prototype = {
         if(m.normalization_list.length>=1){ 
             for (var norm in m.normalization_list) {
                 var check=false
-                for (var div in tmp_norm_list){
-                    console.log( normalize_list[div])
-                    if (tmp_norm_list[div] == m.normalization_list[norm].id){
+                for (var div_id in tmp_norm_list){
+                    console.log( normalize_list[div_id])
+                    if (tmp_norm_list[div_id] == m.normalization_list[norm].id){
                         check=true
                     }
                 }
                 if (check==false) {
                 var id=m.normalization_list[norm].id
                 var expected_size = m.normalization_list[norm].expected_size   
-                var input = document.createElement("input");
-                input.type = "radio";
-                input.value= -1;
-                input.name = "normalize_list";
-                input.id = "reset_norm"+m.normalization_list[norm].id;
+                var input_elem = document.createElement("input");
+                input_elem.type = "radio";
+                input_elem.value= -1;
+                input_elem.name = "normalize_list";
+                input_elem.id = "reset_norm"+m.normalization_list[norm].id;
 
                 console.log(m.normalization_list[norm].id)
-                var div = document.createElement("div");
-                div.className="buttonSelector";
-                div.id = "normalizetest"+id
-                div.dataset.id =id
-                div.dataset.expected_size=expected_size
+                var form_div_elem = document.createElement("div");
+                form_div_elem.className="buttonSelector";
+                form_div_elem.id = "normalizetest"+id
+                form_div_elem.dataset.id =id
+                form_div_elem.dataset.expected_size=expected_size
                 if (m.normalization.id==id){
                     input.checked=true;
                 }
 
                 text= m.clone(m.normalization_list[norm].id).getShortName()+" "+ m.clone(m.normalization_list[norm].id).getStrSize()
-                div.appendChild(input);
+                form_div_elem.appendChild(input_elem);
 
-                div.appendChild(document.createTextNode(text))
+                form_div_elem.appendChild(document.createTextNode(text))
 
-                div.onclick = function() {
+                form_div_elem.onclick = function() {
                      self.m.norm_input.value = ""
 
                     self.m.clone(this.dataset.id).expected= this.dataset.expected_size;
                     self.m.compute_normalization(this.dataset.id, this.dataset.expected_size)
                     self.m.update()
                 }
-            normalize_list.appendChild(div);
+            normalize_list.appendChild(form_div_elem);
             tmp_norm_list.push(m.normalization_list[norm].id)
             }
         }
