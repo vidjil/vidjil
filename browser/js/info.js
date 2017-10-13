@@ -318,7 +318,7 @@ Info.prototype = {
         textarea.innerHTML = info ;
         textarea.setAttribute('placeholder', placeholder);
 
-        $(textarea).data('group-ids', [this.m.group_id]);
+        $(textarea).data('keys', [this.m.group_id]);
         $(textarea).data('needs-atwho', true);
         $(textarea).on('focus', function() {
             new VidjilAutoComplete().setupTags(this);
