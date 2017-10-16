@@ -21,25 +21,6 @@ def extract_id(target, error):
         return id
     except:
         raise ValueError('invalid input %s' % target)
-    
-def get_sample_set_list(type, reference):
-    query = db(
-        auth.vidjil_accessible_query(PermissionEnum.read.value, db[type])
-    ).select(
-        db[type].ALL, # sub optimal, use helpers to reduce ?
-        orderby = ~db[type].id
-    )
-    ss_list = []
-    ref = ""
-
-    factory = ModelFactory()
-    helper = factory.get_instance(type=type)
-    for row in query :
-        tmp = helper.get_id_string(row)
-        ss_list.append(tmp)
-        if reference == row.id:
-            ref = tmp
-    return ss_list, ref
 
 def add():
     sample_set = db.sample_set[request.vars["id"]]

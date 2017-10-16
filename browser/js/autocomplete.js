@@ -83,6 +83,10 @@ VidjilAutoComplete.prototype = {
         this.setupAtWho(input, this.atWhoTags);
     },
 
+    setupSamples: function(input) {
+        this.setupAtWho(input, this.atWhoSamples);
+    },
+
     setupAtWho: function(input, callback) {
         var $input = $(input);
         if ($input.data('needs-atwho')) {
@@ -111,6 +115,43 @@ VidjilAutoComplete.prototype = {
             callbacks: self.getDefaultCallbacks(),
             searchKey: 'search',
             limit: 8
+        });
+    },
+
+    atWhoSamples : function($input) {
+        var self = this;
+        var at = '';
+        this.initCache(at);
+        this.dataUrls[at] = this.datasource.db_address + 'sample_set/auto_complete'
+        var callbacks = self.getDefaultCallbacks()
+        callbacks.beforeSave = function(data) {
+            if (data.length == 1 && data[0] == VidjilAutoComplete.defaultLoadingData[0]) {
+                return data;
+            }
+            var res = $.map(data, function(i) {
+                return {
+                    name: i,
+                    search: i
+                };
+            });
+            return res;
+        };
+
+        callbacks.matcher = function(flag, subtext) {
+            var regex = new RegExp(`[\\s\\S]+`);
+            var match = regex.exec(subtext);
+            if (match) {
+                return match[0];
+            }
+            return null;
+        };
+
+        $input.atwho({
+            at: at,
+            alias: 'samples',
+            data: VidjilAutoComplete.defaultLoadingData,
+            callbacks: callbacks,
+            searchKey: 'search',
         });
     },
 

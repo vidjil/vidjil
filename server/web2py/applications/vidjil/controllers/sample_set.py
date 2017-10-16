@@ -2,6 +2,7 @@
 import gluon.contrib.simplejson, datetime
 import vidjil_utils
 import time
+import json
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -577,3 +578,30 @@ def change_permission():
         res = {"message": ACCESS_DENIED}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+def get_sample_set_list(type):
+    query = db(
+        auth.vidjil_accessible_query(PermissionEnum.read.value, db[type])
+    ).select(
+        db[type].ALL, # sub optimal, use helpers to reduce ?
+        orderby = ~db[type].id
+    )
+    ss_list = []
+
+    factory = ModelFactory()
+    helper = factory.get_instance(type=type)
+    for row in query :
+        tmp = helper.get_id_string(row)
+        ss_list.append(tmp)
+    return ss_list
+
+def auto_complete():
+    if "keys" not in request.vars:
+        return error_message("missing group ids")
+
+    sample_types = json.loads(request.vars['keys'])
+    result = {}
+    for sample_type in sample_types:
+        result[sample_type] = get_sample_set_list(sample_type)
+
+    return json.dumps(result)
