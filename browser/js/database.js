@@ -374,9 +374,6 @@ Database.prototype = {
             this.init_ajaxform()
             
             //
-            this.build_suggest_box()
-            
-            //
             this.fixed_header()
             
             // New page displayed, attempt to display header and login notifications
@@ -1021,79 +1018,6 @@ Database.prototype = {
         arg.id = id             //user id 
        
         this.call('group/rights', arg)
-    },
-    
-    
-    updateList: function(that) {
-        var lastValue = that.lastValue,
-            value = that.value,
-            array = [],
-            pos = value.indexOf('|'),
-            start = that.selectionStart,
-            end = that.selectionEnd,
-            options;
-
-        if (that.options) {
-            options = that.options;
-        } else {
-            options = Object.keys(that.list.options).map(function (option) {
-                return that.list.options[option].value;
-            });
-            that.options = options;
-        }
-
-        if (lastValue !== value && value.length>1) {
-            that.list.innerHTML = options.filter(function (a) {
-                if (a === undefined)
-                    return 0
-                return a.toLowerCase().indexOf(value.toLowerCase()) != -1;
-            }).slice(0,10).map(function (a) {
-                return '<option value="' + value + '|' + a + '">' + a + '</option>';
-            }).join();
-            this.updateInput(that);
-            that.lastValue = value;
-        }
-    },
-
-    updateInput: function(that) {
-        var value = that.value,
-            pos = value.indexOf('|'),
-            start = that.selectionStart,
-            end = that.selectionEnd;
-
-        if (pos != -1) {
-            value = value.slice(pos + 1);
-        }
-        that.value = value;
-        if (that.lastValue !== value){
-            if (that.options.indexOf(value)!= -1) {
-                that.style.color = "green";
-            } else {
-                that.style.color = "red";
-            }
-        }
-        that.setSelectionRange(start, end);
-    },
-    
-    build_suggest_box: function() {
-        var self = this
-        
-        if (document.getElementById("patient_list")){
-            
-            document.getElementById('patient_list').addEventListener('keyup', function (e) {
-                self.updateList(this);
-            });
-            document.getElementById('patient_list').addEventListener('input', function (e) {
-                self.updateInput(this);
-            });
-            document.getElementById('run_list').addEventListener('keyup', function (e) {
-                self.updateList(this);
-            });
-            document.getElementById('run_list').addEventListener('input', function (e) {
-                self.updateInput(this);
-            });
-            
-        }
     },
     
     argsToStr : function (args) {

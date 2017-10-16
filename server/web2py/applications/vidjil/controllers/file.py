@@ -54,19 +54,18 @@ def add():
                 message="The space in directory %s has passed below %d%%." % (defs.DIR_SEQUENCES, defs.FS_LOCK_THRESHHOLD))
             return error_message("Uploads are temporarily disabled. System admins have been made aware of the situation.")
         
-        patient_id = None
-        run_id = None
-        generic_id = None
         group_ids = []
-        if sample_set.sample_type == defs.SET_TYPE_GENERIC:
-            generic_id = db( db.generic.sample_set_id == request.vars["id"]).select()[0].id
-            group_ids.append(get_set_group(sample_set.sample_type, generic_id))
-        if sample_set.sample_type == defs.SET_TYPE_PATIENT:
-            patient_id = db( db.patient.sample_set_id == request.vars["id"]).select()[0].id
-            group_ids.append(get_set_group(sample_set.sample_type, patient_id))
-        if sample_set.sample_type == defs.SET_TYPE_RUN:
-            run_id = db( db.run.sample_set_id == request.vars["id"]).select()[0].id
-            group_ids.append(get_set_group(sample_set.sample_type, run_id))
+        sample_types = [defs.SET_TYPE_GENERIC, defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN]
+        id_strings = {}
+        factory = ModelFactory()
+        for sample_type in sample_types:
+            if sample_set.sample_type == sample_type:
+                row = db(db[sample_type].sample_set_id == request.vars["id"]).select().first()
+                group_ids.append(get_set_group(sample_type, row.id))
+                helper = factory.get_instance(type=sample_type)
+                id_strings[sample_type] = helper.get_id_string(row)
+            else:
+                id_strings[sample_type] = ""
 
         group_ids = [int(gid) for gid in group_ids]
 		
@@ -89,20 +88,11 @@ def add():
                                 info = row.info
 			))
 
-        generic_list, generic = get_sample_set_list(defs.SET_TYPE_GENERIC, generic_id)
-        patient_list, patient = get_sample_set_list(defs.SET_TYPE_PATIENT, patient_id)
-        run_list, run = get_sample_set_list(defs.SET_TYPE_RUN, run_id)
-				
         source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
         return dict(message = T('add file'),
-                   generic_list = generic_list,
-                   patient_list = patient_list,
-                   run_list = run_list,
 				   pre_process_list = pre_process_list,
-                   generic = generic,
-                   patient = patient,
+                   id_strings = id_strings,
                    sample_type = sample_set.sample_type,
-                   run = run,
                    source_module_active = source_module_active,
                    group_ids = group_ids)
 
@@ -279,26 +269,24 @@ def edit():
                                 info = row.info
 			))
 
-        generic_list, generic = get_sample_set_list(defs.SET_TYPE_GENERIC, relevant_ids['generic'])
-        patient_list, patient = get_sample_set_list(defs.SET_TYPE_PATIENT, relevant_ids['patient'])
-        run_list, run = get_sample_set_list(defs.SET_TYPE_RUN, relevant_ids['run'])
-
         group_ids = []
+        id_strings = {}
+        factory = ModelFactory()
         for key in relevant_ids:
-            if (relevant_ids[key] is not None):
+            if relevant_ids[key] is not None:
                 group_ids.append(get_set_group(key, relevant_ids[key]))
+                helper = factory.get_instance(type=key)
+                row = db(db[key].id == relevant_ids[key]).select().first()
+                id_strings[key] = helper.get_id_string(row)
+            else:
+                id_strings[key] = ""
 
         group_ids = [int(gid) for gid in group_ids]
 
         source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
         return dict(message = T('edit file'),
-                   generic_list = generic_list,
-                   patient_list = patient_list,
-                   run_list = run_list,
-                   patient = patient,
+                   id_strings = id_strings,
 				   pre_process_list = pre_process_list,
-                   run = run,
-                   generic = generic,
                    file = db.sequence_file[request.vars["id"]],
                    sample_type = request.vars['sample_type'],
                    source_module_active = source_module_active,
