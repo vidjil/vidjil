@@ -59,7 +59,7 @@
             {{ for key in id_strings: }}
             <tr>
                 <td><label for="{{=key}}_id" id="{{=key}}_id__label">{{=key if key != 'generic' else 'set'}}: </label></td>
-                <td><input onfocus="new VidjilAutoComplete().setupSamples(this);" data-needs-atwho="true" data-keys=["{{=key}}"] id="{{=key}}_list" name="{{=key}}_id" type="text" size="80" value="{{=id_strings[key]}}"></td>
+                <td><input onfocus="new VidjilAutoComplete().setupSamples(this);" data-needs-atwho="true" data-keys=["{{=key}}"] id="{{=key}}_list" name="{{=key}}_id" type="text" size="80" value="{{=id_strings[key]}}", autocomplete="off"></td>
             </tr>
             {{ pass }}
 			<tr class='db_table_split' ><td colspan="2"> sample information </td></tr>
