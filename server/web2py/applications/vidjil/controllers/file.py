@@ -17,7 +17,7 @@ if request.env.http_origin:
 
 def extract_id(target, error):
     try:
-        id = int(target.split('(')[-1][:-1])
+        id = int(target.strip().split('(')[-1][:-1])
         return id
     except:
         raise ValueError('invalid input %s' % target)
