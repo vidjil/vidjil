@@ -104,6 +104,7 @@ VidjilAutoComplete.prototype = {
             data: VidjilAutoComplete.defaultLoadingData,
             callbacks: self.getDefaultCallbacks(),
             searchKey: 'search',
+            limit: 8
         });
     },
 
