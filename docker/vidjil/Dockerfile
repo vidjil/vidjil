@@ -41,7 +41,6 @@ run apt-get update ; DEBIAN_FRONTEND=noninteractive apt-get -y -q --allow-unauth
 run apt-get update ; DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests -y -q --allow-unauthenticated vidjil-server
 
 run cd /usr/share/vidjil/germline && make
-run cd /usr/share/web2py && chown -R www-data:www-data .
 
 #run ln -sf /dev/stdout /var/log/nginx/access.log \
 #	&& ln -sf /dev/stderr /var/log/nginx/error.log

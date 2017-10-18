@@ -26,3 +26,7 @@ License: GPL-3.0+
  .
  On Debian systems, the complete text of the GNU General
  Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
+ .
+ The vidjil-server package is distributed with web2py source code which is licensed as LGPLv3.
+ The extent of the web2py code is found in ./server/web2py/. Any code found in
+ ./server/web2py/applications/vidjil belongs to the Vidjil project and is licensed as such.
