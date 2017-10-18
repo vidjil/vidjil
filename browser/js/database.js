@@ -1103,7 +1103,7 @@ Database.prototype = {
         for (var key in args) {
             if (args[key] instanceof Array){
                 for (var i=0; i<args[key].length; i++){
-                    str += key + "=" + encoreURIComponent(args[key][i]) + "&";
+                    str += key + "=" + encodeURIComponent(args[key][i]) + "&";
                 }
             }else{
                 str += "" + key + "=" + encodeURIComponent(args[key]) + "&";
