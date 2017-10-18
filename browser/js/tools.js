@@ -253,6 +253,23 @@ function append_to_object(data, append_to) {
     }
 }
 
+
+/**
+ * Floor the given number to a power of 10
+ */
+
+function floor_pow10(x)
+{
+  try {
+      return Math.pow(10, Math.floor(Math.log10(x)))
+  }
+  catch(e) {
+      // Always return something
+      return 1+x;
+  }
+}
+
+
 /**
  * Give a nice decimal number above the given number
  * nice_ceil(0.14) -> 0.15
@@ -264,7 +281,7 @@ function nice_ceil(x)
     if (x <= 0) return x
 
     try {
-        var floor_power10 = Math.pow(10,Math.floor(Math.log10(x)))
+        var floor_power10 = floor_pow10(x)
 
         var xx = x / floor_power10
         return (xx == 1 ? 1 : xx <= 1.5 ? 1.5 : Math.ceil(xx)) * floor_power10
@@ -287,7 +304,7 @@ function nice_floor(x)
     if (x <= 0) return x
 
     try {
-        var floor_power10 = Math.pow(10,Math.floor(Math.log10(x)))
+        var floor_power10 = floor_pow10(x)
         return Math.floor(x / floor_power10) * floor_power10
     }
     catch(e) {
