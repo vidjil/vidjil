@@ -119,7 +119,7 @@ int main(int argc, const char** argv)
   string seq2 = fasta2.sequence(j);
 
   cout << ">" << fasta1.label(i) << "\t" << file1 << " " << i << endl << seq1 << endl;
-  cout << ">" << fasta2.label(i) << "\t" << file2 << " " << j << endl << seq2 << endl;
+  cout << ">" << fasta2.label(j) << "\t" << file2 << " " << j << endl << seq2 << endl;
   cout << endl;
 
   
