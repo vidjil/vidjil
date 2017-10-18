@@ -313,6 +313,29 @@ function nice_floor(x)
     }
 }
 
+
+/**
+ * Give a minimial number of digits to represent 'x' with at least 'sd' significant digits
+ * nice_number_digits(14.5, 2) -> 1
+ * nice_number_digits(0.145, 2) -> 2
+ * nice_number_digits(0.0145, 2) -> 3
+ **/
+
+function nice_number_digits(x, sd)
+{
+    if (x <= 0) return sd
+
+    try {
+        var nd = Math.floor(Math.log10(x))
+        return Math.max(0, sd - nd - 1)
+    }
+    catch(e) {
+        // Always return something
+        return sd
+    }
+}
+
+
 /**
  * Sends error to the specified database reference.
  * If database is undefined, throws the specified error.
