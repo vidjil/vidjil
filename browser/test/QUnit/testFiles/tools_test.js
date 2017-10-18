@@ -33,11 +33,15 @@ QUnit.test("floatToFixed", function(assert) {
 
 
 QUnit.test("test rounding functions", function(assert) {
+    assert.equal(floor_pow10(0.072), 0.01, "nice_floor_pow10 0.072");
+
+    assert.equal(nice_ceil(0), 0, "rounding 0");
     assert.equal(nice_ceil(0.072), 0.08, "rounding 0.08");
     assert.equal(nice_ceil(1.2), 1.5, "rounding 1.2");
     assert.equal(nice_ceil(18), 20, "rounding 1.2");
     assert.equal(nice_ceil(100), 100, "rounding 100");
 
+    assert.equal(nice_floor(0), 0, "rounding 0");
     assert.equal(nice_floor(0.072), 0.07, "rounding 0.072");
     assert.equal(nice_floor(100), 100, "rounding 100");
     assert.equal(nice_floor(451), 400, "rounding 451");
