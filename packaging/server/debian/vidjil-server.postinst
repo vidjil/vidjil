@@ -285,6 +285,10 @@ case "$1" in
         vidjil_logs_install
         uwsgi_install
 
+        if [ ! -e "$DIR/server/web2py/wsgihandler.py" ] ; then
+            ln -s /etc/vidjil/wsgihandler.py "$DIR"/server/web2py
+        fi
+
         tools_utils="$DIR/server/web2py/applications/vidjil/modules/tools_utils.py"
         if [ ! -e "$tools_utils" ] ; then
             ln -s "$DIR/tools/utils.py" "$tools_utils"
