@@ -7,15 +7,11 @@
 #include <stdlib.h>   
 #include <core/dynprog.h>
 #include <core/bioreader.hpp>
-#include "docopt.h"
+#include "CLI11.hpp"
 
 using namespace std;
 
 
-
-// très sensible aux espaces, tabulations...
-
-static const char VERSION[] = "align beta" ;
 
 static const char USAGE[] =
 R"(Align sequences using core/dynprog.cpp
@@ -80,29 +76,43 @@ Cost getCost(int cost)
 }  
 
 
-int main(int argc, const char** argv)
+int main(int argc, char** argv)
 {
-  // Options parsing
-  std::map<std::string, docopt::value> args
-    = docopt::docopt(USAGE, { argv + 1, argv + argc }, true, VERSION); 
+  CLI::App app{"Align sequences using core/dynprog.cpp.\n The two sequences can be taken in either one or two fasta files."};
 
-  for(auto const& arg : args) 
-    cout << arg.first << ":" <<arg.second << endl;
-  cout << endl ;
+  int i = 0;
+  int j = 0;
+  app.add_option("-i", i, "Sequence number in file1");
+  app.add_option("-j", j, "Sequence number in file2");
   
   // Files
-  vector<string> files = args["<file>"].asStringList();
+  string file1 = "" ;
+  string file2 = "" ;
+  app.add_option("file1", file1, "file1 (.fa)");
+  app.add_option("file2", file2, "file2 (.fa)");
+
+  // Mode
+  int m = 0;
+  app.add_option("-m,--mode", m, "Mode XXX TODO: DETAIL XXX");
+
+  // Cost
+  int cost = 0;
+  app.add_option("-c,--cost", cost, "Cost XXX TODO: DETAIL XXX");
+
+  // Matrix
+  bool matrix = false;
+  app.add_flag("-x,--matrix", matrix, "Display matrix");
   
-  const char* file1 = files.front().c_str();
-  const char* file2 = files.back().c_str();
+  // Options parsing
+  CLI11_PARSE(app, argc, argv);
+
+  // ----------------------------------------------------------
   
+  // Read files
   BioReader fasta1(file1, 1, " ");
   BioReader fasta2(file2, 1, " ");
   
   // Sequences
-  int i = atoi(args["-i"].asString().c_str());
-  int j = atoi(args["-j"].asString().c_str());
-
   if (i >= fasta1.size())
     {
       cerr << "ERROR : no sequence #" << i << " in " << file1 << endl ;
@@ -124,14 +134,12 @@ int main(int argc, const char** argv)
 
   
   // Cost
-  Cost dpCost = getCost( atoi(args["-c"].asString().c_str()));
+  Cost dpCost = getCost(cost);
   cout << "Cost: " << dpCost << endl;
   cout << endl;
 
   
   // Mode
-  int m = atoi(args["-m"].asString().c_str());
-
   for (int mm=1; mm<=6; mm++)
     {      
       int this_m = m > 0 ? m : mm ;
@@ -142,7 +150,7 @@ int main(int argc, const char** argv)
     dp.compute(); 
     dp.backtrack();
 
-    if (args["--matrix"].asBool())
+    if (matrix)
       cout << dp;
     
     cout << dp.str_back << endl;
