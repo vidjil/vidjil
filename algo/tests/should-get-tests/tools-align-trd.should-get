@@ -1,0 +1,18 @@
+!LAUNCH: $VIDJIL_DIR/algo/tools/align -m 1 -i 2 -j 1 -x $VIDJIL_DATA/trd-dd2-dd3.fa $VIDJIL_DIR/germline/homo-sapiens/TRDD.fa 
+
+$ Load correct sequences
+1:TRDD2.01_0//0_TRDJ1.01 .*trd-dd2-dd3.fa
+1:M22153.TRDD2.01.*TRDD.fa
+
+$ Local alignment
+1: Local
+1: 14 CCTTCCTAC
+1:  0 CCTTCCTAC
+
+$ Matrix, portion leading to the best score (36)
+1: 14i  28.  18d   8d
+1:  4i  18i  32.  22d
+1:  4.   8i  22i  36.
+
+$ Best score
+1: score: 36
