@@ -45,6 +45,12 @@ QUnit.test("test rounding functions", function(assert) {
     assert.equal(nice_floor(0.072), 0.07, "rounding 0.072");
     assert.equal(nice_floor(100), 100, "rounding 100");
     assert.equal(nice_floor(451), 400, "rounding 451");
+
+    assert.equal(nice_number_digits(42, 1), 0, "nice_number_digits 42");
+    assert.equal(nice_number_digits(45.1, 2), 0, "nice_number_digits 45.1");
+    assert.equal(nice_number_digits(4.51, 2), 1, "nice_number_digits 4.51");
+    assert.equal(nice_number_digits(0.4, 2), 2, "nice_number_digits 0.4");
+    assert.equal(nice_number_digits(0.045, 2), 3, "nice_number_digits 0.045");
     }
 );
 
