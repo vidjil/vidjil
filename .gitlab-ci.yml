@@ -101,7 +101,7 @@ deploy_review:
   environment:
     name: review/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
-    on_stop: stop_deploy
+    on_stop: stop_deploy_review
   only:
     - /^feature-[cw]\/.*$/
     - /^hotfix-[cw]\/.*$/
