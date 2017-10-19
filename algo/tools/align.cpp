@@ -91,7 +91,7 @@ int main(int argc, char** argv)
   app.add_option("file1", file1, "file1 (.fa)")
     ->check(CLI::ExistingFile)
     ->required();
-  app.add_option("file2", file2, "file2 (.fa)")
+  app.add_option("file2", file2, "file2 (.fa) [when not given, take file1 twice]")
     ->check(CLI::ExistingFile);
 
   // Mode
@@ -108,6 +108,9 @@ int main(int argc, char** argv)
   
   // Options parsing
   CLI11_PARSE(app, argc, argv);
+
+  if (!file2.size())
+    file2 = file1;
 
   // ----------------------------------------------------------
   
