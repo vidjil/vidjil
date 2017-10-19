@@ -82,8 +82,8 @@ int main(int argc, char** argv)
 
   int i = 0;
   int j = 0;
-  app.add_option("-i", i, "Sequence number in file1");
-  app.add_option("-j", j, "Sequence number in file2");
+  app.add_option("-i", i, "Sequence number in file1", true);
+  app.add_option("-j", j, "Sequence number in file2", true);
   
   // Files
   string file1 = "" ;
@@ -93,11 +93,11 @@ int main(int argc, char** argv)
 
   // Mode
   int m = 0;
-  app.add_option("-m,--mode", m, "Mode XXX TODO: DETAIL XXX");
+  app.add_option("-m,--mode", m, "Mode XXX TODO: DETAIL XXX", true);
 
   // Cost
   int cost = 0;
-  app.add_option("-c,--cost", cost, "Cost XXX TODO: DETAIL XXX");
+  app.add_option("-c,--cost", cost, "Cost XXX TODO: DETAIL XXX", true);
 
   // Matrix
   bool matrix = false;
