@@ -82,8 +82,11 @@ int main(int argc, char** argv)
 
   int i = 0;
   int j = 0;
-  app.add_option("-i", i, "Sequence number in file1", true);
-  app.add_option("-j", j, "Sequence number in file2", true);
+  app.add_option("-i", i, "Sequence number in file1", true)
+    ->group("Sequence selection");
+
+  app.add_option("-j", j, "Sequence number in file2", true)
+    ->group("Sequence selection");
   
   // Files
   string file1 = "" ;
