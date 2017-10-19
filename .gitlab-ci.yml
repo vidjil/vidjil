@@ -9,11 +9,12 @@ before_script:
 stages:
   - test_quality
   - test_unit
+  - deploy_review
   - test_functional
   - test_shouldvdj
   - valgrind_unit
   - valgrind_functional
-  - deploy
+  - deploy_prod
 
 
 # Algorithm
@@ -93,8 +94,8 @@ code_quality:
     - /^hotfix-[cw]\/.*$/
     - prod-client
 
-deploy:
-  stage: deploy
+deploy_review:
+  stage: deploy_review
   script:
     - rsync -av --delete browser $DEPLOY_SERVER:$DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG
   environment:
@@ -106,7 +107,7 @@ deploy:
     - /^hotfix-[cw]\/.*$/
 
 deploy_prod:
-  stage: deploy
+  stage: deploy_prod
   script:
     - rsync -av --delete browser $PROD_CLIENT_SERVER:$PROD_CLIENT_PATH
     - ssh $PROD_CLIENT_SERVER "cp -pr $PROD_CLIENT_PATH_TEMPLATE/browser $PROD_CLIENT_PATH"
@@ -116,8 +117,8 @@ deploy_prod:
   only:
     - prod-client
     
-stop_deploy:
-  stage: deploy
+stop_deploy_review:
+  stage: deploy_review
   variables:
     GIT_STRATEGY: none
   script:
