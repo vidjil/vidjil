@@ -88,8 +88,11 @@ int main(int argc, char** argv)
   // Files
   string file1 = "" ;
   string file2 = "" ;
-  app.add_option("file1", file1, "file1 (.fa)");
-  app.add_option("file2", file2, "file2 (.fa)");
+  app.add_option("file1", file1, "file1 (.fa)")
+    ->check(CLI::ExistingFile)
+    ->required();
+  app.add_option("file2", file2, "file2 (.fa)")
+    ->check(CLI::ExistingFile);
 
   // Mode
   int m = 0;
