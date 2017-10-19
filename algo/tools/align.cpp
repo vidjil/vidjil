@@ -12,40 +12,6 @@
 using namespace std;
 
 
-
-static const char USAGE[] =
-R"(Align sequences using core/dynprog.cpp
-The two sequences can be taken in either one or two fasta files.
-
-    Usage:       
-      align [options] <file>         
-      align [options] <file> <file>  
-
-    Options:
-      -h --help     Show help
-      --version     Show version
-      -i <i>        Sequence number in file1 [default: 0]
-      -j <j>        Sequence number in file2 [default: 0]
-      -m <mode>     Mode [default: 0]
-                0       loop on all modes
-                1       Local 
-                2       LocalEndWithSomeDeletions 
-                3       SemiGlobalTrans 
-                4       SemiGlobal
-                5       GlobalButMostlyLocal
-                6       Global
-      -c <cost>     Cost [default: 2]
-                1       DNA
-                2       VDJ
-                9       VDJaffine
-                5       IdentityDirty
-                6       Hammong
-                7       Levenshtein
-                8       Cluster
-      -x --matrix    Display matrix
-)";
-
-
 // Should be moved in core/dynprog
 
 DynProg::DynProgMode getdpMode(int mode)
@@ -99,11 +65,25 @@ int main(int argc, char** argv)
 
   // Mode
   int m = 0;
-  app.add_option("-m,--mode", m, "Mode XXX TODO: DETAIL XXX", true);
+  app.add_option("-m,--mode", m, R"(Mode
+    0       loop on all modes
+    1       Local
+    2       LocalEndWithSomeDeletions
+    3       SemiGlobalTrans
+    4       SemiGlobal
+    5       GlobalButMostlyLocal
+    6       Global)", true);
 
   // Cost
   int cost = 0;
-  app.add_option("-c,--cost", cost, "Cost XXX TODO: DETAIL XXX", true);
+  app.add_option("-c,--cost", cost, R"(Cost
+    1       DNA
+    2       VDJ
+    9       VDJaffine
+    5       IdentityDirty
+    6       Hammong
+    7       Levenshtein
+    8       Cluster)", true);
 
   // Matrix
   bool matrix = false;
