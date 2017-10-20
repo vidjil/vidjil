@@ -263,6 +263,7 @@ int main (int argc, char **argv)
 
   bool several_D = false;
 
+  vector <string> multi_germlines ;
   bool multi_germline = false;
   bool multi_germline_mark = false;
   bool multi_germline_one_index_per_germline = true;
@@ -309,39 +310,16 @@ int main (int argc, char **argv)
 
   
   group = "Germline presets (at least one -g or -V/(-D)/-J option must be given for all commands except -c " COMMAND_GERMLINES ")";
-  //app.add_option("-g", multi_germlines, "XXXX") -> group(group);
-                 /*
-       << "  -g <.g file>(:filter)" << endl
-       << "                multiple locus/germlines, with tuned parameters." << endl
-       << "                Common values are '-g germline/homo-sapiens.g' or '-g germline/mus-musculus.g'" << endl
-       << "                The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'" << endl
+  app.add_option("-g", multi_germlines, R"Z(
+         -g <.g file>(:filter)
+                    multiple locus/germlines, with tuned parameters.
+                    Common values are '-g germline/homo-sapiens.g' or '-g germline/mus-musculus.g'
+                    The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
+         -g <path>
+                    multiple locus/germlines, shortcut for '-g <path>/)Z" DEFAULT_MULTI_GERMLINE_FILE R"Z(',
+                    processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombination
+)Z") -> group(group) -> expected(1) -> set_type_name("GERMLINES");
 
-      case 'g':
-	multi_germline = true;
-        {
-          string arg = string(optarg);
-          struct stat buffer;
-          if (stat(arg.c_str(), &buffer) == 0)
-            {
-              if( buffer.st_mode & S_IFDIR )
-                {
-                  // argument is a directory
-                  multi_germline_paths_and_files.push_back(make_pair(arg, DEFAULT_MULTI_GERMLINE_FILE)) ;
-                  break ;
-                }
-            }
-
-          // argument is not a directory (and basename can include ':' with a filter)
-          multi_germline_paths_and_files.push_back(make_pair(extract_dirname(arg), extract_basename(arg, false)));
-          break ;
-        }
-  */
-
-  /*
-       << "  -g <path>      << endl
-          "multiple locus/germlines, shortcut for '-g <path>/" + DEFAULT_MULTI_GERMLINE_FILE + "'",
-       << "                processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations" << endl
-  */
   app.add_option("-V", v_reps_V, "custom V germline multi-fasta file") -> group(group) -> set_type_name("FILE");
   app.add_option("-D", v_reps_D, "custom D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components") -> group(group) -> set_type_name("FILE");
   app.add_option("-J", v_reps_J, "custom V germline multi-fasta file") -> group(group) -> set_type_name("FILE");
@@ -507,6 +485,26 @@ int main (int argc, char **argv)
   list <string> f_reps_V(v_reps_V.begin(), v_reps_V.end());
   list <string> f_reps_D(v_reps_D.begin(), v_reps_D.end());
   list <string> f_reps_J(v_reps_J.begin(), v_reps_J.end());
+
+
+  for (string arg: multi_germlines)
+    {
+      multi_germline = true;
+
+      struct stat buffer;
+      if (stat(arg.c_str(), &buffer) == 0)
+        {
+          if( buffer.st_mode & S_IFDIR )
+            {
+              // argument is a directory
+              multi_germline_paths_and_files.push_back(make_pair(arg, DEFAULT_MULTI_GERMLINE_FILE)) ;
+              break ;
+                }
+        }
+
+      // argument is not a directory (and basename can include ':' with a filter)
+      multi_germline_paths_and_files.push_back(make_pair(extract_dirname(arg), extract_basename(arg, false)));
+    }
 
 
   if (!multi_germline && (!f_reps_V.size() || !f_reps_J.size()))
