@@ -524,18 +524,9 @@ int main (int argc, char **argv)
   if (verbose)
     cout << "# verbose " << verbose << endl ;
 
-  if (optind == argc) // TODO
+  if (f_reads == DEFAULT_READS)
     {
       cout << "# using default sequence file: " << f_reads << endl ;
-    }
-  else if (optind+1 == argc)
-    {
-      f_reads = argv[optind] ; 
-    }
-  else
-    {
-      cerr << ERROR_STRING << "Wrong number of arguments." << endl ;
-      exit(1);
     }
 
   size_t min_cover_representative = (size_t) (min_reads_clone < (int) max_auditionned ? min_reads_clone : max_auditionned) ;
