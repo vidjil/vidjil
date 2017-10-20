@@ -292,11 +292,11 @@ int main (int argc, char **argv)
   // cerr << "Usage: " << progname << " [options] <reads.fa/.fq/.gz>" << endl << endl;
 
   group = "Files";
-  app.add_option("reads", f_reads, "reads.fa/.fq/.gz") -> group(group);
+  app.add_option("reads", f_reads, "reads.fa/.fq/.gz") -> group(group) -> set_type_name("FILE");
 
 
   group = "Command selection";
-  app.add_option("-c", command, "command", true) -> group(group);
+  app.add_option("-c", command, "command") -> group(group) -> set_type_name("COMMAND");
  /*
        << "  -c <command>"
        << "\t"     << COMMAND_CLONES    << "  \t locus detection, window extraction, clone clustering (default command, most efficient, all outputs)" << endl
@@ -324,7 +324,7 @@ int main (int argc, char **argv)
 
 
   group = "Input" ;
-  app.add_option("--separator", read_header_separator, "separator for headers in the reads file", true) ->group(group); // -> advanced() ;
+  app.add_option("--separator", read_header_separator, "separator for headers in the reads file", true) -> group(group) -> set_type_name("CHAR"); // -> advanced() ;
 
   
   group = "Germline presets (at least one -g or -V/(-D)/-J option must be given for all commands except -c " COMMAND_GERMLINES ")";
@@ -361,9 +361,9 @@ int main (int argc, char **argv)
           "multiple locus/germlines, shortcut for '-g <path>/" + DEFAULT_MULTI_GERMLINE_FILE + "'",
        << "                processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations" << endl
   */
-  app.add_option("-V", v_reps_V, "custom V germline multi-fasta file") -> group(group);
-  app.add_option("-D", v_reps_D, "custom D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components") -> group(group);
-  app.add_option("-J", v_reps_J, "custom V germline multi-fasta file") -> group(group);
+  app.add_option("-V", v_reps_V, "custom V germline multi-fasta file") -> group(group) -> set_type_name("FILE");
+  app.add_option("-D", v_reps_D, "custom D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components") -> group(group) -> set_type_name("FILE");
+  app.add_option("-J", v_reps_J, "custom V germline multi-fasta file") -> group(group) -> set_type_name("FILE");
 
   group = "Locus/recombinations";
   app.add_flag("-d", several_D, "try to detect several D (experimental)") -> group(group);
@@ -424,7 +424,7 @@ int main (int argc, char **argv)
                  // TODO:  windows_labels[string(optarg)] = string("-W");
                  , "label the given sequence") -> group(group);
   */
-  app.add_option("-l", windows_labels_file, "label a set of sequences given in <file>") -> group(group);
+  app.add_option("-l", windows_labels_file, "label a set of sequences given in <file>") -> group(group) -> set_type_name("FILE");
   app.add_flag("-F", only_labeled_windows, "filter -- keep only the windows related to the labeled sequences") -> group(group);
 
 
@@ -493,8 +493,8 @@ int main (int argc, char **argv)
 
 
   group = "Output";
-  app.add_option("-o", out_dir, "output directory", true) -> group(group);
-  app.add_option("-b", f_basename, "output basename (by default basename of the input file)") -> group(group);
+  app.add_option("-o", out_dir, "output directory", true) -> group(group) -> set_type_name("PATH");
+  app.add_option("-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> set_type_name("FILE");
   app.add_flag("-a", output_sequences_by_cluster, "output all sequences by cluster (" CLONE_FILENAME "*), to be used only on small datasets") -> group(group);
   // << "  -v            verbose mode"  //	verbose += 1 ;
 
