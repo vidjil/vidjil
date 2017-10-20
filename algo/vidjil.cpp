@@ -296,32 +296,13 @@ int main (int argc, char **argv)
 
 
   group = "Command selection";
-  app.add_option("-c", command, "command") -> group(group) -> set_type_name("COMMAND");
- /*
-       << "  -c <command>"
-       << "\t"     << COMMAND_CLONES    << "  \t locus detection, window extraction, clone clustering (default command, most efficient, all outputs)" << endl
-       << "  \t\t" << COMMAND_WINDOWS   << "  \t locus detection, window extraction" << endl
-       << "  \t\t" << COMMAND_SEGMENT   << "  \t detailed V(D)J designation (not recommended)" << endl
-       << "  \t\t" << COMMAND_GERMLINES << "  \t statistics on k-mers in different germlines" << endl
-       << endl ;
- */
-      /*
-      case 'c':
-        if (!strcmp(COMMAND_CLONES,optarg))
-          command = CMD_CLONES;
-        else if (!strcmp(COMMAND_SEGMENT,optarg))
-          command = CMD_SEGMENT;
-        else if (!strcmp(COMMAND_WINDOWS,optarg))
-          command = CMD_WINDOWS;
-        else if (!strcmp(COMMAND_GERMLINES,optarg))
-          command = CMD_GERMLINES;
-        else {
-          cerr << "Unknwown command " << optarg << endl;
-	  usage(argv[0], false);
-        }
-        break;
-        */
-
+  string cmd = COMMAND_CLONES;
+  app.add_option("-c", cmd, "command"
+                 "\n  \t\t" COMMAND_CLONES    "  \t locus detection, window extraction, clone clustering (default command, most efficient, all outputs)"
+                 "\n  \t\t" COMMAND_WINDOWS   "  \t locus detection, window extraction"
+                 "\n  \t\t" COMMAND_SEGMENT   "  \t detailed V(D)J designation (not recommended)"
+                 "\n  \t\t" COMMAND_GERMLINES "  \t statistics on k-mers in different germlines")
+    -> group(group) -> set_type_name("COMMAND");
 
   group = "Input" ;
   app.add_option("--separator", read_header_separator, "separator for headers in the reads file", true) -> group(group) -> set_type_name("CHAR"); // -> advanced() ;
@@ -510,6 +491,18 @@ int main (int argc, char **argv)
 
   //$$ options: post-processing+display
 
+  if (cmd == COMMAND_CLONES)
+    command = CMD_CLONES;
+  else if (cmd == COMMAND_SEGMENT)
+    command = CMD_SEGMENT;
+  else if (cmd == COMMAND_WINDOWS)
+    command = CMD_WINDOWS;
+  else if (cmd == COMMAND_GERMLINES)
+    command = CMD_GERMLINES;
+  else {
+    cerr << "Unknwown command " << optarg << endl;
+    usage(argv[0], false);
+  }
 
   list <string> f_reps_V(v_reps_V.begin(), v_reps_V.end());
   list <string> f_reps_D(v_reps_D.begin(), v_reps_D.end());
