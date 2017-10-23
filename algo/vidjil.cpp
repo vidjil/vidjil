@@ -326,16 +326,16 @@ int main (int argc, char **argv)
 
   group = "Locus/recombinations";
   app.add_flag("-d", several_D, "try to detect several D (experimental)") -> group(group);
-  app.add_flag("--method-2",  multi_germline_unexpected_recombinations_12, "try to detect unexpected recombinations (must be used with -g)") -> group(group);
+  app.add_flag("-2",  multi_germline_unexpected_recombinations_12, "try to detect unexpected recombinations (must be used with -g)") -> group(group);
 
 
   // if (advanced)
   group = "Experimental options (do not use)";
   app.add_flag("-I", multi_germline_mark, "ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)") -> group(group);
-  //app.add_flag("-1",  multi_germline_one_index_per_germline // = false !!!
-  //             "use a unique index for all germline systems (experimental, must be used with -g, do not use)") -> group(group);
-  app.add_flag("--method-4", multi_germline_unexpected_recombinations_1U, "try to detect unexpected recombinations with translocations (experimental, must be used with -g, do not use)") -> group(group);
-  app.add_flag("--keep", keep_unsegmented_as_clone, "keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example -!AX 20)") -> group(group);
+  app.add_flag("-1", multi_germline_one_unique_index,
+               "use a unique index for all germline systems (experimental, must be used with -g, do not use)") -> group(group);
+  app.add_flag("-4", multi_germline_unexpected_recombinations_1U, "try to detect unexpected recombinations with translocations (experimental, must be used with -g, do not use)") -> group(group);
+  app.add_flag("--keep", keep_unsegmented_as_clone, "keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example --keep -AX 20)") -> group(group);
 
   group = "Window prediction";
 #ifndef NO_SPACED_SEEDS
@@ -395,7 +395,7 @@ int main (int argc, char **argv)
   //      case 'f''	segment_cost=strToCost(optarg, VDJ);      break;
   
   group = "Clone analysis (second pass)";
-  app.add_flag("--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)") -> group(group);
+  app.add_flag("-3,--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)") -> group(group);
 
   
   // if (advanced)
