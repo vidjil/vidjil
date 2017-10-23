@@ -266,7 +266,7 @@ int main (int argc, char **argv)
   vector <string> multi_germlines ;
   bool multi_germline = false;
   bool multi_germline_mark = false;
-  bool multi_germline_one_index_per_germline = true;
+  bool multi_germline_one_unique_index = false;
   bool multi_germline_unexpected_recombinations_12 = false;
   bool multi_germline_unexpected_recombinations_1U = false;
 
@@ -667,10 +667,10 @@ int main (int argc, char **argv)
   if (command == CMD_GERMLINES)
     {
       multi_germline = true ;
-      multi_germline_one_index_per_germline = false ;
+      multi_germline_one_unique_index = true ;
     }
 
-  MultiGermline *multigermline = new MultiGermline(indexType, multi_germline_one_index_per_germline);
+  MultiGermline *multigermline = new MultiGermline(indexType, !multi_germline_one_unique_index);
 
     {
       cout << "Load germlines and build Kmer indexes" << endl ;
@@ -705,7 +705,7 @@ int main (int argc, char **argv)
 
     cout << endl ;
 
-    if (!multi_germline_one_index_per_germline) {
+    if (multi_germline_one_unique_index) {
       multigermline->build_with_one_index(seed, true);
     }
 
