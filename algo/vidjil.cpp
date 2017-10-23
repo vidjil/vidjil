@@ -390,9 +390,8 @@ int main (int argc, char **argv)
   //  if (advanced)
   group = "Fine segmentation options (second pass)";
   //       << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
-  //     << "  -E <float>    maximal e-value for determining if a D segment can be trusted (default: " << THRESHOLD_NB_EXPECTED_D << ")" << endl
-  //     << endl ;
   //      case 'f''	segment_cost=strToCost(optarg, VDJ);      break;
+  app.add_option("-E", expected_value_D, "maximal e-value for determining if a D segment can be trusted", true) -> group(group);
   
   group = "Clone analysis (second pass)";
   app.add_flag("-3,--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)") -> group(group);
