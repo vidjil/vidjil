@@ -425,14 +425,14 @@ int main (int argc, char **argv)
                  //    max_representatives = max_clones ;
                  // }
                  "maximal number of clones to be analyzed with a full V(D)J designation ('" NO_LIMIT "': no limit, do not use)", true)-> group(group);
-  /*
-  app.add_flag_function("-A", xxxx,
-	ratio_reads_clone = 0 ;
-	min_reads_clone = 1 ;
-	max_representatives = NO_LIMIT_VALUE ;
-	max_clones = NO_LIMIT_VALUE ;
-  "reports and segments all clones (-r 0 -% 0 -y " NO_LIMIT " -z " NO_LIMIT "), to be used only on very small datasets (for example -AX 20)") -> group(group);
-                        */
+
+  app.add_flag_function("-A", [&](size_t n) {
+      ratio_reads_clone = 0 ;
+      min_reads_clone = 1 ;
+      max_representatives = NO_LIMIT_VALUE ;
+      max_clones = NO_LIMIT_VALUE ;
+    },
+    "reports and segments all clones (-r 0 -% 0 -y " NO_LIMIT " -z " NO_LIMIT "), to be used only on very small datasets (for example -AX 20)") -> group(group);
 
   app.add_option("-x", max_reads_processed_sample, // atoi_NO_LIMIT
                  "maximal number of reads to process ('" NO_LIMIT "': no limit, default), only first reads") -> group(group);
