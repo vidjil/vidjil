@@ -454,7 +454,7 @@ int main (int argc, char **argv)
   app.add_option("-o", out_dir, "output directory", true) -> group(group) -> set_type_name("PATH");
   app.add_option("-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> set_type_name("FILE");
   app.add_flag("-a", output_sequences_by_cluster, "output all sequences by cluster (" CLONE_FILENAME "*), to be used only on small datasets") -> group(group);
-  // << "  -v            verbose mode"  //	verbose += 1 ;
+  app.add_flag_function("-v", [&](size_t n) { verbose += n ; }, "verbose mode") -> group(group);
 
 
   //   case 'h': usage(argv[0], false);
