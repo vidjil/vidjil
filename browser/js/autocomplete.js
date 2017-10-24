@@ -130,8 +130,8 @@ VidjilAutoComplete.prototype = {
             }
             var res = $.map(data, function(i) {
                 return {
-                    name: i,
-                    search: i
+                    name: i.name,
+                    search: i.name
                 };
             });
             return res;

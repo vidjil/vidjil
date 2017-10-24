@@ -592,7 +592,7 @@ def get_sample_set_list(type):
     helper = factory.get_instance(type=type)
     for row in query :
         tmp = helper.get_id_string(row)
-        ss_list.append(tmp)
+        ss_list.append({'name':tmp})
     return ss_list
 
 def auto_complete():
