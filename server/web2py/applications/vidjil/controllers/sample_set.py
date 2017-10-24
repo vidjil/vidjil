@@ -581,7 +581,7 @@ def change_permission():
 
 def get_sample_set_list(type):
     query = db(
-        auth.vidjil_accessible_query(PermissionEnum.read.value, db[type])
+        auth.vidjil_accessible_query(PermissionEnum.admin.value, db[type])
     ).select(
         db[type].ALL, # sub optimal, use helpers to reduce ?
         orderby = ~db[type].id
