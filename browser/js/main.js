@@ -21,6 +21,8 @@
  */
 
 
+NOTIFICATION_PERIOD = 300000			  // Time interval to check for notifications periodically (ms)
+
 
 
 /* Console (optional)
@@ -115,7 +117,8 @@ $(document).ajaxStart(function () {
 });
 db.ajax_indicator_stop();
 
+// Load regularly notifications
 (function worker(){
 	db.loadNotifications();
-	setTimeout(worker, 300000);
+   	setTimeout(worker, NOTIFICATION_PERIOD);
 })();
