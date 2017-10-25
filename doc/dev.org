@@ -693,11 +693,6 @@ make functional
       on a remote server in order to be able to report on a down server, but we have packed it here for convenience.
 
 ** Building and starting the environment
-   You can either build the image from the provided Dockerfile, or pull the
-   latest pre-built image from Dockerhub. Whichever you choose will be
-   performed automatically depending on how you have configured your
-   docker-compose.yml file.
-
    Building the image is simple and can be done prior to editing the
    configuration files if you wish, although it is not necessary.
    The backup and reporter images are built based on the latest vidjil
