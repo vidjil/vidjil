@@ -155,7 +155,7 @@ def make_backup():
     
 def load_backup():
     if auth.is_admin():
-        db.import_from_csv_file(defs.DB_BACKUP_FILE,'rb')
+        db.import_from_csv_file(open(defs.DB_BACKUP_FILE,'rb'))
     
 def repair():
     if auth.is_admin():
