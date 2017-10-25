@@ -1,0 +1,13 @@
+[Unit]
+# An example of a systemd service one would use to start their vidjil environment with docker compose
+Description=Vidjil Server environment
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/local/bin/docker-compose -f /path/to/docker/docker-compose.yml up
+ExecStop=/usr/local/bin/docker-compose -f /path/to/docker/docker-compose.yml stop
+
+[Install]
+WantedBy=local.target
