@@ -693,10 +693,15 @@ make functional
       on a remote server in order to be able to report on a down server, but we have packed it here for convenience.
 
 ** Building and starting the environment
+   You can either build the image from the provided Dockerfile, or pull the
+   latest pre-built image from Dockerhub. Whichever you choose will be
+   performed automatically depending on how you have configured your
+   docker-compose.yml file.
+
    Building the image is simple and can be done prior to editing the
    configuration files if you wish, although it is not necessary.
-   The docker image is not on the DockerHub and therefore needs to be built
-   before it can be used.
+   The backup and reporter images are built based on the latest vidjil
+   docker image from Dockerhub.
 
    #+BEGIN_SRC sh
      docker-compose build
@@ -713,6 +718,17 @@ make functional
    #+BEGIN_SRC sh
      docker-compose up --build
    #+END_SRC
+
+** Updating a Docker installation
+   Usually our docker installation will only require the following:
+
+   #+BEGIN_SRC sh
+     docker pull vidjil/vidjil:latest
+   #+END_SRC
+
+   In some cases you may need to update your docker-compose.yml file or some
+   of the configuration files. The latest versions are available on our
+   [[https://github.com/vidjil/vidjil][GitHub]].
 
 * Migrating Data
 ** Database
