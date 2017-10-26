@@ -13,7 +13,10 @@ def print_patient_info(patient_id):
 
 def print_config_info(config_id):
     config = db.config[config_id]
-    print("%s" % config.name, end=' ')
+    if config is None:
+        print("none_config")
+    else:
+        print("%s" % config.name, end=' ')
 
 def print_sequence_file(res):
     fused_files = db((db.fused_file.sequence_file_list.startswith('%d_' % res.id)) | (db.fused_file.sequence_file_list.contains('_%d_' % res.id))).select()
