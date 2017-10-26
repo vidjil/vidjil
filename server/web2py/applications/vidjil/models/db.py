@@ -22,8 +22,10 @@
 import defs
 from gluon import current
 from gluon.custom_import import track_changes; track_changes(True)
+
 # AUTODELETE should be set to False before any maintenance operation on the DB
-AUTODELETE = True
+# We even prefer to keep it to False for better robustness and traceability.
+AUTODELETE = False
 
 # Length of the upload field
 LENGTH_UPLOAD = 400
