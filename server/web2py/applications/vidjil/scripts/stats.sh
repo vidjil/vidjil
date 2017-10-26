@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo -n "=== Vidjil server at "
+hostname -a
 python ../../../web2py.py -S vidjil -M -R applications/vidjil/scripts//db-stats.py 2> /dev/null
 
 echo -n "=== Server health"
