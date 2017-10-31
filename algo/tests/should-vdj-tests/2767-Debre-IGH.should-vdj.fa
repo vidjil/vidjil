@@ -2,3 +2,10 @@
 AGGTGCAGCTGGTGGAGTCGGGCCCAGGACTGGTGAAGCCTTCGGAGACCCTGTCCCTCACCTGCACTGTCTCTGGTGGCTCCATCAGGATTTAGTACTGGAGCTGGATCCGGCAGCCCCCAGGGAGGGGACTGGAGTGGATTGATTAGATCCACTACAGTGGGAGCA
 GCAGACGCTATAGGGACTACGATTCTAGGCTGT
 CTTTGACTACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGTAAG
+
+### Parts of the sequences with trimmed regions for the 2 segments V4
+#>IGHV4-39*04  # found by vidjil
+#gggagcacctactacaacccgtccctcaag...agtcgagtcaccatatccgtagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgccgcggacac
+
+#>IGHV4-59*01  # waited
+#gggagcaccaactacaacccctccctcaag...agtcgagtcaccatatcagtagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgctgcggacacggccgtgtattactgtgcgagaga
