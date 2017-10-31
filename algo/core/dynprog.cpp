@@ -90,6 +90,7 @@ void Cost::estimate_K_lambda()
 
 ostream& operator<<(ostream& out, const Cost& cost)
 {
+  if (cost.debug)
   out << "(" << cost.match 
       << ", " << cost.mismatch
       << "/" << cost.insertion
@@ -100,6 +101,13 @@ ostream& operator<<(ostream& out, const Cost& cost)
       << ", " << cost.homopolymer
       << ") "
       << cost.K << "/" << cost.lambda ;
+  else
+    out << "\"" << cost.match
+        << ", " << cost.mismatch
+        << ", " << cost.insertion
+        << ", " << cost.homopolymer
+        << ", " << cost.deletion_end
+        << "\"" ;
 
   return out;
 }
