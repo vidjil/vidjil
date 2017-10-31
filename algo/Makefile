@@ -259,7 +259,9 @@ RELEASE_ARCHIVE_TAR = $(RELEASE_NAME).tar
 RELEASE_ARCHIVE_TGZ = $(RELEASE_NAME).tar.gz
 RELEASE_DIR_TMP = releases/tmp
 
-release:
+release: release_create release_check
+
+release_create:
 	$(info ==== Release $(RELEASE_NAME) ====)
 
 	# Prepare directories
@@ -288,7 +290,11 @@ release:
 	cd $(RELEASES_DIR) && gzip $(RELEASE_ARCHIVE_TAR)
 
 
+release_check:
 	# Check archive
+	$(info)
+	$(info ==== Checking $(RELEASE_ARCHIVE_TGZ) ====)
+
 	cd $(RELEASES_DIR) && tar xvfz $(RELEASE_ARCHIVE_TGZ)
 	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE)
 	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) germline
