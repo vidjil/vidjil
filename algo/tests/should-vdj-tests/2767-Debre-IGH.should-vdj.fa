@@ -9,3 +9,10 @@ CTTTGACTACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGTAAG
 
 #>IGHV4-59*01  # waited
 #gggagcaccaactacaacccctccctcaag...agtcgagtcaccatatcagtagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgctgcggacacggccgtgtattactgtgcgagaga
+
+## alignement
+#>IGHV4-59*01   |||  caggtgcagctgcaggagtcgggcccaggactggtgaagccttcggagaccctgtccctcacctgcactgtctctggtggctccatcagtagttactactggagctggatccggcagcccccagggaagggactggagtggattgggtatatctattacagtgggagcaccaactacaacccctccctcaagagtcgagtcaccatatcagtagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgctgcggacacggccgtgtattactgtgcgagaga
+#                     |||||||||||**|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||*|||*|||||||||||||||||||||||||||||||*|||||||||||||||||**||*|||*|*|||||||||||||
+#>clone_vidjil  |||  -AGGTGCAGCTGGTGGAGTCGGGCCCAGGACTGGTGAAGCCTTCGGAGACCCTGTCCCTCACCTGCACTGTCTCTGGTGGCTCCATCAGGATTTAGTACTGGAGCTGGATCCGGCAGCCCCCAGGGAGGGGACTGGAGTGGATTGATTAGATCCACTACAGTGGGAGCA--------------------------------------------------------------------
+#                                                                                             *******|**||**||*|*|||*||||||*||||||||||*|||||||||||||*|||*|||||||||||||*****|||||*||*||||||||||
+#>IGHV4-39*04   |||  -------------------------------------------------------------------------gctccatcagcagtagtagttactactggggctggatccgccagcccccagggaaggggctggagtggattgggagtatctattatagtgggagcacctactacaacccgtccctcaagagtcgagtcaccatatccgtagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgccgcggacac------------------------
