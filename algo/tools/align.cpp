@@ -124,6 +124,7 @@ int main(int argc, char** argv)
   
   // Cost
   Cost dpCost = getCost(cost);
+  dpCost.debug = true ;
   cout << "Cost: " << dpCost << endl;
   cout << endl;
 
