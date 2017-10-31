@@ -216,7 +216,7 @@ void usage(char *progname, bool advanced)
 
   if (advanced)
   cerr << "Fine segmentation options (second pass)" << endl
-       << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
+       << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<< DEFAULT_SEGMENT_COST <<" )"<< endl
        << "  -E <float>    maximal e-value for determining if a D segment can be trusted (default: " << THRESHOLD_NB_EXPECTED_D << ")" << endl
        << endl ;
 
@@ -231,7 +231,7 @@ void usage(char *progname, bool advanced)
        << "  -N <int>      minimum required neighbors for automatic clustering (default " << DEFAULT_MINPTS << ")" << endl
        << "  -S            generate and save comparative matrix for clustering" << endl
        << "  -L            load comparative matrix for clustering" << endl
-       << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
+       << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<< DEFAULT_CLUSTER_COST <<" )"<< endl
        << endl ;
 
   cerr << "Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)" << endl
