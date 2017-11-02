@@ -63,6 +63,7 @@ function loadAfterConf() {
                                          "../tools",
                                          "../url",
                                          "../autocomplete",
+                                         "../tips",
                                          // Speed test
                                          "../speed_test",
                                          "../../test/QUnit/testFiles/data_test",
