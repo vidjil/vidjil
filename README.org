@@ -63,6 +63,11 @@ This software is for research use only and comes with no warranty.
 The development code is available on [[http://git.vidjil.org/]].
 Bug reports, issues and patches are welcome.
 
+* Donations
+
+We welcome Bitcoin donations to [[bitcoin:13u12m6LxVhesKEpS6T5wpYN19LHpwk8xt][13u12m6LxVhesKEpS6T5wpYN19LHpwk8xt]].
+Thank you for your support !
+
 * The Vidjil team
 
 Vidjil is developed by Aurélien Béliard, [[http://cristal.univ-lille.fr/~giraud][Mathieu Giraud]], Ryan Herbert, Tatiana Rocher and [[http://cristal.univ-lille.fr/~salson][Mikaël Salson]]
