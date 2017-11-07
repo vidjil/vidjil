@@ -1,14 +1,21 @@
 #!/bin/sh
 
 COMPLETE=0
+INCREMENTAL=0
 DIR=
 
 if [ $# -ge 1 -a "$1" = "-h" ]; then
-    echo "$0: [-c] [path]
+    echo "$0: [-c] [-i] [path]
 
 -c:   Backup everything
+-i:   Incremental backup, since the first of the month
 path: Where to save the file" >&2
     exit 1
+fi
+
+if [ $# -ge 1 -a "$1" = "-i" ]; then
+    INCREMENTAL=1
+    shift
 fi
 
 if [ $# -ge 1 -a "$1" = "-c" ]; then
@@ -40,8 +47,11 @@ if [ $COMPLETE -eq 1 ]; then
         filename="${DIR}backup_"$now
         zip -r $filename web2py/applications/vidjil/databases/  "$DIR_SEQUENCES" "$DIR_RESULTS" $db_backup_file
 else
+    if [ $INCREMENTAL -eq 1 ]; then
+    else
         filename="${DIR}backup_essentials_"$now
         zip -r $filename web2py/applications/vidjil/databases/  "$DIR_RESULTS" $db_backup_file
+    fi
 fi
 rm -f "$db_backup_file"
 ls -lh $filename
