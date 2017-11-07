@@ -46,8 +46,9 @@ DIR_RESULTS=$(sed -rn "s/^DIR_RESULTS.*['\"](.*)['\"].*$/\1/p" $defs_py)
 python web2py/web2py.py -S vidjil -M -R "applications/vidjil/scripts/backup-db.py" -A "$db_backup_file"
 
 if [ $COMPLETE -eq 1 ]; then
-        filename="${DIR}backup_"$now
-        zip -r $filename web2py/applications/vidjil/databases/  "$DIR_SEQUENCES" "$DIR_RESULTS" $db_backup_file
+        filename_raw="${DIR}backup_"$now
+        filename=$filename_raw.zip
+        zip -r $filename_raw web2py/applications/vidjil/databases/  "$DIR_SEQUENCES" "$DIR_RESULTS" $db_backup_file
 else
     if [ $INCREMENTAL -eq 1 ]; then
         filename_raw="${DIR}backup_incremental_${FIRST_OF_THE_MONTH}__${now}.tar"
@@ -56,8 +57,9 @@ else
 	tar rvf $filename_raw --force-local --after-date "$FIRST_OF_THE_MONTH" "$DIR_RESULTS" 2>&1 | grep -v "file is unchanged"
 	gzip $filename_raw
     else
-        filename="${DIR}backup_essentials_"$now
-        zip -r $filename web2py/applications/vidjil/databases/  "$DIR_RESULTS" $db_backup_file
+        filename_raw="${DIR}backup_essentials_"$now
+        filename=$filename_raw.zip
+        zip -r $filename_raw web2py/applications/vidjil/databases/  "$DIR_RESULTS" $db_backup_file
     fi
 fi
 rm -f "$db_backup_file"
