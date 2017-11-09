@@ -57,8 +57,6 @@ function Model() {
     this.germlineList = new GermlineList()
     this.build();
     window.onresize = function () { self.resize(); };
-    
-    this.start()
 }
 
 
