@@ -207,7 +207,7 @@
                 <a class="button2" href="index.html?sample_set_id={{=request.vars["id"]}}&config={{=row.config.id}}" type="text/html"
                       onclick="event.preventDefault()
                                if( event.which == 2 ) { window.open(this.href) }
-                               else { db.load_data( { 'sample_set_id' : '{{=request.vars["id"]}}' , 'config' : {{=row.config.id}} }, '{{=info["filename"]}}' ) }" >
+                               else { myUrl.loadUrl(db, { 'sample_set_id' : '{{=request.vars["id"]}}' , 'config' : {{=row.config.id}} }, '{{=info["filename"]}}' ) }" >
             {{pass}}
                 {{=row.config.name}} </a>
         {{pass}}

@@ -150,6 +150,13 @@ Url.prototype= {
 
     getStraightParams: function() {
         return ["sample_set_id", "patient_id", "run_id", "config"];
+    },
+
+    loadUrl: function(db, args, filename) {
+        this.url_dict = args;
+        var newParams = this.generateParamsString(args);
+        this.pushUrl(newParams);
+        db.load_data(args, filename);
     }
 
 };
