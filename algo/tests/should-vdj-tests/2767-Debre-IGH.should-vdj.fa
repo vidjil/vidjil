@@ -1,3 +1,4 @@
+#Cette sequence présente un problème du à une délétion trop longue ( > 100 nt)
 >IGHV4-59*04 124/GCAGACGC/5 IGHD5-12*01 2/CTAGGCTGT/4 IGHJ4*02
 AGGTGCAGCTGGTGGAGTCGGGCCCAGGACTGGTGAAGCCTTCGGAGACCCTGTCCCTCACCTGCACTGTCTCTGGTGGCTCCATCAGGATTTAGTACTGGAGCTGGATCCGGCAGCCCCCAGGGAGGGGACTGGAGTGGATTGATTAGATCCACTACAGTGGGAGCA
 GCAGACGCTATAGGGACTACGATTCTAGGCTGT
@@ -16,3 +17,24 @@ CTTTGACTACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGTAAG
 #>clone_vidjil  |||  -AGGTGCAGCTGGTGGAGTCGGGCCCAGGACTGGTGAAGCCTTCGGAGACCCTGTCCCTCACCTGCACTGTCTCTGGTGGCTCCATCAGGATTTAGTACTGGAGCTGGATCCGGCAGCCCCCAGGGAGGGGACTGGAGTGGATTGATTAGATCCACTACAGTGGGAGCA--------------------------------------------------------------------
 #                                                                                             *******|**||**||*|*|||*||||||*||||||||||*|||||||||||||*|||*|||||||||||||*****|||||*||*||||||||||
 #>IGHV4-39*04   |||  -------------------------------------------------------------------------gctccatcagcagtagtagttactactggggctggatccgccagcccccagggaaggggctggagtggattgggagtatctattatagtgggagcacctactacaacccgtccctcaagagtcgagtcaccatatccgtagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgccgcggacac------------------------
+
+
+
+#Cette sequence présente un problème du à une délétion trop longue ( > 100 nt)
+>IGHV3-7*01 111/CCAGGACC/TTGTAGTAG/GAA/2 IGHJ4*01
+CTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCAGGATTCTCCTTTAGTAGCTTTGACATGAGCTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGAGTGGCACATATCTGGAATGATGGAAGTCAGAAATGCTCTGCGG
+CCAGGACCTTGTAGTAGGAA
+TACCTAGTACCACTGGGGCAAGGAAACCCTGGTCACCGTCTCCTCAGGT
+
+#>IGHV3-7*01     CTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTTAGTAGCTATTGGATGAGCTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTGGCCAACATAAAGCAAGATGGAAGTGAGAAATACTATGTGGactctgtgaagggccgattcaccatctccagagacaacgccaagaactcactgtatctgcaaatgaacagcctgagagccgaggacacggctgtgtattactgtgcgagaga
+#                ||||||||||||||||||||||||||||||||||*||||||*||||||||||||*|***|||||||||||||||||||||||||||||||||||||||||*|||||*|**||***|*|*|||||||||*||||||*||*||*||
+#>Clone_complet  ctggggggtccctgagactctcctgtgcagcctcaggattctcctttagtagctttgacatgagctgggtccgccaggctccagggaaggggctggagtgagtggcacatatctggaaTGATGGAAGTCAGAAATGCTCTGCGG
+#                                                         *||||*|||**|****|||||**||||||||||||||||||||||||||||||||||||*||*|*|**||***|*||
+#>IGHV3-72*02                                             ACCTTCAGTGACCACTACATGGACTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTTGGCCGTACTAGAAAcaaagctaacagctacaccacagaatacgccgcgtctgtgaaaggcagattcaccatctcaagagatgattcaaagaactcactgtat
+
+#>del_right_v3-7 (len 110)
+#
+#
+#>del_right_v3-72 (len 88)
+#
+
