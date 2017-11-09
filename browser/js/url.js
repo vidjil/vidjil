@@ -112,6 +112,21 @@ Url.prototype= {
         return params
     },
 
+    generateParamsString: function(params_dict) {
+        var params_list = [];
+        for (var key in params_dict){
+            if ((typeof key != "undefined" && key !== "") && (typeof params_dict[key]!= "undefined" && params_dict[key] !== '')) {
+                params_list.push(key+"="+params_dict[key])
+            }
+        }
+        return params_list.join("&");
+    },
+
+    pushUrl: function(params) {
+        var new_url = "?" + params;
+        this.window.history.pushState('plop', 'plop', new_url);
+    },
+
     getStraightParams: function() {
         return ["sample_set_id", "patient_id", "run_id", "config"];
     }
