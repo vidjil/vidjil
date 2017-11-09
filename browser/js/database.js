@@ -732,13 +732,16 @@ Database.prototype = {
             return
         }
         
-        var url = document.documentURI.split('?')[0]
-        var new_location;
-        if (typeof args.sample_set_id != "undefined")
-            new_location = url+"?sample_set_id="+args.sample_set_id+"&config="+args.config
-        if (typeof args.patient != "undefined")
-            new_location = url+"?patient="+args.patient+"&config="+args.config
-        window.history.pushState('plop', 'plop', new_location);
+        if (typeof args.sample_set_id != "undefined") {
+            this.m.sample_set_id = args.sample_set_id
+        } else if (typeof args.patient != "undefined") {
+            this.m.patient_id = args.patient
+        } else if (typeof args.run_id !== "undefined") {
+            this.m.run_id = args.run_id
+        }
+        if(typeof args.config !== "undefined") {
+            this.m.config = args.config;
+        }
         
         $.ajax({
             type: "POST",
@@ -794,17 +797,15 @@ Database.prototype = {
         
         console.log("db : custom data "+list)
         
-        var url = document.documentURI.split('?')[0]
-        var arg = "?" + this.argsToStr(args)
-        var new_location = url+arg
-        window.history.pushState('plop', 'plop', new_location);
+        var arg = this.argsToStr(args)
+        this.m.custom = arg;
         
         this.m.wait("Comparing samples...")
         $.ajax({
             type: "POST",
             timeout: DB_TIMEOUT_GET_CUSTOM_DATA,
             crossDomain: true,
-            url: self.db_address + "default/get_custom_data" + arg,
+            url: self.db_address + "default/get_custom_data?" + arg,
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.m.resume()
