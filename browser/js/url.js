@@ -3,7 +3,6 @@ function Url(model, win) {
     this.m = model;
     this.window = (typeof win != "undefined") ? win : window
     this.url_dict = this.parseUrlParams(this.window.location.search.toString())
-    this.url = this.window.location.toString().split('?')[0];
     this.sp = this.m.sp
 
     this.m.start(this.url_dict);
