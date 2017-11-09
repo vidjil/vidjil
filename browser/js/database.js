@@ -399,7 +399,6 @@ Database.prototype = {
         if (res.reads){
             this.m.parseJsonData(result, 100)
             this.m.loadGermline();
-            this.m.initClones()
             this.load_analysis(args)
             this.last_file = args
             this.close()
@@ -410,7 +409,6 @@ Database.prototype = {
         //the json result look like a .analysis file so we load it
         if (typeof res.clones != "undefined" && typeof res.reads == "undefined" ){
             this.m.parseJsonAnalysis(result)
-            this.m.initClones()
         }
 
         //the json result contain a flash message
