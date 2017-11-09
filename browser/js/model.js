@@ -800,6 +800,22 @@ changeAlleleNotation: function(alleleNotation) {
             return 0;
         }
 
+        if (!this.clone(cloneID).isSelected()) {
+            this.clone(cloneID).select = true;
+            this.orderedSelectedClones.push(cloneID);
+
+            this.updateElemStyle([cloneID]);
+        }
+    },
+
+    toggleSelect: function(cloneID) {
+        console.log("toggle() (clone " + cloneID + ")");
+
+        // others shouldn't be selectable
+        if (this.clones[cloneID].isVirtual()) {
+            return 0;
+        }
+
         if (this.clone(cloneID).isSelected()) {
             this.clone(cloneID).select = false;
             this.removeFromOrderedSelectedClones(cloneID);
