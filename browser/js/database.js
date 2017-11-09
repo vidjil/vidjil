@@ -732,12 +732,9 @@ Database.prototype = {
             return
         }
         
-        if (typeof args.sample_set_id != "undefined") {
-            this.m.sample_set_id = args.sample_set_id
-        } else if (typeof args.patient != "undefined") {
-            this.m.patient_id = args.patient
-        } else if (typeof args.run_id !== "undefined") {
-            this.m.run_id = args.run_id
+        var id_vars = ["sample_set_id", "patient_id", "run_id"];
+        for (var i = 0; i < id_vars.length; i++) {
+            this.m[id_vars[i]] = args[id_vars[i]];
         }
         if(typeof args.config !== "undefined") {
             this.m.config = args.config;
