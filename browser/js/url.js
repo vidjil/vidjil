@@ -24,30 +24,48 @@ Url.prototype= {
      * */
     update: function () {
 
-        if (!$(".devel-mode:visible").length && typeof this.window.mocked == "undefined")
-            return ;
-
+        // get selected clones
         var selectedList = this.m.getSelected();
         var params_dict = this.url_dict;
         
-        params_dict.clone = selectedList.join();
+        if (selectedList.length > 0) {
+            params_dict.clone = selectedList.join();
+        } else {
+            delete params_dict.clone;
+        }
 
+        // get scatterplot settings
         if (this.sp.select_preset.selectedIndex!=this.sp.default_preset) {
             params_dict.plot = this.sp.splitX+','+this.sp.splitY+','+this.sp.mode;
         } else {
 	    delete params_dict[this.sp.mode];
     	}
 
-        var params_list = [];       
-        for (var key in params_dict){
-            if ((typeof key != "undefined" && key !== "") && (typeof params_dict[key]!= "undefined" && params_dict[key] !== '')) {
-                params_list.push(key+"="+params_dict[key])
+        // get sample_set/patient/run, config...
+        var straight_params = this.getStraightParams();
+        for (var i = 0; i < straight_params.length; i++) {
+            var p = straight_params[i];
+            if (typeof this.m[p] !== "undefined") {
+                params_dict[p] = this.m[p];
             }
         }
-        
-        new_url = "?" + params_list.join("&");
-        this.window.history.pushState('plop', 'plop', new_url);
- 	this.updateModel()
+
+        if (typeof this.m.custom !== "undefined") {
+            var custom_ids = [];
+            var custom_split = this.m.custom.split('&');
+            for (var j = 0; j < custom_split.length; j++) {
+                if (custom_split[j] !== "") {
+                    custom_ids.push(custom_split[j].split('=')[1]);
+                }
+            }
+
+            params_dict.custom = custom_ids.join(',');
+        }
+
+        params = this.generateParamsString(params_dict);
+
+        this.pushUrl(params);
+        this.url_dict = params_dict;
     },
     
     /**
