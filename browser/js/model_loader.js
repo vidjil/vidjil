@@ -536,6 +536,7 @@ Model_loader.prototype = {
                 for (var key in this.analysis.data)
                     this.data[key] = this.analysis.data[key]
             }
+            this.applyUrlParams();
             this.initClones();
             this.initData();
             
@@ -826,6 +827,10 @@ Model_loader.prototype = {
             }
         }
         this.average_quality = this.average_quality/count; 
-    }
+    },
+
+    applyUrlParams:function() {
+        this.url_manager.applyURL();
+    },
 
 };

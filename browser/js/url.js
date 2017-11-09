@@ -78,8 +78,25 @@ Url.prototype= {
         
     },
 
-    updateModel:function() {
+    applyURL : function() {
+        var straight_params = this.getStraightParams();
+        for (var i = 0; i < straight_params.length; i++) {
+            this.m[straight_params[i]] = this.url_dict[straight_params[i]];
+        }
 
+        if (typeof this.url_dict.clone !== "undefined") {
+            var clones = this.url_dict.clone.split(',');
+            for (var j = 0; j < clones.length; j++) {
+                var c = this.m.clone(clones[j]);
+                if (!c.isVirtual()) {
+                    c.select = true;
+                }
+            }
+        }
+        if (typeof this.url_dict.plot !== "undefined") {
+            var sp_params = this.url_dict.plot.split(',');
+            this.sp.changeSplitMethod(sp_params[0], sp_params[1], sp_params[2]);
+        }
     },
 
     parseUrlParams:function (urlparams) {
@@ -94,5 +111,9 @@ Url.prototype= {
         }
         return params
     },
+
+    getStraightParams: function() {
+        return ["sample_set_id", "patient_id", "run_id", "config"];
+    }
 
 };
