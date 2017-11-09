@@ -100,7 +100,9 @@ Url.prototype= {
     applyURL : function() {
         var straight_params = this.getStraightParams();
         for (var i = 0; i < straight_params.length; i++) {
-            this.m[straight_params[i]] = this.url_dict[straight_params[i]];
+            if (typeof this.url_dict[straight_params[i]] !== "undefined") {
+                this.m[straight_params[i]] = this.url_dict[straight_params[i]];
+            }
         }
 
         if (typeof this.url_dict.clone !== "undefined") {
