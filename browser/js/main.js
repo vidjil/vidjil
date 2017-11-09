@@ -86,8 +86,8 @@ try {
      */
     var shortcut = new Shortcut(m)
 
-    var url = new Url(m);
-    m.url_manager = url;
+    var myUrl = new Url(m);
+    m.url_manager = myUrl;
 
     //TODO
     initMenu();
