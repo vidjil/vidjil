@@ -151,6 +151,8 @@ function ScatterPlot(id, model, database) {
 
     this.axisX = new GermlineAxis(this.m, false)
     this.axisY = new GermlineAxis(this.m, true)
+    this.axisX.init(this.m.germlineV, "V")
+    this.axisY.init(this.m.germlineJ, "J")
     this.use_system_grid = false
 
     this.m.sp = this
@@ -173,11 +175,9 @@ ScatterPlot.prototype = {
 
             this.initMenu();
             this.initSVG();
-            this.axisX.init(this.m.germlineV, "V")
-            this.axisY.init(this.m.germlineJ, "J")
 
             this.select_preset.selectedIndex = this.default_preset
-            this.changePreset();
+            //this.changePreset();
             this.tsne_ready=false;
 
         } catch(err) {
