@@ -733,8 +733,8 @@ Database.prototype = {
         }
         
         var id_vars = ["sample_set_id", "patient_id", "run_id"];
-        for (var i = 0; i < id_vars.length; i++) {
-            this.m[id_vars[i]] = args[id_vars[i]];
+        for (var j = 0; j < id_vars.length; j++) {
+            this.m[id_vars[j]] = args[id_vars[j]];
         }
         if(typeof args.config !== "undefined") {
             this.m.config = args.config;
