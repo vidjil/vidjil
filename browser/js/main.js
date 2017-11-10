@@ -94,7 +94,7 @@ try {
     new VidjilAutoComplete(db.db_address + 'tag/auto_complete');
 
     var tips;
-    $.getJSON('tips.json', function(data) {
+    $.getJSON(config.doc_address + '/tips.json', function(data) {
         tips = new TipsOfTheDay(data, new TipDecorator(), config.tip_ids);
         tips.display(document.getElementById('tip-container'));
     });
