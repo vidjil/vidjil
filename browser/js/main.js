@@ -95,7 +95,7 @@ try {
 
     var tips;
     $.getJSON('tips.json', function(data) {
-        tips = new TipsOfTheDay(data, new TipDecorator());
+        tips = new TipsOfTheDay(data, new TipDecorator(), config.tip_ids);
         tips.display(document.getElementById('tip-container'));
     });
 } catch(err) {
