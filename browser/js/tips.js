@@ -1,6 +1,6 @@
-function TipsOfTheDay(data, decorator) {
+function TipsOfTheDay(data, decorator, ids) {
     this.storage_key = "vidjil.tips.seen";
-    this.tips = data;
+    this.tips = this.load(data, ids);
     this.seen = this.get_seen_ids();
     this.cur_unseen = -1;
     this.unseen = this.get_unseen_ids();
@@ -9,6 +9,17 @@ function TipsOfTheDay(data, decorator) {
 }
 
 TipsOfTheDay.prototype =  {
+
+    load: function(data, ids) {
+        if (typeof ids === "undefined") {
+            return data;
+        }
+        var tips = {};
+        for (var i = 0; i < ids.length; i++) {
+            tips[ids[i]] = data[ids[i]];
+        }
+        return tips;
+    },
 
     get_seen_ids: function() {
         var storage = window.localStorage;
