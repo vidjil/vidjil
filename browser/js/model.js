@@ -1057,7 +1057,11 @@ changeAlleleNotation: function(alleleNotation) {
         }
         
         this.resize();
-        this.applyUrlParams();
+
+        if (typeof this.url_manager !== "undefined") {
+            this.applyUrlParams();
+        }
+
         this.displayTop();
     },
 
