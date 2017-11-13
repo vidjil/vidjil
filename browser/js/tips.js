@@ -44,7 +44,7 @@ TipsOfTheDay.prototype =  {
         }
         var tip = this.tips[tip_id];
         this.set_seen(tip_id);
-        return tip;
+        return {id: tip_id, content: tip};
     },
 
     load_next_unseen: function() {
@@ -142,7 +142,9 @@ TipDecorator.prototype = {
 
         var tip_div = document.createElement('div');
         tip_div.className = "left";
-        tip_div.innerHTML = elem;
+        var tmp = elem.content;
+        tmp += "<br><img class=\"tip_img\" src=\"" + config.doc_address + "/tips/" + elem.id + ".png\" onerror=\"this.src='images/transparent_back.png';\" />";
+        tip_div.innerHTML = tmp;
 
         div.appendChild(tip_div);
 
