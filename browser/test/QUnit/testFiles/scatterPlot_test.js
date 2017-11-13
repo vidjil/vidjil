@@ -71,6 +71,7 @@ QUnit.test("node sizes", function(assert) {
 
     var sp = new ScatterPlot("visu", m);
     sp.init();
+    sp.update();
 
     assert.equal(sp.nodes[0].s, 0.05, "node 0, size")
 
