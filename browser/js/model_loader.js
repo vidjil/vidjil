@@ -781,8 +781,4 @@ Model_loader.prototype = {
         this.average_quality = this.average_quality/count; 
     },
 
-    applyUrlParams:function() {
-        this.url_manager.applyURL();
-    },
-
 };

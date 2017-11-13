@@ -1059,7 +1059,7 @@ changeAlleleNotation: function(alleleNotation) {
         this.resize();
 
         if (typeof this.url_manager !== "undefined") {
-            this.applyUrlParams();
+            this.url_manager.applyURL();
         }
 
         this.displayTop();
