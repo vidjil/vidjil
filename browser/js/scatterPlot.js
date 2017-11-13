@@ -177,7 +177,7 @@ ScatterPlot.prototype = {
             this.initSVG();
 
             this.select_preset.selectedIndex = this.default_preset
-            //this.changePreset();
+            this.changePreset();
             this.tsne_ready=false;
 
         } catch(err) {
