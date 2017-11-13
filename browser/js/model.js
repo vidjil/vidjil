@@ -1057,6 +1057,7 @@ changeAlleleNotation: function(alleleNotation) {
         }
         
         this.resize();
+        this.applyUrlParams();
         this.displayTop();
     },
 
