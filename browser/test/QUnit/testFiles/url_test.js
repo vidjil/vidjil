@@ -65,7 +65,6 @@ QUnit.test("plot : modifyURL",function (assert) { with (windowMock) {
     sp.changeYaxis()
     m.update()
      assert.deepEqual(url.url_dict,{
-        "clone": "",
         "plot": "gene_v,gene_j,grid"
         }, "test plot url_dict")
     assert.equal(window.location.search.toString(),"?plot=gene_v,gene_j,grid", "test if plot is in url");
