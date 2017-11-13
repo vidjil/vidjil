@@ -419,7 +419,7 @@ ScatterPlot.prototype = {
         //Initialisation du menu déroulant
         this.select_preset.setAttribute('name', 'select_preset[]');
         this.select_preset.onchange = function() {
-            self.changePreset();
+            self.updatePreset();
         }
         
         element = document.createElement("option");
@@ -480,7 +480,7 @@ ScatterPlot.prototype = {
                 $(span_icon_bar).empty().append(svg);
             }, 'xml');
         span_icon_bar.onclick = function(){
-                self.changeMode(self.MODE_BAR);
+                self.updateMode(self.MODE_BAR);
             };
         
         span_icon_plot = document.createElement('div');
@@ -491,7 +491,7 @@ ScatterPlot.prototype = {
                 $(span_icon_plot).empty().append(svg);
             }, 'xml');
         span_icon_plot.onclick = function(){
-                self.changeMode(self.MODE_GRID);
+                self.updateMode(self.MODE_GRID);
             };
         
         var div_mode = document.createElement('div');
@@ -823,6 +823,11 @@ ScatterPlot.prototype = {
      * */
     changeMode : function (mode) {
         this.changeSplitMethod(this.splitX, this.splitY, mode);
+    },
+
+    updateMode : function (mode) {
+        this.changeMode(mode);
+        this.m.update();
     },
 
     /**
@@ -1357,6 +1362,11 @@ ScatterPlot.prototype = {
     changePreset: function(){
         var elem = this.select_preset;
         this.changeSplitMethod(this.preset[elem.value].x, this.preset[elem.value].y, this.preset[elem.value].mode);
+    },
+
+    updatePreset: function(){
+        this.changePreset();
+        this.m.update();
     },
 
     /* Fonction permettant de mettre à jour de l'axe des X
