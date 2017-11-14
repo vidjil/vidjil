@@ -46,7 +46,7 @@ QUnit.test("grid", function(assert) {
     assert.deepEqual(m.getSelected(), [2], "check click label");
     
     
-    sp.changeSplitMethod("n", "Size", sp.MODE_BAR);
+    sp.changeSplitMethod("nLength", "size", sp.MODE_BAR);
     sp.update()
     
     assert.equal(sp.nodes[1].bar_h , 0.3333333333333333, "node 1, bar h position")
