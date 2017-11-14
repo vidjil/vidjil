@@ -35,11 +35,7 @@ Url.prototype= {
         }
 
         // get scatterplot settings
-        if (this.sp.select_preset.selectedIndex!=this.sp.default_preset) {
-            params_dict.plot = this.sp.splitX+','+this.sp.splitY+','+this.sp.mode;
-        } else {
-	    delete params_dict[this.sp.mode];
-    	}
+        params_dict.plot = this.sp.splitX+','+this.sp.splitY+','+this.sp.mode;
 
         // get sample_set/patient/run, config...
         var straight_params = this.getStraightParams();
