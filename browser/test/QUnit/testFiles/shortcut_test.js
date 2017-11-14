@@ -26,7 +26,7 @@ QUnit.test("shortcuts on scatterplot", function(assert) {
     shortcut.checkKey(keyMock({'key': '#'}))
     assert.equal(sp.mode, sp.MODE_BAR)
 
-    assert.equal(sp.splitX, 'gene_v')
+    assert.equal(sp.splitX, sp.AXIS_GENE_V)
     shortcut.checkKey(keyMock({'keyCode': 52})) // Preset 4
     assert.equal(sp.splitX, 'sequenceLength')
 

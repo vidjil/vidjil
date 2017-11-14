@@ -23,7 +23,7 @@ QUnit.test("grid", function(assert) {
     
     assert.equal(sp.nodes.length, 7 , "check nodes");
     
-    sp.changeSplitMethod("gene_v", "gene_v", sp.MODE_GRID);
+    sp.changeSplitMethod(sp.AXIS_GENE_V, sp.AXIS_GENE_V, sp.MODE_GRID);
     sp.update()
     assert.equal(sp.axisX.pos(1), sp.axisY.pos(1), "check splitMethod V/V /plot : xpos = ypos");
     assert.equal(sp.axisX.pos(1), sp.axisY.pos(1), "check splitMethod V/V /plot : xpos = ypos");
@@ -35,8 +35,8 @@ QUnit.test("grid", function(assert) {
 
     assert.equal(document.getElementById("visu_bar1").className.baseVal, "", "check splitMethod V/V /plot : check if bar are displayed")
 
-    assert.equal(sp.axisX.labels[0].text, "IGHV1-2", "first label for 'gene_v' axis is 'IGHV1-2'")
-    assert.equal(sp.axisX.labels[1].text, "?", "second label for 'gene_v' axis is '?'")
+    assert.equal(sp.axisX.labels[0].text, "IGHV1-2", "first label for 'v' axis is 'IGHV1-2'")
+    assert.equal(sp.axisX.labels[1].text, "?", "second label for 'v' axis is '?'")
 
     assert.equal(m.clone(2).getGene('5'), "IGHV1-2*01", "clone 2 is 'IGHV1-2*01'")
     assert.equal(sp.nodes[2].bar_x, sp.axisX.labels[0].pos, "node 2, bar x position is on 'IGVH4'")
