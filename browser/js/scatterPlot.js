@@ -823,6 +823,7 @@ ScatterPlot.prototype = {
      * */
     changeMode : function (mode) {
         this.changeSplitMethod(this.splitX, this.splitY, mode);
+        this.select_preset.selectedIndex = 0
     },
 
     updateMode : function (mode) {
