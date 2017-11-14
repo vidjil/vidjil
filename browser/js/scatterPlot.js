@@ -1346,6 +1346,7 @@ ScatterPlot.prototype = {
         var elem = this.select_x;
         this.changeSplitMethod(elem.value, this.splitY, this.mode);
         this.select_preset.selectedIndex = 0
+        this.m.update();
     },
 
     /**
@@ -1355,6 +1356,7 @@ ScatterPlot.prototype = {
         var elem = this.select_y;
         this.changeSplitMethod(this.splitX, elem.value, this.mode);
         this.select_preset.selectedIndex = 0
+        this.m.update();
     },
     
     /**
