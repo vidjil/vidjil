@@ -142,7 +142,7 @@ Url.prototype= {
         var params_list = [];
         for (var key in params_dict){
             if ((typeof key != "undefined" && key !== "") && (typeof params_dict[key]!= "undefined")) {
-                if (params_dict[key].constructor === String && params_dict[key] !== '') {
+                if (params_dict[key].constructor !== Array && params_dict[key] !== '') {
                     params_list.push(key+"="+params_dict[key])
                 } else if (params_dict[key].constructor === Array) {
                     for (var i = 0; i < params_dict[key].length; i++) {
