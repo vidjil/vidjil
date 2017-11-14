@@ -59,7 +59,7 @@ Url.prototype= {
                 }
             }
 
-            params_dict.custom = custom_ids.join(',');
+            params_dict.custom = custom_ids;
         }
 
         params = this.generateParamsString(params_dict);
@@ -128,7 +128,16 @@ Url.prototype= {
         url_param = urlparams.substr(1).split("&");
         for (var i = 0; i < url_param.length; i++) {
             var tmparr = url_param[i].split("=");
-	    params[tmparr[0]] = tmparr[1];
+            var p = params[tmparr[0]];
+            if (typeof p === "undefined") {
+                params[tmparr[0]] = tmparr[1];
+            } else if (p.constructor === String){
+                params[tmparr[0]] = [];
+                params[tmparr[0]].push(p);
+                params[tmparr[0]].push(tmparr[1]);
+            } else if (p.constructor === Array) {
+                params[tmparr[0]].push(tmparr[1]);
+            }
         }
         return params
     },
@@ -136,8 +145,14 @@ Url.prototype= {
     generateParamsString: function(params_dict) {
         var params_list = [];
         for (var key in params_dict){
-            if ((typeof key != "undefined" && key !== "") && (typeof params_dict[key]!= "undefined" && params_dict[key] !== '')) {
-                params_list.push(key+"="+params_dict[key])
+            if ((typeof key != "undefined" && key !== "") && (typeof params_dict[key]!= "undefined")) {
+                if (params_dict[key].constructor === String && params_dict[key] !== '') {
+                    params_list.push(key+"="+params_dict[key])
+                } else if (params_dict[key].constructor === Array) {
+                    for (var i = 0; i < params_dict[key].length; i++) {
+                        params_list.push(key+"="+params_dict[key][i]);
+                    }
+                }
             }
         }
         return params_list.join("&");
