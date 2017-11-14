@@ -314,8 +314,8 @@ List.prototype = {
             axis_option.appendChild(document.createTextNode(available_axis[axOpts[i]].label));
             axis.appendChild(axis_option);
         }
-        axis.value = "Size";
-        this.selectedAxis = available_axis.Size;
+        axis.value = "size";
+        this.selectedAxis = available_axis.size;
         axis.onchange = function() {
             self.selectedAxis = available_axis[axis.value];
             self.update()
