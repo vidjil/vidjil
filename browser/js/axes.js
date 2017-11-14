@@ -59,14 +59,14 @@ Axes.prototype = {
                 label:"J allele",
                 axis: new GermlineAxis(this.m, false, true)
             },
-            "sequenceLength" : {
+            "consensusLength" : {
                 doc: "length of the consensus sequence",
                 label: "clone consensus length",
                 axis: new NumericalAxis(this.m, false, false),
                 fct: function(clone) {return clone.getSequenceLength()},
                 pretty: function(len) { return createClassedSpan('threeDigits', len) }
             },
-            "readLength" : {
+            "averageLength" : {
                 doc: "average length of the reads belonging to each clone",
                 label: "clone average read length",
                 axis: new FloatAxis(this.m),
@@ -79,7 +79,7 @@ Axes.prototype = {
                 axis: new PercentAxis(this.m),
                 fct: "GCContent"
             },
-            "n": {
+            "nLength": {
                 doc: "N length, from the end of the V/5' segment to the start of the J/3' segment (excluded)",
                 label: "N length",
                 axis: new NumericalAxis(this.m),
@@ -106,7 +106,7 @@ Axes.prototype = {
                 pretty: function(tag) { return icon_pm(tag, "productive", "not productive") },
                 hide: true
             },
-            "VIdentity-IMGT": {
+            "vIdentity-IMGT": {
                 label: "V identity (as computed by IMGT/V-QUEST)",
                 axis: new NumericalAxis(this.m),
                 fct: function(clone) { return clone.getVIdentityIMGT() },
@@ -152,7 +152,7 @@ Axes.prototype = {
                 pretty: function(system) { return self.m.systemBox(system) },
                 sort: true
             },
-            "Size" : {
+            "size" : {
                 doc: "ratio of the number of reads of each clone to the total number of reads in the selected locus",
                 label: "size",
                 axis: new PercentAxis(this.m),
@@ -162,7 +162,7 @@ Axes.prototype = {
                 max : 1,
                 log : true
             },
-            "otherSize" : {
+            "sizeOtherSample" : {
                 doc: "ratio of the number of reads of each clone to the total number of reads in the selected locus, on a second sample",
                 label: "size (other sample)",
                 axis: new PercentAxis(this.m),
@@ -250,13 +250,13 @@ Axes.prototype = {
                 label: "interpolated length, between BIOMED2 primers (inclusive)",
                 fct: function(cloneID) {return self.m.clone(cloneID).getSegLengthDoubleFeature('primer5', 'primer3')}
             }, 
-            "delRight": {
+            "vDel": {
                 doc: "number of deleted nucleotides at the 3' side of the V/5' segment",
                 label: "V/5' deletions in 3'",
                 axis: new NumericalAxis(this.m),
                 fct: function(clone) { return clone.getDeletion('5', 'delRight') }
             },
-            "delLeft": {
+            "jDel": {
                 doc: "number of deleted nucleotides at the 5' side of the J/3' segment",
                 label: "J/3' deletions in 5'",
                 axis: new NumericalAxis(this.m),
