@@ -39,12 +39,12 @@ Axes.prototype = {
 
     available: function(){
         return {
-            "gene_v": {
+            "v": {
                 doc: "V gene (or 5' segment), gathering all alleles",
                 label:"V/5' gene",
                 axis: new GermlineAxis(this.m, false, true)
             },
-            "gene_j": {
+            "j": {
                 doc: "J gene (or 3' segment), gathering all alleles",
                 label:"J/3' gene",
                 axis: new GermlineAxis(this.m, false, true)

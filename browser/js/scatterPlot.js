@@ -82,8 +82,8 @@ function ScatterPlot(id, model, database) {
     this.dbscanActive = false; //Boolean to know if the DSCAN visualization is on
     this.DBSCANLength = 5; //Length of the DBSCAN edges
 
-    this.AXIS_GENE_V = "gene_v"
-    this.AXIS_GENE_J = "gene_j"
+    this.AXIS_GENE_V = "v"
+    this.AXIS_GENE_J = "j"
     this.AXIS_ALLELE_V = "allele_v"
     this.AXIS_ALLELE_V = "allele_j"
     
