@@ -166,7 +166,10 @@ Axes.prototype = {
                 doc: "ratio of the number of reads of each clone to the total number of reads in the selected locus, on a second sample",
                 label: "size (other sample)",
                 axis: new PercentAxis(this.m),
-                fct : function(clone){return clone.getSizeZero(m.tOther)},
+                fct : function(clone){
+                    var size = clone.getSizeZero(m.tOther) ;
+                    return (typeof size == "undefined") ? self.m.min_size : size
+                },
                 min : function(){return self.m.min_size},
                 max : 1,
                 log : true
