@@ -93,11 +93,8 @@ try {
 
     new VidjilAutoComplete(db.db_address + 'tag/auto_complete');
 
-    var tips;
-    $.getJSON(config.doc_address + '/tips.json', function(data) {
-        tips = new TipsOfTheDay(data, new TipDecorator(), config.tip_ids);
-        tips.display(document.getElementById('tip-container'));
-    });
+    var my_tips = new TipsOfTheDay(tips, new TipDecorator(), config.tip_ids);
+    my_tips.display(document.getElementById('tip-container'));
 } catch(err) {
     this.db.log_error(err)
 }

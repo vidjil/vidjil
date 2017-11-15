@@ -32,7 +32,7 @@ function loadAfterConf() {
     // some files are loaded before the views)
     require(["../view"], function() {
 
-        require(["../germline"],
+        require(["../germline", "../../../doc/tips.js"],
                 function() {
                     require(["../generic_axis"],
                             function() {
