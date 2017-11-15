@@ -117,6 +117,9 @@ Url.prototype= {
         }
         if (typeof this.url_dict.plot !== "undefined") {
             var sp_params = this.url_dict.plot.split(',');
+            if (sp_params.length == 2) {
+                sp_params.push(this.sp.mode);
+            }
             this.sp.changeSplitMethod(sp_params[0], sp_params[1], sp_params[2]);
         }
     },
