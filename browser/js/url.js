@@ -2,6 +2,8 @@ function Url(model, win) {
     View.call(this, model);
     this.m = model;
     this.window = (typeof win != "undefined") ? win : window
+
+    this.encoder = new UrlEncoder();
     this.url_dict = this.parseUrlParams(this.window.location.search.toString())
     this.sp = this.m.sp
 
@@ -133,14 +135,16 @@ Url.prototype= {
         for (var i = 0; i < url_param.length; i++) {
             var tmparr = url_param[i].split("=");
             var p = params[tmparr[0]];
+            var key = this.encoder.decode(tmparr[0]);
+            var val = tmparr[1];
             if (typeof p === "undefined") {
-                params[tmparr[0]] = tmparr[1];
+                params[key] = val;
             } else if (p.constructor === String){
-                params[tmparr[0]] = [];
-                params[tmparr[0]].push(p);
-                params[tmparr[0]].push(tmparr[1]);
+                params[key] = [];
+                params[key].push(p);
+                params[key].push(val);
             } else if (p.constructor === Array) {
-                params[tmparr[0]].push(tmparr[1]);
+                params[key].push(val);
             }
         }
         return params
@@ -150,11 +154,12 @@ Url.prototype= {
         var params_list = [];
         for (var key in params_dict){
             if ((typeof key != "undefined" && key !== "") && (typeof params_dict[key]!= "undefined")) {
+                var encoded = this.encoder.encode(key);
                 if (params_dict[key].constructor !== Array && params_dict[key] !== '') {
-                    params_list.push(key+"="+params_dict[key])
+                    params_list.push(encoded+"="+params_dict[key])
                 } else if (params_dict[key].constructor === Array) {
                     for (var i = 0; i < params_dict[key].length; i++) {
-                        params_list.push(key+"="+params_dict[key][i]);
+                        params_list.push(encoded+"="+params_dict[key][i]);
                     }
                 }
             }
@@ -185,3 +190,33 @@ Url.prototype= {
     }
 
 };
+
+function UrlEncoder() {
+    this.encoding = {
+        'sample_set_id': 'set',
+        'config': 'cf',
+        'clone': 'c',
+        'plot': 'p'
+    };
+
+    this.decoding = {};
+    for (var k in this.encoding) {
+        this.decoding[this.encoding[k]] = k;
+    }
+}
+
+UrlEncoder.prototype = {
+    encode: function(param) {
+        if (typeof this.encoding[param] === "undefined"){
+            return param;
+        }
+        return this.encoding[param];
+    },
+
+    decode: function(param) {
+        if (typeof this.decoding[param] === "undefined"){
+            return param;
+        }
+        return this.decoding[param];
+    }
+}
