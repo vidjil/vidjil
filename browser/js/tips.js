@@ -73,15 +73,15 @@ TipsOfTheDay.prototype =  {
         return this.seen.indexOf(id) < 0;
     },
 
-    display: function(container, prev) {
-        if (typeof prev === "undefined") {
-            prev = false;
+    display: function(container, previous) {
+        if (typeof previous === "undefined") {
+            previous = false;
         }
 
         var self = this;
 
         var tip = null;
-        if (prev) {
+        if (previous) {
             tip = this.load_previous_unseen();
         } else {
             tip = this.load_next_unseen();
