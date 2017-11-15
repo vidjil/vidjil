@@ -734,7 +734,7 @@ Database.prototype = {
             return
         }
         
-        var id_vars = ["sample_set_id", "patient_id", "run_id"];
+        var id_vars = ["sample_set_id", "patient_id", "run_id", "custom"];
         for (var j = 0; j < id_vars.length; j++) {
             this.m[id_vars[j]] = args[id_vars[j]];
         }
