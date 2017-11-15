@@ -46,7 +46,7 @@ QUnit.test("clone : modifyURL", function(assert) { with (windowMock) {
     m.unselectAll();
     assert.equal(window.location.search.toString(),"", "reboot url");
     sp.init()
-    sp.changeSplitMethod("n", "Size", "bar");
+    sp.changeSplitMethod("nLength", "size", "bar");
     sp.update()
     assert.equal(window.location.search.toString(),"", "test if plot is in url");
 
@@ -65,9 +65,9 @@ QUnit.test("plot : modifyURL",function (assert) { with (windowMock) {
     sp.changeYaxis()
     m.update()
      assert.deepEqual(url.url_dict,{
-        "plot": "gene_v,gene_j,grid"
+        "plot": "v,j,grid"
         }, "test plot url_dict")
-    assert.equal(window.location.search.toString(),"?plot=gene_v,gene_j,grid", "test if plot is in url");
+    assert.equal(window.location.search.toString(),"?plot=v,j,grid", "test if plot is in url");
 
 }});
 
