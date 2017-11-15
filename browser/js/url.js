@@ -168,6 +168,12 @@ Url.prototype= {
         var newParams = this.generateParamsString(args);
         this.pushUrl(newParams);
         db.load_data(args, filename);
+    },
+
+    loadCustomUrl: function(db) {
+        this.url_dict = {};
+        this.pushUrl("");
+        db.load_custom_data();
     }
 
 };

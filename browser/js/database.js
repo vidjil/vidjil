@@ -798,6 +798,11 @@ Database.prototype = {
         
         var arg = this.argsToStr(args)
         this.m.custom = arg;
+
+        var id_vars = ["sample_set_id", "patient_id", "run_id", "config"];
+        for (var j = 0; j < id_vars.length; j++) {
+            this.m[id_vars[j]] = undefined;
+        }
         
         this.m.wait("Comparing samples...")
         $.ajax({
