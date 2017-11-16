@@ -28,11 +28,16 @@ require(["../git-sha1"], function () { console.log("Vidjil client " + git_sha1) 
 
 
 function loadAfterConf() {
+    require(['../../../doc/tips'],
+            function(){},
+            function(err) {
+                console.log("missing tips.js");
+            })
     // Then load views (otherwise that could generate some errors if
     // some files are loaded before the views)
     require(["../view"], function() {
 
-        require(["../germline", "../../../doc/tips.js"],
+        require(["../germline"],
                 function() {
                     require(["../generic_axis"],
                             function() {
