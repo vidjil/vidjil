@@ -41,13 +41,28 @@ not been analysed.
   analysed? Also have a look at the average read lengths of these causes. Do
   you notice something regarding the average read lengths?}
 
-\section{Filtering clones}
+\section{Play with the interface and clones}
+
+\subsection{View of the clones}
+
+By default, the view of clones into the list can be setted to adapt it to everyone usage.
+
+
+\question{Fill the filter area with `CTGTGCGAGCCTACCCCGGGTATAGCAGTGCTGGTACGGGGGTGGTTCGA`. What append ? What is this sequence ? }
+
+\question{How can you know what is under the 8 of the short name ``IGHV3-11 3/8/0 D6-19 0/GGGGG/5 J5*02`` ? }
+
+Under the setting tab from the menu, various options can be setted. For example, you can see the timeline graph by their name, their date of sampling or by the number of day between the origin.
+Another option is to show the allele of segments in every case, never or partially.
+
+
+\subsection{Filtering clones}
 
 
 By default Vidjil displays the 50 most abundant clones at each time point.
 With five time points, we may therefore have from 50 to 250 clones displayed
 depending if the top 50 are always the same or always different.
-This number can be increased by going in the \com{filter} menu and by putting the
+This number can be increased to a maximum of 100 clones by going in the \com{filter} menu and by putting the
 slider to its right end.
 \question{Notice how the IGH smaller clones percentage changes. What was its
   initial value? What is it now?}
@@ -106,6 +121,10 @@ After this rename, you can see that the clone is still selected.
 \question{To unselect them all, you can click in an empty area on the top or
   bottom plot.}
 
+Another way to hide a specific clone, like  a noise or unspecific clones, is to select them and to click on the hide button, near focus.
+The last way to hide a clone is to change the tag of it as ``standard (niose)`` and choose to uncheck this tag by clicking on the corresponding tile on the list of tiles at the informatons panel to switch them from a visible state to a filter one.
+
+
 \section{Analysing clone populations}
 
 \subsection{Clustering clones through inspection of their sequences}
@@ -159,6 +178,11 @@ you were right to cluster them). You can also remove some subclones from the
 cluster by clicking on the cross at their left in the list.
 \question{For the sake of the exercise, remove the last clone of the cluster.}
 
+\question{For the next step, chosse the preset ``V distribution`` (shurtcut 5). 
+Open the menu at ``cluster`` tab, and choose ``cluster by V/5'``. What append ? There is two clone with TRGV2. Why ? confirm this by changing the x axis has ``V allele``. }
+
+You can now select and click on the button revert to previous cluster.
+
 
 \subsection{Other metrics and analysis on the clones}
 
@@ -206,6 +230,9 @@ with the \com{color by} menu.
 \marginpar{We apologize to color blinds: the colors are not yet color-blind friendly.}Clones that are close on the grid with similar colors are likely to
 be similar.
 
+\question{First choose the preset ``CDR3 length distribution`` and
+  then color by ``productivity``. See that the color tiles in the info part (upper right) change to show the color coding.}
+  
 Using those different features you should be able to analyse how similar your
 sequences are, and potentially you could cluster them if you'd like.
 
@@ -358,6 +385,14 @@ shortcut.
 
 \question{Select some clones and then, in the export menu, choose \com{export
   fasta}. What happens?}
+
+\question{Open the menu at ``import/export`` tab. Click on the export csv button.
+The resulting file will be a file with the description of all visible clones (complete segmentation, and information on size for each timepoint).
+This file can be easily open by office software like excel or libreoffice calc for further anlysis.}
+
+\question{Open again the menu at ``import/export`` tab. Click on export SVG (graph of plot).
+The resulting file will be a file, openable by everybrowser or some picture editor.}
+
 
 
 
