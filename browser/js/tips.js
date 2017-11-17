@@ -69,6 +69,12 @@ TipsOfTheDay.prototype =  {
         }
     },
 
+    reset: function() {
+        this.seen = []
+        var storage = window.localStorage
+        storage.removeItem(this.storage_key)
+    },
+    
     is_unseen: function(id) {
         return this.seen.indexOf(id) < 0;
     },
