@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+from __future__ import print_function
+
 import unittest
 from gluon.globals import Request, Session, Storage, Response
 from gluon.contrib.test_helpers import form_postvars
@@ -99,7 +101,7 @@ class ConfigController(unittest.TestCase):
         request.vars["id"] = id_config
         
         resp = delete()
-        print resp
+        print(resp)
         self.assertEqual(resp.find('config deleted'), -1, "delete doesn't return a valid message")
         
         
