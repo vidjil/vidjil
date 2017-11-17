@@ -53,8 +53,10 @@ var config = {
     /****************
      * Tips of the day
      */
-    "available_tips" : [ 'T01' ],
-
+    "available_tips" : [
+                     'T01', 'T02', 'T03',
+                     'T30', 'T31', 'T32'
+                     ],
 
     /****************
      * Static alerts
