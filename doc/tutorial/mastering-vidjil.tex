@@ -44,22 +44,29 @@ not been analysed.
   analysed? Also have a look at the average read lengths of these causes. Do
   you notice something regarding the average read lengths?}
 
-\section{Play with the interface and clones}
+\section{Viewing and filtering clones}
 
 \subsection{View of the clones}
 
 By default, the view of clones into the list can be setted to adapt it to everyone usage.
 
 
-\question{Fill the filter area with `CTGTGCGAGCCTACCCCGGGTATAGCAGTGCTGGTACGGGGGTGGTTCGA`. What append ? What is this sequence ? }
+\question{Fill the filter area with `CTGTGCGAGCCTACCCCGGGTATAGCAGTGCTGGTACGGGGGTGGTTCGA`. What happened ? What is this sequence ? }
+XXX à discuter... on fait déjà ci-dessous une recherche par texte... et ici la séquence est trop longue XXX
+
+
+Under the setting tab from the menu, various options can be setted. For example, you can see the timeline graph by their name, their date of sampling or by the number of day between the origin.
+XXX intéressant, à voir où le mettre (pas ici) XXX
+
 
 \question{How can you know what is under the 8 of the short name ``IGHV3-11 3/8/0 D6-19 0/GGGGG/5 J5*02`` ? }
 
-Under the setting tab from the menu, various options can be setted. For example, you can see the timeline graph by their name, their date of sampling or by the number of day between the origin.
+
+
 Another option is to show the allele of segments in every case, never or partially.
 
 
-\subsection{Filtering clones}
+\subsection{Tagging and filtering clones}
 
 
 By default Vidjil displays the 50 most abundant clones at each time point.
@@ -124,10 +131,15 @@ After this rename, you can see that the clone is still selected.
 \question{To unselect them all, you can click in an empty area on the top or
   bottom plot.}
 
-Another way to hide a specific clone, like  a noise or unspecific clones, is to select them and to click on the hide button, near focus.
-The last way to hide a clone is to change the tag of it as ``standard (niose)`` and choose to uncheck this tag by clicking on the corresponding tile on the list of tiles at the informatons panel to switch them from a visible state to a filter one.
+Sometimes, one wants to hide noisy or unrelated clones.
 
+\question{Select a clone or several clones and click on the \com{hide} button, near the \com{focus} button. Show again these
+  clones by clicking on the cross next to the search box.}
 
+% Another way to hide clonesis to assign is to change the tag of it as ``standard (niose)`` and choose to uncheck this tag by clicking on the corresponding tile on the list of tiles at the informatons panel to switch them from a visible state to a filter one.
+%%% Voir ci-dessus, déjà mis
+
+  
 \section{Analysing clone populations}
 
 \subsection{Clustering clones through inspection of their sequences}
@@ -182,9 +194,11 @@ cluster by clicking on the cross at their left in the list.
 \question{For the sake of the exercise, remove the last clone of the cluster.}
 
 \question{For the next step, chosse the preset ``V distribution`` (shurtcut 5). 
-Open the menu at ``cluster`` tab, and choose ``cluster by V/5'``. What append ? There is two clone with TRGV2. Why ? confirm this by changing the x axis has ``V allele``. }
+  Open the \com{cluster} menu, and choose \com{cluster by V/5}. What happened ? There are now two clones with TRGV2. Why ?}
+%%  Confirm this by changing the x axis into ``V allele``.
+%%% -> Problème, on n'a pas encore parlé des axes à cet endroit.
 
-You can now select and click on the button revert to previous cluster.
+\question{In the \com{cluster} menu, select  \com{revert to previous clusters} to undo these clusterings.}
 
 
 \subsection{Other metrics and analysis on the clones}
@@ -215,8 +229,8 @@ In the bar plot mode, pass the mouse over the bars: What happens ?}
 
 Another possibility is to request Vidjil to compute the similarity between
 clones.
-\question{Now select the preset ``plot by similarity'' or even ``plot
-  similarity by locus'' to plot similarity for the current locus.}
+\question{Now select the preset \com{plot by similarity} or even \com{plot
+  similarity by locus} to plot similarity for the current locus.}
 Now the most similar clones should be close together. However note that it is
 theoretically impossible to achieve such a representation in 2 dimensions. So
 it is possible that two dissimilar clones are close together or, conversely,
@@ -229,15 +243,16 @@ explored yet.
 You can change the colors to make it represent some variables of interest
 with the \com{color by} menu.
 \question{First choose the preset ``plot by similarity and by locus'' and
-  then color by N length (in the box at the top of the screen).}
+  then color by \com{N length} (in the box at the top of the screen).}
 \marginpar{We apologize to color blinds: the colors are not yet color-blind friendly.}Clones that are close on the grid with similar colors are likely to
 be similar.
 
-\question{First choose the preset ``CDR3 length distribution`` and
-  then color by ``productivity``. See that the color tiles in the info part (upper right) change to show the color coding.}
+\question{Choose now the preset \com{CDR3 length distribution} and
+  then color by \com{productivity}.
+  See that the color tiles in the info part (upper right) change to show the color key.}
   
 Using those different features you should be able to analyse how similar your
-sequences are, and potentially you could cluster them if you'd like.
+sequences are, and potentially you could cluster them if you'd like or tag them.
 
 
 \bigskip
@@ -361,8 +376,8 @@ We can double check this designation.
 \question{Then tick the checkbox 5'V/D/3'J. In the segmenter the boundaries of
   the V(D)J genes as computed by IMGT/V-QUEST are underlined.}
   
-Note that every informations getted by IMGT/V-QUEST is available by clicking on the \textit{i} icon of analysed. With this, you can directly compare the annotation made by the original software used and V-QUEST. 
-
+Note that data returned by IMGT/V-QUEST are available by clicking on the \textit{i} icon of analyzed clones,
+enabling you to compare the annotations made by the original software and by IMGT/V-QUEST. 
 
 \question{You can also directly send the sequences to IMGT/V-QUEST or IgBlast
   by clicking the corresponding buttons. This opens a new page with the
@@ -379,7 +394,7 @@ You can also change the designation shown on the web application.
   button. Choose what you would like to modify.}
 
 Beware: none of the modification you made (name changes, clusters, clone
-tagging, sample reordering\dots) will not be automatically saved. You have to save
+tagging, sample reordering\dots) will be automatically saved. You have to save
 your changes by yourself either by clicking on \com{save patient} in the top left menu (where the
 ``patient'' name is written) or by using the \texttt{Ctrl+S} keyboard
 shortcut.
@@ -393,18 +408,16 @@ shortcut.
 \question{Select some clones and then, in the export menu, choose \com{export
   fasta}. What happens?}
 
-\question{Open the menu at ``import/export`` tab. Click on the export csv button.
-The resulting file will be a file with the description of all visible clones (complete segmentation, and information on size for each timepoint).
-This file can be easily open by office software like excel or libreoffice calc for further anlysis.}
+\question{Open the \com{import/export} menu, and click on \com{export csv}.
+The resulting file describes all visible clones (complete segmentation, and information on size for each timepoint).
+It can be opened by any spreadsheet software such as LibreOffice Calc or Excel for further anlysis.}
 
-\question{Open again the menu at ``import/export`` tab. Click on export SVG (graph of plot).
-The resulting file will be a file, openable by everybrowser or some picture editor.}
-
-
+\question{Open again \com{import/export} menu, and click on one of the \com{export SVG} buttons.
+This exports the current view of the plot or the graph. The resulting file can be opened and edited from any image drawing software such as Inkscape.}
 
 
 \vfill
-\flushright \it Aurélie Caillault, Mathieu Giraud, Tatiana Rocher, Mikaël Salson
+\flushright \it Aurélie Caillault, Florian Thonier, Mathieu Giraud, Tatiana Rocher, Mikaël Salson
 \\ \texttt{contact@vidjil.org}
 
 \end{document}
