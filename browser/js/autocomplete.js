@@ -138,7 +138,7 @@ VidjilAutoComplete.prototype = {
         };
 
         callbacks.matcher = function(flag, subtext) {
-            var regex = new RegExp(`[\\s\\S]+`);
+            var regex = new RegExp("[\\s\\S]+");
             var match = regex.exec(subtext);
             if (match) {
                 return match[0];
