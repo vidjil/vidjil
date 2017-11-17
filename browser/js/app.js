@@ -28,7 +28,7 @@ require(["../git-sha1"], function () { console.log("Vidjil client " + git_sha1) 
 
 
 function loadAfterConf() {
-    require(['../../../doc/tips'],
+    require(['../../doctips/tips'],
             function(){},
             function(err) {
                 console.log("missing tips.js");
