@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+from __future__ import print_function
+
 import unittest
 from mock import MagicMock, Mock, patch
 from gluon.globals import Request, Session, Storage, Response
@@ -202,7 +204,7 @@ class FileController(unittest.TestCase):
             sequence_id = self.createDumbSequenceFile()
             request.vars['sequence_file_id'] = sequence_id
             res = restart_pre_process()
-            print res
+            print(res)
         self.assertNotEqual(res.find('message'), -1, 'missing message in response')
 
     def testRestartPreProcessInexistantFile(self):
@@ -211,5 +213,5 @@ class FileController(unittest.TestCase):
         with patch.object(Scheduler, 'queue_task', return_value=fake_task) as mock_queue_task:
             request.vars['sequence_file_id'] = 666
             res = restart_pre_process()
-            print res
+            print(res)
         self.assertNotEqual(res.find('"success":"false"'), -1, 'missing message in response')

@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+from __future__ import print_function
+
 import unittest
 import tempfile
 import gluon.contrib.simplejson
@@ -78,7 +80,7 @@ class DefaultController(unittest.TestCase):
         
     def testCustomDataNoFile(self):
         resp = gluon.contrib.simplejson.loads(get_custom_data())
-        print resp['message']
+        print(resp['message'])
         self.assertTrue(resp.has_key('success'))
         self.assertEqual(resp['success'], 'false')
         self.assertNotEqual(resp['message'].find('get_custom_data'), -1)
@@ -95,7 +97,7 @@ class DefaultController(unittest.TestCase):
     def testCustomData(self):
         request.vars['custom'] = [str(fake_result_id2), str(fake_result_id2)]
         resp = gluon.contrib.simplejson.loads(get_custom_data())
-        print resp
+        print(resp)
         if resp.has_key('success') and resp['success'] == 'false':
            self.assertTrue(defs.PORT_FUSE_SERVER is None, 'get_custom_data returns error without fuse server')
         else:

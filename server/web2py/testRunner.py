@@ -34,6 +34,8 @@ ndegroot0@gmail.com
 
 
 
+from __future__ import print_function
+
 from gluon import current
 import gluon
 from gluon.tools import Auth
@@ -274,10 +276,10 @@ suite = unittest.TestSuite()
 
 def showfeedback():
     exc_type, exc_value, exc_traceback = sys.exc_info()
-    print '-'*60
+    print('-'*60)
     for line in traceback.format_exception(exc_type, exc_value,exc_traceback):
-        print line[:-1]
-    print '-'*60
+        print(line[:-1])
+    print('-'*60)
 
 
 def custom_execfile(test_file):
@@ -302,7 +304,7 @@ appname = 'vidjil'
 # find doctests in controller
 path=os.path.join('applications',appname,'controllers','*.py')
 doc_test_files = glob.glob(path)
-print len(doc_test_files)," controller files with possible doctests found."
+print(len(doc_test_files)," controller files with possible doctests found.")
 
 # get all files with tests
 test_files = glob.glob('applications/'+appname+'/tests/*/*.py')
@@ -311,7 +313,7 @@ if not len(test_files):
     raise Exception("No files found for app: " + sys.argv[2])
 
 # Bring in all doc tests and submit them
-print "Run doctests" if doc_test_files else "No doctests"
+print("Run doctests" if doc_test_files else "No doctests")
 for f in  doc_test_files:
     g=custom_execfile(f)
     suite.addTest(doctest.DocFileSuite(f, globs=g,
