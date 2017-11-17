@@ -73,7 +73,11 @@ TipsOfTheDay.prototype =  {
         return this.seen.indexOf(id) < 0;
     },
 
-    display: function(container, previous) {
+    set_container: function(container) {
+        this.container = container
+    },
+
+    display: function(previous) {
         if (typeof previous === "undefined") {
             previous = false;
         }
@@ -96,24 +100,24 @@ TipsOfTheDay.prototype =  {
             var prev = document.createElement('i');
             prev.className = "icon-left-open-1";
             prev.onclick = function() {
-                self.display(container, true);
+                self.display(this.container, true);
             }
             nav_div.appendChild(prev);
 
             var next = document.createElement('i');
             next.className = "icon-right-open-1";
             next.onclick = function() {
-                self.display(container, false);
+                self.display(this.container, false);
             }
             nav_div.appendChild(next);
 
             tip_div.appendChild(nav_div);
 
             // clear the container and insert tip
-            while (container.firstChild) {
-                container.removeChild(container.firstChild);
+            while (this.container.firstChild) {
+                this.container.removeChild(this.container.firstChild);
             }
-            container.appendChild(tip_div);
+            this.container.appendChild(tip_div);
         }
     }
 }
