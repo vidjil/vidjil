@@ -64,6 +64,13 @@ ul {
   font-weight: bold;
   color: red;
 }
+#tip-container {
+  position: absolute;
+  float: right;
+  z-index: 50;
+  right: 0px;
+  top: 32px;
+}
 #upload_summary {
   float: right;
   display: none;
@@ -1607,6 +1614,25 @@ span.warningReads {
   font-weight: bold;
   border-color: darkred;
   background-color: #F2DEDE;
+}
+.tip_1 {
+  width: 400px;
+  border: solid;
+  border-width: 2px;
+  display: block;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  background: #dff0d8;
+  border-color: #333333;
+}
+.right {
+  float: right;
+  clear: both;
+}
+.left {
+  float: left;
+  clear: both;
 }
 select > option:hover {
   background-color: #333333;
