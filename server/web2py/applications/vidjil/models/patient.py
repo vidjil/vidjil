@@ -36,7 +36,7 @@ class Patient(SampleSet):
         return db(db.patient.sample_set_id == sample_set_id).select()[0]
 
     def get_id_string(self, data):
-        name = "%s %s" % (data.first_name, data.last_name)
+        name = self.get_name(data)
         birth = "[%s]" % str(data.birth)
         id = "(%d)" % data.id
         return "%s  %s  %s" % (birth, name, id)

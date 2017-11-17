@@ -53,35 +53,15 @@
             </tr>
 			<tr class='db_table_split' ><td colspan="2"> patient and run </td></tr>
             <tr>
-                <td><label for="generic_id" id="sample_set_id__label">set: </label></td>
-                <td><input list="generics" id="generic_list" name="generic_id" type="text" size="80" value="{{=generic}}"></td>
-                  <datalist id="generics">
-                  {{for row in generic_list :}}
-                      <option value="{{=row}}">
-                  {{pass}}
-                  </datalist>
-                <td rowspan="2">* You must associate this sample with at least one patient, run or set.
-		  <br/>You can also associate it with any combination of the three.</td>
+                <td colspan="2">You must associate this sample with at least one patient, run or set.
+                <br/>You can also associate it with any combination of the three.</td>
             </tr>
+            {{ for key in id_strings: }}
             <tr>
-                <td><label for="patient_id" id="patient_id__label">patient: </label></td>
-                <td><input list="patients" id="patient_list" name="patient_id" type="text" size="80" value="{{=patient}}"></td>
-                  <datalist id="patients">
-                  {{for row in patient_list :}}
-                      <option value="{{=row}}">
-                  {{pass}}
-                  </datalist>
+                <td><label for="{{=key}}_id" id="{{=key}}_id__label">{{=key if key != 'generic' else 'set'}}: </label></td>
+                <td><input onfocus="new VidjilAutoComplete().setupSamples(this);" data-needs-atwho="true" data-keys=["{{=key}}"] id="{{=key}}_list" name="{{=key}}_id" type="text" size="80" value="{{=id_strings[key]}}", autocomplete="off"></td>
             </tr>
-            <tr>
-                <td><label for="run_id" id="run_id__label">run: </label></td>
-                <td><input list="runs" id="run_list" name="run_id" type="text" size="80" value="{{=run}}"></td>
-                  <datalist id="runs">
-                  {{for row in run_list :}}
-                      <option value="{{=row}}">
-                  {{pass}}
-                  </datalist>
-                <td></td>
-            </tr>
+            {{ pass }}
 			<tr class='db_table_split' ><td colspan="2"> sample information </td></tr>
             <tr>
                 <td><label for="sampling_date" id="sampling_date__label">sampling date: </label></td>
