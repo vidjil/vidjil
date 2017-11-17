@@ -96,6 +96,14 @@ ul{
    color: red;
 }
 
+#tip-container {
+  position: absolute;
+  float: right;
+  z-index: 50;
+  right: 0px;
+  top: 32px;
+}
+
 #upload_summary {
   float: right;
   display:none;
@@ -1809,6 +1817,28 @@ span.warningReads {
     font-weight: bold;
     border-color: darkred;
     background-color: @message_red;
+}
+
+.tip_1 {
+  width: 400px;
+  border: solid;
+  border-width: 2px;
+  display: block;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  background: @message_green1;
+  border-color: @border;
+}
+
+.right {
+  float: right;
+  clear: both;
+}
+
+.left {
+  float: left;
+  clear: both;
 }
 
 select>option:hover {

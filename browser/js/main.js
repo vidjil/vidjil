@@ -92,6 +92,9 @@ try {
     initMenu();
 
     new VidjilAutoComplete(db.db_address + 'tag/auto_complete');
+
+    var my_tips = new TipsOfTheDay(tips, new TipDecorator(), config.tip_ids);
+    my_tips.display(document.getElementById('tip-container'));
 } catch(err) {
     this.db.log_error(err)
 }
