@@ -5,7 +5,7 @@ function Url(model, win) {
     this.window = (typeof win != "undefined") ? win : window
 
     this.encoder = new UrlEncoder();
-    this.url_dict = this.parseUrlParams(this.window.location.search.toString())
+    this.url_dict = this.parseUrlParams();
     this.sp = this.m.sp
 
     this.m.start(this.url_dict);
@@ -33,9 +33,9 @@ Url.prototype= {
         }
 
         // get sample_set/patient/run, config...
-        var straight_params = this.getStraightParams();
-        for (var i = 0; i < straight_params.length; i++) {
-            var p = straight_params[i];
+        var positionnal_params = this.getPositionnalParams();
+        for (var i = 0; i < positionnal_params.length; i++) {
+            var p = positionnal_params[i];
             if (typeof this.m[p] !== "undefined") {
                 params_dict[p] = this.m[p];
             }
@@ -79,10 +79,10 @@ Url.prototype= {
     
 
     applyURL : function() {
-        var straight_params = this.getStraightParams();
-        for (var i = 0; i < straight_params.length; i++) {
-            if (typeof this.url_dict[straight_params[i]] !== "undefined") {
-                this.m[straight_params[i]] = this.url_dict[straight_params[i]];
+        var positionnal_params = this.getPositionnalParams();
+        for (var i = 0; i < positionnal_params.length; i++) {
+            if (typeof this.url_dict[positionnal_params[i]] !== "undefined") {
+                this.m[positionnal_params[i]] = this.url_dict[positionnal_params[i]];
             }
         }
 
@@ -106,12 +106,10 @@ Url.prototype= {
         }
     },
 
-    parseUrlParams:function (urlparams) {
+    parseUrlParams:function () {
         params={}
-        if (urlparams.length === 0) {
-            return params;
-        }
-        url_param = urlparams.substr(1).split("&");
+        var url = window.location;
+        var url_param = url.search.substr(1).split("&");
         for (var i = 0; i < url_param.length; i++) {
             var tmparr = url_param[i].split("=");
             var p = params[tmparr[0]];
@@ -127,24 +125,37 @@ Url.prototype= {
                 params[key].push(val);
             }
         }
+
+        var positionnal_params = url.pathname.substr(1).split('-');
+        var pos_param_keys = this.getPositionnalParams();
+        for (var j = 0; j < positionnal_params.length; j++) {
+            params[pos_param_keys[j]] = positionnal_params[j];
+        }
         return params
     },
 
     generateParamsString: function(params_dict) {
         var params_list = [];
+        var positionnal_params = [];
         for (var key in params_dict){
-            if ((typeof key != "undefined" && key !== "") && (typeof params_dict[key]!= "undefined")) {
-                var encoded = this.encoder.encode(key);
-                if (params_dict[key].constructor !== Array && params_dict[key] !== '') {
-                    params_list.push(encoded+"="+params_dict[key])
-                } else if (params_dict[key].constructor === Array) {
-                    for (var i = 0; i < params_dict[key].length; i++) {
-                        params_list.push(encoded+"="+params_dict[key][i]);
+            var val = params_dict[key];
+            if ((typeof key != "undefined" && key !== "") && (typeof val != "undefined")) {
+                var pos = this.getPosition(key);
+                if (pos >= 0) {
+                    positionnal_params[pos] = val;
+                } else {
+                    var encoded = this.encoder.encode(key);
+                    if (val.constructor !== Array && val !== '') {
+                        params_list.push(encoded+"="+val)
+                    } else if (val.constructor === Array) {
+                        for (var i = 0; i < val.length; i++) {
+                            params_list.push(encoded+"="+val[i]);
+                        }
                     }
                 }
             }
         }
-        return params_list.join("&");
+        return positionnal_params.join('-') + '?' + params_list.join("&");
     },
 
     pushUrl: function(params) {
@@ -156,8 +167,12 @@ Url.prototype= {
         }
     },
 
-    getStraightParams: function() {
+    getPositionnalParams: function() {
         return ["sample_set_id", "config"];
+    },
+
+    getPosition: function(param) {
+        return this.getPositionnalParams().indexOf(param);
     },
 
     loadUrl: function(db, args, filename) {

@@ -96,6 +96,14 @@ server {
         uwsgi_temp_path /mnt/data/tmp;
 
         location / {
+            rewrite /([0-9]+)/([0-9]+) /?set=$1&conf=$2 break;
+            root $CWD/../browser;
+            expires 1h;
+
+            error_page 405 = $uri;
+        }
+
+        location /vidjil {
             include /etc/nginx/conf.d/web2py/uwsgi.conf
             proxy_read_timeout 600;
             client_max_body_size 20G;
@@ -103,14 +111,6 @@ server {
         }
         ## if you serve static files through https, copy here the section
         ## from the previous server instance to manage static files
-
-        location /browser {
-            root $CWD/../;
-            expires 1h;
-            add_header Cache-Control must-revalidate;
-
-            error_page 405 = $uri;
-        }
 
         location /germline {
             root $CWD/../;
