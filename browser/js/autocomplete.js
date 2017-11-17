@@ -210,7 +210,7 @@ VidjilAutoComplete.prototype = {
             if (res < 0) {
                 seen.push(elem.name);
             }
-            return res;
+            return res < 0;
         })
 
         $input.atwho('load', at, loaded_data);
