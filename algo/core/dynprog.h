@@ -26,6 +26,8 @@ typedef struct {
 class Cost
 {
  public:
+  bool debug = false;
+
   int match;
   int mismatch;
 
