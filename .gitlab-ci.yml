@@ -70,6 +70,7 @@ test_browser_unit:
     - /^feature-[cw]\/.*$/
     - /^hotfix-[cw]\/.*$/
     - prod-client
+    - dev
 
 test_browser-functional:
   stage: test_functional
@@ -93,6 +94,7 @@ code_quality:
     - /^feature-[cw]\/.*$/
     - /^hotfix-[cw]\/.*$/
     - prod-client
+    - dev
 
 deploy_review:
   stage: deploy_review
