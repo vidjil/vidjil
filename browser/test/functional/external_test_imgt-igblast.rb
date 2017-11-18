@@ -31,7 +31,7 @@ class ExternalTest < BrowserTest
         assert ($b.text.include? "Homsap TRBJ2-5*01"), ">> IMGT expected J not found"
       end
       
-      $b.window(:title => "analysis-example").use
+      $b.window(:title => "").use
       
       $b.window(:title => "IMGT/V-QUEST").close
 
@@ -44,7 +44,7 @@ class ExternalTest < BrowserTest
         assert ($b.text.include? "Homsap IGHV3-9*01"), ">> IMGT expected V not found"
         assert ($b.text.include? "Homsap IGHJ6*02"), ">> IMGT expected J not found"
       end
-      $b.window(:title => "analysis-example").use
+      $b.window(:title => "").use
 
     end
   end
@@ -91,7 +91,7 @@ class ExternalTest < BrowserTest
       end
       $b.window(:title => "IgBLAST Search Results").close
 
-      $b.window(:title => "analysis-example").use
+      $b.window(:title => "").use
 
 
       $b.clone_in_scatterplot('26').click
@@ -103,7 +103,7 @@ class ExternalTest < BrowserTest
         assert ($b.text.include? "IGHJ6*02"), ">> igblast: expected Js not found"
       end
       
-      $b.window(:title => "analysis-example").use
+      $b.window(:title => "").use
     end
   end
 
