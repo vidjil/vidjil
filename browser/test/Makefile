@@ -7,7 +7,7 @@ headless:
 	HEADLESS=1 $(MAKE) functional
 
 functional: ../../doc/analysis-example1.vidjil
-	sh launch_functional_tests
+	sh launch_functional_tests "functional/test_*rb"
 
 functional-rbx: ../../doc/analysis-example1.vidjil
 	LIVE_SERVER=http://app.vidjil.org/browser/ ruby test_browser.rb
