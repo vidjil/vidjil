@@ -179,7 +179,7 @@ Model_loader.prototype = {
                     .initClones()
                 self.update_selected_system()
                 self.dataFileName = url_split[url_split.length-1]
-                self.applyUrlParams(paramsDict);
+                // self.applyUrlParams(paramsDict);
                 callback()
             },                
             error: function (request, status, error) {
