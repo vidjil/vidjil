@@ -82,10 +82,12 @@ class BrowserTest < MiniTest::Test
     $b.div(:id => 'demo_file_menu').a(:id => 'import_data_anchor').click
     
     # select data file
+    print "  data:     " + data_path + "\n"
     $b.div(:id => 'file_menu').file_field(:name,"json").set(data_path)
 
     # select analysis file
     if analysis_path != nil
+      print "  analysis: " + analysis_path + "\n"
       $b.div(:id => 'file_menu').file_field(:name, "pref").set(analysis_path)
     end
 
