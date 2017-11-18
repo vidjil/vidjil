@@ -11,6 +11,7 @@ stages:
   - test_unit
   - deploy_review
   - test_functional
+  - test_functional_external
   - test_shouldvdj
   - valgrind_unit
   - valgrind_functional
@@ -78,7 +79,22 @@ test_browser-functional:
     - make -C browser
     - source /etc/profile.d/rvm.sh
     - rvm use 2.1.1
-    - make headless_browser
+    - HEADLESS=1 make -C browser/test functional
+  artifacts:
+    paths:
+    - browser/
+  only:
+    - /^feature-[cw]\/.*$/
+    - /^hotfix-[cw]\/.*$/
+    - prod-client
+
+test_browser-functional-external:
+  stage: test_functional_external
+  script:
+    - make -C browser
+    - source /etc/profile.d/rvm.sh
+    - rvm use 2.1.1
+    - HEADLESS=1 make -C browser/test external
   artifacts:
     paths:
     - browser/
