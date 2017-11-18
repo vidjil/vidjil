@@ -46,16 +46,16 @@ class BrowserTest < MiniTest::Test
     print "Resize\n"
     $b.window.resize_to(1500, 800)
 
-    print "Testing Vidjil browser at " + index_path + "\n"
+    print "Testing Vidjil client at " + index_path + "\n"
     $b.goto index_path
 
     # check that the browser loaded correctly
     if not $b.div(:id => 'logo').present?
-      print "Loading of Vidjil browser failed. Do not execute remaining tests."
+      print "Loading of Vidjil client failed. Do not execute remaining tests."
       exit
     end
 
-    print "Vidjil browser loaded, launching tests.\n"
+    print "Vidjil client loaded, launching tests.\n"
     
     # A live server can be configured with a database.
     # The welcome popup should not be tested.
@@ -82,10 +82,12 @@ class BrowserTest < MiniTest::Test
     $b.div(:id => 'demo_file_menu').a(:id => 'import_data_anchor').click
     
     # select data file
+    print "  data:     " + data_path + "\n"
     $b.div(:id => 'file_menu').file_field(:name,"json").set(data_path)
 
     # select analysis file
     if analysis_path != nil
+      print "  analysis: " + analysis_path + "\n"
       $b.div(:id => 'file_menu').file_field(:name, "pref").set(analysis_path)
     end
 

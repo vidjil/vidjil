@@ -1,3 +1,6 @@
+# sh launch_functional_tests "functional/test_*rb"
+
+FUNCTIONAL_TESTS=$1
 
 rename_reports_in() {
     dir="$1"
@@ -19,7 +22,7 @@ if [ -z "$FUNCTIONAL_CLIENT_BROWSER_PATH" ]; then
     FUNCTIONAL_CLIENT_BROWSER_PATH="."
 fi
 for browser in $FUNCTIONAL_CLIENT_BROWSER_PATH; do
-    for file in functional/test_*rb; do
+    for file in $FUNCTIONAL_TESTS; do
         if [ ${#browser} -gt 1 ]; then
             export WATIR_BROWSER_PATH="$browser"
         fi
