@@ -183,8 +183,7 @@ ScatterPlot.prototype = {
             this.initMenu();
             this.initSVG();
 
-            this.select_preset.selectedIndex = this.default_preset
-            this.changePreset();
+            this.setPreset(this.default_preset)
             this.tsne_ready=false;
 
         } catch(err) {
@@ -1377,6 +1376,11 @@ ScatterPlot.prototype = {
     updatePreset: function(){
         this.changePreset();
         this.m.update();
+    },
+
+    setPreset: function(preset){
+        this.select_preset.selectedIndex = preset
+        this.changePreset()
     },
 
     /**
