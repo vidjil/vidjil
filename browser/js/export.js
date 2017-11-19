@@ -494,7 +494,7 @@ Report.prototype = {
         if (typeof time != "undefined") this.m.changeTime(time)
             
         this.m.changeGermline(system, false)
-        sp.changeSplitMethod('gene_v', 'gene_j', 'plot')
+        sp.changeSplitMethod(sp.AXIS_GENE_V, sp.AXIS_GENE_J, 'plot')
         
         //resize 791px ~> 21cm
         sp.resize(791,250)

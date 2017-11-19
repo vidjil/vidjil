@@ -35,91 +35,44 @@ Model_loader.prototype = {
     /**
      * check vidjil config file and url to determine what to do onstart.
      * */
-    start: function() {
+    start: function(params) {
         var self = this;
-        var dataURL = "";
-        var analysisURL = "";
-        var sample_set_id = -1;
-        var patient = -1;
-        var run = -1;
-        var dbconfig = -1;
-        var custom_list = [];
-        paramsDict={}
+
         /** Process arguments in conf.js */
         if (typeof config != 'undefined' && typeof config.autoload != 'undefined')
-            dataURL = config.autoload
+            params.data = config.autoload
 
         if (typeof config != 'undefined' && typeof config.autoload_analysis != 'undefined')
-            analysisURL = config.autoload_analysis
+            params.analysis = config.autoload_analysis
 
-        /** Process arguments given on the URL (overrides conf.js) */
-        if (location.search !== '') {
-            var tmp = location.search.substring(1).split('&')
-
-            for (var i=0; i<tmp.length; i++){
-                var tmp2 = tmp[i].split('=')
-                
-                if (tmp2[0] == 'data') dataURL = tmp2[1]
-                if (tmp2[0] == 'analysis') analysisURL = tmp2[1]
-                if (tmp2[0] == 'sample_set_id') sample_set_id = tmp2[1]
-                if (tmp2[0] == 'patient') patient = tmp2[1]
-                if (tmp2[0] == 'run') run = tmp2[1]
-                if (tmp2[0] == 'config') dbconfig = tmp2[1]
-                if (tmp2[0] == 'custom') {
-                    custom_split = tmp2[1].split(',')
-                    for (var j=0; j<custom_split.length; j++) {
-                    custom_list.push(custom_split[j])
-                    }
-                    console.log(custom_list.join('+'))
-                }
-
-                // Arguments for applyUrlParams()
-                if (tmp2[0] == "clone") {
-                    var clonestmp = tmp2[1].split(',');
-                    paramsDict.clone = [];
-
-                    for (var k=0; k<clonestmp.length; k++) {
-                        paramsDict.clone.push(clonestmp[k]);
-                    }
-                }
-
-                if (tmp2[0] == "plot") {
-                    var plottmp = tmp2[1].split(',');
-                    paramsDict.plot = [];
-                    for (var l=0; l<plottmp.length; l++) {
-                        paramsDict.plot.push(plottmp[l])
-                    }
-                }
-        }
-        }
         /** load the default vidjil file, open the database or display the welcome popup depending on the case*/
-        if (dataURL !== "") {
-            if (analysisURL !== ""){
-                var callback = function() {self.loadAnalysisUrl(analysisURL)}
-                this.loadDataUrl(dataURL, paramsDict, callback);
+        if (typeof params.data !== "undefined") {
+            if (typeof params.analysis !== "undefined"){
+                var callback = function() {self.loadAnalysisUrl(params.analysis)}
+                this.loadDataUrl(params.data, params, callback);
             }else{
-                this.loadDataUrl(dataURL, paramsDict);
+                this.loadDataUrl(params.data, params);
             }
         }
             
-        else if (sample_set_id != "-1" && dbconfig != "-1"){
+        else if (typeof params.sample_set_id !== "undefined" && typeof params.config !== "undefined"){
             //wait 1sec to check ssl
-            setTimeout(function () { db.load_data( {"sample_set_id" : sample_set_id , "config" : dbconfig } , "")  }, 1000);
+            setTimeout(function () { db.load_data( {"sample_set_id" : params.sample_set_id , "config" : params.config } , "") }, 1000);
         }
         
-        else if (patient != "-1" && dbconfig != "-1"){
+        else if (typeof params.patient_id !== "undefined" && typeof params.config !== "undefined"){
             //wait 1sec to check ssl
-            setTimeout(function () { db.load_data( {"patient" : patient , "config" : dbconfig } , "")  }, 1000);
+            setTimeout(function () { db.load_data( {"patient" : params.patient_id , "config" : params.config } , "")  }, 1000);
         }
         
-        else if (run != "-1" && dbconfig != "-1"){
+        else if (typeof params.run_id !== "undefined" && typeof params.config !== "undefined"){
             //wait 1sec to check ssl
             setTimeout(function () { db.load_data( {"run" : run , "config" : dbconfig } , "")  }, 1000);
         }
             
-        else if (custom_list.length>0){
+        else if (typeof params.custom !== "undefined" && params.custom.length>0){
             //wait 1sec to check ssl
-            setTimeout(function () { db.load_custom_data( {"custom" : custom_list })  }, 1000);
+            setTimeout(function () { db.load_custom_data( {"custom" : params.custom })  }, 1000);
         }
                 
         else if (typeof config != 'undefined' && config.use_database){
@@ -226,7 +179,7 @@ Model_loader.prototype = {
                     .initClones()
                 self.update_selected_system()
                 self.dataFileName = url_split[url_split.length-1]
-                self.applyUrlParams(paramsDict);
+                // self.applyUrlParams(paramsDict);
                 callback()
             },                
             error: function (request, status, error) {
@@ -826,6 +779,6 @@ Model_loader.prototype = {
             }
         }
         this.average_quality = this.average_quality/count; 
-    }
+    },
 
 };

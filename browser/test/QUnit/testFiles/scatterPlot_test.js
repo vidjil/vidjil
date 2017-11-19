@@ -22,21 +22,23 @@ QUnit.test("grid", function(assert) {
             "buildSystemGrid()");
     
     assert.equal(sp.nodes.length, 7 , "check nodes");
-    
-    sp.changeSplitMethod("gene_v", "gene_v", sp.MODE_GRID);
+    assert.equal(sp.select_preset.selectedIndex, 1, "check whether the default preset is selectionned")
+
+    sp.changeSplitMethod(sp.AXIS_GENE_V, sp.AXIS_GENE_V, sp.MODE_GRID);
     sp.update()
     assert.equal(sp.axisX.pos(1), sp.axisY.pos(1), "check splitMethod V/V /plot : xpos = ypos");
     assert.equal(sp.axisX.pos(1), sp.axisY.pos(1), "check splitMethod V/V /plot : xpos = ypos");
     assert.equal(document.getElementById("visu_circle1").className.baseVal, "circle", "check splitMethod V/V /plot : check if plot are displayed")
     
     sp.switchMode()
+    assert.equal(sp.select_preset.selectedIndex, 0, "check whether no preset is selectionned")
     assert.equal(sp.mode, sp.MODE_BAR)
     sp.update()
 
     assert.equal(document.getElementById("visu_bar1").className.baseVal, "", "check splitMethod V/V /plot : check if bar are displayed")
 
-    assert.equal(sp.axisX.labels[0].text, "IGHV1-2", "first label for 'gene_v' axis is 'IGHV1-2'")
-    assert.equal(sp.axisX.labels[1].text, "?", "second label for 'gene_v' axis is '?'")
+    assert.equal(sp.axisX.labels[0].text, "IGHV1-2", "first label for 'v' axis is 'IGHV1-2'")
+    assert.equal(sp.axisX.labels[1].text, "?", "second label for 'v' axis is '?'")
 
     assert.equal(m.clone(2).getGene('5'), "IGHV1-2*01", "clone 2 is 'IGHV1-2*01'")
     assert.equal(sp.nodes[2].bar_x, sp.axisX.labels[0].pos, "node 2, bar x position is on 'IGVH4'")
@@ -46,7 +48,7 @@ QUnit.test("grid", function(assert) {
     assert.deepEqual(m.getSelected(), [2], "check click label");
     
     
-    sp.changeSplitMethod("n", "Size", sp.MODE_BAR);
+    sp.changeSplitMethod("nLength", "size", sp.MODE_BAR);
     sp.update()
     
     assert.equal(sp.nodes[1].bar_h , 0.3333333333333333, "node 1, bar h position")
@@ -71,6 +73,7 @@ QUnit.test("node sizes", function(assert) {
 
     var sp = new ScatterPlot("visu", m);
     sp.init();
+    sp.update();
 
     assert.equal(sp.nodes[0].s, 0.05, "node 0, size")
 

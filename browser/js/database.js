@@ -399,7 +399,6 @@ Database.prototype = {
         if (res.reads){
             this.m.parseJsonData(result, 100)
             this.m.loadGermline();
-            this.m.initClones()
             this.load_analysis(args)
             this.last_file = args
             this.close()
@@ -410,6 +409,7 @@ Database.prototype = {
         //the json result look like a .analysis file so we load it
         if (typeof res.clones != "undefined" && typeof res.reads == "undefined" ){
             this.m.parseJsonAnalysis(result)
+        } else {
             this.m.initClones()
         }
 
@@ -734,13 +734,13 @@ Database.prototype = {
             return
         }
         
-        var url = document.documentURI.split('?')[0]
-        var new_location;
-        if (typeof args.sample_set_id != "undefined")
-            new_location = url+"?sample_set_id="+args.sample_set_id+"&config="+args.config
-        if (typeof args.patient != "undefined")
-            new_location = url+"?patient="+args.patient+"&config="+args.config
-        window.history.pushState('plop', 'plop', new_location);
+        var id_vars = ["sample_set_id", "patient_id", "run_id", "custom"];
+        for (var j = 0; j < id_vars.length; j++) {
+            this.m[id_vars[j]] = args[id_vars[j]];
+        }
+        if(typeof args.config !== "undefined") {
+            this.m.config = args.config;
+        }
         
         $.ajax({
             type: "POST",
@@ -796,17 +796,20 @@ Database.prototype = {
         
         console.log("db : custom data "+list)
         
-        var url = document.documentURI.split('?')[0]
-        var arg = "?" + this.argsToStr(args)
-        var new_location = url+arg
-        window.history.pushState('plop', 'plop', new_location);
+        var arg = this.argsToStr(args)
+        this.m.custom = arg;
+
+        var id_vars = ["sample_set_id", "patient_id", "run_id", "config"];
+        for (var j = 0; j < id_vars.length; j++) {
+            this.m[id_vars[j]] = undefined;
+        }
         
         this.m.wait("Comparing samples...")
         $.ajax({
             type: "POST",
             timeout: DB_TIMEOUT_GET_CUSTOM_DATA,
             crossDomain: true,
-            url: self.db_address + "default/get_custom_data" + arg,
+            url: self.db_address + "default/get_custom_data?" + arg,
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.m.resume()

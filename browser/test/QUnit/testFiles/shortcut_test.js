@@ -26,9 +26,9 @@ QUnit.test("shortcuts on scatterplot", function(assert) {
     shortcut.checkKey(keyMock({'key': '#'}))
     assert.equal(sp.mode, sp.MODE_BAR)
 
-    assert.equal(sp.splitX, 'gene_v')
+    assert.equal(sp.splitX, sp.AXIS_GENE_V)
     shortcut.checkKey(keyMock({'keyCode': 52})) // Preset 4
-    assert.equal(sp.splitX, 'sequenceLength')
+    assert.equal(sp.splitX, 'consensusLength')
 
     assert.equal(shortcut.system_shortcuts[76][0], "IGL", "System shortcut for IGL")
     assert.equal(m.system_selected.length, 2, "We have 2 systems, TRG and IGH")

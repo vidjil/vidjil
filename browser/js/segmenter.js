@@ -167,7 +167,7 @@ Segment.prototype = {
                 axis_input.setAttribute('type', "checkbox");
                 axis_input.setAttribute('value', axOpts[i]);
                 axis_input.setAttribute('id', "sai"+i); // segmenter axis input
-                if (axOpts[i] == "Size") axis_input.setAttribute('checked', "");
+                if (axOpts[i] == "size") axis_input.setAttribute('checked', "");
                 axis_input.onchange = self_update;
 
                 var axis_label = document.createElement('label');
@@ -178,7 +178,7 @@ Segment.prototype = {
                 axis_option.appendChild(axis_label);
                 tmp.appendChild(axis_option);
             }
-            this.selectedAxis[axOpts.indexOf("Size")] = available_axis.Size;
+            this.selectedAxis[axOpts.indexOf("size")] = available_axis.size;
 
             axis.appendChild(tmp);
             span.appendChild(axis);

@@ -57,8 +57,6 @@ function Model() {
     this.germlineList = new GermlineList()
     this.build();
     window.onresize = function () { self.resize(); };
-    
-    this.start()
 }
 
 
@@ -802,6 +800,22 @@ changeAlleleNotation: function(alleleNotation) {
             return 0;
         }
 
+        if (!this.clone(cloneID).isSelected()) {
+            this.clone(cloneID).select = true;
+            this.orderedSelectedClones.push(cloneID);
+
+            this.updateElemStyle([cloneID]);
+        }
+    },
+
+    toggleSelect: function(cloneID) {
+        console.log("toggle() (clone " + cloneID + ")");
+
+        // others shouldn't be selectable
+        if (this.clones[cloneID].isVirtual()) {
+            return 0;
+        }
+
         if (this.clone(cloneID).isSelected()) {
             this.clone(cloneID).select = false;
             this.removeFromOrderedSelectedClones(cloneID);
@@ -1043,6 +1057,11 @@ changeAlleleNotation: function(alleleNotation) {
         }
         
         this.resize();
+
+        if (typeof this.url_manager !== "undefined") {
+            this.url_manager.applyURL();
+        }
+
         this.displayTop();
     },
 
@@ -2635,18 +2654,6 @@ changeAlleleNotation: function(alleleNotation) {
                 view.shouldRefresh();
             }
         });
-    },
-
-    applyUrlParams:function(params_dict) {
-        if (typeof params_dict.clone!== "undefined" && params_dict.clone !== '') {
-            this.multiSelect(params_dict.clone);
-        }
-
-        if (typeof params_dict.plot!== "undefined" && params_dict.plot !== '') {
-            this.sp.splitX = params_dict.plot[0];
-            this.sp.splitY = params_dict.plot[1];
-            this.sp.mode = params_dict.plot[2];
-        }
     },
 
 

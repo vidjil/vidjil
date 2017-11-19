@@ -54,7 +54,7 @@
                     {{filename = patient_name + " (" + conf['name'] + ")"}}
                     {{if conf['fused_file'] is not None :}}
                       {{ configs.append(str(A(conf['name'], _href="index.html?patient=" + str(row['id']) + "&config=" + str(conf['id']), _type="text/html",
-                            _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { db.load_data( { 'patient' : '" + str(row['id']) + "' , 'config' : " + str(conf['id']) + " }, '" + filename + "' ); }"))) }}
+                            _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadURL(db, { 'patient' : '" + str(row['id']) + "' , 'config' : " + str(conf['id']) + " }, '" + filename + "' ); }"))) }}
                     {{else:}}
                       {{ configs.append(conf['name']) }}
                     {{pass}}

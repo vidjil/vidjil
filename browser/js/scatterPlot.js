@@ -82,12 +82,17 @@ function ScatterPlot(id, model, database) {
     this.dbscanActive = false; //Boolean to know if the DSCAN visualization is on
     this.DBSCANLength = 5; //Length of the DBSCAN edges
 
+    this.AXIS_GENE_V = "v"
+    this.AXIS_GENE_J = "j"
+    this.AXIS_ALLELE_V = "allele_v"
+    this.AXIS_ALLELE_V = "allele_j"
+    
     this.MODE_GRID = "grid"
     this.MODE_BAR = "bar"
 
     this.mode = this.MODE_GRID;
-    this.splitY = "gene_j"; //Distribution method, for the Y axis
-    this.splitX = "gene_v"; //Distribution method, for the X axis
+    this.splitY = this.AXIS_GENE_J; //Distribution method, for the Y axis
+    this.splitX = this.AXIS_GENE_V; //Distribution method, for the X axis
 
     this.time0 = Date.now(); //Initial date saved
     this.time1 = this.time0; //Frames computed
@@ -121,25 +126,25 @@ function ScatterPlot(id, model, database) {
 
     // Plot Presets
     this.preset = {
-        "V/J (genes)" : { "mode": this.MODE_GRID, "x" : "gene_v", "y": "gene_j"},
-        "V/J (alleles)" : { "mode": this.MODE_GRID, "x" : "allele_v", "y": "allele_j"},
-        "V/N length" : { "mode": this.MODE_GRID, "x" : "gene_v", "y": "n"},
-        "clone consensus length / locus" : { "mode": this.MODE_GRID, "x": "sequenceLength", "y" : "locus"},
-        // "V/abundance" : { "mode": this.MODE_GRID, "x" : "gene_v", "y": "Size"},
-        "clone consensus length distribution" : { "mode": this.MODE_BAR, "x" : "sequenceLength", "y": "Size"},
-        "V distribution" :            { "mode": this.MODE_BAR, "x" : "gene_v",         "y": "Size"},
-        "N length distribution" :     { "mode": this.MODE_BAR, "x" : "n",              "y": "gene_v"},
-        "CDR3 length distribution" : { "mode": this.MODE_BAR, "x": "lengthCDR3", "y" : "Size"},
-        "J distribution" :            { "mode": this.MODE_BAR, "x" : "gene_j",         "y": "Size"},
-        "compare two samples" : { "mode": this.MODE_GRID, "x" : "Size", "y": "otherSize"},
+        "V/J (genes)" : { "mode": this.MODE_GRID, "x" : this.AXIS_GENE_V, "y": this.AXIS_GENE_J},
+        "V/J (alleles)" : { "mode": this.MODE_GRID, "x" : this.AXIS_ALLELE_V, "y": this.AXIS_ALLELE_J},
+        "V/N length" : { "mode": this.MODE_GRID, "x" : this.AXIS_GENE_V, "y": "nLength"},
+        "clone consensus length / locus" : { "mode": this.MODE_GRID, "x": "consensusLength", "y" : "locus"},
+        // "V/abundance" : { "mode": this.MODE_GRID, "x" : this.AXIS_GENE_V, "y": "size"},
+        "clone consensus length distribution" : { "mode": this.MODE_BAR, "x" : "consensusLength", "y": "size"},
+        "V distribution" :            { "mode": this.MODE_BAR, "x" : this.AXIS_GENE_V, "y": "size"},
+        "N length distribution" :     { "mode": this.MODE_BAR, "x" : "nLength",  "y": this.AXIS_GENE_V},
+        "CDR3 length distribution" : { "mode": this.MODE_BAR, "x": "lengthCDR3", "y" : "size"},
+        "J distribution" :            { "mode": this.MODE_BAR, "x" : this.AXIS_GENE_J,         "y": "size"},
+        "compare two samples" : { "mode": this.MODE_GRID, "x" : "size", "y": "sizeOtherSample"},
         "plot by similarity" : { "mode": this.MODE_GRID, "x" : "tsneX", "y": "tsneY"},
         "plot by similarity and by locus" : { "mode": this.MODE_GRID, "x" : "tsneX_system", "y": "tsneY_system"},
-        "clone consensus length / GC content " : { "mode": this.MODE_GRID, "x": "sequenceLength", "y" : "GCContent"},
+        "clone consensus length / GC content " : { "mode": this.MODE_GRID, "x": "consensusLength", "y" : "GCContent"},
         "clone consensus coverage / GC content " : { "mode": this.MODE_GRID, "x": "coverage", "y" : "GCContent"},
         "number of samples sharing each clone" : { "mode": this.MODE_GRID, "x": "nbSamples", "y" : "locus"},
-        // "interpolated length between BIOMED2 primers (inclusive)" : { "mode": this.MODE_BAR, "x": "primers", "y" : "Size"},
-        "number of deletions for the segment V/5 in 3" : { "mode": this.MODE_BAR, "x": "delRight", "y" : "Size"},
-        "number of deletions for the segment J/3 in 5" : { "mode": this.MODE_BAR, "x": "delLeft",  "y" : "Size"},
+        // "interpolated length between BIOMED2 primers (inclusive)" : { "mode": this.MODE_BAR, "x": "primers", "y" : "size"},
+        "number of deletions for the segment V/5 in 3" : { "mode": this.MODE_BAR, "x": "vDel", "y" : "size"},
+        "number of deletions for the segment J/3 in 5" : { "mode": this.MODE_BAR, "x": "jDel",  "y" : "size"},
     };
     this.default_preset = 1
 
@@ -151,6 +156,8 @@ function ScatterPlot(id, model, database) {
 
     this.axisX = new GermlineAxis(this.m, false)
     this.axisY = new GermlineAxis(this.m, true)
+    this.axisX.init(this.m.germlineV, "V")
+    this.axisY.init(this.m.germlineJ, "J")
     this.use_system_grid = false
 
     this.m.sp = this
@@ -173,8 +180,6 @@ ScatterPlot.prototype = {
 
             this.initMenu();
             this.initSVG();
-            this.axisX.init(this.m.germlineV, "V")
-            this.axisY.init(this.m.germlineJ, "J")
 
             this.select_preset.selectedIndex = this.default_preset
             this.changePreset();
@@ -419,7 +424,7 @@ ScatterPlot.prototype = {
         //Initialisation du menu déroulant
         this.select_preset.setAttribute('name', 'select_preset[]');
         this.select_preset.onchange = function() {
-            self.changePreset();
+            self.updatePreset();
         }
         
         element = document.createElement("option");
@@ -480,7 +485,7 @@ ScatterPlot.prototype = {
                 $(span_icon_bar).empty().append(svg);
             }, 'xml');
         span_icon_bar.onclick = function(){
-                self.changeMode(self.MODE_BAR);
+                self.updateMode(self.MODE_BAR);
             };
         
         span_icon_plot = document.createElement('div');
@@ -491,7 +496,7 @@ ScatterPlot.prototype = {
                 $(span_icon_plot).empty().append(svg);
             }, 'xml');
         span_icon_plot.onclick = function(){
-                self.changeMode(self.MODE_GRID);
+                self.updateMode(self.MODE_GRID);
             };
         
         var div_mode = document.createElement('div');
@@ -558,19 +563,19 @@ ScatterPlot.prototype = {
         //split clones into bar (axisX)
         var fct;
         switch (this.splitX) {
-            case "allele_v" :
+            case this.AXIS_ALLELE_V :
                 fct = function(clone){return clone.getGene("5")}
                 this.axisX.init(this.m.germlineV, "V", true)
                 break;
-            case "gene_v" :
+            case this.AXIS_GENE_V :
                 fct = function(clone){return clone.getGene("5",false)}
                 this.axisX.init(this.m.germlineV, "V", false)
                 break;
-            case "allele_j" :
+            case this.AXIS_ALLELE_J :
                 fct = function(clone){return clone.getGene("3")}
                 this.axisX.init(this.m.germlineJ, "J", true)
                 break;
-            case "gene_j" :
+            case this.AXIS_GENE_J :
                 fct = function(clone){return clone.getGene("3",false)}
                 this.axisX.init(this.m.germlineJ, "J", false)
                 break;
@@ -590,22 +595,22 @@ ScatterPlot.prototype = {
         this.axisY = new PercentAxis(this.m, true);
         var yFct;
         switch (this.splitY) {
-            case "allele_v" :
+            case this.AXIS_ALLELE_V :
                 yFct = function(clone){return clone.getGene("5")};
                 this.axisY.init(this.m.clones, yFct);
                 this.sortBarTab(fct);
                 break;
-            case "gene_v" :
+            case this.AXIS_GENE_V :
                 yFct = function(clone){return clone.getGene("5",false)};
                 this.axisY.init(this.m.clones, yFct);
                 this.sortBarTab(fct);
                 break;
-            case "allele_j" :
+            case this.AXIS_ALLELE_J :
                 yFct = function(clone){return clone.getGene("3")};
                 this.axisY.init(this.m.clones, yFct);
                 this.sortBarTab(yFct);
                 break;
-            case "gene_j" :
+            case this.AXIS_GENE_J :
                 yFct = function(clone){return clone.getGene("3",false)};
                 this.axisY.init(this.m.clones, yFct);
                 this.sortBarTab(yFct);
@@ -823,6 +828,12 @@ ScatterPlot.prototype = {
      * */
     changeMode : function (mode) {
         this.changeSplitMethod(this.splitX, this.splitY, mode);
+        this.cancelPreset()
+    },
+
+    updateMode : function (mode) {
+        this.changeMode(mode);
+        this.m.update();
     },
 
     /**
@@ -934,8 +945,8 @@ ScatterPlot.prototype = {
         //On prend la hauteur de la div
         this.resizeH = div_height - this.margin[0] - this.margin[2];
 
-        if (this.splitX == "allele_v" || this.splitX == "gene_v" || this.splitX == "allele_j" || this.splitX == "gene_j" || this.splitX == "tsneX_system" ||
-            (this.mode == this.MODE_GRID & (this.splitY == "allele_v" || this.splitY == "gene_v" || this.splitY == "allele_j" || this.splitY == "gene_j"))) {
+        if (this.splitX == this.AXIS_ALLELE_V || this.splitX == this.AXIS_GENE_V || this.splitX == this.AXIS_ALLELE_J || this.splitX == this.AXIS_GENE_J || this.splitX == "tsneX_system" ||
+            (this.mode == this.MODE_GRID & (this.splitY == this.AXIS_ALLELE_V || this.splitY == this.AXIS_GENE_V || this.splitY == this.AXIS_ALLELE_J || this.splitY == this.AXIS_GENE_J))) {
             this.use_system_grid = true;
             this.buildSystemGrid()
         } else {
@@ -1339,7 +1350,8 @@ ScatterPlot.prototype = {
     changeXaxis: function() {
         var elem = this.select_x;
         this.changeSplitMethod(elem.value, this.splitY, this.mode);
-        this.select_preset.selectedIndex = 0
+        this.cancelPreset()
+        this.m.update();
     },
 
     /**
@@ -1348,7 +1360,8 @@ ScatterPlot.prototype = {
     changeYaxis: function() {
         var elem = this.select_y;
         this.changeSplitMethod(this.splitX, elem.value, this.mode);
-        this.select_preset.selectedIndex = 0
+        this.cancelPreset()
+        this.m.update();
     },
     
     /**
@@ -1359,6 +1372,19 @@ ScatterPlot.prototype = {
         this.changeSplitMethod(this.preset[elem.value].x, this.preset[elem.value].y, this.preset[elem.value].mode);
     },
 
+    updatePreset: function(){
+        this.changePreset();
+        this.m.update();
+    },
+
+    /**
+     * deactivate preset selection
+     */
+    
+    cancelPreset: function() {
+        this.select_preset.selectedIndex = 0
+    },
+    
     /* Fonction permettant de mettre à jour de l'axe des X
      * @param data - Un tableau d'objets, concernant les données et les légendages (pour l'axe de X)
      * */
@@ -1417,9 +1443,9 @@ ScatterPlot.prototype = {
             for (n=0; n<self.nodes.length; n++){
                 if (Math.abs(self.axisX.pos(self.m.clone(n)).pos - d.pos) < halfRangeColumn)
                     if (self.nodes[n].r1>0){
-                        console.log("splitX : " + (self.splitX == "gene_v") + ", " + (self.splitX));
+                        console.log("splitX : " + (self.splitX == this.AXIS_GENE_V) + ", " + (self.splitX));
                         console.log("germline : " + (self.m.clones[n].germline == self.m.germlineV.system));
-                        if (self.splitX == "allele_v" || self.splitX == "gene_v" || self.splitX == "allele_j" || self.splitX == "gene_j" || (self.mode == this.MODE_GRID & (self.splitY == "allele_v" || self.splitY == "gene_v" || self.splitY == "allele_j" || self.splitY == "gene_j"))){
+                        if (self.splitX == this.AXIS_ALLELE_V || self.splitX == this.AXIS_GENE_V || self.splitX == this.AXIS_ALLELE_J || self.splitX == this.AXIS_GENE_J || (self.mode == this.MODE_GRID & (self.splitY == this.AXIS_ALLELE_V || self.splitY == this.AXIS_GENE_V || self.splitY == this.AXIS_ALLELE_J || self.splitY == this.AXIS_GENE_J))){
                             if (self.m.clones[n].germline == self.m.germlineV.system)
                                 listToSelect.push(self.nodes[n]);
                         }
@@ -1465,12 +1491,12 @@ ScatterPlot.prototype = {
                 return "rotate(" + self.rotation_x + " " + (self.gridSizeW * d.pos + self.margin[3]) + " " + y + ")"
             })
             .style("fill", function(d) {
-                if (self.m.colorMethod == "V" && self.splitX == "gene_v" && (typeof(d.geneColor) != "undefined")) return d.geneColor;
-                if (self.m.colorMethod == "J" && self.splitX == "gene_j" && (typeof(d.geneColor) != "undefined")) return d.geneColor;
+                if (self.m.colorMethod == "V" && self.splitX == this.AXIS_GENE_V && (typeof(d.geneColor) != "undefined")) return d.geneColor;
+                if (self.m.colorMethod == "J" && self.splitX == this.AXIS_GENE_J && (typeof(d.geneColor) != "undefined")) return d.geneColor;
                 return null;
             });
 
-        //AXIS
+        //this.AXIS
         lines = this.axis_x_container.selectAll("line")
             .data(data);
         lines.enter()
@@ -1500,8 +1526,8 @@ ScatterPlot.prototype = {
                 return "sp_line";
             })
             .style("stroke", function(d) {
-                if (self.m.colorMethod == "V" && self.splitX == "gene_v" && (typeof(d.geneColor) != "undefined")) return d.geneColor;
-                if (self.m.colorMethod == "J" && self.splitX == "gene_j" && (typeof(d.geneColor) != "undefined")) return d.geneColor;
+                if (self.m.colorMethod == "V" && self.splitX == this.AXIS_GENE_V && (typeof(d.geneColor) != "undefined")) return d.geneColor;
+                if (self.m.colorMethod == "J" && self.splitX == this.AXIS_GENE_J && (typeof(d.geneColor) != "undefined")) return d.geneColor;
                 return null;
             });
 
@@ -1534,7 +1560,7 @@ ScatterPlot.prototype = {
                 for (n=0; n<self.nodes.length; n++){
                         if (Math.abs(self.axisY.pos(self.m.clone(n)).pos - d.pos) < halfRangeLine)
                             if (self.nodes[n].r1>0){
-                                if (self.splitX == "allele_v" || self.splitX == "gene_v" || self.splitX == "allele_j" || self.splitX == "gene_j" || (self.mode == this.MODE_GRID & (self.splitY == "allele_v" || self.splitY == "gene_v" || self.splitY == "allele_j" || self.splitY == "gene_j"))){
+                                if (self.splitX == this.AXIS_ALLELE_V || self.splitX == this.AXIS_GENE_V || self.splitX == this.AXIS_ALLELE_J || self.splitX == this.AXIS_GENE_J || (self.mode == this.MODE_GRID & (self.splitY == this.AXIS_ALLELE_V || self.splitY == this.AXIS_GENE_V || self.splitY == this.AXIS_ALLELE_J || self.splitY == this.AXIS_GENE_J))){
                                     if (self.m.clones[n].germline == self.m.germlineV.system)
                                         listToSelect.push(self.nodes[n]);
                                 }
@@ -1563,12 +1589,12 @@ ScatterPlot.prototype = {
                 return "rotate(" + self.rotation_y + " " + x + " " + (self.resizeH * d.pos + self.margin[0]) + ")"
             })
             .style("fill", function(d) {
-                if (self.m.colorMethod == "V" && self.splitY == "gene_v" && (typeof(d.geneColor) != "undefined")) return d.geneColor;
-                if (self.m.colorMethod == "J" && self.splitY == "gene_j" && (typeof(d.geneColor) != "undefined")) return d.geneColor;
+                if (self.m.colorMethod == "V" && self.splitY == this.AXIS_GENE_V && (typeof(d.geneColor) != "undefined")) return d.geneColor;
+                if (self.m.colorMethod == "J" && self.splitY == this.AXIS_GENE_J && (typeof(d.geneColor) != "undefined")) return d.geneColor;
                 return null;
             });
 
-        //AXIS
+        //this.AXIS
         lines = this.axis_y_container.selectAll("line")
             .data(data);
         lines.enter()
@@ -1593,14 +1619,14 @@ ScatterPlot.prototype = {
             })
             .attr("class", function(d) {
                 if (d.type == "subline") {
-                    if (self.splitY != "allele_j" && self.splitY != "allele_v" && self.splitY != "allele_v_used") return "sp_subline_hidden";
+                    if (self.splitY != this.AXIS_ALLELE_J && self.splitY != this.AXIS_ALLELE_V && self.splitY != "allele_v_used") return "sp_subline_hidden";
                     return "sp_subline";
                 }
                 return "sp_line";
             })
             .style("stroke", function(d) {
-                if (self.m.colorMethod == "V" && self.splitY == "gene_v" && (typeof(d.geneColor) != "undefined")) return d.geneColor;
-                if (self.m.colorMethod == "J" && self.splitY == "gene_j" && (typeof(d.geneColor) != "undefined")) return d.geneColor;
+                if (self.m.colorMethod == "V" && self.splitY == this.AXIS_GENE_V && (typeof(d.geneColor) != "undefined")) return d.geneColor;
+                if (self.m.colorMethod == "J" && self.splitY == this.AXIS_GENE_J && (typeof(d.geneColor) != "undefined")) return d.geneColor;
                 return null;
             });
 
@@ -1741,16 +1767,16 @@ ScatterPlot.prototype = {
             axis = aa.axis;
         }
         switch (splitMethod) {
-            case "allele_v" :
+            case this.AXIS_ALLELE_V :
                 axis.init(this.m.germlineV, "V", true)
                 break;
-            case "gene_v" :
+            case this.AXIS_GENE_V :
                 axis.init(this.m.germlineV, "V", false)
                 break;
-            case "allele_j" :
+            case this.AXIS_ALLELE_J :
                 axis.init(this.m.germlineJ, "J", true)
                 break;
-            case "gene_j" :
+            case this.AXIS_GENE_J :
                 axis.init(this.m.germlineJ, "J", false)
                 break;
             default :
