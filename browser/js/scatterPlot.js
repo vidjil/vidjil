@@ -828,7 +828,7 @@ ScatterPlot.prototype = {
      * */
     changeMode : function (mode) {
         this.changeSplitMethod(this.splitX, this.splitY, mode);
-        this.select_preset.selectedIndex = 0
+        this.cancelPreset()
     },
 
     updateMode : function (mode) {
@@ -1350,7 +1350,7 @@ ScatterPlot.prototype = {
     changeXaxis: function() {
         var elem = this.select_x;
         this.changeSplitMethod(elem.value, this.splitY, this.mode);
-        this.select_preset.selectedIndex = 0
+        this.cancelPreset()
         this.m.update();
     },
 
@@ -1360,7 +1360,7 @@ ScatterPlot.prototype = {
     changeYaxis: function() {
         var elem = this.select_y;
         this.changeSplitMethod(this.splitX, elem.value, this.mode);
-        this.select_preset.selectedIndex = 0
+        this.cancelPreset()
         this.m.update();
     },
     
@@ -1377,6 +1377,14 @@ ScatterPlot.prototype = {
         this.m.update();
     },
 
+    /**
+     * deactivate preset selection
+     */
+    
+    cancelPreset: function() {
+        this.select_preset.selectedIndex = 0
+    },
+    
     /* Fonction permettant de mettre à jour de l'axe des X
      * @param data - Un tableau d'objets, concernant les données et les légendages (pour l'axe de X)
      * */
