@@ -194,10 +194,7 @@ Url.prototype= {
 
 function UrlEncoder() {
     this.encoding = {
-        'sample_set_id': 'set',
-        'config': 'cf',
-        'clone': 'c',
-        'plot': 'p'
+        'sample_set_id': 'set'
     };
 
     this.decoding = {};
