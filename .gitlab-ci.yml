@@ -90,6 +90,7 @@ test_browser-functional:
 
 test_browser-functional-external:
   stage: test_functional_external
+  retry: 2
   script:
     - make -C browser
     - source /etc/profile.d/rvm.sh
