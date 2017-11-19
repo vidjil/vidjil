@@ -64,14 +64,17 @@ Builder.prototype = {
             this.build_clusterSelector()
             this.initTag();
 
-            // if (this.m.samples.order.length == 1) this.resizeGraph(0)
             if (this.m.samples.order.length == 1)
+                // One sample, two scatterplots
                 setTimeout(function() {
                     switch_visu2('scatterplot');
                     document.getElementById("visu2_mode_sp").checked = true;
                 })
-            else this.resizeGraph(50)
-
+            else
+                // Several samples, one graph and one scatterplot
+                setTimeout(function() {
+                    switch_visu2('graph');
+                })
         } catch (err) {
             sendErrorToDb(err, this.db);
         }

@@ -214,7 +214,7 @@ Report.prototype = {
         console.log(system_list);
         this.m.wait("Generating report...")
         this.switchstate(system_list, sample_list);
-        var current_system = sp.system;
+        var current_system = this.m.sp.system;
         var self = this
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
         
@@ -494,22 +494,22 @@ Report.prototype = {
         if (typeof time != "undefined") this.m.changeTime(time)
             
         this.m.changeGermline(system, false)
-        sp.changeSplitMethod(sp.AXIS_GENE_V, sp.AXIS_GENE_J, 'plot')
+        this.m.sp.changeSplitMethod(sp.AXIS_GENE_V, sp.AXIS_GENE_J, 'plot')
         
         //resize 791px ~> 21cm
-        sp.resize(791,250)
-        sp.fastForward()
+        this.m.sp.resize(791,250)
+        this.m.sp.fastForward()
         
         var w_sp = this.container(this.m.getStrTime(this.m.t, "short_name") + ' – ' + system)
         w_sp.addClass("scatterplot");
         
-        var svg_sp = document.getElementById(sp.id+"_svg").cloneNode(true);
+        var svg_sp = document.getElementById(this.m.sp.id+"_svg").cloneNode(true);
         
         //set viewbox (same as resize)
         svg_sp.setAttribute("viewBox","0 0 791 250");
         
         for (var i = 0; i < this.m.clones.length; i++) {
-            var circle = svg_sp.querySelectorAll('[id="'+sp.id+'_circle'+i+'"]')[0]
+            var circle = svg_sp.querySelectorAll('[id="'+this.m.sp.id+'_circle'+i+'"]')[0]
             var color = this.m.tag[this.m.clone(i).getTag()].color
             circle.setAttribute("stroke", color);
             
@@ -519,11 +519,11 @@ Report.prototype = {
             }
         }
         
-        var bar_container = svg_sp.querySelectorAll('[id="'+sp.id+'_bar_container"]')[0]
+        var bar_container = svg_sp.querySelectorAll('[id="'+this.m.sp.id+'_bar_container"]')[0]
         bar_container.parentNode.removeChild(bar_container);
         
         w_sp.append(svg_sp)
-        sp.resize();
+        this.m.sp.resize();
 
         for (var j=0; j<this.list.length; j++){
             var cloneID = this.list[j]

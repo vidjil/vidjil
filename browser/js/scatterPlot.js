@@ -32,7 +32,7 @@
  * @param {string} id - dom id of the html div who will contain the scatterplot
  * @param {Model} model
  * */
-function ScatterPlot(id, model, database) {
+function ScatterPlot(id, model, database, default_preset) {
     var self = this;
     
     View.call(this, model);
@@ -146,7 +146,8 @@ function ScatterPlot(id, model, database) {
         "number of deletions for the segment V/5 in 3" : { "mode": this.MODE_BAR, "x": "vDel", "y" : "size"},
         "number of deletions for the segment J/3 in 5" : { "mode": this.MODE_BAR, "x": "jDel",  "y" : "size"},
     };
-    this.default_preset = 1
+
+    this.default_preset = (typeof default_preset == "undefined") ? 1 : default_preset ;
 
     //Menu with graph distrib' (see initMenu function)
     this.graph_menu = [
@@ -160,7 +161,8 @@ function ScatterPlot(id, model, database) {
     this.axisY.init(this.m.germlineJ, "J")
     this.use_system_grid = false
 
-    this.m.sp = this
+    if (typeof this.m.sp == "undefined")
+        this.m.sp = this
 }
 
 
@@ -181,8 +183,7 @@ ScatterPlot.prototype = {
             this.initMenu();
             this.initSVG();
 
-            this.select_preset.selectedIndex = this.default_preset
-            this.changePreset();
+            this.setPreset(this.default_preset)
             this.tsne_ready=false;
 
         } catch(err) {
@@ -1375,6 +1376,11 @@ ScatterPlot.prototype = {
     updatePreset: function(){
         this.changePreset();
         this.m.update();
+    },
+
+    setPreset: function(preset){
+        this.select_preset.selectedIndex = preset
+        this.changePreset()
     },
 
     /**
