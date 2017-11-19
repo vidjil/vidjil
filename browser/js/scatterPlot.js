@@ -161,7 +161,8 @@ function ScatterPlot(id, model, database, default_preset) {
     this.axisY.init(this.m.germlineJ, "J")
     this.use_system_grid = false
 
-    this.m.sp = this
+    if (typeof this.m.sp == "undefined")
+        this.m.sp = this
 }
 
 
