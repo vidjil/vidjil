@@ -1256,7 +1256,7 @@ Clone.prototype = {
         return [
             "consensusLength", "averageLength", "nLength", "lengthCDR3",
             "productivity", "productivity-IMGT",
-            "vIdentity-IMGT",
+            "VIdentity-IMGT",
             "tag", "coverage", "locus", "size", "nbSamples"
         ];
     },

@@ -106,7 +106,7 @@ Axes.prototype = {
                 pretty: function(tag) { return icon_pm(tag, "productive", "not productive") },
                 hide: true
             },
-            "vIdentity-IMGT": {
+            "VIdentity-IMGT": {
                 label: "V identity (as computed by IMGT/V-QUEST)",
                 axis: new NumericalAxis(this.m),
                 fct: function(clone) { return clone.getVIdentityIMGT() },
