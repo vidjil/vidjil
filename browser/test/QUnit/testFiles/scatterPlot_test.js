@@ -22,7 +22,8 @@ QUnit.test("grid", function(assert) {
             "buildSystemGrid()");
     
     assert.equal(sp.nodes.length, 7 , "check nodes");
-    
+    assert.equal(sp.select_preset.selectedIndex, 1, "check whether the default preset is selectionned")
+
     sp.changeSplitMethod(sp.AXIS_GENE_V, sp.AXIS_GENE_V, sp.MODE_GRID);
     sp.update()
     assert.equal(sp.axisX.pos(1), sp.axisY.pos(1), "check splitMethod V/V /plot : xpos = ypos");
@@ -30,6 +31,7 @@ QUnit.test("grid", function(assert) {
     assert.equal(document.getElementById("visu_circle1").className.baseVal, "circle", "check splitMethod V/V /plot : check if plot are displayed")
     
     sp.switchMode()
+    assert.equal(sp.select_preset.selectedIndex, 0, "check whether no preset is selectionned")
     assert.equal(sp.mode, sp.MODE_BAR)
     sp.update()
 
