@@ -123,6 +123,7 @@ Url.prototype= {
                 sp_params.push(this.sp.mode);
             }
             this.sp.changeSplitMethod(sp_params[0], sp_params[1], sp_params[2]);
+            this.sp.cancelPreset()
         }
     },
 
