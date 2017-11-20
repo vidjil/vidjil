@@ -1,9 +1,12 @@
+
+
 function TipsOfTheDay(data, decorator, ids) {
     this.storage_key = "vidjil.tips.seen";
     this.tips = this.load(data, ids);
     this.seen = this.get_seen_ids();
     this.cur_unseen = -1;
     this.unseen = this.get_unseen_ids();
+    this.path = typeof config !== 'undefined' ? config.doc_address : 'doctips/';
 
     this.decorator = decorator;
 }
@@ -153,7 +156,8 @@ TipDecorator.prototype = {
         var tip_div = document.createElement('div');
         tip_div.className = "left";
         var tmp = elem.content;
-        tmp += "<br><img class=\"tip_img\" src=\"" + config.doc_address + "/tips/" + elem.id + ".png\" onerror=\"this.src='images/transparent_back.png';\" />";
+
+        tmp += "<br><img class=\"tip_img\" src=\"" + this.path + "/tips/" + elem.id + ".png\" onerror=\"this.src='images/transparent_back.png';\" />";
         tip_div.innerHTML = tmp;
 
         div.appendChild(tip_div);
