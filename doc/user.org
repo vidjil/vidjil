@@ -187,6 +187,16 @@ Runs can be used to gather samples that have been sequenced in the same run.
 
 
 
+** Permanent address (URLs) to a set of samples 
+
+Addresses such as http://app.vidjil.org/?set=3241&config=39 directly target a set of samples (here the public dataset L3), possibly with your saved analysis.
+Moreover, the address also encodes other parameters, for instance http://app.vidjil.org/?set=3241&config=39&plot=v,size,bar&clone=11,31 (selected axes and selected clones).
+
+To discuss on some results or to raise any issue, you can share such addresses with other users (with whom you share access grants, see below), 
+to your local IT staff or to the Vidjil team.
+
+
+
 ** Samples and pre-processes
 
 Clicking on a patient, a run or a set give acccess to the "samples" page. Each sample is

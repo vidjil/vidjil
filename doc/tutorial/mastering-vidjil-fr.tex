@@ -1,11 +1,9 @@
-\documentclass[11pt]{article}
-
+\documentclass[10pt]{article}
 \usepackage[frenchb]{babel}
 \input{common-headers}
 
 \title{Maîtriser l'application web Vidjil:\\ Analyser et interagir avec les
 clones}
-
 \begin{document}
 \maketitle
 
@@ -20,18 +18,38 @@ quel autre algorithme.}
 
 \question{Connectez-vous au serveur public (\url{https://app.vidjil.org}), soit avec votre compte
 ou avec le compte de démonstration (\texttt{demo@vidjil.org} / \texttt{demo}),
-séléectionnez le patient \textit{Demo LIL-L3} patient, et cliquez sur le lien en bas à droite
+sélectionnez le patient \textit{Demo LIL-L3 (tutorial)} patient, et cliquez sur le lien en bas à droite
 ``see results: multi''.
 L'application web Vidjil s'ouvre.
 }
-\section{Évaluation de la qualité d'un run et de l'analyse}
 
-\question{Connect to the public server (\url{https://app.vidjil.org}), either with your account or the demo account,
-Chargez les fichiers (Demo LIL-L3)}
+Ce patient (patient 063 de [[http://dx.doi.org/10.1016/j.leukres.2016.11.009][Étude de Lille sur la faisabilité de la MRD en utilisant le séquençage à haut débit]])
+souffre d'une T-ALL. Nous avons un échantillon de diagnostic,
+avec des clones dominants en IGH et TRG,
+et quatre échantillons de suivi, incluant une rechute.
+
+\question{Dans le menu \com{settings}, essayez les différentes options de \com{sample key}.
+Les cinq échantillons peuvent être annotés par leur nom, leur date d'échantillonnage
+ou par le nombre de jours depuis la date du premier échantillon.
+}
+
+Dans la section suivante, nous nous focalisons sur l'échantillon de diagnostic.
+La section~\ref{sec:tracking} concernera la comparaison de plusieurs échantillons.
+
+
+
+\section{Évaluation de la qualité d'un run et de l'analyse}
+L'application web Vidjil permet d'exécuter plusieurs algorithmes ``RepSeq'' (analyse de répertoires immunologiques).
+Chaque algorithme ReqSeq a sa propre définition de ce qu'est un clone
+(ou, plus précisement, un clonotype),
+et de comment analyser chaque read et leur assigner une désignation V(D)J.
+Le nombre de reads analysées dépent de l'algorithme utilisé.
+Cet échantillon a été traité par l'algorithme de Vidjil.
+
 
 \marginpar{Le pourcentage de reads analysées peut varier de 0,01\,\% (voire
   moins, pour du
-  RNA-Seq de la capture) à 98--99\,\% (pour des séquençages de très bonne
+  RNA-Seq ou de la capture) à 98--99\,\% (pour des séquençages de très bonne
   qualité, généralement sur séquenceurs Illumina)}
 
 \question{Combien de reads ont été analysées dans l'échantillon en cours~?}
@@ -44,37 +62,64 @@ d'information sur l'échantillon en cours.
 
 \question{Quelle est la longueur moyenne des reads sur les IGH~? et sur les
   TRG~? Les lignes commençant par UNSEG donnent les raisons pour lesquelles
-  certains reads n'ont pas été analysées.}
-\question{Quelles sont les causes majeures expliquant que les reads n'ont pas
+  certains reads n'ont pas été analysées.
+  Vous pouvez voir ce que signifient ces raisons dans la documentation en ligne de l'algorithme : 
+  \href{http://www.vidjil.org/doc/algo.html\#unsegmentation}{vidjil.org/doc/algo.html\#unsegmentation}
+  }
+\question{Quelles sont les principales causes expliquant que les reads n'ont pas
   été analysées~? Regardez aussi la longueur moyenne des reads non
   analysées. Observez-vous quelque chose de particulier au niveau de la
   longueur moyenne de ces reads~?}
 
-\section{Filtre des clones}
+\section{Visualiser et filtrer les clones}
+
+\subsection{Visualiser les clones}
+
+Dan ce fichier, le clone le plus abondant est \texttt{IGHV3-9 7/CCCGGA/17 J6*02}.
+
+\question{Sélectionnez ce clone, en cliquant sur la liste ou la grille/
+Combien de reads ce clone représente-t-il ?
+(voir en bas à droite)
+}
+
+Il y a plusieurs manières d'afficher la désignation V(D)J.
+
+\question{Dans le menu \textit{settings}, sélectionner \com{length}
+pour afficher les zones N en fonction de leur taille.
+Revenez à la situation initiale grâce au réglage \com{sequence (when short)} pour afficher en entier les séquences N (quand elles sont courtes).}
+
+\question{Essayez aussi les options \com{alleles in clone names} : 
+en sélectionnant \com{always}, le gène V est affiché comme \com{IGHV3-9*01}.
+Revenez à la situation intitale avec \com{when not *01} pour avoir des désignations V(D)J plus compactes.}
+
+
+\subsection{Montrer plus de clones}
 
 Par défaut, Vidjil affiche les 50 clones les plus abondants \textit{(top 50)}
 pour chaque échantillon ou point de MRD. Avec 5 points de suivi, nous
 pouvons donc avoir entre 50 et 250 clones observables, tout dépend si le
-\textit{top 50} reste le même pour tous les points ou s'il varie. Ce nombre
-minimum peut être augmenté en allant dans le menu \com{filter} et en
+\textit{top 50} reste le même pour tous les points ou s'il varie.
+Ce nombre
+minimum peut être augmenté jusqu'à 100 en allant dans le menu \com{filter} et en
 poussant vers la droite le curseur.
 
-\question{  Observez comment change le pourcentage des petits clones IGH («~smaller
+\question{Observez comment change la taille cumulée des petits clones IGH («~smaller
   clones~»). Quelle était la valeur initiale~? Quelle est-elle
   maintenant~?}
  Les «~smaller clones~» correspondent aux clones qui n'ont
-  pas été complètement analysés car ils ne sont jamais parmi les plus abondants.
+  pas été séparément analysés car ils ne sont jamais parmi les plus abondants.
 
-\bigskip
 
-Considérez le premier  clone réel de la liste. C'est le plus abondant. Il
-serait intéressant de pouvoir le taguer pour s'en souvenir plus tard.
+\subsection{Taguer et filtrer les clones}
 
-\question{Cliquez sur l'étoile à côté de ce clone et choisissez une couleur de
-  tag. Observez comment cette couleur s'applique sur les autres
-  visualisations.}
+Considérons les clones les plus abondants de la liste :
+\texttt{IGHV3-9 7/CCCGGA/17 J6*02} et \texttt{TRGV10 13//5 JP1}.
+Il serait intéressant de pouvoir les étiqueter pour s'en souvenir plus tard.
 
-Lorsque des clones ont été tagués, il est ensuite possible de
+\question{Cliquez sur l'étoile à côté de ces clones et choisissez des catégories
+telles que \texttt{clone 1} ou \texttt{clone 2}. Observez comment la couleur s'applique dans toutes les parties de l'application.}
+
+Lorsque des clones ont été étiquetés, il est ensuite possible de
 les filtrer selon les couleurs choisies.
 
 \question{Dans la partie en haut à gauche, cliquez sur le carré gris (à droite
@@ -99,7 +144,7 @@ d'ADN.
 
 \bigskip
 
-Une autre façon de taguer un clone spécifique est de le renommer.
+Une autre façon de signaler un clone spécifique est de le renommer.
 
 \question{Double-cliquez sur le nom d'un clone (parmi la liste des clones) et
   lui choisir un autre nom (comme par exemple «~clone principal~»). Validez cette action
@@ -127,7 +172,13 @@ Après ce renommage, vous pouvez voir que ce clone est déjà sélectionné.
   Pour tout désélectionner, vous pouvez cliquer sur une zone vide de
   la grille des clones.} % encart haut ou bas.}
 
-\section{Analyse des populations clonales}
+Parfois, on souhaite cacher des clones provenant d'un bruit de fond.
+
+\question{Sélectionnez un clone ou plusieurs clones et cliquez sur \com{hide}, à côté de  \com{focus}.
+  Rendez ces clones à nouveau visible en cliquant sur la croix à droite du champ de recherche.}
+ 
+
+\section{Analyse de populations clonales}
 
 \subsection{Regroupement de clones («~cluster~») par l'inspection de leur
     séquence}
@@ -189,7 +240,15 @@ vous pouvez toujours retirer certains sous-clones du regroupement par la croix
 à gauche de la liste.
 
 \question{Juste pour l'exercice, retirez le dernier clone de la liste du
-  segmenteur.}
+segmenteur.}
+
+\question{Ouvrez le menu \com{cluster}, et choisissez l'optin \com{cluster by V/5}.
+Que s'est-il passé ? 
+Il y a maintenant dex clones avec TRGV2. Pourquoi ?}
+
+\question{Dans le menu \com{cluster}, sélectionnez \com{revert to previous cluster} pour annuler le groupe.}
+
+
 
 \subsection{Autres paramètres et analyses des clones}
 
@@ -224,7 +283,8 @@ classer les clones selon leur degré de similitude (distance).
 
 \question{Dans le menu \com{plot}, sélectionnez maintenant l'option \com{plot by
   similarity} ou \com{plot by similarity and by locus} pour afficher les
-  clones d'un locus donné selon leur degré de similitude. Ainsi, les
+  clones d'un locus donné selon leur degré de similitude
+  (attention : cela peutrendre un peu de temps). Ainsi, les
   clones présentant une très forte homologie sont à proximité les uns
   des autres. Il est théoriquement impossible d'avoir ce
   type de représentation en deux dimensions. Il est donc possible que deux
@@ -241,19 +301,22 @@ exergue certains paramètres.
 \question{%
   Choisissez d'abord dans le menu \com{plot} de la grille la visualisation \com{plot by
   similarity and by locus}. Puis, dans le menu \com{color by},
-  sélectionnez \com{N}. %
+  sélectionnez \com{N} (dans la fenêtre en haut de l'écran). %
   \marginpar{Nos excuses aux daltoniens, puisque les couleurs ne sont pas
     encore bien différentiables.} Les clones qui sont proches sur la grille avec
   une même couleur sont probablement similaires.}
 
+\question{Choisissez maintenant le réglage \com{CDR3 length distribution} puis colorez par \com{productivity}.
+Vous pouvez observer que les carrés de couleurs dans la partie information (en haut à gauche) changent pour montrer la légende des couleurs.}
+
 En utilisant ces différentes fonctionnalités, vous devez être capables
 d'évaluer le degré d'homologie de vos séquences et potentiellement de
-regrouper des clones si vous le souhaitez.
+regrouper des clones ou les colorer si vous le souhaitez.
 
 \bigskip
 
 \textit{Cette partie est spécifique aux échantillons analysés avec
-l'algorithme Vidjil.}
+l'algorithme inclus dans la plateforme Vidjil.}
 
 Certains clones peuvent être moins fiables que d'autres\ldots{} Voyons
 comment les repérer.
@@ -262,7 +325,7 @@ comment les repérer.
   alerte orange à droite. Cliquez sur l'alerte. À quoi sont dues ces
   alertes~?}
 
-À l'heure actuelle, il peut y avoi deux raisons~:
+À l'heure actuelle, il peut y avoir deux raisons~:
 \begin{itemize}
 \item
   La moyenne de couverture ou \textit{average coverage}~: dans ce cas, la
@@ -303,12 +366,17 @@ locus, cela cache les autres locus.
 Vous pouvez aussi changer le locus actuel en cliquant sur le nom d'un
 autre locus à droite de la grille.
 
-\subsection{Suivi temporel des clones sur plusieurs échantillons}
+\newpage
+
+\section{Suivi temporel des clones sur plusieurs échantillons}
+\label{sec:tracking}
+
 
 Le graphique en haut à droite, le graphique temporel, montre l'évolution des
 clones les plus abondants (figurant au moins dans le \textit{top 10}) de chacun des
 échantillons (ou points) de l'analyse.
 Notons que par souci de lisibilité seules 50 courbes sont affichées au plus.
+\marginpar{Lorsque un seul échantillon est présent, le graphique est remplacé par une seconde grille.}
 
 \question{%
   Passez la souris sur les bulles dans la grille ou au niveau des lignes
@@ -346,8 +414,9 @@ sont affichés dans le reste de l'application.
 
 \question{%
   Sélectionnez un échantillon, classez la liste par taille (\com{size}) et passez la
-  souris sur la liste du top 50 (50 clones les plus abondants). Regardez bien
-  le graphique temporel, que se passe-t-il au bout d'un moment ?}
+  souris sur la liste du top 50 (50 clones les plus abondants).
+  Que se passe-t-il dans le graphique
+  lorsque vous passez la souris au dessus de clones qui ne sont pas dans le top 50 ?}
 
 \bigskip
 
@@ -385,10 +454,12 @@ directement en représentation log-log.
   clones avec une différence de concentration significative entre les deux
   échantillons~?}
 
-\subsection{Les désignations VDJ}
+\section{Travailler avec d'autres logiciels et exporter ses données}
 
-Pour certaines études, les désignations VDJ sont très importantes.
-Dans la liste et dans le segmenteur, ces désignations sont écrites de manière
+\subsection{Vérifier les désignations VDJ avec d'autres logiciels}
+
+Pour certaines études, il est  très important d'avoir les bonnes désignations VDJ.
+Dans la liste des clones et dans le segmenteur, ces désignations sont écrites de manière
 concise afin de gagner de la place.
 
 \question{%
@@ -396,7 +467,7 @@ concise afin de gagner de la place.
   complète de la séquence apparaît dans la barre de status, entre la
   grille et le segmenteur.}
 
-Nous pouvons vérifier cette nomination par deux moyens.
+Nous pouvons vérifier cette assignation par d'autres logiciels.
 
 \question{Sélectionnez quelques clones.}
 \question{%
@@ -409,13 +480,29 @@ Nous pouvons vérifier cette nomination par deux moyens.
 \question{%
   Vous pouvez aussi envoyer directement les séquences sur IMGT/V-QUEST
   ou IgBlast en cliquant sur le bouton portant leur nom respectif.}
+  vous pouvez remarquer que les données renvoyées par IMGT/V-QUEST sont disponible en cliquant sur sur le textit{i} bouton ce qui vous permet de comparer les annotations du logiciel originel et celle d'IMGT/ V-QUEST.       
 
 \bigskip
 
 Il arrive parfois que Vidjil fasse des erreurs dans la désignation VDJ.
 Dans ce cas, vous êtes fortement invités à nous en faire part et nous
-essaierons d'améliorer l'alogorithme de désignation. Vous pouvez aussi
-changer le nom par celle vue sur le site web.
+essaierons d'améliorer l'algorithme de désignation.
+
+\question{Utilisez le bouton \com{get support}  situé dans le menu \com{help}.
+  Un mail pré-composé s'ouvre avec les références des données
+  que vous visualisez tout comme des clones sélectionnés.}
+
+Même sans utilser le bouton \com{get support}, une bonne habitude est
+d'envoyer l'adresse complète se trouvant dans votre navigateur web,
+telle que \url{http://app.vidjil.org/?set=3241&config=39&plot=v,size,bar},
+quand vous voulez discuter avec des collègues ou avec nous de vos données
+ou de vos analyses.
+
+\bigskip
+
+Supposons que vous souhaitiez
+changer la désignation V(D)J.
+
 
 \question{%
   Dans la liste des clones, cliquez sur le «~\textit{i}~» à droite du clone dont
@@ -432,7 +519,7 @@ Cependant, pour ce jeu de démonstration, il n'est pas possible de faire de
 sauvegarde. Vous pourrez en revanche sauvegarder les échantillons qui vous
 appartiennent !
 
-\section{Export de données}
+\subsection{Export de données}
 
 \question{%
   Pour générer des rapports imprimables,
@@ -442,8 +529,19 @@ appartiennent !
   Sélectionnez quelques clones. Ensuite, dans le menu \com{import/export},
   choissisez \com{export fasta}. Que se passe-t-il~?}
 
+
+\question{Ouvrez le menu \com{import/export} et cliquez sur \com{export svg}.
+  Le fichier ainsi généré décrit tous les clones (désignation V(D)J, abondance à chaque échantillon)
+  et peut être ouvert par n'importe quel tableur pour de plus amples analyses.}  
+
+\question{Ouvrez de nouveau le menu \com{import/export} et cliquez sur \com{export svg}.
+  Ceci exporte la vue du graphe ou de la grille.
+  La fichier ainsi généré peut être ouvert et édité par tout logiciel d'image vectoriel comme Inkscape.
+  
+}  
+
 \vfill
-\flushright \it Aurélie Caillault, Mathieu Giraud, Tatiana Rocher, Mikaël Salson
+\flushright \it Aurélien Béliard, Aurélie Caillault, Mathieu Giraud, Tatiana Rocher, Mikaël Salson, Florian Thonier, 
 \\ \texttt{contact@vidjil.org}
 
 \end{document}
