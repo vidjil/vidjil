@@ -94,7 +94,10 @@ try {
 
     new VidjilAutoComplete(db);
 
-    var my_tips = new TipsOfTheDay(tips, new TipDecorator(), config.available_tips);
+    var available_tips;
+    if (typeof config !== 'undefined')
+        available_tips = config.available_tips;
+    var my_tips = new TipsOfTheDay(tips, new TipDecorator(), available_tips);
     my_tips.set_container(document.getElementById('tip-container'))
     my_tips.display()
 } catch(err) {
