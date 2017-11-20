@@ -30,6 +30,7 @@ tips = {
     'T01': 'Do you want to inspect all your V2 clones ? Clicking on a label in the grid will select all clones related to that label',
     'T02': 'Bothered by the sequence panel (bottom view) going up and down? Just click on the pin on the right to keep it calm.',
     'T03': 'A clone with an abundance of <span class="element">+</span> was detected with one or a few reads, but not enough to display a meaningful ratio. A clone with an abundance of <span class="element">-</span> was not detected at all in this sample, guaranteed.',
+    //Hover the mouse to see the actual number of reads.
     'T10': 'Vidjil analyzes data on humans, mice, rats and dogs. We can add your other favorite pets, contact us !',
     'T20': 'Normalize data by selecting a clone and apply selected normalization method XXXX',
     'T30': '<span class="key">←</span> and <span class="key">→</span> navigate between samples. Discover other <a href="http://vidjil.org/doc/user.html#Shortcuts">keyboard shortcuts</a>.',
