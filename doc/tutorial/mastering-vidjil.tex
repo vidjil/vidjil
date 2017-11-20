@@ -7,7 +7,7 @@
 \maketitle
 
 \textit{The goal of this practical session is to learn
-common ways to visualise, filter, analyse and cluster clones
+common ways to visualize, filter, analyse and cluster clones
 on the Vidjil web application.
 %
 These clones may have been computed by the Vidjil algorithm or by any other algorithm.}
@@ -28,17 +28,19 @@ and four follow-up samples, including a relapse.
 }
 
 In the following sections, we focus on the diagnosis sample.
+% and explore how to assess the quality of the data
+% how to view and filter clones and
 The section~\ref{sec:tracking} will deal with the comparison of several samples. 
 
 \section{Assessing the quality of the run and of the analysis}
 
 
-\marginpar{The percentage of analysed reads can range from .01\,\% (for
+\marginpar{The percentage of analyzed reads can range from .01\,\% (for
   RNA-Seq or capture data) to 98-99\,\% (for very high-quality runs mostly on
   Mi-Seq).}
-\question{How many reads have been analysed in the current sample?}
+\question{How many reads have been analyzed in the current sample?}
 
-Now we will try to assess the reason why some reads were not analysed in our
+Now we will try to assess the reason why some reads were not analyzed in our
 sample.
 This might reflect a problem during the sequencing protocol\dots or that could
 be normal.
@@ -46,9 +48,9 @@ For that sake you will need to display the information box by clicking on the
 \textit{i} in the upper left part.
 \question{What are the average read lengths on IGH? and on TRG?}
 The lines starting with \texttt{UNSEG} display the reasons why some reads have
-not been analysed.
+not been analyzed.
 \question{What are the major causes explaining the reads have not been
-  analysed? Also have a look at the average read lengths of these causes. Do
+  analyzed? Also have a look at the average read lengths of these causes. Do
   you notice something regarding the average read lengths?}
 
 \section{Viewing and filtering clones}
@@ -152,7 +154,7 @@ Sometimes, one wants to hide noisy or unrelated clones.
 \subsection{Clustering clones through inspection of their sequences}
 
 The first thing to be done is to see if some clones should be clustered (because
-of sequencing or PCR errors for instance). This step could be automatised
+of sequencing or PCR errors for instance). This step could be automatized
 but, in any case, the automatic clustering would need to be checked by an expert
 eye.
 
@@ -186,7 +188,7 @@ These artifacts (mutations, homopolymers, insertions, deletions)
 depend on the sequencer and the PCR technique.
 
 \question{Cluster all those clones in a single clone by clicking on the ``cluster''
-  button, next to the ``align'' button.}
+  button, next to the \com{align} button.}
 
 All the clustered sequences now appear within a same clone. That can be seen
 in the list: the clone which hosts the subclones appears with a $+$ on its
@@ -200,8 +202,10 @@ you were right to cluster them). You can also remove some subclones from the
 cluster by clicking on the cross at their left in the list.
 \question{For the sake of the exercise, remove the last clone of the cluster.}
 
-\question{For the next step, chosse the preset ``V distribution`` (shurtcut 5). 
-  Open the \com{cluster} menu, and choose \com{cluster by V/5}. What happened ? There are now two clones with TRGV2. Why ?}
+\question{%
+%For the next step, choose the preset \com{V distribution} (keyboard shortcut \com{5}).
+% On n'a pas encore parlé ici des presets. 
+Open the \com{cluster} menu, and choose \com{cluster by V/5}. What happened ? There are now two clones with TRGV2. Why ?}
 %%  Confirm this by changing the x axis into ``V allele``.
 %%% -> Problème, on n'a pas encore parlé des axes à cet endroit.
 
@@ -249,7 +253,7 @@ There is still a feature to help you analyse your data that we have not
 explored yet.
 You can change the colors to make it represent some variables of interest
 with the \com{color by} menu.
-\question{First choose the preset ``plot by similarity and by locus'' and
+\question{First choose the preset \com{plot by similarity and by locus} and
   then color by \com{N length} (in the box at the top of the screen).}
 \marginpar{We apologize to color blinds: the colors are not yet color-blind friendly.}Clones that are close on the grid with similar colors are likely to
 be similar.
@@ -264,7 +268,7 @@ sequences are, and potentially you could cluster them if you'd like or tag them.
 
 \bigskip
 
-\textit{This part is specific to samples analysed with the Vidjil algorithm.}
+\textit{This part is specific to samples analyzed with the Vidjil algorithm.}
 
 Some clones may be less trustable than other ones\dots{} Let's see how to spot them.
 \question{In the clone list, search clones with an orange warning at the
@@ -292,7 +296,7 @@ If you hold the \texttt{Shift} key (the one which is usually above the left
 clicked on.
 
 \question{Click on \com{IGH}, while holding the \texttt{Shift} key. Now what is the
-  number of analysed reads? Why did it change?}
+  number of analyzed reads? Why did it change?}
 
 \question{Now click on \com{TRG}, to filter it in again.}
 
@@ -361,7 +365,7 @@ compare different research or medical situations.
 
 \question{In the \com{color by} menu, choose \com{by abundance}. Select a different
   sample. What happens ? Are there some clones with a significant different concentration in both samples ?
-Revert the color by choosing ``by tag''.}
+Revert the color by choosing \com{by tag}.}
 
 Another option is to directly plot a log-log curve comparing two samples.
 
@@ -383,7 +387,7 @@ short form.
 We can double check this designation with other popular software.
 \question{Select a few clones.}
 \marginpar{This requires an internet connection.}
-\question{Click on the down arrow, which is right to ``IMGT/V-QUEST''. The
+\question{Click on the down triangle, which is right to \com{IMGT/V-QUEST}. The
   clone sequences are sent to IMGT/V-QUEST.}
 \question{Then tick the checkbox 5'V/D/3'J. In the segmenter the boundaries of
   the V(D)J genes as computed by IMGT/V-QUEST are underlined.}
