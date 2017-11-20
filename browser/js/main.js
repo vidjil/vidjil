@@ -101,7 +101,7 @@ try {
     this.db.log_error(err)
 }
 
-if (typeof config.alert !== 'undefined') {
+if (typeof config !== 'undefined' && typeof config.alert !== 'undefined') {
     $("#top-container").addClass("alert")
     $("#alert").append(config.alert)
     $("#alert").click(function () { console.log({'type': 'popup', 'default': config.alert}) })
