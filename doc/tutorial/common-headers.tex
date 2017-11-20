@@ -29,11 +29,13 @@
 \renewcommand\marginpar[1]{\oldmarginpar{\tiny#1}}
 
 \makeatletter
-\renewcommand\maketitle{\begin{minipage}[t]{.7\textwidth}%
-\LARGE\bfseries
-\@title%
+\renewcommand\maketitle{\begin{minipage}[c]{.7\textwidth}%
+{\LARGE\sf \@title}
+\\[1ex] \today
 \end{minipage}
 \hfill
-\today
+\begin{minipage}[c]{.2\textwidth}
+\includegraphics[width=\textwidth]{grid-0}
+\end{minipage}
 }
 \makeatother
