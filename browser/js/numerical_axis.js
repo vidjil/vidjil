@@ -95,18 +95,9 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         if(this.can_undefined)
             this.value_mapping["?"] = [];
 
-        for(var idx in this.clones) {
-            var clone = clones[idx];
-            if(!clone.isVirtual()) {
-                var value = this.applyConverter(clone);
-                if (typeof value == "undefined" || typeof this.value_mapping[value] == "undefined" ) {
-                    if (this.can_undefined)
-                        this.value_mapping["?"].push(clone);
-                }else{
-                    this.value_mapping[value].push(clone);
-                }
-            }
-        }
+        // insert all the values into the valuemapping object
+        this.insert_values()
+        
 
         if (typeof min == "undefined"){
             min = 0;
@@ -150,6 +141,24 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         }
         
         return {'pos': pos};
+    }
+
+    /**
+     * This function allow to insert all the values getted into the value_mapping object. 
+     */
+    NumericalAxis.prototype.insert_values = function() {
+        for(var idx in this.clones) {
+            var clone = this.clones[idx];
+            if(!clone.isVirtual()) {
+                var value = this.applyConverter(clone);
+                if (typeof value == "undefined" || typeof this.value_mapping[value] == "undefined") {
+                    if (this.can_undefined)
+                        this.value_mapping["?"].push(clone);
+                }else{
+                    this.value_mapping[value].push(clone);
+                }
+            }
+       }
     }
     
     /**
@@ -270,5 +279,27 @@ function FloatAxis (model, reverse, can_undefined) {
 FloatAxis.prototype = Object.create(NumericalAxis.prototype);
 
     FloatAxis.prototype.getLabelText = function(value) {
-        return (value).toFixed(2)
+        return parseFloat(value).toFixed(2)
+    }
+
+    FloatAxis.prototype.insert_values = function() {
+        for(var idx in this.clones) {
+            var clone = this.clones[idx];
+            if(!clone.isVirtual()) {
+                var value = this.applyConverter(clone)//.toFixed(2);
+                if (typeof value == "undefined" || value == undefined || value == "undefined") {
+                    if (this.can_undefined)
+                        this.value_mapping["?"].push(clone);
+                }else{
+                    this.value_mapping[value] = this.value_mapping[value] || []
+                    this.value_mapping[value].push(clone);
+                }
+            }
+       }
+       var temp = {}
+       for (key_pos in Object.keys(this.value_mapping).sort()){
+            key = Object.keys(this.value_mapping).sort()[key_pos]
+            temp[key] = this.value_mapping[key]
+       }
+       this.value_mapping = temp
     }
