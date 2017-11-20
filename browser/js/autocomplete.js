@@ -217,7 +217,7 @@ VidjilAutoComplete.prototype = {
                 data: {
                     keys: JSON.stringify(uncached)
                 },
-                xhrFields {
+                xhrFields: {
                     withCredentials: true
                 },
                 timeout: 5000,
