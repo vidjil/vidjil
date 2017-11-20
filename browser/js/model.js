@@ -1738,7 +1738,7 @@ changeAlleleNotation: function(alleleNotation) {
      * @param {float} sizeQ - under this size, this is not quantifiable
      * */
     formatSize: function (size, fixed, sizeQ) {
-        var result = "-"
+        var result = "−"
 
         if (size === 0 || typeof size == 'undefined') return result
 
