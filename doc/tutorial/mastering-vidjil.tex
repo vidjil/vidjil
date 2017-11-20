@@ -237,12 +237,13 @@ and the $y$ axis selects the order of the boxes sharing a same $x$).
 %% \item Regarder les stats disponibles, mettre n°7 (taille des reads)
 
 \question{In the \com{plot} menu, switch between the ``bubble plot'' and the ``bar plot''.
-In the bar plot mode, pass the mouse over the bars: What happens ?}
+In the bar plot mode, pass the mouse over the bars: What happens?}
 
 Another possibility is to request Vidjil to compute the similarity between
 clones.
 \question{Now select the preset \com{plot by similarity} or even \com{plot
-  similarity by locus} to plot similarity for the current locus.}
+  similarity by locus} to plot similarity for the current locus (beware: this
+may take some time).}
 Now the most similar clones should be close together. However note that it is
 theoretically impossible to achieve such a representation in 2 dimensions. So
 it is possible that two dissimilar clones are close together or, conversely,
@@ -316,7 +317,7 @@ right part of the grid.
 %Load now some data with several samples.
 The \textit{time graph} shows the evolution of the top clones of each sample into all the samples.
 Bear in mind that to ensure readability at most 50 curves are displayed in this graph.
-\marginpar{When loading data with only one samples, the time graph is replaced by a second bar/grid plot.}
+\marginpar{When loading data with only one sample, the time graph is replaced by a second bar/grid plot.}
 
 \question{Pass the mouse over the bubbles in the grid or over the lines in the time graph.
   Click on some clone. What happens ?}
@@ -348,7 +349,7 @@ the 50 \textit{most abundant clones} at each sample (which can account to hundre
 clones, when having several samples).
 
 \question{Select a sample, order the list by size, and pass the mouse through the list
-  of top 50 clones. What happens when selecting clones that are not in the top 20 ?}
+  of top 50 clones. What happens in the graph when hovering clones that are not in the top 50 ?}
 
 \bigskip
 
@@ -393,7 +394,7 @@ We can double check this designation with other popular software.
 \question{Then tick the checkbox 5'V/D/3'J. In the segmenter the boundaries of
   the V(D)J genes as computed by IMGT/V-QUEST are underlined.}
   
-Note that data returned by IMGT/V-QUEST are available by clicking on the \textit{i} icon of analyzed clones,
+Note that data returned by IMGT/V-QUEST is available by clicking on the \textit{i} icon of analyzed clones,
 enabling you to compare the annotations made by the original software and by IMGT/V-QUEST. 
 
 \question{You can also directly send the sequences to IMGT/V-QUEST or IgBlast
@@ -405,16 +406,20 @@ enabling you to compare the annotations made by the original software and by IMG
 It may happen the software makes a mistake in the VDJ designation.
 In such a case you're very welcome to report us the problem
 and we will try to improve the designation algorithm.
+For this purpose, you can go in the \com{Help} menu and click on \com{get
+  support}.
 You can also change the designation shown on the web application.
 \question{Click on the \textit{i} icon in the list of clones for the clone you
   want to change the designation. In the segmentation part, click the edit
   button. Choose what you would like to modify.}
 
-Beware: none of the modification you made (name changes, clusters, clone
-tagging, sample reordering\dots) will be automatically saved. You have to save
+Beware: the modifications you made (name changes, clusters, clone
+tagging, sample reordering\dots) will \textbf{not} be automatically saved. You have to save
 your changes by yourself either by clicking on \com{save patient} in the top left menu (where the
 ``patient'' name is written) or by using the \texttt{Ctrl+S} keyboard
 shortcut.
+For this demonstration data, you cannot save your changes as you do not have
+the rights to modify this patient.
 
 % TODO : créer un should-vdj automatiquement !
 \subsection{Exporting data}
@@ -427,7 +432,7 @@ shortcut.
 
 \question{Open the \com{import/export} menu, and click on \com{export csv}.
 The resulting file describes all visible clones (complete segmentation, and information on size for each timepoint).
-It can be opened by any spreadsheet software such as LibreOffice Calc or Excel for further anlysis.}
+It can be opened by any spreadsheet software such as LibreOffice Calc or Excel for further analysis.}
 
 \question{Open again \com{import/export} menu, and click on one of the \com{export SVG} buttons.
 This exports the current view of the plot or the graph. The resulting file can be opened and edited from any image drawing software such as Inkscape.}
