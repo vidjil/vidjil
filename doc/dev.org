@@ -67,9 +67,9 @@ This will unlock the =patients= menu and allow your local browser
 to access the public server at http://app.vidjil.org/.
 
 
-** Browser API
+** Client API and permanent URLs
 
-The browser can be opened on a data file specified from a =data= attribute,
+The client can be opened on a data file specified from a =data= attribute,
 and optionally on an analysis file specified from a =analysis= attribute,
 as in the following URLs on our test server:
 
@@ -80,6 +80,21 @@ as in the following URLs on our test server:
 Both GET and POST requests are accepted.
 Note that the =browser/index.html= file and the =.vidjil/.analysis= files should be hosted on the same server.
 Otherwise, the server hosting the =.vidjil/.analysis= files must accept cross-domain queries.
+
+The client can also load data from a server (see below, requires logging), as in http://app.vidjil.org/?set=3241&config=39
+| =set=xx=    | sample set id |
+| =config=xx= | config id     |
+
+Older formats (patients, run...) are also supported for compatibility but deprecated.
+Moreover, the state of the client can be encoded in the URL, as in http://app.vidjil.org/?set=3241&config=39&plot=v,size,bar&clone=11,31
+
+| =plot=x,y,m=     | plot (x axis, y axis) |
+| =clone=xx,xx,xx= | selected clone ids    |
+
+For =plot= the axis names are found in =browser/js/axes.js=. =m= is optional, and defines the type of plot (either =grid= or =bar=).
+
+We intend to encode more parameters in the URL.
+
 
 
 
@@ -178,14 +193,6 @@ The first three solutions need some further elements from the full =index.html=.
      fields under the =seg= field are displayed as soon as they have a =start= and
      =stop=. Some of them can be explicitly not displayed by filling the
      =exclude_seg_info= array in =getHtmlInfo=.
-
-****url       
-      the system of API/url allow to pass some parameter through the url. the view Url.js get some parameter and add them to the url
-      the parameters are :
-        -scatterplot settings eg: axis label
-        -sampleset id 
-        - selected clone id 
-        - config id    
 
 * Server
 ** Notifications

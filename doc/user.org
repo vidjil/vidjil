@@ -184,15 +184,16 @@ edited ('e') or deleted ('X').
 They are just different ways to group samples. 
 Sets can for example gather a set of samples of a same experiment.
 Runs can be used to gather samples that have been sequenced in the same run.
-****url       
-      the system of API/url allow to pass some parameter through the url. 
-      the parameters are :
-        - scatterplot settings eg: axis label
-        - sampleset id 
-        - selected clone id 
-        - config id    
-        - data to be loaded
-      this system allow to work more efficiently with other user as you can give them your working url . 
+
+
+
+** Permanent address (URLs) to a set of samples 
+
+Addresses such as http://app.vidjil.org/?set=3241&config=39 directly target a set of samples (here the public dataset L3), possibly with your saved analysis.
+Moreover, the address also encodes other parameters, for instance http://app.vidjil.org/?set=3241&config=39&plot=v,size,bar&clone=11,31 (selected axes and selected clones).
+
+To discuss on some results or to raise any issue, you can share such addresses with other users (with whom you share access grants, see below), 
+to your local IT staff or to the Vidjil team.
 
 
 
