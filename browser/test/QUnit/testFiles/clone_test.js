@@ -162,7 +162,7 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.includes(html, "<tr><td>clone size (n-reads (total reads))</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td>clone size (%)</td><td>10.00%</td><td>20.00%</td><td>15.00%</td><td>30.00%</td>",
              "getHtmlInfo: clone information");
     
-    assert.includes(html, "<tr><td class='header' colspan='5'>representative sequence</td></tr><tr><td>sequence name</td><td colspan='4'>hello</td></tr><tr><td>code</td><td colspan='4'>hello</td></tr><tr><td>length</td><td colspan='4'>19</td></tr><tr><td>e-value</td><td colspan='4'><span class='warning'>0.01</span></td></tr><tr><td>size (n-reads (total reads))</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td>size (%)</td><td>5.000%</td><td>10.00%</td><td>-</td><td>30.00%</td></tr>",
+    assert.includes(html, "<tr><td class='header' colspan='5'>representative sequence</td></tr><tr><td>sequence name</td><td colspan='4'>hello</td></tr><tr><td>code</td><td colspan='4'>hello</td></tr><tr><td>length</td><td colspan='4'>19</td></tr><tr><td>e-value</td><td colspan='4'><span class='warning'>0.01</span></td></tr><tr><td>size (n-reads (total reads))</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td>size (%)</td><td>5.000%</td><td>10.00%</td><td>−</td><td>30.00%</td></tr>",
         "getHtmlInfo: representative sequence information");
 
     assert.includes(html, "<tr><td class='header' colspan='5'>segmentation <button type='button' onclick='m.clones[0].toggle()'>edit</button></td></tr><tr><td>sequence</td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td>id</td><td colspan='4'>id1</td></tr>",
