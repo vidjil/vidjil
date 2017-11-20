@@ -197,5 +197,5 @@ function switch_visu2(view) {
     }
 
     tmp.init();
-    tmp.resize();
+    m.resize()
 }

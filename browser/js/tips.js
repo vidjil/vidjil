@@ -147,7 +147,7 @@ TipDecorator.prototype = {
 
         var title = document.createElement('div');
         title.style.fontWeight = "bold";
-        title.appendChild(document.createTextNode('Tips and tricks:'));
+        title.appendChild(document.createTextNode('Tip:'));
         div.appendChild(title);
 
         var tip_div = document.createElement('div');

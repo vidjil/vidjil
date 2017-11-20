@@ -8,6 +8,7 @@ class TestLoadingAnalysis < BrowserTest
     if not defined? $b
       set_browser("/doc/analysis-example2.vidjil", "/doc/analysis-example2.analysis")
       $b.clone_in_scatterplot('0').wait_until_present
+      $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
     end
   end
 

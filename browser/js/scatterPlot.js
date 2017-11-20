@@ -85,7 +85,7 @@ function ScatterPlot(id, model, database, default_preset) {
     this.AXIS_GENE_V = "v"
     this.AXIS_GENE_J = "j"
     this.AXIS_ALLELE_V = "allele_v"
-    this.AXIS_ALLELE_V = "allele_j"
+    this.AXIS_ALLELE_J = "allele_j"
     
     this.MODE_GRID = "grid"
     this.MODE_BAR = "bar"

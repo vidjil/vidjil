@@ -27,12 +27,12 @@ tips = {
     'S90': 'Have you already seen news at the top of the screen? Click on them to have more information.',
 
     // #T Tips (client, possibly without a server)
-    'T01': 'Do you want to inspect all your V4 clones ? Clicking on a label in the grid will select all clones related to that label',
+    'T01': 'Do you want to inspect all your V2 clones ? Clicking on a label in the grid will select all clones related to that label',
     'T02': 'Bothered by the sequence panel (bottom view) going up and down? Just click on the pin on the right to keep it calm.',
-    'T03': 'A clone with an abundance of "+" was detected with one or a few reads, but not enough to display a meaningful ratio. Hover the mouse to see the actual number of reads. A clone with an abundance of "-" was not detected at all, guaranteed.',
+    'T03': 'A clone with an abundance of <span class="element">+</span> was detected with one or a few reads, but not enough to display a meaningful ratio. Hover the mouse to see the actual number of reads. A clone with an abundance of <span class="element">-</span> was not detected at all, guaranteed.',
     'T10': 'Vidjil analyzes data on humans, mice, rats and dogs. We can add your other favorite pets, contact us !',
     'T20': 'Normalize data by selecting a clone and apply selected normalization method XXXX',
-    'T30': '<span class="key">←</span> and <span class="key">→</span>  navigate between samples. Discover other <a href="http://vidjil.org/doc/user.html#Shortcuts">keyboard shortcuts</a>.',
+    'T30': '<span class="key">←</span> and <span class="key">→</span> navigate between samples. Discover other <a href="http://vidjil.org/doc/user.html#Shortcuts">keyboard shortcuts</a>.',
     'T31': '<span class="key">+</span> clusters the selected clones, and <span class="key">Backspace</span> reverts to the previous clustering. Discover other <a href="http://vidjil.org/doc/user.html#Shortcuts">keyboard shortcuts</a>.',
     'T32': '<span class="key">H</span>  switches the display to IGH clones, <span class="key">B</span>  to TRB clones, and so on. Discover other <a href="http://vidjil.org/doc/user.html#Shortcuts">keyboard shortcuts</a>.',
     'T40': 'Drag and drop samples in the graph to reorganize them. This order is saved with "save analysis".',

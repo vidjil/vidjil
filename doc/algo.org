@@ -554,6 +554,9 @@ These values are now computed on the windows, before any further clustering.
 PCR and sequencing errors can thus lead to slighlty over-estimate the diversity.
 
 ** Unsegmentation causes
+   :PROPERTIES:
+   :CUSTOM_ID: unsegmentation
+   :END:
 
 Vidjil output details statistics on the reads that are not segmented (not analyzed).
 Basically, *an unsegmented read is a read where Vidjil cannot identify a window at the junction of V and J genes*.

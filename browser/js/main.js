@@ -92,7 +92,7 @@ try {
     //TODO
     initMenu();
 
-    new VidjilAutoComplete(db.db_address + 'tag/auto_complete');
+    new VidjilAutoComplete(db);
 
     var my_tips = new TipsOfTheDay(tips, new TipDecorator(), config.available_tips);
     my_tips.set_container(document.getElementById('tip-container'))
