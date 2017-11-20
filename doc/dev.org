@@ -179,6 +179,14 @@ The first three solutions need some further elements from the full =index.html=.
      =stop=. Some of them can be explicitly not displayed by filling the
      =exclude_seg_info= array in =getHtmlInfo=.
 
+****url       
+      the system of API/url allow to pass some parameter through the url. the view Url.js get some parameter and add them to the url
+      the parameters are :
+        -scatterplot settings eg: axis label
+        -sampleset id 
+        - selected clone id 
+        - config id    
+
 * Server
 ** Notifications
 
