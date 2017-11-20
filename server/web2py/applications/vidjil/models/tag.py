@@ -93,7 +93,7 @@ def register_tags(db, table, record_id, text, group_id, reset=False):
     tags = tag_extractor.execute(table, record_id, text, group_id, reset)
 
 def get_tags(db, group_ids):
-    pgid = get_public_group_id()
+    pgid = get_public_group_id(group_ids)
     if pgid > 0:
         group_ids.append(pgid)
 
@@ -114,23 +114,12 @@ def tags_to_json(tags, group_ids):
         tag_map[group_id].append(tag_dict)
 
     # Public group hackiness. Mainly to clean up some other hackier hackiness
-    pgid = get_public_group_id()
+    pgid = get_public_group_id(group_ids)
     if pgid > 0 and pgid in tag_map:
         for group_id in tag_map:
             for tag in tag_map[pgid]:
                 if tag not in tag_map[group_id]:
                     tag_map[group_id].append(tag)
-
-        # Public group hackiness. Mainly to clean up some other hackier hackiness
-        pgid = get_public_group_id()
-        if pgid > 0 and pgid in tag_map:
-            for group_id in group_ids:
-                if group_id not in tag_map:
-                    tag_map[group_id] = []
-                for tag in tag_map[pgid]:
-                    if tag not in tag_map[group_id]:
-                        tag_map[group_id].append(tag)
-
 
     return json.dumps(tag_map)
 
@@ -143,9 +132,9 @@ def parse_search(search_string):
     search_string = " ".join(searches)
     return search_string, tags
 
-def get_public_group_id():
+def get_public_group_id(group_ids):
     public_group_name = defs.PUBLIC_GROUP_NAME if hasattr(defs, 'PUBLIC_GROUP_NAME') in defs else 'public'
     public_group = db(db.auth_group.role == public_group_name).select()
-    if (len(public_group) > 0 and public_group.id not in group_ids):
-        return public_group.id
+    if (len(public_group) > 0 and public_group[0].id not in group_ids):
+        return public_group[0].id
     return -1
