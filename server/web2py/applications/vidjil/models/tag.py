@@ -133,7 +133,7 @@ def parse_search(search_string):
     return search_string, tags
 
 def get_public_group_id(group_ids):
-    public_group_name = defs.PUBLIC_GROUP_NAME if hasattr(defs, 'PUBLIC_GROUP_NAME') in defs else 'public'
+    public_group_name = defs.PUBLIC_GROUP_NAME if hasattr(defs, 'PUBLIC_GROUP_NAME') else 'public'
     public_group = db(db.auth_group.role == public_group_name).select()
     if (len(public_group) > 0 and public_group[0].id not in group_ids):
         return public_group[0].id
