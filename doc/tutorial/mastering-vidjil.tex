@@ -16,7 +16,9 @@ These clones may have been computed by the Vidjil algorithm or by any other algo
 
 \question{Connect to the public server (\url{https://app.vidjil.org}), either with your account
 or the demo account (\texttt{demo@vidjil.org} / \texttt{demo}),
-select the \textit{Demo LIL-L3 (tutorial)} patient, and click on the bottom right link, ``see results: multi-inc-xxx''.
+select the \textit{Demo LIL-L3 (tutorial)} patient, and click on the bottom right link, \com{see results: multi-inc-xxx}.
+Do not open the \textit{Demo LIL-L3 (analyzed)} patient: this one contains the complete
+analysis.
 The Vidjil web application opens.}
 
 This patient (patient 063 from [[http://dx.doi.org/10.1016/j.leukres.2016.11.009][Lille study on the feasibility of MRD using HTS]]) suffering T-ALL has one diagnosis sample,
@@ -40,10 +42,14 @@ The number of analyzed reads will depend on the algorithm used.
 This sample has been processed using the Vidjil algorithm.
 
 
+
+The Vidjil web application allows to run several ``RepSeq'' (immune repertoire analysis) algorithms.
+Each RepSeq algorithm has his own way to analyze reads.
+
 \marginpar{The percentage of analyzed reads can range from .01\,\% (for
   RNA-Seq or capture data) to 98-99\,\% (for very high-quality runs mostly on
   Mi-Seq).}
-\question{How many reads have been analyzed in the current sample?}
+\question{How many reads have been analyzed in the current sample with the embedded algorithm ?}
 
 Now we will try to assess the reason why some reads were not analyzed in our
 sample.
@@ -54,8 +60,8 @@ For that sake you will need to display the information box by clicking on the
 \question{What are the average read lengths on IGH? and on TRG?}
 The lines starting with \texttt{UNSEG} display the reasons why some reads have
 not been analyzed.
-You can see what those reasons mean in the online documentation of the
-algorithm: \href{http://www.vidjil.org/doc/algo.html\#unsegmentation}{vidjil.org/doc/algo.html\#unsegmentation}
+
+XXXX On détaille quelque part ? Renvoi à user.org ? Trop technique ici. XXXX
 
 \question{What are the major causes explaining the reads have not been
   analyzed? Also have a look at the average read lengths of these causes. Do
@@ -63,13 +69,18 @@ algorithm: \href{http://www.vidjil.org/doc/algo.html\#unsegmentation}{vidjil.org
 
 \section{Viewing and filtering clones}
 
-\subsection{Looking at a clone}
+
+\subsection{Looking to a clone}
+
+Each RepSeq algorithm has its own definition of what a clone is (or, more precisely
+a clonotype), how to output its sequence and how to assign a V(D)J designation.
+>>>>>>> dev
   
 In this file, the most abundant clone
 is \texttt{IGHV3-9 7/CCCGGA/17 J6*02}.
 
 \question{Select this clone, either by clicking on the list or on the grid.
-  How many reads do this clone represent? (see the bottom part to the right)}
+  How many reads do this clone represent? (see again the bottom part to the right)}
 
 There are several options to display the V(D)J designation.
 
@@ -273,7 +284,7 @@ sequences are, and potentially you could cluster them if you'd like or tag them.
 
 \bigskip
 
-\textit{This part is specific to samples analyzed with the Vidjil algorithm.}
+\textit{This part is specific to samples analyzed with the embedded algorithm of the Vidjil platform.}
 
 Some clones may be less trustable than other ones\dots{} Let's see how to spot them.
 \question{In the clone list, search clones with an orange warning at the

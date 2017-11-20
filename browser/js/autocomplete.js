@@ -217,6 +217,9 @@ VidjilAutoComplete.prototype = {
                 data: {
                     keys: JSON.stringify(uncached)
                 },
+                xhrFields: {
+                    withCredentials: true
+                },
                 timeout: 5000,
                 crossDomain: true,
                 url: self.dataUrls[at],
