@@ -1,11 +1,9 @@
 \documentclass[11pt]{article}
-
 \usepackage[frenchb]{babel}
 \input{common-headers}
 
 \title{Maîtriser l'application web Vidjil:\\ Analyser et interagir avec les
 clones}
-
 \begin{document}
 \maketitle
 
@@ -20,14 +18,34 @@ quel autre algorithme.}
 
 \question{Connectez-vous au serveur public (\url{https://app.vidjil.org}), soit avec votre compte
 ou avec le compte de démonstration (\texttt{demo@vidjil.org} / \texttt{demo}),
-séléectionnez le patient \textit{Demo LIL-L3} patient, et cliquez sur le lien en bas à droite
+séléctionnez le patient \textit{Demo LIL-L3 (tutorial)} patient, et cliquez sur le lien en bas à droite
 ``see results: multi''.
 L'application web Vidjil s'ouvre.
 }
-\section{Évaluation de la qualité d'un run et de l'analyse}
 
-\question{Connect to the public server (\url{https://app.vidjil.org}), either with your account or the demo account,
-Chargez les fichiers (Demo LIL-L3)}
+Ce patient (patient 063 de [[http://dx.doi.org/10.1016/j.leukres.2016.11.009][Étude de Lille sur la faisabilité de la MRD en utilisant le séquençage à haut débit]])
+souffrant de LAL-T contient un échantillon de diagnostic,
+avec des clones dominants en IGH et TRG,
+et quatre échantillon de suivi, incluant une rechute.
+
+\question{Dans le menu \com{setting}, essayez les différentes options de \com{sample key}.
+Les cinq échantillons peuvent être annotés par leur nom, leur date d'échantillonnage
+ou par le nombre de jours depuis le premier échantillon.
+}
+
+Dans la section suivante, nous nous focalisons sur l'échantillon de diagnostic.
+La section~\ref{sec:tracking} gère la comparaison de plusieurs échantillons.
+
+
+
+\section{Évaluation de la qualité d'un run et de l'analyse}
+L'application web Vidjil permet d'exécuter plusieurs algorithmes ``RepSeq'' (analyse de répertoires immunologiques).
+Chaque algorithme ReqSeq a sa propre définition de ce qu'est un clone
+(ou, plus précisement un clonotype),
+comment produire ses read et comment leur assigner leur désignation V(D)J.
+Le nombre de read analysées dépent de l'algorithme utilisé.
+Cet échantillon a été traité par l'algorithme de Vidjil.
+
 
 \marginpar{Le pourcentage de reads analysées peut varier de 0,01\,\% (voire
   moins, pour du
@@ -44,19 +62,45 @@ d'information sur l'échantillon en cours.
 
 \question{Quelle est la longueur moyenne des reads sur les IGH~? et sur les
   TRG~? Les lignes commençant par UNSEG donnent les raisons pour lesquelles
-  certains reads n'ont pas été analysées.}
+  certains reads n'ont pas été analysées.
+  Vous pouvez voir ce que signifient ces raisons dans la documentation en ligne de l'algorithme : 
+  \href{http://www.vidjil.org/doc/algo.html\#unsegmentation}{vidjil.org/doc/algo.html\#unsegmentation}
+  }
 \question{Quelles sont les causes majeures expliquant que les reads n'ont pas
   été analysées~? Regardez aussi la longueur moyenne des reads non
   analysées. Observez-vous quelque chose de particulier au niveau de la
   longueur moyenne de ces reads~?}
 
-\section{Filtre des clones}
+\section{Visualiser et filtrer les clones}
+
+\subsection{Visualiser les clones}
+
+Dan ce fichier, le clone le plus abondant est \texttt{IGHV3-9 7/CCCGGA/17 J6*02}.
+
+\question{Sélectionnez ce clone, en cliquant sur la liste ou la grille/
+Combien de read ce clone représente-t-il ?
+(voir la section du bas, à droite)
+}
+
+Il y a plusieurs manières d'afficher la désignation V(D)J.
+
+\question{Dans le menu textit{settings}, sélèctionner \com{length}
+pour afficher les zones N en fonction de leur taille.
+Revenez à l'état par défaut grâce au réglage \com{sequence (when short)} pour afficher les N en entiers sur les séquences courtes.}
+
+\question{Essayez aussi les options \com{alleles in clone names} : 
+en sélectionnant \com{always}, le gene V du clone est affiché comme \com{IGHV3-9*01}.
+Revenez à l'état par défaut avec \com{when not *01} pour avoir des désignations V(D)J plus condensées.}
+
+
+\subsection{Montrer plus de clones}
 
 Par défaut, Vidjil affiche les 50 clones les plus abondants \textit{(top 50)}
 pour chaque échantillon ou point de MRD. Avec 5 points de suivi, nous
 pouvons donc avoir entre 50 et 250 clones observables, tout dépend si le
-\textit{top 50} reste le même pour tous les points ou s'il varie. Ce nombre
-minimum peut être augmenté en allant dans le menu \com{filter} et en
+\textit{top 50} reste le même pour tous les points ou s'il varie.
+Ce nombre
+minimum peut être augmenté jusqu'à 100 en allant dans le menu \com{filter} et en
 poussant vers la droite le curseur.
 
 \question{  Observez comment change le pourcentage des petits clones IGH («~smaller
@@ -65,14 +109,16 @@ poussant vers la droite le curseur.
  Les «~smaller clones~» correspondent aux clones qui n'ont
   pas été complètement analysés car ils ne sont jamais parmi les plus abondants.
 
-\bigskip
 
-Considérez le premier  clone réel de la liste. C'est le plus abondant. Il
-serait intéressant de pouvoir le taguer pour s'en souvenir plus tard.
+\subsection{Taguer et filtrer les clones}
 
-\question{Cliquez sur l'étoile à côté de ce clone et choisissez une couleur de
-  tag. Observez comment cette couleur s'applique sur les autres
-  visualisations.}
+Considérons les clones les plus abondants de la liste :
+\texttt{IGHV3-9 7/CCCGGA/17 J6*02} and  \texttt{TRGV10 13//5 JP1}.
+Il serait intéressant de pouvoir le taguer pour s'en souvenir plus tard.
+
+\question{Cliquez sur l'étoile à côté de ces clones et choisissez des couleurs de tag,
+telles que \texttt{clone 1} ou \texttt{clone 2}. Observez comment cette couleur s'applique sur les autres
+visualisations.}
 
 Lorsque des clones ont été tagués, il est ensuite possible de
 les filtrer selon les couleurs choisies.
@@ -189,7 +235,15 @@ vous pouvez toujours retirer certains sous-clones du regroupement par la croix
 à gauche de la liste.
 
 \question{Juste pour l'exercice, retirez le dernier clone de la liste du
-  segmenteur.}
+segmenteur.}
+
+\question{Ouvrez le menu \com{cluster}, et choisissez l'optin \com{cluster by V/5}.
+Que s'est-il passé ? 
+Il y a maintenant dex clones avec TRGV2. Pourquoi ?}
+
+\question{Dans le menu \com{cluster}, sélectionnez \com{revert to previous cluster} pour annuler le groupe.}
+
+
 
 \subsection{Autres paramètres et analyses des clones}
 
@@ -224,7 +278,8 @@ classer les clones selon leur degré de similitude (distance).
 
 \question{Dans le menu \com{plot}, sélectionnez maintenant l'option \com{plot by
   similarity} ou \com{plot by similarity and by locus} pour afficher les
-  clones d'un locus donné selon leur degré de similitude. Ainsi, les
+  clones d'un locus donné selon leur degré de similitude
+  (attention : cela peutrendre un peu de temps). Ainsi, les
   clones présentant une très forte homologie sont à proximité les uns
   des autres. Il est théoriquement impossible d'avoir ce
   type de représentation en deux dimensions. Il est donc possible que deux
@@ -241,14 +296,17 @@ exergue certains paramètres.
 \question{%
   Choisissez d'abord dans le menu \com{plot} de la grille la visualisation \com{plot by
   similarity and by locus}. Puis, dans le menu \com{color by},
-  sélectionnez \com{N}. %
+  sélectionnez \com{N} (dans la fenêtre en haut de l'écran). %
   \marginpar{Nos excuses aux daltoniens, puisque les couleurs ne sont pas
     encore bien différentiables.} Les clones qui sont proches sur la grille avec
   une même couleur sont probablement similaires.}
 
+\question{Choisissez maintenant le réglage \com{CDR3 length distribution} puis colorez par \com{productivity}.
+Vous pouvez observer que les carrés de couleurs dans la partie information (en haut à gauche) changent pour montrer la légende des couleurs.}
+
 En utilisant ces différentes fonctionnalités, vous devez être capables
 d'évaluer le degré d'homologie de vos séquences et potentiellement de
-regrouper des clones si vous le souhaitez.
+regrouper des clones ou les colorer si vous le souhaitez.
 
 \bigskip
 
@@ -303,12 +361,15 @@ locus, cela cache les autres locus.
 Vous pouvez aussi changer le locus actuel en cliquant sur le nom d'un
 autre locus à droite de la grille.
 
-\subsection{Suivi temporel des clones sur plusieurs échantillons}
+\section{Suivi temporel des clones sur plusieurs échantillons}
+\label{sec:tracking}
+
 
 Le graphique en haut à droite, le graphique temporel, montre l'évolution des
 clones les plus abondants (figurant au moins dans le \textit{top 10}) de chacun des
 échantillons (ou points) de l'analyse.
 Notons que par souci de lisibilité seules 50 courbes sont affichées au plus.
+\marginpar{Lorsque un seul échantillon est présent, le graphique est remplacé par une seconde grille.}
 
 \question{%
   Passez la souris sur les bulles dans la grille ou au niveau des lignes
@@ -346,8 +407,9 @@ sont affichés dans le reste de l'application.
 
 \question{%
   Sélectionnez un échantillon, classez la liste par taille (\com{size}) et passez la
-  souris sur la liste du top 50 (50 clones les plus abondants). Regardez bien
-  le graphique temporel, que se passe-t-il au bout d'un moment ?}
+  souris sur la liste du top 50 (50 clones les plus abondants).
+  Que se passe-t-il dans le graphique
+  lorsque vous passez la souris au dessus de clones qui ne sont pas dans le top 50 ?}
 
 \bigskip
 
