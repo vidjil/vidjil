@@ -1626,6 +1626,28 @@ span.warningReads {
   background: #dff0d8;
   border-color: #cccccc;
 }
+.tip_img {
+  margin: 20px auto;
+  display: block;
+  border: grey solid 1px;
+}
+.key {
+  display: inline-block;
+  background: #ffffffdd;
+  padding: 2px 4px;
+  border: 1px solid black;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  font-size: 80%;
+  font-weight: bold;
+  color: black;
+}
+.element {
+  display: inline-block;
+  background: #ffffffdd;
+  padding: 2px 4px;
+}
 .right {
   float: right;
   clear: both;

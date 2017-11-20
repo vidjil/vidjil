@@ -1628,7 +1628,7 @@ span.warningReads {
   background: #dff0d8;
   border-color: #333333;
 }
-#tip_img {
+.tip_img {
   margin: 20px auto;
   display: block;
   border: grey solid 1px;
