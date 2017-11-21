@@ -60,14 +60,12 @@ QUnit.test("plot : modifyURL",function (assert) { with (windowMock) {
     sp.init();
     var url= new Url(m, window);
     url.init();
-    // sp.changeSplitMethod("n", "Size", "bar");
-    sp.changeXaxis()
-    sp.changeYaxis()
+    sp.changeSplitMethod("nLength", "size", "grid");
     m.update()
      assert.deepEqual(url.url_dict,{
-        "plot": "v,j,grid"
+        "plot": "nLength,size,grid"
         }, "test plot url_dict")
-    assert.equal(window.location.search.toString(),"?plot=v,j,grid", "test if plot is in url");
+    assert.equal(window.location.search.toString(),"?plot=nLength,size,grid", "test if plot is in url");
 
 }});
 
