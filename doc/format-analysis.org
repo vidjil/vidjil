@@ -69,7 +69,7 @@ or =clusters=, to further cluster some clones, see below).
                 "id": "clone-001",
                 "sequence": "CTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGAAACTCTTTGGCAGTGGAAC",
 		"reads" : [ 243241 ],
-                "_average_read_length": 119.3,
+                "_average_read_length": [ 119.3 ],
                 "germline": "TRG",
                 "top": 1,
                 "seg":
