@@ -279,7 +279,7 @@ function FloatAxis (model, reverse, can_undefined) {
 FloatAxis.prototype = Object.create(NumericalAxis.prototype);
 
     FloatAxis.prototype.getLabelText = function(value) {
-        return parseFloat(value).toFixed( nice_number_digits(this.min, this.max, 2) )
+        return parseFloat(value).toFixed(nice_number_digits(this.max - this.min, 2))
     }
 
     FloatAxis.prototype.insert_values = function() {
