@@ -393,6 +393,7 @@ Database.prototype = {
             } else {
                 this.call(res.redirect, res.args)
             }
+            return res;
         }
         
         //the json result look like a .vidjil file so we load it
@@ -403,7 +404,6 @@ Database.prototype = {
             this.last_file = args
             this.close()
             this.m.db_key = args
-            return;
         }
         
         //the json result look like a .analysis file so we load it
