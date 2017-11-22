@@ -404,6 +404,7 @@ Database.prototype = {
             this.last_file = args
             this.close()
             this.m.db_key = args
+            return;
         }
         
         //the json result look like a .analysis file so we load it
