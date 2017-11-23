@@ -787,8 +787,7 @@ Report.prototype = {
 
 
         var link = "mailto:support@vidjil.org" +
-            "?cc=" +
-            "&subject=" + escape("[Vidjil] Question") +
+            "?subject=" + escape("[Vidjil] Question") +
             "&body=" + escape("Dear Vidjil team," +
                               "\n\nI have a question on the results I obtain on the following sample: " + window.location.href +
                               "\n\n" + clones)
