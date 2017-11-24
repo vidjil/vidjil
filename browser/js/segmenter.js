@@ -925,15 +925,18 @@ Segment.prototype = {
         var result = "";
 
         for (var i = 0; i < selected.length; i++) {
-            if (typeof this.m.clone(selected[i])!="undefined" && typeof (this.m.clone(selected[i]).sequence) != 'undefined' && this.m.clone(selected[i]).sequence !== 0 && this.m.clone(selected[i]).isSelected()){
-            result += "> " + this.m.clone(selected[i]).getName() + " // " + this.m.clone(selected[i]).getStrSize() + "\n";
-            result += this.m.clone(selected[i]).sequence + "\n";
+            if (typeof this.sequence[selected[i]] !== "undefined" &&
+                typeof this.sequence[selected[i]].seq !== "undefined") {
+                var seq = this.sequence[selected[i]];
+                if (seq.is_clone) {
+                    result +="> " + this.m.clone(selected[i]).getName() + " // " + this.m.clone(selected[i]).getStrSize() + "\n";
+                } else {
+                    result += "> " + selected[i];
+                }
+                result += this.sequence[selected[i]].seq.join('') + "\n";
             }
-            else if(typeof this.germline[this.sequence[selected[i]].locus]!="undefined"){
-                result+= ">" + selected[i] + "\n" + this.germline[this.sequence[selected[i]].locus][selected[i]] + "\n";
         }
-    }
-        return result
+        return result;
     },
 
 
