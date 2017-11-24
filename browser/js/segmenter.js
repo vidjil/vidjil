@@ -1194,6 +1194,7 @@ function genSeq(id, locus, model, segmenter) {
     this.pos = [];     
     this.locus = locus
     this.use_marge = true; 
+    this.is_clone = false;
     }
 
 genSeq.prototype= {
@@ -1338,6 +1339,7 @@ function Sequence(id, model, segmenter) {
     this.seq = [];
     this.pos = [];
     this.use_marge = true;
+    this.is_clone = true;
     this.locus = this.m.clone(id).germline;
 }
 
