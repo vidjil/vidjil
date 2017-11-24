@@ -2282,6 +2282,7 @@ changeAlleleNotation: function(alleleNotation) {
         for (var i=0; i < list.length; i++) {
             this.clone(list[i]).isFiltered = true
         }
+        this.unselectAll();
         $("#filter_input").val("(focus on some clones)")
         this.update()
     },
