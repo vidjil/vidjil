@@ -127,7 +127,6 @@ QUnit.test("segt", function (assert) {
     assert.deepEqual(segment.sequence[3].get_positionned_highlight("test_feature",""),{"color": "", "css": "highlight_seq", "seq": "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 94, "stop": 124, "tooltip": ""}, "test feature value")
     assert.equal(m.clone(3).getSegLength('test_feature'),31, "feature length");
     m.unselectAll();
-    segment.updateElem([])
     assert.equal(segment.toFasta(), "");
     m.select(3);
     assert.equal(segment.toFasta(), "> test4 // 2.500%\nGGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA\n", "fasta seq ")
