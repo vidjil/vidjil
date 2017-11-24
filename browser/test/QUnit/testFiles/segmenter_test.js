@@ -100,8 +100,8 @@ QUnit.test("segt", function (assert) {
     m.initClones();
     var segment = new Segment("segment",m)
     segment.init();
-    segment.addToSegmenter(3);
-    segment.addToSegmenter(1);
+    m.select(3);
+    m.select(1);
     assert.equal(m.clone(3).getSequenceName(), "test4", "clone");
     assert.equal(m.clone(3).getSequence(),"GGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA","sequence")
     m.clone(3).addSegFeatureFromSeq('test_feature','CACCCAGGAGGTGGAGCTGGATATTGAGACT');
@@ -128,6 +128,7 @@ QUnit.test("segt", function (assert) {
     assert.equal(m.clone(3).getSegLength('test_feature'),31, "feature length");
     m.unselectAll();
     segment.updateElem([])
+    assert.equal(segment.toFasta(), "");
     m.select(3);
     assert.equal(segment.toFasta(), "> test4 // 2.500%\nGGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA\n", "fasta seq ")
     assert.ok(segment.isDNA('CACCCAGGAGGTGGAGCTGGATATTGAGACT'), "test dna")
