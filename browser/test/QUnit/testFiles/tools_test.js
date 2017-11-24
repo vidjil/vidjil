@@ -54,6 +54,12 @@ QUnit.test("test rounding functions", function(assert) {
     }
 );
 
+QUnit.test("prepend_path_if_not_web", function(assert) {
+    assert.equal(prepend_path_if_not_web('toto', 'tata/'), 'tata/toto');
+    assert.equal(prepend_path_if_not_web('toto', 'http://toto'), 'http://toto');
+    assert.equal(prepend_path_if_not_web('toto', 'ftp://toto'), 'ftp://toto');
+});
+
 QUnit.test("processCloneDBContents", function(assert) {
     var emptyResult = [];
     assert.deepEqual(processCloneDBContents(emptyResult), {'original': [],
