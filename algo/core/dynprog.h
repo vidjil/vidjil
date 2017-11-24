@@ -74,8 +74,8 @@ const Cost Levenshtein = Cost(0, -1, -1);
 const Cost DNA = Cost(+5, -4, -10);
 
 // Vidjil costs
-const Cost VDJ = Cost(+4, -6, -10, -1, -2);
-const Cost VDJaffine = Cost(+4, -6, -15, -1, -1, -2);
+const Cost VDJ = Cost(+4, -6, -10, -1);
+const Cost VDJaffine = Cost(+4, -6, -15, -1, -1, MINUS_INF);
 
 const Cost IdentityDirty = Cost(+1000, -1, -1); // pour avoir une estimation de longueur de l'alignement, utilise dans compare-all
 const Cost Cluster = Cost(+1, -4, -4, 0, 0);
