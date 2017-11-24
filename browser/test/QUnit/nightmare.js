@@ -8,7 +8,9 @@ var uri = 'file://' + curdir;
 nightmare
     .on('console', function(){ console.log(arguments[1]) })
     .goto(uri+"/test_Qunit.html")
-    .wait('#qunit-testresult-display')
+    .wait(function() {
+        return $('.qunit-fail').length > 0 || $('.qunit-pass').length > 0;
+        })
     .evaluate(function () {
         return tap_output;
     })
