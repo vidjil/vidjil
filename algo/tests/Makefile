@@ -100,7 +100,7 @@ curated-vdj.zip: $(SHOULD_VDJ_ARCHIVE)
 	$(eval tmpdir := $(shell mktemp -d))
 	mkdir $(tmpdir)/curated-vdj
 	cp --preserve $(SHOULD_VDJ_ARCHIVE) $(tmpdir)/curated-vdj
-	sed -r 's/\s*BUG//' -i $(tmpdir)/curated-vdj/*
+	sed -r 's/\s*BUG[A-Z-]+//' -i $(tmpdir)/curated-vdj/*
 	for file in $(tmpdir)/curated-vdj/*; do mv $$file `echo $$file | sed 's/should/curated/'`; done
 	cwd=`pwd` && cd $(tmpdir) && zip $$cwd/$@ curated-vdj/*
 	rm -rf $(tmpdir)

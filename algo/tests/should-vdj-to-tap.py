@@ -60,7 +60,10 @@ PROG_TAG = '.1'
 if args.after_two:
     PROG_TAG = '.2'
 
-SPECIAL_KEYWORDS = ['TODO', 'BUG']
+SPECIAL_KEYWORDS = ['TODO']
+
+def special_keywords(after_two):
+    return SPECIAL_KEYWORDS + ['BUG' + ('-LOCUS' if after_two else '')]
 
 global_failed = 0
 global_stats = defaultdict(int)
@@ -86,7 +89,7 @@ def should_pattern_to_regex(p):
         if term.startswith('#'):
             return []
 
-        if term in SPECIAL_KEYWORDS:
+        if term in special_keywords(args.after_two):
             return []
 
         # Ambiguous/alternate pattern
@@ -243,7 +246,7 @@ def should_result_to_tap(should_pattern, result, tap_id):
     special = False
     warn = False
 
-    for kw in SPECIAL_KEYWORDS:
+    for kw in special_keywords(args.after_two):
         if kw in should_pattern:
             tap += '# %s ' % kw
             special = True
