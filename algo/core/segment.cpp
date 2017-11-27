@@ -902,6 +902,14 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
 #endif
 
     }
+
+  if (onlyBottomTriangle && (rep.sequence(box->ref_nb).size() - best_best_j) > BOTTOM_TRIANGLE_SHIFT) {
+    // Too many deletions, let's do a full DP
+    align_against_collection(read, rep, forbidden_rep_id, reverse_ref, reverse_both,
+                             local, box, segment_cost, false);
+    return;
+  }
+
     sort(score_r.begin(),score_r.end(),comp_pair);
 
   box->ref = rep.sequence(box->ref_nb);

@@ -381,6 +381,7 @@ int DynProg::compute(bool onlyBottomTriangle, int onlyBottomTriangleShift)
       
     }
 
+
   // End. Find best_i and best_j, put FIN keywords where the backtrack should stop
   
   if (mode == Local || mode == LocalEndWithSomeDeletions)
