@@ -10,8 +10,6 @@ OTHER_SRC=$(wildcard unit-tests/*.cpp)
 LIB=../core/vidjil.a ../lib/lib.a
 SHOULD=$(wildcard should-get-tests/*.should-get) $(wildcard bugs/*.should-get)
 SHOULD_LOG=$(SHOULD:.should-get=.tap)
-SHOULD_VDJ_EXPECTED_FAILS=--expected-fails 82
-SHOULD_LOCUS_EXPECTED_FAILS=--expected-fails 2
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
 SHOULD_VDJ_VDJ=$(SHOULD_VDJ:.should-vdj.fa=.1.vdj)
 SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
@@ -68,7 +66,7 @@ shouldvdj_if_python:
 	fi
 
 shouldlocus: vidjil
-	$(SHOULD_VDJ_TO_TAP) -2q -r $(SHOULD_LOCUS_EXPECTED_FAILS) $(SHOULD_VDJ) $(SHOULD_LOCUS)
+	$(SHOULD_VDJ_TO_TAP) -2q -r $(SHOULD_VDJ) $(SHOULD_LOCUS)
 
 shouldlocus_and_vdj: vidjil
 	@echo "*** Launching .should-vdj-fa tests..."
@@ -77,19 +75,19 @@ shouldlocus_and_vdj: vidjil
 	@echo "*** All .should-vdj.fa tests passed"
 
 shouldvdj_no_relaunch:
-	$(SHOULD_VDJ_TO_TAP) $(SHOULD_VDJ_EXPECTED_FAILS) $(SHOULD_VDJ_VDJ)
+	$(SHOULD_VDJ_TO_TAP) $(SHOULD_VDJ_VDJ)
 
 shouldvdj:
-	$(SHOULD_VDJ_TO_TAP) $(SHOULD_VDJ_EXPECTED_FAILS) $(SHOULD_VDJ)
+	$(SHOULD_VDJ_TO_TAP) $(SHOULD_VDJ)
 
 shouldvdj_with_rc:
-	$(SHOULD_VDJ_TO_TAP) $(SHOULD_VDJ_EXPECTED_FAILS) -r $(SHOULD_VDJ)
+	$(SHOULD_VDJ_TO_TAP) -r $(SHOULD_VDJ)
 
 shouldvdj_with_rc_merged:
 	cat $(SHOULD_VDJ) > should-vdj-tests/should-vdj.merged.fa
 	$(SHOULD_VDJ_TO_TAP) -r should-vdj-tests/should-vdj.merged.fa
 
-# When the global test suite is passing, individual failed tests (counted in SHOULD_*_EXPECTED_FAILS)
+# When the global test suite is passing, individual failed tests (tagged with BUG or BUG-LOCUS in the *.should-vdj.fa files)
 # can be marked as 'TODO' to make continuous integration happy
 mark_failed_tests_as_todo:
 	-sed -e "s/^\(not ok [0-9]*\) /\1 # TODO ##/" -i".bak" */*.tap
@@ -100,7 +98,7 @@ curated-vdj.zip: $(SHOULD_VDJ_ARCHIVE)
 	$(eval tmpdir := $(shell mktemp -d))
 	mkdir $(tmpdir)/curated-vdj
 	cp --preserve $(SHOULD_VDJ_ARCHIVE) $(tmpdir)/curated-vdj
-	sed -r 's/\s*BUG//' -i $(tmpdir)/curated-vdj/*
+	sed -r 's/\s*BUG[A-Z-]+//' -i $(tmpdir)/curated-vdj/*
 	for file in $(tmpdir)/curated-vdj/*; do mv $$file `echo $$file | sed 's/should/curated/'`; done
 	cwd=`pwd` && cd $(tmpdir) && zip $$cwd/$@ curated-vdj/*
 	rm -rf $(tmpdir)
