@@ -390,6 +390,6 @@ class FineSegmenter : public Segmenter
 
 void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id,
                               bool reverse_ref, bool reverse_both, bool local,
-                              AlignBox *box, Cost segment_cost);
+                              AlignBox *box, Cost segment_cost, bool banded_dp=true);
 
 #endif
