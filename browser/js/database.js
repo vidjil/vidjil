@@ -216,6 +216,13 @@ Database.prototype = {
         try {
             var event = window.event || arguments.callee.caller.arguments[0] 
             event.stopPropagation();
+            var target = event.target
+            if (target.getAttribute("disabled")){
+                return;
+            } else {
+                target.setAttribute("disabled", "disabled")
+                setTimeout(function(){target.removeAttribute("disabled")}, 1000)
+            }
         }
         catch(err)
         {}
