@@ -42,7 +42,6 @@ parser.add_argument('--ignore_cdr3', '-3', action='store_true', help='ignore CDR
 parser.add_argument('--after-two', '-2', action='store_true', help='compare only the right part of the pattern after two underscores (locus code)')
 parser.add_argument('--revcomp', '-r', action='store_true', help='duplicate the tests on reverse-complemented files')
 parser.add_argument('--directory', '-d', default='../..', help='base directory where Vidjil is. This value is used by the default -p and -q values (%(default)s)')
-parser.add_argument('--expected-fails', '-e', type=int, default=0, help='number of expected non-TODO failed tests -- do not exit with error for this number')
 
 parser.add_argument('--verbose', '-v', action='store_true')
 
@@ -67,9 +66,9 @@ def special_keywords(after_two):
 
 global_failed = 0
 global_stats = defaultdict(int)
+global_stats_bug = defaultdict(int)
 global_stats_failed = defaultdict(int)
 global_stats_todo = defaultdict(int)
-
 
 def should_pattern_to_regex(p):
     '''
@@ -236,6 +235,9 @@ def should_result_to_tap(should_pattern, result, tap_id):
             globals()['global_stats_todo'][locus] += 1
         else:
             globals()['global_failed'] += 1
+    if (args.after_two and 'BUG-LOCUS' in should_pattern)\
+       or (not args.after_two and 'BUG' in should_pattern):
+        globals()['global_stats_bug'][locus] += 1
 
         tap += 'not '
 
@@ -332,17 +334,18 @@ if __name__ == '__main__':
         print
 
     print "=== Summary, should-vdj tests ===" + (' (only locus)' if args.after_two else '')
-    print "            tested     passed     failed (todo)"
+    print "            tested     passed     bug     failed (todo)"
     for locus in sorted(global_stats):
-        print "    %-5s     %4d       %4d       %4d   %4s" % (locus, global_stats[locus], global_stats[locus] - global_stats_failed[locus], global_stats_failed[locus],
+        print "    %-5s     %4d       %4d     %4d       %4d   %4s" % (locus, global_stats[locus], global_stats[locus] - global_stats_failed[locus], global_stats_bug[locus], global_stats_failed[locus],
                                                               ("(%d)" % global_stats_todo[locus] if global_stats_todo[locus] else ''))
-    print "    =====     %4d       %4d       %4d   %4s" % (sum(global_stats.values()), sum(global_stats.values()) - sum(global_stats_failed.values()), sum(global_stats_failed.values()),
+    print "    =====     %4d       %4d     %4d       %4d   %4s" % (sum(global_stats.values()), sum(global_stats.values()) - sum(global_stats_failed.values()), sum(global_stats_bug.values()), sum(global_stats_failed.values()),
                                                            "(%d)" % sum(global_stats_todo.values()))
     print
 
-    if args.revcomp:
-        args.expected_fails *= 2
-
-    if not global_failed == args.expected_fails:
-        print "! We were expecting %s non-TODO failed tests, but there are %s such failures." % (args.expected_fails, global_failed)
+    global_bug = sum(global_stats_bug.values())
+    if global_bug < global_failed:
+        print "! We were expecting %s failed tests, but there are %s such failures." % (global_bug, global_failed)
         sys.exit(1)
+    if global_bug > global_failed:
+        print "! There were less failed sequences that expected. Please update the files accordingly!"
+        sys.exit(2)
