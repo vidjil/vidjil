@@ -20,16 +20,17 @@ CTTTGACTACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGTAAG
 
 
 #This sequence may be problematic due to a long deletion ( > 100 nt)
->IGHV3-7*01 111/CCAGGACC/TTGTAGTAG/GAA/2 IGHJ4*01
+>IGHV3-7*01 (112/CCAGGACC/6, 112/CC/0) IGHD2-2 (16/GAATACCTAGTACC/11, 16/GAATACCTAGT, 8)  IGHJ4*01
 CTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCAGGATTCTCCTTTAGTAGCTTTGACATGAGCTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGAGTGGCACATATCTGGAATGATGGAAGTCAGAAATGCTCTGCGG
 CCAGGACCTTGTAGTAGGAA
 TACCTAGTACCACTGGGGCAAGGAAACCCTGGTCACCGTCTCCTCAGGT
 
-#>IGHV3-7*01     CTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTTAGTAGCTATTGGATGAGCTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTGGCCAACATAAAGCAAGATGGAAGTGAGAAATACTATGTGGactctgtgaagggccgattcaccatctccagagacaacgccaagaactcactgtatctgcaaatgaacagcctgagagccgaggacacggctgtgtattactgtgcgagaga
-#                ||||||||||||||||||||||||||||||||||*||||||*||||||||||||*|***|||||||||||||||||||||||||||||||||||||||||*|||||*|**||***|*|*|||||||||*||||||*||*||*||
-#>Clone_complet  ctggggggtccctgagactctcctgtgcagcctcaggattctcctttagtagctttgacatgagctgggtccgccaggctccagggaaggggctggagtgagtggcacatatctggaaTGATGGAAGTCAGAAATGCTCTGCGG
-#                                                         *||||*|||**|****|||||**||||||||||||||||||||||||||||||||||||*||*|*|**||***|*||
-#>IGHV3-72*02                                             ACCTTCAGTGACCACTACATGGACTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTTGGCCGTACTAGAAAcaaagctaacagctacaccacagaatacgccgcgtctgtgaaaggcagattcaccatctcaagagatgattcaaagaactcactgtat
+#>IGHV3-7*01     AGCTATTGGATGAGCTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTGGCCAACATAAAGCAAGATGGAAGTGAGAAATACTATGTGGactctgt...        actactttg-actactggggccaaggaaccctggtcaccgtctcctcag IGHJ4*01
+#                ||||*|***|||||||||||||||||||||||||||||||||||||||||*|||||*|**||***|*|*|||||||||*||||||*||*||*||                    |||*|*| ||*||||||||||||||
+#>Clone_complet  agctttgacatgagctgggtccgccaggctccagggaaggggctggagtgagtggcacatatctggaaTGATGGAAGTCAGAAATGCTCTGCGGCCAGGACCTTGTAGTAGGAATACCTAGTACCACTGGGGCAAGGAAACCCTGGTCACCGTCTCCTCAGGT
+#                **|****|||||**||||||||||||||||||||||||||||||||||||*||*|*|**||***|*||                            ||||**|||||||||
+#>IGHV3-72*02    GACCACTACATGGACTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTTGGCCGTACTAGAAAcaaagctaacag...             ||||**|||||||||
+#>IGHD2-2*01                                                                                                     aggatattgtagtagtaccagctgctatgcc
 
 #>del_right_v3-7 (len 110)
 #
