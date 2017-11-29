@@ -375,6 +375,9 @@ void testBestLengthShifts() {
     }
 
   }
+
+  pair<int, int> result = WindowExtractor::get_best_length_shifts(20, 30, 9, 5);
+  TAP_TEST(result == make_pair(15, 0), TEST_EXTRACTOR_LENGTH_SHIFT, "");
 }
 
 void testProbability(IndexTypes index) {
