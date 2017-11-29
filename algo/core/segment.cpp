@@ -222,7 +222,7 @@ string Segmenter::getJunction(int l, int shift) const {
                                                                         l, central_pos,
                                                                         DEFAULT_WINDOW_SHIFT);
   // Yield UNSEG_TOO_SHORT_FOR_WINDOW into windowExtractor
-  if (length_shift.first < MINIMAL_WINDOW_LENGTH)
+  if (length_shift.first < MINIMAL_WINDOW_LENGTH && length_shift.first < l)
     return "" ;
 
   // Window succesfully extracted
