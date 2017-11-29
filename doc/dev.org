@@ -673,3 +673,143 @@ make functional
      docker-compose up --build
    #+END_SRC
 
+   $ docker-compose up --build
+
+* Migrating Data
+** Database
+   The easiest way to perform a database migration is to first extract the
+   data with the following command:
+
+   $ mysqldump -u <user> -p <db> -c --no-create-info > <file>
+
+   An important element to note here is the --no-create-info we add this
+   parameter because web2py needs to be allowed to create tables itself
+   because it keeps track of database migrations and errors will occur if
+   tables exist which it considers it needs to create.
+
+   In order to import the data into an installation you first need to ensure
+   the tables have been created by Web2py this can be achieved by simply
+   accessing a non-static page.
+
+   /!\ If the database has been initialised from the interface you will
+   likely encounter primary key collisions or duplicated data, so it is best
+   to skip the initialisation altogether.
+
+   Once the tables have been created, the data can be imported as follows:
+
+   $ mysql -u <user> -p <db> < <file>
+
+   Please note that with this method you should have at least one admin user
+   that is accessible in the imported data. Since the initialisation is being
+   skipped, you will not have the usual admin account present.
+   It is also possible to create a user directly from the database although
+   this is not the recommended course of action.
+
+** Files
+   Files can simply be copied over to the new installation, their filenames
+   are stored in the database and should therefore be accessible as long as
+   they are in the correct directories.
+
+** Filtering data
+   When extracting data for a given user, the whole database should not be
+   copied over.
+   There are two courses of action:
+     - create a copy of the existing database and remove the users that are
+       irrelevant. The cascading delete should remove any unwanted data
+       barring a few exceptions (notably fused_file, groups and sample_set_membership)
+
+     - export the relevant data directly from the database. This method
+       requires multiple queries which will not be detailed here.
+
+  Once the database has been correctly extracted, a list of files can be
+  obtained from sequence_file, fused_file, results_file and analysis_file
+  with the following query:
+
+  #+BEGIN_SRC sql
+    SELECT <filename field>
+    FROM <table name>
+    INTO OUTFILE 'filepath'
+    FIELDS TERMINATED BY ','
+    ENCLOSED BY ''
+    LINES TERMINATED BY '\n'
+  #+END_SRC
+
+  Note: We are managing filenames here which should not contain any
+  character such as quotes or commas so we can afford to refrain from
+  enclosing the data with quotes.
+
+  This query will output a csv file containing a filename on each line.
+  Copying the files is now just a matter of running the following script:
+
+** Exporting sample sets
+   The migrator script allows the export and import of data, whether it be a
+   single patient/run/set or a list of them, or even all the sample sets
+   associated to a group.
+
+   #+BEGIN_EXAMPLE
+    usage: migrator.py [-h] [-f FILENAME] [--debug] {export,import} ...
+
+    Export and import data
+
+    positional arguments:
+    {export,import}  Select operation mode
+      export         Export data from the DB into a JSON file
+      import         Import data from JSON into the DB
+
+    optional arguments:
+      -h, --help       show this help message and exit
+      -f FILENAME      Select the file to be read or written to
+      --debug          Output debug information
+   #+END_EXAMPLE
+
+   Export:
+   #+BEGIN_EXAMPLE
+    usage: migrator.py export [-h] {sample_set,group} ...
+
+    positional arguments:
+      {sample_set,group}  Select data selection method
+        sample_set        Export data by sample-set ids
+        group             Extract data by groupid
+
+    optional arguments:
+      -h, --help          show this help message and exit
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+    usage: migrator.py export sample_set [-h] {patient,run,generic} ID [ID
+    ...]
+
+    positional arguments:
+      {patient,run,generic}
+                              Type of sample
+        ID                    Ids of sample sets to be extracted
+
+      optional arguments:
+        -h, --help            show this help message and exit
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+    usage: migrator.py export group [-h] groupid
+
+    positional arguments:
+      groupid     The long ID of the group
+
+    optional arguments:
+      -h, --help  show this help message and exit
+   #+END_EXAMPLE
+
+   Import:
+   #+BEGIN_EXAMPLE
+    usage: migrator.py import [-h] [--dry-run] [--config CONFIG] groupid
+
+    positional arguments:
+      groupid     The long ID of the group
+
+    optional arguments:
+      -h, --help  show this help message and exit
+      --dry-run   With a dry run, the data will not be saved to the database
+      --config CONFIG  Select the config mapping file
+   #+END_EXAMPLE
+  #+BEGIN_SRC sh
+    sh copy_files <file source> <file destination> <input file>
+  #+END_SRC

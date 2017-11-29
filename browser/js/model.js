@@ -173,11 +173,11 @@ Model.prototype = {
         this.norm = false;
         this.normalization = { 
             "method" : "constant",
-            "A" : [],
-            "B" : 0,
+            "size_list" : [],
+            "expected_size" : 0,
             "id" : -1
         };
-
+        this.normalization_list=[]
         /*Variables pour DBSCAN*/
         this.eps = 0;
         this.nbr = 0;
@@ -613,6 +613,7 @@ changeAlleleNotation: function(alleleNotation) {
     
     /**
      * normalize a size to match the normalization done on a given time/sample
+     * normalization is done when update is 
      * @param {float} original_size - size before normalization
      * @param {integer} time - time/sample index of the timepoint where happen the normalization
      * @return {float} normalized_size - size after normalization
@@ -620,16 +621,10 @@ changeAlleleNotation: function(alleleNotation) {
     normalize: function (original_size, time) {
         var normalized_size = 0;
         
-        if (this.normalization.A.length !== 0 && this.normalization.A[time] !== 0) {
-            var A = this.normalization.A[time] /* standard/spike at point time */
-            var B = this.normalization.B       /* standard/spike expected value */
-            
-            if (this.normalization.method=="constant" || original_size <= A){
-                normalized_size = (original_size * B) / A
-            }else{
-                normalized_size = B + ( (original_size - A) * ( (1 - B) / (1 - A) ) )
-            }
-            
+        if (this.normalization.size_list.length !== 0 && this.normalization.size_list[time] !== 0) {
+            var A = this.normalization.size_list[time] /* standard/spike at point time */
+            var B = this.normalization.expected_size       /* standard/spike expected value */
+            normalized_size = (original_size * B) / A           
         }else{
             normalized_size = original_size
         }
@@ -651,8 +646,8 @@ changeAlleleNotation: function(alleleNotation) {
             this.norm = true
             expected_size = typeof expected_size !== 'undefined' ? expected_size : this.clone(cloneID).expected;
             
-            this.normalization.A = []
-            this.normalization.B = expected_size
+            this.normalization.size_list = []
+            this.normalization.expected_size = expected_size
             this.normalization.id = cloneID
             this.normalization.type = "clone"
             
@@ -660,15 +655,19 @@ changeAlleleNotation: function(alleleNotation) {
             this.norm = false
             
             for (var i=0; i<this.samples.number; i++){
-                this.normalization.A[i] = this.clone(cloneID).getSize(i)
+                this.normalization.size_list[i] = this.clone(cloneID).getSize(i)
             }
             
             this.norm = tmp
+        norm_hash = jQuery.extend(true, {}, this.normalization)     
+        this.normalization_list.push(norm_hash)
+    
         }
     },
     
     /**
      * compute normalization factor needed to give a data an expected size
+     * first function called when normalization button is clicked
      * @param {integer} data - index of the data used as pivot for normalization
      * @param {float} expected_size - the size the should have the clone after normalization
      * */
@@ -676,16 +675,16 @@ changeAlleleNotation: function(alleleNotation) {
         expected_size = typeof expected_size !== 'undefined' ? expected_size : this.data[data].expected;
         this.norm = true
         
-        this.normalization.A = []
-        this.normalization.B = expected_size
+        this.normalization.size_list = []
+        this.normalization.expected_size = expected_size
         this.normalization.id = data
-        this.normalization.type = "data"
         this.data[data].expected = expected_size
         
         for (var i=0; i<this.samples.number; i++){
-            this.normalization.A[i] = this.data[data][i]
+            this.normalization.size_list[i] = this.data[data][i]
         }
-        this.changeNormMethod("constant")
+         norm_hash = jQuery.extend(true, {}, this.normalization)
+        this.normalization_list.push(norm_hash)
     },
     
     /**
@@ -693,8 +692,8 @@ changeAlleleNotation: function(alleleNotation) {
      * clones sizes can change depending the parameters so it's neccesary to recompute normalization from time to time
      * */
     update_normalization: function () {
-        if ((this.normalization.B !== 0 && this.normalization.type=="clone" )) {
-            this.compute_normalization( this.normalization.id, this.normalization.B);
+        if ((this.normalization.expected_size !== 0 && this.normalization.type=="clone" )) {
+            this.compute_normalization( this.normalization.id, this.normalization.expected_size);
         }
     },
     
@@ -704,7 +703,7 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     update_precision: function () {
         var min_size = 1
-        
+        var max
         for (var i=0; i<this.samples.order.length; i++){
             var t = this.samples.order[i]
             var size = this.min_sizes[t]
@@ -714,14 +713,19 @@ changeAlleleNotation: function(alleleNotation) {
         
         this.max_size = 1
         this.min_size = min_size
-        if (this.norm && this.normalization.method=="constant"){
+        if (this.norm){
             for (var j=0; j<this.samples.order.length; j++){
-                var max = this.normalization.B/this.normalization.A[j]
+                if(this.normalization.size_list[j]==0){
+                max = this.normalization.expected_size
+                }else{
+                max = this.normalization.expected_size/this.normalization.size_list[j]
+                }
                 if (max>this.max_size) this.max_size=max;
             }
         }
         
         //*2 pour avoir une marge minimum d'un demi-log
+        // 1/0 == infinity
         this.precision=(1/this.min_size)*2
         
         this.scale_color = d3.scale.log()
@@ -977,6 +981,15 @@ changeAlleleNotation: function(alleleNotation) {
         for (var n = 0; n < this.clones.length; n++) {
             this.clone(n).updateColor()
         }
+        // update icon if normalisation is setup 
+        if(this.norm){
+        $("i.icon-lock-1").toggleClass('icon-lock-1 icon-star-2')
+        $("#"+this.normalization.id+" i.icon-star-2").toggleClass('icon-star-2 icon-lock-1')
+        $("#f"+this.normalization.id+" i.icon-star-2").toggleClass('icon-star-2 icon-lock-1')     
+           }else{
+            $("i.icon-lock-1").toggleClass('icon-lock-1 icon-star-2') 
+            // $("#f"+this.normalization.id+" i.icon-star-2").toggleClass('icon-lock-1 icon-star-2')
+           }
 
     },
 
@@ -1887,7 +1900,7 @@ changeAlleleNotation: function(alleleNotation) {
                 console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
             }
         }
-        this.norm_input.onkeydown = function () {
+        this.norm_input.onkeydown = function (event) {
             if (event.keyCode == 13) self.norm_button.click();
         }
         
@@ -1916,20 +1929,8 @@ changeAlleleNotation: function(alleleNotation) {
         if (top>maxTop) top=maxTop;
         this.tagSelector.style.top=top+"px";
     },
-    
-    /**
-     * change the strategy for normalization
-     * @param {string} method - can be 'constant' or 'to-100'
-     * */
-    changeNormMethod : function (method){
-        this.normalization.method=method;
-        if (this.normalization.type=="data" && method !="constant"){
-            this.normalization.method="constant";
-        }
-        
-        this.update()
-    },
-    
+
+
     /**
      * load a new germline and update 
      * @param {string} system - system string to load

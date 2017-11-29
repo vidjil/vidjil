@@ -1274,8 +1274,8 @@ ScatterPlot.prototype = {
                     this.nodes[seqID].s = 0
                     this.nodes[seqID].r1 = 0
                 }
-                size = this.m.clone(cloneID)
-                    .getSize2();
+                size=Math.min(1.5,this.m.clone(cloneID).getSize2())
+                              
                 if (this.m.clusters[cloneID].length === 0) size = this.m.clone(cloneID)
                     .getSequenceSize();
 

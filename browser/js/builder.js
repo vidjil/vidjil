@@ -144,56 +144,80 @@ Builder.prototype = {
         normalize_list.removeAllChildren();
 
         var input = document.createElement("input");
+        var label = document.createElement("label")
+
         input.type = "radio";
         input.value= -1;
         input.name = "normalize_list";
         input.id = "reset_norm";
-        input.checked=true;
-        
+        label.for = "reset_norm"
+     
+       
         var div = document.createElement("div");
-        div.onclick = function () {
-            self.m.compute_normalization(-1) ;
-            this.firstChild.checked=true;
-            self.m.update();
-        };
-        div.className="buttonSelector";
         div.appendChild(input);
-        div.appendChild(document.createTextNode("none"));
-        
-        normalize_list.appendChild(div);
-        
-        // Regroup Clones and Data into a single array with only critical data
-        var divElements = [];
-        for (var i = 0; i < self.m.clones.length; ++i) {
-            if (typeof self.m.clone(i).expected != "undefined") {
-                divElements.push({
-                    id: i,
-                    name: self.m.clone(i).getName(),
-                    expected: self.m.clone(i).expected
-                });
-            }
-        }
-        
-        for (var key in self.m.data) {
-            if (typeof self.m.data[key].expected != "undefined") {
-                divElements.push({
-                    id: key,
-                    name: self.m.data[key],
-                    expected: self.m.data[key].expected
-                });
-            }
-        }
 
-        // Create clickable div for each Clone and Data Entry
-        for (var j = 0; j < divElements.length; ++j) {
-            var elem = self.setupNormalizeDiv(divElements[i], "buttonSelector");
-            console.log(elem);
-            normalize_list.appendChild(elem);
+        div.appendChild(document.createTextNode("none"))
+        div.onclick = function () {
+        self.m.compute_normalization(-1) ;
+        this.firstChild.checked=true;
+        self.m.update();
+        };
+        normalize_list.appendChild(div);
+        tmp_norm_list =[]
+        if(m.normalization_list.length>=1){ 
+            for (var norm in m.normalization_list) {
+                var check=false
+                for (var div_id in tmp_norm_list){
+                    console.log( normalize_list[div_id])
+                    if (tmp_norm_list[div_id] == m.normalization_list[norm].id){
+                        check=true
+                    }
+                }
+                if (check==false) {
+                var id=m.normalization_list[norm].id
+                var expected_size = m.normalization_list[norm].expected_size   
+                var input_elem = document.createElement("input");
+                var label_elem = document.createElement("label")
+                label_elem.setAttribute("for","reset_norm"+m.normalization_list[norm].id);
+                input_elem.type = "radio";
+                input_elem.name = "normalize_list";
+
+                input_elem.id = "reset_norm"+m.normalization_list[norm].id;
+
+                console.log(m.normalization_list[norm].id)
+                var form_div_elem = document.createElement("div");
+                form_div_elem.className="buttonSelector";
+
+                form_div_elem.id = "normalizetest"+id
+                form_div_elem.dataset.id =id
+                form_div_elem.dataset.expected_size=expected_size
+                // if (m.normalization.id==id){
+                //     input.checked=true;
+                // }
+
+                text= m.clone(m.normalization_list[norm].id).getShortName()+" "+ m.clone(m.normalization_list[norm].id).getStrSize()
+                form_div_elem.appendChild(input_elem);
+                form_div_elem.appendChild(label_elem);
+
+                form_div_elem.appendChild(document.createTextNode(text))
+
+                form_div_elem.addEventListener('click', self.applyOldnormalization, false);
+          
+            normalize_list.appendChild(form_div_elem);
+            tmp_norm_list.push(m.normalization_list[norm].id)
+            }
+        }
         }
         
     },
+    applyOldnormalization:function() {
+        self.m.norm_input.value = ""
+        this.firstChild.checked=true;
+        self.m.clone(this.dataset.id).expected= this.dataset.expected_size;
+        self.m.compute_normalization(this.dataset.id, this.dataset.expected_size)
+        self.m.update()
 
-    
+    },
     /* Fonction servant à "déverouiller" l'appel de la fonction compute_normalization(), ainsi qu'à apposer le 'check' au checkBox 'normalize'
      * */
     displayNormalizeButton: function() {
