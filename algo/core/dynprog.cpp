@@ -105,8 +105,8 @@ ostream& operator<<(ostream& out, const Cost& cost)
     out << "\"" << cost.match
         << ", " << cost.mismatch
         << ", " << cost.insertion
-        << ", " << cost.homopolymer
         << ", " << cost.deletion_end
+        << ", " << cost.homopolymer
         << "\"" ;
 
   return out;

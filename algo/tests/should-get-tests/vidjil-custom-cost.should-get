@@ -1,0 +1,5 @@
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -f '1, 2, 3, 4, 5'
+!EXIT_CODE: 1
+
+$Check that correct custom cost is used
+1:use custom Cost "1, 2, 3, 4, 5"
