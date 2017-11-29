@@ -50,6 +50,7 @@ QUnit.module("Clone", {
         "reads" : [10,10,15,15] ,
         "top" : 3,
         "germline" : "TRG",
+        "warn": "a warning",
         "seg" : {
             "3" : "IGHV4*01",
             "4" : "IGHD2*03",
@@ -123,6 +124,9 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.equal(c2.getName(), some_name, "clone2, .getName()");
     assert.equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/12/4 J5*02", "clone2, .getShortName()");
     
+    assert.equal(c2.isWarned(), false, "clone2 is not warned")
+    assert.equal(c3.isWarned(), 'warning', "clone3 is warned")
+
     assert.equal(c3.getSequenceName(), "custom name", "get name clone3 : custom name");
     assert.equal(c3.getCode(), "id3", "get code clone3 : id3");
     
