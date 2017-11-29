@@ -228,6 +228,9 @@ pair<int, int> WindowExtractor::get_best_length_shifts(size_t read_length,
   int best_length = min(constraint_left, constraint_right);
   int best_shift = 0;
 
+  if (best_length == (int)max_window_length)
+    return make_pair(best_length, 0);
+
   list<int> shifts {-1, 1};
   for (int current_shift : shifts) { // -1 will be a left shift
     int shifted_constraint_left = constraint_left + current_shift * shift * 2;
