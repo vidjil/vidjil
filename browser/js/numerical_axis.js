@@ -160,6 +160,7 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
                 }
             }
        }
+        this.sortValueMapping()
     }
     
     /**
@@ -283,21 +284,4 @@ FloatAxis.prototype = Object.create(NumericalAxis.prototype);
         return parseFloat(value).toFixed(nice_number_digits(this.max - this.min, 2))
     }
 
-    FloatAxis.prototype.insert_values = function() {
-        for(var idx in this.clones) {
-            var clone = this.clones[idx];
-            if(!clone.isVirtual()) {
-                var value = this.applyConverter(clone)//.toFixed(2);
-                if (typeof value == "undefined" || value == undefined || value == "undefined") {
-                    if (this.can_undefined)
-                        this.value_mapping["?"].push(clone);
-                }else{
-                    this.value_mapping[value] = this.value_mapping[value] || []
-                    this.value_mapping[value].push(clone);
-                }
-            }
-       }
-
-        this.sortValueMapping()
-    }
 
