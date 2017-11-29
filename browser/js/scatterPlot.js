@@ -565,10 +565,7 @@ ScatterPlot.prototype = {
         //split clones into bar (axisX)
         this.axisX.init(this.m.clones, this.available_axis[this.splitX].fct);
 
-        this.barTab = {};
-        for (var key in this.axisX.value_mapping) {
-            this.barTab[key] = this.axisX.value_mapping[key];
-        }
+        this.axisX.computeBarTab(this)
         
         //sort each bar (axisY)
         
