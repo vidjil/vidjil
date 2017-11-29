@@ -297,12 +297,7 @@ FloatAxis.prototype = Object.create(NumericalAxis.prototype);
                 }
             }
        }
-       var temp = {}
-       var sorted_keys = Object.keys(this.value_mapping).sort()
-       for (var key_pos in sorted_keys){
-            key = sorted_keys[key_pos]
-            temp[key] = this.value_mapping[key]
-       }
-       this.value_mapping = temp
+
+        this.sortValueMapping()
     }
 
