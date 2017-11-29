@@ -77,6 +77,11 @@ Clone.prototype = {
     /**
      * @return {string} a warning class is set on this clone
      */
+        if (typeof this.warn != 'undefined') {
+            if (this.warn.length)
+                return 'warning'
+        }
+
         if (this.hasSeg('clonedb')) {
             if (typeof(this.seg.clonedb['–']) != 'undefined') // TODO: use a stored number of occurrences
                 return 'ok'
@@ -1302,7 +1307,7 @@ Clone.prototype = {
 
             if (this.isWarned()) {
                 span_info.className += " " + this.isWarned() ;
-                span_info.appendChild(icon('icon-warning-1', 'clone information'));
+                span_info.appendChild(icon('icon-warning-1', typeof this.warn != 'undefined' ? this.warn : 'clone information'));
             } else {
                 span_info.appendChild(icon('icon-info', 'clone information'));
             }
