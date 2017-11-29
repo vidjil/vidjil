@@ -1,0 +1,4 @@
+!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -w 60 -r 1 -g $VIDJIL_DIR/germline $VIDJIL_DATA/../should-vdj-tests/7038-long-deletions.should-vdj.fa
+
+$ We should find one clone
+1:==> 1 clone
