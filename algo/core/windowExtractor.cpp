@@ -223,6 +223,9 @@ pair<int, int> WindowExtractor::get_best_length_shifts(size_t read_length,
                                                        size_t max_window_length,
                                                        int central_pos,
                                                        int shift) {
+  if (central_pos < 0 || central_pos >= (int) read_length)
+    return make_pair(0, 0);
+
   int constraint_left = 2 * central_pos + 1;
   int constraint_right = (read_length - central_pos) * 2;
   int best_length = min(constraint_left, constraint_right);

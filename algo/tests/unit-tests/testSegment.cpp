@@ -352,7 +352,8 @@ void testBestLengthShifts() {
       {{91, 5}, {25, -5}},
       {{9, 5}, {25, 5}},
       {{99, 5}, {10, -5}},
-      {{0, 5}, {10, 5}}
+      {{0, 5}, {10, 5}},
+      {{-100, 5}, {0, 0}}
     };
 
   for (auto test: test_sets) {
@@ -367,9 +368,11 @@ void testBestLengthShifts() {
              << expected.second << ") "
              <<  " (with "<< param.first << ", " << param.second << ")");
 
+    if (param.first >= 0) {
     int first_pos = param.first + result.second - result.first / 2;
     TAP_TEST(first_pos >= 0, TEST_EXTRACTOR_LENGTH_SHIFT, " First position is " << first_pos<<  " (with "<< param.first << ", " << param.second << ")");
     TAP_TEST(first_pos + result.first - 1 < 100, TEST_EXTRACTOR_LENGTH_SHIFT, " Last position is " << first_pos + result.first - 1<<  " (with "<< param.first << ", " << param.second << ")");
+    }
 
   }
 }
