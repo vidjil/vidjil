@@ -155,7 +155,7 @@ def add_form():
                     error += " missing permission for %s %d" % (key, set_id)
 
                 query = db((db[key].id == set_id)
-                        &(db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
+                        &(db.sample_set_membership.sample_set_id == db[key].sample_set_id)
                         &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                     ).select(db.sequence_file.ALL)
                 for row in query :
