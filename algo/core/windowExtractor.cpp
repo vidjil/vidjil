@@ -218,3 +218,30 @@ void WindowExtractor::out_stats_germlines(ostream &out) {
     }
 
 }
+
+pair<int, int> WindowExtractor::get_best_length_shifts(size_t read_length,
+                                                       size_t max_window_length,
+                                                       int central_pos,
+                                                       int shift) {
+  int constraint_left = 2 * central_pos + 1;
+  int constraint_right = (read_length - central_pos) * 2;
+  int best_length = min(constraint_left, constraint_right);
+  int best_shift = 0;
+
+  list<int> shifts {-1, 1};
+  for (int current_shift : shifts) { // -1 will be a left shift
+    int shifted_constraint_left = constraint_left + current_shift * shift * 2;
+    int shifted_constraint_right = constraint_right - current_shift * shift * 2;
+
+    shifted_constraint_left = shifted_constraint_left / shift * shift;
+    shifted_constraint_right = shifted_constraint_right / shift * shift;
+
+    int current_length = min(shifted_constraint_left, shifted_constraint_right);
+    if (current_length > best_length && best_length < (int)max_window_length) {
+      best_length = current_length;
+      best_shift = current_shift;
+    }
+  }
+
+  return make_pair(min((int)max_window_length, best_length), best_shift * shift);
+}

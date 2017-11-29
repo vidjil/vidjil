@@ -341,6 +341,39 @@ void testExtractor(IndexTypes index) {
   delete multi;
 }
 
+void testBestLengthShifts() {
+  list<pair<pair<int, int>, pair<int, int> > > test_sets =
+  // pos, shift| length, shift
+    { {{50, 5}, {30, 0}},
+      {{90, 5}, {30, -5}},
+      {{10, 5}, {30, 5}},
+      {{85, 5}, {30, 0}},
+      {{15, 5}, {30, 0}},
+      {{91, 5}, {25, -5}},
+      {{9, 5}, {25, 5}},
+      {{99, 5}, {10, -5}},
+      {{0, 5}, {10, 5}}
+    };
+
+  for (auto test: test_sets) {
+    pair<int, int> param = test.first;
+    pair<int, int> expected = test.second;
+    pair<int, int> result = WindowExtractor::get_best_length_shifts(100, 30,
+                                                                    param.first,
+                                                                    param.second);
+    TAP_TEST(result == expected, TEST_EXTRACTOR_LENGTH_SHIFT,
+             "Obtained (" << result.first << ", " << result.second
+             << ") but expected (" << expected.first << ", "
+             << expected.second << ") "
+             <<  " (with "<< param.first << ", " << param.second << ")");
+
+    int first_pos = param.first + result.second - result.first / 2;
+    TAP_TEST(first_pos >= 0, TEST_EXTRACTOR_LENGTH_SHIFT, " First position is " << first_pos<<  " (with "<< param.first << ", " << param.second << ")");
+    TAP_TEST(first_pos + result.first - 1 < 100, TEST_EXTRACTOR_LENGTH_SHIFT, " Last position is " << first_pos + result.first - 1<<  " (with "<< param.first << ", " << param.second << ")");
+
+  }
+}
+
 void testProbability(IndexTypes index) {
   string v_seq[] = {"AAAA", "AAAC", "AAAG", "AAAT", "AACA", "AACC",
                 "AACG", "AACT", "AAGA", "AAGC", "AAGG", "AAGT",
@@ -413,4 +446,5 @@ void testSegment() {
   testFineSegment(AC_AUTOMATON);
   testBug2224(KMER_INDEX);
   testBug2224(AC_AUTOMATON);
+  testBestLengthShifts();
 }
