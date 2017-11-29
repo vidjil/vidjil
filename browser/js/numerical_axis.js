@@ -151,10 +151,11 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
             var clone = this.clones[idx];
             if(!clone.isVirtual()) {
                 var value = this.applyConverter(clone);
-                if (typeof value == "undefined" || typeof this.value_mapping[value] == "undefined") {
+                if (typeof value == "undefined" || value == undefined || value == "undefined") {
                     if (this.can_undefined)
                         this.value_mapping["?"].push(clone);
                 }else{
+                    this.value_mapping[value] = this.value_mapping[value] || []
                     this.value_mapping[value].push(clone);
                 }
             }
