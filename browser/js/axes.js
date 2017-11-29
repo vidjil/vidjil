@@ -44,6 +44,13 @@ Axes.prototype = {
                 label:"V/5' gene",
                 axis: new GermlineAxis(this.m, false, true)
             },
+            "d": {
+                doc: "D gene, gathering all alleles",
+                label:"D gene",
+                axis: new GenericAxis(),
+                fct: function(clone) {return clone.getGene("4", false)},
+                sort: true
+            },
             "j": {
                 doc: "J gene (or 3' segment), gathering all alleles",
                 label:"J/3' gene",
