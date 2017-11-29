@@ -136,6 +136,15 @@ GenericAxis.prototype = {
         }
     },
 
+    sortValueMapping: function() {
+        var temp = {}
+        for (var key_pos in Object.keys(this.value_mapping).sort()){
+            key = Object.keys(this.value_mapping).sort()[key_pos]
+            temp[key] = this.value_mapping[key]
+        }
+        this.value_mapping = temp
+    },
+
     applyConverter: function(value) {
         var val;
         try {
