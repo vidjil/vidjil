@@ -243,11 +243,11 @@ void testSegmentationCause(IndexTypes index) {
     } else if (data.read(i).label == "seq-seg-no-window") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, ks.getInfoLineWithAffects());
       TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
-      TAP_TEST(ks.getLeft() == 11, TEST_KMER_LEFT, "left = " << ks.getLeft());
-      TAP_TEST(ks.getRight() == 12, TEST_KMER_RIGHT, "right = " << ks.getRight());
+      TAP_TEST(ks.getLeft() == 9, TEST_KMER_LEFT, "left = " << ks.getLeft());
+      TAP_TEST(ks.getRight() == 10, TEST_KMER_RIGHT, "right = " << ks.getRight());
       TAP_TEST(ks.getJunction(30) == "", TEST_KMER_JUNCTION, ks.getInfoLineWithAffects());
-      TAP_TEST(ks.getJunction(20) == "CTGGGACAGGGAATTATTAT"
-               || ks.getJunction(20) == "CCTGGGACAGGGAATTATTA", TEST_KMER_JUNCTION,"window: " << ks.getJunction(20));
+      TAP_TEST(ks.getJunction(15) == "GGACAGGGAATTATT"
+               || ks.getJunction(15) == "GGGACAGGGAATTAT", TEST_KMER_JUNCTION,"window: " << ks.getJunction(15));
       nb_checked++;
     }
   }
@@ -331,7 +331,7 @@ void testExtractor(IndexTypes index) {
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_ONLY_J) == 46, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_ONLY_J));
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_ONLY_V) == 48, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_ONLY_V));
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_AMBIGUOUS) == 52.5, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_AMBIGUOUS));
-  TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW) == 24, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW));
+  TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW) == 20, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW));
   TAP_TEST(we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW) == 71, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW));
 
   TAP_TEST(out_seg.tellp() > 0, TEST_EXTRACTOR_OUT_SEG, "");
