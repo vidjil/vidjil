@@ -28,6 +28,7 @@
 #include <sstream>
 #include <cstring>
 #include <string>
+#include "windowExtractor.h"
 
 #define NO_FORBIDDEN_ID (-1)
 
@@ -215,14 +216,17 @@ string Segmenter::getJunction(int l, int shift) const {
     return getSequence().sequence;
 
   // Regular '-w'
-  int start = (getLeft() + getRight())/2 - l/2 + shift;
-  
+  int central_pos = (getLeft() + getRight())/2 + shift;
+
+  pair<int, int> length_shift = WindowExtractor::get_best_length_shifts(getSequence().sequence.size(),
+                                                                        l, central_pos,
+                                                                        DEFAULT_WINDOW_SHIFT);
   // Yield UNSEG_TOO_SHORT_FOR_WINDOW into windowExtractor
-  if (start < 0 or start + l > (int)sequence.size())  // TODO: +l ou +l-1 ?
+  if (length_shift.first < MINIMAL_WINDOW_LENGTH)
     return "" ;
 
   // Window succesfully extracted
-  return getSequence().sequence.substr(start, l);
+  return getSequence().sequence.substr(central_pos + length_shift.second - length_shift.first / 2, length_shift.first);
 }
 
 int Segmenter::getLeft() const {

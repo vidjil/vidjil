@@ -36,6 +36,13 @@
                                        As we need ~10 bp to recognize the facing V/J, this value should be large enough to handle V/J deletions until ~30 bp,
                                        (and even larger V/J deletions if there is a large facing J or V in the read). */
 
+#define DEFAULT_WINDOW_SHIFT 5  /* Number of nucleotide to try shifting or
+                                   reducing the window when it doesn't fit at
+                                   its place */
+#define MINIMAL_WINDOW_LENGTH 20 /* As we now dynamically adapt the window
+                                    length we need to specify a minimum
+                                    otherwise we could go as low as
+                                    2*DEFAULT_WINDOW_SHIFT */
 
 
 using namespace std;
