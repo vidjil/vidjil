@@ -208,9 +208,10 @@ Sequence Segmenter::getSequence() const {
   return s ;
 }
 
-string Segmenter::getJunction(int l, int shift) const {
+string Segmenter::getJunction(int l, int shift) {
   assert(isSegmented());
 
+  shiftedJunction = false;
   // '-w all'
   if (l == NO_LIMIT_VALUE)
     return getSequence().sequence;
@@ -224,6 +225,9 @@ string Segmenter::getJunction(int l, int shift) const {
   // Yield UNSEG_TOO_SHORT_FOR_WINDOW into windowExtractor
   if (length_shift.first < MINIMAL_WINDOW_LENGTH && length_shift.first < l)
     return "" ;
+
+  if (length_shift.first < l || length_shift.second != 0)
+    shiftedJunction = true;
 
   // Window succesfully extracted
   return getSequence().sequence.substr(central_pos + length_shift.second - length_shift.first / 2, length_shift.first);
@@ -257,7 +261,9 @@ bool Segmenter::isDSegmented() const {
   return dSegmented;
 }
 
-
+bool Segmenter::isJunctionShifted() const {
+  return shiftedJunction;
+}
 // E-values
 
 void Segmenter::checkLeftRightEvaluesThreshold(double threshold, int strand)

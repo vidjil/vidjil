@@ -161,6 +161,7 @@ protected:
   string CDR3aa;
 
   bool reversed, segmented, dSegmented;
+  bool shiftedJunction;
   int because;
 
   /**
@@ -205,8 +206,10 @@ protected:
    *         is not long enough.
    *         The junction is revcomp-ed if the original string comes from reverse
    *         strand.
+   * @post If the size or position of the window had to be dynamically adapted to fit
+   *       in the read, isJunctionShifted() will return true
    */
-  string getJunction(int l, int shift=0) const;
+  string getJunction(int l, int shift=0);
 
   /**
    * @return the left position (on forward strand) of the segmentation.
@@ -242,6 +245,12 @@ protected:
    * @return true if a D gene was found in the N region
    */
   bool isDSegmented() const;
+
+  /**
+   * @return true iff the junction has been shifted or shortened
+   *              dynamically to fit into the sequence
+   */
+  bool isJunctionShifted() const;
 
   /**
    * @return the status of the segmentation. Tells if the Sequence has been segmented
