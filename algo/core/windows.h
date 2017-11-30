@@ -180,7 +180,8 @@ class WindowsStorage {
    * @param status: the segmentation status
    * @param germline: the germline where this sequence has been segmented
    */
-  void add(junction window, Sequence sequence, int status, Germline *germline);
+  void add(junction window, Sequence sequence, int status, Germline *germline,
+           list<int> extra_statuses = {});
 
   /**
    * @pre should be called before keepInterestingWindows()

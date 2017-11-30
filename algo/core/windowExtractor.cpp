@@ -67,13 +67,19 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
     if (seg->isSegmented()) {
 
       // Filter
-      if (!only_labeled_windows || windowsStorage->isInterestingJunction(junc))
+      if (!only_labeled_windows || windowsStorage->isInterestingJunction(junc)) {
 
-      // Store the window
-      windowsStorage->add(junc, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline);
+        // Store the window
+        if (seg->isJunctionShifted())
+          windowsStorage->add(junc, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline, {SEG_SHORTER_WINDOW});
+        else
+          windowsStorage->add(junc, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline);
+      }
 
       // Update stats
       stats[TOTAL_SEG_AND_WINDOW].insert(read_length) ;
+      if (seg->isJunctionShifted())
+        stats[SEG_SHORTER_WINDOW].insert(read_length);
       stats_reads[seg->system].addScore(read_length);
 
       if (out_segmented) {
