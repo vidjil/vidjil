@@ -122,6 +122,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 // warn
 #define WARN_MAX_CLONES 100
 #define WARN_PERCENT_SEGMENTED 40
+#define WARN_COVERAGE 0.6
 
 // display
 #define WIDTH_NB_READS 7
@@ -1367,6 +1368,9 @@ int main (int argc, char **argv)
             {"stop", kseg->getSequence().sequence.length()},
             {"seq", repComp.getQuality()}
         };
+
+        if (repComp.getCoverage() < WARN_COVERAGE)
+          json_clone["warn"] = "Low coverage" ;
         
         if (label.length())
           json_clone["label"] = label ;

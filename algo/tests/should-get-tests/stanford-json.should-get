@@ -62,3 +62,6 @@ $ Second sequence also has evalues
 
 $ All 'start' fields are 1-based, they never equal to zero
 0: "start": 0
+
+$ Warning on low coverage
+1: "warn": "Low coverage"
