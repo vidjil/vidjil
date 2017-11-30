@@ -39,10 +39,12 @@
 #define DEFAULT_WINDOW_SHIFT 5  /* Number of nucleotide to try shifting or
                                    reducing the window when it doesn't fit at
                                    its place */
-#define MINIMAL_WINDOW_LENGTH 20 /* As we now dynamically adapt the window
+#define MINIMAL_WINDOW_LENGTH 30 /* As we now dynamically adapt the window
                                     length we need to specify a minimum
                                     otherwise we could go as low as
-                                    2*DEFAULT_WINDOW_SHIFT */
+                                    2*DEFAULT_WINDOW_SHIFT. Of course this can
+                                    be overriden by the command line by
+                                    providing a shorter -w*/
 
 
 using namespace std;
