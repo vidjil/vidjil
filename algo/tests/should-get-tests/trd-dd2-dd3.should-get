@@ -4,6 +4,7 @@ $ Segment all 8 reads, thanks to TRDD2 and TRDD3
 1: junction detected in 8 reads .100..
 
 $ Find the good number of 20-windows
-1: found 5 20-windows
+1: found 6 20-windows
 
-
+$ One window is shifted
+1: SEG short w -> 1 60.0
