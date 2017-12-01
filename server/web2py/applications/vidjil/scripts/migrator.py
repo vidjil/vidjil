@@ -90,10 +90,13 @@ class ConfigMapper(IdMapper):
             self.load(cfile)
 
     def load(self, cfile):
+        self.mapping = {}
         with open(cfile, 'r') as cfg:
-            self.mapping = json.load(cfg, encoding='utf-8')
+            config_map = json.load(cfg, encoding='utf-8')
+            for key in config_map:
+                self.mapping[long(key)] = config_map[key]
             self.log.info("mapping loaded")
-            selg.log.debug("mapping values: %s" % str(self.config))
+            self.log.debug("mapping: " + str(self.mapping.keys()))
 
 class Extractor():
 
