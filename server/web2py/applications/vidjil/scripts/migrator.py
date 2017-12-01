@@ -1,5 +1,6 @@
 import json, argparse
-import logging, sys, datetime
+import logging, sys, datetime, os
+from shutil import copy
 from pydal.helpers.classes import RecordDeleter, RecordUpdater
 from pydal.objects import LazySet
 from applications.vidjil.models.VidjilAuth import PermissionEnum
@@ -43,7 +44,7 @@ def get_dict_from_row(row):
     for key in row.keys():
         if ((key not in ex_fields) and (type(row[key]) not in ex_types)):
             tmp = row[key]
-            if isinstance(tmp, datetime.datetime):
+            if isinstance(tmp, datetime.datetime) or isinstance(tmp, datetime.date):
                 tmp = tmp.__str__()
             my_dict[key] = tmp
     return my_dict
@@ -214,6 +215,20 @@ class Importer():
                     self.mappings[table] = IdMapper(log)
                 self.mappings[table].setMatchingId(long(vid), oid)
 
+def copy_files(data, src, dest):
+    file_fields = {'results_file': 'data_file',
+            'analysis_file': 'analysis_file',
+            'fused_file': 'fused_file'}
+
+    if not os.path.exists(dest):
+        os.makedirs(dest)
+
+    for t in file_fields:
+        for entry in data[t]:
+            if (data[t][entry][file_fields[t]] is not None):
+                log.debug("Copying %s" % data[t][entry][file_fields[t]])
+                copy(src + '/' + data[t][entry][file_fields[t]], dest + '/' + data[t][entry][file_fields[t]])
+
 def export_peripheral_data(extractor, data_dict, sample_set_ids):
     sequence_rows = extractor.getSequenceFiles(sample_set_ids)
     data_dict['sequence_file'], data_dict['membership'] = extractor.populateSequenceFiles(sequence_rows)
@@ -233,7 +248,7 @@ def export_peripheral_data(extractor, data_dict, sample_set_ids):
 
     return data_dict
 
-def export_group_data(filename, groupid):
+def export_group_data(filesrc, filepath, groupid):
     log.info("exporting group data")
     ext = GroupExtractor(db, log)
 
@@ -252,11 +267,17 @@ def export_group_data(filename, groupid):
 
     tables = export_peripheral_data(ext, tables, sample_set_ids)
 
-    with open(filename, 'w') as outfile:
+    if not os.path.exists(filepath):
+        os.makedirs(filepath)
+
+    with open(filepath + '/export.json', 'w') as outfile:
         json.dump(tables, outfile, ensure_ascii=False, encoding='utf-8')
+
+    log.info("copying files from %s to %s" % (filesrc, filepath))
+    copy_files(tables, filesrc, filepath + '/files')
     log.info("done")
 
-def export_sample_set_data(filename, sample_type, sample_ids):
+def export_sample_set_data(filesrc, filepath, sample_type, sample_ids):
     log.info("exporting sample set data")
     ext = SampleSetExtractor(db, log)
 
@@ -267,14 +288,21 @@ def export_sample_set_data(filename, sample_type, sample_ids):
 
     tables = export_peripheral_data(ext, tables, sample_set_ids)
 
-    with open(filename, 'w') as outfile:
+    if not os.path.exists(filepath):
+        os.makedirs(filepath)
+
+    with open(filepath + '/export.json', 'w') as outfile:
         json.dump(tables, outfile, ensure_ascii=False, encoding='utf-8')
+
+    log.info("copying files from %s to %s" % (filesrc, filepath))
+    copy_files(tables, filesrc, filepath + '/files')
+
     log.info("done")
 
-def import_data(filename, groupid, config=None, dry_run=False):
+def import_data(filesrc, filedest, groupid, config=None, dry_run=False):
     log.info("importing data")
     data = {}
-    with open(filename, 'r') as infile:
+    with open(filesrc + '/export.json', 'r') as infile:
         tmp = json.load(infile, encoding='utf-8')
         data = reencode_dict(tmp)
 
@@ -301,6 +329,8 @@ def import_data(filename, groupid, config=None, dry_run=False):
             log.info("dry run successful, no data saved")
         else:
             db.commit()
+            log.info("copying files from %s to %s" % (filesrc, filepath))
+            copy_files(data, filesrc + '/files', filedest)
             log.info("done")
     except:
         log.error("something went wrong, rolling back")
@@ -327,7 +357,8 @@ def main():
     import_parser.add_argument('--config', type=str, dest='config', help='Select the config mapping file')
     import_parser.add_argument('groupid', type=long, help='The long ID of the group')
 
-    parser.add_argument('-f', type=str, dest='filename', default='./export.txt', help='Select the file to be read or written to')
+    parser.add_argument('-p', type=str, dest='filepath', default='./', help='Select the file destination')
+    parser.add_argument('-s', type=str, dest='filesrc', default='./', help='Select the file source')
     parser.add_argument('--debug', dest='debug', action='store_true', help='Output debug information')
 
     args = parser.parse_args()
@@ -337,13 +368,13 @@ def main():
 
     if args.command == 'export':
         if args.mode == 'group':
-            export_group_data(args.filename, args.groupid)
+            export_group_data(args.filesrc, args.filepath, args.groupid)
         elif args.mode == 'sample_set':
-            export_sample_set_data(args.filename, args.sample_type, args.ssids)
+            export_sample_set_data(args.filesrc, args.filepath, args.sample_type, args.ssids)
     elif args.command == 'import':
         if args.dry:
             log.log.setLevel(logging.DEBUG)
-        import_data(args.filename, args.groupid, args.config, args.dry)
+        import_data(args.filesrc, args.filepath, args.groupid, args.config, args.dry)
 
 if __name__ == '__main__':
     main()
