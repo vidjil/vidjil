@@ -332,7 +332,7 @@ def import_data(filesrc, filedest, groupid, config=None, dry_run=False):
             log.info("dry run successful, no data saved")
         else:
             db.commit()
-            log.info("copying files from %s to %s" % (filesrc, filepath))
+            log.info("copying files from %s to %s" % (filesrc, filedest))
             copy_files(data, filesrc + '/files', filedest)
             log.info("done")
     except:
