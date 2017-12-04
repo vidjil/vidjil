@@ -244,6 +244,9 @@ def export_peripheral_data(extractor, data_dict, sample_set_ids):
     task_rows = extractor.getTableEntries('scheduler_task', 'id', task_ids)
     data_dict['scheduler_task'] = extractor.populateEntries(task_rows, 'scheduler_task')
 
+    run_rows = extractor.getTableEntries('scheduler_run', 'task_id', task_ids)
+    data_dict['scheduler_run'] = extractor.populateEntries(run_rows, 'scheduler_run')
+
     analysis_rows = extractor.getTableEntries('analysis_file', 'sample_set_id', sample_set_ids)
     data_dict['analysis_file'] = extractor.populateEntries(analysis_rows, 'analysis_file')
 
@@ -324,6 +327,7 @@ def import_data(filesrc, filedest, groupid, config=None, dry_run=False):
         imp.importTable('sequence_file', data['sequence_file'], map_val=True)
         imp.importTable('sample_set_membership', data['membership'], {'sample_set': 'sample_set_id', 'sequence_file': 'sequence_file_id'})
         imp.importTable('scheduler_task', data['scheduler_task'], map_val=True)
+        imp.importTable('scheduler_run', data['scheduler_run'], {'scheduler_task': 'task_id'})
         imp.importTable('results_file', data['results_file'], {'sequence_file': 'sequence_file_id', 'scheduler_task': 'scheduler_task_id', 'config': 'config_id'})
         imp.importTable('analysis_file', data['analysis_file'], {'sample_set': 'sample_set_id'})
         imp.importTable('fused_file', data['fused_file'], {'sample_set': 'sample_set_id', 'config': 'config_id'})
