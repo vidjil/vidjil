@@ -75,6 +75,7 @@ class IdMapper():
     def getMatchingId(self, oid):
         if oid not in self.mapping:
             self.log.debug('id %d not in mapping, returning it' % oid)
+            self.log.debug("mapping: " + str(self.mapping.keys()))
             return oid
         return self.mapping[oid]
 
