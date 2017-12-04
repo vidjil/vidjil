@@ -201,16 +201,16 @@ class Importer():
                                       record_id=nid)
             self.log.debug("associated set %d to group %d" % (nid, self.groupid))
 
-    def importTable(self, table, values, ref_fields=[], map_val=False):
+    def importTable(self, table, values, ref_fields={}, map_val=False):
         db = self.db
         self.log.debug("import %ss" % table)
         for vid in values:
             self.log.debug("importing %s: %s" % (table, vid))
             val = values[vid]
-            for ref in ref_fields:
-                ref_key = "%s_id" % ref
-                matching_id = self.mappings[ref].getMatchingId(val[ref_key])
-                self.log.debug("replacing %s: %d with %d" % (ref_key, val[ref_key], matching_id))
+            for key in ref_fields:
+                ref_key = ref_fields[key]
+                matching_id = self.mappings[key].getMatchingId(val[ref_key])
+                self.log.debug("%s replacing %s: %d with %d" % (table, ref_key, val[ref_key], matching_id))
                 val[ref_key] = matching_id
             oid = db[table].insert(**val)
             self.log.debug("new %s: %d" % (table, oid))
@@ -322,11 +322,11 @@ def import_data(filesrc, filedest, groupid, config=None, dry_run=False):
                 imp.importSampleSets(stype, data[stype])
 
         imp.importTable('sequence_file', data['sequence_file'], map_val=True)
-        imp.importTable('sample_set_membership', data['membership'], ['sample_set', 'sequence_file'])
+        imp.importTable('sample_set_membership', data['membership'], {'sample_set': 'sample_set_id', 'sequence_file': 'sequence_file_id'})
         imp.importTable('scheduler_task', data['scheduler_task'], map_val=True)
-        imp.importTable('results_file', data['results_file'], ['sequence_file', 'scheduler_task', 'config'])
-        imp.importTable('analysis_file', data['analysis_file'], ['sample_set'])
-        imp.importTable('fused_file', data['fused_file'], ['sample_set'])
+        imp.importTable('results_file', data['results_file'], {'sequence_file': 'sequence_file_id', 'scheduler_task': 'scheduler_task_id', 'config': 'config_id'})
+        imp.importTable('analysis_file', data['analysis_file'], {'sample_set': 'sample_set_id'})
+        imp.importTable('fused_file', data['fused_file'], {'sample_set': 'sample_set_id', 'config': 'config_id'})
 
         if dry_run:
             db.rollback()
