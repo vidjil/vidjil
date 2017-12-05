@@ -101,7 +101,7 @@
 		    {{pass}}
 
                     {{if can_modify:}}
-                        <td class="pointer" onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'sample_type': '{{=sample_type}}'} )" >  <i class="icon-pencil-2" title="edit sample information"></i> </td>
+                        <td class="pointer" onclick="db.call('file/form', {'file_id' :'{{=row.sequence_file.id}}', 'sample_type': '{{=sample_type}}'} )" >  <i class="icon-pencil-2" title="edit sample information"></i> </td>
                     {{else:}}
                       <td></td>
                     {{pass}}
@@ -188,7 +188,7 @@
 
     <div class="db_block_left">
         {{if can_upload: }}
-        <span class="button2" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )"> + add sample </span>
+        <span class="button2" onclick="db.call('file/form', { 'sample_set_id' : '{{=request.vars["id"]}}' } )"> + add sample </span>
 
         {{pass}}
         <span class="button2" onclick="db.call('sample_set/custom', {'id': '{{=request.vars['id']}}', 'filter': ''} )">compare some of these samples</span>
