@@ -43,4 +43,4 @@ class Run(SampleSet):
         name = data.name
         run_date = "[%s]" % str(data.run_date)
         id = "(%d)" % data.id
-        return "%s  %s  %s" % (run_date, name, id)
+        return ":r %s  %s  %s" % (run_date, name, id)

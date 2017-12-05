@@ -26,4 +26,4 @@ class Generic(SampleSet):
 
     def get_id_string(self, data):
         name = data.name if data.name is not None else "Unnamed Sample Set"
-        return "%s  (%d)" % (name, data.id)
+        return ":s %s  (%d)" % (name, data.id)
