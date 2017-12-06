@@ -1,3 +1,8 @@
+'''
+Returns messages previouly logged within the 'user_log' table.
+See UserLogHandler() in models/db.py.
+'''
+
 import gluon.contrib.simplejson
 
 if request.env.http_origin:

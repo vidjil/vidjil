@@ -323,6 +323,10 @@ class UserLogHandler(logging.Handler):
         self.table = 'user_log'
 
     def emit(self, record):
+        '''
+        When 'user_id' and 'record_id' are defined,
+        further store the record in the db.
+        '''
         if hasattr(record, 'user_id') and hasattr(record, 'record_id'):
             from datetime import datetime
             now = datetime.now()
