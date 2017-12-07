@@ -130,7 +130,7 @@ VidjilAutoComplete.prototype = {
             }
             var res = $.map(data, function(i) {
                 return {
-                    name: i.name,
+                    name: i.name.substr(3),
                     search: i.name
                 };
             });
@@ -144,6 +144,10 @@ VidjilAutoComplete.prototype = {
                 return match[0];
             }
             return null;
+        };
+
+        callbacks.beforeInsert = function(value) {
+            return value + ", "
         };
 
         $input.atwho({
