@@ -65,14 +65,14 @@ enum class ExitCodes {
 /// All errors derive from this one
 struct Error : public std::runtime_error {
     int exit_code;
-    bool print_help;
+    int print_help;
     int get_exit_code() const { return exit_code; }
-    Error(std::string parent, std::string name, ExitCodes exit_code = ExitCodes::BaseClass, bool print_help = true)
+    Error(std::string parent, std::string name, ExitCodes exit_code = ExitCodes::BaseClass, int print_help = 0)
         : runtime_error(parent + ": " + name), exit_code(static_cast<int>(exit_code)), print_help(print_help) {}
     Error(std::string parent,
           std::string name,
           int exit_code = static_cast<int>(ExitCodes::BaseClass),
-          bool print_help = true)
+          int print_help = 0)
         : runtime_error(parent + ": " + name), exit_code(exit_code), print_help(print_help) {}
 };
 
@@ -82,7 +82,7 @@ struct ConstructionError : public Error {
     ConstructionError(std::string parent,
                       std::string name,
                       ExitCodes exit_code = ExitCodes::BaseClass,
-                      bool print_help = true)
+                      int print_help = 0)
         : Error(parent, name, exit_code, print_help) {}
 };
 
@@ -107,7 +107,7 @@ struct OptionAlreadyAdded : public ConstructionError {
 
 /// Anything that can error in Parse
 struct ParseError : public Error {
-    ParseError(std::string parent, std::string name, ExitCodes exit_code = ExitCodes::BaseClass, bool print_help = true)
+    ParseError(std::string parent, std::string name, ExitCodes exit_code = ExitCodes::BaseClass, int print_help = 1)
         : Error(parent, name, exit_code, print_help) {}
 };
 
@@ -115,7 +115,7 @@ struct ParseError : public Error {
 
 /// This is a successful completion on parsing, supposed to exit
 struct Success : public ParseError {
-    Success() : ParseError("Success", "Successfully completed, should be caught and quit", ExitCodes::Success, false) {}
+    Success() : ParseError("Success", "Successfully completed, should be caught and quit", ExitCodes::Success, 0) {}
 };
 
 /// -h or --help on command line
@@ -1806,10 +1806,10 @@ class App {
             std::cerr << "ERROR: ";
             std::cerr << e.what() << std::endl;
             if(e.print_help)
-                std::cerr << help();
+                std::cerr << help(30, "", e.print_help);
         } else {
             if(e.print_help)
-                std::cout << help();
+                std::cout << help(30, "", e.print_help);
         }
         return e.get_exit_code();
     }
