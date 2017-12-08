@@ -123,6 +123,10 @@ struct CallForHelp : public ParseError {
     CallForHelp()
         : ParseError("CallForHelp", "This should be caught in your main function, see examples", ExitCodes::Success) {}
 };
+struct CallForAdvancedHelp : public ParseError {
+    CallForAdvancedHelp()
+       : ParseError("CallForAdvancedHelp", "This should be caught in your main function, see examples", ExitCodes::Success, 2) {}
+};
 
 /// Thrown when parsing an INI file and it is missing
 struct FileError : public ParseError {
