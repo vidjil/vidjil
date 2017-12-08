@@ -441,12 +441,16 @@ int main (int argc, char **argv)
   
   group = "Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)";
   app.add_flag("-U", output_segmented, "output segmented reads (in " SEGMENTED_FILENAME " file)") -> group(group);
-  //   << "  -u            output unsegmented reads, gathered by unsegmentation cause, except for very short and 'too few V/J' reads (in *" << UNSEGMENTED_DETAIL_FILENAME << " files)" << endl
-  //   << "  -uu           output unsegmented reads, gathered by unsegmentation cause, all reads (in *" << UNSEGMENTED_DETAIL_FILENAME << " files) (use only for debug)" << endl
-  //   << "  -uuu          output unsegmented reads, all reads, including a " << UNSEGMENTED_FILENAME << " file (use only for debug)" << endl
-  //       output_unsegmented = output_unsegmented_detail_full ;       // -uuu
-  //       output_unsegmented_detail_full = output_unsegmented_detail; // -uu
-  //       output_unsegmented_detail = true;                           // -u
+  app.add_flag_function("-u", [&](size_t n) {
+      output_unsegmented = output_unsegmented_detail_full ;       // -uuu
+      output_unsegmented_detail_full = output_unsegmented_detail; // -uu
+      output_unsegmented_detail = true;                           // -u
+    }, R"Z(
+        -u          output unsegmented reads, gathered by unsegmentation cause, except for very short and 'too few V/J' reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files)
+        -uu         output unsegmented reads, gathered by unsegmentation cause, all reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files) (use only for debug)
+        -uuu        output unsegmented reads, all reads, including a )Z" UNSEGMENTED_FILENAME R"Z( file (use only for debug)
+)Z") -> group(group);
+
   app.add_flag("-K", output_affects, "output detailed k-mer affectation on all reads (in " AFFECTS_FILENAME " file) (use only for debug, for example -KX 100)") -> group(group);
 
 
