@@ -143,11 +143,6 @@ extern int optind, optopt, opterr;
 void usage(char *progname, bool advanced)
 {
   cout
-       << "  -h            help" << endl
-       << "  -H            help, including experimental and advanced options" << endl
-       << "The full help is available in the doc/algo.org file."
-       << endl
-
        << endl 
        << "Examples (see doc/algo.org)" << endl
        << "  " << progname << " -c clones   -g germline/homo-sapiens.g     -2 -3     demo/Stanford_S22.fasta   # (basic usage, detect the locus for each read," << endl
@@ -460,9 +455,11 @@ int main (int argc, char **argv)
   app.add_flag_function("-v", [&](size_t n) { verbose += n ; }, "verbose mode") -> group(group);
 
 
-  //   case 'h': usage(argv[0], false);
-  //   case 'H': usage(argv[0], true);
-
+  app.add_flag_function("-H", [&](size_t n) { throw CLI::CallForAdvancedHelp() ; },
+                        "help, including advanced and experimental options"
+                        "\n                              "
+                        "The full help is available in the doc/algo.org file."
+                        );
 
 
 
