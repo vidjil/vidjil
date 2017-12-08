@@ -54,6 +54,7 @@
 #include "core/list_utils.h"
 #include "core/windowExtractor.h"
 
+#include "lib/CLI11.hpp"
 #include "lib/json.hpp"
 
 #include "vidjil.h"
@@ -141,118 +142,7 @@ extern int optind, optopt, opterr;
 
 void usage(char *progname, bool advanced)
 {
-  cerr << "Usage: " << progname << " [options] <reads.fa/.fq/.gz>" << endl << endl;
-
-  cerr << "Command selection" << endl
-       << "  -c <command>"
-       << "\t"     << COMMAND_CLONES    << "  \t locus detection, window extraction, clone clustering (default command, most efficient, all outputs)" << endl
-       << "  \t\t" << COMMAND_WINDOWS   << "  \t locus detection, window extraction" << endl
-       << "  \t\t" << COMMAND_SEGMENT   << "  \t detailed V(D)J designation (not recommended)" << endl
-       << "  \t\t" << COMMAND_GERMLINES << "  \t statistics on k-mers in different germlines" << endl
-       << endl ;
-
-  if (advanced)
-  cerr << "Input" << endl
-       << "  -# <string>   separator for headers in the reads file (default: '" << DEFAULT_READ_HEADER_SEPARATOR << "')" << endl
-       << endl ;
-
-  cerr << "Germline presets (at least one -g or -V/(-D)/-J option must be given for all commands except -c " << COMMAND_GERMLINES << ")" << endl
-       << "  -g <.g file>(:filter)" << endl
-       << "                multiple locus/germlines, with tuned parameters." << endl
-       << "                Common values are '-g germline/homo-sapiens.g' or '-g germline/mus-musculus.g'" << endl
-       << "                The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'" << endl
-       << "  -g <path>     multiple locus/germlines, shortcut for '-g <path>/" << DEFAULT_MULTI_GERMLINE_FILE << "'" << endl
-       << "                processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations" << endl
-       << "  -V <file>     custom V germline multi-fasta file" << endl
-       << "  -D <file>     custom D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components" << endl
-       << "  -J <file>     custom J germline multi-fasta file" << endl
-       << endl
-
-       << "Locus/recombinations" << endl
-       << "  -d            try to detect several D (experimental)" << endl
-       << "  -2            try to detect unexpected recombinations (must be used with -g)" << endl
-       << endl ;
-
-  if (advanced)
-  cerr << "Experimental options (do not use)" << endl
-       << "  -I            ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)" << endl
-       << "  -1            use a unique index for all germline systems (experimental, must be used with -g, do not use)" << endl
-       << "  -4            try to detect unexpected recombinations with translocations (experimental, must be used with -g, do not use)" << endl
-       << "  -!            keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example -!AX 20)" << endl
-       << endl
-
-       << "Window prediction" << endl
-#ifndef NO_SPACED_SEEDS
-       << "  (use either -s or -k option, but not both)" << endl
-       << "  (all these options, except -w, are overriden when using -g)" << endl
-       << "  -s <string>   spaced seed used for the V/J affectation" << endl
-       << "                (default: #####-#####, ######-######, #######-#######, depends on germline)" << endl
-#endif
-       << "  -k <int>      k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)" << endl
-#ifndef NO_SPACED_SEEDS
-       << "                (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)" << endl
-#endif
-       << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ") ('" << NO_LIMIT << "': use all the read, no window clustering)" << endl
-       << "  -e <float>    maximal e-value for determining if a V-J segmentation can be trusted (default: " << THRESHOLD_NB_EXPECTED << ")" << endl
-       << "  -t <int>      trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt (default: " << DEFAULT_TRIM << ") (0: no trim)" << endl
-       << endl
-
-       << "Labeled sequences (windows related to these sequences will be kept even if -r/-% thresholds are not reached)" << endl
-       << "  -W <sequence> label the given sequence" << endl
-       << "  -l <file>     label a set of sequences given in <file>" << endl
-       << "  -F            filter -- keep only the windows related to the labeled sequences" << endl
-       << endl ;
-
-  cerr << "Limits to report a clone (or a window)" << endl
-       << "  -r <nb>       minimal number of reads supporting a clone (default: " << DEFAULT_MIN_READS_CLONE << ")" << endl
-       << "  -% <ratio>    minimal percentage of reads supporting a clone (default: " << DEFAULT_RATIO_READS_CLONE << ")" << endl
-       << endl
-
-       << "Limits to further analyze some clones" << endl
-       << "  -y <nb>       maximal number of clones computed with a consensus sequence ('" << NO_LIMIT << "': no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
-       << "  -z <nb>       maximal number of clones to be analyzed with a full V(D)J designation ('" << NO_LIMIT << "': no limit, do not use) (default: " << DEFAULT_MAX_CLONES << ")" << endl
-       << "  -A            reports and segments all clones (-r 0 -% 0 -y " << NO_LIMIT << " -z " << NO_LIMIT << "), to be used only on very small datasets (for example -AX 20)" << endl
-       << "  -x <nb>       maximal number of reads to process ('" << NO_LIMIT << "': no limit, default), only first reads" << endl
-       << "  -X <nb>       maximal number of reads to process ('" << NO_LIMIT << "': no limit, default), sampled reads" << endl
-       << endl ;
-
-  if (advanced)
-  cerr << "Fine segmentation options (second pass)" << endl
-       << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, del_end, homo\" (default "<< DEFAULT_SEGMENT_COST <<" )"<< endl
-       << "  -E <float>    maximal e-value for determining if a D segment can be trusted (default: " << THRESHOLD_NB_EXPECTED_D << ")" << endl
-       << endl ;
-
-  cerr << "Clone analysis (second pass)" << endl
-       << "  -3            CDR3/JUNCTION detection (requires gapped V/J germlines)" << endl
-       << endl ;
-
-  if (advanced)
-  cerr << "Additional clustering (experimental)" << endl
-       << "  -= <file>     manual clustering -- a file used to force some specific edges" << endl
-       << "  -n <int>      maximum distance between neighbors for automatic clustering (default " << DEFAULT_EPSILON << "). No automatic clusterisation if =0." << endl
-       << "  -N <int>      minimum required neighbors for automatic clustering (default " << DEFAULT_MINPTS << ")" << endl
-       << "  -S            generate and save comparative matrix for clustering" << endl
-       << "  -L            load comparative matrix for clustering" << endl
-       << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, del_end, homo\" (default "<< DEFAULT_CLUSTER_COST <<" )"<< endl
-       << endl ;
-
-  cerr << "Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)" << endl
-       << "  -U            output segmented reads (in " << SEGMENTED_FILENAME << " file)" << endl
-       << "  -u            output unsegmented reads, gathered by unsegmentation cause, except for very short and 'too few V/J' reads (in *" << UNSEGMENTED_DETAIL_FILENAME << " files)" << endl
-       << "  -uu           output unsegmented reads, gathered by unsegmentation cause, all reads (in *" << UNSEGMENTED_DETAIL_FILENAME << " files) (use only for debug)" << endl
-       << "  -uuu          output unsegmented reads, all reads, including a " << UNSEGMENTED_FILENAME << " file (use only for debug)" << endl
-
-       << "  -K            output detailed k-mer affectation on all reads (in " << AFFECTS_FILENAME << " file) (use only for debug, for example -KX 100)" << endl
-       << endl
- 
-       << "Output" << endl
-       << "  -o <dir>      output directory (default: " << DEFAULT_OUT_DIR << ")" <<  endl
-       << "  -b <string>   output basename (by default basename of the input file)" << endl
-    
-       << "  -a            output all sequences by cluster (" << CLONE_FILENAME << "*), to be used only on small datasets" << endl
-       << "  -v            verbose mode" << endl
-       << endl        
-
+  cout
        << "  -h            help" << endl
        << "  -H            help, including experimental and advanced options" << endl
        << "The full help is available in the doc/algo.org file."
@@ -311,11 +201,14 @@ int main (int argc, char **argv)
 #endif
 #endif
 
+  CLI::App app{"Vidjil"};
+
   //$$ options: defaults
 
-  list <string> f_reps_V ;
-  list <string> f_reps_D ;
-  list <string> f_reps_J ;
+  vector <string> v_reps_V ;
+  vector <string> v_reps_D ;
+  vector <string> v_reps_J ;
+
   list <pair <string, string>> multi_germline_paths_and_files ;
 
   string read_header_separator = DEFAULT_READ_HEADER_SEPARATOR ;
@@ -338,8 +231,8 @@ int main (int argc, char **argv)
   Cost segment_cost = DEFAULT_SEGMENT_COST ;
   bool detect_CDR3 = false;
   
-  int save_comp = 0;
-  int load_comp = 0;
+  bool save_comp = false;
+  bool load_comp = false;
   
   int verbose = 0 ;
   int command = CMD_CLONES;
@@ -393,19 +286,26 @@ int main (int argc, char **argv)
   json jsonLevenshtein;
   bool jsonLevenshteinComputed = false ;
 
-  //$$ options: getopt
+  //$$ options: definition wiht CLI11
+  string group = "";
+
+  // cerr << "Usage: " << progname << " [options] <reads.fa/.fq/.gz>" << endl << endl;
+
+  group = "Files";
+  app.add_option("reads", f_reads, "reads.fa/.fq/.gz") -> group(group);
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHadI124g:V:D:J:k:r:vw:e:E:C:f:W:l:Fc:N:s:b:Sn:o:L%:y:z:uUK3E:t:#:q")) != EOF)
-
-    switch (c)
-      {
-      case 'h':
-        usage(argv[0], false);
-
-      case 'H':
-        usage(argv[0], true);
-
+  group = "Command selection";
+  app.add_option("-c", command, "command", true) -> group(group);
+ /*
+       << "  -c <command>"
+       << "\t"     << COMMAND_CLONES    << "  \t locus detection, window extraction, clone clustering (default command, most efficient, all outputs)" << endl
+       << "  \t\t" << COMMAND_WINDOWS   << "  \t locus detection, window extraction" << endl
+       << "  \t\t" << COMMAND_SEGMENT   << "  \t detailed V(D)J designation (not recommended)" << endl
+       << "  \t\t" << COMMAND_GERMLINES << "  \t statistics on k-mers in different germlines" << endl
+       << endl ;
+ */
+      /*
       case 'c':
         if (!strcmp(COMMAND_CLONES,optarg))
           command = CMD_CLONES;
@@ -420,29 +320,20 @@ int main (int argc, char **argv)
 	  usage(argv[0], false);
         }
         break;
+        */
 
-      case 'q':
-        indexType = AC_AUTOMATON;
-        break;
 
-      // Input
-      case '#':
-        read_header_separator = string(optarg);
-        break;
+  group = "Input" ;
+  app.add_option("--separator", read_header_separator, "separator for headers in the reads file", true) ->group(group); // -> advanced() ;
 
-      // Germline
-
-      case 'V':
-	f_reps_V.push_back(optarg);
-	break;
-
-      case 'D':
-	f_reps_D.push_back(optarg);
-	break;
-        
-      case 'J':
-	f_reps_J.push_back(optarg);
-	break;
+  
+  group = "Germline presets (at least one -g or -V/(-D)/-J option must be given for all commands except -c " COMMAND_GERMLINES ")";
+  //app.add_option("-g", multi_germlines, "XXXX") -> group(group);
+                 /*
+       << "  -g <.g file>(:filter)" << endl
+       << "                multiple locus/germlines, with tuned parameters." << endl
+       << "                Common values are '-g germline/homo-sapiens.g' or '-g germline/mus-musculus.g'" << endl
+       << "                The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'" << endl
 
       case 'g':
 	multi_germline = true;
@@ -463,31 +354,57 @@ int main (int argc, char **argv)
           multi_germline_paths_and_files.push_back(make_pair(extract_dirname(arg), extract_basename(arg, false)));
           break ;
         }
+  */
 
-      case 'd':
-        several_D = true;
-        break;
+  /*
+       << "  -g <path>      << endl
+          "multiple locus/germlines, shortcut for '-g <path>/" + DEFAULT_MULTI_GERMLINE_FILE + "'",
+       << "                processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations" << endl
+  */
+  app.add_option("-V", v_reps_V, "custom V germline multi-fasta file") -> group(group);
+  app.add_option("-D", v_reps_D, "custom D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components") -> group(group);
+  app.add_option("-J", v_reps_J, "custom V germline multi-fasta file") -> group(group);
 
-      case 'I':
-        multi_germline_mark = true;
-	break;
+  group = "Locus/recombinations";
+  app.add_flag("-d", several_D, "try to detect several D (experimental)") -> group(group);
+  app.add_flag("--method-2",  multi_germline_unexpected_recombinations_12, "try to detect unexpected recombinations (must be used with -g)") -> group(group);
 
-      case '1':
-        multi_germline_one_index_per_germline = false ;
-        break;
 
-      case '2':
-        multi_germline_unexpected_recombinations_12 = true ;
-        break;
+  // if (advanced)
+  group = "Experimental options (do not use)";
+  app.add_flag("-I", multi_germline_mark, "ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)") -> group(group);
+  //app.add_flag("-1",  multi_germline_one_index_per_germline // = false !!!
+  //             "use a unique index for all germline systems (experimental, must be used with -g, do not use)") -> group(group);
+  app.add_flag("--method-4", multi_germline_unexpected_recombinations_1U, "try to detect unexpected recombinations with translocations (experimental, must be used with -g, do not use)") -> group(group);
+  app.add_flag("--keep", keep_unsegmented_as_clone, "keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example -!AX 20)") -> group(group);
 
-      case '4':
-        multi_germline_unexpected_recombinations_1U = true ;
-        break;
+  group = "Window prediction";
+#ifndef NO_SPACED_SEEDS
+  /*
+       << "  (use either -s or -k option, but not both)" << endl
+           << "  (all these options, except -w, are overriden when using -g)" << endl
+       << "  -s <string>   spaced seed used for the V/J affectation" << endl
+       << "                (default: #####-#####, ######-######, #######-#######, depends on germline)" << endl
+  */
+#endif
 
-	break;
+  int kmer_size = 0; // TODO: vierer
+  app.add_option("-k", kmer_size, "k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)") -> group(group);
+  // seed = seed_contiguous(kmer_size);
+  //        seed_changed = true;
+  //	options_s_k++ ;
+    
+#ifndef NO_SPACED_SEEDS
+  //      << "                (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)" << endl
+#endif
+  app.add_option("-w", wmer_size, // atoi_NO_LIMIT
+                 "w-mer size used for the length of the extracted window ('" NO_LIMIT "': use all the read, no window clustering)") -> group(group);
+  app.add_option("-e", expected_value, // atof_NO_LIMIT
+                 "maximal e-value for determining if a V-J segmentation can be trusted", true) -> group(group);
+  app.add_option("-t", trim_sequences, // trim_sequences_changed = true
+                 "trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt  (0: no trim)") -> group(group);
 
-      // Algorithm
-
+/*
       case 's':
 #ifndef NO_SPACED_SEEDS
 	seed = string(optarg);
@@ -496,155 +413,107 @@ int main (int argc, char **argv)
 #else
         cerr << "To enable the option -s, please compile without NO_SPACED_SEEDS" << endl;
 #endif
-        break;
+*/
+  
 
-      case 'k':
-        {
-          int kmer_size = atoi(optarg);
-          seed = seed_contiguous(kmer_size);
-          seed_changed = true;
-        }
-	options_s_k++ ;
-        break;
 
-      case 'w':
-	wmer_size = atoi_NO_LIMIT(optarg);
-        break;
 
-      case '!':
-        keep_unsegmented_as_clone = true;
-        break;
+  group = "Labeled sequences (windows related to these sequences will be kept even if -r/-% thresholds are not reached)";
+  /*
+  app.add_option("-W",
+                 // TODO:  windows_labels[string(optarg)] = string("-W");
+                 , "label the given sequence") -> group(group);
+  */
+  app.add_option("-l", windows_labels_file, "label a set of sequences given in <file>") -> group(group);
+  app.add_flag("-F", only_labeled_windows, "filter -- keep only the windows related to the labeled sequences") -> group(group);
 
-      case 'e':
-        expected_value = atof_NO_LIMIT(optarg);
-        break;
 
-      case 'E':
-        expected_value_D = atof_NO_LIMIT(optarg);
-        break;
+  //  if (advanced)
+  group = "Fine segmentation options (second pass)";
+  //       << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
+  //     << "  -E <float>    maximal e-value for determining if a D segment can be trusted (default: " << THRESHOLD_NB_EXPECTED_D << ")" << endl
+  //     << endl ;
+  //      case 'f''	segment_cost=strToCost(optarg, VDJ);      break;
+  
+  group = "Clone analysis (second pass)";
+  app.add_flag("--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)") -> group(group);
 
-      // Output 
+  
+  // if (advanced)
+  group = "Additional clustering (experimental)" ;
 
-      case 'o':
-        out_dir = optarg ;
-        break;
+  app.add_flag_function("-q", [&](size_t n) { indexType = AC_AUTOMATON; });
+  app.add_option("-n", epsilon, "minimum required neighbors for automatic clustering. No automatic clusterisation if =0.", true) ->group(group);
 
-      case 'b':
-        f_basename = optarg;
-        break;
+  app.add_option("-N", minPts, "", true) -> group(group);
+  app.add_option("-S", save_comp, "generate and save comparative matrix for clustering") -> group(group);
+  app.add_option("-L", load_comp, "load comparative matrix for clustering") -> group(group);
+  app.add_option("--forced-edges", forced_edges, "manual clustering -- a file used to force some specific edges") -> group(group);
+  // << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
+  // cluster_cost=strToCost(optarg, Cluster);
 
-      case 'a':
-	output_sequences_by_cluster = true;
-	break;
+  group = "Limits to report a clone (or a window)";
+  app.add_option("-r", min_reads_clone, "minimal number of reads supporting a clone", true) -> group(group);
+  app.add_option("--ratio", ratio_reads_clone, "minimal percentage of reads supporting a clone", true) -> group(group);
 
-      case 't':
-        trim_sequences = atoi(optarg);
-        trim_sequences_changed = true;
-        break;
-
-      case 'v':
-	verbose += 1 ;
-	break;
-
-      // Limits
-
-      case '%':
-	ratio_reads_clone = atof(optarg);
-	break;
-
-      case 'r':
-	min_reads_clone = atoi(optarg);
-        break;
-
-      case 'y':
-	max_representatives = atoi_NO_LIMIT(optarg);
-        break;
-
-      case 'z':
-	max_clones = atoi_NO_LIMIT(optarg);
-        if ((max_representatives < max_clones) && (max_representatives != NO_LIMIT_VALUE))
-          max_representatives = max_clones ;
-        break;
-
-      case 'A': // --all
+  group = "Limits to further analyze some clones";
+  app.add_option("-y", max_representatives,  // atoi_NO_LIMIT
+                 "maximal number of clones computed with a consensus sequence ('" NO_LIMIT "': no limit)", true) -> group(group);
+  app.add_option("-z", max_clones, //
+                 // [](CLI::results_t res) {
+                 //    max_clones = atoi_NO_LIMIT(optarg);
+                 //    if ((max_representatives < max_clones) && (max_representatives != NO_LIMIT_VALUE))
+                 //    max_representatives = max_clones ;
+                 // }
+                 "maximal number of clones to be analyzed with a full V(D)J designation ('" NO_LIMIT "': no limit, do not use)", true)-> group(group);
+  /*
+  app.add_flag_function("-A", xxxx,
 	ratio_reads_clone = 0 ;
 	min_reads_clone = 1 ;
 	max_representatives = NO_LIMIT_VALUE ;
 	max_clones = NO_LIMIT_VALUE ;
-	break ;
+  "reports and segments all clones (-r 0 -% 0 -y " NO_LIMIT " -z " NO_LIMIT "), to be used only on very small datasets (for example -AX 20)") -> group(group);
+                        */
 
-      case 'X':
-        max_reads_processed_sample = atoi_NO_LIMIT(optarg);
-        break;
+  app.add_option("-x", max_reads_processed_sample, // atoi_NO_LIMIT
+                 "maximal number of reads to process ('" NO_LIMIT "': no limit, default), only first reads") -> group(group);
+  app.add_option("-X", max_reads_processed, // atoi_NO_LIMIT
+                 "maximal number of reads to process ('" NO_LIMIT "': no limit, default), sampled reads") -> group(group);
 
-      case 'x':
-        max_reads_processed = atoi_NO_LIMIT(optarg);
-        break;
+  
+  group = "Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)";
+  app.add_flag("-U", output_segmented, "output segmented reads (in " SEGMENTED_FILENAME " file)") -> group(group);
+  //   << "  -u            output unsegmented reads, gathered by unsegmentation cause, except for very short and 'too few V/J' reads (in *" << UNSEGMENTED_DETAIL_FILENAME << " files)" << endl
+  //   << "  -uu           output unsegmented reads, gathered by unsegmentation cause, all reads (in *" << UNSEGMENTED_DETAIL_FILENAME << " files) (use only for debug)" << endl
+  //   << "  -uuu          output unsegmented reads, all reads, including a " << UNSEGMENTED_FILENAME << " file (use only for debug)" << endl
+  //       output_unsegmented = output_unsegmented_detail_full ;       // -uuu
+  //       output_unsegmented_detail_full = output_unsegmented_detail; // -uu
+  //       output_unsegmented_detail = true;                           // -u
+  app.add_flag("-K", output_affects, "output detailed k-mer affectation on all reads (in " AFFECTS_FILENAME " file) (use only for debug, for example -KX 100)") -> group(group);
 
-      // Labels
 
-      case 'W':
-        windows_labels[string(optarg)] = string("-W");
-        break;
+  group = "Output";
+  app.add_option("-o", out_dir, "output directory", true) -> group(group);
+  app.add_option("-b", f_basename, "output basename (by default basename of the input file)") -> group(group);
+  app.add_flag("-a", output_sequences_by_cluster, "output all sequences by cluster (" CLONE_FILENAME "*), to be used only on small datasets") -> group(group);
+  // << "  -v            verbose mode"  //	verbose += 1 ;
 
-      case 'l':
-	windows_labels_file = optarg; 
-	break;
 
-      case 'F':
-        only_labeled_windows = true;
-        break;
+  //   case 'h': usage(argv[0], false);
+  //   case 'H': usage(argv[0], true);
 
-      // Clustering
 
-      case '=':
-	forced_edges = optarg;
-	break;
-	
-      case 'n':
-	epsilon = atoi(optarg);
-        break;
 
-      case 'N':
-	minPts = atoi(optarg);
-        break;
-	
-      case 'S':
-	save_comp=1;
-        break;
 
-      case 'L':
-	load_comp=1;
-        break;
-	
-      case 'C':
-	cluster_cost=strToCost(optarg, Cluster);
-        break;
-	
-      // Fine segmentation
-      case '3':
-        detect_CDR3 = true;
-        break;
-        
-      case 'f':
-	segment_cost=strToCost(optarg, VDJ);
-        break;
-
-      case 'u':
-        output_unsegmented = output_unsegmented_detail_full ;       // -uuu
-        output_unsegmented_detail_full = output_unsegmented_detail; // -uu
-        output_unsegmented_detail = true;                           // -u
-        break;
-      case 'U':
-        output_segmented = true;
-        break;
-      case 'K':
-        output_affects = true;
-        break;
-      }
-
+  //$$ options: parsing
+  CLI11_PARSE(app, argc, argv);
 
   //$$ options: post-processing+display
+
+
+  list <string> f_reps_V(v_reps_V.begin(), v_reps_V.end());
+  list <string> f_reps_D(v_reps_D.begin(), v_reps_D.end());
+  list <string> f_reps_J(v_reps_J.begin(), v_reps_J.end());
 
 
   if (!multi_germline && (!f_reps_V.size() || !f_reps_J.size()))
@@ -664,7 +533,7 @@ int main (int argc, char **argv)
   if (verbose)
     cout << "# verbose " << verbose << endl ;
 
-  if (optind == argc)
+  if (optind == argc) // TODO
     {
       cout << "# using default sequence file: " << f_reads << endl ;
     }
@@ -1191,7 +1060,7 @@ int main (int argc, char **argv)
       {
 	cout << "Cluster similar windows" << endl ;
 
-	if (load_comp==1) 
+	if (load_comp)
 	  {
 	    comp.load((out_dir+f_basename + "." + comp_filename).c_str());
 	  }
@@ -1200,7 +1069,7 @@ int main (int argc, char **argv)
 	    comp.compare( cout, cluster_cost);
 	  }
 	
-	if (save_comp==1)
+	if (save_comp)
 	  {
 	    comp.save(( out_dir+f_basename + "." + comp_filename).c_str());
 	  }
