@@ -306,7 +306,7 @@ int main (int argc, char **argv)
     -> group(group) -> set_type_name("COMMAND");
 
   group = "Input" ;
-  app.add_option("--separator", read_header_separator, "separator for headers in the reads file", true) -> group(group) -> set_type_name("CHAR"); // -> advanced() ;
+  app.add_option("--separator", read_header_separator, "separator for headers in the reads file", true) -> group(group) -> level() -> set_type_name("CHAR")  ;
 
   
   group = "Germline presets (at least one -g or -V/(-D)/-J option must be given for all commands except -c " COMMAND_GERMLINES ")";
@@ -329,13 +329,12 @@ int main (int argc, char **argv)
   app.add_flag("-2",  multi_germline_unexpected_recombinations_12, "try to detect unexpected recombinations (must be used with -g)") -> group(group);
 
 
-  // if (advanced)
   group = "Experimental options (do not use)";
-  app.add_flag("-I", multi_germline_mark, "ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)") -> group(group);
+  app.add_flag("-I", multi_germline_mark, "ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)") -> group(group) -> level();
   app.add_flag("-1", multi_germline_one_unique_index,
-               "use a unique index for all germline systems (experimental, must be used with -g, do not use)") -> group(group);
-  app.add_flag("-4", multi_germline_unexpected_recombinations_1U, "try to detect unexpected recombinations with translocations (experimental, must be used with -g, do not use)") -> group(group);
-  app.add_flag("--keep", keep_unsegmented_as_clone, "keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example --keep -AX 20)") -> group(group);
+               "use a unique index for all germline systems (experimental, must be used with -g, do not use)") -> group(group) -> level();
+  app.add_flag("-4", multi_germline_unexpected_recombinations_1U, "try to detect unexpected recombinations with translocations (experimental, must be used with -g, do not use)") -> group(group) -> level();
+  app.add_flag("--keep", keep_unsegmented_as_clone, "keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example --keep -AX 20)") -> group(group) -> level();
 
   group = "Window prediction";
 #ifndef NO_SPACED_SEEDS
@@ -391,7 +390,7 @@ int main (int argc, char **argv)
   group = "Fine segmentation options (second pass)";
   //       << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
   //      case 'f''	segment_cost=strToCost(optarg, VDJ);      break;
-  app.add_option("-E", expected_value_D, "maximal e-value for determining if a D segment can be trusted", true) -> group(group);
+  app.add_option("-E", expected_value_D, "maximal e-value for determining if a D segment can be trusted", true) -> group(group) -> level();
   
   group = "Clone analysis (second pass)";
   app.add_flag("-3,--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)") -> group(group);
@@ -401,12 +400,12 @@ int main (int argc, char **argv)
   group = "Additional clustering (experimental)" ;
 
   app.add_flag_function("-q", [&](size_t n) { indexType = AC_AUTOMATON; });
-  app.add_option("-n", epsilon, "minimum required neighbors for automatic clustering. No automatic clusterisation if =0.", true) ->group(group);
+  app.add_option("-n", epsilon, "minimum required neighbors for automatic clustering. No automatic clusterisation if =0.", true) -> group(group) -> level();
 
-  app.add_option("-N", minPts, "", true) -> group(group);
-  app.add_option("-S", save_comp, "generate and save comparative matrix for clustering") -> group(group);
-  app.add_option("-L", load_comp, "load comparative matrix for clustering") -> group(group);
-  app.add_option("--forced-edges", forced_edges, "manual clustering -- a file used to force some specific edges") -> group(group);
+  app.add_option("-N", minPts, "", true) -> group(group) -> level();
+  app.add_option("-S", save_comp, "generate and save comparative matrix for clustering") -> group(group) -> level();
+  app.add_option("-L", load_comp, "load comparative matrix for clustering") -> group(group) -> level();
+  app.add_option("--forced-edges", forced_edges, "manual clustering -- a file used to force some specific edges") -> group(group) -> level();
   // << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
   // cluster_cost=strToCost(optarg, Cluster);
 
