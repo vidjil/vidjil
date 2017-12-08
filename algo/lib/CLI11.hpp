@@ -790,6 +790,9 @@ class Option {
     /// True if this is a required option
     bool required_{false};
 
+    /// >= 2 if this is an advanced option
+    int help_level_{1};
+
     /// The number of expected values, 0 for flag, -1 for unlimited vector
     int expected_{1};
 
@@ -860,6 +863,12 @@ class Option {
     /// Set the option as required
     Option *required(bool value = true) {
         required_ = value;
+        return this;
+    }
+
+    /// Set the help level
+    Option *level(int value = 2) {
+        help_level_ = value;
         return this;
     }
 
@@ -1895,7 +1904,7 @@ class App {
     }
 
     /// Makes a help message, with a column wid for column 1
-    std::string help(size_t wid = 30, std::string prev = "") const {
+    std::string help(size_t wid = 30, std::string prev = "", int help_level = 1) const {
         // Delegate to subcommand if needed
         if(prev == "")
             prev = name_;
@@ -1963,7 +1972,7 @@ class App {
                     continue;
                 out << group << ":" << std::endl;
                 for(const Option_p &opt : options_) {
-                    if(opt->nonpositional() && opt->get_group() == group)
+                    if(opt->nonpositional() && opt->get_group() == group && opt->help_level_ <= help_level)
                         detail::format_help(out, opt->help_name(), opt->get_description(), wid);
                 }
                 out << std::endl;
