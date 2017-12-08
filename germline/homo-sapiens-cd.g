@@ -12,7 +12,7 @@
             "shortcut": "I",
             "color" : "#ffffff",
             "description": "CD",
-            "recombinations": [ { "4": ["CD-sorting.fa"] } ],
+            "recombinations": [ { "1": ["CD-sorting.fa"] } ],
             "parameters": {
                 "seed": "13s"
             }
