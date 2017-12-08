@@ -383,7 +383,9 @@ int main (int argc, char **argv)
 
   //  if (advanced)
   group = "Fine segmentation options (second pass)";
-  //       << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
+
+
+  //       << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, del_end, homo\" (default "<< DEFAULT_SEGMENT_COST <<" )"<< endl
   //      case 'f''	segment_cost=strToCost(optarg, VDJ);      break;
   app.add_option("-E", expected_value_D, "maximal e-value for determining if a D segment can be trusted", true) -> group(group) -> level();
   
@@ -401,7 +403,7 @@ int main (int argc, char **argv)
   app.add_option("-S", save_comp, "generate and save comparative matrix for clustering") -> group(group) -> level();
   app.add_option("-L", load_comp, "load comparative matrix for clustering") -> group(group) -> level();
   app.add_option("--forced-edges", forced_edges, "manual clustering -- a file used to force some specific edges") -> group(group) -> level();
-  // << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
+  // << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, del_end, homo\" (default "<< DEFAULT_CLUSTER_COST <<" )"<< endl
   // cluster_cost=strToCost(optarg, Cluster);
 
   group = "Limits to report a clone (or a window)";
