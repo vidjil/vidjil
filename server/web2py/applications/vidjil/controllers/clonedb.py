@@ -30,7 +30,7 @@ def index():
 def search_clonedb(sequences, sample_set_id):
     sys.path.insert(1, os.path.abspath(defs.DIR_CLONEDB))
     import grep_clones
-    clonedb = imp.load_source('clonedb', defs.DIR_CLONEDB+os.path.sep+'clonedb.cgi')
+    clonedb = imp.load_source('clonedb', defs.DIR_CLONEDB+os.path.sep+'clonedb.py')
 
     results = []
     for sequence in sequences:
