@@ -126,7 +126,12 @@ Url.prototype= {
             }
         }
 
-        var positionnal_params = url.pathname.substr(1).split('/');
+        var slash_params = url.pathname.substr(1).split('/');
+        var positionnal_params = [];
+        for (var k = 0; k < slash_params.length; k++) {
+            if(slash_params[k] !== 'browser')
+                positionnal_params.push(slash_params[k]);
+        }
         var pos_param_keys = this.getPositionnalParams();
         for (var j = 0; j < positionnal_params.length; j++) {
             params[pos_param_keys[j]] = positionnal_params[j];
@@ -159,7 +164,7 @@ Url.prototype= {
     },
 
     pushUrl: function(params) {
-        var new_url = "/" + params;
+        var new_url = '/browser/' + params;
         try  {
             this.window.history.pushState('plop', 'plop', new_url);
         } catch(error) {
