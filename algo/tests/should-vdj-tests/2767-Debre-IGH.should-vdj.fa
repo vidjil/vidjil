@@ -1,17 +1,17 @@
 #This sequence may be problematic due to a long deletion ( > 100 nt)
->IGHV4-59*04 124/GCAGACGC/5 IGHD5-12*01 2/CTAGGCTGT/4 IGHJ4*02 [IGH]
+>IGHV4-59*03 (116/GACGC/5, 119/GCAGACGC/5) IGHD5-12*01 2/CTAGGCTGT/4 IGHJ4*02 [IGH]
 AGGTGCAGCTGGTGGAGTCGGGCCCAGGACTGGTGAAGCCTTCGGAGACCCTGTCCCTCACCTGCACTGTCTCTGGTGGCTCCATCAGGATTTAGTACTGGAGCTGGATCCGGCAGCCCCCAGGGAGGGGACTGGAGTGGATTGATTAGATCCACTACAGTGGGAGCA
 GCAGACGCTATAGGGACTACGATTCTAGGCTGT
 CTTTGACTACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGTAAG
 
 ### Parts of the sequences with trimmed regions for the 2 segments V4
-## alignement                                                                                   120nt to the end
+## alignement                                                                                   116nt to the end
 #                                                                                               | 
-#>IGHV4-59*01   |||    ggagctggatccggcagcccccagggaagggactggagtggattgggtatatctattacagtgggagcaccaactaca...
-#                      |||||||||||||||||||||||||||*|||||||||||||||||**||*|||*|*|||||||||||||*|| 
+#>IGHV4-59*03   |||    ggagctggatccggcagcccccagggaagggactggagtggattgggtatatctattacagtgggagcacca-actaca...
+#                      |||||||||||||||||||||||||||*|||||||||||||||||**||*|||*|*|||||||||||||*|| ||
 #>clone         |||    GGAGCTGGATCCGGCAGCCCCCAGGGAGGGGACTGGAGTGGATTGATTAGATCCACTACAGTGGGAGCAGCAGACGCTATAGGGACTACGATTCTAGGCTGTCTTTGACTACTGGGGCCAGGGAAC
 #                                                             ||||||**||*|||*|*||*||||||||||*|*
-#>IGHV4-59*03   |||                                           GGATTGGGTATATCTATTATAGTGGGAGCACCTACTACAACCCGTCCCT
+#>IGHV4-59*04   |||                                           GGATTGGGTATATCTATTATAGTGGGAGCACCTACTACAACCCGTCCCT
 #                                                                                                   |||||*|*||||||||         ||||||||||||||||||||||||
 # IGHD5-12*01   |||                                                                            GTGGATATAGTGGCTACGATTAC       ||||||||||||||||||||||||
 #                                                                                                                            ||||||||||||||||||||||||
