@@ -91,10 +91,23 @@ However, the following network access are recommended:
 These installation instruction are for Ubuntu server 14.04
 These instructions are preliminary, other documentation can also be found in [[http://git.vidjil.org/blob/dev/doc/dev.org][dev.org]].
 ** With Docker
-   Our docker environment maked use of docker-compose. All Vidjil components
+   All our images are hosted on DockerHub and can be retrieved from the
+   repository [[https://hub.docker.com/r/vidjil/vidjil/][vidjil/vidjil]].
+   Our docker environment makes use of docker-compose. All Vidjil components
    are currently packaged into a single docker image. Individual services are
    started by docker compose, such as in this
    [[example][https://github.com/vidjil/vidjil/blob/master/docker/docker-compose.yml]].
+
+*** Versions
+   - 1.1
+   - 1.2
+   - 1.3
+   - 1.3.1
+   - 1.3.2
+   - tmp_fix
+     This image is identical to 1.3.2 except it has a manual bugfix on pyDAL
+     version 17.11 that was affecting the scheduler_workers.
+
 
 *** Configuring the Vidjil container
    If you are using this environment for use on localhost, everything should
