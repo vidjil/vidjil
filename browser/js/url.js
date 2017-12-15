@@ -33,9 +33,9 @@ Url.prototype= {
         }
 
         // get sample_set/patient/run, config...
-        var positionnal_params = this.getPositionnalParams();
-        for (var i = 0; i < positionnal_params.length; i++) {
-            var p = positionnal_params[i];
+        var straight_params = this.getStraightParams();
+        for (var i = 0; i < straight_params.length; i++) {
+            var p = straight_params[i];
             if (typeof this.m[p] !== "undefined") {
                 params_dict[p] = this.m[p];
             }
@@ -79,10 +79,10 @@ Url.prototype= {
     
 
     applyURL : function() {
-        var positionnal_params = this.getPositionnalParams();
-        for (var i = 0; i < positionnal_params.length; i++) {
-            if (typeof this.url_dict[positionnal_params[i]] !== "undefined") {
-                this.m[positionnal_params[i]] = this.url_dict[positionnal_params[i]];
+        var straight_params = this.getStraightParams();
+        for (var i = 0; i < straight_params.length; i++) {
+            if (typeof this.url_dict[straight_params[i]] !== "undefined") {
+                this.m[straight_params[i]] = this.url_dict[straight_params[i]];
             }
         }
 
@@ -125,46 +125,30 @@ Url.prototype= {
                 params[key].push(val);
             }
         }
-
-        var slash_params = url.pathname.substr(1).split('/');
-        var positionnal_params = [];
-        for (var k = 0; k < slash_params.length; k++) {
-            if(slash_params[k] !== 'browser')
-                positionnal_params.push(slash_params[k]);
-        }
-        var pos_param_keys = this.getPositionnalParams();
-        for (var j = 0; j < positionnal_params.length; j++) {
-            params[pos_param_keys[j]] = positionnal_params[j];
-        }
         return params
     },
 
     generateParamsString: function(params_dict) {
         var params_list = [];
-        var positionnal_params = [];
         for (var key in params_dict){
             var val = params_dict[key];
             if ((typeof key != "undefined" && key !== "") && (typeof val != "undefined")) {
-                var pos = this.getPosition(key);
-                if (pos >= 0) {
-                    positionnal_params[pos] = val;
-                } else {
-                    var encoded = this.encoder.encode(key);
-                    if (val.constructor !== Array && val !== '') {
-                        params_list.push(encoded+"="+val)
-                    } else if (val.constructor === Array) {
-                        for (var i = 0; i < val.length; i++) {
-                            params_list.push(encoded+"="+val[i]);
-                        }
+                var encoded = this.encoder.encode(key);
+                if (val.constructor !== Array && val !== '') {
+                    params_list.push(encoded+"="+val)
+                } else if (val.constructor === Array) {
+                    for (var i = 0; i < val.length; i++) {
+                        params_list.push(encoded+"="+val[i]);
                     }
                 }
             }
         }
-        return positionnal_params.join('/') + '?' + params_list.join("&");
+        return params_list.join("&");
     },
 
     pushUrl: function(params) {
-        var new_url = '/browser/' + params;
+        var new_url;
+        new_url = window.location.pathname + '?' + params;
         try  {
             this.window.history.pushState('plop', 'plop', new_url);
         } catch(error) {
@@ -172,12 +156,8 @@ Url.prototype= {
         }
     },
 
-    getPositionnalParams: function() {
+    getStraightParams: function() {
         return ["sample_set_id", "config"];
-    },
-
-    getPosition: function(param) {
-        return this.getPositionnalParams().indexOf(param);
     },
 
     loadUrl: function(db, args, filename) {
@@ -195,6 +175,63 @@ Url.prototype= {
 
 };
 Url.prototype = $.extend(Object.create(View.prototype), Url.prototype);
+
+function PositionalUrl(model, win) {
+    Url.call(this, model, win);
+}
+
+PositionalUrl.prototype = Object.create(Url.prototype);
+
+PositionalUrl.prototype.parseUrlParams = function() {
+        var params = Url.prototype.parseUrlParams.call(this);
+
+        var url = window.location;
+        var slash_params = url.pathname.substr(1).split('/');
+        var positional_params = [];
+        for (var k = 0; k < slash_params.length; k++) {
+            if(slash_params[k] !== 'browser')
+                positional_params.push(slash_params[k]);
+        }
+        var pos_param_keys = this.getStraightParams();
+        for (var j = 0; j < positional_params.length; j++) {
+            params[pos_param_keys[j]] = positional_params[j];
+        }
+        return params;
+    }
+
+PositionalUrl.prototype.generateParamsString = function(params_dict) {
+        var params_list = [];
+        var positional_params = [];
+        for (var key in params_dict){
+            var val = params_dict[key];
+            if ((typeof key != "undefined" && key !== "") && (typeof val != "undefined")) {
+                var pos = this.getPosition(key);
+                if (pos >= 0) {
+                    positional_params[pos] = val;
+                } else {
+                    var encoded = this.encoder.encode(key);
+                    if (val.constructor !== Array && val !== '') {
+                        params_list.push(encoded+"="+val)
+                    } else if (val.constructor === Array) {
+                        for (var i = 0; i < val.length; i++) {
+                            params_list.push(encoded+"="+val[i]);
+                        }
+                    }
+                }
+            }
+        }
+        return positional_params.join('/') + '?' + params_list.join("&");
+    }
+
+PositionalUrl.prototype.pushUrl = function(params) {
+        var new_url = window.location.origin + '/browser/' + params;
+        console.log("new url: " + new_url);
+        this.window.history.pushState('plop', 'plop', new_url);
+    };
+
+PositionalUrl.prototype.getPosition = function(param) {
+        return this.getStraightParams().indexOf(param);
+    };
 
 function UrlEncoder() {
     this.encoding = {
