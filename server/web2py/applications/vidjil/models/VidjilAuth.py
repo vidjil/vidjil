@@ -616,5 +616,5 @@ class VidjilAuth(Auth):
         if self.log:
             self.log.info('%s %s' % (description, vars))
 
-    def __str__():
-        return "%4s – %s %s" % (self.id, self.first_name, self.last_name)
+    def __str__(self):
+        return "%04d – %s %s" % (self.id, self.first_name, self.last_name)
