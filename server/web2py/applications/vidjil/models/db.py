@@ -371,6 +371,7 @@ def _init_log():
 
 log = _init_log()
 
+auth.log = log
 auth.preload()
 
 current.log = log

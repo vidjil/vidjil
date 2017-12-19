@@ -27,6 +27,7 @@ class VidjilAuth(Auth):
     permissions = {}
 
     def __init__(self, environment=None, db=None):
+        self.log = None
         super(VidjilAuth, self).__init__(environment, db)
 
     def preload(self):
@@ -610,6 +611,10 @@ class VidjilAuth(Auth):
                     (permission.table_name == table)
                     ._select(permission.record_id))
         return query
+
+    def log_event(self, description, vars=None, origin='auth'):
+        if self.log:
+            self.log.info('%s %s' % (description, vars))
 
     def __str__():
         return "%4s – %s %s" % (self.id, self.first_name, self.last_name)
