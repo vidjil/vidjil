@@ -673,9 +673,13 @@ def user():
         auth.is_logged_in = lambda: False
         
         def post_register(form):
-            #default values for new user
-            group_id = db(db.auth_group.role == 'public' ).select()[0].id
+            # Set up a new user
+
+            # Default permissions
             add_default_group_permissions(auth, auth.user_group())
+
+            # Appartenance to the public group
+            group_id = db(db.auth_group.role == 'public').select()[0].id
             db.auth_membership.insert(user_id = auth.user.id, group_id = group_id)
             #restore admin session after register
             session.auth = admin_auth
