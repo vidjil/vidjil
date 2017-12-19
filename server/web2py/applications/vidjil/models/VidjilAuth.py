@@ -614,7 +614,11 @@ class VidjilAuth(Auth):
 
     def log_event(self, description, vars=None, origin='auth'):
         if self.log:
-            self.log.info('%s %s' % (description, vars))
+            message = str(description)
+            for (k,v) in vars.iteritems():
+                if 'password' not in k:
+                    message += ' %s:%s' % (k,v) 
+            self.log.debug(message)
 
     def __str__(self):
         return "%04d – %s %s" % (self.id, self.first_name, self.last_name)
