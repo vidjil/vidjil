@@ -504,6 +504,21 @@ These instructions are preliminary, other documentation can also be found in [[h
    initctl restart uwsgi-emperor
    #+END_SRC
 
+** Logging database queries
+*** MySQL
+    One can see some [[https://stackoverflow.com/questions/650238/how-to-show-the-last-queries-executed-on-mysql][insightful SO post]].
+    To summarize, this can either be done at runtime:
+    #+BEGIN_SRC sql
+    SET GLOBAL log_output = "FILE";
+    SET GLOBAL general_log_file = "/path/to/your/logfile.log";
+    SET GLOBAL general_log = 'ON';
+    #+END_SRC
+    Or directly in the configuration file (less recommended):
+    #+BEGIN_SRC conf
+    general_log_file        = /var/log/mysql/mysql.log
+    general_log             = 1
+    #+END_SRC
+    In that case the server must be restarted afterwards.
 * Running the server in a production environment
 
 ** Introduction
