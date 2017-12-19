@@ -610,3 +610,6 @@ class VidjilAuth(Auth):
                     (permission.table_name == table)
                     ._select(permission.record_id))
         return query
+
+    def __str__():
+        return "%4s – %s %s" % (self.id, self.first_name, self.last_name)
