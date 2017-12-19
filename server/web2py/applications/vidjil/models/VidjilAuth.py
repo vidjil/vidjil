@@ -613,7 +613,7 @@ class VidjilAuth(Auth):
         return query
 
     def log_event(self, description, vars=None, origin='auth'):
-        if self.log:
+        if self.log and description:
             message = str(description)
             for (k,v) in vars.iteritems():
                 if 'password' not in k:
