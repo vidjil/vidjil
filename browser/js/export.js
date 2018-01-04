@@ -676,9 +676,6 @@ Report.prototype = {
         var system = this.m.clone(cloneID).germline
         var clone = $('<div/>', {'class': 'clone'})
         
-        graph.resize(791,300)
-        graph.draw(0)
-        
         var head = $('<span/>', {'class': 'clone_head'}).appendTo(clone);
         //clone svg path icon
         if (time == -1){
