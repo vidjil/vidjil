@@ -137,6 +137,19 @@ Germline::Germline(string code, char shortcut, string path, json json_recom,
 
   if (rep_4.size())
     seg_method = SEG_METHOD_543 ;
+
+  // SEG_METHOD_ONE
+  if (json_recom.find("1") != json_recom.end())
+    {
+      seg_method = SEG_METHOD_ONE ;
+      for (json::iterator it = json_recom["1"].begin();
+           it != json_recom["1"].end(); ++it)
+        {
+          string filename = *it;
+          f_reps_4.push_back(path + filename);
+          rep_4.add(path + filename);
+        }
+    }
 }
 
 void Germline::finish() {
