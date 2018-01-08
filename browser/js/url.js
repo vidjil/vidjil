@@ -220,11 +220,11 @@ PositionalUrl.prototype.generateParamsString = function(params_dict) {
                 }
             }
         }
-        return positional_params.join('/') + '?' + params_list.join("&");
+        return '?' + params_list.join("&");
     }
 
 PositionalUrl.prototype.pushUrl = function(params) {
-        var new_url = window.location.origin + '/browser/' + params;
+        var new_url = window.location.href.split('?')[0] + params;
         console.log("new url: " + new_url);
         this.window.history.pushState('plop', 'plop', new_url);
     };
