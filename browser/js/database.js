@@ -1120,7 +1120,7 @@ Database.prototype = {
             var tgt = $('#live-ajax-icon');
             $('#live-ajax-msg').empty();
             tgt.empty();
-            $('<img/>', {src: '/images/ajax-loader.gif'}).appendTo($('<div/>', {class: 'active-container'}).appendTo(tgt));
+            $('<img/>', {src: './images/ajax-loader.gif'}).appendTo($('<div/>', {class: 'active-container'}).appendTo(tgt));
             $('body').css('cursor', 'wait');
         }
     },
