@@ -146,6 +146,19 @@ VidjilAutoComplete.prototype = {
             return null;
         };
 
+        // code taken directly from atwho source in order to allow use of brackets in inputs
+        callbacks.highlighter = function(li, query) {
+            var regexp;
+            if (!query) {
+                return li;
+            }
+            regexp = new RegExp(">\\s*(\\w*?)(" + query.replace(/[\+\[\]\(\)]/g, function(s) { return "\\" + s; }) + ")(\\w*)\\s*<", 'ig');
+            return li.replace(regexp, function(str, $1, $2, $3) {
+                return '> ' + $1 + '<strong>' + $2 + '</strong>' + $3 + ' <';
+            });
+
+        };
+
         callbacks.beforeInsert = function(value) {
             return value + ", "
         };
