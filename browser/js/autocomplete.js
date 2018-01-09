@@ -138,10 +138,10 @@ VidjilAutoComplete.prototype = {
         };
 
         callbacks.matcher = function(flag, subtext) {
-            var regex = new RegExp("[\\s\\S]+");
-            var match = regex.exec(subtext);
+            var regex = /:?([\s0-9a-z_\[\]\(\)]+),?\s*/ig
+            var match = subtext.match(regex);
             if (match) {
-                return match[0];
+                return match[match.length - 1];
             }
             return null;
         };
