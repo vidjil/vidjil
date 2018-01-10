@@ -73,6 +73,7 @@ DIR=$(dirname $file)
 BASE=$(basename $file)
 cd "$DIR"
 
+EXEC=vidjil-algo
 VIDJIL_DIR=../../../
 VIDJIL_DEFAULT_OPTIONS=""
 VIDJIL_DATA=../data/

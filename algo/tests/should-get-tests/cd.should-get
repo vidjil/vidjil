@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil -g $VIDJIL_DIR/germline/homo-sapiens-cd.g -A $VIDJIL_DATA/cd-4-19.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens-cd.g -A $VIDJIL_DATA/cd-4-19.fa
 
 $ Load CD-sorting.fa
 1:homo-sapiens/CD-sorting.fa .* 28 sequences
