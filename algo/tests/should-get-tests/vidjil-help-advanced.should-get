@@ -1,7 +1,7 @@
 !LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -H  2> out-v ; cat out-v
 
 $ License
-1:Vidjil is free software
+1:vidjil-algo is free software
 
 $ Check default costs
 1:segmenter .* "4, -6, -10, -1, -10"

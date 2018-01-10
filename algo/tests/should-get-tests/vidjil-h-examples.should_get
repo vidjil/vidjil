@@ -3,7 +3,7 @@
 # Test examples embedded in './vidjil-algo -h'
 
 # Run 6 times (-h + 5 examples)
-6:Vidjil -- V.D.J recombinations analysis
+6:vidjil-algo -- V.D.J recombinations analysis
 
 # '-c clone', two times
 2: end of clones
