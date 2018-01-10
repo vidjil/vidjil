@@ -1,4 +1,4 @@
-#+TITLE: Vidjil Algorithm -- Command-line Manual
+#+TITLE: vidjil-algo -- Command-line Manual
 #+AUTHOR: The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="org-mode.css" />
 
@@ -16,14 +16,14 @@ diversity. They are also useful markers of pathologies, and in
 leukemia, are used to quantify the minimal residual disease during
 patient follow-up.
 
-The Vidjil algorithm processes high-throughput sequencing data to extract V(D)J
-junctions and gather them into clones. Vidjil starts 
+Vidjil-algo processes high-throughput sequencing data to extract V(D)J
+junctions and gather them into clones. Vidjil-algo starts 
 from a set of reads and detects "windows" overlapping the actual CDR3.
 This is based on an fast and reliable seed-based heuristic and allows
 to output all sequenced clones. The analysis is extremely fast
 because, in the first phase, no alignment is performed with database
 germline sequences. At the end, only the consensus sequences
-of each clone have to be analyzed. Vidjil can also cluster similar
+of each clone have to be analyzed. Vidjil-algo can also cluster similar
 clones, or leave this to the user after a manual review in the web application.
 
 The method is described in the following references:
@@ -38,8 +38,8 @@ Mathieu Giraud, Mikaël Salson, et al.,
 BMC Genomics 2014, 15:409
 http://dx.doi.org/10.1186/1471-2164-15-409
 
-Vidjil is open-source, released under GNU GPLv3 license.
-This is the help of the Vidjil algorithm, for command-line usage.
+Vidjil-algo is open-source, released under GNU GPLv3 license.
+This is the help of vidjil-algo, for command-line usage.
 Other documentation (users and administrators of the web application, developpers) can be found from http://www.vidjil.org/doc/.
 
 
@@ -47,7 +47,7 @@ Other documentation (users and administrators of the web application, developper
 
 ** Supported platforms
 
-The Vidjil algorithm has been successfully tested on the following platforms :
+Vidjil-algo has been successfully tested on the following platforms :
  - CentOS 6.3 amd64
  - CentOS 6.3 i386
  - CentOS 7.2 i386
@@ -60,19 +60,19 @@ The Vidjil algorithm has been successfully tested on the following platforms :
  - Ubuntu 16.04 LTS
  - OS X 10.9, 10.10, 10.11
 
-Vidjil is developed with continuous integration using systematic unit and functional testing.
+Vidjil-algo is developed with continuous integration using systematic unit and functional testing.
 The development team internally uses [[https://jenkins-ci.org/][Jenkins]] for that.
 Moreover, the results of some of these tests can be publicly checked on [[https://travis-ci.org/vidjil/vidjil][travis-ci.org]].
 
 ** Build requirements (optional)
 
-This paragraph details the requirements to build Vidjil from source.
+This paragraph details the requirements to build Vidjil-algo from source.
 You can also download a static binary (see next paragraph, 'Installation').
 
-To compile Vidjil, make sure:
+To compile Vidjil-algo, make sure:
   - to be on a POSIX system ;
   - to have a C++11 compiler (as =g++= 4.8 or above or =clang= 3.3 or above). 
-    (Vidjil will not work with a =g++= 7.0 or above.)
+    (Vidjil-algo will not work with a =g++= 7.0 or above.)
   - to have the =zlib= installed (=zlib1g-dev= package under Debian/Ubuntu,
     =zlib-devel= package under Fedora/CentOS).
 
@@ -102,9 +102,9 @@ You may also need to install the =gzstream= library with:
 pkg install gzstream
 #+END_SRC
 
-Also Vidjil uses GNU make which requires =gmake= under FreeBSD.
+Also Vidjil-algo uses GNU make which requires =gmake= under FreeBSD.
 At the time of redacting the documentation, =g++= requires extra options to
-ensure flawless compilation and execution of Vidjil:
+ensure flawless compilation and execution of Vidjil-algo:
 #+BEGIN_SRC sh
 make MAKE=gmake CXXFLAGS="-D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"
 #+END_SRC
@@ -176,10 +176,10 @@ make germline
 make                     # build Vijil from the sources (see the requirements, above)
 
 # or
-wget http://bioinfo.lifl.fr/vidjil/vidjil-2015.12_x86_64 -O vidjil
+wget http://bioinfo.lifl.fr/vidjil/vidjil-2015.12_x86_64 -O vidjil-algo
                          # download a static binary (built for x86_64 architectures)
 
-./vidjil -h              # display help/usage
+./vidjil-algo -h              # display help/usage
 #+END_SRC
 
 If your build system does not use C++11 by default, you should replace the =make= commands by:
@@ -219,12 +219,12 @@ make test                # run self-tests (can take 5 to 60 minutes)
 
 * Input and parameters
 
-The main input file of Vidjil is a /set of reads/, given as a =.fasta=
+The main input file of Vidjil-algo is a /set of reads/, given as a =.fasta=
 or =.fastq= file, possibly compressed with gzip (=.gz=).
 This set of reads can reach several gigabytes and 2*10^9 reads. It is
 never loaded entirely in the memory, but reads are processed one by
-one by the Vidjil algorithm.
-Vidjil can also process BAM files, but please note that:
+one by Vidjil-algo.
+Vidjil-algo can also process BAM files, but please note that:
 1. The reads don't need to be aligned beforehand.
 2. In case of paired-end sequencing, the reads must have already been merged
    in the BAM file.
@@ -399,7 +399,7 @@ produce large file and takes huge computation times.
 
 ** Sequences of interest
 
-Vidjil allows to indicate that specific sequences should be followed and output,
+Vidjil-algo allows to indicate that specific sequences should be followed and output,
 even if those sequences are 'rare' (below the =-r/-%= thresholds).
 Such sequences can be provided either with =-W <sequence>=, or with =-l <file>=.
 The file given by =-l= should have one sequence by line, as in the following example:
@@ -412,7 +412,7 @@ GAGAGATGGACGGAATACGTTAAACGACATATGGTTCGGGGTATGGTGCT my-clone-2 foo
 Sequences and labels must be separed by one space.
 The first column of the file is the sequence to be followed
 while the remaining columns consist of the sequence's label.
-In Vidjil output, the labels are output alongside their sequences.
+In Vidjil-algo output, the labels are output alongside their sequences.
 
 A sequence given =-W <sequence>= or with =-l <file>= can be exactly the size
 of the window (=-w=, that is 50 by default). In this case, it is guaranteed that
@@ -472,7 +472,7 @@ two windows that must be clustered.
 
 ** Main output files
 
-The main output of Vidjil (with the default =-c clones= command) are two following files:
+The main output of Vidjil-algo (with the default =-c clones= command) are two following files:
 
  - The =.vidjil= file is /the file for the Vidjil web application/.
    The file is in a =.json= format (detailed in [[file:format-analysis.org][format-analysis.org]])
@@ -493,7 +493,7 @@ The main output of Vidjil (with the default =-c clones= command) are two followi
    detailed V(D)J and CDR3 designation (=-z=, see warning below), given in a '.vdj' format, see below.
    The further clustering is not output in this file.
 
-   The =.vdj.fa= output enables to use Vidjil as a /filtering tool/,
+   The =.vdj.fa= output enables to use Vidjil-algo as a /filtering tool/,
    shrinking a large read set into a manageable number of (pre-)clones
    that will be deeply analyzed and possibly further clustered by
    other software.
@@ -559,8 +559,8 @@ PCR and sequencing errors can thus lead to slighlty over-estimate the diversity.
    :CUSTOM_ID: unsegmentation
    :END:
 
-Vidjil output details statistics on the reads that are not segmented (not analyzed).
-Basically, *an unsegmented read is a read where Vidjil cannot identify a window at the junction of V and J genes*.
+Vidjil-algo outputs details statistics on the reads that are not segmented (not analyzed).
+Basically, *an unsegmented read is a read where Vidjil-algo cannot identify a window at the junction of V and J genes*.
 To properly analyze a read, Vijdil needs that the sequence spans enough V region and J region
 (or, more generally, 5' region and 3' regions when looking for incomplete or unusual recombinations).
 The following unsegmentation causes are reported:
@@ -577,9 +577,9 @@ The following unsegmentation causes are reported:
 |---------------------+---------------------------------------------------------------------------------------------------------------------|
 | =UNSEG only J/3=    | Relevant similarities have been found with some J, but none or not enough with any V.                               |
 |---------------------+---------------------------------------------------------------------------------------------------------------------|
-| =UNSEG ambiguous=   | Vidjil finds some V and J similarities mixed together which makes the situation ambiguous and hardly solvable.      |
+| =UNSEG ambiguous=   | vidjil-algo finds some V and J similarities mixed together which makes the situation ambiguous and hardly solvable.      |
 |---------------------+---------------------------------------------------------------------------------------------------------------------|
-| =UNSEG too short w= | The junction can be identified but the read is too short so that Vidjil could extract the window (by default 50bp). |
+| =UNSEG too short w= | The junction can be identified but the read is too short so that vidjil-algo could extract the window (by default 50bp). |
 |                     | It often means the junction is very close from one end of the read.                                                 |
 |---------------------+---------------------------------------------------------------------------------------------------------------------|
 
@@ -590,7 +590,7 @@ Some datasets may give reads with many low =UNSEG too few= reads:
     This is expected when the PCR or capture-based approach included other regions, such as in whole RNA-seq.
 
  - =UNSEG only V/5= and =UNSEG only J/3= happen when reads do not span enough the junction zone.
-    Vidjil detects a “window” including the CDR3. By default this window is 50bp long,
+    Vidjil-algo detects a “window” including the CDR3. By default this window is 50bp long,
     so the read needs be that long centered on the junction.
 
 See [[http://git.vidjil.org/blob/master/doc/browser.org][browser.org]] for information on the biological or sequencing causes that can lead to few segmented reads.
@@ -703,14 +703,14 @@ require either the =-g germline/homo-sapiens-g:IGH= option, or the multi-germlin
 ** Basic usage: PCR-based datasets, with primers in the V(D)J regions (such as BIOMED-2 primers)
 
 #+BEGIN_SRC sh
-./vidjil -g germline/homo-sapiens.g:IGH -3 demo/Stanford_S22.fasta
+./vidjil-algo -g germline/homo-sapiens.g:IGH -3 demo/Stanford_S22.fasta
    # Cluster the reads into clones, based on windows overlapping IGH CDR3s.
    # Assign the VDJ genes and try to detect the CDR3 of each clone.
    # Summary of clones is available both on stdout, in out/Stanford_S22.vdj.fa and in out/Stanford_S22.vidjil.
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -g germline -2 -3 -d demo/Stanford_S22.fasta
+./vidjil-algo -g germline -2 -3 -d demo/Stanford_S22.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
    # Assign the VDJ genes (including multiple D) and try to detect the CDR3 of each clone.
@@ -721,7 +721,7 @@ require either the =-g germline/homo-sapiens-g:IGH= option, or the multi-germlin
 ** Basic usage: Whole RNA-Seq or capture datasets
 
 #+BEGIN_SRC sh
-./vidjil -g germline -2 -U demo/Stanford_S22.fasta
+./vidjil-algo -g germline -2 -U demo/Stanford_S22.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
    # Assign the VDJ genes and try to detect the CDR3 of each clone.
@@ -737,13 +737,13 @@ This file will be relatively small (a few kB or MB) and can be taken again as an
 ** Advanced usage
 
 #+BEGIN_SRC sh
-./vidjil -c clones -g germline/homo-sapiens.g:IGH -r 1 ./algo/tests/data/clones_simul.fa
+./vidjil-algo -c clones -g germline/homo-sapiens.g:IGH -r 1 ./algo/tests/data/clones_simul.fa
    # Extracts the windows with at least 1 read each (-r 1, the default being -r 5)
    # then cluster them into clones
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -c clones -g germline/homo-sapiens.g:IGH -r 1 -n 5 ./algo/tests/data/clones_simul.fa
+./vidjil-algo -c clones -g germline/homo-sapiens.g:IGH -r 1 -n 5 ./algo/tests/data/clones_simul.fa
    # Window extraction + clone clustering,
    # with automatic clustering, distance five (-n 5)
    # The result of the automatic clustering is in the .vidjil file
@@ -751,13 +751,13 @@ This file will be relatively small (a few kB or MB) and can be taken again as an
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -c segment -g germline/homo-sapiens.g -2 -3 -d -x 50 demo/Stanford_S22.fasta
+./vidjil-algo -c segment -g germline/homo-sapiens.g -2 -3 -d -x 50 demo/Stanford_S22.fasta
    # Detailed V(D)J designation, including multiple D, and CDR3 detection on the first 50 reads, without clone clustering
    # (this is slow and should only be used for testing, or on a small file)
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -c germlines -g germline/homo-sapiens.g demo/Stanford_S22.fasta
+./vidjil-algo -c germlines -g germline/homo-sapiens.g demo/Stanford_S22.fasta
    # Output statistics on the number of occurrences of k-mers of the different germlines
 #+END_SRC
 
