@@ -34,7 +34,7 @@ manage, process your samples (=.fasta=, =.fastq=, =.gz= or =.clntab= files) dire
 (see [[The patient/experiment database and the server]]), and the server behind the patient/experiment
 database computes these =.vidjil= files.
 Otherwise, such =.vidjil= files can be obtained:
- - from the command-line version of Vidjil (starting from
+ - from vidjil-algo (starting from
    =.fasta=, =.fastq= or =.gz= files, see [[http://git.vidjil.org/blob/master/doc/algo.org][algo.org]]).
    To gather several =.vidjil= files, you have to use the [[http://git.vidjil.org/blob/master/tools/fuse.py][fuse.py]] script
  - or by any other V(D)J analysis pipelines able to output files
@@ -254,7 +254,7 @@ Depending on your granted accesses, you can schedule a processing for a sequence
 The processing can take a few seconds to a few hours, depending on the
 software lauched, the options set in the config, the size of the sample and the server load.
 
-The base human configurations with the Vidjil built-in algorithm are « TRG », « IGH », « multi » (=-g germline=), « multi+inc » (=-g germline -i=), « multi+inc+xxx » (=-g germline -i -2=, default advised configuration).
+The base human configurations with vidjil-algo are « TRG », « IGH », « multi » (=-g germline=), « multi+inc » (=-g germline -i=), « multi+inc+xxx » (=-g germline -i -2=, default advised configuration).
 See https://github.com/vidjil/vidjil/blob/master/doc/locus.org for information on these configurations.
 There are also configuration for other species and for other RepSeq algorithms, such as « MiXCR ».
 The server mainteners can add new configurations tailored to specific needs, contact us if you have other needs.
@@ -303,14 +303,14 @@ The different permissions that can be attributed are:
   potential biases that could affect your analysis.
 
 ** How do you define a clone? How are gathered clones?
-  In the *built-in Vidjil algorithm* (Giraud, Salson, BMC Genomics 2014),
+  In vidjil-algo, called *vidjil-algo* (Giraud, Salson, BMC Genomics 2014),
   sequences are gathered into a same clone as long as they share the
   same 50bp DNA sequence around the CDR3 sequence.
   In a first step, the algorithm has a quick heuristic which detects approximatively
   where the CDR3 lies and extracts a 50bp nucleotide sequence centered on that
-  region. This region is called a window in Vidjil's algorithm. When two
+  region. This region is called a *window* in vijdil-algo. When two
   sequences share the same window, they belong to the same clone.  Therefore
-  in Vidjil clones are only defined based on the exact match of a long DNA
+  in vidjil-algo clones are only defined based on the exact match of a long DNA
   sequence. This explains why some little clones can be seen around larger
   clones: they may be due to sequencing error that lead to different windows.
   However those small differences can also be due to a real biological process
@@ -334,14 +334,14 @@ The =.vidjil= file has to give one consensus sequence per clone, and
 Rep-Seq algorithms have to deal with great care to these difference in
 order not to gather reads from different clones.
 
-For the *built-in Vidjil algorithm*, it is required that the window centered on
+For *vidjil-algo*, it is required that the window centered on
 the CDR3 is /exactly/ shared by all the reads. The other positions in
 the consensus sequence are guaranteed to be present in /at least half/
 of the reads. The consensus sequence can thus be shorter than some reads.
 
 ** How are computed the V(D)J designations?
 
-In the *built-in Vidjil algorithm*, V(D)J designations are computed /after the clone clustering/ by dynamic programming,
+In *vijdil-algo*, V(D)J designations are computed /after the clone clustering/ by dynamic programming,
 finding the most similar V (or 5') and J (or 3') gene, then trying to match a D gene.
 Note that the algorithm also detects some VDDJ or VDDDJ recombinations that may happen in the TRD locus.
 Some incomplete or unusual rearrangements (Dh/Jh, Dd2/Dd3, KDE-Intron, mixed TRA-TRD recombinations) are also detected.
@@ -358,7 +358,7 @@ This opens another window/tab.
    :END:
 
 The interest of NGS/RepSeq studies is to provide a deep view of any
-V(D)J repertoire. The underlying analysis softwares (such as Vidjil)
+V(D)J repertoire. The underlying analysis softwares (such as vidjil-algo)
 try to analyze as much reads as possible (see [[Number of analyzed reads]] below).
 One often wants to "see all clones and reads", but a complete list is difficult
 to see in itself. In a typical dataset with about 10^6 reads, even in
@@ -420,9 +420,9 @@ analyzed reads, including the hidden clones.
 The web application displays one consensus sequence per clone (see [[#Representative][Representative]] above).
 In some situations, one may want to go back to the reads.
 
-For the *built-in Vidjil algorithm*, analyzing a dataset with the /default + extract reads/ config enables
+For *vidjil-algo*, analyzing a dataset with the /default + extract reads/ config enables
 to retrieve back the analyzed reads in the =.segmented.vdj.fa= file that can be downloaded through the =out= link near each sample.
-This =.vdj.fa= output enables to use Vidjil as a /filtering tool/,
+This =.vdj.fa= output enables to use vidjil-algo as a /filtering tool/,
 shrinking a large read set into a manageable number of (pre-)clones
 that will be deeply analyzed and possibly further clustered by
 other software.
@@ -448,14 +448,14 @@ With DNA-Seq sequencing with specific V(D)J primers,
 ratios above 90% usually mean very good results. Smaller ratios, especially under 60%, often mean that something went wrong.
 On the other side, capture with many probes or RNA-Seq strategies usually lead to datasets with less than 0.1% V(D)J recombinations.
 
-The “info“ button further detail the causes of non-analysis (for the built-in Vidjil algorithm, =UNSEG=, see detail on [[http://git.vidjil.org/blob/master/doc/algo.org][algo.org]]).
+The “info“ button further detail the causes of non-analysis (for vijdil-algo, =UNSEG=, see detail on [[http://git.vidjil.org/blob/master/doc/algo.org][algo.org]]).
 There can be several causes leading to bad ratios: 
 
 *** Analysis or biological causes
 
    - The data actually contains other germline/locus that what was searched for
       (solution: relauch the processing, or ask that we relaunch it, with the correct germline sequences).
-      See [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]] for information on the analyzable human locus with the built-in Vidjil algorithm,
+      See [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]] for information on the analyzable human locus with vidjil-algo,
      and contact us if you would like to analyze data from species that are not currently available.
 
    - There are incomplete/exceptional recombinations
@@ -470,7 +470,7 @@ There can be several causes leading to bad ratios:
 *** PCR or sequencing causes
 
    - The read length is too short and the reads do not span the junction zone (=UNSEG too few V/J= or =UNSEG only V/J=).
-      (the built-in Vidjil algorithm detects a “window” including the CDR3. By default this window is 50bp long, so the read needs be that long centered on the junction).
+      (vidjil-algo detects a “window” including the CDR3. By default this window is 50bp long, so the read needs be that long centered on the junction).
 
    - In particular, for paired-end sequencing, one of the ends can lead to reads not fully containing the CDR3 region.
      Solutions are to merge the ends with very conservative parameters (see [[Read merging]] above),
@@ -510,7 +510,7 @@ There can be several causes leading to bad ratios:
 
 
 
-   In the built-in Vidjil algorithm,
+   In vidjil-algo,
    the clone coverage is the ratio of the length of the clone consensus sequence
    to the median read length in the clone.
    A consensus sequence is
@@ -536,7 +536,7 @@ There can be several causes leading to bad ratios:
    :PROPERTIES:
    :CUSTOM_ID: evalue
    :END:
-   Vidjil built-in algorithm computes an e-value of the found
+   Vidjil-algo computes an e-value of the found
    recombination. An e-value is the number of times such a recombination is
    expected to be found by chance. The lower the e-value the more robust the
    detection is.

@@ -28,7 +28,7 @@ and to use meanwhile the public test server.
 ** CPU, RAM
 
 *** Minimal
-   The Vidjil algorithm typically uses
+   vidjil-algo typically uses
    approx. 1.2GB of RAM to run on a 1GB =.fastq= and will take approx. 5+ minutes.
    Therefore in order to process requests from a single user with a few samples,
    any standard multi-core processor with 2GB RAM will be enough.
@@ -39,7 +39,7 @@ and to use meanwhile the public test server.
    of usage you require.
    If you have many users that use the app on a daily basis, you will need to
    have multiple cores to ensure the worker queues don't build up.
-   One worker will occupy one core completely when running the Vidjil algorithm (which is
+   One worker will occupy one core completely when running vidjil-algo (which is
    currently single-threaded).
 
    For reference, here is the current Vidjil setup we used on our public
