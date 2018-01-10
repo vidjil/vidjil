@@ -1,24 +1,24 @@
 /*
-  This file is part of Vidjil <http://www.vidjil.org>
-  Copyright (C) 2011-2017 by Bonsai bioinformatics
+  This file is part of Vidjil-algo <http://www.vidjil.org>
+  Copyright (C) 2011-2018 by Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
       Mathieu Giraud <mathieu.giraud@vidjil.org>
       Mikaël Salson <mikael.salson@vidjil.org>
       Marc Duez <marc.duez@vidjil.org>
 
-  "Vidjil" is free software: you can redistribute it and/or modify
+  "Vidjil-algo" is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  "Vidjil" is distributed in the hope that it will be useful,
+  "Vidjil-algo" is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
+  along with "Vidjil-algo". If not, see <http://www.gnu.org/licenses/>
 */
 
 //$$ #include
@@ -66,6 +66,7 @@
 // GIT_VERSION should be defined in "git-version.h", created by "create-git-version-h.sh", to be used outside of releases
 #include "git-version.h"
 
+#define PROGNAME "vidjil-algo"
 #define VIDJIL_JSON_VERSION "2016b"
 
 //$$ #define (mainly default options)
@@ -281,24 +282,25 @@ double atof_NO_LIMIT(char *optarg)
 
 int main (int argc, char **argv)
 {
-  cout << "# Vidjil -- V(D)J recombinations analysis <http://www.vidjil.org/>" << endl
+  cout << "# " << PROGNAME << " -- V(D)J recombinations analysis <http://www.vidjil.org/>" << endl
        << "# Copyright (C) 2011-2017 by the Vidjil team" << endl
        << "# Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille" << endl 
        << endl
-       << "# Vidjil is free software, and you are welcome to redistribute it" << endl
+       << "# " << PROGNAME << " is free software, and you are welcome to redistribute it" << endl
        << "# under certain conditions -- see http://git.vidjil.org/blob/master/doc/LICENSE" << endl
        << "# No lymphocyte was harmed in the making of this software," << endl
        << "# however this software is for research use only and comes with no warranty." << endl
        << endl
-       << "# Please cite http://biomedcentral.com/1471-2164/15/409 if you use Vidjil." << endl
+       << "# Please cite http://biomedcentral.com/1471-2164/15/409 if you use " << PROGNAME << "." << endl
        << endl ;
 
   //////////////////////////////////
   // Display version information or git log
 
-  string soft_version = "vidjil ";
+  string soft_version = PROGNAME ;
+  soft_version += " " ;
 #ifdef RELEASE_TAG
-  cout << "# version: vidjil " << RELEASE_TAG << endl ;
+  cout << "# version: " PROGNAME << " " << RELEASE_TAG << endl ;
   soft_version.append(RELEASE_TAG);
 #else
   cout << "# development version" << endl ;
@@ -683,7 +685,7 @@ int main (int argc, char **argv)
 #ifdef NO_SPACED_SEEDS
   if (! seed_changed)
     {
-    cerr << ERROR_STRING << "Vidjil was compiled with NO_SPACED_SEEDS: please provide a -k option." << endl;
+      cerr << ERROR_STRING << PROGNAME << " was compiled with NO_SPACED_SEEDS: please provide a -k option." << endl;
     exit(1) ;
   }
 #endif
@@ -766,18 +768,18 @@ int main (int argc, char **argv)
   if (max_clones == NO_LIMIT_VALUE || max_clones > WARN_MAX_CLONES)
     {
       cout << endl
-	   << "* WARNING: vidjil was run with '-A' option or with a large '-z' option" << endl ;
+	   << "* WARNING: " << PROGNAME << " was run with '-A' option or with a large '-z' option" << endl ;
     }
   
   if (command == CMD_SEGMENT)
     {
       cout << endl
-	   << "* WARNING: vidjil was run with '-c segment' option" << endl ;
+	   << "* WARNING: " << PROGNAME << " was run with '-c segment' option" << endl ;
     }
   
   if (max_clones == NO_LIMIT_VALUE || max_clones > WARN_MAX_CLONES || command == CMD_SEGMENT)
     {
-      cout << "* Vidjil's purpose is to efficiently extract windows overlapping the CDR3" << endl
+      cout << "* " << PROGNAME << " efficientl extracts windows overlapping the CDR3" << endl
            << "* to cluster reads into clones ('-c clones')." << endl
            << "* Computing accurate V(D)J designations for many sequences ('-c segment' or large '-z' values)" << endl
            << "* is slow and should be done only on small datasets or for testing purposes." << endl
@@ -831,7 +833,7 @@ int main (int argc, char **argv)
                                                FIRST_IF_UNCHANGED("", seed, seed_changed),
                                                FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed));
               } catch (std::exception& e) {
-                cerr << ERROR_STRING << "Vidjil cannot properly read " << path_file.first << "/" << path_file.second << ": " << e.what() << endl;
+                cerr << ERROR_STRING << PROGNAME << " cannot properly read " << path_file.first << "/" << path_file.second << ": " << e.what() << endl;
                 exit(1);
               }
             }
@@ -923,7 +925,7 @@ int main (int argc, char **argv)
   try {
     reads = OnlineBioReaderFactory::create(f_reads, 1, read_header_separator, max_reads_processed, only_nth_read);
   } catch (const invalid_argument e) {
-    cerr << ERROR_STRING << "Vidjil cannot open reads file " << f_reads << ": " << e.what() << endl;
+    cerr << ERROR_STRING << PROGNAME << " cannot open reads file " << f_reads << ": " << e.what() << endl;
     exit(1);
   }
 

@@ -32,7 +32,8 @@ PARANOID= -Wall -Weffc++ -pedantic  \
     -Wunused-value  -Wunused-variable  -Wvariadic-macros \
     -Wvolatile-register-var  -Wwrite-strings
 LDLIBS=-lm -lz
-EXEC=vidjil
+MAIN=vidjil
+EXEC=vidjil-algo
 MAINCORE=$(wildcard *.cpp)
 LIBCORE=core/vidjil.a lib/lib.a
 
@@ -109,7 +110,7 @@ debug:
 	$(MAKE) clean
 	$(MAKE) DEBUG="-ggdb"
 
-$(VIDJIL): $(BINDIR)%: %.o $(LIBCORE)
+$(VIDJIL): $(BINDIR)%: $(MAIN).o $(LIBCORE)
 	$(MAKE) -C core OPTIM="$(OPTIM)"
 	$(MAKE) -C lib OPTIM="$(OPTIM)"
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
