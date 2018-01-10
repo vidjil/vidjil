@@ -79,7 +79,7 @@ def filter_set_ids(req_vars):
     
 def form():
     group_ids = []
-    set_ids = []
+    sets = []
     relevant_ids = []
     factory = ModelFactory()
     sample_types = [defs.SET_TYPE_GENERIC, defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN]
@@ -126,9 +126,7 @@ def form():
     for t in relevant_ids:
         group_ids.append(get_set_group(t[0], t[1]))
         row = db(db[t[0]].id == t[1]).select().first()
-        set_ids.append(helpers[t[0]].get_id_string(row))
-
-    sets_string = ', '.join(set_ids)
+        sets.append({'type': t[0], 'id': helpers[t[0]].get_id_string(row)})
 
     group_ids = [int(gid) for gid in group_ids]
 
@@ -154,7 +152,7 @@ def form():
     source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
     return dict(message = T('edit file'),
                pre_process_list = pre_process_list,
-               sets_string = sets_string,
+               sets = sets,
                file = db.sequence_file[request.vars["file_id"]],
                sample_type = sample_type,
                source_module_active = source_module_active,

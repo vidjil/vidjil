@@ -130,20 +130,10 @@ VidjilAutoComplete.prototype = {
             }
             var res = $.map(data, function(i) {
                 return {
-                    name: i.name.substr(3),
-                    search: i.name
+                    name: i.name
                 };
             });
             return res;
-        };
-
-        callbacks.matcher = function(flag, subtext) {
-            var regex = /:?([\s0-9a-z_\[\]\(\)]+),?\s*/ig
-            var match = subtext.match(regex);
-            if (match) {
-                return match[match.length - 1];
-            }
-            return null;
         };
 
         // code taken directly from atwho source in order to allow use of brackets in inputs
@@ -159,8 +149,9 @@ VidjilAutoComplete.prototype = {
 
         };
 
-        callbacks.beforeInsert = function(value) {
-            return value + ", "
+        callbacks.beforeInsert = function(value, li) {
+            $input.data('set-id', value);
+            return value.substr(3);
         };
 
         $input.atwho({

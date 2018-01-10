@@ -3,7 +3,7 @@
 
 <h3>Edit sequence file</h3>    
 
-<form id="upload_form"  action="DB_ADDRESS/file/submit" enctype="multipart/form-data" method="post">
+<form id="upload_form"  action="DB_ADDRESS/file/submit" enctype="multipart/form-data" method="post" onsubmit="document.getElementById('set_list').value = new Tokeniser().readTokens(document.getElementById('set_div'));">
     <input type="hidden" id="filename" name="filename" type="text" value="">
     <input type="hidden" id="file_id" name="file_id" value="{{if "file_id" in request.vars:}}{{=request.vars["file_id"]}}{{pass}}" >
     <input type="hidden" id="sample_set_id" name="sample_set_id" value="{{if "sample_set_id" in request.vars:}}{{=request.vars["id"]}}{{pass}}" >
@@ -61,7 +61,29 @@
             </tr>
             <tr>
                 <td><label for="set_ids" id="set_ids__label">sets: </label></td>
-                <td><input onfocus="new VidjilAutoComplete().setupSamples(this);" data-needs-atwho="true" data-group-ids="{{=group_ids}}" data-keys='["generic", "patient", "run"]' id="set_list" name="set_ids" type="text" size="80" value="{{=sets_string}}" autocomplete="off"></td>
+                <td>
+                    <div  id="set_div" style="width:100%;">
+                        <input
+                            id="token_input"
+                            onfocus="new VidjilAutoComplete().setupSamples(this); new Tokeniser().setup(this, this.parentNode);"
+                            data-needs-atwho="true"
+                            data-needs-tokeniser="true"
+                            data-group-ids="{{=group_ids}}"
+                            data-keys='["generic", "patient", "run"]'
+                            type="text"
+                            size="80">
+                        <input
+                            hidden
+                            id="set_list"
+                            name="set_ids"
+                            type="text"
+                            size="80">
+                        <br>
+                        {{ for set in sets: }}
+                        <span class="set_token {{=set['type']}}_token" data-set-id="{{=set['id']}}">{{=set['id'][3:]}}</span>
+                        {{pass}}
+                    </div>
+                </td>
             </tr>
 			
 			<tr class='db_table_split' ><td colspan="2"> sample information </td></tr>
