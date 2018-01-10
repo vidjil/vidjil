@@ -249,12 +249,12 @@ def header_igblast_results(ff_fasta, ff_igblast):
 
 ### Vidjil
 
-VIDJIL_FINE = '{directory}/vidjil -X 100 -# "#" -c segment -3 -d -g {directory}/germline/homo-sapiens.g %s >> %s'
-VIDJIL_KMER = '{directory}/vidjil -w 20 -# "#" -b out -c windows -uuuU -2 -g {directory}/germline/homo-sapiens.g %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa >> %s'
+VIDJIL_FINE = '{directory}/vidjil-algo -X 100 -# "#" -c segment -3 -d -g {directory}/germline/homo-sapiens.g %s >> %s'
+VIDJIL_KMER = '{directory}/vidjil-algo -w 20 -# "#" -b out -c windows -uuuU -2 -g {directory}/germline/homo-sapiens.g %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa >> %s'
 
 def should_results_from_vidjil_output(f_log):
     '''
-    Yield (should, result) couples from a Vidjil output including lines in the form of:
+    Yield (should, result) couples from a Vidjil-algo output including lines in the form of:
     >TRDD2*01_1/AGG/1_TRDD3*01__TRD+ + VJ 	0 84 88 187	TRDD2*01 1/AGG/1 TRDD3*01  TRD+
     or
     >TRDV3*01_0//0_TRDJ4*01 ! + VJ	0 49 50 97       TRD UNSEG noisy

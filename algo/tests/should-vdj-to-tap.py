@@ -6,7 +6,7 @@ A .should-vdj.fa file is a fasta file whose identifiers are in the form:
 
 The 'should_pattern' describes the expected V(D)J segmentation in a .vdj format.
 All spaces is the pattern have to be replaced by '_'.
-The script launches Vidjil (or any other PROGRAM) on the .shoud-vdj.fasta file,
+The script launches vidjil-algo (or any other PROGRAM) on the .shoud-vdj.fasta file,
 expecting that it returns another fasta file whose identifiers are in the form:
 
 >should_pattern result
