@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/vidjil $VIDJIL_DEFAULT_OPTIONS -e 1e-3 -r 1 -y 0 -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g ./bug2107.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -e 1e-3 -r 1 -y 0 -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g ./bug2107.fa
 
 # No sequences are segmented
 1: junction detected in 0 reads
