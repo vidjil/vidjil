@@ -1,4 +1,4 @@
-!LAUNCH: (cd $VIDJIL_DIR ; grep './vidjil ' doc/algo.org > out/doc-examples.sh ; sh out/doc-examples.sh)
+!LAUNCH: (cd $VIDJIL_DIR ; grep './$EXEC ' doc/algo.org > out/doc-examples.sh ; sh out/doc-examples.sh)
 
 # Test examples embedded in 'doc/algo.org'
 
