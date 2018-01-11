@@ -62,29 +62,31 @@
             <tr>
                 <td><label for="set_ids" id="set_ids__label">sets: </label></td>
                 <td>
-                    <div  id="set_div" style="width:100%;">
-                        <input
-                            id="token_input"
-                            onfocus="new VidjilAutoComplete().setupSamples(this); new Tokeniser().setup(this, this.parentNode);"
-                            data-needs-atwho="true"
-                            data-needs-tokeniser="true"
-                            data-group-ids="{{=group_ids}}"
-                            data-keys='["generic", "patient", "run"]'
-                            type="text"
-                            size="80">
+                    <div class="token_div" style="width:100%;" onclick="$('#token_input').focus()">
                         <input
                             hidden
                             id="set_list"
                             name="set_ids"
                             type="text"
                             size="80">
-                        <br>
-                        {{ for set in sets: }}
-                            <span class="set_token {{=set['type']}}_token" data-set-id="{{=set['id']}}">
-                                <i class="icon-cancel" onclick="this.parentNode.parentNode.removeChild(this.parentNode);"></i>
-                                {{=set['id'][3:]}}
-                            </span>
-                        {{pass}}
+                        <div id="set_div">
+                            {{ for set in sets: }}
+                                <span class="set_token {{=set['type']}}_token" data-set-id="{{=set['id']}}">
+                                    <i class="icon-cancel" onclick="this.parentNode.parentNode.removeChild(this.parentNode);"></i>
+                                    {{=set['id'][3:]}}
+                                </span>
+                            {{pass}}
+                        </div>
+                        <input
+                            id="token_input"
+                            autocomplete="off"
+                            onfocus="new VidjilAutoComplete().setupSamples(this); new Tokeniser().setup(this, document.getElementById('set_div'));"
+                            data-needs-atwho="true"
+                            data-needs-tokeniser="true"
+                            data-group-ids="{{=group_ids}}"
+                            data-keys='["generic", "patient", "run"]'
+                            type="text"
+                            size="80">
                     </div>
                 </td>
             </tr>
