@@ -45,25 +45,9 @@ Tokeniser.prototype = {
     },
 
     tokenise: function(input, target) {
-        var class_mapping = {
-            ":p": "patient_token",
-            ":r": "run_token",
-            ":s": "generic_token"
-        };
-
-        var token = document.createElement('span');
-        var text = $(input).val().trim();
-        var set_id = $(input).data('set-id');
-        var className = "set_token " + class_mapping[set_id.substr(0, 2)];
-        token.className = className;
-        var x = document.createElement('i');
-        x.className = "icon-cancel";
-        x.onclick = function() {this.parentNode.parentNode.removeChild(this.parentNode);};
-        token.appendChild(x);
-        token.appendChild(document.createTextNode(text));
-        $(token).data('set-id', set_id);
+        var token = this.createToken($(input));
         $(input).val("");
-        $(input).data('set-id');
+        $(input).removeData('set-id');
         target.appendChild(token);
     },
 
@@ -74,5 +58,35 @@ Tokeniser.prototype = {
         })
         .get()
         .join();
+    },
+
+    createToken: function($input) {
+        var class_mapping = {
+            ":p": "patient_token",
+            ":r": "run_token",
+            ":s": "generic_token"
+        };
+
+        var token = document.createElement('span');
+        var text = $input.val().trim();
+        var set_id = $input.data('set-id');
+        var className = "set_token " + class_mapping[set_id.substr(0, 2)];
+        token.className = className;
+
+        var close = this.createCloseButton();
+        token.appendChild(close);
+        token.appendChild(document.createTextNode(text));
+
+        $(token).data('set-id', set_id);
+
+        return token;
+    },
+
+    createCloseButton: function() {
+        var x = document.createElement('i');
+        x.className = "icon-cancel";
+        x.onclick = function() {this.parentNode.parentNode.removeChild(this.parentNode);};
+
+        return x;
     }
 }
