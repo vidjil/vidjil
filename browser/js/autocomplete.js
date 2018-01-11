@@ -124,13 +124,24 @@ VidjilAutoComplete.prototype = {
         this.initCache(at);
         this.dataUrls[at] = this.datasource.db_address + 'sample_set/auto_complete'
         var callbacks = self.getDefaultCallbacks()
+
+        callbacks.matcher = function(flag, subtext) {
+            var regex = /([:\s0-9a-z_\[\]\(\)]+)/ig;
+            var match = subtext.match(regex);
+            if (match) {
+                return match[0];
+            }
+            return null;
+        }
+
         callbacks.beforeSave = function(data) {
             if (data.length == 1 && data[0] == VidjilAutoComplete.defaultLoadingData[0]) {
                 return data;
             }
             var res = $.map(data, function(i) {
                 return {
-                    name: i.name
+                    name: i.name,
+                    search: i.name
                 };
             });
             return res;
