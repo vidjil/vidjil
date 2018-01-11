@@ -56,7 +56,11 @@ Tokeniser.prototype = {
         var set_id = $(input).data('set-id');
         var className = "set_token " + class_mapping[set_id.substr(0, 2)];
         token.className = className;
-        token.innerText = text;
+        var x = document.createElement('i');
+        x.className = "icon-cancel";
+        x.onclick = function() {this.parentNode.parentNode.removeChild(this.parentNode);};
+        token.appendChild(x);
+        token.appendChild(document.createTextNode(text));
         $(token).data('set-id', set_id);
         $(input).val("");
         $(input).data('set-id');

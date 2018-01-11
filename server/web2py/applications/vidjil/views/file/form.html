@@ -80,7 +80,10 @@
                             size="80">
                         <br>
                         {{ for set in sets: }}
-                        <span class="set_token {{=set['type']}}_token" data-set-id="{{=set['id']}}">{{=set['id'][3:]}}</span>
+                            <span class="set_token {{=set['type']}}_token" data-set-id="{{=set['id']}}">
+                                <i class="icon-cancel" onclick="this.parentNode.parentNode.removeChild(this.parentNode);"></i>
+                                {{=set['id'][3:]}}
+                            </span>
                         {{pass}}
                     </div>
                 </td>
