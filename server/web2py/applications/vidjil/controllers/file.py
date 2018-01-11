@@ -242,7 +242,10 @@ def submit():
         db.sequence_file[id] = data
 
     ssid_dict = link_to_sample_sets(id, id_dict)
-    redirect_args = {"id" : ssid_dict[request.vars["sample_type"]][0]}
+    if request.vars["sample_type"] in ssid_dict:
+        redirect_args = {"id" : ssid_dict[request.vars["sample_type"]][0]}
+    else:
+        redirect_args = {"id": ssid_dict[ssid_dict.keys()[0]][0]}
 
     res = {"file_id" : id,
            "message": "file {%d}: metadata saved" % id,
