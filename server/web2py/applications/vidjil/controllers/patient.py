@@ -12,16 +12,27 @@ if request.env.http_origin:
 ACCESS_DENIED = "access denied"
 
 ## return form to create new patient
-def add(): 
-    if (auth.can_create_patient()):
-        creation_group_tuple =  get_default_creation_group(auth)
+def form():
+    # edit patient
+    if("id" in request.vars and auth.can_modify_patient(request.vars["id"])):
+        groups = [get_set_group(defs.SET_TYPE_PATIENT, request.vars["id"])]
+        message = 'edit patient'
+        max_group = None
+
+    #new patient
+    elif (auth.can_create_patient()):
+        creation_group_tuple = get_default_creation_group(auth)
         groups = creation_group_tuple[0]
         max_group = creation_group_tuple[1]
-        return dict(message=T('add patient'), groups=groups, master_group=max_group)
+        message = 'add patient'
     else :
         res = {"message": ACCESS_DENIED}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return dict(message=T(message),
+                groups=groups,
+                master_group=max_group,
+                patient=db.patient[request.vars["id"]])
 
 
 
@@ -29,124 +40,87 @@ def add():
 ## need ["first_name", "last_name", "birth_date", "info"]
 ## redirect to patient list if success
 ## return a flash error message if fail
-def add_form(): 
-    if (auth.can_create_patient()):
-        
-        error = ""
-        if request.vars["first_name"] == "" :
-            error += "first name needed, "
-        if request.vars["last_name"] == "" :
-            error += "last name needed, "
-        if request.vars["birth"] != "" :
-            try:
-                datetime.datetime.strptime(""+request.vars['birth'], '%Y-%m-%d')
-            except ValueError:
-                error += "date (wrong format)"
+def submit():
+    error = ""
+    if request.vars["first_name"] == "" :
+        error += "first name needed, "
+    if request.vars["last_name"] == "" :
+        error += "last name needed, "
+    if request.vars["birth"] != "" :
+        try:
+            datetime.datetime.strptime(""+request.vars['birth'], '%Y-%m-%d')
+        except ValueError:
+            error += "date (wrong format)"
 
-        if error=="" :
-            id_sample_set = db.sample_set.insert(sample_type=defs.SET_TYPE_PATIENT)
-            
-            id = db.patient.insert(first_name=request.vars["first_name"],
-                                   last_name=request.vars["last_name"],
-                                   sample_set_id=id_sample_set,
-                                   birth=request.vars["birth"],
-                                   info=request.vars["info"],
-                                   id_label=request.vars["id_label"],
-                                   creator=auth.user_id)
-
-            user_group = int(request.vars["patient_group"])
-            admin_group = db(db.auth_group.role=='admin').select().first().id
-
-            register_tags(db, defs.SET_TYPE_PATIENT, id, request.vars["info"], user_group)
-            
-            #patient creator automaticaly has all rights 
-            auth.add_permission(user_group, PermissionEnum.access.value, db.patient, id)
-            
-            patient_name = request.vars["first_name"] + ' ' + request.vars["last_name"]
-
-            res = {"redirect": "sample_set/index",
-                   "args" : { "id" : id_sample_set },
-                   "message": "(%s) patient %s added" % (id_sample_set, patient_name) }
-            log.info(res, extra={'user_id': auth.user.id, 'record_id': id, 'table_name': 'patient'})
-
-            if (id % 100) == 0:
-                mail.send(to=defs.ADMIN_EMAILS,
-                subject="[Vidjil] %d" % id,
-                message="The %dth patient has just been created." % id)
-
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
-        else :
-            res = {"success" : "false",
-                   "message" : error}
-            log.error(res)
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-        
-    else :
-        res = {"message": ACCESS_DENIED}
+    if error != "":
+        res = {"success" : "false",
+               "message" : error}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+    p = dict(first_name=request.vars["first_name"],
+             last_name=request.vars["last_name"],
+             birth=request.vars["birth"],
+             info=request.vars["info"],
+             id_label=request.vars["id_label"]
+            )
 
+    register = False
+    reset = False
 
-## return edit form 
-def edit(): 
-    if (auth.can_modify_patient(request.vars["id"]) ):
-        group_id = get_set_group(defs.SET_TYPE_PATIENT, request.vars["id"])
-        return dict(message=T('edit patient'), group_id=group_id)
+    # edit patient
+    log.debug("id present: " + "id" in request.vars)
+    log.debug("id: " + request.vars["id"] + request.vars['id'] == "" + request.vars['id'] is None)
+    if (request.vars['id'] != "" and auth.can_modify_patient(request.vars["id"])):
+        patient = db.patient[request.vars["id"]]
+        db.patient[request.vars["id"]] = p
+
+        if (patient.info != request.vars["info"]):
+            group_id = get_set_group(defs.SET_TYPE_PATIENT, request.vars["id"])
+            register = True
+            reset = True
+
+        res = {"redirect": "back",
+               "message": "%s %s (%s): patient edited" % (request.vars["first_name"], request.vars["last_name"], request.vars["id"])}
+        id = request.vars["id"]
+
+    # add patient
+    elif (auth.can_create_patient()):
+
+        id_sample_set = db.sample_set.insert(sample_type=defs.SET_TYPE_PATIENT)
+
+        p['creator'] = auth.user_id
+        p['sample_set_id'] = id_sample_set
+        id = db.patient.insert(**p)
+
+        user_group = int(request.vars["patient_group"])
+        admin_group = db(db.auth_group.role=='admin').select().first().id
+
+        group_id = user_group
+        register = True
+
+        #patient creator automaticaly has all rights
+        auth.add_permission(user_group, PermissionEnum.access.value, db.patient, id)
+
+        patient_name = request.vars["first_name"] + ' ' + request.vars["last_name"]
+
+        res = {"redirect": "sample_set/index",
+               "args" : { "id" : id_sample_set },
+               "message": "(%s) patient %s added" % (id_sample_set, patient_name) }
+
+        if (id % 100) == 0:
+            mail.send(to=defs.ADMIN_EMAILS,
+            subject="[Vidjil] %d" % id,
+            message="The %dth patient has just been created." % id)
+
     else :
         res = {"message": ACCESS_DENIED}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
-
-
-## check edit form
-## need ["first_name", "last_name", "birth_date", "info"]
-## redirect to patient list if success
-## return a flash error message if fail
-def edit_form(): 
-    if (auth.can_modify_patient(request.vars["id"]) ):
-        error = ""
-        if request.vars["first_name"] == "" :
-            error += "first name needed, "
-        if request.vars["last_name"] == "" :
-            error += "last name needed, "
-        if request.vars["birth"] != "" :
-            try:
-                datetime.datetime.strptime(""+request.vars['birth'], '%Y-%m-%d')
-            except ValueError:
-                error += "date (wrong format)"
-        if request.vars["id"] == "" :
-            error += "patient id needed, "
-
-        if error=="" :
-            patient = db.patient[request.vars["id"]]
-            db.patient[request.vars["id"]] = dict(first_name=request.vars["first_name"],
-                                                   last_name=request.vars["last_name"],
-                                                   birth=request.vars["birth"],
-                                                   info=request.vars["info"],
-                                                   id_label=request.vars["id_label"]
-                                                   )
-
-            if (patient.info != request.vars["info"]):
-                group_id = get_set_group(defs.SET_TYPE_PATIENT, request.vars["id"])
-                register_tags(db, defs.SET_TYPE_PATIENT, request.vars["id"], request.vars["info"], group_id, reset=True)
-
-            res = {"redirect": "back",
-                   "message": "%s %s (%s): patient edited" % (request.vars["first_name"], request.vars["last_name"], request.vars["id"])}
-            log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'patient'})
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
-        else :
-            res = {"success" : "false", "message" : error}
-            log.error(res)
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-    else :
-        res = {"message": ACCESS_DENIED}
-        log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
+    if register:
+        register_tags(db, defs.SET_TYPE_PATIENT, request.vars["id"], request.vars["info"], group_id, reset=reset)
+    log.info(res, extra={'user_id': auth.user.id, 'record_id': id, 'table_name': 'patient'})
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def download():
     return response.download(request, db)

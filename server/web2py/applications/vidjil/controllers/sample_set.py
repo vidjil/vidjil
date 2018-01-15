@@ -446,7 +446,7 @@ def edit():
         
         if sample_type == defs.SET_TYPE_PATIENT:
             patient = db((db.patient.sample_set_id == request.vars["id"])).select()[0]
-            redirect(URL('patient', 'edit', vars=dict(id=patient.id)), headers=response.headers)
+            redirect(URL('patient', 'form', vars=dict(id=patient.id)), headers=response.headers)
         
         elif sample_type == defs.SET_TYPE_RUN:
             run = db((db.run.sample_set_id == request.vars["id"])).select()[0]

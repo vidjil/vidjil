@@ -1,0 +1,51 @@
+{{extend 'db_layout.html'}}
+
+<form id="data_form" action="DB_ADDRESS/patient/submit" enctype="multipart/form-data" method="post">
+    <input type="hidden" id="id" name="id" value="{{if patient is not None:}}{{=patient.id}}{{pass}}">
+    <div {{ if len(groups) <= 1: }} class="hiddenCheckBox" {{pass}}>
+        <label for="group_select" id="patient_group__label">Owner Group: </label>
+        {{= SELECT(*[OPTION(g['name'], _value=g['id']) for g in groups], _id="group_select", _name="patient_group", _value=master_group, value=master_group) }}
+    </div>
+    <div id="fieldset_container">
+        <fieldset name="patient0">
+            <legend>Patient 1</legend>
+            <div>
+                <label for="patient_id_label_0" id="patient_id_label__label_0">Patient ID: </label>
+                <input class="date" id="patient_id_label_0" name="id_label" type="text"
+                    value="{{if patient is not None and patient.id_label is not None:}}{{=patient.id_label}}{{pass}}"><span></span>
+            </div>
+            <div>
+                <label for="patient_first_name_0" id="patient_first_name__label_0">First Name: </label>
+                <input class="string" id="patient_first_name_0" name="first_name" type="text"
+                    value="{{if patient is not None:}}{{=patient.first_name}}{{pass}}"><span>*</span>
+            </div>
+            <div>
+                <label for="patient_last_name_0" id="patient_last_name__label_0">Last Name: </label>
+                <input class="string" id="patient_last_name_0" name="last_name" type="text"
+                    value="{{if patient is not None:}}{{=patient.last_name}}{{pass}}"><span>*</span>
+            </div>
+            <div>
+                <label for="patient_birth_0" id="patient_birth__label_0">Birth: </label>
+                <input class="date" id="patient_birth_0" name="birth" type="text"
+                    value="{{if patient is not None and patient.birth is not None:}}{{=patient.birth}}{{pass}}" placeholder="yyyy-mm-dd">
+            </div>
+            <div>
+                <label for="patient_info_0" id="patient_info__label_0">Info: </label>
+                <textarea
+                    onfocus="$(this).data('keys', [$('#group_select option:selected').val()]);
+                             new VidjilAutoComplete().setupTags(this);"
+                    data-needs-atwho="true"
+                    class="text"
+                    cols="40"
+                    id="patient_info_0"
+                    name="info"
+                    rows="10">{{if patient is not None and patient.info is not None:}}{{=patient.info}}{{pass}}</textarea>
+            </div>
+        </fieldset>
+    </div>
+    <input type="submit" value="save" class="btn"></td>
+</form>
+
+<div>
+    (* required fields)
+</div>
