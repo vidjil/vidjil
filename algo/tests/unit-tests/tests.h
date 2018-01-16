@@ -139,6 +139,7 @@ enum {
   TEST_EXTRACTOR_AVG_LENGTH,
   TEST_EXTRACTOR_OUT_SEG,
   TEST_EXTRACTOR_OUT_UNSEG,
+  TEST_EXTRACTOR_LENGTH_SHIFT,
 
   /* WindowsStorage */
   TEST_WS_GET_GERMLINE,
@@ -300,6 +301,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_EXTRACTOR_AVG_LENGTH, "Test getAverageSegmentationLength() in WindowsExtractor");
   RECORD_TAP_TEST(TEST_EXTRACTOR_OUT_SEG, "Test segmentation output for WindowsExtractor");
   RECORD_TAP_TEST(TEST_EXTRACTOR_OUT_UNSEG, "Test unsegmentation output for WindowsExtractor");
+  RECORD_TAP_TEST(TEST_EXTRACTOR_LENGTH_SHIFT, "Test get_best_length_shifts()");
 
   RECORD_TAP_TEST(TEST_WS_GET_GERMLINE, "Test WindowsStorage::getGermline");
   RECORD_TAP_TEST(TEST_WS_HAS_WINDOW, "Test WindowsStorage::hasWindow");

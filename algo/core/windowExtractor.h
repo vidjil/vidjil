@@ -143,6 +143,22 @@ class WindowExtractor {
    * and number of reads per clones).
    */
   void out_stats_germlines(ostream &out);
+
+  /**
+   * Get best window length and shifts.
+   * @param read_length: total length of the sequence
+   * @param max_window_length: the maximal window length to start with
+   * @param central_pos: start position of the second half of the window
+   * @param shift: length of the shift
+   * @return a pair (length, shift) giving the first window that fits at the central_pos
+   *         (possibly shifted, as mentionned by shift) of the given length.
+   *         shift == 0 iff length == max_window_length.
+   *         In case of an odd window length, we assume that the second half of the
+   *         window, starting at central_pos, is the longest.
+   */
+  static pair<int, int> get_best_length_shifts(size_t read_length, size_t max_window_length,
+                                               int central_pos,
+                                               int shift);
  private:
   /**
    * Initialize the statistics (put 0 everywhere).

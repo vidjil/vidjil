@@ -152,7 +152,7 @@ void WindowsStorage::setIdToAll() {
     }
 }
 
-void WindowsStorage::add(junction window, Sequence sequence, int status, Germline *germline) {
+void WindowsStorage::add(junction window, Sequence sequence, int status, Germline *germline, list<int> extra_statuses) {
   if (! hasWindow(window)) {
     // First time we see that window: init
     status_by_window[window].resize(STATS_SIZE);
@@ -162,6 +162,9 @@ void WindowsStorage::add(junction window, Sequence sequence, int status, Germlin
 
   seqs_by_window[window].add(sequence);
   status_by_window[window][status]++;
+
+  for (int extra: extra_statuses)
+    status_by_window[window][extra]++;
 
   germline_by_window[window] = germline;
 }
@@ -277,6 +280,10 @@ json WindowsStorage::sortedWindowsToJson(map <junction, json> json_data_segment)
       
       json reads = {it->second};
       windowsList["id"] = it->first;
+      if (status_by_window[it->first][SEG_SHORTER_WINDOW])
+        windowsList["warn"] = "Short or shifted window";
+
+
       windowsList["reads"] = reads;
       windowsList["top"] = top++;
       windowsList["germline"] = germline_by_window[it->first]->code;

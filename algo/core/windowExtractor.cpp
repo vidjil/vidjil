@@ -67,13 +67,19 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
     if (seg->isSegmented()) {
 
       // Filter
-      if (!only_labeled_windows || windowsStorage->isInterestingJunction(junc))
+      if (!only_labeled_windows || windowsStorage->isInterestingJunction(junc)) {
 
-      // Store the window
-      windowsStorage->add(junc, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline);
+        // Store the window
+        if (seg->isJunctionShifted())
+          windowsStorage->add(junc, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline, {SEG_SHORTER_WINDOW});
+        else
+          windowsStorage->add(junc, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline);
+      }
 
       // Update stats
       stats[TOTAL_SEG_AND_WINDOW].insert(read_length) ;
+      if (seg->isJunctionShifted())
+        stats[SEG_SHORTER_WINDOW].insert(read_length);
       stats_reads[seg->system].addScore(read_length);
 
       if (out_segmented) {
@@ -217,4 +223,39 @@ void WindowExtractor::out_stats_germlines(ostream &out) {
       out << endl ;
     }
 
+}
+
+pair<int, int> WindowExtractor::get_best_length_shifts(size_t read_length,
+                                                       size_t max_window_length,
+                                                       int central_pos,
+                                                       int shift) {
+  if (central_pos < 0 || central_pos >= (int) read_length)
+    return make_pair(0, 0);
+
+  int constraint_left = 2 * central_pos + 1;
+  int constraint_right = (read_length - central_pos) * 2;
+  int best_length = min(constraint_left, constraint_right);
+  int best_shift = 0;
+
+  if (best_length == (int)max_window_length)
+    return make_pair(best_length, 0);
+
+  best_length = best_length / shift * shift;
+
+  list<int> shifts {-1, 1};
+  for (int current_shift : shifts) { // -1 will be a left shift
+    int shifted_constraint_left = constraint_left + current_shift * shift * 2;
+    int shifted_constraint_right = constraint_right - current_shift * shift * 2;
+
+    shifted_constraint_left = shifted_constraint_left / shift * shift;
+    shifted_constraint_right = shifted_constraint_right / shift * shift;
+
+    int current_length = min(shifted_constraint_left, shifted_constraint_right);
+    if (current_length > best_length && best_length < (int)max_window_length) {
+      best_length = current_length;
+      best_shift = current_shift;
+    }
+  }
+
+  return make_pair(min((int)max_window_length, best_length), best_shift * shift);
 }

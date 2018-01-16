@@ -243,11 +243,11 @@ void testSegmentationCause(IndexTypes index) {
     } else if (data.read(i).label == "seq-seg-no-window") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, ks.getInfoLineWithAffects());
       TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
-      TAP_TEST(ks.getLeft() == 11, TEST_KMER_LEFT, "left = " << ks.getLeft());
-      TAP_TEST(ks.getRight() == 12, TEST_KMER_RIGHT, "right = " << ks.getRight());
+      TAP_TEST(ks.getLeft() == 9, TEST_KMER_LEFT, "left = " << ks.getLeft());
+      TAP_TEST(ks.getRight() == 10, TEST_KMER_RIGHT, "right = " << ks.getRight());
       TAP_TEST(ks.getJunction(30) == "", TEST_KMER_JUNCTION, ks.getInfoLineWithAffects());
-      TAP_TEST(ks.getJunction(20) == "CTGGGACAGGGAATTATTAT"
-               || ks.getJunction(20) == "CCTGGGACAGGGAATTATTA", TEST_KMER_JUNCTION,"window: " << ks.getJunction(20));
+      TAP_TEST(ks.getJunction(15) == "GGACAGGGAATTATT"
+               || ks.getJunction(15) == "GGGACAGGGAATTAT", TEST_KMER_JUNCTION,"window: " << ks.getJunction(15));
       nb_checked++;
     }
   }
@@ -331,7 +331,7 @@ void testExtractor(IndexTypes index) {
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_ONLY_J) == 46, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_ONLY_J));
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_ONLY_V) == 48, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_ONLY_V));
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_AMBIGUOUS) == 52.5, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_AMBIGUOUS));
-  TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW) == 24, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW));
+  TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW) == 20, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW));
   TAP_TEST(we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW) == 71, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW));
 
   TAP_TEST(out_seg.tellp() > 0, TEST_EXTRACTOR_OUT_SEG, "");
@@ -339,6 +339,45 @@ void testExtractor(IndexTypes index) {
 
   delete ws;
   delete multi;
+}
+
+void testBestLengthShifts() {
+  list<pair<pair<int, int>, pair<int, int> > > test_sets =
+  // pos, shift| length, shift
+    { {{50, 5}, {30, 0}},
+      {{90, 5}, {30, -5}},
+      {{10, 5}, {30, 5}},
+      {{85, 5}, {30, 0}},
+      {{15, 5}, {30, 0}},
+      {{91, 5}, {25, -5}},
+      {{9, 5}, {25, 5}},
+      {{99, 5}, {10, -5}},
+      {{0, 5}, {10, 5}},
+      {{-100, 5}, {0, 0}}
+    };
+
+  for (auto test: test_sets) {
+    pair<int, int> param = test.first;
+    pair<int, int> expected = test.second;
+    pair<int, int> result = WindowExtractor::get_best_length_shifts(100, 30,
+                                                                    param.first,
+                                                                    param.second);
+    TAP_TEST(result == expected, TEST_EXTRACTOR_LENGTH_SHIFT,
+             "Obtained (" << result.first << ", " << result.second
+             << ") but expected (" << expected.first << ", "
+             << expected.second << ") "
+             <<  " (with "<< param.first << ", " << param.second << ")");
+
+    if (param.first >= 0) {
+      int first_pos = param.first + result.second - result.first / 2;
+      TAP_TEST(first_pos >= 0, TEST_EXTRACTOR_LENGTH_SHIFT, " First position is " << first_pos<<  " (with "<< param.first << ", " << param.second << ")");
+      TAP_TEST(first_pos + result.first - 1 < 100, TEST_EXTRACTOR_LENGTH_SHIFT, " Last position is " << first_pos + result.first - 1<<  " (with "<< param.first << ", " << param.second << ")");
+    }
+
+  }
+
+  pair<int, int> result = WindowExtractor::get_best_length_shifts(20, 30, 9, 5);
+  TAP_TEST(result == make_pair(15, 0), TEST_EXTRACTOR_LENGTH_SHIFT, "");
 }
 
 void testProbability(IndexTypes index) {
@@ -413,4 +452,5 @@ void testSegment() {
   testFineSegment(AC_AUTOMATON);
   testBug2224(KMER_INDEX);
   testBug2224(AC_AUTOMATON);
+  testBestLengthShifts();
 }

@@ -36,6 +36,15 @@
                                        As we need ~10 bp to recognize the facing V/J, this value should be large enough to handle V/J deletions until ~30 bp,
                                        (and even larger V/J deletions if there is a large facing J or V in the read). */
 
+#define DEFAULT_WINDOW_SHIFT 5  /* Number of nucleotide to try shifting or
+                                   reducing the window when it doesn't fit at
+                                   its place */
+#define MINIMAL_WINDOW_LENGTH 30 /* As we now dynamically adapt the window
+                                    length we need to specify a minimum
+                                    otherwise we could go as low as
+                                    2*DEFAULT_WINDOW_SHIFT. Of course this can
+                                    be overriden by the command line by
+                                    providing a shorter -w*/
 
 
 using namespace std;
@@ -44,6 +53,7 @@ using json = nlohmann::json;
 enum SEGMENTED { NOT_PROCESSED,
 		 TOTAL_SEG_AND_WINDOW,
                  SEG_PLUS, SEG_MINUS,
+                 SEG_SHORTER_WINDOW,
                  UNSEG_TOO_SHORT, UNSEG_STRAND_NOT_CONSISTENT,
 		 UNSEG_TOO_FEW_ZERO,  UNSEG_ONLY_V, UNSEG_ONLY_J,
                  UNSEG_BAD_DELTA_MIN, UNSEG_AMBIGUOUS,
@@ -56,6 +66,7 @@ enum SEGMENTED { NOT_PROCESSED,
 const char* const segmented_mesg[] = { "?",
                                        "SEG",
                                        "SEG_+", "SEG_-",
+                                       "SEG short w",
                                        "UNSEG too short", "UNSEG strand",
 				       "UNSEG too few V/J", "UNSEG only V/5'", "UNSEG only J/3'",
 				       "UNSEG < delta_min", "UNSEG ambiguous",
@@ -152,6 +163,7 @@ protected:
   string CDR3aa;
 
   bool reversed, segmented, dSegmented;
+  bool shiftedJunction;
   int because;
 
   /**
@@ -196,8 +208,10 @@ protected:
    *         is not long enough.
    *         The junction is revcomp-ed if the original string comes from reverse
    *         strand.
+   * @post If the size or position of the window had to be dynamically adapted to fit
+   *       in the read, isJunctionShifted() will return true
    */
-  string getJunction(int l, int shift=0) const;
+  string getJunction(int l, int shift=0);
 
   /**
    * @return the left position (on forward strand) of the segmentation.
@@ -233,6 +247,12 @@ protected:
    * @return true if a D gene was found in the N region
    */
   bool isDSegmented() const;
+
+  /**
+   * @return true iff the junction has been shifted or shortened
+   *              dynamically to fit into the sequence
+   */
+  bool isJunctionShifted() const;
 
   /**
    * @return the status of the segmentation. Tells if the Sequence has been segmented
