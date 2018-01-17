@@ -80,7 +80,7 @@ int KmerAffectAnalyser::minimize(const KmerAffect &affect, int margin, int width
         }
       }
   }
-  return i_max;
+  return i_max + (seq.length() - affectations.size() + 1) / 2;
 }
 
 
