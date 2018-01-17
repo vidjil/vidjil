@@ -21,8 +21,8 @@ $ Three segmented on reverse (Junc#01 doesn't have its rc)
 $ No too short window
 1:UNSEG too short w -> 0
 
-$ Some short windows
-1: SEG short w -> 3   40.0
+$ Some shifted/shortened windows
+1: SEG changed w -> 3   40.0
 
 $ Find the good CDR3
 2: CATWA#YYKKLF

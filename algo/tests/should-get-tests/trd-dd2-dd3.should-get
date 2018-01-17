@@ -7,7 +7,7 @@ $ Find the good number of 20-windows
 1: found 6 20-windows
 
 $ One window is shifted
-1: SEG short w -> 1 60.0
+1: SEG changed w -> 1 60.0
 
 $ Window change is reported in .affects
 1: w20/5

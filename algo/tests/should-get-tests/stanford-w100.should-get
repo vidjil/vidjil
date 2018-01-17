@@ -4,7 +4,7 @@ $ Find the good number of "too short sequences" for windows of size 100
 1: UNSEG too short w ->      0
 
 $ Some reads have shortened or shifted windows
-SEG short w -> 1368
+1: SEG changed w -> 1368
 
 $ Most changed windows are just shifted or lighlty shortened
 913: w100/-5
