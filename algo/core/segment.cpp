@@ -223,11 +223,15 @@ string Segmenter::getJunction(int l, int shift) {
                                                                         l, central_pos,
                                                                         DEFAULT_WINDOW_SHIFT);
   // Yield UNSEG_TOO_SHORT_FOR_WINDOW into windowExtractor
-  if (length_shift.first < MINIMAL_WINDOW_LENGTH && length_shift.first < l)
+  if (length_shift.first < MINIMAL_WINDOW_LENGTH && length_shift.first < l) {
+    info += " w" + string_of_int(length_shift.first) + "/" + string_of_int(length_shift.second);
     return "" ;
+  }
 
-  if (length_shift.first < l || length_shift.second != 0)
+  if (length_shift.first < l || length_shift.second != 0) {
+    info += " w" + string_of_int(length_shift.first) + "/" + string_of_int(length_shift.second);
     shiftedJunction = true;
+  }
 
   // Window succesfully extracted
   return getSequence().sequence.substr(central_pos + length_shift.second - length_shift.first / 2, length_shift.first);
