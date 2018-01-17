@@ -30,7 +30,7 @@ if (test_results[id] <= TAP_MAX_FAILED) { \
       test_results[id]++;                                               \
       cerr << "Test " << #test << " failed (" << __FILE__ << ":"        \
            << __LINE__ << "): " << msg << endl;                         \
-      cerr << "\tadditional infos: " << TAP_ADDITIONAL_INFOS << endl;   \
+      cerr << TAP_ADDITIONAL_INFOS << endl;   \
     }}}
 
 #define TAP_END_TEST tap_end_test(__FILE__)
