@@ -479,7 +479,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
 
     int pos = kaa.minimize(kmer, DEFAULT_MINIMIZE_ONE_MARGIN, DEFAULT_MINIMIZE_WIDTH);
 
-    if (pos == 0)
+    if (pos == NO_MINIMIZING_POSITION)
       {
         because = UNSEG_TOO_SHORT_FOR_WINDOW;
         return ;

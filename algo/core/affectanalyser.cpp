@@ -63,8 +63,7 @@ int KmerAffectAnalyser::minimize(const KmerAffect &affect, int margin, int width
   int i = margin ;
 
   uint64_t val_max = 0 ;
-  int i_max = 0 ;
-
+  int i_max = NO_MINIMIZING_POSITION ;
 
   for (vector<KmerAffect>::const_iterator it = affectations.begin() + margin;
        it < affectations.end() - margin && i <= seq.length() - width;
@@ -80,6 +79,10 @@ int KmerAffectAnalyser::minimize(const KmerAffect &affect, int margin, int width
         }
       }
   }
+
+  if (i_max == NO_MINIMIZING_POSITION)
+    return i_max ;
+
   return i_max + (seq.length() - affectations.size() + 1) / 2;
 }
 

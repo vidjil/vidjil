@@ -11,6 +11,8 @@
 #include <iostream>
 #include <iomanip>
 
+#define NO_MINIMIZING_POSITION -1
+
 // Define two constant affectations: ambiguous and unknown.
 
 /* Declaration of types */
@@ -149,7 +151,8 @@ class KmerAffectAnalyser: public AffectAnalyser {
   int count(const KmerAffect &affect) const;
 
   /**
-   * @return a minimizing position on the matching affectations (taking into account the next affectations), or 0 if there is no such position
+   * @return a minimizing position on the matching affectations (taking into account the next affectations),
+   *         or NO_MINIMIZING_POSITION if there is no such position
    * @param affect: affectation to match
    * @param margin: number of positions at both ends in which one does not take into account the matching affectation
    * @param width: number of affectations to consider, starting from the matching affectation, for the minimization
