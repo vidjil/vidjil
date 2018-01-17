@@ -46,9 +46,13 @@
                                     be overriden by the command line by
                                     providing a shorter -w*/
 
-#define DEFAULT_MINIMIZE_WIDTH       12
+#define DEFAULT_MINIMIZE_WIDTH       12   /* Number of nucleotides on which the minimization integer is computed */
 
-#define DEFAULT_MINIMIZE_ONE_MARGIN  20
+#define DEFAULT_MINIMIZE_ONE_MARGIN  20   /* Number of nucleotides on ends of the reads excluded from the minimization in SEG_METHOD_ONE.
+                                             - A read smaller than (DEFAULT_MINIMIZE_ONE_MARGIN*2 + max(k, DEFAULT_MINIMIZE_WIDTH)), that is 52,
+                                               will trigger UNSEG_TOO_SHORT_FOR_WINDOW.
+                                             - Margins above the half of the window length may produce shortened or shifted windows
+                                          */
 
 
 using namespace std;
