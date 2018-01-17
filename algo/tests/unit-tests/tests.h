@@ -30,6 +30,7 @@ enum {
   TEST_SEQUENCE_OUT,
   TEST_NUC_TO_INT,
   TEST_DNA_TO_INT,
+  TEST_DNA_TO_HASH,
   TEST_NUC_TO_AA,
   TEST_REVCOMP_INT,
   TEST_EXTENDED_NUCL,
@@ -211,6 +212,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_SEQUENCE_OUT, "Test operator<< for Sequence");
   RECORD_TAP_TEST(TEST_NUC_TO_INT, "nuc_to_int()");
   RECORD_TAP_TEST(TEST_DNA_TO_INT, "dna_to_int()");
+  RECORD_TAP_TEST(TEST_DNA_TO_HASH, "dna_to_hash()");
   RECORD_TAP_TEST(TEST_REVCOMP_INT, "revcomp_int()");
   RECORD_TAP_TEST(TEST_EXTRACT_BASENAME, "extractBasename()");
   RECORD_TAP_TEST(TEST_N_CHOOSE_K, "test nChooseK()");
