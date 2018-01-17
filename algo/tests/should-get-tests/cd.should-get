@@ -14,8 +14,8 @@ $ KmerSegmenter, cluster lightly trimmed reads with original ones
 2:Clone .* 2 reads
 
 $ KmerSegmenter, the above clusterisation come from coherent minimizing positions
-1:read-CD4-exact-1 .* @69
-1:read-CD4-exact-trimmed .* @62
+1:read-CD4-exact-1 .* @85
+1:read-CD4-exact-trimmed .* @78
 
 $ FineSegmenter, find 5 clones with CD4 and 3 with CD19
 5:clone-00.* CD4 .* SEG
