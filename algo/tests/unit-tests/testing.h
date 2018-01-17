@@ -33,6 +33,17 @@ if (test_results[id] <= TAP_MAX_FAILED) { \
       cerr << TAP_ADDITIONAL_INFOS << endl;   \
     }}}
 
+#define TAP_TEST_EQUAL(test, expected, id, msg) { test_nb_executions[id]++; \
+    if (test_results[id] <= TAP_MAX_FAILED) {                           \
+      if (! ((test) == expected)) {                                     \
+        test_results[id]++;                                             \
+        cerr << "Test " << #test << " failed (" << __FILE__ << ":" << __LINE__ << "): " \
+             << " expected " << expected << ", got " << (test)          \
+             << " " << msg << endl;                                     \
+        cerr << TAP_ADDITIONAL_INFOS << endl; \
+      }}}
+
+
 #define TAP_END_TEST tap_end_test(__FILE__)
 
 inline bool tap_end_test(const char *filename) {
