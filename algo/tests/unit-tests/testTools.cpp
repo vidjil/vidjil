@@ -265,6 +265,12 @@ void testNucToInt() {
   TAP_TEST(nuc_to_int('C') == 1, TEST_NUC_TO_INT, "");
   TAP_TEST(nuc_to_int('G') == 2, TEST_NUC_TO_INT, "");
   TAP_TEST(nuc_to_int('T') == 3, TEST_NUC_TO_INT, "");
+
+  TAP_TEST(nuc_to_int('a') == 0, TEST_NUC_TO_INT, "");
+  TAP_TEST(nuc_to_int('c') == 1, TEST_NUC_TO_INT, "");
+  TAP_TEST(nuc_to_int('g') == 2, TEST_NUC_TO_INT, "");
+  TAP_TEST(nuc_to_int('t') == 3, TEST_NUC_TO_INT, "");
+
 }
 
 void testDNAToInt() {

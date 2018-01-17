@@ -118,14 +118,14 @@ char complement_nucleotide(char nuc);
 string complement(const string &dna);
 
 /**
- * @pre nuc est un nucléotide en majuscule (A, C, G ou T)
- * @return le code entier du nucléotide (respectivement 0, 1, 2 ou 3)
+ * @param nuc: nucleotide in  either up- or down-casemajuscule (ACGTacgt)
+ * @return integer representation (respectively 0, 1, 2 ou 3)
  */
 inline int nuc_to_int(char nuc) {
-  // A : 0100 0001
-  // C : 0100 0011
-  // G : 0100 0111
-  // T : 0101 0100
+  // A/a : 01*0 0001
+  // C/c : 01*0 0011
+  // G/g : 01*0 0111
+  // T/t : 01*1 0100
   // pos :    3210
   // Bit de poids fort : b_2
   // Bit de poids faible : xor entre b_2 et b_1
