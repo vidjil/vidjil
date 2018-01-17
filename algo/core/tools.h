@@ -134,9 +134,10 @@ inline int nuc_to_int(char nuc) {
 }
 
 /**
- * Convert size nucleotides from a DNA string to an integer.
+ * Convert size nucleotides from a DNA string to an integer or to an hash.
  */
 int dna_to_int(const string &, int size);
+uint64_t dna_to_hash(const string &, int size);
 
 #define GENETIC_CODE \
   "KNKN" "TTTT" "RSRS" "IIMI" \
