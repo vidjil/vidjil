@@ -60,18 +60,16 @@ int KmerAffectAnalyser::count(const KmerAffect &affect) const{
 
 
 int KmerAffectAnalyser::minimize(const KmerAffect &affect, int margin, int width) const {
-  int i = 0 ;
+  int i = margin ;
+
   int val_max = 0 ;
   int i_max = 0 ;
 
-  int stop = seq.length() - width - margin;
 
-  for (vector<KmerAffect>::const_iterator it = affectations.begin();
-       i < stop && it < affectations.end();
+  for (vector<KmerAffect>::const_iterator it = affectations.begin() + margin;
+       it < affectations.end() - margin && i <= seq.length() - width;
        it++, i++) {
 
-    if (i < margin)
-      continue ;
 
     if (*it == affect)
       {
