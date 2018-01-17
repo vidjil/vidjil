@@ -477,11 +477,10 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
         return ;
       }
 
+    int pos = kaa.minimize(kmer, DEFAULT_MINIMIZE_ONE_MARGIN, DEFAULT_MINIMIZE_WIDTH);
+
     segmented = true ;
     because = reversed ? SEG_MINUS : SEG_PLUS ;
-
-    // 30 should be more than half of the window. Should we run this during getJunction(), once w is known ?
-    int pos = kaa.minimize(kmer, 30, 8);
 
     info = "=" + string_of_int(c) + " @" + string_of_int(pos) ;
 

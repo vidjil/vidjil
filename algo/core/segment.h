@@ -46,6 +46,9 @@
                                     be overriden by the command line by
                                     providing a shorter -w*/
 
+#define DEFAULT_MINIMIZE_WIDTH       12
+
+#define DEFAULT_MINIMIZE_ONE_MARGIN  20
 
 using namespace std;
 using json = nlohmann::json;
