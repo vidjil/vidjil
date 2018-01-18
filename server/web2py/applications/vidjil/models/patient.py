@@ -47,3 +47,16 @@ class Patient(SampleSet):
         name = self.get_name(data)
         ident = "(%d)" % data.id
         return ":p %s %s" % (name, ident)
+
+    def validate(self, data):
+        error = []
+        if data["first_name"] == "" :
+            error.append("first name needed")
+        if data["last_name"] == "" :
+            error.append("last name needed")
+        if data["birth"] != "" :
+            try:
+                datetime.datetime.strptime(""+data['birth'], '%Y-%m-%d')
+            except ValueError:
+                error.append("date (wrong format)")
+        return error

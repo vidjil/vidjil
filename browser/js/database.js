@@ -457,6 +457,35 @@ Database.prototype = {
                 }
             });
         }
+
+        if ( document.getElementById('object_form') ) {
+
+            $('#object_form').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    timeout: DB_TIMEOUT_CALL,
+                    crossDomain: true,
+                    url      : $('#object_form').attr('action'),
+                    data     : {'data': JSON.stringify($('#object_form').serializeObject())},
+                    xhrFields: {withCredentials: true},
+                    success: function (result) {
+                        self.display_result(result, $(this).attr('action'))
+                        self.connected = true;
+                    },
+                    error: function (request, status, error) {
+                        self.connected = false;
+                        if (status === "timeout") {
+                            console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                        } else {
+                            console.log({"type": "popup", "msg": request.responseText})
+                        }
+                    }
+                });
+                return false;
+            });
+        }
         
         //login_form
         if ( document.getElementById('login_form') ){

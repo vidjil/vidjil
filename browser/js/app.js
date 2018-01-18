@@ -72,6 +72,7 @@ function loadAfterConf() {
                                          "../tokeniser",
                                          // Speed test
                                          "../speed_test",
+                                         "../form_builder",
                                          "../../test/QUnit/testFiles/data_test",
                                         ], function(){
                                             if (typeof main == "undefined"){

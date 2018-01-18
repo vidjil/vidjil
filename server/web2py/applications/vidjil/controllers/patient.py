@@ -3,6 +3,7 @@ import gluon.contrib.simplejson, datetime
 import vidjil_utils
 import time
 import datetime
+import json
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -32,7 +33,7 @@ def form():
     return dict(message=T(message),
                 groups=groups,
                 master_group=max_group,
-                patient=db.patient[request.vars["id"]])
+                patients=[db.patient[request.vars["id"]]])
 
 
 
@@ -41,86 +42,78 @@ def form():
 ## redirect to patient list if success
 ## return a flash error message if fail
 def submit():
-    error = ""
-    if request.vars["first_name"] == "" :
-        error += "first name needed, "
-    if request.vars["last_name"] == "" :
-        error += "last name needed, "
-    if request.vars["birth"] != "" :
-        try:
-            datetime.datetime.strptime(""+request.vars['birth'], '%Y-%m-%d')
-        except ValueError:
-            error += "date (wrong format)"
+    data = json.loads(request.vars['data'], encoding='utf-8')
+    mf = ModelFactory()
+    helper = mf.get_instance('patient')
+    messages = []
 
-    if error != "":
-        res = {"success" : "false",
-               "message" : error}
-        log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    error = False
+    for p in data['patient']:
+        p['error'] = helper.validate(p)
+        if len(p['error']) > 0:
+            error = True
+            continue
 
-    p = dict(first_name=request.vars["first_name"],
-             last_name=request.vars["last_name"],
-             birth=request.vars["birth"],
-             info=request.vars["info"],
-             id_label=request.vars["id_label"]
-            )
+        register = False
+        reset = False
 
-    register = False
-    reset = False
+        patient_name = "%s %s" % (p['first_name'], p['last_name'])
 
-    # edit patient
-    log.debug("id present: " + "id" in request.vars)
-    log.debug("id: " + request.vars["id"] + request.vars['id'] == "" + request.vars['id'] is None)
-    if (request.vars['id'] != "" and auth.can_modify_patient(request.vars["id"])):
-        patient = db.patient[request.vars["id"]]
-        db.patient[request.vars["id"]] = p
+        # edit patient
+        if (p['id'] != "" and auth.can_modify_patient(p['id'])):
+            id = p["id"]
+            patient = db.patient[id]
+            db.patient[id] = p
 
-        if (patient.info != request.vars["info"]):
-            group_id = get_set_group(defs.SET_TYPE_PATIENT, request.vars["id"])
+            if (patient.info != p['info']):
+                group_id = get_set_group(defs.SET_TYPE_PATIENT, id)
+                register = True
+                reset = True
+
+            messages.append("%s (%s): patient edited" % (patient_name, id))
+
+        # add patient
+        elif (auth.can_create_patient()):
+
+            id_sample_set = db.sample_set.insert(sample_type=defs.SET_TYPE_PATIENT)
+
+            p['creator'] = auth.user_id
+            p['sample_set_id'] = id_sample_set
+            id = db.patient.insert(**p)
+
+            group_id = int(data["group"])
+
             register = True
-            reset = True
 
-        res = {"redirect": "back",
-               "message": "%s %s (%s): patient edited" % (request.vars["first_name"], request.vars["last_name"], request.vars["id"])}
-        id = request.vars["id"]
+            #patient creator automaticaly has all rights
+            auth.add_permission(group_id, PermissionEnum.access.value, db.patient, id)
 
-    # add patient
-    elif (auth.can_create_patient()):
+            messages.append("(%s) patient %s added" % (id_sample_set, patient_name))
 
-        id_sample_set = db.sample_set.insert(sample_type=defs.SET_TYPE_PATIENT)
+            if (id % 100) == 0:
+                mail.send(to=defs.ADMIN_EMAILS,
+                subject="[Vidjil] %d" % id,
+                message="The %dth patient has just been created." % id)
 
-        p['creator'] = auth.user_id
-        p['sample_set_id'] = id_sample_set
-        id = db.patient.insert(**p)
+        else :
+            p['error'].append("permission denied")
+            error = True
 
-        user_group = int(request.vars["patient_group"])
-        admin_group = db(db.auth_group.role=='admin').select().first().id
+        if register:
+            register_tags(db, defs.SET_TYPE_PATIENT, p["id"], p["info"], group_id, reset=reset)
 
-        group_id = user_group
-        register = True
-
-        #patient creator automaticaly has all rights
-        auth.add_permission(user_group, PermissionEnum.access.value, db.patient, id)
-
-        patient_name = request.vars["first_name"] + ' ' + request.vars["last_name"]
-
-        res = {"redirect": "sample_set/index",
-               "args" : { "id" : id_sample_set },
-               "message": "(%s) patient %s added" % (id_sample_set, patient_name) }
-
-        if (id % 100) == 0:
-            mail.send(to=defs.ADMIN_EMAILS,
-            subject="[Vidjil] %d" % id,
-            message="The %dth patient has just been created." % id)
-
-    else :
-        res = {"message": ACCESS_DENIED}
-        log.error(res)
-
-    if register:
-        register_tags(db, defs.SET_TYPE_PATIENT, request.vars["id"], request.vars["info"], group_id, reset=reset)
-    log.info(res, extra={'user_id': auth.user.id, 'record_id': id, 'table_name': 'patient'})
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    if not error:
+        # TODO proper logging of all events
+        #log.info(res, extra={'user_id': auth.user.id, 'record_id': id, 'table_name': 'patient'})
+        res = {"redirect": "sample_set/all",
+                "message": "successfully added/edited patient(s)"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    else:
+        response.view = 'patient/form.html'
+        return dict(message=T("an error occured"),
+                groups=[{'name': 'foobar', 'id': int(data['group'])}],
+                    master_group=data['group'],
+                    patients=data['patient'])
 
 def download():
     return response.download(request, db)
