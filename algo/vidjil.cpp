@@ -1117,6 +1117,7 @@ int main (int argc, char **argv)
     // warn if there are too few segmented sequences
     if (ratio_segmented < WARN_PERCENT_SEGMENTED)
       {
+        json_add_warning(j, "W2x", "Very few V(D)J recombinations found: " + fixed_string_of_float(ratio_segmented, 2) + "%");
         stream_segmentation_info << "  ! There are not so many CDR3 windows found in this set of reads." << endl ;
         stream_segmentation_info << "  ! Please check the unsegmentation causes below and refer to the documentation." << endl ;
       }
@@ -1372,7 +1373,7 @@ int main (int argc, char **argv)
         };
 
         if (repComp.getCoverage() < WARN_COVERAGE)
-          json_clone["warn"] = "Low coverage" ;
+          json_add_warning(json_clone, "W4x", "Low coverage: " + fixed_string_of_float(repComp.getCoverage(), 3));
         
         if (label.length())
           json_clone["label"] = label ;
@@ -1417,8 +1418,6 @@ int main (int argc, char **argv)
           json_clone["seg"][it.key()] = it.value();
         }
 
-        json_data_segment[it->first] = json_clone;
-        
         if (seg.isSegmented())
 	  {
 	      // Check for identical code, outputs to out_edge
@@ -1428,6 +1427,7 @@ int main (int argc, char **argv)
               if (cc)
                 {
                   cout << " (similar to Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc << setfill(' ') << ")";
+                  json_add_warning(json_clone, "W5x", "Similar to another clone " + code);
 
                   nb_edges++ ;
                   out_edges << clones_map_windows[code] + " " + it->first + " "  ;
@@ -1451,7 +1451,8 @@ int main (int argc, char **argv)
 	      out_clone << endl;
 	   } // end if (seg.isSegmented())
 
-
+        json_data_segment[it->first] = json_clone;
+        
 	if (output_sequences_by_cluster) // -a option, output all sequences
 	  {
 	    list<Sequence> sequences = windowsStorage->getReads(it->first);

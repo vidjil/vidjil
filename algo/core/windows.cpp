@@ -281,7 +281,7 @@ json WindowsStorage::sortedWindowsToJson(map <junction, json> json_data_segment)
       json reads = {it->second};
       windowsList["id"] = it->first;
       if (status_by_window[it->first][SEG_SHORTER_WINDOW])
-        windowsList["warn"] = "Short or shifted window";
+        json_add_warning(windowsList, "W5x", "Short or shifted window");
 
 
       windowsList["reads"] = reads;
