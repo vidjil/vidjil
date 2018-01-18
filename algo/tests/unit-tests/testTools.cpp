@@ -247,17 +247,17 @@ void testCreateSequence() {
   Sequence seq1 = create_sequence("label", "l", "AAAAAAAAAA", "!!!!!!!!!!");
   Sequence seq2 = create_sequence("", "", "", "");
 
-  TAP_TEST(seq1.label_full == "label", TEST_CREATE_SEQUENCE_LABEL_FULL, "");
-  TAP_TEST(seq2.label_full == "", TEST_CREATE_SEQUENCE_LABEL_FULL, "");
+  TAP_TEST_EQUAL(seq1.label_full, "label", TEST_CREATE_SEQUENCE_LABEL_FULL, "");
+  TAP_TEST_EQUAL(seq2.label_full, "", TEST_CREATE_SEQUENCE_LABEL_FULL, "");
 
-  TAP_TEST(seq1.label == "l", TEST_CREATE_SEQUENCE_LABEL, "");
-  TAP_TEST(seq2.label == "", TEST_CREATE_SEQUENCE_LABEL, "");
+  TAP_TEST_EQUAL(seq1.label, "l", TEST_CREATE_SEQUENCE_LABEL, "");
+  TAP_TEST_EQUAL(seq2.label, "", TEST_CREATE_SEQUENCE_LABEL, "");
 
-  TAP_TEST(seq1.sequence == "AAAAAAAAAA", TEST_CREATE_SEQUENCE_SEQUENCE, "");
-  TAP_TEST(seq2.sequence == "", TEST_CREATE_SEQUENCE_SEQUENCE, "");
+  TAP_TEST_EQUAL(seq1.sequence, "AAAAAAAAAA", TEST_CREATE_SEQUENCE_SEQUENCE, "");
+  TAP_TEST_EQUAL(seq2.sequence, "", TEST_CREATE_SEQUENCE_SEQUENCE, "");
 
-  TAP_TEST(seq1.quality == "!!!!!!!!!!", TEST_CREATE_SEQUENCE_QUALITY, "");
-  TAP_TEST(seq2.quality == "", TEST_CREATE_SEQUENCE_QUALITY, "");
+  TAP_TEST_EQUAL(seq1.quality, "!!!!!!!!!!", TEST_CREATE_SEQUENCE_QUALITY, "");
+  TAP_TEST_EQUAL(seq2.quality, "", TEST_CREATE_SEQUENCE_QUALITY, "");
 }
 
 void testNucToInt() {

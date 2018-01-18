@@ -80,9 +80,9 @@ void testKmerAffectClass() {
   KmerAffect KAVm("V", -1, 4);
   KmerAffect KAJp("J", 1, 4);
 
-  TAP_TEST(KAVp.affect == Vplus, TEST_KMERAFFECT_CONSTRUCTOR, "");
-  TAP_TEST(KAVm.affect == Vminus, TEST_KMERAFFECT_CONSTRUCTOR, "");
-  TAP_TEST(KAJp.affect == Jplus, TEST_KMERAFFECT_CONSTRUCTOR, "");
+  TAP_TEST_EQUAL(KAVp.affect, Vplus, TEST_KMERAFFECT_CONSTRUCTOR, "");
+  TAP_TEST_EQUAL(KAVm.affect, Vminus, TEST_KMERAFFECT_CONSTRUCTOR, "");
+  TAP_TEST_EQUAL(KAJp.affect, Jplus, TEST_KMERAFFECT_CONSTRUCTOR, "");
 
   KmerAffect copy1(KAVp, false);
   KmerAffect copy2(KAVp, true);

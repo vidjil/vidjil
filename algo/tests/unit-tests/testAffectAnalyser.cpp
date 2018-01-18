@@ -254,7 +254,7 @@ void testGetMaximum() {
   TAP_TEST(results.first_pos_max == 5 && results.last_pos_max == 5,
            TEST_AA_GET_MAXIMUM_POSITIONS,"(" << results.first_pos_max
            << ", " << results.last_pos_max << ")");
-  TAP_TEST(results.max_value == 2, TEST_AA_GET_MAXIMUM_VALUE,
+  TAP_TEST_EQUAL(results.max_value, 2, TEST_AA_GET_MAXIMUM_VALUE,
            "max = " << results.max_value);
 
   results = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 0.9, k);
@@ -264,7 +264,7 @@ void testGetMaximum() {
   TAP_TEST(results.first_pos_max == 1 && results.last_pos_max == 5,
            TEST_AA_GET_MAXIMUM_POSITIONS,"(" << results.first_pos_max
            << ", " << results.last_pos_max << ")");
-  TAP_TEST(results.max_value == 2, TEST_AA_GET_MAXIMUM_VALUE, "");
+  TAP_TEST_EQUAL(results.max_value, 2, TEST_AA_GET_MAXIMUM_VALUE, "");
 
   affect_infos results2 = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 0.9, k+5);
   TAP_TEST(results == results2, TEST_AA_GET_MAXIMUM_VALUE, "");
@@ -286,7 +286,7 @@ void testGetMaximum() {
   TAP_TEST(! results.max_found, 
            TEST_AA_GET_MAXIMUM_MAX_FOUND, "(" << results.first_pos_max
            << ", " << results.last_pos_max << ")");
-  TAP_TEST(results.max_value == 10, TEST_AA_GET_MAXIMUM_VALUE,
+  TAP_TEST_EQUAL(results.max_value, 10, TEST_AA_GET_MAXIMUM_VALUE,
            "max = " << results.max_value);
   TAP_TEST(results.first_pos_max == 9
            && results.last_pos_max == 15, TEST_AA_GET_MAXIMUM_POSITIONS,
@@ -304,7 +304,7 @@ void testGetMaximum() {
            TEST_AA_GET_MAXIMUM_MAX_FOUND, 
            "(" << results.first_pos_max << ", " 
            << results.last_pos_max << ")");
-  TAP_TEST(results.max_value == 0, TEST_AA_GET_MAXIMUM_VALUE,
+  TAP_TEST_EQUAL(results.max_value, 0, TEST_AA_GET_MAXIMUM_VALUE,
            "max = " << results.max_value);
 
   

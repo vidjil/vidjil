@@ -67,7 +67,7 @@ void testRandom() {
       all_equal = false;
   }
 
-  TAP_TEST(all_equal == false, TEST_SAMPLER_RANDOM, "On the 10 trials, we drawn 10 times the same sequence");
+  TAP_TEST_EQUAL(all_equal, false, TEST_SAMPLER_RANDOM, "On the 10 trials, we drawn 10 times the same sequence");
 }
 
 void testSampler() {

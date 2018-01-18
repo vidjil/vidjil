@@ -43,11 +43,11 @@ void testWSAdd() {
   int i = 0;
   list<Sequence>::iterator it = sequences.begin();
   for (; i < 10; it++,i++) {
-    TAP_TEST(it->label_full == "label", TEST_WS_GET_READS, "");
-    TAP_TEST(it->sequence == "GATACATTAGACAGCT", TEST_WS_GET_READS, "");
+    TAP_TEST_EQUAL(it->label_full, "label", TEST_WS_GET_READS, "");
+    TAP_TEST_EQUAL(it->sequence, "GATACATTAGACAGCT", TEST_WS_GET_READS, "");
   }
-  TAP_TEST(it->label_full == "other", TEST_WS_GET_READS, "");
-  TAP_TEST(it->sequence == "TAAGATTAGCCACGGACT", TEST_WS_GET_READS, "");
+  TAP_TEST_EQUAL(it->label_full, "other", TEST_WS_GET_READS, "");
+  TAP_TEST_EQUAL(it->sequence, "TAAGATTAGCCACGGACT", TEST_WS_GET_READS, "");
 
   Germline germline2("Other test", 'o', "data/small_V.fa", "", "data/small_J.fa", "");
   // Insert a sequence from another germline 2 times

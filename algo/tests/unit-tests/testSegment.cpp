@@ -31,12 +31,12 @@ void testOverlap()
   check_and_resolve_overlap(seq, 0, seq.length(),
                             box_A, box_C, VDJ);
 
-  TAP_TEST(box_A->del_right == 3, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides : " << box_A);
-  TAP_TEST(box_C->del_left == 1, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides : " << box_C);
+  TAP_TEST_EQUAL(box_A->del_right, 3, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides : " << box_A);
+  TAP_TEST_EQUAL(box_C->del_left, 1, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides : " << box_C);
 
-  TAP_TEST(box_A->end == 6, TEST_FINE_SEGMENT_OVERLAP, "end position of left region : " << box_A);
+  TAP_TEST_EQUAL(box_A->end, 6, TEST_FINE_SEGMENT_OVERLAP, "end position of left region : " << box_A);
   TAP_TEST(box_A->getLength() == 7, TEST_FINE_SEGMENT_OVERLAP, "length of left region : " << box_A->getLength());
-  TAP_TEST(box_C->start == 7,  TEST_FINE_SEGMENT_OVERLAP, "start position of right region : " << box_C);
+  TAP_TEST_EQUAL(box_C->start, 7,  TEST_FINE_SEGMENT_OVERLAP, "start position of right region : " << box_C);
 
   delete box_A;
   delete box_C;
@@ -252,7 +252,7 @@ void testSegmentationCause(IndexTypes index) {
     }
   }
   
-  TAP_TEST(nb_checked == 14, TEST_KMER_DATA, "");
+  TAP_TEST_EQUAL(nb_checked, 14, TEST_KMER_DATA, "");
 
   delete germline;
 }
@@ -362,7 +362,7 @@ void testBestLengthShifts() {
     pair<int, int> result = WindowExtractor::get_best_length_shifts(100, 30,
                                                                     param.first,
                                                                     param.second);
-    TAP_TEST(result == expected, TEST_EXTRACTOR_LENGTH_SHIFT,
+    TAP_TEST_EQUAL(result, expected, TEST_EXTRACTOR_LENGTH_SHIFT,
              "Obtained (" << result.first << ", " << result.second
              << ") but expected (" << expected.first << ", "
              << expected.second << ") "

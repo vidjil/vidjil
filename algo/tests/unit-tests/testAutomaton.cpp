@@ -83,7 +83,7 @@ void testRCInsertAcAutomaton() {
                                  AFFECT_UNKNOWN };
 
   TAP_TEST(results.size() == expected.size(), TEST_AC_GET_RESULTS, "");
-  TAP_TEST(results == expected, TEST_AC_GET_RESULTS, "");
+  TAP_TEST_EQUAL(results, expected, TEST_AC_GET_RESULTS, "");
 }
 
 
