@@ -362,7 +362,7 @@ void testBestLengthShifts() {
     pair<int, int> result = WindowExtractor::get_best_length_shifts(100, 30,
                                                                     param.first,
                                                                     param.second);
-    TAP_TEST_EQUAL(result, expected, TEST_EXTRACTOR_LENGTH_SHIFT,
+    TAP_TEST(result == expected, TEST_EXTRACTOR_LENGTH_SHIFT,
              "Obtained (" << result.first << ", " << result.second
              << ") but expected (" << expected.first << ", "
              << expected.second << ") "
