@@ -3,22 +3,18 @@
 $ Load CD-sorting.fa
 1:homo-sapiens/CD-sorting.fa .* 28 sequences
 
-$ KmerSegmenter, do not map a read < 52bp
-1: UNSEG too short w .* 1 .*  50.0
-1: read-CD4-exact-trimmed-50 .* UNSEG too short w
-
 $ KmerSegmenter, map reads
-1: found 8 50-windows in 10 reads
+1: found 6 50-windows in 8 reads
 
-$ KmerSegmenter, cluster lightly trimmed reads with original ones
+$ KmerSegmenter, cluster lightly trimmed or mutated reads with original ones
 2:Clone .* 2 reads
 
-$ KmerSegmenter, the above clusterisation come from coherent minimizing positions
+$ KmerSegmenter, the above clusterisation comes from coherent minimizing positions
 1:read-CD4-exact-1 .* @85
 1:read-CD4-exact-trimmed .* @78
 
-$ FineSegmenter, find 5 clones with CD4 and 3 with CD19
-5:clone-00.* CD4 .* SEG
+$ FineSegmenter, find 3 clones with CD4 and 3 with CD19
+3:clone-00.* CD4 .* SEG
 3:clone-00.* CD19 .* SEG
 
 
