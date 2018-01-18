@@ -14,7 +14,7 @@ function FormBuilder() {
 FormBuilder.prototype = {
 
     patient: function(index) {
-        this.indexes['patient'] = index;
+        this.indexes.patient = index;
         var fieldset = this.fieldset('patient');
         fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', 'patient'));
         fieldset.appendChild(this.patient_id());
@@ -59,7 +59,7 @@ FormBuilder.prototype = {
         var f = document.createElement('fieldset');
         f.name = type + this.indexes[type];
         var l = document.createElement('legend');
-        l.innerText = type.charAt(0).toUpperCase() + type.slice(1) + " " + (this.indexes['patient']+1);
+        l.innerText = type.charAt(0).toUpperCase() + type.slice(1) + " " + (this.indexes.patient+1);
         f.appendChild(l);
         return f;
     },
