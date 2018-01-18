@@ -27,6 +27,8 @@
 #include <cassert>
 #include <vector>
 #include "bioreader.hpp"
+#include "../lib/json.hpp"
+using json = nlohmann::json;
 using namespace std;
 
 #define PRINT_VAR(v) cerr << #v << " = " << v << endl
@@ -251,6 +253,9 @@ bool operator!=(const Sequence &s1, const Sequence &s2);
  ***/
 
 void output_label_average(ostream &out, string label, long long int nb, double average, int precision=1);
+
+void json_add_warning(json &clone, string code, string msg);
+
 
 //////////////////////////////////////////////////
 // Template code

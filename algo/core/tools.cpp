@@ -401,3 +401,12 @@ void output_label_average(ostream &out, string label, long long int nb, double a
   else
     out << "-" ;
 }
+
+
+void json_add_warning(json &clone, string code, string msg)
+{
+  if (!clone.count("warn"))
+    clone["warn"] = {} ;
+
+  clone["warn"] += { {"code", code}, {"msg", msg} } ;
+}
