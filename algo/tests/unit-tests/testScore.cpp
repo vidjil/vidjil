@@ -5,15 +5,15 @@ void testScore() {
   ReadLengthScore rls;
 
   Sequence seq1 = {"seq", "seq", "", "", NULL, 0};
-  TAP_TEST(rls.getScore(seq1) == 0., TEST_LENGTH_SCORE,
+  TAP_TEST_EQUAL(rls.getScore(seq1), 0., TEST_LENGTH_SCORE,
            "score should be 0, is " << rls.getScore(seq1));
 
   Sequence seq2 = {"seq", "seq", "ATCGTTTACGTC", "", NULL, 0};
-  TAP_TEST(rls.getScore(seq2) == 12., TEST_LENGTH_SCORE,
+  TAP_TEST_EQUAL(rls.getScore(seq2), 12., TEST_LENGTH_SCORE,
            "score should be 12, is " << rls.getScore(seq2));
 
   Sequence seq3 = {"seq", "seq", "A", "", NULL, 0};
-  TAP_TEST(rls.getScore(seq3) == 1., TEST_LENGTH_SCORE,
+  TAP_TEST_EQUAL(rls.getScore(seq3), 1., TEST_LENGTH_SCORE,
            "score should be 1, is " << rls.getScore(seq3));
 
 
@@ -37,7 +37,7 @@ void testScore() {
 
   // Quality does not exist anymore → the score is the length
   seq4.quality = "";
-  TAP_TEST(rqs.getScore(seq4) == 120, TEST_QUALITY_SCORE,
+  TAP_TEST_EQUAL(rqs.getScore(seq4), 120, TEST_QUALITY_SCORE,
            "score should be 120 not " << rqs.getScore(seq4));
 
 }

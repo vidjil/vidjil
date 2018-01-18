@@ -23,7 +23,7 @@ void testLongest() {
            TEST_SAMPLER_LENGTH, "");
 
   char id = '1';
-  TAP_TEST(l1.size() == 6, TEST_SAMPLER_LONGEST, "");
+  TAP_TEST_EQUAL(l1.size(), 6, TEST_SAMPLER_LONGEST, "");
   for (list<Sequence>::const_iterator it = l1.begin(); it != l1.end(); it++) {
     TAP_TEST(it->label[3] == id, TEST_SAMPLER_LONGEST, "");
     id++;
@@ -39,10 +39,10 @@ void testLongest() {
            && distrib[5] == 1 && distrib[6] == 1 && distrib[7] == 1 && distrib[8] == 1
            && distrib[9] == 2, TEST_SAMPLER_LENGTH, "");
 
-  TAP_TEST(l1.size() == 2, TEST_SAMPLER_LONGEST, "");
+  TAP_TEST_EQUAL(l1.size(), 2, TEST_SAMPLER_LONGEST, "");
   TAP_TEST(l1.front().sequence.size() == 9, TEST_SAMPLER_LONGEST, "");
   Sequence next = *(++l1.begin());
-  TAP_TEST(next.sequence.size() == 10, TEST_SAMPLER_LONGEST, "label = " << next.label);
+  TAP_TEST_EQUAL(next.sequence.size(), 10, TEST_SAMPLER_LONGEST, "label = " << next.label);
 }
 
 // Generate 10 sequences, and launch 10 times getRandom(1).

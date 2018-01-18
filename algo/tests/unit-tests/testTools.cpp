@@ -233,14 +233,14 @@ void testFastaOutputOperator(){
   ostringstream oss;
   BioReader fa("data/test1.fa");
   oss << fa;
-  TAP_TEST(oss.str() == ">seq1\nACAAC\n>seq2\nCGACCCCCAA\n>seq3\nA\n>seq4\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n>\nAATN\n", TEST_FASTA_OUT, oss.str());
+  TAP_TEST_EQUAL(oss.str(), ">seq1\nACAAC\n>seq2\nCGACCCCCAA\n>seq3\nA\n>seq4\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n>\nAATN\n", TEST_FASTA_OUT, oss.str());
 }
 
 void testRevcomp() {
-  TAP_TEST(complement("AATCAGactgactagATCGAn") == "TTAGTCTGACTGATCTAGCTN", TEST_REVCOMP, "");
-  TAP_TEST(revcomp("AATCAGactgactagATCGAn") == "NTCGATCTAGTCAGTCTGATT", TEST_REVCOMP, "");
-  TAP_TEST(revcomp("") == "", TEST_REVCOMP, "");
-  TAP_TEST(revcomp("aaaaaa") == "TTTTTT", TEST_REVCOMP, "");
+  TAP_TEST_EQUAL(complement("AATCAGactgactagATCGAn"), "TTAGTCTGACTGATCTAGCTN", TEST_REVCOMP, "");
+  TAP_TEST_EQUAL(revcomp("AATCAGactgactagATCGAn"), "NTCGATCTAGTCAGTCTGATT", TEST_REVCOMP, "");
+  TAP_TEST_EQUAL(revcomp(""), "", TEST_REVCOMP, "");
+  TAP_TEST_EQUAL(revcomp("aaaaaa"), "TTTTTT", TEST_REVCOMP, "");
 }
 
 void testCreateSequence() {
@@ -261,15 +261,15 @@ void testCreateSequence() {
 }
 
 void testNucToInt() {
-  TAP_TEST(nuc_to_int('A') == 0, TEST_NUC_TO_INT, "");
-  TAP_TEST(nuc_to_int('C') == 1, TEST_NUC_TO_INT, "");
-  TAP_TEST(nuc_to_int('G') == 2, TEST_NUC_TO_INT, "");
-  TAP_TEST(nuc_to_int('T') == 3, TEST_NUC_TO_INT, "");
+  TAP_TEST_EQUAL(nuc_to_int('A'), 0, TEST_NUC_TO_INT, "");
+  TAP_TEST_EQUAL(nuc_to_int('C'), 1, TEST_NUC_TO_INT, "");
+  TAP_TEST_EQUAL(nuc_to_int('G'), 2, TEST_NUC_TO_INT, "");
+  TAP_TEST_EQUAL(nuc_to_int('T'), 3, TEST_NUC_TO_INT, "");
 
-  TAP_TEST(nuc_to_int('a') == 0, TEST_NUC_TO_INT, "");
-  TAP_TEST(nuc_to_int('c') == 1, TEST_NUC_TO_INT, "");
-  TAP_TEST(nuc_to_int('g') == 2, TEST_NUC_TO_INT, "");
-  TAP_TEST(nuc_to_int('t') == 3, TEST_NUC_TO_INT, "");
+  TAP_TEST_EQUAL(nuc_to_int('a'), 0, TEST_NUC_TO_INT, "");
+  TAP_TEST_EQUAL(nuc_to_int('c'), 1, TEST_NUC_TO_INT, "");
+  TAP_TEST_EQUAL(nuc_to_int('g'), 2, TEST_NUC_TO_INT, "");
+  TAP_TEST_EQUAL(nuc_to_int('t'), 3, TEST_NUC_TO_INT, "");
 
 }
 
@@ -327,14 +327,14 @@ void testRevcompInt() {
 }
 
 void testExtendedNucleotides() {
-  TAP_TEST(is_extended_nucleotide('A') == false, TEST_EXTENDED_NUCL, "");
-  TAP_TEST(is_extended_nucleotide('a') == false, TEST_EXTENDED_NUCL, "");
-  TAP_TEST(is_extended_nucleotide('N') == true,  TEST_EXTENDED_NUCL, "");
-  TAP_TEST(is_extended_nucleotide(' ') == true,  TEST_EXTENDED_NUCL, "");
+  TAP_TEST_EQUAL(is_extended_nucleotide('A'), false, TEST_EXTENDED_NUCL, "");
+  TAP_TEST_EQUAL(is_extended_nucleotide('a'), false, TEST_EXTENDED_NUCL, "");
+  TAP_TEST_EQUAL(is_extended_nucleotide('N'), true,  TEST_EXTENDED_NUCL, "");
+  TAP_TEST_EQUAL(is_extended_nucleotide(' '), true,  TEST_EXTENDED_NUCL, "");
 
-  TAP_TEST(has_extended_nucleotides("") == false, TEST_EXTENDED_NUCL, "");
-  TAP_TEST(has_extended_nucleotides("ACGTacgt") == false, TEST_EXTENDED_NUCL, "");
-  TAP_TEST(has_extended_nucleotides("ACGTnacgt") == true, TEST_EXTENDED_NUCL, "");
+  TAP_TEST_EQUAL(has_extended_nucleotides(""), false, TEST_EXTENDED_NUCL, "");
+  TAP_TEST_EQUAL(has_extended_nucleotides("ACGTacgt"), false, TEST_EXTENDED_NUCL, "");
+  TAP_TEST_EQUAL(has_extended_nucleotides("ACGTnacgt"), true, TEST_EXTENDED_NUCL, "");
  }
 
 void testExtractBasename() {
@@ -382,10 +382,10 @@ void testGenerateAllSeeds() {
 }
 
 void testNChooseK() {
-  TAP_TEST(nChoosek(1, 10) == 0, TEST_N_CHOOSE_K, "");
-  TAP_TEST(nChoosek(1, 1) == 1, TEST_N_CHOOSE_K, "");
-  TAP_TEST(nChoosek(5, 2) == 10, TEST_N_CHOOSE_K, "");
-  TAP_TEST(nChoosek(8, 4) == 70, TEST_N_CHOOSE_K, "");
+  TAP_TEST_EQUAL(nChoosek(1, 10), 0, TEST_N_CHOOSE_K, "");
+  TAP_TEST_EQUAL(nChoosek(1, 1), 1, TEST_N_CHOOSE_K, "");
+  TAP_TEST_EQUAL(nChoosek(5, 2), 10, TEST_N_CHOOSE_K, "");
+  TAP_TEST_EQUAL(nChoosek(8, 4), 70, TEST_N_CHOOSE_K, "");
 }
 
 void testIsStopCodon() {

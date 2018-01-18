@@ -61,8 +61,8 @@ void testRCInsertAcAutomaton() {
 
   pointer_state<KmerAffect> *state = aho.goto_state("ACCGT");
 
-  TAP_TEST(state->informations.size() == 1, TEST_AC_GET, "");
-  TAP_TEST(state->informations.front() == AFFECT_AMBIGUOUS, TEST_AC_GET, "");
+  TAP_TEST_EQUAL(state->informations.size(), 1, TEST_AC_GET, "");
+  TAP_TEST_EQUAL(state->informations.front(), AFFECT_AMBIGUOUS, TEST_AC_GET, "");
   TAP_TEST(state->is_final, TEST_AC_FINAL, "");
 
   TAP_TEST(! aho.goto_state("CAAT")->is_final, TEST_AC_FINAL, "");

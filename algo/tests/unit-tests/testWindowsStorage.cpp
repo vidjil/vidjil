@@ -9,20 +9,20 @@ void testWSAdd() {
   Sequence seq = {"label", "l", "GATACATTAGACAGCT", "", NULL, 0};
   Germline germline("Test", 't', "data/small_V.fa", "", "data/small_J.fa", "");
   
-  TAP_TEST(ws.size() == 0, TEST_WS_SIZE_NONE, "");
+  TAP_TEST_EQUAL(ws.size(), 0, TEST_WS_SIZE_NONE, "");
 
   ws.add("ATTAG", seq, SEG_PLUS, &germline);
 
   TAP_TEST(ws.getGermline("ATTAG") == &germline,TEST_WS_GET_GERMLINE, "");
-  TAP_TEST(ws.getGermline("A") == NULL, TEST_WS_GET_GERMLINE_NONE, "");
-  TAP_TEST(ws.hasWindow("ATTAG") == true, TEST_WS_HAS_WINDOW, "");
-  TAP_TEST(ws.hasWindow("A") == false, TEST_WS_HAS_WINDOW, "");
-  TAP_TEST(ws.size() == 1, TEST_WS_SIZE, "");
-  TAP_TEST(ws.getNbReads("ATTAG") == 1, TEST_WS_GET_NB_READS, "");
-  TAP_TEST(ws.getLabel("ATTAG") == "", TEST_WS_GET_LABEL_NONE, "");
+  TAP_TEST_EQUAL(ws.getGermline("A"), NULL, TEST_WS_GET_GERMLINE_NONE, "");
+  TAP_TEST_EQUAL(ws.hasWindow("ATTAG"), true, TEST_WS_HAS_WINDOW, "");
+  TAP_TEST_EQUAL(ws.hasWindow("A"), false, TEST_WS_HAS_WINDOW, "");
+  TAP_TEST_EQUAL(ws.size(), 1, TEST_WS_SIZE, "");
+  TAP_TEST_EQUAL(ws.getNbReads("ATTAG"), 1, TEST_WS_GET_NB_READS, "");
+  TAP_TEST_EQUAL(ws.getLabel("ATTAG"), "", TEST_WS_GET_LABEL_NONE, "");
   
   list<Sequence> sequences = ws.getReads("ATTAG");
-  TAP_TEST(sequences.size() == 1, TEST_WS_GET_READS_SINGLE, "");
+  TAP_TEST_EQUAL(sequences.size(), 1, TEST_WS_GET_READS_SINGLE, "");
   TAP_TEST(sequences.front().label_full == "label", TEST_WS_GET_READS_SINGLE, "");
   TAP_TEST(sequences.front().sequence == "GATACATTAGACAGCT", TEST_WS_GET_READS_SINGLE, "");
 
@@ -34,11 +34,11 @@ void testWSAdd() {
   seq.label_full = "other";
   ws.add("ATTAG", seq, SEG_PLUS, &germline);
 
-  TAP_TEST(ws.size() == 1, TEST_WS_SIZE, "");
-  TAP_TEST(ws.getNbReads("ATTAG") == 11, TEST_WS_GET_NB_READS, "");
+  TAP_TEST_EQUAL(ws.size(), 1, TEST_WS_SIZE, "");
+  TAP_TEST_EQUAL(ws.getNbReads("ATTAG"), 11, TEST_WS_GET_NB_READS, "");
 
   sequences = ws.getReads("ATTAG");
-  TAP_TEST(sequences.size() == 11, TEST_WS_GET_READS, "");
+  TAP_TEST_EQUAL(sequences.size(), 11, TEST_WS_GET_READS, "");
 
   int i = 0;
   list<Sequence>::iterator it = sequences.begin();
@@ -70,7 +70,7 @@ void testWSAdd() {
 
   TAP_TEST(ws.getGermline("ATAGCAT") == &germline3, TEST_WS_GET_GERMLINE, "");
 
-  TAP_TEST(ws.size() == 3, TEST_WS_SIZE, "");
+  TAP_TEST_EQUAL(ws.size(), 3, TEST_WS_SIZE, "");
 
   //  Add a clone with 5 sequence on the first germline
   for (int i = 0; i < 5; i++) {
@@ -81,7 +81,7 @@ void testWSAdd() {
   list<pair<junction, size_t> >sorted = ws.getSortedList();
   list<pair<junction, size_t> >::iterator it2 = sorted.begin();
 
-  TAP_TEST(ws.size() == 4, TEST_WS_SIZE, "");
+  TAP_TEST_EQUAL(ws.size(), 4, TEST_WS_SIZE, "");
   TAP_TEST(sorted.size() == ws.size() , TEST_WS_SORT, "");
   TAP_TEST(it2->first == "ATTAG" && it2->second == 11, TEST_WS_SORT, "");
   it2++;
@@ -94,15 +94,15 @@ void testWSAdd() {
   TAP_TEST(it2 == sorted.end(), TEST_WS_SORT, "");
   
   set<Germline *> germlines = ws.getTopGermlines(1);
-  TAP_TEST(germlines.size() == 1, TEST_WS_TOP_GERMLINES_ONE, "size = " << germlines.size());
+  TAP_TEST_EQUAL(germlines.size(), 1, TEST_WS_TOP_GERMLINES_ONE, "size = " << germlines.size());
   TAP_TEST(*(germlines.find(&germline)) == &germline, TEST_WS_TOP_GERMLINES_ONE, "");
 
   germlines = ws.getTopGermlines(1, 20);
-  TAP_TEST(germlines.size() == 0, TEST_WS_TOP_GERMLINES_NONE, "size = " << germlines.size());
+  TAP_TEST_EQUAL(germlines.size(), 0, TEST_WS_TOP_GERMLINES_NONE, "size = " << germlines.size());
 
   
   germlines = ws.getTopGermlines(3);
-  TAP_TEST(germlines.size() == 2, TEST_WS_TOP_GERMLINES_MULTI, "size = " << germlines.size());
+  TAP_TEST_EQUAL(germlines.size(), 2, TEST_WS_TOP_GERMLINES_MULTI, "size = " << germlines.size());
   TAP_TEST(*(germlines.find(&germline)) == &germline, TEST_WS_TOP_GERMLINES_MULTI, "");
   TAP_TEST(*(germlines.find(&germline3)) == &germline3, TEST_WS_TOP_GERMLINES_MULTI, "");
 }
@@ -123,14 +123,14 @@ void testWSAddWithLimit() {
   ws.add("ATTAG", seq, SEG_PLUS, &germline);
 
   TAP_TEST(ws.getReads("ATTAG").size() == 3, TEST_WS_LIMIT_READS_COUNT, "nb reads: " << ws.getReads("ATTAG").size());
-  TAP_TEST(ws.getNbReads("ATTAG") == 5, TEST_WS_LIMIT_READS_COUNT, "");
+  TAP_TEST_EQUAL(ws.getNbReads("ATTAG"), 5, TEST_WS_LIMIT_READS_COUNT, "");
 
   ws.add("ATTAG", seq_long, SEG_PLUS, &germline);
   ws.add("ATTAG", seq_long, SEG_PLUS, &germline);
   ws.add("ATTAG", seq_long, SEG_PLUS, &germline);
   ws.add("ATTAG", seq_long, SEG_PLUS, &germline);
   TAP_TEST(ws.getReads("ATTAG").size() == 3, TEST_WS_LIMIT_READS_COUNT, "");
-  TAP_TEST(ws.getNbReads("ATTAG") == 9, TEST_WS_LIMIT_READS_COUNT, "");
+  TAP_TEST_EQUAL(ws.getNbReads("ATTAG"), 9, TEST_WS_LIMIT_READS_COUNT, "");
 
   list<Sequence> sequences = ws.getReads("ATTAG");
   for (list<Sequence>::iterator it = sequences.begin(); it != sequences.end(); it++) {

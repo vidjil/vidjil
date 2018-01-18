@@ -70,7 +70,7 @@ void testKmerStoreWithKmer(int k, int test_id) {
 
   // Test with no result
   vector<Kmer> counts = index->getResults("ATTA");
-  TAP_TEST(counts.size() == 0, test_id, "");
+  TAP_TEST_EQUAL(counts.size(), 0, test_id, "");
   
   delete index;
   delete index2;
@@ -80,24 +80,24 @@ template<template <class> class KmerStore>
 void testKmerStoreSeed() {
   KmerStore<Kmer> *index = new KmerStore<Kmer>(8, true);
 
-  TAP_TEST(index->getK() == 8, TEST_KMERSTORE_GET_K, "");
-  TAP_TEST(index->getS() == 8, TEST_KMERSTORE_GET_S, "");
-  TAP_TEST(index->getSeed() == "########", TEST_KMERSTORE_GET_SEED, "");
+  TAP_TEST_EQUAL(index->getK(), 8, TEST_KMERSTORE_GET_K, "");
+  TAP_TEST_EQUAL(index->getS(), 8, TEST_KMERSTORE_GET_S, "");
+  TAP_TEST_EQUAL(index->getSeed(), "########", TEST_KMERSTORE_GET_SEED, "");
   delete index;
 
   string seed = "#####-#####";
   index = new KmerStore<Kmer>(seed, true);
-  TAP_TEST(index->getK() == 10, TEST_KMERSTORE_GET_K, "");
-  TAP_TEST(index->getS() == 11, TEST_KMERSTORE_GET_S, "");
-  TAP_TEST(index->getSeed() == seed, TEST_KMERSTORE_GET_SEED, "");
+  TAP_TEST_EQUAL(index->getK(), 10, TEST_KMERSTORE_GET_K, "");
+  TAP_TEST_EQUAL(index->getS(), 11, TEST_KMERSTORE_GET_S, "");
+  TAP_TEST_EQUAL(index->getSeed(), seed, TEST_KMERSTORE_GET_SEED, "");
 
   delete index;
 
   seed = "##-##-##-##";
   index = new KmerStore<Kmer>(seed, true);
-  TAP_TEST(index->getK() == 8, TEST_KMERSTORE_GET_K, "");
-  TAP_TEST(index->getS() == 11, TEST_KMERSTORE_GET_S, "");
-  TAP_TEST(index->getSeed() == seed, TEST_KMERSTORE_GET_SEED, "");
+  TAP_TEST_EQUAL(index->getK(), 8, TEST_KMERSTORE_GET_K, "");
+  TAP_TEST_EQUAL(index->getS(), 11, TEST_KMERSTORE_GET_S, "");
+  TAP_TEST_EQUAL(index->getSeed(), seed, TEST_KMERSTORE_GET_SEED, "");
 
   delete index;
 }
