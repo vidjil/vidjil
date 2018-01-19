@@ -259,6 +259,15 @@ RELEASE_ARCHIVE_TAR = $(RELEASE_NAME).tar
 RELEASE_ARCHIVE_TGZ = $(RELEASE_NAME).tar.gz
 RELEASE_DIR_TMP = releases/tmp
 
+RELEASE_ALGO = src/
+RELEASE_TOOLS = $(wildcard ../tools/*.py)
+RELEASE_MAKE = ../tools/tests/Makefile ../doc/Makefile
+RELEASE_TESTS = ../doc/format-analysis.org $(wildcard ../doc/analysis-example.vidjil) $(wildcard ../tools/tests/*.should_get) ../tools/tests/should-to-tap.sh ../tools/diff_json.sh ../demo/get-sequences
+RELEASE_GERMLINES = ../germline/Makefile ../germline/germline_id ../germline/get-saved-germline ../germline/get-germline germline/split-from-imgt.py $(wildcard ../germline/*.g) ../germline/revcomp-fasta.py ../germline/fasta.py
+RELEASE_HELP = ../doc/algo.org ../doc/locus.org ../doc/dev.org ../doc/should-vdj.org ../doc/credits.org ../doc/CHANGELOG ../doc/LICENSE ../README.org ../INSTALL.org
+RELEASE_FILES = $(RELEASE_TOOLS) $(RELEASE_TESTS) $(RELEASE_MAKE) $(RELEASE_GERMLINES) $(RELEASE_HELP)
+
+
 release: release_create release_check
 
 release_create:
@@ -268,9 +277,10 @@ release_create:
 	mkdir -p $(RELEASES_DIR)
 	rm -rf $(RELEASES_DIR)/$(RELEASE_ARCHIVE_TAR) $(RELEASES_DIR)/$(RELEASE_ARCHIVE_TGZ) $(RELEASE_DIR_TMP)/$(RELEASE_NAME)
 	mkdir -p $(RELEASE_DIR_TMP)/$(RELEASE_NAME)
+	mkdir -p $(RELEASE_DIR_TMP)/$(RELEASE_NAME)/$(RELEASE_ALGO)
 
 	# Do the archive
-	git archive --format=tar --prefix $(RELEASE_NAME)/ -o $(RELEASES_DIR)/$(RELEASE_ARCHIVE_TAR) HEAD .
+	git archive --format=tar --prefix $(RELEASE_NAME)/$(RELEASE_ALGO) -o $(RELEASES_DIR)/$(RELEASE_ARCHIVE_TAR) HEAD .
 
 	# Tag the release
 	if test "$(RELEASE_TAG)" != "notag"; then \
@@ -278,11 +288,19 @@ release_create:
 	fi
 
 	# Create release.h and git-version.h
-	echo '#define RELEASE_TAG "$(RELEASE_TAG)"' > $(RELEASE_DIR_TMP)/$(RELEASE_NAME)/$(RELEASE_H); \
-	sh create-git-version-h.sh ; cp git-version.h $(RELEASE_DIR_TMP)/$(RELEASE_NAME)/$(GIT_VERSION_H)
+	echo '#define RELEASE_TAG "$(RELEASE_TAG)"' > $(RELEASE_DIR_TMP)/$(RELEASE_NAME)/$(RELEASE_ALGO)/$(RELEASE_H); \
+	sh create-git-version-h.sh ; cp git-version.h $(RELEASE_DIR_TMP)/$(RELEASE_NAME)/$(RELEASE_ALGO)/$(GIT_VERSION_H)
 
-	# Store release.h and git-version.h in archive
-	cd $(RELEASE_DIR_TMP) ; tar rf ../$(RELEASE_ARCHIVE_TAR) $(RELEASE_NAME)/$(RELEASE_H) $(RELEASE_NAME)/$(GIT_VERSION_H)
+	# Store also other files in archive
+	for file in $(RELEASE_FILES); do\
+	  dir=$(RELEASE_DIR_TMP)/$(RELEASE_NAME)/algo/`dirname "$$file"`/;    \
+	  mkdir -p $$dir; \
+	  cp -v "$$file" $$dir/;     \
+	done
+
+	# Store these files in archive
+	cd $(RELEASE_DIR_TMP) ; tar rf ../$(RELEASE_ARCHIVE_TAR) $(RELEASE_NAME)/
+
 
 	# TODO: make -C $(RELEASE_NAME)/doc html || true
 
