@@ -385,9 +385,9 @@ def form():
     # edit set
     if("id" in request.vars):
         sample_set = db.sample_set[request.vars["id"]]
-        if(auth.can_modify(sample_set.sample_type, request.vars["id"])):
-            set_type = sample_set.sample_type
-            sset = db(db[set_type].sample_set_id == sample_set.id).select().first()
+        set_type = sample_set.sample_type
+        sset = db(db[set_type].sample_set_id == sample_set.id).select().first()
+        if(auth.can_modify(sample_set.sample_type, sset.id)):
             groups = [get_set_group(set_type, sset.id)]
             message = 'edit %s' % set_type
             max_group = None
