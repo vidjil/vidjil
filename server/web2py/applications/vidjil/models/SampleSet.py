@@ -113,10 +113,6 @@ class SampleSet(object):
         pass
 
     @abstractmethod
-    def get_add_route(self):
-        pass
-
-    @abstractmethod
     def get_info_dict(self, data):
         pass
 

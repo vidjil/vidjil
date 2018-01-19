@@ -18,9 +18,6 @@ class Generic(SampleSet):
                 info = ""
                 )
 
-    def get_add_route(self):
-        return 'sample_set/add'
-
     def get_data(self, sample_set_id):
         return db(db.generic.sample_set_id == sample_set_id).select()[0]
 
