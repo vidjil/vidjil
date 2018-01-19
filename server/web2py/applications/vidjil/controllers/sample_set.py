@@ -435,8 +435,11 @@ def submit():
 
     error = False
     set_types = vidjil_utils.get_found_types(data)
+
+    length_mapping = {}
     for set_type in set_types:
         helper = mf.get_instance(set_type)
+        length_mapping[len(data[set_type])] = set_type
         for p in data[set_type]:
             p['error'] = helper.validate(p)
             if len(p['error']) > 0:
@@ -495,6 +498,7 @@ def submit():
         # TODO proper logging of all events
         #log.info(res, extra={'user_id': auth.user.id, 'record_id': id, 'table_name': 'patient'})
         res = {"redirect": "sample_set/all",
+                "args" : { "type" : length_mapping[max(length_mapping.keys())] },
                 "message": "successfully added/edited set(s)"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
