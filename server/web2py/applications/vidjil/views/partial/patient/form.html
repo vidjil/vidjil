@@ -1,7 +1,7 @@
 <fieldset name="patient{{=i}}">
     <legend>Patient {{=i+1}}</legend>
     <input type="hidden" id="patient_id_{{=i}}" name="patient[{{=i}}][id]" value="{{if set is not None:}}{{=set['id']}}{{pass}}">
-    {{ if set is not None and len(set['error']) > 0: }}
+    {{ if set is not None and 'error' in set and len(set['error']) > 0: }}
         <div class="error">error: {{=", ".join(set['error'])}}</div>
     {{ pass }}
     <div>
