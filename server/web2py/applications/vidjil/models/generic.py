@@ -13,7 +13,7 @@ class Generic(SampleSet):
 
     def get_info_dict(self, data):
         return dict(name = "set : %s" % self.get_display_name(data),
-                filename = "sample_set_%d" % data.id,
+                filename = "sample_set_%d" % data['id'],
                 label = "",
                 info = ""
                 )
@@ -25,5 +25,5 @@ class Generic(SampleSet):
         return db(db.generic.sample_set_id == sample_set_id).select()[0]
 
     def get_id_string(self, data):
-        name = data.name if data.name is not None else "Unnamed Sample Set"
-        return ":s %s (%d)" % (name, data.id)
+        name = data['name'] if data['name'] is not None else "Unnamed Sample Set"
+        return ":s %s  (%d)" % (name, data['id'])

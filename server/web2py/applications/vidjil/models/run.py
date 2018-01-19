@@ -13,13 +13,13 @@ class Run(SampleSet):
         return fields
 
     def get_name(self, data):
-        return data.name
+        return data['name']
 
     def get_embellished_name(self, data):
-        return 'run: %s' % data.name
+        return 'run: %s' % data['name']
 
     def get_run_date(self, data):
-        return "%s" % str(data.run_date) if data.run_date is not None else ''
+        return "%s" % str(data['run_date']) if data['run_date'] is not None else ''
 
     def filter(self, filter_str, data):
         keys = ['name', 'confs', 'groups', 'run_date', 'info']
@@ -27,10 +27,10 @@ class Run(SampleSet):
         return filter(lambda row : vidjil_utils.advanced_filter(row['string'], filter_str), data)
 
     def get_info_dict(self, data):
-        return dict(name = "run : " + data.name + " (" + str(data.run_date) + ")",
-                    filename = "run : " + data.name + "_" + str(data.run_date),
-                    label = data.id_label + " (" + str(data.run_date) + ")",
-                    info = data.info
+        return dict(name = "run : " + data['name'] + " (" + str(data['run_date']) + ")",
+                    filename = "run : " + data['name'] + "_" + str(data['run_date']),
+                    label = data['id_label'] + " (" + str(data['run_date']) + ")",
+                    info = data['info']
                     )
 
     def get_add_route(self):
@@ -40,6 +40,6 @@ class Run(SampleSet):
         return db(db.run.sample_set_id == sample_set_id).select()[0]
 
     def get_id_string(self, data):
-        name = data.name
-        ident = "(%d)" % data.id
+        name = data['name']
+        ident = "(%d)" % data['id']
         return ":r %s %s" % (name, ident)

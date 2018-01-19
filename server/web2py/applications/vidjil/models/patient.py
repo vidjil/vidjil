@@ -16,13 +16,13 @@ class Patient(SampleSet):
         return fields
 
     def get_name(self, data, anon=None):
-        return vidjil_utils.anon_names(data.id, data.first_name, data.last_name, anon)
+        return vidjil_utils.anon_names(data['id'], data['first_name'], data['last_name'], anon)
 
     def get_display_name(self, data, anon=None):
         return vidjil_utils.display_names(data.id, data.first_name, data.last_name, anon)
 
     def get_birth(self, data):
-        return "%s" % str(data.birth) if data.birth is not None else ''
+        return "%s" % str(data['birth']) if data['birth'] is not None else ''
 
     def filter(self, filter_str, data):
         keys = ['last_name', 'first_name', 'confs', 'groups', 'birth', 'info']
@@ -33,8 +33,8 @@ class Patient(SampleSet):
         name = self.get_display_name(data)
         return dict(name = name,
                     filename = name,
-                    label = data.id_label + " (" + str(data.birth) + ")",
-                    info = data.info
+                    label = data['id_label'] + " (" + str(data['birth']) + ")",
+                    info = data['info']
                     )
 
     def get_add_route(self):
@@ -45,7 +45,7 @@ class Patient(SampleSet):
 
     def get_id_string(self, data):
         name = self.get_name(data)
-        ident = "(%d)" % data.id
+        ident = "(%d)" % data['id']
         return ":p %s %s" % (name, ident)
 
     def validate(self, data):

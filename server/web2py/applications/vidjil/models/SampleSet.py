@@ -18,16 +18,16 @@ class SampleSet(object):
         return getattr(self, key, None)
 
     def get_name(self, data):
-        return data.name
+        return data['name']
 
     def get_display_name(self, data):
         return self.get_name(data)
 
     def get_info(self, data):
-        return data.info
+        return data['info']
 
     def get_tagged_info(self, data):
-        text = self.tag_decorator.decorate(data.info, 'tag', self.type, self.get_list_path())
+        text = self.tag_decorator.decorate(data['info'], 'tag', self.type, self.get_list_path())
         return self.tag_decorator.sanitize(text)
 
     def get_stats_tagged_info(self, data):
@@ -35,7 +35,7 @@ class SampleSet(object):
         return self.tag_decorator.sanitize(text)
 
     def get_configs(self, data):
-        return data.conf_list
+        return data['conf_list']
 
     def get_list_path(self):
         return '/sample_set/all'
@@ -45,28 +45,28 @@ class SampleSet(object):
 
     def get_config_urls(self, data):
         configs = []
-        for conf in data.conf_list:
+        for conf in data['conf_list']:
             filename =  "(%s %s)" % (self.get_display_name(data), conf['name'])
             if conf['fused_file'] is not None :
                 configs.append(
                     str(A(conf['name'],
-                        _href="index.html?sample_set_id=%d&config=%d" % (data.sample_set_id, conf['id']), _type="text/html",
-                        _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %d }, '%s' ); }" % (data.sample_set_id, conf['id'], filename))))
+                        _href="index.html?sample_set_id=%d&config=%d" % (data['sample_set_id'], conf['id']), _type="text/html",
+                        _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %d }, '%s' ); }" % (data['sample_set_id'], conf['id'], filename))))
             else:
                 configs.append(conf['name'])
         return XML(", ".join(configs))
 
     def get_groups(self, data):
-        return data.group_list
+        return data['group_list']
 
     def get_groups_string(self, data):
-        return ', '.join([group for group in data.group_list if group != 'admin'])
+        return ', '.join([group for group in data['group_list'] if group != 'admin'])
 
     def get_creator(self, data):
-        return data.creator
+        return data['creator']
 
     def get_files(self, data):
-        return '%d (%s)' % (data.file_count, vidjil_utils.format_size(data.size))
+        return '%d (%s)' % (data['file_count'], vidjil_utils.format_size(data['size']))
 
     def get_fields(self):
         fields = []
@@ -88,18 +88,18 @@ class SampleSet(object):
 
     def get_sequence_count(self, data):
         if not hasattr(data, 'sequence_count'):
-            data.sequence_count = db( (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+            data['sequence_count'] = db( (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                     &(db.sample_set_membership.sample_set_id == db[self.type].sample_set_id)
-                    &(db[self.type].id == data.id)).count()
-        return data.sequence_count
+                    &(db[self.type].id == data['id'])).count()
+        return data['sequence_count']
 
     def get_data_count(self, data):
         if not hasattr(data, 'data_count'):
-            data.data_count = db( (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+            data['data_count'] = db( (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                 &(db.sample_set_membership.sample_set_id == db[self.type].sample_set_id)
-                &(db[self.type].id == data.id)
+                &(db[self.type].id == data['id'])
                 &(db.results_file.sequence_file_id == db.sequence_file.id)).count()
-        return data.data_count
+        return data['data_count']
 
     def create_filter_string(self, data, keys):
         for row in data:
