@@ -1,44 +1,41 @@
+function capitalise(text) {
+    return text.charAt(0).toUpperCase() + text.slice(1)
+}
+
+function labelise(text) {
+    var split = text.split('_');
+    var result = "";
+    for (var i = 0; i < split.length; i++) {
+        split[i] = capitalise(split[i]);
+    }
+    return split.join(' ');
+}
+
 function FormBuilder() {
     if (typeof FormBuilder.instance === 'object') {
         return FormBuilder.instance;
     }
 
-    FormBuilder.instance = this
-    this.indexes = {
-        'patient': 0,
-        'run': 0,
-        'generic': 0
-    };
+    FormBuilder.instance = this;
+    this.index = 0;
 }
 
 FormBuilder.prototype = {
 
-    patient: function(index) {
-        this.indexes.patient = index;
-        var fieldset = this.fieldset('patient');
-        fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', 'patient'));
-        fieldset.appendChild(this.patient_id());
-        fieldset.appendChild(this.first_name());
-        fieldset.appendChild(this.last_name());
-        fieldset.appendChild(this.birth());
-        fieldset.appendChild(this.info());
-        return fieldset;
-    },
-
     build_label: function(txt, stype, tgt) {
         var l = document.createElement('label');
-        l.htmlFor = tgt + "_" + this.indexes[stype];
-        l.id = stype + "_" + tgt + "__label_" + this.indexes[stype];
+        l.htmlFor = tgt + "_" + this.index;
+        l.id = stype + "_" + tgt + "__label_" + this.index;
         l.innerText = txt + ":";
         return l;
     },
 
     build_input: function(id, className, name, input_type, set_type, placeholder) {
         var i = document.createElement('input');
-        i.id = set_type + "_" + id + "_" + this.indexes[set_type];
+        i.id = set_type + "_" + id + "_" + this.index;
         i.className = className;
         i.type = input_type;
-        i.name = set_type + "[" + this.indexes[set_type] + "][" + name + "]";
+        i.name = set_type + "[" + this.index + "][" + name + "]";
 
         if (typeof placeholder !== "undefined") {
             i.placeholder = placeholder;
@@ -47,61 +44,72 @@ FormBuilder.prototype = {
         return i;
     },
 
+    build_field: function(id, name, label) {
+        if (typeof name === "undefined") {
+            name = id;
+        }
+
+        if (typeof label === "undefined") {
+            label = labelise(id);
+        }
+
+        var d = document.createElement('div');
+        d.appendChild(this.build_label(label, this.type, id));
+        d.appendChild(this.build_input(id, 'string', name, 'text', this.type));
+        return d;
+    },
+
     build_textarea: function(id, className, name, set_type) {
         var t = document.createElement('textarea');
-        t.id = set_type + "_" + id + "_" + this.indexes[set_type];
+        t.id = set_type + "_" + id + "_" + this.index;
         t.className = className;
-        t.name = set_type + "[" + this.indexes[set_type] + "][" + name + "]";
+        t.name = set_type + "[" + this.index + "][" + name + "]";
         return t;
     },
 
-    fieldset: function(type) {
+    build_fieldset: function(type) {
         var f = document.createElement('fieldset');
-        f.name = type + this.indexes[type];
+        f.name = type + this.index;
         var l = document.createElement('legend');
-        l.innerText = type.charAt(0).toUpperCase() + type.slice(1) + " " + (this.indexes.patient+1);
+        l.innerText =  capitalise(type) + " " + (this.index+1);
         f.appendChild(l);
         return f;
     },
+}
 
-    patient_id: function() {
-        var d = document.createElement('div');
+function SetFormBuilder() {
+    this.type = 'foobar';
+    FormBuilder.call(this);
+}
+
+SetFormBuilder.prototype = Object.create(FormBuilder.prototype);
+
+SetFormBuilder.prototype.set_id = function() {
         var id = 'id_label';
-        d.appendChild(this.build_label('Patient ID', 'patient', id));
-        d.appendChild(this.build_input(id, 'date', 'id_label', 'text', 'patient'));
-        return d;
-    },
+        return this.build_field(id, id, capitalise(this.type)+' ID');
+    };
 
-    first_name: function() {
+SetFormBuilder.prototype.date = function(id, name, label) {
+        if (typeof name === "undefined") {
+            name = id;
+        }
+
+        if (typeof label === "undefined") {
+            label = labelise(id);
+        }
+
         var d = document.createElement('div');
-        var id = 'first_name';
-        d.appendChild(this.build_label('First Name', 'patient', id));
-        d.appendChild(this.build_input(id, 'string', id, 'text', 'patient'));
+        d.appendChild(this.build_label(label, this.type, id));
+        d.appendChild(this.build_input(id, 'date', name, 'text', this.type, 'yyyy-mm-dd'));
         return d;
-    },
+    };
 
-    last_name: function() {
-        var d = document.createElement('div');
-        var id = 'last_name';
-        d.appendChild(this.build_label('Last Name', 'patient', id));
-        d.appendChild(this.build_input(id, 'string', id, 'text', 'patient'));
-        return d;
-    },
-
-    birth: function() {
-        var d = document.createElement('div');
-        var id = 'birth';
-        d.appendChild(this.build_label('Birth', 'patient', id));
-        d.appendChild(this.build_input(id, 'date', id, 'text', 'patient', 'yyyy-mm-dd'));
-        return d;
-    },
-
-    info: function() {
+SetFormBuilder.prototype.info = function() {
         var d = document.createElement('div');
         var id = 'info';
-        d.appendChild(this.build_label('Info', 'patient', id));
+        d.appendChild(this.build_label('Info', this.type, id));
 
-        var txt = this.build_textarea('info', "text", 'info', 'patient');
+        var txt = this.build_textarea('info', "text", 'info', this.type);
         $(txt).data('needs-atwho', true);
         $(txt).on('focus', function() {
             $(this).data('keys', [$('#group_select option:selected').val()]);
@@ -111,5 +119,60 @@ FormBuilder.prototype = {
         txt.rows = 10;
         d.appendChild(txt);
         return d;
-    }
+    };
+
+function PatientFormBuilder() {
+    SetFormBuilder.call(this);
+    this.type = 'patient'
 }
+
+PatientFormBuilder.prototype = Object.create(SetFormBuilder.prototype);
+
+PatientFormBuilder.prototype.build = function(index) {
+        this.index = index;
+        var fieldset = this.build_fieldset(this.type);
+        fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
+        fieldset.appendChild(this.set_id());
+        fieldset.appendChild(this.build_field('first_name'));
+        fieldset.appendChild(this.build_field('last_name'));
+        fieldset.appendChild(this.date('birth'));
+        fieldset.appendChild(this.info());
+        return fieldset;
+    };
+
+function RunFormBuilder() {
+    SetFormBuilder.call(this);
+    this.type = 'run';
+}
+
+RunFormBuilder.prototype = Object.create(SetFormBuilder.prototype);
+
+RunFormBuilder.prototype.build = function(index) {
+        this.index = index;
+        var fieldset = this.build_fieldset(this.type);
+        fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
+        fieldset.appendChild(this.set_id());
+        fieldset.appendChild(this.build_field('name'));
+        fieldset.appendChild(this.date('run_date', 'run_date', 'Date'));
+        fieldset.appendChild(this.info());
+        fieldset.appendChild(this.build_field('sequencer'));
+        fieldset.appendChild(this.build_field('pcr', 'pcr', 'PCR'));
+        return fieldset;
+    };
+
+function GenericFormBuilder() {
+    SetFormBuilder.call(this);
+    this.type = 'generic';
+}
+
+GenericFormBuilder.prototype = Object.create(SetFormBuilder.prototype);
+
+SetFormBuilder.prototype.build = function(index) {
+        this.index = index;
+        var fieldset = this.build_fieldset('set');
+        fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
+        fieldset.appendChild(this.set_id());
+        fieldset.appendChild(this.build_field('name'));
+        fieldset.appendChild(this.info());
+        return fieldset;
+    }
