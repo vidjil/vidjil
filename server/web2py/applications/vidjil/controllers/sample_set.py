@@ -503,7 +503,7 @@ def submit():
                 'run': data['run'] if 'run' in data else [],
                 'generic': data['generic'] if 'generic' in data else []
                 }
-        response.view = 'patient/form.html'
+        response.view = 'sample_set/form.html'
         return dict(message=T("an error occured"),
                 groups=[{'name': 'foobar', 'id': int(data['group'])}],
                 master_group=data['group'],
