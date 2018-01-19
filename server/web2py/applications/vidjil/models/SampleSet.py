@@ -135,6 +135,10 @@ class SampleSet(object):
         except:
             raise ValueError('invalid input %s' % string)
 
+    @abstractmethod
+    def validate(self, data):
+        pass
+
 def get_sample_name(sample_set_id):
     '''
     Return the name associated with a sample set (eg. a run or a

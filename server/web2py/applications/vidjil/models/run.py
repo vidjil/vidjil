@@ -43,3 +43,15 @@ class Run(SampleSet):
         name = data['name']
         ident = "(%d)" % data['id']
         return ":r %s %s" % (name, ident)
+
+    def validate(self, data):
+        error = []
+        if data["name"] == "":
+            error.append("name needed")
+
+        if data["run_date"] != "":
+            try:
+                datetime.datetime.strptime(""+data['run_date'], '%Y-%m-%d')
+            except ValueError:
+                error.append("date (wrong format)")
+        return error

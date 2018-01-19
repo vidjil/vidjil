@@ -550,3 +550,8 @@ def check_enough_space(directory):
     size = int(size)
     result = available >= (size * (defs.FS_LOCK_THRESHHOLD/100))
     return result
+
+def get_found_types(data):
+    known_types = set([defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC])
+    present_types = set(data.keys())
+    return known_types.intersection(present_types)

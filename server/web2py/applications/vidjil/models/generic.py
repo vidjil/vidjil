@@ -27,3 +27,9 @@ class Generic(SampleSet):
     def get_id_string(self, data):
         name = data['name'] if data['name'] is not None else "Unnamed Sample Set"
         return ":s %s  (%d)" % (name, data['id'])
+
+    def validate(self, data):
+        error = []
+        if data["name"] == "":
+            error.append("name needed")
+        return error
