@@ -7,6 +7,7 @@ before_script:
   - cp -p doc/analysis-example.vidjil browser/
 
 stages:
+  - test_tools
   - test_quality
   - test_unit
   - deploy_review
@@ -18,6 +19,12 @@ stages:
   - valgrind_functional
   - deploy_prod
 
+
+# Tools
+
+test_tools:
+  stage: test_tools
+  script: make -C tools/tests
 
 # Algorithm
 
