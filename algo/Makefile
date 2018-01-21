@@ -314,11 +314,11 @@ release_check:
 	$(info ==== Checking $(RELEASE_ARCHIVE_TGZ) ====)
 
 	cd $(RELEASES_DIR) && tar xvfz $(RELEASE_ARCHIVE_TGZ)
-	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE)
-	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) germline
-	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) data
-	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) -C algo test
-	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) clean && $(MAKE) static && mv vidjil vidjil-$(RELEASE_TAG)_`uname -m`
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && cd demo && sh get-sequences
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) -C germline get-saved-data
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) -C src/tests/data
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) -C src test
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) -C src clean && $(MAKE) -C src static && mv $(EXEC) $(EXEC)-$(RELEASE_TAG)_`uname -m`
 
 
 
