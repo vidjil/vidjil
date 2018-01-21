@@ -148,7 +148,6 @@ test:
 	$(MAKE) -C tests cleantests
 	$(TEE) '$(MAKE) COVERAGE="$(COVERAGE)" unit' tests/out-unit.log
 	$(MAKE) functional
-	$(TEE) '$(MAKE) -C .. test_tools_if_python'        tests/out-tools.log
 	@echo
 	@echo "*** All tests passed. Congratulations !"
 	@echo
