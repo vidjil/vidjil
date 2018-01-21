@@ -13,6 +13,7 @@ stages:
   - test_functional
   - test_functional_external
   - test_shouldvdj
+  - prepare_release
   - valgrind_unit
   - valgrind_functional
   - deploy_prod
@@ -57,7 +58,12 @@ algo_valgrind_functional:
   only:
     - /^feature-a\/.*$/
 
-
+prepare_release:
+  stage: prepare_release
+  script: make -C algo release RELEASE_TAG='rc'
+  when: manual
+  only:
+    - /^feature-a\/.*$/
 
 # Client
 
