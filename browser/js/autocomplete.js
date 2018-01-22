@@ -126,7 +126,7 @@ VidjilAutoComplete.prototype = {
         var callbacks = self.getDefaultCallbacks()
 
         callbacks.matcher = function(flag, subtext) {
-            var regex = /([:\s0-9a-z_\[\]\(\)]+)/ig;
+            var regex = /([:\s0-9a-z_\[\]\(\)\-]+)/ig;
             var match = subtext.match(regex);
             if (match) {
                 return match[0];
