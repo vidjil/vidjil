@@ -2312,6 +2312,21 @@ label.highlight_label {
     background: #3366FF;
     color: white;
 }
+
+.atwho-view .cur.patient_li {
+    background: @patientTokenColor;
+    color: black;
+}
+
+.atwho-view .cur.run_li {
+    background: @runTokenColor;
+    color: black;
+}
+
+.atwho-view .cur.generic_li {
+    background: @genericTokenColor;
+    color: black;
+}
 .atwho-view .cur small {
     color: white;
 }
@@ -2321,6 +2336,10 @@ label.highlight_label {
 .atwho-view .cur strong {
     color: white;
     font:bold;
+}
+.atwho-view .cur.patient_li strong, .atwho-view .cur.generic_li strong, .atwho-view .cur.run_li strong {
+    color: black;
+    font: bold;
 }
 .atwho-view ul {
     /* width: 100px; */

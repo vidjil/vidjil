@@ -147,8 +147,13 @@ VidjilAutoComplete.prototype = {
             return res;
         };
 
-        // code taken directly from atwho source in order to allow use of brackets in inputs
+        // code modified from atwho source
         callbacks.highlighter = function(li, query) {
+            var css_classes = {'p': 'patient_li',
+                               'r': 'run_li',
+                               's': 'generic_li'}
+
+            li = li.replace('<li>', '<li class=' + css_classes[li.charAt(5)] + '>');
             var regexp;
             if (!query) {
                 return li;
