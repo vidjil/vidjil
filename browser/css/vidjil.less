@@ -2361,6 +2361,25 @@ label.highlight_label {
             border-bottom: 1px solid #DDD;
             cursor: pointer;
             /* border-top: 1px solid #C8C8C8; */
+
+            &.patient_li:before {
+                font-size: 80%;
+                content: 'patient';
+            }
+
+            &.run_li:before {
+                font-size: 80%;
+                content: 'run';
+            }
+
+            &.generic_li:before {
+                font-size: 80%;
+                content: 'generic';
+            }
+
+            & span.autocomplete_li {
+                display: none;
+            }
         }
     }
 

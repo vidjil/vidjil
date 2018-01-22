@@ -149,11 +149,17 @@ VidjilAutoComplete.prototype = {
 
         // code modified from atwho source
         callbacks.highlighter = function(li, query) {
-            var css_classes = {'p': 'patient_li',
-                               'r': 'run_li',
-                               's': 'generic_li'}
+            var mapper = {'p': 'patient',
+                          'r': 'run',
+                          's': 'generic'}
 
-            li = li.replace('<li>', '<li class=' + css_classes[li.charAt(5)] + '>');
+            var set_type = li.charAt(5)
+
+            li = li.replace(li.substr(4,2),
+                    function(str) {
+                        return '<span class="autocomplete_li ' + mapper[set_type] + '">' + str + '</span>';
+                    });
+            li = li.replace('<li>', '<li class="' + mapper[set_type] + '_li">');
             var regexp;
             if (!query) {
                 return li;
