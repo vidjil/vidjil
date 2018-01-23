@@ -18,6 +18,9 @@ class Patient(SampleSet):
     def get_name(self, data, anon=None):
         return vidjil_utils.anon_names(data.id, data.first_name, data.last_name, anon)
 
+    def get_display_name(self, data, anon=None):
+        return vidjil_utils.display_names(data.id, data.first_name, data.last_name, anon)
+
     def get_birth(self, data):
         return "%s" % str(data.birth) if data.birth is not None else ''
 
@@ -27,7 +30,7 @@ class Patient(SampleSet):
         return filter(lambda row : vidjil_utils.advanced_filter(row['string'], filter_str), data)
 
     def get_info_dict(self, data):
-        name = self.get_name(data)
+        name = self.get_display_name(data)
         return dict(name = name,
                     filename = name,
                     label = data.id_label + " (" + str(data.birth) + ")",

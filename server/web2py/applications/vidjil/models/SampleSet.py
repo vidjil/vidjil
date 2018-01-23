@@ -20,6 +20,9 @@ class SampleSet(object):
     def get_name(self, data):
         return data.name
 
+    def get_display_name(self, data):
+        return self.get_name(data)
+
     def get_info(self, data):
         return data.info
 
@@ -43,7 +46,7 @@ class SampleSet(object):
     def get_config_urls(self, data):
         configs = []
         for conf in data.conf_list:
-            filename =  "(%s %s)" % (self.get_name(data), conf['name'])
+            filename =  "(%s %s)" % (self.get_display_name(data), conf['name'])
             if conf['fused_file'] is not None :
                 configs.append(
                     str(A(conf['name'],
@@ -67,7 +70,7 @@ class SampleSet(object):
 
     def get_fields(self):
         fields = []
-        fields.append({'name': 'name', 'sort': 'name', 'call': self.get_name, 'width': 200, 'public': True})
+        fields.append({'name': 'name', 'sort': 'name', 'call': self.get_display_name, 'width': 200, 'public': True})
         fields.append({'name': 'info', 'sort': 'info', 'call': self.get_tagged_info, 'width': None, 'public': True})
         fields.append({'name': 'results', 'sort': 'confs', 'call': self.get_config_urls, 'width': None, 'public': True})
         if auth.is_admin() or len(get_group_list(auth)) > 1:

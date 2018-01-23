@@ -589,7 +589,8 @@ def custom():
             row.checked = True
 
         if row.patient.id is not None:
-            row.names = vidjil_utils.anon_names(row.patient.id, row.patient.first_name, row.patient.last_name)
+            #TODO use helper.
+            row.names = vidjil_utils.display_names(row.patient.id, row.patient.first_name, row.patient.last_name)
             info = row.patient.info
         elif row.run.id is not None:
             row.names = row.run.name

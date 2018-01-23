@@ -94,7 +94,7 @@ def anon_ids(patient_id):
     last_name = db.patient[patient_id].last_name
     first_name = db.patient[patient_id].first_name
 
-    return anon_names(patient_id, first_name, last_name)
+    return display_names(patient_id, first_name, last_name)
 
 def anon_names(patient_id, first_name, last_name, can_view=None):
     '''
@@ -112,6 +112,20 @@ def anon_names(patient_id, first_name, last_name, can_view=None):
     else:
         ln = safe_encoding(last_name)
         name = ln[:3]
+
+    return name
+
+def display_names(patient_id, first_name, last_name, can_view=None):
+    '''
+    Return the name as displayed to a user or admin of a patient
+    whose ID is patient_id.
+    It makes use of anon_names which will return an anonymised version
+    of the patient name if the user doesn't have permission to see the real name.
+    Admins will also see the patient id.
+    '''
+    auth = current.auth
+
+    name = anon_names(patient_id, first_name, last_name, can_view)
 
     # Admins also see the patient id
     if auth.is_admin():
