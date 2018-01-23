@@ -128,6 +128,13 @@ class SampleSet(object):
     def get_id_string(self, data):
         pass
 
+    def parse_id_string(self, string):
+        try:
+            value = string[string.find("(")+1:string.find(")")]
+            return int(value)
+        except:
+            raise ValueError('invalid input %s' % string)
+
 def get_sample_name(sample_set_id):
     '''
     Return the name associated with a sample set (eg. a run or a

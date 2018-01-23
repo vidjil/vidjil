@@ -41,6 +41,5 @@ class Run(SampleSet):
 
     def get_id_string(self, data):
         name = data.name
-        run_date = "[%s]" % str(data.run_date)
-        id = "(%d)" % data.id
-        return ":r %s  %s  %s" % (run_date, name, id)
+        ident = "(%d)" % data.id
+        return ":r %s %s" % (name, ident)

@@ -12,6 +12,7 @@ if request.env.http_origin:
     
 def anon_names(data):
     for row in data:
+        # TODO use helper ?
         row.name = vidjil_utils.anon_ids(row.id)
     return data
 

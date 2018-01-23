@@ -45,6 +45,5 @@ class Patient(SampleSet):
 
     def get_id_string(self, data):
         name = self.get_name(data)
-        birth = "[%s]" % str(data.birth)
-        id = "(%d)" % data.id
-        return ":p %s  %s  %s" % (birth, name, id)
+        ident = "(%d)" % data.id
+        return ":p %s %s" % (name, ident)

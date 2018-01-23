@@ -15,19 +15,14 @@ if request.env.http_origin:
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Max-Age'] = 86400
 
-def extract_id(target, error):
+def extract_set_type(target):
     mapping = {
         'p': 'patient',
         'r': 'run',
         's': 'generic'
     }
-    try:
-        t_split = target.strip().split(' ')
-        tid = int(' '.join(t_split[1:]).split('(')[-1][:-1])
-        ttype = mapping[t_split[0].split(':')[1]]
-        return ttype, tid
-    except:
-        raise ValueError('invalid input %s' % target)
+    return mapping[target.split(':')[1][0]]
+
 
 def manage_filename(filename):
     filepath = ""
@@ -170,6 +165,9 @@ def submit():
             datetime.datetime.strptime(""+request.vars['sampling_date'], '%Y-%m-%d')
         except ValueError:
             error += "date (wrong format), "
+
+    mf = ModelFactory()
+    helpers = {}
             
     set_ids = request.vars['set_ids'].split(',')
     set_ids = [x.strip() for x in set_ids]
@@ -178,9 +176,11 @@ def submit():
     for sid in set_ids:
         if sid != '':
             try:
-                set_type, set_id = extract_id(sid, error)
+                set_type = extract_set_type(sid)
                 if set_type not in id_dict:
+                    helpers[set_type] = mf.get_instance(set_type)
                     id_dict[set_type] = []
+                set_id = helpers[set_type].parse_id_string(sid)
                 id_dict[set_type].append(set_id)
                 if not auth.can_modify(set_type, set_id) :
                     error += " missing permission for %s %d" % (set_type, set_id)
