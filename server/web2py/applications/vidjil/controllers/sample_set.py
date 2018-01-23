@@ -441,8 +441,9 @@ def submit():
         helper = mf.get_instance(set_type)
         length_mapping[len(data[set_type])] = set_type
         for p in data[set_type]:
-            p['error'] = helper.validate(p)
-            if len(p['error']) > 0:
+            errors = helper.validate(p)
+            if len(errors) > 0:
+                p['error'] = errors
                 error = True
                 continue
 
