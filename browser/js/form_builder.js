@@ -22,6 +22,12 @@ function FormBuilder() {
 
 FormBuilder.prototype = {
 
+    build_wrapper: function() {
+        var d = document.createElement('div');
+        d.className = "field_div";
+        return d;
+    },
+
     build_label: function(txt, stype, tgt) {
         var l = document.createElement('label');
         l.htmlFor = tgt + "_" + this.index;
@@ -53,7 +59,7 @@ FormBuilder.prototype = {
             label = labelise(id);
         }
 
-        var d = document.createElement('div');
+        var d = this.build_wrapper();
         d.appendChild(this.build_label(label, this.type, id));
         d.appendChild(this.build_input(id, 'string', name, 'text', this.type));
         return d;
@@ -98,14 +104,17 @@ SetFormBuilder.prototype.date = function(id, name, label) {
             label = labelise(id);
         }
 
-        var d = document.createElement('div');
+        var d = this.build_wrapper();
         d.appendChild(this.build_label(label, this.type, id));
-        d.appendChild(this.build_input(id, 'date', name, 'text', this.type, 'yyyy-mm-dd'));
+        var i = this.build_input(id, 'date', name, 'text', this.type, false, 'yyyy-mm-dd');
+        i.pattern = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
+        i.title = "yyyy-mm-dd"
+        d.appendChild(i);
         return d;
     };
 
 SetFormBuilder.prototype.info = function() {
-        var d = document.createElement('div');
+        var d = this.build_wrapper();
         var id = 'info';
         d.appendChild(this.build_label('Info', this.type, id));
 

@@ -4,27 +4,27 @@
     {{ if set is not None and 'error' in set and len(set['error']) > 0: }}
         <div class="error">error: {{=", ".join(set['error'])}}</div>
     {{ pass }}
-    <div>
+    <div class="field_div">
         <label for="patient_id_label_{{=i}}" id="patient_id_label__label_{{=i}}">Patient ID: </label>
         <input class="date" id="patient_id_label_{{=i}}" name="patient[{{=i}}][id_label]" type="text"
             value="{{if set is not None and set['id_label'] is not None:}}{{=set['id_label']}}{{pass}}"><span></span>
     </div>
-    <div>
+    <div class="field_div">
         <label for="patient_first_name_{{=i}}" id="patient_first_name__label_{{=i}}">First Name: </label>
         <input class="string" id="patient_first_name_{{=i}}" name="patient[{{=i}}][first_name]" type="text"
             value="{{if set is not None:}}{{=set['first_name']}}{{pass}}"><span>*</span>
     </div>
-    <div>
+    <div class="field_div">
         <label for="patient_last_name_{{=i}}" id="patient_last_name__label_{{=i}}">Last Name: </label>
         <input class="string" id="patient_last_name_{{=i}}" name="patient[{{=i}}][last_name]" type="text"
             value="{{if set is not None:}}{{=set['last_name']}}{{pass}}"><span>*</span>
     </div>
-    <div>
+    <div class="field_div">
         <label for="patient_birth_{{=i}}" id="patient_birth__label_{{=i}}">Birth: </label>
         <input class="date" id="patient_birth_{{=i}}" name="patient[{{=i}}][birth]" type="text"
             value="{{if set is not None and set['birth'] is not None:}}{{=set['birth']}}{{pass}}" placeholder="yyyy-mm-dd">
     </div>
-    <div>
+    <div class="field_div">
         <label for="patient_info_{{=i}}" id="patient_info__label_{{=i}}">Info: </label>
         <textarea
             onfocus="$(this).data('keys', [$('#group_select option:selected').val()]);

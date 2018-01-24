@@ -4,22 +4,22 @@
     {{ if set is not None and 'error' in set and len(set['error']) > 0: }}
         <div class="error">error: {{=", ".join(set['error'])}}</div>
     {{ pass }}
-    <div>
+    <div class="field_div">
         <label for="run_id_label_{{=i}}" id="run_id_label__label_{{=i}}">Run ID: </label>
         <input class="date" id="run_id_label_{{=i}}" name="run[{{=i}}][id_label]" type="text"
             value="{{if set is not None and set['id_label'] is not None:}}{{=set['id_label']}}{{pass}}"><span></span>
     </div>
-    <div>
+    <div class="field_div">
         <label for="run_name_{{=i}}" id="run_name__label_{{=i}}">Name: </label>
         <input class="string" id="run_name_{{=i}}" name="run[{{=i}}][name]" type="text"
             value="{{if set is not None:}}{{=set['name']}}{{pass}}"><span>*</span>
     </div>
-    <div>
+    <div class="field_div">
         <label for="run_date_{{=i}}" id="run_date__label_{{=i}}">Date: </label>
         <input class="date" id="run_date_{{=i}}" name="run[{{=i}}][run_date]" type="text"
             value="{{if set is not None and set['run_date'] is not None:}}{{=set['run_date']}}{{pass}}" placeholder="yyyy-mm-dd">
     </div>
-    <div>
+    <div class="field_div">
         <label for="run_info_{{=i}}" id="run_info__label_{{=i}}">Info: </label>
         <textarea
             onfocus="$(this).data('group-ids', [$('#group_select option:selected').val()]);
@@ -31,12 +31,12 @@
             name="run[{{=i}}][info]"
             rows="10">{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}</textarea>
     </div>
-    <div>
+    <div class="field_div">
         <label for="run_sequencer_{{=i}}" id="run_sequencer__label_{{=i}}">Sequencer: </label>
         <input id="run_sequencer_{{=i}}" name="run[{{=i}}][sequencer]" type="text" size="40"
             value="{{if set is not None and set['sequencer'] is not None:}}{{=set['sequencer']}}{{pass}}">
     </div>
-    <div>
+    <div class="field_div">
         <label for="run_pcr_{{=i}}" id="pcr__label_{{=i}}">PCR </label>
         <input id="run_pcr_{{=i}}" name="run[{{=i}}][pcr]" type="text" size="40"
             value="{{if set is not None and set['pcr'] is not None:}}{{=set['pcr']}}{{pass}}">
