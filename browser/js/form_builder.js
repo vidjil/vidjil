@@ -36,12 +36,16 @@ FormBuilder.prototype = {
         return l;
     },
 
-    build_input: function(id, className, name, input_type, set_type, placeholder) {
+    build_input: function(id, className, name, input_type, set_type, required, placeholder) {
         var i = document.createElement('input');
         i.id = set_type + "_" + id + "_" + this.index;
         i.className = className;
         i.type = input_type;
         i.name = set_type + "[" + this.index + "][" + name + "]";
+
+        if (typeof required !== "undefined") {
+            i.required = required;
+        }
 
         if (typeof placeholder !== "undefined") {
             i.placeholder = placeholder;
@@ -50,7 +54,7 @@ FormBuilder.prototype = {
         return i;
     },
 
-    build_field: function(id, name, label) {
+    build_field: function(id, name, label, required, placeholder) {
         if (typeof name === "undefined") {
             name = id;
         }
@@ -61,7 +65,7 @@ FormBuilder.prototype = {
 
         var d = this.build_wrapper();
         d.appendChild(this.build_label(label, this.type, id));
-        d.appendChild(this.build_input(id, 'string', name, 'text', this.type));
+        d.appendChild(this.build_input(id, 'string', name, 'text', this.type, required, placeholder));
         return d;
     },
 
@@ -142,8 +146,8 @@ PatientFormBuilder.prototype.build = function(index) {
         var fieldset = this.build_fieldset(this.type);
         fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         fieldset.appendChild(this.set_id());
-        fieldset.appendChild(this.build_field('first_name'));
-        fieldset.appendChild(this.build_field('last_name'));
+        fieldset.appendChild(this.build_field('first_name', undefined, undefined, true));
+        fieldset.appendChild(this.build_field('last_name', undefined, undefined, true));
         fieldset.appendChild(this.date('birth'));
         fieldset.appendChild(this.info());
         return fieldset;
@@ -161,7 +165,7 @@ RunFormBuilder.prototype.build = function(index) {
         var fieldset = this.build_fieldset(this.type);
         fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         fieldset.appendChild(this.set_id());
-        fieldset.appendChild(this.build_field('name'));
+        fieldset.appendChild(this.build_field('name', undefined, undefined, true));
         fieldset.appendChild(this.date('run_date', 'run_date', 'Date'));
         fieldset.appendChild(this.info());
         fieldset.appendChild(this.build_field('sequencer'));
@@ -180,8 +184,7 @@ SetFormBuilder.prototype.build = function(index) {
         this.index = index;
         var fieldset = this.build_fieldset('set');
         fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
-        fieldset.appendChild(this.set_id());
-        fieldset.appendChild(this.build_field('name'));
+        fieldset.appendChild(this.build_field('name', undefined, undefined, true));
         fieldset.appendChild(this.info());
         return fieldset;
     }
