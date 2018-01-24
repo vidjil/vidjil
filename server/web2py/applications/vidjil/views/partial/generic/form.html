@@ -5,12 +5,12 @@
         <div class="error">error: {{=", ".join(set['error'])}}</div>
     {{pass}}
     <div class="field_div">
-        <label for="sample_set_name_{{=i}}" id="sample_set_name__label_{{=i}}">Name: </label>
+        <label for="sample_set_name_{{=i}}" id="sample_set_name__label_{{=i}}">Name:</label>
         <input id="sample_set_name_{{=i}}" name="generic[{{=i}}][name]" type="text" class="string form-control"
             value="{{if set is not None:}}{{=set['name']}}{{pass}}" required>
     </div>
     <div class="field_div">
-        <label for="sample_set_info_{{=i}}" id="sample_set_info__label_{{=i}}">Info: </label>
+        <label for="sample_set_info_{{=i}}" id="sample_set_info__label_{{=i}}">Info:</label>
         <textarea
             onfocus="$(this).data('group-ids', [$('#group_select option:selected').val()]);
                      new VidjilAutoComplete().setupAtWho(this);"
