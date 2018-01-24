@@ -39,7 +39,7 @@ FormBuilder.prototype = {
     build_input: function(id, className, name, input_type, set_type, required, placeholder) {
         var i = document.createElement('input');
         i.id = set_type + "_" + id + "_" + this.index;
-        i.className = className;
+        i.className = "form-control " + className;
         i.type = input_type;
         i.name = set_type + "[" + this.index + "][" + name + "]";
 
@@ -72,7 +72,7 @@ FormBuilder.prototype = {
     build_textarea: function(id, className, name, set_type) {
         var t = document.createElement('textarea');
         t.id = set_type + "_" + id + "_" + this.index;
-        t.className = className;
+        t.className = "form-control " + className;
         t.name = set_type + "[" + this.index + "][" + name + "]";
         t.rows = 1;
         return t;

@@ -2422,3 +2422,31 @@ form {
         font-weight: normal;
     }
 }
+
+
+
+// taken and modified from the W3 schools webpage https://www.w3schools.com/bootstrap/bootstrap_forms_inputs.asp
+.form-control {
+    padding: 3px 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition-property: border-color, box-shadow;
+    transition-duration: 0.15s, 0.15s;
+    transition-timing-function: ease-in-out, ease-in-out;
+    transition-delay: 0s, 0s;
+    display: inline-block;
+    width: auto;
+    vertical-align: middle;
+    margin: 0;
+}
+
+.form-control:invalid {
+    border: 1px solid red;
+    -webkit-box-shadow: inset 0 1px 1px rgba(255,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(255,0,0,.075);
+}

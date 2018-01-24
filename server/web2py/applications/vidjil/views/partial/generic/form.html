@@ -6,7 +6,7 @@
     {{pass}}
     <div class="field_div">
         <label for="sample_set_name_{{=i}}" id="sample_set_name__label_{{=i}}">Name: </label>
-        <input class="string" id="sample_set_name_{{=i}}" name="generic[{{=i}}][name]" type="text"
+        <input id="sample_set_name_{{=i}}" name="generic[{{=i}}][name]" type="text" class="string form-control"
             value="{{if set is not None:}}{{=set['name']}}{{pass}}" required>
     </div>
     <div class="field_div">
@@ -15,7 +15,7 @@
             onfocus="$(this).data('group-ids', [$('#group_select option:selected').val()]);
                      new VidjilAutoComplete().setupAtWho(this);"
             data-needs-atwho="true"
-            class="text"
+            class="text form-control"
             id="sample_set_info_{{=i}}"
             name="generic[{{=i}}][info]"
             rows="1">{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}</textarea>

@@ -11,12 +11,12 @@
     </div>
     <div class="field_div">
         <label for="run_name_{{=i}}" id="run_name__label_{{=i}}">Name: </label>
-        <input class="string" id="run_name_{{=i}}" name="run[{{=i}}][name]" type="text"
+        <input class="string form-control" id="run_name_{{=i}}" name="run[{{=i}}][name]" type="text"
             value="{{if set is not None:}}{{=set['name']}}{{pass}}" required>
     </div>
     <div class="field_div">
         <label for="run_date_{{=i}}" id="run_date__label_{{=i}}">Date: </label>
-        <input class="date" id="run_date_{{=i}}" name="run[{{=i}}][run_date]" type="text"
+        <input id="run_date_{{=i}}" name="run[{{=i}}][run_date]" type="text" class="date form-control"
             value="{{if set is not None and set['run_date'] is not None:}}{{=set['run_date']}}{{pass}}"
             placeholder="yyyy-mm-dd" title="yyyy-mm-dd" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
     </div>
@@ -26,19 +26,19 @@
             onfocus="$(this).data('group-ids', [$('#group_select option:selected').val()]);
                      new VidjilAutoComplete().setupAtWho(this);"
             data-needs-atwho="true"
-            class="text"
+            class="text form-control"
             id="run_info+{{=i}}"
             name="run[{{=i}}][info]"
             rows="1">{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}</textarea>
     </div>
     <div class="field_div">
         <label for="run_sequencer_{{=i}}" id="run_sequencer__label_{{=i}}">Sequencer: </label>
-        <input id="run_sequencer_{{=i}}" name="run[{{=i}}][sequencer]" type="text"
+        <input id="run_sequencer_{{=i}}" name="run[{{=i}}][sequencer]" type="text" class="form-control"
             value="{{if set is not None and set['sequencer'] is not None:}}{{=set['sequencer']}}{{pass}}">
     </div>
     <div class="field_div">
         <label for="run_pcr_{{=i}}" id="pcr__label_{{=i}}">PCR </label>
-        <input id="run_pcr_{{=i}}" name="run[{{=i}}][pcr]" type="text"
+        <input id="run_pcr_{{=i}}" name="run[{{=i}}][pcr]" type="text" class="form-control"
             value="{{if set is not None and set['pcr'] is not None:}}{{=set['pcr']}}{{pass}}">
     </div>
 </fieldset>
