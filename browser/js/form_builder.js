@@ -179,7 +179,7 @@ function GenericFormBuilder() {
 
 GenericFormBuilder.prototype = Object.create(SetFormBuilder.prototype);
 
-SetFormBuilder.prototype.build = function(index) {
+GenericFormBuilder.prototype.build = function(index) {
         this.index = index;
         var fieldset = this.build_fieldset('set');
         fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
