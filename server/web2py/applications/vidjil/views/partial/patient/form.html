@@ -32,9 +32,8 @@
                      new VidjilAutoComplete().setupTags(this);"
             data-needs-atwho="true"
             class="text"
-            cols="40"
             id="patient_info_{{=i}}"
             name="patient[{{=i}}][info]"
-            rows="10">{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}</textarea>
+            rows="1">{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}</textarea>
     </div>
 </fieldset>

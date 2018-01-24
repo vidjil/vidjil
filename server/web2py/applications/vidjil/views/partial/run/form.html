@@ -27,19 +27,18 @@
                      new VidjilAutoComplete().setupAtWho(this);"
             data-needs-atwho="true"
             class="text"
-            cols="40"
             id="run_info+{{=i}}"
             name="run[{{=i}}][info]"
-            rows="10">{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}</textarea>
+            rows="1">{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}</textarea>
     </div>
     <div class="field_div">
         <label for="run_sequencer_{{=i}}" id="run_sequencer__label_{{=i}}">Sequencer: </label>
-        <input id="run_sequencer_{{=i}}" name="run[{{=i}}][sequencer]" type="text" size="40"
+        <input id="run_sequencer_{{=i}}" name="run[{{=i}}][sequencer]" type="text"
             value="{{if set is not None and set['sequencer'] is not None:}}{{=set['sequencer']}}{{pass}}">
     </div>
     <div class="field_div">
         <label for="run_pcr_{{=i}}" id="pcr__label_{{=i}}">PCR </label>
-        <input id="run_pcr_{{=i}}" name="run[{{=i}}][pcr]" type="text" size="40"
+        <input id="run_pcr_{{=i}}" name="run[{{=i}}][pcr]" type="text"
             value="{{if set is not None and set['pcr'] is not None:}}{{=set['pcr']}}{{pass}}">
     </div>
 </fieldset>

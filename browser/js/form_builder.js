@@ -74,6 +74,7 @@ FormBuilder.prototype = {
         t.id = set_type + "_" + id + "_" + this.index;
         t.className = className;
         t.name = set_type + "[" + this.index + "][" + name + "]";
+        t.rows = 1;
         return t;
     },
 
@@ -128,8 +129,6 @@ SetFormBuilder.prototype.info = function() {
             $(this).data('keys', [$('#group_select option:selected').val()]);
             new VidjilAutoComplete().setupTags(this);
         });
-        txt.cols = 40;
-        txt.rows = 10;
         d.appendChild(txt);
         return d;
     };
