@@ -215,8 +215,9 @@ while read line; do
 			echo >&2; echo >&2; echo $SEPARATOR_LINE >&2
 			echo "$file failed ($nb_hits_found instead of $nb_hits)" >&2
 			echo "$line" >&2
+                        echo $FILE_TO_GREP >&2
 			echo $SEPARATOR_LINE >&2
-			cat $FILE_TO_GREP >&2
+			cat $FILE_TO_GREP | head -n 100 >&2
 			echo $SEPARATOR_LINE >&2; echo >&2; echo >&2
                     fi
                 fi
