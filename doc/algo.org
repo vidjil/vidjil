@@ -296,7 +296,9 @@ Window prediction
   -t <int>      trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt (default: 0) (0: no trim)
 #+END_EXAMPLE
 
-The =-s=, =-k= are the options of the seed-based heuristic. A detailed
+The =-s=, =-k= are the options of the seed-based heuristic that detects
+"junctions", that is a zone in a read that is similar to V genes on its
+left end and similar to J genes in its right end. A detailed
 explanation can be found in (Giraud, Salson and al., 2014).
 /These options are for advanced usage, the defaults values should work./
 The =-s= or =-k= option selects the seed used for the k-mer V/J affectation.
