@@ -53,7 +53,7 @@ using json = nlohmann::json;
 enum SEGMENTED { NOT_PROCESSED,
 		 TOTAL_SEG_AND_WINDOW,
                  SEG_PLUS, SEG_MINUS,
-                 SEG_SHORTER_WINDOW,
+                 SEG_CHANGED_WINDOW,
                  UNSEG_TOO_SHORT, UNSEG_STRAND_NOT_CONSISTENT,
 		 UNSEG_TOO_FEW_ZERO,  UNSEG_ONLY_V, UNSEG_ONLY_J,
                  UNSEG_BAD_DELTA_MIN, UNSEG_AMBIGUOUS,
@@ -163,7 +163,7 @@ protected:
   string CDR3aa;
 
   bool reversed, segmented, dSegmented;
-  bool shiftedJunction;
+  bool junctionChanged;
   int because;
 
   /**
@@ -209,7 +209,7 @@ protected:
    *         The junction is revcomp-ed if the original string comes from reverse
    *         strand.
    * @post If the size or position of the window had to be dynamically adapted to fit
-   *       in the read, isJunctionShifted() will return true
+   *       in the read, isJunctionChanged() will return true
    */
   string getJunction(int l, int shift=0);
 
@@ -252,7 +252,7 @@ protected:
    * @return true iff the junction has been shifted or shortened
    *              dynamically to fit into the sequence
    */
-  bool isJunctionShifted() const;
+  bool isJunctionChanged() const;
 
   /**
    * @return the status of the segmentation. Tells if the Sequence has been segmented

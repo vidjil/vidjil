@@ -211,7 +211,7 @@ Sequence Segmenter::getSequence() const {
 string Segmenter::getJunction(int l, int shift) {
   assert(isSegmented());
 
-  shiftedJunction = false;
+  junctionChanged = false;
   // '-w all'
   if (l == NO_LIMIT_VALUE)
     return getSequence().sequence;
@@ -230,7 +230,7 @@ string Segmenter::getJunction(int l, int shift) {
 
   if (length_shift.first < l || length_shift.second != 0) {
     info += " w" + string_of_int(length_shift.first) + "/" + string_of_int(length_shift.second);
-    shiftedJunction = true;
+    junctionChanged = true;
   }
 
   // Window succesfully extracted
@@ -265,8 +265,8 @@ bool Segmenter::isDSegmented() const {
   return dSegmented;
 }
 
-bool Segmenter::isJunctionShifted() const {
-  return shiftedJunction;
+bool Segmenter::isJunctionChanged() const {
+  return junctionChanged;
 }
 // E-values
 
