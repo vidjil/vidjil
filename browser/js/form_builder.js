@@ -91,7 +91,7 @@ FormBuilder.prototype = {
         return l;
     },
 
-    date : function(id, object, name, label) {
+    build_date : function(id, object, name, label) {
         if (typeof name === "undefined") {
             name = id;
         }
@@ -123,7 +123,7 @@ SetFormBuilder.prototype.set_id = function() {
         return this.build_field(id, id, capitalise(this.type)+' ID');
     };
 
-SetFormBuilder.prototype.info = function() {
+SetFormBuilder.prototype.build_info = function() {
         var d = this.build_wrapper();
         var id = 'info';
         d.appendChild(this.build_label('Info', this.type, id));
@@ -152,8 +152,8 @@ PatientFormBuilder.prototype.build = function(index) {
         fieldset.appendChild(this.set_id());
         fieldset.appendChild(this.build_field('first_name', undefined, undefined, true));
         fieldset.appendChild(this.build_field('last_name', undefined, undefined, true));
-        fieldset.appendChild(this.date('birth'));
-        fieldset.appendChild(this.info());
+        fieldset.appendChild(this.build_date('birth'));
+        fieldset.appendChild(this.build_info());
         return fieldset;
     };
 
@@ -170,8 +170,8 @@ RunFormBuilder.prototype.build = function(index) {
         fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         fieldset.appendChild(this.set_id());
         fieldset.appendChild(this.build_field('name', undefined, undefined, true));
-        fieldset.appendChild(this.date('run_date', 'run_date', 'Date'));
-        fieldset.appendChild(this.info());
+        fieldset.appendChild(this.build_date('run_date', 'run_date', 'Date'));
+        fieldset.appendChild(this.build_info());
         fieldset.appendChild(this.build_field('sequencer'));
         fieldset.appendChild(this.build_field('pcr', 'pcr', 'PCR'));
         return fieldset;
