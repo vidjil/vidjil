@@ -305,7 +305,10 @@ FileFormBuilder.prototype.build_pre_process = function() {
 }
 
 FileFormBuilder.prototype.build_pre_process_select = function() {
+    var self = this;
     var s = document.createElement('select');
+    s.id = 'file_pre_process_' + self.index;
+    s.name = 'file[' + self.index + '][pre_process]';
     var o = document.createElement('option');
     o.required_filed = "1";
     o.value = "0";
