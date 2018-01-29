@@ -193,6 +193,6 @@ GenericFormBuilder.prototype.build = function(index) {
         var fieldset = this.build_fieldset('set');
         fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         fieldset.appendChild(this.build_field('name', undefined, undefined, true));
-        fieldset.appendChild(this.info());
+        fieldset.appendChild(this.build_info());
         return fieldset;
     }
