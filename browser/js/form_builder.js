@@ -28,10 +28,10 @@ FormBuilder.prototype = {
         return d;
     },
 
-    build_label: function(txt, stype, tgt) {
+    build_label: function(txt, object, field) {
         var l = document.createElement('label');
-        l.htmlFor = tgt + "_" + this.index;
-        l.id = stype + "_" + tgt + "__label_" + this.index;
+        l.htmlFor = field + "_" + this.index;
+        l.id = object + "_" + field + "__label_" + this.index;
         l.innerText = txt + ":";
         return l;
     },
@@ -86,6 +86,31 @@ FormBuilder.prototype = {
         f.appendChild(l);
         return f;
     },
+
+    build_legend: function(text) {
+        var l = document.createElement('legend');
+        l.innerText = text;
+        return l;
+    },
+
+    date : function(id, object, name, label) {
+        if (typeof name === "undefined") {
+            name = id;
+        }
+
+        if (typeof label === "undefined") {
+            label = labelise(id);
+        }
+
+        var d = this.build_wrapper();
+        d.appendChild(this.build_label(label, this.type, id));
+        var i = this.build_input(id, 'date', name, 'text', object, false, 'yyyy-mm-dd');
+        i.pattern = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
+        i.title = "yyyy-mm-dd"
+        d.appendChild(i);
+        return d;
+    },
+
 }
 
 function SetFormBuilder() {
@@ -98,24 +123,6 @@ SetFormBuilder.prototype = Object.create(FormBuilder.prototype);
 SetFormBuilder.prototype.set_id = function() {
         var id = 'id_label';
         return this.build_field(id, id, capitalise(this.type)+' ID');
-    };
-
-SetFormBuilder.prototype.date = function(id, name, label) {
-        if (typeof name === "undefined") {
-            name = id;
-        }
-
-        if (typeof label === "undefined") {
-            label = labelise(id);
-        }
-
-        var d = this.build_wrapper();
-        d.appendChild(this.build_label(label, this.type, id));
-        var i = this.build_input(id, 'date', name, 'text', this.type, false, 'yyyy-mm-dd');
-        i.pattern = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
-        i.title = "yyyy-mm-dd"
-        d.appendChild(i);
-        return d;
     };
 
 SetFormBuilder.prototype.info = function() {
