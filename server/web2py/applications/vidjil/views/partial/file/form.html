@@ -1,10 +1,12 @@
 <fieldset name="file{{=i}}">
     <legend>Sample {{=i+1}}</legend>
-    <input type="hidden" id="filename_{{=i}}" name="file[{{=i}}][filename]" type="text" value="">
-    <input type="hidden" id="file_id_{{=i}}" name="file[{{=i}}][id]"
-        value="{{if 'id' in file:}}{{=file['id']}}{{pass}}" >
-    <input type="hidden" id="sample_set_id" name="sample_set_id" value="{{if "sample_set_id" in request.vars:}}{{=request.vars["sample_set_id"]}}{{pass}}" >
-    <input type="hidden" id="sample_type" name="sample_type" value="{{=sample_type}}" />
+    <div>
+        <input type="hidden" id="file_filename_{{=i}}" name="file[{{=i}}][filename]" type="text" value="">
+        <input type="hidden" id="file_id_{{=i}}" name="file[{{=i}}][id]"
+            value="{{if 'id' in file:}}{{=file['id']}}{{pass}}" >
+        <input type="hidden" id="sample_set_id" name="sample_set_id" value="{{if "sample_set_id" in request.vars:}}{{=request.vars["sample_set_id"]}}{{pass}}" >
+        <input type="hidden" id="sample_type" name="sample_type" value="{{=sample_type}}" />
+    </div>
 
     {{ if source_module_active: }}
     <fieldset name="file_source">
