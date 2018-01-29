@@ -3,7 +3,8 @@
 # Testing '-w all' option
 
 $ The junctions are the reads
-1: consider as windows these 13152 reads
+1: considering all analyzed reads as windows
+1: found 13140 windows in 13152 reads
 
 $ Only the first 12 clones have 2 reads
 2:clone-012--IGH--0000002
