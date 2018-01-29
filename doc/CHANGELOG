@@ -1,5 +1,21 @@
 
-This changelog concerns the algorithmic part (C++) of Vidjil.
+This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
+
+2018-01-xx  The Vidjil Team
+	* Renamed program to 'vidjil-algo'
+	* Improved analysis of large deletions in V or J genes (core/segment.cpp) #2767
+	* Improved analysis of reads where V/J junction is close to an end, slightly shifting or shortening
+	  the window (core/segment.cpp, core/windowExtractor.cpp) #2913
+	* Removed default homopolymer cost, improving detection on the majority of sequencers (core/dynprog.h) #2851
+	* Added warnings in the json output on some clones #2916
+	* Bug closed (clean some germinal sequences #2598)
+	* Cleaned folders, with demo data in demo/ and test data in algo/tests/data/ #2635 #2611
+	* Changed option processing library, trying CLI11 instead of docopt (lib/CLI11.hpp, tools/align.cpp) #926
+	* Streamlined packaging and Makefile, based on git #2255 #2630
+	* Updated build process (supporting g++ 4.8 to 7.2, clang from 3.3), warns on non-supported compilers #2614 #2615 #2631
+	* Updated help and online help, in particular on -f option #2076
+	* Refactored unit tests with TEST_TAP_EQUAL #2989
+	* New and updated unit and functional tests, including tests from documentation #1284 #2634
 
 2017-09-08  The Vidjil Team
 	* New BAM input parser, refactored input parsers (core/bioreader.cpp, core/bam.cpp) #2016
