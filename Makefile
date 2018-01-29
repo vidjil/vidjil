@@ -5,6 +5,9 @@ VIDJIL_SERVER_SRC = server/
 
 TEE = python tools/tee.py -v
 
+algo:
+	$(MAKE) -C algo
+
 test_browser: unit_browser functional_browser
 
 test_server: unit_server
@@ -50,7 +53,7 @@ cleanall: clean
 	$(MAKE) -C $(VIDJIL_ALGO_SRC) cleanall
 	$(MAKE) -C server cleanall
 
-.PHONY: all test should clean cleanall distrib data germline unit_coverage should_coverage coverage data germline browser server doc
+.PHONY: all test should clean cleanall distrib data germline unit_coverage should_coverage coverage data germline browser server doc algo
 
 RELEASE_TAG="notag"
 RELEASE_H = $(VIDJIL_ALGO_SRC)/release.h
