@@ -81,9 +81,7 @@ FormBuilder.prototype = {
     build_fieldset: function(type) {
         var f = document.createElement('fieldset');
         f.name = type + this.index;
-        var l = document.createElement('legend');
-        l.innerText =  capitalise(type) + " " + (this.index+1);
-        f.appendChild(l);
+        f.appendChild(this.build_legend(capitalise(type) + " " + (this.index+1)));
         return f;
     },
 
