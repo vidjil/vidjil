@@ -1031,7 +1031,12 @@ int main (int argc, char **argv)
     //$$ Kmer Segmentation
 
     cout << endl;
-    cout << "Loop through reads, looking for windows" << endl ;
+    cout << "Loop through reads, ";
+
+    if (wmer_size != NO_LIMIT_VALUE)
+      cout << "looking for windows up to " << wmer_size << "bp" << endl;
+    else
+      cout << "considering all analyzed reads as windows" << endl;
 
     ofstream *out_segmented = NULL;
     ofstream *out_unsegmented = NULL;
@@ -1107,11 +1112,7 @@ int main (int argc, char **argv)
     int nb_segmented = we.getNbSegmented(TOTAL_SEG_AND_WINDOW);
     float ratio_segmented = 100 * (float) nb_segmented / nb_total_reads ;
 
-    if (wmer_size != NO_LIMIT_VALUE)
-      stream_segmentation_info << "  ==> found " << windowsStorage->size() << " " << wmer_size<< "-windows in " ;
-    else
-      stream_segmentation_info << "  ==> consider as windows these " ;
-
+    stream_segmentation_info << "  ==> found " << windowsStorage->size() << " windows in " ;
     stream_segmentation_info << nb_segmented << " reads"
 	<< " (" << setprecision(3) << ratio_segmented << "% of " <<  nb_total_reads << " reads)" << endl ;
   
