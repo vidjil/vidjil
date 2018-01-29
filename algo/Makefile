@@ -300,6 +300,9 @@ release_create:
 	  cp -v "$$file" $$dir/;     \
 	done
 
+	# A spurious algo/ directory is created, remove it
+	rmdir $(RELEASE_DIR_TMP)/$(RELEASE_NAME)/algo
+
 	# Store these files in archive
 	cd $(RELEASE_DIR_TMP) ; tar rf ../$(RELEASE_ARCHIVE_TAR) $(RELEASE_NAME)/
 
