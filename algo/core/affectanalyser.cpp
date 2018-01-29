@@ -59,6 +59,34 @@ int KmerAffectAnalyser::count(const KmerAffect &affect) const{
 }
 
 
+int KmerAffectAnalyser::minimize(const KmerAffect &affect, int margin, int width) const {
+  int i = margin ;
+
+  uint64_t val_max = 0 ;
+  int i_max = NO_MINIMIZING_POSITION ;
+
+  for (vector<KmerAffect>::const_iterator it = affectations.begin() + margin;
+       it < affectations.end() - margin && i <= seq.length() - width;
+       it++, i++) {
+
+
+    if (*it == affect)
+      {
+        uint64_t val = dna_to_hash(&seq[i], width) ;
+        if (val > val_max) {
+          val_max = val ;
+          i_max = i ;
+        }
+      }
+  }
+
+  if (i_max == NO_MINIMIZING_POSITION)
+    return i_max ;
+
+  return i_max + (seq.length() - affectations.size() + 1) / 2;
+}
+
+
 const KmerAffect&KmerAffectAnalyser::getAffectation(int i) const{
   assert(i >= 0 && i < count());
   return affectations[i];

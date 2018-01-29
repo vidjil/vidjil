@@ -477,10 +477,16 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
         return ;
       }
 
+    int pos = kaa.minimize(kmer, DEFAULT_MINIMIZE_ONE_MARGIN, DEFAULT_MINIMIZE_WIDTH);
+
+    if (pos == NO_MINIMIZING_POSITION)
+      {
+        because = UNSEG_TOO_SHORT_FOR_WINDOW;
+        return ;
+      }
+
     segmented = true ;
     because = reversed ? SEG_MINUS : SEG_PLUS ;
-
-    int pos = sequence.size() / 2 ;
 
     info = "=" + string_of_int(c) + " @" + string_of_int(pos) ;
 

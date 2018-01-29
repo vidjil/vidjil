@@ -280,6 +280,9 @@ void testDNAToInt() {
   TAP_TEST_EQUAL(dna_to_int("TTTT", 4), 255, TEST_DNA_TO_INT, "");
 }
 
+void testDNAToHash() {
+  TAP_TEST_EQUAL(dna_to_hash("ACGT", 4), 6383640340, TEST_DNA_TO_HASH, "");
+}
 
 void testNucToAA() {
   cout << GENETIC_CODE << endl;
@@ -482,6 +485,7 @@ void testTools() {
   testCreateSequence();
   testNucToInt();
   testDNAToInt();
+  testDNAToHash();
   testNucToAA();
   testRevcompInt();
   testExtendedNucleotides();

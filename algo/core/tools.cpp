@@ -137,6 +137,17 @@ int dna_to_int(const string &word, int size) {
   return index_word;
 }
 
+uint64_t dna_to_hash(const string &word, int size) {
+  // djb2-xor hash
+  // no collision on 12-char strings on "ACGT" (nor on 8-char strings on "ACGTacgt")
+  // min/max for 12-char strings on "AGCT" are "AAGAACCAACCC"/"TGAACCAACCAA"
+  uint64_t hash = 5381;
+  for(int i = 0 ; i < size ; i++){
+    hash = ((hash << 5) + hash) ^ word[i];
+  }
+  return hash;
+}
+
 string nuc_to_aa(const string &word) {
   string aa;
   int index_word = 0;

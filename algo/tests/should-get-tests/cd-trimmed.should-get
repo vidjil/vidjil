@@ -1,0 +1,16 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -a -g $VIDJIL_DIR/germline/homo-sapiens-cd.g -A $VIDJIL_DATA/cd-19-trimmed.fa
+
+$ Load CD-sorting.fa
+1:homo-sapiens/CD-sorting.fa .* 28 sequences
+
+$ KmerSegmenter, do not map reads < 52bp
+1: UNSEG too short w .* 3 .*  50.0
+
+$ KmerSegmenter, map reads and gather some reads, including a large clone
+1: found 9 50-windows in 23 reads
+1:Clone .* 13 reads
+
+$ FineSegmenter, find 9 clones with CD19
+9:clone-.* CD19 .* SEG
+
+
