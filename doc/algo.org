@@ -159,11 +159,15 @@ Xcode should be installed first.
 
 
 ** Installation
+
 *** Compiling
+
+Running 'make' from the extracted archive should be enough to install vidjil-algo and run the self-tests (see below).
+It runs the commands that are detailed in the following paragraphs.
 
 #+BEGIN_SRC sh
 
-make germline
+make -C germline get-saved-data
    # get IMGT germline databases (IMGT/GENE-DB) -- you have to agree to IMGT license: 
    # academic research only, provided that it is referred to IMGT®,
    # and cited as "IMGT®, the international ImMunoGeneTics information system® 
@@ -173,10 +177,10 @@ make germline
 
 
 # either
-make                     # build Vijil from the sources (see the requirements, above)
+make -C src              # build Vijil from the sources (see the requirements, above)
 
 # or
-wget http://bioinfo.lifl.fr/vidjil/vidjil-2015.12_x86_64 -O vidjil-algo
+wget http://www.vidjil.org/releases/vidjil-latest.tgzvidjil-latest_x86_64 -O vidjil-algo
                          # download a static binary (built for x86_64 architectures)
 
 ./vidjil-algo -h              # display help/usage
@@ -207,13 +211,13 @@ apt-get install vidjil
 You can run the tests with the following commands:
 
 #+BEGIN_SRC sh
-make data
+make -C src/tests/data
    # get IGH recombinations from a single individual, as described in:
    # Boyd, S. D., and al. Individual variation in the germline Ig gene
    # repertoire inferred from variable region gene rearrangements. J
    # Immunol, 184(12), 6986–92.
 
-make test                # run self-tests (can take 5 to 60 minutes)
+make -C src test                # run self-tests (can take 5 to 60 minutes)
 #+END_SRC
 
 
