@@ -196,3 +196,154 @@ GenericFormBuilder.prototype.build = function(index) {
         fieldset.appendChild(this.build_info());
         return fieldset;
     }
+
+function FileFormBuilder(group_ids, source_module) {
+    FormBuilder.call(this);
+    this.group_ids = group_ids;
+    this.source_module = source_module;
+}
+
+FileFormBuilder.prototype = Object.create(FormBuilder.prototype);
+
+FileFormBuilder.prototype.build = function(index) {
+    this.index = index;
+    var fieldset = this.build_fieldset('file');
+    fieldset.appendChild(this.build_file_fieldset());
+    fieldset.appendChild(this.build_set_fieldset());
+    fieldset.appendChild(this.build_info_fieldset());
+    return fieldset;
+}
+
+FileFormBuilder.prototype.build_file_fieldset = function() {
+    var f = document.createElement('fieldset');
+    f.appendChild(this.build_legend('sequence file(s)'));
+    f.appendChild(this.build_pre_process());
+    f.appendChild(this.build_file_field(1, false));
+    f.appendChild(this.build_file_field(2, true));
+    f.appendChild(this.build_jstree());
+    return f;
+}
+
+FileFormBuilder.prototype.build_set_fieldset = function() {
+    var self = this;
+    var f = document.createElement('fieldset');
+    f.appendChild(this.build_legend('set selection'));
+    var txt = document.createElement('div');
+    txt.innerHTML = "You must associate this sample with at least one patient, run or set.<br>You can also associate it with any combination of the three.";
+    f.appendChild(txt);
+
+    f.appendChild(this.build_label('sets', 'file', 'set_ids'));
+
+    var d = document.createElement('div');
+    d.className = "token_div form-control";
+    d.onclick = function() {
+        $('#token_input_' + self.index).focus();
+    };
+    f.appendChild(d);
+
+    var i = this.build_input('set_list', '', 'set_ids', 'text', 'file');
+    i.hidden = true;
+    i.className = '';
+    d.appendChild(i);
+
+    var set_div = document.createElement('div');
+    set_div.id = "set_div_" + this.index;
+    set_div.className = "token_container";
+    d.appendChild(set_div);
+
+    var i2 = document.createElement('input');
+    i2.type = 'text';
+    i2.id = 'token_input_' + this.index;
+    i2.className = 'token_input';
+    i2.autocomplete = "off";
+    i2.onfocus = function() {
+        new VidjilAutoComplete().setupSamples(this);
+        new Tokeniser().setup(this, document.getElementById('set_div_' + self.index), document.getElementById('file_set_list_' + self.index));
+    }
+    i2.dataset.needsAtwho = true;
+    i2.dataset.needsTokeniser = true;
+    i2.dataset.groupIds = "[" + this.group_ids + "]";
+    i2.dataset.keys = '["generic", "patient", "run"]';
+    d.appendChild(i2);
+
+    return f;
+}
+
+FileFormBuilder.prototype.build_info_fieldset = function() {
+    var f = document.createElement('fieldset');
+    f.appendChild(this.build_legend('sample information'));
+    f.appendChild(this.build_date('sampling_date', 'file'));
+    f.appendChild(this.build_info('file'));
+    return f;
+}
+
+FileFormBuilder.prototype.build_pre_process = function() {
+    var d = this.build_wrapper();
+    d.appendChild(this.build_label('pre process scenario', 'file', 'pre_process'));
+    d.appendChild(this.build_pre_process_select());
+    return d;
+}
+
+FileFormBuilder.prototype.build_pre_process_select = function() {
+    var s = document.createElement('select');
+    var o = document.createElement('option');
+    o.required_filed = "1";
+    o.value = "0";
+    o.innerText = "no pre-process (1 file)";
+    s.appendChild(o);
+    // TODO create from pre_process list (AJAX ?)
+    return s;
+}
+
+FileFormBuilder.prototype.build_file_field = function(id, hidden) {
+    var d = this.build_wrapper();
+    if (this.source_module || hidden) {
+        d.hidden = true;
+        d.style.display = 'none';
+    }
+    d.appendChild(this.build_label('file ' + id, 'file', 'file'));
+    var i = this.build_input('upload_file_' + id, 'upload_field', 'file'+id, 'file', 'file', true);
+    if (this.source_module) {
+        i.disabled = true;
+    }
+    d.appendChild(i);
+    var s = document.createElement('span');
+    s.innerText = "* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)";
+    d.appendChild(s);
+    return d;
+}
+
+FileFormBuilder.prototype.build_jstree = function() {
+    var self = this;
+    var d = this.build_wrapper();
+    if (!this.source_module) {
+        d.hidden = true;
+        d.style.display = 'none';
+    }
+
+    var sel = document.createElement('div');
+    sel.innerText = 'selected';
+    d.appendChild(sel);
+    var tree = document.createElement('div');
+    tree.appendChild(document.createTextNode('file'));
+    tree.id = 'jstree_' + this.index;
+    tree.onmouseover = function() {db.set_jstree($('#jstree_' + self.index))};
+    d.appendChild(tree);
+    return d;
+}
+
+FileFormBuilder.prototype.build_info = function(object) {
+        var self = this;
+        var d = this.build_wrapper();
+        var id = 'info';
+        d.appendChild(this.build_label('Info', object, id));
+
+        var txt = this.build_textarea('info', "text", 'info', object);
+        $(txt).data('needs-atwho', true);
+        $(txt).on('focus', function() {
+            $(this).data('keys', self.group_ids);
+            new VidjilAutoComplete().setupTags(this);
+        });
+        d.appendChild(txt);
+        return d;
+    }
