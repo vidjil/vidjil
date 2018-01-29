@@ -541,14 +541,6 @@ Database.prototype = {
             
             db.pre_process_onChange()
             
-            $('#upload_file').change(function (){
-                var filename = $("#upload_file").val();
-                var lastIndex = filename.lastIndexOf("\\");
-                if (lastIndex >= 0) {
-                    filename = filename.substring(lastIndex + 1);
-                }
-                $('#filename').val(filename);
-            })
             
             $('#upload_form').ajaxForm({
                 type     : "POST",

@@ -216,10 +216,16 @@ FileFormBuilder.prototype.build = function(index) {
 }
 
 FileFormBuilder.prototype.build_file_fieldset = function() {
+    var self = this;
     var f = document.createElement('fieldset');
     f.appendChild(this.build_legend('sequence file(s)'));
     f.appendChild(this.build_pre_process());
-    f.appendChild(this.build_file_field(1, false));
+    var file1 = this.build_file_field(1, false);
+    var file_input = file1.getElementsByTagName('input')[0];
+    file_input.onchange = function() {
+        document.getElementById('file_filename_' + self.index).value = this.value;
+    }
+    f.appendChild(file1);
     f.appendChild(this.build_file_field(2, true));
     f.appendChild(this.build_jstree());
     return f;

@@ -31,9 +31,14 @@
         </div>
         <div id="file_field_1_{{=i}}" class="field_div" {{if source_module_active:}} hidden {{pass}}>
             <label for="file_1_{{=i}}" id="file__label_{{=i}}"> file 1 </label>
-            <input class="upload_field form-control" id="upload_file_1_{{=i}}" type="file" {{if source_module_active:}} disabled {{pass}}><span>* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)</span>
-        </div>
-        <div id="file_2_{{=i}}" class="field_div">
+            <input class="upload_field form-control" id="upload_file_1_{{=i}}" type="file"
+            {{if source_module_active:}}
+                disabled
+            {{pass}}
+                onchange="document.getElementById('file_filename_{{=i}}').value=this.value"
+            ><span>* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)</span>
+    </div>
+    <div id="file_2_{{=i}}" class="field_div">
             <label for="file_2_{{=i}}" id="file2__label_{{=i}}"> file 2 </label>
             <input class="upload_field form-conrol" id="upload_file_2_{{=i}}" type="file"  {{if source_module_active:}} disabled {{pass}}><span>* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)</span>
         </div>
