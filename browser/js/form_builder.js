@@ -208,6 +208,7 @@ FileFormBuilder.prototype = Object.create(FormBuilder.prototype);
 FileFormBuilder.prototype.build = function(index) {
     this.index = index;
     var fieldset = this.build_fieldset('file');
+    fieldset.appendChild(this.build_hidden_fields());
     fieldset.appendChild(this.build_file_fieldset());
     fieldset.appendChild(this.build_set_fieldset());
     fieldset.appendChild(this.build_info_fieldset());
@@ -222,6 +223,19 @@ FileFormBuilder.prototype.build_file_fieldset = function() {
     f.appendChild(this.build_file_field(2, true));
     f.appendChild(this.build_jstree());
     return f;
+}
+
+FileFormBuilder.prototype.build_hidden_fields = function() {
+    var d = document.createElement('div');
+    var i = this.build_input('filename', '', 'filename', 'text', 'file');
+    i.hidden = true;
+    i.className = '';
+    d.appendChild(i);
+    i = this.build_input('id', '', 'id', 'text', 'file');
+    i.hidden = true;
+    i.className = '';
+    d.appendChild(i);
+    return d;
 }
 
 FileFormBuilder.prototype.build_set_fieldset = function() {
