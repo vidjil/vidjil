@@ -1,0 +1,10 @@
+
+# Becomes ../Makefile in a release
+
+vidjil-algo:
+	$(MAKE) -C src
+	cd demo && sh get-sequences
+	$(MAKE) -C germline get-saved-data
+	$(MAKE) -C src/tests/data
+	$(MAKE) -C src test
+

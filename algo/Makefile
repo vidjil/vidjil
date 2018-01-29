@@ -290,6 +290,9 @@ release_create:
 	echo '#define RELEASE_TAG "$(RELEASE_TAG)"' > $(RELEASE_DIR_TMP)/$(RELEASE_NAME)/$(RELEASE_ALGO)/$(RELEASE_H); \
 	sh create-git-version-h.sh ; cp git-version.h $(RELEASE_DIR_TMP)/$(RELEASE_NAME)/$(RELEASE_ALGO)/$(GIT_VERSION_H)
 
+	# Store a global Makefile
+	cp ../Makefile.algo $(RELEASE_DIR_TMP)/$(RELEASE_NAME)/Makefile
+
 	# Store also other files in archive
 	for file in $(RELEASE_FILES); do\
 	  dir=$(RELEASE_DIR_TMP)/$(RELEASE_NAME)/algo/`dirname "$$file"`/;    \
@@ -313,10 +316,7 @@ release_check:
 	$(info ==== Checking $(RELEASE_ARCHIVE_TGZ) ====)
 
 	cd $(RELEASES_DIR) && tar xvfz $(RELEASE_ARCHIVE_TGZ)
-	cd $(RELEASES_DIR)/$(RELEASE_NAME) && cd demo && sh get-sequences
-	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) -C germline get-saved-data
-	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) -C src/tests/data
-	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) -C src test
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE)
 	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) -C src clean && $(MAKE) -C src static && mv $(EXEC) $(EXEC)-$(RELEASE_TAG)_`uname -m`
 
 
