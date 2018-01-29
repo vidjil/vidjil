@@ -31,24 +31,25 @@ function Tokeniser() {
 
 Tokeniser.prototype = {
 
-    setup: function(input, target) {
+    setup: function(input, target, form_input) {
         var self = this;
         if ($(input).data('needs-tokeniser')) {
             $(input).on("keydown", function(e) {
                 if (e.which === 13) {
                     e.preventDefault();
-                    self.tokenise(this, target);
+                    self.tokenise(this, target, form_input);
                 }
             });
             $(input).data('needs-tokeniser', false);
         }
     },
 
-    tokenise: function(input, target) {
+    tokenise: function(input, target, form_input) {
         var token = this.createToken($(input));
         $(input).val("");
         $(input).removeData('set-id');
         target.appendChild(token);
+        form_input.value = this.readTokens(target);
     },
 
     readTokens: function(target) {
