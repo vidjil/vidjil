@@ -138,6 +138,10 @@ SetFormBuilder.prototype.build_info = function() {
         return d;
     };
 
+SetFormBuilder.prototype.build_date = function(id, name, label) {
+        return Object.getPrototypeOf(SetFormBuilder.prototype).build_date(id, name, label);
+    }
+
 function PatientFormBuilder() {
     SetFormBuilder.call(this);
     this.type = 'patient'
