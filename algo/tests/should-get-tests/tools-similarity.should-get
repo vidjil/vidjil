@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/algo/tools/similarity $VIDJIL_DATA/msa.fa
+!LAUNCH: ../../tools/similarity $VIDJIL_DATA/msa.fa
 
 $ Read 3 sequences
 1: 54 bp in .* 3 sequences
