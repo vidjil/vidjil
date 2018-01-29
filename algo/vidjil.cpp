@@ -402,10 +402,11 @@ int main (int argc, char **argv)
       {
       case 'h':
         usage(argv[0], false);
+        break;
 
       case 'H':
         usage(argv[0], true);
-
+        break;
       case 'c':
         if (!strcmp(COMMAND_CLONES,optarg))
           command = CMD_CLONES;
