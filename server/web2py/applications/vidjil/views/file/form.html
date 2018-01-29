@@ -3,111 +3,15 @@
 
 <h3>Edit sequence file</h3>    
 
-<form id="upload_form"  action="DB_ADDRESS/file/submit" enctype="multipart/form-data" method="post" onsubmit="document.getElementById('set_list').value = new Tokeniser().readTokens(document.getElementById('set_div'));">
-    <input type="hidden" id="filename" name="filename" type="text" value="">
-    <input type="hidden" id="file_id" name="file_id" value="{{if "file_id" in request.vars:}}{{=request.vars["file_id"]}}{{pass}}" >
-    <input type="hidden" id="sample_set_id" name="sample_set_id" value="{{if "sample_set_id" in request.vars:}}{{=request.vars["id"]}}{{pass}}" >
-    <input type="hidden" id="sample_type" name="sample_type" value="{{=sample_type}}" />
-    <table>
-        <tbody>
-            {{ if source_module_active: }}
-                        <tr class='db_table_split' ><td colspan="2"> file source </td></tr>
-            <tr>
-                <td>file source</td>
-                <td>
-                    <label for="file_source_computer">my computer</label>
-                    <input type="radio" id="file_source_computer" name="file_source" value="computer" onchange="db.toggle_file_source()" checked="checked"/>
-                    <label for="file_source_nfs">network</label>
-                    <input type="radio" id="file_source_nfs" name="file_source" value="nfs" onchange="db.toggle_file_source()"/>
-                </td>
-            </tr>
-            {{pass}}
-			<tr class='db_table_split' ><td colspan="2"> sequence file(s) </td></tr>
-            <tr {{if source_module_active:}} hidden {{pass}}>
-                <td><label for="pre_process" id="pre_process__label">pre-process scenario: </label></td>
-				<td><select id="pre_process" name="pre_process" onChange="db.pre_process_onChange()" {{if source_module_active:}} disabled {{pass}}>
-                        <option required_files="1" value="0">no pre-process (1 file)</option>
-                        {{for row in pre_process_list :}}
-                                <option title="{{=row["info"]}}" required_files="{{=row["file"]}}" value="{{=row["id"]}}" {{if 'file_id' in request.vars and row["id"]==file.pre_process_id :}}selected{{pass}}>
-                                    {{=row["id"]}} &ndash; {{=row["name"]}}
-                                </option> {{pass}}
-                    </select>
-                  </td>
-                <td></td>
-            </tr>
-            <tr id="file_field" {{if source_module_active:}} hidden {{pass}}>
-                <td ><label for="file" id="file__label"> file 1 </label></td>
-                <td ><input class="upload_field" id="upload_file" type="file" {{if source_module_active:}} disabled {{pass}}></td>
-                <td >* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
-            </tr>
-            <tr id="file2_field">
-                <td><label for="file2" id="file2__label"> file 2 </label></td>
-                <td><input class="upload_field" id="upload_file2" type="file"  {{if source_module_active:}} disabled {{pass}}></td>
-                <td>* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
-            </tr>
-            <tr  {{if not source_module_active:}} hidden {{pass}}>
-                <td>selected</td>
-                <td id="file_indicator"></td>
-            </tr>
-            <tr  {{if not source_module_active:}} hidden {{else:}}  onmouseover="db.set_jstree($('#jstree'))" {{pass}}>
-                <td >file</td>
-                <td><div id="jstree"></div></td>
-            </tr>
-			
-			<tr class='db_table_split' ><td colspan="2"> patient and run </td></tr>
-            <tr>
-                <td colspan="2">You must associate this sample with at least one patient, run or set.
-                <br/>You can also associate it with any combination of the three.</td>
-            </tr>
-            <tr>
-                <td><label for="set_ids" id="set_ids__label">sets: </label></td>
-                <td>
-                    <div class="token_div" style="width:100%;" onclick="$('#token_input').focus()">
-                        <input
-                            hidden
-                            id="set_list"
-                            name="set_ids"
-                            type="text"
-                            size="80">
-                        <div id="set_div">
-                            {{ for set in sets: }}
-                                <span class="set_token {{=set['type']}}_token" data-set-id="{{=set['id']}}">
-                                    <i class="icon-cancel" onclick="this.parentNode.parentNode.removeChild(this.parentNode);"></i>
-                                    {{=set['id'][3:]}}
-                                </span>
-                            {{pass}}
-                        </div>
-                        <input
-                            id="token_input"
-                            autocomplete="off"
-                            onfocus="new VidjilAutoComplete().setupSamples(this); new Tokeniser().setup(this, document.getElementById('set_div'));"
-                            data-needs-atwho="true"
-                            data-needs-tokeniser="true"
-                            data-group-ids="{{=group_ids}}"
-                            data-keys='["generic", "patient", "run"]'
-                            type="text"
-                            size="60">
-                    </div>
-                </td>
-            </tr>
-			
-			<tr class='db_table_split' ><td colspan="2"> sample information </td></tr>
-            <tr>
-                <td><label for="sampling_date" id="sampling_date__label">sampling date: </label></td>
-                <td><input class="date" id="sampling_date" name="sampling_date" type="text" size="20" value="{{if file is not None and file.sampling_date is not None:}}{{=file.sampling_date}}{{pass}}"></td>
-                <td>(format: yyyy-mm-dd)</td>
-            </tr>
-            <tr>
-                <td><label for="file_info" id="file_info__label">info: </label></td>
-                <td><textarea onfocus="new VidjilAutoComplete().setupTags(this);" data-needs-atwho="true" data-keys="{{=group_ids}}" class="text" id="file_info" name="file_info" cols="60" rows="12">{{if file is not None:}}{{=file.info}}{{pass}}</textarea></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td><input type="submit" value="Soumettre" class="btn"></td>
-                <td></td>
-            </tr>
-
-        </tbody>
-    </table>
+<form id="upload_form"  action="DB_ADDRESS/file/submit" enctype="multipart/form-data" method="post">
+    <div id="fieldset_container">
+        {{ for i, file in enumerate(files): }}
+            {{ include 'partial/file/form.html' }}
+        {{ pass }}
+    </div>
+    <span class="button"
+          onclick="document.getElementById('fieldset_container').appendChild(new FileFormBuilder({{=group_ids}}, {{=str(source_module_active).lower()}}).build(this.dataset.index++));"
+          data-index="{{=len(files)}}">add file</span>
+    <input type="submit" value="Soumettre" class="btn">
 </form>
+<div class="clear"></div>
