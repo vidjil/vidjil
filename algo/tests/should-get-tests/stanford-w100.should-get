@@ -1,5 +1,8 @@
 !LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -K -e 10 -r 1 -y 0 -s '#####-#####' -w 100 -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -D $VIDJIL_DIR/germline/homo-sapiens/IGHD.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa -b stanford-w100 $VIDJIL_DATA/Stanford_S22.fasta ; grep 'w.*/.* seed' out/stanford-w100.affects; grep -v 'UNSEG strand' out/stanford-w100.vidjil
 
+$ Look for windows up to 100bp
+1:windows up to 100bp
+
 $ Find the good number of "too short sequences" for windows of size 100
 1: UNSEG too short w ->      0
 
@@ -18,7 +21,7 @@ $ Find the good number of segmented sequences (including "too short sequences")
 1: junction detected in 13152 reads .100%.
 
 $ Find the good number of windows in Stanford S22
-1: found 11835 100-windows in 13152 reads
+1: found 11835 windows in 13152 reads
 
 $ Find the correct number of clones with shifted of shortened windows
 1243: "Short or shifted window"

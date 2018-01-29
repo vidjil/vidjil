@@ -4,7 +4,7 @@ $ Load CD-sorting.fa
 1:homo-sapiens/CD-sorting.fa .* 28 sequences
 
 $ KmerSegmenter, map reads
-1: found 6 50-windows in 8 reads
+1: found 6 windows in 8 reads
 
 $ KmerSegmenter, cluster lightly trimmed or mutated reads with original ones
 2:Clone .* 2 reads
