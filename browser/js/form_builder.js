@@ -325,7 +325,7 @@ FileFormBuilder.prototype.build_file_field = function(id, hidden) {
         d.style.display = 'none';
     }
     d.appendChild(this.build_label('file ' + id, 'file', 'file'));
-    var i = this.build_input('upload_file_' + id, 'upload_field', 'file'+id, 'file', 'file', true);
+    var i = this.build_input('upload_file_' + id, 'upload_field', 'file'+id, 'file', 'file');
     if (this.source_module) {
         i.disabled = true;
     }
