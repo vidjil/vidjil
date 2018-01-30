@@ -164,7 +164,13 @@ void BioReader::add(const string &filename, bool verbose) {
   if (verbose)
     cout << " <== " << filename ;
 
-  add(*reader);
+  try {
+    add(*reader);
+  } catch (...) {
+    delete reader;
+    throw;
+  }
+
   delete reader;
 
   if (verbose)
