@@ -174,10 +174,10 @@ while read line; do
 
                 # Remove trailing whitespaces.
                 # Depending on Bash version they are not handled in the same way → uniformize
-                pattern=$(sed -e 's/^\s*//' <<< "$pattern")
+                pattern=$(sed -r 's/^[[:space:]]*//' <<< "$pattern")
 
                 # Escape special characters for sed
-                pattern=$(sed -e 's/[/&]/\\&/g' <<< $pattern)
+                pattern=$(sed -r 's/[/&]/\\&/g' <<< $pattern)
 
                 while ! [ "${nb_hits:0:1}" -eq "${nb_hits:0:1}" ] 2> /dev/null; do
                     case ${nb_hits:0:1} in
