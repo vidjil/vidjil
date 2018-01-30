@@ -66,7 +66,7 @@ int KmerAffectAnalyser::minimize(const KmerAffect &affect, int margin, int width
   int i_max = NO_MINIMIZING_POSITION ;
 
   for (vector<KmerAffect>::const_iterator it = affectations.begin() + margin;
-       it < affectations.end() - margin && i <= seq.length() - width;
+       it < affectations.end() - margin && i <= (int) seq.length() - width;
        it++, i++) {
 
 
