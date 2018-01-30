@@ -149,7 +149,7 @@ while read line; do
                     fi
                     echo "Launching '$cmd'" >&2
                     if [ -z "$OUTPUT_FILE" ]; then
-                        mkdir -p $(pwd)/$(dirname $LOG_FILE)
+                        mkdir -p "$(pwd)/$(dirname $LOG_FILE)"
                         eval $cmd > $LOG_FILE
                         EXIT_CODE=$?
                         FILE_TO_GREP=$LOG_FILE
