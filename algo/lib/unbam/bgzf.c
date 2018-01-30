@@ -717,7 +717,13 @@ static int check_header(const uint8_t *header)
             && unpackInt16((uint8_t*)&header[14]) == 2) ? 0 : -1;
 }
 
-static void free_cache(BGZF *fp) {}
+static void free_cache(BGZF *fp) {
+	khint_t k;
+	khash_t(cache) *h = (khash_t(cache)*)fp->cache;
+	for (k = kh_begin(h); k < kh_end(h); ++k)
+		if (kh_exist(h, k)) free(kh_val(h, k).block);
+        kh_destroy(cache, h);
+}
 static int load_block_from_cache(BGZF *fp, int64_t block_address) {return 0;}
 static void cache_block(BGZF *fp, int size) {}
 
