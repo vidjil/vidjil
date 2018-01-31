@@ -623,11 +623,12 @@ Database.prototype = {
                 },
             }
         });
+        var index = elem.data('index');
         elem.on('select_node.jstree', function(event, data){
-            $('#filename').val(data.selected);
+            $('#file_filename_' + index).val(data.selected);
             var split_file = data.selected.toString().split('/');
             var file = split_file[split_file.length - 1];
-            $('#file_indicator').text(file);
+            $('#file_indicator_' + index).text(file);
         });
     },
 
