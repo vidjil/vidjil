@@ -161,12 +161,12 @@ Xcode should be installed first.
 
 *** Compiling
 
-Running 'make' from the extracted archive should be enough to install vidjil-algo and run the self-tests (see below).
-It runs the commands that are detailed in the following paragraphs.
+Running 'make' from the extracted archive should be enough to install vidjil-algo with germline and demo files.
+It runs the three following 'make' commands.
 
 #+BEGIN_SRC sh
 
-make -C germline get-saved-data
+make germline
    # get IMGT germline databases (IMGT/GENE-DB) -- you have to agree to IMGT license: 
    # academic research only, provided that it is referred to IMGT®,
    # and cited as "IMGT®, the international ImMunoGeneTics information system® 
@@ -175,14 +175,13 @@ make -C germline get-saved-data
    # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
 
 
-# either
-make -C src              # build Vijil from the sources (see the requirements, above)
+make vijdil-algo         # build vijil-algo from the sources (see the requirements,
+                         # another option is: wget http://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -O vidjil-algo
+                         # to download a static binary (built for x86_64 architectures)
 
-# or
-wget http://www.vidjil.org/releases/vidjil-latest.tgzvidjil-latest_x86_64 -O vidjil-algo
-                         # download a static binary (built for x86_64 architectures)
+make demo                # download demo files (S22 and L4, see demo/get-sequences)
 
-./vidjil-algo -h              # display help/usage
+./vidjil-algo -h         # display help/usage
 #+END_SRC
 
 If your build system does not use C++11 by default, you should replace the =make= commands by:
