@@ -10,3 +10,4 @@ clean:
 	rm -f $(FILES)
 
 
+.PHONY: all clean
