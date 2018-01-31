@@ -546,9 +546,6 @@ Database.prototype = {
         
         //submit formulaire avec fichier
         if ( document.getElementById('upload_form') ){
-            
-            db.pre_process_onChange()
-            
             $('#upload_form').on('submit', function(e) {
                 e.preventDefault();
                 $.ajax({
