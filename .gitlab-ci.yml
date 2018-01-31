@@ -85,6 +85,7 @@ test_browser_unit:
     - /^hotfix-[cw]\/.*$/
     - prod-client
     - dev
+  tags: web
 
 test_browser-functional:
   stage: test_functional
@@ -100,6 +101,7 @@ test_browser-functional:
     - /^feature-[cw]\/.*$/
     - /^hotfix-[cw]\/.*$/
     - prod-client
+  tags: web
 
 test_browser-functional-external:
   stage: test_functional_external
@@ -116,6 +118,7 @@ test_browser-functional-external:
     - /^feature-[cw]\/.*$/
     - /^hotfix-[cw]\/.*$/
     - prod-client
+  tags: web
 
 code_quality:
   stage: test_quality
@@ -125,6 +128,7 @@ code_quality:
     - /^hotfix-[cw]\/.*$/
     - prod-client
     - dev
+  tags: web
 
 deploy_review:
   stage: deploy_review
@@ -138,6 +142,7 @@ deploy_review:
   only:
     - /^feature-[cw]\/.*$/
     - /^hotfix-[cw]\/.*$/
+  tags: web
 
 deploy_prod:
   stage: deploy_prod
@@ -149,7 +154,8 @@ deploy_prod:
     url: http://app.vidjil.org/?data=analysis-example.vidjil
   only:
     - prod-client
-    
+  tags: web
+
 stop_deploy_review:
   stage: deploy_review
   variables:
@@ -163,3 +169,4 @@ stop_deploy_review:
   only:
     - /^feature-[cw]\/.*$/
     - /^hotfix-[cw]\/.*$/
+  tags: web
