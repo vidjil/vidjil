@@ -2,11 +2,11 @@
 
 # Test examples embedded in './vidjil-algo -h'
 
-# Run 6 times (-h + 5 examples)
-6:vidjil-algo -- V.D.J recombinations analysis
+# Run 6 times (-h + 6 examples)
+7:vidjil-algo -- V.D.J recombinations analysis
 
-# '-c clone', two times
-2: end of clones
+# '-c clone', three times
+3: end of clones
 
 # '-c windows'
 1:Extracting windows
@@ -17,3 +17,7 @@
 # '-c germlines'
 1:Discovering germlines
 1:max.*kmer
+
+# LIL-L4, detects first clone
+1:Clone .001 .* 160039 reads
+1:clone-001--TRG.* TRGV9.01 0/AC/1 TRGJ1.02
