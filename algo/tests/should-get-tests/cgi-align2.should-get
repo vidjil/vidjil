@@ -1,4 +1,4 @@
-!LAUNCH: export REQUEST_METHOD=POST ; export CONTENT_TYPE=test ; $LAUNCHER $VIDJIL_DIR/browser/cgi/align.cgi < $VIDJIL_DATA/msa2.fa
+!LAUNCH: export REQUEST_METHOD=POST ; export CONTENT_TYPE=test ; $LAUNCHER $VIDJIL_DIR/tools/align.cgi < $VIDJIL_DATA/msa2.fa
 
 $ no spurious info
 0: .* bp in .* sequences
