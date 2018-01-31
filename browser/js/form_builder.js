@@ -11,6 +11,14 @@ function labelise(text) {
     return split.join(' ');
 }
 
+function add_file(target_id, index, group_ids) {
+    var target = document.getElementById(target_id);
+    var source = $("input[name='source']:checked").val() == 'nfs';
+    var builder = new FileFormBuilder(group_ids, source);
+    target.appendChild(builder.build(index));
+    $('#jstree_loader_' + index).trigger('load');
+}
+
 function FormBuilder() {
     if (typeof FormBuilder.instance === 'object') {
         return FormBuilder.instance;
@@ -197,10 +205,10 @@ GenericFormBuilder.prototype.build = function(index) {
         return fieldset;
     }
 
-function FileFormBuilder(group_ids, source_module) {
+function FileFormBuilder(group_ids, source) {
     FormBuilder.call(this);
     this.group_ids = group_ids;
-    this.source_module = source_module;
+    this.source = source;
 }
 
 FileFormBuilder.prototype = Object.create(FormBuilder.prototype);
@@ -215,18 +223,18 @@ FileFormBuilder.prototype.build = function(index) {
     return fieldset;
 }
 
-FileFormBuilder.prototype.build_file_fieldset = function() {
+FileFormBuilder.prototype.build_file_fieldset = function(source) {
     var self = this;
     var f = document.createElement('fieldset');
     f.appendChild(this.build_legend('sequence file(s)'));
-    var file1 = this.build_file_field(1, false);
+    var file1 = this.build_file_field(1, source);
     var file_input = file1.getElementsByTagName('input')[0];
     file_input.onchange = function() {
         db.upload_file_onChange('file_filename_' + self.index, this.value);
     }
     f.appendChild(file1);
     f.appendChild(this.build_file_field(2, true));
-    f.appendChild(this.build_jstree());
+    f.appendChild(this.build_jstree(!source));
     return f;
 }
 
@@ -298,13 +306,13 @@ FileFormBuilder.prototype.build_info_fieldset = function() {
 
 FileFormBuilder.prototype.build_file_field = function(id, hidden) {
     var d = this.build_wrapper();
-    d.className += " upload_field file_" + id;
-    if (this.source_module || hidden) {
+    d.className += " file_" + id;
+    if (this.source || hidden) {
         d.hidden = true;
     }
     d.appendChild(this.build_label('file ' + id, 'file', 'file'));
     var i = this.build_input('upload_' + id, 'upload_field', 'file'+id, 'file', 'file');
-    if (this.source_module) {
+    if (this.source) {
         i.disabled = true;
     }
     d.appendChild(i);
@@ -318,7 +326,7 @@ FileFormBuilder.prototype.build_jstree = function() {
     var self = this;
     var d = this.build_wrapper();
     d.className += " jstree_container";
-    if (!this.source_module) {
+    if (!this.source) {
         d.hidden = true;
         d.style.display = 'none';
     }
