@@ -332,17 +332,16 @@ Database.prototype = {
     },
     
     
-    pre_process_onChange : function () {
-        var field = document.getElementById("pre_process");
+    pre_process_onChange : function (field) {
         var value = field.value;
         for (var i=0; i<field.options.length; i++){
             var option = field.options[i];
             if (value == option.value){
                 if (option.getAttribute("required_files") == "1"){
-                    document.getElementById("file2_field").style.display = 'none';
-                    document.getElementById("upload_file2").value=""
+                    $(".file_2").hide();
+                    $(".upload_file_2").val("");
                 }else{
-                    document.getElementById("file2_field").style.display = '';
+                    $(".file_2").show();
                 }
             }
         }        
