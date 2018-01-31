@@ -4,7 +4,7 @@ DEFAULT_G=homo-sapiens.g
 DIRS=homo-sapiens/ mus-musculus/ rattus-norvegicus/
 GERMLINE_JS=../browser/js/germline.js
 
-all: germline
+all: get-saved-data
 
 germline: get-saved-data $(GERMLINE_JS)
 
