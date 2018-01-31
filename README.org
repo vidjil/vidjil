@@ -7,7 +7,7 @@
 # https://coveralls.io/r/vidjil/vidjil http://img.shields.io/coveralls/vidjil/vidjil.svg
 
 # Vidjil -- V(D)J recombinations analysis -- [[http://www.vidjil.org]]
-# Copyright (C) 2011-2017 by Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
+# Copyright (C) 2011-2018 by Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
 # [[contact@vidjil.org]]
 
 V(D)J recombinations in lymphocytes are essential for immunological
