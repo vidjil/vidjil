@@ -42,10 +42,9 @@ unit_server:
 ###
 
 data:
-	$(MAKE) -C demo
 	$(MAKE) -C algo/tests/data
 
-germline browser server: %:
+demo germline browser server: %:
 	$(MAKE) -C $@
 
 cleanall: clean
