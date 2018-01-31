@@ -53,7 +53,7 @@ cleanall: clean
 	$(MAKE) -C $(VIDJIL_ALGO_SRC) cleanall
 	$(MAKE) -C server cleanall
 
-.PHONY: all test should clean cleanall distrib data germline unit_coverage should_coverage coverage data germline browser server doc algo
+.PHONY: all test should clean cleanall distrib data demo germline unit_coverage should_coverage coverage data germline browser server doc algo
 
 
 
