@@ -42,6 +42,7 @@ unit_server:
 ###
 
 data:
+	$(MAKE) -C demo
 	$(MAKE) -C algo/tests/data
 
 germline browser server: %:
