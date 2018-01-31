@@ -17,7 +17,7 @@ SHOULD_VDJ_TO_TAP=python -u should-vdj-to-tap.py
 REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
 VALGRIND=valgrind
 VALGRIND_TOOLS= --tool=memcheck --leak-check=full --show-reachable=yes --trace-children=yes
-VALGRIND_OUTPUT_XML= --xml=yes --xml-file="$$(mktemp "$(REPORTS_PATH)/valgrind.xml.XXXXXX")"
+VALGRIND_OUTPUT_XML=--xml=yes --xml-file='$(REPORTS_PATH)/valgrind.xml.%p'
 VALGRIND_OUTPUT=--error-exitcode=1
 
 ifeq ($(XML_OUTPUT), 1)
