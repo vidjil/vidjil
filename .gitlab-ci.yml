@@ -57,6 +57,8 @@ algo_valgrind_unit:
   script: make -C algo valgrind_unit
   only:
     - /^feature-a\/.*$/
+  tags:
+    - valgrind
 
 algo_valgrind_functional:
   stage: valgrind_functional
@@ -64,6 +66,8 @@ algo_valgrind_functional:
   when: manual
   only:
     - /^feature-a\/.*$/
+  tags:
+    - valgrind
 
 prepare_release:
   stage: prepare_release
