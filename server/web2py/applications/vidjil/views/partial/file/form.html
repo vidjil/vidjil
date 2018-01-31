@@ -18,7 +18,7 @@
                 onchange="db.upload_file_onChange('file_filename_{{=i}}', this.value)"
             ><span>* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)</span>
         </div>
-        <div id="file_2_{{=i}}" class="field_div file_2" {{if source_module_active:}} hidden {{pass}}>
+        <div id="file_2_{{=i}}" class="field_div file_2" hidden>
             <label for="file_upload_2_{{=i}}" id="file2__label_{{=i}}"> file 2 </label>
             <input class="upload_field form-control" id="file_upload_2_{{=i}}" type="file"
             {{if source_module_active:}}

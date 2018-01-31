@@ -328,7 +328,6 @@ FileFormBuilder.prototype.build_jstree = function() {
     d.className += " jstree_container";
     if (!this.source) {
         d.hidden = true;
-        d.style.display = 'none';
     }
 
     var sel = document.createTextNode('selected');

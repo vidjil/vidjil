@@ -338,10 +338,10 @@ Database.prototype = {
             var option = field.options[i];
             if (value == option.value){
                 if (option.getAttribute("required_files") == "1"){
-                    $(".file_2").hide();
+                    $(".file_2").attr('hidden', true);
                     $(".upload_file_2").val("");
                 }else{
-                    $(".file_2").show();
+                    $(".file_2").attr('hidden', false);
                 }
             }
         }        
