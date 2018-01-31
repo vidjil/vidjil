@@ -263,8 +263,9 @@ void usage(char *progname, bool advanced)
        << "  " << progname << " -c clones   -g germline/homo-sapiens.g     -2 -3     demo/Stanford_S22.fasta   # (basic usage, detect the locus for each read," << endl
        << "                                                                                          #  including unexpected recombinations, analyzes CDR3)" << endl
        << "  " << progname << " -c clones   -g germline/homo-sapiens.g:IGH    -3     demo/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
-       << "  " << progname << " -c windows  -g germline/homo-sapiens.g     -2 -uu -U demo/Stanford_S22.fasta   # (detect the locus, splits all the reads into large files)" << endl
-       << "  " << progname << " -c segment  -g germline/homo-sapiens.g   -2 -3 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing, here on first 50 reads)" << endl
+       << "  " << progname << " -c clones   -g germline/homo-sapiens.g   -2 -3 -z 20 demo/LIL-L4.fastq.gz      # (basic usage, output detailed V(D)J analysis on the first 20 clones)" << endl
+       << "  " << progname << " -c windows  -g germline/homo-sapiens.g   -y 0 -uu -U demo/LIL-L4.fastq.gz      # (splits all the reads into (large) files depending on the detection of V(D)J recombinations)" << endl
+       << "  " << progname << " -c segment  -g germline/homo-sapiens.g   -2 -3 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing, here on 50 sampled reads)" << endl
        << "  " << progname << " -c germlines -g germline/homo-sapiens.g              demo/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
     ;
   exit(1);
