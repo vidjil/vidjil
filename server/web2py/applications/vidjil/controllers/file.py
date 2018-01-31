@@ -27,13 +27,13 @@ def extract_set_type(target):
 def manage_filename(filename):
     filepath = ""
     name_list = []
-    name_list = request.vars['filename'].split('/')
-    filename = name_list[-1]
-    data = dict(filename=filename, data_file=None)
+    name_list = filename.split('/')
+    myfilename = name_list[-1]
+    data = dict(filename=myfilename, data_file=None)
 
     if len(name_list) > 1:
-        filepath = defs.FILE_SOURCE + '/' + request.vars['filename']
-        split_file = filename.split('.')
+        filepath = defs.FILE_SOURCE + '/' + filename
+        split_file = myfilename.split('.')
         uuid_key = db.uuid().replace('-', '')[-16:]
         encoded_filename = base64.b16encode('.'.join(split_file[0:-1])).lower()
         data_file = "sequence_file.data_file.%s.%s.%s" % (
