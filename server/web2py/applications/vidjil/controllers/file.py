@@ -227,7 +227,7 @@ def submit():
         # add
         else:
             reupload = False
-            fid = db.sequence_file.insert(**file_data)
+            f['id'] = fid = db.sequence_file.insert(**file_data)
 
         group_ids = set()
         for key in f['id_dict']:
@@ -258,7 +258,8 @@ def submit():
         #        'table_name': "TODO FOOBAR"})
 
     if not error:
-        res = {"redirect": "sample_set/all",
+        res = { "file_ids": [f['id'] for f in data['file']],
+                "redirect": "sample_set/all",
                 "message": "successfully added/edited file(s)"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:

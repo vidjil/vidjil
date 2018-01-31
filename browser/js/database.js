@@ -549,63 +549,66 @@ Database.prototype = {
             
             db.pre_process_onChange()
             
-            
-            $('#upload_form').ajaxForm({
-                type     : "POST",
-                cache: false,
-                crossDomain: true,
-                xhrFields: {withCredentials: true},
-                url      : $(this).attr('action'),
-                data     : $(this).serialize(),
-                success  : function(result) {
-                    var js = self.display_result(result)
-                    var fileSelect, files, file, filename;
-                    if (typeof js.file_id != 'undefined'){
-                            $(this).attr("action", "0")
-                            var id = js.file_id
-                            if( document.getElementById("upload_file").files.length !== 0 ){
-                            fileSelect = document.getElementById('upload_file');
-                            files = fileSelect.files;
-                            var data = new FormData();
-                            
-                            for (var i = 0; i < files.length; i++) {
-                                file = files[i];
-                                data.append('file', file, file.name);
+            $('#upload_form').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    type     : "POST",
+                    cache: false,
+                    crossDomain: true,
+                    xhrFields: {withCredentials: true},
+                    url      : $(this).attr('action'),
+                    data     : {'data': JSON.stringify($('#upload_form').serializeObject())},
+                    success  : function(result) {
+                        var js = self.display_result(result)
+                        var id, fileSelect, files, file, filename;
+                        if (typeof js.file_ids !== 'undefined'){
+                            for (var k = 0; k < js.file_ids.length; k++) {
+                                id = js.file_ids[k];
+                                fileSelect = document.getElementById('file_upload_1_' + k);
+                                if( fileSelect.files.length !== 0 ){
+                                    files = fileSelect.files;
+                                    var data = new FormData();
+
+                                    for (var i = 0; i < files.length; i++) {
+                                        file = files[i];
+                                        data.append('file', file, file.name);
+                                    }
+                                    data.append('id', id);
+                                    data.append('file_number', 1)
+                                    data.append('pre_process', document.getElementById('file_pre_process_' + k).value)
+                                    filename = document.getElementById('file_filename_' + k).value;
+                                    self.uploader.add(id, data, filename, 1)
+                                }
+
+                                fileSelect = document.getElementById('file_upload_2_' + k);
+                                if( fileSelect.files.length !== 0 ){
+                                    files = fileSelect.files;
+                                    var data2 = new FormData();
+
+                                    for (var j = 0; j < files.length; j++) {
+                                        file = files[j];
+                                        data2.append('file', file, file.name);
+                                    }
+                                    data2.append('id', id);
+                                    data2.append('file_number', 2)
+                                    data2.append('pre_process', document.getElementById('file_pre_process_' + k).value)
+                                    self.uploader.add(id+"_2", data2, filename, 2)
+                                }
                             }
-                            data.append('id', id);
-                            data.append('file_number', 1)
-                            data.append('pre_process', document.getElementById('pre_process').value)
-                            filename = $('#filename').val()
-                            self.uploader.add(id, data, filename, 1)
                         }
-                        
-                        if( document.getElementById("upload_file2").files.length !== 0 ){
-                            fileSelect = document.getElementById('upload_file2');
-                            files = fileSelect.files;
-                            var data2 = new FormData();
-                            
-                            for (var j = 0; j < files.length; j++) {
-                                file = files[j];
-                                data2.append('file', file, file.name);
-                            }
-                            data2.append('id', id);
-                            data2.append('file_number', 2)
-                            data2.append('pre_process', document.getElementById('pre_process').value)
-                            self.uploader.add(id+"_2", data2, filename, 2)
+                    },
+                    error: function (request, status, error) {
+                        if(status==="timeout") {
+                            console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                        } else {
+                            console.log({"type": "popup", "msg": request + " " + status + " " + error});
                         }
                     }
-                },
-                error: function (request, status, error) {
-                    if(status==="timeout") {
-                        console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                    } else {
-                        console.log({"type": "popup", "msg": request + " " + status + " " + error});
-                    } 
-                }
+                });
+                return false;
             });
-            
-        }  
         
+        }
     },
 
     set_jstree: function(elem) {
