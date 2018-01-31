@@ -1,3 +1,4 @@
+!NO_LAUNCHER:
 !LAUNCH: (cd $VIDJIL_DIR ; ./$EXEC -h 2> out/vidjil-h.txt ; grep '$EXEC -c' out/vidjil-h.txt > out/vidjil-h.sh ; sh out/vidjil-h.sh)
 
 # Test examples embedded in './vidjil-algo -h'

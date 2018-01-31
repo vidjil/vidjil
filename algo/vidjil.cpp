@@ -1020,7 +1020,8 @@ int main (int argc, char **argv)
 	}
       
       delete multigermline;
-      exit(0);
+
+      return 0;
     }
 
 
