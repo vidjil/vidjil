@@ -1019,7 +1019,7 @@ int main (int argc, char **argv)
 	  cout << "     " << key << " " << it->second.name << endl ;
 	}
       
-      delete index;
+      delete multigermline;
       exit(0);
     }
 
@@ -1583,6 +1583,8 @@ int main (int argc, char **argv)
       delete out_segmented;
     if (output_unsegmented)
       delete out_unsegmented;
+    if (output_affects)
+      delete out_affects;
 
     if (output_unsegmented_detail)
       for (int i=STATS_FIRST_UNSEG; i<STATS_SIZE; i++)

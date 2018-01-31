@@ -21,6 +21,16 @@ LazyMsa::LazyMsa(int max, string reference)
 
 LazyMsa::~LazyMsa()
 {
+  for (int i = 0; i <= sizeUsed; i++) {
+    delete [] gapRef[i];
+    delete [] gapSeq[i];
+    delete [] link[i];
+  }
+
+  delete [] gapRef;
+  delete [] gapSeq;
+  delete [] link;
+  delete [] sequences;
 }
 
 void LazyMsa::add(string sequence){
@@ -127,6 +137,8 @@ void LazyMsa::align(string *align){
 
     align[i+1]=stream2.str();
   }
+
+  delete [] maxGap;
 }
 
 
