@@ -319,7 +319,10 @@ release_check:
 	$(info ==== Checking $(RELEASE_ARCHIVE_TGZ) ====)
 
 	cd $(RELEASES_DIR) && tar xvfz $(RELEASE_ARCHIVE_TGZ)
-	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE)
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) germline
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) vidjil-algo
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) demo
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) test
 	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) -C src clean && $(MAKE) -C src static && mv $(EXEC) $(EXEC)-$(RELEASE_TAG)_`uname -m`
 
 
