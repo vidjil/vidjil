@@ -38,7 +38,7 @@ MAINCORE=$(wildcard *.cpp)
 LIBCORE=core/vidjil.a lib/lib.a
 
 BINDIR=../
-CGIDIR=../browser/cgi/
+CGIDIR=../tools/
 TOOLDIR=tools/
 
 VIDJIL=$(BINDIR)$(EXEC)
