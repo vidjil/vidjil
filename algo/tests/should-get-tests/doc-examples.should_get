@@ -2,11 +2,11 @@
 
 # Test examples embedded in 'doc/algo.org'
 
-# Run 8 times
-8:vidjil-algo -- V.D.J recombinations analysis
+# Run nine times
+9:vidjil-algo -- V.D.J recombinations analysis
 
-# '-c clone' (or implied), five times
-5: end of clones
+# '-c clone' (or implied), six times
+6: end of clones
 
 # '-c windows'
 0:Extracting windows
@@ -17,3 +17,17 @@
 # '-c germlines'
 1:Discovering germlines
 1:max.*kmer
+
+# Demo-X5 analysis
+1:found 14 windows in 14 reads
+1: IGH     .* -> .* 1 .* 1
+1: IGH[+]  .* -> .* 1 .* 1
+1: IGK     .* -> .* 1 .* 1
+1: IGK[+]  .* -> .* 2 .* 2
+1: TRA     .* -> .* 1 .* 1
+1: TRA[+]D .* -> .* 1 .* 1
+1: TRB     .* -> .* 1 .* 1
+1: TRB[+]  .* -> .* 1 .* 1
+1: TRD     .* -> .* 1 .* 1
+1: TRD[+]  .* -> .* 2 .* 2
+1: TRG     .* -> .* 1 .* 1
