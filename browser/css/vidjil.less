@@ -2259,18 +2259,19 @@ label.highlight_label {
 }
 
 .token_div {
-    border: 1px solid #bbb7b3;
-    cursor: text;
-    width: 50%;
-
     #set_div span.set_token i.icon-cancel {
         cursor: pointer;
     }
 }
 
-#token_input {
+.token_container {
+    display: inline-block;
+}
+
+.token_input, .token_input:focus {
     border: 0;
     box-shadow: none;
+    width: 100px;
 }
 
 fieldset {
