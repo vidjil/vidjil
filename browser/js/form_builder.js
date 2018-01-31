@@ -219,7 +219,6 @@ FileFormBuilder.prototype.build_file_fieldset = function() {
     var self = this;
     var f = document.createElement('fieldset');
     f.appendChild(this.build_legend('sequence file(s)'));
-    f.appendChild(this.build_pre_process());
     var file1 = this.build_file_field(1, false);
     var file_input = file1.getElementsByTagName('input')[0];
     file_input.onchange = function() {
@@ -295,27 +294,6 @@ FileFormBuilder.prototype.build_info_fieldset = function() {
     f.appendChild(this.build_date('sampling_date', 'file'));
     f.appendChild(this.build_info('file'));
     return f;
-}
-
-FileFormBuilder.prototype.build_pre_process = function() {
-    var d = this.build_wrapper();
-    d.appendChild(this.build_label('pre process scenario', 'file', 'pre_process'));
-    d.appendChild(this.build_pre_process_select());
-    return d;
-}
-
-FileFormBuilder.prototype.build_pre_process_select = function() {
-    var self = this;
-    var s = document.createElement('select');
-    s.id = 'file_pre_process_' + self.index;
-    s.name = 'file[' + self.index + '][pre_process]';
-    var o = document.createElement('option');
-    o.required_filed = "1";
-    o.value = "0";
-    o.innerText = "no pre-process (1 file)";
-    s.appendChild(o);
-    // TODO create from pre_process list (AJAX ?)
-    return s;
 }
 
 FileFormBuilder.prototype.build_file_field = function(id, hidden) {

@@ -4,6 +4,20 @@
 <h3>Edit sequence file</h3>    
 
 <form id="upload_form"  action="DB_ADDRESS/file/submit" enctype="multipart/form-data" method="post">
+
+    <fieldset {{if source_module_active:}} hidden {{pass}}>
+        <legend>Pre process</legend>
+        <label for="pre_process" id="pre_process__label">pre-process scenario: </label>
+        <select id="pre_process" name="pre_process" onChange="db.pre_process_onChange(this)" {{if source_module_active:}} disabled {{pass}}>
+            <option required_files="1" value="0">no pre-process (1 file)</option>
+            {{for row in pre_process_list :}}
+                <option title="{{=row["info"]}}" required_files="{{=row["file"]}}" value="{{=row["id"]}}"
+                    {{if 'file_id' in request.vars and row["id"]==files[0].pre_process_id :}}selected{{pass}}>
+                    {{=row["id"]}} &ndash; {{=row["name"]}}
+                </option>
+            {{pass}}
+        </select>
+    </fieldset>
     <div id="fieldset_container">
         {{ for i, file in enumerate(files): }}
             {{ include 'partial/file/form.html' }}

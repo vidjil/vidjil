@@ -19,17 +19,6 @@
     {{pass}}
     <fieldset name="sequence_file">
         <legend>sequence file(s)</legend>
-        <div {{if source_module_active:}} hidden {{pass}}>
-            <label for="pre_process_{{=i}}" id="pre_process__label_{{=i}}">pre-process scenario: </label>
-            <select id="pre_process_{{=i}}" name="file[{{=i}}][pre_process]" onChange="db.pre_process_onChange()" {{if source_module_active:}} disabled {{pass}}>
-                <option required_files="1" value="0">no pre-process (1 file)</option>
-                {{for row in pre_process_list :}}
-                    <option title="{{=row["info"]}}" required_files="{{=row["file"]}}" value="{{=row["id"]}}"
-                        {{if 'file_id' in request.vars and row["id"]==file.pre_process_id :}}selected{{pass}}>
-                        {{=row["id"]}} &ndash; {{=row["name"]}}
-                    </option>
-                {{pass}}
-            </select>
         </div>
         <div id="file_field_1_{{=i}}" class="field_div" {{if source_module_active:}} hidden {{pass}}>
             <label for="file_1_{{=i}}" id="file__label_{{=i}}"> file 1 </label>

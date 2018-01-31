@@ -188,11 +188,18 @@ def form():
                source_module_active = source_module_active,
                group_ids = group_ids)
 
-
 #TODO check data
 def submit():
     data = json.loads(request.vars['data'], encoding='utf-8')
     error = False
+
+    pre_process = None
+    pre_process_flag = "DONE"
+    if request.vars['pre_process'] is not None:
+        if f['pre_process'] != "0":
+            pre_process = int(f['pre_process'])
+            pre_process_flag = "WAIT"
+
     for f in data['file']:
         errors = validate(f)
         f = validate_sets(f, errors)
@@ -202,18 +209,9 @@ def submit():
             error = True
             continue
 
-        pre_process = None
-        pre_process_flag = "DONE"
-        if f['pre_process'] is not None:
-            if f['pre_process'] != "0":
-                pre_process = int(f['pre_process'])
-                pre_process_flag = "WAIT"
-            else:
-                f['pre_process'] = None
-
         file_data = dict(sampling_date=f['sampling_date'],
                          info=f['info'],
-                         pre_process_id=f['pre_process'],
+                         pre_process_id=pre_process,
                          pre_process_flag= pre_process_flag,
                          provider=auth.user_id)
 
