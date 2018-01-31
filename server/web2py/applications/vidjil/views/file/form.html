@@ -5,6 +5,15 @@
 
 <form id="upload_form"  action="DB_ADDRESS/file/submit" enctype="multipart/form-data" method="post">
 
+    {{ if source_module_active: }}
+    <fieldset name="file_source">
+        <legend>file source</legend>
+        <label for="source_computer">my computer</label>
+        <input type="radio" id="source_computer" name="source" value="computer" onchange="db.toggle_file_source()"/>
+        <label for="source_nfs">network</label>
+        <input type="radio" id="source_nfs" name="source" value="nfs" onchange="db.toggle_file_source()" checked="checked" />
+    </fieldset>
+    {{pass}}
     <fieldset {{if source_module_active:}} hidden {{pass}}>
         <legend>Pre process</legend>
         <label for="pre_process" id="pre_process__label">pre-process scenario: </label>

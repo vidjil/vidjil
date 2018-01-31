@@ -627,27 +627,27 @@ Database.prototype = {
         var elem = $('.upload_field');
         var disable = !elem.prop('disabled');
         elem.prop('disabled', disable);
-        elem.parents("tr").prop('hidden', disable);
+        elem.closest("div").prop('hidden', disable);
         if (disable) {
             elem.val(undefined);
-            $('#filename').val(undefined);
+            $('.filename').val(undefined);
         }
 
         var pre_process = $('#pre_process');
         pre_process.prop('disabled', disable);
-        pre_process.parents("tr").prop('hidden', disable);
+        pre_process.closest("fieldset").prop('hidden', disable);
     },
 
     toggle_jstree: function(){
-        var tree = $('#jstree');
-        var enable = tree.parents("tr").prop('hidden');
-        tree.parents("tr").prop('hidden', !enable);
+        var tree = $('.jstree');
+        var enable = tree.closest("div.jstree_container").prop('hidden');
+        tree.closest("div.jstree_container").prop('hidden', !enable);
         if (enable) {
-            this.set_jstree(tree);
+            this.set_jstree(tree.children('div'));
         } else {
             $.jstree.destroy();
-            tree.off('select_node.jstree');
-            $('#filename').val(undefined);
+            tree.children('div').off('select_node.jstree');
+            $('.filename').val(undefined);
         }
     },
 

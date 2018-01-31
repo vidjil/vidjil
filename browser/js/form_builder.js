@@ -232,7 +232,7 @@ FileFormBuilder.prototype.build_file_fieldset = function() {
 
 FileFormBuilder.prototype.build_hidden_fields = function() {
     var d = document.createElement('div');
-    var i = this.build_input('filename', '', 'filename', 'text', 'file');
+    var i = this.build_input('filename', 'filename', 'filename', 'text', 'file');
     i.hidden = true;
     i.className = '';
     d.appendChild(i);
@@ -298,12 +298,12 @@ FileFormBuilder.prototype.build_info_fieldset = function() {
 
 FileFormBuilder.prototype.build_file_field = function(id, hidden) {
     var d = this.build_wrapper();
+    d.className += " upload_field file_" + id;
     if (this.source_module || hidden) {
         d.hidden = true;
-        d.style.display = 'none';
     }
     d.appendChild(this.build_label('file ' + id, 'file', 'file'));
-    var i = this.build_input('upload_file_' + id, 'upload_field', 'file'+id, 'file', 'file');
+    var i = this.build_input('upload_' + id, 'upload_field', 'file'+id, 'file', 'file');
     if (this.source_module) {
         i.disabled = true;
     }
@@ -317,19 +317,26 @@ FileFormBuilder.prototype.build_file_field = function(id, hidden) {
 FileFormBuilder.prototype.build_jstree = function() {
     var self = this;
     var d = this.build_wrapper();
+    d.className += " jstree_container";
     if (!this.source_module) {
         d.hidden = true;
         d.style.display = 'none';
     }
 
-    var sel = document.createElement('div');
-    sel.innerText = 'selected';
+    var sel = document.createTextNode('selected');
     d.appendChild(sel);
+    var indicator = document.createElement('div');
+    indicator.id = "file_indicator_" + self.index;
+    d.appendChild(indicator);
+    var tree_par = document.createElement('div');
+    tree_par.className = "jstree";
+    tree_par.onmouseover = function() {db.set_jstree($('#jstree_' + self.index), self.index)};
+    tree_par.appendChild(document.createTextNode('file'));
+    d.appendChild(tree_par);
     var tree = document.createElement('div');
-    tree.appendChild(document.createTextNode('file'));
     tree.id = 'jstree_' + this.index;
-    tree.onmouseover = function() {db.set_jstree($('#jstree_' + self.index))};
-    d.appendChild(tree);
+    tree.dataset.index = this.index;
+    tree_par.appendChild(tree);
     return d;
 }
 
