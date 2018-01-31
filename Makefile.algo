@@ -3,7 +3,7 @@
 
 .PHONY: all germline vidjil-algo demo test
 
-all: germline vidjil-algo demo test
+all: germline vidjil-algo demo
 
 germline:
 	$(MAKE) -C germline get-saved-data
