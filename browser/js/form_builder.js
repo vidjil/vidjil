@@ -329,8 +329,9 @@ FileFormBuilder.prototype.build_jstree = function() {
     indicator.id = "file_indicator_" + self.index;
     d.appendChild(indicator);
     var tree_par = document.createElement('div');
+    tree_par.id = "jstree_loader_" + self.index;
     tree_par.className = "jstree";
-    tree_par.onmouseover = function() {db.set_jstree($('#jstree_' + self.index), self.index)};
+    tree_par.onload = function() {db.set_jstree($('#jstree_' + self.index), self.index)};
     tree_par.appendChild(document.createTextNode('file'));
     d.appendChild(tree_par);
     var tree = document.createElement('div');

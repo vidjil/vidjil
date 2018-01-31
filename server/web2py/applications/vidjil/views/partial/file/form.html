@@ -29,11 +29,11 @@
         <div class="jstree_container" {{if not source_module_active:}} hidden {{pass}}>
             selected
             <div id="file_indicator_{{=i}}"></div>
-            <div class="jstree"
+            <div class="jstree" id="jstree_loader_{{=i}}"
                 {{if not source_module_active:}}
                     hidden
                 {{else:}}
-                    onmouseover="db.set_jstree($('#jstree_{{=i}}'), {{=i}})"
+                    onload="db.set_jstree($('#jstree_{{=i}}'), {{=i}})"
                 {{pass}}>
                 file
                 <div id="jstree_{{=i}}" data-index="{{=i}}"></div>

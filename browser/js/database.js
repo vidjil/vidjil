@@ -389,6 +389,9 @@ Database.prototype = {
 
             $("#menu-container").addClass('disabledClass');
 
+            // Hax !
+            $('.jstree').trigger('load');
+
             return 0 ;
         }
         

@@ -33,7 +33,7 @@
         {{ pass }}
     </div>
     <span class="button"
-          onclick="document.getElementById('fieldset_container').appendChild(new FileFormBuilder({{=group_ids}}, {{=str(source_module_active).lower()}}).build(this.dataset.index++));"
+          onclick="document.getElementById('fieldset_container').appendChild(new FileFormBuilder({{=group_ids}}, {{=str(source_module_active).lower()}}).build(this.dataset.index)); $('#jstree_loader_'+this.dataset.index++).trigger('load');"
           data-index="{{=len(files)}}">add file</span>
     <input type="submit" value="Soumettre" class="btn">
 </form>
