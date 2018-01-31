@@ -24,6 +24,7 @@ ifeq ($(XML_OUTPUT), 1)
   VALGRIND_OUTPUT=$(VALGRIND_OUTPUT_XML)
 endif
 
+VALGRIND_CMD=$(VALGRIND) $(VALGRIND_TOOLS) $(VALGRIND_OUTPUT)
 
 #should-vdj that should not be published in our public curated dataset (just internal tests)
 EXCLUDE_SHOULD_VDJ=bug20151006-rc.should-vdj.fa cdr3-indels.should-vdj.fa ext-nucleotides-N.should-vdj.fa segment_simul.should-vdj.fa trd-dd2-dd3.should-vdj.fa trd-dd2up-dd3down.should-vdj.fa igh-vdj.should-vdj.fa Demo-X5.should-vdj.fa
@@ -116,13 +117,13 @@ curated-vdj.zip: $(SHOULD_VDJ_ARCHIVE)
 
 valgrind_should:
 	$(MAKE) -C $(REPORTS_PATH) clean_valgrind
-	LAUNCHER="$(VALGRIND) $(VALGRIND_TOOLS) $(VALGRIND_OUTPUT)" $(MAKE) should
+	LAUNCHER="$(VALGRIND_CMD)" $(MAKE) should
 
 valgrind_%:
-	LAUNCHER="$(VALGRIND) $(VALGRIND_TOOLS) $(VALGRIND_OUTPUT)" $(MAKE) $(patsubst valgrind_%,%,$@)
+	LAUNCHER="$(VALGRIND_CMD)" $(MAKE) $(patsubst valgrind_%,%,$@)
 
 valgrind_tests: vidjil ./unit-tests/tests
-	$(VALGRIND) $(VALGRIND_TOOLS) $(VALGRIND_OUTPUT) ./unit-tests/tests
+	$(VALGRIND_CMD) ./unit-tests/tests
 
 $(EXEC): % : %.o $(LIB) 
 	$(CXX) -o $@ $< $(LIB) $(LDLIBS) $(LDFLAGS) $(CXXFLAGS)
