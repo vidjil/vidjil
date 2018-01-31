@@ -24,7 +24,6 @@
             {{if source_module_active:}}
                 disabled
             {{pass}}
-                onchange="document.getElementById('file_filename_{{=i}}').value=this.value"
             ><span>* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)</span>
         </div>
         <div class="jstree_container" {{if not source_module_active:}} hidden {{pass}}>

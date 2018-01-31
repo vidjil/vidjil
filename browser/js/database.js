@@ -346,6 +346,15 @@ Database.prototype = {
             }
         }        
     },
+
+    upload_file_onChange : function (target_id, value) {
+        var target = document.getElementById(target_id);
+        var lastIndex = value.lastIndexOf('\\');
+        if (lastIndex > 0) {
+            value = value.substring(lastIndex + 1);
+        }
+        target.value = value;
+    },
     
     /**
      * callback function for callURL() <br>
