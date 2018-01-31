@@ -711,10 +711,19 @@ require either the =-g germline/homo-sapiens-g:IGH= option, or the multi-germlin
 
 ** Basic usage: PCR-based datasets, with primers in the V(D)J regions (such as BIOMED-2 primers)
 
+
+#+BEGIN_SRC sh
+./vidjil-algo -c clones   -g germline/homo-sapiens.g -2 -3 -r 1  demo/Demo-X5.fa
+  # Detect the locus for each read, cluster and report clones starting from the first read (-r 1).
+  # including unexpected recombinations (-2). Assign the V(D)J genes and try to detect the CDR3s (-3).
+  # Demo-X5 is a collection of sequences on all human locus, including some incomplete or unusual recombinations:
+  # IGH (VDJ, DJ), IGK (VJ, V-KDE, Intron-KDE), IGL, TRA, TRB (VJ, DJ), TRG and TRD (VDDJ, Dd2-Dd3, Vd-Ja).
+#+END_SRC
+
 #+BEGIN_SRC sh
 ./vidjil-algo -g germline/homo-sapiens.g:IGH -3 demo/Stanford_S22.fasta
-   # Cluster the reads into clones, based on windows overlapping IGH CDR3s.
-   # Assign the VDJ genes and try to detect the CDR3 of each clone.
+   # Cluster the reads and report the clones, based on windows overlapping IGH CDR3s.
+   # Assign the V(D)J genes and try to detect the CDR3 of each clone.
    # Summary of clones is available both on stdout, in out/Stanford_S22.vdj.fa and in out/Stanford_S22.vidjil.
 #+END_SRC
 
