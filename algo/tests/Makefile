@@ -116,7 +116,7 @@ curated-vdj.zip: $(SHOULD_VDJ_ARCHIVE)
 	./should-to-tap.sh $<
 
 valgrind_should:
-	$(MAKE) -C $(REPORTS_PATH) clean_valgrind
+	$(MAKE) -C "$(REPORTS_PATH)" clean_valgrind
 	LAUNCHER="$(VALGRIND_CMD)" $(MAKE) should
 
 valgrind_%:
