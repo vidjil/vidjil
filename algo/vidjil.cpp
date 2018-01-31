@@ -260,8 +260,9 @@ void usage(char *progname, bool advanced)
 
        << endl 
        << "Examples (see doc/algo.org)" << endl
-       << "  " << progname << " -c clones   -g germline/homo-sapiens.g     -2 -3     demo/Stanford_S22.fasta   # (basic usage, detect the locus for each read," << endl
-       << "                                                                                          #  including unexpected recombinations, analyzes CDR3)" << endl
+       << "  " << progname << " -c clones   -g germline/homo-sapiens.g   -2 -3 -r 1  demo/Demo-X5.fa           # (basic usage, detect the locus for each read," << endl
+       << "                                                                                               #  cluster reads and report clones starting from the first read (-r 1)," << endl
+       << "                                                                                               #  including unexpected recombinations (-2), assign V(D)J genes and try to detect the CDR3s (-3))" << endl
        << "  " << progname << " -c clones   -g germline/homo-sapiens.g:IGH    -3     demo/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
        << "  " << progname << " -c clones   -g germline/homo-sapiens.g   -2 -3 -z 20 demo/LIL-L4.fastq.gz      # (basic usage, output detailed V(D)J analysis on the first 20 clones)" << endl
        << "  " << progname << " -c windows  -g germline/homo-sapiens.g   -y 0 -uu -U demo/LIL-L4.fastq.gz      # (splits all the reads into (large) files depending on the detection of V(D)J recombinations)" << endl
