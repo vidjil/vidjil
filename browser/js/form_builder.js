@@ -111,7 +111,7 @@ FormBuilder.prototype.build_date = function(id, object, name, label) {
         }
 
         var d = this.build_wrapper();
-        d.appendChild(this.build_label(label, this.type, id));
+        d.appendChild(this.build_label(label, object, id));
         var i = this.build_input(id, 'date', name, 'text', object, false, 'yyyy-mm-dd');
         i.pattern = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
         i.title = "yyyy-mm-dd"
