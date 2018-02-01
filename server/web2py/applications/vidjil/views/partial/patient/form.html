@@ -23,7 +23,7 @@
         <label for="patient_birth_{{=i}}" id="patient_birth__label_{{=i}}">Birth:</label>
         <input class="date form-control" id="patient_birth_{{=i}}" name="patient[{{=i}}][birth]" type="text"
             value="{{if set is not None and set['birth'] is not None:}}{{=set['birth']}}{{pass}}"
-            placeholder="yyyy-mm-dd" title="yyyy-mm-dd" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
+            placeholder="yyyy-mm-dd" title="yyyy-mm-dd" pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))">
     </div>
     <div class="field_div">
         <label for="patient_info_{{=i}}" id="patient_info__label_{{=i}}">Info:</label>
