@@ -211,12 +211,15 @@ def submit():
             db.sequence_file[fid] = file_data
             #remove previous membership
             db( db.sample_set_membership.sequence_file_id == fid).delete()
+            action = "edit"
 
         # add
         else:
             reupload = False
             f['id'] = fid = db.sequence_file.insert(**file_data)
+            action = "add"
 
+        mes = "file (%d) %s %sed" % (f["id"], f["filename"], action)
         group_ids = set()
         for key in f['id_dict']:
             for sid in f['id_dict'][key]:
@@ -224,11 +227,11 @@ def submit():
         for group_id in group_ids:
             register_tags(db, 'sequence_file', fid, f["info"], group_id, reset=True)
 
-        mes = "file {%d}: " % fid
         if f['filename'] != "":
             if reupload:
                 # file is being reuploaded, remove all existing results_files
                 db(db.results_file.sequence_file_id == fid).delete()
+                mes += " file was replaced"
 
             file_data, filepath = manage_filename(f["filename"])
             filename = file_data['filename']
@@ -240,10 +243,9 @@ def submit():
 
         ssid_dict = link_to_sample_sets(fid, f['id_dict'])
 
-        # TODO proper logging of upload/editing
-        #log.info(res, extra={'user_id': auth.user.id,\
-        #        'record_id': redirect_args['id'],\
-        #        'table_name': "TODO FOOBAR"})
+        log.info(mes, extra={'user_id': auth.user.id,\
+                'record_id': redirect_args['id'],\
+                'table_name': "sequence_file"})
 
     if not error:
         res = { "file_ids": [f['id'] for f in data['file']],

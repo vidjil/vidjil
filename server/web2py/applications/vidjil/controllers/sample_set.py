@@ -431,7 +431,6 @@ def form():
 def submit():
     data = json.loads(request.vars['data'], encoding='utf-8')
     mf = ModelFactory()
-    messages = []
 
     error = False
     set_types = vidjil_utils.get_found_types(data)
@@ -457,13 +456,14 @@ def submit():
                 id = p["id"]
                 sset = db[set_type][id]
                 db[set_type][id] = p
+                id_sample_set = sset['sample_set_id']
 
                 if (sset.info != p['info']):
                     group_id = get_set_group(set_type, id)
                     register = True
                     reset = True
 
-                messages.append("%s (%s): %s edited" % (name, id, set_type))
+                action = "edit"
 
             # add
             elif (auth.can_create_patient()):
@@ -481,7 +481,7 @@ def submit():
                 #patient creator automaticaly has all rights
                 auth.add_permission(group_id, PermissionEnum.access.value, db[set_type], p['id'])
 
-                messages.append("(%s) patient %s added" % (id_sample_set, name))
+                action = "add"
 
                 if (p['id'] % 100) == 0:
                     mail.send(to=defs.ADMIN_EMAILS,
@@ -492,12 +492,12 @@ def submit():
                 p['error'].append("permission denied")
                 error = True
 
+            mes = "%s (%s) %s %sed" % (set_type, id_sample_set, name, action)
+            log.info(mes, extra={'user_id': auth.user.id, 'record_id': id, 'table_name': 'patient'})
             if register:
                 register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
 
     if not error:
-        # TODO proper logging of all events
-        #log.info(res, extra={'user_id': auth.user.id, 'record_id': id, 'table_name': 'patient'})
         res = {"redirect": "sample_set/all",
                 "args" : { "type" : length_mapping[max(length_mapping.keys())] },
                 "message": "successfully added/edited set(s)"}
