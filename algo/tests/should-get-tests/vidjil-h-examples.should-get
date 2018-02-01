@@ -1,5 +1,5 @@
 !NO_LAUNCHER:
-!LAUNCH: (cd $VIDJIL_DIR ; ./$EXEC -h 2>&1 > /dev/null | grep '$EXEC -c' | sh)
+!LAUNCH: (cd $VIDJIL_DIR ; ./$EXEC -h 2>&1 > /dev/null | grep '$EXEC -c' | sed 's/demo.LIL-L4/-X 1000 demo\\/LIL-L4/' | sh)
 
 # Test examples embedded in './vidjil-algo -h'
 
@@ -20,5 +20,5 @@
 1:max.*kmer
 
 # LIL-L4, detects first clone
-1:Clone .001 .* 160039 reads
+1:Clone .001 .* 30..\%
 1:clone-001--TRG.* TRGV9.01 0/AC/1 TRGJ1.02
