@@ -139,7 +139,7 @@ extern char *optarg;
 
 extern int optind, optopt, opterr;
 
-void usage(char *progname, bool advanced)
+int usage(char *progname, bool advanced)
 {
   cerr << "Usage: " << progname << " [options] <reads.fa/.fq/.gz>" << endl << endl;
 
@@ -269,7 +269,7 @@ void usage(char *progname, bool advanced)
        << "  " << progname << " -c segment  -g germline/homo-sapiens.g   -2 -3 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing, here on 50 sampled reads)" << endl
        << "  " << progname << " -c germlines -g germline/homo-sapiens.g              demo/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
     ;
-  exit(1);
+  return 1;
 }
 
 
@@ -403,12 +403,10 @@ int main (int argc, char **argv)
     switch (c)
       {
       case 'h':
-        usage(argv[0], false);
-        break;
+        return usage(argv[0], false);
 
       case 'H':
-        usage(argv[0], true);
-        break;
+        return usage(argv[0], true);
       case 'c':
         if (!strcmp(COMMAND_CLONES,optarg))
           command = CMD_CLONES;
@@ -420,7 +418,7 @@ int main (int argc, char **argv)
           command = CMD_GERMLINES;
         else {
           cerr << "Unknwown command " << optarg << endl;
-	  usage(argv[0], false);
+	  return usage(argv[0], false);
         }
         break;
 
@@ -653,13 +651,13 @@ int main (int argc, char **argv)
   if (!multi_germline && (!f_reps_V.size() || !f_reps_J.size()))
     {
       cerr << ERROR_STRING << "At least one germline must be given with -g or -V/(-D)/-J." << endl ;
-      exit(1);
+      return 1;
     }
 
   if (options_s_k > 1)
     {
       cerr << ERROR_STRING << "Use at most one -s or -k option." << endl ;
-      exit(1);
+      return 1;
     }
 
   string out_seqdir = out_dir + "/seq/" ;
@@ -678,7 +676,7 @@ int main (int argc, char **argv)
   else
     {
       cerr << ERROR_STRING << "Wrong number of arguments." << endl ;
-      exit(1);
+      return 1;
     }
 
   size_t min_cover_representative = (size_t) (min_reads_clone < (int) max_auditionned ? min_reads_clone : max_auditionned) ;
@@ -689,7 +687,7 @@ int main (int argc, char **argv)
   if (! seed_changed)
     {
       cerr << ERROR_STRING << PROGNAME << " was compiled with NO_SPACED_SEEDS: please provide a -k option." << endl;
-    exit(1) ;
+      return 1;
   }
 #endif
 	  
@@ -699,7 +697,7 @@ int main (int argc, char **argv)
   if (seed.size() >= MAX_SEED_SIZE)
     {
       cerr << ERROR_STRING << "Seed size is too large (MAX_SEED_SIZE)." << endl ;
-      exit(1);
+      return 1;
     }
 #endif
 
@@ -707,7 +705,7 @@ int main (int argc, char **argv)
   if ((wmer_size< 0) && (wmer_size!= NO_LIMIT_VALUE))
     {
       cerr << ERROR_STRING << "Too small -w. The window size should be positive" << endl;
-      exit(1);
+      return 1;
     }
 
   // Check that out_dir is an existing directory or creates it
@@ -715,13 +713,13 @@ int main (int argc, char **argv)
 
   if (mkpath(out_cstr, 0755) == -1) {
     cerr << ERROR_STRING << "Directory creation: " << out_dir << endl; perror("");
-    exit(2);
+    return 2;
   }
 
   const char *outseq_cstr = out_seqdir.c_str();
   if (mkpath(outseq_cstr, 0755) == -1) {
     cerr << ERROR_STRING << "Directory creation: " << out_seqdir << endl; perror("");
-    exit(2);
+    return 2;
   }
 
   // Compute basename if not given as an option
@@ -837,7 +835,7 @@ int main (int argc, char **argv)
                                                FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed));
               } catch (std::exception& e) {
                 cerr << ERROR_STRING << PROGNAME << " cannot properly read " << path_file.first << "/" << path_file.second << ": " << e.what() << endl;
-                exit(1);
+                return 1;
               }
             }
 	}
@@ -929,7 +927,7 @@ int main (int argc, char **argv)
     reads = OnlineBioReaderFactory::create(f_reads, 1, read_header_separator, max_reads_processed, only_nth_read);
   } catch (const invalid_argument e) {
     cerr << ERROR_STRING << PROGNAME << " cannot open reads file " << f_reads << ": " << e.what() << endl;
-    exit(1);
+    return 1;
   }
 
   out_dir += "/";
@@ -1666,7 +1664,7 @@ int main (int argc, char **argv)
 
   } else {
     cerr << "Ooops... unknown command. I don't know what to do apart from exiting!" << endl;
-    exit(1);
+    return 1;
   }
   
   //$ Output json
