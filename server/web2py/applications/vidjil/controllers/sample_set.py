@@ -453,6 +453,7 @@ def submit():
 
             # edit
             if (p['id'] != "" and auth.can_modify(set_type, p['id'])):
+                reset = True
                 id = p["id"]
                 sset = db[set_type][id]
                 db[set_type][id] = p
