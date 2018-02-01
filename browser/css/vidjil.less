@@ -2260,12 +2260,6 @@ label.highlight_label {
     background-color: @patientTokenColor;
 }
 
-.token_div {
-    #set_div span.set_token i.icon-cancel {
-        cursor: pointer;
-    }
-}
-
 .token_container {
     display: inline-block;
 }
@@ -2303,6 +2297,19 @@ form {
 .error {
     font-weight: bold;
     color: red;
+}
+
+.icon-cancel {
+    cursor: pointer;
+}
+
+#fieldset_container {
+    :not(.set_token) {
+        > .icon-cancel {
+            float: right;
+            clear: both;
+        }
+    }
 }
 
 /* atwho css */
