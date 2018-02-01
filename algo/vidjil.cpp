@@ -868,7 +868,7 @@ int main (int argc, char **argv)
       if (multi_germline_unexpected_recombinations_12) {
         Germline *pseudo = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", trim_sequences);
         pseudo->seg_method = SEG_METHOD_MAX12 ;
-        pseudo->index = multigermline->index ;
+        pseudo->set_index(multigermline->index);
         multigermline->germlines.push_back(pseudo);
       }
 
@@ -876,7 +876,7 @@ int main (int argc, char **argv)
         Germline *pseudo_u = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", trim_sequences);
         pseudo_u->seg_method = SEG_METHOD_MAX1U ;
         // TODO: there should be more up/downstream regions for the PSEUDO_UNEXPECTED germline. And/or smaller seeds ?
-        pseudo_u->index = multigermline->index ;
+        pseudo_u->set_index(multigermline->index);
         multigermline->germlines.push_back(pseudo_u);
     }
 
