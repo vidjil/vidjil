@@ -835,6 +835,7 @@ int main (int argc, char **argv)
                                                FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed));
               } catch (std::exception& e) {
                 cerr << ERROR_STRING << PROGNAME << " cannot properly read " << path_file.first << "/" << path_file.second << ": " << e.what() << endl;
+                delete multigermline;
                 return 1;
               }
             }
