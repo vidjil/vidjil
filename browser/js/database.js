@@ -575,7 +575,7 @@ Database.prototype = {
                                     }
                                     data.append('id', id);
                                     data.append('file_number', 1)
-                                    data.append('pre_process', document.getElementById('file_pre_process_' + k).value)
+                                    data.append('pre_process', document.getElementById('pre_process').value)
                                     filename = document.getElementById('file_filename_' + k).value;
                                     self.uploader.add(id, data, filename, 1)
                                 }
