@@ -24,27 +24,29 @@ function FormBuilder() {
         return FormBuilder.instance;
     }
 
+    Closeable.call(this);
+
     FormBuilder.instance = this;
     this.index = 0;
 }
 
-FormBuilder.prototype = {
+FormBuilder.prototype = Object.create(Closeable.prototype);
 
-    build_wrapper: function() {
+FormBuilder.prototype.build_wrapper = function() {
         var d = document.createElement('div');
         d.className = "field_div";
         return d;
-    },
+    }
 
-    build_label: function(txt, object, field) {
+FormBuilder.prototype.build_label = function(txt, object, field) {
         var l = document.createElement('label');
         l.htmlFor = field + "_" + this.index;
         l.id = object + "_" + field + "__label_" + this.index;
         l.innerText = txt + ":";
         return l;
-    },
+    }
 
-    build_input: function(id, className, name, input_type, set_type, required, placeholder) {
+FormBuilder.prototype.build_input = function(id, className, name, input_type, set_type, required, placeholder) {
         var i = document.createElement('input');
         i.id = set_type + "_" + id + "_" + this.index;
         i.className = "form-control " + className;
@@ -60,9 +62,9 @@ FormBuilder.prototype = {
         }
 
         return i;
-    },
+    }
 
-    build_field: function(id, name, label, required, placeholder) {
+FormBuilder.prototype.build_field = function(id, name, label, required, placeholder) {
         if (typeof name === "undefined") {
             name = id;
         }
@@ -75,31 +77,31 @@ FormBuilder.prototype = {
         d.appendChild(this.build_label(label, this.type, id));
         d.appendChild(this.build_input(id, 'string', name, 'text', this.type, required, placeholder));
         return d;
-    },
+    }
 
-    build_textarea: function(id, className, name, set_type) {
+FormBuilder.prototype.build_textarea = function(id, className, name, set_type) {
         var t = document.createElement('textarea');
         t.id = set_type + "_" + id + "_" + this.index;
         t.className = "form-control " + className;
         t.name = set_type + "[" + this.index + "][" + name + "]";
         t.rows = 1;
         return t;
-    },
+    }
 
-    build_fieldset: function(type) {
+FormBuilder.prototype.build_fieldset = function(type) {
         var f = document.createElement('fieldset');
         f.name = type + this.index;
         f.appendChild(this.build_legend(capitalise(type) + " " + (this.index+1)));
         return f;
-    },
+    }
 
-    build_legend: function(text) {
+FormBuilder.prototype.build_legend = function(text) {
         var l = document.createElement('legend');
         l.innerText = text;
         return l;
-    },
+    }
 
-    build_date : function(id, object, name, label) {
+FormBuilder.prototype.build_date = function(id, object, name, label) {
         if (typeof name === "undefined") {
             name = id;
         }
@@ -115,9 +117,7 @@ FormBuilder.prototype = {
         i.title = "yyyy-mm-dd"
         d.appendChild(i);
         return d;
-    },
-
-}
+    }
 
 function SetFormBuilder() {
     this.type = 'foobar';
@@ -160,6 +160,7 @@ PatientFormBuilder.prototype = Object.create(SetFormBuilder.prototype);
 PatientFormBuilder.prototype.build = function(index) {
         this.index = index;
         var fieldset = this.build_fieldset(this.type);
+        fieldset.appendChild(this.createCloseButton());
         fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         fieldset.appendChild(this.set_id());
         fieldset.appendChild(this.build_field('first_name', undefined, undefined, true));
@@ -179,6 +180,7 @@ RunFormBuilder.prototype = Object.create(SetFormBuilder.prototype);
 RunFormBuilder.prototype.build = function(index) {
         this.index = index;
         var fieldset = this.build_fieldset(this.type);
+        fieldset.appendChild(this.createCloseButton());
         fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         fieldset.appendChild(this.set_id());
         fieldset.appendChild(this.build_field('name', undefined, undefined, true));
@@ -199,6 +201,7 @@ GenericFormBuilder.prototype = Object.create(SetFormBuilder.prototype);
 GenericFormBuilder.prototype.build = function(index) {
         this.index = index;
         var fieldset = this.build_fieldset('set');
+        fieldset.appendChild(this.createCloseButton());
         fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         fieldset.appendChild(this.build_field('name', undefined, undefined, true));
         fieldset.appendChild(this.build_info());
@@ -216,6 +219,7 @@ FileFormBuilder.prototype = Object.create(FormBuilder.prototype);
 FileFormBuilder.prototype.build = function(index) {
     this.index = index;
     var fieldset = this.build_fieldset('file');
+    fieldset.appendChild(this.createCloseButton());
     fieldset.appendChild(this.build_hidden_fields());
     fieldset.appendChild(this.build_file_fieldset());
     fieldset.appendChild(this.build_set_fieldset());

@@ -39,7 +39,8 @@ function loadAfterConf() {
 
         require(["../germline"],
                 function() {
-                    require(["../generic_axis"],
+                    require(["../generic_axis",
+                             "../closeable"],
                             function() {
                                 require(["../compare",
                                          "../menu",
