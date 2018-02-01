@@ -218,7 +218,7 @@ FileFormBuilder.prototype = Object.create(FormBuilder.prototype);
 
 FileFormBuilder.prototype.build = function(index) {
     this.index = index;
-    var fieldset = this.build_fieldset('file');
+    var fieldset = this.build_fieldset('sample');
     fieldset.appendChild(this.createCloseButton());
     fieldset.appendChild(this.build_hidden_fields());
     fieldset.appendChild(this.build_file_fieldset());
