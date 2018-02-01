@@ -12,8 +12,9 @@ QUnit.test("tokeniser", function(assert) {
     assert.equal(token.innerText, "foobar", "check whether the token text is correct");
 
     var mock_div = document.createElement('div');
+    var mock_target = document.createElement('input');
 
-    tokeniser.tokenise(mock_input, mock_div);
+    tokeniser.tokenise(mock_input, mock_div, mock_target);
     assert.equal(mock_input.value, "", "check that input value is reset");
     assert.equal($(mock_input).data('set-id'), undefined, "check that input data set-id is reset");
 
