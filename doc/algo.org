@@ -754,7 +754,7 @@ This file will be relatively small (a few kB or MB) and can be taken again as an
 ** Advanced usage
 
 #+BEGIN_SRC sh
-./vidjil-algo -c clones -g germline/homo-sapiens.g -r 1 -n 5 -x 10000 demo/LIL-L4.fa
+./vidjil-algo -c clones -g germline/homo-sapiens.g -r 1 -n 5 -x 10000 demo/LIL-L4.fastq.gz
    # Extracts the windows with at least 1 read each (-r 1, the default being -r 5)
    # on the first 10,000 reads, then cluster them into clones
    # with a second clustering step at distance five (-n 5)
