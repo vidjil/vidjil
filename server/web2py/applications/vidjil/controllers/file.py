@@ -213,7 +213,7 @@ def submit():
         f = validate_sets(f, errors)
 
         if len(errors) > 0:
-            f['error'] = error
+            f['error'] = errors
             error = True
             continue
 

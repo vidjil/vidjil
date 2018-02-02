@@ -1,5 +1,8 @@
 <fieldset name="file{{=i}}">
     <legend>Sample {{=i+1}}</legend>
+    {{ if file is not None and 'error' in file and len(file['error']) > 0: }}
+        <div class="error">error: {{=", ".join(file['error'])}}</div>
+    {{ pass }}
     <div>
         <input type="hidden" id="file_filename_{{=i}}" class="filename" name="file[{{=i}}][filename]" type="text" value="">
         <input type="hidden" id="file_id_{{=i}}" name="file[{{=i}}][id]"
