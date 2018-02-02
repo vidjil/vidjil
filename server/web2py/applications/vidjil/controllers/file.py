@@ -77,6 +77,7 @@ def validate_sets(myfile, errors):
     mf = ModelFactory()
     helpers = {}
     myfile['id_dict'] = {}
+    myfile['sets'] = []
     set_ids = [x.strip() for x in myfile['set_ids'].split(',')]
     for sid in set_ids:
         try:
@@ -84,6 +85,7 @@ def validate_sets(myfile, errors):
             if set_type not in myfile['id_dict']:
                 helpers[set_type] = mf.get_instance(set_type)
                 myfile['id_dict'][set_type] = []
+            myfile['sets'].append({'type': set_type, 'id': sid})
             set_id = helpers[set_type].parse_id_string(sid)
             myfile['id_dict'][set_type].append(set_id)
             if not auth.can_modify(set_type, set_id) :
@@ -112,15 +114,20 @@ def get_pre_process_list():
                         info = row.info
                 ))
     return pre_process_list
-    
-def form():
-    group_ids = []
-    relevant_ids = []
+
+def get_set_helpers():
     factory = ModelFactory()
     sample_types = [defs.SET_TYPE_GENERIC, defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN]
     helpers = {}
     for stype in sample_types:
         helpers[stype] = factory.get_instance(type=stype)
+    return helpers
+
+def form():
+    group_ids = []
+    relevant_ids = {}
+
+    helpers = get_set_helpers()
 
     # new file
     if 'sample_set_id' in request.vars:
