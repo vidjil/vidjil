@@ -3,11 +3,11 @@
 
 # Test examples embedded in 'doc/algo.org'
 
-# Run nine times
-9:vidjil-algo -- V.D.J recombinations analysis
+# Run eight times
+8:vidjil-algo -- V.D.J recombinations analysis
 
-# '-c clone' (or implied), six times
-6: end of clones
+# '-c clone' (or implied), five times
+5: end of clones
 
 # '-c windows'
 0:Extracting windows
