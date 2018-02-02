@@ -16,6 +16,7 @@ stages:
   - test_functional_external
   - test_shouldvdj
   - prepare_release
+  - release
   - valgrind_unit
   - valgrind_functional
   - deploy_prod
@@ -76,6 +77,15 @@ prepare_release:
   when: manual
   only:
     - /^feature-a\/.*$/
+
+release:
+  stage: release
+  script: make -C algo release RELEASE_TAG=`cat algo/release`
+  when: manual
+  only:
+    - /^feature-a\/release$/
+  artifacts:
+    paths
 
 # Client
 
