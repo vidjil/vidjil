@@ -754,17 +754,12 @@ This file will be relatively small (a few kB or MB) and can be taken again as an
 ** Advanced usage
 
 #+BEGIN_SRC sh
-./vidjil-algo -c clones -g germline/homo-sapiens.g:IGH -r 1 ./algo/tests/data/clones_simul.fa
+./vidjil-algo -c clones -g germline/homo-sapiens.g -r 1 -n 5 -x 10000 demo/LIL-L4.fa
    # Extracts the windows with at least 1 read each (-r 1, the default being -r 5)
-   # then cluster them into clones
-#+END_SRC
-
-#+BEGIN_SRC sh
-./vidjil-algo -c clones -g germline/homo-sapiens.g:IGH -r 1 -n 5 ./algo/tests/data/clones_simul.fa
-   # Window extraction + clone clustering,
-   # with automatic clustering, distance five (-n 5)
-   # The result of the automatic clustering is in the .vidjil file
-   # and can been seen/edited in the web application.
+   # on the first 10,000 reads, then cluster them into clones
+   # with a second clustering step at distance five (-n 5)
+   # The result of this second is in the .vidjil file ('clusters')
+   # and can been seen and edited in the web application.
 #+END_SRC
 
 #+BEGIN_SRC sh
