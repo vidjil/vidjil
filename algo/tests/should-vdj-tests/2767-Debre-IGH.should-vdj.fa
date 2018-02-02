@@ -1,0 +1,42 @@
+#This sequence may be problematic due to a long deletion ( > 100 nt)
+#IGHV4-59*01 has as many errors as IGHV4-59*03 but is longer hence less desirable
+#but could be ok too
+>IGHV4-59*03 (116/GACGC/5, 119/GCAGACGC/5) IGHD5-12*01 2/CTAGGCTGT/4 IGHJ4*02 [IGH]
+AGGTGCAGCTGGTGGAGTCGGGCCCAGGACTGGTGAAGCCTTCGGAGACCCTGTCCCTCACCTGCACTGTCTCTGGTGGCTCCATCAGGATTTAGTACTGGAGCTGGATCCGGCAGCCCCCAGGGAGGGGACTGGAGTGGATTGATTAGATCCACTACAGTGGGAGCA
+GCAGACGCTATAGGGACTACGATTCTAGGCTGT
+CTTTGACTACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGTAAG
+
+### Parts of the sequences with trimmed regions for the 2 segments V4
+## alignement                                                                                   116nt to the end
+#                                                                                               | 
+#>IGHV4-59*03   |||    ggagctggatccggcagcccccagggaagggactggagtggattgggtatatctattacagtgggagcacca-actaca...
+#                      |||||||||||||||||||||||||||*|||||||||||||||||**||*|||*|*|||||||||||||*|| ||
+#>clone         |||    GGAGCTGGATCCGGCAGCCCCCAGGGAGGGGACTGGAGTGGATTGATTAGATCCACTACAGTGGGAGCAGCAGACGCTATAGGGACTACGATTCTAGGCTGTCTTTGACTACTGGGGCCAGGGAAC
+#                                                             ||||||**||*|||*|*||*||||||||||*|*
+#>IGHV4-59*04   |||                                           GGATTGGGTATATCTATTATAGTGGGAGCACCTACTACAACCCGTCCCT
+#                                                                                                   |||||*|*||||||||         ||||||||||||||||||||||||
+# IGHD5-12*01   |||                                                                            GTGGATATAGTGGCTACGATTAC       ||||||||||||||||||||||||
+#                                                                                                                            ||||||||||||||||||||||||
+# IGHJ4*01      |||                                                                                                      ACTACTTTGACTACTGGGGCCAAGGAACCCTGGTCACCGTCTCCTCAG
+
+
+
+#This sequence may be problematic due to a long deletion ( > 100 nt)
+>IGHV3-7*01 (112/CCAGGACC/6, 112/CC/0) IGHD2-2 (16/GAATACCTAGTACC/12, 16/GAATACCTAGT/9, 16/GAA/2)  (IGHJ4*01, IGHJ4*02) [IGH]
+CTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCAGGATTCTCCTTTAGTAGCTTTGACATGAGCTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGAGTGGCACATATCTGGAATGATGGAAGTCAGAAATGCTCTGCGG
+CCAGGACCTTGTAGTAGGAA
+TACCTAGTACCACTGGGGCAAGGAAACCCTGGTCACCGTCTCCTCAGGT
+
+#>IGHV3-7*01     AGCTATTGGATGAGCTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTGGCCAACATAAAGCAAGATGGAAGTGAGAAATACTATGTGGactctgt...        actactttg-actactggggccagggaaccctggtcaccgtctcctcag IGHJ4*02
+#                ||||*|***|||||||||||||||||||||||||||||||||||||||||*|||||*|**||***|*|*|||||||||*||||||*||*||*||                    |||*|*| ||*|||||||| ||| ||||||||
+#>Clone_complet  agctttgacatgagctgggtccgccaggctccagggaaggggctggagtgagtggcacatatctggaaTGATGGAAGTCAGAAATGCTCTGCGGCCAGGACCTTGTAGTAGGAATACCTAGTACCACTGGGGCAAGGAAACCCTGGTCACCGTCTCCTCAGGT
+#                **|****|||||**||||||||||||||||||||||||||||||||||||*||*|*|**||***|*||                            ||||**|||||||||
+#>IGHV3-72*02    GACCACTACATGGACTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTTGGCCGTACTAGAAAcaaagctaacag...             ||||**|||||||||
+#>IGHD2-2*01                                                                                                     aggatattgtagtagtaccagctgctatgcc
+
+#>del_right_v3-7 (len 110)
+#
+#
+#>del_right_v3-72 (len 88)
+#
+

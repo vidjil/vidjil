@@ -240,7 +240,10 @@ MultiGermline::MultiGermline(IndexTypes indexType, bool _one_index_per_germline)
 }
 
 MultiGermline::~MultiGermline() {
-  for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
+  if (index && --(index->refs) == 0) {
+    delete index;
+  }
+  for (list<Germline*>::iterator it = germlines.begin(); it != germlines.end(); ++it)
     {
       delete *it ;
     }
@@ -373,6 +376,7 @@ void MultiGermline::build_with_one_index(string seed, bool set_index)
 {
   bool rc = true ;
   index = KmerStoreFactory<KmerAffect>::createIndex(indexType, seed, rc);
+  index->refs = 1;
   insert_in_one_index(index, set_index);
 }
 

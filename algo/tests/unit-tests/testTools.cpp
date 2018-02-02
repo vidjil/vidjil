@@ -180,14 +180,15 @@ void testFastaAddThrows() {
   }
   TAP_TEST_EQUAL(caught, true, TEST_FASTA_INVALID_FILE, "");
   caught = false;
-  OnlineBioReader *fa_read;
+  OnlineBioReader *fa_read = NULL;
   try {
     // Can't test empty file with BioReader since we
     // don't complain for empty files explicitly in BioReader constructor.
     fa_read = OnlineBioReaderFactory::create("data/malformed6.fq");
     fa_read->next();
   } catch (invalid_argument e) {
-    delete fa_read;
+    if (fa_read)
+        delete fa_read;
     TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -280,6 +281,9 @@ void testDNAToInt() {
   TAP_TEST_EQUAL(dna_to_int("TTTT", 4), 255, TEST_DNA_TO_INT, "");
 }
 
+void testDNAToHash() {
+  TAP_TEST_EQUAL(dna_to_hash("ACGT", 4), 6383640340, TEST_DNA_TO_HASH, "");
+}
 
 void testNucToAA() {
   cout << GENETIC_CODE << endl;
@@ -482,6 +486,7 @@ void testTools() {
   testCreateSequence();
   testNucToInt();
   testDNAToInt();
+  testDNAToHash();
   testNucToAA();
   testRevcompInt();
   testExtendedNucleotides();

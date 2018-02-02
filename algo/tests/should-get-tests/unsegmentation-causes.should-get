@@ -2,7 +2,7 @@
 
 $ Only one sequence is segmented, but it is too small for a window (too short w)
 1: junction detected in 1 reads
-1: found 0 50-windows in 0 reads
+1: found 0 windows in 0 reads
 
 $ The proper unsegmentation cause is given
 1: UNSEG too short   -> .* 1

@@ -211,7 +211,7 @@ Sequence Segmenter::getSequence() const {
 string Segmenter::getJunction(int l, int shift) {
   assert(isSegmented());
 
-  shiftedJunction = false;
+  junctionChanged = false;
   // '-w all'
   if (l == NO_LIMIT_VALUE)
     return getSequence().sequence;
@@ -230,7 +230,7 @@ string Segmenter::getJunction(int l, int shift) {
 
   if (length_shift.first < l || length_shift.second != 0) {
     info += " w" + string_of_int(length_shift.first) + "/" + string_of_int(length_shift.second);
-    shiftedJunction = true;
+    junctionChanged = true;
   }
 
   // Window succesfully extracted
@@ -265,8 +265,8 @@ bool Segmenter::isDSegmented() const {
   return dSegmented;
 }
 
-bool Segmenter::isJunctionShifted() const {
-  return shiftedJunction;
+bool Segmenter::isJunctionChanged() const {
+  return junctionChanged;
 }
 // E-values
 
@@ -477,10 +477,16 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
         return ;
       }
 
+    int pos = kaa.minimize(kmer, DEFAULT_MINIMIZE_ONE_MARGIN, DEFAULT_MINIMIZE_WIDTH);
+
+    if (pos == NO_MINIMIZING_POSITION)
+      {
+        because = UNSEG_TOO_SHORT_FOR_WINDOW;
+        return ;
+      }
+
     segmented = true ;
     because = reversed ? SEG_MINUS : SEG_PLUS ;
-
-    int pos = sequence.size() / 2 ;
 
     info = "=" + string_of_int(c) + " @" + string_of_int(pos) ;
 
@@ -830,12 +836,13 @@ bool comp_pair (pair<int,int> i,pair<int,int> j)
  * @param local:        if true, Local alignment (D segment), otherwise LocalEndWithSomeDeletions and onlyBottomTriangle (V and J segments)
  * @param box:          the AligBox to fill
  * @param segment_cost: the cost used by the dynamic programing
+ * @param banded_dp: should we perform a banded DP?
  * @post  box is filled
  */
 
 void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id,
                               bool reverse_ref, bool reverse_both, bool local,
-                             AlignBox *box, Cost segment_cost)
+                              AlignBox *box, Cost segment_cost, bool banded_dp)
 {
   
   int best_score = MINUS_INF ;
@@ -852,6 +859,7 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
 
   // With reverse_ref, the read is reversed to prevent calling revcomp on each reference sequence
   string sequence_or_rc = revcomp(read, reverse_ref);
+  bool onlyBottomTriangle = !local && banded_dp ;
   
   for (int r = 0 ; r < rep.size() ; r++)
     {
@@ -864,7 +872,6 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
 			   reverse_both, reverse_both,
                           rep.read(r).marked_pos);
 
-      bool onlyBottomTriangle = !local ;
       int score = dp.compute(onlyBottomTriangle, BOTTOM_TRIANGLE_SHIFT);
       
       if (local==true){ 
@@ -895,6 +902,14 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
 #endif
 
     }
+
+  if (onlyBottomTriangle && (rep.sequence(box->ref_nb).size() - best_best_j) > BOTTOM_TRIANGLE_SHIFT) {
+    // Too many deletions, let's do a full DP
+    align_against_collection(read, rep, forbidden_rep_id, reverse_ref, reverse_both,
+                             local, box, segment_cost, false);
+    return;
+  }
+
     sort(score_r.begin(),score_r.end(),comp_pair);
 
   box->ref = rep.sequence(box->ref_nb);

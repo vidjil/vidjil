@@ -38,7 +38,7 @@ MAINCORE=$(wildcard *.cpp)
 LIBCORE=core/vidjil.a lib/lib.a
 
 BINDIR=../
-CGIDIR=../browser/cgi/
+CGIDIR=../tools/
 TOOLDIR=tools/
 
 VIDJIL=$(BINDIR)$(EXEC)
@@ -148,7 +148,6 @@ test:
 	$(MAKE) -C tests cleantests
 	$(TEE) '$(MAKE) COVERAGE="$(COVERAGE)" unit' tests/out-unit.log
 	$(MAKE) functional
-	$(TEE) '$(MAKE) -C .. test_tools_if_python'        tests/out-tools.log
 	@echo
 	@echo "*** All tests passed. Congratulations !"
 	@echo
@@ -240,6 +239,94 @@ shouldvdj_generated_fine: base
 	@echo "*** Generated .should-vdj.fa tests finished -- Fine"
 	python tests/tap-stats.py tests/data/gen/0-*.1.tap
 	python tests/tap-stats.py tests/data/gen/5-*.1.tap
+
+
+
+###
+# Release
+###
+
+# $(MAKE) release RELEASE_TAG=2013.04alpha
+
+RELEASE_TAG = notag
+RELEASE_H = release.h
+GIT_VERSION_H = git-version.h
+
+RELEASES_DIR = releases/
+RELEASE_NAME = vidjil-$(RELEASE_TAG)
+RELEASE_ARCHIVE_TAR = $(RELEASE_NAME).tar
+RELEASE_ARCHIVE_TGZ = $(RELEASE_NAME).tar.gz
+RELEASE_DIR_TMP = releases/tmp
+
+RELEASE_ALGO = src/
+RELEASE_TOOLS = $(wildcard ../tools/*.py)
+RELEASE_MAKE = ../tools/tests/Makefile ../doc/Makefile
+RELEASE_TESTS = ../doc/format-analysis.org $(wildcard ../doc/analysis-example.vidjil) $(wildcard ../tools/tests/*.should_get) ../tools/tests/should-to-tap.sh ../tools/diff_json.sh ../demo/get-sequences ../demo/Demo-X5.fa ../demo/Makefile
+RELEASE_GERMLINES = ../germline/Makefile ../germline/germline_id ../germline/get-saved-germline ../germline/get-germline ../germline/split-from-imgt.py $(wildcard ../germline/*.g) ../germline/revcomp-fasta.py ../germline/fasta.py
+RELEASE_HELP = ../doc/algo.org ../doc/locus.org ../doc/dev.org ../doc/should-vdj.org ../doc/credits.org ../doc/CHANGELOG ../doc/LICENSE ../README.org ../INSTALL.org
+RELEASE_FILES = $(RELEASE_TOOLS) $(RELEASE_TESTS) $(RELEASE_MAKE) $(RELEASE_GERMLINES) $(RELEASE_HELP)
+
+
+release: release_create release_check
+
+release_create:
+	$(info ==== Release $(RELEASE_NAME) ====)
+
+	# Prepare directories
+	mkdir -p $(RELEASES_DIR)
+	rm -rf $(RELEASES_DIR)/$(RELEASE_ARCHIVE_TAR) $(RELEASES_DIR)/$(RELEASE_ARCHIVE_TGZ) $(RELEASE_DIR_TMP)/$(RELEASE_NAME)
+	mkdir -p $(RELEASE_DIR_TMP)/$(RELEASE_NAME)
+	mkdir -p $(RELEASE_DIR_TMP)/$(RELEASE_NAME)/$(RELEASE_ALGO)
+
+	# Do the archive
+	git archive --format=tar --prefix $(RELEASE_NAME)/$(RELEASE_ALGO) -o $(RELEASES_DIR)/$(RELEASE_ARCHIVE_TAR) HEAD .
+
+	# Tag the release
+	if test "$(RELEASE_TAG)" != "notag"; then \
+		git tag -f $(RELEASE_NAME); \
+	fi
+
+	# Create release.h and git-version.h
+	echo '#define RELEASE_TAG "$(RELEASE_TAG)"' > $(RELEASE_DIR_TMP)/$(RELEASE_NAME)/$(RELEASE_ALGO)/$(RELEASE_H); \
+	sh create-git-version-h.sh ; cp git-version.h $(RELEASE_DIR_TMP)/$(RELEASE_NAME)/$(RELEASE_ALGO)/$(GIT_VERSION_H)
+
+	# Store a global Makefile
+	cp ../Makefile.algo $(RELEASE_DIR_TMP)/$(RELEASE_NAME)/Makefile
+
+	# Store also other files in archive
+	for file in $(RELEASE_FILES); do\
+	  dir=$(RELEASE_DIR_TMP)/$(RELEASE_NAME)/algo/`dirname "$$file"`/;    \
+	  mkdir -p $$dir; \
+	  cp -v "$$file" $$dir/;     \
+	done
+
+	# A spurious algo/ directory is created, remove it
+	rmdir $(RELEASE_DIR_TMP)/$(RELEASE_NAME)/algo
+
+	# Store these files in archive
+	cd $(RELEASE_DIR_TMP) ; tar rf ../$(RELEASE_ARCHIVE_TAR) $(RELEASE_NAME)/
+
+
+	# TODO: make -C $(RELEASE_NAME)/doc html || true
+
+	# Compress the archive
+	cd $(RELEASES_DIR) && gzip $(RELEASE_ARCHIVE_TAR)
+
+
+release_check:
+	# Check archive
+	$(info)
+	$(info ==== Checking $(RELEASE_ARCHIVE_TGZ) ====)
+
+	cd $(RELEASES_DIR) && tar xvfz $(RELEASE_ARCHIVE_TGZ)
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) germline
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) vidjil-algo
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) demo
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) test
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) -C src clean && $(MAKE) -C src static && mv $(EXEC) $(EXEC)-$(RELEASE_TAG)_`uname -m`
+
+
+
 
 ###
 # dep.mk

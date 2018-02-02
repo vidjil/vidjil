@@ -23,6 +23,14 @@ void testAffectAnalyser1() {
   TAP_TEST_EQUAL(ckaa.getAllowedOverlap(), k-1, TEST_COUNT_AA_GET_OVERLAP, "");
   TAP_TEST_EQUAL(ckaa.getSequence(), "AAAACCCCCGGGGG", TEST_AA_GET_SEQUENCE, "actual: " << ckaa.getSequence());
 
+  int shift = (kaa.getSequence().length() - kaa.getAllAffectations(AO_NONE).size() + 1) / 2;
+  TAP_TEST_EQUAL(kaa.minimize(KmerAffect::getAmbiguous(), 0, 4), 0+shift, TEST_AA_MINIMIZE, ""); // first k-mer, AAAA is ambiguous
+  TAP_TEST_EQUAL(kaa.minimize(KmerAffect::getAmbiguous(), 1, 4), NO_MINIMIZING_POSITION, TEST_AA_MINIMIZE, ""); // too large margin (left side)
+  TAP_TEST_EQUAL(kaa.minimize(KmerAffect("A", 1, k), 0, 3), NO_MINIMIZING_POSITION, TEST_AA_MINIMIZE, ""); // no non-ambiguous AAAA
+  TAP_TEST_EQUAL(kaa.minimize(KmerAffect("C", 1, k), 3, 4), 4+shift, TEST_AA_MINIMIZE, ""); // margin = 3, does not affect C
+  TAP_TEST_EQUAL(kaa.minimize(KmerAffect("C", 1, k), 5, 4), 5+shift, TEST_AA_MINIMIZE, ""); // margin = 5, second k-mer C exactly fits between both margins
+  TAP_TEST_EQUAL(kaa.minimize(KmerAffect("G", 1, k), 5, 4), NO_MINIMIZING_POSITION, TEST_AA_MINIMIZE, ""); // too large margin (right side)
+
   for (int i = 2; i < nb_seq-1; i++) {
     // i starts at 2 because AAAA is not found: there is an ambiguity with
     // AAAA coming from AAAACAAAACAAAAC or AAAAAAAAAAAAAAA

@@ -149,6 +149,7 @@ while read line; do
                     fi
                     echo "Launching '$cmd'" >&2
                     if [ -z "$OUTPUT_FILE" ]; then
+                        mkdir -p "$(pwd)/$(dirname $LOG_FILE)"
                         eval $cmd > $LOG_FILE
                         EXIT_CODE=$?
                         FILE_TO_GREP=$LOG_FILE
@@ -173,10 +174,10 @@ while read line; do
 
                 # Remove trailing whitespaces.
                 # Depending on Bash version they are not handled in the same way → uniformize
-                pattern=$(sed -e 's/^\s*//' <<< "$pattern")
+                pattern=$(sed -r 's/^[[:space:]]*//' <<< "$pattern")
 
                 # Escape special characters for sed
-                pattern=$(sed -e 's/[/&]/\\&/g' <<< $pattern)
+                pattern=$(sed -r 's/[/&]/\\&/g' <<< $pattern)
 
                 while ! [ "${nb_hits:0:1}" -eq "${nb_hits:0:1}" ] 2> /dev/null; do
                     case ${nb_hits:0:1} in
@@ -215,8 +216,9 @@ while read line; do
 			echo >&2; echo >&2; echo $SEPARATOR_LINE >&2
 			echo "$file failed ($nb_hits_found instead of $nb_hits)" >&2
 			echo "$line" >&2
+                        echo $FILE_TO_GREP >&2
 			echo $SEPARATOR_LINE >&2
-			cat $FILE_TO_GREP >&2
+			cat $FILE_TO_GREP | head -n 100 >&2
 			echo $SEPARATOR_LINE >&2; echo >&2; echo >&2
                     fi
                 fi

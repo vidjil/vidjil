@@ -1,7 +1,7 @@
 !LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g -c clones -A -3 $VIDJIL_DATA/segment_lec.fa
 
-$ Extract 50bp windows (TRG)
-1:found . 50-windows
+$ Extract up to 50bp windows (TRG)
+1:windows up to 50bp
 
 $ Find the good number of windows
 1: found 4 .* in 7 reads .* 7 reads

@@ -15,7 +15,16 @@ SHOULD_VDJ_VDJ=$(SHOULD_VDJ:.should-vdj.fa=.1.vdj)
 SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
 SHOULD_VDJ_TO_TAP=python -u should-vdj-to-tap.py
 REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
-VALGRIND=valgrind -v --tool=memcheck --leak-check=full --show-reachable=yes --undef-value-errors=yes --track-origins=yes --xml=yes --xml-file="$$(mktemp "$(REPORTS_PATH)/valgrind.xml.XXXXXX")"
+VALGRIND=valgrind
+VALGRIND_TOOLS= --tool=memcheck --leak-check=full --show-reachable=yes --trace-children=yes
+VALGRIND_OUTPUT_XML=--xml=yes --xml-file='$(REPORTS_PATH)/valgrind.xml.%p'
+VALGRIND_OUTPUT=--error-exitcode=1
+
+ifeq ($(XML_OUTPUT), 1)
+  VALGRIND_OUTPUT=$(VALGRIND_OUTPUT_XML)
+endif
+
+VALGRIND_CMD=$(VALGRIND) $(VALGRIND_TOOLS) $(VALGRIND_OUTPUT)
 
 #should-vdj that should not be published in our public curated dataset (just internal tests)
 EXCLUDE_SHOULD_VDJ=bug20151006-rc.should-vdj.fa cdr3-indels.should-vdj.fa ext-nucleotides-N.should-vdj.fa segment_simul.should-vdj.fa trd-dd2-dd3.should-vdj.fa trd-dd2up-dd3down.should-vdj.fa igh-vdj.should-vdj.fa Demo-X5.should-vdj.fa
@@ -107,14 +116,14 @@ curated-vdj.zip: $(SHOULD_VDJ_ARCHIVE)
 	./should-to-tap.sh $<
 
 valgrind_should:
-	$(MAKE) -C $(REPORTS_PATH) clean_valgrind
-	LAUNCHER="$(VALGRIND)" $(MAKE) should
+	$(MAKE) -C "$(REPORTS_PATH)" clean_valgrind
+	LAUNCHER="$(VALGRIND_CMD)" $(MAKE) should
 
 valgrind_%:
-	LAUNCHER="$(VALGRIND)" $(MAKE) $(patsubst valgrind_%,%,$@)
+	LAUNCHER="$(VALGRIND_CMD)" $(MAKE) $(patsubst valgrind_%,%,$@)
 
 valgrind_tests: vidjil ./unit-tests/tests
-	$(VALGRIND) ./unit-tests/tests
+	$(VALGRIND_CMD) ./unit-tests/tests
 
 $(EXEC): % : %.o $(LIB) 
 	$(CXX) -o $@ $< $(LIB) $(LDLIBS) $(LDFLAGS) $(CXXFLAGS)

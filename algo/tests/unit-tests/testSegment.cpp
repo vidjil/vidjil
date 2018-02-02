@@ -272,7 +272,7 @@ void testBug2224(IndexTypes index) {
   germline->finish();
 
   KmerSegmenter ks(data.read(0), germline);
-  TAP_TEST_EQUAL(ks.getKmerAffectAnalyser(), NULL, TEST_BUG2224, "");
+  TAP_TEST(ks.getKmerAffectAnalyser() == NULL, TEST_BUG2224, "");
   json json_output = ks.toJson();
   TAP_TEST_EQUAL(json_output.count("affectValues"), 0, TEST_BUG2224, "");
   TAP_TEST_EQUAL(json_output.count("affectSigns"), 0, TEST_BUG2224, "");
@@ -345,14 +345,8 @@ void testBestLengthShifts() {
   list<pair<pair<int, int>, pair<int, int> > > test_sets =
   // pos, shift| length, shift
     { {{50, 5}, {30, 0}},
-      {{90, 5}, {30, -5}},
-      {{10, 5}, {30, 5}},
-      {{85, 5}, {30, 0}},
-      {{15, 5}, {30, 0}},
-      {{91, 5}, {25, -5}},
-      {{9, 5}, {25, 5}},
-      {{99, 5}, {10, -5}},
-      {{0, 5}, {10, 5}},
+      {{85, 5}, {30, 0}},  {{90, 5}, {30, -5}},  {{91, 5}, {30, -10}},  {{96, 5}, {25, -10}},  {{99, 5}, {20, -10}},
+      {{15, 5}, {30, 0}},  {{10, 5}, {30,  5}},  {{ 9, 5}, {30, 10}},   {{ 4, 5}, {25,  10}},  {{ 0, 5}, {20,  10}},
       {{-100, 5}, {0, 0}}
     };
 

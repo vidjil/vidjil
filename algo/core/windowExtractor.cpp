@@ -70,16 +70,16 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
       if (!only_labeled_windows || windowsStorage->isInterestingJunction(junc)) {
 
         // Store the window
-        if (seg->isJunctionShifted())
-          windowsStorage->add(junc, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline, {SEG_SHORTER_WINDOW});
+        if (seg->isJunctionChanged())
+          windowsStorage->add(junc, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline, {SEG_CHANGED_WINDOW});
         else
           windowsStorage->add(junc, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline);
       }
 
       // Update stats
       stats[TOTAL_SEG_AND_WINDOW].insert(read_length) ;
-      if (seg->isJunctionShifted())
-        stats[SEG_SHORTER_WINDOW].insert(read_length);
+      if (seg->isJunctionChanged())
+        stats[SEG_CHANGED_WINDOW].insert(read_length);
       stats_reads[seg->system].addScore(read_length);
 
       if (out_segmented) {
@@ -242,7 +242,7 @@ pair<int, int> WindowExtractor::get_best_length_shifts(size_t read_length,
 
   best_length = best_length / shift * shift;
 
-  list<int> shifts {-1, 1};
+  list<int> shifts {-1, 1, -2, 2};
   for (int current_shift : shifts) { // -1 will be a left shift
     int shifted_constraint_left = constraint_left + current_shift * shift * 2;
     int shifted_constraint_right = constraint_right - current_shift * shift * 2;

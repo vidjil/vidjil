@@ -151,7 +151,7 @@ class WindowExtractor {
    * @param central_pos: start position of the second half of the window
    * @param shift: length of the shift
    * @return a pair (length, shift) giving the first window that fits at the central_pos
-   *         (possibly shifted, as mentionned by shift) of the given length.
+   *         (possibly shifted at most twice, as mentionned by shift) of the given length.
    *         shift == 0 iff length == max_window_length.
    *         In case of an odd window length, we assume that the second half of the
    *         window, starting at central_pos, is the longest.

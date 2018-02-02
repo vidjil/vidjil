@@ -27,6 +27,8 @@
 #include <cassert>
 #include <vector>
 #include "bioreader.hpp"
+#include "../lib/json.hpp"
+using json = nlohmann::json;
 using namespace std;
 
 #define PRINT_VAR(v) cerr << #v << " = " << v << endl
@@ -134,9 +136,10 @@ inline int nuc_to_int(char nuc) {
 }
 
 /**
- * Convert size nucleotides from a DNA string to an integer.
+ * Convert size nucleotides from a DNA string to an integer or to an hash.
  */
 int dna_to_int(const string &, int size);
+uint64_t dna_to_hash(const string &, int size);
 
 #define GENETIC_CODE \
   "KNKN" "TTTT" "RSRS" "IIMI" \
@@ -251,6 +254,9 @@ bool operator!=(const Sequence &s1, const Sequence &s2);
  ***/
 
 void output_label_average(ostream &out, string label, long long int nb, double average, int precision=1);
+
+void json_add_warning(json &clone, string code, string msg);
+
 
 //////////////////////////////////////////////////
 // Template code

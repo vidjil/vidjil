@@ -3,8 +3,8 @@
 ** Algorithm -- Installation instructions
 
    #+BEGIN_SRC sh
-make ; make germline ; make data
-./vidjil -h   
+make
+./vidjil-algo -h
    #+END_SRC
 
 Detailed compilation, installation and usage instructions

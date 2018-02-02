@@ -14,7 +14,7 @@ void testWSAdd() {
   ws.add("ATTAG", seq, SEG_PLUS, &germline);
 
   TAP_TEST(ws.getGermline("ATTAG") == &germline,TEST_WS_GET_GERMLINE, "");
-  TAP_TEST_EQUAL(ws.getGermline("A"), NULL, TEST_WS_GET_GERMLINE_NONE, "");
+  TAP_TEST(ws.getGermline("A") == NULL, TEST_WS_GET_GERMLINE_NONE, "");
   TAP_TEST_EQUAL(ws.hasWindow("ATTAG"), true, TEST_WS_HAS_WINDOW, "");
   TAP_TEST_EQUAL(ws.hasWindow("A"), false, TEST_WS_HAS_WINDOW, "");
   TAP_TEST_EQUAL(ws.size(), 1, TEST_WS_SIZE, "");

@@ -1,10 +1,28 @@
 #!/bin/sh
 
 echo <<EOF
-Please pay attention that the Stanford_S22 dataset comes from Boyd,
-S. D., et al. Individual variation in the germline Ig gene repertoire inferred
-from variable region gene rearrangements. J Immunol, 184(12), 6986–92.
+Downloading public data
+
+- Stanford_S22 dataset from
+  Boyd, S. D., et al. Individual variation in the germline Ig gene repertoire inferred
+  from variable region gene rearrangements. J Immunol, 184(12), 6986–92.
+
+- LIL-L4 dataset from
+  Giraud, Salson, et al. Fast multiclonal clusterization of V(D)J recombinations
+  from high-throughput sequencing. BMC Genomics 2014, 15:409.
 EOF
 
-wget -q -O- http://www.vidjil.org/seqs/Stanford_S22.tar.gz | tar xvzf -
+wget -nc -q http://www.vidjil.org/seqs/Stanford_S22.tar.gz
+tar xvzf Stanford_S22.tar.gz
+
+wget -nc -q --show-progress -O LIL-L4.fastq.gz https://db.vidjil.org/vidjil/patient/download/sequence_file.data_file.89a7ad1ac0e2c6fa.4c313530303132352e496f6e5870726573735f3039362e66617374712e677a.gz
+status=$?
+# wget -nc -O exits with 1 when file already exists but thit is is not an
+# error and should not fail the Makefile!
+if [ $status -eq 1 ]; then
+    exit 0
+else
+    exit $status
+fi
+
 

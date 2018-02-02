@@ -95,9 +95,8 @@ These instructions are preliminary, other documentation can also be found in [[h
    repository [[https://hub.docker.com/r/vidjil/vidjil/][vidjil/vidjil]].
    Our docker environment makes use of docker-compose. All Vidjil components
    are currently packaged into a single docker image. Individual services are
-   started by docker compose, such as in this
-   [[example][https://github.com/vidjil/vidjil/blob/master/docker/docker-compose.yml]].
-
+   started by docker compose, such as in this [[http://gitlab.vidjil.org/blob/master/docker/docker-compose.yml][example]].
+   
 *** Versions
    - 1.1
    - 1.2

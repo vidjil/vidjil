@@ -140,19 +140,21 @@ extern char *optarg;
 
 extern int optind, optopt, opterr;
 
-void usage(char *progname, bool advanced)
+int usage(char *progname, bool advanced)
 {
   cout
        << endl 
        << "Examples (see doc/algo.org)" << endl
-       << "  " << progname << " -c clones   -g germline/homo-sapiens.g     -2 -3     demo/Stanford_S22.fasta   # (basic usage, detect the locus for each read," << endl
-       << "                                                                                          #  including unexpected recombinations, analyzes CDR3)" << endl
+       << "  " << progname << " -c clones   -g germline/homo-sapiens.g   -2 -3 -r 1  demo/Demo-X5.fa           # (basic usage, detect the locus for each read," << endl
+       << "                                                                                               #  cluster reads and report clones starting from the first read (-r 1)," << endl
+       << "                                                                                               #  including unexpected recombinations (-2), assign V(D)J genes and try to detect the CDR3s (-3))" << endl
        << "  " << progname << " -c clones   -g germline/homo-sapiens.g:IGH    -3     demo/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
-       << "  " << progname << " -c windows  -g germline/homo-sapiens.g     -2 -uu -U demo/Stanford_S22.fasta   # (detect the locus, splits all the reads into large files)" << endl
-       << "  " << progname << " -c segment  -g germline/homo-sapiens.g   -2 -3 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing, here on first 50 reads)" << endl
+       << "  " << progname << " -c clones   -g germline/homo-sapiens.g   -2 -3 -z 20 demo/LIL-L4.fastq.gz      # (basic usage, output detailed V(D)J analysis on the first 20 clones)" << endl
+       << "  " << progname << " -c windows  -g germline/homo-sapiens.g   -y 0 -uu -U demo/LIL-L4.fastq.gz      # (splits all the reads into (large) files depending on the detection of V(D)J recombinations)" << endl
+       << "  " << progname << " -c segment  -g germline/homo-sapiens.g   -2 -3 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing, here on 50 sampled reads)" << endl
        << "  " << progname << " -c germlines -g germline/homo-sapiens.g              demo/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
     ;
-  exit(1);
+  return 1;
 }
 
 
@@ -511,13 +513,13 @@ int main (int argc, char **argv)
   if (!multi_germline && (!f_reps_V.size() || !f_reps_J.size()))
     {
       cerr << ERROR_STRING << "At least one germline must be given with -g or -V/(-D)/-J." << endl ;
-      exit(1);
+      return 1;
     }
 
   if (options_s_k > 1)
     {
       cerr << ERROR_STRING << "Use at most one -s or -k option." << endl ;
-      exit(1);
+      return 1;
     }
 
   string out_seqdir = out_dir + "/seq/" ;
@@ -530,6 +532,12 @@ int main (int argc, char **argv)
       cout << "# using default sequence file: " << f_reads << endl ;
     }
 
+  //  else
+  //  {
+  //    cerr << ERROR_STRING << "Wrong number of arguments." << endl ;
+  //    return 1;
+  //  }
+
   size_t min_cover_representative = (size_t) (min_reads_clone < (int) max_auditionned ? min_reads_clone : max_auditionned) ;
 
   // Default seeds
@@ -538,7 +546,7 @@ int main (int argc, char **argv)
   if (! seed_changed)
     {
       cerr << ERROR_STRING << PROGNAME << " was compiled with NO_SPACED_SEEDS: please provide a -k option." << endl;
-    exit(1) ;
+      return 1;
   }
 #endif
 	  
@@ -548,7 +556,7 @@ int main (int argc, char **argv)
   if (seed.size() >= MAX_SEED_SIZE)
     {
       cerr << ERROR_STRING << "Seed size is too large (MAX_SEED_SIZE)." << endl ;
-      exit(1);
+      return 1;
     }
 #endif
 
@@ -556,7 +564,7 @@ int main (int argc, char **argv)
   if ((wmer_size< 0) && (wmer_size!= NO_LIMIT_VALUE))
     {
       cerr << ERROR_STRING << "Too small -w. The window size should be positive" << endl;
-      exit(1);
+      return 1;
     }
 
   // Check that out_dir is an existing directory or creates it
@@ -564,13 +572,13 @@ int main (int argc, char **argv)
 
   if (mkpath(out_cstr, 0755) == -1) {
     cerr << ERROR_STRING << "Directory creation: " << out_dir << endl; perror("");
-    exit(2);
+    return 2;
   }
 
   const char *outseq_cstr = out_seqdir.c_str();
   if (mkpath(outseq_cstr, 0755) == -1) {
     cerr << ERROR_STRING << "Directory creation: " << out_seqdir << endl; perror("");
-    exit(2);
+    return 2;
   }
 
   // Compute basename if not given as an option
@@ -686,7 +694,8 @@ int main (int argc, char **argv)
                                                FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed));
               } catch (std::exception& e) {
                 cerr << ERROR_STRING << PROGNAME << " cannot properly read " << path_file.first << "/" << path_file.second << ": " << e.what() << endl;
-                exit(1);
+                delete multigermline;
+                return 1;
               }
             }
 	}
@@ -719,7 +728,7 @@ int main (int argc, char **argv)
       if (multi_germline_unexpected_recombinations_12) {
         Germline *pseudo = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", trim_sequences);
         pseudo->seg_method = SEG_METHOD_MAX12 ;
-        pseudo->index = multigermline->index ;
+        pseudo->set_index(multigermline->index);
         multigermline->germlines.push_back(pseudo);
       }
 
@@ -727,7 +736,7 @@ int main (int argc, char **argv)
         Germline *pseudo_u = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", trim_sequences);
         pseudo_u->seg_method = SEG_METHOD_MAX1U ;
         // TODO: there should be more up/downstream regions for the PSEUDO_UNEXPECTED germline. And/or smaller seeds ?
-        pseudo_u->index = multigermline->index ;
+        pseudo_u->set_index(multigermline->index);
         multigermline->germlines.push_back(pseudo_u);
     }
 
@@ -778,7 +787,7 @@ int main (int argc, char **argv)
     reads = OnlineBioReaderFactory::create(f_reads, 1, read_header_separator, max_reads_processed, only_nth_read);
   } catch (const invalid_argument e) {
     cerr << ERROR_STRING << PROGNAME << " cannot open reads file " << f_reads << ": " << e.what() << endl;
-    exit(1);
+    return 1;
   }
 
   out_dir += "/";
@@ -868,8 +877,9 @@ int main (int argc, char **argv)
 	  cout << "     " << key << " " << it->second.name << endl ;
 	}
       
-      delete index;
-      exit(0);
+      delete multigermline;
+
+      return 0;
     }
 
 
@@ -882,7 +892,12 @@ int main (int argc, char **argv)
     //$$ Kmer Segmentation
 
     cout << endl;
-    cout << "Loop through reads, looking for windows" << endl ;
+    cout << "Loop through reads, ";
+
+    if (wmer_size != NO_LIMIT_VALUE)
+      cout << "looking for windows up to " << wmer_size << "bp" << endl;
+    else
+      cout << "considering all analyzed reads as windows" << endl;
 
     ofstream *out_segmented = NULL;
     ofstream *out_unsegmented = NULL;
@@ -958,17 +973,14 @@ int main (int argc, char **argv)
     int nb_segmented = we.getNbSegmented(TOTAL_SEG_AND_WINDOW);
     float ratio_segmented = 100 * (float) nb_segmented / nb_total_reads ;
 
-    if (wmer_size != NO_LIMIT_VALUE)
-      stream_segmentation_info << "  ==> found " << windowsStorage->size() << " " << wmer_size<< "-windows in " ;
-    else
-      stream_segmentation_info << "  ==> consider as windows these " ;
-
+    stream_segmentation_info << "  ==> found " << windowsStorage->size() << " windows in " ;
     stream_segmentation_info << nb_segmented << " reads"
 	<< " (" << setprecision(3) << ratio_segmented << "% of " <<  nb_total_reads << " reads)" << endl ;
   
     // warn if there are too few segmented sequences
     if (ratio_segmented < WARN_PERCENT_SEGMENTED)
       {
+        json_add_warning(j, "W20", "Very few V(D)J recombinations found: " + fixed_string_of_float(ratio_segmented, 2) + "%");
         stream_segmentation_info << "  ! There are not so many CDR3 windows found in this set of reads." << endl ;
         stream_segmentation_info << "  ! Please check the unsegmentation causes below and refer to the documentation." << endl ;
       }
@@ -1224,7 +1236,7 @@ int main (int argc, char **argv)
         };
 
         if (repComp.getCoverage() < WARN_COVERAGE)
-          json_clone["warn"] = "Low coverage" ;
+          json_add_warning(json_clone, "W51", "Low coverage: " + fixed_string_of_float(repComp.getCoverage(), 3));
         
         if (label.length())
           json_clone["label"] = label ;
@@ -1269,8 +1281,6 @@ int main (int argc, char **argv)
           json_clone["seg"][it.key()] = it.value();
         }
 
-        json_data_segment[it->first] = json_clone;
-        
         if (seg.isSegmented())
 	  {
 	      // Check for identical code, outputs to out_edge
@@ -1280,6 +1290,7 @@ int main (int argc, char **argv)
               if (cc)
                 {
                   cout << " (similar to Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc << setfill(' ') << ")";
+                  json_add_warning(json_clone, "W53", "Similar to another clone " + code);
 
                   nb_edges++ ;
                   out_edges << clones_map_windows[code] + " " + it->first + " "  ;
@@ -1303,7 +1314,8 @@ int main (int argc, char **argv)
 	      out_clone << endl;
 	   } // end if (seg.isSegmented())
 
-
+        json_data_segment[it->first] = json_clone;
+        
 	if (output_sequences_by_cluster) // -a option, output all sequences
 	  {
 	    list<Sequence> sequences = windowsStorage->getReads(it->first);
@@ -1430,6 +1442,8 @@ int main (int argc, char **argv)
       delete out_segmented;
     if (output_unsegmented)
       delete out_unsegmented;
+    if (output_affects)
+      delete out_affects;
 
     if (output_unsegmented_detail)
       for (int i=STATS_FIRST_UNSEG; i<STATS_SIZE; i++)
@@ -1510,7 +1524,7 @@ int main (int argc, char **argv)
 
   } else {
     cerr << "Ooops... unknown command. I don't know what to do apart from exiting!" << endl;
-    exit(1);
+    return 1;
   }
   
   //$ Output json

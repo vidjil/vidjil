@@ -1,4 +1,4 @@
-CC=g++
+CXX?=g++
 OPTIM=-O2
 override CXXFLAGS += -std=c++11 -W -Wall -I.. -I../lib/ $(OPTIM)
 LDLIBS=-lm -lz
@@ -14,7 +14,7 @@ all: $(EXEC)
 
 $(EXEC): %: %.o 
 	$(MAKE) -C .. base OPTIM="$(OPTIM)"
-	$(CC) -I .. -o $@ $^ $(LIBCORE) $(LDLIBS)
+	$(CXX) -I .. -o $@ $^ $(LIBCORE) $(LDLIBS)
 
 clean:
 	rm -f $(EXEC)

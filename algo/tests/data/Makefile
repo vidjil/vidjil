@@ -3,7 +3,8 @@ DATA=Stanford_S22.fasta Stanford_S22.rc.fasta chimera-fake-VJ-trim.g
 all: $(DATA)
 
 Stanford_S22.fasta:
-	cd ../../../demo ; sh get-sequences
+	$(MAKE) -C ../../../demo
+	rm -f Stanford_S22*.fasta
 	ln -sv ../../../demo/Stanford_S22*.fasta .
 
 Stanford_S22.rc.fasta: Stanford_S22.fasta

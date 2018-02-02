@@ -1,0 +1,20 @@
+
+# Becomes ../Makefile in a release
+
+.PHONY: all germline vidjil-algo demo test
+
+all: germline vidjil-algo demo
+
+germline:
+	$(MAKE) -C germline get-saved-data
+
+vidjil-algo:
+	$(MAKE) -C src
+
+demo:
+	cd demo && sh get-sequences
+
+test:
+	$(MAKE) -C src/tests/data
+	$(MAKE) -C src test
+

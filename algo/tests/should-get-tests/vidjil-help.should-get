@@ -1,3 +1,4 @@
+!NO_LAUNCHER:
 !LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -h  2> out-v ; cat out-v
 
 $ License

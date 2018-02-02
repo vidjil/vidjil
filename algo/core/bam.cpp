@@ -45,7 +45,7 @@ OnlineBAM::OnlineBAM(const string &input_filename,
   :OnlineBioReader(input_filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence) {this->init();}
 
 OnlineBAM::~OnlineBAM() {
-  free(bam_entry);
+  bam_destroy1(bam_entry);
   bam_hdr_destroy(header);
   if (input_allocated)
     bgzf_close(input);

@@ -1,22 +1,31 @@
 
 
 before_script:
+  - make demo
   - make data
   - make germline
   - make -C browser sha1
   - cp -p doc/analysis-example.vidjil browser/
 
 stages:
+  - test_tools
   - test_quality
   - test_unit
   - deploy_review
   - test_functional
   - test_functional_external
   - test_shouldvdj
+  - prepare_release
   - valgrind_unit
   - valgrind_functional
   - deploy_prod
 
+
+# Tools
+
+test_tools:
+  stage: test_tools
+  script: make -C tools/tests
 
 # Algorithm
 
@@ -49,6 +58,8 @@ algo_valgrind_unit:
   script: make -C algo valgrind_unit
   only:
     - /^feature-a\/.*$/
+  tags:
+    - valgrind
 
 algo_valgrind_functional:
   stage: valgrind_functional
@@ -56,8 +67,15 @@ algo_valgrind_functional:
   when: manual
   only:
     - /^feature-a\/.*$/
+  tags:
+    - valgrind
 
-
+prepare_release:
+  stage: prepare_release
+  script: make -C algo release RELEASE_TAG='rc'
+  when: manual
+  only:
+    - /^feature-a\/.*$/
 
 # Client
 
@@ -72,6 +90,8 @@ test_browser_unit:
     - /^hotfix-[cw]\/.*$/
     - prod-client
     - dev
+  tags:
+    - web
 
 test_browser-functional:
   stage: test_functional
@@ -87,6 +107,8 @@ test_browser-functional:
     - /^feature-[cw]\/.*$/
     - /^hotfix-[cw]\/.*$/
     - prod-client
+  tags:
+    - web
 
 test_browser-functional-external:
   stage: test_functional_external
@@ -103,6 +125,8 @@ test_browser-functional-external:
     - /^feature-[cw]\/.*$/
     - /^hotfix-[cw]\/.*$/
     - prod-client
+  tags:
+    - web
 
 code_quality:
   stage: test_quality
@@ -112,6 +136,8 @@ code_quality:
     - /^hotfix-[cw]\/.*$/
     - prod-client
     - dev
+  tags:
+    - web
 
 deploy_review:
   stage: deploy_review
@@ -125,6 +151,8 @@ deploy_review:
   only:
     - /^feature-[cw]\/.*$/
     - /^hotfix-[cw]\/.*$/
+  tags:
+    - web
 
 deploy_prod:
   stage: deploy_prod
@@ -136,7 +164,9 @@ deploy_prod:
     url: http://app.vidjil.org/?data=analysis-example.vidjil
   only:
     - prod-client
-    
+  tags:
+    - web
+
 stop_deploy_review:
   stage: deploy_review
   variables:
@@ -150,3 +180,5 @@ stop_deploy_review:
   only:
     - /^feature-[cw]\/.*$/
     - /^hotfix-[cw]\/.*$/
+  tags:
+    - web

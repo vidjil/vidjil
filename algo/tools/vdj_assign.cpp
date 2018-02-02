@@ -111,6 +111,5 @@ int main(int argc, const char** argv)
 
   cout << box_V.refToString(start_V, end_J) << "\t" << box_V << endl ;
   cout << box_J.refToString(start_V, end_J) << "\t" << box_J << endl ;
-      
-  exit (0);
+  return 0;
 }

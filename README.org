@@ -7,7 +7,7 @@
 # https://coveralls.io/r/vidjil/vidjil http://img.shields.io/coveralls/vidjil/vidjil.svg
 
 # Vidjil -- V(D)J recombinations analysis -- [[http://www.vidjil.org]]
-# Copyright (C) 2011-2017 by Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
+# Copyright (C) 2011-2018 by Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
 # [[contact@vidjil.org]]
 
 V(D)J recombinations in lymphocytes are essential for immunological
@@ -17,9 +17,9 @@ patient follow-up.
 High-throughput sequencing (NGS/HTS) now enables the deep sequencing 
 of a lymphoid population with dedicated [[http://omictools.com/rep-seq-c424-p1.html][Rep-Seq]] methods and softwares.
 
-The Vidjil platform contains three components. The Vidjil algorithm
-process high-througput sequencing data to *extract V(D)J
-junctions and gather them into clones*. Vidjil starts 
+The Vidjil platform contains three components. 
+Vidjil-algo processes high-througput sequencing data to *extract V(D)J
+junctions and gather them into clones*. Vidjil-algo starts 
 from a set of reads and detects "windows" overlapping the actual CDR3.
 This is based on an fast and reliable seed-based heuristic and allows
 to output all sequenced clones. The analysis is extremely fast
@@ -40,7 +40,7 @@ can manage, upload, analyze and annotate their runs directly on the web applicai
 
 * Vidjil components
 
-** The algorithm
+** Vidjil-algo
 
 - Stable releases can be downloaded from http://bioinfo.lille.inria.fr/vidjil
 - Development code is under [[algo/]]

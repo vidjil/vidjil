@@ -71,8 +71,7 @@ You can also download a static binary (see next paragraph, 'Installation').
 
 To compile Vidjil-algo, make sure:
   - to be on a POSIX system ;
-  - to have a C++11 compiler (as =g++= 4.8 or above or =clang= 3.3 or above). 
-    (Vidjil-algo will not work with a =g++= 7.0 or above.)
+  - to have a C++11 compiler (as =g++= 4.8 or above, =g++= 7.2 being supported, or =clang= 3.3 or above).
   - to have the =zlib= installed (=zlib1g-dev= package under Debian/Ubuntu,
     =zlib-devel= package under Fedora/CentOS).
 
@@ -159,7 +158,11 @@ Xcode should be installed first.
 
 
 ** Installation
+
 *** Compiling
+
+Running 'make' from the extracted archive should be enough to install vidjil-algo with germline and demo files.
+It runs the three following 'make' commands.
 
 #+BEGIN_SRC sh
 
@@ -172,14 +175,13 @@ make germline
    # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
 
 
-# either
-make                     # build Vijil from the sources (see the requirements, above)
+make vijdil-algo         # build vijil-algo from the sources (see the requirements,
+                         # another option is: wget http://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -O vidjil-algo
+                         # to download a static binary (built for x86_64 architectures)
 
-# or
-wget http://bioinfo.lifl.fr/vidjil/vidjil-2015.12_x86_64 -O vidjil-algo
-                         # download a static binary (built for x86_64 architectures)
+make demo                # download demo files (S22 and L4, see demo/get-sequences)
 
-./vidjil-algo -h              # display help/usage
+./vidjil-algo -h         # display help/usage
 #+END_SRC
 
 If your build system does not use C++11 by default, you should replace the =make= commands by:
@@ -207,13 +209,13 @@ apt-get install vidjil
 You can run the tests with the following commands:
 
 #+BEGIN_SRC sh
-make data
+make -C src/tests/data
    # get IGH recombinations from a single individual, as described in:
    # Boyd, S. D., and al. Individual variation in the germline Ig gene
    # repertoire inferred from variable region gene rearrangements. J
    # Immunol, 184(12), 6986–92.
 
-make test                # run self-tests (can take 5 to 60 minutes)
+make -C src test                # run self-tests (can take 5 to 60 minutes)
 #+END_SRC
 
 
@@ -296,7 +298,9 @@ Window prediction
   -t <int>      trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt (default: 0) (0: no trim)
 #+END_EXAMPLE
 
-The =-s=, =-k= are the options of the seed-based heuristic. A detailed
+The =-s=, =-k= are the options of the seed-based heuristic that detects
+"junctions", that is a zone in a read that is similar to V genes on its
+left end and similar to J genes in its right end. A detailed
 explanation can be found in (Giraud, Salson and al., 2014).
 /These options are for advanced usage, the defaults values should work./
 The =-s= or =-k= option selects the seed used for the k-mer V/J affectation.
@@ -309,9 +313,9 @@ on the CDR3. No sequencing errors are corrected inside this window.
 The center of the "window", predicted by the high-throughput heuristic, may
 be shifted by a few bases from the actual "center" of the CDR3 (for TRG,
 less than 15 bases compared to the IMGT/V-QUEST or IgBlast prediction
-in >99% of cases). The extracted window should be large enough to
-fully contain the CDR3 as well as some part of the end of the V and
-the start of the J, or at least some specific N region, to uniquely identify a clone.
+in >99% of cases when the reads are large enough). Usually, a 50 bp-window
+fully contains the CDR3 as well as some part of the end of the V and
+the start of the J, or at least some specific N region to uniquely identify the clone.
 
 Setting =-w= to higher values (such as =-w 60= or =-w 100=) makes the clone clustering
 even more conservative, enabling to split clones with low specificity (such as IGH with very
@@ -328,6 +332,10 @@ on the read length of your data, but may in some cases falsely cluster reads fro
 different clones.
 For VJ recombinations, the =-w 40= option is usually safe, and =-w 30= can also be tested.
 Setting =-w= to lower values is not recommended.
+
+When the read is too short too extract the requested length, the window can be shifted
+(at most 10 bp) or shrinkened (down until 30bp) by increments of 5bp. Such reads
+are counted in =SEG changed w= and the corresponding clones are output with the =Wxx= warning.
 
 The =-e= option sets the maximal e-value accepted for segmenting a sequence.
 It is an upper bound on the number of exepcted windows found by chance by the seed-based heuristic.
@@ -702,10 +710,19 @@ require either the =-g germline/homo-sapiens-g:IGH= option, or the multi-germlin
 
 ** Basic usage: PCR-based datasets, with primers in the V(D)J regions (such as BIOMED-2 primers)
 
+
+#+BEGIN_SRC sh
+./vidjil-algo -c clones   -g germline/homo-sapiens.g -2 -3 -r 1  demo/Demo-X5.fa
+  # Detect the locus for each read, cluster and report clones starting from the first read (-r 1).
+  # including unexpected recombinations (-2). Assign the V(D)J genes and try to detect the CDR3s (-3).
+  # Demo-X5 is a collection of sequences on all human locus, including some incomplete or unusual recombinations:
+  # IGH (VDJ, DJ), IGK (VJ, V-KDE, Intron-KDE), IGL, TRA, TRB (VJ, DJ), TRG and TRD (VDDJ, Dd2-Dd3, Vd-Ja).
+#+END_SRC
+
 #+BEGIN_SRC sh
 ./vidjil-algo -g germline/homo-sapiens.g:IGH -3 demo/Stanford_S22.fasta
-   # Cluster the reads into clones, based on windows overlapping IGH CDR3s.
-   # Assign the VDJ genes and try to detect the CDR3 of each clone.
+   # Cluster the reads and report the clones, based on windows overlapping IGH CDR3s.
+   # Assign the V(D)J genes and try to detect the CDR3 of each clone.
    # Summary of clones is available both on stdout, in out/Stanford_S22.vdj.fa and in out/Stanford_S22.vidjil.
 #+END_SRC
 
