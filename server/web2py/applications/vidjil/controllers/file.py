@@ -115,6 +115,14 @@ def get_pre_process_list():
                 ))
     return pre_process_list
 
+def get_set_list(id_dict, helpers):
+    sets = []
+    for key in id_dict:
+        slist = db(db[key].id.belongs(id_dict[key])).select()
+        for sset in slist:
+            sets.append({'type': key, 'id': helpers[key].get_id_string(sset)})
+    return sets
+
 def get_set_helpers():
     factory = ModelFactory()
     sample_types = [defs.SET_TYPE_GENERIC, defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN]
@@ -168,11 +176,7 @@ def form():
     myfile = db.sequence_file[request.vars["file_id"]]
     if myfile is None:
         myfile = {}
-    myfile['sets'] = []
-    for t in relevant_ids:
-        group_ids.append(get_set_group(t[0], t[1]))
-        row = db(db[t[0]].id == t[1]).select().first()
-        myfile['sets'].append({'type': t[0], 'id': helpers[t[0]].get_id_string(row)})
+    myfile['sets'] = get_set_list(relevant_ids, helpers)
 
     group_ids = [int(gid) for gid in group_ids]
     pre_process_list = get_pre_process_list()
