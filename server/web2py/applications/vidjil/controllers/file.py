@@ -183,7 +183,8 @@ def form():
         myfile = {}
     myfile['sets'] = get_set_list(relevant_ids, helpers)
 
-    group_ids = [int(gid) for gid in group_ids]
+    upload_group_ids = [int(gid) for gid in get_upload_group_ids(auth)]
+    group_ids = [int(g['id']) for g in get_default_creation_group(auth)[0]]
     pre_process_list = get_pre_process_list()
 
     source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
@@ -192,7 +193,8 @@ def form():
                files = [myfile],
                sample_type = sample_type,
                source_module_active = source_module_active,
-               group_ids = group_ids)
+               group_ids = group_ids,
+               upload_group_ids = upload_group_ids)
 
 #TODO check data
 def submit():
@@ -274,13 +276,17 @@ def submit():
     else:
         source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
         response.view = 'file/form.html'
+        upload_group_ids = [int(gid) for gid in get_upload_group_ids(auth)]
+        group_ids = [int(g['id']) for g in get_default_creation_group(auth)[0]]
+        pre_process_list = get_pre_process_list()
         return dict(message=T("an error occured"),
                pre_process_list = pre_process_list,
                sets = sets,
                files = data['file'],
                sample_type = sample_type,
                source_module_active = source_module_active,
-               group_ids = group_ids)
+               group_ids = group_ids,
+               upload_group_ids = upload_group_ids)
     
 def upload(): 
     session.forget(response)
