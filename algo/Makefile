@@ -323,7 +323,7 @@ release_check:
 	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) vidjil-algo
 	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) demo
 	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) test
-	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) -C src clean && $(MAKE) -C src static && mv $(EXEC) $(EXEC)-$(RELEASE_TAG)_`uname -m`
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) -C src clean && $(MAKE) -C src static && mv -v $(EXEC) $(EXEC)-$(RELEASE_TAG)_`uname -m`
 
 
 
