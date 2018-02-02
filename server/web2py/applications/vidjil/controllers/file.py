@@ -152,7 +152,10 @@ def form():
             return error_message("Uploads are temporarily disabled. System admins have been made aware of the situation.")
 
         row = db(db[sample_set.sample_type].sample_set_id == request.vars["sample_set_id"]).select().first()
-        relevant_ids.append((sample_set.sample_type, row.id))
+        stype = sample_set.sample_type
+        if stype not in relevant_ids:
+            relevant_ids[stype] = []
+        relevant_ids[stype].append(row.id)
 
     # edit file
     elif 'file_id' in request.vars:
@@ -167,7 +170,9 @@ def form():
             ).select(db.sample_set_membership.sample_set_id)
         for row in sample_set_list :
             smp_type = db.sample_set[row.sample_set_id].sample_type
-            relevant_ids.append((smp_type, db(db[smp_type].sample_set_id == row.sample_set_id).select()[0].id))
+            if smp_type not in relevant_ids:
+                relevant_ids[smp_type] = []
+            relevant_ids[smp_type].append(db(db[smp_type].sample_set_id == row.sample_set_id).select()[0].id)
 
         sample_type = request.vars["sample_type"]
     else:
