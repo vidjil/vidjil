@@ -43,21 +43,23 @@ def manage_filename(filename):
 
     return (data, filepath)
 
+def get_sample_set_ids(id_dict):
+    ssid_dict = {}
+    for key in id_dict:
+        ids = id_dict[key]
+        ssid_dict[key] = []
+        ssids = [r.sample_set_id for r in db(db[key].id.belongs(id_dict[key])).select()]
+        ssid_dict[key] = ssids
+    return ssid_dict
+
 def link_to_sample_sets(seq_file_id, id_dict):
     '''
     Create sample set memberships and return a dict of the sample set ids.
     The keys to the dict are thee same as the ones passed in id_dict
     '''
-    ssid_dict = {}
     for key in id_dict:
-        ids = id_dict[key]
-        ssid_dict[key] = []
-        for oid in ids:
-            sample_set_id = db[key][oid].sample_set_id
-            ssid_dict[key].append(sample_set_id)
-            id_sample_set_membership_run = db.sample_set_membership.insert(sample_set_id=sample_set_id,
-                                                                  sequence_file_id=seq_file_id)
-    return ssid_dict
+        arr = [{'sample_set_id': oid, 'sequence_file_id': seq_file_id} for oid in id_dict[key]]
+        db.sample_set_membership.bulk_insert(arr)
 
 # TODO put these in a model or utils or smth
 def validate(myfile):
@@ -241,7 +243,8 @@ def submit():
                 file_data['network'] = True
             db.sequence_file[fid] = file_data
 
-        ssid_dict = link_to_sample_sets(fid, f['id_dict'])
+        id_dict = get_sample_set_ids(f['id_dict'])
+        link_to_sample_sets(fid, id_dict)
 
         log.info(mes, extra={'user_id': auth.user.id,\
                 'record_id': redirect_args['id'],\
