@@ -285,7 +285,7 @@ double atof_NO_LIMIT(char *optarg)
 int main (int argc, char **argv)
 {
   cout << "# " << PROGNAME << " -- V(D)J recombinations analysis <http://www.vidjil.org/>" << endl
-       << "# Copyright (C) 2011-2017 by the Vidjil team" << endl
+       << "# Copyright (C) 2011-2018 by the Vidjil team" << endl
        << "# Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille" << endl 
        << endl
        << "# " << PROGNAME << " is free software, and you are welcome to redistribute it" << endl
