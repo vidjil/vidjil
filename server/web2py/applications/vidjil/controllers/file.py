@@ -265,7 +265,7 @@ def submit():
         link_to_sample_sets(fid, id_dict)
 
         log.info(mes, extra={'user_id': auth.user.id,\
-                'record_id': redirect_args['id'],\
+                'record_id': f['id'],\
                 'table_name': "sequence_file"})
 
     if not error:
@@ -283,7 +283,7 @@ def submit():
                pre_process_list = pre_process_list,
                sets = sets,
                files = data['file'],
-               sample_type = sample_type,
+               sample_type = data['sample_type'],
                source_module_active = source_module_active,
                group_ids = group_ids,
                upload_group_ids = upload_group_ids)
