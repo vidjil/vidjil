@@ -85,7 +85,8 @@ release:
   only:
     - /^feature-a\/release$/
   artifacts:
-    paths
+    paths:
+    - algo/releases/vidjil-`cat algo/release`.tar.gz
 
 # Client
 
