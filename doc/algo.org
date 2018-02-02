@@ -705,8 +705,8 @@ applicable being removed:
 
 * Examples of use
 
-All the following examples are on a IGH VDJ recombinations : they thus
-require either the =-g germline/homo-sapiens-g:IGH= option, or the multi-germline =-g germline= option.
+Examples on a IGH VDJ recombinations require either to specigy =-g germline/homo-sapiens-g:IGH=,
+or to use the multi-germline option =-g germline/homo-sapiens.g= that can be shortened into =-g germline=.
 
 ** Basic usage: PCR-based datasets, with primers in the V(D)J regions (such as BIOMED-2 primers)
 
