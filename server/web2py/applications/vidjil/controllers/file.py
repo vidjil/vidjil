@@ -281,7 +281,6 @@ def submit():
         pre_process_list = get_pre_process_list()
         return dict(message=T("an error occured"),
                pre_process_list = pre_process_list,
-               sets = sets,
                files = data['file'],
                sample_type = data['sample_type'],
                source_module_active = source_module_active,
