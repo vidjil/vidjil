@@ -64,7 +64,7 @@ def get_gene_coord(imgt_line):
     >>> line = '>X15272|TRGV4*01|Homo sapiens|F|V-REGION|406..705|300 nt|1| | | | |300+0=300| |rev-compl|'
     >>> get_gene_coord(line)[0] == 'X15272'
     True
-    >>> get_gene_coord(line)[1] == {'from': 406, 'to': 705, 'imgt_name': 'TRGV4*01'}
+    >>> get_gene_coord(line)[1] == {'from': 406, 'to': 705, 'imgt_data': 'TRGV4*01|Homo sapiens|F|V-REGION', 'imgt_name': 'TRGV4*01'}
     True
     '''
     elements = imgt_line.split('|')
@@ -78,7 +78,8 @@ def get_gene_coord(imgt_line):
         end = end.split(',')[0]
     return elements[0][1:], {'from': int(start),
                              'to': int(end),
-                             'imgt_name': elements[1]}
+                             'imgt_name': elements[1],
+                             'imgt_data': '|'.join(elements[1:5])}
 
 def get_gene_sequence(gene, other_gene_name, start, end):
     '''
@@ -103,7 +104,8 @@ def retrieve_genes(filename, genes, additional_length):
                 end += additional_length
             elif additional_length < 0:
                 start = max(1, start + additional_length)
-            f.write(get_gene_sequence(gene, coord['imgt_name'], start, end))
+            gene_data = get_gene_sequence(gene, coord['imgt_data'], start, end)
+            f.write(gene_data)
 
 
 #                  Phe
