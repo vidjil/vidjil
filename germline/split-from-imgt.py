@@ -94,7 +94,7 @@ def store_data_if_updownstream(fasta_header, path, data, genes):
         if gene_name:
             data[path+'/'+gene][gene_name].append(gene_coord)
     
-def retrieve_genes(filename, genes, additional_length):
+def retrieve_genes(filename, genes, tag, additional_length):
     f = verbose_open_w(filename)
     for gene in genes:
         for coord in genes[gene]:
@@ -104,7 +104,7 @@ def retrieve_genes(filename, genes, additional_length):
                 end += additional_length
             elif additional_length < 0:
                 start = max(1, start + additional_length)
-            gene_data = get_gene_sequence(gene, coord['imgt_data'], start, end)
+            gene_data = get_gene_sequence(gene, coord['imgt_data'] + tag, start, end)
             f.write(gene_data)
 
 
@@ -180,6 +180,9 @@ DOWNSTREAM_REGIONS=['[A-Z]{3}J', 'TRDD3']
 UPSTREAM_REGIONS=['IGHD', 'TRDD', 'TRBD', 'TRDD2']
 # Be careful, 'IGHD' regex for UPSTREAM_REGIONS also matches IGHD*0? constant regions.
 
+TAG_DOWNSTREAM='+down'
+TAG_UPSTREAM='+up'
+
 SPECIES = {
     "Homo sapiens": 'homo-sapiens/',
     "Mus musculus": 'mus-musculus/',
@@ -248,6 +251,6 @@ for l in sys.stdin:
             current_special.write(l)
 
 for system in upstream_data:
-    retrieve_genes(system+"_upstream.fa", upstream_data[system], -LENGTH_UPSTREAM)
+    retrieve_genes(system+"_upstream.fa", upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM)
 for system in downstream_data:
-    retrieve_genes(system+"_downstream.fa", downstream_data[system], LENGTH_DOWNSTREAM)
+    retrieve_genes(system+"_downstream.fa", downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM)
