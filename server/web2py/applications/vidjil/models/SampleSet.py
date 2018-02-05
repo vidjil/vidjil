@@ -154,11 +154,11 @@ def get_sample_name(sample_set_id):
         return vidjil_utils.anon_ids(patient_or_run.id)
     return patient_or_run.name
 
-def get_set_group(stype, sid):
+def get_set_group(sid):
     '''
     Return the group associated with the set
     '''
-    perm = db((db.auth_permission.table_name == stype) &
+    perm = db((db.auth_permission.table_name == 'sample_set') &
               (db.auth_permission.record_id == sid) &
               (db.auth_permission.name == PermissionEnum.access.value)
             ).select().first()

@@ -42,7 +42,7 @@ class Patient(SampleSet):
 
     def get_id_string(self, data):
         name = self.get_name(data)
-        ident = "(%d)" % data['id']
+        ident = "(%d)" % data['sample_set_id']
         return ":p %s %s" % (name, ident)
 
     def validate(self, data):

@@ -1,6 +1,7 @@
 <fieldset name="generic{{=i}}">
     <legend>Set {{=i+1}}</legend>
     <input type="hidden" id="generic_id_{{=i}}" name="generic[{{=i}}][id]" value="{{if set is not None:}}{{=set['id']}}{{pass}}">
+    <input type="hidden" sample_set_id="generic_sample_set_id_{{=i}}" name="generic[{{=i}}][sample_set_id]" value="{{if set is not None:}}{{=set['sample_set_id']}}{{pass}}">
     {{ if set is not None and 'error' in set and len(set['error']) > 0: }}
         <div class="error">error: {{=", ".join(set['error'])}}</div>
     {{pass}}

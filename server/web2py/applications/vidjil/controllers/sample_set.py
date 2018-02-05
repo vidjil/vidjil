@@ -387,8 +387,8 @@ def form():
         sample_set = db.sample_set[request.vars["id"]]
         set_type = sample_set.sample_type
         sset = db(db[set_type].sample_set_id == sample_set.id).select().first()
-        if(auth.can_modify(sample_set.sample_type, sset.id)):
-            groups = [get_set_group(set_type, sset.id)]
+        if(auth.can_modify_sample_set(sset.sample_set_id)):
+            groups = [get_set_group(sset.sample_set_id)]
             message = 'edit %s' % set_type
             max_group = None
         else:
@@ -452,15 +452,14 @@ def submit():
             name = helper.get_name(p)
 
             # edit
-            if (p['id'] != "" and auth.can_modify(set_type, p['id'])):
+            if (p['sample_set_id'] != "" and auth.can_modify_sample_set(p['sample_set_id'])):
                 reset = True
-                id = p["id"]
-                sset = db[set_type][id]
-                db[set_type][id] = p
+                sset = db(db[set_type].sample_set_id == p['sample_set_id']).select().first()
+                db[set_type][sset.id] = p
                 id_sample_set = sset['sample_set_id']
 
                 if (sset.info != p['info']):
-                    group_id = get_set_group(set_type, id)
+                    group_id = get_set_group(id_sample_set)
                     register = True
                     reset = True
 
@@ -480,7 +479,7 @@ def submit():
                 register = True
 
                 #patient creator automaticaly has all rights
-                auth.add_permission(group_id, PermissionEnum.access.value, db[set_type], p['id'])
+                auth.add_permission(group_id, PermissionEnum.access.value, 'sample_set', p['sample_set_id'])
 
                 action = "add"
 
@@ -494,7 +493,7 @@ def submit():
                 error = True
 
             mes = "%s (%s) %s %sed" % (set_type, id_sample_set, name, action)
-            log.info(mes, extra={'user_id': auth.user.id, 'record_id': id, 'table_name': 'patient'})
+            log.info(mes, extra={'user_id': auth.user.id, 'record_id': p['id'], 'table_name': 'patient'})
             if register:
                 register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
 
@@ -543,10 +542,7 @@ def custom():
         qq = (db.sample_set.id == request.vars["id"])
         
     else:
-        qq = (auth.vidjil_accessible_query(PermissionEnum.read.value, db.patient)
-                | auth.vidjil_accessible_query(PermissionEnum.read.value, db.run)
-                | auth.vidjil_accessible_query(PermissionEnum.read.value, db.generic))
-
+        qq = (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set))
         myGroupBy = db.sequence_file.id|db.patient.id|db.run.id|db.generic.id|db.results_file.config_id
 
     q = (qq
@@ -761,7 +757,8 @@ def change_permission():
 
 def get_sample_set_list(type):
     query = db(
-        auth.vidjil_accessible_query(PermissionEnum.admin.value, db[type])
+        (auth.vidjil_accessible_query(PermissionEnum.admin.value, db.sample_set))&
+        (db[type].sample_set_id == db.sample_set.id)
     ).select(
         db[type].ALL, # sub optimal, use helpers to reduce ?
         orderby = ~db[type].id

@@ -162,6 +162,7 @@ PatientFormBuilder.prototype.build = function(index) {
         var fieldset = this.build_fieldset(this.type);
         fieldset.appendChild(this.createCloseButton());
         fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
+        fieldset.appendChild(this.build_input('sample_set_id', 'text', 'sample_set_id', 'hidden', this.type));
         fieldset.appendChild(this.set_id());
         fieldset.appendChild(this.build_field('first_name', undefined, undefined, true));
         fieldset.appendChild(this.build_field('last_name', undefined, undefined, true));
@@ -182,6 +183,7 @@ RunFormBuilder.prototype.build = function(index) {
         var fieldset = this.build_fieldset(this.type);
         fieldset.appendChild(this.createCloseButton());
         fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
+        fieldset.appendChild(this.build_input('sample_set_id', 'text', 'sample_set_id', 'hidden', this.type));
         fieldset.appendChild(this.set_id());
         fieldset.appendChild(this.build_field('name', undefined, undefined, true));
         fieldset.appendChild(this.build_date('run_date', 'run_date', 'Date'));
@@ -203,6 +205,7 @@ GenericFormBuilder.prototype.build = function(index) {
         var fieldset = this.build_fieldset('set');
         fieldset.appendChild(this.createCloseButton());
         fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
+        fieldset.appendChild(this.build_input('sample_set_id', 'text', 'sample_set_id', 'hidden', this.type));
         fieldset.appendChild(this.build_field('name', undefined, undefined, true));
         fieldset.appendChild(this.build_info());
         return fieldset;

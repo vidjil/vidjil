@@ -95,7 +95,7 @@ def validate_sets(myfile, errors):
             myfile['sets'].append({'type': set_type, 'id': sid})
             set_id = helpers[set_type].parse_id_string(sid)
             myfile['id_dict'][set_type].append(set_id)
-            if not auth.can_modify(set_type, set_id) :
+            if not auth.can_modify_sample_set(set_id) :
                 errors.append("missing permission for %s %d" % (set_type, set_id))
         except ValueError:
             errors.append("Invalid %s %s" % (key, set_ids[set_type]))
@@ -247,12 +247,10 @@ def submit():
             action = "add"
 
         mes = "file (%d) %s %sed" % (f["id"], f["filename"], action)
-        group_ids = set()
         for key in f['id_dict']:
             for sid in f['id_dict'][key]:
-                group_ids.add(get_set_group(key, sid))
-        for group_id in group_ids:
-            register_tags(db, 'sequence_file', fid, f["info"], group_id, reset=True)
+                group_id = get_set_group(sid)
+                register_tags(db, 'sequence_file', fid, f["info"], group_id, reset=True)
 
         if f['filename'] != "":
             if reupload:
@@ -268,8 +266,7 @@ def submit():
                 file_data['network'] = True
             db.sequence_file[fid] = file_data
 
-        id_dict = get_sample_set_ids(f['id_dict'])
-        link_to_sample_sets(fid, id_dict)
+        link_to_sample_sets(fid, f['id_dict'])
 
         log.info(mes, extra={'user_id': auth.user.id,\
                 'record_id': f['id'],\

@@ -38,7 +38,7 @@ class Run(SampleSet):
 
     def get_id_string(self, data):
         name = data['name']
-        ident = "(%d)" % data['id']
+        ident = "(%d)" % data['sample_set_id']
         return ":r %s %s" % (name, ident)
 
     def validate(self, data):
