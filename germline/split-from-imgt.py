@@ -263,6 +263,6 @@ for l in sys.stdin:
             current_special.write(l)
 
 for system in upstream_data:
-    retrieve_genes(system+"_upstream.fa", upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM)
+    retrieve_genes(system + TAG_UPSTREAM + '.fa', upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM)
 for system in downstream_data:
-    retrieve_genes(system+"_downstream.fa", downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM)
+    retrieve_genes(system + TAG_DOWNSTREAM + '.fa', downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM)
