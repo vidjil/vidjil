@@ -60,6 +60,7 @@ def link_to_sample_sets(seq_file_id, id_dict):
     for key in id_dict:
         arr = [{'sample_set_id': oid, 'sequence_file_id': seq_file_id} for oid in id_dict[key]]
         db.sample_set_membership.bulk_insert(arr)
+    db.commit()
 
 # TODO put these in a model or utils or smth
 def validate(myfile):
