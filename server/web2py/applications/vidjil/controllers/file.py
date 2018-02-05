@@ -75,10 +75,16 @@ def validate(myfile):
     return error
 
 def validate_sets(myfile, errors):
-    mf = ModelFactory()
-    helpers = {}
     myfile['id_dict'] = {}
     myfile['sets'] = []
+
+    if len(myfile['set_ids']) == 0:
+        errors.append("missing set association")
+        return myfile
+
+    mf = ModelFactory()
+    helpers = {}
+
     set_ids = [x.strip() for x in myfile['set_ids'].split(',')]
     for sid in set_ids:
         try:
