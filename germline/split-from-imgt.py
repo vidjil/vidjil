@@ -142,11 +142,16 @@ def gap_j(seq):
 
     seqs = seq.strip()
 
-    if seqs in CUSTOM_118:
-        print "# Custom 118 position in %s" % seq
-        pos = CUSTOM_118[seqs]
+    pos = None
 
-    else:
+    for custom_seq in CUSTOM_118:
+        if not custom_seq:
+            continue
+        if seqs.startswith(custom_seq):
+            print "# Custom 118 position in %s" % seqs
+            pos = CUSTOM_118[custom_seq]
+
+    if pos is None:
         m = j118.search(seq)
 
         if not m:
