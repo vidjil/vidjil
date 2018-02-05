@@ -1,5 +1,5 @@
 !NO_LAUNCHER:
-!LAUNCH: (cd $VIDJIL_DIR/germline ; cat homo-sapiens/TRAJ.fa homo-sapiens/TRAJ_downstream.fa | tr 'ACGT' 'acgt' )
+!LAUNCH: (cd $VIDJIL_DIR/germline ; cat homo-sapiens/TRAJ.fa homo-sapiens/TRAJ+down.fa | tr 'ACGT' 'acgt' )
 
 $ Correct gapped sequence (TRAJ11*01, regular case), twice (one regular, one downstream)
 2: ^[.]{9}tgaattcaggatacagcaccctcacctttgggaaggggactatgcttctagtctctccag
