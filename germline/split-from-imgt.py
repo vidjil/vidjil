@@ -105,6 +105,11 @@ def retrieve_genes(filename, genes, tag, additional_length):
             elif additional_length < 0:
                 start = max(1, start + additional_length)
             gene_data = get_gene_sequence(gene, coord['imgt_data'] + tag, start, end)
+            if coord['imgt_data'].split('|')[-1] == FEATURE_J_REGION:
+                gene_lines = gene_data.split('\n')
+                gene_lines[1] = gap_j(gene_lines[1].lower())
+                gene_data = '\n'.join(gene_lines)
+
             f.write(gene_data)
 
 
@@ -161,7 +166,9 @@ LENGTH_DOWNSTREAM=40
 SPECIAL_SEQUENCES = [
 ]
 
-FEATURES_VDJ = [ "V-REGION", "D-REGION", "J-REGION" ]
+FEATURE_J_REGION = 'J-REGION'
+
+FEATURES_VDJ = [ "V-REGION", "D-REGION", FEATURE_J_REGION ]
 FEATURES_CLASSES = [
     "CH1", "CH2", "CH3", "CH3-CHS", "CH4-CHS",
     "H", "H-CH2", "H1", "H2", "H3", "H4",
@@ -241,7 +248,7 @@ for l in sys.stdin:
                 current_special = verbose_open_w(name)
 
 
-    if '>' not in l and current_files and feature == 'J-REGION':
+    if '>' not in l and current_files and feature == FEATURE_J_REGION:
         l = gap_j(l)
 
     for current_file in current_files:
