@@ -14,7 +14,8 @@ function labelise(text) {
 function add_file(target_id, index, group_ids) {
     var target = document.getElementById(target_id);
     var source = $("input[name='source']:checked").val() == 'nfs';
-    var builder = new FileFormBuilder(group_ids, source);
+    var num_files = $("select#pre_process").find(':selected').attr("required_files"); // number of files requested by pre_process
+    var builder = new FileFormBuilder(group_ids, source, num_files);
     target.appendChild(builder.build(index));
     $('#jstree_loader_' + index).trigger('load');
 }
@@ -211,10 +212,12 @@ GenericFormBuilder.prototype.build = function(index) {
         return fieldset;
     }
 
-function FileFormBuilder(group_ids, source) {
+function FileFormBuilder(group_ids, source, num_files) {
     FormBuilder.call(this);
     this.group_ids = group_ids;
     this.source = source;
+    this.num_files = num_files;
+
 }
 
 FileFormBuilder.prototype = Object.create(FormBuilder.prototype);
@@ -230,18 +233,19 @@ FileFormBuilder.prototype.build = function(index) {
     return fieldset;
 }
 
-FileFormBuilder.prototype.build_file_fieldset = function(source) {
+FileFormBuilder.prototype.build_file_fieldset = function() {
     var self = this;
+    var hide_second = this.source || this.num_files < 2;
     var f = document.createElement('fieldset');
     f.appendChild(this.build_legend('sequence file(s)'));
-    var file1 = this.build_file_field(1, source);
+    var file1 = this.build_file_field(1, this.source);
     var file_input = file1.getElementsByTagName('input')[0];
     file_input.onchange = function() {
         db.upload_file_onChange('file_filename_' + self.index, this.value);
     }
     f.appendChild(file1);
-    f.appendChild(this.build_file_field(2, true));
-    f.appendChild(this.build_jstree(!source));
+    f.appendChild(this.build_file_field(2, hide_second));
+    f.appendChild(this.build_jstree(!this.source));
     return f;
 }
 
