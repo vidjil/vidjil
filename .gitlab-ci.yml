@@ -12,6 +12,7 @@ stages:
   - test_quality
   - test_unit
   - deploy_review
+  - test_germlines
   - test_functional
   - test_functional_external
   - test_shouldvdj
@@ -27,6 +28,18 @@ stages:
 test_tools:
   stage: test_tools
   script: make -C tools/tests
+
+
+# Germlines
+
+test_germlines:
+  stage: test_germlines
+  script:
+    - make -C germline get-all-data
+    - make -C algo/tests should_germline
+  only:
+    - /^feature-g\/.*$/
+
 
 # Algorithm
 
