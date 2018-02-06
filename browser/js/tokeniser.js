@@ -20,12 +20,15 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
-function Tokeniser() {
+function Tokeniser(target, form_input) {
     if (typeof Tokeniser.instance === 'object') {
         return Tokeniser.instance;
     }
 
     Closeable.call(this);
+
+    this.target = target;
+    this.form_input = form_input
 
     Tokeniser.instance = this;
     return this;
@@ -33,29 +36,14 @@ function Tokeniser() {
 
 Tokeniser.prototype = Object.create(Closeable.prototype);
 
-Tokeniser.prototype.setup = function(input, target, form_input) {
-        var self = this;
-        if ($(input).data('needs-tokeniser')) {
-            $(input).on("keydown", function(e) {
-                if (e.which === 13) {
-                    e.preventDefault();
-                    self.tokenise(this, target, form_input);
-                }
-            });
-            $(input).data('needs-tokeniser', false);
-        }
+Tokeniser.prototype.tokenise = function(text) {
+        var token = this.createToken(text);
+        this.target.appendChild(token);
+        this.form_input.value = this.readTokens();
     }
 
-Tokeniser.prototype.tokenise = function(input, target, form_input) {
-        var token = this.createToken($(input));
-        $(input).val("");
-        $(input).removeData('set-id');
-        target.appendChild(token);
-        form_input.value = this.readTokens(target);
-    }
-
-Tokeniser.prototype.readTokens = function(target) {
-        var nodes = $(target).children('.set_token');
+Tokeniser.prototype.readTokens = function() {
+        var nodes = $(this.target).children('.set_token');
         return nodes.map(function callback() {
             return $(this).data('set-id');
         })
@@ -63,7 +51,7 @@ Tokeniser.prototype.readTokens = function(target) {
         .join();
     }
 
-Tokeniser.prototype.createToken = function($input) {
+Tokeniser.prototype.createToken = function(set_id) {
         var class_mapping = {
             ":p": "patient_token",
             ":r": "run_token",
@@ -71,8 +59,7 @@ Tokeniser.prototype.createToken = function($input) {
         };
 
         var token = document.createElement('span');
-        var text = $input.val().trim();
-        var set_id = $input.data('set-id');
+        var text = set_id.substr(3).trim();
         var className = "set_token " + class_mapping[set_id.substr(0, 2)];
         token.className = className;
 

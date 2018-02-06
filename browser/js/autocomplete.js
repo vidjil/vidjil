@@ -173,8 +173,8 @@ VidjilAutoComplete.prototype = {
         };
 
         callbacks.beforeInsert = function(value, li) {
-            $input.data('set-id', value);
-            return value.substr(3);
+            new Tokeniser().tokenise(value); // Tokeniser is a Singleton
+            return "";
         };
 
         $input.atwho({

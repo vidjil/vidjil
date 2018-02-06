@@ -71,7 +71,7 @@
                     class="token_input"
                     autocomplete="off"
                     onfocus="new VidjilAutoComplete().setupSamples(this);
-                    new Tokeniser().setup(this, document.getElementById('set_div_{{=i}}'), document.getElementById('file_set_list_{{=i}}'));"
+                    new Tokeniser(document.getElementById('set_div_{{=i}}'), document.getElementById('file_set_list_{{=i}}'));"
                     data-needs-atwho="true"
                     data-needs-tokeniser="true"
                     data-group-ids="{{=upload_group_ids}}"
