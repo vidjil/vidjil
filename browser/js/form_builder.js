@@ -47,7 +47,7 @@ FormBuilder.prototype.build_label = function(txt, object, field) {
         return l;
     }
 
-FormBuilder.prototype.build_input = function(id, className, name, input_type, set_type, required, placeholder) {
+FormBuilder.prototype.build_input = function(id, className, name, input_type, set_type, placeholder, required) {
         var i = document.createElement('input');
         i.id = set_type + "_" + id + "_" + this.index;
         i.className = "form-control " + className;
@@ -65,7 +65,7 @@ FormBuilder.prototype.build_input = function(id, className, name, input_type, se
         return i;
     }
 
-FormBuilder.prototype.build_field = function(id, name, label, required, placeholder) {
+FormBuilder.prototype.build_field = function(id, name, label, required) {
         if (typeof name === "undefined") {
             name = id;
         }
@@ -75,17 +75,17 @@ FormBuilder.prototype.build_field = function(id, name, label, required, placehol
         }
 
         var d = this.build_wrapper();
-        d.appendChild(this.build_label(label, this.type, id));
-        d.appendChild(this.build_input(id, 'string', name, 'text', this.type, required, placeholder));
+        d.appendChild(this.build_input(id, 'string', name, 'text', this.type, label, required));
         return d;
     }
 
-FormBuilder.prototype.build_textarea = function(id, className, name, set_type) {
+FormBuilder.prototype.build_textarea = function(id, className, name, set_type, placeholder) {
         var t = document.createElement('textarea');
         t.id = set_type + "_" + id + "_" + this.index;
         t.className = "form-control " + className;
         t.name = set_type + "[" + this.index + "][" + name + "]";
         t.rows = 1;
+        t.placeholder = placeholder;
         return t;
     }
 
@@ -112,8 +112,7 @@ FormBuilder.prototype.build_date = function(id, object, name, label) {
         }
 
         var d = this.build_wrapper();
-        d.appendChild(this.build_label(label, object, id));
-        var i = this.build_input(id, 'date', name, 'text', object, false, 'yyyy-mm-dd');
+        var i = this.build_input(id, 'date', name, 'text', object, label+' (yyyy-mm-dd)', false);
         i.pattern = "(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))";
         i.title = "yyyy-mm-dd"
         d.appendChild(i);
@@ -135,9 +134,9 @@ SetFormBuilder.prototype.set_id = function() {
 SetFormBuilder.prototype.build_info = function() {
         var d = this.build_wrapper();
         var id = 'info';
-        d.appendChild(this.build_label('Info', this.type, id));
+        var label = labelise(id);
 
-        var txt = this.build_textarea('info', "text", 'info', this.type);
+        var txt = this.build_textarea('info', "text", 'info', this.type, label);
         $(txt).data('needs-atwho', true);
         $(txt).on('focus', function() {
             $(this).data('keys', [$('#group_select option:selected').val()]);
