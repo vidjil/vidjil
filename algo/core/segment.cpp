@@ -1085,8 +1085,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   box_J->end = sequence.length()-1;
 
   // Why could this happen ?
-      if (box_J->start>=(int) sequence.length())
-	  box_J->start=sequence.length()-1;
+  if (box_J->start>=(int) sequence.length())
+    box_J->start=sequence.length()-1;
 
   // seg_N will be recomputed in finishSegmentation()
 
