@@ -18,7 +18,7 @@ failed.write('#!/bin/sh\n\n')
 for tap in glob.glob('should-get-tests/*.tap'):
     ok = True
     for l in open(tap):
-        if 'not ok' in l:
+        if 'not ok' in l and not 'SKIP' in l and not 'TODO' in l:
             ok = False
             break
 
