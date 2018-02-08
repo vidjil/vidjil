@@ -77,7 +77,7 @@ should:
 	-$(MAKE) -k should_raw
 	python should-status.py
 
-should_failed:
+failed_should:
 	-sh failed-should-get-tests.sh
 	python should-status.py
 
