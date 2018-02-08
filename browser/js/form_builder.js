@@ -236,6 +236,9 @@ FileFormBuilder.prototype.build_file_fieldset = function() {
     var hide_second = this.source || this.num_files < 2;
     var f = document.createElement('fieldset');
     f.appendChild(this.build_legend('sequence file(s)'));
+    var s = document.createElement('div');
+    s.innerText = "(.fa, .fastq, .fa.gz, .fastq.gz, .clntab)";
+    f.appendChild(s);
     var file1 = this.build_file_field(1, this.source);
     var file_input = file1.getElementsByTagName('input')[0];
     file_input.onchange = function() {
@@ -325,9 +328,6 @@ FileFormBuilder.prototype.build_file_field = function(id, hidden) {
         i.disabled = true;
     }
     d.appendChild(i);
-    var s = document.createElement('span');
-    s.innerText = "* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)";
-    d.appendChild(s);
     return d;
 }
 
