@@ -38,7 +38,7 @@ SimilarityMatrix compare_all(list <Sequence> sequences,
 
   for (list <Sequence>::const_iterator it1 = sequences.begin();
        it1 != sequences.end(); ++it1 )
-  num = 0 ;
+    num = 0 ;
 
   list<string>::const_iterator itLabel = sequence_names.begin();
   for (list <Sequence>::const_iterator it1 = sequences.begin();
