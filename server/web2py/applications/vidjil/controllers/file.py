@@ -74,32 +74,37 @@ def validate(myfile):
             error.append("date (wrong format)")
     return error
 
-def validate_sets(myfile, errors):
-    myfile['id_dict'] = {}
-    myfile['sets'] = []
+def validate_sets(set_ids):
+    id_dict = {}
+    sets = []
+    errors = []
 
-    if len(myfile['set_ids']) == 0:
+    log.debug('set_ids: ' + str(set_ids))
+    log.debug('len: ' + str(len(set_ids)))
+    if len(set_ids) == 0:
         errors.append("missing set association")
-        return myfile
 
     mf = ModelFactory()
     helpers = {}
 
-    set_ids = [x.strip() for x in myfile['set_ids'].split(',')]
-    for sid in set_ids:
+    set_ids_arr = []
+    if len(set_ids) > 0:
+        set_ids_arr = [x.strip() for x in set_ids.split(',')]
+    log.debug('set_ids array: ' + str(set_ids))
+    for sid in set_ids_arr:
         try:
             set_type = extract_set_type(sid)
-            if set_type not in myfile['id_dict']:
+            if set_type not in id_dict:
                 helpers[set_type] = mf.get_instance(set_type)
-                myfile['id_dict'][set_type] = []
-            myfile['sets'].append({'type': set_type, 'id': sid})
+                id_dict[set_type] = []
+            sets.append({'type': set_type, 'id': sid})
             set_id = helpers[set_type].parse_id_string(sid)
-            myfile['id_dict'][set_type].append(set_id)
+            id_dict[set_type].append(set_id)
             if not auth.can_modify_sample_set(set_id) :
                 errors.append("missing permission for %s %d" % (set_type, set_id))
         except ValueError:
-            errors.append("Invalid %s %s" % (key, set_ids[set_type]))
-    return myfile
+            errors.append("Invalid %s %s" % (key, sid))
+    return sets, id_dict, errors
 
 def get_pre_process_list():
     query_pre_process = db(
@@ -188,20 +193,15 @@ def form():
     myfile = db.sequence_file[request.vars["file_id"]]
     if myfile is None:
         myfile = {}
-    myfile['sets'] = get_set_list(relevant_ids, helpers)
+    sets = get_set_list(relevant_ids, helpers)
 
-    upload_group_ids = [int(gid) for gid in get_upload_group_ids(auth)]
-    group_ids = [int(g['id']) for g in get_default_creation_group(auth)[0]]
-    pre_process_list = get_pre_process_list()
+    data = {}
+    data['file'] = [myfile]
+    data['sets'] = sets
+    data['sample_type'] = sample_type
+    data['errors'] = []
 
-    source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
-    return dict(message = T('edit file'),
-               pre_process_list = pre_process_list,
-               files = [myfile],
-               sample_type = sample_type,
-               source_module_active = source_module_active,
-               group_ids = group_ids,
-               upload_group_ids = upload_group_ids)
+    return form_response(data)
 
 #TODO check data
 def submit():
@@ -215,9 +215,16 @@ def submit():
             pre_process = int(f['pre_process'])
             pre_process_flag = "WAIT"
 
+    sets, id_dict, errors = validate_sets(data['set_ids'])
+    data['sets'] = sets
+
+    data['errors'] = errors
+
+    if len(errors) > 0:
+        return form_response(data)
+
     for f in data['file']:
         errors = validate(f)
-        f = validate_sets(f, errors)
 
         if len(errors) > 0:
             f['error'] = errors
@@ -247,8 +254,8 @@ def submit():
             action = "add"
 
         mes = "file (%d) %s %sed" % (f["id"], f["filename"], action)
-        for key in f['id_dict']:
-            for sid in f['id_dict'][key]:
+        for key in id_dict:
+            for sid in id_dict[key]:
                 group_id = get_set_group(sid)
                 register_tags(db, 'sequence_file', fid, f["info"], group_id, reset=True)
 
@@ -266,7 +273,7 @@ def submit():
                 file_data['network'] = True
             db.sequence_file[fid] = file_data
 
-        link_to_sample_sets(fid, f['id_dict'])
+        link_to_sample_sets(fid, id_dict)
 
         log.info(mes, extra={'user_id': auth.user.id,\
                 'record_id': f['id'],\
@@ -278,19 +285,24 @@ def submit():
                 "message": "successfully added/edited file(s)"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
-        source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
-        response.view = 'file/form.html'
-        upload_group_ids = [int(gid) for gid in get_upload_group_ids(auth)]
-        group_ids = [int(g['id']) for g in get_default_creation_group(auth)[0]]
-        pre_process_list = get_pre_process_list()
-        return dict(message=T("an error occured"),
-               pre_process_list = pre_process_list,
-               files = data['file'],
-               sample_type = data['sample_type'],
-               source_module_active = source_module_active,
-               group_ids = group_ids,
-               upload_group_ids = upload_group_ids)
+        return form_response(data)
     
+def form_response(data):
+    source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
+    response.view = 'file/form.html'
+    upload_group_ids = [int(gid) for gid in get_upload_group_ids(auth)]
+    group_ids = [int(g['id']) for g in get_default_creation_group(auth)[0]]
+    pre_process_list = get_pre_process_list()
+    return dict(message=T("an error occured"),
+           pre_process_list = pre_process_list,
+           files = data['file'],
+           sets = data['sets'],
+           sample_type = data['sample_type'],
+           errors = data['errors'],
+           source_module_active = source_module_active,
+           group_ids = group_ids,
+           upload_group_ids = upload_group_ids)
+
 def upload(): 
     session.forget(response)
     mes = ""
