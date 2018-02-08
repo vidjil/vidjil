@@ -227,7 +227,6 @@ FileFormBuilder.prototype.build = function(index) {
     fieldset.appendChild(this.createCloseButton());
     fieldset.appendChild(this.build_hidden_fields());
     fieldset.appendChild(this.build_file_fieldset());
-    fieldset.appendChild(this.build_set_fieldset());
     fieldset.appendChild(this.build_info_fieldset());
     return fieldset;
 }
