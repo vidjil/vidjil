@@ -65,7 +65,7 @@ void comp_matrix::compare(ostream &out, Cost cluster_cost)
             j2=it1->first;
             DynProg dp = DynProg(j1, j2, DynProg::Local, compareCost);
             int score=dp.compute();
-            int distance = max(j1.size(), j2.size())-score;
+            int distance = max(j1.size(), j2.size()) * compareCost.match - score;
             m[c2][c1]=distance;
             m[c1][c2]=distance;
             c1++;

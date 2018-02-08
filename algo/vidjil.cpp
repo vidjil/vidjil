@@ -1189,9 +1189,6 @@ int main (int argc, char **argv)
     list <list <junction> > clones_windows;
     comp_matrix comp=comp_matrix(sort_clones);
       
-    //$$ Further analyze some clones (-z)
-    if (command == CMD_CLONES) {
-
     if (epsilon || forced_edges.size())
       {
 	cout << "Cluster similar windows" << endl ;
@@ -1220,6 +1217,9 @@ int main (int argc, char **argv)
 	cout << "No clustering" << endl ; 
       }
 
+
+    //$$ Further analyze some clones (-z)
+    if (command == CMD_CLONES) {
 
     // TODO: output clones_windows (.data, other places ?)
 
