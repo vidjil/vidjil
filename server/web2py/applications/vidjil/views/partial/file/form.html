@@ -46,20 +46,19 @@
     <fieldset>
         <legend>sample information</legend>
         <div class="field_div">
-            <label for="sampling_date_{{=i}}" id="sampling_date__label_{{=i}}">sampling date: </label>
             <input class="date form-control" id="sampling_date_{{=i}}" name="file[{{=i}}][sampling_date]" type="text"
                 value="{{if 'sampling_date' in file and file['sampling_date'] is not None:}}{{=file['sampling_date']}}{{pass}}"
-                placeholder="yyyy-mm-dd" pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))">
+                placeholder="Sampling Date (yyyy-mm-dd)" pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))">
         </div>
         <div class="field_div">
-            <label for="file_info_{{=i}}" id="file_info__label_{{=i}}">info: </label>
             <textarea id="file_info_{{=i}}"
                 onfocus="new VidjilAutoComplete().setupTags(this);"
                 data-needs-atwho="true"
                 data-keys="{{=group_ids}}"
                 class="text form-control"
                 name="file[{{=i}}][info]"
-                rows="1">{{if 'info' in file and file['info'] is not None:}}{{=file['info']}}{{pass}}</textarea>
+                rows="1"
+                placeholder="Info">{{if 'info' in file and file['info'] is not None:}}{{=file['info']}}{{pass}}</textarea>
         </div>
     </fieldset>
 </fieldset>
