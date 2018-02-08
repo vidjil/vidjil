@@ -140,6 +140,7 @@ VidjilAutoComplete.prototype = {
             }
             var res = $.map(data, function(i) {
                 return {
+                    id: i.id,
                     name: i.name,
                     search: i.name
                 };
@@ -175,6 +176,17 @@ VidjilAutoComplete.prototype = {
         callbacks.beforeInsert = function(value, li) {
             new Tokeniser().tokenise(value); // Tokeniser is a Singleton
             return "";
+        };
+
+        callbacks.sorter = function(query, items) {
+            return items.sort(function(a, b){
+                if(a.id < b.id) {
+                    return 1;
+                } else if (a.id == b.id) {
+                    return 0
+                }
+                return -1;
+            });
         };
 
         $input.atwho({

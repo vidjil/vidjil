@@ -761,7 +761,7 @@ def get_sample_set_list(type):
         (db[type].sample_set_id == db.sample_set.id)
     ).select(
         db[type].ALL, # sub optimal, use helpers to reduce ?
-        orderby = ~db[type].id
+        orderby = ~db[type].sample_set_id
     )
     ss_list = []
 
@@ -769,7 +769,7 @@ def get_sample_set_list(type):
     helper = factory.get_instance(type=type)
     for row in query :
         tmp = helper.get_id_string(row)
-        ss_list.append({'name':tmp})
+        ss_list.append({'name':tmp, 'id': row.sample_set_id})
     return ss_list
 
 def auto_complete():
