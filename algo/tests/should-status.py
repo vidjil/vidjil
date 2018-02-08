@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 import sys
+import os
 import glob
 from collections import defaultdict
 
@@ -33,6 +34,7 @@ print("=== %s " % TAPS,
 
 if stats[False]:
     print(" --> %s" % FAILED_TESTS_SH)
+    os.system('cat %s' % FAILED_TESTS_SH)
     sys.exit(1)
 
 print()
