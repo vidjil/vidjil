@@ -71,3 +71,18 @@ Tokeniser.prototype.createToken = function(set_id) {
 
         return token;
     }
+
+Tokeniser.prototype.removeToken = function(token) {
+        this.target.removeChild(token);
+        this.form_input.value = this.readTokens();
+        return token;
+    }
+
+Tokeniser.prototype.createCloseButton = function() {
+        var self = this;
+        var close = Object.getPrototypeOf(Tokeniser.prototype).createCloseButton.call(this);
+        close.onclick = function() {
+            self.removeToken(this.parentNode);
+        }
+        return close;
+    }
