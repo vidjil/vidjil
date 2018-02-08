@@ -12,10 +12,12 @@ stages:
   - test_quality
   - test_unit
   - deploy_review
+  - test_germlines
   - test_functional
   - test_functional_external
   - test_shouldvdj
   - prepare_release
+  - release
   - valgrind_unit
   - valgrind_functional
   - deploy_prod
@@ -26,6 +28,18 @@ stages:
 test_tools:
   stage: test_tools
   script: make -C tools/tests
+
+
+# Germlines
+
+test_germlines:
+  stage: test_germlines
+  script:
+    - make -C germline get-all-data
+    - make -C algo/tests should_germline
+  only:
+    - /^feature-g\/.*$/
+
 
 # Algorithm
 
@@ -76,6 +90,19 @@ prepare_release:
   when: manual
   only:
     - /^feature-a\/.*$/
+
+release:
+  stage: release
+  script: make -C algo release RELEASE_TAG=`cat algo/release`
+  when: manual
+  only:
+    - /^feature-a\/release$/
+  artifacts:
+    paths:
+    - algo/releases/vidjil-algo-`cat algo/release`.tar.gz
+    - algo/releases/vidjil-algo-`cat algo/release`/vidjil-algo-`cat algo/release`_`uname -m`
+  tags:
+    - ubuntu-16.04-amd64
 
 # Client
 

@@ -8,6 +8,8 @@ EXEC=$(SRC:.cpp=)
 OBJ=$(SRC:.cpp=.o)
 OTHER_SRC=$(wildcard unit-tests/*.cpp)
 LIB=../core/vidjil.a ../lib/lib.a
+SHOULD_GERMLINE=$(wildcard should-get-tests/10-germlines-*.should-get)
+SHOULD_GERMLINE_LOG=$(SHOULD_GERMLINE:.should-get=.tap)
 SHOULD=$(wildcard should-get-tests/*.should-get) $(wildcard bugs/*.should-get)
 SHOULD_LOG=$(SHOULD:.should-get=.tap)
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
@@ -66,7 +68,18 @@ snapshot_diff_current:
 	-make snapshot SNAPSHOT="$(SNAPSHOT_CURRENT)"
 	-diff -u -I ".*20..-..-...*" snapshot-last $(SNAPSHOT_CURRENT)
 
-should: vidjil $(SHOULD_LOG)
+
+should_germline: $(SHOULD_GERMLINE_LOG)
+
+should_raw: vidjil $(SHOULD_LOG)
+
+should:
+	-$(MAKE) -k should_raw
+	python should-status.py
+
+failed_should:
+	-sh failed-should-get-tests.sh
+	python should-status.py
 
 shouldvdj_if_python:
 	if python ../../tools/check_python_version.py ; \

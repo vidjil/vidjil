@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 dir=$(dirname $0)
 
 germline_id=$(cat $dir/germline_id)

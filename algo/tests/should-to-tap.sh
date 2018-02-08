@@ -8,7 +8,7 @@ In the .should_get format, every line starting with a # is a comment
 every line starting with a $ is a description of the test
 non empty lines, must be of the following form:
 <info>:<regexp>
-where <regexp> is a regular expression passed to grep 
+where <regexp> is a regular expression passed to `grep -E`
 (beware to escape backslashes).
 info is the number of times this regular expression should occur in the file.
 the info can be prefixed by a letter either s or f or e (they can be mixed):

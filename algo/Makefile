@@ -253,7 +253,7 @@ RELEASE_H = release.h
 GIT_VERSION_H = git-version.h
 
 RELEASES_DIR = releases/
-RELEASE_NAME = vidjil-$(RELEASE_TAG)
+RELEASE_NAME = vidjil-algo-$(RELEASE_TAG)
 RELEASE_ARCHIVE_TAR = $(RELEASE_NAME).tar
 RELEASE_ARCHIVE_TGZ = $(RELEASE_NAME).tar.gz
 RELEASE_DIR_TMP = releases/tmp
@@ -323,7 +323,7 @@ release_check:
 	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) vidjil-algo
 	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) demo
 	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) test
-	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) -C src clean && $(MAKE) -C src static && mv $(EXEC) $(EXEC)-$(RELEASE_TAG)_`uname -m`
+	cd $(RELEASES_DIR)/$(RELEASE_NAME) && $(MAKE) -C src clean && $(MAKE) -C src static && mv -v $(EXEC) $(EXEC)-$(RELEASE_TAG)_`uname -m`
 
 
 

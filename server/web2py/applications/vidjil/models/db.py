@@ -95,6 +95,9 @@ auth.settings.remember_me_form = False
 auth.settings.logged_url = URL('user', 'info')
 auth.settings.login_next = URL('user', 'info')
 
+auth.settings.create_user_groups = 'user_%(id)04d'
+auth.messages.group_description = 'Group of user %(id)04d - %(first_name)s %(last_name)s'
+
 ## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
 ## register with janrain.com, write your domain:api_key in private/janrain.key
 from gluon.contrib.login_methods.rpx_account import use_janrain
@@ -371,6 +374,7 @@ def _init_log():
 
 log = _init_log()
 
+auth.log = log
 auth.preload()
 
 current.log = log

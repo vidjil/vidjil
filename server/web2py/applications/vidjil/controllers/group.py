@@ -79,8 +79,8 @@ def add_form():
         add_default_group_permissions(auth, id)
 
         res = {"redirect": "group/index",
-               "message" : "group '%s' created" % id}
-        log.info(res)
+               "message" : "group '%s' (%s) created" % (id, request.vars["group_name"])}
+        log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
@@ -108,8 +108,8 @@ def edit_form():
                                                description=request.vars["info"])
 
         res = {"redirect": "group/index",
-               "message" : "group '%s' modified" % id}
-        log.info(res)
+               "message" : "group '%s' modified" % request.vars["id"]}
+        log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
@@ -136,7 +136,7 @@ def delete():
     
     res = {"redirect": "group/index",
            "message": "group '%s' deleted" % request.vars["id"]}
-    log.info(res)
+    log.admin(res)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
@@ -171,7 +171,9 @@ def remove_permission():
         auth.del_permission(auth.user_group(request.vars["user_id"]), PermissionEnum.admin_group.value, db.auth_group, request.vars["group_id"])
 
     res = {"redirect" : "group/permission" ,
-           "args" : { "id" : request.vars["group_id"]} }
+           "args" : { "id" : request.vars["group_id"]},
+           "message": "user '%s' is not anymore owner of the group '%s'" % (request.vars["user_id"], request.vars["group_id"]) 
+    }
     log.info(res)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
@@ -182,8 +184,9 @@ def change_permission():
         return error_message("ACCESS_DENIED")
     auth.add_permission(auth.user_group(request.vars["user_id"]), PermissionEnum.admin_group.value, db.auth_group, request.vars["group_id"])
 
-    res = {"redirect" : "group/permission" , "args" : { "id" : request.vars["group_id"]} }
-    log.info(res)
+    res = {"redirect" : "group/permission" , "args" : { "id" : request.vars["group_id"]},
+           "message": "user '%s' is now owner of the group '%s'" % (request.vars["user_id"], request.vars["group_id"]) }
+    log.admin(res)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 ## invite an user to join the group
@@ -195,7 +198,7 @@ def invite():
         res = {"redirect" : "group/info" ,
                "args" : { "id" : request.vars["group_id"]},
                "message" : "user '%s' added to group '%s'" % (request.vars["user_id"], request.vars["group_id"])}
-        log.info(res)
+        log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else:
@@ -214,7 +217,7 @@ def kick():
         res = {"redirect" : "group/info" ,
                "args" : { "id" : request.vars["group_id"]},
                "message" : "user '%s' removed from group '%s'" % (request.vars["user_id"], request.vars["group_id"])}
-        log.info(res)
+        log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else:
