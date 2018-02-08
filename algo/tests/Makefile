@@ -71,7 +71,15 @@ snapshot_diff_current:
 
 should_germline: $(SHOULD_GERMLINE_LOG)
 
-should: vidjil $(SHOULD_LOG)
+should_raw: vidjil $(SHOULD_LOG)
+
+should:
+	-$(MAKE) -k should_raw
+	python should-status.py
+
+should_failed:
+	-sh failed-should-get-tests.sh
+	python should-status.py
 
 shouldvdj_if_python:
 	if python ../../tools/check_python_version.py ; \
