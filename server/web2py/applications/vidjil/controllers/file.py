@@ -43,15 +43,6 @@ def manage_filename(filename):
 
     return (data, filepath)
 
-def get_sample_set_ids(id_dict):
-    ssid_dict = {}
-    for key in id_dict:
-        ids = id_dict[key]
-        ssid_dict[key] = []
-        ssids = [r.sample_set_id for r in db(db[key].id.belongs(id_dict[key])).select()]
-        ssid_dict[key] = ssids
-    return ssid_dict
-
 def link_to_sample_sets(seq_file_id, id_dict):
     '''
     Create sample set memberships and return a dict of the sample set ids.
