@@ -119,6 +119,21 @@ FormBuilder.prototype.build_date = function(id, object, name, label) {
         return d;
     }
 
+FormBuilder.prototype.build_info = function(object, keys) {
+        var d = this.build_wrapper();
+        var id = 'info';
+        var label = labelise(id);
+
+        var txt = this.build_textarea('info', "text", 'info', object, label);
+        $(txt).data('needs-atwho', true);
+        $(txt).on('focus', function() {
+            $(this).data('keys', keys);
+            new VidjilAutoComplete().setupTags(this);
+        });
+        d.appendChild(txt);
+        return d;
+    }
+
 function SetFormBuilder() {
     this.type = 'foobar';
     FormBuilder.call(this);
@@ -129,21 +144,6 @@ SetFormBuilder.prototype = Object.create(FormBuilder.prototype);
 SetFormBuilder.prototype.set_id = function() {
         var id = 'id_label';
         return this.build_field(id, id, capitalise(this.type)+' ID');
-    };
-
-SetFormBuilder.prototype.build_info = function() {
-        var d = this.build_wrapper();
-        var id = 'info';
-        var label = labelise(id);
-
-        var txt = this.build_textarea('info', "text", 'info', this.type, label);
-        $(txt).data('needs-atwho', true);
-        $(txt).on('focus', function() {
-            $(this).data('keys', [$('#group_select option:selected').val()]);
-            new VidjilAutoComplete().setupTags(this);
-        });
-        d.appendChild(txt);
-        return d;
     };
 
 SetFormBuilder.prototype.build_date = function(id, name, label) {
@@ -167,7 +167,7 @@ PatientFormBuilder.prototype.build = function(index) {
         fieldset.appendChild(this.build_field('first_name', undefined, undefined, true));
         fieldset.appendChild(this.build_field('last_name', undefined, undefined, true));
         fieldset.appendChild(this.build_date('birth'));
-        fieldset.appendChild(this.build_info());
+        fieldset.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()]));
         return fieldset;
     };
 
@@ -187,7 +187,7 @@ RunFormBuilder.prototype.build = function(index) {
         fieldset.appendChild(this.set_id());
         fieldset.appendChild(this.build_field('name', undefined, undefined, true));
         fieldset.appendChild(this.build_date('run_date', 'run_date', 'Date'));
-        fieldset.appendChild(this.build_info());
+        fieldset.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()]));
         fieldset.appendChild(this.build_field('sequencer'));
         fieldset.appendChild(this.build_field('pcr', 'pcr', 'PCR'));
         return fieldset;
@@ -207,7 +207,7 @@ GenericFormBuilder.prototype.build = function(index) {
         fieldset.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         fieldset.appendChild(this.build_input('sample_set_id', 'text', 'sample_set_id', 'hidden', this.type));
         fieldset.appendChild(this.build_field('name', undefined, undefined, true));
-        fieldset.appendChild(this.build_info());
+        fieldset.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()]));
         return fieldset;
     }
 
@@ -310,7 +310,7 @@ FileFormBuilder.prototype.build_info_fieldset = function() {
     var f = document.createElement('fieldset');
     f.appendChild(this.build_legend('sample information'));
     f.appendChild(this.build_date('sampling_date', 'file'));
-    f.appendChild(this.build_info('file'));
+    f.appendChild(this.build_info('file', this.group_ids));
     return f;
 }
 
@@ -357,19 +357,3 @@ FileFormBuilder.prototype.build_jstree = function() {
     tree_par.appendChild(tree);
     return d;
 }
-
-FileFormBuilder.prototype.build_info = function(object) {
-        var self = this;
-        var d = this.build_wrapper();
-        var id = 'info';
-        d.appendChild(this.build_label('Info', object, id));
-
-        var txt = this.build_textarea('info', "text", 'info', object);
-        $(txt).data('needs-atwho', true);
-        $(txt).on('focus', function() {
-            $(this).data('keys', self.group_ids);
-            new VidjilAutoComplete().setupTags(this);
-        });
-        d.appendChild(txt);
-        return d;
-    }
