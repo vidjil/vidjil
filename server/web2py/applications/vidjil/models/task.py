@@ -173,7 +173,6 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
         return "FAIL"
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
-    germline_folder = defs.DIR_GERMLINE
     upload_folder = defs.DIR_SEQUENCES
     out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
     
@@ -189,7 +188,14 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
 
     ## config de vidjil
     vidjil_cmd = db.config[id_config].command
-    vidjil_cmd = vidjil_cmd.replace( ' germline' ,germline_folder)
+
+    if 'next' in vidjil_cmd:
+        vidjil_cmd = vidjil_cmd.replace('next', '')
+        vidjil_cmd = vidjil_cmd.replace(' germline' , defs.DIR_GERMLINE_NEXT)
+        cmd = defs.DIR_VIDJIL_NEXT + '/vidjil-algo '
+    else:
+        vidjil_cmd = vidjil_cmd.replace(' germline' , defs.DIR_GERMLINE)
+        cmd = defs.DIR_VIDJIL + '/vidjil '
 
     if grep_reads:
         # TODO: security, assert grep_reads XXXX
@@ -201,7 +207,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
 
     try:
         ## commande complete
-        cmd = defs.DIR_VIDJIL + '/vidjil ' + ' -o  ' + out_folder + " -b " + output_filename
+        cmd += ' -o  ' + out_folder + " -b " + output_filename
         cmd += ' ' + vidjil_cmd + ' '+ seq_file
 
         ## execute la commande vidjil
