@@ -142,7 +142,8 @@ VidjilAutoComplete.prototype = {
                 return {
                     id: i.id,
                     name: i.name,
-                    search: i.name
+                    search: i.name,
+                    set_type: i.type
                 };
             });
             return res;
@@ -159,9 +160,10 @@ VidjilAutoComplete.prototype = {
             // encapsulate the string_id's set_type token (:p, :r, :s) within a span
             li = li.replace(li.substr(4,2),
                     function(str) {
-                        return '<span class="autocomplete_li ' + mapper[set_type] + '">' + str + '</span>';
+                        return '<span class="autocomplete_li ' + mapper[set_type] + '">' + str + '</span><span class="set_token '+ mapper[set_type] + '_token">';
                     });
             li = li.replace('<li>', '<li class="' + mapper[set_type] + '_li">');
+            li = li.replace('</li>', '</span></li>');
             var regexp;
             if (!query) {
                 return li;

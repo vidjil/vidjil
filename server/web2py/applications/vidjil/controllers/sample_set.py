@@ -771,7 +771,7 @@ def get_sample_set_list(type):
     helper = factory.get_instance(type=type)
     for row in query :
         tmp = helper.get_id_string(row)
-        ss_list.append({'name':tmp, 'id': row.sample_set_id})
+        ss_list.append({'name':tmp, 'id': row.sample_set_id, 'type': type})
     return ss_list
 
 def auto_complete():
