@@ -3,6 +3,9 @@
     {{ if file is not None and 'error' in file and len(file['error']) > 0: }}
         <div class="error">error: {{=", ".join(file['error'])}}</div>
     {{ pass }}
+    {{ if file is not None and 'message' in file and len(file['message']) > 0: }}
+        <div>{{=", ".join(file['message'])}}</div>
+    {{ pass }}
     <div>
         <input type="hidden" id="file_filename_{{=i}}" class="filename" name="file[{{=i}}][filename]" type="text" value="">
         <input type="hidden" id="file_id_{{=i}}" name="file[{{=i}}][id]"

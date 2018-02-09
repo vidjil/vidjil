@@ -222,6 +222,8 @@ def submit():
             error = True
             continue
 
+        f['message'] = []
+
         file_data = dict(sampling_date=f['sampling_date'],
                          info=f['info'],
                          pre_process_id=pre_process,
@@ -245,6 +247,8 @@ def submit():
             action = "add"
 
         mes = "file (%d) %s %sed" % (f["id"], f["filename"], action)
+        f['message'].append(mes)
+        f['message'].append("You must reselect the file for it to be uploaded")
         for key in id_dict:
             for sid in id_dict[key]:
                 group_id = get_set_group(sid)

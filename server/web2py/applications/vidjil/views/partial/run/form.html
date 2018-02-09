@@ -5,6 +5,9 @@
     {{ if set is not None and 'error' in set and len(set['error']) > 0: }}
         <div class="error">error: {{=", ".join(set['error'])}}</div>
     {{ pass }}
+    {{ if set is not None and 'message' in set and len(set['message']) > 0: }}
+        <div>{{=", ".join(set['message'])}}</div>
+    {{ pass }}
     <div class="field_div">
         <input class="date" id="run_id_label_{{=i}}" name="run[{{=i}}][id_label]" type="text"
             value="{{if set is not None and set['id_label'] is not None:}}{{=set['id_label']}}{{pass}}" placeholder="Run ID"><span></span>

@@ -5,6 +5,9 @@
     {{ if set is not None and 'error' in set and len(set['error']) > 0: }}
         <div class="error">error: {{=", ".join(set['error'])}}</div>
     {{pass}}
+    {{ if set is not None and 'message' in set and len(set['message']) > 0: }}
+        <div>{{=", ".join(set['message'])}}</div>
+    {{ pass }}
     <div class="field_div">
         <input id="sample_set_name_{{=i}}" name="generic[{{=i}}][name]" type="text" class="string form-control"
             value="{{if set is not None:}}{{=set['name']}}{{pass}}" required placeholder="Name">
