@@ -1,43 +1,41 @@
-<fieldset name="run{{=i}}">
-    <legend>Run {{=i+1}}</legend>
-    <input type="hidden" id="run_id_{{=i}}" name="run[{{=i}}][id]" value="{{if set is not None:}}{{=set['id']}}{{pass}}">
-    <input type="hidden" sample_set_id="run_sample_set_id_{{=i}}" name="run[{{=i}}][sample_set_id]" value="{{if set is not None:}}{{=set['sample_set_id']}}{{pass}}">
-    {{ if set is not None and 'error' in set and len(set['error']) > 0: }}
-        <div class="error">error: {{=", ".join(set['error'])}}</div>
-    {{ pass }}
-    {{ if set is not None and 'message' in set and len(set['message']) > 0: }}
-        <div>{{=", ".join(set['message'])}}</div>
-    {{ pass }}
-    <div class="field_div">
-        <input class="date" id="run_id_label_{{=i}}" name="run[{{=i}}][id_label]" type="text"
-            value="{{if set is not None and set['id_label'] is not None:}}{{=set['id_label']}}{{pass}}" placeholder="Run ID"><span></span>
-    </div>
-    <div class="field_div">
-        <input class="string form-control" id="run_name_{{=i}}" name="run[{{=i}}][name]" type="text"
-            value="{{if set is not None:}}{{=set['name']}}{{pass}}" required placeholder="Name">
-    </div>
-    <div class="field_div">
-        <input id="run_date_{{=i}}" name="run[{{=i}}][run_date]" type="text" class="date form-control"
-            value="{{if set is not None and set['run_date'] is not None:}}{{=set['run_date']}}{{pass}}"
-            placeholder="Date (yyyy-mm-dd)" title="yyyy-mm-dd" pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))">
-    </div>
-    <div class="field_div">
-        <textarea
-            onfocus="$(this).data('group-ids', [$('#group_select option:selected').val()]);
-                     new VidjilAutoComplete().setupAtWho(this);"
-            data-needs-atwho="true"
-            class="text form-control"
-            id="run_info_{{=i}}"
-            name="run[{{=i}}][info]"
-            rows="1"
-            placeholder="Info">{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}</textarea>
-    </div>
-    <div class="field_div">
-        <input id="run_sequencer_{{=i}}" name="run[{{=i}}][sequencer]" type="text" class="form-control"
-            value="{{if set is not None and set['sequencer'] is not None:}}{{=set['sequencer']}}{{pass}}" placeholder="Sequencer">
-    </div>
-    <div class="field_div">
-        <input id="run_pcr_{{=i}}" name="run[{{=i}}][pcr]" type="text" class="form-control"
-            value="{{if set is not None and set['pcr'] is not None:}}{{=set['pcr']}}{{pass}}" placeholder="PCR">
-    </div>
-</fieldset>
+<div>Run {{=i+1}}</div>
+<input type="hidden" id="run_id_{{=i}}" name="run[{{=i}}][id]" value="{{if set is not None:}}{{=set['id']}}{{pass}}">
+<input type="hidden" sample_set_id="run_sample_set_id_{{=i}}" name="run[{{=i}}][sample_set_id]" value="{{if set is not None:}}{{=set['sample_set_id']}}{{pass}}">
+{{ if set is not None and 'error' in set and len(set['error']) > 0: }}
+    <div class="error">error: {{=", ".join(set['error'])}}</div>
+{{ pass }}
+{{ if set is not None and 'message' in set and len(set['message']) > 0: }}
+    <div>{{=", ".join(set['message'])}}</div>
+{{ pass }}
+<div class="field_div">
+    <input class="date" id="run_id_label_{{=i}}" name="run[{{=i}}][id_label]" type="text"
+        value="{{if set is not None and set['id_label'] is not None:}}{{=set['id_label']}}{{pass}}" placeholder="Run ID"><span></span>
+</div>
+<div class="field_div">
+    <input class="string form-control" id="run_name_{{=i}}" name="run[{{=i}}][name]" type="text"
+        value="{{if set is not None:}}{{=set['name']}}{{pass}}" required placeholder="Name">
+</div>
+<div class="field_div">
+    <input id="run_date_{{=i}}" name="run[{{=i}}][run_date]" type="text" class="date form-control"
+        value="{{if set is not None and set['run_date'] is not None:}}{{=set['run_date']}}{{pass}}"
+        placeholder="Date (yyyy-mm-dd)" title="yyyy-mm-dd" pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))">
+</div>
+<div class="field_div">
+    <textarea
+        onfocus="$(this).data('group-ids', [$('#group_select option:selected').val()]);
+                 new VidjilAutoComplete().setupAtWho(this);"
+        data-needs-atwho="true"
+        class="text form-control"
+        id="run_info_{{=i}}"
+        name="run[{{=i}}][info]"
+        rows="1"
+        placeholder="Info">{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}</textarea>
+</div>
+<div class="field_div">
+    <input id="run_sequencer_{{=i}}" name="run[{{=i}}][sequencer]" type="text" class="form-control"
+        value="{{if set is not None and set['sequencer'] is not None:}}{{=set['sequencer']}}{{pass}}" placeholder="Sequencer">
+</div>
+<div class="field_div">
+    <input id="run_pcr_{{=i}}" name="run[{{=i}}][pcr]" type="text" class="form-control"
+        value="{{if set is not None and set['pcr'] is not None:}}{{=set['pcr']}}{{pass}}" placeholder="PCR">
+</div>

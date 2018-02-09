@@ -6,17 +6,13 @@
 <form id="upload_form"  action="DB_ADDRESS/file/submit" enctype="multipart/form-data" method="post">
 
     {{ if source_module_active: }}
-    <fieldset name="file_source">
-        <legend>file source</legend>
+        <span>file source</span>
         <label for="source_computer">my computer</label>
         <input type="radio" id="source_computer" name="source" value="computer" onchange="db.toggle_file_source()"/>
         <label for="source_nfs">network</label>
         <input type="radio" id="source_nfs" name="source" value="nfs" onchange="db.toggle_file_source()" checked="checked" />
-    </fieldset>
     {{pass}}
-    <fieldset {{if source_module_active:}} hidden {{pass}}>
-        <legend>Pre process</legend>
-        <label for="pre_process" id="pre_process__label">pre-process scenario: </label>
+    <div {{if source_module_active:}} hidden {{pass}}>
         <select id="pre_process" name="pre_process" onChange="db.pre_process_onChange(this)" {{if source_module_active:}} disabled {{pass}}>
             <option required_files="1" value="0">no pre-process (1 file)</option>
             {{for row in pre_process_list :}}
@@ -26,47 +22,43 @@
                 </option>
             {{pass}}
         </select>
-    </fieldset>
-
-    <fieldset>
-        <legend>set selection</legend>
-        <div>
-            You must associate this sample with at least one patient, run or set.<br>You can also associate it with any combination of the three.
-        </div>
-        <div class="field_div">
-            {{ if len(errors) > 0: }}
-                <div class="error">{{=", ".join(errors)}}</div>
-            {{ pass }}
-            <label for="set_ids" id="set_ids__label">sets: </label>
-            <div class="token_div form-control" onclick="$('#token_input').focus()">
-                <input
-                    hidden
-                    id="file_set_list"
-                    name="set_ids"
-                    type="text"
-                    value="{{=",".join([set['id'] for set in sets])}}">
-                <div id="set_div" class="token_container">
-                    {{ for set in sets: }}
-                        <span class="set_token {{=set['type']}}_token" data-set-id="{{=set['id']}}">
-                            <i class="icon-cancel" onclick="new Tokeniser(document.getElementById('set_div'), document.getElementById('file_set_list')).removeToken(this.parentNode);"></i>
-                            {{=set['id'][3:]}}
-                        </span>
-                    {{pass}}
-                </div>
-                <input
-                    id="token_input"
-                    class="token_input"
-                    autocomplete="off"
-                    onfocus="new VidjilAutoComplete().setupSamples(this);
-                    new Tokeniser(document.getElementById('set_div'), document.getElementById('file_set_list'));"
-                    data-needs-atwho="true"
-                    data-needs-tokeniser="true"
-                    data-group-ids="{{=upload_group_ids}}"
-                    data-keys='["generic", "patient", "run"]'
-                    type="text">
+    </div>
+    <div>
+        You must associate this sample with at least one patient, run or set.<br>You can also associate it with any combination of the three.
+    </div>
+    <div class="field_div">
+        {{ if len(errors) > 0: }}
+            <div class="error">{{=", ".join(errors)}}</div>
+        {{ pass }}
+        <label for="set_ids" id="set_ids__label">sets: </label>
+        <div class="token_div form-control" onclick="$('#token_input').focus()">
+            <input
+                hidden
+                id="file_set_list"
+                name="set_ids"
+                type="text"
+                value="{{=",".join([set['id'] for set in sets])}}">
+            <div id="set_div" class="token_container">
+                {{ for set in sets: }}
+                    <span class="set_token {{=set['type']}}_token" data-set-id="{{=set['id']}}">
+                        <i class="icon-cancel" onclick="new Tokeniser(document.getElementById('set_div'), document.getElementById('file_set_list')).removeToken(this.parentNode);"></i>
+                        {{=set['id'][3:]}}
+                    </span>
+                {{pass}}
             </div>
+            <input
+                id="token_input"
+                class="token_input"
+                autocomplete="off"
+                onfocus="new VidjilAutoComplete().setupSamples(this);
+                new Tokeniser(document.getElementById('set_div'), document.getElementById('file_set_list'));"
+                data-needs-atwho="true"
+                data-needs-tokeniser="true"
+                data-group-ids="{{=upload_group_ids}}"
+                data-keys='["generic", "patient", "run"]'
+                type="text">
         </div>
-    </fieldset>
+    </div>
     <div id="fieldset_container">
         {{ for i, file in enumerate(files): }}
             {{ include 'partial/file/form.html' }}

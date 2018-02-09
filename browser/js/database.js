@@ -647,7 +647,7 @@ Database.prototype = {
 
         var pre_process = $('#pre_process');
         pre_process.prop('disabled', disable);
-        pre_process.closest("fieldset").prop('hidden', disable);
+        pre_process.closest("div").prop('hidden', disable);
     },
 
     toggle_jstree: function(){
