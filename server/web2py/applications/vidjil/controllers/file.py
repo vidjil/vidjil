@@ -222,8 +222,6 @@ def submit():
             error = True
             continue
 
-        f['message'] = []
-
         file_data = dict(sampling_date=f['sampling_date'],
                          info=f['info'],
                          pre_process_id=pre_process,
@@ -246,6 +244,7 @@ def submit():
             f['id'] = fid = db.sequence_file.insert(**file_data)
             action = "add"
 
+        f['message'] = []
         mes = "file (%d) %s %sed" % (f["id"], f["filename"], action)
         f['message'].append(mes)
         f['message'].append("You must reselect the file for it to be uploaded")

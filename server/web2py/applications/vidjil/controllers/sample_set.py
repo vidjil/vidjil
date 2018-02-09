@@ -446,8 +446,6 @@ def submit():
                 error = True
                 continue
 
-            p['message'] = []
-
             register = False
             reset = False
 
@@ -494,6 +492,7 @@ def submit():
                 p['error'].append("permission denied")
                 error = True
 
+            p['message'] = []
             mes = "%s (%s) %s %sed" % (set_type, id_sample_set, name, action)
             p['message'].append(mes)
             log.info(mes, extra={'user_id': auth.user.id, 'record_id': p['id'], 'table_name': 'patient'})
