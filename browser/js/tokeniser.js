@@ -22,6 +22,14 @@
 
 function Tokeniser(target, form_input) {
     if (typeof Tokeniser.instance === 'object') {
+        if (typeof target !== "undefined") {
+            Tokeniser.instance.target = target;
+        }
+
+        if (typeof form_input !== "undefined") {
+            Tokeniser.instance.form_input = form_input
+        }
+
         return Tokeniser.instance;
     }
 

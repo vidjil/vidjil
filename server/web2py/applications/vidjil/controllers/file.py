@@ -184,6 +184,7 @@ def form():
     myfile = db.sequence_file[request.vars["file_id"]]
     if myfile is None:
         myfile = {}
+    myfile['sets'] = []
     sets = get_set_list(relevant_ids, helpers)
 
     data = {}
@@ -217,6 +218,8 @@ def submit():
     for f in data['file']:
         errors = validate(f)
 
+        f['sets'], f['id_dict'], err = validate_sets(f['set_ids'])
+
         if len(errors) > 0:
             f['error'] = errors
             error = True
@@ -248,6 +251,12 @@ def submit():
         mes = "file (%d) %s %sed" % (f["id"], f["filename"], action)
         f['message'].append(mes)
         f['message'].append("You must reselect the file for it to be uploaded")
+
+        for key in f['id_dict']:
+            if key not in id_dict:
+                id_dict[key] = []
+            id_dict[key] += f['id_dict'][key]
+
         for key in id_dict:
             for sid in id_dict[key]:
                 group_id = get_set_group(sid)

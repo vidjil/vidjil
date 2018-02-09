@@ -37,28 +37,28 @@
             {{ if len(errors) > 0: }}
                 <div class="error">{{=", ".join(errors)}}</div>
             {{ pass }}
-            <label for="set_ids_{{=0}}" id="set_ids__label_{{=0}}">sets: </label>
-            <div class="token_div form-control" onclick="$('#token_input_{{=0}}').focus()">
+            <label for="set_ids" id="set_ids__label">sets: </label>
+            <div class="token_div form-control" onclick="$('#token_input').focus()">
                 <input
                     hidden
-                    id="file_set_list_{{=0}}"
+                    id="file_set_list"
                     name="set_ids"
                     type="text"
                     value="{{=",".join([set['id'] for set in sets])}}">
-                <div id="set_div_{{=0}}" class="token_container">
+                <div id="set_div" class="token_container">
                     {{ for set in sets: }}
                         <span class="set_token {{=set['type']}}_token" data-set-id="{{=set['id']}}">
-                            <i class="icon-cancel" onclick="new Tokeniser(document.getElementById('set_div_{{=0}}'), document.getElementById('file_set_list_{{=0}}')).removeToken(this.parentNode);"></i>
+                            <i class="icon-cancel" onclick="new Tokeniser(document.getElementById('set_div'), document.getElementById('file_set_list')).removeToken(this.parentNode);"></i>
                             {{=set['id'][3:]}}
                         </span>
                     {{pass}}
                 </div>
                 <input
-                    id="token_input_{{=0}}"
+                    id="token_input"
                     class="token_input"
                     autocomplete="off"
                     onfocus="new VidjilAutoComplete().setupSamples(this);
-                    new Tokeniser(document.getElementById('set_div_{{=0}}'), document.getElementById('file_set_list_{{=0}}'));"
+                    new Tokeniser(document.getElementById('set_div'), document.getElementById('file_set_list'));"
                     data-needs-atwho="true"
                     data-needs-tokeniser="true"
                     data-group-ids="{{=upload_group_ids}}"
