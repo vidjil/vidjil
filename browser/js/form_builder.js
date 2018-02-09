@@ -298,7 +298,7 @@ FileFormBuilder.prototype.build_set_fieldset = function() {
     i2.autocomplete = "off";
     i2.onfocus = function() {
         new VidjilAutoComplete().setupSamples(this);
-        new Tokeniser().setup(this, document.getElementById('set_div_' + self.index), document.getElementById('file_set_list_' + self.index));
+        new Tokeniser(document.getElementById('set_div_' + self.index), document.getElementById('file_set_list_' + self.index));
     }
     i2.dataset.needsAtwho = true;
     i2.dataset.needsTokeniser = true;
