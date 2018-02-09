@@ -70,8 +70,6 @@ def validate_sets(set_ids):
     sets = []
     errors = []
 
-    log.debug('set_ids: ' + str(set_ids))
-    log.debug('len: ' + str(len(set_ids)))
     if len(set_ids) == 0:
         errors.append("missing set association")
 
@@ -81,7 +79,6 @@ def validate_sets(set_ids):
     set_ids_arr = []
     if len(set_ids) > 0:
         set_ids_arr = [x.strip() for x in set_ids.split(',')]
-    log.debug('set_ids array: ' + str(set_ids))
     for sid in set_ids_arr:
         try:
             set_type = extract_set_type(sid)
