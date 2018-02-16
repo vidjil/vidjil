@@ -123,6 +123,7 @@ Germline.prototype = {
         if (type=="D") type2="4"
         if (type=="J") type2="3"
         if (typeof this.m.germlineList.list[system] !== 'undefined' &&
+            typeof this.m.germlineList.list[system].recombinations !== 'undefined' && // Old 'custom' germline format, see #3043
             typeof this.m.germlineList.list[system].recombinations[0] !== 'undefined'){
             if (typeof this.m.germlineList.list[system].recombinations[0][type2] !== 'undefined' ){
                 for (var i=0; i<this.m.germlineList.list[system].recombinations[0][type2].length; i++){
