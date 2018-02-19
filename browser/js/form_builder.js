@@ -297,7 +297,6 @@ FileFormBuilder.prototype.build_set_div = function() {
     var self = this;
     var f = document.createElement('div');
     f.className = "field_div"
-    f.appendChild(this.build_label('sets', 'file', 'set_ids'));
 
     var d = document.createElement('div');
     d.className = "token_div form-control";
@@ -329,6 +328,7 @@ FileFormBuilder.prototype.build_set_div = function() {
     i2.dataset.needsTokeniser = true;
     i2.dataset.groupIds = "[" + this.group_ids + "]";
     i2.dataset.keys = '["generic", "patient", "run"]';
+    i2.placeholder = "Sets";
     d.appendChild(i2);
 
     return f;

@@ -47,7 +47,6 @@
         </div>
     </div>
     <div class="field_div">
-        <label for="file_set_ids_{{=i}}" id="file_set_ids__label_{{=i}}">sets: </label>
         <div class="token_div form-control" onclick="$('#token_input_{{=i}}').focus()">
             <input
                 hidden
@@ -73,6 +72,7 @@
                 data-needs-tokeniser="true"
                 data-group-ids="{{=upload_group_ids}}"
                 data-keys='["generic", "patient", "run"]'
+                placeholder="Sets"
                 type="text">
         </div>
     </div>
