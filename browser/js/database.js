@@ -648,6 +648,10 @@ Database.prototype = {
         var pre_process = $('#pre_process');
         pre_process.prop('disabled', disable);
         pre_process.closest("div").prop('hidden', disable);
+
+        if (!disable) {
+            this.pre_process_onChange(pre_process);
+        }
     },
 
     toggle_jstree: function(){
