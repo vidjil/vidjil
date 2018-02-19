@@ -172,6 +172,16 @@ PatientFormBuilder.prototype.build = function(index) {
         return div;
     };
 
+PatientFormBuilder.prototype.createCloseButton = function() {
+        var self = this;
+        var close = Object.getPrototypeOf(PatientFormBuilder.prototype).createCloseButton.call(this);
+        $(close).click(function() {
+            var button = document.getElementById('patient_button');
+            button.dataset.index --;
+        });
+        return close;
+    };
+
 function RunFormBuilder() {
     SetFormBuilder.call(this);
     this.type = 'run';
@@ -194,6 +204,16 @@ RunFormBuilder.prototype.build = function(index) {
         return div;
     };
 
+RunFormBuilder.prototype.createCloseButton = function() {
+        var self = this;
+        var close = Object.getPrototypeOf(RunFormBuilder.prototype).createCloseButton.call(this);
+        $(close).click(function() {
+            var button = document.getElementById('run_button');
+            button.dataset.index--;
+        });
+        return close;
+    };
+
 function GenericFormBuilder() {
     SetFormBuilder.call(this);
     this.type = 'generic';
@@ -211,6 +231,16 @@ GenericFormBuilder.prototype.build = function(index) {
         div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()]));
         return div;
     }
+
+GenericFormBuilder.prototype.createCloseButton = function() {
+        var self = this;
+        var close = Object.getPrototypeOf(GenericFormBuilder.prototype).createCloseButton.call(this);
+        $(close).click(function() {
+            var button = document.getElementById('generic_button');
+            button.dataset.index--;
+        });
+        return close;
+    };
 
 function FileFormBuilder(group_ids, source, num_files) {
     FormBuilder.call(this);
@@ -344,3 +374,13 @@ FileFormBuilder.prototype.build_jstree = function() {
     tree_par.appendChild(tree);
     return d;
 }
+
+FileFormBuilder.prototype.createCloseButton = function() {
+        var self = this;
+        var close = Object.getPrototypeOf(FileFormBuilder.prototype).createCloseButton.call(this);
+        $(close).click(function() {
+            var button = document.getElementById('file_button');
+            button.dataset.index--;
+        });
+        return close;
+    }
