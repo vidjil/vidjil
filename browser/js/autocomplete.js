@@ -168,7 +168,7 @@ VidjilAutoComplete.prototype = {
             if (!query) {
                 return li;
             }
-            regexp = new RegExp(">([\\:\\(\\)\\[\\]A-Za-z0-9\\-]+\\s*)+(" + query.replace(/([\+\[\]\(\)\-])/g, function(str, s) { return "\\" + s; }) + ")([\\(\\)\\[\\]A-Za-z0-9\\s\\-]*)<", 'ig');
+            regexp = new RegExp(">([\\(\\)\\[\\]A-Za-z0-9\\-]*\\s*)+(" + query.replace(/([\+\[\]\(\)\-])/g, function(str, s) { return "\\" + s; }) + ")([\\(\\)\\[\\]A-Za-z0-9\\s\\-]*)<", 'ig');
             return li.replace(regexp, function(str, $1, $2, $3) {
                 return '> ' + $1 + '<strong>' + $2 + '</strong>' + $3 + ' <';
             });
