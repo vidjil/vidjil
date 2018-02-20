@@ -1,5 +1,5 @@
 <div>
-    <div>File {{=i+1}}</div>
+    <div>Sample {{=i+1}}</div>
     {{ if file is not None and 'error' in file and len(file['error']) > 0: }}
         <div class="error">error: {{=", ".join(file['error'])}}</div>
     {{ pass }}

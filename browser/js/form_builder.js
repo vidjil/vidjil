@@ -254,7 +254,7 @@ FileFormBuilder.prototype = Object.create(FormBuilder.prototype);
 
 FileFormBuilder.prototype.build = function(index) {
     this.index = index;
-    var div = this.build_div('file');
+    var div = this.build_div('sample');
     div.appendChild(this.createCloseButton());
     div.appendChild(this.build_hidden_fields());
     div.appendChild(this.build_file_div());
