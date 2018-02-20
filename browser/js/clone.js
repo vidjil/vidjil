@@ -1125,6 +1125,15 @@ Clone.prototype = {
         }
         html += "</tr>"
 
+        //warnings
+        if (this.isWarned()) {
+            html += header("warnings")
+
+            for (var i = 0; i < this.warn.length; i++) {
+                html += row_1(this.warn[i].code, this.warn[i].msg);
+            }
+        }
+
         //cluster info
         if (isCluster) {
             html += header("clone")
