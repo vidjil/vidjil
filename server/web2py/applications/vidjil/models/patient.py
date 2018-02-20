@@ -42,8 +42,11 @@ class Patient(SampleSet):
 
     def get_id_string(self, data):
         name = self.get_name(data)
-        ident = "(%d)" % data['sample_set_id']
-        return ":p %s %s" % (name, ident)
+        ident = " (%d)" % data['sample_set_id']
+        birth = ""
+        if data['birth'] is not None:
+            birth = " (%s)" % data['birth']
+        return ":p %s%s%s" % (name, birth, ident)
 
     def validate(self, data):
         error = []

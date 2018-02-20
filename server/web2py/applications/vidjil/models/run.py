@@ -38,8 +38,11 @@ class Run(SampleSet):
 
     def get_id_string(self, data):
         name = data['name']
-        ident = "(%d)" % data['sample_set_id']
-        return ":r %s %s" % (name, ident)
+        ident = " (%d)" % data['sample_set_id']
+        run_date = ""
+        if data['run_date'] is not None:
+            run_date = " (%s)" % data['run_date']
+        return ":r %s%s%s" % (name, run_date, ident)
 
     def validate(self, data):
         error = []
