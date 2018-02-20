@@ -48,7 +48,15 @@ function Clone(data, model, index, virtual) {
     }
 
     this.seg = this.m.convertSeg(this.seg)
+
+    // .warn, handle old formats
+    if (typeof this.warn === 'undefined')
+        this.warn = []
     
+    if (typeof this.warn === 'string')
+        this.warn = [ this.warn ]
+
+    // .shortName
     if (typeof (this.getSequence()) != 'undefined' && typeof (this.name) != 'undefined') {
         this.shortName = this.name.replace(new RegExp('IGHV', 'g'), "VH");
         this.shortName = this.shortName.replace(new RegExp('IGHD', 'g'), "DH");
@@ -63,6 +71,9 @@ function Clone(data, model, index, virtual) {
     this.computeGCContent()
     this.computeCoverage()
     this.computeEValue()
+
+    // .warn, client computed warnings
+    this.computeWarnings()
 }
 
 function nullIfZero(x) { return (x === 0 || x === '0') ? '' : x }
@@ -89,10 +100,22 @@ Clone.prototype = {
                 return 'info'
         }
 
-        if (this.coverage < this.COVERAGE_WARN) return 'warning';
-        if (typeof(this.eValue) != 'undefined' && this.eValue > this.EVALUE_WARN) return 'warning';
+        return false
+    },
 
-        return false;
+    computeWarnings: function() {
+
+        console.log(this.coverage)
+
+        if (this.coverage < this.COVERAGE_WARN)
+            this.warn.push({'code': 'W51', 'msg': 'Low coverage (' + this.coverage.toFixed(3) + ')'}) ;
+
+        if (typeof(this.eValue) != 'undefined' && this.eValue > this.EVALUE_WARN)
+            this.warn.push({'code': 'Wxx', 'msg': 'Bad e-value (' + this.eValue + ')' });
+
+    },
+
+
     },
 
     /**
