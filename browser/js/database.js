@@ -333,18 +333,13 @@ Database.prototype = {
     
     
     pre_process_onChange : function (field) {
-        var value = field.value;
-        for (var i=0; i<field.options.length; i++){
-            var option = field.options[i];
-            if (value == option.value){
-                if (option.getAttribute("required_files") == "1"){
-                    $(".file_2").attr('hidden', true);
-                    $(".upload_file_2").val("");
-                }else{
-                    $(".file_2").attr('hidden', false);
-                }
-            }
-        }        
+        var $option = $(field).find(":selected");
+        if ($option.attr('required_files') == "1"){
+            $(".file_2").hide();
+            $(".upload_file").val("");
+        }else{
+            $(".file_2").show();
+        }
     },
 
     upload_file_onChange : function (target_id, value) {
