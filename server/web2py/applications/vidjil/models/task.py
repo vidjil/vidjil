@@ -195,7 +195,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
         cmd = defs.DIR_VIDJIL_NEXT + '/vidjil-algo '
     else:
         vidjil_cmd = vidjil_cmd.replace(' germline' , defs.DIR_GERMLINE)
-        cmd = defs.DIR_VIDJIL + '/vidjil '
+        cmd = defs.DIR_VIDJIL + '/vidjil-algo '
 
     if grep_reads:
         # TODO: security, assert grep_reads XXXX
