@@ -1129,7 +1129,7 @@ Clone.prototype = {
         if (this.isWarned()) {
             html += header("warnings")
 
-            for (var i = 0; i < this.warn.length; i++) {
+            for (i = 0; i < this.warn.length; i++) {
                 html += row_1(this.warn[i].code, this.warn[i].msg);
             }
         }
