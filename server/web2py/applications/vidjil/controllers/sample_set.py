@@ -213,6 +213,47 @@ def all():
                 page = page)
 
 
+## Stats
+
+def stats():
+    start = time.time()
+
+    # d = all()
+    d = custom()
+    
+    # Build .vidjil file list
+    f_samples = []
+    for row in d['query']:
+        found = {}
+        f_results = defs.DIR_RESULTS + row.results_file.data_file
+
+        f_fused = None
+        pos_in_fused = None
+
+        fused_file = ''
+        # TODO: fix the following request
+        # fused_file = db((db.fused_file.sample_set_id == row.sample_set.id) & (db.fused_file.config_id == row.results_file.config_id)).select(orderby = ~db.fused_file.id, limitby=(0,1))
+        if len(fused_file) > 0 and fused_file[0].sequence_file_list is not None:
+            sequence_file_list = fused_file[0].sequence_file_list.split('_')
+            try:
+                pos_in_fused = sequence_file_list.index(str(row.sequence_file.id))
+                f_fused = defs.DIR_RESULTS + fused_file[0].fused_file
+            except ValueError:
+                pass
+                
+        metadata = { } # 'patient': row.patient, 'sequence_file': row.sequence_file }
+        f_samples += [(metadata, f_results, f_fused, pos_in_fused)]
+    
+    # Send to vidjil_utils.stats
+    res = vidjil_utils.stats(f_samples)
+    d = {}
+    d['stats'] = res
+    d['f_samples'] = f_samples # TMP, for debug
+
+    # Return
+    log.debug("stats (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
+    return gluon.contrib.simplejson.dumps(d, separators=(',',':'))
+
 ## return form to create new generic sample_set
 def add():
     if (auth.can_create_patient()):

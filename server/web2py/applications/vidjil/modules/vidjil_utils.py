@@ -321,6 +321,122 @@ def extract_fields_from_json(json_fields, pos_in_list, filename, max_bytes = Non
 
     return matched_keys
 
+
+####
+
+
+STATS_READLINES = 1000 # approx. size in which the stats are searched
+STATS_MAXBYTES = 500000 # approx. size in which the stats are searched
+
+
+def stats(samples):
+
+    stats_regex = [
+        # found 771265 40-windows in 2620561 segments (85.4%) inside 3068713 sequences # before 1f501e13 (-> 2015.05)
+        'in (?P<seg>\d+) segments \((?P<seg_ratio>.*?)\) inside (?P<reads>\d+) sequences',
+
+        # found 10750 50-windows in 13139 reads (99.9% of 13153 reads)
+        'windows in (?P<seg>\d+) reads \((?P<seg_ratio>.*?) of (?P<reads>\d+) reads\)',
+
+        # segmentation causes
+        'log.* SEG_[+].*?-> (?P<SEG_plus>.*?).n',
+        'log.* SEG_[-].*?-> (?P<SEG_minus>.*?).n',
+    ]
+
+    # stats by locus
+    for locus in defs.LOCUS:
+        locus_regex = locus.replace('+', '[+]')
+        locus_group = locus.replace('+', 'p')
+        stats_regex += [ 'log.* %(locus)s.*?->\s*?(?P<%(locus_g)s_reads>\d+)\s+(?P<%(locus_g)s_av_len>[0-9.]+)\s+(?P<%(locus_g)s_clones>\d+)\s+(?P<%(locus_g)s_av_reads>[0-9.]+)\s*.n'
+                         % { 'locus': locus_regex, 'locus_g': locus_group } ]
+
+    json_paths = {
+        'result_file': {
+            'main_clone': '/clones[0]/name',
+            'main_clone_reads': '/clones[0]/reads[0]'
+        },
+        'fused_file': {
+                  'reads distribution [>= 10%]': 'reads/distribution/0.1',
+                  'reads distribution [>= 1% < 10%]': 'reads/distribution/0.01',
+                  'reads distribution [>= .01% < 1%]': 'reads/distribution/0.001',
+                  'reads distribution [>= .001% < .01%]': 'reads/distribution/0.0001',
+                  'reads distribution [>= .0001% < .001%]': 'reads/distribution/0.00001',
+                  'producer': 'samples/producer'
+        }
+    }
+
+    keys_patient = [ 'info' ]
+    keys_file = [ 'sampling_date', 'size_file' ]
+
+    keys = []
+    keys += keys_file
+    keys += keys_patient
+
+    regex = []
+    for sr in stats_regex:
+        r = re.compile(sr)
+        regex += [r]
+        keys += r.groupindex.keys()
+
+    keys += sorted(json_paths['result_file'].keys() + json_paths['fused_file'].keys())
+
+    tab = []
+    found = {}
+
+    for (metadata, f_result, f_fused, pos_in_fused) in samples:
+        row = {}
+        row_result = search_first_regex_in_file(regex, f_result, STATS_READLINES)
+        row['result'] = row_result # TMP, for debug
+        try:
+            row_result_json = extract_fields_from_json(json_paths['result_file'], None, defs.DIR_RESULTS + results_f, STATS_MAXBYTES)
+        except:
+            row_result_json = []
+
+        if f_fused:
+            try:
+                row_fused = extract_fields_from_json(json_paths['fused_file'], pos_in_fused, f_fused, STATS_MAXBYTES)
+            except ValueError:
+                row_fused = []
+        else:
+            row_fused = {}
+        results_list = [row_result, row_result_json, row_fused]
+
+        for key in keys:
+            for map_result in results_list:
+                if key in map_result:
+                    row[key] = map_result[key]
+                    found[key] = True
+            if key not in found:
+                if key in keys_patient:
+                    row[key] = "TODO" + key  # metadata['patient'][key]
+                    found[key] = True
+                elif key in keys_file:
+                    row[key] = "TODO" + key  # metadata['sequence_file'][key]
+                    found[key] = True
+                else:
+                    row[key] = ''
+        
+        tab += [row]
+
+    # Re-process some data
+    keys += ['IGH_av_clones']
+    for row in tab:
+        row['IGH_av_clones'] = ''
+        if 'IGH_av_reads' in row:
+            try:
+                row['IGH_av_clones'] = '%.4f' % (1.0 / float(row['IGH_av_reads']))
+                found['IGH_av_clones'] = True
+            except:
+                pass
+
+    # Keep only non-empty columns
+    res = []
+    for key in keys:
+        if key in found:
+            res += [key]
+
+    return tab # res # TODO
+
 ####
 
 SOURCES = "https://github.com/vidjil/vidjil/blob/master/server/web2py/applications/vidjil/%s#L%s"
