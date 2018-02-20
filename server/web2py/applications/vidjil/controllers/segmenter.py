@@ -59,7 +59,7 @@ def segment_sequences(sequences):
             config = config.replace( ' germline' ,germline_folder)
 
             ## commande complete
-            cmd = defs.DIR_VIDJIL + '/vidjil ' + ' -o  ' + folder_path 
+            cmd = defs.DIR_VIDJIL + '/vidjil-algo ' + ' -o  ' + folder_path 
             cmd += ' ' + config + ' ' + file_path
 
             ## execute la commande vidjil
