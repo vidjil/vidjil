@@ -84,6 +84,13 @@ class SampleSet(object):
                 &(db.results_file.sequence_file_id == db.sequence_file.id)).count()
         return data.data_count
 
+    def create_filter_string(self, data, keys):
+        for row in data:
+            row['string'] = []
+            for key in keys:
+                if key in row:
+                    row['string'].append(str(row[key]))
+
     @abstractmethod
     def filter(self, filter_str, data):
         pass

@@ -7,8 +7,8 @@ class Generic(SampleSet):
         return 'set'
 
     def filter(self, filter_str, data):
-        for row in data:
-            row['string'] = [row['name'], row['confs'], row['groups'], str(row['info'])]
+        keys = ['name', 'confs', 'groups', 'info']
+        self.create_filter_string(data, keys)
         return filter(lambda row : vidjil_utils.advanced_filter(row['string'], filter_str), data)
 
     def get_info_dict(self, data):
