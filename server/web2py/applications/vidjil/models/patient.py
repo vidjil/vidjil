@@ -10,6 +10,11 @@ class Patient(SampleSet):
         fields.insert(1, {'name': 'birth', 'sort': 'birth', 'call': self.get_birth, 'width': 100, 'public': True})
         return fields
 
+    def get_reduced_fields(self):
+        fields = super(Patient, self).get_reduced_fields()
+        fields.insert(1, {'name': 'birth', 'sort': 'birth', 'call': self.get_birth, 'width': 100, 'public': True})
+        return fields
+
     def get_name(self, data, anon=None):
         return vidjil_utils.anon_names(data.id, data.first_name, data.last_name, anon)
 

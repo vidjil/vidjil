@@ -7,6 +7,11 @@ class Run(SampleSet):
         fields.insert(1, {'name': 'run_date', 'sort': 'run_date', 'call': self.get_run_date, 'width': 100, 'public': True})
         return fields
 
+    def get_reduced_fields(self):
+        fields = super(Run, self).get_reduced_fields()
+        fields.insert(1, {'name': 'run_date', 'sort': 'run_date', 'call': self.get_run_date, 'width': 100, 'public': True})
+        return fields
+
     def get_name(self, data):
         return data.name
 
