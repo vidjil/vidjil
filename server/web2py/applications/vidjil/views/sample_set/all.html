@@ -66,7 +66,7 @@
 {{else:}}
 <!-- <span class="button2 inactive" onclick="db.call('sample_set/add')" title="you don't have permission to create new {{=helper.get_type_display()}}s"> add sample_set </span> -->
 {{pass}}
-<span class="button2" onclick="db.call('sample_set/stats', {'type': '{{=helper.get_type()}}'})">stats</span>
+<span class="button2" onclick="db.call('sample_set/stats', {'type': '{{=helper.get_type()}}', 'filter': '{{=request.vars['filter']}}'})">stats</span>
 
   </div>
   <div class="db_block_right">
