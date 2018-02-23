@@ -172,7 +172,7 @@ test_server_unit:
     stage: test_unit
     script:
       - make -C server install_web2py_standalone
-      - make -C launch_fuse_server
+      - make -C server launch_fuse_server
       - make unit_server
       - make -C server kill_fuse_server
     only:
