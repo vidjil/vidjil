@@ -210,6 +210,7 @@
                                else { myUrl.loadUrl(db, { 'sample_set_id' : '{{=request.vars["id"]}}' , 'config' : {{=row.config.id}} }, '{{=info["filename"]}}' ) }" >
             {{pass}}
                 {{=row.config.name}} </a>
+                <a id="stats_button" target="_blank" class="button2" href="/vidjil/sample_set/result_files?sample_set_ids={{=request.vars['id']}}&config_id={{=row.config.id}}">export {{=row.config.name}}</a>
         {{pass}}
     </div>
 
