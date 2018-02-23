@@ -27,11 +27,18 @@ class SampleSet(object):
         text = self.tag_decorator.decorate(data.info, 'tag', self.type, self.get_list_path())
         return self.tag_decorator.sanitize(text)
 
+    def get_stats_tagged_info(self, data):
+        text = self.tag_decorator.decorate(data.info, 'tag', self.type, self.get_stats_path())
+        return self.tag_decorator.sanitize(text)
+
     def get_configs(self, data):
         return data.conf_list
 
     def get_list_path(self):
         return '/sample_set/all'
+
+    def get_stats_path(self):
+        return '/sample_set/stats'
 
     def get_config_urls(self, data):
         configs = []
@@ -72,7 +79,7 @@ class SampleSet(object):
     def get_reduced_fields(self):
         fields = []
         fields.append({'name': 'name', 'sort': 'name', 'call': self.get_name, 'width': 200, 'public': True})
-        fields.append({'name': 'info', 'sort': 'info', 'call': self.get_tagged_info, 'width': None, 'public': True})
+        fields.append({'name': 'info', 'sort': 'info', 'call': self.get_stats_tagged_info, 'width': None, 'public': True})
         fields.append({'name': 'files', 'sort': 'file_count', 'call': self.get_files, 'width': 100, 'public': True})
         return fields
 
