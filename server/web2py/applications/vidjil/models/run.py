@@ -14,7 +14,7 @@ class Run(SampleSet):
         return 'run: %s' % data.name
 
     def get_run_date(self, data):
-        return data.run_date
+        return "%s" % str(data.run_date) if data.run_date is not None else ''
 
     def filter(self, filter_str, data):
         for row in data:
