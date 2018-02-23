@@ -67,7 +67,7 @@ Model_loader.prototype = {
         
         else if (typeof params.run_id !== "undefined" && typeof params.config !== "undefined"){
             //wait 1sec to check ssl
-            setTimeout(function () { db.load_data( {"run" : run , "config" : dbconfig } , "")  }, 1000);
+            setTimeout(function () { db.load_data( {"run" : params.run_id , "config" : params.config } , "")  }, 1000);
         }
             
         else if (typeof params.custom !== "undefined" && params.custom.length>0){
