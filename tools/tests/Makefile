@@ -5,10 +5,10 @@ all: $(TAP) doctests
 
 fuse-doc.tap: fuse-doc.should_get force
 	$(MAKE) -C ../../doc analysis-example1.vidjil
-	./should-to-tap.sh $<
+	../should-to-tap.sh $<
 
 %.tap: %.should_get force
-	./should-to-tap.sh $<
+	../should-to-tap.sh $<
 
 doctests:
 	@echo "*** Launching python tests..."
