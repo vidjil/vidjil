@@ -1,13 +1,13 @@
-SHOULD=$(wildcard *.should_get)
-TAP=$(SHOULD:.should_get=.tap)
+SHOULD=$(wildcard *.should-get)
+TAP=$(SHOULD:.should-get=.tap)
 
 all: $(TAP) doctests
 
-fuse-doc.tap: fuse-doc.should_get force
+fuse-doc.tap: fuse-doc.should-get force
 	$(MAKE) -C ../../doc analysis-example1.vidjil
 	../should-to-tap.sh $<
 
-%.tap: %.should_get force
+%.tap: %.should-get force
 	../should-to-tap.sh $<
 
 doctests:
