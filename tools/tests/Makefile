@@ -1,9 +1,9 @@
-SHOULD=$(wildcard *.should-get)
+SHOULD=$(wildcard should-get-tests/*.should-get)
 TAP=$(SHOULD:.should-get=.tap)
 
 all: $(TAP) doctests
 
-fuse-doc.tap: fuse-doc.should-get force
+should-get-tests/fuse-doc.tap: should-get-tests/fuse-doc.should-get force
 	$(MAKE) -C ../../doc analysis-example1.vidjil
 	../should-to-tap.sh $<
 
