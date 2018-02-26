@@ -171,6 +171,9 @@ code_quality:
 test_server_unit:
     stage: test_unit
     script:
+      - virtualenv $CI_BUILD_REF_SLUG
+      - pip install -r requirements.txt
+      - source $CI_BUILD_REF_SLUG/bin/activate
       - make -C server install_web2py_standalone
       - make -C server launch_fuse_server
       - make unit_server
