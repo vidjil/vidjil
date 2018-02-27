@@ -330,4 +330,6 @@ for test_file in test_files:
     suite.addTest(unittest.makeSuite(globals()[filename+directory]))
 
 #unittest.TextTestRunner(verbosity=2).run(suite)
-xmlrunner.XMLTestRunner(output='test-reports', verbosity=1).run(suite)
+result = xmlrunner.XMLTestRunner(output='test-reports', verbosity=1).run(suite)
+
+sys.exit(not result.wasSuccessful())
