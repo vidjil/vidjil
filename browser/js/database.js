@@ -1109,6 +1109,12 @@ Database.prototype = {
         $('#stats_button').attr('href', addr);
     },
 
+    updateStatsSelection: function(cb) {
+        var $cb=$(cb);
+        $('[name^=\"sample_set_ids\"]').prop('checked', $cb.is(':checked'));
+        this.updateStatsButton();
+    },
+
     // Log functions, to server
     // 'quiet' is set to true to avoid infinite loops with timeouts
     log : function (lvl, msg) {
