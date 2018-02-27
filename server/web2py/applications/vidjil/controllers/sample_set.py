@@ -519,27 +519,22 @@ def custom():
         sample_set = db.sample_set[request.vars["id"]]
         factory = ModelFactory()
         helper = factory.get_instance(type=sample_set.sample_type)
-        q = ((auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config))
-                & (db.sample_set.id == request.vars["id"])
-                & (db.sample_set_membership.sample_set_id == db.sample_set.id)
-                & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-                & (db.results_file.sequence_file_id==db.sequence_file.id)
-                & (db.results_file.data_file != '')
-                & (db.config.id==db.results_file.config_id)
-            )
+        qq = (db.sample_set.id == request.vars["id"])
         
     else:
-        q = ((auth.vidjil_accessible_query(PermissionEnum.read.value, db.patient)
+        qq = (auth.vidjil_accessible_query(PermissionEnum.read.value, db.patient)
                 | auth.vidjil_accessible_query(PermissionEnum.read.value, db.run)
                 | auth.vidjil_accessible_query(PermissionEnum.read.value, db.generic))
-                & (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config))
-                & (db.sample_set_membership.sample_set_id == db.sample_set.id)
-                & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-                & (db.results_file.sequence_file_id==db.sequence_file.id)
-                & (db.results_file.data_file != '')
-                & (db.config.id==db.results_file.config_id)
-            )
+
         myGroupBy = db.sequence_file.id|db.patient.id|db.run.id|db.generic.id|db.results_file.config_id
+
+    q = (qq
+        & (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config))
+        & (db.sample_set_membership.sample_set_id == db.sample_set.id)
+        & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+        & (db.results_file.sequence_file_id==db.sequence_file.id)
+        & (db.results_file.data_file != '')
+        & (db.config.id==db.results_file.config_id))
 
     group_ids = get_involved_groups()
 
@@ -549,25 +544,32 @@ def custom():
 
     search, tags = parse_search(request.vars["filter"])
 
+    left_join = [
+        db.patient.on(db.patient.sample_set_id == db.sample_set.id),
+        db.run.on(db.run.sample_set_id == db.sample_set.id),
+        db.generic.on(db.generic.sample_set_id == db.sample_set.id)
+    ]
+
+    select = [
+        db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name,
+        db.run.id, db.run.info, db.run.name,
+        db.generic.id, db.generic.info, db.generic.name,
+        db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
+        db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
+        db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
+        db.sequence_file.size_file
+    ]
+
     if (tags is not None and len(tags) > 0):
         q = filter_by_tags(q, 'sequence_file', tags)
         count = db.tag.name.count()
-        query = db(q).select(
-                db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name,
-                db.run.id, db.run.info, db.run.name,
-                db.generic.id, db.generic.info, db.generic.name,
-                db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
-                db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
-                db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
-                db.sequence_file.size_file,
-                db.tag_ref.record_id,
+        select = select + [db.tag_ref.record_id,
                 db.tag_ref.table_name,
-                count,
-                left = [
-                    db.patient.on(db.patient.sample_set_id == db.sample_set.id),
-                    db.run.on(db.run.sample_set_id == db.sample_set.id),
-                    db.generic.on(db.generic.sample_set_id == db.sample_set.id)
-                    ],
+                count]
+
+        query = db(q).select(
+                *select,
+                left = left_join,
                 orderby = db.sequence_file.id|db.results_file.run_date,
                 groupby = db.tag_ref.table_name|db.tag_ref.record_id,
                 having = count >= len(tags)
@@ -575,18 +577,8 @@ def custom():
 
     else:
         query = db(q).select(
-                db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name,
-                db.run.id, db.run.info, db.run.name,
-                db.generic.id, db.generic.info, db.generic.name,
-                db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
-                db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
-                db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
-                db.sequence_file.size_file,
-                left = [
-                    db.patient.on(db.patient.sample_set_id == db.sample_set.id),
-                    db.run.on(db.run.sample_set_id == db.sample_set.id),
-                    db.generic.on(db.generic.sample_set_id == db.sample_set.id)
-                    ],
+                *select,
+                left = left_join,
                 orderby = db.sequence_file.id|db.results_file.run_date,
                 groupby = myGroupBy
             )
