@@ -275,6 +275,12 @@ def result_files():
     if isinstance(sample_set_ids, types.StringTypes):
         sample_set_ids = [sample_set_ids]
 
+    if int(config_id) == -1:
+        config_query = (db.results_file.config_id > 0)
+    else:
+        config_query = (db.results_file.config_id == config_id)
+
+
     left_join = [
         db.patient.on(db.patient.sample_set_id == db.sample_set.id),
         db.run.on(db.run.sample_set_id == db.sample_set.id),
@@ -284,7 +290,7 @@ def result_files():
             (db.sample_set.id.belongs(sample_set_ids)) &
             (db.sample_set_membership.sample_set_id == db.sample_set.id) &
             (db.results_file.sequence_file_id == db.sample_set_membership.sequence_file_id) &
-            (db.results_file.config_id == config_id)
+            config_query
         )
 
     results = q.select(db.results_file.ALL, db.sample_set.ALL, db.patient.ALL, db.run.ALL, db.generic.ALL, left=left_join)
