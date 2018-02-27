@@ -290,6 +290,7 @@ def result_files():
             (db.sample_set.id.belongs(sample_set_ids)) &
             (db.sample_set_membership.sample_set_id == db.sample_set.id) &
             (db.results_file.sequence_file_id == db.sample_set_membership.sequence_file_id) &
+            (db.results_file.data_file != None) &
             config_query
         )
 
