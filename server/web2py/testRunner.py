@@ -59,7 +59,7 @@ test_db = DAL('sqlite://testing1234.sqlite')
 init_db_helper()
 
 for tablename in db.tables:  # Copy tables!
-    table_copy = [copy(f) for f in db[tablename]]
+    table_copy = [f.clone() for f in db[tablename]]
     test_db.define_table(tablename, *table_copy)
 
 db = test_db
