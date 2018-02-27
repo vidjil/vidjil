@@ -30,8 +30,6 @@ class MigrateLogger():
     def getLogger(self):
         return self.log
 
-log = MigrateLogger()
-
 def get_dict_from_row(row):
     '''
     Create a dict element from a Row element
@@ -216,10 +214,10 @@ class Importer():
             self.log.debug("new %s: %d" % (table, oid))
             if map_val:
                 if table not in self.mappings:
-                    self.mappings[table] = IdMapper(log)
+                    self.mappings[table] = IdMapper(self.log)
                 self.mappings[table].setMatchingId(long(vid), oid)
 
-def copy_files(data, src, dest):
+def copy_files(data, src, dest, log=MigrateLogger()):
     file_fields = {'results_file': 'data_file',
             'analysis_file': 'analysis_file',
             'fused_file': 'fused_file'}
@@ -233,7 +231,7 @@ def copy_files(data, src, dest):
                 log.debug("Copying %s" % data[t][entry][file_fields[t]])
                 copy(src + '/' + data[t][entry][file_fields[t]], dest + '/' + data[t][entry][file_fields[t]])
 
-def export_peripheral_data(extractor, data_dict, sample_set_ids):
+def export_peripheral_data(extractor, data_dict, sample_set_ids, log=MigrateLogger()):
     sequence_rows = extractor.getSequenceFiles(sample_set_ids)
     data_dict['sequence_file'], data_dict['membership'] = extractor.populateSequenceFiles(sequence_rows)
 
@@ -255,7 +253,7 @@ def export_peripheral_data(extractor, data_dict, sample_set_ids):
 
     return data_dict
 
-def export_group_data(filesrc, filepath, groupid):
+def export_group_data(filesrc, filepath, groupid, log=MigrateLogger()):
     log.info("exporting group data")
     ext = GroupExtractor(db, log)
 
@@ -272,7 +270,7 @@ def export_group_data(filesrc, filepath, groupid):
     
     sample_set_ids = patient_ssids + run_ssids + generic_ssids
 
-    tables = export_peripheral_data(ext, tables, sample_set_ids)
+    tables = export_peripheral_data(ext, tables, sample_set_ids, log=log)
 
     if not os.path.exists(filepath):
         os.makedirs(filepath)
@@ -281,10 +279,10 @@ def export_group_data(filesrc, filepath, groupid):
         json.dump(tables, outfile, ensure_ascii=False, encoding='utf-8')
 
     log.info("copying files from %s to %s" % (filesrc, filepath))
-    copy_files(tables, filesrc, filepath + '/files')
+    copy_files(tables, filesrc, filepath + '/files', log=log)
     log.info("done")
 
-def export_sample_set_data(filesrc, filepath, sample_type, sample_ids):
+def export_sample_set_data(filesrc, filepath, sample_type, sample_ids, log=MigrateLogger()):
     log.info("exporting sample set data")
     ext = SampleSetExtractor(db, log)
 
@@ -293,7 +291,7 @@ def export_sample_set_data(filesrc, filepath, sample_type, sample_ids):
     rows = ext.getAccessible(sample_type, sample_ids)
     tables[sample_type], sample_set_ids = ext.populateSets(rows)
 
-    tables = export_peripheral_data(ext, tables, sample_set_ids)
+    tables = export_peripheral_data(ext, tables, sample_set_ids, log=log)
 
     if not os.path.exists(filepath):
         os.makedirs(filepath)
@@ -306,7 +304,7 @@ def export_sample_set_data(filesrc, filepath, sample_type, sample_ids):
 
     log.info("done")
 
-def import_data(filesrc, filedest, groupid, config=None, dry_run=False):
+def import_data(filesrc, filedest, groupid, config=None, dry_run=False, log=MigrateLogger()):
     log.info("importing data")
     data = {}
     with open(filesrc + '/export.json', 'r') as infile:
@@ -338,7 +336,7 @@ def import_data(filesrc, filedest, groupid, config=None, dry_run=False):
         else:
             db.commit()
             log.info("copying files from %s to %s" % (filesrc, filedest))
-            copy_files(data, filesrc + '/files', filedest)
+            copy_files(data, filesrc + '/files', filedest, log=log)
             log.info("done")
     except:
         log.error("something went wrong, rolling back")
@@ -371,18 +369,19 @@ def main():
 
     args = parser.parse_args()
 
+    log = MigrateLogger()
     if args.debug:
         log.log.setLevel(logging.DEBUG)
 
     if args.command == 'export':
         if args.mode == 'group':
-            export_group_data(args.filesrc, args.filepath, args.groupid)
+            export_group_data(args.filesrc, args.filepath, args.groupid, log)
         elif args.mode == 'sample_set':
-            export_sample_set_data(args.filesrc, args.filepath, args.sample_type, args.ssids)
+            export_sample_set_data(args.filesrc, args.filepath, args.sample_type, args.ssids, log)
     elif args.command == 'import':
         if args.dry:
             log.log.setLevel(logging.DEBUG)
-        import_data(args.filesrc, args.filepath, args.groupid, args.config, args.dry)
+        import_data(args.filesrc, args.filepath, args.groupid, args.config, args.dry, log)
 
 if __name__ == '__main__':
     main()
