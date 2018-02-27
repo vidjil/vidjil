@@ -210,8 +210,10 @@
                                else { myUrl.loadUrl(db, { 'sample_set_id' : '{{=request.vars["id"]}}' , 'config' : {{=row.config.id}} }, '{{=info["filename"]}}' ) }" >
             {{pass}}
                 {{=row.config.name}} </a>
-                <a id="stats_button" target="_blank" class="button2" href="/vidjil/sample_set/result_files?sample_set_ids={{=request.vars['id']}}&config_id={{=row.config.id}}">export {{=row.config.name}}</a>
         {{pass}}
+        {{ if fused_count > 0: }}
+        <a id="stats_button" target="_blank" class="button2" href="/vidjil/sample_set/result_files?sample_set_ids={{=request.vars['id']}}&config_id=-1">export</a>
+        {{ pass }}
     </div>
 
 </div>
