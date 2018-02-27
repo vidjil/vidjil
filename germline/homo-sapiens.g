@@ -175,19 +175,6 @@
             "parameters": {
                 "seed": "10s"
             }
-        },
-
-        "IKAZOS": {
-            "shortcut": "I",
-            "color" : "#d63a19",
-            "description": "Ikaros Trsl locus",
-            "recombinations": [ {
-                "5": ["../ikaros_as_V.fa"],
-                "3": ["../ikaros_as_J.fa"]
-            } ],
-            "parameters": {
-                "seed": "10s"
-            }
         }
     }
 }
