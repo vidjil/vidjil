@@ -82,8 +82,8 @@ def init_db_form():
 
 def init_db_helper(force=False, admin_email="plop@plop.com", admin_password="1234"):
     if (force) or (db(db.auth_user.id > 0).count() == 0) : 
-        #for table in db :
-            #table.truncate()
+        for table in db :
+            table.truncate()
         
         id_first_user=""
 

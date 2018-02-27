@@ -59,7 +59,7 @@ test_db = DAL('sqlite://testing1234.sqlite')
 init_db_helper()
 
 for tablename in db.tables:  # Copy tables!
-    table_copy = [copy(f) for f in db[tablename]]
+    table_copy = [f.clone() for f in db[tablename]]
     test_db.define_table(tablename, *table_copy)
 
 db = test_db
@@ -330,4 +330,6 @@ for test_file in test_files:
     suite.addTest(unittest.makeSuite(globals()[filename+directory]))
 
 #unittest.TextTestRunner(verbosity=2).run(suite)
-xmlrunner.XMLTestRunner(output='test-reports', verbosity=1).run(suite)
+result = xmlrunner.XMLTestRunner(output='test-reports', verbosity=1).run(suite)
+
+sys.exit(not result.wasSuccessful())
