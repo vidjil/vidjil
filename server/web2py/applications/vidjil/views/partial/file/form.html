@@ -33,8 +33,8 @@
             >
         </div>
         <div class="jstree_container" {{if not source_module_active:}} hidden {{pass}}>
-            selected
-            <div id="file_indicator_{{=i}}"></div>
+            selected:
+            <span id="file_indicator_{{=i}}"></span>
             <div class="jstree" id="jstree_loader_{{=i}}"
                 {{if not source_module_active:}}
                     hidden
@@ -42,7 +42,7 @@
                     onload="db.set_jstree($('#jstree_{{=i}}'), {{=i}})"
                 {{pass}}>
                 file
-                <div id="jstree_{{=i}}" data-index="{{=i}}"></div>
+                <div id="jstree_{{=i}}"  class="inline" data-index="{{=i}}"></div>
             </div>
         </div>
     </div>

@@ -357,9 +357,9 @@ FileFormBuilder.prototype.build_jstree = function() {
         d.hidden = true;
     }
 
-    var sel = document.createTextNode('selected');
+    var sel = document.createTextNode('selected:');
     d.appendChild(sel);
-    var indicator = document.createElement('div');
+    var indicator = document.createElement('span');
     indicator.id = "file_indicator_" + self.index;
     d.appendChild(indicator);
     var tree_par = document.createElement('div');
@@ -370,6 +370,7 @@ FileFormBuilder.prototype.build_jstree = function() {
     d.appendChild(tree_par);
     var tree = document.createElement('div');
     tree.id = 'jstree_' + this.index;
+    tree.className = "inline";
     tree.dataset.index = this.index;
     tree_par.appendChild(tree);
     return d;
