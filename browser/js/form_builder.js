@@ -91,7 +91,11 @@ FormBuilder.prototype.build_textarea = function(id, className, name, set_type, p
 
 FormBuilder.prototype.build_div = function(type) {
         var d = document.createElement('div');
-        var s = document.createElement('div');
+        var c = document.createElement('div');
+        c.className = "clear";
+        d.appendChild(c);
+        var s = document.createElement('span');
+        s.className = "left form_label"
         s.innerText = capitalise(type) + " " + (this.index+1);
         d.appendChild(s);
         return d;
@@ -282,6 +286,7 @@ FileFormBuilder.prototype.build_file_div = function() {
 
 FileFormBuilder.prototype.build_hidden_fields = function() {
     var d = document.createElement('div');
+    d.className = "hidden";
     var i = this.build_input('filename', 'filename', 'filename', 'text', 'file');
     i.hidden = true;
     i.className = '';

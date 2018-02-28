@@ -1,12 +1,12 @@
 <div>
-    <div>Sample {{=i+1}}</div>
+    <span class="left form_label" style="line-height: 33px">Sample {{=i+1}}</span>
     {{ if file is not None and 'error' in file and len(file['error']) > 0: }}
         <div class="error">error: {{=", ".join(file['error'])}}</div>
     {{ pass }}
     {{ if file is not None and 'message' in file and len(file['message']) > 0: }}
         <div>{{=", ".join(file['message'])}}</div>
     {{ pass }}
-    <div>
+    <div class="hidden">
         <input type="hidden" id="file_filename_{{=i}}" class="filename" name="file[{{=i}}][filename]" type="text" value="">
         <input type="hidden" id="file_id_{{=i}}" name="file[{{=i}}][id]"
             value="{{if 'id' in file:}}{{=file['id']}}{{pass}}" >

@@ -1874,12 +1874,10 @@ h3 .uid {
 
 .right {
   float: right;
-  clear: both;
 }
 
 .left {
   float: left;
-  clear: both;
 }
 
 select>option:hover {
@@ -2286,7 +2284,12 @@ form {
         text-align: right;
     }
     div.field_div {
+        float: left;
         display: inline-block;
+    }
+    .form_label {
+        line-height: 33px;
+        width: 70px;
     }
 }
 
@@ -2303,11 +2306,14 @@ form {
     display: inline-block;
 }
 
+.hidden {
+    display: none;
+}
+
 #fieldset_container {
     :not(.set_token) {
         > .icon-cancel {
             float: right;
-            clear: both;
         }
     }
 }
