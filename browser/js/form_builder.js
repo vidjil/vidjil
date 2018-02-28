@@ -258,9 +258,9 @@ FileFormBuilder.prototype.build = function(index) {
     div.appendChild(this.createCloseButton());
     div.appendChild(this.build_hidden_fields());
     div.appendChild(this.build_file_div());
-    div.appendChild(this.build_set_div());
     div.appendChild(this.build_date('sampling_date', 'file'));
     div.appendChild(this.build_info('file', this.group_ids));
+    div.appendChild(this.build_set_div());
     return div;
 }
 
