@@ -384,8 +384,8 @@ class VidjilauthModel(unittest.TestCase):
                 "User %d is a member of admin group and is missing permissions to modify group %d" % (admin_user_id, parent_group))
 
     def testCanModifyPreProcess(self):
-        result = auth.can_modify_pre_process(pre_process_id, user_id)
-        self.assertTrue(result, "User %d should be able to modify pre process %d" % (user_id, pre_process_id))
+        result = auth.can_modify_pre_process(pre_process_id, admin_user_id)
+        self.assertTrue(result, "User %d should be able to modify pre process %d" % (admin_user_id, pre_process_id))
 
         result = auth.can_modify_pre_process(pre_process_id, user_id_sec)
         self.assertFalse(result, "User %d should be able to modify pre process %d" % (user_id_sec, pre_process_id))
@@ -608,8 +608,8 @@ class VidjilauthModel(unittest.TestCase):
         self.assertEqual(Counter(expected), Counter(result), "Expected: %s, but got: %s" % (str(expected), str(result)))
 
         for patient_id in expected:
-            res = auth.can_modify_patient(patient_id, user_id)
-            self.assertTrue(res, "User %d is missing permissions on patient %d" % (user_id, patient_id))
+            res = auth.can_modify_patient(patient_id, admin_user_id)
+            self.assertTrue(res, "User %d is missing permissions on patient %d" % (admin_user_id, patient_id))
 
     def testAccessibleCanConcordance(self):
         res_accessible = [p.id for p in db(auth.vidjil_accessible_query(PermissionEnum.read.value, 'patient', auth.user_id)).select()]
