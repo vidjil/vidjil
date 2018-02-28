@@ -270,8 +270,8 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.is_admin(user=auth.user_id)
         self.assertFalse(result, "User %d should not have admin permissions" % auth.user_id)
 
-        result = auth.is_admin(user=user_id)
-        self.assertTrue(result, "User %d should have admin permissions" % user_id)
+        result = auth.is_admin(user=admin_user_id)
+        self.assertTrue(result, "User %d should have admin permissions" % admin_user_id)
 
     def testIsInGroup(self):
         parent_group_name = db(db.auth_group.id == parent_group).select()[0].role
@@ -297,9 +297,9 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_modify_patient(patient_id_qua, user_id_sec)
         self.assertTrue(result, "User %d should be able to modify patient %d" % (user_id_sec, patient_id_qua))
 
-        result = auth.can_modify_patient(patient_id_qua, user_id)
+        result = auth.can_modify_patient(patient_id_qua, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to modify patient %d" % (user_id, patient_id_qua))
+                "User %d is a member of admin group and is missing permissions to modify patient %d" % (admin_user_id, patient_id_qua))
 
     def testCanModifyRun(self):
         result = auth.can_modify_run(run_id)
@@ -308,9 +308,9 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_modify_run(run_id, user_id_sec)
         self.assertTrue(result, "User %d should be able to modify run %d" % (user_id_sec, run_id))
 
-        result = auth.can_modify_run(run_id, user_id)
+        result = auth.can_modify_run(run_id, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to modify run %d" % (user_id, run_id))
+                "User %d is a member of admin group and is missing permissions to modify run %d" % (admin_user_id, run_id))
 
     def testCanModifySampleSet(self):
         result = auth.can_modify_sample_set(first_sample_set_id)
@@ -319,9 +319,9 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_modify_sample_set(first_sample_set_id, user_id_sec)
         self.assertTrue(result, "User %d should be able to modify sample_set %d" % (user_id_sec, first_sample_set_id))
 
-        result = auth.can_modify_sample_set(first_sample_set_id, user_id)
+        result = auth.can_modify_sample_set(first_sample_set_id, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to modify sample_set %d" % (user_id, first_sample_set_id))
+                "User %d is a member of admin group and is missing permissions to modify sample_set %d" % (admin_user_id, first_sample_set_id))
 
     def testCanModifyGeneric(self):
         # patient data
@@ -331,9 +331,9 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_modify('patient', patient_id_qua, user_id_sec)
         self.assertTrue(result, "User %d should be able to modify patient %d" % (user_id_sec, patient_id_qua))
 
-        result = auth.can_modify('patient', patient_id_qua, user_id)
+        result = auth.can_modify('patient', patient_id_qua, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to modify patient %d" % (user_id, patient_id_qua))
+                "User %d is a member of admin group and is missing permissions to modify patient %d" % (admin_user_id, patient_id_qua))
 
         # run data
         result = auth.can_modify('run', run_id)
@@ -342,9 +342,9 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_modify('run', run_id, user_id_sec)
         self.assertTrue(result, "User %d should be able to modify run %d" % (user_id_sec, run_id))
 
-        result = auth.can_modify('run', run_id, user_id)
+        result = auth.can_modify('run', run_id, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to modify run %d" % (user_id, run_id))
+                "User %d is a member of admin group and is missing permissions to modify run %d" % (admin_user_id, run_id))
 
         # generic data
         result = auth.can_modify('generic', generic_id)
@@ -353,9 +353,9 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_modify('generic', generic_id, user_id_sec)
         self.assertTrue(result, "User %d should be able to modify generic %d" % (user_id_sec, generic_id))
 
-        result = auth.can_modify('generic', generic_id, user_id)
+        result = auth.can_modify('generic', generic_id, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to modify generic %d" % (user_id, generic_id))
+                "User %d is a member of admin group and is missing permissions to modify generic %d" % (admin_user_id, generic_id))
 
     def testCanModifyFile(self):
         result = auth.can_modify_file(file_id)
@@ -364,9 +364,9 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_modify_file(file_id, user_id_sec)
         self.assertTrue(result, "User %d should be able to modify file %d" % (user_id_sec, file_id))
 
-        result = auth.can_modify_file(file_id, user_id)
+        result = auth.can_modify_file(file_id, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to modify file %d" % (user_id, file_id))
+                "User %d is a member of admin group and is missing permissions to modify file %d" % (admin_user_id, file_id))
 
     def testCanModifyConfig(self):
         result = auth.can_modify_config(config_id)
@@ -375,9 +375,9 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_modify_config(config_id, user_id_sec)
         self.assertTrue(result, "User %d should be able to modify config %d" % (user_id_sec, config_id))
 
-        result = auth.can_modify_config(config_id, user_id)
+        result = auth.can_modify_config(config_id, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to modify config %d" % (user_id, config_id))
+                "User %d is a member of admin group and is missing permissions to modify config %d" % (admin_user_id, config_id))
 
     def testCanModifyGroup(self):
         result = auth.can_modify_group(parent_group)
@@ -386,9 +386,9 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_modify_group(parent_group, user_id_sec)
         self.assertTrue(result, "User %d should be able to modify group %d" % (user_id_sec, parent_group))
 
-        result = auth.can_modify_group(parent_group, user_id)
+        result = auth.can_modify_group(parent_group, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to modify group %d" % (user_id, parent_group))
+                "User %d is a member of admin group and is missing permissions to modify group %d" % (admin_user_id, parent_group))
 
     def testCanModifyPreProcess(self):
         result = auth.can_modify_pre_process(pre_process_id, user_id)
@@ -406,9 +406,9 @@ class VidjilauthModel(unittest.TestCase):
         self.assertTrue(result,
                 "User %d should be able to process files for patient %d" % (user_id_sec, patient_id))
 
-        result = auth.can_process_file('patient', patient_id, user_id)
+        result = auth.can_process_file('patient', patient_id, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to process files" % user_id)
+                "User %d is a member of admin group and is missing permissions to process files" % admin_user_id)
 
     def testCanProcessSampleSet(self):
         result = auth.can_process_sample_set(sample_set_id_sec)
@@ -427,9 +427,9 @@ class VidjilauthModel(unittest.TestCase):
         self.assertFalse(result,
                 "User %d should not be able to process files for sample_set %d" % (user_id_sec, sample_set_id_ter))
 
-        result = auth.can_process_sample_set(sample_set_id, user_id)
+        result = auth.can_process_sample_set(sample_set_id, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to process files" % user_id)
+                "User %d is a member of admin group and is missing permissions to process files" % admin_user_id)
 
     def testCanUploadFile(self):
         result = auth.can_upload_file('patient', patient_id_sec)
@@ -440,9 +440,9 @@ class VidjilauthModel(unittest.TestCase):
         self.assertTrue(result,
                 "User %d should be able to upload files for patient %d" % (user_id_sec, patient_id))
 
-        result = auth.can_upload_file('patient', patient_id, user_id)
+        result = auth.can_upload_file('patient', patient_id, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to upload files" % user_id)
+                "User %d is a member of admin group and is missing permissions to upload files" % admin_user_id)
 
     def testCanUploadSampleSet(self):
         result = auth.can_upload_sample_set(sample_set_id_sec)
@@ -453,9 +453,9 @@ class VidjilauthModel(unittest.TestCase):
         self.assertTrue(result,
                 "User %d should be able to upload files for sample_set %d" % (user_id_sec, sample_set_id))
 
-        result = auth.can_upload_sample_set(sample_set_id, user_id)
+        result = auth.can_upload_sample_set(sample_set_id, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to upload files" % user_id)
+                "User %d is a member of admin group and is missing permissions to upload files" % admin_user_id)
 
     def testCanUseConfig(self):
         result = auth.can_use_config(config_id)
@@ -464,9 +464,9 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_use_config(config_id, user_id_sec)
         self.assertTrue(result, "User %d should be able to use config %d" % (user_id_sec, config_id))
 
-        result = auth.can_use_config(config_id, user_id)
+        result = auth.can_use_config(config_id, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to use config %d" % (user_id, config_id))
+                "User %d is a member of admin group and is missing permissions to use config %d" % (admin_user_id, config_id))
 
     def testCanView(self):
         result = auth.can_view('patient', patient_id_qua)
@@ -475,9 +475,9 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_view('patient', patient_id_qua, user_id_sec)
         self.assertTrue(result, "User %d should be able to view patient %d" % (user_id_sec, patient_id_qua))
 
-        result = auth.can_view('patient', patient_id_qua, user_id)
+        result = auth.can_view('patient', patient_id_qua, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to view patient %d" % (user_id, patient_id_qua))
+                "User %d is a member of admin group and is missing permissions to view patient %d" % (admin_user_id, patient_id_qua))
 
     def testCanViewSampleSet(self):
         result = auth.can_view_sample_set(first_sample_set_id)
@@ -486,9 +486,9 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_view_sample_set(first_sample_set_id, user_id_sec)
         self.assertTrue(result, "User %d should be able to view sample_set %d" % (user_id_sec, first_sample_set_id))
 
-        result = auth.can_view_sample_set(first_sample_set_id, user_id)
+        result = auth.can_view_sample_set(first_sample_set_id, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to view sample_set %d" % (user_id, first_sample_set_id))
+                "User %d is a member of admin group and is missing permissions to view sample_set %d" % (admin_user_id, first_sample_set_id))
 
     def testCanSavePatient(self):
         result = auth.can_save_patient(patient_id_qua)
@@ -497,9 +497,9 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_save_patient(patient_id_qua, user_id_sec)
         self.assertTrue(result, "User %d should be able to save patient %d" % (user_id_sec, patient_id_qua))
 
-        result = auth.can_save_patient(patient_id_qua, user_id)
+        result = auth.can_save_patient(patient_id_qua, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to save patient %d" % (user_id, patient_id_qua))
+                "User %d is a member of admin group and is missing permissions to save patient %d" % (admin_user_id, patient_id_qua))
 
     def testCanSaveRun(self):
         result = auth.can_save_run(run_id)
@@ -508,9 +508,9 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_save_run(run_id, user_id_sec)
         self.assertTrue(result, "User %d should be able to save run %d" % (user_id_sec, run_id))
 
-        result = auth.can_save_run(run_id, user_id)
+        result = auth.can_save_run(run_id, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to save run %d" % (user_id, run_id))
+                "User %d is a member of admin group and is missing permissions to save run %d" % (admin_user_id, run_id))
 
     def testCanSaveSampleSet(self):
         result = auth.can_save_sample_set(first_sample_set_id)
@@ -519,9 +519,9 @@ class VidjilauthModel(unittest.TestCase):
         result = auth.can_save_sample_set(first_sample_set_id, user_id_sec)
         self.assertTrue(result, "User %d should be able to save sample_set %d" % (user_id_sec, first_sample_set_id))
 
-        result = auth.can_save_sample_set(first_sample_set_id, user_id)
+        result = auth.can_save_sample_set(first_sample_set_id, admin_user_id)
         self.assertTrue(result,
-                "User %d is a member of admin group and is missing permissions to save sample_set %d" % (user_id, first_sample_set_id))
+                "User %d is a member of admin group and is missing permissions to save sample_set %d" % (admin_user_id, first_sample_set_id))
 
     def testCanViewInfo(self):
         result = auth.can_view_info('patient', patient_id_sec, auth.user_id)
