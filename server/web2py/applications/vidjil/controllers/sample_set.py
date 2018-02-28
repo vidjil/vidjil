@@ -289,12 +289,13 @@ def result_files():
     q = db(
             (db.sample_set.id.belongs(sample_set_ids)) &
             (db.sample_set_membership.sample_set_id == db.sample_set.id) &
-            (db.results_file.sequence_file_id == db.sample_set_membership.sequence_file_id) &
+            (db.sequence_file.id == db.sample_set_membership.sequence_file_id) &
+            (db.results_file.sequence_file_id == db.sequence_file.id) &
             (db.results_file.data_file != None) &
             config_query
         )
 
-    results = q.select(db.results_file.ALL, db.sample_set.ALL, db.patient.ALL, db.run.ALL, db.generic.ALL, left=left_join)
+    results = q.select(db.results_file.ALL, db.sequence_file.ALL, db.sample_set.ALL, db.patient.ALL, db.run.ALL, db.generic.ALL, left=left_join)
 
     sample_types = ['patient', 'run', 'generic']
     mf = ModelFactory()
@@ -310,7 +311,9 @@ def result_files():
         log.debug("res: " + str(res))
         metadata.append({'id': res.sample_set.id,
             'name': helpers[res.sample_set.sample_type].get_name(res[res.sample_set.sample_type]),
-            'file': res.results_file.data_file})
+            'file': res.results_file.data_file,
+            'set_info': res[res.sample_set.sample_type].info,
+            'sample_info': res.sequence_file.info})
         path = defs.DIR_RESULTS + res.results_file.data_file
         zipfile.writestr(res.results_file.data_file, open(path, 'rb').read())
 
