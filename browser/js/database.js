@@ -1099,6 +1099,22 @@ Database.prototype = {
         return true;
     },
 
+    updateStatsButton: function() {
+        var sample_set_ids = [];
+        $('[name^="sample_set_ids"]:checked').each(function() {
+            sample_set_ids.push("sample_set_ids=" + $(this).val());
+        });
+        var config_id = $('#choose_config').find(':selected').val();
+        var addr = DB_ADDRESS + '/sample_set/result_files?config_id=' + config_id + '&' + sample_set_ids.join('&');
+        $('#stats_button').attr('href', addr);
+    },
+
+    updateStatsSelection: function(cb) {
+        var $cb=$(cb);
+        $('[name^=\"sample_set_ids\"]').prop('checked', $cb.is(':checked'));
+        this.updateStatsButton();
+    },
+
     // Log functions, to server
     // 'quiet' is set to true to avoid infinite loops with timeouts
     log : function (lvl, msg) {

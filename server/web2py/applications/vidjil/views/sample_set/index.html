@@ -211,6 +211,9 @@
             {{pass}}
                 {{=row.config.name}} </a>
         {{pass}}
+        {{ if fused_count > 0: }}
+        <a id="stats_button" target="_blank" class="button2 devel-mode" href="/vidjil/sample_set/result_files?sample_set_ids={{=request.vars['id']}}&config_id=-1">export all results</a>
+        {{ pass }}
     </div>
 
 </div>

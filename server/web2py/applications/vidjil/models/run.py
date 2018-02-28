@@ -7,6 +7,11 @@ class Run(SampleSet):
         fields.insert(1, {'name': 'run_date', 'sort': 'run_date', 'call': self.get_run_date, 'width': 100, 'public': True})
         return fields
 
+    def get_reduced_fields(self):
+        fields = super(Run, self).get_reduced_fields()
+        fields.insert(1, {'name': 'run_date', 'sort': 'run_date', 'call': self.get_run_date, 'width': 100, 'public': True})
+        return fields
+
     def get_name(self, data):
         return data.name
 
@@ -17,8 +22,8 @@ class Run(SampleSet):
         return "%s" % str(data.run_date) if data.run_date is not None else ''
 
     def filter(self, filter_str, data):
-        for row in data:
-            row['string'] = [row['name'], row['confs'], row['groups'], str(row['run_date']), str(row['info'])]
+        keys = ['name', 'confs', 'groups', 'run_date', 'info']
+        self.create_filter_string(data, keys)
         return filter(lambda row : vidjil_utils.advanced_filter(row['string'], filter_str), data)
 
     def get_info_dict(self, data):

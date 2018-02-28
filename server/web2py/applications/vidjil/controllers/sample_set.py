@@ -212,6 +212,162 @@ def all():
                 step = step,
                 page = page)
 
+def stats():
+    start = time.time()
+    if not auth.user :
+        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
+                    vars=dict(_next=URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT}, scheme=True, host=True)))
+            }
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+    isAdmin = auth.is_admin()
+    if request.vars['type']:
+        type = request.vars['type']
+    else :
+        type = defs.SET_TYPE_GENERIC
+
+    ##filter
+    if "filter" not in request.vars :
+        request.vars["filter"] = ""
+
+    search, tags = parse_search(request.vars["filter"])
+    group_ids = get_involved_groups()
+
+    list = SampleSetList(type, tags=tags)
+    list.load_sample_information()
+    list.load_anon_permissions()
+    result = list.get_values()
+
+    factory = ModelFactory()
+    helper = factory.get_instance(type=type)
+    fields = helper.get_reduced_fields()
+
+    ##sort result
+    reverse = False
+    if request.vars["reverse"] == "true" :
+        reverse = True
+    if "sort" in request.vars:
+        result = sorted(result, key = lambda row : row[request.vars["sort"]], reverse=reverse)
+    else:
+        result = sorted(result, key = lambda row : row.id, reverse=not reverse)
+
+    result = helper.filter(search, result)
+    log.debug("%s stat list (%.3fs) %s" % (request.vars["type"], time.time()-start, search))
+
+    return dict(query = result,
+                fields = fields,
+                helper = helper,
+                group_ids = group_ids,
+                isAdmin = isAdmin,
+                reverse = False)
+
+def result_files():
+    from zipfile import ZipFile
+    from cStringIO import StringIO
+    import types
+    errors = []
+    config_id = request.vars['config_id']
+    sample_set_ids = []
+    if 'sample_set_ids' in request.vars:
+        sample_set_ids = request.vars['sample_set_ids']
+
+    #little hack since we can't pass array parameters with only one value
+    if isinstance(sample_set_ids, types.StringTypes):
+        sample_set_ids = [sample_set_ids]
+
+    if int(config_id) == -1:
+        config_query = (db.results_file.config_id > 0)
+    else:
+        config_query = (db.results_file.config_id == config_id)
+
+
+    left_join = [
+        db.patient.on(db.patient.sample_set_id == db.sample_set.id),
+        db.run.on(db.run.sample_set_id == db.sample_set.id),
+        db.generic.on(db.generic.sample_set_id == db.sample_set.id)
+    ]
+    q = db(
+            (db.sample_set.id.belongs(sample_set_ids)) &
+            (db.sample_set_membership.sample_set_id == db.sample_set.id) &
+            (db.sequence_file.id == db.sample_set_membership.sequence_file_id) &
+            (db.results_file.sequence_file_id == db.sequence_file.id) &
+            (db.results_file.data_file != None) &
+            config_query
+        )
+
+    results = q.select(db.results_file.ALL, db.sequence_file.ALL, db.sample_set.ALL, db.patient.ALL, db.run.ALL, db.generic.ALL, left=left_join)
+
+    sample_types = ['patient', 'run', 'generic']
+    mf = ModelFactory()
+    helpers = {}
+
+    for t in sample_types:
+        helpers[t] = mf.get_instance(type=t)
+
+    tempfile = StringIO()
+    zipfile = ZipFile(tempfile, 'w')
+    metadata = []
+    for res in results:
+        log.debug("res: " + str(res))
+        metadata.append({'id': res.sample_set.id,
+            'name': helpers[res.sample_set.sample_type].get_name(res[res.sample_set.sample_type]),
+            'file': res.results_file.data_file,
+            'set_info': res[res.sample_set.sample_type].info,
+            'sample_info': res.sequence_file.info})
+        path = defs.DIR_RESULTS + res.results_file.data_file
+        zipfile.writestr(res.results_file.data_file, open(path, 'rb').read())
+
+    zipfile.writestr('metadata.json', json.dumps(metadata))
+    zipfile.close()
+
+    filename = "export_%s_%s.zip" % ('-'.join(sample_set_ids), str(datetime.date.today()))
+
+    response.headers['Content-Type'] = "application/zip"
+    response.headers['Content-Disposition'] = 'attachment; filename=%s' % filename# to force download as attachment
+    rtn = tempfile.getvalue()
+
+    return rtn
+
+## Stats
+
+def mystats():
+    start = time.time()
+
+    # d = all()
+    d = custom()
+    
+    # Build .vidjil file list
+    f_samples = []
+    for row in d['query']:
+        found = {}
+        f_results = defs.DIR_RESULTS + row.results_file.data_file
+
+        f_fused = None
+        pos_in_fused = None
+
+        fused_file = ''
+        # TODO: fix the following request
+        # fused_file = db((db.fused_file.sample_set_id == row.sample_set.id) & (db.fused_file.config_id == row.results_file.config_id)).select(orderby = ~db.fused_file.id, limitby=(0,1))
+        if len(fused_file) > 0 and fused_file[0].sequence_file_list is not None:
+            sequence_file_list = fused_file[0].sequence_file_list.split('_')
+            try:
+                pos_in_fused = sequence_file_list.index(str(row.sequence_file.id))
+                f_fused = defs.DIR_RESULTS + fused_file[0].fused_file
+            except ValueError:
+                pass
+                
+        metadata = { } # 'patient': row.patient, 'sequence_file': row.sequence_file }
+        f_samples += [(metadata, f_results, f_fused, pos_in_fused)]
+    
+    # Send to vidjil_utils.stats
+    res = vidjil_utils.stats(f_samples)
+    d = {}
+    d['stats'] = res
+    d['f_samples'] = f_samples # TMP, for debug
+
+    # Return
+    log.debug("stats (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
+    return gluon.contrib.simplejson.dumps(d, separators=(',',':'))
 
 ## return form to create new generic sample_set
 def add():

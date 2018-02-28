@@ -10,6 +10,11 @@ class Patient(SampleSet):
         fields.insert(1, {'name': 'birth', 'sort': 'birth', 'call': self.get_birth, 'width': 100, 'public': True})
         return fields
 
+    def get_reduced_fields(self):
+        fields = super(Patient, self).get_reduced_fields()
+        fields.insert(1, {'name': 'birth', 'sort': 'birth', 'call': self.get_birth, 'width': 100, 'public': True})
+        return fields
+
     def get_name(self, data, anon=None):
         return vidjil_utils.anon_names(data.id, data.first_name, data.last_name, anon)
 
@@ -17,8 +22,8 @@ class Patient(SampleSet):
         return "%s" % str(data.birth) if data.birth is not None else ''
 
     def filter(self, filter_str, data):
-        for row in data:
-            row['string'] = [row['last_name'], row['first_name'], row['confs'], row['groups'], str(row['birth']), str(row['info'])]
+        keys = ['last_name', 'first_name', 'confs', 'groups', 'birth', 'info']
+        self.create_filter_string(data, keys)
         return filter(lambda row : vidjil_utils.advanced_filter(row['string'], filter_str), data)
 
     def get_info_dict(self, data):

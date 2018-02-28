@@ -27,11 +27,18 @@ class SampleSet(object):
         text = self.tag_decorator.decorate(data.info, 'tag', self.type, self.get_list_path())
         return self.tag_decorator.sanitize(text)
 
+    def get_stats_tagged_info(self, data):
+        text = self.tag_decorator.decorate(data.info, 'tag', self.type, self.get_stats_path())
+        return self.tag_decorator.sanitize(text)
+
     def get_configs(self, data):
         return data.conf_list
 
     def get_list_path(self):
         return '/sample_set/all'
+
+    def get_stats_path(self):
+        return '/sample_set/stats'
 
     def get_config_urls(self, data):
         configs = []
@@ -69,6 +76,13 @@ class SampleSet(object):
         fields.append({'name': 'files', 'sort': 'file_count', 'call': self.get_files, 'width': 100, 'public': True})
         return fields
 
+    def get_reduced_fields(self):
+        fields = []
+        fields.append({'name': 'name', 'sort': 'name', 'call': self.get_name, 'width': 200, 'public': True})
+        fields.append({'name': 'info', 'sort': 'info', 'call': self.get_stats_tagged_info, 'width': None, 'public': True})
+        fields.append({'name': 'files', 'sort': 'file_count', 'call': self.get_files, 'width': 100, 'public': True})
+        return fields
+
     def get_sequence_count(self, data):
         if not hasattr(data, 'sequence_count'):
             data.sequence_count = db( (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
@@ -83,6 +97,13 @@ class SampleSet(object):
                 &(db[self.type].id == data.id)
                 &(db.results_file.sequence_file_id == db.sequence_file.id)).count()
         return data.data_count
+
+    def create_filter_string(self, data, keys):
+        for row in data:
+            row['string'] = []
+            for key in keys:
+                if key in row:
+                    row['string'].append(str(row[key]))
 
     @abstractmethod
     def filter(self, filter_str, data):
