@@ -8,7 +8,7 @@
     <div>{{=", ".join(set['message'])}}</div>
 {{ pass }}
 <div class="field_div">
-    <input class="date" id="run_id_label_{{=i}}" name="run[{{=i}}][id_label]" type="text"
+    <input class="date form-control" id="run_id_label_{{=i}}" name="run[{{=i}}][id_label]" type="text"
         value="{{if set is not None and set['id_label'] is not None:}}{{=set['id_label']}}{{pass}}" placeholder="Run ID"><span></span>
 </div>
 <div class="field_div">
