@@ -74,7 +74,7 @@ class DefaultController(unittest.TestCase):
         request.vars['sample_set_id'] = fake_sample_set_id
         
         resp = get_data()
-        self.assertNotEqual(resp.find('segmented":[742377]'), -1, "get_data doesn't return a valid json " + resp)
+        self.assertNotEqual(resp.find('segmented":[742377'), -1, "get_data doesn't return a valid json " + resp)
         self.assertNotEqual(resp.find('(config_test_popipo)'), -1, "get_data doesn't return a valid json")
         
         
