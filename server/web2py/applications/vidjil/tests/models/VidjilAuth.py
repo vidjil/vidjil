@@ -167,18 +167,11 @@ class VidjilauthModel(unittest.TestCase):
 
         group_qui = db.auth_group.insert(role="group5", description="fifth group")
 
-        admin_group = db.auth_group.insert(role="admin", description="admin group")
+        admin_group = 1
         db.auth_membership.insert(user_id=admin_user_id, group_id=admin_group)
 
         db.group_assoc.insert(first_group_id = parent_group, second_group_id = group_sec)
         db.group_assoc.insert(first_group_id = group_qui, second_group_id = group)
-
-        db.auth_permission.insert(name=PermissionEnum.access.value, table_name='sample_set', group_id=admin_group, record_id=0)
-        db.auth_permission.insert(name=PermissionEnum.access.value, table_name='patient', group_id=admin_group, record_id=0)
-        db.auth_permission.insert(name=PermissionEnum.access.value, table_name='run', group_id=admin_group, record_id=0)
-        db.auth_permission.insert(name=PermissionEnum.read.value, table_name='sample_set', group_id=admin_group, record_id=0)
-        db.auth_permission.insert(name=PermissionEnum.read.value, table_name='patient', group_id=admin_group, record_id=0)
-        db.auth_permission.insert(name=PermissionEnum.read.value, table_name='run', group_id=admin_group, record_id=0)
 
         db.auth_permission.insert(name=PermissionEnum.upload.value, table_name='sample_set', group_id=group_qua, record_id=0)
         db.auth_permission.insert(name=PermissionEnum.run.value, table_name='sample_set', group_id=group_qua, record_id=0)
