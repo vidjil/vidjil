@@ -101,7 +101,7 @@ class DefaultController(unittest.TestCase):
         if resp.has_key('success') and resp['success'] == 'false':
            self.assertTrue(defs.PORT_FUSE_SERVER is None, 'get_custom_data returns error without fuse server')
         else:
-            self.assertEqual(resp['reads']['segmented'][0], resp['reads']['segmented'][1], "get_custom_data doesn't return a valid json")
+            self.assertEqual(resp['reads']['segmented'][0], resp['reads']['segmented'][2], "get_custom_data doesn't return a valid json")
 
     def testSaveAnalysis(self):
         class emptyClass( object ):
