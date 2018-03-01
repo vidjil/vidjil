@@ -634,10 +634,12 @@ Database.prototype = {
         var elem = $('.upload_field');
         var disable = !elem.prop('disabled');
         elem.prop('disabled', disable);
-        elem.closest("div").prop('hidden', disable);
         if (disable) {
+            elem.closest("div").hide();
             elem.val(undefined);
             $('.filename').val(undefined);
+        } else {
+            elem.closest("div").show();
         }
 
         var pre_process = $('#pre_process');

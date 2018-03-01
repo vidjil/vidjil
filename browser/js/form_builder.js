@@ -343,7 +343,7 @@ FileFormBuilder.prototype.build_file_field = function(id, hidden) {
     var d = this.build_wrapper();
     d.className += " file_" + id;
     if (this.source || hidden) {
-        d.hidden = true;
+        d.style.display = "none";
     }
     var i = this.build_input('upload_' + id, 'upload_field', 'file'+id, 'file', 'file');
     if (this.source) {
