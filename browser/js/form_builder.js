@@ -357,7 +357,7 @@ FileFormBuilder.prototype.build_file_field = function(id, hidden) {
 FileFormBuilder.prototype.build_jstree = function() {
     var self = this;
     var d = this.build_wrapper();
-    d.className += " jstree_container";
+    d.className += " jstree_field";
     if (!this.source) {
         d.hidden = true;
     }
@@ -366,8 +366,8 @@ FileFormBuilder.prototype.build_jstree = function() {
     }
 
     var sel = document.createElement('span');
-    sel.className = "form_label";
-    sel.appendChild(document.createTextNode(('selected:')));
+    sel.className = "button2";
+    sel.appendChild(document.createTextNode(('browse')));
     d.appendChild(sel);
     var indicator = document.createElement('span');
     indicator.id = "file_indicator_" + self.index;

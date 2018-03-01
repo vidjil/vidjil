@@ -78,10 +78,11 @@
             >
         </div>
         <div id="jstree_field_{{=i}}"
+            class="field_div jstree_field form-control"
             {{if not source_module_active:}} style="display: none;" {{pass}}
             data-index={{=i}}
             onclick="db.display_jstree(this.dataset.index)">
-            <span class="form_label">selected:</span>
+            <span class="button2">browse</span>
             <span id="file_indicator_{{=i}}"></span>
         </div>
     </div>
