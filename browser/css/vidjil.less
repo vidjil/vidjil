@@ -1025,22 +1025,25 @@ a.tag-link {
 
 /* ----------------- */
 
-.data-container, .info-container{
+.modal {
   z-index:3;
   border:solid; 
   position: fixed; 
-  top: 50px; 
-  left: 20px + @width_left_container;
   font-size: 13px; 
   padding: 10px;
   background: @background;
   display:none;
-  max-width: -moz-calc(~"100%" - @width_left_container + 60px);
-  max-width: -webkit-calc(~"100%" - @width_left_container + 60px);
-  max-width: calc(~"100%" - @width_left_container + 60px);
-  height: -moz-calc(~"100%" - 215px);
-  height: -webkit-calc(~"100%" - 215px);
-  height: calc(~"100%" - 215px);
+
+  &.data-container, &.info-container{
+    top: 50px;
+    left: 20px + @width_left_container;
+    max-width: -moz-calc(~"100%" - @width_left_container + 60px);
+    max-width: -webkit-calc(~"100%" - @width_left_container + 60px);
+    max-width: calc(~"100%" - @width_left_container + 60px);
+    height: -moz-calc(~"100%" - 215px);
+    height: -webkit-calc(~"100%" - 215px);
+    height: calc(~"100%" - 215px);
+  }
 }
 
 .data-msg, .info-msg{

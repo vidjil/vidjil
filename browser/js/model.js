@@ -80,7 +80,7 @@ Model.prototype = {
         //build infoBox
         
         this.infoBox = document.createElement("div");
-        this.infoBox.className = "info-container";
+        this.infoBox.className = "modal info-container";
         
         var closeinfoBox = document.createElement("span");
         closeinfoBox.className = "closeButton" ;
