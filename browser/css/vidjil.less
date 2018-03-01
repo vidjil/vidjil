@@ -1044,6 +1044,14 @@ a.tag-link {
     height: -webkit-calc(~"100%" - 215px);
     height: calc(~"100%" - 215px);
   }
+
+  &.jstree-container {
+    padding-top: 30px;
+    top: 10%;
+    left: 25%;
+    width: 50%;
+    height: 70%;
+  }
 }
 
 .data-msg, .info-msg{
@@ -2207,9 +2215,15 @@ label.highlight_label {
     white-space: pre-line;
 }
 
-#jstree {
-    max-height: 300px;
+.jstree {
+    height: 90%;
+    width: 100%;
     overflow-y: auto;
+    overflow-x: auto;
+}
+
+.jstree_button {
+    float: right;
 }
 
 .jstree-anchor {

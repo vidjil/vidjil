@@ -621,13 +621,29 @@ Database.prototype = {
                 },
             }
         });
-        var index = elem.data('index');
         elem.on('select_node.jstree', function(event, data){
-            $('#file_filename_' + index).val(data.selected);
+            $('#file_filename').val(data.selected);
             var split_file = data.selected.toString().split('/');
             var file = split_file[split_file.length - 1];
-            $('#file_indicator_' + index).text(file);
+            $('#file_indicator').text(file);
         });
+    },
+
+    display_jstree: function(caller_index) {
+        $("#jstree_button").data("index", caller_index);
+        $("#jstree_container").show();
+        $('#file_indicator_' + caller_index).text("");
+        $('#file_filename_' + caller_index).val("");
+    },
+
+    close_jstree: function() {
+        $("#jstree_container").hide();
+    },
+
+    select_jstree: function(caller_index) {
+        $('#file_indicator_' + caller_index).text($('#file_indicator').text());
+        $('#file_filename_' + caller_index).val($('#file_filename').val());
+        $("#jstree_container").hide();
     },
 
     toggle_upload_fields: function() {

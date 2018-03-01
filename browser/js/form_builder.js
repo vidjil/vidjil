@@ -361,23 +361,17 @@ FileFormBuilder.prototype.build_jstree = function() {
     if (!this.source) {
         d.hidden = true;
     }
+    d.onclick = function() {
+        db.display_jstree(self.index);
+    }
 
-    var sel = document.createTextNode('selected:');
+    var sel = document.createElement('span');
+    sel.className = "form_label";
+    sel.appendChild(document.createTextNode(('selected:')));
     d.appendChild(sel);
     var indicator = document.createElement('span');
     indicator.id = "file_indicator_" + self.index;
     d.appendChild(indicator);
-    var tree_par = document.createElement('div');
-    tree_par.id = "jstree_loader_" + self.index;
-    tree_par.className = "jstree";
-    tree_par.onload = function() {db.set_jstree($('#jstree_' + self.index), self.index)};
-    tree_par.appendChild(document.createTextNode('file'));
-    d.appendChild(tree_par);
-    var tree = document.createElement('div');
-    tree.id = 'jstree_' + this.index;
-    tree.className = "inline";
-    tree.dataset.index = this.index;
-    tree_par.appendChild(tree);
     return d;
 }
 

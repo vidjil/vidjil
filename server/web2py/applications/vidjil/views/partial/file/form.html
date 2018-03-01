@@ -77,18 +77,12 @@
                 title="(.fa, .fastq, .fa.gz, .fastq.gz, .clntab)"
             >
         </div>
-        <div class="jstree_container" {{if not source_module_active:}} hidden {{pass}}>
-            selected:
+        <div id="jstree_field_{{=i}}"
+            {{if not source_module_active:}} style="display: none;" {{pass}}
+            data-index={{=i}}
+            onclick="db.display_jstree(this.dataset.index)">
+            <span class="form_label">selected:</span>
             <span id="file_indicator_{{=i}}"></span>
-            <div class="jstree" id="jstree_loader_{{=i}}"
-                {{if not source_module_active:}}
-                    hidden
-                {{else:}}
-                    onload="db.set_jstree($('#jstree_{{=i}}'), {{=i}})"
-                {{pass}}>
-                file
-                <div id="jstree_{{=i}}"  class="inline" data-index="{{=i}}"></div>
-            </div>
         </div>
     </div>
 </div>
