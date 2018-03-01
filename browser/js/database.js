@@ -668,16 +668,9 @@ Database.prototype = {
     },
 
     toggle_jstree: function(){
-        var tree = $('.jstree');
-        var enable = tree.closest("div.jstree_container").prop('hidden');
-        tree.closest("div.jstree_container").prop('hidden', !enable);
-        if (enable) {
-            this.set_jstree(tree.children('div'));
-        } else {
-            $.jstree.destroy();
-            tree.children('div').off('select_node.jstree');
-            $('.filename').val(undefined);
-        }
+        var tree = $('.jstree_field');
+        var enable = tree.prop('hidden');
+        tree.prop('hidden', !enable);
     },
 
     toggle_file_source: function() {
