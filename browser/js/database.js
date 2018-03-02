@@ -702,6 +702,27 @@ Database.prototype = {
         });
     },
 
+    logout: function() {
+        var self = this;
+        $.ajax({
+            type: "POST",
+            timeout: DB_TIMEOUT_CALL,
+            crossDomain: true,
+            url: self.db_address + 'default/user/logout',
+            xhrField: {withCredentials: true},
+            success: function (result) {
+                db.call("default/home");
+            },
+            error: function (request, status, error) {
+                if (status === "timeout") {
+                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                } else {
+                    self.call("default/home");
+                }
+            }
+        });
+    },
+
     /*récupére et initialise le browser avec un fichier .data
      * args => format json ( parametre attendu  > patient_id, config_id)
      * filename => patient name used in the patient menu for the previous visited patients
