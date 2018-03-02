@@ -34,7 +34,7 @@
                 name="set_ids"
                 type="text"
                 value="{{=",".join([set['id'] for set in sets])}}">
-            <div id="set_div" class="token_container">
+            <div id="set_div" class="token_container" data-min-tokens=1>
                 {{ for set in sets: }}
                     <span class="set_token {{=set['type']}}_token" data-set-id="{{=set['id']}}">
                         <i class="icon-cancel" onclick="new Tokeniser(document.getElementById('set_div'), document.getElementById('file_set_list')).removeToken(this.parentNode);"></i>

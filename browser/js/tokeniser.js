@@ -47,11 +47,13 @@ Tokeniser.prototype = Object.create(Closeable.prototype);
 Tokeniser.prototype.tokenise = function(text) {
         var token = this.createToken(text);
         this.target.appendChild(token);
+        var tokens = this.getTokens();
+        tokens.children('.icon-cancel').removeClass('disabledClass');
         this.form_input.value = this.readTokens();
     }
 
 Tokeniser.prototype.readTokens = function() {
-        var nodes = $(this.target).children('.set_token');
+        var nodes = this.getTokens();
         return nodes.map(function callback() {
             return $(this).data('set-id');
         })
@@ -81,9 +83,18 @@ Tokeniser.prototype.createToken = function(set_id) {
     }
 
 Tokeniser.prototype.removeToken = function(token) {
-        this.target.removeChild(token);
-        this.form_input.value = this.readTokens();
-        return token;
+        var tokens = this.getTokens();
+        var len = tokens.length;
+        var min = this.target.dataset.minTokens;
+        if (typeof min === "undefined" ||
+            (typeof this.target.dataset.minTokens !== "undefined" &&
+             this.target.dataset.minTokens < len)) {
+                this.target.removeChild(token);
+                this.form_input.value = this.readTokens();
+                return token;
+        } else {
+            tokens.children('.icon-cancel').addClass('disabledClass');
+        }
     }
 
 Tokeniser.prototype.createCloseButton = function() {
@@ -93,4 +104,8 @@ Tokeniser.prototype.createCloseButton = function() {
             self.removeToken(this.parentNode);
         }
         return close;
+    }
+
+Tokeniser.prototype.getTokens = function() {
+        return $(this.target).children('.set_token');
     }
