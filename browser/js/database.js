@@ -410,10 +410,7 @@ Database.prototype = {
         //the json result look like a .analysis file so we load it
         if (typeof res.clones != "undefined" && typeof res.reads == "undefined" ){
             this.m.parseJsonAnalysis(result)
-        } else {
-            this.m.initClones()
         }
-
         //the json result contain a flash message
         if (res.message) {
 	    priority = res.success == 'false' ? 2 : 1
