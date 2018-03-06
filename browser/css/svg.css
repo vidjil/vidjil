@@ -1403,6 +1403,9 @@ span.warningReads {
   border-color: #FFFFFF;
   background: #FFFFFF;
 }
+.db_table .uid {
+  font-size: 80%;
+}
 .db_block {
   width: 100%;
   display: inline-block;

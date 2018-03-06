@@ -18,6 +18,7 @@
     <table class="db_table" id="table">
         <thead>
 	    <tr>
+	      <td class="column4"></td>
             {{ for header in fields: }}
 	        {{if isAdmin or header['public']:}}
 	            <td class="{{if header['width']:}}column_{{=header['width']}}{{pass}} pointer"
@@ -38,6 +39,7 @@
        {{for i in range(0, min(len(query), step)) :}}
            {{data = query[i]}}
            <tr class="pointer" onclick="db.call('sample_set/index', {'id' :'{{=data.sample_set_id}}' , 'config_id' : {{=data.most_used_conf}} } )" >
+	       <td class="uid">{{=data.sample_set_id}}</td>
                {{ for field in fields: }}
   		   <td>
 		       {{= field['call'](data)}}
