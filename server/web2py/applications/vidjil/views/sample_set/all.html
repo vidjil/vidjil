@@ -72,8 +72,10 @@
 
   </div>
   <div class="db_block_right">
-  <br />
-  {{ =min(step, len(query)) }} {{=helper.get_type_display()}}s, {{ =total_file_count }} files ({{ =vidjil_utils.format_size(total_size) }})
+    <br />
+    {{ if len(query) <= step: }}
+      {{ =len(query) }} {{=helper.get_type_display()}}s, {{ =total_file_count }} files ({{ =vidjil_utils.format_size(total_size) }})
+    {{ pass }}
   </div>
 </div>
 <div class="db_block_center">
