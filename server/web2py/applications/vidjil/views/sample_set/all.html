@@ -79,6 +79,7 @@
   </div>
 </div>
 <div class="db_block_center">
+ {{ if page > 0 or len(query) > step: }}
     page:
     {{ if page > 0: }}
         <i class="icon-left-open-1" onclick="db.call('sample_set/all', {'type': '{{=helper.get_type()}}', 'page': {{=page-1}}})"></i>
@@ -87,4 +88,5 @@
     {{if len(query) > step : }}
         <i class="icon-right-open-1" onclick="db.call('sample_set/all', {'type': '{{=helper.get_type()}}', 'page': {{=page+1}}})"></i>
     {{ pass }}
+ {{ pass }}
 </div>
