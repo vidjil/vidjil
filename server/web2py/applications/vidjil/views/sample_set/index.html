@@ -77,9 +77,9 @@
 
                  <tr>
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}  {{pass}} id="sequence_file_{{=row.sequence_file.id}}">
+                       {{if row.sequence_file.network:}}<i class="icon-upload-cloud-outline" title="This file is stored on your lab's network"></i>{{pass}}
 		       {{if auth.is_admin():}}({{=row.sequence_file.id}}){{pass}}
                          {{=row.sequence_file.filename}}
-                       {{if row.sequence_file.network:}}(N){{pass}}
                     </td>
                     <td> {{if row.sequence_file.sampling_date <> None:}} {{=row.sequence_file.sampling_date}} {{pass}}</td>
                     <td> {{=tag_decorator.sanitize(tag_decorator.decorate(row.sequence_file.info, 'tag', 'sequence_file', '/sample_set/custom'))}} </td>
@@ -106,7 +106,7 @@
                       <td></td>
                     {{pass}}
                         <td> <a {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}
-                                {{else:}} href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" {{pass}}  >dl</a></td>
+                                {{else:}} href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" {{pass}}  ><i class="icon-down" title="Download sequence file"></i></a></td>
                     {{if can_modify:}}
                         <td class="pointer" onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id }}', 'redirect_sample_set_id' : '{{=request.vars["id"]}}'} )" >  <i class="icon-erase" title="delete sample"></i> </td>
                     {{else:}}<td></td>{{pass}}
@@ -123,10 +123,10 @@
                      <td>
                         {{if row.results_file.data_file:}}
                             <a href={{=URL('default', 'download', scheme='https', args=row.results_file.data_file, vars=dict(filename='result-%s-%s.txt' % (request.vars['id'], row.results_file.id)))}}
-                               type="application/octet-stream">dl</a>
+                               type="application/octet-stream"><i class="icon-down" title="Download result file"></i></a>
                         {{pass}}
                      </td>
-                     <td {{if status in ["COMPLETED", "FAILED"]:}} class="pointer" onclick="db.call('results_file/output', { 'results_file_id' : '{{=row.results_file.id}}' }) " {{else:}} class="inactive" {{pass}}>out</td>
+                     <td {{if status in ["COMPLETED", "FAILED"]:}} class="pointer" onclick="db.call('results_file/output', { 'results_file_id' : '{{=row.results_file.id}}' }) " {{else:}} class="inactive" {{pass}}><i class="icon-docs" title="See the output files"></i></td>
                     {{if can_modify and auth.can_process_sample_set(request.vars['id']):}}
                      <td class="pointer" onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}', 'sample_set_id': '{{=request.vars["id"]}}'})" >  <i class="icon-erase" title="delete process"></i> </td>
                     {{else:}}
@@ -138,7 +138,7 @@
                    <td>
                    {{if row.sequence_file.data_file != None and ( row.results_file.id == None or ( status != "RUNNING" and status != "QUEUED" and status != "ASSIGNED") ):}}
                        {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
-                           <span class="button" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } )"> run >> </span>
+                           <span class="button" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } )"><i class="icon-cog-2" title="Run the selected configuration for this file"></i></span>
     sample_set_id = fake_sample_set_id
                        {{pass}}
                    {{pass}}
