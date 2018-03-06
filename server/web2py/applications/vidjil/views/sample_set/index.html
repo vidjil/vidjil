@@ -7,7 +7,7 @@
     <h3>
     <i class="icon-left-open-1" title="previous" onclick="db.call('sample_set/index', {'next': '1', 'id' :'{{=request.vars['id']}}', 'config_id' : '{{=request.vars['config_id']}}'})"></i>
     <i class="icon-right-open-1" title="next" onclick="db.call('sample_set/index', {'next': '-1', 'id' :'{{=request.vars['id']}}', 'config_id' : '{{=request.vars['config_id']}}'})"></i>
-        {{=info["name"]}}
+       <span class="uid">{{=request.vars['id']}}</span> {{=info["name"]}}
     </h3>
 
         
