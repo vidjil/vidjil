@@ -191,6 +191,7 @@ Url.prototype= {
     }
 
 };
+Url.prototype = $.extend(Object.create(View.prototype), Url.prototype);
 
 function UrlEncoder() {
     this.encoding = {
