@@ -586,7 +586,7 @@ Database.prototype = {
                                     }
                                     data2.append('id', id);
                                     data2.append('file_number', 2)
-                                    data2.append('pre_process', document.getElementById('file_pre_process_' + k).value)
+                                    data2.append('pre_process', document.getElementById('pre_process').value)
                                     self.uploader.add(id+"_2", data2, filename, 2)
                                 }
                             }
