@@ -4,7 +4,7 @@
 
 MY_PWD="$PWD"
 
-source_files="../algo ../browser ../data ../doc ../germline ../Makefile ../tools"
+source_files="../src ../demo ../doc ../germline ../Makefile ../tools"
 dest_files="vidjil"
 exec_dir="$dest_files"
 
