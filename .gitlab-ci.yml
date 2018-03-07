@@ -177,6 +177,7 @@ test_server_unit:
       - make -C server install_web2py_standalone
       - make -C server launch_fuse_server
       - make unit_server
+    after_script:
       - make -C server kill_fuse_server
     only:
       - /^feature-[sw]\/.*$/
