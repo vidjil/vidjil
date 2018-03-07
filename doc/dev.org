@@ -654,6 +654,8 @@ make functional
    - reporter     A monitoring utility that can be configured to send
      monitoring information to a remote server
 
+ For more information about Docker Compose and how to install it check out
+ https://docs.docker.com/compose/
 
 ** Starting the environment
    Ensure your docker-compose.yml contains the correct reference to the
