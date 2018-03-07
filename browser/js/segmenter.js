@@ -505,6 +505,13 @@ Segment.prototype = {
         this.updateElemStyle(list);
     },
 
+    /**
+     * clear functionnal data in order to start from a clean instance when loading a new .vidjil file
+     * */
+    reset: function() {
+        this.sequence = {};
+    },
+
     removeGermline:function(id){
         elem = document.getElementById("seq"+id);
         elem.parentNode.removeChild(elem)
@@ -1183,6 +1190,10 @@ Segment.prototype = {
 
     shouldRefresh: function() {
         this.init()
+    },
+
+    empty: function() {
+        this.sequence = {};
     }
 
 }; //fin prototype Segment

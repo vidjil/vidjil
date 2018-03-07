@@ -51,8 +51,8 @@ function Model() {
     }
     this.germline = {};
     this.create_germline_obj();
-    this.setAll();
     this.view = [];
+    this.setAll();
     this.checkBrowser();
     this.germlineList = new GermlineList()
     this.build();
@@ -213,6 +213,12 @@ Model.prototype = {
         ]
 
         this.default_tag=8;
+
+        for (var i = 0; i < this.view.length; i++) {
+            console.log("i: " + i);
+            console.log(typeof this.view[i]);
+            this.view[i].reset();
+        }
         
     },
     

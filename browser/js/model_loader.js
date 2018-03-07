@@ -106,6 +106,7 @@ Model_loader.prototype = {
             
         oFReader.readAsText(oFile);
         oFReader.onload = function (oFREvent) {
+            self.reset();
             self.parseJsonData(oFREvent.target.result, limit);
             self.loadGermline()
                 .initClones()
@@ -174,6 +175,7 @@ Model_loader.prototype = {
             crossDomain: true,
             url: url,
             success: function (result) {
+                self.reset();
                 self.parseJsonData(result, 100)
                     .loadGermline()
                     .initClones()

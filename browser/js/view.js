@@ -84,4 +84,11 @@ View.prototype = {
     resize : function () {
         
     },
+
+    /**
+     * reset the inner data withoout having to initialise the whole view
+     * */
+    reset : function () {
+
+    },
 }
