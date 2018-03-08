@@ -1,2 +1,2 @@
 vidjil-algo usr/bin/
-tools/cgi /usr/share/vidjil/browser/
+tools/*.cgi /usr/share/vidjil/browser/cgi/
