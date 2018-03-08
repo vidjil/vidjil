@@ -215,8 +215,6 @@ Model.prototype = {
         this.default_tag=8;
 
         for (var i = 0; i < this.view.length; i++) {
-            console.log("i: " + i);
-            console.log(typeof this.view[i]);
             this.view[i].reset();
         }
         
