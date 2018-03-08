@@ -570,7 +570,7 @@ def custom():
     ]
 
     select = [
-        db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name,
+        db.patient.id, db.patient.sample_set_id, db.patient.info, db.patient.first_name, db.patient.last_name,
         db.run.id, db.run.info, db.run.name,
         db.generic.id, db.generic.info, db.generic.name,
         db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
@@ -609,7 +609,7 @@ def custom():
 
         if row.patient.id is not None:
             #TODO use helper.
-            row.names = vidjil_utils.display_names(row.patient.id, row.patient.first_name, row.patient.last_name)
+            row.names = vidjil_utils.display_names(row.patient.sample_set_id, row.patient.first_name, row.patient.last_name)
             info = row.patient.info
         elif row.run.id is not None:
             row.names = row.run.name

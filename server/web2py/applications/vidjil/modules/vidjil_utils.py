@@ -91,12 +91,11 @@ def anon_ids(patient_id):
     db = current.db
     auth=current.auth
     
-    last_name = db.patient[patient_id].last_name
-    first_name = db.patient[patient_id].first_name
+    patient = db.patient[patient_id]
 
-    return display_names(patient_id, first_name, last_name)
+    return display_names(patient.sample_set_id, patient.first_name, patient.last_name)
 
-def anon_names(patient_id, first_name, last_name, can_view=None):
+def anon_names(sample_set_id, first_name, last_name, can_view=None):
     '''
     Anonymize the given names of the patient whose ID is patient_id.
     This function performs at most one db call (to know if we can see
@@ -107,7 +106,7 @@ def anon_names(patient_id, first_name, last_name, can_view=None):
 
     ln = safe_encoding(last_name)
     fn = safe_encoding(first_name)
-    if can_view or (can_view == None and auth.can_view_info('patient', patient_id)):
+    if can_view or (can_view == None and auth.can_view_info('sample_set', sample_set_id)):
         name = ln + " " + fn
     else:
         ln = safe_encoding(last_name)
@@ -115,7 +114,7 @@ def anon_names(patient_id, first_name, last_name, can_view=None):
 
     return name
 
-def display_names(patient_id, first_name, last_name, can_view=None):
+def display_names(sample_set_id, first_name, last_name, can_view=None):
     '''
     Return the name as displayed to a user or admin of a patient
     whose ID is patient_id.
@@ -125,11 +124,11 @@ def display_names(patient_id, first_name, last_name, can_view=None):
     '''
     auth = current.auth
 
-    name = anon_names(patient_id, first_name, last_name, can_view)
+    name = anon_names(sample_set_id, first_name, last_name, can_view)
 
     # Admins also see the patient id
     if auth.is_admin():
-        name += ' (%s)' % patient_id
+        name += ' (%s)' % sample_set_id
 
     return name
 
