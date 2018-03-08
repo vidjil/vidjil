@@ -179,6 +179,7 @@ test_server_unit:
       - make unit_server
     after_script:
       - make -C server kill_fuse_server
+      - deactivate
     only:
       - /^feature-[sw]\/.*$/
       - /^hotfix-[sw]\/.*$/
