@@ -496,7 +496,6 @@ Database.prototype = {
                 data     : $(this).serialize(),
                 xhrFields: {withCredentials: true},
                 success: function (result) {
-                    console.log(args)
                     self.call(next, args)
                 },
                 error: function (request, status, error) {
