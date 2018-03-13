@@ -313,7 +313,7 @@ class MsgUserAdapter(logging.LoggerAdapter):
         usern = usern.replace(' ','-')
         if auth.is_impersonating():
             usern = 'team!' + usern
-        new_msg =  '%30s %12s %s' % (ip, ('<%s>' % usern), msg)
+        new_msg =  u'%30s %12s %s' % (ip, (u'<%s>' % usern), msg)
         return new_msg, kwargs
     
     def admin(self, msg):
