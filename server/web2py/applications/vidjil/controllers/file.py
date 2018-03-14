@@ -280,8 +280,10 @@ def submit():
                 'table_name': "sequence_file"})
 
     if not error:
+        set_type = data['sets'][0]['type']
         res = { "file_ids": [f['id'] for f in data['file']],
                 "redirect": "sample_set/all",
+                "args" : { "type" : set_type},
                 "message": "successfully added/edited file(s)"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
