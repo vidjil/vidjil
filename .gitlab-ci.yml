@@ -206,11 +206,16 @@ deploy_review:
 deploy_prod:
   stage: deploy_prod
   script:
-    - rsync -av --delete browser $PROD_CLIENT_SERVER:$PROD_CLIENT_PATH
-    - ssh $PROD_CLIENT_SERVER "cp -pr $PROD_CLIENT_PATH_TEMPLATE/browser $PROD_CLIENT_PATH"
+    - ssh $PROD_CLIENT_SERVER "
+         cd $PROD_CLIENT_PATH;
+         git fetch
+         && git reset --hard origin/prod-client
+         && make -C browser
+         && make -C browser sha1
+         && cp doc/analysis-example.vidjil browser/"
   environment:
     name: production
-    url: http://app.vidjil.org/?data=analysis-example.vidjil
+    url: http://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil
   only:
     - prod-client
   tags:
