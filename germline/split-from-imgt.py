@@ -64,7 +64,7 @@ def get_gene_coord(imgt_line):
     >>> line = '>X15272|TRGV4*01|Homo sapiens|F|V-REGION|406..705|300 nt|1| | | | |300+0=300| |rev-compl|'
     >>> get_gene_coord(line)[0] == 'X15272'
     True
-    >>> get_gene_coord(line)[1] == {'from': 406, 'to': 705, 'imgt_name': 'TRGV4*01'}
+    >>> get_gene_coord(line)[1] == {'from': 406, 'to': 705, 'imgt_data': 'TRGV4*01|Homo sapiens|F|V-REGION', 'imgt_name': 'TRGV4*01'}
     True
     '''
     elements = imgt_line.split('|')
@@ -78,7 +78,8 @@ def get_gene_coord(imgt_line):
         end = end.split(',')[0]
     return elements[0][1:], {'from': int(start),
                              'to': int(end),
-                             'imgt_name': elements[1]}
+                             'imgt_name': elements[1],
+                             'imgt_data': '|'.join(elements[1:5])}
 
 def get_gene_sequence(gene, other_gene_name, start, end):
     '''
@@ -93,7 +94,7 @@ def store_data_if_updownstream(fasta_header, path, data, genes):
         if gene_name:
             data[path+'/'+gene][gene_name].append(gene_coord)
     
-def retrieve_genes(filename, genes, additional_length):
+def retrieve_genes(filename, genes, tag, additional_length):
     f = verbose_open_w(filename)
     for gene in genes:
         for coord in genes[gene]:
@@ -103,7 +104,13 @@ def retrieve_genes(filename, genes, additional_length):
                 end += additional_length
             elif additional_length < 0:
                 start = max(1, start + additional_length)
-            f.write(get_gene_sequence(gene, coord['imgt_name'], start, end))
+            gene_data = get_gene_sequence(gene, coord['imgt_data'] + tag, start, end)
+            if coord['imgt_data'].split('|')[-1] == FEATURE_J_REGION:
+                gene_lines = gene_data.split('\n')
+                gene_lines[1] = gap_j(gene_lines[1].lower())
+                gene_data = '\n'.join(gene_lines)
+
+            f.write(gene_data)
 
 
 #                  Phe
@@ -135,11 +142,16 @@ def gap_j(seq):
 
     seqs = seq.strip()
 
-    if seqs in CUSTOM_118:
-        print "# Custom 118 position in %s" % seq
-        pos = CUSTOM_118[seqs]
+    pos = None
 
-    else:
+    for custom_seq in CUSTOM_118:
+        if not custom_seq:
+            continue
+        if seqs.startswith(custom_seq):
+            print "# Custom 118 position in %s" % seqs
+            pos = CUSTOM_118[custom_seq]
+
+    if pos is None:
         m = j118.search(seq)
 
         if not m:
@@ -159,7 +171,9 @@ LENGTH_DOWNSTREAM=40
 SPECIAL_SEQUENCES = [
 ]
 
-FEATURES_VDJ = [ "V-REGION", "D-REGION", "J-REGION" ]
+FEATURE_J_REGION = 'J-REGION'
+
+FEATURES_VDJ = [ "V-REGION", "D-REGION", FEATURE_J_REGION ]
 FEATURES_CLASSES = [
     "CH1", "CH2", "CH3", "CH3-CHS", "CH4-CHS",
     "H", "H-CH2", "H1", "H2", "H3", "H4",
@@ -177,6 +191,9 @@ SPLIT_SEQUENCES = {'/DV': ['TRAV', 'TRDV']}
 DOWNSTREAM_REGIONS=['[A-Z]{3}J', 'TRDD3']
 UPSTREAM_REGIONS=['IGHD', 'TRDD', 'TRBD', 'TRDD2']
 # Be careful, 'IGHD' regex for UPSTREAM_REGIONS also matches IGHD*0? constant regions.
+
+TAG_DOWNSTREAM='+down'
+TAG_UPSTREAM='+up'
 
 SPECIES = {
     "Homo sapiens": 'homo-sapiens/',
@@ -236,7 +253,7 @@ for l in sys.stdin:
                 current_special = verbose_open_w(name)
 
 
-    if '>' not in l and current_files and feature == 'J-REGION':
+    if '>' not in l and current_files and feature == FEATURE_J_REGION:
         l = gap_j(l)
 
     for current_file in current_files:
@@ -246,6 +263,6 @@ for l in sys.stdin:
             current_special.write(l)
 
 for system in upstream_data:
-    retrieve_genes(system+"_upstream.fa", upstream_data[system], -LENGTH_UPSTREAM)
+    retrieve_genes(system + TAG_UPSTREAM + '.fa', upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM)
 for system in downstream_data:
-    retrieve_genes(system+"_downstream.fa", downstream_data[system], LENGTH_DOWNSTREAM)
+    retrieve_genes(system + TAG_DOWNSTREAM + '.fa', downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM)
