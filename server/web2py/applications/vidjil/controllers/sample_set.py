@@ -304,29 +304,38 @@ def result_files():
     for t in sample_types:
         helpers[t] = mf.get_instance(type=t)
 
-    tempfile = StringIO()
-    zipfile = ZipFile(tempfile, 'w')
-    metadata = []
-    for res in results:
-        log.debug("res: " + str(res))
-        metadata.append({'id': res.sample_set.id,
-            'name': helpers[res.sample_set.sample_type].get_name(res[res.sample_set.sample_type]),
-            'file': res.results_file.data_file,
-            'set_info': res[res.sample_set.sample_type].info,
-            'sample_info': res.sequence_file.info})
-        path = defs.DIR_RESULTS + res.results_file.data_file
-        zipfile.writestr(res.results_file.data_file, open(path, 'rb').read())
-
-    zipfile.writestr('metadata.json', json.dumps(metadata))
-    zipfile.close()
-
     filename = "export_%s_%s.zip" % ('-'.join(sample_set_ids), str(datetime.date.today()))
+    filedir = defs.DIR_SEQUENCES + '/' + filename
+    try:
+        zipfile = ZipFile(filedir, 'w')
+        metadata = []
+        for res in results:
+            metadata.append({'id': res.sample_set.id,
+                'name': helpers[res.sample_set.sample_type].get_name(res[res.sample_set.sample_type]),
+                'file': res.results_file.data_file,
+                'set_info': res[res.sample_set.sample_type].info,
+                'sample_info': res.sequence_file.info})
+            path = defs.DIR_RESULTS + res.results_file.data_file
+            zipfile.writestr(res.results_file.data_file, open(path, 'rb').read())
 
-    response.headers['Content-Type'] = "application/zip"
-    response.headers['Content-Disposition'] = 'attachment; filename=%s' % filename# to force download as attachment
-    rtn = tempfile.getvalue()
+        zipfile.writestr('metadata.json', json.dumps(metadata))
 
-    return rtn
+        zipfile.close()
+
+        response.headers['Content-Type'] = "application/zip"
+        response.headers['Content-Disposition'] = 'attachment; filename=%s' % filename# to force download as attachment
+
+        return response.stream(open(filedir), chunk_size=4096)
+    except:
+        res = {"message": "an error occurred"}
+        log.error("An error occured when creating archive of sample_sets %s" % str(sample_set_ids))
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    finally:
+        try:
+            os.unlink(filedir)
+        except OSError:
+            pass
+
 
 ## Stats
 
