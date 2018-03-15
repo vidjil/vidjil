@@ -314,7 +314,8 @@ def result_files():
                 'name': helpers[res.sample_set.sample_type].get_name(res[res.sample_set.sample_type]),
                 'file': res.results_file.data_file,
                 'set_info': res[res.sample_set.sample_type].info,
-                'sample_info': res.sequence_file.info})
+                'sample_info': res.sequence_file.info,
+                'sequence_file': res.sequence_file.filename})
             path = defs.DIR_RESULTS + res.results_file.data_file
             zipfile.writestr(res.results_file.data_file, open(path, 'rb').read())
 
