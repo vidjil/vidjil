@@ -180,8 +180,8 @@ test_server_unit:
       - make -C server kill_fuse_server
       - deactivate
     only:
-      - /^feature-[sw]\/.*$/
-      - /^hotfix-[sw]\/.*$/
+      - /^feature-.*s.*\/.*$/
+      - /^hotfix-.*s.*\/.*$/
       - prod-server
       - dev
     tags:
