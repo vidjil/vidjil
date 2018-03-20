@@ -37,12 +37,12 @@ class TagController(unittest.TestCase):
         resp = auto_complete()
         self.assertNotEqual(resp.find("missing group ids"), -1, "auto_complete did not fail correctly")
 
-        request.vars["group_ids"] = "[]"
+        request.vars["keys"] = "[]"
         resp = auto_complete()
         self.assertEqual(resp.find("missing group ids"), -1, "auto_complete failed to detect group_ids param")
         self.assertEqual(resp, "{}", "auto_complete returned an unexpected response")
 
-        request.vars["group_ids"] = "[%d,%d]" % (unique_group, fake_group_id)
+        request.vars["keys"] = "[%d,%d]" % (unique_group, fake_group_id)
         resp = auto_complete()
         json_resp = json.loads(resp)
         self.assertTrue(json_resp.has_key(str(unique_group)), "missing tag for unique_group: %s" % unique_group)

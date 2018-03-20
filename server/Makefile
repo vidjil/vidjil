@@ -9,7 +9,7 @@ install_web2py:
 	cp -i web2py/applications/vidjil/modules/defs.py.sample web2py/applications/vidjil/modules/defs.py
 
 unit: clean_unit_tests
-	cd web2py; python web2py.py -S vidjil -M -R testRunner.py
+	python web2py/web2py.py -S vidjil -M -R testRunner.py
 
 install_web2py_standalone: install_web2py
 	mkdir -p web2py/applications/vidjil/databases web2py/upload/uploads web2py/result/results
