@@ -356,8 +356,11 @@ FileFormBuilder.prototype.build_file_field = function(id, hidden) {
 
 FileFormBuilder.prototype.build_jstree = function() {
     var self = this;
-    var d = this.build_wrapper();
-    d.className += " jstree_field";
+    var w = this.build_wrapper();
+    var d = document.createElement('div');
+    w.appendChild(d);
+
+    d.className += " jstree_field form-control";
     if (!this.source) {
         d.hidden = true;
     }
