@@ -1,0 +1,4 @@
+!LAUNCH: python ../../vidjil-to-fasta.py -o vidjil-to-fasta.fasta ../../../data/no_clones.vidjil > /dev/null; cat vidjil-to-fasta.fasta
+
+$ No data should be found
+0:.

@@ -36,9 +36,9 @@ test_germlines:
   stage: test_germlines
   script:
     - make -C germline get-all-data
-    - make -C algo/tests should_germline
+    - make -C germline/tests
   only:
-    - /^feature-g\/.*$/
+    - /^feature-.*g.*\/.*$/
 
 
 # Algorithm
@@ -47,31 +47,31 @@ test_algo_unit:
   stage: test_unit
   script: make -C algo unit
   only:
-    - /^feature-a\/.*$/
+    - /^feature-.*a.*\/.*$/
 
 test_tools_unit:
   stage: test_unit
   script: make -C tools/tests
   only:
-    - /^feature-a\/.*$/
+    - /^feature-.*a.*\/.*$/
 
 test_algo_should:
   stage: test_functional
   script: make -C algo should
   only:
-    - /^feature-a\/.*$/
+    - /^feature-.*a.*\/.*$/
 
 test_algo_shouldvdj:
   stage: test_shouldvdj
   script: make -C algo shouldvdj
   only:
-    - /^feature-a\/.*$/
+    - /^feature-.*a.*\/.*$/
 
 algo_valgrind_unit:
   stage: valgrind_unit
   script: make -C algo valgrind_unit
   only:
-    - /^feature-a\/.*$/
+    - /^feature-.*a.*\/.*$/
   tags:
     - valgrind
 
@@ -80,7 +80,7 @@ algo_valgrind_functional:
   script: make -C algo valgrind_should
   when: manual
   only:
-    - /^feature-a\/.*$/
+    - /^feature-.*a.*\/.*$/
   tags:
     - valgrind
 
@@ -89,14 +89,14 @@ prepare_release:
   script: make -C algo release RELEASE_TAG='rc'
   when: manual
   only:
-    - /^feature-a\/.*$/
+    - /^feature-.*a.*\/.*$/
 
 release:
   stage: release
   script: make -C algo release RELEASE_TAG=`cat algo/release`
   when: manual
   only:
-    - /^feature-a\/release$/
+    - /^feature-.*a.*\/release$/
   artifacts:
     paths:
     - algo/releases/vidjil-algo-`cat algo/release`.tar.gz
@@ -113,8 +113,8 @@ test_browser_unit:
     paths:
     - browser/
   only:
-    - /^feature-[cw]\/.*$/
-    - /^hotfix-[cw]\/.*$/
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
     - prod-client
     - dev
   tags:
@@ -131,8 +131,8 @@ test_browser-functional:
     paths:
     - browser/
   only:
-    - /^feature-[cw]\/.*$/
-    - /^hotfix-[cw]\/.*$/
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
     - prod-client
   tags:
     - web
@@ -149,8 +149,8 @@ test_browser-functional-external:
     paths:
     - browser/
   only:
-    - /^feature-[cw]\/.*$/
-    - /^hotfix-[cw]\/.*$/
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
     - prod-client
   tags:
     - web
@@ -159,8 +159,8 @@ code_quality:
   stage: test_quality
   script: make -C browser quality
   only:
-    - /^feature-[cw]\/.*$/
-    - /^hotfix-[cw]\/.*$/
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
     - prod-client
     - dev
   tags:
@@ -199,8 +199,8 @@ deploy_review:
     url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
     on_stop: stop_deploy_review
   only:
-    - /^feature-[cw]\/.*$/
-    - /^hotfix-[cw]\/.*$/
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
   tags:
     - web
 
@@ -233,7 +233,7 @@ stop_deploy_review:
     name: review/$CI_BUILD_REF_NAME
     action: stop
   only:
-    - /^feature-[cw]\/.*$/
-    - /^hotfix-[cw]\/.*$/
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
   tags:
     - web
