@@ -176,12 +176,9 @@ test_server_unit:
       - pip install -r requirements.txt
       - make -C server install_web2py_standalone
       - make -C server launch_fuse_server
-      - >
-        make unit_server
-        exit_code=$?
-        make -C server kill_fuse_server
-        deactivate
-        exit $exit_code
+      - make unit_server || (make -C server kill_fuse_server; deactivate; false)
+      - make -C server kill_fuse_server
+      - deactivate
     only:
       - /^feature-[sw]\/.*$/
       - /^hotfix-[sw]\/.*$/
