@@ -5,6 +5,21 @@
         <label for="group_select" id="patient_group__label">Owner Group: </label>
         {{= SELECT(*[OPTION(g['name'], _value=g['id']) for g in groups], _id="group_select", _name="group", _value=master_group, value=master_group) }}
     </div>
+    <div class="buttons_add_elements">
+      <span class="button"
+            onclick="document.getElementById('fieldset_container').appendChild(new PatientFormBuilder().build(this.dataset.index++));"
+            id="patient_button"
+            data-index="{{=len(sets[defs.SET_TYPE_PATIENT])}}">add patient</span>
+      <span class="button"
+            onclick="document.getElementById('fieldset_container').appendChild(new RunFormBuilder().build(this.dataset.index++));"
+            id="run_button"
+            data-index="{{=len(sets[defs.SET_TYPE_RUN])}}">add run</span>
+      <span class="button"
+            onclick="document.getElementById('fieldset_container').appendChild(new GenericFormBuilder().build(this.dataset.index++));"
+            id="generic_button"
+            data-index="{{=len(sets[defs.SET_TYPE_GENERIC])}}">add set</span>
+      <div class="clear"></div>
+    </div>
     <div id="fieldset_container">
         {{ for set_type in sets: }}
             {{ for i, set in enumerate(sets[set_type]): }}
@@ -18,19 +33,6 @@
             {{ pass }}
         {{ pass }}
     </div>
-    <div class="clear"></div>
-    <span class="button"
-       onclick="document.getElementById('fieldset_container').appendChild(new PatientFormBuilder().build(this.dataset.index++));"
-       id="patient_button"
-       data-index="{{=len(sets[defs.SET_TYPE_PATIENT])}}">add patient</span>
-    <span class="button"
-       onclick="document.getElementById('fieldset_container').appendChild(new RunFormBuilder().build(this.dataset.index++));"
-       id="run_button"
-       data-index="{{=len(sets[defs.SET_TYPE_RUN])}}">add run</span>
-    <span class="button"
-       onclick="document.getElementById('fieldset_container').appendChild(new GenericFormBuilder().build(this.dataset.index++));"
-       id="generic_button"
-       data-index="{{=len(sets[defs.SET_TYPE_GENERIC])}}">add set</span>
     <div class="clear"></div>
     <input type="submit" value="save" class="btn"></td>
 </form>

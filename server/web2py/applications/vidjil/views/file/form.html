@@ -55,17 +55,20 @@
                 type="text">
         </div>
     </div>
+    <div class="clear"></div>
+    <div class="buttons_add_elements">
+        <span class="button"
+          onclick="add_file('fieldset_container', this.dataset.index++, {{=group_ids}})"
+          id="file_button"
+          data-index="{{=len(files)}}">add file</span>
+        <div class="clear"></div>
+    </div>
     <div id="fieldset_container">
         {{ for i, file in enumerate(files): }}
             <div class="clear"></div>
             {{ include 'partial/file/form.html' }}
         {{ pass }}
     </div>
-    <div class="clear"></div>
-    <span class="button"
-          onclick="add_file('fieldset_container', this.dataset.index++, {{=group_ids}})"
-          id="file_button"
-          data-index="{{=len(files)}}">add file</span>
     <div class="clear"></div>
     <input type="submit" value="Soumettre" class="btn">
 </form>
