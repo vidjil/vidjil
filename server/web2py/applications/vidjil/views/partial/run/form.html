@@ -8,7 +8,7 @@
     <div>{{=", ".join(set['message'])}}</div>
 {{ pass }}
 <div class="field_div">
-    <input class="date form-control" id="run_id_label_{{=i}}" name="run[{{=i}}][id_label]" type="text"
+    <input class="form-control" id="run_id_label_{{=i}}" name="run[{{=i}}][id_label]" type="text"
         value="{{if set is not None and set['id_label'] is not None:}}{{=set['id_label']}}{{pass}}" placeholder="Run ID"><span></span>
 </div>
 <div class="field_div">
@@ -18,7 +18,7 @@
 <div class="field_div">
     <input id="run_date_{{=i}}" name="run[{{=i}}][run_date]" type="text" class="date form-control"
         value="{{if set is not None and set['run_date'] is not None:}}{{=set['run_date']}}{{pass}}"
-        placeholder="Date (yyyy-mm-dd)" title="yyyy-mm-dd" pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))">
+        placeholder="yyyy-mm-dd" title="run date" pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))">
 </div>
 <div class="field_div">
     <textarea

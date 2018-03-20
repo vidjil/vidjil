@@ -117,9 +117,9 @@ FormBuilder.prototype.build_date = function(id, object, name, label) {
         }
 
         var d = this.build_wrapper();
-        var i = this.build_input(id, 'date', name, 'text', object, label+' (yyyy-mm-dd)', false);
+        var i = this.build_input(id, 'date', name, 'text', object, 'yyyy-mm-dd', false);
         i.pattern = "(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))";
-        i.title = "yyyy-mm-dd"
+        i.title = label;
         d.appendChild(i);
         return d;
     }
