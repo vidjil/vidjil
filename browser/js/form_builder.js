@@ -147,7 +147,9 @@ SetFormBuilder.prototype = Object.create(FormBuilder.prototype);
 
 SetFormBuilder.prototype.set_id = function() {
         var id = 'id_label';
-        return this.build_field(id, id, this.type + ' ID');
+        var f = this.build_field(id, id, capitalise(this.type)+' ID');
+        f.className += "stringid";
+        return f;
     };
 
 SetFormBuilder.prototype.build_date = function(id, name, label) {
