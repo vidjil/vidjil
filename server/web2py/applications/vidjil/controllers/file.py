@@ -246,6 +246,7 @@ def submit():
             f['id'] = fid = db.sequence_file.insert(**file_data)
             action = "add"
 
+        data['action'] = action
         f['message'] = []
         mes = "file (%d) %s %sed" % (int(f["id"]), f["filename"], action)
         f['message'].append(mes)
