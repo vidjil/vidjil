@@ -78,6 +78,7 @@ class Sample_setController(unittest.TestCase):
 
 
     def test1Add(self):
+        import json
         patient = {
             "first_name" : "bob",
             "last_name" : "bob",
@@ -87,7 +88,7 @@ class Sample_setController(unittest.TestCase):
         }
         data = {'patient':[patient], 'group': fake_group_id}
 
-        request.vars['data'] = data
+        request.vars['data'] = json.dumps(data)
 
         name = "%s %s" % (request.vars["first_name"], request.vars["last_name"])
 
@@ -101,6 +102,7 @@ class Sample_setController(unittest.TestCase):
         self.assertTrue(resp.has_key('message'), "edit() has returned an incomplete response")
 
     def testEditForm(self):
+        import json
         patient = {
             "id" : fake_patient_id,
             "first_name" : "bab",
@@ -110,7 +112,7 @@ class Sample_setController(unittest.TestCase):
             "id_label" : "bab"
         }
         data = {'patient': [patient]}
-        request.vars['data'] = data
+        request.vars['data'] = json.dumps(data)
 
         resp = submit()
         self.assertNotEqual(resp.find('bab bab (1): patient edited"'), -1, "edit patient failed")
