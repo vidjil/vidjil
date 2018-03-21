@@ -71,3 +71,46 @@ class Sample_setController(unittest.TestCase):
 
         resp = change_permission()
         self.assertTrue(auth.get_group_access('patient', patient.id, fake_group_id), "fail to add permission")
+
+    def testForm(self):
+        resp = form()
+        self.assertTrue(resp.has_key('message'), "add() has returned an incomplete response")
+
+
+    def test1Add(self):
+        patient = {
+            "first_name" : "bob",
+            "last_name" : "bob",
+            "birth" : "2011-11-11",
+            "info" : "test patient kZtYnOipmAzZ",
+            "id_label" : "bob"
+        }
+        data = {'patient':[patient], 'group': fake_group_id}
+
+        request.vars['data'] = data
+
+        name = "%s %s" % (request.vars["first_name"], request.vars["last_name"])
+
+        resp = submit()
+        self.assertNotEqual(resp.find('patient %s added' % name), -1, "add patient failled")
+
+    def testEdit(self):
+        request.vars["id"] = fake_patient_id
+
+        resp = form()
+        self.assertTrue(resp.has_key('message'), "edit() has returned an incomplete response")
+
+    def testEditForm(self):
+        patient = {
+            "id" : fake_patient_id,
+            "first_name" : "bab",
+            "last_name" : "bab",
+            "birth" : "2010-10-10",
+            "info" : "bab",
+            "id_label" : "bab"
+        }
+        data = {'patient': [patient]}
+        request.vars['data'] = data
+
+        resp = submit()
+        self.assertNotEqual(resp.find('bab bab (1): patient edited"'), -1, "edit patient failed")
