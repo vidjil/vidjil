@@ -212,18 +212,15 @@ def submit():
 
     data['errors'] = errors
 
-    data['action'] = 'add'
-
     if len(errors) > 0:
-        return form_response(data)
+        error = True
 
     for f in data['file']:
-        errors = validate(f)
+        f['errors'] = validate(f)
 
         f['sets'], f['id_dict'], err = validate_sets(f['set_ids'])
 
-        if len(errors) > 0:
-            f['error'] = errors
+        if len(f['errors']) > 0:
             error = True
             continue
 
