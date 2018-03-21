@@ -1,12 +1,15 @@
 {{extend 'db_layout.html'}}
 <form id="upload_form"  action="DB_ADDRESS/file/submit" enctype="multipart/form-data" method="post">
 
+   <h3>Add sample(s)</h3>
+
     {{ if source_module_active: }}
-        <span>file source</span>
+        <span>file source: </span>
         <label for="source_computer">my computer</label>
         <input type="radio" id="source_computer" name="source" value="computer" onchange="db.toggle_file_source()"/>
         <label for="source_nfs">network</label>
-        <input type="radio" id="source_nfs" name="source" value="nfs" onchange="db.toggle_file_source()" checked="checked" />
+        <input type="radio" id="source_nfs" name="source" value="nfs" onchange="db.toggle_file_source()" checked="checked" />        
+        <p></p>
     {{pass}}
     <div {{if source_module_active:}} hidden {{pass}}>
         <select id="pre_process" name="pre_process" onChange="db.pre_process_onChange(this)" {{if source_module_active:}} disabled {{pass}}>
@@ -20,8 +23,9 @@
         </select>
     </div>
     <div>
-        You must associate this sample with at least one patient, run or set.<br>You can also associate it with any combination of the three.
+        Samples have to be associated with at least one patient, run or set.<br>You can also associate them with any combination of the three.
     </div>
+    &nbsp;
     <div class="field_div">
         {{ if len(errors) > 0: }}
             <div class="error">{{=", ".join(errors)}}</div>
@@ -60,7 +64,7 @@
         <span class="button"
           onclick="add_file('fieldset_container', this.dataset.index++, {{=group_ids}})"
           id="file_button"
-          data-index="{{=len(files)}}">add file</span>
+          data-index="{{=len(files)}}">add other sample</span>
         <div class="clear"></div>
     </div>
     <div id="fieldset_container">
@@ -70,7 +74,7 @@
         {{ pass }}
     </div>
     <div class="clear"></div>
-    <input type="submit" value="Soumettre" class="btn">
+    <input type="submit" value="submit" class="btn">
 </form>
 
 <div id="jstree_container" class="modal jstree-container">
