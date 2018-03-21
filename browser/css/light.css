@@ -2157,6 +2157,20 @@ form .form_label {
   -webkit-box-shadow: inset 0 1px 1px rgba(255, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(255, 0, 0, 0.075);
 }
+.form-control.stringid {
+  min-width: 80px;
+  width: 80px;
+}
+.form-control.sequencer {
+  display: none;
+}
+.form-control.pcr {
+  display: none;
+}
+.form-control.text {
+  min-width: 350px;
+  width: 350px;
+}
 .form-control[type="file"],
 .form-control.jstree_field {
   border: 0px;
