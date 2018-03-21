@@ -1416,7 +1416,7 @@ span.warningReads {
   background: #ffffff;
 }
 h3 .uid {
-  font-size: 70;
+  font-size: 70%;
   margin: 0 1em;
 }
 .db_table .uid {
