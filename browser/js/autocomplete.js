@@ -124,26 +124,77 @@ VidjilAutoComplete.prototype = {
         this.initCache(at);
         this.dataUrls[at] = this.datasource.db_address + 'sample_set/auto_complete'
         var callbacks = self.getDefaultCallbacks()
+
+        callbacks.matcher = function(flag, subtext) {
+            var regex = /([:0-9a-z_\[\]\(\)\-]+\s*)*/ig;
+            var match = subtext.match(regex);
+            if (match) {
+                var filtered = match.filter(function(word) {
+                    return word.length > 0
+                });
+                if (filtered.length) {
+                    return filtered[0];
+                }
+                return match[0];
+            }
+            return null;
+        }
+
         callbacks.beforeSave = function(data) {
             if (data.length == 1 && data[0] == VidjilAutoComplete.defaultLoadingData[0]) {
                 return data;
             }
             var res = $.map(data, function(i) {
                 return {
+                    id: i.id,
                     name: i.name,
-                    search: i.name
+                    search: i.name,
+                    set_type: i.type
                 };
             });
             return res;
         };
 
-        callbacks.matcher = function(flag, subtext) {
-            var regex = new RegExp("[\\s\\S]+");
-            var match = regex.exec(subtext);
-            if (match) {
-                return match[0];
+        // code modified from atwho source
+        callbacks.highlighter = function(li, query) {
+            var mapper = {'p': 'patient',
+                          'r': 'run',
+                          's': 'generic'}
+
+            var set_type = li.charAt(5)
+
+            // encapsulate the string_id's set_type token (:p, :r, :s) within a span
+            li = li.replace(li.substr(4,2),
+                    function(str) {
+                        return '<span class="autocomplete_li ' + mapper[set_type] + '">' + str + '</span><span class="set_token '+ mapper[set_type] + '_token">';
+                    });
+            li = li.replace('<li>', '<li class="' + mapper[set_type] + '_li">');
+            li = li.replace('</li>', '</span></li>');
+            var regexp;
+            if (!query) {
+                return li;
             }
-            return null;
+            regexp = new RegExp(">([\\(\\)\\[\\]A-Za-z0-9\\-\\s]*)+(" + query.replace(/([\+\[\]\(\)\-])/g, function(str, s) { return "\\" + s; }) + ")([\\(\\)\\[\\]A-Za-z0-9\\s\\-]*)<", 'ig');
+            return li.replace(regexp, function(str, $1, $2, $3) {
+                return '> ' + $1 + '<strong>' + $2 + '</strong>' + $3 + ' <';
+            });
+
+        };
+
+        callbacks.beforeInsert = function(value, li) {
+            new Tokeniser().tokenise(value); // Tokeniser is a Singleton
+            return "";
+        };
+
+        callbacks.sorter = function(query, items) {
+            return items.sort(function(a, b){
+                if(a.id < b.id) {
+                    return 1;
+                } else if (a.id == b.id) {
+                    return 0
+                }
+                return -1;
+            });
         };
 
         $input.atwho({

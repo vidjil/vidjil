@@ -6,7 +6,8 @@ class SampleSetList():
         if page is not None and step is not None:
             limitby = (page*step, (page+1)*step+1) # one more element to indicate if another page exists
 
-        query = (auth.vidjil_accessible_query(PermissionEnum.read.value, db[type]))
+        query = ((auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)) &
+                (db[type].sample_set_id == db.sample_set.id))
 
         if (tags is not None and len(tags) > 0):
             query = filter_by_tags(query, self.type, tags)

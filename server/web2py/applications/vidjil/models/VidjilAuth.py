@@ -288,6 +288,8 @@ class VidjilAuth(Auth):
             return False
         perm = self.get_permission(PermissionEnum.admin.value, 'sample_set', sample_set_id, user)\
             or self.is_admin(user)
+        if perm:
+            return True
 
         for row in db( db[sample_type].sample_set_id == sample_set_id ).select() :
             if self.can_modify(sample_type, row.id, user):

@@ -43,7 +43,7 @@
        {{for row in query :}}
            <tr class="pointer" onclick="db.call('sample_set/index', {'id' :'{{=row['sample_set_id']}}' , 'config_id' : {{=row['most_used_conf']}} } )" >
                 <td>
-                     {{ patient_name = vidjil_utils.anon_names(row['id'], row['first_name'], row['last_name'], row['anon_allowed'])}}
+                     {{ patient_name = vidjil_utils.anon_names(row['sample_set_id'], row['first_name'], row['last_name'], row['anon_allowed'])}}
 		     {{= patient_name}}
                 </td>
                 <td> {{ if row['birth'] is not None: }} {{=row['birth'] }} {{ pass }} </td>

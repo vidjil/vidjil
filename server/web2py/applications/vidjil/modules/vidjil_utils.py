@@ -91,12 +91,11 @@ def anon_ids(patient_id):
     db = current.db
     auth=current.auth
     
-    last_name = db.patient[patient_id].last_name
-    first_name = db.patient[patient_id].first_name
+    patient = db.patient[patient_id]
 
-    return anon_names(patient_id, first_name, last_name)
+    return display_names(patient.sample_set_id, patient.first_name, patient.last_name)
 
-def anon_names(patient_id, first_name, last_name, can_view=None):
+def anon_names(sample_set_id, first_name, last_name, can_view=None):
     '''
     Anonymize the given names of the patient whose ID is patient_id.
     This function performs at most one db call (to know if we can see
@@ -107,15 +106,29 @@ def anon_names(patient_id, first_name, last_name, can_view=None):
 
     ln = safe_encoding(last_name)
     fn = safe_encoding(first_name)
-    if can_view or (can_view == None and auth.can_view_info('patient', patient_id)):
+    if can_view or (can_view == None and auth.can_view_info('sample_set', sample_set_id)):
         name = ln + " " + fn
     else:
         ln = safe_encoding(last_name)
         name = ln[:3]
 
+    return name
+
+def display_names(sample_set_id, first_name, last_name, can_view=None):
+    '''
+    Return the name as displayed to a user or admin of a patient
+    whose ID is patient_id.
+    It makes use of anon_names which will return an anonymised version
+    of the patient name if the user doesn't have permission to see the real name.
+    Admins will also see the patient id.
+    '''
+    auth = current.auth
+
+    name = anon_names(sample_set_id, first_name, last_name, can_view)
+
     # Admins also see the patient id
     if auth.is_admin():
-        name += ' (%s)' % patient_id
+        name += ' (%s)' % sample_set_id
 
     return name
 
@@ -536,3 +549,8 @@ def check_enough_space(directory):
     size = int(size)
     result = available >= (size * (defs.FS_LOCK_THRESHHOLD/100))
     return result
+
+def get_found_types(data):
+    known_types = set([defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC])
+    present_types = set(data.keys())
+    return known_types.intersection(present_types)

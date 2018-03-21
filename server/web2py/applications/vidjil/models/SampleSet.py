@@ -18,13 +18,16 @@ class SampleSet(object):
         return getattr(self, key, None)
 
     def get_name(self, data):
-        return data.name
+        return data['name']
+
+    def get_display_name(self, data):
+        return self.get_name(data)
 
     def get_info(self, data):
-        return data.info
+        return data['info']
 
     def get_tagged_info(self, data):
-        text = self.tag_decorator.decorate(data.info, 'tag', self.type, self.get_list_path())
+        text = self.tag_decorator.decorate(data['info'], 'tag', self.type, self.get_list_path())
         return self.tag_decorator.sanitize(text)
 
     def get_stats_tagged_info(self, data):
@@ -32,7 +35,7 @@ class SampleSet(object):
         return self.tag_decorator.sanitize(text)
 
     def get_configs(self, data):
-        return data.conf_list
+        return data['conf_list']
 
     def get_list_path(self):
         return '/sample_set/all'
@@ -42,32 +45,32 @@ class SampleSet(object):
 
     def get_config_urls(self, data):
         configs = []
-        for conf in data.conf_list:
-            filename =  "(%s %s)" % (self.get_name(data), conf['name'])
+        for conf in data['conf_list']:
+            filename =  "(%s %s)" % (self.get_display_name(data), conf['name'])
             if conf['fused_file'] is not None :
                 configs.append(
                     str(A(conf['name'],
-                        _href="index.html?sample_set_id=%d&config=%d" % (data.sample_set_id, conf['id']), _type="text/html",
-                        _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %d }, '%s' ); }" % (data.sample_set_id, conf['id'], filename))))
+                        _href="index.html?sample_set_id=%d&config=%d" % (data['sample_set_id'], conf['id']), _type="text/html",
+                        _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %d }, '%s' ); }" % (data['sample_set_id'], conf['id'], filename))))
             else:
                 configs.append(conf['name'])
         return XML(", ".join(configs))
 
     def get_groups(self, data):
-        return data.group_list
+        return data['group_list']
 
     def get_groups_string(self, data):
-        return ', '.join([group for group in data.group_list if group != 'admin'])
+        return ', '.join([group for group in data['group_list'] if group != 'admin'])
 
     def get_creator(self, data):
-        return data.creator
+        return data['creator']
 
     def get_files(self, data):
-        return '%d (%s)' % (data.file_count, vidjil_utils.format_size(data.size))
+        return '%d (%s)' % (data['file_count'], vidjil_utils.format_size(data['size']))
 
     def get_fields(self):
         fields = []
-        fields.append({'name': 'name', 'sort': 'name', 'call': self.get_name, 'width': 200, 'public': True})
+        fields.append({'name': 'name', 'sort': 'name', 'call': self.get_display_name, 'width': 200, 'public': True})
         fields.append({'name': 'info', 'sort': 'info', 'call': self.get_tagged_info, 'width': None, 'public': True})
         fields.append({'name': 'results', 'sort': 'confs', 'call': self.get_config_urls, 'width': None, 'public': True})
         if auth.is_admin() or len(get_group_list(auth)) > 1:
@@ -85,18 +88,18 @@ class SampleSet(object):
 
     def get_sequence_count(self, data):
         if not hasattr(data, 'sequence_count'):
-            data.sequence_count = db( (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+            data['sequence_count'] = db( (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                     &(db.sample_set_membership.sample_set_id == db[self.type].sample_set_id)
-                    &(db[self.type].id == data.id)).count()
-        return data.sequence_count
+                    &(db[self.type].id == data['id'])).count()
+        return data['sequence_count']
 
     def get_data_count(self, data):
         if not hasattr(data, 'data_count'):
-            data.data_count = db( (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+            data['data_count'] = db( (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                 &(db.sample_set_membership.sample_set_id == db[self.type].sample_set_id)
-                &(db[self.type].id == data.id)
+                &(db[self.type].id == data['id'])
                 &(db.results_file.sequence_file_id == db.sequence_file.id)).count()
-        return data.data_count
+        return data['data_count']
 
     def create_filter_string(self, data, keys):
         for row in data:
@@ -110,10 +113,6 @@ class SampleSet(object):
         pass
 
     @abstractmethod
-    def get_add_route(self):
-        pass
-
-    @abstractmethod
     def get_info_dict(self, data):
         pass
 
@@ -123,6 +122,17 @@ class SampleSet(object):
 
     @abstractmethod
     def get_id_string(self, data):
+        pass
+
+    def parse_id_string(self, string):
+        try:
+            value = string[string.find("(")+1:string.find(")")]
+            return int(value)
+        except:
+            raise ValueError('invalid input %s' % string)
+
+    @abstractmethod
+    def validate(self, data):
         pass
 
 def get_sample_name(sample_set_id):
@@ -144,11 +154,11 @@ def get_sample_name(sample_set_id):
         return vidjil_utils.anon_ids(patient_or_run.id)
     return patient_or_run.name
 
-def get_set_group(stype, sid):
+def get_set_group(sid):
     '''
     Return the group associated with the set
     '''
-    perm = db((db.auth_permission.table_name == stype) &
+    perm = db((db.auth_permission.table_name == 'sample_set') &
               (db.auth_permission.record_id == sid) &
               (db.auth_permission.name == PermissionEnum.access.value)
             ).select().first()

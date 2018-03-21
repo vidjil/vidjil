@@ -332,20 +332,23 @@ Database.prototype = {
     },
     
     
-    pre_process_onChange : function () {
-        var field = document.getElementById("pre_process");
-        var value = field.value;
-        for (var i=0; i<field.options.length; i++){
-            var option = field.options[i];
-            if (value == option.value){
-                if (option.getAttribute("required_files") == "1"){
-                    document.getElementById("file2_field").style.display = 'none';
-                    document.getElementById("upload_file2").value=""
-                }else{
-                    document.getElementById("file2_field").style.display = '';
-                }
-            }
-        }        
+    pre_process_onChange : function (field) {
+        var $option = $(field).find(":selected");
+        if ($option.attr('required_files') == "1"){
+            $(".file_2").hide();
+            $(".upload_file").val("");
+        }else{
+            $(".file_2").show();
+        }
+    },
+
+    upload_file_onChange : function (target_id, value) {
+        var target = document.getElementById(target_id);
+        var lastIndex = value.lastIndexOf('\\');
+        if (lastIndex > 0) {
+            value = value.substring(lastIndex + 1);
+        }
+        target.value = value;
     },
     
     /**
@@ -380,6 +383,9 @@ Database.prototype = {
             this.loadNotifications();
 
             $("#menu-container").addClass('disabledClass');
+
+            // Hax !
+            $('.jstree').trigger('load');
 
             return 0 ;
         }
@@ -457,6 +463,35 @@ Database.prototype = {
                 }
             });
         }
+
+        if ( document.getElementById('object_form') ) {
+
+            $('#object_form').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    timeout: DB_TIMEOUT_CALL,
+                    crossDomain: true,
+                    url      : $('#object_form').attr('action'),
+                    data     : {'data': JSON.stringify($('#object_form').serializeObject())},
+                    xhrFields: {withCredentials: true},
+                    success: function (result) {
+                        self.display_result(result, $(this).attr('action'))
+                        self.connected = true;
+                    },
+                    error: function (request, status, error) {
+                        self.connected = false;
+                        if (status === "timeout") {
+                            console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                        } else {
+                            console.log({"type": "popup", "msg": request.responseText})
+                        }
+                    }
+                });
+                return false;
+            });
+        }
         
         //login_form
         if ( document.getElementById('login_form') ){
@@ -509,74 +544,66 @@ Database.prototype = {
         
         //submit formulaire avec fichier
         if ( document.getElementById('upload_form') ){
-            
-            db.pre_process_onChange()
-            
-            $('#upload_file').change(function (){
-                var filename = $("#upload_file").val();
-                var lastIndex = filename.lastIndexOf("\\");
-                if (lastIndex >= 0) {
-                    filename = filename.substring(lastIndex + 1);
-                }
-                $('#filename').val(filename);
-            })
-            
-            $('#upload_form').ajaxForm({
-                type     : "POST",
-                cache: false,
-                crossDomain: true,
-                xhrFields: {withCredentials: true},
-                url      : $(this).attr('action'),
-                data     : $(this).serialize(),
-                success  : function(result) {
-                    var js = self.display_result(result)
-                    var fileSelect, files, file, filename;
-                    if (typeof js.file_id != 'undefined'){
-                            $(this).attr("action", "0")
-                            var id = js.file_id
-                            if( document.getElementById("upload_file").files.length !== 0 ){
-                            fileSelect = document.getElementById('upload_file');
-                            files = fileSelect.files;
-                            var data = new FormData();
-                            
-                            for (var i = 0; i < files.length; i++) {
-                                file = files[i];
-                                data.append('file', file, file.name);
+            $('#upload_form').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    type     : "POST",
+                    cache: false,
+                    crossDomain: true,
+                    xhrFields: {withCredentials: true},
+                    url      : $(this).attr('action'),
+                    data     : {'data': JSON.stringify($('#upload_form').serializeObject())},
+                    success  : function(result) {
+                        var js = self.display_result(result)
+                        var id, fileSelect, files, file, filename;
+                        if (typeof js.file_ids !== 'undefined'){
+                            for (var k = 0; k < js.file_ids.length; k++) {
+                                id = js.file_ids[k];
+                                fileSelect = document.getElementById('file_upload_1_' + k);
+                                if( fileSelect.files.length !== 0 ){
+                                    files = fileSelect.files;
+                                    var data = new FormData();
+
+                                    for (var i = 0; i < files.length; i++) {
+                                        file = files[i];
+                                        data.append('file', file, file.name);
+                                    }
+                                    data.append('id', id);
+                                    data.append('file_number', 1)
+                                    data.append('pre_process', document.getElementById('pre_process').value)
+                                    filename = document.getElementById('file_filename_' + k).value;
+                                    self.uploader.add(id, data, filename, 1)
+                                }
+
+                                fileSelect = document.getElementById('file_upload_2_' + k);
+                                if( fileSelect.files.length !== 0 ){
+                                    files = fileSelect.files;
+                                    var data2 = new FormData();
+
+                                    for (var j = 0; j < files.length; j++) {
+                                        file = files[j];
+                                        data2.append('file', file, file.name);
+                                    }
+                                    data2.append('id', id);
+                                    data2.append('file_number', 2)
+                                    data2.append('pre_process', document.getElementById('pre_process').value)
+                                    self.uploader.add(id+"_2", data2, filename, 2)
+                                }
                             }
-                            data.append('id', id);
-                            data.append('file_number', 1)
-                            data.append('pre_process', document.getElementById('pre_process').value)
-                            filename = $('#filename').val()
-                            self.uploader.add(id, data, filename, 1)
                         }
-                        
-                        if( document.getElementById("upload_file2").files.length !== 0 ){
-                            fileSelect = document.getElementById('upload_file2');
-                            files = fileSelect.files;
-                            var data2 = new FormData();
-                            
-                            for (var j = 0; j < files.length; j++) {
-                                file = files[j];
-                                data2.append('file', file, file.name);
-                            }
-                            data2.append('id', id);
-                            data2.append('file_number', 2)
-                            data2.append('pre_process', document.getElementById('pre_process').value)
-                            self.uploader.add(id+"_2", data2, filename, 2)
+                    },
+                    error: function (request, status, error) {
+                        if(status==="timeout") {
+                            console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                        } else {
+                            console.log({"type": "popup", "msg": request + " " + status + " " + error});
                         }
                     }
-                },
-                error: function (request, status, error) {
-                    if(status==="timeout") {
-                        console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                    } else {
-                        console.log({"type": "popup", "msg": request + " " + status + " " + error});
-                    } 
-                }
+                });
+                return false;
             });
-            
-        }  
         
+        }
     },
 
     set_jstree: function(elem) {
@@ -595,39 +622,55 @@ Database.prototype = {
             }
         });
         elem.on('select_node.jstree', function(event, data){
-            $('#filename').val(data.selected);
+            $('#file_filename').val(data.selected);
             var split_file = data.selected.toString().split('/');
             var file = split_file[split_file.length - 1];
             $('#file_indicator').text(file);
         });
     },
 
+    display_jstree: function(caller_index) {
+        $("#jstree_button").data("index", caller_index);
+        $("#jstree_container").show();
+        $('#file_indicator_' + caller_index).text("");
+        $('#file_filename_' + caller_index).val("");
+    },
+
+    close_jstree: function() {
+        $("#jstree_container").hide();
+    },
+
+    select_jstree: function(caller_index) {
+        $('#file_indicator_' + caller_index).text($('#file_indicator').text());
+        $('#file_filename_' + caller_index).val($('#file_filename').val());
+        $("#jstree_container").hide();
+    },
+
     toggle_upload_fields: function() {
         var elem = $('.upload_field');
         var disable = !elem.prop('disabled');
         elem.prop('disabled', disable);
-        elem.parents("tr").prop('hidden', disable);
         if (disable) {
+            elem.closest("div").hide();
             elem.val(undefined);
-            $('#filename').val(undefined);
+            $('.filename').val(undefined);
+        } else {
+            elem.closest("div").show();
         }
 
         var pre_process = $('#pre_process');
         pre_process.prop('disabled', disable);
-        pre_process.parents("tr").prop('hidden', disable);
+        pre_process.closest("div").prop('hidden', disable);
+
+        if (!disable) {
+            this.pre_process_onChange(pre_process);
+        }
     },
 
     toggle_jstree: function(){
-        var tree = $('#jstree');
-        var enable = tree.parents("tr").prop('hidden');
-        tree.parents("tr").prop('hidden', !enable);
-        if (enable) {
-            this.set_jstree(tree);
-        } else {
-            $.jstree.destroy();
-            tree.off('select_node.jstree');
-            $('#filename').val(undefined);
-        }
+        var tree = $('.jstree_field');
+        var enable = tree.prop('hidden');
+        tree.prop('hidden', !enable);
     },
 
     toggle_file_source: function() {

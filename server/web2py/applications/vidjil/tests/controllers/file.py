@@ -77,7 +77,7 @@ class FileController(unittest.TestCase):
         request.vars['filename'] = "plopapi"
         request.vars["sample_type"] = defs.SET_TYPE_PATIENT
 
-        resp = add_form()
+        resp = submit()
         self.assertNotEqual(resp.find('"redirect":"sample_set/index"'), -1, "add_form() failed")
     
     
@@ -85,7 +85,7 @@ class FileController(unittest.TestCase):
         request.vars['patient_id'] = fake_patient_id
         request.vars['id'] = fake_file_id
         
-        resp = edit()
+        resp = form()
         self.assertTrue(resp.has_key('message'), "edit() has returned an incomplete response")
         
         
@@ -105,7 +105,7 @@ class FileController(unittest.TestCase):
         request.vars["sample_type"] = defs.SET_TYPE_PATIENT
         
         
-        resp = edit_form()
+        resp = submit()
         self.assertEqual(resp.find('"message":"plopapi: metadata saved"'), -1, "edit_form() failed")
        
        

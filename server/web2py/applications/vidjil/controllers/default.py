@@ -346,7 +346,7 @@ def get_data():
                 data["info"] = db.generic[row.id].info
                 data["generic_id"] = row.id
                 data["sample_name"] = generic_name
-                data["group_id"] = get_set_group(defs.SET_TYPE_GENERIC, row.id)
+                data["group_id"] = get_set_group(row.sample_set_id)
 
         if (sample_set.sample_type == defs.SET_TYPE_PATIENT):
             for row in db( db.patient.sample_set_id == request.vars["sample_set_id"] ).select() :
@@ -356,7 +356,7 @@ def get_data():
                 data["info"] = db.patient[row.id].info
                 data["patient_id"] = row.id
                 data["sample_name"] = patient_name
-                data["group_id"] = get_set_group(defs.SET_TYPE_PATIENT, row.id)
+                data["group_id"] = get_set_group(row.sample_set_id)
 
         if (sample_set.sample_type == defs.SET_TYPE_RUN) :
             for row in db( db.run.sample_set_id == request.vars["sample_set_id"] ).select() :
@@ -366,7 +366,7 @@ def get_data():
                 data["info"] = db.run[row.id].info
                 data["run_id"] = row.id
                 data["sample_name"] = run_name
-                data["group_id"] = get_set_group(defs.SET_TYPE_RUN, row.id)
+                data["group_id"] = get_set_group(row.sample_set_id)
 
         log_query = db(  ( db.user_log.record_id == log_reference_id )
                        & ( db.user_log.table_name == sample_set.sample_type )

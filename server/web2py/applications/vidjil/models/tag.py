@@ -48,7 +48,7 @@ class TagExtractor(TagManager):
         db.commit()
 
     def parse_text(self, text):
-        return list(set(re.findall(self.expression(), unicode(text, 'utf-8'), re.UNICODE)))
+        return list(set(re.findall(self.expression(), text, re.UNICODE)))
 
     def execute(self, table, record_id, text, group_id, reset=False):
         if (reset):
