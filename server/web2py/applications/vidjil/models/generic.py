@@ -29,4 +29,6 @@ class Generic(SampleSet):
         error = []
         if data["name"] == "":
             error.append("name needed")
+        if data["name"].find("|"):
+            error.append("illegal character '|' in name")
         return error

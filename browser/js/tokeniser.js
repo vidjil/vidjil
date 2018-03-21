@@ -58,7 +58,7 @@ Tokeniser.prototype.readTokens = function() {
             return $(this).data('set-id');
         })
         .get()
-        .join();
+        .join('|');
     }
 
 Tokeniser.prototype.createToken = function(set_id) {

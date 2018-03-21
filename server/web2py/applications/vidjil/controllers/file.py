@@ -21,7 +21,7 @@ def extract_set_type(target):
         'r': 'run',
         's': 'generic'
     }
-    return mapping[target.split(':')[1][0]]
+    return mapping[target.split('|')[1][0]]
 
 
 def manage_filename(filename):
