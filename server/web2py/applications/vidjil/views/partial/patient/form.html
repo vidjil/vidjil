@@ -28,6 +28,7 @@
     <input
         onfocus="$(this).data('keys', [$('#group_select option:selected').val()]);
                  new VidjilAutoComplete().setupTags(this);"
+        onkeydown="if (event.keyCode == 13) return false;"
         data-needs-atwho="true"
         class="text form-control"
         id="patient_info_{{=i}}"
