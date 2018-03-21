@@ -21,5 +21,6 @@
         id="sample_set_info_{{=i}}"
         name="generic[{{=i}}][info]"
         rows="1"
-        placeholder="set information (#tags can be used)">{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}</input>
+        placeholder="set information (#tags can be used)"
+        value="{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}"/>
 </div>

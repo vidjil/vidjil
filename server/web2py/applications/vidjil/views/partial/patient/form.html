@@ -34,5 +34,6 @@
         id="patient_info_{{=i}}"
         name="patient[{{=i}}][info]"
         rows="1"
-        placeholder="patient information (#tags can be used)">{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}</input>
+        placeholder="patient information (#tags can be used)"
+        value="{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}" />
 </div>

@@ -30,7 +30,8 @@
         id="run_info_{{=i}}"
         name="run[{{=i}}][info]"
         rows="1"
-        placeholder="run information (#tags can be used)">{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}</input>
+        placeholder="run information (#tags can be used)"
+        value="{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}"/>
 </div>
 <div class="field_div">
     <input id="run_sequencer_{{=i}}" name="run[{{=i}}][sequencer]" type="text" class="form-control sequencer"
