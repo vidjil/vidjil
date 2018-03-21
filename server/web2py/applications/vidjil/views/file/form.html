@@ -2,9 +2,9 @@
 <form id="upload_form"  action="DB_ADDRESS/file/submit" enctype="multipart/form-data" method="post" onkeypress="return event.keyCode != 13;">
 
    {{ if isEditing: }}
-   <h3>Add samples</h3>
-   {{ else: }}   
    <h3>Edit sample</h3>
+   {{ else: }}   
+   <h3>Add samples</h3>
    {{ pass }}
 
     {{ if source_module_active: }}
@@ -95,7 +95,7 @@
     <div class="clear"></div>
     &nbsp;
     <div class="clear"></div>
-    <input type="submit" value="Submit all sample(s)" class="button2">
+    <input type="submit" value="Submit samples" class="button2">
 </form>
 
 <div id="jstree_container" class="modal jstree-container">
