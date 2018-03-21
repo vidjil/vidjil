@@ -126,7 +126,7 @@ class SampleSet(object):
 
     def parse_id_string(self, string):
         try:
-            value = string[string.find("(")+1:string.find(")")]
+            value = string[string.rfind("(")+1:string.rfind(")")]
             return int(value)
         except:
             raise ValueError('invalid input %s' % string)
