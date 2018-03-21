@@ -2176,7 +2176,11 @@ form .form_label {
   border-radius: unset;
   box-shadow: unset;
   cursor: pointer;
-  width: 234px;
+  width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 30px;
 }
 .form-control.date {
   min-width: 85px;
