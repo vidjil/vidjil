@@ -245,7 +245,7 @@ def submit():
             action = "add"
 
         f['message'] = []
-        mes = "file (%d) %s %sed" % (f["id"], f["filename"], action)
+        mes = "file (%d) %s %sed" % (int(f["id"]), f["filename"], action)
         f['message'].append(mes)
         f['message'].append("You must reselect the file for it to be uploaded")
 
