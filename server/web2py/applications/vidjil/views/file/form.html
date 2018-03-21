@@ -32,15 +32,18 @@
         <h3>Patient, run or set association</h3>
         Samples have to be associated with at least one patient, run or set. 
 	You can also associate them with any combination of the three.
+        {{ if isEditing: }}
+	{{ else: }}
 	All the samples added here will be associated to the "common sets". 
 	Moreover, in the sample list, you can associate individually some samples to some specific patient, run or set.
+	{{ pass }}
     </div>
     &nbsp;
     <div class="field_div">
         {{ if len(errors) > 0: }}
             <div class="error">{{=", ".join(errors)}}</div>
         {{ pass }}
-        <label for="set_ids" id="set_ids__label">Common sets: </label>
+        <label for="set_ids" id="set_ids__label">{{ if isEditing: }}Sets:{{ else: }}Common sets:{{ pass }}</label>
         <div class="token_div form-control" onclick="$('#token_input').focus()">
             <input
                 hidden

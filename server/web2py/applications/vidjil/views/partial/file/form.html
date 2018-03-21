@@ -73,7 +73,9 @@
                     </span>
                 {{pass}}
             </div>
-            <input
+	    {{ if isEditing: }}
+            {{ else: }}
+	    <input
                 id="token_input_{{=i}}"
                 class="token_input"
                 autocomplete="off"
@@ -85,6 +87,7 @@
                 data-keys='["generic", "patient", "run"]'
                 placeholder="specific sets"
                 type="text">
+	    {{ pass }}
         </div>
     </div>
 </div>
