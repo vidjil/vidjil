@@ -6,7 +6,7 @@ function labelise(text) {
     var split = text.split('_');
     var result = "";
     for (var i = 0; i < split.length; i++) {
-        split[i] = capitalise(split[i]);
+        split[i] = split[i] ; // capitalise(split[i]);
     }
     return split.join(' ');
 }
@@ -96,7 +96,7 @@ FormBuilder.prototype.build_div = function(type) {
         d.appendChild(c);
         var s = document.createElement('span');
         s.className = "left form_label"
-        s.innerText = capitalise(type) + " " + (this.index+1);
+        s.innerText = capitalise(type == 'generic' ? 'set' : type) + " " + (this.index+1);
         d.appendChild(s);
         return d;
     }
@@ -147,7 +147,7 @@ SetFormBuilder.prototype = Object.create(FormBuilder.prototype);
 
 SetFormBuilder.prototype.set_id = function() {
         var id = 'id_label';
-        return this.build_field(id, id, capitalise(this.type)+' ID');
+        return this.build_field(id, id, this.type + ' ID');
     };
 
 SetFormBuilder.prototype.build_date = function(id, name, label) {
@@ -332,7 +332,7 @@ FileFormBuilder.prototype.build_set_div = function() {
     i2.dataset.needsTokeniser = true;
     i2.dataset.groupIds = "[" + this.group_ids + "]";
     i2.dataset.keys = '["generic", "patient", "run"]';
-    i2.placeholder = "Sets";
+    i2.placeholder = "specific sets";
     d.appendChild(i2);
 
     return f;
