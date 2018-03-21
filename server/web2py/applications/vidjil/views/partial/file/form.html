@@ -54,7 +54,7 @@
             class="text form-control"
             name="file[{{=i}}][info]"
             rows="1"
-            placeholder="sample information">{{if 'info' in file and file['info'] is not None:}}{{=file['info']}}{{pass}}</input>
+            placeholder="sample information (#tags can be used)">{{if 'info' in file and file['info'] is not None:}}{{=file['info']}}{{pass}}</input>
     </div>
     <div class="field_div">
         <div class="token_div form-control" onclick="$('#token_input_{{=i}}').focus()">
