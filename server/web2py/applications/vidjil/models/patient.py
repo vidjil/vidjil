@@ -59,6 +59,6 @@ class Patient(SampleSet):
                 datetime.datetime.strptime(""+data['birth'], '%Y-%m-%d')
             except ValueError:
                 error.append("date (wrong format)")
-        if (data["first_name"] + data['last_name']).find('|'):
+        if (data["first_name"] + data['last_name']).find('|') >= 0:
             error.append("illegal character '|' in name")
         return error

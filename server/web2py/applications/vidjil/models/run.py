@@ -54,7 +54,7 @@ class Run(SampleSet):
                 datetime.datetime.strptime(""+data['run_date'], '%Y-%m-%d')
             except ValueError:
                 error.append("date (wrong format)")
-        if data["name"].find("|"):
+        if data["name"].find("|") >= 0:
             error.append("illegal character '|' in name")
 
         return error
