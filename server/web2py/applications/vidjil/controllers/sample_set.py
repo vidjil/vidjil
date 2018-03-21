@@ -516,7 +516,8 @@ def submit():
         return dict(message=T("an error occured"),
                 groups=[{'name': 'foobar', 'id': int(data['group'])}],
                 master_group=data['group'],
-                sets=sets)
+                sets=sets,
+                isEditing = (action=='edit'))
 
 def custom():
     start = time.time()
