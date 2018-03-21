@@ -21,7 +21,7 @@ def extract_set_type(target):
         'r': 'run',
         's': 'generic'
     }
-    return mapping[target.split('|')[1][0]]
+    return mapping[target.split(':')[1][0]]
 
 
 def manage_filename(filename):
@@ -78,7 +78,7 @@ def validate_sets(set_ids):
 
     set_ids_arr = []
     if len(set_ids) > 0:
-        set_ids_arr = [x.strip() for x in set_ids.split(',')]
+        set_ids_arr = [x.strip() for x in set_ids.split('|')]
     for sid in set_ids_arr:
         try:
             set_type = extract_set_type(sid)
