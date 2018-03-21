@@ -91,7 +91,7 @@ def validate_sets(set_ids):
             if not auth.can_modify_sample_set(set_id) :
                 errors.append("missing permission for %s %d" % (set_type, set_id))
         except ValueError:
-            errors.append("Invalid %s %s" % (key, sid))
+            errors.append("Invalid %s %s" % (set_type, sid))
     return sets, id_dict, errors
 
 def get_pre_process_list():
