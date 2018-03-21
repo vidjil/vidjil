@@ -37,7 +37,7 @@ def get_default_creation_group(auth):
 def get_upload_group_ids(auth):
     db = auth.db
     group_ids = []
-    group_list = get_group_list()
+    group_list = get_group_list(auth)
     for group in group_list:
         if (auth.is_admin()
                 or auth.has_permission(PermissionEnum.upload.value, 'sample_set', 0, group_id = group.id)):
