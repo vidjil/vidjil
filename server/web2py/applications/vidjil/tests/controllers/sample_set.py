@@ -84,7 +84,8 @@ class Sample_setController(unittest.TestCase):
             "last_name" : "bob",
             "birth" : "2011-11-11",
             "info" : "test patient kZtYnOipmAzZ",
-            "id_label" : "bob"
+            "id_label" : "bob",
+            "sample_set_id": ""
         }
         data = {'patient':[patient], 'group': fake_group_id}
 
@@ -103,13 +104,15 @@ class Sample_setController(unittest.TestCase):
 
     def testEditForm(self):
         import json
+        pat = db.patient[fake_patient_id]
         patient = {
-            "id" : fake_patient_id,
+            "id" : pat.id,
             "first_name" : "bab",
             "last_name" : "bab",
             "birth" : "2010-10-10",
             "info" : "bab",
             "id_label" : "bab"
+            "sample_set_id": pat.sample_set_id
         }
         data = {'patient': [patient]}
         request.vars['data'] = json.dumps(data)
