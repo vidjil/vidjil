@@ -12,8 +12,10 @@
         <p></p>
     {{pass}}
     <div {{if source_module_active:}} hidden {{pass}}>
+        <h3>Pre-process scenario</h3>
+        If you have two R1/R2 files per sample, please select an appropriate pre-process :
         <select id="pre_process" name="pre_process" onChange="db.pre_process_onChange(this)" {{if source_module_active:}} disabled {{pass}}>
-            <option required_files="1" value="0">no pre-process (1 file)</option>
+            <option required_files="1" value="0">no pre-process (1 file per sample)</option>
             {{for row in pre_process_list :}}
                 <option title="{{=row["info"]}}" required_files="{{=row["file"]}}" value="{{=row["id"]}}"
                     {{if 'file_id' in request.vars and row["id"]==files[0].pre_process_id :}}selected{{pass}}>
@@ -23,14 +25,18 @@
         </select>
     </div>
     <div>
-        Samples have to be associated with at least one patient, run or set.<br>You can also associate them with any combination of the three.
+        <h3>Patient, run or set association</h3>
+        Samples have to be associated with at least one patient, run or set. 
+	You can also associate them with any combination of the three.
+	All the samples added here will be associated to the "common sets". 
+	Moreover, in the sample list, you can associate individually some samples to some specific patient, run or set.
     </div>
     &nbsp;
     <div class="field_div">
         {{ if len(errors) > 0: }}
             <div class="error">{{=", ".join(errors)}}</div>
         {{ pass }}
-        <label for="set_ids" id="set_ids__label">sets: </label>
+        <label for="set_ids" id="set_ids__label">Common sets: </label>
         <div class="token_div form-control" onclick="$('#token_input').focus()">
             <input
                 hidden
@@ -60,13 +66,19 @@
         </div>
     </div>
     <div class="clear"></div>
+
+    <div>
+      <h3>Sample list</h3>
+     </div>
     <div class="buttons_add_elements">
-        <span class="button"
+       Click on 
+         <span class="button2"
           onclick="add_file('fieldset_container', this.dataset.index++, {{=group_ids}})"
           id="file_button"
           data-index="{{=len(files)}}">add other sample</span>
-        <div class="clear"></div>
+       to add at once more than one sample.
     </div>
+    <div class="clear"></div>
     <div id="fieldset_container">
         {{ for i, file in enumerate(files): }}
             <div class="clear"></div>
@@ -74,7 +86,7 @@
         {{ pass }}
     </div>
     <div class="clear"></div>
-    <input type="submit" value="submit" class="btn">
+    <input type="submit" value="Submit all sample(s)" class="button2">
 </form>
 
 <div id="jstree_container" class="modal jstree-container">

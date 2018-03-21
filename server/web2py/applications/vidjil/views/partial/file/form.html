@@ -21,7 +21,7 @@
                 disabled
             {{pass}}
                 onchange="db.upload_file_onChange('file_filename_{{=i}}', this.value)"
-                title="(.fa, .fastq, .fa.gz, .fastq.gz, .clntab)"
+                title="first file for this sample (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)"
             >
         </div>
         <div id="file_2_{{=i}}" class="field_div file_2" style="display: none">
@@ -29,7 +29,7 @@
             {{if source_module_active:}}
                 disabled
             {{pass}}
-                title="(.fa, .fastq, .fa.gz, .fastq.gz, .clntab)"
+                title="second file for this sample (.fa, .fastq, .fa.gz, .fastq.gz)"
             >
         </div>
         <div id="jstree_field_{{=i}}"
@@ -47,14 +47,14 @@
             placeholder="yyyy-mm-dd" pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))">
     </div>
     <div class="field_div">
-        <textarea id="file_info_{{=i}}"
+        <input id="file_info_{{=i}}"
             onfocus="new VidjilAutoComplete().setupTags(this);"
             data-needs-atwho="true"
             data-keys="{{=group_ids}}"
             class="text form-control"
             name="file[{{=i}}][info]"
             rows="1"
-            placeholder="Info">{{if 'info' in file and file['info'] is not None:}}{{=file['info']}}{{pass}}</textarea>
+            placeholder="sample information">{{if 'info' in file and file['info'] is not None:}}{{=file['info']}}{{pass}}</input>
     </div>
     <div class="field_div">
         <div class="token_div form-control" onclick="$('#token_input_{{=i}}').focus()">
@@ -82,7 +82,7 @@
                 data-needs-tokeniser="true"
                 data-group-ids="{{=upload_group_ids}}"
                 data-keys='["generic", "patient", "run"]'
-                placeholder="Sets"
+                placeholder="specific sets"
                 type="text">
         </div>
     </div>
