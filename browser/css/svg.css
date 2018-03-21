@@ -2165,8 +2165,8 @@ form .form_label {
   width: 234px;
 }
 .form-control.date {
-  min-width: 70px;
-  width: 70px;
+  min-width: 85px;
+  width: 85px;
 }
 [hidden] {
   display: none !important;
