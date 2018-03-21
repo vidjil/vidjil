@@ -124,12 +124,11 @@ FormBuilder.prototype.build_date = function(id, object, name, label) {
         return d;
     }
 
-FormBuilder.prototype.build_info = function(object, keys) {
+FormBuilder.prototype.build_info = function(object, keys, label) {
         var d = this.build_wrapper();
         var id = 'info';
-        var label = labelise(id);
 
-        var txt = this.build_textarea('info', "text", 'info', object, label);
+        var txt = this.build_input('info', "text", 'info', 'text', object, label + ' information (#tags can be used)');
         $(txt).data('needs-atwho', true);
         $(txt).on('focus', function() {
             $(this).data('keys', keys);
@@ -172,7 +171,7 @@ PatientFormBuilder.prototype.build = function(index) {
         div.appendChild(this.build_field('first_name', undefined, undefined, true));
         div.appendChild(this.build_field('last_name', undefined, undefined, true));
         div.appendChild(this.build_date('birth'));
-        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()]));
+        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'patient'));
         return div;
     };
 
@@ -202,7 +201,7 @@ RunFormBuilder.prototype.build = function(index) {
         div.appendChild(this.set_id());
         div.appendChild(this.build_field('name', undefined, undefined, true));
         div.appendChild(this.build_date('run_date', 'run_date', 'Date'));
-        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()]));
+        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'run'));
         div.appendChild(this.build_field('sequencer'));
         div.appendChild(this.build_field('pcr', 'pcr', 'PCR'));
         return div;
@@ -232,7 +231,7 @@ GenericFormBuilder.prototype.build = function(index) {
         div.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         div.appendChild(this.build_input('sample_set_id', 'text', 'sample_set_id', 'hidden', this.type));
         div.appendChild(this.build_field('name', undefined, undefined, true));
-        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()]));
+        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'set'));
         return div;
     }
 
@@ -263,7 +262,7 @@ FileFormBuilder.prototype.build = function(index) {
     div.appendChild(this.build_hidden_fields());
     div.appendChild(this.build_file_div());
     div.appendChild(this.build_date('sampling_date', 'file'));
-    div.appendChild(this.build_info('file', this.group_ids));
+    div.appendChild(this.build_info('file', this.group_ids, 'sample'));
     div.appendChild(this.build_set_div());
     return div;
 }
