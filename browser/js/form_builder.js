@@ -134,6 +134,11 @@ FormBuilder.prototype.build_info = function(object, keys, label) {
             $(this).data('keys', keys);
             new VidjilAutoComplete().setupTags(this);
         });
+        txt.onkeydown = function(event) {
+            if (event.keyCode == 13) {
+                return false;
+            }
+        }
         d.appendChild(txt);
         return d;
     }
