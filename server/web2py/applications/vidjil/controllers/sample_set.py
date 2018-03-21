@@ -443,6 +443,7 @@ def submit():
         length_mapping[len(data[set_type])] = set_type
         for p in data[set_type]:
             errors = helper.validate(p)
+            action = "add"
             if len(errors) > 0:
                 p['error'] = errors
                 error = True
