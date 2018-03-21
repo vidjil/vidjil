@@ -212,11 +212,7 @@ def submit():
 
     data['errors'] = errors
 
-    if (f["id"] != ""):
-        action = 'edit'
-    else:
-        action = 'add'
-    data['action'] = action
+    data['action'] = 'add'
 
     if len(errors) > 0:
         return form_response(data)
