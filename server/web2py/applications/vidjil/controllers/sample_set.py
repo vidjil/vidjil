@@ -389,7 +389,7 @@ def form():
         sset = db(db[set_type].sample_set_id == sample_set.id).select().first()
         if(auth.can_modify_sample_set(sset.sample_set_id)):
             groups = [get_set_group(sset.sample_set_id)]
-            message = 'edit %s' % set_type
+            action = 'edit'
             max_group = None
         else:
             denied = True
@@ -401,7 +401,7 @@ def form():
         creation_group_tuple = get_default_creation_group(auth)
         groups = creation_group_tuple[0]
         max_group = creation_group_tuple[1]
-        message = 'add %s' % set_type
+        action = 'add'
     else :
         denied = True
 
@@ -410,6 +410,7 @@ def form():
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+    message = '%s %s' % (action, set_type)
     sets = {
             'patient': [],
             'run': [],
@@ -420,7 +421,8 @@ def form():
     return dict(message=T(message),
                 groups=groups,
                 master_group=max_group,
-                sets=sets)
+                sets=sets,
+                isEditing = (action=='edit'))
 
 
 

@@ -156,6 +156,7 @@ def form():
         if stype not in relevant_ids:
             relevant_ids[stype] = []
         relevant_ids[stype].append(row.id)
+        action = 'add'
 
     # edit file
     elif 'file_id' in request.vars:
@@ -173,6 +174,7 @@ def form():
             if smp_type not in relevant_ids:
                 relevant_ids[smp_type] = []
             relevant_ids[smp_type].append(db(db[smp_type].sample_set_id == row.sample_set_id).select()[0].id)
+        action = 'edit'
 
         sample_type = request.vars["sample_type"]
     else:
@@ -189,6 +191,7 @@ def form():
     data['sets'] = sets
     data['sample_type'] = sample_type
     data['errors'] = []
+    data['action'] = action
 
     return form_response(data)
 
@@ -303,7 +306,8 @@ def form_response(data):
            errors = data['errors'],
            source_module_active = source_module_active,
            group_ids = group_ids,
-           upload_group_ids = upload_group_ids)
+           upload_group_ids = upload_group_ids,
+           isEditing = data['action']=='edit')
 
 def upload(): 
     session.forget(response)
