@@ -778,7 +778,8 @@ def get_sample_set_list(type):
         (db[type].sample_set_id == db.sample_set.id)
     ).select(
         db[type].ALL, # sub optimal, use helpers to reduce ?
-        orderby = ~db[type].sample_set_id
+        orderby = ~db[type].sample_set_id,
+        limitby(0,500)
     )
     ss_list = []
 
