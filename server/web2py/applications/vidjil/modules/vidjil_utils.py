@@ -109,7 +109,6 @@ def anon_names(sample_set_id, first_name, last_name, can_view=None):
     if can_view or (can_view == None and auth.can_view_info('sample_set', sample_set_id)):
         name = ln + " " + fn
     else:
-        current.log.debug(type(ln))
         if isinstance(ln, unicode):
             name = ln[:3]
         else:
