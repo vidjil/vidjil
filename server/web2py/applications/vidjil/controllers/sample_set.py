@@ -500,7 +500,7 @@ def submit():
                 error = True
 
             p['message'] = []
-            mes = "%s (%s) %s %sed" % (set_type, id_sample_set, name, action)
+            mes = u"%s (%s) %s %sed" % (set_type, id_sample_set, name, action)
             p['message'].append(mes)
             log.info(mes, extra={'user_id': auth.user.id, 'record_id': p['id'], 'table_name': 'patient'})
             if register:
