@@ -20,6 +20,8 @@
 
 
 import defs
+import vidjil_utils
+
 from gluon import current
 from gluon.custom_import import track_changes; track_changes(True)
 
@@ -313,7 +315,8 @@ class MsgUserAdapter(logging.LoggerAdapter):
         usern = usern.replace(' ','-')
         if auth.is_impersonating():
             usern = 'team!' + usern
-        new_msg =  u'%30s %12s %s' % (ip, (u'<%s>' % usern.decode('utf8')), msg)
+        new_msg =  u'%30s %12s %s' % (ip, (u'<%s>' % vidjil_utils.safe_decoding(usern)),
+                                      vidjil_utils.safe_decoding(msg))
         return new_msg, kwargs
     
     def admin(self, msg):

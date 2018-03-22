@@ -109,10 +109,7 @@ def anon_names(sample_set_id, first_name, last_name, can_view=None):
     if can_view or (can_view == None and auth.can_view_info('sample_set', sample_set_id)):
         name = ln + " " + fn
     else:
-        if isinstance(ln, unicode):
-            name = ln[:3]
-        else:
-            name = unicode(ln.decode('utf-8')[:3])
+        name = unicode(safe_decoding(ln)[:3])
 
     return name
 
@@ -133,6 +130,15 @@ def display_names(sample_set_id, first_name, last_name, can_view=None):
         name += ' (%s)' % sample_set_id
 
     return name
+
+def safe_decoding(string):
+    '''
+    Get a unicode string. If the string was already unicode we just return it.
+    '''
+    if isinstance(string, unicode):
+        return string
+    else:
+        return string.decode('utf-8')
 
 def safe_encoding(string):
     '''
