@@ -589,7 +589,8 @@ class VidjilAuth(Auth):
                                                 user_id=user_id)
             return cquery
         if not isinstance(table, str) and\
-                self.has_permission(name, table, 0, user_id):
+                self.has_permission(name, table, 0, user_id) and\
+                self.has_permission(PermissionEnum.access.value, table, 0, user_id):
             return table.id > 0
         membership = self.table_membership()
         permission = self.table_permission()
