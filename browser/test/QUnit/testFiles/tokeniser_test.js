@@ -32,5 +32,5 @@ QUnit.test("tokeniser", function(assert) {
     mock_div.appendChild(wrong_span);
 
     var read = tokeniser.readTokens();
-    assert.equal(read, ":p foobar,0,1", "check whether the token spans are read correctly");
+    assert.equal(read, ":p foobar|0|1", "check whether the token spans are read correctly");
 });
