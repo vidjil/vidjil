@@ -283,7 +283,8 @@ def submit():
                 'table_name': "sequence_file"})
 
     if not error:
-        set_id = data['sets'][0]['id']
+        set_type = data['sets'][0]['type']
+        set_id = id_dict[set_type][0]
         res = { "file_ids": [f['id'] for f in data['file']],
                 "redirect": "sample_set/index",
                 "args" : { "id" : set_id, "config_id": -1},
