@@ -510,7 +510,7 @@ def submit():
         msg = "successfully added/edited set(s)"
         if sum_sets == 1:
             res = {"redirect": "sample_set/index",
-                   "args": { "id":  data[length_mapping[max_num][0]]['sample_set_id']},
+                   "args": { "id":  data[length_mapping[max_num]][0]['sample_set_id']},
                    "message": msg}
         else:
             res = {"redirect": "sample_set/all",
