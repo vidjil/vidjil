@@ -111,7 +111,7 @@ class Sample_setController(unittest.TestCase):
             "last_name" : "bab",
             "birth" : "2010-10-10",
             "info" : "bab",
-            "id_label" : "bab"
+            "id_label" : "bab",
             "sample_set_id": pat.sample_set_id
         }
         data = {'patient': [patient]}
