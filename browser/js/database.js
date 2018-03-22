@@ -496,6 +496,28 @@ Database.prototype = {
         //login_form
         if ( document.getElementById('login_form') ){
             //$('#login_form').on('submit',self.login_form );
+            var action = $('#login_form').attr('action');
+            var nexts = action.split("&")
+            var next = "default/home"
+            if (action.indexOf('register') != -1)
+                next = "user/info"
+            var args = {}
+            for (var i=0; i<nexts.length; i++){
+                var index = nexts[i].indexOf("_next")
+                if (index != -1){
+                    next = nexts[i].substr(index)
+                    next = next.replace("_next=", "")
+                    next = decodeURIComponent(next)
+                    if (next.split("?").length == 2){
+                        var tmp = next.split("?")[1].split("&")
+                        for (var k in tmp){
+                            var tmp2 = tmp[k].split("=")
+                            args[tmp2[0]] = tmp2[1]
+                        }
+                    }
+                    next = next.split("?")[0]
+                }
+            }
             
             $('#login_form').ajaxForm({
                 type: "POST",
@@ -506,33 +528,12 @@ Database.prototype = {
                 data     : $(this).serialize(),
                 xhrFields: {withCredentials: true},
                 success: function (result) {
-                    self.display_result(result, $(this).attr('action'))
+                    self.call(next, args)
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
                         console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                     } else {
-                        var nexts = $('#login_form').attr('action').split("&")
-                        var next = "default/home"
-                        if ($('#login_form').attr('action').indexOf('register') != -1)
-                            next = "user/info"
-                        var args = {}
-                        for (var i=0; i<nexts.length; i++){
-                            var index = nexts[i].indexOf("_next")
-                            if (index != -1){
-                                next = nexts[i].substr(index)
-                                next = next.replace("_next=", "")
-                                next = decodeURIComponent(next)
-                                if (next.split("?").length == 2){
-                                    var tmp = next.split("?")[1].split("&") 
-                                    for (var k in tmp){
-                                        var tmp2 = tmp[k].split("=")
-                                        args[tmp2[0]] = tmp2[1]
-                                    }
-                                }
-                                next = next.split("?")[0]
-                            }
-                        }
                         console.log(args)
                         self.call(next, args)
                     }
@@ -736,6 +737,27 @@ Database.prototype = {
 		    // This triggers another request() call, but this time with quiet=true
 		    self.warn("request: " + status + " - " + url)
 		}
+            }
+        });
+    },
+
+    logout: function() {
+        var self = this;
+        $.ajax({
+            type: "POST",
+            timeout: DB_TIMEOUT_CALL,
+            crossDomain: true,
+            url: self.db_address + 'default/user/logout',
+            xhrField: {withCredentials: true},
+            success: function (result) {
+                db.call("default/home");
+            },
+            error: function (request, status, error) {
+                if (status === "timeout") {
+                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                } else {
+                    self.call("default/home");
+                }
             }
         });
     },
