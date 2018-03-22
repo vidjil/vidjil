@@ -440,7 +440,9 @@ def submit():
     length_mapping = {}
     for set_type in set_types:
         helper = mf.get_instance(set_type)
-        length_mapping[len(data[set_type])] = set_type
+        length = len(data[set_type])
+        if length not in length_mapping:
+            length_mapping[length] = set_type
         for p in data[set_type]:
             errors = helper.validate(p)
             action = "add"
@@ -503,9 +505,17 @@ def submit():
                 register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
 
     if not error:
-        res = {"redirect": "sample_set/all",
-                "args" : { "type" : length_mapping[max(length_mapping.keys())] },
-                "message": "successfully added/edited set(s)"}
+        sum_sets = sum(length_mapping.keys())
+        max_num = max(length_mapping.keys())
+        msg = "successfully added/edited set(s)"
+        if sum_sets == 1:
+            res = {"redirect": "sample_set/index",
+                   "args": { "id":  data[length_mapping[max_num][0]]['sample_set_id']},
+                   "message": msg}
+        else:
+            res = {"redirect": "sample_set/all",
+                    "args" : { "type" : length_mapping[max_num] },
+                    "message": msg}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
         sets = {
