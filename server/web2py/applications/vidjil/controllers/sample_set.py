@@ -438,9 +438,11 @@ def submit():
     set_types = vidjil_utils.get_found_types(data)
 
     length_mapping = {}
+    sum_sets = 0
     for set_type in set_types:
         helper = mf.get_instance(set_type)
         length = len(data[set_type])
+        sum_sets += length
         if length not in length_mapping:
             length_mapping[length] = set_type
         for p in data[set_type]:
@@ -505,7 +507,6 @@ def submit():
                 register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
 
     if not error:
-        sum_sets = sum(length_mapping.keys())
         max_num = max(length_mapping.keys())
         msg = "successfully added/edited set(s)"
         if sum_sets == 1:
