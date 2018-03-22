@@ -1990,13 +1990,13 @@ label.highlight_label {
   background-color: #eee;
 }
 .run_token {
-  background-color: #ffadad;
+  background-color: #ffdddd;
 }
 .generic_token {
-  background-color: #adccff;
+  background-color: #ddddff;
 }
 .patient_token {
-  background-color: #adffae;
+  background-color: #ddffdd;
 }
 .token_container {
   display: inline-block;
