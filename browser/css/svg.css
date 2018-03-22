@@ -1979,6 +1979,10 @@ label.highlight_label {
 .widestBox {
   min-width: 52px;
 }
+.button_token {
+  border-radius: 2px;
+  padding: 0 2px;
+}
 .set_token {
   border-radius: 5px;
   padding: 3px;
