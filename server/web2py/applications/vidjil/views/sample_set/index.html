@@ -156,7 +156,7 @@
     
    <br /><br />
    {{if can_modify:}}
-   <i class="icon-pencil-2" title="edit information" onclick="db.call('sample_set/edit', { 'id' : '{{=request.vars["id"]}}' } )" > </i>
+   <i class="icon-pencil-2 pointer" title="edit information" onclick="db.call('sample_set/form', { 'id' : '{{=request.vars["id"]}}' } )" > </i>
    {{pass}}
    {{ text = tag_decorator.decorate(info["info"], 'tag', sample_type, '/sample_set/all') }}
    {{=tag_decorator.sanitize(text)}}
