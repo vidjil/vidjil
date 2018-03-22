@@ -202,7 +202,7 @@ def submit():
 
     pre_process = None
     pre_process_flag = "DONE"
-    if request.vars['pre_process'] is not None:
+    if data['pre_process'] is not None:
         if f['pre_process'] != "0":
             pre_process = int(f['pre_process'])
             pre_process_flag = "WAIT"
