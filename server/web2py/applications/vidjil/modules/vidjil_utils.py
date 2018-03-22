@@ -104,12 +104,11 @@ def anon_names(sample_set_id, first_name, last_name, can_view=None):
     '''
     auth=current.auth
 
-    ln = safe_encoding(last_name)
-    fn = safe_encoding(first_name)
+    ln = last_name
+    fn = first_name
     if can_view or (can_view == None and auth.can_view_info('sample_set', sample_set_id)):
         name = ln + " " + fn
     else:
-        ln = safe_encoding(last_name)
         name = ln[:3]
 
     return name
