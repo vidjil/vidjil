@@ -212,6 +212,7 @@ def submit():
 
     data['errors'] = errors
 
+    data['action'] = 'add'
     if len(errors) > 0:
         error = True
 
