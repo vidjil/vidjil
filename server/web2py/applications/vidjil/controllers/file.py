@@ -202,10 +202,9 @@ def submit():
 
     pre_process = None
     pre_process_flag = "DONE"
-    if data['pre_process'] is not None:
-        if f['pre_process'] != "0":
-            pre_process = int(f['pre_process'])
-            pre_process_flag = "WAIT"
+    if data['pre_process'] is not None and int(data['pre_process']) > 0:
+        pre_process = int(data['pre_process'])
+        pre_process_flag = "WAIT"
 
     sets, id_dict, errors = validate_sets(data['set_ids'])
     data['sets'] = sets
