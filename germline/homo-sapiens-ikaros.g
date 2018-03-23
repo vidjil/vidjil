@@ -19,6 +19,19 @@
             "parameters": {
                 "seed": "10s"
             }
+        },
+
+        "ERG": {
+            "shortcut": "E",
+            "color" : "#d63a19",
+            "description": "ERG mediated recombinaions",
+            "recombinations": [ {
+                "5": ["erg_as_V.fa"],
+                "3": ["erg_as_J.fa"]
+            } ],
+            "parameters": {
+                "seed": "10s"
+            }
         }
     }
 }
