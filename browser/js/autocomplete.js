@@ -157,7 +157,6 @@ VidjilAutoComplete.prototype = {
 
         // code modified from atwho source
         callbacks.highlighter = function(li, query) {
-	   // return li;
             var mapper = {'p': 'patient',
                           'r': 'run',
                           's': 'generic'}
@@ -165,10 +164,10 @@ VidjilAutoComplete.prototype = {
             var set_type = li.charAt(5)
 
             // encapsulate the string_id's set_type token (:p, :r, :s) within a span
-            opening_li = '<li class="' + mapper[set_type] + '_li">' +
+            var opening_li = '<li class="' + mapper[set_type] + '_li">' +
 		'<span class="autocomplete_li ' + mapper[set_type] + '">' + li.substr(4, 2) + '</span><span class="set_token '+ mapper[set_type] + '_token">';
-            closing_li = '</span></li>';
-	    content = li.substr(6, li.length - 11);
+            var closing_li = '</span></li>';
+            var content = li.substr(6, li.length - 11);
 
             if (!query) {
                 return opening_li + content + closing_li;
