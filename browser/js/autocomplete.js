@@ -157,6 +157,7 @@ VidjilAutoComplete.prototype = {
 
         // code modified from atwho source
         callbacks.highlighter = function(li, query) {
+	   // return li;
             var mapper = {'p': 'patient',
                           'r': 'run',
                           's': 'generic'}
@@ -164,21 +165,16 @@ VidjilAutoComplete.prototype = {
             var set_type = li.charAt(5)
 
             // encapsulate the string_id's set_type token (:p, :r, :s) within a span
-            li = li.replace(li.substr(4,2),
-                    function(str) {
-                        return '<span class="autocomplete_li ' + mapper[set_type] + '">' + str + '</span><span class="set_token '+ mapper[set_type] + '_token">';
-                    });
-            li = li.replace('<li>', '<li class="' + mapper[set_type] + '_li">');
-            li = li.replace('</li>', '</span></li>');
-            var regexp;
-            if (!query) {
-                return li;
-            }
-            regexp = new RegExp(">([\\(\\)\\[\\]A-Za-z0-9\\-\\s]*)+(" + query.replace(/([\+\[\]\(\)\-])/g, function(str, s) { return "\\" + s; }) + ")([\\(\\)\\[\\]A-Za-z0-9\\s\\-]*)<", 'ig');
-            return li.replace(regexp, function(str, $1, $2, $3) {
-                return '> ' + $1 + '<strong>' + $2 + '</strong>' + $3 + ' <';
-            });
+            opening_li = '<li class="' + mapper[set_type] + '_li">' +
+		'<span class="autocomplete_li ' + mapper[set_type] + '">' + li.substr(4, 2) + '</span><span class="set_token '+ mapper[set_type] + '_token">';
+            closing_li = '</span></li>';
+	    content = li.substr(6, li.length - 11);
 
+            if (!query) {
+                return opening_li + content + closing_li;
+            }
+
+	    return opening_li + content.replace(new RegExp(query, "gi"), '<strong>' + query + '</strong>') + closing_li;
         };
 
         callbacks.beforeInsert = function(value, li) {
