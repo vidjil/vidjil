@@ -156,9 +156,14 @@ class Diversity:
 
     def __init__(self, data=None):
         self.d={}
-        self.d["index_H_entropy"]      = [data["index_H_entropy"]]
-        self.d["index_E_equitability"] = [data["index_E_equitability"]]
-        self.d["index_Ds_diversity"]   = [data["index_Ds_diversity"]]
+        if data == None:
+            self.d["index_H_entropy"]      = ["na"]
+            self.d["index_E_equitability"] = ["na"]
+            self.d["index_Ds_diversity"]   = ["na"]
+        else: 
+            self.d["index_H_entropy"]      = [data["index_H_entropy"]]
+            self.d["index_E_equitability"] = [data["index_E_equitability"]]
+            self.d["index_Ds_diversity"]   = [data["index_Ds_diversity"]]
 
     def __add__(self, other):
         self.d['index_H_entropy'].append(      other.d['index_H_entropy'][0] )
@@ -352,7 +357,10 @@ class ListWindows(VidjilJson):
                     self.d["clones"] = []
                 self.check_version(file_path)
 
-                self.d["diversity"] = Diversity(self.d["diversity"])
+                if "diversity" in self.d.keys():
+                    self.d["diversity"] = Diversity(self.d["diversity"])
+                else:
+                    self.d["diversity"] = Diversity()
         
         if 'distribution' not in self.d['reads'].d:
             self.d['reads'].d['distribution'] = {}
@@ -642,6 +650,8 @@ lw1.d["timestamp"] = 'ts'
 lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25], "germline": {}, "distribution": {}}', object_hook=lw1.toPython)
 lw1.d["clones"].append(w5)
 lw1.d["clones"].append(w6)
+lw1.d["diversity"] = Diversity()
+
 
 w7 = Window(1)
 w7.d ={"id" : "aaa", "reads" : [8], "top" : 4 }
@@ -653,6 +663,7 @@ lw2.d["timestamp"] = 'ts'
 lw2.d["reads"] = json.loads('{"total": [40], "segmented": [34], "germline": {}, "distribution": {}}', object_hook=lw1.toPython)
 lw2.d["clones"].append(w7)
 lw2.d["clones"].append(w8)
+lw2.d["diversity"] = Diversity()
 
     
     
