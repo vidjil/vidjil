@@ -152,6 +152,24 @@ class Samples:
     def __str__(self):
         return "<Samples: %s>" % self.d
 
+class Diversity: 
+
+    def __init__(self, data=None):
+        self.d={}
+        self.d["index_H_entropy"]      = [data["index_H_entropy"]]
+        self.d["index_E_equitability"] = [data["index_E_equitability"]]
+        self.d["index_Ds_diversity"]   = [data["index_Ds_diversity"]]
+
+    def __add__(self, other):
+        self.d['index_H_entropy'].append(      other.d['index_H_entropy'][0] )
+        self.d['index_E_equitability'].append( other.d['index_E_equitability'][0] )
+        self.d['index_Ds_diversity'].append(   other.d['index_Ds_diversity'][0] )
+
+        return self
+
+    def __str__(self):
+        return "<Diversity: %s>" % self.d
+        
 class Reads: 
 
     def __init__(self):
@@ -333,6 +351,8 @@ class ListWindows(VidjilJson):
                 if not self.d["clones"]:
                     self.d["clones"] = []
                 self.check_version(file_path)
+
+                self.d["diversity"] = Diversity(self.d["diversity"])
         
         if 'distribution' not in self.d['reads'].d:
             self.d['reads'].d['distribution'] = {}
@@ -400,6 +420,7 @@ class ListWindows(VidjilJson):
         obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], l1, l2)
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
+        obj.d["diversity"] = self.d["diversity"] + other.d["diversity"]
         
         return obj
         
@@ -557,7 +578,7 @@ class ListWindows(VidjilJson):
         
     def toJson(self, obj):
         '''Serializer for json module'''
-        if isinstance(obj, ListWindows) or isinstance(obj, Window) or isinstance(obj, Samples) or isinstance(obj, Reads):
+        if isinstance(obj, ListWindows) or isinstance(obj, Window) or isinstance(obj, Samples) or isinstance(obj, Reads) or isinstance(obj, Diversity):
             result = {}
             for key in obj.d :
                 result[key]= obj.d[key]
