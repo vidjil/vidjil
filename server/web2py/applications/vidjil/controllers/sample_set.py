@@ -773,19 +773,26 @@ def change_permission():
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
-def get_sample_set_list(type):
+def get_sample_set_list(stype, query):
+    factory = ModelFactory()
+    helper = factory.get_instance(type=stype)
+    filter_query = helper.get_name_filter_query(query)
+
+    limitby = None
+    if not query :
+        limitby = (0, 10)
+
     query = db(
         (auth.vidjil_accessible_query(PermissionEnum.admin.value, db.sample_set))&
-        (db[type].sample_set_id == db.sample_set.id)
+        (db[stype].sample_set_id == db.sample_set.id) &
+        (filter_query)
     ).select(
-        db[type].ALL, # sub optimal, use helpers to reduce ?
-        orderby = ~db[type].sample_set_id,
-        limitby=(0,500)
+        db[stype].ALL, # sub optimal, use helpers to reduce ?
+        orderby = ~db[stype].sample_set_id,
+        limitby = limitby
     )
     ss_list = []
 
-    factory = ModelFactory()
-    helper = factory.get_instance(type=type)
     for row in query :
         tmp = helper.get_id_string(row)
         ss_list.append({'name':tmp, 'id': row.sample_set_id, 'type': type})
@@ -795,9 +802,10 @@ def auto_complete():
     if "keys" not in request.vars:
         return error_message("missing group ids")
 
-    sample_types = json.loads(request.vars['keys'])
-    result = {}
+    query = json.loads(request.vars['keys'])
+    sample_types = [defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC]
+    result = []
     for sample_type in sample_types:
-        result[sample_type] = get_sample_set_list(sample_type)
+        result += get_sample_set_list(sample_type, query)
 
     return json.dumps(result)

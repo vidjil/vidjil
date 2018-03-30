@@ -108,6 +108,11 @@ class SampleSet(object):
                 if key in row:
                     row['string'].append(str(row[key]))
 
+    def get_name_filter_query(query):
+        if query is None or query == '':
+            return (db[self.type].name != None)
+        return (db[self.type].name.like('%' + query + "%"))
+
     @abstractmethod
     def filter(self, filter_str, data):
         pass
