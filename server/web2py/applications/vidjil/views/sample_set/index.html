@@ -222,9 +222,9 @@
     <div class="db_block_right">
         {{if fused_file is not None :}}
             download {{=db.config[config_id].name}}
-            <a class="button" href={{=URL('default', 'get_data', scheme='https', vars=dict(sample_set_id = request.vars['id'], config = request.vars['config_id'], filename=fused_filename))}}> .vidjil </a>
+            <a class="button" href={{=URL('default', 'get_data', scheme='https', vars=dict(sample_set_id = request.vars['id'], config = request.vars['config_id'], filename=vidjil_utils.safe_encoding(fused_filename)))}}> .vidjil </a>
             {{if analysis_count >0:}}
-            <a class="button" href={{=URL('default', 'get_analysis', scheme='https', vars=dict(sample_set_id = request.vars['id'], config = request.vars['config_id'], filename=analysis_filename))}}> .analysis </a>
+            <a class="button" href={{=URL('default', 'get_analysis', scheme='https', vars=dict(sample_set_id = request.vars['id'], config = request.vars['config_id'], filename=vidjil_utils.safe_encoding(analysis_filename)))}}> .analysis </a>
             {{pass}}
         {{pass}}
     </div>
