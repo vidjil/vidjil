@@ -405,8 +405,10 @@ Database.prototype = {
         //the json result look like a .vidjil file so we load it
         if (res.reads){
             this.m.parseJsonData(result, 100)
-            this.m.loadGermline();
+            this.m.loadGermline()
+                .initClones();
             this.load_analysis(args)
+                .update_selected_system();
             this.last_file = args
             this.close()
             this.m.db_key = args
