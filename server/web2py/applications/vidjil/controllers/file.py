@@ -298,7 +298,7 @@ def form_response(data):
     source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
     response.view = 'file/form.html'
     upload_group_ids = [int(gid) for gid in get_upload_group_ids(auth)]
-    group_ids = [int(g['id']) for g in get_default_creation_group(auth)[0]]
+    group_ids = get_involved_groups()
     pre_process_list = get_pre_process_list()
     return dict(message=T("an error occured"),
            pre_process_list = pre_process_list,
