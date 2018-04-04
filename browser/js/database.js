@@ -407,8 +407,7 @@ Database.prototype = {
             this.m.parseJsonData(result, 100)
             this.m.loadGermline()
                 .initClones();
-            this.load_analysis(args)
-                .update_selected_system();
+            this.load_analysis(args);
             this.last_file = args
             this.close()
             this.m.db_key = args
