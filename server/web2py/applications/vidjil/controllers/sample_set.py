@@ -420,6 +420,7 @@ def form():
     sets[set_type].append(sset)
     return dict(message=T(message),
                 groups=groups,
+                group_ids = get_involved_groups(),
                 master_group=max_group,
                 sets=sets,
                 isEditing = (action=='edit'))

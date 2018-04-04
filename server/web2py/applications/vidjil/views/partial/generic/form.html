@@ -13,10 +13,10 @@
 </div>
 <div class="field_div">
     <input
-        onfocus="$(this).data('group-ids', [$('#group_select option:selected').val()]);
-                 new VidjilAutoComplete().setupAtWho(this);"
+        onfocus="new VidjilAutoComplete().setupTags(this);"
         onkeydown="if (event.keyCode == 13) return false;"
         data-needs-atwho="true"
+        data-keys="{{=group_ids}}"
         class="text form-control"
         id="sample_set_info_{{=i}}"
         name="generic[{{=i}}][info]"

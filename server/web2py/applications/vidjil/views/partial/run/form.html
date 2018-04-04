@@ -22,8 +22,8 @@
 </div>
 <div class="field_div">
     <input
-        onfocus="$(this).data('keys', [$('#group_select option:selected').val()]);
-                 new VidjilAutoComplete().setupTags(this);"
+        onfocus=" new VidjilAutoComplete().setupTags(this);"
+        data-keys="{{=group_ids}}"         
         onkeydown="if (event.keyCode == 13) return false;"
         data-needs-atwho="true"
         class="text form-control"
