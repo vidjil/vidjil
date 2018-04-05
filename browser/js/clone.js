@@ -54,7 +54,7 @@ function Clone(data, model, index, virtual) {
         this.warn = []
     
     if (typeof this.warn === 'string')
-        this.warn = [ this.warn ]
+        this.warn = [ {'code': '', 'level': warnLevels[WARN], 'msg': this.warn } ]
 
     // .shortName
     if (typeof (this.getSequence()) != 'undefined' && typeof (this.name) != 'undefined') {
@@ -107,10 +107,10 @@ Clone.prototype = {
         console.log(this.coverage)
 
         if (this.coverage < this.COVERAGE_WARN)
-            this.warn.push({'code': 'W51', 'msg': 'Low coverage (' + this.coverage.toFixed(3) + ')'}) ;
+            this.warn.push({'code': 'W51', 'level': warnLevels[WARN], 'msg': 'Low coverage (' + this.coverage.toFixed(3) + ')'}) ;
 
         if (typeof(this.eValue) != 'undefined' && this.eValue > this.EVALUE_WARN)
-            this.warn.push({'code': 'Wxx', 'msg': 'Bad e-value (' + this.eValue + ')' });
+            this.warn.push({'code': 'Wxx', 'level': warnLevels[WARN], 'msg': 'Bad e-value (' + this.eValue + ')' });
 
     },
 
