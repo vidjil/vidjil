@@ -261,7 +261,7 @@ bool operator!=(const Sequence &s1, const Sequence &s2);
 
 void output_label_average(ostream &out, string label, long long int nb, double average, int precision=1);
 
-void json_add_warning(json &clone, string code, string msg);
+void json_add_warning(json &clone, string code, string msg, string level=LEVEL_WARN);
 
 
 //////////////////////////////////////////////////
