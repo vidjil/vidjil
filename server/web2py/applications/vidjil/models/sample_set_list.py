@@ -51,7 +51,7 @@ class SampleSetList():
             self.elements[key.id].most_used_conf = ""
             self.elements[key.id].groups = ""
             self.elements[key.id].group_list = []
-            self.elements[key.id].has_permission = auth.can_modify(type, key.id)
+            self.elements[key.id].has_permission = auth.can_modify_sample_set(key.sample_set_id)
             self.elements[key.id].anon_allowed = auth.can_view_info(type, key.id)
 
         self.element_ids = self.elements.keys()
