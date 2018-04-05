@@ -7,7 +7,7 @@ $ The FineSegmenter gives the locus information (-2)
 1:Unexpected [+]TRBV/[+]TRGJ
 1:Unexpected [+]TRDV/[+]IGHJ
 1:Unexpected [+]TRDV/[-]IGKV
-1:Unexpected [-]IGLJ/[+]TRGJ
+1:Unexpected [-]IGLJ.down/[+]TRGJ
 
 $ The FineSegmenter gives the locus information (-2) and takes the best strand
 1:Unexpected [+]IGKV/[+]IGLJ
