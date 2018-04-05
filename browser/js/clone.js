@@ -126,7 +126,7 @@ Clone.prototype = {
     },
 
     warnText: function () {
-        items = []
+        var items = []
 
         for (var i = 0; i < this.warn.length; i++) {
             items.push(this.warn[i].code + ': ' + this.warn[i].msg)
