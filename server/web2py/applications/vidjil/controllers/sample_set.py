@@ -26,11 +26,12 @@ def next_sample_set():
             sample_set_id = int(request.vars['id'])
             
             go_next = int(request.vars['next'])
+            same_type_with_permissions = (db.sample_set.sample_type == sample_type) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set))
             if go_next > 0:
-                res = db((db.sample_set.id > sample_set_id) & (db.sample_set.sample_type == sample_type) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set))).select(
+                res = db((db.sample_set.id > sample_set_id) & (same_type_with_permissions)).select(
                     db.sample_set.id, orderby=db.sample_set.id, limitby=(0,1))
             else:
-                res = db((db.sample_set.id < sample_set_id) & (db.sample_set.sample_type == sample_type) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set))).select(
+                res = db((db.sample_set.id < sample_set_id) & (same_type_with_permissions)).select(
                     db.sample_set.id, orderby=~db.sample_set.id, limitby=(0,1))
             if (len(res) > 0):
                 request.vars["id"] = str(res[0].id)
