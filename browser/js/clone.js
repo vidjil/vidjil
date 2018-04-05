@@ -88,8 +88,10 @@ Clone.prototype = {
     /**
      * @return {string} a warning class is set on this clone
      */
-        if (this.warn.length) {
-            return 'warning'
+        var wL = this.warnLevel()
+
+        if (wL >= WARN) {
+            return warnTextOf(wL)
         }
 
         if (this.hasSeg('clonedb')) {
@@ -111,7 +113,16 @@ Clone.prototype = {
 
         if (typeof(this.eValue) != 'undefined' && this.eValue > this.EVALUE_WARN)
             this.warn.push({'code': 'Wxx', 'level': warnLevels[WARN], 'msg': 'Bad e-value (' + this.eValue + ')' });
+    },
 
+    warnLevel: function () {
+        var level = 0
+
+        for (var i = 0; i < this.warn.length; i++) {
+            level = Math.max(level, warnLevelOf(this.warn[i].level))
+        }
+
+        return level
     },
 
     warnText: function () {
