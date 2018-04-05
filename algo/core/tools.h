@@ -20,6 +20,12 @@
                                    */
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
 
+#define LEVEL_DEBUG "debug"
+#define LEVEL_INFO  "info"
+#define LEVEL_WARN  "warn"
+#define LEVEL_ERROR "error"
+#define LEVEL_FATAL "fatal"
+
 #include <sstream>
 #include <iostream>
 #include <iomanip>
