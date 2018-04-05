@@ -366,3 +366,35 @@ function remove_all_children(node)
 Node.prototype.removeAllChildren = function removeAllChildren() {
     remove_all_children(this);
 }
+
+
+
+FATAL = 50
+ERROR = 40
+WARN = 30
+INFO = 20
+DEBUG = 10
+
+warnLevels = {
+    'fatal': FATAL,
+    'error': ERROR,
+    'warn': WARN,
+    'info': INFO,
+    'debug': DEBUG
+}
+
+warnTexts = { }
+
+for (var key in warnLevels) {
+    warnTexts[warnLevels[key]] = key ;
+}
+
+function warnLevelOf(key)
+{
+    return (key in warnLevels) ? warnLevels[key] : WARN
+}
+
+function warnTextOf(key)
+{
+    return (key in warnTexts) ? warnTexts[key] : '?'
+}
