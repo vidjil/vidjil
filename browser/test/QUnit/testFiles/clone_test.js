@@ -36,7 +36,11 @@ QUnit.module("Clone", {
         "reads" : [10,10,30,0] ,
         "top" : 2,
         "germline" : "TRG",
-
+        "warn": [{
+            "code": "Wxx",
+            "msg": "a warning that is only an information",
+            "level": "info"
+        }],
         "seg" : {
             "5" : {'start': 2, 'stop': 6, 'delRight': 18}, // 1-based (current format)
         }
@@ -50,7 +54,7 @@ QUnit.module("Clone", {
         "reads" : [10,10,15,15] ,
         "top" : 3,
         "germline" : "TRG",
-        "warn": "a warning",
+        "warn": "a warning, old style",
         "seg" : {
             "3" : "IGHV4*01",
             "4" : "IGHD2*03",
@@ -77,6 +81,15 @@ QUnit.module("Clone", {
         "reads" : [10,10,15,15] ,
         "top" : 4,
         "germline" : "TRG",
+        "warn": [{
+            "code": "Wyy",
+            "msg": "a normal warning",
+            "level": "warn"
+        },{
+            "code": "Wzz",
+            "msg": "a severe warning",
+            "level": "error"
+        }],
         "seg" : {
             "3" : "IGHV4*01",
             "4" : "IGHD2*03",
@@ -123,9 +136,12 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.equal(c2.getCode(), some_name, "clone2, .getCode()");
     assert.equal(c2.getName(), some_name, "clone2, .getName()");
     assert.equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/12/4 J5*02", "clone2, .getShortName()");
-    
-    assert.equal(c2.isWarned(), false, "clone2 is not warned")
-    assert.equal(c3.isWarned(), 'warning', "clone3 is warned")
+
+    assert.equal(c1.isWarned(), 'warn', "clone1 is warned (client, bad e-value)")
+    assert.equal(c2.isWarned(), false, "clone2 is not warned (only 'info')")
+    assert.equal(c3.isWarned(), 'warn', "clone3 is warned with 'warn'")
+    assert.equal(c4.isWarned(), 'error', "clone3 is warned with 'error'")
+    assert.equal(c5.isWarned(), false, "clone5 is not warned")
 
     assert.equal(c3.getSequenceName(), "custom name", "get name clone3 : custom name");
     assert.equal(c3.getCode(), "id3", "get code clone3 : id3");
