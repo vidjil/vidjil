@@ -106,8 +106,6 @@ Clone.prototype = {
 
     computeWarnings: function() {
 
-        console.log(this.coverage)
-
         if (this.coverage < this.COVERAGE_WARN)
             this.warn.push({'code': 'W51', 'level': warnLevels[WARN], 'msg': 'Low coverage (' + this.coverage.toFixed(3) + ')'}) ;
 

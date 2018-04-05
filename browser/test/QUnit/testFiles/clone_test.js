@@ -140,7 +140,7 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.equal(c1.isWarned(), 'warn', "clone1 is warned (client, bad e-value)")
     assert.equal(c2.isWarned(), false, "clone2 is not warned (only 'info')")
     assert.equal(c3.isWarned(), 'warn', "clone3 is warned with 'warn'")
-    assert.equal(c4.isWarned(), 'error', "clone3 is warned with 'error'")
+    assert.equal(c4.isWarned(), 'error', "clone4 is warned with 'error'")
     assert.equal(c5.isWarned(), false, "clone5 is not warned")
 
     assert.equal(c3.getSequenceName(), "custom name", "get name clone3 : custom name");
