@@ -1994,13 +1994,13 @@ label.highlight_label {
   background-color: #eee;
 }
 .run_token {
-  background-color: #eed0ff;
+  background-color: #ffdde0;
 }
 .generic_token {
-  background-color: #dcffed;
+  background-color: #dcedff;
 }
 .patient_token {
-  background-color: #ffdde0;
+  background-color: #eed0ff;
 }
 .token_container {
   display: inline-block;
