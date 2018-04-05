@@ -3,5 +3,5 @@
 $ No clustering due to -w all
 1: considering all analyzed reads as windows
 
-$ Warning on similar clones in json
-1: "code": "W53", "msg": "Similar to another clone IGHV3-48.01 .* IGHJ4.02"
+$ Warning on similar clones in json ('warn' because this is a clone in the first 10 clones)
+1: "code": "W53", "level": "warn", "msg": "Similar to another clone IGHV3-48.01 .* IGHJ4.02"
