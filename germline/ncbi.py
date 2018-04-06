@@ -16,16 +16,14 @@ from xml.dom import minidom, Node
 
 
 
+# The two following functions should be refactored as one (used in split-from-imgt and get-CD)
+
 def get_gene_sequence(gene, other_gene_name, start, end):
     '''
     Return the gene sequences between positions start and end (included).
     '''
     fasta_string = urllib.urlopen(API_NUCCORE_ID_FROM_TO % (gene, start, end)).read()
     return re.sub('(>\S*) ', r'\1|'+other_gene_name+'|', fasta_string)
-
-
-
-
 
 def ncbi_and_write(ncbi, additional_header, outs):
     print ncbi, additional_header
