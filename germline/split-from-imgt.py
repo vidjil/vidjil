@@ -8,6 +8,8 @@ import urllib
 from collections import defaultdict, OrderedDict
 import re
 
+from ncbi import *
+
 IMGT_LICENSE = '''
    # To use the IMGT germline databases (IMGT/GENE-DB), you have to agree to IMGT license: 
    # academic research only, provided that it is referred to IMGT®,
@@ -18,8 +20,6 @@ IMGT_LICENSE = '''
 '''
 
 print (IMGT_LICENSE)
-
-NCBI_API = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&rettype=fasta&retmode=text'+'&id=%s&from=%s&to=%s'
 
 # Parse lines in IMGT/GENE-DB such as:
 # >M12949|TRGV1*01|Homo sapiens|ORF|...
@@ -91,12 +91,6 @@ def get_gene_coord(imgt_line):
                              'imgt_name': elements[1],
                              'imgt_data': '|'.join(elements[1:5])}
 
-def get_gene_sequence(gene, other_gene_name, start, end):
-    '''
-    Return the gene sequences between positions start and end (included).
-    '''
-    fasta_string = urllib.urlopen(NCBI_API % (gene, start, end)).read()
-    return re.sub('(>\S*) ', r'\1|'+other_gene_name+'|', fasta_string)
 
 def store_data_if_updownstream(fasta_header, path, data, genes):
     for gene in gene_matches(fasta_header, genes):
