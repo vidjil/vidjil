@@ -1171,15 +1171,21 @@ span.info {
 text.info {
   color: blue;
 }
+span.warn,
 span.warning {
   color: orange;
 }
+text.warn,
 text.warning {
   fill: orange;
 }
+span.error,
+span.fatal,
 span.alert {
   color: red;
 }
+text.error,
+text.fatal,
 text.alert {
   fill: red;
 }

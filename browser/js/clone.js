@@ -54,7 +54,7 @@ function Clone(data, model, index, virtual) {
         this.warn = []
     
     if (typeof this.warn === 'string')
-        this.warn = [ this.warn ]
+        this.warn = [ {'code': '', 'level': warnLevels[WARN], 'msg': this.warn } ]
 
     // .shortName
     if (typeof (this.getSequence()) != 'undefined' && typeof (this.name) != 'undefined') {
@@ -88,8 +88,10 @@ Clone.prototype = {
     /**
      * @return {string} a warning class is set on this clone
      */
-        if (this.warn.length) {
-            return 'warning'
+        var wL = this.warnLevel()
+
+        if (wL >= WARN) {
+            return warnTextOf(wL)
         }
 
         if (this.hasSeg('clonedb')) {
@@ -104,18 +106,25 @@ Clone.prototype = {
 
     computeWarnings: function() {
 
-        console.log(this.coverage)
-
         if (this.coverage < this.COVERAGE_WARN)
-            this.warn.push({'code': 'W51', 'msg': 'Low coverage (' + this.coverage.toFixed(3) + ')'}) ;
+            this.warn.push({'code': 'W51', 'level': warnLevels[WARN], 'msg': 'Low coverage (' + this.coverage.toFixed(3) + ')'}) ;
 
         if (typeof(this.eValue) != 'undefined' && this.eValue > this.EVALUE_WARN)
-            this.warn.push({'code': 'Wxx', 'msg': 'Bad e-value (' + this.eValue + ')' });
+            this.warn.push({'code': 'Wxx', 'level': warnLevels[WARN], 'msg': 'Bad e-value (' + this.eValue + ')' });
+    },
 
+    warnLevel: function () {
+        var level = 0
+
+        for (var i = 0; i < this.warn.length; i++) {
+            level = Math.max(level, warnLevelOf(this.warn[i].level))
+        }
+
+        return level
     },
 
     warnText: function () {
-        items = []
+        var items = []
 
         for (var i = 0; i < this.warn.length; i++) {
             items.push(this.warn[i].code + ': ' + this.warn[i].msg)
