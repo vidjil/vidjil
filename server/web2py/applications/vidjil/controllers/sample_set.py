@@ -23,19 +23,18 @@ def next_sample_set():
     if 'next' in request.vars:
         try:
             sample_type = db.sample_set[request.vars["id"]].sample_type
-            
-            for row in db( db[sample_type].sample_set_id == request.vars["id"] ).select() :
-                current_id = row.id
+            sample_set_id = int(request.vars['id'])
             
             go_next = int(request.vars['next'])
+            same_type_with_permissions = (db.sample_set.sample_type == sample_type) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set))
             if go_next > 0:
-                res = db((db[sample_type].id > current_id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db[sample_type]))).select(
-                    db[sample_type].id, db[sample_type].sample_set_id, orderby=db[sample_type].id, limitby=(0,1))
+                res = db((db.sample_set.id > sample_set_id) & (same_type_with_permissions)).select(
+                    db.sample_set.id, orderby=db.sample_set.id, limitby=(0,1))
             else:
-                res = db((db[sample_type].id < current_id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db[sample_type]))).select(
-                    db[sample_type].id, db[sample_type].sample_set_id, orderby=~db[sample_type].id, limitby=(0,1))
+                res = db((db.sample_set.id < sample_set_id) & (same_type_with_permissions)).select(
+                    db.sample_set.id, orderby=~db.sample_set.id, limitby=(0,1))
             if (len(res) > 0):
-                request.vars["id"] = str(res[0].sample_set_id)
+                request.vars["id"] = str(res[0].id)
         except:
             pass
 
