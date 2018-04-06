@@ -223,7 +223,10 @@ class OrderedDefaultListDict(OrderedDict):
 downstream_data = defaultdict(lambda: OrderedDefaultListDict())
 upstream_data = defaultdict(lambda: OrderedDefaultListDict())
 
-for l in sys.stdin:
+ReferenceSequences = sys.argv[1]
+GeneList = sys.argv[2]
+
+for l in open(ReferenceSequences):
 
     # New sequence: compute 'current_files' and stores up/downstream_data[]
 
