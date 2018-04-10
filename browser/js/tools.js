@@ -25,11 +25,11 @@ function nth_ocurrence(str, needle, nth) {
  */
 function tsvToArray(allText) {
     var allTextLines = allText.split(/\r\n|\n/);
-    var headers = allTextLines[0].split('	');
+    var headers = $.trim(allTextLines[0]).split('	');
     var lines = [];
 
     for (var i = 1; i < allTextLines.length; i++) {
-        var data = allTextLines[i].split('	');
+        var data = $.trim(allTextLines[i]).split('	');
         if (data.length == headers.length) {
             var tarr = {};
             for (var j = 0; j < headers.length; j++) {
