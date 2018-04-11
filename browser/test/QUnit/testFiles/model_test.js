@@ -149,6 +149,10 @@ QUnit.test("select/focus", function(assert) {
     assert.deepEqual(m.getSelected(), [], "unselect all");
     m.multiSelect([0,2,3])
     assert.deepEqual(m.getSelected(), [0,2,3], "multi-select");
+    m.unselect(2);
+    assert.deepEqual(m.getSelected(), [0, 3], "unselect");
+    m.unselect(5);
+    assert.deepEqual(m.getSelected(), [0, 3], "unselect");
     m.unselectAll()
     assert.equal(m.findWindow("aaaaaaaaaaaid1aaaaaaa"), 0, "findWindow : Ok")
     assert.equal(m.findWindow("aaaaaaaaaaaplopaaaaaaa"), -1, "findWindow : Ok")

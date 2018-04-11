@@ -816,6 +816,26 @@ changeAlleleNotation: function(alleleNotation) {
         }
     },
 
+    /**
+     * Unselect an isolated clone
+     * @param {integer} - cloneID - index of the clone to remove from the selection
+     */
+    unselect: function(cloneID) {
+        console.log("unselect() (clone " + cloneID + ")");
+        if (this.clones[cloneID].isVirtual()) {
+            return 0;
+        }
+
+        if (this.clone(cloneID).isSelected()) {
+            var index = this.orderedSelectedClones.indexOf(cloneID);
+            if (index > -1)
+                this.orderedSelectedClones.splice(index, 1);
+            this.clone(cloneID).select = false;
+            this.updateElemStyle([cloneID]);
+        }
+        console.log("orderedSelectedClones: " + this.orderedSelectedClones.join(","));
+    },
+
     toggleSelect: function(cloneID) {
         console.log("toggle() (clone " + cloneID + ")");
 
