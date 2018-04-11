@@ -970,13 +970,21 @@ changeAlleleNotation: function(alleleNotation) {
                 if (!this.clone(i).split) {
                     for (var j = 0; j < this.clusters[i].length; j++) {
                         seq = this.clusters[i][j]
-                        this.clone(seq).disable();
+                        var clone = this.clone(seq);
+                        clone.disable();
+                        if (j > 0 && clone.isSelected())
+                            // Unselect all subclones
+                            this.unselect(seq);
                     }
                     this.clone(i).enable(this.top)
                 } else {
+                    var main_clone = this.clone(this.clusters[i][0]);
                     for (var k = 0; k < this.clusters[i].length; k++) {
                         seq = this.clusters[i][k]
-                        this.clone(seq).enable(this.top)
+                        var clone = this.clone(seq);
+                        clone.enable(this.top)
+                        if (clone.isSelected() != main_clone.isSelected())
+                            this.select(seq, main_clone.select);
                     }
                 }
             }
