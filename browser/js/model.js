@@ -970,9 +970,9 @@ changeAlleleNotation: function(alleleNotation) {
                 if (!this.clone(i).split) {
                     for (var j = 0; j < this.clusters[i].length; j++) {
                         seq = this.clusters[i][j]
-                        var clone = this.clone(seq);
-                        clone.disable();
-                        if (j > 0 && clone.isSelected())
+                        var subclone = this.clone(seq);
+                        subclone.disable();
+                        if (j > 0 && subclone.isSelected())
                             // Unselect all subclones
                             this.unselect(seq);
                     }
