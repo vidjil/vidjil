@@ -45,8 +45,8 @@ class VidjilBrowser < Watir::Browser
     return clone_in_list(id, extra).element(:id => 'cluster'+id)
   end
 
-  # Return the n-th clone in a cluster for clone ID
-  # n: a str (starting at 1)
+  # Return a given clone in a cluster for clone ID
+  # n: a str corresponding to the clone ID in the cluster
   def clone_in_cluster(id, n, extra = {})
     cluster = clone_cluster(id, extra).element(:id => '_'+n)
     return {object: cluster,
