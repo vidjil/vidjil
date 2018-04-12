@@ -972,13 +972,13 @@ changeAlleleNotation: function(alleleNotation) {
                         seq = this.clusters[i][j]
                         var subclone = this.clone(seq);
                         subclone.disable();
-                        if (j > 0 && subclone.isSelected())
+                        if (seq != i && subclone.isSelected())
                             // Unselect all subclones
                             this.unselect(seq);
                     }
                     this.clone(i).enable(this.top)
                 } else {
-                    var main_clone = this.clone(this.clusters[i][0]);
+                    var main_clone = this.clone(i);
                     for (var k = 0; k < this.clusters[i].length; k++) {
                         seq = this.clusters[i][k]
                         var clone = this.clone(seq);
