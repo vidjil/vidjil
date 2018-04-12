@@ -903,7 +903,7 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
 
     }
 
-  int score_with_limit_number_of_indels = (rep.sequence(box->ref_nb).size() - BOTTOM_TRIANGLE_SHIFT) * segment_cost.match - BOTTOM_TRIANGLE_SHIFT * segment_cost.insertion;
+  int score_with_limit_number_of_indels = (rep.sequence(box->ref_nb).size() - BOTTOM_TRIANGLE_SHIFT) * segment_cost.match + BOTTOM_TRIANGLE_SHIFT * segment_cost.insertion;
   if (onlyBottomTriangle && best_score < score_with_limit_number_of_indels) {
     // Too many indels/mismatches, let's do a full DP
     align_against_collection(read, rep, forbidden_rep_id, reverse_ref, reverse_both,
