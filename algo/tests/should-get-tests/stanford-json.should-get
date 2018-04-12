@@ -7,13 +7,13 @@ $ From homo-sapiens.g
 1:"species_taxon_id": 9606
 
 $ Number of reads
-e1:"total": [13153]
+1:"total": \[13153\]
 
 $ Number of segmented reads
-e1:"segmented": [13152]
+1:"segmented": \[13152\]
 
 $ Most abundant window
-1:"id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC".*"reads": \\[8\\]
+1:"id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC".*"reads": \[8\]
 
 $ Affect values are over all the sequence
 1: "affectValues": .[^}]*"start": 1, "stop": 127

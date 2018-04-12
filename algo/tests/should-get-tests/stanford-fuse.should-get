@@ -2,10 +2,10 @@
 !LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -z 0 -w 60 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta ; python $VIDJIL_DIR/tools/fuse.py out/Stanford_S22.vidjil out/Stanford_S22.vidjil -o out/fused.data ; cat out/fused.data | python $VIDJIL_DIR/tools/format_json.py -1
 
 $ Points list
-1:"original_names": [".*data//Stanford_S22.fasta", ".*data//Stanford_S22.fasta"]
+1:"original_names": \[".*data//Stanford_S22.fasta", ".*data//Stanford_S22.fasta"\]
 
 $ Most abundant window, twice, fused 
-1:"id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC".*"reads": \\[8, 8\\].*"top": 2
+1:"id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC".*"reads": \[8, 8\].*"top": 2
 
 # Fails since 49046ca6b97, no more 'others'
 $ Windows that are not in the top 50
