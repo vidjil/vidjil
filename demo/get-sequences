@@ -15,7 +15,8 @@ EOF
 wget -nc -q http://www.vidjil.org/seqs/Stanford_S22.tar.gz
 tar xvzf Stanford_S22.tar.gz
 
-wget -nc -q --show-progress -O LIL-L4.fastq.gz https://db.vidjil.org/vidjil/patient/download/sequence_file.data_file.89a7ad1ac0e2c6fa.4c313530303132352e496f6e5870726573735f3039362e66617374712e677a.gz
+echo "Retrieving demo dataset, please be patient…"
+wget -nc -q -O LIL-L4.fastq.gz https://db.vidjil.org/vidjil/patient/download/sequence_file.data_file.89a7ad1ac0e2c6fa.4c313530303132352e496f6e5870726573735f3039362e66617374712e677a.gz
 status=$?
 # wget -nc -O exits with 1 when file already exists but thit is is not an
 # error and should not fail the Makefile!
