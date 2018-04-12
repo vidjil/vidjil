@@ -1,4 +1,5 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -e 10 -z 0 -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -D $VIDJIL_DIR/germline/homo-sapiens/IGHD.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa -s \\\\#\\\\#\\\\#\\\\#\\\\#\\\\#-\\\\#\\\\#\\\\#\\\\#\\\\#\\\\# $VIDJIL_DATA/Stanford_S22.fasta
+
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -e 10 -z 0 -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -D $VIDJIL_DIR/germline/homo-sapiens/IGHD.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa -s "######-######" $VIDJIL_DATA/Stanford_S22.fasta
 
 $ Germlines are custom
 1: custom germlines
