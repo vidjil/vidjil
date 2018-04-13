@@ -38,7 +38,7 @@ def home():
     if auth.is_admin():
         redirect = URL('admin', 'index', scheme=True, host=True)
     else:
-        redirect = URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT}, scheme=True, host=True)
+        redirect = URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True, host=True)
     res = {"redirect" : redirect}
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
