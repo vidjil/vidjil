@@ -146,17 +146,18 @@ def index():
 ## return a list of generic sample_sets
 def all():
     start = time.time()
-    if not auth.user :
-        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
-                    vars=dict(_next=URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT}, scheme=True, host=True)))
-            }
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
-    isAdmin = auth.is_admin()
     if request.vars['type']:
         type = request.vars['type']
     else :
         type = defs.SET_TYPE_GENERIC
+
+    if not auth.user :
+        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
+                    vars=dict(_next=URL('sample_set', 'all', vars={'type': type, 'page': 0}, scheme=True, host=True)))
+            }
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+    isAdmin = auth.is_admin()
 
     step = None
     page = None
@@ -515,7 +516,7 @@ def submit():
                    "message": msg}
         else:
             res = {"redirect": "sample_set/all",
-                    "args" : { "type" : length_mapping[max_num] },
+                    "args" : { "type" : length_mapping[max_num], "page": 0 },
                     "message": msg}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
@@ -691,7 +692,7 @@ def delete():
         db(db.sample_set.id == sample_set.id).delete()
 
         res = {"redirect": "sample_set/all",
-               "args": {"type": sample_type},
+               "args": {"type": sample_type, "page": 0},
                "success": "true",
                "message": "sample set ("+str(request.vars["id"])+") deleted"}
         log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars["id"], 'table_name': 'sample_set'})
