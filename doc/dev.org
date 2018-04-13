@@ -233,7 +233,10 @@ The cache is stored for each user and is updated only when a change occurs (mess
 ** Permissions
    Permissions are handled by Web2py's authentication mechanism which is
    specialised to Vidjil's characteristics through the =VidjilAuth= class.
-
+*** Login
+**** Redirect after login
+     The URL at which we access after login is defined in the controllers
+     =sample_set/all= and in =default/home=.
 ** Database
 *** Export
     mysqldump -u <user> -p <database> -c --no-create-info > <file>
