@@ -148,7 +148,7 @@ def all():
     start = time.time()
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
-                    vars=dict(_next=URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT}, scheme=True, host=True)))
+                    vars=dict(_next=URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True, host=True)))
             }
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
