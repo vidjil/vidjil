@@ -339,7 +339,7 @@ FileFormBuilder.prototype.build_set_div = function() {
     i2.dataset.needsTokeniser = true;
     i2.dataset.groupIds = "[" + this.group_ids + "]";
     i2.dataset.keys = '["generic", "patient", "run"]';
-    i2.placeholder = "specific sets";
+    i2.placeholder = "other patient/run/sets";
     d.appendChild(i2);
 
     return f;
