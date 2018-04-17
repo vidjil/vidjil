@@ -595,25 +595,29 @@ class VidjilAuth(Auth):
         membership = self.table_membership()
         permission = self.table_permission()
         perm_groups = self.get_permission_groups(name, user_id)
-        query = (table.id.belongs(
-                db(((membership.user_id == user_id) &
-                    (membership.group_id.belongs(perm_groups)) &
-                    (membership.group_id == permission.group_id) &
-                    (permission.name == PermissionEnum.access.value) &
-                    (permission.table_name == table)))._select(permission.record_id)) |
-            table.id.belongs(
-                db(((membership.user_id == user_id) &
-                    (membership.group_id.belongs(perm_groups)) &
-                    (membership.group_id == db.group_assoc.second_group_id) &
-                    (db.group_assoc.first_group_id == permission.group_id) &
-                    (permission.name == PermissionEnum.access.value) &
-                    (permission.table_name == table)))._select(permission.record_id)))
+        accessible_ids_results = db(((membership.user_id == user_id) &
+                                     (membership.group_id.belongs(perm_groups)) &
+                                     (membership.group_id == permission.group_id) &
+                                     (permission.name == PermissionEnum.access.value) &
+                                     (permission.table_name == table))).select(permission.record_id)
+        accessible_assoc_results = db(((membership.user_id == user_id) &
+                                       (membership.group_id.belongs(perm_groups)) &
+                                       (membership.group_id == db.group_assoc.second_group_id) &
+                                       (db.group_assoc.first_group_id == permission.group_id) &
+                                       (permission.name == PermissionEnum.access.value) &
+                                       (permission.table_name == table))).select(permission.record_id)
+
+        everybody_results = []
         if self.settings.everybody_group_id:
-            query |= table.id.belongs(
-                db(permission.group_id == self.settings.everybody_group_id)
-                    (permission.name == name)
-                    (permission.table_name == table)
-                    ._select(permission.record_id))
+            everybody_results = db(permission.group_id == self.settings.everybody_group_id)\
+                                (permission.name == name)\
+                                (permission.table_name == table)\
+                                .select(permission.record_id)
+
+        accessible_ids = [i.record_id for i in accessible_ids_results] +\
+                         [i.record_id for i in accessible_assoc_results] +\
+                         [i.record_id for i in everybody_results]
+        query = (table.id.belongs(accessible_ids))
         return query
 
     def log_event(self, description, vars=None, origin='auth'):
