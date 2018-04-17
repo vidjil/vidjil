@@ -24,12 +24,22 @@ NCBI_API = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore
 # Parse lines in IMGT/GENE-DB such as:
 # >M12949|TRGV1*01|Homo sapiens|ORF|...
 
-open_files = {}
+
 current_file = None
 
 def verbose_open_w(name):
     print (" ==> %s" % name)
     return open(name, 'w')
+
+class KeyDefaultDict(defaultdict):
+    def __missing__(self, key):
+        if self.default_factory is None:
+            raise KeyError((key,))
+        self[key] = value = self.default_factory(key)
+        return value
+
+open_files = KeyDefaultDict(lambda key: verbose_open_w('%s.fa' % key))
+
 
 def get_split_files(seq, split_seq):
     for s_seq in split_seq.keys():
@@ -243,9 +253,6 @@ for l in sys.stdin:
                 if systems:
                     keys = [path + s for s in systems]
                 for key in keys:
-                    if not (key in open_files):
-                        name = '%s.fa' % (key)
-                        open_files[key] = verbose_open_w(name)
                     current_files.append(open_files[key])
 
             if seq in SPECIAL_SEQUENCES:
