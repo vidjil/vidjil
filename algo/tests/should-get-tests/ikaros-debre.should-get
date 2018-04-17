@@ -5,6 +5,7 @@
 $ All sequence have been seen as IKAROS rearangements
 8: --IKAROS--
 
+### controle sequence given by Debré ###
 # del4-7__jonction_intron3_intron7
 $ Find the correct assignation for the sequence intron_3//intron_7
 1: intron_3 16/CCCGCG/8 intron_7
@@ -20,3 +21,55 @@ $ Find the correct assignation for the sequence intron_3//3_UTR
 # del2-8__jonction_intron1_3UTR
 $ Find the correct assignation for the sequence intron_1//3_UTR
 1: intron_1 18/TTCTAA/9 3'UTR_breakpoint1
+
+
+###  cas patient 19498  ###
+$ Find the correct assignation for the sequence
+1: intron_3 2/TT/3 intron_7
+
+$ Find the correct assignation for the sequence
+1: intron_3 2/GAA/2 intron_7
+
+$ Find the correct assignation for the sequence
+1: intron_3 7/TCGAGG/5 intron_7
+
+
+
+### 13922 - sequences ikfz1 ####
+$ Find the correct assignation for the sequence
+1: intron_3 1//2 intron_7 (témoin del4-7)
+$ Find the correct assignation for the sequence
+1: intron_1 8/CCCTTC/3 intron_7 (témoin del2-7)
+$ Find the correct assignation for the sequence
+1: intron_3 0/TCGG/6 intron_7 (seq 4-7 du patient)
+
+
+
+### 17464 - sequences ikfz1 ####
+$ Find the correct assignation for the sequence
+1: intron_3 5/GA/2 intron_7 (del4-7 majo)
+$ Find the correct assignation for the sequence
+1: intron_3 1/TC/2 intron_7 
+$ Find the correct assignation for the sequence
+1: intron_3 5/CGGGCG/16 intron_7
+$ Find the correct assignation for the sequence
+1: intron_3 0/C/3 intron_7
+$ Find the correct assignation for the sequence
+1: intron_3 3/GCGG/5 intron_7
+$ Find the correct assignation for the sequence
+1: intron_3 1/GGTTAAAG/5 intron_7
+
+
+### 13444 - sequences ikfz1 ####
+$ Find the correct assignation for the sequence
+1: intron_3 1/GCCTCC/2 intron_7 (del4-7 majo 1)
+$ Find the correct assignation for the sequence
+1: intron_3 0/C/2 intron_7 (del4-7 majo 4)
+$ Find the correct assignation for the sequence
+1: intron_3 1/TAGG/6 intron_7 (del4-7 majo 3)
+$ Find the correct assignation for the sequence
+1: intron_3 7/TCGGT/3 intron_7 (del4-7 majo 2)
+$ Find the correct assignation for the sequence
+1: intron_1 5//3 intron_7 (del2-7 majo)
+$ Find the correct assignation for the sequence
+1: intron_1 8/CCGA/3 intron_7 (del2-7 mino)
