@@ -903,8 +903,18 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
 
     }
 
-  if (onlyBottomTriangle && (rep.sequence(box->ref_nb).size() - best_best_j) > BOTTOM_TRIANGLE_SHIFT) {
-    // Too many deletions, let's do a full DP
+  int length = best_best_i;     // end position of the alignment in the read
+  int del_end = rep.sequence(box->ref_nb).size() - best_best_j;
+  if (reverse_ref || reverse_both) {
+    length = read.length() - length - 1;
+    del_end = best_best_j;
+  }
+  length = min(length, (int) rep.sequence(box->ref_nb).size());
+  length += del_end;
+  // length is an estimation of the number of aligned nucleotides. It would be better with #2138
+  int score_with_limit_number_of_indels = (length - BOTTOM_TRIANGLE_SHIFT) * segment_cost.match + BOTTOM_TRIANGLE_SHIFT * segment_cost.insertion;
+  if (onlyBottomTriangle && best_score < score_with_limit_number_of_indels) {
+    // Too many indels/mismatches, let's do a full DP
     align_against_collection(read, rep, forbidden_rep_id, reverse_ref, reverse_both,
                              local, box, segment_cost, false);
     return;
