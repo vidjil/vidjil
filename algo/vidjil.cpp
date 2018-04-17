@@ -124,6 +124,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define WARN_MAX_CLONES 100
 #define WARN_PERCENT_SEGMENTED 40
 #define WARN_COVERAGE 0.6
+#define WARN_NUM_CLONES_SIMILAR 10
 
 // display
 #define WIDTH_NB_READS 7
@@ -1431,7 +1432,8 @@ int main (int argc, char **argv)
               if (cc)
                 {
                   cout << " (similar to Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc << setfill(' ') << ")";
-                  json_add_warning(json_clone, "W53", "Similar to another clone " + code);
+                  json_add_warning(json_clone, "W53", "Similar to another clone " + code,
+                                   num_clone <= WARN_NUM_CLONES_SIMILAR ? LEVEL_WARN : LEVEL_INFO);
 
                   nb_edges++ ;
                   out_edges << clones_map_windows[code] + " " + it->first + " "  ;

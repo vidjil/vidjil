@@ -20,6 +20,12 @@
                                    */
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
 
+#define LEVEL_DEBUG "debug"
+#define LEVEL_INFO  "info"
+#define LEVEL_WARN  "warn"
+#define LEVEL_ERROR "error"
+#define LEVEL_FATAL "fatal"
+
 #include <sstream>
 #include <iostream>
 #include <iomanip>
@@ -255,7 +261,7 @@ bool operator!=(const Sequence &s1, const Sequence &s2);
 
 void output_label_average(ostream &out, string label, long long int nb, double average, int precision=1);
 
-void json_add_warning(json &clone, string code, string msg);
+void json_add_warning(json &clone, string code, string msg, string level=LEVEL_WARN);
 
 
 //////////////////////////////////////////////////
