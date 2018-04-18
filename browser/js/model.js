@@ -816,6 +816,26 @@ changeAlleleNotation: function(alleleNotation) {
         }
     },
 
+    /**
+     * Unselect an isolated clone
+     * @param {integer} - cloneID - index of the clone to remove from the selection
+     */
+    unselect: function(cloneID) {
+        console.log("unselect() (clone " + cloneID + ")");
+        if (this.clones[cloneID].isVirtual()) {
+            return 0;
+        }
+
+        if (this.clone(cloneID).isSelected()) {
+            var index = this.orderedSelectedClones.indexOf(cloneID);
+            if (index > -1)
+                this.orderedSelectedClones.splice(index, 1);
+            this.clone(cloneID).select = false;
+            this.updateElemStyle([cloneID]);
+        }
+        console.log("orderedSelectedClones: " + this.orderedSelectedClones.join(","));
+    },
+
     toggleSelect: function(cloneID) {
         console.log("toggle() (clone " + cloneID + ")");
 
@@ -950,13 +970,21 @@ changeAlleleNotation: function(alleleNotation) {
                 if (!this.clone(i).split) {
                     for (var j = 0; j < this.clusters[i].length; j++) {
                         seq = this.clusters[i][j]
-                        this.clone(seq).disable();
+                        var subclone = this.clone(seq);
+                        subclone.disable();
+                        if (seq != i && subclone.isSelected())
+                            // Unselect all subclones
+                            this.unselect(seq);
                     }
                     this.clone(i).enable(this.top)
                 } else {
+                    var main_clone = this.clone(i);
                     for (var k = 0; k < this.clusters[i].length; k++) {
                         seq = this.clusters[i][k]
-                        this.clone(seq).enable(this.top)
+                        var clone = this.clone(seq);
+                        clone.enable(this.top)
+                        if (clone.isSelected() != main_clone.isSelected())
+                            this.select(seq, main_clone.select);
                     }
                 }
             }

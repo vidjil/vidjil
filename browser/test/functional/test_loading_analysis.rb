@@ -129,6 +129,30 @@ end
     assert (not $b.clone_in_scatterplot('2').visible?)
   end
 
+  def test_08_select_cluster
+    $b.clone_in_scatterplot('1').click
+
+    clustered = $b.clone_info('1')
+    assert ($b.clone_in_scatterplot('1', :class => "circle_select").exists?)
+    assert ($b.clone_in_graph('1', :class=> "graph_select").exists?)
+    assert ($b.clone_in_segmenter('1').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
+    assert ( not $b.clone_in_scatterplot('2', :class => "circle_select").exists?)
+    assert ( not $b.clone_in_graph('2', :class=> "graph_select").exists?)
+    assert ( not $b.clone_in_segmenter('2').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
+
+    clustered[:cluster].click
+
+    assert ($b.clone_in_scatterplot('1', :class => "circle_select").exists?)
+    assert ($b.clone_in_graph('1', :class=> "graph_select").exists?)
+    assert ($b.clone_in_segmenter('1').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
+    assert ( $b.clone_in_scatterplot('2', :class => "circle_select").exists?)
+    assert ( $b.clone_in_graph('2', :class=> "graph_select").exists?)
+    assert ( $b.clone_in_segmenter('2').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
+
+    clustered[:cluster].click
+    $b.unselect
+  end
+
   def test_90_select_other
     # Click on first point
     $b.graph_x_legend('1').click
