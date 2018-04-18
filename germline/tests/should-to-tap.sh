@@ -1,1 +1,0 @@
-../../tools/should-to-tap.sh

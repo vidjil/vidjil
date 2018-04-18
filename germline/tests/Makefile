@@ -1,9 +1,5 @@
-SHOULD=$(wildcard should-get-tests/*.should-get)
-TAP=$(SHOULD:.should-get=.tap)
 
-all: $(TAP)
-
-%.tap: %.should-get force
-	./should-to-tap.sh $<
+go:
+	python3 should.py should-get-tests/*.should-get
 
 force:
