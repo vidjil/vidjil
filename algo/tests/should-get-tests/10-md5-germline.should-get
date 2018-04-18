@@ -1,5 +1,5 @@
 !NO_LAUNCHER:
-!LAUNCH: (cd $VIDJIL_DIR/germline ; md5sum {homo-sapiens,mus-musculus,rattus-norvegicus}/*.fa || md5 -r {homo-sapiens,mus-musculus,rattus-norvegicus}/*.fa)
+!LAUNCH: (cd $VIDJIL_DIR/germline ; md5sum */*.fa || md5 -r */*.fa)
 
 $ Check md5 in germline/, sequences split and processed from germline and other databases
 1:b64be21f03b290c6850ce2cb2f1d6f02 homo-sapiens/IGHD.fa
