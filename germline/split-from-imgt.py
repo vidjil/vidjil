@@ -5,7 +5,7 @@
 import sys
 import os
 import urllib
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import re
 
 IMGT_LICENSE = '''
@@ -214,8 +214,14 @@ SPECIES = {
     "Rattus norvegicus_BN; Sprague-Dawley": 'rattus-norvegicus/'
 }
 
-downstream_data = defaultdict(lambda: defaultdict(list))
-upstream_data = defaultdict(lambda: defaultdict(list))
+
+class OrderedDefaultListDict(OrderedDict):
+    def __missing__(self, key):
+        self[key] = value = []
+        return value
+
+downstream_data = defaultdict(lambda: OrderedDefaultListDict())
+upstream_data = defaultdict(lambda: OrderedDefaultListDict())
 
 for l in sys.stdin:
 
