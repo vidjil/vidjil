@@ -104,8 +104,7 @@ def store_data_if_updownstream(fasta_header, path, data, genes):
         if gene_name:
             data[path+'/'+gene][gene_name].append(gene_coord)
     
-def retrieve_genes(filename, genes, tag, additional_length):
-    f = verbose_open_w(filename)
+def retrieve_genes(f, genes, tag, additional_length):
     for gene in genes:
         for coord in genes[gene]:
             start = coord['from']
@@ -270,6 +269,9 @@ for l in sys.stdin:
             current_special.write(l)
 
 for system in upstream_data:
-    retrieve_genes(system + TAG_UPSTREAM + '.fa', upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM)
+    f = verbose_open_w(system + TAG_UPSTREAM + '.fa')
+    retrieve_genes(f, upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM)
+
 for system in downstream_data:
-    retrieve_genes(system + TAG_DOWNSTREAM + '.fa', downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM)
+    f = verbose_open_w(system + TAG_DOWNSTREAM + '.fa')
+    retrieve_genes(f, downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM)
