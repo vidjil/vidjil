@@ -66,7 +66,6 @@ SHOW_ELAPSED_TIME_ABOVE = 1.0
 
 RE_MODIFIERS = re.compile('^(\D*)(\d*)(\D*)$')
 
-EXT_SHOULD = '.should'
 OUT_LOG = '.log'
 OUT_TAP = '.tap'
 
@@ -88,6 +87,8 @@ STATUS = {
     TODO: 'TODO',
     TODO_PASSED: 'TODO-but-ok',
 }
+
+WARN_STATUS = [False, SKIP, TODO_PASSED]
 
 STATUS_TAP = {
     None: 'not run',
@@ -254,27 +255,35 @@ def replace_variables(s, variables):
 class Stats():
     '''
     >>> s = Stats('foo')
-    >>> s[2] += 1
+    >>> s.up(2)
     >>> list(s.keys())
     [2]
+    >>> s[2]
+    [1]
 
     >>> t = Stats()
-    >>> t[2] += 1
-    >>> t[3] += 1
+    >>> t.up(2, 'hello')
+    >>> t.up(3)
 
     >>> u = s + t
     >>> sorted(u.keys())
     [2, 3]
     >>> list(s.keys())
     [2]
+
+    >>> sorted(u.items())
+    [(2, [1, 'hello']), (3, [1])]
     '''
 
     def __init__(self, item=''):
-        self.stats = defaultdict(int)
+        self.stats = defaultdict(list)
         self.item = item
 
     def __getitem__(self, key):
         return self.stats[key]
+
+    def up(self, key, data=1):
+        self.stats[key].append(data)
 
     def __setitem__(self, key, value):
         self.stats[key] = value
@@ -282,20 +291,29 @@ class Stats():
     def keys(self):
         return self.stats.keys()
 
+    def items(self):
+        return self.stats.items()
+
+    def values(self):
+        return self.stats.values()
+
+    def total(self):
+        return sum(map(len, self.stats.values()))
+
     def __add__(self, other):
         result = Stats(self.item)
         for data in (self, other):
             for key in data.keys():
-                result[key] += data[key]
+                result.stats[key] += data.stats[key]
         return result
 
     def str_status(self, status, colorize=True):
         s = '==> '
         s += STATUS[status]
         s += ' - '
-        s += ' '.join(['%s:%d' % (STATUS[key], val) for (key, val) in self.stats.items()] + ['total:%s' %  sum(self.stats.values())])
+        s += ' '.join(['%s:%d' % (STATUS[key], len(val)) for (key, val) in self.items()] + ['total:%s' % self.total()])
         if self.item:
-            s += ' ' + self.item + ('s' if sum(self.stats.values()) > 1 else '')
+            s += ' ' + self.item + ('s' if self.total() > 1 else '')
         return color(STATUS_COLORS[status], s, colorize)
 
 
@@ -308,26 +326,29 @@ class TestAbstract:
     def str_additional_status(self, verbose=False):
         return ''
 
-    def str_status(self, verbose=False, names=STATUS):
+    def str_status(self, verbose=False, names=STATUS, colorize=True):
         s = ''
-        s += names[self.status]
+        s += color(STATUS_COLORS[self.status], names[self.status], colorize)
         s += self.str_additional_status(verbose)
 
         return s
 
-    def tap(self, names=STATUS_TAP):
+    def tap(self, names=STATUS_TAP, colorize=False):
         s = []
 
         if self.status is not None:
-            s.append(self.str_status(names=names))
+            s.append(self.str_status(names=names, colorize=colorize))
 
         if self.name:
             s.append(self.name)
 
         return ' - '.join(s)
 
+    def str(self, colorize):
+        return self.tap(names=STATUS, colorize=colorize)
+
     def __str__(self):
-        return self.tap(names=STATUS)
+        return self.str(colorize=True)
 
 
 class Test(TestAbstract):
@@ -338,7 +359,7 @@ class Test(TestAbstract):
 
     def str_additional_status(self, verbose = False):
         s = ''
-        if self.status == False or verbose:
+        if self.status in WARN_STATUS or verbose:
             s += ' (%s)' % self.info
         return s
 
@@ -351,7 +372,7 @@ class TestLine(TestAbstract):
     >>> repr(test)
     ':hello'
 
-    >>> test.str_status()
+    >>> test.str_status(colorize=False)
     'not run'
 
     >>> test.test(['world'])
@@ -372,7 +393,7 @@ class TestLine(TestAbstract):
     False
     >>> test.count
     1
-    >>> print(test)
+    >>> print(test.str(colorize=False))
     failed (1/3)
     >>> test.tap()
     'not ok (1/3)'
@@ -424,6 +445,7 @@ class TestLine(TestAbstract):
     def __init__(self, modifiers, expression, name=''):
         self.name = name
         self.status = None
+        self.count = '?'
 
         # Extract self.expected_count from modifiers
         m = RE_MODIFIERS.match(modifiers)
@@ -473,7 +495,7 @@ class TestLine(TestAbstract):
     def str_additional_status(self, verbose=False):
         s = ''
 
-        if self.status == False or verbose:
+        if self.status in WARN_STATUS or verbose:
             s += ' (%s/%s)' % (self.count, self.expected_count if self.expected_count is not None else '+')
 
         return s
@@ -518,8 +540,11 @@ class TestSet():
     def __init__(self, modifiers = '', cd = None):
         self.requires = True
         self.requires_cmd = None
+        self.requires_stderr = []
         self.cmds = []
         self.tests = []
+        self.stdin = []
+        self.stdout = []
         self.test_lines = []
         self.status = None
         self.modifiers = modifiers
@@ -547,7 +572,6 @@ class TestSet():
             # Directive -- Requires
             if l.startswith(DIRECTIVE_REQUIRES):
                 self.requires_cmd = l[len(DIRECTIVE_REQUIRES):].strip()
-                self.requires = (subprocess.run(self.requires_cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0)
                 continue
 
             # Directive -- No launcher
@@ -610,30 +634,45 @@ class TestSet():
         print('  stderr --> %s lines' % len(self.stderr))
         print(color(ANSI.CYAN, ''.join(self.stderr), colorize))
 
-    def skip_all(self):
+    def skip_all(self, reason, verbose=1):
+        if verbose > 0:
+            print('Skipping tests: %s' % reason)
         for test in self.tests:
             test.status = SKIP
-            self.stats[test.status] += 1
+            self.stats.up(test.status)
         self.status = SKIP
 
     def test(self, variables=[], verbose=0, colorize=True):
-        self.status = True
-
-        if not self.requires :
-            if verbose > 0:
-                print('Skipping tests as condition is not met: %s' % self.requires_cmd)
-            self.skip_all()
-            return self.status
 
         variables_all = self.variables + variables
         if verbose > 1:
             print_variables(variables_all)
 
+        def cmd_variables_cd(cmd):
+            cmd = replace_variables(cmd, variables_all)
+            if self.cd:
+                cmd = 'cd %s ; ' % self.cd + cmd
+            if verbose > 0:
+                print(color(ANSI.MAGENTA, cmd, colorize))
+            return cmd
+
+        self.status = True
+
+        if self.requires_cmd:
+            requires_cmd = cmd_variables_cd(self.requires_cmd)
+            p = subprocess.Popen(requires_cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            self.requires = (p.wait() == 0)
+            self.requires_stderr = [l.decode(errors='replace') for l in p.stderr.readlines()]
+            if verbose > 0:
+                print(color(ANSI.CYAN, ''.join(self.requires_stderr), colorize))
+
+            if not self.requires:
+                self.skip_all('Condition is not met: %s' % self.requires_cmd, verbose)
+                return self.status
+
         if not self.use_launcher:
             if replace_variables(VAR_LAUNCHER, variables_all):
-                if verbose > 0:
-                    print('Skipping %s tests' % DIRECTIVE_NO_LAUNCHER)
-                self.skip_all()
+                self.skip_all('%s while %s is given' % (DIRECTIVE_NO_LAUNCHER, VAR_LAUNCHER), verbose)
                 return self.status
 
         start_time = time.time()
@@ -642,27 +681,24 @@ class TestSet():
 
         if not VAR_LAUNCHER in cmd:
             cmd = VAR_LAUNCHER + ' ' + cmd
-        cmd = replace_variables(cmd, variables_all)
-        if self.cd:
-            cmd = 'cd %s ; ' % self.cd + cmd
-        if verbose > 0:
-            print(color(ANSI.MAGENTA, cmd, colorize))
+
+        cmd = cmd_variables_cd(cmd)
+
         p = subprocess.Popen([cmd], shell=True,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                              close_fds=True)
 
         try:
             self.exit_code = p.wait(TIMEOUT)
+            self.tests.append(Test('Exit code is %d' % self.expected_exit_code, self.exit_code == self.expected_exit_code, str(self.exit_code)))
         except subprocess.TimeoutExpired:
-            if verbose > 0:
-                print('Timeout after %s seconds, skipping tests' % TIMEOUT)
-            self.skip_all()
-            return self.status
+            self.exit_code = None
+            self.tests.append(Test('Exit code is %d' % self.expected_exit_code, SKIP, 'timeout after %s seconds' % TIMEOUT))
 
         self.stdout = [l.decode(errors='replace') for l in p.stdout.readlines()]
         self.stderr = [l.decode(errors='replace') for l in p.stderr.readlines()]
 
-        self.tests.append(Test('Exit code is %d' % self.expected_exit_code, self.exit_code == self.expected_exit_code, str(self.exit_code)))
+
 
         if verbose > 0:
             self.print_stderr(colorize)
@@ -671,13 +707,13 @@ class TestSet():
 
         for test in self.tests:
             test.test(self.test_lines, variables=variables_all, verbose=verbose-1)
-            self.stats[test.status] += 1
+            self.stats.up(test.status)
 
             if not test.status:
                 self.status = False
 
-            if verbose > 0 or test.status in [False, TODO_PASSED]:
-                print(test)
+            if verbose > 0 or test.status in WARN_STATUS:
+                print(test.str(colorize))
 
         if self.status is False and verbose <= 0:
             print(color(ANSI.MAGENTA, cmd, colorize))
@@ -725,12 +761,12 @@ class FileSet():
         self.status = None
         self.stats = Stats('file')
         self.stats_tests = Stats('test')
-        self.failed_files = []
 
     def test(self, variables=None, cd=None, cd_same=False, output=None, verbose=0):
         self.status = True
 
-        for f in self.files:
+        try:
+          for f in self.files:
             if verbose > 0:
                 print(f)
             cd_f = os.path.dirname(f) if cd_same else cd
@@ -738,18 +774,19 @@ class FileSet():
             s.load(open(f))
 
             s.test(variables, verbose - 1)
-            self.stats[s.status] += 1
+            self.stats.up(s.status, f)
             if not s.status:
                 self.status = False
-                self.failed_files.append(f)
 
             self.stats_tests += s.stats
 
+            filename_without_ext = os.path.splitext(f)[0]
+
             if output and OUT_LOG in output:
-                write_to_file(f.replace(EXT_SHOULD, OUT_LOG), ''.join(s.test_lines))
+                write_to_file(filename_without_ext + OUT_LOG, ''.join(s.test_lines))
 
             if output and OUT_TAP in output:
-                write_to_file(f.replace(EXT_SHOULD, OUT_TAP), s.tap())
+                write_to_file(filename_without_ext + OUT_TAP, s.tap())
 
             if verbose > 0 or s.status is False:
                 if not verbose:
@@ -759,16 +796,20 @@ class FileSet():
                         print(s.str_elapsed_time())
                 print(s.str_status())
                 print('')
+        except KeyboardInterrupt:
+            print('==== interrupted ====\n')
 
         print('Summary', end=' ')
         print(self.stats.str_status(self.status))
         print('Summary', end=' ')
         print(self.stats_tests.str_status(self.status))
 
-        if self.failed_files:
-            print('Failed files:')
-            for f in self.failed_files:
-                print(f)
+        for sta in self.stats.keys():
+            if sta == True:
+                continue
+            print('files with %s:' % color(STATUS_COLORS[sta], STATUS[sta]))
+            for f in self.stats[sta]:
+                print('  ' + f)
 
         return self.status
 
