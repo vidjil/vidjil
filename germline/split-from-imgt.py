@@ -219,6 +219,8 @@ upstream_data = defaultdict(lambda: defaultdict(list))
 
 for l in sys.stdin:
 
+    # New sequence: compute 'current_files' and stores up/downstream_data[]
+
     if ">" in l:
         current_files = []
         current_special = None
@@ -259,14 +261,23 @@ for l in sys.stdin:
                 current_special = verbose_open_w(name)
 
 
+    # Possibly gap J_REGION
+
     if '>' not in l and current_files and feature == FEATURE_J_REGION:
         l = gap_j(l)
+
+    # Dump 'l' to the concerned files
 
     for current_file in current_files:
             current_file.write(l)
 
     if current_special:
             current_special.write(l)
+
+    # End, loop to next 'l'
+
+
+# Dump up/downstream data
 
 for system in upstream_data:
     f = verbose_open_w(system + TAG_UPSTREAM + '.fa')
