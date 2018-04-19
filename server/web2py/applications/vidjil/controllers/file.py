@@ -207,7 +207,7 @@ def submit():
         pre_process = int(data['pre_process'])
         pre_process_flag = "WAIT"
 
-    sets, id_dict, errors = validate_sets(data['set_ids'])
+    sets, common_id_dict, errors = validate_sets(data['set_ids'])
     data['sets'] = sets
 
     data['errors'] = errors
@@ -252,6 +252,8 @@ def submit():
         mes = "file (%d) %s %sed" % (int(f["id"]), f["filename"], action)
         f['message'].append(mes)
         f['message'].append("You must reselect the file for it to be uploaded")
+
+        id_dict = common_id_dict.copy()
 
         for key in f['id_dict']:
             if key not in id_dict:
