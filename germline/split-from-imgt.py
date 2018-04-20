@@ -5,7 +5,7 @@
 import sys
 import os
 import urllib
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import re
 
 IMGT_LICENSE = '''
@@ -24,12 +24,22 @@ NCBI_API = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore
 # Parse lines in IMGT/GENE-DB such as:
 # >M12949|TRGV1*01|Homo sapiens|ORF|...
 
-open_files = {}
+
 current_file = None
 
 def verbose_open_w(name):
     print (" ==> %s" % name)
     return open(name, 'w')
+
+class KeyDefaultDict(defaultdict):
+    def __missing__(self, key):
+        if self.default_factory is None:
+            raise KeyError((key,))
+        self[key] = value = self.default_factory(key)
+        return value
+
+open_files = KeyDefaultDict(lambda key: verbose_open_w('%s.fa' % key))
+
 
 def get_split_files(seq, split_seq):
     for s_seq in split_seq.keys():
@@ -94,8 +104,7 @@ def store_data_if_updownstream(fasta_header, path, data, genes):
         if gene_name:
             data[path+'/'+gene][gene_name].append(gene_coord)
     
-def retrieve_genes(filename, genes, tag, additional_length):
-    f = verbose_open_w(filename)
+def retrieve_genes(f, genes, tag, additional_length):
     for gene in genes:
         for coord in genes[gene]:
             start = coord['from']
@@ -205,10 +214,18 @@ SPECIES = {
     "Rattus norvegicus_BN; Sprague-Dawley": 'rattus-norvegicus/'
 }
 
-downstream_data = defaultdict(lambda: defaultdict(list))
-upstream_data = defaultdict(lambda: defaultdict(list))
+
+class OrderedDefaultListDict(OrderedDict):
+    def __missing__(self, key):
+        self[key] = value = []
+        return value
+
+downstream_data = defaultdict(lambda: OrderedDefaultListDict())
+upstream_data = defaultdict(lambda: OrderedDefaultListDict())
 
 for l in sys.stdin:
+
+    # New sequence: compute 'current_files' and stores up/downstream_data[]
 
     if ">" in l:
         current_files = []
@@ -243,9 +260,6 @@ for l in sys.stdin:
                 if systems:
                     keys = [path + s for s in systems]
                 for key in keys:
-                    if not (key in open_files):
-                        name = '%s.fa' % (key)
-                        open_files[key] = verbose_open_w(name)
                     current_files.append(open_files[key])
 
             if seq in SPECIAL_SEQUENCES:
@@ -253,8 +267,12 @@ for l in sys.stdin:
                 current_special = verbose_open_w(name)
 
 
+    # Possibly gap J_REGION
+
     if '>' not in l and current_files and feature == FEATURE_J_REGION:
         l = gap_j(l)
+
+    # Dump 'l' to the concerned files
 
     for current_file in current_files:
             current_file.write(l)
@@ -262,7 +280,15 @@ for l in sys.stdin:
     if current_special:
             current_special.write(l)
 
+    # End, loop to next 'l'
+
+
+# Dump up/downstream data
+
 for system in upstream_data:
-    retrieve_genes(system + TAG_UPSTREAM + '.fa', upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM)
+    f = verbose_open_w(system + TAG_UPSTREAM + '.fa')
+    retrieve_genes(f, upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM)
+
 for system in downstream_data:
-    retrieve_genes(system + TAG_DOWNSTREAM + '.fa', downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM)
+    f = verbose_open_w(system + TAG_DOWNSTREAM + '.fa')
+    retrieve_genes(f, downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM)
