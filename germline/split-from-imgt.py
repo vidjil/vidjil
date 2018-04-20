@@ -89,6 +89,7 @@ def get_gene_coord(imgt_line):
         end = end.split(',')[0]
     return elements[0][1:], {'from': int(start),
                              'to': int(end),
+                             'species': elements[2],
                              'imgt_name': elements[1],
                              'imgt_data': '|'.join(elements[1:5])}
 
@@ -99,9 +100,11 @@ def store_data_if_updownstream(fasta_header, path, data, genes):
         if gene_name:
             data[path+'/'+gene][gene_name].append(gene_coord)
     
-def retrieve_genes(f, genes, tag, additional_length):
+def retrieve_genes(f, genes, tag, additional_length, gene_list):
     for gene in genes:
         for coord in genes[gene]:
+            gene_id = gene_list.get_gene_id_from_imgt_name(coord['species'], coord['imgt_name'])
+            print(coord, gene_id)
             start = coord['from']
             end = coord['to']
             if additional_length > 0:
@@ -241,7 +244,7 @@ class IMGTGENEDBGeneList():
 
 
 
-def split_IMGTGENEDBReferenceSequences(f):
+def split_IMGTGENEDBReferenceSequences(f, gene_list):
 
   downstream_data = defaultdict(lambda: OrderedDefaultListDict())
   upstream_data = defaultdict(lambda: OrderedDefaultListDict())
@@ -310,11 +313,11 @@ def split_IMGTGENEDBReferenceSequences(f):
 
   for system in upstream_data:
       f = verbose_open_w(system + TAG_UPSTREAM + '.fa')
-      retrieve_genes(f, upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM)
+      retrieve_genes(f, upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM, gene_list)
 
   for system in downstream_data:
       f = verbose_open_w(system + TAG_DOWNSTREAM + '.fa')
-      retrieve_genes(f, downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM)
+      retrieve_genes(f, downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM, gene_list)
 
 
 
@@ -327,5 +330,6 @@ if __name__ == '__main__':
     ReferenceSequences = sys.argv[1]
     GeneList = sys.argv[2]
 
-    split_IMGTGENEDBReferenceSequences(ReferenceSequences)
+    gl = IMGTGENEDBGeneList(GeneList)
+    split_IMGTGENEDBReferenceSequences(ReferenceSequences, gl)
     
