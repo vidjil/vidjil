@@ -1,4 +1,4 @@
-!LAUNCH: (cd ../.. ; python analysis-windows.py -w 40 ../algo/tests/data/analysis-with-windows.analysis ; python analysis-windows.py -w 60 ../algo/tests/data/analysis-with-windows.analysis.new ; ./diff_json.sh ../algo/tests/data/analysis-with-windows.analysis{,.new.new} -s ; cat ../algo/tests/data/analysis-with-windows.analysis.new)
+!LAUNCH: (cd ../.. ; python analysis-windows.py -w 40 ../algo/tests/data/analysis-with-windows.analysis ; python analysis-windows.py -w 60 ../algo/tests/data/analysis-with-windows.analysis.new ; ./diff_json.sh ../algo/tests/data/analysis-with-windows.analysis ../algo/tests/data/analysis-with-windows.analysis.new.new -s ; cat ../algo/tests/data/analysis-with-windows.analysis.new)
 
 $ First and last files are identical
 1:are identical
