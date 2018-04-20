@@ -1,10 +1,10 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -KA -z 0 -s \\\\#\\\\#\\\\#\\\\#\\\\#-\\\\#\\\\#\\\\#\\\\#\\\\# -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa -D $VIDJIL_DIR/germline/homo-sapiens/IGHD.fa   $VIDJIL_DATA/common-V-D.fa  ; cat out/common-V-D.affects
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -KA -z 0 -s "#####-#####" -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa -D $VIDJIL_DIR/germline/homo-sapiens/IGHD.fa   $VIDJIL_DATA/common-V-D.fa  ; cat out/common-V-D.affects
 
 $ Segments the sequence
 1: SEG  .* -> .* 1 
 
 $ Find the good affects for the D segment, including a AMBIGUOUS k-mer, common with V
-1:_ _ _ \\?.f.f.f.f.f.f _ _ _ _
+1:_ _ _ \?.f.f.f.f.f.f _ _ _ _
 
 $ The windows found by the KmerSegmenter has a fairly good position
 2: 1 163 180 220

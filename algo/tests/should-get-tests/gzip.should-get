@@ -1,5 +1,5 @@
 !NO_LAUNCHER:
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/clones_simul.fa > out-fa ;  $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -b clones_simul $VIDJIL_DATA/clones_simul.fa.gz > out-fa-gz ; diff -s -I '\#' -I 'index' -I 'Command line' out-fa out-fa-gz ; echo 'Diff: '\\$?; wc -l out-fa-gz
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/clones_simul.fa > out-fa ;  $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -b clones_simul $VIDJIL_DATA/clones_simul.fa.gz > out-fa-gz ; diff -s -I '\#' -I 'index' -I 'Command line' out-fa out-fa-gz ; echo 'Diff: '$?; wc -l out-fa-gz
 
 $ Identical output
 1:Diff: 0

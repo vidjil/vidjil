@@ -13,7 +13,7 @@ $ Find the good length statistics
 1: SEG -> .* 84.0
 
 $ Four segmented on forward
-1:SEG_\\+ -> 4
+1:SEG_\+ -> 4
 
 $ Three segmented on reverse (Junc#01 doesn't have its rc)
 1:SEG_- -> 3

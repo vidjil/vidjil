@@ -1,4 +1,4 @@
 !LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/long-segmentation.fa
 
 $ Sequence should be segmented by k-mer segmenter
-e1:SEG_+ -> 1 
+b:SEG_[+] -> 1 
