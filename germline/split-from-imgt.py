@@ -8,7 +8,7 @@ import urllib
 from collections import defaultdict, OrderedDict
 import re
 
-from ncbi import *
+import ncbi
 
 IMGT_LICENSE = '''
    # To use the IMGT germline databases (IMGT/GENE-DB), you have to agree to IMGT license: 
@@ -104,14 +104,22 @@ def retrieve_genes(f, genes, tag, additional_length, gene_list):
     for gene in genes:
         for coord in genes[gene]:
             gene_id = gene_list.get_gene_id_from_imgt_name(coord['species'], coord['imgt_name'])
-            print(coord, gene_id)
-            start = coord['from']
-            end = coord['to']
+
+            if gene_id:
+                # gene_id is found, extract from chromosome
+                (target, start, end) = ncbi.get_gene_positions(gene_id)
+                print(coord, gene_id, target, start, end)
+            else:
+                # extract from gene
+                target = gene
+                start = coord['from']
+                end = coord['to']
+
             if additional_length > 0:
                 end += additional_length
             elif additional_length < 0:
                 start = max(1, start + additional_length)
-            gene_data = get_gene_sequence(gene, coord['imgt_data'] + tag, start, end)
+            gene_data = ncbi.get_gene_sequence(target, coord['imgt_data'] + tag, start, end)
             if coord['imgt_data'].split('|')[-1] == FEATURE_J_REGION:
                 gene_lines = gene_data.split('\n')
                 gene_lines[1] = gap_j(gene_lines[1].lower())
