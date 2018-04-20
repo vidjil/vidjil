@@ -19,8 +19,6 @@ IMGT_LICENSE = '''
    # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
 '''
 
-print (IMGT_LICENSE)
-
 def remove_allele(name):
     return name.split('*')[0]
 
@@ -217,11 +215,6 @@ class OrderedDefaultListDict(OrderedDict):
         self[key] = value = []
         return value
 
-downstream_data = defaultdict(lambda: OrderedDefaultListDict())
-upstream_data = defaultdict(lambda: OrderedDefaultListDict())
-
-ReferenceSequences = sys.argv[1]
-GeneList = sys.argv[2]
 
 
 class IMGTGENEDBGeneList():
@@ -247,7 +240,13 @@ class IMGTGENEDBGeneList():
         return self.data[species, remove_allele(name)]
 
 
-for l in open(ReferenceSequences):
+
+def split_IMGTGENEDBReferenceSequences(f):
+
+  downstream_data = defaultdict(lambda: OrderedDefaultListDict())
+  upstream_data = defaultdict(lambda: OrderedDefaultListDict())
+
+  for l in open(ReferenceSequences):
 
     # New sequence: compute 'current_files' and stores up/downstream_data[]
 
@@ -307,12 +306,26 @@ for l in open(ReferenceSequences):
     # End, loop to next 'l'
 
 
-# Dump up/downstream data
+  # Dump up/downstream data
 
-for system in upstream_data:
-    f = verbose_open_w(system + TAG_UPSTREAM + '.fa')
-    retrieve_genes(f, upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM)
+  for system in upstream_data:
+      f = verbose_open_w(system + TAG_UPSTREAM + '.fa')
+      retrieve_genes(f, upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM)
 
-for system in downstream_data:
-    f = verbose_open_w(system + TAG_DOWNSTREAM + '.fa')
-    retrieve_genes(f, downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM)
+  for system in downstream_data:
+      f = verbose_open_w(system + TAG_DOWNSTREAM + '.fa')
+      retrieve_genes(f, downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM)
+
+
+
+
+
+if __name__ == '__main__':
+
+    print (IMGT_LICENSE)
+
+    ReferenceSequences = sys.argv[1]
+    GeneList = sys.argv[2]
+
+    split_IMGTGENEDBReferenceSequences(ReferenceSequences)
+    
