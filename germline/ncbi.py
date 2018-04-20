@@ -50,12 +50,21 @@ def get_last_LocationHistType(gene):
     xml = minidom.parseString(urllib.urlopen(API_GENE_ID_XML % gene).read())
 
     locations = xml.getElementsByTagName('LocationHistType')
-    return xml_bang_one(locations[0])
+
+    if locations:
+        return xml_bang_one(locations[0])
+    else:
+        raise KeyError, gene
 
 def get_gene_positions(gene):
     '''
     >>> get_gene_positions(6969)
     (u'NC_000007.14', 38253428, 38253379)
+
+    >>> get_gene_positions('zoycooxz')
+    Traceback (most recent call last):
+      ...
+    KeyError: 'zoycooxz'
     '''
 
     loc = get_last_LocationHistType(gene)

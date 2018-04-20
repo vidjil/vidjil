@@ -107,9 +107,14 @@ def retrieve_genes(f, genes, tag, additional_length, gene_list):
 
             if gene_id:
                 # gene_id is found, extract from chromosome
-                (target, start, end) = ncbi.get_gene_positions(gene_id)
-                print(coord, gene_id, target, start, end)
-            else:
+                try:
+                    (target, start, end) = ncbi.get_gene_positions(gene_id)
+                    print(coord, gene_id, target, start, end)
+                except KeyError:
+                    print('! No positions for %s (%s)' % (gene_id, gene))
+                    gene_id = None
+
+            if not gene_id:
                 # extract from gene
                 target = gene
                 start = coord['from']
