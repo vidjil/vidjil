@@ -120,11 +120,7 @@ def retrieve_genes(f, genes, tag, additional_length, gene_list):
                 start = coord['from']
                 end = coord['to']
 
-            if additional_length > 0:
-                end += additional_length
-            elif additional_length < 0:
-                start = max(1, start + additional_length)
-            gene_data = ncbi.get_gene_sequence(target, coord['imgt_data'] + tag, start, end)
+            gene_data = ncbi.get_gene_sequence(target, coord['imgt_data'] + tag, start, end, additional_length)
             if coord['imgt_data'].split('|')[-1] == FEATURE_J_REGION:
                 gene_lines = gene_data.split('\n')
                 gene_lines[1] = gap_j(gene_lines[1].lower())

@@ -18,10 +18,15 @@ from xml.dom import minidom, Node
 
 # The two following functions should be refactored as one (used in split-from-imgt and get-CD)
 
-def get_gene_sequence(gene, other_gene_name, start, end):
+def get_gene_sequence(gene, other_gene_name, start, end, additional_length):
     '''
     Return the gene sequences between positions start and end (included).
     '''
+    if additional_length > 0:
+        end += additional_length
+    elif additional_length < 0:
+        start = max(1, start + additional_length)
+
     fasta_string = urllib.urlopen(API_NUCCORE_ID_FROM_TO % (gene, start, end)).read()
     return re.sub('(>\S*) ', r'\1|'+other_gene_name+'|', fasta_string)
 
