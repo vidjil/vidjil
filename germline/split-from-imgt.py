@@ -246,78 +246,78 @@ class IMGTGENEDBGeneList():
 
 def split_IMGTGENEDBReferenceSequences(f, gene_list):
 
-  downstream_data = defaultdict(lambda: OrderedDefaultListDict())
-  upstream_data = defaultdict(lambda: OrderedDefaultListDict())
+    downstream_data = defaultdict(lambda: OrderedDefaultListDict())
+    upstream_data = defaultdict(lambda: OrderedDefaultListDict())
 
-  for l in open(ReferenceSequences):
+    for l in open(ReferenceSequences):
 
-    # New sequence: compute 'current_files' and stores up/downstream_data[]
+        # New sequence: compute 'current_files' and stores up/downstream_data[]
 
-    if ">" in l:
-        current_files = []
-        current_special = None
+        if ">" in l:
+            current_files = []
+            current_special = None
 
-        species = l.split('|')[2].strip()
-        feature = l.split('|')[4].strip()
+            species = l.split('|')[2].strip()
+            feature = l.split('|')[4].strip()
 
-        if species in SPECIES and feature in FEATURES:
-            seq = l.split('|')[1]
-            path = SPECIES[species]
-
-            if feature in FEATURES_VDJ:
-                system = seq[:4]
-            else:
-                system = seq[:seq.find("*")]
-                if not system in CLASSES:
-                    print "! Unknown class: ", system
-                system = system.replace("IGH", "IGHC=")
-
-            keys = [path + system]
-
-            check_directory_exists(path)
-
-            if system.startswith('IG') or system.startswith('TR'):
+            if species in SPECIES and feature in FEATURES:
+                seq = l.split('|')[1]
+                path = SPECIES[species]
 
                 if feature in FEATURES_VDJ:
-                    store_data_if_updownstream(l, path, downstream_data, DOWNSTREAM_REGIONS)
-                    store_data_if_updownstream(l, path, upstream_data, UPSTREAM_REGIONS)
+                    system = seq[:4]
+                else:
+                    system = seq[:seq.find("*")]
+                    if not system in CLASSES:
+                        print "! Unknown class: ", system
+                    system = system.replace("IGH", "IGHC=")
 
-                systems = get_split_files(seq, SPLIT_SEQUENCES)
-                if systems:
-                    keys = [path + s for s in systems]
-                for key in keys:
-                    current_files.append(open_files[key])
+                keys = [path + system]
 
-            if seq in SPECIAL_SEQUENCES:
-                name = '%s.fa' % seq.replace('*', '-')
-                current_special = verbose_open_w(name)
+                check_directory_exists(path)
 
+                if system.startswith('IG') or system.startswith('TR'):
 
-    # Possibly gap J_REGION
+                    if feature in FEATURES_VDJ:
+                        store_data_if_updownstream(l, path, downstream_data, DOWNSTREAM_REGIONS)
+                        store_data_if_updownstream(l, path, upstream_data, UPSTREAM_REGIONS)
 
-    if '>' not in l and current_files and feature == FEATURE_J_REGION:
-        l = gap_j(l)
+                    systems = get_split_files(seq, SPLIT_SEQUENCES)
+                    if systems:
+                        keys = [path + s for s in systems]
+                    for key in keys:
+                        current_files.append(open_files[key])
 
-    # Dump 'l' to the concerned files
-
-    for current_file in current_files:
-            current_file.write(l)
-
-    if current_special:
-            current_special.write(l)
-
-    # End, loop to next 'l'
+                if seq in SPECIAL_SEQUENCES:
+                    name = '%s.fa' % seq.replace('*', '-')
+                    current_special = verbose_open_w(name)
 
 
-  # Dump up/downstream data
+        # Possibly gap J_REGION
 
-  for system in upstream_data:
-      f = verbose_open_w(system + TAG_UPSTREAM + '.fa')
-      retrieve_genes(f, upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM, gene_list)
+        if '>' not in l and current_files and feature == FEATURE_J_REGION:
+            l = gap_j(l)
 
-  for system in downstream_data:
-      f = verbose_open_w(system + TAG_DOWNSTREAM + '.fa')
-      retrieve_genes(f, downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM, gene_list)
+        # Dump 'l' to the concerned files
+
+        for current_file in current_files:
+                current_file.write(l)
+
+        if current_special:
+                current_special.write(l)
+
+        # End, loop to next 'l'
+
+
+    # Dump up/downstream data
+
+    for system in upstream_data:
+        f = verbose_open_w(system + TAG_UPSTREAM + '.fa')
+        retrieve_genes(f, upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM, gene_list)
+
+    for system in downstream_data:
+        f = verbose_open_w(system + TAG_DOWNSTREAM + '.fa')
+        retrieve_genes(f, downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM, gene_list)
 
 
 
