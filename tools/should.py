@@ -709,8 +709,13 @@ class TestSet():
             test.test(self.test_lines, variables=variables_all, verbose=verbose-1)
             self.stats.up(test.status)
 
-            if not test.status:
+            # When a test fails, the file fails
+            if test.status is False:
                 self.status = False
+
+            # When the file is not failing, we may report a more sublte status
+            if test.status in WARN_STATUS and self.status is True:
+                self.status = test.status
 
             if verbose > 0 or test.status in WARN_STATUS:
                 print(test.str(colorize))
