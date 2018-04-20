@@ -21,6 +21,9 @@ IMGT_LICENSE = '''
 
 print (IMGT_LICENSE)
 
+def remove_allele(name):
+    return name.split('*')[0]
+
 # Parse lines in IMGT/GENE-DB such as:
 # >M12949|TRGV1*01|Homo sapiens|ORF|...
 
@@ -219,6 +222,30 @@ upstream_data = defaultdict(lambda: OrderedDefaultListDict())
 
 ReferenceSequences = sys.argv[1]
 GeneList = sys.argv[2]
+
+
+class IMGTGENEDBGeneList():
+    '''
+    Parse lines such as
+    'Homo sapiens;TRGJ2;F;Homo sapiens T cell receptor gamma joining 2;1;7;7p14;M12961;6969;'
+
+    >>> gl = IMGTGENEDBGeneList('IMGTGENEDB-GeneList')
+    >>> gl.get_gene_id_from_imgt_name('Homo sapiens', 'TRGJ2*01')
+    '6969'
+    '''
+
+    def __init__(self, f):
+
+        self.data = defaultdict(str)
+
+        for l in open(f):
+            ll = l.split(';')
+            species, name, gene_id = ll[0], ll[1], ll[-2]
+            self.data[species, name] = gene_id
+
+    def get_gene_id_from_imgt_name(self, species, name):
+        return self.data[species, remove_allele(name)]
+
 
 for l in open(ReferenceSequences):
 
