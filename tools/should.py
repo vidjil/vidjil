@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# should.py -- Test command-line applications through .should files
+# should -- Test command-line applications through .should files
 #
 # Copyright (C) 2018 by CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
 # Contributors:
@@ -12,13 +12,13 @@
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# "should.py" is distributed in the hope that it will be useful,
+# "should" is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with "should.py". If not, see <http://www.gnu.org/licenses/>
+# along with "should". If not, see <http://www.gnu.org/licenses/>
 
 import sys
 
@@ -31,13 +31,17 @@ import argparse
 import subprocess
 import time
 import os.path
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
+import xml.etree.ElementTree as ET
+import datetime
 
 # Make sure the output is in utf8
 sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf8', buffering=1)
 sys.stderr = open(sys.stderr.fileno(), mode='w', encoding='utf8', buffering=1)
 
 DEFAULT_CFG = 'should.cfg'
+RETRY = 'should.retry'
+RETRY_FLAG = '--retry'
 
 TOKEN_COMMENT = '#'
 TOKEN_DIRECTIVE = '!'
@@ -68,6 +72,7 @@ RE_MODIFIERS = re.compile('^(\D*)(\d*)(\D*)$')
 
 OUT_LOG = '.log'
 OUT_TAP = '.tap'
+OUT_XML = 'should.xml'
 
 LINE = '-' * 40
 ENDLINE_CHARS = '\r\n'
@@ -98,6 +103,10 @@ STATUS_TAP = {
     TODO: 'not ok # TODO',
     TODO_PASSED: 'ok # TODO',
 }
+
+STATUS_XML = STATUS.copy()
+STATUS_XML[False] = 'failure'
+STATUS_XML[SKIP] = 'skipped'
 
 
 # Simple colored output
@@ -176,7 +185,7 @@ for (mod_char, mod_long, mod_help) in MODIFIERS:
 parser = ArgParser(description='Test command-line applications through .should files',
                    fromfile_prefix_chars='@',
                    epilog='''Example:
-  python3 %(prog)s demo/hello.should''',
+  %(prog)s demo/hello.should''',
                                  formatter_class=argparse.RawTextHelpFormatter)
 
 options = ArgParser(fromfile_prefix_chars='@') # Can be used in !OPTIONS: directive
@@ -192,11 +201,12 @@ output = parser.add_argument_group('output options')
 
 output.add_argument('--log', action='append_const', dest='output', const=OUT_LOG, help='stores the output into .log files')
 output.add_argument('--tap', action='append_const', dest='output', const=OUT_TAP, help='outputs .tap files')
+output.add_argument('--xml', action='append_const', dest='output', const=OUT_XML, help='outputs JUnit-like XML into %s' % OUT_XML)
 output.add_argument('-v', '--verbose', action='count', help='increase verbosity', default=1)
 output.add_argument('-q', '--quiet', action='store_const', dest='verbose', const=0, help='verbosity to zero')
 
 parser.add_argument('file', metavar='should-file', nargs='+', help='''input files (.should)''')
-
+parser.add_argument(RETRY_FLAG, action='store_true', help='launch again the last failed or warned tests')
 
 class ShouldException(BaseException):
     pass
@@ -251,6 +261,10 @@ def replace_variables(s, variables):
     return s
 
 
+class OrderedDefaultListDict(OrderedDict):
+    def __missing__(self, key):
+        self[key] = value = []
+        return value
 
 class Stats():
     '''
@@ -276,7 +290,7 @@ class Stats():
     '''
 
     def __init__(self, item=''):
-        self.stats = defaultdict(list)
+        self.stats = OrderedDefaultListDict()
         self.item = item
 
     def __getitem__(self, key):
@@ -319,7 +333,7 @@ class Stats():
 
 
 
-class TestAbstract:
+class TestCaseAbstract:
     def __init__(self):
         raise NotImplemented
 
@@ -332,6 +346,13 @@ class TestAbstract:
         s += self.str_additional_status(verbose)
 
         return s
+
+    def xml(self):
+        x = ET.Element('testcase', {'name': self.name, 'status': STATUS_XML[self.status]})
+        if self.status in WARN_STATUS:
+            x.append(ET.Element(STATUS_XML[self.status],
+                                {'message': repr(self) + '\n' + self.str_status(names=STATUS_XML, colorize = False)}))
+        return x
 
     def tap(self, names=STATUS_TAP, colorize=False):
         s = []
@@ -350,8 +371,10 @@ class TestAbstract:
     def __str__(self):
         return self.str(colorize=True)
 
+    def __repr__(self):
+        raise NotImplemented
 
-class Test(TestAbstract):
+class ExternalTestCase(TestCaseAbstract):
     def __init__(self, name, status, info=''):
         self.name = name
         self.status = status
@@ -366,9 +389,13 @@ class Test(TestAbstract):
     def test(self, *args, **kwargs):
         pass
 
-class TestLine(TestAbstract):
+    def __repr__(self):
+        return self.info
+
+
+class TestCase(TestCaseAbstract):
     '''
-    >>> test = TestLine('', 'hello')
+    >>> test = TestCase('', 'hello')
     >>> repr(test)
     ':hello'
 
@@ -385,7 +412,7 @@ class TestLine(TestAbstract):
     True
 
 
-    >>> test = TestLine('3', 'hello')
+    >>> test = TestCase('3', 'hello')
     >>> repr(test)
     '3:hello'
 
@@ -402,41 +429,41 @@ class TestLine(TestAbstract):
     True
 
 
-    >>> TestLine('r2', ' e.*o ').test(['hello', 'ello', 'world'])
+    >>> TestCase('r2', ' e.*o ').test(['hello', 'ello', 'world'])
     True
 
-    >>> TestLine('z1', ' e').test(['hello', 'h ello'])
+    >>> TestCase('z1', ' e').test(['hello', 'h ello'])
     True
 
-    >>> TestLine('rl', 'e.*o').test(['hel', 'lo'])
+    >>> TestCase('rl', 'e.*o').test(['hel', 'lo'])
     True
 
-    >>> TestLine('', 'e o').test(['e  o'])
+    >>> TestCase('', 'e o').test(['e  o'])
     False
 
-    >>> TestLine('f', 'e o').test(['e  o'])
+    >>> TestCase('f', 'e o').test(['e  o'])
     'TODO'
 
-    >>> TestLine('b', 'e o').test(['e  o'])
+    >>> TestCase('b', 'e o').test(['e  o'])
     True
 
-    >>> TestLine('b', 'e    o').test(['e  o'])
+    >>> TestCase('b', 'e    o').test(['e  o'])
     True
 
-    >>> TestLine('w2', 'o').test(['hello world'])
+    >>> TestCase('w2', 'o').test(['hello world'])
     True
 
-    >>> TestLine('wW2', 'o').test(['hello world'])
+    >>> TestCase('wW2', 'o').test(['hello world'])
     False
 
-    >>> TestLine('wr2', 'a.c').test(['bli abc axc bla'])
+    >>> TestCase('wr2', 'a.c').test(['bli abc axc bla'])
     True
 
 
-    >>> repr(TestLine('x3y', 'hello'))
+    >>> repr(TestCase('x3y', 'hello'))
     'xy3:hello'
 
-    >>> print(TestLine('1x2', 'hello')) # doctest: +IGNORE_EXCEPTION_DETAIL
+    >>> print(TestCase('1x2', 'hello')) # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
      ...
     ShouldException: Error in parsing modifiers: 1x2
@@ -504,9 +531,9 @@ class TestLine(TestAbstract):
         return '%s%s:%s' % (self.modifiers, self.expected_count if self.expected_count is not None else '', self.expression)
 
 
-class TestSet():
+class TestSuite():
     '''
-    >>> s = TestSet()
+    >>> s = TestSuite()
     >>> s.load(['echo "hello"', '$My test', ':hello'])
     >>> print(s)
     echo "hello"
@@ -517,7 +544,7 @@ class TestSet():
     >>> s.tests[0].status
     True
 
-    >>> s2 = TestSet('r')
+    >>> s2 = TestSuite('r')
     >>> s2.variables.append(("$LAUNCHER", ""))
     >>> s2.load(['echo "hello"', '$ A nice test', ':e.*o'])
     >>> s2.test(verbose = 1, colorize = False)   # doctest: +NORMALIZE_WHITESPACE
@@ -537,7 +564,8 @@ class TestSet():
     ok - Exit code is 0
     '''
 
-    def __init__(self, modifiers = '', cd = None):
+    def __init__(self, modifiers = '', cd = None, name = ''):
+        self.name = name
         self.requires = True
         self.requires_cmd = None
         self.requires_stderr = []
@@ -613,7 +641,7 @@ class TestSet():
             if RE_TEST.search(l):
                 pos = l.find(TOKEN_TEST)
                 modifiers, expression = l[:pos], l[pos+1:]
-                self.tests.append(TestLine(self.modifiers + modifiers, expression, name))
+                self.tests.append(TestCase(self.modifiers + modifiers, expression, name))
                 continue
 
             # Command
@@ -644,12 +672,12 @@ class TestSet():
 
     def test(self, variables=[], verbose=0, colorize=True):
 
-        variables_all = self.variables + variables
+        self.variables_all = self.variables + variables
         if verbose > 1:
-            print_variables(variables_all)
+            print_variables(self.variables_all)
 
         def cmd_variables_cd(cmd):
-            cmd = replace_variables(cmd, variables_all)
+            cmd = replace_variables(cmd, self.variables_all)
             if self.cd:
                 cmd = 'cd %s ; ' % self.cd + cmd
             if verbose > 0:
@@ -671,7 +699,7 @@ class TestSet():
                 return self.status
 
         if not self.use_launcher:
-            if replace_variables(VAR_LAUNCHER, variables_all):
+            if replace_variables(VAR_LAUNCHER, self.variables_all):
                 self.skip_all('%s while %s is given' % (DIRECTIVE_NO_LAUNCHER, VAR_LAUNCHER), verbose)
                 return self.status
 
@@ -690,10 +718,10 @@ class TestSet():
 
         try:
             self.exit_code = p.wait(TIMEOUT)
-            self.tests.append(Test('Exit code is %d' % self.expected_exit_code, self.exit_code == self.expected_exit_code, str(self.exit_code)))
+            self.tests.append(ExternalTestCase('Exit code is %d' % self.expected_exit_code, self.exit_code == self.expected_exit_code, str(self.exit_code)))
         except subprocess.TimeoutExpired:
             self.exit_code = None
-            self.tests.append(Test('Exit code is %d' % self.expected_exit_code, SKIP, 'timeout after %s seconds' % TIMEOUT))
+            self.tests.append(ExternalTestCase('Exit code is %d' % self.expected_exit_code, SKIP, 'timeout after %s seconds' % TIMEOUT))
 
         self.stdout = [l.decode(errors='replace') for l in p.stdout.readlines()]
         self.stderr = [l.decode(errors='replace') for l in p.stderr.readlines()]
@@ -706,7 +734,7 @@ class TestSet():
         self.test_lines = open(self.source).readlines() if self.source else self.stdout
 
         for test in self.tests:
-            test.test(self.test_lines, variables=variables_all, verbose=verbose-1)
+            test.test(self.test_lines, variables=self.variables_all, verbose=verbose-1)
             self.stats.up(test.status)
 
             # When a test fails, the file fails
@@ -736,15 +764,36 @@ class TestSet():
     def str_status(self, colorize=True):
         return self.stats.str_status(self.status, colorize)
 
+    def xml(self):
+        x = ET.Element('testsuite',
+                       {'id': self.name,
+                        'name': self.name,
+                        'cmd': str(self.cmds),
+                        'tests': str(self.stats.total()),
+                        'failures': str(len(self.stats[False])),
+                        'skipped': str(len(self.stats[SKIP])),
+                        'time': self.str_elapsed_time(tag=''),
+                        'timestamp': datetime.datetime.now().isoformat()
+                       })
+        for test in self.tests:
+            x.append(test.xml())
+
+        v = ET.Element('properties')
+        for (key, val) in self.variables_all:
+            v.append(ET.Element('property', {'name': key, 'value': val}))
+        x.append(v)
+
+        return x
+
     def tap(self):
         s = ''
         s += '1..%d' % len(self.tests) + '\n'
-        s += '\n'.join(map(TestLine.tap, self.tests))
+        s += '\n'.join(map(TestCase.tap, self.tests))
         s += '\n'
         return s
 
-    def str_elapsed_time(self):
-        return ('%.2fs' % self.elapsed_time) if self.elapsed_time is not None else ''
+    def str_elapsed_time(self, tag='s'):
+        return ('%.2f%s' % (self.elapsed_time, tag)) if self.elapsed_time is not None else ''
 
     def __str__(self):
         s = ''
@@ -762,6 +811,7 @@ class FileSet():
 
     def __init__(self, files, modifiers = ''):
         self.files = files
+        self.sets = []
         self.modifiers = modifiers
         self.status = None
         self.stats = Stats('file')
@@ -775,7 +825,8 @@ class FileSet():
             if verbose > 0:
                 print(f)
             cd_f = os.path.dirname(f) if cd_same else cd
-            s = TestSet(self.modifiers, cd_f)
+            s = TestSuite(self.modifiers, cd_f, name = f)
+            self.sets.append(s)
             s.load(open(f))
 
             s.test(variables, verbose - 1)
@@ -804,6 +855,9 @@ class FileSet():
         except KeyboardInterrupt:
             print('==== interrupted ====\n')
 
+        if output and OUT_XML in output:
+            self.xml().write(OUT_XML)
+
         print('Summary', end=' ')
         print(self.stats.str_status(self.status))
         print('Summary', end=' ')
@@ -818,9 +872,65 @@ class FileSet():
 
         return self.status
 
+    def xml(self):
+        x = ET.Element('testsuites',
+                       {'id': 'Test at %s' % datetime.datetime.now().isoformat(),
+                        'name': 'tested by should',
+                        'tests': str(self.stats_tests.total()),
+                        'failures': str(len(self.stats_tests[False])),
+                       })
+
+        for s in self.sets:
+            x.append(s.xml())
+
+        return ET.ElementTree(x)
+
+    def write_retry(self, argv, argv_remove, verbose=1):
+        '''
+        If there were tests in WARN_STATUS, write the RETRY file
+        with, non-file arguments and WARN_STATUS files.
+        '''
+
+        # cmd = [sys.executable, sys.argv[0]]
+
+        files = []
+
+        for sta in WARN_STATUS:
+            files += self.stats[sta]
+
+        if not files:
+            return
+
+        args = []
+        for arg in argv:
+            if arg not in argv_remove:
+                args.append(arg)
+
+        with open(RETRY, 'w') as f:
+            f.write('\n'.join(args + files) + '\n')
+
+        if verbose > 0:
+            print('%s %s will relaunch these tests.' % (sys.argv[0], RETRY_FLAG))
+
+def read_retry():
+    try:
+        return [l.rstrip() for l in open(RETRY).readlines()]
+    except:
+        return []
+
 
 if __name__ == '__main__':
     argv = (['@' + DEFAULT_CFG] + sys.argv[1:]) if os.path.exists(DEFAULT_CFG) else sys.argv[1:]
+
+    if RETRY_FLAG in argv:
+        retry = read_retry()
+        argv += retry
+        if retry:
+            print(color(ANSI.BLUE, "Retrying previous failed or warned tests"))
+        else:
+            print(color(ANSI.RED, "Nothing to retry"))
+            sys.exit(2)
+
     args = parser.parse_args(argv)
     variables = populate_variables(args.var)
     variables.append((VAR_LAUNCHER, args.launcher))
@@ -830,6 +940,9 @@ if __name__ == '__main__':
 
     fs = FileSet(args.file, modifiers=''.join(args.mod if args.mod else []))
     status = fs.test(variables = variables, cd = args.cd, cd_same = args.cd_same, output = args.output, verbose = args.verbose)
+
+    retry = fs.write_retry(sys.argv[1:], args.file, verbose = args.verbose)
+
     sys.exit(0 if status else 1)
 
 
