@@ -79,6 +79,8 @@ auth.settings.two_factor_authentication_group = "auth2step"
 
 crud, service, plugins = Crud(db), Service(), PluginManager()
 
+auth.settings.password_min_length = 6
+
 ## create all tables needed by auth if not custom tables
 auth.define_tables(username=False, signature=False)
 
