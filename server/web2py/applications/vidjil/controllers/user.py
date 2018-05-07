@@ -57,13 +57,13 @@ def index():
     			reverse=reverse)
 
 def edit():
-    if auth.is_admin():
+    if auth.can_modify_user(int(request.vars['id'])):
         user = db.auth_user[request.vars["id"]]
         return dict(message=T("Edit user"), user=user)
     return error_message(ACCESS_DENIED)
 
 def edit_form():
-    if auth.is_admin():
+    if auth.can_modify_user(int(request.vars['id'])):
         error = ""
         if request.vars["first_name"] == "" :
             error += "first name needed, "
