@@ -57,7 +57,7 @@ def index():
     			reverse=reverse)
 
 def edit():
-    if auth.is_admin():
+    if auth.can_modify_user(int(request.vars['id'])):
         user = db.auth_user[request.vars["id"]]
         log.info("load edit form for user",
                 extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'auth_user'})
@@ -65,7 +65,7 @@ def edit():
     return error_message(ACCESS_DENIED)
 
 def edit_form():
-    if auth.is_admin():
+    if auth.can_modify_user(int(request.vars['id'])):
         error = ""
         if request.vars["first_name"] == "" :
             error += "first name needed, "
