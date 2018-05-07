@@ -79,6 +79,8 @@ def edit_form():
                 error.append("password fields must match")
             else:
                 password = db.auth_user.password.validate(request.vars["password"])[0]
+                if not password:
+                    error.append("Password is too short, should be at least of length "+str(auth.settings.password_min_length))
 
         if len(error) == 0:
             data = dict(first_name = request.vars["first_name"],
