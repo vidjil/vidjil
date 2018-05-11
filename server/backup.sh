@@ -76,6 +76,7 @@ else
         zip -r $filename_raw web2py/applications/vidjil/databases/  "$DIR_RESULTS" $db_backup_file $sql_backup_file
     fi
 fi
+rm -f "$sql_backup_file"
 rm -f "$db_backup_file"
 ls -lh $filename
 echo $filename
