@@ -54,7 +54,7 @@ class FileController(unittest.TestCase):
     def testAdd(self):      
         request.vars['id'] = fake_patient_id
         
-        resp = add()
+        resp = json.loads(form())
         self.assertTrue(resp.has_key('message'), "add() has returned an incomplete response")
         
         
