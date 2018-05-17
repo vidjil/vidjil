@@ -73,6 +73,7 @@ class Sample_setController(unittest.TestCase):
         self.assertTrue(auth.get_group_access('patient', patient.id, fake_group_id), "fail to add permission")
 
     def testForm(self):
+        request.vars["type"] = "patient"
         resp = form()
         self.assertTrue(resp.has_key('message'), "add() has returned an incomplete response")
 
