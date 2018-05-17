@@ -88,7 +88,7 @@ class FileController(unittest.TestCase):
     
     
     def testEdit(self):
-        request.vars['patient_id'] = fake_patient_id
+        request.vars['sample_set_id'] = fake_sample_set_id
         request.vars['id'] = fake_file_id
         
         resp = form()
