@@ -51,14 +51,14 @@ class FileController(unittest.TestCase):
                                        provider=user_id,
                                        data_file =  db.sequence_file.data_file.store(open("../../doc/analysis-example.vidjil", 'rb'), "babibou"))
 
-    def testAdd(self):      
+    def testForm(self):
         request.vars['id'] = fake_patient_id
         
         resp = json.loads(form())
         self.assertTrue(resp.has_key('message'), "add() has returned an incomplete response")
         
         
-    def testAddForm(self):      
+    def testSubmit(self):
         class emptyClass( object ):
             pass
         
