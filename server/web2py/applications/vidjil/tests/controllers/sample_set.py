@@ -119,3 +119,17 @@ class Sample_setController(unittest.TestCase):
 
         resp = submit()
         self.assertNotEqual(resp.find('bab bab (1): patient edited"'), -1, "edit patient failed")
+
+    def testConfirm(self):
+        request.vars["id"] = fake_sample_set_id
+
+        resp = confirm()
+        self.assertTrue(resp.has_key('message'), "confirm() has returned an incomplete response")
+
+
+    def test4Delete(self):
+        patient = db( db.patient.info == "test patient kZtYnOipmAzZ").select()[0]
+        request.vars["id"] = patient.sample_set_id
+
+        resp = delete()
+        self.assertNotEqual(resp.find('sample set ('+str(patient.sample_set_id)+') deleted'), -1, "delete sample_set failed")
