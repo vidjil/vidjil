@@ -66,16 +66,22 @@ class FileController(unittest.TestCase):
         setattr(plop, 'file',  open("../../doc/analysis-example.vidjil", 'rb'))
         setattr(plop, 'filename', 'plopapou')
 
-        request.vars['sampling_date'] = "1992-02-02"
-        request.vars['file_info'] = "plop"
-        request.vars['pcr'] = "plop"
-        request.vars['sequencer'] = "plop"
-        request.vars['producer'] = "plop"
-        request.vars['patient_id'] = "plapipou("+str(fake_patient_id)+")"
-        request.vars['run_id'] = ""
-        request.vars['generic_id'] = ""
-        request.vars['filename'] = "plopapi"
-        request.vars["sample_type"] = defs.SET_TYPE_PATIENT
+        data = {}
+        data['set_ids'] = ":p plapipou ("+str(fake_patient_id)+")"
+
+        myfile= {
+            "id": "",
+            "sampling_date": "1992-02-02",
+            "info": "plop",
+            "pcr": "plop",
+            "sequencer": "plop",
+            "producer": "plop",
+            "filename": "plopapi",
+            "set_ids": ""
+        }
+        data['file'] = [myfile]
+
+        request.vars['data'] = json.dumps(data)
 
         resp = submit()
         self.assertNotEqual(resp.find('"redirect":"sample_set/index"'), -1, "add_form() failed")
@@ -90,19 +96,23 @@ class FileController(unittest.TestCase):
         
         
     def testEditForm(self):
-        request.vars['id'] = fake_file_id
-        request.vars['filename'] = "plopapi"
-        
-        request.vars['sampling_date'] = "1992-02-02"
-        request.vars['file_info'] = "plop"
-        request.vars['pcr'] = "plop"
-        request.vars['sequencer'] = "plop"
-        request.vars['producer']="plop"
-        request.vars['patient_id']="plapipou("+str(fake_patient_id)+")"
-        request.vars['run_id']=""
-        request.vars['generic_id']=""
-	request.vars['pre_process'] = fake_pre_process_id
-        request.vars["sample_type"] = defs.SET_TYPE_PATIENT
+        data = {}
+        data['set_ids']=":p plapipou ("+str(fake_patient_id)+")"
+        data["sample_type"] = defs.SET_TYPE_PATIENT
+
+        myfile = {
+            "id" : fake_file_id,
+            "filename" : "plopapi",
+            "sampling_date" : "1992-02-02",
+            "info" : "plop",
+            "pcr" : "plop",
+            "sequencer" : "plop",
+            "producer":"plop",
+            "set_ids" : ""
+        }
+        data['file'] = [myfile]
+
+        request.vars['data'] = json.dumps(data)
         
         
         resp = submit()
