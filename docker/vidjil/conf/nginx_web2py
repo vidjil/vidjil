@@ -36,7 +36,7 @@ server {
         ## from the previous server instance to manage static files
 
     location /browser {
-        root /var/www;
+        root /usr/share/vidjil;
         expires 1h;
         add_header Cache-Control must-revalidate;
 
