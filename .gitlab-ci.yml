@@ -22,6 +22,7 @@ stages:
   - valgrind_unit
   - valgrind_functional
   - prepare_deploy
+  - deploy_docker
   - deploy_prod
 
 # Anchors
@@ -238,6 +239,21 @@ test_server_unit:
     tags:
       - web
 
+test_server_functional:
+  stage: test_functional
+  script:
+    - cp -r browser/ docker/vidjil/source/ && cp -r server/ docker/vidjil/source/
+    - docker build -t $CI_BUILD_REF_SLUG docker/vidjil
+    - docker run $CI_BUILD_REF_SLUG /path/to/test
+    - rm -rf docker/vidjil/source/*
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+    - prod-server
+    - dev
+  tags:
+    - web
+
 # Deployment
 
 deploy_review:
@@ -253,6 +269,17 @@ deploy_review:
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
+  tags:
+    - web
+
+deploy_docker:
+  stage: deploy_docker
+  script:
+    - docker tag $CI_BUILD_REF_SLUG vidjil/vidjil:latest
+    - docker push vidjil/vidjil:latest
+  when: manual
+  only:
+    - prod-server
   tags:
     - web
 
