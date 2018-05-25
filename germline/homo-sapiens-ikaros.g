@@ -11,10 +11,10 @@
         "IKAZOS": {
             "shortcut": "I",
             "color" : "#d63a19",
-            "description": "Ikaros Trsl locus",
+            "description": "IKAROS Trsl locus",
             "recombinations": [ {
-                "5": ["ikaros_as_V.fa"],
-                "3": ["ikaros_as_J.fa"]
+                "5": ["IKAROS-as-V.fa"],
+                "3": ["IKAROS-as-J.fa"]
             } ],
             "parameters": {
                 "seed": "10s"
@@ -26,8 +26,8 @@
             "color" : "#d63a19",
             "description": "ERG mediated recombinaions",
             "recombinations": [ {
-                "5": ["erg_as_V.fa"],
-                "3": ["erg_as_J.fa"]
+                "5": ["ERG-as-V.fa"],
+                "3": ["ERG-as-J.fa"]
             } ],
             "parameters": {
                 "seed": "10s"
