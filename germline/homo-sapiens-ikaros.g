@@ -8,7 +8,7 @@
     
     "systems": {
 
-        "IKAZOS": {
+        "IKAROS": {
             "shortcut": "I",
             "color" : "#d63a19",
             "description": "IKAROS Trsl locus",
