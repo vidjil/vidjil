@@ -35,18 +35,18 @@ $ Find the correct assignation for the sequence
 
 
 ### 13922 - sequences ikfz1 ####
-$ Find the correct assignation for the sequence
-1: intron_3 1//2 intron_7 (témoin del4-7)
-$ Find the correct assignation for the sequence
-1: intron_1 8/CCCTTC/3 intron_7 (témoin del2-7)
-$ Find the correct assignation for the sequence
-1: intron_3 0/TCGG/6 intron_7 (seq 4-7 du patient)
+$ Find the correct assignation for the sequence  (témoin del4-7)
+1: intron_3 1//2 intron_7
+$ Find the correct assignation for the sequence (témoin del2-7)
+1: intron_1 8/CCCTTC/3 intron_7
+$ Find the correct assignation for the sequence (seq 4-7 du patient)
+1: intron_3 0/TCGG/6 intron_7
 
 
 
 ### 17464 - sequences ikfz1 ####
-$ Find the correct assignation for the sequence
-1: intron_3 5/GA/2 intron_7 (del4-7 majo)
+$ Find the correct assignation for the sequence (del4-7 majo)
+1: intron_3 5/GA/2 intron_7
 $ Find the correct assignation for the sequence
 1: intron_3 1/TC/2 intron_7 
 $ Find the correct assignation for the sequence
@@ -60,15 +60,15 @@ $ Find the correct assignation for the sequence
 
 
 ### 13444 - sequences ikfz1 ####
-$ Find the correct assignation for the sequence
-1: intron_3 1/GCCTCC/2 intron_7 (del4-7 majo 1)
-$ Find the correct assignation for the sequence
-1: intron_3 0/C/2 intron_7 (del4-7 majo 4)
-$ Find the correct assignation for the sequence
-1: intron_3 1/TAGG/6 intron_7 (del4-7 majo 3)
-$ Find the correct assignation for the sequence
-1: intron_3 7/TCGGT/3 intron_7 (del4-7 majo 2)
-$ Find the correct assignation for the sequence
-1: intron_1 5//3 intron_7 (del2-7 majo)
-$ Find the correct assignation for the sequence
-1: intron_1 8/CCGA/3 intron_7 (del2-7 mino)
+$ Find the correct assignation for the sequence  (del4-7 majo 1)
+1: intron_3 1/GCCTCC/2 intron_7
+$ Find the correct assignation for the sequence (del4-7 majo 4)
+1: intron_3 0/C/2 intron_7
+$ Find the correct assignation for the sequence (del4-7 majo 3)
+1: intron_3 1/TAGG/6 intron_7
+$ Find the correct assignation for the sequence (del4-7 majo 2)
+1: intron_3 7/TCGGT/3 intron_7
+$ Find the correct assignation for the sequence (del2-7 majo)
+1: intron_1 5//3 intron_7
+$ Find the correct assignation for the sequence (del2-7 mino)
+1: intron_1 8/CCGA/3 intron_7
