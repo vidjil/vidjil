@@ -6,7 +6,7 @@ class TestLogin < BrowserTest
   def setup
     super
     if not defined? $b
-      set_browser("https://localhost/browser")
+      set_browser("http://localhost/browser")
     end
   end
 
