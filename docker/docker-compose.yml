@@ -7,13 +7,6 @@ services:
         volumes:
             - ./mysql/:/docker-entrypoint-initdb.d/
             - /opt/vidjil/mysql:/var/lib/mysql
-    postfix:
-        image: catatnight/postfix
-        environment:
-            - maildomain=mail.example.com
-            - smtp_user=user:pwd
-        ports:
-                - "25:25"
     uwsgi:
         build: ./vidjil
         image: vidjil:test
@@ -22,11 +15,9 @@ services:
             - fuse
         depends_on:
             - mysql
-            - postfix
             - fuse
         links:
             - mysql:mysql
-            - postfix:postfix
             - fuse:fuse
     fuse:
         image: vidjil:test
@@ -81,6 +72,4 @@ services:
             - ./reporter/code:/opt/reporter
         depends_on:
             - uwsgi
-        links:
-            - postfix:postfix
             - uwsgi:uwsgi
