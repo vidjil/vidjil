@@ -282,11 +282,11 @@ map<Info, int> PointerACAutomaton<Info>::getMultiResults(const seqtype &seq, boo
   pointer_state<Info>* current_state = getInitialState();
   size_t seq_len = seq.length();
   map<Info, int> results;
-  list<Info> informations;
 
   for(size_t i = 0;i < seq_len;++i) {
     current_state = (pointer_state<Info> *)next(current_state, seq[i]);
-    informations = current_state->informations;
+    set<Info> informations(current_state->informations.begin(),
+                           current_state->informations.end());
     for(auto const& info : informations){
       /* If map contain info, increase its occurence. */
       if(results.count(info) > 0){
