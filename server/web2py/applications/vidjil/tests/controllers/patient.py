@@ -39,19 +39,10 @@ class PatientController(unittest.TestCase):
         
         
         
-    def testConfirm(self):
-        request.vars["id"] = fake_patient_id
-        
-        resp = confirm()
-        self.assertTrue(resp.has_key('message'), "confirm() has returned an incomplete response")
         
         
-    def test4Delete(self):
-        patient_id = db( db.patient.info == "test patient kZtYnOipmAzZ").select()[0].id
-        request.vars["id"] = patient_id
         
-        resp = delete()
-        self.assertNotEqual(resp.find('patient ('+str(patient_id)+') deleted'), -1, "delete patient failed")
+        
         
         
         

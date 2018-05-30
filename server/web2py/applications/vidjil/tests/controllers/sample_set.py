@@ -73,6 +73,7 @@ class Sample_setController(unittest.TestCase):
         self.assertTrue(auth.get_group_access('patient', patient.id, fake_group_id), "fail to add permission")
 
     def testForm(self):
+        request.vars["type"] = "patient"
         resp = form()
         self.assertTrue(resp.has_key('message'), "add() has returned an incomplete response")
 
@@ -94,7 +95,7 @@ class Sample_setController(unittest.TestCase):
         name = "%s %s" % (request.vars["first_name"], request.vars["last_name"])
 
         resp = submit()
-        self.assertNotEqual(resp.find('patient %s added' % name), -1, "add patient failled")
+        self.assertNotEqual(resp.find('successfully added/edited set(s)'), -1, "add patient failled")
 
     def testEdit(self):
         request.vars["id"] = fake_patient_id
@@ -118,4 +119,18 @@ class Sample_setController(unittest.TestCase):
         request.vars['data'] = json.dumps(data)
 
         resp = submit()
-        self.assertNotEqual(resp.find('bab bab (1): patient edited"'), -1, "edit patient failed")
+        self.assertNotEqual(resp.find('successfully added/edited set(s)"'), -1, "edit patient failed")
+
+    def testConfirm(self):
+        request.vars["id"] = fake_sample_set_id
+
+        resp = confirm()
+        self.assertTrue(resp.has_key('message'), "confirm() has returned an incomplete response")
+
+
+    def test4Delete(self):
+        patient = db( db.patient.info == "test patient kZtYnOipmAzZ").select()[0]
+        request.vars["id"] = patient.sample_set_id
+
+        resp = delete()
+        self.assertNotEqual(resp.find('sample set ('+str(patient.sample_set_id)+') deleted'), -1, "delete sample_set failed")
