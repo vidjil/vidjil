@@ -80,7 +80,7 @@ QUnit.test("node sizes", function(assert) {
     m.clone(0).quantifiable = false;
     sp.updateClone(0)
 
-    assert.equal(sp.nodes[0].s, 0.10, "node 0 (not quantifiable), size")
+    assert.equal(sp.nodes[0].s, 0.001, "node 0 (not quantifiable), size")
 })
 
 
