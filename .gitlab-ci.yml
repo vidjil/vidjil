@@ -242,10 +242,8 @@ test_server_unit:
 test_server_functional:
   stage: test_functional
   script:
-    - cp -r browser/ docker/vidjil/source/ && cp -r server/ docker/vidjil/source/
-    - docker build -t $CI_BUILD_REF_SLUG docker/vidjil
-    - docker run $CI_BUILD_REF_SLUG /path/to/test
-    - rm -rf docker/vidjil/source/*
+    - docker build --build-args git_branch=$CI_BUILD_REF_SLUG -t $CI_BUILD_REF_SLUG docker/vidjil
+    - docker run $CI_BUILD_REF_SLUG HEADLESS=1 /usr/share/vidjil/server/web2py/vidjil/test/functional/launch_functional_tests test_*.rb
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
