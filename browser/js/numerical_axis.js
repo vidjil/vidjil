@@ -56,6 +56,7 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         this.reset();
         this.clones = clones;
         use_log = typeof use_log !== 'undefined' ? use_log : false;
+        this.use_log = use_log ;
         display_label = typeof display_label !== 'undefined' ? display_label : true;
         var self = this;
         
@@ -137,7 +138,7 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         if (typeof value != "undefined" && value != 'undefined'){
             pos = this.sizeScale(value);
         }else{
-            pos = this.sizeScale(this.max);
+            pos = this.sizeScale(this.use_log ? this.min : this.max) ;
         }
         
         return {'pos': pos};
