@@ -126,8 +126,5 @@ BioReader filterBioReaderWithACAutomaton(
       }
     }
   }
-  if(result.size() <= 2){
-    return origin;
-  }
   return result;
 }
