@@ -1,0 +1,7 @@
+source 'http://rubygems.org'
+gem 'minitest'
+gem 'minitest-ci'
+gem 'watir'
+gem 'watir-webdriver'
+gem 'test-unit'
+gem 'headless'

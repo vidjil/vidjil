@@ -31,15 +31,24 @@ run cd /usr/share/vidjil/germline && make
 copy ./conf/nginx_gzip_static.conf /etc/nginx/conf.d/web2py/gzip_static.conf
 copy ./conf/nginx_gzip.conf /etc/nginx/conf.d/web2py/gzip.conf
 copy ./conf/uwsgi.conf /etc/nginx/conf.d/web2py/uwsgi.conf
-copy ./conf/nginx_web2py /etc/nginx/sites-enabled/web2py
-copy ./conf/nginx_web2py /etc/nginx/sites-available/web2py
+add ./scripts/install.sh /opt/install_scripts/install.sh
+copy ./conf/defs.py /opt/vidjil_conf/defs.py
+copy ./conf/defs_http.py /opt/vidjil_conf/defs_http.py
+copy ./conf/conf.js /opt/vidjil_conf/conf.js
+copy ./conf/conf_http.js /opt/vidjil_conf/conf_http.js
+copy ./conf/nginx_web2py /opt/vidjil_conf/web2py
+copy ./conf/nginx_web2py_http /opt/vidjil_conf/web2py_http
+copy ./conf/Gemfile /usr/share/vidjil/Gemfile
+
+arg build_env='PRODUCTION'
+env BUILD_ENV $build_env
 
 copy ./conf/uwsgi.ini /etc/uwsgi/apps-enabled/web2py.ini
 run mkdir /etc/vidjil
-copy ./conf/defs.py /etc/vidjil/defs.py
-copy ./conf/conf.js /etc/vidjil/conf.js
+run chmod +x /opt/install_scripts/install.sh && /opt/install_scripts/install.sh
 run ln -s /etc/vidjil/defs.py /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
 run ln -s /etc/vidjil/conf.js /usr/share/vidjil/browser/js/conf.js
+
 copy ./scripts/nginx-entrypoint.sh /entrypoints/nginx-entrypoint.sh
 copy ./scripts/uwsgi-entrypoint.sh /entrypoints/uwsgi-entrypoint.sh
 copy ./scripts/fuse-entrypoint.sh /entrypoints/fuse-entrypoint.sh
