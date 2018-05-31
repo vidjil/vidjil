@@ -75,3 +75,5 @@ FILE_TYPES = ['fasta', 'fastq', 'fastq.gz']
 SET_TYPE_PATIENT = 'patient'
 SET_TYPE_RUN= 'run'
 SET_TYPE_GENERIC = 'generic'
+
+REQUIRE_HTTPS = True
