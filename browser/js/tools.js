@@ -398,3 +398,31 @@ function warnTextOf(key)
 {
     return (key in warnTexts) ? warnTexts[key] : '?'
 }
+
+
+/**
+ *  Pearson correlation coefficient
+ */
+
+function sum(l) {
+    return l.reduce(function(a, b) { return a + b; }, 0);
+}
+
+function square(x) { return x*x ; }
+
+function pearsonCoeff(l1, l2) {
+
+    var sum1 = sum(l1);
+    var sum2 = sum(l2);
+    var sum1sq = sum(l1.map(square))
+    var sum2sq = sum(l2.map(square))
+
+    var sum12 = 0;
+    for (var i=0, n=l1.length; i < n; i++) { sum12 += l1[i] * l2[i] ; }
+
+    var d = (n*sum1sq - sum1*sum1) * (n*sum2sq - sum2*sum2)
+
+    if (d == 0) return 0
+
+    return (n*sum12 - sum1*sum2) / Math.sqrt(d)
+}
