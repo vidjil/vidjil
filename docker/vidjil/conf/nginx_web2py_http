@@ -1,5 +1,5 @@
 upstream uwsgi {
-    server localhost:8000;
+    server uwsgi:8000;
 }
 
 server {
