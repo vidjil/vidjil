@@ -703,10 +703,13 @@ Clone.prototype = {
     /* return a list of read numbers (sum of all reads of clustered clones) for all samples
      * */
 
-    getReadsAllSamples: function () {
+    getReadsAllSamples: function (f) {
+        if (typeof(f) == 'undefined')
+            f = function (x) { return x }
+
         var time_length = this.m.samples.order.length
         var reads = []
-        for (var t = 0; t < time_length; t++) reads.push(this.getReads(t)) ;
+        for (var t = 0; t < time_length; t++) reads.push(f(this.getReads(t))) ;
         return reads;
     },
 
