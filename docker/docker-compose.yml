@@ -41,8 +41,7 @@ services:
         ports:
             - "80:80"
             - "443:443"
-        #command: bash /entrypoints/nginx-entrypoint.sh
-        command: bash -c "spawn-fcgi -u www-data -s /var/run/fcgiwrap.socket /usr/sbin/fcgiwrap ; nginx -g 'daemon off;'"
+        command: bash /entrypoints/nginx-entrypoint.sh
         volumes_from:
             - uwsgi
 
