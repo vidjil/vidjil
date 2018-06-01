@@ -40,6 +40,8 @@ copy ./conf/nginx_web2py /opt/vidjil_conf/web2py
 copy ./conf/nginx_web2py_http /opt/vidjil_conf/web2py_http
 copy ./conf/Gemfile /usr/share/vidjil/Gemfile
 
+run cd /usr/share/vidjil/browser/css/icons && make
+
 arg build_env='PRODUCTION'
 env BUILD_ENV $build_env
 
