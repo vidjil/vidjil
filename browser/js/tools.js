@@ -426,3 +426,5 @@ function pearsonCoeff(l1, l2) {
 
     return (n*sum12 - sum1*sum2) / Math.sqrt(d)
 }
+
+function logadd1(x) { return Math.log(x + 1) ; }

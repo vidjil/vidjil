@@ -870,6 +870,30 @@ changeAlleleNotation: function(alleleNotation) {
         }
         this.updateStyle();
     },
+
+
+    /**
+     * select clones correlated to a given clone
+     * @param {integer} - cloneID - index of the reference clone
+     */
+    selectCorrelated: function(ref, threshold) {
+
+        if (typeof threshold === "undefined") {
+            threshold = 0.95
+        }
+r = []
+        refReads = this.clone(ref).getReadsAllSamples(logadd1)
+        r.push(refReads)
+
+        for (var i=0; i<this.clones.length; i++){
+            var clone = this.clone(i);
+            var coeff = pearsonCoeff(refReads, clone.getReadsAllSamples(logadd1))
+            clone.select = (Math.abs(coeff) > threshold)
+            r.push([i, coeff, threshold, clone.select])
+        }
+        this.updateStyle(); return r;
+    },
+
     
     /**
      * put a list of clones in the selection
