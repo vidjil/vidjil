@@ -26,10 +26,6 @@ pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* buildACAutomatonToFilterBi
     if(currentLabel != previousLabel){
       indexes->push_back(i);
       asciiNumber++;
-      if(char(asciiNumber) == AFFECT_AMBIGUOUS_CHAR ||
-        char(asciiNumber) == AFFECT_UNKNOWN_CHAR){
-        asciiNumber++;
-      }
     }
     if(asciiNumber > 127){
       delete result; delete aho; delete indexes;
@@ -75,14 +71,8 @@ BioReader filterBioReaderWithACAutomaton(
       tmpKmer = mx.first;
       asciiChar = tmpKmer.getLabel().at(0);
       asciiNum = int(asciiChar);
-      if(asciiNum == int(AFFECT_UNKNOWN_SYMBOL[0]) || asciiNum == int(AFFECT_AMBIGUOUS_SYMBOL[0])){
-        asciiNum++;
-      }
       if(asciiNum > indexes->size() - 1){
         break;
-      }
-      if(asciiChar == AFFECT_AMBIGUOUS_SYMBOL[0] || asciiChar == AFFECT_UNKNOWN_SYMBOL[0]){
-        continue;
       }
       for(int i = indexes->at(asciiNum - 1); i < indexes->at(asciiNum); ++i){
         result.add(origin.read(i));
@@ -107,14 +97,9 @@ BioReader filterBioReaderWithACAutomaton(
         tmpKmer = element.first;
         asciiChar = tmpKmer.getLabel().at(0);
         asciiNum = int(asciiChar);
-        if(asciiNum == int(AFFECT_UNKNOWN_SYMBOL[0]) || asciiNum == int(AFFECT_AMBIGUOUS_SYMBOL[0])){
-          asciiNum++;
-        }
         if(asciiNum > indexes->size() - 1){
           break;
         }
-        if(asciiChar == AFFECT_AMBIGUOUS_SYMBOL[0] || asciiChar == AFFECT_UNKNOWN_SYMBOL[0]){
-          continue;
         }
         for(int i = indexes->at(asciiNum - 1); i < indexes->at(asciiNum); ++i){
           result.add(origin.read(i));
