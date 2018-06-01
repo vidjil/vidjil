@@ -14,7 +14,7 @@ pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* buildACAutomatonToFilterBi
     return nullptr;
   }
   result = new pair<vector<int>*,AbstractACAutomaton<KmerAffect>*>();
-  aho = new PointerACAutomaton<KmerAffect>(false, true);
+  aho = new PointerACAutomaton<KmerAffect>(seed, false, true);
   indexes = new vector<int>();
   aho->insert(origin.sequence(0),std::string("") + char(1), true, 0, seed);
   asciiNumber = 1;
