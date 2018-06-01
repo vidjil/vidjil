@@ -106,7 +106,7 @@ json_data = {
         "name": "test4",
         "germline": "TRG",
         "top": 4,
-        "reads": [5, 5, 5, 5],
+        "reads": [5, 5, 5, 50],
         "seg": {
             "3": "TRGJ2*02",
             "5": "TRGV4*01",
@@ -213,8 +213,8 @@ json_data = {
     {
         "sequence" : "catcatcatgatgctacgatcttac",
         "name" : "test5",
-        "id" : "catgat",
-        "reads" : [4,4,4,4],
+        "id" : "id5",
+        "reads" : [4,4,4,40],
         "top" : 5,
         "name": "unseg sequence",
         "germline" : "IGH",
