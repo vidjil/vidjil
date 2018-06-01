@@ -47,9 +47,11 @@ env BUILD_ENV $build_env
 
 copy ./conf/uwsgi.ini /etc/uwsgi/apps-enabled/web2py.ini
 run mkdir /etc/vidjil
+copy ./conf/wsgihandler.py /etc/vidjil/wsgihandler.py
 run chmod +x /opt/install_scripts/install.sh && /opt/install_scripts/install.sh
 run ln -s /etc/vidjil/defs.py /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
 run ln -s /etc/vidjil/conf.js /usr/share/vidjil/browser/js/conf.js
+run ln -s /etc/vidjil/wsgihandler.py /usr/share/vidjil/server/web2py/wsgihandler.py
 
 copy ./scripts/nginx-entrypoint.sh /entrypoints/nginx-entrypoint.sh
 copy ./scripts/uwsgi-entrypoint.sh /entrypoints/uwsgi-entrypoint.sh
