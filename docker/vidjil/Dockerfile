@@ -45,6 +45,7 @@ run cd /usr/share/vidjil/browser/css/icons && make
 arg build_env='PRODUCTION'
 env BUILD_ENV $build_env
 
+run rm /etc/nginx/sites-enabled/default
 copy ./conf/uwsgi.ini /etc/uwsgi/apps-enabled/web2py.ini
 run mkdir /etc/vidjil
 copy ./conf/wsgihandler.py /etc/vidjil/wsgihandler.py
