@@ -84,7 +84,7 @@ BioReader filterBioReaderWithACAutomaton(
     /* sort map */
     typedef function<bool(pair<KmerAffect, int>, pair<KmerAffect, int>)> Comparator;
     Comparator compFunctor = [](pair<KmerAffect, int> elem1 ,pair<KmerAffect, int> elem2){
-      return elem1.second > elem2.second;
+      return (elem1.second == elem2.second) ? elem1.first > elem2.first : elem1.second > elem2.second;
     };
     // Use a set to use the comparator and sort function
     set<pair<KmerAffect, int>, Comparator> setOfWords(mapAho.begin(), mapAho.end(), compFunctor);
