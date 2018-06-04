@@ -31,7 +31,7 @@ services:
             - /opt/vidjil/log/nginx:/var/log/nginx
             - /opt/vidjil/log/uwsgi:/var/log/uwsgi
             - /opt/vidjil/backup:/mnt/backup
-            - ./vidjil/conf:/etc/vidjil
+            #- ./vidjil/conf:/etc/vidjil
     nginx:
         image: vidjil:test
         depends_on:
