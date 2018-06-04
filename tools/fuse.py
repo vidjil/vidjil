@@ -154,22 +154,20 @@ class Samples:
 
 class Diversity: 
 
+    keys = ["index_H_entropy", "index_E_equitability", "index_Ds_diversity"]
+
     def __init__(self, data=None):
         self.d={}
-        if data == None:
-            self.d["index_H_entropy"]      = ["na"]
-            self.d["index_E_equitability"] = ["na"]
-            self.d["index_Ds_diversity"]   = ["na"]
-        else: 
-            self.d["index_H_entropy"]      = [data["index_H_entropy"]]
-            self.d["index_E_equitability"] = [data["index_E_equitability"]]
-            self.d["index_Ds_diversity"]   = [data["index_Ds_diversity"]]
+
+        for k in self.keys:
+            if data == None or not (k in data):
+                self.d[k] = ["na"]
+            else:
+                self.d[k]= [data[k]]
 
     def __add__(self, other):
-        self.d['index_H_entropy'].append(      other.d['index_H_entropy'][0] )
-        self.d['index_E_equitability'].append( other.d['index_E_equitability'][0] )
-        self.d['index_Ds_diversity'].append(   other.d['index_Ds_diversity'][0] )
-
+        for k in self.keys:
+            self.d[k].append(other.d[k][0])
         return self
 
     def __str__(self):
