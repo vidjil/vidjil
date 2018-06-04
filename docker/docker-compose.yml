@@ -8,7 +8,6 @@ services:
             - ./mysql/:/docker-entrypoint-initdb.d/
             - /opt/vidjil/mysql:/var/lib/mysql
     uwsgi:
-        build: ./vidjil
         image: vidjil:test
         command: bash /entrypoints/uwsgi-entrypoint.sh
         volumes_from:
