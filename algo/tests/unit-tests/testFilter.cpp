@@ -368,6 +368,8 @@ void testGetNSignicativeKmers(){
     TAP_TEST(j < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENE_NOT_FOUND);
     TAP_TEST(filtered.size() < germline.rep_5.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_ERROR);
   }
+}
+
 void testBehaviourWhenHugeBioReader(){
   BioReader hugeBioReader;
   hugeBioReader.add("../../germline/homo-sapiens/IGHV.fa");
