@@ -175,7 +175,8 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     console.log(m.samples.order);
 
     html = m.clones[0].getHtmlInfo();
-    assert.includes(html, "<h2>Cluster info : hello</h2><div id='info_window'><table><tr><th></th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
+    assert.includes(html, "<h2>Cluster info : hello</h2>")
+    assert.includes(html, "<div id='info_window'><table><tr><th></th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
              "getHtmlInfo: cluster info");
 
     assert.includes(html, "<tr><td>clone name</td><td colspan='4'>hello</td></tr><tr><td>clone short name</td><td colspan='4'>hello</td></tr>",
