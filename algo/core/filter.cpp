@@ -91,7 +91,8 @@ BioReader filterBioReaderWithACAutomaton(
 
     // Iterate over the pair and not the map
     unsigned int nbKmers = 0;
-    int previousKmerOccurs = 0;
+    pair<KmerAffect, int> pBegin = *setOfWords.begin();
+    int previousKmerOccurs = pBegin.second;
     for(pair<KmerAffect, int> element : setOfWords){
       // Add corresponding sequences to the BioReader
       if(nbKmers < kmer_threshold){
@@ -101,9 +102,7 @@ BioReader filterBioReaderWithACAutomaton(
         if(asciiNum > indexes->size() - 1){
           break;
         }
-        if(previousKmerOccurs == element.second){
-          /* take ex-aequo */
-        }else{
+        if(previousKmerOccurs != element.second){
           nbKmers++;
         }
         for(int i = indexes->at(asciiNum - 1); i < indexes->at(asciiNum); ++i){
