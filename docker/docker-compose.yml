@@ -71,4 +71,5 @@ services:
             - ./reporter/code:/opt/reporter
         depends_on:
             - uwsgi
+        links:
             - uwsgi:uwsgi
