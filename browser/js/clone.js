@@ -1139,6 +1139,9 @@ Clone.prototype = {
         } else {
             html = "<h2>Sequence info : " + this.getSequenceName() + "</h2>"
         }
+
+        html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.90); m.closeInfoBox();'>correlated</a> clones</p>"
+        html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.99); m.closeInfoBox();'>strongly correlated</a> clones</p>"
         
         //column
         html += "<div id='info_window'><table><tr><th></th>"
