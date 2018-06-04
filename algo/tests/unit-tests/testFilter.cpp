@@ -352,45 +352,22 @@ void testGetNSignicativeKmers(){
   germline.new_index(KMER_INDEX);
   germline.finish();
 
-  Sequence seq = data.getSequence();
+  string SIZE_ERROR = "Filtered size must be less than original one";
+  string GENE_NOT_FOUND = "Filtering sequence not found after filter";
 
-  string SIZE_ERROR = "Filtered size isn't accurate";
-  string GENE_ERROR = "BioReader doesn't have the good genes";
-
-  for(int n = 1; n <= 20; ++n){
-    filtered = filterBioReaderWithACAutomaton(
-                    germline.pair_automaton, germline.rep_5, seq.sequence, n);
-    string currentLabel; string previousLabel;
-    previousLabel = extractGeneName(filtered.label(0));
-    int geneNumber = 1;
-
-    for(int i = 1;i < filtered.size(); ++i){
-      currentLabel = extractGeneName(filtered.label(i));
-      if(currentLabel != previousLabel){
-        geneNumber++;
+  for(int i = 0; i < germline.rep_5.size(); ++i){
+    Sequence seq = germline.rep_5.read(i);
+    filtered = filterBioReaderWithACAutomaton(germline.pair_automaton, germline.rep_5, seq.sequence, 1);
+    int j = 0;
+    while(j < filtered.size()){
+      if(extractGeneName(filtered.label(j)) == extractGeneName(seq.label)){
+        break;
       }
-      previousLabel = currentLabel;
+      ++j;
     }
-    TAP_TEST_EQUAL(n, geneNumber, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_ERROR);
-    TAP_TEST(currentLabel.find("IGH") == 0, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENE_ERROR);
+    TAP_TEST(j < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENE_NOT_FOUND);
+    TAP_TEST(filtered.size() < germline.rep_5.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_ERROR);
   }
-  seqtype s = germline.rep_5.sequence(5);
-  filtered = filterBioReaderWithACAutomaton(germline.pair_automaton, germline.rep_5, s, 5);
-  bool isInFilteredBioReader = false;
-  string str, str2;
-  str2 = extractGeneName(germline.rep_5.label(5));
-  int i = 0;
-  while(i < filtered.size() && !isInFilteredBioReader){
-    str = extractGeneName(filtered.label(i));
-    if(str == str2){
-      isInFilteredBioReader = true;
-      break;
-    }
-    ++i;
-  }
-  TAP_TEST(isInFilteredBioReader && i < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENE_ERROR);
-}
-
 void testBehaviourWhenHugeBioReader(){
   BioReader hugeBioReader;
   hugeBioReader.add("../../germline/homo-sapiens/IGHV.fa");
