@@ -6,3 +6,5 @@ $ Fuse the three files
 $ Check the producer string in output file
 1: "producer": "vidjil fuse"
 
+$ Diversity is fused
+l1: "index_Ds_diversity": . 1, 0.9 .

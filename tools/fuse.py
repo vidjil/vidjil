@@ -152,6 +152,27 @@ class Samples:
     def __str__(self):
         return "<Samples: %s>" % self.d
 
+class Diversity: 
+
+    keys = ["index_H_entropy", "index_E_equitability", "index_Ds_diversity"]
+
+    def __init__(self, data=None):
+        self.d={}
+
+        for k in self.keys:
+            if data == None or not (k in data):
+                self.d[k] = ["na"]
+            else:
+                self.d[k]= [data[k]]
+
+    def __add__(self, other):
+        for k in self.keys:
+            self.d[k].append(other.d[k][0])
+        return self
+
+    def __str__(self):
+        return "<Diversity: %s>" % self.d
+        
 class Reads: 
 
     def __init__(self):
@@ -333,6 +354,11 @@ class ListWindows(VidjilJson):
                 if not self.d["clones"]:
                     self.d["clones"] = []
                 self.check_version(file_path)
+
+                if "diversity" in self.d.keys():
+                    self.d["diversity"] = Diversity(self.d["diversity"])
+                else:
+                    self.d["diversity"] = Diversity()
         
         if 'distribution' not in self.d['reads'].d:
             self.d['reads'].d['distribution'] = {}
@@ -400,6 +426,7 @@ class ListWindows(VidjilJson):
         obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], l1, l2)
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
+        obj.d["diversity"] = self.d["diversity"] + other.d["diversity"]
         
         return obj
         
@@ -557,7 +584,7 @@ class ListWindows(VidjilJson):
         
     def toJson(self, obj):
         '''Serializer for json module'''
-        if isinstance(obj, ListWindows) or isinstance(obj, Window) or isinstance(obj, Samples) or isinstance(obj, Reads):
+        if isinstance(obj, ListWindows) or isinstance(obj, Window) or isinstance(obj, Samples) or isinstance(obj, Reads) or isinstance(obj, Diversity):
             result = {}
             for key in obj.d :
                 result[key]= obj.d[key]
@@ -621,6 +648,8 @@ lw1.d["timestamp"] = 'ts'
 lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25], "germline": {}, "distribution": {}}', object_hook=lw1.toPython)
 lw1.d["clones"].append(w5)
 lw1.d["clones"].append(w6)
+lw1.d["diversity"] = Diversity()
+
 
 w7 = Window(1)
 w7.d ={"id" : "aaa", "reads" : [8], "top" : 4 }
@@ -632,6 +661,7 @@ lw2.d["timestamp"] = 'ts'
 lw2.d["reads"] = json.loads('{"total": [40], "segmented": [34], "germline": {}, "distribution": {}}', object_hook=lw1.toPython)
 lw2.d["clones"].append(w7)
 lw2.d["clones"].append(w8)
+lw2.d["diversity"] = Diversity()
 
     
     

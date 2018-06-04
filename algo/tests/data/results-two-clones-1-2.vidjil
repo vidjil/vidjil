@@ -46,5 +46,9 @@
 	    "4" :  [ "/some/IGHD.fa" ],
 	    "5" :  [ "/some/IGHJ.fa" ]
 	} 
-    } 
+    },
+
+   "diversity": {
+      "index_Ds_diversity": 0.9
+    }
  } 
