@@ -427,7 +427,7 @@ void testExAequoKmersWhenSignificantParameter(){
   while(k < filtered.size() && extractGeneName(filtered.label(k)) != extractGeneName(testedBioReader.label(12))){
     ++k;
   }
-  TAP_TEST(k < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, "BioReader doesn't have ex-aequo");
+  TAP_TEST(k < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
 }
 
 void testBehaviourWhenHugeBioReader(){
