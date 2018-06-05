@@ -369,20 +369,7 @@ void testGetNSignicativeKmers(){
     TAP_TEST(filtered.size() < germline.rep_5.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_ERROR);
   }
 }
-/*
-  sequences[0] = {"seq1-full_name", "seq-01*01", "AGCTGC","", NULL, 0};
-  sequences[1] = {"seq1-full_name", "seq-01*02", "AGCTGA", "", NULL, 0};
-  sequences[2] = {"seq1-full_name", "seq-01*03", "AGCTGT", "", NULL, 0};
-  sequences[3] = {"seq2_full_name", "seq-02*01", "TCAA", "", NULL, 0};
-  sequences[4] = {"seq2_full_name", "seq-02*02", "TCCA", "", NULL, 0};
-  sequences[5] = {"seq3_full_name", "seq-03*01", "GGGG", "", NULL, 0};
-  sequences[6] = {"seq4_full_name", "seq-04*01", "CCAATG", "", NULL, 0};
-  sequences[7] = {"seq4_full_name", "seq-04*02", "CCAATT", "", NULL, 0};
-  sequences[8] = {"seq4_full_name", "seq-04*03", "CCAATA", "", NULL, 0};
-  sequences[9] = {"seq4_full_name", "seq-04*04", "CCAATC", "", NULL, 0};
-  sequences[10] = {"seq5_full_name", "seq-05*01", "TTTT", "", NULL, 0};
-  sequences[11] = {"seq6_full_name", "seq-06*01", "AAAT", "", NULL, 0};
-*/
+
 void testExAequoKmersWhenSignificantParameter(){
   BioReader testedBioReader, filtered;
   seqtype seq;
@@ -405,7 +392,6 @@ void testExAequoKmersWhenSignificantParameter(){
   for(int i = 0;i < 13; ++i){
     testedBioReader.add(sequences[i]);
   }
-  /* K-mers belonging to 3 and 6 appears 29 both */
   seq = "AAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAAT";
   seq += "GGGGGGGGGGGGGGGTTTTTTTTTTTTTTTTTTTGGGGGGGGGGGGGGGGGGGGTTTTTTTTTTTTTTTT";
   p = buildACAutomatonToFilterBioReader(testedBioReader, "####");
