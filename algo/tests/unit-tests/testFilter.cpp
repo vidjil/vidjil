@@ -370,6 +370,16 @@ void testGetNSignicativeKmers(){
   }
 }
 
+/*
+Check if the filter method use the ex-aequo K-mers if a significant
+parameter is provided.
+For example if the parameter is N = 5 and the method get the following
+K-mers occurences: 10, 10, 5, 5, 4, 3, 2 we want to filter using the K-mers with
+the occurences 10, 10, 5, 5 and 4.
+However if the K-mers occurences are 10, 10, 5, 5, 4, 4, 2 we want to filter using
+the K-mers with occurences 10, 10, 5, 5, 4, and 4 (The last one is ex-aequo so
+we take both).
+*/
 void testExAequoKmersWhenSignificantParameter(){
   BioReader testedBioReader, filtered;
   seqtype seq;
@@ -395,7 +405,11 @@ void testExAequoKmersWhenSignificantParameter(){
   seq = "AAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAAT";
   seq += "GGGGGGGGGGGGGGGTTTTTTTTTTTTTTTTTTTGGGGGGGGGGGGGGGGGGGGTTTTTTTTTTTTTTTT";
   p = buildACAutomatonToFilterBioReader(testedBioReader, "####");
+  /* Filter using the 2 most significant K-mers, the first one is belonging to
+     sequence n°11 (with more than 60 occurences) and second one is sequence n°5
+     and n°10 appearing 29 times both. */
   filtered = filterBioReaderWithACAutomaton(p, testedBioReader, seq, 2);
+  /* Check that filtered BioReader contains sequence n°5 and sequence n°10 which are ex-aequo. */
   int i = 0;
   while(i < filtered.size() && extractGeneName(filtered.label(i)) != extractGeneName(testedBioReader.label(5))){
     ++i;
@@ -406,6 +420,7 @@ void testExAequoKmersWhenSignificantParameter(){
   }
   TAP_TEST(i < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   TAP_TEST(j < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
+  /* Add a third ex-aequo: k-mer belonging to sequence n°12 appearing 29 times */
   seq += "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC";
   delete p->first; delete p->second; delete p;
   p = buildACAutomatonToFilterBioReader(testedBioReader, "####");
