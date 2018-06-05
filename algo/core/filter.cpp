@@ -88,27 +88,31 @@ BioReader filterBioReaderWithACAutomaton(
     };
     // Use a set to use the comparator and sort function
     set<pair<KmerAffect, int>, Comparator> setOfWords(mapAho.begin(), mapAho.end(), compFunctor);
-
+    set<pair<KmerAffect, int>, Comparator>::iterator setIt = setOfWords.begin();
     // Iterate over the pair and not the map
     unsigned int nbKmers = 0;
-    pair<KmerAffect, int> pBegin = *setOfWords.begin();
-    int previousKmerOccurs = pBegin.second;
     for(pair<KmerAffect, int> element : setOfWords){
       // Add corresponding sequences to the BioReader
       if(nbKmers < kmer_threshold){
+        nbKmers++;
+        /* Check if next K-mer has same occurence */
+        if(nbKmers == kmer_threshold){
+          std::advance(setIt, nbKmers);
+          pair<KmerAffect, int> pNext = *setIt;
+          int nextKmerOccurs = pNext.second;
+          if(nextKmerOccurs == element.second){
+            nbKmers--;
+          }
+        }
         tmpKmer = element.first;
         asciiChar = tmpKmer.getLabel().at(0);
         asciiNum = int(asciiChar);
         if(asciiNum > indexes->size() - 1){
           break;
         }
-        if(previousKmerOccurs != element.second){
-          nbKmers++;
-        }
         for(int i = indexes->at(asciiNum - 1); i < indexes->at(asciiNum); ++i){
           result.add(origin.read(i));
         }
-        previousKmerOccurs = element.second;
       }
       else{
         /* Enough K-mers used for filtering, no need to go further */
