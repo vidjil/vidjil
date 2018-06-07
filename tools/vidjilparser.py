@@ -83,6 +83,20 @@ class VidjilWriter(object):
             self.purgeBuffer()
         return ""
 
+class Predicate(object):
+
+    def __init__(self, field, comparator, value):
+        self.comp = comparator
+        self.field = field
+        self.value = value
+
+    def compare(self, field, other):
+        if self.comp is None:
+            return True
+        try:
+            return field == self. field and self.comp(other, self.value)
+        except:
+            return False
 
 
 class VidjilParser(object):
@@ -115,8 +129,8 @@ class VidjilParser(object):
     def writer(self):
         return self._writer
 
-    def addPrefix(self, prefix):
-        self.prefixes.append(prefix)
+    def addPrefix(self, prefix, conditional = None, comp = None, value = None):
+        self.prefixes.append((prefix, Predicate(conditional, comp, value)))
 
     def extract(self, filepath):
         vidjilfile = open(filepath, 'r')
@@ -129,11 +143,23 @@ class VidjilParser(object):
         res = ""
         for prefix, event, value in parser:
             #There must be a better way !!!
-            cond = any(prefix.startswith(item) for item in self.prefixes) \
-                    or (any(item.startswith(prefix) for item in self.prefixes) \
+            cond = any(prefix.startswith(item[0]) for item in self.prefixes) \
+                    or (any(item[0].startswith(prefix) for item in self.prefixes) \
                         and (value is None \
-                            or any(item.startswith(prefix + '.' + str(value)) for item in self.prefixes) \
-                                or any(item.startswith(str(value)) for item in self.prefixes)))
+                            or any(item[0].startswith(prefix + '.' + str(value)) for item in self.prefixes) \
+                                or any(item[0].startswith(str(value)) for item in self.prefixes)))
             if cond:
+                if not self._writer.conserveBuffer \
+                        and any((item[1].compare(prefix, value)) for item in self.prefixes):
+                    self._writer.conserveBuffer = True
+
+                bufferOn = any(prefix == item[0] or prefix == item[0]+'.item' for item in self.prefixes)
+                if bufferOn and event == "start_map":
+                    self._writer.startBuffering()
+
                 res += writer.write(prefix, event, value, previous)
+
+                if bufferOn and event == "end_map":
+                    res += self._writer.endBuffering()
+                previous = event
         return res
