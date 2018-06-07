@@ -721,7 +721,6 @@ def main():
     vparser.addPrefix('clones', 'clones.item.top', le, args.top)
     for path_name in files:
         json_clones = vparser.extract(path_name)
-        print(json_clones)
         clones = json.loads(json_clones)
         f += [c['id'] for c in clones["clones"]]
     f = sorted(set(f))
