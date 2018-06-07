@@ -45,7 +45,9 @@ class VidjilWriter(object):
         elif event == 'string':
             mstr = '\'{}\','
         else:
-            mstr = '{},'
+            if event == 'boolean':
+                value = str(value).lower()
+            mstr = '{}'
         padding = ''
         if self.pretty and previous_event != 'map_key':
             if len(prefix) > 0:
