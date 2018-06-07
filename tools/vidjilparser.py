@@ -6,6 +6,9 @@ class VidjilWriter(object):
     def __init__(self, filepath, pretty=False):
         self._filepath = filepath
         self.pretty = pretty
+        self.buffer = ""
+        self.buffering = False
+        self.conserveBuffer = False
 
     def __enter__(self):
         self.file = open(self._filepath, 'w')
@@ -15,6 +18,15 @@ class VidjilWriter(object):
         self.file.close()
 
     def write(self, prefix, event, value, previous):
+        res = self._write(prefix, event, value, previous)
+        if self.buffering:
+            self.buffer += res
+            return ""
+        else:
+            self.file.write(res)
+            return res
+
+    def _write(self, prefix, event, value, previous):
         if self.pretty:
             end = '\n'
         else:
@@ -39,7 +51,31 @@ class VidjilWriter(object):
             if len(prefix) > 0:
                 padding = ''.join(['\t' for i in range(len(prefix.split('.')))])
         mstr = '{}' + mstr + end
-        self.file.write(mstr.format(padding, value))
+        return mstr.format(padding, value)
+
+    def purgeBuffer(self):
+        self.buffer = ""
+        self.conserveBuffer = False
+
+    def writeBuffer(self):
+        try:
+            self.file.write(self.buffer)
+            return self.buffer
+        finally:
+            self.purgeBuffer()
+
+    def startBuffering(self):
+        self.buffering = True
+
+    def endBuffering(self):
+        self.buffering = False
+        if self.conserveBuffer:
+            self.conserveBuffer = False
+            return self.writeBuffer()
+        else :
+            self.purgeBuffer()
+        return ""
+
 
 
 class VidjilParser(object):
@@ -79,10 +115,11 @@ class VidjilParser(object):
         vidjilfile = open(filepath, 'r')
         parser = ijson.parse(vidjilfile)
         with self.writer() as writer:
-            self._extract(parser, writer)
+            return self._extract(parser, writer)
 
     def _extract(self, parser, writer):
         previous = ''
+        res = ""
         for prefix, event, value in parser:
             #There must be a better way !!!
             cond = any(prefix.startswith(item) for item in self.prefixes) \
@@ -91,4 +128,5 @@ class VidjilParser(object):
                             or any(item.startswith(prefix + '.' + str(value)) for item in self.prefixes) \
                                 or any(item.startswith(str(value)) for item in self.prefixes)))
             if cond:
-                writer.write(prefix, event, value, previous)
+                res += writer.write(prefix, event, value, previous)
+        return res
