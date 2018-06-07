@@ -34,21 +34,26 @@ class VidjilWriter(object):
         if event == 'start_map':
             mstr = '{{'
         elif event == 'end_map':
-            mstr = '}},'
+            mstr = '}}'
         elif event == 'start_array':
             mstr = '['
         elif event == 'end_array':
-            mstr = '],'
+            mstr = ']'
         elif event == 'map_key':
-            mstr = '\'{}\':'
+            mstr = '\"{}\":'
             end = ''
         elif event == 'string':
-            mstr = '\'{}\','
+            mstr = '\"{}\"'
         else:
             if event == 'boolean':
                 value = str(value).lower()
             mstr = '{}'
         padding = ''
+        if type(value) in [str, unicode] :
+            value = value.replace("\n", "\\n")
+            value = value.replace("\r", "\\r")
+        if previous not in ['', 'map_key', 'start_map', 'start_array'] and event not in ['end_map', 'end_array']:
+            mstr = "," + mstr
         if self.pretty and previous != 'map_key':
             if len(prefix) > 0:
                 padding = ''.join(['\t' for i in range(len(prefix.split('.')))])
