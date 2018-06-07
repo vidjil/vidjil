@@ -107,7 +107,7 @@ class VidjilParser(object):
         else:
             self._writer = VidjilWriter('out.json')
         self._model_prefixes = []
-        self.prefixes = ['clones.item.seg.affectSigns']
+        self.prefixes = []
 
     def initModel(self, model_path):
         with open(model_path, 'r') as model:
