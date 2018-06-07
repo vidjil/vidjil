@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import ijson
+from six import string_types
 
 class VidjilWriter(object):
 
@@ -49,7 +50,7 @@ class VidjilWriter(object):
                 value = str(value).lower()
             mstr = '{}'
         padding = ''
-        if type(value) in [str, unicode] :
+        if isinstance(value, string_types) :
             value = value.replace("\n", "\\n")
             value = value.replace("\r", "\\r")
         if previous not in ['', 'map_key', 'start_map', 'start_array'] and event not in ['end_map', 'end_array']:
