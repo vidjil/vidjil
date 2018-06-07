@@ -49,7 +49,7 @@ class VidjilWriter(object):
                 value = str(value).lower()
             mstr = '{}'
         padding = ''
-        if self.pretty and previous_event != 'map_key':
+        if self.pretty and previous != 'map_key':
             if len(prefix) > 0:
                 padding = ''.join(['\t' for i in range(len(prefix.split('.')))])
         mstr = '{}' + mstr + end
