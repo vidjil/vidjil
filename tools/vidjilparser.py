@@ -164,11 +164,14 @@ class VidjilParser(object):
 
                 bufferOn = any(prefix == item[0] or prefix == item[0]+'.item' for item in self.prefixes)
                 if bufferOn and event == "start_map":
+                    saved_previous = previous
                     self._writer.startBuffering()
 
                 res += writer.write(prefix, event, value, previous)
 
-                if bufferOn and event == "end_map":
-                    res += self._writer.endBuffering()
                 previous = event
+                if bufferOn and event == "end_map":
+                    if not self._writer.conserveBuffer:
+                        previous = saved_previous
+                    res += self._writer.endBuffering()
         return res
