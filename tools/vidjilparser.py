@@ -132,6 +132,10 @@ class VidjilParser(object):
     def addPrefix(self, prefix, conditional = None, comp = None, value = None):
         self.prefixes.append((prefix, Predicate(conditional, comp, value)))
 
+    def reset(self):
+        self.prefixes = []
+        self._writer.purgeBuffer()
+
     def extract(self, filepath):
         vidjilfile = open(filepath, 'r')
         parser = ijson.parse(vidjilfile)
