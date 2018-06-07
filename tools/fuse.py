@@ -791,7 +791,7 @@ def main():
         for i in range(len(jlist_fused.d["clones"])) :
             fasta += ">>" + str(i) + "\n"
             fasta += jlist_fused.d["clones"][i].d["id"] + "\n"
-        fasta_file = tempfile.NamedTemporaryFile(delete=False)
+        fasta_file = tempfile.NamedTemporaryFile(mode="w", delete=False)
         fasta_file.write(fasta)
         try:
             out = subprocess.check_output([TOOL_SIMILARITY, "-j", fasta_file.name])
