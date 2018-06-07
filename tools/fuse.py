@@ -36,10 +36,12 @@ import os
 import datetime
 import subprocess
 import tempfile
-from operator import itemgetter
+from operator import itemgetter, le
 from utils import *
 from defs import *
 from collections import defaultdict
+
+from vidjilparser import VidjilParser
 
 FUSE_VERSION = "vidjil fuse"
 
@@ -331,37 +333,34 @@ class ListWindows(VidjilJson):
         with open(output, "w") as f:
             json.dump(self, f, indent=2, default=self.toJson)
 
-    def load(self, file_path, *args, **kwargs):
+    def load(self, string, *args, **kwargs):
+        '''
         if not '.clntab' in file_path:
             self.load_vidjil(file_path, *args, **kwargs)
         else:
             self.load_clntab(file_path, *args, **kwargs)
+        '''
+        self.load_vidjil(string, *args, **kwargs)
         
-    def load_vidjil(self, file_path, pipeline, verbose=True):
+    def load_vidjil(self, string, pipeline, verbose=True):
         '''init listWindows with data file
         Detects and selects the parser according to the file extension.'''
-
-        # name = file_path.split("/")[-1]
-        extension = file_path.split('.')[-1]
-
-        if verbose:
-            print("<==", file_path, "\t", end=' ')
         
-        with open(file_path, "r") as f:
-                tmp = json.load(f, object_hook=self.toPython)
-                self.d=tmp.d
-                # Be robust against 'null' values for clones
-                if not self.d["clones"]:
-                    self.d["clones"] = []
-                self.check_version(file_path)
+        tmp = json.loads(string, object_hook=self.toPython)
+        self.d=tmp.d
+        # Be robust against 'null' values for clones
+        if not self.d["clones"]:
+            self.d["clones"] = []
+        #self.check_version(file_path)
 
-                if "diversity" in self.d.keys():
-                    self.d["diversity"] = Diversity(self.d["diversity"])
-                else:
-                    self.d["diversity"] = Diversity()
+        if "diversity" in self.d.keys():
+            self.d["diversity"] = Diversity(self.d["diversity"])
+        else:
+            self.d["diversity"] = Diversity()
         
         if 'distribution' not in self.d['reads'].d:
             self.d['reads'].d['distribution'] = {}
+        '''
         if pipeline: 
             # renaming, private pipeline
             f = '/'.join(file_path.split('/')[2:-1])
@@ -375,6 +374,7 @@ class ListWindows(VidjilJson):
         
         time = os.path.getmtime(file_path)
         self.d["samples"].d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
+        '''
 
         self.id_lengths = defaultdict(int)
 
@@ -716,17 +716,27 @@ def main():
 
     #filtre
     f = []
+
+    vparser = VidjilParser()
+    vparser.addPrefix('clones', 'clones.item.top', le, args.top)
     for path_name in files:
-        jlist = ListWindows()
-        jlist.load(path_name, args.pipeline)
-        f += jlist.getTop(args.top)
+        json_clones = vparser.extract(path_name)
+        print(json_clones)
+        clones = json.loads(json_clones)
+        f += [c['id'] for c in clones["clones"]]
     f = sorted(set(f))
     
+    vparser.reset()
+    vparser.addPrefix('reads')
+    vparser.addPrefix('clones.item', 'clones.item.id', (lambda x, y: x in y), f)
+    vparser.addPrefix('samples')
+    vparser.addPrefix('vidjil_json_version')
     if args.multi:
         for path_name in files:
+            json_reads = vparser.extract(path_name)
             jlist = ListWindows()
-            jlist.load(path_name, args.pipeline)
-            jlist.build_stat()
+            jlist.load(json_reads, args.pipeline)
+            #jlist.build_stat()
             
             print("\t", jlist, end=' ')
 
@@ -741,10 +751,11 @@ def main():
     else:
         print("### Read and merge input files")
         for path_name in files:
+            json_reads = vparser.extract(path_name)
             jlist = ListWindows()
-            jlist.load(path_name, args.pipeline)
-            jlist.build_stat()
-            jlist.filter(f)
+            jlist.load(json_reads, args.pipeline)
+            #jlist.build_stat()
+            #jlist.filter(f)
 
             w1 = Window(1)
             w2 = Window(2)
