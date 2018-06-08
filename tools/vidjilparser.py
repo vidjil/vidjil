@@ -1,6 +1,11 @@
 #!/usr/bin/python
 import ijson
 from six import string_types
+from enum import Enum
+
+class MatchingEvent(Enum):
+    end_map = "start_map"
+    end_array = "start_array"
 
 class VidjilWriter(object):
 
@@ -77,6 +82,7 @@ class VidjilWriter(object):
             self.purgeBuffer()
 
     def startBuffering(self):
+        self.conserveBuffer = False
         self.buffering = True
 
     def endBuffering(self):
@@ -97,9 +103,10 @@ class Predicate(object):
 
     def compare(self, field, other):
         if self.comp is None:
-            return True
+            return field == self.field
         try:
-            return field == self. field and self.comp(other, self.value)
+            res = field == self.field and self.comp(other, self.value)
+            return res
         except:
             return False
 
@@ -135,6 +142,8 @@ class VidjilParser(object):
         return self._writer
 
     def addPrefix(self, prefix, conditional = None, comp = None, value = None):
+        if conditional is None:
+            conditional = prefix
         self.prefixes.append((prefix, Predicate(conditional, comp, value)))
 
     def reset(self):
@@ -147,28 +156,41 @@ class VidjilParser(object):
         with self.writer() as writer:
             return self._extract(parser, writer)
 
+    def isStartEvent(self, event):
+        return event in ['start_map', 'start_array']
+
+    def isEndEvent(self, event):
+        return event in ['end_map', 'end_array', 'number', 'string', 'boolean']
+
+    def isMatching(self, mbuffer, other):
+        if other[1] not in MatchingEvent.__members__:
+            return False
+        return (mbuffer[0] == other[0]) and (mbuffer[1] == MatchingEvent[other[1]].value)
+
     def _extract(self, parser, writer):
         previous = ''
         res = ""
+        bufferStart = (None, None)
         for prefix, event, value in parser:
             subelem = lambda x, y: x.startswith(y)
             if any(subelem(prefix, item[0])\
                     or (subelem(item[0], prefix) and (value is None or subelem(item[0], str(value))))\
                     for item in self.prefixes):
 
+                bufferOn = any(prefix == item[0] for item in self.prefixes) and self.isStartEvent(event)
+                if bufferOn:
+                    bufferStart = (prefix, event)
+                    saved_previous = previous
+                    self._writer.startBuffering()
+
                 if not self._writer.conserveBuffer \
                         and any((item[1].compare(prefix, value)) for item in self.prefixes):
                     self._writer.conserveBuffer = True
 
-                bufferOn = any(prefix == item[0] or prefix == item[0]+'.item' for item in self.prefixes)
-                if bufferOn and event == "start_map":
-                    saved_previous = previous
-                    self._writer.startBuffering()
-
                 res += writer.write(prefix, event, value, previous)
 
                 previous = event
-                if bufferOn and event == "end_map":
+                if (self.writer().buffering and (self.isEndEvent(event) and self.isMatching(bufferStart, (prefix, event)) or self._writer.conserveBuffer)):
                     if not self._writer.conserveBuffer:
                         previous = saved_previous
                     res += self._writer.endBuffering()
