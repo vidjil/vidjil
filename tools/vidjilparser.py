@@ -151,13 +151,11 @@ class VidjilParser(object):
         previous = ''
         res = ""
         for prefix, event, value in parser:
-            #There must be a better way !!!
-            cond = any(prefix.startswith(item[0]) for item in self.prefixes) \
-                    or (any(item[0].startswith(prefix) for item in self.prefixes) \
-                        and (value is None \
-                            or any(item[0].startswith(prefix + '.' + str(value)) for item in self.prefixes) \
-                                or any(item[0].startswith(str(value)) for item in self.prefixes)))
-            if cond:
+            subelem = lambda x, y: x.startswith(y)
+            if any(subelem(prefix, item[0])\
+                    or (subelem(item[0], prefix) and (value is None or subelem(item[0], str(value))))\
+                    for item in self.prefixes):
+
                 if not self._writer.conserveBuffer \
                         and any((item[1].compare(prefix, value)) for item in self.prefixes):
                     self._writer.conserveBuffer = True
