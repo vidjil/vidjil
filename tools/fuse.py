@@ -718,7 +718,7 @@ def main():
     f = []
 
     vparser = VidjilParser()
-    vparser.addPrefix('clones', 'clones.item.top', le, args.top)
+    vparser.addPrefix('clones.item', 'clones.item.top', le, args.top)
     for path_name in files:
         json_clones = vparser.extract(path_name)
         clones = json.loads(json_clones)
