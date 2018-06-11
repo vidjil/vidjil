@@ -726,10 +726,8 @@ def main():
     f = sorted(set(f))
     
     vparser.reset()
-    vparser.addPrefix('reads')
+    vparser.addPrefix('')
     vparser.addPrefix('clones.item', 'clones.item.id', (lambda x, y: x in y), f)
-    vparser.addPrefix('samples')
-    vparser.addPrefix('vidjil_json_version')
     if args.multi:
         for path_name in files:
             json_reads = vparser.extract(path_name)
