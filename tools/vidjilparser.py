@@ -12,7 +12,7 @@ class VidjilWriter(object):
     def __init__(self, filepath=None, pretty=False):
         self._filepath = filepath
         self.pretty = pretty
-        self.buffer = ""
+        self.buffer = []
         self.buffering = False
         self.conserveBuffer = False
         self.file = None
@@ -29,7 +29,7 @@ class VidjilWriter(object):
     def write(self, prefix, event, value, previous):
         res = self._write(prefix, event, value, previous)
         if self.buffering:
-            self.buffer += res
+            self.buffer.append(res)
             return ""
         elif self.file:
             self.file.write(res)
@@ -70,14 +70,14 @@ class VidjilWriter(object):
         return mstr.format(padding, value)
 
     def purgeBuffer(self):
-        self.buffer = ""
+        self.buffer = []
         self.conserveBuffer = False
 
     def writeBuffer(self):
         try:
             if self.file:
                 self.file.write(self.buffer)
-            return self.buffer
+            return ''.join(self.buffer)
         finally:
             self.purgeBuffer()
 
