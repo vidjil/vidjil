@@ -221,7 +221,8 @@ int usage(char *progname, bool advanced)
   cerr << "Fine segmentation options (second pass)" << endl
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, del_end, homo\" (default "<< DEFAULT_SEGMENT_COST <<" )"<< endl
        << "  -E <float>    maximal e-value for determining if a D segment can be trusted (default: " << THRESHOLD_NB_EXPECTED_D << ")" << endl
-       << endl ;
+       << "  -Z <nb>       use custom filter with threshold to reduce calculation time" << endl
+       << endl;
 
   cerr << "Clone analysis (second pass)" << endl
        << "  -3            CDR3/JUNCTION detection (requires gapped V/J germlines)" << endl
