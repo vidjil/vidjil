@@ -859,7 +859,7 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
 
   // With reverse_ref, the read is reversed to prevent calling revcomp on each reference sequence
   string sequence_or_rc = revcomp(read, reverse_ref);
-  bool onlyBottomTriangle = !local && banded_dp && false ;
+  bool onlyBottomTriangle = !local && banded_dp ;
   
   for (int r = 0 ; r < rep.size() ; r++)
     {
