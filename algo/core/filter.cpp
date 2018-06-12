@@ -58,7 +58,7 @@ BioReader filterBioReaderWithACAutomaton(
   KmerAffect tmpKmer;
   unsigned int asciiNum;
   char asciiChar;
-  if(!idxAho){
+  if(!idxAho || kmer_threshold < 0){
     return origin;
   }
   indexes =  idxAho->first;
