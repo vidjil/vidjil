@@ -44,7 +44,7 @@ class Germline {
   int max_indexing;
 
   void init(string _code, char _shortcut,
-            string seed, int max_indexing);
+            string seed, int max_indexing, bool build_automaton=false);
 
  public:
   /*
@@ -53,21 +53,21 @@ class Germline {
 
   Germline(string _code, char _shortcut,
            list <string> f_rep_5, list <string> f_rep_4, list <string> f_rep_3,
-           string seed="", int max_indexing=0);
-
-  Germline(string _code, char _shortcut, 
-  	   string f_rep_5, string f_rep_4, string f_rep_3,
-	   string seed="", int max_indexing=0);
-
-  Germline(string _code, char _shortcut, 
-      BioReader _rep_5, BioReader _rep_4, BioReader _rep_3,
-	   string seed="", int max_indexing=0);
+           string seed="", int max_indexing=0, bool build_automaton=false);
 
   Germline(string _code, char _shortcut,
-	   string seed="", int max_indexing=0);
-  
+  	   string f_rep_5, string f_rep_4, string f_rep_3,
+	   string seed="", int max_indexing=0, bool build_automaton=false);
+
+  Germline(string _code, char _shortcut,
+      BioReader _rep_5, BioReader _rep_4, BioReader _rep_3,
+	   string seed="", int max_indexing=0, bool build_automaton=false);
+
+  Germline(string _code, char _shortcut,
+	   string seed="", int max_indexing=0, bool build_automaton=false);
+
   Germline(string _code, char shortcut, string path, json json_recom,
-           string seed="", int max_indexing=0);
+           string seed="", int max_indexing=0, bool build_automaton=false);
 
   ~Germline();
 
@@ -156,7 +156,7 @@ class MultiGermline {
    *   max_indexing:
    */
   void build_from_json(string path, string json_filename_and_filter, int filter,
-                       string default_seed="", int default_max_indexing=0);
+                       string default_seed="", int default_max_indexing=0, bool build_automaton=false);
 
   /**
    * Finishes the construction of the multi germline so that it can be used

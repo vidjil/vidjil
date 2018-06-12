@@ -6,7 +6,7 @@
 
 void Germline::init(string _code, char _shortcut,
                     string seed,
-                    int max_indexing)
+                    int max_indexing, bool build_automaton)
 {
   seg_method = SEG_METHOD_53 ;
   code = _code ;
@@ -24,20 +24,20 @@ void Germline::init(string _code, char _shortcut,
   affect_5 = string(1, toupper(shortcut)) + "-" + code + "V";
   affect_4 = string(1, 14 + shortcut) + "-" + code + "D";
   affect_3 = string(1, tolower(shortcut)) + "-" + code + "J";
-  automaton_5 = buildACAutomatonToFilterBioReader(rep_5, seed);
+  automaton_5 = build_automaton ? buildACAutomatonToFilterBioReader(rep_5, seed) : nullptr;
 }
 
 
 Germline::Germline(string _code, char _shortcut,
-		   string seed, int max_indexing)
+                   string seed, int max_indexing, bool build_automaton)
 {
-  init(_code, _shortcut, seed, max_indexing);
+  init(_code, _shortcut, seed, max_indexing, build_automaton);
 }
 
 
 Germline::Germline(string _code, char _shortcut,
-		   string f_rep_5, string f_rep_4, string f_rep_3,
-		   string seed, int max_indexing)
+                   string f_rep_5, string f_rep_4, string f_rep_3,
+                   string seed, int max_indexing, bool build_automaton)
 {
 
   f_reps_5.push_back(f_rep_5);
@@ -48,8 +48,8 @@ Germline::Germline(string _code, char _shortcut,
   rep_5 = BioReader(f_rep_5, 2, "|");
   rep_4 = BioReader(f_rep_4, 2, "|");
   rep_3 = BioReader(f_rep_3, 2, "|");
-  
-  init(_code, _shortcut, seed, max_indexing);
+
+  init(_code, _shortcut, seed, max_indexing, build_automaton);
 
   if (rep_4.size())
     seg_method = SEG_METHOD_543 ;
@@ -57,8 +57,8 @@ Germline::Germline(string _code, char _shortcut,
 
 
 Germline::Germline(string _code, char _shortcut,
-		   list <string> _f_reps_5, list <string> _f_reps_4, list <string> _f_reps_3,
-		   string seed, int max_indexing)
+                   list <string> _f_reps_5, list <string> _f_reps_4, list <string> _f_reps_3,
+                   string seed, int max_indexing, bool build_automaton)
 {
 
   f_reps_5 = _f_reps_5 ;
@@ -73,9 +73,9 @@ Germline::Germline(string _code, char _shortcut,
 
   for (list<string>::const_iterator it = f_reps_5.begin(); it != f_reps_5.end(); ++it)
     rep_5.add(*it);
-  
-  init(_code, _shortcut, seed, max_indexing);
-  
+
+  init(_code, _shortcut, seed, max_indexing, build_automaton);
+
   for (list<string>::const_iterator it = f_reps_4.begin(); it != f_reps_4.end(); ++it)
     rep_4.add(*it);
 
@@ -89,20 +89,20 @@ Germline::Germline(string _code, char _shortcut,
 
 Germline::Germline(string _code, char _shortcut, 
            BioReader _rep_5, BioReader _rep_4, BioReader _rep_3,
-                   string seed, int max_indexing)
+                   string seed, int max_indexing, bool build_automaton)
 {
   rep_5 = _rep_5 ;
   rep_4 = _rep_4 ;
   rep_3 = _rep_3 ;
-  
-  init(_code, _shortcut, seed, max_indexing);
+
+  init(_code, _shortcut, seed, max_indexing, build_automaton);
 
   if (rep_4.size())
     seg_method = SEG_METHOD_543 ;
 }
 
 Germline::Germline(string code, char shortcut, string path, json json_recom,
-                   string seed, int max_indexing)
+                   string seed, int max_indexing, bool build_automaton)
 {
 
   bool regular = (code.find("+") == string::npos);
@@ -118,9 +118,9 @@ Germline::Germline(string code, char shortcut, string path, json json_recom,
     f_reps_5.push_back(path + filename);
     rep_5.add(path + filename);
   }
-  
-  init(code, shortcut, seed, max_indexing);
-  
+
+  init(code, shortcut, seed, max_indexing, build_automaton);
+
   if (json_recom.find("4") != json_recom.end()) {
     for (json::iterator it = json_recom["4"].begin();
         it != json_recom["4"].end(); ++it) 
@@ -279,7 +279,7 @@ void MultiGermline::add_germline(Germline *germline)
 }
 
 void MultiGermline::build_from_json(string path, string json_filename_and_filter, int filter,
-                                    string default_seed, int default_max_indexing)
+                                    string default_seed, int default_max_indexing, bool build_automaton)
 {
 
   //extract json_filename and systems_filter
@@ -362,14 +362,14 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
     seedMap["9s"] = SEED_9;
 
     seed = (default_seed.size() == 0) ? seedMap[seed] : default_seed;
-    
+
     //for each set of recombination 3/4/5
     for (json::iterator it2 = recom.begin(); it2 != recom.end(); ++it2) {
       add_germline(new Germline(code, shortcut, path + "/", *it2,
-                                seed, max_indexing));
+                                seed, max_indexing, build_automaton));
     }
   }
-  
+
 }
 
 /* if 'one_index_per_germline' was not set, this should be called once all germlines have been loaded */
