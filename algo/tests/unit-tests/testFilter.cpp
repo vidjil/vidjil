@@ -357,7 +357,7 @@ void testGetNSignicativeKmers(){
 
   for(int i = 0; i < germline.rep_5.size(); ++i){
     Sequence seq = germline.rep_5.read(i);
-    filtered = filterBioReaderWithACAutomaton(germline.pair_automaton, germline.rep_5, seq.sequence, 1);
+    filtered = filterBioReaderWithACAutomaton(germline.automaton_5, germline.rep_5, seq.sequence, 1);
     int j = 0;
     while(j < filtered.size()){
       if(extractGeneName(filtered.label(j)) == extractGeneName(seq.label)){

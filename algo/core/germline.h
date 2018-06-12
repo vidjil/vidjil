@@ -70,8 +70,8 @@ class Germline {
            string seed="", int max_indexing=0);
 
   ~Germline();
-	
-	pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* pair_automaton;
+
+	pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* automaton_5;
   int seg_method ;
   string code ;
   char   shortcut ;

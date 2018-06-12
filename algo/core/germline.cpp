@@ -24,7 +24,7 @@ void Germline::init(string _code, char _shortcut,
   affect_5 = string(1, toupper(shortcut)) + "-" + code + "V";
   affect_4 = string(1, 14 + shortcut) + "-" + code + "D";
   affect_3 = string(1, tolower(shortcut)) + "-" + code + "J";
-  pair_automaton = buildACAutomatonToFilterBioReader(rep_5, seed);
+  automaton_5 = buildACAutomatonToFilterBioReader(rep_5, seed);
 }
 
 
@@ -210,14 +210,14 @@ void Germline::override_rep5_rep3_from_labels(KmerAffect left, KmerAffect right)
 
 Germline::~Germline()
 {
-  if(pair_automaton){
-    if(pair_automaton->first){
-      delete pair_automaton->first;
+  if(automaton_5){
+    if(automaton_5->first){
+      delete automaton_5->first;
     }
-    if(pair_automaton->second){
-      delete pair_automaton->second;
+    if(automaton_5->second){
+      delete automaton_5->second;
     }
-    delete pair_automaton;
+    delete automaton_5;
   }
   if (index)
     {
