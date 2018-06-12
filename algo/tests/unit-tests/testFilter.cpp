@@ -348,7 +348,7 @@ void testGetNSignicativeKmers(){
   data.next();
   data.next();
 
-  Germline germline("IGH", 'G', seqV, seqD, seqJ, "########");
+  Germline germline("IGH", 'G', seqV, seqD, seqJ, "########", 0, true);
   germline.new_index(KMER_INDEX);
   germline.finish();
 
