@@ -647,7 +647,7 @@ int main (int argc, char **argv)
         output_affects = true;
         break;
       case 'Z':
-        kmer_threshold = atoi(optarg);
+        kmer_threshold = atoi_NO_LIMIT(optarg);
         break;
       }
 
