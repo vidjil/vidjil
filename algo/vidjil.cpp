@@ -397,10 +397,12 @@ int main (int argc, char **argv)
   json jsonLevenshtein;
   bool jsonLevenshteinComputed = false ;
 
+  //the number of k-mer used in filter function
+  int kmer_threshold = NO_LIMIT_VALUE;
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHadI124g:V:D:J:k:r:vw:e:E:C:f:W:l:Fc:N:s:b:Sn:o:L%:y:z:uUK3E:t:#:q")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHadI124g:V:D:J:k:r:vw:e:E:C:f:W:l:Fc:N:s:b:Sn:o:L%:y:z:uUK3E:t:#:qZ:")) != EOF)
 
     switch (c)
       {
@@ -643,6 +645,9 @@ int main (int argc, char **argv)
         break;
       case 'K':
         output_affects = true;
+        break;
+      case 'Z':
+        kmer_threshold = atoi(optarg);
         break;
       }
 
