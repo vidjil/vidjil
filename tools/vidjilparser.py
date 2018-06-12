@@ -9,30 +9,23 @@ class MatchingEvent(Enum):
 
 class VidjilWriter(object):
 
-    def __init__(self, filepath=None, pretty=False):
-        self._filepath = filepath
+    def __init__(self, pretty=False):
         self.pretty = pretty
         self.buffer = []
         self.buffering = False
         self.conserveBuffer = False
-        self.file = None
 
     def __enter__(self):
-        if self._filepath:
-            self.file = open(self._filepath, 'wb')
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        if self.file:
-            self.file.close()
+        pass
 
     def write(self, prefix, event, value, previous):
         res = self._write(prefix, event, value, previous)
         if self.buffering:
             self.buffer.append(res)
             return ""
-        elif self.file:
-            self.file.write(res)
         return res
 
     def _write(self, prefix, event, value, previous):
@@ -75,8 +68,6 @@ class VidjilWriter(object):
 
     def writeBuffer(self):
         try:
-            if self.file:
-                self.file.write(self.buffer)
             return ''.join(self.buffer)
         finally:
             self.purgeBuffer()
@@ -93,6 +84,30 @@ class VidjilWriter(object):
         else :
             self.purgeBuffer()
         return ""
+
+class VidjilFileWriter(VidjilWriter):
+
+    def __init__(self, filepath=None, pretty=False):
+        super(VidjilWriter, self).__init__()
+        self._filepath = filepath
+        self.file = None
+
+    def __enter__(self):
+        self.file = open(self._filepath, 'wb')
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.file.close()
+
+    def write(self, prefix, event, value, previous):
+        res = super(VidjilWriter, self).write(prefix, event, value, previous)
+        self.file.write(res)
+        return res
+
+    def writeBuffer(self):
+        res = super(VidjilWriter, self).writeBuffer()
+        self.file.write(res)
+        return res
 
 class Predicate(object):
 
