@@ -1448,8 +1448,14 @@ int main (int argc, char **argv)
                 }
 
 	      // Output best V, (D) and J germlines to CLONE_FILENAME-*
-              if ((segmented_germline->seg_method == SEG_METHOD_53) || (segmented_germline->seg_method == SEG_METHOD_543))
-	      out_clone << segmented_germline->rep_5.read(seg.box_V->ref_nb) ;
+              if ((segmented_germline->seg_method == SEG_METHOD_53) || (segmented_germline->seg_method == SEG_METHOD_543)){
+                    Sequence s = seg.getSequence();
+                    seqtype sq = s.sequence;
+                    BioReader filtered = filterBioReaderWithACAutomaton(
+                                         segmented_germline->pair_automaton,
+                                         segmented_germline->rep_5, sq);
+                    out_clone << filtered.read(seg.box_V->ref_nb);
+                  }
               if ((segmented_germline->seg_method == SEG_METHOD_543) || (segmented_germline->seg_method == SEG_METHOD_ONE))
                 out_clone << segmented_germline->rep_4.read(seg.box_D->ref_nb) ;
               if ((segmented_germline->seg_method == SEG_METHOD_53) || (segmented_germline->seg_method == SEG_METHOD_543))
