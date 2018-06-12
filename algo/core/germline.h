@@ -12,6 +12,7 @@
 #include "../lib/json.hpp"
 #include "kmerstorefactory.hpp"
 #include "bioreader.hpp"
+#include "filter.h"
 #include <climits>
 
 #define DEFAULT_GERMLINE_SEED SEED_S10
@@ -69,7 +70,8 @@ class Germline {
            string seed="", int max_indexing=0);
 
   ~Germline();
-
+	
+	pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* pair_automaton;
   int seg_method ;
   string code ;
   char   shortcut ;
@@ -83,7 +85,9 @@ class Germline {
    * Finishes the construction of the germline so that it can be used
    */
   void finish();
-
+	
+	/* Return the max indexing of a germline */
+	int getMaxIndexing();
   void new_index(IndexTypes type);
   void set_index(IKmerStore<KmerAffect> *index);
 

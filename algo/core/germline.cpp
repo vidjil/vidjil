@@ -24,6 +24,7 @@ void Germline::init(string _code, char _shortcut,
   affect_5 = string(1, toupper(shortcut)) + "-" + code + "V";
   affect_4 = string(1, 14 + shortcut) + "-" + code + "D";
   affect_3 = string(1, tolower(shortcut)) + "-" + code + "J";
+  pair_automaton = buildACAutomatonToFilterBioReader(rep_5, seed);
 }
 
 
@@ -38,7 +39,6 @@ Germline::Germline(string _code, char _shortcut,
 		   string f_rep_5, string f_rep_4, string f_rep_3,
 		   string seed, int max_indexing)
 {
-  init(_code, _shortcut, seed, max_indexing);
 
   f_reps_5.push_back(f_rep_5);
   f_reps_4.push_back(f_rep_4);
@@ -48,6 +48,8 @@ Germline::Germline(string _code, char _shortcut,
   rep_5 = BioReader(f_rep_5, 2, "|");
   rep_4 = BioReader(f_rep_4, 2, "|");
   rep_3 = BioReader(f_rep_3, 2, "|");
+  
+  init(_code, _shortcut, seed, max_indexing);
 
   if (rep_4.size())
     seg_method = SEG_METHOD_543 ;
@@ -58,7 +60,6 @@ Germline::Germline(string _code, char _shortcut,
 		   list <string> _f_reps_5, list <string> _f_reps_4, list <string> _f_reps_3,
 		   string seed, int max_indexing)
 {
-  init(_code, _shortcut, seed, max_indexing);
 
   f_reps_5 = _f_reps_5 ;
   f_reps_4 = _f_reps_4 ;
@@ -72,6 +73,8 @@ Germline::Germline(string _code, char _shortcut,
 
   for (list<string>::const_iterator it = f_reps_5.begin(); it != f_reps_5.end(); ++it)
     rep_5.add(*it);
+  
+  init(_code, _shortcut, seed, max_indexing);
   
   for (list<string>::const_iterator it = f_reps_4.begin(); it != f_reps_4.end(); ++it)
     rep_4.add(*it);
@@ -88,11 +91,11 @@ Germline::Germline(string _code, char _shortcut,
            BioReader _rep_5, BioReader _rep_4, BioReader _rep_3,
                    string seed, int max_indexing)
 {
-  init(_code, _shortcut, seed, max_indexing);
-
   rep_5 = _rep_5 ;
   rep_4 = _rep_4 ;
   rep_3 = _rep_3 ;
+  
+  init(_code, _shortcut, seed, max_indexing);
 
   if (rep_4.size())
     seg_method = SEG_METHOD_543 ;
@@ -101,7 +104,6 @@ Germline::Germline(string _code, char _shortcut,
 Germline::Germline(string code, char shortcut, string path, json json_recom,
                    string seed, int max_indexing)
 {
-  init(code, shortcut, seed, max_indexing);
 
   bool regular = (code.find("+") == string::npos);
   
@@ -116,6 +118,8 @@ Germline::Germline(string code, char shortcut, string path, json json_recom,
     f_reps_5.push_back(path + filename);
     rep_5.add(path + filename);
   }
+  
+  init(code, shortcut, seed, max_indexing);
   
   if (json_recom.find("4") != json_recom.end()) {
     for (json::iterator it = json_recom["4"].begin();
@@ -150,6 +154,10 @@ Germline::Germline(string code, char shortcut, string path, json json_recom,
           rep_4.add(path + filename);
         }
     }
+}
+
+int Germline::getMaxIndexing(){
+  return this->max_indexing;
 }
 
 void Germline::finish() {
@@ -202,6 +210,15 @@ void Germline::override_rep5_rep3_from_labels(KmerAffect left, KmerAffect right)
 
 Germline::~Germline()
 {
+  if(pair_automaton){
+    if(pair_automaton->first){
+      delete pair_automaton->first;
+    }
+    if(pair_automaton->second){
+      delete pair_automaton->second;
+    }
+    delete pair_automaton;
+  }
   if (index)
     {
       if (--(index->refs) == 0)
