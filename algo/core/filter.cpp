@@ -66,7 +66,7 @@ BioReader filterBioReaderWithACAutomaton(
   mapAho = aho->getMultiResults(seq);
 
   //All k-mers selected : iterate over all map
-  if(kmer_threshold == NO_LIMIT_VALUE || kmer_threshold > mapAho.size()){
+  if(kmer_threshold == NO_LIMIT_VALUE || kmer_threshold > (int)mapAho.size()){
     for(auto const mx: mapAho){
       tmpKmer = mx.first;
       asciiChar = tmpKmer.getLabel().at(0);
@@ -90,7 +90,7 @@ BioReader filterBioReaderWithACAutomaton(
     set<pair<KmerAffect, int>, Comparator> setOfWords(mapAho.begin(), mapAho.end(), compFunctor);
     set<pair<KmerAffect, int>, Comparator>::iterator setIt = setOfWords.begin();
     // Iterate over the pair and not the map
-    unsigned int nbKmers = 0;
+    int nbKmers = 0;
     for(pair<KmerAffect, int> element : setOfWords){
       // Add corresponding sequences to the BioReader
       if(nbKmers < kmer_threshold){
