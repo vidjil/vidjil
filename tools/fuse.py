@@ -333,25 +333,20 @@ class ListWindows(VidjilJson):
         with open(output, "w") as f:
             json.dump(self, f, indent=2, default=self.toJson)
 
-    def load(self, string, *args, **kwargs):
-        '''
+    def load(self, file_path, *args, **kwargs):
         if not '.clntab' in file_path:
             self.load_vidjil(file_path, *args, **kwargs)
         else:
             self.load_clntab(file_path, *args, **kwargs)
-        '''
-        self.load_vidjil(string, *args, **kwargs)
-        
-    def load_vidjil(self, string, pipeline, verbose=True):
-        '''init listWindows with data file
-        Detects and selects the parser according to the file extension.'''
-        
-        tmp = json.loads(string, object_hook=self.toPython)
-        self.d=tmp.d
+
+    def loads(self, string, *args, **kwargs):
+        self.loads_vidjil(string, *args, **kwargs)
+
+    def init_data(self, data):
+        self.d=data.d
         # Be robust against 'null' values for clones
         if not self.d["clones"]:
             self.d["clones"] = []
-        #self.check_version(file_path)
 
         if "diversity" in self.d.keys():
             self.d["diversity"] = Diversity(self.d["diversity"])
@@ -360,21 +355,6 @@ class ListWindows(VidjilJson):
         
         if 'distribution' not in self.d['reads'].d:
             self.d['reads'].d['distribution'] = {}
-        '''
-        if pipeline: 
-            # renaming, private pipeline
-            f = '/'.join(file_path.split('/')[2:-1])
-            if verbose:
-                print("[%s]" % f)
-
-        else:
-            f = file_path
-            if verbose:
-                print()
-        
-        time = os.path.getmtime(file_path)
-        self.d["samples"].d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
-        '''
 
         self.id_lengths = defaultdict(int)
 
@@ -386,6 +366,36 @@ class ListWindows(VidjilJson):
             print("%% run_v ->", self.d["samples"].d["producer"], self.d["samples"].d["run_timestamp"])
         except KeyError:
             pass
+
+    def load_vidjil(self, file_path, pipeline, verbose=True):
+        '''init listWindows with data file
+        Detects and selects the parser according to the file extension.'''
+        extension = file_path.split('.')[-1]
+
+        if verbose:
+            print("<==", file_path, "\t", end=' ')
+
+        with open(file_path, "r") as f:
+            self.init_data(json.load(f, object_hook=self.toPython))
+            self.check_version(file_path)
+
+        if pipeline: 
+            # renaming, private pipeline
+            f = '/'.join(file_path.split('/')[2:-1])
+            if verbose:
+                print("[%s]" % f)
+
+        else:
+            f = file_path
+            if verbose:
+                print()
+
+        time = os.path.getmtime(file_path)
+        self.d["samples"].d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
+
+    def loads_vidjil(self, string, pipeline, verbose=True):
+        '''init listWindows with a json string'''
+        self.init_data(json.loads(string, object_hook=self.toPython))
 
     def getTop(self, top):
         result = []
@@ -687,6 +697,7 @@ def main():
     
     group_options.add_argument('--compress', '-c', action='store_true', help='compress point names, removing common substrings')
     group_options.add_argument('--pipeline', '-p', action='store_true', help='compress point names (internal Bonsai pipeline)')
+    group_options.add_argument('--ijson', action='store_true', help='use the ijson vidjilparser')
 
     group_options.add_argument('--output', '-o', type=str, default='fused.vidjil', help='output file (%(default)s)')
     group_options.add_argument('--top', '-t', type=int, default=50, help='keep only clones in the top TOP of some point (%(default)s)')
@@ -720,20 +731,31 @@ def main():
     vparser = VidjilParser()
     vparser.addPrefix('clones.item', 'clones.item.top', le, args.top)
     for path_name in files:
-        json_clones = vparser.extract(path_name)
-        clones = json.loads(json_clones)
-        f += [c['id'] for c in clones["clones"]]
+        if args.ijson:
+            json_clones = vparser.extract(path_name)
+            clones = json.loads(json_clones)
+            f += [c['id'] for c in clones["clones"]]
+        else:
+            jlist = ListWindows()
+            jlist.load(path_name, args.pipeline)
+            f += jlist.getTop(args.top)
+
     f = sorted(set(f))
     
-    vparser.reset()
-    vparser.addPrefix('')
-    vparser.addPrefix('clones.item', 'clones.item.id', (lambda x, y: x in y), f)
+    if args.ijson:
+        vparser.reset()
+        vparser.addPrefix('')
+        vparser.addPrefix('clones.item', 'clones.item.id', (lambda x, y: x in y), f)
+
     if args.multi:
         for path_name in files:
-            json_reads = vparser.extract(path_name)
             jlist = ListWindows()
-            jlist.load(json_reads, args.pipeline)
-            #jlist.build_stat()
+            if args.ijson:
+                json_reads = vparser.extract(path_name)
+                jlist.loads(json_reads, args.pipeline)
+            else:
+                jlist.load(path_name, args.pipeline)
+                jlist.build_stat()
             
             print("\t", jlist, end=' ')
 
@@ -748,11 +770,14 @@ def main():
     else:
         print("### Read and merge input files")
         for path_name in files:
-            json_reads = vparser.extract(path_name)
             jlist = ListWindows()
-            jlist.load(json_reads, args.pipeline)
-            #jlist.build_stat()
-            #jlist.filter(f)
+            if args.ijson:
+                json_reads = vparser.extract(path_name)
+                jlist.loads(json_reads, args.pipeline)
+            else:
+                jlist.load(path_name, args.pipeline)
+                jlist.build_stat()
+                jlist.filter(f)
 
             w1 = Window(1)
             w2 = Window(2)
