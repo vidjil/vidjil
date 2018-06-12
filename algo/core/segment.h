@@ -12,6 +12,7 @@
 #include "kmeraffect.h"
 #include "affectanalyser.h"
 #include "../lib/json.hpp"
+#include "filter.h"
 
 // #define DEBUG_EVALUE
 

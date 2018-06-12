@@ -29,7 +29,10 @@
 #include <cstring>
 #include <string>
 #include "windowExtractor.h"
-
+#include <set>
+#include "automaton.h"
+#include <map>
+#include <string>
 #define NO_FORBIDDEN_ID (-1)
 
 AlignBox::AlignBox(string _key, string _color) {
@@ -1046,12 +1049,11 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
 
   /* Regular 53 Segmentation */
-  align_against_collection(sequence_or_rc, germline->rep_5, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
+	BioReader filtered = filterBioReaderWithACAutomaton(germline->pair_automaton, germline->rep_5, sequence_or_rc);
+	align_against_collection(sequence_or_rc, filtered, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
                                         box_V, segment_cost);
-
   align_against_collection(sequence_or_rc, germline->rep_3, NO_FORBIDDEN_ID, reverse_J, !reverse_J, false,
                                           box_J, segment_cost);
-
   // J was run with '!reverseJ', we copy the box informations from right to left
   // Should this directly be handled in align_against_collection() ?
   box_J->start = box_J->end ;
