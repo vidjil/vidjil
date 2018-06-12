@@ -42,6 +42,10 @@ Kmer &Kmer::operator+=(const Kmer &kmer) {
   return *this;
 }
 
+string Kmer::getLabel() const{
+	return "";
+}
+
 size_t Kmer::getLength() const{
   return 10;
 }
