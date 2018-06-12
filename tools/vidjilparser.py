@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import ijson
+import ijson.backends.yajl2 as ijson
 from six import string_types
 from enum import Enum
 
@@ -19,7 +19,7 @@ class VidjilWriter(object):
 
     def __enter__(self):
         if self._filepath:
-            self.file = open(self._filepath, 'w')
+            self.file = open(self._filepath, 'wb')
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
@@ -122,14 +122,14 @@ class VidjilParser(object):
         self.prefixes = []
 
     def initModel(self, model_path):
-        with open(model_path, 'r') as model:
+        with open(model_path, 'rb') as model:
             parser = ijson.parse(model)
             for prefix, event, value in parser:
                 if (prefix, event) not in self._model_prefixes:
                     self._model_prefixes.append((prefix, event))
 
     def validate(self, filepath):
-        with open(filepath, 'r') as vfile:
+        with open(filepath, 'rb') as vfile:
             parser = ijson.parse(vfile)
             model = list(self._model_prefixes)
             for prefix, event, value in parser:
@@ -151,7 +151,7 @@ class VidjilParser(object):
         self._writer.purgeBuffer()
 
     def extract(self, filepath):
-        vidjilfile = open(filepath, 'r')
+        vidjilfile = open(filepath, 'rb')
         parser = ijson.parse(vidjilfile)
         with self.writer() as writer:
             return self._extract(parser, writer)
