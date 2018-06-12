@@ -26,6 +26,8 @@
 #define LEVEL_ERROR "error"
 #define LEVEL_FATAL "fatal"
 
+#define ALL_KMERS_VALUE 0 /* Use in -Z 0 (filtering on all k-mers with at least
+                             one match. */
 #include <sstream>
 #include <iostream>
 #include <iomanip>
