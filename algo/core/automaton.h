@@ -80,6 +80,16 @@ public:
    */
   virtual void *next(void *state, char c) = 0;
 
+	/**
+	 * This function returns the number of times every Kmer appears in the
+	 * given sequence.
+	 * It returns a map containing the number of occurences per Kmer.
+	 * @param seq: The sequence that the occurences of Kmer will be determinated.
+   * @param false: unused.
+	 * @param seed: unused.
+	 */
+	virtual map<Info,int> getMultiResults
+		(const seqtype &seq, bool no_revcomp=false, string seed = "") = 0;
 };
 
 #define DNA_ALPHABET_SIZE 4
@@ -189,6 +199,8 @@ public:
   // From IKmerStore
 
   vector<Info> getResults(const seqtype &seq, bool no_revcomp=false, string seed = "");
+ 	 
+  map<Info,int> getMultiResults(const seqtype &seq, bool no_revcomp=false, string seed = "");
   Info& get(seqtype &word) ;
 
    Info& operator[](seqtype& word);

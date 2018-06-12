@@ -276,6 +276,32 @@ vector<Info> PointerACAutomaton<Info>::getResults(const seqtype &seq, bool no_re
 }
 
 template <class Info>
+map<Info, int> PointerACAutomaton<Info>::getMultiResults(const seqtype &seq, bool no_revcomp, string seed) {
+  UNUSED(no_revcomp);
+  UNUSED(seed);
+  pointer_state<Info>* current_state = getInitialState();
+  size_t seq_len = seq.length();
+  map<Info, int> results;
+  list<Info> informations;
+
+  for(size_t i = 0;i < seq_len;++i) {
+    current_state = (pointer_state<Info> *)next(current_state, seq[i]);
+    informations = current_state->informations;
+    for(auto const& info : informations){
+      /* If map contain info, increase its occurence. */
+      if(results.count(info) > 0){
+        results[info] = results[info] + 1;
+      }
+      /* Otherwise add info into map with a value of 1. */
+      else{ 
+        results.insert(pair<Info,int>(info,1));
+      }
+    } 
+  }   
+  return results;
+}
+
+template <class Info>
 Info& PointerACAutomaton<Info>::get(seqtype &word) {
   pointer_state<Info> *state = (pointer_state<Info> *)this->goto_state(word);
   return state->informations.front();
