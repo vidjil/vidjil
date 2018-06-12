@@ -3,7 +3,7 @@
 
 #include "automaton.h"
 #include <stack>
-
+#include <set>
 //////////////////// IMPLEMENTATIONS ////////////////////
 
 template <class Info>
@@ -58,22 +58,22 @@ void *AbstractACAutomaton<Info>::goto_state(const string &seq, void *starting_st
 ///////////////////////
 
 template <class Info>
-PointerACAutomaton<Info>::PointerACAutomaton(bool revcomp):AbstractACAutomaton<Info>(){
-  init("##########",revcomp);
+PointerACAutomaton<Info>::PointerACAutomaton(bool revcomp, bool multiple_info):AbstractACAutomaton<Info>(){
+  init("##########",revcomp, multiple_info);
 }
 
 template <class Info>
-PointerACAutomaton<Info>::PointerACAutomaton(string seed, bool revcomp):AbstractACAutomaton<Info>() {
-  init(seed, revcomp);
+PointerACAutomaton<Info>::PointerACAutomaton(string seed, bool revcomp, bool multiple_info):AbstractACAutomaton<Info>() {
+  init(seed, revcomp, multiple_info);
 }
 
 template <class Info>
-PointerACAutomaton<Info>::PointerACAutomaton(int k, bool revcomp):AbstractACAutomaton<Info>() {
-  init(seed_contiguous(k), revcomp);
+PointerACAutomaton<Info>::PointerACAutomaton(int k, bool revcomp, bool multiple_info):AbstractACAutomaton<Info>() {
+  init(seed_contiguous(k), revcomp, multiple_info);
 }
 
 template <class Info>
-void PointerACAutomaton<Info>::init(string seed, bool revcomp) {
+void PointerACAutomaton<Info>::init(string seed, bool revcomp, bool multiple_info) {
   if (revcomp && Info::hasRevcompSymetry()) {
     cerr << "PointerACAutomaton cannot deal with revcomp symmetry at the moment."
          << endl;
@@ -86,6 +86,7 @@ void PointerACAutomaton<Info>::init(string seed, bool revcomp) {
   this->s = seed.length();
   this->revcomp_indexed = revcomp;
   this->max_size_indexing = 0;
+  this->multiple_info = multiple_info;
 }
 
 template <class Info>
@@ -182,12 +183,16 @@ void PointerACAutomaton<Info>::insert(const seqtype &seq, Info info) {
     }
   }
   state->is_final = true;
-  assert(info.getLength() <= MAX_KMER_SIZE);
   if (state->informations.front().isNull()) {
     this->nb_kmers_inserted++;
     this->kmers_inserted[info]++;
+    state->informations.front() += info;
+  } else {
+    if (this->multiple_info)
+      state->informations.push_back(info);
+    else
+      state->informations.front() += info;
   }
-  state->informations.front() += info;
 }
 
 template <class Info>

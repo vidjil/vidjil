@@ -8,7 +8,7 @@
 #include <queue>
 #include <utility>
 #include "tools.h"
-#include <set>
+#include <map>
 
 using namespace std;
 
@@ -111,32 +111,38 @@ public:
 template <class Info>
 class PointerACAutomaton: public AbstractACAutomaton<Info> {
 private:
+  bool multiple_info;
+
   void free_automaton(pointer_state<Info> *);
-  void init(string seed, bool revcomp);
+  void init(string seed, bool revcomp, bool multiple_info);
 public:
   using IKmerStore<Info>::insert;
 
   /**
    * @param revcomp: should the revcomp of the sequences also be indexed
+   * @param multiple_info: should all the Info stored in the automaton or
+   *                       only a single value summarizing them all.
    *
    * The default seed will be a contiguous seed of 10 letters.  But the seed
    * can be specified when inserting sequences. This should be the preferred
    * choice as one may want to have different seeds depending on the
    * sequences.
    */
-  PointerACAutomaton(bool revcomp=false);
+  PointerACAutomaton(bool revcomp=false, bool multiple_info=false);
 
   /**
    * @param seed: the seed to be used for indexing
    * @param revcomp: indexing revcomp too ?
+   * @param multiple_info: storing all info?
    */
-  PointerACAutomaton(string seed, bool revcomp=false);
+  PointerACAutomaton(string seed, bool revcomp=false, bool multiple_info=false);
 
   /**
    * @param k: the size of the contiguous seed
    * @param revcomp: indexing revcomp too ?
+   * @param multiple_info: storing all info?
    */
-  PointerACAutomaton(int k, bool revcomp=false);
+  PointerACAutomaton(int k, bool revcomp=false, bool multiple_info=false);
 
   ~PointerACAutomaton();
 
