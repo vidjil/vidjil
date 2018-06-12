@@ -66,7 +66,7 @@ BioReader filterBioReaderWithACAutomaton(
   mapAho = aho->getMultiResults(seq);
 
   //All k-mers selected : iterate over all map
-  if(kmer_threshold == NO_LIMIT_VALUE || kmer_threshold > (int)mapAho.size()){
+  if(kmer_threshold == ALL_KMERS_VALUE || kmer_threshold > (int)mapAho.size()){
     for(auto const mx: mapAho){
       tmpKmer = mx.first;
       asciiChar = tmpKmer.getLabel().at(0);
