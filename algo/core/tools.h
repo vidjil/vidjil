@@ -91,6 +91,14 @@ inline int spaced_int(int *input, const string &seed) {
 
 }
 
+/* 
+	Extract the gene name from a label. This take the whole part
+	before the star and returns it. If there is no star in the
+	name the whole label is returned.
+	IGHV-01*05	->	IGHV-01
+	IGHV-7500AB	->	IGHV-7500AB
+*/
+string extractGeneName(string label);
 
 /**
  * Sort the number of occurrence stored as the second element of a pair.
