@@ -49,7 +49,7 @@ pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* buildACAutomatonToFilterBi
 BioReader filterBioReaderWithACAutomaton(
     pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* idxAho,
     BioReader &origin, seqtype &seq,
-    unsigned int kmer_threshold){
+    int kmer_threshold){
 
   BioReader result;
   AbstractACAutomaton<KmerAffect>* aho;
@@ -66,7 +66,7 @@ BioReader filterBioReaderWithACAutomaton(
   mapAho = aho->getMultiResults(seq);
 
   //All k-mers selected : iterate over all map
-  if(kmer_threshold == -1 || kmer_threshold > mapAho.size()){
+  if(kmer_threshold == NO_LIMIT_VALUE || kmer_threshold > mapAho.size()){
     for(auto const mx: mapAho){
       tmpKmer = mx.first;
       asciiChar = tmpKmer.getLabel().at(0);

@@ -38,7 +38,7 @@
 BioReader filterBioReaderWithACAutomaton(
     pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* idxAho,
     BioReader &origin, seqtype &seq,
-    unsigned int kmer_threshold = UINT_MAX);
+    int kmer_threshold = NO_LIMIT_VALUE);
 
 /*
   This function takes a BioReader as a parameter and returns
