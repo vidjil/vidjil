@@ -472,6 +472,25 @@ void testTrimSequence() {
     }
 }
 
+/* 
+	Check the integrity of the extractGeneName function. 
+	The whole name is truncated before the star.
+	If there isn't any star in the name, the label
+	is returned as it is.	
+*/
+void testExtractGeneName(){
+	string example_1 = "IGHV-01*01";
+	string example_2 = "FAMOUS-GENE-01*2999";
+	string example_3 = "IGHV-30";
+
+	TAP_TEST(extractGeneName(example_1) == "IGHV-01", TEST_EXTRACT_GENE_NAME,
+	"Fail to extract gene name from:" << example_1 << " result:" << extractGeneName(example_1));
+	TAP_TEST(extractGeneName(example_2) == "FAMOUS-GENE-01", TEST_EXTRACT_GENE_NAME,
+	"Fail to extract gene name from:" << example_2 << " result:" << extractGeneName(example_2));
+	TAP_TEST(extractGeneName(example_3) == "IGHV-30", TEST_EXTRACT_GENE_NAME,
+	"Fail to extract gene name from:" << example_3 << " result:" << extractGeneName(example_3));
+}
+
 void testTools() {
   testOnlineBioReader1();
   testOnlineBioReaderMaxNth();
@@ -495,4 +514,5 @@ void testTools() {
   testGenerateAllSeeds();
   testTrimSequence();
   testIsStopCodon();
+	testExtractGeneName();
 }

@@ -22,6 +22,7 @@ enum {
   TEST_BAM_LABEL_FULL,
   TEST_BAM_SEQUENCE,
   TEST_IS_STOP_CODON,
+  TEST_EXTRACT_GENE_NAME,
 
   TEST_CREATE_SEQUENCE_LABEL_FULL,
   TEST_CREATE_SEQUENCE_LABEL,
@@ -206,6 +207,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_FASTA_NB_SEQUENCES, "Nb sequences in Fasta");
   RECORD_TAP_TEST(TEST_IS_STOP_CODON, "Check if is stop codon");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_LABEL_FULL, "create_sequence: label_full field");
+  RECORD_TAP_TEST(TEST_EXTRACT_GENE_NAME, "Return the gene name of an entire name");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_LABEL, "create_sequence: label field");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_SEQUENCE, "create_sequence: sequence field");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_QUALITY, "create_sequence: quality field");
