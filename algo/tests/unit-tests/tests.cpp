@@ -2,6 +2,7 @@
 #include "tests.h"
 
 #include "testTools.cpp"
+#include "testFilter.cpp"
 #include "testKmerAffect.cpp"
 #include "testStorage.cpp"
 #include "testAffectAnalyser.cpp"
@@ -19,8 +20,8 @@
 int main(void) {
   TAP_START(NB_TESTS);
   declare_tests();
- 
   testTools();
+  testFilter();
   testStorage();
   testKmerAffect();
   testAffectAnalyser();
