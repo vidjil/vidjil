@@ -1448,18 +1448,12 @@ int main (int argc, char **argv)
                 }
 
 	      // Output best V, (D) and J germlines to CLONE_FILENAME-*
-              if ((segmented_germline->seg_method == SEG_METHOD_53) || (segmented_germline->seg_method == SEG_METHOD_543)){
-                    Sequence s = seg.getSequence();
-                    seqtype sq = s.sequence;
-                    BioReader filtered = filterBioReaderWithACAutomaton(
-                                         segmented_germline->pair_automaton,
-                                         segmented_germline->rep_5, sq);
-                    out_clone << filtered.read(seg.box_V->ref_nb);
-                  }
-              if ((segmented_germline->seg_method == SEG_METHOD_543) || (segmented_germline->seg_method == SEG_METHOD_ONE))
-                out_clone << segmented_germline->rep_4.read(seg.box_D->ref_nb) ;
               if ((segmented_germline->seg_method == SEG_METHOD_53) || (segmented_germline->seg_method == SEG_METHOD_543))
-	      out_clone << segmented_germline->rep_3.read(seg.box_J->ref_nb) ;
+                out_clone << ">" << seg.box_V->ref_label << endl << seg.box_V->ref << endl ;
+              if ((segmented_germline->seg_method == SEG_METHOD_543) || (segmented_germline->seg_method == SEG_METHOD_ONE))
+                out_clone << ">" << seg.box_D->ref_label << endl << seg.box_D->ref << endl ;
+              if ((segmented_germline->seg_method == SEG_METHOD_53) || (segmented_germline->seg_method == SEG_METHOD_543))
+                out_clone << ">" << seg.box_J->ref_label << endl << seg.box_J->ref << endl ;
 	      out_clone << endl;
 	   } // end if (seg.isSegmented())
 
