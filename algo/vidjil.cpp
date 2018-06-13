@@ -110,6 +110,8 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
 
+#define DEFAULT_KMER_THRESHOLD NO_LIMIT_VALUE
+
 #define DEFAULT_EPSILON  0
 #define DEFAULT_MINPTS   10
 
@@ -221,7 +223,7 @@ int usage(char *progname, bool advanced)
   cerr << "Fine segmentation options (second pass)" << endl
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, del_end, homo\" (default "<< DEFAULT_SEGMENT_COST <<" )"<< endl
        << "  -E <float>    maximal e-value for determining if a D segment can be trusted (default: " << THRESHOLD_NB_EXPECTED_D << ")" << endl
-       << "  -Z <nb>       use custom filter with threshold to reduce calculation time" << endl
+       << "  -Z <nb>       typical number of V genes, selected by k-mer comparison, to compare to the read ('" << NO_LIMIT << "': all genes, default)" << endl
        << endl;
 
   cerr << "Clone analysis (second pass)" << endl
@@ -398,7 +400,7 @@ int main (int argc, char **argv)
   bool jsonLevenshteinComputed = false ;
 
   //the number of k-mer used in filter function
-  int kmer_threshold = NO_LIMIT_VALUE;
+  int kmer_threshold = DEFAULT_KMER_THRESHOLD;
   //$$ options: getopt
 
 
