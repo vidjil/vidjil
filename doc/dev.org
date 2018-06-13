@@ -696,24 +696,22 @@ make functional
      dev.
 
    #+BEGIN_SRC sh
-     docker build --build-arg build_env=PRODUCTION --build-arg
-     git_branch=<my_feature_branch> .
+     docker build --build-arg build_env=PRODUCTION --build-arg git_branch=<my_feature_branch> docker/vidjil-client -t vidjil/client:<version>
+     docker build --build-arg build_env=PRODUCTION --build-arg git_branch=<my_feature_branch> docker/vidjil-server -t vidjil/server:<version>
    #+END_SRC
 
    Tag the image you have just built:
 
    #+BEGIN_SRC sh
-     docker tag vidjil:test vidjil/vidjil:<version>
-   #+END_SRC
-     or
-   #+BEGIN_SRC sh
-     docker tag vidjil:test vidjil/vidjil:<latestversion>
+     docker tag vidjil:test vidjil/client:latest
+     docker tag vidjil:test vidjil/server:latest
    #+END_SRC
 
    Push the image to DockerHub:
 
    #+BEGIN_SRC sh
-     docker push vidjil/vidjil:<tag>
+     docker push vidjil/client:<tag>
+     docker push vidjil/server:<tag>
    #+END_SRC
 
    You may be required to log in, in which case you can consult
