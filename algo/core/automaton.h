@@ -81,10 +81,12 @@ public:
   virtual void *next(void *state, char c) = 0;
 
 	/**
-	 * This function returns the number of times every Kmer appears in the
+	 * This function returns the number of times every Info appears in the
 	 * given sequence.
-	 * It returns a map containing the number of occurences per Kmer.
-	 * @param seq: The sequence that the occurences of Kmer will be determinated.
+	 * It returns a map containing the number of occurences per Info.
+	 * @param seq: The sequence to be queried. It is passed through 
+         *             the automaton to identify matching k-mers and extract 
+         *             the corresponding Info.
    * @param false: unused.
 	 * @param seed: unused.
 	 */
@@ -130,7 +132,7 @@ public:
 
   /**
    * @param revcomp: should the revcomp of the sequences also be indexed
-   * @param multiple_info: should all the Info stored in the automaton or
+   * @param multiple_info: should all the Info be stored in the automaton or
    *                       only a single value summarizing them all.
    *
    * The default seed will be a contiguous seed of 10 letters.  But the seed
