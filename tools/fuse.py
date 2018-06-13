@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 ### fuse.py - Vidjil utility to parse and regroup list of clones of different timepoints or origins
