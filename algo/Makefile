@@ -262,7 +262,7 @@ RELEASE_ALGO = src/
 RELEASE_TOOLS = $(wildcard ../tools/*.py)
 RELEASE_MAKE = ../tools/tests/Makefile ../doc/Makefile
 RELEASE_TESTS = ../doc/format-analysis.org $(wildcard ../doc/analysis-example.vidjil) $(wildcard ../tools/tests/*.should_get) ../tools/tests/should-to-tap.sh ../tools/diff_json.sh ../demo/get-sequences ../demo/Demo-X5.fa ../demo/Makefile
-RELEASE_GERMLINES = ../germline/Makefile ../germline/germline_id ../germline/get-saved-germline ../germline/get-germline ../germline/split-from-imgt.py $(wildcard ../germline/*.g) ../germline/revcomp-fasta.py ../germline/fasta.py
+RELEASE_GERMLINES = ../germline/Makefile ../germline/germline_id ../germline/get-saved-germline ../germline/get-germline ../germline/split-from-imgt.py $(wildcard ../germline/*.g) ../germline/revcomp-fasta.py ../germline/fasta.py ../germline/homo-sapiens/IKZF*fa ../germline/homo-sapiens/ERG*fa 
 RELEASE_HELP = ../doc/algo.org ../doc/locus.org ../doc/dev.org ../doc/should-vdj.org ../doc/credits.org ../doc/CHANGELOG ../doc/LICENSE ../README.org ../INSTALL.org
 RELEASE_FILES = $(RELEASE_TOOLS) $(RELEASE_TESTS) $(RELEASE_MAKE) $(RELEASE_GERMLINES) $(RELEASE_HELP)
 
