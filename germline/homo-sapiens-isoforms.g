@@ -8,13 +8,13 @@
     
     "systems": {
 
-        "IKAROS": {
+        "IKZF1": {
             "shortcut": "I",
             "color" : "#d63a19",
             "description": "IKAROS Trsl locus",
             "recombinations": [ {
-                "5": ["IKAROS-as-V.fa"],
-                "3": ["IKAROS-as-J.fa"]
+                "5": ["IKZF1-as-V.fa"],
+                "3": ["IKZF1-as-J.fa"]
             } ],
             "parameters": {
                 "seed": "10s"
