@@ -29,7 +29,10 @@
 #include <cstring>
 #include <string>
 #include "windowExtractor.h"
-
+#include <set>
+#include "automaton.h"
+#include <map>
+#include <string>
 #define NO_FORBIDDEN_ID (-1)
 
 AlignBox::AlignBox(string _key, string _color) {
@@ -947,7 +950,7 @@ string format_del(int deletions)
   return deletions ? *"(" + string_of_int(deletions) + " del)" : "" ;
 }
 
-FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  double threshold, double multiplier)
+FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  double threshold, double multiplier, int kmer_threshold)
 {
   box_V = new AlignBox("5");
   box_D = new AlignBox("4");
@@ -1046,12 +1049,16 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
 
   /* Regular 53 Segmentation */
-  align_against_collection(sequence_or_rc, germline->rep_5, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
+  if(kmer_threshold != NO_LIMIT_VALUE){
+	  BioReader filtered = filterBioReaderWithACAutomaton(germline->automaton_5, germline->rep_5, sequence_or_rc, kmer_threshold);
+	  align_against_collection(sequence_or_rc, filtered, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
                                         box_V, segment_cost);
-
+  }else{
+    align_against_collection(sequence_or_rc, germline->rep_5, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
+                                        box_V, segment_cost);
+  }
   align_against_collection(sequence_or_rc, germline->rep_3, NO_FORBIDDEN_ID, reverse_J, !reverse_J, false,
                                           box_J, segment_cost);
-
   // J was run with '!reverseJ', we copy the box informations from right to left
   // Should this directly be handled in align_against_collection() ?
   box_J->start = box_J->end ;

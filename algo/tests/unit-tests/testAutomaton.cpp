@@ -47,6 +47,81 @@ void testSimpleInsertACAutomaton() {
   TAP_TEST(aho.get(acag).count == 5, TEST_AC_GET, "");
 }
 
+/* 
+  This test check the integrity of the getMultiResults function in
+   AbstractACAutomaton class and its inherited classes.
+*/
+void testGetMultiResults(){
+  map<KmerAffect,int> results;
+  PointerACAutomaton<KmerAffect> aho(false);
+  const string errorOccurence = "KmerAffect doesn't have the good number of occurences.";
+  const string errorSize = "Map has too many Kmers.";
+  seqtype seq = "TTTTAATTAAGGGGCTACCCCCAATGTCCGTGGAGCTCTGGGGGGTTA";
+  affect_t affect[10];
+  seqtype seqs[10];
+  char c = 'a';
+  for(int i = 0; i < 10; ++i){
+    affect[i].c = c;
+    c++;
+  }
+  seqs[0] = "AGCTCT";
+  seqs[1] = "TTTT";
+  seqs[2] = "AATT";
+  seqs[3] = "CGTGG";
+  seqs[4] = "CAATGTC";
+  seqs[5] = "AGGG";
+  seqs[6] = "GGGG";
+  seqs[7] = "TTAA";
+  seqs[8] = "GCTAC";
+  seqs[9] = "CCCC";
+  
+  for(int i = 0;i < 10; ++i){
+    aho.insert(seqs[i], KmerAffect(affect[i]));
+  }
+  aho.build_failure_functions();
+  results = aho.getMultiResults(seq);
+
+  /* Best situation: every sequences is found at least once in automaton. */
+  TAP_TEST(results.size() <= 11, TEST_AC_OCCURENCES, errorSize);
+  TAP_TEST_EQUAL(results.at(aho.get(seqs[0])), 1, TEST_AC_OCCURENCES, errorOccurence);  
+  TAP_TEST_EQUAL(results.at(aho.get(seqs[1])), 1, TEST_AC_OCCURENCES, errorOccurence);  
+  TAP_TEST_EQUAL(results.at(aho.get(seqs[2])), 1, TEST_AC_OCCURENCES, errorOccurence);  
+  TAP_TEST_EQUAL(results.at(aho.get(seqs[3])), 1, TEST_AC_OCCURENCES, errorOccurence);  
+  TAP_TEST_EQUAL(results.at(aho.get(seqs[4])), 1, TEST_AC_OCCURENCES, errorOccurence);  
+  TAP_TEST_EQUAL(results.at(aho.get(seqs[5])), 1, TEST_AC_OCCURENCES, errorOccurence);  
+  TAP_TEST_EQUAL(results.at(aho.get(seqs[6])), 4, TEST_AC_OCCURENCES, errorOccurence);  
+  TAP_TEST_EQUAL(results.at(aho.get(seqs[7])), 2, TEST_AC_OCCURENCES, errorOccurence);  
+  TAP_TEST_EQUAL(results.at(aho.get(seqs[8])), 1, TEST_AC_OCCURENCES, errorOccurence);  
+  TAP_TEST_EQUAL(results.at(aho.get(seqs[9])), 2, TEST_AC_OCCURENCES, errorOccurence);  
+  
+  /* Situation: Only one K-mer is in the sequence, appearing once. */
+  seqtype seq2 = "AAAAAAAAAAAAAAAAAATTCAAAAAAAAA";
+  results = aho.getMultiResults(seq2);
+  TAP_TEST(results.size() <= 2, TEST_AC_OCCURENCES, errorSize);
+  TAP_TEST_EQUAL(results.at(aho.get(seqs[2])), 1, TEST_AC_OCCURENCES, errorOccurence);
+
+  /* Situation: Only one K-mer is the sequence, appearing many times. */
+  seqtype seq3 = "GCTACGCTACGCTACGCTACGCTA";
+  results = aho.getMultiResults(seq3);
+  TAP_TEST(results.size() <= 2, TEST_AC_OCCURENCES, errorSize);
+  TAP_TEST_EQUAL(results.at(aho.get(seqs[8])), 4, TEST_AC_OCCURENCES, errorOccurence);
+  
+  /* Situation: No K-mer appear in the sequence. */
+  seqtype seq4 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+  results = aho.getMultiResults(seq4);
+  TAP_TEST(results.size() <= 1, TEST_AC_OCCURENCES, errorSize);
+  
+  /* Check if there is at least one Kmer unknown when no matching K-mer */
+  unsigned int i = 0;
+  for(auto const& x : results){
+    if(x.first.toStringValues() == AFFECT_UNKNOWN_SYMBOL){
+      break;
+    }
+    ++i;
+  }
+  TAP_TEST(i < results.size(), TEST_AC_OCCURENCES, "Ambiguous Kmer not found");
+}
+
 void testRCInsertAcAutomaton() {
   PointerACAutomaton<KmerAffect> aho(true);
 
@@ -86,8 +161,8 @@ void testRCInsertAcAutomaton() {
   TAP_TEST(results == expected, TEST_AC_GET_RESULTS, "");
 }
 
-
 void testAutomaton() {
   testSimpleInsertACAutomaton();
   testRCInsertAcAutomaton();
+  testGetMultiResults();
 }

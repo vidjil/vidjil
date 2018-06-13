@@ -110,6 +110,8 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
 
+#define DEFAULT_KMER_THRESHOLD NO_LIMIT_VALUE
+
 #define DEFAULT_EPSILON  0
 #define DEFAULT_MINPTS   10
 
@@ -221,7 +223,8 @@ int usage(char *progname, bool advanced)
   cerr << "Fine segmentation options (second pass)" << endl
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, del_end, homo\" (default "<< DEFAULT_SEGMENT_COST <<" )"<< endl
        << "  -E <float>    maximal e-value for determining if a D segment can be trusted (default: " << THRESHOLD_NB_EXPECTED_D << ")" << endl
-       << endl ;
+       << "  -Z <nb>       typical number of V genes, selected by k-mer comparison, to compare to the read ('" << NO_LIMIT << "': all genes, default)" << endl
+       << endl;
 
   cerr << "Clone analysis (second pass)" << endl
        << "  -3            CDR3/JUNCTION detection (requires gapped V/J germlines)" << endl
@@ -396,10 +399,12 @@ int main (int argc, char **argv)
   json jsonLevenshtein;
   bool jsonLevenshteinComputed = false ;
 
+  //the number of k-mer used in filter function
+  int kmer_threshold = DEFAULT_KMER_THRESHOLD;
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHadI124g:V:D:J:k:r:vw:e:E:C:f:W:l:Fc:N:s:b:Sn:o:L%:y:z:uUK3E:t:#:q")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHadI124g:V:D:J:k:r:vw:e:E:C:f:W:l:Fc:N:s:b:Sn:o:L%:y:z:uUK3E:t:#:qZ:")) != EOF)
 
     switch (c)
       {
@@ -643,6 +648,9 @@ int main (int argc, char **argv)
       case 'K':
         output_affects = true;
         break;
+      case 'Z':
+        kmer_threshold = atoi_NO_LIMIT(optarg);
+        break;
       }
 
 
@@ -833,7 +841,7 @@ int main (int argc, char **argv)
               try {
                 multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_REGULAR,
                                                FIRST_IF_UNCHANGED("", seed, seed_changed),
-                                               FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed));
+                                               FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), (kmer_threshold != NO_LIMIT_VALUE));
               } catch (std::exception& e) {
                 cerr << ERROR_STRING << PROGNAME << " cannot properly read " << path_file.first << "/" << path_file.second << ": " << e.what() << endl;
                 delete multigermline;
@@ -846,8 +854,8 @@ int main (int argc, char **argv)
 	  // Custom germline
 	  Germline *germline;
 	  germline = new Germline("custom", 'X',
-                                  f_reps_V, f_reps_D, f_reps_J, 
-                                  seed, trim_sequences);
+                                  f_reps_V, f_reps_D, f_reps_J,
+                                  seed, trim_sequences, (kmer_threshold != NO_LIMIT_VALUE));
 
           germline->new_index(indexType);
 
@@ -868,14 +876,14 @@ int main (int argc, char **argv)
       }
 
       if (multi_germline_unexpected_recombinations_12) {
-        Germline *pseudo = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", trim_sequences);
+        Germline *pseudo = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", trim_sequences, (kmer_threshold != NO_LIMIT_VALUE));
         pseudo->seg_method = SEG_METHOD_MAX12 ;
         pseudo->set_index(multigermline->index);
         multigermline->germlines.push_back(pseudo);
       }
 
       if (multi_germline_unexpected_recombinations_1U) {
-        Germline *pseudo_u = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", trim_sequences);
+        Germline *pseudo_u = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", trim_sequences, (kmer_threshold != NO_LIMIT_VALUE));
         pseudo_u->seg_method = SEG_METHOD_MAX1U ;
         // TODO: there should be more up/downstream regions for the PSEUDO_UNEXPECTED germline. And/or smaller seeds ?
         pseudo_u->set_index(multigermline->index);
@@ -887,7 +895,7 @@ int main (int argc, char **argv)
       for (pair <string, string> path_file: multi_germline_paths_and_files)
         multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_INCOMPLETE,
                                        FIRST_IF_UNCHANGED("", seed, seed_changed),
-                                       FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed));
+                                       FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), (kmer_threshold != NO_LIMIT_VALUE));
       if ((! multigermline->one_index_per_germline) && (command != CMD_GERMLINES)) {
         multigermline->insert_in_one_index(multigermline->index, true);
       }
@@ -1399,8 +1407,8 @@ int main (int argc, char **argv)
         // FineSegmenter
         size_t nb_fine_segmented = (size_t) max_clones; // When -1, it will become the max value.
         nb_fine_segmented = MIN(nb_fine_segmented, sort_clones.size());
-        FineSegmenter seg(representative, segmented_germline, segment_cost, expected_value, nb_fine_segmented);
-	
+        FineSegmenter seg(representative, segmented_germline, segment_cost, expected_value, nb_fine_segmented, kmer_threshold);
+
         if (segmented_germline->seg_method == SEG_METHOD_543)
 	  seg.FineSegmentD(segmented_germline, several_D, expected_value_D, nb_fine_segmented);
 
@@ -1449,11 +1457,11 @@ int main (int argc, char **argv)
 
 	      // Output best V, (D) and J germlines to CLONE_FILENAME-*
               if ((segmented_germline->seg_method == SEG_METHOD_53) || (segmented_germline->seg_method == SEG_METHOD_543))
-	      out_clone << segmented_germline->rep_5.read(seg.box_V->ref_nb) ;
+                out_clone << ">" << seg.box_V->ref_label << endl << seg.box_V->ref << endl ;
               if ((segmented_germline->seg_method == SEG_METHOD_543) || (segmented_germline->seg_method == SEG_METHOD_ONE))
-                out_clone << segmented_germline->rep_4.read(seg.box_D->ref_nb) ;
+                out_clone << ">" << seg.box_D->ref_label << endl << seg.box_D->ref << endl ;
               if ((segmented_germline->seg_method == SEG_METHOD_53) || (segmented_germline->seg_method == SEG_METHOD_543))
-	      out_clone << segmented_germline->rep_3.read(seg.box_J->ref_nb) ;
+                out_clone << ">" << seg.box_J->ref_label << endl << seg.box_J->ref << endl ;
 	      out_clone << endl;
 	   } // end if (seg.isSegmented())
 
@@ -1616,8 +1624,8 @@ int main (int argc, char **argv)
         KmerMultiSegmenter kmseg(reads->getSequence(), multigermline, NULL); //  out_unsegmented);
         KmerSegmenter *seg = kmseg.the_kseg ;
         Germline *germline = seg->segmented_germline ;
-        
-        FineSegmenter s(seq, germline, segment_cost, expected_value, nb_reads_for_evalue);
+
+        FineSegmenter s(seq, germline, segment_cost, expected_value, nb_reads_for_evalue, kmer_threshold);
 
         json json_clone;
         json_clone["id"] = seq.label;
