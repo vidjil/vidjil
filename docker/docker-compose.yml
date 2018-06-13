@@ -8,7 +8,7 @@ services:
             - ./mysql/:/docker-entrypoint-initdb.d/
             - /opt/vidjil/mysql:/var/lib/mysql
     uwsgi:
-        image: vidjil:test
+        image: vidjil/server:test
         command: bash /entrypoints/uwsgi-entrypoint.sh
         volumes_from:
             - fuse
@@ -19,7 +19,7 @@ services:
             - mysql:mysql
             - fuse:fuse
     fuse:
-        image: vidjil:test
+        image: vidjil/server:test
         command: bash /entrypoints/fuse-entrypoint.sh
         volumes:
             - /opt/vidjil/databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
@@ -27,12 +27,11 @@ services:
             - /opt/vidjil/result/tmp:/mnt/result/tmp
             - /opt/vidjil/upload/uploads:/mnt/upload/uploads
             - /opt/vidjil/log:/var/vidjil
-            - /opt/vidjil/log/nginx:/var/log/nginx
             - /opt/vidjil/log/uwsgi:/var/log/uwsgi
             - /opt/vidjil/backup:/mnt/backup
-            #- ./vidjil/conf:/etc/vidjil
+            #- ./vidjil-server/conf:/etc/vidjil
     nginx:
-        image: vidjil:test
+        image: vidjil/client:test
         depends_on:
             - uwsgi
         links:
@@ -41,11 +40,11 @@ services:
             - "80:80"
             - "443:443"
         command: bash /entrypoints/nginx-entrypoint.sh
-        volumes_from:
-            - uwsgi
+        volumes:
+            - /opt/vidjil/log/nginx:/var/log/nginx
 
     workers:
-        image: vidjil:test
+        image: vidjil/server:test
         command: /usr/local/bin/gosu www-data python /usr/share/vidjil/server/web2py/web2py.py -K vidjil,vidjil,vidjil
         volumes_from:
             - uwsgi

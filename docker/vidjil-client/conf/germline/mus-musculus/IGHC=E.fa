@@ -1,0 +1,62 @@
+>X01857|IGHE*01|Mus musculus_BALB/c|F|CH1|g,140..411|273 nt|1|+1|-1| | |273+96=369| | |
+............gcctctatcaggaaccctcagctctaccccttaaagccctgtaaaggc
+..................actgcttccatgaccctaggctgcctagtaaaggactacttc
+cct......aatcctgtgactgtgacctggtattcagactccctgaacatg.........
+...agcactgtgaacttccctgccctcggttctgaa........................
+ctcaaggtcaccaccagccaagtgaccagctggggcaag...............tcagcc
+aagaacttcacatgccacgtgacacatcct.........ccatcattcaacgaaagtagg
+actatccta
+>X01857|IGHE*01|Mus musculus_BALB/c|F|CH2|g,955..1274|321 nt|1|+1|-1| | |321+57=378| | |
+...gttcgacctgtcaacatcactgagcccaccttggagctactccattcatcctgcgac
+cccaatgcattc......cactccaccatccagctgtactgcttcatttatggccacatc
+cta......aatgatgtctctgtcagctggctaatggacgatcgggagataactgat...
+...acacttgcacaaactgttctaatcaaggaggaaggc..................aaa
+ctagcctctacctgcagtaaactcaacatcactgagcagcaatgg......atgtctgaa
+agcaccttcacctgcaaggtcacctcccaa............ggcgtagactatttggcc
+cacactcggagatgccca
+>X01857|IGHE*01|Mus musculus_BALB/c|F|CH3|g,1357..1676|321 nt|1|+1|-1| | |321+57=378| | |
+.........gatcatgagccacggggtgtgattacctacctgatcccacccagccccctg
+gacctgtatcaa......aacggtgctcccaagcttacctgtctggtggtggacctggaa
+agcgag...aagaatgtcaatgtgacgtggaaccaagagaagaagacttcagtc......
+...tcagcatcccagtggtacactaagcaccacaataac..................gcc
+acaactagtatcacctccatcctgcctgtagttgccaaggactgg......attgaaggc
+tacggctatcagtgcatagtggaccaccctgat......tttcccaagcccattgtgcgt
+tccatcaccaagacccca
+>X01857|IGHE*01|Mus musculus_BALB/c|F|CH4-CHS|g,1760..2109|351 nt|1|+1| | | |351+60=411| | |
+............ggccagcgctcagcccccgaggtatatgtgttcccaccaccagaggag
+gagagc............gaggacaaacgcacactcacctgtttgatccagaacttcttc
+cct......gaggatatctctgtgcagtggctgggggatggcaaactgatctcaaacagc
+...cagcacagtaccacaacacccctgaaatccaatggctcc............aatcaa
+ggcttcttcatcttcagtcgcctagaggtcgccaagacactctgg......acacagaga
+aaacagttcacctgccaagtgatccatgaggcacttcagaaacccaggaaactggagaaa
+acaatatccacaagcctt.........ggtaacacctccctccgtccctcc
+>X03624|IGHE*01|Mus musculus_BALB/c|F|M1|g,40..173|135 nt|1|+1| | | |135+0=135| | |
+gagctagacctccaggacctatgtattgaagaggtggagggcgaggagctggaagagctg
+tggaccagtatttgtgtcttcatcaccctgttcctgctcagtgtgagctatggggccact
+gtcaccgtcctcaag
+>X03624|IGHE*01|Mus musculus_BALB/c|F|M2|254..334|81 nt|1| | | | |81+0=81| | |
+gtgaagtgggtcctctccacaccgatgcaggatacaccccagaccttccaagactatgcc
+aacatcctccagaccagggca
+>M23104|IGHE*02|Mus musculus_BALB/c|F|CH1|1..270|270 nt|1| | | | |270+99=369|partial in 5' and in 3' | |
+...............tctatcaggaaccctcagctctaccccttgaagccctgtaaaggc
+..................actgcttccatgaccctgggctgcctggtaaaggactacttc
+cct......ggtcctgtgactgtgacctggtattcagactccctgaacatg.........
+...agcactgtgaacttccctgccctcggttctgaa........................
+ctcaaggtcaccaccagccaagtgaccagctggggcaag...............tcagcc
+aagaacttcacatgccacgtgacacatcct.........ccatcattcaacgaaagtagg
+actatccta
+>M22934|IGHE*02|Mus musculus_BALB/c|F|CH4-CHS|2..351|350 nt|1| | || |350+61=411| | |
+.............gccagcgctcagcccccgaggtatatgtgttcccaccaccagaggag
+gagagc............gaggacaaacgcacactcacctgcttgatccagaacttcttc
+cct......gaggatatctctgtgcagtggctggaggatggcaaactgatctcaaacagc
+...cagcacagtaccacaacacccctgaaatccaatggctcc............aatcaa
+ggcttcttcatcttcagtcgcctagaggtcgccaagacactctgg......acacagaga
+aaacagttcacctgccaagtgatccatgaggcacttcagaaacccaggaaactggagaaa
+acaatatccacaagcctt.........ggtaacacctccctccgtccctcc
+>U08933|IGHE*02|Mus musculus_BALB/c|F|M1|g,692..825|135 nt|1|+1| | | |135+0=135| | |
+gagctagacctccaggacctatgtattgaagaggtggagggcgaggagctggaagagctg
+tggaccagtatttgtgtcttcatcaccctgttcctgctcagtgtgagctatggggccact
+gtcaccgtcctcaag
+>U08933|IGHE*02|Mus musculus_BALB/c|F|M2|908..988|81 nt|1| | | | |81+0=81| | |
+gtgaagtgggtcttctccacaccgatgcaggatacaccccagaccttccaagactatgcc
+aacatcctccagaccagggca

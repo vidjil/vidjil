@@ -1,0 +1,54 @@
+>X06766|IGHGP*01|Homo sapiens|ORF|CH1|g,195..487|294 nt|1|+1|-1| | |294+72=366| | |
+............gcctccaccaagggcccatcggtcttccccctggtgccctcctccagg
+agcgtctct.........gagggcacagcggccctgggctgcctggtcaaggactacttc
+ccc......gaaccggtgacggtgtcgtggaactcaggggccctgaccaga.........
+...agcgtgcacaccttcccggctgtcctacagtcctca..................gga
+ctctactccctcagcagcgtggtgaccgtgccctccagcagcttg.........ggcacc
+cagacctacacctgcaacgtagatcacaagccc......agcaacaccaaggtggacaag
+acagtt
+>X06766|IGHGP*01|Homo sapiens|ORF|H|g,878..927|51 nt|1|+1|-1| | |51+0=51| | |
+gagcccaaaaccccatgttgtgacacaactcacacatgcccaccatgtgca
+>X06766|IGHGP*01|Homo sapiens|ORF|CH2|a,1047..1375|330 nt|1|+1|-1| | |330+48=378| | |
+......acaactgaacccctggggggaccgtcagtcttcctcttccccccaaaacccaag
+gataccctcatgatc...tcccggacccctgaggtcacgtgcgtggtggtggacgtgagc
+cacgaagaccctgaggtcaagttcaactggtacgtggacggcgtggaggtgcat......
+...aatgccaagacaaagccgtgggaggagcagtacaac..................agc
+acgtaccatgtggtcagcgtcctcaccgtcgtgcaccagaactgg......ctgaacggc
+agggagtacaagtgcaaggtctccaacaaaggc......ctcccagcccccatcgagaaa
+accatctccaaaaccaaa
+>X06766|IGHGP*01|Homo sapiens|ORF|CH3-CHS|g,1474..1790|318 nt|1|+1| | | |318+75=393| | |
+............gggcagccccgagaaccacaggtgtacaccctgcccccatcccagaag
+...atgacc.........aagaaccaggtcaccctgacctgcctggtcaaaggcttctac
+ccc......agcgacatcaccgtggagtgggagagcaatgggcagccggagaac......
+...aactacaagaccacgcctcccatgctggactccaac..................ggc
+tccttcttcctctatagcaagctcaccgtggacaagagcaggtgg......cagcagggg
+aacgtcttctcatgctccgtgatgcatgagggt...ctgcacaaccactacacgcagaag
+agcctctccctgtccccg.........ggtaaa
+>X52849|IGHGP*01|Homo sapiens|ORF|M1|g,102..232|132 nt|1|+1| | | |132+0=132| | |
+gagctgcaactggaggagagctgtgcggaggcgcaggacggggagctggacgggctgtgg
+acgaccatcaccatcttcatcacactcttcctgctaagcgtgtgctacagtgccaccgtc
+accttcttcaag
+>X52848|IGHGP*01|Homo sapiens|ORF|M2|106..186|81 nt|1| | | | |81+0=81| | |
+gtgaagtggatcttctcctcggtggtggacctgaagcagaccatcgtccccgactacagg
+aacatgatcgggcagggggcc
+>AL928769|IGHGP*02|Homo sapiens|ORF|CH1|g,10682..10974|294 nt|1|+1|-1| | |294+72=366| | |
+............gcctccaccaagggcccatcggtcttccccctggtgccctcctccagg
+agcgtctct.........gagggcacagcggccctgggctgcctggtcaaggactacttc
+ccc......gaaccggtgacggtgtcgtggaactcaggggccctgaccaga.........
+...agcgtgcacaccttcccggctgtcctacagtcctca..................gga
+ctctactccctcagcagcgtggtgaccgtgccctccagcagcttg.........ggcacc
+cagacctacacctgcaacgtagatcacaagccc......agcaacaccaaggtggacaag
+acagtt
+>AL928769|IGHGP*02|Homo sapiens|ORF|H|g,11365..11414|51 nt|1|+1|-1| | |51+0=51| | |
+gagcccaaaaccccatgttgtgacacaactcacacatgcccaccatgtgca
+>AL928769|IGHGP*02|Homo sapiens|ORF|CH2|a,11534..11862|330 nt|1|+1|-1| | |330+48=378| | |
+......acaactgaacccctggggggaccgtcagtcttcctcttccccccaaaacccaag
+gataccctcatgatc...tcccggacccctgaggtcacgtgcgtggtggtggacgtgagc
+cacgaagaccctgaggtcaagttcaactggtacgtggacggcgtggaggtgcat......
+...aatgccaagacaaagccgtgggaggagcagtacaac..................agc
+acgtaccatgtggtcagcgtcctcaccgtcgtgcaccagaactgg......ctgaacggc
+aaggagtacaagtgcaaggtctccaacaaaggc......ctcccagcccccatcgagaaa
+accatctccaaaaccaaa
+>AL928769|IGHGP*02|Homo sapiens|ORF|CH3-CHS|g,11961..12039|80 nt|1|+1| | | |80+24=104|partial in 3'| |
+............gggcagccccgagaaccacaggtgtacaccctgcccccatcccagaag
+...atgacc.........aagaaccaggtcaccctgaccctttc

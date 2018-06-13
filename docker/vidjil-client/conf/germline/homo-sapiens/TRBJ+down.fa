@@ -1,0 +1,66 @@
+>K02545.1:749-836|TRBJ1-1*01|Homo sapiens|F|J-REGION+down|Homo sapiens T-cell receptor beta-chain D-1-1 (TCRB), T-cell receptor beta-chain J-1-1 (TCRB), and T-cell receptor beta-chain J-1-2 (TCRB) genes, partial cds
+..................tgaacactgaagctttctttggacaaggcaccagactcacagttgtaggtaagacatttttcaggttctt
+TTGCAGATCCGTCACAGG
+
+>K02545.1:886-973|TRBJ1-2*01|Homo sapiens|F|J-REGION+down|Homo sapiens T-cell receptor beta-chain D-1-1 (TCRB), T-cell receptor beta-chain J-1-1 (TCRB), and T-cell receptor beta-chain J-1-2 (TCRB) genes, partial cds
+..................ctaactatggctacaccttcggttcggggaccaggttaaccgttgtaggtaaggctgggggtctctagga
+GGGGTGCGATGAGGGAGG
+
+>M14158.1:1499-1588|TRBJ1-3*01|Homo sapiens|F|J-REGION+down|Human T-cell receptor germline beta-chain D1.1 and J1.1 to J1.6 genes
+................ctctggaaacaccatatattttggagagggaagttggctcactgttgtaggtgagtaagtcaaggctgga
+CAGCTGGGAACTTGCAAAAA
+
+>M14158.1:2095-2185|TRBJ1-4*01|Homo sapiens|F|J-REGION+down|Human T-cell receptor germline beta-chain D1.1 and J1.1 to J1.6 genes
+...............caactaatgaaaaactgttttttggcagtggaacccagctctctgtcttgggtatgtaaaagacttcttt
+CGGGATAGTGTATCATAAGGT
+
+>M14158.1:2368-2457|TRBJ1-5*01|Homo sapiens|F|J-REGION+down|Human T-cell receptor germline beta-chain D1.1 and J1.1 to J1.6 genes
+................tagcaatcagccccagcattttggtgatgggactcgactctccatcctaggtaagttggcagaatcaggg
+TGGTATGGCCATTGTCCCTT
+
+>M14158.1:2859-2951|TRBJ1-6*01|Homo sapiens|F|J-REGION+down|Human T-cell receptor germline beta-chain D1.1 and J1.1 to J1.6 genes
+.............ctcctataattcacccctccactttgggaatgggaccaggctcactgtgacaggtatgggggctccactc
+TTGACTCGGGGGTGCCTGGGTTT
+
+>M14159.1:2316-2402|TRBJ2-7*01|Homo sapiens|F|J-REGION+down|Human T-cell receptor germline beta-chain D2.1 and J2.1 to J2.7 genes
+...................ctcctacgagcagtacttcgggccgggcaccaggctcacggtcacaggtgagattcgggcgtctccccac
+CTTCCAGCCCCTCGGTC
+
+>L36092.2:643043-643135|TRBJ1-6*02|Homo sapiens|F|J-REGION+down|Homo sapiens germline beta T-cell receptor locus
+.............ctcctataattcacccctccactttgggaacgggaccaggctcactgtgacaggtatgggggctccactc
+TTGACTCGGGGGTGCCTGGGTTT
+
+>X02987.1:800-889|TRBJ2-1*01|Homo sapiens|F|J-REGION+down|Human germline DNA for T-cell receptor beta-chain D beta 2-J beta 2 region
+................ctcctacaatgagcagttcttcgggccagggacacggctcaccgtgctaggtaagaagggggctccaggt
+GGGAGAGAGGGTGAGCAGCC
+
+>X02987.1:995-1085|TRBJ2-2*01|Homo sapiens|F|J-REGION+down|Human germline DNA for T-cell receptor beta-chain D beta 2-J beta 2 region
+...............cgaacaccggggagctgttttttggagaaggctctaggctgaccgtactgggtaaggaggcggctggggc
+TCCGGAGAGCTCCGAGAGGGC
+
+>X02987.1:1132-1217|TRBJ2-2P*01|Homo sapiens|ORF|J-REGION+down|Human germline DNA for T-cell receptor beta-chain D beta 2-J beta 2 region
+# No Phe/Trp-Gly-X-Gly pattern
+ctgagaggcgctgctgggcgtctgggcggaggactcctggttctgggtgctgggagagcgatggggctct
+CAGCGGTGGGAAGGAC
+
+>X02987.1:1282-1370|TRBJ2-3*01|Homo sapiens|F|J-REGION+down|Human germline DNA for T-cell receptor beta-chain D beta 2-J beta 2 region
+.................agcacagatacgcagtattttggcccaggcacccggctgacagtgctcggtaagcgggggctcccgctga
+AGCCCGGGAACTGGGGAGG
+
+>X02987.1:1432-1521|TRBJ2-4*01|Homo sapiens|F|J-REGION+down|Human germline DNA for T-cell receptor beta-chain D beta 2-J beta 2 region
+................agccaaaaacattcagtacttcggcgccgggacccggctctcagtgctgggtaagctggggccgccgggg
+GACCGGGGACGAGACTGCGC
+
+>X02987.1:1553-1640|TRBJ2-5*01|Homo sapiens|F|J-REGION+down|Human germline DNA for T-cell receptor beta-chain D beta 2-J beta 2 region
+..................accaagagacccagtacttcgggccaggcacgcggctcctggtgctcggtgagcgcgggctgctggggcg
+CGGGCGCGGGCGGCTTGG
+
+>X02987.1:1673-1765|TRBJ2-6*01|Homo sapiens|F|J-REGION+down|Human germline DNA for T-cell receptor beta-chain D beta 2-J beta 2 region
+.............ctctggggccaacgtcctgactttcggggccggcagcaggctgaccgtgctgggtgagttttcgcgggac
+CACCCGGGCGGCGGGATTCAGGT
+
+>X02987.1:1890-1976|TRBJ2-7*02|Homo sapiens|ORF|J-REGION+down|Human germline DNA for T-cell receptor beta-chain D beta 2-J beta 2 region
+# No Phe/Trp-Gly-X-Gly pattern
+ctcctacgagcagtacgtcgggccgggcaccaggctcacggtcacaggtgagattcgggcgtctccccac
+CTTCCAGCCCCTCGGTC
+

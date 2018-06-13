@@ -1,0 +1,56 @@
+>AABR03078283|IGLV1S1*01|Rattus norvegicus_BN/SsNHsdMCW|F|V-REGION|28839..29132|294 nt|1| | | | |294+42=336| | |
+caggctgttgtgactcaggaatctgca...ctcaccacattacctggtggaacagttaca
+ctcacttgccactcaagtactggggctgttaca.........accagtaactatgccaac
+tggattcaagaaaaagcagatcatttattcactggtatagtaggtgacacc.........
+............agcaacagggctccaggtgctcct...gccagattctcaggctccctg
+......cttgaaggcaaggctgcccttaccatcacaggggcgcagattgaggatgaggca
+acgtatttctgttctctctggtacagcaaccatttc
+>AABR03078283|IGLV2S1*01|Rattus norvegicus_BN/SsNHsdMCW|F|V-REGION|65417..65719|303 nt|1| | | | |303+39=342| | |
+cagttcacgctgactcaaccaaagtcc...gtgtcaggatctttaagaagcactatcacc
+attccctgtgagcgcagcagtggtgacatt............ggagatagctatgtgagc
+tggtaccagcaacacttgggaagaccccccatcaatgtgatctatgctgat.........
+............gatcaaagaccatctgaagtgtct...gatcggttctcgggctccatc
+gacagctcctctaactcagcctcactgaccatcactaatctgcagatggatgatgaggcc
+gactacttctgtcagtcttacgatagtaatattgatattaat
+>AABR03078283|IGLV3S1*01|Rattus norvegicus_BN/SsNHsdMCW|F|V-REGION|105325..105621|297 nt|1| | | | |297+39=336| | |
+caggctgtccttactcagccaaactct...gtgtctacgtctctaggaagcacagtcaaa
+ctgtcttgcacactcagctctggtaacata............gaaaacaactatgtgcac
+tggtaccagcagtatgagggaagatctcccaccactatgatttataatgat.........
+............gataagagaccggatggtgtccct...gacaggttctctggctccatt
+gacagctcttccaactcagccttcctgacaatcaataatgtggaaattgaagatgaagct
+atctacttctgtcattcttatgttagtagtattaat
+>AABR03078979|IGLV3S2*01|Rattus norvegicus_BN/SsNHsdMCW|F|V-REGION|23502..23798|297 nt|1| | | | |297+39=336| | |
+cagtttgtgcttactcagccaaactct...gtgtctacgaatctcggaagcacagtcaaa
+ctgtcttgcaagcgcagcactggtaacatt............ggaagcaattatgtgaac
+tggtaccagcagcatgagggaagatctcccaccactatgatttatagggat.........
+............gataagagaccagatggagttcct...gacaggttctctggctccatt
+gacagatcttccaactcagccctcctgacaatcaataatgtgcagactgaagatgaagct
+gactacttctgtcagtcttacagtagtggtattaat
+>AABR03078834|IGLV3S3*01|Rattus norvegicus_BN/SsNHsdMCW|F|V-REGION|21325..21621|297 nt|1| | | | |297+39=336| | |
+cagtttgtgcttactcagtcaaactct...atgtctacgtctctaggaagcacagtcaaa
+ctgtcttgcaagcgcagcactggtaacatt............ggaagcagctatgtgtac
+tggtaccagcagcatgagggaagatctcccaccactatgatttatgatgat.........
+............gataagagaccagatggagttcct...gataggttctctggctccatt
+gacagctcttccaactcagccttcctgacaatcaataatgtgcagattgaagatgaagct
+atctacttctgtcagtcttacagtagtggtattaat
+>AC109901|IGLV3S4*01|Rattus norvegicus_BN/SsNHsdMCW|F|V-REGION|137299..137595|297 nt|1| | || |297+39=336| |rev-compl|
+caggttgtgcttactcagccaaaatct...gtgtctacgtctctagaaagcacagtcaaa
+ctgtcttgcaaactcaactctggtaacatt............ggaagctactatatacac
+tggtaccagcagcatgagggaagatctcccaccactatgatttatagggat.........
+............gataagagaccagatggagttcct...gataggttctctggctccatt
+gacagctcttccaactcagccttcctgacaatcaataatgtgcagactgaagatgaagct
+atctacttctgtcattcttatgatagtagtattaat
+>AC109901|IGLV3S5*01|Rattus norvegicus_BN/SsNHsdMCW|F|V-REGION|122770..123066|297 nt|1| | || |297+39=336| |rev-compl|
+caggttgtgcttactcagccaaacact...gtgtctacgtctctaggaatcacagtcaaa
+ctgtcttgcaagtgcagctctggtaacatt............ggaagctactctgtgcac
+tggtaccagcagcatgagggaagatctcccaccactatgatatataaggat.........
+............gataaaagaccagatggagttcct...gataggttctctggctccatt
+gacagctcttccaattcagcattcctgacaatcaataatgtgcagactgaagatgaagct
+gtctacttctgtcattcttatgatagtaatattaat
+>AC133058|IGLV4S1*01|Rattus norvegicus|F|V-REGION|133011..133299|289 nt|1| | || |289+51=340| | |
+agctatgagctgatccaaccaccttcg...gcatcagtcactctgggaaatactgtctca
+ctcacttgtgtcggagatgaattatca..................aaaagatatgctcag
+tggtatcaacaaaagccagacaagaccattgtgtccgtgatatacaaagat.........
+............agtgagcggccctcaggcatctct...gaccgattctctggttcc...
+...agctccgggacaacagccactctgacaatccatggcaccctggctgaggatgaggct
+gattattactgtttgtcaacatatagtgatgataatcttc

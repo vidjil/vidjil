@@ -1,0 +1,46 @@
+>RatNor_6_chr6|IGHM*01|Rattus norvegicus_BN; Sprague-Dawley|F|CH1|g,645217..645530|315 nt|1|+1|-1|| |315+60=375| |rev-compl|
+............gagagtcagtcctccccaactgtcttccccctcgtctcctgcgagagc
+cccctgtctgat......gagaatttggtggccatgggctgcctggcccgggacttcctg
+ccc......agctccatttccttctcctggaactaccagaacaacactgaagtcatgcag
+...ggtgtcagaaccttcccaacactgaggacaggggac.....................
+aaatacacagctacctcgcaggtgttactgtccgccaaaaatgtccttgaaggttcagat
+gaatacttggtatgcaaaatccaccatggc............aacaaaaacaaagatctg
+catgtgccgattcca
+>RatNor_6_chr6|IGHM*01|Rattus norvegicus_BN; Sprague-Dawley|F|CH2|g,644759..645096|339 nt|1|+1|-1|| |339+45=384| |rev-compl|
+.........gctgtcgttgagatgaaccccaatgtgagtgtgttcattccaccacgtgat
+gccttctctggccctgcaccccgcaagtccagactcatctgcgaggccaccaacttcagt
+ccc......aaacagatcacagtatcctggctacaggatgggaagcctgtgaaatct...
+...ggcttcaccacagagccagtgactgtcgaggccaaaggatcc......agaccccaa
+acctacaaggtcataagcacactgaccatcactgaaagcgactgg......ctgaacctg
+aatgtgttcacctgccgcgtggatcacagg............ggtctcaccttctggaag
+aacgtgtcctccacatgcgctgcc
+>RatNor_6_chr6|IGHM*01|Rattus norvegicus_BN; Sprague-Dawley|F|CH3|a,644161..644477|318 nt|1|+1|-1|| |318+60=378| |rev-compl|
+............agtccatctacagacatcctagccttccccatccccccctcctttgct
+gacatcttcctc......accaagtctgctaagctgtcctgtctggtcacaaacctggca
+acctat...gacaccctgaatatctcctggtcttccaaaagtggtgaaccactg......
+...gagaccaacactaaaatcatggaaagtcaccccaat..................ggc
+accttcagtgctgtgggtgtggctagtgtttgtatggaagactgg......gataacagg
+aaggaatttgtatgcactgtgactcacagggac......ctgccttcaccacagaaaaaa
+ttcatctcaaaacccaat
+>RatNor_6_chr6|IGHM*01|Rattus norvegicus_BN; Sprague-Dawley|F|CH4-CHS|g,643663..644054|393 nt|1|+1| || |393+45=438| |rev-compl|
+.........gaggtggccaaacatccacctgctgtgtacctgctgccgccagcccgtgaa
+caactgatcctg......agggagtcggccacagtcacctgcctggtgaagggtttctct
+cct......gcagacatctttgtacagtggcttcagagagggcaacccttgtcctcagac
+...aagtatgtgaccagtgccccaatgccagagcctggggct............ccaggc
+ctgtacttcacccacagcatcctgactgtgacagaggaggaatgg......aactccgga
+gagacctacacctgtgttgtaggccacgaggcc...ctgccacacatggtgaccgagagg
+accgtggacaagtccactggtaaacccacactgtacaatgtatcgctgatcatgtctgac
+acaggtggcacctgctat
+>RatNor_6_chr6|IGHM*01|Rattus norvegicus_BN; Sprague-Dawley|F|M1|g,641819..641934|117 nt|1|+1| || |117+0=117| |rev-compl|
+gagggggaggtgaatgctgaggaggaaggctttgagaacctatggaccaccgcctctacc
+ttcatcgtcctcttcctcttgagcctcttctacagcaccactgtcaccctgttcaag
+>RatNor_6_chr6|IGHM*01|Rattus norvegicus_BN; Sprague-Dawley|F|M2|641694..641699|6 nt|1| | || |6+0=6| |rev-compl|
+gtgaaa
+>M13800|IGHM*02|Rattus norvegicus|F|CH2|n,78..415|339 nt|1|+1|-1| | |339+45=384| | |
+.........nctgtcgttgagatgaaccccaatgtgagtgtgttcattccaccacgtgat
+gccttctctggccctgcaccccgcaagtccagactcatctgcgaggccaccaacttcagt
+ccc......aaacagatcacagtatcctggctacaggatgggaagcctgtgaaatct...
+...ggcttcaccacagagccagtgactgtcgaggccaaaggatcc......agaccccaa
+acctacaaggtcataagcacactgaccatcactgaaagcgactgg......ctgaacctg
+aatgtgttcacctgccgcgtggatcacagg............ggtctcacctgcttgaag
+aacgtgtcctccacatgcgctgcc

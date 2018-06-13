@@ -1,0 +1,267 @@
+>M14905.1:77-172|TRAJ31*01|Homo sapiens|F|J-REGION+down|Human T-cell receptor germline alpha chain J-region involved in the t(8;14) translocation
+.............gaataacaatgccagactcatgtttggagatggaactcagctggtggtgaagcccagtaagtggccatgt
+TTTATTGATATTTGACCAAACAAATA
+
+>AC023226.3:51292-51394|TRAJ13*02|Homo sapiens|F|J-REGION+down|Homo sapiens chromosome 14 clone RP11-576P2 map 14, WORKING DRAFT SEQUENCE, 21 unordered pieces
+# No Phe/Trp-Gly-X-Gly pattern
+ttgggatgacttggagctttgttccagttccaaaggtaactttctggtaacccccagaattcacactgta
+ATGCCTGCCTTTACAAAATGACTTCCCTTCCCC
+
+>X02888.1:35-126|TRAJ25*01|Homo sapiens|ORF|J-REGION+down|Human gene for T-cell receptor alpha chain J region
+.........cagaaggacaaggcttctcctttatctttgggaaggggacaaggctgcttgtcaagccaagtaagtgaca
+TATAATTTATATGTGCTGATAA
+
+>M35620.1:35-97|TRAJ40*01|Homo sapiens|F|J-REGION+down|Human T-cell receptor germline J-alpha AA DNA, partial cds
+........actacctcaggaacctacaaatacatctttggaacaggcaccaggctgaaggttttagcaagt
+
+>M35622.1:30-89|TRAJ34*01|Homo sapiens|F|J-REGION+down|Human T-cell receptor germline J-alpha AB DNA, partial cds
+...........tcttataacaccgacaagctcatctttgggactgggaccagattacaagtctttccaagt
+
+>AF532854.1:240-312|TRAJ32*02|Homo sapiens|(F)|J-REGION+down|Homo sapiens clone SCO31 T-cell receptor alpha mRNA, partial cds
+.........atggtggtgctacaaacaagctcatctttggaactggcactctgcttgctgtccagccaaatatccagaa
+CCC
+
+>AF033825.1:312-402|TRAJ47*02|Homo sapiens|(F)|J-REGION+down|Homo sapiens clone VI-06.G5 T cell receptor alpha chain variable segment AV4S1 mRNA, partial cds
+............tggaatatggaaacaagctggtctttggcgcaggaaccattctgagagtcaagtcctatatccagaaccc
+TGACCCTGCCGTGTACCAGCT
+
+>AJ007774.1:336-408|TRAJ37*02|Homo sapiens|(F)|J-REGION+down|Homo sapiens mRNA for T-cell antigen receptor-alpha, clone Pil-6a, partial
+.......tggctctagcaacacaggcaaactaatctttgggcaagggacaactttacaagtaaaaccagatatccag
+AAC
+
+>X58763.1:61-123|TRAJ23*02|Homo sapiens|F|J-REGION+down|Human mRNA for T cell receptor J alpha gene segment JHAP36G
+......tgatttataaccagggaggaaagcttatcttcggacagggaacggagctatctgtgaaaccca
+
+>X05773.1:173-239|TRAJ17*01|Homo sapiens|F|J-REGION+down|Human inv(14) Linv tumor DNA for TCR alpha germline J segment
+......tgatcaaagctgcaggcaacaagctaacttttggaggaggaaccagggtgctagttaaaccaagtga
+
+>M16747.1:31-98|TRAJ6*01|Homo sapiens|F|J-REGION+down|Human germ-line T-cell receptor J-7-alpha gene, partial cds
+.......tgcatcaggaggaagctacatacctacatttggaagaggaaccagccttattgttcatccgtgtaagt
+
+>M35619.1:30-94|TRAJ44*01|Homo sapiens|F|J-REGION+down|Human T-cell receptor germline J-alpha RP DNA, partial cds
+......taaataccggcactgccagtaaactcacctttgggactggaacaagacttcaggtcacgctcggt
+
+>M94081.1:73699-73802|TRAJ10*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.....atactcacgggaggaggaaacaaactcacctttgggacaggcactcagctaaaagtggaactcagtaagt
+ATGAGATTCTATGGTAATTACAAAATGTATTCTG
+
+>M94081.1:72706-72805|TRAJ11*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.........tgaattcaggatacagcaccctcacctttgggaaggggactatgcttctagtctctccaggtacatgttg
+ACCCCATCCCACCCATGTTTTCCCCTTATC
+
+>M94081.1:71280-71382|TRAJ13*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+......tgaattctgggggttaccagaaagttacctttggaattggaacaaagctccaagtcatcccaagtgagtc
+CAATTTCCTATGCTTTCCTCTTCCTTGTGTTGT
+
+>M94081.1:70532-70623|TRAJ14*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.................atttatagcacattcatctttgggagtgggacaagattatcagtaaaacctggtaagtaggcaatatgtc
+ACTAAAGTAGGAGGCTTAATGT
+
+>M94081.1:69836-69935|TRAJ15*02|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.........ccaaccaggcaggaactgctctgatctttgggaagggaacccacctatcagtgagttccagtaagtacct
+GATAATTATTGATCATAGTGCTTGTACTTA
+
+>M94081.1:68743-68842|TRAJ16*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.........ggttttcagatggccagaagctgctctttgcaaggggaaccatgttaaaggtggatcttagtaagtatta
+TTACTAATGAATTCTTAATTGATTAGTTTT
+
+>M94081.1:65876-65981|TRAJ18*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+...ccgacagaggctcaaccctggggaggctatactttggaagaggaactcagttgactgtctggcctggtga
+GTGAGTCGCTTTCTATTCCAGGAAAATATTACTGTG
+
+>M94081.1:65489-65588|TRAJ19*01|Homo sapiens|ORF|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.........gctatcaaagattttacaatttcacctttggaaagggatccaaacataatgtcactccaagtaagtgagc
+AGCCTTTTGTACTCGAAAATAGGGCCAGGG
+
+>M94081.1:64552-64648|TRAJ20*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+............gttctaacgactacaagctcagctttggagccggaaccacagtaactgtaagagcaagtaagtaagaaag
+AAAAGTCCAGAATAATTTTAAGCAAAA
+
+>M94081.1:63829-63923|TRAJ21*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+..............tacaacttcaacaaattttactttggatctgggaccaaactcaatgtaaaaccaagtaagttatagttgc
+CTAGAAGAAAAAGTTACCAACACAT
+
+>M94081.1:60650-60752|TRAJ23*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+......tgatttataaccagggaggaaagcttatcttcggacagggaacggagttatctgtgaaacccagtaagta
+TAAAATTGTATCCCTGGATTAAGCAATGTCTGT
+
+>M94081.1:60203-60305|TRAJ24*02|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+......tgacaactgacagctgggggaaattgcagtttggagcagggacccaggttgtggtcaccccaggtaagcc
+CCATTCCCTGGAGCCTCACCTGCCCTTAGTATT
+
+>M94081.1:58680-58779|TRAJ26*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.........gggataactatggtcagaattttgtctttggtcccggaaccagattgtccgtgctgccctgtaagtacag
+TTAAGTGGAGATAGAAAATGAGTCCAGTGC
+
+>M94081.1:56507-56605|TRAJ27*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+..........taacaccaatgcaggcaaatcaacctttggggatgggactacgctcactgtgaagccaagtaagttgtgt
+TCTTCTTTGCCTAGGCCTTCAGGGGCAAT
+
+>M94081.1:55857-55962|TRAJ28*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+..............................catactctggggctgggagttaccaactcactttcgggaaggggaccaaactctcggtcataccaagtaa
+GTTCTTCTTTCTGGCTAATTATTCTTCCCGAGAAGC
+
+>M94081.1:54177-54276|TRAJ29*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.........ggaattcaggaaacacacctcttgtctttggaaagggcacaagactttctgtgattgcaagtaagtgttt
+CTAGCCATCCTTGATTTTGATCAGCAATGG
+
+>M94081.1:53090-53186|TRAJ30*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+............tgaacagagatgacaagatcatctttggaaaagggacacgacttcatattctccccagtaagtgctgttt
+ATGTGATTTTCTGACATTAACTCCCAC
+
+>M94081.1:49581-49686|TRAJ32*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+...tgaattatggcggtgctacaaacaagctcatctttggaactggcactctgcttgctgtccagccaagtac
+GTAAGTAGTGGCATGTGTCAGGTGGATTCTGTGTCC
+
+>M94081.1:48843-48939|TRAJ33*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+............tggatagcaactatcagttaatctggggcgctgggaccaagctaattataaagccaggtaagtctcagag
+ATGTGACTGCACGGGAGAGGAGACACT
+
+>M94081.1:46885-46983|TRAJ35*01|Homo sapiens|ORF|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+..........gataggctttgggaatgtgctgcattgcgggtccggcactcaagtgattgttttaccacgtaagtatatc
+TTTTCTCATTTCTGTGGGCTGTTATGTCC
+
+>M94081.1:45353-45451|TRAJ36*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+..........tcaaactggggcaaacaacctcttctttgggactggaacgagactcaccgttattccctgtaagtcctta
+CCTCTTGACAAAAAAGCTCTTAGTCTGTA
+
+>M94081.1:43993-44094|TRAJ37*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.......tggctctggcaacacaggcaaactaatctttgggcaagggacaactttacaagtaaaaccaggtaggtct
+GGATGTTTCCAAGTGAAGTGCAGTTATCCACT
+
+>M94081.1:42473-42574|TRAJ38*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+........taatgctggcaacaaccgtaagctgatttggggattgggaacaagcctggcagtaaatccgagtgagtct
+TCGTGTTAACTCTGTCAAACCTGTCTGTGCAG
+
+>M94081.1:41843-41945|TRAJ39*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+......tgaataataatgcaggcaacatgctcacctttggagggggaacaaggttaatggtcaaaccccgtgagta
+TCTCTGCTGAATCCATAATGAATGCTCTAATTT
+
+>M94081.1:82396-82498|TRAJ4*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+......tgttttctggtggctacaataagctgatttttggagcagggaccaggctggctgtacacccatgtgagta
+TGACCCTGCAAGTGACCAGTGCAAAAAGAACTG
+
+>M94081.1:37900-38001|TRAJ41*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.......gaactcaaattccgggtatgcactcaacttcggcaaaggcacctcgctgttggtcacaccccgtgagttt
+TTGTGGTTTACTAATTGTCCTCTCTGGAAAGA
+
+>M94081.1:37130-37235|TRAJ42*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+...tgaattatggaggaagccaaggaaatctcatctttggaaaaggcactaaactctctgttaaaccaagtaa
+GTGTTGGGGATTCAAAGTCCTGATTTATCATCAGTA
+
+>M94081.1:36154-36247|TRAJ43*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+...............acaataacaatgacatgcgctttggagcagggaccagactgacagtaaaaccaagtaagttgggggaatg
+GGTCAATCTTAAAAGCTGACCTGA
+
+>M94081.1:34169-34274|TRAJ45*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+..............................tgtattcaggaggaggtgctgacggactcacctttggcaaagggactcatctaatcatccagccctgtaa
+GTGCTTTTGCCTGGGAGGTGGGGTTCAAAATGCAGT
+
+>M94081.1:33647-33749|TRAJ46*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+......agaagaaaagcagcggagacaagctgacttttgggaccgggactcgtttagcagttaggcccagtaagtc
+TGAGCAGAAAGTAAGATATTTATGCCTTTTCCT
+
+>M94081.1:33096-33192|TRAJ47*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+............tggaatatggaaacaaactggtctttggcgcaggaaccattctgagagtcaagtcctgtgagtataaaac
+ACACTCAAGTCCCAACCTGGGTTTCAT
+
+>M94081.1:30737-30839|TRAJ48*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+......tatctaactttggaaatgagaaattaacctttgggactggaacaagactcaccatcatacccagtaagtt
+CTTCATCCTTGGTCAGGAAATCAGCCTGCATAA
+
+>M94081.1:29734-29829|TRAJ49*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.............gaacaccggtaaccagttctattttgggacagggacaagtttgacggtcattccaagtaagtcaaagaaa
+ATTTTCCATCACCATTGTGTTGAGCA
+
+>M94081.1:80444-80543|TRAJ5*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.........tggacacgggcaggagagcacttacttttgggagtggaacaagactccaagtgcaaccaagtaagtaccc
+AAACTTAGGCTCTGGCCAAAGACACAGAAA
+
+>M94081.1:28839-28938|TRAJ50*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.........tgaaaacctcctacgacaaggtgatatttgggccagggacaagcttatcagtcattccaagtaagtgtcc
+CTGGGGTGCTGCCTGTGGAGTGCGCTGGGG
+
+>M94081.1:27429-27531|TRAJ51*01|Homo sapiens|P|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+......agatgcgtgacagctatgagaagctgatatttggaaaggagacatgactaactgtgaagccaagcaagct
+GGAAAGACCTAAACTCACAGTGTTCCTTATGTA
+
+>M94081.1:26474-26582|TRAJ52*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+ctaatgctggtggtactagctatggaaagctgacatttggacaagggaccatcttgactgtccatccaag
+TAAGTGTAACAAGACACAGCAGTATACTGGAAATTCTGG
+
+>M94081.1:23251-23356|TRAJ53*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+...agaatagtggaggtagcaactataaactgacatttggaaaaggaactctcttaaccgtgaatccaagtaa
+GTTTGAAGGGAGTGGGGGAAGGGGGGATTCAAACAC
+
+>M94081.1:22534-22633|TRAJ54*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.........taattcagggagcccagaagctggtatttggccaaggaaccaggctgactatcaacccaagtaagtatga
+CAGGGTGAAGCTACATGCAGCTGAGTACAG
+
+>M94081.1:21944-22040|TRAJ55*01|Homo sapiens|P|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.............acaagtgctggtaatgctcctgttggggaaaggggatgagtacaaaaataaatccaagtaagtgtggagg
+GACAAGAAGATCTCACAGTGCAGGATT
+
+>M94081.1:19768-19869|TRAJ56*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.......ttatactggagccaatagtaagctgacatttggaaaaggaataactctgagtgttagaccaggtatgttt
+TAATGAATGTTATTTGTTTCCAAACATAAGCC
+
+>M94081.1:19119-19221|TRAJ57*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+......taactcagggcggatctgaaaagctggtctttggaaagggaacgaaactgacagtaaacccatgtaagtc
+TGAATAATGCTTCCAAATTTCTCCCTGGAACCC
+
+>M94081.1:17954-18056|TRAJ58*01|Homo sapiens|ORF|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+......tttaagaaaccagtggctctaggttgacctttggggaaggaacacagctcacagtgaatcctggtaagtg
+GAGGGGAGCATTGAATCCTCTGCCTGAATGTAT
+
+>M94081.1:16801-16894|TRAJ59*01|Homo sapiens|ORF|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.........ggaaggaaggaaacaggaaatttacatttggaatggggacgcaagtgagagtgaagctatctttaaacca
+AAGGTGTCAGGTTATTTGGTTTGG
+
+>M94081.1:16554-16650|TRAJ60*01|Homo sapiens|P|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+............tgaagatcacctagatgctcaactttgggaaggggactgagttaattgtgagcctgggtgagtacctcaa
+CTCCAGAGGTAGCTTTAGCGGAACCCC
+
+>M94081.1:15564-15663|TRAJ61*01|Homo sapiens|ORF|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.........ggtaccgggttaataggaaactgacatttggagccaacactagaggaatcatgaaactcagcaagtaata
+TTTGGCAGAATTTTTTTTTCTATCTGAAAA
+
+>M94081.1:77821-77919|TRAJ7*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+..........tgactatgggaacaacagactcgcttttgggaaggggaaccaagtggtggtcataccaagtaagtgagct
+GGGATCCTCCTGCACAAATGGCCACAGCA
+
+>M94081.1:76346-76445|TRAJ8*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+.........tgaacacaggctttcagaaacttgtatttggaactggcacccgacttctggtcagtccaagtaagtcaaa
+TCTGCAGAAATGTGTAGCCCTATCCTCAAT
+
+>M94081.1:75756-75856|TRAJ9*01|Homo sapiens|F|J-REGION+down|Human Tcr-C-delta gene, exons 1-4; Tcr-V-delta gene, exons 1-2; T-cell receptor alpha (Tcr-alpha) gene, J1-J61 segments; and Tcr-C-alpha gene, exons 1-4
+........ggaaatactggaggcttcaaaactatctttggagcaggaacaagactatttgttaaagcaagtaagttcc
+ATGAAATAACCTGATTTATATTACAGTTGAA
+
+>X05775.1:80-179|TRAJ15*01|Homo sapiens|F|J-REGION+down|Human t(14;14) Pt tumor DNA for TCR alpha germline J(S) segment
+.........ccaaccaggcaggaactgctctgatctttgggaagggaaccaccttatcagtgagttccagtaagtacct
+GATAATTATTGATCATAGTGCTTGTACTTA
+
+>X02884.1:2363-2464|TRAJ1*01|Homo sapiens|ORF|J-REGION+down|Human genes for T-cell receptor alpha chain J region 4kb upstream of C(a) gene
+.......gtatgaaagtattacctcccagttgcaatttggcaaaggaaccagagtttccacttctccccgtacgtct
+GCCCATGCCCAGAGTTTCCTGATGCTCACTAA
+
+>X02884.1:1397-1502|TRAJ2*01|Homo sapiens|ORF|J-REGION+down|Human genes for T-cell receptor alpha chain J region 4kb upstream of C(a) gene
+...tgaatactggaggaacaattgataaactcacatttgggaaagggacccatgtattcattatatctggtga
+GTCATCCCAGGTGGCACCACGTGCAACCCCATGGGC
+
+>X02884.1:504-605|TRAJ3*01|Homo sapiens|F|J-REGION+down|Human genes for T-cell receptor alpha chain J region 4kb upstream of C(a) gene
+.......ggggtacagcagtgcttccaagataatctttggatcagggaccagactcagcatccggccaagtaagtag
+AATGAAGCAGGAGAGCAAGGGAGGACGGACAA
+
+>X02885.1:53-152|TRAJ12*01|Homo sapiens|F|J-REGION+down|Human gene for T-cell receptor alpha chain J region
+.........ggatggatagcagctataaattgatcttcgggagtgggaccagactgctggtcaggcctggtaagtaagg
+TGTCAGAGAGGCAACAGAAAGATTGAGGGT
+
+>X02886.1:405-507|TRAJ22*01|Homo sapiens|F|J-REGION+down|Human gene for T-cell receptor alpha chain J region
+......tttcttctggttctgcaaggcaactgacctttggatctgggacacaattgactgttttacctggtaggct
+GCCTCAATTAAATACTATTTGCACTGATTTACT
+
+>X02887.1:124-226|TRAJ24*01|Homo sapiens|F|J-REGION+down|Human gene for T-cell receptor alpha chain J region
+......tgacaactgacagctgggggaaattcgagtttggagcagggacccaggttgtggtcaccccaggtaagcc
+CATTCCTGGAGCTCACTGCCTTAGTATTGGCAT
+

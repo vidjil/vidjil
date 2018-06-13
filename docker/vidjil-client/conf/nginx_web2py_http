@@ -4,7 +4,6 @@ upstream uwsgi {
 
 server {
         listen 80 default_server;
-        server_name     $hostname;
         keepalive_timeout    70;
 
         uwsgi_max_temp_file_size 20480m;

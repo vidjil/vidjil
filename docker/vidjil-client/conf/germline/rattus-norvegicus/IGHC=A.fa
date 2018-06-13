@@ -1,0 +1,47 @@
+>RatNor_6_chr6|IGHA*01|Rattus norvegicus_BN; Sprague-Dawley|F|CH1|g,462152..462450|300 nt|1|+1|-1|| |300+75=375| |rev-compl|
+............gagtccgcgaaagatcccaccatctacccactgagacccccaccatct
+ccgtca............agcgacccagtgacaatcggctgcctaattcagaattacttc
+ccatcc...ggaactatgaatgtgacctggggcaagagtggaaaggatata.........
+...agcgtcataaacttcccacctgccccagcctctggg.....................
+ccatacaccatgtgcagccagttgacattgccagctgcagagtgc......ccaaaagga
+acatctgtgaaatactatgttcaatataac.........acaagccccgtcagagaattg
+agtgtggaatgccct
+>RatNor_6_chr6|IGHA*01|Rattus norvegicus_BN; Sprague-Dawley|F|H-CH2|g,461602..461924|324 nt|1|+1|-1|| |324+69=393| |rev-compl|
+ggtccaaaaccctcctta..................gtctgccgccctcgcctgtcactg
+caacggccagcccttgaggacctgctcctg......ggttcagaggccagcctcacatgt
+actctgagaggcctgaaagagcct...acgggagccgtcttcacctggcagcccaccact
+gggaaggat............gcagtgcagaaggaagctgtgcaggactcctgtggc...
+..................tgctacactgtgtccagcgtcctgcctggctgtgccgagcgc
+tgg......aacaatggagagaccttcacatgcacagctacccaccctgaattt...gag
+acccccttaaccggcgaaattgccaaagtcaca
+>RatNor_6_chr6|IGHA*01|Rattus norvegicus_BN; Sprague-Dawley|F|CH3-CHS|g,461007..461398|393 nt|1|+1| || |393+45=438| |rev-compl|
+............gaaaacaccttcccaccccaggtccacctgctaccgccgccgtcggag
+gagctggccctg......aatgagctcgtgtccctgacatgcctggtgcgaggattcaac
+cct......aaagatgtgctggtgcgttggctacaagggaatgaggagctgccctctgaa
+...agctacctagtgtttgagcccctgagggagccaggcgaagga.........gccatc
+acctacctggtgacaagcgtgctgcgtgtgtcagctgaaacctgg......aagcagggt
+gcccagtactcctgcatggtgggccacgaggcc...ttgcccatgagcttcacccagaag
+accatcgaccgtctgtcgggtaaacccaccaacgtcaacgtgtctgtgatcatgtcagag
+ggagatggcatttgctac
+>RatNor_6_chr6|IGHA*01|Rattus norvegicus_BN; Sprague-Dawley|F|M|g,458479..458672|195 nt|1|+1| || |195+0=195| |rev-compl|
+gaatgccaagagccaccttcctacgtgatactggaccagtcacaagacatcctggaggaa
+gagaccccgggtgccagtctgtggcccaccgctgtgaccttcctcaccctcttcctactg
+agcttgttctacagcacagcactcaccgtcacaactgtacgaggcccatttggcagcaaa
+gaggtcccccagtac
+>M13801|IGHA*02|Rattus norvegicus|F|H-CH2|1..34|33 nt|1| | | | |33+360=393|partial in 5'| |
+............................................................
+............................................................
+............................................................
+............................................................
+............................................................
+............................................................
+acccccttaaccggcaaaattgccaaagtcaca
+>M13801|IGHA*02|Rattus norvegicus|F|CH3-CHS|g,236..627|393 nt|1|+1| | | |393+54=447| | |
+............gaaaacaccttcccaccccaggtccacctcgtaccgccgccgtcggag
+gagctggccctg......aatgagctcgtgtccctgacatgcctggtgcgaggattcaac
+cct......aaagatgtgctggtgcgttggctacaagggaatgaggagctgccctctgaa
+...agctacctagtgtttgagcccctgagggagccaggcgaagga.........gccatc
+acctacctggtgacaagcgtgctgcgtgtgtcagctgaaacctgg......aagcagggt
+gcccagtactcctgcatggtgggccacgaggcc...ttgcccatgagcttcacccagaag
+accatcgaccgtctgtcg.........ggtaaacccaccaacgtcaacgtgtctgtgatc
+atgtcagagggagatggcatttgctac

@@ -1,0 +1,20 @@
+>M12829.1:111-210|TRGJ2*01|Mus musculus_BALB/c|F|J-REGION+down|Mouse T-cell receptor germline gamma chain gene V-region (J10.5)
+# No Phe/Trp-Gly-X-Gly pattern
+atagctcgggctttcacaaggtatttgcagaaggaacaaagctcatagtaattccctccggtaagtacct
+TTTATTCTGCTTTATTCCAGTGATGAAAAG
+
+>AF037352.1:80378-80477|TRGJ3*01|Mus musculus|F|J-REGION+down|Mus musculus T cell receptor gamma locus, TCR gamma 1 and gamma 3 gene clusters
+# No Phe/Trp-Gly-X-Gly pattern
+atagttgggactttcacaaggtatttgcagaaggaactaagctcatagtaattccttctggtaagtacct
+TTTTTTCTGCTTTATTCCAGTGATGAAAAG
+
+>X05502.1:36-136|TRGJ4*01|Mus musculus|F|J-REGION+down|Mouse germline T-cell receptor gamma-chain gene joining region (J2)
+# No Phe/Trp-Gly-X-Gly pattern
+tcaggcacatcatgggtcaagatatttgccaaagggacaaagctcgtagtaattcccccaggtaagtaag
+CTAAGCTGTTGTGTTGTTATCTTAGAGGGAA
+
+>M12830.1:122-221|TRGJ1*01|Mus musculus_BALB/c|F|J-REGION+down|Mouse T-cell receptor germline gamma chain gene V-region (J13.4)
+# No Phe/Trp-Gly-X-Gly pattern
+atagctcaggttttcacaaggtatttgcagaaggaactaagctcatagtaattccctctggtaagtacct
+TTTTTCTGCTTTATTCCAGTGATGAAAAGA
+
