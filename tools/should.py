@@ -22,8 +22,8 @@
 
 import sys
 
-if not (sys.version_info >= (3, 5)):
-    print("Python >= 3.5 required")
+if not (sys.version_info >= (3, 4)):
+    print("Python >= 3.4 required")
     sys.exit(1)
 
 import re
