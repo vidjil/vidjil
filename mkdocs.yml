@@ -11,3 +11,6 @@ pages:
     - vidjil-algo: vidjil-algo.md
     - locus and recombinations: locus.md
 
+extra_css:
+    - mkdocs-extra.css
+
