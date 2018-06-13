@@ -1,6 +1,25 @@
-<link rel="stylesheet" type="text/css" href="org-mode.css" />
+# vidjil-algo – Command-line manual
+*The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)*
 
-V(D)J recombinations in lymphocytes are essential for immunological
+```
+  Vidjil -- High-throughput Analysis of V(D)J Immune Repertoire -- [[http://www.vidjil.org]]
+  Copyright (C) 2011-2018 by Bonsai bioinformatics
+  at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
+  contact@vidjil.org
+```
+
+This is the help of vidjil-algo, for command-line usage.
+This manual can be browsed online:
+
+ - <http://www.vidjil.org/doc/algo>                    (last stable release)
+ - <http://git.vidjil.org/blob/master/doc/algo.md>     (development version)
+
+Other documentation (users and administrators of the web application, developpers) can be found from <http://www.vidjil.org/doc/>.
+
+
+## About
+
+*V(D)J recombinations* in lymphocytes are essential for immunological
 diversity. They are also useful markers of pathologies, and in
 leukemia, are used to quantify the minimal residual disease during
 patient follow-up.
@@ -250,7 +269,7 @@ The `germline/*.g` presets configure the analyzed recombinations.
 The following presets are provided:
 
   - `germline/homo-sapiens.g`: Homo sapiens, TR (`TRA`, `TRB`, `TRG`, `TRD`) and Ig (`IGH`, `IGK`, `IGL`) locus,
-    including incomplete/unusal recombinations (`TRA+D`, `TRB+`, `TRD+`, `IGH+`, `IGK+`, see [locus.org](http://git.vidjil.org/blob/master/doc/locus.org))
+    including incomplete/unusal recombinations (`TRA+D`, `TRB+`, `TRD+`, `IGH+`, `IGK+`, see [locus](locus)).
   - `germline/homo-sapiens-isotypes.g`: Homo sapiens heavy chain locus, looking for sequences with, on one side, IGHJ (or even IGHV) genes,
     and, on the other side, an IGH constant chain.
   - `germline/homo-sapiens-cd.g`: Homo sapiens, common CD genes (experimental, does not check for recombinations)
