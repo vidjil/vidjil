@@ -93,7 +93,7 @@ STATUS = {
     TODO_PASSED: 'TODO-but-ok',
 }
 
-WARN_STATUS = [False, SKIP, TODO_PASSED]
+WARN_STATUS = [False, SKIP, TODO, TODO_PASSED]
 
 STATUS_TAP = {
     None: 'not run',
