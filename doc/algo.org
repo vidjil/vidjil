@@ -388,8 +388,8 @@ to display the clones on the grid (otherwise they are displayed on the
 If you want to analyze more clones, you should use =-z 200= or
 =-z 500=.  It is not recommended to use larger values: outputting more
 than 500 clones is often not useful since they can not be visualized easily
-in the web application, and takes large computation time (full dynamic programming,
-see below).
+in the web application, and takes large computation time (full dynamic programming
+with all germline sequences), possibly reduced when using =-Z= (see below).
 
 Note that even if a clone is not in the top 100 (or 200, or 500) but
 still passes the =-r=, =-%= options, it is still reported in both the =.vidjil=
@@ -404,6 +404,12 @@ The =-A= option disables all these thresholds. This option should be
 used only for test and debug purposes, on very small datasets, and
 produce large file and takes huge computation times.
 
+The experimental =-Z= option speeds up the full analysis by a pre-processing step,
+again based on k-mers, to select a subset of the V germline genes to be compared to the read.
+The option gives the typical size of this subset (it can be larger when several V germlines
+genes are very similar, or smaller when there are not enough V germline genes).
+Setting =-Z 5= is generally safe. With the default option, =-Z all=, this
+pre-processing step is not activated.
 
 ** Sequences of interest
 
