@@ -1,0 +1,13 @@
+site_name: Vidjil
+
+docs_dir: doc
+
+plugins: []
+
+repo_url: https://gitlab.inria.fr/vidjil/vidjil
+repo_name: gitlab
+
+pages:
+    - vidjil-algo: vidjil-algo.md
+    - locus and recombinations: locus.md
+
