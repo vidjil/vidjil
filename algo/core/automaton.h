@@ -80,18 +80,18 @@ public:
    */
   virtual void *next(void *state, char c) = 0;
 
-	/**
-	 * This function returns the number of times every Info appears in the
-	 * given sequence.
-	 * It returns a map containing the number of occurences per Info.
-	 * @param seq: The sequence to be queried. It is passed through 
-         *             the automaton to identify matching k-mers and extract 
-         *             the corresponding Info.
+  /**
+   * This function returns the number of times every Info appears in the
+   * given sequence.
+   * It returns a map containing the number of occurences per Info.
+   * @param seq: The sequence to be queried. It is passed through 
+   *             the automaton to identify matching k-mers and extract 
+   *             the corresponding Info.
    * @param false: unused.
-	 * @param seed: unused.
-	 */
-	virtual map<Info,int> getMultiResults
-		(const seqtype &seq, bool no_revcomp=false, string seed = "") = 0;
+   * @param seed: unused.
+   */
+  virtual map<Info,int> getMultiResults
+    (const seqtype &seq, bool no_revcomp=false, string seed = "") = 0;
 };
 
 #define DNA_ALPHABET_SIZE 4
