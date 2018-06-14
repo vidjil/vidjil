@@ -93,10 +93,12 @@ BioReader filterBioReaderWithACAutomaton(
     int nbKmers = 0, previousOccurences = 0;
     for(pair<KmerAffect, int> element : setOfWords){
       // Add corresponding sequences to the BioReader
-      if(nbKmers <= kmer_threshold){
-        nbKmers++;
         if(nbKmers == kmer_threshold && previousOccurences == element.second){
-          nbKmers--;
+          //Keep the same amount of genes
+        }else if(nbKmers < kmer_threshold){
+          nbKmers++;
+        }else{
+          break;
         }
         tmpKmer = element.first;
         asciiChar = tmpKmer.getLabel().at(0);
@@ -108,11 +110,6 @@ BioReader filterBioReaderWithACAutomaton(
           result.add(origin.read(i));
         }
         previousOccurences = element.second;
-      }
-      else{
-        /* Enough K-mers used for filtering, no need to go further */
-        break;
-      }
     }
   }
   return (result.size() == 0) ? origin : result;
