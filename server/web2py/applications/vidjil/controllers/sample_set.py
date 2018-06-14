@@ -651,6 +651,47 @@ def custom():
                 tag_decorator=tag_decorator,
                 group_ids=group_ids)
 
+def getStatHeaders():
+    return ['set_name']
+
+def getStatData(results_file_ids):
+    mf = ModelFactory()
+    set_types = [defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC]
+    helpers = {}
+    for stype in set_types:
+        helpers[stype] = mf.get_instance(stype)
+
+    query = db(
+        (db.results_file.id.belongs(results_file_ids)) &
+        (db.sample_set_membership.sample_set_id == db.results_file.sequence_file_id) &
+        (db.sample_set.id == db.sample_set_membership.sample_set_id)
+        ).select(
+            db.results_file.ALL, db.sample_set.ALL, db.patient.ALL, db.run.ALL, db.generic.ALL,
+            left = [
+                db.patient.on(db.patient.sample_set_id == db.sample_set.id),
+                db.run.on(db.run.sample_set_id == db.sample_set.id),
+                db.generic.on(db.generic.sample_set_id == db.sample_set.id)
+            ]
+        )
+
+    data = []
+    for res in query:
+        d = {}
+        set_type = res.sample_set.sample_type
+        d['set_name'] = helpers[set_type].get_name(res[set_type])
+        data.append(d)
+    return data
+
+def multi_sample_stats():
+    data = {}
+    data['headers'] = getStatHeaders()
+    results = []
+    #if not auth.can_view_sample_set():
+    #    return "permission denied %s" % res
+    results = getStatData(request.vars['custom_result'])
+    data['results'] = results
+    return dict(data=data)
+
 def confirm():
     if auth.can_modify_sample_set(request.vars["id"]):
         sample_set = db.sample_set[request.vars["id"]]
