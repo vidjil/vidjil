@@ -385,6 +385,7 @@ void testExAequoKmersWhenSignificantParameter(){
   seqtype seq;
   pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* p;
   string BIOREADER_EXAEQUO = "BioReader doesn't have ex-aequo";
+  string SIZE_BIOREADER = "BioReader doesn't contain the good amount of sequences";
   Sequence sequences[13];
   sequences[0] = {"seq1-full_name", "seq-01*01", "AGCTAGCTA","", NULL, 0};
   sequences[1] = {"seq1-full_name", "seq-01*02", "AGCTAGCTT", "", NULL, 0};
@@ -418,18 +419,29 @@ void testExAequoKmersWhenSignificantParameter(){
   while(j < filtered.size() && extractGeneName(filtered.label(j)) != extractGeneName(testedBioReader.label(10))){
     ++j;
   }
+  /* Check that filtered BioReader contains sequence n°11 which is the most present in the sequence. */
+  int k = 0;
+  while(k < filtered.size() && extractGeneName(filtered.label(k)) != extractGeneName(testedBioReader.label(11))){
+    ++k;
+  }
+
+  /* Even though the filtered function got 2 as a parameter, since there are two ex-aequo the size is 3 */
+  TAP_TEST(filtered.size() == 3, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_BIOREADER);
   TAP_TEST(i < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   TAP_TEST(j < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
+  TAP_TEST(k < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   /* Add a third ex-aequo: k-mer belonging to sequence n°12 appearing 29 times */
   seq += "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC";
   delete p->first; delete p->second; delete p;
   p = buildACAutomatonToFilterBioReader(testedBioReader, "####");
   filtered = filterBioReaderWithACAutomaton(p, testedBioReader, seq, 2);
-  int k = 0;
-  while(k < filtered.size() && extractGeneName(filtered.label(k)) != extractGeneName(testedBioReader.label(12))){
-    ++k;
+  int l = 0;
+  while(l < filtered.size() && extractGeneName(filtered.label(l)) != extractGeneName(testedBioReader.label(12))){
+    ++l;
   }
-  TAP_TEST(k < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
+  /* Even though the filtered function got 2 as a parameter, since there are three ex-aequo the size is 4 */
+  TAP_TEST(filtered.size() == 4, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_BIOREADER);
+  TAP_TEST(l < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   delete p->first; delete p->second; delete p;
 }
 
