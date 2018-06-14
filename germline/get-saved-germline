@@ -19,4 +19,6 @@ EOF
 
 wget -N http://www.vidjil.org/germlines/germline-${germline_id}.tar.gz
 tar xzmfv germline-${germline_id}.tar.gz --strip-components=1 germline/
-tar xzmfv germline-${germline_id}.tar.gz --strip-components=1 -C $dir/../browser/ browser/ || true
+if [ -d "$dir/../browser" ]; then
+    tar xzmfv germline-${germline_id}.tar.gz --strip-components=1 -C $dir/../browser/ browser/
+fi
