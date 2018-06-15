@@ -1240,7 +1240,8 @@ ScatterPlot.prototype = {
             if (otherSize > size) size = otherSize
         }
 
-        if ((size == Clone.prototype.NOT_QUANTIFIABLE_SIZE) || (size < this.CLONE_MIN_SIZE))
+        if ((size == Clone.prototype.NOT_QUANTIFIABLE_SIZE) ||
+            (size > 0 && size < this.CLONE_MIN_SIZE))
             size = this.CLONE_MIN_SIZE
 
         this.nodes[cloneID].s = size
