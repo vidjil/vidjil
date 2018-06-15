@@ -652,7 +652,9 @@ def custom():
                 group_ids=group_ids)
 
 def getStatHeaders():
-    return ['set_name']
+    return [
+            ('set_name', lambda x, y, z: z[y].get_name(x[y]))
+        ]
 
 def getStatData(results_file_ids):
     mf = ModelFactory()
@@ -678,13 +680,14 @@ def getStatData(results_file_ids):
     for res in query:
         d = {}
         set_type = res.sample_set.sample_type
-        d['set_name'] = helpers[set_type].get_name(res[set_type])
+        for head, func in getStatHeaders():
+            d[head] = func(res, set_type, helpers)
         data.append(d)
     return data
 
 def multi_sample_stats():
     data = {}
-    data['headers'] = getStatHeaders()
+    data['headers'] = [h for h, f in getStatHeaders()]
     results = []
     #if not auth.can_view_sample_set():
     #    return "permission denied %s" % res
