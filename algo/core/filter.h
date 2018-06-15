@@ -21,7 +21,7 @@ class FilterWithACAutomaton {
                     filter on every K-mers returned by getMultiResults. Otherwise
                     it will filter on the "kmer_threshold" number of K-mers. For
                     Example if kmer_threshold = 10, it will filter on the 10 most
-                    significant K-mers returned by getMultiResults
+                    significant K-mers returned by getMultiResults.
   */
   BioReader filterBioReaderWithACAutomaton(
       pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* idxAho,
