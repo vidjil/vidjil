@@ -302,7 +302,11 @@ class TestMultilocus < BrowserTest
     assert ($b.clone_in_scatterplot('90').exists?)
 
   end
-  
+
+  def test_18_empty_clone_invisible
+    assert ( $b.execute_script("return m.clones[66].reads[0]") == 0), "Clone should have no read"
+    assert (not $b.clone_in_scatterplot('66').visible?), "Clone should not be visible"
+  end
 
   def TODO_test_14_edit_tag
     begin
