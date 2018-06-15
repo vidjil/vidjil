@@ -90,19 +90,15 @@ BioReader filterBioReaderWithACAutomaton(
     set<pair<KmerAffect, int>, Comparator> setOfWords(mapAho.begin(), mapAho.end(), compFunctor);
     set<pair<KmerAffect, int>, Comparator>::iterator setIt = setOfWords.begin();
     // Iterate over the pair and not the map
-    int nbKmers = 0;
+    int nbKmers = 0, previousOccurences = 0;
     for(pair<KmerAffect, int> element : setOfWords){
       // Add corresponding sequences to the BioReader
-      if(nbKmers < kmer_threshold){
-        nbKmers++;
-        /* Check if next K-mer has same occurence */
-        if(nbKmers == kmer_threshold){
-          std::advance(setIt, nbKmers);
-          pair<KmerAffect, int> pNext = *setIt;
-          int nextKmerOccurs = pNext.second;
-          if(nextKmerOccurs == element.second){
-            nbKmers--;
-          }
+        if(nbKmers == kmer_threshold && previousOccurences == element.second){
+          //Keep the same amount of genes
+        }else if(nbKmers < kmer_threshold){
+          nbKmers++;
+        }else{
+          break;
         }
         tmpKmer = element.first;
         asciiChar = tmpKmer.getLabel().at(0);
@@ -113,11 +109,7 @@ BioReader filterBioReaderWithACAutomaton(
         for(int i = indexes->at(asciiNum - 1); i < indexes->at(asciiNum); ++i){
           result.add(origin.read(i));
         }
-      }
-      else{
-        /* Enough K-mers used for filtering, no need to go further */
-        break;
-      }
+        previousOccurences = element.second;
     }
   }
   return (result.size() == 0) ? origin : result;
