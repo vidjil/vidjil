@@ -4,6 +4,9 @@
 #include "automaton.hpp"
 
 class FilterWithACAutomaton {
+  private:
+    pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* p;
+
   public:
     FilterWithACAutomaton(BioReader &origin, string seed);
     ~FilterWithACAutomaton();
@@ -27,7 +30,6 @@ class FilterWithACAutomaton {
                     significant K-mers returned by getMultiResults.
   */
   BioReader filterBioReaderWithACAutomaton(
-      pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* idxAho,
       BioReader &origin, seqtype &seq,
       int kmer_threshold = NO_LIMIT_VALUE);
   /*
@@ -78,7 +80,6 @@ class FilterWithACAutomaton {
     The param "seed" is used while inserting sequences in the automaton. By default
     the seed has a size of 10.
   */
-  pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>*
-  buildACAutomatonToFilterBioReader(BioReader &origin, string seed);
+  void buildACAutomatonToFilterBioReader(BioReader &origin, string seed);
 };
 #endif

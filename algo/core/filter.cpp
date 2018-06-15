@@ -8,8 +8,8 @@ FilterWithACAutomaton::~FilterWithACAutomaton(){
 
 }
 
+void FilterWithACAutomaton::buildACAutomatonToFilterBioReader
   (BioReader &origin, string seed){
-  pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* result;
   vector<int>* indexes;
   PointerACAutomaton<KmerAffect>* aho;
   char asciiChar;
@@ -18,9 +18,10 @@ FilterWithACAutomaton::~FilterWithACAutomaton(){
   string previousLabel;
 
   if(origin.size() < 1){
-    return nullptr;
+    p = nullptr;
+    return;
   }
-  result = new pair<vector<int>*,AbstractACAutomaton<KmerAffect>*>();
+  p = new pair<vector<int>*,AbstractACAutomaton<KmerAffect>*>();
   aho = new PointerACAutomaton<KmerAffect>(seed, false, true);
   indexes = new vector<int>();
   aho->insert(origin.sequence(0),std::string("") + char(1), true, 0, seed);
@@ -35,8 +36,9 @@ FilterWithACAutomaton::~FilterWithACAutomaton(){
       asciiNumber++;
     }
     if(asciiNumber > 127){
-      delete result; delete aho; delete indexes;
-      return nullptr;
+      delete p; delete aho; delete indexes;
+      p = nullptr;
+      return;
     }
     asciiChar = char(asciiNumber);
     aho->insert(origin.sequence(i),std::string("") + asciiChar, true, 0, seed);
@@ -44,9 +46,8 @@ FilterWithACAutomaton::~FilterWithACAutomaton(){
   }
   indexes->push_back(origin.size());
   aho->build_failure_functions();
-  result->first = indexes;
-  result->second = aho;
-  return result;
+  p->first = indexes;
+  p->second = aho;
 }
 
 /*
@@ -54,7 +55,6 @@ FilterWithACAutomaton::~FilterWithACAutomaton(){
   based on it.
 */
 BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
-    pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* idxAho,
     BioReader &origin, seqtype &seq,
     int kmer_threshold){
 
@@ -65,11 +65,11 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
   KmerAffect tmpKmer;
   unsigned int asciiNum;
   char asciiChar;
-  if(!idxAho || kmer_threshold < 0){
+  if(!p || kmer_threshold < 0){
     return origin;
   }
-  indexes =  idxAho->first;
-  aho = idxAho->second;
+  indexes =  p->first;
+  aho = p->second;
   mapAho = aho->getMultiResults(seq);
 
   //All k-mers selected : iterate over all map
