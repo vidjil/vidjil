@@ -208,6 +208,10 @@ void Germline::override_rep5_rep3_from_labels(KmerAffect left, KmerAffect right)
   rep_3 = index->getLabel(right);
 }
 
+FilterWithACAutomaton* Germline::getFilter(){
+  return this->filter;
+}
+
 Germline::~Germline()
 {
   if(automaton_5){

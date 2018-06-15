@@ -115,11 +115,13 @@ class Germline {
   string affect_5 ;
   string affect_4 ;
   string affect_3 ;
-  
+
   BioReader  rep_5 ;
   BioReader  rep_4 ;
   BioReader  rep_3 ;
   IKmerStore<KmerAffect> *index;
+
+  FilterWithACAutomaton* getFilter();
 };
 
 ostream &operator<<(ostream &out, const Germline &germline);
