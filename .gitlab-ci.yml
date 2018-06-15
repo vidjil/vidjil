@@ -120,6 +120,18 @@ copy_release:
   only:
     - /^feature-.*a.*\/release$/
 
+deploy_release_prod:
+  stage: deploy_prod
+  only:
+    - /^feature-.*a.*\/release$/
+  script:
+    - |
+      release_name=$(cat algo/release)
+      ssh $VIDJIL_SERVER "cd releases/vidjil;\
+          tar xvzf vidjil-algo-${release_name}.tar.gz;\
+          make -C vidjil-algo-${release_name}
+          ln -sf vidjil-algo-${release_name} next"
+
 # Client
 
 test_browser_unit:
