@@ -244,7 +244,7 @@ test_server_functional:
   script:
     - docker build --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/server:test" docker/vidjil-server
     - docker build --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/client:test" docker/vidjil-client
-    - cd docker && (docker-compose up &) && cd ..
+    - cd docker && (docker-compose up &) && cd .. && sleep 10
     - HEADLESS=1 make functional_server || (cd docker && docker-compose stop; false)
     - cd docker && docker-compose stop
   only:
