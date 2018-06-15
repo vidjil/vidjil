@@ -663,7 +663,7 @@ def getStatData(results_file_ids):
 
     query = db(
         (db.results_file.id.belongs(results_file_ids)) &
-        (db.sample_set_membership.sample_set_id == db.results_file.sequence_file_id) &
+        (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id) &
         (db.sample_set.id == db.sample_set_membership.sample_set_id)
         ).select(
             db.results_file.ALL, db.sample_set.ALL, db.patient.ALL, db.run.ALL, db.generic.ALL,
