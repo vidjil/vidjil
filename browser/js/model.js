@@ -881,17 +881,15 @@ changeAlleleNotation: function(alleleNotation) {
         if (typeof threshold === "undefined") {
             threshold = 0.95
         }
-r = []
+
         refReads = this.clone(ref).getReadsAllSamples(logadd1)
-        r.push(refReads)
 
         for (var i=0; i<this.clones.length; i++){
             var clone = this.clone(i);
             var coeff = pearsonCoeff(refReads, clone.getReadsAllSamples(logadd1))
             clone.select = (Math.abs(coeff) > threshold)
-            r.push([i, coeff, threshold, clone.select])
         }
-        this.updateStyle(); return r;
+        this.updateStyle();
     },
 
     
