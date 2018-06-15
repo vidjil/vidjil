@@ -5,8 +5,15 @@ FilterWithACAutomaton::FilterWithACAutomaton(BioReader &origin, string seed){
 }
 
 FilterWithACAutomaton::~FilterWithACAutomaton(){
-  delete p->first;
-  delete p->second;
+  if(p){
+    if(p->first){
+      delete p->first;
+    }
+    if(p->second){
+      delete p->second;
+    }
+    delete p;
+  }
 }
 
 void FilterWithACAutomaton::buildACAutomatonToFilterBioReader
