@@ -101,6 +101,7 @@ release:
     paths:
     - algo/releases/vidjil-algo-`cat algo/release`.tar.gz
     - algo/releases/vidjil-algo-`cat algo/release`/vidjil-algo-`cat algo/release`_`uname -m`
+  allow_failure: false
   tags:
     - ubuntu-16.04-amd64
 
