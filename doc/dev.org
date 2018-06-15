@@ -718,6 +718,13 @@ make functional
    https://docs.docker.com/engine/reference/commandline/login/ for more
    information.
 
+   If you encounter an issue where docker is unable to access
+   archive.ubuntu.org then you may need to add your dns to /etc/docker/daemon.json
+   #+BEGIN_SRC json
+      {
+          "dns":["dns1", "dns2"]
+      }
+
 * Migrating Data
 ** Database
    The easiest way to perform a database migration is to first extract the
