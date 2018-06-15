@@ -247,9 +247,7 @@ void testAutomatonBuilderFilteringBioReader(){
       TEST_LABEL_ERROR);
     }
   }
-  delete pair1->first; delete pair1->second; delete pair1;
-  delete pair2->first; delete pair2->second; delete pair2;
-  delete pair3->first; delete pair3->second; delete pair3;
+  delete f1; delete f2; delete f3;
 }
 
 void testFilterBioReaderWithACAutomaton(){
@@ -337,10 +335,7 @@ void testFilterBioReaderWithACAutomaton(){
               TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENES_ERROR);
     }
   }
-
-  delete pair1->first, delete pair1->second; delete pair1;
-  delete pair2->first; delete pair2->second; delete pair2;
-  delete pair3->first; delete pair3->second; delete pair3;
+  delete f1; delete f2; delete f3;
 }
 
 void testGetNSignicativeKmers(){
@@ -364,6 +359,7 @@ void testGetNSignicativeKmers(){
     Sequence seq = germline.rep_5.read(i);
     FilterWithACAutomaton *f = germline.getFilter();
     filtered = f->filterBioReaderWithACAutomaton(germline.rep_5, seq.sequence, 1);
+    delete f;
     int j = 0;
     while(j < filtered.size()){
       if(extractGeneName(filtered.label(j)) == extractGeneName(seq.label)){

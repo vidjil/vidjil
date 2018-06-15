@@ -214,14 +214,8 @@ FilterWithACAutomaton* Germline::getFilter(){
 
 Germline::~Germline()
 {
-  if(automaton_5){
-    if(automaton_5->first){
-      delete automaton_5->first;
-    }
-    if(automaton_5->second){
-      delete automaton_5->second;
-    }
-    delete automaton_5;
+  if(filter){
+    delete filter;
   }
   if (index)
     {

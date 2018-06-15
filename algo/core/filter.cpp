@@ -5,7 +5,8 @@ FilterWithACAutomaton::FilterWithACAutomaton(BioReader &origin, string seed){
 }
 
 FilterWithACAutomaton::~FilterWithACAutomaton(){
-
+  delete p->first;
+  delete p->second;
 }
 
 void FilterWithACAutomaton::buildACAutomatonToFilterBioReader
