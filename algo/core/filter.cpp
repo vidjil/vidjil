@@ -1,6 +1,6 @@
 #include "filter.h"
 
-pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* buildACAutomatonToFilterBioReader
+pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* FilterWithACAutomaton::buildACAutomatonToFilterBioReader
   (BioReader &origin, string seed){
   pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* result;
   vector<int>* indexes;
@@ -46,7 +46,7 @@ pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* buildACAutomatonToFilterBi
   Takes a built automaton and a vector of indexes and build a BioReader
   based on it.
 */
-BioReader filterBioReaderWithACAutomaton(
+BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
     pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* idxAho,
     BioReader &origin, seqtype &seq,
     int kmer_threshold){
