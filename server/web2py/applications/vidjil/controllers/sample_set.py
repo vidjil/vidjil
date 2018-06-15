@@ -696,7 +696,11 @@ def multi_sample_stats():
     results = []
     #if not auth.can_view_sample_set():
     #    return "permission denied %s" % res
-    results = getStatData(request.vars['custom_result'])
+    custom_result = request.vars['custom_result']
+    if not isinstance(custom_result, list):
+        custom_result = [custom_result]
+
+    results = getStatData(custom_result)
     data['results'] = results
     return dict(data=data)
 
