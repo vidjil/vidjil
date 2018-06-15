@@ -653,11 +653,11 @@ def custom():
 
 def getStatHeaders():
     return [
-            ('set_id', lambda x, y, z: x.sample_set.id),
-            ('set_name', lambda x, y, z: z[y].get_name(x[y])),
-            ('set_info', lambda x, y, z: z[y].get_info(x[y])),
-            ('config', lambda x, y, z: x.config.name)
-        ]
+        ('set_id', lambda x, y, z: x.sample_set.id),
+        ('set_name', lambda x, y, z: z[y].get_name(x[y])),
+        ('set_info', lambda x, y, z: z[y].get_info(x[y])),
+        ('config', lambda x, y, z: x.config.name)
+    ]
 
 def getStatData(results_file_ids):
     mf = ModelFactory()
