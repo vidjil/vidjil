@@ -45,9 +45,9 @@ function compare(string1, string2) {
     var comparaison_1 = string1 > string2
     var comparaison_2 = string1 < string2
 
-    if( !comparaison_1 && !comparaison_2){ return 0}
-    if(  comparaison_1 && !comparaison_2){ return 1}
-    if( !comparaison_1 &&  comparaison_2){ return -1}
+    if( comparaison_1){ return 1}
+    if( comparaison_2){ return -1}
+    return 0;
 }
 
 /* Fonction permettant la comparaison entre 2 caractères ascii
