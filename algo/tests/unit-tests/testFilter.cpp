@@ -160,6 +160,7 @@ void testAutomatonBuilderFilteringBioReader(){
   vector<int> expectedIndexes1;
   vector<int> expectedIndexes2;
   vector<int> expectedIndexes3;
+  FilterWithACAutomaton *f1, *f2, *f3;
   seqtype seq;
   KmerAffect k;
   char asciiChar;
@@ -179,9 +180,13 @@ void testAutomatonBuilderFilteringBioReader(){
   expectedIndexes2 = getDebugIndexes2();
   expectedIndexes3 = getDebugIndexes3();
 
-  pair1 = buildACAutomatonToFilterBioReader(testedBioReader1, "####");
-  pair2 = buildACAutomatonToFilterBioReader(testedBioReader2, "####");
-  pair3 = buildACAutomatonToFilterBioReader(testedBioReader3, "####");
+  f1 = new FilterWithACAutomaton(testedBioReader1,"####");
+  f2 = new FilterWithACAutomaton(testedBioReader2,"####");
+  f3 = new FilterWithACAutomaton(testedBioReader3,"####");
+
+  pair1 = f1->getPair();
+  pair2 = f2->getPair();
+  pair3 = f3->getPair();
 
   /* test indexes size */
     TAP_TEST_EQUAL(pair1->first->size(), expectedIndexes1.size(),
