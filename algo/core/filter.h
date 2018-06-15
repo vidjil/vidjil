@@ -1,21 +1,7 @@
 #ifndef FILTER_H
 #define FILTER_H
-#include <climits> //for UINT_MAX in filterBioReader
 #include "bioreader.hpp"
 #include "automaton.hpp"
-
-/*
-  This number is used in filterBioReaderWithACAutomaton to define
-  the minimum number of occurence that genes must have to be in the
-  filtered BioReader.
-*/
-#define BIOREADER_MIN 3
-
-/*
-  The number of required genes that must be greater or equal to BIOREADER_MIN
-  to filter a BioReader.
-*/
-#define REQUIRED_GOOD_GENES 1
 
 /*
   This function will filter a BioReader
