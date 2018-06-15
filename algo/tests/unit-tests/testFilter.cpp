@@ -435,12 +435,28 @@ void testExAequoKmersWhenSignificantParameter(){
   delete p->first; delete p->second; delete p;
   p = buildACAutomatonToFilterBioReader(testedBioReader, "####");
   filtered = filterBioReaderWithACAutomaton(p, testedBioReader, seq, 2);
+  /* Check that filtered BioReader contains previous sequences and n°12 */
+  i = 0;
+  while(i < filtered.size() && extractGeneName(filtered.label(i)) != extractGeneName(testedBioReader.label(5))){
+    ++i;
+  }
+  j = 0;
+  while(j < filtered.size() && extractGeneName(filtered.label(j)) != extractGeneName(testedBioReader.label(10))){
+    ++j;
+  }
+  k = 0;
+  while(k < filtered.size() && extractGeneName(filtered.label(k)) != extractGeneName(testedBioReader.label(11))){
+    ++k;
+  }
   int l = 0;
   while(l < filtered.size() && extractGeneName(filtered.label(l)) != extractGeneName(testedBioReader.label(12))){
     ++l;
   }
   /* Even though the filtered function got 2 as a parameter, since there are three ex-aequo the size is 4 */
   TAP_TEST(filtered.size() == 4, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_BIOREADER);
+  TAP_TEST(i < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
+  TAP_TEST(j < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
+  TAP_TEST(k < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   TAP_TEST(l < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   delete p->first; delete p->second; delete p;
 }
