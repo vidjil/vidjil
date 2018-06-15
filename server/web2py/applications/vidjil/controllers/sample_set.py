@@ -653,7 +653,10 @@ def custom():
 
 def getStatHeaders():
     return [
-            ('set_name', lambda x, y, z: z[y].get_name(x[y]))
+            ('set_id', lambda x, y, z: x.sample_set.id),
+            ('set_name', lambda x, y, z: z[y].get_name(x[y])),
+            ('set_info', lambda x, y, z: z[y].get_info(x[y])),
+            ('config', lambda x, y, z: x.config.name)
         ]
 
 def getStatData(results_file_ids):
@@ -666,9 +669,11 @@ def getStatData(results_file_ids):
     query = db(
         (db.results_file.id.belongs(results_file_ids)) &
         (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id) &
-        (db.sample_set.id == db.sample_set_membership.sample_set_id)
+        (db.sample_set.id == db.sample_set_membership.sample_set_id) &
+        (db.config.id == db.results_file.config_id)
         ).select(
             db.results_file.ALL, db.sample_set.ALL, db.patient.ALL, db.run.ALL, db.generic.ALL,
+            db.config.ALL,
             left = [
                 db.patient.on(db.patient.sample_set_id == db.sample_set.id),
                 db.run.on(db.run.sample_set_id == db.sample_set.id),
