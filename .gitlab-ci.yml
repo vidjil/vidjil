@@ -20,6 +20,7 @@ stages:
   - release
   - valgrind_unit
   - valgrind_functional
+  - prepare_deploy
   - deploy_prod
 
 
@@ -101,8 +102,35 @@ release:
     paths:
     - algo/releases/vidjil-algo-`cat algo/release`.tar.gz
     - algo/releases/vidjil-algo-`cat algo/release`/vidjil-algo-`cat algo/release`_`uname -m`
+  allow_failure: false
   tags:
     - ubuntu-16.04-amd64
+
+copy_release:
+  stage: prepare_deploy
+  script:
+    - |
+      for repo in $ALGO_REPOSITORIES; do
+        echo "Copying release to $repo"
+        scp algo/releases/vidjil-algo*.tar.gz algo/releases/vidjil-algo*/vidjil-algo-*_* $repo
+      done
+      release_name=$(cat algo/release)
+      ssh $VIDJIL_WWW "cd /var/www/html/releases; ln -sf vidjil-algo-${release_name}.tar.gz vidjil-latest.tgz; ln -sf vidjil-algo-${release_name}_x86_64 vidjil-latest_x86_64"
+      ssh $VIDJIL_BONSAI "cd /bio1/www/html/vidjil; scp vidjil-algo-${release_name}* VIDJIL_BONSAI_PROD:/bio1/www/html/vidjil"
+  only:
+    - /^feature-.*a.*\/release$/
+
+deploy_release_prod:
+  stage: deploy_prod
+  only:
+    - /^feature-.*a.*\/release$/
+  script:
+    - |
+      release_name=$(cat algo/release)
+      ssh $VIDJIL_SERVER "cd releases/vidjil;\
+          tar xvzf vidjil-algo-${release_name}.tar.gz;\
+          make -C vidjil-algo-${release_name}
+          ln -sf vidjil-algo-${release_name} next"
 
 # Client
 
