@@ -193,6 +193,7 @@ deploy_review:
   stage: deploy_review
   script:
     - make -C browser icons
+    - echo "$REVIEW_CONFIG_JS" > browser/js/conf.js
     - rsync -av --delete browser $DEPLOY_SERVER:$DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG
   environment:
     name: review/$CI_BUILD_REF_NAME
