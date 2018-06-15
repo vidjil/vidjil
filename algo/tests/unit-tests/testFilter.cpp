@@ -359,7 +359,6 @@ void testGetNSignicativeKmers(){
     Sequence seq = germline.rep_5.read(i);
     FilterWithACAutomaton *f = germline.getFilter();
     filtered = f->filterBioReaderWithACAutomaton(germline.rep_5, seq.sequence, 1);
-    delete f;
     int j = 0;
     while(j < filtered.size()){
       if(extractGeneName(filtered.label(j)) == extractGeneName(seq.label)){
@@ -452,8 +451,7 @@ void testExAequoKmersWhenSignificantParameter(){
   TAP_TEST(i < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   TAP_TEST(j < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   TAP_TEST(k < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
-  TAP_TEST(l < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
-  delete p->first; delete p->second; delete p;
+  delete f;
 }
 
 void testBehaviourWhenHugeBioReader(){
