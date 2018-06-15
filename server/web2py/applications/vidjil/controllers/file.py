@@ -441,7 +441,7 @@ def delete():
 
         res = {"redirect": "sample_set/index",
                "args" : { "id" : request.vars["redirect_sample_set_id"]},
-               "message": "sequence file deleted"}
+               "message": "sequence file ({}) deleted".format(request.vars['id'])}
         if associated_id is not None:
             log.info(res, extra={'user_id': auth.user.id, 'record_id': associated_id, 'table_name': sample_set.sample_type})
         else:
