@@ -388,6 +388,7 @@ we take both).
 */
 void testExAequoKmersWhenSignificantParameter(){
   BioReader testedBioReader, filtered;
+  FilterWithACAutomaton *f;
   seqtype seq;
   pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* p;
   string BIOREADER_EXAEQUO = "BioReader doesn't have ex-aequo";
@@ -411,11 +412,12 @@ void testExAequoKmersWhenSignificantParameter(){
   }
   seq = "AAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAAT";
   seq += "GGGGGGGGGGGGGGGTTTTTTTTTTTTTTTTTTTGGGGGGGGGGGGGGGGGGGGTTTTTTTTTTTTTTTT";
-  p = buildACAutomatonToFilterBioReader(testedBioReader, "####");
+  f = new FilterWithACAutomaton(testedBioReader, "####");
+  p = f->getPair();
   /* Filter using the 2 most significant K-mers, the first one is belonging to
      sequence n°11 (with more than 60 occurences) and second one is sequence n°5
      and n°10 appearing 29 times both. */
-  filtered = filterBioReaderWithACAutomaton(p, testedBioReader, seq, 2);
+  filtered = f->filterBioReaderWithACAutomaton(testedBioReader, seq, 2);
   /* Check that filtered BioReader contains sequence n°5 and sequence n°10 which are ex-aequo. */
   int i = 0;
   while(i < filtered.size() && extractGeneName(filtered.label(i)) != extractGeneName(testedBioReader.label(5))){
@@ -438,20 +440,11 @@ void testExAequoKmersWhenSignificantParameter(){
   TAP_TEST(k < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   /* Add a third ex-aequo: k-mer belonging to sequence n°12 appearing 29 times */
   seq += "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC";
-  delete p->first; delete p->second; delete p;
-  p = buildACAutomatonToFilterBioReader(testedBioReader, "####");
-  filtered = filterBioReaderWithACAutomaton(p, testedBioReader, seq, 2);
-  /* Check that filtered BioReader contains previous sequences and n°12 */
-  i = 0;
-  while(i < filtered.size() && extractGeneName(filtered.label(i)) != extractGeneName(testedBioReader.label(5))){
-    ++i;
-  }
-  j = 0;
-  while(j < filtered.size() && extractGeneName(filtered.label(j)) != extractGeneName(testedBioReader.label(10))){
-    ++j;
-  }
-  k = 0;
-  while(k < filtered.size() && extractGeneName(filtered.label(k)) != extractGeneName(testedBioReader.label(11))){
+  delete f;
+  f = new FilterWithACAutomaton(testedBioReader, "####");
+  filtered = f->filterBioReaderWithACAutomaton(testedBioReader, seq, 2);
+  int k = 0;
+  while(k < filtered.size() && extractGeneName(filtered.label(k)) != extractGeneName(testedBioReader.label(12))){
     ++k;
   }
   int l = 0;
