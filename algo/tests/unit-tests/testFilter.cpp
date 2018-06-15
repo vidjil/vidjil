@@ -258,6 +258,7 @@ void testFilterBioReaderWithACAutomaton(){
   seqtype sequence1, sequence2, sequence3;
   BioReader testedBioReader1, testedBioReader2, testedBioReader3;
   BioReader filteredBioReader1, filteredBioReader2, filteredBioReader3;
+  FilterWithACAutomaton *f1, *f2, *f3;
 
   const string SIZE_ERROR =
       "The BioReader size must be less or equal than the original's size";
@@ -274,17 +275,16 @@ void testFilterBioReaderWithACAutomaton(){
   testedBioReader1 = getDebugBioReader1();
   testedBioReader2 = getDebugBioReader2();
   testedBioReader3 = getDebugBioReader3();
-  pair1 = buildACAutomatonToFilterBioReader(testedBioReader1, "####");
-  pair2 = buildACAutomatonToFilterBioReader(testedBioReader2, "####");
-  pair3 = buildACAutomatonToFilterBioReader(testedBioReader3, "####");
+  f1 = new FilterWithACAutomaton(testedBioReader1, "####");
+  f2 = new FilterWithACAutomaton(testedBioReader2, "####");
+  f3 = new FilterWithACAutomaton(testedBioReader3, "####");
+  pair1 = f1->getPair();
+  pair2 = f2->getPair();
+  pair3 = f3->getPair();
 
-
-  filteredBioReader1 = filterBioReaderWithACAutomaton
-                      (pair1, testedBioReader1, sequence1);
-  filteredBioReader2 = filterBioReaderWithACAutomaton
-                      (pair2, testedBioReader2, sequence2);
-  filteredBioReader3 = filterBioReaderWithACAutomaton
-                      (pair3, testedBioReader3, sequence3);
+  filteredBioReader1 = f1->filterBioReaderWithACAutomaton(testedBioReader1, sequence1);
+  filteredBioReader2 = f2->filterBioReaderWithACAutomaton(testedBioReader2, sequence2);
+  filteredBioReader3 = f3->filterBioReaderWithACAutomaton(testedBioReader3, sequence3);
 
   //check filteredBioReader size
   TAP_TEST(filteredBioReader1.size() <= testedBioReader1.size(),
