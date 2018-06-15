@@ -1,4 +1,4 @@
-
+#include "filter.h"
 #include "germline.h"
 #include "automaton.hpp"
 #include <fstream>
@@ -24,7 +24,7 @@ void Germline::init(string _code, char _shortcut,
   affect_5 = string(1, toupper(shortcut)) + "-" + code + "V";
   affect_4 = string(1, 14 + shortcut) + "-" + code + "D";
   affect_3 = string(1, tolower(shortcut)) + "-" + code + "J";
-  automaton_5 = build_automaton ? buildACAutomatonToFilterBioReader(rep_5, seed) : nullptr;
+  filter = build_automaton ? new FilterWithACAutomaton(rep_5, seed) : nullptr;
 }
 
 

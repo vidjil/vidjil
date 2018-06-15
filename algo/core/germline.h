@@ -41,6 +41,8 @@ using json = nlohmann::json;
 
 class Germline {
  private:
+  FilterWithACAutomaton* filter;
+
   int max_indexing;
 
   void init(string _code, char _shortcut,
