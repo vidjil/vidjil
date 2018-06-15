@@ -3,6 +3,8 @@ import gluon.contrib.simplejson, datetime
 import vidjil_utils
 import time
 import json
+from vidjilparser import VidjilParser
+import operator
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -659,6 +661,15 @@ def getStatHeaders():
         ('config', lambda x, y, z: x.config.name)
     ]
 
+def getResultsFileStats(file_name, dest):
+    file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
+    parser = VidjilParser()
+    parser.addPrefix('clones.item', 'clones.item.top', operator.eq, 1)
+
+    mjson = parser.extract(file_path)
+    dest['main_clone'] = json.loads(mjson)['clones'][0]
+    return dest
+
 def getStatData(results_file_ids):
     mf = ModelFactory()
     set_types = [defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC]
@@ -687,6 +698,7 @@ def getStatData(results_file_ids):
         set_type = res.sample_set.sample_type
         for head, func in getStatHeaders():
             d[head] = func(res, set_type, helpers)
+        d = getResultsFileStats(res.results_file.data_file, d)
         data.append(d)
     return data
 
