@@ -81,5 +81,7 @@ class FilterWithACAutomaton {
     the seed has a size of 10.
   */
   void buildACAutomatonToFilterBioReader(BioReader &origin, string seed);
+
+  pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* getPair();
 };
 #endif

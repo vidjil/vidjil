@@ -120,3 +120,7 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
   }
   return (result.size() == 0) ? origin : result;
 }
+
+pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>*  FilterWithACAutomaton::getPair(){
+  return this->p;
+}
