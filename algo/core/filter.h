@@ -5,6 +5,9 @@
 
 class FilterWithACAutomaton {
   public:
+    FilterWithACAutomaton(BioReader &origin, string seed);
+    ~FilterWithACAutomaton();
+
   /*
     This function will filter a BioReader
     @param idxAho:  A pointer to a pair containing an int vector pointer and

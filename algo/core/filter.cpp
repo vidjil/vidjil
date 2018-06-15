@@ -1,6 +1,8 @@
 #include "filter.h"
 
-pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* FilterWithACAutomaton::buildACAutomatonToFilterBioReader
+FilterWithACAutomaton::FilterWithACAutomaton(BioReader &origin, string seed){
+  buildACAutomatonToFilterBioReader(origin, seed);
+}
   (BioReader &origin, string seed){
   pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* result;
   vector<int>* indexes;
