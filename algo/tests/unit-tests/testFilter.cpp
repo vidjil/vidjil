@@ -385,7 +385,6 @@ void testExAequoKmersWhenSignificantParameter(){
   BioReader testedBioReader, filtered;
   FilterWithACAutomaton *f;
   seqtype seq;
-  pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* p;
   string BIOREADER_EXAEQUO = "BioReader doesn't have ex-aequo";
   string SIZE_BIOREADER = "BioReader doesn't contain the good amount of sequences";
   Sequence sequences[13];
@@ -408,7 +407,6 @@ void testExAequoKmersWhenSignificantParameter(){
   seq = "AAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAAT";
   seq += "GGGGGGGGGGGGGGGTTTTTTTTTTTTTTTTTTTGGGGGGGGGGGGGGGGGGGGTTTTTTTTTTTTTTTT";
   f = new FilterWithACAutomaton(testedBioReader, "####");
-  p = f->getPair();
   /* Filter using the 2 most significant K-mers, the first one is belonging to
      sequence n°11 (with more than 60 occurences) and second one is sequence n°5
      and n°10 appearing 29 times both. */
@@ -464,6 +462,7 @@ void testBehaviourWhenHugeBioReader(){
   p = f->getPair();
   TAP_TEST(!p, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON,
     "Automaton should not be constructed on a BioReader containing more than 127 sequences.");
+  delete f;
 }
 
 void testFilter(){
