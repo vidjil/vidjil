@@ -69,14 +69,17 @@ function compare(string1, string2) {
 	charS1 = string1_lower.charAt(i);
 	charS2 = string2_lower.charAt(i);
     }
-    if (value_compare_ascii !== 0)
+    if (value_compare_ascii !== 0){
       return value_compare_ascii;
+    }
     //Si l'on arrive ici, c'est qu'il n'y avait rien à comparer sur les chaînes de caractères précédemment données
     //Vérification si l'un ou/et l'autre est/sont nul(s)
     var value_compare_length = compare_length(string1_lower, string2_lower, i);
-    if (value_compare_length === undefined)
+    if (value_compare_length === undefined) {
 	return compare_numbers(string1_lower.substring(i,string1.length), string2_lower.substring(i, string2.length));
-    else return value_compare_length;
+	} else {
+		return value_compare_length;
+	}
 }
 
 /* Fonction permettant la comparaison entre 2 caractères ascii
