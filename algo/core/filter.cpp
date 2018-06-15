@@ -3,6 +3,11 @@
 FilterWithACAutomaton::FilterWithACAutomaton(BioReader &origin, string seed){
   buildACAutomatonToFilterBioReader(origin, seed);
 }
+
+FilterWithACAutomaton::~FilterWithACAutomaton(){
+
+}
+
   (BioReader &origin, string seed){
   pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* result;
   vector<int>* indexes;
