@@ -353,8 +353,6 @@ int main (int argc, char **argv)
   /*
        << "  (use either -s or -k option, but not both)" << endl
            << "  (all these options, except -w, are overriden when using -g)" << endl
-       << "  -s <string>   spaced seed used for the V/J affectation" << endl
-       << "                (default: #####-#####, ######-######, #######-#######, depends on germline)" << endl
   */
 #endif
 
@@ -374,13 +372,18 @@ int main (int argc, char **argv)
   app.add_option("-t", trim_sequences, // trim_sequences_changed = true
                  "trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt  (0: no trim)") -> group(group);
 
+  app.add_option("-s",
+                 [&](CLI::results_t res) {
+                   seed = res[0] ;
+                   options_s_k++ ;
+                   seed_changed = true;
+                   return true;
+                 },
+                 "spaced seeds used for the V/J affectation (default: depends on germline)"
+                 ) -> group(group) -> level();
+
 /*
-      case 's':
-#ifndef NO_SPACED_SEEDS
-	seed = string(optarg);
-        seed_changed = true;
-	options_s_k++ ;
-#else
+#ifdef NO_SPACED_SEEDS
         cerr << "To enable the option -s, please compile without NO_SPACED_SEEDS" << endl;
 #endif
 */
