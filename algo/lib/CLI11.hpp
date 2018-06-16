@@ -308,7 +308,7 @@ inline void format_help(std::stringstream &out, std::string name, std::string de
 }
 
 /// Verify the first character of an option
-template <typename T> bool valid_first_char(T c) { return std::isalpha(c, std::locale()) || c == '_'; }
+template <typename T> bool valid_first_char(T c) { return std::isalnum(c, std::locale()) || c == '_'; }
 
 /// Verify following characters of an option
 template <typename T> bool valid_later_char(T c) {
