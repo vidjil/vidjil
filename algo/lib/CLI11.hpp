@@ -1105,6 +1105,9 @@ template <typename CRTP> class OptionBase {
     /// True if this is a required option
     bool required_{false};
 
+    /// >= 2 if this is an advanced option
+    int help_level_{1};
+
     /// Ignore the case when matching (option, not value)
     bool ignore_case_{false};
 
@@ -1135,6 +1138,12 @@ template <typename CRTP> class OptionBase {
     /// Set the option as required
     CRTP *required(bool value = true) {
         required_ = value;
+        return static_cast<CRTP *>(this);
+    }
+
+    /// Set the help level
+    CRTP *level(int value = 2) {
+        help_level_ = value;
         return static_cast<CRTP *>(this);
     }
 
@@ -2615,7 +2624,7 @@ class App {
     }
 
     /// Makes a help message, with a column wid for column 1
-    std::string help(size_t wid = 30, std::string prev = "") const {
+    std::string help(size_t wid = 30, std::string prev = "", int help_level = 1) const {
         // Delegate to subcommand if needed
         if(prev.empty())
             prev = name_;
@@ -2686,7 +2695,7 @@ class App {
                     continue; // Hidden
                 out << std::endl << group << ":" << std::endl;
                 for(const Option_p &opt : options_) {
-                    if(opt->nonpositional() && opt->get_group() == group)
+                    if(opt->nonpositional() && opt->get_group() == group && opt->help_level_ <= help_level)
                         detail::format_help(out, opt->help_name(true), opt->get_description(), wid);
                 }
             }
