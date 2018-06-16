@@ -30,6 +30,13 @@ QUnit.test("segmenter", function(assert) {
     assert.equal(document.getElementById("f0"), null, "unselect : Ok")
     assert.equal(document.getElementById("f1"), null, "unselect : Ok")
     assert.equal(document.getElementById("f2"), null, "unselect : Ok")
+
+    m.select(0);
+    m.select(2);
+    m.unselect(2);
+    assert.notEqual(div0.innerHTML.indexOf("test1"), -1, "select : Ok")
+    assert.equal(document.getElementById("f2"), null, "unselect : Ok")
+    m.unselectAll();
     
     //
     assert.deepEqual(segment.findPotentialField(), ["","cdr3","fr1", "5", "id", "f1", "V-REGION","J-REGION","D-REGION","CDR3-IMGT"], "potentialField : Ok")

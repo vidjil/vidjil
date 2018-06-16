@@ -8,8 +8,6 @@ EXEC=$(SRC:.cpp=)
 OBJ=$(SRC:.cpp=.o)
 OTHER_SRC=$(wildcard unit-tests/*.cpp)
 LIB=../core/vidjil.a ../lib/lib.a
-SHOULD_GERMLINE=$(wildcard should-get-tests/10-germlines-*.should-get)
-SHOULD_GERMLINE_LOG=$(SHOULD_GERMLINE:.should-get=.tap)
 SHOULD=$(wildcard should-get-tests/*.should-get) $(wildcard bugs/*.should-get)
 SHOULD_LOG=$(SHOULD:.should-get=.tap)
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
@@ -69,17 +67,8 @@ snapshot_diff_current:
 	-diff -u -I ".*20..-..-...*" snapshot-last $(SNAPSHOT_CURRENT)
 
 
-should_germline: $(SHOULD_GERMLINE_LOG)
-
-should_raw: vidjil $(SHOULD_LOG)
-
-should:
-	-$(MAKE) -k should_raw
-	python should-status.py
-
-failed_should:
-	-sh failed-should-get-tests.sh
-	python should-status.py
+should: vidjil
+	python3 should.py $(SHOULD)
 
 shouldvdj_if_python:
 	if python ../../tools/check_python_version.py ; \
@@ -128,9 +117,9 @@ curated-vdj.zip: $(SHOULD_VDJ_ARCHIVE)
 %.tap: %.should-get force
 	./should-to-tap.sh $<
 
-valgrind_should:
+valgrind_should: vidjil
 	$(MAKE) -C "$(REPORTS_PATH)" clean_valgrind
-	LAUNCHER="$(VALGRIND_CMD)" $(MAKE) should
+	python3 should.py --launcher "$(VALGRIND_CMD)" $(SHOULD)
 
 valgrind_%:
 	LAUNCHER="$(VALGRIND_CMD)" $(MAKE) $(patsubst valgrind_%,%,$@)

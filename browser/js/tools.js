@@ -25,11 +25,11 @@ function nth_ocurrence(str, needle, nth) {
  */
 function tsvToArray(allText) {
     var allTextLines = allText.split(/\r\n|\n/);
-    var headers = allTextLines[0].split('	');
+    var headers = $.trim(allTextLines[0]).split('	');
     var lines = [];
 
     for (var i = 1; i < allTextLines.length; i++) {
-        var data = allTextLines[i].split('	');
+        var data = $.trim(allTextLines[i]).split('	');
         if (data.length == headers.length) {
             var tarr = {};
             for (var j = 0; j < headers.length; j++) {
@@ -365,4 +365,36 @@ function remove_all_children(node)
 // Add the clean_nodes function to the Node prototype
 Node.prototype.removeAllChildren = function removeAllChildren() {
     remove_all_children(this);
+}
+
+
+
+FATAL = 50
+ERROR = 40
+WARN = 30
+INFO = 20
+DEBUG = 10
+
+warnLevels = {
+    'fatal': FATAL,
+    'error': ERROR,
+    'warn': WARN,
+    'info': INFO,
+    'debug': DEBUG
+}
+
+warnTexts = { }
+
+for (var key in warnLevels) {
+    warnTexts[warnLevels[key]] = key ;
+}
+
+function warnLevelOf(key)
+{
+    return (key in warnLevels) ? warnLevels[key] : WARN
+}
+
+function warnTextOf(key)
+{
+    return (key in warnTexts) ? warnTexts[key] : '?'
 }

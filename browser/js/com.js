@@ -49,7 +49,7 @@ function Com(default_console) {
         }
     }
     
-    this.data_id = "data-container"; //TODO
+    this.data_id = "modal data-container"; //TODO
     
 
     this.DEBUG = 0
@@ -199,7 +199,7 @@ Com.prototype = {
         
         
         this.div_dataBox = document.createElement("div");
-        this.div_dataBox.className = "data-container";
+        this.div_dataBox.className = "modal data-container";
         
         var closedataBox = document.createElement("span");
         closedataBox.className = "closeButton" ;

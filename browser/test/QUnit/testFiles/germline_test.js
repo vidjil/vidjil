@@ -32,3 +32,30 @@ QUnit.test("GermlineList : ", function(assert) {
     assert.equal(gl.getColor('AZE'), "#ffffff", "AZE should have a color")
     assert.equal(gl.getShortcut('AZE'), "$", "AZE should have a shortcut")
 })
+
+QUnit.test("Germline load : ", function(assert) {
+    // Test if the function work correctly with the load of a 'custom' system
+    model = new Model()
+    gl = new GermlineList();
+    gerlmine_custom = {
+        "custom": {
+          "3": [
+            "start_reference.fa"
+          ],
+          "4": [],
+          "5": [
+            "ends_reference_D.fa"
+          ],
+          "shortcut": "X"
+        }
+      }
+
+    gl.add( gerlmine_custom )
+    model.germlineList = gl
+    model.germlineV = new Germline(model);
+    model.germlineV.load("custom", "V", this)
+
+    console.log( model.germlineV.system )
+    assert.equal(model.germlineV.system, "custom", "Load correctly an old fashion custom system")
+
+})

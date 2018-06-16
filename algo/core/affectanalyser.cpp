@@ -289,7 +289,7 @@ string KmerAffectAnalyser::toString() const{
 }
 
 string KmerAffectAnalyser::toStringValues() const{
-    string kmer;
+  string kmer;
   for (size_t i = 0; i < affectations.size(); i++) {
     kmer += affectations[i].toStringValues();
   }

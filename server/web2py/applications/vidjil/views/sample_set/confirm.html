@@ -4,10 +4,10 @@
 {{if 'message' in globals():}}
 
 <div>
-    <h3>{{=message}}: {{helper.get_name(data)}}
+    <h3>{{=message}}: {{helper.get_display_name(data)}}
     </h3>
     
-    Are you sure you want to delete the {{=helper.get_type()}} {{=helper.get_name(data)}} ?</br>
+    Are you sure you want to delete the {{=helper.get_type()}} {{=helper.get_display_name(data)}} ?</br>
     This will delete {{=helper.get_sequence_count(data)}} sequence file(s) and {{=helper.get_data_count(data)}} result files.</br>
     This action cannot be undone.
 

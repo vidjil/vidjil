@@ -1,14 +1,11 @@
-SHOULD=$(wildcard *.should_get)
-TAP=$(SHOULD:.should_get=.tap)
 
-all: $(TAP) doctests
+all: should doctests
 
-fuse-doc.tap: fuse-doc.should_get force
+should-get-tests/fuse-doc.tap: should-get-tests/fuse-doc.should-get force
 	$(MAKE) -C ../../doc analysis-example1.vidjil
-	./should-to-tap.sh $<
 
-%.tap: %.should_get force
-	./should-to-tap.sh $<
+should: should-get-tests/fuse-doc.tap
+	python3 ../should.py should-get-tests/*.should-get
 
 doctests:
 	@echo "*** Launching python tests..."

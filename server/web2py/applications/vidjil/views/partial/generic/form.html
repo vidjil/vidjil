@@ -1,0 +1,27 @@
+<span class="left form_label">Set {{=i+1}}</span>
+<input type="hidden" id="generic_id_{{=i}}" name="generic[{{=i}}][id]" value="{{if set is not None:}}{{=set['id']}}{{pass}}">
+<input type="hidden" sample_set_id="generic_sample_set_id_{{=i}}" name="generic[{{=i}}][sample_set_id]" value="{{if set is not None:}}{{=set['sample_set_id']}}{{pass}}">
+{{ if set is not None and 'error' in set and len(set['error']) > 0: }}
+    <div class="error">error: {{=", ".join(set['error'])}}</div>
+{{pass}}
+{{ if set is not None and 'message' in set and len(set['message']) > 0: }}
+    <div>{{=", ".join(set['message'])}}</div>
+{{ pass }}
+<div class="field_div">
+    <input id="sample_set_name_{{=i}}" name="generic[{{=i}}][name]" type="text" class="string form-control"
+        value="{{if set is not None:}}{{=set['name']}}{{pass}}" required placeholder="Name">
+</div>
+<div class="field_div">
+    <input
+        onfocus="new VidjilAutoComplete().setupTags(this);"
+        onkeydown="if (event.keyCode == 13) return false;"
+        data-needs-atwho="true"
+        data-keys="{{=group_ids}}"
+        class="text form-control"
+        id="sample_set_info_{{=i}}"
+        name="generic[{{=i}}][info]"
+        rows="1"
+        placeholder="set information (#tags can be used)"
+        autocomplete="off"
+        value="{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}"/>
+</div>

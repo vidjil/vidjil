@@ -1,0 +1,45 @@
+<span class="left form_label">Run {{=i+1}}</span>
+<input type="hidden" id="run_id_{{=i}}" name="run[{{=i}}][id]" value="{{if set is not None:}}{{=set['id']}}{{pass}}">
+<input type="hidden" sample_set_id="run_sample_set_id_{{=i}}" name="run[{{=i}}][sample_set_id]" value="{{if set is not None:}}{{=set['sample_set_id']}}{{pass}}">
+{{ if set is not None and 'error' in set and len(set['error']) > 0: }}
+    <div class="error">error: {{=", ".join(set['error'])}}</div>
+{{ pass }}
+{{ if set is not None and 'message' in set and len(set['message']) > 0: }}
+    <div>{{=", ".join(set['message'])}}</div>
+{{ pass }}
+<div class="field_div">
+    <input class="stringid form-control" id="run_id_label_{{=i}}" name="run[{{=i}}][id_label]" type="text"
+        value="{{if set is not None and set['id_label'] is not None:}}{{=set['id_label']}}{{pass}}" placeholder="run ID"><span></span>
+</div>
+<div class="field_div">
+    <input class="string form-control" id="run_name_{{=i}}" name="run[{{=i}}][name]" type="text"
+        value="{{if set is not None:}}{{=set['name']}}{{pass}}" required placeholder="run name">
+</div>
+<div class="field_div">
+    <input id="run_date_{{=i}}" name="run[{{=i}}][run_date]" type="text" class="date form-control"
+        value="{{if set is not None and set['run_date'] is not None:}}{{=set['run_date']}}{{pass}}"
+        placeholder="yyyy-mm-dd" title="run date" pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))">
+</div>
+<div class="field_div">
+    <input
+        onfocus=" new VidjilAutoComplete().setupTags(this);"
+        data-keys="{{=group_ids}}"         
+        onkeydown="if (event.keyCode == 13) return false;"
+        data-needs-atwho="true"
+        class="text form-control"
+        id="run_info_{{=i}}"
+        name="run[{{=i}}][info]"
+        rows="1"
+        placeholder="run information (#tags can be used)"
+        autocomplete="off"
+        value="{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}"/>
+</div>
+<div class="field_div">
+    <input id="run_sequencer_{{=i}}" name="run[{{=i}}][sequencer]" type="text" class="form-control sequencer"
+        value="{{if set is not None and set['sequencer'] is not None:}}{{=set['sequencer']}}{{pass}}" placeholder="sequencer">
+</div>
+<div class="field_div">
+    <input id="run_pcr_{{=i}}" name="run[{{=i}}][pcr]" type="text" class="form-control pcr"
+        value="{{if set is not None and set['pcr'] is not None:}}{{=set['pcr']}}{{pass}}" placeholder="primers, capture...">
+</div>
+

@@ -203,12 +203,6 @@ Info.prototype = {
         }
     },
 
-    updateElem : function (list) {},
-
-    updateElemStyle : function () {},
-
-    resize : function () {},
-
     /*
      * */
     edit: function (elem, data) {
@@ -556,3 +550,4 @@ Info.prototype = {
         return element;
     },
 }
+Info.prototype = $.extend(Object.create(View.prototype), Info.prototype);

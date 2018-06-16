@@ -191,10 +191,14 @@ Url.prototype= {
     }
 
 };
+Url.prototype = $.extend(Object.create(View.prototype), Url.prototype);
 
 function UrlEncoder() {
     this.encoding = {
-        'sample_set_id': 'set'
+        'sample_set_id': 'set',
+        'patient_id': 'patient',
+        'run_id': 'run'
+
     };
 
     this.decoding = {};

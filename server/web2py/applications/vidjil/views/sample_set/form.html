@@ -1,0 +1,51 @@
+{{extend 'db_layout.html'}}
+
+{{ if isEditing: }}
+<h3>Edit patient, run, or set</h3>
+{{ else: }}
+<h3>Add patients, runs, or sets</h3>
+{{ pass }}
+
+<form id="object_form" action="DB_ADDRESS/sample_set/submit" enctype="multipart/form-data" method="post" onkeypress="return event.keyCode != 13;">
+    <div {{ if len(groups) <= 1: }} class="hiddenCheckBox" {{pass}}>
+        <label for="group_select" id="patient_group__label">Owner Group: </label>
+        {{= SELECT(*[OPTION(g['name'], _value=g['id']) for g in groups], _id="group_select", _name="group", _value=master_group, value=master_group) }}
+    </div>
+{{ if isEditing: }}
+{{ else: }}
+    <div class="buttons_add_elements">
+      Patients, runs and sets are different ways to group samples.
+      You can create at once several of these sets:
+      <span class="button2"
+            onclick="document.getElementById('fieldset_container').appendChild(new PatientFormBuilder().build(this.dataset.index++));"
+            id="patient_button"
+            data-index="{{=len(sets[defs.SET_TYPE_PATIENT])}}">add patient</span>
+      <span class="button2"
+            onclick="document.getElementById('fieldset_container').appendChild(new RunFormBuilder().build(this.dataset.index++));"
+            id="run_button"
+            data-index="{{=len(sets[defs.SET_TYPE_RUN])}}">add run</span>
+      <span class="button2"
+            onclick="document.getElementById('fieldset_container').appendChild(new GenericFormBuilder().build(this.dataset.index++));"
+            id="generic_button"
+            data-index="{{=len(sets[defs.SET_TYPE_GENERIC])}}">add set</span>
+      <div class="clear"></div>
+    </div>
+{{ pass }}
+    <div id="fieldset_container">
+        {{ for set_type in sets: }}
+            {{ for i, set in enumerate(sets[set_type]): }}
+                {{ if set_type == defs.SET_TYPE_PATIENT: }}
+                    {{ include 'partial/patient/form.html' }}
+                {{ elif set_type == defs.SET_TYPE_RUN: }}
+                    {{ include 'partial/run/form.html' }}
+                {{ elif set_type == defs.SET_TYPE_GENERIC: }}
+                    {{ include 'partial/generic/form.html' }}
+                {{pass}}
+            {{ pass }}
+        {{ pass }}
+    </div>
+    <div class="clear"></div>
+    <div class="clear"></div>
+    <input type="submit" value="save" class="btn"></td>
+</form>
+

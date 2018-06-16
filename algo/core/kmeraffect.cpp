@@ -60,12 +60,8 @@ bool operator!=(const affect_t &a1, const affect_t &a2) {
 }
 string toString(const affect_t &a) {
   string result;
-  if((a == AFFECT_UNKNOWN.affect) || (a == AFFECT_AMBIGUOUS.affect))
-    result = " ";
-  else
-    result = (affect_strand(a)==1 ? "+" : "-");
-
-  result += string(1,affect_char(a));
+  result = toStringSigns(a);
+  result += toStringValues(a);
   return result;
 }
 

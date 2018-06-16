@@ -43,6 +43,8 @@ public:
    * @return true if the element is the same as when initialised with default constructor.
    */
   bool isNull() const;
+	
+	string getLabel() const;
 
   /**
    * @return true iff the kmer is unknown (which doesn't make sense here but

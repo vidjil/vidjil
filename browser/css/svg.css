@@ -332,6 +332,7 @@ line {
   font-weight: bold;
   text-anchor: middle;
   dominant-baseline: middle;
+  cursor: pointer;
 }
 .sp_legend2 {
   fill: #777777;
@@ -358,6 +359,7 @@ line {
   fill: #777777;
   font-weight: bold;
   text-anchor: left;
+  cursor: pointer;
 }
 .sp_legend_focus {
   fill: #777777;
@@ -849,17 +851,19 @@ a.tag-link {
   text-decoration: none;
 }
 /* ----------------- */
-.data-container,
-.info-container {
+.modal {
   z-index: 3;
   border: solid;
   position: fixed;
-  top: 50px;
-  left: 495px;
   font-size: 13px;
   padding: 10px;
   background: #FFFFFF;
   display: none;
+}
+.modal.data-container,
+.modal.info-container {
+  top: 50px;
+  left: 495px;
   max-width: -moz-calc(100% - 535px);
   max-width: -webkit-calc(100% - 535px);
   max-width: calc(100% - 535px);
@@ -867,9 +871,16 @@ a.tag-link {
   height: -webkit-calc(100% - 215px);
   height: calc(100% - 215px);
 }
+.modal.jstree-container {
+  padding-top: 30px;
+  top: 10%;
+  left: 25%;
+  width: 50%;
+  height: 70%;
+}
 .data-msg,
 .info-msg {
-  overflow-x: hidden;
+  overflow-x: auto;
   height: 100%;
   width: 100%;
 }
@@ -1159,15 +1170,21 @@ span.info {
 text.info {
   color: blue;
 }
+span.warn,
 span.warning {
   color: orange;
 }
+text.warn,
 text.warning {
   fill: orange;
 }
+span.error,
+span.fatal,
 span.alert {
   color: red;
 }
+text.error,
+text.fatal,
 text.alert {
   fill: red;
 }
@@ -1403,15 +1420,24 @@ span.warningReads {
   border-color: #FFFFFF;
   background: #FFFFFF;
 }
+h3 .uid {
+  font-size: 70%;
+  margin: 0 1em;
+}
+.db_table .uid {
+  font-size: 80%;
+}
 .db_block {
   width: 100%;
   display: inline-block;
 }
 .db_footer {
-  display: inline-block;
+  display: block;
   position: absolute;
   bottom: 5px;
   left: 0px;
+  width: 100%;
+  background: white;
 }
 .db_block_left {
   float: left;
@@ -1622,16 +1648,36 @@ span.warningReads {
   border-radius: 5px;
   padding: 5px;
   margin: 5px;
-  background: #dff0d8;
+  background: #DFF0D8;
   border-color: #333333;
+}
+#tip_img {
+  margin: 20px auto;
+  display: block;
+  border: grey solid 1px;
+}
+.key {
+  display: inline-block;
+  background: #ffffffdd;
+  padding: 2px 4px;
+  border: 1px solid black;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  font-size: 80%;
+  font-weight: bold;
+  color: black;
+}
+.element {
+  display: inline-block;
+  background: #ffffffdd;
+  padding: 2px 4px;
 }
 .right {
   float: right;
-  clear: both;
 }
 .left {
   float: left;
-  clear: both;
 }
 select > option:hover {
   background-color: #333333;
@@ -1910,9 +1956,14 @@ label.highlight_label {
 .db_table td.pre-line {
   white-space: pre-line;
 }
-#jstree {
-  max-height: 300px;
+.jstree {
+  height: 90%;
+  width: 100%;
   overflow-y: auto;
+  overflow-x: auto;
+}
+.jstree_button {
+  float: right;
 }
 .jstree-anchor {
   max-width: 200px;
@@ -1933,6 +1984,73 @@ label.highlight_label {
 }
 .widestBox {
   min-width: 52px;
+}
+.button_token {
+  border-radius: 2px;
+  padding: 0 2px;
+}
+.set_token {
+  border-radius: 5px;
+  padding: 3px;
+  margin: 3px;
+  color: #000;
+  font-size: 85%;
+  display: inline-block;
+  background-color: #eee;
+}
+.run_token {
+  background-color: #ffdde0;
+}
+.generic_token {
+  background-color: #dcedff;
+}
+.patient_token {
+  background-color: #eed0ff;
+}
+.token_container {
+  display: inline-block;
+}
+.token_input,
+.token_input:focus {
+  border: 0;
+  box-shadow: none;
+  width: 100px;
+  height: 25px;
+}
+.file_fieldset {
+  clear: right;
+  width: -moz-available;
+}
+form label {
+  display: inline-block;
+  text-align: right;
+}
+form div.field_div {
+  float: left;
+  display: inline-block;
+}
+form .form_label {
+  line-height: 33px;
+  width: 70px;
+}
+.error {
+  font-weight: bold;
+  color: red;
+}
+.icon-cancel {
+  cursor: pointer;
+}
+.inline {
+  display: inline-block;
+}
+.hidden {
+  display: none;
+}
+#fieldset_container :not(.set_token) > .icon-cancel {
+  float: right;
+}
+.buttons_add_elements {
+  margin: 1em 0;
 }
 /* atwho css */
 .atwho-view {
@@ -1976,12 +2094,18 @@ label.highlight_label {
 .atwho-view .cur small {
   color: white;
 }
-.atwho-view strong {
-  color: #3366FF;
-}
 .atwho-view .cur strong {
   color: white;
   font: bold;
+}
+.atwho-view .cur.patient_li strong,
+.atwho-view .cur.generic_li strong,
+.atwho-view .cur.run_li strong {
+  color: black;
+  font: bold;
+}
+.atwho-view strong {
+  color: #3366FF;
 }
 .atwho-view ul {
   /* width: 100px; */
@@ -1998,10 +2122,82 @@ label.highlight_label {
   cursor: pointer;
   /* border-top: 1px solid #C8C8C8; */
 }
+.atwho-view ul li.patient_li:before {
+  font-size: 80%;
+  content: 'patient';
+}
+.atwho-view ul li.run_li:before {
+  font-size: 80%;
+  content: 'run';
+}
+.atwho-view ul li.generic_li:before {
+  font-size: 80%;
+  content: 'set';
+}
+.atwho-view ul li span.autocomplete_li {
+  display: none;
+}
 .atwho-view small {
   font-size: smaller;
   color: #777;
   font-weight: normal;
+}
+.form-control {
+  padding: 3px 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border-color ease-in-out 0.15s, -webkit-box-shadow ease-in-out 0.15s;
+  -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition-property: border-color, box-shadow;
+  transition-duration: 0.15s, 0.15s;
+  transition-timing-function: ease-in-out, ease-in-out;
+  transition-delay: 0s, 0s;
+  display: inline-block;
+  min-width: 200px;
+  vertical-align: middle;
+  margin: 0;
+  height: 25px;
+}
+.form-control:invalid {
+  border: 1px solid red;
+  -webkit-box-shadow: inset 0 1px 1px rgba(255, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(255, 0, 0, 0.075);
+}
+.form-control.stringid {
+  min-width: 80px;
+  width: 80px;
+}
+.form-control.sequencer {
+  display: none;
+}
+.form-control.pcr {
+  display: none;
+}
+.form-control.text {
+  min-width: 350px;
+  width: 350px;
+}
+.form-control[type="file"],
+.form-control.jstree_field {
+  border: 0px;
+  border-radius: unset;
+  box-shadow: unset;
+  cursor: pointer;
+  width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 30px;
+}
+.form-control.date {
+  min-width: 85px;
+  width: 85px;
+}
+[hidden] {
+  display: none !important;
 }
 #resolution5 {
   opacity: 0;

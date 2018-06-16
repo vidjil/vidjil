@@ -1,0 +1,9 @@
+
+cd $VIDJIL_DIR/germline
+cat homo-sapiens/TRDD+up.fa 
+
+$ Three sequences
+3:>
+
+$ Correct gene order
+l:TRDD1.*TRDD2.*TRDD3

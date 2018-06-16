@@ -20,6 +20,14 @@
                                    */
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
 
+#define LEVEL_DEBUG "debug"
+#define LEVEL_INFO  "info"
+#define LEVEL_WARN  "warn"
+#define LEVEL_ERROR "error"
+#define LEVEL_FATAL "fatal"
+
+#define ALL_KMERS_VALUE 0 /* Use in -Z 0 (filtering on all k-mers with at least
+                             one match. */
 #include <sstream>
 #include <iostream>
 #include <iomanip>
@@ -27,6 +35,7 @@
 #include <cassert>
 #include <vector>
 #include "bioreader.hpp"
+#include "kmeraffect.h"
 #include "../lib/json.hpp"
 using json = nlohmann::json;
 using namespace std;
@@ -84,6 +93,14 @@ inline int spaced_int(int *input, const string &seed) {
 
 }
 
+/* 
+	Extract the gene name from a label. This take the whole part
+	before the star and returns it. If there is no star in the
+	name the whole label is returned.
+	IGHV-01*05	->	IGHV-01
+	IGHV-7500AB	->	IGHV-7500AB
+*/
+string extractGeneName(string label);
 
 /**
  * Sort the number of occurrence stored as the second element of a pair.
@@ -255,7 +272,7 @@ bool operator!=(const Sequence &s1, const Sequence &s2);
 
 void output_label_average(ostream &out, string label, long long int nb, double average, int precision=1);
 
-void json_add_warning(json &clone, string code, string msg);
+void json_add_warning(json &clone, string code, string msg, string level=LEVEL_WARN);
 
 
 //////////////////////////////////////////////////

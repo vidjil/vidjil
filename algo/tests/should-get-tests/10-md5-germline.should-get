@@ -1,5 +1,5 @@
 !NO_LAUNCHER:
-!LAUNCH: (cd $VIDJIL_DIR/germline ; md5sum {homo-sapiens,mus-musculus,rattus-norvegicus}/*.fa || md5 -r {homo-sapiens,mus-musculus,rattus-norvegicus}/*.fa)
+!LAUNCH: (cd $VIDJIL_DIR/germline ; md5sum */*.fa || md5 -r */*.fa)
 
 $ Check md5 in germline/, sequences split and processed from germline and other databases
 1:b64be21f03b290c6850ce2cb2f1d6f02 homo-sapiens/IGHD.fa
@@ -45,7 +45,7 @@ $ Check md5 in germline/, sequences split and processed from germline and other 
 
 $ Check md5 in germline/, other sequences
 1:9112d6975669ccb59970fa79ceef599d homo-sapiens/CD-sorting.fa
-1:61dfe19ec7af93f0d85c17248f2b0429 homo-sapiens/CD.fa
+1:e6540659d36fa37f83f7e1463dde906f homo-sapiens/CD.fa
 1:eb32e780af5a4b8c0d1e9d780bacac43 homo-sapiens/IGHC=A1.fa
 1:b1ea36c4255c63d775ecdb03967ec89e homo-sapiens/IGHC=A2.fa
 1:43c54f3ddedfde87f70b0e0bea2d6d5f homo-sapiens/IGHC=D.fa
@@ -56,20 +56,20 @@ $ Check md5 in germline/, other sequences
 1:d5123a856e2dedacfcfcd5fd11ebc2bc homo-sapiens/IGHC=G4.fa
 1:6c1e3e61d5824a03f71a5527ccdbb35c homo-sapiens/IGHC=GP.fa
 1:dd2263230c64abb9a22f5f8b7a979275 homo-sapiens/IGHC=M.fa
-1:ee931390172a155c57e5102becc61a94 homo-sapiens/IGHD_upstream.fa
-1:a5908f30af350a1addc2b32b6c0a3687 homo-sapiens/IGHJ_downstream.fa
+1:2ed67cdd3d8f8fe3096afe747a0df205 homo-sapiens/IGHD.up.fa
+1:a13a4c31570952c6c7fc1e7161051675 homo-sapiens/IGHJ.down.fa
 1:7d6247262807ad5478b7a4e52a59c568 homo-sapiens/IGK-INTRON.fa
 1:1147a04c4e8a8dd534aae65db1ae13ca homo-sapiens/IGK-KDE.fa
-1:8bcc31b17b2b189cf63b777b2d265429 homo-sapiens/IGKJ_downstream.fa
-1:ce3c1393aaecd458f699f7d6033f52e1 homo-sapiens/IGLJ_downstream.fa
-1:cc8387faed2ed512aace00fa3da2237b homo-sapiens/TRAJ_downstream.fa
-1:d651bd2f53e63bcbdd0212296c863e7f homo-sapiens/TRBD_upstream.fa
-1:da84091de4d8b3eb5d45597761c23214 homo-sapiens/TRBJ_downstream.fa
-1:1323fa3a4ff0e9633d1f56fd8dfeae73 homo-sapiens/TRDD2_upstream.fa
-1:d22703bc2d88f2b8e540b02d27a7c2cb homo-sapiens/TRDD3_downstream.fa
-1:cad48f69caadd2d1bf49ee770b494f87 homo-sapiens/TRDD_upstream.fa
-1:93ef44f3b523cc1f31309fa8155ee6f4 homo-sapiens/TRDJ_downstream.fa
-1:bca56d51783e873afce73a0064d13841 homo-sapiens/TRGJ_downstream.fa
+1:805f326b92db78d8276b5a58b0f93fa2 homo-sapiens/IGKJ.down.fa
+1:9f37008bdabf1d7102d753845e36309e homo-sapiens/IGLJ.down.fa
+1:68e06198c4f41898533fecd30b86a446 homo-sapiens/TRAJ.down.fa
+1:79f9526d456d4550c1451a67e34efa51 homo-sapiens/TRBD.up.fa
+1:052da0d01539810a3ede514ade7ec988 homo-sapiens/TRBJ.down.fa
+1:e0a1860c5f9f937800c4b9d090f0c8aa homo-sapiens/TRDD.up.fa
+1:4f1d8f0e508e7e40adbd8896b64a905c homo-sapiens/TRDD2.up.fa
+1:d8017c8ee68383b874f7ff00efab0db6 homo-sapiens/TRDD3.down.fa
+1:a0a77c861cb4abc5222fad9da143e2b9 homo-sapiens/TRDJ.down.fa
+1:f1ae8b4f91c3ab3cad31e490f09eeff0 homo-sapiens/TRGJ.down.fa
 1:48f54c5af4f8d748ab2f02b2a6ea3370 mus-musculus/IGHC=A.fa
 1:25cb0451d31ca5337d462eb648914fe7 mus-musculus/IGHC=D.fa
 1:8f2ec40bc77a4e7f0c7b19655812ddbc mus-musculus/IGHC=E.fa
@@ -79,17 +79,17 @@ $ Check md5 in germline/, other sequences
 1:03cd9b5729ec3de23b302c476a51c9d3 mus-musculus/IGHC=G2C.fa
 1:744e59a4b5d1fc53beae91a0bee8f34a mus-musculus/IGHC=G3.fa
 1:b72bc2ed53226dd68519bb0cb679f608 mus-musculus/IGHC=M.fa
-1:6999c4b5e2e6826db38c2b7031898549 mus-musculus/IGHD_upstream.fa
-1:0d08472c439919e7f1ff3f94e219ce06 mus-musculus/IGHJ_downstream.fa
-1:1a78ebfac3014fb315e351be5a47cd6d mus-musculus/IGKJ_downstream.fa
-1:fed03cc1dd8db74e7ca0f8a096684c43 mus-musculus/IGLJ_downstream.fa
-1:49d297ec599be873ecff7e87d6d18280 mus-musculus/TRAJ_downstream.fa
-1:636b7f7e5218c0873bceca4383de854e mus-musculus/TRBD_upstream.fa
-1:5fa4ab0abd39a77570c20d091bd44125 mus-musculus/TRBJ_downstream.fa
-1:d30451ef4f292ed3dfa530305601f44b mus-musculus/TRDD2_upstream.fa
-1:c1cf00ac2d5d602b1b091c24efd0f8d8 mus-musculus/TRDD_upstream.fa
-1:86c419035414b6a90d5a6ef3d8befbf5 mus-musculus/TRDJ_downstream.fa
-1:b251b775573a57383133b7736bf4a9cd mus-musculus/TRGJ_downstream.fa
+1:bacb56a07cfcd93a4734fa25a832a805 mus-musculus/IGHD.up.fa
+1:07cd7e934d5ad5b804b5e8008c3f6662 mus-musculus/IGHJ.down.fa
+1:94cb5eaa7f9b1732fe9f21bfaee11af7 mus-musculus/IGKJ.down.fa
+1:8b2a0ea8303c8bc21ca6c9669a91cc7a mus-musculus/IGLJ.down.fa
+1:f3840f00f202cafd36d2cd3b17608bbd mus-musculus/TRAJ.down.fa
+1:60ad210f435d4f31b37f0254bf9d96fe mus-musculus/TRBD.up.fa
+1:8be584820144e5f8960ac71361752f10 mus-musculus/TRBJ.down.fa
+1:97a0118ff5659b8e46e937e3b4afa43c mus-musculus/TRDD.up.fa
+1:b1e00c7630580fd3c79801ae9174734d mus-musculus/TRDD2.up.fa
+1:5481f5e78573695406baa58a04689d2c mus-musculus/TRDJ.down.fa
+1:1d823716238ad85afe903fa7db8604c2 mus-musculus/TRGJ.down.fa
 1:90075c7d51bd1d08892163848a8f2ecc rattus-norvegicus/IGHC=A.fa
 1:e0d2d3e90980bf783e35d3775a3c327d rattus-norvegicus/IGHC=D.fa
 1:8461bb440ad2264eb638d948bda186ab rattus-norvegicus/IGHC=E.fa
@@ -98,6 +98,6 @@ $ Check md5 in germline/, other sequences
 1:6f2605929ae226fd7ebaf9b40d948a85 rattus-norvegicus/IGHC=G2B.fa
 1:36f7704ea32dbc0eb71c4ffbe459c23c rattus-norvegicus/IGHC=G2C.fa
 1:a27b6fc827063a041062a8b4b2945232 rattus-norvegicus/IGHC=M.fa
-1:9083a8624f30a489d8629a00ad583acb rattus-norvegicus/IGHD_upstream.fa
-1:e033a04d204536607efc008046060857 rattus-norvegicus/IGHJ_downstream.fa
-1:9ea41ae8e5c74dd579dacf04d2069e64 rattus-norvegicus/IGLJ_downstream.fa
+1:a122818ff4b6ef5e2013a1ae1c493425 rattus-norvegicus/IGHD.up.fa
+1:3445516778ab4fbf96cf4008a40e6fe2 rattus-norvegicus/IGHJ.down.fa
+1:69aa6db3bb8a332289ab3b5cf5ab3b5a rattus-norvegicus/IGLJ.down.fa

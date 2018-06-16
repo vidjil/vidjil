@@ -38,6 +38,7 @@ services:
             - /opt/vidjil/upload/uploads:/mnt/upload/uploads
             - /opt/vidjil/log:/var/vidjil
             - /opt/vidjil/log/nginx:/var/log/nginx
+            - /opt/vidjil/log/uwsgi:/var/log/uwsgi
             - /opt/vidjil/backup:/mnt/backup
             - ./vidjil/conf:/etc/vidjil
     nginx:

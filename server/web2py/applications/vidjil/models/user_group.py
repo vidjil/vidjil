@@ -1,7 +1,4 @@
-from gluon import current
-
-def get_group_list():
-    auth = current.auth
+def get_group_list(auth):
     if (auth.is_admin()):
         return db(db.auth_group).select(db.auth_group.id, db.auth_group.role)
     else:
@@ -15,7 +12,7 @@ def get_default_creation_group(auth):
     max_group = auth.user_group()
     group_dict = {}
     max_elements = 0
-    group_list = get_group_list()
+    group_list = get_group_list(auth)
     for group in group_list:
         if (auth.is_admin()
                 or auth.has_permission(PermissionEnum.create.value, 'sample_set', 0, group_id = group.id)):
@@ -36,6 +33,20 @@ def get_default_creation_group(auth):
                 max_group = tgt_group.id
     groups = [{'id': group_dict[key]['id'], 'name': group_dict[key]['name']} for key in group_dict]
     return (groups, max_group)
+
+def get_upload_group_ids(auth):
+    db = auth.db
+    group_ids = []
+    group_list = get_group_list(auth)
+    for group in group_list:
+        if (auth.is_admin()
+                or auth.has_permission(PermissionEnum.upload.value, 'sample_set', 0, group_id = group.id)):
+            parents = auth.get_group_parent(group.id)
+            if (len(parents) > 0):
+                group_ids.append(parents[0].id)
+            else:
+                group_ids.append(group.id)
+    return group_ids
 
 def get_involved_groups():
     '''

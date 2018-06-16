@@ -13,14 +13,14 @@
 
 Here are aggregated notes forming the developer documentation on the Vidjil components, algorithm,
 web application client and server.
-This documentation is a work-in-progress, it is far from being as polished as the user documentation
+This documentation is a work-in-progress, it is far from being as polished as the user documentation.
 Help can also be found in the source code and in the commit messages.
 
 
 * Algorithm
 ** Code organisation
    The algorithm follows roughly those steps:
-   1. The germlines are read. germlines are in the fasta format and are read
+   1. The germlines are read. Germlines are in the fasta format and are read
       by the Fasta class (=core/fasta.h=). Germlines are built using the
       Germline (or MultiGermline) class (=core/germline.h=)
    2. The input sequence file (.fasta, .fastq, .gz) is read by an OnlineFasta
@@ -233,7 +233,10 @@ The cache is stored for each user and is updated only when a change occurs (mess
 ** Permissions
    Permissions are handled by Web2py's authentication mechanism which is
    specialised to Vidjil's characteristics through the =VidjilAuth= class.
-
+*** Login
+**** Redirect after login
+     The URL at which we access after login is defined in the controllers
+     =sample_set/all= and in =default/home=.
 ** Database
 *** Export
     mysqldump -u <user> -p <database> -c --no-create-info > <file>
@@ -502,6 +505,10 @@ make functional
    And build the package in the /tmp folder along with all the files needed
    to add the package to a repository
 
+   It is worth noting that while all packages can be built directly from the
+   project sources, the algorithm is actually built from the releases found
+   at http://www.vidjil.org/releases.
+
 ** Packaging Vidjil into a Debian Binary Package
   In this section we will explain how to package a pre-compiled version of
   Vidjil that will allow easy installation although it will not meet all the
@@ -650,30 +657,59 @@ make functional
    - reporter     A monitoring utility that can be configured to send
      monitoring information to a remote server
 
+ For more information about Docker Compose and how to install it check out
+ https://docs.docker.com/compose/
 
-** Building and starting the environment
-   Building the image is simple and can be done prior to editing the
-   configuration files if you wish, although it is not necessary.
-   The backup and reporter images are built based on the latest vidjil
-   docker image from Dockerhub.
+** Starting the environment
+   Ensure your docker-compose.yml contains the correct reference to the
+   vidjil image you want to use. Usually this will be vidjil/vidjil:latest,
+   but more tags are available at https://hub.docker.com/r/vidjil/vidjil/tags/.
 
-   #+BEGIN_SRC sh
-     docker-compose build
-   #+END_SRC
-
-   Running the services:
+   Running the following command will automatically download any missing
+   images and start the environment:
 
    #+BEGIN_SRC sh
      docker-compose up
    #+END_SRC
 
-   Shorthand for the two previous commands:
+   If you are using the backup and reporter images, then you need to first
+   build these from the image you are using by running the following:
 
    #+BEGIN_SRC sh
      docker-compose up --build
    #+END_SRC
 
-   $ docker-compose up --build
+   This will also start the environment for you.
+
+** Building images for DockerHub
+   Make sure your Dockerfile is up to date with any changes you may want to
+   make to the containers. And make sure the latest vidjil packages have been
+   deployed to the vidjil repository since they will be used as the source
+   for the actual vidjil application.
+
+   #+BEGIN_SRC sh
+     docker-compose build
+   #+END_SRC
+
+   Tag the image you have just built:
+
+   #+BEGIN_SRC sh
+     docker tag vidjil:test vidjil/vidjil:<version>
+   #+END_SRC
+     or
+   #+BEGIN_SRC sh
+     docker tag vidjil:test vidjil/vidjil:<latestversion>
+   #+END_SRC
+
+   Push the image to DockerHub:
+
+   #+BEGIN_SRC sh
+     docker push vidjil/vidjil:<tag>
+   #+END_SRC
+
+   You may be required to log in, in which case you can consult
+   https://docs.docker.com/engine/reference/commandline/login/ for more
+   information.
 
 * Migrating Data
 ** Database

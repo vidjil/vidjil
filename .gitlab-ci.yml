@@ -20,6 +20,7 @@ stages:
   - release
   - valgrind_unit
   - valgrind_functional
+  - prepare_deploy
   - deploy_prod
 
 
@@ -36,9 +37,9 @@ test_germlines:
   stage: test_germlines
   script:
     - make -C germline get-all-data
-    - make -C algo/tests should_germline
+    - make -C germline/tests
   only:
-    - /^feature-g\/.*$/
+    - /^feature-.*g.*\/.*$/
 
 
 # Algorithm
@@ -47,31 +48,31 @@ test_algo_unit:
   stage: test_unit
   script: make -C algo unit
   only:
-    - /^feature-a\/.*$/
+    - /^feature-.*a.*\/.*$/
 
 test_tools_unit:
   stage: test_unit
   script: make -C tools/tests
   only:
-    - /^feature-a\/.*$/
+    - /^feature-.*a.*\/.*$/
 
 test_algo_should:
   stage: test_functional
   script: make -C algo should
   only:
-    - /^feature-a\/.*$/
+    - /^feature-.*a.*\/.*$/
 
 test_algo_shouldvdj:
   stage: test_shouldvdj
   script: make -C algo shouldvdj
   only:
-    - /^feature-a\/.*$/
+    - /^feature-.*a.*\/.*$/
 
 algo_valgrind_unit:
   stage: valgrind_unit
   script: make -C algo valgrind_unit
   only:
-    - /^feature-a\/.*$/
+    - /^feature-.*a.*\/.*$/
   tags:
     - valgrind
 
@@ -80,7 +81,7 @@ algo_valgrind_functional:
   script: make -C algo valgrind_should
   when: manual
   only:
-    - /^feature-a\/.*$/
+    - /^feature-.*a.*\/.*$/
   tags:
     - valgrind
 
@@ -89,20 +90,47 @@ prepare_release:
   script: make -C algo release RELEASE_TAG='rc'
   when: manual
   only:
-    - /^feature-a\/.*$/
+    - /^feature-.*a.*\/.*$/
 
 release:
   stage: release
   script: make -C algo release RELEASE_TAG=`cat algo/release`
   when: manual
   only:
-    - /^feature-a\/release$/
+    - /^feature-.*a.*\/release$/
   artifacts:
     paths:
     - algo/releases/vidjil-algo-`cat algo/release`.tar.gz
     - algo/releases/vidjil-algo-`cat algo/release`/vidjil-algo-`cat algo/release`_`uname -m`
+  allow_failure: false
   tags:
     - ubuntu-16.04-amd64
+
+copy_release:
+  stage: prepare_deploy
+  script:
+    - |
+      for repo in $ALGO_REPOSITORIES; do
+        echo "Copying release to $repo"
+        scp algo/releases/vidjil-algo*.tar.gz algo/releases/vidjil-algo*/vidjil-algo-*_* $repo
+      done
+      release_name=$(cat algo/release)
+      ssh $VIDJIL_WWW "cd /var/www/html/releases; ln -sf vidjil-algo-${release_name}.tar.gz vidjil-latest.tgz; ln -sf vidjil-algo-${release_name}_x86_64 vidjil-latest_x86_64"
+      ssh $VIDJIL_BONSAI "cd /bio1/www/html/vidjil; scp vidjil-algo-${release_name}* VIDJIL_BONSAI_PROD:/bio1/www/html/vidjil"
+  only:
+    - /^feature-.*a.*\/release$/
+
+deploy_release_prod:
+  stage: deploy_prod
+  only:
+    - /^feature-.*a.*\/release$/
+  script:
+    - |
+      release_name=$(cat algo/release)
+      ssh $VIDJIL_SERVER "cd releases/vidjil;\
+          tar xvzf vidjil-algo-${release_name}.tar.gz;\
+          make -C vidjil-algo-${release_name}
+          ln -sf vidjil-algo-${release_name} next"
 
 # Client
 
@@ -113,8 +141,8 @@ test_browser_unit:
     paths:
     - browser/
   only:
-    - /^feature-[cw]\/.*$/
-    - /^hotfix-[cw]\/.*$/
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
     - prod-client
     - dev
   tags:
@@ -131,8 +159,8 @@ test_browser-functional:
     paths:
     - browser/
   only:
-    - /^feature-[cw]\/.*$/
-    - /^hotfix-[cw]\/.*$/
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
     - prod-client
   tags:
     - web
@@ -149,8 +177,8 @@ test_browser-functional-external:
     paths:
     - browser/
   only:
-    - /^feature-[cw]\/.*$/
-    - /^hotfix-[cw]\/.*$/
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
     - prod-client
   tags:
     - web
@@ -159,12 +187,35 @@ code_quality:
   stage: test_quality
   script: make -C browser quality
   only:
-    - /^feature-[cw]\/.*$/
-    - /^hotfix-[cw]\/.*$/
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
     - prod-client
     - dev
   tags:
     - web
+
+# Server
+
+test_server_unit:
+    stage: test_unit
+    script:
+      - virtualenv $CI_BUILD_REF_SLUG
+      - source $CI_BUILD_REF_SLUG/bin/activate
+      - pip install -r requirements.txt
+      - make -C server install_web2py_standalone
+      - make -C server launch_fuse_server
+      - make unit_server || (make -C server kill_fuse_server; deactivate; false)
+      - make -C server kill_fuse_server
+      - deactivate
+    only:
+      - /^feature-.*s.*\/.*$/
+      - /^hotfix-.*s.*\/.*$/
+      - prod-server
+      - dev
+    tags:
+      - web
+
+# Deployment
 
 deploy_review:
   stage: deploy_review
@@ -176,19 +227,24 @@ deploy_review:
     url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
     on_stop: stop_deploy_review
   only:
-    - /^feature-[cw]\/.*$/
-    - /^hotfix-[cw]\/.*$/
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
   tags:
     - web
 
 deploy_prod:
   stage: deploy_prod
   script:
-    - rsync -av --delete browser $PROD_CLIENT_SERVER:$PROD_CLIENT_PATH
-    - ssh $PROD_CLIENT_SERVER "cp -pr $PROD_CLIENT_PATH_TEMPLATE/browser $PROD_CLIENT_PATH"
+    - ssh $PROD_CLIENT_SERVER "
+         cd $PROD_CLIENT_PATH;
+         git fetch
+         && git reset --hard origin/prod-client
+         && make -C browser
+         && make -C browser sha1
+         && cp doc/analysis-example.vidjil browser/"
   environment:
     name: production
-    url: http://app.vidjil.org/?data=analysis-example.vidjil
+    url: http://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil
   only:
     - prod-client
   tags:
@@ -205,7 +261,7 @@ stop_deploy_review:
     name: review/$CI_BUILD_REF_NAME
     action: stop
   only:
-    - /^feature-[cw]\/.*$/
-    - /^hotfix-[cw]\/.*$/
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
   tags:
     - web

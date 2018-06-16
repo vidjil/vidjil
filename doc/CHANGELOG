@@ -1,6 +1,14 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+2018-06-14  The Vidjil Team
+	* New experimental option -Z to speed-up the full analysis with a pre-processing based on k-mers (core/filter.cpp) #920
+	* New experimental analysis of Ikaros/ERG recombinations (germline/homo-sapiens-ikaros.g) #2139
+	* Improved analysis with large number of mutations in V or J genes (core/dynprog.cpp) #3066
+	* Added levels to warnings, lowering level for W53 (core/tools.cpp) #3136 #3137
+	* Refactored the functional test framework (tools/should.py) #3105
+	* New and updated unit and functional tests
+
 2018-02-02  The Vidjil Team
 	* Renamed program to 'vidjil-algo'
 	* Improved analysis of large deletions in V or J genes (core/segment.cpp) #2767

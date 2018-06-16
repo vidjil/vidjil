@@ -39,7 +39,8 @@ function loadAfterConf() {
 
         require(["../germline"],
                 function() {
-                    require(["../generic_axis"],
+                    require(["../generic_axis",
+                             "../closeable"],
                             function() {
                                 require(["../compare",
                                          "../menu",
@@ -69,8 +70,10 @@ function loadAfterConf() {
                                          "../url",
                                          "../autocomplete",
                                          "../tips",
+                                         "../tokeniser",
                                          // Speed test
                                          "../speed_test",
+                                         "../form_builder",
                                          "../../test/QUnit/testFiles/data_test",
                                         ], function(){
                                             if (typeof main == "undefined"){

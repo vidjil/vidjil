@@ -148,7 +148,7 @@ class MigratorScript(unittest.TestCase):
                         'run_date': '1970-01-01 00:00:00'}
         results = {10: results_file}
 
-        imp.importTable('results_file', results, ['sequence_file'], True)
+        imp.importTable('results_file', results, {'sequence_file': 'sequence_file_id'}, True)
         res = db((db.results_file.data_file == 'foobar.txt')
                 &(db.results_file.run_date == '1970-01-01 00:00:00')
             ).select()

@@ -12,6 +12,7 @@
 #include "kmeraffect.h"
 #include "affectanalyser.h"
 #include "../lib/json.hpp"
+#include "filter.h"
 
 // #define DEBUG_EVALUE
 
@@ -353,14 +354,20 @@ class FineSegmenter : public Segmenter
    vector<pair<int, int> > score_J;
 
    vector <AlignBox*> boxes ;
-   
+
    /**
    * Build a fineSegmenter based on KmerSegmentation
    * @param seq: An object read from a FASTA/FASTQ file
    * @param germline: germline used
+   * @param kmer_threshold: This threshold is used while filtering the V
+   *   BioReader in Germline. If this value is 0, every K-mer from getMultiResults
+   *   is used for the filtering. Otherwise if N > 0, the N best K-mers are used
+   *   for the filtering.
+   * By default this parameter doesn't filter the germline.
    */
    FineSegmenter(Sequence seq, Germline *germline, Cost segment_cost,
-                 double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0);
+                 double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0,
+                int kmer_threshold=NO_LIMIT_VALUE);
 
    ~FineSegmenter();
 

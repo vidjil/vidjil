@@ -269,7 +269,44 @@ class TestMultilocus < BrowserTest
 
     assert ($b.clone_in_segmenter(clone_id).exists?), "Clone %s is not in segmenter" % clone_id
   end
-  
+
+  def test_17_select_clustered
+    $b.clone_in_scatterplot('1').click
+    $b.clone_in_scatterplot('37').click(:control)
+    $b.clone_in_scatterplot('90').click(:control)
+
+    $b.merge.click
+
+    assert ($b.clone_in_scatterplot('90').exists?), "Main clone of the cluster should be clone 90"
+    assert ($b.clone_in_scatterplot('90', :class => "circle_select").exists?), "Clone should be selected"
+
+    $b.clone_info('90')[:cluster].click
+
+    assert ( $b.clone_in_scatterplot('1', :class => "circle_select").exists?)
+    assert ( $b.clone_in_graph('1', :class=> "graph_select").exists?)
+    assert ( $b.clone_in_segmenter('1').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
+    assert ( $b.clone_in_scatterplot('37', :class => "circle_select").exists?)
+    assert ( $b.clone_in_graph('37', :class=> "graph_select").exists?)
+    assert ( $b.clone_in_segmenter('37').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
+    assert ( $b.clone_in_scatterplot('90', :class => "circle_select").exists?)
+    assert ( $b.clone_in_graph('90', :class=> "graph_select").exists?)
+    assert ( $b.clone_in_segmenter('90').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
+
+    $b.clone_in_cluster('90', '1')[:delete].click
+    $b.clone_in_cluster('90', '37')[:delete].click
+
+    $b.unselect
+
+    assert ($b.clone_in_scatterplot('1').exists?)
+    assert ($b.clone_in_scatterplot('37').exists?)
+    assert ($b.clone_in_scatterplot('90').exists?)
+
+  end
+
+  def test_18_empty_clone_invisible
+    assert ( $b.execute_script("return m.clones[66].reads[0]") == 0), "Clone should have no read"
+    assert (not $b.clone_in_scatterplot('66').visible?), "Clone should not be visible"
+  end
 
   def TODO_test_14_edit_tag
     begin

@@ -294,26 +294,26 @@ bool KmerRepresentativeComputer::tryToExtendRepresentative(const vector<Kmer> co
     else
       pos_of_interest = i - 1;
     if (pos_of_interest < (int) counts[current_seed].size() && pos_of_interest >= 0) {
-    if (isSufficienlyExpressed(counts[current_seed][pos_of_interest].count, sequences.size())) {
-      i += direction;
+      if (isSufficienlyExpressed(counts[current_seed][pos_of_interest].count, sequences.size())) {
+	i += direction;
 
-      if (nb_seeds > 1) {
-        size_t seed_length = seeds[current_seed].size();
-        for (size_t pos = 0; pos < seed_length; pos++) {
-          bool previous_cover = cover[pos_of_interest+pos];
-          cover[pos_of_interest+pos] |= (seeds[current_seed][pos] == '#');
-          if (! previous_cover && cover[pos_of_interest+pos])
-            length_cover++;
-        }
-      } else {
-        int pos_modif = (direction == -1) ? pos_of_interest : i;
-        if (!cover[pos_modif])
-          length_cover++;
-        cover[pos_modif] = true;
+	if (nb_seeds > 1) {
+	  size_t seed_length = seeds[current_seed].size();
+	  for (size_t pos = 0; pos < seed_length; pos++) {
+	    bool previous_cover = cover[pos_of_interest+pos];
+	    cover[pos_of_interest+pos] |= (seeds[current_seed][pos] == '#');
+	    if (! previous_cover && cover[pos_of_interest+pos])
+	      length_cover++;
+	  }
+	} else {
+	  int pos_modif = (direction == -1) ? pos_of_interest : i;
+	  if (!cover[pos_modif])
+	    length_cover++;
+	  cover[pos_modif] = true;
+	}
+
+	was_extended = true;
       }
-
-      was_extended = true;
-    }
     }
   }
   return was_extended;

@@ -43,7 +43,7 @@
        {{for row in query :}}
            <tr class="pointer" onclick="db.call('sample_set/index', {'id' :'{{=row['sample_set_id']}}' , 'config_id' : {{=row['most_used_conf']}} } )" >
                 <td>
-                     {{ patient_name = vidjil_utils.anon_names(row['id'], row['first_name'], row['last_name'], row['anon_allowed'])}}
+                     {{ patient_name = vidjil_utils.anon_names(row['sample_set_id'], row['first_name'], row['last_name'], row['anon_allowed'])}}
 		     {{= patient_name}}
                 </td>
                 <td> {{ if row['birth'] is not None: }} {{=row['birth'] }} {{ pass }} </td>
@@ -82,7 +82,7 @@
     <div class="db_block_left">
 
 {{if auth.can_create_patient():}}
-<span class="button2" onclick="db.call('patient/add')"> + new patient </span>
+<span class="button2" onclick="db.call('patient/add')"> + new patients </span>
 <span class="button2" onclick="db.call('sample_set/custom', {'filter': '{{=request.vars['filter']}}' })"> compare samples/patients </span>
 {{else:}}
 <!-- <span class="button2 inactive" onclick="db.call('patient/add')" title="you don't have permission to create new patient"> add patient </span> -->

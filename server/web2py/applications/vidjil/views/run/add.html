@@ -1,62 +1,54 @@
-{{extend 'db_layout.html'}}
-
-<form id="data_form" action="DB_ADDRESS/run/add_form" enctype="multipart/form-data" method="post">
-    <table>
-        <tbody>
-            <tr>
-                <td><label for="run_id_label" id="patient_id_label__label">Run ID: </label></td>
-                <td><input class="date" id="run_id_label" name="id_label" type="text" value=""><span></span></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td ><label for="run_name" id="run_name__label">Name: </label></td>
-                <td ><input class="string" id="run_name" name="name" type="text" value=""><span>*</span></td>
-                <td ></td>
-            </tr>
-            <tr>
-                <td><label for="run_date" id="run_date__label">Date: </label></td>
-                <td><input class="date" id="run_date" name="run_date" type="text" value=""><span>(format: yyyy-mm-dd)</span></td>
-                <td></td>
-            </tr>
-            <tr {{ if len(groups) <= 1: }} class="hiddenCheckBox" {{pass}}>
-                <td><label for="run_group" id="run_group__label">Owner Group: </label></td>
-                <td>
-                    {{= SELECT(*[OPTION(g['name'], _value=g['id']) for g in groups], _id="group_select", _name="run_group", _value=master_group, value=master_group) }}
-                </td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><label for="run_info" id="run_info__label">Info: </label></td>
-                <td><textarea onfocus="$(this).data('group-ids', [$('#group_select option:selected').val()]); new VidjilAutoComplete().setupAtWho(this);" data-needs-atwho="true" class="text" cols="40" id="run_info" name="info" rows="10"></textarea></td>
-            <td></td>
-            </tr>
-			<tr>
-			<td><label for="sequencer" id="sequencer__label">Sequencer: </label></td>
-			<td><input list="sequencer" id="sequencer" name="sequencer" type="text" size="40" value=""></td>
-                  <datalist id="sequencer">
-                  {{for row in sequencer_list :}}
-                      <option value="{{=row['sequencer']}}">
-                  {{pass}}
-                  </datalist>
-			</tr>
-			<tr>
-			<td><label for="pcr" id="pcr__label">PCR </label></td>
-			<td><input list="pcr" id="pcr" name="pcr" type="text" size="40" value=""></td>
-                  <datalist id="pcr">
-                  {{for row in pcr_list :}}
-                      <option value="{{=row['pcr']}}">
-                  {{pass}}
-                  </datalist>
-			</tr>
-            <tr>
-                <td></td>
-                <td ><input type="submit" value="save" class="btn"></td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
-</form>
-
-<div>
-    (* required fields)
-</div>
+<fieldset name="run{{=i}}">
+    <legend>Run {{=i+1}}</legend>
+    <input type="hidden" id="run_id_{{=i}}" name="run[{{=i}}][id]" value="{{if r is not None and 'id' in r:}}{{=p['id']}}{{pass}}">
+    {{ if r is not None and 'error' in r: }}
+        <div class="error">error: {{=", ".join(r['error'])}}</div>
+    {{ pass }}
+    <div>
+        <label for="run_id_label_{{=i}}" id="run_id_label__label_{{=i}}">Run ID: </label>
+        <input class="date" id="run_id_label_{{=i}}" name="run[{{=i}}][id_label]" type="text"
+            value="{{if r is not None and r['id_label'] is not None:}}{{=r['id_label']}}{{pass}}"><span></span>
+    </div>
+    <div>
+        <label for="run_name_{{=i}}" id="run_name__label_{{=i}}">Name: </label>
+        <input class="string" id="run_name_{{=i}}" name="run[{{=i}}][name]" type="text"
+            value="{{if r is not None:}}{{r['name']}}{{pass}}"><span>*</span>
+    </div>
+    <div>
+        <label for="run_date_{{=i}}" id="run_date__label_{{=i}}">Date: </label>
+        <input class="date" id="run_date_{{=i}}" name="run[{{=i}}][run_date]" type="text"
+            value="{{if r is not None and r['run_date'] is not None:}}{{=r['run_date']}}{{pass}}" placeholder="yyyy-mm-dd">
+    </div>
+    <div>
+        <label for="run_info_{{=i}}" id="run_info__label_{{=i}}">Info: </label>
+        <textarea
+            onfocus="$(this).data('group-ids', [$('#group_select option:selected').val()]);
+                     new VidjilAutoComplete().setupAtWho(this);"
+            data-needs-atwho="true"
+            class="text"
+            cols="40"
+            id="run_info+{{=i}}"
+            name="run[{{=i}}][info]"
+            rows="10">{{if r is not None and r['info'] is not None:}}{{=r['info']}}{{pass}}</textarea>
+    </div>
+    <div>
+        <label for="run_sequencer_{{=i}}" id="run_sequencer__label_{{=i}}">Sequencer: </label>
+        <input list="sequencer_{{=i}}" id="run_sequencer_{{=i}}" name="run[{{=i}}][sequencer]" type="text" size="40"
+            value="{{if r is not None and r['sequencer'] is not None:}}{{=r['sequencer']}}{{pass}}">
+              <datalist id="sequencer_{{=i}}">
+              {{for row in sequencer_list :}}
+                  <option value="{{=row['sequencer']}}">
+              {{pass}}
+              </datalist>
+    </div>
+    <div>
+        <label for="run_pcr_{{=i}}" id="pcr__label_{{=i}}">PCR </label>
+        <input list="pcr_{{i}}" id="run_pcr_{{=i}}" name="run[{{=i}}][pcr]" type="text" size="40"
+            value="{{if r is not None and r['pcr'] is not None:}}{{=r['pcr']}}{{pass}}">
+              <datalist id="pcr_{{=i}}">
+              {{for row in pcr_list :}}
+                  <option value="{{=row['pcr']}}">
+              {{pass}}
+              </datalist>
+    </div>
+</fieldset>

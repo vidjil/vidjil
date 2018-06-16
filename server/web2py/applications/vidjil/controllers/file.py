@@ -15,78 +15,25 @@ if request.env.http_origin:
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Max-Age'] = 86400
 
-def extract_id(target, error):
-    try:
-        id = int(target.strip().split('(')[-1][:-1])
-        return id
-    except:
-        raise ValueError('invalid input %s' % target)
+def extract_set_type(target):
+    mapping = {
+        'p': 'patient',
+        'r': 'run',
+        's': 'generic'
+    }
+    return mapping[target.split(':')[1][0]]
 
-def add():
-    sample_set = db.sample_set[request.vars["id"]]
-    if not auth.can_upload_sample_set(sample_set.id):
-        return error_message("you don't have right to upload files")
-    else:
-        sample_type = sample_set.sample_type
-        enough_space = vidjil_utils.check_enough_space(defs.DIR_SEQUENCES)
-        if not enough_space:
-            mail.send(to=defs.ADMIN_EMAILS,
-                subject="[Vidjil] Server space",
-                message="The space in directory %s has passed below %d%%." % (defs.DIR_SEQUENCES, defs.FS_LOCK_THRESHHOLD))
-            return error_message("Uploads are temporarily disabled. System admins have been made aware of the situation.")
-        
-        group_ids = []
-        sample_types = [defs.SET_TYPE_GENERIC, defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN]
-        id_strings = {}
-        factory = ModelFactory()
-        for sample_type in sample_types:
-            if sample_set.sample_type == sample_type:
-                row = db(db[sample_type].sample_set_id == request.vars["id"]).select().first()
-                group_ids.append(get_set_group(sample_type, row.id))
-                helper = factory.get_instance(type=sample_type)
-                id_strings[sample_type] = helper.get_id_string(row)
-            else:
-                id_strings[sample_type] = ""
-
-        group_ids = [int(gid) for gid in group_ids]
-		
-	query_pre_process = db(
-            db.pre_process>0
-        ).select(
-            db.pre_process.ALL,
-			orderby = ~db.pre_process.id
-        )
-		
-	pre_process_list = []
-	for row in query_pre_process :
-		file = 1
-		if "&file2" in row.command: 
-			file = 2
-		pre_process_list.append(dict(
-				id = row.id,
-				name = row.name,
-				file = file,
-                                info = row.info
-			))
-
-        source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
-        return dict(message = T('add file'),
-				   pre_process_list = pre_process_list,
-                   id_strings = id_strings,
-                   sample_type = sample_set.sample_type,
-                   source_module_active = source_module_active,
-                   group_ids = group_ids)
 
 def manage_filename(filename):
     filepath = ""
     name_list = []
-    name_list = request.vars['filename'].split('/')
-    filename = name_list[-1]
-    data = dict(filename=filename, data_file=None)
+    name_list = filename.split('/')
+    myfilename = name_list[-1]
+    data = dict(filename=myfilename, data_file=None)
 
     if len(name_list) > 1:
-        filepath = defs.FILE_SOURCE + '/' + request.vars['filename']
-        split_file = filename.split('.')
+        filepath = defs.FILE_SOURCE + '/' + filename
+        split_file = myfilename.split('.')
         uuid_key = db.uuid().replace('-', '')[-16:]
         encoded_filename = base64.b16encode('.'.join(split_file[0:-1])).lower()
         data_file = "sequence_file.data_file.%s.%s.%s" % (
@@ -101,275 +48,271 @@ def link_to_sample_sets(seq_file_id, id_dict):
     Create sample set memberships and return a dict of the sample set ids.
     The keys to the dict are thee same as the ones passed in id_dict
     '''
-    ssid_dict = {}
     for key in id_dict:
-        oid = id_dict[key]
-        sample_set_id = db[key][oid].sample_set_id
-        ssid_dict[key] = sample_set_id
-        id_sample_set_membership_run = db.sample_set_membership.insert(sample_set_id=sample_set_id,
-                                                                  sequence_file_id=seq_file_id)
-    return ssid_dict
+        arr = [{'sample_set_id': oid, 'sequence_file_id': seq_file_id} for oid in id_dict[key]]
+        db.sample_set_membership.bulk_insert(arr)
+    db.commit()
 
-def filter_set_ids(req_vars):
-    '''
-    Create a dict with the patient, run etc.. id strings as sent by the form
-    '''
-    # TODO I wanted to make an associative array straight in the HTML form
-    # but I couldn't get it working...
-    set_ids = {}
-    set_ids[defs.SET_TYPE_GENERIC] = req_vars['generic_id']
-    set_ids[defs.SET_TYPE_PATIENT] = req_vars['patient_id']
-    set_ids[defs.SET_TYPE_RUN] = req_vars['run_id']
-    return set_ids
-
-def add_form(): 
-    error = ""
-    patient_id = None
-    run_id = None
-    generic_id = None
-    
-    if request.vars['sampling_date'] != '' :
+# TODO put these in a model or utils or smth
+def validate(myfile):
+    error = []
+    if myfile['filename'] == None :
+        error.append("missing filename")
+    if myfile['sampling_date'] != '' :
         try:
-            datetime.datetime.strptime(""+request.vars['sampling_date'], '%Y-%m-%d')
+            datetime.datetime.strptime(""+myfile['sampling_date'], '%Y-%m-%d')
         except ValueError:
-            error += "date (wrong format), "
-            
-    if request.vars['filename'] == None :
-        error += " missing file"
-    else:
-        data, filepath = manage_filename(request.vars["filename"])
-        filename = data['filename']
+            error.append("date (wrong format)")
+    return error
 
-    if request.vars['patient_id'] == '' and request.vars['run_id'] == "" and request.vars['generic_id'] == "":
-        error += " missing patient or run or sample_set"
-
-    set_ids = filter_set_ids(request.vars)
-
+def validate_sets(set_ids):
     id_dict = {}
-    for key in set_ids:
-        if set_ids[key] != '':
-            try:
-                set_id = extract_id(set_ids[key], error)
-                id_dict[key] = set_id
-                if not auth.can_modify(key, set_id) :
-                    error += " missing permission for %s %d" % (key, set_id)
+    sets = []
+    errors = []
 
-                query = db((db[key].id == set_id)
-                        &(db.sample_set_membership.sample_set_id == db[key].sample_set_id)
-                        &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-                    ).select(db.sequence_file.ALL)
-                for row in query :
-                    if row.filename == filename :
-                        error += " this sequence file already exists for this %s" % key
-                        break
-            except ValueError:
-                error += " Invalid %s %s" % (key, set_ids[key])
+    if len(set_ids) == 0:
+        errors.append("missing set association")
 
+    mf = ModelFactory()
+    helpers = {}
 
-    if request.vars['generic_id'] != '' :
+    set_ids_arr = []
+    if len(set_ids) > 0:
+        set_ids_arr = [x.strip() for x in set_ids.split('|')]
+    for sid in set_ids_arr:
         try:
-            generic_id = extract_id(request.vars['generic_id'], error)
-            if not auth.can_modify('generic', generic_id) :
-                error += " missing permissions for sample_set %d" % generic_id
+            set_type = extract_set_type(sid)
+            if set_type not in id_dict:
+                helpers[set_type] = mf.get_instance(set_type)
+                id_dict[set_type] = []
+            sets.append({'type': set_type, 'id': sid})
+            set_id = helpers[set_type].parse_id_string(sid)
+            id_dict[set_type].append(set_id)
+            if not auth.can_modify_sample_set(set_id) :
+                errors.append("missing permission for %s %d" % (set_type, set_id))
         except ValueError:
-            error += " invalid sample_set %s" % request.vars['sample_set_id']
-    pre_process = None
-    pre_process_flag = "DONE"
-    if request.vars['pre_process'] is not None and request.vars['pre_process'] != "0":
-        pre_process = request.vars['pre_process']
-        pre_process_flag = "WAIT"
+            errors.append("Invalid %s %s" % (set_type, sid))
+    return sets, id_dict, errors
 
-    if error=="" :
+def get_pre_process_list():
+    query_pre_process = db(
+        db.pre_process>0
+    ).select(
+        db.pre_process.ALL,
+        orderby = ~db.pre_process.id
+    )
 
-        #add sequence_file to the db
-        id = db.sequence_file.insert(sampling_date=request.vars['sampling_date'],
-                            info=request.vars['file_info'],
-                            pre_process_id=pre_process,
-                            pre_process_flag=pre_process_flag,
-                            provider=auth.user_id)
+    pre_process_list = []
+    for row in query_pre_process :
+        file = 1
+        if "&file2" in row.command:
+                file = 2
+        pre_process_list.append(dict(
+                        id = row.id,
+                        name = row.name,
+                        file = file,
+                        info = row.info
+                ))
+    return pre_process_list
 
-        group_ids = set()
-        for key in id_dict:
-            group_ids.add(get_set_group(key, id_dict[key]))
-        for group_id in group_ids:
-            register_tags(db, 'sequence_file', id, request.vars["file_info"], group_id)
+def get_set_list(id_dict, helpers):
+    sets = []
+    for key in id_dict:
+        slist = db(db[key].id.belongs(id_dict[key])).select()
+        for sset in slist:
+            sets.append({'type': key, 'id': helpers[key].get_id_string(sset)})
+    return sets
 
-        log_message = "upload started"
-        if request.vars['filename'] != "":
-            if data['data_file'] is not None:
-                log_message = "registered"
-                os.symlink(filepath, defs.DIR_SEQUENCES + data['data_file'])
-                data['size_file'] = os.path.getsize(filepath)
-                data['network'] = True
-            db.sequence_file[id] = data
+def get_set_helpers():
+    factory = ModelFactory()
+    sample_types = [defs.SET_TYPE_GENERIC, defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN]
+    helpers = {}
+    for stype in sample_types:
+        helpers[stype] = factory.get_instance(type=stype)
+    return helpers
 
+def form():
+    group_ids = []
+    relevant_ids = {}
 
-        ids_sample_set = []
+    helpers = get_set_helpers()
 
-        ssid_dict = link_to_sample_sets(id, id_dict)
-        redirect_args = {"id" : ssid_dict[request.vars["sample_type"]]}
-        
-        res = {"file_id" : id,
-               "message": "(%s) file {%s} : %s: %s" % (','.join(map(str,ids_sample_set)), id, log_message, request.vars['filename']),
-               "redirect": "sample_set/index",
-               "args" : redirect_args
-               }
-        log.info(res, extra={'user_id': auth.user.id,\
-                'record_id': run_id if run_id is not None else patient_id,\
-                'table_name': 'run' if run_id is not None else 'patient'})
+    # new file
+    if 'sample_set_id' in request.vars:
+        sample_set = db.sample_set[request.vars["sample_set_id"]]
+        if not auth.can_upload_sample_set(sample_set.id):
+            return error_message("you don't have right to upload files")
 
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-        
-    else :
-        return error_message(error)
+        sample_type = sample_set.sample_type
+        enough_space = vidjil_utils.check_enough_space(defs.DIR_SEQUENCES)
+        if not enough_space:
+            mail.send(to=defs.ADMIN_EMAILS,
+                subject="[Vidjil] Server space",
+                message="The space in directory %s has passed below %d%%." % (defs.DIR_SEQUENCES, defs.FS_LOCK_THRESHHOLD))
+            return error_message("Uploads are temporarily disabled. System admins have been made aware of the situation.")
 
+        row = db(db[sample_set.sample_type].sample_set_id == request.vars["sample_set_id"]).select().first()
+        stype = sample_set.sample_type
+        if stype not in relevant_ids:
+            relevant_ids[stype] = []
+        relevant_ids[stype].append(row.id)
+        action = 'add'
 
-    
-def edit(): 
-    if auth.can_modify_file(request.vars['id']):
-        relevant_ids = {'patient': None, 'run': None, 'generic': None}
+    # edit file
+    elif 'file_id' in request.vars:
+        if not auth.can_modify_file(request.vars['file_id']):
+            return error_message("you need admin permission to edit files")
 
         sample_set_list = db(
-                (db.sample_set_membership.sequence_file_id == request.vars['id'])
+                (db.sample_set_membership.sequence_file_id == request.vars['file_id'])
                 & (db.sample_set_membership.sample_set_id != None)
                 & (db.sample_set.id == db.sample_set_membership.sample_set_id)
                 & (db.sample_set.sample_type != 'sequence_file')
             ).select(db.sample_set_membership.sample_set_id)
         for row in sample_set_list :
-            sample_type = db.sample_set[row.sample_set_id].sample_type
-            relevant_ids[sample_type] = db(db[sample_type].sample_set_id == row.sample_set_id).select()[0].id
-        
-	query_pre_process = db(
-            db.pre_process>0
-        ).select(
-            db.pre_process.ALL,
-			orderby = ~db.pre_process.id
-        )
-		
-	pre_process_list = []
-	for row in query_pre_process :
-		file = 1
-		if "&file2" in row.command: 
-			file = 2
-		pre_process_list.append(dict(
-				id = row.id,
-				name = row.name,
-				file = file,
-                                info = row.info
-			))
+            smp_type = db.sample_set[row.sample_set_id].sample_type
+            if smp_type not in relevant_ids:
+                relevant_ids[smp_type] = []
+            relevant_ids[smp_type].append(db(db[smp_type].sample_set_id == row.sample_set_id).select()[0].id)
+        action = 'edit'
 
-        group_ids = []
-        id_strings = {}
-        factory = ModelFactory()
-        for key in relevant_ids:
-            if relevant_ids[key] is not None:
-                group_ids.append(get_set_group(key, relevant_ids[key]))
-                helper = factory.get_instance(type=key)
-                row = db(db[key].id == relevant_ids[key]).select().first()
-                id_strings[key] = helper.get_id_string(row)
-            else:
-                id_strings[key] = ""
-
-        group_ids = [int(gid) for gid in group_ids]
-
-        source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
-        return dict(message = T('edit file'),
-                   id_strings = id_strings,
-				   pre_process_list = pre_process_list,
-                   file = db.sequence_file[request.vars["id"]],
-                   sample_type = request.vars['sample_type'],
-                   source_module_active = source_module_active,
-                   group_ids = group_ids)
-
+        sample_type = request.vars["sample_type"]
     else:
-        return error_message("you need admin permission to edit files")
-        
+        return error_message("missing sample_set or file id")
 
+    myfile = db.sequence_file[request.vars["file_id"]]
+    if myfile is None:
+        myfile = {}
+    myfile['sets'] = []
+    sets = get_set_list(relevant_ids, helpers)
+
+    data = {}
+    data['file'] = [myfile]
+    data['sets'] = sets
+    data['sample_type'] = sample_type
+    data['errors'] = []
+    data['action'] = action
+
+    return form_response(data)
 
 #TODO check data
-def edit_form(): 
-    error = ""
-    patient_id = None
-    run_id = None
-    generic_id = None
+def submit():
+    data = json.loads(request.vars['data'], encoding='utf-8')
+    error = False
 
-    if request.vars['patient_id'] == '' and request.vars['run_id'] == "" and request.vars['generic_id'] == "":
-        error += " missing patient or run or sample_set"
+    pre_process = None
+    pre_process_flag = "DONE"
+    if 'pre_process' in data and data['pre_process'] is not None and\
+       int(data['pre_process']) > 0:
+        pre_process = int(data['pre_process'])
+        pre_process_flag = "WAIT"
 
-    if request.vars['id'] == None :
-        error += "missing id"
-    if request.vars['filename'] == None :
-        error += " missing filename"
-    if request.vars['sampling_date'] != '' :
-        try:
-            datetime.datetime.strptime(""+request.vars['sampling_date'], '%Y-%m-%d')
-        except ValueError:
-            error += "date (wrong format), "
-            
-    # TODO I wanted to make an associative array straight in the HTML form
-    # but I couldn't get it working...
-    set_ids = filter_set_ids(request.vars)
+    sets, common_id_dict, errors = validate_sets(data['set_ids'])
+    data['sets'] = sets
 
-    id_dict = {}
-    for key in set_ids:
-        if set_ids[key] != '':
-            try:
-                set_id = extract_id(set_ids[key], error)
-                id_dict[key] = set_id
-                if not auth.can_modify(key, set_id) :
-                    error += " missing permission for %s %d" % (key, set_id)
-            except ValueError:
-                error += " Invalid %s %s" % (key, set_ids[key])
+    data['errors'] = errors
 
-    if error=="" :
-        id = int(request.vars["id"])
-        mes = "file {%d}: " % id
-        filename = db.sequence_file[id].filename
-        if 'filename' in request.vars and request.vars['filename'] != "":
-            filename = request.vars['filename']
-            # file is being reuploaded, remove all existing results_files
-            db(db.results_file.sequence_file_id == id).delete()
-        pre_process = None
-        if request.vars['pre_process'] is not None and request.vars['pre_process'] != "0":
-            pre_process = int(request.vars['pre_process'])
-        if request.vars['sampling_date'] != None and request.vars['file_info'] != None :
-            sequence_file = db.sequence_file[id]
-            db.sequence_file[id] = dict(sampling_date=request.vars['sampling_date'],
-                                                        info=request.vars['file_info'],
-                                                        pre_process_id=pre_process,
-                                                        provider=auth.user_id)
+    data['action'] = 'add'
+    if len(errors) > 0:
+        error = True
 
-            if sequence_file.info != request.vars['file_info']:
-                group_ids = set()
-                for key in id_dict:
-                    group_ids.add(get_set_group(key, id_dict[key]))
-                for group_id in group_ids:
-                    register_tags(db, 'sequence_file', id, request.vars["file_info"], group_id, reset=True)
+    for f in data['file']:
+        f['errors'] = validate(f)
 
-        if request.vars['filename'] != "":
-            data, filepath = manage_filename(request.vars["filename"])
-            if 'data_file' in data and data['data_file'] is not None:
-                os.symlink(filepath, defs.DIR_SEQUENCES + data['data_file'])
-            db.sequence_file[id] = data
-            
-        #remove previous membership
-        for row in db( db.sample_set_membership.sequence_file_id == id).select() :
-            if db.sample_set[row.sample_set_id].sample_type != "sequence_file" :
-                db(db.sample_set_membership.id == row.id).delete()
-        
-        ssid_dict = link_to_sample_sets(id, id_dict)
-        redirect_args = {"id" : ssid_dict[request.vars["sample_type"]]}
-        
-        res = {"file_id" : id,
-               "message": "file {%d}: metadata saved" % id,
-               "redirect": "sample_set/index",
-               "args" : redirect_args
-               }
-        log.info(res, extra={'user_id': auth.user.id, 'record_id': redirect_args['id'], 'table_name': 'run' if run_id is not None else 'patient'})
+        f['sets'], f['id_dict'], err = validate_sets(f['set_ids'])
+
+        if len(f['errors']) > 0:
+            error = True
+            continue
+
+        file_data = dict(sampling_date=f['sampling_date'],
+                         info=f['info'],
+                         pre_process_id=pre_process,
+                         pre_process_flag= pre_process_flag,
+                         provider=auth.user_id)
+
+        # edit
+        if (f["id"] != ""):
+            reupload = True
+            fid = int(f["id"])
+            sequence_file = db.sequence_file[fid]
+            db.sequence_file[fid] = file_data
+            #remove previous membership
+            db( db.sample_set_membership.sequence_file_id == fid).delete()
+            action = "edit"
+
+        # add
+        else:
+            reupload = False
+            f['id'] = fid = db.sequence_file.insert(**file_data)
+            action = "add"
+
+        data['action'] = action
+        f['message'] = []
+        mes = "file (%d) %s %sed" % (int(f["id"]), f["filename"], action)
+        f['message'].append(mes)
+        f['message'].append("You must reselect the file for it to be uploaded")
+
+        id_dict = common_id_dict.copy()
+
+        for key in f['id_dict']:
+            if key not in id_dict:
+                id_dict[key] = []
+            id_dict[key] += f['id_dict'][key]
+
+        for key in id_dict:
+            for sid in id_dict[key]:
+                group_id = get_set_group(sid)
+                register_tags(db, 'sequence_file', fid, f["info"], group_id, reset=True)
+
+        if f['filename'] != "":
+            if reupload:
+                # file is being reuploaded, remove all existing results_files
+                db(db.results_file.sequence_file_id == fid).delete()
+                mes += " file was replaced"
+
+            file_data, filepath = manage_filename(f["filename"])
+            filename = file_data['filename']
+            if 'data_file' in file_data and file_data['data_file'] is not None:
+                os.symlink(filepath, defs.DIR_SEQUENCES + file_data['data_file'])
+                file_data['size_file'] = os.path.getsize(filepath)
+                file_data['network'] = True
+            db.sequence_file[fid] = file_data
+
+        link_to_sample_sets(fid, id_dict)
+
+        log.info(mes, extra={'user_id': auth.user.id,\
+                'record_id': f['id'],\
+                'table_name': "sequence_file"})
+
+    if not error:
+        set_type = data['sets'][0]['type']
+        set_id = id_dict[set_type][0]
+        res = { "file_ids": [f['id'] for f in data['file']],
+                "redirect": "sample_set/index",
+                "args" : { "id" : set_id, "config_id": -1},
+                "message": "successfully added/edited file(s)"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-    else :
-        return error_message(error)
+    else:
+        return form_response(data)
     
+def form_response(data):
+    source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
+    response.view = 'file/form.html'
+    upload_group_ids = [int(gid) for gid in get_upload_group_ids(auth)]
+    group_ids = get_involved_groups()
+    pre_process_list = get_pre_process_list()
+    return dict(message=T("an error occured"),
+           pre_process_list = pre_process_list,
+           files = data['file'],
+           sets = data['sets'],
+           sample_type = data['sample_type'],
+           errors = data['errors'],
+           source_module_active = source_module_active,
+           group_ids = group_ids,
+           upload_group_ids = upload_group_ids,
+           isEditing = data['action']=='edit')
+
 def upload(): 
     session.forget(response)
     mes = ""

@@ -65,7 +65,7 @@ def add_form():
 
         res = {"redirect": "config/index",
                "message": "config '%s' added" % request.vars['config_name']}
-        log.admin(res)
+        log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
     else :

@@ -173,7 +173,6 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
         return "FAIL"
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
-    germline_folder = defs.DIR_GERMLINE
     upload_folder = defs.DIR_SEQUENCES
     out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
     
@@ -189,7 +188,14 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
 
     ## config de vidjil
     vidjil_cmd = db.config[id_config].command
-    vidjil_cmd = vidjil_cmd.replace( ' germline' ,germline_folder)
+
+    if 'next' in vidjil_cmd:
+        vidjil_cmd = vidjil_cmd.replace('next', '')
+        vidjil_cmd = vidjil_cmd.replace(' germline' , defs.DIR_GERMLINE_NEXT)
+        cmd = defs.DIR_VIDJIL_NEXT + '/vidjil-algo '
+    else:
+        vidjil_cmd = vidjil_cmd.replace(' germline' , defs.DIR_GERMLINE)
+        cmd = defs.DIR_VIDJIL + '/vidjil-algo '
 
     if grep_reads:
         # TODO: security, assert grep_reads XXXX
@@ -201,7 +207,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
 
     try:
         ## commande complete
-        cmd = defs.DIR_VIDJIL + '/vidjil ' + ' -o  ' + out_folder + " -b " + output_filename
+        cmd += ' -o  ' + out_folder + " -b " + output_filename
         cmd += ' ' + vidjil_cmd + ' '+ seq_file
 
         ## execute la commande vidjil
@@ -290,6 +296,97 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
 	    sample_set_id = row.sample_set_id
 	    print(row.sample_set_id)
             run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
+
+    return "SUCCESS"
+
+def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False):
+    from subprocess import Popen, PIPE, STDOUT, os
+    import time
+    import json
+
+    upload_folder = defs.DIR_SEQUENCES
+    out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
+
+    # FIXME Use shutil instead
+    cmd = "rm -rf "+out_folder
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    p.wait()
+
+    ## filepath du fichier de séquence
+    row = db(db.sequence_file.id==id_file).select()
+    filename = row[0].data_file
+    output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
+    seq_file = upload_folder+filename
+
+    ## config de vidjil
+    arg_cmd = db.config[id_config].command
+
+    os.makedirs(out_folder)
+    out_log = out_folder + '/vidjil-igrec.log'
+    log_file = open(out_log, 'w')
+
+    out_results = out_folder + "/out/igrec.vidjil"
+    ## commande complete
+    try:
+        igrec = defs.DIR_IGREC + '/igrec.py'
+        if not os.path.isfile(igrec):
+            print("!!! IgReC binary file not found")
+        cmd = "%s -s %s -o %s/out %s" % (igrec, seq_file, out_folder, arg_cmd)
+
+        ## execute la commande IgReC
+        print("=== Launching IgReC ===")
+        print(cmd)
+        print("========================")
+        sys.stdout.flush()
+
+        p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=STDOUT, close_fds=True)
+        p.wait()
+
+        print("Output log in " + out_log)
+        sys.stdout.flush()
+
+        ## Get result file
+        print("===>", out_results)
+        results_filepath = os.path.abspath(out_results)
+        stream = open(results_filepath, 'rb')
+        stream.close()
+    except:
+        print("!!! IgReC failed, no result file")
+        res = {"message": "[%s] c%s: IgReC FAILED - %s" % (id_data, id_config, out_folder)}
+        log.error(res)
+        raise
+
+    original_name = row[0].data_file
+    with open(results_filepath, 'r') as json_file:
+        my_json = json.load(json_file)
+        fill_field(my_json, original_name, "original_names", "samples")
+        fill_field(my_json, cmd, "commandline", "samples")
+
+        # TODO fix this dirty hack to get around bad file descriptor error
+    new_file = open(results_filepath, 'w')
+    json.dump(my_json, new_file)
+    new_file.close()
+
+    ## insertion dans la base de donnée
+    ts = time.time()
+
+    stream = open(results_filepath, 'rb')
+    db.results_file[id_data] = dict(status = "ready",
+                                 run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
+                                 data_file = stream
+                                )
+
+    db.commit()
+
+    config_name = db.config[id_config].name
+    res = {"message": "[%s] c%s: IgReC - %s" % (id_data, id_config, out_folder)}
+    log.info(res)
+
+    for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
+        sample_set_id = row.sample_set_id
+        print(row.sample_set_id)
+        run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
+
 
     return "SUCCESS"
 
@@ -783,6 +880,7 @@ from gluon.scheduler import Scheduler
 scheduler = Scheduler(db, dict(vidjil=run_vidjil,
                                compute_contamination=compute_contamination,
                                mixcr=run_mixcr,
+                               igrec=run_igrec,
                                none=run_copy,
                                pre_process=run_pre_process,
                                refuse=run_refuse),

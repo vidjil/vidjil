@@ -1,0 +1,95 @@
+<div>
+    <span class="left form_label" style="line-height: 33px">Sample {{=i+1}}</span>
+    {{ if file is not None and 'error' in file and len(file['error']) > 0: }}
+        <div class="error">error: {{=", ".join(file['error'])}}</div>
+    {{ pass }}
+    {{ if file is not None and 'message' in file and len(file['message']) > 0: }}
+        <div>{{=", ".join(file['message'])}}</div>
+    {{ pass }}
+    <div class="hidden">
+        <input type="hidden" id="file_filename_{{=i}}" class="filename" name="file[{{=i}}][filename]" type="text" value="">
+        <input type="hidden" id="file_id_{{=i}}" name="file[{{=i}}][id]"
+            value="{{if 'id' in file:}}{{=file['id']}}{{pass}}" >
+        <input type="hidden" id="sample_set_id" name="sample_set_id" value="{{if "sample_set_id" in request.vars:}}{{=request.vars["sample_set_id"]}}{{pass}}" >
+        <input type="hidden" id="sample_type" name="sample_type" value="{{=sample_type}}" />
+    </div>
+
+    <div class="field_div">
+        <div id="file_field_1_{{=i}}" class="field_div file_1" {{if source_module_active:}} style="display: none" {{pass}}>
+            <input class="upload_field form-control" id="file_upload_1_{{=i}}" type="file"
+            {{if source_module_active:}}
+                disabled
+            {{pass}}
+                onchange="db.upload_file_onChange('file_filename_{{=i}}', this.value)"
+                title="first file for this sample (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)"
+            >
+        </div>
+        <div id="file_2_{{=i}}" class="field_div file_2" style="display: none">
+            <input class="upload_field form-control" id="file_upload_2_{{=i}}" type="file"
+            {{if source_module_active:}}
+                disabled
+            {{pass}}
+                title="second file for this sample (.fa, .fastq, .fa.gz, .fastq.gz)"
+            >
+        </div>
+        <div id="jstree_field_{{=i}}"
+            class="field_div jstree_field form-control"
+            {{if not source_module_active:}} style="display: none;" {{pass}}
+            data-index={{=i}}
+            onclick="db.display_jstree(this.dataset.index)">
+            <span class="button2">browse</span>
+            <span id="file_indicator_{{=i}}"></span>
+        </div>
+    </div>
+    <div class="field_div">
+        <input class="date form-control" id="sampling_date_{{=i}}" name="file[{{=i}}][sampling_date]" type="text" title="sampling date"
+            value="{{if 'sampling_date' in file and file['sampling_date'] is not None:}}{{=file['sampling_date']}}{{pass}}"
+            placeholder="yyyy-mm-dd" pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))">
+    </div>
+    <div class="field_div">
+        <input id="file_info_{{=i}}"
+            onfocus="new VidjilAutoComplete().setupTags(this);"
+            onkeydown="if (event.keyCode == 13) return false;"
+            data-needs-atwho="true"
+            data-keys="{{=group_ids}}"
+            class="text form-control"
+            name="file[{{=i}}][info]"
+            rows="1"
+            placeholder="sample information (#tags can be used)"
+            autocomplete="off"
+            value="{{if 'info' in file and file['info'] is not None:}}{{=file['info']}}{{pass}}"/>
+    </div>
+    <div class="field_div">
+        <div class="token_div form-control" onclick="$('#token_input_{{=i}}').focus()">
+            <input
+                hidden
+                id="file_set_list_{{=i}}"
+                name="file[{{=i}}][set_ids]"
+                type="text"
+                value="{{=",".join([set['id'] for set in file['sets']])}}">
+            <div id="file_set_div_{{=i}}" class="token_container">
+                {{ for set in file['sets']: }}
+                    <span class="set_token {{=set['type']}}_token" data-set-id="{{=set['id']}}">
+                        <i class="icon-cancel" onclick="new Tokeniser(document.getElementById('file_set_div_{{=i}}'), document.getElementById('file_set_list_{{=i}}')).removeToken(this.parentNode);"></i>
+                        {{=set['id'][3:]}}
+                    </span>
+                {{pass}}
+            </div>
+	    {{ if isEditing: }}
+            {{ else: }}
+	    <input
+                id="token_input_{{=i}}"
+                class="token_input"
+                autocomplete="off"
+                onfocus="new VidjilAutoComplete().setupSamples(this);
+                new Tokeniser(document.getElementById('file_set_div_{{=i}}'), document.getElementById('file_set_list_{{=i}}'));"
+                data-needs-atwho="true"
+                data-needs-tokeniser="true"
+                data-group-ids="{{=upload_group_ids}}"
+                data-keys='["generic", "patient", "run"]'
+                placeholder="other patient/run/sets"
+                type="text">
+	    {{ pass }}
+        </div>
+    </div>
+</div>

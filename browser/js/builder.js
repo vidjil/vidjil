@@ -506,3 +506,4 @@ Builder.prototype = {
         return div;
     },
 }
+Builder.prototype = $.extend(Object.create(View.prototype), Builder.prototype);

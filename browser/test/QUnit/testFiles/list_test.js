@@ -168,5 +168,3 @@ QUnit.test("tag/norm", function(assert) {
     assert.equal(m.clone(2).getSize(), 0.3125, "size after norm : Ok")
 });
 
-
-

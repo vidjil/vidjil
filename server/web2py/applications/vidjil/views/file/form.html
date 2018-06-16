@@ -1,0 +1,124 @@
+{{extend 'db_layout.html'}}
+<form id="upload_form"  action="DB_ADDRESS/file/submit" enctype="multipart/form-data" method="post" onkeypress="return event.keyCode != 13;">
+
+   {{ if isEditing: }}
+   <h3>Edit sample</h3>
+   {{ else: }}   
+   <h3>Add samples</h3>
+   {{ pass }}
+
+    {{ if source_module_active: }}
+        <span>file source: </span>
+        <label for="source_computer">my computer</label>
+        <input type="radio" id="source_computer" name="source" value="computer" onchange="db.toggle_file_source()"/>
+        <label for="source_nfs">network</label>
+        <input type="radio" id="source_nfs" name="source" value="nfs" onchange="db.toggle_file_source()" checked="checked" />        
+        <p></p>
+    {{pass}}
+    <div {{if source_module_active:}} hidden {{pass}}>
+        <h3>Pre-process scenario</h3>
+        If you have two R1/R2 files per sample, please select an appropriate pre-process :
+        <select id="pre_process" name="pre_process" onChange="db.pre_process_onChange(this)" {{if source_module_active:}} disabled {{pass}}>
+            <option required_files="1" value="0">no pre-process (1 file per sample)</option>
+            {{for row in pre_process_list :}}
+                <option title="{{=row["info"]}}" required_files="{{=row["file"]}}" value="{{=row["id"]}}"
+                    {{if 'file_id' in request.vars and row["id"]==files[0].pre_process_id :}}selected{{pass}}>
+                    {{=row["id"]}} &ndash; {{=row["name"]}}
+                </option>
+            {{pass}}
+        </select>
+    </div>
+    <div>
+        <h3>Patient, run or set association</h3>
+        Samples have to be associated with at least one patient, run or set. 
+	You can also associate them with any combination of the three.
+        {{ if isEditing: }}
+	{{ else: }}
+	All the samples added here will be associated to the "common patient/run/sets". 
+	Moreover, in the sample list, you can associate individually some samples to some other patient, run or sets.
+	{{ pass }}
+    </div>
+    &nbsp;
+    <div class="field_div">
+        {{ if len(errors) > 0: }}
+            <div class="error">{{=", ".join(errors)}}</div>
+        {{ pass }}
+        <label for="set_ids" id="set_ids__label">{{ if isEditing: }}Sets:{{ else: }}Common sets:{{ pass }}</label>
+        <div class="token_div form-control" onclick="$('#token_input').focus()">
+            <input
+                hidden
+                id="file_set_list"
+                name="set_ids"
+                type="text"
+                value="{{=",".join([set['id'] for set in sets])}}">
+            <div id="set_div" class="token_container" data-min-tokens=1>
+                {{ for set in sets: }}
+                    <span class="set_token {{=set['type']}}_token" data-set-id="{{=set['id']}}">
+                        <i class="icon-cancel" onclick="new Tokeniser(document.getElementById('set_div'), document.getElementById('file_set_list')).removeToken(this.parentNode);"></i>
+                        {{=set['id'][3:]}}
+                    </span>
+                {{pass}}
+            </div>
+            <input
+                id="token_input"
+                class="token_input"
+                autocomplete="off"
+                onfocus="new VidjilAutoComplete().setupSamples(this);
+                new Tokeniser(document.getElementById('set_div'), document.getElementById('file_set_list'));"
+                data-needs-atwho="true"
+                data-needs-tokeniser="true"
+                data-group-ids="{{=upload_group_ids}}"
+                data-keys='["generic", "patient", "run"]'
+                type="text">
+        </div>
+    </div>
+    <div class="clear"></div>
+   
+   {{ if isEditing: }}
+   {{ else: }}
+    <div>
+      <h3>Sample list</h3>
+     </div>
+    <div class="buttons_add_elements">
+       Click on 
+         <span class="button2"
+          onclick="add_file('fieldset_container', this.dataset.index++, {{=group_ids}})"
+          id="file_button"
+          data-index="{{=len(files)}}">add other sample</span>
+       to add at once more than one sample.
+    </div>
+   {{ pass }}
+    <div class="clear"></div>
+    <div id="fieldset_container">
+        {{ for i, file in enumerate(files): }}
+            <div class="clear"></div>
+            {{ include 'partial/file/form.html' }}
+        {{ pass }}
+    </div>
+    <div class="clear"></div>
+    &nbsp;
+    <div class="clear"></div>
+    <input type="submit" value="Submit samples" class="button2">
+</form>
+
+<div id="jstree_container" class="modal jstree-container">
+    <span class="closeButton"
+        onclick="db.close_jstree()">
+        <i class="icon-cancel"></i>
+    </span>
+    <input type="hidden" id="file_filename" />
+    <span>file:</span>
+    <span id="file_indicator"></span>
+    <div class="jstree" id="jstree_loader"
+        {{if not source_module_active:}}
+            hidden
+        {{else:}}
+            onload="db.set_jstree($('#jstree'))"
+        {{pass}}>
+        <div id="jstree"></div>
+    </div>
+    <span id="jstree_button" class="jstree_button button2" data-index=0 onclick="db.select_jstree($(this).data('index'))">ok</span>
+    <span id="jstree_close" class="jstree_button button2" onclick="db.close_jstree()">cancel</span>
+</div>
+
+<div class="clear"></div>

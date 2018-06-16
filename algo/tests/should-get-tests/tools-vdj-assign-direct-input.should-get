@@ -1,4 +1,4 @@
-!LAUNCH: ../../tools/vdj_assign - $VIDJIL_DIR/germline/homo-sapiens/IGH V J "IGHV3-15*01" "IGHJ4*02" <<< "CCGAGGACACAGCCGTGTATTTTTTCCCCTAGTGGTTGCCCCTTTGACTACTGGGGCCAGGGAACC"
+!LAUNCH: echo "CCGAGGACACAGCCGTGTATTTTTTCCCCTAGTGGTTGCCCCTTTGACTACTGGGGCCAGGGAACC" | ../../tools/vdj_assign - $VIDJIL_DIR/germline/homo-sapiens/IGH V J "IGHV3-15*01" "IGHJ4*02"
 
 $ Compute correct coordinates
 1: read        .*  1 .*  60

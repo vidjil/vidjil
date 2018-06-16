@@ -48,7 +48,15 @@ function Clone(data, model, index, virtual) {
     }
 
     this.seg = this.m.convertSeg(this.seg)
+
+    // .warn, handle old formats
+    if (typeof this.warn === 'undefined')
+        this.warn = []
     
+    if (typeof this.warn === 'string')
+        this.warn = [ {'code': '', 'level': warnLevels[WARN], 'msg': this.warn } ]
+
+    // .shortName
     if (typeof (this.getSequence()) != 'undefined' && typeof (this.name) != 'undefined') {
         this.shortName = this.name.replace(new RegExp('IGHV', 'g'), "VH");
         this.shortName = this.shortName.replace(new RegExp('IGHD', 'g'), "DH");
@@ -63,6 +71,9 @@ function Clone(data, model, index, virtual) {
     this.computeGCContent()
     this.computeCoverage()
     this.computeEValue()
+
+    // .warn, client computed warnings
+    this.computeWarnings()
 }
 
 function nullIfZero(x) { return (x === 0 || x === '0') ? '' : x }
@@ -77,9 +88,10 @@ Clone.prototype = {
     /**
      * @return {string} a warning class is set on this clone
      */
-        if (typeof this.warn != 'undefined') {
-            if (this.warn.length)
-                return 'warning'
+        var wL = this.warnLevel()
+
+        if (wL >= WARN) {
+            return warnTextOf(wL)
         }
 
         if (this.hasSeg('clonedb')) {
@@ -89,10 +101,36 @@ Clone.prototype = {
                 return 'info'
         }
 
-        if (this.coverage < this.COVERAGE_WARN) return 'warning';
-        if (typeof(this.eValue) != 'undefined' && this.eValue > this.EVALUE_WARN) return 'warning';
+        return false
+    },
 
-        return false;
+    computeWarnings: function() {
+
+        if (this.coverage < this.COVERAGE_WARN)
+            this.warn.push({'code': 'W51', 'level': warnLevels[WARN], 'msg': 'Low coverage (' + this.coverage.toFixed(3) + ')'}) ;
+
+        if (typeof(this.eValue) != 'undefined' && this.eValue > this.EVALUE_WARN)
+            this.warn.push({'code': 'Wxx', 'level': warnLevels[WARN], 'msg': 'Bad e-value (' + this.eValue + ')' });
+    },
+
+    warnLevel: function () {
+        var level = 0
+
+        for (var i = 0; i < this.warn.length; i++) {
+            level = Math.max(level, warnLevelOf(this.warn[i].level))
+        }
+
+        return level
+    },
+
+    warnText: function () {
+        var items = []
+
+        for (var i = 0; i < this.warn.length; i++) {
+            items.push(this.warn[i].code + ': ' + this.warn[i].msg)
+        }
+
+        return items.join('\n')
     },
 
     /**
@@ -102,8 +140,8 @@ Clone.prototype = {
 
     REGEX_N: /^(-?\d*)\/([ACGT]*)\/(-?\d*)$/,                                    // 6/ACCAT/
     REGEX_N_SIZE: /^(-?\d*)\/(\d*)\/(-?\d*)$/,                                   // 6/5/
-    REGEX_GENE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD)([\w-*]*)$/,                       // IGHV3-11*03
-    REGEX_GENE_IGNORE_ALLELE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD)([\w-]*)([\w-*]*)$/,   // IGHV3-11*03  (ignore *03)
+    REGEX_GENE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD|IKZF1-|ERG-)([\w-*]*)$/,                       // IGHV3-11*03
+    REGEX_GENE_IGNORE_ALLELE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD|IKZF1-|ERG-)([\w-]*)([\w-*]*)$/,   // IGHV3-11*03  (ignore *03)
 
     getAverageReadLength: function(time) {
         if (this._average_read_length == 'undefined')
@@ -1096,6 +1134,15 @@ Clone.prototype = {
         }
         html += "</tr>"
 
+        //warnings
+        if (this.isWarned()) {
+            html += header("warnings")
+
+            for (i = 0; i < this.warn.length; i++) {
+                html += row_1(this.warn[i].code, this.warn[i].msg);
+            }
+        }
+
         //cluster info
         if (isCluster) {
             html += header("clone")
@@ -1307,7 +1354,7 @@ Clone.prototype = {
 
             if (this.isWarned()) {
                 span_info.className += " " + this.isWarned() ;
-                span_info.appendChild(icon('icon-warning-1', typeof this.warn != 'undefined' ? this.warn : 'clone information'));
+                span_info.appendChild(icon('icon-warning-1', this.warnText()));
             } else {
                 span_info.appendChild(icon('icon-info', 'clone information'));
             }

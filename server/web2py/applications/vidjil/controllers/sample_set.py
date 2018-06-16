@@ -23,19 +23,18 @@ def next_sample_set():
     if 'next' in request.vars:
         try:
             sample_type = db.sample_set[request.vars["id"]].sample_type
-            
-            for row in db( db[sample_type].sample_set_id == request.vars["id"] ).select() :
-                current_id = row.id
+            sample_set_id = int(request.vars['id'])
             
             go_next = int(request.vars['next'])
+            same_type_with_permissions = (db.sample_set.sample_type == sample_type) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set))
             if go_next > 0:
-                res = db((db[sample_type].id > current_id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db[sample_type]))).select(
-                    db[sample_type].id, db[sample_type].sample_set_id, orderby=db[sample_type].id, limitby=(0,1))
+                res = db((db.sample_set.id > sample_set_id) & (same_type_with_permissions)).select(
+                    db.sample_set.id, orderby=db.sample_set.id, limitby=(0,1))
             else:
-                res = db((db[sample_type].id < current_id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db[sample_type]))).select(
-                    db[sample_type].id, db[sample_type].sample_set_id, orderby=~db[sample_type].id, limitby=(0,1))
+                res = db((db.sample_set.id < sample_set_id) & (same_type_with_permissions)).select(
+                    db.sample_set.id, orderby=~db.sample_set.id, limitby=(0,1))
             if (len(res) > 0):
-                request.vars["id"] = str(res[0].sample_set_id)
+                request.vars["id"] = str(res[0].id)
         except:
             pass
 
@@ -147,17 +146,18 @@ def index():
 ## return a list of generic sample_sets
 def all():
     start = time.time()
-    if not auth.user :
-        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
-                    vars=dict(_next=URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT}, scheme=True, host=True)))
-            }
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
-    isAdmin = auth.is_admin()
     if request.vars['type']:
         type = request.vars['type']
     else :
         type = defs.SET_TYPE_GENERIC
+
+    if not auth.user :
+        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
+                    vars=dict(_next=URL('sample_set', 'all', vars={'type': type, 'page': 0}, scheme=True, host=True)))
+            }
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+    isAdmin = auth.is_admin()
 
     step = None
     page = None
@@ -177,7 +177,7 @@ def all():
     list.load_creator_names()
     list.load_sample_information()
     list.load_config_information()
-    if isAdmin or len(get_group_list()) > 1:
+    if isAdmin or len(get_group_list(auth)) > 1:
         list.load_permitted_groups()
     list.load_anon_permissions()
     result = list.get_values()
@@ -212,121 +212,325 @@ def all():
                 step = step,
                 page = page)
 
+def stats():
+    start = time.time()
+    if not auth.user :
+        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
+                    vars=dict(_next=URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT}, scheme=True, host=True)))
+            }
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
-## return form to create new generic sample_set
-def add():
-    if (auth.can_create_patient()):
-        creation_group_tuple =  get_default_creation_group(auth)
+    isAdmin = auth.is_admin()
+    if request.vars['type']:
+        type = request.vars['type']
+    else :
+        type = defs.SET_TYPE_GENERIC
+
+    ##filter
+    if "filter" not in request.vars :
+        request.vars["filter"] = ""
+
+    search, tags = parse_search(request.vars["filter"])
+    group_ids = get_involved_groups()
+
+    list = SampleSetList(type, tags=tags)
+    list.load_sample_information()
+    list.load_anon_permissions()
+    result = list.get_values()
+
+    factory = ModelFactory()
+    helper = factory.get_instance(type=type)
+    fields = helper.get_reduced_fields()
+
+    ##sort result
+    reverse = False
+    if request.vars["reverse"] == "true" :
+        reverse = True
+    if "sort" in request.vars:
+        result = sorted(result, key = lambda row : row[request.vars["sort"]], reverse=reverse)
+    else:
+        result = sorted(result, key = lambda row : row.id, reverse=not reverse)
+
+    result = helper.filter(search, result)
+    log.debug("%s stat list (%.3fs) %s" % (request.vars["type"], time.time()-start, search))
+
+    return dict(query = result,
+                fields = fields,
+                helper = helper,
+                group_ids = group_ids,
+                isAdmin = isAdmin,
+                reverse = False)
+
+def result_files():
+    from zipfile import ZipFile
+    from cStringIO import StringIO
+    import types
+    errors = []
+    config_id = request.vars['config_id']
+    sample_set_ids = []
+    if 'sample_set_ids' in request.vars:
+        sample_set_ids = request.vars['sample_set_ids']
+
+    #little hack since we can't pass array parameters with only one value
+    if isinstance(sample_set_ids, types.StringTypes):
+        sample_set_ids = [sample_set_ids]
+
+    if int(config_id) == -1:
+        config_query = (db.results_file.config_id > 0)
+    else:
+        config_query = (db.results_file.config_id == config_id)
+
+
+    left_join = [
+        db.patient.on(db.patient.sample_set_id == db.sample_set.id),
+        db.run.on(db.run.sample_set_id == db.sample_set.id),
+        db.generic.on(db.generic.sample_set_id == db.sample_set.id)
+    ]
+    q = db(
+            (db.sample_set.id.belongs(sample_set_ids)) &
+            (db.sample_set_membership.sample_set_id == db.sample_set.id) &
+            (db.sequence_file.id == db.sample_set_membership.sequence_file_id) &
+            (db.results_file.sequence_file_id == db.sequence_file.id) &
+            (db.results_file.data_file != None) &
+            config_query
+        )
+
+    results = q.select(db.results_file.ALL, db.sequence_file.ALL, db.sample_set.ALL, db.patient.ALL, db.run.ALL, db.generic.ALL, left=left_join)
+
+    sample_types = ['patient', 'run', 'generic']
+    mf = ModelFactory()
+    helpers = {}
+
+    for t in sample_types:
+        helpers[t] = mf.get_instance(type=t)
+
+    filename = "export_%s_%s.zip" % ('-'.join(sample_set_ids), str(datetime.date.today()))
+    filedir = defs.DIR_SEQUENCES + '/' + filename
+    try:
+        zipfile = ZipFile(filedir, 'w')
+        metadata = []
+        for res in results:
+            metadata.append({'id': res.sample_set.id,
+                'name': helpers[res.sample_set.sample_type].get_name(res[res.sample_set.sample_type]),
+                'file': res.results_file.data_file,
+                'set_info': res[res.sample_set.sample_type].info,
+                'sample_info': res.sequence_file.info,
+                'sequence_file': res.sequence_file.filename})
+            path = defs.DIR_RESULTS + res.results_file.data_file
+            zipfile.writestr(res.results_file.data_file, open(path, 'rb').read())
+
+        zipfile.writestr('metadata.json', json.dumps(metadata))
+
+        zipfile.close()
+
+        response.headers['Content-Type'] = "application/zip"
+        response.headers['Content-Disposition'] = 'attachment; filename=%s' % filename# to force download as attachment
+
+        return response.stream(open(filedir), chunk_size=4096)
+    except:
+        res = {"message": "an error occurred"}
+        log.error("An error occured when creating archive of sample_sets %s" % str(sample_set_ids))
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    finally:
+        try:
+            os.unlink(filedir)
+        except OSError:
+            pass
+
+
+## Stats
+
+def mystats():
+    start = time.time()
+
+    # d = all()
+    d = custom()
+    
+    # Build .vidjil file list
+    f_samples = []
+    for row in d['query']:
+        found = {}
+        f_results = defs.DIR_RESULTS + row.results_file.data_file
+
+        f_fused = None
+        pos_in_fused = None
+
+        fused_file = ''
+        # TODO: fix the following request
+        # fused_file = db((db.fused_file.sample_set_id == row.sample_set.id) & (db.fused_file.config_id == row.results_file.config_id)).select(orderby = ~db.fused_file.id, limitby=(0,1))
+        if len(fused_file) > 0 and fused_file[0].sequence_file_list is not None:
+            sequence_file_list = fused_file[0].sequence_file_list.split('_')
+            try:
+                pos_in_fused = sequence_file_list.index(str(row.sequence_file.id))
+                f_fused = defs.DIR_RESULTS + fused_file[0].fused_file
+            except ValueError:
+                pass
+                
+        metadata = { } # 'patient': row.patient, 'sequence_file': row.sequence_file }
+        f_samples += [(metadata, f_results, f_fused, pos_in_fused)]
+    
+    # Send to vidjil_utils.stats
+    res = vidjil_utils.stats(f_samples)
+    d = {}
+    d['stats'] = res
+    d['f_samples'] = f_samples # TMP, for debug
+
+    # Return
+    log.debug("stats (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
+    return gluon.contrib.simplejson.dumps(d, separators=(',',':'))
+
+## return form to create new set
+def form():
+    denied = False
+    # edit set
+    if("id" in request.vars):
+        sample_set = db.sample_set[request.vars["id"]]
+        set_type = sample_set.sample_type
+        sset = db(db[set_type].sample_set_id == sample_set.id).select().first()
+        if(auth.can_modify_sample_set(sset.sample_set_id)):
+            groups = [get_set_group(sset.sample_set_id)]
+            action = 'edit'
+            max_group = None
+        else:
+            denied = True
+
+    # new set
+    elif (auth.can_create_patient()):
+        sset = None
+        set_type = request.vars["type"]
+        creation_group_tuple = get_default_creation_group(auth)
         groups = creation_group_tuple[0]
         max_group = creation_group_tuple[1]
-        return dict(message=T('add sample_set'), groups=groups, master_group=max_group)
+        action = 'add'
     else :
+        denied = True
+
+    if denied:
         res = {"message": ACCESS_DENIED}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+    message = '%s %s' % (action, set_type)
+    sets = {
+            'patient': [],
+            'run': [],
+            'generic': []
+            }
+    # We add a None object to the desired set type to initialise an empty form in the template.
+    sets[set_type].append(sset)
+    return dict(message=T(message),
+                groups=groups,
+                group_ids = get_involved_groups(),
+                master_group=max_group,
+                sets=sets,
+                isEditing = (action=='edit'))
 
 
-## create a generic sample_set if the html form is complete
-## needs ["name", "info"]
-## redirect to generic sample_set list if success
+
+## create a patient if the html form is complete
+## need ["first_name", "last_name", "birth_date", "info"]
+## redirect to patient list if success
 ## return a flash error message if fail
-def add_form():
-    if (auth.can_create_patient()):
+def submit():
+    data = json.loads(request.vars['data'], encoding='utf-8')
+    mf = ModelFactory()
 
-        error = ""
-        if request.vars["name"] == "" :
-            error += "name needed, "
+    error = False
+    set_types = vidjil_utils.get_found_types(data)
 
-        if error=="" :
-            id_sample_set = db.sample_set.insert(sample_type=defs.SET_TYPE_GENERIC)
+    length_mapping = {}
+    sum_sets = 0
+    for set_type in set_types:
+        helper = mf.get_instance(set_type)
+        length = len(data[set_type])
+        sum_sets += length
+        if length not in length_mapping:
+            length_mapping[length] = set_type
+        for p in data[set_type]:
+            errors = helper.validate(p)
+            action = "add"
+            if len(errors) > 0:
+                p['error'] = errors
+                error = True
+                continue
 
-            id = db.generic.insert(name=request.vars["name"],
-                                   info=request.vars["info"],
-                                   creator=auth.user_id,
-                                   sample_set_id=id_sample_set)
+            register = False
+            reset = False
 
-            user_group = int(request.vars["sample_set_group"])
-            admin_group = db(db.auth_group.role=='admin').select().first().id
+            name = helper.get_name(p)
 
-            register_tags(db, defs.SET_TYPE_GENERIC, id, request.vars["info"], user_group)
+            # edit
+            if (p['sample_set_id'] != "" and auth.can_modify_sample_set(p['sample_set_id'])):
+                reset = True
+                sset = db(db[set_type].sample_set_id == p['sample_set_id']).select().first()
+                db[set_type][sset.id] = p
+                id_sample_set = sset['sample_set_id']
 
-            #sample_set creator automaticaly has all rights
-            auth.add_permission(user_group, PermissionEnum.access.value, db.generic, id)
+                if (sset.info != p['info']):
+                    group_id = get_set_group(id_sample_set)
+                    register = True
+                    reset = True
 
+                action = "edit"
+
+            # add
+            elif (auth.can_create_patient()):
+
+                id_sample_set = db.sample_set.insert(sample_type=set_type)
+
+                p['creator'] = auth.user_id
+                p['sample_set_id'] = id_sample_set
+                p['id'] = db[set_type].insert(**p)
+
+                group_id = int(data["group"])
+
+                register = True
+
+                #patient creator automaticaly has all rights
+                auth.add_permission(group_id, PermissionEnum.access.value, 'sample_set', p['sample_set_id'])
+
+                action = "add"
+
+                if (p['id'] % 100) == 0:
+                    mail.send(to=defs.ADMIN_EMAILS,
+                    subject="[Vidjil] %d" % p['id'],
+                    message="The %dth %s has just been created." % (p['id'], set_type))
+
+            else :
+                p['error'].append("permission denied")
+                error = True
+
+            p['message'] = []
+            mes = u"%s (%s) %s %sed" % (set_type, id_sample_set, name, action)
+            p['message'].append(mes)
+            log.info(mes, extra={'user_id': auth.user.id, 'record_id': p['id'], 'table_name': 'patient'})
+            if register:
+                register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
+
+    if not error:
+        max_num = max(length_mapping.keys())
+        msg = "successfully added/edited set(s)"
+        if sum_sets == 1:
             res = {"redirect": "sample_set/index",
-                   "args" : { "id" : id_sample_set },
-                   "message": "(%s) sample_set %s added" % (id, request.vars["name"]) }
-            log.info(res, extra={'user_id': auth.user.id, 'record_id': id, 'table_name': 'sample_set'})
-
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
-        else :
-            res = {"success" : "false",
-                   "message" : error}
-            log.error(res)
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
-    else :
-        res = {"message": ACCESS_DENIED}
-        log.error(res)
+                   "args": { "id":  data[length_mapping[max_num]][0]['sample_set_id']},
+                   "message": msg}
+        else:
+            res = {"redirect": "sample_set/all",
+                    "args" : { "type" : length_mapping[max_num], "page": 0 },
+                    "message": msg}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
-def edit():
-    sample_set = db.sample_set[request.vars["id"]]
-    if sample_set is not None:
-
-        sample_type = sample_set.sample_type
-        
-        if sample_type == defs.SET_TYPE_PATIENT:
-            patient = db((db.patient.sample_set_id == request.vars["id"])).select()[0]
-            redirect(URL('patient', 'edit', vars=dict(id=patient.id)), headers=response.headers)
-        
-        elif sample_type == defs.SET_TYPE_RUN:
-            run = db((db.run.sample_set_id == request.vars["id"])).select()[0]
-            redirect(URL('run', 'edit', vars=dict(id=run.id)), headers=response.headers)
-
-        else :
-            generic = db((db.generic.sample_set_id == request.vars["id"])).select()[0]
-            if (auth.can_modify('generic', generic.id)):
-                request.vars["id"] = generic.id
-                group_id = get_set_group(defs.SET_TYPE_GENERIC, request.vars["id"])
-                return dict(message=T('edit sample_set'), group_id=group_id)
-    res = {"message": ACCESS_DENIED}
-    log.error(res)
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
-def edit_form():
-    if (auth.can_modify('generic', request.vars["id"]) ):
-        error = ""
-        if request.vars["name"] == "" :
-            error += "name needed, "
-        if request.vars["id"] == "" :
-            error += "sample set id needed, "
-
-        if error=="" :
-            generic = db.generic[request.vars["id"]]
-            db.generic[request.vars["id"]] = dict(name=request.vars["name"],
-                                                   info=request.vars["info"],
-                                                   )
-
-            group_id = get_set_group(defs.SET_TYPE_GENERIC, request.vars["id"])
-            if (generic.info != request.vars["info"]):
-                register_tags(db, defs.SET_TYPE_GENERIC, request.vars["id"], request.vars["info"], group_id, reset=True)
-
-            res = {"redirect": "back",
-                   "message": "%s (%s): sample_set edited" % (request.vars["name"], request.vars["sample_set_id"])}
-            log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'generic'})
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
-        else :
-            res = {"success" : "false", "message" : error}
-            log.error(res)
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-    else :
-        res = {"message": ACCESS_DENIED}
-        log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    else:
+        sets = {
+                'patient': data['patient'] if 'patient' in data else [],
+                'run': data['run'] if 'run' in data else [],
+                'generic': data['generic'] if 'generic' in data else []
+                }
+        response.view = 'sample_set/form.html'
+        return dict(message=T("an error occured"),
+                groups=[{'name': 'foobar', 'id': int(data['group'])}],
+                master_group=data['group'],
+                sets=sets,
+                isEditing = (action=='edit'))
 
 def custom():
     start = time.time()
@@ -353,27 +557,19 @@ def custom():
         sample_set = db.sample_set[request.vars["id"]]
         factory = ModelFactory()
         helper = factory.get_instance(type=sample_set.sample_type)
-        q = ((auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config))
-                & (db.sample_set.id == request.vars["id"])
-                & (db.sample_set_membership.sample_set_id == db.sample_set.id)
-                & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-                & (db.results_file.sequence_file_id==db.sequence_file.id)
-                & (db.results_file.data_file != '')
-                & (db.config.id==db.results_file.config_id)
-            )
+        qq = (db.sample_set.id == request.vars["id"])
         
     else:
-        q = ((auth.vidjil_accessible_query(PermissionEnum.read.value, db.patient)
-                | auth.vidjil_accessible_query(PermissionEnum.read.value, db.run)
-                | auth.vidjil_accessible_query(PermissionEnum.read.value, db.generic))
-                & (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config))
-                & (db.sample_set_membership.sample_set_id == db.sample_set.id)
-                & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-                & (db.results_file.sequence_file_id==db.sequence_file.id)
-                & (db.results_file.data_file != '')
-                & (db.config.id==db.results_file.config_id)
-            )
+        qq = (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set))
         myGroupBy = db.sequence_file.id|db.patient.id|db.run.id|db.generic.id|db.results_file.config_id
+
+    q = (qq
+        & (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config))
+        & (db.sample_set_membership.sample_set_id == db.sample_set.id)
+        & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+        & (db.results_file.sequence_file_id==db.sequence_file.id)
+        & (db.results_file.data_file != '')
+        & (db.config.id==db.results_file.config_id))
 
     group_ids = get_involved_groups()
 
@@ -383,25 +579,32 @@ def custom():
 
     search, tags = parse_search(request.vars["filter"])
 
+    left_join = [
+        db.patient.on(db.patient.sample_set_id == db.sample_set.id),
+        db.run.on(db.run.sample_set_id == db.sample_set.id),
+        db.generic.on(db.generic.sample_set_id == db.sample_set.id)
+    ]
+
+    select = [
+        db.patient.id, db.patient.sample_set_id, db.patient.info, db.patient.first_name, db.patient.last_name,
+        db.run.id, db.run.info, db.run.name,
+        db.generic.id, db.generic.info, db.generic.name,
+        db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
+        db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
+        db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
+        db.sequence_file.size_file
+    ]
+
     if (tags is not None and len(tags) > 0):
         q = filter_by_tags(q, 'sequence_file', tags)
         count = db.tag.name.count()
-        query = db(q).select(
-                db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name,
-                db.run.id, db.run.info, db.run.name,
-                db.generic.id, db.generic.info, db.generic.name,
-                db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
-                db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
-                db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
-                db.sequence_file.size_file,
-                db.tag_ref.record_id,
+        select = select + [db.tag_ref.record_id,
                 db.tag_ref.table_name,
-                count,
-                left = [
-                    db.patient.on(db.patient.sample_set_id == db.sample_set.id),
-                    db.run.on(db.run.sample_set_id == db.sample_set.id),
-                    db.generic.on(db.generic.sample_set_id == db.sample_set.id)
-                    ],
+                count]
+
+        query = db(q).select(
+                *select,
+                left = left_join,
                 orderby = db.sequence_file.id|db.results_file.run_date,
                 groupby = db.tag_ref.table_name|db.tag_ref.record_id,
                 having = count >= len(tags)
@@ -409,18 +612,8 @@ def custom():
 
     else:
         query = db(q).select(
-                db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name,
-                db.run.id, db.run.info, db.run.name,
-                db.generic.id, db.generic.info, db.generic.name,
-                db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
-                db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
-                db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
-                db.sequence_file.size_file,
-                left = [
-                    db.patient.on(db.patient.sample_set_id == db.sample_set.id),
-                    db.run.on(db.run.sample_set_id == db.sample_set.id),
-                    db.generic.on(db.generic.sample_set_id == db.sample_set.id)
-                    ],
+                *select,
+                left = left_join,
                 orderby = db.sequence_file.id|db.results_file.run_date,
                 groupby = myGroupBy
             )
@@ -431,7 +624,8 @@ def custom():
             row.checked = True
 
         if row.patient.id is not None:
-            row.names = vidjil_utils.anon_names(row.patient.id, row.patient.first_name, row.patient.last_name)
+            #TODO use helper.
+            row.names = vidjil_utils.display_names(row.patient.sample_set_id, row.patient.first_name, row.patient.last_name)
             info = row.patient.info
         elif row.run.id is not None:
             row.names = row.run.name
@@ -498,7 +692,7 @@ def delete():
         db(db.sample_set.id == sample_set.id).delete()
 
         res = {"redirect": "sample_set/all",
-               "args": {"type": sample_type},
+               "args": {"type": sample_type, "page": 0},
                "success": "true",
                "message": "sample set ("+str(request.vars["id"])+") deleted"}
         log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars["id"], 'table_name': 'sample_set'})
@@ -581,10 +775,12 @@ def change_permission():
 
 def get_sample_set_list(type):
     query = db(
-        auth.vidjil_accessible_query(PermissionEnum.admin.value, db[type])
+        (auth.vidjil_accessible_query(PermissionEnum.admin.value, db.sample_set))&
+        (db[type].sample_set_id == db.sample_set.id)
     ).select(
         db[type].ALL, # sub optimal, use helpers to reduce ?
-        orderby = ~db[type].id
+        orderby = ~db[type].sample_set_id,
+        limitby=(0,500)
     )
     ss_list = []
 
@@ -592,7 +788,7 @@ def get_sample_set_list(type):
     helper = factory.get_instance(type=type)
     for row in query :
         tmp = helper.get_id_string(row)
-        ss_list.append({'name':tmp})
+        ss_list.append({'name':tmp, 'id': row.sample_set_id, 'type': type})
     return ss_list
 
 def auto_complete():

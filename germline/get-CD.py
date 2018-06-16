@@ -9,9 +9,10 @@ HUGO_REQUEST = 'http://www.genenames.org/cgi-bin/download?'
 HUGO_COLS = '&col=gd_hgnc_id&col=md_refseq_id&col=gd_other_ids_list&col=gd_app_sym&col=gd_app_name&col=gd_status&col=gd_prev_sym&col=gd_aliases&col=gd_pub_chrom_map&col=gd_pub_acc_ids&col=gd_pub_refseq_ids'
 
 # HUGO query on 'hcdm.org' entries
-HUGO_QUERY = '&status=Approved&status=Entry+Withdrawn&status_opt=2&where=gd_other_ids+LIKE+%27%25hcdm.org%25%27&order_by=gd_app_sym_sort&format=text&limit=&hgnc_dbtag=on&submit=submit'
+HUGO_QUERY_HCDM = '&status=Approved&status=Entry+Withdrawn&status_opt=2&where=gd_other_ids+LIKE+%27%25hcdm.org%25%27&order_by=gd_app_sym_sort&format=text&limit=&hgnc_dbtag=on&submit=submit'
 
-HUGO_URL = HUGO_REQUEST + HUGO_COLS + HUGO_QUERY
+HUGO_URL_HCDM = HUGO_REQUEST + HUGO_COLS + HUGO_QUERY_HCDM
+
 
 NCBI_API = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&rettype=fasta&retmode=text'+'&id=%s'
 
@@ -28,7 +29,19 @@ out = open(OUT, 'w')
 print "==>", SORTING_OUT
 sorting_out = open(SORTING_OUT, 'w')
 
-for l in urllib.urlopen(HUGO_URL).readlines():
+
+def ncbi_and_write(ncbi, hugo, cd_id, outs):
+    print cd_id, hugo, ncbi
+    fasta = urllib.urlopen(NCBI_API % ncbi).read()
+    fasta_with_id = fasta.replace('>', '>%s|%s|' % (hugo, cd_id))
+
+    for out in outs:
+        out.write(fasta_with_id)
+
+
+
+
+for l in urllib.urlopen(HUGO_URL_HCDM).readlines():
     ll = l.split('\t')
 
     try:
@@ -37,15 +50,8 @@ for l in urllib.urlopen(HUGO_URL).readlines():
     except:
         print "!", l
         continue
-        
-    print cd_id, hugo, ncbi 
-    
-    fasta = urllib.urlopen(NCBI_API % ncbi).read()
-    fasta_with_id = fasta.replace('>', '>%s|%s|' % (hugo, cd_id))    
 
-    out.write(fasta_with_id)
+    ncbi_and_write(ncbi, hugo, cd_id, [out] + ([sorting_out] if cd_id in SORTING_CD else []))
 
-    if cd_id in SORTING_CD:
-        sorting_out.write(fasta_with_id)
-    
+
 

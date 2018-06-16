@@ -180,7 +180,7 @@ ostream &operator<<(ostream &os, const KmerAffect &kmer);
  * Constant defining any not-unknown affectation
  * Could be used by .getIndexLoad(), but now any non-AFFECT_UNKNOWN kmer will work.
  */
-const KmerAffect AFFECT_NOT_UNKNOWN = KmerAffect(AFFECT_NOT_UNKNOWN_SYMBOL, 0, 1);
+const KmerAffect AFFECT_NOT_UNKNOWN = KmerAffect(AFFECT_NOT_UNKNOWN_SYMBOL, 0, -1);
 
 /**
  * Constant defining the unknown affectation (not known yet)
@@ -190,7 +190,7 @@ const KmerAffect AFFECT_UNKNOWN = KmerAffect(AFFECT_UNKNOWN_SYMBOL, 0, 1);
 /**
  * Constant defining the ambiguous affectation (many possibilities)
  */
-const KmerAffect AFFECT_AMBIGUOUS = KmerAffect(AFFECT_AMBIGUOUS_SYMBOL, 1, 1);
+const KmerAffect AFFECT_AMBIGUOUS = KmerAffect(AFFECT_AMBIGUOUS_SYMBOL, 1, -1);
 
 const KmerAffect AFFECT_V = KmerAffect("V", 1);
 const KmerAffect AFFECT_J = KmerAffect("J", 1);

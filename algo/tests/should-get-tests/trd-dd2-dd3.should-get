@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -K -A -e 10 -k 8 -w 20 -V $VIDJIL_DIR/germline/homo-sapiens/TRDV.fa -V $VIDJIL_DIR/germline/homo-sapiens/TRDD2_upstream.fa -J $VIDJIL_DIR/germline/homo-sapiens/TRDD3_downstream.fa -J $VIDJIL_DIR/germline/homo-sapiens/TRDJ.fa $VIDJIL_DATA/trd-dd2-dd3.fa ; cat out/trd-dd2-dd3.affects
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -K -A -e 10 -k 8 -w 20 -V $VIDJIL_DIR/germline/homo-sapiens/TRDV.fa -V $VIDJIL_DIR/germline/homo-sapiens/TRDD2+up.fa -J $VIDJIL_DIR/germline/homo-sapiens/TRDD3+down.fa -J $VIDJIL_DIR/germline/homo-sapiens/TRDJ.fa $VIDJIL_DATA/trd-dd2-dd3.fa ; cat out/trd-dd2-dd3.affects
 
 $ Segment all 8 reads, thanks to TRDD2 and TRDD3
 1: junction detected in 8 reads .100..

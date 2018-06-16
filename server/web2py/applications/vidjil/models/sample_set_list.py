@@ -6,7 +6,8 @@ class SampleSetList():
         if page is not None and step is not None:
             limitby = (page*step, (page+1)*step+1) # one more element to indicate if another page exists
 
-        query = (auth.vidjil_accessible_query(PermissionEnum.read.value, db[type]))
+        query = ((auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)) &
+                (db[type].sample_set_id == db.sample_set.id))
 
         if (tags is not None and len(tags) > 0):
             query = filter_by_tags(query, self.type, tags)
@@ -50,7 +51,7 @@ class SampleSetList():
             self.elements[key.id].most_used_conf = ""
             self.elements[key.id].groups = ""
             self.elements[key.id].group_list = []
-            self.elements[key.id].has_permission = auth.can_modify(type, key.id)
+            self.elements[key.id].has_permission = auth.can_modify_sample_set(key.sample_set_id)
             self.elements[key.id].anon_allowed = auth.can_view_info(type, key.id)
 
         self.element_ids = self.elements.keys()

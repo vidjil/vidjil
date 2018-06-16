@@ -65,7 +65,7 @@ void comp_matrix::compare(ostream &out, Cost cluster_cost)
             j2=it1->first;
             DynProg dp = DynProg(j1, j2, DynProg::Local, compareCost);
             int score=dp.compute();
-            int distance = max(j1.size(), j2.size())-score;
+            int distance = max(j1.size(), j2.size()) * compareCost.match - score;
             m[c2][c1]=distance;
             m[c1][c2]=distance;
             c1++;
@@ -88,8 +88,8 @@ void comp_matrix::load(string file){
   for(unsigned int i=0; i<sort_clones.size();i++){
     in_comp.read(tampon, sort_clones.size()*sizeof(char));
     for(unsigned int j=0;j<sort_clones.size(); j++){
-	m[i][j]=tampon[j];
-      }
+      m[i][j]=tampon[j];
+    }
   }
   free(tampon);
 
@@ -157,25 +157,25 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
       
       size_t j = 0; 
       for (list <pair<junction,size_t> >::const_iterator it1 = sort_clones.begin();
-        (it1 != sort_clones.end()) & (j<matrix_size); ++it1) 
-      {
-        j++;
-        j2=it1->first;
-        int distance = (int)m[c2][c1];
+	   (it1 != sort_clones.end()) & (j<matrix_size); ++it1) 
+	{
+	  j++;
+	  j2=it1->first;
+	  int distance = (int)m[c2][c1];
             
-        if (distance <= epsilon){
+	  if (distance <= epsilon){
             neighbor[j1].push_back(j2);
-        }
-        c1++;
-        c++;
+	  }
+	  c1++;
+	  c++;
         }//fin it1
-        c2++;
-        c1=0;
-      }//fin it0
+      c2++;
+      c1=0;
+    }//fin it0
     
-/////////////////////////
-//Forced - edges
-    if (forced_edges.size())
+  /////////////////////////
+  //Forced - edges
+  if (forced_edges.size())
     {
       ifstream fe(forced_edges.c_str());
   
@@ -243,7 +243,7 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
 	nVoisins=0;
 	
 	for (list<string>::iterator it1 = voisins1.begin();
-	it1 != voisins1.end(); ++it1 ) nVoisins+=count[*it1];
+	     it1 != voisins1.end(); ++it1 ) nVoisins+=count[*it1];
 	
 	if (nVoisins<minPts){
 	  //noise
@@ -268,7 +268,7 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
 	      
 	      nVoisins=0;
 	      for (list<string>::iterator it1 = voisins2.begin();it1 != voisins2.end();
-	      ++it1 )nVoisins+=count[*it1];
+		   ++it1 )nVoisins+=count[*it1];
 	      //si la junction possede assez de voisins
 	      if (nVoisins>=minPts){
 		//on ajoute ses voisins a la liste des voisins du cluster
@@ -308,9 +308,9 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
 	  list< string > c2;
 	  
 	  for (list< pair<int,string> >::iterator c_it = c.begin(); c_it != c.end();
-	      ++c_it ){
+	       ++c_it ){
 	    pair<int,string> pair=*c_it;
-	  c2.push_back(pair.second);
+	    c2.push_back(pair.second);
 	  }
 	  c2.reverse();
 	  cluster.push_back(c2);

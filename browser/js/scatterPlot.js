@@ -82,6 +82,8 @@ function ScatterPlot(id, model, database, default_preset) {
     this.dbscanActive = false; //Boolean to know if the DSCAN visualization is on
     this.DBSCANLength = 5; //Length of the DBSCAN edges
 
+    this.CLONE_MIN_SIZE = 0.001
+
     this.AXIS_GENE_V = "v"
     this.AXIS_GENE_J = "j"
     this.AXIS_ALLELE_V = "allele_v"
@@ -1238,8 +1240,9 @@ ScatterPlot.prototype = {
             if (otherSize > size) size = otherSize
         }
 
-        if (size == Clone.prototype.NOT_QUANTIFIABLE_SIZE)
-            size = 0.1
+        if ((size == Clone.prototype.NOT_QUANTIFIABLE_SIZE) ||
+            (size > 0 && size < this.CLONE_MIN_SIZE))
+            size = this.CLONE_MIN_SIZE
 
         this.nodes[cloneID].s = size
         this.nodes[cloneID].r1 = this.radiusClone(size)
@@ -1750,7 +1753,7 @@ ScatterPlot.prototype = {
         }
 
         oldOtherVisibility = this.otherVisibility
-        this.otherVisibility = this.splitX == "otherSize" || this.splitY == "otherSize"
+        this.otherVisibility = this.splitX == "sizeOtherSample" || this.splitY == "sizeOtherSample"
         if (this.otherVisibility != oldOtherVisibility)
             this.updateClones()
 

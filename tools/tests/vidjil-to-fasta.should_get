@@ -1,4 +1,0 @@
-!LAUNCH: (cd ..; python vidjil-to-fasta.py -o tests/vidjil-to-fasta.fasta ../data/no_clones.vidjil > /dev/null; cat tests/vidjil-to-fasta.fasta)
-
-$ No data should be found
-0:.

@@ -414,10 +414,29 @@ void output_label_average(ostream &out, string label, long long int nb, double a
 }
 
 
-void json_add_warning(json &clone, string code, string msg)
+void json_add_warning(json &clone, string code, string msg, string level)
 {
   if (!clone.count("warn"))
     clone["warn"] = {} ;
 
-  clone["warn"] += { {"code", code}, {"msg", msg} } ;
+  clone["warn"] += { {"code", code}, {"level", level}, {"msg", msg} } ;
+}
+
+/* 
+	 Return the part of label before the star
+	 For example:
+	 IGHV5-51*01 -> IGHV5-51
+	 If there is no star in the name, the whole label is returned.
+	 IGHV10-40 -> IGHV10-40
+*/
+string extractGeneName(string label){
+	string result;
+	size_t star_pos;
+	star_pos = label.rfind("*");
+	if(star_pos != string::npos){
+		result = label.substr(0, star_pos);
+	}else{
+		result = label;
+	}
+	return result;
 }

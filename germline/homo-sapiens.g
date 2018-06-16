@@ -1,5 +1,5 @@
 {
-    "ref": "http://www.vidjil.org/germlines/germline-49.tar.gz",
+    "ref": "http://www.vidjil.org/germlines/germline-52.tar.gz",
 
     "species": "Homo sapiens",
     "species_taxon_id": 9606,
@@ -40,7 +40,7 @@
             "description": "Human T-cell receptor, beta locus (7q34), incomplete Db-Jb recombinations",
             "follows": "TRB",
             "recombinations": [ {
-                "5": ["TRBD_upstream.fa"],
+                "5": ["TRBD+up.fa"],
                 "3": ["TRBJ.fa"]
             } ],
             "parameters": {
@@ -83,7 +83,7 @@
                 "4": ["TRDD.fa"],
                 "3": ["TRAJ.fa"]
             }, {
-                "5": ["TRDD_upstream.fa"],
+                "5": ["TRDD+up.fa"],
                 "3": ["TRAJ.fa"]
             } ],
             "parameters": {
@@ -97,14 +97,14 @@
             "follows": "TRD",
             "recombinations": [ {
                 "5": ["TRDV.fa"],
-                "3": ["TRDD3_downstream.fa"]
+                "3": ["TRDD3+down.fa"]
             }, {
-                "5": ["TRDD2_upstream.fa"],
+                "5": ["TRDD2+up.fa"],
                 "4": ["TRDD.fa"],
                 "3": ["TRDJ.fa"]
             }, {
-                "5": ["TRDD2_upstream.fa"],
-                "3": ["TRDD3_downstream.fa"]
+                "5": ["TRDD2+up.fa"],
+                "3": ["TRDD3+down.fa"]
             } ],
             "parameters": {
                 "seed": "9s"
@@ -130,7 +130,7 @@
             "description": "Human immunoglobulin, heavy locus (14q32.33), incomplete Dh-Jh recombinations",
             "follows": "IGH",
             "recombinations": [ {
-                "5": ["IGHD_upstream.fa"],
+                "5": ["IGHD+up.fa"],
                 "3": ["IGHJ.fa"]
             } ],
             "parameters": {

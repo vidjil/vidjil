@@ -77,7 +77,7 @@ to learn the essential features of Vidjil.
 ** The info panel (upper left panel)
    - patient/run/set information :: user can put some informations in this case to retain about the set of samples
    - locus :: germline used for analyzing the data. In case of multi-locus 
-              data, you can select what locus should be displayed (see [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]])
+              data, you can select what locus should be displayed (see [[./locus.html][locus.html]])
    - analysis :: name (without extension) of the loaded file used for displaying the data
    - sample :: name of the current sample. You can also change the current sample by clicking directly on his name in the graph panel (when available).
    #The name can be edited (“edit”).
@@ -255,7 +255,7 @@ The processing can take a few seconds to a few hours, depending on the
 software lauched, the options set in the config, the size of the sample and the server load.
 
 The base human configurations with vidjil-algo are « TRG », « IGH », « multi » (=-g germline=), « multi+inc » (=-g germline -i=), « multi+inc+xxx » (=-g germline -i -2=, default advised configuration).
-See https://github.com/vidjil/vidjil/blob/master/doc/locus.org for information on these configurations.
+See [[./locus.html][locus.html]] for information on these configurations.
 There are also configuration for other species and for other RepSeq algorithms, such as « MiXCR ».
 The server mainteners can add new configurations tailored to specific needs, contact us if you have other needs.
 

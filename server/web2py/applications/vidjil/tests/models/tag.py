@@ -25,8 +25,9 @@ class TagModel (unittest.TestCase):
         self.assertTrue(len(refs) == 1, 'incorrect number of tags match this description')
 
     def test_tags_to_json(self):
-        tags = get_tags(db, [unique_group, fake_group_id])
-        json_tags = tags_to_json(tags)
+        group_ids = [unique_group, fake_group_id]
+        tags = get_tags(db, group_ids)
+        json_tags = tags_to_json(tags, group_ids)
 
         tag_dict = json.loads(json_tags)
         self.assertTrue(tag_dict.has_key(str(unique_group)), "tag_dict missing key unique_group: %d" % unique_group)

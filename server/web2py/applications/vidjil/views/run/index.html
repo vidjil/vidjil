@@ -85,7 +85,7 @@
     <div class="db_block_left">
 
 {{if auth.can_create_patient():}}
-<span class="button2" onclick="db.call('run/add')"> + new run </span>
+<span class="button2" onclick="db.call('run/add')"> + new runs </span>
 <span class="button2" onclick="db.call('sample_set/custom', {'filter': '{{=request.vars['filter']}}' })"> compare samples/runs </span>
 {{else:}}
 <!-- <span class="button2 inactive" onclick="db.call('patient/add')" title="you don't have permission to create new patient"> add patient </span> -->

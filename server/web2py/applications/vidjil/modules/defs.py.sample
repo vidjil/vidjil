@@ -39,13 +39,16 @@ BASENAME_OUT_VIDJIL_ID = '%06d'
 ### Directory for program used in task.py
 ### relative path start from server/web2py
 DIR_VIDJIL = '../../'
+DIR_VIDJIL_NEXT = '../../'
 DIR_FUSE = '../../tools'
 DIR_MIXCR = '../../'
+DIR_IGREC = '../../'
 DIR_PEAR = '../../'
 DIR_CLONEDB = '../../../clonedb'
 
 ### Directory that store the germlines used by Vidjil
 DIR_GERMLINE = DIR_VIDJIL + 'germline/'
+DIR_GERMLINE_NEXT = DIR_VIDJIL_NEXT + 'germline/'
 
 ### Port on which to run the fuse server
 ### Used in models/task.py and in /server/fuse_server.py

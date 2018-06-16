@@ -1,0 +1,40 @@
+<span class="left form_label">Patient {{=i+1}}</span>
+<input type="hidden" id="patient_id_{{=i}}" name="patient[{{=i}}][id]" value="{{if set is not None:}}{{=set['id']}}{{pass}}">
+<input type="hidden" sample_set_id="patient_sample_set_id_{{=i}}" name="patient[{{=i}}][sample_set_id]" value="{{if set is not None:}}{{=set['sample_set_id']}}{{pass}}">
+{{ if set is not None and 'error' in set and len(set['error']) > 0: }}
+    <div class="error">error: {{=", ".join(set['error'])}}</div>
+{{ pass }}
+{{ if set is not None and 'message' in set and len(set['message']) > 0: }}
+    <div>{{=", ".join(set['message'])}}</div>
+{{ pass }}
+<div class="field_div">
+    <input class="stringid form-control" id="patient_id_label_{{=i}}" name="patient[{{=i}}][id_label]" type="text"
+        value="{{if set is not None and set['id_label'] is not None:}}{{=set['id_label']}}{{pass}}" placeholder="Patient ID">
+</div>
+<div class="field_div">
+    <input class="string form-control" id="patient_first_name_{{=i}}" name="patient[{{=i}}][first_name]" type="text"
+        value="{{if set is not None:}}{{=set['first_name']}}{{pass}}" required placeholder="First Name">
+</div>
+<div class="field_div">
+    <input class="string form-control" id="patient_last_name_{{=i}}" name="patient[{{=i}}][last_name]" type="text"
+        value="{{if set is not None:}}{{=set['last_name']}}{{pass}}" required placeholder="Last Name">
+</div>
+<div class="field_div">
+    <input class="date form-control" id="patient_birth_{{=i}}" name="patient[{{=i}}][birth]" type="text"
+        value="{{if set is not None and set['birth'] is not None:}}{{=set['birth']}}{{pass}}"
+        title="birth date" pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))" placeholder="yyyy-mm-dd">
+</div>
+<div class="field_div">
+    <input
+        onfocus="new VidjilAutoComplete().setupTags(this);"
+        onkeydown="if (event.keyCode == 13) return false;"
+        data-needs-atwho="true"
+        data-keys="{{=group_ids}}"
+        class="text form-control"
+        id="patient_info_{{=i}}"
+        name="patient[{{=i}}][info]"
+        rows="1"
+        placeholder="patient information (#tags can be used)"
+        autocomplete="off"
+        value="{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}" />
+</div>

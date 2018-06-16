@@ -18,6 +18,7 @@ info = db.config[request.vars["id"]]
                 <td><select id="config_program" name="config_program">
                         <option value="none" {{if info.program == "none":}}selected="selected"{{pass}}>none</option>
                         <option value="vidjil" {{if info.program == "vidjil":}}selected="selected"{{pass}}>vidjil</option>
+                        <option value="igrec" {{if info.program == "igrec":}}selected="selected"{{pass}}>igrec</option>
                         <option value="mixcr" {{if info.program == "mixcr":}}selected="selected"{{pass}}>mixcr</option>
                         <option value="euro-mrd pipeline" {{if info.program == "euro-mrd pipeline":}}selected="selected"{{pass}}>euro-mrd pipeline</option>
                     </select></td>
@@ -40,7 +41,7 @@ info = db.config[request.vars["id"]]
             </tr>
             <tr>
                 <td> </td>
-                <td ><input type="submit" value="Soumettre" class="btn"> </td>
+                <td ><input type="submit" value="update config" class="btn"> </td>
                 <td> </td>
             </tr>
         </tbody>

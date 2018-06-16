@@ -1,7 +1,0 @@
-!LAUNCH: python ../fuse.py ../../doc/analysis-example1.vidjil ../../doc/analysis-example2.vidjil; cat fused.vidjil | python ../format_json.py -1 -u
-
-$ Fuse the two examples (three samples, two identical)
-e1:"segmented": [335662, 335662, 410124]
-
-$ IGH and TRG germlines
-e1:"germline": {"TRG": [250000, 250000, 300000], "IGH": [85662, 85662, 10124]}

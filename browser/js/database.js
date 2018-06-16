@@ -332,20 +332,23 @@ Database.prototype = {
     },
     
     
-    pre_process_onChange : function () {
-        var field = document.getElementById("pre_process");
-        var value = field.value;
-        for (var i=0; i<field.options.length; i++){
-            var option = field.options[i];
-            if (value == option.value){
-                if (option.getAttribute("required_files") == "1"){
-                    document.getElementById("file2_field").style.display = 'none';
-                    document.getElementById("upload_file2").value=""
-                }else{
-                    document.getElementById("file2_field").style.display = '';
-                }
-            }
-        }        
+    pre_process_onChange : function (field) {
+        var $option = $(field).find(":selected");
+        if ($option.attr('required_files') == "1"){
+            $(".file_2").hide();
+            $(".upload_file").val("");
+        }else{
+            $(".file_2").show();
+        }
+    },
+
+    upload_file_onChange : function (target_id, value) {
+        var target = document.getElementById(target_id);
+        var lastIndex = value.lastIndexOf('\\');
+        if (lastIndex > 0) {
+            value = value.substring(lastIndex + 1);
+        }
+        target.value = value;
     },
     
     /**
@@ -381,6 +384,9 @@ Database.prototype = {
 
             $("#menu-container").addClass('disabledClass');
 
+            // Hax !
+            $('.jstree').trigger('load');
+
             return 0 ;
         }
         
@@ -399,8 +405,9 @@ Database.prototype = {
         //the json result look like a .vidjil file so we load it
         if (res.reads){
             this.m.parseJsonData(result, 100)
-            this.m.loadGermline();
-            this.load_analysis(args)
+            this.m.loadGermline()
+                .initClones();
+            this.load_analysis(args);
             this.last_file = args
             this.close()
             this.m.db_key = args
@@ -410,10 +417,7 @@ Database.prototype = {
         //the json result look like a .analysis file so we load it
         if (typeof res.clones != "undefined" && typeof res.reads == "undefined" ){
             this.m.parseJsonAnalysis(result)
-        } else {
-            this.m.initClones()
         }
-
         //the json result contain a flash message
         if (res.message) {
 	    priority = res.success == 'false' ? 2 : 1
@@ -460,10 +464,61 @@ Database.prototype = {
                 }
             });
         }
+
+        if ( document.getElementById('object_form') ) {
+
+            $('#object_form').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    timeout: DB_TIMEOUT_CALL,
+                    crossDomain: true,
+                    url      : $('#object_form').attr('action'),
+                    data     : {'data': JSON.stringify($('#object_form').serializeObject())},
+                    xhrFields: {withCredentials: true},
+                    success: function (result) {
+                        self.display_result(result, $(this).attr('action'))
+                        self.connected = true;
+                    },
+                    error: function (request, status, error) {
+                        self.connected = false;
+                        if (status === "timeout") {
+                            console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                        } else {
+                            console.log({"type": "popup", "msg": request.responseText})
+                        }
+                    }
+                });
+                return false;
+            });
+        }
         
         //login_form
         if ( document.getElementById('login_form') ){
             //$('#login_form').on('submit',self.login_form );
+            var action = $('#login_form').attr('action');
+            var nexts = action.split("&")
+            var next = "default/home"
+            if (action.indexOf('register') != -1)
+                next = "user/info"
+            var args = {}
+            for (var i=0; i<nexts.length; i++){
+                var index = nexts[i].indexOf("_next")
+                if (index != -1){
+                    next = nexts[i].substr(index)
+                    next = next.replace("_next=", "")
+                    next = decodeURIComponent(next)
+                    if (next.split("?").length == 2){
+                        var tmp = next.split("?")[1].split("&")
+                        for (var k in tmp){
+                            var tmp2 = tmp[k].split("=")
+                            args[tmp2[0]] = tmp2[1]
+                        }
+                    }
+                    next = next.split("?")[0]
+                }
+            }
             
             $('#login_form').ajaxForm({
                 type: "POST",
@@ -474,33 +529,12 @@ Database.prototype = {
                 data     : $(this).serialize(),
                 xhrFields: {withCredentials: true},
                 success: function (result) {
-                    self.display_result(result, $(this).attr('action'))
+                    self.call(next, args)
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
                         console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                     } else {
-                        var nexts = $('#login_form').attr('action').split("&")
-                        var next = "default/home"
-                        if ($('#login_form').attr('action').indexOf('register') != -1)
-                            next = "user/info"
-                        var args = {}
-                        for (var i=0; i<nexts.length; i++){
-                            var index = nexts[i].indexOf("_next")
-                            if (index != -1){
-                                next = nexts[i].substr(index)
-                                next = next.replace("_next=", "")
-                                next = decodeURIComponent(next)
-                                if (next.split("?").length == 2){
-                                    var tmp = next.split("?")[1].split("&") 
-                                    for (var k in tmp){
-                                        var tmp2 = tmp[k].split("=")
-                                        args[tmp2[0]] = tmp2[1]
-                                    }
-                                }
-                                next = next.split("?")[0]
-                            }
-                        }
                         console.log(args)
                         self.call(next, args)
                     }
@@ -512,74 +546,66 @@ Database.prototype = {
         
         //submit formulaire avec fichier
         if ( document.getElementById('upload_form') ){
-            
-            db.pre_process_onChange()
-            
-            $('#upload_file').change(function (){
-                var filename = $("#upload_file").val();
-                var lastIndex = filename.lastIndexOf("\\");
-                if (lastIndex >= 0) {
-                    filename = filename.substring(lastIndex + 1);
-                }
-                $('#filename').val(filename);
-            })
-            
-            $('#upload_form').ajaxForm({
-                type     : "POST",
-                cache: false,
-                crossDomain: true,
-                xhrFields: {withCredentials: true},
-                url      : $(this).attr('action'),
-                data     : $(this).serialize(),
-                success  : function(result) {
-                    var js = self.display_result(result)
-                    var fileSelect, files, file, filename;
-                    if (typeof js.file_id != 'undefined'){
-                            $(this).attr("action", "0")
-                            var id = js.file_id
-                            if( document.getElementById("upload_file").files.length !== 0 ){
-                            fileSelect = document.getElementById('upload_file');
-                            files = fileSelect.files;
-                            var data = new FormData();
-                            
-                            for (var i = 0; i < files.length; i++) {
-                                file = files[i];
-                                data.append('file', file, file.name);
+            $('#upload_form').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    type     : "POST",
+                    cache: false,
+                    crossDomain: true,
+                    xhrFields: {withCredentials: true},
+                    url      : $(this).attr('action'),
+                    data     : {'data': JSON.stringify($('#upload_form').serializeObject())},
+                    success  : function(result) {
+                        var js = self.display_result(result)
+                        var id, fileSelect, files, file, filename;
+                        if (typeof js.file_ids !== 'undefined'){
+                            for (var k = 0; k < js.file_ids.length; k++) {
+                                id = js.file_ids[k];
+                                fileSelect = document.getElementById('file_upload_1_' + k);
+                                if( fileSelect.files.length !== 0 ){
+                                    files = fileSelect.files;
+                                    var data = new FormData();
+
+                                    for (var i = 0; i < files.length; i++) {
+                                        file = files[i];
+                                        data.append('file', file, file.name);
+                                    }
+                                    data.append('id', id);
+                                    data.append('file_number', 1)
+                                    data.append('pre_process', document.getElementById('pre_process').value)
+                                    filename = document.getElementById('file_filename_' + k).value;
+                                    self.uploader.add(id, data, filename, 1)
+                                }
+
+                                fileSelect = document.getElementById('file_upload_2_' + k);
+                                if( fileSelect.files.length !== 0 ){
+                                    files = fileSelect.files;
+                                    var data2 = new FormData();
+
+                                    for (var j = 0; j < files.length; j++) {
+                                        file = files[j];
+                                        data2.append('file', file, file.name);
+                                    }
+                                    data2.append('id', id);
+                                    data2.append('file_number', 2)
+                                    data2.append('pre_process', document.getElementById('pre_process').value)
+                                    self.uploader.add(id+"_2", data2, filename, 2)
+                                }
                             }
-                            data.append('id', id);
-                            data.append('file_number', 1)
-                            data.append('pre_process', document.getElementById('pre_process').value)
-                            filename = $('#filename').val()
-                            self.uploader.add(id, data, filename, 1)
                         }
-                        
-                        if( document.getElementById("upload_file2").files.length !== 0 ){
-                            fileSelect = document.getElementById('upload_file2');
-                            files = fileSelect.files;
-                            var data2 = new FormData();
-                            
-                            for (var j = 0; j < files.length; j++) {
-                                file = files[j];
-                                data2.append('file', file, file.name);
-                            }
-                            data2.append('id', id);
-                            data2.append('file_number', 2)
-                            data2.append('pre_process', document.getElementById('pre_process').value)
-                            self.uploader.add(id+"_2", data2, filename, 2)
+                    },
+                    error: function (request, status, error) {
+                        if(status==="timeout") {
+                            console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                        } else {
+                            console.log({"type": "popup", "msg": request + " " + status + " " + error});
                         }
                     }
-                },
-                error: function (request, status, error) {
-                    if(status==="timeout") {
-                        console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                    } else {
-                        console.log({"type": "popup", "msg": request + " " + status + " " + error});
-                    } 
-                }
+                });
+                return false;
             });
-            
-        }  
         
+        }
     },
 
     set_jstree: function(elem) {
@@ -598,39 +624,55 @@ Database.prototype = {
             }
         });
         elem.on('select_node.jstree', function(event, data){
-            $('#filename').val(data.selected);
+            $('#file_filename').val(data.selected);
             var split_file = data.selected.toString().split('/');
             var file = split_file[split_file.length - 1];
             $('#file_indicator').text(file);
         });
     },
 
+    display_jstree: function(caller_index) {
+        $("#jstree_button").data("index", caller_index);
+        $("#jstree_container").show();
+        $('#file_indicator_' + caller_index).text("");
+        $('#file_filename_' + caller_index).val("");
+    },
+
+    close_jstree: function() {
+        $("#jstree_container").hide();
+    },
+
+    select_jstree: function(caller_index) {
+        $('#file_indicator_' + caller_index).text($('#file_indicator').text());
+        $('#file_filename_' + caller_index).val($('#file_filename').val());
+        $("#jstree_container").hide();
+    },
+
     toggle_upload_fields: function() {
         var elem = $('.upload_field');
         var disable = !elem.prop('disabled');
         elem.prop('disabled', disable);
-        elem.parents("tr").prop('hidden', disable);
         if (disable) {
+            elem.closest("div").hide();
             elem.val(undefined);
-            $('#filename').val(undefined);
+            $('.filename').val(undefined);
+        } else {
+            elem.closest("div").show();
         }
 
         var pre_process = $('#pre_process');
         pre_process.prop('disabled', disable);
-        pre_process.parents("tr").prop('hidden', disable);
+        pre_process.closest("div").prop('hidden', disable);
+
+        if (!disable) {
+            this.pre_process_onChange(pre_process);
+        }
     },
 
     toggle_jstree: function(){
-        var tree = $('#jstree');
-        var enable = tree.parents("tr").prop('hidden');
-        tree.parents("tr").prop('hidden', !enable);
-        if (enable) {
-            this.set_jstree(tree);
-        } else {
-            $.jstree.destroy();
-            tree.off('select_node.jstree');
-            $('#filename').val(undefined);
-        }
+        var tree = $('.jstree_field');
+        var enable = tree.prop('hidden');
+        tree.prop('hidden', !enable);
     },
 
     toggle_file_source: function() {
@@ -696,6 +738,27 @@ Database.prototype = {
 		    // This triggers another request() call, but this time with quiet=true
 		    self.warn("request: " + status + " - " + url)
 		}
+            }
+        });
+    },
+
+    logout: function() {
+        var self = this;
+        $.ajax({
+            type: "POST",
+            timeout: DB_TIMEOUT_CALL,
+            crossDomain: true,
+            url: self.db_address + 'default/user/logout',
+            xhrField: {withCredentials: true},
+            success: function (result) {
+                db.call("default/home");
+            },
+            error: function (request, status, error) {
+                if (status === "timeout") {
+                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                } else {
+                    self.call("default/home");
+                }
             }
         });
     },
@@ -1097,6 +1160,22 @@ Database.prototype = {
         }
         
         return true;
+    },
+
+    updateStatsButton: function() {
+        var sample_set_ids = [];
+        $('[name^="sample_set_ids"]:checked').each(function() {
+            sample_set_ids.push("sample_set_ids=" + $(this).val());
+        });
+        var config_id = $('#choose_config').find(':selected').val();
+        var addr = DB_ADDRESS + '/sample_set/result_files?config_id=' + config_id + '&' + sample_set_ids.join('&');
+        $('#stats_button').attr('href', addr);
+    },
+
+    updateStatsSelection: function(cb) {
+        var $cb=$(cb);
+        $('[name^=\"sample_set_ids\"]').prop('checked', $cb.is(':checked'));
+        this.updateStatsButton();
     },
 
     // Log functions, to server

@@ -149,6 +149,10 @@ QUnit.test("select/focus", function(assert) {
     assert.deepEqual(m.getSelected(), [], "unselect all");
     m.multiSelect([0,2,3])
     assert.deepEqual(m.getSelected(), [0,2,3], "multi-select");
+    m.unselect(2);
+    assert.deepEqual(m.getSelected(), [0, 3], "unselect");
+    m.unselect(5);
+    assert.deepEqual(m.getSelected(), [0, 3], "unselect");
     m.unselectAll()
     assert.equal(m.findWindow("aaaaaaaaaaaid1aaaaaaa"), 0, "findWindow : Ok")
     assert.equal(m.findWindow("aaaaaaaaaaaplopaaaaaaa"), -1, "findWindow : Ok")
@@ -200,6 +204,9 @@ QUnit.test("cluster", function(assert) {
     m.merge()
     assert.deepEqual(m.clusters[0], [0,1], "merge 0 and 1: build cluster [0,1]");
     assert.equal(m.clone(0).getSize(), 0.15, "cluster [0,1] : getsize = 0.15");
+    assert.ok(! m.clones[1].isSelected(), "Merged clone should not be selected");
+    assert.ok(m.clones[0].isSelected(), "Main merged clone should not be selected");
+
     
     m.unselectAll()
     m.select(0)

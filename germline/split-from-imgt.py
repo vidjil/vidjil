@@ -5,7 +5,7 @@
 import sys
 import os
 import urllib
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import re
 
 IMGT_LICENSE = '''
@@ -24,12 +24,22 @@ NCBI_API = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore
 # Parse lines in IMGT/GENE-DB such as:
 # >M12949|TRGV1*01|Homo sapiens|ORF|...
 
-open_files = {}
+
 current_file = None
 
 def verbose_open_w(name):
     print (" ==> %s" % name)
     return open(name, 'w')
+
+class KeyDefaultDict(defaultdict):
+    def __missing__(self, key):
+        if self.default_factory is None:
+            raise KeyError((key,))
+        self[key] = value = self.default_factory(key)
+        return value
+
+open_files = KeyDefaultDict(lambda key: verbose_open_w('%s.fa' % key))
+
 
 def get_split_files(seq, split_seq):
     for s_seq in split_seq.keys():
@@ -64,7 +74,7 @@ def get_gene_coord(imgt_line):
     >>> line = '>X15272|TRGV4*01|Homo sapiens|F|V-REGION|406..705|300 nt|1| | | | |300+0=300| |rev-compl|'
     >>> get_gene_coord(line)[0] == 'X15272'
     True
-    >>> get_gene_coord(line)[1] == {'from': 406, 'to': 705, 'imgt_name': 'TRGV4*01'}
+    >>> get_gene_coord(line)[1] == {'from': 406, 'to': 705, 'imgt_data': 'TRGV4*01|Homo sapiens|F|V-REGION', 'imgt_name': 'TRGV4*01'}
     True
     '''
     elements = imgt_line.split('|')
@@ -78,7 +88,8 @@ def get_gene_coord(imgt_line):
         end = end.split(',')[0]
     return elements[0][1:], {'from': int(start),
                              'to': int(end),
-                             'imgt_name': elements[1]}
+                             'imgt_name': elements[1],
+                             'imgt_data': '|'.join(elements[1:5])}
 
 def get_gene_sequence(gene, other_gene_name, start, end):
     '''
@@ -93,8 +104,7 @@ def store_data_if_updownstream(fasta_header, path, data, genes):
         if gene_name:
             data[path+'/'+gene][gene_name].append(gene_coord)
     
-def retrieve_genes(filename, genes, additional_length):
-    f = verbose_open_w(filename)
+def retrieve_genes(f, genes, tag, additional_length):
     for gene in genes:
         for coord in genes[gene]:
             start = coord['from']
@@ -103,7 +113,13 @@ def retrieve_genes(filename, genes, additional_length):
                 end += additional_length
             elif additional_length < 0:
                 start = max(1, start + additional_length)
-            f.write(get_gene_sequence(gene, coord['imgt_name'], start, end))
+            gene_data = get_gene_sequence(gene, coord['imgt_data'] + tag, start, end)
+            if coord['imgt_data'].split('|')[-1] == FEATURE_J_REGION:
+                gene_lines = gene_data.split('\n')
+                gene_lines[1] = gap_j(gene_lines[1].lower())
+                gene_data = '\n'.join(gene_lines)
+
+            f.write(gene_data)
 
 
 #                  Phe
@@ -135,11 +151,16 @@ def gap_j(seq):
 
     seqs = seq.strip()
 
-    if seqs in CUSTOM_118:
-        print "# Custom 118 position in %s" % seq
-        pos = CUSTOM_118[seqs]
+    pos = None
 
-    else:
+    for custom_seq in CUSTOM_118:
+        if not custom_seq:
+            continue
+        if seqs.startswith(custom_seq):
+            print "# Custom 118 position in %s" % seqs
+            pos = CUSTOM_118[custom_seq]
+
+    if pos is None:
         m = j118.search(seq)
 
         if not m:
@@ -159,7 +180,9 @@ LENGTH_DOWNSTREAM=40
 SPECIAL_SEQUENCES = [
 ]
 
-FEATURES_VDJ = [ "V-REGION", "D-REGION", "J-REGION" ]
+FEATURE_J_REGION = 'J-REGION'
+
+FEATURES_VDJ = [ "V-REGION", "D-REGION", FEATURE_J_REGION ]
 FEATURES_CLASSES = [
     "CH1", "CH2", "CH3", "CH3-CHS", "CH4-CHS",
     "H", "H-CH2", "H1", "H2", "H3", "H4",
@@ -178,6 +201,9 @@ DOWNSTREAM_REGIONS=['[A-Z]{3}J', 'TRDD3']
 UPSTREAM_REGIONS=['IGHD', 'TRDD', 'TRBD', 'TRDD2']
 # Be careful, 'IGHD' regex for UPSTREAM_REGIONS also matches IGHD*0? constant regions.
 
+TAG_DOWNSTREAM='+down'
+TAG_UPSTREAM='+up'
+
 SPECIES = {
     "Homo sapiens": 'homo-sapiens/',
     "Mus musculus": 'mus-musculus/',
@@ -188,10 +214,18 @@ SPECIES = {
     "Rattus norvegicus_BN; Sprague-Dawley": 'rattus-norvegicus/'
 }
 
-downstream_data = defaultdict(lambda: defaultdict(list))
-upstream_data = defaultdict(lambda: defaultdict(list))
+
+class OrderedDefaultListDict(OrderedDict):
+    def __missing__(self, key):
+        self[key] = value = []
+        return value
+
+downstream_data = defaultdict(lambda: OrderedDefaultListDict())
+upstream_data = defaultdict(lambda: OrderedDefaultListDict())
 
 for l in sys.stdin:
+
+    # New sequence: compute 'current_files' and stores up/downstream_data[]
 
     if ">" in l:
         current_files = []
@@ -226,9 +260,6 @@ for l in sys.stdin:
                 if systems:
                     keys = [path + s for s in systems]
                 for key in keys:
-                    if not (key in open_files):
-                        name = '%s.fa' % (key)
-                        open_files[key] = verbose_open_w(name)
                     current_files.append(open_files[key])
 
             if seq in SPECIAL_SEQUENCES:
@@ -236,8 +267,12 @@ for l in sys.stdin:
                 current_special = verbose_open_w(name)
 
 
-    if '>' not in l and current_files and feature == 'J-REGION':
+    # Possibly gap J_REGION
+
+    if '>' not in l and current_files and feature == FEATURE_J_REGION:
         l = gap_j(l)
+
+    # Dump 'l' to the concerned files
 
     for current_file in current_files:
             current_file.write(l)
@@ -245,7 +280,15 @@ for l in sys.stdin:
     if current_special:
             current_special.write(l)
 
+    # End, loop to next 'l'
+
+
+# Dump up/downstream data
+
 for system in upstream_data:
-    retrieve_genes(system+"_upstream.fa", upstream_data[system], -LENGTH_UPSTREAM)
+    f = verbose_open_w(system + TAG_UPSTREAM + '.fa')
+    retrieve_genes(f, upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM)
+
 for system in downstream_data:
-    retrieve_genes(system+"_downstream.fa", downstream_data[system], LENGTH_DOWNSTREAM)
+    f = verbose_open_w(system + TAG_DOWNSTREAM + '.fa')
+    retrieve_genes(f, downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM)

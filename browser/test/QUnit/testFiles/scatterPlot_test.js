@@ -80,7 +80,36 @@ QUnit.test("node sizes", function(assert) {
     m.clone(0).quantifiable = false;
     sp.updateClone(0)
 
-    assert.equal(sp.nodes[0].s, 0.10, "node 0 (not quantifiable), size")
+    assert.equal(sp.nodes[0].s, 0.001, "node 0 (not quantifiable), size")
+})
+
+
+QUnit.test("other plot", function(assert) {
+
+    var m = new Model(m);
+    m.parseJsonData(json_data, 100)
+    m.loadGermline()
+    m.initClones()
+
+    var sp = new ScatterPlot("visu", m);
+    sp.init();
+    sp.update();
+
+    assert.equal(sp.otherVisibility, false)
+    assert.equal(sp.nodes[2].s, 0.125, "node 0, size (main sample time 0)")
+
+    m.tOther = 1
+    var preset = sp.preset["compare two samples"]
+    sp.changeSplitMethod(preset.x, preset.y, preset.mode)
+
+    assert.equal(sp.splitY, "sizeOtherSample")
+        assert.equal(sp.otherVisibility, true)
+
+    assert.equal(sp.nodes[2].s, 0.25, "node 0, size (other sample time 1)")
+
+    m.tOther = 3
+    sp.updateClone(2)
+    assert.equal(sp.nodes[2].s, 0.125, "node 0, size (other sample time 3)")
 })
 
 
