@@ -546,6 +546,11 @@ class CallForHelp : public ParseError {
     CallForHelp() : CallForHelp("This should be caught in your main function, see examples", ExitCodes::Success) {}
 };
 
+class CallForAdvancedHelp : public ParseError {
+    CLI11_ERROR_DEF(ParseError, CallForAdvancedHelp)
+    CallForAdvancedHelp() : CallForAdvancedHelp("This should be caught in your main function, see examples", ExitCodes::Success /* , 2 */ ) {}
+};
+  
 /// Does not output a diagnostic in CLI11_PARSE, but allows to return from main() with a specific error code.
 class RuntimeError : public ParseError {
     CLI11_ERROR_DEF(ParseError, RuntimeError)
@@ -2499,6 +2504,11 @@ class App {
 
         if(dynamic_cast<const CLI::CallForHelp *>(&e) != nullptr) {
             out << help();
+            return e.get_exit_code();
+        }
+
+        if(dynamic_cast<const CLI::CallForAdvancedHelp *>(&e) != nullptr) {
+            out << help(30, "", 2);
             return e.get_exit_code();
         }
 
