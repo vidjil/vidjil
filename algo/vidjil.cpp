@@ -111,6 +111,8 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
 
+#define DEFAULT_KMER_THRESHOLD NO_LIMIT_VALUE
+
 #define DEFAULT_EPSILON  0
 #define DEFAULT_MINPTS   10
 
@@ -284,6 +286,8 @@ int main (int argc, char **argv)
   json jsonLevenshtein;
   bool jsonLevenshteinComputed = false ;
 
+  int kmer_threshold = DEFAULT_KMER_THRESHOLD;
+
   //$$ options: definition wiht CLI11
   string group = "";
 
@@ -390,6 +394,10 @@ int main (int argc, char **argv)
   //       << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, del_end, homo\" (default "<< DEFAULT_SEGMENT_COST <<" )"<< endl
   //      case 'f''	segment_cost=strToCost(optarg, VDJ);      break;
   app.add_option("-E", expected_value_D, "maximal e-value for determining if a D segment can be trusted", true) -> group(group) -> level();
+
+  app.add_option("-Z", kmer_threshold, "typical number of V genes, selected by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes, default)", true) -> group(group) -> level() -> set_type_name("NB");
+  //  atoi_NO_LIMIT(optarg);
+
   
   group = "Clone analysis (second pass)";
   app.add_flag("-3,--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)") -> group(group);
