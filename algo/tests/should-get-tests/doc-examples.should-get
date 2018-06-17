@@ -4,7 +4,7 @@
 # Test examples embedded in 'doc/algo.org'
 
 # Run eight times
-8:vidjil-algo -- V.D.J recombinations analysis
+8:vidjil-algo -- V.D.J recombinations analysis .*vidjil.org
 
 # '-c clone' (or implied), five times
 5: end of clones

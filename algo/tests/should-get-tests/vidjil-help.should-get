@@ -11,5 +11,5 @@ $ Check default filtering options
 1: =100 .* maximal number of clones to be analyzed
 
 $ Do not display advanced options
-0: Experimental options
+0: , experimental options
 0: custom Cost

@@ -9,6 +9,6 @@ $ Check default costs
 1:clustering .* "1, -4, -4, 0, 0"
 
 $ Display advanced options
-: Experimental options
+: , experimental options
 : custom Cost
 
