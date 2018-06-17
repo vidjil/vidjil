@@ -1,5 +1,5 @@
 !NO_LAUNCHER:
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -h  2> out-v ; cat out-v
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -h
 
 $ License
 1:vidjil-algo is free software
@@ -10,3 +10,6 @@ $ Check default filtering options
 1: =100 .* maximal number of clones computed with a consensus sequence
 1: =100 .* maximal number of clones to be analyzed
 
+$ Do not display advanced options
+0: Experimental options
+0: custom Cost
