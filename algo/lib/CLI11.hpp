@@ -225,7 +225,7 @@ inline std::vector<std::string> split(const std::string &s, char delim) {
 }
 
 /// Simple function to join a string
-template <typename T> std::string join(const T &v, std::string delim = ",") {
+template <typename T> std::string join(const T &v, std::string delim = ", ") {
     std::ostringstream s;
     size_t start = 0;
     for(const auto &i : v) {
@@ -237,7 +237,7 @@ template <typename T> std::string join(const T &v, std::string delim = ",") {
 }
 
 /// Join a string in reverse order
-template <typename T> std::string rjoin(const T &v, std::string delim = ",") {
+template <typename T> std::string rjoin(const T &v, std::string delim = ", ") {
     std::ostringstream s;
     for(size_t start = 0; start < v.size(); start++) {
         if(start > 0)
@@ -1583,8 +1583,8 @@ class Option : public OptionBase<Option> {
                 out << " x " << get_expected();
             if(get_expected() == -1)
                 out << " ...";
-            if(get_required())
-                out << " (REQUIRED)";
+            // if(get_required())
+            //    out << " (REQUIRED)";
         }
         if(!envname_.empty())
             out << " (env:" << envname_ << ")";
@@ -2689,7 +2689,7 @@ class App {
 
         // Positional descriptions
         if(pos) {
-            out << std::endl << "Positionals:" << std::endl;
+            out << std::endl ;
             for(const Option_p &opt : options_) {
                 if(detail::to_lower(opt->get_group()).empty())
                     continue; // Hidden
@@ -2703,7 +2703,7 @@ class App {
             for(const std::string &group : groups) {
                 if(detail::to_lower(group).empty())
                     continue; // Hidden
-                out << std::endl << group << ":" << std::endl;
+                out << std::endl << group << std::endl;
                 for(const Option_p &opt : options_) {
                     if(opt->nonpositional() && opt->get_group() == group && opt->help_level_ <= help_level)
                         detail::format_help(out, opt->help_name(true), opt->get_description(), wid);
