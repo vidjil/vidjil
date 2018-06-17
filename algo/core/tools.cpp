@@ -74,6 +74,14 @@ string scientific_string_of_double(double number)
    return ss.str();
 }
 
+string string_of_map(map <string, string> m, string before)
+{
+  stringstream ss;
+  for (auto x: m)
+    ss << before << x.first << ":" << x.second;
+  return ss.str();
+}
+
 
 bool is_extended_nucleotide(char nuc) {
   switch(nuc) {
