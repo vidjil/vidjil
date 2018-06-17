@@ -353,13 +353,7 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
       break ;
     }
 
-    map<string, string> seedMap;
-    seedMap["13s"] = SEED_S13;
-    seedMap["12s"] = SEED_S12;
-    seedMap["10s"] = SEED_S10;
-    seedMap["9s"] = SEED_9;
-
-    seed = (default_seed.size() == 0) ? seedMap[seed] : default_seed;
+    seed = (default_seed.size() == 0) ? seed : default_seed;
 
     //for each set of recombination 3/4/5
     for (json::iterator it2 = recom.begin(); it2 != recom.end(); ++it2) {

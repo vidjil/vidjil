@@ -43,16 +43,12 @@ using namespace std;
 
 #define PRINT_VAR(v) cerr << #v << " = " << v << endl
 
+#define NB_N_CHOOSE_K_STORED 500
 
 #define SEED_YES '#'
 
 // Common seeds
-#define SEED_9   "#########"
-#define SEED_S10 "#####-#####"
-#define SEED_S12 "######-######"
-#define SEED_S13 "#######-######"
-
-#define NB_N_CHOOSE_K_STORED 500
+extern map<string, string> seedMap;
 
 string seed_contiguous(int k);
 

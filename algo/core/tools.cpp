@@ -19,6 +19,13 @@ int seed_weight(const string &seed)
   return count(seed.begin(), seed.end(), SEED_YES);
 }
 
+map<string, string> seedMap = {
+  {"9c", "#########"},
+  {"10s", "#####-#####"},
+  {"12s", "######-######"},
+  {"13s", "#######-######"}
+};
+
 char spaced_buf[MAX_SEED_SIZE+1];
 
 string spaced(const string &input, const string &seed) {
