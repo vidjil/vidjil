@@ -412,9 +412,15 @@ int main (int argc, char **argv)
   //  if (advanced)
   group = "Fine segmentation options (second pass)";
 
+  app.add_option("-f",
+                 [&segment_cost](CLI::results_t res) {
+                   segment_cost = strToCost(res[0].c_str(), VDJ); 
+                   return true;
+                 },
+                 "use custom Cost for fine segmenter : format \"match, subst, indels, del_end, homo\" (default DEFAULT_SEGMENT_COST )"
+                 // TODO: description, default value
+                 ) -> group(group);
 
-  //       << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, del_end, homo\" (default "<< DEFAULT_SEGMENT_COST <<" )"<< endl
-  //      case 'f''	segment_cost=strToCost(optarg, VDJ);      break;
   app.add_option("-E", expected_value_D, "maximal e-value for determining if a D segment can be trusted", true) -> group(group) -> level();
 
   app.add_option("-Z", kmer_threshold, "typical number of V genes, selected by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes, default)", true) -> group(group)
@@ -434,8 +440,15 @@ int main (int argc, char **argv)
   app.add_option("-S", save_comp, "generate and save comparative matrix for clustering") -> group(group) -> level();
   app.add_option("-L", load_comp, "load comparative matrix for clustering") -> group(group) -> level();
   app.add_option("--forced-edges", forced_edges, "manual clustering -- a file used to force some specific edges") -> group(group) -> level();
-  // << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, del_end, homo\" (default "<< DEFAULT_CLUSTER_COST <<" )"<< endl
-  // cluster_cost=strToCost(optarg, Cluster);
+
+  app.add_option("-C",
+                 [&cluster_cost](CLI::results_t res) {
+                   cluster_cost = strToCost(res[0].c_str(), Cluster);
+                   return true;
+                 },
+                 "use custom Cost for automatic clustering : format \"match, subst, indels, del_end, homo\" (default DEFAULT_CLUSTER_COST )"
+                 // TODO: description, default value
+                 ) -> group(group) -> level();
 
   group = "Limits to report a clone (or a window)";
   app.add_option("-r", min_reads_clone, "minimal number of reads supporting a clone", true) -> group(group);
