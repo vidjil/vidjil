@@ -112,6 +112,15 @@ ostream& operator<<(ostream& out, const Cost& cost)
   return out;
 }
 
+string string_of_cost(const Cost cost)
+{
+   stringstream ss;
+   ss << cost ;
+   return ss.str();
+}
+
+
+
 Cost::Cost()
 {
 }

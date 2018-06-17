@@ -417,8 +417,7 @@ int main (int argc, char **argv)
                    segment_cost = strToCost(res[0].c_str(), VDJ); 
                    return true;
                  },
-                 "use custom Cost for fine segmenter : format \"match, subst, indels, del_end, homo\" (default DEFAULT_SEGMENT_COST )"
-                 // TODO: description, default value
+                 "use custom Cost for fine segmenter : format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_SEGMENT_COST) + ")"
                  ) -> group(group);
 
   app.add_option("-E", expected_value_D, "maximal e-value for determining if a D segment can be trusted", true) -> group(group) -> level();
@@ -446,8 +445,7 @@ int main (int argc, char **argv)
                    cluster_cost = strToCost(res[0].c_str(), Cluster);
                    return true;
                  },
-                 "use custom Cost for automatic clustering : format \"match, subst, indels, del_end, homo\" (default DEFAULT_CLUSTER_COST )"
-                 // TODO: description, default value
+                 "use custom Cost for automatic clustering : format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_CLUSTER_COST) + ")"
                  ) -> group(group) -> level();
 
   group = "Limits to report a clone (or a window)";
