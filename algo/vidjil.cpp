@@ -550,8 +550,8 @@ int main (int argc, char **argv)
             {
               // argument is a directory
               multi_germline_paths_and_files.push_back(make_pair(arg, DEFAULT_MULTI_GERMLINE_FILE)) ;
-              break ;
-                }
+              continue ;
+            }
         }
 
       // argument is not a directory (and basename can include ':' with a filter)
