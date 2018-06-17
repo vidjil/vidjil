@@ -387,7 +387,7 @@ int main (int argc, char **argv)
                    return worked;
                  },
                  "k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)")
-    -> group(group) -> set_type_name("INT");
+    -> group(group) -> level() -> set_type_name("INT");
 
     
 #ifndef NO_SPACED_SEEDS
@@ -395,11 +395,11 @@ int main (int argc, char **argv)
 #endif
   app.add_option("-w", wmer_size,
                  "w-mer size used for the length of the extracted window ('" NO_LIMIT "': use all the read, no window clustering)")
-    -> group(group) -> transform(string_NO_LIMIT);
+    -> group(group) -> level() -> transform(string_NO_LIMIT);
 
   app.add_option("-e", expected_value,
                  "maximal e-value for determining if a V-J segmentation can be trusted", true)
-    -> group(group) -> transform(string_NO_LIMIT);
+    -> group(group) -> level() -> transform(string_NO_LIMIT);
 
   app.add_option("-t",
                  [&](CLI::results_t res) {
@@ -409,7 +409,7 @@ int main (int argc, char **argv)
                  },
                  // trim_sequences,
                  "trim V and J genes (resp. 5' and 3' regions) to keep at most <INT> nt  (0: no trim)")
-    -> group(group) -> set_type_name("INT");
+    -> group(group) -> level() ->  set_type_name("INT");
 
   app.add_option("-s",
                  [&](CLI::results_t res) {
@@ -450,9 +450,9 @@ int main (int argc, char **argv)
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Labeled sequences (windows related to these sequences will be kept even if -r/--ratio thresholds are not reached)";
-  app.add_option("-W", windows_labels_explicit, "label the given sequence(s)") -> group(group) -> set_type_name("SEQUENCE");
-  app.add_option("-l", windows_labels_file, "label a set of sequences given in <file>") -> group(group) -> set_type_name("FILE");
-  app.add_flag("-F", only_labeled_windows, "filter -- keep only the windows related to the labeled sequences") -> group(group);
+  app.add_option("-W", windows_labels_explicit, "label the given sequence(s)") -> group(group) -> level() -> set_type_name("SEQUENCE");
+  app.add_option("-l", windows_labels_file, "label a set of sequences given in <file>") -> group(group) -> level() -> set_type_name("FILE");
+  app.add_flag("-F", only_labeled_windows, "filter -- keep only the windows related to the labeled sequences") -> group(group) -> level();
 
 
   // ----------------------------------------------------------------------------------------------------------------------
