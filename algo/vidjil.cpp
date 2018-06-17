@@ -147,7 +147,6 @@ string usage_examples(char *progname)
 {
   stringstream ss;
   ss
-       << endl 
        << "Examples (see doc/algo.org)" << endl
        << "  " << progname << " -c clones   -g germline/homo-sapiens.g   -2 -3 -r 1  demo/Demo-X5.fa           # (basic usage, detect the locus for each read," << endl
        << "                                                                                               #  cluster reads and report clones starting from the first read (-r 1)," << endl
@@ -213,7 +212,7 @@ int main (int argc, char **argv)
 #endif
 #endif
 
-  CLI::App app{"Vidjil"};
+  CLI::App app{"# vidjil-algo -- V(D)J recombinations analysis", argv[0]};
 
   //$$ options: defaults
 
@@ -305,8 +304,8 @@ int main (int argc, char **argv)
   //$$ options: definition wiht CLI11
   string group = "";
 
-  // cerr << "Usage: " << progname << " [options] <reads.fa/.fq/.gz>" << endl << endl;
 
+  // ----------------------------------------------------------------------------------------------------------------------
   app.add_option("reads_file", f_reads, R"Z(reads file, in one of the following formats:
                                   - FASTA (.fa/.fasta, .fa.gz/.fasta.gz)
                                   - FASTQ (.fq/.fastq, .fq.gz/.fastq.gz)
@@ -316,6 +315,7 @@ int main (int argc, char **argv)
     -> required() -> set_type_name("");
 
 
+  // ----------------------------------------------------------------------------------------------------------------------
   group = "Command selection";
   string cmd = COMMAND_CLONES;
   app.add_option("-c", cmd, "command"
@@ -325,10 +325,13 @@ int main (int argc, char **argv)
                  "\n  \t\t" COMMAND_GERMLINES "  \t statistics on k-mers in different germlines")
     -> group(group) -> set_type_name("COMMAND");
 
+  // ----------------------------------------------------------------------------------------------------------------------
   group = "Input" ;
-  app.add_option("--header-sep", read_header_separator, "separator for headers in the reads file", true) -> group(group) -> level() -> set_type_name("CHAR")  ;
+  app.add_option("--header-sep", read_header_separator, "separator for headers in the reads file", false)
+    -> group(group) -> level() -> set_type_name("CHAR='" DEFAULT_READ_HEADER_SEPARATOR "'");
 
-  
+
+  // ----------------------------------------------------------------------------------------------------------------------
   group = "Germline presets (at least one -g or -V/(-D)/-J option must be given for all commands except -c " COMMAND_GERMLINES ")";
   app.add_option("-g", multi_germlines, R"Z(
          -g <.g FILE>(:FILTER)
@@ -344,25 +347,24 @@ int main (int argc, char **argv)
   app.add_option("-D", v_reps_D, "custom D germline multi-fasta file(s) (and resets -m and -w options), will segment into V(D)J components") -> group(group) -> set_type_name("FILE");
   app.add_option("-J", v_reps_J, "custom V germline multi-fasta file(s)") -> group(group) -> set_type_name("FILE");
 
+
+  // ----------------------------------------------------------------------------------------------------------------------
   group = "Locus/recombinations";
   app.add_flag("-d", several_D, "try to detect several D (experimental)") -> group(group);
   app.add_flag("-2",  multi_germline_unexpected_recombinations_12, "try to detect unexpected recombinations (must be used with -g)") -> group(group);
 
 
-  group = "Experimental options (do not use)";
-  app.add_flag("-I", multi_germline_mark, "ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)") -> group(group) -> level();
-  app.add_flag("-1", multi_germline_one_unique_index,
-               "use a unique index for all germline systems (experimental, must be used with -g, do not use)") -> group(group) -> level();
-  app.add_flag("-4", multi_germline_unexpected_recombinations_1U, "try to detect unexpected recombinations with translocations (experimental, must be used with -g, do not use)") -> group(group) -> level();
-  app.add_flag("--keep", keep_unsegmented_as_clone, "keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example --keep -AX 20)") -> group(group) -> level();
+  // ----------------------------------------------------------------------------------------------------------------------
+  group = "Recombination detection (\"window\" prediction, first pass)";
 
-  group = "Window prediction";
 #ifndef NO_SPACED_SEEDS
-  /*
-       << "  (use either -s or -k option, but not both)" << endl
-           << "  (all these options, except -w, are overriden when using -g)" << endl
-  */
+  group += " (use either -s or -k option, but not both)\n                        (all these options, except -w, are overriden when using -g)";
 #endif
+
+  app.add_flag_function("-q",
+                        [&](size_t n) { indexType = AC_AUTOMATON; },
+                        "use Aho-Corasick-like automaton (experimental)"
+                        ) -> group(group) -> level();
 
   app.add_option("-k",
                  [&](CLI::results_t res) {
@@ -413,61 +415,30 @@ int main (int argc, char **argv)
 */
   
 
+  // ----------------------------------------------------------------------------------------------------------------------
+  group = "Recombination detection, experimental options (do not use)";
+  app.add_flag("-I", multi_germline_mark, "ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)") -> group(group) -> level();
+  app.add_flag("-1", multi_germline_one_unique_index,
+               "use a unique index for all germline systems (experimental, must be used with -g, do not use)") -> group(group) -> level();
+  app.add_flag("-4", multi_germline_unexpected_recombinations_1U, "try to detect unexpected recombinations with translocations (experimental, must be used with -g, do not use)") -> group(group) -> level();
+  app.add_flag("--keep", keep_unsegmented_as_clone, "keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example --keep -AX 20)") -> group(group) -> level();
 
 
+  // ----------------------------------------------------------------------------------------------------------------------
   group = "Labeled sequences (windows related to these sequences will be kept even if -r/--ratio thresholds are not reached)";
-
   app.add_option("-W", windows_labels_explicit, "label the given sequence(s)") -> group(group) -> set_type_name("SEQUENCE");
-
   app.add_option("-l", windows_labels_file, "label a set of sequences given in <file>") -> group(group) -> set_type_name("FILE");
   app.add_flag("-F", only_labeled_windows, "filter -- keep only the windows related to the labeled sequences") -> group(group);
 
 
-  //  if (advanced)
-  group = "Fine segmentation options (second pass)";
-
-  app.add_option("-f",
-                 [&segment_cost](CLI::results_t res) {
-                   segment_cost = strToCost(res[0].c_str(), VDJ); 
-                   return true;
-                 },
-                 "use custom Cost for fine segmenter : format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_SEGMENT_COST) + ")"
-                 ) -> group(group) -> level() -> set_type_name("COST");
-
-  app.add_option("-E", expected_value_D, "maximal e-value for determining if a D segment can be trusted", true) -> group(group) -> level();
-
-  app.add_option("-Z", kmer_threshold, "typical number of V genes, selected by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes, default)", false)
-    -> group(group)
-    -> transform(string_NO_LIMIT) -> level();
-  
-  group = "Clone analysis (second pass)";
-  app.add_flag("-3,--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)") -> group(group);
-
-  
-  // if (advanced)
-  group = "Additional clustering (experimental)" ;
-
-  app.add_flag_function("-q", [&](size_t n) { indexType = AC_AUTOMATON; });
-  app.add_option("-n", epsilon, "minimum required neighbors for automatic clustering. No automatic clusterisation if =0.", true) -> group(group) -> level();
-
-  app.add_option("-N", minPts, "", true) -> group(group) -> level();
-  app.add_flag("-S", save_comp, "generate and save comparative matrix for clustering") -> group(group) -> level();
-  app.add_flag("-L", load_comp, "load comparative matrix for clustering") -> group(group) -> level();
-  app.add_option("--forced-edges", forced_edges, "manual clustering -- a file used to force some specific edges") -> group(group) -> level() -> set_type_name("FILE");
-
-  app.add_option("-C",
-                 [&cluster_cost](CLI::results_t res) {
-                   cluster_cost = strToCost(res[0].c_str(), Cluster);
-                   return true;
-                 },
-                 "use custom Cost for automatic clustering : format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_CLUSTER_COST) + ")"
-                 ) -> group(group) -> level() -> set_type_name("COST");
-
+  // ----------------------------------------------------------------------------------------------------------------------
   group = "Limits to report a clone (or a window)";
   app.add_option("-r", min_reads_clone, "minimal number of reads supporting a clone", true) -> group(group);
   app.add_option("--ratio", ratio_reads_clone, "minimal percentage of reads supporting a clone", true) -> group(group);
 
-  group = "Limits to further analyze some clones";
+
+  // ----------------------------------------------------------------------------------------------------------------------
+  group = "Limits to further analyze some clones (second pass)";
   app.add_option("-y", max_representatives,
                  "maximal number of clones computed with a consensus sequence ('" NO_LIMIT "': no limit)", true) -> group(group) -> transform(string_NO_LIMIT);
 
@@ -495,7 +466,48 @@ int main (int argc, char **argv)
   app.add_option("-X", max_reads_processed_sample,
                  "maximal number of reads to process ('" NO_LIMIT "': no limit, default), sampled reads") -> group(group) -> transform(string_NO_LIMIT);
 
+
+  // ----------------------------------------------------------------------------------------------------------------------
+  group = "Clone analysis (second pass)";
+
+  app.add_option("-f",
+                 [&segment_cost](CLI::results_t res) {
+                   segment_cost = strToCost(res[0].c_str(), VDJ); 
+                   return true;
+                 },
+                 "use custom Cost for fine segmenter : format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_SEGMENT_COST) + ")"
+                 ) -> group(group) -> level() -> set_type_name("COST");
+
+  app.add_option("-E", expected_value_D, "maximal e-value for determining if a D segment can be trusted", true) -> group(group) -> level();
+
+  app.add_option("-Z", kmer_threshold, "typical number of V genes, selected by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes, default)", false)
+    -> group(group)
+    -> transform(string_NO_LIMIT) -> level();
+
   
+
+  group = "Clone analysis (second pass)";
+  app.add_flag("-3,--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)") -> group(group);
+
+
+  // ----------------------------------------------------------------------------------------------------------------------
+  group = "Additional clustering (third pass, experimental)" ;
+  app.add_option("-n", epsilon, "minimum required neighbors for automatic clustering. No automatic clusterisation if =0.", true) -> group(group) -> level();
+  app.add_option("-N", minPts, "minimum required neighbors for automatic clustering", true) -> group(group) -> level();
+  app.add_flag("-S", save_comp, "generate and save comparative matrix for clustering") -> group(group) -> level();
+  app.add_flag("-L", load_comp, "load comparative matrix for clustering") -> group(group) -> level();
+  app.add_option("--forced-edges", forced_edges, "manual clustering -- a file used to force some specific edges") -> group(group) -> level() -> set_type_name("FILE");
+
+  app.add_option("-C",
+                 [&cluster_cost](CLI::results_t res) {
+                   cluster_cost = strToCost(res[0].c_str(), Cluster);
+                   return true;
+                 },
+                 "use custom Cost for automatic clustering : format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_CLUSTER_COST) + ")"
+                 ) -> group(group) -> level() -> set_type_name("COST");
+
+  
+  // ----------------------------------------------------------------------------------------------------------------------
   group = "Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)";
   app.add_flag("-U", output_segmented, "output segmented reads (in " SEGMENTED_FILENAME " file)") -> group(group);
   app.add_flag_function("-u", [&](size_t n) {
@@ -505,27 +517,32 @@ int main (int argc, char **argv)
     }, R"Z(
         -u          output unsegmented reads, gathered by unsegmentation cause, except for very short and 'too few V/J' reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files)
         -uu         output unsegmented reads, gathered by unsegmentation cause, all reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files) (use only for debug)
-        -uuu        output unsegmented reads, all reads, including a )Z" UNSEGMENTED_FILENAME R"Z( file (use only for debug)
-)Z") -> group(group);
+        -uuu        output unsegmented reads, all reads, including a )Z" UNSEGMENTED_FILENAME R"Z( file (use only for debug))Z") -> group(group);
 
   app.add_flag("-K", output_affects, "output detailed k-mer affectation on all reads (in " AFFECTS_FILENAME " file) (use only for debug, for example -KX 100)") -> group(group);
 
 
+  // ----------------------------------------------------------------------------------------------------------------------
   group = "Output";
   app.add_option("-o", out_dir, "output directory", true) -> group(group) -> set_type_name("PATH");
-  app.add_option("-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> set_type_name("FILE");
+  app.add_option("-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> set_type_name("STRING");
   app.add_flag("-a", output_sequences_by_cluster, "output all sequences by cluster (" CLONE_FILENAME "*), to be used only on small datasets") -> group(group);
   app.add_flag_function("-v", [&](size_t n) { verbose += n ; }, "verbose mode") -> group(group);
 
+
+  // ----------------------------------------------------------------------------------------------------------------------
+  group = "Help";
+  app.set_help_flag("-h", "help")
+    -> group(group);
 
   app.add_flag_function("-H", [&](size_t n) { throw CLI::CallForAdvancedHelp() ; },
                         "help, including advanced and experimental options"
                         "\n                              "
                         "The full help is available in the doc/algo.org file."
-                        );
+                        ) -> group(group);
 
 
-
+  // ----------------------------------------------------------------------------------------------------------------------
   app.set_footer(usage_examples(argv[0]));
 
   //$$ options: parsing
