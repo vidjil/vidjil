@@ -8,6 +8,7 @@
 
 
 #define NO_LIMIT_VALUE  -1  // Value for 'all' on command-line options
+#define NO_LIMIT_VALUE_STRING  "-1"
 
 
 #define MAX_SEED_SIZE  50 // Spaced seed buffer

@@ -170,6 +170,16 @@ double atof_NO_LIMIT(char *optarg)
   return strcmp(NO_LIMIT, optarg) ? atof(optarg) : NO_LIMIT_VALUE ;
 }
 
+string string_NO_LIMIT(string s)
+{
+  if (!strcmp(NO_LIMIT, s.c_str()))
+    return NO_LIMIT_VALUE_STRING ;
+
+  return s;
+}
+
+
+
 int main (int argc, char **argv)
 {
   cout << "# " << PROGNAME << " -- V(D)J recombinations analysis <http://www.vidjil.org/>" << endl
@@ -357,10 +367,10 @@ int main (int argc, char **argv)
 #ifndef NO_SPACED_SEEDS
   //      << "                (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)" << endl
 #endif
-  app.add_option("-w", wmer_size, // atoi_NO_LIMIT
-                 "w-mer size used for the length of the extracted window ('" NO_LIMIT "': use all the read, no window clustering)") -> group(group);
-  app.add_option("-e", expected_value, // atof_NO_LIMIT
-                 "maximal e-value for determining if a V-J segmentation can be trusted", true) -> group(group);
+  app.add_option("-w", wmer_size,
+                 "w-mer size used for the length of the extracted window ('" NO_LIMIT "': use all the read, no window clustering)") -> group(group) -> transform(string_NO_LIMIT);
+  app.add_option("-e", expected_value,
+                 "maximal e-value for determining if a V-J segmentation can be trusted", true) -> group(group) -> transform(string_NO_LIMIT);
   app.add_option("-t", trim_sequences, // trim_sequences_changed = true
                  "trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt  (0: no trim)") -> group(group);
 
@@ -396,9 +406,8 @@ int main (int argc, char **argv)
   //      case 'f''	segment_cost=strToCost(optarg, VDJ);      break;
   app.add_option("-E", expected_value_D, "maximal e-value for determining if a D segment can be trusted", true) -> group(group) -> level();
 
-  app.add_option("-Z", kmer_threshold, "typical number of V genes, selected by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes, default)", true) -> group(group) -> level() -> set_type_name("NB");
-  //  atoi_NO_LIMIT(optarg);
-
+  app.add_option("-Z", kmer_threshold, "typical number of V genes, selected by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes, default)", true) -> group(group)
+    -> transform(string_NO_LIMIT) -> level() -> set_type_name("NB") ;
   
   group = "Clone analysis (second pass)";
   app.add_flag("-3,--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)") -> group(group);
@@ -422,8 +431,8 @@ int main (int argc, char **argv)
   app.add_option("--ratio", ratio_reads_clone, "minimal percentage of reads supporting a clone", true) -> group(group);
 
   group = "Limits to further analyze some clones";
-  app.add_option("-y", max_representatives,  // atoi_NO_LIMIT
-                 "maximal number of clones computed with a consensus sequence ('" NO_LIMIT "': no limit)", true) -> group(group);
+  app.add_option("-y", max_representatives,
+                 "maximal number of clones computed with a consensus sequence ('" NO_LIMIT "': no limit)", true) -> group(group) -> transform(string_NO_LIMIT);
   app.add_option("-z", max_clones, //
                  // [](CLI::results_t res) {
                  //    max_clones = atoi_NO_LIMIT(optarg);
@@ -440,10 +449,10 @@ int main (int argc, char **argv)
     },
     "reports and segments all clones (-r 0 -% 0 -y " NO_LIMIT " -z " NO_LIMIT "), to be used only on very small datasets (for example -AX 20)") -> group(group);
 
-  app.add_option("-x", max_reads_processed_sample, // atoi_NO_LIMIT
-                 "maximal number of reads to process ('" NO_LIMIT "': no limit, default), only first reads") -> group(group);
-  app.add_option("-X", max_reads_processed, // atoi_NO_LIMIT
-                 "maximal number of reads to process ('" NO_LIMIT "': no limit, default), sampled reads") -> group(group);
+  app.add_option("-x", max_reads_processed_sample,
+                 "maximal number of reads to process ('" NO_LIMIT "': no limit, default), only first reads") -> group(group) -> transform(string_NO_LIMIT);
+  app.add_option("-X", max_reads_processed,
+                 "maximal number of reads to process ('" NO_LIMIT "': no limit, default), sampled reads") -> group(group) -> transform(string_NO_LIMIT);
 
   
   group = "Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)";
