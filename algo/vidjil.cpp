@@ -331,7 +331,7 @@ int main (int argc, char **argv)
          -g <path>
                     multiple locus/germlines, shortcut for '-g <path>/)Z" DEFAULT_MULTI_GERMLINE_FILE R"Z(',
                     processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombination
-)Z") -> group(group) -> expected(1) -> set_type_name("GERMLINES");
+)Z") -> group(group) -> set_type_name("GERMLINES");
 
   app.add_option("-V", v_reps_V, "custom V germline multi-fasta file") -> group(group) -> set_type_name("FILE");
   app.add_option("-D", v_reps_D, "custom D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components") -> group(group) -> set_type_name("FILE");
