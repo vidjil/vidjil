@@ -283,6 +283,7 @@ int main (int argc, char **argv)
   string forced_edges = "" ;
 
   map <string, string> windows_labels ;
+  vector <string> windows_labels_explicit ;
   string windows_labels_file = "" ;
   bool only_labeled_windows = false ;
 
@@ -400,11 +401,9 @@ int main (int argc, char **argv)
 
 
   group = "Labeled sequences (windows related to these sequences will be kept even if -r/-% thresholds are not reached)";
-  /*
-  app.add_option("-W",
-                 // TODO:  windows_labels[string(optarg)] = string("-W");
-                 , "label the given sequence") -> group(group);
-  */
+
+  app.add_option("-W", windows_labels_explicit, "label the given sequence") -> group(group);
+
   app.add_option("-l", windows_labels_file, "label a set of sequences given in <file>") -> group(group) -> set_type_name("FILE");
   app.add_flag("-F", only_labeled_windows, "filter -- keep only the windows related to the labeled sequences") -> group(group);
 
@@ -566,6 +565,9 @@ int main (int argc, char **argv)
       return 1;
     }
 
+  for(string lab : windows_labels_explicit)
+    windows_labels[lab] = string("-W");
+  
   string out_seqdir = out_dir + "/seq/" ;
 
   if (verbose)
