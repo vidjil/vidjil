@@ -2653,7 +2653,7 @@ class App {
         bool npos = false;
         std::vector<std::string> groups;
         for(const Option_p &opt : options_) {
-            if(opt->nonpositional()) {
+            if(opt->nonpositional() && opt->help_level_ <= help_level) {
                 npos = true;
 
                 // Add group if it is not already in there
