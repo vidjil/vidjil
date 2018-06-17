@@ -378,7 +378,13 @@ int main (int argc, char **argv)
                  "w-mer size used for the length of the extracted window ('" NO_LIMIT "': use all the read, no window clustering)") -> group(group) -> transform(string_NO_LIMIT);
   app.add_option("-e", expected_value,
                  "maximal e-value for determining if a V-J segmentation can be trusted", true) -> group(group) -> transform(string_NO_LIMIT);
-  app.add_option("-t", trim_sequences, // trim_sequences_changed = true
+  app.add_option("-t",
+                 [&](CLI::results_t res) {
+                   bool worked = CLI::detail::lexical_cast(res[0], trim_sequences);
+                   trim_sequences_changed = true;
+                   return true;
+                 },
+                 // trim_sequences,
                  "trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt  (0: no trim)") -> group(group);
 
   app.add_option("-s",
