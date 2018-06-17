@@ -161,11 +161,11 @@ int usage(char *progname, bool advanced)
 }
 
 
-int atoi_NO_LIMIT(char *optarg)
+int atoi_NO_LIMIT(const char *optarg)
 {
   return strcmp(NO_LIMIT, optarg) ? atoi(optarg) : NO_LIMIT_VALUE ;
 }
-double atof_NO_LIMIT(char *optarg)
+double atof_NO_LIMIT(const char *optarg)
 {
   return strcmp(NO_LIMIT, optarg) ? atof(optarg) : NO_LIMIT_VALUE ;
 }
@@ -455,12 +455,15 @@ int main (int argc, char **argv)
   group = "Limits to further analyze some clones";
   app.add_option("-y", max_representatives,
                  "maximal number of clones computed with a consensus sequence ('" NO_LIMIT "': no limit)", true) -> group(group) -> transform(string_NO_LIMIT);
-  app.add_option("-z", max_clones, //
-                 // [](CLI::results_t res) {
-                 //    max_clones = atoi_NO_LIMIT(optarg);
-                 //    if ((max_representatives < max_clones) && (max_representatives != NO_LIMIT_VALUE))
-                 //    max_representatives = max_clones ;
-                 // }
+
+  app.add_option("-z",
+                 [&max_clones, &max_representatives](CLI::results_t res) {
+                   max_clones = atoi_NO_LIMIT(res[0].c_str());
+                   if ((max_representatives < max_clones) && (max_representatives != NO_LIMIT_VALUE))
+                     max_representatives = max_clones ;
+                   return true;
+                   // TODO: return false on bad input
+                 },
                  "maximal number of clones to be analyzed with a full V(D)J designation ('" NO_LIMIT "': no limit, do not use)", true)-> group(group);
 
   app.add_flag_function("-A", [&](size_t n) {
