@@ -12,3 +12,5 @@ $ Display advanced options
 : , experimental options
 : custom Cost
 
+$ Correct number of options
+B47:^  -

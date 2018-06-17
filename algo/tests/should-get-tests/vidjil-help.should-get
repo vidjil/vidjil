@@ -13,3 +13,6 @@ $ Check default filtering options
 $ Do not display advanced options
 0: , experimental options
 0: custom Cost
+
+$ Correct number of regular options
+B24:^  -
