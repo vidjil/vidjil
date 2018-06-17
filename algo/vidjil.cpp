@@ -301,7 +301,7 @@ int main (int argc, char **argv)
 
   int kmer_threshold = DEFAULT_KMER_THRESHOLD;
 
-  //$$ options: definition wiht CLI11
+  //$$ options: definition with CLI11
   string group = "";
 
 
@@ -333,6 +333,7 @@ int main (int argc, char **argv)
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Germline presets (at least one -g or -V/(-D)/-J option must be given for all commands except -c " COMMAND_GERMLINES ")";
+
   app.add_option("-g", multi_germlines, R"Z(
          -g <.g FILE>(:FILTER)
                     multiple locus/germlines, with tuned parameters.
@@ -340,12 +341,20 @@ int main (int argc, char **argv)
                     The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
          -g PATH
                     multiple locus/germlines, shortcut for '-g PATH/)Z" DEFAULT_MULTI_GERMLINE_FILE R"Z(',
-                    processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombination
-)Z") -> group(group) -> set_type_name("GERMLINES");
+                    processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombination)Z")
+    -> group(group) -> set_type_name("GERMLINES");
 
-  app.add_option("-V", v_reps_V, "custom V germline multi-fasta file(s)") -> group(group) -> set_type_name("FILE");
-  app.add_option("-D", v_reps_D, "custom D germline multi-fasta file(s) (and resets -m and -w options), will segment into V(D)J components") -> group(group) -> set_type_name("FILE");
-  app.add_option("-J", v_reps_J, "custom V germline multi-fasta file(s)") -> group(group) -> set_type_name("FILE");
+  app.add_option("-V", v_reps_V,
+                 "custom V germline multi-fasta file(s)")
+    -> group(group) -> set_type_name("FILE");
+
+  app.add_option("-D", v_reps_D,
+                 "custom D germline multi-fasta file(s) (and resets -m and -w options), will segment into V(D)J components")
+    -> group(group) -> set_type_name("FILE");
+
+  app.add_option("-J", v_reps_J,
+                 "custom V germline multi-fasta file(s)")
+    -> group(group) -> set_type_name("FILE");
 
 
   // ----------------------------------------------------------------------------------------------------------------------
@@ -363,8 +372,8 @@ int main (int argc, char **argv)
 
   app.add_flag_function("-q",
                         [&](size_t n) { indexType = AC_AUTOMATON; },
-                        "use Aho-Corasick-like automaton (experimental)"
-                        ) -> group(group) -> level();
+                        "use Aho-Corasick-like automaton (experimental)")
+    -> group(group) -> level();
 
   app.add_option("-k",
                  [&](CLI::results_t res) {
@@ -377,17 +386,21 @@ int main (int argc, char **argv)
                    }
                    return worked;
                  },
-                 "k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)"
-                 ) -> group(group) -> set_type_name("INT");
+                 "k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)")
+    -> group(group) -> set_type_name("INT");
 
     
 #ifndef NO_SPACED_SEEDS
   //      << "                (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)" << endl
 #endif
   app.add_option("-w", wmer_size,
-                 "w-mer size used for the length of the extracted window ('" NO_LIMIT "': use all the read, no window clustering)") -> group(group) -> transform(string_NO_LIMIT);
+                 "w-mer size used for the length of the extracted window ('" NO_LIMIT "': use all the read, no window clustering)")
+    -> group(group) -> transform(string_NO_LIMIT);
+
   app.add_option("-e", expected_value,
-                 "maximal e-value for determining if a V-J segmentation can be trusted", true) -> group(group) -> transform(string_NO_LIMIT);
+                 "maximal e-value for determining if a V-J segmentation can be trusted", true)
+    -> group(group) -> transform(string_NO_LIMIT);
+
   app.add_option("-t",
                  [&](CLI::results_t res) {
                    bool worked = CLI::detail::lexical_cast(res[0], trim_sequences);
@@ -395,8 +408,8 @@ int main (int argc, char **argv)
                    return true;
                  },
                  // trim_sequences,
-                 "trim V and J genes (resp. 5' and 3' regions) to keep at most <INT> nt  (0: no trim)"
-                 ) -> group(group) -> set_type_name("INT");
+                 "trim V and J genes (resp. 5' and 3' regions) to keep at most <INT> nt  (0: no trim)")
+    -> group(group) -> set_type_name("INT");
 
   app.add_option("-s",
                  [&](CLI::results_t res) {
@@ -405,8 +418,8 @@ int main (int argc, char **argv)
                    seed_changed = true;
                    return true;
                  },
-                 "spaced seeds used for the V/J affectation (default: depends on germline)"
-                 ) -> group(group) -> level();
+                 "spaced seeds used for the V/J affectation (default: depends on germline)")
+    -> group(group) -> level();
 
 /*
 #ifdef NO_SPACED_SEEDS
@@ -417,11 +430,22 @@ int main (int argc, char **argv)
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Recombination detection, experimental options (do not use)";
-  app.add_flag("-I", multi_germline_mark, "ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)") -> group(group) -> level();
+
+  app.add_flag("-I", multi_germline_mark,
+               "ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)")
+    -> group(group) -> level();
+
   app.add_flag("-1", multi_germline_one_unique_index,
-               "use a unique index for all germline systems (experimental, must be used with -g, do not use)") -> group(group) -> level();
-  app.add_flag("-4", multi_germline_unexpected_recombinations_1U, "try to detect unexpected recombinations with translocations (experimental, must be used with -g, do not use)") -> group(group) -> level();
-  app.add_flag("--keep", keep_unsegmented_as_clone, "keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example --keep -AX 20)") -> group(group) -> level();
+               "use a unique index for all germline systems (experimental, must be used with -g, do not use)")
+    -> group(group) -> level();
+
+  app.add_flag("-4", multi_germline_unexpected_recombinations_1U,
+               "try to detect unexpected recombinations with translocations (experimental, must be used with -g, do not use)")
+    -> group(group) -> level();
+
+  app.add_flag("--keep", keep_unsegmented_as_clone,
+               "keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example --keep -AX 20)")
+    -> group(group) -> level();
 
 
   // ----------------------------------------------------------------------------------------------------------------------
@@ -439,8 +463,10 @@ int main (int argc, char **argv)
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Limits to further analyze some clones (second pass)";
+
   app.add_option("-y", max_representatives,
-                 "maximal number of clones computed with a consensus sequence ('" NO_LIMIT "': no limit)", true) -> group(group) -> transform(string_NO_LIMIT);
+                 "maximal number of clones computed with a consensus sequence ('" NO_LIMIT "': no limit)", true)
+    -> group(group) -> transform(string_NO_LIMIT);
 
   app.add_option("-z",
                  [&max_clones, &max_representatives](CLI::results_t res) {
@@ -450,8 +476,8 @@ int main (int argc, char **argv)
                    return true;
                    // TODO: return false on bad input
                  },
-                 "maximal number of clones to be analyzed with a full V(D)J designation ('" NO_LIMIT "': no limit, do not use)"
-                 ) -> group(group) -> set_type_name("INT=" + string_of_int(max_clones));
+                 "maximal number of clones to be analyzed with a full V(D)J designation ('" NO_LIMIT "': no limit, do not use)")
+    -> group(group) -> set_type_name("INT=" + string_of_int(max_clones));
 
   app.add_flag_function("-A", [&](size_t n) {
       ratio_reads_clone = 0 ;
@@ -459,12 +485,16 @@ int main (int argc, char **argv)
       max_representatives = NO_LIMIT_VALUE ;
       max_clones = NO_LIMIT_VALUE ;
     },
-    "reports and segments all clones (-r 0 --ratio 0 -y " NO_LIMIT " -z " NO_LIMIT "), to be used only on very small datasets (for example -AX 20)") -> group(group);
+    "reports and segments all clones (-r 0 --ratio 0 -y " NO_LIMIT " -z " NO_LIMIT "), to be used only on very small datasets (for example -AX 20)")
+    -> group(group);
 
   app.add_option("-x", max_reads_processed,
-                 "maximal number of reads to process ('" NO_LIMIT "': no limit, default), only first reads") -> group(group) -> transform(string_NO_LIMIT);
+                 "maximal number of reads to process ('" NO_LIMIT "': no limit, default), only first reads")
+    -> group(group) -> transform(string_NO_LIMIT);
+
   app.add_option("-X", max_reads_processed_sample,
-                 "maximal number of reads to process ('" NO_LIMIT "': no limit, default), sampled reads") -> group(group) -> transform(string_NO_LIMIT);
+                 "maximal number of reads to process ('" NO_LIMIT "': no limit, default), sampled reads")
+    -> group(group) -> transform(string_NO_LIMIT);
 
 
   // ----------------------------------------------------------------------------------------------------------------------
@@ -475,19 +505,19 @@ int main (int argc, char **argv)
                    segment_cost = strToCost(res[0].c_str(), VDJ); 
                    return true;
                  },
-                 "use custom Cost for fine segmenter : format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_SEGMENT_COST) + ")"
-                 ) -> group(group) -> level() -> set_type_name("COST");
+                 "use custom Cost for fine segmenter : format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_SEGMENT_COST) + ")")
+    -> group(group) -> level() -> set_type_name("COST");
 
-  app.add_option("-E", expected_value_D, "maximal e-value for determining if a D segment can be trusted", true) -> group(group) -> level();
+  app.add_option("-E", expected_value_D,
+                 "maximal e-value for determining if a D segment can be trusted", true)
+    -> group(group) -> level();
 
-  app.add_option("-Z", kmer_threshold, "typical number of V genes, selected by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes, default)", false)
-    -> group(group)
-    -> transform(string_NO_LIMIT) -> level();
+  app.add_option("-Z", kmer_threshold,
+                 "typical number of V genes, selected by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes, default)", false)
+    -> group(group) -> transform(string_NO_LIMIT) -> level();
 
-  
-
-  group = "Clone analysis (second pass)";
-  app.add_flag("-3,--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)") -> group(group);
+  app.add_flag("-3,--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)")
+    -> group(group);
 
 
   // ----------------------------------------------------------------------------------------------------------------------
@@ -503,13 +533,16 @@ int main (int argc, char **argv)
                    cluster_cost = strToCost(res[0].c_str(), Cluster);
                    return true;
                  },
-                 "use custom Cost for automatic clustering : format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_CLUSTER_COST) + ")"
-                 ) -> group(group) -> level() -> set_type_name("COST");
+                 "use custom Cost for automatic clustering : format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_CLUSTER_COST) + ")")
+    -> group(group) -> level() -> set_type_name("COST");
 
   
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)";
-  app.add_flag("-U", output_segmented, "output segmented reads (in " SEGMENTED_FILENAME " file)") -> group(group);
+  app.add_flag("-U", output_segmented,
+               "output segmented reads (in " SEGMENTED_FILENAME " file)")
+    -> group(group);
+
   app.add_flag_function("-u", [&](size_t n) {
       output_unsegmented = output_unsegmented_detail_full ;       // -uuu
       output_unsegmented_detail_full = output_unsegmented_detail; // -uu
@@ -517,9 +550,12 @@ int main (int argc, char **argv)
     }, R"Z(
         -u          output unsegmented reads, gathered by unsegmentation cause, except for very short and 'too few V/J' reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files)
         -uu         output unsegmented reads, gathered by unsegmentation cause, all reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files) (use only for debug)
-        -uuu        output unsegmented reads, all reads, including a )Z" UNSEGMENTED_FILENAME R"Z( file (use only for debug))Z") -> group(group);
+        -uuu        output unsegmented reads, all reads, including a )Z" UNSEGMENTED_FILENAME R"Z( file (use only for debug))Z")
+    -> group(group);
 
-  app.add_flag("-K", output_affects, "output detailed k-mer affectation on all reads (in " AFFECTS_FILENAME " file) (use only for debug, for example -KX 100)") -> group(group);
+  app.add_flag("-K", output_affects,
+               "output detailed k-mer affectation on all reads (in " AFFECTS_FILENAME " file) (use only for debug, for example -KX 100)")
+    -> group(group);
 
 
   // ----------------------------------------------------------------------------------------------------------------------
@@ -538,8 +574,8 @@ int main (int argc, char **argv)
   app.add_flag_function("-H", [&](size_t n) { throw CLI::CallForAdvancedHelp() ; },
                         "help, including advanced and experimental options"
                         "\n                              "
-                        "The full help is available in the doc/algo.org file."
-                        ) -> group(group);
+                        "The full help is available in the doc/algo.org file.")
+    -> group(group);
 
 
   // ----------------------------------------------------------------------------------------------------------------------
