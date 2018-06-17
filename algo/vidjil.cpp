@@ -400,7 +400,7 @@ int main (int argc, char **argv)
 
 
 
-  group = "Labeled sequences (windows related to these sequences will be kept even if -r/-% thresholds are not reached)";
+  group = "Labeled sequences (windows related to these sequences will be kept even if -r/--ratio thresholds are not reached)";
 
   app.add_option("-W", windows_labels_explicit, "label the given sequence") -> group(group);
 
@@ -472,7 +472,7 @@ int main (int argc, char **argv)
       max_representatives = NO_LIMIT_VALUE ;
       max_clones = NO_LIMIT_VALUE ;
     },
-    "reports and segments all clones (-r 0 -% 0 -y " NO_LIMIT " -z " NO_LIMIT "), to be used only on very small datasets (for example -AX 20)") -> group(group);
+    "reports and segments all clones (-r 0 --ratio 0 -y " NO_LIMIT " -z " NO_LIMIT "), to be used only on very small datasets (for example -AX 20)") -> group(group);
 
   app.add_option("-x", max_reads_processed_sample,
                  "maximal number of reads to process ('" NO_LIMIT "': no limit, default), only first reads") -> group(group) -> transform(string_NO_LIMIT);
@@ -1136,7 +1136,7 @@ int main (int argc, char **argv)
     if (sort_clones.size() == 0)
       {
 	cout << "  ! No clones with current parameters." << endl;
-	cout << "  ! See the 'Limits to report a clone' options (-r, -%, -z, -A)." << endl;
+	cout << "  ! See the 'Limits to report a clone' options (-r, --ratio, -z, -A)." << endl;
       }
     else
       {
