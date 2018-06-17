@@ -319,7 +319,7 @@ int main (int argc, char **argv)
     -> group(group) -> set_type_name("COMMAND");
 
   group = "Input" ;
-  app.add_option("--separator", read_header_separator, "separator for headers in the reads file", true) -> group(group) -> level() -> set_type_name("CHAR")  ;
+  app.add_option("--header-sep", read_header_separator, "separator for headers in the reads file", true) -> group(group) -> level() -> set_type_name("CHAR")  ;
 
   
   group = "Germline presets (at least one -g or -V/(-D)/-J option must be given for all commands except -c " COMMAND_GERMLINES ")";
