@@ -307,8 +307,13 @@ int main (int argc, char **argv)
 
   // cerr << "Usage: " << progname << " [options] <reads.fa/.fq/.gz>" << endl << endl;
 
-  group = "Files";
-  app.add_option("reads", f_reads, "reads.fa/.fq/.gz") -> group(group) -> set_type_name("FILE");
+  app.add_option("reads_file", f_reads, R"Z(reads file, in one of the following formats:
+                                  - FASTA (.fa/.fasta, .fa.gz/.fasta.gz)
+                                  - FASTQ (.fq/.fastq, .fq.gz/.fastq.gz)
+                                  - BAM (.bam)
+                              Paired-end reads should be merged before given as an input to vidjil-algo.
+                 )Z")
+    -> required() -> set_type_name("");
 
 
   group = "Command selection";
