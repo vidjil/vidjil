@@ -356,11 +356,19 @@ int main (int argc, char **argv)
   */
 #endif
 
-  int kmer_size = 0; // TODO: vierer
-  app.add_option("-k", kmer_size, "k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)") -> group(group);
-  // seed = seed_contiguous(kmer_size);
-  //        seed_changed = true;
-  //	options_s_k++ ;
+  app.add_option("-k",
+                 [&](CLI::results_t res) {
+                   int kmer_size ;
+                   bool worked = CLI::detail::lexical_cast(res[0], kmer_size);
+                   if (worked) {
+                     seed = seed_contiguous(kmer_size);
+                     seed_changed = true;
+                     options_s_k++ ;
+                   }
+                   return worked;
+                 },
+                 "k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)") -> group(group);
+
     
 #ifndef NO_SPACED_SEEDS
   //      << "                (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)" << endl
