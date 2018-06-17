@@ -464,7 +464,8 @@ int main (int argc, char **argv)
                    return true;
                    // TODO: return false on bad input
                  },
-                 "maximal number of clones to be analyzed with a full V(D)J designation ('" NO_LIMIT "': no limit, do not use)", true)-> group(group);
+                 "maximal number of clones to be analyzed with a full V(D)J designation ('" NO_LIMIT "': no limit, do not use)"
+                 ) -> group(group) -> set_type_name("INT=" + string_of_int(max_clones));
 
   app.add_flag_function("-A", [&](size_t n) {
       ratio_reads_clone = 0 ;
