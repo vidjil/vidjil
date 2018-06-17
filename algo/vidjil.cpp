@@ -326,18 +326,18 @@ int main (int argc, char **argv)
   
   group = "Germline presets (at least one -g or -V/(-D)/-J option must be given for all commands except -c " COMMAND_GERMLINES ")";
   app.add_option("-g", multi_germlines, R"Z(
-         -g <.g file>(:filter)
+         -g <.g FILE>(:FILTER)
                     multiple locus/germlines, with tuned parameters.
                     Common values are '-g germline/homo-sapiens.g' or '-g germline/mus-musculus.g'
                     The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
-         -g <path>
-                    multiple locus/germlines, shortcut for '-g <path>/)Z" DEFAULT_MULTI_GERMLINE_FILE R"Z(',
+         -g PATH
+                    multiple locus/germlines, shortcut for '-g PATH/)Z" DEFAULT_MULTI_GERMLINE_FILE R"Z(',
                     processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombination
 )Z") -> group(group) -> set_type_name("GERMLINES");
 
-  app.add_option("-V", v_reps_V, "custom V germline multi-fasta file") -> group(group) -> set_type_name("FILE");
-  app.add_option("-D", v_reps_D, "custom D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components") -> group(group) -> set_type_name("FILE");
-  app.add_option("-J", v_reps_J, "custom V germline multi-fasta file") -> group(group) -> set_type_name("FILE");
+  app.add_option("-V", v_reps_V, "custom V germline multi-fasta file(s)") -> group(group) -> set_type_name("FILE");
+  app.add_option("-D", v_reps_D, "custom D germline multi-fasta file(s) (and resets -m and -w options), will segment into V(D)J components") -> group(group) -> set_type_name("FILE");
+  app.add_option("-J", v_reps_J, "custom V germline multi-fasta file(s)") -> group(group) -> set_type_name("FILE");
 
   group = "Locus/recombinations";
   app.add_flag("-d", several_D, "try to detect several D (experimental)") -> group(group);
@@ -370,7 +370,8 @@ int main (int argc, char **argv)
                    }
                    return worked;
                  },
-                 "k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)") -> group(group);
+                 "k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)"
+                 ) -> group(group) -> set_type_name("INT");
 
     
 #ifndef NO_SPACED_SEEDS
@@ -387,7 +388,8 @@ int main (int argc, char **argv)
                    return true;
                  },
                  // trim_sequences,
-                 "trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt  (0: no trim)") -> group(group);
+                 "trim V and J genes (resp. 5' and 3' regions) to keep at most <INT> nt  (0: no trim)"
+                 ) -> group(group) -> set_type_name("INT");
 
   app.add_option("-s",
                  [&](CLI::results_t res) {
@@ -410,7 +412,7 @@ int main (int argc, char **argv)
 
   group = "Labeled sequences (windows related to these sequences will be kept even if -r/--ratio thresholds are not reached)";
 
-  app.add_option("-W", windows_labels_explicit, "label the given sequence") -> group(group);
+  app.add_option("-W", windows_labels_explicit, "label the given sequence(s)") -> group(group) -> set_type_name("SEQUENCE");
 
   app.add_option("-l", windows_labels_file, "label a set of sequences given in <file>") -> group(group) -> set_type_name("FILE");
   app.add_flag("-F", only_labeled_windows, "filter -- keep only the windows related to the labeled sequences") -> group(group);
@@ -425,12 +427,13 @@ int main (int argc, char **argv)
                    return true;
                  },
                  "use custom Cost for fine segmenter : format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_SEGMENT_COST) + ")"
-                 ) -> group(group);
+                 ) -> group(group) -> level() -> set_type_name("COST");
 
   app.add_option("-E", expected_value_D, "maximal e-value for determining if a D segment can be trusted", true) -> group(group) -> level();
 
-  app.add_option("-Z", kmer_threshold, "typical number of V genes, selected by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes, default)", true) -> group(group)
-    -> transform(string_NO_LIMIT) -> level() -> set_type_name("NB") ;
+  app.add_option("-Z", kmer_threshold, "typical number of V genes, selected by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes, default)", false)
+    -> group(group)
+    -> transform(string_NO_LIMIT) -> level();
   
   group = "Clone analysis (second pass)";
   app.add_flag("-3,--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)") -> group(group);
@@ -443,9 +446,9 @@ int main (int argc, char **argv)
   app.add_option("-n", epsilon, "minimum required neighbors for automatic clustering. No automatic clusterisation if =0.", true) -> group(group) -> level();
 
   app.add_option("-N", minPts, "", true) -> group(group) -> level();
-  app.add_option("-S", save_comp, "generate and save comparative matrix for clustering") -> group(group) -> level();
-  app.add_option("-L", load_comp, "load comparative matrix for clustering") -> group(group) -> level();
-  app.add_option("--forced-edges", forced_edges, "manual clustering -- a file used to force some specific edges") -> group(group) -> level();
+  app.add_flag("-S", save_comp, "generate and save comparative matrix for clustering") -> group(group) -> level();
+  app.add_flag("-L", load_comp, "load comparative matrix for clustering") -> group(group) -> level();
+  app.add_option("--forced-edges", forced_edges, "manual clustering -- a file used to force some specific edges") -> group(group) -> level() -> set_type_name("FILE");
 
   app.add_option("-C",
                  [&cluster_cost](CLI::results_t res) {
@@ -453,7 +456,7 @@ int main (int argc, char **argv)
                    return true;
                  },
                  "use custom Cost for automatic clustering : format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_CLUSTER_COST) + ")"
-                 ) -> group(group) -> level();
+                 ) -> group(group) -> level() -> set_type_name("COST");
 
   group = "Limits to report a clone (or a window)";
   app.add_option("-r", min_reads_clone, "minimal number of reads supporting a clone", true) -> group(group);
