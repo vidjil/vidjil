@@ -143,9 +143,10 @@ extern char *optarg;
 
 extern int optind, optopt, opterr;
 
-int usage(char *progname, bool advanced)
+string usage_examples(char *progname)
 {
-  cout
+  stringstream ss;
+  ss
        << endl 
        << "Examples (see doc/algo.org)" << endl
        << "  " << progname << " -c clones   -g germline/homo-sapiens.g   -2 -3 -r 1  demo/Demo-X5.fa           # (basic usage, detect the locus for each read," << endl
@@ -157,7 +158,8 @@ int usage(char *progname, bool advanced)
        << "  " << progname << " -c segment  -g germline/homo-sapiens.g   -2 -3 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing, here on 50 sampled reads)" << endl
        << "  " << progname << " -c germlines -g germline/homo-sapiens.g              demo/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
     ;
-  return 1;
+
+  return ss.str();
 }
 
 
@@ -516,6 +518,8 @@ int main (int argc, char **argv)
 
 
 
+  app.set_footer(usage_examples(argv[0]));
+
   //$$ options: parsing
   CLI11_PARSE(app, argc, argv);
 
@@ -531,7 +535,7 @@ int main (int argc, char **argv)
     command = CMD_GERMLINES;
   else {
     cerr << "Unknwown command " << optarg << endl;
-    usage(argv[0], false);
+    throw CLI::CallForHelp();
   }
 
   list <string> f_reps_V(v_reps_V.begin(), v_reps_V.end());
