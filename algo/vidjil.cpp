@@ -353,8 +353,10 @@ int main (int argc, char **argv)
                    seed_changed = true;
                    return true;
                  },
-                 "spaced seeds used for the V/J affectation (default: depends on germline)")
-    -> group(group) -> level();
+                 "spaced seed used for the V/J affectation (default: depends on germline), given either explicitely, either by an alias"
+                 "\n                             " + string_of_map(seedMap, " ")
+                 )
+    -> group(group) -> level() -> set_type_name("SEED=" DEFAULT_SEED);
 
 
   // ----------------------------------------------------------------------------------------------------------------------
