@@ -397,6 +397,34 @@ void testGetMaximum() {
            << results.nb_after_left << ", right: "
            << results.nb_after_right);
 
+
+  KmerAffect a6[] = {AFFECT_J_BWD, AFFECT_J_BWD, AFFECT_J_BWD,
+                     AFFECT_J_BWD, AFFECT_J_BWD, AFFECT_J_BWD, AFFECT_J_BWD, AFFECT_J_BWD,
+                     AFFECT_V_BWD, AFFECT_V_BWD, AFFECT_V_BWD,
+                     AFFECT_V_BWD, AFFECT_V_BWD, AFFECT_J_BWD,
+                     AFFECT_J_BWD, AFFECT_J_BWD, AFFECT_V_BWD, AFFECT_V_BWD, AFFECT_V_BWD, AFFECT_V_BWD};
+  //  0 1 2 3 4 5 6 7 8 9  11  13  15  17  19
+  // J-J-J-J-J-J-J-J-V-V-V-V-V-J-J-J-V-V-V-V-
+  vector<KmerAffect> affectations6(a6, a6+sizeof(a6)/sizeof(KmerAffect));
+  KmerAffectAnalyser kaa6(*index, "", affectations6);
+  results = kaa6.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 2., 0);
+
+  TAP_TEST(! results.max_found, TEST_AA_GET_MAXIMUM_MAX_FOUND,
+           "max_found = " << results.max_found);
+  TAP_TEST(results.max_value == 4, TEST_AA_GET_MAXIMUM_VALUE,
+           "max = " << results.max_value);
+  TAP_TEST(results.first_pos_max == 7 && results.last_pos_max == 11,
+           TEST_AA_GET_MAXIMUM_POSITIONS,
+           "first = " << results.first_pos_max
+           << ", last = " << results.last_pos_max);
+  TAP_TEST(results.nb_before_left == 4 && results.nb_before_right == 3
+           && results.nb_after_left == 0 && results.nb_after_right == 5,
+           TEST_AA_GET_MAXIMUM_COUNTS,
+           "before:: left: " << results.nb_before_left <<", right: "
+           << results.nb_before_right << "\nafter:: left: "
+           << results.nb_after_left << ", right: "
+           << results.nb_after_right);
+
   delete index;
 }
 
