@@ -205,3 +205,17 @@ QUnit.test("computeStartStop(arrayToProcess,sequence)", function(assert) {
 
     }
 );
+
+
+QUnit.test("Pearson coefficient", function(assert) {
+
+    assert.equal(pearsonCoeff([0, 1, 2, 3], [0, 1, 2, 3]), 1)
+    assert.equal(pearsonCoeff([0, 1, 2, 3], [40, 50, 60, 70]), 1)
+
+    assert.ok(pearsonCoeff([0, 1, 2, 3], [41, 49, 68, 69]) > .9)
+    assert.ok(pearsonCoeff([0, 1, 2, 3], [49, 30, 1, 102]) < .5)
+
+    assert.equal(pearsonCoeff([3, 2, 1], [1, 2, 3]), -1)
+    assert.equal(pearsonCoeff([3, 2, 1], [10, 20, 30]), -1)
+    }
+);

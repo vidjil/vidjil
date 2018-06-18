@@ -161,6 +161,27 @@ QUnit.test("select/focus", function(assert) {
 });
 
 
+
+QUnit.test("correlate", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data,100)
+    assert.equal(m.clone(0).id, 'id1')
+    assert.equal(m.clone(1).id, 'id2')
+    assert.equal(m.clone(2).id, 'id3')
+    assert.equal(m.clone(3).id, 'id4')
+    assert.equal(m.clone(4).id, 'id5')
+
+    m.selectCorrelated(4, 0.99)
+    assert.deepEqual(m.getSelected(), [3, 4], "Clone 3 is strongly correlated to clone 4");
+
+    m.selectCorrelated(4)
+    assert.deepEqual(m.getSelected(), [2, 3, 4], "Clones 2 and 3 are correlated to clone 4");
+
+    m.selectCorrelated(0, 0.99)
+    assert.deepEqual(m.getSelected(), [0, 1], "Clone 1 strongly (negatively) correlated to clone 0");
+})
+
+
 QUnit.test("focus/hide/reset_filter", function(assert) {
 
     var m = new Model();

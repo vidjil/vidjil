@@ -39,7 +39,7 @@ QUnit.test("segmenter", function(assert) {
     m.unselectAll();
     
     //
-    assert.deepEqual(segment.findPotentialField(), ["","cdr3","fr1", "5", "id", "f1", "V-REGION","J-REGION","D-REGION","CDR3-IMGT"], "potentialField : Ok")
+    assert.deepEqual(segment.findPotentialField(), ["","cdr3","fr1", "5", "f1", "V-REGION","J-REGION","D-REGION","CDR3-IMGT"], "potentialField : Ok")
 
     m.select(0)
     // assert.deepEqual(segment.toFasta(), "> test1 // 5.000%\naaaaaaaaaaaaaaaaaaaAG\n","toFasta :Ok")
@@ -140,7 +140,7 @@ QUnit.test("segt", function (assert) {
     assert.ok(segment.isDNA('CACCCAGGAGGTGGAGCTGGATATTGAGACT'), "test dna")
     assert.ok(segment.isAA('CACCCAGGAGGTGGAGCTGGATATTGAGACT'), "test AA")
     assert.ok(segment.isPos(h), "test if an object contain pos")
-    assert.deepEqual(segment.findPotentialField(),["", "cdr3", "fr1", "5", "test_feature", "id", "f1", "V-REGION", "J-REGION",  "D-REGION", "CDR3-IMGT"], "find field to highlight")
+    assert.deepEqual(segment.findPotentialField(),["", "cdr3", "fr1", "5", "test_feature", "f1", "V-REGION", "J-REGION",  "D-REGION", "CDR3-IMGT"], "find field to highlight")
 
 })
 
