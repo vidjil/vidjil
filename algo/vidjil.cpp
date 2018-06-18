@@ -544,9 +544,9 @@ int main (int argc, char **argv)
     -> group(group);
 
   app.add_flag_function("-u", [&](size_t n) {
-      output_unsegmented = output_unsegmented_detail_full ;       // -uuu
-      output_unsegmented_detail_full = output_unsegmented_detail; // -uu
-      output_unsegmented_detail = true;                           // -u
+      output_unsegmented = (n >= 3);             // -uuu
+      output_unsegmented_detail_full = (n >= 2); // -uu
+      output_unsegmented_detail = (n >= 1);      // -u
     }, R"Z(
         -u          output unsegmented reads, gathered by unsegmentation cause, except for very short and 'too few V/J' reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files)
         -uu         output unsegmented reads, gathered by unsegmentation cause, all reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files) (use only for debug)
