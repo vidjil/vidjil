@@ -479,5 +479,6 @@ void testAffectAnalyser() {
   testAffectAnalyser2<PointerACAutomaton>();
   testAffectAnalyserMaxes<PointerACAutomaton>();
   testBugAffectAnalyser<PointerACAutomaton>();
+  testGetMaximum<PointerACAutomaton>();
   testAffectAnalyserSpaced<PointerACAutomaton>();
 }
