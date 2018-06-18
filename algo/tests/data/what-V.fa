@@ -1,0 +1,24 @@
+
+# Here TRGV1*01 should be strictly better than TRGV5P*01
+
+#          #####-#####
+#                       X                           X              X
+# V1*01  aagcacaaggagcaattggaatttgagactgcaaaatctaattaaaaatgattctgggttctattactgtgccacctgggacagg
+#        aagcacaaggagcaaCtggaatttgagactgcaaaatctaattGaaaatgattctgggGtctattactgtgccacct
+# V5P*01 accgaggaggtggagCtggaatttgagactgcaaaatctaattgaaaatgattctggggtctattactgtgccacctggggcagg
+#         XXX XX   X X X=                           =              =                     !
+
+>TRGV1*01 8/AAAA/0 TRGJ1*01 - 3 mutations in V1
+aagcacaaggagcaaCtggaatttgagactgcaaaatctaattGaaaatgattctgggGtctattactgtgccacct
+aaaa
+gaattattataagaaactctttggcagtggaacaacactggttgtcacag
+
+>TRGV1*01 8/AAAA/0 TRGJ1*01 - 2 mutations in V1
+aagcacaaggagcaaCtggaatttgagactgcaaaatctaattaaaaatgattctgggGtctattactgtgccacct
+aaaa
+gaattattataagaaactctttggcagtggaacaacactggttgtcacag
+
+>TRGV1*01 8/AAAA/0 TRGJ1*01 - 1 mutation in V1
+aagcacaaggagcaaCtggaatttgagactgcaaaatctaattaaaaatgattctgggttctattactgtgccacct
+aaaa
+gaattattataagaaactctttggcagtggaacaacactggttgtcacag
