@@ -662,7 +662,7 @@ def getResultsFileStats(file_name, dest):
     parser.addPrefix('clones.item', 'clones.item.top', operator.eq, 1)
 
     mjson = parser.extract(file_path)
-    dest['main_clone'] = json.loads(mjson)['clones'][0]
+    dest['main_clone'] = json.loads(mjson)['clones'][0]['name']
     return dest
 
 def getStatData(results_file_ids):
