@@ -654,12 +654,7 @@ def custom():
                 group_ids=group_ids)
 
 def getStatHeaders():
-    return [
-        ('set_id', lambda x, y, z: x.sample_set.id),
-        ('set_name', lambda x, y, z: z[y].get_name(x[y])),
-        ('set_info', lambda x, y, z: z[y].get_info(x[y])),
-        ('config', lambda x, y, z: x.config.name)
-    ]
+    return ['set_id', 'set_name', 'set_info']
 
 def getResultsFileStats(file_name, dest):
     file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
@@ -683,8 +678,13 @@ def getStatData(results_file_ids):
         (db.sample_set.id == db.sample_set_membership.sample_set_id) &
         (db.config.id == db.results_file.config_id)
         ).select(
-            db.results_file.ALL, db.sample_set.ALL, db.patient.ALL, db.run.ALL, db.generic.ALL,
-            db.config.ALL,
+            db.results_file.data_file.with_alias("results_file"),
+            db.sample_set.id.with_alias("set_id"),
+            db.sample_set.sample_type.with_alias("sample_type"),
+            db.patient.first_name.with_alias("set_name"), db.patient.last_name, db.patient.info.with_alias('set_info'),
+            db.run.name,
+            db.generic.name,
+            db.config.name,
             left = [
                 db.patient.on(db.patient.sample_set_id == db.sample_set.id),
                 db.run.on(db.run.sample_set_id == db.sample_set.id),
@@ -695,16 +695,17 @@ def getStatData(results_file_ids):
     data = []
     for res in query:
         d = {}
-        set_type = res.sample_set.sample_type
-        for head, func in getStatHeaders():
-            d[head] = func(res, set_type, helpers)
-        d = getResultsFileStats(res.results_file.data_file, d)
+        set_type = res.sample_type
+        headers = getStatHeaders()
+        for head in headers:
+            d[head] = res[head]
+        d = getResultsFileStats(res.results_file, d)
         data.append(d)
     return data
 
 def multi_sample_stats():
     data = {}
-    data['headers'] = [h for h, f in getStatHeaders()]
+    data['headers'] = getStatHeaders()
     results = []
     #if not auth.can_view_sample_set():
     #    return "permission denied %s" % res
