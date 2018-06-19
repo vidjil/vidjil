@@ -658,6 +658,14 @@ def getStatHeaders():
 
 def getResultsFileStats(file_name, dest):
     file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
+    with open(file_path, 'rb') as f:
+        objects = ijson.items(f, 'samples.results_file_id')
+
+        dest['results_file_ids'] = json.loads(mjson)['results_file_id']
+        return dest
+
+def getFusedStats(file_name, res, dest):
+    file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
     parser = VidjilParser()
     parser.addPrefix('clones.item', 'clones.item.top', operator.eq, 1)
 
@@ -676,9 +684,12 @@ def getStatData(results_file_ids):
         (db.results_file.id.belongs(results_file_ids)) &
         (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id) &
         (db.sample_set.id == db.sample_set_membership.sample_set_id) &
-        (db.config.id == db.results_file.config_id)
+        (db.config.id == db.results_file.config_id) &
+        (db.fused_file.config_id == db.config.id) &
+        (db.fused_file.sample_set_id == db.sample_set.id)
         ).select(
             db.results_file.data_file.with_alias("results_file"),
+            db.fused_file.fused_file.with_alias("fused_file"),
             db.sample_set.id.with_alias("set_id"),
             db.sample_set.sample_type.with_alias("sample_type"),
             db.patient.first_name.with_alias("set_name"), db.patient.last_name, db.patient.info.with_alias('set_info'),
@@ -700,7 +711,7 @@ def getStatData(results_file_ids):
         for head, htype in headers:
             if htype == 'db':
                 d[head] = res[head]
-        d = getResultsFileStats(res.results_file, d)
+        d = getFusedStats(res.fused_file, res, d)
         data.append(d)
     return data
 
