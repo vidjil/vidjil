@@ -654,7 +654,7 @@ def custom():
                 group_ids=group_ids)
 
 def getStatHeaders():
-    return ['set_id', 'set_name', 'set_info']
+    return [('set_id', 'db'), ('set_name', 'db'), ('set_info', 'db'), ('main_clone', 'parser')]
 
 def getResultsFileStats(file_name, dest):
     file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
@@ -697,15 +697,16 @@ def getStatData(results_file_ids):
         d = {}
         set_type = res.sample_type
         headers = getStatHeaders()
-        for head in headers:
-            d[head] = res[head]
+        for head, htype in headers:
+            if htype == 'db':
+                d[head] = res[head]
         d = getResultsFileStats(res.results_file, d)
         data.append(d)
     return data
 
 def multi_sample_stats():
     data = {}
-    data['headers'] = getStatHeaders()
+    data['headers'] = [h for h, t in getStatHeaders()]
     results = []
     #if not auth.can_view_sample_set():
     #    return "permission denied %s" % res
