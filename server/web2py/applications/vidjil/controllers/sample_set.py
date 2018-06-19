@@ -654,7 +654,7 @@ def custom():
                 group_ids=group_ids)
 
 def getStatHeaders():
-    return [('set_id', 'db'), ('set_name', 'db'), ('set_info', 'db'), ('main_clone', 'parser')]
+    return [('set_id', 'db'), ('set_name', 'db'), ('set_info', 'db'), ('main_clone', 'parser'), ('reads', 'parser'), ('mapped', 'parser')]
 
 def getResultsFileStats(file_name, dest):
     file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
@@ -668,9 +668,20 @@ def getFusedStats(file_name, res, dest):
     file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
     parser = VidjilParser()
     parser.addPrefix('clones.item', 'clones.item.top', operator.eq, 1)
+    parser.addPrefix("reads")
+    parser.addPrefix("samples")
 
     mjson = parser.extract(file_path)
-    dest['main_clone'] = json.loads(mjson)['clones'][0]['name']
+    data = json.loads(mjson)
+    result_index = -1
+    if "results_file_id" in data['samples']:
+        result_index = data['samples']['results_file_id'].index(res['resuts_file_id'])
+    elif "original_names" in data['samples']:
+        result_index = data['samples']['original_names'].index(defs.DIR_SEQUENCES + res['sequence_file'])
+    dest['main_clone'] = data['clones'][0]['name']
+    reads = data['reads']['total'][result_index]
+    dest['reads'] = reads
+    dest['mapped'] = "%d (%d%%)" % (data['reads']['segmented'][result_index], 100 * (data['reads']['segmented'][result_index]/reads))
     return dest
 
 def getStatData(results_file_ids):
@@ -682,14 +693,16 @@ def getStatData(results_file_ids):
 
     query = db(
         (db.results_file.id.belongs(results_file_ids)) &
-        (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id) &
+        (db.sequence_file.id == db.results_file.sequence_file_id) &
+        (db.sample_set_membership.sequence_file_id == db.sequence_file.id) &
         (db.sample_set.id == db.sample_set_membership.sample_set_id) &
         (db.config.id == db.results_file.config_id) &
         (db.fused_file.config_id == db.config.id) &
         (db.fused_file.sample_set_id == db.sample_set.id)
         ).select(
-            db.results_file.data_file.with_alias("results_file"),
+            db.results_file.data_file.with_alias("results_file"), db.results_file.id.with_alias("results_file_id"),
             db.fused_file.fused_file.with_alias("fused_file"),
+            db.sequence_file.data_file.with_alias("sequence_file"),
             db.sample_set.id.with_alias("set_id"),
             db.sample_set.sample_type.with_alias("sample_type"),
             db.patient.first_name.with_alias("set_name"), db.patient.last_name, db.patient.info.with_alias('set_info'),
