@@ -681,8 +681,9 @@ def getFusedStats(file_name, res, dest):
     dest['main_clone'] = data['clones'][0]['name']
     reads = data['reads']['total'][result_index]
     dest['reads'] = reads
-    dest['mapped'] = "%d (%d%%)" % (data['reads']['segmented'][result_index], 100 * (data['reads']['segmented'][result_index]/reads))
+    dest['mapped'] = "%d (%d%%)" % (data['reads']['segmented'][result_index], 100.0 * (float(data['reads']['segmented'][result_index])/float(reads)))
     return dest
+
 
 def getStatData(results_file_ids):
     mf = ModelFactory()
