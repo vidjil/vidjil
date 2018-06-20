@@ -54,7 +54,7 @@ services:
         links:
             - mysql
     backup:
-        image: vidjil:test
+        image: vidjil/server:test
         command: bash -c "echo '0 5 * * * cd /usr/share/vidjil/server; sh backup.sh /mnt/backup 2>1&' > /etc/cron.d/backup-cron && cron"
         volumes_from:
             - uwsgi
