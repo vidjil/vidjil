@@ -706,10 +706,12 @@ def getStatData(results_file_ids):
             db.sequence_file.data_file.with_alias("sequence_file"),
             db.sample_set.id.with_alias("set_id"),
             db.sample_set.sample_type.with_alias("sample_type"),
-            db.patient.first_name.with_alias("set_name"), db.patient.last_name, db.patient.info.with_alias('set_info'),
+            db.patient.first_name, db.patient.last_name, db.patient.info.with_alias('set_info'), db.patient.sample_set_id,
             db.run.name,
             db.generic.name,
             db.config.name,
+
+            db.generic.name.with_alias("set_name"), # use generic name as failsafe for set name
             left = [
                 db.patient.on(db.patient.sample_set_id == db.sample_set.id),
                 db.run.on(db.run.sample_set_id == db.sample_set.id),
@@ -725,6 +727,7 @@ def getStatData(results_file_ids):
         for head, htype in headers:
             if htype == 'db':
                 d[head] = res[head]
+        d['set_name'] = helpers[set_type].get_name(res[set_type])
         d = getFusedStats(res.fused_file, res, d)
         data.append(d)
     return data
