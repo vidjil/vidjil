@@ -253,7 +253,7 @@ test_server_functional:
     - prod-server
     - dev
   tags:
-    - web
+    - x86_64
 
 # Deployment
 
