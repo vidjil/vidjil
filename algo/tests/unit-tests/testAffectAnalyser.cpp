@@ -325,14 +325,16 @@ void testGetMaximum() {
                      AFFECT_J, AFFECT_J, AFFECT_V, AFFECT_J};
   //  0 1 2 3 4 5 6 7 8 9  11  13  15  17  19
   //  V V V V V V V V V V _ _ _ _ _ _ J J V J
-  //                            ^^^^^
+  //0 0 0 0 0 1 2 3 4 5 6 7 8 9101010 9 8 7 6
+  //                           ^^^^^^
   vector<KmerAffect> affectations3(a3, a3+sizeof(a3)/sizeof(KmerAffect));
   KmerAffectAnalyser kaa3(*index, "", affectations3);
+  // span = 4, maxOverlap = 0
   results = kaa3.getMaximum(AFFECT_V, AFFECT_J, 2., 0);
 
   TAP_TEST(results.max_found, TEST_AA_GET_MAXIMUM_MAX_FOUND,
            "max_found = " << results.max_found);
-  TAP_TEST(results.max_value, TEST_AA_GET_MAXIMUM_VALUE,
+  TAP_TEST(results.max_value == 10, TEST_AA_GET_MAXIMUM_VALUE,
            "max = " << results.max_value);
   TAP_TEST(results.first_pos_max == 13 && results.last_pos_max == 15,
            TEST_AA_GET_MAXIMUM_POSITIONS, 
@@ -351,11 +353,13 @@ void testGetMaximum() {
                      AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V,
                      AFFECT_J, AFFECT_J, AFFECT_J, AFFECT_J, AFFECT_J,
                      AFFECT_J, AFFECT_J, AFFECT_J, AFFECT_J, AFFECT_J};
-  //  0 1 2 3 4 5 6 7 8 9  11  13  15  17  19
+  //  0 1 2 3 4 5 6 7 8 9  11  13  15  17  19    // i
   //  V V V V V V V V V V J J J J J J J J J J
+  //0 0 0 0 0 1 2 3 4 5 6 6 6 6 6 5 4 3 2 1 0    // currentValue, after iteration i
   //                    ^^^^^^^^^
   vector<KmerAffect> affectations4(a4, a4+sizeof(a4)/sizeof(KmerAffect));
   KmerAffectAnalyser kaa4(*index, "", affectations4);
+  // span = 4, maxOverlap = 0
   results = kaa4.getMaximum(AFFECT_V, AFFECT_J, 2., 0);
 
   TAP_TEST(results.max_found, TEST_AA_GET_MAXIMUM_MAX_FOUND,
@@ -379,8 +383,9 @@ void testGetMaximum() {
                      AFFECT_J, AFFECT_J, AFFECT_V, AFFECT_V, AFFECT_V,
                      AFFECT_V, AFFECT_V, AFFECT_J, AFFECT_J, AFFECT_J,
                      AFFECT_J, AFFECT_J, AFFECT_J, AFFECT_J, AFFECT_J};
-  //  0 1 2 3 4 5 6 7 8 9  11  13  15  17  19
+  //  0 1 2 3 4 5 6 7 8 9  11  13  15  17  19   // i
   //  V V V V J J J V V V V V J J J J J J J J
+  //0 0 0 0 0 0 0 0 1 1 1 1 2 2 2 2 2 1 0-1-2   // currentValue, after iteration i
   //                        ^^^^^^^^^
   vector<KmerAffect> affectations5(a5, a5+sizeof(a5)/sizeof(KmerAffect));
   KmerAffectAnalyser kaa5(*index, "", affectations5);
