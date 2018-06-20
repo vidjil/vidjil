@@ -726,7 +726,7 @@ def getStatData(results_file_ids):
         headers = getStatHeaders()
         for head, htype in headers:
             if htype == 'db':
-                d[head] = res[head]
+                d[head] = res[head] if res[head] is not None else ""
         d['set_name'] = helpers[set_type].get_name(res[set_type])
         d = getFusedStats(res.fused_file, res, d)
         data.append(d)
