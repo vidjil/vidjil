@@ -30,6 +30,7 @@ import re
 import argparse
 import subprocess
 import time
+import random
 import os.path
 from collections import defaultdict, OrderedDict
 import xml.etree.ElementTree as ET
@@ -57,6 +58,7 @@ DIRECTIVE_SOURCE = '!OUTPUT_FILE:'
 DIRECTIVE_EXIT_CODE = '!EXIT_CODE:'
 
 VAR_LAUNCHER = '$LAUNCHER'
+VAR_EXTRA = '$EXTRA'
 
 MOD_TODO = 'f'
 MOD_REGEX = 'r'
@@ -64,6 +66,9 @@ MOD_COUNT_ALL = 'w'
 MOD_BLANKS = 'b'
 MOD_MULTI_LINES = 'l'
 MOD_KEEP_LEADING_TRAILING_SPACES = 'z'
+
+MOD_MORE_THAN = '>'
+MOD_LESS_THAN = '<'
 
 TIMEOUT = 120
 SHOW_ELAPSED_TIME_ABOVE = 1.0
@@ -77,7 +82,8 @@ OUT_XML = 'should.xml'
 LINE = '-' * 40
 ENDLINE_CHARS = '\r\n'
 CONTINUATION_CHAR = '\\'
-MAX_DUMP_LINES = 100
+MAX_HALF_DUMP_LINES = 45
+MAX_DUMP_LINES = 2*MAX_HALF_DUMP_LINES + 10
 
 SKIP = 'SKIP'
 
@@ -148,6 +154,9 @@ MODIFIERS = [
     (MOD_BLANKS, 'blanks', "ignore whitespace differences as soon as there is at least one space. Implies 'r'"),
     (MOD_MULTI_LINES, 'multi-lines', 'search on all the output rather than on every line'),
     (MOD_KEEP_LEADING_TRAILING_SPACES, 'ltspaces', 'keep leading and trailing spaces'),
+
+    (MOD_MORE_THAN, 'more-than', 'requires that the expression occurs strictly more than the given number'),
+    (MOD_LESS_THAN, 'less-than', 'requires that the expression occurs strictly less than the given number'),
 ]
 
 
@@ -168,6 +177,8 @@ class ModifierParser(ArgParser):
 
     def parse_modifiers(self, modifiers):
         mods, unknown = self.parse_known_args(['-' + mod for mod in modifiers])
+        for m in unknown:
+            sys.stderr.write("! Unknown modifier '%s'\n" % m[1])
         return mods
 
 parser_mod = ModifierParser()
@@ -175,10 +186,15 @@ parser_mod.help = 'modifiers (uppercase letters cancel previous modifiers)\n'
 
 for (mod_char, mod_long, mod_help) in MODIFIERS:
     parser_mod.add_argument('-' + mod_char, '--' + mod_long, action='store_true', help=mod_help)
-    parser_mod.add_argument('-' + mod_char.upper(), dest=mod_long.replace('-', '_'), action='store_const', const=False, default=False,
-                            help='back to default, overriding any previous -%s' % mod_char)
 
-    parser_mod.help += '  %s/%s %s\n' % (mod_char, mod_char.upper(), mod_help)
+    if mod_char.upper() != mod_char:
+        parser_mod.add_argument('-' + mod_char.upper(), dest=mod_long.replace('-', '_'), action='store_const', const=False, default=False,
+                                help='back to default, overriding any previous -%s' % mod_char)
+        help_upper = '/%s' % mod_char.upper()
+    else:
+        help_upper = '  '
+
+    parser_mod.help += '  %s%s %s\n' % (mod_char, help_upper, mod_help)
 
 # Main argument parser
 
@@ -194,8 +210,11 @@ for p in (parser, options):
     p.add_argument('--cd', metavar='PATH', help='directory from which to run the test commands')
     p.add_argument('--cd-same', action='store_true', help='run the test commands from the same directory as the .should files')
     p.add_argument('--launcher', metavar='CMD', default='', help='launcher preceding each command (or replacing %s)' % VAR_LAUNCHER)
+    p.add_argument('--extra', metavar='ARG', default='', help='extra argument after the first word of each command (or replacing %s)' % VAR_EXTRA)
     p.add_argument('--mod', metavar='MODIFIERS', action='append', help='global ' + parser_mod.help)
     p.add_argument('--var', metavar='NAME=value', action='append', help='variable definition (then use $NAME in .should files)')
+
+parser.add_argument('--shuffle', action='store_true', help='shuffle the tests')
 
 output = parser.add_argument_group('output options')
 
@@ -216,6 +235,23 @@ def write_to_file(f, what):
     print('==> %s' % f)
     with open(f, 'w', encoding='utf-8') as ff:
         ff.write(what)
+
+
+
+# Command pre-processing
+
+def pre_process(cmd):
+
+    cc = cmd.split(' ')
+
+    if not VAR_EXTRA in cmd:
+        cc = [cc[0], VAR_EXTRA] + cc[1:]
+
+    if not VAR_LAUNCHER in cmd:
+        cc = [VAR_LAUNCHER] + cc
+
+    return ' '.join(cc)
+
 
 # Variables definition and expansion
 
@@ -508,7 +544,14 @@ class TestCase(TestCaseAbstract):
             elif expression_var in l:
                 self.count += l.count(expression_var) if self.mods.count_all else 1
 
-        self.status = (self.count > 0) if self.expected_count is None else (self.count == self.expected_count)
+        if self.expected_count is None:
+            self.status = (self.count > 0)
+        elif self.mods.less_than:
+            self.status = (self.count < self.expected_count)
+        elif self.mods.more_than:
+            self.status = (self.count > self.expected_count)
+        else:
+            self.status = (self.count == self.expected_count)
 
         if self.mods.todo:
             self.status = [TODO, TODO_PASSED][self.status]
@@ -546,6 +589,7 @@ class TestSuite():
 
     >>> s2 = TestSuite('r')
     >>> s2.variables.append(("$LAUNCHER", ""))
+    >>> s2.variables.append(("$EXTRA", ""))
     >>> s2.load(['echo "hello"', '$ A nice test', ':e.*o'])
     >>> s2.test(verbose = 1, colorize = False)   # doctest: +NORMALIZE_WHITESPACE
     echo "hello"
@@ -616,6 +660,8 @@ class TestSuite():
             if l.startswith(DIRECTIVE_OPTIONS):
                 opts, unknown = options.parse_known_args(l[len(DIRECTIVE_OPTIONS):].split())
                 self.variables += populate_variables(opts.var)
+                if opts.mod:
+                    self.modifiers += ''.join(opts.mod)
                 continue
 
             # Directive -- Exit code
@@ -645,6 +691,7 @@ class TestSuite():
                 continue
 
             # Command
+            l = l.strip()
             next_cmd_continues = l.endswith(CONTINUATION_CHAR)
             if next_cmd_continues:
                 l = l[:-1]
@@ -705,11 +752,7 @@ class TestSuite():
 
         start_time = time.time()
 
-        cmd = ' ; '.join(self.cmds)
-
-        if not VAR_LAUNCHER in cmd:
-            cmd = VAR_LAUNCHER + ' ' + cmd
-
+        cmd = ' ; '.join(map(pre_process, self.cmds))
         cmd = cmd_variables_cd(cmd)
 
         p = subprocess.Popen([cmd], shell=True,
@@ -754,7 +797,13 @@ class TestSuite():
 
         if self.status is False or verbose > 1:
             print(LINE)
-            print(''.join(self.test_lines[:MAX_DUMP_LINES]))
+            if len(self.test_lines) <= MAX_DUMP_LINES:
+                print(''.join(self.test_lines), end='')
+            else:
+                print(''.join(self.test_lines[:MAX_HALF_DUMP_LINES]), end='')
+                print(color(ANSI.MAGENTA, '... %d other lines ...' % (len(self.test_lines) - 2*MAX_HALF_DUMP_LINES), colorize))
+                print(''.join(self.test_lines[-MAX_HALF_DUMP_LINES:]), end='')
+
             print(LINE)
 
         self.elapsed_time = time.time() - start_time
@@ -816,6 +865,9 @@ class FileSet():
         self.status = None
         self.stats = Stats('file')
         self.stats_tests = Stats('test')
+
+    def __len__(self):
+        return len(self.files)
 
     def test(self, variables=None, cd=None, cd_same=False, output=None, verbose=0):
         self.status = True
@@ -934,14 +986,20 @@ if __name__ == '__main__':
     args = parser.parse_args(argv)
     variables = populate_variables(args.var)
     variables.append((VAR_LAUNCHER, args.launcher))
+    variables.append((VAR_EXTRA, args.extra))
 
     if args.verbose>0:
         print_variables(variables)
 
+    if args.shuffle:
+        print("Shuffling test files")
+        random.shuffle(args.file)
+
     fs = FileSet(args.file, modifiers=''.join(args.mod if args.mod else []))
     status = fs.test(variables = variables, cd = args.cd, cd_same = args.cd_same, output = args.output, verbose = args.verbose)
 
-    retry = fs.write_retry(sys.argv[1:], args.file, verbose = args.verbose)
+    if len(fs) > 1:
+        retry = fs.write_retry(sys.argv[1:], args.file, verbose = args.verbose)
 
     sys.exit(0 if status else 1)
 
