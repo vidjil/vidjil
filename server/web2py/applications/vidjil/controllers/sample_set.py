@@ -795,7 +795,7 @@ def get_sample_set_list(stype, q):
 
     for row in query :
         tmp = helper.get_id_string(row)
-        ss_list.append({'name':tmp, 'id': row.sample_set_id, 'type': type})
+        ss_list.append({'name':tmp, 'id': row.sample_set_id, 'type': stype})
     return ss_list
 
 def auto_complete():
