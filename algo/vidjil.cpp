@@ -369,7 +369,7 @@ int main (int argc, char **argv)
 #endif
 
   app.add_flag_function("-q",
-                        [&](size_t n) { indexType = AC_AUTOMATON; },
+                        [&](size_t n) { UNUSED(n); indexType = AC_AUTOMATON; },
                         "use Aho-Corasick-like automaton (experimental)")
     -> group(group) -> level();
 
@@ -478,6 +478,7 @@ int main (int argc, char **argv)
     -> group(group) -> set_type_name("INT=" + string_of_int(max_clones));
 
   app.add_flag_function("-A", [&](size_t n) {
+      UNUSED(n);
       ratio_reads_clone = 0 ;
       min_reads_clone = 1 ;
       max_representatives = NO_LIMIT_VALUE ;
@@ -569,7 +570,7 @@ int main (int argc, char **argv)
   app.set_help_flag("-h", "help")
     -> group(group);
 
-  app.add_flag_function("-H", [&](size_t n) { throw CLI::CallForAdvancedHelp() ; },
+  app.add_flag_function("-H", [&](size_t n) { UNUSED(n); throw CLI::CallForAdvancedHelp() ; },
                         "help, including advanced and experimental options"
                         "\n                              "
                         "The full help is available in the doc/algo.org file.")
