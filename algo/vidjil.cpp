@@ -288,8 +288,6 @@ int main (int argc, char **argv)
   string windows_labels_file = "" ;
   bool only_labeled_windows = false ;
 
-  char c ;
-
   int options_s_k = 0 ;
 
   double expected_value = THRESHOLD_NB_EXPECTED;
@@ -403,7 +401,7 @@ int main (int argc, char **argv)
 
   app.add_option("-t",
                  [&](CLI::results_t res) {
-                   bool worked = CLI::detail::lexical_cast(res[0], trim_sequences);
+                   CLI::detail::lexical_cast(res[0], trim_sequences);
                    trim_sequences_changed = true;
                    return true;
                  },

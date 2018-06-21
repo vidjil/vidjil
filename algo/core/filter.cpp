@@ -88,7 +88,6 @@ BioReader filterBioReaderWithACAutomaton(
     };
     // Use a set to use the comparator and sort function
     set<pair<KmerAffect, int>, Comparator> setOfWords(mapAho.begin(), mapAho.end(), compFunctor);
-    set<pair<KmerAffect, int>, Comparator>::iterator setIt = setOfWords.begin();
     // Iterate over the pair and not the map
     int nbKmers = 0, previousOccurences = 0;
     for(pair<KmerAffect, int> element : setOfWords){
