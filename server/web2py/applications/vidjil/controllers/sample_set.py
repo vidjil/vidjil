@@ -773,13 +773,13 @@ def change_permission():
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
-def get_sample_set_list(stype, query):
+def get_sample_set_list(stype, q):
     factory = ModelFactory()
     helper = factory.get_instance(type=stype)
-    filter_query = helper.get_name_filter_query(query)
+    filter_query = helper.get_name_filter_query(q)
 
     limitby = None
-    if not query :
+    if not q :
         limitby = (0, 10)
 
     query = db(
