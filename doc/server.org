@@ -181,10 +181,12 @@ These instructions are preliminary, other documentation can also be found in [[h
     apt-get install g++
     apt-get install make
     apt-get install unzip
-    apt-get install python-pip
+    apt-get install python-dev python-pip
+    apt-get install libyajl2 libyajl-dev
     pip install unittest2
     pip install unittest-xml-reporting
     pip install enum34
+    pip install ijson cffi
    #+END_SRC
 
 ** Vidjil server installation and initialization
