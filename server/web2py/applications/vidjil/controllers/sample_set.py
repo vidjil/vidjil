@@ -776,14 +776,14 @@ def change_permission():
 def get_sample_set_list(stype, q):
     factory = ModelFactory()
     helper = factory.get_instance(type=stype)
-    filter_query = helper.get_name_filter_query(q)
 
     limitby = None
-    if len(q) == 0:
+    if q is not None and len(q) == 0:
         q = None
     if not q :
         limitby = (0, 10)
 
+    filter_query = helper.get_name_filter_query(q)
     query = db(
         (auth.vidjil_accessible_query(PermissionEnum.admin.value, db.sample_set))&
         (db[stype].sample_set_id == db.sample_set.id) &
