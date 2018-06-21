@@ -8,6 +8,7 @@
    {{ pass }}
 
    {{ network_source = source_module_active }}
+   {{ required_files = 1 }}
     {{ if source_module_active: }}
         <span>file source: </span>
         <label for="source_computer">my computer</label>
@@ -24,7 +25,10 @@
             <option required_files="1" value="0">no pre-process (1 file per sample)</option>
             {{for row in pre_process_list :}}
                 <option title="{{=row["info"]}}" required_files="{{=row["file"]}}" value="{{=row["id"]}}"
-                    {{if 'file_id' in request.vars and row["id"]==files[0].pre_process_id :}}selected{{pass}}>
+                    {{if 'file_id' in request.vars and row["id"]==files[0].pre_process_id :}}
+			selected
+			{{ required_files=row["file"]}}
+			{{pass}}>
                     {{=row["id"]}} &ndash; {{=row["name"]}}
                 </option>
             {{pass}}

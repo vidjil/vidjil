@@ -24,7 +24,7 @@
                 title="first file for this sample (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)"
             >
         </div>
-        <div id="file_2_{{=i}}" class="field_div file_2" style="display: none">
+        <div id="file_2_{{=i}}" class="field_div file_2" {{if required_files < 2:}}style="display: none"{{pass}}>
             <input class="upload_field form-control" id="file_upload_2_{{=i}}" type="file"
             {{if network_source:}}
                 disabled
