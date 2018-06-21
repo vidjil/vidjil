@@ -7,18 +7,20 @@
    <h3>Add samples</h3>
    {{ pass }}
 
+   {{ network_source = source_module_active }}
     {{ if source_module_active: }}
         <span>file source: </span>
         <label for="source_computer">my computer</label>
-        <input type="radio" id="source_computer" name="source" value="computer" onchange="db.toggle_file_source()"/>
+	{{ network_source = not 'file_id' in request.vars or files[0].network }}
+        <input type="radio" id="source_computer" name="source" value="computer" onchange="db.toggle_file_source()" {{ if not network_source: }} checked="checked" {{pass}}/>
         <label for="source_nfs">network</label>
-        <input type="radio" id="source_nfs" name="source" value="nfs" onchange="db.toggle_file_source()" checked="checked" />        
+        <input type="radio" id="source_nfs" name="source" value="nfs" onchange="db.toggle_file_source()" {{if network_source:}} checked="checked" {{pass}} />
         <p></p>
     {{pass}}
-    <div {{if source_module_active:}} hidden {{pass}}>
+    <div {{if network_source:}} hidden {{pass}}>
         <h3>Pre-process scenario</h3>
         If you have two R1/R2 files per sample, please select an appropriate pre-process :
-        <select id="pre_process" name="pre_process" onChange="db.pre_process_onChange(this)" {{if source_module_active:}} disabled {{pass}}>
+        <select id="pre_process" name="pre_process" onChange="db.pre_process_onChange(this)" {{if network_source:}} disabled {{pass}}>
             <option required_files="1" value="0">no pre-process (1 file per sample)</option>
             {{for row in pre_process_list :}}
                 <option title="{{=row["info"]}}" required_files="{{=row["file"]}}" value="{{=row["id"]}}"

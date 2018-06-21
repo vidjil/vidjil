@@ -15,9 +15,9 @@
     </div>
 
     <div class="field_div">
-        <div id="file_field_1_{{=i}}" class="field_div file_1" {{if source_module_active:}} style="display: none" {{pass}}>
+        <div id="file_field_1_{{=i}}" class="field_div file_1" {{if network_source:}} style="display: none" {{pass}}>
             <input class="upload_field form-control" id="file_upload_1_{{=i}}" type="file"
-            {{if source_module_active:}}
+            {{if network_source:}}
                 disabled
             {{pass}}
                 onchange="db.upload_file_onChange('file_filename_{{=i}}', this.value)"
@@ -26,7 +26,7 @@
         </div>
         <div id="file_2_{{=i}}" class="field_div file_2" style="display: none">
             <input class="upload_field form-control" id="file_upload_2_{{=i}}" type="file"
-            {{if source_module_active:}}
+            {{if network_source:}}
                 disabled
             {{pass}}
                 title="second file for this sample (.fa, .fastq, .fa.gz, .fastq.gz)"
@@ -34,7 +34,7 @@
         </div>
         <div id="jstree_field_{{=i}}"
             class="field_div jstree_field form-control"
-            {{if not source_module_active:}} style="display: none;" {{pass}}
+            {{if not network_source:}} hidden {{pass}}
             data-index={{=i}}
             onclick="db.display_jstree(this.dataset.index)">
             <span class="button2">browse</span>
