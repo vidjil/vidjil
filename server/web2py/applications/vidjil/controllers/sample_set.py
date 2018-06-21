@@ -779,6 +779,8 @@ def get_sample_set_list(stype, q):
     filter_query = helper.get_name_filter_query(q)
 
     limitby = None
+    if len(q) == 0:
+        q = None
     if not q :
         limitby = (0, 10)
 
