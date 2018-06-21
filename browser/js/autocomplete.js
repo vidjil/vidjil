@@ -192,6 +192,18 @@ VidjilAutoComplete.prototype = {
             });
         };
 
+        callbacks.filter = function(query, data, searchKey) {
+            var fetchData = self.fetchData.bind(self);
+            var isLoaded = self.isLoaded.bind(self);
+            var keys = [this.$inputor.val()];
+            if (VidjilAutoComplete.isLoading(data) || !isLoaded(keys)) {
+                this.$inputor.atwho('load', this.at, VidjilAutoComplete.defaultLoadingData);
+                fetchData(this.$inputor, this.at, keys);
+                return data;
+            }
+            return $.fn.atwho.default.callbacks.filter(query, data, searchKey);
+        };
+
         $input.atwho({
             at: at,
             alias: 'samples',
