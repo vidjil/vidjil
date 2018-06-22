@@ -63,14 +63,17 @@ def init_db():
 def init_db_form():
     if (db(db.auth_user.id > 0).count() == 0) :
         error = ""
+        force = False
         if request.vars['email'] == "":
             error += "You must specify an admin email address, "
         if len(request.vars['password']) < 8:
             error += "Password must be at least 8 characters long, "
         if request.vars['confirm_password'] != request.vars['password']:
             error += "Passwords didn't match"
+        if "force" in request.vars and request.vars["force"].lower() == 'true':
+            force = True
         if error == "":
-            init_db_helper(admin_email=request.vars['email'], admin_password=request.vars['password'])
+            init_db_helper(force=force, admin_email=request.vars['email'], admin_password=request.vars['password'])
         else :
             res = {"success" : "false",
                    "message" : error}
