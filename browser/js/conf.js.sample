@@ -32,7 +32,8 @@ var config = {
         "path" : "/browser/data/",
         "file" : [
             "Stanford-S22.vidjil",
-            "L2-LIL-2.vidjil"
+            "L2-LIL-2.vidjil",
+            "http://www.vidjil.org/2016-lr/demo/LIL-L2.vidjil"
         ]
     },
     */
