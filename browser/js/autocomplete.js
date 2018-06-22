@@ -195,8 +195,9 @@ VidjilAutoComplete.prototype = {
         callbacks.filter = function(query, data, searchKey) {
             var fetchData = self.fetchData.bind(self);
             var isLoaded = self.isLoaded.bind(self);
-            var keys = [this.$inputor.val()];
-            if (VidjilAutoComplete.isLoading(data) || !isLoaded(keys)) {
+            var val = this.$inputor.val()
+            var keys = [val];
+            if ((VidjilAutoComplete.isLoading(data) || !isLoaded(keys)) && (val.length == 0 || val.length >= 3)) {
                 this.$inputor.atwho('load', this.at, VidjilAutoComplete.defaultLoadingData);
                 fetchData(this.$inputor, this.at, keys);
                 return data;
