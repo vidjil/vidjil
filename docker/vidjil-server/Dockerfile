@@ -26,6 +26,7 @@ run cd /usr/share/vidjil/server && wget --no-check-certificate https://mdipierro
 add ./scripts/install.sh /opt/install_scripts/install.sh
 copy ./conf/defs.py /opt/vidjil_conf/defs.py
 copy ./conf/defs_http.py /opt/vidjil_conf/defs_http.py
+copy ./conf/base.py /usr/share/vidjil/server/web2py/gluon/packages/dal/pydal/base.py
 
 arg build_env='PRODUCTION'
 env BUILD_ENV $build_env
