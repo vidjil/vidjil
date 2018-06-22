@@ -7,12 +7,10 @@
    <h3>Add samples</h3>
    {{ pass }}
 
-   {{ network_source = source_module_active }}
    {{ required_files = 1 }}
     {{ if source_module_active: }}
         <span>file source: </span>
         <label for="source_computer">my computer</label>
-	{{ network_source = not 'file_id' in request.vars or files[0].network }}
         <input type="radio" id="source_computer" name="source" value="computer" onchange="db.toggle_file_source()" {{ if not network_source: }} checked="checked" {{pass}}/>
         <label for="source_nfs">network</label>
         <input type="radio" id="source_nfs" name="source" value="nfs" onchange="db.toggle_file_source()" {{if network_source:}} checked="checked" {{pass}} />
