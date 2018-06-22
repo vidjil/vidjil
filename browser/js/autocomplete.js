@@ -157,6 +157,10 @@ VidjilAutoComplete.prototype = {
 
         // code modified from atwho source
         callbacks.highlighter = function(li, query) {
+            var def = VidjilAutoComplete.defaultLoadingData[0];
+            if (li.substr(4, def.length) == def) {
+                return li;
+            }
             var mapper = {'p': 'patient',
                           'r': 'run',
                           's': 'generic'}
