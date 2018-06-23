@@ -1,7 +1,8 @@
 #+TITLE: Vidjil -- High-throughput Analysis of V(D)J Immune Repertoire
 #+AUTHOR: The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Ryan and Tatiana)
 
-[[https://travis-ci.org/vidjil/vidjil][https://img.shields.io/travis/vidjil/vidjil/master.svg]]
+
+[[https://gitlab.inria.fr/vidjil/vidjil/tree/dev][https://gitlab.inria.fr/vidjil/vidjil/badges/dev/build.svg]]
 [[http://opensource.org/licenses/GPL-3.0][http://img.shields.io/badge/license-GPLv3+-green.svg]]
 [[https://landscape.io/github/vidjil/vidjil][https://landscape.io/github/vidjil/vidjil/master/landscape.svg?style=flat]]
 # https://coveralls.io/r/vidjil/vidjil http://img.shields.io/coveralls/vidjil/vidjil.svg
