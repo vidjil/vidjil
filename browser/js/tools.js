@@ -111,6 +111,20 @@ function correctIMGTPositionsForInsertions(data) {
 }
 
 /**
+ * Prepend a path before a filepath if that filepath is not a web path.
+ * @param file: a path to a file may be relative, absolute or web path
+ * @param path: a directory path
+ * @return file iff it is a web path (ie. starting with http or ftp)
+ *         path + file otherwise
+ */
+function prepend_path_if_not_web(file, path) {
+    if (file.startsWith('http') || file.startsWith('ftp')) {
+        return file;
+    }
+    return path + file;
+}
+
+/**
  * Take in parameter the JSON result of CloneDB for one clone
  * Return a hash whose keys are URLs to sample sets and configs.
  * An additional key (termed 'original') corresponds to the original

@@ -40,7 +40,7 @@ function initMenu () {
                 type: "GET",
                 timeout: 5000,
                 crossDomain: true,
-                url: config.file_menu.path + config.file_menu.file[0],
+                url: prepend_path_if_not_web(config.file_menu.file[0], config.file_menu.path),
                 success: function (result) {
                     $('#static_file_menu').css("display", "")
                     var demo_file = document.getElementById("fileSelector").firstChild
@@ -50,7 +50,8 @@ function initMenu () {
                         var a = document.createElement('a');
                         a.className = "buttonSelector"
                         a.onclick = function () {
-                            m.loadDataUrl(config.file_menu.path + config.file_menu.file[i])
+                            var url = prepend_path_if_not_web(config.file_menu.file[i], config.file_menu.path);
+                            m.loadDataUrl(url)
                         }
 
                         a.appendChild(document.createTextNode(config.file_menu.file[i]))
