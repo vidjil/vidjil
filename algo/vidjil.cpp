@@ -365,11 +365,10 @@ int main (int argc, char **argv)
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Recombination detection (\"window\" prediction, first pass)";
-
-#ifndef NO_SPACED_SEEDS
-  group += " (use either -s or -k option, but not both)\n                        (all these options, except -w, are overriden when using -g)";
-#endif
-
+  group += "\n    (use either -s or -k option, but not both)";
+  group += "\n    (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)" ;
+  group += "\n    (all these options, except -w, are overriden when using -g)";
+  
   app.add_flag_function("-q",
                         [&](size_t n) { indexType = AC_AUTOMATON; },
                         "use Aho-Corasick-like automaton (experimental)")
@@ -389,10 +388,6 @@ int main (int argc, char **argv)
                  "k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)")
     -> group(group) -> level() -> set_type_name("INT");
 
-    
-#ifndef NO_SPACED_SEEDS
-  //      << "                (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)" << endl
-#endif
   app.add_option("-w", wmer_size,
                  "w-mer size used for the length of the extracted window ('" NO_LIMIT "': use all the read, no window clustering)")
     -> group(group) -> level() -> transform(string_NO_LIMIT);
@@ -421,12 +416,6 @@ int main (int argc, char **argv)
                  "spaced seeds used for the V/J affectation (default: depends on germline)")
     -> group(group) -> level();
 
-/*
-#ifdef NO_SPACED_SEEDS
-        cerr << "To enable the option -s, please compile without NO_SPACED_SEEDS" << endl;
-#endif
-*/
-  
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Recombination detection, experimental options (do not use)";
@@ -657,26 +646,12 @@ int main (int argc, char **argv)
 
   size_t min_cover_representative = (size_t) (min_reads_clone < (int) max_auditionned ? min_reads_clone : max_auditionned) ;
 
-  // Default seeds
-
-#ifdef NO_SPACED_SEEDS
-  if (! seed_changed)
-    {
-      cerr << ERROR_STRING << PROGNAME << " was compiled with NO_SPACED_SEEDS: please provide a -k option." << endl;
-      return 1;
-  }
-#endif
-	  
-
-#ifndef NO_SPACED_SEEDS
   // Check seed buffer  
   if (seed.size() >= MAX_SEED_SIZE)
     {
       cerr << ERROR_STRING << "Seed size is too large (MAX_SEED_SIZE)." << endl ;
       return 1;
     }
-#endif
-
 
   if ((wmer_size< 0) && (wmer_size!= NO_LIMIT_VALUE))
     {

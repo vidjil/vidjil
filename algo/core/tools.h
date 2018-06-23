@@ -73,10 +73,6 @@ string spaced(const string &input, const string &seed);
 
 inline int spaced_int(int *input, const string &seed) {
 
-#ifdef NO_SPACED_SEEDS
-  return input ;
-#endif
-
   // cout << input << endl << seed << endl ;
   // assert(input.length() == seed.length()); // length is not equal, pointer
 

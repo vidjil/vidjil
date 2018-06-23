@@ -27,10 +27,6 @@ string spaced(const string &input, const string &seed) {
 //   return input.substr(0, 7) + input.substr(8, 7);
 // #endif
 
-#ifdef NO_SPACED_SEEDS
-  return input ;
-#endif
-
   int j = 0 ;
 
   // cout << input << endl << seed << endl ;
