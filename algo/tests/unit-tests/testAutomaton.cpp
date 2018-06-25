@@ -114,7 +114,7 @@ void testGetMultiResults(){
   /* Check if there is at least one Kmer unknown when no matching K-mer */
   unsigned int i = 0;
   for(auto const& x : results){
-    if(x.first.toStringValues() == AFFECT_UNKNOWN_SYMBOL){
+    if(x.first.toStringValues() == AFFECT_UNKNOWN_TO_STRING){
       break;
     }
     ++i;

@@ -170,11 +170,16 @@ bool operator!=(const KmerAffect &a1, const KmerAffect &a2);
 ostream &operator<<(ostream &os, const KmerAffect &kmer);
 
 #define AFFECT_NOT_UNKNOWN_SYMBOL "*"
-#define AFFECT_AMBIGUOUS_SYMBOL "?"
-#define AFFECT_UNKNOWN_SYMBOL "_"
+#define AFFECT_AMBIGUOUS_SYMBOL "\0"
+#define AFFECT_UNKNOWN_SYMBOL "\1"
 #define AFFECT_AMBIGUOUS_CHAR (AFFECT_AMBIGUOUS_SYMBOL[0])
 #define AFFECT_UNKNOWN_CHAR (AFFECT_UNKNOWN_SYMBOL[0])
 
+/* Define how an ambiguous kmeraffect looks like in a string */
+#define AFFECT_AMBIGUOUS_TO_STRING "?"
+
+/* Define how an unknown kmeraffect looks like in a string */
+#define AFFECT_UNKNOWN_TO_STRING "_"
 
 /**
  * Constant defining any not-unknown affectation

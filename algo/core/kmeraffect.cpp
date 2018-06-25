@@ -66,6 +66,12 @@ string toString(const affect_t &a) {
 }
 
 string toStringValues(const affect_t &a){
+  if(a == AFFECT_UNKNOWN.affect){
+    return AFFECT_UNKNOWN_TO_STRING;
+  }
+  if(a == AFFECT_AMBIGUOUS.affect){
+    return AFFECT_AMBIGUOUS_TO_STRING;
+  }
   return string(1,affect_char(a));
 }
 
@@ -149,7 +155,7 @@ int KmerAffect::getStrand() const{
 }
 
 string KmerAffect::getLabel() const {
-  return string(1, affect_char(affect));
+ return ::toStringValues(affect);
 }
 
 unsigned char KmerAffect::getLength() const {
