@@ -83,11 +83,33 @@ def init_db_form():
     res = {"redirect" : "default/user/login"}
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+def reset_db():
+    mysql = db._uri[:5] == "mysql"
+    # if using mysql disable foreign keys to be able to truncate
+    if mysql:
+        db.executesql('SET FOREIGN_KEY_CHECKS = 0;')
+    try:
+        for table in db :
+            r = None
+            try:
+                # check if table exists (db can contain tables that don't exist, like auth_cas)
+                r = db(table.id > 0).select(limitby = (0,1))
+            except:
+                pass
+            if r is not None:
+                table.truncate()
+    except:
+        raise
+    finally:
+        # lets not forget to renable foreign keys
+        if mysql:
+            db.executesql('SET FOREIGN_KEY_CHECKS = 1;')
+
 def init_db_helper(force=False, admin_email="plop@plop.com", admin_password="1234"):
     if (force) or (db(db.auth_user.id > 0).count() == 0) : 
-        for table in db :
-            table.truncate()
-        
+        if force:
+            reset_db()
+
         id_first_user=""
 
         ## création du premier user
