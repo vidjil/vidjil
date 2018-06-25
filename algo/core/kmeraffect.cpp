@@ -155,7 +155,7 @@ int KmerAffect::getStrand() const{
 }
 
 string KmerAffect::getLabel() const {
-  return string(1, affect_char(affect));
+ return ::toStringValues(affect);
 }
 
 unsigned char KmerAffect::getLength() const {
