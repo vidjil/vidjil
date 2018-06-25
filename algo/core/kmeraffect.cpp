@@ -66,6 +66,12 @@ string toString(const affect_t &a) {
 }
 
 string toStringValues(const affect_t &a){
+  if(a == AFFECT_UNKNOWN.affect){
+    return string(1, '_');
+  }
+  if(a == AFFECT_AMBIGUOUS.affect){
+    return string(1, '?');
+  }
   return string(1,affect_char(a));
 }
 
