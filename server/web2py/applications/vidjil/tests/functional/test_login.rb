@@ -16,7 +16,7 @@ class TestLogin < BrowserTest
 
     init_button.click
     init_form = $b.form(:id => "data_form")
-    init_form.wait_unil_present
+    init_form.wait_until_present
 
     init_form.text_field(:id => "email").set("plop@plop.com")
     init_form.text_field(:id => "password").set("foobartest")
