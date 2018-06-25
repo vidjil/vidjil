@@ -114,9 +114,9 @@ void testGetMultiResults(){
     If there is K-mers in automaton doesn't match the sequence, the map must
     return only unknown K-mers.
   */
-  for(auto const& x : results){
-    TAP_TEST(x.first == AFFECT_UNKNOWN, TEST_AC_OCCURENCES, "Unknown Kmer not found");
-  }
+  pair<KmerAffect, int> singleResult = *(results.begin());
+  KmerAffect unknownKmerAffect = singleResult.first;
+  TAP_TEST_EQUAL(unknownKmerAffect, AFFECT_UNKNOWN, TEST_AC_OCCURENCES, "Unknown Kmer not found");
 }
 
 void testRCInsertAcAutomaton() {
