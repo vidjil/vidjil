@@ -67,10 +67,10 @@ string toString(const affect_t &a) {
 
 string toStringValues(const affect_t &a){
   if(a == AFFECT_UNKNOWN.affect){
-    return string(1, '_');
+    return AFFECT_UNKNOWN_TO_STRING;
   }
   if(a == AFFECT_AMBIGUOUS.affect){
-    return string(1, '?');
+    return AFFECT_AMBIGUOUS_TO_STRING;
   }
   return string(1,affect_char(a));
 }
