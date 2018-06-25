@@ -562,3 +562,25 @@ def get_found_types(data):
     known_types = set([defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC])
     present_types = set(data.keys())
     return known_types.intersection(present_types)
+
+def reset_db(db):
+    mysql = db._uri[:5] == "mysql"
+    # if using mysql disable foreign keys to be able to truncate
+    if mysql:
+        db.executesql('SET FOREIGN_KEY_CHECKS = 0;')
+    try:
+        for table in db :
+            r = None
+            try:
+                # check if table exists (db can contain tables that don't exist, like auth_cas)
+                r = db(table.id > 0).select(limitby = (0,1))
+            except:
+                pass
+            if r is not None:
+                table.truncate()
+    except:
+        raise
+    finally:
+        # lets not forget to renable foreign keys
+        if mysql:
+            db.executesql('SET FOREIGN_KEY_CHECKS = 1;')
