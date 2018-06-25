@@ -110,16 +110,13 @@ void testGetMultiResults(){
   seqtype seq4 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
   results = aho.getMultiResults(seq4);
   TAP_TEST(results.size() <= 1, TEST_AC_OCCURENCES, errorSize);
-  
-  /* Check if there is at least one Kmer unknown when no matching K-mer */
-  unsigned int i = 0;
-  for(auto const& x : results){
-    if(x.first.toStringValues() == AFFECT_UNKNOWN_TO_STRING){
-      break;
-    }
-    ++i;
-  }
-  TAP_TEST(i < results.size(), TEST_AC_OCCURENCES, "Ambiguous Kmer not found");
+  /*
+    If there is K-mers in automaton doesn't match the sequence, the map must
+    return only unknown K-mers.
+  */
+  pair<KmerAffect, int> singleResult = *(results.begin());
+  KmerAffect unknownKmerAffect = singleResult.first;
+  TAP_TEST_EQUAL(unknownKmerAffect, AFFECT_UNKNOWN, TEST_AC_OCCURENCES, "Unknown Kmer not found");
 }
 
 void testRCInsertAcAutomaton() {
