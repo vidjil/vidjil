@@ -288,8 +288,6 @@ int main (int argc, char **argv)
   string windows_labels_file = "" ;
   bool only_labeled_windows = false ;
 
-  char c ;
-
   int options_s_k = 0 ;
 
   double expected_value = THRESHOLD_NB_EXPECTED;
@@ -370,7 +368,7 @@ int main (int argc, char **argv)
   group += "\n    (all these options, except -w, are overriden when using -g)";
   
   app.add_flag_function("-q",
-                        [&](size_t n) { indexType = AC_AUTOMATON; },
+                        [&](size_t n) { UNUSED(n); indexType = AC_AUTOMATON; },
                         "use Aho-Corasick-like automaton (experimental)")
     -> group(group) -> level();
 
@@ -398,7 +396,7 @@ int main (int argc, char **argv)
 
   app.add_option("-t",
                  [&](CLI::results_t res) {
-                   bool worked = CLI::detail::lexical_cast(res[0], trim_sequences);
+                   CLI::detail::lexical_cast(res[0], trim_sequences);
                    trim_sequences_changed = true;
                    return true;
                  },
@@ -469,6 +467,7 @@ int main (int argc, char **argv)
     -> group(group) -> set_type_name("INT=" + string_of_int(max_clones));
 
   app.add_flag_function("-A", [&](size_t n) {
+      UNUSED(n);
       ratio_reads_clone = 0 ;
       min_reads_clone = 1 ;
       max_representatives = NO_LIMIT_VALUE ;
@@ -560,7 +559,7 @@ int main (int argc, char **argv)
   app.set_help_flag("-h", "help")
     -> group(group);
 
-  app.add_flag_function("-H", [&](size_t n) { throw CLI::CallForAdvancedHelp() ; },
+  app.add_flag_function("-H", [&](size_t n) { UNUSED(n); throw CLI::CallForAdvancedHelp() ; },
                         "help, including advanced and experimental options"
                         "\n                              "
                         "The full help is available in the doc/algo.org file.")
