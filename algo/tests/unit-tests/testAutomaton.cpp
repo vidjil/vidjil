@@ -115,7 +115,7 @@ void testGetMultiResults(){
     return only unknown K-mers.
   */
   for(auto const& x : results){
-    TAP_TEST(x.first == AFFECT_UNKNOWN, TEST_AC_OCCURENCES, "Ambiguous Kmer not found");
+    TAP_TEST(x.first == AFFECT_UNKNOWN, TEST_AC_OCCURENCES, "Unknown Kmer not found");
   }
 }
 
