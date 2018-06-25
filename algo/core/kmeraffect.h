@@ -172,6 +172,9 @@ ostream &operator<<(ostream &os, const KmerAffect &kmer);
 #define AFFECT_NOT_UNKNOWN_SYMBOL "*"
 #define AFFECT_AMBIGUOUS_SYMBOL "\0"
 #define AFFECT_UNKNOWN_SYMBOL "\1"
+
+/* Those are just shortcuts to access the *_SYMBOL constant with a char
+ * type */
 #define AFFECT_AMBIGUOUS_CHAR (AFFECT_AMBIGUOUS_SYMBOL[0])
 #define AFFECT_UNKNOWN_CHAR (AFFECT_UNKNOWN_SYMBOL[0])
 
