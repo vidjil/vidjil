@@ -242,8 +242,8 @@ test_server_unit:
 test_server_functional:
   stage: test_functional
   script:
-    - docker build --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/server:test" docker/vidjil-server
-    - docker build --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/client:test" docker/vidjil-client
+    - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/server:test" docker/vidjil-server
+    - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/client:test" docker/vidjil-client
     - cd docker && docker-compose up -d && cd ..
     - docker exec docker_uwsgi_1 python /usr/share/vidjil/server/web2py/web2py.py -S vidjil -M -R /usr/share/vidjil/server/web2py/applications/vidjil/tests/functional/init_test_db.py
     - source /etc/profile.d/rvm.sh
