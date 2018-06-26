@@ -441,7 +441,7 @@ void testExAequoKmersWhenSignificantParameter(){
   delete f;
   f = new FilterWithACAutomaton(testedBioReader, "####");
   filtered = f->filterBioReaderWithACAutomaton(testedBioReader, seq, 2);
-  int k = 0;
+  k = 0;
   while(k < filtered.size() && extractGeneName(filtered.label(k)) != extractGeneName(testedBioReader.label(12))){
     ++k;
   }
