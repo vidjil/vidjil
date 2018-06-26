@@ -16,6 +16,7 @@ stages:
   - test_functional
   - test_functional_external
   - test_shouldvdj
+  - coverage
   - prepare_release
   - release
   - valgrind_unit
@@ -46,7 +47,7 @@ test_germlines:
 
 test_algo_unit:
   stage: test_unit
-  script: make -C algo unit
+  script: make -C algo unit_coverage
   only:
     - /^feature-.*a.*\/.*$/
 
@@ -58,13 +59,19 @@ test_tools_unit:
 
 test_algo_should:
   stage: test_functional
-  script: make -C algo should
+  script: make -C algo should_coverage
   only:
     - /^feature-.*a.*\/.*$/
 
 test_algo_shouldvdj:
   stage: test_shouldvdj
-  script: make -C algo shouldvdj
+  script: make -C algo shouldvdj_coverage
+  only:
+    - /^feature-.*a.*\/.*$/
+
+algo_coverage:
+  stage: coverage
+  script: make -C algo lcov_reports
   only:
     - /^feature-.*a.*\/.*$/
 
