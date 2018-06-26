@@ -362,7 +362,7 @@ void testGetNSignicativeKmers(){
 
   for(int i = 0; i < germline.rep_5.size(); ++i){
     Sequence seq = germline.rep_5.read(i);
-    FilterWithACAutomaton *f = germline.getFilter();
+    FilterWithACAutomaton *f = germline.getFilter_5();
     filtered = f->filterBioReaderWithACAutomaton(germline.rep_5, seq.sequence, 1);
     int j = 0;
     while(j < filtered.size()){
