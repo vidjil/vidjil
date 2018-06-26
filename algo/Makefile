@@ -6,10 +6,13 @@ else
 	COVERAGE_OPTION=
 endif
 
-
-OPTIM=-O2 -DNDEBUG  $(COVERAGE_OPTION) $(DEBUG)
-override CXXFLAGS += -W -Wall -std=c++11 $(OPTIM)
-override LDFLAGS += $(COVERAGE_OPTION)
+ifeq ($(CXXFLAGS), )
+  CXXFLAGS := -W -Wall -std=c++11 -O2 -DNDEBUG
+endif
+override CXXFLAGS += $(COVERAGE_OPTION) $(DEBUG)
+ifeq ($(LDFLAGS),)
+  LDFLAGS := $(COVERAGE_OPTION)
+endif
 
 export CXXFLAGS
 export LDFLAGS
@@ -68,7 +71,7 @@ static:
 ###
 
 paranoid: clean
-	$(MAKE) vidjil OPTIM="$(PARANOID)"
+	$(MAKE) vidjil CXXFLAGS="$(CXXFLAGS) $(PARANOID)"
 
 ###
 
@@ -96,17 +99,17 @@ cleanspaced:
 
 $(ALIGN_CGI): cgi/align.o $(LIBCORE)
 	mkdir -p $(CGIDIR)
-	$(MAKE) -C core OPTIM="$(OPTIM)"
+	$(MAKE) -C core
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 
 $(SIMILARITY_CGI): cgi/similarity.o $(LIBCORE)
 	mkdir -p $(CGIDIR)
-	$(MAKE) -C core OPTIM="$(OPTIM)"
+	$(MAKE) -C core
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 
 $(SIMILARITY_TOOL): cgi/similarity.o $(LIBCORE)
 	mkdir -p $(TOOLDIR)
-	$(MAKE) -C core OPTIM="$(OPTIM)"
+	$(MAKE) -C core
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 
 ###
@@ -116,8 +119,8 @@ debug:
 	$(MAKE) DEBUG="-ggdb"
 
 $(VIDJIL): $(BINDIR)%: $(MAIN).o $(LIBCORE)
-	$(MAKE) -C core OPTIM="$(OPTIM)"
-	$(MAKE) -C lib OPTIM="$(OPTIM)"
+	$(MAKE) -C core
+	$(MAKE) -C lib
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 ###
@@ -125,10 +128,10 @@ $(VIDJIL): $(BINDIR)%: $(MAIN).o $(LIBCORE)
 ###
 
 core/%.a: FORCE
-	$(MAKE) -C core OPTIM="$(OPTIM)" $(notdir $@)
+	$(MAKE) -C core $(notdir $@)
 
 lib/%.a: FORCE
-	$(MAKE) -C lib OPTIM="$(OPTIM)" $(notdir $@)
+	$(MAKE) -C lib $(notdir $@)
 
 clean:
 	$(MAKE) -C core $@
@@ -151,7 +154,7 @@ cleanall: cleancoverage
 
 test:
 	$(MAKE) -C tests cleantests
-	$(TEE) '$(MAKE) OPTIM="$(OPTIM)" unit' tests/out-unit.log
+	$(TEE) '$(MAKE) unit' tests/out-unit.log
 	$(MAKE) functional
 	@echo
 	@echo "*** All tests passed. Congratulations !"
@@ -167,7 +170,7 @@ snapshot_diff_current:
 
 unit: all
 	@echo "*** Launching unit tests..."
-	$(MAKE) OPTIM="$(OPTIM)" -C tests
+	$(MAKE) -C tests
 	@echo "*** All unit tests passed"
 
 functional: all
@@ -177,12 +180,12 @@ functional: all
 should: all
 	@echo
 	@echo "*** Launching .should_get tests..."
-	$(MAKE) OPTIM="$(OPTIM)" -C tests should
+	$(MAKE) -C tests should
 	@echo "*** All .should_get tests passed"
 
 shouldvdj: all
 	@echo
-	$(MAKE) OPTIM="$(OPTIM)" -C tests shouldvdj_if_python
+	$(MAKE) -C tests shouldvdj_if_python
 
 
 valgrind_unit:
