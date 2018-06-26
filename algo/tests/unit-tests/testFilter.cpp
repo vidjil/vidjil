@@ -151,7 +151,8 @@ vector<int> getDebugIndexes3(){
   the revceivedAutomaton wear the good label.
 */
 void testAutomatonBuilderFilteringBioReader(){
-  pair<vector<int>*, AbstractACAutomaton<KmerAffect>*> *pair1, *pair2, *pair3;
+  vector<int> *v1, *v2, *v3;
+  AbstractACAutomaton<KmerAffect> *a1, *a2, *a3;
   KmerAffect tmpKmer;
   seqtype tmpSeq;
   BioReader testedBioReader1;
@@ -160,6 +161,7 @@ void testAutomatonBuilderFilteringBioReader(){
   vector<int> expectedIndexes1;
   vector<int> expectedIndexes2;
   vector<int> expectedIndexes3;
+  FilterWithACAutomaton *f1, *f2, *f3;
   seqtype seq;
   KmerAffect k;
   char asciiChar;
@@ -179,34 +181,41 @@ void testAutomatonBuilderFilteringBioReader(){
   expectedIndexes2 = getDebugIndexes2();
   expectedIndexes3 = getDebugIndexes3();
 
-  pair1 = buildACAutomatonToFilterBioReader(testedBioReader1, "####");
-  pair2 = buildACAutomatonToFilterBioReader(testedBioReader2, "####");
-  pair3 = buildACAutomatonToFilterBioReader(testedBioReader3, "####");
+  f1 = new FilterWithACAutomaton(testedBioReader1,"####");
+  f2 = new FilterWithACAutomaton(testedBioReader2,"####");
+  f3 = new FilterWithACAutomaton(testedBioReader3,"####");
+
+  v1 = f1->getIndexes();
+  v2 = f2->getIndexes();
+  v3 = f3->getIndexes();
+  a1 = f1->getAutomaton();
+  a2 = f2->getAutomaton();
+  a3 = f3->getAutomaton();
 
   /* test indexes size */
-    TAP_TEST_EQUAL(pair1->first->size(), expectedIndexes1.size(),
+    TAP_TEST_EQUAL(v1->size(), expectedIndexes1.size(),
       TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
       TEST_SIZE_ERROR);
-    TAP_TEST_EQUAL(pair2->first->size(), expectedIndexes2.size(),
+    TAP_TEST_EQUAL(v2->size(), expectedIndexes2.size(),
       TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
       TEST_SIZE_ERROR);
-    TAP_TEST_EQUAL(pair3->first->size(), expectedIndexes3.size(),
+    TAP_TEST_EQUAL(v3->size(), expectedIndexes3.size(),
       TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
       TEST_SIZE_ERROR);
 
   /* test indexes content */
-  for(unsigned int i = 0; i < pair1->first->size(); ++i){
-    TAP_TEST_EQUAL(pair1->first->at(i), expectedIndexes1[i],
+  for(unsigned int i = 0; i < v1->size(); ++i){
+    TAP_TEST_EQUAL(v1->at(i), expectedIndexes1[i],
     TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
     TEST_CONTENT_ERROR);
   }
-  for(unsigned int i = 0; i < pair2->first->size(); ++i){
-    TAP_TEST_EQUAL(pair2->first->at(i), expectedIndexes2[i],
+  for(unsigned int i = 0; i < v2->size(); ++i){
+    TAP_TEST_EQUAL(v2->at(i), expectedIndexes2[i],
     TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
     TEST_CONTENT_ERROR);
   }
-  for(unsigned int i = 0; i < pair3->first->size(); ++i){
-    TAP_TEST_EQUAL(pair3->first->at(i), expectedIndexes3[i],
+  for(unsigned int i = 0; i < v3->size(); ++i){
+    TAP_TEST_EQUAL(v3->at(i), expectedIndexes3[i],
     TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
     TEST_CONTENT_ERROR);
   }
@@ -215,7 +224,7 @@ void testAutomatonBuilderFilteringBioReader(){
   for(unsigned int i = 0;i < expectedIndexes1.size() - 1; ++i){
     for(int j = expectedIndexes1[i]; j < expectedIndexes1[i + 1]; ++j){
       seq = testedBioReader1.sequence(j);
-      k = pair1->second->get(seq);
+      k = a1->get(seq);
       asciiChar = k.getLabel().at(0);
       asciiNum = int(asciiChar);
       TAP_TEST_EQUAL(asciiNum, i + 1, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
@@ -225,7 +234,7 @@ void testAutomatonBuilderFilteringBioReader(){
   for(unsigned int i = 0;i < expectedIndexes2.size() - 1; ++i){
     for(int j = expectedIndexes2[i]; j < expectedIndexes2[i + 1]; ++j){
       seq = testedBioReader2.sequence(j);
-      k = pair2->second->get(seq);
+      k = a2->get(seq);
       asciiChar = k.getLabel().at(0);
       asciiNum = int(asciiChar);
       TAP_TEST_EQUAL(asciiNum, i + 1, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
@@ -235,24 +244,24 @@ void testAutomatonBuilderFilteringBioReader(){
   for(unsigned int i = 0;i < expectedIndexes3.size() - 1; ++i){
     for(int j = expectedIndexes3[i]; j < expectedIndexes3[i + 1]; ++j){
       seq = testedBioReader3.sequence(j);
-      k = pair3->second->get(seq);
+      k = a3->get(seq);
       asciiChar = k.getLabel().at(0);
       asciiNum = int(asciiChar);
       TAP_TEST_EQUAL(asciiNum, i + 1, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
       TEST_LABEL_ERROR);
     }
   }
-  delete pair1->first; delete pair1->second; delete pair1;
-  delete pair2->first; delete pair2->second; delete pair2;
-  delete pair3->first; delete pair3->second; delete pair3;
+  delete f1; delete f2; delete f3;
 }
 
 void testFilterBioReaderWithACAutomaton(){
-  pair<vector<int>*, AbstractACAutomaton<KmerAffect>*> *pair1, *pair2, *pair3;
+  vector<int> *v1, *v2, *v3;
+  AbstractACAutomaton<KmerAffect> *a1, *a2, *a3;
   KmerAffect tmpKmer;
   seqtype sequence1, sequence2, sequence3;
   BioReader testedBioReader1, testedBioReader2, testedBioReader3;
   BioReader filteredBioReader1, filteredBioReader2, filteredBioReader3;
+  FilterWithACAutomaton *f1, *f2, *f3;
 
   const string SIZE_ERROR =
       "The BioReader size must be less or equal than the original's size";
@@ -269,17 +278,19 @@ void testFilterBioReaderWithACAutomaton(){
   testedBioReader1 = getDebugBioReader1();
   testedBioReader2 = getDebugBioReader2();
   testedBioReader3 = getDebugBioReader3();
-  pair1 = buildACAutomatonToFilterBioReader(testedBioReader1, "####");
-  pair2 = buildACAutomatonToFilterBioReader(testedBioReader2, "####");
-  pair3 = buildACAutomatonToFilterBioReader(testedBioReader3, "####");
+  f1 = new FilterWithACAutomaton(testedBioReader1, "####");
+  f2 = new FilterWithACAutomaton(testedBioReader2, "####");
+  f3 = new FilterWithACAutomaton(testedBioReader3, "####");
+  v1 = f1->getIndexes();
+  v2 = f2->getIndexes();
+  v3 = f3->getIndexes();
+  a1 = f1->getAutomaton();
+  a2 = f2->getAutomaton();
+  a3 = f3->getAutomaton();
 
-
-  filteredBioReader1 = filterBioReaderWithACAutomaton
-                      (pair1, testedBioReader1, sequence1);
-  filteredBioReader2 = filterBioReaderWithACAutomaton
-                      (pair2, testedBioReader2, sequence2);
-  filteredBioReader3 = filterBioReaderWithACAutomaton
-                      (pair3, testedBioReader3, sequence3);
+  filteredBioReader1 = f1->filterBioReaderWithACAutomaton(testedBioReader1, sequence1);
+  filteredBioReader2 = f2->filterBioReaderWithACAutomaton(testedBioReader2, sequence2);
+  filteredBioReader3 = f3->filterBioReaderWithACAutomaton(testedBioReader3, sequence3);
 
   //check filteredBioReader size
   TAP_TEST(filteredBioReader1.size() <= testedBioReader1.size(),
@@ -290,8 +301,7 @@ void testFilterBioReaderWithACAutomaton(){
     TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_ERROR);
 
   //check filtered BioReaders content
-  vector<int>* v1 = pair1->first;
-  map<KmerAffect, int> m1 = pair1->second->getMultiResults(sequence1);
+  map<KmerAffect, int> m1 = a1->getMultiResults(sequence1);
   list<Sequence> l1 = filteredBioReader1.getAll();
   for(auto const m : m1){
     KmerAffect tmpKmer = m.first;
@@ -304,8 +314,7 @@ void testFilterBioReaderWithACAutomaton(){
               TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENES_ERROR);
     }
   }
-  vector<int>* v2 = pair2->first;
-  map<KmerAffect, int> m2 = pair2->second->getMultiResults(sequence2);
+  map<KmerAffect, int> m2 = a2->getMultiResults(sequence2);
   list<Sequence> l2 = filteredBioReader2.getAll();
   for(auto const m : m2){
     KmerAffect tmpKmer = m.first;
@@ -318,8 +327,7 @@ void testFilterBioReaderWithACAutomaton(){
               TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENES_ERROR);
     }
   }
-  vector<int>* v3 = pair3->first;
-  map<KmerAffect, int> m3 = pair3->second->getMultiResults(sequence3);
+  map<KmerAffect, int> m3 = a3->getMultiResults(sequence3);
   list<Sequence> l3 = filteredBioReader3.getAll();
   for(auto const m : m3){
     KmerAffect tmpKmer = m.first;
@@ -332,10 +340,7 @@ void testFilterBioReaderWithACAutomaton(){
               TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENES_ERROR);
     }
   }
-
-  delete pair1->first, delete pair1->second; delete pair1;
-  delete pair2->first; delete pair2->second; delete pair2;
-  delete pair3->first; delete pair3->second; delete pair3;
+  delete f1; delete f2; delete f3;
 }
 
 void testGetNSignicativeKmers(){
@@ -357,7 +362,8 @@ void testGetNSignicativeKmers(){
 
   for(int i = 0; i < germline.rep_5.size(); ++i){
     Sequence seq = germline.rep_5.read(i);
-    filtered = filterBioReaderWithACAutomaton(germline.automaton_5, germline.rep_5, seq.sequence, 1);
+    FilterWithACAutomaton *f = germline.getFilter_5();
+    filtered = f->filterBioReaderWithACAutomaton(germline.rep_5, seq.sequence, 1);
     int j = 0;
     while(j < filtered.size()){
       if(extractGeneName(filtered.label(j)) == extractGeneName(seq.label)){
@@ -382,8 +388,8 @@ we take both).
 */
 void testExAequoKmersWhenSignificantParameter(){
   BioReader testedBioReader, filtered;
+  FilterWithACAutomaton *f;
   seqtype seq;
-  pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* p;
   string BIOREADER_EXAEQUO = "BioReader doesn't have ex-aequo";
   string SIZE_BIOREADER = "BioReader doesn't contain the good amount of sequences";
   Sequence sequences[13];
@@ -405,11 +411,11 @@ void testExAequoKmersWhenSignificantParameter(){
   }
   seq = "AAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAATAAAT";
   seq += "GGGGGGGGGGGGGGGTTTTTTTTTTTTTTTTTTTGGGGGGGGGGGGGGGGGGGGTTTTTTTTTTTTTTTT";
-  p = buildACAutomatonToFilterBioReader(testedBioReader, "####");
+  f = new FilterWithACAutomaton(testedBioReader, "####");
   /* Filter using the 2 most significant K-mers, the first one is belonging to
      sequence n°11 (with more than 60 occurences) and second one is sequence n°5
      and n°10 appearing 29 times both. */
-  filtered = filterBioReaderWithACAutomaton(p, testedBioReader, seq, 2);
+  filtered = f->filterBioReaderWithACAutomaton(testedBioReader, seq, 2);
   /* Check that filtered BioReader contains sequence n°5 and sequence n°10 which are ex-aequo. */
   int i = 0;
   while(i < filtered.size() && extractGeneName(filtered.label(i)) != extractGeneName(testedBioReader.label(5))){
@@ -432,20 +438,11 @@ void testExAequoKmersWhenSignificantParameter(){
   TAP_TEST(k < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   /* Add a third ex-aequo: k-mer belonging to sequence n°12 appearing 29 times */
   seq += "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC";
-  delete p->first; delete p->second; delete p;
-  p = buildACAutomatonToFilterBioReader(testedBioReader, "####");
-  filtered = filterBioReaderWithACAutomaton(p, testedBioReader, seq, 2);
-  /* Check that filtered BioReader contains previous sequences and n°12 */
-  i = 0;
-  while(i < filtered.size() && extractGeneName(filtered.label(i)) != extractGeneName(testedBioReader.label(5))){
-    ++i;
-  }
-  j = 0;
-  while(j < filtered.size() && extractGeneName(filtered.label(j)) != extractGeneName(testedBioReader.label(10))){
-    ++j;
-  }
+  delete f;
+  f = new FilterWithACAutomaton(testedBioReader, "####");
+  filtered = f->filterBioReaderWithACAutomaton(testedBioReader, seq, 2);
   k = 0;
-  while(k < filtered.size() && extractGeneName(filtered.label(k)) != extractGeneName(testedBioReader.label(11))){
+  while(k < filtered.size() && extractGeneName(filtered.label(k)) != extractGeneName(testedBioReader.label(12))){
     ++k;
   }
   int l = 0;
@@ -457,18 +454,20 @@ void testExAequoKmersWhenSignificantParameter(){
   TAP_TEST(i < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   TAP_TEST(j < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   TAP_TEST(k < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
-  TAP_TEST(l < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
-  delete p->first; delete p->second; delete p;
+  delete f;
 }
 
 void testBehaviourWhenHugeBioReader(){
   BioReader hugeBioReader;
+  FilterWithACAutomaton *f;
   hugeBioReader.add("../../germline/homo-sapiens/IGHV.fa");
   hugeBioReader.add("../../germline/homo-sapiens/IGLV.fa");
-  pair<vector<int>*,AbstractACAutomaton<KmerAffect>*>* p;
-  p = buildACAutomatonToFilterBioReader(hugeBioReader, "#########");
-  TAP_TEST(!p, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON,
+  AbstractACAutomaton<KmerAffect>* automaton;
+  f = new FilterWithACAutomaton(hugeBioReader, "#########");
+  automaton = f->getAutomaton();
+  TAP_TEST(!automaton, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON,
     "Automaton should not be constructed on a BioReader containing more than 127 sequences.");
+  delete f;
 }
 
 void testFilter(){

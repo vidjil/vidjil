@@ -1,4 +1,4 @@
-
+#include "filter.h"
 #include "germline.h"
 #include "automaton.hpp"
 #include <fstream>
@@ -24,7 +24,7 @@ void Germline::init(string _code, char _shortcut,
   affect_5 = string(1, toupper(shortcut)) + "-" + code + "V";
   affect_4 = string(1, 14 + shortcut) + "-" + code + "D";
   affect_3 = string(1, tolower(shortcut)) + "-" + code + "J";
-  automaton_5 = build_automaton ? buildACAutomatonToFilterBioReader(rep_5, seed) : nullptr;
+  filter_5 = build_automaton ? new FilterWithACAutomaton(rep_5, seed) : nullptr;
 }
 
 
@@ -208,16 +208,14 @@ void Germline::override_rep5_rep3_from_labels(KmerAffect left, KmerAffect right)
   rep_3 = index->getLabel(right);
 }
 
+FilterWithACAutomaton* Germline::getFilter_5(){
+  return this->filter_5;
+}
+
 Germline::~Germline()
 {
-  if(automaton_5){
-    if(automaton_5->first){
-      delete automaton_5->first;
-    }
-    if(automaton_5->second){
-      delete automaton_5->second;
-    }
-    delete automaton_5;
+  if(filter_5){
+    delete filter_5;
   }
   if (index)
     {

@@ -1,22 +1,33 @@
 #include "filter.h"
 
-pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* buildACAutomatonToFilterBioReader
+FilterWithACAutomaton::FilterWithACAutomaton(BioReader &origin, string seed){
+  buildACAutomatonToFilterBioReader(origin, seed);
+}
+
+FilterWithACAutomaton::~FilterWithACAutomaton(){
+    if(automaton){
+      delete automaton;
+    }
+    if(indexes){
+      delete indexes;
+    }
+}
+
+void FilterWithACAutomaton::buildACAutomatonToFilterBioReader
   (BioReader &origin, string seed){
-  pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* result;
-  vector<int>* indexes;
-  PointerACAutomaton<KmerAffect>* aho;
   char asciiChar;
   int asciiNumber;
   string currentLabel;
   string previousLabel;
 
   if(origin.size() < 1){
-    return nullptr;
+    automaton = nullptr;
+    indexes = nullptr;
+    return;
   }
-  result = new pair<vector<int>*,AbstractACAutomaton<KmerAffect>*>();
-  aho = new PointerACAutomaton<KmerAffect>(seed, false, true);
+  automaton = new PointerACAutomaton<KmerAffect>(seed, false, true);
   indexes = new vector<int>();
-  aho->insert(origin.sequence(0),std::string("") + char(1), true, 0, seed);
+  automaton->insert(origin.sequence(0),std::string("") + char(1), true, 0, seed);
   asciiNumber = 1;
   indexes->push_back(0);
   previousLabel = extractGeneName(origin.label(0));
@@ -28,42 +39,36 @@ pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* buildACAutomatonToFilterBi
       asciiNumber++;
     }
     if(asciiNumber > 127){
-      delete result; delete aho; delete indexes;
-      return nullptr;
+      delete automaton; delete indexes;
+      automaton = nullptr;
+      indexes = nullptr;
+      return;
     }
     asciiChar = char(asciiNumber);
-    aho->insert(origin.sequence(i),std::string("") + asciiChar, true, 0, seed);
+    automaton->insert(origin.sequence(i),std::string("") + asciiChar, true, 0, seed);
     previousLabel = currentLabel;
   }
   indexes->push_back(origin.size());
-  aho->build_failure_functions();
-  result->first = indexes;
-  result->second = aho;
-  return result;
+  automaton->build_failure_functions();
 }
 
 /*
   Takes a built automaton and a vector of indexes and build a BioReader
   based on it.
 */
-BioReader filterBioReaderWithACAutomaton(
-    pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* idxAho,
+BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
     BioReader &origin, seqtype &seq,
     int kmer_threshold){
 
   BioReader result;
-  AbstractACAutomaton<KmerAffect>* aho;
-  vector<int>* indexes;
   map<KmerAffect, int> mapAho;
   KmerAffect tmpKmer;
   unsigned int asciiNum;
   char asciiChar;
-  if(!idxAho || kmer_threshold < 0){
+  if(!automaton || !indexes || kmer_threshold < 0){
     return origin;
   }
-  indexes =  idxAho->first;
-  aho = idxAho->second;
-  mapAho = aho->getMultiResults(seq);
+  mapAho = automaton->getMultiResults(seq);
 
   //All k-mers selected : iterate over all map
   if(kmer_threshold == ALL_KMERS_VALUE || kmer_threshold > (int)mapAho.size()){
@@ -112,4 +117,12 @@ BioReader filterBioReaderWithACAutomaton(
     }
   }
   return (result.size() == 0) ? origin : result;
+}
+
+vector<int>* FilterWithACAutomaton::getIndexes() const{
+  return this->indexes;
+}
+
+AbstractACAutomaton<KmerAffect>* FilterWithACAutomaton::getAutomaton() const{
+  return this->automaton;
 }

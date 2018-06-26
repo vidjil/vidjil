@@ -41,6 +41,8 @@ using json = nlohmann::json;
 
 class Germline {
  private:
+  FilterWithACAutomaton* filter_5;
+
   int max_indexing;
 
   void init(string _code, char _shortcut,
@@ -113,11 +115,13 @@ class Germline {
   string affect_5 ;
   string affect_4 ;
   string affect_3 ;
-  
+
   BioReader  rep_5 ;
   BioReader  rep_4 ;
   BioReader  rep_3 ;
   IKmerStore<KmerAffect> *index;
+
+  FilterWithACAutomaton* getFilter_5();
 };
 
 ostream &operator<<(ostream &out, const Germline &germline);
