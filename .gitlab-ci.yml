@@ -155,6 +155,23 @@ deploy_release_prod:
           make -C vidjil-algo-${release_name}
           ln -sf vidjil-algo-${release_name} next"
 
+test_various_compilers:
+  stage: test_functional
+  only:
+    - feature-a/test-compilers
+  tags:
+    - several-compilers
+  script:
+    - |
+      for CXX in $COMPILERS; do
+        echo "**** Using $CXX for compilation ****"
+        make -C algo clean
+        make -C algo CXX=$CXX unit
+        make -C algo CXX=$CXX should
+        make -C algo CXX=$CXX valgrind_unit
+      done
+
+
 # Client
 
 test_browser_unit:
