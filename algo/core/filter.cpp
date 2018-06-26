@@ -119,6 +119,10 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
   return (result.size() == 0) ? origin : result;
 }
 
-pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>*  FilterWithACAutomaton::getPair(){
-  return this->p;
+vector<int>* FilterWithACAutomaton::getIndexes() const{
+  return this->indexes;
+}
+
+AbstractACAutomaton<KmerAffect>* FilterWithACAutomaton::getAutomaton() const{
+  return this->automaton;
 }
