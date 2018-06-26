@@ -4,7 +4,8 @@ label version="1.1"
 label description="An NGINX based docker image which comes \
 with a full installation of the Vidjil client."
 
-env GOSU_VERSION 1.7
+run sed -i 's/^\(user .*\)$/user www-data;/' /etc/nginx/nginx.conf
+
 run set -x \
 	&& apt-get update && apt-get install -y --no-install-recommends wget make unzip git sudo curl fcgiwrap && rm -rf /var/lib/apt/lists/*
 
@@ -21,6 +22,8 @@ copy ./conf/conf_http.js /opt/vidjil_conf/conf_http.js
 copy ./conf/nginx_web2py /opt/vidjil_conf/web2py
 copy ./conf/nginx_web2py_http /opt/vidjil_conf/web2py_http
 copy ./conf/Gemfile /usr/share/vidjil/Gemfile
+copy ./conf/align.cgi /usr/share/vidjil/browser/cgi/align.cgi
+copy ./conf/similarity.cgi /usr/share/vidjil/browser/cgi/similarity.cgi
 
 run cd /usr/share/vidjil/browser/css/icons && make
 run cd /usr/share/vidjil/germline && make

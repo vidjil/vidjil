@@ -8,7 +8,7 @@ var config = {
     /* Used for the 'align' script 
      * If this is not defined, the 'align' button is not available
      */    
-    "cgi_address" : "http://localhost/cgi/", // Public test server
+    "cgi_address" : "https://localhost/cgi/", // Public test server
     // "cgi_address" : "http://127.0.1.1/cgi-bin/",
 
     /* The following options control how the user may have access to .vidjil files.

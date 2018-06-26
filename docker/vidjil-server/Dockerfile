@@ -13,8 +13,7 @@ run set -x \
 	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
 	&& gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
 	&& rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
-	&& chmod +x /usr/local/bin/gosu \
-	&& apt-get purge -y --auto-remove ca-certificates
+	&& chmod +x /usr/local/bin/gosu
 
 run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y -q sudo curl apt-utils uwsgi-plugin-python
 
@@ -37,6 +36,8 @@ copy ./conf/wsgihandler.py /etc/vidjil/wsgihandler.py
 run chmod +x /opt/install_scripts/install.sh; sync && /opt/install_scripts/install.sh
 run ln -s /etc/vidjil/defs.py /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
 run ln -s /etc/vidjil/wsgihandler.py /usr/share/vidjil/server/web2py/wsgihandler.py
+
+run wget http://www.vidjil.org/releases/vidjil-latest_x86_64 && mv vidjil-latest_x86_64 /usr/share/vidjil/vidjil-algo && cd /usr/share/vidjil/ && chmod +x vidjil-algo && cd germline && make
 
 copy ./scripts/uwsgi-entrypoint.sh /entrypoints/uwsgi-entrypoint.sh
 copy ./scripts/fuse-entrypoint.sh /entrypoints/fuse-entrypoint.sh
