@@ -61,18 +61,14 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
     int kmer_threshold){
 
   BioReader result;
-  AbstractACAutomaton<KmerAffect>* aho;
-  vector<int>* indexes;
   map<KmerAffect, int> mapAho;
   KmerAffect tmpKmer;
   unsigned int asciiNum;
   char asciiChar;
-  if(!p || kmer_threshold < 0){
+  if(!automaton || !indexes || kmer_threshold < 0){
     return origin;
   }
-  indexes =  p->first;
-  aho = p->second;
-  mapAho = aho->getMultiResults(seq);
+  mapAho = automaton->getMultiResults(seq);
 
   //All k-mers selected : iterate over all map
   if(kmer_threshold == ALL_KMERS_VALUE || kmer_threshold > (int)mapAho.size()){
