@@ -42,6 +42,7 @@ services:
         command: bash /entrypoints/nginx-entrypoint.sh
         volumes:
             - /opt/vidjil/log/nginx:/var/log/nginx
+            - /etc/nginx/ssl:/etc/nginx/ssl
 
     workers:
         image: vidjil/server:test
