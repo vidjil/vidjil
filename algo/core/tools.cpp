@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <algorithm>
 #include "tools.h"
+#include "../lib/json.hpp"
 
 string seed_contiguous(int k)
 {

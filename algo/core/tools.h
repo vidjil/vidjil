@@ -37,7 +37,7 @@
 #include <vector>
 #include "bioreader.hpp"
 #include "kmeraffect.h"
-#include "../lib/json.hpp"
+#include "../lib/json_fwd.hpp"
 using json = nlohmann::json;
 using namespace std;
 

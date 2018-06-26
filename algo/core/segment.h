@@ -11,7 +11,7 @@
 #include "kmerstore.h"
 #include "kmeraffect.h"
 #include "affectanalyser.h"
-#include "../lib/json.hpp"
+#include "../lib/json_fwd.hpp"
 #include "filter.h"
 
 // #define DEBUG_EVALUE

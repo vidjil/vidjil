@@ -9,7 +9,7 @@
 #include <ctime>
 #include "dynprog.h"
 #include "windows.h"
-#include "../lib/json.hpp"
+#include "../lib/json_fwd.hpp"
 
 using namespace std ;
 using json = nlohmann::json;

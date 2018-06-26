@@ -1,6 +1,7 @@
 #include "filter.h"
 #include "germline.h"
 #include "automaton.hpp"
+#include "../lib/json.hpp"
 #include <fstream>
 #include <ctype.h>
 

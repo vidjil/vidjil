@@ -22,6 +22,7 @@
 */
 
 #include "similarityMatrix.h"
+#include "../lib/json.hpp"
 #include <cassert>
 #include <limits>
 #include <math.h>

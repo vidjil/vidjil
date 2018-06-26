@@ -19,7 +19,7 @@
 #include "read_score.h"
 #include "representative.h"
 #include "stats.h"
-#include "../lib/json.hpp"
+#include "../lib/json_fwd.hpp"
 
 #define NB_BINS 30
 #define MAX_VALUE_BINS 500
