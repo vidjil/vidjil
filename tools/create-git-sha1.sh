@@ -8,9 +8,7 @@ GITV_H=$1
 GITV_H_TMP=${GITV_H}.tmp
 PRETTY_PREFIX=$2
 
-touch ${GITV_H}
-
 git log -1 --pretty=format:"${PRETTY_PREFIX} \"%h (%cd)\"" --date=short --abbrev-commit > ${GITV_H_TMP} 2> /dev/null
 
 # Replace the file only when the new file is different
-diff ${GITV_H} ${GITV_H_TMP} || mv ${GITV_H_TMP} ${GITV_H}
+diff ${GITV_H} ${GITV_H_TMP} 2> /dev/null || mv ${GITV_H_TMP} ${GITV_H}
