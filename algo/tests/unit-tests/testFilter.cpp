@@ -151,7 +151,8 @@ vector<int> getDebugIndexes3(){
   the revceivedAutomaton wear the good label.
 */
 void testAutomatonBuilderFilteringBioReader(){
-  pair<vector<int>*, AbstractACAutomaton<KmerAffect>*> *pair1, *pair2, *pair3;
+  vector<int> *v1, *v2, *v3;
+  AbstractACAutomaton<KmerAffect> *a1, *a2, *a3;
   KmerAffect tmpKmer;
   seqtype tmpSeq;
   BioReader testedBioReader1;
@@ -184,34 +185,37 @@ void testAutomatonBuilderFilteringBioReader(){
   f2 = new FilterWithACAutomaton(testedBioReader2,"####");
   f3 = new FilterWithACAutomaton(testedBioReader3,"####");
 
-  pair1 = f1->getPair();
-  pair2 = f2->getPair();
-  pair3 = f3->getPair();
+  v1 = f1->getIndexes();
+  v2 = f2->getIndexes();
+  v3 = f3->getIndexes();
+  a1 = f1->getAutomaton();
+  a2 = f2->getAutomaton();
+  a3 = f3->getAutomaton();
 
   /* test indexes size */
-    TAP_TEST_EQUAL(pair1->first->size(), expectedIndexes1.size(),
+    TAP_TEST_EQUAL(v1->size(), expectedIndexes1.size(),
       TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
       TEST_SIZE_ERROR);
-    TAP_TEST_EQUAL(pair2->first->size(), expectedIndexes2.size(),
+    TAP_TEST_EQUAL(v2->size(), expectedIndexes2.size(),
       TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
       TEST_SIZE_ERROR);
-    TAP_TEST_EQUAL(pair3->first->size(), expectedIndexes3.size(),
+    TAP_TEST_EQUAL(v3->size(), expectedIndexes3.size(),
       TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
       TEST_SIZE_ERROR);
 
   /* test indexes content */
-  for(unsigned int i = 0; i < pair1->first->size(); ++i){
-    TAP_TEST_EQUAL(pair1->first->at(i), expectedIndexes1[i],
+  for(unsigned int i = 0; i < v1->size(); ++i){
+    TAP_TEST_EQUAL(v1->at(i), expectedIndexes1[i],
     TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
     TEST_CONTENT_ERROR);
   }
-  for(unsigned int i = 0; i < pair2->first->size(); ++i){
-    TAP_TEST_EQUAL(pair2->first->at(i), expectedIndexes2[i],
+  for(unsigned int i = 0; i < v2->size(); ++i){
+    TAP_TEST_EQUAL(v2->at(i), expectedIndexes2[i],
     TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
     TEST_CONTENT_ERROR);
   }
-  for(unsigned int i = 0; i < pair3->first->size(); ++i){
-    TAP_TEST_EQUAL(pair3->first->at(i), expectedIndexes3[i],
+  for(unsigned int i = 0; i < v3->size(); ++i){
+    TAP_TEST_EQUAL(v3->at(i), expectedIndexes3[i],
     TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
     TEST_CONTENT_ERROR);
   }
@@ -220,7 +224,7 @@ void testAutomatonBuilderFilteringBioReader(){
   for(unsigned int i = 0;i < expectedIndexes1.size() - 1; ++i){
     for(int j = expectedIndexes1[i]; j < expectedIndexes1[i + 1]; ++j){
       seq = testedBioReader1.sequence(j);
-      k = pair1->second->get(seq);
+      k = a1->get(seq);
       asciiChar = k.getLabel().at(0);
       asciiNum = int(asciiChar);
       TAP_TEST_EQUAL(asciiNum, i + 1, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
@@ -230,7 +234,7 @@ void testAutomatonBuilderFilteringBioReader(){
   for(unsigned int i = 0;i < expectedIndexes2.size() - 1; ++i){
     for(int j = expectedIndexes2[i]; j < expectedIndexes2[i + 1]; ++j){
       seq = testedBioReader2.sequence(j);
-      k = pair2->second->get(seq);
+      k = a2->get(seq);
       asciiChar = k.getLabel().at(0);
       asciiNum = int(asciiChar);
       TAP_TEST_EQUAL(asciiNum, i + 1, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
@@ -240,7 +244,7 @@ void testAutomatonBuilderFilteringBioReader(){
   for(unsigned int i = 0;i < expectedIndexes3.size() - 1; ++i){
     for(int j = expectedIndexes3[i]; j < expectedIndexes3[i + 1]; ++j){
       seq = testedBioReader3.sequence(j);
-      k = pair3->second->get(seq);
+      k = a3->get(seq);
       asciiChar = k.getLabel().at(0);
       asciiNum = int(asciiChar);
       TAP_TEST_EQUAL(asciiNum, i + 1, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
