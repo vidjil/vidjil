@@ -2,6 +2,7 @@
 #include "core/filter.h"
 #include "core/germline.h"
 #include "core/tools.h"
+#include <algorithm>
 
 /*
   Create an artificial BioReader to experiment tests.
