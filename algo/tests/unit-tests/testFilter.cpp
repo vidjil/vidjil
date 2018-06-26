@@ -462,10 +462,10 @@ void testBehaviourWhenHugeBioReader(){
   FilterWithACAutomaton *f;
   hugeBioReader.add("../../germline/homo-sapiens/IGHV.fa");
   hugeBioReader.add("../../germline/homo-sapiens/IGLV.fa");
-  pair<vector<int>*,AbstractACAutomaton<KmerAffect>*>* p;
+  AbstractACAutomaton<KmerAffect>* automaton;
   f = new FilterWithACAutomaton(hugeBioReader, "#########");
-  p = f->getPair();
-  TAP_TEST(!p, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON,
+  automaton = f->getAutomaton();
+  TAP_TEST(!automaton, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON,
     "Automaton should not be constructed on a BioReader containing more than 127 sequences.");
   delete f;
 }
