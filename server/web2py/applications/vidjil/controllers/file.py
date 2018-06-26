@@ -236,6 +236,10 @@ def submit():
             reupload = True
             fid = int(f["id"])
             sequence_file = db.sequence_file[fid]
+            if f['filename'] == '':
+                # If we don't reupload a new file
+                file_data.pop('pre_process_flag')
+            
             db.sequence_file[fid] = file_data
             #remove previous membership
             db( db.sample_set_membership.sequence_file_id == fid).delete()
@@ -298,6 +302,10 @@ def submit():
     
 def form_response(data):
     source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
+    network_source = source_module_active and (data['action'] != 'edit'     \
+                                               or len(data['file']) == 0    \
+                                               or data['file'][0].network)
+      # should be true only when we want to use the network view
     response.view = 'file/form.html'
     upload_group_ids = [int(gid) for gid in get_upload_group_ids(auth)]
     group_ids = get_involved_groups()
@@ -309,6 +317,7 @@ def form_response(data):
            sample_type = data['sample_type'],
            errors = data['errors'],
            source_module_active = source_module_active,
+           network_source = network_source,
            group_ids = group_ids,
            upload_group_ids = upload_group_ids,
            isEditing = data['action']=='edit')
