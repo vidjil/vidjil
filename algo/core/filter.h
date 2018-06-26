@@ -5,7 +5,8 @@
 
 class FilterWithACAutomaton {
   private:
-    pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* p;
+    vector<int>* indexes;
+    AbstractACAutomaton<KmerAffect>* automaton;
 
   public:
     FilterWithACAutomaton(BioReader &origin, string seed);
@@ -82,6 +83,14 @@ class FilterWithACAutomaton {
   */
   void buildACAutomatonToFilterBioReader(BioReader &origin, string seed);
 
-  pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* getPair();
+  /**
+  * Return the vector of indexes used while building the automaton.
+  */
+  vector<int>* getIndexes() const;
+
+  /**
+  * Return the automaton stored.
+  */
+  AbstractACAutomaton<KmerAffect>* getAutomaton() const;
 };
 #endif
