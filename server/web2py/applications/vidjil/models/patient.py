@@ -62,3 +62,9 @@ class Patient(SampleSet):
         if (data["first_name"] + data['last_name']).find('|') >= 0:
             error.append("illegal character '|' in name")
         return error
+
+    def get_name_filter_query(self, query):
+        if query is None or query == '':
+            return (db[self.type].id > 0)
+        return ((db[self.type].first_name.like('%' + query + "%")) |
+                (db[self.type].last_name.like('%' + query + '%')))
