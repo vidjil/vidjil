@@ -24,6 +24,13 @@ stages:
   - prepare_deploy
   - deploy_prod
 
+# Anchors
+
+.coverage_dependency: &lcov_artifact
+  artifacts:
+    paths:
+      - algo/lcov_test_*.filtered
+    expire_in: 6hrs
 
 # Tools
 
@@ -48,6 +55,7 @@ test_germlines:
 test_algo_unit:
   stage: test_unit
   script: make -C algo unit_coverage
+  <<: *lcov_artifact
   only:
     - /^feature-.*a.*\/.*$/
 
@@ -62,10 +70,12 @@ test_algo_should:
   script: make -C algo should_coverage
   only:
     - /^feature-.*a.*\/.*$/
+  <<: *lcov_artifact
 
 test_algo_shouldvdj:
   stage: test_shouldvdj
   script: make -C algo shouldvdj_coverage
+  <<: *lcov_artifact
   only:
     - /^feature-.*a.*\/.*$/
 
