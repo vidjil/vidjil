@@ -103,7 +103,7 @@ void testFastaAddThrows() {
   bool caught = false;
   try {
     BioReader fa1("mlkdkklflskjfskldfj.fa");
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Error in opening file") != string::npos, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -114,7 +114,7 @@ void testFastaAddThrows() {
   caught = false;
   try {
     fa1.add("ljk:lkjsdfsdlfjsdlfkjs.fa");
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Error in opening file") != string::npos, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -123,7 +123,7 @@ void testFastaAddThrows() {
   caught = false;
   try {
     fa1.add("Makefile");
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("The file seems to be malformed") != string::npos, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -133,7 +133,7 @@ void testFastaAddThrows() {
   try {
     OnlineBioReader *fa = OnlineBioReaderFactory::create("lkjdflkdfjglkdfjg.fa");
     delete fa;
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Error in opening file") != string::npos, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -142,7 +142,7 @@ void testFastaAddThrows() {
   caught = false;
   try {
     BioReader fa1("data/malformed1.fq");
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Expected line starting with +") != string::npos, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -150,7 +150,7 @@ void testFastaAddThrows() {
   caught = false;
   try {
     BioReader fa1("data/malformed2.fq");
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -158,7 +158,7 @@ void testFastaAddThrows() {
   caught = false;
   try {
     BioReader fa1("data/malformed3.fq");
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Quality and sequence don't have the same length") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -166,7 +166,7 @@ void testFastaAddThrows() {
   caught = false;
   try {
     BioReader fa1("data/malformed4.fq");
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -174,7 +174,7 @@ void testFastaAddThrows() {
   caught = false;
   try {
     BioReader fa1("data/malformed5.fq");
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -186,7 +186,7 @@ void testFastaAddThrows() {
     // don't complain for empty files explicitly in BioReader constructor.
     fa_read = OnlineBioReaderFactory::create("data/malformed6.fq");
     fa_read->next();
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     if (fa_read)
         delete fa_read;
     TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
@@ -197,7 +197,7 @@ void testFastaAddThrows() {
   caught = false;
   try {
     BioReader fa1("data/malformed7.fq");
-  } catch(invalid_argument e) {
+  } catch(invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }

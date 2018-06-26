@@ -304,7 +304,7 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
 
     germlines = json::parse(content);
 
-  } catch (const invalid_argument e) {
+  } catch (const invalid_argument &e) {
     cerr << ERROR_STRING << "Vidjil cannot open .g file " << path + "/" + json_filename << ": " << e.what() << endl;
     exit(1);
   }

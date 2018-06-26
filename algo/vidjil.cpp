@@ -876,7 +876,7 @@ int main (int argc, char **argv)
 
   try {
     reads = OnlineBioReaderFactory::create(f_reads, 1, read_header_separator, max_reads_processed, only_nth_read);
-  } catch (const invalid_argument e) {
+  } catch (const invalid_argument &e) {
     cerr << ERROR_STRING << PROGNAME << " cannot open reads file " << f_reads << ": " << e.what() << endl;
     return 1;
   }
