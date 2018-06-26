@@ -125,10 +125,10 @@ $(VIDJIL): $(BINDIR)%: $(MAIN).o $(LIBCORE)
 ###
 
 core/%.a: FORCE
-	$(MAKE) -C core $(notdir $@)
+	$(MAKE) -C core OPTIM="$(OPTIM)" $(notdir $@)
 
 lib/%.a: FORCE
-	$(MAKE) -C lib $(notdir $@)
+	$(MAKE) -C lib OPTIM="$(OPTIM)" $(notdir $@)
 
 clean:
 	$(MAKE) -C core $@
@@ -151,7 +151,7 @@ cleanall: cleancoverage
 
 test:
 	$(MAKE) -C tests cleantests
-	$(TEE) '$(MAKE) COVERAGE="$(COVERAGE)" unit' tests/out-unit.log
+	$(TEE) '$(MAKE) OPTIM="$(OPTIM)" unit' tests/out-unit.log
 	$(MAKE) functional
 	@echo
 	@echo "*** All tests passed. Congratulations !"
@@ -167,7 +167,7 @@ snapshot_diff_current:
 
 unit: all
 	@echo "*** Launching unit tests..."
-	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C tests
+	$(MAKE) OPTIM="$(OPTIM)" -C tests
 	@echo "*** All unit tests passed"
 
 functional: all
@@ -177,12 +177,12 @@ functional: all
 should: all
 	@echo
 	@echo "*** Launching .should_get tests..."
-	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C tests should
+	$(MAKE) OPTIM="$(OPTIM)" -C tests should
 	@echo "*** All .should_get tests passed"
 
 shouldvdj: all
 	@echo
-	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C tests shouldvdj_if_python
+	$(MAKE) OPTIM="$(OPTIM)" -C tests shouldvdj_if_python
 
 
 valgrind_unit:
