@@ -15,21 +15,19 @@ FilterWithACAutomaton::~FilterWithACAutomaton(){
 
 void FilterWithACAutomaton::buildACAutomatonToFilterBioReader
   (BioReader &origin, string seed){
-  vector<int>* indexes;
-  PointerACAutomaton<KmerAffect>* aho;
   char asciiChar;
   int asciiNumber;
   string currentLabel;
   string previousLabel;
 
   if(origin.size() < 1){
-    p = nullptr;
+    automaton = nullptr;
+    indexes = nullptr;
     return;
   }
-  p = new pair<vector<int>*,AbstractACAutomaton<KmerAffect>*>();
-  aho = new PointerACAutomaton<KmerAffect>(seed, false, true);
+  automaton = new PointerACAutomaton<KmerAffect>(seed, false, true);
   indexes = new vector<int>();
-  aho->insert(origin.sequence(0),std::string("") + char(1), true, 0, seed);
+  automaton->insert(origin.sequence(0),std::string("") + char(1), true, 0, seed);
   asciiNumber = 1;
   indexes->push_back(0);
   previousLabel = extractGeneName(origin.label(0));
@@ -41,18 +39,17 @@ void FilterWithACAutomaton::buildACAutomatonToFilterBioReader
       asciiNumber++;
     }
     if(asciiNumber > 127){
-      delete p; delete aho; delete indexes;
-      p = nullptr;
+      delete automaton; delete indexes;
+      automaton = nullptr;
+      indexes = nullptr;
       return;
     }
     asciiChar = char(asciiNumber);
-    aho->insert(origin.sequence(i),std::string("") + asciiChar, true, 0, seed);
+    automaton->insert(origin.sequence(i),std::string("") + asciiChar, true, 0, seed);
     previousLabel = currentLabel;
   }
   indexes->push_back(origin.size());
-  aho->build_failure_functions();
-  p->first = indexes;
-  p->second = aho;
+  automaton->build_failure_functions();
 }
 
 /*
