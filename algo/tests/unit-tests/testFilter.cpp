@@ -255,7 +255,8 @@ void testAutomatonBuilderFilteringBioReader(){
 }
 
 void testFilterBioReaderWithACAutomaton(){
-  pair<vector<int>*, AbstractACAutomaton<KmerAffect>*> *pair1, *pair2, *pair3;
+  vector<int> *v1, *v2, *v3;
+  AbstractACAutomaton<KmerAffect> *a1, *a2, *a3;
   KmerAffect tmpKmer;
   seqtype sequence1, sequence2, sequence3;
   BioReader testedBioReader1, testedBioReader2, testedBioReader3;
@@ -280,9 +281,12 @@ void testFilterBioReaderWithACAutomaton(){
   f1 = new FilterWithACAutomaton(testedBioReader1, "####");
   f2 = new FilterWithACAutomaton(testedBioReader2, "####");
   f3 = new FilterWithACAutomaton(testedBioReader3, "####");
-  pair1 = f1->getPair();
-  pair2 = f2->getPair();
-  pair3 = f3->getPair();
+  v1 = f1->getIndexes();
+  v2 = f2->getIndexes();
+  v3 = f3->getIndexes();
+  a1 = f1->getAutomaton();
+  a2 = f2->getAutomaton();
+  a3 = f3->getAutomaton();
 
   filteredBioReader1 = f1->filterBioReaderWithACAutomaton(testedBioReader1, sequence1);
   filteredBioReader2 = f2->filterBioReaderWithACAutomaton(testedBioReader2, sequence2);
@@ -297,8 +301,7 @@ void testFilterBioReaderWithACAutomaton(){
     TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_ERROR);
 
   //check filtered BioReaders content
-  vector<int>* v1 = pair1->first;
-  map<KmerAffect, int> m1 = pair1->second->getMultiResults(sequence1);
+  map<KmerAffect, int> m1 = a1->getMultiResults(sequence1);
   list<Sequence> l1 = filteredBioReader1.getAll();
   for(auto const m : m1){
     KmerAffect tmpKmer = m.first;
@@ -311,8 +314,7 @@ void testFilterBioReaderWithACAutomaton(){
               TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENES_ERROR);
     }
   }
-  vector<int>* v2 = pair2->first;
-  map<KmerAffect, int> m2 = pair2->second->getMultiResults(sequence2);
+  map<KmerAffect, int> m2 = a2->getMultiResults(sequence2);
   list<Sequence> l2 = filteredBioReader2.getAll();
   for(auto const m : m2){
     KmerAffect tmpKmer = m.first;
@@ -325,8 +327,7 @@ void testFilterBioReaderWithACAutomaton(){
               TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENES_ERROR);
     }
   }
-  vector<int>* v3 = pair3->first;
-  map<KmerAffect, int> m3 = pair3->second->getMultiResults(sequence3);
+  map<KmerAffect, int> m3 = a3->getMultiResults(sequence3);
   list<Sequence> l3 = filteredBioReader3.getAll();
   for(auto const m : m3){
     KmerAffect tmpKmer = m.first;
