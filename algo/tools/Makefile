@@ -14,7 +14,7 @@ all: $(EXEC)
 
 $(EXEC): %: %.o 
 	$(MAKE) -C .. base OPTIM="$(OPTIM)"
-	$(CXX) -I .. -o $@ $^ $(LIBCORE) $(LDLIBS)
+	$(CXX) -I .. -o $@ $^ $(LIBCORE) $(LDLIBS) $(LDFLAGS)
 
 clean:
 	rm -f $(EXEC)

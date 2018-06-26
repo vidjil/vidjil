@@ -9,6 +9,11 @@ endif
 
 OPTIM=-O2 -DNDEBUG  $(COVERAGE_OPTION) $(DEBUG)
 override CXXFLAGS += -W -Wall -std=c++11 $(OPTIM)
+override LDFLAGS += $(COVERAGE_OPTION)
+
+export CXXFLAGS
+export LDFLAGS
+export CXX
 
 ## inspired from http://stackoverflow.com/questions/399850/best-compiler-warning-level-for-c-c-compilers/401276
 PARANOID= -Wall -Weffc++ -pedantic  \
@@ -113,7 +118,7 @@ debug:
 $(VIDJIL): $(BINDIR)%: $(MAIN).o $(LIBCORE)
 	$(MAKE) -C core OPTIM="$(OPTIM)"
 	$(MAKE) -C lib OPTIM="$(OPTIM)"
-	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 ###
 # Subdirectories
