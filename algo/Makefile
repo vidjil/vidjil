@@ -206,6 +206,10 @@ coverage: unit_coverage should_coverage
 unit_coverage: clean
 	$(MAKE) COVERAGE=1 unit
 should_coverage: clean
+	$(MAKE) COVERAGE=1 should
+shouldvdj_coverage: clean
+	$(MAKE) COVERAGE=1 shouldvdj
+functional_coverage: clean
 	$(MAKE) COVERAGE=1 functional
 
 ### Reports with gcovr
