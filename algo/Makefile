@@ -13,6 +13,7 @@ override CXXFLAGS += $(COVERAGE_OPTION) $(DEBUG)
 ifeq ($(LDFLAGS),)
   LDFLAGS := $(COVERAGE_OPTION)
 endif
+COV_OUTFILE?=lcov.out
 
 export CXXFLAGS
 export LDFLAGS
@@ -58,7 +59,7 @@ CREATE_VERSION_GIT_H := $(shell test -x ./create-git-version-h.sh && ./create-gi
 
 TEE = python ../tools/tee.py -v
 
-.PHONY: all core lib clean forcedep
+.PHONY: all core lib clean forcedep gcovr_reports
 
 all: $(VIDJIL) $(ALIGN_CGI) $(SIMILARITY_CGI) $(SIMILARITY_TOOL)
 	$(MAKE) -C $(TOOLDIR)
@@ -205,29 +206,27 @@ coverage: unit_coverage should_coverage
 
 unit_coverage: clean
 	$(MAKE) COVERAGE=1 unit
+	$(MAKE) COV_OUTFILE=lcov_test_unit gencov
 should_coverage: clean
 	$(MAKE) COVERAGE=1 should
+	$(MAKE) COV_OUTFILE=lcov_test_should gencov
 shouldvdj_coverage: clean
 	$(MAKE) COVERAGE=1 shouldvdj
+	$(MAKE) COV_OUTFILE=lcov_test_shouldvdj gencov
 functional_coverage: clean
 	$(MAKE) COVERAGE=1 functional
+	$(MAKE) COV_OUTFILE=lcov_test_functional gencov
 
-### Reports with gcovr
+gencov:
+	which lcov > /dev/null || exit 0
+	lcov --rc lcov_branch_coverage=1 -d . -c -o $(COV_OUTFILE)
+	lcov --rc lcov_branch_coverage=1  --remove $(COV_OUTFILE) '/usr/*' '*algo/tests/*' '*algo/lib/*' '*algo/tools/*' -o $(COV_OUTFILE).filtered
 
-unit_gcovr: unit_coverage
+### Reports with lcov
+
+lcov_reports:
 	mkdir -p reports
-	which gcovr > /dev/null && (gcovr -r . -e tests/ --xml > ../reports/unit_coverage.xml) || echo "gcovr is needed to generate a full report"
-should_gcovr: should_coverage
-	mkdir -p reports
-	which gcovr > /dev/null && (gcovr -r . -e tests/ --xml > ../reports/should_coverage.xml) || echo "gcovr is needed to generate a full report"
-
-### Upload to coveralls.io
-
-unit_coveralls:
-	coveralls $(COVERALLS_OPTIONS) --exclude release --exclude lib --exclude tests --exclude tools --exclude tests --exclude ../tools --exclude lib --gcov-options '\-lp'
-should_coveralls:
-	coveralls $(COVERALLS_OPTIONS) --exclude release --exclude lib --exclude tests --exclude tools --exclude tests --exclude ../tools --exclude lib --gcov-options '\-lp' -r algo
-
+	which lcov > /dev/null && (lcov --rc lcov_branch_coverage=1 $(addprefix -a ,$(wildcard lcov*.filtered)) -o lcov_filtered_total.out && genhtml --branch-coverage --legend --output-directory reports/ lcov_filtered_total.out ) || echo "gcovr is needed to generate a full report"
 
 ### cppcheck
 
