@@ -41,7 +41,7 @@ using json = nlohmann::json;
 
 class Germline {
  private:
-  FilterWithACAutomaton* filter;
+  FilterWithACAutomaton* filter_5;
 
   int max_indexing;
 
@@ -121,7 +121,7 @@ class Germline {
   BioReader  rep_3 ;
   IKmerStore<KmerAffect> *index;
 
-  FilterWithACAutomaton* getFilter();
+  FilterWithACAutomaton* getFilter_5();
 };
 
 ostream &operator<<(ostream &out, const Germline &germline);

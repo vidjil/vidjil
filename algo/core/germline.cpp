@@ -24,7 +24,7 @@ void Germline::init(string _code, char _shortcut,
   affect_5 = string(1, toupper(shortcut)) + "-" + code + "V";
   affect_4 = string(1, 14 + shortcut) + "-" + code + "D";
   affect_3 = string(1, tolower(shortcut)) + "-" + code + "J";
-  filter = build_automaton ? new FilterWithACAutomaton(rep_5, seed) : nullptr;
+  filter_5 = build_automaton ? new FilterWithACAutomaton(rep_5, seed) : nullptr;
 }
 
 
@@ -208,14 +208,14 @@ void Germline::override_rep5_rep3_from_labels(KmerAffect left, KmerAffect right)
   rep_3 = index->getLabel(right);
 }
 
-FilterWithACAutomaton* Germline::getFilter(){
-  return this->filter;
+FilterWithACAutomaton* Germline::getFilter_5(){
+  return this->filter_5;
 }
 
 Germline::~Germline()
 {
-  if(filter){
-    delete filter;
+  if(filter_5){
+    delete filter_5;
   }
   if (index)
     {
