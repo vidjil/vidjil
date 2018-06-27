@@ -26,6 +26,18 @@ map<string, string> seedMap = {
   {"13s", "#######-######"}
 };
 
+string expand_seed(string seed)
+{
+  if (seed.size() == 0)
+    seed = DEFAULT_SEED;
+
+  if (seed.find(SEED_YES) == std::string::npos)
+    return seedMap[seed];
+
+  return seed ;
+}
+
+
 char spaced_buf[MAX_SEED_SIZE+1];
 
 string spaced(const string &input, const string &seed) {

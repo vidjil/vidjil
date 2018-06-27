@@ -48,7 +48,9 @@ using namespace std;
 #define SEED_YES '#'
 
 // Common seeds
+#define DEFAULT_SEED "10s"
 extern map<string, string> seedMap;
+string expand_seed(string seed);
 
 string seed_contiguous(int k);
 
