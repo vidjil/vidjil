@@ -204,16 +204,16 @@ valgrind_should:
 
 coverage: unit_coverage should_coverage
 
-unit_coverage: clean
+unit_coverage: cleancoverage
 	$(MAKE) COVERAGE=1 unit
 	$(MAKE) COV_OUTFILE=lcov_test_unit gencov
-should_coverage: clean
+should_coverage: cleancoverage
 	$(MAKE) COVERAGE=1 should
 	$(MAKE) COV_OUTFILE=lcov_test_should gencov
-shouldvdj_coverage: clean
+shouldvdj_coverage: cleancoverage
 	$(MAKE) COVERAGE=1 shouldvdj
 	$(MAKE) COV_OUTFILE=lcov_test_shouldvdj gencov
-functional_coverage: clean
+functional_coverage: cleancoverage
 	$(MAKE) COVERAGE=1 functional
 	$(MAKE) COV_OUTFILE=lcov_test_functional gencov
 
