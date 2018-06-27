@@ -50,7 +50,7 @@ using namespace std;
 // Common seeds
 #define DEFAULT_SEED "10s"
 extern map<string, string> seedMap;
-string expand_seed(string seed);
+string expand_seed(const string &seed);
 
 string seed_contiguous(int k);
 
@@ -110,7 +110,7 @@ bool pair_occurrence_sort(pair<T, int> a, pair<T, int> b);
 string string_of_int(int number);
 string fixed_string_of_float(float number, int precision);
 string scientific_string_of_double(double number);
-string string_of_map(map <string, string> m, string before);
+string string_of_map(map <string, string> m, const string &before);
 
 /**
  * @param nuc is A, C, G, T or any extended nucleotide (or lowercase)

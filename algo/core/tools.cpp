@@ -26,10 +26,10 @@ map<string, string> seedMap = {
   {"13s", "#######-######"}
 };
 
-string expand_seed(string seed)
+string expand_seed(const string &seed)
 {
   if (seed.size() == 0)
-    seed = DEFAULT_SEED;
+    return expand_seed(DEFAULT_SEED);
 
   if (seed.find(SEED_YES) == std::string::npos)
     return seedMap[seed];
@@ -86,7 +86,7 @@ string scientific_string_of_double(double number)
    return ss.str();
 }
 
-string string_of_map(map <string, string> m, string before)
+string string_of_map(map <string, string> m, const string &before)
 {
   stringstream ss;
   for (auto x: m)
