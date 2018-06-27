@@ -168,23 +168,26 @@ snapshot_diff:
 snapshot_diff_current:
 	$(MAKE) -C tests snapshot_diff_current
 
-unit: all
+unit:
+	$(MAKE) CXXFLAGS="$(filter-out -DNDEBUG, $(CXXFLAGS))" all
 	@echo "*** Launching unit tests..."
 	$(MAKE) -C tests
 	@echo "*** All unit tests passed"
 
-functional: all
+functional:
 	$(TEE) '$(MAKE) should'      tests/out-should-get.log
 	$(TEE) '$(MAKE) shouldvdj'   tests/out-should-vdj.log
 
-should: all
+should:
+	$(MAKE) CXXFLAGS="$(filter-out -DNDEBUG, $(CXXFLAGS))" all
 	@echo
 	@echo "*** Launching .should_get tests..."
 	$(MAKE) -C tests should
 	@echo "*** All .should_get tests passed"
 
-shouldvdj: all
+shouldvdj:
 	@echo
+	$(MAKE) CXXFLAGS="$(filter-out -DNDEBUG, $(CXXFLAGS))" all
 	$(MAKE) -C tests shouldvdj_if_python
 
 
