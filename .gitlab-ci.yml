@@ -81,6 +81,7 @@ test_algo_shouldvdj:
 
 algo_coverage:
   stage: coverage
+  coverage: /^\s*lines\.*:\s+([0-9.]+\%)/
   script: make -C algo lcov_reports
   only:
     - /^feature-.*a.*\/.*$/
