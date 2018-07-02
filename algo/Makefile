@@ -14,6 +14,7 @@ ifeq ($(LDFLAGS),)
   LDFLAGS := $(COVERAGE_OPTION)
 endif
 COV_OUTFILE?=lcov.out
+BASE_PATH=$(dir $(abspath .))
 
 export CXXFLAGS
 export LDFLAGS
@@ -219,14 +220,14 @@ functional_coverage: cleancoverage
 
 gencov:
 	which lcov > /dev/null || exit 0
-	lcov --rc lcov_branch_coverage=1 -d . -c -o $(COV_OUTFILE)
+	lcov --rc lcov_branch_coverage=1 --rc geninfo_adjust_src_path="$(BASE_PATH)" -d . -c -o $(COV_OUTFILE)
 	lcov --rc lcov_branch_coverage=1  --remove $(COV_OUTFILE) '/usr/*' '*algo/tests/*' '*algo/lib/*' '*algo/tools/*' -o $(COV_OUTFILE).filtered
 
 ### Reports with lcov
 
 lcov_reports:
 	mkdir -p reports
-	which lcov > /dev/null && (lcov --rc lcov_branch_coverage=1 $(addprefix -a ,$(wildcard lcov*.filtered)) -o lcov_filtered_total.out && genhtml --branch-coverage --legend --output-directory reports/ lcov_filtered_total.out ) || echo "gcovr is needed to generate a full report"
+	which lcov > /dev/null && (lcov --rc lcov_branch_coverage=1 $(addprefix -a ,$(wildcard lcov*.filtered)) | sed 's_^SF:algo_SF:'"$(BASE_PATH)"'/algo_' > lcov_filtered_total.out && genhtml --branch-coverage --legend --output-directory reports/ lcov_filtered_total.out ) || echo "gcovr is needed to generate a full report"
 
 ### cppcheck
 
