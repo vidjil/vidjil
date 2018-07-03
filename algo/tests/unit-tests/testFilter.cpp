@@ -221,33 +221,33 @@ void testAutomatonBuilderFilteringBioReader(){
   }
 
   /* test automaton KmerAffect label */
-  for(unsigned int i = 0;i < expectedIndexes1.size() - 1; ++i){
+  for(unsigned int i = 0, l = SPECIFIC_KMERS_NUMBER;i < expectedIndexes1.size() - 1; ++i, ++l){
     for(int j = expectedIndexes1[i]; j < expectedIndexes1[i + 1]; ++j){
       seq = testedBioReader1.sequence(j);
       k = a1->get(seq);
       asciiChar = k.getLabel().at(0);
       asciiNum = int(asciiChar);
-      TAP_TEST_EQUAL(asciiNum, i + 1, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
+      TAP_TEST_EQUAL(asciiNum, l, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
       TEST_LABEL_ERROR);
     }
   }
-  for(unsigned int i = 0;i < expectedIndexes2.size() - 1; ++i){
+  for(unsigned int i = 0, l = SPECIFIC_KMERS_NUMBER;i < expectedIndexes2.size() - 1; ++i, ++l){
     for(int j = expectedIndexes2[i]; j < expectedIndexes2[i + 1]; ++j){
       seq = testedBioReader2.sequence(j);
       k = a2->get(seq);
       asciiChar = k.getLabel().at(0);
       asciiNum = int(asciiChar);
-      TAP_TEST_EQUAL(asciiNum, i + 1, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
+      TAP_TEST_EQUAL(asciiNum, l, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
       TEST_LABEL_ERROR);
     }
   }
-  for(unsigned int i = 0;i < expectedIndexes3.size() - 1; ++i){
+  for(unsigned int i = 0, l = SPECIFIC_KMERS_NUMBER; i < expectedIndexes3.size() - 1; ++i, ++l){
     for(int j = expectedIndexes3[i]; j < expectedIndexes3[i + 1]; ++j){
       seq = testedBioReader3.sequence(j);
       k = a3->get(seq);
       asciiChar = k.getLabel().at(0);
       asciiNum = int(asciiChar);
-      TAP_TEST_EQUAL(asciiNum, i + 1, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
+      TAP_TEST_EQUAL(asciiNum, l, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
       TEST_LABEL_ERROR);
     }
   }
@@ -305,11 +305,11 @@ void testFilterBioReaderWithACAutomaton(){
   list<Sequence> l1 = filteredBioReader1.getAll();
   for(auto const m : m1){
     KmerAffect tmpKmer = m.first;
-    if(tmpKmer.isNull() || tmpKmer.isUnknown() || tmpKmer.isAmbiguous()){
+    if(!tmpKmer.isGeneric()){
       continue;
     }
     unsigned int asciiNumber = int(tmpKmer.getLabel().at(0));
-    for(int i = v1->at(asciiNumber-1); i < v1->at(asciiNumber); ++i){
+    for(int i = v1->at(asciiNumber-SPECIFIC_KMERS_NUMBER); i < v1->at(asciiNumber-SPECIFIC_KMERS_NUMBER + 1); ++i){
       TAP_TEST(find(l1.begin(), l1.end(), testedBioReader1.read(i)) != l1.end(),
               TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENES_ERROR);
     }
@@ -318,11 +318,11 @@ void testFilterBioReaderWithACAutomaton(){
   list<Sequence> l2 = filteredBioReader2.getAll();
   for(auto const m : m2){
     KmerAffect tmpKmer = m.first;
-    if(tmpKmer.isNull() || tmpKmer.isUnknown() || tmpKmer.isAmbiguous()){
+    if(!tmpKmer.isGeneric()){
       continue;
     }
     unsigned int asciiNumber = int(tmpKmer.getLabel().at(0));
-    for(int i = v2->at(asciiNumber-1); i < v2->at(asciiNumber); ++i){
+    for(int i = v2->at(asciiNumber-SPECIFIC_KMERS_NUMBER); i < v2->at(asciiNumber-SPECIFIC_KMERS_NUMBER + 1); ++i){
       TAP_TEST(find(l2.begin(), l2.end(), testedBioReader2.read(i)) != l2.end(),
               TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENES_ERROR);
     }
@@ -331,11 +331,11 @@ void testFilterBioReaderWithACAutomaton(){
   list<Sequence> l3 = filteredBioReader3.getAll();
   for(auto const m : m3){
     KmerAffect tmpKmer = m.first;
-    if(tmpKmer.isNull() || tmpKmer.isUnknown() || tmpKmer.isAmbiguous()){
+    if(!tmpKmer.isGeneric()){
       continue;
     }
     unsigned int asciiNumber = int(tmpKmer.getLabel().at(0));
-    for(int i = v3->at(asciiNumber-1); i < v3->at(asciiNumber); ++i){
+    for(int i = v3->at(asciiNumber-SPECIFIC_KMERS_NUMBER); i < v3->at(asciiNumber-SPECIFIC_KMERS_NUMBER + 1); ++i){
       TAP_TEST(find(l3.begin(), l3.end(), testedBioReader3.read(i)) != l3.end(),
               TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENES_ERROR);
     }
@@ -432,7 +432,7 @@ void testExAequoKmersWhenSignificantParameter(){
   }
 
   /* Even though the filtered function got 2 as a parameter, since there are two ex-aequo the size is 3 */
-  TAP_TEST(filtered.size() == 3, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_BIOREADER);
+  TAP_TEST_EQUAL(filtered.size(), 3, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_BIOREADER);
   TAP_TEST(i < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   TAP_TEST(j < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   TAP_TEST(k < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
@@ -450,7 +450,7 @@ void testExAequoKmersWhenSignificantParameter(){
     ++l;
   }
   /* Even though the filtered function got 2 as a parameter, since there are three ex-aequo the size is 4 */
-  TAP_TEST(filtered.size() == 4, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_BIOREADER);
+  TAP_TEST_EQUAL(filtered.size(), 4, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_BIOREADER);
   TAP_TEST(i < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   TAP_TEST(j < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   TAP_TEST(k < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
