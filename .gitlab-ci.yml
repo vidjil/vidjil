@@ -16,6 +16,7 @@ stages:
   - test_functional
   - test_functional_external
   - test_shouldvdj
+  - coverage
   - prepare_release
   - release
   - valgrind_unit
@@ -23,6 +24,13 @@ stages:
   - prepare_deploy
   - deploy_prod
 
+# Anchors
+
+.coverage_dependency: &lcov_artifact
+  artifacts:
+    paths:
+      - algo/lcov_test_*.filtered
+    expire_in: 6hrs
 
 # Tools
 
@@ -46,7 +54,8 @@ test_germlines:
 
 test_algo_unit:
   stage: test_unit
-  script: make -C algo unit
+  script: make -C algo unit_coverage
+  <<: *lcov_artifact
   only:
     - /^feature-.*a.*\/.*$/
 
@@ -58,13 +67,27 @@ test_tools_unit:
 
 test_algo_should:
   stage: test_functional
-  script: make -C algo should
+  script: make -C algo should_coverage
   only:
     - /^feature-.*a.*\/.*$/
+  <<: *lcov_artifact
 
 test_algo_shouldvdj:
   stage: test_shouldvdj
-  script: make -C algo shouldvdj
+  script: make -C algo shouldvdj_coverage
+  <<: *lcov_artifact
+  only:
+    - /^feature-.*a.*\/.*$/
+
+algo_coverage:
+  stage: coverage
+  coverage: /^\s*lines\.*:\s+([0-9.]+\%)/
+  script:
+    - make -C algo lcov_reports
+    - mv algo/reports/ coverage
+  artifacts:
+    paths:
+      - coverage/
   only:
     - /^feature-.*a.*\/.*$/
 

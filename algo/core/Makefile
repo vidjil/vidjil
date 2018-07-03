@@ -1,6 +1,8 @@
 CXX?=g++
-OPTIM=-O2 
-override CXXFLAGS += -W -Wall -std=c++11 $(OPTIM)
+ifeq ($(CXXFLAGS), )
+  CXXFLAGS := -W -Wall -std=c++11 -O2 -DNDEBUG
+endif
+export CXXFLAGS
 INC=-I ../
 SRCCORE=$(wildcard *.cpp)
 OBJCORE=$(SRCCORE:.cpp=.o)
