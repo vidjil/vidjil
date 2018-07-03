@@ -346,24 +346,15 @@ void testFilterBioReaderWithACAutomaton(){
 void testGetNSignicativeKmers(){
   BioReader filtered;
   BioReader seqV("../../germline/homo-sapiens/IGHV.fa", 2);
-  BioReader seqD("../../germline/homo-sapiens/IGHD.fa", 2);
-  BioReader seqJ("../../germline/homo-sapiens/IGHJ.fa", 2);
-
-  OnlineFasta data("data/Stanford_S22.fasta", 1, " ");
-  data.next();
-  data.next();
-
-  Germline germline("IGH", 'G', seqV, seqD, seqJ, "########", 0, true);
-  germline.new_index(KMER_INDEX);
-  germline.finish();
 
   string SIZE_ERROR = "Filtered size must be less than original one";
   string GENE_NOT_FOUND = "Filtering sequence not found after filter";
 
-  for(int i = 0; i < germline.rep_5.size(); ++i){
-    Sequence seq = germline.rep_5.read(i);
-    FilterWithACAutomaton *f = germline.getFilter_5();
-    filtered = f->filterBioReaderWithACAutomaton(germline.rep_5, seq.sequence, 1);
+  for(int i = 0; i < seqV.size(); ++i){
+    Sequence seq = seqV.read(i);
+    FilterWithACAutomaton *f = new FilterWithACAutomaton(seqV, "########");
+    filtered = f->filterBioReaderWithACAutomaton(seqV, seq.sequence, 1);
+    delete f;
     int j = 0;
     while(j < filtered.size()){
       if(extractGeneName(filtered.label(j)) == extractGeneName(seq.label)){
@@ -372,7 +363,7 @@ void testGetNSignicativeKmers(){
       ++j;
     }
     TAP_TEST(j < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENE_NOT_FOUND);
-    TAP_TEST(filtered.size() < germline.rep_5.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_ERROR);
+    TAP_TEST(filtered.size() < seqV.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_ERROR);
   }
 }
 
