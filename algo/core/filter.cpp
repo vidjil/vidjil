@@ -73,14 +73,8 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
   //All k-mers selected : iterate over all map
   if(kmer_threshold == ALL_KMERS_VALUE || kmer_threshold > (int)mapAho.size()){
     for(auto const mx: mapAho){
-      tmpKmer = mx.first;
-      asciiChar = tmpKmer.getLabel().at(0);
-      asciiNum = int(asciiChar);
-      if(asciiNum > indexes->size() - 1){
-        break;
-      }
-      for(int i = indexes->at(asciiNum - 1); i < indexes->at(asciiNum); ++i){
-        result.add(origin.read(i));
+      if(mx.first.isGeneric()){
+        transferBioReaderSequences(origin, result, mx.first);
       }
     }
   /* The most significant k-mers selected : iterate over a portion of the

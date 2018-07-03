@@ -178,6 +178,10 @@ bool KmerAffect::isUnknown() const {
   return affect.c == (int) AFFECT_UNKNOWN_CHAR;
 }
 
+bool KmerAffect::isGeneric() const {
+  return !(isUnknown() || isAmbiguous());
+}
+
 string KmerAffect::toString() const {
   return ::toString(affect);
 }
