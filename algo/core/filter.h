@@ -10,6 +10,7 @@ class FilterWithACAutomaton {
     AbstractACAutomaton<KmerAffect>* automaton;
 
   public:
+    BioReader &originalBioReader;
 
     /* The number of times filterBioReaderWithACAutomaton is called. */
     int filtered_sequences_calls;
@@ -40,8 +41,7 @@ class FilterWithACAutomaton {
                     significant K-mers returned by getMultiResults.
   */
   BioReader filterBioReaderWithACAutomaton(
-      BioReader &origin, seqtype &seq,
-      int kmer_threshold = NO_LIMIT_VALUE);
+      seqtype &seq, int kmer_threshold = NO_LIMIT_VALUE);
   /*
     This function takes a BioReader as a parameter and returns
     a couple containing an int vector pointer and an automaton
@@ -90,7 +90,7 @@ class FilterWithACAutomaton {
     The param "seed" is used while inserting sequences in the automaton. By default
     the seed has a size of 10.
   */
-  void buildACAutomatonToFilterBioReader(BioReader &origin, string seed);
+  void buildACAutomatonToFilterBioReader(string seed);
 
   /**
   * Return the vector of indexes used while building the automaton.
