@@ -1,6 +1,8 @@
 #include "filter.h"
 
 FilterWithACAutomaton::FilterWithACAutomaton(BioReader &origin, string seed){
+  this->filtered_sequences_nb = 0;
+  this->filtered_sequences_calls = 0;
   buildACAutomatonToFilterBioReader(origin, seed);
 }
 
@@ -61,7 +63,9 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
 
   BioReader result;
   map<KmerAffect, int> mapAho;
+  this->filtered_sequences_calls += 1;
   if(!automaton || !indexes || kmer_threshold < 0){
+    this->filtered_sequences_nb += origin.size();
     return origin;
   }
   mapAho = automaton->getMultiResults(seq);
@@ -101,6 +105,7 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
         previousOccurences = element.second;
     }
   }
+  this->filtered_sequences_nb += (result.size () == 0) ? origin.size() : result.size();
   return (result.size() == 0) ? origin : result;
 }
 
