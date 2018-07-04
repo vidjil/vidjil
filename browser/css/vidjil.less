@@ -808,12 +808,15 @@ line {
     width: 0px;
     word-spacing: normal;
 }
-span .substitution, span .indel {
+span .substitution, span .silent, span .indel, span .insertion, span .deletion {
   font-weight: bold;
   color: #800;
 }
 span .substitution {
   border-bottom: 1px solid #800;
+}
+span .silent {
+  border: 1px solid #800;
 }
 
 							  /*tag*/
