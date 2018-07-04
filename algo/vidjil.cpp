@@ -1626,14 +1626,9 @@ int main (int argc, char **argv)
     cout << "FineSegmenter:" << endl;
     for(list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
       FilterWithACAutomaton *f =  (*it)->getFilter_5();
-      int original_bioreader_size = (*it)->rep_5.size();
-      int total_sequences_filtered = (f) ? f->filtered_sequences_nb : 0;
-      int total_filtered_calls = (f) ? f->filtered_sequences_calls : 0;
-      int total_sequences_original = total_filtered_calls * original_bioreader_size;
-      float aligned_rate = ((float)total_sequences_filtered/(float)total_sequences_original) * 100;
-      cout << '\t'<< (*it)->code << "\taligned\t" << total_sequences_filtered;
-      cout << "/" << total_sequences_original << " (" << aligned_rate << "%)";
-      cout << endl;
+      if(f){
+        cout << "\t" << (*it)->code << "\t" << *f;
+      }
     }
   }
 

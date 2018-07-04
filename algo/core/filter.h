@@ -112,5 +112,7 @@ class FilterWithACAutomaton {
   * about how the label is used, see buildACAutomatonToFilterBioReader's doc.
   */
   void transferBioReaderSequences(const BioReader &src, BioReader &dst, const KmerAffect k) const;
+
+  friend ostream &operator<<(ostream&, const FilterWithACAutomaton&);
 };
 #endif

@@ -126,3 +126,15 @@ vector<int>* FilterWithACAutomaton::getIndexes() const{
 AbstractACAutomaton<KmerAffect>* FilterWithACAutomaton::getAutomaton() const{
   return this->automaton;
 }
+
+ostream &operator<<(ostream &out, const FilterWithACAutomaton& obj){
+  int origin_bioreader_size = obj.originalBioReader.size();
+  int total_sequences_filtered = obj.filtered_sequences_nb;
+  int total_filtered_calls = obj.filtered_sequences_calls;
+  int total_sequences_origin = total_filtered_calls * origin_bioreader_size;
+  float aligned_rate = ((float)total_sequences_filtered/(float)total_sequences_origin) * 100;
+  out << "aligned\t" << total_sequences_filtered;
+  out << "/" << total_sequences_origin << " (" << aligned_rate << "%)";
+  out << endl;
+  return out;
+}
