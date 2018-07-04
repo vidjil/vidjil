@@ -92,5 +92,16 @@ class FilterWithACAutomaton {
   * Return the automaton stored.
   */
   AbstractACAutomaton<KmerAffect>* getAutomaton() const;
+
+
+  /**
+  * Transfer sequences from a BioReader to another.
+  * @param src The BioReader from where the transfer will operate.
+  * @param dst The BioReader that will receive the new sequences.
+  * @param k The K-mer that indicate which sequences will be transfered.
+  * The label stored in the K-mer is used to select sequences. For more informations
+  * about how the label is used, see buildACAutomatonToFilterBioReader's doc.
+  */
+  void transferBioReaderSequences(const BioReader &src, BioReader &dst, const KmerAffect k) const;
 };
 #endif

@@ -27,12 +27,11 @@ void FilterWithACAutomaton::buildACAutomatonToFilterBioReader
   }
   automaton = new PointerACAutomaton<KmerAffect>(seed, false, true);
   indexes = new vector<int>();
-  automaton->insert(origin.sequence(0),std::string("") + char(1), true, 0, seed);
-  asciiNumber = 1;
+  asciiNumber = SPECIFIC_KMERS_NUMBER;
+  automaton->insert(origin.sequence(0),std::string("") + char(asciiNumber), true, 0, seed);
   indexes->push_back(0);
   previousLabel = extractGeneName(origin.label(0));
-  int i;
-  for(i = 1;i < origin.size(); ++i){
+  for(int i = 1;i < origin.size(); ++i){
     currentLabel = extractGeneName(origin.label(i));
     if(currentLabel != previousLabel){
       indexes->push_back(i);
@@ -62,9 +61,6 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
 
   BioReader result;
   map<KmerAffect, int> mapAho;
-  KmerAffect tmpKmer;
-  unsigned int asciiNum;
-  char asciiChar;
   if(!automaton || !indexes || kmer_threshold < 0){
     return origin;
   }
@@ -73,14 +69,8 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
   //All k-mers selected : iterate over all map
   if(kmer_threshold == ALL_KMERS_VALUE || kmer_threshold > (int)mapAho.size()){
     for(auto const mx: mapAho){
-      tmpKmer = mx.first;
-      asciiChar = tmpKmer.getLabel().at(0);
-      asciiNum = int(asciiChar);
-      if(asciiNum > indexes->size() - 1){
-        break;
-      }
-      for(int i = indexes->at(asciiNum - 1); i < indexes->at(asciiNum); ++i){
-        result.add(origin.read(i));
+      if(mx.first.isGeneric()){
+        transferBioReaderSequences(origin, result, mx.first);
       }
     }
   /* The most significant k-mers selected : iterate over a portion of the
@@ -97,6 +87,9 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
     int nbKmers = 0, previousOccurences = 0;
     for(pair<KmerAffect, int> element : setOfWords){
       // Add corresponding sequences to the BioReader
+        if(!element.first.isGeneric()){
+          continue;
+        }
         if(nbKmers == kmer_threshold && previousOccurences == element.second){
           //Keep the same amount of genes
         }else if(nbKmers < kmer_threshold){
@@ -104,19 +97,23 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
         }else{
           break;
         }
-        tmpKmer = element.first;
-        asciiChar = tmpKmer.getLabel().at(0);
-        asciiNum = int(asciiChar);
-        if(asciiNum > indexes->size() - 1){
-          break;
-        }
-        for(int i = indexes->at(asciiNum - 1); i < indexes->at(asciiNum); ++i){
-          result.add(origin.read(i));
-        }
+        transferBioReaderSequences(origin, result, element.first);
         previousOccurences = element.second;
     }
   }
   return (result.size() == 0) ? origin : result;
+}
+
+void FilterWithACAutomaton::transferBioReaderSequences(const BioReader &src, BioReader &dst, KmerAffect k) const{
+  char asciiChar = k.getLabel().at(0);
+  unsigned int asciiNum = int(asciiChar);
+
+  if(asciiNum > indexes->size() || !k.isGeneric()){
+    throw invalid_argument("Incorrect K-mer transmitted.");
+  }
+  for(int i = indexes->at(asciiNum - SPECIFIC_KMERS_NUMBER); i < indexes->at(asciiNum - SPECIFIC_KMERS_NUMBER + 1); ++i){
+    dst.add(src.read(i));
+  }
 }
 
 vector<int>* FilterWithACAutomaton::getIndexes() const{

@@ -221,33 +221,33 @@ void testAutomatonBuilderFilteringBioReader(){
   }
 
   /* test automaton KmerAffect label */
-  for(unsigned int i = 0;i < expectedIndexes1.size() - 1; ++i){
+  for(unsigned int i = 0, l = SPECIFIC_KMERS_NUMBER;i < expectedIndexes1.size() - 1; ++i, ++l){
     for(int j = expectedIndexes1[i]; j < expectedIndexes1[i + 1]; ++j){
       seq = testedBioReader1.sequence(j);
       k = a1->get(seq);
       asciiChar = k.getLabel().at(0);
       asciiNum = int(asciiChar);
-      TAP_TEST_EQUAL(asciiNum, i + 1, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
+      TAP_TEST_EQUAL(asciiNum, l, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
       TEST_LABEL_ERROR);
     }
   }
-  for(unsigned int i = 0;i < expectedIndexes2.size() - 1; ++i){
+  for(unsigned int i = 0, l = SPECIFIC_KMERS_NUMBER;i < expectedIndexes2.size() - 1; ++i, ++l){
     for(int j = expectedIndexes2[i]; j < expectedIndexes2[i + 1]; ++j){
       seq = testedBioReader2.sequence(j);
       k = a2->get(seq);
       asciiChar = k.getLabel().at(0);
       asciiNum = int(asciiChar);
-      TAP_TEST_EQUAL(asciiNum, i + 1, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
+      TAP_TEST_EQUAL(asciiNum, l, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
       TEST_LABEL_ERROR);
     }
   }
-  for(unsigned int i = 0;i < expectedIndexes3.size() - 1; ++i){
+  for(unsigned int i = 0, l = SPECIFIC_KMERS_NUMBER; i < expectedIndexes3.size() - 1; ++i, ++l){
     for(int j = expectedIndexes3[i]; j < expectedIndexes3[i + 1]; ++j){
       seq = testedBioReader3.sequence(j);
       k = a3->get(seq);
       asciiChar = k.getLabel().at(0);
       asciiNum = int(asciiChar);
-      TAP_TEST_EQUAL(asciiNum, i + 1, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
+      TAP_TEST_EQUAL(asciiNum, l, TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
       TEST_LABEL_ERROR);
     }
   }
@@ -305,11 +305,11 @@ void testFilterBioReaderWithACAutomaton(){
   list<Sequence> l1 = filteredBioReader1.getAll();
   for(auto const m : m1){
     KmerAffect tmpKmer = m.first;
-    if(tmpKmer.isNull() || tmpKmer.isUnknown() || tmpKmer.isAmbiguous()){
+    if(!tmpKmer.isGeneric()){
       continue;
     }
     unsigned int asciiNumber = int(tmpKmer.getLabel().at(0));
-    for(int i = v1->at(asciiNumber-1); i < v1->at(asciiNumber); ++i){
+    for(int i = v1->at(asciiNumber-SPECIFIC_KMERS_NUMBER); i < v1->at(asciiNumber-SPECIFIC_KMERS_NUMBER + 1); ++i){
       TAP_TEST(find(l1.begin(), l1.end(), testedBioReader1.read(i)) != l1.end(),
               TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENES_ERROR);
     }
@@ -318,11 +318,11 @@ void testFilterBioReaderWithACAutomaton(){
   list<Sequence> l2 = filteredBioReader2.getAll();
   for(auto const m : m2){
     KmerAffect tmpKmer = m.first;
-    if(tmpKmer.isNull() || tmpKmer.isUnknown() || tmpKmer.isAmbiguous()){
+    if(!tmpKmer.isGeneric()){
       continue;
     }
     unsigned int asciiNumber = int(tmpKmer.getLabel().at(0));
-    for(int i = v2->at(asciiNumber-1); i < v2->at(asciiNumber); ++i){
+    for(int i = v2->at(asciiNumber-SPECIFIC_KMERS_NUMBER); i < v2->at(asciiNumber-SPECIFIC_KMERS_NUMBER + 1); ++i){
       TAP_TEST(find(l2.begin(), l2.end(), testedBioReader2.read(i)) != l2.end(),
               TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENES_ERROR);
     }
@@ -331,11 +331,11 @@ void testFilterBioReaderWithACAutomaton(){
   list<Sequence> l3 = filteredBioReader3.getAll();
   for(auto const m : m3){
     KmerAffect tmpKmer = m.first;
-    if(tmpKmer.isNull() || tmpKmer.isUnknown() || tmpKmer.isAmbiguous()){
+    if(!tmpKmer.isGeneric()){
       continue;
     }
     unsigned int asciiNumber = int(tmpKmer.getLabel().at(0));
-    for(int i = v3->at(asciiNumber-1); i < v3->at(asciiNumber); ++i){
+    for(int i = v3->at(asciiNumber-SPECIFIC_KMERS_NUMBER); i < v3->at(asciiNumber-SPECIFIC_KMERS_NUMBER + 1); ++i){
       TAP_TEST(find(l3.begin(), l3.end(), testedBioReader3.read(i)) != l3.end(),
               TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENES_ERROR);
     }
@@ -346,24 +346,15 @@ void testFilterBioReaderWithACAutomaton(){
 void testGetNSignicativeKmers(){
   BioReader filtered;
   BioReader seqV("../../germline/homo-sapiens/IGHV.fa", 2);
-  BioReader seqD("../../germline/homo-sapiens/IGHD.fa", 2);
-  BioReader seqJ("../../germline/homo-sapiens/IGHJ.fa", 2);
-
-  OnlineFasta data("data/Stanford_S22.fasta", 1, " ");
-  data.next();
-  data.next();
-
-  Germline germline("IGH", 'G', seqV, seqD, seqJ, "########", 0, true);
-  germline.new_index(KMER_INDEX);
-  germline.finish();
 
   string SIZE_ERROR = "Filtered size must be less than original one";
   string GENE_NOT_FOUND = "Filtering sequence not found after filter";
 
-  for(int i = 0; i < germline.rep_5.size(); ++i){
-    Sequence seq = germline.rep_5.read(i);
-    FilterWithACAutomaton *f = germline.getFilter_5();
-    filtered = f->filterBioReaderWithACAutomaton(germline.rep_5, seq.sequence, 1);
+  for(int i = 0; i < seqV.size(); ++i){
+    Sequence seq = seqV.read(i);
+    FilterWithACAutomaton *f = new FilterWithACAutomaton(seqV, "########");
+    filtered = f->filterBioReaderWithACAutomaton(seqV, seq.sequence, 1);
+    delete f;
     int j = 0;
     while(j < filtered.size()){
       if(extractGeneName(filtered.label(j)) == extractGeneName(seq.label)){
@@ -372,7 +363,7 @@ void testGetNSignicativeKmers(){
       ++j;
     }
     TAP_TEST(j < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENE_NOT_FOUND);
-    TAP_TEST(filtered.size() < germline.rep_5.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_ERROR);
+    TAP_TEST(filtered.size() < seqV.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_ERROR);
   }
 }
 
@@ -432,7 +423,7 @@ void testExAequoKmersWhenSignificantParameter(){
   }
 
   /* Even though the filtered function got 2 as a parameter, since there are two ex-aequo the size is 3 */
-  TAP_TEST(filtered.size() == 3, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_BIOREADER);
+  TAP_TEST_EQUAL(filtered.size(), 3, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_BIOREADER);
   TAP_TEST(i < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   TAP_TEST(j < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   TAP_TEST(k < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
@@ -450,7 +441,7 @@ void testExAequoKmersWhenSignificantParameter(){
     ++l;
   }
   /* Even though the filtered function got 2 as a parameter, since there are three ex-aequo the size is 4 */
-  TAP_TEST(filtered.size() == 4, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_BIOREADER);
+  TAP_TEST_EQUAL(filtered.size(), 4, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_BIOREADER);
   TAP_TEST(i < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   TAP_TEST(j < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
   TAP_TEST(k < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, BIOREADER_EXAEQUO);
@@ -470,10 +461,156 @@ void testBehaviourWhenHugeBioReader(){
   delete f;
 }
 
+/* Test the good behaviour of Filter's transferBioReaderSequences function. */
+void testTransferBioReaderSequences(){
+  affect_t affect;
+  KmerAffect *kmer;
+  BioReader res, testedBioReader1;
+  FilterWithACAutomaton *f;
+  bool caught = false;
+  const string ERROR_NO_EXCEPTION_THROWN = "The function must throw an exception when invalid K-mer is transmitted.";
+  const string ERROR_NON_EMPTY_BIOREADER = "The BioReader shouldn't contain any sequences.";
+  const string ERROR_INCORRECT_BIOREADER = "The BioReader doesn't have the correct number of sequences.";
+  testedBioReader1 = getDebugBioReader1();
+  f = new FilterWithACAutomaton(testedBioReader1, "####");
+  affect.length = 1;
+
+  /* When k-mer's label has a n°ascii over 127, the transfer should not operate. */
+  affect.c = char(128);
+  kmer = new KmerAffect(affect);
+  try{
+    f->transferBioReaderSequences(testedBioReader1, res, *kmer);
+  }catch(...){
+    caught = true;
+  }
+  TAP_TEST(caught, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_NO_EXCEPTION_THROWN);
+  TAP_TEST_EQUAL(res.size(), 0, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_NON_EMPTY_BIOREADER);
+  delete kmer;
+
+  /* When k-mer's label has a n°ascii above the number of genes contained in the BioReader, the transfer should not operate. */
+  affect.c = char(8);
+  kmer = new KmerAffect(affect);
+  try{
+    f->transferBioReaderSequences(testedBioReader1, res, *kmer);
+    caught = false;
+  }catch(...){
+    caught = true;
+  }
+  TAP_TEST(caught, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_NO_EXCEPTION_THROWN);
+  TAP_TEST_EQUAL(res.size(), 0, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_NON_EMPTY_BIOREADER);
+  delete kmer;
+
+  /* When k-mer's label has the n°ascii 0, the transfer should not operate since it's an ambiguous k-mer. */
+  affect.c = AFFECT_AMBIGUOUS_CHAR;
+  kmer = new KmerAffect(affect);
+  try{
+    f->transferBioReaderSequences(testedBioReader1, res, *kmer);
+    caught = false;
+  }catch(...){
+    caught = true;
+  }
+  delete kmer;
+  TAP_TEST(caught, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_NON_EMPTY_BIOREADER);
+  TAP_TEST_EQUAL(res.size(), 0, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_NON_EMPTY_BIOREADER);
+
+  /* When k-mer's label has a n°ascii 1, the transfer should not operate since it's an unknown k-mer. */
+  affect.c = AFFECT_UNKNOWN_CHAR;
+  kmer = new KmerAffect(affect);
+  try{
+    f->transferBioReaderSequences(testedBioReader1, res, *kmer);
+    caught = false;
+  }catch(...){
+    caught = true;
+  }
+  TAP_TEST(caught, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_NON_EMPTY_BIOREADER);
+  TAP_TEST_EQUAL(res.size(), 0, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_NON_EMPTY_BIOREADER);
+  delete kmer;
+
+  /* With an ascii n°2, the functions should take only the 3 first sequences. */
+  affect.c = char(2);
+  kmer = new KmerAffect(affect);
+  try{
+    f->transferBioReaderSequences(testedBioReader1, res, *kmer);
+    caught = false;
+  }catch(...){
+    caught = true;
+  }
+  TAP_TEST(!caught, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_NON_EMPTY_BIOREADER);
+  TAP_TEST_EQUAL(res.size(), 3, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_INCORRECT_BIOREADER);
+  delete kmer;
+
+  /* With an ascii n°3, the functions should contain the 3 previous sequences and 2 more. */
+  affect.c = char(3);
+  kmer = new KmerAffect(affect);
+  try{
+    f->transferBioReaderSequences(testedBioReader1, res, *kmer);
+    caught = false;
+  }catch(...){
+    caught = true;
+  }
+  TAP_TEST(!caught, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_NON_EMPTY_BIOREADER);
+  TAP_TEST_EQUAL(res.size(), 5, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_INCORRECT_BIOREADER);
+  delete kmer;
+
+  /* With an ascii n°4, the functions should contain the 5 previous sequences and 1 more. */
+  affect.c = char(4);
+  kmer = new KmerAffect(affect);
+  try{
+    f->transferBioReaderSequences(testedBioReader1, res, *kmer);
+    caught = false;
+  }catch(...){
+    caught = true;
+  }
+  TAP_TEST(!caught, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_NON_EMPTY_BIOREADER);
+  TAP_TEST_EQUAL(res.size(), 6, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_INCORRECT_BIOREADER);
+  delete kmer;
+
+  /* With an ascii n°5, the functions should contain the 6 previous sequences and 4 more. */
+  affect.c = char(5);
+  kmer = new KmerAffect(affect);
+  try{
+    f->transferBioReaderSequences(testedBioReader1, res, *kmer);
+    caught = false;
+  }catch(...){
+    caught = true;
+  }
+  TAP_TEST(!caught, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_NON_EMPTY_BIOREADER);
+  TAP_TEST_EQUAL(res.size(), 10, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_INCORRECT_BIOREADER);
+  delete kmer;
+
+  /* With an ascii n°6, the functions should contain the 10 previous sequences and 1 more. */
+  affect.c = char(6);
+  kmer = new KmerAffect(affect);
+  try{
+    f->transferBioReaderSequences(testedBioReader1, res, *kmer);
+    caught = false;
+  }catch(...){
+    caught = true;
+  }
+  TAP_TEST(!caught, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_NON_EMPTY_BIOREADER);
+  TAP_TEST_EQUAL(res.size(), 11, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_INCORRECT_BIOREADER);
+  delete kmer;
+
+  /* With an ascii n°7, the functions should contain the 11 previous sequences and 2 more, wich is the same as the original BioReader. */
+  affect.c = char(7);
+  kmer = new KmerAffect(affect);
+  try{
+    f->transferBioReaderSequences(testedBioReader1, res, *kmer);
+    caught = false;
+  }catch(...){
+    caught = true;
+  }
+  TAP_TEST(!caught, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_NON_EMPTY_BIOREADER);
+  TAP_TEST_EQUAL(res.size(), testedBioReader1.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_INCORRECT_BIOREADER);
+  delete kmer;
+  delete f;
+}
+
 void testFilter(){
   testAutomatonBuilderFilteringBioReader();
   testFilterBioReaderWithACAutomaton();
   testBehaviourWhenHugeBioReader();
   testGetNSignicativeKmers();
   testExAequoKmersWhenSignificantParameter();
+  testTransferBioReaderSequences();
 }

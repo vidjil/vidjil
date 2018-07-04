@@ -152,6 +152,11 @@ public:
    * @return true iff the value is the same as the one given by default constructor
    */
   bool isNull() const;
+  
+  /**
+  * @return true if the K-mer is not odd (ambiguous or unknown)
+  */
+  bool isGeneric() const;
 
   string toString() const;
 string toStringValues()const;
@@ -183,6 +188,9 @@ ostream &operator<<(ostream &os, const KmerAffect &kmer);
 
 /* Define how an unknown kmeraffect looks like in a string */
 #define AFFECT_UNKNOWN_TO_STRING "_"
+
+/* Define how meny specific k-mers exist. For now there is only ambiguous and unknown. */
+#define SPECIFIC_KMERS_NUMBER 2
 
 /**
  * Constant defining any not-unknown affectation
