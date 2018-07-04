@@ -288,9 +288,9 @@ void testFilterBioReaderWithACAutomaton(){
   a2 = f2->getAutomaton();
   a3 = f3->getAutomaton();
 
-  filteredBioReader1 = f1->filterBioReaderWithACAutomaton(testedBioReader1, sequence1);
-  filteredBioReader2 = f2->filterBioReaderWithACAutomaton(testedBioReader2, sequence2);
-  filteredBioReader3 = f3->filterBioReaderWithACAutomaton(testedBioReader3, sequence3);
+  filteredBioReader1 = f1->filterBioReaderWithACAutomaton(sequence1);
+  filteredBioReader2 = f2->filterBioReaderWithACAutomaton(sequence2);
+  filteredBioReader3 = f3->filterBioReaderWithACAutomaton(sequence3);
 
   //check filteredBioReader size
   TAP_TEST(filteredBioReader1.size() <= testedBioReader1.size(),
@@ -353,7 +353,7 @@ void testGetNSignicativeKmers(){
   for(int i = 0; i < seqV.size(); ++i){
     Sequence seq = seqV.read(i);
     FilterWithACAutomaton *f = new FilterWithACAutomaton(seqV, "########");
-    filtered = f->filterBioReaderWithACAutomaton(seqV, seq.sequence, 1);
+    filtered = f->filterBioReaderWithACAutomaton(seq.sequence, 1);
     delete f;
     int j = 0;
     while(j < filtered.size()){
@@ -406,7 +406,7 @@ void testExAequoKmersWhenSignificantParameter(){
   /* Filter using the 2 most significant K-mers, the first one is belonging to
      sequence n°11 (with more than 60 occurences) and second one is sequence n°5
      and n°10 appearing 29 times both. */
-  filtered = f->filterBioReaderWithACAutomaton(testedBioReader, seq, 2);
+  filtered = f->filterBioReaderWithACAutomaton(seq, 2);
   /* Check that filtered BioReader contains sequence n°5 and sequence n°10 which are ex-aequo. */
   int i = 0;
   while(i < filtered.size() && extractGeneName(filtered.label(i)) != extractGeneName(testedBioReader.label(5))){
@@ -431,7 +431,7 @@ void testExAequoKmersWhenSignificantParameter(){
   seq += "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC";
   delete f;
   f = new FilterWithACAutomaton(testedBioReader, "####");
-  filtered = f->filterBioReaderWithACAutomaton(testedBioReader, seq, 2);
+  filtered = f->filterBioReaderWithACAutomaton(seq, 2);
   k = 0;
   while(k < filtered.size() && extractGeneName(filtered.label(k)) != extractGeneName(testedBioReader.label(12))){
     ++k;

@@ -1622,7 +1622,19 @@ int main (int argc, char **argv)
     cerr << "Ooops... unknown command. I don't know what to do apart from exiting!" << endl;
     return 1;
   }
-  
+
+  //$ Output statistics on filter()
+  if(kmer_threshold != NO_LIMIT_VALUE){
+    cout << "Statistics on clone analysis (-Z):" << endl;
+    for(list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
+      FilterWithACAutomaton *f =  (*it)->getFilter_5();
+      if (f)
+        if (f->filtered_sequences_nb)
+          cout << "\t" << (*it)->code << "\t" << *f;
+    }
+    cout << endl;
+  }
+
   //$ Output json
   cout << "  ==> " << f_json << "\t(data file for the web application)" << endl ;
   ofstream out_json(f_json.c_str()) ;

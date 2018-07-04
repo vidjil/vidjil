@@ -1,7 +1,9 @@
 #include "filter.h"
 
-FilterWithACAutomaton::FilterWithACAutomaton(BioReader &origin, string seed){
-  buildACAutomatonToFilterBioReader(origin, seed);
+FilterWithACAutomaton::FilterWithACAutomaton(BioReader &origin, string seed) : originalBioReader(origin){
+  this->filtered_sequences_nb = 0;
+  this->filtered_sequences_calls = 0;
+  buildACAutomatonToFilterBioReader(seed);
 }
 
 FilterWithACAutomaton::~FilterWithACAutomaton(){
@@ -13,14 +15,13 @@ FilterWithACAutomaton::~FilterWithACAutomaton(){
     }
 }
 
-void FilterWithACAutomaton::buildACAutomatonToFilterBioReader
-  (BioReader &origin, string seed){
+void FilterWithACAutomaton::buildACAutomatonToFilterBioReader(string seed){
   char asciiChar;
   int asciiNumber;
   string currentLabel;
   string previousLabel;
 
-  if(origin.size() < 1){
+  if(originalBioReader.size() < 1){
     automaton = nullptr;
     indexes = nullptr;
     return;
@@ -28,11 +29,11 @@ void FilterWithACAutomaton::buildACAutomatonToFilterBioReader
   automaton = new PointerACAutomaton<KmerAffect>(seed, false, true);
   indexes = new vector<int>();
   asciiNumber = SPECIFIC_KMERS_NUMBER;
-  automaton->insert(origin.sequence(0),std::string("") + char(asciiNumber), true, 0, seed);
+  automaton->insert(originalBioReader.sequence(0),std::string("") + char(asciiNumber), true, 0, seed);
   indexes->push_back(0);
-  previousLabel = extractGeneName(origin.label(0));
-  for(int i = 1;i < origin.size(); ++i){
-    currentLabel = extractGeneName(origin.label(i));
+  previousLabel = extractGeneName(originalBioReader.label(0));
+  for(int i = 1;i < originalBioReader.size(); ++i){
+    currentLabel = extractGeneName(originalBioReader.label(i));
     if(currentLabel != previousLabel){
       indexes->push_back(i);
       asciiNumber++;
@@ -44,10 +45,10 @@ void FilterWithACAutomaton::buildACAutomatonToFilterBioReader
       return;
     }
     asciiChar = char(asciiNumber);
-    automaton->insert(origin.sequence(i),std::string("") + asciiChar, true, 0, seed);
+    automaton->insert(originalBioReader.sequence(i),std::string("") + asciiChar, true, 0, seed);
     previousLabel = currentLabel;
   }
-  indexes->push_back(origin.size());
+  indexes->push_back(originalBioReader.size());
   automaton->build_failure_functions();
 }
 
@@ -56,13 +57,14 @@ void FilterWithACAutomaton::buildACAutomatonToFilterBioReader
   based on it.
 */
 BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
-    BioReader &origin, seqtype &seq,
-    int kmer_threshold){
+    seqtype &seq, int kmer_threshold){
 
   BioReader result;
   map<KmerAffect, int> mapAho;
+  this->filtered_sequences_calls += 1;
   if(!automaton || !indexes || kmer_threshold < 0){
-    return origin;
+    this->filtered_sequences_nb += originalBioReader.size();
+    return originalBioReader;
   }
   mapAho = automaton->getMultiResults(seq);
 
@@ -70,7 +72,7 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
   if(kmer_threshold == ALL_KMERS_VALUE || kmer_threshold > (int)mapAho.size()){
     for(auto const mx: mapAho){
       if(mx.first.isGeneric()){
-        transferBioReaderSequences(origin, result, mx.first);
+        transferBioReaderSequences(originalBioReader, result, mx.first);
       }
     }
   /* The most significant k-mers selected : iterate over a portion of the
@@ -97,11 +99,12 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
         }else{
           break;
         }
-        transferBioReaderSequences(origin, result, element.first);
+        transferBioReaderSequences(originalBioReader, result, element.first);
         previousOccurences = element.second;
     }
   }
-  return (result.size() == 0) ? origin : result;
+  this->filtered_sequences_nb += (result.size () == 0) ? originalBioReader.size() : result.size();
+  return (result.size() == 0) ? originalBioReader : result;
 }
 
 void FilterWithACAutomaton::transferBioReaderSequences(const BioReader &src, BioReader &dst, KmerAffect k) const{
@@ -122,4 +125,19 @@ vector<int>* FilterWithACAutomaton::getIndexes() const{
 
 AbstractACAutomaton<KmerAffect>* FilterWithACAutomaton::getAutomaton() const{
   return this->automaton;
+}
+
+ostream &operator<<(ostream &out, const FilterWithACAutomaton& obj){
+  int origin_bioreader_size = obj.originalBioReader.size();
+  int total_sequences_filtered = obj.filtered_sequences_nb;
+  int total_filtered_calls = obj.filtered_sequences_calls;
+  int total_sequences_origin = total_filtered_calls * origin_bioreader_size;
+  float aligned_rate = ((float)total_sequences_filtered/(float)total_sequences_origin) * 100;
+
+  out << fixed << setw(8) << total_sequences_filtered << "/"
+      << fixed << setw(8) << total_sequences_origin << "    "
+      << fixed << setprecision(1) << setw(6) << aligned_rate << "%"
+      << endl ;
+
+  return out ;
 }
