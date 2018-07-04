@@ -1414,7 +1414,7 @@ Sequence.prototype = Object.create(genSeq.prototype);
             }
         }
         
-        for (var h=0; h<this.seq.length; h++) this.seqAA[h] =this.seq[h]; // "&nbsp";
+        for (var h=0; h<this.seq.length; h++) this.seqAA[h] = " ";
         
         var i = 0
 
@@ -1429,10 +1429,10 @@ Sequence.prototype = Object.create(genSeq.prototype);
             var code = "";
             var pos;
             
-            while (code.length<3 & i<=stop){
+            while (code.length<3 && i<=stop){
                 if (this.seq[i] != "-") {
                     code += this.seq[i];
-                    this.seqAA[i] = "&nbsp;";
+                    this.seqAA[i] = " ";
                 }
                 if(code.length == 2) pos = i;
                 i++;
