@@ -4,12 +4,21 @@
 #include "automaton.hpp"
 
 class FilterWithACAutomaton {
+
   private:
     vector<int>* indexes;
     AbstractACAutomaton<KmerAffect>* automaton;
 
   public:
+
+    /* The number of times filterBioReaderWithACAutomaton is called. */
+    int filtered_sequences_calls;
+
+    /* The size of the BioReader returned after filtering.*/
+
+    int filtered_sequences_nb;
     FilterWithACAutomaton(BioReader &origin, string seed);
+
     ~FilterWithACAutomaton();
 
   /*
