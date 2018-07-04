@@ -1622,7 +1622,21 @@ int main (int argc, char **argv)
     cerr << "Ooops... unknown command. I don't know what to do apart from exiting!" << endl;
     return 1;
   }
-  
+  if(kmer_threshold != NO_LIMIT_VALUE){
+    cout << "FineSegmenter:" << endl;
+    for(list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
+      FilterWithACAutomaton *f =  (*it)->getFilter_5();
+      int original_bioreader_size = (*it)->rep_5.size();
+      int total_sequences_filtered = (f) ? f->filtered_sequences_nb : 0;
+      int total_filtered_calls = (f) ? f->filtered_sequences_calls : 0;
+      int total_sequences_original = total_filtered_calls * original_bioreader_size;
+      float aligned_rate = ((float)total_sequences_filtered/(float)total_sequences_original) * 100;
+      cout << '\t'<< (*it)->code << "\taligned\t" << total_sequences_filtered;
+      cout << "/" << total_sequences_original << " (" << aligned_rate << "%)";
+      cout << endl;
+    }
+  }
+
   //$ Output json
   cout << "  ==> " << f_json << "\t(data file for the web application)" << endl ;
   ofstream out_json(f_json.c_str()) ;
