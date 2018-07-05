@@ -28,20 +28,20 @@ QUnit.test("test get_codons", function(assert) {
     assert.deepEqual(codons, {ref : ['AT', 'G--AT', 'AGA', 'CAG'],
                               seq : ['AA', 'ACCCG', '-GG', 'GTT']});
 
-    r = '-----ATG--ATAGACAG';
-    s = '--GACAAACCCG-GGGTT';
+    r = '-----ATG--ATAGA--CAG';
+    s = '--GACAAACCCG-GG--GTT';
 
     codons = get_codons(r, s, 0);
-    assert.deepEqual(codons, {ref : ['-----', 'ATG', '--', 'ATA', 'GAC', 'AG'],
-                              seq : ['--GAC', 'AAA', 'CC', 'CG-', 'GGG', 'TT']});
+    assert.deepEqual(codons, {ref : ['-----', 'ATG', '--', 'ATA', 'GA--C', 'AG'],
+                              seq : ['--GAC', 'AAA', 'CC', 'CG-', 'GG--G', 'TT']});
 
     codons = get_codons(r, s, 1);
-    assert.deepEqual(codons, {ref : ['-----A', 'TG--A', 'TAG', 'ACA', 'G'],
-                              seq : ['--GACA', 'AACCC', 'G-G', 'GGT', 'T']});
+    assert.deepEqual(codons, {ref : ['-----A', 'TG--A', 'TAG', 'A--CA', 'G'],
+                              seq : ['--GACA', 'AACCC', 'G-G', 'G--GT', 'T']});
 
     codons = get_codons(r, s, 2);
-    assert.deepEqual(codons, {ref : ['-----AT', 'G--AT', 'AGA', 'CAG'],
-                              seq : ['--GACAA', 'ACCCG', '-GG', 'GTT']});
+    assert.deepEqual(codons, {ref : ['-----AT', 'G--AT', 'AGA', '--', 'CAG'],
+                              seq : ['--GACAA', 'ACCCG', '-GG', '--', 'GTT']});
 
 });
 
