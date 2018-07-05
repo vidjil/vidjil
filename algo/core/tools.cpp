@@ -32,7 +32,12 @@ string expand_seed(const string &seed)
     return expand_seed(DEFAULT_SEED);
 
   if (seed.find(SEED_YES) == std::string::npos)
-    return seedMap[seed];
+    {
+      if (seedMap.find(seed) == seedMap.end())
+        throw invalid_argument("Unknown seed: " + seed);
+      else
+        return seedMap[seed];
+    }
 
   return seed ;
 }
