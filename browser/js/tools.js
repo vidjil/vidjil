@@ -97,14 +97,31 @@ function get_mutations(ref, seq, frame) {
                     mutations[nb_pos] = INS;
                 } else if (codons.seq[i][p] == '-') {
                     mutations[nb_pos] = DEL;
-                } else if (codons.seq[i].length == 3 &&
-                           codons.ref[i].length == 3 &&
-                           frame != undefined &&
-                           tableAA.hasOwnProperty(codons.seq[i]) &&
-                           tableAA[codons.seq[i]] == tableAA[codons.ref[i]]) {
-                    mutations[nb_pos] = SILENT;
                 } else {
-                    mutations[nb_pos] = SUBST;
+                    var codon1 = codons.ref[i];
+                    var codon2 = codons.seq[i];
+                    if (codon1.length > 3 && codon1.length == codon2.length) {
+                        codon1 = '';
+                        codon2 = '';
+                        // We may have common gaps (due to alignment with
+                        // other sequences) that need to be ignored
+                        for (var j = 0; j < codons.ref[i].length; j++) {
+                            if (codons.ref[i][j] != codons.seq[i][j] ||
+                                codons.ref[i][j] != '-') {
+                                codon1 += codons.ref[i][j];
+                                codon2 += codons.seq[i][j];
+                            }
+                        }
+                    }
+                    if (codon1.length == 3 &&
+                        codon2.length == 3 &&
+                        frame != undefined &&
+                        tableAA.hasOwnProperty(codon2) &&
+                        tableAA[codon1] == tableAA[codon2]) {
+                        mutations[nb_pos] = SILENT;
+                    } else {
+                        mutations[nb_pos] = SUBST;
+                    }
                 }
             }
             nb_pos++;
