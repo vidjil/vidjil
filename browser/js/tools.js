@@ -12,8 +12,10 @@ var DEL="deletion";
  *               0: first codon starts at first position, etc.
  * @return an object containing a property ref and a property seq whose values
  * are a list of codons. Some “codons” from seq may have a length ≠ 3.
- * All codons from ref have 3 nucleotides (apart from the first/last codons), but may
+ * All codons from ref have 0 or 3 nucleotides (apart from the first/last codons), but may
  * contain dashes.
+ * The total number of characters in both lists are equal and are also
+ * equal to the number of characters in the original sequences.
  */
 function get_codons(ref, seq, frame) {
     var codons_ref = [];
@@ -32,12 +34,10 @@ function get_codons(ref, seq, frame) {
         if (ref[pos] != '-') {
             if (frame == 0)
                 break;
-            current_codon_ref += ref[pos];
             frame--;
         }
-        if (seq[pos] != '-') {
-            current_codon_seq += seq[pos];
-        }
+        current_codon_seq += seq[pos];
+        current_codon_ref += ref[pos];
     }
 
     if (current_codon_seq != '' || current_codon_ref != '') {
@@ -60,10 +60,8 @@ function get_codons(ref, seq, frame) {
         }
 
         if (ref[pos] == '-') {
-            if (seq[pos] != '-') {
-                current_codon_seq += seq[pos];
-                current_codon_ref += '-';
-            }
+            current_codon_seq += seq[pos];
+            current_codon_ref += '-';
         } else {
             current_codon_ref += ref[pos];
             current_codon_seq += seq[pos];

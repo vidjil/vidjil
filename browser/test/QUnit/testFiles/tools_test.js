@@ -27,6 +27,22 @@ QUnit.test("test get_codons", function(assert) {
     codons = get_codons(r, s, 2);
     assert.deepEqual(codons, {ref : ['AT', 'G--AT', 'AGA', 'CAG'],
                               seq : ['AA', 'ACCCG', '-GG', 'GTT']});
+
+    r = '-----ATG--ATAGACAG';
+    s = '--GACAAACCCG-GGGTT';
+
+    codons = get_codons(r, s, 0);
+    assert.deepEqual(codons, {ref : ['-----', 'ATG', '--', 'ATA', 'GAC', 'AG'],
+                              seq : ['--GAC', 'AAA', 'CC', 'CG-', 'GGG', 'TT']});
+
+    codons = get_codons(r, s, 1);
+    assert.deepEqual(codons, {ref : ['-----A', 'TG--A', 'TAG', 'ACA', 'G'],
+                              seq : ['--GACA', 'AACCC', 'G-G', 'GGT', 'T']});
+
+    codons = get_codons(r, s, 2);
+    assert.deepEqual(codons, {ref : ['-----AT', 'G--AT', 'AGA', 'CAG'],
+                              seq : ['--GACAA', 'ACCCG', '-GG', 'GTT']});
+
 });
 
 QUnit.test("test get_mutations", function(assert) {
@@ -82,21 +98,21 @@ QUnit.test("test get_mutations", function(assert) {
     // AG-T > cGAT
     mutations = get_mutations(r, s, 0);
     assert.equal(Object.keys(mutations).length, 3, "Three mutations");
-    assert.deepEqual(mutations, {3 : DEL, 6 : SUBST, 8 : INS});
+    assert.deepEqual(mutations, {3 : DEL, 7 : SUBST, 9 : INS});
 
     // ATA > ATC (I)
     mutations = get_mutations(r, s, 1);
     assert.equal(Object.keys(mutations).length, 3, "Three mutations");
-    assert.deepEqual(mutations, {3 : DEL, 6 : SILENT, 8 : INS});
+    assert.deepEqual(mutations, {3 : DEL, 7 : SILENT, 9 : INS});
 
     // TAG > TcG (* > S)
     mutations = get_mutations(r, s, 2);
     assert.equal(Object.keys(mutations).length, 3, "Three mutations");
-    assert.deepEqual(mutations, {3 : DEL, 6 : SUBST, 8 : INS});
+    assert.deepEqual(mutations, {3 : DEL, 7 : SUBST, 9 : INS});
 
     mutations = get_mutations(r, s);
     assert.equal(Object.keys(mutations).length, 3, "Three mutations without phase");
-    assert.deepEqual(mutations, {3 : DEL, 6 : SUBST, 8 : INS});
+    assert.deepEqual(mutations, {3 : DEL, 7 : SUBST, 9 : INS});
 });
 
 QUnit.test("test nth_ocurrence", function(assert) {
