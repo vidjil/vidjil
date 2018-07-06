@@ -1,0 +1,4 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -c segment -g $VIDJIL_DIR/germline/homo-sapiens.g -Z 1 $VIDJIL_DATA/3344-bad-filtering.fa
+
+$ Check that proper filtering is used
+1: IGHV4-31*02
