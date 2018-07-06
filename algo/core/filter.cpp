@@ -68,6 +68,25 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
   }
   mapAho = automaton->getMultiResults(seq);
 
+  #ifdef DEBUG_FILTER /* Display the number of k-mers found for each genes. */
+  int currentAsciiNumber;
+  string previousLabel = "", currentLabel;
+  currentAsciiNumber = SPECIFIC_KMERS_NUMBER;
+  previousLabel = extractGeneName(originalBioReader.label(0));
+  for(int i = 1;i < originalBioReader.size(); ++i){
+    for(auto const mx: mapAho){
+      currentLabel = extractGeneName(originalBioReader.label(i));
+      if(currentLabel != previousLabel){
+        currentAsciiNumber++;
+      }
+      if(currentAsciiNumber == int(mx.first.getLabel().at(0))){
+        cout << mx.second << " kmers found for " << originalBioReader.label(i) << endl;
+      }
+      previousLabel = currentLabel;
+    }
+  }
+  #endif  
+
   //All k-mers selected : iterate over all map
   if(kmer_threshold == ALL_KMERS_VALUE || kmer_threshold > (int)mapAho.size()){
     for(auto const mx: mapAho){
