@@ -1,8 +1,9 @@
 
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -Z 10 -A -x 30 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -Z 10 -A -x 30 -v -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta
 
 $ Clone 13 is correctly analyzed
 1:FLN1FA001EP9M2.* IGHV2-26.* 2/GAT.*GCC/8 IGHJ2
 
 $ Statistics on -Z
-# TODO, test on -Z statistics #3259
+1:Statistics on clone analysis
+rb1: IGH 1579/ 10470 15..%
