@@ -606,6 +606,25 @@ void testTransferBioReaderSequences(){
   delete f;
 }
 
+/* If the sequence used in Filter class doesn't match any of the sequences 
+stored in the original BioReader, we expect to get the original BioReader. */
+void testOriginalBioReaderIsReturned(){
+  BioReader testedBioReader1, result;
+  FilterWithACAutomaton *f;
+  seqtype seq[3]; 
+  testedBioReader1 = getDebugBioReader1();
+  f = new FilterWithACAutomaton(testedBioReader1, "####");
+  seq[0] = "CCCCCCCCCCCCCCCCCCC"; 
+  seq[1] = "AGGGAGGGAGGGAGGGAGGGT"; 
+  seq[2] = "GCGCGCGCGCGCGCGCGCGCGC";
+  for(int i = 0; i < 3; ++i){
+    result = f->filterBioReaderWithACAutomaton(seq[i]);
+    TAP_TEST_EQUAL(result.size(), testedBioReader1.size(),
+    TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, "Returned BioReader should be the orignal one.");
+  }
+  delete f;
+}
+
 void testFilter(){
   testAutomatonBuilderFilteringBioReader();
   testFilterBioReaderWithACAutomaton();
@@ -613,4 +632,5 @@ void testFilter(){
   testGetNSignicativeKmers();
   testExAequoKmersWhenSignificantParameter();
   testTransferBioReaderSequences();
+  testOriginalBioReaderIsReturned();
 }
