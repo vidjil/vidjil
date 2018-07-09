@@ -1,6 +1,12 @@
+MD_FILES=$(wildcard *.md)
 ORG_FILES=$(wildcard *.org)
 
-html: $(ORG_FILES)
+all: html htmlorg
+
+html: $(MD_FILES)
+	cd .. ; mkdocs build
+
+htmlorg: $(ORG_FILES)
 	make $(subst .org,.html, $^)
 
 %.html: %.org
