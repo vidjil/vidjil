@@ -105,6 +105,6 @@ def get_gene_positions(gene):
     loc = get_last_LocationHistType(gene)
 
     chr = loc['ChrAccVer']
-    start, stop = int(loc['ChrStart']), int(loc['ChrStop'])
+    start, stop = int(loc['ChrStart'])+1, int(loc['ChrStop'])+1
 
     return chr, start, stop
