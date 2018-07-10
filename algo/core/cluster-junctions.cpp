@@ -22,6 +22,7 @@
 */
 
 #include "cluster-junctions.h"
+#include "../lib/json.hpp"
 #include<cstdlib>
 
   bool MySort(const pair<int, string>& lh, const pair<int, string>& rh){

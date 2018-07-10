@@ -9,7 +9,7 @@
 #include "automaton.hpp"
 #include "stats.h"
 #include "tools.h"
-#include "../lib/json.hpp"
+#include "../lib/json_fwd.hpp"
 #include "kmerstorefactory.hpp"
 #include "bioreader.hpp"
 #include "filter.h"

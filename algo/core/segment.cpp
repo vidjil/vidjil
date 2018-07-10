@@ -24,6 +24,7 @@
 #include <cassert>
 #include "segment.h"
 #include "tools.h"
+#include "../lib/json.hpp"
 #include "affectanalyser.h"
 #include <sstream>
 #include <cstring>

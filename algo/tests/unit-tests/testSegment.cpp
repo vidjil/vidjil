@@ -8,6 +8,7 @@
 #include "core/bioreader.hpp"
 #include "core/segment.h"
 #include "core/windowExtractor.h"
+#include "lib/json.hpp"
 
 using namespace std;
 

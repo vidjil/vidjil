@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "tools.h"
+#include "../lib/json.hpp"
 #include "windows.h"
 #include "representative.h"
 #include "segment.h"

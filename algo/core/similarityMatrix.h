@@ -6,7 +6,7 @@
 #include <iostream>
 #include <iomanip>
 #include "json.h"
-#include "../lib/json.hpp"
+#include "../lib/json_fwd.hpp"
 
 using namespace std;
 using json = nlohmann::json;
