@@ -10,24 +10,31 @@ ACCESS_DENIED = "access denied"
 ## return group list
 def index():
     count = db.auth_group.id.count()
+    user_count = db.auth_user.id.count()
     query = db(
-       db.auth_group.id > 0
-    ).select(db.auth_group.ALL, groupby = db.auth_group.id, orderby=db.auth_group.role)
+       (db.auth_group.id > 0) &
+       (db.auth_membership.group_id == db.auth_group.id) &
+       (db.auth_membership.user_id == db.auth_user.id)
+    ).select(
+            db.auth_group.role.with_alias('role'),
+            db.auth_group.id.with_alias('id'),
+            db.auth_group.description.with_alias('description'),
+            user_count.with_alias('count'),
+            groupby = db.auth_group.id,
+            orderby=db.auth_group.role)
 
     for row in query:
-        row.count = db(
-                (db.auth_group.id == db.auth_membership.group_id)
-                & (db.auth_group.id == row.id)
-            ).count()
         row.parents = ', '.join(str(value) for value in auth.get_group_parent(row.id))
 
         row.access = ''
-        if auth.has_permission(PermissionEnum.create.value, 'sample_set', group_id=row.id): row.access += 'c'
-        if auth.has_permission(PermissionEnum.upload.value, 'sample_set', group_id=row.id): row.access += 'u'
-        if auth.has_permission(PermissionEnum.run.value, 'sample_set', group_id=row.id): row.access += 'r'
-        if auth.has_permission(PermissionEnum.anon.value, 'sample_set', group_id=row.id): row.access += 'a'
-        if auth.has_permission(PermissionEnum.admin.value, 'sample_set', group_id=row.id): row.access += 'e'
-        if auth.has_permission(PermissionEnum.save.value, 'sample_set', group_id=row.id): row.access += 's'
+        permissions_list = [PermissionEnum.create.value,
+                            PermissionEnum.upload.value,
+                            PermissionEnum.run.value,
+                            PermissionEnum.anon.value,
+                            PermissionEnum.admin.value,
+                            PermissionEnum.save.value]
+        permissions = auth.get_group_permissions(table_name='sample_set', group_id=row.id, myfilter=permissions_list)
+        row.access = ''.join([PermissionLetterMapping[p].value for p in permissions])
 
     return dict(message=T('Groups'), query=query, count=count)
 

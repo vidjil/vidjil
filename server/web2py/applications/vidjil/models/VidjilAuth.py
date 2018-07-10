@@ -4,6 +4,14 @@ from gluon.dal import Row, Set, Query
 
 from permission_enum import PermissionEnum
 
+class PermissionLetterMapping(Enum):
+    admin = 'e'
+    create = 'c'
+    upload = 'u'
+    run = 'r'
+    anon = 'a'
+    save = 's'
+
 class VidjilAuth(Auth):
     admin = None
     groups = None
@@ -123,6 +131,15 @@ class VidjilAuth(Auth):
     def get_group_access(self, object_of_action, id, group):
         perm = self.has_permission(PermissionEnum.access.value, object_of_action, id, group_id = group)
         return perm
+
+    def get_group_permissions(self, table_name, group_id, record_id=0, myfilter=[]):
+        q = ((db.auth_permission.table_name == table_name)&
+            (db.auth_permission.group_id == group_id)&
+            (db.auth_permission.record_id == record_id))
+        if myfilter:
+            q &= (db.auth_permission.name.belongs(myfilter))
+        perms = db(q).select(db.auth_permission.name)
+        return [p.name for p in perms]
 
     def get_group_permission(self, action, object_of_action, id = 0, group = None):
         '''
