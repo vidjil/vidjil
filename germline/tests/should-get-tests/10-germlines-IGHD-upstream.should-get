@@ -1,0 +1,5 @@
+!NO_LAUNCHER:
+!LAUNCH: (cd $VIDJIL_DIR/germline ; grep -A2 -F 'IGHD2-2*02' homo-sapiens/IGHD+up.fa | tr -d '\n')
+
+$ Correct sequence, with upstream
+1:AGGATTTTGTGGGGGCTCGTGTCACTGTGA

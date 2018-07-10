@@ -1,8 +1,8 @@
 !NO_LAUNCHER:
-!LAUNCH: (cd $VIDJIL_DIR/germline ; cat homo-sapiens/TRDD2+up.fa | tr '|' '#' )
+!LAUNCH: (cd $VIDJIL_DIR/germline ; cat homo-sapiens/TRDD2+up.fa | tr '|' '#' | tr -d '\n')
 
 $ Correct full header, with TRDD2*01 identifier between pipes
-1: .*#TRDD2.01#.*Human T-cell receptor germline delta-chain D-region DNA
+f1: .*#TRDD2.01#.*Human T-cell receptor germline delta-chain D-region DNA
 
 $ Correct sequence, with upstream
 1: AAGAGGGTTTTTATACTGATGTGTTTCATTGTGCCTTCCTAC
