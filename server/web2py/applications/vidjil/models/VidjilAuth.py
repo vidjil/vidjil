@@ -138,7 +138,7 @@ class VidjilAuth(Auth):
             (db.auth_permission.record_id == record_id))
         if myfilter:
             q &= (db.auth_permission.name.belongs(myfilter))
-        perms = db(q).select(db.auth_permission.name)
+        perms = db(q).select(db.auth_permission.name, orderby=db.auth_permission.name)
         return [p.name for p in perms]
 
     def get_group_permission(self, action, object_of_action, id = 0, group = None):
