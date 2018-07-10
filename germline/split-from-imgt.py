@@ -93,10 +93,24 @@ def get_gene_coord(imgt_line):
                              'imgt_name': elements[1],
                              'imgt_data': '|'.join(elements[1:5])}
 
+def paste_updown_on_fasta(fasta, up, down):
+    '''
+    Put upstream and/or downstream data on an existing FASTA sequences
+    >>> paste_updown_on_fasta('>seq\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT', 'CCCC', 'GGGG')
+    '>seq\\nCCCC\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT\\nGGGG\\n'
+    >>> paste_updown_on_fasta('>seq\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT\\n', '', 'GGGG')
+    '>seq\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT\\nGGGG\\n'
+    >>> paste_updown_on_fasta('>seq\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT', 'CCCC', '')
+    '>seq\\nCCCC\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT\\n'
+    '''
+    lines = fasta.split('\n')
+    return lines[0]+'\n' + (up+'\n' if up else '') + '\n'.join(filter(None, lines[1:])) + '\n'\
+        + (down+'\n' if down else '')
 
 def store_data_if_updownstream(fasta_header, path, data, genes):
     for gene in gene_matches(fasta_header, genes):
         gene_name, gene_coord = get_gene_coord(fasta_header)
+
         if gene_name:
             data[path+'/'+gene][gene_name].append(gene_coord)
     
