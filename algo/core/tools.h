@@ -43,16 +43,14 @@ using namespace std;
 
 #define PRINT_VAR(v) cerr << #v << " = " << v << endl
 
+#define NB_N_CHOOSE_K_STORED 500
 
 #define SEED_YES '#'
 
 // Common seeds
-#define SEED_9   "#########"
-#define SEED_S10 "#####-#####"
-#define SEED_S12 "######-######"
-#define SEED_S13 "#######-######"
-
-#define NB_N_CHOOSE_K_STORED 500
+#define DEFAULT_SEED "10s"
+extern map<string, string> seedMap;
+string expand_seed(const string &seed);
 
 string seed_contiguous(int k);
 
@@ -112,6 +110,7 @@ bool pair_occurrence_sort(pair<T, int> a, pair<T, int> b);
 string string_of_int(int number);
 string fixed_string_of_float(float number, int precision);
 string scientific_string_of_double(double number);
+string string_of_map(map <string, string> m, const string &before);
 
 /**
  * @param nuc is A, C, G, T or any extended nucleotide (or lowercase)

@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -KA -z 0 -s "#####-#####" -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa -D $VIDJIL_DIR/germline/homo-sapiens/IGHD.fa   $VIDJIL_DATA/common-V-D.fa  ; cat out/common-V-D.affects
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -KA -z 0 -s 10s -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa -D $VIDJIL_DIR/germline/homo-sapiens/IGHD.fa   $VIDJIL_DATA/common-V-D.fa  ; cat out/common-V-D.affects
 
 $ Segments the sequence
 1: SEG  .* -> .* 1 

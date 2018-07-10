@@ -19,6 +19,30 @@ int seed_weight(const string &seed)
   return count(seed.begin(), seed.end(), SEED_YES);
 }
 
+map<string, string> seedMap = {
+  {"9c", "#########"},
+  {"10s", "#####-#####"},
+  {"12s", "######-######"},
+  {"13s", "#######-######"}
+};
+
+string expand_seed(const string &seed)
+{
+  if (seed.size() == 0)
+    return expand_seed(DEFAULT_SEED);
+
+  if (seed.find(SEED_YES) == std::string::npos)
+    {
+      if (seedMap.find(seed) == seedMap.end())
+        throw invalid_argument("Unknown seed: " + seed);
+      else
+        return seedMap[seed];
+    }
+
+  return seed ;
+}
+
+
 char spaced_buf[MAX_SEED_SIZE+1];
 
 string spaced(const string &input, const string &seed) {
@@ -65,6 +89,14 @@ string scientific_string_of_double(double number)
    stringstream ss;
    ss << scientific << number ;
    return ss.str();
+}
+
+string string_of_map(map <string, string> m, const string &before)
+{
+  stringstream ss;
+  for (auto x: m)
+    ss << before << x.first << ":" << x.second;
+  return ss.str();
 }
 
 

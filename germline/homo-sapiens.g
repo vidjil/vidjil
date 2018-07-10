@@ -107,7 +107,7 @@
                 "3": ["TRDD3+down.fa"]
             } ],
             "parameters": {
-                "seed": "9s"
+                "seed": "9c"
             }
         },
 

@@ -13,9 +13,8 @@ void Germline::init(string _code, char _shortcut,
   shortcut = _shortcut ;
   index = 0 ;
   this->max_indexing = max_indexing;
-  this->seed = seed;
-  if (this->seed.size() == 0)
-    this->seed = DEFAULT_GERMLINE_SEED;
+
+  this->seed = expand_seed(seed);
 
   affect_5 = "V" ;
   affect_4 = "" ;
@@ -24,7 +23,7 @@ void Germline::init(string _code, char _shortcut,
   affect_5 = string(1, toupper(shortcut)) + "-" + code + "V";
   affect_4 = string(1, 14 + shortcut) + "-" + code + "D";
   affect_3 = string(1, tolower(shortcut)) + "-" + code + "J";
-  filter_5 = build_automaton ? new FilterWithACAutomaton(rep_5, seed) : nullptr;
+  filter_5 = build_automaton ? new FilterWithACAutomaton(rep_5, this->seed) : nullptr;
 }
 
 
@@ -167,7 +166,7 @@ void Germline::finish() {
 
 void Germline::new_index(IndexTypes type)
 {
-  assert(! seed.empty());
+  assert(! seed.empty() && (seed.find(SEED_YES) != std::string::npos));
 
   bool rc = true ;
   index = KmerStoreFactory<KmerAffect>::createIndex(type, seed, rc);
@@ -353,13 +352,7 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
       break ;
     }
 
-    map<string, string> seedMap;
-    seedMap["13s"] = SEED_S13;
-    seedMap["12s"] = SEED_S12;
-    seedMap["10s"] = SEED_S10;
-    seedMap["9s"] = SEED_9;
-
-    seed = (default_seed.size() == 0) ? seedMap[seed] : default_seed;
+    seed = (default_seed.size() == 0) ? seed : default_seed;
 
     //for each set of recombination 3/4/5
     for (json::iterator it2 = recom.begin(); it2 != recom.end(); ++it2) {
@@ -390,7 +383,7 @@ void MultiGermline::insert_in_one_index(IKmerStore<KmerAffect> *_index, bool set
 void MultiGermline::build_with_one_index(string seed, bool set_index)
 {
   bool rc = true ;
-  index = KmerStoreFactory<KmerAffect>::createIndex(indexType, seed, rc);
+  index = KmerStoreFactory<KmerAffect>::createIndex(indexType, expand_seed(seed), rc);
   index->refs = 1;
   insert_in_one_index(index, set_index);
 }

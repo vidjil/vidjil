@@ -106,7 +106,6 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define DEFAULT_K      0
 #define DEFAULT_W      50
-#define DEFAULT_SEED   DEFAULT_GERMLINE_SEED
 
 #define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
@@ -354,8 +353,10 @@ int main (int argc, char **argv)
                    seed_changed = true;
                    return true;
                  },
-                 "spaced seeds used for the V/J affectation (default: depends on germline)")
-    -> group(group) -> level();
+                 "seed, possibly spaced, used for the V/J affectation (default: depends on germline), given either explicitely, either by an alias"
+                 "\n                             " + string_of_map(seedMap, " ")
+                 )
+    -> group(group) -> level() -> set_type_name("SEED=" DEFAULT_SEED);
 
 
   // ----------------------------------------------------------------------------------------------------------------------

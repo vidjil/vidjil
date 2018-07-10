@@ -8,6 +8,10 @@ $ Check default costs
 1:segmenter .* "4, -6, -10, -1, -10"
 1:clustering .* "1, -4, -4, 0, 0"
 
+$ Show seeds
+1: 9c.#########
+1: 13s.#######-######
+
 $ Display advanced options
 : , experimental options
 : custom Cost
