@@ -118,24 +118,27 @@ def retrieve_genes(f, genes, tag, additional_length, gene_list):
     for gene in genes:
         for coord in genes[gene]:
 
-            # extract from gene
-            gene_data = ncbi.get_gene_sequence(gene, coord['imgt_data'] + tag, coord['from'], coord['to'], additional_length)
-
             # try to extract from genome
             gene_id = gene_list.get_gene_id_from_imgt_name(coord['species'], coord['imgt_name'])
+
+            allele_additional_length = 0
 
             if gene_id:
                 try:
                     (target, start, end) = ncbi.get_gene_positions(gene_id)
                     print(coord, gene_id, target, start, end)
                 except KeyError:
-                    print('! No positions for %s (%s)' % (gene_id, gene))
+                    print('! No positions for %s (%s: %s)' % (gene_id, gene, str(genes[gene])))
+                    allele_additional_length = additional_length
                     gene_id = None
 
+                        # extract from gene
+            gene_data = ncbi.get_gene_sequence(gene, coord['imgt_data'] + tag, coord['from'], coord['to'], allele_additional_length)
+
             if gene_id:
-                genome_data = ncbi.get_gene_sequence(target, coord['imgt_data'] + tag, start, end, additional_length)
-                # TODO: Check that gene_data was in genome_data
-                gene_data = genome_data
+                up_down = ncbi.get_updownstream_sequences(target, coord['imgt_data'] + tag, start, end, additional_length)
+                # We put the up and downstream data before and after the sequence we retrieved previously
+                gene_data = paste_updown_on_fasta(gene_data, up_down[0], up_down[1])
 
 
             # post-process gene_data
