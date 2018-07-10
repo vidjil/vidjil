@@ -3,6 +3,7 @@ import urllib
 import sys
 import re
 import os
+import fasta
 
 API_EUTILS = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?'
 
@@ -40,6 +41,33 @@ def ncbi_and_write(ncbi, additional_header, outs):
     for out in outs:
         out.write(fasta_with_id)
 
+def get_updownstream_sequences(gene, other_gene_name, start, end, additional_length):
+    #Only returns upstream or downstream raw sequences
+    if additional_length == 0:
+        return ('', '')
+    reversed = -1 if (end < start) else 1
+    if additional_length > 0:
+        start = end + 1 * reversed
+        end = end + additional_length * reversed
+    elif additional_length < 0:
+        end = start - 1 * reversed
+        start = max(1, start + additional_length * reversed)
+
+    if start > end:
+        tmp = start
+        start = end
+        end = tmp
+
+    updown_fasta = urllib.urlopen(API_NUCCORE_ID_FROM_TO % (gene, start, end)).read()
+
+    updown_raw = '\n'.join(updown_fasta.split('\n')[1:]).strip()
+    if reversed == -1:
+        updown_raw = fasta.revcomp(updown_raw.upper())
+
+    if additional_length > 0:
+        return ('', updown_raw)
+    else:
+        return (updown_raw, '')
 
 
 # Parse output from API_GENE_ID_XML to get genomic positions of a gene
