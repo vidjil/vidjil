@@ -45,7 +45,7 @@ test_germlines:
   stage: test_germlines
   script:
     - make -C germline get-all-data
-    - make -C germline/tests
+    - make -C germline tests
   only:
     - /^feature-.*g.*\/.*$/
 

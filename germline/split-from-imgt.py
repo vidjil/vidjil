@@ -75,7 +75,7 @@ def get_gene_coord(imgt_line):
     >>> line = '>X15272|TRGV4*01|Homo sapiens|F|V-REGION|406..705|300 nt|1| | | | |300+0=300| |rev-compl|'
     >>> get_gene_coord(line)[0] == 'X15272'
     True
-    >>> get_gene_coord(line)[1] == {'from': 406, 'to': 705, 'imgt_data': 'TRGV4*01|Homo sapiens|F|V-REGION', 'imgt_name': 'TRGV4*01'}
+    >>> get_gene_coord(line)[1] == {'from': 406, 'to': 705, 'imgt_data': 'TRGV4*01|Homo sapiens|F|V-REGION', 'imgt_name': 'TRGV4*01', 'species': 'Homo sapiens'}
     True
     '''
     elements = imgt_line.split('|')
@@ -338,11 +338,15 @@ def split_IMGTGENEDBReferenceSequences(f, gene_list):
 
 if __name__ == '__main__':
 
-    print (IMGT_LICENSE)
+    if sys.argv[1] == '--test':
+        import doctest
+        doctest.testmod()
+    else:
+        print (IMGT_LICENSE)
 
-    ReferenceSequences = sys.argv[1]
-    GeneList = sys.argv[2]
+        ReferenceSequences = sys.argv[1]
+        GeneList = sys.argv[2]
 
-    gl = IMGTGENEDBGeneList(GeneList)
-    split_IMGTGENEDBReferenceSequences(ReferenceSequences, gl)
+        gl = IMGTGENEDBGeneList(GeneList)
+        split_IMGTGENEDBReferenceSequences(ReferenceSequences, gl)
     
