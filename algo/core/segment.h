@@ -397,6 +397,7 @@ class FineSegmenter : public Segmenter
    */
   void findCDR3();
 
+  void checkWarnings(json &json_clone);
   json toJson();
   
 };

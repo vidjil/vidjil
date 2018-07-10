@@ -1424,6 +1424,8 @@ int main (int argc, char **argv)
 	      out_clone << endl;
 	   } // end if (seg.isSegmented())
 
+
+        seg.checkWarnings(json_clone);
         json_data_segment[it->first] = json_clone;
         
 	if (output_sequences_by_cluster) // -a option, output all sequences
