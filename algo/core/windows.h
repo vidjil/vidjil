@@ -215,10 +215,11 @@ class WindowsStorage {
 
   /**
    * Print the windows from the most abundant to the least abundant
+   * @max_json_output: maximal number of windows to output (<= 0: no limit)
    */ 
   ostream &printSortedWindows(ostream &os);
   
-  json sortedWindowsToJson(map<junction, json> json_data_segment);
+  json sortedWindowsToJson(map<junction, json> json_data_segment, int max_json_output);
 
   /**
    * Display a window with its in size in a somewhat FASTA format

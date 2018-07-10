@@ -399,9 +399,11 @@ int main (int argc, char **argv)
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Limits to report a clone (or a window)";
+  int max_clones_id = NO_LIMIT_VALUE ;
   int min_reads_clone = DEFAULT_MIN_READS_CLONE ;
   float ratio_reads_clone = DEFAULT_RATIO_READS_CLONE;
 
+  app.add_option("--max-clones", max_clones_id, "maximal number of output clones ('" NO_LIMIT "': no maximum, default)", false) -> group(group);
   app.add_option("-r", min_reads_clone, "minimal number of reads supporting a clone", true) -> group(group);
   app.add_option("--ratio", ratio_reads_clone, "minimal percentage of reads supporting a clone", true) -> group(group);
 
@@ -1260,14 +1262,25 @@ int main (int argc, char **argv)
       string label = windowsStorage->getLabel(it->first);
       string window_str = ">" + clone_id + "--window" + " " + label + '\n' + it->first + '\n' ;
 
-      //$$ If max_representatives is reached, we stop here but still outputs the window
 
-      if ((max_representatives >= 0) && (num_clone >= max_representatives + 1)
-          && ! windowsStorage->isInterestingJunction(it->first))
-	{
-	  out_clones << window_str << endl ;
-	  continue;
-	}
+
+      // interesting junctions are always handled
+      if (!windowsStorage->isInterestingJunction(it->first))
+      {
+
+        // If max_clones is reached, we stop here
+        if ((max_clones_id >= 0) && (num_clone >= max_clones_id + 1))
+          { cout << "STOP" << endl ;
+            continue ;
+          }
+
+        // If max_representatives is reached, we stop here but still outputs the window
+        if ((max_representatives >= 0) && (num_clone >= max_representatives + 1))
+          {
+            out_clones << window_str << endl ;
+            continue;
+          }
+      }
 
 
       cout << clone_id_human << endl ;
@@ -1497,7 +1510,7 @@ int main (int argc, char **argv)
     //json->add("links", jsonLevenshtein);
     //out_json << json->toString();
 
-    json jsonSortedWindows = windowsStorage->sortedWindowsToJson(json_data_segment);
+    json jsonSortedWindows = windowsStorage->sortedWindowsToJson(json_data_segment, max_clones_id);
     
     json reads_germline;
     for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
