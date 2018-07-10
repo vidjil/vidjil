@@ -2,9 +2,11 @@
 import urllib
 import sys
 import re
+import os
 
 API_EUTILS = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?'
 
+API_EUTILS += 'api_key='+os.environ['NCBI_KEY']+'&' if 'NCBI_KEY' in os.environ else ''
 
 API_NUCCORE_ID =         API_EUTILS + 'db=nuccore&rettype=fasta&retmode=text' + '&id=%s'
 API_NUCCORE_ID_FROM_TO = API_EUTILS + 'db=nuccore&rettype=fasta&retmode=text' + '&id=%s' + '&from=%s&to=%s'
