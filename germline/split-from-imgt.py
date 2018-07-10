@@ -189,7 +189,7 @@ def gap_j(seq):
             pos = CUSTOM_118[custom_seq]
 
     if pos is None:
-        m = j118.search(seq)
+        m = j118.search(seq, re.IGNORECASE)
 
         if not m:
             if len(seq) > PHE_TRP_WARN_SIZE:
