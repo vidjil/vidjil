@@ -248,7 +248,8 @@ clustering.
 
 ## Recombination / locus selection
 
-``` example
+
+``` diff
 Germline presets (at least one -g or -V/(-D)/-J option must be given for all commands except -c germlines)
   -g <.g file>(:filter)
                 multiple locus/germlines, with tuned parameters.
@@ -292,7 +293,7 @@ Finally, the advanced `-V/(-D)/-J` options enable to select custom V, (D) and J 
 
 ## Main algorithm parameters
 
-``` example
+``` diff
 Window prediction
   (use either -s or -k option, but not both)
   -s <string>   spaced seed used for the V/J affectation
@@ -362,7 +363,7 @@ The default is `-t 0`.
 
 The following options control how many clones are output and analyzed.
 
-``` example
+``` diff
 Limits to report a clone (or a window)
   -r <nb>       minimal number of reads supporting a clone (default: 5)
   -% <ratio>    minimal percentage of reads supporting a clone (default: 0)
@@ -424,7 +425,7 @@ even if those sequences are 'rare' (below the `-r/-%` thresholds).
 Such sequences can be provided either with `-W <sequence>`, or with `-l <file>`.
 The file given by `-l` should have one sequence by line, as in the following example:
 
-``` example
+``` diff
 GAGAGATGGACGGGATACGTAAAACGACATATGGTTCGGGGTTTGGTGCT my-clone-1
 GAGAGATGGACGGAATACGTTAAACGACATATGGTTCGGGGTATGGTGCT my-clone-2 foo
 ```
@@ -521,7 +522,7 @@ By default, the two output files are named `out/basename.vidjil` in `out/basenam
 
 The `out/basename.windows.fa` file contains the list of windows, with number of occurrences:
 
-``` example
+``` diff
 >8--window--1
 TATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTG
 >5--window--2
@@ -536,7 +537,7 @@ The first window has 8 occurrences, the second window has 5 occurrences.
 The `out/seq/clone.fa-*` contains the detailed analysis by clone, with
 the window, the consensus sequence, as well as with the most similar V, (D) and J germline genes:
 
-``` example
+``` diff
 >clone-001--IGH--0000008--0.0608%--window
 TATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTG
 >clone-001--IGH--0000008--0.0608%--lcl|FLN1FA001CPAUQ.1|-[105,232]-#2 - 128 bp (55% of 232.0 bp) + VDJ  0 54 73 84 85 127   IGHV3-23*05 6/ACCCGGGAGGAACAATAT/9 IGHD6-13*01 0//5 IGHJ4*02  IGH SEG_+ 1.946653e-19 1.352882e-19/5.937712e-20
@@ -651,7 +652,7 @@ Segmentations of V(D)J recombinations are displayed using a dedicated
 `.vdj` format. This format is compatible with FASTA format. A line starting
 with a \> is of the following form:
 
-``` example
+``` diff
 >name + VDJ  startV endV   startD endD   startJ  endJ   Vgene   delV/N1/delD5'   Dgene   delD3'/N2/delJ   Jgene   comments
 
         name          sequence name (include the number of occurrences in the read set and possibly other information)
@@ -692,7 +693,7 @@ this case a valid FASTA file.
 For VJ recombinations the output is similar, the fields that are not
 applicable being removed:
 
-``` example
+``` diff
 >name + VJ  startV endV   startJ endJ   Vgene   delV/N1/delJ   Jgene  comments
 ```
 
