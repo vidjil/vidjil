@@ -3,25 +3,25 @@
 
 $ Check md5 in germline/, sequences split and processed from germline and other databases
 1:b64be21f03b290c6850ce2cb2f1d6f02 homo-sapiens/IGHD.fa
-1:f38ca03b7672641c7b3c0e7787311bb8 homo-sapiens/IGHJ.fa
-1:e4da5f60a89df3879538bf00d9e7f5c9 homo-sapiens/IGHV.fa
+1:6a64f90ea2d19721d410c545e9d0bb9e homo-sapiens/IGHJ.fa
+1:73e6adab4faeb48b4fc2904e3a6e90f8 homo-sapiens/IGHV.fa
 1:0367825e404f753f0890b8f52aec7502 homo-sapiens/IGKJ.fa
-1:10ffddf98d73396b46c521c6999bbd09 homo-sapiens/IGKV.fa
+1:820188b335764f0eb04578ea35bbb143 homo-sapiens/IGKV.fa
 1:af257e110cf1ec6c38457af82a8118aa homo-sapiens/IGLJ.fa
-1:721f5afdf6ea9af5bafad4226d7e7f15 homo-sapiens/IGLV.fa
-1:bf915f443a26733f82391baae221c0d4 homo-sapiens/TRAJ.fa
-1:26013bcd4988623da89900646ce94387 homo-sapiens/TRAV.fa
+1:d6fa96cbc4de984729154c9d2217e3d2 homo-sapiens/IGLV.fa
+1:f0c43d7b0074e155aef411ea7353c23e homo-sapiens/TRAJ.fa
+1:935d588445e94d575c412cb3699b6bff homo-sapiens/TRAV.fa
 1:5b74170b9c45b9243558941bf07666ff homo-sapiens/TRBD.fa
 1:b9f8390d1d18a9ef5db9ab6875e196f1 homo-sapiens/TRBJ.fa
-1:b27a826a947b2fe17c82799753773538 homo-sapiens/TRBV.fa
+1:6540dc6a0e4f84de208a8b1f5d9fa981 homo-sapiens/TRBV.fa
 1:7f9fe8eaf781cf87453c157a771d5aaf homo-sapiens/TRDD.fa
 1:e50fc3c2f786f0b5a2b6fb5834dd3814 homo-sapiens/TRDJ.fa
-1:1dbb96884c9d479af59e216d4a9f7143 homo-sapiens/TRDV.fa
-1:4f6495933de0b93cfcc2e4ac00d1ecaa homo-sapiens/TRGJ.fa
-1:6094243f35263dfcc96e75adbfe8c04b homo-sapiens/TRGV.fa
+1:36dbb85d696634b8ee6ba0dc7500af85 homo-sapiens/TRDV.fa
+1:552cbc4883f3524fdc871fc156ecfdde homo-sapiens/TRGJ.fa
+1:e50df5cf337648190bc59609fe5fb5e0 homo-sapiens/TRGV.fa
 1:6f585362d727b243dd284ede15118670 mus-musculus/IGHD.fa
 1:218632e3e3c4fcd4c9ca7281e8976e3a mus-musculus/IGHJ.fa
-1:5cdc40857ff3084ed2d7163706b11f1d mus-musculus/IGHV.fa
+1:d389ee1e204699942ec1185fad8cd3df mus-musculus/IGHV.fa
 1:47568ad1ee648410b734c3b33f4a9eea mus-musculus/IGKJ.fa
 1:e2774dbad5e73f3b0c1e46aeab285baa mus-musculus/IGKV.fa
 1:750276a78c3b55f378449ecdcb9c3f78 mus-musculus/IGLJ.fa
@@ -38,14 +38,14 @@ $ Check md5 in germline/, sequences split and processed from germline and other 
 1:982c0fc1208d066bc028621e94d2b466 mus-musculus/TRGV.fa
 1:d55f4acf266d3bae4a7f9b3aa1881abc rattus-norvegicus/IGHD.fa
 1:07fa1dbe7a70f34c9a4e42ba9e9d7ca1 rattus-norvegicus/IGHJ.fa
-1:f5382906485e36c05fb6cbd877eb2896 rattus-norvegicus/IGHV.fa
+1:877b03603ec7e2a99d10184c3636f635 rattus-norvegicus/IGHV.fa
 1:c5ca90bea438f929308c5d57dfb1dc6b rattus-norvegicus/IGKV.fa
 1:96bc9d75e6b072e5d643c195ed562497 rattus-norvegicus/IGLJ.fa
 1:7e5c54685597270f333b41b70aef74ad rattus-norvegicus/IGLV.fa
 
 $ Check md5 in germline/, other sequences
+1:957b46da4114a1ed66f2e9b5d06aff2a homo-sapiens/CD.fa
 1:9112d6975669ccb59970fa79ceef599d homo-sapiens/CD-sorting.fa
-1:e6540659d36fa37f83f7e1463dde906f homo-sapiens/CD.fa
 1:eb32e780af5a4b8c0d1e9d780bacac43 homo-sapiens/IGHC=A1.fa
 1:b1ea36c4255c63d775ecdb03967ec89e homo-sapiens/IGHC=A2.fa
 1:43c54f3ddedfde87f70b0e0bea2d6d5f homo-sapiens/IGHC=D.fa
