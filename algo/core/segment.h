@@ -231,7 +231,14 @@ protected:
    * @return the right position (on forward strand) of the segmentation
    */
   int getRight() const;
+
   
+  /**
+   * @return the number of positions between the left and the right positions
+   */
+  int getMidLength() const;
+
+
   /**
    * @return the left position (on forward strand) of the D segmentation.
    */
@@ -390,6 +397,7 @@ class FineSegmenter : public Segmenter
    */
   void findCDR3();
 
+  void checkWarnings(json &json_clone);
   json toJson();
   
 };

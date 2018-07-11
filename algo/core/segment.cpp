@@ -249,6 +249,10 @@ int Segmenter::getRight() const {
   return box_J->start;
 }
 
+int Segmenter::getMidLength() const {
+  return box_J->start - box_V->end - 1;
+}
+
 int Segmenter::getLeftD() const {
   return box_D->start;
 }
@@ -1311,6 +1315,20 @@ void FineSegmenter::findCDR3(){
 
   JUNCTIONproductive = (CDR3nuc.length() % 3 == 0) && (! hasInFrameStopCodon(getSequence().sequence, (JUNCTIONstart-1)%3));
   // Reminder: JUNCTIONstart is 1-based
+}
+
+void FineSegmenter::checkWarnings(json &json_clone)
+{
+  if (isSegmented())
+    {
+      // Non-recombined D7-27/J1 sequence
+      if ((box_V->ref_label.find("IGHD7-27") != string::npos)
+          && (box_J->ref_label.find("IGHJ1") != string::npos)
+          && ((getMidLength() >= 90) || (getMidLength() <= 94)))
+        {
+          json_add_warning(json_clone, "W61", "Non-recombined D7-27/J1 sequence", LEVEL_ERROR);
+        }
+    }
 }
 
 json FineSegmenter::toJson(){

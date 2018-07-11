@@ -159,6 +159,7 @@ void testSegmentationCause(IndexTypes index) {
                TEST_KMER_JUNCTION, ks.getInfoLineWithAffects());
       TAP_TEST_EQUAL(ks.getLeft(), 17, TEST_KMER_LEFT, "left = " << ks.getLeft());
       TAP_TEST_EQUAL(ks.getRight(), 18, TEST_KMER_RIGHT, "right = " << ks.getRight());
+      TAP_TEST_EQUAL(ks.getMidLength(), 0, TEST_KMER_RIGHT, "mid length = " << ks.getMidLength());
 
       ks.setSegmentationStatus(NOT_PROCESSED);
       TAP_TEST(! ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
