@@ -132,7 +132,7 @@ def retrieve_genes(f, genes, tag, additional_length, gene_list):
                 gene_id = None
 
                 # extract from gene
-        gene_data = ncbi.get_gene_sequence(gene, coord['imgt_data'] + tag, coord['from'], coord['to'], allele_additional_length)
+        gene_data = ncbi.get_gene_sequence(gene, coord['from'], coord['to'], allele_additional_length)
 
         if gene_id:
             up_down = ncbi.get_updownstream_sequences(target, coord['imgt_data'] + tag, start, end, additional_length)

@@ -41,7 +41,7 @@ def ncbi_and_write(ncbi, additional_header, outs):
     for out in outs:
         out.write(fasta_with_id)
 
-def get_updownstream_sequences(gene, other_gene_name, start, end, additional_length):
+def get_updownstream_sequences(gene, start, end, additional_length):
     '''
      Only returns upstream or downstream raw sequences
 
