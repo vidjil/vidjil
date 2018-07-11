@@ -54,7 +54,7 @@
                                                will trigger UNSEG_TOO_SHORT_FOR_WINDOW.
                                              - Margins above the half of the window length may produce shortened or shifted windows
                                           */
-
+#define FRACTION_ALIGNED_AT_WORST .5 /* Fraction of the sequence that should be aligned before deactivating the heuristics */
 
 using namespace std;
 using json = nlohmann::json;
