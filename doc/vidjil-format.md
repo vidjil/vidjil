@@ -41,6 +41,7 @@ There is here one clone on the `TRG` locus with a designation `TRGV5*01 5/CC/0 T
 Note that other elements could be added by some program (such as `tag`, to identify some clones,
 or `clusters`, to further cluster some clones, see below).
 
+<!-- tangle: analysis-example1.vidjil -->
 ``` javascript
 {
     "producer": "program xyz version xyz",
@@ -88,6 +89,7 @@ Clones that have a same `id` are gathered (see 'What is a clone?', above).
 It is the responsibility of the program generating the initial `.vidjil` files to choose these `id` to
 do a correct gathering.
 
+<!-- tangle: analysis-example2.vidjil -->
 ``` javascript
 {
     "producer": "program xyz version xyz / fuse.py version xyz",
@@ -150,6 +152,7 @@ This file reflects the annotations a user could have done within the Vidjil web 
 She has manually set sample names (`names`), tagged (`tag`, `tags`), named (`name`) and clustered (`clusters`)
 some clones, and added external data (`data`).
 
+<!-- tangle: analysis-example2.analysis -->
 ``` javascript
 {
     "producer": "user Bob, via Vidjil webapp",
