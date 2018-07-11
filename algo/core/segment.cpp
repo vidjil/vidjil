@@ -845,7 +845,8 @@ bool comp_pair (pair<int,int> i,pair<int,int> j)
 
 void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id,
                               bool reverse_ref, bool reverse_both, bool local,
-                              AlignBox *box, Cost segment_cost, bool banded_dp)
+                              AlignBox *box, Cost segment_cost, bool banded_dp,
+                              double evalue_threshold)
 {
   
   int best_score = MINUS_INF ;
@@ -921,7 +922,7 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
   if (onlyBottomTriangle && best_score < score_with_limit_number_of_indels) {
     // Too many indels/mismatches, let's do a full DP
     align_against_collection(read, rep, forbidden_rep_id, reverse_ref, reverse_both,
-                             local, box, segment_cost, false);
+                             local, box, segment_cost, false,evalue_threshold);
     return;
   }
 
@@ -1027,13 +1028,15 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   
   sequence_or_rc = revcomp(sequence, reversed); // sequence, possibly reversed
 
+  // the threshold is lowered by the number of independent tests made
+  double standardised_threshold_evalue = threshold / multiplier;
 
   /* Read mapping */
   if (germline->seg_method == SEG_METHOD_ONE)
     {
       align_against_collection(sequence_or_rc, germline->rep_4, NO_FORBIDDEN_ID, false, false,
                                true, // local
-                               box_D, segment_cost);
+                               box_D, segment_cost, false, standardised_threshold_evalue);
 
       segmented = true ;
       because = reversed ? SEG_MINUS : SEG_PLUS ;
@@ -1055,13 +1058,13 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 	  FilterWithACAutomaton* f = germline->getFilter_5();
     BioReader filtered = f->filterBioReaderWithACAutomaton(sequence_or_rc, kmer_threshold);
 	  align_against_collection(sequence_or_rc, filtered, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
-                                        box_V, segment_cost);
+                                   box_V, segment_cost, false, standardised_threshold_evalue);
   }else{
     align_against_collection(sequence_or_rc, germline->rep_5, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
-                                        box_V, segment_cost);
+                             box_V, segment_cost, false, standardised_threshold_evalue);
   }
   align_against_collection(sequence_or_rc, germline->rep_3, NO_FORBIDDEN_ID, reverse_J, !reverse_J, false,
-                                          box_J, segment_cost);
+                           box_J, segment_cost, false, standardised_threshold_evalue);
   // J was run with '!reverseJ', we copy the box informations from right to left
   // Should this directly be handled in align_against_collection() ?
   box_J->start = box_J->end ;
@@ -1141,7 +1144,7 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
 
     // Align
     align_against_collection(str, germline->rep_4, forbidden_id, false, false, true,
-                                           box_DD, segment_cost);
+                             box_DD, segment_cost, false, evalue_standardised_threshold_evalue);
 
     box_DD->start += l ;
     box_DD->end += l ;

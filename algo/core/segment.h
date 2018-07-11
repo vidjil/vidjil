@@ -359,6 +359,7 @@ class FineSegmenter : public Segmenter
    * Build a fineSegmenter based on KmerSegmentation
    * @param seq: An object read from a FASTA/FASTQ file
    * @param germline: germline used
+   * @param threshold: threshold of randomly expected segmentation
    * @param kmer_threshold: This threshold is used while filtering the V
    *   BioReader in Germline. If this value is 0, every K-mer from getMultiResults
    *   is used for the filtering. Otherwise if N > 0, the N best K-mers are used
@@ -394,9 +395,14 @@ class FineSegmenter : public Segmenter
   
 };
 
-
+/**
+ * @param segment_cost: cost used
+ * @param banded_dp: Should we use banded dynamic programming?
+ * @param evalue_threshold: threshold for randomly expected segmentation (evalue)
+ */
 void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id,
                               bool reverse_ref, bool reverse_both, bool local,
-                              AlignBox *box, Cost segment_cost, bool banded_dp=true);
+                              AlignBox *box, Cost segment_cost, bool banded_dp=true,
+                              double evalue_threshold=1.);
 
 #endif
