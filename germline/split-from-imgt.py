@@ -112,42 +112,41 @@ def store_data_if_updownstream(fasta_header, path, data, genes):
         gene_name, gene_coord = get_gene_coord(fasta_header)
 
         if gene_name:
-            data[path+'/'+gene][gene_name].append(gene_coord)
+            data[path+'/'+gene].append((gene_name, gene_coord))
     
 def retrieve_genes(f, genes, tag, additional_length, gene_list):
-    for gene in genes:
-        for coord in genes[gene]:
+    for info in genes:
+        (gene, coord) = info
+        # try to extract from genome
+        gene_id = gene_list.get_gene_id_from_imgt_name(coord['species'], coord['imgt_name'])
 
-            # try to extract from genome
-            gene_id = gene_list.get_gene_id_from_imgt_name(coord['species'], coord['imgt_name'])
+        allele_additional_length = 0
+        
+        if gene_id:
+            try:
+                (target, start, end) = ncbi.get_gene_positions(gene_id)
+                print(coord, gene_id, target, start, end)
+            except KeyError:
+                print('! No positions for %s (%s: %s)' % (gene_id, gene, str(coord)))
+                allele_additional_length = additional_length
+                gene_id = None
 
-            allele_additional_length = 0
+                # extract from gene
+        gene_data = ncbi.get_gene_sequence(gene, coord['imgt_data'] + tag, coord['from'], coord['to'], allele_additional_length)
 
-            if gene_id:
-                try:
-                    (target, start, end) = ncbi.get_gene_positions(gene_id)
-                    print(coord, gene_id, target, start, end)
-                except KeyError:
-                    print('! No positions for %s (%s: %s)' % (gene_id, gene, str(genes[gene])))
-                    allele_additional_length = additional_length
-                    gene_id = None
-
-                        # extract from gene
-            gene_data = ncbi.get_gene_sequence(gene, coord['imgt_data'] + tag, coord['from'], coord['to'], allele_additional_length)
-
-            if gene_id:
-                up_down = ncbi.get_updownstream_sequences(target, coord['imgt_data'] + tag, start, end, additional_length)
-                # We put the up and downstream data before and after the sequence we retrieved previously
-                gene_data = paste_updown_on_fasta(gene_data, up_down[0], up_down[1])
+        if gene_id:
+            up_down = ncbi.get_updownstream_sequences(target, coord['imgt_data'] + tag, start, end, additional_length)
+            # We put the up and downstream data before and after the sequence we retrieved previously
+            gene_data = paste_updown_on_fasta(gene_data, up_down[0], up_down[1])
 
 
-            # post-process gene_data
-            if coord['imgt_data'].split('|')[-1] == FEATURE_J_REGION:
-                gene_lines = gene_data.split('\n')
-                gene_lines[1] = gap_j(gene_lines[1].lower())
-                gene_data = '\n'.join(gene_lines)
+        # post-process gene_data
+        if coord['imgt_data'].split('|')[-1] == FEATURE_J_REGION:
+            gene_lines = gene_data.split('\n')
+            gene_lines[1] = gap_j(gene_lines[1].lower())
+            gene_data = '\n'.join(gene_lines)
 
-            f.write(gene_data)
+        f.write(gene_data)
 
 
 #                  Phe
@@ -276,8 +275,8 @@ class IMGTGENEDBGeneList():
 
 def split_IMGTGENEDBReferenceSequences(f, gene_list):
 
-    downstream_data = defaultdict(lambda: OrderedDefaultListDict())
-    upstream_data = defaultdict(lambda: OrderedDefaultListDict())
+    downstream_data = OrderedDefaultListDict()
+    upstream_data = OrderedDefaultListDict()
 
     for l in open(ReferenceSequences):
 
