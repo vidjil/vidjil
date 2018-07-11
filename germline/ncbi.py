@@ -42,7 +42,23 @@ def ncbi_and_write(ncbi, additional_header, outs):
         out.write(fasta_with_id)
 
 def get_updownstream_sequences(gene, other_gene_name, start, end, additional_length):
-    #Only returns upstream or downstream raw sequences
+    '''
+     Only returns upstream or downstream raw sequences
+
+    :param gene: accession number where the sequence of interest is
+    :param start, end: start and end positions in the sequence of
+                       interest of our gene of interest. These are not
+                       the positions we want to recover. We want to recover
+                       positions that are either upstream or downstream.
+                       Note that when the gene of interest is on the reverse
+                       strand, we have start > end.
+    :param additional_length: length of the upstream of downstream region to
+                       recover. When additional_length > 0 we get the downstream
+                       region, and conversely when additional_length < 0.
+    :return: A tuple whose first element is the upstream region (or empty)
+             and where the second element is the downstream region (or empty
+    '''
+
     if additional_length == 0:
         return ('', '')
     reversed = -1 if (end < start) else 1
