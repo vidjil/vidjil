@@ -919,7 +919,9 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
   int min_number_of_matches = min(int(length * FRACTION_ALIGNED_AT_WORST), length - BOTTOM_TRIANGLE_SHIFT); // Minimal number of matches we can have with a triangle
   int max_number_of_insertions = length - min_number_of_matches;
   int score_with_limit_number_of_indels =  min_number_of_matches * segment_cost.match + max_number_of_insertions * segment_cost.insertion;
-  if (onlyBottomTriangle && best_score < score_with_limit_number_of_indels) {
+  float evalue = sequence_or_rc.size() * rep.totalSize() * segment_cost.toPValue(best_score);
+  if (onlyBottomTriangle && (best_score < score_with_limit_number_of_indels
+                             || evalue > evalue_threshold)) {
     // Too many indels/mismatches, let's do a full DP
     align_against_collection(read, rep, forbidden_rep_id, reverse_ref, reverse_both,
                              local, box, segment_cost, false,evalue_threshold);
