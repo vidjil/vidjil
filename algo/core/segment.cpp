@@ -1136,9 +1136,12 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
       
     string str = seq.substr(l, r-l);
 
+    // the threshold is lowered by the number of independent tests made
+    double standardised_threshold_evalue = evalue_threshold / multiplier;
+
     // Align
     align_against_collection(str, germline->rep_4, forbidden_id, false, false, true,
-                             box_DD, segment_cost, false, evalue_standardised_threshold_evalue);
+                             box_DD, segment_cost, false, standardised_threshold_evalue);
 
     box_DD->start += l ;
     box_DD->end += l ;
