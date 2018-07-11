@@ -3,8 +3,6 @@
 #include "bioreader.hpp"
 #include "automaton.hpp"
 
-typedef function<bool(pair<KmerAffect, int>, pair<KmerAffect, int>)> Comparator;
-
 class FilterWithACAutomaton {
 
   private:

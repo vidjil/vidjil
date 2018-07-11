@@ -98,6 +98,7 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
     sorted map */
   }else{
     /* sort map */
+    using Comparator = bool (*) (pair<KmerAffect, int>, pair<KmerAffect, int>);
     Comparator compFunctor = [](pair<KmerAffect, int> elem1 ,pair<KmerAffect, int> elem2){
       return (elem1.second == elem2.second) ? elem1.first > elem2.first : elem1.second > elem2.second;
     };
