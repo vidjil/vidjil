@@ -395,10 +395,20 @@ class FineSegmenter : public Segmenter
   
 };
 
+
+
 /**
- * @param segment_cost: cost used
+ * Align a read against a collection of sequences, maximizing the alignment 'score'
+ * @param read:         the read
+ * @param rep:          a collection of reference sequences
+ * @param reverse_ref:  if true, reverse the reference sequences (VkVk)
+ * @param reverse_both: if true, reverse both the read and the reference sequences (J segment)
+ * @param local:        if true, Local alignment (D segment), otherwise LocalEndWithSomeDeletions and onlyBottomTriangle (V and J segments)
+ * @param box:          the AligBox to fill
+ * @param segment_cost: the cost used by the dynamic programing
  * @param banded_dp: Should we use banded dynamic programming?
- * @param evalue_threshold: threshold for randomly expected segmentation (evalue)
+ * @param evalue_threshold: threshold for randomly expected segmentation (evalue) to relaunch a full DP without banded_dp
+ * @post  box is filled
  */
 void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id,
                               bool reverse_ref, bool reverse_both, bool local,

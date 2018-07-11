@@ -830,19 +830,6 @@ bool comp_pair (pair<int,int> i,pair<int,int> j)
 }
 
 
-/**
- * Align a read against a collection of sequences, maximizing the alignment 'score'
- * @param read:         the read
- * @param rep:          a collection of reference sequences
- * @param reverse_ref:  if true, reverse the reference sequences (VkVk)
- * @param reverse_both: if true, reverse both the read and the reference sequences (J segment)
- * @param local:        if true, Local alignment (D segment), otherwise LocalEndWithSomeDeletions and onlyBottomTriangle (V and J segments)
- * @param box:          the AligBox to fill
- * @param segment_cost: the cost used by the dynamic programing
- * @param banded_dp: should we perform a banded DP?
- * @post  box is filled
- */
-
 void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id,
                               bool reverse_ref, bool reverse_both, bool local,
                               AlignBox *box, Cost segment_cost, bool banded_dp,
