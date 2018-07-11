@@ -10,6 +10,7 @@ repo_name: gitlab
 pages:
     - vidjil-algo: vidjil-algo.md
     - locus and recombinations: locus.md
+    - .vidjil file format: vidjil-format.md
 
 extra_css:
     - mkdocs-extra.css

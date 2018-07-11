@@ -491,7 +491,7 @@ two windows that must be clustered.
 The main output of Vidjil-algo (with the default `-c clones` command) are two following files:
 
   - The `.vidjil` file is *the file for the Vidjil web application*.
-    The file is in a `.json` format (detailed in [format-analysis.org](format-analysis.org))
+    The file is in a `.json` format (detailed in [vidjil-format](vidjil-format))
     describing the windows and their count, the consensus sequences (`-y`),
     the detailed V(D)J and CDR3 designation (`-z`, see warning below), and possibly
     the results of the further clustering.
