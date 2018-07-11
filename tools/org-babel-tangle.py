@@ -16,14 +16,19 @@ def export_tangle(filename, content):
     f = open(filename, "w")
     f.write(content)
     f.close()
-                
-def extract_tangle(content, names=None):
+
+
+REGEX_TANGLE_ORG = '\n\#\+BEGIN_SRC[^\n]*:tangle (%s)[^\n]*\n(.*?)\n#\+END_SRC'
+
+REGEX = REGEX_TANGLE_ORG
+
+def extract_tangle(content, names=None, regex_template = REGEX):
     r'''
     Extract a tangle from an .org file
 
-    >>> extract_tangle('\n#+BEGIN_SRC sh :tangle ex1 :var ex=2\necho $ex\n#+END_SRC')
+    >>> extract_tangle('\n#+BEGIN_SRC sh :tangle ex1 :var ex=2\necho $ex\n#+END_SRC', regex_template=REGEX_TANGLE_ORG)
     [{'content': 'echo $ex', 'filename': 'ex1'}]
-    >>> extract_tangle('\n#+BEGIN_SRC sh :tangle ex2 :var ex=2\necho $ex\n#+END_SRC', ['ex2'])
+    >>> extract_tangle('\n#+BEGIN_SRC sh :tangle ex2 :var ex=2\necho $ex\n#+END_SRC', ['ex2'], regex_template=REGEX_TANGLE_ORG)
     [{'content': 'echo $ex', 'filename': 'ex2'}]
     '''
     if names == None:
@@ -31,7 +36,7 @@ def extract_tangle(content, names=None):
     
     tangles = []
     for name in names:
-        regex = '\n\#\+BEGIN_SRC[^\n]*:tangle ('+name+')[^\n]*\n(.*?)\n#\+END_SRC'
+        regex = regex_template % name
         compiled_regex = re.compile(regex, re.DOTALL)
         results = compiled_regex.findall(content)
 
