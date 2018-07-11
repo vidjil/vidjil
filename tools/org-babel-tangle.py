@@ -19,8 +19,9 @@ def export_tangle(filename, content):
 
 
 REGEX_TANGLE_ORG = '\n\#\+BEGIN_SRC[^\n]*:tangle (%s)[^\n]*\n(.*?)\n#\+END_SRC'
+REGEX_TANGLE_MD  = '\n<!-- tangle: (%s)[^\n]*\n```[^\n]*\n(.*?)\n```'
 
-REGEX = REGEX_TANGLE_ORG
+REGEX = REGEX_TANGLE_MD
 
 def extract_tangle(content, names=None, regex_template = REGEX):
     r'''
@@ -30,6 +31,8 @@ def extract_tangle(content, names=None, regex_template = REGEX):
     [{'content': 'echo $ex', 'filename': 'ex1'}]
     >>> extract_tangle('\n#+BEGIN_SRC sh :tangle ex2 :var ex=2\necho $ex\n#+END_SRC', ['ex2'], regex_template=REGEX_TANGLE_ORG)
     [{'content': 'echo $ex', 'filename': 'ex2'}]
+    >>> extract_tangle('foo \n<!-- tangle: hello --> \n``` console \nworld\n``` \n bar', ['hello'])
+    [{'content': 'world', 'filename': 'hello'}]
     '''
     if names == None:
         names = ['[^ \t\n]+']
