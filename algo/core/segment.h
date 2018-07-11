@@ -231,7 +231,14 @@ protected:
    * @return the right position (on forward strand) of the segmentation
    */
   int getRight() const;
+
   
+  /**
+   * @return the number of positions between the left and the right positions
+   */
+  int getMidLength() const;
+
+
   /**
    * @return the left position (on forward strand) of the D segmentation.
    */

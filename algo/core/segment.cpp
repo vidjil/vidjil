@@ -249,6 +249,10 @@ int Segmenter::getRight() const {
   return box_J->start;
 }
 
+int Segmenter::getMidLength() const {
+  return box_J->start - box_V->end - 1;
+}
+
 int Segmenter::getLeftD() const {
   return box_D->start;
 }
