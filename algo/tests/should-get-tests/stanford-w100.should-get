@@ -7,10 +7,10 @@ $ Find the good number of "too short sequences" for windows of size 100
 1: UNSEG too short w ->      0
 
 $ Some reads have shortened or shifted windows
-1: SEG changed w -> 1368
+1: SEG changed w -> 1369
 
 $ Most changed windows are just shifted
-913: w100/-5
+914: w100/-5
 360: w100/-10
 
 $ Some changed windows are lighlty shortened
@@ -24,7 +24,7 @@ $ Find the good number of windows in Stanford S22
 1: found 11835 windows in 13152 reads
 
 $ Find the correct number of clones with shifted of shortened windows
-1243: "Short or shifted window"
-1243: "W50"
+1244: "Short or shifted window"
+1244: "W50"
 
 
