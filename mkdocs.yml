@@ -8,8 +8,9 @@ repo_url: https://gitlab.inria.fr/vidjil/vidjil
 repo_name: gitlab
 
 pages:
-    - vidjil-algo: vidjil-algo.md
+    - web platform, user manual: user.md
     - locus and recombinations: locus.md
+    - vidjil-algo: vidjil-algo.md
     - .vidjil file format: vidjil-format.md
 
 extra_css:
