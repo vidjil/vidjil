@@ -52,7 +52,7 @@ Otherwise, such `.vidjil` files can be obtained:
 
   - You can change the number of displayed clones by moving the slider “number of clones” (menu “filter”).
     The maximal number of clones that can be displayed depends on the processing step before.
-    See below "[Can I see all the clones ?](#smaller-clones)".
+    See below "[Can I see all the clones ?](#can-i-see-all-the-clones)".
 
   - Clones can be selected by clicking on them either in the list, on the sample graph,
     or the grid (simple selection or rectangle selection).
@@ -163,7 +163,7 @@ or their “N length” (that is N1-D-N2 in the case of VDJ recombinations).
 
 The sequence view displays nucleotide sequences from selected clones.
 
-  - See "[What is the sequence displayed for each clone ?](#Representative)" below
+  - See "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clone)" below
   - Sequences can be aligned together (“align” button), identifying substitutions, insertions and deletions.
   - You can remove sequences from the aligner (and the selection) by clicking on the “X” at the left.
   - You can further analyze the sequences with IMGT/V-QUEST, IgBlast or Blast. This opens another window/tab.
@@ -403,7 +403,7 @@ analyzed reads, including the hidden clones.
 
 ## Going back to the analyzed reads
 
-The web application displays one consensus sequence per clone (see [Representative](#Representative) above).
+The web application displays one consensus sequence per clone (see [Representative](#what-is-the-sequence-displayed-for-each-clone) above).
 In some situations, one may want to go back to the reads.
 
 For **vidjil-algo**, analyzing a dataset with the *default + extract reads* config enables
@@ -488,7 +488,7 @@ In vidjil-algo,
 the clone coverage is the ratio of the length of the clone consensus sequence
 to the median read length in the clone.
 A consensus sequence is
-displayed for each clone (see [What is the sequence displayed for each clone?](#Representative)).
+displayed for each clone (see [What is the sequence displayed for each clone?](#what-is-the-sequence-displayed-for-each-clone)).
 Its length should be representative of the read lengths among that clone. A
 clone can be constituted of thousands of reads of various lengths. We
 expect the consensus sequence to be close to the median read length of the
