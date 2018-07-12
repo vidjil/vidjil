@@ -69,8 +69,7 @@ Vidjil-algo has been successfully tested on the following platforms :
   - OS X 10.9, 10.10, 10.11
 
 Vidjil-algo is developed with continuous integration using systematic unit and functional testing.
-The development team internally uses [Jenkins](https://jenkins-ci.org/) for that.
-Moreover, the results of some of these tests can be publicly checked on [travis-ci.org](https://travis-ci.org/vidjil/vidjil).
+The development team internally uses [Gitlab CI](http://gitlab.vidjil.org/pipelines) and [Jenkins](https://jenkins-ci.org/) for that.
 
 ## Build requirements (optional)
 
@@ -79,7 +78,7 @@ You can also download a static binary (see next paragraph, 'Installation').
 
 To compile Vidjil-algo, make sure:
   - to be on a POSIX system ;
-  - to have a C++11 compiler (as `g++` 4.8 or above, `g++` 7.3 being supported, or `clang` 3.3 or above).
+  - to have a C++11 compiler (as `g++` 4.8 or above, or `clang` 3.3 or above).
   - to have the `zlib` installed (`zlib1g-dev` package under Debian/Ubuntu,
     `zlib-devel` package under Fedora/CentOS).
 
@@ -114,7 +113,7 @@ At the time of redacting the documentation, `g++` requires extra options to
 ensure flawless compilation and execution of Vidjil-algo:
 
 ``` bash
-make MAKE=gmake CXXFLAGS="-D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"
+make MAKE=gmake CXXFLAGS="-std=c++11 -O2 Wall -D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"
 ```
 
 The `gcc49` at the end of the command line is to be replaced by the `gcc` version
@@ -190,26 +189,11 @@ make demo                # download demo files (S22 and L4, see demo/get-sequenc
 ./vidjil-algo -h         # display help/usage
 ```
 
-If your build system does not use C++11 by default, you should replace the `make` commands by:
+On some older systems you may need to replace the `make` commands with:
 
 ``` bash
-make CXXFLAGS='-std=c++11'                           ### gcc-4.8
-make CXXFLAGS='-std=c++11' LDFLAGS='-stdlib=libc++'  ### OS X Mavericks
+make LDFLAGS='-stdlib=libc++'  ### OS X Mavericks
 ```
-
-### Package
-
-If you use a Debian-based operating system you can simply add the Vidjil
-repository to your sources.list:
-deb <http://rby.vidjil.org:8080/archive> sid/all/
-deb <http://rby.vidjil.org:8080/archive> sid/amd64/
-
-deb <http://rby.vidjil.org:8080/archive> wheezy/all/
-deb <http://rby.vidjil.org:8080/archive> wheezy/amd64/
-
-And install from he command line:
-apt-get update
-apt-get install vidjil
 
 ## Self-tests (optional)
 
