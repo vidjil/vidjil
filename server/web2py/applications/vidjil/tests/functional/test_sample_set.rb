@@ -76,11 +76,11 @@ class TestSampleSet < BrowserTest
 
     # check form data
     info = form.text_field(:id => "patient_info_0")
-    assert(form.text_field(:id => "patient_id_label_0").value == "test_label 0")
-    assert(form.text_field(:id => "patient_first_name_0").value == "first 0")
-    assert(form.text_field(:id => "patient_last_name_0").value == "last 0")
+    assert(form.text_field(:id => "patient_id_label_0").value == "test_label 4")
+    assert(form.text_field(:id => "patient_first_name_0").value == "first 4")
+    assert(form.text_field(:id => "patient_last_name_0").value == "last 4")
     assert(form.text_field(:id => "patient_birth_0").value == "2010-10-10")
-    assert(info.value == "patient 0 #test")
+    assert(info.value == "patient 4 #test")
 
     info.set("#edited")
 
