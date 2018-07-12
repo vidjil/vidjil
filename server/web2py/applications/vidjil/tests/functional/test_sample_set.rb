@@ -44,11 +44,11 @@ class TestSampleSet < BrowserTest
 
     # fill in form
     for i in 0..4 do
-      form.text_field(:id => "patient_id_label_"+i).set("test_label " + i)
-      form.text_field(:id => "patient_first_name_"+i).set("first " + i)
-      form.text_field(:id => "patient_last_name_"+i).set("last " + i)
-      form.text_field(:id => "patient_birth_"+i).set("2010-10-10")
-      form.text_field(:id => "patient_info_"+i).set("patient " + i + " #test")
+      form.text_field(:id => "patient_id_label_%d" % i).set("test_label %d" % i)
+      form.text_field(:id => "patient_first_name_%d"% i).set("first %d" % i)
+      form.text_field(:id => "patient_last_name_%d" % i).set("last %d" % i)
+      form.text_field(:id => "patient_birth_%d" % i).set("2010-10-10")
+      form.text_field(:id => "patient_info_%d" % i).set("patient %d #test" % i)
     end
 
     form.input(:type => "submit").click
@@ -58,9 +58,9 @@ class TestSampleSet < BrowserTest
     lines = table.tbody.tr(:class => "pointer")
     assert(lines.size == 5)
     for i in 0..4 do
-      #assert(lines[i].td[1].text.match"first " + i + " last " + i)
-      assert(lines[i].td[2].text == "2010-10-10")
-      assert(lines[i].td[3].text == "patient " + i + " #test")
+      #assert(line.cell(:index => 1).text.match("first %d last %d" % [i, i]))
+      assert(line.cell(:index => 2).text == "2010-10-10")
+      #assert(line.cell(:index => 3).text == "patient %d #test" % i)
     end
   end
 
