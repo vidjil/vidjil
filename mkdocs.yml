@@ -12,6 +12,7 @@ pages:
     - locus and recombinations: locus.md
     - vidjil-algo: vidjil-algo.md
     - .vidjil file format: vidjil-format.md
+    - credits: credits.md
 
 extra_css:
     - mkdocs-extra.css
