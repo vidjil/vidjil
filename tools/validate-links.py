@@ -5,6 +5,7 @@ import glob
 import sys
 from urllib.parse import *
 import re
+from collections import defaultdict
 
 DEFAULT_FILES = glob.glob('../site/*/*.html')
 
@@ -16,6 +17,8 @@ STATUS = {
     False: 'KO',
     True: 'ok'
 }
+
+stats = defaultdict(int)
 
 def check_url(url, ids=[]):
 
@@ -44,7 +47,15 @@ def check_file(f):
     for url in REGEX_HREF.findall(content):
         ok = check_url(url, ids)
         print(STATUS[ok] + '    ' + url)
+        globals()['stats'][ok] += 1
     print()
+
+
+def print_stats():
+    print('==== Summary')
+    for k, v in STATUS.items():
+        print('  %s : %3d' % (v, globals()['stats'][k]))
+
     
 if __name__ == '__main__':
 
@@ -52,4 +63,7 @@ if __name__ == '__main__':
 
     for f in files:
         check_file(f)
-        
+    print_stats()
+
+    if globals()['stats'][False]:
+        sys.exit(1)
