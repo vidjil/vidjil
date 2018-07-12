@@ -12,7 +12,7 @@ unit: clean_unit_tests
 	python web2py/web2py.py -S vidjil -M -R testRunner.py
 
 functional:
-	$(MAKE) -C web2py/applications/vidjil/tests/functional functional
+	$(MAKE) -C web2py/applications/vidjil/tests functional
 
 install_web2py_standalone: install_web2py
 	mkdir -p web2py/applications/vidjil/databases web2py/upload/uploads web2py/result/results
