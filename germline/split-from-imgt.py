@@ -107,6 +107,16 @@ def paste_updown_on_fasta(fasta, up, down):
     return lines[0]+'\n' + (up+'\n' if up else '') + '\n'.join(filter(None, lines[1:])) + '\n'\
         + (down+'\n' if down else '')
 
+def check_imgt_ncbi_consistency(imgt_info, imgt_data, ncbi_target, ncbi_start, ncbi_end):
+    if abs(imgt_info['from'] - imgt_info['to']) != abs(ncbi_start - ncbi_end):
+        print "WARNING: Length for %s differ between IMGT (%d) and NCBI (%d)" % (imgt_info['imgt_name'], abs(imgt_info['from'] - imgt_info['to'])+1, abs(ncbi_start - ncbi_end)+1)
+    else:
+        # Check that sequences are identical
+        ncbi_seq = ncbi.get_gene_sequence(ncbi_target, '', ncbi_start, ncbi_end, 0).split('\n')[1:]
+        gene_lines = imgt_data.split('\n')[1:]
+        if ncbi_seq != gene_lines:
+            print"WARNING: Sequences for %s differ between IMGT and NCBI:\n%s\n%s" % (imgt_info['imgt_name'], ''.join(gene_lines), ''.join(ncbi_seq))
+
 def store_data_if_updownstream(fasta_header, path, data, genes):
     for gene in gene_matches(fasta_header, genes):
         gene_name, gene_coord = get_gene_coord(fasta_header)
@@ -135,6 +145,10 @@ def retrieve_genes(f, genes, tag, additional_length, gene_list):
         gene_data = ncbi.get_gene_sequence(gene, coord['imgt_data'] + tag, coord['from'], coord['to'], allele_additional_length)
 
         if gene_id:
+            # Check consistency for *01 allele
+            if coord['imgt_name'].endswith('*01'):
+                check_imgt_ncbi_consistency(coord, gene_data, target, start, end)
+
             up_down = ncbi.get_updownstream_sequences(target, start, end, additional_length)
             # We put the up and downstream data before and after the sequence we retrieved previously
             gene_data = paste_updown_on_fasta(gene_data, up_down[0], up_down[1])
