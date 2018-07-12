@@ -1,0 +1,19 @@
+site_name: Vidjil
+
+docs_dir: doc
+
+plugins: []
+
+repo_url: https://gitlab.inria.fr/vidjil/vidjil
+repo_name: gitlab
+
+pages:
+    - web platform, user manual: user.md
+    - locus and recombinations: locus.md
+    - vidjil-algo: vidjil-algo.md
+    - .vidjil file format: vidjil-format.md
+    - credits: credits.md
+
+extra_css:
+    - mkdocs-extra.css
+

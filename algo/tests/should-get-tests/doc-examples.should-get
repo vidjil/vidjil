@@ -1,7 +1,7 @@
 !NO_LAUNCHER:
-!LAUNCH: (cd $VIDJIL_DIR ; grep './$EXEC ' doc/algo.org | sh)
+!LAUNCH: (cd $VIDJIL_DIR ; grep './$EXEC ' doc/vidjil-algo.md | sh)
 
-# Test examples embedded in 'doc/algo.org'
+# Test examples embedded in 'doc/vidjil-algo.md'
 
 # Run eight times
 8:vidjil-algo -- V.D.J recombinations analysis .*vidjil.org
