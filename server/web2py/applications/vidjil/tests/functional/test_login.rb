@@ -35,6 +35,8 @@ class TestLogin < BrowserTest
     login_form.text_field(:id => "auth_user_password").set('foobar')
     login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
+
+    login_form = $b.form(:id => 'login_form')
     assert(login_form.present?)
   end
 
