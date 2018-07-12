@@ -51,7 +51,7 @@ class TestSampleSet < BrowserTest
       form.text_field(:id => "patient_first_name_%d"% i).set("first %d" % i)
       form.text_field(:id => "patient_last_name_%d" % i).set("last %d" % i)
       form.text_field(:id => "patient_birth_%d" % i).set("2010-10-10")
-      form.text_field(:id => "patient_info_%d" % i).set("patient %d #test" % i)
+      form.text_field(:id => "patient_info_%d" % i).set("patient %d #test #mytag%d" % [i, i])
     end
 
     form.input(:type => "submit").click
@@ -81,7 +81,7 @@ class TestSampleSet < BrowserTest
     assert(form.text_field(:id => "patient_first_name_0").value == "first 4")
     assert(form.text_field(:id => "patient_last_name_0").value == "last 4")
     assert(form.text_field(:id => "patient_birth_0").value == "2010-10-10")
-    assert(info.value == "patient 4 #test")
+    assert(info.value == "patient 4 #test #mytag4")
 
     info.set("#edited")
 
@@ -106,6 +106,18 @@ class TestSampleSet < BrowserTest
     table.wait_until_present
     lines = table.tbody.rows
     assert(lines.count == 4)
+  end
+
+  def test_patient_005_search
+    table = go_to_list
+
+    filter = $b.text_field(:id => "db_filter_input")
+    filter.set('patient 2')
+    filter.fire_event('onblur')
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
+    table = $b.table(:id => 'table')
+    lines = table.tbody.rows
+    assert(lines.count == 1)
   end
 
   def test_zz_close
