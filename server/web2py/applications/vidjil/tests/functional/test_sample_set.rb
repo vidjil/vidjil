@@ -70,7 +70,7 @@ class TestSampleSet < BrowserTest
     table.wait_until_present
 
     # click edit button for first line in table
-    table.i(:class => "icon-pencil-2")[0].click
+    table.i(:class => "icon-pencil-2", :index => 0).click
     form = $b.form(:id => "object_form")
     form.wait_until_present
 
@@ -88,7 +88,7 @@ class TestSampleSet < BrowserTest
     $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     table.wait_until_present
     lines = table.tbody.rows
-    assert(lines[0].td[3].text == "#edited")
+    assert(lines[0].cell(:index => 3).text == "#edited")
   end
 
   def test_patient_004_delete
@@ -97,7 +97,7 @@ class TestSampleSet < BrowserTest
     table.wait_until_present
 
     # click delete button for first line in table
-    table.i(:class => "icon-erase")[0].click
+    table.i(:class => "icon-erase", :index => 0).click
 
     delete_button = $b.button(:text => "delete")
     delete_button.wait_until_present
