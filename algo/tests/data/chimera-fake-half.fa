@@ -2,17 +2,17 @@
 # one half is first 60 bp of some V genes
 # the other half is a 40 bp di-mer sequence
 
->TRAV1-1*01--cgcg
+>TRAV1-1*01--caca
 ggacaaagccttgagcagccctctgaagtgacagctgtggaaggagccattgtccagata
-cgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcg
+cacacacacacacacacacacacacacacacacacacaca
 
->TRGV1*01--cgcg
+>TRGV1*01--caca
 tcttccaacttggaagggagaacgaagtcagtcaccaggctgactgggtcatctgctgaa
-cgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcg
+cacacacacacacacacacacacacacacacacacacaca
 
->IGHV1-18*01--cgcg
+>IGHV1-18*01--caca
 caggttcagctggtgcagtctggagctgaggtgaagaagcctggggcctcagtgaaggtc
-cgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcg
+cacacacacacacacacacacacacacacacacacacaca
 
 
 >atat--TRBV1*01
