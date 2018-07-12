@@ -135,11 +135,14 @@ def retrieve_genes(f, genes, tag, additional_length, gene_list):
         if gene_id:
             try:
                 (target, start, end) = ncbi.get_gene_positions(gene_id)
-                print(coord, gene_id, target, start, end)
             except KeyError:
                 print('! No positions for %s (%s: %s)' % (gene_id, gene, str(coord)))
                 allele_additional_length = additional_length
                 gene_id = None
+
+        # gene: is the name of the sequence where the VDJ gene was identified according to IMGT. The gene is just a part of the sequence
+        # gene_id: is the NCBI ID of the VDJ gene
+        # target: is the NCBI ID of the chromosome
 
                 # extract from gene
         gene_data = ncbi.get_gene_sequence(gene, coord['imgt_data'] + tag, coord['from'], coord['to'], allele_additional_length)
