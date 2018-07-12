@@ -8,6 +8,12 @@ class TestSampleSet < BrowserTest
     if not defined? $b
       set_browser("http://localhost/browser")
     end
+    login_form = $b.form(:id => 'login_form')
+    if login_form.present?
+      login_form.text_field(:id => "auth_user_email").set('plop@plop.com')
+      login_form.text_field(:id => "auth_user_password").set('foobartest')
+      login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
+    end
   end
 
   def test_patient_001_list
