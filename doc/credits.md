@@ -1,19 +1,22 @@
-Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes,
-developed by the Bonsai bioinformatics lab, at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille.
+# Credits
 
-Contact: Mathieu Giraud and Mikaël Salson \<contact@vidjil.org\>
+Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes, developed and maintained by
+the [Bonsai bioinformatics lab](http://cristal.univ-lille.fr/bonsai) at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
+and the [VidjilNet consortium](http://www.vidjil.net) at Fondation Inria.
 
-# Vidjil core development
+Contact: [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
 
-  - Mathieu Giraud, 2011-2017
-  - Mikaël Salson, 2011-2017
+## Vidjil core development
+
+  - Mathieu Giraud, 2011-2018
+  - Mikaël Salson, 2011-2018
   - Marc Duez, 2012-2016
   - Tatiana Rocher, 2014-2017
-  - Florian Thonier, 2015-2017
-  - Ryan Herbert, 2015-2017
+  - Florian Thonier, 2015-2018
+  - Ryan Herbert, 2015-2018
   - Aurélien Béliard, 2016-2017
 
-# Other contributors
+## Other contributors
 
   - David Chatel, 2011-2012
   - Antonin Carette, 2014
@@ -22,13 +25,14 @@ Contact: Mathieu Giraud and Mikaël Salson \<contact@vidjil.org\>
   - Amina Boussalia and Fabien Fache, 2016
   - Eddy El Khatib and Nicolas Berveglieri, 2017
   - Téo Vasseur, 2017
+  - Cyprien Borée, 2018
 
-# .should-vdj.fa tests with curated V(D)J designations
+## `.should-vdj.fa` tests with curated V(D)J designations
 
   - Yann Ferret (CHRU Lille), 2014-2015
   - Florian Thonier (Inserm, Paris Necker), 2015-2016
 
-# Acknowledgements
+## Acknowledgements
 
 We thank all our users, collaborators and colleagues who provided feedback on Vidjil and proposed new ideas.
 Our special thanks go to:
@@ -51,17 +55,18 @@ Vidjil is developed in collaboration or in connection with the following groups:
   - Institut Necker Enfants Malades, Paris
   - EuroClonality-NGS working group
 
-# Funding
+## Funding
 
 The development of Vidjil is funded by:
 
   - Région Nord-Pas-de-Calais/Hauts-de-France, 2012-2017
   - Université Lille 1, 2014-2017
   - SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), 2014-2017
-  - Inria Lille, 2015-2017
-  - InCA, 2016-2017
+  - Inria Lille, 2015-2018
+  - InCA, 2016-2018
+  - VidjilNet consortium, 2018
 
-# Reference
+## Reference
 
 Marc Duez et al.,
 “Vidjil: A web platform for analysis of high-throughput repertoire sequencing”,
