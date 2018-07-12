@@ -55,9 +55,9 @@ class TestSampleSet < BrowserTest
 
     # ensure patients were added
     table.wait_until_present
-    lines = table.tbody.tr(:class => "pointer")
-    assert(lines.size == 5)
-    for i in 0..4 do
+    lines = table.tbody.rows
+    assert(lines.count == 5)
+    lines.each do |line|
       #assert(line.cell(:index => 1).text.match("first %d last %d" % [i, i]))
       assert(line.cell(:index => 2).text == "2010-10-10")
       #assert(line.cell(:index => 3).text == "patient %d #test" % i)
@@ -87,7 +87,7 @@ class TestSampleSet < BrowserTest
     form.input(:type => "submit").click
     $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     table.wait_until_present
-    lines = table.tbody.tr(:class => "pointer")
+    lines = table.tbody.rows
     assert(lines[0].td[3].text == "#edited")
   end
 
@@ -104,8 +104,8 @@ class TestSampleSet < BrowserTest
     delete_button.click
 
     table.wait_until_present
-    lines = table.tbody.tr(:class => "pointer")
-    assert(lines.size == 4)
+    lines = table.tbody.rows
+    assert(lines.count == 4)
   end
 
   def test_zz_close
