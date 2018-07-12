@@ -31,7 +31,7 @@ class TestSampleSet < BrowserTest
     table.wait_until_present
 
     # go to form
-    $b.span(:class => "button2", :text => " + new patients ").click
+    $b.span(:class => "button2", :text => "+ new patients").click
     form = $b.form(:id => "object_form")
     form.wait_until_present
 
