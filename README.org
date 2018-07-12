@@ -45,7 +45,7 @@ can manage, upload, analyze and annotate their runs directly on the web applicai
 
 - Stable releases can be downloaded from http://bioinfo.lille.inria.fr/vidjil
 - Development code is under [[algo/]]
-- Documentation, compilation and installation instructions: [[doc/algo.org]]
+- Documentation, compilation and installation instructions: [[doc/vidjil-algo.md]]
 
 ** The web application
 
