@@ -496,10 +496,10 @@ The main output of Vidjil-algo (with the default `-c clones` command) are two fo
     the detailed V(D)J and CDR3 designation (`-z`, see warning below), and possibly
     the results of the further clustering.
     
-    The web application takes this `.vidjil` file ([possibly merged with `fuse.py`](#fuse_py)) for the *visualization and analysis* of clones and their
+    The web application takes this `.vidjil` file ([possibly merged with `fuse.py`](#following-clones-in-several-samples)) for the *visualization and analysis* of clones and their
     tracking along different samples (for example time points in a MRD
     setup or in a immunological study).
-    Please see [browser](browser.org).org for more information on the web application.
+    Please see the [br](browser.org).org for more information on the web application.
 
   - The `.vdj.fa` file is *a FASTA file for further processing by other bioinformatics tools*.
     The sequences are at least the windows (and their count in the headers) or
