@@ -16,19 +16,22 @@ class TestSampleSet < BrowserTest
     end
   end
 
-  def test_patient_001_list
+  def go_to_list
     $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     table = $b.table(:id => "table")
     table.wait_until_present
+    table
+  end
+
+  def test_patient_001_list
+    table = go_to_list
 
     # should be no patients
     assert(!table.tbody.present?)
   end
 
   def test_patient_002_add
-    $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
-    table = $b.table(:id => "table")
-    table.wait_until_present
+    table = go_to_list
 
     # go to form
     $b.span(:class => "button2", :text => "+ new patients").click
@@ -65,9 +68,7 @@ class TestSampleSet < BrowserTest
   end
 
   def test_patient_003_edit
-    $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
-    table = $b.table(:id => "table")
-    table.wait_until_present
+    table = go_to_list
 
     # click edit button for first line in table
     table.i(:class => "icon-pencil-2", :index => 0).click
@@ -85,16 +86,15 @@ class TestSampleSet < BrowserTest
     info.set("#edited")
 
     form.input(:type => "submit").click
-    $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
+    table = $b.table(:id => 'table')
     table.wait_until_present
+    table = go_to_list
     lines = table.tbody.rows
     assert(lines[0].cell(:index => 3).text == "#edited")
   end
 
   def test_patient_004_delete
-    $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
-    table = $b.table(:id => "table")
-    table.wait_until_present
+    table = go_to_list
 
     # click delete button for first line in table
     table.i(:class => "icon-erase", :index => 0).click
