@@ -11,7 +11,7 @@ class TestSampleSet < BrowserTest
   end
 
   def test_patient_001_list
-    $b.a(:class => "button button_token patient_token", :text => "patient").click
+    $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     table = $b.table(:id => "table")
     table.wait_until_present
 
@@ -20,7 +20,7 @@ class TestSampleSet < BrowserTest
   end
 
   def test_patient_002_add
-    $b.a(:class => "button button_token patient_token", :text => "patient").click
+    $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     table = $b.table(:id => "table")
     table.wait_until_present
 
@@ -59,7 +59,7 @@ class TestSampleSet < BrowserTest
   end
 
   def test_patient_003_edit
-    $b.a(:class => "button button_token patient_token", :text => "patient").click
+    $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     table = $b.table(:id => "table")
     table.wait_until_present
 
@@ -79,13 +79,14 @@ class TestSampleSet < BrowserTest
     info.set("#edited")
 
     form.input(:type => "submit").click
+    $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     table.wait_until_present
     lines = table.tbody.tr(:class => "pointer")
     assert(lines[0].td[3].text == "#edited")
   end
 
   def test_patient_004_delete
-    $b.a(:class => "button button_token patient_token", :text => "patient").click
+    $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     table = $b.table(:id => "table")
     table.wait_until_present
 
