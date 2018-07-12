@@ -10,7 +10,7 @@ API_EUTILS = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?'
 API_EUTILS += 'api_key='+os.environ['NCBI_KEY']+'&' if 'NCBI_KEY' in os.environ else ''
 
 API_NUCCORE_ID =         API_EUTILS + 'db=nuccore&rettype=fasta&retmode=text' + '&id=%s'
-API_NUCCORE_ID_FROM_TO = API_EUTILS + 'db=nuccore&rettype=fasta&retmode=text' + '&id=%s' + '&from=%s&to=%s'
+API_NUCCORE_ID_FROM_TO = API_EUTILS + 'db=nuccore&rettype=fasta&retmode=text' + '&id=%s' + '&from=%s&to=%s&strand=%d'
 
 API_GENE_ID_XML = API_EUTILS + 'db=gene&retmode=xml&rettype=docsum' + '&id=%s'
 
@@ -25,12 +25,19 @@ def get_gene_sequence(gene, other_gene_name, start, end, additional_length):
     '''
     Return the gene sequences between positions start and end (included).
     '''
+    reversed = False
+    if end < start:
+        tmp = end
+        end = start
+        start = tmp
+        reversed = True
+
     if additional_length > 0:
         end += additional_length
     elif additional_length < 0:
         start = max(1, start + additional_length)
 
-    fasta_string = urllib.urlopen(API_NUCCORE_ID_FROM_TO % (gene, start, end)).read()
+    fasta_string = urllib.urlopen(API_NUCCORE_ID_FROM_TO % (gene, start, end, 2 if reversed else 1)).read()
     return re.sub('(>\S*) ', r'\1|'+other_gene_name+'|', fasta_string)
 
 def ncbi_and_write(ncbi, additional_header, outs):
@@ -69,16 +76,9 @@ def get_updownstream_sequences(gene, start, end, additional_length):
         end = start - 1 * reversed
         start = max(1, start + additional_length * reversed)
 
-    if start > end:
-        tmp = start
-        start = end
-        end = tmp
-
-    updown_fasta = urllib.urlopen(API_NUCCORE_ID_FROM_TO % (gene, start, end)).read()
+    updown_fasta = get_gene_sequence(gene, '', start, end, 0)
 
     updown_raw = '\n'.join(updown_fasta.split('\n')[1:]).strip()
-    if reversed == -1:
-        updown_raw = fasta.revcomp(updown_raw.upper())
 
     if additional_length > 0:
         return ('', updown_raw)
