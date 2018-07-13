@@ -3,9 +3,13 @@
 cd $(dirname $0)
 wget -N http://www.imgt.org/download/GENE-DB/IMGTGENEDB-GeneList
 wget -N http://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP
-python split-from-imgt.py IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP IMGTGENEDB-GeneList
+errors=$(tempfile)
+python split-from-imgt.py IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP IMGTGENEDB-GeneList 2> $errors
 
 wget -O IMGT_RELEASE http://www.imgt.org/download/GENE-DB/RELEASE
 
 wget -N -P homo-sapiens http://vidjil.org/germline/IGK-INTRON.fa
 wget -N -P homo-sapiens http://vidjil.org/germline/IGK-KDE.fa
+
+cat $errors
+rm -f $errors

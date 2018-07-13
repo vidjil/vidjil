@@ -109,7 +109,7 @@ def paste_updown_on_fasta(fasta, up, down):
 
 def check_imgt_ncbi_consistency(imgt_info, imgt_data, ncbi_target, ncbi_start, ncbi_end):
     if abs(imgt_info['from'] - imgt_info['to']) != abs(ncbi_start - ncbi_end):
-        print "WARNING: Length for %s differ between IMGT (%d) and NCBI (%d)" % (imgt_info['imgt_name'], abs(imgt_info['from'] - imgt_info['to'])+1, abs(ncbi_start - ncbi_end)+1)
+        print >>sys.stderr,"WARNING: Length for %s differ between IMGT (%d) and NCBI (%d)" % (imgt_info['imgt_name'], abs(imgt_info['from'] - imgt_info['to'])+1, abs(ncbi_start - ncbi_end)+1)
     else:
         # Check that sequences are identical
         ncbi_seq = ncbi.get_gene_sequence(ncbi_target, '', ncbi_start, ncbi_end, 0).split('\n')[1:]
@@ -119,7 +119,13 @@ def check_imgt_ncbi_consistency(imgt_info, imgt_data, ncbi_target, ncbi_start, n
         imgt_seq = ''.join(gene_lines).upper().replace('.', '')
         ncbi_seq = ''.join(ncbi_seq).upper()
         if imgt_seq != ncbi_seq:
-            print"WARNING: Sequences for %s differ between IMGT and NCBI:\n%s\n%s" % (imgt_info['imgt_name'], ''.join(gene_lines), ''.join(ncbi_seq))
+            print >>sys.stderr, "WARNING: Sequences for %s differ between IMGT and NCBI\n%s" % (imgt_info['imgt_name'], imgt_seq)
+            for i, letter in enumerate(ncbi_seq):
+                if letter == imgt_seq[i]:
+                    sys.stderr.write('.')
+                else:
+                    sys.stderr.write(letter)
+            sys.stderr.write('\n')
 
 def store_data_if_updownstream(fasta_header, path, data, genes):
     for gene in gene_matches(fasta_header, genes):
