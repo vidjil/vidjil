@@ -234,20 +234,22 @@ clustering.
 
 
 ``` diff
-Germline presets (at least one -g or -V/(-D)/-J option must be given for all commands except -c germlines)
-  -g <.g file>(:filter)
-                multiple locus/germlines, with tuned parameters.
-                Common values are '-g germline/homo-sapiens.g'    '-g germline/mus-musculus.g'
-                The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
-  -g <path>     multiple locus/germlines, shortcut for '-g <path>/homo-sapiens.g'
-                processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations
-  -V <file>     custom V germline multi-fasta file
-  -D <file>     custom D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components
-  -J <file>     custom J germline multi-fasta file
+Germline presets (at least one -g or -V/(-D)/-J option must be given)
+  -g GERMLINES ...
+         -g <.g FILE>(:FILTER)
+                    multiple locus/germlines, with tuned parameters.
+                    Common values are '-g germline/homo-sapiens.g' or '-g germline/mus-musculus.g'
+                    The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
+         -g PATH
+                    multiple locus/germlines, shortcut for '-g PATH/homo-sapiens.g',
+                    processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations
+  -V FILE ...                 custom V germline multi-fasta file(s)
+  -D FILE ...                 custom D germline multi-fasta file(s), segment into V(D)J components
+  -J FILE ...                 custom V germline multi-fasta file(s)
 
 Locus/recombinations
-  -d            try to detect several D (experimental)
-  -2            try to detect unexpected recombinations (must be used with -g)
+  -d                          try to detect several D (experimental)
+  -2                          try to detect unexpected recombinations (must be used with -g)
 ```
 
 The `germline/*.g` presets configure the analyzed recombinations.
@@ -278,15 +280,16 @@ Finally, the advanced `-V/(-D)/-J` options enable to select custom V, (D) and J 
 ## Main algorithm parameters
 
 ``` diff
-Window prediction
-  (use either -s or -k option, but not both)
-  -s <string>   spaced seed used for the V/J affectation
-                (default: #####-#####, ######-######, #######-#######, depends on germline)
-  -k <int>      k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)
-                (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)
-  -w <int>      w-mer size used for the length of the extracted window (default: 50) ('all': use all the read, no window clustering)
-  -e <float>    maximal e-value for determining if a segmentation can be trusted (default: 'all', no limit)
-  -t <int>      trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt (default: 0) (0: no trim)
+Recombination detection ("window" prediction, first pass)
+    (use either -s or -k option, but not both)
+    (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)
+    (all these options, except -w, are overriden when using -g)
+  -k INT                      k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)
+  -w INT                      w-mer size used for the length of the extracted window ('all': use all the read, no window clustering)
+  -e FLOAT=1                  maximal e-value for determining if a V-J segmentation can be trusted
+  -t INT                      trim V and J genes (resp. 5' and 3' regions) to keep at most <INT> nt  (0: no trim)
+  -s SEED=10s                 seed, possibly spaced, used for the V/J affectation (default: depends on germline), given either explicitely or by an alias
+                              10s:#####-##### 12s:######-###### 13s:#######-###### 9c:#########
 ```
 
 The `-s`, `-k` are the options of the seed-based heuristic that detects
@@ -349,13 +352,16 @@ The following options control how many clones are output and analyzed.
 
 ``` diff
 Limits to report a clone (or a window)
-  -r <nb>       minimal number of reads supporting a clone (default: 5)
-  -% <ratio>    minimal percentage of reads supporting a clone (default: 0)
+  --max-clones INT            maximal number of output clones ('all': no maximum, default)
+  -r INT=5                    minimal number of reads supporting a clone
+  --ratio FLOAT=0             minimal percentage of reads supporting a clone
 
-Limits to further analyze some clones
-  -y <nb>       maximal number of clones computed with a consensus sequence ('all': no limit) (default: 100)
-  -z <nb>       maximal number of clones to be analyzed with a full V(D)J designation ('all': no limit, do not use) (default: 100)
-  -A            reports and segments all clones (-r 1 -% 0 -y all -z all), to be used only on very small datasets
+Limits to further analyze some clones (second pass)
+  -y INT=100                  maximal number of clones computed with a consensus sequence ('all': no limit)
+  -z INT=100                  maximal number of clones to be analyzed with a full V(D)J designation ('all': no limit, do not use)
+  -A                          reports and segments all clones (-r 0 --ratio 0 -y all -z all), to be used only on very small datasets (for example -AX 20)
+  -x INT                      maximal number of reads to process ('all': no limit, default), only first reads
+  -X INT                      maximal number of reads to process ('all': no limit, default), sampled reads
 ```
 
 The `-r/-%` options are strong thresholds: if a clone does not have
@@ -584,6 +590,16 @@ Some datasets may give reads with many low `UNSEG too few` reads:
 See [browser.org](http://git.vidjil.org/blob/master/doc/browser.org) for information on the biological or sequencing causes that can lead to few segmented reads.
 
 ## Filtering reads
+
+``` diff
+Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)
+  -U                          output segmented reads (in .segmented.vdj.fa file)
+  -u
+        -u          output unsegmented reads, gathered by unsegmentation cause, except for very short and 'too few V/J' reads (in *.fa files)
+        -uu         output unsegmented reads, gathered by unsegmentation cause, all reads (in *.fa files) (use only for debug)
+        -uuu        output unsegmented reads, all reads, including a .unsegmented.vdj.fa file (use only for debug)
+  -K                          output detailed k-mer affectation on all reads (in .affects file) (use only for debug, for example -KX 100)
+```
 
 It is possible to extract all segmented or unsegmented reads, possibly to give them to other software.
 Runing Vidjil with `-U` gives a file `out/basename.segmented.vdj.fa`, with all segmented reads.
