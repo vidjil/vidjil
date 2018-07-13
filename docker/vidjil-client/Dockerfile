@@ -26,7 +26,6 @@ copy ./conf/align.cgi /usr/share/vidjil/browser/cgi/align.cgi
 copy ./conf/similarity.cgi /usr/share/vidjil/browser/cgi/similarity.cgi
 
 run cd /usr/share/vidjil/browser/css/icons && make
-run cd /usr/share/vidjil/germline && make
 
 arg build_env='PRODUCTION'
 env BUILD_ENV $build_env

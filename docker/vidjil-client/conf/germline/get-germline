@@ -1,9 +1,0 @@
-#!/bin/sh
-
-cd $(dirname $0)
-wget -O - http://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP | python split-from-imgt.py
-
-wget -O IMGT_RELEASE http://www.imgt.org/download/GENE-DB/RELEASE
-
-wget -N -P homo-sapiens http://vidjil.org/germline/IGK-INTRON.fa
-wget -N -P homo-sapiens http://vidjil.org/germline/IGK-KDE.fa
