@@ -97,7 +97,7 @@ class TestSampleSet < BrowserTest
     table = go_to_list
 
     # click delete button for first line in table
-    table.i(:class => "icon-erase", :index => 0).click
+    table.i(:class => "icon-erase", :index => 1).click
 
     delete_button = $b.button(:text => "delete")
     delete_button.wait_until_present
@@ -112,8 +112,8 @@ class TestSampleSet < BrowserTest
     table = go_to_list
 
     filter = $b.text_field(:id => "db_filter_input")
-    filter.set('patient 2')
-    filter.fire_event('onblur')
+    filter.set('edited')
+    filter.fire_event('onchange')
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => 'table')
     lines = table.tbody.rows
