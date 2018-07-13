@@ -1,8 +1,8 @@
 #!/bin/sh
 
 cd $(dirname $0)
-wget http://www.imgt.org/download/GENE-DB/IMGTGENEDB-GeneList
-wget http://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP
+wget -N http://www.imgt.org/download/GENE-DB/IMGTGENEDB-GeneList
+wget -N http://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP
 python split-from-imgt.py IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP IMGTGENEDB-GeneList
 
 wget -O IMGT_RELEASE http://www.imgt.org/download/GENE-DB/RELEASE
