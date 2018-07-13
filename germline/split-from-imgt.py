@@ -75,7 +75,7 @@ def get_gene_coord(imgt_line):
     >>> line = '>X15272|TRGV4*01|Homo sapiens|F|V-REGION|406..705|300 nt|1| | | | |300+0=300| |rev-compl|'
     >>> get_gene_coord(line)[0] == 'X15272'
     True
-    >>> get_gene_coord(line)[1] == {'from': 406, 'to': 705, 'imgt_data': 'TRGV4*01|Homo sapiens|F|V-REGION', 'imgt_name': 'TRGV4*01', 'species': 'Homo sapiens'}
+    >>> get_gene_coord(line)[1] == {'from': 406, 'to': 705, 'imgt_data': 'TRGV4*01|Homo sapiens|F|V-REGION', 'imgt_name': 'TRGV4*01', 'species': 'Homo sapiens', 'seq': ''}
     True
     '''
     elements = imgt_line.split('|')
@@ -91,7 +91,8 @@ def get_gene_coord(imgt_line):
                              'to': int(end),
                              'species': elements[2],
                              'imgt_name': elements[1],
-                             'imgt_data': '|'.join(elements[1:5])}
+                             'imgt_data': '|'.join(elements[1:5]),
+                             'seq': ''}
 
 def paste_updown_on_fasta(fasta, up, down):
     '''
@@ -128,11 +129,14 @@ def check_imgt_ncbi_consistency(imgt_info, imgt_data, ncbi_target, ncbi_start, n
             sys.stderr.write('\n')
 
 def store_data_if_updownstream(fasta_header, path, data, genes):
+    paths = []                  # A given sequence can be stored in several files
     for gene in gene_matches(fasta_header, genes):
         gene_name, gene_coord = get_gene_coord(fasta_header)
 
         if gene_name:
             data[path+'/'+gene].append((gene_name, gene_coord))
+            paths.append(path+'/'+gene)
+    return paths
     
 def retrieve_genes(f, genes, tag, additional_length, gene_list):
     for info in genes:
@@ -154,8 +158,8 @@ def retrieve_genes(f, genes, tag, additional_length, gene_list):
         # gene_id: is the NCBI ID of the VDJ gene
         # target: is the NCBI ID of the chromosome
 
-                # extract from gene
-        gene_data = ncbi.get_gene_sequence(gene, coord['imgt_data'] + tag, coord['from'], coord['to'], allele_additional_length)
+        gene_data = coord['seq']
+
 
         if gene_id:
             # Check consistency for *01 allele
@@ -170,7 +174,6 @@ def retrieve_genes(f, genes, tag, additional_length, gene_list):
         # post-process gene_data
         if coord['imgt_data'].split('|')[-1] == FEATURE_J_REGION:
             gene_lines = gene_data.split('\n')
-            gene_lines[1] = gap_j(gene_lines[1].lower())
             gene_data = '\n'.join(gene_lines)
 
         f.write(gene_data)
@@ -312,6 +315,7 @@ def split_IMGTGENEDBReferenceSequences(f, gene_list):
         if ">" in l:
             current_files = []
             current_special = None
+            key_upstream, key_downstream = ([], [])
 
             species = l.split('|')[2].strip()
             feature = l.split('|')[4].strip()
@@ -335,8 +339,8 @@ def split_IMGTGENEDBReferenceSequences(f, gene_list):
                 if system.startswith('IG') or system.startswith('TR'):
 
                     if feature in FEATURES_VDJ:
-                        store_data_if_updownstream(l, path, downstream_data, DOWNSTREAM_REGIONS)
-                        store_data_if_updownstream(l, path, upstream_data, UPSTREAM_REGIONS)
+                        key_downstream = store_data_if_updownstream(l, path, downstream_data, DOWNSTREAM_REGIONS)
+                        key_upstream = store_data_if_updownstream(l, path, upstream_data, UPSTREAM_REGIONS)
 
                     systems = get_split_files(seq, SPLIT_SEQUENCES)
                     if systems:
@@ -353,6 +357,12 @@ def split_IMGTGENEDBReferenceSequences(f, gene_list):
 
         if '>' not in l and current_files and feature == FEATURE_J_REGION:
             l = gap_j(l)
+
+        for key in key_downstream:
+            downstream_data[key][-1][1]['seq'] += l
+        for key in key_upstream:
+            upstream_data[key][-1][1]['seq'] += l
+
 
         # Dump 'l' to the concerned files
 
