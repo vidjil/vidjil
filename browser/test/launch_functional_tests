@@ -1,6 +1,6 @@
-# sh launch_functional_tests "functional/test_*rb"
+# sh launch_functional_tests functional/test_*rb
 
-FUNCTIONAL_TESTS=$1
+FUNCTIONAL_TESTS=$*
 
 rename_reports_in() {
     dir="$1"
