@@ -168,9 +168,9 @@ def form():
                 & (db.sample_set_membership.sample_set_id != None)
                 & (db.sample_set.id == db.sample_set_membership.sample_set_id)
                 & (db.sample_set.sample_type != 'sequence_file')
-            ).select(db.sample_set_membership.sample_set_id)
+            ).select(db.sample_set_membership.sample_set_id.with_alias('sample_set_id'), db.sample_set.sample_type.with_alias('sample_type'))
         for row in sample_set_list :
-            smp_type = db.sample_set[row.sample_set_id].sample_type
+            smp_type= row.sample_type
             if smp_type not in relevant_ids:
                 relevant_ids[smp_type] = []
             relevant_ids[smp_type].append(db(db[smp_type].sample_set_id == row.sample_set_id).select()[0].id)
