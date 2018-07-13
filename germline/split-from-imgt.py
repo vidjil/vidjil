@@ -174,6 +174,7 @@ def retrieve_genes(f, genes, tag, additional_length, gene_list):
         # post-process gene_data
         if coord['imgt_data'].split('|')[-1] == FEATURE_J_REGION:
             gene_lines = gene_data.split('\n')
+            gene_lines[1] = gap_j(gene_lines[1].lower())
             gene_data = '\n'.join(gene_lines)
 
         f.write(gene_data)
@@ -353,16 +354,16 @@ def split_IMGTGENEDBReferenceSequences(f, gene_list):
                     current_special = verbose_open_w(name)
 
 
-        # Possibly gap J_REGION
-
-        if '>' not in l and current_files and feature == FEATURE_J_REGION:
-            l = gap_j(l)
-
         for key in key_downstream:
             downstream_data[key][-1][1]['seq'] += l
         for key in key_upstream:
             upstream_data[key][-1][1]['seq'] += l
 
+
+        # Possibly gap J_REGION
+
+        if '>' not in l and current_files and feature == FEATURE_J_REGION:
+            l = gap_j(l)
 
         # Dump 'l' to the concerned files
 
