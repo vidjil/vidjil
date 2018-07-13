@@ -41,8 +41,6 @@ from utils import *
 from defs import *
 from collections import defaultdict
 
-from vidjilparser import VidjilParser
-
 FUSE_VERSION = "vidjil fuse"
 
 TOOL_SIMILARITY = "../algo/tools/similarity"
@@ -728,8 +726,11 @@ def main():
     #filtre
     f = []
 
-    vparser = VidjilParser()
-    vparser.addPrefix('clones.item', 'clones.item.top', le, args.top)
+    if args.ijson:
+        from vidjilparser import VidjilParser
+        vparser = VidjilParser()
+        vparser.addPrefix('clones.item', 'clones.item.top', le, args.top)
+
     for path_name in files:
         if args.ijson:
             json_clones = vparser.extract(path_name)
