@@ -1,0 +1,8 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -e 1e-5  -g $VIDJIL_DIR/germline -r 1 bug3009.fa
+
+$ Segmented as TRD+
+1: TRD\+ -> 1
+1: SEG_\+ -> 1
+
+$ VDJ assignation
+1:TRDD2.01 28/CAA/2 TRDD3.01

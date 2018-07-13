@@ -5,4 +5,4 @@ $ Correct full header, with TRDD2*01 identifier between pipes
 f1: .*#TRDD2.01#.*Human T-cell receptor germline delta-chain D-region DNA
 
 $ Correct sequence, with upstream
-1: AAGAGGGTTTTTATACTGATGTGTTTCATTGTGCCTTCCTAC
+i1: AAGAGGGTTTTTATACTGATGTGTTTCATTGTGCCTTCCTAC

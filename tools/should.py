@@ -26,6 +26,9 @@ if not (sys.version_info >= (3, 4)):
     print("Python >= 3.4 required")
     sys.exit(1)
 
+__version_info__ = ('1','0','0+dev')
+__version__ = '.'.join(__version_info__)
+
 import re
 import argparse
 import subprocess
@@ -63,6 +66,7 @@ VAR_EXTRA = '$EXTRA'
 MOD_TODO = 'f'
 MOD_REGEX = 'r'
 MOD_COUNT_ALL = 'w'
+MOD_IGNORE_CASE = 'i'
 MOD_BLANKS = 'b'
 MOD_MULTI_LINES = 'l'
 MOD_KEEP_LEADING_TRAILING_SPACES = 'z'
@@ -151,6 +155,7 @@ MODIFIERS = [
     (MOD_TODO, 'todo', 'consider that the test should fail'),
     (MOD_REGEX, 'regex', 'consider as a regular expression'),
     (MOD_COUNT_ALL, 'count-all', 'count all occurrences, even on a same line'),
+    (MOD_IGNORE_CASE, 'ignore-case', 'ignore case changes'),
     (MOD_BLANKS, 'blanks', "ignore whitespace differences as soon as there is at least one space. Implies 'r'"),
     (MOD_MULTI_LINES, 'multi-lines', 'search on all the output rather than on every line'),
     (MOD_KEEP_LEADING_TRAILING_SPACES, 'ltspaces', 'keep leading and trailing spaces'),
@@ -203,6 +208,9 @@ parser = ArgParser(description='Test command-line applications through .should f
                    epilog='''Example:
   %(prog)s demo/hello.should''',
                                  formatter_class=argparse.RawTextHelpFormatter)
+
+parser.add_argument('--version', action='version',
+                    version='%(prog)s {version}'.format(version=__version__))
 
 options = ArgParser(fromfile_prefix_chars='@') # Can be used in !OPTIONS: directive
 
@@ -526,13 +534,22 @@ class TestCase(TestCaseAbstract):
                 self.expression = self.expression.replace('  ', ' ')
             self.expression = self.expression.replace(' ', '\s+')
             self.mods.regex = True
-        self.regex = re.compile(self.expression) if self.mods.regex else None
+
+        self.regex = None
+        if self.mods.regex:
+            if self.mods.ignore_case:
+                self.regex = re.compile(self.expression, re.IGNORECASE)
+            else:
+                self.regex = re.compile(self.expression)
 
     def test(self, lines, variables=None, verbose=0):
         if self.mods.multi_lines:
             lines = [' '.join([l.rstrip(ENDLINE_CHARS) for l in lines])]
 
         expression_var = replace_variables(self.expression, variables)
+
+        if not self.regex and self.mods.ignore_case:
+            expression_var = expression_var.upper()
 
         self.count = 0
         for l in lines:
@@ -541,8 +558,11 @@ class TestCase(TestCaseAbstract):
                     self.count += len(self.regex.findall(l))
                 elif self.regex.search(l):
                     self.count += 1
-            elif expression_var in l:
-                self.count += l.count(expression_var) if self.mods.count_all else 1
+            else:
+                if self.mods.ignore_case:
+                    l = l.upper()
+                if expression_var in l:
+                    self.count += l.count(expression_var) if self.mods.count_all else 1
 
         if self.expected_count is None:
             self.status = (self.count > 0)
@@ -566,7 +586,9 @@ class TestCase(TestCaseAbstract):
         s = ''
 
         if self.status in WARN_STATUS or verbose:
-            s += ' (%s/%s)' % (self.count, self.expected_count if self.expected_count is not None else '+')
+            s += ' (%s/%s%s)' % (self.count,
+                                 MOD_LESS_THAN if self.mods.less_than else MOD_MORE_THAN if self.mods.more_than else '',
+                                 self.expected_count if self.expected_count is not None else '+')
 
         return s
 
