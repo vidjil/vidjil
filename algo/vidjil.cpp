@@ -123,7 +123,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define MAX_CLONES_FOR_SIMILARITY 20
 
 // warn
-#define WARN_MAX_CLONES 100
+#define WARN_MAX_CLONES 5000
 #define WARN_PERCENT_SEGMENTED 40
 #define WARN_COVERAGE 0.6
 #define WARN_NUM_CLONES_SIMILAR 10
@@ -252,7 +252,7 @@ int main (int argc, char **argv)
 
 
   // ----------------------------------------------------------------------------------------------------------------------
-  group = "Germline presets (at least one -g or -V/(-D)/-J option must be given for all commands except -c " COMMAND_GERMLINES ")";
+  group = "Germline presets (at least one -g or -V/(-D)/-J option must be given)";
 
   vector <string> multi_germlines ;
   app.add_option("-g", multi_germlines, R"Z(
@@ -262,7 +262,7 @@ int main (int argc, char **argv)
                     The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
          -g PATH
                     multiple locus/germlines, shortcut for '-g PATH/)Z" DEFAULT_MULTI_GERMLINE_FILE R"Z(',
-                    processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombination)Z")
+                    processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations)Z")
     -> group(group) -> set_type_name("GERMLINES");
 
   vector <string> v_reps_V ;
@@ -275,7 +275,7 @@ int main (int argc, char **argv)
 
 
   app.add_option("-D", v_reps_D,
-                 "custom D germline multi-fasta file(s) (and resets -m and -w options), will segment into V(D)J components")
+                 "custom D germline multi-fasta file(s), segment into V(D)J components")
     -> group(group) -> set_type_name("FILE");
 
   app.add_option("-J", v_reps_J,
@@ -353,7 +353,7 @@ int main (int argc, char **argv)
                    seed_changed = true;
                    return true;
                  },
-                 "seed, possibly spaced, used for the V/J affectation (default: depends on germline), given either explicitely, either by an alias"
+                 "seed, possibly spaced, used for the V/J affectation (default: depends on germline), given either explicitely or by an alias"
                  "\n                             " + string_of_map(seedMap, " ")
                  )
     -> group(group) -> level() -> set_type_name("SEED=" DEFAULT_SEED);
@@ -734,7 +734,7 @@ int main (int argc, char **argv)
            << "* to cluster reads into clones ('-c clones')." << endl
            << "* Computing accurate V(D)J designations for many sequences ('-c segment' or large '-z' values)" << endl
            << "* is slow and should be done only on small datasets or for testing purposes." << endl
-	   << "* More information is provided in the 'doc/algo.org' file." << endl 
+	   << "* More information is provided in the 'doc/vidjil-algo.md' file." << endl 
 	   << endl ;
     }
 
