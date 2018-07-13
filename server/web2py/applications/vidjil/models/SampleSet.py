@@ -79,6 +79,12 @@ class SampleSet(object):
         fields.append({'name': 'files', 'sort': 'file_count', 'call': self.get_files, 'width': 100, 'public': True})
         return fields
 
+    def get_sort_fields(self):
+        fields = {}
+        for field in self.get_fields():
+            fields[field['sort']] = field
+        return fields
+
     def get_reduced_fields(self):
         fields = []
         fields.append({'name': 'name', 'sort': 'name', 'call': self.get_name, 'width': 200, 'public': True})

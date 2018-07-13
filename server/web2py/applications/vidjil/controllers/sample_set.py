@@ -189,13 +189,14 @@ def all():
     factory = ModelFactory()
     helper = factory.get_instance(type=type)
     fields = helper.get_fields()
+    sort_fields = helper.get_sort_fields()
 
     ##sort result
     reverse = False
     if request.vars["reverse"] == "true" :
         reverse = True
     if "sort" in request.vars:
-        result = sorted(result, key = lambda row : row[request.vars["sort"]], reverse=reverse)
+        result = sorted(result, key = sort_fields[request.vars["sort"]]['call'], reverse=reverse)
     else:
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
 
@@ -208,7 +209,7 @@ def all():
                 helper = helper,
                 group_ids = group_ids,
                 isAdmin = isAdmin,
-                reverse = False,
+                reverse = reverse,
                 step = step,
                 page = page)
 
