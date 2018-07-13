@@ -10,6 +10,8 @@ import re
 
 import ncbi
 
+GENES_SEQ_FROM_NCBI = False
+
 IMGT_LICENSE = '''
    # To use the IMGT germline databases (IMGT/GENE-DB), you have to agree to IMGT license: 
    # academic research only, provided that it is referred to IMGT®,
@@ -158,8 +160,11 @@ def retrieve_genes(f, genes, tag, additional_length, gene_list):
         # gene_id: is the NCBI ID of the VDJ gene
         # target: is the NCBI ID of the chromosome
 
-        gene_data = coord['seq']
-
+        if GENES_SEQ_FROM_NCBI:
+            gene_data = ncbi.get_gene_sequence(gene, coord['imgt_data'] + tag, coord['from'], coord['to'], allele_additional_length)
+        else:
+            # IMGT
+            gene_data = coord['seq']
 
         if gene_id:
             # Check consistency for *01 allele
