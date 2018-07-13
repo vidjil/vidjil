@@ -1,8 +1,8 @@
 !NO_LAUNCHER:
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -z 200 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/trd-dd2-dd3.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -z 20000 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/trd-dd2-dd3.fa
 
 $ Warning, -z
 1:WARNING
 
 $ Link to documentation
-1:algo.org
+1:vidjil-algo.md
