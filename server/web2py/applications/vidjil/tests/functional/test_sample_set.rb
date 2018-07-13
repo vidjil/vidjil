@@ -120,6 +120,20 @@ class TestSampleSet < BrowserTest
     assert(lines.count == 1)
   end
 
+  def test_patient_006_autocomplete
+    table = go_to_list
+
+    $b.execute_script("new VidjilAutoComplete().clearCache()")
+    filter = $b.text_field(:id => "db_filter_input")
+    filter.set('#myt')
+    autocomplete = $b.div(:id => 'at-view-tags').ul
+    puts autocomplete.html
+    autocomplete.wait_until_present
+    assert(autocomplete.visible?)
+    puts autcomplete.ul.count
+    assert(autocomplete.ul.count == 5)
+  end
+
   def test_zz_close
     close_everything
   end
