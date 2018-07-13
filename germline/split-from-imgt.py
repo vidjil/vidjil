@@ -114,7 +114,11 @@ def check_imgt_ncbi_consistency(imgt_info, imgt_data, ncbi_target, ncbi_start, n
         # Check that sequences are identical
         ncbi_seq = ncbi.get_gene_sequence(ncbi_target, '', ncbi_start, ncbi_end, 0).split('\n')[1:]
         gene_lines = imgt_data.split('\n')[1:]
-        if ncbi_seq != gene_lines:
+        if gene_lines[0].startswith('#'):
+            gene_lines = gene_lines[1:]
+        imgt_seq = ''.join(gene_lines).upper().replace('.', '')
+        ncbi_seq = ''.join(ncbi_seq).upper()
+        if imgt_seq != ncbi_seq:
             print"WARNING: Sequences for %s differ between IMGT and NCBI:\n%s\n%s" % (imgt_info['imgt_name'], ''.join(gene_lines), ''.join(ncbi_seq))
 
 def store_data_if_updownstream(fasta_header, path, data, genes):
