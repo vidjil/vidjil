@@ -11,8 +11,8 @@
 This is the help of vidjil-algo, for command-line usage.
 This manual can be browsed online:
 
- - <http://www.vidjil.org/doc/algo>                    (last stable release)
- - <http://git.vidjil.org/blob/master/doc/algo.md>     (development version)
+ - <http://www.vidjil.org/doc/vidjil-algo>                (last stable release)
+ - <http://gitlab.vidjil.org/blob/dev/doc/vidjil-algo.md> (development version)
 
 Other documentation (users and administrators of the web application, developpers) can be found from <http://www.vidjil.org/doc/>.
 
@@ -36,19 +36,17 @@ clones, or leave this to the user after a manual review in the web application.
 
 The method is described in the following references:
 
-Marc Duez et al.,
+- Marc Duez et al.,
 “Vidjil: A web platform for analysis of high-throughput repertoire sequencing”,
 PLOS ONE 2016, 11(11):e0166126
 <http://dx.doi.org/10.1371/journal.pone.0166126>
 
-Mathieu Giraud, Mikaël Salson, et al.,
+- Mathieu Giraud, Mikaël Salson, et al.,
 "Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing",
 BMC Genomics 2014, 15:409
 <http://dx.doi.org/10.1186/1471-2164-15-409>
 
 Vidjil-algo is open-source, released under GNU GPLv3 license.
-This is the help of vidjil-algo, for command-line usage.
-Other documentation (users and administrators of the web application, developpers) can be found from <http://www.vidjil.org/doc/>.
 
 # Requirements and installation
 
@@ -74,9 +72,10 @@ The development team internally uses [Gitlab CI](http://gitlab.vidjil.org/pipeli
 ## Build requirements (optional)
 
 This paragraph details the requirements to build Vidjil-algo from source.
-You can also download a static binary (see next paragraph, 'Installation').
+You can also download a static binary, see [installation](#installation).
 
 To compile Vidjil-algo, make sure:
+
   - to be on a POSIX system ;
   - to have a C++11 compiler (as `g++` 4.8 or above, or `clang` 3.3 or above).
   - to have the `zlib` installed (`zlib1g-dev` package under Debian/Ubuntu,
@@ -166,8 +165,8 @@ Xcode should be installed first.
 
 ### Compiling
 
-Running 'make' from the extracted archive should be enough to install vidjil-algo with germline and demo files.
-It runs the three following 'make' commands.
+Running `make` from the extracted archive should be enough to install vidjil-algo with germline and demo files.
+It runs the three following `make` commands.
 
 ``` bash
 
@@ -364,13 +363,15 @@ Limits to further analyze some clones (second pass)
   -X INT                      maximal number of reads to process ('all': no limit, default), sampled reads
 ```
 
-The `-r/-%` options are strong thresholds: if a clone does not have
+The `-r/--ratio` options are strong thresholds: if a clone does not have
 the requested number of reads, the clone is discarded (except when
 using `-l`, see below).
 The default `-r 5` option is meant to only output clones that
 have a significant read support. **You should use** `-r 1` **if you
 want to detect all clones starting from the first read** (especially for
 MRD detection).
+
+The `--max-clones` option limits the number of output clones, even without consensus sequences.
 
 The `-y` option limits the number of clones for which a consensus
 sequence is computed. Usually you do not need to have more
@@ -385,11 +386,10 @@ to display the clones on the grid (otherwise they are displayed on the
 If you want to analyze more clones, you should use `-z 200` or
 `-z 500`. It is not recommended to use larger values: outputting more
 than 500 clones is often not useful since they can not be visualized easily
-in the web application, and takes large computation time (full dynamic programming
-with all germline sequences), possibly reduced when using `-Z` (see below).
+in the web application, and takes more computation time.
 
 Note that even if a clone is not in the top 100 (or 200, or 500) but
-still passes the `-r`, `-%` options, it is still reported in both the `.vidjil`
+still passes the `-r`, `--ratio` options, it is still reported in both the `.vidjil`
 and `.vdj.fa` files. If the clone is at some MRD point in the top 100 (or 200, or 500),
 it will be fully analyzed/segmented by this other point (and then
 collected by the `fuse.py` script, using consensus sequences computed at this
@@ -401,17 +401,18 @@ The `-A` option disables all these thresholds. This option should be
 used only for test and debug purposes, on very small datasets, and
 produce large file and takes huge computation times.
 
-The experimental `-Z` option speeds up the full analysis by a pre-processing step,
+The `-Z` option speeds up the full analysis by a pre-processing step,
 again based on k-mers, to select a subset of the V germline genes to be compared to the read.
 The option gives the typical size of this subset (it can be larger when several V germlines
 genes are very similar, or smaller when there are not enough V germline genes).
-Setting `-Z 5` is generally safe. With the default option, `-Z all`, this
-pre-processing step is not activated.
+The default `-Z 3` is generally safe.
+Setting `-Z all` removes this pre-processing step, running a full dynamic programming
+with all germline sequences that is much slower.
 
 ## Sequences of interest
 
 Vidjil-algo allows to indicate that specific sequences should be followed and output,
-even if those sequences are 'rare' (below the `-r/-%` thresholds).
+even if those sequences are 'rare' (below the `-r/--ratio` thresholds).
 Such sequences can be provided either with `-W <sequence>`, or with `-l <file>`.
 The file given by `-l` should have one sequence by line, as in the following example:
 
@@ -489,7 +490,7 @@ The main output of Vidjil-algo (with the default `-c clones` command) are two fo
     The web application takes this `.vidjil` file ([possibly merged with `fuse.py`](#following-clones-in-several-samples)) for the *visualization and analysis* of clones and their
     tracking along different samples (for example time points in a MRD
     setup or in a immunological study).
-    Please see the [br](browser.org).org for more information on the web application.
+    Please see the [user manual](user.md) for more information on the web application.
 
   - The `.vdj.fa` file is *a FASTA file for further processing by other bioinformatics tools*.
     The sequences are at least the windows (and their count in the headers) or
@@ -587,7 +588,7 @@ Some datasets may give reads with many low `UNSEG too few` reads:
     Vidjil-algo detects a “window” including the CDR3. By default this window is 50bp long,
     so the read needs be that long centered on the junction.
 
-See [browser.org](http://git.vidjil.org/blob/master/doc/browser.org) for information on the biological or sequencing causes that can lead to few segmented reads.
+See the [user manual](user.md) for information on the biological or sequencing causes that can lead to few segmented reads.
 
 ## Filtering reads
 

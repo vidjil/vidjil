@@ -6,7 +6,7 @@ They are also useful markers of pathologies, and in leukemia, are used to quanti
 High-throughput sequencing (NGS/HTS) now enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](http://omictools.com/rep-seq-c424-p1.html) methods and software.
 
 This is the help of the [Vidjil web application](http://app.vidjil.org/browser/).
-Further help can always be asked to <support@vidjil.org>. We can also arrange phone or Skype meeting.
+Further help can always be asked to <support@vidjil.org>. We can also arrange phone or video meeting.
 
 The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Ryan and Tatiana)
 
@@ -52,7 +52,7 @@ Otherwise, such `.vidjil` files can be obtained:
 
   - You can change the number of displayed clones by moving the slider “number of clones” (menu “filter”).
     The maximal number of clones that can be displayed depends on the processing step before.
-    See below "[Can I see all the clones ?](#can-i-see-all-the-clones)".
+    See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads)".
 
   - Clones can be selected by clicking on them either in the list, on the sample graph,
     or the grid (simple selection or rectangle selection).
