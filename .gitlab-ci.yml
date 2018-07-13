@@ -21,6 +21,7 @@ stages:
   - release
   - valgrind_unit
   - valgrind_functional
+  - multiple_tests
   - prepare_deploy
   - deploy_prod
 
@@ -149,11 +150,8 @@ deploy_release_prod:
           make -C vidjil-algo-${release_name};\
           ln -sfT vidjil-algo-${release_name} next"
 
-test_various_compilers:
-  stage: test_functional
-  when: manual
-  only:
-    - /^feature-.*a.*\/.*$/
+.testing-compilers: &test_various_compilers
+  stage: multiple_tests
   tags:
     - several-compilers
   script:
@@ -165,6 +163,17 @@ test_various_compilers:
         make -C algo CXX=$CXX should
         make -C algo CXX=$CXX valgrind_unit
       done
+
+test_various_compilers_manual:
+  <<: *test_various_compilers
+  when: manual
+  only:
+    - /^feature-.*a.*\/.*$/
+
+test_various_compilers_release:
+  <<: *test_various_compilers
+  only:
+    - /^feature-.*a.*\/release$/
 
 
 # Client
