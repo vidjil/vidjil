@@ -59,12 +59,6 @@ test_algo_unit:
   only:
     - /^feature-.*a.*\/.*$/
 
-test_tools_unit:
-  stage: test_unit
-  script: make -C tools/tests
-  only:
-    - /^feature-.*a.*\/.*$/
-
 test_algo_should:
   stage: test_functional
   script: make -C algo should_coverage
