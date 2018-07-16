@@ -90,6 +90,7 @@ class TestSampleSet < BrowserTest
     table.wait_until_present
     table = go_to_list
     lines = table.tbody.rows
+    lines[0].wait_until_present
     assert(lines[0].cell(:index => 3).text == "#edited")
   end
 
