@@ -144,7 +144,7 @@ deploy_release_prod:
   script:
     - |
       release_name=$(cat algo/release)
-      ssh $VIDJIL_SERVER "cd releases/vidjil;\
+      ssh $DEPLOY_SERVER "cd releases/vidjil;\
           tar xvzf vidjil-algo-${release_name}.tar.gz;\
           make -C vidjil-algo-${release_name}
           ln -sf vidjil-algo-${release_name} next"
