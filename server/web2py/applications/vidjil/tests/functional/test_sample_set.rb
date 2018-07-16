@@ -115,7 +115,7 @@ class TestSampleSet < BrowserTest
     filter = $b.text_field(:id => "db_filter_input")
     filter.set('edited')
     filter.fire_event('onchange')
-    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => 'table')
     lines = table.tbody.rows
     assert(lines.count == 1)
