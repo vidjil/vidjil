@@ -94,14 +94,22 @@ algo_valgrind_unit:
   tags:
     - valgrind
 
-algo_valgrind_functional:
+.snip_valgrind_functional: &valgrind_functional
   stage: valgrind_functional
   script: make -C algo valgrind_should
+  tags:
+    - valgrind
+
+algo_valgrind_functional:
+  <<: *valgrind_functional
   when: manual
   only:
     - /^feature-.*a.*\/.*$/
-  tags:
-    - valgrind
+
+release_valgrind_functional:
+  <<: *valgrind_functional
+  only:
+    - /^feature-.*a.*\/release$/
 
 prepare_release:
   stage: prepare_release
