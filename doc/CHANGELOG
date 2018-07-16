@@ -1,7 +1,7 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
-2018-07-xx  The Vidjil Team
+2018-07-16  The Vidjil Team
 	* New default option -Z 3, speeding up the full analysis of clones with a pre-processing based on k-mers #3298
 	  Processes with `-c segment` or with large `-z` values will be between 2x and 15x faster (vidjil.cpp, core/filter.cpp)
 	* Integrated and extended up/downstream regions, improving analysis of heavily deleted 3' genes (germline/) #3008 #3009
