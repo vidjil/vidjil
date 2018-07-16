@@ -1,4 +1,6 @@
-# vidjil-algo – Command-line manual
+# vidjil-algo 2018.07
+**Command-line manual**
+
 *The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)*
 
 ```
