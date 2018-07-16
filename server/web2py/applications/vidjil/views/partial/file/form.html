@@ -42,7 +42,7 @@
         </div>
     </div>
     <div class="field_div">
-        <input class="date form-control" id="sampling_date_{{=i}}" name="file[{{=i}}][sampling_date]" type="text" title="sampling date"
+        <input class="date form-control" id="file_sampling_date_{{=i}}" name="file[{{=i}}][sampling_date]" type="text" title="sampling date"
             value="{{if 'sampling_date' in file and file['sampling_date'] is not None:}}{{=file['sampling_date']}}{{pass}}"
             placeholder="yyyy-mm-dd" pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))">
     </div>

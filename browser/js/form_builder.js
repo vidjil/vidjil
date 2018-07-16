@@ -364,6 +364,7 @@ FileFormBuilder.prototype.build_jstree = function() {
     var self = this;
     var w = this.build_wrapper();
     var d = document.createElement('div');
+    d.id = "jstree_field_" + self.index;
     w.appendChild(d);
 
     d.className += " jstree_field form-control";
