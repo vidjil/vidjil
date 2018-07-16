@@ -186,7 +186,7 @@ make germline
    # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
 
 
-make vijdil-algo         # build vijil-algo from the sources (see the requirements,
+make algo                # build vijil-algo from the sources (see the requirements,
                          # another option is: wget http://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -O vidjil-algo
                          # to download a static binary (built for x86_64 architectures)
 
