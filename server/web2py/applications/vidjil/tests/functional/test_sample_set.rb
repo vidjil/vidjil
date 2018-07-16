@@ -17,7 +17,7 @@ class TestSampleSet < BrowserTest
   end
 
   def go_to_list
-    $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
+    $b.a(:class => "button button_token patient_token", :text => "patients").click
     table = $b.table(:id => "table")
     table.wait_until_present
     table
