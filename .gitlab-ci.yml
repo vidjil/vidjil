@@ -146,8 +146,8 @@ deploy_release_prod:
       release_name=$(cat algo/release)
       ssh $DEPLOY_SERVER "cd releases/vidjil;\
           tar xvzf vidjil-algo-${release_name}.tar.gz;\
-          make -C vidjil-algo-${release_name}
-          ln -sf vidjil-algo-${release_name} next"
+          make -C vidjil-algo-${release_name};\
+          ln -sfT vidjil-algo-${release_name} next"
 
 test_various_compilers:
   stage: test_functional
