@@ -165,6 +165,11 @@ Xcode should be installed first.
 
 ## Installation
 
+### Download
+
+Stables releases can be downloaded from <http://www.vidjil.org/releases> or <http://bioinfo.lifl.fr/vidjil/>.
+Development code is found at <http://gitlab.vidjil.org>.
+
 ### Compiling
 
 Running `make` from the extracted archive should be enough to install vidjil-algo with germline and demo files.
