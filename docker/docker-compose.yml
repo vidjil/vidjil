@@ -43,7 +43,7 @@ services:
         volumes:
             - /opt/vidjil/log/nginx:/var/log/nginx
             - /etc/nginx/ssl:/etc/nginx/ssl
-            - ../germline:/usr/share/vidji/browser/germline
+            - ../germline:/usr/share/vidjil/germline
 
     workers:
         image: vidjil/server:test
