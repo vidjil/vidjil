@@ -312,7 +312,7 @@ release_create:
 	for file in $(RELEASE_FILES); do\
 	  dir=$(RELEASE_DIR_TMP)/$(RELEASE_NAME)/algo/`dirname "$$file"`/;    \
 	  mkdir -p $$dir; \
-	  cp -v "$$file" $$dir/;     \
+	  cp -v "$$file" $$dir/ || exit 1;     \
 	done
 
 	# A spurious algo/ directory is created, remove it
