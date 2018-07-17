@@ -72,4 +72,8 @@ class TestSampleSet < BrowserTest
     lines = table.tbody.rows
     assert(lines.count == num_additional_files + 1)
   end
+
+  def test_zz_close
+    close_everything
+  end
 end
