@@ -77,6 +77,29 @@ class TestSampleSet < BrowserTest
     assert(lines.count == num_additional_files + 1)
   end
 
+  def test_002_edit
+    table = go_to_first_set
+
+    lines = table.tbody.rows
+    lines[0].wait_until_present
+    cell = lines[0].td(:class => "pointer")
+    cell.i(:class => "icon-pencil-2").click
+    form = $b.form(:id => "upload_form")
+    form.wait_until_present
+    form.text_field(:id => "file_info_0").set("#edited")
+    form.input(:type => "submit").click
+
+
+    table = $b.table(:id => "table")
+    table.wait_until_present
+
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+
+    lines = table.tbody.rows
+    lines[2].wait_until_present
+    assert($b.link(:text => "#edited").present?)
+  end
+
   def test_zz_close
     close_everything
   end
