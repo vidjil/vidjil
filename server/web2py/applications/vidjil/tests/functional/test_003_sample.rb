@@ -7,6 +7,7 @@ class TestSampleSet < BrowserTest
     super
     if not defined? $b
       set_browser("http://localhost/browser")
+      $num_additional_files = 2
     end
     login_form = $b.form(:id => 'login_form')
     if login_form.present?
@@ -44,14 +45,13 @@ class TestSampleSet < BrowserTest
 
     $b.input(:id => "source_nfs").click
 
-    num_additional_files = 2
     file_button = $b.span(:id => "file_button")
-    for i in 0..num_additional_files-1
+    for i in 0..$num_additional_files-1
       file_button.click
     end
 
     jstree = $b.div(:id => "jstree")
-    for i in 0..num_additional_files
+    for i in 0..$num_additional_files
       $b.div(:id => "jstree_field_%d" % i).span(:text => "browse").click
       assert(jstree.visible?)
       jstree_file = jstree.a(:id => "//Demo-X5.fa_anchor")
@@ -74,7 +74,7 @@ class TestSampleSet < BrowserTest
     table.wait_until_present
 
     lines = table.tbody.rows
-    assert(lines.count == num_additional_files + 1)
+    assert(lines.count == $num_additional_files + 1)
   end
 
   def test_002_edit
