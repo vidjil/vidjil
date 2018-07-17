@@ -19,12 +19,14 @@ class TestSampleSet < BrowserTest
   def go_to_first_set
     # load patient list
     $b.a(:class => "button button_token patient_token", :text => "patients").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
     table.wait_until_present
     lines = table.tbody.rows
     lines[0].wait_until_present
     # select first patient
     lines[0].click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
     # check that list of samples is loaded
     table = $b.table(:id => "table")
     table.wait_until_present
