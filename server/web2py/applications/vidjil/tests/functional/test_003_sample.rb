@@ -121,7 +121,19 @@ class TestSampleSet < BrowserTest
 
     table.wait_until_present
     assert(table.tbody.rows.count == $num_additional_files)
+  end
 
+  def test_004_run
+    table = go_to_first_set
+
+    $b.select_list(:id => "choose_config").select_value(2)
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+
+    lines = table.tbody.rows
+    lines[0].wait_until_present
+    lines[0].i(:class => "icon-cog-2").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    assert(lines[0].td(:text => "QUEUED").present?)
   end
 
   def test_zz_close
