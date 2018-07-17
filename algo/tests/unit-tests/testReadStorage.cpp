@@ -13,7 +13,7 @@ void testBinReadStorage() {
   TAP_TEST_EQUAL(reads.scoreToBin(11), 3, TEST_BRS_SCORE_TO_BIN, "");
   TAP_TEST_EQUAL(reads.scoreToBin(5), 1, TEST_BRS_SCORE_TO_BIN, "");
 
-  Sequence seq1 = {"label", "l", "GAGAG", "", NULL, 0};
+  Sequence seq1 = {"label", "l", "GAGAG", "", 0};
   reads.add(seq1);
   TAP_TEST_EQUAL(reads.smallest_bin_not_empty, 1, TEST_BRS_SBNE, "");
   TAP_TEST_EQUAL(reads.getNbInserted(), 1, TEST_BRS_GET_NB_INSERTED, "");
@@ -22,7 +22,7 @@ void testBinReadStorage() {
            && reads.getScoreByScore(5.) == 5
            && reads.getScore(1) ==  5, TEST_BRS_GET_SCORE, "");
 
-  Sequence seq2 = {"label2", "l2", "GA", "", NULL, 0};
+  Sequence seq2 = {"label2", "l2", "GA", "", 0};
   reads.add(seq2);
   TAP_TEST_EQUAL(reads.smallest_bin_not_empty, 0, TEST_BRS_SBNE, "");
   TAP_TEST_EQUAL(reads.getNbInserted(), 2, TEST_BRS_GET_NB_INSERTED, "");
@@ -34,7 +34,7 @@ void testBinReadStorage() {
   TAP_TEST_EQUAL(reads.getScore(), 7, TEST_BRS_GET_SCORE, "");
   TAP_TEST_EQUAL(reads.getAverageScore(), 3.5, TEST_BRS_GET_AVG_SCORE, "");
 
-  Sequence seq3 = {"label3", "l3", "GGAGACAGTA", "", NULL, 0};
+  Sequence seq3 = {"label3", "l3", "GGAGACAGTA", "", 0};
   reads.add(seq3);
   TAP_TEST_EQUAL(reads.smallest_bin_not_empty, 0, TEST_BRS_SBNE, "");
   TAP_TEST_EQUAL(reads.getNbInserted(), 3, TEST_BRS_GET_NB_INSERTED, "");
@@ -43,7 +43,7 @@ void testBinReadStorage() {
            && reads.getScoreByScore(10.) == 10
            && reads.getScore(2) ==  10, TEST_BRS_GET_SCORE, "");
 
-  Sequence seq4 = {"label4", "l4", "AGAGACAGTA", "", NULL, 0};
+  Sequence seq4 = {"label4", "l4", "AGAGACAGTA", "", 0};
   reads.add(seq4);
   TAP_TEST_EQUAL(reads.smallest_bin_not_empty, 1, TEST_BRS_SBNE, "");
   TAP_TEST_EQUAL(reads.getNbInserted(), 4, TEST_BRS_GET_NB_INSERTED, "");
@@ -57,7 +57,7 @@ void testBinReadStorage() {
            && reads.getScore(2) ==  20, TEST_BRS_GET_SCORE, "");
   TAP_TEST_EQUAL(reads.getAverageScoreBySeq(seq4), 10, TEST_BRS_GET_AVG_SCORE, "");
 
-  Sequence seq5 = {"label5", "l5", "AATAAGAGTGAGACAGTA", "", NULL, 0};
+  Sequence seq5 = {"label5", "l5", "AATAAGAGTGAGACAGTA", "", 0};
   reads.add(seq5);
   TAP_TEST_EQUAL(reads.smallest_bin_not_empty, 2, TEST_BRS_SBNE, "");
   TAP_TEST_EQUAL(reads.getNbInserted(), 5, TEST_BRS_GET_NB_INSERTED, "");
