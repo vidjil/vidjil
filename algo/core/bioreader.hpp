@@ -41,7 +41,6 @@ typedef struct read_t
   string label;
   string sequence; // Sequence: original string representation
   string quality;
-  int*   seq;      // Sequence: seq representation
   size_t    marked_pos; // Some marked position in the sequence
 } Sequence;
 
