@@ -117,7 +117,7 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     task = scheduler.queue_task(program, args,
                                 repeats = 1, timeout = defs.TASK_TIMEOUT)
     
-    if db.sequence_file[id_sequence].pre_process_flag != "COMPLETED" and db.sequence_file[id_sequence].pre_process_flag :
+    if db.sequence_file[id_sequence].pre_process_flag != "DONE" and db.sequence_file[id_sequence].pre_process_flag :
         db.scheduler_task[task.id] = dict(status ="STOPPED")
     
     db.results_file[data_id] = dict(scheduler_task_id = task.id)
