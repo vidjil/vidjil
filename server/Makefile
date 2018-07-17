@@ -14,6 +14,9 @@ unit: clean_unit_tests
 functional:
 	$(MAKE) -C web2py/applications/vidjil/tests functional
 
+headless:
+	HEADLESS=1 $(MAKE) -C web2py/applications/vidjil/tests functional
+
 install_web2py_standalone: install_web2py
 	mkdir -p web2py/applications/vidjil/databases web2py/upload/uploads web2py/result/results
 	sed -i 's@/var/vidjil@logs@' web2py/applications/vidjil/modules/defs.py
