@@ -100,6 +100,30 @@ class TestSampleSet < BrowserTest
     assert($b.link(:text => "#edited").present?)
   end
 
+  def test_003_delete
+    table = go_to_first_set
+
+    lines = table.tbody.rows
+    lines[0].wait_until_present
+    mcell = lines[0].cells(:class => "pointer")
+    mcell.each do |c|
+      del = c.i(:class => "icon-erase")
+      if del.present?
+        del.click
+      end
+    end
+
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+
+    button = $b.button(:text => "delete sequence and results")
+    button.wait_until_present
+    button.click
+
+    table.wait_until_present
+    assert(table.tbody.rows.count == $num_additional_files)
+
+  end
+
   def test_zz_close
     close_everything
   end
