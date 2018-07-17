@@ -262,6 +262,9 @@ json WindowsStorage::computeDiversity(int nb_segmented) {
   return jsonDiversity;
 }
 
+void WindowsStorage::clearSequences(){
+  seqs_by_window.clear();
+}
 
 json WindowsStorage::sortedWindowsToJson(map <junction, json> json_data_segment, int max_json_output) {
   json windowsArray;
