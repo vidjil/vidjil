@@ -281,6 +281,7 @@ def submit():
                 os.symlink(filepath, defs.DIR_SEQUENCES + file_data['data_file'])
                 file_data['size_file'] = os.path.getsize(filepath)
                 file_data['network'] = True
+                file_data['data_file'] = str(file_data['data_file'])
             db.sequence_file[fid] = file_data
 
         link_to_sample_sets(fid, id_dict)
