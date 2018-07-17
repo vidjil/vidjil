@@ -54,7 +54,7 @@ class TestSampleSet < BrowserTest
     for i in 0..num_additional_files
       $b.div(:id => "jstree_field_%d" % i).span(:text => "browse").click
       assert(jstree.visible?)
-      jstree_file = jstree.a(:id => "//Demo-X5.fasta_anchor")
+      jstree_file = jstree.a(:id => "//Demo-X5.fa_anchor")
       unless jstree_file.present? and jstree_file.present?
         jstree.a(:id => "/_anchor").double_click
       end
