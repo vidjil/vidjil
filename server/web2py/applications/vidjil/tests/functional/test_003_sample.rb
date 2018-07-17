@@ -16,7 +16,7 @@ class TestSampleSet < BrowserTest
     end
   end
 
-  def go_to_first
+  def go_to_first_set
     # load patient list
     $b.a(:class => "button button_token patient_token", :text => "patients").click
     table = $b.table(:id => "table")
@@ -32,7 +32,7 @@ class TestSampleSet < BrowserTest
   end
 
   def test_001_add
-    table = go_to_first
+    table = go_to_first_set
 
     add_button = $b.span(:text => "+ add samples")
     add_button.wait_until_present
