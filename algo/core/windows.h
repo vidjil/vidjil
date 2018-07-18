@@ -220,7 +220,11 @@ class WindowsStorage {
   ostream &printSortedWindows(ostream &os);
   
   json sortedWindowsToJson(map<junction, json> json_data_segment, int max_json_output);
-
+  
+  /**
+   * Clear the seqs_by_window map.
+   */
+  void clearSequences();
   /**
    * Display a window with its in size in a somewhat FASTA format
    */

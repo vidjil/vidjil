@@ -1512,6 +1512,7 @@ int main (int argc, char **argv)
     //json->add("links", jsonLevenshtein);
     //out_json << json->toString();
 
+    windowsStorage->clearSequences();
     json jsonSortedWindows = windowsStorage->sortedWindowsToJson(json_data_segment, max_clones_id);
     
     json reads_germline;
