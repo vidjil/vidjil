@@ -264,7 +264,7 @@ void testBug2224(IndexTypes index) {
   BioReader seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
 
   BioReader data(true, "virtual");
-  Sequence s = {">label", ">label", "ATTATATA", "", NULL, 0};
+  Sequence s = {">label", ">label", "ATTATATA", "", 0};
   data.add(s);
 
 
@@ -402,8 +402,8 @@ void testProbability(IndexTypes index) {
                 "CTTG", "CTTT"};
   BioReader V, J;
   for (int i = 0; i < 64; i++) {
-    Sequence v = {"V_" + string_of_int(i+33), "V" + string_of_int(i+33), v_seq[i], "", NULL, 0};
-    Sequence j = {"J_" + string_of_int(i+33), "J" + string_of_int(i+33), j_seq[i], "", NULL, 0};
+    Sequence v = {"V_" + string_of_int(i+33), "V" + string_of_int(i+33), v_seq[i], "", 0};
+    Sequence j = {"J_" + string_of_int(i+33), "J" + string_of_int(i+33), j_seq[i], "", 0};
     V.add(v);
     J.add(j);
   }
@@ -419,7 +419,7 @@ void testProbability(IndexTypes index) {
   TAP_TEST_EQUAL(germline.index->getIndexLoad(AFFECT_NOT_UNKNOWN), .75, TEST_GET_INDEX_LOAD, ".getIndexLoad with AFFECT_NOT_UNKNOWN = " << germline.index->getIndexLoad(AFFECT_NOT_UNKNOWN));
   TAP_TEST_EQUAL(germline.index->getIndexLoad(AFFECT_UNKNOWN), .25, TEST_GET_INDEX_LOAD, ".getIndexLoad with AFFECT_UNKNOWN : " << germline.index->getIndexLoad(AFFECT_UNKNOWN));
 
-  Sequence seq = {"to_segment", "to_segment", "TATCG", "", NULL, 0};
+  Sequence seq = {"to_segment", "to_segment", "TATCG", "", 0};
   KmerSegmenter kseg(seq, &germline);
 
   KmerAffectAnalyser *kaa = kseg.getKmerAffectAnalyser();

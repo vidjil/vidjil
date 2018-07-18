@@ -14,19 +14,19 @@
 BioReader getDebugBioReader1(){
   BioReader result;
   Sequence sequences[13];
-  sequences[0] = {"seq1-full_name", "seq-01*01", "AGCTGC","", NULL, 0};
-  sequences[1] = {"seq1-full_name", "seq-01*02", "AGCTGA", "", NULL, 0};
-  sequences[2] = {"seq1-full_name", "seq-01*03", "AGCTGT", "", NULL, 0};
-  sequences[3] = {"seq2_full_name", "seq-02*01", "TCAA", "", NULL, 0};
-  sequences[4] = {"seq2_full_name", "seq-02*02", "TCCA", "", NULL, 0};
-  sequences[5] = {"seq3_full_name", "seq-03*01", "GGGG", "", NULL, 0};
-  sequences[6] = {"seq4_full_name", "seq-04*01", "CCAATG", "", NULL, 0};
-  sequences[7] = {"seq4_full_name", "seq-04*02", "CCAATT", "", NULL, 0};
-  sequences[8] = {"seq4_full_name", "seq-04*03", "CCAATA", "", NULL, 0};
-  sequences[9] = {"seq4_full_name", "seq-04*04", "CCAATC", "", NULL, 0};
-  sequences[10] = {"seq5_full_name", "seq-05", "TTTT", "", NULL, 0};
-  sequences[11] = {"seq6_full_name", "seq-06*01", "AAAT", "", NULL, 0};
-  sequences[12] = {"seq6_full_name", "seq-06*02", "AAAA", "", NULL, 0};
+  sequences[0] = {"seq1-full_name", "seq-01*01", "AGCTGC","", 0};
+  sequences[1] = {"seq1-full_name", "seq-01*02", "AGCTGA", "", 0};
+  sequences[2] = {"seq1-full_name", "seq-01*03", "AGCTGT", "", 0};
+  sequences[3] = {"seq2_full_name", "seq-02*01", "TCAA", "", 0};
+  sequences[4] = {"seq2_full_name", "seq-02*02", "TCCA", "", 0};
+  sequences[5] = {"seq3_full_name", "seq-03*01", "GGGG", "", 0};
+  sequences[6] = {"seq4_full_name", "seq-04*01", "CCAATG", "", 0};
+  sequences[7] = {"seq4_full_name", "seq-04*02", "CCAATT", "", 0};
+  sequences[8] = {"seq4_full_name", "seq-04*03", "CCAATA", "", 0};
+  sequences[9] = {"seq4_full_name", "seq-04*04", "CCAATC", "", 0};
+  sequences[10] = {"seq5_full_name", "seq-05", "TTTT", "", 0};
+  sequences[11] = {"seq6_full_name", "seq-06*01", "AAAT", "", 0};
+  sequences[12] = {"seq6_full_name", "seq-06*02", "AAAA", "", 0};
   for(int i = 0;i < 13; ++i){
     result.add(sequences[i]);
   }
@@ -43,17 +43,17 @@ BioReader getDebugBioReader1(){
 BioReader getDebugBioReader2(){
   BioReader result;
   Sequence sequences[11];
-  sequences[0] = {"seq1-full_name", "seq-01*01", "AGCTGC","", NULL, 0};
-  sequences[1] = {"seq2_full_name", "seq-02*01", "TCAA", "", NULL, 0};
-  sequences[2] = {"seq2_full_name", "seq-02*02", "TCCA", "", NULL, 0};
-  sequences[3] = {"seq3_full_name", "seq-03*01", "GGGG", "", NULL, 0};
-  sequences[4] = {"seq4_full_name", "seq-04*01", "CCAATG", "", NULL, 0};
-  sequences[5] = {"seq4_full_name", "seq-04*02", "CCAATT", "", NULL, 0};
-  sequences[6] = {"seq4_full_name", "seq-04*03", "CCAATA", "", NULL, 0};
-  sequences[7] = {"seq4_full_name", "seq-04*04", "CCAATC", "", NULL, 0};
-  sequences[8] = {"seq5_full_name", "seq-05*01", "TTTT", "", NULL, 0};
-  sequences[9] = {"seq6_full_name", "seq-06*01", "AAAT", "", NULL, 0};
-  sequences[10] = {"seq6_full_name", "seq-06*02", "AAAA", "", NULL, 0};
+  sequences[0] = {"seq1-full_name", "seq-01*01", "AGCTGC","", 0};
+  sequences[1] = {"seq2_full_name", "seq-02*01", "TCAA", "", 0};
+  sequences[2] = {"seq2_full_name", "seq-02*02", "TCCA", "", 0};
+  sequences[3] = {"seq3_full_name", "seq-03*01", "GGGG", "", 0};
+  sequences[4] = {"seq4_full_name", "seq-04*01", "CCAATG", "", 0};
+  sequences[5] = {"seq4_full_name", "seq-04*02", "CCAATT", "", 0};
+  sequences[6] = {"seq4_full_name", "seq-04*03", "CCAATA", "", 0};
+  sequences[7] = {"seq4_full_name", "seq-04*04", "CCAATC", "", 0};
+  sequences[8] = {"seq5_full_name", "seq-05*01", "TTTT", "", 0};
+  sequences[9] = {"seq6_full_name", "seq-06*01", "AAAT", "", 0};
+  sequences[10] = {"seq6_full_name", "seq-06*02", "AAAA", "", 0};
   for(int i = 0;i < 11; ++i){
     result.add(sequences[i]);
   }
@@ -69,18 +69,18 @@ BioReader getDebugBioReader2(){
 BioReader getDebugBioReader3(){
   BioReader result;
   Sequence sequences[12];
-  sequences[0] = {"seq1-full_name", "seq-01*01", "AGCTGC","", NULL, 0};
-  sequences[1] = {"seq1-full_name", "seq-01*02", "AGCTGA", "", NULL, 0};
-  sequences[2] = {"seq1-full_name", "seq-01*03", "AGCTGT", "", NULL, 0};
-  sequences[3] = {"seq2_full_name", "seq-02*01", "TCAA", "", NULL, 0};
-  sequences[4] = {"seq2_full_name", "seq-02*02", "TCCA", "", NULL, 0};
-  sequences[5] = {"seq3_full_name", "seq-03*01", "GGGG", "", NULL, 0};
-  sequences[6] = {"seq4_full_name", "seq-04*01", "CCAATG", "", NULL, 0};
-  sequences[7] = {"seq4_full_name", "seq-04*02", "CCAATT", "", NULL, 0};
-  sequences[8] = {"seq4_full_name", "seq-04*03", "CCAATA", "", NULL, 0};
-  sequences[9] = {"seq4_full_name", "seq-04*04", "CCAATC", "", NULL, 0};
-  sequences[10] = {"seq5_full_name", "seq-05*01", "TTTT", "", NULL, 0};
-  sequences[11] = {"seq6_full_name", "seq-06*01", "AAAT", "", NULL, 0};
+  sequences[0] = {"seq1-full_name", "seq-01*01", "AGCTGC","", 0};
+  sequences[1] = {"seq1-full_name", "seq-01*02", "AGCTGA", "", 0};
+  sequences[2] = {"seq1-full_name", "seq-01*03", "AGCTGT", "", 0};
+  sequences[3] = {"seq2_full_name", "seq-02*01", "TCAA", "", 0};
+  sequences[4] = {"seq2_full_name", "seq-02*02", "TCCA", "", 0};
+  sequences[5] = {"seq3_full_name", "seq-03*01", "GGGG", "", 0};
+  sequences[6] = {"seq4_full_name", "seq-04*01", "CCAATG", "", 0};
+  sequences[7] = {"seq4_full_name", "seq-04*02", "CCAATT", "", 0};
+  sequences[8] = {"seq4_full_name", "seq-04*03", "CCAATA", "", 0};
+  sequences[9] = {"seq4_full_name", "seq-04*04", "CCAATC", "", 0};
+  sequences[10] = {"seq5_full_name", "seq-05*01", "TTTT", "", 0};
+  sequences[11] = {"seq6_full_name", "seq-06*01", "AAAT", "", 0};
   for(int i = 0;i < 12; ++i){
     result.add(sequences[i]);
   }
@@ -385,19 +385,19 @@ void testExAequoKmersWhenSignificantParameter(){
   string BIOREADER_EXAEQUO = "BioReader doesn't have ex-aequo";
   string SIZE_BIOREADER = "BioReader doesn't contain the good amount of sequences";
   Sequence sequences[13];
-  sequences[0] = {"seq1-full_name", "seq-01*01", "AGCTAGCTA","", NULL, 0};
-  sequences[1] = {"seq1-full_name", "seq-01*02", "AGCTAGCTT", "", NULL, 0};
-  sequences[2] = {"seq1-full_name", "seq-01*03", "AGCTAGCTC", "", NULL, 0};
-  sequences[3] = {"seq2_full_name", "seq-02*01", "TCAATCAA", "", NULL, 0};
-  sequences[4] = {"seq2_full_name", "seq-02*02", "TCCATCAA", "", NULL, 0};
-  sequences[5] = {"seq3_full_name", "seq-03*01", "GGGGGGGG", "", NULL, 0};
-  sequences[6] = {"seq4_full_name", "seq-04*01", "CCAATGCC", "", NULL, 0};
-  sequences[7] = {"seq4_full_name", "seq-04*02", "CCAATTCC", "", NULL, 0};
-  sequences[8] = {"seq4_full_name", "seq-04*03", "CCAATACC", "", NULL, 0};
-  sequences[9] = {"seq4_full_name", "seq-04*04", "CCAATCCC", "", NULL, 0};
-  sequences[10] = {"seq5_full_name", "seq-05*01", "TTTTTTTT", "", NULL, 0};
-  sequences[11] = {"seq6_full_name", "seq-06*01", "AAATAAAT", "", NULL, 0};
-  sequences[12] = {"seq7_full_name", "seq-07*01", "CCCCCCCC", "", NULL, 0};
+  sequences[0] = {"seq1-full_name", "seq-01*01", "AGCTAGCTA","", 0};
+  sequences[1] = {"seq1-full_name", "seq-01*02", "AGCTAGCTT", "", 0};
+  sequences[2] = {"seq1-full_name", "seq-01*03", "AGCTAGCTC", "", 0};
+  sequences[3] = {"seq2_full_name", "seq-02*01", "TCAATCAA", "", 0};
+  sequences[4] = {"seq2_full_name", "seq-02*02", "TCCATCAA", "", 0};
+  sequences[5] = {"seq3_full_name", "seq-03*01", "GGGGGGGG", "", 0};
+  sequences[6] = {"seq4_full_name", "seq-04*01", "CCAATGCC", "", 0};
+  sequences[7] = {"seq4_full_name", "seq-04*02", "CCAATTCC", "", 0};
+  sequences[8] = {"seq4_full_name", "seq-04*03", "CCAATACC", "", 0};
+  sequences[9] = {"seq4_full_name", "seq-04*04", "CCAATCCC", "", 0};
+  sequences[10] = {"seq5_full_name", "seq-05*01", "TTTTTTTT", "", 0};
+  sequences[11] = {"seq6_full_name", "seq-06*01", "AAATAAAT", "", 0};
+  sequences[12] = {"seq7_full_name", "seq-07*01", "CCCCCCCC", "", 0};
   for(int i = 0;i < 13; ++i){
     testedBioReader.add(sequences[i]);
   }

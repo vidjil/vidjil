@@ -218,7 +218,7 @@ void testFastaLabelAndMark() {
 
 void testSequenceOutputOperator() {
   ostringstream oss;
-  Sequence seq = {"a b c", "a", "GATTACA", "AIIIIIH", NULL, 0};
+  Sequence seq = {"a b c", "a", "GATTACA", "AIIIIIH", 0};
   oss << seq;
 
   TAP_TEST_EQUAL(oss.str(), "@a\nGATTACA\n+\nAIIIIIH\n", TEST_SEQUENCE_OUT, oss.str());

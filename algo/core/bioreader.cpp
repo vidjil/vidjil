@@ -46,8 +46,6 @@ OnlineBioReader::OnlineBioReader(const string &input_filename,
 }
 
 OnlineBioReader::~OnlineBioReader() {
-  if (current.seq)
-    delete [] current.seq;
 }
 
 void OnlineBioReader::init() {
@@ -55,7 +53,6 @@ void OnlineBioReader::init() {
   nb_sequences_parsed = 0;
   nb_sequences_returned = 0;
   char_nb = 0;
-  current.seq = NULL;
   current.marked_pos = 0;
   current_gaps = 0;
 }

@@ -78,13 +78,9 @@ void OnlineFasta::next() {
   current.label.erase();
   current.sequence.erase();
   current.quality.erase();
-  if (current.seq) {
-    delete [] current.seq;
-    current.seq = NULL;
-    current.marked_pos = 0;
-    current_gaps = 0;
-  }
-
+  current.marked_pos = 0;
+  current_gaps = 0;
+  
   if  (hasNextData()) {
     switch(line[0]) {
     case '>': state=FASTX_FASTA; break;
@@ -136,13 +132,6 @@ void OnlineFasta::next() {
 
     // Sequence in uppercase
     transform(current.sequence.begin(), current.sequence.end(), current.sequence.begin(), (int (*)(int))toupper);
-
-    // Compute seq
-    current.seq = new int[current.sequence.length()];
-    for (unsigned int i=0; i< current.sequence.length(); i++)
-      {
-	current.seq[i] = nuc_to_int(current.sequence[i]) ;
-      }
 
   } else
     unexpectedEOF();

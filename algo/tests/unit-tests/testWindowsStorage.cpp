@@ -6,7 +6,7 @@
 void testWSAdd() {
   map<string, string> labels;
   WindowsStorage ws(labels);
-  Sequence seq = {"label", "l", "GATACATTAGACAGCT", "", NULL, 0};
+  Sequence seq = {"label", "l", "GATACATTAGACAGCT", "", 0};
   Germline germline("Test", 't', "data/small_V.fa", "", "data/small_J.fa", "");
   
   TAP_TEST_EQUAL(ws.size(), 0, TEST_WS_SIZE_NONE, "");
@@ -112,8 +112,8 @@ void testWSAddWithLimit() {
   WindowsStorage ws(labels);
   ws.setMaximalNbReadsPerWindow(3);
   ws.setBinParameters(1, 20);
-  Sequence seq = {"label", "l", "GATACATTAGACAGCT", "", NULL, 0};
-  Sequence seq_long = {"label", "l", "GATACATTAGACAGCTTATATATATATTTATAT", "", NULL, 0};
+  Sequence seq = {"label", "l", "GATACATTAGACAGCT", "", 0};
+  Sequence seq_long = {"label", "l", "GATACATTAGACAGCTTATATATATATTTATAT", "", 0};
   Germline germline("Test", 't', "data/small_V.fa", "", "data/small_J.fa", "");
 
   ws.add("ATTAG", seq, SEG_PLUS, &germline);
