@@ -117,7 +117,7 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     task = scheduler.queue_task(program, args,
                                 repeats = 1, timeout = defs.TASK_TIMEOUT)
     
-    if db.sequence_file[id_sequence].pre_process_flag != "DONE" and db.sequence_file[id_sequence].pre_process_flag :
+    if db.sequence_file[id_sequence].pre_process_flag not in ["COMPLETED", "DONE"] and db.sequence_file[id_sequence].pre_process_flag :
         db.scheduler_task[task.id] = dict(status ="STOPPED")
     
     db.results_file[data_id] = dict(scheduler_task_id = task.id)
@@ -842,7 +842,7 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
     # We forget the initial data_file (and possibly data_file2)
     db.sequence_file[sequence_file_id] = dict(data_file = stream,
                                               data_file2 = None,
-                                              pre_process_flag = "DONE")
+                                              pre_process_flag = "COMPLETED")
     db.commit()
     #resume STOPPED task for this sequence file
     stopped_task = db(
