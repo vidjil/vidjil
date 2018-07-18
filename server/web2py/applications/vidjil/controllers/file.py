@@ -201,7 +201,7 @@ def submit():
     error = False
 
     pre_process = None
-    pre_process_flag = "DONE"
+    pre_process_flag = "COMPLETED"
     if 'pre_process' in data and data['pre_process'] is not None and\
        int(data['pre_process']) > 0:
         pre_process = int(data['pre_process'])
