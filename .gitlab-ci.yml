@@ -248,7 +248,6 @@ test_server_functional:
     - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server/" server/web2py/applications/vidjil/tests/init_func_test_db.sh
     - docker exec docker_uwsgi_1 sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
     - docker exec docker_nginx_1 make -C /usr/share/vidjil browser
-    - docker exec docker_uwsgi_1 python /usr/share/vidjil/server/web2py/web2py.py -S vidjil -M -R /usr/share/vidjil/server/web2py/applications/vidjil/tests/functional/init_test_db.py
     - source /etc/profile.d/rvm.sh
     - rvm use 2.1.1
     - HEADLESS=1 make functional_server || (cd docker && docker-compose stop; false)
