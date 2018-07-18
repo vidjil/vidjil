@@ -151,8 +151,9 @@ deploy_release_prod:
 
 test_various_compilers:
   stage: test_functional
+  when: manual
   only:
-    - feature-a/test-compilers
+    - /^feature-.*a.*\/.*$/
   tags:
     - several-compilers
   script:
