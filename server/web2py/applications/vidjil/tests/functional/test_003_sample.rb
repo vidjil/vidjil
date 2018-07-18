@@ -133,6 +133,11 @@ class TestSample < BrowserTest
     lines[0].wait_until_present
     lines[0].i(:class => "icon-cog-2").click
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+
+    table = $b.table(:id => "table")
+    table.wait_until_present
+    lines = table.tbody.rows
+    lines[0].wait_until_present
     assert(lines[0].td(:text => "QUEUED").present?)
   end
 
