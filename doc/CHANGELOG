@@ -1,6 +1,9 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+2018-07-18  The Vidjil Team
+	* Cleaned memory after the heuristic, lowering memory usage up to 50% on datasets with many 1-read clones #2120 #3387
+
 2018-07-16  The Vidjil Team
 	* New default option -Z 3, speeding up the full analysis of clones with a pre-processing based on k-mers #3298
 	  Processes with `-c segment` or with large `-z` values will be between 2x and 15x faster (vidjil.cpp, core/filter.cpp)
@@ -10,8 +13,9 @@ This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil pla
 	* Refactored option processing for vidjil-algo with CLI11 (lib/CLI11.hpp, vidjil.cpp) #2732
 	* Improved build time up to 40% (lib/json_fwd.h) #3307
 	* Updated third-party library (lib/json.hpp) #2935
-	* Improved build and release process, supporting also g++ 7.3 and testing several compilers (.gitlab-ci.yml) #3002 #3015
+	* Improved build and release process, supporting also g++ 7.3 and testing several compilers (.gitlab-ci.yml) #3002 #3015 #3310
 	* Removed unused code and CI parts #3294 #3287
+	* Updated documentation, converted into .md files (#3004)
 	* Refactored and re-enabled code coverage, making it publicly accessible on Gitlab (algo/Makefile, .gitlab-ci.yml) #1696
 	* New and updated unit and functional tests
 
