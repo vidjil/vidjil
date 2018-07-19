@@ -926,7 +926,7 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
   box->del_right = reverse_both ? best_best_j : box->ref.size() - best_best_j - 1;
   box->del_left = best_first_j;
   box->start = best_first_i;
-  
+  box->rep = &rep; 
   box->score = score_r;
 
 #ifdef DEBUG_SEGMENT	

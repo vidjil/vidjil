@@ -91,6 +91,7 @@ const char* const segmented_mesg[] = { "?",
 class AlignBox
 {
  public:
+  BioReader *rep;
   string key;
   string color;
 
