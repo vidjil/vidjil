@@ -213,6 +213,7 @@ Database.prototype = {
      * @param {object} args - parameters ({ "name_arg1" : "arg1", ... })
      * */
     call: function (page, args) {
+        var self = this;
         try {
             var event = window.event || arguments.callee.caller.arguments[0] 
             event.stopPropagation();
@@ -221,7 +222,8 @@ Database.prototype = {
                 return;
             } else {
                 target.setAttribute("disabled", "disabled")
-                setTimeout(function(){target.removeAttribute("disabled")}, 1000)
+                self.ajax_indicator_start();
+                setTimeout(function(){target.removeAttribute("disabled"); self.ajax_indicator_stop()}, 2000)
             }
         }
         catch(err)
