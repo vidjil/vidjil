@@ -70,7 +70,7 @@ string AlignBox::getSequence(string sequence) {
   return sequence.substr(start, end-start+1);
 }
 
-void AlignBox::addToJson(json &seg) {
+void AlignBox::addToJson(json &seg, int alternative_genes) {
 
   json j;
 
@@ -947,12 +947,13 @@ string format_del(int deletions)
   return deletions ? *"(" + string_of_int(deletions) + " del)" : "" ;
 }
 
-FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  double threshold, double multiplier, int kmer_threshold)
+FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
+                double threshold, double multiplier, int kmer_threshold, int alternative_genes)
 {
   box_V = new AlignBox("5");
   box_D = new AlignBox("4");
   box_J = new AlignBox("3");
-
+  this->alternative_genes = alternative_genes;
   segmented = false;
   dSegmented = false;
   because = NOT_PROCESSED ;
@@ -1333,7 +1334,7 @@ json FineSegmenter::toJson(){
 
   for (AlignBox *box: boxes)
     {
-      box->addToJson(seg);
+      box->addToJson(seg, this->alternative_genes);
     }
 
   if (isSegmented()) {
