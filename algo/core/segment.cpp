@@ -89,6 +89,14 @@ void AlignBox::addToJson(json &seg, int alternative_genes) {
     }
 
   seg[key] = j ;
+  /*Export the N best genes if threshold parameter is specified*/
+  if(rep && !this->score.empty() && rep->size() <= (int)this->score.size() && alternative_genes > 0 && alternative_genes <= (int)this->score.size()){
+    seg[key + "alt"] = json::array();
+    for(int i = 0; i < alternative_genes;++i){
+        int r = this->score[i].second;
+        seg[key + "alt"].push_back(json::object({{"name",rep->label(r)}}));
+    }
+  }
 }
 
 
