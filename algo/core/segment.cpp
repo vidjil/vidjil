@@ -1050,9 +1050,9 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,
 
   /* Regular 53 Segmentation */
   if(kmer_threshold != NO_LIMIT_VALUE){
-	  FilterWithACAutomaton* f = germline->getFilter_5();
-    BioReader filtered = f->filterBioReaderWithACAutomaton(sequence_or_rc, kmer_threshold);
-	  align_against_collection(sequence_or_rc, filtered, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
+    FilterWithACAutomaton* f = germline->getFilter_5();
+    this->filtered_rep_5 = f->filterBioReaderWithACAutomaton(sequence_or_rc, kmer_threshold);
+    align_against_collection(sequence_or_rc, this->filtered_rep_5, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
                                    box_V, segment_cost, false, standardised_threshold_evalue);
   }else{
     align_against_collection(sequence_or_rc, germline->rep_5, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,

@@ -356,6 +356,7 @@ class KmerMultiSegmenter
 class FineSegmenter : public Segmenter
 {
  private:
+  BioReader filtered_rep_5;
   int alternative_genes;
  public:
    vector<pair<int, int> > score_V;
