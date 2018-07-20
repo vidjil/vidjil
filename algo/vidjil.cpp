@@ -478,7 +478,7 @@ int main (int argc, char **argv)
     -> group(group);
 
   int alternative_genes = 0;
-  app.add_option("-R", alternative_genes, "export the N best genes into .vidjil file", true)
+  app.add_option("--alternative-genes", alternative_genes, "number of alternative V(D)J genes to show beyond the most similar one", true)
     -> group(group) -> level();
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Additional clustering (third pass, experimental)" ;
