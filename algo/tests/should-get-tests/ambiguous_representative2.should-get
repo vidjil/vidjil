@@ -6,7 +6,7 @@ $ Three clones should be found
 # All clones should have a representative on 100%  of the length
 # Each regex should appear twice as it also appears in the similarity matrix.
 
-$ Representative length of clone 1
+$ Representative length of clone 1 (cf. #1541)
 f2:clone1.*100% of
 
 $ Representative length of clone 2

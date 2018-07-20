@@ -1,3 +1,4 @@
+# See #3003
 
 # We launch three times a sequence of interest (buggy-D.fa) with a various
 # number of distinct reads (mutations randomly inserted in the middle).
