@@ -53,4 +53,7 @@ class TestPreProcess < BrowserTest
     assert(lines.count == 1)
   end
 
+  def test_zz_close
+    close_everything
+  end
 end
