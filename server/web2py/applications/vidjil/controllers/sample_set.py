@@ -654,7 +654,8 @@ def custom():
                 group_ids=group_ids)
 
 def getStatHeaders():
-    return [('set_id', 'db'), ('set_name', 'db'), ('set_info', 'db'), ('main_clone', 'parser'), ('reads', 'parser'), ('mapped', 'parser')]
+    m = StatDecorator()
+    return [('set_id', 'db', m), ('set_name', 'db', m), ('set_info', 'db', m), ('main_clone', 'parser', m), ('reads', 'parser', m), ('mapped', 'parser', m)]
 
 def getResultsFileStats(file_name, dest):
     file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
@@ -724,9 +725,9 @@ def getStatData(results_file_ids):
         d = {}
         set_type = res.sample_type
         headers = getStatHeaders()
-        for head, htype in headers:
+        for head, htype, model in headers:
             if htype == 'db':
-                d[head] = res[head] if res[head] is not None else ""
+                d[head] = model.decorate(res[head])
         d['set_name'] = helpers[set_type].get_name(res[set_type])
         d = getFusedStats(res.fused_file, res, d)
         data.append(d)
@@ -734,7 +735,7 @@ def getStatData(results_file_ids):
 
 def multi_sample_stats():
     data = {}
-    data['headers'] = [h for h, t in getStatHeaders()]
+    data['headers'] = [h for h, t, m in getStatHeaders()]
     results = []
     custom_result = request.vars['custom_result']
     if not isinstance(custom_result, list):
