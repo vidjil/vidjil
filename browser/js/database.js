@@ -229,7 +229,6 @@ Database.prototype = {
         catch(err)
         {}
         
-        var self = this;
         var url = self.db_address + page
         if (page.substr(0,4).toLowerCase() == "http") {
             url = page
