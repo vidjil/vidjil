@@ -13,12 +13,14 @@ class TestPreProcess < BrowserTest
       login_form.text_field(:id => "auth_user_email").set('plop@plop.com')
       login_form.text_field(:id => "auth_user_password").set('foobartest')
       login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
+      Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
     end
   end
 
   def go_to_list
     #$b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     $b.a(:class => "button", :text => "pre-process").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
     table.wait_until_present
     table
