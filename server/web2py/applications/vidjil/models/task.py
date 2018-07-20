@@ -152,7 +152,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
     from datetime import timedelta as timed
     
     ## re schedule if pre_process is still pending
-    if db.sequence_file[id_file].pre_process_flag != "COMPLETED" and db.sequence_file[id_file].pre_process_flag:
+    if db.sequence_file[id_file].pre_process_flag not in ["COMPLETED", "DONE"] and db.sequence_file[id_file].pre_process_flag:
         
         print("Pre-process is still pending, re-schedule")
     
