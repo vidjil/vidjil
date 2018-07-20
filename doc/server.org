@@ -487,6 +487,13 @@ These instructions are preliminary, other documentation can also be found in [[h
    #+BEGIN_SRC sh
    initctl restart web2py-scheduler
    #+END_SRC
+** Debugging Web2py workers
+   One can launch the workers by hand (see in the =/etc/init= script and add a
+   =-D 0= option. It prints debugging information on what the workers are doing.
+
+   The most useful information are from the TICKER worker: the one that
+   assigns jobs to workers. So you'd better first kill all the workers and
+   then launch one by hand to be sure that it will be the ticker.
 
 ** Restarting web2py
    Just touch the file =/etc/uwsgi/web2py.ini=.
@@ -502,7 +509,6 @@ These instructions are preliminary, other documentation can also be found in [[h
    #+BEGIN_SRC sh
    initctl restart uwsgi-emperor
    #+END_SRC
-
 ** Logging database queries
 *** MySQL
     One can see some [[https://stackoverflow.com/questions/650238/how-to-show-the-last-queries-executed-on-mysql][insightful SO post]].
