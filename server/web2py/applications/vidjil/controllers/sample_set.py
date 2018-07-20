@@ -736,11 +736,28 @@ def multi_sample_stats():
     data = {}
     data['headers'] = [h for h, t in getStatHeaders()]
     results = []
-    #if not auth.can_view_sample_set():
-    #    return "permission denied %s" % res
     custom_result = request.vars['custom_result']
     if not isinstance(custom_result, list):
         custom_result = [custom_result]
+
+    custom_result = [long(i) for i in custom_result]
+
+    permitted_results = db(
+        (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)) &
+        (db.sample_set.id == db.sample_set_membership.sample_set_id) &
+        (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id) &
+        (db.results_file.id.belongs(custom_result))
+    ).select(
+            db.results_file.id.with_alias('results_file_id')
+        )
+
+    permitted_results_ids = [r.results_file_id for r in permitted_results]
+    log.debug("premitted: " + str(permitted_results_ids))
+    log.debug("custom: " + str(custom_result))
+    if set(permitted_results_ids) != set(custom_result):
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     results = getStatData(custom_result)
     data['results'] = results
