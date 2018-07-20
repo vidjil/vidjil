@@ -91,6 +91,7 @@ const char* const segmented_mesg[] = { "?",
 class AlignBox
 {
  public:
+  BioReader *rep;
   string key;
   string color;
 
@@ -101,7 +102,7 @@ class AlignBox
 
   AlignBox(string key = "", string color="");
   string getSequence(string sequence);
-  void addToJson(json &seg);
+  void addToJson(json &seg, int alternative_genes=NO_LIMIT_VALUE);
 
   /**
    * Returns 'V', 'D', 'J', or possibly '5', '4', '3', '?', depending on the ref_label and on the key
@@ -355,6 +356,9 @@ class KmerMultiSegmenter
 
 class FineSegmenter : public Segmenter
 {
+ private:
+  BioReader filtered_rep_5;
+  int alternative_genes;
  public:
    vector<pair<int, int> > score_V;
    vector<pair<int, int> > score_D;
@@ -375,7 +379,7 @@ class FineSegmenter : public Segmenter
    */
    FineSegmenter(Sequence seq, Germline *germline, Cost segment_cost,
                  double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0,
-                int kmer_threshold=NO_LIMIT_VALUE);
+                int kmer_threshold=NO_LIMIT_VALUE, int alternative_genes=NO_LIMIT_VALUE);
 
    ~FineSegmenter();
 

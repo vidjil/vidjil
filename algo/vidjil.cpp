@@ -477,7 +477,9 @@ int main (int argc, char **argv)
   app.add_flag("-3,--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)")
     -> group(group);
 
-
+  int alternative_genes = 0;
+  app.add_option("--alternative-genes", alternative_genes, "number of alternative V(D)J genes to show beyond the most similar one", true)
+    -> group(group) -> level();
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Additional clustering (third pass, experimental)" ;
 
@@ -1366,7 +1368,7 @@ int main (int argc, char **argv)
         // FineSegmenter
         size_t nb_fine_segmented = (size_t) max_clones; // When -1, it will become the max value.
         nb_fine_segmented = MIN(nb_fine_segmented, sort_clones.size());
-        FineSegmenter seg(representative, segmented_germline, segment_cost, expected_value, nb_fine_segmented, kmer_threshold);
+        FineSegmenter seg(representative, segmented_germline, segment_cost, expected_value, nb_fine_segmented, kmer_threshold, alternative_genes);
 
         if (segmented_germline->seg_method == SEG_METHOD_543)
 	  seg.FineSegmentD(segmented_germline, several_D, expected_value_D, nb_fine_segmented);
@@ -1587,7 +1589,7 @@ int main (int argc, char **argv)
         KmerSegmenter *seg = kmseg.the_kseg ;
         Germline *germline = seg->segmented_germline ;
 
-        FineSegmenter s(seq, germline, segment_cost, expected_value, nb_reads_for_evalue, kmer_threshold);
+        FineSegmenter s(seq, germline, segment_cost, expected_value, nb_reads_for_evalue, kmer_threshold, alternative_genes);
 
         json json_clone;
         json_clone["id"] = seq.label;

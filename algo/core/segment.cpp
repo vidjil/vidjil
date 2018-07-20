@@ -70,7 +70,7 @@ string AlignBox::getSequence(string sequence) {
   return sequence.substr(start, end-start+1);
 }
 
-void AlignBox::addToJson(json &seg) {
+void AlignBox::addToJson(json &seg, int alternative_genes) {
 
   json j;
 
@@ -89,6 +89,14 @@ void AlignBox::addToJson(json &seg) {
     }
 
   seg[key] = j ;
+  /*Export the N best genes if threshold parameter is specified*/
+  if(rep && !this->score.empty() && rep->size() <= (int)this->score.size() && alternative_genes > 0 && alternative_genes <= (int)this->score.size()){
+    seg[key + "alt"] = json::array();
+    for(int i = 0; i < alternative_genes;++i){
+        int r = this->score[i].second;
+        seg[key + "alt"].push_back(json::object({{"name",rep->label(r)}}));
+    }
+  }
 }
 
 
@@ -926,7 +934,7 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
   box->del_right = reverse_both ? best_best_j : box->ref.size() - best_best_j - 1;
   box->del_left = best_first_j;
   box->start = best_first_i;
-  
+  box->rep = &rep; 
   box->score = score_r;
 
 #ifdef DEBUG_SEGMENT	
@@ -947,12 +955,13 @@ string format_del(int deletions)
   return deletions ? *"(" + string_of_int(deletions) + " del)" : "" ;
 }
 
-FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  double threshold, double multiplier, int kmer_threshold)
+FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
+                double threshold, double multiplier, int kmer_threshold, int alternative_genes)
 {
   box_V = new AlignBox("5");
   box_D = new AlignBox("4");
   box_J = new AlignBox("3");
-
+  this->alternative_genes = alternative_genes;
   segmented = false;
   dSegmented = false;
   because = NOT_PROCESSED ;
@@ -1049,9 +1058,9 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
   /* Regular 53 Segmentation */
   if(kmer_threshold != NO_LIMIT_VALUE){
-	  FilterWithACAutomaton* f = germline->getFilter_5();
-    BioReader filtered = f->filterBioReaderWithACAutomaton(sequence_or_rc, kmer_threshold);
-	  align_against_collection(sequence_or_rc, filtered, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
+    FilterWithACAutomaton* f = germline->getFilter_5();
+    this->filtered_rep_5 = f->filterBioReaderWithACAutomaton(sequence_or_rc, kmer_threshold);
+    align_against_collection(sequence_or_rc, this->filtered_rep_5, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
                                    box_V, segment_cost, false, standardised_threshold_evalue);
   }else{
     align_against_collection(sequence_or_rc, germline->rep_5, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
@@ -1333,7 +1342,7 @@ json FineSegmenter::toJson(){
 
   for (AlignBox *box: boxes)
     {
-      box->addToJson(seg);
+      box->addToJson(seg, this->alternative_genes);
     }
 
   if (isSegmented()) {
