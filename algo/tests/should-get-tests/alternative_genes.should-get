@@ -1,5 +1,5 @@
 !REQUIRES: python $VIDJIL_DIR/tools/check_python_version.py
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -R 3 -c segment -x 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta > /dev/null ; cat out/Stanford_S22.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS --alternative-genes 3 -c segment -x 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta > /dev/null ; cat out/Stanford_S22.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
 
 $ Presence of alternative:
 1: "3alt"
@@ -15,5 +15,5 @@ $ Presence of alternative:
 1: "name": "IGHV3-48.02"
 1: "name": "IGHV3-48.04"
 
-$ The correct number of "name" field
+$ Correct number of "name" fields (1 clone + 3*1 'best' genes + 3*3 'alternative' genes)
 w13:"name"
