@@ -139,7 +139,31 @@ def store_data_if_updownstream(fasta_header, path, data, genes):
             data[path+'/'+gene].append((gene_name, gene_coord))
             paths.append(path+'/'+gene)
     return paths
-    
+
+def ignore_strand(start, end):
+    if start < end:
+        return (start, end)
+    return (end, start)
+
+def compute_updownstream_length(genes, default_length):
+    positions = [ ignore_strand(info[1]['target_start'], info[1]['target_end']) for info in genes if 'target_start' in info[1]]
+    positions = list(set(positions))
+    positions.sort()
+    i = 0
+    min_length = default_length
+    sign = - 1 if min_length < 0 else 1
+    while i < len(positions) - 1:
+        last = positions[i][1]
+        first_next = positions[i+1][0]
+        diff = first_next - last - 1
+        if diff < abs(min_length):
+            min_length = diff * sign
+        i += 1
+        # Should we divide by 2 the length so that we don't have overlaps
+        # between up and downstream?
+    return min_length
+
+
 def retrieve_genes(f, genes, tag, additional_length, gene_list):
     for info in genes:
         (gene, coord) = info
@@ -151,17 +175,26 @@ def retrieve_genes(f, genes, tag, additional_length, gene_list):
         if gene_id:
             try:
                 (target, start, end) = ncbi.get_gene_positions(gene_id)
+                coord['target'] = target
+                coord['target_start'] = start
+                coord['target_end'] = end
+                coord['gene_id'] = gene_id
             except KeyError:
                 print('! No positions for %s (%s: %s)' % (gene_id, gene, str(coord)))
-                allele_additional_length = additional_length
-                gene_id = None
+
+    min_updownstream = compute_updownstream_length(genes, additional_length)
 
         # gene: is the name of the sequence where the VDJ gene was identified according to IMGT. The gene is just a part of the sequence
         # gene_id: is the NCBI ID of the VDJ gene
         # target: is the NCBI ID of the chromosome
 
+    for info in genes:
+        (gene, coord) = info
+
+        gene_id = coord['gene_id'] if 'gene_id' in coord else None
+
         if GENES_SEQ_FROM_NCBI:
-            gene_data = ncbi.get_gene_sequence(gene, coord['imgt_data'] + tag, coord['from'], coord['to'], allele_additional_length)
+            gene_data = ncbi.get_gene_sequence(gene, coord['imgt_data'] + tag, coord['from'], coord['to'], min_updownstream)
         else:
             # IMGT
             gene_data = coord['seq']
@@ -169,9 +202,10 @@ def retrieve_genes(f, genes, tag, additional_length, gene_list):
         if gene_id:
             # Check consistency for *01 allele
             if coord['imgt_name'].endswith('*01'):
-                check_imgt_ncbi_consistency(coord, gene_data, target, start, end)
-
-            up_down = ncbi.get_updownstream_sequences(target, start, end, additional_length)
+                check_imgt_ncbi_consistency(coord, gene_data, coord['target'], coord['target_start'],
+                                            coord['target_end'])
+            up_down = ncbi.get_updownstream_sequences(coord['target'], coord['target_start'],
+                                                      coord['target_end'], min_updownstream)
             # We put the up and downstream data before and after the sequence we retrieved previously
             gene_data = paste_updown_on_fasta(gene_data, up_down[0], up_down[1])
 
