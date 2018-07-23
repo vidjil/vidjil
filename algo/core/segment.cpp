@@ -614,6 +614,9 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
 
   // E-value multiplier
   double multiplier = multi_germline->germlines.size() * nb_reads_for_evalue;
+#ifdef DEBUG_KMS_EVALUE
+  cerr << "multiplier: germline_size=" << multi_germline->germlines.size() <<", nb_reads_for_evalue=" << nb_reads_for_evalue << endl;
+#endif
   
   // Iterate over the germlines
   for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
@@ -690,6 +693,10 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   evalue_left = pvalues.first * multiplier ;
   evalue_right = pvalues.second * multiplier ;
   evalue = evalue_left + evalue_right ;
+#ifdef DEBUG_KMS_EVALUE
+  cerr << "\tmultiplier=" << multiplier << ",\tevalues=[" << evalue_left << ", " << evalue_right << "],\t"
+       << "evalue=" << evalue << endl;
+#endif
 
   // This can lead to UNSEG_TOO_FEW_ZERO or UNSEG_ONLY_V/J
   checkLeftRightEvaluesThreshold(threshold, strand);

@@ -381,6 +381,10 @@ double IKmerStore<T>::getProbabilityAtLeastOrAbove(const T kmer, int at_least, i
     probability_not_having_system /= (1 - index_load);
   }
 
+#ifdef DEBUG_KMS_EVALUE
+  cerr << "e-value:\tindex_load=" << index_load << ",\tat_least=" << at_least << ",\tlength=" << length <<",\tp-value=" << proba << endl;
+#endif
+
   return proba;
 }
 
