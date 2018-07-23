@@ -271,8 +271,8 @@ def gap_j(seq):
     return (MAX_GAP_J - pos) * '.' + seq
 
 
-LENGTH_UPSTREAM=40
-LENGTH_DOWNSTREAM=40
+LENGTH_UPSTREAM=200
+LENGTH_DOWNSTREAM=200
 # Create isolated files for some sequences
 SPECIAL_SEQUENCES = [
 ]
