@@ -2139,33 +2139,26 @@ changeAlleleNotation: function(alleleNotation) {
             }
             //V D J
 
-            var listGene = []
+            var listGene = [];
+            var gene_germline = [];
             for (var j=0; j<list.length; j++){
-                var geneV = this.clone(list[j]).getGene(5)
-                var geneD = this.clone(list[j]).getGene(4)
-                var geneJ = this.clone(list[j]).getGene(3)
+                // gene_way: 5, 4, 3
+                for (var gene_way = 5; gene_way >= 3; gene_way--) {
+                    var gene = this.clone(list[j]).getGene(gene_way);
 
-                if ((geneV !== undefined) && listGene.indexOf(geneV) == -1)
-                    listGene.push(geneV)
-                if ((geneD !== undefined) && listGene.indexOf(geneD) == -1)
-                    listGene.push(geneD)
-                if ((geneJ !== undefined) && listGene.indexOf(geneJ) == -1)
-                    listGene.push(geneJ)     
+                    if ((gene !== undefined) && listGene.indexOf(gene) == -1) {
+                        listGene.push(gene);
+                        gene_germline.push(this.clones[list[j]].germline);
+                    }
+                }
             }
 
             for (var k=0; k<listGene.length; k++){
-                if (listGene[k].charAt(0) == 'K'){
-                    germName = "IGK-KDE"
-                }
-                else{
-                    if (listGene[k].charAt(1) == 'n')
-                        germName = "IGK-INTRON" 
-                    else
-                        germName = listGene[k].slice(0, 4);
-                }
-                if (typeof germline[germName][listGene[k]] != 'undefined') {
+                var germName = gene_germline[k].substring(0, 3);
+
+                if (typeof this.germline[germName][listGene[k]] != 'undefined') {
                     fasta += ">" + listGene[k] + '\n';
-                    fasta += germline[germName][listGene[k]].toUpperCase() + '\n'
+                    fasta += this.germline[germName][listGene[k]].toUpperCase() + '\n';
                 }
             }
 
