@@ -2158,7 +2158,7 @@ changeAlleleNotation: function(alleleNotation) {
 
                 if (typeof this.germline[germName][listGene[k]] != 'undefined') {
                     fasta += ">" + listGene[k] + '\n';
-                    fasta += this.germline[germName][listGene[k]].toUpperCase() + '\n';
+                    fasta += this.germline[germName][listGene[k]].toUpperCase().replace(/\./g, '') + '\n';
                 }
             }
 
