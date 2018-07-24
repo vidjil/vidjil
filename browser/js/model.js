@@ -516,6 +516,21 @@ changeAlleleNotation: function(alleleNotation) {
             command = this.samples.commandline[time]
         return command;
     },
+
+    getDiversity: function(key, time) {
+	time = typeof time !== 'undefined' ? time : this.t
+	if (typeof this.diversity != 'undefined' &&
+	    typeof this.diversity[key] != 'undefined') {
+
+	    // Diversity may not be stored in an Array for retrocompatiblitiy reasons
+	    // See #1941 and #3416
+	    if (typeof this.diversity[key][time] != 'undefined') {
+		return this.diversity[key][time].toFixed(3);
+	    } else {
+		return this.diversity[key].toFixed(3);
+	    }
+	}
+    },
     
     /**
      * return date of software run given a time/sample index <br>
@@ -1235,7 +1250,7 @@ changeAlleleNotation: function(alleleNotation) {
         if ( typeof this.diversity != 'undefined') {
             html += "<tr><td class='header' colspan='2'> diversity </td></tr>"
             for (var key in this.diversity) {
-                html += "<tr><td> " + key.replace('index_', '') + "</td><td>" + this.diversity[key].toFixed(3) + '</td></tr>'
+                html += "<tr><td> " + key.replace('index_', '') + "</td><td>" + this.getDiversity(key, timeID) + '</td></tr>'
             }
         }
 
