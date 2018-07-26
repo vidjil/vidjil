@@ -148,4 +148,21 @@ QUnit.test("axis", function(assert) {
                 return clone.getName();
             })
     assert.equal(axis.pos(m.clone(0)).pos.toPrecision(3), 0.0625, "generic (name : clone 0 ")
+
+    // undefined values
+    axis = new NumericalAxis(m);
+    axis.init(m.clones,
+              function(clone) {
+                  return undefined;
+              }, "V", true, 0);
+    assert.equal(axis.labels.length, 2, "Just two labels: 0, undefined");
+
+    // undefined values
+    axis = new NumericalAxis(m);
+    axis.init(m.clones,
+              function(clone) {
+                  return 'undefined';
+              });
+    assert.equal(axis.labels[0].pos, 1, "Just two labels: undefined, 0");
+    assert.equal(axis.labels[1].pos, 0, "Just two labels: undefined, 0");
 });
