@@ -184,6 +184,7 @@ def write_fuse_to_fasta(data, outfile, used_names, current_filename, options, me
     used so far as well as their number of occurrences (prevents
     having sequences with the same name)
     '''
+    clones_percentage = {}
 
     if options.top < MAX_TOP:
         data.filter(data.getTop(options.top))
@@ -207,6 +208,17 @@ def write_fuse_to_fasta(data, outfile, used_names, current_filename, options, me
             else:
                 name += clone.d['name'].replace(' ', spacer)
             additional_header_info = []
+
+            #Percentage
+            #take the max reads number of the samples (in case of multiple
+            #samples)
+            max_sample = max(clone.d['reads'])
+            #take the index corresponding to the max_sample
+            index_max_sample = clone.d['reads'].index(max_sample)
+            germline = clone.d['germline']
+            reads_total_nb = data.d['reads'].d['germline'][germline][index_max_sample]
+            percentage = float(max_sample)/reads_total_nb
+
             if name in used_names:
                 used_names[name] += 1
                 additional_header_info.append(str(used_names[name]))
@@ -220,6 +232,8 @@ def write_fuse_to_fasta(data, outfile, used_names, current_filename, options, me
             else:
                 sample_name = current_filename
             additional_header_info.append('sample_name=%s' % sample_name)
+
+            additional_header_info.append('percentage=%s'%percentage)
 
             if len(metadata) > 0:
                 additional_header_info.append(metadata.replace(' ', spacer))
