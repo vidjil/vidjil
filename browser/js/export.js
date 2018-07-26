@@ -740,7 +740,20 @@ Report.prototype = {
         } else {
             $('<span/>', {'text': 'segment fail'}).appendTo(sequence);
         }
-        
+
+        //CloneDB results
+        if (typeof this.m.clones[cloneID].seg.clonedb != 'undefined'){
+          var clonedbContent = $('<div/>', {'class': 'cloneDB'}).appendTo(clone);
+          var table = $('<table/>', {'class': 'info-table'}).appendTo(clonedbContent);
+          var result = this.m.clones[cloneID].seg.clonedb.clones_names;
+          var j = 0;
+          for (var c in result){
+            var row = $('<tr/>').appendTo(table);
+            $('<td/>', {'class': 'label', 'text': result[j]}).appendTo(row);
+            $('<td/>', {'text': result[c][0] +' clone'+((result[c][0] === 1) ? '' : 's') + ' (' + this.m.formatSize(result[c][1],true,this.m.getSizeThresholdQ(this.m.t)) + ')'}).appendTo(row);
+            j++;
+          }
+        }
         return clone
     },
 

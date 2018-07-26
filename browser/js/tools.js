@@ -130,9 +130,10 @@ function prepend_path_if_not_web(file, path) {
  * An additional key (termed 'original') corresponds to the original
  * results as returned by CloneDB.
  */
-function processCloneDBContents(results) {
+function processCloneDBContents(results,model) {
     var existing_urls = {};
     var final_results = {};
+    var clones_results = {};
     var count_non_viewable = 0;
     for (var clone in results) {
         if (typeof results[clone].tags != 'undefined' &&
@@ -150,13 +151,17 @@ function processCloneDBContents(results) {
                         config_name = config_name[0];
                     else
                         config_name = 'unknown';
-		    url = '?sample_set_id='+results[clone].tags.sample_set[i]+'&config='+results[clone].tags.config_id[0];
+		    var url = '?sample_set_id='+results[clone].tags.sample_set[i]+'&config='+results[clone].tags.config_id[0];
 		    var msg = '<a href="'+url+'">'+name+'</a> ('+config_name+')';
 		    if (! (url in existing_urls)) {
+                       clones_results[name] = [results[clone].occ,parseFloat(results[clone].tags.percentage[0])];
 			existing_urls[url] = true;
-			final_results[msg] = results[clone].occ;
+			final_results[msg] = [results[clone].occ,parseFloat(results[clone].tags.percentage[0])];
 		    } else{
-			final_results[msg] += results[clone].occ;
+			final_results[msg][0] += results[clone].occ;
+                       clones_results[name][0] += results[clone].occ;
+                       final_results[msg][1] += parseFloat(results[clone].tags.percentage[0]);
+                       clones_results[name][1] += parseFloat(results[clone].tags.percentage[0]);
 		    }
 
                 } else {
@@ -168,7 +173,7 @@ function processCloneDBContents(results) {
         }
     }
     for (var fr in final_results) {
-	final_results[fr] = final_results[fr]+' clone'+((final_results[fr] === 1) ? '' : 's');
+	final_results[fr] = final_results[fr][0]+' clone'+((final_results[fr][0] === 1) ? '' : 's') + ' (' + model.formatSize(final_results[fr][1],true,model.getSizeThresholdQ(model.t)) + ')';
     }
     if (count_non_viewable > 0)
         final_results['Non viewable samples'] = count_non_viewable;
@@ -177,6 +182,7 @@ function processCloneDBContents(results) {
         final_results['–'] = "No occurrence of this clone in CloneDB"
 
     final_results.original = results;
+    final_results.clones_names = clones_results;
     return final_results;
 }
 

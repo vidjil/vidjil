@@ -62,7 +62,11 @@ QUnit.test("prepend_path_if_not_web", function(assert) {
 
 QUnit.test("processCloneDBContents", function(assert) {
     var emptyResult = [];
-    assert.deepEqual(processCloneDBContents(emptyResult), {'original': [],
+    var m = new Model();
+    m.parseJsonData(json_data, 100);
+
+    assert.deepEqual(processCloneDBContents(emptyResult, m), {'original': [],
+                                                           'clones_names': {},
                                                            '–': 'No occurrence of this clone in CloneDB'},
                      "processing empty result");
     
@@ -71,13 +75,19 @@ QUnit.test("processCloneDBContents", function(assert) {
                                   'sample_set': ["15", "152"],
                                   'config_id': ['1024'],
                                   'config_name': ['config'],
-                                  'sample_name': ['toto']},
+                                  'sample_name': ['toto'],
+                                  'percentage' : [.1242]
+                                 },
                          'occ': 3,
                          'V' : 'IGHV1*02',
                          'J' : 'IGHJ3*01'}];
-    assert.deepEqual(processCloneDBContents(singleResult),
-                     {'<a href="?sample_set_id=15&config=1024">patient</a> (config)': "3 clones",
-                      '<a href="?sample_set_id=152&config=1024">152</a> (config)': "3 clones",
+    assert.deepEqual(processCloneDBContents(singleResult, m),
+                     {'<a href="?sample_set_id=15&config=1024">patient</a> (config)': "3 clones (12.42%)",
+                      '<a href="?sample_set_id=152&config=1024">152</a> (config)': "3 clones (12.42%)",
+                      'clones_names': {
+                          '152' : [3, .1242],
+                          'patient' : [3, .1242]
+                      },
                       'original': singleResult}, "processing one result");
 
     var multipleResults = [{'tags': {'sample_set_viewable': [true, true],
@@ -85,6 +95,7 @@ QUnit.test("processCloneDBContents", function(assert) {
                                   'sample_set': ["15", "152"],
                                   'config_id': ['1024'],
                                   'config_name': ['config'],
+                                  'percentage': [.15],
                                   'sample_name': ['toto']},
                          'occ': 3,
                          'V' : 'IGHV1*02',
@@ -95,6 +106,7 @@ QUnit.test("processCloneDBContents", function(assert) {
                                   'sample_set': ["152"],
                                   'config_id': ['1024'],
                                   'config_name': ['config'],
+                                  'percentage': [.1],
                                   'sample_name': ['toto']},
                          'occ': 2,
                          'V' : 'IGHV1*01',
@@ -105,19 +117,20 @@ QUnit.test("processCloneDBContents", function(assert) {
                                   'sample_set': ["666"],
                                   'config_id': ['10'],
                                   'config_name': ['[old] config'],
+                                  'percentage': [.05],
                                   'sample_name': ['toto']},
                          'occ': 100,
                          'V' : 'IGHV1*02',
                         'J' : 'IGHJ3*01'}];
-    var results = processCloneDBContents(multipleResults);
-    assert.equal(results['<a href="?sample_set_id=152&config=1024">152</a> (config)'], '5 clones', "multiple results");
-    assert.equal(results['<a href="?sample_set_id=15&config=1024">patient</a> (config)'], '3 clones', "multiple results, one entry");
+    var results = processCloneDBContents(multipleResults, m);
+    assert.equal(results['<a href="?sample_set_id=152&config=1024">152</a> (config)'], '5 clones (25.00%)', "multiple results");
+    assert.equal(results['<a href="?sample_set_id=15&config=1024">patient</a> (config)'], '3 clones (15.00%)', "multiple results, one entry");
     assert.equal(results['Non viewable samples'], 1, "One non viewable sample");
     var count = 0;
     for (var item in results) {
         count += 1;
     }
-    assert.equal(count, 4, "Two results plus one non-viewable plus original entry");
+    assert.equal(count, 5, "Two results plus one non-viewable plus original entry plus clone names");
 
     // Test missing viewable property
     var missingViewable = [{'tags': {'sample_set_name': ['patient', null],
@@ -128,7 +141,11 @@ QUnit.test("processCloneDBContents", function(assert) {
                          'occ': 3,
                          'V' : 'IGHV1*02',
                          'J' : 'IGHJ3*01'}];
-    assert.deepEqual(processCloneDBContents(missingViewable), {'Non viewable samples': 1, 'original': missingViewable},
+    assert.deepEqual(processCloneDBContents(missingViewable, m),
+                     {'Non viewable samples': 1,
+                      'original': missingViewable,
+                      'clones_names' : {}   // Empty as the sample can't be viewed
+                     },
                      "processing missingViewable");
 
 });

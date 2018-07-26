@@ -1480,11 +1480,26 @@ Clone.prototype = {
             time = this.m.getTime(time)
             return field[time]
         }
+    },
+
+    /**
+    * Get the number of occurrences of the clone in cloneDB
+    * @return {int} res - the number of occurrences, undefined if cloneDB wasn't called
+    */
+    numberInCloneDB: function () {
+      var res = 0;
+      var clonedb = this.seg.clonedb;
+      if (typeof clonedb == 'undefined'){
+        return undefined;
+      }else{
+        for (var c in clonedb.clones_names){
+          res += clonedb.clones_names[c][0];
+        }
+        return res;
+      }
     }
-    
+
 };
-
-
 
 
 

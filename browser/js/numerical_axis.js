@@ -104,7 +104,9 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
             min = 0;
             max = 1;
         }
-        else {
+        else if (typeof max === 'undefined') {
+            max = min + 1;
+        } else {
             min = nice_floor(min)
             max = nice_ceil(max)
         }
@@ -198,7 +200,7 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
             undefined_min = min
             // Recover the initial min value
 
-            nb_step = this.computeSteps(min, max, nb_steps);
+            nb_steps = this.computeSteps(min, max, nb_steps);
  
             if (has_undefined) {
                 nb_steps = nb_steps -1 
@@ -227,7 +229,7 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
     }
 
     NumericalAxis.prototype.computeSteps = function(min, max, nb_steps) {
-        var steps = nb_steps+1;
+        var steps = nb_steps;
         if (Math.abs(max - min) < nb_steps) {
             steps = Math.abs(max - min)
         }
