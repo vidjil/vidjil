@@ -25,10 +25,10 @@ def create_clone_db_for_sequences(sequences, output_file):
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
-        print >> sys.stderr, "Usage: %s <output file> <id>+\n\n\
+        print("Usage: %s <output file> <id>+\n\n\
         Create a FASTA file to be used for a clonotype database.\n\
         The results are retrieved from the results for all the sequences accessible to the provided groups\n\n\
-        \t<id>: group id for whom we want to get the sequence files" % sys.argv[0]
+        \t<id>: group id for whom we want to get the sequence files" % sys.argv[0])
         exit(1)
     output_file = sys.argv[1]
     group_ids = [int(group_id) for group_id in sys.argv[2:]]
