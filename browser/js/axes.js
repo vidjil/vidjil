@@ -269,6 +269,13 @@ Axes.prototype = {
                 axis: new NumericalAxis(this.m),
                 fct: function(clone) {return clone.getDeletion('3', 'delLeft')}
             },
+            "occCloneDB": {
+                doc: "number of occurrences in cloneDB",
+                label: "cloneDB occurrences",
+                axis: new NumericalAxis(this.m),
+                min: 0,
+                fct: function(clone) {return clone.numberInCloneDB()}
+            }
         };
     }
 }
