@@ -104,7 +104,9 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
             min = 0;
             max = 1;
         }
-        else {
+        else if (typeof max === 'undefined') {
+            max = min + 1;
+        } else {
             min = nice_floor(min)
             max = nice_ceil(max)
         }
