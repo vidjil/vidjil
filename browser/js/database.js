@@ -313,12 +313,26 @@ Database.prototype = {
             data: "sequences="+windows.join()+"&sample_set_id="+self.m.sample_set_id,
             xhrFields: {withCredentials: true},
             success: function (result) {
+		try {
+		    res = jQuery.parseJSON(result);
+		    result = res;
+		} catch (err) {}
                 self.connected = true;
-	        for (var i = 0; i < kept_clones.length; i++) {
-		    self.m.clones[kept_clones[i]].seg.clonedb = processCloneDBContents(result[i]);
-	        }
-                m.shouldRefresh()
-                m.update()
+		if (typeof result.success !== 'undefined' && result.success == 'false') {
+                    console.log({
+			"type": "flash",
+			"msg": result.message,
+			"priority": 2
+                    });
+                    self.connected = false;
+		} else { 
+	            for (var i = 0; i < kept_clones.length; i++) {
+			self.m.clones[kept_clones[i]].seg.clonedb = processCloneDBContents(result[i]);
+	            }
+                    m.shouldRefresh()
+                    m.update()
+		}
+		
             },
             error: function() {
                 self.connected = false;
