@@ -94,6 +94,17 @@ public:
    */
   void init(size_t nb_bins, size_t max_score, const VirtualReadScore *vrs, bool no_list = false);
 
+ private:
+  /**
+   * Private function used by init() that actually does the job. It actually creates the number of bins
+   * given in parameter.
+   */
+  void __init(size_t nb_bins, size_t max_score, const VirtualReadScore *vrs, bool no_list = false);
+
+  void free_objects();
+
+ public:
+
   ~BinReadStorage();
   
   void add(Sequence &s);
