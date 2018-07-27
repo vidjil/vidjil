@@ -68,6 +68,7 @@ class VirtualReadStorage {
  */
 class BinReadStorage: public VirtualReadStorage {
  private:
+  size_t max_bins;
   size_t nb_bins;
   list<Sequence> *bins;
   double *score_bins;
@@ -87,6 +88,7 @@ public:
    * nb_bins are created and the maximal score for the reads that will be added is assumed 
    * to be max_score. If higher score are met, they are put in the nb_bins+1 bin.
    * The class doesn't destruct the VirtualReadScore. It is the responsability of the caller.
+   * May not build as many as nb_bins to save memory.
    * @pre all scores must be >= 0
    * @param no_list: don't create a list (useful for storing only stats,
    *                 false by default: lists are created). If the option is set to true, the

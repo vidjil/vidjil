@@ -17,7 +17,8 @@ BinReadStorage::BinReadStorage()
    nb_inserted(0), nb_stored(0), smallest_bin_not_empty(~0),label(),inited(false) {}
 
 void BinReadStorage::init(size_t nb_bins, size_t max_score, const VirtualReadScore *vrs, bool no_list) {
-  __init(nb_bins, max_score, vrs, no_list);
+  this->max_bins = nb_bins;
+  __init(0, max_score, vrs, no_list);
 }
 
 void BinReadStorage::__init(size_t nb_bins, size_t max_score, const VirtualReadScore *vrs, bool no_list) {
