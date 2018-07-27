@@ -42,6 +42,25 @@ void BinReadStorage::__init(size_t nb_bins, size_t max_score, const VirtualReadS
   inited=true;
 }
 
+void BinReadStorage::reallocate(){
+  list<Sequence> tmpBin;
+  if (bins)
+    tmpBin = bins[0];
+
+  free_objects();
+
+  all_read_lengths = 0;
+  smallest_bin_not_empty = ~0;
+  total_nb_scores = 0;
+  nb_stored = 0;
+  inited = false;
+  __init(max_bins, max_score, scorer, tmpBin.size() == 0);
+  for(auto s : tmpBin){
+    this->add(s);
+  }
+  nb_inserted -= nb_stored;
+}
+
 BinReadStorage::~BinReadStorage() {
   free_objects();
 }

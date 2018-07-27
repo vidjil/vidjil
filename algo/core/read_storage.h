@@ -107,7 +107,13 @@ public:
 
  public:
 
+  /**
+  * If the bin is full we need, the storage needs to be reallocated to have more memory.
+  */
+  void reallocate();
+
   ~BinReadStorage();
+
   
   void add(Sequence &s);
 
