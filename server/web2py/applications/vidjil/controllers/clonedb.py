@@ -38,8 +38,12 @@ def search_clonedb(sequences, sample_set_id):
         options = clonedb.build_grep_clones_options({'sequence': sequence+' -sample_set:%d' % sample_set_id,
                                                      'index': 'clonedb_{}'.format(parent_group)})
         args = grep_clones.parser.parse_args(options)
-        log.debug(args)
-        occurrences = grep_clones.launch_search(args)
+        try:
+            occurrences = grep_clones.launch_search(args)
+        except ValueError:
+            return error_message('Are you sure your account has an enabled CloneDB?')
+        except Exception as e:
+            return error_message(e.message)
         for occ in occurrences:
             if 'tags' in occ and 'sample_set' in occ['tags']:
                 info = get_info_of_viewable_sample_set([int(sample_id) for sample_id in occ['tags']['sample_set']], int(occ['tags']['config_id'][0]))
