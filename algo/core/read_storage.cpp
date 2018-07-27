@@ -90,6 +90,9 @@ void BinReadStorage::addScore(size_t bin, float score) {
 }
 
 void BinReadStorage::add(Sequence &s) {
+  if(nb_stored == getMaxNbReadsStored() && nb_inserted == nb_stored){
+    reallocate();
+  }
   float score = scorer->getScore(s);
   size_t bin = scoreToBin(score);
   addScore(bin, score);
