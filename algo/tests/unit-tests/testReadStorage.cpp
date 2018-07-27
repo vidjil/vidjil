@@ -9,13 +9,13 @@ void testBinReadStorage() {
   
   TAP_TEST_EQUAL(reads.scoreToBin(0), 0, TEST_BRS_SCORE_TO_BIN, "");
   TAP_TEST_EQUAL(reads.scoreToBin(2), 0, TEST_BRS_SCORE_TO_BIN, "");
-  TAP_TEST_EQUAL(reads.scoreToBin(10), 2, TEST_BRS_SCORE_TO_BIN, "");
-  TAP_TEST_EQUAL(reads.scoreToBin(11), 3, TEST_BRS_SCORE_TO_BIN, "");
-  TAP_TEST_EQUAL(reads.scoreToBin(5), 1, TEST_BRS_SCORE_TO_BIN, "");
+  TAP_TEST_EQUAL(reads.scoreToBin(10), 0, TEST_BRS_SCORE_TO_BIN, "");
+  TAP_TEST_EQUAL(reads.scoreToBin(11), 0, TEST_BRS_SCORE_TO_BIN, "");
+  TAP_TEST_EQUAL(reads.scoreToBin(5), 0, TEST_BRS_SCORE_TO_BIN, "");
 
   Sequence seq1 = {"label", "l", "GAGAG", "", 0};
   reads.add(seq1);
-  TAP_TEST_EQUAL(reads.smallest_bin_not_empty, 1, TEST_BRS_SBNE, "");
+  TAP_TEST_EQUAL(reads.smallest_bin_not_empty, 0, TEST_BRS_SBNE, "");
   TAP_TEST_EQUAL(reads.getNbInserted(), 1, TEST_BRS_GET_NB_INSERTED, "");
   TAP_TEST_EQUAL(reads.getNbStored(), 1, TEST_BRS_GET_NB_STORED, "");
   TAP_TEST(reads.getScoreBySeq(seq1) == 5
@@ -27,9 +27,9 @@ void testBinReadStorage() {
   TAP_TEST_EQUAL(reads.smallest_bin_not_empty, 0, TEST_BRS_SBNE, "");
   TAP_TEST_EQUAL(reads.getNbInserted(), 2, TEST_BRS_GET_NB_INSERTED, "");
   TAP_TEST_EQUAL(reads.getNbStored(), 2, TEST_BRS_GET_NB_STORED, "");
-  TAP_TEST(reads.getScoreBySeq(seq2) == 2
-           && reads.getScoreByScore(2.) == 2
-           && reads.getScore(0) ==  2, TEST_BRS_GET_SCORE, "");
+  TAP_TEST_EQUAL(reads.getScoreBySeq(seq2), 7, TEST_BRS_GET_NB_STORED, "");
+  TAP_TEST_EQUAL(reads.getScoreByScore(2.), 7, TEST_BRS_GET_NB_STORED, "");
+  TAP_TEST_EQUAL(reads.getScore(0), 7, TEST_BRS_GET_NB_STORED, "");
 
   TAP_TEST_EQUAL(reads.getScore(), 7, TEST_BRS_GET_SCORE, "");
   TAP_TEST_EQUAL(reads.getAverageScore(), 3.5, TEST_BRS_GET_AVG_SCORE, "");
@@ -39,9 +39,9 @@ void testBinReadStorage() {
   TAP_TEST_EQUAL(reads.smallest_bin_not_empty, 0, TEST_BRS_SBNE, "");
   TAP_TEST_EQUAL(reads.getNbInserted(), 3, TEST_BRS_GET_NB_INSERTED, "");
   TAP_TEST_EQUAL(reads.getNbStored(), 3, TEST_BRS_GET_NB_STORED, "");
-  TAP_TEST(reads.getScoreBySeq(seq3) == 10
-           && reads.getScoreByScore(10.) == 10
-           && reads.getScore(2) ==  10, TEST_BRS_GET_SCORE, "");
+  TAP_TEST_EQUAL(reads.getScoreBySeq(seq3), 17, TEST_BRS_GET_NB_STORED, "");
+  TAP_TEST_EQUAL(reads.getScoreByScore(10.), 17, TEST_BRS_GET_NB_STORED, "");
+  TAP_TEST_EQUAL(reads.getScore(2), 17, TEST_BRS_GET_SCORE, "");
 
   Sequence seq4 = {"label4", "l4", "AGAGACAGTA", "", 0};
   reads.add(seq4);
