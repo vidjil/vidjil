@@ -6,6 +6,8 @@ import os
 import sys
 import imp
 
+from controller_utils import error_message
+
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -23,7 +25,7 @@ def index():
 
     if request.vars['sequences'] == None or request.vars['sequences'] == ''\
        or request.vars['sample_set_id'] == None:
-        return response.json({'error': 'Malformed request'})
+        return error_message('Malformed request')
 
     return search_clonedb(request.vars['sequences'].split(','), int(request.vars['sample_set_id']))
 
