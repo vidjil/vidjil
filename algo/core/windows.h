@@ -218,8 +218,13 @@ class WindowsStorage {
    * @max_json_output: maximal number of windows to output (<= 0: no limit)
    */ 
   ostream &printSortedWindows(ostream &os);
-  
-  json sortedWindowsToJson(map<junction, json> json_data_segment, int max_json_output);
+
+  /**
+   * @param delete_all: Delete the objects while they are inserted into the JSON. This prevents the memory
+   *                    from continously increasing (see #2120, #3387)
+   * @return a JSON object containing all the information
+   */
+  json sortedWindowsToJson(map<junction, json> json_data_segment, int max_json_output, bool delete_all=false);
   
   /**
    * Clear the seqs_by_window map.

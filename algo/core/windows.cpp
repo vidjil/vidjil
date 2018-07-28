@@ -266,12 +266,12 @@ void WindowsStorage::clearSequences(){
   seqs_by_window.clear();
 }
 
-json WindowsStorage::sortedWindowsToJson(map <junction, json> json_data_segment, int max_json_output) {
+json WindowsStorage::sortedWindowsToJson(map <junction, json> json_data_segment, int max_json_output, bool delete_all) {
   json windowsArray;
   int top = 1;
     
   for (list<pair <junction, size_t> >::const_iterator it = sort_all_windows.begin(); 
-       it != sort_all_windows.end(); ++it) 
+       it != sort_all_windows.end(); )
     {
        
       json windowsList;
@@ -295,6 +295,13 @@ json WindowsStorage::sortedWindowsToJson(map <junction, json> json_data_segment,
       
       windowsArray.push_back(windowsList);
 
+      if (delete_all) {
+        germline_by_window.erase(it->first);
+        status_by_window.erase(it->first);
+        it = sort_all_windows.erase(it);
+      } else {
+        it++;
+      }
       if (top == max_json_output + 1)
         break ;
     }
