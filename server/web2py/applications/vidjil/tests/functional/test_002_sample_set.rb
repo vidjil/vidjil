@@ -19,6 +19,7 @@ class TestSampleSet < BrowserTest
   def go_to_list
     #$b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     $b.a(:class => "button button_token patient_token", :text => "patients").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
     table.wait_until_present
     table
@@ -87,6 +88,7 @@ class TestSampleSet < BrowserTest
     info.set("#edited")
 
     form.input(:type => "submit").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => 'table')
     table.wait_until_present
     table = go_to_list
