@@ -725,11 +725,13 @@ def getStatData(results_file_ids):
         d = {}
         set_type = res.sample_type
         headers = getStatHeaders()
+        d = getFusedStats(res.fused_file, res, d)
         for head, htype, model in headers:
             if htype == 'db':
-                d[head] = model.decorate(res[head])
+                d[head] = res[head]
+            d[head] = model.decorate(d[head])
+            log.debug("%s: %s" % (head, d[head]))
         d['set_name'] = helpers[set_type].get_name(res[set_type])
-        d = getFusedStats(res.fused_file, res, d)
         data.append(d)
     return data
 
