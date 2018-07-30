@@ -1,6 +1,6 @@
 import vidjil_utils
 
-class StatDecorator():
+class StatDecorator(object):
 
     def __init__(self):
         pass
