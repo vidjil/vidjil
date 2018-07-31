@@ -138,3 +138,13 @@ def get_public_group_id(group_ids):
     if (len(public_group) > 0 and public_group[0].id not in group_ids):
         return public_group[0].id
     return -1
+
+def get_sample_set_tags(sample_id):
+    sample_set = db.sample_set[sample_id]
+    sample_type = sample_set.sample_type
+    table = db(db[sample_type].sample_set_id == sample_id).select()
+    for row in table:
+        tag_ref = db((row.id == db.tag_ref.record_id)
+                & (db.tag_ref.table_name == sample_type)
+                & (db.tag_ref.tag_id == db.tag.id)).select(db.tag.name)
+    return tag_ref
