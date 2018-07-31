@@ -51,18 +51,22 @@ def search_clonedb(sequences, sample_set_id):
                 info = get_info_of_viewable_sample_set([int(sample_id) for sample_id in occ['tags']['sample_set']], int(occ['tags']['config_id'][0]))
                 occ['tags']['sample_set_viewable'] = info['viewable']
                 occ['tags']['sample_set_name'] = info['name']
+                occ['tags']['sample_tags'] = info['sample_tags']
                 config_db = db.config[occ['tags']['config_id'][0]]
                 occ['tags']['config_name'] = [config_db.name if config_db else None]
         results.append(occurrences)
     return response.json(results)
 
 def get_info_of_viewable_sample_set(sample_sets, config):
-    info = {'viewable': [], 'name': []}
+    info = {'viewable': [], 'name': [], 'sample_tags': []}
     for sample_id in sample_sets:
         viewable = auth.can_view_sample_set(sample_id, auth.user)
         info['viewable'].append(viewable)
         if viewable:
             info['name'].append(get_sample_name(sample_id))
+            tags = get_sample_set_tags(sample_id)
+            for row in tags:
+                info['sample_tags'].append("#" + row.name)
         else:
             info['name'].append(None)
     return info
