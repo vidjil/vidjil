@@ -214,7 +214,7 @@ def get_data():
     if "run" in request.vars :
         request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
     
-    if not "sample_set_id" in request.vars :
+    if not "sample_set_id" in request.vars or request.vars['sample_set_id'] is None:
         error += "id sampleset file needed, "
     else : 
         if not auth.can_view_sample_set(request.vars["sample_set_id"]):
@@ -441,7 +441,7 @@ def get_analysis():
     if "run" in request.vars :
         request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
     
-    if not "sample_set_id" in request.vars :
+    if not "sample_set_id" in request.vars or request.vars['sample_set_id'] is None:
         error += "id sample_set file needed, "
     if not auth.can_view_sample_set(request.vars["sample_set_id"]):
         error += "you do not have permission to consult this sample_set ("+str(request.vars["sample_set_id"])+")"
