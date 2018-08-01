@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import math
 import re
 import defs
@@ -584,3 +585,106 @@ def reset_db(db):
         # lets not forget to renable foreign keys
         if mysql:
             db.executesql('SET FOREIGN_KEY_CHECKS = 1;')
+
+def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_password="1234"):
+    from gluon.main import save_password
+    from permission_enum import PermissionEnum
+    if (force) or (db(db.auth_user.id > 0).count() == 0) : 
+        if force:
+            reset_db(db)
+
+        id_first_user=""
+
+        ## création du premier user
+        id_first_user=db.auth_user.insert(
+            password = db.auth_user.password.validate(admin_password)[0],
+            email = admin_email,
+            first_name = 'System',
+            last_name = 'Administrator'
+        )
+
+        # set web2py administration interface password to the same as vidjil admin password
+        save_password(admin_password, 443)
+
+        ## création des groupes de base
+        id_admin_group=db.auth_group.insert(role='admin')
+        id_sa_group=db.auth_group.insert(role='user_1')
+        id_public_group=db.auth_group.insert(role="public")
+
+        db.auth_membership.insert(user_id=id_first_user, group_id=id_admin_group)
+        db.auth_membership.insert(user_id=id_first_user, group_id=id_sa_group)
+        db.auth_membership.insert(user_id=id_first_user, group_id=id_public_group)
+
+        ## base Vidjil configs
+
+        db.config.insert(
+            name = 'default + extract reads',
+            program = 'vidjil',
+            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -U ',
+            fuse_command = '-t 100',
+            info = 'Same as the default "multi+inc+xxx" (multi-locus, with some incomplete/unusual/unexpected recombinations), and extract analyzed reads in the "out" temporary directory.'
+        )
+        db.config.insert(
+            name = 'multi+inc+xxx',
+            program = 'vidjil',
+            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 ',
+            fuse_command = '-t 100',
+            info = 'multi-locus, with some incomplete/unusual/unexpected recombinations'
+        )
+        db.config.insert(
+            name = 'multi+inc',
+            program = 'vidjil',
+            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -w 50 ',
+            fuse_command = '-t 100',
+            info = 'multi-locus, with some incomplete/unusual recombinations'
+        )
+        db.config.insert(
+            name = 'multi',
+            program = 'vidjil',
+            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD -i -e 1 -d -w 50 ',
+            fuse_command = '-t 100',
+            info = 'multi-locus, only complete recombinations'
+        )
+        db.config.insert(
+            name = 'TRG',
+            program = 'vidjil',
+            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:TRG ',
+            fuse_command = '-t 100',
+            info = 'TRG, VgJg'
+        )
+        db.config.insert(
+            name = 'IGH',
+            program = 'vidjil',
+            command = '-c clones -w 60 -d -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH ',
+            fuse_command = '-t 100',
+            info = 'IGH, Vh(Dh)Jh'
+        )
+
+        ## permission
+        ## system admin have admin/read/create rights on all patients, groups and configs
+        auth.add_permission(id_admin_group, PermissionEnum.access.value, db.sample_set, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.access.value, db.patient, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.access.value, db.run, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.access.value, db.generic, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.access.value, db.config, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.access.value, db.pre_process, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.access.value, db.auth_group, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.admin.value, db.sample_set, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.admin.value, db.patient, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.admin.value, db.generic, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.admin.value, db.run, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.admin_group.value, db.auth_group, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.admin_config.value, db.config, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.admin_pre_process.value, db.pre_process, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.read.value, db.sample_set, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.read.value, db.patient, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.read.value, db.run, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.read.value, db.generic, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.read_group.value, db.auth_group, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.read_config.value, db.config, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.read_pre_process.value, db.pre_process, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.create.value, db.sample_set, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.create_group.value, db.auth_group, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.create_config.value, db.config, 0)
+        auth.add_permission(id_admin_group, PermissionEnum.create_pre_process.value, db.pre_process, 0)
+        auth.add_permission(id_admin_group, 'impersonate', db.auth_user, 0)
