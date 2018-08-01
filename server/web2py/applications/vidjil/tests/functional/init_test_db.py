@@ -42,8 +42,11 @@ class DBInitialiser(object):
 
     def get_set_dict(self, set_type, sample_set_id, i):
         if set_type == defs.SET_TYPE_PATIENT:
-            return dict(first_name="patient", last_name=i, info="test patient %d #test%d" % (i, i), sample_set_id=sample_set_id)
-        return dict(name="%s %d" % (set_type, i), info="test %s %d #test%d" % (set_type, i, i), sample_set_id=sample_set_id)
+            return dict(id_label="", first_name="patient", last_name=i, birth="2010-10-10", info="test patient %d #test%d" % (i, i), sample_set_id=sample_set_id)
+        d = dict(name="%s %d" % (set_type, i), info="test %s %d #test%d" % (set_type, i, i), sample_set_id=sample_set_id)
+        if set_type == defs.SET_TYPE_RUN:
+            d['id_label'] = ""
+        return d
 
     def _init_users(self):
         vidjil_utils.init_db_helper(db, auth, force=True, admin_email="plop@plop.com", admin_password="foobartest")
