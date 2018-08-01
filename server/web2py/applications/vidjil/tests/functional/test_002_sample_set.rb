@@ -27,13 +27,13 @@ class TestSampleSet < BrowserTest
 
   def test_patient_001_list
     table = go_to_list
-
-    # should be no patients
-    assert(!table.tbody.present?)
+    assert(table.tbody.present?)
   end
 
   def test_patient_002_add
     table = go_to_list
+
+    count = table.tbody.rows.count
 
     # go to form
     $b.span(:class => "button2", :text => "+ new patients").click
@@ -61,7 +61,7 @@ class TestSampleSet < BrowserTest
     # ensure patients were added
     table.wait_until_present
     lines = table.tbody.rows
-    assert(lines.count == 5)
+    assert(lines.count == count + 5)
     lines.each do |line|
       #assert(line.cell(:index => 1).text.match("first %d last %d" % [i, i]))
       assert(line.cell(:index => 2).text == "2010-10-10")
@@ -100,6 +100,7 @@ class TestSampleSet < BrowserTest
   def test_patient_004_delete
     table = go_to_list
 
+    count = table.tbody.rows.count
     # click delete button for first line in table
     table.i(:class => "icon-erase", :index => 1).click
 
@@ -109,7 +110,7 @@ class TestSampleSet < BrowserTest
 
     table.wait_until_present
     lines = table.tbody.rows
-    assert(lines.count == 4)
+    assert(lines.count == count-1)
   end
 
   def test_patient_005_search

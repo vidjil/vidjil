@@ -18,15 +18,19 @@ class TestSample < BrowserTest
   end
 
   def go_to_first_set
+    go_to_set 0
+  end
+
+  def go_to_set(index)
     # load patient list
     $b.a(:class => "button button_token patient_token", :text => "patients").click
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
     table.wait_until_present
     lines = table.tbody.rows
-    lines[0].wait_until_present
+    lines[index].wait_until_present
     # select first patient
-    lines[0].click
+    lines[index].click
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
     # check that list of samples is loaded
     table = $b.table(:id => "table")
@@ -36,6 +40,8 @@ class TestSample < BrowserTest
 
   def test_001_add
     table = go_to_first_set
+
+    count = table.tbody.rows.count
 
     add_button = $b.span(:text => "+ add samples")
     add_button.wait_until_present
@@ -74,7 +80,7 @@ class TestSample < BrowserTest
     table.wait_until_present
 
     lines = table.tbody.rows
-    assert(lines.count == $num_additional_files + 1)
+    assert(lines.count == count + $num_additional_files + 1)
   end
 
   def test_002_edit
@@ -101,7 +107,9 @@ class TestSample < BrowserTest
   end
 
   def test_003_delete
-    table = go_to_first_set
+    table = go_to_set 3
+
+    count = table.tbody.rows.count
 
     lines = table.tbody.rows
     lines[0].wait_until_present
@@ -115,16 +123,18 @@ class TestSample < BrowserTest
 
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
 
-    button = $b.button(:text => "delete sequence and results")
+    button = $b.button(:text => "delete")
     button.wait_until_present
     button.click
 
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+
     table.wait_until_present
-    assert(table.tbody.rows.count == $num_additional_files)
+    assert(table.tbody.rows.count == count-1)
   end
 
   def test_004_run
-    table = go_to_first_set
+    table = go_to_set 3
 
     $b.select_list(:id => "choose_config").select_value(2)
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}

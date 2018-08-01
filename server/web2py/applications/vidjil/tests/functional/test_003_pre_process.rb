@@ -28,12 +28,12 @@ class TestPreProcess < BrowserTest
   def test_pre_process_001_list
     table = go_to_list
 
-    # should be no pre-processes
-    assert(!table.tbody.present?)
+    assert(table.tbody.present?)
   end
 
   def test_pre_process_002_add
     table = go_to_list
+    count = table.tbody.rows.count
 
     # go to form
     $b.span(:class => "button2", :text => "+ new pre-process").click
@@ -49,7 +49,7 @@ class TestPreProcess < BrowserTest
     table = $b.table(:id => "table")
     table.wait_until_present
     lines = table.tbody.rows
-    assert(lines.count == 1)
+    assert(lines.count == count+1)
   end
 
   def test_zz_close
