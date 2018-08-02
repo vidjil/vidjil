@@ -79,7 +79,8 @@ class DBInitialiser(object):
                     info="test file %s %d" % (sample_set.sample_type, i),
                     filename="test_file.fasta",
                     size_file=1024,
-                    network=False
+                    network=False,
+                    data_file="test_sequence_file"
                 )
                 db.sample_set_membership.insert(sample_set_id=sample_set.id, sequence_file_id=sfid)
 
@@ -90,7 +91,8 @@ class DBInitialiser(object):
         for sf in sequence_files:
             membership = db(db.sample_set_membership.sequence_file_id == sf.id).select(limitby=(0,1)).first()
             stid = db.scheduler_task.insert(
-                application_name="vidjil"
+                application_name="vidjil",
+                status="COMPLETED"
             )
             db.results_file.insert(
                 sequence_file_id=sf.id,
