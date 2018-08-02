@@ -73,17 +73,19 @@ class TestSampleSet < BrowserTest
     table = go_to_list
 
     # click edit button for first line in table
-    table.i(:class => "icon-pencil-2", :index => 0).click
+    line = table.td(:text => /test patient 3/).parent
+    sample_set_id = line.td(:class => "uid").text
+    line.i(:class => "icon-pencil-2").click
     form = $b.form(:id => "object_form")
     form.wait_until_present
 
     # check form data
     info = form.text_field(:id => "patient_info_0")
-    assert(form.text_field(:id => "patient_id_label_0").value == "test_label 4")
-    assert(form.text_field(:id => "patient_first_name_0").value == "first 4")
-    assert(form.text_field(:id => "patient_last_name_0").value == "last 4")
+    assert(form.text_field(:id => "patient_id_label_0").value == "")
+    assert(form.text_field(:id => "patient_first_name_0").value == "patient")
+    assert(form.text_field(:id => "patient_last_name_0").value == "3")
     assert(form.text_field(:id => "patient_birth_0").value == "2010-10-10")
-    assert(info.value == "patient 4 #test #mytag4")
+    assert(info.value == "test patient 3 #test3")
 
     info.set("#edited")
 
@@ -92,9 +94,8 @@ class TestSampleSet < BrowserTest
     table = $b.table(:id => 'table')
     table.wait_until_present
     table = go_to_list
-    lines = table.tbody.rows
-    lines[0].wait_until_present
-    assert(lines[0].cell(:index => 3).text == "#edited")
+    line = table.td(:class => "uid", :text => sample_set_id).parent
+    assert(line.cell(:index => 3).text == "#edited")
   end
 
   def test_patient_delete
