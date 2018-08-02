@@ -124,7 +124,7 @@ class TestSample < BrowserTest
 
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
 
-    button = $b.button(:text => "delete")
+    button = $b.button(:text => "delete sequence and results")
     button.wait_until_present
     button.click
 
