@@ -10,6 +10,7 @@ class TestLogin < BrowserTest
     end
   end
 
+=begin
   def test_00_init_db
     init_button = $b.a(:text => "init database")
     assert(init_button.present?)
@@ -27,6 +28,7 @@ class TestLogin < BrowserTest
     login_form = $b.form(:id => 'login_form')
     login_form.wait_until_present
   end
+=end
 
   def test_failed_login
     login_form = $b.form(:id => 'login_form')
