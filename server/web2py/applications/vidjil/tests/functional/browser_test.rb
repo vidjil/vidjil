@@ -15,7 +15,8 @@ MiniTest.autorun
 #browser test suite
 class BrowserTest < MiniTest::Test
 
-  def initialize
+  def initialize(opt)
+    super opt
     ObjectSpace.define_finalizer(self, proc { close_everything })
   end
 
