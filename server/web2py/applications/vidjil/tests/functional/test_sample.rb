@@ -38,7 +38,7 @@ class TestSample < BrowserTest
     table
   end
 
-  def test_001_add
+  def test_add
     table = go_to_first_set
 
     count = table.tbody.rows.count
@@ -83,7 +83,7 @@ class TestSample < BrowserTest
     assert(lines.count == count + $num_additional_files + 1)
   end
 
-  def test_002_edit
+  def test_edit
     table = go_to_first_set
 
     lines = table.tbody.rows
@@ -106,7 +106,7 @@ class TestSample < BrowserTest
     assert($b.link(:text => "#edited").present?)
   end
 
-  def test_003_delete
+  def test_delete
     table = go_to_set 3
 
     count = table.tbody.rows.count
@@ -134,7 +134,7 @@ class TestSample < BrowserTest
     assert(table.tbody.rows.count == count-1)
   end
 
-  def test_004_run
+  def test_run
     table = go_to_first_set
 
     $b.select_list(:id => "choose_config").select_value(2)
@@ -150,9 +150,5 @@ class TestSample < BrowserTest
     lines = table.tbody.rows
     lines[0].wait_until_present
     assert(lines[0].td(:text => "QUEUED").present?)
-  end
-
-  def test_zz_close
-    close_everything
   end
 end

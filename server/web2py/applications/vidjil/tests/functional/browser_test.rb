@@ -15,8 +15,12 @@ MiniTest.autorun
 #browser test suite
 class BrowserTest < MiniTest::Test
 
+  def initialize
+    ObjectSpace.define_finalizer(self, proc { close_everything })
+  end
+
   def self.test_order
-    :alpha
+    :random
   end
 
   def setup

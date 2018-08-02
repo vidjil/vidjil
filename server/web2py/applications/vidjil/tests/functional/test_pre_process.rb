@@ -31,7 +31,7 @@ class TestPreProcess < BrowserTest
     assert(table.tbody.present?)
   end
 
-  def test_pre_process_002_add
+  def test_pre_process_add
     table = go_to_list
     count = table.tbody.rows.count
 
@@ -50,9 +50,5 @@ class TestPreProcess < BrowserTest
     table.wait_until_present
     lines = table.tbody.rows
     assert(lines.count == count+1)
-  end
-
-  def test_zz_close
-    close_everything
   end
 end

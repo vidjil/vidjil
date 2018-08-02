@@ -30,7 +30,7 @@ class TestSampleSet < BrowserTest
     assert(table.tbody.present?)
   end
 
-  def test_patient_002_add
+  def test_patient_add
     table = go_to_list
 
     count = table.tbody.rows.count
@@ -69,7 +69,7 @@ class TestSampleSet < BrowserTest
     end
   end
 
-  def test_patient_003_edit
+  def test_patient_edit
     table = go_to_list
 
     # click edit button for first line in table
@@ -97,7 +97,7 @@ class TestSampleSet < BrowserTest
     assert(lines[0].cell(:index => 3).text == "#edited")
   end
 
-  def test_patient_004_delete
+  def test_patient_delete
     table = go_to_list
 
     count = table.tbody.rows.count
@@ -113,7 +113,7 @@ class TestSampleSet < BrowserTest
     assert(lines.count == count-1)
   end
 
-  def test_patient_005_search
+  def test_patient_search
     table = go_to_list
 
     filter = $b.text_field(:id => "db_filter_input")
@@ -128,7 +128,7 @@ class TestSampleSet < BrowserTest
   end
 
 =begin
-  def test_patient_006_autocomplete
+  def test_patient_autocomplete
     table = go_to_list
 
     $b.execute_script("new VidjilAutoComplete().clearCache()")
@@ -143,8 +143,4 @@ class TestSampleSet < BrowserTest
     assert(autocomplete.ul.count == 5)
   end
 =end
-
-  def test_zz_close
-    close_everything
-  end
 end

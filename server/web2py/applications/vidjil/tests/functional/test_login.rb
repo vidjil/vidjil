@@ -28,7 +28,7 @@ class TestLogin < BrowserTest
     login_form.wait_until_present
   end
 
-  def test_01_failed_login
+  def test_failed_login
     login_form = $b.form(:id => 'login_form')
     assert(login_form.present?)
     login_form.text_field(:id => "auth_user_email").set('foo@bar.com')
@@ -40,7 +40,7 @@ class TestLogin < BrowserTest
     assert(login_form.present?)
   end
 
-  def test_02_successful_login
+  def test_successful_login
     login_form = $b.form(:id => 'login_form')
     assert(login_form.present?)
     login_form.text_field(:id => "auth_user_email").set('plop@plop.com')
@@ -48,10 +48,6 @@ class TestLogin < BrowserTest
     login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
     assert(!login_form.present?)
-  end
-
-  def test_zz_close
-    close_everything
   end
 end
 
