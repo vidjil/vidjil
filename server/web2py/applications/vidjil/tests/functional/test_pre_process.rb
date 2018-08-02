@@ -40,9 +40,9 @@ class TestPreProcess < BrowserTest
     form = $b.form(:id => "data_form")
     form.wait_until_present
 
-    form.text_field(:id => "pre_process_name").set('cat')
-    form.textarea(:id => "pre_process_command").set('cat &file1& &file2& > &result&')
-    form.textarea(:id => "pre_process_name").set('concatenate two files using cat')
+    form.text_field(:id => "pre_process_name").set('dummy')
+    form.textarea(:id => "pre_process_command").set('dummy &file1& &file2& > &result&')
+    form.textarea(:id => "pre_process_name").set('dummy pre-process for testing purposes')
     form.input(:type => "submit").click
 
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
@@ -50,5 +50,44 @@ class TestPreProcess < BrowserTest
     table.wait_until_present
     lines = table.tbody.rows
     assert(lines.count == count+1)
+  end
+
+  def test_pre_process_edit
+    table = go_to_list
+
+    line = table.td(:text => "test pre-process 0").parent
+    uid = line.td(:index => 0).text
+    line.i(:class => "icon-pencil-2").click
+
+    form = $b.form(:id => "data_form")
+    form.wait_until_present
+    info = form.textarea(:id => "pre_process_info")
+    assert(form.text_field(:id => "pre_process_name").value == "test pre-process 0")
+    assert(form.textarea(:id => "pre_process_command").value == "dummy &file1& &file2& > &result&")
+    assert(info.value == "test 0")
+
+    info.set("edited")
+
+    form.input(:type => "submit").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    table = $b.table(:id => 'table')
+    table.wait_until_present
+
+    line = table.td(:index => 0, :text => uid).parent
+    assert(line.td(:text => "edited").present?)
+  end
+
+  def test_pre_process_delete
+    table = go_to_list
+
+    count = table.tbody.rows.count
+    line = table.td(:text => "test pre-process 2").parent
+    line.i(:class => "icon-erase").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    $b.button(:text => "continue").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    table.wait_until_present
+    lines = table.tbody.rows
+    assert(lines.count == count-1)
   end
 end

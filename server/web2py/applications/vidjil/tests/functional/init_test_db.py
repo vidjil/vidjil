@@ -68,6 +68,8 @@ class DBInitialiser(object):
         public_group = db(db.auth_group.role == "public").select().first()
         pid = db.pre_process.insert(name="public pre-process", command="cat &file1& &file2& > &result&", info="concatenate two files")
         auth.add_permission(public_group.id, PermissionEnum.access.value, db.pre_process, pid)
+        for i in range(3):
+            db.pre_process.insert(name="test pre-process %d" % i, command="dummy &file1& &file2& > &result&", info="test %d" % i)
 
     @_needs_sets
     def _init_sequence_files(self):
