@@ -118,6 +118,7 @@ class TestSample < BrowserTest
       del = c.i(:class => "icon-erase")
       if del.present?
         del.click
+        break
       end
     end
 
