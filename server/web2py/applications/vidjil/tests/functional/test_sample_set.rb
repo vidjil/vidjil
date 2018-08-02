@@ -119,7 +119,7 @@ class TestSampleSet < BrowserTest
 
     filter = $b.text_field(:id => "db_filter_input")
     filter.wait_until_present
-    filter.set('edited')
+    filter.set('test1')
 
     filter.fire_event('onchange')
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
