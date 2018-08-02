@@ -135,7 +135,7 @@ class TestSample < BrowserTest
   end
 
   def test_004_run
-    table = go_to_set 3
+    table = go_to_first_set
 
     $b.select_list(:id => "choose_config").select_value(2)
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
