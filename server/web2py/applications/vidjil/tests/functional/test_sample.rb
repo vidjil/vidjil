@@ -30,7 +30,7 @@ class TestSample < BrowserTest
     lines = table.tbody.rows
     lines[index].wait_until_present
     # select first patient
-    lines[index].click
+    lines[index].td(:index => 0).click
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
     # check that list of samples is loaded
     table = $b.table(:id => "table")
