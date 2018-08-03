@@ -103,7 +103,8 @@ class TestSampleSet < BrowserTest
 
     count = table.tbody.rows.count
     # click delete button for first line in table
-    table.i(:class => "icon-erase", :index => 1).click
+    line = table.td(:text => /test patient 4/).parent
+    line.i(:class => "icon-erase").click
 
     delete_button = $b.button(:text => "delete")
     delete_button.wait_until_present
