@@ -8,6 +8,11 @@ class TestLogin < BrowserTest
     if not defined? $b
       set_browser("http://localhost/browser")
     end
+    logout = $b.a(:class => "button", :text => "(logout)")
+    if logout.present?
+      logout.click
+      Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    end
   end
 
 =begin
