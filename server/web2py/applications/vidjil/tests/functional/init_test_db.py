@@ -57,10 +57,13 @@ class DBInitialiser(object):
         types = [defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC]
         public_group = db(db.auth_group.role == "public").select().first()
         for i in range(5):
+            tag_id = db.tag.insert(name="test%d" % i)
+            db.group_tag.insert(group_id=public_group.id, tag_id=tag_id)
             for t in types:
                 ssid = db.sample_set.insert(sample_type=t)
                 sid = db[t].insert(**self.get_set_dict(t, ssid, i))
                 auth.add_permission(public_group.id, PermissionEnum.access.value, db.sample_set, ssid)
+                db.tag_ref.insert(tag_id=tag_id, table_name=t, record_id=sid)
         self.initialised_sets = True
 
     @_needs_init
@@ -76,15 +79,17 @@ class DBInitialiser(object):
         sample_sets = db(db.sample_set.id > 0).select()
         for sample_set in sample_sets:
             for i in range(3):
+                tag_id = db(db.tag.name == "test%d" % i).select().first().id
                 sfid = db.sequence_file.insert(
                     sampling_date="2010-10-10",
-                    info="test file %s %d" % (sample_set.sample_type, i),
+                    info="test file %s %d #test%d" % (sample_set.sample_type, i, i),
                     filename="test_file.fasta",
                     size_file=1024,
                     network=False,
                     data_file="test_sequence_file"
                 )
                 db.sample_set_membership.insert(sample_set_id=sample_set.id, sequence_file_id=sfid)
+                db.tag_ref.insert(tag_id=tag_id, table_name=db.sequence_file, record_id=sfid)
 
     @_needs_files
     def _init_results_files(self):
@@ -100,14 +105,16 @@ class DBInitialiser(object):
                 sequence_file_id=sf.id,
                 config_id=config.id,
                 run_date="2010-10-10 10:10:10:10",
-                scheduler_task_id=stid
+                scheduler_task_id=stid,
+                data_file="test_results_file"
             )
             db.fused_file.insert(
                 config_id=config.id,
                 sample_set_id=membership.sample_set_id,
                 fuse_date="2010-10-10 10:10:10:10",
                 status="COMPLETED",
-                sequence_file_list="%d_" % membership.sequence_file_id
+                sequence_file_list="%d_" % membership.sequence_file_id,
+                fused_file="test_fused_file"
             )
 
     @_needs_init
