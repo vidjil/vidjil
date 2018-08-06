@@ -21,7 +21,7 @@ class BrowserTest < MiniTest::Test
   end
 
   def self.test_order
-    :random
+    :alpha
   end
 
   def setup

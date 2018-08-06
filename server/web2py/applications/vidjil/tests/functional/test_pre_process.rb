@@ -1,7 +1,7 @@
 load 'vidjil_browser.rb'
-load 'browser_test.rb'
+load 'server_test.rb'
 
-class TestPreProcess < BrowserTest
+class TestPreProcess < ServerTest
 
   def setup
     super
