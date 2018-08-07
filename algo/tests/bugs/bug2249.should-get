@@ -1,13 +1,13 @@
 !LAUNCH: $VIDJIL_DIR/$EXEC -E 1 -d -g $VIDJIL_DIR/germline -c segment bug2249.fa
 
 $ Should not have a TRDD2 (length 9) with 8 deletions (first seq)
-fe0:7 TRDD2*01 1
+f0:7 TRDD2.01 1
 
 $ Should not have TRDD2 (length 9) with 12 deletions (second seq)
-fe0:6 TRDD2*01 6
+f0:6 TRDD2.01 6
 
 $ Should not have IGHD5-24 (length 20) with 29 deletions
-fe0:17 IGHD5-24*01 12
+f0:17 IGHD5-24.01 12
 
 $ Should not have VDDDJ
 f0:VDDDJ
