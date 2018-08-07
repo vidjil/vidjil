@@ -56,10 +56,6 @@ GermlineAxis.prototype = Object.create(GenericAxis.prototype);
         var allele_list = this.germline.allele
         var total_gene = Object.keys(gene_list).length
 
-        if (geneType=="V") this.type2="5"
-        if (geneType=="D") this.type2="4"
-        if (geneType=="J") this.type2="3"
-
         var pos;
         //labels
         for (var key in gene_list){
@@ -109,26 +105,6 @@ GermlineAxis.prototype = Object.create(GenericAxis.prototype);
     GermlineAxis.prototype.pos = function(clone) {
         var pos = this.applyConverter(clone);
         return this.label_mapping[pos];
-    }
-
-    GermlineAxis.prototype.converter = function(clone) {
-        var gene_list = this.gene_list;
-        var allele_list = this.allele_list;
-        var total_gene = this.total_gene;
-        var value;
-        if (clone.hasSeg(this.type2)) {
-            var name = clone.seg[this.type2].name;
-            if (typeof name != 'undefined' &&
-                typeof gene_list[name.split("*")[0]] != "undefined")
-            {
-                if (this.displayAllele){
-                    value = name;
-                }else {
-                    value = name.split("*")[0];
-                }
-            }
-        }
-        return value;
     }
     
     /**
