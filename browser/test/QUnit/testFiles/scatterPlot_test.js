@@ -50,7 +50,10 @@ QUnit.test("grid", function(assert) {
     
     sp.changeSplitMethod("nLength", "size", sp.MODE_BAR);
     sp.update()
-    
+
+    assert.equal(sp.select_x.selectedIndex, 8, 'select_x index');
+    assert.equal(sp.select_y.selectedIndex, 14, 'select_y index');
+
     assert.equal(sp.nodes[1].bar_h , 0.3333333333333333, "node 1, bar h position")
     assert.equal(sp.nodes[1].bar_x , sp.axisX.labels[9].pos ,"node 1, bar x position is on '9'")
     assert.equal(sp.axisX.labels[9].text, "9", "10th label for 'n' axis' is '9'")
