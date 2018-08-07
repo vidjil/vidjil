@@ -24,12 +24,16 @@
 #include <cassert>
 #include "segment.h"
 #include "tools.h"
+#include "../lib/json.hpp"
 #include "affectanalyser.h"
 #include <sstream>
 #include <cstring>
 #include <string>
 #include "windowExtractor.h"
-
+#include <set>
+#include "automaton.h"
+#include <map>
+#include <string>
 #define NO_FORBIDDEN_ID (-1)
 
 AlignBox::AlignBox(string _key, string _color) {
@@ -243,6 +247,10 @@ int Segmenter::getLeft() const {
   
 int Segmenter::getRight() const {
   return box_J->start;
+}
+
+int Segmenter::getMidLength() const {
+  return box_J->start - box_V->end - 1;
 }
 
 int Segmenter::getLeftD() const {
@@ -827,22 +835,10 @@ bool comp_pair (pair<int,int> i,pair<int,int> j)
 }
 
 
-/**
- * Align a read against a collection of sequences, maximizing the alignment 'score'
- * @param read:         the read
- * @param rep:          a collection of reference sequences
- * @param reverse_ref:  if true, reverse the reference sequences (VkVk)
- * @param reverse_both: if true, reverse both the read and the reference sequences (J segment)
- * @param local:        if true, Local alignment (D segment), otherwise LocalEndWithSomeDeletions and onlyBottomTriangle (V and J segments)
- * @param box:          the AligBox to fill
- * @param segment_cost: the cost used by the dynamic programing
- * @param banded_dp: should we perform a banded DP?
- * @post  box is filled
- */
-
 void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id,
                               bool reverse_ref, bool reverse_both, bool local,
-                              AlignBox *box, Cost segment_cost, bool banded_dp)
+                              AlignBox *box, Cost segment_cost, bool banded_dp,
+                              double evalue_threshold)
 {
   
   int best_score = MINUS_INF ;
@@ -859,7 +855,7 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
 
   // With reverse_ref, the read is reversed to prevent calling revcomp on each reference sequence
   string sequence_or_rc = revcomp(read, reverse_ref);
-  bool onlyBottomTriangle = !local && banded_dp && false ;
+  bool onlyBottomTriangle = !local && banded_dp ;
   
   for (int r = 0 ; r < rep.size() ; r++)
     {
@@ -912,11 +908,15 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
   length = min(length, (int) rep.sequence(box->ref_nb).size());
   length += del_end;
   // length is an estimation of the number of aligned nucleotides. It would be better with #2138
-  int score_with_limit_number_of_indels = (length - BOTTOM_TRIANGLE_SHIFT) * segment_cost.match + BOTTOM_TRIANGLE_SHIFT * segment_cost.insertion;
-  if (onlyBottomTriangle && best_score < score_with_limit_number_of_indels) {
+  int min_number_of_matches = min(int(length * FRACTION_ALIGNED_AT_WORST), length - BOTTOM_TRIANGLE_SHIFT); // Minimal number of matches we can have with a triangle
+  int max_number_of_insertions = length - min_number_of_matches;
+  int score_with_limit_number_of_indels =  min_number_of_matches * segment_cost.match + max_number_of_insertions * segment_cost.insertion;
+  float evalue = sequence_or_rc.size() * rep.totalSize() * segment_cost.toPValue(best_score);
+  if (onlyBottomTriangle && (best_score < score_with_limit_number_of_indels
+                             || evalue > evalue_threshold)) {
     // Too many indels/mismatches, let's do a full DP
     align_against_collection(read, rep, forbidden_rep_id, reverse_ref, reverse_both,
-                             local, box, segment_cost, false);
+                             local, box, segment_cost, false,evalue_threshold);
     return;
   }
 
@@ -947,7 +947,7 @@ string format_del(int deletions)
   return deletions ? *"(" + string_of_int(deletions) + " del)" : "" ;
 }
 
-FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  double threshold, double multiplier)
+FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  double threshold, double multiplier, int kmer_threshold)
 {
   box_V = new AlignBox("5");
   box_D = new AlignBox("4");
@@ -1022,13 +1022,15 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   
   sequence_or_rc = revcomp(sequence, reversed); // sequence, possibly reversed
 
+  // the threshold is lowered by the number of independent tests made
+  double standardised_threshold_evalue = threshold / multiplier;
 
   /* Read mapping */
   if (germline->seg_method == SEG_METHOD_ONE)
     {
       align_against_collection(sequence_or_rc, germline->rep_4, NO_FORBIDDEN_ID, false, false,
                                true, // local
-                               box_D, segment_cost);
+                               box_D, segment_cost, false, standardised_threshold_evalue);
 
       segmented = true ;
       because = reversed ? SEG_MINUS : SEG_PLUS ;
@@ -1046,12 +1048,17 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
 
   /* Regular 53 Segmentation */
-  align_against_collection(sequence_or_rc, germline->rep_5, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
-                                        box_V, segment_cost);
-
+  if(kmer_threshold != NO_LIMIT_VALUE){
+	  FilterWithACAutomaton* f = germline->getFilter_5();
+    BioReader filtered = f->filterBioReaderWithACAutomaton(sequence_or_rc, kmer_threshold);
+	  align_against_collection(sequence_or_rc, filtered, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
+                                   box_V, segment_cost, false, standardised_threshold_evalue);
+  }else{
+    align_against_collection(sequence_or_rc, germline->rep_5, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
+                             box_V, segment_cost, false, standardised_threshold_evalue);
+  }
   align_against_collection(sequence_or_rc, germline->rep_3, NO_FORBIDDEN_ID, reverse_J, !reverse_J, false,
-                                          box_J, segment_cost);
-
+                           box_J, segment_cost, false, standardised_threshold_evalue);
   // J was run with '!reverseJ', we copy the box informations from right to left
   // Should this directly be handled in align_against_collection() ?
   box_J->start = box_J->end ;
@@ -1129,9 +1136,12 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
       
     string str = seq.substr(l, r-l);
 
+    // the threshold is lowered by the number of independent tests made
+    double standardised_threshold_evalue = evalue_threshold / multiplier;
+
     // Align
     align_against_collection(str, germline->rep_4, forbidden_id, false, false, true,
-                                           box_DD, segment_cost);
+                             box_DD, segment_cost, false, standardised_threshold_evalue);
 
     box_DD->start += l ;
     box_DD->end += l ;
@@ -1302,6 +1312,20 @@ void FineSegmenter::findCDR3(){
 
   JUNCTIONproductive = (CDR3nuc.length() % 3 == 0) && (! hasInFrameStopCodon(getSequence().sequence, (JUNCTIONstart-1)%3));
   // Reminder: JUNCTIONstart is 1-based
+}
+
+void FineSegmenter::checkWarnings(json &json_clone)
+{
+  if (isSegmented())
+    {
+      // Non-recombined D7-27/J1 sequence
+      if ((box_V->ref_label.find("IGHD7-27") != string::npos)
+          && (box_J->ref_label.find("IGHJ1") != string::npos)
+          && ((getMidLength() >= 90) || (getMidLength() <= 94)))
+        {
+          json_add_warning(json_clone, "W61", "Non-recombined D7-27/J1 sequence", LEVEL_ERROR);
+        }
+    }
 }
 
 json FineSegmenter::toJson(){

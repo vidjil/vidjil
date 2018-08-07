@@ -117,7 +117,7 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     task = scheduler.queue_task(program, args,
                                 repeats = 1, timeout = defs.TASK_TIMEOUT)
     
-    if db.sequence_file[id_sequence].pre_process_flag == "WAIT" or db.sequence_file[id_sequence].pre_process_flag == "RUN" : 
+    if db.sequence_file[id_sequence].pre_process_flag != "COMPLETED" and db.sequence_file[id_sequence].pre_process_flag :
         db.scheduler_task[task.id] = dict(status ="STOPPED")
     
     db.results_file[data_id] = dict(scheduler_task_id = task.id)
@@ -152,7 +152,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
     from datetime import timedelta as timed
     
     ## re schedule if pre_process is still pending
-    if db.sequence_file[id_file].pre_process_flag == "WAIT" or db.sequence_file[id_file].pre_process_flag == "RUN" :
+    if db.sequence_file[id_file].pre_process_flag != "COMPLETED" and db.sequence_file[id_file].pre_process_flag:
         
         print("Pre-process is still pending, re-schedule")
     

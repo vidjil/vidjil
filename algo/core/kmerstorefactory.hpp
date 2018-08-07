@@ -32,7 +32,7 @@ public:
     IKmerStore<T> *index;
     try{
       index = new ArrayKmerStore<T>(seed, revcomp);
-    }catch(exception e){
+    }catch(exception &e){
       cout << "  (using a MapKmer to fit into memory)" << endl;
       index = new MapKmerStore<T>(seed, revcomp);
     }

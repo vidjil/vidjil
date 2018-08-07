@@ -8,6 +8,7 @@
 
 
 #define NO_LIMIT_VALUE  -1  // Value for 'all' on command-line options
+#define NO_LIMIT_VALUE_STRING  "-1"
 
 
 #define MAX_SEED_SIZE  50 // Spaced seed buffer
@@ -26,6 +27,8 @@
 #define LEVEL_ERROR "error"
 #define LEVEL_FATAL "fatal"
 
+#define ALL_KMERS_VALUE 0 /* Use in -Z 0 (filtering on all k-mers with at least
+                             one match. */
 #include <sstream>
 #include <iostream>
 #include <iomanip>
@@ -33,22 +36,21 @@
 #include <cassert>
 #include <vector>
 #include "bioreader.hpp"
-#include "../lib/json.hpp"
+#include "kmeraffect.h"
+#include "../lib/json_fwd.hpp"
 using json = nlohmann::json;
 using namespace std;
 
 #define PRINT_VAR(v) cerr << #v << " = " << v << endl
 
+#define NB_N_CHOOSE_K_STORED 500
 
 #define SEED_YES '#'
 
 // Common seeds
-#define SEED_9   "#########"
-#define SEED_S10 "#####-#####"
-#define SEED_S12 "######-######"
-#define SEED_S13 "#######-######"
-
-#define NB_N_CHOOSE_K_STORED 500
+#define DEFAULT_SEED "10s"
+extern map<string, string> seedMap;
+string expand_seed(const string &seed);
 
 string seed_contiguous(int k);
 
@@ -69,10 +71,6 @@ string spaced(const string &input, const string &seed);
 
 inline int spaced_int(int *input, const string &seed) {
 
-#ifdef NO_SPACED_SEEDS
-  return input ;
-#endif
-
   // cout << input << endl << seed << endl ;
   // assert(input.length() == seed.length()); // length is not equal, pointer
 
@@ -90,6 +88,14 @@ inline int spaced_int(int *input, const string &seed) {
 
 }
 
+/* 
+	Extract the gene name from a label. This take the whole part
+	before the star and returns it. If there is no star in the
+	name the whole label is returned.
+	IGHV-01*05	->	IGHV-01
+	IGHV-7500AB	->	IGHV-7500AB
+*/
+string extractGeneName(string label);
 
 /**
  * Sort the number of occurrence stored as the second element of a pair.
@@ -104,6 +110,7 @@ bool pair_occurrence_sort(pair<T, int> a, pair<T, int> b);
 string string_of_int(int number);
 string fixed_string_of_float(float number, int precision);
 string scientific_string_of_double(double number);
+string string_of_map(map <string, string> m, const string &before);
 
 /**
  * @param nuc is A, C, G, T or any extended nucleotide (or lowercase)

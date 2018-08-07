@@ -140,6 +140,8 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
   results.first_pos_max = results.last_pos_max = 0;
   results.nb_before_left = results.nb_before_right = results.nb_after_right = results.nb_after_left = 0;
   currentValue = 0;
+  int nb_during_max = 0;
+  bool continue_max;
 
   for (int i = 0; i < min(length,span - maxOverlap); i++) {
     if (affectations[i] == after) {
@@ -151,7 +153,8 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
   for (int i = span - maxOverlap; i < length; i++) {
     /* i - span + maxOverlap, to avoir overlapping k-mers */
 
-
+    continue_max = false;
+    
     /* Read the current affectations, and store them both in currentValue and at the right of the previous maximum.
        The affectation of 'before' is interpreted relatively to span and maxOverlap */
 
@@ -168,17 +171,38 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
 
     /* If we raise above the max, or if we continue a previous maximum (even from a distant position), store in results */
     if (currentValue >= results.max_value) {
-      if (currentValue > results.max_value)
+      if (currentValue > results.max_value) {
         results.first_pos_max = i;
+
+        // We are above the previous max. We reaffect the ignored affectations
+        // during the previous plateau.
+        results.nb_after_left += nb_during_max;
+        results.nb_before_left += nb_during_max;
+        nb_during_max = 0;
+      } else if (results.last_pos_max == i - 1) {
+        if (affectations[i] == after) {
+          // in such a case we also have affectations[i - span + maxOverlap] == before
+          // because we are still on a maximum this means currentValue hasn't changed
+          assert (affectations[i - span + maxOverlap] == before);
+          nb_during_max++;
+          continue_max = true;
+        }
+      }
       results.max_value = currentValue;
       results.last_pos_max = i;
 
-      /* What was at the right of the previous maximum is now at the left of the current maximum */
-      results.nb_after_left += results.nb_after_right;
-      results.nb_before_left += results.nb_before_right;
+      if (! continue_max) {
+        /* What was at the right of the previous maximum is now at the left of
+         * the current maximum.  But we only count them if we are not on a
+         * plateau. If we later reach a higher maximum they will be counted
+         * back (see above) */
+        results.nb_after_left += results.nb_after_right;
+        results.nb_before_left += results.nb_before_right;
+      }
       results.nb_after_right = 0;
       results.nb_before_right = 0;
     }
+
 
 #ifdef DEBUG_GET_MAXIMUM
     cout << setw(3) << i

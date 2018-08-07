@@ -54,6 +54,12 @@ QUnit.test("test rounding functions", function(assert) {
     }
 );
 
+QUnit.test("prepend_path_if_not_web", function(assert) {
+    assert.equal(prepend_path_if_not_web('/tata', 'toto'), 'toto/tata');
+    assert.equal(prepend_path_if_not_web('http://toto', 'toto'), 'http://toto');
+    assert.equal(prepend_path_if_not_web('ftp://toto', 'toto'), 'ftp://toto');
+});
+
 QUnit.test("processCloneDBContents", function(assert) {
     var emptyResult = [];
     assert.deepEqual(processCloneDBContents(emptyResult), {'original': [],
@@ -203,5 +209,19 @@ QUnit.test("computeStartStop(arrayToProcess,sequence)", function(assert) {
         assert.ok( null != imgt2display, "function returned a not null array");
         assert.deepEqual(imgt2display, imgt2displayCheck, "Processed array is similar to expected array");
 
+    }
+);
+
+
+QUnit.test("Pearson coefficient", function(assert) {
+
+    assert.equal(pearsonCoeff([0, 1, 2, 3], [0, 1, 2, 3]), 1)
+    assert.equal(pearsonCoeff([0, 1, 2, 3], [40, 50, 60, 70]), 1)
+
+    assert.ok(pearsonCoeff([0, 1, 2, 3], [41, 49, 68, 69]) > .9)
+    assert.ok(pearsonCoeff([0, 1, 2, 3], [49, 30, 1, 102]) < .5)
+
+    assert.equal(pearsonCoeff([3, 2, 1], [1, 2, 3]), -1)
+    assert.equal(pearsonCoeff([3, 2, 1], [10, 20, 30]), -1)
     }
 );

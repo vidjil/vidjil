@@ -1,6 +1,9 @@
 CXX?=g++
-OPTIM=-O2
-override CXXFLAGS += -std=c++11 -W -Wall -I.. -I../lib/ $(OPTIM)
+ifeq ($(CXXFLAGS), )
+  CXXFLAGS := -W -Wall -std=c++11 -O2 -DNDEBUG
+endif
+override CXXFLAGS += -I.. -I../lib/
+export CXXFLAGS
 LDLIBS=-lm -lz
 SRC=$(wildcard *.cpp)
 EXEC=$(SRC:.cpp=)
@@ -13,8 +16,8 @@ go: vdj_assign align
 all: $(EXEC)
 
 $(EXEC): %: %.o 
-	$(MAKE) -C .. base OPTIM="$(OPTIM)"
-	$(CXX) -I .. -o $@ $^ $(LIBCORE) $(LDLIBS)
+	$(MAKE) -C .. base
+	$(CXX) -I .. -o $@ $^ $(LIBCORE) $(LDLIBS) $(LDFLAGS)
 
 clean:
 	rm -f $(EXEC)

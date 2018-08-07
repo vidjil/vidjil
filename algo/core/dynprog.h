@@ -67,6 +67,7 @@ class Cost
 
 
 ostream& operator<<(ostream& out, const Cost& cost);
+string string_of_cost(const Cost cost);
 
 // Usual costs
 const Cost Hamming = Cost(0, -1, MINUS_INF);

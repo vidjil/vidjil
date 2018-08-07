@@ -42,8 +42,8 @@ Warnings which were implemented ([x]) have a fixed code that should not be chang
 - [ ]     Possible strand ambiguity 
 
 *Strange recombination (FineSegmenter in vidjil-algo), V and J genes*
-- [ ] W6x Co-linear recombination D7-J1  #2232
 - [ ]     Potential co-linear genome match (pos xxxxxx) #1664 #1629 
+- [ ] W61 Non-recombined D7-27/J1 sequence  #2232
 - [ ]     Potential di-mer #2820 
 - [ ]     Very large deletion (xxx bp) #2909
 - [ ]     Unexpected recombination

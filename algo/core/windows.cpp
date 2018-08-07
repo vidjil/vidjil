@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "tools.h"
+#include "../lib/json.hpp"
 #include "windows.h"
 #include "representative.h"
 #include "segment.h"
@@ -262,7 +263,7 @@ json WindowsStorage::computeDiversity(int nb_segmented) {
 }
 
 
-json WindowsStorage::sortedWindowsToJson(map <junction, json> json_data_segment) {
+json WindowsStorage::sortedWindowsToJson(map <junction, json> json_data_segment, int max_json_output) {
   json windowsArray;
   int top = 1;
     
@@ -290,6 +291,9 @@ json WindowsStorage::sortedWindowsToJson(map <junction, json> json_data_segment)
       windowsList["seg_stat"] = this->statusToJson(it->first);
       
       windowsArray.push_back(windowsList);
+
+      if (top == max_json_output + 1)
+        break ;
     }
 
   return windowsArray;

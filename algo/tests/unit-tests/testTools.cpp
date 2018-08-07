@@ -50,10 +50,10 @@ void testOnlineBioReaderMaxNth() {
 
 
 void testFastaNbSequences() {
-  TAP_TEST_EQUAL(nb_sequences_in_file("../../germline/homo-sapiens/IGHV.fa"), 349, TEST_FASTA_NB_SEQUENCES, "ccc");
+  TAP_TEST_EQUAL(nb_sequences_in_file("../../germline/homo-sapiens/IGHV.fa"), 357, TEST_FASTA_NB_SEQUENCES, "ccc");
 
   int a1 = approx_nb_sequences_in_file("../../germline/homo-sapiens/IGHV.fa");
-  TAP_TEST(a1 >= 345 && a1 <= 355, TEST_FASTA_NB_SEQUENCES, "");
+  TAP_TEST(a1 >= 350 && a1 <= 370, TEST_FASTA_NB_SEQUENCES, "");
 
   int a2 = nb_sequences_in_file("data/Stanford_S22.fasta", true);
   TAP_TEST(a2 >= 13100 && a2 <= 13200, TEST_FASTA_NB_SEQUENCES, "");
@@ -103,7 +103,7 @@ void testFastaAddThrows() {
   bool caught = false;
   try {
     BioReader fa1("mlkdkklflskjfskldfj.fa");
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Error in opening file") != string::npos, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -114,7 +114,7 @@ void testFastaAddThrows() {
   caught = false;
   try {
     fa1.add("ljk:lkjsdfsdlfjsdlfkjs.fa");
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Error in opening file") != string::npos, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -123,7 +123,7 @@ void testFastaAddThrows() {
   caught = false;
   try {
     fa1.add("Makefile");
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("The file seems to be malformed") != string::npos, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -133,7 +133,7 @@ void testFastaAddThrows() {
   try {
     OnlineBioReader *fa = OnlineBioReaderFactory::create("lkjdflkdfjglkdfjg.fa");
     delete fa;
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Error in opening file") != string::npos, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -142,7 +142,7 @@ void testFastaAddThrows() {
   caught = false;
   try {
     BioReader fa1("data/malformed1.fq");
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Expected line starting with +") != string::npos, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -150,7 +150,7 @@ void testFastaAddThrows() {
   caught = false;
   try {
     BioReader fa1("data/malformed2.fq");
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -158,7 +158,7 @@ void testFastaAddThrows() {
   caught = false;
   try {
     BioReader fa1("data/malformed3.fq");
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Quality and sequence don't have the same length") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -166,7 +166,7 @@ void testFastaAddThrows() {
   caught = false;
   try {
     BioReader fa1("data/malformed4.fq");
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -174,7 +174,7 @@ void testFastaAddThrows() {
   caught = false;
   try {
     BioReader fa1("data/malformed5.fq");
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -186,7 +186,7 @@ void testFastaAddThrows() {
     // don't complain for empty files explicitly in BioReader constructor.
     fa_read = OnlineBioReaderFactory::create("data/malformed6.fq");
     fa_read->next();
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &e) {
     if (fa_read)
         delete fa_read;
     TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
@@ -197,7 +197,7 @@ void testFastaAddThrows() {
   caught = false;
   try {
     BioReader fa1("data/malformed7.fq");
-  } catch(invalid_argument e) {
+  } catch(invalid_argument &e) {
     TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
@@ -472,6 +472,25 @@ void testTrimSequence() {
     }
 }
 
+/* 
+	Check the integrity of the extractGeneName function. 
+	The whole name is truncated before the star.
+	If there isn't any star in the name, the label
+	is returned as it is.	
+*/
+void testExtractGeneName(){
+	string example_1 = "IGHV-01*01";
+	string example_2 = "FAMOUS-GENE-01*2999";
+	string example_3 = "IGHV-30";
+
+	TAP_TEST(extractGeneName(example_1) == "IGHV-01", TEST_EXTRACT_GENE_NAME,
+	"Fail to extract gene name from:" << example_1 << " result:" << extractGeneName(example_1));
+	TAP_TEST(extractGeneName(example_2) == "FAMOUS-GENE-01", TEST_EXTRACT_GENE_NAME,
+	"Fail to extract gene name from:" << example_2 << " result:" << extractGeneName(example_2));
+	TAP_TEST(extractGeneName(example_3) == "IGHV-30", TEST_EXTRACT_GENE_NAME,
+	"Fail to extract gene name from:" << example_3 << " result:" << extractGeneName(example_3));
+}
+
 void testTools() {
   testOnlineBioReader1();
   testOnlineBioReaderMaxNth();
@@ -495,4 +514,5 @@ void testTools() {
   testGenerateAllSeeds();
   testTrimSequence();
   testIsStopCodon();
+	testExtractGeneName();
 }

@@ -1,5 +1,5 @@
 !NO_LAUNCHER:
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -H  2> out-v ; cat out-v
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -H
 
 $ License
 1:vidjil-algo is free software
@@ -8,4 +8,13 @@ $ Check default costs
 1:segmenter .* "4, -6, -10, -1, -10"
 1:clustering .* "1, -4, -4, 0, 0"
 
+$ Show seeds
+1: 9c.#########
+1: 13s.#######-######
 
+$ Display advanced options
+: , experimental options
+: custom Cost
+
+$ Correct number of options
+B48:^  -

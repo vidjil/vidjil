@@ -221,7 +221,7 @@ def should_result_to_tap(should_pattern, result, tap_id):
         match = os.system("echo '%s' | grep -E '%s' > /dev/null 2>&1" \
                           % (result.replace("'", "'\\''"),
                              should_regex.pattern.replace("'", "'\\''")))
-        found = (match == 0)
+        found = (match == 0) and not ('UNSEG' in result)
 
     globals()['global_stats'][locus] += 1
 

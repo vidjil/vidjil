@@ -39,7 +39,7 @@ QUnit.test("segmenter", function(assert) {
     m.unselectAll();
     
     //
-    assert.deepEqual(segment.findPotentialField(), ["","cdr3","fr1", "5", "id", "f1", "V-REGION","J-REGION","D-REGION","CDR3-IMGT"], "potentialField : Ok")
+    assert.deepEqual(segment.findPotentialField(), ["","cdr3","fr1", "5", "f1", "V-REGION","J-REGION","D-REGION","CDR3-IMGT"], "potentialField : Ok")
 
     m.select(0)
     // assert.deepEqual(segment.toFasta(), "> test1 // 5.000%\naaaaaaaaaaaaaaaaaaaAG\n","toFasta :Ok")
@@ -140,7 +140,7 @@ QUnit.test("segt", function (assert) {
     assert.ok(segment.isDNA('CACCCAGGAGGTGGAGCTGGATATTGAGACT'), "test dna")
     assert.ok(segment.isAA('CACCCAGGAGGTGGAGCTGGATATTGAGACT'), "test AA")
     assert.ok(segment.isPos(h), "test if an object contain pos")
-    assert.deepEqual(segment.findPotentialField(),["", "cdr3", "fr1", "5", "test_feature", "id", "f1", "V-REGION", "J-REGION",  "D-REGION", "CDR3-IMGT"], "find field to highlight")
+    assert.deepEqual(segment.findPotentialField(),["", "cdr3", "fr1", "5", "test_feature", "f1", "V-REGION", "J-REGION",  "D-REGION", "CDR3-IMGT"], "find field to highlight")
 
 })
 
@@ -151,18 +151,18 @@ QUnit.test("segt", function (assert) {
     var segment = new Segment("segment",m);
     segment.init();
     segment.addGermlineToSegmenter("IGHD1-1*01","IGH");
-    assert.equal(segment.sequence["IGHD1-1*01"].seq.join(""), "GGGCGCCGGGGCAGATTCTGAACAGCCCCGAGTCACGGTGGGTACAACTGGAACGAC")
+    assert.equal(segment.sequence["IGHD1-1*01"].seq.join("").toUpperCase(), "GGGCGCCGGGGCAGATTCTGAACAGCCCCGAGTCACGGTGGGTACAACTGGAACGAC")
     assert.equal(segment.sequence["IGHD1-1*01"].is_clone, false);
     m.select(2)
     segment.addToSegmenter(2);
     segment.add_all_germline_to_segmenter();
     // segment.updateElem()
     assert.equal(segment.sequence[2].seq.join(" "),"c c c c c c c c c c c c c c c c c c c c", "clone 3 sequence")
-    assert.equal(segment.sequence["IGHV1-2*01"].seq.join(""),"caggtgcagctggtgcagtctggggctgaggtgaagaagcctggggcctcagtgaaggtctcctgcaaggcttctggatacaccttcaccggctactatatgcactgggtgcgacaggcccctggacaagggcttgagtggatgggacggatcaaccctaacagtggtggcacaaactatgcacagaagtttcagggcagggtcaccagtaccagggacacgtccatcagcacagcctacatggagctgagcaggctgagatctgacgacacggtcgtgtattactgtgcgagaga","5 germline")
-    assert.equal(segment.sequence["IGHD2-2*02"].seq.join(""),"GCGGGGACAGGAGGATTTTGTGGGGGCTCGTGTCACTGTGAGGATATTGTAGTAGTACCAGCTGCTATACC","4 germline")
-    assert.equal(segment.sequence["IGHJ6*01"].seq.join(""),"attactactactactacggtatggacgtctgggggcaagggaccacggtcaccgtctcctcag","3 germline")
+    assert.equal(segment.sequence["IGHV1-2*01"].seq.join("").toLowerCase(),"caggtgcagctggtgcagtctggggctgaggtgaagaagcctggggcctcagtgaaggtctcctgcaaggcttctggatacaccttcaccggctactatatgcactgggtgcgacaggcccctggacaagggcttgagtggatgggacggatcaaccctaacagtggtggcacaaactatgcacagaagtttcagggcagggtcaccagtaccagggacacgtccatcagcacagcctacatggagctgagcaggctgagatctgacgacacggtcgtgtattactgtgcgagaga","5 germline")
+    assert.equal(segment.sequence["IGHD2-2*02"].seq.join("").toUpperCase(),"GCGGGGACAGGAGGATTTTGTGGGGGCTCGTGTCACTGTGAGGATATTGTAGTAGTACCAGCTGCTATACC","4 germline")
+    assert.equal(segment.sequence["IGHJ6*01"].seq.join("").toLowerCase(),"attactactactactacggtatggacgtctgggggcaagggaccacggtcaccgtctcctcagaagaatggccactctagggcctttgttttctgctactgcc","3 germline")
 
     segment.addSequenceTosegmenter("test","igh", "accccccgtgtagtagtcc")
-    assert.equal(segment.sequence["test"].seq.join(""),"accccccgtgtagtagtcc"," test sequence ")
+    assert.equal(segment.sequence["test"].seq.join("").toLowerCase(),"accccccgtgtagtagtcc"," test sequence ")
     assert.equal(segment.sequence["test"].is_clone, false);
   })

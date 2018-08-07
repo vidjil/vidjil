@@ -11,7 +11,8 @@
 #include "kmerstore.h"
 #include "kmeraffect.h"
 #include "affectanalyser.h"
-#include "../lib/json.hpp"
+#include "../lib/json_fwd.hpp"
+#include "filter.h"
 
 // #define DEBUG_EVALUE
 
@@ -53,7 +54,7 @@
                                                will trigger UNSEG_TOO_SHORT_FOR_WINDOW.
                                              - Margins above the half of the window length may produce shortened or shifted windows
                                           */
-
+#define FRACTION_ALIGNED_AT_WORST .5 /* Fraction of the sequence that should be aligned before deactivating the heuristics */
 
 using namespace std;
 using json = nlohmann::json;
@@ -230,7 +231,14 @@ protected:
    * @return the right position (on forward strand) of the segmentation
    */
   int getRight() const;
+
   
+  /**
+   * @return the number of positions between the left and the right positions
+   */
+  int getMidLength() const;
+
+
   /**
    * @return the left position (on forward strand) of the D segmentation.
    */
@@ -353,14 +361,21 @@ class FineSegmenter : public Segmenter
    vector<pair<int, int> > score_J;
 
    vector <AlignBox*> boxes ;
-   
+
    /**
    * Build a fineSegmenter based on KmerSegmentation
    * @param seq: An object read from a FASTA/FASTQ file
    * @param germline: germline used
+   * @param threshold: threshold of randomly expected segmentation
+   * @param kmer_threshold: This threshold is used while filtering the V
+   *   BioReader in Germline. If this value is 0, every K-mer from getMultiResults
+   *   is used for the filtering. Otherwise if N > 0, the N best K-mers are used
+   *   for the filtering.
+   * By default this parameter doesn't filter the germline.
    */
    FineSegmenter(Sequence seq, Germline *germline, Cost segment_cost,
-                 double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0);
+                 double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0,
+                int kmer_threshold=NO_LIMIT_VALUE);
 
    ~FineSegmenter();
 
@@ -383,13 +398,29 @@ class FineSegmenter : public Segmenter
    */
   void findCDR3();
 
+  void checkWarnings(json &json_clone);
   json toJson();
   
 };
 
 
+
+/**
+ * Align a read against a collection of sequences, maximizing the alignment 'score'
+ * @param read:         the read
+ * @param rep:          a collection of reference sequences
+ * @param reverse_ref:  if true, reverse the reference sequences (VkVk)
+ * @param reverse_both: if true, reverse both the read and the reference sequences (J segment)
+ * @param local:        if true, Local alignment (D segment), otherwise LocalEndWithSomeDeletions and onlyBottomTriangle (V and J segments)
+ * @param box:          the AligBox to fill
+ * @param segment_cost: the cost used by the dynamic programing
+ * @param banded_dp: Should we use banded dynamic programming?
+ * @param evalue_threshold: threshold for randomly expected segmentation (evalue) to relaunch a full DP without banded_dp
+ * @post  box is filled
+ */
 void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id,
                               bool reverse_ref, bool reverse_both, bool local,
-                              AlignBox *box, Cost segment_cost, bool banded_dp=true);
+                              AlignBox *box, Cost segment_cost, bool banded_dp=true,
+                              double evalue_threshold=1.);
 
 #endif

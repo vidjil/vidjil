@@ -168,9 +168,9 @@ def form():
                 & (db.sample_set_membership.sample_set_id != None)
                 & (db.sample_set.id == db.sample_set_membership.sample_set_id)
                 & (db.sample_set.sample_type != 'sequence_file')
-            ).select(db.sample_set_membership.sample_set_id)
+            ).select(db.sample_set_membership.sample_set_id.with_alias('sample_set_id'), db.sample_set.sample_type.with_alias('sample_type'))
         for row in sample_set_list :
-            smp_type = db.sample_set[row.sample_set_id].sample_type
+            smp_type= row.sample_type
             if smp_type not in relevant_ids:
                 relevant_ids[smp_type] = []
             relevant_ids[smp_type].append(db(db[smp_type].sample_set_id == row.sample_set_id).select()[0].id)
@@ -236,6 +236,10 @@ def submit():
             reupload = True
             fid = int(f["id"])
             sequence_file = db.sequence_file[fid]
+            if f['filename'] == '':
+                # If we don't reupload a new file
+                file_data.pop('pre_process_flag')
+            
             db.sequence_file[fid] = file_data
             #remove previous membership
             db( db.sample_set_membership.sequence_file_id == fid).delete()
@@ -298,6 +302,10 @@ def submit():
     
 def form_response(data):
     source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
+    network_source = source_module_active and (data['action'] != 'edit'     \
+                                               or len(data['file']) == 0    \
+                                               or data['file'][0].network)
+      # should be true only when we want to use the network view
     response.view = 'file/form.html'
     upload_group_ids = [int(gid) for gid in get_upload_group_ids(auth)]
     group_ids = get_involved_groups()
@@ -309,6 +317,7 @@ def form_response(data):
            sample_type = data['sample_type'],
            errors = data['errors'],
            source_module_active = source_module_active,
+           network_source = network_source,
            group_ids = group_ids,
            upload_group_ids = upload_group_ids,
            isEditing = data['action']=='edit')
@@ -441,7 +450,7 @@ def delete():
 
         res = {"redirect": "sample_set/index",
                "args" : { "id" : request.vars["redirect_sample_set_id"]},
-               "message": "sequence file deleted"}
+               "message": "sequence file ({}) deleted".format(request.vars['id'])}
         if associated_id is not None:
             log.info(res, extra={'user_id': auth.user.id, 'record_id': associated_id, 'table_name': sample_set.sample_type})
         else:

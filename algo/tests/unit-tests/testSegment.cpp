@@ -8,6 +8,7 @@
 #include "core/bioreader.hpp"
 #include "core/segment.h"
 #include "core/windowExtractor.h"
+#include "lib/json.hpp"
 
 using namespace std;
 
@@ -158,6 +159,7 @@ void testSegmentationCause(IndexTypes index) {
                TEST_KMER_JUNCTION, ks.getInfoLineWithAffects());
       TAP_TEST_EQUAL(ks.getLeft(), 17, TEST_KMER_LEFT, "left = " << ks.getLeft());
       TAP_TEST_EQUAL(ks.getRight(), 18, TEST_KMER_RIGHT, "right = " << ks.getRight());
+      TAP_TEST_EQUAL(ks.getMidLength(), 0, TEST_KMER_RIGHT, "mid length = " << ks.getMidLength());
 
       ks.setSegmentationStatus(NOT_PROCESSED);
       TAP_TEST(! ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
@@ -216,11 +218,11 @@ void testSegmentationCause(IndexTypes index) {
       TAP_TEST_EQUAL(ks.getSegmentationStatus(), UNSEG_AMBIGUOUS, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       nb_checked++;
     } else if (data.read(i).label == "seq-delta-min") {
-      // This test was a test for delta_min but the read is now reported as ambiguous,
-      // as they are, at the left of the segmentation point, not twice more "V" k-mers than "J" k-mers.
+      // This test was a test for delta_min but the read is now reported as UNSEG_ONLY_J,
+      // as they are, at the left of the segmentation point, much not enough Vs
       // We keep the test, but change it.
       TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "delta-min: " << ks.getInfoLineWithAffects());
-      TAP_TEST_EQUAL(ks.getSegmentationStatus(), UNSEG_AMBIGUOUS, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
+      TAP_TEST_EQUAL(ks.getSegmentationStatus(), UNSEG_ONLY_J, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       nb_checked++;
     } else if (data.read(i).label == "seq-delta-min-padded") {
       // This one has enough k-mers to be segmented
@@ -316,10 +318,10 @@ void testExtractor(IndexTypes index) {
   TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_TOO_SHORT), 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_STRAND_NOT_CONSISTENT), 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_TOO_FEW_ZERO), 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
-  TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_ONLY_J), 3, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_ONLY_J), 4, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_ONLY_V), 3, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_BAD_DELTA_MIN), 0, TEST_EXTRACTOR_NB_SEGMENTED, "");
-  TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_AMBIGUOUS), 2, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_AMBIGUOUS), 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_TOO_SHORT_FOR_WINDOW), 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST_EQUAL(we.getNbSegmented(TOTAL_SEG_AND_WINDOW), 3, TEST_EXTRACTOR_NB_SEGMENTED, "");
 
@@ -328,9 +330,9 @@ void testExtractor(IndexTypes index) {
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_TOO_SHORT), 4, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_STRAND_NOT_CONSISTENT), 36, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_TOO_FEW_ZERO), 36, TEST_EXTRACTOR_AVG_LENGTH, "");
-  TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_ONLY_J), 46, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_ONLY_J));
+  TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_ONLY_J), 42.75, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_ONLY_J));
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_ONLY_V), 48, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_ONLY_V));
-  TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_AMBIGUOUS), 52.5, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_AMBIGUOUS));
+  TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_AMBIGUOUS), 72, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_AMBIGUOUS));
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW), 20, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW));
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW), 71, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW));
 

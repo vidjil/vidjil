@@ -53,13 +53,13 @@ QUnit.test("sort", function(assert) {
     var clone_list = document.getElementById('list').lastChild.childNodes
     
     list.sortListBy(function(id){return m.clone(id).getSize()});
-    assert.notEqual(clone_list[0].innerHTML.indexOf("IGH smaller"), -1, "sortBySize: Ok");
-    assert.notEqual(clone_list[1].innerHTML.indexOf("TRG smaller"), -1, "sortBySize: Ok");
-    assert.notEqual(clone_list[2].innerHTML.indexOf("test1"),       -1, "sortBySize: Ok");
-    assert.notEqual(clone_list[3].innerHTML.indexOf("test2"),       -1, "sortBySize: Ok");
-    assert.notEqual(clone_list[4].innerHTML.indexOf("test4"),       -1, "sortBySize: Ok");
-    assert.notEqual(clone_list[5].innerHTML.indexOf("unseg sequence"), -1, "sortBySize: Ok");
-    assert.notEqual(clone_list[6].innerHTML.indexOf("test3"),       -1, "sortBySize: Ok");
+    assert.notEqual(clone_list[4].innerHTML.indexOf("IGH smaller"), -1, "sortBySize, IGH smaller");
+    assert.notEqual(clone_list[6].innerHTML.indexOf("TRG smaller"), -1, "sortBySize, TRG smaller");
+    assert.notEqual(clone_list[2].innerHTML.indexOf("test1"),       -1, "sortBySize, test1");
+    assert.notEqual(clone_list[3].innerHTML.indexOf("test2"),       -1, "sortBySize, test2");
+    assert.notEqual(clone_list[0].innerHTML.indexOf("test4"),       -1, "sortBySize, test4");
+    assert.notEqual(clone_list[1].innerHTML.indexOf("unseg sequence"), -1, "sortBySize, unseg sequence");
+    assert.notEqual(clone_list[5].innerHTML.indexOf("test3"),       -1, "sortBySize, test3");
 
     list.sortListByV();
     assert.notEqual(clone_list[0].innerHTML.indexOf("test3"),       -1, "sortByV: Ok");

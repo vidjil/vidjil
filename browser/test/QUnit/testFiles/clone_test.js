@@ -170,10 +170,13 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.equal(c1.getSequenceSize(), "0.05", "clone c1 size : 0.05");
     assert.equal(c1.getNumberNonZeroSamples(), 4, "clustered clone c1, getNumberNonZeroSamples");
 
+    assert.deepEqual(c1.getReadsAllSamples(), [20, 20, 30, 30], "cluster c1+c2 reads on all samples");
+
     console.log(m.samples.order);
 
     html = m.clones[0].getHtmlInfo();
-    assert.includes(html, "<h2>Cluster info : hello</h2><div id='info_window'><table><tr><th></th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
+    assert.includes(html, "<h2>Cluster info : hello</h2>")
+    assert.includes(html, "<div id='info_window'><table><tr><th></th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
              "getHtmlInfo: cluster info");
 
     assert.includes(html, "<tr><td>clone name</td><td colspan='4'>hello</td></tr><tr><td>clone short name</td><td colspan='4'>hello</td></tr>",

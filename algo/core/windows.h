@@ -19,7 +19,7 @@
 #include "read_score.h"
 #include "representative.h"
 #include "stats.h"
-#include "../lib/json.hpp"
+#include "../lib/json_fwd.hpp"
 
 #define NB_BINS 30
 #define MAX_VALUE_BINS 500
@@ -215,10 +215,11 @@ class WindowsStorage {
 
   /**
    * Print the windows from the most abundant to the least abundant
+   * @max_json_output: maximal number of windows to output (<= 0: no limit)
    */ 
   ostream &printSortedWindows(ostream &os);
   
-  json sortedWindowsToJson(map<junction, json> json_data_segment);
+  json sortedWindowsToJson(map<junction, json> json_data_segment, int max_json_output);
 
   /**
    * Display a window with its in size in a somewhat FASTA format

@@ -140,8 +140,8 @@ Clone.prototype = {
 
     REGEX_N: /^(-?\d*)\/([ACGT]*)\/(-?\d*)$/,                                    // 6/ACCAT/
     REGEX_N_SIZE: /^(-?\d*)\/(\d*)\/(-?\d*)$/,                                   // 6/5/
-    REGEX_GENE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD)([\w-*]*)$/,                       // IGHV3-11*03
-    REGEX_GENE_IGNORE_ALLELE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD)([\w-]*)([\w-*]*)$/,   // IGHV3-11*03  (ignore *03)
+    REGEX_GENE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD|IKZF1-|ERG-)([\w-*]*)$/,                       // IGHV3-11*03
+    REGEX_GENE_IGNORE_ALLELE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD|IKZF1-|ERG-)([\w-]*)([\w-*]*)$/,   // IGHV3-11*03  (ignore *03)
 
     getAverageReadLength: function(time) {
         if (this._average_read_length == 'undefined')
@@ -699,6 +699,20 @@ Clone.prototype = {
 
     }, //end getSize
 
+
+    /* return a list of read numbers (sum of all reads of clustered clones) for all samples
+     * */
+
+    getReadsAllSamples: function (f) {
+        if (typeof(f) == 'undefined')
+            f = function (x) { return x }
+
+        var time_length = this.m.samples.order.length
+        var reads = []
+        for (var t = 0; t < time_length; t++) reads.push(f(this.getReads(t))) ;
+        return reads;
+    },
+
     /**
      * @param: A variable number of arguments which consists of property names that should be found in seg.
      * @return true iff all of the property are found in seg.
@@ -1125,6 +1139,9 @@ Clone.prototype = {
         } else {
             html = "<h2>Sequence info : " + this.getSequenceName() + "</h2>"
         }
+
+        html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.90); m.closeInfoBox();'>correlated</a> clones</p>"
+        html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.99); m.closeInfoBox();'>strongly correlated</a> clones</p>"
         
         //column
         html += "<div id='info_window'><table><tr><th></th>"

@@ -1,7 +1,10 @@
 CXX?=g++
 INCLUDE=-I ..
-OPTIM=-g -O2 $(COVERAGE)
-override CXXFLAGS += -std=c++11 -W -Wall $(OPTIM)
+ifeq ($(CXXFLAGS), )
+  CXXFLAGS := -W -Wall -std=c++11 -O2
+endif
+CXXFLAGS := $(filter-out -DNDEBUG,$(CXXFLAGS))
+export CXXFLAGS
 LDLIBS=-lz
 SRC= unit-tests/tests.cpp
 EXEC=$(SRC:.cpp=)
@@ -136,7 +139,7 @@ $(EXEC): % : %.o $(LIB)
 
 vidjil:
 	$(MAKE) -C ../ clean
-	$(MAKE) -C ../ OPTIM="$(OPTIM)"
+	$(MAKE) -C ../
 
 core:
 	$(MAKE) -C ../core

@@ -1,6 +1,28 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+2018-07-16  The Vidjil Team
+	* New default option -Z 3, speeding up the full analysis of clones with a pre-processing based on k-mers #3298
+	  Processes with `-c segment` or with large `-z` values will be between 2x and 15x faster (vidjil.cpp, core/filter.cpp)
+	* Integrated and extended up/downstream regions, improving analysis of heavily deleted 3' genes (germline/) #3008 #3009
+	* Corrected the heuristic in borderline cases with overlapping VJ affectations (core/affectanalyser.cpp) #3296
+	* Streamlined handling of seeds, enabling the use of aliases with -s (core/tools.cpp) #3293
+	* Refactored option processing for vidjil-algo with CLI11 (lib/CLI11.hpp, vidjil.cpp) #2732
+	* Improved build time up to 40% (lib/json_fwd.h) #3307
+	* Updated third-party library (lib/json.hpp) #2935
+	* Improved build and release process, supporting also g++ 7.3 and testing several compilers (.gitlab-ci.yml) #3002 #3015
+	* Removed unused code and CI parts #3294 #3287
+	* Refactored and re-enabled code coverage, making it publicly accessible on Gitlab (algo/Makefile, .gitlab-ci.yml) #1696
+	* New and updated unit and functional tests
+
+2018-06-14  The Vidjil Team
+	* New experimental option -Z to speed-up the full analysis with a pre-processing based on k-mers (core/filter.cpp) #920
+	* New experimental analysis of Ikaros/ERG recombinations (germline/homo-sapiens-ikaros.g) #2139
+	* Improved analysis with large number of mutations in V or J genes (core/dynprog.cpp) #3066
+	* Added levels to warnings, lowering level for W53 (core/tools.cpp) #3136 #3137
+	* Refactored the functional test framework (tools/should.py) #3105
+	* New and updated unit and functional tests
+
 2018-02-02  The Vidjil Team
 	* Renamed program to 'vidjil-algo'
 	* Improved analysis of large deletions in V or J genes (core/segment.cpp) #2767

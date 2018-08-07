@@ -22,15 +22,25 @@ typedef enum affect_options_e {
 } affect_options_t;
 
 
-/* Stores results during .getMaximum() computation */
+/*
+   Stores results during .getMaximum() computation
+   See examples in tests/unit-tests/testAffectAnalyser.cpp:testGetMaximum()
+ */
 typedef struct affect_infos_s {
+
+  // Position of the plateau
   int first_pos_max;            /* First position of maximum */
   int last_pos_max;             /* Last position of maximum */
+
+  // Value on the plateau
   int max_value;                /* Maximal value */
+
+  // Number of complete affectations at both sides of the plateau
   int nb_before_right;          /* Nb of “before” right of the maximum */
   int nb_after_right;           /* Same with “after” */
   int nb_before_left;           /* Nb of “before” left of the maximum */
   int nb_after_left;            /* Same with “after” */
+
   bool max_found;               /* We have found a maximum */
 } affect_infos;
 

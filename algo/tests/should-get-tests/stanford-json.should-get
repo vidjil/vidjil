@@ -22,7 +22,8 @@ $ No quality information here
 0: "quality"
 
 $ Segmentation
-1:"name": "IGHV3-11.03 6/ACCCGGGAGGAACAATAT/9 IGHD6-13.01 0//5 IGHJ4.02"
+# IGHV3-11*03 may also be detected
+1:"name": "IGHV3-23.05 6/ACCCGGGAGGAACAATAT/9 IGHD6-13.01 0//5 IGHJ4.02"
 
 #                                                     Cys-T-=R=-E-=E=-Q-=Y=-S-=S=-W-=Y=-F-=D=-F-Trp
 #          1         2         3         4         5  | *|  6         7   *     8    **   9    |  |10        11        12
@@ -38,7 +39,8 @@ $ Segmentation
 # JUNCTION: 53 -> 97
 
 $ Segmentation details - V
-1:"5": ."delRight": 6, "name": "IGHV3-11.03", "stop": 54.
+# IGHV3-11*03 may also be detected
+1:"5": ."delRight": 6, "name": "IGHV3-23.05", "stop": 54.
 
 $ Segmentation details - D
 1:"4": ."delLeft": 9, "delRight": 0, "name": "IGHD6-13.01", "start": 73, "stop": 84.

@@ -5,6 +5,11 @@ VIDJIL_SERVER_SRC = server/
 
 TEE = python tools/tee.py -v
 
+all:
+	$(MAKE) germline
+	$(MAKE) algo
+	$(MAKE) demo
+
 algo:
 	$(MAKE) -C algo
 

@@ -57,8 +57,8 @@ void testAffect() {
   TAP_TEST_EQUAL(toString(Vminus), "-V", TEST_AFFECT_TO_STRING, toString(Vminus));
   TAP_TEST_EQUAL(toString(Vplus), "+V", TEST_AFFECT_TO_STRING, toString(Vplus));
   TAP_TEST_EQUAL(toString(Jplus), "+J", TEST_AFFECT_TO_STRING, toString(Jplus));
-  TAP_TEST_EQUAL(toString(AFFECT_UNKNOWN.affect), " " AFFECT_UNKNOWN_SYMBOL, TEST_AFFECT_TO_STRING, "");
-  TAP_TEST_EQUAL(toString(AFFECT_AMBIGUOUS.affect), " " AFFECT_AMBIGUOUS_SYMBOL, TEST_AFFECT_TO_STRING, "");
+  TAP_TEST_EQUAL(toString(AFFECT_UNKNOWN.affect), " " AFFECT_UNKNOWN_TO_STRING, TEST_AFFECT_TO_STRING, "");
+  TAP_TEST_EQUAL(toString(AFFECT_AMBIGUOUS.affect), " " AFFECT_AMBIGUOUS_TO_STRING, TEST_AFFECT_TO_STRING, "");
 
   ostringstream oss;
   oss << Vminus;
@@ -104,13 +104,13 @@ void testKmerAffectClass() {
   TAP_TEST(unknown == AFFECT_UNKNOWN, TEST_KMERAFFECT_CONSTRUCTOR, "");
   TAP_TEST(unknown.isUnknown(), TEST_KMERAFFECT_UNKNOWN, "");
   TAP_TEST_EQUAL(unknown.getStrand(), 0, TEST_KMERAFFECT_STRAND, "");
-  TAP_TEST_EQUAL(unknown.getLabel(), AFFECT_UNKNOWN_SYMBOL, TEST_KMERAFFECT_LABEL, "");
+  TAP_TEST_EQUAL(unknown.getLabel(), AFFECT_UNKNOWN_TO_STRING, TEST_KMERAFFECT_LABEL, "");
   unknown += KAVm;
   TAP_TEST(unknown.affect == KAVm, TEST_KMERAFFECT_ADD, "");
   unknown += KAJp;
   TAP_TEST(unknown == AFFECT_AMBIGUOUS, TEST_KMERAFFECT_ADD, "");
   TAP_TEST(unknown.isAmbiguous(), TEST_KMERAFFECT_AMBIGUOUS, "");
-  TAP_TEST_EQUAL(unknown.getLabel(), AFFECT_AMBIGUOUS_SYMBOL, TEST_KMERAFFECT_LABEL, "");
+  TAP_TEST_EQUAL(unknown.getLabel(), AFFECT_AMBIGUOUS_TO_STRING, TEST_KMERAFFECT_LABEL, "");
   TAP_TEST_EQUAL(unknown.getStrand(), 0, TEST_KMERAFFECT_STRAND, "");
   TAP_TEST_EQUAL(unknown.getLength(), 4, TEST_KMERAFFECT_AMBIGUOUS, "");
 

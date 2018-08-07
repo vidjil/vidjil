@@ -60,16 +60,18 @@ bool operator!=(const affect_t &a1, const affect_t &a2) {
 }
 string toString(const affect_t &a) {
   string result;
-  if((a == AFFECT_UNKNOWN.affect) || (a == AFFECT_AMBIGUOUS.affect))
-    result = " ";
-  else
-    result = (affect_strand(a)==1 ? "+" : "-");
-
-  result += string(1,affect_char(a));
+  result = toStringSigns(a);
+  result += toStringValues(a);
   return result;
 }
 
 string toStringValues(const affect_t &a){
+  if(a == AFFECT_UNKNOWN.affect){
+    return AFFECT_UNKNOWN_TO_STRING;
+  }
+  if(a == AFFECT_AMBIGUOUS.affect){
+    return AFFECT_AMBIGUOUS_TO_STRING;
+  }
   return string(1,affect_char(a));
 }
 
@@ -153,7 +155,7 @@ int KmerAffect::getStrand() const{
 }
 
 string KmerAffect::getLabel() const {
-  return string(1, affect_char(affect));
+ return ::toStringValues(affect);
 }
 
 unsigned char KmerAffect::getLength() const {
@@ -174,6 +176,10 @@ bool KmerAffect::isNull() const {
 
 bool KmerAffect::isUnknown() const {
   return affect.c == (int) AFFECT_UNKNOWN_CHAR;
+}
+
+bool KmerAffect::isGeneric() const {
+  return !(isUnknown() || isAmbiguous());
 }
 
 string KmerAffect::toString() const {

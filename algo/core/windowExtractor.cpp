@@ -33,7 +33,7 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
     try {
       reads->next();
     }
-    catch (const invalid_argument e) {
+    catch (const invalid_argument &e) {
       cout << endl;
       cerr << WARNING_STRING << "Error in getting a new read: " << e.what() << endl;
       cerr << WARNING_STRING << "Vidjil stops the analysis here, after " << nb_reads << " reads." << endl;

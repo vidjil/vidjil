@@ -1,4 +1,4 @@
-!LAUNCH: python ../../fuse.py ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ; cat fused.vidjil
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ; cat fused.vidjil
 
 $ Fuse the three files
 2: ListWindows: .1000, 1000, 1000.

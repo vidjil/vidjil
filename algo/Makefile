@@ -6,9 +6,19 @@ else
 	COVERAGE_OPTION=
 endif
 
+ifeq ($(CXXFLAGS), )
+  CXXFLAGS := -W -Wall -std=c++11 -O2 -DNDEBUG
+endif
+override CXXFLAGS += $(COVERAGE_OPTION) $(DEBUG)
+ifeq ($(LDFLAGS),)
+  LDFLAGS := $(COVERAGE_OPTION)
+endif
+COV_OUTFILE?=lcov.out
+BASE_PATH=$(dir $(abspath .))
 
-OPTIM=-O2 -DNDEBUG  $(COVERAGE_OPTION) $(DEBUG)
-override CXXFLAGS += -W -Wall -std=c++11 $(OPTIM)
+export CXXFLAGS
+export LDFLAGS
+export CXX
 
 ## inspired from http://stackoverflow.com/questions/399850/best-compiler-warning-level-for-c-c-compilers/401276
 PARANOID= -Wall -Weffc++ -pedantic  \
@@ -50,7 +60,7 @@ CREATE_VERSION_GIT_H := $(shell test -x ./create-git-version-h.sh && ./create-gi
 
 TEE = python ../tools/tee.py -v
 
-.PHONY: all core lib clean forcedep
+.PHONY: all core lib clean forcedep gcovr_reports
 
 all: $(VIDJIL) $(ALIGN_CGI) $(SIMILARITY_CGI) $(SIMILARITY_TOOL)
 	$(MAKE) -C $(TOOLDIR)
@@ -63,7 +73,7 @@ static:
 ###
 
 paranoid: clean
-	$(MAKE) vidjil OPTIM="$(PARANOID)"
+	$(MAKE) vidjil CXXFLAGS="$(CXXFLAGS) $(PARANOID)"
 
 ###
 
@@ -91,17 +101,17 @@ cleanspaced:
 
 $(ALIGN_CGI): cgi/align.o $(LIBCORE)
 	mkdir -p $(CGIDIR)
-	$(MAKE) -C core OPTIM="$(OPTIM)"
+	$(MAKE) -C core
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 
 $(SIMILARITY_CGI): cgi/similarity.o $(LIBCORE)
 	mkdir -p $(CGIDIR)
-	$(MAKE) -C core OPTIM="$(OPTIM)"
+	$(MAKE) -C core
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 
 $(SIMILARITY_TOOL): cgi/similarity.o $(LIBCORE)
 	mkdir -p $(TOOLDIR)
-	$(MAKE) -C core OPTIM="$(OPTIM)"
+	$(MAKE) -C core
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 
 ###
@@ -111,9 +121,9 @@ debug:
 	$(MAKE) DEBUG="-ggdb"
 
 $(VIDJIL): $(BINDIR)%: $(MAIN).o $(LIBCORE)
-	$(MAKE) -C core OPTIM="$(OPTIM)"
-	$(MAKE) -C lib OPTIM="$(OPTIM)"
-	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
+	$(MAKE) -C core
+	$(MAKE) -C lib
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 ###
 # Subdirectories
@@ -146,7 +156,7 @@ cleanall: cleancoverage
 
 test:
 	$(MAKE) -C tests cleantests
-	$(TEE) '$(MAKE) COVERAGE="$(COVERAGE)" unit' tests/out-unit.log
+	$(TEE) '$(MAKE) unit' tests/out-unit.log
 	$(MAKE) functional
 	@echo
 	@echo "*** All tests passed. Congratulations !"
@@ -160,24 +170,27 @@ snapshot_diff:
 snapshot_diff_current:
 	$(MAKE) -C tests snapshot_diff_current
 
-unit: all
+unit:
+	$(MAKE) CXXFLAGS="$(filter-out -DNDEBUG, $(CXXFLAGS))" all
 	@echo "*** Launching unit tests..."
-	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C tests
+	$(MAKE) -C tests
 	@echo "*** All unit tests passed"
 
-functional: all
+functional:
 	$(TEE) '$(MAKE) should'      tests/out-should-get.log
 	$(TEE) '$(MAKE) shouldvdj'   tests/out-should-vdj.log
 
-should: all
+should:
+	$(MAKE) CXXFLAGS="$(filter-out -DNDEBUG, $(CXXFLAGS))" all
 	@echo
 	@echo "*** Launching .should_get tests..."
-	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C tests should
+	$(MAKE) -C tests should
 	@echo "*** All .should_get tests passed"
 
-shouldvdj: all
+shouldvdj:
 	@echo
-	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C tests shouldvdj_if_python
+	$(MAKE) CXXFLAGS="$(filter-out -DNDEBUG, $(CXXFLAGS))" all
+	$(MAKE) -C tests shouldvdj_if_python
 
 
 valgrind_unit:
@@ -192,27 +205,29 @@ valgrind_should:
 
 coverage: unit_coverage should_coverage
 
-unit_coverage: clean
+unit_coverage: cleancoverage
 	$(MAKE) COVERAGE=1 unit
-should_coverage: clean
+	$(MAKE) COV_OUTFILE=lcov_test_unit gencov
+should_coverage: cleancoverage
+	$(MAKE) COVERAGE=1 should
+	$(MAKE) COV_OUTFILE=lcov_test_should gencov
+shouldvdj_coverage: cleancoverage
+	$(MAKE) COVERAGE=1 shouldvdj
+	$(MAKE) COV_OUTFILE=lcov_test_shouldvdj gencov
+functional_coverage: cleancoverage
 	$(MAKE) COVERAGE=1 functional
+	$(MAKE) COV_OUTFILE=lcov_test_functional gencov
 
-### Reports with gcovr
+gencov:
+	which lcov > /dev/null || exit 0
+	lcov --rc geninfo_adjust_src_path="$(BASE_PATH)" -d . -c -o $(COV_OUTFILE)
+	lcov  --remove $(COV_OUTFILE) '/usr/*' '*algo/tests/*' '*algo/lib/*' '*algo/tools/*' -o $(COV_OUTFILE).filtered
 
-unit_gcovr: unit_coverage
+### Reports with lcov
+
+lcov_reports:
 	mkdir -p reports
-	which gcovr > /dev/null && (gcovr -r . -e tests/ --xml > ../reports/unit_coverage.xml) || echo "gcovr is needed to generate a full report"
-should_gcovr: should_coverage
-	mkdir -p reports
-	which gcovr > /dev/null && (gcovr -r . -e tests/ --xml > ../reports/should_coverage.xml) || echo "gcovr is needed to generate a full report"
-
-### Upload to coveralls.io
-
-unit_coveralls:
-	coveralls $(COVERALLS_OPTIONS) --exclude release --exclude lib --exclude tests --exclude tools --exclude tests --exclude ../tools --exclude lib --gcov-options '\-lp'
-should_coveralls:
-	coveralls $(COVERALLS_OPTIONS) --exclude release --exclude lib --exclude tests --exclude tools --exclude tests --exclude ../tools --exclude lib --gcov-options '\-lp' -r algo
-
+	which lcov > /dev/null && (lcov $(addprefix -a ,$(wildcard lcov*.filtered)) | sed 's_^SF:algo_SF:'"$(BASE_PATH)"'/algo_' > lcov_filtered_total.out && genhtml --branch-coverage --legend --output-directory reports/ lcov_filtered_total.out ) || echo "gcovr is needed to generate a full report"
 
 ### cppcheck
 
@@ -261,9 +276,9 @@ RELEASE_DIR_TMP = releases/tmp
 RELEASE_ALGO = src/
 RELEASE_TOOLS = $(wildcard ../tools/*.py)
 RELEASE_MAKE = ../tools/tests/Makefile ../doc/Makefile
-RELEASE_TESTS = ../doc/format-analysis.org $(wildcard ../doc/analysis-example.vidjil) $(wildcard ../tools/tests/*.should_get) ../tools/tests/should-to-tap.sh ../tools/diff_json.sh ../demo/get-sequences ../demo/Demo-X5.fa ../demo/Makefile
-RELEASE_GERMLINES = ../germline/Makefile ../germline/germline_id ../germline/get-saved-germline ../germline/get-germline ../germline/split-from-imgt.py $(wildcard ../germline/*.g) ../germline/revcomp-fasta.py ../germline/fasta.py
-RELEASE_HELP = ../doc/algo.org ../doc/locus.org ../doc/dev.org ../doc/should-vdj.org ../doc/credits.org ../doc/CHANGELOG ../doc/LICENSE ../README.org ../INSTALL.org
+RELEASE_TESTS = ../doc/vidjil-format.md $(wildcard ../doc/analysis-example.vidjil) $(wildcard ../tools/tests/*.should_get) ../tools/should.py  ../tools/diff_json.sh ../demo/get-sequences ../demo/Demo-X5.fa ../demo/Makefile
+RELEASE_GERMLINES = ../germline/Makefile ../germline/germline_id ../germline/get-saved-germline ../germline/get-germline ../germline/split-from-imgt.py $(wildcard ../germline/*.g) ../germline/revcomp-fasta.py ../germline/fasta.py ../germline/homo-sapiens/IKZF*fa ../germline/homo-sapiens/ERG*fa 
+RELEASE_HELP = ../doc/vidjil-algo.md ../doc/locus.md ../doc/dev.org ../doc/should-vdj.org ../doc/credits.md ../doc/CHANGELOG ../doc/LICENSE ../README.md ../INSTALL.md
 RELEASE_FILES = $(RELEASE_TOOLS) $(RELEASE_TESTS) $(RELEASE_MAKE) $(RELEASE_GERMLINES) $(RELEASE_HELP)
 
 
@@ -297,7 +312,7 @@ release_create:
 	for file in $(RELEASE_FILES); do\
 	  dir=$(RELEASE_DIR_TMP)/$(RELEASE_NAME)/algo/`dirname "$$file"`/;    \
 	  mkdir -p $$dir; \
-	  cp -v "$$file" $$dir/;     \
+	  cp -v "$$file" $$dir/ || exit 1;     \
 	done
 
 	# A spurious algo/ directory is created, remove it

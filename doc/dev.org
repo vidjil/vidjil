@@ -13,14 +13,14 @@
 
 Here are aggregated notes forming the developer documentation on the Vidjil components, algorithm,
 web application client and server.
-This documentation is a work-in-progress, it is far from being as polished as the user documentation
+This documentation is a work-in-progress, it is far from being as polished as the user documentation.
 Help can also be found in the source code and in the commit messages.
 
 
 * Algorithm
 ** Code organisation
    The algorithm follows roughly those steps:
-   1. The germlines are read. germlines are in the fasta format and are read
+   1. The germlines are read. Germlines are in the fasta format and are read
       by the Fasta class (=core/fasta.h=). Germlines are built using the
       Germline (or MultiGermline) class (=core/germline.h=)
    2. The input sequence file (.fasta, .fastq, .gz) is read by an OnlineFasta

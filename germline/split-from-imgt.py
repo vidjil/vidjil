@@ -8,6 +8,10 @@ import urllib
 from collections import defaultdict, OrderedDict
 import re
 
+import ncbi
+
+GENES_SEQ_FROM_NCBI = False
+
 IMGT_LICENSE = '''
    # To use the IMGT germline databases (IMGT/GENE-DB), you have to agree to IMGT license: 
    # academic research only, provided that it is referred to IMGT®,
@@ -17,9 +21,8 @@ IMGT_LICENSE = '''
    # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
 '''
 
-print (IMGT_LICENSE)
-
-NCBI_API = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&rettype=fasta&retmode=text'+'&id=%s&from=%s&to=%s'
+def remove_allele(name):
+    return name.split('*')[0]
 
 # Parse lines in IMGT/GENE-DB such as:
 # >M12949|TRGV1*01|Homo sapiens|ORF|...
@@ -74,7 +77,7 @@ def get_gene_coord(imgt_line):
     >>> line = '>X15272|TRGV4*01|Homo sapiens|F|V-REGION|406..705|300 nt|1| | | | |300+0=300| |rev-compl|'
     >>> get_gene_coord(line)[0] == 'X15272'
     True
-    >>> get_gene_coord(line)[1] == {'from': 406, 'to': 705, 'imgt_data': 'TRGV4*01|Homo sapiens|F|V-REGION', 'imgt_name': 'TRGV4*01'}
+    >>> get_gene_coord(line)[1] == {'from': 406, 'to': 705, 'imgt_data': 'TRGV4*01|Homo sapiens|F|V-REGION', 'imgt_name': 'TRGV4*01', 'species': 'Homo sapiens', 'seq': ''}
     True
     '''
     elements = imgt_line.split('|')
@@ -88,38 +91,98 @@ def get_gene_coord(imgt_line):
         end = end.split(',')[0]
     return elements[0][1:], {'from': int(start),
                              'to': int(end),
+                             'species': elements[2],
                              'imgt_name': elements[1],
-                             'imgt_data': '|'.join(elements[1:5])}
+                             'imgt_data': '|'.join(elements[1:5]),
+                             'seq': ''}
 
-def get_gene_sequence(gene, other_gene_name, start, end):
+def paste_updown_on_fasta(fasta, up, down):
     '''
-    Return the gene sequences between positions start and end (included).
+    Put upstream and/or downstream data on an existing FASTA sequences
+    >>> paste_updown_on_fasta('>seq\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT', 'CCCC', 'GGGG')
+    '>seq\\nCCCC\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT\\nGGGG\\n'
+    >>> paste_updown_on_fasta('>seq\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT\\n', '', 'GGGG')
+    '>seq\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT\\nGGGG\\n'
+    >>> paste_updown_on_fasta('>seq\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT', 'CCCC', '')
+    '>seq\\nCCCC\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT\\n'
     '''
-    fasta_string = urllib.urlopen(NCBI_API % (gene, start, end)).read()
-    return re.sub('(>\S*) ', r'\1|'+other_gene_name+'|', fasta_string)
+    lines = fasta.split('\n')
+    return lines[0]+'\n' + (up+'\n' if up else '') + '\n'.join(filter(None, lines[1:])) + '\n'\
+        + (down+'\n' if down else '')
+
+def check_imgt_ncbi_consistency(imgt_info, imgt_data, ncbi_target, ncbi_start, ncbi_end):
+    if abs(imgt_info['from'] - imgt_info['to']) != abs(ncbi_start - ncbi_end):
+        print >>sys.stderr,"WARNING: Length for %s differ between IMGT (%d) and NCBI (%d)" % (imgt_info['imgt_name'], abs(imgt_info['from'] - imgt_info['to'])+1, abs(ncbi_start - ncbi_end)+1)
+    else:
+        # Check that sequences are identical
+        ncbi_seq = ncbi.get_gene_sequence(ncbi_target, '', ncbi_start, ncbi_end, 0).split('\n')[1:]
+        gene_lines = imgt_data.split('\n')[1:]
+        if gene_lines[0].startswith('#'):
+            gene_lines = gene_lines[1:]
+        imgt_seq = ''.join(gene_lines).upper().replace('.', '')
+        ncbi_seq = ''.join(ncbi_seq).upper()
+        if imgt_seq != ncbi_seq:
+            print >>sys.stderr, "WARNING: Sequences for %s differ between IMGT and NCBI\n%s" % (imgt_info['imgt_name'], imgt_seq)
+            for i, letter in enumerate(ncbi_seq):
+                if letter == imgt_seq[i]:
+                    sys.stderr.write('.')
+                else:
+                    sys.stderr.write(letter)
+            sys.stderr.write('\n')
 
 def store_data_if_updownstream(fasta_header, path, data, genes):
+    paths = []                  # A given sequence can be stored in several files
     for gene in gene_matches(fasta_header, genes):
         gene_name, gene_coord = get_gene_coord(fasta_header)
-        if gene_name:
-            data[path+'/'+gene][gene_name].append(gene_coord)
-    
-def retrieve_genes(f, genes, tag, additional_length):
-    for gene in genes:
-        for coord in genes[gene]:
-            start = coord['from']
-            end = coord['to']
-            if additional_length > 0:
-                end += additional_length
-            elif additional_length < 0:
-                start = max(1, start + additional_length)
-            gene_data = get_gene_sequence(gene, coord['imgt_data'] + tag, start, end)
-            if coord['imgt_data'].split('|')[-1] == FEATURE_J_REGION:
-                gene_lines = gene_data.split('\n')
-                gene_lines[1] = gap_j(gene_lines[1].lower())
-                gene_data = '\n'.join(gene_lines)
 
-            f.write(gene_data)
+        if gene_name:
+            data[path+'/'+gene].append((gene_name, gene_coord))
+            paths.append(path+'/'+gene)
+    return paths
+    
+def retrieve_genes(f, genes, tag, additional_length, gene_list):
+    for info in genes:
+        (gene, coord) = info
+        # try to extract from genome
+        gene_id = gene_list.get_gene_id_from_imgt_name(coord['species'], coord['imgt_name'])
+
+        allele_additional_length = 0
+        
+        if gene_id:
+            try:
+                (target, start, end) = ncbi.get_gene_positions(gene_id)
+            except KeyError:
+                print('! No positions for %s (%s: %s)' % (gene_id, gene, str(coord)))
+                allele_additional_length = additional_length
+                gene_id = None
+
+        # gene: is the name of the sequence where the VDJ gene was identified according to IMGT. The gene is just a part of the sequence
+        # gene_id: is the NCBI ID of the VDJ gene
+        # target: is the NCBI ID of the chromosome
+
+        if GENES_SEQ_FROM_NCBI:
+            gene_data = ncbi.get_gene_sequence(gene, coord['imgt_data'] + tag, coord['from'], coord['to'], allele_additional_length)
+        else:
+            # IMGT
+            gene_data = coord['seq']
+
+        if gene_id:
+            # Check consistency for *01 allele
+            if coord['imgt_name'].endswith('*01'):
+                check_imgt_ncbi_consistency(coord, gene_data, target, start, end)
+
+            up_down = ncbi.get_updownstream_sequences(target, start, end, additional_length)
+            # We put the up and downstream data before and after the sequence we retrieved previously
+            gene_data = paste_updown_on_fasta(gene_data, up_down[0], up_down[1])
+
+
+        # post-process gene_data
+        if coord['imgt_data'].split('|')[-1] == FEATURE_J_REGION:
+            gene_lines = gene_data.split('\n')
+            gene_lines[1] = gap_j(gene_lines[1].lower())
+            gene_data = '\n'.join(gene_lines)
+
+        f.write(gene_data)
 
 
 #                  Phe
@@ -161,7 +224,7 @@ def gap_j(seq):
             pos = CUSTOM_118[custom_seq]
 
     if pos is None:
-        m = j118.search(seq)
+        m = j118.search(seq, re.IGNORECASE)
 
         if not m:
             if len(seq) > PHE_TRP_WARN_SIZE:
@@ -220,75 +283,129 @@ class OrderedDefaultListDict(OrderedDict):
         self[key] = value = []
         return value
 
-downstream_data = defaultdict(lambda: OrderedDefaultListDict())
-upstream_data = defaultdict(lambda: OrderedDefaultListDict())
 
-for l in sys.stdin:
 
-    # New sequence: compute 'current_files' and stores up/downstream_data[]
+class IMGTGENEDBGeneList():
+    '''
+    Parse lines such as
+    'Homo sapiens;TRGJ2;F;Homo sapiens T cell receptor gamma joining 2;1;7;7p14;M12961;6969;'
 
-    if ">" in l:
-        current_files = []
-        current_special = None
+    >>> gl = IMGTGENEDBGeneList('IMGTGENEDB-GeneList')
+    >>> gl.get_gene_id_from_imgt_name('Homo sapiens', 'TRGJ2*01')
+    '6969'
+    '''
 
-        species = l.split('|')[2].strip()
-        feature = l.split('|')[4].strip()
+    def __init__(self, f):
 
-        if species in SPECIES and feature in FEATURES:
-            seq = l.split('|')[1]
-            path = SPECIES[species]
+        self.data = defaultdict(str)
 
-            if feature in FEATURES_VDJ:
-                system = seq[:4]
-            else:
-                system = seq[:seq.find("*")]
-                if not system in CLASSES:
-                    print "! Unknown class: ", system
-                system = system.replace("IGH", "IGHC=")
+        for l in open(f):
+            ll = l.split(';')
+            species, name, gene_id = ll[0], ll[1], ll[-2]
+            self.data[species, name] = gene_id
 
-            keys = [path + system]
+    def get_gene_id_from_imgt_name(self, species, name):
+        return self.data[species, remove_allele(name)]
 
-            check_directory_exists(path)
 
-            if system.startswith('IG') or system.startswith('TR'):
+
+def split_IMGTGENEDBReferenceSequences(f, gene_list):
+
+    downstream_data = OrderedDefaultListDict()
+    upstream_data = OrderedDefaultListDict()
+
+    for l in open(ReferenceSequences):
+
+        # New sequence: compute 'current_files' and stores up/downstream_data[]
+
+        if ">" in l:
+            current_files = []
+            current_special = None
+            key_upstream, key_downstream = ([], [])
+
+            species = l.split('|')[2].strip()
+            feature = l.split('|')[4].strip()
+
+            if species in SPECIES and feature in FEATURES:
+                seq = l.split('|')[1]
+                path = SPECIES[species]
 
                 if feature in FEATURES_VDJ:
-                    store_data_if_updownstream(l, path, downstream_data, DOWNSTREAM_REGIONS)
-                    store_data_if_updownstream(l, path, upstream_data, UPSTREAM_REGIONS)
+                    system = seq[:4]
+                else:
+                    system = seq[:seq.find("*")]
+                    if not system in CLASSES:
+                        print "! Unknown class: ", system
+                    system = system.replace("IGH", "IGHC=")
 
-                systems = get_split_files(seq, SPLIT_SEQUENCES)
-                if systems:
-                    keys = [path + s for s in systems]
-                for key in keys:
-                    current_files.append(open_files[key])
+                keys = [path + system]
 
-            if seq in SPECIAL_SEQUENCES:
-                name = '%s.fa' % seq.replace('*', '-')
-                current_special = verbose_open_w(name)
+                check_directory_exists(path)
 
+                if system.startswith('IG') or system.startswith('TR'):
 
-    # Possibly gap J_REGION
+                    if feature in FEATURES_VDJ:
+                        key_downstream = store_data_if_updownstream(l, path, downstream_data, DOWNSTREAM_REGIONS)
+                        key_upstream = store_data_if_updownstream(l, path, upstream_data, UPSTREAM_REGIONS)
 
-    if '>' not in l and current_files and feature == FEATURE_J_REGION:
-        l = gap_j(l)
+                    systems = get_split_files(seq, SPLIT_SEQUENCES)
+                    if systems:
+                        keys = [path + s for s in systems]
+                    for key in keys:
+                        current_files.append(open_files[key])
 
-    # Dump 'l' to the concerned files
-
-    for current_file in current_files:
-            current_file.write(l)
-
-    if current_special:
-            current_special.write(l)
-
-    # End, loop to next 'l'
+                if seq in SPECIAL_SEQUENCES:
+                    name = '%s.fa' % seq.replace('*', '-')
+                    current_special = verbose_open_w(name)
 
 
-# Dump up/downstream data
+        for key in key_downstream:
+            downstream_data[key][-1][1]['seq'] += l
+        for key in key_upstream:
+            upstream_data[key][-1][1]['seq'] += l
 
-for system in upstream_data:
-    f = verbose_open_w(system + TAG_UPSTREAM + '.fa')
-    retrieve_genes(f, upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM)
 
-for system in downstream_data:
-    f = verbose_open_w(system + TAG_DOWNSTREAM + '.fa')
-    retrieve_genes(f, downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM)
+        # Possibly gap J_REGION
+
+        if '>' not in l and current_files and feature == FEATURE_J_REGION:
+            l = gap_j(l)
+
+        # Dump 'l' to the concerned files
+
+        for current_file in current_files:
+                current_file.write(l)
+
+        if current_special:
+                current_special.write(l)
+
+        # End, loop to next 'l'
+
+
+    # Dump up/downstream data
+
+    for system in upstream_data:
+        f = verbose_open_w(system + TAG_UPSTREAM + '.fa')
+        retrieve_genes(f, upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM, gene_list)
+
+    for system in downstream_data:
+        f = verbose_open_w(system + TAG_DOWNSTREAM + '.fa')
+        retrieve_genes(f, downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM, gene_list)
+
+
+
+
+
+if __name__ == '__main__':
+
+    if sys.argv[1] == '--test':
+        import doctest
+        doctest.testmod()
+    else:
+        print (IMGT_LICENSE)
+
+        ReferenceSequences = sys.argv[1]
+        GeneList = sys.argv[2]
+
+        gl = IMGTGENEDBGeneList(GeneList)
+        split_IMGTGENEDBReferenceSequences(ReferenceSequences, gl)
+    

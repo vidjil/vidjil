@@ -157,6 +157,10 @@ VidjilAutoComplete.prototype = {
 
         // code modified from atwho source
         callbacks.highlighter = function(li, query) {
+            var def = VidjilAutoComplete.defaultLoadingData[0];
+            if (li.substr(4, def.length) == def) {
+                return li;
+            }
             var mapper = {'p': 'patient',
                           'r': 'run',
                           's': 'generic'}
@@ -192,12 +196,26 @@ VidjilAutoComplete.prototype = {
             });
         };
 
+        callbacks.filter = function(query, data, searchKey) {
+            var fetchData = self.fetchData.bind(self);
+            var isLoaded = self.isLoaded.bind(self);
+            var val = this.$inputor.val()
+            var keys = [val];
+            if ((VidjilAutoComplete.isLoading(data) || !isLoaded(keys)) && (val.length == 0 || val.length >= 3)) {
+                this.$inputor.atwho('load', this.at, VidjilAutoComplete.defaultLoadingData);
+                fetchData(this.$inputor, this.at, keys);
+                return data;
+            }
+            return $.fn.atwho.default.callbacks.filter(query, data, searchKey);
+        };
+
         $input.atwho({
             at: at,
             alias: 'samples',
             data: VidjilAutoComplete.defaultLoadingData,
             callbacks: callbacks,
             searchKey: 'search',
+            limit: 10
         });
     },
 

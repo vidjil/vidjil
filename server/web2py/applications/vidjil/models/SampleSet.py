@@ -79,6 +79,12 @@ class SampleSet(object):
         fields.append({'name': 'files', 'sort': 'file_count', 'call': self.get_files, 'width': 100, 'public': True})
         return fields
 
+    def get_sort_fields(self):
+        fields = {}
+        for field in self.get_fields():
+            fields[field['sort']] = field
+        return fields
+
     def get_reduced_fields(self):
         fields = []
         fields.append({'name': 'name', 'sort': 'name', 'call': self.get_name, 'width': 200, 'public': True})
@@ -107,6 +113,11 @@ class SampleSet(object):
             for key in keys:
                 if key in row:
                     row['string'].append(str(row[key]))
+
+    def get_name_filter_query(self, query):
+        if query is None or query == '':
+            return (db[self.type].name != None)
+        return (db[self.type].name.like('%' + query + "%"))
 
     @abstractmethod
     def filter(self, filter_str, data):

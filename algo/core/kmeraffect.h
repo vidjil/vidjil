@@ -152,6 +152,11 @@ public:
    * @return true iff the value is the same as the one given by default constructor
    */
   bool isNull() const;
+  
+  /**
+  * @return true if the K-mer is not odd (ambiguous or unknown)
+  */
+  bool isGeneric() const;
 
   string toString() const;
 string toStringValues()const;
@@ -170,17 +175,28 @@ bool operator!=(const KmerAffect &a1, const KmerAffect &a2);
 ostream &operator<<(ostream &os, const KmerAffect &kmer);
 
 #define AFFECT_NOT_UNKNOWN_SYMBOL "*"
-#define AFFECT_AMBIGUOUS_SYMBOL "?"
-#define AFFECT_UNKNOWN_SYMBOL "_"
+#define AFFECT_AMBIGUOUS_SYMBOL "\0"
+#define AFFECT_UNKNOWN_SYMBOL "\1"
+
+/* Those are just shortcuts to access the *_SYMBOL constant with a char
+ * type */
 #define AFFECT_AMBIGUOUS_CHAR (AFFECT_AMBIGUOUS_SYMBOL[0])
 #define AFFECT_UNKNOWN_CHAR (AFFECT_UNKNOWN_SYMBOL[0])
 
+/* Define how an ambiguous kmeraffect looks like in a string */
+#define AFFECT_AMBIGUOUS_TO_STRING "?"
+
+/* Define how an unknown kmeraffect looks like in a string */
+#define AFFECT_UNKNOWN_TO_STRING "_"
+
+/* Define how meny specific k-mers exist. For now there is only ambiguous and unknown. */
+#define SPECIFIC_KMERS_NUMBER 2
 
 /**
  * Constant defining any not-unknown affectation
  * Could be used by .getIndexLoad(), but now any non-AFFECT_UNKNOWN kmer will work.
  */
-const KmerAffect AFFECT_NOT_UNKNOWN = KmerAffect(AFFECT_NOT_UNKNOWN_SYMBOL, 0, 1);
+const KmerAffect AFFECT_NOT_UNKNOWN = KmerAffect(AFFECT_NOT_UNKNOWN_SYMBOL, 0, -1);
 
 /**
  * Constant defining the unknown affectation (not known yet)
@@ -190,7 +206,7 @@ const KmerAffect AFFECT_UNKNOWN = KmerAffect(AFFECT_UNKNOWN_SYMBOL, 0, 1);
 /**
  * Constant defining the ambiguous affectation (many possibilities)
  */
-const KmerAffect AFFECT_AMBIGUOUS = KmerAffect(AFFECT_AMBIGUOUS_SYMBOL, 1, 1);
+const KmerAffect AFFECT_AMBIGUOUS = KmerAffect(AFFECT_AMBIGUOUS_SYMBOL, 1, -1);
 
 const KmerAffect AFFECT_V = KmerAffect("V", 1);
 const KmerAffect AFFECT_J = KmerAffect("J", 1);

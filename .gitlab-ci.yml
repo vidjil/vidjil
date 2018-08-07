@@ -16,12 +16,21 @@ stages:
   - test_functional
   - test_functional_external
   - test_shouldvdj
+  - coverage
   - prepare_release
   - release
   - valgrind_unit
   - valgrind_functional
+  - prepare_deploy
   - deploy_prod
 
+# Anchors
+
+.coverage_dependency: &lcov_artifact
+  artifacts:
+    paths:
+      - algo/lcov_test_*.filtered
+    expire_in: 6hrs
 
 # Tools
 
@@ -36,7 +45,7 @@ test_germlines:
   stage: test_germlines
   script:
     - make -C germline get-all-data
-    - make -C germline/tests
+    - make -C germline tests
   only:
     - /^feature-.*g.*\/.*$/
 
@@ -45,25 +54,34 @@ test_germlines:
 
 test_algo_unit:
   stage: test_unit
-  script: make -C algo unit
-  only:
-    - /^feature-.*a.*\/.*$/
-
-test_tools_unit:
-  stage: test_unit
-  script: make -C tools/tests
+  script: make -C algo unit_coverage
+  <<: *lcov_artifact
   only:
     - /^feature-.*a.*\/.*$/
 
 test_algo_should:
   stage: test_functional
-  script: make -C algo should
+  script: make -C algo should_coverage
   only:
     - /^feature-.*a.*\/.*$/
+  <<: *lcov_artifact
 
 test_algo_shouldvdj:
   stage: test_shouldvdj
-  script: make -C algo shouldvdj
+  script: make -C algo shouldvdj_coverage
+  <<: *lcov_artifact
+  only:
+    - /^feature-.*a.*\/.*$/
+
+algo_coverage:
+  stage: coverage
+  coverage: /^\s*lines\.*:\s+([0-9.]+\%)/
+  script:
+    - make -C algo lcov_reports
+    - mv algo/reports/ coverage
+  artifacts:
+    paths:
+      - coverage/
   only:
     - /^feature-.*a.*\/.*$/
 
@@ -101,8 +119,52 @@ release:
     paths:
     - algo/releases/vidjil-algo-`cat algo/release`.tar.gz
     - algo/releases/vidjil-algo-`cat algo/release`/vidjil-algo-`cat algo/release`_`uname -m`
+  allow_failure: false
   tags:
     - ubuntu-16.04-amd64
+
+copy_release:
+  stage: prepare_deploy
+  script:
+    - |
+      for repo in $ALGO_REPOSITORIES; do
+        echo "Copying release to $repo"
+        scp algo/releases/vidjil-algo*.tar.gz algo/releases/vidjil-algo*/vidjil-algo-*_* $repo
+      done
+      release_name=$(cat algo/release)
+      ssh $VIDJIL_WWW "cd /var/www/html/releases; ln -sf vidjil-algo-${release_name}.tar.gz vidjil-latest.tgz; ln -sf vidjil-algo-${release_name}_x86_64 vidjil-latest_x86_64"
+      ssh $VIDJIL_BONSAI "cd /bio1/www/html/vidjil; scp vidjil-algo-${release_name}* $VIDJIL_BONSAI_PROD:/bio1/www/html/vidjil"
+  only:
+    - /^feature-.*a.*\/release$/
+
+deploy_release_prod:
+  stage: deploy_prod
+  only:
+    - /^feature-.*a.*\/release$/
+  script:
+    - |
+      release_name=$(cat algo/release)
+      ssh $DEPLOY_SERVER "cd releases/vidjil;\
+          tar xvzf vidjil-algo-${release_name}.tar.gz;\
+          make -C vidjil-algo-${release_name};\
+          ln -sfT vidjil-algo-${release_name} next"
+
+test_various_compilers:
+  stage: test_functional
+  only:
+    - feature-a/test-compilers
+  tags:
+    - several-compilers
+  script:
+    - |
+      for CXX in $COMPILERS; do
+        echo "**** Using $CXX for compilation ****"
+        make -C algo clean
+        make -C algo CXX=$CXX unit
+        make -C algo CXX=$CXX should
+        make -C algo CXX=$CXX valgrind_unit
+      done
+
 
 # Client
 
@@ -193,6 +255,7 @@ deploy_review:
   stage: deploy_review
   script:
     - make -C browser icons
+    - echo "$REVIEW_CONFIG_JS" > browser/js/conf.js
     - rsync -av --delete browser $DEPLOY_SERVER:$DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG
   environment:
     name: review/$CI_BUILD_REF_NAME

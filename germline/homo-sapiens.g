@@ -1,5 +1,5 @@
 {
-    "ref": "http://www.vidjil.org/germlines/germline-52.tar.gz",
+    "ref": "http://www.vidjil.org/germlines/germline-59.tar.gz",
 
     "species": "Homo sapiens",
     "species_taxon_id": 9606,
@@ -14,7 +14,7 @@
             "description": "Human T-cell receptor, alpha locus (14q11.2)",
             "recombinations": [ {
                 "5": ["TRAV.fa"],
-                "3": ["TRAJ.fa"]
+                "3": ["TRAJ+down.fa"]
             } ],
             "parameters": {
                 "seed": "13s"
@@ -28,7 +28,7 @@
             "recombinations": [ {
                 "5": ["TRBV.fa"],
                 "4": ["TRBD.fa"],
-                "3": ["TRBJ.fa"]
+                "3": ["TRBJ+down.fa"]
             } ],
             "parameters": {
                 "seed": "12s"
@@ -41,7 +41,7 @@
             "follows": "TRB",
             "recombinations": [ {
                 "5": ["TRBD+up.fa"],
-                "3": ["TRBJ.fa"]
+                "3": ["TRBJ+down.fa"]
             } ],
             "parameters": {
                 "seed": "12s"
@@ -54,7 +54,7 @@
             "description": "Human T-cell receptor, gamma locus (7p14)",
             "recombinations": [ {
                 "5": ["TRGV.fa"],
-                "3": ["TRGJ.fa"]
+                "3": ["TRGJ+down.fa"]
             } ],
             "parameters": {
                 "seed": "10s"
@@ -68,7 +68,7 @@
             "recombinations": [ {
                 "5": ["TRDV.fa"],
                 "4": ["TRDD.fa"],
-                "3": ["TRDJ.fa"]
+                "3": ["TRDJ+down.fa"]
             } ],
             "parameters": {
                 "seed": "10s"
@@ -81,10 +81,10 @@
             "recombinations": [ {
                 "5": ["TRDV.fa"],
                 "4": ["TRDD.fa"],
-                "3": ["TRAJ.fa"]
+                "3": ["TRAJ+down.fa"]
             }, {
                 "5": ["TRDD+up.fa"],
-                "3": ["TRAJ.fa"]
+                "3": ["TRAJ+down.fa"]
             } ],
             "parameters": {
                 "seed": "13s"
@@ -101,13 +101,13 @@
             }, {
                 "5": ["TRDD2+up.fa"],
                 "4": ["TRDD.fa"],
-                "3": ["TRDJ.fa"]
+                "3": ["TRDJ+down.fa"]
             }, {
                 "5": ["TRDD2+up.fa"],
                 "3": ["TRDD3+down.fa"]
             } ],
             "parameters": {
-                "seed": "9s"
+                "seed": "9c"
             }
         },
 
@@ -118,7 +118,7 @@
             "recombinations": [ {
                 "5": ["IGHV.fa"],
                 "4": ["IGHD.fa"],
-                "3": ["IGHJ.fa"]
+                "3": ["IGHJ+down.fa"]
             } ],
             "parameters": {
                 "seed": "12s"
@@ -131,7 +131,7 @@
             "follows": "IGH",
             "recombinations": [ {
                 "5": ["IGHD+up.fa"],
-                "3": ["IGHJ.fa"]
+                "3": ["IGHJ+down.fa"]
             } ],
             "parameters": {
                 "seed": "12s"
@@ -144,7 +144,7 @@
             "description": "Human immunoglobulin, kappa locus (2p11.2)",
             "recombinations": [ {
                 "5": ["IGKV.fa"],
-                "3": ["IGKJ.fa"]
+                "3": ["IGKJ+down.fa"]
             } ],
             "parameters": {
                 "seed": "10s"
@@ -170,7 +170,7 @@
             "description": "Human immunoglobulin, lambda locus (22q11.2)",
             "recombinations": [ {
                 "5": ["IGLV.fa"],
-                "3": ["IGLJ.fa"]
+                "3": ["IGLJ+down.fa"]
             } ],
             "parameters": {
                 "seed": "10s"

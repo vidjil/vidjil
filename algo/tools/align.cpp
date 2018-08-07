@@ -46,12 +46,20 @@ int main(int argc, char** argv)
 {
   CLI::App app{"Align sequences using core/dynprog.cpp.\n The two sequences can be taken in either one or two fasta files."};
 
+  // Sequence selection
   int i = 0;
   int j = 0;
   app.add_option("-i", i, "Sequence number in file1", true)
     ->group("Sequence selection");
 
   app.add_option("-j", j, "Sequence number in file2", true)
+    ->group("Sequence selection");
+
+  bool rev_i = false;
+  bool rev_j = false;
+  app.add_flag("--rev-i", rev_i, "Reverse sequence(s) in file1")
+    ->group("Sequence selection");
+  app.add_flag("--rev-j", rev_j, "Reverse sequence(s) in file2")
     ->group("Sequence selection");
   
   // Files
@@ -135,7 +143,7 @@ int main(int argc, char** argv)
       int this_m = m > 0 ? m : mm ;
       cout << "===== -m " << this_m << " : " << mode_description[this_m] << endl ;
       DynProg::DynProgMode dpMode = getdpMode(this_m);
-    DynProg dp = DynProg(seq1, seq2, dpMode, dpCost);
+      DynProg dp = DynProg(seq1, seq2, dpMode, dpCost, rev_i, rev_j);
 
     dp.compute(); 
     dp.backtrack();

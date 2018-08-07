@@ -1,0 +1,18 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens-isoforms.g -r 1 -e 0.1 $VIDJIL_DATA/erg_debre.fa
+
+
+$ All sequences have been seen as different ERG recombinations
+1: found 4 windows in 4 reads
+1: ERG .* -> .* 4
+
+###  cas patient 19498  ###
+$ Find the correct assignation for the sequence
+1: ERG-1F 1/AGGG/3 ERG-Seq-R
+$ Find the correct assignation for the sequence
+1: ERG-4F 6/CCC/0 ERG-Seq-R
+$ Find the correct assignation for the sequence
+1: ERG-1F 1/GTAAGGAGC/0 ERG-Seq-R
+
+###  cas patient 13444  ###
+$ Find the correct assignation for the sequence
+1: ERG-4F 0/GG/18 ERG-Seq-R

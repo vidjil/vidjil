@@ -42,41 +42,12 @@ var term = "*";
  * Renvoie 1 si la deuxième chaîne doit être classée avant la première
  */
 function compare(string1, string2) {
-    //Variable permettant l'incrémentation dans le TantQue
-    var i = 0;
-    //Vérification de la présence de l'étoile (pour la comparaison d'allèles)
-    var boolTerm = false;
-    //On réduit tout en minuscule, afin de faciliter la comparaison caractère par caractère...
-    var string1_lower = string1.toLowerCase();
-    var string2_lower = string2.toLowerCase();
-    //On sauvegarde le premier caractère de la phrase en minuscule
-    var charS1 = string1_lower.charAt(0);
-    var charS2 = string2_lower.charAt(0);
-    if (charS1 == term) {
-	charS1 = string1_lower.charAt(1);
-	boolTerm = true;
-    }
-    if (charS2 == term) {
-	charS2 = string2_lower.charAt(1);
-	boolTerm = true;
-    }
-    if (boolTerm === true) i = 1;
-    //On va trier les noms qui, pour l'instant, ne contiennent aucun nombre
-    var value_compare_ascii = 0;
-    while (value_compare_ascii === 0 && isNaN(charS1) && isNaN(charS2) && i<string1.length && i<string2.length) {
-	value_compare_ascii = compare_ascii(charS1, charS2);
-	i++;
-	charS1 = string1_lower.charAt(i);
-	charS2 = string2_lower.charAt(i);
-    }
-    if (value_compare_ascii !== 0)
-      return value_compare_ascii;
-    //Si l'on arrive ici, c'est qu'il n'y avait rien à comparer sur les chaînes de caractères précédemment données
-    //Vérification si l'un ou/et l'autre est/sont nul(s)
-    var value_compare_length = compare_length(string1_lower, string2_lower, i);
-    if (value_compare_length === undefined)
-	return compare_numbers(string1_lower.substring(i,string1.length), string2_lower.substring(i, string2.length));
-    else return value_compare_length;
+    var comparaison_1 = string1 > string2
+    var comparaison_2 = string1 < string2
+
+    if( comparaison_1){ return 1}
+    if( comparaison_2){ return -1}
+    return 0;
 }
 
 /* Fonction permettant la comparaison entre 2 caractères ascii
