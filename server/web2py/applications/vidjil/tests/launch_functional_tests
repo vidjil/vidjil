@@ -22,6 +22,7 @@ if [ -z "$FUNCTIONAL_CLIENT_BROWSER_PATH" ]; then
     FUNCTIONAL_CLIENT_BROWSER_PATH="."
 fi
 for browser in $FUNCTIONAL_CLIENT_BROWSER_PATH; do
+    sh init_func_test_db.sh
     for file in $FUNCTIONAL_TESTS; do
         if [ ${#browser} -gt 1 ]; then
             export WATIR_BROWSER_PATH="$browser"

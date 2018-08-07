@@ -23,6 +23,7 @@ stages:
   - valgrind_functional
   - multiple_tests
   - prepare_deploy
+  - deploy_docker
   - deploy_prod
 
 # Anchors
@@ -267,6 +268,28 @@ test_server_unit:
     tags:
       - web
 
+test_server_functional:
+  stage: test_functional
+  script:
+    - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/server:test" docker/vidjil-server
+    - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/client:test" docker/vidjil-client
+    - cd docker && docker-compose up -d && cd ..
+    - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/web2py/" server/web2py/applications/vidjil/tests/init_func_test_db.sh
+    - docker exec docker_uwsgi_1 sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
+    - docker exec docker_nginx_1 make -C /usr/share/vidjil browser
+    - source /etc/profile.d/rvm.sh
+    - rvm use 2.1.1
+    - HEADLESS=1 make functional_server || (cd docker && docker-compose stop; false)
+    - cd docker && docker-compose stop
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+    - prod-server
+    - dev
+  tags:
+    - x86_64
+    - docker
+
 # Deployment
 
 deploy_review:
@@ -284,6 +307,18 @@ deploy_review:
     - /^hotfix-.*c.*\/.*$/
   tags:
     - web
+
+deploy_docker:
+  stage: deploy_docker
+  script:
+    - docker tag $CI_BUILD_REF_SLUG vidjil/vidjil:latest
+    - docker push vidjil/vidjil:latest
+  when: manual
+  only:
+    - prod-server
+  tags:
+    - web
+    - docker
 
 deploy_prod:
   stage: deploy_prod

@@ -39,6 +39,12 @@ headless_browser:
 unit_server:
 	$(MAKE) -C server/ unit
 
+functional_server:
+	$(MAKE) -C server functional
+
+headless_server:
+	$(MAKE) -C server headless
+
 ###
 
 data:

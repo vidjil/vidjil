@@ -3,24 +3,7 @@ upstream uwsgi {
 }
 
 server {
-        listen 80;
-        server_name     $hostname;
-
-        location / {
-                return 301 https://$host/browser;
-        }
-}
-
-server {
-        listen 443 default_server ssl;
-        server_name     $hostname;
-        ssl_certificate         /etc/nginx/ssl/web2py.crt;
-        ssl_certificate_key     /etc/nginx/ssl/web2py.key;
-        ssl_prefer_server_ciphers on;
-        ssl_session_cache shared:SSL:10m;
-        ssl_session_timeout 10m;
-        ssl_ciphers ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-DSS-AES256-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA;
-        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        listen 80 default_server;
         keepalive_timeout    70;
 
         uwsgi_max_temp_file_size 20480m;
@@ -36,7 +19,7 @@ server {
         ## from the previous server instance to manage static files
 
     location /browser {
-        root /var/www;
+        root /usr/share/vidjil;
         expires 1h;
         add_header Cache-Control must-revalidate;
 

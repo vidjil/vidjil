@@ -646,7 +646,6 @@ make functional
  stop individual services.
  The services are as follows:
    - mysql        The database
-   - postfix      The mailing server
    - uwsgi        The Web2py backend server
    - fuse         The XmlRPCServer that handles custom fuses (for comparing
      samples)
@@ -664,6 +663,10 @@ make functional
    Ensure your docker-compose.yml contains the correct reference to the
    vidjil image you want to use. Usually this will be vidjil/vidjil:latest,
    but more tags are available at https://hub.docker.com/r/vidjil/vidjil/tags/.
+
+   You may also want to uncomment the volume in the fuse volume block "-
+   ./vidjil/conf:/etc/vidjil" this will provide easier access to all of the
+   configuration files, allowing for tweaks.
 
    Running the following command will automatically download any missing
    images and start the environment:
@@ -683,33 +686,44 @@ make functional
 
 ** Building images for DockerHub
    Make sure your Dockerfile is up to date with any changes you may want to
-   make to the containers. And make sure the latest vidjil packages have been
-   deployed to the vidjil repository since they will be used as the source
-   for the actual vidjil application.
+   make to the containers. The Dockerfile accepts some build arguments:
+   - build-env: TEST or PRODUCTION. If unspecified, PRODUCTION is assumed.
+     The main difference is that TEST will build the image with an HTTP
+     configuration whereas PRODUCTION uses HTTPS.
+   - git_repo : The repository to build the image from. By default, our main
+     repository is assumed.
+   - git_branch : The git branch to clone from the repository. By default:
+     dev.
 
    #+BEGIN_SRC sh
-     docker-compose build
+     docker build --build-arg build_env=PRODUCTION --build-arg git_branch=<my_feature_branch> docker/vidjil-client -t vidjil/client:<version>
+     docker build --build-arg build_env=PRODUCTION --build-arg git_branch=<my_feature_branch> docker/vidjil-server -t vidjil/server:<version>
    #+END_SRC
 
    Tag the image you have just built:
 
    #+BEGIN_SRC sh
-     docker tag vidjil:test vidjil/vidjil:<version>
-   #+END_SRC
-     or
-   #+BEGIN_SRC sh
-     docker tag vidjil:test vidjil/vidjil:<latestversion>
+     docker tag vidjil:test vidjil/client:latest
+     docker tag vidjil:test vidjil/server:latest
    #+END_SRC
 
    Push the image to DockerHub:
 
    #+BEGIN_SRC sh
-     docker push vidjil/vidjil:<tag>
+     docker push vidjil/client:<tag>
+     docker push vidjil/server:<tag>
    #+END_SRC
 
    You may be required to log in, in which case you can consult
    https://docs.docker.com/engine/reference/commandline/login/ for more
    information.
+
+   If you encounter an issue where docker is unable to access
+   archive.ubuntu.org then you may need to add your dns to /etc/docker/daemon.json
+   #+BEGIN_SRC json
+      {
+          "dns":["dns1", "dns2"]
+      }
 
 * Migrating Data
 ** Database

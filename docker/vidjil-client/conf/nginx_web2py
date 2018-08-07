@@ -1,0 +1,83 @@
+upstream uwsgi {
+    server uwsgi:8000;
+}
+
+server {
+        listen 80;
+        server_name     $hostname;
+
+        location / {
+                return 301 https://$host/browser;
+        }
+}
+
+server {
+        listen 443 default_server ssl;
+        server_name     $hostname;
+        ssl_certificate         /etc/nginx/ssl/web2py.crt;
+        ssl_certificate_key     /etc/nginx/ssl/web2py.key;
+        ssl_prefer_server_ciphers on;
+        ssl_session_cache shared:SSL:10m;
+        ssl_session_timeout 10m;
+        ssl_ciphers ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-DSS-AES256-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        keepalive_timeout    70;
+
+        uwsgi_max_temp_file_size 20480m;
+
+        location / {
+            include /etc/nginx/conf.d/web2py/uwsgi.conf;
+            proxy_read_timeout 600;
+            client_max_body_size 20G;
+            ###
+        
+        }
+        ## if you serve static files through https, copy here the section
+        ## from the previous server instance to manage static files
+
+    location /browser {
+        root /usr/share/vidjil;
+        expires 1h;
+        add_header Cache-Control must-revalidate;
+
+        error_page 405 = $uri;
+    
+    }
+
+    location /germline {
+        root /usr/share/vidjil/;
+        expires 1h;
+        add_header Cache-Control must-revalidate;
+
+        error_page 405 = $uri;
+    
+    }
+
+    ###to enable correct use of response.static_version
+    #location ~* ^/(\w+)/static(?:/_[\d]+\.[\d]+\.[\d]+)?/(.*)$ {
+        #    alias /usr/share/vidjil/server/web2py/applications/$1/static/$2;
+        #    expires max;
+        #
+    #}
+    ###
+
+    client_max_body_size 20G;
+
+    location /cgi/ {
+        gzip off;
+        root  /usr/share/vidjil/browser/;
+        # Fastcgi socket
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        # Fastcgi parameters, include the standard ones
+        include /etc/nginx/fastcgi_params;
+        # Adjust non standard parameters (SCRIPT_FILENAME)
+        fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+    
+    }
+
+    location /vidjil/file/upload {
+        include /etc/nginx/conf.d/web2py/uwsgi.conf;
+        uwsgi_read_timeout 10m;
+        client_max_body_size 20G;
+    }
+}

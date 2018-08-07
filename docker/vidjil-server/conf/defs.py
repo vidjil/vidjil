@@ -6,14 +6,13 @@
 ### Email notifications for server errors
 SMTP_SERVER = 'localhost'
 # SMTP_SERVER = 'logging' # no mail
-FROM_EMAIL = 'root@vidjil.org'
+FROM_EMAIL = 'notifications@vidjil.org'
 ADMIN_EMAILS = ['notifications@vidjil.org']
 
 ### address for the sql database
 ###
 DB_ADDRESS = 'sqlite://storage.sqlite'
-DB_ADDRESS = 'mysql://vidjil:XXXXXXXX@localhost/vidjil'
-
+DB_ADDRESS = 'mysql://vidjil:rootpass@mysql/vidjil'
 DB_POOL_SIZE = 4
 
 ### Backup file
@@ -38,21 +37,14 @@ BASENAME_OUT_VIDJIL_ID = '%06d'
 
 ### Directory for program used in task.py
 ### relative path start from server/web2py
-DIR_VIDJIL = '../../'
-DIR_VIDJIL_NEXT = '../../'
+DIR_VIDJIL = '/usr/share/vidjil/'
 DIR_FUSE = '../../tools'
-DIR_MIXCR = '../../'
-DIR_IGREC = '../../'
-DIR_PEAR = '../../'
-DIR_CLONEDB = '../../../clonedb'
-
-### Directory that store the germlines used by Vidjil
-DIR_GERMLINE = DIR_VIDJIL + 'germline/'
-DIR_GERMLINE_NEXT = DIR_VIDJIL_NEXT + 'germline/'
-
+DIR_MIXCR = '/usr/bin'
+DIR_IGREC = '/usr/local/bin/'
+DIR_GERMLINE = '/usr/share/vidjil/germline'
 ### Port on which to run the fuse server
 ### Used in models/task.py and in /server/fuse_server.py
-FUSE_SERVER = 'localhost'
+FUSE_SERVER = 'fuse'
 PORT_FUSE_SERVER = 12789
 
 ### Log files
@@ -71,15 +63,6 @@ REVERSE_IP = '/home/vidjil/ips.txt'
 LOCUS = ['TRA', 'TRA+D', 'TRB', 'TRG', 'TRD', 'TRD+',
          'IGH', 'IGH+', 'IGK', 'IGK+', 'IGL']
 
-### Sample sets types
-### Tables are defined with these names:
-### do not change these values once the server is set
-SET_TYPE_GENERIC = 'generic'
-SET_TYPE_PATIENT = 'patient'
-SET_TYPE_RUN = 'run'
-
-
-
 # Preventu upload and run when 1% space is left in target disk
 FS_LOCK_THRESHHOLD = 1
 
@@ -88,5 +71,9 @@ SCHEDULER_HEARTBEAT = 5
 # Directory to search for files
 FILE_SOURCE = '/mnt/data/src'
 FILE_TYPES = ['fasta', 'fastq', 'fastq.gz', 'fa']
+
+SET_TYPE_PATIENT = 'patient'
+SET_TYPE_RUN= 'run'
+SET_TYPE_GENERIC = 'generic'
 
 REQUIRE_HTTPS = True

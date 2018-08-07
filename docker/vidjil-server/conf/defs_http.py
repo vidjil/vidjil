@@ -37,7 +37,7 @@ BASENAME_OUT_VIDJIL_ID = '%06d'
 
 ### Directory for program used in task.py
 ### relative path start from server/web2py
-DIR_VIDJIL = '/usr/bin/'
+DIR_VIDJIL = '/usr/share/vidjil/'
 DIR_FUSE = '../../tools'
 DIR_MIXCR = '/usr/bin'
 DIR_IGREC = '/usr/local/bin/'
@@ -70,8 +70,10 @@ SCHEDULER_HEARTBEAT = 5
 
 # Directory to search for files
 FILE_SOURCE = '/mnt/data/src'
-FILE_TYPES = ['fasta', 'fastq', 'fastq.gz']
+FILE_TYPES = ['fasta', 'fastq', 'fastq.gz', 'fa']
 
 SET_TYPE_PATIENT = 'patient'
 SET_TYPE_RUN= 'run'
 SET_TYPE_GENERIC = 'generic'
+
+REQUIRE_HTTPS = False
