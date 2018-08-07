@@ -49,7 +49,10 @@ class VidjilWriter(object):
         else:
             if event == 'boolean':
                 value = str(value).lower()
-            mstr = '{}'
+            if value is None:
+                mstr = 'null'
+            else:
+                mstr = '{}'
         padding = ''
         if isinstance(value, string_types) :
             value = value.replace("\n", "\\n")

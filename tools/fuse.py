@@ -735,7 +735,8 @@ def main():
         if args.ijson:
             json_clones = vparser.extract(path_name)
             clones = json.loads(json_clones)
-            f += [c['id'] for c in clones["clones"]]
+            if clones["clones"] is not None:
+                f += [c['id'] for c in clones["clones"]]
         else:
             jlist = ListWindows()
             jlist.load(path_name, args.pipeline)
