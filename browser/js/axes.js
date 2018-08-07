@@ -42,7 +42,9 @@ Axes.prototype = {
             "v": {
                 doc: "V gene (or 5' segment), gathering all alleles",
                 label:"V/5' gene",
-                axis: new GermlineAxis(this.m, false, true)
+                axis: new GermlineAxis(this.m, false, true,
+                                       "5", false),
+                fct: function(clone) {return clone.getGene("5", false)}
             },
             "d": {
                 doc: "D gene, gathering all alleles",
@@ -54,17 +56,23 @@ Axes.prototype = {
             "j": {
                 doc: "J gene (or 3' segment), gathering all alleles",
                 label:"J/3' gene",
-                axis: new GermlineAxis(this.m, false, true)
+                axis: new GermlineAxis(this.m, false, true,
+                                       "3", false),
+                fct: function(clone) {return clone.getGene("3", false)}
             },
             "allele_v": {
                 doc: "V gene (or 5' segment), with allele",
                 label:"V allele",
-                axis: new GermlineAxis(this.m, false, true)
+                axis: new GermlineAxis(this.m, false, true,
+                                       "5", true),
+                fct: function(clone) {return clone.getGene("5", true)}
             },
             "allele_j": {
                 doc: "J gene (or 3' segment), with allele",
                 label:"J allele",
-                axis: new GermlineAxis(this.m, false, true)
+                axis: new GermlineAxis(this.m, false, true,
+                                       "3", true),
+                fct: function(clone) {return clone.getGene("3", true)}
             },
             "consensusLength" : {
                 doc: "length of the consensus sequence",
