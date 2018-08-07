@@ -275,7 +275,7 @@ def populate_variables(var):
         for v in var:
             try:
                 key, var = v.split('=')
-                variables.append(('$' + key, var))
+                variables = [('$' + key, var)] + variables
 
             except IOError:
                 raise ShouldException('Error in parsing variable definition: ' + v)
@@ -681,7 +681,7 @@ class TestSuite():
             # Directive -- Options
             if l.startswith(DIRECTIVE_OPTIONS):
                 opts, unknown = options.parse_known_args(l[len(DIRECTIVE_OPTIONS):].split())
-                self.variables += populate_variables(opts.var)
+                self.variables = populate_variables(opts.var) + self.variables
                 if opts.mod:
                     self.modifiers += ''.join(opts.mod)
                 continue
