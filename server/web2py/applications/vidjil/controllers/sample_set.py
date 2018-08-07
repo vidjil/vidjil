@@ -655,7 +655,9 @@ def custom():
 
 def getStatHeaders():
     m = StatDecorator()
-    return [('set_id', 'db', m), ('set_name', 'db', m), ('set_info', 'db', m), ('main_clone', 'parser', m), ('reads', 'parser', m), ('mapped', 'parser', m)]
+    b = BooleanDecorator()
+    p = BarDecorator()
+    return [('set_id', 'db', m), ('set_name', 'db', m), ('set_info', 'db', m), ('main_clone', 'parser', m), ('reads', 'parser', m), ('mapped', 'parser', m), ('mapped_percent', 'parser', p), ('bool', 'parser', b), ('bool_true', 'parser', b)]
 
 def getResultsFileStats(file_name, dest):
     file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
@@ -682,7 +684,10 @@ def getFusedStats(file_name, res, dest):
     dest['main_clone'] = data['clones'][0]['name']
     reads = data['reads']['total'][result_index]
     dest['reads'] = reads
-    dest['mapped'] = "%d (%d%%)" % (data['reads']['segmented'][result_index], 100.0 * (float(data['reads']['segmented'][result_index])/float(reads)))
+    dest['mapped'] = "%d" % (data['reads']['segmented'][result_index])
+    dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
+    dest['bool'] = False
+    dest['bool_true'] = True
     return dest
 
 
