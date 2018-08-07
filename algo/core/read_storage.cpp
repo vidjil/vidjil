@@ -17,6 +17,11 @@ BinReadStorage::BinReadStorage()
    nb_inserted(0), nb_stored(0), smallest_bin_not_empty(~0),label(),inited(false) {}
 
 void BinReadStorage::init(size_t nb_bins, size_t max_score, const VirtualReadScore *vrs, bool no_list) {
+  this->max_bins = nb_bins;
+  __init(0, max_score, vrs, no_list);
+}
+
+void BinReadStorage::__init(size_t nb_bins, size_t max_score, const VirtualReadScore *vrs, bool no_list) {
   this->all_read_lengths = 0;
   if (inited)
     return;
@@ -37,7 +42,30 @@ void BinReadStorage::init(size_t nb_bins, size_t max_score, const VirtualReadSco
   inited=true;
 }
 
+void BinReadStorage::reallocate(){
+  list<Sequence> tmpBin;
+  if (bins)
+    tmpBin = bins[0];
+
+  free_objects();
+
+  all_read_lengths = 0;
+  smallest_bin_not_empty = ~0;
+  total_nb_scores = 0;
+  nb_stored = 0;
+  inited = false;
+  __init(max_bins, max_score, scorer, tmpBin.size() == 0);
+  for(auto s : tmpBin){
+    this->add(s);
+  }
+  nb_inserted -= nb_stored;
+}
+
 BinReadStorage::~BinReadStorage() {
+  free_objects();
+}
+
+void BinReadStorage::free_objects() {
   if (bins)
     delete [] bins;
   if (score_bins) {
@@ -62,6 +90,9 @@ void BinReadStorage::addScore(size_t bin, float score) {
 }
 
 void BinReadStorage::add(Sequence &s) {
+  if(nb_stored == getMaxNbReadsStored() && nb_inserted == nb_stored){
+    reallocate();
+  }
   float score = scorer->getScore(s);
   size_t bin = scoreToBin(score);
   addScore(bin, score);
