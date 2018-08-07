@@ -107,7 +107,11 @@ GermlineAxis.prototype.init = function (values, fct) {
      * */
     GermlineAxis.prototype.pos = function(clone) {
         var pos = this.applyConverter(clone);
-        return this.label_mapping[pos];
+        var p = this.label_mapping[pos];
+        if (typeof p == 'undefined') {
+           p = this.label_mapping["?"];
+        }
+        return (typeof p != 'undefined') ? p : { 'pos': 1 }
     }
     
     /**
