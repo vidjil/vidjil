@@ -561,8 +561,7 @@ ScatterPlot.prototype = {
      * compute and update the position of all rectangles representing a clone using selected axis
      * */
     updateBar: function() {
-        self = this
-        
+
         //split clones into bar (axisX)
         this.axisX.init(this.m.clones, this.available_axis[this.splitX].fct);
 
