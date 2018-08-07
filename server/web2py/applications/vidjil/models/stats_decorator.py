@@ -15,9 +15,9 @@ class BooleanDecorator(StatDecorator):
 
     def decorate(self, data):
         if data:
-            myclass = "icon-ok-circled"
+            myclass = "icon-ok"
         else:
-            myclass = "icon-cancel-circled"
+            myclass = "icon-cancel"
         return I(_class=myclass)
 
 class BarDecorator(StatDecorator):
