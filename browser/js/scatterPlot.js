@@ -1805,6 +1805,8 @@ ScatterPlot.prototype = {
         var select_y = 0
         var i=0;
         for (var key in this.available_axis) {
+            if (typeof this.available_axis[key].hide !== "undefined" && this.available_axis[key].hide)
+                continue;
             if (key == this.splitX) select_x = i
             if (key == this.splitY) select_y = i
             i++;
