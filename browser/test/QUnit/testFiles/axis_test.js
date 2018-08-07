@@ -39,9 +39,12 @@ QUnit.test("axis", function(assert) {
     assert.equal(axis.pos(m.clone(2)).pos.toPrecision(3), 0.548, "clone 2 (12.5%) position -> 0.452")
 
     m.changeGermline("TRG")
-    axis = new GermlineAxis(m);
+
     //germline V
-    axis.init(m.germlineV, "V")
+    axis = new GermlineAxis(m, false, true, "5", false);
+    axis.init(m.clones, function(clone) {return clone.getGene("5", false)})
+    console.log(axis.germline)
+
     assert.deepEqual(axis.labels,  [
             {"geneColor": "rgb(183,110,36)","pos": 0.16666666666666666,"text": "TRGV4","type": "line"},
             {"geneColor": "rgb(36,183,171)","pos": 0.5,"text": "TRGV5","type": "line"},
@@ -55,7 +58,9 @@ QUnit.test("axis", function(assert) {
     
     
     //germline J
-    axis.init(axis.m.germlineJ, "J")
+    axis = new GermlineAxis(m, false, true, "3", false);
+    axis.init(m.clones, function(clone) {return clone.getGene("3", false)})
+
     assert.deepEqual(axis.labels,  [
             {"geneColor": "rgb(36,183,171)","pos": 0.25,"text": "TRGJ2","type": "line"},
             {"geneColor": "","pos": 0.75,"text": "?","type": "line"}
@@ -65,9 +70,10 @@ QUnit.test("axis", function(assert) {
     assert.equal(axis.pos(m.clone(2)).pos.toPrecision(3), 0.750, "clone 2 (?) position -> 0.75")
     
     
-    
     //germline allele J
-    axis.init(axis.m.germlineJ, "J", true)
+    axis = new GermlineAxis(m, false, true, "3", true);
+    axis.init(m.clones, function(clone) {return clone.getGene("3", true)})
+
     assert.deepEqual(axis.labels,  [
             {"geneColor": "rgb(36,183,171)","pos": 0.25,"text": "TRGJ2","type": "line"},
             {"geneColor": "rgb(183,110,36)","pos": 0.125,"text": "*02","type": "subline"},
