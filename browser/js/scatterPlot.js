@@ -1719,10 +1719,12 @@ ScatterPlot.prototype = {
         if (typeof reverse === "undefined") reverse = false;
         var axis;
         var aa = this.available_axis[splitMethod] 
-        if (aa !== undefined) {
-            axis = aa.axis;
+        if (aa == undefined) {
+            console.log('Undefined axis: ' + splitMethod)
+            return
         }
 
+        axis = aa.axis;
         axis.reverse = reverse;
         axis.init(this.m.clones, aa.fct, aa.labels, aa.sort, aa.min, aa.max, aa.log, aa.display_label);
 
