@@ -29,36 +29,36 @@
  * @constructor
  * @param {Model} model 
  * @reverse {boolean} reverse - by default axis go from low to high but can be revsersed
+ * @param {string} geneType - "5" or "3"
+ * @param {boolean} displayAllele - (show/hide allele)
  * */
-function GermlineAxis (model, reverse, can_undefined) {
+function GermlineAxis (model, reverse, can_undefined,
+                       geneType, displayAllele) {
     this.m = model
     this.labels = [];
     this.label_mapping = {};
     this.values = [];
     this.value_mapping = {};
     GenericAxis.call(this, reverse, can_undefined);
+    this.geneType = geneType
+    this.displayAllele = displayAllele
 }
 
 GermlineAxis.prototype = Object.create(GenericAxis.prototype);
     
     /**
      * init axis with a germline object
-     * @param {Germline} germline
-     * @param {string} genetype - "V" "D" or "J"
-     * @param {boolean} displayAllele - (show/hide allele)
      * */
-    GermlineAxis.prototype.init = function (germline, geneType, displayAllele) {
+GermlineAxis.prototype.init = function (values, fct) {
         this.reset()
-        this.values = this.m.clones;
-        this.germline = germline;
+
+    this.converter = fct
+    this.values = values
+    this.germline = this.geneType == "5" ? this.m.germlineV : this.m.germlineJ
 
         var gene_list = this.germline.gene
         var allele_list = this.germline.allele
         var total_gene = Object.keys(gene_list).length
-
-        if (geneType=="V") this.type2="5"
-        if (geneType=="D") this.type2="4"
-        if (geneType=="J") this.type2="3"
 
         var pos;
         //labels
@@ -67,7 +67,7 @@ GermlineAxis.prototype = Object.create(GenericAxis.prototype);
             this.addLabel("line", key, pos, key, this.germline.gene[key].color);
         }
 
-        if (displayAllele){
+    if (this.displayAllele){
             for (var al in allele_list){
                 var gene = al.split("*")[0]
                 var allele = al.split("*")[1]
@@ -87,7 +87,6 @@ GermlineAxis.prototype = Object.create(GenericAxis.prototype);
         this.gene_list = gene_list;
         this.allele_list = allele_list;
         this.total_gene = total_gene;
-        this.displayAllele = displayAllele;
     }
 
     /**
@@ -108,27 +107,11 @@ GermlineAxis.prototype = Object.create(GenericAxis.prototype);
      * */
     GermlineAxis.prototype.pos = function(clone) {
         var pos = this.applyConverter(clone);
-        return this.label_mapping[pos];
-    }
-
-    GermlineAxis.prototype.converter = function(clone) {
-        var gene_list = this.gene_list;
-        var allele_list = this.allele_list;
-        var total_gene = this.total_gene;
-        var value;
-        if (clone.hasSeg(this.type2)) {
-            var name = clone.seg[this.type2].name;
-            if (typeof name != 'undefined' &&
-                typeof gene_list[name.split("*")[0]] != "undefined")
-            {
-                if (this.displayAllele){
-                    value = name;
-                }else {
-                    value = name.split("*")[0];
-                }
-            }
+        var p = this.label_mapping[pos];
+        if (typeof p == 'undefined') {
+           p = this.label_mapping["?"];
         }
-        return value;
+        return (typeof p != 'undefined') ? p : { 'pos': 1 }
     }
     
     /**

@@ -561,74 +561,18 @@ ScatterPlot.prototype = {
      * compute and update the position of all rectangles representing a clone using selected axis
      * */
     updateBar: function() {
-        self = this
-        
-        //split clones into bar (axisX)
-        var fct;
-        switch (this.splitX) {
-            case this.AXIS_ALLELE_V :
-                fct = function(clone){return clone.getGene("5")}
-                this.axisX.init(this.m.germlineV, "V", true)
-                break;
-            case this.AXIS_GENE_V :
-                fct = function(clone){return clone.getGene("5",false)}
-                this.axisX.init(this.m.germlineV, "V", false)
-                break;
-            case this.AXIS_ALLELE_J :
-                fct = function(clone){return clone.getGene("3")}
-                this.axisX.init(this.m.germlineJ, "J", true)
-                break;
-            case this.AXIS_GENE_J :
-                fct = function(clone){return clone.getGene("3",false)}
-                this.axisX.init(this.m.germlineJ, "J", false)
-                break;
-            default :
-                if (typeof this.available_axis[this.splitX])
-                    this.axisX.init(this.m.clones, this.available_axis[this.splitX].fct);
-            break;
-        }
 
-        this.barTab = {};
-        for (var key in this.axisX.value_mapping) {
-            this.barTab[key] = this.axisX.value_mapping[key];
-        }
+        //split clones into bar (axisX)
+        this.axisX.init(this.m.clones, this.available_axis[this.splitX].fct);
+
+        this.axisX.computeBarTab(this)
         
         //sort each bar (axisY)
         
         this.axisY = new PercentAxis(this.m, true);
-        var yFct;
-        switch (this.splitY) {
-            case this.AXIS_ALLELE_V :
-                yFct = function(clone){return clone.getGene("5")};
-                this.axisY.init(this.m.clones, yFct);
-                this.sortBarTab(fct);
-                break;
-            case this.AXIS_GENE_V :
-                yFct = function(clone){return clone.getGene("5",false)};
-                this.axisY.init(this.m.clones, yFct);
-                this.sortBarTab(fct);
-                break;
-            case this.AXIS_ALLELE_J :
-                yFct = function(clone){return clone.getGene("3")};
-                this.axisY.init(this.m.clones, yFct);
-                this.sortBarTab(yFct);
-                break;
-            case this.AXIS_GENE_J :
-                yFct = function(clone){return clone.getGene("3",false)};
-                this.axisY.init(this.m.clones, yFct);
-                this.sortBarTab(yFct);
-                break;
-            default :
-                yFct = function(clone){return clone.getGene("3")};
-                if (typeof this.available_axis[this.splitY]){
-                    yFct = this.available_axis[this.splitY].fct;
-                }
+        this.axisY.init(this.m.clones, this.available_axis[this.splitY].fct);
+        this.sortBarTab(this.axisY.converter);
 
-                this.axisY.init(this.m.clones, yFct);
-                this.sortBarTab(yFct);
-            break;
-        }
-        
         //compute position for each clones
         this.computeBarTab();
         
@@ -1772,27 +1716,15 @@ ScatterPlot.prototype = {
         if (typeof reverse === "undefined") reverse = false;
         var axis;
         var aa = this.available_axis[splitMethod] 
-        if (aa !== undefined) {
-            axis = aa.axis;
+        if (aa == undefined) {
+            console.log('Undefined axis: ' + splitMethod)
+            return
         }
-        switch (splitMethod) {
-            case this.AXIS_ALLELE_V :
-                axis.init(this.m.germlineV, "V", true)
-                break;
-            case this.AXIS_GENE_V :
-                axis.init(this.m.germlineV, "V", false)
-                break;
-            case this.AXIS_ALLELE_J :
-                axis.init(this.m.germlineJ, "J", true)
-                break;
-            case this.AXIS_GENE_J :
-                axis.init(this.m.germlineJ, "J", false)
-                break;
-            default :
-                axis.reverse = reverse;
-                axis.init(this.m.clones, aa.fct, aa.labels, aa.sort, aa.min, aa.max, aa.log, aa.display_label);
-            break;
-        }
+
+        axis = aa.axis;
+        axis.reverse = reverse;
+        axis.init(this.m.clones, aa.fct, aa.labels, aa.sort, aa.min, aa.max, aa.log, aa.display_label);
+
         return axis;
     },
 
