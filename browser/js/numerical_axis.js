@@ -60,7 +60,7 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         display_label = typeof display_label !== 'undefined' ? display_label : true;
         var self = this;
         
-        this.nb_steps = this.NB_STEPS_IN_AXIS
+        this.nb_steps = this.MAX_NB_STEPS_IN_AXIS
         this.nb_steps_special = this.can_undefined ? 1 : 0
         this.nb_steps_normal = this.nb_steps - this.nb_steps_special
 

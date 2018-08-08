@@ -34,7 +34,7 @@ function GenericAxis (reverse, can_undefined) {
     this.values = []
     this.value_mapping = {};
     this.can_undefined = true;
-    this.NB_STEPS_IN_AXIS = 6; // Number (max) of labels per numerical axis
+    this.MAX_NB_STEPS_IN_AXIS = 8; // Number (max) of labels per numerical axis
     this.NB_STEPS_BAR = 18; // Number (max) of labels per numerical axis in histograms
     if(typeof can_undefined !== "undefined")
         this.can_undefined = can_undefined;
