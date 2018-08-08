@@ -137,7 +137,7 @@ QUnit.test("axis", function(assert) {
     
     assert.equal(axis.pos(m.clone(0)).pos.toPrecision(3), 0.0476, "custom (percent) : clone 0 (gc = 1/21) position -> 0.0476")
     assert.equal(axis.pos(m.clone(1)).pos.toPrecision(3), 0.778, "custom (percent) : clone 1 (gc = 14/18) position -> 0.944")
-    assert.deepEqual(axis.labels[0].text,  "0.00%", "custom (percent) : check label 0.00%")
+    assert.deepEqual(axis.labels[0].text,  "0%", "custom (percent) : check label 0%")
     
     //gc + log
     axis.init(m.clones, 'GCContent', undefined, false, 0.001, 1, true)
