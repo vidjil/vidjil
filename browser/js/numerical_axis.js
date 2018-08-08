@@ -271,7 +271,7 @@ PercentAxis.prototype = Object.create(NumericalAxis.prototype);
     }
 
     PercentAxis.prototype.getLabelText = function(value) {
-        return floatToFixed(value*100, 4) + "%"
+        return parseFloat(value*100).toFixed(nice_number_digits(100 * (this.max - this.min), 2)) + "%"
     }
 
 /**
