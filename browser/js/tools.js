@@ -296,12 +296,12 @@ function floor_pow10(x)
  * nice_ceil(23.4) -> 30
  **/
 
-function nice_ceil(x)
+function nice_ceil(x, force_pow10)
 {
     if (x <= 0) return x
 
     try {
-        var floor_power10 = floor_pow10(x)
+        var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
 
         var xx = x / floor_power10
         return (xx == 1 ? 1 : xx <= 1.5 ? 1.5 : Math.ceil(xx)) * floor_power10
@@ -317,14 +317,16 @@ function nice_ceil(x)
  * Give a nice decimal number under the given number
  * nice_floor(0.14) -> 0.1
  * nice_floor(23.4) -> 20
+ * nice_floor(23.4, 1) -> 23
+ * nice_floor(23.4, 100) -> 0
  **/
 
-function nice_floor(x)
+function nice_floor(x, force_pow10)
 {
     if (x <= 0) return x
 
     try {
-        var floor_power10 = floor_pow10(x)
+        var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
         return Math.floor(x / floor_power10) * floor_power10
     }
     catch(e) {
