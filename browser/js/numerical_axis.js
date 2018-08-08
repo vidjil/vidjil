@@ -236,9 +236,10 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
 
     NumericalAxis.prototype.computeSteps = function(min, max, nb_steps) {
         var steps = nb_steps;
-        if (Math.abs(max - min) < nb_steps) {
-            steps = Math.abs(max - min)
-        }
+
+        // if (Math.abs(max - min) < nb_steps) {
+        //     steps = Math.abs(max - min)
+        // }
         return steps;
     }
 
