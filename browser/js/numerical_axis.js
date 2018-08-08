@@ -33,7 +33,7 @@
 function NumericalAxis (model, reverse, can_undefined) {
     this.m = model;
     this.labels = [];
-    this.clones = [];
+    this.values = [];
     this.value_mapping = {};
     this.reverse = reverse;
     GenericAxis.call(this, reverse, can_undefined);
@@ -54,7 +54,7 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
      * */
     NumericalAxis.prototype.init = function(clones, fct, labels, sort, default_min, default_max, use_log, display_label){
         this.reset();
-        this.clones = clones;
+        this.values = clones;
         use_log = typeof use_log !== 'undefined' ? use_log : false;
         this.use_log = use_log ;
         display_label = typeof display_label !== 'undefined' ? display_label : true;
@@ -80,9 +80,9 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         if (typeof max === 'function') max = max();
 
         if (typeof labels == "undefined") {
-            for (var i in this.clones){
-                if (! this.clones[i].isVirtual()) {
-                    var tmp = this.applyConverter(this.clones[i]);
+            for (var i in this.values){
+                if (! this.values[i].isVirtual()) {
+                    var tmp = this.applyConverter(this.values[i]);
 
                     if ( typeof tmp != "undefined" && !isNaN(tmp)){
                         if ( tmp > max || typeof max == "undefined") max = tmp;
@@ -169,19 +169,8 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
             this.value_mapping[nice_ceil(m, this.step_bar)] = []
 
         // Fill value_mapping
-        for (var idx in this.clones) {
-            var clone = this.clones[idx];
-            if(!clone.isVirtual()) {
-                var value = nice_ceil(this.applyConverter(clone), this.step_bar);
-                if (typeof value == "undefined" || value == undefined || value == "undefined") {
-                    if (this.can_undefined)
-                        this.value_mapping["?"].push(clone);
-                }else{
-                    this.value_mapping[value] = this.value_mapping[value] || []
-                    this.value_mapping[value].push(clone);
-                }
-            }
-       }
+        this.populateValueMapping(this.step_bar)
+
         this.sortValueMapping()
     }
     

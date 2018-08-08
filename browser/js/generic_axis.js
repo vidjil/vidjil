@@ -114,19 +114,30 @@ GenericAxis.prototype = {
         }
     },
 
-    populateValueMapping: function() {
+    populateValueMapping: function(round) {
 
         for (var idx in this.values) {
             var value = this.values[idx];
+
+            // if (value.isVirtual())
+            //    continue ;  // ? pas toujours ?
+
             var convert = this.applyConverter(value);
 
-            if (typeof convert !== 'undefined') {
+            if (typeof round !== 'undefined')
+                convert = nice_ceil(convert, round)
+
+            if (typeof convert == "undefined" || convert == undefined || convert == "undefined") {
+                if (this.can_undefined) {
+                    if (typeof this.value_mapping["?"] === 'undefined')
+                        this.value_mapping["?"] = [];
+                    this.value_mapping["?"].push(value);
+                }
+            }
+            else
+            {
                 this.value_mapping[convert] = this.value_mapping[convert] || []
                 this.value_mapping[convert].push(value);
-            } else if (this.can_undefined){
-                if (typeof this.value_mapping["?"] === 'undefined')
-                    this.value_mapping["?"] = [];
-                this.value_mapping["?"].push(value);
             }
         }
     },
