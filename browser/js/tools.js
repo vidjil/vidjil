@@ -313,6 +313,27 @@ function nice_ceil(x, force_pow10)
 }
 
 
+
+/**
+ * Give a nice decimal number (to 1/2/5) above the given number
+ **/
+
+function nice_1_2_5_ceil(x)
+{
+    if (x <= 0) return x
+
+    try {
+        var floor_power10 = floor_pow10(x)
+        var xx = x / floor_power10
+        return (xx == 1 ? 1 : xx <= 2 ? 2 : xx <= 5 ? 5 : 10) * floor_power10
+    }
+    catch(e) {
+        // Always return something
+        return x;
+    }
+}
+
+
 /**
  * Give a nice decimal number under the given number
  * nice_floor(0.14) -> 0.1
