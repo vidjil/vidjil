@@ -50,6 +50,7 @@ test_germlines:
     - make -C germline tests
   only:
     - /^feature-.*g.*\/.*$/
+    - schedules
 
 
 # Algorithm
@@ -60,12 +61,14 @@ test_algo_unit:
   <<: *lcov_artifact
   only:
     - /^feature-.*a.*\/.*$/
+    - schedules
 
 test_algo_should:
   stage: test_functional
   script: make -C algo should_coverage
   only:
     - /^feature-.*a.*\/.*$/
+    - schedules
   <<: *lcov_artifact
 
 test_algo_shouldvdj:
@@ -74,7 +77,8 @@ test_algo_shouldvdj:
   <<: *lcov_artifact
   only:
     - /^feature-.*a.*\/.*$/
-
+    - schedules
+  
 algo_coverage:
   stage: coverage
   coverage: /^\s*lines\.*:\s+([0-9.]+\%)/
@@ -86,12 +90,14 @@ algo_coverage:
       - coverage/
   only:
     - /^feature-.*a.*\/.*$/
+    - schedules
 
 algo_valgrind_unit:
   stage: valgrind_unit
   script: make -C algo valgrind_unit
   only:
     - /^feature-.*a.*\/.*$/
+    - schedules
   tags:
     - valgrind
 
@@ -106,6 +112,7 @@ algo_valgrind_functional:
   when: manual
   only:
     - /^feature-.*a.*\/.*$/
+    - schedules
 
 release_valgrind_functional:
   <<: *valgrind_functional
@@ -178,6 +185,7 @@ test_various_compilers_manual:
   when: manual
   only:
     - /^feature-.*a.*\/.*$/
+    - schedules
 
 test_various_compilers_release:
   <<: *test_various_compilers
@@ -198,6 +206,7 @@ test_browser_unit:
     - /^hotfix-.*c.*\/.*$/
     - prod-client
     - dev
+    - schedules
   tags:
     - web
 
@@ -215,6 +224,7 @@ test_browser-functional:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
     - prod-client
+    - schedules
   tags:
     - web
 
@@ -233,6 +243,7 @@ test_browser-functional-external:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
     - prod-client
+    - schedules
   tags:
     - web
 
@@ -244,6 +255,7 @@ code_quality:
     - /^hotfix-.*c.*\/.*$/
     - prod-client
     - dev
+    - schedules
   tags:
     - web
 
@@ -265,6 +277,7 @@ test_server_unit:
       - /^hotfix-.*s.*\/.*$/
       - prod-server
       - dev
+      - schedules
     tags:
       - web
 
@@ -286,6 +299,7 @@ test_server_functional:
     - /^hotfix-.*s.*\/.*$/
     - prod-server
     - dev
+    - schedules
   tags:
     - x86_64
     - docker
