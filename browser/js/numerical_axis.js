@@ -147,13 +147,6 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         this.computeLabels(min, max, use_log, display_label, this.can_undefined)
     }
 
-    NumericalAxis.prototype.pos = function(clone) {
-        var value, pos;
-        value = this.applyConverter(clone);
-
-        return this.pos_from_value(value)
-    }
-
     NumericalAxis.prototype.pos_from_value = function(value) {
 
         if (typeof value != "undefined" && value != 'undefined'){

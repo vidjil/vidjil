@@ -115,24 +115,18 @@ GenericAxis.prototype = {
     },
 
     populateValueMapping: function() {
-        var values = this.values;
-        var value_mapping = this.value_mapping;
-        var label_mapping = this.label_mapping;
 
-        var label_array = Object.keys(label_mapping);
-        for (var i = 0; i < values.length; i++) {
-            var value = values[i];
+        for (var idx in this.values) {
+            var value = this.values[idx];
             var convert = this.applyConverter(value);
-            if (typeof label_mapping[convert] !== 'undefined') {
-                var index = label_array.indexOf(convert);
-                if (typeof value_mapping[index] === 'undefined') {
-                    value_mapping[index] = [];
-                }
-                value_mapping[index].push(value);
+
+            if (typeof convert !== 'undefined') {
+                this.value_mapping[convert] = this.value_mapping[convert] || []
+                this.value_mapping[convert].push(value);
             } else if (this.can_undefined){
-                if (typeof value_mapping["?"] === 'undefined')
-                    value_mapping["?"] = [];
-                value_mapping["?"].push(value);
+                if (typeof this.value_mapping["?"] === 'undefined')
+                    this.value_mapping["?"] = [];
+                this.value_mapping["?"].push(value);
             }
         }
     },
@@ -181,10 +175,19 @@ GenericAxis.prototype = {
     },
     
     pos: function(element) {
-        var value = this.label_mapping[this.applyConverter(element)];
-        if (typeof value === 'undefined')
-            value = this.label_mapping["?"];
-        return value;
+        value = this.applyConverter(element);
+
+        return this.pos_from_value(value)
+    },
+
+    pos_from_value: function(value) {
+
+        var pos = this.label_mapping[value]
+
+        if (typeof pos === 'undefined')
+            pos = this.label_mapping["?"];
+
+        return pos ;
     },
 
     computeLabels: function(values, sort) {
