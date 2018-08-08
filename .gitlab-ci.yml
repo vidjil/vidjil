@@ -14,7 +14,6 @@ stages:
   - deploy_review
   - test_germlines
   - test_functional
-  - test_functional_external
   - test_shouldvdj
   - coverage
   - prepare_release
@@ -25,6 +24,7 @@ stages:
   - prepare_deploy
   - deploy_docker
   - deploy_prod
+  - test_functional_external
 
 # Anchors
 
