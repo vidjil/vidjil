@@ -58,6 +58,22 @@ QUnit.test("test rounding functions", function(assert) {
     }
 );
 
+QUnit.test("test nice_min_max_steps", function(assert) {
+    assert.deepEqual(nice_min_max_steps(347.34, 354.23, 10), {min: 347, max: 355, step: 1, nb_steps: 8}, "347.34..354.23 (10)");
+    assert.deepEqual(nice_min_max_steps(17, 305, 20), {min: 0, max: 320, step: 20, nb_steps: 16}, "17..305 (20)");
+    assert.deepEqual(nice_min_max_steps(17, 305, 10), {min: 0, max: 350, step: 50, nb_steps: 7}, "17..305 (10)");
+    assert.deepEqual(nice_min_max_steps(17, 305, 4), {min: 0, max: 400, step: 100, nb_steps: 4}, "17..305 (4)");
+
+    assert.deepEqual(nice_min_max_steps(190, 310, 15), {min: 190, max: 310, step: 10, nb_steps: 12}, "190..310 (15)");
+    assert.deepEqual(nice_min_max_steps(190, 310, 3), {min: 150, max: 350, step: 100, nb_steps: 2}, "190..310 (3)");
+
+    assert.deepEqual(nice_min_max_steps(0.03, 19.24, 5), {min: 0, max: 20, step: 5, nb_steps: 4}, "0.03..19.24 (5)");
+    assert.deepEqual(nice_min_max_steps(0, 7, 4), {min: 0, max: 8, step: 2, nb_steps: 4}, "0..7 (4)");
+
+    assert.deepEqual(nice_min_max_steps(43, 103, 5), {min: 40, max: 120, step: 20, nb_steps: 4}, "43..103 (5)");
+    assert.deepEqual(nice_min_max_steps(43, 103, 3), {min: 0, max: 150, step: 50, nb_steps: 3}, "43..103 (3)");
+});
+
 QUnit.test("prepend_path_if_not_web", function(assert) {
     assert.equal(prepend_path_if_not_web('/tata', 'toto'), 'toto/tata');
     assert.equal(prepend_path_if_not_web('http://toto', 'toto'), 'http://toto');

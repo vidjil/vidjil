@@ -357,6 +357,40 @@ function nice_floor(x, force_pow10)
 }
 
 
+
+
+
+/**
+ * Give nice min/max/step numbers including the given [min, max] interval in order that steps are also nice,
+ * See examples in tools_test.js
+ * nice_min_max_steps(0.03, 19.24, 5) -> {min: 0, max: 20, step: 4}
+ * nice_min_max_steps(0, 7, 4) -> {min: 0, max:8, step: 2}
+ **/
+
+function nice_min_max_steps(min, max, nb_max_steps)
+{
+    var basic_step = nice_1_2_5_ceil((max - min) / nb_max_steps)
+
+    var n_min = nice_floor(min, basic_step)
+    var n_max = nice_ceil(max, basic_step)
+
+    var step = nice_1_2_5_ceil((n_max - n_min) / nb_max_steps)
+    var nb_steps = Math.ceil((n_max - n_min) / step)
+
+    // In some rare cases, we try another loop of rounding
+    var overlength = nb_steps * step - (n_max - n_min)
+    if (overlength)
+    {
+        n_min = nice_floor(min, step)
+        n_max = nice_ceil(max, step)
+        nb_steps = Math.ceil((n_max - n_min) / step)
+    }
+
+    return {min: n_min, max: n_max, step: step, nb_steps: nb_steps}
+}
+
+
+
 /**
  * Give a minimial number of digits to represent 'x' with at least 'sd' significant digits
  * nice_number_digits(14.5, 2) -> 1
