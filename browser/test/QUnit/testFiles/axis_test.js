@@ -97,7 +97,7 @@ QUnit.test("axis", function(assert) {
             0,25)
     
     assert.equal(axis.pos(m.clone(0)).pos.toPrecision(3), 0.00, "custom  : clone 0 (nlength = 0) position -> 0.00")
-    assert.equal(axis.pos(m.clone(1)).pos.toPrecision(3), 0.257, "custom  : clone 1 (nlength = 9) position -> 0.30")
+    assert.equal(axis.pos(m.clone(1)).pos.toPrecision(3), 0.30, "custom  : clone 1 (nlength = 9) position -> 0.30")
   
     //sequenceLength
     axis = new NumericalAxis(m)
@@ -107,18 +107,18 @@ QUnit.test("axis", function(assert) {
             },
             undefined,
             false)
-    
-    assert.equal(axis.pos(m.clone(0)).pos.toPrecision(3), 0.0325, "custom 2 : clone 0 (sequenceLength = 21)  position -> 0.0325")
-    assert.equal(axis.pos(m.clone(1)).pos.toPrecision(3), 0.0236, "custom 2 : clone 1 (sequenceLength = 18)  position -> 0.0236")
-    assert.equal(axis.pos(m.clone(3)).pos.toPrecision(3), 0.683,  "custom 2 : clone 3 (sequenceLength = 241) position -> 0.683")
-    assert.equal(axis.label_mapping.hasOwnProperty('0'),  false, "axis have not label 0")
-    assert.equal(axis.label_mapping.hasOwnProperty('10'), true,  "axis have label 10")
-    assert.equal(axis.label_mapping.hasOwnProperty('281'), true, "axis have label 281")
-    assert.equal(axis.label_mapping['10'].pos.toPrecision(3), 0, "pos of axis.label 10 is 0")
-    assert.equal(axis.label_mapping['281'].pos.toPrecision(3), 0.800, "pos of axis.label 281 is 0.800")
+
+    assert.equal(axis.pos(m.clone(0)).pos.toPrecision(3), 0.0700, "custom 2 : clone 0 (sequenceLength = 21)  position")
+    assert.equal(axis.pos(m.clone(1)).pos.toPrecision(3), 0.0600, "custom 2 : clone 1 (sequenceLength = 18)  position")
+    assert.equal(axis.pos(m.clone(3)).pos.toPrecision(3), 0.803, "custom 2 : clone 3 (sequenceLength = 241) position")
+    assert.equal(axis.label_mapping.hasOwnProperty('0'),  true, "axis has label 0")
+    assert.equal(axis.label_mapping.hasOwnProperty('10'), false,  "axis does not have label 10")
+    assert.equal(axis.label_mapping.hasOwnProperty('250'), true, "axis has label 250")
+    assert.equal(axis.label_mapping['0'].pos.toPrecision(3), 0, "pos of axis.label 0 is 0")
+    assert.equal(axis.label_mapping['150'].pos.toPrecision(3), 0.500, "pos of axis.label 150 is 0.500")
     assert.equal(axis.labels[0].pos, 1, "pos of axis label 0 ('?' value) is 1")
-    assert.approx(axis.labels[axis.labels.length-1].pos, 0.8, 0.01, "pos of last axis label is about 0.80")
-    assert.equal( (axis.labels.length != axis.label_mapping.length), true, "axis.labels length != axis.label_mapping length (du to '?')")
+    assert.approx(axis.labels[axis.labels.length-1].pos, 0.833, 0.01, "pos of last axis label is about 0.833")
+    assert.equal((axis.labels.length != axis.label_mapping.length), true, "axis.labels length != axis.label_mapping length (du to '?')")
 
     // sequenceLength with undefined
     axis = new NumericalAxis(m)
@@ -160,7 +160,7 @@ QUnit.test("axis", function(assert) {
     axis.init(m.clones,
               function(clone) {
                   return undefined;
-              }, "V", true, 0);
+              }, "V", true, 0, 0);
     assert.equal(axis.labels.length, 2, "Just two labels: 0, undefined");
 
     // undefined values
