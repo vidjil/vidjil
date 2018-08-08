@@ -72,6 +72,8 @@ QUnit.test("test nice_min_max_steps", function(assert) {
 
     assert.deepEqual(nice_min_max_steps(43, 103, 5), {min: 40, max: 120, step: 20, nb_steps: 4}, "43..103 (5)");
     assert.deepEqual(nice_min_max_steps(43, 103, 3), {min: 0, max: 150, step: 50, nb_steps: 3}, "43..103 (3)");
+
+    assert.deepEqual(nice_min_max_steps(42, 42, 20), {min: 42, max: 42, step: 0, nb_steps: 0}, "42..42 (20)");
 });
 
 QUnit.test("prepend_path_if_not_web", function(assert) {
