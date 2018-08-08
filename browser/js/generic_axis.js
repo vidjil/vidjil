@@ -35,6 +35,7 @@ function GenericAxis (reverse, can_undefined) {
     this.value_mapping = {};
     this.can_undefined = true;
     this.MAX_NB_STEPS_IN_AXIS = 8; // Number (max) of labels per numerical axis
+    this.MAX_NB_BARS_IN_AXIS = 100
     this.NB_STEPS_BAR = 18; // Number (max) of labels per numerical axis in histograms
     if(typeof can_undefined !== "undefined")
         this.can_undefined = can_undefined;
@@ -212,31 +213,6 @@ GenericAxis.prototype = {
         }
     },
 
-    /**
-     * add labels for barplot <br>
-     * @param {Array} tab - barplot descriptor like the one made by Model.computeBarTab()
-     * */
-    computeBarLabels : function () {
-        this.labels = [];
-        this.label_mapping = {};
-        var length = Object.keys(this.value_mapping).length;
-
-        var step = 1 + Math.floor(length / this.NB_STEPS_BAR)
-        var text;
-        var i=1
-        for (var e in this.value_mapping){
-            if (i%step === 0 || (e == '?' && this.value_mapping[e].length > 0)){
-                text = this.getLabelText(e);
-                if (e == '?')
-                    text = e;
-                var pos = this.posBarLabel(i, length);
-                if (this.reverse) pos = 1 - pos;
-                this.addLabel("line", text, pos, text);
-            }
-            i++;
-        }
-
-    },
 
     getLabelText: function(value) {
         return value;

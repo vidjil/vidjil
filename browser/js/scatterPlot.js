@@ -668,10 +668,8 @@ ScatterPlot.prototype = {
         
         k=1 ;
         for (var i in this.barTab) {
-            val = this.barTab[i];
-
             var y_pos = 0
-            var x_pos = this.axisX.posBarLabel(k);
+            var x_pos = this.axisX.pos_from_value(i).pos
             
             for (var j in this.barTab[i]){
                 var clone = this.barTab[i][j]
@@ -695,7 +693,6 @@ ScatterPlot.prototype = {
         }
         this.axisY.reverse = true;
         this.axisY.computeLabels(0, bar_max);
-        this.axisX.computeBarLabels(this.barTab)
         this.initGrid();
         this.drawBarTab(500);
         

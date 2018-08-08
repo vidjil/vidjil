@@ -64,6 +64,7 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         this.nb_steps_special = this.can_undefined ? 1 : 0
         this.nb_steps_normal = this.nb_steps - this.nb_steps_special
 
+        // Sets this.converter
         if (typeof fct === 'function') {
             this.converter = fct;
         } else {
@@ -71,7 +72,8 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
                 return elem[fct];
             }
         }
-        
+
+        // Compute min / max
         var min = default_min;
         var max = default_max;
         if (typeof min === 'function') min = min();
@@ -88,21 +90,7 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
                     }
                 }
             }
-            for (var j=min; j<=max; j++){
-                this.value_mapping[j]=[];
-            }
-        } else {
-            for (var k in labels) {
-                var val = labels[k];
-                this.value_mapping[val] = [];
-            }
         }
-        if(this.can_undefined)
-            this.value_mapping["?"] = [];
-
-        // insert all the values into the valuemapping object
-        this.insert_values()
-        
 
         if (typeof min == "undefined"){
             min = 0;
@@ -144,13 +132,29 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
                 .domain([min, max])
                 .range(range);
         }
-            
+
+
+        // Prepare value_mapping
+        this.value_mapping = {};
+
+        if(this.can_undefined)
+            this.value_mapping["?"] = [];
+
+        this.insert_values()
+
+
+        // Set labels
         this.computeLabels(min, max, use_log, display_label, this.can_undefined)
     }
 
     NumericalAxis.prototype.pos = function(clone) {
         var value, pos;
         value = this.applyConverter(clone);
+
+        return this.pos_from_value(value)
+    }
+
+    NumericalAxis.prototype.pos_from_value = function(value) {
 
         if (typeof value != "undefined" && value != 'undefined'){
             pos = this.sizeScale(value);
@@ -165,10 +169,17 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
      * This function allow to insert all the values getted into the value_mapping object. 
      */
     NumericalAxis.prototype.insert_values = function() {
-        for(var idx in this.clones) {
+        this.step_bar = nice_1_2_5_ceil((this.max - this.min) / this.MAX_NB_BARS_IN_AXIS)
+
+        // Init value_mapping
+        for (var m = this.min; m < this.max; m += this.step_bar)
+            this.value_mapping[nice_ceil(m, this.step_bar)] = []
+
+        // Fill value_mapping
+        for (var idx in this.clones) {
             var clone = this.clones[idx];
             if(!clone.isVirtual()) {
-                var value = this.applyConverter(clone);
+                var value = nice_ceil(this.applyConverter(clone), this.step_bar);
                 if (typeof value == "undefined" || value == undefined || value == "undefined") {
                     if (this.can_undefined)
                         this.value_mapping["?"].push(clone);
