@@ -570,6 +570,7 @@ ScatterPlot.prototype = {
         //sort each bar (axisY)
         
         this.axisY = new PercentAxis(this.m, true);
+        this.axisY.MAX_NB_STEPS_IN_AXIS = 5;
         this.axisY.init(this.m.clones, this.available_axis[this.splitY].fct);
         this.sortBarTab(this.axisY.converter);
 
@@ -1723,8 +1724,8 @@ ScatterPlot.prototype = {
      * @param {Axis} axis
      * @param {string} splitMethod
      * */
-    updateAxis: function(splitMethod, reverse) {
-        if (typeof reverse === "undefined") reverse = false;
+    updateAxis: function(splitMethod, is_Y) {
+        if (typeof is_Y === "undefined") is_Y = false;
         var axis;
         var aa = this.available_axis[splitMethod] 
         if (aa == undefined) {
@@ -1733,7 +1734,9 @@ ScatterPlot.prototype = {
         }
 
         axis = aa.axis;
-        axis.reverse = reverse;
+        axis.reverse = is_Y;
+        if (is_Y)
+            axis.MAX_NB_STEPS_IN_AXIS = 6
         axis.init(this.m.clones, aa.fct, aa.labels, aa.sort, aa.min, aa.max, aa.log, aa.display_label);
 
         return axis;

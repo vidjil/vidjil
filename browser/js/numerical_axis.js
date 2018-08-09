@@ -60,6 +60,10 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         display_label = typeof display_label !== 'undefined' ? display_label : true;
         var self = this;
         
+        this.nb_steps = this.MAX_NB_STEPS_IN_AXIS
+        this.nb_steps_special = this.can_undefined ? 1 : 0
+        this.nb_steps_normal = this.nb_steps - this.nb_steps_special
+
         if (typeof fct === 'function') {
             this.converter = fct;
         } else {
@@ -107,12 +111,23 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         else if (typeof max === 'undefined') {
             max = min + 1;
         } else {
-            min = nice_floor(min)
-            max = nice_ceil(max)
+            if (use_log)
+            {
+                min = nice_floor(min)
+                max = nice_ceil(max)
+            }
+            else
+            {
+                nice = nice_min_max_steps(min, max, this.nb_steps_normal)
+                min = nice.min
+                max = nice.max
+                this.nb_steps_normal = nice.nb_steps
+                this.nb_steps = this.nb_steps_normal + this.nb_steps_special
+            }
         }
 
         if (this.can_undefined && ! use_log) {
-            max = max + (max - min)/this.NB_STEPS_IN_AXIS
+            max = max + (max - min) / (this.nb_steps_normal)
         }
 
         this.min = min;
@@ -196,29 +211,20 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
                 h = h / 10;
             }
         }else{
-            var nb_steps = this.NB_STEPS_IN_AXIS-1
-            undefined_min = min
-            // Recover the initial min value
 
-            nb_steps = this.computeSteps(min, max, nb_steps);
+            this.nb_steps = this.computeSteps(min, max, this.nb_steps);
  
-            if (has_undefined) {
-                nb_steps = nb_steps -1 
-            }
-
             if (has_undefined){
                 this.labels.push(this.label("line", (this.reverse) ? 0 : 1, "?"))
-                h = (max-min)/(nb_steps+1)
-            } else {
-                h = (max-min)/(nb_steps)
             }
 
+            h = (max - min) / this.nb_steps
+
             // Computed so that pos <= 1 (in the loop below)
-            var delta = (min - max)/((min - undefined_min)/(max-undefined_min) - 1)
-            // Shift the start when there is an undefined value
-            var start_shift = (min - undefined_min)/(max-undefined_min)
-            for (var j = 0; j <= nb_steps; j++) {
-                pos = (h*j)*(1/delta);
+            var delta = max - min
+
+            for (var j = 0; j <= this.nb_steps_normal ; j++) {
+                pos = j / this.nb_steps
 
                 text = this.getLabelText(min + h*j);
                 if (this.reverse) pos = 1 - pos;
@@ -230,9 +236,10 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
 
     NumericalAxis.prototype.computeSteps = function(min, max, nb_steps) {
         var steps = nb_steps;
-        if (Math.abs(max - min) < nb_steps) {
-            steps = Math.abs(max - min)
-        }
+
+        // if (Math.abs(max - min) < nb_steps) {
+        //     steps = Math.abs(max - min)
+        // }
         return steps;
     }
 
@@ -264,7 +271,7 @@ PercentAxis.prototype = Object.create(NumericalAxis.prototype);
     }
 
     PercentAxis.prototype.getLabelText = function(value) {
-        return floatToFixed(value*100, 4) + "%"
+        return parseFloat(value*100).toFixed(nice_number_digits(100 * (this.max - this.min), 2)) + "%"
     }
 
 /**

@@ -296,15 +296,36 @@ function floor_pow10(x)
  * nice_ceil(23.4) -> 30
  **/
 
-function nice_ceil(x)
+function nice_ceil(x, force_pow10)
+{
+    if (x <= 0) return x
+
+    try {
+        var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
+
+        var xx = x / floor_power10
+        return (xx == 1 ? 1 : xx <= 1.5 ? 1.5 : Math.ceil(xx)) * floor_power10
+    }
+    catch(e) {
+        // Always return something
+        return x;
+    }
+}
+
+
+
+/**
+ * Give a nice decimal number (to 1/2/5) above the given number
+ **/
+
+function nice_1_2_5_ceil(x)
 {
     if (x <= 0) return x
 
     try {
         var floor_power10 = floor_pow10(x)
-
         var xx = x / floor_power10
-        return (xx == 1 ? 1 : xx <= 1.5 ? 1.5 : Math.ceil(xx)) * floor_power10
+        return (xx == 1 ? 1 : xx <= 2 ? 2 : xx <= 5 ? 5 : 10) * floor_power10
     }
     catch(e) {
         // Always return something
@@ -317,14 +338,16 @@ function nice_ceil(x)
  * Give a nice decimal number under the given number
  * nice_floor(0.14) -> 0.1
  * nice_floor(23.4) -> 20
+ * nice_floor(23.4, 1) -> 23
+ * nice_floor(23.4, 100) -> 0
  **/
 
-function nice_floor(x)
+function nice_floor(x, force_pow10)
 {
     if (x <= 0) return x
 
     try {
-        var floor_power10 = floor_pow10(x)
+        var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
         return Math.floor(x / floor_power10) * floor_power10
     }
     catch(e) {
@@ -332,6 +355,43 @@ function nice_floor(x)
         return x;
     }
 }
+
+
+
+
+
+/**
+ * Give nice min/max/step numbers including the given [min, max] interval in order that steps are also nice,
+ * See examples in tools_test.js
+ * nice_min_max_steps(0.03, 19.24, 5) -> {min: 0, max: 20, step: 4}
+ * nice_min_max_steps(0, 7, 4) -> {min: 0, max:8, step: 2}
+ **/
+
+function nice_min_max_steps(min, max, nb_max_steps)
+{
+    if (min == max)
+        return {min: min, max: max, step: 0, nb_steps: 0}
+
+    var basic_step = nice_1_2_5_ceil((max - min) / nb_max_steps)
+
+    var n_min = nice_floor(min, basic_step)
+    var n_max = nice_ceil(max, basic_step)
+
+    var step = nice_1_2_5_ceil((n_max - n_min) / nb_max_steps)
+    var nb_steps = Math.ceil((n_max - n_min) / step)
+
+    // In some rare cases, we try another loop of rounding
+    var overlength = nb_steps * step - (n_max - n_min)
+    if (overlength)
+    {
+        n_min = nice_floor(min, step)
+        n_max = nice_ceil(max, step)
+        nb_steps = Math.ceil((n_max - n_min) / step)
+    }
+
+    return {min: n_min, max: n_max, step: step, nb_steps: nb_steps}
+}
+
 
 
 /**
