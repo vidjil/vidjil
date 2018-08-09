@@ -111,7 +111,7 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
                 nice = nice_min_max_steps(min, max, this.nb_steps_normal)
                 min = nice.min
                 max = nice.max
-                this.nb_steps_normal = nice.nb_steps
+                this.nb_steps_normal = this.limitSteps(min, max, nice.nb_steps);
             }
         }
 
@@ -211,8 +211,6 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
                 h = h / 10;
             }
         }else{
-
-            this.nb_steps = this.computeSteps(min, max, this.nb_steps);
  
             if (has_undefined){
                 this.labels.push(this.label("line", (this.reverse) ? 0 : 1, "?"))
@@ -234,12 +232,12 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         }
     }
 
-    NumericalAxis.prototype.computeSteps = function(min, max, nb_steps) {
+    NumericalAxis.prototype.limitSteps = function(min, max, nb_steps) {
         var steps = nb_steps;
 
-        // if (Math.abs(max - min) < nb_steps) {
-        //     steps = Math.abs(max - min)
-        // }
+        if (Math.abs(max - min) < nb_steps) {
+            steps = Math.abs(max - min)
+        }
         return steps;
     }
 
