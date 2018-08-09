@@ -162,7 +162,7 @@ QUnit.test("axis", function(assert) {
               function(clone) {
                   return undefined;
               }, "V", true, 0, 0);
-    assert.equal(axis.labels.length, 2, "Just two labels: 0, undefined");
+    assert.equal(axis.labels.length, 3, "Just three labels: 0, 1, undefined");
 
     // undefined values
     axis = new NumericalAxis(m);
@@ -170,6 +170,11 @@ QUnit.test("axis", function(assert) {
               function(clone) {
                   return 'undefined';
               });
-    assert.equal(axis.labels[0].pos, 1, "Just two labels: undefined, 0");
-    assert.equal(axis.labels[1].pos, 0, "Just two labels: undefined, 0");
+
+    assert.equal(axis.labels[0].pos, 1, "Just three labels: undefined, 0, 1");
+    assert.equal(axis.labels[1].pos, 0, "Just three labels: undefined, 0, 1");
+
+    assert.equal(axis.labels[2].pos, 0.5, "Just three labels: undefined, 0, 1");
+    assert.equal(axis.labels[2].text, "1", "Just three labels: undefined, 0, 1");
+
 });
