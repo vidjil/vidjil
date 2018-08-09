@@ -49,7 +49,7 @@ function ScatterPlot(id, model, database, default_preset) {
     this.gridSizeH = 1; //grid height
 
     //Margins (css style : top/right/bottom/left)
-    this.default_margin = [75,10,25,120];
+    this.default_margin = [45,10,15,90];
     this.graph_margin = [25,25,25,25];
     this.margin = this.default_margin;
 
@@ -1368,7 +1368,7 @@ ScatterPlot.prototype = {
         var className = "sp_legend"
         if (space < 1.1) {
             this.rotation_x = 320;
-            this.text_position_x = 60;
+            this.text_position_x = 40;
             this.sub_text_position_x = 80;
             className = "sp_rotated_legend";
         } else {
