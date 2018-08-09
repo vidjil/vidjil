@@ -762,7 +762,7 @@ ScatterPlot.prototype = {
                     return "circle_hidden";
             })
             self.update()
-        },500)
+        },400)
 
         
     },
