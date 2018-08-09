@@ -97,10 +97,11 @@ QUnit.test("axis", function(assert) {
             0,25)
     
     assert.equal(axis.pos(m.clone(0)).pos.toPrecision(3), 0.00, "custom  : clone 0 (nlength = 0) position -> 0.00")
-    assert.equal(axis.pos(m.clone(1)).pos.toPrecision(3), 0.30, "custom  : clone 1 (nlength = 9) position -> 0.30")
+    assert.equal(axis.pos(m.clone(1)).pos.toPrecision(3), 0.321, "custom  : clone 1 (nlength = 9) position")
   
     //sequenceLength
     axis = new NumericalAxis(m)
+    axis.MAX_NB_STEPS_IN_AXIS = 8
     axis.init(m.clones,
             function(clone) {
                 return clone.getSequenceLength();

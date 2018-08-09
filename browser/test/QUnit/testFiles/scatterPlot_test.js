@@ -47,7 +47,8 @@ QUnit.test("grid", function(assert) {
     $(document.getElementsByClassName("sp_legend")[0]).d3Click() //click label ighv4
     assert.deepEqual(m.getSelected(), [2], "check click label");
     
-    
+
+    sp.available_axis["nLength"].axis.MAX_NB_STEPS_IN_AXIS = 8
     sp.changeSplitMethod("nLength", "size", sp.MODE_BAR);
     sp.update()
 
