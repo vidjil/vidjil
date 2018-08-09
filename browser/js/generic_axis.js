@@ -125,7 +125,7 @@ GenericAxis.prototype = {
             var convert = this.applyConverter(value);
 
             if (typeof round !== 'undefined')
-                convert = nice_ceil(convert, round)
+                convert = nice_ceil(convert - round/2, round)
 
             if (typeof convert == "undefined" || convert == undefined || convert == "undefined") {
                 if (this.can_undefined) {
