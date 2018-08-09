@@ -1391,10 +1391,14 @@ ScatterPlot.prototype = {
             self.m.unselectAllUnlessKey(d3.event)
             var listToSelect = [];
             var halfRangeColumn = 0.5;
-            if (self.axisX.labels.length>1)
-                halfRangeColumn = Math.abs((self.axisX.labels[1].pos - self.axisX.labels[0].pos)/2);
+            if (self.axisX.labels.length>1){
+                var nb_start = 0
+                if (self.axisX.labels[0].text == "?")
+                    nb_start = 1
+                halfRangeColumn = Math.abs((self.axisX.labels[nb_start+1].pos - self.axisX.labels[nb_start].pos)/2);
+            }
             for (n=0; n<self.nodes.length; n++){
-                if (Math.abs(self.axisX.pos(self.m.clone(n)).pos - d.pos) < halfRangeColumn)
+                if (Math.abs(self.axisX.pos(self.m.clone(n)).pos - d.pos) < halfRangeColumn){
                     if (self.nodes[n].r1>0){
                         console.log("splitX : " + (self.splitX == this.AXIS_GENE_V) + ", " + (self.splitX));
                         console.log("germline : " + (self.m.clones[n].germline == self.m.germlineV.system));
@@ -1402,9 +1406,11 @@ ScatterPlot.prototype = {
                             if (self.m.clones[n].germline == self.m.germlineV.system)
                                 listToSelect.push(self.nodes[n]);
                         }
-                        else
+                        else {
                             listToSelect.push(self.nodes[n]);
                         }
+                    }
+                }
             }
                 self.m.multiSelect(listToSelect);
            })
@@ -1508,10 +1514,14 @@ ScatterPlot.prototype = {
                 self.m.unselectAllUnlessKey(d3.event)
                 var listToSelect = [];
                 var halfRangeLine = 0.5;
-                if (self.axisY.labels.length>1)
-                    halfRangeLine = Math.abs((self.axisY.labels[0].pos - self.axisY.labels[1].pos)/2);
+                if (self.axisY.labels.length>1){
+                    var nb_start = 0
+                    if (self.axisY.labels[0].text == "?")
+                        nb_start = 1
+                    halfRangeLine = Math.abs((self.axisY.labels[nb_start+1].pos - self.axisY.labels[nb_start].pos)/2);
+                }
                 for (n=0; n<self.nodes.length; n++){
-                        if (Math.abs(self.axisY.pos(self.m.clone(n)).pos - d.pos) < halfRangeLine)
+                        if (Math.abs(self.axisY.pos(self.m.clone(n)).pos - d.pos) < halfRangeLine){
                             if (self.nodes[n].r1>0){
                                 if (self.splitX == this.AXIS_ALLELE_V || self.splitX == this.AXIS_GENE_V || self.splitX == this.AXIS_ALLELE_J || self.splitX == this.AXIS_GENE_J || (self.mode == this.MODE_GRID & (self.splitY == this.AXIS_ALLELE_V || self.splitY == this.AXIS_GENE_V || self.splitY == this.AXIS_ALLELE_J || self.splitY == this.AXIS_GENE_J))){
                                     if (self.m.clones[n].germline == self.m.germlineV.system)
@@ -1519,6 +1529,7 @@ ScatterPlot.prototype = {
                                 }
                                 else
                                     listToSelect.push(self.nodes[n]);
+                            }
                         }
                     }
                 self.m.multiSelect(listToSelect);
