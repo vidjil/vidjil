@@ -191,6 +191,10 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
             display_label = true;
         if (typeof has_undefined == 'undefined')
             has_undefined = false
+
+        // Re-compute nb_steps (will not change the min/max here, only the label display)
+        this.nb_steps_special = has_undefined ? 1 : 0
+        this.nb_steps = this.nb_steps_normal + this.nb_steps_special
         
         var text, pos, h;
         if (use_log){
