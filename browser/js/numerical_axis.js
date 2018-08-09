@@ -255,23 +255,6 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         return value;
     }
 
-function PercentAxis (model, reverse, can_undefined) {
-    this.m = model;
-    this.labels = [];
-    this.reverse = reverse;
-    NumericalAxis.call(this, model, reverse, can_undefined);
-}
-
-PercentAxis.prototype = Object.create(NumericalAxis.prototype);
-
-    PercentAxis.prototype.computeSteps = function(min, max, nb_steps) {
-        return nb_steps;
-    }
-
-    PercentAxis.prototype.getLabelText = function(value) {
-        return parseFloat(value*100).toFixed(nice_number_digits(100 * (this.max - this.min), 2)) + "%"
-    }
-
 /**
  * Axis object contain labels and their position on an axis (from 0 to 1) <br>
  * can provide the position of a clone on it
@@ -279,6 +262,10 @@ PercentAxis.prototype = Object.create(NumericalAxis.prototype);
  * @param {Model} model
  * @reverse {boolean} reverse - by default axis go from low to high but can be revsersed
  * */
+
+
+// FloatAxis
+
 function FloatAxis (model, reverse, can_undefined) {
     this.m = model;
     this.labels = [];
@@ -292,4 +279,21 @@ FloatAxis.prototype = Object.create(NumericalAxis.prototype);
         return parseFloat(value).toFixed(nice_number_digits(this.max - this.min, 2))
     }
 
+    FloatAxis.prototype.limitSteps = function(min, max, nb_steps) {
+        return nb_steps;
+    }
 
+// PercentAxis
+
+function PercentAxis (model, reverse, can_undefined) {
+    this.m = model;
+    this.labels = [];
+    this.reverse = reverse;
+    NumericalAxis.call(this, model, reverse, can_undefined);
+}
+
+PercentAxis.prototype = Object.create(FloatAxis.prototype);
+
+    PercentAxis.prototype.getLabelText = function(value) {
+        return parseFloat(value*100).toFixed(nice_number_digits(100 * (this.max - this.min), 2)) + "%"
+    }
