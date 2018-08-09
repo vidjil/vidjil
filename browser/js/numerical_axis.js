@@ -95,9 +95,11 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         if (typeof min == "undefined"){
             min = 0;
             max = 1;
+            this.nb_steps_normal = 1
         }
-        else if (typeof max === 'undefined') {
+        else if (typeof max == 'undefined') {
             max = min + 1;
+            this.nb_steps_normal = 1
         } else {
             if (use_log)
             {
@@ -110,9 +112,10 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
                 min = nice.min
                 max = nice.max
                 this.nb_steps_normal = nice.nb_steps
-                this.nb_steps = this.nb_steps_normal + this.nb_steps_special
             }
         }
+
+        this.nb_steps = this.nb_steps_normal + this.nb_steps_special
 
         if (this.can_undefined && ! use_log) {
             max = max + (max - min) / (this.nb_steps_normal)
