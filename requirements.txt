@@ -6,3 +6,5 @@ requests==2.12.3
 six==1.11.0
 unittest-xml-reporting==2.1.1
 uWSGI==2.0.14
+ijson==2.3
+cffi==1.11.5

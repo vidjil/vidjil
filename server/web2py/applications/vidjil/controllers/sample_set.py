@@ -3,6 +3,8 @@ import gluon.contrib.simplejson, datetime
 import vidjil_utils
 import time
 import json
+from vidjilparser import VidjilParser
+import operator
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -650,6 +652,124 @@ def custom():
                 helper=helper,
                 tag_decorator=tag_decorator,
                 group_ids=group_ids)
+
+def getStatHeaders():
+    m = StatDecorator()
+    b = BooleanDecorator()
+    p = BarDecorator()
+    return [('set_id', 'db', m), ('set_name', 'db', m), ('set_info', 'db', m), ('main_clone', 'parser', m), ('reads', 'parser', m), ('mapped', 'parser', m), ('mapped_percent', 'parser', p), ('bool', 'parser', b), ('bool_true', 'parser', b)]
+
+def getResultsFileStats(file_name, dest):
+    file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
+    with open(file_path, 'rb') as f:
+        objects = ijson.items(f, 'samples.results_file_id')
+
+        dest['results_file_ids'] = json.loads(mjson)['results_file_id']
+        return dest
+
+def getFusedStats(file_name, res, dest):
+    file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
+    parser = VidjilParser()
+    parser.addPrefix('clones.item', 'clones.item.top', operator.eq, 1)
+    parser.addPrefix("reads")
+    parser.addPrefix("samples")
+
+    mjson = parser.extract(file_path)
+    data = json.loads(mjson)
+    result_index = -1
+    if "results_file_id" in data['samples']:
+        result_index = data['samples']['results_file_id'].index(res['resuts_file_id'])
+    elif "original_names" in data['samples']:
+        result_index = data['samples']['original_names'].index(defs.DIR_SEQUENCES + res['sequence_file'])
+    dest['main_clone'] = data['clones'][0]['name']
+    reads = data['reads']['total'][result_index]
+    dest['reads'] = reads
+    dest['mapped'] = "%d" % (data['reads']['segmented'][result_index])
+    dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
+    dest['bool'] = False
+    dest['bool_true'] = True
+    return dest
+
+
+def getStatData(results_file_ids):
+    mf = ModelFactory()
+    set_types = [defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC]
+    helpers = {}
+    for stype in set_types:
+        helpers[stype] = mf.get_instance(stype)
+
+    query = db(
+        (db.results_file.id.belongs(results_file_ids)) &
+        (db.sequence_file.id == db.results_file.sequence_file_id) &
+        (db.sample_set_membership.sequence_file_id == db.sequence_file.id) &
+        (db.sample_set.id == db.sample_set_membership.sample_set_id) &
+        (db.config.id == db.results_file.config_id) &
+        (db.fused_file.config_id == db.config.id) &
+        (db.fused_file.sample_set_id == db.sample_set.id)
+        ).select(
+            db.results_file.data_file.with_alias("results_file"), db.results_file.id.with_alias("results_file_id"),
+            db.fused_file.fused_file.with_alias("fused_file"),
+            db.sequence_file.data_file.with_alias("sequence_file"),
+            db.sample_set.id.with_alias("set_id"),
+            db.sample_set.sample_type.with_alias("sample_type"),
+            db.patient.first_name, db.patient.last_name, db.patient.info.with_alias('set_info'), db.patient.sample_set_id,
+            db.run.name,
+            db.generic.name,
+            db.config.name,
+
+            db.generic.name.with_alias("set_name"), # use generic name as failsafe for set name
+            left = [
+                db.patient.on(db.patient.sample_set_id == db.sample_set.id),
+                db.run.on(db.run.sample_set_id == db.sample_set.id),
+                db.generic.on(db.generic.sample_set_id == db.sample_set.id)
+            ]
+        )
+
+    data = []
+    for res in query:
+        d = {}
+        set_type = res.sample_type
+        headers = getStatHeaders()
+        d = getFusedStats(res.fused_file, res, d)
+        for head, htype, model in headers:
+            if htype == 'db':
+                d[head] = res[head]
+            d[head] = model.decorate(d[head])
+            log.debug("%s: %s" % (head, d[head]))
+        d['set_name'] = helpers[set_type].get_name(res[set_type])
+        data.append(d)
+    return data
+
+def multi_sample_stats():
+    data = {}
+    data['headers'] = [h for h, t, m in getStatHeaders()]
+    results = []
+    custom_result = request.vars['custom_result']
+    if not isinstance(custom_result, list):
+        custom_result = [custom_result]
+
+    custom_result = [long(i) for i in custom_result]
+
+    permitted_results = db(
+        (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)) &
+        (db.sample_set.id == db.sample_set_membership.sample_set_id) &
+        (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id) &
+        (db.results_file.id.belongs(custom_result))
+    ).select(
+            db.results_file.id.with_alias('results_file_id')
+        )
+
+    permitted_results_ids = [r.results_file_id for r in permitted_results]
+    log.debug("premitted: " + str(permitted_results_ids))
+    log.debug("custom: " + str(custom_result))
+    if set(permitted_results_ids) != set(custom_result):
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+    results = getStatData(custom_result)
+    data['results'] = results
+    return dict(data=data)
 
 def confirm():
     if auth.can_modify_sample_set(request.vars["id"]):
