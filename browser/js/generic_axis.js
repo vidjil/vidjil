@@ -233,14 +233,6 @@ GenericAxis.prototype = {
         return value;
     },
 
-    computeBarTab: function(ref) {
-        ref.barTab = {};
-        for (var key in this.value_mapping) {
-            var vkey = (typeof key == 'undefined') ? '?' : key
-            ref.barTab[vkey] = this.value_mapping[key];
-        }
-    },
-
     posBarLabel : function (i) {
         var length = Object.keys(this.value_mapping).length;
         return (i-0.5)/length ;
