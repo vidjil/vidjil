@@ -152,7 +152,7 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
 
     NumericalAxis.prototype.pos_from_value = function(value) {
 
-        if (typeof value != "undefined" && value != 'undefined'){
+        if (typeof value != "undefined" && value != 'undefined' && value != "?"){
             pos = this.sizeScale(value);
         }else{
             pos = this.sizeScale(this.use_log ? this.min : this.max) ;

@@ -127,7 +127,7 @@ GenericAxis.prototype = {
             if (typeof round !== 'undefined')
                 convert = nice_ceil(convert - round/2, round)
 
-            if (typeof convert == "undefined" || convert == undefined || convert == "undefined") {
+            if (typeof convert == "undefined" || convert == undefined || convert == "undefined" || Number.isNaN(convert)) {
                 if (this.can_undefined) {
                     if (typeof this.value_mapping["?"] === 'undefined')
                         this.value_mapping["?"] = [];
@@ -235,7 +235,8 @@ GenericAxis.prototype = {
     computeBarTab: function(ref) {
         ref.barTab = {};
         for (var key in this.value_mapping) {
-            ref.barTab[key] = this.value_mapping[key];
+            var vkey = (typeof key == 'undefined') ? '?' : key
+            ref.barTab[vkey] = this.value_mapping[key];
         }
     },
 
