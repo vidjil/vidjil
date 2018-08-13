@@ -167,13 +167,16 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
     NumericalAxis.prototype.insert_values = function() {
         this.step_bar = nice_1_2_5_ceil((this.max - this.min) / this.MAX_NB_BARS_IN_AXIS)
 
-        // Init value_mapping
-        for (var m = this.min; m < this.max; m += this.step_bar)
-            this.value_mapping[nice_ceil(m, this.step_bar)] = []
-
-        // Fill value_mapping
+        // Fill actual value_mapping
         this.populateValueMapping(this.step_bar)
+        this.sortValueMapping()
 
+        // Fill remaining value_mapping
+        for (var m = this.min; m < this.max; m += this.step_bar)
+        {
+            var x = nice_ceil(m, this.step_bar)
+            this.value_mapping[x] = this.value_mapping[x] || []
+        }
         this.sortValueMapping()
     }
     
