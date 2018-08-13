@@ -143,9 +143,10 @@ GenericAxis.prototype = {
     },
 
     sortValueMapping: function() {
+        var keys = Object.keys(this.value_mapping).sort()
         var temp = {}
-        for (var key_pos in Object.keys(this.value_mapping).sort()){
-            key = Object.keys(this.value_mapping).sort()[key_pos]
+        for (var key_pos in keys){
+            key = keys[key_pos]
             temp[key] = this.value_mapping[key]
         }
         this.value_mapping = temp
