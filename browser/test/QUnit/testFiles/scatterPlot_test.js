@@ -47,7 +47,8 @@ QUnit.test("grid", function(assert) {
     $(document.getElementsByClassName("sp_legend")[0]).d3Click() //click label ighv4
     assert.deepEqual(m.getSelected(), [2], "check click label");
     
-    
+
+    sp.available_axis["nLength"].axis.MAX_NB_STEPS_IN_AXIS = 8
     sp.changeSplitMethod("nLength", "size", sp.MODE_BAR);
     sp.update()
 
@@ -55,8 +56,9 @@ QUnit.test("grid", function(assert) {
     assert.equal(sp.select_y.selectedIndex, 14, 'select_y index');
 
     assert.equal(sp.nodes[1].bar_h , 0.3333333333333333, "node 1, bar h position")
-    assert.equal(sp.nodes[1].bar_x , sp.axisX.labels[9].pos ,"node 1, bar x position is on '9'")
-    assert.equal(sp.axisX.labels[9].text, "9", "10th label for 'n' axis' is '9'")
+    assert.equal(sp.nodes[1].bar_x , (sp.axisX.labels[5].pos + sp.axisX.labels[6].pos)/2,
+                 "node 1, bar x position is between labels 5th ('8') and 6th ('10')")
+    assert.equal(sp.axisX.labels[5].text, "8", "Correct 5th label ('10')")
     assert.equal(sp.nodes[1].bar_y , 0.3333333333333333, "node 1, bar y position")
 
     assert.approx(sp.nodes[2].bar_h, 0.40, 0.05, "node 2, bar h is about 0.40")

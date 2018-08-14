@@ -49,7 +49,7 @@ function ScatterPlot(id, model, database, default_preset) {
     this.gridSizeH = 1; //grid height
 
     //Margins (css style : top/right/bottom/left)
-    this.default_margin = [75,10,25,120];
+    this.default_margin = [45,10,15,90];
     this.graph_margin = [25,25,25,25];
     this.margin = this.default_margin;
 
@@ -564,8 +564,6 @@ ScatterPlot.prototype = {
 
         //split clones into bar (axisX)
         this.axisX.init(this.m.clones, this.available_axis[this.splitX].fct);
-
-        this.axisX.computeBarTab(this)
         
         //sort each bar (axisY)
         
@@ -615,8 +613,8 @@ ScatterPlot.prototype = {
             if (va.constructor === Number) return (vb.constructor === Number ) ? (va-vb) : -1;
         }
         
-        for (var i in this.barTab) {
-            this.barTab[i].sort(compare);
+        for (var i in this.axisX.value_mapping) {
+            this.axisX.value_mapping[i].sort(compare);
         }
         
         return this;
@@ -635,10 +633,10 @@ ScatterPlot.prototype = {
      * */
     computeBarMax : function () {
         var bar_max = 0;
-        for (var i in this.barTab) {
+        for (var i in this.axisX.value_mapping) {
             var tmp = 0;
-            for (var j in this.barTab[i]) {
-                var clone = this.barTab[i][j]
+            for (var j in this.axisX.value_mapping[i]) {
+                var clone = this.axisX.value_mapping[i][j]
                 if (this.includeBar(clone)){
                     tmp += clone.getSize();
                 }
@@ -654,7 +652,7 @@ ScatterPlot.prototype = {
      * */
     computeBarTab : function () {
         var bar_max = nice_ceil(this.computeBarMax());
-        var tab_length = Object.keys(this.barTab).length;
+        var tab_length = Object.keys(this.axisX.value_mapping).length;
         var width = Math.min(0.08, 0.8 / tab_length);
         
         
@@ -667,14 +665,12 @@ ScatterPlot.prototype = {
         }
         
         k=1 ;
-        for (var i in this.barTab) {
-            val = this.barTab[i];
-
+        for (var i in this.axisX.value_mapping) {
             var y_pos = 0
-            var x_pos = this.axisX.posBarLabel(k);
+            var x_pos = this.axisX.pos_from_value(i).pos
             
-            for (var j in this.barTab[i]){
-                var clone = this.barTab[i][j]
+            for (var j in this.axisX.value_mapping[i]){
+                var clone = this.axisX.value_mapping[i][j]
                 var cloneID = clone.index;
                 if (this.includeBar(clone)){
                     height = clone.getSize()/bar_max;
@@ -695,7 +691,6 @@ ScatterPlot.prototype = {
         }
         this.axisY.reverse = true;
         this.axisY.computeLabels(0, bar_max);
-        this.axisX.computeBarLabels(this.barTab)
         this.initGrid();
         this.drawBarTab(500);
         
@@ -765,7 +760,7 @@ ScatterPlot.prototype = {
                     return "circle_hidden";
             })
             self.update()
-        },500)
+        },400)
 
         
     },
@@ -1371,7 +1366,7 @@ ScatterPlot.prototype = {
         var className = "sp_legend"
         if (space < 1.1) {
             this.rotation_x = 320;
-            this.text_position_x = 60;
+            this.text_position_x = 40;
             this.sub_text_position_x = 80;
             className = "sp_rotated_legend";
         } else {

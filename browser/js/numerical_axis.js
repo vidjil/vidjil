@@ -33,7 +33,7 @@
 function NumericalAxis (model, reverse, can_undefined) {
     this.m = model;
     this.labels = [];
-    this.clones = [];
+    this.values = [];
     this.value_mapping = {};
     this.reverse = reverse;
     GenericAxis.call(this, reverse, can_undefined);
@@ -54,7 +54,7 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
      * */
     NumericalAxis.prototype.init = function(clones, fct, labels, sort, default_min, default_max, use_log, display_label){
         this.reset();
-        this.clones = clones;
+        this.values = clones;
         use_log = typeof use_log !== 'undefined' ? use_log : false;
         this.use_log = use_log ;
         display_label = typeof display_label !== 'undefined' ? display_label : true;
@@ -64,6 +64,7 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         this.nb_steps_special = this.can_undefined ? 1 : 0
         this.nb_steps_normal = this.nb_steps - this.nb_steps_special
 
+        // Sets this.converter
         if (typeof fct === 'function') {
             this.converter = fct;
         } else {
@@ -71,16 +72,17 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
                 return elem[fct];
             }
         }
-        
+
+        // Compute min / max
         var min = default_min;
         var max = default_max;
         if (typeof min === 'function') min = min();
         if (typeof max === 'function') max = max();
 
         if (typeof labels == "undefined") {
-            for (var i in this.clones){
-                if (! this.clones[i].isVirtual()) {
-                    var tmp = this.applyConverter(this.clones[i]);
+            for (var i in this.values){
+                if (! this.values[i].isVirtual()) {
+                    var tmp = this.applyConverter(this.values[i]);
 
                     if ( typeof tmp != "undefined" && !isNaN(tmp)){
                         if ( tmp > max || typeof max == "undefined") max = tmp;
@@ -88,28 +90,16 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
                     }
                 }
             }
-            for (var j=min; j<=max; j++){
-                this.value_mapping[j]=[];
-            }
-        } else {
-            for (var k in labels) {
-                var val = labels[k];
-                this.value_mapping[val] = [];
-            }
         }
-        if(this.can_undefined)
-            this.value_mapping["?"] = [];
-
-        // insert all the values into the valuemapping object
-        this.insert_values()
-        
 
         if (typeof min == "undefined"){
             min = 0;
             max = 1;
+            this.nb_steps_normal = 1
         }
-        else if (typeof max === 'undefined') {
+        else if (typeof max == 'undefined') {
             max = min + 1;
+            this.nb_steps_normal = 1
         } else {
             if (use_log)
             {
@@ -121,10 +111,11 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
                 nice = nice_min_max_steps(min, max, this.nb_steps_normal)
                 min = nice.min
                 max = nice.max
-                this.nb_steps_normal = nice.nb_steps
-                this.nb_steps = this.nb_steps_normal + this.nb_steps_special
+                this.nb_steps_normal = this.limitSteps(min, max, nice.nb_steps);
             }
         }
+
+        this.nb_steps = this.nb_steps_normal + this.nb_steps_special
 
         if (this.can_undefined && ! use_log) {
             max = max + (max - min) / (this.nb_steps_normal)
@@ -144,15 +135,24 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
                 .domain([min, max])
                 .range(range);
         }
-            
+
+
+        // Prepare value_mapping
+        this.value_mapping = {};
+
+        if(this.can_undefined)
+            this.value_mapping["?"] = [];
+
+        this.insert_values()
+
+
+        // Set labels
         this.computeLabels(min, max, use_log, display_label, this.can_undefined)
     }
 
-    NumericalAxis.prototype.pos = function(clone) {
-        var value, pos;
-        value = this.applyConverter(clone);
+    NumericalAxis.prototype.pos_from_value = function(value) {
 
-        if (typeof value != "undefined" && value != 'undefined'){
+        if (typeof value != "undefined" && value != 'undefined' && value != "?"){
             pos = this.sizeScale(value);
         }else{
             pos = this.sizeScale(this.use_log ? this.min : this.max) ;
@@ -165,19 +165,15 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
      * This function allow to insert all the values getted into the value_mapping object. 
      */
     NumericalAxis.prototype.insert_values = function() {
-        for(var idx in this.clones) {
-            var clone = this.clones[idx];
-            if(!clone.isVirtual()) {
-                var value = this.applyConverter(clone);
-                if (typeof value == "undefined" || value == undefined || value == "undefined") {
-                    if (this.can_undefined)
-                        this.value_mapping["?"].push(clone);
-                }else{
-                    this.value_mapping[value] = this.value_mapping[value] || []
-                    this.value_mapping[value].push(clone);
-                }
-            }
-       }
+        this.step_bar = nice_1_2_5_ceil((this.max - this.min) / this.MAX_NB_BARS_IN_AXIS)
+
+        // Init value_mapping
+        for (var m = this.min; m < this.max; m += this.step_bar)
+            this.value_mapping[nice_ceil(m, this.step_bar)] = []
+
+        // Fill value_mapping
+        this.populateValueMapping(this.step_bar)
+
         this.sortValueMapping()
     }
     
@@ -198,6 +194,10 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
             display_label = true;
         if (typeof has_undefined == 'undefined')
             has_undefined = false
+
+        // Re-compute nb_steps (will not change the min/max here, only the label display)
+        this.nb_steps_special = has_undefined ? 1 : 0
+        this.nb_steps = this.nb_steps_normal + this.nb_steps_special
         
         var text, pos, h;
         if (use_log){
@@ -211,8 +211,6 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
                 h = h / 10;
             }
         }else{
-
-            this.nb_steps = this.computeSteps(min, max, this.nb_steps);
  
             if (has_undefined){
                 this.labels.push(this.label("line", (this.reverse) ? 0 : 1, "?"))
@@ -234,12 +232,12 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         }
     }
 
-    NumericalAxis.prototype.computeSteps = function(min, max, nb_steps) {
+    NumericalAxis.prototype.limitSteps = function(min, max, nb_steps) {
         var steps = nb_steps;
 
-        // if (Math.abs(max - min) < nb_steps) {
-        //     steps = Math.abs(max - min)
-        // }
+        if (Math.abs(max - min) < nb_steps) {
+            steps = Math.abs(max - min)
+        }
         return steps;
     }
 
@@ -257,23 +255,6 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         return value;
     }
 
-function PercentAxis (model, reverse, can_undefined) {
-    this.m = model;
-    this.labels = [];
-    this.reverse = reverse;
-    NumericalAxis.call(this, model, reverse, can_undefined);
-}
-
-PercentAxis.prototype = Object.create(NumericalAxis.prototype);
-
-    PercentAxis.prototype.computeSteps = function(min, max, nb_steps) {
-        return nb_steps;
-    }
-
-    PercentAxis.prototype.getLabelText = function(value) {
-        return parseFloat(value*100).toFixed(nice_number_digits(100 * (this.max - this.min), 2)) + "%"
-    }
-
 /**
  * Axis object contain labels and their position on an axis (from 0 to 1) <br>
  * can provide the position of a clone on it
@@ -281,6 +262,10 @@ PercentAxis.prototype = Object.create(NumericalAxis.prototype);
  * @param {Model} model
  * @reverse {boolean} reverse - by default axis go from low to high but can be revsersed
  * */
+
+
+// FloatAxis
+
 function FloatAxis (model, reverse, can_undefined) {
     this.m = model;
     this.labels = [];
@@ -294,4 +279,21 @@ FloatAxis.prototype = Object.create(NumericalAxis.prototype);
         return parseFloat(value).toFixed(nice_number_digits(this.max - this.min, 2))
     }
 
+    FloatAxis.prototype.limitSteps = function(min, max, nb_steps) {
+        return nb_steps;
+    }
 
+// PercentAxis
+
+function PercentAxis (model, reverse, can_undefined) {
+    this.m = model;
+    this.labels = [];
+    this.reverse = reverse;
+    NumericalAxis.call(this, model, reverse, can_undefined);
+}
+
+PercentAxis.prototype = Object.create(FloatAxis.prototype);
+
+    PercentAxis.prototype.getLabelText = function(value) {
+        return parseFloat(value*100).toFixed(nice_number_digits(100 * (this.max - this.min), 2)) + "%"
+    }

@@ -34,7 +34,8 @@ function GenericAxis (reverse, can_undefined) {
     this.values = []
     this.value_mapping = {};
     this.can_undefined = true;
-    this.MAX_NB_STEPS_IN_AXIS = 8; // Number (max) of labels per numerical axis
+    this.MAX_NB_STEPS_IN_AXIS = 14; // Number (max) of labels per numerical axis
+    this.MAX_NB_BARS_IN_AXIS = 200
     this.NB_STEPS_BAR = 18; // Number (max) of labels per numerical axis in histograms
     if(typeof can_undefined !== "undefined")
         this.can_undefined = can_undefined;
@@ -113,33 +114,39 @@ GenericAxis.prototype = {
         }
     },
 
-    populateValueMapping: function() {
-        var values = this.values;
-        var value_mapping = this.value_mapping;
-        var label_mapping = this.label_mapping;
+    populateValueMapping: function(round) {
 
-        var label_array = Object.keys(label_mapping);
-        for (var i = 0; i < values.length; i++) {
-            var value = values[i];
+        for (var idx in this.values) {
+            var value = this.values[idx];
+
+            // if (value.isVirtual())
+            //    continue ;  // ? pas toujours ?
+
             var convert = this.applyConverter(value);
-            if (typeof label_mapping[convert] !== 'undefined') {
-                var index = label_array.indexOf(convert);
-                if (typeof value_mapping[index] === 'undefined') {
-                    value_mapping[index] = [];
+
+            if (typeof round !== 'undefined')
+                convert = nice_ceil(convert - round/2, round)
+
+            if (typeof convert == "undefined" || convert == undefined || convert == "undefined" || Number.isNaN(convert)) {
+                if (this.can_undefined) {
+                    if (typeof this.value_mapping["?"] === 'undefined')
+                        this.value_mapping["?"] = [];
+                    this.value_mapping["?"].push(value);
                 }
-                value_mapping[index].push(value);
-            } else if (this.can_undefined){
-                if (typeof value_mapping["?"] === 'undefined')
-                    value_mapping["?"] = [];
-                value_mapping["?"].push(value);
+            }
+            else
+            {
+                this.value_mapping[convert] = this.value_mapping[convert] || []
+                this.value_mapping[convert].push(value);
             }
         }
     },
 
     sortValueMapping: function() {
+        var keys = Object.keys(this.value_mapping).sort()
         var temp = {}
-        for (var key_pos in Object.keys(this.value_mapping).sort()){
-            key = Object.keys(this.value_mapping).sort()[key_pos]
+        for (var key_pos in keys){
+            key = keys[key_pos]
             temp[key] = this.value_mapping[key]
         }
         this.value_mapping = temp
@@ -180,10 +187,19 @@ GenericAxis.prototype = {
     },
     
     pos: function(element) {
-        var value = this.label_mapping[this.applyConverter(element)];
-        if (typeof value === 'undefined')
-            value = this.label_mapping["?"];
-        return value;
+        value = this.applyConverter(element);
+
+        return this.pos_from_value(value)
+    },
+
+    pos_from_value: function(value) {
+
+        var pos = this.label_mapping[value]
+
+        if (typeof pos === 'undefined')
+            pos = this.label_mapping["?"];
+
+        return pos ;
     },
 
     computeLabels: function(values, sort) {
@@ -212,41 +228,9 @@ GenericAxis.prototype = {
         }
     },
 
-    /**
-     * add labels for barplot <br>
-     * @param {Array} tab - barplot descriptor like the one made by Model.computeBarTab()
-     * */
-    computeBarLabels : function () {
-        this.labels = [];
-        this.label_mapping = {};
-        var length = Object.keys(this.value_mapping).length;
-
-        var step = 1 + Math.floor(length / this.NB_STEPS_BAR)
-        var text;
-        var i=1
-        for (var e in this.value_mapping){
-            if (i%step === 0 || (e == '?' && this.value_mapping[e].length > 0)){
-                text = this.getLabelText(e);
-                if (e == '?')
-                    text = e;
-                var pos = this.posBarLabel(i, length);
-                if (this.reverse) pos = 1 - pos;
-                this.addLabel("line", text, pos, text);
-            }
-            i++;
-        }
-
-    },
 
     getLabelText: function(value) {
         return value;
-    },
-
-    computeBarTab: function(ref) {
-        ref.barTab = {};
-        for (var key in this.value_mapping) {
-            ref.barTab[key] = this.value_mapping[key];
-        }
     },
 
     posBarLabel : function (i) {

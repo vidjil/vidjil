@@ -370,7 +370,11 @@ function nice_floor(x, force_pow10)
 function nice_min_max_steps(min, max, nb_max_steps)
 {
     if (min == max)
-        return {min: min, max: max, step: 0, nb_steps: 0}
+    {
+        min = nice_floor(min)
+        max = nice_ceil(max + 1)
+        nb_max_steps = 1
+    }
 
     var basic_step = nice_1_2_5_ceil((max - min) / nb_max_steps)
 

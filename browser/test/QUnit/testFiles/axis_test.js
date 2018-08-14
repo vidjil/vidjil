@@ -97,10 +97,11 @@ QUnit.test("axis", function(assert) {
             0,25)
     
     assert.equal(axis.pos(m.clone(0)).pos.toPrecision(3), 0.00, "custom  : clone 0 (nlength = 0) position -> 0.00")
-    assert.equal(axis.pos(m.clone(1)).pos.toPrecision(3), 0.30, "custom  : clone 1 (nlength = 9) position -> 0.30")
+    assert.equal(axis.pos(m.clone(1)).pos.toPrecision(3), 0.321, "custom  : clone 1 (nlength = 9) position")
   
     //sequenceLength
     axis = new NumericalAxis(m)
+    axis.MAX_NB_STEPS_IN_AXIS = 8
     axis.init(m.clones,
             function(clone) {
                 return clone.getSequenceLength();
@@ -161,7 +162,7 @@ QUnit.test("axis", function(assert) {
               function(clone) {
                   return undefined;
               }, "V", true, 0, 0);
-    assert.equal(axis.labels.length, 2, "Just two labels: 0, undefined");
+    assert.equal(axis.labels.length, 3, "Just three labels: 0, 1, undefined");
 
     // undefined values
     axis = new NumericalAxis(m);
@@ -169,6 +170,11 @@ QUnit.test("axis", function(assert) {
               function(clone) {
                   return 'undefined';
               });
-    assert.equal(axis.labels[0].pos, 1, "Just two labels: undefined, 0");
-    assert.equal(axis.labels[1].pos, 0, "Just two labels: undefined, 0");
+
+    assert.equal(axis.labels[0].pos, 1, "Just three labels: undefined, 0, 1");
+    assert.equal(axis.labels[1].pos, 0, "Just three labels: undefined, 0, 1");
+
+    assert.equal(axis.labels[2].pos, 0.5, "Just three labels: undefined, 0, 1");
+    assert.equal(axis.labels[2].text, "1", "Just three labels: undefined, 0, 1");
+
 });
