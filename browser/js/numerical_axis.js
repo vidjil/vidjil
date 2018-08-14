@@ -161,19 +161,44 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         return {'pos': pos};
     }
 
+
+    NumericalAxis.prototype.compute_min_key_diff = function() {
+        // var keys = Object.keys(this.value_mapping).sort()
+
+        var prev_key
+        this.min_key_diff = this.max - this.min
+
+        for (var key in this.value_mapping){
+            //key = keys[key_pos]
+            //temp[key] = this.value_mapping[key]
+
+            if (prev_key != undefined)
+            {
+                var key_diff = key - prev_key
+                if (this.min_key_diff == undefined || (key_diff < this.min_key_diff && key_diff > 0))
+                    this.min_key_diff = key_diff
+            }
+            prev_key = key
+        }
+    }
+
     /**
      * This function allow to insert all the values getted into the value_mapping object. 
      */
     NumericalAxis.prototype.insert_values = function() {
         this.step_bar = nice_1_2_5_ceil((this.max - this.min) / this.MAX_NB_BARS_IN_AXIS)
 
-        // Init value_mapping
-        for (var m = this.min; m < this.max; m += this.step_bar)
-            this.value_mapping[nice_ceil(m, this.step_bar)] = []
-
-        // Fill value_mapping
+        // Fill actual value_mapping
         this.populateValueMapping(this.step_bar)
+        this.sortValueMapping()
+        this.compute_min_key_diff()
 
+        // Fill remaining value_mapping, but only with necessary step (.min_key_diff) to tell apart different values
+        for (var m = this.min; m < this.max * 1.0001; m += this.min_key_diff)
+        {
+            var x = nice_ceil(m, this.step_bar)
+            this.value_mapping[x] = this.value_mapping[x] || []
+        }
         this.sortValueMapping()
     }
     
