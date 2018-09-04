@@ -657,7 +657,17 @@ def getStatHeaders():
     m = StatDecorator()
     b = BooleanDecorator()
     p = BarDecorator()
-    return [('set_id', 'db', m), ('set_name', 'db', m), ('set_info', 'db', m), ('main_clone', 'parser', m), ('reads', 'parser', m), ('mapped', 'parser', m), ('mapped_percent', 'parser', p), ('bool', 'parser', b), ('bool_true', 'parser', b)]
+    bc = BarChartDecorator()
+    return [('set_id', 'db', m),
+            ('set_name', 'db', m),
+            ('set_info', 'db', m),
+            ('main_clone', 'parser', m),
+            ('reads', 'parser', m),
+            ('mapped', 'parser', m),
+            ('mapped_percent', 'parser', p),
+            ('bool', 'parser', b),
+            ('bool_true', 'parser', b),
+        ]
 
 def getResultsFileStats(file_name, dest):
     file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
