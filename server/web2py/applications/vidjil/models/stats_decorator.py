@@ -27,3 +27,15 @@ class BarDecorator(StatDecorator):
 
     def decorate(self, data):
         return DIV(SPAN(_style="width: %d%%" % data), _class="meter", _title="%d%%" % data)
+
+class BarChartDecorator(StatDecorator):
+
+    def __init__(self):
+        super(BarChartDecorator, self).__init__()
+
+    def decorate(self, data):
+        bars = []
+        for val in data:
+            bar_span = SPAN(_style="height: %d%%; width: %d%%" % (val, (1.0/len(data))*100), _title="%d%%" % val, _class="bar")
+            bars.append(bar_span)
+        return DIV(*bars, _class="bar_chart")
