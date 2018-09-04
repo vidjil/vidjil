@@ -667,6 +667,7 @@ def getStatHeaders():
             ('mapped_percent', 'parser', p),
             ('bool', 'parser', b),
             ('bool_true', 'parser', b),
+            ('genescan', 'parser', bc)
         ]
 
 def getResultsFileStats(file_name, dest):
@@ -698,6 +699,12 @@ def getFusedStats(file_name, res, dest):
     dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
     dest['bool'] = False
     dest['bool_true'] = True
+    dest['genescan'] = [68, 27, 18, 45, 89, 63, 53, 64, 93, 21, 47,  5, 64, 68, 46, 68, 18,
+        72, 36, 70, 39, 21, 84, 32, 29,  4, 76, 51, 33, 67, 14, 57, 75, 61,
+        29, 11, 81, 71, 91, 32, 40, 71, 87, 54, 50, 88, 72, 59, 29, 80, 48,
+        94, 12, 60,  1, 16, 29, 93, 53, 19, 32, 97, 13, 98, 80, 69,  7, 73,
+        7, 83, 71, 90, 12, 57, 92, 26, 73, 35, 15, 47, 52, 88, 86, 10, 51,
+        51, 87, 37, 33, 23, 62, 80, 14, 26, 40, 32, 34, 60, 98, 46]
     return dest
 
 
