@@ -66,14 +66,62 @@ The development of Vidjil is funded by:
   - InCA, 2016-2018
   - VidjilNet consortium, 2018
 
-## Reference
+
+## References
+
+If you use vidjil-algo, please cite [Giraud, Salson 2014].
+If you use the web platform, please cite [Duez 2016].
 
 Marc Duez et al.,
-“Vidjil: A web platform for analysis of high-throughput repertoire sequencing”,
+*Vidjil: A web platform for analysis of high-throughput repertoire sequencing*,
 PLOS ONE 2016, 11(11):e0166126
 <http://dx.doi.org/10.1371/journal.pone.0166126>
 
 Mathieu Giraud, Mikaël Salson, et al.,
-"Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing",
+*Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing*,
 BMC Genomics 2014, 15:409
 <http://dx.doi.org/10.1186/1471-2164-15-409>
+
+
+
+## Some publications using Vidjil
+
+Jean-Sebastien Allain et al.,
+*IGHV segment utilization in immunoglobulin gene rearrangement differentiates patients with anti-myelin-associated glycoprotein neuropathy from others immunoglobulin M-gammopathies*,
+Haematologica, 2018, 103:e207-e210
+<http://dx.doi.org/10.3324/haematol.2017.177444>
+
+Yann Ferret et al.,
+*Multi-loci diagnosis of acute lymphoblastic leukaemia with high-throughput sequencing and bioinformatics analysis*,
+British Journal of Haematology, 2016, 173, 413–420
+<http://dx.doi.org/10.1111/bjh.13981>
+
+Henrike J. Fischer et al.,
+*Modulation of CNS autoimmune responses by CD8+ T cells coincides with their oligoclonal expansion*
+Journal of Neuroimmunology, 2015, S0165-5728(15)30065-5
+<http://dx.doi.org/10.1016/j.jneuroim.2015.10.020>
+
+Michaela Kotrova et al.,
+*The predictive strength of next-generation sequencing MRD detection for relapse compared with current methods in childhood ALL*,
+Blood, 2015, 126:1045-1047
+<http://dx.doi.org/10.1182/blood-2015-07-655159>
+
+Ralf A. Linker et al.,
+*Thymocyte-derived BDNF influences T-cell maturation at the DN3/DN4 transition stage*
+European Journal of Immunology, 2015, 45, 1326-1338
+<http://dx.doi.org/10.1002/eji.201444985>
+
+Mikaël Salson et al.,
+*High-throughput sequencing in acute lymphoblastic leukemia: Follow-up of minimal residual disease and emergence of new clones*,
+Leukemia Research, 2017, 53, 1–7
+<http://dx.doi.org/10.1016/j.leukres.2016.11.009>
+
+Florian Scherer et al.,
+*Distinct biological subtypes and patterns of genome evolution in lymphoma revealed by circulating tumor DNA*,
+Science Translational Medicine, 2016, 8, 364ra155
+<http://dx.doi.org/10.1126/scitranslmed.aai8545>
+
+Edit Porpaczy et al.,
+*Aggressive B-cell lymphomas in patients with myelofibrosis receiving JAK1/2 inhibitor therapy*,
+Blood, 2018,
+<https://dx.doi.org/10.1182/blood-2017-10-810739>
