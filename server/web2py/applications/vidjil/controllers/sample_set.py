@@ -700,7 +700,7 @@ def getFusedStats(file_name, res, dest):
     dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
     dest['bool'] = False
     dest['bool_true'] = True
-    dest['loci'] = [x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] >= 0]
+    dest['loci'] = [x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0]
     dest['genescan'] = [68, 27, 18, 45, 89, 63, 53, 64, 93, 21, 47,  5, 64, 68, 46, 68, 18,
         72, 36, 70, 39, 21, 84, 32, 29,  4, 76, 51, 33, 67, 14, 57, 75, 61,
         29, 11, 81, 71, 91, 32, 40, 71, 87, 54, 50, 88, 72, 59, 29, 80, 48,
