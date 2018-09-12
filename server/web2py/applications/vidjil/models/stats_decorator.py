@@ -39,3 +39,15 @@ class BarChartDecorator(StatDecorator):
             bar_span = SPAN(_style="height: %d%%; width: %d%%" % (val, (1.0/len(data))*100), _title="%d%%" % val, _class="bar")
             bars.append(bar_span)
         return DIV(*bars, _class="bar_chart")
+
+class SetsDecorator(StatDecorator):
+
+    def __init__(self):
+        super(SetsDecorator, self).__init__()
+
+    def decorate(self, data):
+        ssets = []
+        for sample_set in data:
+            d = DIV("(%d) %s" % (sample_set['id'], sample_set['name']))
+            ssets.append(d)
+        return DIV(*ssets)

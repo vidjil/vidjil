@@ -655,12 +655,11 @@ def custom():
 
 def getStatHeaders():
     m = StatDecorator()
+    s = SetsDecorator()
     b = BooleanDecorator()
     p = BarDecorator()
     bc = BarChartDecorator()
-    return [('set_id', 'db', m),
-            ('set_name', 'db', m),
-            ('set_info', 'db', m),
+    return [('sample_sets', 'db', s),
             ('main_clone', 'parser', m),
             ('reads', 'parser', m),
             ('mapped', 'parser', m),
@@ -718,14 +717,9 @@ def getStatData(results_file_ids):
     query = db(
         (db.results_file.id.belongs(results_file_ids)) &
         (db.sequence_file.id == db.results_file.sequence_file_id) &
-        (db.sample_set_membership.sequence_file_id == db.sequence_file.id) &
-        (db.sample_set.id == db.sample_set_membership.sample_set_id) &
-        (db.config.id == db.results_file.config_id) &
-        (db.fused_file.config_id == db.config.id) &
-        (db.fused_file.sample_set_id == db.sample_set.id)
+        (db.config.id == db.results_file.config_id)
         ).select(
             db.results_file.data_file.with_alias("results_file"), db.results_file.id.with_alias("results_file_id"),
-            db.fused_file.fused_file.with_alias("fused_file"),
             db.sequence_file.data_file.with_alias("sequence_file"),
             db.sample_set.id.with_alias("set_id"),
             db.sample_set.sample_type.with_alias("sample_type"),
@@ -736,24 +730,46 @@ def getStatData(results_file_ids):
 
             db.generic.name.with_alias("set_name"), # use generic name as failsafe for set name
             left = [
+                db.sample_set_membership.on(db.sample_set_membership.sequence_file_id == db.sequence_file.id),
+                db.sample_set.on(db.sample_set.id == db.sample_set_membership.sample_set_id),
                 db.patient.on(db.patient.sample_set_id == db.sample_set.id),
                 db.run.on(db.run.sample_set_id == db.sample_set.id),
                 db.generic.on(db.generic.sample_set_id == db.sample_set.id)
             ]
         )
 
-    data = []
+    tmp_data = {}
     for res in query:
+        set_type = res['sample_type']
+        if res.results_file_id not in tmp_data:
+            tmp = res.copy()
+            tmp['sample_sets'] = []
+            tmp_data[tmp['results_file_id']] = tmp
+            tmp.pop('set_id', None)
+            tmp.pop(set_type, None)
+            tmp.pop('set_info', None)
+        else:
+            tmp = tmp_data[res['results_file_id']]
+
+        sample_set = {}
+        sample_set['id'] = res['set_id']
+        sample_set['name'] = helpers[set_type].get_name(res[set_type])
+        sample_set['info'] = res['set_info']
+        tmp['sample_sets'].append(sample_set)
+
+
+    data = []
+    for key in tmp_data:
+        res = tmp_data[key]
         d = {}
-        set_type = res.sample_type
+        set_type = res['sample_type']
         headers = getStatHeaders()
-        d = getFusedStats(res.fused_file, res, d)
+        d = getFusedStats(res['results_file'], res, d)
         for head, htype, model in headers:
             if htype == 'db':
                 d[head] = res[head]
             d[head] = model.decorate(d[head])
             log.debug("%s: %s" % (head, d[head]))
-        d['set_name'] = helpers[set_type].get_name(res[set_type])
         data.append(d)
     return data
 
