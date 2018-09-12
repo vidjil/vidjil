@@ -91,6 +91,23 @@ def compute_contamination(sequence_file_id, results_file_id, config_id):
 
     return result
     
+def compute_num_clones(results_file_id, min_threshold):
+    results_file = db.results_file[results_file_id]
+    with open(results_file.data_file, 'wb') as results:
+        try:
+            d = json.load(results)
+            loci_threshold = {}
+            loci_min = {}
+            loci_totals = d['reads']['germline']
+            for locus in loci_totals:
+                loci_threshold[locus] = 0
+                loci_min[locus] = loci_totals[locus][0] * (min_threshold/100.0)
+
+            for clone in d["clones"]:
+                gerlmine = clones['reads']['germline']
+                if clone['reads'][0] >=  loci_min[germline]:
+                    loci_threshold[germline] += 1
+
 
 def schedule_run(id_sequence, id_config, grep_reads=None):
     from subprocess import Popen, PIPE, STDOUT, os
