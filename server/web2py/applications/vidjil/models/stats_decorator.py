@@ -51,3 +51,15 @@ class SetsDecorator(StatDecorator):
             d = DIV("(%d) %s" % (sample_set['id'], sample_set['name']))
             ssets.append(d)
         return DIV(*ssets)
+
+class LociListDecorator(StatDecorator):
+
+    def __init__(self):
+        super(LociListDecorator, self).__init__()
+
+    def decorate(self, data):
+        loci = []
+        for locus in data:
+            span = SPAN(locus)
+            loci.append(span)
+        return DIV(*loci)
