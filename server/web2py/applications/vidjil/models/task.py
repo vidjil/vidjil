@@ -91,22 +91,34 @@ def compute_contamination(sequence_file_id, results_file_id, config_id):
 
     return result
     
-def compute_num_clones(results_file_id, min_threshold):
-    results_file = db.results_file[results_file_id]
-    with open(results_file.data_file, 'wb') as results:
+def compute_num_clones(id_file, id_config, id_data, min_threshold, clean_before=True, clean_after=False):
+    out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
+    output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
+    out_extra = out_folder+'/'+output_filename+'.vidjil.extra'
+    result = {}
+    results_file = db((db.results_file.sequence_file_id == id_file) &
+                      (db.results_file.config_id == id_config)
+                    ).select().first()
+    with open(defs.DIR_RESULTS+results_file.data_file, "rb") as rf:
         try:
-            d = json.load(results)
-            loci_threshold = {}
+            d = json.load(rf)
             loci_min = {}
             loci_totals = d['reads']['germline']
             for locus in loci_totals:
-                loci_threshold[locus] = 0
+                if locus not in result:
+                    result[locus] = [0]
                 loci_min[locus] = loci_totals[locus][0] * (min_threshold/100.0)
 
             for clone in d["clones"]:
-                gerlmine = clones['reads']['germline']
+                germline = clone['germline']
                 if clone['reads'][0] >=  loci_min[germline]:
-                    loci_threshold[germline] += 1
+                    result[germline][0] += 1
+        except ValueError as e:
+            print('invalid_json')
+            return "FAIL"
+    with open(out_extra, 'wb') as extra:
+        json.dump(result, extra)
+    return "SUCCESS"
 
 
 def schedule_run(id_sequence, id_config, grep_reads=None):
@@ -312,6 +324,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
         for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
 	    sample_set_id = row.sample_set_id
 	    print(row.sample_set_id)
+            compute_num_clones(id_file, id_config, id_data, 5)
             run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
 
     return "SUCCESS"
@@ -901,6 +914,7 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
 from gluon.scheduler import Scheduler
 scheduler = Scheduler(db, dict(vidjil=run_vidjil,
                                compute_contamination=compute_contamination,
+                               compute_num_clones=compute_num_clones,
                                mixcr=run_mixcr,
                                igrec=run_igrec,
                                none=run_copy,
