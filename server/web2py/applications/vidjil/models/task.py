@@ -91,14 +91,15 @@ def compute_contamination(sequence_file_id, results_file_id, config_id):
 
     return result
     
-def compute_num_clones(id_file, id_config, id_data, min_threshold, clean_before=True, clean_after=False):
-    out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
-    output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
-    out_extra = out_folder+'/'+output_filename+'.vidjil.extra'
+def compute_extra(id_file, id_config, min_threshold):
     result = {}
     results_file = db((db.results_file.sequence_file_id == id_file) &
                       (db.results_file.config_id == id_config)
                     ).select().first()
+    id_data = results_file.id
+    out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
+    output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
+    out_extra = out_folder+'/'+output_filename+'.vidjil.extra'
     with open(defs.DIR_RESULTS+results_file.data_file, "rb") as rf:
         try:
             d = json.load(rf)
@@ -174,6 +175,10 @@ def schedule_fuse(sample_set_ids, config_ids):
     if len(args) > 0:
         task = scheduler.queue_task('refuse', [args],
                                     repeats = 1, timeout = defs.TASK_TIMEOUT)
+
+def schedule_compute_extra(id_file, id_config, min_threshold):
+    args = [id_file, id_config,  min_threshold]
+    task = scheduler.queue_task('compute_extra', args, repeats=1, timeout=defs.TASK_TIMEOUT)
 
 def run_vidjil(id_file, id_config, id_data, grep_reads,
                clean_before=False, clean_after=False):
@@ -914,7 +919,7 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
 from gluon.scheduler import Scheduler
 scheduler = Scheduler(db, dict(vidjil=run_vidjil,
                                compute_contamination=compute_contamination,
-                               compute_num_clones=compute_num_clones,
+                               compute_extra=compute_extra,
                                mixcr=run_mixcr,
                                igrec=run_igrec,
                                none=run_copy,

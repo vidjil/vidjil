@@ -722,7 +722,8 @@ def getStatData(results_file_ids):
         (db.sequence_file.id == db.results_file.sequence_file_id) &
         (db.config.id == db.results_file.config_id)
         ).select(
-            db.results_file.data_file.with_alias("results_file"), db.results_file.id.with_alias("results_file_id"),
+            db.results_file.sequence_file_id, db.results_file.config_id,
+            db.results_file.data_file.with_alias("data_file"), db.results_file.id.with_alias("results_file_id"),
             db.sequence_file.data_file.with_alias("sequence_file"),
             db.sample_set.id.with_alias("set_id"),
             db.sample_set.sample_type.with_alias("sample_type"),
@@ -767,12 +768,14 @@ def getStatData(results_file_ids):
         d = {}
         set_type = res['sample_type']
         headers = getStatHeaders()
-        d = getFusedStats(res['results_file'], res, d)
+        d = getFusedStats(res['data_file'], res, d)
         for head, htype, model in headers:
             if htype == 'db':
                 d[head] = res[head]
             d[head] = model.decorate(d[head])
             log.debug("%s: %s" % (head, d[head]))
+        d['sequence_file_id'] = res['results_file']['sequence_file_id']
+        d['config_id'] = res['results_file']['config_id']
         data.append(d)
     return data
 
