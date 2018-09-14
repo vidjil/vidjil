@@ -14,7 +14,8 @@ require(["jquery",
          "tsne",
          "jstree.min",
          "jquery.caret",
-         "jquery.atwho"], function() {
+         "jquery.atwho",
+         "svgExport"], function() {
              // Then config file (needed by Vidjil)
              require(['../conf'], function() {
                  loadAfterConf()
