@@ -5,6 +5,7 @@ import time
 import json
 from vidjilparser import VidjilParser
 import operator
+import math
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -665,6 +666,7 @@ def getStatHeaders():
             ('reads', 'parser', m),
             ('mapped', 'parser', m),
             ('mapped_percent', 'parser', p),
+            ('genescan', 'parser', bc),
             ('bool', 'parser', b),
             ('bool_true', 'parser', b),
             ('loci', 'parser', l),
@@ -682,7 +684,7 @@ def getResultsFileStats(file_name, dest):
 def getFusedStats(file_name, res, dest):
     file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
     parser = VidjilParser()
-    parser.addPrefix('clones.item', 'clones.item.top', operator.eq, 1)
+    parser.addPrefix('clones.item', 'clones.item.top', operator.le, 100)
     parser.addPrefix("reads")
     parser.addPrefix("samples")
 
@@ -698,6 +700,26 @@ def getFusedStats(file_name, res, dest):
     dest['reads'] = reads
     dest['mapped'] = "%d" % (data['reads']['segmented'][result_index])
     dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
+
+    tmp = {}
+    for c in data['clones']:
+        arl = int(math.ceil(c['_average_read_length'][result_index]))
+        if arl > 0:
+            if arl not in tmp:
+                tmp[arl] = 0
+            tmp[arl] += c['reads'][result_index]
+    min_len = int(min(tmp.keys()))
+    max_len = int(max(tmp.keys()))
+    tmp_arr = []
+    log.debug(str(tmp.keys()))
+    for i in range(max_len - min_len):
+        cursor = i + min_len
+        if cursor in tmp:
+            tmp_arr.insert(i, 100.0*math.log(tmp[cursor])/math.log(reads))
+        else:
+            tmp_arr.insert(i, 0)
+    dest['genescan'] = tmp_arr
+
     dest['bool'] = False
     dest['bool_true'] = True
     dest['loci'] = [x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0]

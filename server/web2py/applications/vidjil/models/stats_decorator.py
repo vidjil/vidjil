@@ -40,6 +40,19 @@ class BarChartDecorator(StatDecorator):
             bars.append(bar_span)
         return DIV(*bars, _class="bar_chart")
 
+class LabeledBarChartDecorator(BarChartDecorator):
+
+    def __init__(self):
+        super(LabeledBarChartDecorator, self).__init__()
+
+    def decorate(self, data):
+        bars = []
+        for key in data:
+            val = data[key]
+            bar_span = SPAN(_style="height: %f%%; width: %f%%" % (val, (1.0/len(data))*100), _title="%s" % key, _class="bar")
+            bars.append(bar_span)
+        return DIV(*bars, _class="bar_chart")
+
 class SetsDecorator(StatDecorator):
 
     def __init__(self):
