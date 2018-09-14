@@ -6,6 +6,28 @@
 
 using namespace std;
 
+
+string format_seq_align(string seq, unsigned int n, int *gaps)
+{
+  ostringstream stream;
+
+  for (unsigned int i=0; i<n; i++){
+    for (int j=0; j<gaps[i] ; j++){
+      stream << "-";
+      }
+    stream << seq[i];
+  }
+
+  // gaps after the last position
+  for (int j=0; j<gaps[n] ; j++){
+    stream << "-";
+  }
+
+  return stream.str();
+}
+
+
+
 LazyMsa::LazyMsa(int max, string reference)
 {
   sizeMax=max;
@@ -59,39 +81,13 @@ void LazyMsa::add(string sequence){
 }
 
 void LazyMsa::alignOne(string *align, int one){
-  
-  ostringstream stream;
-    
-    for (unsigned int i=0; i<ref.size(); i++){
-      for (int j=0; j<gapRef[one][i] ; j++){
-	stream <<"-";
-      }
-      stream<<ref[i];
-    }
-    for (int j=0; j<gapRef[one][ref.size()] ; j++){
-	stream <<"-";
-    }
-    
-  align[0]=stream.str();
-
-  ostringstream stream2;
-    
-    for (unsigned int i=0; i<sequences[one].size(); i++){
-      for (int j=0; j<gapSeq[one][i] ; j++){
-	stream2 <<"-";
-      }
-      stream2<<sequences[one][i];
-    }
-    for (int j=0; j<gapSeq[one][sequences[one].size()] ; j++){
-      stream2 <<"-";
-    }
-    
-  align[1]=stream2.str();
-
+  align[0] = format_seq_align(ref, ref.size(), gapRef[one]);
+  align[1] = format_seq_align(sequences[one], sequences[one].size(), gapSeq[one]);
 }
 
 void LazyMsa::align(string *align){
-  
+
+  // Define and compute maxGap, the maximum number of insertions at each position of the reference sequence
   int *maxGap= new int [ref.size()+1];
   
   for (unsigned int i = 0; i< ref.size()+1; i++){
@@ -103,39 +99,20 @@ void LazyMsa::align(string *align){
      if ( gapRef[i][j] > maxGap[j] ) maxGap[j]=gapRef[i][j];
    }
   }
-  
-  ostringstream stream;
-    
-    for (unsigned int i=0; i<ref.size(); i++){
-      for (int j=0; j<maxGap[i] ; j++){
-	stream <<"-";
-      }
-      stream<<ref[i];
-    }
-    for (int j=0; j<maxGap[ref.size()] ; j++){
-      stream <<"-";
-    }
-    
-  align[0]=stream.str();
-  
+
+  // Reference sequence
+  align[0] = format_seq_align(ref, ref.size(), maxGap);
+
+  // Other sequences
   for (int i=0; i<sizeUsed+1; i++){
-    ostringstream stream2;
-  
+
+    // Update gapSeq
     for (unsigned int j = 0; j< ref.size()+1; j++){
       gapSeq[i][link[i][j]]+=maxGap[j]-gapRef[i][j];
     }
     
-    for (unsigned int j=0; j<sequences[i].size(); j++){
-      for (int k=0; k<gapSeq[i][j] ; k++){
-	stream2 <<"-";
-      }
-      stream2<<sequences[i][j];
-    }
-    for (int k=0; k<gapSeq[i][sequences[i].size()] ; k++){
-      stream2 <<"-";
-    }
-
-    align[i+1]=stream2.str();
+    // Build output
+    align[i+1] = format_seq_align(sequences[i], sequences[i].size(), gapSeq[i]);
   }
 
   delete [] maxGap;
