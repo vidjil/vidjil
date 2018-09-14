@@ -91,7 +91,8 @@ void LazyMsa::alignOne(string *align, int one){
 }
 
 void LazyMsa::align(string *align){
-  
+
+  // Define and compute maxGap, the maximum number of insertions at each position of the reference sequence
   int *maxGap= new int [ref.size()+1];
   
   for (unsigned int i = 0; i< ref.size()+1; i++){
@@ -103,9 +104,11 @@ void LazyMsa::align(string *align){
      if ( gapRef[i][j] > maxGap[j] ) maxGap[j]=gapRef[i][j];
    }
   }
-  
+
+  // Build the output
   ostringstream stream;
-    
+
+  // Reference sequence
     for (unsigned int i=0; i<ref.size(); i++){
       for (int j=0; j<maxGap[i] ; j++){
 	stream <<"-";
@@ -117,14 +120,17 @@ void LazyMsa::align(string *align){
     }
     
   align[0]=stream.str();
-  
+
+  // Other sequences
   for (int i=0; i<sizeUsed+1; i++){
     ostringstream stream2;
-  
+
+    // Update gapSeq
     for (unsigned int j = 0; j< ref.size()+1; j++){
       gapSeq[i][link[i][j]]+=maxGap[j]-gapRef[i][j];
     }
     
+    // Build output
     for (unsigned int j=0; j<sequences[i].size(); j++){
       for (int k=0; k<gapSeq[i][j] ; k++){
 	stream2 <<"-";
