@@ -93,14 +93,12 @@ def compute_contamination(sequence_file_id, results_file_id, config_id):
     
 def compute_extra(id_file, id_config, min_threshold):
     result = {}
+    d = None
     results_file = db((db.results_file.sequence_file_id == id_file) &
                       (db.results_file.config_id == id_config)
-                    ).select().first()
-    id_data = results_file.id
-    out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
-    output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
-    out_extra = out_folder+'/'+output_filename+'.vidjil.extra'
-    with open(defs.DIR_RESULTS+results_file.data_file, "rb") as rf:
+                    ).select(orderby=~db.results_file.run_date).first()
+    filename = defs.DIR_RESULTS+results_file.data_file
+    with open(filename, "rb") as rf:
         try:
             d = json.load(rf)
             loci_min = {}
@@ -117,8 +115,9 @@ def compute_extra(id_file, id_config, min_threshold):
         except ValueError as e:
             print('invalid_json')
             return "FAIL"
-    with open(out_extra, 'wb') as extra:
-        json.dump(result, extra)
+    d['reads']['distribution'] = result
+    with open(filename, 'wb') as extra:
+        json.dump(d, extra)
     return "SUCCESS"
 
 
