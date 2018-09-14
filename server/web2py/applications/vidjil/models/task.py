@@ -329,7 +329,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
         for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
 	    sample_set_id = row.sample_set_id
 	    print(row.sample_set_id)
-            compute_num_clones(id_file, id_config, id_data, 5)
+            compute_extra(id_file, id_config, 5)
             run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
 
     return "SUCCESS"
