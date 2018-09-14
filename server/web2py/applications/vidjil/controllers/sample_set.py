@@ -798,7 +798,6 @@ def getStatData(results_file_ids):
             if htype == 'db':
                 d[head] = res[head]
             d[head] = model.decorate(d[head])
-            log.debug("%s: %s" % (head, d[head]))
         d['sequence_file_id'] = res['results_file']['sequence_file_id']
         d['config_id'] = res['results_file']['config_id']
         data.append(d)
