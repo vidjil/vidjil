@@ -103,9 +103,26 @@ These instructions are preliminary, other documentation can also be found in [[h
    - 1.3
    - 1.3.1
    - 1.3.2
-   - tmp_fix
-     This image is identical to 1.3.2 except it has a manual bugfix on pyDAL
-     version 17.11 that was affecting the scheduler_workers.
+   - 1.4.2
+
+*** Docker environment
+ The vidjil Docker environment is managed by Docker Compose since it is
+ composed of several different services this allows us to easily start and
+ stop individual services.
+ The services are as follows:
+   - mysql        The database
+   - uwsgi        The Web2py backend server
+   - fuse         The XmlRPCServer that handles custom fuses (for comparing
+     samples)
+   - nginx        The web server
+   - workers      The Web2py Scheduler workers in charge of executing vidjil
+     users' samples
+   - backup       Starts a cron job to schedule regular backups
+   - reporter     A monitoring utility that can be configured to send
+     monitoring information to a remote server
+
+ For more information about Docker Compose and how to install it check out
+ https://docs.docker.com/compose/
 
 
 *** Configuring the Vidjil container
@@ -163,6 +180,33 @@ These instructions are preliminary, other documentation can also be found in [[h
 
     - Configure the reporter. Ideally this container should be positioned
       on a remote server in order to be able to report on a down server, but we have packed it here for convenience.
+
+*** Starting the environment
+   Ensure your docker-compose.yml contains the correct reference to the
+   vidjil image you want to use. Usually this will be vidjil/vidjil:latest,
+   but more tags are available at https://hub.docker.com/r/vidjil/vidjil/tags/.
+
+   You may also want to uncomment the volume in the fuse volume block "-
+   ./vidjil/conf:/etc/vidjil" this will provide easier access to all of the
+   configuration files, allowing for tweaks. From this location, it will be easier to enable more softwaer or pipelines by putting the binary in this location taht will be see by the docker instance.
+
+   Running the following command will automatically download any missing
+   images and start the environment:
+
+   #+BEGIN_SRC sh
+     docker-compose up
+   #+END_SRC
+
+   If you are using the backup and reporter images, then you need to first
+   build these from the image you are using by running the following:
+
+   #+BEGIN_SRC sh
+     docker-compose up --build
+   #+END_SRC
+
+   This will also start the environment for you.
+
+
 
 *** Updating a Docker installation
    Usually our docker installation will only require the following:
