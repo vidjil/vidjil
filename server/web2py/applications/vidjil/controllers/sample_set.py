@@ -742,13 +742,18 @@ def getStatData(results_file_ids):
     query = db(
         (db.results_file.id.belongs(results_file_ids)) &
         (db.sequence_file.id == db.results_file.sequence_file_id) &
-        (db.config.id == db.results_file.config_id)
+        (db.config.id == db.results_file.config_id) &
+        (db.sample_set_membership.sequence_file_id == db.sequence_file.id) &
+        (db.sample_set.id == db.sample_set_membership.sample_set_id) &
+        (db.fused_file.sample_set_id == db.sample_set.id) &
+        (db.fused_file.config_id == db.config.id)
         ).select(
             db.results_file.sequence_file_id, db.results_file.config_id,
             db.results_file.data_file.with_alias("data_file"), db.results_file.id.with_alias("results_file_id"),
             db.sequence_file.data_file.with_alias("sequence_file"),
             db.sample_set.id.with_alias("set_id"),
             db.sample_set.sample_type.with_alias("sample_type"),
+            db.fused_file.fused_file.with_alias("fused_file"),
             db.patient.first_name, db.patient.last_name, db.patient.info.with_alias('set_info'), db.patient.sample_set_id,
             db.run.name,
             db.generic.name,
@@ -756,8 +761,6 @@ def getStatData(results_file_ids):
 
             db.generic.name.with_alias("set_name"), # use generic name as failsafe for set name
             left = [
-                db.sample_set_membership.on(db.sample_set_membership.sequence_file_id == db.sequence_file.id),
-                db.sample_set.on(db.sample_set.id == db.sample_set_membership.sample_set_id),
                 db.patient.on(db.patient.sample_set_id == db.sample_set.id),
                 db.run.on(db.run.sample_set_id == db.sample_set.id),
                 db.generic.on(db.generic.sample_set_id == db.sample_set.id)
@@ -790,7 +793,7 @@ def getStatData(results_file_ids):
         d = {}
         set_type = res['sample_type']
         headers = getStatHeaders()
-        d = getFusedStats(res['data_file'], res, d)
+        d = getFusedStats(res['fused_file'], res, d)
         for head, htype, model in headers:
             if htype == 'db':
                 d[head] = res[head]
