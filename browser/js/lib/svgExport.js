@@ -1,7 +1,10 @@
 /*
   This code is coming from
   http://bl.ocks.org/Rokotyan/0556f8facbaf344507cdc45dc3622177 released under
-  the MIT license.
+  the MIT license and has then been slightly modified to better get the CSS
+  rules.
+
+  This code can thus be used under the MIT license.
 */
 
 function getSVGString( svgNode ) {
@@ -20,24 +23,18 @@ function getSVGString( svgNode ) {
 	var selectorTextArr = [];
 
 	// Add Parent element Id and Classes to the list
-	selectorTextArr.push( '#'+parentElement.id );
+     	selectorTextArr.push( '#'+parentElement.id.toLowerCase() );
 	for (var c = 0; c < parentElement.classList.length; c++)
 	    if ( !contains('.'+parentElement.classList[c], selectorTextArr) )
-		selectorTextArr.push( '.'+parentElement.classList[c] );
+		selectorTextArr.push( '.'+parentElement.classList[c].toLowerCase() );
 
 	// Add Children element Ids and Classes to the list
-	var nodes = parentElement.getElementsByTagName("*");
-	for (var i = 0; i < nodes.length; i++) {
-	    var id = nodes[i].id;
-	    if ( !contains('#'+id, selectorTextArr) )
-		selectorTextArr.push( '#'+id );
-            
-	    var classes = nodes[i].classList;
-	    for (var c = 0; c < classes.length; c++)
-		if ( !contains('.'+classes[c], selectorTextArr) )
-		    selectorTextArr.push( '.'+classes[c] );
-	}
-        
+        var children = $(parentElement).find('*');
+        var parents = $(parentElement).parents();
+
+        pushIDAndClasses(children, selectorTextArr);
+        pushIDAndClasses(parents, selectorTextArr);
+
         // Extract CSS Rules
         var extractedCSSText = "";
         for (var i = 0; i < document.styleSheets.length; i++) {
@@ -52,8 +49,13 @@ function getSVGString( svgNode ) {
 
 	    var cssRules = s.cssRules;
 	    for (var r = 0; r < cssRules.length; r++) {
-		if ( contains( cssRules[r].selectorText, selectorTextArr ) )
-		    extractedCSSText += cssRules[r].cssText;
+                if (typeof cssRules[r].selectorText !== 'undefined') {
+                    var currentRule = cssRules[r].selectorText.split(/\s*,\s*/);
+                    for (var q = 0; q < currentRule.length; q++) {
+         	        if ( contains( currentRule[q].toLowerCase(), selectorTextArr ) )
+		            extractedCSSText += cssRules[r].cssText;
+                    }
+                }
 	    }
         }
         
@@ -62,6 +64,21 @@ function getSVGString( svgNode ) {
 
         function contains(str,arr) {
 	    return arr.indexOf( str ) === -1 ? false : true;
+        }
+
+        function pushIDAndClasses(nodes, selectorTextArr) {
+            for (var i = 0; i < nodes.length; i++) {
+	        var id = nodes[i].id;
+	        if ( !contains('#'+id, selectorTextArr) )
+	            selectorTextArr.push( '#'+id.toLowerCase() );
+
+	        var classes = nodes[i].classList;
+	        for (var c = 0; c < classes.length; c++)
+	            if ( !contains('.'+classes[c], selectorTextArr) )
+		        selectorTextArr.push( '.'+classes[c].toLowerCase() );
+
+                selectorTextArr.push(nodes[i].tagName.toLowerCase());
+            }
         }
     }
 
@@ -101,4 +118,13 @@ function svgString2Image( svgString, width, height, format, callback ) {
     };
 
     image.src = imgsrc;
+}
+
+function saveD3ToPNG( dataBlob, filesize ){
+    saveAs( dataBlob, 'export.png' ); // FileSaver.js function
+}
+
+function exportD3ToPNG(svgTag) {
+    var svgString = getSVGString(svgTag);
+    svgString2Image( svgString, 2*svgTag.width.baseVal.value, 2*svgTag.height.baseVal.value, 'png', saveD3ToPNG ); // passes Blob and filesize String to the callback
 }
