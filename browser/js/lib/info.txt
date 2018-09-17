@@ -55,6 +55,11 @@ Tools
     * @license 		MIT
     * @compatibility    IE 6+, Firefox 2+, Safari 3.2+, Chrome 3+, Opera 10+
 
+    svgExport.js        : Export SVG to PNG
+    * @author           Nikita Rokotyan, adapted by the Vidjil Team
+    * @link             http://bl.ocks.org/Rokotyan/0556f8facbaf344507cdc45dc3622177
+    * @license          MIT
+
     tsne.js             : Implementation of TSNE algorithm
     * @version          2d62a1c4
     * @author           Andrej Karpathy

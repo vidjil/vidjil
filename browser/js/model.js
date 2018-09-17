@@ -2089,41 +2089,7 @@ changeAlleleNotation: function(alleleNotation) {
 
         saveAs(textFileAsBlob, filename + ".csv");
     },
-    
-    /**
-     * save a svg file of the selected svg element.
-     * @return {file} svg 
-     * */
-    exportSVG: function (elementID) {
-        var self = this;
-        var element = document.getElementById(elementID);
-        
-        $(document).ready(function() {
 
-            $.when($.get("css/svg.css"))
-            .done(function(css) {
-                
-                var textToWrite = '<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">';
-                textToWrite += "<style>";
-                css = css.replace(/\/\*.+?\*\/|\/\/.*(?=[\n\r])/g, '');
-                textToWrite += css;
-                textToWrite += "</style>";
-                textToWrite += element.innerHTML;
-                textToWrite += "</svg>";
-                
-                var textFileAsBlob = new Blob([textToWrite], {
-                    type: 'text'
-                });
-                var filename = self.getPrintableAnalysisName().replace(/[ \/\\:]/,'_')
-                saveAs(textFileAsBlob, filename + ".svg");
-                
-                self.resize();
-            });
-        })
-        
-
-    },
-    
     /**
      * save a csv file of the currently visibles clones.
      * @return {string} csv 
@@ -2169,6 +2135,10 @@ changeAlleleNotation: function(alleleNotation) {
             console.log({msg: "Export FASTA: please select clones to be exported", type: 'flash', priority: 2});
         }
         
+    },
+
+    exportViewToPNG: function(tag) {
+        exportD3ToPNG(tag, decodeURIComponent(this.getPrintableAnalysisName().replace(/[ \/\\:]/,'_')));
     },
     
     /**

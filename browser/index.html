@@ -130,8 +130,8 @@
                         </div>
                         <div class="menu_box">
                             <a class="buttonSelector" id="export_analysis" onclick="javascript:m.saveAnalysis()">export analysis</a>
-                            <a class="buttonSelector" id="export_svg1" onclick="javascript:graph.resize(1400,800);m.exportSVG('visu2_svg')">export SVG graph</a>
-                            <a class="buttonSelector" id="export_svg2" onclick="javascript:sp.resize(1400,800);sp.fastForward();m.exportSVG('visu_svg')">export SVG plot</a>
+                            <a class="buttonSelector" id="export_svg1" onclick="javascript:m.exportViewToPNG(document.querySelector('#visu2_svg'))">export top graph (PNG)</a>
+                            <a class="buttonSelector" id="export_svg2" onclick="javascript:m.exportViewToPNG(document.querySelector('#visu_svg'))">export bottom graph (PNG)</a>
                             <a class="buttonSelector" id="export_csv" onclick="javascript:m.exportCSV()">export csv (visible clones)</a>
                             <a class="buttonSelector" id="export_fasta" onclick="javascript:m.exportFasta()">export fasta (selected clones)</a>
                         </div>
