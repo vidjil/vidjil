@@ -93,7 +93,7 @@ function getSVGString( svgNode ) {
 }
 
 
-function svgString2Image( svgString, width, height, format, callback ) {
+function svgString2Image( svgString, width, height, format, name, callback ) {
     var format = format ? format : 'png';
 
     var imgsrc = 'data:image/svg+xml;base64,'+ btoa( unescape( encodeURIComponent( svgString ) ) ); // Convert SVG string to data URL
@@ -111,7 +111,7 @@ function svgString2Image( svgString, width, height, format, callback ) {
 
 	canvas.toBlob( function(blob) {
 	    var filesize = Math.round( blob.length/1024 ) + ' KB';
-	    if ( callback ) callback( blob, filesize );
+	    if ( callback ) callback( blob, filesize, name );
 	});
 
 	
@@ -120,11 +120,11 @@ function svgString2Image( svgString, width, height, format, callback ) {
     image.src = imgsrc;
 }
 
-function saveD3ToPNG( dataBlob, filesize ){
-    saveAs( dataBlob, 'export.png' ); // FileSaver.js function
+function saveD3ToPNG( dataBlob, filesize, filename ){
+    saveAs( dataBlob, filename ); // FileSaver.js function
 }
 
-function exportD3ToPNG(svgTag) {
+function exportD3ToPNG(svgTag, filename) {
     var svgString = getSVGString(svgTag);
-    svgString2Image( svgString, 2*svgTag.width.baseVal.value, 2*svgTag.height.baseVal.value, 'png', saveD3ToPNG ); // passes Blob and filesize String to the callback
+    svgString2Image( svgString, 2*svgTag.width.baseVal.value, 2*svgTag.height.baseVal.value, 'png', filename+'.png', saveD3ToPNG ); // passes Blob and filesize String to the callback
 }

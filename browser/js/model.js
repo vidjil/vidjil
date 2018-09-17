@@ -2136,6 +2136,10 @@ changeAlleleNotation: function(alleleNotation) {
         }
         
     },
+
+    exportViewToPNG: function(tag) {
+        exportD3ToPNG(tag, decodeURIComponent(this.getPrintableAnalysisName().replace(/[ \/\\:]/,'_')));
+    },
     
     /**
      * produce an html systemBox of the given system
