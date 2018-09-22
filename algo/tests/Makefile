@@ -71,7 +71,7 @@ snapshot_diff_current:
 
 
 should: vidjil
-	python3 should.py $(SHOULD)
+	python3 should.py --xml $(SHOULD)
 
 shouldvdj_if_python:
 	if python ../../tools/check_python_version.py ; \
