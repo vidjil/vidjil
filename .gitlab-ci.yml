@@ -66,6 +66,9 @@ test_algo_unit:
 test_algo_should:
   stage: test_functional
   script: make -C algo should_coverage
+  artifacts:
+    reports:
+      junit: algo/tests/should.xml
   only:
     - /^feature-.*a.*\/.*$/
     - schedules
