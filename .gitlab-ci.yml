@@ -28,8 +28,8 @@ stages:
 
 # Anchors
 
-.coverage_dependency: &lcov_artifact
-  artifacts:
+.coverage_dependency:
+  artifacts: &lcov_artifact
     paths:
       - algo/lcov_test_*.filtered
     expire_in: 6hrs
@@ -58,7 +58,8 @@ test_germlines:
 test_algo_unit:
   stage: test_unit
   script: make -C algo unit_coverage
-  <<: *lcov_artifact
+  artifacts:
+    <<: *lcov_artifact
   only:
     - /^feature-.*a.*\/.*$/
     - schedules
@@ -67,17 +68,18 @@ test_algo_should:
   stage: test_functional
   script: make -C algo should_coverage
   artifacts:
+    <<: *lcov_artifact
     reports:
       junit: algo/tests/should.xml
   only:
     - /^feature-.*a.*\/.*$/
     - schedules
-  <<: *lcov_artifact
 
 test_algo_shouldvdj:
   stage: test_shouldvdj
   script: make -C algo shouldvdj_coverage
-  <<: *lcov_artifact
+  artifacts:
+    <<: *lcov_artifact
   only:
     - /^feature-.*a.*\/.*$/
     - schedules
