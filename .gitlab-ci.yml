@@ -14,9 +14,9 @@ stages:
   - deploy_review
   - test_germlines
   - test_shouldvdj
-  - coverage
   - test_functional
   - test_functional_external
+  - coverage
   - prepare_release
   - release
   - valgrind_unit
