@@ -209,6 +209,8 @@ These instructions are preliminary, other documentation can also be found in [[h
 
 
 *** Updating a Docker installation
+  By security, we please you to make a backup before doing this process.
+
    Usually our docker installation will only require the following:
 
    #+BEGIN_SRC sh
@@ -234,6 +236,11 @@ These instructions are preliminary, other documentation can also be found in [[h
    In some cases you may need to update your docker-compose.yml file or some
    of the configuration files. The latest versions are available on our
    [[https://inria.gitlab.com/vidjil/vidjil][Gitlab]].
+
+   By default, all previous volumes will be reuse and no datas will be lost. 
+   If needed, the MYSQL database will be updated to match the newest format. 
+   this step is automaticly done by web2py.
+   XXX TODO XXX (**demande confirmation par test**)
 
 ** Requirements
    #+BEGIN_SRC sh
