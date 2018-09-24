@@ -213,14 +213,22 @@ Database.prototype = {
      * @param {object} args - parameters ({ "name_arg1" : "arg1", ... })
      * */
     call: function (page, args) {
+        var self = this;
         try {
             var event = window.event || arguments.callee.caller.arguments[0] 
             event.stopPropagation();
+            var target = event.target
+            if (target.getAttribute("disabled")){
+                return;
+            } else {
+                target.setAttribute("disabled", "disabled")
+                self.ajax_indicator_start();
+                setTimeout(function(){target.removeAttribute("disabled"); self.ajax_indicator_stop()}, 2000)
+            }
         }
         catch(err)
         {}
         
-        var self = this;
         var url = self.db_address + page
         if (page.substr(0,4).toLowerCase() == "http") {
             url = page
