@@ -6,6 +6,8 @@ import os
 import sys
 import imp
 
+from controller_utils import error_message
+
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -23,7 +25,7 @@ def index():
 
     if request.vars['sequences'] == None or request.vars['sequences'] == ''\
        or request.vars['sample_set_id'] == None:
-        return response.json({'error': 'Malformed request'})
+        return error_message('Malformed request')
 
     return search_clonedb(request.vars['sequences'].split(','), int(request.vars['sample_set_id']))
 
@@ -33,11 +35,17 @@ def search_clonedb(sequences, sample_set_id):
     clonedb = imp.load_source('clonedb', defs.DIR_CLONEDB+os.path.sep+'clonedb.py')
 
     results = []
+    parent_group = get_default_creation_group(auth)[1]
     for sequence in sequences:
-        options = clonedb.build_grep_clones_options({'sequence': sequence+' -sample_set:%d' % sample_set_id})
+        options = clonedb.build_grep_clones_options({'sequence': sequence+' -sample_set:%d' % sample_set_id,
+                                                     'index': 'clonedb_{}'.format(parent_group)})
         args = grep_clones.parser.parse_args(options)
-        log.debug(args)
-        occurrences = grep_clones.launch_search(args)
+        try:
+            occurrences = grep_clones.launch_search(args)
+        except ValueError:
+            return error_message('Are you sure your account has an enabled CloneDB?')
+        except Exception as e:
+            return error_message(e.message)
         for occ in occurrences:
             if 'tags' in occ and 'sample_set' in occ['tags']:
                 info = get_info_of_viewable_sample_set([int(sample_id) for sample_id in occ['tags']['sample_set']], int(occ['tags']['config_id'][0]))
