@@ -3,7 +3,7 @@ This is the preliminary help of the Vidjil server.
 This help is intended for server administrators.
 Users should consult the web application manual.
 
-# Roadmap: plain installation / Docker containers
+# Plain installation or Docker containers
 
 There are two ways to install and run a Vidjil server:
 
@@ -36,37 +36,52 @@ have multiple cores to ensure the worker queues don't build up.
 One worker will occupy one core completely when running vidjil-algo (which is
 currently single-threaded).
 
-For reference, here is the current Vidjil setup we used on our public
-testing server <https://app.vidjil.org> during two years (40+ users, including 15 regular users):
+For reference, here are various setups we used on our public
+testing server <https://app.vidjil.org> during two years
 
+
+#### 2016 -- 2017 (40+ users, including 15 regular users)
   - Processor: Quad core Intel 2.4MHz
+  - 3 workers
   - RAM: 16GB
 
-Given that the CPU is quad-core, we have 3 workers for executing Vidjil,
-keeping always one CPU core dedicated to the web server,
-even when the workers run at full capacity.
 
-As of the end of 2016, we use for the public server a virtual machine with similar capabilities.
-
+#### since 2018  (100+ users, including 30+ regular users)
+  - Virtual Machine: 8 virtual CPUs, similar capacity Xxxxx
+  - 6 workers
+  - RAM: Xxxx
+  
+  
+We create less workers for executing Vidjil-algo than there are (virtual) CPU availabe,
+keeping always one CPU core dedicated to the web server, even when the workers run at full capacity.
 Running other RepSeq programs through the Vidjil server may require additional CPU and RAM.
 
 ## Storage
+
+### Full upload of sequences
 
 As for many high-throughput sequencing pipeline, **disk storage to store input data (`.fastq`, `.fasta`, `.fastq.gz` or `.fasta.gz`)
 is now the main constraint** in our environment.
 
 Depending on the sequencer, files can weigh several GB.
-Depending of the number of users, a full installation's total storage should thus be serveral hundred GB, or even several TB.
+Depending of the number of users, a full installation's total storage should thus be serveral hundred GB, or even several TB
+(as of the end of 2018, 4 TB for the public server).
 We recommend a RAID setup of at least 2x2TB to allow for user files and at least one backup.
 
-User files (results, annotations) as well as the metadata database are quite smaller (as of the end of 2016, on the public server, 3 GB for all user files of 40+ users).
+User files (results, annotations) as well as the metadata database are quite smaller
+(as of the end of 2016, on the public server, 3 GB for all user files of 40+ users).
 Note that even when the input sequences are deleted, the server is still able to display the results of previous analyses.
-Moreover, a future release at some point of 2017 will allow to access `.fastq` files on a mounted filesystem.
+
+### Remote access on a mounted filesystem
+
+Moreover, it is possible to access `.fastq` files on a mounted filesystem.
+XXX Document me ! XXXX
+
 
 ## Authentication
 
 The accounts are now local to the Vidjil server.
-We intend to implement some LDAP access at some point of 2017.
+We intend to implement some LDAP access at some point of 2020.
 
 ## Network
 
@@ -77,12 +92,13 @@ However, the following network access are recommended:
       - for users: several features using external platforms (IgBlast, IMGT/V-QUEST…)
       - for server mainteners: upgrades and reports to a monitor server
   - inbound access
-      - The team in Lille may help local server mainteners in some monitoring, maintenance and upgrade tasks,
+      - through the VidjilNet consortium (http://www.vidjil.net),
+        the team in Lille may help local server mainteners in some monitoring, maintenance and upgrade tasks,
         provided a SSH access can be arranged, possibly over VPN.
 
 # Installing and running the Vidjil server
 
-These installation instruction are for Ubuntu server 14.04
+These installation instruction are for Ubuntu server 14.04.
 These instructions are preliminary, other documentation can also be found in [dev.org](http://git.vidjil.org/blob/dev/doc/dev.org).
 
 ## With Docker
