@@ -302,7 +302,7 @@ Segment.prototype = {
                 input.id = 'vdj_input_check';
                 $(input).on("click", function() {
                     if(this.checked) {
-                        self.highlight[0].field = "CDR3";
+                        self.highlight[0].field = "cdr3";
                         self.highlight[0].color = "red";
 
                     } else {
@@ -318,9 +318,6 @@ Segment.prototype = {
 
                 input.setAttribute("title", 'Display CDR3 computed by Vidjil');
                 label.setAttribute("title", 'Display CDR3 computed by Vidjil');
-
-                input.className = 'devel-mode';
-                label.className = 'devel-mode';
 
                 span.appendChild(input);
                 span.appendChild(label);
