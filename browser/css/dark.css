@@ -674,8 +674,7 @@ span .silent {
   color: #008;
 }
 span .end-codon {
-  border-right: 1px gray dotted;
-  margin-right: 2px;
+  box-shadow: 1px 0 0 #839496;
 }
 /*tag*/
 .tagSelector {

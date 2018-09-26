@@ -673,6 +673,9 @@ span .silent {
   border-bottom: 3px double #008;
   color: #008;
 }
+span .end-codon {
+  box-shadow: 1px 0 0 #657b83;
+}
 /*tag*/
 .tagSelector {
   padding: 5px;
