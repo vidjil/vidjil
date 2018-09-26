@@ -2,6 +2,7 @@ var SILENT="silent";
 var SUBST="substitution";
 var INS="insertion";
 var DEL="deletion";
+var END_CODON = "end-codon";
 
 /**
  * Get codons from two aligned sequences
@@ -76,14 +77,14 @@ function get_codons(ref, seq, frame) {
 }
 
 /**
- * Get positions of mutations and their type between two aligned sequences
+ * Get positions of mutations and their type, as well as end position of codons, between two aligned sequences
  * @pre both sequences are aligned together
  * @param ref: reference the sequence
  * @param seq: the sequence aligned to ref
  * @param frame: the frame in the reference sequence
  *               0: first codon starts at first position, etc.
- * @return a dictionary whose keys are positions of mutations in the alignment
- * and whose values are a type of mutation either SUBST/SILENT/INS/DEL
+ * @return a dictionary whose keys are positions of mutations / end of codons in the alignment
+ * and whose values are a combinations of SUBST/SILENT/INS/DEL/END_CODON
  */
 function get_mutations(ref, seq, frame) {
     var codons = get_codons(ref, seq, frame);
@@ -126,6 +127,7 @@ function get_mutations(ref, seq, frame) {
             }
             nb_pos++;
         }
+        mutations[nb_pos-1] = (typeof mutations[nb_pos-1] === 'undefined' ? '' :  mutations[nb_pos-1] + ' ') + END_CODON;
     }
     return mutations;
 }
