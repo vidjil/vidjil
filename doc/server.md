@@ -101,7 +101,7 @@ However, the following network access are recommended:
 
 # Docker installation
 
-All our images are hosted on DockerHub and can be retrieved from the
+to       All our images are hosted on DockerHub and can be retrieved from the
 repository [vidjil/vidjil](https://hub.docker.com/r/vidjil/vidjil/).
 Our docker environment makes use of docker-compose (<https://docs.docker.com/compose/>).
 All Vidjil components
@@ -225,14 +225,30 @@ By security, we please you to make a backup before doing this process.
 Usually our docker installation will only require the following:
 
 ``` bash
-docker pull vidjil/vidjil:latest
+docker pull vidjil/server[:<version>]
+docker pull vidjil/client[:<version>]
+```
+
+If you do not have access to `hub.docker.com` on your server, then you
+should pull the image onto a machine that does and extract it into a tar
+archive and send it to your server with your favourite method and import
+the image on the server.
+
+Extract:
+``` sh
+docker save -o <output_file> vidjil/server[:<version>] vidjil/client[:<version>]
+```
+
+Import:
+```sh
+     docker load -i <input_file>
 ```
 
 In some cases you may need to update your docker-compose.yml file or some
 of the configuration files. The latest versions are available on our
-[GitHub](https://github.com/vidjil/vidjil).
+[Gitlab](https://inria.gitlab.com/vidjil/vidjil).
 
-By default, all previous volumes will be reuse and no datas will be lost.
+By default, all previous volumes will be reused and no datas will be lost.
 If needed, the MYSQL database will be updated to match the newest format.
 this step is automaticly done by web2py.
 XXX TODO XXX (****demande confirmation par test****)
