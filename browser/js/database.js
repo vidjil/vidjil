@@ -335,7 +335,7 @@ Database.prototype = {
                     self.connected = false;
 		} else { 
 	            for (var i = 0; i < kept_clones.length; i++) {
-			self.m.clones[kept_clones[i]].seg.clonedb = processCloneDBContents(result[i]);
+			self.m.clones[kept_clones[i]].seg.clonedb = processCloneDBContents(result[i], self.m);
 	            }
                     m.shouldRefresh()
                     m.update()
