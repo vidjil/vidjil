@@ -8,7 +8,7 @@ services:
             - ./mysql/:/docker-entrypoint-initdb.d/
             - /opt/vidjil/mysql:/var/lib/mysql
     uwsgi:
-        image: vidjil/server:test
+        image: vidjil/server:latest
         command: bash /entrypoints/uwsgi-entrypoint.sh
         volumes_from:
             - fuse
@@ -19,7 +19,7 @@ services:
             - mysql:mysql
             - fuse:fuse
     fuse:
-        image: vidjil/server:test
+        image: vidjil/server:latest
         command: bash /entrypoints/fuse-entrypoint.sh
         volumes:
             - /opt/vidjil/databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
@@ -31,7 +31,7 @@ services:
             - /opt/vidjil/backup:/mnt/backup
             #- ./vidjil-server/conf:/etc/vidjil
     nginx:
-        image: vidjil/client:test
+        image: vidjil/client:latest
         depends_on:
             - uwsgi
         links:
@@ -46,7 +46,7 @@ services:
             - ../germline:/usr/share/vidjil/germline
 
     workers:
-        image: vidjil/server:test
+        image: vidjil/server:latest
         command: /usr/local/bin/gosu www-data python /usr/share/vidjil/server/web2py/web2py.py -K vidjil,vidjil,vidjil
         volumes_from:
             - uwsgi
@@ -56,7 +56,7 @@ services:
         links:
             - mysql
     backup:
-        image: vidjil/server:test
+        image: vidjil/server:latest
         command: bash -c "echo '0 5 * * * cd /usr/share/vidjil/server; sh backup.sh /mnt/backup 2>1&' > /etc/cron.d/backup-cron && cron"
         volumes_from:
             - uwsgi
@@ -64,7 +64,7 @@ services:
             - mysql
     reporter:
         build: ./reporter
-        image: reporter:test
+        image: reporter:latest
         volumes_from:
             - uwsgi
         volumes:
