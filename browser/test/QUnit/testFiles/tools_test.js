@@ -67,6 +67,8 @@ QUnit.test("test nice_min_max_steps", function(assert) {
     assert.deepEqual(nice_min_max_steps(190, 310, 15), {min: 190, max: 310, step: 10, nb_steps: 12}, "190..310 (15)");
     assert.deepEqual(nice_min_max_steps(190, 310, 3), {min: 150, max: 350, step: 100, nb_steps: 2}, "190..310 (3)");
 
+    assert.deepEqual(nice_min_max_steps(0.54, 1.05, 7), {min: 0.5, max: 1.1, step: 0.1, nb_steps: 7}, "0.54..1.05 (7)");
+
     assert.deepEqual(nice_min_max_steps(0.03, 19.24, 5), {min: 0, max: 20, step: 5, nb_steps: 4}, "0.03..19.24 (5)");
     assert.deepEqual(nice_min_max_steps(0, 7, 4), {min: 0, max: 8, step: 2, nb_steps: 4}, "0..7 (4)");
 
