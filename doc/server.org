@@ -168,12 +168,28 @@ These instructions are preliminary, other documentation can also be found in [[h
    Usually our docker installation will only require the following:
 
    #+BEGIN_SRC sh
-     docker pull vidjil/vidjil:latest
+     docker pull vidjil/server[:<version>]
+     docker pull vidjil/client[:<version>]
+   #+END_SRC
+
+   If you do not have access to hub.docker.com on your server, then you
+   should pull the image onto a machine that does and extract it into a tar
+   archive and send it to your server with your favourite method and import
+   the image on the server.
+
+   Extract:
+   #+BEGIN_SRC sh
+     docker save -o <output_file> vidjil/server[:<version>] vidjil/client[:<version>]
+   #+END_SRC
+
+   Import:
+   #+BEGIN_SRC sh
+     docker load -i <input_file>
    #+END_SRC
 
    In some cases you may need to update your docker-compose.yml file or some
    of the configuration files. The latest versions are available on our
-   [[https://github.com/vidjil/vidjil][GitHub]].
+   [[https://inria.gitlab.com/vidjil/vidjil][Gitlab]].
 
 ** Requirements
    #+BEGIN_SRC sh
