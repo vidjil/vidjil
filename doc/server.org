@@ -89,9 +89,10 @@ These instructions are preliminary, other documentation can also be found in [[h
 ** With Docker
    All our images are hosted on DockerHub and can be retrieved from the
    repository [[https://hub.docker.com/r/vidjil/vidjil/][vidjil/vidjil]].
-   Our docker environment makes use of docker-compose. All Vidjil components
+   Our docker environment makes use of docker-compose (https://docs.docker.com/compose/). 
+   All Vidjil components
    are currently packaged into a single docker image. Individual services are
-   started by docker compose, such as in this [[http://gitlab.vidjil.org/blob/master/docker/docker-compose.yml][example]].
+   started by docker-compose, such as in this [[http://gitlab.vidjil.org/blob/master/docker/docker-compose.yml][example]].
    
 *** Versions
    - 1.1
@@ -102,10 +103,10 @@ These instructions are preliminary, other documentation can also be found in [[h
    - 1.4.2
 
 *** Docker environment
- The vidjil Docker environment is managed by Docker Compose since it is
+ The vidjil Docker environment is managed by docker-compose since it is
  composed of several different services this allows us to easily start and
  stop individual services.
- The services are as follows:
+ The services managed by docker-compose are as follows:
    - mysql        The database
    - uwsgi        The Web2py backend server
    - fuse         The XmlRPCServer that handles custom fuses (for comparing
@@ -117,19 +118,14 @@ These instructions are preliminary, other documentation can also be found in [[h
    - reporter     A monitoring utility that can be configured to send
      monitoring information to a remote server
 
- For more information about Docker Compose and how to install it check out
- https://docs.docker.com/compose/
 
+*** Configuring the Vidjil container for a network usage
 
-*** Configuring the Vidjil container
-   If you are using this environment for use on localhost, everything should
-   work out of the box.
-
-   However you may need to further configure the setup in order to make it
-   available to a whole network.
-   Here is a list of the configuration files found in the vidjil directory:
-     conf/conf.js                             contains various variables for the vidjil browser
-     conf/defs.py                             contains various variables for the vidjil server
+   Everything should work out of the box for a local installation.
+   The container may be further configured to make it available to a whole network.
+   The following configuration files are found in the vidjil directory:
+     conf/conf.js                             various variables for the vidjil browser
+     conf/defs.py                             various variables for the vidjil server
      conf/gzip.conf                           configuration for gzip in nginx
      conf/gzip_static.conf                    same as the previous but for static resources
      conf/uwsgi.ini                           configuration required to run vidjil with uwsgi
