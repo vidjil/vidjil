@@ -647,10 +647,24 @@ Web2py and Vidjil are no exception to this rule.
 
 Performing an Analysis in Vidjil is time-consuming, therefore should the
 data be lost, valuable man-hours are also lost.
-In order to prevent this we make regular incremental (?) backups of the
+In order to prevent this we make regular incremental backups of the
 data stored on the vidjil servers.
-This not only applies to the fiels uploaded and created by vidjil, but also
-to the database.
+
+This applies to the files created during the analysis (either by a software or a human).
+This does not apply to uploaded files.
+
+To ease the backup, the `backup.sh` script provides an example.  For this
+script to be ran automatically, it is required that `mysqldump` does not ask
+for a password. The credentials informations should be provided in a `~/.my.cnf` file (for MySQL obviously).
+
+``` conf
+[client]
+user = backup
+password = "strongpassword"
+host = localhost
+```
+It is also advised that the backup user has a read-only access to the database.
+
 
 ## Autodelete and Permissions
 
