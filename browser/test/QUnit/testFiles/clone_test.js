@@ -514,3 +514,22 @@ QUnit.test("changealleleNotation", function(assert) {
     m.changeAlleleNotation('never')
     assert.equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/12/4 J5", "clone2, .getShortName()");
 });
+
+QUnit.test("productivity", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data);
+    var c1 = new Clone(json_clone1, m, 0);
+    var c2 = new Clone(json_clone2, m, 1);
+    var c3 = new Clone(json_clone3, m, 2);
+    m.initClones();
+
+    assert.equal(c1.getProductivityName(), "productive", "clone 1 should be productive");
+    assert.equal(c1.isProductive(), true, "clone 1 should be productive");
+
+    assert.equal(c2.getProductivityName(), "no CDR3 detected", "clone 2 doesn't have information about productivity");
+    assert.equal(c2.isProductive(), false, "clone 2 doesn't have information about productivity");
+
+    assert.equal(c3.getProductivityName(), "not productive", "clone 3 should not be productive");
+    assert.equal(c3.isProductive(), false, "clone 3 should not be productive");
+
+});

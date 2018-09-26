@@ -932,6 +932,16 @@ Clone.prototype = {
         }
         return "unknown"
     },
+
+    /**
+     * @return true iff the clone is productive, false otherwise.
+     * Thus the function doesn't differentiate between a non-productive
+     * clone and a clone for which we don't know. For more information
+     * see getProductivityName() function.
+     */
+    isProductive: function() {
+        return this.getProductivityName() == "productive";
+    },
     
     /* compute clone color
      *
