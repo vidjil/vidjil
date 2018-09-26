@@ -12,16 +12,12 @@ There are two ways to install and run a Vidjil server:
 
  - The *plain installation of the server* should run on any Linux/Unix server with Nginx (recommanded) or Apache.
    We provide below detailed instructions for Ubuntu 14.04 LTS.
-   This is now the recommended installation.
+   This was previously the recommended installation.
    We use this installation on the public server ([[https://app.vidjil.org]]) since October 2014.
 
- - We are developping Debian packages as well as *Docker containers* to ease the installation and the maintenance.
-   The Docker containers are currently tested in some partner hospitals,
-   and we intend to release ready-to-use Docker containers in Q3 2017.
-   This will then be the recommanded way to install and use Vidjil.
-
-We recommand to people interested in installing a Vidjil server to wait until Q3 2017
-and to use meanwhile the public test server.
+ - We are developpinf *Docker containers* to ease the installation and the maintenance.
+   The Docker containers are used in some partner hospitals.
+   We recommend this installation for new instances of Vidjil.
 
 * Requirements
 
