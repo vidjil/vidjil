@@ -164,7 +164,7 @@ or their “N length” (that is N1-D-N2 in the case of VDJ recombinations).
 The sequence view displays nucleotide sequences from selected clones.
 
   - See "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clone)" below
-  - Sequences can be aligned together (“align” button), identifying substitutions, insertions and deletions.
+  - Sequences can be aligned together (“align” button), identifying substitutions, insertions and deletions. Silent mutations are identified, as soon as a CDR3 is detected, and represented with a double border in blue.
   - You can remove sequences from the aligner (and the selection) by clicking on the “X” at the left.
   - You can further analyze the sequences with IMGT/V-QUEST, IgBlast or Blast. This opens another window/tab.
   - You can unselect all sequences by clicking on the background of the grid.
