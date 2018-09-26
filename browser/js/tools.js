@@ -2,7 +2,8 @@ var SILENT="silent";
 var SUBST="substitution";
 var INS="insertion";
 var DEL="deletion";
-var END_CODON = "end-codon";
+var END_CODON = "end-codon ";
+var END_CODON_NOT_FIRST = "end-codon-not-first ";
 
 /**
  * Get codons from two aligned sequences
@@ -127,7 +128,7 @@ function get_mutations(ref, seq, frame) {
             }
             nb_pos++;
         }
-        mutations[nb_pos-1] = (typeof mutations[nb_pos-1] === 'undefined' ? '' :  mutations[nb_pos-1] + ' ') + END_CODON;
+        mutations[nb_pos-1] = END_CODON + (typeof mutations[nb_pos-1] === 'undefined' ? '' :  mutations[nb_pos-1])
     }
     return mutations;
 }
