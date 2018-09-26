@@ -673,6 +673,10 @@ span .silent {
   border-bottom: 3px double #008;
   color: #008;
 }
+span .end-codon {
+  border-right: 1px gray dotted;
+  margin-right: 2px;
+}
 /*tag*/
 .tagSelector {
   padding: 5px;
