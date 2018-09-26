@@ -1,6 +1,120 @@
 QUnit.module("Tools", {
 });
 
+QUnit.test("test get_codons", function(assert) {
+    var r = 'ATGATAGAC';
+    var s = 'AAACCCGGG';
+    var codons = get_codons(r, s, 0);
+    assert.deepEqual(codons, {ref : ['ATG', 'ATA', 'GAC'], seq : ['AAA', 'CCC', 'GGG']});
+
+    codons = get_codons(r, s, 1);
+    assert.deepEqual(codons, {ref : ['A', 'TGA', 'TAG', 'AC'], seq : ['A', 'AAC', 'CCG', 'GG']});
+
+    codons = get_codons(r, s, 2);
+    assert.deepEqual(codons, {ref : ['AT', 'GAT', 'AGA', 'C'], seq : ['AA', 'ACC', 'CGG', 'G']});
+
+    r = 'ATG--ATAGACAG';
+    s = 'AAACCCG-GGGTT';
+
+    codons = get_codons(r, s, 0);
+    assert.deepEqual(codons, {ref : ['ATG', '--', 'ATA', 'GAC', 'AG'],
+                              seq : ['AAA', 'CC', 'CG-', 'GGG', 'TT']});
+
+    codons = get_codons(r, s, 1);
+    assert.deepEqual(codons, {ref : ['A', 'TG--A', 'TAG', 'ACA', 'G'],
+                              seq : ['A', 'AACCC', 'G-G', 'GGT', 'T']});
+
+    codons = get_codons(r, s, 2);
+    assert.deepEqual(codons, {ref : ['AT', 'G--AT', 'AGA', 'CAG'],
+                              seq : ['AA', 'ACCCG', '-GG', 'GTT']});
+
+    r = '-----ATG--ATAGA--CAG';
+    s = '--GACAAACCCG-GG--GTT';
+
+    codons = get_codons(r, s, 0);
+    assert.deepEqual(codons, {ref : ['-----', 'ATG', '--', 'ATA', 'GA--C', 'AG'],
+                              seq : ['--GAC', 'AAA', 'CC', 'CG-', 'GG--G', 'TT']});
+
+    codons = get_codons(r, s, 1);
+    assert.deepEqual(codons, {ref : ['-----A', 'TG--A', 'TAG', 'A--CA', 'G'],
+                              seq : ['--GACA', 'AACCC', 'G-G', 'G--GT', 'T']});
+
+    codons = get_codons(r, s, 2);
+    assert.deepEqual(codons, {ref : ['-----AT', 'G--AT', 'AGA', '--', 'CAG'],
+                              seq : ['--GACAA', 'ACCCG', '-GG', '--', 'GTT']});
+
+});
+
+QUnit.test("test get_mutations", function(assert) {
+    var r = 'ATAGATAGATAG';
+    var mutations = get_mutations(r, r, 0);
+    assert.equal (Object.keys(mutations).length, 0, "No mutation");
+    mutations = get_mutations(r, r, 1);
+    assert.equal (Object.keys(mutations).length, 0, "No mutation");
+    mutations = get_mutations(r, r, 2);
+    assert.equal (Object.keys(mutations).length, 0, "No mutation");
+
+    // GAT > GAc (give same D AA)
+    var s = 'ATAGACAGATAG';
+    //       0123456789
+    mutations = get_mutations(r, s, 0);
+    assert.equal (Object.keys(mutations).length, 1, "Single mutation");
+    assert.equal (mutations[5], SILENT, "Silent mutation");
+
+    // ATA > AcA (I > T)
+    mutations = get_mutations(r, s, 1);
+    assert.equal (Object.keys(mutations).length, 1, "Single mutation");
+    assert.equal (mutations[5], SUBST, "Silent mutation");
+
+    // TAG > cAG (* > Q)
+    mutations = get_mutations(r, s, 2);
+    assert.equal (Object.keys(mutations).length, 1, "Single mutation");
+    assert.equal (mutations[5], SUBST, "Silent mutation");
+
+    r = 'ATAGATAG-TAG';
+    s = 'ATA-ATCGATAG';
+    //   0123456789
+
+    // AG-T > cGAT (no base in the reference → can't tell if the mutation is silent)
+    mutations = get_mutations(r, s, 0);
+    assert.equal(Object.keys(mutations).length, 3, "Three mutations");
+    assert.deepEqual(mutations, {3 : DEL, 6 : SUBST, 8 : INS});
+
+    // ATA > ATc (I)
+    mutations = get_mutations(r, s, 1);
+    assert.equal(Object.keys(mutations).length, 3, "Three mutations");
+    assert.deepEqual(mutations, {3 : DEL, 6 : SILENT, 8 : INS});
+
+    // TAG > TcG (* > S)
+    mutations = get_mutations(r, s, 2);
+    assert.equal(Object.keys(mutations).length, 3, "Three mutations");
+    assert.deepEqual(mutations, {3 : DEL, 6 : SUBST, 8 : INS});
+
+    // Same example as before but with common indels to check that they are ignored
+    r = 'ATAGAT-AG-TA--G';
+    s = 'ATA-AT-CGATA--G';
+    //   0123456789
+
+    // AG-T > cGAT
+    mutations = get_mutations(r, s, 0);
+    assert.equal(Object.keys(mutations).length, 3, "Three mutations");
+    assert.deepEqual(mutations, {3 : DEL, 7 : SUBST, 9 : INS});
+
+    // ATA > ATC (I)
+    mutations = get_mutations(r, s, 1);
+    assert.equal(Object.keys(mutations).length, 3, "Three mutations");
+    assert.deepEqual(mutations, {3 : DEL, 7 : SILENT, 9 : INS});
+
+    // TAG > TcG (* > S)
+    mutations = get_mutations(r, s, 2);
+    assert.equal(Object.keys(mutations).length, 3, "Three mutations");
+    assert.deepEqual(mutations, {3 : DEL, 7 : SUBST, 9 : INS});
+
+    mutations = get_mutations(r, s);
+    assert.equal(Object.keys(mutations).length, 3, "Three mutations without phase");
+    assert.deepEqual(mutations, {3 : DEL, 7 : SUBST, 9 : INS});
+});
+
 QUnit.test("test nth_ocurrence", function(assert) {
         var str = "needle needle needle needle";
         var m = nth_ocurrence(str, 'n', 3);

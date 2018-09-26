@@ -1,3 +1,135 @@
+var SILENT="silent";
+var SUBST="substitution";
+var INS="insertion";
+var DEL="deletion";
+
+/**
+ * Get codons from two aligned sequences
+ * @pre both sequences are aligned together ref.length == seq.length
+ * @param ref: reference the sequence
+ * @param seq: the sequence aligned to ref
+ * @param frame: the frame in the reference sequence
+ *               0: first codon starts at first position, etc.
+ * @return an object containing a property ref and a property seq whose values
+ * are a list of codons. Some “codons” from seq may have a length ≠ 3.
+ * All codons from ref have 0 or 3 nucleotides (apart from the first/last codons), but may
+ * contain dashes.
+ * The total number of characters in both lists are equal and are also
+ * equal to the number of characters in the original sequences.
+ */
+function get_codons(ref, seq, frame) {
+    var codons_ref = [];
+    var codons_seq = [];
+    var current_codon_ref = '';
+    var current_codon_seq = '';
+
+    var pos = 0;
+
+    if (frame == undefined) {
+        return {ref: [ref], seq: [seq]};
+    }
+
+    // Search first nucleotide pos
+    for (pos; pos < ref.length; pos++) {
+        if (ref[pos] != '-') {
+            if (frame == 0)
+                break;
+            frame--;
+        }
+        current_codon_seq += seq[pos];
+        current_codon_ref += ref[pos];
+    }
+
+    if (current_codon_seq != '' || current_codon_ref != '') {
+        codons_ref.push(current_codon_ref);
+        codons_seq.push(current_codon_seq);
+        current_codon_ref = '';
+        current_codon_seq = '';
+    }
+
+    var nb_nuc = 0;
+    for (; pos < ref.length; pos++) {
+        if (nb_nuc == 3 ||
+            (ref[pos] != '-' && current_codon_seq.length > 0 &&
+             nb_nuc == 0)) {
+            codons_ref.push(current_codon_ref);
+            codons_seq.push(current_codon_seq);
+            current_codon_ref = '';
+            current_codon_seq = '';
+            nb_nuc = 0;
+        }
+
+        if (ref[pos] == '-') {
+            current_codon_seq += seq[pos];
+            current_codon_ref += '-';
+        } else {
+            current_codon_ref += ref[pos];
+            current_codon_seq += seq[pos];
+            nb_nuc ++;
+        }
+    }
+    if (current_codon_ref.length > 0)
+        codons_ref.push(current_codon_ref);
+    if (current_codon_seq.length > 0)
+        codons_seq.push(current_codon_seq);
+    return {ref : codons_ref, seq : codons_seq};
+}
+
+/**
+ * Get positions of mutations and their type between two aligned sequences
+ * @pre both sequences are aligned together
+ * @param ref: reference the sequence
+ * @param seq: the sequence aligned to ref
+ * @param frame: the frame in the reference sequence
+ *               0: first codon starts at first position, etc.
+ * @return a dictionary whose keys are positions of mutations in the alignment
+ * and whose values are a type of mutation either SUBST/SILENT/INS/DEL
+ */
+function get_mutations(ref, seq, frame) {
+    var codons = get_codons(ref, seq, frame);
+    var mutations = {};
+    var nb_pos = 0;
+    console.log(codons);
+    for (var i = 0; i < codons.ref.length ; i++) {
+        for (var p = 0; p < codons.ref[i].length; p++) {
+            if (codons.ref[i][p] != codons.seq[i][p]) {
+                if (codons.ref[i][p] == '-') {
+                    mutations[nb_pos] = INS;
+                } else if (codons.seq[i][p] == '-') {
+                    mutations[nb_pos] = DEL;
+                } else {
+                    var codon1 = codons.ref[i];
+                    var codon2 = codons.seq[i];
+                    if (codon1.length > 3 && codon1.length == codon2.length) {
+                        codon1 = '';
+                        codon2 = '';
+                        // We may have common gaps (due to alignment with
+                        // other sequences) that need to be ignored
+                        for (var j = 0; j < codons.ref[i].length; j++) {
+                            if (codons.ref[i][j] != codons.seq[i][j] ||
+                                codons.ref[i][j] != '-') {
+                                codon1 += codons.ref[i][j];
+                                codon2 += codons.seq[i][j];
+                            }
+                        }
+                    }
+                    if (codon1.length == 3 &&
+                        codon2.length == 3 &&
+                        frame != undefined &&
+                        tableAA.hasOwnProperty(codon2) &&
+                        tableAA[codon1] == tableAA[codon2]) {
+                        mutations[nb_pos] = SILENT;
+                    } else {
+                        mutations[nb_pos] = SUBST;
+                    }
+                }
+            }
+            nb_pos++;
+        }
+    }
+    return mutations;
+}
+
 /**
  * Find the position of the nth occurence of needle
  *

@@ -1230,15 +1230,15 @@ genSeq.prototype= {
 
 
     /**
-     * compare sequence with another string and surround change
+     * TODO !
      * @param {char} self
      * @param {char} other
      * @return {string}  
      * */
-    spanify_mutation: function (self, other) {
-        if (this.segmenter.aligned && self != other) {
+    spanify_mutation: function (self, other, mutation) {
+        if (mutation != undefined) {
             var span = document.createElement('span');
-            span.className = (self == '-' || other == '-' ? 'indel' : 'substitution');
+            span.className = mutation
             span.setAttribute('other', other + '-' + this.segmenter.first_clone);
             span.appendChild(document.createTextNode(self));
             return span;
@@ -1280,6 +1280,25 @@ genSeq.prototype= {
         result = document.createElement('span');
         currentSpan = document.createElement('span');
 
+        var isProductive = (! this.segmenter.amino &&
+                            this.m.clones.hasOwnProperty(this.segmenter.first_clone) &&
+                            this.m.clones[this.segmenter.first_clone].getProductivityName() == "productive"); // TODO : isProductive method
+        var reference_phase = (isProductive) ? (this.m.clones[this.segmenter.first_clone].seg.junction.start - 1) % 3 : undefined;
+
+        var mutations = {};
+        var ref = '';
+        var seq = '';
+        if (this.segmenter.amino) {
+            seq = this.seqAA;
+            ref = this.segmenter.sequence[this.segmenter.first_clone].seqAA;
+        } else {
+            seq = this.seq;
+            ref = this.segmenter.sequence[this.segmenter.first_clone].seq;
+        }
+        if (this.segmenter.aligned) {
+            mutations = get_mutations(ref, seq, reference_phase);
+        }
+        
         for (var i = 0; i < this.seq.length; i++) {
             for (var m in highlights){
                 var h = highlights[m];
@@ -1316,12 +1335,7 @@ genSeq.prototype= {
                 }
             }
 
-            // one character
-            if (this.segmenter.amino){
-                currentSpan.appendChild(this.spanify_mutation(this.seqAA[l], this.segmenter.sequence[this.segmenter.first_clone].seqAA[l]));
-            }else{
-                currentSpan.appendChild(this.spanify_mutation(this.seq[i], this.segmenter.sequence[this.segmenter.first_clone].seq[i]))
-            }
+            currentSpan.appendChild(this.spanify_mutation(seq[i], ref[i], mutations.hasOwnProperty(i) ? mutations[i] : undefined))
         }
         result.appendChild(currentSpan);
         var marge = ""
