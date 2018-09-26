@@ -1,7 +1,9 @@
 
-This is the preliminary help of the Vidjil server.
+This is the preliminary help of the Vidjil server on Ubuntu server 14.04.
 This help is intended for server administrators.
 Users should consult the web application manual.
+Other documentation can also be found in [dev.org](http://git.vidjil.org/blob/dev/doc/dev.org).
+
 
 # Plain installation or Docker containers
 
@@ -12,7 +14,7 @@ There are two ways to install and run a Vidjil server:
     This was previously the recommended installation.
     We use this installation on the public server (<https://app.vidjil.org>) since October 2014.
 
-  - We are developpinf **Docker containers** to ease the installation and the maintenance.
+  - We are developping and deploying in 2018 **Docker containers** to ease the installation and the maintenance.
     The Docker containers are used in some partner hospitals.
     We recommend this installation for new instances of Vidjil.
 
@@ -96,12 +98,8 @@ However, the following network access are recommended:
         the team in Lille may help local server mainteners in some monitoring, maintenance and upgrade tasks,
         provided a SSH access can be arranged, possibly over VPN.
 
-# Installing and running the Vidjil server
 
-These installation instruction are for Ubuntu server 14.04.
-These instructions are preliminary, other documentation can also be found in [dev.org](http://git.vidjil.org/blob/dev/doc/dev.org).
-
-## With Docker
+# Docker installation
 
 All our images are hosted on DockerHub and can be retrieved from the
 repository [vidjil/vidjil](https://hub.docker.com/r/vidjil/vidjil/).
@@ -110,7 +108,7 @@ All Vidjil components
 are currently packaged into a single docker image. Individual services are
 started by docker-compose, such as in this [example](http://gitlab.vidjil.org/blob/master/docker/docker-compose.yml).
 
-### Versions
+## Versions
 
   - 1.1
   - 1.2
@@ -119,7 +117,7 @@ started by docker-compose, such as in this [example](http://gitlab.vidjil.org/bl
   - 1.3.2
   - 1.4.2
 
-### Docker environment
+## Docker environment
 
 The vidjil Docker environment is managed by docker-compose since it is
 composed of several different services this allows us to easily start and
@@ -137,56 +135,55 @@ The services managed by docker-compose are as follows:
   - reporter A monitoring utility that can be configured to send
     monitoring information to a remote server
 
-### Configuring the Vidjil container for a network usage
+## Configuring the Vidjil container for a network usage
 
 Everything should work out of the box for a local installation.
 The container may be further configured to make it available to a whole network.
 The following configuration files are found in the vidjil directory:
-conf/conf.js various variables for the vidjil browser
-conf/defs.py various variables for the vidjil server
-conf/gzip.conf configuration for gzip in nginx
-conf/gzip<sub>static</sub>.conf same as the previous but for static resources
-conf/uwsgi.ini configuration required to run vidjil with uwsgi
-sites/nginx configuration required when running vidjil with nginx
-scripts/nginx-entrypoint.sh entrypoint for the nginx
-service (not currently in use)
-scripts/uwsgi-entrypoint.sh entrypoint for the uwsgi
+
+  - `conf/conf.js` various variables for the vidjil browser
+  - `conf/defs.py` various variables for the vidjil server
+  - `conf/gzip.conf` configuration for gzip in nginx
+  - `conf/gzip_static`.conf same as the previous but for static resources
+  - `conf/uwsgi.ini`   configuration required to run vidjil with uwsgi
+  - `sites/nginx` configuration required when running vidjil with nginx
+  - `scripts/nginx-entrypoint.sh` entrypoint for the nginx
+  - `service` (not currently in use)
+  - `scripts/uwsgi-entrypoint.sh` entrypoint for the uwsgi
 service. Ensures the owner of some relevant volumes are correct within
 the container and starts uwsgi
 
 Here are some notable configuration changes you should consider:
 
-  - Change the mysql user/password in docker-compose.yml. You will also
-    need to change the DB<sub>ADDRESS</sub> in conf/defs.py to match it.
+  - Change the mysql user/password in `docker-compose.yml`. You will also
+    need to change the `DB_ADDRESS` in `conf/defs.py` to match it.
 
-  - Change the hostname in the nginx configuration vidjil/sites/nginx<sub>conf</sub>.
+  - Change the hostname in the nginx configuration `vidjil/sites/nginx_conf`.
     If you are using vidjil on a network, then this might be required.
 
-  - Change the default admin password. Login as plop@plop.com password 1234
-    and go to the following URL: <https://>\<your
-    hostname\>/vidjil/default/user/change<sub>password</sub>
+  - Change the default admin password. Login as `plop@plop.com`, password `1234`
+    and go to <https://your-hostname/vidjil/default/user/change_password>
 
   - Change the ssl certificates. When building the image vidjil-server
     which creates a self-signed certificate for the sake of convenience to
     ensure the HTTPS queries work from the start, but this may not be
     acceptable for a production environment.
     In order to replace certificates the current method is to mount the
-    certificates to /etc/nginx/ssl with docker volumes in
-    docker-compose.yml.
+    certificates to `/etc/nginx/ssl` with docker volumes in
+    `docker-compose.yml`.
 
-  - Change the FROM<sub>EMAIL</sub> and ADMIN<sub>EMAILS</sub> variables in conf/defs.py. These
+  - Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `conf/defs.py`. These
     represent the sender email address and the destination email addresses,
     used in reporting patient milestones and server errors.
 
-  - Change the database password. In the mysql directory you will find an
+  - Change the database password. In the `mysql` directory you will find an
     entrypoint script which creates the database, the user and set that
     user's password.
-    This is the password you need to match in the defs.py file in the
-    vidjil configuration.
+    This is the password you need to match in `defs.py`.
 
-  - Change the volumes in docker-compose.yml. By default all files that
+  - Change the volumes in `docker-compose.yml`. By default all files that
     require saving outside of the containers (the database, uploads, vidjil
-    results and log files) are stored in /opt/vidjil , but you can change
+    results and log files) are stored in `/opt/vidjil`, but you can change
     this by editing the paths in the volumes.
 
   - Configure the reporter. Ideally this container should be positioned
@@ -194,13 +191,16 @@ Here are some notable configuration changes you should consider:
 
 ### Starting the environment
 
-Ensure your docker-compose.yml contains the correct reference to the
-vidjil image you want to use. Usually this will be vidjil/vidjil:latest,
+Ensure your `docker-compose.yml` contains the correct reference to the
+vidjil image you want to use. Usually this will be `vidjil/vidjil:latest`,
 but more tags are available at <https://hub.docker.com/r/vidjil/vidjil/tags/>.
 
-You may also want to uncomment the volume in the fuse volume block "-
-./vidjil/conf:/etc/vidjil" this will provide easier access to all of the
-configuration files, allowing for tweaks. From this location, it will be easier to enable more softwaer or pipelines by putting the binary in this location taht will be see by the docker instance.
+You may also want to uncomment the volume in the fuse volume block 
+`./vidjil/conf:/etc/vidjil`.
+This will provide easier access to all of the
+configuration files, allowing for tweaks.
+From this location, it will be easier to enable more software or pipelines
+by putting their binaries in this location taht will be see by the docker instance.
 
 Running the following command will automatically download any missing
 images and start the environment:
@@ -237,6 +237,10 @@ If needed, the MYSQL database will be updated to match the newest format.
 this step is automaticly done by web2py.
 XXX TODO XXX (****demande confirmation par test****)
 
+
+# Plain server installation
+
+
 ## Requirements
 
 ``` bash
@@ -252,7 +256,7 @@ pip install enum34
 pip install ijson cffi
 ```
 
-## Vidjil server installation and initialization
+## Server installation and initialization
 
 Enter in the `server/` directory.
 
@@ -260,8 +264,6 @@ If you just want to do some tests without installing a real web server,
 then launch `make install_web2py_standalone`. In the other case, launch
 `make install_web2py`.
 
-The process for installing Vidjil server together with a real web server
-will be detailed in the future.
 
 ## Detailed manual server installation and browser linking
 
