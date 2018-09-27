@@ -1299,7 +1299,7 @@ genSeq.prototype= {
             ref = this.segmenter.sequence[this.segmenter.first_clone].seq;
         }
         if (this.segmenter.aligned) {
-            mutations = get_mutations(ref, seq, reference_phase);
+            mutations = get_mutations(ref, seq, reference_phase, true);
         }
 
         var i_am_first_clone = (this.id == this.segmenter.first_clone)

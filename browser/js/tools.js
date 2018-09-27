@@ -87,7 +87,7 @@ function get_codons(ref, seq, frame) {
  * @return a dictionary whose keys are positions of mutations / end of codons in the alignment
  * and whose values are a combinations of SUBST/SILENT/INS/DEL/END_CODON
  */
-function get_mutations(ref, seq, frame) {
+function get_mutations(ref, seq, frame, with_end_codon) {
     var codons = get_codons(ref, seq, frame);
     var mutations = {};
     var nb_pos = 0;
@@ -128,7 +128,8 @@ function get_mutations(ref, seq, frame) {
             }
             nb_pos++;
         }
-        mutations[nb_pos-1] = END_CODON + (typeof mutations[nb_pos-1] === 'undefined' ? '' :  mutations[nb_pos-1])
+        if (typeof with_end_codon !== undefined && with_end_codon)
+            mutations[nb_pos-1] = END_CODON + (typeof mutations[nb_pos-1] === 'undefined' ? '' :  mutations[nb_pos-1])
     }
     return mutations;
 }
