@@ -23,6 +23,7 @@ stages:
   - valgrind_functional
   - multiple_tests
   - prepare_deploy
+  - pre_deploy_docker
   - deploy_docker
   - deploy_prod
 
@@ -331,14 +332,36 @@ deploy_review:
   tags:
     - web
 
-deploy_docker:
-  stage: deploy_docker
+pre_deploy_docker:
+  stage: pre_deploy_docker
   script:
-    - docker tag $CI_BUILD_REF_SLUG vidjil/vidjil:latest
-    - docker push vidjil/vidjil:latest
+    - export CUR_DATE=date +%Y-%m-%d
+    - export TYPE=$CI_COMMIT_REF_NAME | awk '{ gsub(/prod-/, "") }{ print $1 }'
+    - export TAG="vidjil/$TYPE:$CI_COMMIT_SHA-$CUR_DATE"
+    - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=PRODUCTION -t $TAG docker/vidjil-$TYPE
   when: manual
   only:
     - prod-server
+    - prod-client
+  tags:
+    - web
+    - docker
+
+deploy_docker:
+  stage: deploy_docker
+  script:
+    - export CUR_DATE=date +%Y-%m-%d
+    - export TYPE=$CI_COMMIT_REF_NAME | awk '{ gsub(/prod-/, "") }{ print $1 }'
+    - export TAG="vidjil/$TYPE:$CI_COMMIT_SHA-$CUR_DATE"
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker push $TAG
+    - docker tag $TAG "vidjil/$TYPE:latest"
+    - docker push "vidjil/$TYPE:latest"
+    - docker rmi $TAG "vidjil/$TYPE:latest"
+  when: manual
+  only:
+    - prod-server
+    - prod-client
   tags:
     - web
     - docker
