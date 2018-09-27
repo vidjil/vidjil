@@ -111,7 +111,7 @@ class TestPreProcess < ServerTest
     list = $b.table(:id => "table")
     list.wait_until_present
     line = table.td(:text => "public").parent
-    checkbox = line.cells.last.input(:type => "checkbox")
+    checkbox = line.cells.last.checkbox
     assert(checkbox.set?)
   end
 end
