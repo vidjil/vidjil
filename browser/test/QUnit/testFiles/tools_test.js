@@ -73,7 +73,7 @@ QUnit.test("test get_mutations", function(assert) {
 
     r = 'ATAGATAG-TAG';
     s = 'ATA-ATCGATAG';
-    //   0123456789
+    //   012345678901
 
     // AG-T > cGAT (no base in the reference → can't tell if the mutation is silent)
     mutations = get_mutations(r, s, 0);
@@ -82,13 +82,26 @@ QUnit.test("test get_mutations", function(assert) {
 
     // ATA > ATc (I)
     mutations = get_mutations(r, s, 1);
-    assert.equal(Object.keys(mutations).length, 3, "Three mutations");
+    assert.equal(Object.keys(mutations).length, 3, "Three mutations (including a SILENT)");
     assert.deepEqual(mutations, {3 : DEL, 6 : SILENT, 8 : INS});
 
     // TAG > TcG (* > S)
     mutations = get_mutations(r, s, 2);
     assert.equal(Object.keys(mutations).length, 3, "Three mutations");
     assert.deepEqual(mutations, {3 : DEL, 6 : SUBST, 8 : INS});
+
+    // Same example, with end codons
+    mutations = get_mutations(r, s, 0, true);
+    assert.equal(Object.keys(mutations).length, 6, "Six mutations + end codons");
+    assert.deepEqual(mutations, {2 : END_CODON, 3 : DEL, 5 : END_CODON, 6 : SUBST, 8 : INS, 9 : END_CODON});
+
+    mutations = get_mutations(r, s, 1, true);
+    assert.equal(Object.keys(mutations).length, 5, "Five mutations + end codons (including a SILENT)");
+    assert.deepEqual(mutations, {0 : END_CODON, 3 : END_CODON + DEL, 6 : END_CODON + SILENT, 8 : INS, 10: END_CODON});
+
+    mutations = get_mutations(r, s, 2, true);
+    assert.equal(Object.keys(mutations).length, 7, "Seven mutations + end codons");
+    assert.deepEqual(mutations, {1 : END_CODON, 3 : DEL, 4 : END_CODON, 6 : SUBST, 7 : END_CODON, 8 : END_CODON + INS, 11 : END_CODON});
 
     // Same example as before but with common indels to check that they are ignored
     r = 'ATAGAT-AG-TA--G';
