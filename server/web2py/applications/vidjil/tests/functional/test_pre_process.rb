@@ -90,4 +90,28 @@ class TestPreProcess < ServerTest
     lines = table.tbody.rows
     assert(lines.count == count-1)
   end
+
+  def test_pre_process_permission
+    table = go_to_list
+
+    line = table.td(:text => "test pre-process 2").parent
+    line.i(:class => 'icon-key').click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+
+    list = $b.table(:id => "table")
+    list.wait_until_present
+    line = table.td(:text => "public").parent
+    checkbox = line.cells.last.input(:type => "checkbox")
+    assert(checkbox.checked == False)
+    checkbox.click
+
+    # reload page to check if permissions are persistant.
+    $b.span(:id => "db_reload").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    list = $b.table(:id => "table")
+    list.wait_until_present
+    line = table.td(:text => "public").parent
+    checkbox = line.cells.last.input(:type => "checkbox")
+    assert(checkbox.checked == True)
+  end
 end
