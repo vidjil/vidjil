@@ -128,7 +128,7 @@ function get_mutations(ref, seq, frame, with_end_codon) {
             }
             nb_pos++;
         }
-        if (typeof with_end_codon !== undefined && with_end_codon)
+        if (typeof with_end_codon !== undefined && with_end_codon && (i < codons.ref.length - 1 || codons.ref[i].length >= 3))
             mutations[nb_pos-1] = END_CODON + (typeof mutations[nb_pos-1] === 'undefined' ? '' :  mutations[nb_pos-1])
     }
     return mutations;
