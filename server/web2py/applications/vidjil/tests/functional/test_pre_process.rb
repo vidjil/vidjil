@@ -102,7 +102,7 @@ class TestPreProcess < ServerTest
     list.wait_until_present
     line = table.td(:text => "public").parent
     checkbox = line.cells.last.checkbox
-    assert(checkbox.set? == False)
+    assert(checkbox.set? == false)
     checkbox.click
 
     # reload page to check if permissions are persistant.
