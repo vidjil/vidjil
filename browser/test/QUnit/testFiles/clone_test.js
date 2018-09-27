@@ -527,11 +527,21 @@ QUnit.test("productivity", function(assert) {
 
     assert.equal(c1.getProductivityName(), "productive", "clone 1 should be productive");
     assert.equal(c1.isProductive(), true, "clone 1 should be productive");
+    assert.equal(c1.getPhase(), 0, "Phase of clone 1 should be 0");
+
+    c1.seg.junction.start = 8;
+    assert.equal(c1.getPhase(), 2, "Phase of modified clone 1 should be 2");
+    c1.seg.junction.start = 7;
+    assert.equal(c1.getPhase(), 1, "Phase of modified clone 1 should be 1");
+    c1.seg.junction.start = 6;
+    assert.equal(c1.getPhase(), 0, "Phase of modified clone 1 should be 0");
 
     assert.equal(c2.getProductivityName(), "no CDR3 detected", "clone 2 doesn't have information about productivity");
     assert.equal(c2.isProductive(), false, "clone 2 doesn't have information about productivity");
+    assert.equal(c2.getPhase(), 'undefined', "No phase for clone 2");
 
     assert.equal(c3.getProductivityName(), "not productive", "clone 3 should not be productive");
     assert.equal(c3.isProductive(), false, "clone 3 should not be productive");
+    assert.equal(c3.getPhase(), 'undefined', "No phase for clone 3");
 
 });
