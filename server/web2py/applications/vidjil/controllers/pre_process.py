@@ -166,7 +166,7 @@ def change_permission():
 
     if error=="":
         if auth.get_group_access(db.pre_process, int(request.vars["pre_process_id"]), int(request.vars["group_id"])):
-            auth.del_permission(request.vars["group_id"], PermissionEnum.access.value, db.config, request.vars["pre_process_id"])
+            auth.del_permission(request.vars["group_id"], PermissionEnum.access.value, db.pre_process, request.vars["pre_process_id"])
             res = {"message" : "c%s: access '%s' deleted to '%s'" % (request.vars["pre_process_id"],
                                                                      PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
         else :
