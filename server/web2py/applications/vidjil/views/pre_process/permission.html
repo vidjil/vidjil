@@ -1,0 +1,43 @@
+{{extend 'db_layout.html'}}
+{{import vidjil_utils}}
+
+
+<h3>
+    Config {{=db.pre_process[request.vars["id"]].name}}
+</h3>
+
+<div id="db_table_container">
+    <table class="db_table" id="table">
+        <thead>
+            <tr><td class="column1">id</td>
+                <td class="column_200"> group / user</td>
+                <td class="column_200">permissions</td>
+                <td class="column1">access from</td>
+                <td class="column1"> access</td>
+            </tr>
+        </thead>
+        {{admin = auth.can_modify_pre_process(request.vars["id"])}}
+        {{ for row in query :}}
+            <tr>
+                <td> {{=row.id}}</td>
+                <td> {{=row.owner}} </td>
+                <td> {{=row.perms}}</td>
+                <td> {{=row.parent_access}}
+                {{if admin :}}
+                    <td> <input type="checkbox" onclick="db.call('pre_process/change_permission', {
+                                                                  'pre_process_id' : {{=request.vars['id']}} ,
+                                                                  'group_id' : {{=row.id}}})"
+                                {{if row.read :}} checked {{pass}}></td>
+                {{else:}}
+                    <td class="inactive"> <input type="checkbox" onclick="this.click()"
+                                {{if row.read :}} checked {{pass}}></td>
+                {{pass}}
+            </tr>
+        {{pass}}
+    </table>
+    <table class="db_table" id="db_fixed_header"></table>    
+</div>
+
+{{if not auth.can_modify_pre_process(request.vars["id"]) :}}
+    <div>you need admin access on this pre process if you want to change permission </div>
+{{pass}}
