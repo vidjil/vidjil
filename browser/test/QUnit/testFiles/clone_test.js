@@ -116,9 +116,11 @@ var json_clone5 = {
 
 QUnit.test("name, informations, getHtmlInfo", function(assert) {
     
+    assert.equal(json_clone1.seg.junction.start, 10, "Start junction is 10 in JSON for clone 1");
     var m = new Model();
     m.parseJsonData(json_data)
     var c1 = new Clone(json_clone1, m, 0)
+    assert.equal(c1.seg.junction.start, 9, "Start junction is now 9 for clone 1 as positions start at 0 in the code");
     var c2 = new Clone(json_clone2, m, 1)
     var c3 = new Clone(json_clone3, m, 2)
     var c4 = new Clone(json_clone4, m, 3)
@@ -513,4 +515,33 @@ QUnit.test("changealleleNotation", function(assert) {
     assert.equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/12/4 J5*02", "clone2, .getShortName()");
     m.changeAlleleNotation('never')
     assert.equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/12/4 J5", "clone2, .getShortName()");
+});
+
+QUnit.test("productivity", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data);
+    var c1 = new Clone(json_clone1, m, 0);
+    var c2 = new Clone(json_clone2, m, 1);
+    var c3 = new Clone(json_clone3, m, 2);
+    m.initClones();
+
+    assert.equal(c1.getProductivityName(), "productive", "clone 1 should be productive");
+    assert.equal(c1.isProductive(), true, "clone 1 should be productive");
+    assert.equal(c1.getPhase(), 0, "Phase of clone 1 should be 0");
+
+    c1.seg.junction.start = 8;
+    assert.equal(c1.getPhase(), 2, "Phase of modified clone 1 should be 2");
+    c1.seg.junction.start = 7;
+    assert.equal(c1.getPhase(), 1, "Phase of modified clone 1 should be 1");
+    c1.seg.junction.start = 6;
+    assert.equal(c1.getPhase(), 0, "Phase of modified clone 1 should be 0");
+
+    assert.equal(c2.getProductivityName(), "no CDR3 detected", "clone 2 doesn't have information about productivity");
+    assert.equal(c2.isProductive(), false, "clone 2 doesn't have information about productivity");
+    assert.equal(c2.getPhase(), 'undefined', "No phase for clone 2");
+
+    assert.equal(c3.getProductivityName(), "not productive", "clone 3 should not be productive");
+    assert.equal(c3.isProductive(), false, "clone 3 should not be productive");
+    assert.equal(c3.getPhase(), 'undefined', "No phase for clone 3");
+
 });

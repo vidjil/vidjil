@@ -1280,10 +1280,10 @@ genSeq.prototype= {
         result = document.createElement('span');
         currentSpan = document.createElement('span');
 
-        var isProductive = (! this.segmenter.amino &&
-                            this.m.clones.hasOwnProperty(this.segmenter.first_clone) &&
-                            this.m.clones[this.segmenter.first_clone].getProductivityName() == "productive"); // TODO : isProductive method
-        var reference_phase = (isProductive) ? (this.m.clones[this.segmenter.first_clone].seg.junction.start - 1) % 3 : undefined;
+        var canDisplaySynMutations = (! this.segmenter.amino &&
+                                      this.m.clones.hasOwnProperty(this.segmenter.first_clone) &&
+                                      this.m.clones[this.segmenter.first_clone].isProductive());
+        var reference_phase = (canDisplaySynMutations) ? (this.m.clones[this.segmenter.first_clone].getPhase()) : undefined;
 
         var mutations = {};
         var ref = '';

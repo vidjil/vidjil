@@ -22,7 +22,10 @@
  */
 
 /**
- * Clone object, store clone information and provide useful access function
+ * Clone object, store clone information and provide useful access function.
+ *
+ * BEWARE! Positions inside the seg field start at 0
+ *
  * @constructor Clone
  * @param {object} data - json style object, come directly from .vidjil file
  * @param {Model} model
@@ -920,6 +923,20 @@ Clone.prototype = {
         return "unknown"
     },
 
+    /**
+     * @return the  phase for the sequence.
+     * The phase is computed according to the CDR3. For the phase to be returned
+     * we need to have isProductive() (otherwise we return "undefined").
+     * The returned phase is an integer between 0 and 2. 0 meaning that
+     * the first codon should start at the first nucleotide of the sequence.
+     */
+    getPhase: function() {
+        if (this.isProductive()) {
+            return this.seg.junction.start % 3;
+        }
+        return 'undefined';
+    },
+
     getVIdentityIMGT: function () {
         if (typeof this.seg.imgt !== 'undefined' &&
             this.seg.imgt !== null) {
@@ -931,6 +948,16 @@ Clone.prototype = {
                 return this.seg.imgt["V-REGION identity % (with ins/del events)"];
         }
         return "unknown"
+    },
+
+    /**
+     * @return true iff the clone is productive, false otherwise.
+     * Thus the function doesn't differentiate between a non-productive
+     * clone and a clone for which we don't know. For more information
+     * see getProductivityName() function.
+     */
+    isProductive: function() {
+        return this.getProductivityName() == "productive";
     },
     
     /* compute clone color
