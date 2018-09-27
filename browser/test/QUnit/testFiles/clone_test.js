@@ -116,9 +116,11 @@ var json_clone5 = {
 
 QUnit.test("name, informations, getHtmlInfo", function(assert) {
     
+    assert.equal(json_clone1.seg.junction.start, 10, "Start junction is 10 in JSON for clone 1");
     var m = new Model();
     m.parseJsonData(json_data)
     var c1 = new Clone(json_clone1, m, 0)
+    assert.equal(c1.seg.junction.start, 9, "Start junction is now 9 for clone 1 as positions start at 0 in the code");
     var c2 = new Clone(json_clone2, m, 1)
     var c3 = new Clone(json_clone3, m, 2)
     var c4 = new Clone(json_clone4, m, 3)

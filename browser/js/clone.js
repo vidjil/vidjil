@@ -22,7 +22,10 @@
  */
 
 /**
- * Clone object, store clone information and provide useful access function
+ * Clone object, store clone information and provide useful access function.
+ *
+ * BEWARE! Positions inside the seg field start at 0
+ *
  * @constructor Clone
  * @param {object} data - json style object, come directly from .vidjil file
  * @param {Model} model
