@@ -688,3 +688,11 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         auth.add_permission(id_admin_group, PermissionEnum.create_config.value, db.config, 0)
         auth.add_permission(id_admin_group, PermissionEnum.create_pre_process.value, db.pre_process, 0)
         auth.add_permission(id_admin_group, 'impersonate', db.auth_user, 0)
+
+        auth.add_permission(id_public_group, PermissionEnum.read_config.value, db.config, 0)
+        for config in db(db.config.id > 0).select():
+            auth.add_permission(id_public_group, PermissionEnum.access.value, db.config, config.id)
+
+        auth.add_permission(id_public_group, PermissionEnum.read_pre_process.value, db.pre_process, 0)
+        for pre_process in db(db.pre_process.id > 0).select():
+            auth.add_permission(id_public_group, PermissionEnum.access.value, db.pre_process, pre_process.id)

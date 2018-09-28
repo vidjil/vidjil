@@ -95,12 +95,7 @@ def validate_sets(set_ids):
     return sets, id_dict, errors
 
 def get_pre_process_list():
-    query_pre_process = db(
-        db.pre_process>0
-    ).select(
-        db.pre_process.ALL,
-        orderby = ~db.pre_process.id
-    )
+    query_pre_process = db((auth.vidjil_accessible_query(PermissionEnum.read_pre_process.value, db.pre_process) | auth.vidjil_accessible_query(PermissionEnum.admin_pre_process.value, db.pre_process) ) ).select(orderby=~db.pre_process.id)
 
     pre_process_list = []
     for row in query_pre_process :

@@ -115,3 +115,68 @@ def info():
     else :
         res = {"message": "acces denied"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+def permission():
+    if (not auth.can_modify_pre_process(request.vars["id"]) ):
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+    query = db( (db.auth_group.role != 'admin') ).select()
+
+    query2 = db( (db.auth_group.role != 'admin') &
+                (db.auth_membership.group_id == db.auth_group.id) &
+                (db.auth_membership.user_id == db.auth_user.id)    
+              ).select()
+
+    usermap = {}
+    for row in query2 : 
+        if row.auth_group.role[:5] == "user_" :
+            usermap[row.auth_group.role] = row.auth_user.id 
+
+    for row in query :
+        row.owner = row.role
+        if row.owner[:5] == "user_" :
+            id = usermap[row.owner]
+            row.owner = db.auth_user[id].first_name + " " + db.auth_user[id].last_name
+
+        permissions = db(
+                (db.auth_permission.group_id == row.id) &
+                (db.auth_permission.record_id == 0) &
+                (db.auth_permission.table_name == 'sample_set')).select()
+        row.perms = ', '.join(map(lambda x: x.name, permissions))
+
+        row.parent_access = ', '.join(str(value) for value in auth.get_access_groups(db.pre_process, request.vars['id'], group=row.id))
+        row.read =  auth.get_group_access('pre_process', request.vars['id'], row.id)
+
+    return dict(query = query)
+
+#TODO refactor with patient/change_permission
+def change_permission():
+    if (not auth.can_modify_pre_process(request.vars["pre_process_id"]) ):
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+    error = ""
+    if request.vars["group_id"] == "" :
+        error += "missing group_id, "
+    if request.vars["pre_process_id"] == "" :
+        error += "missing pre_process_id, "
+
+    if error=="":
+        if auth.get_group_access(db.pre_process, int(request.vars["pre_process_id"]), int(request.vars["group_id"])):
+            auth.del_permission(request.vars["group_id"], PermissionEnum.access.value, db.pre_process, request.vars["pre_process_id"])
+            res = {"message" : "c%s: access '%s' deleted to '%s'" % (request.vars["pre_process_id"],
+                                                                     PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
+        else :
+            auth.add_permission(request.vars["group_id"], PermissionEnum.access.value, db.pre_process, request.vars["pre_process_id"])
+            res = {"message" : "c%s: access '%s' granted to '%s'" % (request.vars["pre_process_id"],
+                                                                     PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
+
+        log.admin(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    else :
+        res = {"message": "incomplete request : "+error }
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
