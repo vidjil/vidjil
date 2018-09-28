@@ -43,8 +43,14 @@ class TestSampleSet < ServerTest
     assert($b.select(:id => "group_select").present?)
 
     # add more elements to form
-    for i in 0..3 do
+    for i in 0..4 do
       $b.span(:id => "patient_button").click
+
+      # Delete a line to ensure robustness
+      if i == 2
+        l = $b.span(:text => "Patient %d" % i+2).parent
+        l.i(:class => "icon-cancel").click
+      end
     end
 
     # fill in form
