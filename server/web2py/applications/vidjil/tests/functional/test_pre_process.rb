@@ -94,7 +94,7 @@ class TestPreProcess < ServerTest
   def test_pre_process_permission
     table = go_to_list
 
-    line = table.td(:text => "test pre-process perm").parent
+    line = table.td(:text => "pre-process perm").parent
     line.i(:class => 'icon-key').click
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
 
