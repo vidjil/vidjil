@@ -450,6 +450,8 @@ def submit():
         if length not in length_mapping:
             length_mapping[length] = set_type
         for p in data[set_type]:
+            if p is None:
+                continue
             errors = helper.validate(p)
             action = "add"
             if len(errors) > 0:
