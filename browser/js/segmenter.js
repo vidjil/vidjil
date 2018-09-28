@@ -1235,8 +1235,11 @@ genSeq.prototype= {
      * @param {char} other
      * @return {string}  
      * */
-    spanify_mutation: function (self, other, mutation) {
-        if (mutation != undefined) {
+    spanify_mutation: function (self, other, mutation, i_am_first_clone) {
+        if (mutation != undefined && !i_am_first_clone) {
+            mutation = mutation.replace(END_CODON, END_CODON_NOT_FIRST)
+        }
+        if (mutation != undefined && mutation) {
             var span = document.createElement('span');
             span.className = mutation
             span.setAttribute('other', other + '-' + this.segmenter.first_clone);
@@ -1296,8 +1299,10 @@ genSeq.prototype= {
             ref = this.segmenter.sequence[this.segmenter.first_clone].seq;
         }
         if (this.segmenter.aligned) {
-            mutations = get_mutations(ref, seq, reference_phase);
+            mutations = get_mutations(ref, seq, reference_phase, true);
         }
+
+        var i_am_first_clone = (this.id == this.segmenter.first_clone)
         
         for (var i = 0; i < this.seq.length; i++) {
             for (var m in highlights){
@@ -1335,7 +1340,7 @@ genSeq.prototype= {
                 }
             }
 
-            currentSpan.appendChild(this.spanify_mutation(seq[i], ref[i], mutations.hasOwnProperty(i) ? mutations[i] : undefined))
+            currentSpan.appendChild(this.spanify_mutation(seq[i], ref[i], mutations.hasOwnProperty(i) ? mutations[i] : undefined, i_am_first_clone))
         }
         result.appendChild(currentSpan);
         var marge = ""
