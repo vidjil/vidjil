@@ -1,6 +1,7 @@
 #coding: utf-8
 from gluon.tools import Auth
 from gluon.dal import Row, Set, Query
+from enum import Enum
 
 from permission_enum import PermissionEnum
 
