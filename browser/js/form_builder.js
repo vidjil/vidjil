@@ -187,7 +187,6 @@ PatientFormBuilder.prototype.createCloseButton = function() {
         var close = Object.getPrototypeOf(PatientFormBuilder.prototype).createCloseButton.call(this);
         $(close).click(function() {
             var button = document.getElementById('patient_button');
-            button.dataset.index --;
         });
         return close;
     };
@@ -219,7 +218,6 @@ RunFormBuilder.prototype.createCloseButton = function() {
         var close = Object.getPrototypeOf(RunFormBuilder.prototype).createCloseButton.call(this);
         $(close).click(function() {
             var button = document.getElementById('run_button');
-            button.dataset.index--;
         });
         return close;
     };
@@ -247,7 +245,6 @@ GenericFormBuilder.prototype.createCloseButton = function() {
         var close = Object.getPrototypeOf(GenericFormBuilder.prototype).createCloseButton.call(this);
         $(close).click(function() {
             var button = document.getElementById('generic_button');
-            button.dataset.index--;
         });
         return close;
     };
@@ -390,7 +387,6 @@ FileFormBuilder.prototype.createCloseButton = function() {
         var close = Object.getPrototypeOf(FileFormBuilder.prototype).createCloseButton.call(this);
         $(close).click(function() {
             var button = document.getElementById('file_button');
-            button.dataset.index--;
         });
         return close;
     }
