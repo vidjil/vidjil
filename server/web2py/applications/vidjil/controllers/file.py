@@ -48,7 +48,9 @@ def link_to_sample_sets(seq_file_id, id_dict):
     Create sample set memberships and return a dict of the sample set ids.
     The keys to the dict are thee same as the ones passed in id_dict
     '''
+    log.debug("linking file %d to sets:" % seq_file_id)
     for key in id_dict:
+        log.debug("%s: %s" % (key, str(id_dict[key])))
         arr = [{'sample_set_id': oid, 'sequence_file_id': seq_file_id} for oid in id_dict[key]]
         db.sample_set_membership.bulk_insert(arr)
     db.commit()
