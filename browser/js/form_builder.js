@@ -43,7 +43,7 @@ FormBuilder.prototype.build_label = function(txt, object, field) {
         var l = document.createElement('label');
         l.htmlFor = field + "_" + this.index;
         l.id = object + "_" + field + "__label_" + this.index;
-        l.innerText = txt + ":";
+        $(l).text(txt + ":"); // for compatibility with older browsers (FF32, IE7/8)
         return l;
     }
 
@@ -96,14 +96,14 @@ FormBuilder.prototype.build_div = function(type) {
         d.appendChild(c);
         var s = document.createElement('span');
         s.className = "left form_label"
-        s.innerText = capitalise(type == 'generic' ? 'set' : type) + " " + (this.index+1);
+        $(s).text(capitalise(type == 'generic' ? 'set' : type) + " " + (this.index+1)); // for compatibility with older browsers (FF32, IE7/8)
         d.appendChild(s);
         return d;
     }
 
 FormBuilder.prototype.build_legend = function(text) {
         var l = document.createElement('legend');
-        l.innerText = text;
+        $(l).text(text); // for compatibility with older browsers (FF32, IE7/8)
         return l;
     }
 
@@ -187,7 +187,6 @@ PatientFormBuilder.prototype.createCloseButton = function() {
         var close = Object.getPrototypeOf(PatientFormBuilder.prototype).createCloseButton.call(this);
         $(close).click(function() {
             var button = document.getElementById('patient_button');
-            button.dataset.index --;
         });
         return close;
     };
@@ -219,7 +218,6 @@ RunFormBuilder.prototype.createCloseButton = function() {
         var close = Object.getPrototypeOf(RunFormBuilder.prototype).createCloseButton.call(this);
         $(close).click(function() {
             var button = document.getElementById('run_button');
-            button.dataset.index--;
         });
         return close;
     };
@@ -247,7 +245,6 @@ GenericFormBuilder.prototype.createCloseButton = function() {
         var close = Object.getPrototypeOf(GenericFormBuilder.prototype).createCloseButton.call(this);
         $(close).click(function() {
             var button = document.getElementById('generic_button');
-            button.dataset.index--;
         });
         return close;
     };
@@ -390,7 +387,6 @@ FileFormBuilder.prototype.createCloseButton = function() {
         var close = Object.getPrototypeOf(FileFormBuilder.prototype).createCloseButton.call(this);
         $(close).click(function() {
             var button = document.getElementById('file_button');
-            button.dataset.index--;
         });
         return close;
     }
