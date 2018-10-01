@@ -106,6 +106,18 @@ class TestSample < ServerTest
     assert($b.link(:text => "#edited").present?)
   end
 
+  def test_set_association_preservation
+    assert False
+  end
+
+  def test_set_association_create
+    assert False
+  end
+
+  def test_set_association_update
+    assert False
+  end
+
   def test_delete
     table = go_to_set 3
 
