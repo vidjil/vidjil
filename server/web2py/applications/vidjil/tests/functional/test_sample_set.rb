@@ -55,11 +55,16 @@ class TestSampleSet < ServerTest
 
     # fill in form
     for i in 0..4 do
-      form.text_field(:id => "patient_id_label_%d" % i).set("test_label %d" % i)
-      form.text_field(:id => "patient_first_name_%d"% i).set("first %d" % i)
-      form.text_field(:id => "patient_last_name_%d" % i).set("last %d" % i)
-      form.text_field(:id => "patient_birth_%d" % i).set("2010-10-10")
-      form.text_field(:id => "patient_info_%d" % i).set("patient %d #test #mytag%d" % [i, i])
+      if i > 2
+        k = i+1
+      else
+        k = i
+      end
+      form.text_field(:id => "patient_id_label_%d" % k).set("test_label %d" % k)
+      form.text_field(:id => "patient_first_name_%d"% k).set("first %d" % k)
+      form.text_field(:id => "patient_last_name_%d" % k).set("last %d" % k)
+      form.text_field(:id => "patient_birth_%d" % k).set("2010-10-10")
+      form.text_field(:id => "patient_info_%d" % k).set("patient %d #test #mytag%d" % [k, k])
     end
 
     form.input(:type => "submit").click
