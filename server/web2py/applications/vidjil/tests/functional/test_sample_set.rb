@@ -48,7 +48,7 @@ class TestSampleSet < ServerTest
 
       # Delete a line to ensure robustness
       if i == 2
-        l = $b.span(:text => "Patient %d" % i+2).parent
+        l = $b.span(:text => "Patient %d" % (i+2)).parent
         l.i(:class => "icon-cancel").click
       end
     end
