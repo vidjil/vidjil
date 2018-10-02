@@ -106,7 +106,7 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
     // Use a set to use the comparator and sort function
     set<pair<KmerAffect, int>, Comparator> setOfWords(mapAho.begin(), mapAho.end(), compFunctor);
     // Iterate over the pair and not the map
-    int nbKmers = 0, previousOccurences = 0;
+    int nbKmers = 0;
     int nb_kmers_limit = -1;    // Limit number of kmers, defined when the last gene of interest is reached
     
     for(pair<KmerAffect, int> element : setOfWords){
@@ -132,7 +132,6 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
             return originalBioReader;
           }
         }
-        previousOccurences = element.second;
     }
   }
   this->filtered_sequences_nb += (result.size () == 0) ? originalBioReader.size() : result.size();
