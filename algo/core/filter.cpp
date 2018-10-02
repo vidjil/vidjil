@@ -114,7 +114,7 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
         if(!element.first.isGeneric()){
           continue;
         }
-        if(nbKmers == kmer_threshold && nb_kmers_limit == element.second){
+        if(nbKmers == kmer_threshold && nb_kmers_limit <= element.second){
           // We have reached our limit of number of genes recovered but we
           // continue taking sequences are they have a similar number of
           // matching k-mers.
