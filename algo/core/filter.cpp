@@ -58,7 +58,7 @@ void FilterWithACAutomaton::buildACAutomatonToFilterBioReader(string seed){
   based on it.
 */
 BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
-    seqtype &seq, int kmer_threshold){
+    seqtype &seq, int kmer_threshold, int pvalue){
 
   BioReader result;
   map<KmerAffect, int> mapAho;
@@ -126,7 +126,7 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
         transferBioReaderSequences(originalBioReader, result, element.first);
         if (nbKmers == kmer_threshold && nb_kmers_limit == -1) {
           int maxlen = getSizeLongestTransferredSequence(result, element.first);
-          nb_kmers_limit = compute_nb_kmers_limit(element.first.getLength(), element.second, maxlen);
+          nb_kmers_limit = compute_nb_kmers_limit(element.first.getLength(), element.second, maxlen, pvalue);
           if (nb_kmers_limit == 0) {
             this->filtered_sequences_nb += originalBioReader.size();
             return originalBioReader;

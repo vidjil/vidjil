@@ -22,7 +22,7 @@ class FilterWithACAutomaton {
 
     ~FilterWithACAutomaton();
 
-  /*
+    /**
     This function will filter a BioReader
     @param idxAho:  A pointer to a pair containing an int vector pointer and
                     an AbstractACAutomaton pointer parametrized by KmerAffect.
@@ -39,9 +39,11 @@ class FilterWithACAutomaton {
                     it will filter on the "kmer_threshold" number of K-mers. For
                     Example if kmer_threshold = 10, it will filter on the 10 most
                     significant K-mers returned by getMultiResults.
-  */
+    @param pvalue: The pvalue to be used for determining the minimal number of kmers.
+                   This pvalu must actually be given as an integer (90, for .9, 999 for .999…)
+    */
   BioReader filterBioReaderWithACAutomaton(
-      seqtype &seq, int kmer_threshold = NO_LIMIT_VALUE);
+      seqtype &seq, int kmer_threshold = NO_LIMIT_VALUE, int pvalue=999);
   /*
     This function takes a BioReader as a parameter and returns
     a couple containing an int vector pointer and an automaton
