@@ -14,6 +14,6 @@
  * @return The lower bound of the confidence interval assumuing that the center of the confidence 
  *         interval is given by `nb_occ`. In all cases the returned value will be >= 0.
  */
-int compute_nb_kmers_limit(int kmer_size, int nb_occ, int sequence_length, int p_value=95);
+int compute_nb_kmers_limit(int kmer_size, int nb_occ, int sequence_length, int p_value=99);
 
 #endif
