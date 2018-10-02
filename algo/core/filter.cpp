@@ -1,4 +1,5 @@
 #include "filter.h"
+#include "math.hpp"
 
 FilterWithACAutomaton::FilterWithACAutomaton(BioReader &origin, string seed) : originalBioReader(origin){
   this->filtered_sequences_nb = 0;
@@ -106,19 +107,31 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
     set<pair<KmerAffect, int>, Comparator> setOfWords(mapAho.begin(), mapAho.end(), compFunctor);
     // Iterate over the pair and not the map
     int nbKmers = 0, previousOccurences = 0;
+    int nb_kmers_limit = -1;    // Limit number of kmers, defined when the last gene of interest is reached
+    
     for(pair<KmerAffect, int> element : setOfWords){
       // Add corresponding sequences to the BioReader
         if(!element.first.isGeneric()){
           continue;
         }
-        if(nbKmers == kmer_threshold && previousOccurences == element.second){
-          //Keep the same amount of genes
+        if(nbKmers == kmer_threshold && nb_kmers_limit == element.second){
+          // We have reached our limit of number of genes recovered but we
+          // continue taking sequences are they have a similar number of
+          // matching k-mers.
         }else if(nbKmers < kmer_threshold){
           nbKmers++;
         }else{
           break;
         }
         transferBioReaderSequences(originalBioReader, result, element.first);
+        if (nbKmers == kmer_threshold && nb_kmers_limit == -1) {
+          int maxlen = getSizeLongestTransferredSequence(result, element.first);
+          nb_kmers_limit = compute_nb_kmers_limit(element.first.getLength(), element.second, maxlen);
+          if (nb_kmers_limit == 0) {
+            this->filtered_sequences_nb += originalBioReader.size();
+            return originalBioReader;
+          }
+        }
         previousOccurences = element.second;
     }
   }
@@ -136,6 +149,22 @@ void FilterWithACAutomaton::transferBioReaderSequences(const BioReader &src, Bio
   for(int i = indexes->at(asciiNum - SPECIFIC_KMERS_NUMBER); i < indexes->at(asciiNum - SPECIFIC_KMERS_NUMBER + 1); ++i){
     dst.add(src.read(i));
   }
+}
+
+int FilterWithACAutomaton::getSizeLongestTransferredSequence(const BioReader &reader, KmerAffect k) const{
+  char asciiChar = k.getLabel().at(0);
+  unsigned int asciiNum = int(asciiChar);
+
+  if(asciiNum > indexes->size() || !k.isGeneric()){
+    throw invalid_argument("Incorrect K-mer transmitted.");
+  }
+
+  size_t longest = 0;
+  for(int i = 0; i < indexes->at(asciiNum - SPECIFIC_KMERS_NUMBER + 1) - indexes->at(asciiNum - SPECIFIC_KMERS_NUMBER); ++i){
+    if (longest < reader.sequence(reader.size() - i - 1).length())
+      longest = reader.sequence(reader.size() - i - 1).length();
+  }
+  return longest;
 }
 
 vector<int>* FilterWithACAutomaton::getIndexes() const{

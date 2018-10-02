@@ -114,5 +114,12 @@ class FilterWithACAutomaton {
   void transferBioReaderSequences(const BioReader &src, BioReader &dst, const KmerAffect k) const;
 
   friend ostream &operator<<(ostream&, const FilterWithACAutomaton&);
+
+ private:
+  /**
+   * Get the size of the longest sequence among the sequences that were just
+   * transferred to the BioReader reader.
+   */
+  int getSizeLongestTransferredSequence(const BioReader &reader, KmerAffect k) const;
 };
 #endif
