@@ -27,6 +27,7 @@ enum {
   /* Filter tests */
   TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
   TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON,
+  TEST_FILTER_BIOREADER_PVALUE,
 
   TEST_CREATE_SEQUENCE_LABEL_FULL,
   TEST_CREATE_SEQUENCE_LABEL,
@@ -220,6 +221,7 @@ inline void declare_tests() {
     "Check the automaton and the index vector produced while filtering a BioReader");	
   RECORD_TAP_TEST(TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, 
     "Filter a BioReader using the getMultiResults of an automaton");
+  RECORD_TAP_TEST(TEST_FILTER_BIOREADER_PVALUE, "Filtering BioReader with p-value");
 
 	RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_LABEL_FULL, "create_sequence: label_full field");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_LABEL, "create_sequence: label field");

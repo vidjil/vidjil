@@ -626,6 +626,54 @@ void testOriginalBioReaderIsReturned(){
   delete f;
 }
 
+void testPvalueRoleInFiltration() {
+  BioReader germline;
+  // seq+endseq are a substring of a de Bruijn sequence for k=4
+  // (ie. all k-mers are different)
+  // http://www.hakank.org/comb/debruijn.cgi?k=4&n=4
+  string seq = "ACTTAGAGATAGCCAGCGAGCTAGGCAGGGAGGTAGTCAGTGAGTTATA";
+  string endseq = "TCCATCGATCTATGCATGGATGTATTCATTG";
+  int nb_seq = 10;
+  // Add sequences with an increasing number of As
+  for (int i = 0; i < nb_seq; i++) {
+    // We add the Ts to  have a long enough reference sequence, otherwise it
+    // would bias the p-value computation
+    germline.add({"seq"+to_string(i), "seq"+to_string(i), seq.substr(0, 10 + i*4)+"TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT", "", 0});
+  }
+  germline.add({"seq"+to_string(nb_seq), "seq"+to_string(nb_seq), seq+"TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT", "", 0});
+
+  FilterWithACAutomaton filter(germline, "####");
+
+  cerr << "First filtering" << endl;
+  string query = seq + endseq;
+  // seq have 49 nt, so about 46 k-mers should match.
+
+  // With a 90% confidence interval, we will get sequences with ≥40 k-mers
+  // Thus we'll get
+  // seq10 (whole sequence)
+  // seq9 46nt (without T homopolymer) → 42 k-mers
+  BioReader result = filter.filterBioReaderWithACAutomaton(query, 1, 90);
+  TAP_TEST_EQUAL(result.size(), 2, TEST_FILTER_BIOREADER_PVALUE, "");
+  TAP_TEST_EQUAL(result.label(0), "seq10", TEST_FILTER_BIOREADER_PVALUE, "");
+  TAP_TEST_EQUAL(result.label(1), "seq9", TEST_FILTER_BIOREADER_PVALUE, "");
+
+  cerr << "Second filtering" << endl;
+  // The p-value should give us a threshold around 32 k-mers, which could be reached first for
+  // sequence seq7 → 4 sequences in total
+  result = filter.filterBioReaderWithACAutomaton(query, 1, 999);
+  TAP_TEST_EQUAL(result.size(), 4, TEST_FILTER_BIOREADER_PVALUE, "");
+  TAP_TEST_EQUAL(result.label(3), "seq7", TEST_FILTER_BIOREADER_PVALUE, "");
+
+  // The third sequence with most kmers will be seq8
+  // which is of length 42nt → 39 k-mers
+  // With a 90% confidence interval, we will get sequences with ≥33 k-mers
+  // → from seq7 (38nt and 35 k-mers) to seq10
+  result = filter.filterBioReaderWithACAutomaton(query, 3, 90);
+  TAP_TEST_EQUAL(result.size(), 4, TEST_FILTER_BIOREADER_PVALUE, "");
+  TAP_TEST_EQUAL(result.label(3), "seq7", TEST_FILTER_BIOREADER_PVALUE, "");
+
+}
+
 void testFilter(){
   testAutomatonBuilderFilteringBioReader();
   testFilterBioReaderWithACAutomaton();
@@ -634,4 +682,5 @@ void testFilter(){
   testExAequoKmersWhenSignificantParameter();
   testTransferBioReaderSequences();
   testOriginalBioReaderIsReturned();
+  testPvalueRoleInFiltration();
 }
