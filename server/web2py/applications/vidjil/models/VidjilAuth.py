@@ -603,6 +603,7 @@ class VidjilAuth(Auth):
         return query
 
     def log_event(self, description, vars=None, origin='auth'):
+        super(VidjilAuth, self).log_event(description, vars, origin)
         if self.log and description:
             message = description % vars + '.'
             for (k,v) in vars.iteritems():
