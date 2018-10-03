@@ -661,13 +661,14 @@ def getStatHeaders():
     p = BarDecorator()
     bc = BarChartDecorator()
     lbc = LabeledBarChartDecorator()
+    g = GenescanDecorator()
     l = LociListDecorator()
     return [('sample_sets', 'db', s),
             ('main_clone', 'parser', m),
             ('reads', 'parser', m),
             ('mapped', 'parser', m),
             ('mapped_percent', 'parser', p),
-            ('genescan', 'parser', lbc),
+            ('genescan', 'parser', g),
             #('bool', 'parser', b),
             #('bool_true', 'parser', b),
             ('loci', 'parser', l),
