@@ -81,6 +81,9 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
 
         if (typeof labels == "undefined") {
             for (var i in this.values){
+                if (this.ignore(this.values[i]))
+                    continue;
+
                 if (! this.values[i].isVirtual()) {
                     var tmp = this.applyConverter(this.values[i]);
 
