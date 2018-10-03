@@ -660,13 +660,14 @@ def getStatHeaders():
     b = BooleanDecorator()
     p = BarDecorator()
     bc = BarChartDecorator()
+    lbc = LabeledBarChartDecorator()
     l = LociListDecorator()
     return [('sample_sets', 'db', s),
             ('main_clone', 'parser', m),
             ('reads', 'parser', m),
             ('mapped', 'parser', m),
             ('mapped_percent', 'parser', p),
-            ('genescan', 'parser', bc),
+            ('genescan', 'parser', lbc),
             #('bool', 'parser', b),
             #('bool_true', 'parser', b),
             ('loci', 'parser', l),
@@ -710,15 +711,15 @@ def getFusedStats(file_name, res, dest):
             tmp[arl] += c['reads'][result_index]
     min_len = int(min(tmp.keys()))
     max_len = int(max(tmp.keys()))
-    tmp_arr = []
     log.debug(str(tmp.keys()))
+    tmp_dict = {}
     for i in range(max_len - min_len):
         cursor = i + min_len
         if cursor in tmp:
-            tmp_arr.insert(i, 100.0*math.log(tmp[cursor])/math.log(reads))
+            tmp_dict[i] = 100.0*math.log(tmp[cursor])/math.log(reads)
         else:
-            tmp_arr.insert(i, 0)
-    dest['genescan'] = tmp_arr
+            tmp_dict[i] = 0
+    dest['genescan'] = tmp_dict
 
     #dest['bool'] = False
     #dest['bool_true'] = True
