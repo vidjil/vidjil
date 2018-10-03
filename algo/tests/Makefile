@@ -16,7 +16,7 @@ SHOULD_LOG=$(SHOULD:.should-get=.tap)
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
 SHOULD_VDJ_VDJ=$(SHOULD_VDJ:.should-vdj.fa=.1.vdj)
 SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
-SHOULD_VDJ_TO_TAP=python -u should-vdj-to-tap.py
+SHOULD_VDJ_TO_TAP=time python -u should-vdj-to-tap.py
 REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
 VALGRIND=valgrind
 VALGRIND_TOOLS= --tool=memcheck --leak-check=full --show-reachable=yes --trace-children=yes
@@ -71,7 +71,7 @@ snapshot_diff_current:
 
 
 should: vidjil
-	python3 should.py --xml $(SHOULD)
+	time python3 should.py --xml $(SHOULD)
 
 shouldvdj_if_python:
 	if python ../../tools/check_python_version.py ; \
@@ -122,7 +122,7 @@ curated-vdj.zip: $(SHOULD_VDJ_ARCHIVE)
 
 valgrind_should: vidjil
 	$(MAKE) -C "$(REPORTS_PATH)" clean_valgrind
-	python3 should.py --launcher "$(VALGRIND_CMD)" $(SHOULD)
+	time python3 should.py --launcher "$(VALGRIND_CMD)" $(SHOULD)
 
 valgrind_%:
 	LAUNCHER="$(VALGRIND_CMD)" $(MAKE) $(patsubst valgrind_%,%,$@)
