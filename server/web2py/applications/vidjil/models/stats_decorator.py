@@ -73,6 +73,6 @@ class LociListDecorator(StatDecorator):
     def decorate(self, data):
         loci = []
         for locus in data:
-            span = SPAN(locus)
+            span = SPAN(locus, _class="stats_locus")
             loci.append(span)
         return DIV(*loci)
