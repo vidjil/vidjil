@@ -1690,8 +1690,8 @@ ScatterPlot.prototype = {
         this.mode = mode;
         this.compute_size();
 
-        this.axisX = this.updateAxis(this.splitX, false);
-        this.axisY = this.updateAxis(this.splitY, true);
+        this.axisX = this.updateAxis(this.splitX, false, (this.mode == this.MODE_BAR));
+        this.axisY = this.updateAxis(this.splitY, true, false);
         
         if (this.mode == this.MODE_BAR){
             this.updateBar();
@@ -1719,7 +1719,7 @@ ScatterPlot.prototype = {
      * @param {Axis} axis
      * @param {string} splitMethod
      * */
-    updateAxis: function(splitMethod, is_Y) {
+    updateAxis: function(splitMethod, is_Y, adaptAxis) {
         if (typeof is_Y === "undefined") is_Y = false;
         var axis;
         var aa = this.available_axis[splitMethod] 
@@ -1730,6 +1730,8 @@ ScatterPlot.prototype = {
 
         axis = aa.axis;
         axis.reverse = is_Y;
+        axis.adapt = adaptAxis
+
         if (is_Y)
             axis.MAX_NB_STEPS_IN_AXIS = 6
         axis.init(this.m.clones, aa.fct, aa.labels, aa.sort, aa.min, aa.max, aa.log, aa.display_label);
