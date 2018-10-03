@@ -720,8 +720,8 @@ def getFusedStats(file_name, res, dest):
             tmp_arr.insert(i, 0)
     dest['genescan'] = tmp_arr
 
-    dest['bool'] = False
-    dest['bool_true'] = True
+    #dest['bool'] = False
+    #dest['bool_true'] = True
     dest['loci'] = [x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0]
     dest['barchart'] = [68, 27, 18, 45, 89, 63, 53, 64, 93, 21, 47,  5, 64, 68, 46, 68, 18,
         72, 36, 70, 39, 21, 84, 32, 29,  4, 76, 51, 33, 67, 14, 57, 75, 61,
