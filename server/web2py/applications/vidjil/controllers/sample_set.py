@@ -667,8 +667,8 @@ def getStatHeaders():
             ('mapped', 'parser', m),
             ('mapped_percent', 'parser', p),
             ('genescan', 'parser', bc),
-            ('bool', 'parser', b),
-            ('bool_true', 'parser', b),
+            #('bool', 'parser', b),
+            #('bool_true', 'parser', b),
             ('loci', 'parser', l),
             ('barchart', 'parser', bc)
         ]
