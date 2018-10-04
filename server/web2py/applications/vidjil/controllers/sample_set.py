@@ -673,7 +673,8 @@ def getStatHeaders():
             #('bool_true', 'parser', b),
             ('loci', 'parser', l),
             ('distribution', 'parser', lbc),
-            ('clones_five_percent', 'parser', m)
+            ('clones_five_percent', 'parser', m),
+            ('abundance', 'parser', lbc)
         ]
 
 def getFusedStats(file_name, res, dest):
@@ -695,6 +696,7 @@ def getFusedStats(file_name, res, dest):
     dest['reads'] = reads
     dest['mapped'] = "%d" % (data['reads']['segmented'][result_index])
     dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
+    dest['abundance'] = [(key, 100.0*data['reads']['germline'][key][result_index]/reads) for key in data['reads']['germline']]
 
     tmp = {}
     for c in data['clones']:
