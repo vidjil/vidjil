@@ -26,7 +26,7 @@ class BarDecorator(StatDecorator):
         super(BarDecorator, self).__init__()
 
     def decorate(self, data):
-        return DIV(SPAN(_style="width: %d%%" % data), _class="meter", _title="%d%%" % data)
+        return DIV(SPAN(_class="meter_bar", _style="width: %d%%" % data), SPAN(SPAN("%d%%" % data, _class="meter_value"), _class="value_container"), _class="meter", _title="%d%%" % data)
 
 class BarChartDecorator(StatDecorator):
 
