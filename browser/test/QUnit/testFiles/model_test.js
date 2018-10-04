@@ -379,3 +379,23 @@ QUnit.test("normalization: test", function(assert) {
 
    // m.compute_data_normalization()
 });
+
+QUnit.test("findGermlineFromGene", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100)
+    gene5_name = "IGHV1-18*01"
+    gene5_seq  = "caggttcagctggtgcagtctggagct...gaggtgaagaagcctggggcctcagtgaaggtctcctgcaaggcttctggttacaccttt............accagctatggtatcagctgggtgcgacaggcccctggacaagggcttgagtggatgggatggatcagcgcttac......aatggtaacacaaactatgcacagaagctccag...ggcagagtcaccatgaccacagacacatccacgagcacagcctacatggagctgaggagcctgagatctgacgacacggccgtgtattactgtgcgagaga"
+    gene3_name = "IGHJ6*01"
+    gene3_seq  = "......attactactactactacggtatggacgtctgggggcaagggaccacggtcaccgtctcctcag"
+    var getted = m.findGermlineFromGene(gene5_name)
+    assert.equal(getted, gene5_seq, 'function return the correct sequence for the gene V: IGHV1-18*01')
+
+    // As gene3 contain the upstream, the test verify if the sequence getted includes the original sequence
+    var getted = m.findGermlineFromGene(gene3_name).includes(gene3_seq)
+    assert.equal(getted, true, 'function return the correct sequence for the gene J: IGHJ6*01')
+
+    var getted = m.findGermlineFromGene("unknown_gene")
+    assert.equal(getted, "", 'function return the correct sequence for the gene J: unknown_gene')
+
+});
+
