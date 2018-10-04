@@ -2119,10 +2119,13 @@ changeAlleleNotation: function(alleleNotation) {
                 }
             }
 
+
             for (var k=0; k<listGene.length; k++){
                 var germName = gene_germline[k].substring(0, 3);
-
-                if (typeof this.germline[germName][listGene[k]] != 'undefined') {
+                if (gene_germline[k] == "unexpected") {
+                    fasta += ">" + listGene[k] + '\n';
+                    fasta += this.findGermlineFromGene(listGene[k]).toUpperCase().replace(/\./g, '') + '\n';
+                } else if (typeof this.germline[germName][listGene[k]] != 'undefined') {
                     fasta += ">" + listGene[k] + '\n';
                     fasta += this.germline[germName][listGene[k]].toUpperCase().replace(/\./g, '') + '\n';
                 }
