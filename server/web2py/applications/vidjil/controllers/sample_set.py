@@ -676,14 +676,6 @@ def getStatHeaders():
             ('clones_five_percent', 'parser', m)
         ]
 
-def getResultsFileStats(file_name, dest):
-    file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
-    with open(file_path, 'rb') as f:
-        objects = ijson.items(f, 'samples.results_file_id')
-
-        dest['results_file_ids'] = json.loads(mjson)['results_file_id']
-        return dest
-
 def getFusedStats(file_name, res, dest):
     file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
     parser = VidjilParser()
