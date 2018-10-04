@@ -707,7 +707,6 @@ def getFusedStats(file_name, res, dest):
             tmp[arl] += c['reads'][result_index]
     min_len = int(min(tmp.keys()))
     max_len = int(max(tmp.keys()))
-    log.debug(str(tmp.keys()))
     tmp_dict = {}
     for i in range(max_len - min_len):
         cursor = i + min_len
