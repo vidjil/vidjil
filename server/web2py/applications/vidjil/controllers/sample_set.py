@@ -678,7 +678,9 @@ def getStatHeaders():
         ]
 
 def getFusedStats(file_name, res, dest):
+    log.debug("getFusedStats()")
     file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
+    log.debug("file_path: %s" % file_path)
     parser = VidjilParser()
     parser.addPrefix('clones.item', 'clones.item.top', operator.le, 100)
     parser.addPrefix("reads")
@@ -742,6 +744,7 @@ def getResultsStats(file_name, dest):
     return dest
 
 def getStatData(results_file_ids):
+    log.debug("getStatData(%s)" % str(results_file_ids))
     mf = ModelFactory()
     set_types = [defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC]
     helpers = {}
@@ -833,8 +836,8 @@ def multi_sample_stats():
         )
 
     permitted_results_ids = [r.results_file_id for r in permitted_results]
-    log.debug("premitted: " + str(permitted_results_ids))
-    log.debug("custom: " + str(custom_result))
+    log.debug("multi_sample_stats premitted: " + str(permitted_results_ids))
+    log.debug("multi_sample_stats requested: " + str(custom_result))
     if set(permitted_results_ids) != set(custom_result):
         res = {"message": ACCESS_DENIED}
         log.error(res)
