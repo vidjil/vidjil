@@ -721,7 +721,7 @@ def getFusedStats(file_name, res, dest):
     #dest['bool'] = False
     #dest['bool_true'] = True
     dest['loci'] = [x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0]
-    dest['clones_five_percent'] = sum([data['reads']['distribution'][key][1] for key in data['reads']['distribution']])
+    dest['clones_five_percent'] = sum([data['reads']['distribution'][key][result_index] for key in data['reads']['distribution']])
     return dest
 
 def getResultsStats(file_name, dest):
