@@ -10,7 +10,7 @@
                 <span class="content {{=h}}">{{=h}}</span>
             </td>
             {{ pass }}
-            <td class="column5"></td>
+            <td class="column5 devel-mode"></td>
         </tr>
         </thead>
         <tbody>
@@ -21,7 +21,7 @@
                         <span class="content {{=h}}">{{=res[h]}}</span>
                     </td>
                     {{ pass }}
-                    <td>
+                    <td class="devel-mode">
                        <span class="pointer" onclick="db.call('default/run_extra', { 'sequence_file_id' : '{{=res["sequence_file_id"]}}', 'config_id' : {{=res["config_id"]}} } )"><i class="icon-cog-2" title="Run the selected configuration for this file"></i></span>
                     </td>
                 </tr>
