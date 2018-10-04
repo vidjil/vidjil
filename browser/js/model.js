@@ -2137,6 +2137,23 @@ changeAlleleNotation: function(alleleNotation) {
         
     },
 
+    /** 
+     * Bypass the germline name to ge tthe sequence of a gene
+     * This function is used for case of unexpected
+     * return the sequence (if found), else an empty string
+     */
+    findGermlineFromGene: function(gene_name){
+        for (i in this.germline){
+            for (j in this.germline[i]){
+                if (gene_name == j){
+                    return this.germline[i][j]
+                }
+            }
+        }
+        // Case if gene is not present in this.germline
+        return ""
+    },
+
     exportViewToPNG: function(tag) {
         exportD3ToPNG(tag, decodeURIComponent(this.getPrintableAnalysisName().replace(/[ \/\\:]/,'_')));
     },
