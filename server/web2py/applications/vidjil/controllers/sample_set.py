@@ -725,7 +725,25 @@ def getFusedStats(file_name, res, dest):
     #dest['bool'] = False
     #dest['bool_true'] = True
     dest['loci'] = [x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0]
-    dest['distribution'] = sorted([(x[0], 100.0*x[1][result_index]/reads) for x in data['reads']['distribution'].items()], key=operator.itemgetter(0))
+    return dest
+
+def getResultsStats(file_name, dest):
+    import ijson.backends.yajl2_cffi as ijson
+    log.debug("getResultsStats()")
+    file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
+    log.debug("file_path: %s" % file_path)
+    distributions = []
+    with open(file_path, 'rb') as results:
+        i = "1"
+        while True:
+            results.seek(0, 0)
+            tmp =  [d for d in ijson.items(results, "reads-distribution-%s.item" % i)]
+            if len(tmp) == 0:
+                break
+            else:
+                distributions.append((i, tmp[0]))
+                i += "0"
+    dest['distribution'] = distributions
     return dest
 
 def getStatData(results_file_ids):
@@ -790,6 +808,7 @@ def getStatData(results_file_ids):
         set_type = res['sample_type']
         headers = getStatHeaders()
         d = getFusedStats(res['fused_file'], res, d)
+        d = getResultsStats(res['data_file'], d)
         for head, htype, model in headers:
             if htype == 'db':
                 d[head] = res[head]
