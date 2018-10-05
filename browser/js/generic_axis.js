@@ -42,6 +42,7 @@ function GenericAxis (reverse, can_undefined) {
     this.reverse = false;
     if(typeof reverse !== "undefined")
         this.reverse = reverse
+    this.adapt = false
 }
 
 GenericAxis.prototype = {
@@ -62,7 +63,12 @@ GenericAxis.prototype = {
         this.populateLabels(labels, sort);
         this.populateValueMapping();
 
+
         return this;
+    },
+
+    ignore: function(clone) {
+        return this.adapt && clone.isFiltered
     },
 
     compareLabels: function(a, b) {
@@ -86,6 +92,8 @@ GenericAxis.prototype = {
         else {
             for (var i=0; i < values.length; i++) {
                 var value = values[i];
+                if (this.ignore(value))
+                    continue;
                 var convert = this.applyConverter(value);
                 var pos;
                 if (labels.indexOf(convert) != -1) {
@@ -122,6 +130,8 @@ GenericAxis.prototype = {
             // if (value.isVirtual())
             //    continue ;  // ? pas toujours ?
 
+            if (this.ignore(value))
+                continue;
             var convert = this.applyConverter(value);
 
             if (typeof round !== 'undefined')
@@ -207,6 +217,8 @@ GenericAxis.prototype = {
         var has_undefined;
         for (var i = 0; i < values.length; i++) {
             var value = values[i];
+            if (this.ignore(value))
+                continue;
             var key = this.applyConverter(value);
             if (typeof key == 'undefined') {
                 has_undefined = true;
