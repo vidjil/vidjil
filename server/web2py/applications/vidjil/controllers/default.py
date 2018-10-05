@@ -158,7 +158,14 @@ def run_contamination():
     log.error(res)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
-
+def run_extra():
+    task = scheduler.queue_task('compute_extra', pvars=dict(id_file=request.vars["sequence_file_id"],
+                                                            id_config=request.vars["config_id"],
+                                                            min_threshold=5))
+    res = {"success" : "true",
+           "processId" : task.id}
+    log.debug(res)
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def checkProcess():
     task = db.scheduler_task[request.vars["processId"]]
