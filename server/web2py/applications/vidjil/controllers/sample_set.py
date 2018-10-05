@@ -665,8 +665,8 @@ def getStatHeaders():
     l = LociListDecorator()
     return [('sample_sets', 'db', s),
             ('main_clone', 'parser', m),
-            ('reads', 'parser', m),
-            ('mapped', 'parser', m),
+            #('reads', 'parser', m),
+            ('mapped reads', 'parser', m),
             ('mapped_percent', 'parser', p),
             ('read lengths', 'parser', g),
             #('bool', 'parser', b),
@@ -695,8 +695,9 @@ def getFusedStats(file_name, res, dest):
         result_index = data['samples']['original_names'].index(defs.DIR_SEQUENCES + res['sequence_file'])
     dest['main_clone'] = data['clones'][0]['name']
     reads = data['reads']['total'][result_index]
-    dest['reads'] = reads
-    dest['mapped'] = "%d" % (data['reads']['segmented'][result_index])
+    # dest['reads'] = reads
+    mapped_reads = data['reads']['segmented'][result_index]
+    dest['mapped reads'] = "%d / %d (%.2f %%)" % (mapped_reads, reads, 100.0*mapped_reads/reads if reads else 0)
     dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
     dest['abundance'] = [(key, 100.0*data['reads']['germline'][key][result_index]/reads) for key in data['reads']['germline']]
 
