@@ -2146,6 +2146,15 @@ changeAlleleNotation: function(alleleNotation) {
      * return the sequence (if found), else an empty string
      */
     findGermlineFromGene: function(gene_name){
+        // If germline can be determined from gene name
+        if (this.germline[gene_name.substring(0, 3).toUpperCase()] != undefined)
+            var locus = gene_name.substring(0, 3).toUpperCase()
+            for (var j in this.germline[locus]){
+                if (gene_name == j){
+                    return this.germline[locus][j]
+                }
+            }
+        // Else, try with all germline of model
         for (var i in this.germline){
             for (var j in this.germline[i]){
                 if (gene_name == j){
