@@ -53,6 +53,10 @@ class LabeledBarChartDecorator(BarChartDecorator):
                 style += ";min-height: 1px"
             bar_span = SPAN(_style=style, _title="%s" % t[0], _class="bar")
             bars.append(bar_span)
+
+        # Last bar, to have a full height
+        bars.append(SPAN(_style="height: 100%; visibility: hidden;", _class="bar"))
+
         return DIV(*bars, _class="bar_chart")
 
 class GenescanDecorator(LabeledBarChartDecorator):
