@@ -806,6 +806,7 @@ def getStatData(results_file_ids):
         sample_set['id'] = res['set_id']
         sample_set['name'] = helpers[set_type].get_name(res[set_type])
         sample_set['info'] = res['set_info']
+        sample_set['type'] = set_type
         tmp['sample_sets'].append(sample_set)
 
 
