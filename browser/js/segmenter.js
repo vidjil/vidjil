@@ -233,7 +233,8 @@ Segment.prototype = {
             span = document.createElement('span');
             span.id = "toCloneDB";
             span.setAttribute('title', 'Send sequences to EC-NGS/CloneDB in the background')
-            span.className = "button devel-mode";
+            span.className = "button ";
+            span.className += (typeof config !== 'undefined' && config.clonedb) ? "" : "devel-mode";
             span.onclick = function () {
                 self.db.callCloneDB(self.m.getSelected());
             };
