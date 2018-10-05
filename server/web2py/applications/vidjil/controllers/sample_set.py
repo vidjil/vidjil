@@ -709,14 +709,14 @@ def getFusedStats(file_name, res, dest):
             tmp[arl] += c['reads'][result_index]
     min_len = int(min(tmp.keys()))
     max_len = int(max(tmp.keys()))
-    tmp_dict = {}
-    for i in range(max_len - min_len):
-        cursor = i + min_len
-        if cursor in tmp:
-            tmp_dict[i] = 100.0*math.log(tmp[cursor])/math.log(reads)
+    tmp_list = []
+    for i in range(min_len, max_len):
+        if i in tmp:
+            tmp_val = 100.0*math.log(tmp[i])/math.log(reads)
         else:
-            tmp_dict[i] = 0
-    dest['genescan'] = tmp_dict
+            tmp_val = 0
+        tmp_list.append((i, tmp_val))
+    dest['genescan'] = tmp_list
 
     #dest['bool'] = False
     #dest['bool_true'] = True

@@ -59,9 +59,8 @@ class GenescanDecorator(LabeledBarChartDecorator):
 
     def decorate(self, data):
         import operator
-        sorted_values = sorted(data.items(), key=operator.itemgetter(0))
         new_values = []
-        for t in sorted_values:
+        for t in data:
             new_key = "%d%% at %dbp" % (t[1], t[0])
             new_values.append((new_key, t[1]))
         return super(GenescanDecorator, self).decorate(new_values)
