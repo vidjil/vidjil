@@ -48,7 +48,10 @@ class LabeledBarChartDecorator(BarChartDecorator):
     def decorate(self, data):
         bars = []
         for t in data:
-            bar_span = SPAN(_style="height: %f%%; width: %f%%" % (t[1], (1.0/len(data))*100), _title="%s" % t[0], _class="bar")
+            style = "height: %f%%; width: %f%%" % (t[1], (1.0/len(data))*100)
+            if t[1]:
+                style += ";min-height: 1px"
+            bar_span = SPAN(_style=style, _title="%s" % t[0], _class="bar")
             bars.append(bar_span)
         return DIV(*bars, _class="bar_chart")
 
@@ -61,7 +64,7 @@ class GenescanDecorator(LabeledBarChartDecorator):
         import operator
         new_values = []
         for t in data:
-            new_key = "%d%% at %dbp" % (t[1], t[0])
+            new_key = "%.1f%% at %dbp" % (t[2], t[0])
             new_values.append((new_key, t[1]))
         return super(GenescanDecorator, self).decorate(new_values)
 

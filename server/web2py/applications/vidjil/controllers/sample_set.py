@@ -668,7 +668,7 @@ def getStatHeaders():
             ('reads', 'parser', m),
             ('mapped', 'parser', m),
             ('mapped_percent', 'parser', p),
-            ('genescan', 'parser', g),
+            ('read lengths', 'parser', g),
             #('bool', 'parser', b),
             #('bool_true', 'parser', b),
             ('loci', 'parser', l)
@@ -705,18 +705,27 @@ def getFusedStats(file_name, res, dest):
         arl = int(math.ceil(c['_average_read_length'][result_index]))
         if arl > 0:
             if arl not in tmp:
-                tmp[arl] = 0
-            tmp[arl] += c['reads'][result_index]
-    min_len = int(min(tmp.keys()))
-    max_len = int(max(tmp.keys()))
+                tmp[arl] = 0.0
+            tmp[arl] += float(c['reads'][result_index])
+    min_len = 0 #int(min(tmp.keys()))
+    max_len = 500 #int(max(tmp.keys()))
     tmp_list = []
+
+    if mapped_reads == 0:
+        mapped_reads = 1
     for i in range(min_len, max_len):
         if i in tmp:
-            tmp_val = 100.0*math.log(tmp[i])/math.log(reads)
+            if tmp[i]:
+                scaled_val = (3 + math.log10(tmp[i]/mapped_reads)) / 2
+                display_val = max(0.01, min(1, scaled_val)) * 100
+            else:
+                display_val = 0
+            real_val = 100.0*(tmp[i]/mapped_reads)
         else:
-            tmp_val = 0
-        tmp_list.append((i, tmp_val))
-    dest['genescan'] = tmp_list
+            display_val = 0
+            real_val = 0
+        tmp_list.append((i, display_val, real_val))
+    dest['read lengths'] = tmp_list
 
     #dest['bool'] = False
     #dest['bool_true'] = True
