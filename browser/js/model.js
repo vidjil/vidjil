@@ -2146,8 +2146,8 @@ changeAlleleNotation: function(alleleNotation) {
      * return the sequence (if found), else an empty string
      */
     findGermlineFromGene: function(gene_name){
-        for (i in this.germline){
-            for (j in this.germline[i]){
+        for (var i in this.germline){
+            for (var j in this.germline[i]){
                 if (gene_name == j){
                     return this.germline[i][j]
                 }
