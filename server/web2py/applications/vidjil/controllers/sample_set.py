@@ -671,10 +671,10 @@ def getStatHeaders():
             ('genescan', 'parser', g),
             #('bool', 'parser', b),
             #('bool_true', 'parser', b),
-            ('loci', 'parser', l),
-            ('distribution', 'parser', lbc),
-            ('clones_five_percent', 'parser', m),
-            ('abundance', 'parser', lbc)
+            ('loci', 'parser', l)
+            #('distribution', 'parser', lbc),
+            #('clones_five_percent', 'parser', m),
+            #('abundance', 'parser', lbc)
         ]
 
 def getFusedStats(file_name, res, dest):
@@ -806,7 +806,7 @@ def getStatData(results_file_ids):
         set_type = res['sample_type']
         headers = getStatHeaders()
         d = getFusedStats(res['fused_file'], res, d)
-        d = getResultsStats(res['data_file'], d)
+        #d = getResultsStats(res['data_file'], d)
         for head, htype, model in headers:
             if htype == 'db':
                 d[head] = res[head]
