@@ -50,7 +50,7 @@ class LabeledBarChartDecorator(BarChartDecorator):
         for t in data:
             percentage_per_item = (1.0/len(data))*100
             # We want larger bars to better see them. However we may not want that with wide labeled bar charts
-            style = "height: %f%%; width: %f%%; margin-right: -%f%" % (t[1], percentage_per_item * 2, percentage_per_item)
+            style = "height: %f%%; width: %f%%; margin-right: -%f%%" % (t[1], percentage_per_item * 2, percentage_per_item)
             if t[1]:
                 style += ";min-height: 1px"
             bar_span = SPAN(_style=style, _title="%s" % t[0], _class="bar")
