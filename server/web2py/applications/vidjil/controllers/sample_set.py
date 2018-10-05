@@ -663,7 +663,7 @@ def getStatHeaders():
     lbc = LabeledBarChartDecorator()
     g = GenescanDecorator()
     l = LociListDecorator()
-    return [('sample_sets', 'db', s),
+    return [('sets', 'db', s),
             #('reads', 'parser', m),
             ('mapped reads', 'parser', m),
             #('mapped_percent', 'parser', p),
@@ -795,7 +795,7 @@ def getStatData(results_file_ids):
         set_type = res['sample_type']
         if res.results_file_id not in tmp_data:
             tmp = res.copy()
-            tmp['sample_sets'] = []
+            tmp['sets'] = []
             tmp_data[tmp['results_file_id']] = tmp
             tmp.pop('set_id', None)
             tmp.pop(set_type, None)
@@ -808,7 +808,7 @@ def getStatData(results_file_ids):
         sample_set['name'] = helpers[set_type].get_name(res[set_type])
         sample_set['info'] = res['set_info']
         sample_set['type'] = set_type
-        tmp['sample_sets'].append(sample_set)
+        tmp['sets'].append(sample_set)
 
 
     data = []
