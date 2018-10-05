@@ -664,16 +664,16 @@ def getStatHeaders():
     g = GenescanDecorator()
     l = LociListDecorator()
     return [('sample_sets', 'db', s),
-            ('main_clone', 'parser', m),
             #('reads', 'parser', m),
             ('mapped reads', 'parser', m),
-            ('mapped_percent', 'parser', p),
+            #('mapped_percent', 'parser', p),
             ('read lengths', 'parser', g),
             #('bool', 'parser', b),
             #('bool_true', 'parser', b),
-            ('loci', 'parser', l)
+            ('loci', 'parser', l),
             #('distribution', 'parser', lbc),
             #('clones_five_percent', 'parser', m),
+            ('main clone', 'parser', m)
             #('abundance', 'parser', lbc)
         ]
 
@@ -693,7 +693,7 @@ def getFusedStats(file_name, res, dest):
         result_index = data['samples']['results_file_id'].index(res['resuts_file_id'])
     elif "original_names" in data['samples']:
         result_index = data['samples']['original_names'].index(defs.DIR_SEQUENCES + res['sequence_file'])
-    dest['main_clone'] = data['clones'][0]['name']
+    dest['main clone'] = data['clones'][0]['name']
     reads = data['reads']['total'][result_index]
     # dest['reads'] = reads
     mapped_reads = data['reads']['segmented'][result_index]
@@ -717,7 +717,7 @@ def getFusedStats(file_name, res, dest):
     for i in range(min_len, max_len):
         if i in tmp:
             if tmp[i]:
-                scaled_val = (3 + math.log10(tmp[i]/mapped_reads)) / 2
+                scaled_val = (2.5 + math.log10(tmp[i]/mapped_reads)) / 2
                 display_val = max(0.01, min(1, scaled_val)) * 100
             else:
                 display_val = 0
