@@ -76,7 +76,12 @@ class SetsDecorator(StatDecorator):
     def decorate(self, data):
         ssets = []
         for sample_set in data:
-            d = DIV("(%d) %s" % (sample_set['id'], sample_set['name']), _onclick="db.call('sample_set/index', {'id': '%d'})" % sample_set['id'], _class="pointer set_token %s_token" % sample_set['type'])
+            s = SPAN("%d " % sample_set['id'], _style='font-size:60%')
+            d = DIV(s,
+                    sample_set['name'],
+                    _onclick="db.call('sample_set/index', {'id': '%d'})" % sample_set['id'], 
+                    _style="opacity: .5;",
+                    _class="pointer set_token %s_token" % sample_set['type'])
             ssets.append(d)
         return DIV(*ssets)
 
