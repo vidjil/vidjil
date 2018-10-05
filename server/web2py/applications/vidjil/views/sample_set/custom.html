@@ -6,9 +6,9 @@
 <div>
 
 	{{ if request.vars['id']: }}
-		<h3>Compare samples from {{=helper.get_type_display()}} {{=get_sample_name(request.vars["id"])}}</h3>
+		<h3>Preview or compare samples from {{=helper.get_type_display()}} {{=get_sample_name(request.vars["id"])}}</h3>
 	{{ else: }}
-	        <h3>Compare samples</h3>
+	        <h3>Preview or compare samples</h3>
     {{pass}}
 
     <p>Select up to 10 samples to be compared.</p>
@@ -102,8 +102,8 @@
     </div>
 
     <div class="db_block_right">
+        <span class="devel-mode button2" onclick="db.call('sample_set/multi_sample_stats', {'custom_result': db.getListInput('custom_result[]') })" >preview / quality control</span>
         <span class="button2" onclick="myUrl.loadCustomUrl(db)" > see results </span>
-        <span class="devel-mode button2" onclick="db.call('sample_set/multi_sample_stats', {'custom_result': db.getListInput('custom_result[]') })" >stats</span>
     </div>
 
 </div>
