@@ -703,13 +703,16 @@ def getFusedStats(file_name, res, dest):
 
     tmp = {}
     for c in data['clones']:
-        arl = int(math.ceil(c['_average_read_length'][result_index]))
+        try:
+            arl = int(math.ceil(c['_average_read_length'][result_index]))
+        except:
+            continue
         if arl > 0:
             if arl not in tmp:
                 tmp[arl] = 0.0
             tmp[arl] += float(c['reads'][result_index])
-    min_len = 0 #int(min(tmp.keys()))
-    max_len = 500 #int(max(tmp.keys()))
+    min_len = 100 #int(min(tmp.keys()))
+    max_len = 600 #int(max(tmp.keys()))
     tmp_list = []
 
     if mapped_reads == 0:
