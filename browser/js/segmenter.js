@@ -823,6 +823,16 @@ Segment.prototype = {
                 }
                 if (c.getSize()>max){
                     system=c.get('germline')
+
+                    if (system == "unexpected"){
+                        var loci = [c.getGene("5").substring(0,3), c.getGene("3").substring(0,3) ]
+                        if (loci[0] == loci[1]){
+                            system = loci[0]
+                        } else {
+                            console.log( "This clone have 2 locus for gene 5 and 3. Sytem still unexpected")
+                            console.log( loci )
+                        }
+                    }
                     max=c.getSize()
                 }
             }
