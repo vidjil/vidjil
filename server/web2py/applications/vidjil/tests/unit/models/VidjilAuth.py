@@ -683,3 +683,16 @@ class VidjilauthModel(unittest.TestCase):
 
         res = auth.get_group_access('patient', patient_id, group_sec)
         self.assertFalse(res, "Group %d should not have direct access to patient %d" % (group_sec, patient_id))
+
+    def testGetGroupPermissions(self):
+        permissions = auth.get_group_permissions(table_name='sample_set', group_id=parent_group)
+        expected = [PermissionEnum.read.value]
+        self.assertEqual(Counter(expected), Counter(permissions), "Expected %s, but got %s for group %d" % (str(expected), str(permissions), parent_group))
+
+        permissions = auth.get_group_permissions(table_name='sample_set', group_id=1)
+        expected = [PermissionEnum.access.value, PermissionEnum.read.value, PermissionEnum.admin.value, PermissionEnum.create.value]
+        self.assertEqual(Counter(expected), Counter(permissions), "Expected %s, but got %s for group %d" % (str(expected), str(permissions), 1))
+
+        expected = [PermissionEnum.read.value, PermissionEnum.create.value]
+        permissions = auth.get_group_permissions(table_name='sample_set', group_id=1, myfilter=expected)
+        self.assertEqual(Counter(expected), Counter(permissions), "Expected %s, but got %s for group %d" % (str(expected), str(permissions), 1))
