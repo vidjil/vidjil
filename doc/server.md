@@ -101,7 +101,7 @@ However, the following network access are recommended:
 
 # Docker installation
 
-to       All our images are hosted on DockerHub and can be retrieved from the
+All our images are hosted on DockerHub and can be retrieved from the
 repository [vidjil/vidjil](https://hub.docker.com/r/vidjil/vidjil/).
 Our docker environment makes use of docker-compose (<https://docs.docker.com/compose/>).
 All Vidjil components
@@ -117,27 +117,41 @@ started by docker-compose, such as in this [example](http://gitlab.vidjil.org/bl
   - 1.3.2
   - 1.4.2
 
+## Before installation
+
+Install `docker-compose`. See <https://docs.docker.com/compose/install/#install-compose>
+
+If it doesn't exist yet, you should create a `docker` group.
+The users needing to access `docker` must belong to this group.
+
+Retrieve the git XXXX  available at XXXX.
+Directory `docker`.
+This contains both `docker-compose.yml` as well as 
+
 ## Docker environment
 
 The vidjil Docker environment is managed by docker-compose since it is
 composed of several different services this allows us to easily start and
 stop individual services.
+
 The services managed by docker-compose are as follows:
 
   - mysql The database
   - uwsgi The Web2py backend server
   - fuse The XmlRPCServer that handles custom fuses (for comparing
     samples)
-  - nginx The web server
+  - nginx The web server, containing the client web application
   - workers The Web2py Scheduler workers in charge of executing vidjil
     users' samples
   - backup Starts a cron job to schedule regular backups
   - reporter A monitoring utility that can be configured to send
     monitoring information to a remote server
 
+Backup and reporter services can be commented out.
+
+
 ## Configuring the Vidjil container for a network usage
 
-Everything should work out of the box for a local installation.
 The container may be further configured to make it available to a whole network.
 The following configuration files are found in the vidjil directory:
 
@@ -155,39 +169,83 @@ the container and starts uwsgi
 
 Here are some notable configuration changes you should consider:
 
-  - Change the mysql user/password in `docker-compose.yml`. You will also
-    need to change the `DB_ADDRESS` in `conf/defs.py` to match it.
+Go to `vidjil/docker
 
-  - Change the hostname in the nginx configuration `vidjil/sites/nginx_conf`.
-    If you are using vidjil on a network, then this might be required.
+### Passwords
 
-  - Change the default admin password. Login as `plop@plop.com`, password `1234`
-    and go to <https://your-hostname/vidjil/default/user/change_password>
+  - Change the mysql root password in `docker-compose.yml`
+  - Change the mysql vidjil password in `mysql/create_db.sql` and sets it also in `vidjil-server/conf/defs.py`
 
-  - Change the ssl certificates. When building the image vidjil-server
-    which creates a self-signed certificate for the sake of convenience to
-    ensure the HTTPS queries work from the start, but this may not be
-    acceptable for a production environment.
-    In order to replace certificates the current method is to mount the
-    certificates to `/etc/nginx/ssl` with docker volumes in
-    `docker-compose.yml`.
+### Hostname 
 
-  - Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `conf/defs.py`. These
+  If you plan to use Vidjil only locally, these steps are not required.
+
+  - Change the hostname in the nginx configuration `vidjil-client/conf/nginx_web2py`,
+    replacing `$hostname` with your FQDN.
+  - Edit the `vidjil-client/conf/conf.js`
+        change all 'localhost' to the FQDN
+
+  - Configure the SSL certificates
+       - one option is to create a self-signed SSL certificate:
+       	 ```
+	 openssl genrsa 4096 > web2py.key
+	 openssl req -new -x509 -nodes -sha1 -days 1780 -key web2py.key > web2py.crt
+	 openssl x509 -noout -fingerprint -text < web2py.crt
+	 mv web2py.* docker/vidjil-client/ssl/
+	 ```
+	 It will trigger warnings 
+
+       - a better option is to configure letsencrypt
+
+    In `docker-compose.yml`, update `nginx.volumes` to add the directory where
+    the certificate is located.
+
+ 
+## First launch
+
+  - Comment backup/reporter services !!!
+
+It is avised to first launch  `docker-compose up mysql`. The first time,
+this container create the database and it takes some time.
+
+Launch docker-compose `docker-compose up`
+
+
+
+`docker ps` should display four running containers:
+docker_nginx_1, docker_uwsgi_1, docker_fuse_1, docker_mysql_1
+
+
+  - `make germline` to create `germline/`. You should accept IMGT licences. XXXX
+  - Copy the germline.js `docker cp browser/js/germline.js docker_nginx_1:/usr/share/vidjil/browser/js/germline.js`
+      `docker commit docker_nginx_1 vidjil/client:latest`
+
+
+Open a web browser to <https://your-hostname>
+
+Create a first account by entering an email.
+This account is the main root account of the server. Other administrators could then be created.
+It will be also used for the  web2py admin passwor.
+
+
+
+
+### Further configuration
+
+  - Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `vidjil-server/conf/defs.py`. These
     represent the sender email address and the destination email addresses,
     used in reporting patient milestones and server errors.
-
-  - Change the database password. In the `mysql` directory you will find an
-    entrypoint script which creates the database, the user and set that
-    user's password.
-    This is the password you need to match in `defs.py`.
 
   - Change the volumes in `docker-compose.yml`. By default all files that
     require saving outside of the containers (the database, uploads, vidjil
     results and log files) are stored in `/opt/vidjil`, but you can change
     this by editing the paths in the volumes.
+      XXX Size, XXXXX
 
   - Configure the reporter. Ideally this container should be positioned
     on a remote server in order to be able to report on a down server, but we have packed it here for convenience.
+  You will also
+    need to change the `DB_ADDRESS` in `conf/defs.py` to match it.
 
 ### Starting the environment
 
@@ -217,6 +275,16 @@ docker-compose up --build
 ```
 
 This will also start the environment for you.
+
+
+### Troubleshooting
+
+Errors "Can't connect to MySQL server on 'mysql'"
+
+The mysql container is not fully launched. This can happen especially at the first launch.
+Relaunch the containers.
+XXXX Relaunch the workers.
+
 
 ### Updating a Docker installation
 
