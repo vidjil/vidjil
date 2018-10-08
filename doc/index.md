@@ -22,7 +22,7 @@ methods and software.
 
   - [Vidjil-algo documentation](vidjil-algo.md)
   - [Encoding clones with V(D)J recombinations](vidjil-format.md), specification of the `.vidjil` file format
-  - [Server documentation](./server.html)
+  - [Docker/Server installation and maintenance](server.md)
 
 These documentations and additional developer and maintainer documentation
 are availaible from the [doc/](http://gitlab.vidjil.org/tree/master/doc) directory in the source files.
