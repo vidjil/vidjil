@@ -270,7 +270,7 @@ json WindowsStorage::sortedWindowsToJson(map <junction, json> json_data_segment,
   json windowsArray;
   int top = 1;
     
-  for (list<pair <junction, size_t> >::const_iterator it = sort_all_windows.begin(); 
+  for (list<pair <junction, size_t> >::iterator it = sort_all_windows.begin();
        it != sort_all_windows.end(); )
     {
        
