@@ -977,6 +977,8 @@ Clone.prototype = {
             }
         } else if (this.m.colorMethod == 'clone') {
             this.color = colorGeneratorIndex(this.index)
+        } else if (this.m.colorMethod == 'cdr3') {
+            this.color = this.getCDR3Color();
         }else if (this.m.colorMethod == "Tag"){
             this.color =  this.m.tag[this.getTag()].color;
         }else if (this.m.colorMethod == "dbscan"){
@@ -1507,6 +1509,22 @@ Clone.prototype = {
             time = this.m.getTime(time)
             return field[time]
         }
+    },
+
+    /**
+     * Deterministically return a color associated with the CDR3 (if any)
+     */
+    getCDR3Color: function() {
+        var junction = this.getSegAASequence('junction');
+        if (junction.length == 0)
+            return '';
+        // Convert CDR3 to int
+        var intcdr3 = 0;
+        junction = junction.toUpperCase();
+        for (var i = 0; i < junction.length; i++) {
+            intcdr3 += (junction.charCodeAt(i)-65) * (Math.pow(26, i));
+        }
+        return colorGeneratorIndex(intcdr3);
     },
 
     /**
