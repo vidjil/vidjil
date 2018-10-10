@@ -6,4 +6,4 @@ $ Clone 13 is correctly analyzed
 
 $ Statistics on -Z
 1:Statistics on clone analysis
-rb1: IGH 1[5-7][0-9]{2}/ 1[0-2][0-9]{3} 15..%
+rb1: IGH 3[0-2][0-9]{2}/ 1[0-2][0-9]{3} 28..%

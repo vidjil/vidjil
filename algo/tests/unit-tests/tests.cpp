@@ -16,6 +16,7 @@
 #include "testWindowsStorage.cpp"
 #include "testReadStorage.cpp"
 #include "testAutomaton.cpp"
+#include "testMath.cpp"
 
 int main(void) {
   TAP_START(NB_TESTS);
@@ -36,6 +37,7 @@ int main(void) {
   testWindowStorage();
   testReadStorage();
   testAutomaton();
+  testMath();
 
   TAP_END_TEST_EXIT
 }
