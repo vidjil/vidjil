@@ -84,7 +84,9 @@ def info():
 
 
     
-    log.debug('patient (%s)' % request.vars["id"])
+    log.info('run (%s)' % request.vars["id"], extra={'user_id': auth.user.id,
+        'record_id': request.vars["id"],
+        'table_name': "run"})
     if (auth.can_view('patient', request.vars["id"]) ):
         return dict(query=query,
                     patient=patient,

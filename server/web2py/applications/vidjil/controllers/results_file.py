@@ -65,6 +65,9 @@ def index():
             row.string = [row.sequence_file.filename, row.config.name, row.patient.last_name, row.patient.first_name, row.sequence_file.producer, str(row.results_file.run_date), row.status]
         query = query.find(lambda row : vidjil_utils.advanced_filter(row.string,request.vars["filter"]) )
         
+        log.info("access results file admin panel", extra={'user_id': auth.user.id,
+                'record_id': None,
+                'table_name': "results_file"})
         return dict(query = query,
                     reverse=reverse)
 
@@ -89,6 +92,9 @@ def run_all_patients():
 def info():
     sample_set_id = get_sample_set_id(request.vars["results_file_id"])
     if (auth.can_modify_sample_set(sample_set_id)):
+        log.info("access results file info", extra={'user_id': auth.user.id,
+                'record_id': request.vars["results_file_id"],
+                'table_name': "results_file"})
         return dict(message=T('result info'))
     else :
         res = {"message": "acces denied"}
@@ -107,6 +113,9 @@ def output():
             file_size = vidjil_utils.format_size(os.stat(output_directory + f).st_size)
             file_dicts.append({'filename': f, 'size': file_size})
 
+        log.info("view output files", extra={'user_id': auth.user.id,
+                'record_id': request.vars["results_file_id"],
+                'table_name': "results_file"})
         return dict(message="output files",
                     results_file_id = results_id,
                     files=file_dicts)
@@ -120,6 +129,9 @@ def download():
         directory = defs.DIR_OUT_VIDJIL_ID % results_id
         filepath = directory + os.path.basename(request.vars['filename'])
         try:
+            log.info("Downloaded results file", extra={'user_id': auth.user.id,
+                'record_id': request.vars["results_file_id"],
+                'table_name': "results_file"})
             return response.stream(open(filepath), attachment = True, filename = request.vars['filename'], chunk_size=10**6)
         except IOError:
             return error_message("File could not be read")
@@ -166,7 +178,9 @@ def delete():
                           "config_id" : config_id},
                "success": "true",
                "message": "[%s] (%s) c%s: process deleted " % (request.vars["results_file_id"], sample_set_id, config_id)}
-        log.info(res)
+        log.info(res, extra={'user_id': auth.user.id,
+                'record_id': request.vars["results_file_id"],
+                'table_name': "results_file"})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"message": "acces denied"}

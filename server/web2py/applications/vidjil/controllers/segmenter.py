@@ -71,6 +71,7 @@ def segment_sequences(sequences):
             else:
                 return response.json({'error': 'Error while processing the file'})
 
+    log.debug("segment sequences %s" % str(sequences))
     return response.json(gluon.contrib.simplejson.loads(text_result))
 
 def check_sequences(sequences):
