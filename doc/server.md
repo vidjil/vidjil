@@ -607,16 +607,15 @@ Then you can launch the tests with `make unit`.
 Check whether the relevant disks are properly mounted.
 Disks failures or other events could have triggered a read-only partition.
 
-## Workers seem to be stuck
+## Jobs stay in `QUEUED`, workers seem to be stuck
 
 For some reasons, that are not clear yet, it may happen that workers are not
-assigned any additional jobs even if they don't have any ongoin jobs.
+assigned any additional jobs even if they don't have any ongoing jobs.
 
 In such a (rare) case, it may be useful to restart web2py schedulers
+with `service web2py-scheduler restart` or `initctl restart web2py-scheduler`
+depending on your installation.
 
-``` bash
-initctl restart web2py-scheduler
-```
 
 ## Debugging Web2py workers
 
