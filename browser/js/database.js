@@ -400,9 +400,9 @@ Database.prototype = {
             
             //
             this.fixed_header()
-            
+            adress=DB_ADDRESS + 'notification/get_active_notifications'
             // New page displayed, attempt to display header and login notifications
-            this.loadNotifications();
+            this.loadNotifications(adress);
 
             $("#menu-container").addClass('disabledClass');
 
@@ -986,13 +986,13 @@ Database.prototype = {
     // periodically query the server for notifications
     // And loads them into elements with id 'header_messages' and 'login_messages'
 	// TODO : Tidy up
-    loadNotifications: function() {
+    loadNotifications: function(adress) {
     	var self = this;
-		if (DB_ADDRESS !== "") {
+		if (adress !== "") {
 			$.ajax({
 		        type: "GET",
 		        crossDomain: true,
-		        url: DB_ADDRESS + 'notification/get_active_notifications',
+		        url: adress,
                         xhrFields: {withCredentials: true},
 		        timeout: DB_TIMEOUT_CALL,
 		        success: function (result) {
@@ -1004,7 +1004,6 @@ Database.prototype = {
 		                console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
 		            } else {
 		                console.log("unable to get notifications");
-		                console.log(DB_ADDRESS + ": " + error);
 		            }
 		        }
 		    });

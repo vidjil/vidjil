@@ -128,7 +128,8 @@ db.ajax_indicator_stop();
 
 // Load regularly notifications
 (function worker(){
-	db.loadNotifications();
+       adress = config.db_address + 'notification/get_active_notifications'
+	db.loadNotifications(adress);
    	setTimeout(worker, NOTIFICATION_PERIOD);
 })();
 
