@@ -1,10 +1,30 @@
-!LAUNCH: python ../../pear_structured_log.py -i pear_log.log
+!LAUNCH: python ../../pear_structured_log.py -i ../data/pear_log.log -o ../data/pear_strucured.json; cat ../data/pear_strucured.json
 
-$ Clone id-1 has a different number of reads 
-1:Not the same number or reads: id-1
+$ Correct number of assembled reads
+1:"reads_assembled_number": 2972
 
-$ Clone id-2 is not in the second file
-1:[-] .* Clone not present: .* id-2
+1:"reads_total_number": 3000
 
-$ Clone id-3 is not in the first file
-1:[+] .* Clone not present: .* id-3
+$ Correct number of unassembled reads
+1:"reads_not_assembled_number": 28
+
+$ Correct information on input files used by pear
+1:"assembled_reads": "demo_set.fastq.assembled.fastq", 
+1:"discarded_reads": "demo_set.fastq.discarded.fastq", 
+1:"unassembled_forward": "demo_set.fastq.unassembled.forward.fastq", 
+1:"unassembled_reverse": "demo_set.fastq.unassembled.reverse.fastq"
+
+$ Correct parameter return
+1:"forward_file": "sequence_R1.fastq", 
+1:"minimum_overlap": "10", 
+1:"phred": "33", 
+1:"reverse_file": "sequence_R2.fastq", 
+1:"scoring_methode": "Scaled score", 
+1:"version": "PEAR v0.9.10 \[May 30, 2016\]"
+
+
+$ Correct nucleotides frequencies
+1:"base_frequency_a": "0.269874", 
+1:"base_frequency_c": "0.257653", 
+1:"base_frequency_g": "0.238808", 
+1:"base_frequency_t": "0.233665", 

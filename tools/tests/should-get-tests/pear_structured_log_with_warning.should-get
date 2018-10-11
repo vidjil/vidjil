@@ -1,0 +1,16 @@
+!LAUNCH: python ../../pear_structured_log.py -i ../data/pear_log_warning.log -o ../data/pear_strucured_waring.json; cat ../data/pear_strucured_waring.json
+
+$ Correct percentage of reads
+1:"percentage_assembled": 32.4, 
+1:"percentage_discarded": 16.666666666666668, 
+1:"percentage_not_assembled": 50.93333333333333, 
+
+$ Correct number of reads
+1:"reads_assembled_number": 972, 
+1:"reads_discarded_number": 500, 
+1:"reads_not_assembled_number": 1528, 
+1:"reads_total_number": 3000
+
+$ correct add of warning into the structured log
+1:"Very few reads assembled"
+1:"High level of discarded reads"
