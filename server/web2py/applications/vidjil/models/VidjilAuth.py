@@ -310,6 +310,15 @@ class VidjilAuth(Auth):
             and (self.get_permission(PermissionEnum.admin_pre_process.value, 'pre_process', pre_process_id, user)\
             or self.is_admin(user))
 
+    def can_modify_user(self, id):
+        '''
+        Returns True if the current user can modify the user
+        whose ID is given as parameter
+
+        :param: id should be an integer
+        '''
+        return self.is_admin() or self.user_id == id
+
     def can_modify(self, object_of_action, id, user = None):
         '''
         Returns True if the user can modify the object of action whose ID id id
