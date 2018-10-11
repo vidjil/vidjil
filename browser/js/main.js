@@ -46,6 +46,7 @@ setCrossDomainModel(m);
  * This links the model to a patient database (possibly the one defined in config.js)
  */
 var db = new Database(m);
+var notification = new Notification(m)
 
 try {
     /* Views

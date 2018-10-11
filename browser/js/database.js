@@ -996,29 +996,7 @@ Database.prototype = {
                         xhrFields: {withCredentials: true},
 		        timeout: DB_TIMEOUT_CALL,
 		        success: function (result) {
-		        	var messages;
-		        	try {
-		        		messages = JSON.parse(result);
-		        		var header_messages = [];
-		        		var login_messages = [];
-		        		for (var i = 0; i < messages.length; ++i) {
-                                               if (messages[i].notification.message_type == 'header') {
-		        				header_messages.push(messages[i]);
-                                               } else if (messages[i].notification.message_type == 'login') {
-		        				login_messages.push(messages[i]);
-		        			}
-		        		}
-		        		
-		        		//TODO see if we can remove this hard coupling to classes
-		        		var hm = $('#header_messages');
-			        	self.integrateMessages(hm, header_messages);
-
-			        	var lm = $('#login_messages');
-			        	self.integrateMessages(lm, login_messages);
-			        
-		        	} catch (err) {
-		        		console.log("ERROR: " + err);
-		        	}
+		        	notification.parse_notification(result)
 		            
 		        }, 
 		        error: function (request, status, error) {
@@ -1035,42 +1013,6 @@ Database.prototype = {
 		}
 	},
 
-	// takes a jQuery elem
-	integrateMessages: function(elem, messages, classNames) {
-		var message, preformat;
-		// empty container because prototype is destined to be called periodically
-		elem.empty();
-
-		//set default classes if they are undefined
-		classNames = classNames === undefined ? {'urgent': 'urgent_message', 'info': 'info_message'} : classNames;
-
-		if (messages.length > 0) {
-			for (var i=0; i < messages.length; ++i) {
-
-                                display_title = ""
-                                if (messages[i].notification.message_type == 'login')
-                                {
-                                    display_title += messages[i].notification.creation_datetime.split(' ')[0] + ' : '
-                                }
-                                display_title += messages[i].notification.title
-
-				message = document.createElement('div');
-				message.className = classNames[messages[i].notification.priority] + " notification";
-				$(message).attr('onclick', "db.call('notification/index', {'id': '" + messages[i].notification.id + "'})");
-
-				$(message).append(
-					// message is sanitized by the server so we unescape the string to include links and formatting
-					document.createTextNode(unescape(display_title))
-				);
-				elem.append(message);
-			}
-			elem.fadeIn();
-    	} else {
-    		// No messages to display so hide message container
-    		elem.fadeOut();
-    	}
-	},
-    
     //affiche la fenetre de dialogue avec le serveur et affiche ses réponses
     display: function (msg) {
         this.div.style.display = "block";
