@@ -75,12 +75,12 @@ def pear_converter(fileIn, fileOut):
       
       ### number of reads
       elif "Assembled reads" in line : 
-        json_data["reads"]["reads_assembled_number"]     = convert_value(line)[0].replace(",","")
-        json_data["reads"]["reads_total_number"]         = convert_value(line)[1].replace(",","")
+        json_data["reads"]["reads_assembled_number"]     = int(convert_value(line)[0].replace(",",""))
+        json_data["reads"]["reads_total_number"]         = int(convert_value(line)[1].replace(",",""))
       elif "Discarded reads" in line : 
-        json_data["reads"]["reads_discarded_number"]     = convert_value(line)[0].replace(",","")
+        json_data["reads"]["reads_discarded_number"]     = int(convert_value(line)[0].replace(",",""))
       elif "Not assembled reads" in line : 
-        json_data["reads"]["reads_not_assembled_number"] = convert_value(line)[0].replace(",","")
+        json_data["reads"]["reads_not_assembled_number"] = int(convert_value(line)[0].replace(",",""))
       
       ### Warnings
       json_data["warning"] = []
