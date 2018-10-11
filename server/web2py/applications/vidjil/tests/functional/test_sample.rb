@@ -21,12 +21,17 @@ class TestSample < ServerTest
     go_to_set 0
   end
 
-  def go_to_set(index)
+  def go_to_patient_list
     # load patient list
     $b.a(:class => "button button_token patient_token", :text => "patients").click
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
     table.wait_until_present
+    table
+  end
+
+  def go_to_set(index)
+    table = go_to_patient_list
     lines = table.tbody.rows
     lines[index].wait_until_present
     # select first patient
@@ -36,6 +41,16 @@ class TestSample < ServerTest
     table = $b.table(:id => "table")
     table.wait_until_present
     table
+  end
+
+  def go_to_set_by_tag(tag)
+    table = go_to_patient_list
+
+    table.a(:text => tag).parent.parent.cells[2].click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    samples_table = $b.table(:id => "table")
+    samples_table.wait_until_present
+    samples_table
   end
 
   def test_add
@@ -107,16 +122,8 @@ class TestSample < ServerTest
   end
 
   def test_set_association_preservation
-    $b.a(:class => "button button_token patient_token", :text => "patients").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
-    table = $b.table(:id => "table")
-    table.wait_until_present
-
-    table.a(:text => "#set_assoc_1").parent.parent.cells[1].click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
-    samples_table = $b.table(:id => "table")
-    samples_table.wait_until_present
-    table.a(:text => "#set_assoc_1").parent.parent.i(:class => "icon-pencil-2").click
+    samples_table = go_to_set_by_tag "#set_assoc_1"
+    samples_table.a(:text => "#set_assoc_1").parent.parent.i(:class => "icon-pencil-2").click
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
 
     form = $b.form(:id => "upload_form")
@@ -129,7 +136,7 @@ class TestSample < ServerTest
     form.input(:type => "submit").click
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
 
-    table.a(:text => "#set_assoc_1").parent.parent.i(:class => "icon-pencil-2").click
+    samples_table.a(:text => "#set_assoc_1").parent.parent.i(:class => "icon-pencil-2").click
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
     form = $b.form(:id => "upload_form")
     form.wait_until_present
@@ -143,15 +150,7 @@ class TestSample < ServerTest
   end
 
   def test_set_association_update
-    $b.a(:class => "button button_token patient_token", :text => "patients").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
-    table = $b.table(:id => "table")
-    table.wait_until_present
-
-    table.a(:text => "#set_assoc_2").parent.parent.cells[2].click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
-    samples_table = $b.table(:id => "table")
-    samples_table.wait_until_present
+    samples_table = go_to_set_by_tag "#set_assoc_2"
     samples_table.a(:text => "#set_assoc_2").parent.parent.i(:class => "icon-pencil-2").click
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
 
@@ -167,7 +166,7 @@ class TestSample < ServerTest
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
     samples_table = $b.table(:id => "table")
     samples_table.wait_until_present
-    table.a(:text => "#set_assoc_2").parent.parent.i(:class => "icon-pencil-2").click
+    samples_table.a(:text => "#set_assoc_2").parent.parent.i(:class => "icon-pencil-2").click
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
 
     form = $b.form(:id => "upload_form")
