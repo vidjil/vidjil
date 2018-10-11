@@ -5,6 +5,7 @@
 # Script by Florian Thonier
 # florian@vidjil.org
 # ===============================
+from __future__ import division
 import operator
 import sys, os
 import json
@@ -82,18 +83,20 @@ def pear_converter(fileIn, fileOut):
       elif "Not assembled reads" in line : 
         json_data["reads"]["reads_not_assembled_number"] = int(convert_value(line)[0].replace(",",""))
       
-      ### Warnings
-      json_data["warning"] = []
-      # assembled reads
-      percentage_not_assembled = json_data["reads"]["reads_not_assembled_number"] / json_data["reads"]["reads_total_number"]
-      if percentage_not_assembled > 50.00 : 
-        json_data["warning"].append("Very few reads assembled")
-      elif percentage_not_assembled > 20.00 : 
-        json_data["warning"].append("Few reads assembled")
-      # discarded reads
-      percentage_discarded     = json_data["reads"]["reads_discarded_number"]     / json_data["reads"]["reads_total_number"]
-      if percentage_discarded > 10.00 : 
-        json_data["warning"].append("High level of discarded reads")
+    ### Warnings
+    json_data["warning"] = []
+    # assembled reads
+    percentage_not_assembled = int(json_data["reads"]["reads_not_assembled_number"]) / json_data["reads"]["reads_total_number"]
+    json_data["reads"]["percentage_not_assembled"] = percentage_not_assembled
+    if percentage_not_assembled > 50.00 : 
+      json_data["warning"].append("Very few reads assembled")
+    elif percentage_not_assembled > 20.00 : 
+      json_data["warning"].append("Few reads assembled")
+    # discarded reads
+    percentage_discarded     = json_data["reads"]["reads_discarded_number"]     / json_data["reads"]["reads_total_number"]
+    json_data["reads"]["percentage_discarded"] = percentage_discarded
+    if percentage_discarded > 10.00 : 
+      json_data["warning"].append("High level of discarded reads")
 
 
     ### export as json
