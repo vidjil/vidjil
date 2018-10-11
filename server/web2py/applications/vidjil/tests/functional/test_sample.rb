@@ -54,7 +54,7 @@ class TestSample < ServerTest
   end
 
   def test_add
-    table = go_to_set 3
+    table = go_to_set_by_tag "#test4"
 
     count = table.tbody.rows.count
 
@@ -99,7 +99,7 @@ class TestSample < ServerTest
   end
 
   def test_edit
-    table = go_to_set 3
+    table = go_to_set_by_tag "#test3"
 
     lines = table.tbody.rows
     lines[0].wait_until_present
@@ -176,7 +176,7 @@ class TestSample < ServerTest
   end
 
   def test_delete
-    table = go_to_set 3
+    table = go_to_set_by_tag "#test2"
 
     count = table.tbody.rows.count
 
@@ -204,7 +204,7 @@ class TestSample < ServerTest
   end
 
   def test_run
-    table = go_to_set 2
+    table = go_to_set_by_tag "#set_assoc_0"
 
     $b.select_list(:id => "choose_config").select_value(2)
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
