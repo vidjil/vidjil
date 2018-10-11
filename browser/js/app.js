@@ -65,6 +65,7 @@ function loadAfterConf() {
                                          "../crossDomain",
                                          "../database",
                                          "../shortcut",
+                                         "../notification",
                                          "../export",
                                          "../similarity",
                                          "../tools",

@@ -46,6 +46,7 @@ setCrossDomainModel(m);
  * This links the model to a patient database (possibly the one defined in config.js)
  */
 var db = new Database(m);
+var notification = new Notification(m)
 
 try {
     /* Views
@@ -127,7 +128,8 @@ db.ajax_indicator_stop();
 
 // Load regularly notifications
 (function worker(){
-	db.loadNotifications();
+       adress = config.db_address + 'notification/get_active_notifications'
+	db.loadNotifications(adress);
    	setTimeout(worker, NOTIFICATION_PERIOD);
 })();
 
