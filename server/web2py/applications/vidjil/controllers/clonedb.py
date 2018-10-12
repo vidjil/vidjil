@@ -36,6 +36,8 @@ def search_clonedb(sequences, sample_set_id):
 
     results = []
     parent_group = get_default_creation_group(auth)[1]
+    auth.load_permissions(PermissionEnum.read.value, 'sample_set')
+    auth.load_permissions(PermissionEnum.anon.value, 'sample_set')
     for sequence in sequences:
         options = clonedb.build_grep_clones_options({'sequence': sequence+' -sample_set:%d' % sample_set_id,
                                                      'index': 'clonedb_{}'.format(parent_group)})
