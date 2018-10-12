@@ -260,7 +260,7 @@ def get_data():
         if (sample_set.sample_type == defs.SET_TYPE_PATIENT):
             for row in db( db.patient.sample_set_id == request.vars["sample_set_id"] ).select() :
                 log_reference_id = row.id
-                patient_name = vidjil_utils.anon_ids(row.id)
+                patient_name = vidjil_utils.anon_ids([row.id])[0]
                 data["dataFileName"] = patient_name + " (" + config_name + ")"
                 data["info"] = db.patient[row.id].info
                 data["patient_id"] = row.id
@@ -401,7 +401,7 @@ def get_custom_data():
 
             patient_run = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select().first()
             config_id = db.results_file[id].config_id
-            name = vidjil_utils.anon_ids(patient_run.id) if sample_set.sample_type == defs.SET_TYPE_PATIENT else patient_run.name
+            name = vidjil_utils.anon_ids([patient_run.id])[0] if sample_set.sample_type == defs.SET_TYPE_PATIENT else patient_run.name
             filename = db.sequence_file[sequence_file_id].filename
             data["samples"]["original_names"].append(name + "_" + filename)
             data["samples"]["timestamp"].append(str(db.sequence_file[sequence_file_id].sampling_date))
