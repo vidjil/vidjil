@@ -7,7 +7,6 @@
 #include "tools.h"
 #include "../lib/json.hpp"
 
-
 #define KEY_SEG "seg"
 
 using namespace std;
@@ -21,6 +20,7 @@ private:
 public:
   void set(string key, json val);
   void set(string key, string subkey, json val);
+  void setSeg(string subkey, json val);
   void add_warning(string code, string msg, string level);
   
   json toJson();

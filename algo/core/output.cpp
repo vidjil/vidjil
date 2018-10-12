@@ -12,6 +12,11 @@ void CloneOutput::set(string key, string subkey, json val)
   j[key][subkey] = val ;
 }
 
+void CloneOutput::setSeg(string subkey, json val)
+{
+  set(KEY_SEG, subkey, val);
+}
+
 void CloneOutput::add_warning(string code, string msg, string level)
 {
   json_add_warning(j, code, msg, level);
