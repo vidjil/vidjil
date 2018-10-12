@@ -48,15 +48,13 @@ import os
 import traceback
 import shutil
 from copy import copy
+import vidjil_utils
 
 execfile("applications/vidjil/controllers/default.py", globals())
 
 
 # create a test database by copying the original db
 test_db = DAL('sqlite://testing1234.sqlite')
-
-# build default database if doesn't exist
-init_db_helper()
 
 for tablename in db.tables:  # Copy tables!
     table_copy = [f.clone() for f in db[tablename]]
@@ -65,8 +63,8 @@ for tablename in db.tables:  # Copy tables!
 db = test_db
 auth.db = test_db
 
-
-init_db_helper(True)
+# build default database if doesn't exist
+vidjil_utils.init_db_helper(db, auth, True)
 
 fake_sample_set_id = db.sample_set.insert(sample_type = 'patient')
 
