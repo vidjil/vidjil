@@ -66,6 +66,7 @@ Vidjil-algo has been successfully tested on the following platforms :
   - Ubuntu 12.04 LTS amd64
   - Ubuntu 14.04 LTS amd64
   - Ubuntu 16.04 LTS
+  - Ubuntu 18.04 LTS
   - OS X 10.9, 10.10, 10.11
 
 Vidjil-algo is developed with continuous integration using systematic unit and functional testing.
