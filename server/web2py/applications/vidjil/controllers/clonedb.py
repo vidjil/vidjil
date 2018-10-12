@@ -48,26 +48,37 @@ def search_clonedb(sequences, sample_set_id):
         return error_message('Are you sure your account has an enabled CloneDB?')
     except Exception as e:
         return error_message(e.message)
+
+    sample_set_ids = [ sid for occurrences_one_seq in occurrences for occ in occurrences_one_seq if 'tags' in occ and 'sample_set' in occ['tags']  for sid in occ['tags']['sample_set'] ]
+
+    sample_sets = SampleSets(sample_set_ids)
+    sample_names = sample_sets.get_names()
+    sample_tags = sample_sets.get_tag_names()
+
+    for occurrences_one_seq in occurrences:
+        for occ in occurrences_one_seq:
             if 'tags' in occ and 'sample_set' in occ['tags']:
-                info = get_info_of_viewable_sample_set([int(sample_id) for sample_id in occ['tags']['sample_set']], int(occ['tags']['config_id'][0]))
+                
+                info = get_info_of_viewable_sample_set([int(sample_id) for sample_id in occ['tags']['sample_set']], int(occ['tags']['config_id'][0]), sample_names, sample_tags)
                 occ['tags']['sample_set_viewable'] = info['viewable']
                 occ['tags']['sample_set_name'] = info['name']
                 occ['tags']['sample_tags'] = info['sample_tags']
                 config_db = db.config[occ['tags']['config_id'][0]]
                 occ['tags']['config_name'] = [config_db.name if config_db else None]
-        results.append(occurrences)
+        results.append(occurrences_one_seq)
     return response.json(results)
 
-def get_info_of_viewable_sample_set(sample_sets, config):
+def get_info_of_viewable_sample_set(sample_sets, config, sample_names, sample_tags):
     info = {'viewable': [], 'name': [], 'sample_tags': []}
     for sample_id in sample_sets:
-        viewable = auth.can_view_sample_set(sample_id, auth.user)
+        viewable = auth.can_view_sample_set(sample_id, auth.user.id)
         info['viewable'].append(viewable)
         if viewable:
-            info['name'].append(get_sample_name(sample_id))
-            tags = get_sample_set_tags(sample_id)
-            for row in tags:
-                info['sample_tags'].append("#" + row.name)
+            info['name'].append(sample_names.get(sample_id))
+            tags = sample_tags.get(sample_id)
+            if tags:
+                for row in tags:
+                    info['sample_tags'].append("#" + row.name)
         else:
             info['name'].append(None)
     return info
