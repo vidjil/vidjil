@@ -278,6 +278,9 @@ test_server_unit:
       - make unit_server || (make -C server kill_fuse_server; deactivate; false)
       - make -C server kill_fuse_server
       - deactivate
+    artifacts:
+      reports:
+        junit: server/web2py/test-reports/TEST*xml
     only:
       - /^feature-.*s.*\/.*$/
       - /^hotfix-.*s.*\/.*$/
