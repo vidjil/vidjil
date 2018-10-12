@@ -16,6 +16,7 @@ class DBInitialiser(object):
         self._init_sequence_files()
         self._init_results_files()
         self._init_notifications()
+        self._init_set_association_data()
 
 
     def _needs_init(func):
@@ -134,6 +135,33 @@ class DBInitialiser(object):
         for i in range(3):
             c = db.auth_group.insert(role="test child %d" % i)
             db.group_assoc.insert(first_group_id=parent, second_group_id=c)
+
+    @_needs_init
+    def _init_set_association_data(self):
+        types = [defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC]
+        public_group = db(db.auth_group.role == "public").select().first()
+        for i in range(3):
+            tag_id = db.tag.insert(name="set_assoc_%d" % i)
+            db.group_tag.insert(group_id=public_group.id, tag_id=tag_id)
+            sfid = db.sequence_file.insert(
+                sampling_date="2010-10-10",
+                info="#set_assoc_%d" % i,
+                filename="test_file.fasta",
+                size_file=1024,
+                network=False,
+                data_file="test_sequence_file"
+            )
+            db.tag_ref.insert(tag_id=tag_id, table_name=db.sequence_file, record_id=sfid)
+
+            for t in types:
+                ssid = db.sample_set.insert(sample_type=t)
+                d = self.get_set_dict(t, ssid, i)
+                d['info'] = "set association test #set_assoc_%d" % i
+                sid = db[t].insert(**d)
+                auth.add_permission(public_group.id, PermissionEnum.access.value, db.sample_set, ssid)
+                db.tag_ref.insert(tag_id=tag_id, table_name=t, record_id=sid)
+                db.sample_set_membership.insert(sample_set_id=ssid, sequence_file_id=sfid)
+
 
 initialiser = DBInitialiser()
 initialiser.run()
