@@ -71,7 +71,7 @@ string AlignBox::getSequence(string sequence) {
   return sequence.substr(start, end-start+1);
 }
 
-void AlignBox::addToOutput(CloneOutput clone, int alternative_genes) {
+void AlignBox::addToOutput(CloneOutput *clone, int alternative_genes) {
 
   json j;
   j["name"] = ref_label;
@@ -88,7 +88,7 @@ void AlignBox::addToOutput(CloneOutput clone, int alternative_genes) {
       j["delLeft"] = del_left;
     }
 
-  clone.setSeg(key, j) ;
+  clone->setSeg(key, j) ;
 
   /*Export the N best genes if threshold parameter is specified*/
   if(rep && !this->score.empty() && rep->size() <= (int)this->score.size() && alternative_genes > 0 && alternative_genes <= (int)this->score.size()){
@@ -97,7 +97,7 @@ void AlignBox::addToOutput(CloneOutput clone, int alternative_genes) {
         int r = this->score[i].second;
         jalt.push_back(json::object({{"name",rep->label(r)}}));
     }
-    clone.setSeg(key + "alt", jalt);
+    clone->setSeg(key + "alt", jalt);
   }
 }
 
@@ -1332,7 +1332,7 @@ void FineSegmenter::findCDR3(){
   // Reminder: JUNCTIONstart is 1-based
 }
 
-void FineSegmenter::checkWarnings(CloneOutput clone)
+void FineSegmenter::checkWarnings(CloneOutput *clone)
 {
   if (isSegmented())
     {
@@ -1341,12 +1341,12 @@ void FineSegmenter::checkWarnings(CloneOutput clone)
           && (box_J->ref_label.find("IGHJ1") != string::npos)
           && ((getMidLength() >= 90) || (getMidLength() <= 94)))
         {
-          clone.add_warning("W61", "Non-recombined D7-27/J1 sequence", LEVEL_ERROR);
+          clone->add_warning("W61", "Non-recombined D7-27/J1 sequence", LEVEL_ERROR);
         }
     }
 }
 
-void FineSegmenter::toOutput(CloneOutput clone){
+void FineSegmenter::toOutput(CloneOutput *clone){
   json seg;
 
   for (AlignBox *box: boxes)
@@ -1357,15 +1357,15 @@ void FineSegmenter::toOutput(CloneOutput clone){
   if (isSegmented()) {
 
     if (isDSegmented()) {
-      clone.setSeg("N1", seg_N1.size());
-      clone.setSeg("N2", seg_N2.size());
+      clone->setSeg("N1", seg_N1.size());
+      clone->setSeg("N2", seg_N2.size());
     }
     else {
-      clone.setSeg("N", seg_N.size());
+      clone->setSeg("N", seg_N.size());
     }
 
     if (CDR3start >= 0) {
-        clone.setSeg("cdr3", {
+        clone->setSeg("cdr3", {
             {"start", CDR3start},
             {"stop", CDR3end},
             {"aa", CDR3aa}
@@ -1373,7 +1373,7 @@ void FineSegmenter::toOutput(CloneOutput clone){
     }
 
     if (JUNCTIONstart >= 0) {
-        clone.setSeg("junction", {
+        clone->setSeg("junction", {
             {"start", JUNCTIONstart},
             {"stop", JUNCTIONend},
             {"aa", JUNCTIONaa},
@@ -1387,25 +1387,25 @@ json toJsonSegVal(string s) {
   return {{"val", s}};
 }
 
-void KmerSegmenter::toOutput(CloneOutput clone) {
+void KmerSegmenter::toOutput(CloneOutput *clone) {
     json seg;
     int sequenceSize = sequence.size();
 
     if (evalue > NO_LIMIT_VALUE)
-      clone.setSeg("evalue", toJsonSegVal(scientific_string_of_double(evalue)));
+      clone->setSeg("evalue", toJsonSegVal(scientific_string_of_double(evalue)));
     if (evalue_left > NO_LIMIT_VALUE)
-      clone.setSeg("evalue_left",  toJsonSegVal(scientific_string_of_double(evalue_left)));
+      clone->setSeg("evalue_left",  toJsonSegVal(scientific_string_of_double(evalue_left)));
     if (evalue_right > NO_LIMIT_VALUE)
-      clone.setSeg("evalue_right", toJsonSegVal(scientific_string_of_double(evalue_right)));
+      clone->setSeg("evalue_right", toJsonSegVal(scientific_string_of_double(evalue_right)));
 
     if (getKmerAffectAnalyser() != NULL) {
-      clone.setSeg("affectValues", {
+      clone->setSeg("affectValues", {
         {"start", 1},
         {"stop", sequenceSize},
         {"seq", getKmerAffectAnalyser()->toStringValues()}
       });
     
-      clone.setSeg("affectSigns", {
+      clone->setSeg("affectSigns", {
         {"start", 1},
         {"stop", sequenceSize},
         {"seq", getKmerAffectAnalyser()->toStringSigns()}

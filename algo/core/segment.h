@@ -103,7 +103,7 @@ class AlignBox
 
   AlignBox(string key = "", string color="");
   string getSequence(string sequence);
-  void addToOutput(CloneOutput clone, int alternative_genes);
+  void addToOutput(CloneOutput *clone, int alternative_genes);
 
   /**
    * Returns 'V', 'D', 'J', or possibly '5', '4', '3', '?', depending on the ref_label and on the key
@@ -327,7 +327,7 @@ class KmerSegmenter : public Segmenter
   KmerAffectAnalyser *getKmerAffectAnalyser() const;
 
   string getInfoLineWithAffects() const;
-  void toOutput(CloneOutput clone);
+  void toOutput(CloneOutput *clone);
 
  private:
   void computeSegmentation(int strand, KmerAffect left, KmerAffect right,
@@ -403,8 +403,8 @@ class FineSegmenter : public Segmenter
    */
   void findCDR3();
 
-  void checkWarnings(CloneOutput clone);
-  void toOutput(CloneOutput clone);
+  void checkWarnings(CloneOutput *clone);
+  void toOutput(CloneOutput *clone);
   
 };
 
