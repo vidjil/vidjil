@@ -29,7 +29,8 @@ services:
             - /opt/vidjil/log:/var/vidjil
             - /opt/vidjil/log/uwsgi:/var/log/uwsgi
             - /opt/vidjil/backup:/mnt/backup
-            #- ./vidjil-server/conf:/etc/vidjil
+            - ./vidjil-server/conf:/etc/vidjil
+            - ../germline:/usr/share/vidjil/germline
     nginx:
         image: vidjil/client:latest
         depends_on:
@@ -43,6 +44,7 @@ services:
         volumes:
             - /opt/vidjil/log/nginx:/var/log/nginx
             - /etc/nginx/ssl:/etc/nginx/ssl
+            - ./vidjil-client/conf:/etc/vidjil
             - ../germline:/usr/share/vidjil/germline
 
     workers:

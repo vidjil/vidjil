@@ -233,12 +233,27 @@ vidjil image you want to use. Usually this will be `vidjil/vidjil:latest`,
 but more tags are available at <https://hub.docker.com/r/vidjil/vidjil/tags/>.
 
 XXXX ? XXXX
-You may also want to uncomment the volume in the fuse volume block 
-`./vidjil/conf:/etc/vidjil`.
-This will provide easier access to all of the
+The volumes in the fuse and nginx volume block
+`./vidjil-server/conf:/etc/vidjil` and `./vidjil-client/conf:/etc/vidjil`
+will provide easier access to all of the
 configuration files, allowing for tweaks.
 From this location, it will be easier to enable more software or pipelines
 by putting their binaries in this location taht will be see by the docker instance.
+
+# Docker -- Gerlmines
+
+In order to use Vidjil, you will need to retrieve the germline files.
+
+From the root of the git repository run:
+```sh
+cd gerlmine
+make
+```
+These germlines are included in the server container with a volume in the fuse block
+in your `docker-compose.yml`: `../germline:/usr/share/vidjil/germline`.
+
+After retrieving the germlines, you will also need to copy the generated `germline.js`
+(found in `browser/js/`) into the `docker/vidjil-client/conf` directory.
 
 
 # Docker -- Troubleshooting

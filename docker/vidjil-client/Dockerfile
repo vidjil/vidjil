@@ -34,6 +34,7 @@ run mkdir /etc/vidjil
 run rm /etc/nginx/conf.d/default.conf
 run chmod +x /opt/install_scripts/install.sh; sync && /opt/install_scripts/install.sh
 run ln -s /etc/vidjil/conf.js /usr/share/vidjil/browser/js/conf.js
+run ln -s /etc/vidjil/germline.js /usr/share/vidjil/browser/js/germline.js
 
 copy ./scripts/nginx-entrypoint.sh /entrypoints/nginx-entrypoint.sh
 run chown -R www-data:www-data /usr/share/vidjil
