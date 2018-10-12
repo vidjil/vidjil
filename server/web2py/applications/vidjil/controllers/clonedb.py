@@ -38,17 +38,16 @@ def search_clonedb(sequences, sample_set_id):
     parent_group = get_default_creation_group(auth)[1]
     auth.load_permissions(PermissionEnum.read.value, 'sample_set')
     auth.load_permissions(PermissionEnum.anon.value, 'sample_set')
-    for sequence in sequences:
-        options = clonedb.build_grep_clones_options({'sequence': sequence+' -sample_set:%d' % sample_set_id,
+    options = clonedb.build_grep_clones_options({'sequence': sequences[0]+' -sample_set:%d' % sample_set_id,
                                                      'index': 'clonedb_{}'.format(parent_group)})
-        args = grep_clones.parser.parse_args(options)
-        try:
-            occurrences = grep_clones.launch_search(args)
-        except ValueError:
-            return error_message('Are you sure your account has an enabled CloneDB?')
-        except Exception as e:
-            return error_message(e.message)
-        for occ in occurrences:
+    options += sequences[1:]
+    args = grep_clones.parser.parse_args(options)
+    try:
+        occurrences = grep_clones.launch_search(args)
+    except ValueError:
+        return error_message('Are you sure your account has an enabled CloneDB?')
+    except Exception as e:
+        return error_message(e.message)
             if 'tags' in occ and 'sample_set' in occ['tags']:
                 info = get_info_of_viewable_sample_set([int(sample_id) for sample_id in occ['tags']['sample_set']], int(occ['tags']['config_id'][0]))
                 occ['tags']['sample_set_viewable'] = info['viewable']
