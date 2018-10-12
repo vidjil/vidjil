@@ -307,7 +307,7 @@ test_server_functional:
     - cd docker && docker-compose stop
     - docker stop $(docker ps -aq)
     - docker rm $(docker ps -aq)
-    - docker rmi "vidjil/server:test" "vidjil/client:test"
+    - docker rmi "vidjil/server:test" "vidjil/client:test" reporter:test
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
