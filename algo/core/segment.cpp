@@ -24,6 +24,7 @@
 #include <cassert>
 #include "segment.h"
 #include "tools.h"
+#include "output.h"
 #include "../lib/json.hpp"
 #include "affectanalyser.h"
 #include <sstream>
@@ -1330,7 +1331,7 @@ void FineSegmenter::findCDR3(){
   // Reminder: JUNCTIONstart is 1-based
 }
 
-void FineSegmenter::checkWarnings(json &json_clone)
+void FineSegmenter::checkWarnings(CloneOutput clone)
 {
   if (isSegmented())
     {
@@ -1339,7 +1340,7 @@ void FineSegmenter::checkWarnings(json &json_clone)
           && (box_J->ref_label.find("IGHJ1") != string::npos)
           && ((getMidLength() >= 90) || (getMidLength() <= 94)))
         {
-          json_add_warning(json_clone, "W61", "Non-recombined D7-27/J1 sequence", LEVEL_ERROR);
+          clone.add_warning("W61", "Non-recombined D7-27/J1 sequence", LEVEL_ERROR);
         }
     }
 }

@@ -7,6 +7,7 @@
 #include "bioreader.hpp"
 #include "dynprog.h"
 #include "tools.h"
+#include "output.h"
 #include "germline.h"
 #include "kmerstore.h"
 #include "kmeraffect.h"
@@ -402,7 +403,7 @@ class FineSegmenter : public Segmenter
    */
   void findCDR3();
 
-  void checkWarnings(json &json_clone);
+  void checkWarnings(CloneOutput clone);
   json toJson();
   
 };
