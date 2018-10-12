@@ -57,32 +57,30 @@ def index():
     			reverse=reverse)
 
 def edit():
-    if auth.can_modify_user(int(request.vars['id'])):
+    if auth.is_admin():
         user = db.auth_user[request.vars["id"]]
         return dict(message=T("Edit user"), user=user)
     return error_message(ACCESS_DENIED)
 
 def edit_form():
-    if auth.can_modify_user(int(request.vars['id'])):
-        error = []
+    if auth.is_admin():
+        error = ""
         if request.vars["first_name"] == "" :
-            error.append("first name needed")
+            error += "first name needed, "
         if request.vars["last_name"] == "" :
-            error.append("last name needed")
+            error += "last name needed, "
         if request.vars["email"] == "":
-            error.append("email cannot be empty")
+            error += "email cannot be empty"
         elif not re.match(r"[^@]+@[^@]+\.[^@]+", request.vars["email"]):
-            error.append("incorrect email format")
+            error += "incorrect email format"
 
         if request.vars["password"] != "":
             if request.vars["confirm_password"] != request.vars["password"]:
-                error.append("password fields must match")
+                error += "password fields must match"
             else:
                 password = db.auth_user.password.validate(request.vars["password"])[0]
-                if not password:
-                    error.append("Password is too short, should be at least of length "+str(auth.settings.password_min_length))
 
-        if len(error) == 0:
+        if error == "":
             data = dict(first_name = request.vars["first_name"],
                                                     last_name = request.vars["last_name"],
                                                     email = request.vars["email"])
@@ -97,7 +95,7 @@ def edit_form():
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
         else :
-            res = {"success" : "false", "message" : ', '.join(error)}
+            res = {"success" : "false", "message" : error}
             log.error(res)
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
