@@ -104,10 +104,10 @@ def pear_converter(fileIn, fileOut):
     ### export as json
     try:
         json.dump(json_data, fo, sort_keys=True, indent=4, ensure_ascii=False)
-        print("Dump : %s" % (fileOut))
+        # print("Dump : %s" % (fileOut))
         fo.close()
     except:  # pragma: no cover
-        print("Dump : FAILED" )
+        print("Dump : FAILED (%s)" % (fileOut))
         return -1
 
     return
