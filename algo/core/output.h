@@ -4,7 +4,6 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#include "windows.h"
 #include "tools.h"
 #include "../lib/json.hpp"
 

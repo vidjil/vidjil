@@ -1,6 +1,8 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
+using namespace std ;
+typedef string junction ;
 
 // error
 #define ERROR_STRING "[error] "

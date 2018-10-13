@@ -28,8 +28,6 @@
 using namespace std;
 using json = nlohmann::json;
 
-typedef string junction ;
-
 class WindowsStorage {
  private:
   map<junction, BinReadStorage > seqs_by_window;
