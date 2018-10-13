@@ -1338,7 +1338,7 @@ int main (int argc, char **argv)
         clone->set("_average_read_length", { windowsStorage->getAverageLength(it->first) });
         clone->set("_coverage_info", {repComp.getCoverageInfo()});
         //From KmerMultiSegmenter
-        clone.add("seg", kseg->toJson());
+        kseg->toOutput(clone);
 
         if (repComp.getQuality().length())
         clone->set("seg", "quality", {
@@ -1386,11 +1386,10 @@ int main (int argc, char **argv)
     
         
         // From FineSegmenter
+        if (seg.code.length() > 0)
           clone->set("name", seg.code);
-        json json_fseg = seg.toJson();
-        for (json::iterator it = json_fseg.begin(); it != json_fseg.end(); ++it) {
-          clone->set("seg", it.key(), it.value());
-        }
+
+        seg.toOutput(clone);
 
         if (seg.isSegmented())
 	  {
@@ -1609,8 +1608,7 @@ int main (int argc, char **argv)
                   s.findCDR3();
 
                 clone->set("name", s.code);
-                clone->set("seg", s.toJson());
-                
+                s.toOutput(clone);
                 g = germline ;
               }
         else

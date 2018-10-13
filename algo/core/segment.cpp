@@ -71,10 +71,9 @@ string AlignBox::getSequence(string sequence) {
   return sequence.substr(start, end-start+1);
 }
 
-void AlignBox::addToJson(json &seg, int alternative_genes) {
+void AlignBox::addToOutput(CloneOutput clone, int alternative_genes) {
 
   json j;
-
   j["name"] = ref_label;
 
   if (key != "3") // no end information for J
@@ -89,14 +88,16 @@ void AlignBox::addToJson(json &seg, int alternative_genes) {
       j["delLeft"] = del_left;
     }
 
-  seg[key] = j ;
+  clone.setSeg(key, j) ;
+
   /*Export the N best genes if threshold parameter is specified*/
   if(rep && !this->score.empty() && rep->size() <= (int)this->score.size() && alternative_genes > 0 && alternative_genes <= (int)this->score.size()){
-    seg[key + "alt"] = json::array();
+    json jalt = json::array();
     for(int i = 0; i < alternative_genes;++i){
         int r = this->score[i].second;
-        seg[key + "alt"].push_back(json::object({{"name",rep->label(r)}}));
+        jalt.push_back(json::object({{"name",rep->label(r)}}));
     }
+    clone.setSeg(key + "alt", jalt);
   }
 }
 
@@ -1345,74 +1346,71 @@ void FineSegmenter::checkWarnings(CloneOutput clone)
     }
 }
 
-json FineSegmenter::toJson(){
+void FineSegmenter::toOutput(CloneOutput clone){
   json seg;
 
   for (AlignBox *box: boxes)
     {
-      box->addToJson(seg, this->alternative_genes);
+      box->addToOutput(clone, this->alternative_genes);
     }
 
   if (isSegmented()) {
 
     if (isDSegmented()) {
-      seg["N1"] = seg_N1.size();
-      seg["N2"] = seg_N2.size();
+      clone.setSeg("N1", seg_N1.size());
+      clone.setSeg("N2", seg_N2.size());
     }
     else {
-      seg["N"] = seg_N.size();
+      clone.setSeg("N", seg_N.size());
     }
 
     if (CDR3start >= 0) {
-        seg["cdr3"] = {
+        clone.setSeg("cdr3", {
             {"start", CDR3start},
             {"stop", CDR3end},
             {"aa", CDR3aa}
-        };
+        });
     }
 
     if (JUNCTIONstart >= 0) {
-        seg["junction"] = {
+        clone.setSeg("junction", {
             {"start", JUNCTIONstart},
             {"stop", JUNCTIONend},
             {"aa", JUNCTIONaa},
             {"productive", JUNCTIONproductive}
-        };
+        });
     }
   }
-  
-  return seg;
 }
 
 json toJsonSegVal(string s) {
   return {{"val", s}};
 }
 
-json KmerSegmenter::toJson() {
+void KmerSegmenter::toOutput(CloneOutput clone) {
     json seg;
     int sequenceSize = sequence.size();
 
     if (evalue > NO_LIMIT_VALUE)
-      seg["evalue"] = toJsonSegVal(scientific_string_of_double(evalue));
+      clone.setSeg("evalue", toJsonSegVal(scientific_string_of_double(evalue)));
     if (evalue_left > NO_LIMIT_VALUE)
-      seg["evalue_left"] = toJsonSegVal(scientific_string_of_double(evalue_left));
+      clone.setSeg("evalue_left",  toJsonSegVal(scientific_string_of_double(evalue_left)));
     if (evalue_right > NO_LIMIT_VALUE)
-      seg["evalue_right"] = toJsonSegVal(scientific_string_of_double(evalue_right));
+      clone.setSeg("evalue_right", toJsonSegVal(scientific_string_of_double(evalue_right)));
 
     if (getKmerAffectAnalyser() != NULL) {
-      seg["affectValues"] = {
+      clone.setSeg("affectValues", {
         {"start", 1},
         {"stop", sequenceSize},
         {"seq", getKmerAffectAnalyser()->toStringValues()}
-      };
+      });
     
-      seg["affectSigns"] = {
+      clone.setSeg("affectSigns", {
         {"start", 1},
         {"stop", sequenceSize},
         {"seq", getKmerAffectAnalyser()->toStringSigns()}
-      };
+      });
     }
-    return seg;
 }
 
 
