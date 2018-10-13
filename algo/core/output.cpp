@@ -2,14 +2,19 @@
 #include "output.h"
 
 
-void CloneOutput::set(string key, json val)
+void Output::set(string key, json val)
 {
    j[key] = val ;
 }
 
-void CloneOutput::set(string key, string subkey, json val)
+void Output::set(string key, string subkey, json val)
 {
   j[key][subkey] = val ;
+}
+
+void Output::set(string key, string subkey, string subsubkey, json val)
+{
+  j[key][subkey][subsubkey] = val ;
 }
 
 void CloneOutput::setSeg(string subkey, json val)
@@ -17,7 +22,7 @@ void CloneOutput::setSeg(string subkey, json val)
   set(KEY_SEG, subkey, val);
 }
 
-void CloneOutput::add_warning(string code, string msg, string level)
+void Output::add_warning(string code, string msg, string level)
 {
   json_add_warning(j, code, msg, level);
 }
@@ -25,4 +30,17 @@ void CloneOutput::add_warning(string code, string msg, string level)
 json CloneOutput::toJson()
 {
    return j;
+}
+
+
+
+
+SampleOutput::SampleOutput(json init)
+{
+  j = init;
+}
+
+void SampleOutput::addClone(junction junction, CloneOutput *clone)
+{
+  clones[junction] = clone;
 }
