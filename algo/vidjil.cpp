@@ -1089,8 +1089,6 @@ int main (int argc, char **argv)
     we.out_stats(stream_segmentation_info);
     
     cout << stream_segmentation_info.str();
-      map <junction, json> json_data_segment ;
-    
 
 	//////////////////////////////////
 	//$$ Sort windows
@@ -1333,6 +1331,7 @@ int main (int argc, char **argv)
 
 
         CloneOutput *clone  = new CloneOutput();
+        output->addClone(it->first, clone);
         clone->set("sequence", kseg->getSequence().sequence);
         clone->set("_coverage", { repComp.getCoverage() });
         clone->set("_average_read_length", { windowsStorage->getAverageLength(it->first) });
@@ -1361,7 +1360,6 @@ int main (int argc, char **argv)
           {
             cout << representative << endl ;
             out_clones << representative << endl ;
-            json_data_segment[it->first] = clone.toJson();
             continue;
           }
 
@@ -1425,9 +1423,7 @@ int main (int argc, char **argv)
 	      out_clone << endl;
 	   } // end if (seg.isSegmented())
 
-
         seg.checkWarnings(clone);
-        json_data_segment[it->first] = clone.toJson();
         
 	if (output_sequences_by_cluster) // -a option, output all sequences
 	  {
@@ -1485,7 +1481,7 @@ int main (int argc, char **argv)
 
     } // end if (command == CMD_CLONES) 
 
-    //$$ .json output: json_data_segment
+    //$$ .json output
     cout << endl ;
     
     //json custom germline
@@ -1514,7 +1510,7 @@ int main (int argc, char **argv)
     //out_json << json->toString();
 
     windowsStorage->clearSequences();
-    json jsonSortedWindows = windowsStorage->sortedWindowsToJson(json_data_segment, max_clones_id);
+    windowsStorage->sortedWindowsToOutput(output, max_clones_id);
     
     json reads_germline;
     for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
@@ -1531,9 +1527,7 @@ int main (int argc, char **argv)
             {"segmented", {nb_segmented}},
             {"germline", reads_germline}
     });
-    output->set("clones", jsonSortedWindows);
     output->set("germlines", json_germlines);
-
     output->set("germlines", "ref", multigermline->ref);
     output->set("germlines", "species", multigermline->species) ;
     output->set("germlines", "species_taxon_id", multigermline->species_taxon_id) ;
@@ -1589,6 +1583,7 @@ int main (int argc, char **argv)
         FineSegmenter s(seq, germline, segment_cost, expected_value, nb_reads_for_evalue, kmer_threshold, alternative_genes);
 
         CloneOutput *clone = new CloneOutput();
+        output->addClone(seq.label, clone);
         clone->set("id", seq.label);
         clone->set("sequence", seq.sequence);
         clone->set("reads", { 1 });
