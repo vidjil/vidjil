@@ -44,3 +44,17 @@ void SampleOutput::addClone(junction junction, CloneOutput *clone)
 {
   clones[junction] = clone;
 }
+
+CloneOutput* SampleOutput::getClone(junction junction)
+{
+  if (clones.find(junction) != clones.end()){
+    return clones[junction];
+  }
+  else
+  {
+    CloneOutput *clone = new(CloneOutput);
+    addClone(junction, clone);
+    clone -> set("sequence", 0); // TODO need to compute representative sequence for this case
+    return clone;
+  }
+}

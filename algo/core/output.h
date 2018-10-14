@@ -45,6 +45,9 @@ public:
 
   void addClone(junction junction, CloneOutput *clone);
 
+  // get a clone, or create a new one if needed
+  CloneOutput* getClone(junction junction);
+
   json toJson();
 };
 
