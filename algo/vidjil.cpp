@@ -1582,9 +1582,10 @@ int main (int argc, char **argv)
 
         FineSegmenter s(seq, germline, segment_cost, expected_value, nb_reads_for_evalue, kmer_threshold, alternative_genes);
 
+        string id = string_of_int(nb);
         CloneOutput *clone = new CloneOutput();
-        output->addClone(seq.label, clone);
-        clone->set("id", seq.label);
+        output->addClone(id, clone);
+        clone->set("id", id);
         clone->set("sequence", seq.sequence);
         clone->set("reads", { 1 });
         clone->set("top", 0);
