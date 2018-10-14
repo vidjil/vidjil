@@ -758,7 +758,7 @@ int main (int argc, char **argv)
   ostringstream stream_cmdline;
   for (int i=0; i < argc; i++) stream_cmdline << argv[i] << " ";
 
-  json j = {
+  SampleOutput *output = new SampleOutput({
     {"vidjil_json_version", VIDJIL_JSON_VERSION},
     {"samples", {
         {"number", 1},
@@ -767,7 +767,7 @@ int main (int argc, char **argv)
         {"producer", {soft_version}},
         {"commandline", {stream_cmdline.str()}}
       }}
-  };
+  });
 
 
   /////////////////////////////////////////
@@ -1081,7 +1081,7 @@ int main (int argc, char **argv)
     // warn if there are too few segmented sequences
     if (ratio_segmented < WARN_PERCENT_SEGMENTED)
       {
-        json_add_warning(j, "W20", "Very few V(D)J recombinations found: " + fixed_string_of_float(ratio_segmented, 2) + "%");
+        output->add_warning("W20", "Very few V(D)J recombinations found: " + fixed_string_of_float(ratio_segmented, 2) + "%", LEVEL_WARN);
         stream_segmentation_info << "  ! There are not so many CDR3 windows found in this set of reads." << endl ;
         stream_segmentation_info << "  ! Please check the unsegmentation causes below and refer to the documentation." << endl ;
       }
@@ -1523,28 +1523,28 @@ int main (int argc, char **argv)
     }
 
 
-    // Complete main json output
-    j["diversity"] = jsonDiversity ;
-    j["samples"]["log"] = { stream_segmentation_info.str() } ;
-    j["reads"] = {
+    // Complete main output
+    output->set("diversity", jsonDiversity);
+    output->set("samples", "log", { stream_segmentation_info.str() }) ;
+    output->set("reads", {
             {"total", {nb_total_reads}},
             {"segmented", {nb_segmented}},
             {"germline", reads_germline}
-    } ;
-    j["clones"] = jsonSortedWindows ;
-    j["germlines"] = json_germlines ;
+    });
+    output->set("clones", jsonSortedWindows);
+    output->set("germlines", json_germlines);
 
-    j["germlines"]["ref"] = multigermline->ref ;
-    j["germlines"]["species"] = multigermline->species ;
-    j["germlines"]["species_taxon_id"] = multigermline->species_taxon_id ;
+    output->set("germlines", "ref", multigermline->ref);
+    output->set("germlines", "species", multigermline->species) ;
+    output->set("germlines", "species_taxon_id", multigermline->species_taxon_id) ;
 
     if (epsilon || forced_edges.size()){
-        j["clusters"] = comp.toJson(clones_windows);
+        output->set("clusters", comp.toJson(clones_windows));
     }
     
     //Added edges in the json output file
     if (jsonLevenshteinComputed)
-    j["similarity"] = jsonLevenshtein;
+      output->set("similarity", jsonLevenshtein);
 
 
     //$$ Clean
@@ -1569,8 +1569,6 @@ int main (int argc, char **argv)
     ////////////////////////////////////////
     //       V(D)J SEGMENTATION           //
     ////////////////////////////////////////
-
-    json json_clones ;
 
     int nb = 0;
     int nb_segmented = 0 ;
@@ -1619,21 +1617,18 @@ int main (int argc, char **argv)
         clone->set("germline", g->code);
         nb_segmented_by_germline[g->code]++ ;
 
-        json_clones += clone.toJson();
-
         cout << s << endl;        
       }
 
-    // Finish .json preparation
-    j["clones"] = json_clones;
-    j["reads"]["segmented"] = { nb_segmented } ;
-    j["reads"]["total"] = { nb } ;
+    // Finish output preparation
+    output->set("reads", "segmented", { nb_segmented }) ;
+    output->set("reads", "total", { nb }) ;
 
     multigermline->insert(not_segmented);
     for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
       Germline *germline = *it ;
       if (nb_segmented_by_germline[germline->code])
-        j["reads"]["germline"][germline->code] = { nb_segmented_by_germline[germline->code] } ;
+        output->set("reads", "germline", germline->code, { nb_segmented_by_germline[germline->code] });
     }
 
   } else {
@@ -1657,7 +1652,7 @@ int main (int argc, char **argv)
   cout << "  ==> " << f_json << "\t(data file for the web application)" << endl ;
   ofstream out_json(f_json.c_str()) ;
 
-  out_json << j.dump(2);
+  out_json << output.toJson().dump(2);
 
   //$$ Clean
   delete multigermline ;
