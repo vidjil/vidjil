@@ -1644,11 +1644,12 @@ int main (int argc, char **argv)
     cout << endl;
   }
 
-  //$ Output json
+  //$ Output .vidjil json
   cout << "  ==> " << f_json << "\t(data file for the web application)" << endl ;
   ofstream out_json(f_json.c_str()) ;
+  SampleOutputVidjil *outputVidjil = static_cast<SampleOutputVidjil *>(output);
 
-  out_json << output.toJson().dump(2);
+  outputVidjil->out(out_json);
 
   //$$ Clean
   delete multigermline ;

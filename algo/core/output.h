@@ -36,11 +36,12 @@ public:
 
 class SampleOutput : public Output
 {
-private:
+protected:
   map <junction, CloneOutput*> clones;
 
 public:
   SampleOutput(json init);
+  virtual ~SampleOutput();
 
   void addClone(junction junction, CloneOutput *clone);
 
@@ -48,6 +49,7 @@ public:
   CloneOutput* getClone(junction junction);
 
   json toJson();
+  void out(ostream &s);
 };
 
 
@@ -68,23 +70,14 @@ class CloneOutputFormatterJson(CloneOutputFormatter)
 }
 */
 
-/*
 
-class SampleOutputFormatter
+// Native Json .vidjil format
+// See vidjil-format.md
+class SampleOutputVidjil : public SampleOutput
 {
+public:
+  void out(ostream &s);
+};
 
-}
-
-class SampleOutputFormatterCSV(SampleOutputFormatter)
-{
-
-}
-
-class SampleOutputFormatterJson(SampleOutputFormatter)
-{
-
-}
-
-*/
 
 #endif

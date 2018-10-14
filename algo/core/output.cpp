@@ -40,6 +40,14 @@ SampleOutput::SampleOutput(json init)
   j = init;
 }
 
+SampleOutput::~SampleOutput()
+{
+}
+
+void SampleOutput::out(ostream &s)
+{
+}
+
 void SampleOutput::addClone(junction junction, CloneOutput *clone)
 {
   clones[junction] = clone;
@@ -57,4 +65,18 @@ CloneOutput* SampleOutput::getClone(junction junction)
     clone -> set("sequence", 0); // TODO need to compute representative sequence for this case
     return clone;
   }
+}
+
+
+
+void SampleOutputVidjil::out(ostream &s)
+{
+   json j_clones;
+
+   for (auto it: clones)
+      j_clones.push_back(it.second->toJson());
+
+   j["clones"] = j_clones;
+
+   s << j.dump(2);
 }
