@@ -15,6 +15,9 @@ class Run(SampleSet):
     def get_name(self, data):
         return data['name']
 
+    def get_display_name(self, data):
+        return SPAN(self.get_name(data), _class="set_token run_token")
+
     def get_embellished_name(self, data):
         return 'run: %s' % data['name']
 
