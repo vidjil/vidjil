@@ -63,6 +63,8 @@ for tablename in db.tables:  # Copy tables!
 db = test_db
 auth.db = test_db
 
+current.db = db
+current.auth = auth
 # build default database if doesn't exist
 vidjil_utils.init_db_helper(db, auth, True)
 
@@ -89,6 +91,8 @@ user_id = db.auth_user.insert(
 )
 unique_group = db.auth_group.insert(role="user_"+str(user_id), description=" ")
 db.auth_membership.insert(user_id=user_id, group_id=unique_group)
+
+auth.user = db.auth_user[user_id]
 
 # with admin privilege
 group_id = 1 #admin group
