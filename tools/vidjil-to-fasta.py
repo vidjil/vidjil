@@ -215,8 +215,7 @@ def write_fuse_to_fasta(data, outfile, used_names, current_filename, options, me
             max_sample = max(clone.d['reads'])
             #take the index corresponding to the max_sample
             index_max_sample = clone.d['reads'].index(max_sample)
-            germline = clone.d['germline']
-            reads_total_nb = data.d['reads'].d['germline'][germline][index_max_sample]
+            reads_total_nb = data.d['reads'].d['segmented'][index_max_sample]
             percentage = float(max_sample)/reads_total_nb
 
             if name in used_names:
