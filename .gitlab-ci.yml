@@ -341,7 +341,7 @@ deploy_docker:
   script:
     - export CUR_DATE=date +%Y-%m-%d
     - export TYPE=$CI_COMMIT_REF_NAME | awk '{ gsub(/prod-/, "") }{ print $1 }'
-    - export TAG="vidjil/$TYPE:$CI_COMMIT_SHA-$CUR_DATE"
+    - export TAG="vidjil/$TYPE:$CUR_DATE-$CI_COMMIT_SHA"
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=PRODUCTION -t $TAG docker/vidjil-$TYPE
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker push $TAG
