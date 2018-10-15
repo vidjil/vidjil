@@ -12,7 +12,7 @@ class Generic(SampleSet):
         return filter(lambda row : vidjil_utils.advanced_filter(row['string'], filter_str), data)
 
     def get_info_dict(self, data):
-        return dict(name = "set : %s" % self.get_display_name(data),
+        return dict(name = self.get_display_name(data),
                 filename = "sample_set_%d" % data['id'],
                 label = "",
                 info = ""

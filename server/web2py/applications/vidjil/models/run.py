@@ -30,7 +30,7 @@ class Run(SampleSet):
         return filter(lambda row : vidjil_utils.advanced_filter(row['string'], filter_str), data)
 
     def get_info_dict(self, data):
-        return dict(name = "run : " + data['name'] + " (" + str(data['run_date']) + ")",
+        return dict(name = self.get_display_name(data),
                     filename = "run : " + data['name'] + "_" + str(data['run_date']),
                     label = data['id_label'] + " (" + str(data['run_date']) + ")",
                     info = data['info']
