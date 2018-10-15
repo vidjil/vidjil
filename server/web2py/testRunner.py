@@ -241,6 +241,13 @@ sec_fake_tag_id = db.tag.insert(name="sec_fake_tag")
 db.group_tag.insert(group_id=unique_group, tag_id=first_fake_tag_id)
 db.group_tag.insert(group_id=fake_group_id, tag_id=sec_fake_tag_id)
 
+first_fake_tag_ref = db.tag_ref.insert(tag_id = first_fake_tag_id,
+                                       table_name = 'patient',
+                                       record_id = fake_sample_set_id)
+sec_fake_tag_ref = db.tag_ref.insert(tag_id = sec_fake_tag_id,
+                                       table_name = 'patient',
+                                       record_id = fake_sample_set_id)
+
 db.commit()
 
 
