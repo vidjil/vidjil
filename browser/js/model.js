@@ -2122,7 +2122,7 @@ changeAlleleNotation: function(alleleNotation) {
 
             for (var k=0; k<listGene.length; k++){
                 var germName = gene_germline[k].substring(0, 3);
-                if (gene_germline[k] == "unexpected") {
+                if (this.germline[germName] != undefined) {
                     seq_found = this.findGermlineFromGene(listGene[k]).toUpperCase().replace(/\./g, '');
                     if (seq_found != undefined){
                         fasta += ">" + listGene[k] + '\n';
