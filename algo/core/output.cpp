@@ -42,6 +42,8 @@ SampleOutput::SampleOutput(json init)
 
 SampleOutput::~SampleOutput()
 {
+  for (auto it: clones)
+    delete it.second;
 }
 
 void SampleOutput::out(ostream &s)
