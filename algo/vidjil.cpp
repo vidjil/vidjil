@@ -1654,6 +1654,7 @@ int main (int argc, char **argv)
   //$$ Clean
   delete multigermline ;
   delete reads;
+  delete output;
 }
 
 //$$ end
