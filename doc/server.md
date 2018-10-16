@@ -101,10 +101,9 @@ However, the following network access are recommended:
 
 # Docker -- Installation
 
-All our images are hosted on DockerHub and can be retrieved from the
-repository [vidjil/vidjil](https://hub.docker.com/r/vidjil/vidjil/).
-The last image is tagged with `vidjil/vidjil:latest`.
-All Vidjil components are currently packaged into a single docker image.
+All our images are hosted on DockerHub in the [vidjil/](https://hub.docker.com/r/vidjil) repositories.
+The last images are tagged with `vidjil/server:latest` and `vidjil/client:latest`.
+
 Individual services are started by docker-compose  (<https://docs.docker.com/compose/>).
 
 
@@ -124,9 +123,14 @@ This contains both [docker-compose.yml](http://gitlab.vidjil.org/blob/dev/docker
 
 The vidjil Docker environment is managed by `docker-compose`, who launches the following services:
 
+From `vidjil/client`
+
+  - `nginx` The web server, containing the client web application
+
+From `vidjil/server`
+
   - `mysql` The database
   - `uwsgi` The Web2py backend server
-  - `nginx` The web server, containing the client web application
   - `workers` The Web2py Scheduler workers in charge of executing vidjil users' samples
 
   - `fuse` The XmlRPCServer that handles queries for comparing samples
@@ -229,8 +233,8 @@ Here are some notable configuration changes you should consider:
 ### XXX ? XXX
 
 Ensure your `docker-compose.yml` contains the correct reference to the
-vidjil image you want to use. Usually this will be `vidjil/vidjil:latest`,
-but more tags are available at <https://hub.docker.com/r/vidjil/vidjil/tags/>.
+vidjil image you want to use. Usually this will be `vidjil/server:latest`,
+but more tags are available at <https://hub.docker.com/r/vidjil/server/tags/>.
 
 XXXX ? XXXX
 The volumes in the fuse and nginx volume block
