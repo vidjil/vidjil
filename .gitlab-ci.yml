@@ -13,8 +13,8 @@ stages:
   - test_unit
   - deploy_review
   - test_germlines
-  - test_shouldvdj
   - test_functional
+  - test_shouldvdj
   - test_functional_external
   - coverage
   - prepare_release
