@@ -37,8 +37,8 @@ have multiple cores to ensure the worker queues don't build up.
 One worker will occupy one core completely when running vidjil-algo (which is
 currently single-threaded).
 
-For reference, here are various setups we used on our public
-testing server <https://app.vidjil.org> during two years
+For reference, here are various setups of our public
+testing server <https://app.vidjil.org>:
 
 
 #### 2016 -- 2017 (40+ users, including 15 regular users)
@@ -48,9 +48,9 @@ testing server <https://app.vidjil.org> during two years
 
 
 #### since 2018  (100+ users, including 30+ regular users)
-  - Virtual Machine: 8 virtual CPUs, similar capacity Xxxxx
+  - Virtual Machine: 8 virtual CPUs
   - 6 workers
-  - RAM: Xxxx
+  - RAM: 28GB
   
   
 We create less workers for executing Vidjil-algo than there are (virtual) CPU availabe,
