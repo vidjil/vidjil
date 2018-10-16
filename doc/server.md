@@ -686,17 +686,18 @@ Web2py and Vidjil are no exception to this rule.
 
 ## Making backups
 
-Performing an Analysis in Vidjil is time-consuming, therefore should the
-data be lost, valuable man-hours are also lost.
-In order to prevent this we make regular incremental backups of the
-data stored on the vidjil servers.
+The top priority is to backup *files created during the analysis*
+(either by a software or a human).
+Should the data be lost, valuable man-hours would be lost.
+In order to prevent this, we make twice a day incremental backups of the
+data stored on the public Vidjil servers.
 
-This applies to the files created during the analysis (either by a software or a human).
-This does not apply to uploaded files.
+This does not apply to uploaded files. We public servers that they should
+keep a backup of their original sequence files.
 
 To ease the backup, the `backup.sh` script provides an example.  For this
 script to be ran automatically, it is required that `mysqldump` does not ask
-for a password. The credentials informations should be provided in a `~/.my.cnf` file (for MySQL obviously).
+for a password. The credentials informations should be provided in a `~/.my.cnf` file (in the case of MySQL).
 
 ``` conf
 [client]
@@ -709,11 +710,13 @@ It is also advised that the backup user has a read-only access to the database.
 
 ## Autodelete and Permissions
 
-Web2py has a handy feature called AutoDelete which allows the administrator
+Web2py has a handy feature called `AutoDelete` which allows the administrator
 to state that file reference deletions should be cascaded if no other
 references to the file exist.
-When deploying to production one needs to make sure AutoDelete is
+When deploying to production one needs to make sure `AutoDelete` is
 deactivated.
+This is the case for the default Vijdil installation (see `server/web2py/applications/vidjil/models/db.py`).
+
 As a second precaution it is also wise to temporarily restrict web2py's
 access to referenced files.
 
@@ -721,7 +724,9 @@ Taking two mesures to prevent file loss might seem like overkill, but
 securing data is more important than the small amount of extra time spent
 putting these mesures into place.
 
-## Deploying the server
+# Plain server installation -- updating the server
+
+**(information to be updated)**
 
 Currently deploying changes to production is analogous to merging into the
 rbx branch and pulling from the server.
@@ -733,7 +738,6 @@ then looking at the database.
 
 ## Step by Step
 
-  - Set AutoDelete to False
   - Check permissions on the uploads folder (set to 100)
       - you can also check the amount of files present at this point for future
         reference
