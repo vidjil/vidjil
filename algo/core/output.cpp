@@ -48,6 +48,12 @@ void Output::add_warning(string code, string msg, string level)
 }
 
 
+int CloneOutput::reads()
+{
+  return j["reads"][0];
+}
+
+
 CloneOutput::~CloneOutput()
 {
 }
@@ -116,6 +122,8 @@ map <string, string> CloneOutputAIRR::fields()
   map <string, string> fields;
 
   fields["locus"] = get("germline");
+  fields["consensus_count"] = string_of_int(reads());
+
   fields["sequence_id"] = get("id");
   fields["clone_id"] = get("id");
   fields["sequence"] = get("sequence");

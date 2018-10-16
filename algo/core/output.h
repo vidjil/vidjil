@@ -36,6 +36,8 @@ class CloneOutput : public Output
 public:
   virtual ~CloneOutput();
 
+  int reads();
+
   void setSeg(string subkey, json val);
 
   json toJson();
