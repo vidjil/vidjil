@@ -177,9 +177,13 @@ Then `docker ps` should display four running containers:
 `docker_nginx_1`, `docker_uwsgi_1`, `docker_fuse_1`, `docker_mysql_1`
 
 
-  - From the `vidjil` directory, run `make germline` to create `germline/`. You should accept IMGT licences.
-  - Copy the `germline.js` with `docker cp browser/js/germline.js docker_nginx_1:/usr/share/vidjil/browser/js/germline.js`
-    and `docker commit docker_nginx_1 vidjil/client:latest`
+  - Vidjil also need germline files.
+      - You can use IMGT germline files if you accept IMGT licence.
+        For this, from the `vidjil` directory (root of the git repository),
+        run `make germline` to create `germline/` while checking the licence.
+      - These germlines are included in the server container with a volume in the fuse block
+        in your `docker-compose.yml`: `../germline:/usr/share/vidjil/germline`.
+      - Copy also the generated `browser/js/germline.js` into the `docker/vidjil-client/conf/` directory.
 
 
   - Open a web browser to <https://your-hostname>.
@@ -244,24 +248,8 @@ configuration files, allowing for tweaks.
 From this location, it will be easier to enable more software or pipelines
 by putting their binaries in this location taht will be see by the docker instance.
 
-# Docker -- Gerlmines
-
-In order to use Vidjil, you will need to retrieve the germline files.
-
-From the root of the git repository run:
-```sh
-cd gerlmine
-make
-```
-These germlines are included in the server container with a volume in the fuse block
-in your `docker-compose.yml`: `../germline:/usr/share/vidjil/germline`.
-
-After retrieving the germlines, you will also need to copy the generated `germline.js`
-(found in `browser/js/`) into the `docker/vidjil-client/conf` directory.
-
 
 # Docker -- Troubleshooting
-
 
 ###  Error "Can't connect to MySQL server on 'mysql'"
 
