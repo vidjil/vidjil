@@ -237,19 +237,17 @@ Here are some notable configuration changes you should consider:
 
 
 
-### XXX ? XXX
+### Docker -- Adding external software
 
-Ensure your `docker-compose.yml` contains the correct reference to the
-vidjil image you want to use. Usually this will be `vidjil/server:latest`,
-but more tags are available at <https://hub.docker.com/r/vidjil/server/tags/>.
+**(To be documented)**
 
-XXXX ? XXXX
 The volumes in the fuse and nginx volume block
 `./vidjil-server/conf:/etc/vidjil` and `./vidjil-client/conf:/etc/vidjil`
 will provide easier access to all of the
 configuration files, allowing for tweaks.
+
 From this location, it will be easier to enable more software or pipelines
-by putting their binaries in this location taht will be see by the docker instance.
+by putting their binaries in this location that will be see by the docker instance.
 
 
 # Docker -- Troubleshooting
