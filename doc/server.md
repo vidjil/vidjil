@@ -265,14 +265,16 @@ XXXX Relaunch the workers.
 
 **(October 2018: Temporary instructions, please wait.)**
 
-By security, we please you to make a backup before doing this process.
-
-Usually our docker installation will only require the following:
+By security, we please you to make a backup (see "Backups", below) before doing this process.
+Updating the Docker installation usually only require the following:
 
 ``` bash
-docker pull vidjil/server[:<version>]
-docker pull vidjil/client[:<version>]
+docker pull vidjil/server:latest
+docker pull vidjil/client:latest
 ```
+
+This will pull the latest version of the images.
+More tags are available at <https://hub.docker.com/r/vidjil/server/tags/>.
 
 If you do not have access to `hub.docker.com` on your server, then you
 should pull the image onto a machine that does and extract it into a tar
@@ -289,13 +291,13 @@ Import:
      docker load -i <input_file>
 ```
 
-In some cases you may need to update your docker-compose.yml file or some
-of the configuration files. The latest versions are available on our
+In some cases you may need to update your `docker-compose.yml` file or some
+of the configuration files. The latest versions of these files are available on our
 [Gitlab](https://inria.gitlab.com/vidjil/vidjil).
 
-By default, all previous volumes will be reused and no datas will be lost.
+By default, all previous volumes will be reused and no data will be lost.
 If needed, the MYSQL database will be updated to match the newest format.
-this step is automaticly done by web2py.
+this step is handled by web2py.
 XXX TODO XXX (****demande confirmation par test****)
 
 
