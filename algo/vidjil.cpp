@@ -103,6 +103,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define AFFECTS_FILENAME ".affects"
 #define EDGES_FILENAME ".edges"
 #define COMP_FILENAME "comp.vidjil"
+#define AIRR_SUFFIX ".tsv"
 #define JSON_SUFFIX ".vidjil"
 
 #define DEFAULT_K      0
@@ -753,6 +754,7 @@ int main (int argc, char **argv)
   //            JSON OUTPUT              //
   /////////////////////////////////////////
 
+  string f_airr = out_dir + f_basename + AIRR_SUFFIX ;
   string f_json = out_dir + f_basename + JSON_SUFFIX ;
 
   ostringstream stream_cmdline;
@@ -1638,12 +1640,18 @@ int main (int argc, char **argv)
     cout << endl;
   }
 
+  //$ Output AIRR .tsv
+  cout << "  ==> " << f_airr << "   \t(AIRR output)" << endl;
+  ofstream out_airr(f_airr.c_str());
+  static_cast<SampleOutputAIRR *>(output) -> out(out_airr);
+
   //$ Output .vidjil json
-  cout << "  ==> " << f_json << "\t(data file for the web application)" << endl ;
+  cout << "  ==> " << f_json << "\t(data file for the Vidjil web application)" << endl ;
   ofstream out_json(f_json.c_str()) ;
   SampleOutputVidjil *outputVidjil = static_cast<SampleOutputVidjil *>(output);
 
   outputVidjil->out(out_json);
+
 
   //$$ Clean
   delete multigermline ;
