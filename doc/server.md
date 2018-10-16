@@ -76,8 +76,7 @@ Note that even when the input sequences are deleted, the server is still able to
 ### Remote access on a mounted filesystem
 
 Moreover, it is possible to access `.fastq` files on a mounted filesystem.
-XXX Document me ! XXXX
-
+See `FILE_SOURCE` below.
 
 ## Authentication
 
@@ -218,6 +217,11 @@ Here are some notable configuration changes you should consider:
   - Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `vidjil-server/conf/defs.py`. These
     represent the sender email address and the destination email addresses,
     used in reporting patient milestones and server errors.
+
+  - To allow users to select files from a mounted volume,
+    set `FILE_SOURCE` and `FILE_TYPES` in `vidjil-server/conf/defs.py`.
+    In this case, the `DIR_SEQUENCES` directory will be populated with links to the selected files.
+    Users will still be allowed to upload their own files.
 
   - Change the `volumes` in `docker-compose.yml`. By default all files that
     require saving outside of the containers (the database, uploads, vidjil
