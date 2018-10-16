@@ -5,7 +5,10 @@
 
 string getout(json v)
 {
-  return v.is_null() ? NULL_VAL : v ;
+  if (v.is_null()) return NULL_VAL ;
+  if (v.is_number()) return string_of_int(v) ;
+  if (v.is_string()) return v;
+  return v.dump();
 }
 
 string Output::get(string key)
