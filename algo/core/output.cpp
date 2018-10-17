@@ -120,6 +120,13 @@ void SampleOutputVidjil::out(ostream &s)
 
 // AIRR .tsv output
 
+string TF_format_bool(string val)
+{
+  if (val == "false") return "F" ;
+  if (val == "true") return "T" ;
+  return val ;
+}
+
 map <string, string> CloneOutputAIRR::fields()
 {
   map <string, string> fields;
@@ -133,6 +140,12 @@ map <string, string> CloneOutputAIRR::fields()
   fields["v_call"] = get(KEY_SEG, "5", "name");
   fields["d_call"] = get(KEY_SEG, "4", "name");
   fields["j_call"] = get(KEY_SEG, "3", "name");
+  
+  fields["cdr3_aa"] = get(KEY_SEG, "cdr3", "aa");
+  fields["junction"] = NULL_VAL;
+  fields["junction_aa"] = get(KEY_SEG, "junction", "aa");
+  fields["productive"] = TF_format_bool(get(KEY_SEG, "junction", "productive"));
+  fields["rev_comp"] = NULL_VAL;
 
   return fields;
 }
@@ -145,6 +158,12 @@ void SampleOutputAIRR::out(ostream &s)
     "v_call", "d_call", "j_call",
     "sequence_id",
     "sequence",
+    
+    "productive",
+    "junction_aa",
+    "junction",
+    "cdr3_aa",
+    "rev_comp",
     "sequence_alignment",
     "germline_alignment",
     "v_cigar", "d_cigar", "j_cigar",
