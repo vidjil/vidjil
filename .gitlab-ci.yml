@@ -341,7 +341,7 @@ deploy_review:
 deploy_docker:
   stage: deploy_prod
   script:
-    - export CUR_DATE=date +%Y-%m-%d
+    - export CUR_DATE=`date +%Y-%m-%d`
     - export TYPE=$CI_COMMIT_REF_NAME | awk '{ gsub(/prod-/, "") }{ print $1 }'
     - export TAG="vidjil/$TYPE:$CUR_DATE-$CI_COMMIT_SHA"
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=PRODUCTION -t $TAG docker/vidjil-$TYPE
