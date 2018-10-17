@@ -273,6 +273,29 @@ The mysql container is not fully launched. This can happen especially at the fir
 Relaunch the containers.
 XXXX Relaunch the workers.
 
+If restarting the containers does not resolve the issue, there are a couple of things
+you can look into:
+ - Ensure the database password in `vidjil-server/conf/defs.py` matches the password for
+ the mysql user: vidjil.
+ If you're not sure, you can check with the following:
+ ```sh
+ docker exec -it docker_mysql_1 bash
+ mysql -u vidjil -p vidjil
+ ```
+ or reset it:
+ ```sh
+ docker exec -it docker_mysql_1 bash
+ mysql -u root -p
+ SET PASSWORD FOR vidjil = PASSWORD('<new password>');
+ ```
+ - Ensure the database was created correctly. This should have been done automatically,
+ but just in case, you can check the console output, or check the database:
+ ```sh
+ docker exec -it docker_mysql_1 bash
+ mysql -u vidjil -p vidjil
+ ```
+ if the database doesn't exist, mysql will display an error after logging in.
+
 
 # Docker -- Updating a Docker installation
 
