@@ -34,6 +34,8 @@ public:
 class CloneOutput : public Output
 {
 public:
+  virtual ~CloneOutput();
+
   void setSeg(string subkey, json val);
 
   json toJson();
@@ -59,27 +61,24 @@ public:
 };
 
 
-/*
-class CloneOutputFormatter
-{
-
-}
-
-class CloneOutputFormatterCSV(CloneOutputFormatter)
-{
-
-}
-
-class CloneOutputFormatterJson(CloneOutputFormatter)
-{
-
-}
-*/
-
-
 // Native Json .vidjil format
 // See vidjil-format.md
 class SampleOutputVidjil : public SampleOutput
+{
+public:
+  void out(ostream &s);
+};
+
+// AIRR
+// See http://docs.airr-community.org
+class CloneOutputAIRR : public CloneOutput
+{
+public:
+  void out(ostream &s);
+  map <string, string> fields();
+};
+
+class SampleOutputAIRR : public SampleOutput
 {
 public:
   void out(ostream &s);
