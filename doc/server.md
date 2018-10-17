@@ -263,6 +263,16 @@ in your `docker-compose.yml`: `../germline:/usr/share/vidjil/germline`.
 After retrieving the germlines, you will also need to copy the generated `germline.js`
 (found in `browser/js/`) into the `docker/vidjil-client/conf` directory.
 
+# Docker -- Adding Software
+
+Some software can be added to Vidjil for pre-processing or even processing if the
+software outputs data compatible with the .vidjil format.
+We recommend you add software by adding a volume to your `docker-compose.yml`.
+By default we add our external files to `/opt/vidjil` on the host machine. You can then
+reference the executable in `vidjil-server/conf/defs.py`.
+In some cases, using the software may require development. In other cases, adding
+the appropriate `pre process` or `analysis config` can be enough.
+
 
 # Docker -- Troubleshooting
 
