@@ -1,6 +1,26 @@
 
 #include "output.h"
 
+#define NULL_VAL ""
+
+string getout(json v)
+{
+  return v.is_null() ? NULL_VAL : v ;
+}
+
+string Output::get(string key)
+{
+  return getout(j[key]);
+}
+string Output::get(string key, string subkey)
+{
+  return getout(j[key][subkey]);
+}
+string Output::get(string key, string subkey, string subsubkey)
+{
+  return getout(j[key][subkey][subsubkey]);
+}
+
 
 void Output::set(string key, json val)
 {

@@ -18,10 +18,16 @@ protected:
   json j;
   
 public:
+  string get(string key);
+  string get(string key, string subkey);
+  string get(string key, string subkey, string subsubkey);
+
   void set(string key, json val);
   void set(string key, string subkey, json val);
   void set(string key, string subkey, string subsubkey, json val);
+
   void add_warning(string code, string msg, string level);
+
 };
 
 
