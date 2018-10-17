@@ -1343,6 +1343,19 @@ void FineSegmenter::checkWarnings(CloneOutput *clone)
         {
           clone->add_warning("W61", "Non-recombined D7-27/J1 sequence", LEVEL_ERROR);
         }
+
+      // Multiple candidate assignations
+      for (auto box: {box_V, box_J})
+      {
+        if ((box->score.size() > 1) && (box->score[0].first == box->score[1].first)) {
+          string genes = "";
+          for (auto it: box->score) {
+            if (it.first < box->score[0].first) break;
+            genes += " " + box->rep->label(it.second);
+          }
+          clone->add_warning("W69", "Several genes with equal probability:" + genes, LEVEL_WARN);
+        }
+      }
     }
 }
 
