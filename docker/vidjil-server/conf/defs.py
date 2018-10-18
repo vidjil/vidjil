@@ -10,8 +10,10 @@ FROM_EMAIL = 'notifications@vidjil.org'
 ADMIN_EMAILS = ['notifications@vidjil.org']
 
 ### address for the sql database
-###
-DB_ADDRESS = 'sqlite://storage.sqlite'
+### sqlite (not recommended)
+# DB_ADDRESS = 'sqlite://storage.sqlite'
+
+### mysql, with password (to be also set in mysql/create_db.sql)
 DB_ADDRESS = 'mysql://vidjil:rootpass@mysql/vidjil'
 DB_POOL_SIZE = 4
 
