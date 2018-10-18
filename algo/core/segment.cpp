@@ -523,7 +523,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
       || (germline->seg_method == SEG_METHOD_MAX1U))
     { // Pseudo-germline, MAX12 and MAX1U
       pair <KmerAffect, KmerAffect> max12 ;
-      CountKmerAffectAnalyser ckaa(*(germline->index), sequence);
+      KmerAffectAnalyser ckaa = *kaa;
 
 
       set<KmerAffect> forbidden;
