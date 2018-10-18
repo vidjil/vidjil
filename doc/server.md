@@ -298,10 +298,15 @@ you can look into:
 
 # Docker -- Updating a Docker installation
 
-**(October 2018: Temporary instructions, please wait.)**
+## Before the update
 
-By security, we please you to make a backup (see "Backups", below) before doing this process.
-Updating the Docker installation usually only require the following:
+We post news on image updates at <http://gitlab.vidjil.org/tree/dev/docker/CHANGELOG>.
+Check there whether the new image require any configuration change.
+
+By security, we please you to always make a backup (see "Backups", below) before doing this process.
+It is especially important to backup the database, as the update process may transform it.
+
+## Pulling the new images
 
 ``` bash
 docker pull vidjil/server:latest
@@ -312,8 +317,8 @@ This will pull the latest version of the images.
 More tags are available at <https://hub.docker.com/r/vidjil/server/tags/>.
 
 If you do not have access to `hub.docker.com` on your server, then you
-should pull the image onto a machine that does and extract it into a tar
-archive and send it to your server with your favourite method and import
+should pull and extract the image onto a machine that does,
+send it to your server with your favourite method, and finally import
 the image on the server.
 
 Extract:
@@ -323,17 +328,30 @@ docker save -o <output_file> vidjil/server[:<version>] vidjil/client[:<version>]
 
 Import:
 ```sh
-     docker load -i <input_file>
+docker load -i <input_file>
 ```
 
-In some cases you may need to update your `docker-compose.yml` file or some
-of the configuration files. The latest versions of these files are available on our
-[Gitlab](https://inria.gitlab.com/vidjil/vidjil).
+## Launch the new containers
+
+In some cases, you may need to update your `docker-compose.yml` file or some
+of the configuration files. We will describe the changes in the `CHANGELOG` file.
+The latest versions of these files are available on our
+[Gitlab](https://gitlab.vidjil.org/).
+
+Once the images are pulled, you can relaunch the containers:
+```sh
+docker-compose down
+docker-compose up
+```
 
 By default, all previous volumes will be reused and no data will be lost.
-If needed, the MYSQL database will be updated to match the newest format.
-this step is handled by web2py.
-XXX TODO XXX (****demande confirmation par test****)
+If the database schema was updated, web2py will update it on your database.
+Check that the containers run well, and that you still manage to log on Vidjil
+and to access the database, and to see a result from a sample.
+
+If something is not working properly, you have still the option to rollback
+to the previous images (for example by tagging as `latest` a previous image),
+and possibly by reusing also your last databse backup if something went wrong.
 
 
 # Plain server installation
