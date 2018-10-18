@@ -121,11 +121,11 @@ This contains both [docker-compose.yml](http://gitlab.vidjil.org/blob/dev/docker
 
 The vidjil Docker environment is managed by `docker-compose`, who launches the following services:
 
-From `vidjil/client`
+From image `vidjil/client`
 
   - `nginx` The web server, containing the client web application
 
-From `vidjil/server`
+From image `vidjil/server`
 
   - `mysql` The database
   - `uwsgi` The Web2py backend server
@@ -180,7 +180,7 @@ forget to make a backup of any file you replace.)
   - Comment backup/reporter services in `docker-compose.yml`
 
   - It is avised to first launch  with `docker-compose up mysql`.
-The first time, this container create the database and it takes some time.
+The first time, this container creates the database and it takes some time.
 
 - When `mysql` is launched,
 you can safely launch `docker-compose up`.
@@ -213,7 +213,7 @@ The following configuration files are found in the `vidjil/docker` directory:
   - `conf/conf.js` various variables for the vidjil browser
   - `conf/defs.py` various variables for the vidjil server
   - `conf/gzip.conf` configuration for gzip in nginx
-  - `conf/gzip_static`.conf same as the previous but for static resources
+  - `conf/gzip_static.conf` same as the previous but for static resources
   - `conf/uwsgi.ini`   configuration required to run vidjil with uwsgi
   - `sites/nginx` configuration required when running vidjil with nginx
   - `scripts/nginx-entrypoint.sh` entrypoint for the nginx
@@ -227,25 +227,25 @@ Here are some notable configuration changes you should consider:
   -  mysql root password (`mysql.environment` in `docker-compose.yml`),  mysql vidjil password (`docker-compose.yml` and  `vidjil-server/conf/defs.py`),
      as mentionned above
 
-  - Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `vidjil-server/conf/defs.py`. These
-    represent the sender email address and the destination email addresses,
-    used in reporting patient milestones and server errors.
+  - Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `vidjil-server/conf/defs.py`.
+    They are used for admin emails monitoring the server an reporting errors.
 
   - To allow users to select files from a mounted volume,
     set `FILE_SOURCE` and `FILE_TYPES` in `vidjil-server/conf/defs.py`.
     In this case, the `DIR_SEQUENCES` directory will be populated with links to the selected files.
     Users will still be allowed to upload their own files.
 
-  - Change the `volumes` in `docker-compose.yml`. By default all files that
+  - By default all files that
     require saving outside of the containers (the database, uploads, vidjil
-    results and log files) are stored in `/opt/vidjil`, but you can change
+    results and log files) are stored in `/opt/vidjil`.
+    This can be changed in the `volumes` in `docker-compose.yml`.
     this by editing the paths in the volumes.
     See also <a href="#storage">Requirements / Storage</a> above.
 
-
   - Configure the reporter. Ideally this container should be positioned
-    on a remote server in order to be able to report on a down server, but we have packed it here for convenience.
-  You will also
+    on a remote server in order to be able to report on a down server,
+    but we have packed it here for convenience.
+    You will also
     need to change the `DB_ADDRESS` in `conf/defs.py` to match it.
 
 
@@ -253,11 +253,10 @@ Here are some notable configuration changes you should consider:
 # Docker -- Adding external software
 
 Some software can be added to Vidjil for pre-processing or even processing if the
-software outputs data compatible with the .vidjil format.
+software outputs data compatible with the `.vidjil` format.
 We recommend you add software by adding a volume to your `docker-compose.yml`.
 By default we add our external files to `/opt/vidjil` on the host machine. You can then
 reference the executable in `vidjil-server/conf/defs.py`.
-
 
 When the software has compatible inputs and outputs, it will be enough
 to configure then the appropriate `pre process` or `analysis config` (to be documented).
@@ -275,8 +274,8 @@ If restarting the containers does not resolve the issue, there are a couple of t
 you can look into:
 
  - Ensure the database password in `vidjil-server/conf/defs.py` matches the password for
- the mysql user: vidjil.
- If you're not sure, you can check with the following:
+ the mysql user: `vidjil`.
+ If you are not sure, you can check with the following:
  ```sh
  docker exec -it docker_mysql_1 bash
  mysql -u vidjil -p vidjil
@@ -294,7 +293,7 @@ you can look into:
  docker exec -it docker_mysql_1 bash
  mysql -u vidjil -p vidjil
  ```
- if the database doesn't exist, mysql will display an error after logging in.
+ If the database does not exist, mysql will display an error after logging in.
 
 
 # Docker -- Updating a Docker installation
