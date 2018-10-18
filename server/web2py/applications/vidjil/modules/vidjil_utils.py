@@ -696,3 +696,29 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         auth.add_permission(id_public_group, PermissionEnum.read_pre_process.value, db.pre_process, 0)
         for pre_process in db(db.pre_process.id > 0).select():
             auth.add_permission(id_public_group, PermissionEnum.access.value, db.pre_process, pre_process.id)
+
+        tags = ['ALL', 'T-ALL',  'B-ALL',
+                'pre-B-ALL','pro-B-ALL', 'mature-B-ALL',
+                'CML', 'HCL', 'MZL', 'T-PLL',
+                'CLL', 'LGL',
+                'lymphoma',
+                'MCL', 'NHL', 'HL', 'FL', 'DLBCL',
+                'WM', 'MAG',
+                'MM',
+                'diagnosis', 'MRD', 'relapse', 'CR', 'deceased',
+                'pre-BMT', 'post-BMT', 'pre-SCT', 'post-SCT',
+                'dilution', 'standard',
+                'QC', 'EuroMRD',
+                'marrow', 'blood',
+                'repertoire',
+                'TIL', 'CAR-T', 'scFv',
+                'FR1', 'FR2', 'FR3',
+                'TRA', 'TRB', 'TRG', 'TRD',
+                'IGH', 'IGK', 'KDE', 'IGL',
+                'IKAROS',
+                'BCR-ABL', 'TEL-AML1', 'E2A-PBX',
+                'BCL2',
+                'PAX5']
+        for tag in tags:
+            tid  = db.tag.insert(name=tag)
+            db.group_tag.insert(group_id=public_group, tag_id=tid)
