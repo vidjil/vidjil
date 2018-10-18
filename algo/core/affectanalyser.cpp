@@ -349,12 +349,8 @@ CountKmerAffectAnalyser::CountKmerAffectAnalyser(IKmerStore<KmerAffect> &kms, co
 
 
 CountKmerAffectAnalyser::~CountKmerAffectAnalyser() {
-  set<KmerAffect> affects = this->getDistinctAffectations();
-
-  /* Initialize each key with a 0-integer array */
-  for (set<KmerAffect>::iterator it = affects.begin(); 
-       it != affects.end(); it++) {
-    delete [] counts[*it];
+  for (auto it : counts) {
+    delete [] it.second;
   }  
 }
 
