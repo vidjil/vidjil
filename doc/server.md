@@ -249,26 +249,17 @@ Here are some notable configuration changes you should consider:
 
 ### Docker -- Adding external software
 
-**(To be documented)**
-
-The volumes in the fuse and nginx volume block
-`./vidjil-server/conf:/etc/vidjil` and `./vidjil-client/conf:/etc/vidjil`
-will provide easier access to all of the
-configuration files, allowing for tweaks.
-
-From this location, it will be easier to enable more software or pipelines
-by putting their binaries in this location that will be see by the docker instance.
-
-# Docker -- Adding Software
-
 Some software can be added to Vidjil for pre-processing or even processing if the
 software outputs data compatible with the .vidjil format.
 We recommend you add software by adding a volume to your `docker-compose.yml`.
 By default we add our external files to `/opt/vidjil` on the host machine. You can then
 reference the executable in `vidjil-server/conf/defs.py`.
-In some cases, using the software may require development. In other cases, adding
-the appropriate `pre process` or `analysis config` can be enough.
 
+
+When the software has compatible inputs and outputs, it will be enough
+to configure then the appropriate `pre process` or `analysis config` (to be documented).
+In some cases, using the software may require development such as wrappers.
+Contact us (<mailto:contact@vidjil.org>) to have more information and help.
 
 # Docker -- Troubleshooting
 
