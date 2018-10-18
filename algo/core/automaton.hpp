@@ -15,16 +15,16 @@ void AbstractACAutomaton<Info>::finish_building() {
     IKmerStore<Info>::finish_building();
     build_failure_functions();
   }
+  all_index_load = 0;
+  for(auto iter: kmers_inserted) {
+    all_index_load += getIndexLoad(iter.first);
+  }
 }
 
 template<class Info>
 float AbstractACAutomaton<Info>::getIndexLoad(Info kmer) const {
-  float load = 0;
   if (kmers_inserted.count(kmer) == 0) {
-    for(auto iter: kmers_inserted) {
-      load += getIndexLoad(iter.first);
-    }
-    return (kmer.isUnknown()) ? 1 - load : load;
+    return (kmer.isUnknown()) ? 1 - all_index_load : all_index_load;
   } else {
     return kmers_inserted.at(kmer) / pow(4.0, kmer.getLength());
   }
