@@ -137,30 +137,31 @@ From `vidjil/server`
 
 
 
-## Configuring the Vidjil container for a network usage
-
-Vidjil uses HTTPS by default, and will therefore require some ssl certificates.
-You can achieve this with the following steps:
+## Network usage and SSL certificates
 
 (If you are simply using Vidjil from your computer for testing purposes you can skip the next two steps).
+
   - Change the hostname in the nginx configuration `vidjil-client/conf/nginx_web2py`,
     replacing `$hostname` with your FQDN.
   - Edit the `vidjil-client/conf/conf.js`
         change all 'localhost' to the FQDN
 
-(You will need this step whether you are using locally or not).
-  - Configure the SSL certificates
-       - A fast option is to create a self-signed SSL certificate.
-         Note that it will trigger security warnings when accessing the client.
-       	 ```
-	 openssl genrsa 4096 > web2py.key
-	 openssl req -new -x509 -nodes -sha1 -days 1780 -key web2py.key > web2py.crt
-	 openssl x509 -noout -fingerprint -text < web2py.crt
-	 mv web2py.* docker/vidjil-client/ssl/
-	 ```
+(You will need the following step whether you are using locally or not).
 
-       - A better option is to use other certificates, for example by configuring free [Let's Encrypt](https://letsencrypt.org/) certificates;
-         In `docker-compose.yml`, update `nginx.volumes` to add the directory with the certifictes.
+Vidjil uses HTTPS by default, and will therefore require SSL certificates.
+You can achieve this with the following steps:
+
+  - Configure the SSL certificates
+     - A fast option is to create a self-signed SSL certificate.
+       Note that it will trigger security warnings when accessing the client.
+       ```
+openssl genrsa 4096 > web2py.key
+openssl req -new -x509 -nodes -sha1 -days 1780 -key web2py.key > web2py.crt
+openssl x509 -noout -fingerprint -text < web2py.crt
+mv web2py.* docker/vidjil-client/ssl/
+      ```
+     - A better option is to use other certificates, for example by configuring free [Let's Encrypt](https://letsencrypt.org/) certificates;
+       In `docker-compose.yml`, update `nginx.volumes` to add the directory with the certifictes.
 
 If you would prefer to use the vidjil over HTTP (not recommended outside of testing purposes), you can
 use the provided configuration files in `docker/vidjil-server/conf` and `docker/vidjil-client/conf`. You will find several files
@@ -169,6 +170,7 @@ forget to make a backup of any file you replace.)
  
 ## First configuration and first launch
 
+  - Set the SSL certificates (see above)
   - Change the mysql root password in `docker-compose.yml`
   - Change the mysql vidjil password in `mysql/create_db.sql` and sets it also in `vidjil-server/conf/defs.py`
 
