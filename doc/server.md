@@ -139,13 +139,16 @@ From `vidjil/server`
 
 ## Configuring the Vidjil container for a network usage
 
-If you plan to use Vidjil only locally, these steps are not required.
+Vidjil uses HTTPS by default, and will therefore require some ssl certificates.
+You can achieve this with the following steps:
 
+(If you are simply using Vidjil from your computer for testing purposes you can skip the next two steps).
   - Change the hostname in the nginx configuration `vidjil-client/conf/nginx_web2py`,
     replacing `$hostname` with your FQDN.
   - Edit the `vidjil-client/conf/conf.js`
         change all 'localhost' to the FQDN
 
+(You will need this step whether you are using locally or not).
   - Configure the SSL certificates
        - A fast option is to create a self-signed SSL certificate.
          Note that it will trigger security warnings when accessing the client.
@@ -158,6 +161,11 @@ If you plan to use Vidjil only locally, these steps are not required.
 
        - A better option is to use other certificates, for example by configuring free [Let's Encrypt](https://letsencrypt.org/) certificates;
          In `docker-compose.yml`, update `nginx.volumes` to add the directory with the certifictes.
+
+If you would prefer to use the vidjil over HTTP (not recommended outside of testing purposes), you can
+use the provided configuration files in `docker/vidjil-server/conf` and `docker/vidjil-client/conf`. You will find several files
+that contain "http" in their name. Simply replace the existing config files with their HTTP counter-part (for safety reasons, don't
+forget to make a backup of any file you replace.)
  
 ## First configuration and first launch
 
@@ -249,6 +257,16 @@ configuration files, allowing for tweaks.
 From this location, it will be easier to enable more software or pipelines
 by putting their binaries in this location that will be see by the docker instance.
 
+# Docker -- Adding Software
+
+Some software can be added to Vidjil for pre-processing or even processing if the
+software outputs data compatible with the .vidjil format.
+We recommend you add software by adding a volume to your `docker-compose.yml`.
+By default we add our external files to `/opt/vidjil` on the host machine. You can then
+reference the executable in `vidjil-server/conf/defs.py`.
+In some cases, using the software may require development. In other cases, adding
+the appropriate `pre process` or `analysis config` can be enough.
+
 
 # Docker -- Troubleshooting
 
@@ -257,6 +275,29 @@ by putting their binaries in this location that will be see by the docker instan
 The mysql container is not fully launched. This can happen especially at the first launch.
 Relaunch the containers.
 XXXX Relaunch the workers.
+
+If restarting the containers does not resolve the issue, there are a couple of things
+you can look into:
+ - Ensure the database password in `vidjil-server/conf/defs.py` matches the password for
+ the mysql user: vidjil.
+ If you're not sure, you can check with the following:
+ ```sh
+ docker exec -it docker_mysql_1 bash
+ mysql -u vidjil -p vidjil
+ ```
+ or reset it:
+ ```sh
+ docker exec -it docker_mysql_1 bash
+ mysql -u root -p
+ SET PASSWORD FOR vidjil = PASSWORD('<new password>');
+ ```
+ - Ensure the database was created correctly. This should have been done automatically,
+ but just in case, you can check the console output, or check the database:
+ ```sh
+ docker exec -it docker_mysql_1 bash
+ mysql -u vidjil -p vidjil
+ ```
+ if the database doesn't exist, mysql will display an error after logging in.
 
 
 # Docker -- Updating a Docker installation
