@@ -669,6 +669,9 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
   for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
     {
       Germline *germline = *it ;
+      if (germline->code != "unexpected") {
+        continue;
+      }
       double incomplete_multiplier = 1;
 
       if (germline->code.find("+") != string::npos) {
