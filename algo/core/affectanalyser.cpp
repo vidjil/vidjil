@@ -1,4 +1,6 @@
 #include "affectanalyser.h"
+#include <algorithm>
+#include <unordered_map>
 
 bool operator==(const affect_infos &ai1, const affect_infos &ai2) {
   return ai1.first_pos_max == ai2.first_pos_max
@@ -312,6 +314,33 @@ int KmerAffectAnalyser::last(const KmerAffect &affect) const{
 }
 
 
+pair <KmerAffect, KmerAffect> KmerAffectAnalyser::max12(const set<KmerAffect> forbidden) const {
+  pair<KmerAffect, int> max_counts[2] = {make_pair(KmerAffect::getUnknown(), -1),
+                                         make_pair(KmerAffect::getUnknown(), -1)};
+  std::unordered_map<KmerAffect, int> counts;
+
+  for (KmerAffect affect: affectations) {
+    if (forbidden.count(affect) == 0) {
+      if (counts.count(affect) > 0)
+        counts[affect]++;
+      else
+        counts[affect] = 1;
+    }
+  }
+
+  for (auto it: counts) {
+    if (it.second > max_counts[1].second) {
+      if (it.second > max_counts[0].second) {
+        max_counts[1] = max_counts[0];
+        max_counts[0] = it;
+      } else {
+        max_counts[1] = it;
+      }
+    }
+  }
+  return make_pair(max_counts[0].first, max_counts[1].first);
+}
+
 string KmerAffectAnalyser::toString() const{
   string kmer;
   for (size_t i = 0; i < affectations.size(); i++) {
@@ -385,38 +414,6 @@ KmerAffect CountKmerAffectAnalyser::max(const set<KmerAffect> forbidden) const {
 
   return max_affect;
 }
-
-
-
-pair <KmerAffect, KmerAffect> CountKmerAffectAnalyser::max12(const set<KmerAffect> forbidden) const {
-  map<KmerAffect, int* >::const_iterator it = counts.begin();
-  KmerAffect max1_affect = KmerAffect::getUnknown();
-  KmerAffect max2_affect = KmerAffect::getUnknown();
-  int max1_count = -1;
-  int max2_count = -1;
-  
-  for (; it != counts.end(); it++) {
-    if (forbidden.count(it->first) == 0) {
-      int current_count = count(it->first);
-      if (current_count > max1_count)
-        {
-          max2_affect = max1_affect ;
-          max2_count = max1_count ;
-          max1_affect = it->first ;
-          max1_count = current_count ;
-        }
-      else if (current_count > max2_count) 
-        {            
-          max2_affect = it->first;
-          max2_count = current_count;
-        }      
-    }
-  }
-
-  return make_pair(max1_affect, max2_affect);
-}
-
-
 
 int CountKmerAffectAnalyser::countBefore(const KmerAffect&affect, int pos) const {
   if (pos == 0 || counts.count(affect) == 0)
