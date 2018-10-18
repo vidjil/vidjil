@@ -721,4 +721,4 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
                 'PAX5']
         for tag in tags:
             tid  = db.tag.insert(name=tag)
-            db.group_tag.insert(group_id=public_group, tag_id=tid)
+            db.group_tag.insert(group_id=id_public_group, tag_id=tid)
