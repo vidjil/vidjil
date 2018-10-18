@@ -1356,6 +1356,8 @@ void FineSegmenter::toOutput(CloneOutput *clone){
 
   if (isSegmented()) {
 
+    clone->set("name", code);
+
     if (isDSegmented()) {
       clone->setSeg("N1", seg_N1.size());
       clone->setSeg("N2", seg_N2.size());
@@ -1380,6 +1382,10 @@ void FineSegmenter::toOutput(CloneOutput *clone){
             {"productive", JUNCTIONproductive}
         });
     }
+  }
+  else // not segmented
+  {
+    clone->set("name", label);
   }
 }
 
