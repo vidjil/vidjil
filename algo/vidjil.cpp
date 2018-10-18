@@ -1382,11 +1382,6 @@ int main (int argc, char **argv)
 	out_clone << seg << endl ;
 	out_clones << seg << endl ;
     
-        
-        // From FineSegmenter
-        if (seg.code.length() > 0)
-          clone->set("name", seg.code);
-
         seg.toOutput(clone);
 
         if (seg.isSegmented())
@@ -1601,8 +1596,6 @@ int main (int argc, char **argv)
                 if (detect_CDR3)
                   s.findCDR3();
 
-                clone->set("name", s.code);
-                s.toOutput(clone);
                 g = germline ;
               }
         else
@@ -1610,6 +1603,7 @@ int main (int argc, char **argv)
             g = not_segmented ;
           }
 
+        s.toOutput(clone);
         clone->set("germline", g->code);
         nb_segmented_by_germline[g->code]++ ;
 
