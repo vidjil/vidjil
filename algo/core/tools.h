@@ -109,7 +109,7 @@ template <class T>
 bool pair_occurrence_sort(pair<T, int> a, pair<T, int> b);
 
 
-string string_of_int(int number);
+string string_of_int(int number, int pad_to_width=0);
 string fixed_string_of_float(float number, int precision);
 string scientific_string_of_double(double number);
 string string_of_map(map <string, string> m, const string &before);
