@@ -266,11 +266,11 @@ Contact us (<mailto:contact@vidjil.org>) to have more information and help.
 ###  Error "Can't connect to MySQL server on 'mysql'"
 
 The mysql container is not fully launched. This can happen especially at the first launch.
-Relaunch the containers.
-XXXX Relaunch the workers.
+You may relaunch the containers.
 
 If restarting the containers does not resolve the issue, there are a couple of things
 you can look into:
+
  - Ensure the database password in `vidjil-server/conf/defs.py` matches the password for
  the mysql user: vidjil.
  If you're not sure, you can check with the following:
@@ -284,6 +284,7 @@ you can look into:
  mysql -u root -p
  SET PASSWORD FOR vidjil = PASSWORD('<new password>');
  ```
+ 
  - Ensure the database was created correctly. This should have been done automatically,
  but just in case, you can check the console output, or check the database:
  ```sh
