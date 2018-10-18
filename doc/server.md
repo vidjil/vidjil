@@ -154,14 +154,17 @@ You can achieve this with the following steps:
   - Configure the SSL certificates
      - A fast option is to create a self-signed SSL certificate.
        Note that it will trigger security warnings when accessing the client.
+       From the `docker/` directory:
        ```
 openssl genrsa 4096 > web2py.key
 openssl req -new -x509 -nodes -sha1 -days 1780 -key web2py.key > web2py.crt
 openssl x509 -noout -fingerprint -text < web2py.crt
-mv web2py.* docker/vidjil-client/ssl/
+mkdir -p vidjil-client/ssl
+mv web2py.* vidjil-client/ssl/
       ```
      - A better option is to use other certificates, for example by configuring free [Let's Encrypt](https://letsencrypt.org/) certificates;
-       In `docker-compose.yml`, update `nginx.volumes` to add the directory with the certifictes.
+       In `docker-compose.yml`, update `nginx.volumes`, line `./vidjil-client/ssl:/etc/nginx/ssl`, to set the directory with the certificates.
+
 
 If you would prefer to use the vidjil over HTTP (not recommended outside of testing purposes), you can
 use the provided configuration files in `docker/vidjil-server/conf` and `docker/vidjil-client/conf`. You will find several files
@@ -172,7 +175,7 @@ forget to make a backup of any file you replace.)
 
   - Set the SSL certificates (see above)
   - Change the mysql root password in `docker-compose.yml`
-  - Change the mysql vidjil password in `mysql/create_db.sql` and sets it also in `vidjil-server/conf/defs.py`
+  - Change the mysql vidjil password in `mysql/create_db.sql` and sets it also in `DB_ADDRESS` in `vidjil-server/conf/defs.py`
 
   - Comment backup/reporter services in `docker-compose.yml`
 
@@ -181,8 +184,8 @@ The first time, this container create the database and it takes some time.
 
 - When `mysql` is launched,
 you can safely launch `docker-compose up`.
-Then `docker ps` should display four running containers:
-`docker_nginx_1`, `docker_uwsgi_1`, `docker_fuse_1`, `docker_mysql_1`
+Then `docker ps` should display five running containers:
+`docker_nginx_1`, `docker_uwsgi_1`, `docker_workers_1`, `docker_fuse_1`, `docker_mysql_1`
 
 
   - Vidjil also need germline files.
@@ -194,10 +197,10 @@ Then `docker ps` should display four running containers:
       - Copy also the generated `browser/js/germline.js` into the `docker/vidjil-client/conf/` directory.
 
 
-  - Open a web browser to <https://your-hostname>.
-Create a first account by entering an email.
+  - Open a web browser to <https://localhost>, or to your FQDN if you configured it (see above).
+Click on `init database` and create a first account by entering an email.
 This account is the main root account of the server. Other administrators could then be created.
-It will be also used for the  web2py admin passwor.
+It will be also the web2py admin password.
 
 
 
@@ -247,7 +250,7 @@ Here are some notable configuration changes you should consider:
 
 
 
-### Docker -- Adding external software
+# Docker -- Adding external software
 
 Some software can be added to Vidjil for pre-processing or even processing if the
 software outputs data compatible with the .vidjil format.
