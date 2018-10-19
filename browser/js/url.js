@@ -223,7 +223,7 @@ PositionalUrl.prototype.generateParamsString = function(params_dict) {
                 }
             }
         }
-        return '?' + params_list.join("&");
+        return '/' + positional_params.join('/') + '?' + params_list.join("&");
     }
 
 PositionalUrl.prototype.pushUrl = function(params) {
