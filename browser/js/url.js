@@ -227,7 +227,7 @@ PositionalUrl.prototype.generateParamsString = function(params_dict) {
     }
 
 PositionalUrl.prototype.pushUrl = function(params) {
-        var new_url = window.location.href.split('?')[0] + params;
+        var new_url = window.location.href.split('browser')[0] + 'browser' + params;
         console.log("new url: " + new_url);
         this.window.history.pushState('plop', 'plop', new_url);
     };
