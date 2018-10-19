@@ -71,10 +71,10 @@ string spaced(const string &input, const string &seed) {
 }
 
 
-string string_of_int(int number)
+string string_of_int(int number, int w)
 {
    stringstream ss;
-   ss << number ;
+   ss << setfill('0') << setw(w) << number ;
    return ss.str();
 }
 

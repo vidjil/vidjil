@@ -53,6 +53,7 @@
 #include "core/labels.h"
 #include "core/list_utils.h"
 #include "core/windowExtractor.h"
+#include "core/output.h"
 
 #include "lib/CLI11.hpp"
 #include "lib/json.hpp"
@@ -757,7 +758,7 @@ int main (int argc, char **argv)
   ostringstream stream_cmdline;
   for (int i=0; i < argc; i++) stream_cmdline << argv[i] << " ";
 
-  json j = {
+  SampleOutput *output = new SampleOutput({
     {"vidjil_json_version", VIDJIL_JSON_VERSION},
     {"samples", {
         {"number", 1},
@@ -766,7 +767,7 @@ int main (int argc, char **argv)
         {"producer", {soft_version}},
         {"commandline", {stream_cmdline.str()}}
       }}
-  };
+  });
 
 
   /////////////////////////////////////////
@@ -1080,7 +1081,7 @@ int main (int argc, char **argv)
     // warn if there are too few segmented sequences
     if (ratio_segmented < WARN_PERCENT_SEGMENTED)
       {
-        json_add_warning(j, "W20", "Very few V(D)J recombinations found: " + fixed_string_of_float(ratio_segmented, 2) + "%");
+        output->add_warning("W20", "Very few V(D)J recombinations found: " + fixed_string_of_float(ratio_segmented, 2) + "%", LEVEL_WARN);
         stream_segmentation_info << "  ! There are not so many CDR3 windows found in this set of reads." << endl ;
         stream_segmentation_info << "  ! Please check the unsegmentation causes below and refer to the documentation." << endl ;
       }
@@ -1088,8 +1089,6 @@ int main (int argc, char **argv)
     we.out_stats(stream_segmentation_info);
     
     cout << stream_segmentation_info.str();
-      map <junction, json> json_data_segment ;
-    
 
 	//////////////////////////////////
 	//$$ Sort windows
@@ -1330,27 +1329,28 @@ int main (int argc, char **argv)
         if (verbose)
           cout << "KmerSegmenter: " << kseg->getInfoLine() << endl;
 
-        
-        json json_clone;
-        json_clone["sequence"] = kseg->getSequence().sequence;
-        json_clone["_coverage"] = { repComp.getCoverage() };
-        json_clone["_average_read_length"] = { windowsStorage->getAverageLength(it->first) };
-        json_clone["_coverage_info"] = {repComp.getCoverageInfo()};
+
+        CloneOutput *clone  = new CloneOutput();
+        output->addClone(it->first, clone);
+        clone->set("sequence", kseg->getSequence().sequence);
+        clone->set("_coverage", { repComp.getCoverage() });
+        clone->set("_average_read_length", { windowsStorage->getAverageLength(it->first) });
+        clone->set("_coverage_info", {repComp.getCoverageInfo()});
         //From KmerMultiSegmenter
-        json_clone["seg"] = kseg->toJson();
+        kseg->toOutput(clone);
 
         if (repComp.getQuality().length())
-        json_clone["seg"]["quality"] = {
+        clone->set("seg", "quality", {
             {"start", 1},
             {"stop", kseg->getSequence().sequence.length()},
             {"seq", repComp.getQuality()}
-        };
+        });
 
         if (repComp.getCoverage() < WARN_COVERAGE)
-          json_add_warning(json_clone, "W51", "Low coverage: " + fixed_string_of_float(repComp.getCoverage(), 3));
-        
+          clone->add_warning("W51", "Low coverage: " + fixed_string_of_float(repComp.getCoverage(), 3), LEVEL_WARN);
+
         if (label.length())
-          json_clone["label"] = label ;
+          clone->set("label", label) ;
 
         //$$ If max_clones is reached, we stop here but still outputs the representative
 
@@ -1360,7 +1360,6 @@ int main (int argc, char **argv)
           {
             cout << representative << endl ;
             out_clones << representative << endl ;
-            json_data_segment[it->first] = json_clone;
             continue;
           }
 
@@ -1383,14 +1382,7 @@ int main (int argc, char **argv)
 	out_clone << seg << endl ;
 	out_clones << seg << endl ;
     
-        
-        // From FineSegmenter
-        if (seg.code.length() > 0)
-          json_clone["name"] = seg.code;
-        json json_fseg = seg.toJson();
-        for (json::iterator it = json_fseg.begin(); it != json_fseg.end(); ++it) {
-          json_clone["seg"][it.key()] = it.value();
-        }
+        seg.toOutput(clone);
 
         if (seg.isSegmented())
 	  {
@@ -1401,7 +1393,7 @@ int main (int argc, char **argv)
               if (cc)
                 {
                   cout << " (similar to Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc << setfill(' ') << ")";
-                  json_add_warning(json_clone, "W53", "Similar to another clone " + code,
+                  clone->add_warning("W53", "Similar to another clone " + code,
                                    num_clone <= WARN_NUM_CLONES_SIMILAR ? LEVEL_WARN : LEVEL_INFO);
 
                   nb_edges++ ;
@@ -1426,9 +1418,7 @@ int main (int argc, char **argv)
 	      out_clone << endl;
 	   } // end if (seg.isSegmented())
 
-
-        seg.checkWarnings(json_clone);
-        json_data_segment[it->first] = json_clone;
+        seg.checkWarnings(clone);
         
 	if (output_sequences_by_cluster) // -a option, output all sequences
 	  {
@@ -1486,7 +1476,7 @@ int main (int argc, char **argv)
 
     } // end if (command == CMD_CLONES) 
 
-    //$$ .json output: json_data_segment
+    //$$ .json output
     cout << endl ;
     
     //json custom germline
@@ -1515,7 +1505,7 @@ int main (int argc, char **argv)
     //out_json << json->toString();
 
     windowsStorage->clearSequences();
-    json jsonSortedWindows = windowsStorage->sortedWindowsToJson(json_data_segment, max_clones_id);
+    windowsStorage->sortedWindowsToOutput(output, max_clones_id);
     
     json reads_germline;
     for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
@@ -1524,28 +1514,26 @@ int main (int argc, char **argv)
     }
 
 
-    // Complete main json output
-    j["diversity"] = jsonDiversity ;
-    j["samples"]["log"] = { stream_segmentation_info.str() } ;
-    j["reads"] = {
+    // Complete main output
+    output->set("diversity", jsonDiversity);
+    output->set("samples", "log", { stream_segmentation_info.str() }) ;
+    output->set("reads", {
             {"total", {nb_total_reads}},
             {"segmented", {nb_segmented}},
             {"germline", reads_germline}
-    } ;
-    j["clones"] = jsonSortedWindows ;
-    j["germlines"] = json_germlines ;
-
-    j["germlines"]["ref"] = multigermline->ref ;
-    j["germlines"]["species"] = multigermline->species ;
-    j["germlines"]["species_taxon_id"] = multigermline->species_taxon_id ;
+    });
+    output->set("germlines", json_germlines);
+    output->set("germlines", "ref", multigermline->ref);
+    output->set("germlines", "species", multigermline->species) ;
+    output->set("germlines", "species_taxon_id", multigermline->species_taxon_id) ;
 
     if (epsilon || forced_edges.size()){
-        j["clusters"] = comp.toJson(clones_windows);
+        output->set("clusters", comp.toJson(clones_windows));
     }
     
     //Added edges in the json output file
     if (jsonLevenshteinComputed)
-    j["similarity"] = jsonLevenshtein;
+      output->set("similarity", jsonLevenshtein);
 
 
     //$$ Clean
@@ -1571,8 +1559,6 @@ int main (int argc, char **argv)
     //       V(D)J SEGMENTATION           //
     ////////////////////////////////////////
 
-    json json_clones ;
-
     int nb = 0;
     int nb_segmented = 0 ;
     map <string, int> nb_segmented_by_germline ;
@@ -1591,11 +1577,13 @@ int main (int argc, char **argv)
 
         FineSegmenter s(seq, germline, segment_cost, expected_value, nb_reads_for_evalue, kmer_threshold, alternative_genes);
 
-        json json_clone;
-        json_clone["id"] = seq.label;
-        json_clone["sequence"] = seq.sequence;
-        json_clone["reads"] = { 1 };
-        json_clone["top"] = 0;
+        string id = string_of_int(nb, 6);
+        CloneOutput *clone = new CloneOutput();
+        output->addClone(id, clone);
+        clone->set("id", id);
+        clone->set("sequence", seq.sequence);
+        clone->set("reads", { 1 });
+        clone->set("top", 0);
         Germline *g ;
 
             if (s.isSegmented()) 
@@ -1608,8 +1596,6 @@ int main (int argc, char **argv)
                 if (detect_CDR3)
                   s.findCDR3();
 
-                json_clone["name"] = s.code;
-                json_clone["seg"] = s.toJson();
                 g = germline ;
               }
         else
@@ -1617,24 +1603,22 @@ int main (int argc, char **argv)
             g = not_segmented ;
           }
 
-        json_clone["germline"] = g->code;
+        s.toOutput(clone);
+        clone->set("germline", g->code);
         nb_segmented_by_germline[g->code]++ ;
-
-        json_clones += json_clone;
 
         cout << s << endl;        
       }
 
-    // Finish .json preparation
-    j["clones"] = json_clones;
-    j["reads"]["segmented"] = { nb_segmented } ;
-    j["reads"]["total"] = { nb } ;
+    // Finish output preparation
+    output->set("reads", "segmented", { nb_segmented }) ;
+    output->set("reads", "total", { nb }) ;
 
     multigermline->insert(not_segmented);
     for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
       Germline *germline = *it ;
       if (nb_segmented_by_germline[germline->code])
-        j["reads"]["germline"][germline->code] = { nb_segmented_by_germline[germline->code] } ;
+        output->set("reads", "germline", germline->code, { nb_segmented_by_germline[germline->code] });
     }
 
   } else {
@@ -1654,15 +1638,17 @@ int main (int argc, char **argv)
     cout << endl;
   }
 
-  //$ Output json
+  //$ Output .vidjil json
   cout << "  ==> " << f_json << "\t(data file for the web application)" << endl ;
   ofstream out_json(f_json.c_str()) ;
+  SampleOutputVidjil *outputVidjil = static_cast<SampleOutputVidjil *>(output);
 
-  out_json << j.dump(2);
+  outputVidjil->out(out_json);
 
   //$$ Clean
   delete multigermline ;
   delete reads;
+  delete output;
 }
 
 //$$ end

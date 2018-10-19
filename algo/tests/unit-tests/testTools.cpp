@@ -491,6 +491,12 @@ void testExtractGeneName(){
 	"Fail to extract gene name from:" << example_3 << " result:" << extractGeneName(example_3));
 }
 
+void testConversions(){  
+  TAP_TEST_EQUAL(string_of_int(12), "12", TEST_CONVERSIONS, "");
+  TAP_TEST_EQUAL(string_of_int(12, 4), "0012", TEST_CONVERSIONS, "");
+  TAP_TEST_EQUAL(fixed_string_of_float(12.345, 1), "12.3", TEST_CONVERSIONS, "");
+}
+
 void testTools() {
   testOnlineBioReader1();
   testOnlineBioReaderMaxNth();
@@ -515,4 +521,5 @@ void testTools() {
   testTrimSequence();
   testIsStopCodon();
 	testExtractGeneName();
+  testConversions();
 }

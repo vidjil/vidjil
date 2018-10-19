@@ -266,35 +266,25 @@ void WindowsStorage::clearSequences(){
   seqs_by_window.clear();
 }
 
-json WindowsStorage::sortedWindowsToJson(map <junction, json> json_data_segment, int max_json_output, bool delete_all) {
-  json windowsArray;
+void WindowsStorage::sortedWindowsToOutput(SampleOutput *output, int max_output, bool delete_all) {
+
   int top = 1;
     
   for (list<pair <junction, size_t> >::iterator it = sort_all_windows.begin();
        it != sort_all_windows.end(); )
     {
        
-      json windowsList;
+      CloneOutput *clone = output->getClone(it->first);
 
-      if (json_data_segment.find(it->first) != json_data_segment.end()){
-          windowsList = json_data_segment[it->first];
-      }else{
-          windowsList["sequence"] = 0; //TODO need to compute representative sequence for this case
-      }
-      
-      json reads = {it->second};
-      windowsList["id"] = it->first;
       if (status_by_window[it->first][SEG_CHANGED_WINDOW])
-        json_add_warning(windowsList, "W50", "Short or shifted window");
+        clone->add_warning("W50", "Short or shifted window", LEVEL_WARN);
 
-
-      windowsList["reads"] = reads;
-      windowsList["top"] = top++;
-      windowsList["germline"] = germline_by_window[it->first]->code;
-      windowsList["seg_stat"] = this->statusToJson(it->first);
+      clone->set("id", it->first);
+      clone->set("reads", {it->second});
+      clone->set("top", top++);
+      clone->set("germline", germline_by_window[it->first]->code);
+      clone->set("seg_stat", this->statusToJson(it->first));
       
-      windowsArray.push_back(windowsList);
-
       if (delete_all) {
         germline_by_window.erase(it->first);
         status_by_window.erase(it->first);
@@ -302,11 +292,9 @@ json WindowsStorage::sortedWindowsToJson(map <junction, json> json_data_segment,
       } else {
         it++;
       }
-      if (top == max_json_output + 1)
+      if (top == max_output + 1)
         break ;
     }
-
-  return windowsArray;
 }
 
 ostream &WindowsStorage::windowToStream(ostream &os, junction window, int num_seq, 
