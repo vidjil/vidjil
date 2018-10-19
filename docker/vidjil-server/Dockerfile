@@ -1,4 +1,4 @@
-from ubuntu:16.04
+from ubuntu:18.04
 
 label version="1.1"
 label description="An Ubuntu based docker image which comes \
