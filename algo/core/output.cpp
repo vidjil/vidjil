@@ -13,14 +13,23 @@ string getout(json v)
 
 string Output::get(string key)
 {
+  if (!j.count(key)) return NULL_VAL ;
+
   return getout(j[key]);
 }
 string Output::get(string key, string subkey)
 {
+  if (!j.count(key)) return NULL_VAL ;
+  if (!j[key].count(subkey)) return NULL_VAL ;
+
   return getout(j[key][subkey]);
 }
 string Output::get(string key, string subkey, string subsubkey)
 {
+  if (!j.count(key)) return NULL_VAL ;
+  if (!j[key].count(subkey)) return NULL_VAL ;
+  if (!j[key][subkey].count(subsubkey)) return NULL_VAL ;
+
   return getout(j[key][subkey][subsubkey]);
 }
 
