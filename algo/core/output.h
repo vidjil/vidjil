@@ -18,16 +18,26 @@ protected:
   json j;
   
 public:
+  string get(string key);
+  string get(string key, string subkey);
+  string get(string key, string subkey, string subsubkey);
+
   void set(string key, json val);
   void set(string key, string subkey, json val);
   void set(string key, string subkey, string subsubkey, json val);
+
   void add_warning(string code, string msg, string level);
+
 };
 
 
 class CloneOutput : public Output
 {
 public:
+  virtual ~CloneOutput();
+
+  int reads();
+
   void setSeg(string subkey, json val);
 
   json toJson();
@@ -53,27 +63,24 @@ public:
 };
 
 
-/*
-class CloneOutputFormatter
-{
-
-}
-
-class CloneOutputFormatterCSV(CloneOutputFormatter)
-{
-
-}
-
-class CloneOutputFormatterJson(CloneOutputFormatter)
-{
-
-}
-*/
-
-
 // Native Json .vidjil format
 // See vidjil-format.md
 class SampleOutputVidjil : public SampleOutput
+{
+public:
+  void out(ostream &s);
+};
+
+// AIRR
+// See http://docs.airr-community.org
+class CloneOutputAIRR : public CloneOutput
+{
+public:
+  void out(ostream &s);
+  map <string, string> fields();
+};
+
+class SampleOutputAIRR : public SampleOutput
 {
 public:
   void out(ostream &s);

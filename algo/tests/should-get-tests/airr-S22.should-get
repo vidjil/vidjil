@@ -1,0 +1,33 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -c clones -z 2 -3 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta  > /dev/null ; cat out/Stanford_S22.tsv
+
+$ There are four lines, all with tabs
+4:
+4:\t
+
+$ The required AIRR fields are present
+:consensus_count	
+:v_call	d_call j_call
+:sequence_id
+:sequence	
+:sequence_alignment	
+:germline_alignment
+:v_cigar	d_cigar	j_cigar	
+
+$ Three clones on IGH
+3:IGH
+
+$ One clone has 8 reads, two clones have 5 reads
+1:IGH 8
+2:IGH 5
+
+$ v_call for 2 clones (-z 2)
+2:IGHV
+
+$ First clone window appears third times (clone_id, sequence_id, sequence)
+w3:TATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTG
+
+$ No spurious character
+0:"
+0:@
+0:\\
+

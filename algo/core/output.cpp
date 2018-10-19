@@ -1,6 +1,29 @@
 
 #include "output.h"
 
+#define NULL_VAL ""
+
+string getout(json v)
+{
+  if (v.is_null()) return NULL_VAL ;
+  if (v.is_number()) return string_of_int(v) ;
+  if (v.is_string()) return v;
+  return v.dump();
+}
+
+string Output::get(string key)
+{
+  return getout(j[key]);
+}
+string Output::get(string key, string subkey)
+{
+  return getout(j[key][subkey]);
+}
+string Output::get(string key, string subkey, string subsubkey)
+{
+  return getout(j[key][subkey][subsubkey]);
+}
+
 
 void Output::set(string key, json val)
 {
@@ -25,6 +48,17 @@ void CloneOutput::setSeg(string subkey, json val)
 void Output::add_warning(string code, string msg, string level)
 {
   json_add_warning(j, code, msg, level);
+}
+
+
+int CloneOutput::reads()
+{
+  return j["reads"][0];
+}
+
+
+CloneOutput::~CloneOutput()
+{
 }
 
 json CloneOutput::toJson()
@@ -69,7 +103,7 @@ CloneOutput* SampleOutput::getClone(junction junction)
   }
 }
 
-
+// .vidjil json output
 
 void SampleOutputVidjil::out(ostream &s)
 {
@@ -81,4 +115,52 @@ void SampleOutputVidjil::out(ostream &s)
    j["clones"] = j_clones;
 
    s << j.dump(2);
+}
+
+
+// AIRR .tsv output
+
+map <string, string> CloneOutputAIRR::fields()
+{
+  map <string, string> fields;
+
+  fields["locus"] = get("germline");
+  fields["consensus_count"] = string_of_int(reads());
+
+  fields["sequence_id"] = get("id");
+  fields["clone_id"] = get("id");
+  fields["sequence"] = get("sequence");
+  fields["v_call"] = get(KEY_SEG, "5", "name");
+  fields["d_call"] = get(KEY_SEG, "4", "name");
+  fields["j_call"] = get(KEY_SEG, "3", "name");
+
+  return fields;
+}
+
+void SampleOutputAIRR::out(ostream &s)
+{
+  vector <string> fields = {
+    "locus",
+    "consensus_count",
+    "v_call", "d_call", "j_call",
+    "sequence_id",
+    "sequence",
+    "sequence_alignment",
+    "germline_alignment",
+    "v_cigar", "d_cigar", "j_cigar",
+    "clone_id"
+  };
+
+
+  for (string f: fields)
+    s << f << "\t" ;
+  s << endl ;
+
+  for (auto it: clones)
+  {
+    map <string, string> clone_fields = static_cast<CloneOutputAIRR *>(it.second) -> fields();
+    for (string f: fields)
+      s << clone_fields[f] << "\t" ;
+    s << endl;
+  }
 }
