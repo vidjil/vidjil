@@ -75,6 +75,7 @@ response.generic_patterns = ['*'] if request.is_local else []
 
 from gluon.tools import Auth, Crud, Service, PluginManager, prettydate
 auth = VidjilAuth(db)
+auth.settings.two_factor_authentication_group = "auth2step"
 
 crud, service, plugins = Crud(db), Service(), PluginManager()
 
