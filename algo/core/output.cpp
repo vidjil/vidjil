@@ -65,6 +65,18 @@ int CloneOutput::reads()
   return j["reads"][0];
 }
 
+string CloneOutput::getWarnings()
+{
+  string warnings = "" ;
+
+  if (!j.count("warn")) return warnings ;
+
+  for (json w: j["warn"])
+  {
+    warnings +=  w["code"].get<std::string>() + " ";
+  }
+}
+
 
 CloneOutput::~CloneOutput()
 {
