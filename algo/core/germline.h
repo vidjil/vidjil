@@ -37,9 +37,13 @@ enum SEGMENTATION_METHODS {
 using namespace std;
 using json = nlohmann::json;
 
+class MultiGermline;
+
 class Germline {
  private:
-  FilterWithACAutomaton* filter_5;
+  FilterWithACAutomaton* filter_5, *old_filter_5;
+  MultiGermline *multigermline;
+  bool overriden_filter;
 
   int max_indexing;
 
@@ -98,6 +102,12 @@ class Germline {
   void new_index(IndexTypes type);
   void set_index(IKmerStore<KmerAffect> *index);
 
+  MultiGermline *get_multigermline() const;
+  /**
+   * Sets the MultiGermline of this germline
+   */
+  void set_multigermline(MultiGermline *multi);
+
   void update_index(IKmerStore<KmerAffect> *_index = NULL);
 
   void mark_as_ambiguous(Germline *other);
@@ -140,6 +150,7 @@ enum GERMLINES_FILTER { GERMLINES_ALL,
 class MultiGermline {
  private:
   IndexTypes indexType;
+  map <string, Germline*> rep_germlines;
  public:
   bool one_index_per_germline;
   list <Germline*> germlines;
@@ -156,6 +167,8 @@ class MultiGermline {
 
   void insert(Germline *germline);
   void add_germline(Germline *germline);
+
+  Germline *get_germline(BioReader rep);
 
   /**
    * Build from a json .g germline file

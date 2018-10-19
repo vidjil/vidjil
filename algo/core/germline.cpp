@@ -14,6 +14,9 @@ void Germline::init(string _code, char _shortcut,
   shortcut = _shortcut ;
   index = 0 ;
   this->max_indexing = max_indexing;
+  multigermline = nullptr;
+  overriden_filter = false;
+  old_filter_5 = nullptr;
 
   this->seed_5 = expand_seed(seed_5);
   this->seed_4 = expand_seed(seed_4);
@@ -188,6 +191,13 @@ void Germline::set_index(IKmerStore<KmerAffect> *_index)
   }
 }
 
+MultiGermline *Germline::get_multigermline() const {
+  return this->multigermline;
+}
+void Germline::set_multigermline(MultiGermline *multi) {
+  this->multigermline = multi;
+}
+
 
 void Germline::update_index(IKmerStore<KmerAffect> *_index)
 {
@@ -212,6 +222,17 @@ void Germline::override_rep5_rep3_from_labels(KmerAffect left, KmerAffect right)
 {
   rep_5 = index->getLabel(left);
   rep_3 = index->getLabel(right);
+  if (multigermline) {
+    Germline *g = multigermline->get_germline(rep_5);
+    if (! overriden_filter) {
+      old_filter_5 = filter_5;
+      overriden_filter = true;
+    }
+    if (g)
+      filter_5 = g->getFilter_5();
+    else
+      filter_5 = nullptr;
+  }
 }
 
 FilterWithACAutomaton* Germline::getFilter_5(){
@@ -220,8 +241,10 @@ FilterWithACAutomaton* Germline::getFilter_5(){
 
 Germline::~Germline()
 {
-  if(filter_5){
+  if(filter_5 && ! overriden_filter){
     delete filter_5;
+  } else if (old_filter_5 && overriden_filter) {
+    delete old_filter_5;
   }
   if (index)
     {
@@ -420,8 +443,17 @@ void MultiGermline::finish() {
     index->finish_building();
   }
   for (auto germline: germlines) {
+    germline->set_multigermline(this);
+    rep_germlines[germline->rep_5.name] = germline;
+    rep_germlines[germline->rep_3.name] = germline;
     germline->finish();
   }
+}
+
+Germline *MultiGermline::get_germline(BioReader rep) {
+  if (rep_germlines.count(rep.name) == 0)
+    return nullptr;
+  return rep_germlines[rep.name];
 }
 
 /* Mark k-mers common to several germlines as ambiguous */
