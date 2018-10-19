@@ -10,3 +10,8 @@ $ There is a segmentation in the .vidjil, but without any D
 1:"name": "TRBJ2-3.01"
 0:"name": "TRBD
 1:"name": "TRBV7-2.01"
+
+$ There is a warning on multiple candidate assignations
+1:"code": "W69"
+1:equal probability: TRBV7-2.0[12] TRBV7-2.0[12]"
+
