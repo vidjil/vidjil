@@ -168,6 +168,8 @@ map <string, string> CloneOutputAIRR::fields()
   fields["productive"] = TF_format_bool(get(KEY_SEG, "junction", "productive"));
   fields["rev_comp"] = NULL_VAL;
 
+  fields["warnings"] = getWarnings();
+
   return fields;
 }
 
@@ -184,6 +186,7 @@ void SampleOutputAIRR::out(ostream &s)
     "junction_aa",
     "junction",
     "cdr3_aa",
+    "warnings",
     "rev_comp",
     "sequence_alignment",
     "germline_alignment",
