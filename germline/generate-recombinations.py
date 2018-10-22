@@ -5,6 +5,7 @@ import json
 import fasta
 import random
 import argparse
+import os.path
 
 random.seed(33328778554)
 
@@ -245,7 +246,7 @@ def list_int(s):
 if __name__ == '__main__':
     DESCRIPTION='Script generating fake V(D)J recombinations'
     parser = argparse.ArgumentParser(description=DESCRIPTION)
-    parser.add_argument('-g', '--germlines', type=file, default='germlines.data', help='path to the germlines.data file')
+    parser.add_argument('-g', '--germlines', type=file, default='homo-sapiens.g', help='path to the germlines.data file')
     parser.add_argument('--deletions', '-d', type=list_int, default = [(lambda: 5)], help='List -- separated by colons -- of the number of deletions at junctions (or single value, if the number is the same everywhere).')
     parser.add_argument('--insertions', '-i', type=list_int, default = [(lambda: 3)], help='List -- separated by colons -- of the number of insertions at junctions (or single value, if the number is the same everywhere')
     parser.add_argument('--random-deletions', '-D', type=list_random_tuple, help='List of random deletions at junctions under the format mean,standard_deviation (or single value, if the number is the same everywhere')
@@ -258,23 +259,23 @@ if __name__ == '__main__':
     germlines_json = args.germlines.read().replace('germline_data = ', '')
     germlines = json.loads(germlines_json)
 
-    for code in germlines:
-        g = germlines[code]
+    for code in germlines["systems"]:
+        g = germlines["systems"][code]
         print("--- %s - %-4s - %s"  % (g['shortcut'], code, g['description']))
-
+        basepath = germlines["path"] + os.path.sep
         # Read germlines
 
         nb_recomb = 0
         for recomb in g['recombinations']:
             labels = ['V']
-            files = [recomb['5']]
+            files = [[basepath + f for f in recomb['5']]]
 
             if '4' in recomb:
                 labels.append('D')
-                files.append(recomb['4'])
+                files.append([basepath + f for f in recomb['4']])
 
             labels.append('J')
-            files.append(recomb['3'])
+            files.append([basepath + f for f in recomb['3']])
             repertoire = vdj_repertoire.files(labels, files)
 
             print("      5: %3d sequences\n" % repertoire.nb_sequences('V'),
@@ -286,14 +287,14 @@ if __name__ == '__main__':
                 code_in_filename = code_in_filename + '-%d' % (nb_recomb+1)
 
             # Generate recombinations
-            recombination0 = vdj_recombination()
-            generate_to_file(repertoire, recombination0, code, '../data/gen/0-removes-%s.should-vdj.fa' % code_in_filename, 1)
+            # recombination0 = vdj_recombination()
+            # generate_to_file(repertoire, recombination0, code, '../data/gen/0-removes-%s.should-vdj.fa' % code_in_filename, 1)
 
             deletions = args.deletions if args.random_deletions is None else args.random_deletions
             insertions = args.insertions if args.random_insertions is None else args.random_insertions
 
             recombination5 = vdj_recombination(deletions=deletions, insertions=insertions, processing = [(lambda s: mutate_sequence(s, args.error))])
 
-            generate_to_file(repertoire, recombination5, code, '../data/gen/5-removes-%s.should-vdj.fa' % code_in_filename, args.nb_recombinations)
+            generate_to_file(repertoire, recombination5, code, '../data/gen/generated-%s.should-vdj.fa' % code_in_filename, args.nb_recombinations)
 
             print()
