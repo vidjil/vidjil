@@ -101,6 +101,10 @@ try {
     var my_tips = new TipsOfTheDay(tips, new TipDecorator(), available_tips);
     my_tips.set_container(document.getElementById('tip-container'))
     my_tips.display()
+
+    var menu_container = document.getElementById('vmiSelector');
+    var menu = vmi.setMenuOptions(new VidjilMenuDecorator());
+    menu_container.appendChild(menu);
 } catch(err) {
     this.db.log_error(err)
 }
