@@ -1,0 +1,1 @@
+/home/ryan/projects/vmi/src/js/vmi.js
