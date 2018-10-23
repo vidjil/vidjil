@@ -49,6 +49,18 @@ var db = new Database(m);
 var notification = new Notification(m)
 
 try {
+    var vmi = new VMI();
+    vmi.setupHTML();
+    var panel_instructions = {'mid-container': [{"left-container": ["info-row", "list-row", "data-row"]}, "visu-container", "bot-container"]};
+    vmi.setupPanels(panel_instructions);
+
+    vmi.addView("info", "info-row", "");
+    vmi.addView("list", "list-row", "");
+    vmi.addView("data", "data-row", "");
+    vmi.addView("visu", "visu-container", "");
+    vmi.addView("visu2", "visu-container", "");
+    vmi.setOverlays(["info-row", "list-row", "data-row", "visu-container", "bot-container"]);
+
     /* Views
      * Each view is rendered inside a <div> html element (whose id is given as the first paramter),
      * and kept sync with the model given as the other parameter (here 'm').
