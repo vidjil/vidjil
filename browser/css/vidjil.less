@@ -86,6 +86,7 @@ ul{
   margin : auto;
   overflow : hidden;
   background : @background;
+  position: relative;
 }
 
 #top-container {
@@ -195,7 +196,7 @@ line {
 
 #info-row{
     height : 200px;
-    display : table-row;
+    display : inline-block;
 }
 
 #info{
@@ -517,11 +518,15 @@ line {
 }
 
 #list-row, #data-row{
-  display: table-row;
+  display: inline-block;
 }
 
 #list, #data{
-  display:table-cell;
+  display: inline-block;
+}
+
+#list-row, #data-row, #info-row {
+  position: relative;
 }
 
 #data-row{
