@@ -35,6 +35,12 @@ html{
   min-height: 250px
 }
 
+body {
+  display: flex;
+  flex-flow: column;
+  overflow-x: hidden;
+}
+
 body, svg {
   font-family: @default-font;
   font-size: 13px;
@@ -77,6 +83,8 @@ ul{
 }
 
 #visu-container{
+  position: relative;
+  flex: 1 1 auto;
   -khtml-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: -moz-none;
@@ -86,15 +94,13 @@ ul{
   margin : auto;
   overflow : hidden;
   background : @background;
-  position: relative;
 }
 
 #top-container {
+  flex: 0 1 auto;
   height: @top_container_height;
   width: 100%;
   background: @background;
-  position : fixed;
-  z-index:1;
 }
 
 #top-container.alert
@@ -145,6 +151,8 @@ ul{
 
 #mid-container {
   position : fixed;
+  display: flex;
+  flex: 1 1 auto;
   top : @top_container_height;
   bottom : 125px ;
   width: -moz-calc(~"100%" - @margin + @margin);
@@ -166,16 +174,15 @@ ul{
 }
 
 #left-container {
-  height:100%;
+  display: flex;
+  flex-flow: column;
   width : @width_left_container;
-  float : left;
   overflow-y : none;
   -khtml-user-select: auto;
   -webkit-user-select: auto;
   -moz-user-select: auto;
   -ms-user-select: auto;
   user-select: auto;
-  display : table;
 }
 
 #visu, #visu2 {
@@ -195,8 +202,7 @@ line {
                         /* left-container - info */
 
 #info-row{
-    height : 200px;
-    display : inline-block;
+    flex: 0 1 auto;
 }
 
 #info{
@@ -517,23 +523,21 @@ line {
     border-color : @border;
 }
 
-#list-row, #data-row{
-  display: inline-block;
+#list-row, #info-row, #data-row{
+    position: relative;
 }
 
-#list, #data{
-  display: inline-block;
-}
-
-#list-row, #data-row, #info-row {
-  position: relative;
+#list-row{
+  flex: 1 1 auto;
 }
 
 #data-row{
+  flex: 0 0 auto;
   height : 0.1px;
 }
 
 #list_clones{
+  flex: 1 1 auto;
   overflow-y : scroll;
   overflow-x : hidden;
   height : calc(~"100% - 30px");  /*100% - list_menu height */
@@ -1249,10 +1253,14 @@ span.logo
   overflow: hidden;
 }
 
+#bot-placeholder {
+  flex: 0 0 135px;
+}
+
 #bot-container {
   position: fixed;
-  bottom: 0px;
-  left: 0px;
+  left: 0;
+  bottom: 0;
   width: 100%;
   border-top: solid;
   border-width: 6px;
@@ -1265,6 +1273,7 @@ span.logo
 }
 
 #list_menu{
+  flex: 0 1 auto;
   -khtml-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: -moz-none;
