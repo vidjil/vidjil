@@ -644,7 +644,7 @@ See also [What is a clone ?](vidjil-format/#what-is-a-clone).
 | Name  | Type | AIRR 1.2 Description <br /> *vidjil-algo implementation* |
 | ----- | ---- |  ------------------------------------------------------- |
 | locus | string | Gene locus (chain type). For example, `IGH`, `IGK`, `IGL`, `TRA`, `TRB`, `TRD`, or `TRG`.<br />*Vidjil-algo outputs all these loci. Moreover, the incomplete recombinations analyzed by vidjil-algo are reported as `IGH+`, `IGK+`, `TRA+D`, `TRB+`, `TRD+`, and `xxx` for unexpected recombinations. See  [locus](locus).*
-| consensus_count | number | Number of reads contributing to the (UMI) consensus for this sequence. For example, the sum of the number of reads for all UMIs that contribute to the query sequence. <br />*Number of reads gathered in the clone.*
+| duplicate_count | number | Number of reads contributing to the (UMI) consensus for this sequence. For example, the sum of the number of reads for all UMIs that contribute to the query sequence. <br />*Number of reads gathered in the clone.*
 | sequence_id | string  | Unique query sequence identifier within the file. Most often this will be the input sequence header or a substring thereof, but may also be a custom identifier defined by the tool in cases where query sequences have been combined in some fashion prior to alignment. <br />*This identifier is the (50 bp by default) window extacted around the junction.* |
 | clone_id 	| string | 	Clonal cluster assignment for the query sequence. <br />*This identifier is again the (50 bp by default) window extacted around the junction.*
 | warnings (+) | string | *Warnings associated to this clone. See <https://gitlab.vidjil.org/blob/dev/doc/warnings.md>.*
