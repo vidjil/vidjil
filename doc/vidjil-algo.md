@@ -650,7 +650,7 @@ See also [What is a clone ?](vidjil-format/#what-is-a-clone).
 | warnings (+) | string | *Warnings associated to this clone. See <https://gitlab.vidjil.org/blob/dev/doc/warnings.md>.*
 | sequence  | string | The query nucleotide sequence. Usually, this is the unmodified input sequence, which may be reverse complemented if necessary. In some cases, this field may contain consensus sequences or other types of collapsed input sequences if these steps are performed prior to alignment. <br />*This contains the consensus/representative sequence of each clone.*
 | rev_comp  | boolean | True if the alignment is on the opposite strand (reverse complemented) with respect to the query sequence. If True then all output data, such as alignment coordinates and sequences, are based on the reverse complement of 'sequence'. <br />*Set to null, as vidjil-algo gather reads from both strands in clones* |
-| v_call, d_call, j_call  | string  | V/D/J gene with allele. For example, IGHV4-59\*01. <br /> *In the case of uncomplete/unexpected recombinations (locus with a `+`), we still use* `v/d/j_call`. |
+| v_call, d_call, j_call  | string  | V/D/J gene with allele. For example, IGHV4-59\*01. <br /> *implemented. In the case of uncomplete/unexpected recombinations (locus with a `+`), we still use `v/d/j_call`. Note that this value can be null on clones beyond the `-z` option.* |
 | junction  | string  |      Junction region nucleotide sequence, where the junction is defined as the CDR3 plus the two flanking conserved codons. <br />*null*
 | junction_aa  | string  | Junction region amino acid sequence.      <br />*implemented*
 | cdr3_aa | string | Amino acid translation of the cdr3 field.   <br />*implemented*
