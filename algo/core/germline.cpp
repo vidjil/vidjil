@@ -5,6 +5,10 @@
 #include <fstream>
 #include <ctype.h>
 
+map<string, char> Germline::filename_shortcut = map<string, char>();
+map<char, char> Germline::shortcut_conversion = map<char, char>();
+set<char> Germline::used_shortcuts = set<char>();
+
 void Germline::init(string _code, char _shortcut,
                     string seed_5, string seed_4, string seed_3,
                     int max_indexing, bool build_automaton)
@@ -26,9 +30,34 @@ void Germline::init(string _code, char _shortcut,
   affect_4 = "" ;
   affect_3 = "J" ;
 
-  affect_5 = string(1, toupper(shortcut)) + "-" + code + "V";
-  affect_4 = string(1, 14 + shortcut) + "-" + code + "D";
-  affect_3 = string(1, tolower(shortcut)) + "-" + code + "J";
+  char vShortcut = toupper(shortcut);
+  char dShortcut = 14+shortcut;
+  char jShortcut = tolower(shortcut);
+
+  vShortcut = get_new_shortcut_when_conflict(vShortcut, rep_5);
+  dShortcut = get_new_shortcut_when_conflict(dShortcut, rep_4);
+  jShortcut = get_new_shortcut_when_conflict(jShortcut, rep_3);
+
+  used_shortcuts.insert(vShortcut);
+  used_shortcuts.insert(jShortcut);
+
+  if (filename_shortcut.count(rep_5.name) == 0)
+    for (auto filename: rep_5.filenames)
+      filename_shortcut[filename] = vShortcut;
+  if (filename_shortcut.count(rep_3.name) == 0)
+    for (auto filename: rep_3.filenames)
+      filename_shortcut[filename] = jShortcut;
+
+  if (rep_4.name.size() > 0) {
+    used_shortcuts.insert(dShortcut);
+    if (filename_shortcut.count(rep_4.name) == 0)
+      for(auto filename: rep_4.filenames)
+        filename_shortcut[filename] = dShortcut;
+  }
+  
+  affect_5 = string(1, vShortcut) + "-" + code + "V";
+  affect_4 = string(1, dShortcut) + "-" + code + "D";
+  affect_3 = string(1, jShortcut) + "-" + code + "J";
   filter_5 = build_automaton ? new FilterWithACAutomaton(rep_5, this->seed_5) : nullptr;
 }
 
@@ -124,8 +153,6 @@ Germline::Germline(string code, char shortcut, string path, json json_recom,
     rep_5.add(path + filename);
   }
 
-  init(code, shortcut, seed_5, seed_4, seed_3, max_indexing, build_automaton);
-
   if (json_recom.find("4") != json_recom.end()) {
     for (json::iterator it = json_recom["4"].begin();
         it != json_recom["4"].end(); ++it) 
@@ -159,6 +186,8 @@ Germline::Germline(string code, char shortcut, string path, json json_recom,
           rep_4.add(path + filename);
         }
     }
+
+  init(code, shortcut, seed_5, seed_4, seed_3, max_indexing, build_automaton);
 }
 
 int Germline::getMaxIndexing(){
@@ -239,6 +268,31 @@ void Germline::override_rep5_rep3_from_labels(KmerAffect left, KmerAffect right)
 
 FilterWithACAutomaton* Germline::getFilter_5(){
   return this->filter_5;
+}
+
+char Germline::get_new_shortcut_when_conflict(char shortcut, BioReader &reader) {
+  char original_shortcut = shortcut;
+
+  if (used_shortcuts.count(shortcut) == 0) {
+    shortcut_conversion[shortcut] = shortcut;
+    return shortcut;
+  }
+
+  bool common_files = false;
+  for (auto filename: reader.filenames) {
+    if (filename_shortcut.count(filename) > 0) {
+      common_files = true;
+      break;
+    }
+  }
+  if (! common_files && reader.filenames.size() > 0) {
+    // We have the same shortcut, but different files
+    do {
+      shortcut = ((shortcut + 30) % 120) + 8;
+    } while (used_shortcuts.count(shortcut) > 0);
+  }
+  shortcut_conversion[shortcut] = original_shortcut;
+  return shortcut;
 }
 
 Germline::~Germline()

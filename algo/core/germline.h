@@ -14,6 +14,8 @@
 #include "bioreader.hpp"
 #include "filter.h"
 #include <climits>
+#include <map>
+#include <set>
 
 enum SEGMENTATION_METHODS {
   SEG_METHOD_53,      // Regular or incomplete germlines, 5'-3'
@@ -41,6 +43,10 @@ class MultiGermline;
 
 class Germline {
  private:
+  static map<string, char> filename_shortcut; /* Association between filename and shortcut */
+  static map<char, char> shortcut_conversion;
+  static set<char> used_shortcuts;
+  
   FilterWithACAutomaton* filter_5, *old_filter_5;
   MultiGermline *multigermline;
   bool overriden_filter;
@@ -120,6 +126,8 @@ class Germline {
    * @post  set rep_5 and rep_3 stored in the labels of the index
    */
   void override_rep5_rep3_from_labels(KmerAffect left, KmerAffect right);
+
+  static char get_new_shortcut_when_conflict(char, BioReader &);
 
   list <string> f_reps_5 ;
   list <string> f_reps_4 ;
