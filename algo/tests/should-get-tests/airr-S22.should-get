@@ -16,6 +16,12 @@ $ The required AIRR fields are present
 :productive
 :rev_comp
 
+$ Optional AIRR fields
+:duplicate_count
+
+$ Custom AIRR fields
+:warnings
+
 $ Three clones on IGH
 3:IGH
 
