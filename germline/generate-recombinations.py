@@ -252,7 +252,7 @@ if __name__ == '__main__':
     parser.add_argument('--random-deletions', '-D', type=list_random_tuple, help='List of random deletions at junctions under the format mean,standard_deviation (or single value, if the number is the same everywhere')
     parser.add_argument('--random-insertions', '-I', type=list_random_tuple, help='List of the number of insertions at junctions under the format mean,standard_deviation (or single value, if the number is the same everywhere')
     parser.add_argument('-n', '--nb-recombinations', type=int, default=5, help='Number of times each recombination (with insertions/deletions) is generated')
-    parser.add_argument('-e', '--error', type=float, default = 0., help='Probability of error at the nucleotide level')
+    parser.add_argument('-e', '--error', type=float, default = 0., help='Probability of substitution at the nucleotide level')
 
     args = parser.parse_args()
 
