@@ -153,7 +153,7 @@ map <string, string> CloneOutputAIRR::fields()
   map <string, string> fields;
 
   fields["locus"] = get("germline");
-  fields["consensus_count"] = string_of_int(reads());
+  fields["duplicate_count"] = string_of_int(reads());
 
   fields["sequence_id"] = get("id");
   fields["clone_id"] = get("id");
@@ -177,7 +177,7 @@ void SampleOutputAIRR::out(ostream &s)
 {
   vector <string> fields = {
     "locus",
-    "consensus_count",
+    "duplicate_count",
     "v_call", "d_call", "j_call",
     "sequence_id",
     "sequence",
