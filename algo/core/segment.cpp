@@ -636,7 +636,22 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
   }
 
     } // endif Pseudo-germline
- 
+
+  Germline *left_g = segmented_germline->index->getLabel(before);
+  Germline *right_g = segmented_germline->index->getLabel(after);
+  int order = left_g->code.compare(right_g->code);
+  // If germlines differ take the longest one
+  // if one is prefix of the other.
+  //  (works for IGH/IGH+ for instance, what about TRA+D?)
+  if (order < 0) {
+    if (right_g->code.compare(0, left_g->code.size(), left_g->code) == 0)
+      segmented_germline = right_g;
+  } else if (order >  0) {
+    if (left_g->code.compare(0, right_g->code.size(), right_g->code) == 0)
+      segmented_germline = left_g;
+  } else {
+    segmented_germline = left_g;
+  }
   computeSegmentation(strand, before, after, threshold, multiplier);
 }
 
