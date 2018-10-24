@@ -13,14 +13,23 @@ string getout(json v)
 
 string Output::get(string key)
 {
+  if (!j.count(key)) return NULL_VAL ;
+
   return getout(j[key]);
 }
 string Output::get(string key, string subkey)
 {
+  if (!j.count(key)) return NULL_VAL ;
+  if (!j[key].count(subkey)) return NULL_VAL ;
+
   return getout(j[key][subkey]);
 }
 string Output::get(string key, string subkey, string subsubkey)
 {
+  if (!j.count(key)) return NULL_VAL ;
+  if (!j[key].count(subkey)) return NULL_VAL ;
+  if (!j[key][subkey].count(subsubkey)) return NULL_VAL ;
+
   return getout(j[key][subkey][subsubkey]);
 }
 
@@ -54,6 +63,18 @@ void Output::add_warning(string code, string msg, string level)
 int CloneOutput::reads()
 {
   return j["reads"][0];
+}
+
+string CloneOutput::getWarnings()
+{
+  string warnings = "" ;
+
+  if (!j.count("warn")) return warnings ;
+
+  for (json w: j["warn"])
+  {
+    warnings +=  w["code"].get<std::string>() + " ";
+  }
 }
 
 
@@ -120,6 +141,13 @@ void SampleOutputVidjil::out(ostream &s)
 
 // AIRR .tsv output
 
+string TF_format_bool(string val)
+{
+  if (val == "false") return "F" ;
+  if (val == "true") return "T" ;
+  return val ;
+}
+
 map <string, string> CloneOutputAIRR::fields()
 {
   map <string, string> fields;
@@ -133,6 +161,14 @@ map <string, string> CloneOutputAIRR::fields()
   fields["v_call"] = get(KEY_SEG, "5", "name");
   fields["d_call"] = get(KEY_SEG, "4", "name");
   fields["j_call"] = get(KEY_SEG, "3", "name");
+  
+  fields["cdr3_aa"] = get(KEY_SEG, "cdr3", "aa");
+  fields["junction"] = NULL_VAL;
+  fields["junction_aa"] = get(KEY_SEG, "junction", "aa");
+  fields["productive"] = TF_format_bool(get(KEY_SEG, "junction", "productive"));
+  fields["rev_comp"] = NULL_VAL;
+
+  fields["warnings"] = getWarnings();
 
   return fields;
 }
@@ -145,6 +181,13 @@ void SampleOutputAIRR::out(ostream &s)
     "v_call", "d_call", "j_call",
     "sequence_id",
     "sequence",
+    
+    "productive",
+    "junction_aa",
+    "junction",
+    "cdr3_aa",
+    "warnings",
+    "rev_comp",
     "sequence_alignment",
     "germline_alignment",
     "v_cigar", "d_cigar", "j_cigar",

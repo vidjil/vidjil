@@ -37,6 +37,7 @@ public:
   virtual ~CloneOutput();
 
   int reads();
+  string getWarnings();
 
   void setSeg(string subkey, json val);
 
