@@ -636,9 +636,10 @@ For example `-uu -X 1000` splits the unsegmented reads from the 1000 first reads
 Since version 2018.10, vidjil-algo supports the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
 We export all required fields, some optional fields, as also some custom fields (+).
 
-Note that Vidjil-algo is designed to efficiently gather reads into clones. We thus report in the AIRR format *clones*.
+Note that Vidjil-algo is designed to efficiently gather reads from large datasets into clones. 
+By default (`-c clones`), we thus report in the AIRR format *clones*.
 See also [What is a clone ?](vidjil-format/#what-is-a-clone).
-
+Using `-c segment` trigger a separate analysis for each read, but this is usually not advised for large datasets. 
 
 
 | Name  | Type | AIRR 1.2 Description <br /> *vidjil-algo implementation* |
