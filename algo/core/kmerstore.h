@@ -11,6 +11,8 @@
 #include "tools.h"
 #include "proba.h"
 
+class Germline;
+
 using namespace std;
 
 typedef
@@ -96,7 +98,7 @@ public:
   int refs; // number of germlines using this index
   bool multiple_in_one;
 
-  list< pair <T, BioReader> > labels;
+  map<T, Germline *> labels;
 
   IKmerStore();
 
@@ -106,7 +108,7 @@ public:
    * @param seed: the seed to use for indexing. By default it will be the seed of the index
    * @post All the sequences in the FASTA files have been indexed, and the label is stored in the list of labels
    */
-  void insert(BioReader& input, const string& label="", int keep_only = 0, string seed = "");
+  void insert(BioReader& input, const string& label="", Germline *germline=NULL, int keep_only = 0, string seed = "");
 
   /**
    * @param input: A list of FASTA files
@@ -114,7 +116,7 @@ public:
    * @param seed: the seed to use for indexing. By default it will be the seed of the index
    * @post All the sequences in the FASTA files have been indexed, and the label is stored in the list of labels
    */
-  void insert(list<BioReader>& input, const string& label="", int keep_only = 0, string seed = "");
+  void insert(list<BioReader>& input, const string& label="", Germline *germline=NULL, int keep_only = 0, string seed = "");
   
   /**
    * @param input: A sequence to be cut in k-mers
@@ -182,7 +184,7 @@ public:
    * @param kmer: a kmer
    * @return one label associated with the kmer
    */
-  BioReader getLabel(T kmer) const;
+  Germline *getLabel(T kmer) const;
 
   /**
    * @return whether the index differentiate kmer types
@@ -286,26 +288,31 @@ IKmerStore<T>::~IKmerStore(){}
 template<class T> 
 void IKmerStore<T>::insert(list<BioReader>& input,
                            const string &label,
+                           Germline *germline,
                            int keep_only,
                            string seed){
   for(list<BioReader>::iterator it = input.begin() ; it != input.end() ; it++){
-    insert(*it, label, keep_only, seed);
+    insert(*it, label, germline, keep_only, seed);
   }
 }
 
 template<class T> 
 void IKmerStore<T>::insert(BioReader& input,
                            const string &label,
+                           Germline *germline,
                            int keep_only,
                            string seed){
   for (int r = 0; r < input.size(); r++) {
     insert(input.sequence(r), label, true, keep_only, seed);
   }
 
-  labels.push_back(make_pair(T(label, 1, seed.size()), input)) ;
+  T current_label = T(label, 1, seed.size());
+  if (labels.count(current_label) == 0) {
+    labels[current_label] = germline;
 
-  if (revcomp_indexed  && ! T::hasRevcompSymetry()) {
-    labels.push_back(make_pair(T(label, -1, seed.size()), input)) ;
+    if (revcomp_indexed  && ! T::hasRevcompSymetry()) {
+      labels[T(label, -1, seed.size())] = germline ;
+    }
   }
 }
 
@@ -411,17 +418,16 @@ string IKmerStore<T>::getSeed() const {
 }
 
 template<class T>
-BioReader IKmerStore<T>::getLabel(T kmer) const {
-  for (typename list< pair<T, BioReader> >::const_iterator it = labels.begin(); it != labels.end(); ++it)
-    if (it->first == kmer)
-      return it->second ;
+Germline *IKmerStore<T>::getLabel(T kmer) const {
+  if (labels.count(kmer) > 0)
+    return labels.at(kmer);
   // Nothing interesting found
   // Try by ignoring length if the index is not able to deal with different lengths
   if (! hasDifferentKmerTypes() && kmer.getLength() != (unsigned char)~0) {
     kmer.setLength(~0);
     return getLabel(kmer);
   }
-  return BIOREADER_AMBIGUOUS ;
+  return NULL ;
 }
 
 template<class T>

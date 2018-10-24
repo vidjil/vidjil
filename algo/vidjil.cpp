@@ -1044,12 +1044,12 @@ int main (int argc, char **argv)
       IKmerStore<KmerAffect> *index = multigermline->index ;
 
       // Initialize statistics, with two additional categories
-      index->labels.push_back(make_pair(KmerAffect::getAmbiguous(), BIOREADER_AMBIGUOUS));
-      index->labels.push_back(make_pair(KmerAffect::getUnknown(), BIOREADER_UNKNOWN));
+      index->labels[KmerAffect::getAmbiguous()] = NULL;
+      index->labels[KmerAffect::getUnknown()] = NULL;
       
-      for (list< pair <KmerAffect, BioReader> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
+      for (auto it: index->labels)
 	{
-	  char key = affect_char(it->first.affect) ;
+	  char key = affect_char(it.first.affect) ;
 	  stats_kmer[key] = 0 ;
 	  stats_max[key] = 0 ;
 	}
@@ -1101,12 +1101,12 @@ int main (int argc, char **argv)
 	   << endl ;
       cout << "\t" << " max" << "\t\t" << "        kmers" << "\n" ;
 
-      for (list< pair <KmerAffect, BioReader> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
+      for (auto it: index->labels)
 	{
-          if (it->first.getStrand() == -1)
+          if (it.first.getStrand() == -1)
             continue ;
 
-	  char key = affect_char(it->first.affect) ;
+	  char key = affect_char(it.first.affect) ;
 	  
 	  cout << setw(12) << stats_max[key] << " " ;
 	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_max[key] / nb_reads * 100 << "%" ;
@@ -1116,7 +1116,7 @@ int main (int argc, char **argv)
 	  cout << setw(12) << stats_kmer[key] << " " ;
 	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_kmer[key] / total_length * 100 << "%" ;
 
-	  cout << "     " << key << " " << it->second.name << endl ;
+	  cout << "     " << key << " " << it.second->code << endl ;
 	}
       
       if (__only_on_exit__clean_memory) { delete multigermline; } return 0;

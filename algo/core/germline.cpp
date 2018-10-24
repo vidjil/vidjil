@@ -203,25 +203,27 @@ void Germline::update_index(IKmerStore<KmerAffect> *_index)
 {
   if (!_index) _index = index ;
 
-  _index->insert(rep_5, affect_5, max_indexing, seed_5);
-  _index->insert(rep_4, affect_4, 0, seed_4);
-  _index->insert(rep_3, affect_3, -max_indexing, seed_3);
+  _index->insert(rep_5, affect_5, this, max_indexing, seed_5);
+  _index->insert(rep_4, affect_4, this, 0, seed_4);
+  _index->insert(rep_3, affect_3, this, -max_indexing, seed_3);
 }
 
 void Germline::mark_as_ambiguous(Germline *other)
 {
-  index->insert(other->rep_5, AFFECT_AMBIGUOUS_SYMBOL, max_indexing, seed_5);
+  index->insert(other->rep_5, AFFECT_AMBIGUOUS_SYMBOL, this, max_indexing, seed_5);
 
   if (other->affect_4.size())
-    index->insert(other->rep_4, AFFECT_AMBIGUOUS_SYMBOL, 0, seed_4);
+    index->insert(other->rep_4, AFFECT_AMBIGUOUS_SYMBOL, this, 0, seed_4);
 
-  index->insert(other->rep_3, AFFECT_AMBIGUOUS_SYMBOL, -max_indexing, seed_3);
+  index->insert(other->rep_3, AFFECT_AMBIGUOUS_SYMBOL, this, -max_indexing, seed_3);
 }
 
 void Germline::override_rep5_rep3_from_labels(KmerAffect left, KmerAffect right)
 {
-  rep_5 = index->getLabel(left);
-  rep_3 = index->getLabel(right);
+  Germline *left_germline = index->getLabel(left);
+  rep_5 = (left_germline) ? left_germline->rep_5 : BIOREADER_AMBIGUOUS;
+  Germline *right_germline = index->getLabel(right);
+  rep_3 = (right_germline) ? right_germline->rep_3 : BIOREADER_AMBIGUOUS;
   if (multigermline) {
     Germline *g = multigermline->get_germline(rep_5);
     if (! overriden_filter) {
