@@ -50,7 +50,7 @@ var notification = new Notification(m)
 
 try {
     var vmi = new VMI();
-    vmi.setupHTML();
+    vmi.setupDrawer();
     var panel_instructions = {'mid-container': [{"left-container": ["info-row", "list-row", "data-row"]}, "visu-container", "bot-container"]};
     vmi.setupPanels(panel_instructions);
 
