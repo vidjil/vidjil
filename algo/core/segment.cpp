@@ -442,7 +442,6 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
   info_extra = "seed";
   segmented = false;
   segmented_germline = germline ;
-  system = germline->code; // useful ?
   reversed = false;
   because = NOT_PROCESSED ; // Cause of unsegmentation
   score = 0 ;
