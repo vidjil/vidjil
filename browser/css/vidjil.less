@@ -176,6 +176,7 @@ ul{
 #left-container {
   display: flex;
   flex-flow: column;
+  position: relative;
   width : @width_left_container;
   overflow-y : none;
   -khtml-user-select: auto;
@@ -201,15 +202,11 @@ line {
 
                         /* left-container - info */
 
-#info-row{
-    flex: 0 1 auto;
-}
-
 #info{
+  flex: 0 0 auto;
   font-size: 13px;
   padding:3px;
   background : @background;
-  display : table-cell;
 }
 
 .info_line {
@@ -523,15 +520,11 @@ line {
     border-color : @border;
 }
 
-#list-row, #info-row, #data-row{
-    position: relative;
-}
-
-#list-row{
+#list{
   flex: 1 1 auto;
 }
 
-#data-row{
+#data{
   flex: 0 0 auto;
   height : 0.1px;
 }
