@@ -59,6 +59,7 @@ try {
     vmi.addView("data", "left-container", "");
     vmi.addView("visu", "visu-container", "");
     vmi.addView("visu2", "visu-container", "");
+    vmi.addView("segmenter", "bot-container", "");
     vmi.setOverlays(["info-row", "list-row", "data-row", "visu-container", "bot-container"]);
 
     /* Views
@@ -71,7 +72,7 @@ try {
     var list_clones = new List("list", "data", m, db);   // List of clones
     var sp = new ScatterPlot("visu", m, db);             // Scatterplot (both grid and bar plot view)
     var sp2;
-    var segment = new Segment("bot-container", m, db);   // Segmenter
+    var segment = new Segment("segmenter", m, db);   // Segmenter
 
 
     /* Similarity
