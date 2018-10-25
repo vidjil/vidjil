@@ -158,7 +158,7 @@ VMI.prototype = {
             div.onmouseover = function(){ 
                 var view_id = this.textContent
                 var div     = document.getElementById(view_id)
-                div.classList.add("vmim-highlight");
+                div.classList.add("vmi-highlight");
             }
             div.onmouseout  = function(){ 
                 var view_id = this.textContent
