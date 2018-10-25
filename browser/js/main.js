@@ -54,11 +54,11 @@ try {
     var panel_instructions = [{'mid-container': ["left-container", "visu-container"]},"bot-container"];
     vmi.setupPanels(panel_instructions, document.body);
 
+    vmi.addView("data", "left-container", "");
     vmi.addView("info", "left-container", "");
     vmi.addView("list", "left-container", "");
-    vmi.addView("data", "left-container", "");
-    vmi.addView("visu", "visu-container", "");
     vmi.addView("visu2", "visu-container", "");
+    vmi.addView("visu", "visu-container", "");
     vmi.addView("segmenter", "bot-container", "");
     vmi.setOverlays(["info-row", "list-row", "data-row", "visu-container", "bot-container"]);
 
