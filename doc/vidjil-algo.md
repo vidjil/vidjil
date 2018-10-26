@@ -143,6 +143,10 @@ apt-get update
 apt-get install -t jessie g++-4.8 valgrind
 ```
 
+### Ubuntu 16.04 LTS, Ubuntu 18.04 LTS
+
+Recent versions of `g++` are included.
+
 ### Ubuntu 14.04 LTS
 
 ``` bash
@@ -207,13 +211,13 @@ make LDFLAGS='-stdlib=libc++'  ### OS X Mavericks
 You can run the tests with the following commands:
 
 ``` bash
-make -C src/tests/data
+make -C algo/tests/data
    # get IGH recombinations from a single individual, as described in:
    # Boyd, S. D., and al. Individual variation in the germline Ig gene
    # repertoire inferred from variable region gene rearrangements. J
    # Immunol, 184(12), 6986–92.
 
-make -C src test                # run self-tests (can take 5 to 60 minutes)
+make -C algo test                # run self-tests (can take 5 to 60 minutes)
 ```
 
 # Input and parameters
