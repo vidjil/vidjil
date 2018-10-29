@@ -156,7 +156,6 @@ map <string, string> CloneOutputAIRR::fields()
   fields["duplicate_count"] = string_of_int(reads());
 
   fields["sequence_id"] = get("id");
-  fields["clone_id"] = get("id");
   fields["sequence"] = get("sequence");
   fields["v_call"] = get(KEY_SEG, "5", "name");
   fields["d_call"] = get(KEY_SEG, "4", "name");
@@ -191,7 +190,6 @@ void SampleOutputAIRR::out(ostream &s)
     "sequence_alignment",
     "germline_alignment",
     "v_cigar", "d_cigar", "j_cigar",
-    "clone_id"
   };
 
 

@@ -36,8 +36,8 @@ $ Two clones are productive, no clone is labeled as non-productive
 $ v_call for 2 clones (-z 2)
 2:IGHV
 
-$ First clone window appears third times (clone_id, sequence_id, sequence)
-w3:TATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTG
+$ First clone window appears two times (sequence_id, sequence)
+w2:TATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTG
 
 $ Junction of the first clone appears once, but CDR3 twice (it is also included in the junction)
 1:CTREEQYSSWYFDFW		
