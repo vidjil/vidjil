@@ -31,7 +31,7 @@ stages:
   artifacts: &lcov_artifact
     paths:
       - algo/lcov_test_*.filtered
-    expire_in: 6hrs
+    expire_in: 1 week
 
 # Tools
 
@@ -92,6 +92,7 @@ algo_coverage:
   artifacts:
     paths:
       - coverage/
+    expire_in: 1 week
   only:
     - /^feature-.*a.*\/.*$/
     - schedules
@@ -140,6 +141,7 @@ release:
     paths:
     - algo/releases/vidjil-algo-`cat algo/release`.tar.gz
     - algo/releases/vidjil-algo-`cat algo/release`/vidjil-algo-`cat algo/release`_`uname -m`
+    expire_in: 10 years
   allow_failure: false
   tags:
     - ubuntu-16.04-amd64
