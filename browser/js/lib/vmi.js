@@ -76,7 +76,8 @@ VMI.prototype = {
      **/
     setView : function(view, panel) {
         if (panel) view.parentId = panel;
-        document.getElementById(view.parentId).appendChild(view.node);
+        var parent = document.getElementById(view.parentId)
+        parent.insertBefore(view.node, parent.firstChild);
     },
 
     /**
@@ -105,19 +106,10 @@ VMI.prototype = {
     **/
     viewSetter : function(view) {
         var self = this
-        var focus = function(target) {
-            target.className += " focused";
-            var listener = function() {
-                self.hideEditors();
-                target.removeEventListener('click', listener);
-            };
-            target.addEventListener('click', listener);
-        }
-
         
         var f = function(e) {
+            self.hideEditors();
             if (e.ctrlKey) {
-                self.hideEditors();
                 available_panels = $(".editor")
                 var id_panel;
                 $(".editor").each(function(i, obj){

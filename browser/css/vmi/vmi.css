@@ -67,11 +67,4 @@
     height: 100%;
     /*height: 200px;*/
 }
-
-.view:nth-last-child(n+4) {
-    display: none;
-    /*Je glisse ici un lien utile sur lequel je suis tombé en cherchant ça
-    Ce n'est pas directement lié mais c'est une astuce plutît sympa
-    https://stackoverflow.com/questions/8720931/can-css-detect-the-number-of-children-an-element-has*/
-}
 /*##############################################*/
