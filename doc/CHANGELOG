@@ -10,6 +10,7 @@ This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil pla
 	* New AIRR .tsv output (core/output.c) #2828
 	* Updated documentation
 	* New and updated unit and functional tests
+	* Known regressions: This version may not work on some systems #3601 #3602
 
 2018-07-18  The Vidjil Team
 	* Cleaned memory after the heuristic, lowering memory usage up to 50% on datasets with many 1-read clones #2120 #3387
