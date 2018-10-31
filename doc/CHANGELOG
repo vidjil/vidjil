@@ -1,13 +1,14 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
-2018-10-xx  The Vidjil Team
+2018-10-31  The Vidjil Team
 	* New option --alternative-genes, outputs germline genes beyond the most probable one (core/segment.cpp) #1459
 	* New warning W69 for equally probable germline genes (core/segment.cpp) #3575
 	* Improved again memory usage, creating bins only when necessary (core/readstorage.cpp) #3393
 	* Improved the full analysis pre-processing, extending -Z 1 based on probabilities (core/filter.cpp, core/math.cpp) #3225
 	* Refactored output handling (core/output.cpp) #3858
 	* New AIRR .tsv output (core/output.c) #2828
+	* Updated documentation
 	* New and updated unit and functional tests
 
 2018-07-18  The Vidjil Team
