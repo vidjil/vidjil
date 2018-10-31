@@ -212,13 +212,13 @@ make LDFLAGS='-stdlib=libc++'  ### OS X Mavericks
 You can run the tests with the following commands:
 
 ``` bash
-make -C algo/tests/data
+make -C src/tests/data
    # get IGH recombinations from a single individual, as described in:
    # Boyd, S. D., and al. Individual variation in the germline Ig gene
    # repertoire inferred from variable region gene rearrangements. J
    # Immunol, 184(12), 6986–92.
 
-make -C algo test                # run self-tests (can take 5 to 60 minutes)
+make -C src test                # run self-tests (can take 5 to 60 minutes)
 ```
 
 # Input and parameters
