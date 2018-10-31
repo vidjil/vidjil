@@ -1,4 +1,4 @@
-# vidjil-algo 2018.07
+# vidjil-algo 2018.10
 **Command-line manual**
 
 *The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)*
@@ -635,8 +635,6 @@ For example `-uu -X 1000` splits the unsegmented reads from the 1000 first reads
 
 
 ## AIRR .tsv output
-
-**(draft version)**
 
 Since version 2018.10, vidjil-algo supports the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
 We export all required fields, some optional fields, as also some custom fields (+).
