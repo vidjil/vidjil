@@ -79,7 +79,7 @@ try {
     vmi.addView("info", "left-container", "");
     vmi.addView("list", "left-container", "");
     vmi.addView("visu2", "visu-container", "");
-    document.getElementById("mid-container").appendChild(separator);
+    document.getElementById("visu-container").appendChild(separator);
     vmi.addView("visu", "visu-container", "");
     vmi.addView("segmenter", "bot-container", "");
     vmi.setOverlays(["info-row", "list-row", "data-row", "visu-container", "bot-container"]);
