@@ -75,9 +75,9 @@ try {
     var panel_instructions = [{'mid-container': ["left-container", "visu-container"]},"bot-container"];
     vmi.setupPanels(panel_instructions, document.body);
 
-    vmi.addView("data", "left-container", "");
     vmi.addView("info", "left-container", "");
     vmi.addView("list", "left-container", "");
+    vmi.addView("data", "left-container", "");
     vmi.addView("visu2", "visu-container", "");
     document.getElementById("visu-container").appendChild(separator);
     vmi.addView("visu", "visu-container", "");
