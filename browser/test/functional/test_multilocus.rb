@@ -86,7 +86,6 @@ class TestMultilocus < BrowserTest
   def test_04_rename_clone_by_enter
     sleep 1
     clone_name = $b.clone_info('24')[:name]
-    $b.execute_script('arguments[0].scrollIntoView()', clone_name)
     clone_name.double_click
 
     $b.clone_name_editor.set 'renamed_return'
