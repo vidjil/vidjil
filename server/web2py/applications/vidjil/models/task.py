@@ -184,6 +184,11 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
     from subprocess import Popen, PIPE, STDOUT, os
     from datetime import timedelta as timed
     
+    if db.sequence_file[id_file].pre_process_flag == "FAILED" :
+        print("Pre-process has failed")
+        raise ValueError('pre-process has failed')
+        return "FAIL"
+    
     ## re schedule if pre_process is still pending
     if db.sequence_file[id_file].pre_process_flag not in ["COMPLETED", "DONE"] and db.sequence_file[id_file].pre_process_flag:
         
@@ -199,11 +204,6 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
         sys.stdout.flush()
         
         return "SUCCESS"
-    
-    if db.sequence_file[id_file].pre_process_flag == "FAILED" :
-        print("Pre-process has failed")
-        raise ValueError('pre-process has failed')
-        return "FAIL"
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
     upload_folder = defs.DIR_SEQUENCES
