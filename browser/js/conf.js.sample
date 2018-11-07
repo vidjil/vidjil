@@ -50,6 +50,8 @@ var config = {
     /* Used for the standalone segmenter page */
     "segmenter_address" : "https://db.vidjil.org/vidjil/segmenter",
 
+    /* Do we have access to a CloneDB ? */
+    "clonedb": false,
 
     /****************
      * Tips of the day
