@@ -14,6 +14,9 @@ def index():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     query = db((auth.vidjil_accessible_query(PermissionEnum.read_pre_process.value, db.pre_process) | auth.vidjil_accessible_query(PermissionEnum.admin_pre_process.value, db.pre_process) ) ).select(orderby=~db.pre_process.name)
+    log.info("view pre process list", extra={'user_id': auth.user.id,
+                'record_id': None,
+                'table_name': "pre_process"})
 
     return dict(message=T('Pre-process list'),
                query=query,
@@ -48,6 +51,9 @@ def add_form():
         res = {"redirect": "pre_process/index",
                "message": "pre_process '%s' added" % request.vars['pre_process_name']}
         log.admin(res)
+        log.info(res, extra={'user_id': auth.user.id,
+                'record_id': pre_proc_id,
+                'table_name': "pre_process"})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
     else :
@@ -83,6 +89,9 @@ def edit_form():
                "message": "pre_process '%s' updated" % request.vars['pre_process_name']}
 
         log.admin(res)
+        log.info(res, extra={'user_id': auth.user.id,
+                'record_id': request.vars["id"],
+                'table_name': "pre_process"})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
@@ -105,12 +114,18 @@ def delete():
     res = {"redirect": "pre_process/index",
            "message": "pre_process '%s' deleted" % request.vars["id"]}
     log.admin(res)
+    log.info(res, extra={'user_id': auth.user.id,
+            'record_id': request.vars["id"],
+            'table_name': "pre_process"})
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 ## need ["sequence_file_id"]
 ## need ["sample_set_id"]
 def info():
     if (auth.can_modify_sample_set(request.vars["sample_set_id"])):
+        log.info("view pre process info", extra={'user_id': auth.user.id,
+                'record_id': request.vars["sample_set_id"],
+                'table_name': "sample_set_id"})
         return dict(message=T('result info'))
     else :
         res = {"message": "acces denied"}
@@ -175,6 +190,9 @@ def change_permission():
                                                                      PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
 
         log.admin(res)
+        log.info(res, extra={'user_id': auth.user.id,
+                'record_id': request.vars["pre_process_id"],
+                'table_name': "pre_process"})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"message": "incomplete request : "+error }

@@ -321,8 +321,8 @@ class MsgUserAdapter(logging.LoggerAdapter):
                                       vidjil_utils.safe_decoding(msg))
         return new_msg, kwargs
     
-    def admin(self, msg):
-        self.log(logging.ADMIN, msg)
+    def admin(self, msg, extra=None):
+        self.log(logging.ADMIN, msg, extra)
 #
 class UserLogHandler(logging.Handler):
 

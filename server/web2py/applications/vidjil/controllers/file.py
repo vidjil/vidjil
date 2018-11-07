@@ -154,6 +154,9 @@ def form():
             relevant_ids[stype] = []
         relevant_ids[stype].append(row.id)
         action = 'add'
+        log.debug("load add form", extra={'user_id': auth.user.id,
+                'record_id': request.vars['sample_set_id'],
+                'table_name': "sample_set"})
 
     # edit file
     elif 'file_id' in request.vars:
@@ -174,6 +177,9 @@ def form():
         action = 'edit'
 
         sample_type = request.vars["sample_type"]
+        log.debug("load edit form", extra={'user_id': auth.user.id,
+                'record_id': request.vars['file_id'],
+                'table_name': "sequence_file"})
     else:
         return error_message("missing sample_set or file id")
 
@@ -283,8 +289,8 @@ def submit():
 
         link_to_sample_sets(fid, id_dict)
 
-        log.info(mes, extra={'user_id': auth.user.id,\
-                'record_id': f['id'],\
+        log.info(mes, extra={'user_id': auth.user.id,
+                'record_id': f['id'],
                 'table_name': "sequence_file"})
 
     if not error:
@@ -388,6 +394,7 @@ def upload():
         log.error(res)
     else:
         log.info(res)
+        log.debug("#TODO log all relevant info to database")
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
   
 
@@ -494,6 +501,9 @@ def restart_pre_process():
     db.sequence_file[sequence_file.id] = dict(pre_process_flag = 'WAIT')
     db.commit()
     res = schedule_pre_process(sequence_file.id, pre_process.id)
+    log.debug("restart pre process", extra={'user_id': auth.user.id,
+                'record_id': sequence_file.id,
+                'table_name': "sequence_file"})
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def match_filetype(filename, extension):

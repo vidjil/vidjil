@@ -139,6 +139,7 @@ def run_request():
 
     if error == "" :
         res = schedule_run(request.vars["sequence_file_id"], id_config, grep_reads)
+        log.info("run requested", extra={'user_id': auth.user.id, 'record_id': request.vars['sequence_file_id'], 'table_name': 'sequence_file'})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
@@ -340,6 +341,7 @@ def get_data():
                 data["samples"]["id"].append("")
 
         log.debug("get_data (%s) c%s -> %s (%s)" % (request.vars["sample_set_id"], request.vars["config"], fused_file, "downloaded" if download else "streamed"))
+        log.info("load sample", extra={'user_id': auth.user.id, 'record_id': request.vars['sample_set_id'], 'table_name': 'sample_set'})
 
         dumped_json = gluon.contrib.simplejson.dumps(data, separators=(',',':'))
 
@@ -408,6 +410,8 @@ def get_custom_data():
             data["samples"]["info"].append(db.sequence_file[sequence_file_id].info)
             data["samples"]["commandline"].append(db.config[config_id].command)
 
+        log.info("load custom data #TODO log db")
+
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
 
     else :
@@ -451,6 +455,8 @@ def get_analysis():
         analysis_data = get_analysis_data(request.vars['sample_set_id'])
         #analysis_data["info_patient"] = db.patient[request.vars["patient"]].info
         dumped_json = gluon.contrib.simplejson.dumps(analysis_data, separators=(',',':'))
+
+        log.info("load analysis", extra={'user_id': auth.user.id, 'record_id': request.vars['sample_id'], 'table_name': 'sample_set'})
 
         if download:
             return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.vars['filename'])
@@ -516,6 +522,8 @@ def save_analysis():
         res = {"success" : "true",
                "message" : "(%s): analysis saved" % (sample_set_id)}
         log.info(res, extra={'user_id': auth.user.id})
+
+        log.info("save analysis", extra={'user_id': auth.user.id, 'record_id': request.vars['samples_id'], 'table_name': 'sample_set'})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"success" : "false",

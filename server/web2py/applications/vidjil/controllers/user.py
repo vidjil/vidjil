@@ -52,13 +52,15 @@ def index():
     else:
         query = sorted(query, key = lambda row : row.id, reverse=False)
 
-            
+    log.info("view user list", extra={'user_id': auth.user.id, 'record_id': None, 'table_name': 'auth_user'})
     return dict(query=query,
     			reverse=reverse)
 
 def edit():
     if auth.is_admin():
         user = db.auth_user[request.vars["id"]]
+        log.info("load edit form for user",
+                extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'auth_user'})
         return dict(message=T("Edit user"), user=user)
     return error_message(ACCESS_DENIED)
 
@@ -91,7 +93,8 @@ def edit_form():
             db.commit()
             res = {"redirect": "back",
                     "message": "%s (%s) user edited" % (request.vars["email"], request.vars["id"])}
-            log.info(res)
+            log.info(res,
+                extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'auth_user'})
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
         else :
@@ -108,4 +111,6 @@ def edit_form():
 def info():
     if "id" not in request.vars:
         request.vars["id"] = db().select(db.auth_user.ALL, orderby=~db.auth_user.id)[0].id
+    log.info("view info for user (%d)" % int(request.vars['id']),
+            extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'auth_user'})
     return dict(message=T('user info'))

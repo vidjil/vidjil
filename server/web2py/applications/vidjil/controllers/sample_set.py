@@ -128,7 +128,9 @@ def index():
     for row in query_pre_process:
         pre_process_list[row.id] = row.name
     
-    log.debug('sample_set (%s)' % request.vars["id"])
+    log.info('sample_set (%s)' % request.vars["id"], extra={'user_id': auth.user.id,
+        'record_id': request.vars["id"],
+        'table_name': "sample_set"})
     #if (auth.can_view_patient(request.vars["id"]) ):
     return dict(query=query,
                 pre_process_list=pre_process_list,
@@ -204,7 +206,10 @@ def all():
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
 
     result = helper.filter(search, result)
-    log.debug("%s list (%.3fs) %s" % (request.vars["type"], time.time()-start, search))
+    log.info("%s list %s" % (request.vars["type"], search), extra={'user_id': auth.user.id,
+        'record_id': None,
+        'table_name': "sample_set"})
+    log.debug("sample_set list (%.3fs)" % (time.time()-start))
 
 
     return dict(query = result,
@@ -256,7 +261,10 @@ def stats():
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
 
     result = helper.filter(search, result)
-    log.debug("%s stat list (%.3fs) %s" % (request.vars["type"], time.time()-start, search))
+    log.info("%s stat list %s" % (request.vars["type"], search), extra={'user_id': auth.user.id,
+        'record_id': None,
+        'table_name': "sample_set"})
+    log.debug("stat list (%.3fs)" % time.time()-start)
 
     return dict(query = result,
                 fields = fields,
@@ -329,6 +337,9 @@ def result_files():
 
         response.headers['Content-Type'] = "application/zip"
         response.headers['Content-Disposition'] = 'attachment; filename=%s' % filename# to force download as attachment
+        log.info("extract results files (%s)" % sample_set_ids, extra={'user_id': auth.user.id,
+            'record_id': None,
+            'table_name': "sample_set"})
 
         return response.stream(open(filedir), chunk_size=4096)
     except:
@@ -379,14 +390,19 @@ def mystats():
     d['stats'] = res
     d['f_samples'] = f_samples # TMP, for debug
 
+    #TODO can we get a record id here ?
+    log.info('stats (%s)' % request.vars["id"], extra={'user_id': auth.user.id,
+        'record_id': None,
+        'table_name': "results_file"})
+    log.debug("mystats (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
     # Return
-    log.debug("stats (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
     return gluon.contrib.simplejson.dumps(d, separators=(',',':'))
 
 ## return form to create new set
 def form():
     denied = False
     # edit set
+    extra = {'user_id': auth.user.id, 'record_id': None, 'table_name': "sample_set"}
     if("id" in request.vars):
         sample_set = db.sample_set[request.vars["id"]]
         set_type = sample_set.sample_type
@@ -397,6 +413,7 @@ def form():
             max_group = None
         else:
             denied = True
+        extra['record_id'] = request.vars["id"]
 
     # new set
     elif (auth.can_create_patient()):
@@ -422,6 +439,7 @@ def form():
             }
     # We add a None object to the desired set type to initialise an empty form in the template.
     sets[set_type].append(sset)
+    log.info("load form " + message, extra=extra)
     return dict(message=T(message),
                 groups=groups,
                 group_ids = get_involved_groups(),
@@ -509,7 +527,7 @@ def submit():
             p['message'] = []
             mes = u"%s (%s) %s %sed" % (set_type, id_sample_set, name, action)
             p['message'].append(mes)
-            log.info(mes, extra={'user_id': auth.user.id, 'record_id': p['id'], 'table_name': 'patient'})
+            log.info(mes, extra={'user_id': auth.user.id, 'record_id': id_sample_set, 'table_name': 'sample_set'})
             if register:
                 register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
 
@@ -647,6 +665,7 @@ def custom():
         query = query.find(lambda row : ( row.results_file.config_id==config_id or (str(row.results_file.id) in request.vars["custom_list"])) )
     
     tag_decorator = TagDecorator(get_tag_prefix())
+    log.info("load compare list", extra={'user_id': auth.user.id, 'record_id': None, 'table_name': "results_file"})
     log.debug("sample_set/custom (%.3fs) %s" % (time.time()-start, search))
 
     return dict(query=query,
@@ -857,6 +876,8 @@ def multi_sample_stats():
 
     results = getStatData(custom_result)
     data['results'] = results
+    log.info("load multi sample stats (%s)" % str(custom_result),
+            extra={'user_id': auth.user.id, 'record_id': None, 'table_name': 'results_file'})
     return dict(data=data)
 
 def confirm():
@@ -938,6 +959,8 @@ def permission():
             row.parent_access = ', '.join(str(value) for value in auth.get_access_groups(db[stype], request.vars['id'], group=row.id))
             row.read =  auth.get_group_access(sample_set.sample_type, data.id, row.id)
 
+        log.info("load permission page for sample_set (%s)" % request.vars["id"],
+                extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': "sample_set"})
         return dict(query=query,
                     helper=helper,
                     data=data)
@@ -971,7 +994,7 @@ def change_permission():
                 auth.add_permission(request.vars["group_id"], PermissionEnum.access.value, db[sample_type], data_id)
                 res = {"message" : "access '%s' granted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
 
-            log.info(res)
+            log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars['sample_set_id'], 'table_name': 'sample_set'})
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         else :
             res = {"message": "incomplete request : "+error }
