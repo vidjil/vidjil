@@ -970,3 +970,23 @@ optional arguments:
   --dry-run   With a dry run, the data will not be saved to the database
   --config CONFIG  Select the config mapping file
 ```
+
+# Using CloneDB [Under development]
+The [CloneDB](https://gitlab.inria.fr/vidjil/clonedb) has to be installed
+independently of the Vidjil platform.
+
+Then one can easily extract data to be used with CloneDB. A script is provided
+(`server/web2py/applications/vidjil/scripts/create_clone_db.py`) which
+produces a FASTA file to be indexed with CloneDB. This script takes as
+parameter the FASTA output file and one (or many) group IDs, which correspond
+to the groups having access to the datasets. Note that for the moment the Vidjil platform only allow a per group access to the CloneDB.
+
+The FASTA output filename must follow the format `clonedb_XXX.fa` where `XXX`
+is replaced with the group ID.
+
+Make sure that the `DIR_CLONEDB` variable is set in `defs.py` and points to
+the CloneDB server directory. Make sure that in this directory the
+`clonedb_defs.py` has been filled correctly.
+
+Then index the created FASTA file with the CloneDB index (follow the
+instructions from CloneDB).
