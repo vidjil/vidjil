@@ -814,23 +814,25 @@ Segment.prototype = {
 
         for (var i = 0; i < list.length; i++) {
             if (this.isClone(list[i])) {
-            var c = this.m.clone(list[i])
-            
-            if (typeof (c.getSequence()) !== 0){
-                request += ">" + c.index + "#" + c.getName() + "\n" + c.getSequence() + "\n";
-            }else{
-                request += ">" + c.index + "#" + c.getName() + "\n" + c.id + "\n";
+                var c = this.m.clone(list[i])
+                
+                if (typeof (c.getSequence()) !== 0){
+                    request += ">" + c.index + "#" + c.getName() + "\n" + c.getSequence() + "\n";
+                } else {
+                    request += ">" + c.index + "#" + c.getName() + "\n" + c.id + "\n";
+                }
+                if (c.getSize()>max){
+                    system = c.getLocus()
+                    max=c.getSize()
+                }
             }
-            if (c.getSize()>max){
-                system=c.get('germline')
-                max=c.getSize()
+            else if (typeof this.germline[list[i]]) {
+                request += ">" +list[i] + "\n" +this.germline[this.sequence[list[i]].locus][list[i]] + "\n";
             }
         }
-        else if (typeof this.germline[list[i]]) {
-            request += ">" +list[i] + "\n" +this.germline[this.sequence[list[i]].locus][list[i]] + "\n";
-        }
-        }
-        if (address == 'IMGT') imgtPost(this.m.species, request, system);
+        if (address == 'IMGT') {
+            imgtPost(this.m.species, request, system);
+        } 
         if (address == 'IMGTSeg') {
             imgtPostForSegmenter(this.m.species, request, system, this);
             var change_options = {'l01p01c47' : 'N', // Deactivate default output
