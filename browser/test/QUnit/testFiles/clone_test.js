@@ -35,7 +35,7 @@ QUnit.module("Clone", {
         "name" : some_name,
         "reads" : [10,10,30,0] ,
         "top" : 2,
-        "germline" : "TRG",
+        "germline" : "IGH",
         "warn": [{
             "code": "Wxx",
             "msg": "a warning that is only an information",
@@ -138,6 +138,9 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.equal(c2.getCode(), some_name, "clone2, .getCode()");
     assert.equal(c2.getName(), some_name, "clone2, .getName()");
     assert.equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/12/4 J5*02", "clone2, .getShortName()");
+
+    assert.equal(c1.getLocus(), "TRG")
+    assert.equal(c2.getLocus(), "IGH")
 
     assert.equal(c1.isWarned(), 'warn', "clone1 is warned (client, bad e-value)")
     assert.equal(c2.isWarned(), false, "clone2 is not warned (only 'info')")
