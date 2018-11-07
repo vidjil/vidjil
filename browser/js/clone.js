@@ -450,7 +450,7 @@ Clone.prototype = {
 
       var locus = this.get('germline')
 
-      if (locus == "unexpected") {
+      if (typeof this.m.germline[locus] === "undefined") {
         var loci = [this.getGene("5").substring(0,3), this.getGene("3").substring(0,3) ]
         locus = loci[0]
         if (loci[0] != loci[1]) {
