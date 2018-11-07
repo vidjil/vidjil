@@ -448,17 +448,17 @@ Clone.prototype = {
     */
     getLocus: function () {
 
-      var locus = this.get('germline')
+        var locus = this.get('germline')
 
-      if (typeof this.m.germline[locus] === "undefined") {
-        var loci = [this.getGene("5").substring(0,3), this.getGene("3").substring(0,3) ]
-        locus = loci[0]
-        if (loci[0] != loci[1]) {
-          console.log("Clone " + this.getName() + "recombines sequences from two separate loci. Using: " + locus)
+        if (typeof this.m.germline[locus] === "undefined") {
+            var loci = [this.getGene("5").substring(0,3), this.getGene("3").substring(0,3) ]
+            locus = loci[0]
+            if (loci[0] != loci[1]) {
+                console.log("Clone " + this.getName() + "recombines sequences from two separate loci. Using: " + locus)
+            }
         }
-      }
 
-      return locus
+        return locus
     },
 
     /**
