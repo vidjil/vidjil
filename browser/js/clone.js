@@ -444,6 +444,24 @@ Clone.prototype = {
     },
 
     /**
+    * @return {string} locus (at least the locus of the 5' gene)cluster number
+    */
+    getLocus: function () {
+
+      locus = this.get('germline')
+
+      if (locus == "unexpected") {
+        var loci = [this.getGene("5").substring(0,3), this.getGene("3").substring(0,3) ]
+        locus = loci[0]
+        if (loci[0] != loci[1]) {
+          console.log("Clone " + this.getName() + "recombines sequences from two separate loci. Using: " + locus)
+        }
+      }
+
+      return locus
+    },
+
+    /**
      * compute the clone size ( ratio of all clones clustered ) at a given time
      * @param {integer} time - tracking point (default value : current tracking point)
      * @return {float} size

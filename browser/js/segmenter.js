@@ -822,15 +822,7 @@ Segment.prototype = {
                     request += ">" + c.index + "#" + c.getName() + "\n" + c.id + "\n";
                 }
                 if (c.getSize()>max){
-                    system=c.get('germline')
-
-                    if (system == "unexpected"){
-                        var loci = [c.getGene("5").substring(0,3), c.getGene("3").substring(0,3) ]
-                        system = loci[0]
-                        if (loci[0] != loci[1]){
-                            console.log("Clone " + c.getName() + "recombines sequences from two separate loci. Using: " + system)
-                        }
-                    }
+                    system = c.getLocus()
                     max=c.getSize()
                 }
             }
