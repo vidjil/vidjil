@@ -446,13 +446,16 @@ class VidjilAuth(Auth):
             or self.is_admin(user))
 
     def can_view_sample_set(self, sample_set_id, user = None) :
+        perm = self.get_permission(PermissionEnum.read.value, 'sample_set', sample_set_id, user)\
+            or self.is_admin(user)
+
+        if perm:
+            return perm
+
         sample_set = db.sample_set[sample_set_id]
         sample_type = sample_set.sample_type
         if sample_set is None:
             return False
-
-        perm = self.get_permission(PermissionEnum.read.value, 'sample_set', sample_set_id, user)\
-            or self.is_admin(user)
 
         for row in db( db[sample_type].sample_set_id == sample_set_id ).select() :
             if self.can_view(sample_type, row.id, user):

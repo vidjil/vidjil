@@ -87,14 +87,18 @@ def anon_birth(patient_id, user_id):
     else:
         return age
 
-def anon_ids(patient_id):
-    '''Anonymize patient name. Only the 'anon' access see the full patient name.'''
+def anon_ids(patient_ids, can_view = None):
+    '''Anonymize patient name. Only the 'anon' access see the full patient name.
+    patient_ids is a list of patient IDs
+    '''
     db = current.db
     auth=current.auth
     
-    patient = db.patient[patient_id]
+    patients = db(db.patient.id.belongs(patient_ids)).select(db.patient.sample_set_id, 
+                                                             db.patient.first_name,
+                                                             db.patient.last_name)
 
-    return display_names(patient.sample_set_id, patient.first_name, patient.last_name)
+    return [display_names(p.sample_set_id, p.first_name, p.last_name, can_view) for p in patients]
 
 def anon_names(sample_set_id, first_name, last_name, can_view=None):
     '''
