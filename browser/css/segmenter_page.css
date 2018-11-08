@@ -404,6 +404,8 @@ line {
 }
 #list {
   flex: 1 1 auto;
+  height: 0px;
+  max-height: 100%;
 }
 #data {
   flex: 0 0 auto;
@@ -415,6 +417,8 @@ line {
   overflow-x: hidden;
   height: calc(100% - 30px);
   /*100% - list_menu height */
+  max-height: 100%;
+  width: 100%;
   padding: 2px;
 }
 #list_data {
@@ -1056,6 +1060,10 @@ span.logo {
   border-top: solid;
   border-width: 6px;
   min-height: 125px;
+}
+#segmenter {
+  display: flex;
+  flex-flow: column;
 }
 .tn {
   width: 120px;
