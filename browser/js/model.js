@@ -2150,9 +2150,9 @@ changeAlleleNotation: function(alleleNotation) {
      */
     findGermlineFromGene: function(gene_name){
         // If germline can be determined from gene name
-        if (this.germline[gene_name.substring(0, 3).toUpperCase()] != undefined) {
-            var locus = gene_name.substring(0, 3).toUpperCase()
-                return this.germline[locus][gene_name]
+        var locus = gene_name.substring(0, 4).toUpperCase()
+        if (this.germline[locus] != undefined) {
+            return this.germline[locus][gene_name].toUpperCase().replace(/\./g, '');
         }
         // Else, try with all germline of model
         for (var i in this.germline){
