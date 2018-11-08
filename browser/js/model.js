@@ -2126,7 +2126,7 @@ changeAlleleNotation: function(alleleNotation) {
                     seq_found = this.findGermlineFromGene(listGene[k]);
                     if (seq_found != undefined){
                         fasta += ">" + listGene[k] + '\n';
-                        fasta += seq_found + '\n';
+                        fasta += seq_found.toUpperCase().replace(/\./g, '') + '\n';
                     }
                 }
             }
@@ -2149,12 +2149,12 @@ changeAlleleNotation: function(alleleNotation) {
         // If germline can be determined from gene name
         var locus = gene_name.substring(0, 4).toUpperCase()
         if (this.germline[locus] != undefined) {
-            return this.germline[locus][gene_name].toUpperCase().replace(/\./g, '');
+            return this.germline[locus][gene_name]
         }
         // Else, try with all germline of model
         for (var i in this.germline){
             if (this.germline[i][gene_name] != undefined ){
-                return this.germline[i][gene_name].toUpperCase().replace(/\./g, '');
+                return this.germline[i][gene_name]
             }
         }
         // Case if gene is not present in this.germline
