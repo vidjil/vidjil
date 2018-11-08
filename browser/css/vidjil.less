@@ -523,6 +523,7 @@ line {
 #list{
   flex: 1 1 auto;
   height: 0px; // set scrollbar flex will override height
+  max-height: 100%;
 }
 
 #data{
@@ -535,6 +536,7 @@ line {
   overflow-y : scroll;
   overflow-x : hidden;
   height : calc(~"100% - 30px");  /*100% - list_menu height */
+  max-height: 100%;
   width: 100%;
   padding:2px;
 }
