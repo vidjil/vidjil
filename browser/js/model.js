@@ -2123,14 +2123,11 @@ changeAlleleNotation: function(alleleNotation) {
             for (var k=0; k<listGene.length; k++){
                 var germName = gene_germline[k].substring(0, 3);
                 if (this.germline[germName] != undefined) {
-                    seq_found = this.findGermlineFromGene(listGene[k]).toUpperCase().replace(/\./g, '');
+                    seq_found = this.findGermlineFromGene(listGene[k]);
                     if (seq_found != undefined){
                         fasta += ">" + listGene[k] + '\n';
                         fasta += seq_found + '\n';
                     }
-                } else if (typeof this.germline[germName][listGene[k]] != 'undefined') {
-                    fasta += ">" + listGene[k] + '\n';
-                    fasta += this.germline[germName][listGene[k]].toUpperCase().replace(/\./g, '') + '\n';
                 }
             }
 
