@@ -47,7 +47,7 @@
         1632, 0
       ],
       "ERG": [
-        288, 0
+        362, 0
       ]
     }
   }, 
@@ -123,21 +123,6 @@
         303
       ], 
       "id": "YTGTGCYGYGYCCCYYGGYYAAAYCCTTGY"
-    }, 
-    {
-      "germline": "TRB", 
-      "sequence": 0, 
-      "top": 50, 
-      "seg_stat": [
-        {
-          "1": 132, 
-          "2": 230
-        }
-      ], 
-      "reads": [
-        362
-      ], 
-      "id": "CTGTGCYGYGYYCTGGGGGGTYCYTYAYGYC"
     }, 
     {
       "germline": "TRB", 
@@ -1761,13 +1746,13 @@
     {
       "germline": "ERG",
       "sequence": "GTCTAACTCAGAAGCATCTCACGGTAAGGAAAAATTTTCCTTTCTGATGAAAATCAAATGTAAAACACTGTAACAAAAAAAGAGGACATTTCCAATTATTTAAAAAATGGATACCTCCCACTTTTTCCAAAAGTAAAAAAAAAAAAAGAATTTGGAATGGCTTACCAAACAGATTACAATAAATCATAGTCTAAGATAAACATCTGAAGCACTTGGGGCTTTCTGGTGCGTGAGGCTAGAGTGAAGAAAGGGAGAGGGTGGCTGTGGACCACCGAAGCTGA", 
-      "top": 100,
+      "top": 50,
       "name": "ERG-4F 0/TCT/0 ERG-Seq-R",
       "seg_stat": {
         "3": 9832
       },
       "reads": [
-        288
+        362
       ],
       "id": "AAATCATAGTCTAAGATAAACATCTGAAGCACTTGGGGCTTTCTGGTGCG"
 
