@@ -159,7 +159,7 @@ def form():
                 'table_name': "sample_set"})
 
     # edit file
-    elif 'file_id' in request.vars:
+    elif 'file_id' in request.vars and request.vars['file_id'] is not None:
         if not auth.can_modify_file(request.vars['file_id']):
             return error_message("you need admin permission to edit files")
 
@@ -492,7 +492,7 @@ def producer_list():
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def restart_pre_process():
-    if "sequence_file_id" not in request.vars:
+    if "sequence_file_id" not in request.vars or request.vars['sequence_file_id'] is None:
         return error_message("missing parameter")
     sequence_file = db.sequence_file[request.vars["sequence_file_id"]]
     if sequence_file is None or not auth.can_modify_file(sequence_file.id):
