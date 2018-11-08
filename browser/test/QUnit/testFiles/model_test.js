@@ -400,7 +400,7 @@ QUnit.test("findGermlineFromGene", function(assert) {
     assert.equal(getted, true, 'function return the correct sequence for the gene J: TRGJ1*02')
 
     var getted = m.findGermlineFromGene("unknown_gene")
-    assert.equal(getted, "", 'function return the correct sequence for the gene J: unknown_gene')
+    assert.equal(getted, undefined, 'function return undefined value for the gene J: unknown_gene')
 
 });
 
