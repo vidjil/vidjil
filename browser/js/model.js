@@ -2157,7 +2157,7 @@ changeAlleleNotation: function(alleleNotation) {
         // Else, try with all germline of model
         for (var i in this.germline){
             if (this.germline[i][gene_name] != undefined ){
-                return this.germline[i][j]
+                return this.germline[i][gene_name].toUpperCase().replace(/\./g, '');
             }
         }
         // Case if gene is not present in this.germline
