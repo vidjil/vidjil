@@ -407,8 +407,7 @@ line {
   max-height: 100%;
 }
 #data {
-  flex: 0 0 auto;
-  height: 0.1px;
+  flex: 0 1 auto;
 }
 #list_clones {
   flex: 1 1 auto;
