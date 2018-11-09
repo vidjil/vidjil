@@ -223,7 +223,7 @@ Database.prototype = {
             } else {
                 target.setAttribute("disabled", "disabled")
                 self.ajax_indicator_start();
-                setTimeout(function(){target.removeAttribute("disabled"); self.ajax_indicator_stop()}, 2000)
+                setTimeout(function(){target.removeAttribute("disabled")}, 2000)
             }
         }
         catch(err)
