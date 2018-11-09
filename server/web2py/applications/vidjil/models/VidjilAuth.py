@@ -282,10 +282,10 @@ class VidjilAuth(Auth):
         
     def can_modify_sample_set(self, sample_set_id, user = None) :
         sample_set = db.sample_set[sample_set_id]
-        sample_type = sample_set.sample_type
-
         if sample_set is None:
             return False
+        
+        sample_type = sample_set.sample_type
         perm = self.get_permission(PermissionEnum.admin.value, 'sample_set', sample_set_id, user)\
             or self.is_admin(user)
         if perm:
@@ -453,10 +453,10 @@ class VidjilAuth(Auth):
             return perm
 
         sample_set = db.sample_set[sample_set_id]
-        sample_type = sample_set.sample_type
         if sample_set is None:
             return False
 
+        sample_type = sample_set.sample_type
         for row in db( db[sample_type].sample_set_id == sample_set_id ).select() :
             if self.can_view(sample_type, row.id, user):
                 perm = True;
