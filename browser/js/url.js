@@ -111,7 +111,7 @@ Url.prototype= {
         var url = window.location;
         var url_param = [];
         if (url.search.length > 0) {
-            url.search.substr(1).split("&");
+            url_param = url.search.substr(1).split("&");
         }
         for (var i = 0; i < url_param.length; i++) {
             var tmparr = url_param[i].split("=");
