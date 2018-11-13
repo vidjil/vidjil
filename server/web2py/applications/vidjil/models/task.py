@@ -102,16 +102,18 @@ def compute_extra(id_file, id_config, min_threshold):
         try:
             d = json.load(rf)
             loci_min = {}
-            loci_totals = d['reads']['germline']
-            for locus in loci_totals:
-                if locus not in result:
-                    result[locus] = [0]
-                loci_min[locus] = loci_totals[locus][0] * (min_threshold/100.0)
+            if 'reads' in d and 'germline' in d['reads']:
+                loci_totals = d['reads']['germline']
+                for locus in loci_totals:
+                    if locus not in result:
+                        result[locus] = [0]
+                    loci_min[locus] = loci_totals[locus][0] * (min_threshold/100.0)
 
-            for clone in d["clones"]:
-                germline = clone['germline']
-                if clone['reads'][0] >=  loci_min[germline]:
-                    result[germline][0] += 1
+            if 'clones' in d and d['clones'] is not None:
+                for clone in d["clones"]:
+                    germline = clone['germline']
+                    if clone['reads'][0] >=  loci_min[germline]:
+                        result[germline][0] += 1
         except ValueError as e:
             print('invalid_json')
             return "FAIL"
