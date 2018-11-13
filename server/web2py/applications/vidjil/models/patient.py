@@ -32,7 +32,7 @@ class Patient(SampleSet):
     def get_info_dict(self, data):
         name = self.get_display_name(data)
         return dict(name = name,
-                    filename = name,
+                    filename = self.get_name(data),
                     label = data['id_label'] + " (" + str(data['birth']) + ")",
                     info = data['info']
                     )

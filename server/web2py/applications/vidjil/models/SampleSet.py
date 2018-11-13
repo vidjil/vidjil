@@ -46,7 +46,7 @@ class SampleSet(object):
     def get_config_urls(self, data):
         configs = []
         for conf in data['conf_list']:
-            filename =  "(%s %s)" % (self.get_display_name(data), conf['name'])
+            filename =  "(%s %s)" % (self.get_name(data), conf['name'])
             if conf['fused_file'] is not None :
                 configs.append(
                     str(A(conf['name'],
