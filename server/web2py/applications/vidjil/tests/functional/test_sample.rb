@@ -279,6 +279,6 @@ class TestSample < ServerTest
     lines = table.tbody.rows
     lines[0].wait_until_present
     l = lines[0]
-    assert(l.td(:text => "QUEUED").present? or l.td(:text => "ASSIGNED") or l.td(:text => "COMPLETED"))
+    assert(l.td(:text => "QUEUED").present? or l.td(:text => "ASSIGNED").present? or l.td(:text => "COMPLETED").present?)
   end
 end
