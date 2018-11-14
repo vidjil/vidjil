@@ -451,7 +451,9 @@ def delete():
             config_ids = get_sequence_file_config_ids(request.vars["id"])
             db(db.results_file.sequence_file_id == request.vars["id"]).delete()
             db(db.sequence_file.id == request.vars["id"]).delete()
-            schedule_fuse(sample_set_ids, config_ids)
+            set_memberships = db(db.sample_set_membership.sample_set_id.belongs(sample_set_ids)).select()
+            non_empty_set_ids = [r.sample_set_id for r in set_memberships]
+            schedule_fuse(non_empty_set_ids, config_ids)
 
         res = {"redirect": "sample_set/index",
                "args" : { "id" : request.vars["redirect_sample_set_id"]},
