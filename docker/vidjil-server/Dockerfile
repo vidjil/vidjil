@@ -4,7 +4,7 @@ label version="1.1"
 label description="An Ubuntu based docker image which comes \
 with a full installation of the Vidjil algoright and browser/server."
 
-env GOSU_VERSION 1.7
+env GOSU_VERSION 1.10
 run set -x \
 	&& apt-get update && apt-get install -y --no-install-recommends ca-certificates wget cron unzip make python ipython python-enum34 python-requests git python-ijson libyajl2 python-cffi gnupg2 && rm -rf /var/lib/apt/lists/* \
 	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
