@@ -382,19 +382,6 @@ List.prototype = {
      * resize List view to match his div size
      * */
     resize: function () {
-        //hardcore resize (for firefox and ...)
-        //seriously 7 years after the first release of the html5 specs there is no simple way (except with chrome) to put a scrollbar inside a table-cell
-
-        document.getElementById("list_data").style.height = "";
-        document.getElementById("list_clones").style.height = "0px";
-
-        var data = document.getElementById(this.id_data).parentNode.offsetHeight;
-        if (data>100)data = 100
-        document.getElementById("list_data").style.height = data+"px";
-
-        var menu = document.getElementById("list_menu").offsetHeight;
-        var list = $("#" + this.id).parent().innerHeight();
-        document.getElementById("list_clones").style.height = (list-menu)+"px";
 
     },
 

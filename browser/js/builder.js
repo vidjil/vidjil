@@ -406,7 +406,12 @@ Builder.prototype = {
     },
 
     toggle_left_container: function () {
-        $("#left-container").toggle()
+        var $left = $("#left-container")
+        var val = 'none';
+        if ($left.css('display') === "none") {
+            val = 'flex';
+        }
+        $left.css('display', val);
         this.m.resize();
     },
 
