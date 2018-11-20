@@ -108,7 +108,7 @@ Blood, 2015, 126:1045-1047
 
 Michaela Kotrova et al.,
 *Next‐generation amplicon TRB locus sequencing can overcome limitations of flow‐cytometric Vβ expression analysis and confirms clonality in all T‐cell prolymphocytic leukemia cases*,
-Cytometry Part A, 2018
+Cytometry Part A, 93(11):1118-1124, 2018
 <http://dx.doi.org/10.1002/cyto.a.23604>
 
 Ralf A. Linker et al.,
