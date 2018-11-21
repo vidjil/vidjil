@@ -75,6 +75,8 @@ string CloneOutput::getWarnings()
   {
     warnings +=  w["code"].get<std::string>() + " ";
   }
+
+  return warnings;
 }
 
 
