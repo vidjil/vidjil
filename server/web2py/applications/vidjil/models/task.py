@@ -646,6 +646,12 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
             files += defs.DIR_RESULTS + row.results_file.data_file + " "
             sequence_file_list += str(row.results_file.sequence_file_id) + "_"
             
+    if files == "":
+        print("!!! Fuse failed: no files to fuse")
+        res = {"message": "[%s] c%s: 'fuse' FAILED - %s no files to fuse" % (id_data, id_config, output_file)}
+        log.error(res)
+        return "FAILED"
+
     try:
         fuse_cmd = db.config[id_config].fuse_command
         cmd = "python "+defs.DIR_FUSE+"/fuse.py -o "+ output_file + " " + fuse_cmd + " " + files
