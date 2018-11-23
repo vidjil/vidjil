@@ -761,7 +761,7 @@ int main (int argc, char **argv)
   ostringstream stream_cmdline;
   for (int i=0; i < argc; i++) stream_cmdline << argv[i] << " ";
 
-  SampleOutput *output = new SampleOutput({
+  SampleOutput output({
     {"vidjil_json_version", VIDJIL_JSON_VERSION},
     {"samples", {
         {"number", 1},
@@ -1084,7 +1084,7 @@ int main (int argc, char **argv)
     // warn if there are too few segmented sequences
     if (ratio_segmented < WARN_PERCENT_SEGMENTED)
       {
-        output->add_warning("W20", "Very few V(D)J recombinations found: " + fixed_string_of_float(ratio_segmented, 2) + "%", LEVEL_WARN);
+        output.add_warning("W20", "Very few V(D)J recombinations found: " + fixed_string_of_float(ratio_segmented, 2) + "%", LEVEL_WARN);
         stream_segmentation_info << "  ! There are not so many CDR3 windows found in this set of reads." << endl ;
         stream_segmentation_info << "  ! Please check the unsegmentation causes below and refer to the documentation." << endl ;
       }
@@ -1334,7 +1334,7 @@ int main (int argc, char **argv)
 
 
         CloneOutput *clone  = new CloneOutput();
-        output->addClone(it->first, clone);
+        output.addClone(it->first, clone);
         clone->set("sequence", kseg->getSequence().sequence);
         clone->set("_coverage", { repComp.getCoverage() });
         clone->set("_average_read_length", { windowsStorage->getAverageLength(it->first) });
@@ -1508,7 +1508,7 @@ int main (int argc, char **argv)
     //out_json << json->toString();
 
     windowsStorage->clearSequences();
-    windowsStorage->sortedWindowsToOutput(output, max_clones_id);
+    windowsStorage->sortedWindowsToOutput(&output, max_clones_id);
     
     json reads_germline;
     for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
@@ -1518,25 +1518,25 @@ int main (int argc, char **argv)
 
 
     // Complete main output
-    output->set("diversity", jsonDiversity);
-    output->set("samples", "log", { stream_segmentation_info.str() }) ;
-    output->set("reads", {
+    output.set("diversity", jsonDiversity);
+    output.set("samples", "log", { stream_segmentation_info.str() }) ;
+    output.set("reads", {
             {"total", {nb_total_reads}},
             {"segmented", {nb_segmented}},
             {"germline", reads_germline}
     });
-    output->set("germlines", json_germlines);
-    output->set("germlines", "ref", multigermline->ref);
-    output->set("germlines", "species", multigermline->species) ;
-    output->set("germlines", "species_taxon_id", multigermline->species_taxon_id) ;
+    output.set("germlines", json_germlines);
+    output.set("germlines", "ref", multigermline->ref);
+    output.set("germlines", "species", multigermline->species) ;
+    output.set("germlines", "species_taxon_id", multigermline->species_taxon_id) ;
 
     if (epsilon || forced_edges.size()){
-        output->set("clusters", comp.toJson(clones_windows));
+        output.set("clusters", comp.toJson(clones_windows));
     }
     
     //Added edges in the json output file
     if (jsonLevenshteinComputed)
-      output->set("similarity", jsonLevenshtein);
+      output.set("similarity", jsonLevenshtein);
 
 
     //$$ Clean
@@ -1582,7 +1582,7 @@ int main (int argc, char **argv)
 
         string id = string_of_int(nb, 6);
         CloneOutput *clone = new CloneOutput();
-        output->addClone(id, clone);
+        output.addClone(id, clone);
         clone->set("id", id);
         clone->set("sequence", seq.sequence);
         clone->set("reads", { 1 });
@@ -1614,14 +1614,14 @@ int main (int argc, char **argv)
       }
 
     // Finish output preparation
-    output->set("reads", "segmented", { nb_segmented }) ;
-    output->set("reads", "total", { nb }) ;
+    output.set("reads", "segmented", { nb_segmented }) ;
+    output.set("reads", "total", { nb }) ;
 
     multigermline->insert(not_segmented);
     for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
       Germline *germline = *it ;
       if (nb_segmented_by_germline[germline->code])
-        output->set("reads", "germline", germline->code, { nb_segmented_by_germline[germline->code] });
+        output.set("reads", "germline", germline->code, { nb_segmented_by_germline[germline->code] });
     }
 
   } else {
@@ -1644,12 +1644,12 @@ int main (int argc, char **argv)
   //$ Output AIRR .tsv
   cout << "  ==> " << f_airr << "   \t(AIRR output)" << endl;
   ofstream out_airr(f_airr.c_str());
-  static_cast<SampleOutputAIRR *>(output) -> out(out_airr);
+  static_cast<SampleOutputAIRR *>(&output) -> out(out_airr);
 
   //$ Output .vidjil json
   cout << "  ==> " << f_json << "\t(data file for the Vidjil web application)" << endl ;
   ofstream out_json(f_json.c_str()) ;
-  SampleOutputVidjil *outputVidjil = static_cast<SampleOutputVidjil *>(output);
+  SampleOutputVidjil *outputVidjil = static_cast<SampleOutputVidjil *>(&output);
 
   outputVidjil->out(out_json);
 
@@ -1657,7 +1657,6 @@ int main (int argc, char **argv)
   //$$ Clean
   delete multigermline ;
   delete reads;
-  delete output;
 }
 
 //$$ end
