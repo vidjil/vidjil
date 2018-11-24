@@ -18,11 +18,11 @@ stages:
   - test_functional_external
   - coverage
   - prepare_release
-  - release
+  - tgz_release
   - valgrind_unit
   - valgrind_functional
   - multiple_tests
-  - prepare_deploy
+  - publish_release
   - deploy_prod
 
 # Anchors
@@ -131,10 +131,9 @@ prepare_release:
   only:
     - /^feature-.*a.*\/.*$/
 
-release:
-  stage: release
+tgz_release:
+  stage: tgz_release
   script: make -C algo release RELEASE_TAG=`cat algo/release`
-  when: manual
   only:
     - /^feature-.*a.*\/release$/
   artifacts:
@@ -147,7 +146,7 @@ release:
     - ubuntu-16.04-amd64
 
 copy_release:
-  stage: prepare_deploy
+  stage: publish_release
   script:
     - |
       for repo in $ALGO_REPOSITORIES; do
@@ -157,11 +156,13 @@ copy_release:
       release_name=$(cat algo/release)
       ssh $VIDJIL_WWW "cd /var/www/html/releases; ln -sf vidjil-algo-${release_name}.tar.gz vidjil-latest.tgz; ln -sf vidjil-algo-${release_name}_x86_64 vidjil-latest_x86_64"
       ssh $VIDJIL_BONSAI "cd /bio1/www/html/vidjil; scp vidjil-algo-${release_name}* $VIDJIL_BONSAI_PROD:/bio1/www/html/vidjil"
+  when: manual
   only:
     - /^feature-.*a.*\/release$/
 
 deploy_release_prod:
   stage: deploy_prod
+  when: manual
   only:
     - /^feature-.*a.*\/release$/
   script:
