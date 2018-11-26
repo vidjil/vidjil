@@ -1,4 +1,4 @@
-# vidjil-algo 2018.10-dev
+# vidjil-algo 2018.10
 **Command-line manual**
 
 *The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)*
@@ -70,8 +70,6 @@ Vidjil-algo has been successfully tested on the following platforms :
   - Ubuntu 18.04 LTS
   - OS X 10.9, 10.10, 10.11
 
-Use Vidjil-algo 2018.07.2 for a wide support of these platforms.
-
 Vidjil-algo is developed with continuous integration using systematic unit and functional testing.
 The development team internally uses [Gitlab CI](http://gitlab.vidjil.org/pipelines) and [Jenkins](https://jenkins-ci.org/) for that.
 
@@ -84,9 +82,7 @@ To compile Vidjil-algo, make sure:
 
   - to be on a POSIX system ;
   - to have a C++11 compiler (as `g++` 4.8 or above, `g++` 7.3 being supported, or `clang` 3.3 or above).
-    Note that the 2018.10-dev version of Vidjil-algo does not work with `g++` 8.0 or above and with `clang`.
-    Use the 2018.07.2 version for a wider support.
-    
+    This version of Vidjil-algo does not work with `g++` 8.0 or above.
   - to have the `zlib` installed (`zlib1g-dev` package under Debian/Ubuntu,
     `zlib-devel` package under Fedora/CentOS).
 
@@ -641,7 +637,7 @@ For example `-uu -X 1000` splits the unsegmented reads from the 1000 first reads
 
 ## AIRR .tsv output
 
-Since version 2018.10-dev, vidjil-algo supports the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
+Since version 2018.10, vidjil-algo supports the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
 We export all required fields, some optional fields, as also some custom fields (+).
 
 Note that Vidjil-algo is designed to efficiently gather reads from large datasets into clones. 
