@@ -113,7 +113,7 @@ server {
         ## from the previous server instance to manage static files
 
         location /browser {
-            rewrite /browser/([0-9]+)/([0-9]+)(/+) /browser/?set=$1&conf=$2 break;
+            rewrite /browser/([0-9]+)/([0-9]+)(\/?) /browser/?set=$1&conf=$2 break;
             rewrite /browser/([0-9/]+)/(css|js|images|test)/(.*) /browser/$2/$3 redirect;
             root $CWD/../;
             expires 1h;
