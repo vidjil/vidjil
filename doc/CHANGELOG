@@ -1,6 +1,10 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+2018-11-26
+	* Corrected 2018-10 release, works now on all suported platforms #3601 #3062 (core/output.cpp)
+	* Updated the functional test framework, relaunching some tests (tools/should.py)
+
 2018-10-31  The Vidjil Team
 	* New option --alternative-genes, outputs germline genes beyond the most probable one (core/segment.cpp) #1459
 	* New warning W69 for equally probable germline genes (core/segment.cpp) #3575
