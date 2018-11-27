@@ -25,7 +25,7 @@ server {
 
         uwsgi_max_temp_file_size 20480m;
 
-        location / {
+        location ~ /(vidjil|admin) {
             include /etc/nginx/conf.d/web2py/uwsgi.conf;
             proxy_read_timeout 600;
             client_max_body_size 20G;
@@ -41,7 +41,8 @@ server {
 
             error_page 405 = $1;
 
-        location /browser {
+        location /(c|client|browser) {
+            rewrite /(c|client|browser) /browser;
             rewrite /browser/([0-9]+)/([0-9]+)(\/?) /browser/?set=$1&conf=$2 break;
             rewrite /browser/([0-9/]+)/(css|js|images|test)/(.*) /browser/$2/$3 redirect;
             root /usr/share/vidjil;
