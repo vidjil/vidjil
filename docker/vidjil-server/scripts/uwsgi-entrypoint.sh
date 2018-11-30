@@ -1,8 +1,11 @@
 #!/bin/bash
 touch /var/vidjil/vidjil.log
 touch /var/vidjil/vidjil-debug.log
-chown -R www-data:www-data /var/vidjil/vidjil*
-chown -R www-data:www-data /mnt/result
-chown -R www-data:www-data /mnt/upload
-chown -R www-data:www-data /usr/share/vidjil/server/web2py/applications/vidjil/databases
-/usr/local/bin/gosu www-data /usr/bin/uwsgi --ini /etc/uwsgi/apps-enabled/web2py.ini
+if [ -d /mnt/result/results ]; then
+    user=$(stat -c '%u' /mnt/result/results)
+else
+    user=www-data
+fi
+chown -R $user /var/vidjil/vidjil*
+chown -R $user /usr/share/vidjil/server/web2py/applications/vidjil/databases
+/usr/local/bin/gosu $user /usr/bin/uwsgi --ini /etc/uwsgi/apps-enabled/web2py.ini
