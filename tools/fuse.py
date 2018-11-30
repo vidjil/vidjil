@@ -702,6 +702,8 @@ def main():
 
     group_options.add_argument('--first', '-f', type=int, default=0, help='take only into account the first FIRST files (0 for all) (%(default)s)')
 
+    group_options.add_argument('--pre', type=str,help='pre-process program (launched on each input .vidjil file)')
+
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
   
     args = parser.parse_args()
@@ -722,6 +724,18 @@ def main():
         if len(files) > args.first:
             print("! %d files were given. We take into account the first %d files." % (len(files), args.first))
         files = files[:args.first]
+
+    if args.pre:
+        print("Pre-processing files...")
+        pre_processed_files = []
+        for f in files:
+            ff = tempfile.NamedTemporaryFile(suffix='.vidjil', delete=False)
+            com = '%s %s %s' % (args.pre, f, ff.name)
+            print(com)
+            os.system(com)
+            pre_processed_files.append(ff.name)
+            print()
+        files = pre_processed_files
 
     #filtre
     f = []
