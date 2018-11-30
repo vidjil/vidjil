@@ -330,7 +330,7 @@ deploy_review:
   script:
     - make -C browser icons
     - echo "$REVIEW_CONFIG_JS" > browser/js/conf.js
-    - rsync -av --delete browser $DEPLOY_SERVER:$DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG
+    - rsync -av --delete browser $REVIEW_SERVER:$REVIEW_SERVER_PATH$CI_BUILD_REF_SLUG
   environment:
     name: review/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
@@ -385,7 +385,7 @@ stop_deploy_review:
   variables:
     GIT_STRATEGY: none
   script:
-    - ssh $DEPLOY_SERVER "rm -rf $DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG"
+    - ssh $REVIEW_SERVER "rm -rf $REVIEW_SERVER_PATH$CI_BUILD_REF_SLUG"
   when: manual
   environment:
     name: review/$CI_BUILD_REF_NAME
