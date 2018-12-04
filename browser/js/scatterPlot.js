@@ -1366,13 +1366,15 @@ ScatterPlot.prototype = {
         var className = "sp_legend"
         if (space < 1.1) {
             this.rotation_x = 320;
-            this.text_position_x = 40;
+            this.text_position_x = 55;
+            this.margin[0] = 60
             this.sub_text_position_x = 80;
             className = "sp_rotated_legend";
         } else {
             this.rotation_x = 0;
             className = "sp_legend";
             this.text_position_x = 30;
+            this.margin[0] = 45
             this.sub_text_position_x = 45;
         }
 
