@@ -4,4 +4,4 @@ $ Display the name of the .vidjil file
 2: data/results-two-clones-1-2.vidjil
 
 $ Output a row of a LaTeX table
-1: & .* 800 & 84..*\% .* of IGH .* 80.00.% & name-1 .* id-1
+1: & .* 800 & 84..*\% .* of IGH .* 80.00.% & name-2 .* id-2
