@@ -1,0 +1,10 @@
+!NO_LAUNCHER:
+!LAUNCH: (cd $VIDJIL_DIR/germline ; cat homo-sapiens/IGKV.fa)
+
+$ Genes that are not inframe are present
+1: IGKV1-22.01
+1: IGKV2/OR2-4.01
+
+$ Inframe genes are present only once
+1: IGKV1.13.01
+1: IGKV1D.13.01
