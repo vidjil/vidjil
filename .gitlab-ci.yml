@@ -1,5 +1,4 @@
 
-
 before_script:
   - make demo
   - make data
@@ -385,7 +384,7 @@ deploy_germlines:
   script:
     - make -C germline get-all-data
     - make -C germline js
-    - date=$(date +%Y%m%d)
+    - date=$(date +%Y-%m-%d)
     - tar cvzf germline-$date.tar.gz germline/*/*.fa germline/IMGT_RELEASE browser/js/germline.js
     - scp germline-$date.tar.gz $VIDJIL_WWW:$REMOTE_GERMLINE_DIR
   only:
