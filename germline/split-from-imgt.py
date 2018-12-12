@@ -309,12 +309,18 @@ class IMGTGENEDBGeneList():
 
 
 
-def split_IMGTGENEDBReferenceSequences(f, gene_list):
+def split_IMGTGENEDBReferenceSequences(sources, gene_list):
 
     downstream_data = OrderedDefaultListDict()
     upstream_data = OrderedDefaultListDict()
 
-    for l in open(ReferenceSequences):
+    processed_keys = []
+
+    for source in sources:
+      print()
+      print()
+      print('<== %s' % source)
+      for l in open(source):
 
         # New sequence: compute 'current_files' and stores up/downstream_data[]
 
@@ -328,6 +334,13 @@ def split_IMGTGENEDBReferenceSequences(f, gene_list):
 
             if species in SPECIES and feature in FEATURES:
                 seq = l.split('|')[1]
+
+                # Check whether this sequence was already retrieven from a previous source
+                key = '%s %s %s' % (species, seq, feature)
+                if key in processed_keys:
+                    continue
+                processed_keys.append(key)
+
                 path = SPECIES[species]
 
                 if feature in FEATURES_VDJ:
@@ -403,9 +416,10 @@ if __name__ == '__main__':
     else:
         print (IMGT_LICENSE)
 
-        ReferenceSequences = sys.argv[1]
-        GeneList = sys.argv[2]
+        ReferenceSequencesInframe = sys.argv[1]
+        ReferenceSequencesAll = sys.argv[2]
+        GeneList = sys.argv[3]
 
         gl = IMGTGENEDBGeneList(GeneList)
-        split_IMGTGENEDBReferenceSequences(ReferenceSequences, gl)
+        split_IMGTGENEDBReferenceSequences([ReferenceSequencesInframe, ReferenceSequencesAll], gl)
     
