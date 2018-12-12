@@ -1,5 +1,4 @@
 
-
 before_script:
   - make demo
   - make data
@@ -379,6 +378,20 @@ deploy_prod:
     - prod-client
   tags:
     - web
+
+deploy_germlines:
+  stage: deploy_prod
+  script:
+    - make -C germline get-all-data
+    - make -C germline js
+    - date=$(date +%Y-%m-%d)
+    - tar cvzf germline-$date.tar.gz germline/*/*.fa germline/IMGT_RELEASE browser/js/germline.js
+    - scp germline-$date.tar.gz $VIDJIL_WWW:$REMOTE_GERMLINE_DIR
+  only:
+    - manual
+    - /^feature-.*g.*\/.*$/
+    
+
 
 stop_deploy_review:
   stage: deploy_review
