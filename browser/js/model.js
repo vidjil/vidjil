@@ -666,7 +666,7 @@ changeAlleleNotation: function(alleleNotation) {
 
 
     /**
-     * normalize a size to match the normalization done on a given time/sample
+     * normalize a ratio/size to match the normalization done on a given time/sample
      * normalization is done when update is 
      * @param {float} original_size - size before normalization
      * @param {integer} time - time/sample index of the timepoint where happen the normalization
@@ -682,12 +682,21 @@ changeAlleleNotation: function(alleleNotation) {
                 normalized_size = (original_size * B) / A
                 return normalized_size
             }
-        } else if (this.normalization_mode == this.NORM_EXTERNAL && normalized_reads != undefined){
-            return Math.round(normalized_reads[time] / this.reads.segmented[time]) ;
         }
         
         // includes this.NORM_FALSE
         return original_size
+    },
+
+    /**
+     * normalize a number of reads
+     */
+    normalize_reads: function(clone, time) {
+      if (this.normalization_mode == this.NORM_EXTERNAL && clone.normalized_reads != undefined) {
+        return clone.normalized_reads[time] ;
+      } else {
+        return clone.reads[time] ;
+      }
     },
 
     /**
