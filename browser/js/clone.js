@@ -1557,7 +1557,7 @@ Clone.prototype = {
         if (icon_tag != null){
             icon_tag.classList.remove("icon-star-2")
             icon_tag.classList.remove("icon-lock-1")
-            icon_tag.classList.remove("icon-cogs")
+            icon_tag.classList.remove("icon-star-empty-1")
 
             // change class in function of model.normalization method
             if (this.m.normalization_mode == this.m.NORM_EXPECTED){
@@ -1569,7 +1569,7 @@ Clone.prototype = {
                 }
             } else if (this.m.normalization_mode == this.m.NORM_EXTERNAL){
                 if (this.normalized_reads != undefined){
-                    icon_tag.classList.add("icon-cogs")
+                    icon_tag.classList.add("icon-star-empty-1")
                 } else {
                     icon_tag.classList.add("icon-star-2")
                 }
