@@ -273,6 +273,7 @@ Model.prototype = {
      * */
     initClones: function () {
         console.log("initClones()");
+        var have_external_normalization = false
 
         // time_type to name_short if there is many samples
         if (this.samples.order.length > 6)
@@ -290,6 +291,9 @@ Model.prototype = {
             clone = this.clone(i)
             var n = clone.getNlength();
             if (n > n_max) {n_max = n; }
+            if (clone.normalized_reads){
+                have_external_normalization = true
+            }
         }
         this.n_max = n_max
         
@@ -302,6 +306,14 @@ Model.prototype = {
         
         this.applyAnalysis(this.analysis);
         this.initData();
+        if (have_external_normalization){
+            this.set_normalization(this.NORM_EXTERNAL)
+            // change radio button selection
+            var radio = document.getElementById("external_normalization_input")
+            if (radio != undefined) {
+                radio.checked = true;
+            }
+        }
     }, //end initClones
 
 changeCloneNotation: function(cloneNotationType) {
