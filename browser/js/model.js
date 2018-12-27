@@ -60,6 +60,7 @@ function Model() {
 
     this.NORM_FALSE     = "no_norm"
     this.NORM_EXPECTED  = "expected"
+    this.NORM_EXTERNAL  = "external"
     this.normalization_mode = this.NORM_FALSE
 }
 
@@ -641,7 +642,7 @@ changeAlleleNotation: function(alleleNotation) {
      * @return {[type]}      [description]
      */
     set_normalization: function(mode){
-        if (mode !== this.NORM_FALSE && mode !== this.NORM_EXPECTED){
+        if (mode !== this.NORM_FALSE && mode !== this.NORM_EXPECTED && mode !== this.NORM_EXTERNAL ){
             console.error("Try to change to an undetermined mode of normalization")
             this.normalization_mode = this.NORM_FALSE
             return
@@ -673,6 +674,8 @@ changeAlleleNotation: function(alleleNotation) {
             }else{
                 return original_size
             }
+        } else if (this.normalization_mode == this.NORM_EXTERNAL && normalized_reads != undefined){
+            return Math.round(normalized_reads[time]) / this.reads.segmented[time] ;
         }
         
         return original_size
