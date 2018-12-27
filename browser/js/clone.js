@@ -474,13 +474,20 @@ Clone.prototype = {
         time = this.m.getTime(time);
         
         if (this.m.reads.segmented[time] === 0 ) return 0;
-        var result = this.getReads(time) / this.m.reads.segmented[time];
-        
-        if (this.m.norm) result = this.m.normalize(result, time);
-
-        return result;
+        var result     = this.getReads(time) / this.m.reads.segmented[time];
+        var normalized = this.getNormalizedReads(result, time);
+        return normalized;
     }, //end getSize
     
+    /**
+     * [getNormalizedReads description]
+     * @return {[type]} [description]
+     */
+    getNormalizedReads:function(original_size, time){
+        return this.m.normalize(original_size, time, this.normalized_reads)
+    },
+
+
     /**
      * compute the clone size (ratio of all clones clustered) at a given time <br>
      * return 'undefined' in case of empty clone <br>
@@ -536,11 +543,9 @@ Clone.prototype = {
         time = this.m.getTime(time)
         
         if (this.m.reads.segmented[time] === 0 ) return 0
-        var result = this.getReads(time) / this.m.reads.segmented[time]
-        
-        if (this.m.norm ) result = this.m.normalize(result, time)
-
-        return result
+        var result     = this.getReads(time) / this.m.reads.segmented[time]
+        var normalized = this.getNormalizedReads(result, time);
+        return normalized;
     },
 
     /**
@@ -563,11 +568,9 @@ Clone.prototype = {
         if (this.germline in this.m.reads.germline) system_reads = this.m.reads.germline[this.germline][time]
         
         if (system_reads === 0 ) return 0
-        var result = this.getReads(time) / system_reads
-        
-        if (this.m.norm) result = this.m.normalize(result, time)
-
-        return result
+        var result     = this.getReads(time) / system_reads
+        var normalized = this.getNormalizedReads(result, time);
+        return normalized;
     },
 
     /**
@@ -622,8 +625,8 @@ Clone.prototype = {
 
         if (group_reads === 0 ) return 0 ;
         var result = this.getReads(time) / group_reads
-        if (this.norm) result = this.normalize(result, time)
-        return result
+        var normalized = this.getNormalizedReads(result, time);
+        return normalized;
 
     },
 
@@ -688,12 +691,8 @@ Clone.prototype = {
         
         if (this.m.reads.segmented[time] === 0 ) return 0
         var result = this.get('reads',time) / this.m.reads.segmented[time]
-        
-        if (this.norm) {
-            result = this.m.normalize(result, time)
-        }
-
-        return result
+        var normalized = this.getNormalizedReads(result, time);
+        return normalized;
 
     }, //end getSequenceSize
 
