@@ -194,19 +194,19 @@
                 <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();" onmouseover=" showSelector('settingsSelector');" > settings
                     <div id="settingsSelector" class="selector"><div>
                         <div class="menu_box">
-                            Normalization method
+                            normalization
                             <form name="normalize_list_2" id="normalize_list_2">
                                 <label id="no_normalization" for="no_normalization_input" class="buttonSelector" onclick="m.set_normalization(m.NORM_FALSE); m.update()">
                                     <input id="no_normalization_input" type="radio" name="normalization" value="no_norm" />
-                                    No normalization
+                                    no normalization
                                 </label>
                                 <label id="external_normalization"  for="external_normalization_input" class="buttonSelector" onclick="m.set_normalization(m.NORM_EXTERNAL); m.update()">
                                     <input id="external_normalization_input" type="radio" name="normalization" value="external_normalization" />
-                                    External computation
+                                    from input data
                                 </label>
                                 <label id="expected_normalization"  for="expected_normalization_input" class="buttonSelector" onclick="m.set_normalization(m.NORM_EXPECTED); m.update()">
                                     <input id="expected_normalization_input" type="radio" name="normalization" value="expected_normalization" />
-                                    Expected clone size
+                                    set on a given clone
                                 </label>
                             </form>
                         </div>
