@@ -383,9 +383,9 @@ QUnit.test("normalization: test", function(assert) {
 
     // Switch normalization to external (field normalized_reads)
     m.set_normalization(m.NORM_EXTERNAL)
-    assert.equal(c6.getSize(), 0.1, "clone1 external normalization size for time 1")
-    assert.equal(c6.getSize(2), 0, "clone1 external normalization size for time 2")
-    assert.equal(c6.getSize(3), 0.3, "clone1 external normalization size for time 3")
+    assert.equal(c6.getSize(), 0.1, "external normalization: 20 / 200")
+    assert.equal(c6.getSize(2), 0, "external normalization: 0 / 100")
+    assert.equal(c6.getSize(3), 0.3, "external normalization: 30 / 100")
     assert.equal(c2.getSize(), 0.05, "external normalization have no effect on clone without field")
 
     // Disable normalization
