@@ -462,7 +462,7 @@ Report.prototype = {
     },
     
     normalizeInfo: function () {
-        if (this.m.norm){
+        if (this.m.normalization_mode != this.NORM_FALSE){
             var container = this.container("Normalization")
             var norm_id = this.m.normalization.id
             var norm_value = this.m.normalization.B
