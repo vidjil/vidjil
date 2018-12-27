@@ -475,19 +475,9 @@ Clone.prototype = {
         
         if (this.m.reads.segmented[time] === 0 ) return 0;
         var result     = this.getReads(time) / this.m.reads.segmented[time];
-        var normalized = this.getNormalizedReads(result, time);
-        return normalized;
+        return this.m.normalize(result, time)
     }, //end getSize
     
-    /**
-     * [getNormalizedReads description]
-     * @return {[type]} [description]
-     */
-    getNormalizedReads:function(original_size, time){
-        return this.m.normalize(original_size, time, this.normalized_reads)
-    },
-
-
     /**
      * compute the clone size (ratio of all clones clustered) at a given time <br>
      * return 'undefined' in case of empty clone <br>
@@ -544,8 +534,7 @@ Clone.prototype = {
         
         if (this.m.reads.segmented[time] === 0 ) return 0
         var result     = this.getReads(time) / this.m.reads.segmented[time]
-        var normalized = this.getNormalizedReads(result, time);
-        return normalized;
+        return this.m.normalize(result, time)
     },
 
     /**
@@ -569,8 +558,7 @@ Clone.prototype = {
         
         if (system_reads === 0 ) return 0
         var result     = this.getReads(time) / system_reads
-        var normalized = this.getNormalizedReads(result, time);
-        return normalized;
+        return this.m.normalize(result, time)
     },
 
     /**
@@ -625,9 +613,7 @@ Clone.prototype = {
 
         if (group_reads === 0 ) return 0 ;
         var result = this.getReads(time) / group_reads
-        var normalized = this.getNormalizedReads(result, time);
-        return normalized;
-
+        return this.m.normalize(result, time)
     },
 
     /* return a printable information: length, number of reads, and ratios
@@ -691,9 +677,7 @@ Clone.prototype = {
         
         if (this.m.reads.segmented[time] === 0 ) return 0
         var result = this.get('reads',time) / this.m.reads.segmented[time]
-        var normalized = this.getNormalizedReads(result, time);
-        return normalized;
-
+        return this.m.normalize(result, time)
     }, //end getSequenceSize
 
     getStrSequenceSize: function (time) {
@@ -712,7 +696,7 @@ Clone.prototype = {
 
         var cluster = this.getCluster()
         for (var j = 0; j < cluster.length; j++) {
-            result += this.m.clone(cluster[j]).reads[time];
+            result += this.m.normalize_reads(this.m.clone(cluster[j]), time);
         }
 
         return result
