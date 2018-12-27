@@ -675,21 +675,18 @@ changeAlleleNotation: function(alleleNotation) {
     normalize: function (original_size, time, normalized_reads) {
         var normalized_size = 0;
         
-        if (this.normalization_mode == this.NORM_FALSE){
-            return original_size
-        } else if (this.normalization_mode == this.NORM_EXPECTED){
+        if (this.normalization_mode == this.NORM_EXPECTED){
             if (this.normalization.size_list.length !== 0 && this.normalization.size_list[time] !== 0) {
                 var A = this.normalization.size_list[time] /* standard/spike at point time */
                 var B = this.normalization.expected_size       /* standard/spike expected value */
                 normalized_size = (original_size * B) / A
                 return normalized_size
-            }else{
-                return original_size
             }
         } else if (this.normalization_mode == this.NORM_EXTERNAL && normalized_reads != undefined){
             return Math.round(normalized_reads[time] / this.reads.segmented[time]) ;
         }
         
+        // includes this.NORM_FALSE
         return original_size
     },
 
