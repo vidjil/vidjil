@@ -1393,12 +1393,15 @@ Clone.prototype = {
             self.m.openTagSelector(self.index, e);
         }
         span_star.id = self.index
-        if ((self.m.norm)&&(self.index==self.m.normalization.id)){
-        span_star.appendChild(icon('icon-lock-1', 'clone tag'))
-
+        var tag_icon = document.createElement('i')
+        tag_icon.id  = "tag_icon_"+self.index
+        tag_icon.title = "clone_tag"
+        if ((self.m.normalization_mode == self.m.NORM_EXPECTED)&&(self.index==self.m.normalization.id)){
+            tag_icon.classList.add('icon-lock-1')
         }else{
-        span_star.appendChild(icon('icon-star-2', 'clone tag'))
+            tag_icon.classList.add('icon-star-2')
         }
+        span_star.appendChild(tag_icon)
         span_star.setAttribute('id', 'color' + this.index);
         if (typeof this.tag != 'undefined')
             span_star.style.color = this.m.tag[this.getTag()].color
@@ -1559,7 +1562,39 @@ Clone.prototype = {
         }
         return res;
       }
-    }
+    },
+
+    /**
+    * Update the clone tag icon
+    */
+    updateCloneTagIcon: function () {
+        // get the icon tag element
+        icon_tag = document.getElementById("tag_icon_"+this.index)
+        if (icon_tag != null){
+            icon_tag.classList.remove("icon-star-2")
+            icon_tag.classList.remove("icon-lock-1")
+            icon_tag.classList.remove("icon-cogs")
+
+            // change class in function of model.normalization method
+            if (this.m.normalization_mode == this.m.NORM_EXPECTED){
+                var expected_clone_index = this.m.normalization.id
+                if (expected_clone_index == this.index){
+                    icon_tag.classList.add("icon-lock-1")
+                } else {
+                    icon_tag.classList.add("icon-star-2")
+                }
+            } else if (this.m.normalization_mode == this.m.NORM_EXTERNAL){
+                if (this.normalized_reads != undefined){
+                    icon_tag.classList.add("icon-cogs")
+                } else {
+                    icon_tag.classList.add("icon-star-2")
+                }
+            } else {
+                icon_tag.classList.add("icon-star-2")
+            }
+        }
+         return
+    },
 
 };
 
