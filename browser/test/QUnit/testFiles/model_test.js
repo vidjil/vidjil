@@ -365,17 +365,34 @@ QUnit.test("normalization: test", function(assert) {
     var c3 = new Clone(json_clone3, m, 2)
     var c4 = new Clone(json_clone4, m, 3)
     var c5 = new Clone(json_clone5, m, 4)
+    var c6 = new Clone(json_clone6, m, 4)
     m.initClones()
+    m.set_normalization(m.NORM_FALSE)
     assert.equal(c2.getSize(),0.05,"clone3 size")
+    m.set_normalization(m.NORM_EXPECTED)
     m.compute_normalization(0,0.20)
-    assert.equal(m.normalization.expected_size,0.20, "expected value")
+    assert.deepEqual(m.normalization.expected_size, 0.20, "expected value")
     assert.equal(c1.getSize().toFixed(2),m.normalization.expected_size,"clone1 normalized size")
     assert.equal(c1.getSize(1).toFixed(2),m.normalization.expected_size,"clone1 normalized size")
     assert.equal(c1.getSize(2),0,"clone1 normalized size")
 
     assert.equal(m.normalize(c2.getSize(),0),0.8000000000000002,"normalize")
+    m.set_normalization(m.NORM_FALSE)
     m.compute_normalization(-1,0)
     assert.equal(c2.getSize(), 0.05, "clone3 size ")
 
-   // m.compute_data_normalization()
-});
+    // Switch normalization to external (field normalized_reads)
+    m.set_normalization(m.NORM_EXTERNAL)
+    assert.equal(c6.getSize(), 0.1, "clone1 external normalization size for time 1")
+    assert.equal(c6.getSize(2), 0, "clone1 external normalization size for time 2")
+    assert.equal(c6.getSize(3), 0.3, "clone1 external normalization size for time 3")
+    assert.equal(c2.getSize(), 0.05, "external normalization have no effect on clone without field")
+
+    // Disable normalization
+    m.set_normalization(m.NORM_FALSE)
+    assert.equal(c2.getSize(), 0.05, "Clone 2 has correct size after disble normalization")
+
+    // Switch normalization again to NORM_EXPECTED
+    m.set_normalization(m.NORM_EXPECTED)
+    assert.equal(c6.getSize().toFixed(2), 0.2, "Clone 1 has correct size after switching again normalization to NORM_EXPECTED")
+})
