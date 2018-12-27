@@ -687,7 +687,7 @@ changeAlleleNotation: function(alleleNotation) {
                 return original_size
             }
         } else if (this.normalization_mode == this.NORM_EXTERNAL && normalized_reads != undefined){
-            return Math.round(normalized_reads[time]) / this.reads.segmented[time] ;
+            return Math.round(normalized_reads[time] / this.reads.segmented[time]) ;
         }
         
         return original_size
