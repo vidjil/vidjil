@@ -57,6 +57,10 @@ function Model() {
     this.germlineList = new GermlineList()
     this.build();
     window.onresize = function () { self.resize(); };
+
+    this.NORM_FALSE     = "no_norm"
+    this.NORM_EXPECTED  = "expected"
+    this.normalization_mode = this.NORM_FALSE
 }
 
 
@@ -170,7 +174,6 @@ Model.prototype = {
         this.cloneNotationType="short_sequence";
         this.alleleNotation = "when_not_01";
 
-        this.norm = false;
         this.normalization = { 
             "method" : "constant",
             "size_list" : [],
@@ -178,6 +181,7 @@ Model.prototype = {
             "id" : -1
         };
         this.normalization_list=[]
+        this.normalization_mode = this.NORM_FALSE
         /*Variables pour DBSCAN*/
         this.eps = 0;
         this.nbr = 0;
@@ -630,6 +634,24 @@ changeAlleleNotation: function(alleleNotation) {
         }
     },
     
+
+    /**
+     * [changeNormalisation description]
+     * @param  {String} mode - some this.NORM_*
+     * @return {[type]}      [description]
+     */
+    set_normalization: function(mode){
+        if (mode !== this.NORM_FALSE && mode !== this.NORM_EXPECTED){
+            console.error("Try to change to an undetermined mode of normalization")
+            this.normalization_mode = this.NORM_FALSE
+            return
+        }
+        this.normalization_mode = mode
+
+        return
+    },
+
+
     /**
      * normalize a size to match the normalization done on a given time/sample
      * normalization is done when update is 
@@ -637,18 +659,23 @@ changeAlleleNotation: function(alleleNotation) {
      * @param {integer} time - time/sample index of the timepoint where happen the normalization
      * @return {float} normalized_size - size after normalization
      * */
-    normalize: function (original_size, time) {
+    normalize: function (original_size, time, normalized_reads) {
         var normalized_size = 0;
         
-        if (this.normalization.size_list.length !== 0 && this.normalization.size_list[time] !== 0) {
-            var A = this.normalization.size_list[time] /* standard/spike at point time */
-            var B = this.normalization.expected_size       /* standard/spike expected value */
-            normalized_size = (original_size * B) / A           
-        }else{
-            normalized_size = original_size
+        if (this.normalization_mode == this.NORM_FALSE){
+            return original_size
+        } else if (this.normalization_mode == this.NORM_EXPECTED){
+            if (this.normalization.size_list.length !== 0 && this.normalization.size_list[time] !== 0) {
+                var A = this.normalization.size_list[time] /* standard/spike at point time */
+                var B = this.normalization.expected_size       /* standard/spike expected value */
+                normalized_size = (original_size * B) / A
+                return normalized_size
+            }else{
+                return original_size
+            }
         }
         
-        return normalized_size
+        return original_size
     },
 
     /**
@@ -658,11 +685,9 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     compute_normalization: function (cloneID, expected_size) {
         if (cloneID==-1){ 
-            this.norm = false
             expected_size = 0;
             this.normalization.id = cloneID
         }else{
-            this.norm = true
             expected_size = typeof expected_size !== 'undefined' ? expected_size : this.clone(cloneID).expected;
             
             this.normalization.size_list = []
@@ -670,14 +695,13 @@ changeAlleleNotation: function(alleleNotation) {
             this.normalization.id = cloneID
             this.normalization.type = "clone"
             
-            var tmp = this.norm
-            this.norm = false
-            
+            var tmp = this.normalization_mode
+            this.normalization_mode = this.NORM_FALSE
+
             for (var i=0; i<this.samples.number; i++){
                 this.normalization.size_list[i] = this.clone(cloneID).getSize(i)
             }
-            
-            this.norm = tmp
+            this.normalization_mode = tmp
         norm_hash = jQuery.extend(true, {}, this.normalization)     
         this.normalization_list.push(norm_hash)
     
@@ -692,7 +716,6 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     compute_data_normalization: function (data, expected_size) {
         expected_size = typeof expected_size !== 'undefined' ? expected_size : this.data[data].expected;
-        this.norm = true
         
         this.normalization.size_list = []
         this.normalization.expected_size = expected_size
@@ -726,13 +749,13 @@ changeAlleleNotation: function(alleleNotation) {
         for (var i=0; i<this.samples.order.length; i++){
             var t = this.samples.order[i]
             var size = this.min_sizes[t]
-            if (this.norm) size = this.normalize(this.min_sizes[t], t) 
+            size = this.normalize(this.min_sizes[t], t)
             if (size < min_size) min_size = size
         }
         
         this.max_size = 1
         this.min_size = min_size
-        if (this.norm){
+        if (this.normalization_mode != this.NORM_FALSE){
             for (var j=0; j<this.samples.order.length; j++){
                 if(this.normalization.size_list[j]==0){
                 max = this.normalization.expected_size
@@ -1795,8 +1818,7 @@ changeAlleleNotation: function(alleleNotation) {
 
         if (this.reads.segmented[time] === 0 ) return 0;
         var result = this.NB_READS_THRESHOLD_QUANTIFIABLE / this.reads.segmented[time];
-
-        if (this.norm) result = this.normalize(result, time);
+        result = this.normalize(result, time);
 
         return result;
     },
@@ -1960,11 +1982,14 @@ changeAlleleNotation: function(alleleNotation) {
             var size = parseFloat(self.norm_input.value);
             
             if (size>0 && size<1){
+                self.set_normalization( self.NORM_EXPECTED )
                 self.norm_input.value = ""
                 self.clone(cloneID).expected=size;
                 self.compute_normalization(cloneID, size)
                 self.update()
                 $(self.tagSelector).hide('fast')
+                document.getElementById("expected_normalization_input").checked = true;
+
             }else{
                 console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
             }
