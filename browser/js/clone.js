@@ -688,21 +688,25 @@ Clone.prototype = {
     },
 
     /* compute the clone reads number ( sum of all reads of clones clustered )
-     * @t : tracking point (default value : current tracking point)
+     * @time : tracking point (default value : current tracking point)
+     * @raw: do not normalize
      * */
-    getReads: function (time) {
+    getReads: function (time, raw) {
         time = this.m.getTime(time)
         var result = 0;
 
         var cluster = this.getCluster()
         for (var j = 0; j < cluster.length; j++) {
-            result += this.m.normalize_reads(this.m.clone(cluster[j]), time);
+            result += this.m.normalize_reads(this.m.clone(cluster[j]), time, raw);
         }
 
         return result
 
-    }, //end getSize
+    },
 
+    getRawReads: function (time) {
+      return this.getReads(time, true)
+    },
 
     /* return a list of read numbers (sum of all reads of clustered clones) for all samples
      * */
