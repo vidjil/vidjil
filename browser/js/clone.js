@@ -1200,10 +1200,17 @@ Clone.prototype = {
             html += row_1("clone name", this.getName())
             html += row_1("clone short name", this.getShortName())
 
-            html += "<tr><td>clone size (n-reads (total reads))</td>"
+            html += "<tr><td>clone size (n-reads (total reads))"
+            if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL) {
+                html += "<br />[normalized]"
+            }
+            html += "</td>"
             for (var j = 0; j < time_length; j++) {
                 html += "<td>"
-                html += this.getReads(this.m.samples.order[j]) + "  (" + this.m.reads.segmented[this.m.samples.order[j]] + ")"
+                html += this.getRawReads(this.m.samples.order[j]) + "  (" + this.m.reads.segmented[this.m.samples.order[j]] + ")"
+                if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL) {
+                  html += "<br />[" + this.getReads(this.m.samples.order[j]).toFixed(2) + "]"
+                }
                 if ($('#debug_menu').is(':visible') && (typeof this.m.db_key.config != 'undefined' )) {
                 html += "<br/>"
                 call_reads = "db.call('default/run_request', { "
