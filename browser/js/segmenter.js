@@ -994,6 +994,7 @@ Segment.prototype = {
         var list = this.m.getSelected()
         var sumPercentage = 0;
         var sumReads = 0;
+        var sumRawReads = 0;
         var length = 0;
         var lastActiveClone = 0;
             
@@ -1004,14 +1005,18 @@ Segment.prototype = {
                 length += 1;
                 sumPercentage += this.m.clone(list[i]).getSize();
                 sumReads+= this.m.clone(list[i]).getReads(); 
+                sumRawReads+= this.m.clone(list[i]).getRawReads();
             }
         }
 
         var t = ""
-        if (sumReads > 0) {
+        if (sumRawReads > 0) {
             t += length + " clone" + (length>1 ? "s" : "") + ", "
 
-            t += this.m.toStringThousands(sumReads) + " read" + (sumReads>1 ? "s" : "")
+            t += this.m.toStringThousands(sumRawReads) + " read" + (sumRawReads>1 ? "s" : "")
+
+            if (sumRawReads != sumReads)
+               t += " [" + this.m.toStringThousands(Math.floor(sumReads*100)/100) + " norm.]"
 
             percentageStr = this.m.getStrAnySize(this.m.t, sumPercentage)
             if (percentageStr != "+")

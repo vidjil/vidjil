@@ -637,7 +637,7 @@ Clone.prototype = {
         reads = this.getReads(time)
 
         if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL)
-            s += "[" + this.m.toStringThousands(reads) + " normalized]"
+            s += "[" + this.m.toStringThousands(Math.floor(reads * 100) / 100) + " normalized] "
 
         if (reads < this.m.NB_READS_THRESHOLD_QUANTIFIABLE)
             return s
