@@ -624,6 +624,7 @@ Clone.prototype = {
     */
 
     getPrintableSize: function (time) {
+        time = this.m.getTime(time)
 
         var reads = this.getRawReads(time)
         s = this.getSequenceLength() + ' nt'
