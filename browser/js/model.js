@@ -689,10 +689,11 @@ changeAlleleNotation: function(alleleNotation) {
     },
 
     /**
-     * normalize a number of reads
+     * normalize a number of reads according to this.NORM_EXTERNAL
+     * if raw is defined, do not normalize
      */
-    normalize_reads: function(clone, time) {
-      if (this.normalization_mode == this.NORM_EXTERNAL && clone.normalized_reads != undefined) {
+    normalize_reads: function(clone, time, raw) {
+      if (this.normalization_mode == this.NORM_EXTERNAL && clone.normalized_reads != undefined && raw == undefined) {
         return clone.normalized_reads[time] ;
       } else {
         return clone.reads[time] ;

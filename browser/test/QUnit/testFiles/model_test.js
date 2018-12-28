@@ -357,7 +357,7 @@ QUnit.test("model: primer detection", function(assert) {
 
 
 
-QUnit.test("normalization: test", function(assert) {
+QUnit.test("normalization", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data, 100)
     var c1 = new Clone(json_clone1, m, 0)
@@ -379,11 +379,15 @@ QUnit.test("normalization: test", function(assert) {
     assert.equal(m.normalize(c2.getSize(),0),0.8000000000000002,"normalize")
     m.set_normalization(m.NORM_FALSE)
     m.compute_normalization(-1,0)
+
+    assert.equal(c6.getSize(), 0.05, "no normalization: 10 / 200")
+    assert.includes(c6.getPrintableSize(), "10 reads (5.000%", "no normalization: 10 / 200")
     assert.equal(c2.getSize(), 0.05, "clone3 size ")
 
     // Switch normalization to external (field normalized_reads)
     m.set_normalization(m.NORM_EXTERNAL)
     assert.equal(c6.getSize(), 0.1, "external normalization: 20 / 200")
+    assert.includes(c6.getPrintableSize(), "10 reads [20 normalized] (10.00%", "external normalization: 10 / 200, getPrintableSize")
     assert.equal(c6.getSize(2), 0, "external normalization: 0 / 100")
     assert.equal(c6.getSize(3), 0.3, "external normalization: 30 / 100")
     assert.equal(c2.getSize(), 0.05, "external normalization have no effect on clone without field")

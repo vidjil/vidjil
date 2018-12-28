@@ -117,6 +117,7 @@ var json_clone5 = {
 // Clone with normalized_reads
 var json_clone6 = {
         "id" : "id6",
+        "germline" : "TRG",
         "reads" : [10,10,0,30],
         "normalized_reads" : [20,20,0,30],
     }

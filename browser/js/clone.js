@@ -624,8 +624,9 @@ Clone.prototype = {
     */
 
     getPrintableSize: function (time) {
+        time = this.m.getTime(time)
 
-        var reads = this.getReads(time)
+        var reads = this.getRawReads(time)
         s = this.getSequenceLength() + ' nt'
 
         if (!this.quantifiable)
@@ -633,6 +634,11 @@ Clone.prototype = {
 
         s += ', '
         s += this.m.toStringThousands(reads) + ' read' + (reads > 1 ? 's' : '') + ' '
+
+        reads = this.getReads(time)
+
+        if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL)
+            s += "[" + this.m.toStringThousands(Math.floor(reads * 100) / 100) + " normalized] "
 
         if (reads < this.m.NB_READS_THRESHOLD_QUANTIFIABLE)
             return s
@@ -688,21 +694,25 @@ Clone.prototype = {
     },
 
     /* compute the clone reads number ( sum of all reads of clones clustered )
-     * @t : tracking point (default value : current tracking point)
+     * @time : tracking point (default value : current tracking point)
+     * @raw: do not normalize
      * */
-    getReads: function (time) {
+    getReads: function (time, raw) {
         time = this.m.getTime(time)
         var result = 0;
 
         var cluster = this.getCluster()
         for (var j = 0; j < cluster.length; j++) {
-            result += this.m.normalize_reads(this.m.clone(cluster[j]), time);
+            result += this.m.normalize_reads(this.m.clone(cluster[j]), time, raw);
         }
 
         return result
 
-    }, //end getSize
+    },
 
+    getRawReads: function (time) {
+      return this.getReads(time, true)
+    },
 
     /* return a list of read numbers (sum of all reads of clustered clones) for all samples
      * */
@@ -1196,10 +1206,17 @@ Clone.prototype = {
             html += row_1("clone name", this.getName())
             html += row_1("clone short name", this.getShortName())
 
-            html += "<tr><td>clone size (n-reads (total reads))</td>"
+            html += "<tr><td>clone size (n-reads (total reads))"
+            if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL) {
+                html += "<br />[normalized]"
+            }
+            html += "</td>"
             for (var j = 0; j < time_length; j++) {
                 html += "<td>"
-                html += this.getReads(this.m.samples.order[j]) + "  (" + this.m.reads.segmented[this.m.samples.order[j]] + ")"
+                html += this.getRawReads(this.m.samples.order[j]) + "  (" + this.m.reads.segmented[this.m.samples.order[j]] + ")"
+                if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL) {
+                  html += "<br />[" + this.getReads(this.m.samples.order[j]).toFixed(2) + "]"
+                }
                 if ($('#debug_menu').is(':visible') && (typeof this.m.db_key.config != 'undefined' )) {
                 html += "<br/>"
                 call_reads = "db.call('default/run_request', { "
