@@ -693,7 +693,7 @@ changeAlleleNotation: function(alleleNotation) {
      * if raw is defined, do not normalize
      */
     normalize_reads: function(clone, time, raw) {
-      if (this.normalization_mode == this.NORM_EXTERNAL && clone.normalized_reads != undefined && !(raw != undefined)) {
+      if (this.normalization_mode == this.NORM_EXTERNAL && clone.normalized_reads != undefined && raw == undefined) {
         return clone.normalized_reads[time] ;
       } else {
         return clone.reads[time] ;
