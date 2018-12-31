@@ -1361,6 +1361,9 @@ span.warningReads {
 #bot-separator:hover {
   background: #fdf6e3;
 }
+#norm_button {
+  width: 7ex;
+}
 .edit_button {
   float: right;
   margin-right: 2px;
