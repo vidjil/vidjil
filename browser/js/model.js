@@ -1994,6 +1994,7 @@ changeAlleleNotation: function(alleleNotation) {
         span2.appendChild(this.norm_input)
         
         this.norm_button = document.createElement('button');
+        this.norm_input.id = "norm_button";
         this.norm_button.appendChild(document.createTextNode("ok"))
         this.norm_button.onclick = function () {
             var cloneID = self.cloneID;
@@ -2007,8 +2008,7 @@ changeAlleleNotation: function(alleleNotation) {
                 self.compute_normalization(cloneID, size)
                 self.update()
                 $(self.tagSelector).hide('fast')
-                document.getElementById("expected_normalization_input").checked = true;
-
+                $("expected_normalization_input").prop("checked", true)
             }else{
                 console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
             }
