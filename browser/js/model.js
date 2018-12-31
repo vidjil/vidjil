@@ -274,6 +274,8 @@ Model.prototype = {
     initClones: function () {
         console.log("initClones()");
         var have_external_normalization = false
+        $("#external_normalization").hide();
+        $("#expected_normalization").hide();
 
         // time_type to name_short if there is many samples
         if (this.samples.order.length > 6)
@@ -312,6 +314,7 @@ Model.prototype = {
             var radio = document.getElementById("external_normalization_input")
             if (radio != undefined) {
                 radio.checked = true;
+                $("#external_normalization").show();
             }
         }
     }, //end initClones
@@ -1991,6 +1994,7 @@ changeAlleleNotation: function(alleleNotation) {
         span2.appendChild(this.norm_input)
         
         this.norm_button = document.createElement('button');
+        this.norm_input.id = "norm_button";
         this.norm_button.appendChild(document.createTextNode("ok"))
         this.norm_button.onclick = function () {
             var cloneID = self.cloneID;
@@ -1998,13 +2002,13 @@ changeAlleleNotation: function(alleleNotation) {
             
             if (size>0 && size<1){
                 self.set_normalization( self.NORM_EXPECTED )
+                $("#expected_normalization").show();
                 self.norm_input.value = ""
                 self.clone(cloneID).expected=size;
                 self.compute_normalization(cloneID, size)
                 self.update()
                 $(self.tagSelector).hide('fast')
-                document.getElementById("expected_normalization_input").checked = true;
-
+                $("expected_normalization_input").prop("checked", true)
             }else{
                 console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
             }
