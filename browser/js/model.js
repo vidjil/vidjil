@@ -274,6 +274,8 @@ Model.prototype = {
     initClones: function () {
         console.log("initClones()");
         var have_external_normalization = false
+        $("#external_normalization").hide();
+        $("#expected_normalization").hide();
 
         // time_type to name_short if there is many samples
         if (this.samples.order.length > 6)
@@ -312,6 +314,7 @@ Model.prototype = {
             var radio = document.getElementById("external_normalization_input")
             if (radio != undefined) {
                 radio.checked = true;
+                $("#external_normalization").show();
             }
         }
     }, //end initClones
@@ -1998,6 +2001,7 @@ changeAlleleNotation: function(alleleNotation) {
             
             if (size>0 && size<1){
                 self.set_normalization( self.NORM_EXPECTED )
+                $("#expected_normalization").show();
                 self.norm_input.value = ""
                 self.clone(cloneID).expected=size;
                 self.compute_normalization(cloneID, size)
