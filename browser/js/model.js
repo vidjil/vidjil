@@ -273,7 +273,7 @@ Model.prototype = {
      * */
     initClones: function () {
         console.log("initClones()");
-        var have_external_normalization = false
+        var this.have_external_normalization = false
         $("#external_normalization").hide();
         $("#expected_normalization").hide();
 
@@ -308,7 +308,7 @@ Model.prototype = {
         
         this.applyAnalysis(this.analysis);
         this.initData();
-        if (have_external_normalization){
+        if (this.have_external_normalization){
             this.set_normalization(this.NORM_EXTERNAL)
             // change radio button selection
             var radio = document.getElementById("external_normalization_input")
