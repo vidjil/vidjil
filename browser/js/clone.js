@@ -464,9 +464,10 @@ Clone.prototype = {
     /**
      * compute the clone size ( ratio of all clones clustered ) at a given time
      * @param {integer} time - tracking point (default value : current tracking point)
+     * @param {boolean} ignore_expected_normalisation - Return size with no normalisation for scatterplot usage
      * @return {float} size
      * */
-    getSize: function (time, ignore_expected_normalisation=undefined) {
+    getSize: function (time, ignore_expected_normalisation=false) {
 
         if (!this.quantifiable)
             return this.NOT_QUANTIFIABLE_SIZE
