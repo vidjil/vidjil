@@ -143,6 +143,8 @@ Builder.prototype = {
         var normalize_list = document.getElementById("normalize_list");
         normalize_list.removeAllChildren();
 
+
+        // NO NORM
         var input = document.createElement("input");
         var label = document.createElement("label")
 
@@ -158,10 +160,12 @@ Builder.prototype = {
 
         div.appendChild(document.createTextNode("none"))
         div.onclick = function () {
-        self.m.compute_normalization(-1) ;
-        this.firstChild.checked=true;
-        self.m.update();
+            this.firstChild.checked=true;
+            self.m.set_normalization(self.m.NORM_FALSE)
+            self.m.update();
         };
+
+        // NORM BY EXPECTED (setted clones)
         normalize_list.appendChild(div);
         tmp_norm_list =[]
         if(m.normalization_list.length>=1){ 
@@ -191,33 +195,60 @@ Builder.prototype = {
                 form_div_elem.id = "normalizetest"+id
                 form_div_elem.dataset.id =id
                 form_div_elem.dataset.expected_size=expected_size
-                // if (m.normalization.id==id){
-                //     input.checked=true;
-                // }
 
-                text= m.clone(m.normalization_list[norm].id).getShortName()+" "+ m.clone(m.normalization_list[norm].id).getStrSize()
+                text = "set on a clone; " + m.clone(m.normalization_list[norm].id).getShortName()+" (norm to "+ expected_size + "%)"
                 form_div_elem.appendChild(input_elem);
                 form_div_elem.appendChild(label_elem);
 
                 form_div_elem.appendChild(document.createTextNode(text))
 
-                form_div_elem.addEventListener('click', self.applyOldnormalization, false);
+                form_div_elem.onclick = function () {
+                    self.m.norm_input.value = ""
+                    self.m.set_normalization(m.NORM_EXPECTED);
+                    self.m.clone(this.dataset.id).expected= this.dataset.expected_size;
+                    self.m.compute_normalization(this.dataset.id, this.dataset.expected_size)
+
+                    this.firstChild.checked=true;
+                    self.m.update();
+                };
           
             normalize_list.appendChild(form_div_elem);
             tmp_norm_list.push(m.normalization_list[norm].id)
             }
         }
         }
-        
-    },
-    applyOldnormalization:function() {
-        self.m.norm_input.value = ""
-        this.firstChild.checked=true;
-        self.m.clone(this.dataset.id).expected= this.dataset.expected_size;
-        self.m.compute_normalization(this.dataset.id, this.dataset.expected_size)
-        self.m.update()
 
+        // NORM by External normalization
+        var input_elem = document.createElement("input");
+        var label_elem = document.createElement("label")
+        label_elem.setAttribute("for","reset_norm_external");
+        input_elem.type = "radio";
+        input_elem.name = "normalize_list";
+        input_elem.id   = "reset_norm_external";
+
+        var form_div_elem = document.createElement("div");
+        form_div_elem.className = "buttonSelector";
+        form_div_elem.id        = "normalize_external";
+
+        text= "from input data"
+        form_div_elem.appendChild(input_elem);
+        form_div_elem.appendChild(label_elem);
+        form_div_elem.appendChild(document.createTextNode(text))
+        form_div_elem.onclick = function () {
+            this.firstChild.checked=true;
+            self.m.set_normalization(self.m.NORM_EXTERNAL)
+            self.m.update();
+        };
+          
+        normalize_list.appendChild(form_div_elem);
+        // Should disable radio choice if data haven't external normalization
+        // todo
+        // m.have_external_normalization !! 
+
+        // Select correct radio button
+        // todo
     },
+
     /* Fonction servant à "déverouiller" l'appel de la fonction compute_normalization(), ainsi qu'à apposer le 'check' au checkBox 'normalize'
      * */
     displayNormalizeButton: function() {
