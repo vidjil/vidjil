@@ -164,6 +164,8 @@ Builder.prototype = {
             self.m.set_normalization(self.m.NORM_FALSE)
             self.m.update();
         };
+        // check this radio button if correspond to the current normalization
+        if (this.m.normalization_mode == this.m.NORM_FALSE) { div.firstChild.checked=true; }
         normalize_list.appendChild(div);
 
         var input_elem, label_elem, form_div_elem;
@@ -204,7 +206,8 @@ Builder.prototype = {
                 form_div_elem.appendChild(document.createTextNode(text))
 
                 form_div_elem.onclick = self.div_radio_normalize_expected
-          
+                // check this radio button if correspond to the current normalization
+                if (this.m.normalization_mode == this.m.NORM_EXPECTED && this.m.normalization.id == id) { form_div_elem.firstChild.checked=true; }
             normalize_list.appendChild(form_div_elem);
             tmp_norm_list.push(m.normalization_list[norm].id)
             }
@@ -236,6 +239,8 @@ Builder.prototype = {
                 self.m.update();
             };
 
+            // check this radio button if correspond to the current normalization
+            if (this.m.normalization_mode == this.m.NORM_EXTERNAL) { form_div_elem.firstChild.checked=true; }
             normalize_list.appendChild(form_div_elem);
         }
 
