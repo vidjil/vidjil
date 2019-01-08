@@ -164,17 +164,17 @@ Builder.prototype = {
             self.m.set_normalization(self.m.NORM_FALSE)
             self.m.update();
         };
+        normalize_list.appendChild(div);
 
         var input_elem, label_elem, form_div_elem;
 
         // NORM BY EXPECTED (setted clones)
-        normalize_list.appendChild(div);
         tmp_norm_list =[]
         if(m.normalization_list.length>=1){ 
             for (var norm in m.normalization_list) {
                 var check=false
                 for (var div_id in tmp_norm_list){
-                    console.log( normalize_list[div_id])
+                    // console.log( normalize_list[div_id])
                     if (tmp_norm_list[div_id] == m.normalization_list[norm].id){
                         check=true
                     }
@@ -190,7 +190,6 @@ Builder.prototype = {
 
                 input_elem.id = "reset_norm"+m.normalization_list[norm].id;
 
-                console.log(m.normalization_list[norm].id)
                 form_div_elem = document.createElement("div");
                 form_div_elem.className="buttonSelector";
 
