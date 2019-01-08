@@ -273,7 +273,7 @@ Model.prototype = {
      * */
     initClones: function () {
         console.log("initClones()");
-        var this.have_external_normalization = false
+        this.have_external_normalization = false
         $("#external_normalization").hide();
         $("#expected_normalization").hide();
 
