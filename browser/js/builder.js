@@ -199,7 +199,7 @@ Builder.prototype = {
                 form_div_elem.dataset.id =id
                 form_div_elem.dataset.expected_size=expected_size
 
-                text = "set on a clone; " + m.clone(m.normalization_list[norm].id).getShortName()+" (norm to "+ expected_size + "%)"
+                text = m.formatSize(expected_size) + " for " + m.clone(m.normalization_list[norm].id).getShortName()
                 form_div_elem.appendChild(input_elem);
                 form_div_elem.appendChild(label_elem);
 
