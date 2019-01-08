@@ -204,15 +204,7 @@ Builder.prototype = {
 
                 form_div_elem.appendChild(document.createTextNode(text))
 
-                form_div_elem.onclick = function () {
-                    self.m.norm_input.value = ""
-                    self.m.set_normalization(m.NORM_EXPECTED);
-                    self.m.clone(this.dataset.id).expected= this.dataset.expected_size;
-                    self.m.compute_normalization(this.dataset.id, this.dataset.expected_size)
-
-                    this.firstChild.checked=true;
-                    self.m.update();
-                };
+                form_div_elem.onclick = self.div_radio_normalize_expected
           
             normalize_list.appendChild(form_div_elem);
             tmp_norm_list.push(m.normalization_list[norm].id)
@@ -250,6 +242,17 @@ Builder.prototype = {
         // Select correct radio button
         // todo
     },
+
+    div_radio_normalize_expected: function () {
+        self.m.norm_input.value = ""
+        self.m.set_normalization(self.m.NORM_EXPECTED);
+        self.m.clone(this.dataset.id).expected= this.dataset.expected_size;
+        self.m.compute_normalization(this.dataset.id, this.dataset.expected_size)
+
+        this.firstChild.checked=true;
+        self.m.update();
+    },
+
 
     /* Fonction servant à "déverouiller" l'appel de la fonction compute_normalization(), ainsi qu'à apposer le 'check' au checkBox 'normalize'
      * */
