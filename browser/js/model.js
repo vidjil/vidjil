@@ -294,7 +294,7 @@ Model.prototype = {
             var n = clone.getNlength();
             if (n > n_max) {n_max = n; }
             if (clone.normalized_reads){
-                have_external_normalization = true
+                this.have_external_normalization = true
             }
         }
         this.n_max = n_max
