@@ -211,35 +211,34 @@ Builder.prototype = {
         }
         }
 
-        // NORM by External normalization
-        input_elem = document.createElement("input");
-        label_elem = document.createElement("label")
-        label_elem.setAttribute("for","reset_norm_external");
-        input_elem.type = "radio";
-        input_elem.name = "normalize_list";
-        input_elem.id   = "reset_norm_external";
-
-        form_div_elem = document.createElement("div");
-        form_div_elem.className = "buttonSelector";
-        form_div_elem.id        = "normalize_external";
-
-        text= "from input data"
-        form_div_elem.appendChild(input_elem);
-        form_div_elem.appendChild(label_elem);
-        form_div_elem.appendChild(document.createTextNode(text))
-        form_div_elem.onclick = function () {
-            this.firstChild.checked=true;
-            self.m.set_normalization(self.m.NORM_EXTERNAL)
-            self.m.update();
-        };
-          
-        normalize_list.appendChild(form_div_elem);
         // Should disable radio choice if data haven't external normalization
-        // todo
-        // m.have_external_normalization !! 
+        if (this.m.have_external_normalization == true) {
+            // NORM by External normalization
+            input_elem = document.createElement("input");
+            label_elem = document.createElement("label")
+            label_elem.setAttribute("for","reset_norm_external");
+            input_elem.type = "radio";
+            input_elem.name = "normalize_list";
+            input_elem.id   = "reset_norm_external";
 
-        // Select correct radio button
-        // todo
+
+            form_div_elem = document.createElement("div");
+            form_div_elem.className = "buttonSelector";
+            form_div_elem.id        = "normalize_external";
+
+            form_div_elem.appendChild(input_elem);
+            form_div_elem.appendChild(label_elem);
+            text= "from input data"
+            form_div_elem.appendChild(document.createTextNode(text))
+            form_div_elem.onclick = function () {
+                this.firstChild.checked=true;
+                self.m.set_normalization(self.m.NORM_EXTERNAL)
+                self.m.update();
+            };
+
+            normalize_list.appendChild(form_div_elem);
+        }
+
     },
 
     div_radio_normalize_expected: function () {
