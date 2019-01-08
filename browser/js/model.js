@@ -663,6 +663,9 @@ changeAlleleNotation: function(alleleNotation) {
             return
         }
         this.normalization_mode = mode
+        if (mode == this.NORM_FALSE || mode == this.NORM_EXTERNAL ){
+            this.normalization.id = -1
+        }
 
         return
     },
