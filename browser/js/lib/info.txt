@@ -37,7 +37,7 @@ Tools
     * @license 		apache v2 
 
     qunit.js            : Unit testing
-    * @version          2.1.1
+    * @version          2.9.1 (2019-01-07)
     * @author           QUnit team (Trent Willis et al)
     * @link             http://qunitjs.com/
     * @license          MIT
