@@ -10,7 +10,7 @@ Views
 Tools
 
     jQuery		: fast, small, and feature-rich JavaScript library
-    * @version	 	jQuery v2.1.1
+    * @version	 	3.3.1 (2018-01-20)
     * @author 		John Resig and jQuery team
     * @link 		jquery.org
     * @license 		MIT Licensed
