@@ -1,7 +1,7 @@
 Views
 
     d3-v3		: framework svg pour graphique/scatterplot
-    * @version          3.4.11
+    * @version          3.4.11 (2014)
     * @author 		Michael Bostock
     * @link 		http://d3js.org/
     * @license 		BSD Licensed
@@ -20,12 +20,13 @@ Tools
                         => 3.x: 
 
     file.js  		: load/save cross-navigator
+    * @version          (<= 2014)
     * @author 		Eli Grey
     * @link 		http://eligrey.com
     * @license 		MIT Licensed
 
     jstree              : distant file explorator
-    * @version          3.3.3
+    * @version          3.3.3 (2016-10-31)
     * @author           Ivan Bozhanov
     * @link             https://www.jstree.com/
     * @license          MIT
@@ -57,11 +58,12 @@ Tools
 
     svgExport.js        : Export SVG to PNG
     * @author           Nikita Rokotyan, adapted by the Vidjil Team
+    * @version          retrieven on 2018-09-14
     * @link             http://bl.ocks.org/Rokotyan/0556f8facbaf344507cdc45dc3622177
     * @license          MIT
 
     tsne.js             : Implementation of TSNE algorithm
-    * @version          2d62a1c4
+    * @version          2d62a1c4 (2015-10-13)
     * @author           Andrej Karpathy
     * @link             https://github.com/karpathy/tsnejs
     * @license          MIT
