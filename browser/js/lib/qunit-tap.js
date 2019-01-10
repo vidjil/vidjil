@@ -2,12 +2,12 @@
  * QUnit-TAP - A TAP Output Producer Plugin for QUnit
  *
  * https://github.com/twada/qunit-tap
- * version: 1.5.0
+ * version: 1.5.1
  *
- * Copyright (c) 2010-2015 Takuto Wada
+ * Copyright (c) 2010-2017 Takuto Wada
  * Dual licensed under the MIT and GPLv2 licenses.
- *   https://raw.github.com/twada/qunit-tap/master/MIT-LICENSE.txt
- *   https://raw.github.com/twada/qunit-tap/master/GPL-LICENSE.txt
+ *   https://github.com/twada/qunit-tap/blob/master/MIT-LICENSE.txt
+ *   https://github.com/twada/qunit-tap/blob/master/GPL-LICENSE.txt
  *
  * A part of extend function is:
  *   Copyright 2012 jQuery Foundation and other contributors
@@ -28,7 +28,7 @@
 }(this, function () {
     'use strict';
 
-    var qunitTapVersion = '1.5.0',
+    var qunitTapVersion = '1.5.1',
         slice = Array.prototype.slice;
 
     // borrowed from qunit.js
