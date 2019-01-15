@@ -23,16 +23,21 @@ if [ -z "$FUNCTIONAL_CLIENT_BROWSER_PATH" ]; then
 fi
 for browser in $FUNCTIONAL_CLIENT_BROWSER_PATH; do
     for file in $FUNCTIONAL_TESTS; do
+        echo "\033[34m===" $file "\033[0m"
         if [ ${#browser} -gt 1 ]; then
             export WATIR_BROWSER_PATH="$browser"
         fi
         ruby -I functional $file;
         TMP_EXIT=$?
         if [ $TMP_EXIT -ne 0 ]; then
+            echo "\033[31m===" $file ": FAILED \033[0m"
             EXIT=$TMP_EXIT
+        else
+            echo "\033[32m===" $file ": ok \033[0m"
         fi
         rename_reports_in test/reports/ "$browser"
         mv test/reports/*.xml test/
+        echo
     done
 done
 exit $EXIT
