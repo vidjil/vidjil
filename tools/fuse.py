@@ -40,6 +40,7 @@ from operator import itemgetter, le
 from utils import *
 from defs import *
 from collections import defaultdict
+from pipes import quote
 
 FUSE_VERSION = "vidjil fuse"
 
@@ -676,7 +677,25 @@ lw2.d["clones"].append(w8)
 lw2.d["diversity"] = Diversity()
 
     
+def exec_command(command, directory, input_file):
+    '''
+    Execute the command `command` from the directory
+    `directory`. The executable must exist in
+    this directory. No path changes are allowed in `command`.
     
+    Returns the output filename (a .vidjil). 
+    '''
+    assert (not os.path.sep in command), "No {} allowed in the command name".format(os.path.sep)
+    ff = tempfile.NamedTemporaryFile(suffix='.vidjil', delete=False)
+
+    basedir = os.path.dirname(os.path.abspath(sys.argv[0]))
+    command_fullpath = basedir+os.path.sep+directory+os.path.sep+command
+    com = '%s %s %s' % (quote(command_fullpath), quote(os.path.abspath(input_file)), ff.name)
+    print(com)
+    os.system(com)
+    print()
+    return ff.name
+
 
  
 def main():
@@ -706,6 +725,8 @@ def main():
 
     group_options.add_argument('--first', '-f', type=int, default=0, help='take only into account the first FIRST files (0 for all) (%(default)s)')
 
+    group_options.add_argument('--pre', type=str,help='pre-process program (launched on each input .vidjil file) (needs defs.PRE_PROCESS_DIR)')
+
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
   
     args = parser.parse_args()
@@ -726,6 +747,14 @@ def main():
         if len(files) > args.first:
             print("! %d files were given. We take into account the first %d files." % (len(files), args.first))
         files = files[:args.first]
+
+    if args.pre:
+        print("Pre-processing files...")
+        pre_processed_files = []
+        for f in files:
+            out_name = exec_command(args.pre, PRE_PROCESS_DIR, f)
+            pre_processed_files.append(out_name)
+        files = pre_processed_files
 
     #filtre
     f = []
