@@ -721,7 +721,7 @@ def main():
 
     group_options.add_argument('--first', '-f', type=int, default=0, help='take only into account the first FIRST files (0 for all) (%(default)s)')
 
-    group_options.add_argument('--pre', type=str,help='pre-process program (launched on each input .vidjil file)')
+    group_options.add_argument('--pre', type=str,help='pre-process program (launched on each input .vidjil file) (needs defs.PRE_PROCESS_DIR)')
 
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
   
