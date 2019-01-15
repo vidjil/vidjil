@@ -49,7 +49,7 @@ class TestNormalization < BrowserTest
 
     def test_02_normalization_external
         set_browser("/doc/analysis-example.vidjil")
-        assert ($b.span(:text => '0.326%').present?), "Span show correct normalized size (external) by default"
+        assert ($b.span(:text => '0.122%').present?), "Span show correct normalized size (external) by default"
         
         $b.element(:id => 'settings_menu').click
         assert ($b.div(:id => 'normalize_list').visible?), "After clicking normalize_list form should be visible"
