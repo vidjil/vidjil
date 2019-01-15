@@ -467,7 +467,8 @@ Clone.prototype = {
      * @param {boolean} ignore_expected_normalisation - Return size with no normalisation for scatterplot usage
      * @return {float} size
      * */
-    getSize: function (time, ignore_expected_normalisation=false) {
+    getSize: function (time, ignore_expected_normalisation) {
+        if (ignore_expected_normalisation == undefined) { ignore_expected_normalisation=false}
 
         if (!this.quantifiable)
             return this.NOT_QUANTIFIABLE_SIZE
