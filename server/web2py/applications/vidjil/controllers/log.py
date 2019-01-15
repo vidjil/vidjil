@@ -33,6 +33,10 @@ def index():
 
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+    res = {"message": ACCESS_DENIED}
+    log.error(res)
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
     user_log = db.user_log
     data_list = []
     groups = []
