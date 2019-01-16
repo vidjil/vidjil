@@ -464,9 +464,11 @@ Clone.prototype = {
     /**
      * compute the clone size ( ratio of all clones clustered ) at a given time
      * @param {integer} time - tracking point (default value : current tracking point)
+     * @param {boolean} ignore_expected_normalisation - Return size with no normalisation for scatterplot usage
      * @return {float} size
      * */
-    getSize: function (time) {
+    getSize: function (time, ignore_expected_normalisation) {
+        if (ignore_expected_normalisation == undefined) { ignore_expected_normalisation=false}
 
         if (!this.quantifiable)
             return this.NOT_QUANTIFIABLE_SIZE
@@ -475,7 +477,11 @@ Clone.prototype = {
         
         if (this.m.reads.segmented[time] === 0 ) return 0;
         var result     = this.getReads(time) / this.m.reads.segmented[time];
-        return this.m.normalize(result, time)
+        if ( ignore_expected_normalisation == true && this.m.normalization_mode == this.m.NORM_EXPECTED){
+            // special getSize for scatterplot (ignore constant/expected normalization)
+            return result
+        }
+        return this.m.normalize(result, time) 
     }, //end getSize
     
     /**
@@ -520,22 +526,6 @@ Clone.prototype = {
         return max;
     },
     
-    /**
-     * special getSize for scatterplot (ignore constant normalization)<br>
-     * @param {integer} time - tracking point (default value : current tracking point)
-     * @return {float} size
-     * */
-    getSize2: function (time) {
-
-        if (!this.quantifiable)
-            return this.NOT_QUANTIFIABLE_SIZE
-
-        time = this.m.getTime(time)
-        
-        if (this.m.reads.segmented[time] === 0 ) return 0
-        var result     = this.getReads(time) / this.m.reads.segmented[time]
-        return this.m.normalize(result, time)
-    },
 
     /**
      * @return {string} the global size ratio of the clone at the given time
