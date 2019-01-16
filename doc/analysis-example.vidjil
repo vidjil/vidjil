@@ -49,6 +49,7 @@
       "ERG": [
         362, 0
       ]
+
     }
   }, 
   "samples": {
@@ -100,7 +101,8 @@
       }, 
       "reads": [
         606
-      ], 
+      ],
+      "normalized_reads": [909],
       "seg_stat": [
         {
           "1": 217, 
@@ -123,6 +125,21 @@
         303
       ], 
       "id": "YTGTGCYGYGYCCCYYGGYYAAAYCCTTGY"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 50, 
+      "seg_stat": [
+        {
+          "1": 132, 
+          "2": 230
+        }
+      ], 
+      "reads": [
+        362
+      ], 
+      "id": "CTGTGCYGYGYYCTGGGGGGTYCYTYAYGYC"
     }, 
     {
       "germline": "TRB", 
@@ -1587,9 +1604,9 @@
       "id": "YTGTGCYGYGYCGYYGGYYYYAGYTYTT"
     }, 
     {
-      "germline": "TRB", 
-      "name": "TRBV29*01 -3/2/-4 TRBD1*01 -1/1/-7 TRBJ2-7*01", 
-      "sequence": "YYGGGYYACGYAYAGCGGYGYTTYYCCTYTYTGYTYTGCYAAAYAACYYYYTGTGYCTYTGTGCYGYGTTYCYGGGGGGYAYGYCTYGGYCCGGYCYGGCYACGGTTTYYGYYTYYAATGTYCYYCCYAG", 
+      "germline": "ERG", 
+      "name": "ERG-4F 0/TCT/0 ERG-Seq-R", 
+      "sequence": "GTCTAACTCAGAAGCATCTCACGGTAAGGAAAAATTTTCCTTTCTGATGAAAATCAAATGTAAAACACTGTAACAAAAAAAGAGGACATTTCCAATTATTTAAAAAATGGATACCTCCCACTTTTTCCAAAAGTAAAAAAAAAAAAAGAATTTGGAATGGCTTACCAAACAGATTACAATAAATCATAGTCTAAGATAAACATCTGAAGCACTTGGGGCTTTCTGGTGCGTGAGGCTAGAGTGAAGAAAGGGAGAGGGTGGCTGTGGACCACCGAAGCTGA", 
       "top": 2, 
       "seg": {
         "5end": 94, 
@@ -1742,20 +1759,6 @@
         447
       ], 
       "id": "ACTGYCCYTGTGCYGYGYTGYGGYAAYCGCY"
-    },
-    {
-      "germline": "ERG",
-      "sequence": "GTCTAACTCAGAAGCATCTCACGGTAAGGAAAAATTTTCCTTTCTGATGAAAATCAAATGTAAAACACTGTAACAAAAAAAGAGGACATTTCCAATTATTTAAAAAATGGATACCTCCCACTTTTTCCAAAAGTAAAAAAAAAAAAAGAATTTGGAATGGCTTACCAAACAGATTACAATAAATCATAGTCTAAGATAAACATCTGAAGCACTTGGGGCTTTCTGGTGCGTGAGGCTAGAGTGAAGAAAGGGAGAGGGTGGCTGTGGACCACCGAAGCTGA", 
-      "top": 50,
-      "name": "ERG-4F 0/TCT/0 ERG-Seq-R",
-      "seg_stat": {
-        "3": 9832
-      },
-      "reads": [
-        362
-      ],
-      "id": "AAATCATAGTCTAAGATAAACATCTGAAGCACTTGGGGCTTTCTGGTGCG"
-
     }
   ], 
   "clusters": [], 

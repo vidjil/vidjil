@@ -31,7 +31,7 @@ class TestMultilocus < BrowserTest
   end
 
   def test_00_germline
-    assert ($b.div(:id => 'info').span(:class => 'systemBoxNameMenu', :index => 1).text.include? 'TRA'), 'missing system TRA'
+    assert ($b.div(:id => 'info').span(:class => 'systemBoxNameMenu', :index => 2).text.include? 'TRA'), 'missing system TRA'
   end
 
   def test_00_legend_scatterplot
@@ -199,7 +199,7 @@ class TestMultilocus < BrowserTest
     $b.clone_in_scatterplot('77').click
     $b.clone_in_scatterplot('25').click(:control)
     $b.clone_in_scatterplot('88').click(:control)
-    $b.clone_in_scatterplot('50').click(:control)
+    $b.clone_in_scatterplot('90').click(:control)
 
     $b.menu_item_export_fasta.click
     assert ( $b.window(:title => "").exists? ) , ">> fail opening fasta export "
