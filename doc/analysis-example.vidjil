@@ -97,7 +97,8 @@
       }, 
       "reads": [
         606
-      ], 
+      ],
+      "normalized_reads": [909],
       "seg_stat": [
         {
           "1": 217, 

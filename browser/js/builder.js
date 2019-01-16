@@ -143,6 +143,8 @@ Builder.prototype = {
         var normalize_list = document.getElementById("normalize_list");
         normalize_list.removeAllChildren();
 
+
+        // NO NORM
         var input = document.createElement("input");
         var label = document.createElement("label")
 
@@ -158,17 +160,23 @@ Builder.prototype = {
 
         div.appendChild(document.createTextNode("none"))
         div.onclick = function () {
-        self.m.compute_normalization(-1) ;
-        this.firstChild.checked=true;
-        self.m.update();
+            this.firstChild.checked=true;
+            self.m.set_normalization(self.m.NORM_FALSE)
+            self.m.update();
         };
+        // check this radio button if correspond to the current normalization
+        if (this.m.normalization_mode == this.m.NORM_FALSE) { div.firstChild.checked=true; }
         normalize_list.appendChild(div);
+
+        var input_elem, label_elem, form_div_elem;
+
+        // NORM BY EXPECTED (setted clones)
         tmp_norm_list =[]
         if(m.normalization_list.length>=1){ 
             for (var norm in m.normalization_list) {
                 var check=false
                 for (var div_id in tmp_norm_list){
-                    console.log( normalize_list[div_id])
+                    // console.log( normalize_list[div_id])
                     if (tmp_norm_list[div_id] == m.normalization_list[norm].id){
                         check=true
                     }
@@ -176,48 +184,79 @@ Builder.prototype = {
                 if (check==false) {
                 var id=m.normalization_list[norm].id
                 var expected_size = m.normalization_list[norm].expected_size   
-                var input_elem = document.createElement("input");
-                var label_elem = document.createElement("label")
+                input_elem = document.createElement("input");
+                label_elem = document.createElement("label")
                 label_elem.setAttribute("for","reset_norm"+m.normalization_list[norm].id);
                 input_elem.type = "radio";
                 input_elem.name = "normalize_list";
 
                 input_elem.id = "reset_norm"+m.normalization_list[norm].id;
 
-                console.log(m.normalization_list[norm].id)
-                var form_div_elem = document.createElement("div");
+                form_div_elem = document.createElement("div");
                 form_div_elem.className="buttonSelector";
 
                 form_div_elem.id = "normalizetest"+id
                 form_div_elem.dataset.id =id
                 form_div_elem.dataset.expected_size=expected_size
-                // if (m.normalization.id==id){
-                //     input.checked=true;
-                // }
 
-                text= m.clone(m.normalization_list[norm].id).getShortName()+" "+ m.clone(m.normalization_list[norm].id).getStrSize()
+                text = m.formatSize(expected_size) + " for " + m.clone(m.normalization_list[norm].id).getShortName()
                 form_div_elem.appendChild(input_elem);
                 form_div_elem.appendChild(label_elem);
 
                 form_div_elem.appendChild(document.createTextNode(text))
 
-                form_div_elem.addEventListener('click', self.applyOldnormalization, false);
-          
+                form_div_elem.onclick = self.div_radio_normalize_expected
+                // check this radio button if correspond to the current normalization
+                if (this.m.normalization_mode == this.m.NORM_EXPECTED && this.m.normalization.id == id) { form_div_elem.firstChild.checked=true; }
             normalize_list.appendChild(form_div_elem);
             tmp_norm_list.push(m.normalization_list[norm].id)
             }
         }
         }
-        
-    },
-    applyOldnormalization:function() {
-        self.m.norm_input.value = ""
-        this.firstChild.checked=true;
-        self.m.clone(this.dataset.id).expected= this.dataset.expected_size;
-        self.m.compute_normalization(this.dataset.id, this.dataset.expected_size)
-        self.m.update()
+
+        // Should disable radio choice if data haven't external normalization
+        if (this.m.have_external_normalization == true) {
+            // NORM by External normalization
+            input_elem = document.createElement("input");
+            label_elem = document.createElement("label")
+            label_elem.setAttribute("for","reset_norm_external");
+            input_elem.type = "radio";
+            input_elem.name = "normalize_list";
+            input_elem.id   = "reset_norm_external";
+
+
+            form_div_elem = document.createElement("div");
+            form_div_elem.className = "buttonSelector";
+            form_div_elem.id        = "normalize_external";
+
+            form_div_elem.appendChild(input_elem);
+            form_div_elem.appendChild(label_elem);
+            text= "from input data"
+            form_div_elem.appendChild(document.createTextNode(text))
+            form_div_elem.onclick = function () {
+                this.firstChild.checked=true;
+                self.m.set_normalization(self.m.NORM_EXTERNAL)
+                self.m.update();
+            };
+
+            // check this radio button if correspond to the current normalization
+            if (this.m.normalization_mode == this.m.NORM_EXTERNAL) { form_div_elem.firstChild.checked=true; }
+            normalize_list.appendChild(form_div_elem);
+        }
 
     },
+
+    div_radio_normalize_expected: function () {
+        self.m.norm_input.value = ""
+        self.m.set_normalization(self.m.NORM_EXPECTED);
+        self.m.clone(this.dataset.id).expected= this.dataset.expected_size;
+        self.m.compute_normalization(this.dataset.id, this.dataset.expected_size)
+
+        this.firstChild.checked=true;
+        self.m.update();
+    },
+
+
     /* Fonction servant à "déverouiller" l'appel de la fonction compute_normalization(), ainsi qu'à apposer le 'check' au checkBox 'normalize'
      * */
     displayNormalizeButton: function() {

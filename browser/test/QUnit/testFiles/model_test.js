@@ -399,4 +399,26 @@ QUnit.test("normalization", function(assert) {
     // Switch normalization again to NORM_EXPECTED
     m.set_normalization(m.NORM_EXPECTED)
     assert.equal(c6.getSize().toFixed(2), 0.2, "Clone 1 has correct size after switching again normalization to NORM_EXPECTED")
+
+
+    // Test detection of external normalization inside clones
+    var m = new Model();
+    m.parseJsonData(json_data, 100)
+    var c1 = new Clone(json_clone1, m, 0)
+    var c2 = new Clone(json_clone2, m, 1)
+    m.initClones()
+    assert.equal(m.have_external_normalization, false, "Model don't show clone with normalized_reads")
+    
+    var c1 = new Clone(json_clone1, m, 0)
+    var c2 = new Clone(json_clone2, m, 1)
+    var c6 = new Clone(json_clone6, m, 4)
+    m.initClones()
+    assert.equal(m.have_external_normalization, true, "model have detected normalized_reads of clones")
+
+    m.parseJsonData(json_data, 100)
+    var c1 = new Clone(json_clone1, m, 0)
+    var c2 = new Clone(json_clone2, m, 1)
+    m.initClones()
+    assert.equal(m.have_external_normalization, false, "Model have_external_normalization is correctly resetted")
+
 })
