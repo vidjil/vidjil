@@ -199,7 +199,7 @@ class TestMultilocus < BrowserTest
     $b.clone_in_scatterplot('77').click
     $b.clone_in_scatterplot('25').click(:control)
     $b.clone_in_scatterplot('88').click(:control)
-    $b.clone_in_scatterplot('50').click(:control)
+    $b.clone_in_scatterplot('90').click(:control)
 
     $b.menu_item_export_fasta.click
     assert ( $b.window(:title => "").exists? ) , ">> fail opening fasta export "
