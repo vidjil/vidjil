@@ -28,3 +28,5 @@ dep.mk
 /browser/css/*.css
 /browser/cgi/align.cgi
 /browser/js/conf.js
+node_modules/
+cypress/

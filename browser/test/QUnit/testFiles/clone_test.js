@@ -114,6 +114,14 @@ var json_clone5 = {
     "top": 5,
 };
 
+// Clone with normalized_reads
+var json_clone6 = {
+        "id" : "id6",
+        "germline" : "TRG",
+        "reads" : [10,10,0,30],
+        "normalized_reads" : [20,20,0,30],
+    }
+
 QUnit.test("name, informations, getHtmlInfo", function(assert) {
     
     assert.equal(json_clone1.seg.junction.start, 10, "Start junction is 10 in JSON for clone 1");

@@ -98,21 +98,25 @@ class Window:
         myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline"]
         obj = Window(1)
         
+        # 'id' and 'top' will be taken from 'topmost' clone
+        del obj.d["id"]
+        del obj.d["top"]
+
+        # Data of type 'list'
         concatenate_with_padding(obj.d,
                                  self.d, len(self.d["reads"]),
                                  other.d, len(other.d["reads"]),
                                  myList)
                     
-        #keep other data who don't need to be concat
-        if other.d["top"] < self.d["top"] :
-            for key in other.d :
-                if key in myList :
-                    obj.d[key] = other.d[key]
-        else :
-            for key in self.d :
-                if key in myList :
-                    obj.d[key] = self.d[key]
-        
+        # All other data, including 'top'
+        # When there are conflicting keys, keep data from the 'topmost' clone
+        order = [other, self] if other.d["top"] < self.d["top"] else [self, other]
+
+        for source in order:
+            for key in source.d:
+                if key not in obj.d:
+                    obj.d[key] = source.d[key]
+
         return obj
         
     def get_nb_reads(self, cid, point=0):

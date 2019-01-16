@@ -2,9 +2,11 @@
 
 cd $(dirname $0)
 wget -N http://www.imgt.org/download/GENE-DB/IMGTGENEDB-GeneList
-wget -N http://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP
+wget -N http://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP 
+wget -N http://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+allP
+
 errors=$(tempfile)
-python split-from-imgt.py IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP IMGTGENEDB-GeneList 2> $errors
+python split-from-imgt.py IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP IMGTGENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+allP IMGTGENEDB-GeneList 2> $errors
 
 wget -O IMGT_RELEASE http://www.imgt.org/download/GENE-DB/RELEASE
 

@@ -1,8 +1,14 @@
-!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ; cat fused.vidjil
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/no_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil ; cat fused.vidjil
 
 $ Fuse the three files
-2: ListWindows: .1000, 1000, 1000.
+2: ListWindows: .0, 1000, 500.
 
 $ Check the producer string in output file
 1: "producer": "vidjil fuse"
 
+$ Clone 'id-1' metadata is copied from both files
+1: "valA": "12"
+1: "valB": "13"
+
+$ A common metadata is copied from where the clone is the most abundant
+1: "valC": "13"

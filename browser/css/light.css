@@ -409,6 +409,7 @@ line {
 }
 #data {
   flex: 0 1 auto;
+  border: none;
 }
 #list_clones {
   flex: 1 1 auto;
@@ -1359,6 +1360,9 @@ span.warningReads {
 #vertical-separator:hover,
 #bot-separator:hover {
   background: #fdf6e3;
+}
+#norm_button {
+  width: 7ex;
 }
 .edit_button {
   float: right;
