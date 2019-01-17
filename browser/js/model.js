@@ -2166,12 +2166,15 @@ changeAlleleNotation: function(alleleNotation) {
                 }
             }
 
+
             for (var k=0; k<listGene.length; k++){
                 var germName = gene_germline[k].substring(0, 3);
-
-                if (typeof this.germline[germName][listGene[k]] != 'undefined') {
-                    fasta += ">" + listGene[k] + '\n';
-                    fasta += this.germline[germName][listGene[k]].toUpperCase().replace(/\./g, '') + '\n';
+                if (this.germline[germName] != undefined) {
+                    seq_found = this.findGermlineFromGene(listGene[k]);
+                    if (seq_found != undefined){
+                        fasta += ">" + listGene[k] + '\n';
+                        fasta += seq_found.toUpperCase().replace(/\./g, '') + '\n';
+                    }
                 }
             }
 
@@ -2182,6 +2185,27 @@ changeAlleleNotation: function(alleleNotation) {
             console.log({msg: "Export FASTA: please select clones to be exported", type: 'flash', priority: 2});
         }
         
+    },
+
+    /** 
+     * Bypass the germline name to ge tthe sequence of a gene
+     * This function is used for case of unexpected
+     * return the sequence (if found), else an empty string
+     */
+    findGermlineFromGene: function(gene_name){
+        // If germline can be determined from gene name
+        var locus = gene_name.substring(0, 4).toUpperCase()
+        if (this.germline[locus] != undefined) {
+            return this.germline[locus][gene_name]
+        }
+        // Else, try with all germline of model
+        for (var i in this.germline){
+            if (this.germline[i][gene_name] != undefined ){
+                return this.germline[i][gene_name]
+            }
+        }
+        // Case if gene is not present in this.germline
+        return undefined
     },
 
     exportViewToPNG: function(tag) {
