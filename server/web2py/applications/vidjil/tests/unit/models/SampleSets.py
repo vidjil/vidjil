@@ -36,7 +36,11 @@ class SamplesetsModel(unittest.TestCase):
 
         names = samples.get_tag_names()
 
+        self.assertEquals(len(names), 1)
         # Tags should have been removed by editing the entry in
         # testEditForm()
         self.assertFalse('first_fake_tag' in names[fake_sample_set_id])
         self.assertFalse('sec_fake_tag' in names[fake_sample_set_id])
+
+        # But we should have a ref to the ALL tag
+        self.assertTrue('ALL' in names[fake_sample_set_id])

@@ -111,7 +111,7 @@ class Sample_setController(unittest.TestCase):
             "first_name" : "bab",
             "last_name" : "bab",
             "birth" : "2010-10-10",
-            "info" : "bab",
+            "info" : "bab #ALL ",
             "id_label" : "bab",
             "sample_set_id": pat.sample_set_id
         }
