@@ -28,14 +28,15 @@ class SamplesetsModel(unittest.TestCase):
 
         names = samples.get_names()
 
-        self.assertEquals(names[fake_sample_set_id], "plo")
-        self.assertEquals(names[permission_sample_set], "bar")
+        self.assertTrue(names[fake_sample_set_id].startswith("bab"))
+        self.assertTrue(names[permission_sample_set].startswith("bar"))
         
     def testGetTagNames(self):
         samples = SampleSets([fake_sample_set_id, permission_sample_set])
 
         names = samples.get_tag_names()
 
-        self.assertEquals('first_fake_tag' in names[fake_sample_set_id], True)
-        self.assertEquals('sec_fake_tag' in names[fake_sample_set_id], True)
-        self.assertEquals(permission_sample_set in names, False)
+        # Tags should have been removed by editing the entry in
+        # testEditForm()
+        self.assertFalse('first_fake_tag' in names[fake_sample_set_id])
+        self.assertFalse('sec_fake_tag' in names[fake_sample_set_id])
