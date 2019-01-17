@@ -273,7 +273,7 @@ Model.prototype = {
      * */
     initClones: function () {
         console.log("initClones()");
-        var have_external_normalization = false
+        this.have_external_normalization = false
         $("#external_normalization").hide();
         $("#expected_normalization").hide();
 
@@ -294,7 +294,7 @@ Model.prototype = {
             var n = clone.getNlength();
             if (n > n_max) {n_max = n; }
             if (clone.normalized_reads){
-                have_external_normalization = true
+                this.have_external_normalization = true
             }
         }
         this.n_max = n_max
@@ -308,7 +308,7 @@ Model.prototype = {
         
         this.applyAnalysis(this.analysis);
         this.initData();
-        if (have_external_normalization){
+        if (this.have_external_normalization){
             this.set_normalization(this.NORM_EXTERNAL)
             // change radio button selection
             var radio = document.getElementById("external_normalization_input")
@@ -663,6 +663,9 @@ changeAlleleNotation: function(alleleNotation) {
             return
         }
         this.normalization_mode = mode
+        if (mode == this.NORM_FALSE || mode == this.NORM_EXTERNAL ){
+            this.normalization.id = -1
+        }
 
         return
     },
