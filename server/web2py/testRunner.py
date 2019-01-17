@@ -316,7 +316,7 @@ doc_test_files = glob.glob(path)
 print(len(doc_test_files)," controller files with possible doctests found.")
 
 # get all files with tests
-test_files = glob.glob('applications/'+appname+'/tests/unit/*/*.py')
+test_files = sorted(glob.glob('applications/'+appname+'/tests/unit/*/*.py'))
 
 if not len(test_files):
     raise Exception("No files found for app: " + sys.argv[2])
