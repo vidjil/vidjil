@@ -139,6 +139,7 @@ def run_request():
 
     if error == "" :
         res = schedule_run(request.vars["sequence_file_id"], id_config, grep_reads)
+        log.info("run requested", extra={'user_id': auth.user.id, 'record_id': request.vars['sequence_file_id'], 'table_name': 'sequence_file'})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
@@ -213,7 +214,7 @@ def get_data():
     if "run" in request.vars :
         request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
     
-    if not "sample_set_id" in request.vars :
+    if not "sample_set_id" in request.vars or request.vars['sample_set_id'] is None:
         error += "id sampleset file needed, "
     else : 
         if not auth.can_view_sample_set(request.vars["sample_set_id"]):
@@ -260,7 +261,7 @@ def get_data():
         if (sample_set.sample_type == defs.SET_TYPE_PATIENT):
             for row in db( db.patient.sample_set_id == request.vars["sample_set_id"] ).select() :
                 log_reference_id = row.id
-                patient_name = vidjil_utils.anon_ids(row.id)
+                patient_name = vidjil_utils.anon_ids([row.id])[0]
                 data["dataFileName"] = patient_name + " (" + config_name + ")"
                 data["info"] = db.patient[row.id].info
                 data["patient_id"] = row.id
@@ -340,6 +341,7 @@ def get_data():
                 data["samples"]["id"].append("")
 
         log.debug("get_data (%s) c%s -> %s (%s)" % (request.vars["sample_set_id"], request.vars["config"], fused_file, "downloaded" if download else "streamed"))
+        log.info("load sample", extra={'user_id': auth.user.id, 'record_id': request.vars['sample_set_id'], 'table_name': 'sample_set'})
 
         dumped_json = gluon.contrib.simplejson.dumps(data, separators=(',',':'))
 
@@ -401,12 +403,14 @@ def get_custom_data():
 
             patient_run = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select().first()
             config_id = db.results_file[id].config_id
-            name = vidjil_utils.anon_ids(patient_run.id) if sample_set.sample_type == defs.SET_TYPE_PATIENT else patient_run.name
+            name = vidjil_utils.anon_ids([patient_run.id])[0] if sample_set.sample_type == defs.SET_TYPE_PATIENT else patient_run.name
             filename = db.sequence_file[sequence_file_id].filename
             data["samples"]["original_names"].append(name + "_" + filename)
             data["samples"]["timestamp"].append(str(db.sequence_file[sequence_file_id].sampling_date))
             data["samples"]["info"].append(db.sequence_file[sequence_file_id].info)
             data["samples"]["commandline"].append(db.config[config_id].command)
+
+        log.info("load custom data #TODO log db")
 
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
 
@@ -437,7 +441,7 @@ def get_analysis():
     if "run" in request.vars :
         request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
     
-    if not "sample_set_id" in request.vars :
+    if not "sample_set_id" in request.vars or request.vars['sample_set_id'] is None:
         error += "id sample_set file needed, "
     if not auth.can_view_sample_set(request.vars["sample_set_id"]):
         error += "you do not have permission to consult this sample_set ("+str(request.vars["sample_set_id"])+")"
@@ -451,6 +455,8 @@ def get_analysis():
         analysis_data = get_analysis_data(request.vars['sample_set_id'])
         #analysis_data["info_patient"] = db.patient[request.vars["patient"]].info
         dumped_json = gluon.contrib.simplejson.dumps(analysis_data, separators=(',',':'))
+
+        log.info("load analysis", extra={'user_id': auth.user.id, 'record_id': request.vars['sample_id'], 'table_name': 'sample_set'})
 
         if download:
             return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.vars['filename'])
@@ -516,6 +522,8 @@ def save_analysis():
         res = {"success" : "true",
                "message" : "(%s): analysis saved" % (sample_set_id)}
         log.info(res, extra={'user_id': auth.user.id})
+
+        log.info("save analysis", extra={'user_id': auth.user.id, 'record_id': request.vars['samples_id'], 'table_name': 'sample_set'})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"success" : "false",

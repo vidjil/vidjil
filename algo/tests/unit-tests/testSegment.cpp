@@ -7,12 +7,11 @@
 #include "core/dynprog.h"
 #include "core/bioreader.hpp"
 #include "core/segment.h"
+#include "core/output.h"
 #include "core/windowExtractor.h"
 #include "lib/json.hpp"
 
 using namespace std;
-
-
 
 void testOverlap()
 {
@@ -275,7 +274,10 @@ void testBug2224(IndexTypes index) {
 
   KmerSegmenter ks(data.read(0), germline);
   TAP_TEST(ks.getKmerAffectAnalyser() == NULL, TEST_BUG2224, "");
-  json json_output = ks.toJson();
+
+  CloneOutput clone ;
+  ks.toOutput(&clone);
+  json json_output = clone.toJson();
   TAP_TEST_EQUAL(json_output.count("affectValues"), 0, TEST_BUG2224, "");
   TAP_TEST_EQUAL(json_output.count("affectSigns"), 0, TEST_BUG2224, "");
   TAP_TEST_EQUAL(json_output.count("affectevalue"), 0, TEST_BUG2224, "");

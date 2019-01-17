@@ -544,14 +544,8 @@ Graph.prototype = {
             ];
             
             var size = []
-            if (this.m.norm === true){
-                for (var j = 0; j < res.length; j++) {
-                    size[j] = this.m.normalize(res[j], j)
-                }
-            }else{
-                for (var k = 0; k < res.length; k++) {
-                    size[k] = res[k]
-                }
+            for (var j = 0; j < res.length; j++) {
+                size[j] = this.m.normalize(res[j], j)
             }
                 
             p.push([0, (1 - this.scale_x(size[0] * this.m.precision))]);
@@ -749,7 +743,7 @@ Graph.prototype = {
             for (var i = 0; i < this.m.samples.number; i++) {
                 var t = this.m.samples.order.indexOf(i)
                 var val = this.m.data[key][t]
-                if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val,t)
+                val = this.m.normalize(val,t)
                 tab.push(val)
             }
             
@@ -971,12 +965,10 @@ Graph.prototype = {
         
         var max = this.m.precision*this.m.max_size
         //get ready for something really dirty
-        if (this.m.norm){
-            for (var i=0; i<this.m.samples.order.length; i++) {
-                for (var j=0; j<this.m.clones.length; j++){
-                    var size = this.m.precision*this.m.clone(j).getSize()
-                    if (size>max) max=size;
-                }
+        for (var i=0; i<this.m.samples.order.length; i++) {
+            for (var j=0; j<this.m.clones.length; j++){
+                var size = this.m.precision*this.m.clone(j).getSize()
+                if (size>max) max=size;
             }
         }
         
@@ -1028,15 +1020,13 @@ Graph.prototype = {
             var max = this.m.data[key][0];
             var min = this.m.data[key][0];
             
-            if (this.m.norm && this.m.normalization.type=="data"){
-                max = this.m.normalize(max, 0)
-                min = this.m.normalize(min, 0)
-            }
+            max = this.m.normalize(max, 0)
+            min = this.m.normalize(min, 0)
             
             for (var i = 0; i < this.m.samples.number; i++) {
                 var t = this.m.samples.order.indexOf(i)
                 var val = this.m.data[key][t]
-                if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val, t)
+                val = this.m.normalize(val, t)
                 if (val>max) max=val;
                 if (val<min) min=val;
             }

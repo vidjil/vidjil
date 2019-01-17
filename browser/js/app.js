@@ -2,7 +2,7 @@ requirejs.config({
     baseUrl: 'js/lib',
     paths: {
         app: '',
-        jquery: 'jquery-2.1.1.min'
+        jquery: 'jquery-3.3.1.min'
     }
 });
 
@@ -15,6 +15,7 @@ require(["jquery",
          "jstree.min",
          "jquery.caret",
          "jquery.atwho",
+         "vmi",
          "svgExport"], function() {
              // Then config file (needed by Vidjil)
              require(['../conf'], function() {
@@ -76,6 +77,7 @@ function loadAfterConf() {
                                          // Speed test
                                          "../speed_test",
                                          "../form_builder",
+                                         "../vidjil_menu_decorator",
                                          "../../test/QUnit/testFiles/data_test",
                                         ], function(){
                                             if (typeof main == "undefined"){

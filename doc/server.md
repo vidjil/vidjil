@@ -121,11 +121,11 @@ This contains both [docker-compose.yml](http://gitlab.vidjil.org/blob/dev/docker
 
 The vidjil Docker environment is managed by `docker-compose`, who launches the following services:
 
-From `vidjil/client`
+From image `vidjil/client`
 
   - `nginx` The web server, containing the client web application
 
-From `vidjil/server`
+From image `vidjil/server`
 
   - `mysql` The database
   - `uwsgi` The Web2py backend server
@@ -137,42 +137,55 @@ From `vidjil/server`
 
 
 
-## Configuring the Vidjil container for a network usage
+## Network usage and SSL certificates
 
-If you plan to use Vidjil only locally, these steps are not required.
+(If you are simply using Vidjil from your computer for testing purposes you can skip the next two steps).
 
   - Change the hostname in the nginx configuration `vidjil-client/conf/nginx_web2py`,
     replacing `$hostname` with your FQDN.
   - Edit the `vidjil-client/conf/conf.js`
         change all 'localhost' to the FQDN
 
-  - Configure the SSL certificates
-       - A fast option is to create a self-signed SSL certificate.
-         Note that it will trigger security warnings when accessing the client.
-       	 ```
-	 openssl genrsa 4096 > web2py.key
-	 openssl req -new -x509 -nodes -sha1 -days 1780 -key web2py.key > web2py.crt
-	 openssl x509 -noout -fingerprint -text < web2py.crt
-	 mv web2py.* docker/vidjil-client/ssl/
-	 ```
+(You will need the following step whether you are using locally or not).
 
-       - A better option is to use other certificates, for example by configuring free [Let's Encrypt](https://letsencrypt.org/) certificates;
-         In `docker-compose.yml`, update `nginx.volumes` to add the directory with the certifictes.
+Vidjil uses HTTPS by default, and will therefore require SSL certificates.
+You can achieve this with the following steps:
+
+  - Configure the SSL certificates
+     - A fast option is to create a self-signed SSL certificate.
+       Note that it will trigger security warnings when accessing the client.
+       From the `docker/` directory:
+       ```
+openssl genrsa 4096 > web2py.key
+openssl req -new -x509 -nodes -sha1 -days 1780 -key web2py.key > web2py.crt
+openssl x509 -noout -fingerprint -text < web2py.crt
+mkdir -p vidjil-client/ssl
+mv web2py.* vidjil-client/ssl/
+      ```
+     - A better option is to use other certificates, for example by configuring free [Let's Encrypt](https://letsencrypt.org/) certificates;
+       In `docker-compose.yml`, update `nginx.volumes`, line `./vidjil-client/ssl:/etc/nginx/ssl`, to set the directory with the certificates.
+
+
+If you would prefer to use the vidjil over HTTP (not recommended outside of testing purposes), you can
+use the provided configuration files in `docker/vidjil-server/conf` and `docker/vidjil-client/conf`. You will find several files
+that contain "http" in their name. Simply replace the existing config files with their HTTP counter-part (for safety reasons, don't
+forget to make a backup of any file you replace.)
  
 ## First configuration and first launch
 
+  - Set the SSL certificates (see above)
   - Change the mysql root password in `docker-compose.yml`
-  - Change the mysql vidjil password in `mysql/create_db.sql` and sets it also in `vidjil-server/conf/defs.py`
+  - Change the mysql vidjil password in `mysql/create_db.sql` and sets it also in `DB_ADDRESS` in `vidjil-server/conf/defs.py`
 
   - Comment backup/reporter services in `docker-compose.yml`
 
   - It is avised to first launch  with `docker-compose up mysql`.
-The first time, this container create the database and it takes some time.
+The first time, this container creates the database and it takes some time.
 
 - When `mysql` is launched,
 you can safely launch `docker-compose up`.
-Then `docker ps` should display four running containers:
-`docker_nginx_1`, `docker_uwsgi_1`, `docker_fuse_1`, `docker_mysql_1`
+Then `docker ps` should display five running containers:
+`docker_nginx_1`, `docker_uwsgi_1`, `docker_workers_1`, `docker_fuse_1`, `docker_mysql_1`
 
 
   - Vidjil also need germline files.
@@ -184,10 +197,10 @@ Then `docker ps` should display four running containers:
       - Copy also the generated `browser/js/germline.js` into the `docker/vidjil-client/conf/` directory.
 
 
-  - Open a web browser to <https://your-hostname>.
-Create a first account by entering an email.
+  - Open a web browser to <https://localhost>, or to your FQDN if you configured it (see above).
+Click on `init database` and create a first account by entering an email.
 This account is the main root account of the server. Other administrators could then be created.
-It will be also used for the  web2py admin passwor.
+It will be also the web2py admin password.
 
 
 
@@ -200,7 +213,7 @@ The following configuration files are found in the `vidjil/docker` directory:
   - `conf/conf.js` various variables for the vidjil browser
   - `conf/defs.py` various variables for the vidjil server
   - `conf/gzip.conf` configuration for gzip in nginx
-  - `conf/gzip_static`.conf same as the previous but for static resources
+  - `conf/gzip_static.conf` same as the previous but for static resources
   - `conf/uwsgi.ini`   configuration required to run vidjil with uwsgi
   - `sites/nginx` configuration required when running vidjil with nginx
   - `scripts/nginx-entrypoint.sh` entrypoint for the nginx
@@ -214,57 +227,86 @@ Here are some notable configuration changes you should consider:
   -  mysql root password (`mysql.environment` in `docker-compose.yml`),  mysql vidjil password (`docker-compose.yml` and  `vidjil-server/conf/defs.py`),
      as mentionned above
 
-  - Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `vidjil-server/conf/defs.py`. These
-    represent the sender email address and the destination email addresses,
-    used in reporting patient milestones and server errors.
+  - Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `vidjil-server/conf/defs.py`.
+    They are used for admin emails monitoring the server an reporting errors.
 
   - To allow users to select files from a mounted volume,
     set `FILE_SOURCE` and `FILE_TYPES` in `vidjil-server/conf/defs.py`.
     In this case, the `DIR_SEQUENCES` directory will be populated with links to the selected files.
     Users will still be allowed to upload their own files.
 
-  - Change the `volumes` in `docker-compose.yml`. By default all files that
+  - By default all files that
     require saving outside of the containers (the database, uploads, vidjil
-    results and log files) are stored in `/opt/vidjil`, but you can change
+    results and log files) are stored in `/opt/vidjil`.
+    This can be changed in the `volumes` in `docker-compose.yml`.
     this by editing the paths in the volumes.
     See also <a href="#storage">Requirements / Storage</a> above.
 
-
   - Configure the reporter. Ideally this container should be positioned
-    on a remote server in order to be able to report on a down server, but we have packed it here for convenience.
-  You will also
+    on a remote server in order to be able to report on a down server,
+    but we have packed it here for convenience.
+    You will also
     need to change the `DB_ADDRESS` in `conf/defs.py` to match it.
 
 
 
-### Docker -- Adding external software
+# Docker -- Adding external software
 
-**(To be documented)**
+Some software can be added to Vidjil for pre-processing or even processing if the
+software outputs data compatible with the `.vidjil` format.
+We recommend you add software by adding a volume to your `docker-compose.yml`.
+By default we add our external files to `/opt/vidjil` on the host machine. You can then
+reference the executable in `vidjil-server/conf/defs.py`.
 
-The volumes in the fuse and nginx volume block
-`./vidjil-server/conf:/etc/vidjil` and `./vidjil-client/conf:/etc/vidjil`
-will provide easier access to all of the
-configuration files, allowing for tweaks.
-
-From this location, it will be easier to enable more software or pipelines
-by putting their binaries in this location that will be see by the docker instance.
-
+When the software has compatible inputs and outputs, it will be enough
+to configure then the appropriate `pre process` or `analysis config` (to be documented).
+In some cases, using the software may require development such as wrappers.
+Contact us (<mailto:contact@vidjil.org>) to have more information and help.
 
 # Docker -- Troubleshooting
 
 ###  Error "Can't connect to MySQL server on 'mysql'"
 
 The mysql container is not fully launched. This can happen especially at the first launch.
-Relaunch the containers.
-XXXX Relaunch the workers.
+You may relaunch the containers.
+
+If restarting the containers does not resolve the issue, there are a couple of things
+you can look into:
+
+ - Ensure the database password in `vidjil-server/conf/defs.py` matches the password for
+ the mysql user: `vidjil`.
+ If you are not sure, you can check with the following:
+ ```sh
+ docker exec -it docker_mysql_1 bash
+ mysql -u vidjil -p vidjil
+ ```
+ or reset it:
+ ```sh
+ docker exec -it docker_mysql_1 bash
+ mysql -u root -p
+ SET PASSWORD FOR vidjil = PASSWORD('<new password>');
+ ```
+ 
+ - Ensure the database was created correctly. This should have been done automatically,
+ but just in case, you can check the console output, or check the database:
+ ```sh
+ docker exec -it docker_mysql_1 bash
+ mysql -u vidjil -p vidjil
+ ```
+ If the database does not exist, mysql will display an error after logging in.
 
 
 # Docker -- Updating a Docker installation
 
-**(October 2018: Temporary instructions, please wait.)**
+## Before the update
 
-By security, we please you to make a backup (see "Backups", below) before doing this process.
-Updating the Docker installation usually only require the following:
+We post news on image updates at <http://gitlab.vidjil.org/tree/dev/docker/CHANGELOG>.
+Check there whether the new image require any configuration change.
+
+By security, we please you to always make a backup (see "Backups", below) before doing this process.
+It is especially important to backup the database, as the update process may transform it.
+
+## Pulling the new images
 
 ``` bash
 docker pull vidjil/server:latest
@@ -275,8 +317,8 @@ This will pull the latest version of the images.
 More tags are available at <https://hub.docker.com/r/vidjil/server/tags/>.
 
 If you do not have access to `hub.docker.com` on your server, then you
-should pull the image onto a machine that does and extract it into a tar
-archive and send it to your server with your favourite method and import
+should pull and extract the image onto a machine that does,
+send it to your server with your favourite method, and finally import
 the image on the server.
 
 Extract:
@@ -286,17 +328,30 @@ docker save -o <output_file> vidjil/server[:<version>] vidjil/client[:<version>]
 
 Import:
 ```sh
-     docker load -i <input_file>
+docker load -i <input_file>
 ```
 
-In some cases you may need to update your `docker-compose.yml` file or some
-of the configuration files. The latest versions of these files are available on our
-[Gitlab](https://inria.gitlab.com/vidjil/vidjil).
+## Launch the new containers
+
+In some cases, you may need to update your `docker-compose.yml` file or some
+of the configuration files. We will describe the changes in the `CHANGELOG` file.
+The latest versions of these files are available on our
+[Gitlab](https://gitlab.vidjil.org/).
+
+Once the images are pulled, you can relaunch the containers:
+```sh
+docker-compose down
+docker-compose up
+```
 
 By default, all previous volumes will be reused and no data will be lost.
-If needed, the MYSQL database will be updated to match the newest format.
-this step is handled by web2py.
-XXX TODO XXX (****demande confirmation par test****)
+If the database schema was updated, web2py will update it on your database.
+Check that the containers run well, and that you still manage to log on Vidjil
+and to access the database, and to see a result from a sample.
+
+If something is not working properly, you have still the option to rollback
+to the previous images (for example by tagging as `latest` a previous image),
+and possibly by reusing also your last databse backup if something went wrong.
 
 
 # Plain server installation
@@ -915,3 +970,23 @@ optional arguments:
   --dry-run   With a dry run, the data will not be saved to the database
   --config CONFIG  Select the config mapping file
 ```
+
+# Using CloneDB [Under development]
+The [CloneDB](https://gitlab.inria.fr/vidjil/clonedb) has to be installed
+independently of the Vidjil platform.
+
+Then one can easily extract data to be used with CloneDB. A script is provided
+(`server/web2py/applications/vidjil/scripts/create_clone_db.py`) which
+produces a FASTA file to be indexed with CloneDB. This script takes as
+parameter the FASTA output file and one (or many) group IDs, which correspond
+to the groups having access to the datasets. Note that for the moment the Vidjil platform only allow a per group access to the CloneDB.
+
+The FASTA output filename must follow the format `clonedb_XXX.fa` where `XXX`
+is replaced with the group ID.
+
+Make sure that the `DIR_CLONEDB` variable is set in `defs.py` and points to
+the CloneDB server directory. Make sure that in this directory the
+`clonedb_defs.py` has been filled correctly.
+
+Then index the created FASTA file with the CloneDB index (follow the
+instructions from CloneDB).

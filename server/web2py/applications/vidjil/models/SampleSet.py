@@ -21,7 +21,7 @@ class SampleSet(object):
         return data['name']
 
     def get_display_name(self, data):
-        return self.get_name(data)
+        return SPAN(self.get_name(data), _class="set_token generic_token")
 
     def get_info(self, data):
         return data['info']
@@ -46,7 +46,7 @@ class SampleSet(object):
     def get_config_urls(self, data):
         configs = []
         for conf in data['conf_list']:
-            filename =  "(%s %s)" % (self.get_display_name(data), conf['name'])
+            filename =  "(%s %s)" % (self.get_name(data), conf['name'])
             if conf['fused_file'] is not None :
                 configs.append(
                     str(A(conf['name'],
@@ -162,7 +162,7 @@ def get_sample_name(sample_set_id):
     if patient_or_run is None:
         return None
     if sample.sample_type == defs.SET_TYPE_PATIENT:
-        return vidjil_utils.anon_ids(patient_or_run.id)
+        return vidjil_utils.anon_ids([patient_or_run.id])[0]
     return patient_or_run.name
 
 def get_set_group(sid):

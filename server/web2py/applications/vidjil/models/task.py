@@ -111,20 +111,23 @@ def compute_extra(id_file, id_config, min_threshold):
         try:
             d = json.load(rf)
             loci_min = {}
-            loci_totals = d['reads']['germline']
-            for locus in loci_totals:
-                if locus not in result:
-                    result[locus] = [0]
-                loci_min[locus] = loci_totals[locus][0] * (min_threshold/100.0)
 
-            # Be robust against 'null' values for clones
-            if not d["clones"]:
+            if 'reads' in d and 'germline' in d['reads']:
+                loci_totals = d['reads']['germline']
+                for locus in loci_totals:
+                    if locus not in result:
+                        result[locus] = [0]
+                    loci_min[locus] = loci_totals[locus][0] * (min_threshold/100.0)
+
+            if 'clones' in d and d['clones'] is not None:
+                for clone in d["clones"]:
+                    germline = clone['germline']
+                    if clone['reads'][0] >=  loci_min[germline]:
+                        result[germline][0] += 1
+            elif d["clones"] is None:
+                # Be robust against 'null' values for clones
                 d["clones"] = []
             
-            for clone in d["clones"]:
-                germline = clone['germline']
-                if clone['reads'][0] >=  loci_min[germline]:
-                    result[germline][0] += 1
         except ValueError as e:
             print('invalid_json')
             return "FAIL"
@@ -197,6 +200,11 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
     from subprocess import Popen, PIPE, STDOUT, os
     from datetime import timedelta as timed
     
+    if db.sequence_file[id_file].pre_process_flag == "FAILED" :
+        print("Pre-process has failed")
+        raise ValueError('pre-process has failed')
+        return "FAIL"
+    
     ## re schedule if pre_process is still pending
     if db.sequence_file[id_file].pre_process_flag not in ["COMPLETED", "DONE"] and db.sequence_file[id_file].pre_process_flag:
         
@@ -212,11 +220,6 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
         sys.stdout.flush()
         
         return "SUCCESS"
-    
-    if db.sequence_file[id_file].pre_process_flag == "FAILED" :
-        print("Pre-process has failed")
-        raise ValueError('pre-process has failed')
-        return "FAIL"
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
     upload_folder = defs.DIR_SEQUENCES
@@ -657,6 +660,12 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
             files += defs.DIR_RESULTS + row.results_file.data_file + " "
             sequence_file_list += str(row.results_file.sequence_file_id) + "_"
             
+    if files == "":
+        print("!!! Fuse failed: no files to fuse")
+        res = {"message": "[%s] c%s: 'fuse' FAILED - %s no files to fuse" % (id_data, id_config, output_file)}
+        log.error(res)
+        return "FAILED"
+
     try:
         fuse_cmd = db.config[id_config].fuse_command
         cmd = "python "+defs.DIR_FUSE+"/fuse.py -o "+ output_file + " " + fuse_cmd + " " + files

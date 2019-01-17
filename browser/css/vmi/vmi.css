@@ -1,0 +1,70 @@
+
+#vmi-menu {
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    margin: 6px 0;
+    width: 150px;
+}
+
+#vmi-menu div {
+    text-align: center;
+    font-size: 1.5em;
+    padding: 20px;
+    border: solid;
+    cursor: pointer;
+}
+
+#vmi-drawer {
+    display: none;
+}
+
+.focused {
+    background-color: lightblue;
+}
+
+#vmi-panels {
+    display: grid;
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 150px;
+    background: #ffffff;
+    margin: 3px;
+    overflow: hidden;
+}
+
+.vmi-panel {
+    display: grid;
+    position: relative;
+}
+
+.vmi-panel:empty {
+    display: none;
+}
+
+
+.editor {
+    display: none;
+}
+
+.overlay {
+    z-index: 2;
+    background-image: url('../images/box.png');
+    background-size: 100% 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+    background-repeat: no-repeat;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+    opacity: 0.5;
+    border: 20px dashed;
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    height: 100%;
+    /*height: 200px;*/
+}
+/*##############################################*/

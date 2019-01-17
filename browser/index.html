@@ -30,6 +30,7 @@
         <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu-mono/stylesheet.css" /> 
         <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/fontello.css" />
         <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/animation.css" />
+        <link rel="stylesheet" href="css/vmi/vmi.css" />
         <link id="palette" rel="stylesheet" type="text/css" href="css/light.css" />
         <link id="seg_highlight" rel="stylesheet" type="text/css" href="css/segmenter_highlight.css" />
         <link rel="stylesheet" href="css/jstree_themes/default/style.min.css" />
@@ -54,7 +55,7 @@
             <input id="upload_pref" type="file" name="pref" /></br>
             <p class='help'>The .analysis file stores all parameters set by the user (tags, colors, manual clusters).</p>
 
-            <button onclick="document.getElementById('file_menu').style.display='none';
+            <button id="start_import_json" onclick="document.getElementById('file_menu').style.display='none';
             m.load('upload_json','upload_pref', 200)">start</button> 
         </div>
 
@@ -89,6 +90,10 @@
         <!-- TOP-CONTAINER -->
         <div id="top-container" onmouseout="hideSelector()">
             <div id="menu-container">
+                <div class="menu devel-mode" onmouseover="showSelector('vmiSelector');">vmi
+                    <!-- Div is filld programmatically with vmi menu -->
+                    <div class="selector" id="vmiSelector"></div>
+                </div>
                 <div class="menu" id="top_info">
                     <!--Div is filled programmatically -->
                 </div>
@@ -150,6 +155,7 @@
                           <a class="buttonSelector" onclick="m.merge();">cluster selected clones</a>
                           <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(5)});">cluster by V/5' </a>
                           <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(3)});">cluster by J/3' </a>
+                          <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getSegAASequence('junction')});">cluster by CDR3 </a>
                           <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).germline});">cluster by locus </a>
                           <a class="buttonSelector devel-mode" onclick="m.similarity_builder.DBscan(95,0.001);">cluster by DBscan (experimental) </a>
                           <a class="buttonSelector" onclick="m.similarity_builder.cluster_me(95,0.1);">cluster by similarity </a>
@@ -187,9 +193,12 @@
 
                 <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();" onmouseover=" showSelector('settingsSelector');" > settings
                     <div id="settingsSelector" class="selector"><div>
+                     
                         <div class="menu_box">
-                            normalization</br>
+                            normalization
                             <form name="normalize_list" id="normalize_list">
+                            </form>
+                            <form name="normalize_list" id="normalize_list"> <!--  class="devel-mode"> -->
                             </form>
                         </div>
                         <div class="menu_box">
@@ -315,9 +324,6 @@
 
             <!-- LEFT-CONTAINER -->
             <div id="left-container">
-                <div id="info-row"><div id="info"> </div></div>
-                <div id="list-row"><div id="list"> </div></div>
-                <div id="data-row"><div id="data"> </div></div>
             </div>
             <!-- fin left-container -->
 
@@ -328,25 +334,6 @@
 
             <!-- VISU-CONTAINER  -->
             <div id="visu-container">
-                <div id="visu2"></div>
-                <div id="visu-separator" >...
-                    <div class="visu2_menu_anchor devel-mode">
-                        <div class="visu2_menu">
-                            <div class="visu2_menu_content">
-                                <label for="visu2_mode_sp" onclick="switch_visu2('scatterplot')">
-                                    scatterplot
-                                    <input id="visu2_mode_sp" name="visu2_mode" type="radio"/>
-                                </label>
-                                <label for="visu2_mode_gr" onclick="switch_visu2('graph')">
-                                    graph
-                                    <input id="visu2_mode_gr" name="visu2_mode" type="radio" checked/>
-                                </label>
-                            </div>
-                            mode
-                        </div>
-                    </div>
-                </div>
-                <div id="visu" onclick=""></div>
             </div>
 
         </div>

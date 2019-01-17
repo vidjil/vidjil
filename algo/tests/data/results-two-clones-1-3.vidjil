@@ -21,6 +21,8 @@
     "clones" :  [  
 	{ 
 	    "id" : "id-1",
+      "valB" : "13",
+      "valC" : "13",
 	    "name": "name-1",
 	    "sequence" : "seq-1",
 

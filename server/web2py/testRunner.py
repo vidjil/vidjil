@@ -63,6 +63,8 @@ for tablename in db.tables:  # Copy tables!
 db = test_db
 auth.db = test_db
 
+current.db = db
+current.auth = auth
 # build default database if doesn't exist
 vidjil_utils.init_db_helper(db, auth, True)
 
@@ -89,6 +91,8 @@ user_id = db.auth_user.insert(
 )
 unique_group = db.auth_group.insert(role="user_"+str(user_id), description=" ")
 db.auth_membership.insert(user_id=user_id, group_id=unique_group)
+
+auth.user = db.auth_user[user_id]
 
 # with admin privilege
 group_id = 1 #admin group
@@ -236,6 +240,13 @@ sec_fake_tag_id = db.tag.insert(name="sec_fake_tag")
 
 db.group_tag.insert(group_id=unique_group, tag_id=first_fake_tag_id)
 db.group_tag.insert(group_id=fake_group_id, tag_id=sec_fake_tag_id)
+
+first_fake_tag_ref = db.tag_ref.insert(tag_id = first_fake_tag_id,
+                                       table_name = 'patient',
+                                       record_id = fake_sample_set_id)
+sec_fake_tag_ref = db.tag_ref.insert(tag_id = sec_fake_tag_id,
+                                       table_name = 'patient',
+                                       record_id = fake_sample_set_id)
 
 db.commit()
 

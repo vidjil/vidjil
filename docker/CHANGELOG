@@ -1,0 +1,16 @@
+
+This CHANGELOG concerns the Docker images of vidjil.
+We publish here notes to help to update these images.
+See <http://www.vidjil.org/doc/server>
+
+vidjil/server:2018-10-19-3a690203
+vidjil/client:2018-10-18-f959661a
+   - Tag initialization while creating the database
+   - Updated default location for SSL certificates
+   - Ubuntu 18.04 image
+   - Corrected and updated documentation
+
+vidjil/server:2018-10-15-f0df4cd9
+vidjil/client:2018-10-15-f0df4cd9
+   - Initial release, following refactor of the containers and of the documentation
+   

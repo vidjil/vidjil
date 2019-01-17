@@ -814,23 +814,25 @@ Segment.prototype = {
 
         for (var i = 0; i < list.length; i++) {
             if (this.isClone(list[i])) {
-            var c = this.m.clone(list[i])
-            
-            if (typeof (c.getSequence()) !== 0){
-                request += ">" + c.index + "#" + c.getName() + "\n" + c.getSequence() + "\n";
-            }else{
-                request += ">" + c.index + "#" + c.getName() + "\n" + c.id + "\n";
+                var c = this.m.clone(list[i])
+                
+                if (typeof (c.getSequence()) !== 0){
+                    request += ">" + c.index + "#" + c.getName() + "\n" + c.getSequence() + "\n";
+                } else {
+                    request += ">" + c.index + "#" + c.getName() + "\n" + c.id + "\n";
+                }
+                if (c.getSize()>max){
+                    system = c.getLocus()
+                    max=c.getSize()
+                }
             }
-            if (c.getSize()>max){
-                system=c.get('germline')
-                max=c.getSize()
+            else if (typeof this.germline[list[i]]) {
+                request += ">" +list[i] + "\n" +this.germline[this.sequence[list[i]].locus][list[i]] + "\n";
             }
         }
-        else if (typeof this.germline[list[i]]) {
-            request += ">" +list[i] + "\n" +this.germline[this.sequence[list[i]].locus][list[i]] + "\n";
-        }
-        }
-        if (address == 'IMGT') imgtPost(this.m.species, request, system);
+        if (address == 'IMGT') {
+            imgtPost(this.m.species, request, system);
+        } 
         if (address == 'IMGTSeg') {
             imgtPostForSegmenter(this.m.species, request, system, this);
             var change_options = {'l01p01c47' : 'N', // Deactivate default output
@@ -992,6 +994,7 @@ Segment.prototype = {
         var list = this.m.getSelected()
         var sumPercentage = 0;
         var sumReads = 0;
+        var sumRawReads = 0;
         var length = 0;
         var lastActiveClone = 0;
             
@@ -1002,14 +1005,18 @@ Segment.prototype = {
                 length += 1;
                 sumPercentage += this.m.clone(list[i]).getSize();
                 sumReads+= this.m.clone(list[i]).getReads(); 
+                sumRawReads+= this.m.clone(list[i]).getRawReads();
             }
         }
 
         var t = ""
-        if (sumReads > 0) {
+        if (sumRawReads > 0) {
             t += length + " clone" + (length>1 ? "s" : "") + ", "
 
-            t += this.m.toStringThousands(sumReads) + " read" + (sumReads>1 ? "s" : "")
+            t += this.m.toStringThousands(sumRawReads) + " read" + (sumRawReads>1 ? "s" : "")
+
+            if (sumRawReads != sumReads)
+               t += " [" + this.m.toStringThousands(Math.floor(sumReads*100)/100) + " norm.]"
 
             percentageStr = this.m.getStrAnySize(this.m.t, sumPercentage)
             if (percentageStr != "+")
@@ -1414,7 +1421,7 @@ Sequence.prototype = Object.create(genSeq.prototype);
             }
         }
         
-        for (var h=0; h<this.seq.length; h++) this.seqAA[h] =this.seq[h]; // "&nbsp";
+        for (var h=0; h<this.seq.length; h++) this.seqAA[h] = " ";
         
         var i = 0
 
@@ -1429,10 +1436,10 @@ Sequence.prototype = Object.create(genSeq.prototype);
             var code = "";
             var pos;
             
-            while (code.length<3 & i<=stop){
+            while (code.length<3 && i<=stop){
                 if (this.seq[i] != "-") {
                     code += this.seq[i];
-                    this.seqAA[i] = "&nbsp;";
+                    this.seqAA[i] = " ";
                 }
                 if(code.length == 2) pos = i;
                 i++;

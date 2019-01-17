@@ -106,6 +106,11 @@ Michaela Kotrova et al.,
 Blood, 2015, 126:1045-1047
 <http://dx.doi.org/10.1182/blood-2015-07-655159>
 
+Michaela Kotrova et al.,
+*Next‐generation amplicon TRB locus sequencing can overcome limitations of flow‐cytometric Vβ expression analysis and confirms clonality in all T‐cell prolymphocytic leukemia cases*,
+Cytometry Part A, 93(11):1118-1124, 2018
+<http://dx.doi.org/10.1002/cyto.a.23604>
+
 Ralf A. Linker et al.,
 *Thymocyte-derived BDNF influences T-cell maturation at the DN3/DN4 transition stage*
 European Journal of Immunology, 2015, 45, 1326-1338

@@ -40,5 +40,23 @@ var config = {
     // "autoload_analysis" : "data/Stanford-S22.analysis"
 
     // Proxy config for IMGT querying
-    "proxy": "https://localhost/vidjil/proxy/imgt"
+    "proxy": "https://localhost/vidjil/proxy/imgt",
+
+    /* Used for the standalone segmenter page */
+    "segmenter_address" : "https://db.vidjil.org/vidjil/segmenter",
+
+    /* Do we have access to a CloneDB ? */
+    "clonedb": false,
+
+    /****************
+     * Tips of the day
+     */
+    "doc_address" : "doctips/",
+    "available_tips" : []
+
+    /****************
+     * Static alerts
+     */
+
+    // "alert": "Server is down",
 }

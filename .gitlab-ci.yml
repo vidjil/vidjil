@@ -1,5 +1,4 @@
 
-
 before_script:
   - make demo
   - make data
@@ -18,11 +17,11 @@ stages:
   - test_functional_external
   - coverage
   - prepare_release
-  - release
+  - tgz_release
   - valgrind_unit
   - valgrind_functional
   - multiple_tests
-  - prepare_deploy
+  - publish_release
   - deploy_prod
 
 # Anchors
@@ -31,7 +30,7 @@ stages:
   artifacts: &lcov_artifact
     paths:
       - algo/lcov_test_*.filtered
-    expire_in: 6hrs
+    expire_in: 1 week
 
 # Tools
 
@@ -92,6 +91,7 @@ algo_coverage:
   artifacts:
     paths:
       - coverage/
+    expire_in: 1 week
   only:
     - /^feature-.*a.*\/.*$/
     - schedules
@@ -130,22 +130,22 @@ prepare_release:
   only:
     - /^feature-.*a.*\/.*$/
 
-release:
-  stage: release
+tgz_release:
+  stage: tgz_release
   script: make -C algo release RELEASE_TAG=`cat algo/release`
-  when: manual
   only:
     - /^feature-.*a.*\/release$/
   artifacts:
     paths:
     - algo/releases/vidjil-algo-`cat algo/release`.tar.gz
     - algo/releases/vidjil-algo-`cat algo/release`/vidjil-algo-`cat algo/release`_`uname -m`
+    expire_in: 10 years
   allow_failure: false
   tags:
     - ubuntu-16.04-amd64
 
 copy_release:
-  stage: prepare_deploy
+  stage: publish_release
   script:
     - |
       for repo in $ALGO_REPOSITORIES; do
@@ -155,11 +155,13 @@ copy_release:
       release_name=$(cat algo/release)
       ssh $VIDJIL_WWW "cd /var/www/html/releases; ln -sf vidjil-algo-${release_name}.tar.gz vidjil-latest.tgz; ln -sf vidjil-algo-${release_name}_x86_64 vidjil-latest_x86_64"
       ssh $VIDJIL_BONSAI "cd /bio1/www/html/vidjil; scp vidjil-algo-${release_name}* $VIDJIL_BONSAI_PROD:/bio1/www/html/vidjil"
+  when: manual
   only:
     - /^feature-.*a.*\/release$/
 
 deploy_release_prod:
   stage: deploy_prod
+  when: manual
   only:
     - /^feature-.*a.*\/release$/
   script:
@@ -327,7 +329,7 @@ deploy_review:
   script:
     - make -C browser icons
     - echo "$REVIEW_CONFIG_JS" > browser/js/conf.js
-    - rsync -av --delete browser $DEPLOY_SERVER:$DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG
+    - rsync -av --delete browser $REVIEW_SERVER:$REVIEW_SERVER_PATH$CI_BUILD_REF_SLUG
   environment:
     name: review/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
@@ -341,11 +343,12 @@ deploy_review:
 deploy_docker:
   stage: deploy_prod
   script:
-    - export CUR_DATE=date +%Y-%m-%d
-    - export TYPE=$CI_COMMIT_REF_NAME | awk '{ gsub(/prod-/, "") }{ print $1 }'
-    - export TAG="vidjil/$TYPE:$CUR_DATE-$CI_COMMIT_SHA"
-    - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=PRODUCTION -t $TAG docker/vidjil-$TYPE
+    - export CUR_DATE=`date +%Y-%m-%d`
+    - export TYPE=`echo $CI_COMMIT_REF_NAME | awk '{ gsub(/prod-/, "") }{ print $1 }'`
+    - export SHA=`echo $CI_COMMIT_SHA | awk '{ print substr($0, 0, 8) }'`
+    - export TAG="vidjil/$TYPE:$CUR_DATE-$SHA"
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=PRODUCTION -t $TAG docker/vidjil-$TYPE
     - docker push $TAG
     - docker tag $TAG "vidjil/$TYPE:latest"
     - docker push "vidjil/$TYPE:latest"
@@ -376,12 +379,26 @@ deploy_prod:
   tags:
     - web
 
+deploy_germlines:
+  stage: deploy_prod
+  script:
+    - make -C germline get-all-data
+    - make -C germline js
+    - date=$(date +%Y-%m-%d)
+    - tar cvzf germline-$date.tar.gz germline/*/*.fa germline/IMGT_RELEASE browser/js/germline.js
+    - scp germline-$date.tar.gz $VIDJIL_WWW:$REMOTE_GERMLINE_DIR
+  only:
+    - manual
+    - /^feature-.*g.*\/.*$/
+    
+
+
 stop_deploy_review:
   stage: deploy_review
   variables:
     GIT_STRATEGY: none
   script:
-    - ssh $DEPLOY_SERVER "rm -rf $DEPLOY_SERVER_PATH$CI_BUILD_REF_SLUG"
+    - ssh $REVIEW_SERVER "rm -rf $REVIEW_SERVER_PATH$CI_BUILD_REF_SLUG"
   when: manual
   environment:
     name: review/$CI_BUILD_REF_NAME

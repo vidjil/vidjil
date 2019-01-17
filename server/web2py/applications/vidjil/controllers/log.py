@@ -13,7 +13,7 @@ if request.env.http_origin:
 def anon_names(data):
     for row in data:
         # TODO use helper ?
-        row.name = vidjil_utils.anon_ids(row.id)
+        row.name = vidjil_utils.anon_ids([row.id])[0]
     return data
 
 def get_data_list(table):
@@ -72,7 +72,7 @@ def index():
             orderby=~db.user_log.created)
     for row in query:
         if row.patient.first_name is not None:
-            row.names = vidjil_utils.anon_ids(row.user_log.record_id)
+            row.names = vidjil_utils.anon_ids([row.user_log.record_id])[0]
         else:
             row.names = row.run.name
     return dict(query=query,

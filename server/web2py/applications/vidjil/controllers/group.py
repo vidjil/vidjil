@@ -36,6 +36,10 @@ def index():
         permissions = auth.get_group_permissions(table_name='sample_set', group_id=row.id, myfilter=permissions_list)
         row.access = ''.join([PermissionLetterMapping[p].value for p in permissions])
 
+    log.info("access group list", extra={'user_id': auth.user.id,
+                'record_id': None,
+                'table_name': "group"})
+
     return dict(message=T('Groups'), query=query, count=count)
 
 ## return an html form to add a group
@@ -44,6 +48,10 @@ def add():
         groups = db(db.auth_group).select()
     else:
         groups = auth.get_user_groups()
+
+    log.info('access group add form', extra={'user_id': auth.user.id,
+                'record_id': None,
+                'table_name': "group"})
     return dict(message=T('New group'), groups=groups)
 
 
@@ -87,6 +95,10 @@ def add_form():
 
         res = {"redirect": "group/index",
                "message" : "group '%s' (%s) created" % (id, request.vars["group_name"])}
+
+        log.info(res, extra={'user_id': auth.user.id,
+                'record_id': id,
+                'table_name': "group"})
         log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
@@ -99,6 +111,10 @@ def edit():
     if auth.is_admin() or auth.has_permission(PermissionsEnum.admin.value, db.auth_group, request.vars["id"]):
         group = db.auth_group[request.vars["id"]]
         return dict(message=T('Edit group'), group=group)
+
+    log.info('access group edit form', extra={'user_id': auth.user.id,
+                'record_id': request.vars["id"],
+                'table_name': "group"})
     return error_message(ACCESS_DENIED)
 
 def edit_form():
@@ -116,6 +132,10 @@ def edit_form():
 
         res = {"redirect": "group/index",
                "message" : "group '%s' modified" % request.vars["id"]}
+
+        log.info(res, extra={'user_id': auth.user.id,
+                'record_id': request.vars['id'],
+                'table_name': "group"})
         log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
@@ -143,6 +163,9 @@ def delete():
     
     res = {"redirect": "group/index",
            "message": "group '%s' deleted" % request.vars["id"]}
+    log.info(res, extra={'user_id': auth.user.id,
+                'record_id': request.vars["id"],
+                'table_name': "group"})
     log.admin(res)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
@@ -151,6 +174,9 @@ def delete():
 ## need ["id"]
 def info():
     if auth.can_view_group(request.vars["id"]):
+        log.info("access user list", extra={'user_id': auth.user.id,
+                'record_id': request.vars["id"],
+                'table_name': "group"})
         return dict(message=T('group info'))
     return error_message(ACCESS_DENIED)
 
@@ -159,6 +185,9 @@ def info():
 ## need ["id"]
 def permission():
     if auth.can_modify_group(request.vars["id"]):
+        log.info("view permission page", extra={'user_id': auth.user.id,
+                'record_id': request.vars["id"],
+                'table_name': "group"})
         return dict(message=T('permission'))
     return error_message(ACCESS_DENIED)
 
@@ -181,7 +210,9 @@ def remove_permission():
            "args" : { "id" : request.vars["group_id"]},
            "message": "user '%s' is not anymore owner of the group '%s'" % (request.vars["user_id"], request.vars["group_id"]) 
     }
-    log.info(res)
+    log.info(res, extra={'user_id': auth.user.id,
+                'record_id': request.vars["id"],
+                'table_name': "group"})
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 ## give admin right to a group member
@@ -194,6 +225,9 @@ def change_permission():
     res = {"redirect" : "group/permission" , "args" : { "id" : request.vars["group_id"]},
            "message": "user '%s' is now owner of the group '%s'" % (request.vars["user_id"], request.vars["group_id"]) }
     log.admin(res)
+    log.info(res, extra={'user_id': auth.user.id,
+                'record_id': request.vars["id"],
+                'table_name': "group"})
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 ## invite an user to join the group
@@ -206,6 +240,9 @@ def invite():
                "args" : { "id" : request.vars["group_id"]},
                "message" : "user '%s' added to group '%s'" % (request.vars["user_id"], request.vars["group_id"])}
         log.admin(res)
+        log.info(res, extra={'user_id': auth.user.id,
+                'record_id': request.vars["group_id"],
+                'table_name': "group"})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else:
@@ -225,6 +262,9 @@ def kick():
                "args" : { "id" : request.vars["group_id"]},
                "message" : "user '%s' removed from group '%s'" % (request.vars["user_id"], request.vars["group_id"])}
         log.admin(res)
+        log.info(res, extra={'user_id': auth.user.id,
+                'record_id': request.vars["group_id"],
+                'table_name': "group"})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else:
@@ -250,6 +290,9 @@ def rights():
                 "args" : {"id" : group_id },
                 "message": msg}
         log.admin(res)
+        log.info(res, extra={'user_id': auth.user.id,
+                'record_id': request.vars["id"],
+                'table_name': "group"})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"message": "admin only"}

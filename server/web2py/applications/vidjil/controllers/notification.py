@@ -85,7 +85,9 @@ def add_form():
         res = {"redirect": "notification/index",
                "args" : { "id" : id },
                "message": "notification added"}
-        log.info(res)
+        log.info(res, extra={'user_id': auth.user.id,
+                'record_id': id,
+                'table_name': "notification"})
         # Clear cache of all notifications
         cache.ram.clear(regex=NOTIFICATION_CACHE_PREFIX + '*')
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
@@ -141,7 +143,9 @@ def edit_form():
         res = {"redirect": "notification/index",
                "args" : { "id" : request.vars['id'] },
                "message": "notification updated"}
-        log.info(res)
+        log.info(res, extra={'user_id': auth.user.id,
+                'record_id': request.vars["id"],
+                'table_name': "notification"})
         # Clear cache of all notifications
         cache.ram.clear(regex=NOTIFICATION_CACHE_PREFIX + '*')
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
@@ -166,7 +170,9 @@ def delete():
     res = {"redirect": "notification/index",
                "success": "true",
                "message": "notification " + request.vars['id'] + " deleted"}
-    log.info(res)
+    log.info(res, extra={'user_id': auth.user.id,
+            'record_id': request.vars["id"],
+            'table_name': "notification"})
     # Clear cache of all notifications
     cache.ram.clear(regex=NOTIFICATION_CACHE_PREFIX + '*')
     return gluon.contrib.simplejson.dumps(res, separators=(',',':')) 

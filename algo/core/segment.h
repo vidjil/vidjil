@@ -7,6 +7,7 @@
 #include "bioreader.hpp"
 #include "dynprog.h"
 #include "tools.h"
+#include "output.h"
 #include "germline.h"
 #include "kmerstore.h"
 #include "kmeraffect.h"
@@ -102,7 +103,7 @@ class AlignBox
 
   AlignBox(string key = "", string color="");
   string getSequence(string sequence);
-  void addToJson(json &seg, int alternative_genes=NO_LIMIT_VALUE);
+  void addToOutput(CloneOutput *clone, int alternative_genes);
 
   /**
    * Returns 'V', 'D', 'J', or possibly '5', '4', '3', '?', depending on the ref_label and on the key
@@ -326,7 +327,7 @@ class KmerSegmenter : public Segmenter
   KmerAffectAnalyser *getKmerAffectAnalyser() const;
 
   string getInfoLineWithAffects() const;
-  json toJson();
+  void toOutput(CloneOutput *clone);
 
  private:
   void computeSegmentation(int strand, KmerAffect left, KmerAffect right,
@@ -402,8 +403,8 @@ class FineSegmenter : public Segmenter
    */
   void findCDR3();
 
-  void checkWarnings(json &json_clone);
-  json toJson();
+  void checkWarnings(CloneOutput *clone);
+  void toOutput(CloneOutput *clone);
   
 };
 

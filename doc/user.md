@@ -35,7 +35,7 @@ database computes these `.vidjil` files.
 Otherwise, such `.vidjil` files can be obtained:
 
   - from vidjil-algo (starting from
-    `.fasta`, `.fastq` or `.gz` files, see [algo.org](http://git.vidjil.org/blob/master/doc/algo.org)).
+    `.fasta`, `.fastq` or `.gz` files, see [vidjil-algo documentation](http://www.vidjil.org/doc/vidjil-algo/)).
     To gather several `.vidjil` files, you have to use the [fuse.py](http://git.vidjil.org/blob/master/tools/fuse.py) script
   - or by any other V(D)J analysis pipelines able to output files
     respecting the `.vidjil` [file format](./format-analysis.org) (contact us if you are interested)
@@ -429,18 +429,18 @@ With DNA-Seq sequencing with specific V(D)J primers,
 ratios above 90% usually mean very good results. Smaller ratios, especially under 60%, often mean that something went wrong.
 On the other side, capture with many probes or RNA-Seq strategies usually lead to datasets with less than 0.1% V(D)J recombinations.
 
-The “info“ button further detail the causes of non-analysis (for vijdil-algo, `UNSEG`, see detail on [algo.org](http://git.vidjil.org/blob/master/doc/algo.org)).
+The “info“ button further detail the causes of non-analysis (for vijdil-algo, `UNSEG`, see detail on [vidjil-algo documentation](http://www.vidjil.org/doc/vidjil-algo/#unsegmentation-causes)).
 There can be several causes leading to bad ratios:
 
 ### Analysis or biological causes
 
   - The data actually contains other germline/locus that what was searched for
     (solution: relauch the processing, or ask that we relaunch it, with the correct germline sequences).
-    See [locus.org](http://git.vidjil.org/blob/master/doc/locus.org) for information on the analyzable human locus with vidjil-algo,
+    See [locus documentation](http://www.vidjil.org/doc/locus/) for information on the analyzable human locus with vidjil-algo,
     and contact us if you would like to analyze data from species that are not currently available.
 
   - There are incomplete/exceptional recombinations
-    (Vidjil can process some of them, config `multi+inc`, see [locus.org](http://git.vidjil.org/blob/master/doc/locus.org) for details)
+    (Vidjil can process some of them, config `multi+inc`, see [locus documentation](http://www.vidjil.org/doc/locus/) for details)
 
   - There are too many hypersomatic mutations
     (usually Vidjil can process mutations until 10% mutation rate… above that threshold, some sequences may be lost).

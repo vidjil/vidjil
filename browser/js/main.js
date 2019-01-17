@@ -49,6 +49,41 @@ var db = new Database(m);
 var notification = new Notification(m)
 
 try {
+    var vmi = new VMI();
+    vmi.setupDrawer();
+
+    /* use template to create DOM elements from string */
+    var template = document.createElement('template');
+    template.innerHTML = ["<div id=\"visu-separator\" >...",
+        "<div class=\"visu2_menu_anchor devel-mode\">",
+        "<div class=\"visu2_menu\">",
+        "<div class=\"visu2_menu_content\">",
+        "<label for=\"visu2_mode_sp\" onclick=\"switch_visu2('scatterplot')\">",
+        "scatterplot",
+        "<input id=\"visu2_mode_sp\" name=\"visu2_mode\" type=\"radio\"/>",
+        "</label>",
+        "<label for=\"visu2_mode_gr\" onclick=\"switch_visu2('graph')\">",
+        "graph",
+        "<input id=\"visu2_mode_gr\" name=\"visu2_mode\" type=\"radio\" checked/>",
+        "</label>",
+        "</div>",
+        "mode",
+        "</div>",
+        "</div>",
+        "</div>"].join('');
+    var separator = template.content.firstChild;
+    var panel_instructions = [{'mid-container': ["left-container", "visu-container"]},"bot-container"];
+    vmi.setupPanels(panel_instructions, document.body);
+
+    vmi.addView("info", "left-container", "");
+    vmi.addView("list", "left-container", "");
+    vmi.addView("data", "left-container", "");
+    vmi.addView("visu2", "visu-container", "");
+    document.getElementById("visu-container").appendChild(separator);
+    vmi.addView("visu", "visu-container", "");
+    vmi.addView("segmenter", "bot-container", "");
+    vmi.setOverlays(["info-row", "list-row", "data-row", "visu-container", "bot-container"]);
+
     /* Views
      * Each view is rendered inside a <div> html element (whose id is given as the first paramter),
      * and kept sync with the model given as the other parameter (here 'm').
@@ -59,7 +94,7 @@ try {
     var list_clones = new List("list", "data", m, db);   // List of clones
     var sp = new ScatterPlot("visu", m, db);             // Scatterplot (both grid and bar plot view)
     var sp2;
-    var segment = new Segment("bot-container", m, db);   // Segmenter
+    var segment = new Segment("segmenter", m, db);   // Segmenter
 
 
     /* Similarity
@@ -101,6 +136,10 @@ try {
     var my_tips = new TipsOfTheDay(tips, new TipDecorator(), available_tips);
     my_tips.set_container(document.getElementById('tip-container'))
     my_tips.display()
+
+    var menu_container = document.getElementById('vmiSelector');
+    var menu = vmi.setMenuOptions(new VidjilMenuDecorator());
+    menu_container.appendChild(menu);
 } catch(err) {
     this.db.log_error(err)
 }

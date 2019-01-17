@@ -19,6 +19,9 @@ def index():
     used_query = db(db.results_file.config_id > 0).select(db.results_file.config_id, distinct=True)
     used_configs = [row.config_id for row in used_query]
 
+    mes = u"Access config list"
+    log.info(mes, extra={'user_id': auth.user.id, 'record_id': -1, 'table_name': 'config'})
+
     return dict(message=T('Configs'),
                query=query,
                used_configs=used_configs,
@@ -63,6 +66,9 @@ def add_form():
                                 table_name='config',
                                 record_id=config_id)
 
+        mes = u"Added config"
+        log.info(mes, extra={'user_id': auth.user.id, 'record_id': config_id, 'table_name': 'config'})
+
         res = {"redirect": "config/index",
                "message": "config '%s' added" % request.vars['config_name']}
         log.info(res)
@@ -76,6 +82,8 @@ def add_form():
 
 def edit():
     if (auth.can_modify_config(request.vars['id'])):
+        mes = u"Load config edit form"
+        log.info(mes, extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'config'})
         return dict(message=T('edit config'))
     return error_message(ACCESS_DENIED)
 
@@ -104,6 +112,8 @@ def edit_form():
                "message": "config '%s' updated" % request.vars['config_name']}
 
         log.admin(res)
+        mes = u"Submit config edit form"
+        log.info(mes, extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'config'})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
@@ -127,6 +137,8 @@ def delete():
             res = {"redirect": "config/index",
                    "message": "config '%s' deleted" % request.vars["id"]}
             log.admin(res)
+            mes = u"Delete config"
+            log.info(mes, extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'config'})
         else:
             res = {"redirect": "config/index",
                     "success": "false",
@@ -190,7 +202,7 @@ def change_permission():
                 res = {"message" : "c%s: access '%s' granted to '%s'" % (request.vars["config_id"],
                                                                          PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
             
-            log.admin(res)
+            log.admin(res, extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'config'})
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         else :
             res = {"message": "incomplete request : "+error }

@@ -19,6 +19,7 @@
 #include "read_score.h"
 #include "representative.h"
 #include "stats.h"
+#include "output.h"
 #include "../lib/json_fwd.hpp"
 
 #define NB_BINS 30
@@ -26,8 +27,6 @@
 
 using namespace std;
 using json = nlohmann::json;
-
-typedef string junction ;
 
 class WindowsStorage {
  private:
@@ -222,9 +221,9 @@ class WindowsStorage {
   /**
    * @param delete_all: Delete the objects while they are inserted into the JSON. This prevents the memory
    *                    from continously increasing (see #2120, #3387)
-   * @return a JSON object containing all the information
+   * @post insert the information into the SampleOutput clones
    */
-  json sortedWindowsToJson(map<junction, json> json_data_segment, int max_json_output, bool delete_all=false);
+  void sortedWindowsToOutput(SampleOutput *output, int max_output, bool delete_all=false);
   
   /**
    * Clear the seqs_by_window map.

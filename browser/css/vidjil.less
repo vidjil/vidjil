@@ -21,12 +21,24 @@
 
 /* #dcffed also available */
 
+#vmi-menu {
+  position: unset;
+  bottom: unset;
+  width: unset;
+}
+
 html{
   height: 100%;
   padding: 0px;
   margin: 0px;
   min-width: 1160px;
   min-height: 250px
+}
+
+body {
+  display: flex;
+  flex-flow: column;
+  overflow-x: hidden;
 }
 
 body, svg {
@@ -71,6 +83,8 @@ ul{
 }
 
 #visu-container{
+  position: relative;
+  flex: 1 1 auto;
   -khtml-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: -moz-none;
@@ -83,11 +97,10 @@ ul{
 }
 
 #top-container {
+  flex: 0 1 auto;
   height: @top_container_height;
   width: 100%;
   background: @background;
-  position : fixed;
-  z-index:1;
 }
 
 #top-container.alert
@@ -138,6 +151,8 @@ ul{
 
 #mid-container {
   position : fixed;
+  display: flex;
+  flex: 1 1 auto;
   top : @top_container_height;
   bottom : 125px ;
   width: -moz-calc(~"100%" - @margin + @margin);
@@ -159,16 +174,16 @@ ul{
 }
 
 #left-container {
-  height:100%;
+  display: flex;
+  flex-flow: column;
+  position: relative;
   width : @width_left_container;
-  float : left;
   overflow-y : none;
   -khtml-user-select: auto;
   -webkit-user-select: auto;
   -moz-user-select: auto;
   -ms-user-select: auto;
   user-select: auto;
-  display : table;
 }
 
 #visu, #visu2 {
@@ -177,7 +192,7 @@ ul{
 }
 
 #visu2 {
-max-height: calc(~"100%" - @margin)
+  max-height: calc(~"100%" - @margin)
 }
 
 line {
@@ -187,16 +202,11 @@ line {
 
                         /* left-container - info */
 
-#info-row{
-    height : 200px;
-    display : table-row;
-}
-
 #info{
+  flex: 0 0 auto;
   font-size: 13px;
   padding:3px;
   background : @background;
-  display : table-cell;
 }
 
 .info_line {
@@ -510,22 +520,24 @@ line {
     border-color : @border;
 }
 
-#list-row, #data-row{
-  display: table-row;
+#list{
+  flex: 1 1 auto;
+  height: 0px; // set scrollbar flex will override height
+  max-height: 100%;
 }
 
-#list, #data{
-  display:table-cell;
-}
-
-#data-row{
-  height : 0.1px;
+#data{
+  flex: 0 1 auto;
+  border: none;  
 }
 
 #list_clones{
+  flex: 1 1 auto;
   overflow-y : scroll;
   overflow-x : hidden;
   height : calc(~"100% - 30px");  /*100% - list_menu height */
+  max-height: 100%;
+  width: 100%;
   padding:2px;
 }
 
@@ -1238,14 +1250,23 @@ span.logo
   overflow: hidden;
 }
 
+#bot-placeholder {
+  flex: 0 0 135px;
+}
+
 #bot-container {
   position: fixed;
-  bottom: 0px;
-  left: 0px;
+  left: 0;
+  bottom: 0;
   width: 100%;
   border-top: solid;
   border-width: 6px;
   min-height: 125px;
+}
+
+#segmenter {
+  display: flex;
+  flex-flow: column;
 }
 
 .tn{
@@ -1254,6 +1275,7 @@ span.logo
 }
 
 #list_menu{
+  flex: 0 1 auto;
   -khtml-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: -moz-none;
@@ -1539,6 +1561,10 @@ span.warningReads {
     background: @highlight;
 }
 
+#norm_button {
+  width: 7ex;
+}
+
 .edit_button {
     float: right;
     margin-right: 2px;
@@ -1699,7 +1725,7 @@ h3 .uid {
 #db_table_container{
     overflow-y: scroll;
     overflow-x: hidden;
-    height: 100%;
+    height: calc(100% -30px);
     position: relative;
 }
 

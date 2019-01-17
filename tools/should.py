@@ -38,6 +38,7 @@ import os.path
 from collections import defaultdict, OrderedDict
 import xml.etree.ElementTree as ET
 import datetime
+import tempfile
 
 # Make sure the output is in utf8
 sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf8', buffering=1)
@@ -266,7 +267,7 @@ def pre_process(cmd):
 def populate_variables(var):
     '''
     >>> populate_variables(['ab=cd', 'ef=xyz'])
-    [('$ab', 'cd'), ('$ef', 'xyz')]
+    [('$ef', 'xyz'), ('$ab', 'cd')]
     '''
 
     variables = []
@@ -777,8 +778,10 @@ class TestSuite():
         cmd = ' ; '.join(map(pre_process, self.cmds))
         cmd = cmd_variables_cd(cmd)
 
+        f_stdout = tempfile.TemporaryFile()
+        f_stderr = tempfile.TemporaryFile()
         p = subprocess.Popen([cmd], shell=True,
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                             stdout=f_stdout, stderr=f_stderr,
                              close_fds=True)
 
         try:
@@ -788,9 +791,12 @@ class TestSuite():
             self.exit_code = None
             self.tests.append(ExternalTestCase('Exit code is %d' % self.expected_exit_code, SKIP, 'timeout after %s seconds' % TIMEOUT))
 
-        self.stdout = [l.decode(errors='replace') for l in p.stdout.readlines()]
-        self.stderr = [l.decode(errors='replace') for l in p.stderr.readlines()]
-
+        f_stdout.seek(0)
+        f_stderr.seek(0)
+        self.stdout = [l.decode(errors='replace') for l in f_stdout.readlines()]
+        self.stderr = [l.decode(errors='replace') for l in f_stderr.readlines()]
+        f_stdout.close()
+        f_stderr.close()
 
 
         if verbose > 0:

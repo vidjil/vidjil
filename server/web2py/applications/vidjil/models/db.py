@@ -75,6 +75,7 @@ response.generic_patterns = ['*'] if request.is_local else []
 
 from gluon.tools import Auth, Crud, Service, PluginManager, prettydate
 auth = VidjilAuth(db)
+auth.settings.two_factor_authentication_group = "auth2step"
 
 crud, service, plugins = Crud(db), Service(), PluginManager()
 
@@ -320,8 +321,8 @@ class MsgUserAdapter(logging.LoggerAdapter):
                                       vidjil_utils.safe_decoding(msg))
         return new_msg, kwargs
     
-    def admin(self, msg):
-        self.log(logging.ADMIN, msg)
+    def admin(self, msg, extra=None):
+        self.log(logging.ADMIN, msg, extra)
 #
 class UserLogHandler(logging.Handler):
 

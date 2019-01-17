@@ -444,11 +444,31 @@ Clone.prototype = {
     },
 
     /**
+    * @return {string} locus (at least the locus of the 5' gene)cluster number
+    */
+    getLocus: function () {
+
+        var locus = this.get('germline')
+
+        if (typeof this.m.germline[locus] === "undefined") {
+            var loci = [this.getGene("5").substring(0,3), this.getGene("3").substring(0,3) ]
+            locus = loci[0]
+            if (loci[0] != loci[1]) {
+                console.log("Clone " + this.getName() + "recombines sequences from two separate loci. Using: " + locus)
+            }
+        }
+
+        return locus
+    },
+
+    /**
      * compute the clone size ( ratio of all clones clustered ) at a given time
      * @param {integer} time - tracking point (default value : current tracking point)
+     * @param {boolean} ignore_expected_normalisation - Return size with no normalisation for scatterplot usage
      * @return {float} size
      * */
-    getSize: function (time) {
+    getSize: function (time, ignore_expected_normalisation) {
+        if (ignore_expected_normalisation == undefined) { ignore_expected_normalisation=false}
 
         if (!this.quantifiable)
             return this.NOT_QUANTIFIABLE_SIZE
@@ -456,11 +476,12 @@ Clone.prototype = {
         time = this.m.getTime(time);
         
         if (this.m.reads.segmented[time] === 0 ) return 0;
-        var result = this.getReads(time) / this.m.reads.segmented[time];
-        
-        if (this.m.norm) result = this.m.normalize(result, time);
-
-        return result;
+        var result     = this.getReads(time) / this.m.reads.segmented[time];
+        if ( ignore_expected_normalisation == true && this.m.normalization_mode == this.m.NORM_EXPECTED){
+            // special getSize for scatterplot (ignore constant/expected normalization)
+            return result
+        }
+        return this.m.normalize(result, time) 
     }, //end getSize
     
     /**
@@ -505,25 +526,6 @@ Clone.prototype = {
         return max;
     },
     
-    /**
-     * special getSize for scatterplot (ignore constant normalization)<br>
-     * @param {integer} time - tracking point (default value : current tracking point)
-     * @return {float} size
-     * */
-    getSize2: function (time) {
-
-        if (!this.quantifiable)
-            return this.NOT_QUANTIFIABLE_SIZE
-
-        time = this.m.getTime(time)
-        
-        if (this.m.reads.segmented[time] === 0 ) return 0
-        var result = this.getReads(time) / this.m.reads.segmented[time]
-        
-        if (this.m.norm ) result = this.m.normalize(result, time)
-
-        return result
-    },
 
     /**
      * @return {string} the global size ratio of the clone at the given time
@@ -545,11 +547,8 @@ Clone.prototype = {
         if (this.germline in this.m.reads.germline) system_reads = this.m.reads.germline[this.germline][time]
         
         if (system_reads === 0 ) return 0
-        var result = this.getReads(time) / system_reads
-        
-        if (this.m.norm) result = this.m.normalize(result, time)
-
-        return result
+        var result     = this.getReads(time) / system_reads
+        return this.m.normalize(result, time)
     },
 
     /**
@@ -604,9 +603,7 @@ Clone.prototype = {
 
         if (group_reads === 0 ) return 0 ;
         var result = this.getReads(time) / group_reads
-        if (this.norm) result = this.normalize(result, time)
-        return result
-
+        return this.m.normalize(result, time)
     },
 
     /* return a printable information: length, number of reads, and ratios
@@ -617,8 +614,9 @@ Clone.prototype = {
     */
 
     getPrintableSize: function (time) {
+        time = this.m.getTime(time)
 
-        var reads = this.getReads(time)
+        var reads = this.getRawReads(time)
         s = this.getSequenceLength() + ' nt'
 
         if (!this.quantifiable)
@@ -626,6 +624,11 @@ Clone.prototype = {
 
         s += ', '
         s += this.m.toStringThousands(reads) + ' read' + (reads > 1 ? 's' : '') + ' '
+
+        reads = this.getReads(time)
+
+        if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL)
+            s += "[" + this.m.toStringThousands(Math.floor(reads * 100) / 100) + " normalized] "
 
         if (reads < this.m.NB_READS_THRESHOLD_QUANTIFIABLE)
             return s
@@ -670,13 +673,7 @@ Clone.prototype = {
         
         if (this.m.reads.segmented[time] === 0 ) return 0
         var result = this.get('reads',time) / this.m.reads.segmented[time]
-        
-        if (this.norm) {
-            result = this.m.normalize(result, time)
-        }
-
-        return result
-
+        return this.m.normalize(result, time)
     }, //end getSequenceSize
 
     getStrSequenceSize: function (time) {
@@ -687,21 +684,25 @@ Clone.prototype = {
     },
 
     /* compute the clone reads number ( sum of all reads of clones clustered )
-     * @t : tracking point (default value : current tracking point)
+     * @time : tracking point (default value : current tracking point)
+     * @raw: do not normalize
      * */
-    getReads: function (time) {
+    getReads: function (time, raw) {
         time = this.m.getTime(time)
         var result = 0;
 
         var cluster = this.getCluster()
         for (var j = 0; j < cluster.length; j++) {
-            result += this.m.clone(cluster[j]).reads[time];
+            result += this.m.normalize_reads(this.m.clone(cluster[j]), time, raw);
         }
 
         return result
 
-    }, //end getSize
+    },
 
+    getRawReads: function (time) {
+      return this.getReads(time, true)
+    },
 
     /* return a list of read numbers (sum of all reads of clustered clones) for all samples
      * */
@@ -1195,10 +1196,17 @@ Clone.prototype = {
             html += row_1("clone name", this.getName())
             html += row_1("clone short name", this.getShortName())
 
-            html += "<tr><td>clone size (n-reads (total reads))</td>"
+            html += "<tr><td>clone size (n-reads (total reads))"
+            if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL) {
+                html += "<br />[normalized]"
+            }
+            html += "</td>"
             for (var j = 0; j < time_length; j++) {
                 html += "<td>"
-                html += this.getReads(this.m.samples.order[j]) + "  (" + this.m.reads.segmented[this.m.samples.order[j]] + ")"
+                html += this.getRawReads(this.m.samples.order[j]) + "  (" + this.m.reads.segmented[this.m.samples.order[j]] + ")"
+                if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL) {
+                  html += "<br />[" + this.getReads(this.m.samples.order[j]).toFixed(2) + "]"
+                }
                 if ($('#debug_menu').is(':visible') && (typeof this.m.db_key.config != 'undefined' )) {
                 html += "<br/>"
                 call_reads = "db.call('default/run_request', { "
@@ -1376,12 +1384,15 @@ Clone.prototype = {
             self.m.openTagSelector(self.index, e);
         }
         span_star.id = self.index
-        if ((self.m.norm)&&(self.index==self.m.normalization.id)){
-        span_star.appendChild(icon('icon-lock-1', 'clone tag'))
-
+        var tag_icon = document.createElement('i')
+        tag_icon.id  = "tag_icon_"+self.index
+        tag_icon.title = "clone_tag"
+        if ((self.m.normalization_mode == self.m.NORM_EXPECTED)&&(self.index==self.m.normalization.id)){
+            tag_icon.classList.add('icon-lock-1')
         }else{
-        span_star.appendChild(icon('icon-star-2', 'clone tag'))
+            tag_icon.classList.add('icon-star-2')
         }
+        span_star.appendChild(tag_icon)
         span_star.setAttribute('id', 'color' + this.index);
         if (typeof this.tag != 'undefined')
             span_star.style.color = this.m.tag[this.getTag()].color
@@ -1542,7 +1553,39 @@ Clone.prototype = {
         }
         return res;
       }
-    }
+    },
+
+    /**
+    * Update the clone tag icon
+    */
+    updateCloneTagIcon: function () {
+        // get the icon tag element
+        icon_tag = document.getElementById("tag_icon_"+this.index)
+        if (icon_tag != null){
+            icon_tag.classList.remove("icon-star-2")
+            icon_tag.classList.remove("icon-lock-1")
+            icon_tag.classList.remove("icon-star-empty-1")
+
+            // change class in function of model.normalization method
+            if (this.m.normalization_mode == this.m.NORM_EXPECTED){
+                var expected_clone_index = this.m.normalization.id
+                if (expected_clone_index == this.index){
+                    icon_tag.classList.add("icon-lock-1")
+                } else {
+                    icon_tag.classList.add("icon-star-2")
+                }
+            } else if (this.m.normalization_mode == this.m.NORM_EXTERNAL){
+                if (this.normalized_reads != undefined){
+                    icon_tag.classList.add("icon-star-empty-1")
+                } else {
+                    icon_tag.classList.add("icon-star-2")
+                }
+            } else {
+                icon_tag.classList.add("icon-star-2")
+            }
+        }
+         return
+    },
 
 };
 

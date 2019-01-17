@@ -35,7 +35,7 @@ QUnit.module("Clone", {
         "name" : some_name,
         "reads" : [10,10,30,0] ,
         "top" : 2,
-        "germline" : "TRG",
+        "germline" : "IGH",
         "warn": [{
             "code": "Wxx",
             "msg": "a warning that is only an information",
@@ -114,6 +114,14 @@ var json_clone5 = {
     "top": 5,
 };
 
+// Clone with normalized_reads
+var json_clone6 = {
+        "id" : "id6",
+        "germline" : "TRG",
+        "reads" : [10,10,0,30],
+        "normalized_reads" : [20,20,0,30],
+    }
+
 QUnit.test("name, informations, getHtmlInfo", function(assert) {
     
     assert.equal(json_clone1.seg.junction.start, 10, "Start junction is 10 in JSON for clone 1");
@@ -138,6 +146,9 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.equal(c2.getCode(), some_name, "clone2, .getCode()");
     assert.equal(c2.getName(), some_name, "clone2, .getName()");
     assert.equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/12/4 J5*02", "clone2, .getShortName()");
+
+    assert.equal(c1.getLocus(), "TRG")
+    assert.equal(c2.getLocus(), "IGH")
 
     assert.equal(c1.isWarned(), 'warn', "clone1 is warned (client, bad e-value)")
     assert.equal(c2.isWarned(), false, "clone2 is not warned (only 'info')")
@@ -344,6 +355,11 @@ QUnit.test("size", function(assert) {
     assert.equal(c1.get('reads'), 10, "clone c1 reads : 10");
     assert.equal(c1.getSequenceSize(), "0.05", "clone c1 size : 0.05");
     
+    // testgetSize with no norm for scatterplot usage
+    m.set_normalization(m.NORM_EXPECTED)
+    m.compute_normalization(0,0.20)
+    assert.equal(c1.getSize().toFixed(2), 0.20, "c1 get correct size after normalisation");
+    assert.equal(c1.getSize(undefined, true), 0.10, "c1 return size with no norm if parameter is setted for");
     
 });
 

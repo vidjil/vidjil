@@ -278,7 +278,7 @@ Axes.prototype = {
                 fct: function(clone) {return clone.getDeletion('3', 'delLeft')}
             },
             "occCloneDB": {
-                hide : true,
+                hide : (typeof config === 'undefined' || ! config.clonedb),
                 doc: "number of occurrences in cloneDB",
                 label: "cloneDB occurrences",
                 axis: new NumericalAxis(this.m),

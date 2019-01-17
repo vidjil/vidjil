@@ -154,9 +154,12 @@ def form():
             relevant_ids[stype] = []
         relevant_ids[stype].append(row.id)
         action = 'add'
+        log.debug("load add form", extra={'user_id': auth.user.id,
+                'record_id': request.vars['sample_set_id'],
+                'table_name': "sample_set"})
 
     # edit file
-    elif 'file_id' in request.vars:
+    elif 'file_id' in request.vars and request.vars['file_id'] is not None:
         if not auth.can_modify_file(request.vars['file_id']):
             return error_message("you need admin permission to edit files")
 
@@ -174,6 +177,9 @@ def form():
         action = 'edit'
 
         sample_type = request.vars["sample_type"]
+        log.debug("load edit form", extra={'user_id': auth.user.id,
+                'record_id': request.vars['file_id'],
+                'table_name': "sequence_file"})
     else:
         return error_message("missing sample_set or file id")
 
@@ -283,8 +289,8 @@ def submit():
 
         link_to_sample_sets(fid, id_dict)
 
-        log.info(mes, extra={'user_id': auth.user.id,\
-                'record_id': f['id'],\
+        log.info(mes, extra={'user_id': auth.user.id,
+                'record_id': f['id'],
                 'table_name': "sequence_file"})
 
     if not error:
@@ -388,6 +394,7 @@ def upload():
         log.error(res)
     else:
         log.info(res)
+        log.debug("#TODO log all relevant info to database")
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
   
 
@@ -444,7 +451,9 @@ def delete():
             config_ids = get_sequence_file_config_ids(request.vars["id"])
             db(db.results_file.sequence_file_id == request.vars["id"]).delete()
             db(db.sequence_file.id == request.vars["id"]).delete()
-            schedule_fuse(sample_set_ids, config_ids)
+            set_memberships = db(db.sample_set_membership.sample_set_id.belongs(sample_set_ids)).select()
+            non_empty_set_ids = [r.sample_set_id for r in set_memberships]
+            schedule_fuse(non_empty_set_ids, config_ids)
 
         res = {"redirect": "sample_set/index",
                "args" : { "id" : request.vars["redirect_sample_set_id"]},
@@ -485,7 +494,7 @@ def producer_list():
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def restart_pre_process():
-    if "sequence_file_id" not in request.vars:
+    if "sequence_file_id" not in request.vars or request.vars['sequence_file_id'] is None:
         return error_message("missing parameter")
     sequence_file = db.sequence_file[request.vars["sequence_file_id"]]
     if sequence_file is None or not auth.can_modify_file(sequence_file.id):
@@ -494,6 +503,9 @@ def restart_pre_process():
     db.sequence_file[sequence_file.id] = dict(pre_process_flag = 'WAIT')
     db.commit()
     res = schedule_pre_process(sequence_file.id, pre_process.id)
+    log.debug("restart pre process", extra={'user_id': auth.user.id,
+                'record_id': sequence_file.id,
+                'table_name': "sequence_file"})
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def match_filetype(filename, extension):

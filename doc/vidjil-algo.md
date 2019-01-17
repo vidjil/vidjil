@@ -1,4 +1,4 @@
-# vidjil-algo 2018.07
+# vidjil-algo 2018.10
 **Command-line manual**
 
 *The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)*
@@ -7,6 +7,7 @@
   Vidjil -- High-throughput Analysis of V(D)J Immune Repertoire -- [[http://www.vidjil.org]]
   Copyright (C) 2011-2018 by Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
+  and VidjilNet consortium.
   contact@vidjil.org
 ```
 
@@ -80,7 +81,8 @@ You can also download a static binary, see [installation](#installation).
 To compile Vidjil-algo, make sure:
 
   - to be on a POSIX system ;
-  - to have a C++11 compiler (as `g++` 4.8 or above, or `clang` 3.3 or above).
+  - to have a C++11 compiler (as `g++` 4.8 or above, `g++` 7.3 being supported, or `clang` 3.3 or above).
+    This version of Vidjil-algo does not work with `g++` 8.0 or above.
   - to have the `zlib` installed (`zlib1g-dev` package under Debian/Ubuntu,
     `zlib-devel` package under Fedora/CentOS).
 
@@ -142,6 +144,10 @@ Then g++ 4.8 can be installed.
 apt-get update
 apt-get install -t jessie g++-4.8 valgrind
 ```
+
+### Ubuntu 16.04 LTS, Ubuntu 18.04 LTS
+
+Recent versions of `g++` are included.
 
 ### Ubuntu 14.04 LTS
 
@@ -627,6 +633,41 @@ Similarly, options are available to get the unsegmented reads:
 Again, as these options may generate large files, they are generally not recommended.
 However, they are very useful in some situations, especially to understand why some dataset gives poor segmentation result.
 For example `-uu -X 1000` splits the unsegmented reads from the 1000 first reads.
+
+
+## AIRR .tsv output
+
+Since version 2018.10, vidjil-algo supports the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
+We export all required fields, some optional fields, as also some custom fields (+).
+
+Note that Vidjil-algo is designed to efficiently gather reads from large datasets into clones. 
+By default (`-c clones`), we thus report in the AIRR format *clones*.
+See also [What is a clone ?](vidjil-format/#what-is-a-clone).
+Using `-c segment` trigger a separate analysis for each read, but this is usually not advised for large datasets. 
+
+
+| Name  | Type | AIRR 1.2 Description <br /> *vidjil-algo implementation* |
+| ----- | ---- |  ------------------------------------------------------- |
+| locus | string | Gene locus (chain type). For example, `IGH`, `IGK`, `IGL`, `TRA`, `TRB`, `TRD`, or `TRG`.<br />*Vidjil-algo outputs all these loci. Moreover, the incomplete recombinations analyzed by vidjil-algo are reported as `IGH+`, `IGK+`, `TRA+D`, `TRB+`, `TRD+`, and `xxx` for unexpected recombinations. See  [locus](locus).*
+| duplicate_count | number | Number of reads contributing to the (UMI) consensus for this sequence. For example, the sum of the number of reads for all UMIs that contribute to the query sequence. <br />*Number of reads gathered in the clone.*
+| sequence_id | string  | Unique query sequence identifier within the file. Most often this will be the input sequence header or a substring thereof, but may also be a custom identifier defined by the tool in cases where query sequences have been combined in some fashion prior to alignment. <br />*This identifier is the (50 bp by default) window extacted around the junction.* |
+| clone_id 	| string | 	Clonal cluster assignment for the query sequence. <br />*This identifier is again the (50 bp by default) window extacted around the junction.*
+| warnings (+) | string | *Warnings associated to this clone. See <https://gitlab.vidjil.org/blob/dev/doc/warnings.md>.*
+| sequence  | string | The query nucleotide sequence. Usually, this is the unmodified input sequence, which may be reverse complemented if necessary. In some cases, this field may contain consensus sequences or other types of collapsed input sequences if these steps are performed prior to alignment. <br />*This contains the consensus/representative sequence of each clone.*
+| rev_comp  | boolean | True if the alignment is on the opposite strand (reverse complemented) with respect to the query sequence. If True then all output data, such as alignment coordinates and sequences, are based on the reverse complement of 'sequence'. <br />*Set to null, as vidjil-algo gather reads from both strands in clones* |
+| v_call, d_call, j_call  | string  | V/D/J gene with allele. For example, IGHV4-59\*01. <br /> *implemented. In the case of uncomplete/unexpected recombinations (locus with a `+`), we still use `v/d/j_call`. Note that this value can be null on clones beyond the `-z` option.* |
+| junction  | string  |      Junction region nucleotide sequence, where the junction is defined as the CDR3 plus the two flanking conserved codons. <br />*null*
+| junction_aa  | string  | Junction region amino acid sequence.      <br />*implemented*
+| cdr3_aa | string | Amino acid translation of the cdr3 field.   <br />*implemented*
+| productive | boolean | True if the V(D)J sequence is predicted to be productive.  <br /> *true, false, or null when no CDR3 has been detected* |
+| sequence_alignment  | string  | Aligned portion of query sequence, including any indel corrections or numbering spacers, such as IMGT-gaps. Typically, this will include only the V(D)J region, but that is not a requirement. <br /> *null*                                         |
+| germline_alignment | string  | Assembled, aligned, fully length inferred germline sequence spanning the same region as the sequence_alignment field (typically the V(D)J region) and including the same set of corrections and spacers (if any). <br />*null*
+| v_cigar, d_cigar, j_cigar | string  | CIGAR strings for the V/D/J gene <br />*null*.
+
+Currently, we do not output alignment strings.
+Our implementation of .tsv may evolve in future versions.
+Contact us if a particular feature does interest you.
+
 
 ## Segmentation and .vdj format
 

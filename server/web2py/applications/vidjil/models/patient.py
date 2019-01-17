@@ -19,7 +19,7 @@ class Patient(SampleSet):
         return vidjil_utils.anon_names(data['sample_set_id'], data['first_name'], data['last_name'], anon)
 
     def get_display_name(self, data, anon=None):
-        return vidjil_utils.display_names(data.sample_set_id, data.first_name, data.last_name, anon)
+        return SPAN(vidjil_utils.display_names(data.sample_set_id, data.first_name, data.last_name, anon), _class="set_token patient_token")
 
     def get_birth(self, data):
         return "%s" % str(data['birth']) if data['birth'] is not None else ''
@@ -32,7 +32,7 @@ class Patient(SampleSet):
     def get_info_dict(self, data):
         name = self.get_display_name(data)
         return dict(name = name,
-                    filename = name,
+                    filename = self.get_name(data),
                     label = data['id_label'] + " (" + str(data['birth']) + ")",
                     info = data['info']
                     )

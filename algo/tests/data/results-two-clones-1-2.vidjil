@@ -21,11 +21,13 @@
     "clones" :  [  
 	{ 
 	    "id" : "id-1",
+      "valA" : "12",
+      "valC" : "12",
 	    "name": "name-1",
 	    "sequence" : "seq-1",
 
-	    "reads" :  [ 800 ] ,
-	    "top" : 1,
+	    "reads" :  [ 100 ] ,
+	    "top" : 2,
 	    "germline" : "IGH"
 	},
 	{
@@ -33,8 +35,8 @@
 	    "name" : "name-2",
 	    "sequence": "seq-2",
 
-	    "reads" :  [ 100 ] ,
-	    "top" : 2,
+	    "reads" :  [ 800 ] ,
+	    "top" : 1,
 	    "germline" : "IGH"
 	} 
     ] ,
