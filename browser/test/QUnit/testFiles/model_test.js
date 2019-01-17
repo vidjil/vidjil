@@ -422,3 +422,28 @@ QUnit.test("normalization", function(assert) {
     assert.equal(m.have_external_normalization, false, "Model have_external_normalization is correctly resetted")
 
 })
+
+QUnit.test("findGermlineFromGene", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100)
+    gene5_name = "IGHV1-18*01"
+    gene5_seq  = "caggttcagctggtgcagtctggagct...gaggtgaagaagcctggggcctcagtgaaggtctcctgcaaggcttctggttacaccttt............accagctatggtatcagctgggtgcgacaggcccctggacaagggcttgagtggatgggatggatcagcgcttac......aatggtaacacaaactatgcacagaagctccag...ggcagagtcaccatgaccacagacacatccacgagcacagcctacatggagctgaggagcctgagatctgacgacacggccgtgtattactgtgcgagaga"
+    gene3a_name = "IGHJ6*01"
+    gene3a_seq  = "......attactactactactacggtatggacgtctgggggcaagggaccacggtcaccgtctcctcag"
+    gene3b_name = "TRGJ1*02"
+    gene3b_seq  = "...................ttattataagaaactctttggcagtggaacaacacttgttgtcacag"
+    var getted = m.findGermlineFromGene(gene5_name)
+    assert.equal(getted, gene5_seq, 'function return the correct sequence for the gene V: IGHV1-18*01')
+
+    // As gene3 contain the upstream, the test verify if the sequence getted includes the original sequence
+    var getted = m.findGermlineFromGene(gene3a_name).includes(gene3a_seq)
+    assert.equal(getted, true, 'function return the correct sequence for the gene J: IGHJ6*01')
+    // another 3 gene, from another locus
+    var getted = m.findGermlineFromGene(gene3b_name).includes(gene3b_seq)
+    assert.equal(getted, true, 'function return the correct sequence for the gene J: TRGJ1*02')
+
+    var getted = m.findGermlineFromGene("unknown_gene")
+    assert.equal(getted, undefined, 'function return undefined value for the gene J: unknown_gene')
+
+});
+
