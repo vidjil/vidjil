@@ -2051,6 +2051,11 @@ changeAlleleNotation: function(alleleNotation) {
         if (top<minTop) top=minTop;
         if (top>maxTop) top=maxTop;
         this.tagSelector.style.top=top+"px";
+
+        // If multiple clones Ids; disabled normalization div
+        if (clonesIDs.length > 1) {
+            $("#"+div.id).addClass("disabledbutton");
+        }
     },
 
 
