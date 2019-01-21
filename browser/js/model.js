@@ -2036,7 +2036,7 @@ changeAlleleNotation: function(alleleNotation) {
         
         
         var string = "Tag for : <br/>"
-        for (cloneID in clonesIDs){
+        for (var cloneID in clonesIDs){
             string += "* "+ this.clone(cloneID).getName() + " (" + cloneID + ")<br/>"; 
         }
         this.tagSelectorInfo.innerHTML = string
