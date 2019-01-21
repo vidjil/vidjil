@@ -2029,7 +2029,11 @@ changeAlleleNotation: function(alleleNotation) {
         this.tagSelectorList.appendChild(li);
         
         
-        if (cloneID[0] == "s") cloneID = cloneID.substr(3);
+        var string = "Tag for : <br/>"
+        for (cloneID in clonesIDs){
+            string += "* "+ this.clone(cloneID).getName() + " (" + cloneID + ")<br/>"; 
+        }
+        this.tagSelectorInfo.innerHTML = string
         $(this.tagSelector).show();
         
         
