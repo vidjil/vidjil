@@ -371,7 +371,22 @@ Segment.prototype = {
             hide_selected.onclick = function () { self.m.hideSelected() }
             div_stats.appendChild(hide_selected)
 
-            //
+            
+            // Tag/Star
+            var span_star = document.createElement('span')
+            span_star.setAttribute('class', 'starBox');
+            span_star.onclick = function (e) {
+                self.m.openTagSelector(m.getSelected(), e);
+            }
+            span_star.id = self.index
+            var tag_icon = document.createElement('i')
+            tag_icon.id  = "tag_icon__multiple"
+            tag_icon.title = "clone_tag_multiple"
+            tag_icon.classList.add('icon-star-2')
+            span_star.appendChild(tag_icon)
+            div_stats.appendChild(span_star);
+            
+
             div.appendChild(div_stats)
             div_stats.appendChild(span_fixsegmenter);
 
