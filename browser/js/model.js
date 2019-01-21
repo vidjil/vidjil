@@ -1983,6 +1983,9 @@ changeAlleleNotation: function(alleleNotation) {
             buildTagSelector(i);
         }
         
+        var separator = document.createElement('div');
+        separator.innerHTML = "<hr>"
+
         var span1 = document.createElement('span');
         span1.appendChild(document.createTextNode("normalize to: "))
 
@@ -1997,8 +2000,9 @@ changeAlleleNotation: function(alleleNotation) {
         this.norm_button = document.createElement('button');
         this.norm_input.id = "norm_button";
         this.norm_button.appendChild(document.createTextNode("ok"))
+        
         this.norm_button.onclick = function () {
-            var cloneID = self.cloneID;
+            var cloneID = self.clonesIDs[0];
             var size = parseFloat(self.norm_input.value);
             
             if (size>0 && size<1){
@@ -2019,10 +2023,12 @@ changeAlleleNotation: function(alleleNotation) {
         }
         
         var div = document.createElement('div');
+        div.id  = "normalization_expected_input_div"
+        div.appendChild(separator)
         div.appendChild(span1)
         div.appendChild(span2)
         div.appendChild(this.norm_button)
-        
+
         var li = document.createElement('li');
         li.appendChild(div)
 
