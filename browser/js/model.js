@@ -1948,32 +1948,30 @@ changeAlleleNotation: function(alleleNotation) {
      * open/build the tag/normalize menu for a clone
      * @param {integer} cloneID - clone index
      * */
-    openTagSelector: function (cloneID, e) {
+    openTagSelector: function (clonesIDs, e) {
         var self = this;
         cloneID = typeof cloneID !== 'undefined' ? cloneID : this.cloneID;
         this.tagSelectorList.removeAllChildren();
-        this.cloneID=cloneID
+        this.clonesIDs=clonesIDs
 
         var buildTagSelector = function (i) {
             var span1 = document.createElement('span');
             span1.className = "tagColorBox tagColor" + i
-            span1.onclick = function () {
-                self.clone(cloneID).changeTag(i)
-                $(self.tagSelector).hide('fast')
-            }
-
+           
             var span2 = document.createElement('span');
             span2.className = "tagName" + i + " tn"
             span2.appendChild(document.createTextNode(self.tag[i].name))
-            span2.onclick = function () {
-                self.clone(cloneID).changeTag(i)
-                $(self.tagSelector).hide('fast')
-            }
 
             var div = document.createElement('div');
             div.className = "tagElem"
             div.appendChild(span1)
             div.appendChild(span2)
+            div.onclick = function () {
+                for (var j = 0; j < clonesIDs.length; j++) {
+                    self.clone(clonesIDs[j]).changeTag(i)
+                }
+                $(self.tagSelector).hide('fast')
+            }
 
             var li = document.createElement('li');
             li.appendChild(div)
@@ -2033,7 +2031,6 @@ changeAlleleNotation: function(alleleNotation) {
         
         if (cloneID[0] == "s") cloneID = cloneID.substr(3);
         $(this.tagSelector).show();
-        this.tagSelectorInfo.innerHTML = "tag for "+this.clone(cloneID).getName()+"("+cloneID+")"; 
         
         
         //replace tagSeelector
