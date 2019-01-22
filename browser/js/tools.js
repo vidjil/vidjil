@@ -661,15 +661,15 @@ function sort_list_locus(key_list){
     var generic_locus_1 = [ "TRA", "TRB", "TRB+", "TRG", "TRD", "TRA+D", "TRD+", "IGH", "IGH+", "IGK", "IGK+", "IGL"]
     var generic_locus_2 = [ "TRA", "TRB", "TRB+", "TRG", "TRD", "TRA+D", "TRD+", "IGH", "IGH+", "IGK", "IGK+", "IGL"]
 
-
+    var index;
     for (var i = 0; i < generic_locus_1.length; i++) {
         // If not present, deletion of result list
         if (key_list.indexOf(generic_locus_1[i]) == -1) {
-            var index = generic_locus_2.indexOf(generic_locus_1[i]);
+            index = generic_locus_2.indexOf(generic_locus_1[i]);
             generic_locus_2.splice(index, 1);
         } else {
             // else deletion of list given
-            var index = key_list.indexOf(generic_locus_1[i]);
+            index = key_list.indexOf(generic_locus_1[i]);
             key_list.splice(index, 1);
         }
     }
