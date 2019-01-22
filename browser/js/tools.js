@@ -678,8 +678,8 @@ function sort_list_locus(key_list){
     key_list.sort()
     
     // Add these elements to result list
-    for (var i = 0; i < key_list.length; i++) {
-        generic_locus_2.push( key_list[i] )
+    for (var j = 0; j < key_list.length; j++) {
+        generic_locus_2.push( key_list[j] )
     }
     return generic_locus_2
 }
