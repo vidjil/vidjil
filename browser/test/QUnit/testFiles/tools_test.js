@@ -393,3 +393,23 @@ QUnit.test("Pearson coefficient", function(assert) {
     assert.equal(pearsonCoeff([3, 2, 1], [10, 20, 30]), -1)
     }
 );
+
+
+QUnit.test("Sort list locus", function(assert) {
+
+    liste_sort_1 = [ "TRA", "TRB", "TRB+", "TRG", "TRD", "TRA+D", "TRD+", "IGH", "IGH+", "IGK", "IGK+", "IGL"]
+    console.log( "sort_list_locus" )
+    list_test_1 = [ "TRA", "TRB", "TRG", "TRD", "testlocus", "IGH", "IGK", "IGL"]
+    wait_test_1 = [ "TRA", "TRB", "TRG", "TRD", "IGH", "IGK", "IGL", "testlocus"]
+    list_test_2 = [ "IGH", "IGH+", "testlocus", "IGK+", "IGL", "unknow_locus", "TRA", "TRB", "TRB+", "TRG", "TRD"]
+    wait_test_2 = [ "TRA", "TRB", "TRB+", "TRG", "TRD", "IGH", "IGH+", "IGK+", "IGL", "testlocus", "unknow_locus"]
+
+    // console.log( "result_1" )
+    // console.log( sort_list_locus(list_test_1))
+    // console.log( "result_2" )
+    // console.log( sort_list_locus(list_test_2))
+
+    assert.deepEqual(sort_list_locus(list_test_1), wait_test_1, "list1 is correctly sorted")
+    assert.deepEqual(sort_list_locus(list_test_2), wait_test_2, "list2 is correctly sorted")
+    }
+);

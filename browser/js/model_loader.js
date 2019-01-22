@@ -325,6 +325,8 @@ Model_loader.prototype = {
                 self.system_available.push(system)
             }
         }
+        self.system_available = sort_list_locus(self.system_available)
+
         for (var sa in self.system_available){
             system = this.system_available[sa]
             self.system_selected.push(system)

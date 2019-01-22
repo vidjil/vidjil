@@ -648,3 +648,38 @@ function pearsonCoeff(l1, l2) {
 }
 
 function logadd1(x) { return Math.log(x + 1) ; }
+
+/**
+ * Sort list of available locus.
+ * The list is ordered on a preordered list of locus.
+ * Locus that are not in this list will be added a supplmeent of this one at the end of it.
+ * @param  {Array} key_list List of system available in model, or a list of locus
+ * @return {Array}          Ordered list of locus
+ */
+function sort_list_locus(key_list){
+    // Ordered list of all  generic locus 
+    var generic_locus_1 = [ "TRA", "TRB", "TRB+", "TRG", "TRD", "TRA+D", "TRD+", "IGH", "IGH+", "IGK", "IGK+", "IGL"]
+    var generic_locus_2 = [ "TRA", "TRB", "TRB+", "TRG", "TRD", "TRA+D", "TRD+", "IGH", "IGH+", "IGK", "IGK+", "IGL"]
+
+
+    for (var i = 0; i < generic_locus_1.length; i++) {
+        // If not present, deletion of result list
+        if (key_list.indexOf(generic_locus_1[i]) == -1) {
+            var index = generic_locus_2.indexOf(generic_locus_1[i]);
+            generic_locus_2.splice(index, 1);
+        } else {
+            // else deletion of list given
+            var index = key_list.indexOf(generic_locus_1[i]);
+            key_list.splice(index, 1);
+        }
+    }
+    // key_list will only contain locus that are not in generic list of locus
+    // Sort keeped elements
+    key_list.sort()
+    
+    // Add these elements to result list
+    for (var i = 0; i < key_list.length; i++) {
+        generic_locus_2.push( key_list[i] )
+    }
+    return generic_locus_2
+}
