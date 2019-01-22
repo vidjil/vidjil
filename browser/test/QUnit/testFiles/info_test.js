@@ -49,8 +49,8 @@ QUnit.test("read details", function(assert) {
 
     m.keep_one_active_system('IGH')
     var sbnm = document.getElementsByClassName('systemBoxNameMenu')
-    assert.includes(sbnm[0].outerHTML, '<span class="systemBoxNameMenu IGH">', 'system box IGH is still active')
-    assert.includes(sbnm[1].outerHTML, '<span class="systemBoxNameMenu inactive TRG">', 'system box TRG is inactive')
+    assert.includes(sbnm[0].outerHTML, '<span class="systemBoxNameMenu inactive TRG">', 'system box TRG is inactive')
+    assert.includes(sbnm[1].outerHTML, '<span class="systemBoxNameMenu IGH">', 'system box IGH is still active')
 
     var reads = document.getElementsByClassName('reads_details')[0]
     assert.includes(reads.outerHTML, 'analyzed reads</span><span>200 (100.00%)', 'read details: analyzed reads (same than before)')
