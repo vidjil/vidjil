@@ -1964,6 +1964,7 @@ changeAlleleNotation: function(alleleNotation) {
 
             var div = document.createElement('div');
             div.className = "tagElem"
+            div.id = "tagElem_" + i
             div.appendChild(span1)
             div.appendChild(span2)
             div.onclick = function () {

@@ -362,7 +362,7 @@ class TestMultilocus < BrowserTest
       
       ## Test tag selection for one clone
       $b.clone_info('25')[:star].click
-      $b.span("tagColor0").click
+      $b.div("tagElem_0").click
 
       assert ($b.clone_info('25')[:name].style('color') ==  'rgba(220, 50, 47, 1)' ) , "clone 25 have changed color"
       assert ( not $b.clone_info('88')[:name].style('color') ==  'rgba(220, 50, 47, 1)' ) , "clone 88 (second of the selection) haven't chaged color "
@@ -370,7 +370,7 @@ class TestMultilocus < BrowserTest
 
       ## Test tag selection for multiple clone
       $b.i("tag_icon__multiple").click
-      $b.span("tagColor6").click
+      $b.div("tagElem_6").click
       assert ($b.clone_info('25')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 25 have also changed color"
       assert ($b.clone_info('77')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 77 have also changed color"
       assert ($b.clone_info('88')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 88 have also changed color"
