@@ -374,12 +374,11 @@ Segment.prototype = {
             
             // Tag/Star
             var span_star = document.createElement('span')
-            span_star.setAttribute('class', 'starBox');
+            span_star.setAttribute('class', 'button');
             span_star.setAttribute("title", 'Tag selected clones');
             span_star.onclick = function (e) {
                 if (m.getSelected().length > 0) { self.m.openTagSelector(m.getSelected(), e); }
             }
-            span_star.id = self.index
             var tag_icon = document.createElement('i')
             tag_icon.id  = "tag_icon__multiple"
             tag_icon.classList.add('icon-star-2')
