@@ -2035,10 +2035,12 @@ changeAlleleNotation: function(alleleNotation) {
 
         this.tagSelectorList.appendChild(li);
         
-        
-        var string = "Tag for : <br/>"
-        for (var cloneID in clonesIDs){
-            string += "* "+ this.clone(cloneID).getName() + " (" + cloneID + ")<br/>"; 
+        var string;
+        if (clonesIDs.length > 1){
+            string = `Tag for ${clonesIDs.length} clones`
+        } else {
+            if (clonesIDs[0][0] == "s") cloneID = clonesIDs[0].substr(3);
+            string = "Tag for "+this.clone(clonesIDs[0]).getName()
         }
         this.tagSelectorInfo.innerHTML = string
         $(this.tagSelector).show();
