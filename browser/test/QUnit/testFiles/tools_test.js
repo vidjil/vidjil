@@ -401,7 +401,7 @@ QUnit.test("Sort list locus", function(assert) {
     console.log( "sort_list_locus" )
     list_test_1 = [ "TRA", "TRB", "TRG", "TRD", "testlocus", "IGH", "IGK", "IGL"]
     wait_test_1 = [ "TRA", "TRB", "TRG", "TRD", "IGH", "IGK", "IGL", "testlocus"]
-    list_test_2 = [ "IGH", "IGH+", "testlocus", "IGK+", "IGL", "unknow_locus", "TRA", "TRB", "TRB+", "TRG", "TRD"]
+    list_test_2 = [ "IGH", "IGH+", "unknow_locus", "IGK+", "IGL", "testlocus", "TRA", "TRB", "TRB+", "TRG", "TRD"]
     wait_test_2 = [ "TRA", "TRB", "TRB+", "TRG", "TRD", "IGH", "IGH+", "IGK+", "IGL", "testlocus", "unknow_locus"]
 
     // console.log( "result_1" )
