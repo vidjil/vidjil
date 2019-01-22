@@ -375,17 +375,16 @@ Segment.prototype = {
             // Tag/Star
             var span_star = document.createElement('span')
             span_star.setAttribute('class', 'starBox');
+            span_star.setAttribute("title", 'Tag selected clones');
             span_star.onclick = function (e) {
-                self.m.openTagSelector(m.getSelected(), e);
+                if (m.getSelected().length > 0) { self.m.openTagSelector(m.getSelected(), e); }
             }
             span_star.id = self.index
             var tag_icon = document.createElement('i')
             tag_icon.id  = "tag_icon__multiple"
-            tag_icon.title = "clone_tag_multiple"
             tag_icon.classList.add('icon-star-2')
             span_star.appendChild(tag_icon)
             div_stats.appendChild(span_star);
-            
 
             div.appendChild(div_stats)
             div_stats.appendChild(span_fixsegmenter);
@@ -1057,6 +1056,12 @@ Segment.prototype = {
                 s += extra_info_system.system
             }
             $(".stats_content").prop('title', s)
+        }
+
+        if (this.m.getSelected().length > 0){  
+            $("#tag_icon__multiple").css("display", "")
+        } else {
+            $("#tag_icon__multiple").css("display", "none")
         }
     },
 

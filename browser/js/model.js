@@ -1950,8 +1950,8 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     openTagSelector: function (clonesIDs, e) {
         var self = this;
-        cloneID = typeof cloneID !== 'undefined' ? cloneID : this.cloneID;
         this.tagSelectorList.removeAllChildren();
+        clonesIDs = clonesIDs !== undefined ? clonesIDs : this.clonesIDs; 
         this.clonesIDs=clonesIDs
 
         var buildTagSelector = function (i) {
