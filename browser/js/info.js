@@ -332,7 +332,7 @@ Info.prototype = {
         var keys = 0;
 
         var key_list = this.m.system_available;
-        key_list.sort();
+        
 
         var last_key = "";
 
