@@ -2037,7 +2037,7 @@ changeAlleleNotation: function(alleleNotation) {
         
         var string;
         if (clonesIDs.length > 1){
-            string = "Tag for " + clonesIDs.length +  "clones"
+            string = "Tag for " + clonesIDs.length +  " clones"
         } else {
             if (clonesIDs[0][0] == "s") cloneID = clonesIDs[0].substr(3);
             string = "Tag for "+this.clone(clonesIDs[0]).getName()
