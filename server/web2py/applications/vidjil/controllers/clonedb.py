@@ -78,7 +78,7 @@ def get_info_of_viewable_sample_set(sample_sets, config, sample_names, sample_ta
             tags = sample_tags.get(sample_id)
             if tags:
                 for row in tags:
-                    info['sample_tags'].append("#" + row.name)
+                    info['sample_tags'].append("#" + row)
         else:
             info['name'].append(None)
     return info
