@@ -353,6 +353,21 @@ If something is not working properly, you have still the option to rollback
 to the previous images (for example by tagging as `latest` a previous image),
 and possibly by reusing also your last databse backup if something went wrong.
 
+### Launching a single container
+
+When an update occurs on a single container, one may not want to relaunch all
+the containers, to save time. With `docker-compose` it is possible to do so.
+
+Stop the desired container (for instance the client):
+```
+docker-compose stop nginx
+```
+
+Then launch it again
+
+```
+docker-compose up -d nginx
+```
 
 # Plain server installation
 
