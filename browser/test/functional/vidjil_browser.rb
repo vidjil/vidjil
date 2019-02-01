@@ -309,7 +309,7 @@ class VidjilBrowser < Watir::Browser
 
   # Return the field for editing tag name in the tag selector
   def tag_selector_edit_normalisation
-    return tag_selector.text_field(:id => 'normalized_size')
+    return tag_selector.text_field(:id => 'norm_button')
   end
 
   # Return the button that validates the changes in the tag selector

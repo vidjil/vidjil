@@ -22,45 +22,43 @@ class TestNormalization < BrowserTest
 
     def test_00_normalization_none
         $b.element(:id => 'settings_menu').click
-        assert ($b.div(:id => 'normalize_list').visible?), "After clicking normalize_list form should be visible"
-        assert ($b.div(:id => 'reset_norm').present?), "Form have the input for reset normalization"
-        $b.execute_script(' showSelector("settingsSelector"); console.log( "hide settings")')
-        $b.send_keys :escape
-    end
+        assert ($b.form(:id => 'normalize_list').present?), "After clicking normalize_list form should be visible"
+        assert ($b.input(:id => 'reset_norm').present?), "Form have the input for reset normalization"
+        $b.clone_in_list('25').hover # Just put the mouse somewhere else to close the menu
+     end
 
 
     def test_01_normalization_expected
-        set_browser("/doc/analysis-example.vidjil")
-        
-        $b.div(:id => 'color25').click
-        $b.text_field(:id => 'norm_button').set '0.1'
+        assert ($b.clone_info('25')[:size].text == '0.129%'), "Span show correct size before normalization"
+
+        $b.clone_info('25')[:star].click
+        $b.tag_selector_edit_normalisation.set '0.1'
         $b.send_keys :enter
         
-        assert ($b.span(:text => '10.00%').present?), "Span show correct normalized size"
+        assert ($b.clone_info('25')[:size].text == '10.00%'), "Span show correct normalized size"
 
-        $b.element(:id => 'settings_menu').click
-        assert ($b.div(:id => 'normalize_list').visible?), "After clicking normalize_list form should be visible"
+        $b.menu_settings.click
+        assert ($b.form(:id => 'normalize_list').present?), "After clicking normalize_list form should be visible"
         assert ($b.div(:id => 'normalizetest25').present?), "Form have the input for expected normalization"
         
-        $b.div(:id => 'reset_norm').click
+        $b.input(:id => 'reset_norm').click
         $b.send_keys :escape
         
-        assert ($b.span(:text => '0.129%').present?), "Span show correct size after reset normalization"
+        assert ($b.clone_info('25')[:size].text == '0.129%'), "Span show correct size after reset normalization"
     end
 
 
     def test_02_normalization_external
-        set_browser("/doc/analysis-example.vidjil")
-        assert ($b.span(:text => '0.122%').present?), "Span show correct normalized size (external) by default"
+        assert ($b.clone_info('1')[:size].text == '0.081%'), "Span show correct size after reset normalization"
         
-        $b.element(:id => 'settings_menu').click
-        assert ($b.div(:id => 'normalize_list').visible?), "After clicking normalize_list form should be visible"
+        $b.menu_settings.click
+        assert ($b.form(:id => 'normalize_list').present?), "After clicking normalize_list form should be visible"
         assert ($b.div(:id => 'normalize_external').present?), "Form have the input for external normalization"
-        assert (not $b.div(:id => 'normalizetest25').present?), "Form have not the input for expected normalization"
+        assert ($b.div(:id => 'normalizetest25').present?), "Form still have the input for expected normalization"
         
-        $b.div(:id => 'reset_norm').click
+        $b.div(:id => 'normalize_external').click
         
-        assert ($b.span(:text => '0.081%').present?), "Span show correct size after reset normalization"
+        assert ($b.clone_info('1')[:size].text == '0.122%'), "Span should show correct normalized size (external) (" + $b.clone_info('1')[:size].text+")"
     end
 
 
