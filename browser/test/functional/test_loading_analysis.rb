@@ -7,7 +7,7 @@ class TestLoadingAnalysis < BrowserTest
     super
     if not defined? $b
       set_browser("/doc/analysis-example2.vidjil", "/doc/analysis-example2.analysis")
-      $b.clone_in_scatterplot('0').wait_until_present
+      $b.clone_in_scatterplot('0').wait_until(&:present?)
       $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
     end
   end
@@ -30,9 +30,9 @@ class TestLoadingAnalysis < BrowserTest
 
     $b.select_tag('0').click
 
-    assert (not $b.clone_in_list('0').visible?)
-    assert (not $b.clone_in_scatterplot('0').visible?)
-    assert (not $b.clone_in_graph('0').visible?)
+    assert (not $b.clone_in_list('0').present?)
+    assert (not $b.clone_in_scatterplot('0').present?)
+    assert (not $b.clone_in_graph('0').present?)
 
     $b.select_tag('0').click
   end
@@ -61,36 +61,36 @@ class TestLoadingAnalysis < BrowserTest
   end
 
   def test_04_hide_clone
-    assert ($b.clone_in_list('0').visible?)
-    assert ($b.clone_in_scatterplot('0').visible?)
-    assert ($b.clone_in_graph('0').visible?)
+    assert ($b.clone_in_list('0').present?)
+    assert ($b.clone_in_scatterplot('0').present?)
+    assert ($b.clone_in_graph('0').present?)
 
     # Hide the clone by affecting it to a hidden tag
     $b.clone_info('0')[:star].click
     $b.tag_item('4')[:name].click
 
-    assert (not $b.clone_in_list('0').visible?)
-    assert (not $b.clone_in_scatterplot('0').visible?)
-    assert (not $b.clone_in_graph('0').visible?)
+    assert (not $b.clone_in_list('0').present?)
+    assert (not $b.clone_in_scatterplot('0').present?)
+    assert (not $b.clone_in_graph('0').present?)
 
     # Unhide clone
     $b.element(:id => 'fastTag4', :class => 'inactiveTag').click
     assert (not $b.element(:id => 'fastTag4', :class => 'inactiveTag').exists?)
-    assert ($b.clone_in_list('0').visible?)
-    assert ($b.clone_in_scatterplot('0').visible?)
-    assert ($b.clone_in_graph('0').visible?)
+    assert ($b.clone_in_list('0').present?)
+    assert ($b.clone_in_scatterplot('0').present?)
+    assert ($b.clone_in_graph('0').present?)
   end
 
   def test_05_check_cluster
     clustered = $b.clone_info('1')
     assert (clustered[:name].text == 'clone2'), "First clone of cluster should be clone2"
-    assert ($b.clone_in_scatterplot('1').visible?)
-    assert (not $b.clone_in_scatterplot('2').visible?)
+    assert ($b.clone_in_scatterplot('1').present?)
+    assert (not $b.clone_in_scatterplot('2').present?)
 
     clustered[:cluster].click
 
-    assert ($b.clone_in_scatterplot('1').visible?)
-    assert ($b.clone_in_scatterplot('2').visible?)
+    assert ($b.clone_in_scatterplot('1').present?), "First clone should still be present"
+    $b.clone_in_scatterplot('2').wait_until(&:present?)
 
     first_in_cluster = $b.clone_in_cluster('1', '1')
     second_in_cluster = $b.clone_in_cluster('1', '2')
@@ -105,12 +105,13 @@ end
   def test_06_remove_cluster
     clustered = $b.clone_info('1')
     clustered[:cluster].click
+    $b.clone_in_cluster('1', '2')[:delete].wait_until(&:present?)
     $b.clone_in_cluster('1', '2')[:delete].click
 
-    assert (not $b.clone_cluster('1').visible?)
+    assert (not $b.clone_cluster('1').present?)
     
-    assert ($b.clone_in_scatterplot('1').visible?)
-    assert ($b.clone_in_scatterplot('2').visible?)
+    assert ($b.clone_in_scatterplot('1').present?)
+    assert ($b.clone_in_scatterplot('2').present?)
 
     clone3 = $b.clone_info('2')
     assert (clone3[:name].text == "clone3")
@@ -125,8 +126,8 @@ end
 
     clustered = $b.clone_info('1')
     assert (clustered[:name].text == 'clone2')
-    assert ($b.clone_in_scatterplot('1').visible?)
-    assert (not $b.clone_in_scatterplot('2').visible?)
+    assert ($b.clone_in_scatterplot('1').present?)
+    assert (not $b.clone_in_scatterplot('2').present?)
   end
 
   def test_08_select_cluster

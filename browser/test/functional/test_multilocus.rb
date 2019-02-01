@@ -44,7 +44,7 @@ class TestMultilocus < BrowserTest
   def test_00_info_point
     assert (not $b.div(:id => 'info_timepoint').present?), "Info timepoint should not be present"
     $b.info_point.i.click
-    assert ($b.div(:id => 'info_timepoint').visible?), "After clicking info timepoint should be visible"
+    assert ($b.div(:id => 'info_timepoint').present?), "After clicking info timepoint should be visible"
 
     table = $b.div(:id => 'info_timepoint').table
     assert (table[1][1].text == '786861'), "Incorrect  number of reads in infopoint"
@@ -107,7 +107,7 @@ class TestMultilocus < BrowserTest
     begin
       $b.unselect
       #test hover a clone in the list
-      $b.clone_in_scatterplot('25').wait_until_present
+      $b.clone_in_scatterplot('25').wait_until(&:present?)
       $b.clone_in_list('25').hover
 
       check_when_list_or_scatterplot_focused
@@ -117,7 +117,7 @@ class TestMultilocus < BrowserTest
   def test_05_focus_in_scatterplot
     begin
       $b.unselect
-      $b.clone_in_scatterplot('25').wait_until_present
+      $b.clone_in_scatterplot('25').wait_until(&:present?)
       $b.clone_in_scatterplot('25').hover
 
       check_when_list_or_scatterplot_focused
@@ -140,7 +140,7 @@ class TestMultilocus < BrowserTest
 
   def test_08_click_in_list
     #test select a clone in the list
-    $b.clone_in_scatterplot('25').wait_until_present
+    $b.clone_in_scatterplot('25').wait_until(&:present?)
     $b.clone_info('25')[:name].click()
 
     check_when_list_or_scatterplot_clicked
@@ -150,7 +150,7 @@ class TestMultilocus < BrowserTest
   end
 
   def test_08_click_in_scatterplot
-    $b.clone_in_scatterplot('25').wait_until_present
+    $b.clone_in_scatterplot('25').wait_until(&:present?)
     $b.clone_in_scatterplot('25').click
 
     check_when_list_or_scatterplot_clicked
@@ -161,7 +161,7 @@ class TestMultilocus < BrowserTest
 
   def TODO_test_09_normalize
     $b.clone_info('25')[:star].click
-    $b.tag_selector_edit_normalisation.wait_until_present
+    $b.tag_selector_edit_normalisation.wait_until(&:present?)
     $b.tag_selector_edit_normalisation.set('0.01')
     $b.tag_selector_normalisation_validator.click 
     
@@ -175,7 +175,7 @@ class TestMultilocus < BrowserTest
   end
 
   def test_0a_shortcuts_numpad
-    $b.clone_in_scatterplot('25').wait_until_present
+    $b.clone_in_scatterplot('25').wait_until(&:present?)
     $b.clone_in_scatterplot('25').click
 
     assert ($b.preset_selector.selected? "[0] V/J (genes)"), ">> preset selector badly set"
@@ -187,9 +187,9 @@ class TestMultilocus < BrowserTest
     begin
       $b.clone_info('25')[:star].click
       name = $b.tag_item('0')[:name]
-      name.wait_until_present
+      name.wait_until(&:present?)
       name.click
-      name.wait_while_present
+      name.wait_while(&:present?)
 
       assert ($b.clone_info('25')[:name].style('color') ==  'rgba(220, 50, 47, 1)' ) , ">> fail tag : clone color hasn't changed"
     end
@@ -258,11 +258,11 @@ class TestMultilocus < BrowserTest
 
       assert (smaller.text.include?("smaller clones")), "We should have smaller clones at index %d of the list, instead we have %s " % [i, smaller.text]
 
-      assert (smaller.visible?), "Smaller clones #%d should be visible, it is not" % [i]
+      assert (smaller.present?), "Smaller clones #%d should be visible, it is not" % [i]
       smaller.hover
-      assert (smaller.visible?), "Smaller clones #%d should still be visible after hovering it" % [i]
+      assert (smaller.present?), "Smaller clones #%d should still be visible after hovering it" % [i]
 
-      assert (not $b.clone_in_scatterplot(smaller.id).visible?), "Smaller clone %d should not be visible in scatterplot" % [i]
+      assert (not $b.clone_in_scatterplot(smaller.id).present?), "Smaller clone %d should not be visible in scatterplot" % [i]
     end
   end
 
@@ -308,7 +308,7 @@ class TestMultilocus < BrowserTest
 
   def test_18_empty_clone_invisible
     assert ( $b.execute_script("return m.clones[66].reads[0]") == 0), "Clone should have no read"
-    assert (not $b.clone_in_scatterplot('66').visible?), "Clone should not be visible"
+    assert (not $b.clone_in_scatterplot('66').present?), "Clone should not be visible"
   end
 
   def TODO_test_14_edit_tag
@@ -317,7 +317,7 @@ class TestMultilocus < BrowserTest
       $b.clone_info('25')[:star].click
 
       edit = $b.tag_item('0')[:edit]
-      edit.wait_until_present
+      edit.wait_until(&:present?)
       edit.click
       $b.tag_selector_edit_name.set 'renamed_click'
       $b.tag_selector_name_validator.click
@@ -329,7 +329,7 @@ class TestMultilocus < BrowserTest
       $b.clone_info('24')[:star].click
 
       edit = $b.tag_item('1')[:edit]
-      edit.wait_until_present
+      edit.wait_until(&:present?)
       edit.click
       $b.tag_selector_edit_name.set 'renamed_return'
       $b.send_keys :return
@@ -340,7 +340,7 @@ class TestMultilocus < BrowserTest
       ## check renames (on again another clone)
       $b.clone_info('23')[:star].click
       edit = $b.tag_item('1')[:edit]
-      edit.wait_until_present
+      edit.wait_until(&:present?)
 
       assert ($b.tag_selector.text.include? 'renamed_click'),  "fail edit tag with mouse : tag name in tag selector hasn't changed"
       assert ($b.tag_selector.text.include? 'renamed_return'), "fail edit tag with keyboard : tag name in tag selector hasn't changed"

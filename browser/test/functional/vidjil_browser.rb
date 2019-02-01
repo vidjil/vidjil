@@ -1,5 +1,5 @@
 # coding: utf-8
-require 'watir-webdriver'
+require 'watir'
 
 class VidjilBrowser < Watir::Browser
 
@@ -9,7 +9,7 @@ class VidjilBrowser < Watir::Browser
       Selenium::WebDriver::Firefox.path = ENV['WATIR_BROWSER_PATH']
     end
     # :chrome or :safari
-    super :firefox
+    super :firefox, :marionette => false
 
     print "Running "+driver.capabilities.browser_name+" "+driver.capabilities.version+"\n"
   end
@@ -70,9 +70,9 @@ class VidjilBrowser < Watir::Browser
   # Beware the id must be a string
   def clone_in_scatterplot(id, extra={}, number=1)
     circle = element(extra.merge(:id => scatterplot_id(number) + "_circle"+id))
-    if circle.exists? and not circle.visible?
+    if circle.exists? and not circle.present?
       bar = element(extra.merge(:id => scatterplot_id(number) + "_bar"+id))
-      if bar.exists? and bar.visible?
+      if bar.exists? and bar.present?
         return bar
       end
     end
@@ -133,7 +133,7 @@ class VidjilBrowser < Watir::Browser
 
   # Return the span of the locus
   def locus_topleft(locus)
-       return span(:class => 'systemBoxNameMenu', :class => locus)
+       return span(:class => ['systemBoxNameMenu', locus])
   end
 
   def menu_patient
@@ -196,6 +196,7 @@ class VidjilBrowser < Watir::Browser
   # (String or Regex)
   def scatterplot_select_preset(axis, number = 1)
     scatterplot_menu(number).hover
+    sleep 1
     preset_selector.select axis
   end
 

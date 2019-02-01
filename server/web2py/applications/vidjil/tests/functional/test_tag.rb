@@ -13,16 +13,16 @@ class TestTag < ServerTest
       login_form.text_field(:id => "auth_user_email").set('plop@plop.com')
       login_form.text_field(:id => "auth_user_password").set('foobartest')
       login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
-      Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+      Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     end
   end
 
   def go_to_list
     #$b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     $b.a(:class => "button button_token patient_token", :text => "patients").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
-    table.wait_until_present
+    table.wait_until(&:present?)
     table
   end
 
@@ -30,7 +30,7 @@ class TestTag < ServerTest
     table = go_to_list
 
     table.a(:text => /#test2/).click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     $b.table(:id => "table").tbody.rows.each do |row|
       assert(row.a(:text => /#test2/).present?)
@@ -41,13 +41,13 @@ class TestTag < ServerTest
     table = go_to_list
 
     table.td(:text => /test patient 2/).click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table.tbody.a(:text => "#test2").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     table = $b.table(:id => "table")
     table.tbody.a(:text => "#test2").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     $b.table(:id => "table").tbody.rows.each do |row|
       assert(row.a(:text => /#test2/).present?)
@@ -60,7 +60,7 @@ class TestTag < ServerTest
     search = $b.text_field(:id => "db_filter_input")
     search.set("#test2")
     search.fire_event('onchange')
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     $b.table(:id => "table").tbody.rows.each do |row|
       assert(row.a(:text => "#test2").present?)
@@ -71,12 +71,12 @@ class TestTag < ServerTest
     table = go_to_list
 
     $b.span(:class => "button2", :text => "compare samples/patients").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     search = $b.text_field(:id => "db_filter_input")
     search.set("#test2")
     search.fire_event('onchange')
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     $b.table(:id => "table").tbody.rows.each do |row|
       assert(row.a(:text => /#test2/).present?)

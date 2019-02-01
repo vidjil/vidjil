@@ -17,23 +17,23 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
 
     $b.button(:id => 'form_submit').click
 
-    $b.element(:class => 'imgAjaxLoading').wait_until_present
-    $b.clone_in_scatterplot('0').wait_until_present
+    $b.element(:class => 'imgAjaxLoading').wait_until(&:present?)
+    $b.clone_in_scatterplot('0').wait_until(&:present?)
     
     assert ($b.element(:class => 'segmenter').present?), "Segmenter should be present"
     assert ($b.element(:class => 'scatterplot').present?), "Segmenter should be present"
   end
 
   def test_01_segmenter
-    assert ($b.clone_in_segmenter('0').visible?), "Clone 0 should be in segmenter"
-    assert ($b.clone_in_segmenter('1').visible?), "Clone 1 should be in segmenter"
+    assert ($b.clone_in_segmenter('0').present?), "Clone 0 should be in segmenter"
+    assert ($b.clone_in_segmenter('1').present?), "Clone 1 should be in segmenter"
     assert (not $b.clone_in_segmenter('2').exists?), "Clone 2 should not exist"
   end
 
   def test_02_scatterplot
-    assert ($b.clone_in_scatterplot('0').visible?), "Clone 0 should be in scatterplot"
-    assert ($b.clone_in_scatterplot('1').visible?), "Clone 1 should be in scatterplot"
-    assert (not $b.clone_in_scatterplot('2').visible?), "Clone 2 should not be visible"
+    assert ($b.clone_in_scatterplot('0').present?), "Clone 0 should be in scatterplot"
+    assert ($b.clone_in_scatterplot('1').present?), "Clone 1 should be in scatterplot"
+    assert (not $b.clone_in_scatterplot('2').present?), "Clone 2 should not be visible"
   end
 
   def test_03_change_color
@@ -44,6 +44,7 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
     $b.tag_item('3')[:name].click
     $b.clone_in_segmenter('1').hover # Change clone to hover: on hover color doesn't change
 
+    sleep(1)
     assert ($b.clone_info_segmenter('0')[:name].style('color') == tagColor), "Clone has not changed color in segmenter"
 
     # Must remove rgb from the start of the fill style, and the closing parentheses at the end,
@@ -58,7 +59,7 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
     for i in ['0', '1']
       for gene in ['V', 'J']
         span = $b.clone_in_segmenter(i).span(:class => gene)
-        assert (span.visible?), "#{gene} span should be visible"
+        assert (span.present?), "#{gene} span should be visible"
       end
     end
   end

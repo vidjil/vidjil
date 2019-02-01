@@ -13,15 +13,15 @@ class TestPreProcess < ServerTest
       login_form.text_field(:id => "auth_user_email").set('plop@plop.com')
       login_form.text_field(:id => "auth_user_password").set('foobartest')
       login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
-      Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+      Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     end
   end
 
   def go_to_list
     $b.a(:class => "button", :text => "pre-process").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
-    table.wait_until_present
+    table.wait_until(&:present?)
     table
   end
 
@@ -38,16 +38,16 @@ class TestPreProcess < ServerTest
     # go to form
     $b.span(:class => "button2", :text => "+ new pre-process").click
     form = $b.form(:id => "data_form")
-    form.wait_until_present
+    form.wait_until(&:present?)
 
     form.text_field(:id => "pre_process_name").set('dummy')
     form.textarea(:id => "pre_process_command").set('dummy &file1& &file2& > &result&')
     form.textarea(:id => "pre_process_name").set('dummy pre-process for testing purposes')
     form.input(:type => "submit").click
 
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
-    table.wait_until_present
+    table.wait_until(&:present?)
     lines = table.tbody.rows
     assert(lines.count == count+1)
   end
@@ -60,7 +60,7 @@ class TestPreProcess < ServerTest
     line.i(:class => "icon-pencil-2").click
 
     form = $b.form(:id => "data_form")
-    form.wait_until_present
+    form.wait_until(&:present?)
     info = form.textarea(:id => "pre_process_info")
     assert(form.text_field(:id => "pre_process_name").value == "test pre-process 0")
     assert(form.textarea(:id => "pre_process_command").value == "dummy &file1& &file2& > &result&")
@@ -69,9 +69,9 @@ class TestPreProcess < ServerTest
     info.set("edited")
 
     form.input(:type => "submit").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => 'table')
-    table.wait_until_present
+    table.wait_until(&:present?)
 
     line = table.td(:index => 0, :text => uid).parent
     assert(line.td(:text => "edited").present?)
@@ -83,10 +83,10 @@ class TestPreProcess < ServerTest
     count = table.tbody.rows.count
     line = table.td(:text => "test pre-process 2").parent
     line.i(:class => "icon-erase").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     $b.button(:text => "continue").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
-    table.wait_until_present
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
+    table.wait_until(&:present?)
     lines = table.tbody.rows
     assert(lines.count == count-1)
   end
@@ -96,10 +96,10 @@ class TestPreProcess < ServerTest
 
     line = table.td(:text => "pre-process perm").parent
     line.i(:class => 'icon-key').click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     list = $b.table(:id => "table")
-    list.wait_until_present
+    list.wait_until(&:present?)
     line = table.td(:text => "public").parent
     checkbox = line.cells.last.checkbox
     assert(checkbox.set? == false)
@@ -107,9 +107,9 @@ class TestPreProcess < ServerTest
 
     # reload page to check if permissions are persistant.
     $b.span(:id => "db_reload").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     list = $b.table(:id => "table")
-    list.wait_until_present
+    list.wait_until(&:present?)
     line = table.td(:text => "public").parent
     checkbox = line.cells.last.checkbox
     assert(checkbox.set?)
