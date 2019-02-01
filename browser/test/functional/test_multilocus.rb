@@ -161,7 +161,7 @@ class TestMultilocus < BrowserTest
     assert (not $b.clone_in_list('25').class_name.include? "list_select"), ">> Incorrect class name, clone is not unselected'"
   end
 
-  def TODO_test_09_normalize
+  def test_09_normalize
     $b.clone_info('25')[:star].click
     $b.tag_selector_edit_normalisation.wait_until(&:present?)
     $b.tag_selector_edit_normalisation.set('0.01')
