@@ -222,7 +222,7 @@ test_browser-functional:
   script:
     - make -C browser
     - source /etc/profile.d/rvm.sh
-    - rvm use 2.1.1
+    - rvm use 2.6.1
     - HEADLESS=1 make -C browser/test functional
   artifacts:
     paths:
@@ -241,7 +241,7 @@ test_browser-functional-external:
   script:
     - make -C browser
     - source /etc/profile.d/rvm.sh
-    - rvm use 2.1.1
+    - rvm use 2.6.1
     - HEADLESS=1 make -C browser/test external
   artifacts:
     paths:
@@ -306,7 +306,7 @@ test_server_functional:
     - docker exec docker_uwsgi_1 sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
     - docker exec docker_nginx_1 make -C /usr/share/vidjil browser
     - source /etc/profile.d/rvm.sh
-    - rvm use 2.1.1
+    - rvm use 2.6.1
     - HEADLESS=1 make functional_server || (cd docker && docker-compose stop; docker stop $(docker ps -aq); docker rm $(docker ps -aq); docker rmi "vidjil/server:test" "vidjil/client:test"; false)
     - cd docker && docker-compose stop
     - docker stop $(docker ps -aq)
