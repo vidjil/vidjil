@@ -204,9 +204,9 @@ class TestMultilocus < BrowserTest
     $b.clone_in_scatterplot('90').click(:control)
 
     $b.menu_item_export_fasta.click
-    assert ( $b.window(:title => "").exists? ) , ">> fail opening fasta export "
-    $b.window(:title => "").use do
-      assert ($b.text.include? ">TRBV29*01 -1/0/-0 TRBD1*01 -2/0/-5 TRBJ2-5*01"), "header name"
+    assert ( $b.window(:url => /about:blank/ )) , ">> fail opening fasta export "
+    $b.window(:url => /about:blank/).use do
+      assert ($b.text.include? ">TRBV29*01 -1/0/-0 TRBD1*01 -2/0/-5 TRBJ2-5*01"), "header name: "+$b.text
       assert ($b.text.include? "YYGGGYYACGYAYAGCGGYGYTTYYCCTYTYTGYTYTGCYAAAYAACYYYYTGTGYCTYTGTGCYGYGTTYCCCGGYYYAAACYCYCYYCCTYGG\nCYAGGYCYGG"), "sequence"
       assert ($b.text.include? ">ERG-4F 0/TCT/0 ERG-Seq-R"), "header name locus ERG"
       assert (not $b.text.include? ">ERG-4F\n"), "header name of segment should not exist (segment is not present in germline)"

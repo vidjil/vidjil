@@ -75,8 +75,8 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
   def test_07_export_fasta
     $b.element(:id => 'btn_exportfasta').click
     
-    assert ( $b.window(:title => "").exists? ) , ">> fail opening fasta export "
-    $b.window(:title => "").use do
+    assert ( $b.window(:url => /about:blank/).exists? ) , ">> fail opening fasta export "
+    $b.window(:url => /about:blank/).use do
       assert ($b.text.index(/TRGV5.*200 nt/) > 0), "header name"
       assert ($b.text.index(/IGHV3-13.*374 nt/) > 0), "header name"
       assert ($b.text.include? "CCTGGG\nGGGCCAG\nATT"), "sequence"
