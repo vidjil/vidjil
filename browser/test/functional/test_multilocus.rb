@@ -9,7 +9,9 @@ class TestMultilocus < BrowserTest
     super
     if not defined? $b
       set_browser("/doc/analysis-example.vidjil")
-      $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
+      if $b.div(id: 'tip-container').present?
+        $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
+      end
     end
   end
 
