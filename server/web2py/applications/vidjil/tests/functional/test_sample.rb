@@ -23,7 +23,7 @@ class TestSample < ServerTest
 
   def go_to_patient_list
     # load patient list
-    $b.a(:class => "button button_token patient_token", :text => "patients").click
+    $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
@@ -146,21 +146,21 @@ class TestSample < ServerTest
   end
 
   def test_set_association_create
-    $b.a(:class => "button button_token patient_token", :text => "patients").click
+    $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
 
     patient_id = table.a(:text => "#set_assoc_0").parent.parent.td(:class => 'uid').text
 
-    $b.a(:class => "button button_token run_token", :text => "runs").click
+    $b.a(:class => ["button", "button_token", "run_token"], :text => "runs").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
 
     run_id = table.a(:text => "#set_assoc_0").parent.parent.td(:class => 'uid').text
 
-    $b.a(:class => "button button_token generic_token", :text => "sets").click
+    $b.a(:class => ["button", "button_token", "generic_token"], :text => "sets").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
