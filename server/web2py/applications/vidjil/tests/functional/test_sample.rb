@@ -46,7 +46,7 @@ class TestSample < ServerTest
   def go_to_set_by_tag(tag)
     table = go_to_patient_list
 
-    table.a(:text => tag).parent.parent.cells[2].click
+    table.a(:text => tag).parent.parent.td(:class => 'uid').click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     samples_table = $b.table(:id => "table")
     samples_table.wait_until(&:present?)
@@ -151,21 +151,21 @@ class TestSample < ServerTest
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
 
-    patient_id = table.a(:text => "#set_assoc_0").parent.parent.cells[0].text
+    patient_id = table.a(:text => "#set_assoc_0").parent.parent.td(:class => 'uid').text
 
     $b.a(:class => "button button_token run_token", :text => "runs").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
 
-    run_id = table.a(:text => "#set_assoc_0").parent.parent.cells[0].text
+    run_id = table.a(:text => "#set_assoc_0").parent.parent.td(:class => 'uid').text
 
     $b.a(:class => "button button_token generic_token", :text => "sets").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
 
-    set_id = table.a(:text => "#set_assoc_0").parent.parent.cells[0].text
+    set_id = table.a(:text => "#set_assoc_0").parent.parent.td(:class => 'uid').text
 
     samples_table = go_to_set_by_tag "#set_assoc_0"
     $b.span(:class => "button2", :text => "+ add samples").click

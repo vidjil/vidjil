@@ -107,7 +107,7 @@ class TestSampleSet < ServerTest
     table.wait_until(&:present?)
     table = go_to_list
     line = table.td(:class => "uid", :text => sample_set_id).parent
-    assert(line.cell(:index => 3).text == "#edited")
+    assert(line.td(:index => 3).text == "#edited")
   end
 
   def test_patient_delete

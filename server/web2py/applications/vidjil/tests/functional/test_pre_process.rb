@@ -102,7 +102,7 @@ class TestPreProcess < ServerTest
     list = $b.table(:id => "table")
     list.wait_until(&:present?)
     line = table.td(:text => "public").parent
-    checkbox = line.cells.last.checkbox
+    checkbox = line.checkbox
     assert(checkbox.set? == false)
     checkbox.click
 
@@ -112,7 +112,7 @@ class TestPreProcess < ServerTest
     list = $b.table(:id => "table")
     list.wait_until(&:present?)
     line = table.td(:text => "public").parent
-    checkbox = line.cells.last.checkbox
+    checkbox = line.checkbox
     assert(checkbox.set?)
   end
 end
