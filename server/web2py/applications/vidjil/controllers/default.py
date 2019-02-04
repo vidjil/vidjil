@@ -369,7 +369,7 @@ def get_custom_data():
     if not "custom" in request.vars :
         error += "no file selected, "
     else:
-        samples = request.vars['custom'] if request.vars['custom'] is list else [request.vars['custom']]
+        samples = request.vars['custom'] if type(request.vars['custom']) is not str else [request.vars['custom']]
         if not samples:
             error += "incorrect query, need at least one sample"
         else:
