@@ -364,13 +364,16 @@ def get_custom_data():
 
     error = ""
 
+    samples = []
+
     if not "custom" in request.vars :
         error += "no file selected, "
     else:
-        if type(request.vars['custom']) is not list or len(request.vars['custom']) < 2:
-            error += "you must select several files."
+        samples = request.vars['custom'] if type(request.vars['custom']) is not str else [request.vars['custom']]
+        if not samples:
+            error += "incorrect query, need at least one sample"
         else:
-            for id in request.vars["custom"] :
+            for id in samples:
                 log.debug("id = '%s'" % str(id))
                 sequence_file_id = db.results_file[id].sequence_file_id
                 sample_set_id = db((db.sample_set_membership.sequence_file_id == sequence_file_id)
@@ -380,11 +383,11 @@ def get_custom_data():
             
     if error == "" :
         try:
-            data = custom_fuse(request.vars["custom"])
+            data = custom_fuse(samples)
         except IOError, error:
             return error_message(str(error))
         
-        generic_info = "Compare samples"
+        generic_info = "Compare samples" if len(samples) > 1 else "Sample %s" % samples[0]
         data["sample_name"] = generic_info
         data["dataFileName"] = generic_info
         data["info"] = generic_info
@@ -393,7 +396,7 @@ def get_custom_data():
         data["samples"]["info"] = []
         data["samples"]["commandline"] = []
         
-        for id in request.vars["custom"] :
+        for id in samples:
             sequence_file_id = db.results_file[id].sequence_file_id
             sample_set = db((db.sequence_file.id == sequence_file_id)
                             & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
