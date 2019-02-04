@@ -473,6 +473,8 @@ make functional
      #+END_SRC
 
 
+     If you have to launch =irb= on a remote server without X (only using =Xvfb=)
+     you may be interested to use the [[https://en.wikipedia.org/wiki/Xvfb#Remote_control_over_SSH][redirection over SSH]].
 * Packaging
 
 ** Script driven building
