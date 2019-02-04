@@ -42,7 +42,7 @@ class TestPreProcess < ServerTest
 
     form.text_field(:id => "pre_process_name").set('dummy')
     form.textarea(:id => "pre_process_command").set('dummy &file1& &file2& > &result&')
-    form.textarea(:id => "pre_process_name").set('dummy pre-process for testing purposes')
+    form.textarea(:id => "pre_process_info").set('dummy pre-process for testing purposes')
     form.input(:type => "submit").click
 
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
