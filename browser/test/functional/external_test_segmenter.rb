@@ -17,8 +17,8 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
 
     $b.button(:id => 'form_submit').click
 
-    $b.element(:class => 'imgAjaxLoading').wait_until_present
-    $b.clone_in_scatterplot('0').wait_until_present
+    $b.element(:class => 'imgAjaxLoading').wait_until(&:present?)
+    $b.clone_in_scatterplot('0').wait_until(&:present?)
     
     assert ($b.element(:class => 'segmenter').present?), "Segmenter should be present"
     assert ($b.element(:class => 'scatterplot').present?), "Segmenter should be present"
@@ -27,15 +27,15 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
   def test_05_imgt_post
     begin
       $b.span(:id => "toIMGTSeg" ).click
-      $b.segmenter_checkbox_imgt_vdj.wait_until_present
-      Watir::Wait.until(timeout=10) { $b.span(:class => "identityBad").exists? }
+      $b.segmenter_checkbox_imgt_vdj.wait_until(&:present?)
+      Watir::Wait.until(timeout: 10) { $b.span(:class => "identityBad").exists? }
       clone_info = $b.clone_info_segmenter('0')
-      clone_info[:identity].element(:text => "NaN%").wait_while_present
+      clone_info[:identity].element(:text => "NaN%").wait_while(&:present?)
       productive_title = clone_info[:axis].element(:class => 'productivity-IMGT').title
       assert (productive_title.include? 'productivity'), "IMGT should tell us the productivity of the sequence"
 
       clone_segmenter = $b.clone_in_segmenter('0')
-      Watir::Wait.until(timeout=10) { $b.execute_script("return typeof model.clone(0).seg.imgt['N-REGION end']") != "undefined" }
+      Watir::Wait.until(timeout: 10) { $b.execute_script("return typeof model.clone(0).seg.imgt['N-REGION end']") != "undefined" }
       $b.segmenter_checkbox_imgt_vdj.click
       highlights = clone_segmenter.spans(:class => 'highlight_border')
 

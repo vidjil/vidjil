@@ -371,42 +371,27 @@ For OS X, see https://github.com/watir/watirbook/blob/master/manuscript/installa
   source /etc/profile.d/rvm.sh
   #+END_SRC
 
-***** Install ruby 2.1.1
+***** Install ruby 2.6.1
 
 #+BEGIN_SRC sh
-rvm install 2.1.1
+rvm install 2.6.1
 #+END_SRC
 
 
-***** Switch to ruby 2.1.1
+***** Switch to ruby 2.6.1
 
 #+BEGIN_SRC sh
-rvm use 2.1.1
+rvm use 2.6.1
 #+END_SRC
 
 
 ***** Install necessary gems
 
 #+BEGIN_SRC sh
-gem install minitest
-gem install minitest-ci
-gem install watir-webdriver
-gem install test-unit
+gem install minitest minitest-ci watir test-unit
 #+END_SRC
 
-This may install a =selenium-webdriver= gem whose version is ≥ 3. We highly
-recommend that you force an install to a version < 3 (/e.g./ 2.53.4).
-
-#+BEGIN_SRC sh
-# Removing a new version of selenium-webdriver
-gem uninstall selenium-webdriver
-# Installing an older version
-gem install selenium-webdriver -v 2.53.4
-#+END_SRC
-
-However the webdriver may not work with recent versions of Firefox (> 45).  In
-such a case you would like to downgrade your Firefox version or use a former
-version. The Firefox version used can be set with an environment variable (see
+The Firefox version used can be set with an environment variable (see
 below). All Firefox releases are [[https://download-installer.cdn.mozilla.net/pub/firefox/releases/ ][available here]].
 
 **** Launch browser tests
@@ -488,6 +473,8 @@ make functional
      #+END_SRC
 
 
+     If you have to launch =irb= on a remote server without X (only using =Xvfb=)
+     you may be interested to use the [[https://en.wikipedia.org/wiki/Xvfb#Remote_control_over_SSH][redirection over SSH]].
 * Packaging
 
 ** Script driven building

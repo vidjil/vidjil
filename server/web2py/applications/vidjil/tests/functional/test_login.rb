@@ -11,7 +11,7 @@ class TestLogin < ServerTest
     logout = $b.a(:class => "button", :text => "(logout)")
     if logout.present?
       logout.click
-      Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+      Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     end
   end
 
@@ -22,7 +22,7 @@ class TestLogin < ServerTest
 
     init_button.click
     init_form = $b.form(:id => "data_form")
-    init_form.wait_until_present
+    init_form.wait_until(&:present?)
 
     init_form.text_field(:id => "email").set("plop@plop.com")
     init_form.text_field(:id => "password").set("foobartest")
@@ -31,7 +31,7 @@ class TestLogin < ServerTest
     init_form.input(:type => "submit").click
 
     login_form = $b.form(:id => 'login_form')
-    login_form.wait_until_present
+    login_form.wait_until(&:present?)
   end
 =end
 
@@ -41,7 +41,7 @@ class TestLogin < ServerTest
     login_form.text_field(:id => "auth_user_email").set('foo@bar.com')
     login_form.text_field(:id => "auth_user_password").set('foobar')
     login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     login_form = $b.form(:id => 'login_form')
     assert(login_form.present?)
@@ -53,7 +53,7 @@ class TestLogin < ServerTest
     login_form.text_field(:id => "auth_user_email").set('plop@plop.com')
     login_form.text_field(:id => "auth_user_password").set('foobartest')
     login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     assert(!login_form.present?)
   end
 end

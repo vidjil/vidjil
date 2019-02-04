@@ -17,11 +17,10 @@ class TestSampleSet < ServerTest
   end
 
   def go_to_list
-    #$b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
-    $b.a(:class => "button button_token patient_token", :text => "patients").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
-    table.wait_until_present
+    table.wait_until(&:present?)
     table
   end
 
@@ -38,7 +37,7 @@ class TestSampleSet < ServerTest
     # go to form
     $b.span(:class => "button2", :text => "+ new patients").click
     form = $b.form(:id => "object_form")
-    form.wait_until_present
+    form.wait_until(&:present?)
 
     assert($b.select(:id => "group_select").present?)
 
@@ -70,7 +69,8 @@ class TestSampleSet < ServerTest
     form.input(:type => "submit").click
 
     # ensure patients were added
-    table.wait_until_present
+    table = $b.table(:id => "table")
+    table.wait_until(&:present?)
     lines = table.tbody.rows
     assert(lines.count == count + 5)
     lines.each do |line|
@@ -88,7 +88,7 @@ class TestSampleSet < ServerTest
     sample_set_id = line.td(:class => "uid").text
     line.i(:class => "icon-pencil-2").click
     form = $b.form(:id => "object_form")
-    form.wait_until_present
+    form.wait_until(&:present?)
 
     # check form data
     info = form.text_field(:id => "patient_info_0")
@@ -101,12 +101,12 @@ class TestSampleSet < ServerTest
     info.set("#edited")
 
     form.input(:type => "submit").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => 'table')
-    table.wait_until_present
+    table.wait_until(&:present?)
     table = go_to_list
     line = table.td(:class => "uid", :text => sample_set_id).parent
-    assert(line.cell(:index => 3).text == "#edited")
+    assert(line.td(:index => 3).text == "#edited")
   end
 
   def test_patient_delete
@@ -118,10 +118,11 @@ class TestSampleSet < ServerTest
     line.i(:class => "icon-erase").click
 
     delete_button = $b.button(:text => "delete")
-    delete_button.wait_until_present
+    delete_button.wait_until(&:present?)
     delete_button.click
 
-    table.wait_until_present
+    table = $b.table(:id => "table")
+    table.wait_until(&:present?)
     lines = table.tbody.rows
     assert(lines.count == count-1)
   end
@@ -130,11 +131,11 @@ class TestSampleSet < ServerTest
     table = go_to_list
 
     filter = $b.text_field(:id => "db_filter_input")
-    filter.wait_until_present
+    filter.wait_until(&:present?)
     filter.set('test1')
 
     filter.fire_event('onchange')
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => 'table')
     lines = table.tbody.rows
     assert(lines.count == 1)
@@ -150,8 +151,8 @@ class TestSampleSet < ServerTest
     sleep(2)
     autocomplete = $b.div(:id => 'at-view-tags')
     puts autocomplete.html
-    autocomplete.wait_until_present
-    assert(autocomplete.visible?)
+    autocomplete.wait_until(&:present?)
+    assert(autocomplete.present?)
     puts autcomplete.ul.count
     assert(autocomplete.ul.count == 5)
   end

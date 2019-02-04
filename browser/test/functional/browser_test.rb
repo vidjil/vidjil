@@ -1,6 +1,6 @@
 require 'rubygems'
 gem "minitest"
-require 'watir-webdriver'
+require 'watir'
 require 'test/unit'
 require "minitest/autorun"
 require 'minitest/ci'
@@ -65,7 +65,7 @@ class BrowserTest < MiniTest::Test
       print "Welcome popup.\n"
 
       # wait for the welcoming popup
-      $b.div(:class => 'popup_msg').wait_until_present(2)
+      $b.div(:class => 'popup_msg').wait_until(timeout: 2){ |el| el.present? }
     
       # close the welcoming popup
       $b.div(:class => 'popup_msg').button(:text => 'ok').click
@@ -83,12 +83,12 @@ class BrowserTest < MiniTest::Test
     
     # select data file
     print "  data:     " + data_path + "\n"
-    $b.div(:id => 'file_menu').file_field(:name,"json").set(data_path)
+    $b.div(:id => 'file_menu').file_field(name: "json").set(data_path)
 
     # select analysis file
     if analysis_path != nil
       print "  analysis: " + analysis_path + "\n"
-      $b.div(:id => 'file_menu').file_field(:name, "pref").set(analysis_path)
+      $b.div(:id => 'file_menu').file_field(name: "pref").set(analysis_path)
     end
 
     $b.div(:id => 'file_menu').button(:text => 'start').click
