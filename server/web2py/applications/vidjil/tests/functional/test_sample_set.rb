@@ -70,6 +70,7 @@ class TestSampleSet < ServerTest
     form.input(:type => "submit").click
 
     # ensure patients were added
+    table = $b.table(:id => "table")
     table.wait_until(&:present?)
     lines = table.tbody.rows
     assert(lines.count == count + 5)
@@ -121,6 +122,7 @@ class TestSampleSet < ServerTest
     delete_button.wait_until(&:present?)
     delete_button.click
 
+    table = $b.table(:id => "table")
     table.wait_until(&:present?)
     lines = table.tbody.rows
     assert(lines.count == count-1)

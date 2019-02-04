@@ -86,6 +86,7 @@ class TestPreProcess < ServerTest
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     $b.button(:text => "continue").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
+    table = $b.table(:id => "table")
     table.wait_until(&:present?)
     lines = table.tbody.rows
     assert(lines.count == count-1)

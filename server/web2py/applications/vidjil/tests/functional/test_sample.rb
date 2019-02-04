@@ -257,6 +257,7 @@ class TestSample < ServerTest
 
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
+    table = $b.table(:id => "table")
     table.wait_until(&:present?)
     assert(table.tbody.rows.count == count-1)
   end
