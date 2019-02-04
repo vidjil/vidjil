@@ -456,7 +456,7 @@ def get_analysis():
         #analysis_data["info_patient"] = db.patient[request.vars["patient"]].info
         dumped_json = gluon.contrib.simplejson.dumps(analysis_data, separators=(',',':'))
 
-        log.info("load analysis", extra={'user_id': auth.user.id, 'record_id': request.vars['sample_id'], 'table_name': 'sample_set'})
+        log.info("load analysis", extra={'user_id': auth.user.id, 'record_id': request.vars['sample_set_id'], 'table_name': 'sample_set'})
 
         if download:
             return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.vars['filename'])
@@ -523,7 +523,7 @@ def save_analysis():
                "message" : "(%s): analysis saved" % (sample_set_id)}
         log.info(res, extra={'user_id': auth.user.id})
 
-        log.info("save analysis", extra={'user_id': auth.user.id, 'record_id': request.vars['samples_id'], 'table_name': 'sample_set'})
+        log.info("save analysis", extra={'user_id': auth.user.id, 'record_id': sample_set_id, 'table_name': 'sample_set'})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"success" : "false",
