@@ -1,6 +1,6 @@
 DB_ADDRESS = ""
-DB_TIMEOUT_CALL = 15000               // Regular call
-DB_TIMEOUT_GET_DATA = 20000           // Get patient/sample .data
+DB_TIMEOUT_CALL = 30000               // Regular call
+DB_TIMEOUT_GET_DATA = DB_TIMEOUT_CALL           // Get patient/sample .data
 DB_TIMEOUT_GET_CUSTOM_DATA = 1200000  // Launch custum fused sample .data
 
 var SEQ_LENGTH_CLONEDB = 40; // Length of the sequence retrieved for CloneDB
