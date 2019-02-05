@@ -352,6 +352,31 @@ class TestMultilocus < BrowserTest
     end
   end
 
+
+  def test_19_edit_tag
+    begin
+      $b.clone_in_scatterplot('77').click
+      $b.clone_in_scatterplot('25').click(:control)
+      $b.clone_in_scatterplot('88').click(:control)
+      $b.clone_in_scatterplot('90').click(:control)
+      
+      ## Test tag selection for one clone
+      $b.clone_info('25')[:star].click
+      $b.element(:id => 'tagElem_0').click
+
+      assert ($b.clone_info('25')[:name].style('color') ==  'rgba(220, 50, 47, 1)' ) , "clone 25 have changed color"
+      assert ( not $b.clone_info('88')[:name].style('color') ==  'rgba(220, 50, 47, 1)' ) , "clone 88 (second of the selection) haven't chaged color "
+
+
+      ## Test tag selection for multiple clone
+      $b.element(:id => "tag_icon__multiple").click
+      $b.element(:id => 'tagElem_6').click
+      assert ($b.clone_info('25')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 25 have also changed color"
+      assert ($b.clone_info('77')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 77 have also changed color"
+      assert ($b.clone_info('88')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 88 have also changed color"
+    end
+  end
+
   # Not really a test
   def test_zz_close
     close_everything

@@ -401,6 +401,7 @@ List.prototype = {
             self.m.focusIn(cloneID);
         }
         div_elem.className = "listElem";
+        div_elem.id        = "listElem_"+cloneID
         div_elem.style.display = "block";
 
         var span_name = document.createElement('span');
