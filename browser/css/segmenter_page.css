@@ -1361,6 +1361,9 @@ span.warningReads {
 #bot-separator:hover {
   background: #fdf6e3;
 }
+#norm_button {
+  width: 7ex;
+}
 .edit_button {
   float: right;
   margin-right: 2px;
@@ -2269,6 +2272,10 @@ form .form_label {
 }
 [hidden] {
   display: none !important;
+}
+.disabledbutton {
+  pointer-events: none;
+  opacity: 0.4;
 }
 body {
   line-height: 20px;
