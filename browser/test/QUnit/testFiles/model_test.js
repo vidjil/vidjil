@@ -116,7 +116,8 @@ QUnit.test("top clones", function(assert) {
     m.displayTop(-10)
     assert.equal(m.top, 0, "Top cannot be negative")
     m.displayTop(m.countRealClones() * 2 + 10)
-    assert.equal(m.top, m.countRealClones(), "Top cannot be greater than the number of real clones")
+    
+    assert.equal(m.current_top, m.countRealClones(), "Top cannot be greater than the number of real clones")
 
     m.displayTop(1)
 

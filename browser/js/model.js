@@ -1199,13 +1199,17 @@ changeAlleleNotation: function(alleleNotation) {
     displayTop: function (top) {
         top = typeof top !== 'undefined' ? top : this.top;
 
-        this.top = top;
 
         if (top < 0)
             top = 0
+        // Remember the top setted
+        // Allow to keep this values between various samples
+        this.top = top;
+
+        // top show cannot be greater than the number of clones
         if (top > this.countRealClones())
             top = this.countRealClones()
-
+        this.current_top = top
 
         var html_slider = document.getElementById('top_slider');
         if (html_slider !== null) {
