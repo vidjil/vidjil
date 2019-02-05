@@ -1198,12 +1198,14 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     displayTop: function (top) {
         top = typeof top !== 'undefined' ? top : this.top;
+
+        this.top = top;
+
         if (top < 0)
             top = 0
         if (top > this.countRealClones())
             top = this.countRealClones()
 
-        this.top = top;
 
         var html_slider = document.getElementById('top_slider');
         if (html_slider !== null) {
