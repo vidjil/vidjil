@@ -2273,9 +2273,3 @@ form .form_label {
 [hidden] {
   display: none !important;
 }
-
-
-.disabledbutton {
-    pointer-events: none;
-    opacity: 0.4;
-}
