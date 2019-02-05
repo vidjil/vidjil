@@ -96,7 +96,7 @@ server {
         uwsgi_temp_path /mnt/data/tmp;
 
         location / {
-            rewrite /([0-9]+)/([0-9]+) /?set=$1&conf=$2 break;
+            rewrite /([0-9]+)/([0-9]+)(/+) /?set=$1&conf=$2 break;
             root $CWD/../browser;
             expires 1h;
 

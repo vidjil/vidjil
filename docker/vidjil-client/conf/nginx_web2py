@@ -26,7 +26,7 @@ server {
         uwsgi_max_temp_file_size 20480m;
 
         location / {
-            rewrite /([0-9]+)-([0-9]+) /?set=$1&conf=$2 break;
+            rewrite /([0-9]+)/([0-9]+)(/+) /?set=$1&conf=$2 break;
             root /usr/share/vidjil;
             expires 1h;
             add_header Cache-Control must-revalidate;

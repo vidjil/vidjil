@@ -126,7 +126,7 @@ Url.prototype= {
             }
         }
 
-        var positionnal_params = url.pathname.substr(1).split('-');
+        var positionnal_params = url.pathname.substr(1).split('/');
         var pos_param_keys = this.getPositionnalParams();
         for (var j = 0; j < positionnal_params.length; j++) {
             params[pos_param_keys[j]] = positionnal_params[j];
@@ -155,11 +155,11 @@ Url.prototype= {
                 }
             }
         }
-        return positionnal_params.join('-') + '?' + params_list.join("&");
+        return positionnal_params.join('/') + '?' + params_list.join("&");
     },
 
     pushUrl: function(params) {
-        var new_url = "?" + params;
+        var new_url = "/" + params;
         try  {
             this.window.history.pushState('plop', 'plop', new_url);
         } catch(error) {

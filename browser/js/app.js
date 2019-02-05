@@ -1,7 +1,7 @@
 var DEFAULT_DB_ADDRESS="https://db.vidjil.org/vidjil/";
 
 requirejs.config({
-    baseUrl: 'js/lib',
+    baseUrl: '/js/lib',
     paths: {
         app: '',
         jquery: 'jquery-3.3.1.min',
