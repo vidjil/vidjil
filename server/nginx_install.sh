@@ -112,15 +112,9 @@ server {
         ## if you serve static files through https, copy here the section
         ## from the previous server instance to manage static files
 
-        location ~ ^/(css|js|images|test) {
-            root /usr/share/vidjil/browser/;
-            expires 1h;
-
-            error_page 405 = $uri;
-        }
-
         location /browser {
             rewrite /browser/([0-9]+)/([0-9]+)(/+) /browser/?set=$1&conf=$2 break;
+            rewrite /browser/([0-9/]+)/(css|js|images|test)/(.*) /browser/$2/$3 redirect;
             root $CWD/../;
             expires 1h;
 

@@ -26,16 +26,6 @@ server {
         uwsgi_max_temp_file_size 20480m;
 
         location / {
-            rewrite /([0-9]+)/([0-9]+)(/+) /?set=$1&conf=$2 break;
-            root /usr/share/vidjil;
-            expires 1h;
-            add_header Cache-Control must-revalidate;
-
-            error_page 405 = $uri;
-
-        }
-
-        location /vidjil {
             include /etc/nginx/conf.d/web2py/uwsgi.conf;
             proxy_read_timeout 600;
             client_max_body_size 20G;
@@ -50,6 +40,16 @@ server {
             expires 1h;
 
             error_page 405 = $1;
+
+        location /browser {
+            rewrite /browser/([0-9]+)/([0-9]+)(/+) /browser/?set=$1&conf=$2 break;
+            rewrite /browser/([0-9/]+)/(css|js|images|test)/(.*) /browser/$2/$3 redirect;
+            root /usr/share/vidjil;
+            expires 1h;
+            add_header Cache-Control must-revalidate;
+
+            error_page 405 = $uri;
+
         }
 
     location /germline {
