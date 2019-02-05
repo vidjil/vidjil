@@ -197,7 +197,7 @@ class TestMultilocus < BrowserTest
       name.click
       name.wait_while(&:present?)
 
-      assert ($b.clone_info('25')[:name].style('color') ==  'rgba(220, 50, 47, 1)' ) , ">> fail tag : clone color hasn't changed"
+      $b.until {$b.clone_info('25')[:name].style('color') ==  'rgba(220, 50, 47, 1)' }
     end
   end
 
@@ -291,7 +291,7 @@ class TestMultilocus < BrowserTest
 
     $b.clone_info('90')[:cluster].click
 
-    assert ( $b.clone_in_scatterplot('1', :class => "circle_select").exists?)
+    $b.until { $b.clone_in_scatterplot('1', :class => "circle_select").exists?}
     assert ( $b.clone_in_graph('1', :class=> "graph_select").exists?)
     assert ( $b.clone_in_segmenter('1').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
     assert ( $b.clone_in_scatterplot('37', :class => "circle_select").exists?)
@@ -368,7 +368,7 @@ class TestMultilocus < BrowserTest
       $b.clone_info('25')[:star].click
       $b.element(:id => 'tagElem_0').click
 
-      assert ($b.clone_info('25')[:name].style('color') ==  'rgba(220, 50, 47, 1)' ) , "clone 25 have changed color"
+      $b.until {$b.clone_info('25')[:name].style('color') ==  'rgba(220, 50, 47, 1)' } # clone 25 should have changed color
       assert ( not $b.clone_info('88')[:name].style('color') ==  'rgba(220, 50, 47, 1)' ) , "clone 88 (second of the selection) haven't chaged color "
 
 
