@@ -107,9 +107,9 @@ end
   def test_06_remove_cluster
     clustered = $b.clone_info('1')
     clustered[:cluster].click
-    $b.clone_in_cluster('1', '2')[:delete].wait_until(&:present?)
+    $b.until { $b.clone_in_cluster('1', '2')[:delete].present? }
     $b.clone_in_cluster('1', '2')[:delete].click
-
+    
     assert (not $b.clone_cluster('1').present?)
     
     assert ($b.clone_in_scatterplot('1').present?)

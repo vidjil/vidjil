@@ -337,6 +337,12 @@ class VidjilBrowser < Watir::Browser
     return div(:id => 'list_clones')
   end
   
+  def until(extra = {})
+    default = {timeout: 3}
+    default.merge(extra)
+    Watir::Wait.until(default) { yield }
+  end
+
   protected
 
   def scatterplot_id(number=1)
