@@ -816,7 +816,7 @@ span .end-codon {
   transition-delay: 0s, 0s;
 }
 #add_clone_menu > #addclone_input.error {
-  border: 1px solid darkred;
+  border: 1px solid #8b0000;
 }
 .buttonSelector {
   background: #ffffff;
