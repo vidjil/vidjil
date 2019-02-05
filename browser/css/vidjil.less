@@ -155,8 +155,6 @@ ul{
   flex: 1 1 auto;
   top : @top_container_height;
   bottom : 125px ;
-  width: -moz-calc(~"100%" - @margin + @margin);
-  width: -webkit-calc(~"100%" - @margin + @margin);
   width: calc(~"100%" - @margin + @margin);
   overflow: hidden;
   background: @background;
@@ -1061,11 +1059,7 @@ a.tag-link {
   &.data-container, &.info-container{
     top: 50px;
     left: 20px + @width_left_container;
-    max-width: -moz-calc(~"100%" - @width_left_container + 60px);
-    max-width: -webkit-calc(~"100%" - @width_left_container + 60px);
     max-width: calc(~"100%" - @width_left_container + 60px);
-    height: -moz-calc(~"100%" - 215px);
-    height: -webkit-calc(~"100%" - 215px);
     height: calc(~"100%" - 215px);
   }
 
@@ -1212,8 +1206,6 @@ span.logo
     position: relative;
     text-align: center;
     float: left;
-    width: -moz-calc(~"100%" - (@width_left_container + @width_stats + @width_highlight + 50));
-    width: -webkit-calc(~"100%" - (@width_left_container + @width_stats + @width_highlight + 50));
     width: calc(~"100%" - (@width_left_container +  @width_stats + @width_highlight + 50));
     overflow: hidden;
     height: 1.1em;
@@ -1243,8 +1235,6 @@ span.logo
   min-width: 150px;
   margin-left: -6px;
   border-top: none;
-  margin-top: -moz-calc(@top_container_height - 24px);
-  margin-top: -webkit-calc(@top_container_height - 24px);
   margin-top: calc(@top_container_height - 24px);
   z-index:5;
   overflow: hidden;
