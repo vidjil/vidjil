@@ -97,10 +97,10 @@ class BrowserTest < MiniTest::Test
 
   def close_everything
     if defined? $b
-      print "\nTests finished, closing browser.\n"
-      $b.close
       if ENV['HEADLESS']
         $headless.destroy
+      else
+        $b.close
       end
     end
   end
