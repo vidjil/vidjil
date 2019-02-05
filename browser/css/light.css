@@ -1655,18 +1655,18 @@ h3 .uid {
 .flash_1,
 .log_1 {
   font-weight: bold;
-  background-color: #DFF0D8;
+  background-color: #dff0d8;
 }
 .flash_2,
 .log_2 {
   font-weight: bold;
-  background-color: #F2DEAE;
+  background-color: #f2deae;
 }
 .flash_3,
 .log_3 {
   font-weight: bold;
   border-color: darkred;
-  background-color: #F2DEDE;
+  background-color: #f2dede;
 }
 .tip_1 {
   width: 400px;
@@ -1676,7 +1676,7 @@ h3 .uid {
   border-radius: 5px;
   padding: 5px;
   margin: 5px;
-  background: #DFF0D8;
+  background: #dff0d8;
   border-color: #cccccc;
 }
 #tip_img {
@@ -1806,7 +1806,7 @@ table.log textarea {
   flex-grow: 1;
 }
 .tagColor0 {
-  background: #DC322F;
+  background: #dc322f;
 }
 .tagColor1 {
   background: #cb4b16;
@@ -1846,12 +1846,12 @@ table.log textarea {
   border: 2px solid #8b0000;
   margin: 3px;
   font-weight: bold;
-  background-color: #F2DEDE;
+  background-color: #f2dede;
 }
 .info_message {
   border: 1px solid #cccccc;
   margin: 4px;
-  background-color: #DFF0D8;
+  background-color: #dff0d8;
 }
 .notification {
   padding: 3px;
