@@ -7,9 +7,14 @@ class VidjilBrowser < Watir::Browser
     if ENV['WATIR_BROWSER_PATH']
       print "Using custom browser location " + ENV['WATIR_BROWSER_PATH'] + "\n"
       Selenium::WebDriver::Firefox.path = ENV['WATIR_BROWSER_PATH']
+      Selenium::WebDriver::Chrome.path = ENV['WATIR_BROWSER_PATH'] 
     end
     # :chrome or :safari
-    super :firefox, :marionette => false
+    if ENV['WATIR_CHROME']
+      super :chrome
+    else
+      super :firefox, :marionette => false
+    end
 
     print "Running "+driver.capabilities.browser_name+" "+driver.capabilities.version+"\n"
   end
