@@ -880,7 +880,48 @@ changeAlleleNotation: function(alleleNotation) {
 
             this.updateElemStyle([cloneID]);
         }
+        this.colorize_multitag_star_icon()
     },
+
+
+    /**
+     * [colorize_multitag_star_icon description]
+     * @return {[type]} [description]
+     */
+    colorize_multitag_star_icon: function(){
+        var color = this.getColorSelectedClone()
+        var div = document.getElementById("tag_icon__multiple")
+        if (color){
+            div.style.color = color;
+        } else  {
+            div.style.color = ""
+        }
+    },
+
+
+    /**
+     * Return the color of selected clones if similar; else return false
+     * @return {[type]} [description]
+     */
+    getColorSelectedClone: function(){
+        var selected   = this.getSelected()
+        var list_color = []
+
+        for (var i = 0; i < selected.length; i++) {
+            var clone_id = selected[i]
+            var clone = this.clones[clone_id]
+            var color = clone.true_color;
+            list_color.push(color)
+        }
+
+        var setted_list = Array.from(new Set(list_color) )
+        if ( setted_list.length == 1) {
+            return setted_list[0]
+        } else {
+            return false
+        }
+    },
+
 
     /**
      * Unselect an isolated clone
@@ -983,7 +1024,7 @@ changeAlleleNotation: function(alleleNotation) {
             this.orderedSelectedClones.push(tmp[j].id);
             list[j] = tmp[j].id
         }
-
+        this.updateStyle();
         this.updateElemStyle(list);
         this.update();
     },
@@ -1103,7 +1144,7 @@ changeAlleleNotation: function(alleleNotation) {
             this.clone(n).updateCloneTagIcon()
         }
 
-
+        this.colorize_multitag_star_icon();
     },
 
     /**
