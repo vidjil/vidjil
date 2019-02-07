@@ -890,11 +890,16 @@ changeAlleleNotation: function(alleleNotation) {
      */
     colorize_multitag_star_icon: function(){
         var color = this.getColorSelectedClone()
-        var div = document.getElementById("tag_icon__multiple")
-        if (color){
-            div.style.color = color;
-        } else  {
-            div.style.color = ""
+        try {
+            // put it in a try to not create errors on qunit
+            var div = document.getElementById("tag_icon__multiple")
+            if (color){
+                div.style.color = color;
+            } else  {
+                div.style.color = ""
+            }
+        } catch {
+            // ne rien faire.
         }
     },
 
