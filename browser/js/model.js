@@ -898,7 +898,7 @@ changeAlleleNotation: function(alleleNotation) {
             } else  {
                 div.style.color = ""
             }
-        } catch {
+        } catch (err) {
             // ne rien faire.
         }
     },
