@@ -942,14 +942,14 @@ Segment.prototype = {
      * */
     toFasta: function () {
         var selected = this.sequenceListInSegmenter();
-        var result = "";
+        var result = '<pre>';
 
         for (var i = 0; i < selected.length; i++) {
             if (typeof this.sequence[selected[i]] !== "undefined" &&
                 typeof this.sequence[selected[i]].seq !== "undefined") {
                 var seq = this.sequence[selected[i]];
                 if (seq.is_clone) {
-                    result +="> " + this.m.clone(selected[i]).getName() + " // " + this.m.clone(selected[i]).getStrSize() + "\n";
+                    result += "> " + this.m.clone(selected[i]).getName() + " // " + this.m.clone(selected[i]).getStrSize() + "\n";
                 } else {
                     result += "> " + selected[i];
                 }
@@ -959,6 +959,23 @@ Segment.prototype = {
         return result;
     },
 
+
+    /**
+     * save a csv file of the currently visibles clones.
+     * @return {string} csv 
+     * */
+    exportAlignFasta: function () {
+
+        var list = this.m.getSelected()
+        if (list.length>0){
+        
+            var fasta = this.toFasta()
+            openAndFillNewTab( fasta )
+        }else{
+            console.log({msg: "Export FASTA: please select clones to be exported", type: 'flash', priority: 2});
+        }
+        
+    },
 
 
     /**
