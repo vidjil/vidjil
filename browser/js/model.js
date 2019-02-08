@@ -2216,7 +2216,6 @@ changeAlleleNotation: function(alleleNotation) {
     exportFasta: function () {
         var list = this.getSelected()
         if (list.length>0){
-            var w = window.open("", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
             
             var fasta = '<pre>'
             for (var i=0; i<list.length; i++){
@@ -2238,7 +2237,6 @@ changeAlleleNotation: function(alleleNotation) {
                 }
             }
 
-
             for (var k=0; k<listGene.length; k++){
                 var germName = gene_germline[k].substring(0, 3);
                 if (this.germline[germName] != undefined) {
@@ -2250,14 +2248,13 @@ changeAlleleNotation: function(alleleNotation) {
                 }
             }
 
-            var result = $('<div/>', {
-                html: fasta
-            }).appendTo(w.document.body);
+            openAndFillNewTab( fasta )
         }else{
             console.log({msg: "Export FASTA: please select clones to be exported", type: 'flash', priority: 2});
         }
         
     },
+
 
     /** 
      * Bypass the germline name to ge tthe sequence of a gene
