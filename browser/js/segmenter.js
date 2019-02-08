@@ -67,6 +67,7 @@ function Segment(id, model, database) {
     this.is_open = false;
     this.amino = false;
     this.aligned = false;
+        
     this.fixed = false;         // whether the segmenter is fixed
     this.germline = this.m.germline;
     //elements to be highlited in sequences
@@ -665,6 +666,7 @@ Segment.prototype = {
         var self = this;
 
         this.aligned = false ;
+        this.resetAlign()
         this.sequence[cloneID] = new Sequence(cloneID, this.m, this)
         
         var divParent = document.getElementById("listSeq");
@@ -774,6 +776,7 @@ Segment.prototype = {
     addSequenceTosegmenter : function(id, locus, str){
         var self =this
         this.aligned = false ;
+        this.resetAlign()
         if ( typeof this.sequence[id]=="undefined"){
             this.sequence[id] = new genSeq(id, locus, this.m, this)
             this.sequence[id].load("str")
@@ -934,6 +937,10 @@ Segment.prototype = {
                 console.log({"type": "flash", "msg": "cgi error : impossible to connect", "priority": 2});
             }
         });
+
+        // Allow to use button of the export menu
+        div = document.getElementById("export_fasta_align")
+        div.classList.remove("disabledClass")
     },
 
     /**
@@ -986,9 +993,17 @@ Segment.prototype = {
 
         this.aligned = false
 
-        for (var i = 0; i < selected.length; i++) {
-            var spanM = document.getElementById("m" + selected[i])
-            spanM.innerHTML =  this.sequence[selected[i]].load().toString(this)
+        div = document.getElementById("export_fasta_align")
+        div.classList.add("disabledClass")
+
+        try{
+            if( selected.length ){
+                for (var i = 0; i < selected.length; i++) {
+                    var spanM = document.getElementById("m" + selected[i])
+                    spanM.innerHTML =  this.sequence[selected[i]].load().toString(this)
+                }
+            }
+        } catch (err) {
         }
     },
     
@@ -1001,12 +1016,12 @@ Segment.prototype = {
 
         var json = JSON.parse(file)
 
-	// Load all (aligned) sequences
+	    // Load all (aligned) sequences
         for (var i = 0; i < json.seq.length; i++) {
             this.sequence[this.memTab[i]].load(json.seq[i])
-	}
+    	}
 
-	// Render all (aligned) sequences
+	    // Render all (aligned) sequences
         for (var j = 0; j < json.seq.length; j++) {
 
             // global container
