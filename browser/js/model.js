@@ -890,6 +890,7 @@ changeAlleleNotation: function(alleleNotation) {
      */
     colorize_multitag_star_icon: function(){
         var color = this.getColorSelectedClone()
+
         try {
             // put it in a try to not create errors on qunit
             var div = document.getElementById("tag_icon__multiple")
@@ -910,21 +911,23 @@ changeAlleleNotation: function(alleleNotation) {
      */
     getColorSelectedClone: function(){
         var selected   = this.getSelected()
-        var list_color = []
-
+        var list_color = new Set()
+        
+        if (selected.length == 0){
+            return false
+        }
+        
         for (var i = 0; i < selected.length; i++) {
             var clone_id = selected[i]
             var clone = this.clones[clone_id]
             var color = clone.true_color;
-            list_color.push(color)
+            list_color.add(color)
+            if (list_color.size == 2){
+                return false
+            }
         }
 
-        var setted_list = Array.from(new Set(list_color) )
-        if ( setted_list.length == 1) {
-            return setted_list[0]
-        } else {
-            return false
-        }
+        return Array.from(list_color)[0]
     },
 
 
