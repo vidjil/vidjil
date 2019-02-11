@@ -129,7 +129,7 @@ end
     clustered = $b.clone_info('1')
     assert (clustered[:name].text == 'clone2')
     assert ($b.clone_in_scatterplot('1').present?)
-    assert (not $b.clone_in_scatterplot('2').present?)
+    $b.until{ not $b.clone_in_scatterplot('2').present? }
   end
 
   def test_08_select_cluster

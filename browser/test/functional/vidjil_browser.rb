@@ -12,6 +12,8 @@ class VidjilBrowser < Watir::Browser
     # :chrome or :safari
     if ENV['WATIR_CHROME']
       super :chrome
+    elsif ENV['WATIR_MARIONETTE']
+      super :firefox
     else
       super :firefox, :marionette => false
     end
