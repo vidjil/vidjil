@@ -965,10 +965,9 @@ Clone.prototype = {
      *
      * */
     updateColor: function () {
+
         var allele;
-        if (this.m.focus == this.index){
-            this.color = "";
-        }else if (this.m.colorMethod == "abundance") {
+        if (this.m.colorMethod == "abundance") {
             var size = this.getSize()
             if (this.getCluster().length===0){ size = this.getSequenceSize() }
             if (size === 0){
@@ -1006,6 +1005,11 @@ Clone.prototype = {
                 this.color = colorProductivity(this.seg.junction.productive)
             }
         }else{
+            this.color = "";
+        }
+        this.true_color = this.color
+
+        if (this.m.focus == this.index){
             this.color = "";
         }
     },
