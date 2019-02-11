@@ -312,6 +312,10 @@ function processCloneDBContents(results,model) {
                         config_name = 'unknown';
 		    var url = '?sample_set_id='+results[clone].tags.sample_set[i]+'&config='+results[clone].tags.config_id[0];
 		    var msg = '<a href="'+url+'">'+name+'</a> ('+config_name+')';
+                    if (typeof results[clone].tags.sample_tags !== 'undefined' &&
+                       results[clone].tags.sample_tags[i].length > 0) {
+                        msg += '<br/><span class="sample-tag">'+results[clone].tags.sample_tags[i].join('</span> <span class="sample-tag">')+'</span>';
+                    }
 		    if (! (url in existing_urls)) {
                        clones_results[name] = [results[clone].occ,parseFloat(results[clone].tags.percentage[0])];
 			existing_urls[url] = true;
