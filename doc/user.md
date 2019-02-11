@@ -123,6 +123,17 @@ to learn the essential features of Vidjil.
     sample but has been detected in another sample that is not currently
     displayed.
 
+### Detailed information on each clone
+The "i" button opens a window showing detailed information (V(D)J designation,
+e-value, number of reads) about each clone.
+
+In addition, depending on what the user launched on this clone, we may also
+find detailed informations retrieved from IMGT or from CloneDB.
+#### Detailed information from CloneDB
+Note that this feature is experimental.
+
+Also note that the percentage shown can be above 100% as the percentage is
+calculated over all the samples in the sample set.
 ## The sample graph
 
 The sample graph is hidden when there is only one sample. It shows the most frequent clones of each sample, tracked into every sample.
