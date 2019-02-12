@@ -98,7 +98,7 @@ shouldvdj_with_rc:
 	$(SHOULD_VDJ_TO_TAP) -r $(SHOULD_VDJ)
 
 shouldvdj_with_rc_merged:
-	cat $(SHOULD_VDJ) > should-vdj-tests/should-vdj.merged.fa
+	awk 1  $(SHOULD_VDJ) > should-vdj-tests/should-vdj.merged.fa
 	$(SHOULD_VDJ_TO_TAP) -r should-vdj-tests/should-vdj.merged.fa
 
 # When the global test suite is passing, individual failed tests (tagged with BUG or BUG-LOCUS in the *.should-vdj.fa files)
