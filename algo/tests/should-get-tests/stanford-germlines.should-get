@@ -1,4 +1,4 @@
-!LAUNCH: ($LAUNCHER $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -c germlines -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRD,TRG,IGH,IGK,IGL -t 100 -s '######-######' $VIDJIL_DATA/Stanford_S22.fasta)
+!LAUNCH: ($LAUNCHER $VIDJIL_DIR/$EXEC $EXTRA $VIDJIL_DEFAULT_OPTIONS -c germlines -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRD,TRG,IGH,IGK,IGL -t 100 -s '######-######' $VIDJIL_DATA/Stanford_S22.fasta)
 
 $ number of reads and kmers
 1:13153 reads, 3020179 kmers
