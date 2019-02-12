@@ -943,7 +943,7 @@ Segment.prototype = {
 
             div = document.getElementById("export_fasta_align")
             div.classList.remove("disabledClass")
-        } catch {
+        } catch (err) {
             // Div doesn't exist (qunit only ?)
         }
     },
@@ -1001,7 +1001,7 @@ Segment.prototype = {
         try {
             div = document.getElementById("export_fasta_align")
             div.classList.add("disabledClass")
-        } catch {
+        } catch (err) {
             // Div doesn't exist (qunit only ?)
         }
 
