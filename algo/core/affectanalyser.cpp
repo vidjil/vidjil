@@ -83,7 +83,7 @@ int KmerAffectAnalyser::minimize(const KmerAffect &affect, int margin, int width
   if (i_max == NO_MINIMIZING_POSITION)
     return i_max ;
 
-  return i_max + (seq.length() - affectations.size() + 1) / 2;
+  return i_max + kms.getS() / 2;
 }
 
 
