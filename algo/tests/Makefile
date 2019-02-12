@@ -122,7 +122,7 @@ curated-vdj.zip: $(SHOULD_VDJ_ARCHIVE)
 
 valgrind_should: vidjil
 	$(MAKE) -C "$(REPORTS_PATH)" clean_valgrind
-	time python3 should.py --launcher "$(VALGRIND_CMD)" $(SHOULD)
+	time python3 should.py --launcher "$(VALGRIND_CMD)" --extra=--clean-memory $(SHOULD)
 
 valgrind_%:
 	LAUNCHER="$(VALGRIND_CMD)" $(MAKE) $(patsubst valgrind_%,%,$@)
