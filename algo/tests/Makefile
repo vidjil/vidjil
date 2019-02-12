@@ -90,7 +90,7 @@ shouldlocus: vidjil
 shouldlocus_and_vdj: vidjil
 	@echo "*** Launching .should-vdj-fa tests..."
 	$(MAKE) shouldlocus
-	$(MAKE) shouldvdj_with_rc
+	$(MAKE) shouldvdj_with_rc_merged
 	@echo "*** All .should-vdj.fa tests passed"
 
 shouldvdj_no_relaunch:
