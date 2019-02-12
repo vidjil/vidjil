@@ -939,8 +939,13 @@ Segment.prototype = {
         });
 
         // Allow to use button of the export menu
-        div = document.getElementById("export_fasta_align")
-        div.classList.remove("disabledClass")
+        try {
+
+            div = document.getElementById("export_fasta_align")
+            div.classList.remove("disabledClass")
+        } catch {
+            // Div doesn't exist (qunit only ?)
+        }
     },
 
     /**
@@ -993,8 +998,12 @@ Segment.prototype = {
 
         this.aligned = false
 
-        div = document.getElementById("export_fasta_align")
-        div.classList.add("disabledClass")
+        try {
+            div = document.getElementById("export_fasta_align")
+            div.classList.add("disabledClass")
+        } catch {
+            // Div doesn't exist (qunit only ?)
+        }
 
         try{
             if( selected.length ){
