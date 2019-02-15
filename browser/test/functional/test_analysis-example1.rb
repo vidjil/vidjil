@@ -7,19 +7,21 @@ class TestSimple < BrowserTest
     super
     if not defined? $b
       set_browser("/doc/analysis-example1.vidjil")
-      $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
+      if $b.div(id: 'tip-container').present?
+        $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
+      end
     end
   end
   
   def test_00_graph_hidden
-#    assert (not $b.clone_in_graph('0').visible?), "Graph lines should not be visible"
+#    assert (not $b.clone_in_graph('0').present?), "Graph lines should not be visible"
     assert (not $b.graph.exists?), "Graph should not exist"
   end
 
   def test_00_double_scatterplot
     # analysis-example has only one sample, second scatterplot expected
-    assert ( $b.scatterplot.visible?), "First scatterplot should be found"
-    assert ( $b.scatterplot(2).visible?), "Second scatterplot should be found"
+    assert ( $b.scatterplot.present?), "First scatterplot should be found"
+    assert ( $b.scatterplot(2).present?), "Second scatterplot should be found"
   end
 
   def test_01_legend_scatterplot
@@ -35,12 +37,12 @@ class TestSimple < BrowserTest
   def test_02_deactivate_locus
     initial_read_nb = $b.info_selected_locus.text
     $b.locus_topleft('TRG').click
-    $b.clone_in_scatterplot('0').wait_while_present
+    $b.clone_in_scatterplot('0').wait_while(&:present?)
     assert ($b.info_selected_locus.text == "no read"), "When unselected we have no reads"
 
     # Reactivate
     $b.locus_topleft('TRG').click
-    $b.clone_in_scatterplot('0').wait_until_present
+    $b.clone_in_scatterplot('0').wait_until(&:present?)
     assert ($b.info_selected_locus.text == initial_read_nb), "Read number should be identical to what we had at first"
   end
 

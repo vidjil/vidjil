@@ -155,8 +155,6 @@ ul{
   flex: 1 1 auto;
   top : @top_container_height;
   bottom : 125px ;
-  width: -moz-calc(~"100%" - @margin + @margin);
-  width: -webkit-calc(~"100%" - @margin + @margin);
   width: calc(~"100%" - @margin + @margin);
   overflow: hidden;
   background: @background;
@@ -973,12 +971,7 @@ span .end-codon-not-first {
   border: 1px solid silver;
   border-radius: 0.1em;
   padding: 1%;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  -webkit-transition: border linear .2s, box-shadow linear .2s;
-  -moz-transition: border linear .2s, box-shadow linear .2s;
-  -o-transition: border linear .2s, box-shadow linear .2s;
   transition: border linear .2s, box-shadow linear .2s;
   transition-property: border, box-shadow;
   transition-duration: 0.2s, 0.2s;
@@ -1061,11 +1054,7 @@ a.tag-link {
   &.data-container, &.info-container{
     top: 50px;
     left: 20px + @width_left_container;
-    max-width: -moz-calc(~"100%" - @width_left_container + 60px);
-    max-width: -webkit-calc(~"100%" - @width_left_container + 60px);
     max-width: calc(~"100%" - @width_left_container + 60px);
-    height: -moz-calc(~"100%" - 215px);
-    height: -webkit-calc(~"100%" - 215px);
     height: calc(~"100%" - 215px);
   }
 
@@ -1212,8 +1201,6 @@ span.logo
     position: relative;
     text-align: center;
     float: left;
-    width: -moz-calc(~"100%" - (@width_left_container + @width_stats + @width_highlight + 50));
-    width: -webkit-calc(~"100%" - (@width_left_container + @width_stats + @width_highlight + 50));
     width: calc(~"100%" - (@width_left_container +  @width_stats + @width_highlight + 50));
     overflow: hidden;
     height: 1.1em;
@@ -1243,8 +1230,6 @@ span.logo
   min-width: 150px;
   margin-left: -6px;
   border-top: none;
-  margin-top: -moz-calc(@top_container_height - 24px);
-  margin-top: -webkit-calc(@top_container_height - 24px);
   margin-top: calc(@top_container_height - 24px);
   z-index:5;
   overflow: hidden;
@@ -1305,11 +1290,6 @@ span.logo
 
 .gradient{
   background: rgb(61,36,182); 
-  background: -moz-linear-gradient(left, rgb(61,36,182) 0%, rgb(36,72,181) 10%, rgb(36,135,184) 20%, rgb(36,183,171) 30%, rgb(36,184,110) 40%, rgb(36,183,48) 50%, rgb(85,184,36) 60%, rgb(146,183,36) 70%, rgb(184,159,36) 80%, rgb(178,95,35) 90%, rgb(184,36,36) 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgb(61,36,182)), color-stop(10%,rgb(36,72,181)), color-stop(20%,rgb(36,135,184)), color-stop(30%,rgb(36,183,171)), color-stop(40%,rgb(36,184,110)), color-stop(50%,rgb(36,183,48)), color-stop(60%,rgb(85,184,36)), color-stop(70%,rgb(146,183,36)), color-stop(80%,rgb(184,159,36)), color-stop(90%,rgb(178,95,35)), color-stop(100%,rgb(184,36,36))); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(left, rgb(61,36,182) 0%,rgb(36,72,181) 10%,rgb(36,135,184) 20%,rgb(36,183,171) 30%,rgb(36,184,110) 40%,rgb(36,183,48) 50%,rgb(85,184,36) 60%,rgb(146,183,36) 70%,rgb(184,159,36) 80%,rgb(178,95,35) 90%,rgb(184,36,36) 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(left, rgb(61,36,182) 0%,rgb(36,72,181) 10%,rgb(36,135,184) 20%,rgb(36,183,171) 30%,rgb(36,184,110) 40%,rgb(36,183,48) 50%,rgb(85,184,36) 60%,rgb(146,183,36) 70%,rgb(184,159,36) 80%,rgb(178,95,35) 90%,rgb(184,36,36) 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(left, rgb(61,36,182) 0%,rgb(36,72,181) 10%,rgb(36,135,184) 20%,rgb(36,183,171) 30%,rgb(36,184,110) 40%,rgb(36,183,48) 50%,rgb(85,184,36) 60%,rgb(146,183,36) 70%,rgb(184,159,36) 80%,rgb(178,95,35) 90%,rgb(184,36,36) 100%); /* IE10+ */
   background: linear-gradient(to right, rgb(61,36,182) 0%,rgb(36,72,181) 10%,rgb(36,135,184) 20%,rgb(36,183,171) 30%,rgb(36,184,110) 40%,rgb(36,183,48) 50%,rgb(85,184,36) 60%,rgb(146,183,36) 70%,rgb(184,159,36) 80%,rgb(178,95,35) 90%,rgb(184,36,36) 100%); /* W3C */
   filter: "progid:DXImageTransform.Microsoft.gradient( startColorstr='#3d24b6', endColorstr='#b82424',GradientType=1 )"; /* IE6-9 */
   width :180px;
@@ -1785,9 +1765,6 @@ h3 .uid {
 .loading_seq {
     height: 15px;
     width: 100px;
-    background-image: -webkit-linear-gradient(-45deg, @border 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, @border 50%, @border 75%, rgba(255, 154, 26, 0) 75%); 
-    background-image: -moz-linear-gradient(-45deg, @border 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, @border 50%, @border 75%, rgba(255, 154, 26, 0) 75%);
-    background-image: -o-linear-gradient(-45deg, @border 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, @border 50%, @border 75%, rgba(255, 154, 26, 0) 75%);
     background-image: linear-gradient(-45deg, @border 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, @border 50%, @border 75%, rgba(255, 154, 26, 0) 75%);
     background-size: 50px 50px;
     -webkit-animation: move 2s linear infinite;
@@ -1853,10 +1830,6 @@ h3 .uid {
     margin: 5px;
     background: @background;
     border-color: @border;
-    -webkit-transition: background 1s linear;
-    -moz-transition: background 1s linear;
-    -ms-transition: background 1s linear;
-    -o-transition: background 1s linear;
     transition: background 1s linear;
 }
 
@@ -1911,8 +1884,6 @@ h3 .uid {
   background: #ffffffdd;
   padding: 2px 4px;
   border: 1px solid black;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
   border-radius: 3px;
   font-size: 80%;
   font-weight: bold;
@@ -1979,8 +1950,6 @@ select>option:hover {
 
 input:focus, textarea:focus, #add_clone_menu > #addclone_input:focus {
     border-color: @border;
-    -webkit-box-shadow: inset 0 1px 1px @background, 0 0 8px @border;
-    -moz-box-shadow: inset 0 1px 1px @background, 0 0 8px @border;
     box-shadow: inset 0 1px 1px @background, 0 0 8px @border;
     outline: 0;
     outline: thin dotted \9;
@@ -2104,8 +2073,6 @@ flex-grow : 1;
 .notification {
 	padding: 3px;
 	display: inline-block;
-    -webkit-border-radius: 2px;
-	-moz-border-radius: 2px;
 	border-radius: 2px;
 	cursor: pointer;
 }
@@ -2177,8 +2144,6 @@ flex-grow : 1;
 }
 
 textarea#edit_value {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
     box-sizing: border-box;
     //display:block;
     position: fixed;
@@ -2617,4 +2582,9 @@ form {
 
 [hidden] {
       display: none !important;
+}
+
+.disabledbutton {
+    pointer-events: none;
+    opacity: 0.4;
 }

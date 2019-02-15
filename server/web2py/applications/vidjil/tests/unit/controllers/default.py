@@ -89,10 +89,7 @@ class DefaultController(unittest.TestCase):
     def testCustomDataOneFile(self):
         request.vars['custom'] = str(fake_result_id)
         resp = gluon.contrib.simplejson.loads(get_custom_data())
-        self.assertTrue(resp.has_key('success'))
-        self.assertEqual(resp['success'], 'false')
-        self.assertNotEqual(resp['message'].find('get_custom_data'), -1)
-        self.assertNotEqual(resp['message'].find('select several files'), -1)
+        self.assertEqual(resp['sample_name'], 'Sample %s' % fake_result_id)
 
     def testCustomData(self):
         request.vars['custom'] = [str(fake_result_id2), str(fake_result_id2)]
@@ -102,6 +99,7 @@ class DefaultController(unittest.TestCase):
            self.assertTrue(defs.PORT_FUSE_SERVER is None, 'get_custom_data returns error without fuse server')
         else:
             self.assertEqual(resp['reads']['segmented'][0], resp['reads']['segmented'][2], "get_custom_data doesn't return a valid json")
+            self.assertEqual(resp['sample_name'], 'Compare samples')
 
     def testSaveAnalysis(self):
         class emptyClass( object ):

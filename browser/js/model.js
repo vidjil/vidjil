@@ -880,7 +880,56 @@ changeAlleleNotation: function(alleleNotation) {
 
             this.updateElemStyle([cloneID]);
         }
+        this.colorize_multitag_star_icon()
     },
+
+
+    /**
+     * [colorize_multitag_star_icon description]
+     * @return {[type]} [description]
+     */
+    colorize_multitag_star_icon: function(){
+        var color = this.getColorSelectedClone()
+
+        try {
+            // put it in a try to not create errors on qunit
+            var div = document.getElementById("tag_icon__multiple")
+            if (color){
+                div.style.color = color;
+            } else  {
+                div.style.color = ""
+            }
+        } catch (err) {
+            // ne rien faire.
+        }
+    },
+
+
+    /**
+     * Return the color of selected clones if similar; else return false
+     * @return {[type]} [description]
+     */
+    getColorSelectedClone: function(){
+        var selected   = this.getSelected()
+        var list_color = new Set()
+        
+        if (selected.length == 0){
+            return false
+        }
+        
+        for (var i = 0; i < selected.length; i++) {
+            var clone_id = selected[i]
+            var clone = this.clones[clone_id]
+            var color = clone.true_color;
+            list_color.add(color)
+            if (list_color.size == 2){
+                return false
+            }
+        }
+
+        return Array.from(list_color)[0]
+    },
+
 
     /**
      * Unselect an isolated clone
@@ -983,7 +1032,7 @@ changeAlleleNotation: function(alleleNotation) {
             this.orderedSelectedClones.push(tmp[j].id);
             list[j] = tmp[j].id
         }
-
+        this.updateStyle();
         this.updateElemStyle(list);
         this.update();
     },
@@ -1103,7 +1152,7 @@ changeAlleleNotation: function(alleleNotation) {
             this.clone(n).updateCloneTagIcon()
         }
 
-
+        this.colorize_multitag_star_icon();
     },
 
     /**
@@ -1198,12 +1247,18 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     displayTop: function (top) {
         top = typeof top !== 'undefined' ? top : this.top;
+
+
         if (top < 0)
             top = 0
+        // Remember the top setted
+        // Allow to keep this values between various samples
+        this.top = top;
+
+        // top show cannot be greater than the number of clones
         if (top > this.countRealClones())
             top = this.countRealClones()
-
-        this.top = top;
+        this.current_top = top
 
         var html_slider = document.getElementById('top_slider');
         if (html_slider !== null) {
@@ -1948,32 +2003,31 @@ changeAlleleNotation: function(alleleNotation) {
      * open/build the tag/normalize menu for a clone
      * @param {integer} cloneID - clone index
      * */
-    openTagSelector: function (cloneID, e) {
+    openTagSelector: function (clonesIDs, e) {
         var self = this;
-        cloneID = typeof cloneID !== 'undefined' ? cloneID : this.cloneID;
         this.tagSelectorList.removeAllChildren();
-        this.cloneID=cloneID
+        clonesIDs = clonesIDs !== undefined ? clonesIDs : this.clonesIDs; 
+        this.clonesIDs=clonesIDs
 
         var buildTagSelector = function (i) {
             var span1 = document.createElement('span');
             span1.className = "tagColorBox tagColor" + i
-            span1.onclick = function () {
-                self.clone(cloneID).changeTag(i)
-                $(self.tagSelector).hide('fast')
-            }
-
+           
             var span2 = document.createElement('span');
             span2.className = "tagName" + i + " tn"
             span2.appendChild(document.createTextNode(self.tag[i].name))
-            span2.onclick = function () {
-                self.clone(cloneID).changeTag(i)
-                $(self.tagSelector).hide('fast')
-            }
 
             var div = document.createElement('div');
             div.className = "tagElem"
+            div.id = "tagElem_" + i
             div.appendChild(span1)
             div.appendChild(span2)
+            div.onclick = function () {
+                for (var j = 0; j < clonesIDs.length; j++) {
+                    self.clone(clonesIDs[j]).changeTag(i)
+                }
+                $(self.tagSelector).hide('fast')
+            }
 
             var li = document.createElement('li');
             li.appendChild(div)
@@ -1985,6 +2039,9 @@ changeAlleleNotation: function(alleleNotation) {
             buildTagSelector(i);
         }
         
+        var separator = document.createElement('div');
+        separator.innerHTML = "<hr>"
+
         var span1 = document.createElement('span');
         span1.appendChild(document.createTextNode("normalize to: "))
 
@@ -1999,8 +2056,9 @@ changeAlleleNotation: function(alleleNotation) {
         this.norm_button = document.createElement('button');
         this.norm_input.id = "norm_button";
         this.norm_button.appendChild(document.createTextNode("ok"))
+        
         this.norm_button.onclick = function () {
-            var cloneID = self.cloneID;
+            var cloneID = self.clonesIDs[0];
             var size = parseFloat(self.norm_input.value);
             
             if (size>0 && size<1){
@@ -2021,19 +2079,26 @@ changeAlleleNotation: function(alleleNotation) {
         }
         
         var div = document.createElement('div');
+        div.id  = "normalization_expected_input_div"
+        div.appendChild(separator)
         div.appendChild(span1)
         div.appendChild(span2)
         div.appendChild(this.norm_button)
-        
+
         var li = document.createElement('li');
         li.appendChild(div)
 
         this.tagSelectorList.appendChild(li);
         
-        
-        if (cloneID[0] == "s") cloneID = cloneID.substr(3);
+        var string;
+        if (clonesIDs.length > 1){
+            string = "Tag for " + clonesIDs.length +  " clones"
+        } else {
+            if (clonesIDs[0][0] == "s") cloneID = clonesIDs[0].substr(3);
+            string = "Tag for "+this.clone(clonesIDs[0]).getName()
+        }
+        this.tagSelectorInfo.innerHTML = string
         $(this.tagSelector).show();
-        this.tagSelectorInfo.innerHTML = "tag for "+this.clone(cloneID).getName()+"("+cloneID+")"; 
         
         
         //replace tagSeelector
@@ -2044,6 +2109,11 @@ changeAlleleNotation: function(alleleNotation) {
         if (top<minTop) top=minTop;
         if (top>maxTop) top=maxTop;
         this.tagSelector.style.top=top+"px";
+
+        // If multiple clones Ids; disabled normalization div
+        if (clonesIDs.length > 1) {
+            $("#"+div.id).addClass("disabledbutton");
+        }
     },
 
 

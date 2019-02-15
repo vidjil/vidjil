@@ -12,7 +12,7 @@ class TestSegmenterPageErrors < SegmenterTest
 
     $b.button(:id => 'form_submit').click
 
-    $b.element(:class => 'flash_2').wait_until_present
+    $b.element(:class => 'flash_2').wait_until(&:present?)
     assert ($b.element(:class => 'flash_2', :index => 1).text.include? "invalid sequences"), "We should have an error_message"
     
     assert (not $b.element(:class => 'segmenter').present?), "Segmenter should not be present"
@@ -30,8 +30,8 @@ CGTCTT"
 
     $b.button(:id => 'form_submit').click
 
-    $b.element(:class => 'imgAjaxLoading').wait_until_present
-    $b.clone_in_segmenter('0').wait_until_present
+    $b.element(:class => 'imgAjaxLoading').wait_until(&:present?)
+    $b.clone_in_segmenter('0').wait_until(&:present?)
     
     assert ($b.element(:class => 'segmenter').present?), "Segmenter should be present"
     assert ($b.element(:class => 'scatterplot').present?), "Segmenter should be present"

@@ -116,7 +116,9 @@ QUnit.test("top clones", function(assert) {
     m.displayTop(-10)
     assert.equal(m.top, 0, "Top cannot be negative")
     m.displayTop(m.countRealClones() * 2 + 10)
-    assert.equal(m.top, m.countRealClones(), "Top cannot be greater than the number of real clones")
+    
+    assert.equal(m.top, m.countRealClones() * 2 + 10, "Model top can be greater than the number of real clones")
+    assert.equal(m.current_top, m.countRealClones(), "Current Top cannot be greater than the number of real clones")
 
     m.displayTop(1)
 
@@ -447,3 +449,42 @@ QUnit.test("findGermlineFromGene", function(assert) {
 
 });
 
+
+
+
+QUnit.test("tag / color", function(assert) {
+    
+    var m = new Model();
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone1, m, 0)
+    var c2 = new Clone(json_clone2, m, 1)
+    var c3 = new Clone(json_clone3, m, 2)
+    var c4 = new Clone(json_clone4, m, 3)
+    var c5 = new Clone(json_clone5, m, 4)
+    var c6 = new Clone(json_clone6, m, 4)
+    m.initClones()
+
+    assert.equal(m.getColorSelectedClone(), false, "Color of selected clones (empty selection) is correct")
+    // select 2 clones without tag
+    m.select(0)
+    m.select(1)
+
+    assert.equal(m.getColorSelectedClone(), "", "Color of selected clones (without tags) is correct")
+
+    // Change tag of clones
+    assert.equal(c1.getTag(), 8, "getTag() >> default tag : 8");  
+    c1.changeTag(5)
+    c2.changeTag(5)
+    c1.updateColor()
+    c2.updateColor()
+    assert.equal(c1.getTag(), 5, "changeTag() >> tag : 5");
+
+    // tag 8 color: ''
+    // tag 5 color: #2aa198
+    assert.equal(m.getColorSelectedClone(), "#2aa198", "Color of selected clones (same tag) is correct")
+    
+    // select another clone, without tag
+    m.select(2)
+    assert.equal(m.getColorSelectedClone(), "", "Color of selected clones (mix of clones) is false")
+    
+});

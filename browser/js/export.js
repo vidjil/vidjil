@@ -372,7 +372,7 @@ Report.prototype = {
         var left = $('<div/>', {'class': 'flex'}).appendTo(sinfo);
         
         var content = [
-            {'label': "Filename:" , value : this.m.samples.original_names[time]},
+            {'label': "Filename:" , value : this.m.samples.names[time]},
             {'label': "Sample date:" , value : this.m.getSampleTime(time)},
             {'label': "Analysis date:" , value : this.m.getTimestampTime(time)}
         ]

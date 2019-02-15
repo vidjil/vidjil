@@ -4,7 +4,7 @@ var INS="insertion";
 var DEL="deletion";
 var END_CODON = "end-codon ";
 var END_CODON_NOT_FIRST = "end-codon-not-first ";
-
+var LOCUS_ORDER = [ "TRA", "TRB", "TRB+", "TRG", "TRD", "TRA+D", "TRD+", "IGH", "IGH+", "IGK", "IGK+", "IGL"]
 /**
  * Get codons from two aligned sequences
  * @pre both sequences are aligned together ref.length == seq.length
@@ -648,3 +648,34 @@ function pearsonCoeff(l1, l2) {
 }
 
 function logadd1(x) { return Math.log(x + 1) ; }
+
+
+
+/**
+ * Compare two locus to sort them.
+ * The list is ordered on a preordered list of locus (LOCUS_ORDER).
+ * By this way, locus that are not in this list will be added at the end of it.
+ * @param  {String} valA One locus value
+ * @param  {String} valB Another locus value to compare
+ * @return {Number}      A number -1 if A before B, else 1
+ */
+function locus_cmp(valA, valB){
+    // Ordered list of all  generic locus 
+    var index_A = LOCUS_ORDER.indexOf(valA)
+    var index_B = LOCUS_ORDER.indexOf(valB)
+
+    if (index_A == -1 && index_B == -1){
+        // Neither A or B are present in LOCUS_ORDER
+        return valA.localeCompare(valB)
+    } else if (index_A != -1 && index_B == -1){
+        // Only A is present in LOCUS_ORDER
+        return -1
+    } else if (index_A == -1 && index_B != -1){
+        // Only B is present in LOCUS_ORDER
+        return 1
+    } else if (index_A != -1 && index_B != -1){
+        // A & B are present in LOCUS_ORDER
+        return index_A - index_B
+    }
+    return 0
+}

@@ -393,3 +393,19 @@ QUnit.test("Pearson coefficient", function(assert) {
     assert.equal(pearsonCoeff([3, 2, 1], [10, 20, 30]), -1)
     }
 );
+
+
+QUnit.test("Sort list locus", function(assert) {
+
+    list_test_1 = [ "TRA", "TRB", "TRG", "TRD", "testlocus", "IGH", "IGK", "IGL"]
+    wait_test_1 = [ "TRA", "TRB", "TRG", "TRD", "IGH", "IGK", "IGL", "testlocus"]
+    list_test_2 = [ "IGH", "IGH+", "unknow_locus", "IGK+", "IGL", "testlocus", "TRA", "TRB", "TRB+", "TRG", "TRD"]
+    wait_test_2 = [ "TRA", "TRB", "TRB+", "TRG", "TRD", "IGH", "IGH+", "IGK+", "IGL", "testlocus", "unknow_locus"]
+    
+    list_test_1.sort(locus_cmp)
+    list_test_2.sort(locus_cmp)
+
+    assert.deepEqual(list_test_1, wait_test_1, "list2 is correctly sorted")
+    assert.deepEqual(list_test_2, wait_test_2, "list2 is correctly sorted")
+    }
+);

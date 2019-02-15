@@ -19,7 +19,7 @@ class ExternalTest < BrowserTest
 
   def test_10_imgt
     begin
-      $b.clone_in_scatterplot('25').wait_until_present
+      $b.clone_in_scatterplot('25').wait_until(&:present?)
       $b.clone_in_scatterplot('25').click
       
       $b.span(:id => "toIMGT" ).click
@@ -53,7 +53,7 @@ class ExternalTest < BrowserTest
     begin
       $b.clone_in_scatterplot('25').click
       $b.span(:id => "toIMGTSeg" ).click
-      $b.segmenter_checkbox_imgt_vdj.wait_until_present
+      $b.segmenter_checkbox_imgt_vdj.wait_until(&:present?)
 
       clone_info = $b.clone_info_segmenter('25')
       productive_title = clone_info[:axis].element(:class => 'productivity-IMGT').title
@@ -67,8 +67,8 @@ class ExternalTest < BrowserTest
         assert (h.style('width').to_i >= 100), "Highlights should have a reasonable width, found to be %s" % h.style('width')
       end
 
-      Watir::Wait.until(timeout=10) { clone_info[:identity].span.exists? }
-      clone_info[:identity].element(:text => "NaN%").wait_while_present
+      Watir::Wait.until(timeout: 10) { clone_info[:identity].span.exists? }
+      clone_info[:identity].element(:text => "NaN%").wait_while(&:present?)
       assert ((clone_info[:identity].text =~ /^[0-9\.]+%$/) == 0 ), "We should have identity rate (found: %s)" % clone_info[:identity].text
 
       $b.unselect
@@ -78,7 +78,7 @@ class ExternalTest < BrowserTest
   
   def test_11_igBlast
     begin
-      $b.clone_in_scatterplot('25').wait_until_present
+      $b.clone_in_scatterplot('25').wait_until(&:present?)
       $b.clone_in_scatterplot('25').click
       
       $b.span(:id => "toIgBlast" ).click

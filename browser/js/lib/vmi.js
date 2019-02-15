@@ -234,7 +234,10 @@ VMI.prototype = {
     },
 
 
-    create_panel : function(child_id, parent_div_id, add_to_available=false) {
+    create_panel : function(child_id, parent_div_id, add_to_available) {
+        if (typeof(add_to_available) === 'undefined') {
+            add_to_available = false;
+        }
         var parent_div = document.getElementById(parent_div_id)
         // verify parent_div 
         if (parent_div == null){
@@ -269,7 +272,10 @@ VMI.prototype = {
     /**
      * todo : transmettre par un paramètre la création des panels : exemple --> {"AB": ["A","B"], "C": ["C"]}
      */
-    setupPanels : function(instructions, parent_div="vmi-panels"){
+    setupPanels : function(instructions, parent_div){
+        if (typeof(parent_div) === 'undefined') {
+            parent_div = "vmi-panels";
+        }
 
         // determiner si instruction est une liste ou un dico
         if (Array.isArray(instructions)){

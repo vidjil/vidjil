@@ -364,13 +364,16 @@ def get_custom_data():
 
     error = ""
 
+    samples = []
+
     if not "custom" in request.vars :
         error += "no file selected, "
     else:
-        if type(request.vars['custom']) is not list or len(request.vars['custom']) < 2:
-            error += "you must select several files."
+        samples = request.vars['custom'] if type(request.vars['custom']) is not str else [request.vars['custom']]
+        if not samples:
+            error += "incorrect query, need at least one sample"
         else:
-            for id in request.vars["custom"] :
+            for id in samples:
                 log.debug("id = '%s'" % str(id))
                 sequence_file_id = db.results_file[id].sequence_file_id
                 sample_set_id = db((db.sample_set_membership.sequence_file_id == sequence_file_id)
@@ -380,11 +383,11 @@ def get_custom_data():
             
     if error == "" :
         try:
-            data = custom_fuse(request.vars["custom"])
+            data = custom_fuse(samples)
         except IOError, error:
             return error_message(str(error))
         
-        generic_info = "Compare samples"
+        generic_info = "Compare samples" if len(samples) > 1 else "Sample %s" % samples[0]
         data["sample_name"] = generic_info
         data["dataFileName"] = generic_info
         data["info"] = generic_info
@@ -393,7 +396,7 @@ def get_custom_data():
         data["samples"]["info"] = []
         data["samples"]["commandline"] = []
         
-        for id in request.vars["custom"] :
+        for id in samples:
             sequence_file_id = db.results_file[id].sequence_file_id
             sample_set = db((db.sequence_file.id == sequence_file_id)
                             & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
@@ -456,7 +459,7 @@ def get_analysis():
         #analysis_data["info_patient"] = db.patient[request.vars["patient"]].info
         dumped_json = gluon.contrib.simplejson.dumps(analysis_data, separators=(',',':'))
 
-        log.info("load analysis", extra={'user_id': auth.user.id, 'record_id': request.vars['sample_id'], 'table_name': 'sample_set'})
+        log.info("load analysis", extra={'user_id': auth.user.id, 'record_id': request.vars['sample_set_id'], 'table_name': 'sample_set'})
 
         if download:
             return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.vars['filename'])
@@ -523,7 +526,7 @@ def save_analysis():
                "message" : "(%s): analysis saved" % (sample_set_id)}
         log.info(res, extra={'user_id': auth.user.id})
 
-        log.info("save analysis", extra={'user_id': auth.user.id, 'record_id': request.vars['samples_id'], 'table_name': 'sample_set'})
+        log.info("save analysis", extra={'user_id': auth.user.id, 'record_id': sample_set_id, 'table_name': 'sample_set'})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"success" : "false",

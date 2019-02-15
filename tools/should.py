@@ -26,7 +26,7 @@ if not (sys.version_info >= (3, 4)):
     print("Python >= 3.4 required")
     sys.exit(1)
 
-__version_info__ = ('1','0','0+dev')
+__version_info__ = ('1','0','0')
 __version__ = '.'.join(__version_info__)
 
 import re
@@ -222,6 +222,7 @@ for p in (parser, options):
     p.add_argument('--extra', metavar='ARG', default='', help='extra argument after the first word of each command (or replacing %s)' % VAR_EXTRA)
     p.add_argument('--mod', metavar='MODIFIERS', action='append', help='global ' + parser_mod.help)
     p.add_argument('--var', metavar='NAME=value', action='append', help='variable definition (then use $NAME in .should files)')
+    p.add_argument('--timeout', type=int, default = TIMEOUT, help = 'Delay (in seconds) after which the task is stopped (default: %(default)d)')
 
 parser.add_argument('--shuffle', action='store_true', help='shuffle the tests')
 
@@ -631,7 +632,7 @@ class TestSuite():
     ok - Exit code is 0
     '''
 
-    def __init__(self, modifiers = '', cd = None, name = ''):
+    def __init__(self, modifiers = '', cd = None, name = '', timeout = TIMEOUT):
         self.name = name
         self.requires = True
         self.requires_cmd = None
@@ -650,6 +651,7 @@ class TestSuite():
         self.use_launcher = True
         self.expected_exit_code = 0
         self.elapsed_time = None
+        self.timeout = timeout
 
     def load(self, should_lines):
         name = ''
@@ -785,11 +787,12 @@ class TestSuite():
                              close_fds=True)
 
         try:
-            self.exit_code = p.wait(TIMEOUT)
+            self.exit_code = p.wait(self.timeout)
             self.tests.append(ExternalTestCase('Exit code is %d' % self.expected_exit_code, self.exit_code == self.expected_exit_code, str(self.exit_code)))
         except subprocess.TimeoutExpired:
             self.exit_code = None
-            self.tests.append(ExternalTestCase('Exit code is %d' % self.expected_exit_code, SKIP, 'timeout after %s seconds' % TIMEOUT))
+            self.tests.append(ExternalTestCase('Exit code is %d' % self.expected_exit_code, SKIP, 'timeout after %s seconds' % self.timeout))
+            p.kill()
 
         f_stdout.seek(0)
         f_stderr.seek(0)
@@ -886,13 +889,14 @@ class TestSuite():
 
 class FileSet():
 
-    def __init__(self, files, modifiers = ''):
+    def __init__(self, files, modifiers = '', timeout = TIMEOUT):
         self.files = files
         self.sets = []
         self.modifiers = modifiers
         self.status = None
         self.stats = Stats('file')
         self.stats_tests = Stats('test')
+        self.timeout = timeout
 
     def __len__(self):
         return len(self.files)
@@ -905,7 +909,7 @@ class FileSet():
             if verbose > 0:
                 print(f)
             cd_f = os.path.dirname(f) if cd_same else cd
-            s = TestSuite(self.modifiers, cd_f, name = f)
+            s = TestSuite(self.modifiers, cd_f, name = f, timeout = self.timeout)
             self.sets.append(s)
             s.load(open(f))
 
@@ -1023,7 +1027,7 @@ if __name__ == '__main__':
         print("Shuffling test files")
         random.shuffle(args.file)
 
-    fs = FileSet(args.file, modifiers=''.join(args.mod if args.mod else []))
+    fs = FileSet(args.file, timeout = args.timeout, modifiers=''.join(args.mod if args.mod else []))
     status = fs.test(variables = variables, cd = args.cd, cd_same = args.cd_same, output = args.output, verbose = args.verbose)
 
     if len(fs) > 1:

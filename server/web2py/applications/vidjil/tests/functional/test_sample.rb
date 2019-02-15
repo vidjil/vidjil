@@ -23,33 +23,33 @@ class TestSample < ServerTest
 
   def go_to_patient_list
     # load patient list
-    $b.a(:class => "button button_token patient_token", :text => "patients").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
-    table.wait_until_present
+    table.wait_until(&:present?)
     table
   end
 
   def go_to_set(index)
     table = go_to_patient_list
     lines = table.tbody.rows
-    lines[index].wait_until_present
+    lines[index].wait_until(&:present?)
     # select first patient
     lines[index].td(:index => 0).click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     # check that list of samples is loaded
     table = $b.table(:id => "table")
-    table.wait_until_present
+    table.wait_until(&:present?)
     table
   end
 
   def go_to_set_by_tag(tag)
     table = go_to_patient_list
 
-    table.a(:text => tag).parent.parent.cells[2].click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    table.a(:text => tag).parent.parent.td(:class => 'uid').click
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     samples_table = $b.table(:id => "table")
-    samples_table.wait_until_present
+    samples_table.wait_until(&:present?)
     samples_table
   end
 
@@ -59,10 +59,10 @@ class TestSample < ServerTest
     count = table.tbody.rows.count
 
     add_button = $b.span(:text => "+ add samples")
-    add_button.wait_until_present
+    add_button.wait_until(&:present?)
     add_button.click
     form = $b.form(:id => "upload_form")
-    form.wait_until_present
+    form.wait_until(&:present?)
 
     $b.input(:id => "source_nfs").click
 
@@ -74,16 +74,16 @@ class TestSample < ServerTest
     jstree = $b.div(:id => "jstree")
     for i in 0..$num_additional_files
       $b.div(:id => "jstree_field_%d" % i).span(:text => "browse").click
-      assert(jstree.visible?)
+      assert(jstree.present?)
       jstree_file = jstree.a(:id => "//Demo-X5.fa_anchor")
       unless jstree_file.present? and jstree_file.present?
         jstree.a(:id => "/_anchor").double_click
       end
-      jstree_file.wait_until_present
+      jstree_file.wait_until(&:present?)
       jstree_file.click
 
       $b.span(:id => "jstree_button").click
-      assert(!jstree.visible?)
+      assert(!jstree.present?)
 
       form.text_field(:id => "file_sampling_date_%d" % i).set("2010-10-10")
       form.text_field(:id => "file_info_%d" % i).set("#my_file_%d" % i)
@@ -92,7 +92,7 @@ class TestSample < ServerTest
     form.input(:type => "submit").click
 
     table = $b.table(:id => "table")
-    table.wait_until_present
+    table.wait_until(&:present?)
 
     lines = table.tbody.rows
     assert(lines.count == count + $num_additional_files + 1)
@@ -102,92 +102,92 @@ class TestSample < ServerTest
     table = go_to_set_by_tag "#test3"
 
     lines = table.tbody.rows
-    lines[0].wait_until_present
+    lines[0].wait_until(&:present?)
     cell = lines[0].td(:class => "pointer")
     cell.i(:class => "icon-pencil-2").click
     form = $b.form(:id => "upload_form")
-    form.wait_until_present
+    form.wait_until(&:present?)
     form.text_field(:id => "file_info_0").set("#edited")
     form.input(:type => "submit").click
 
 
     table = $b.table(:id => "table")
-    table.wait_until_present
+    table.wait_until(&:present?)
 
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     lines = table.tbody.rows
-    lines[2].wait_until_present
+    lines[2].wait_until(&:present?)
     assert($b.link(:text => "#edited").present?)
   end
 
   def test_set_association_preservation
     samples_table = go_to_set_by_tag "#set_assoc_1"
     samples_table.a(:text => "#set_assoc_1").parent.parent.i(:class => "icon-pencil-2").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     form = $b.form(:id => "upload_form")
-    form.wait_until_present
+    form.wait_until(&:present?)
 
     assert(form.div(:id => 'set_div').spans.length == 3)
     sets_text = form.input(:id => "file_set_list").text
 
     form.text_field(:id => "file_info_0").set("#set_assoc_1 #edited")
     form.input(:type => "submit").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     samples_table.a(:text => "#set_assoc_1").parent.parent.i(:class => "icon-pencil-2").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     form = $b.form(:id => "upload_form")
-    form.wait_until_present
+    form.wait_until(&:present?)
 
     assert(form.div(:id => 'set_div').spans.length == 3)
     assert(sets_text == form.input(:id => "file_set_list").text)
   end
 
   def test_set_association_create
-    $b.a(:class => "button button_token patient_token", :text => "patients").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
-    table.wait_until_present
+    table.wait_until(&:present?)
 
-    patient_id = table.a(:text => "#set_assoc_0").parent.parent.cells[0].text
+    patient_id = table.a(:text => "#set_assoc_0").parent.parent.td(:class => 'uid').text
 
-    $b.a(:class => "button button_token run_token", :text => "runs").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    $b.a(:class => ["button", "button_token", "run_token"], :text => "runs").click
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
-    table.wait_until_present
+    table.wait_until(&:present?)
 
-    run_id = table.a(:text => "#set_assoc_0").parent.parent.cells[0].text
+    run_id = table.a(:text => "#set_assoc_0").parent.parent.td(:class => 'uid').text
 
-    $b.a(:class => "button button_token generic_token", :text => "sets").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    $b.a(:class => ["button", "button_token", "generic_token"], :text => "sets").click
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
-    table.wait_until_present
+    table.wait_until(&:present?)
 
-    set_id = table.a(:text => "#set_assoc_0").parent.parent.cells[0].text
+    set_id = table.a(:text => "#set_assoc_0").parent.parent.td(:class => 'uid').text
 
     samples_table = go_to_set_by_tag "#set_assoc_0"
     $b.span(:class => "button2", :text => "+ add samples").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     form = $b.form(:id => "upload_form")
-    form.wait_until_present
+    form.wait_until(&:present?)
 
     $b.input(:id => "source_nfs").click
 
     jstree = $b.div(:id => "jstree")
     $b.div(:id => "jstree_field_0").span(:text => "browse").click
-    assert(jstree.visible?)
+    assert(jstree.present?)
     jstree_file = jstree.a(:id => "//Demo-X5.fa_anchor")
     unless jstree_file.present? and jstree_file.present?
       jstree.a(:id => "/_anchor").double_click
     end
-    jstree_file.wait_until_present
+    jstree_file.wait_until(&:present?)
     jstree_file.click
 
     $b.span(:id => "jstree_button").click
-    assert(!jstree.visible?)
+    assert(!jstree.present?)
 
     form.text_field(:id => "file_sampling_date_0").set("2010-10-10")
     form.text_field(:id => "file_info_0").set("#my_file_add")
@@ -198,11 +198,11 @@ class TestSample < ServerTest
     form.input(:type => "submit").click
 
     samples_table = $b.table(:id => "table")
-    samples_table.wait_until_present
+    samples_table.wait_until(&:present?)
     samples_table.a(:text => "#set_assoc_0").parent.parent.i(:class => "icon-pencil-2").click
 
     form = $b.form(:id => "upload_form")
-    form.wait_until_present
+    form.wait_until(&:present?)
     set_div = form.div(:id => 'set_div')
     assert(set_div.spans.length == 3)
   end
@@ -210,10 +210,10 @@ class TestSample < ServerTest
   def test_set_association_update
     samples_table = go_to_set_by_tag "#set_assoc_2"
     samples_table.a(:text => "#set_assoc_2").parent.parent.i(:class => "icon-pencil-2").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     form = $b.form(:id => "upload_form")
-    form.wait_until_present
+    form.wait_until(&:present?)
 
     set_div = form.div(:id => 'set_div')
     assert(set_div.spans.length == 3)
@@ -221,14 +221,14 @@ class TestSample < ServerTest
     set_div.spans[1].i(:class => "icon-cancel").click
     form.input(:type => "submit").click
 
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     samples_table = $b.table(:id => "table")
-    samples_table.wait_until_present
+    samples_table.wait_until(&:present?)
     samples_table.a(:text => "#set_assoc_2").parent.parent.i(:class => "icon-pencil-2").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     form = $b.form(:id => "upload_form")
-    form.wait_until_present
+    form.wait_until(&:present?)
     set_div = form.div(:id => 'set_div')
     assert(set_div.spans.length == 2)
   end
@@ -239,7 +239,7 @@ class TestSample < ServerTest
     count = table.tbody.rows.count
 
     lines = table.tbody.rows
-    lines[0].wait_until_present
+    lines[0].wait_until(&:present?)
     mcell = lines[0].cells(:class => "pointer")
     mcell.each do |c|
       del = c.i(:class => "icon-erase")
@@ -249,35 +249,36 @@ class TestSample < ServerTest
       end
     end
 
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     button = $b.button(:text => "delete sequence and results")
-    button.wait_until_present
+    button.wait_until(&:present?)
     button.click
 
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
-    table.wait_until_present
+    table = $b.table(:id => "table")
+    table.wait_until(&:present?)
     assert(table.tbody.rows.count == count-1)
   end
 
   def test_run
     table = go_to_set_by_tag "#set_assoc_0"
 
-    $b.select_list(:id => "choose_config").select_value(2)
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    $b.select_list(:id => "choose_config").select("2")
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     samples_table = $b.table(:id => "table")
-    samples_table.wait_until_present
+    samples_table.wait_until(&:present?)
     lines = samples_table.tbody.rows
-    lines[0].wait_until_present
+    lines[0].wait_until(&:present?)
     lines[0].i(:class => "icon-cog-2").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     table = $b.table(:id => "table")
-    table.wait_until_present
+    table.wait_until(&:present?)
     lines = table.tbody.rows
-    lines[0].wait_until_present
+    lines[0].wait_until(&:present?)
     l = lines[0]
     assert(l.td(:text => "QUEUED").present? || l.td(:text => "ASSIGNED").present? || l.td(:text => "COMPLETED").present?)
   end
