@@ -39,6 +39,11 @@ CGTCTT"
     assert ($b.clone_in_segmenter('0').text.include? 'CGTCTT'), "We should have sequence CGTCTT, %s instead" % $b.clone_in_segmenter('0').text
   end
 
+
+  def test_02_export_align_sequences
+    assert ( $b.menu_item_export_fasta_align(:class => 'disabledClass').exists?), ">> export align sequences is disable by default"
+  end
+
   def test_zz_close
     close_everything
   end
