@@ -1,0 +1,11 @@
+cat ../../vidjil.cpp
+
+$ The variable is used four times 
+4:__only_on_exit__clean_memory
+
+$ Two times for the definition
+1:bool __only_on_exit__clean_memory
+1:add_flag.*__only_on_exit__clean_memory
+
+$ And two other times, just before exiting
+2:if .__only_on_exit__clean_memory. .* exit.0.
