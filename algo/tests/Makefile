@@ -139,7 +139,7 @@ $(EXEC): % : %.o $(LIB)
 
 vidjil:
 	$(MAKE) -C ../ clean
-	$(MAKE) -C ../
+	$(MAKE) -C ../ 2>&1 | tee make-vidjil-algo.log
 
 core:
 	$(MAKE) -C ../core
