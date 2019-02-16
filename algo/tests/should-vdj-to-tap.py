@@ -85,7 +85,7 @@ def should_pattern_to_regex(p):
     def process_term(term):
 
         # Comment, stop parsing here
-        if term.startswith('#'):
+        if term.startswith('#') or term.startswith('@'):
             return []
 
         if term in special_keywords(args.after_two):
