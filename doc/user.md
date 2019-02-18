@@ -137,11 +137,15 @@ e-value, number of reads) about each clone.
 
 In addition, depending on what the user launched on this clone, we may also
 find detailed informations retrieved from IMGT or from CloneDB.
-#### Detailed information from CloneDB
-Note that this feature is experimental.
 
-Also note that the percentage shown can be above 100% as the percentage is
+#### Detailed information from CloneDB (experimental feature)
+If you are connected to a patient/experiment database where CloneDB is enabled,
+and if CloneDB was launched on the selected clone,
+you can see here occurrences of this clone in CloneDB
+as well as links to the relevant patients/runs/sets.
+Note that the percentage shown can be above 100% as the percentage is
 calculated over all the samples in the sample set.
+
 ## The sample graph
 
 The sample graph is hidden when there is only one sample. It shows the most frequent clones of each sample, tracked into every sample.
