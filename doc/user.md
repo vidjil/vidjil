@@ -100,6 +100,17 @@ to learn the essential features of Vidjil.
 
 ## The list of clones (left panel)
 
+When they were processed by **vidjil-algo**, clones are described with identifiers
+such as `TRGV3*01 2/ATC/6 J1*02` that describes the V(D)J recombination.
+Here the sequence was analyzed as
+the V gene `TRGV3*01`, with `2` nucleotides deleted at its end (3'),
+followed by a N region with the three nucleotides `ATC`,
+then followed by the J gene `TRGJ1*02`, with `6` nucleotides deleted at its start (5').
+
+  - You can adjust the way that these clone names are displayed through
+    the menu options “settings > N regions in clone names”
+    and “settings > alleles in clone names”.
+
   - You can assign other tags with colors to clones using the “★” button.
     The “filter” menu allows to further filter clones by tags.
 
