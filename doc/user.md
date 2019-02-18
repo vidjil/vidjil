@@ -77,26 +77,25 @@ to learn the essential features of Vidjil.
 
 ## The info panel (upper left panel)
 
-  - patient/run/set information  
-    user can put some informations in this case to retain about the set of samples
-  - locus  
-    germline used for analyzing the data. In case of multi-locus
+  - *patient/run/set information.*
+  - *locus.* Germline(s) used for analyzing the data. In case of multi-locus
     data, you can select what locus should be displayed (see [locus.html](./locus.html))
-  - analysis  
-    name (without extension) of the loaded file used for displaying the data
-  - sample  
-    name of the current sample. You can also change the current sample by clicking directly on his name in the graph panel (when available).
+  - *analysis.*   Name (without extension) of the loaded file.
+  - *sample.* Name of the current sample.
 
-\#The name can be edited (“edit”).
+<!-- The name can be edited (“edit”). -->
 
-  - date  
-    indicate the date of the run of the current sample (edit with the database, on the patient/run/sample set tab).
-    You can change the sample viewed by clicking on the `←` and `→` buttons. A cycling view is available by the fix button.
-  - analyzed reads  
-    number of reads where the underlying RepSeq algorithm found a V(D)J recombination, for that sample
+  - *date.* Date of the current sample
+    (can be edited in the database, on the patient/run/sample set tab).
+    When displaying multiple samples from a same patient/run/set,
+    you can change the sample viewed by clicking on the `←` and `→` buttons,
+    or cycle trough them by clicking on the "▶" button.
+
+  - *analyzed reads.* umber of reads where the underlying RepSeq algorithm
+    found a V(D)J recombination, for that sample.
     See *Number of analyzed reads* below.
-  - total  
-    total number of reads for that sample
+    By hovering the mouse, one also sees the *total*
+    number of reads for that sample.
 
 ## The list of clones (left panel)
 
@@ -118,8 +117,6 @@ then followed by the J gene `TRGJ1*02`, with `6` nucleotides deleted at its star
     according to this clone. You must specify the expected concentration in the
     “expected size” field (e.g. 0.01 for 1%). See *Control with standard/spike* below.
 
-  - The “i” button displays additional information on each clone.
-
   - The list can be sorted on V genes, J genes or clone abundance.
     The “+” and “-” allow respectively to un-cluster or re-cluster all clones that have
     already been clustered.
@@ -135,7 +132,7 @@ then followed by the J gene `TRGJ1*02`, with `6` nucleotides deleted at its star
     displayed.
 
 ### Detailed information on each clone
-The "i" button opens a window showing detailed information (V(D)J designation,
+The “🛈” button opens a window showing detailed information (V(D)J designation,
 e-value, number of reads) about each clone.
 
 In addition, depending on what the user launched on this clone, we may also
@@ -224,7 +221,7 @@ They are just different ways to group samples.
 Sets can for example gather a set of samples of a same experiment.
 Runs can be used to gather samples that have been sequenced in the same run.
 
-## Permanent address (URLs) to a set of samples
+## Permanent address (URL) to a set of samples
 
 Addresses such as <http://app.vidjil.org/?set=3241&config=39> directly target a set of samples (here the public dataset L3), possibly with your saved analysis.
 Moreover, the address also encodes other parameters, for instance <http://app.vidjil.org/?set=3241&config=39&plot=v,size,bar&clone=11,31> (selected axes and selected clones).
@@ -246,7 +243,7 @@ which is not the case for the results (unless the user wants so).
 You can see which samples have been processed with the selected
 config, and access to the results (`See results`, bottom right).
 
-Adding a sample
+### Adding a sample
 
 To add a sample (`+ sample`), you must add at least one sample file. Each sample file must
 be linked to a patient, a run or a set. One of those fields will be automatically
@@ -256,7 +253,7 @@ patient, run or sets. It is advised to fill in both fields (when it makes
 sense). However please note that the correspondig patients, runs and sets must have
 been created beforehand.
 
-Pre-processing
+### Pre-processing
 
 The sample files may be preprocessed, by selecting a *pre-process scenario* when adding a sample.
 At the moment the only preprocess avalaible on the public server (<http://app.vidjil.org>) are the paired-end read merging.
@@ -282,7 +279,7 @@ Depending on your granted accesses, you can schedule a processing for a sequence
 The processing can take a few seconds to a few hours, depending on the
 software lauched, the options set in the config, the size of the sample and the server load.
 
-The base human configurations with vidjil-algo are « TRG », « IGH », « multi » (`-g germline`), « multi+inc » (`-g germline -i`), « multi+inc+xxx » (`-g germline -i -2`, default advised configuration).
+The base human configurations with **vidjil-algo** are « TRG », « IGH », « multi » (`-g germline`), « multi+inc » (`-g germline -i`), « multi+inc+xxx » (`-g germline -i -2`, default advised configuration).
 See [locus.html](./locus.html) for information on these configurations.
 There are also configuration for other species and for other RepSeq algorithms, such as « MiXCR ».
 The server mainteners can add new configurations tailored to specific needs, contact us if you have other needs.
@@ -313,7 +310,7 @@ another organisation.
 
 The different permissions that can be attributed are:
 
-  - Read: Permissions to sview patients/runs/sets to which a group or organisation has access to
+  - Read: Permissions to view patients/runs/sets to which a group or organisation has access to
   - Create: Permissions to create patients/runs/sets
   - Upload: Permissions to upload samples to the patients/runs/sets of a group
   - Run: Permissions to run vidjil on an uploaded samples to the patients/runs/sets of a group
@@ -511,7 +508,7 @@ There can be several causes leading to bad ratios:
 
 ## Clone coverage
 
-In vidjil-algo,
+In **vidjil-algo**,
 the clone coverage is the ratio of the length of the clone consensus sequence
 to the median read length in the clone.
 A consensus sequence is
