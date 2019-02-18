@@ -174,12 +174,17 @@ When there is only one sample, two such views are shown.
 
   - On the bar plots, the Y axis corresponds to the order of clones inside each bar.
 
-  - The “focus“ button (bottom right) allows to further analyze a selection of clones, and the “hide” button allows to hide some clones.
-    To exit the focus/hide mode, click on the “X” near the search box.
+  - At the bottom of the plot view, the “status bar“ displays information
+    on the selected clone.
 
+  - The “focus“ button (status bar, bottom right) allows to further analyze a selection of clones, and the “hide” button allows to hide some clones.
+    To exit the focus/hide mode, click on the “X” near the search box.
 To further analyze a set of clones sharing a same V and J, it is often useful
 to focus on the clones, then to display them according either to their “clone length”
 or their “N length” (that is N1-D-N2 in the case of VDJ recombinations).
+
+   - The “★” button (status bar, bottom right) allows
+   to tag at once all the selected clones.
 
 ## The sequence view (bottom panel)
 
