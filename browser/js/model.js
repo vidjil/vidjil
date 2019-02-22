@@ -2213,11 +2213,11 @@ changeAlleleNotation: function(alleleNotation) {
      * save a csv file of the currently visibles clones.
      * @return {string} csv 
      * */
-    exportFasta: function () {
+    getFasta: function () {
         var list = this.getSelected()
         if (list.length>0){
             
-            var fasta = '<pre>'
+            var fasta = ''
             for (var i=0; i<list.length; i++){
                 fasta += this.clone(list[i]).getFasta() + '\n'
             }
@@ -2247,10 +2247,17 @@ changeAlleleNotation: function(alleleNotation) {
                     }
                 }
             }
-
-            openAndFillNewTab( fasta )
-        }else{
+            return fasta
+        } else {
             console.log({msg: "Export FASTA: please select clones to be exported", type: 'flash', priority: 2});
+        }
+        return -1
+    },
+
+    exportFasta: function () {
+        var fasta = this.getFasta()
+        if (fasta != -1) {
+            openAndFillNewTab( "<pre>" + fasta )
         }
         
     },

@@ -954,7 +954,7 @@ Segment.prototype = {
      * */
     toFasta: function () {
         var selected = this.sequenceListInSegmenter();
-        var result = '<pre>';
+        var result = '';
 
         for (var i = 0; i < selected.length; i++) {
             if (typeof this.sequence[selected[i]] !== "undefined" &&
@@ -982,7 +982,7 @@ Segment.prototype = {
         if (list.length>0){
         
             var fasta = this.toFasta()
-            openAndFillNewTab( fasta )
+            openAndFillNewTab( "<pre>" + fasta )
         }else{
             console.log({msg: "Export FASTA: please select clones to be exported", type: 'flash', priority: 2});
         }
