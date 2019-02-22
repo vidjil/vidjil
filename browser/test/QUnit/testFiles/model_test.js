@@ -447,6 +447,28 @@ QUnit.test("findGermlineFromGene", function(assert) {
     var getted = m.findGermlineFromGene("unknown_gene")
     assert.equal(getted, undefined, 'function return undefined value for the gene J: unknown_gene')
 
+})
+
+QUnit.test("getFasta", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100)
+    var c1 = new Clone(json_clone1, m, 0)
+    var c2 = new Clone(json_clone2, m, 1)
+    var c3 = new Clone(json_clone3, m, 2)
+    var c4 = new Clone(json_clone4, m, 3)
+    var c5 = new Clone(json_clone5, m, 4)
+    var c6 = new Clone(json_clone6, m, 4)
+    m.initClones()
+
+
+    m.select(0)
+    m.select(1)
+    var fasta = m.getFasta()
+    console.log( fasta )
+
+    fasta_to_get = ">hello    19 nt, 10 reads (5.000%, 10.00% of TRG)\naaaaaa\naaaattttt\ntttt\n\n>IGHV3-23*01 6/ACGTG/4 IGHD1-1*01 5/CCCACGTGGGGG/4 IGHJ5*02    11 nt, 10 reads (5.000%, 10.00% of IGH)\nAACGTACCAGG\n\n"
+    assert.equal(fasta, fasta_to_get, "getFasta return the correct content")
+
 });
 
 
