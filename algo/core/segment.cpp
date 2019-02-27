@@ -801,11 +801,15 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
 
 // #define DEBUG_OVERLAP
 #ifdef DEBUG_OVERLAP
-      cout << dp_l ;
-      cout << dp_r ;
+     cout << "=== check_and_resolve_overlap" << endl;
+     cout << seq << endl;
+     cout << "boxes: " << *box_left << "/" << *box_right << endl ; 
+
+      // cout << dp_l ;
+      // cout << dp_r ;
 
       cout << "seq:" << seq_left << "\t\t" << seq_right << endl;
-      cout << "ref:" << ref_left << "\t\t" << ref_right << endl;
+      cout << "ref:" << box_left->ref << "\t\t" << ref_right << endl;
       for(int i=0; i<=overlap; i++)
         cout << i << "  left: " << score_l[i] << "/" << trim_l[i] << "     right: " << score_r[i] << "/" << trim_r[i] << endl;
 #endif
@@ -839,6 +843,7 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
            << "    left: " << best_i << "-" << box_left->del_right << " @" << box_left->end
            << "    right:" << best_j << "-" << box_right->del_left << " @" << box_right->start
            << endl;
+      cout << "boxes: " << *box_left << " / " << *box_right << endl ;
 #endif
     } // end if (overlap > 0)
 
