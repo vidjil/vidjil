@@ -759,7 +759,7 @@ void Segmenter::setSegmentationStatus(int status) {
 
 string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
                                  AlignBox *box_left, AlignBox *box_right,
-                                 Cost segment_cost)
+                                 Cost segment_cost, bool reverse_V, bool reverse_J)
 {
   // Overlap size
   int overlap = box_left->end - box_right->start + 1;
@@ -773,7 +773,7 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
       int score_l[overlap+1];
       
       //LEFT
-      DynProg dp_l = DynProg(seq_left, box_left->ref,
+      DynProg dp_l = DynProg(seq_left, revcomp(box_left->ref, reverse_V),
 			   DynProg::Local, segment_cost);
       score_l[0] = dp_l.compute();
 
@@ -781,6 +781,7 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
       //RIGHT
       // reverse right sequence
       string ref_right=string(box_right->ref.rbegin(), box_right->ref.rend());
+      ref_right = revcomp(ref_right, reverse_J);
       seq_right=string(seq_right.rbegin(), seq_right.rend());
 
 
@@ -1118,7 +1119,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,
 
     //overlap VJ
   seg_N = check_and_resolve_overlap(sequence_or_rc, 0, sequence_or_rc.length(),
-                                    box_V, box_J, segment_cost);
+                                    box_V, box_J, segment_cost, reverse_V, reverse_J);
 
   // Reset extreme positions
   box_V->start = 0;
