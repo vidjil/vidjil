@@ -334,11 +334,11 @@ if __name__ == '__main__':
         print
 
     print "=== Summary, should-vdj tests ===" + (' (only locus)' if args.after_two else '')
-    print "            tested     passed     bug     failed (todo)"
+    print "                 tested     passed      bug     failed (todo)"
     for locus in sorted(global_stats):
-        print "    %-5s     %4d       %4d     %4d       %4d   %4s" % (locus, global_stats[locus], global_stats[locus] - global_stats_failed[locus], global_stats_bug[locus], global_stats_failed[locus],
+        print "    %-10s     %4d       %4d     %4d       %4d   %4s" % (locus, global_stats[locus], global_stats[locus] - global_stats_failed[locus], global_stats_bug[locus], global_stats_failed[locus],
                                                               ("(%d)" % global_stats_todo[locus] if global_stats_todo[locus] else ''))
-    print "    =====     %4d       %4d     %4d       %4d   %4s" % (sum(global_stats.values()), sum(global_stats.values()) - sum(global_stats_failed.values()), sum(global_stats_bug.values()), sum(global_stats_failed.values()),
+    print "    ==========     %4d       %4d     %4d       %4d   %4s" % (sum(global_stats.values()), sum(global_stats.values()) - sum(global_stats_failed.values()), sum(global_stats_bug.values()), sum(global_stats_failed.values()),
                                                            "(%d)" % sum(global_stats_todo.values()))
     print
 
