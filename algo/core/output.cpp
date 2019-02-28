@@ -105,6 +105,7 @@ SampleOutput::~SampleOutput()
 
 void SampleOutput::out(ostream &s)
 {
+  UNUSED(s);
 }
 
 void SampleOutput::addClone(junction junction, CloneOutput *clone)
