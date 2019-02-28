@@ -1032,7 +1032,6 @@ changeAlleleNotation: function(alleleNotation) {
             this.orderedSelectedClones.push(tmp[j].id);
             list[j] = tmp[j].id
         }
-        this.updateStyle();
         this.updateElemStyle(list);
         this.update();
     },
