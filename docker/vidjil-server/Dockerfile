@@ -20,7 +20,7 @@ run apt-get update ; apt-get install --no-install-recommends --no-install-sugges
 arg git_branch=dev
 arg remote_repo=https://gitlab.inria.fr/vidjil/vidjil.git
 run cd /usr/share/ && git config --global http.sslVerify false && git clone -b $git_branch $remote_repo
-run cd /usr/share/vidjil/server && wget --no-check-certificate https://mdipierro.pythonanywhere.com/examples/static/web2py_src.zip && unzip web2py_src.zip && unlink web2py_src.zip
+run cd /usr/share/vidjil/server && make download_web2py && unzip web2py_src.zip && unlink web2py_src.zip
 
 add ./scripts/install.sh /opt/install_scripts/install.sh
 copy ./conf/defs.py /opt/vidjil_conf/defs.py
