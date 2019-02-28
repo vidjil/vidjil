@@ -1,3 +1,4 @@
+!NO_LAUNCHER:
 cat ../../vidjil.cpp
 
 $ The variable is used four times 
