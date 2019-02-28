@@ -148,6 +148,7 @@ ostream &operator<<(ostream &out, const AlignBox &box);
  * @param seq_begin, seq_end:              the positions to consider on 'seq' for the two sequences that may overlap
  * @param *box_left, *box_right            the two boxes
  * @param segment_cost:                    the cost used by the dynamic programing
+ * @param reverse_V, reverse_J             should we revcomp the sequence on 5' or 3'?
  *
  * @post  box_left->del_left and box_right->del_right are set to the best number of nucleotides to trim in order to remove the overlap.
  *        box_left->end and box_right->start are shifted by the good number of nucleotides
@@ -157,7 +158,8 @@ ostream &operator<<(ostream &out, const AlignBox &box);
 
 string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
                                  AlignBox *box_left, AlignBox *box_right,
-                                 Cost segment_cost);
+                                 Cost segment_cost, bool reverse_V = false,
+                                 bool reverse_J = false);
 
 class Segmenter {
 protected:
