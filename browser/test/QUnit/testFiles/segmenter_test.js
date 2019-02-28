@@ -63,6 +63,17 @@ QUnit.test("segmenter", function(assert) {
     m.multiSelect([0,1])
     assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "2 clones, 30 reads (15.00%) ", "stats (several clones) : Ok")
 
+    // Select multiple clones and check they are ordered.
+    m.unselectAll()
+    m.multiSelect([0, 1, 2]);
+    var list_html = document.getElementById('listSeq').innerHTML;
+    var clone0_pos = list_html.search('"seq0"');
+    var clone1_pos = list_html.search('"seq1"');
+    var clone2_pos = list_html.search('"seq2"');
+    // Clone 2 is more abundant than clone 1 more abundant than clone 0
+    assert.ok(clone2_pos < clone1_pos);
+    assert.ok(clone1_pos < clone0_pos);
+    
     m.unselectAll()
     m.select(2)
     m.changeTime(3)
