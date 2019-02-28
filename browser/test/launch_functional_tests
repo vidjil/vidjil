@@ -1,7 +1,18 @@
 # sh launch_functional_tests functional/test_*rb
 
+if [ -z "$FUNCTIONAL_CLIENT_BROWSER_PATH" ]; then
+    FUNCTIONAL_CLIENT_BROWSER_PATH="."
+fi
+
+if  [ "$1" = "--browsers-from-file" ]
+then
+    shift
+    BROWSER_LIST=`sed "s#^#$FUNCTIONAL_CLIENT_BROWSER_DIR#" ./tested-browsers`
+else
+    BROWSER_LIST=$FUNCTIONAL_CLIENT_BROWSER_PATH
+fi
+
 FUNCTIONAL_TESTS=$*
-BROWSER_LIST=./tested-browsers
 
 rename_reports_in() {
     dir="$1"
@@ -19,17 +30,17 @@ rename_reports_in() {
 
 rm -f test/*.xml
 EXIT=0
-if [ -z "$FUNCTIONAL_CLIENT_BROWSER_PATH" ]; then
-    FUNCTIONAL_CLIENT_BROWSER_PATH="."
-fi
-cat $BROWSER_LIST | while read browser ; do
+
+
+
+for browser in $BROWSER_LIST; do
     echo
     echo "\033[1m\033[33m===== Testing browser: " $browser "\033[0m"
     echo
     for file in $FUNCTIONAL_TESTS; do
         echo "\033[34m===" $file "\033[0m"
         if [ ${#browser} -gt 1 ]; then
-            export WATIR_BROWSER_PATH="$FUNCTIONAL_CLIENT_BROWSER_PATH/$browser"
+            export WATIR_BROWSER_PATH="$browser"
         fi
         ruby -I functional $file;
         TMP_EXIT=$?
