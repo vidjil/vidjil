@@ -1,3 +1,4 @@
+!NO_EXTRA:
 !LAUNCH: ../../tools/similarity $VIDJIL_DATA/msa.fa
 
 $ Read 3 sequences
