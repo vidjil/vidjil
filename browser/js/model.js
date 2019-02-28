@@ -911,23 +911,26 @@ changeAlleleNotation: function(alleleNotation) {
      */
     getColorSelectedClone: function(){
         var selected   = this.getSelected()
-        var list_color = new Set()
         
         if (selected.length == 0){
             return false
         }
         
+        var common_color;
         for (var i = 0; i < selected.length; i++) {
             var clone_id = selected[i]
             var clone = this.clones[clone_id]
             var color = clone.true_color;
-            list_color.add(color)
-            if (list_color.size == 2){
-                return false
+            if (common_color != color) {
+                if (common_color === undefined) {
+                    common_color = color;
+                } else {
+                    return false;
+                }
             }
         }
 
-        return Array.from(list_color)[0]
+        return common_color;
     },
 
 
