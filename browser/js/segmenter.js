@@ -953,7 +953,7 @@ Segment.prototype = {
      * @return {string} fasta 
      * */
     toFasta: function () {
-        var selected = this.sequenceListInSegmenter();
+        var selected = this.m.orderedSelectedClones;
         var result = '';
 
         for (var i = 0; i < selected.length; i++) {
