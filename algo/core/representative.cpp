@@ -114,8 +114,8 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
       index[i]->insert(it->sequence, it->label, false, 0, seeds[i]);
   }
 
-  // Create a read chooser to have the sequences sorted by length
-  ReadQualityScore *rlc = new ReadQualityScore();
+  // Create a read chooser to have the sequences sorted on the criteria we want
+  VirtualReadScore *rlc = new RandomScore();
   ReadChooser rc(sequences, *rlc);
   delete rlc;
 

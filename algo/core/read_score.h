@@ -91,4 +91,17 @@ class ReadQualityScore: public VirtualReadScore {
    */
   float getScore(const Sequence &sequence) const;
 };
+
+/**
+ * A very simple implementation of VirtualReadScore.
+ * The score is random.
+ */
+class RandomScore: public VirtualReadScore {
+ public:
+  RandomScore();
+  ~RandomScore();
+
+  float getScore(const Sequence &sequence) const;
+};
+
 #endif
