@@ -174,6 +174,10 @@ class VidjilBrowser < Watir::Browser
     return menu_item_export('export_fasta')
   end
 
+  def menu_item_export_fasta_align
+    return menu_item_export('export_fasta_align')
+  end
+
   def merge
     return element(:id => 'merge')
   end

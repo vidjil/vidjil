@@ -2213,12 +2213,11 @@ changeAlleleNotation: function(alleleNotation) {
      * save a csv file of the currently visibles clones.
      * @return {string} csv 
      * */
-    exportFasta: function () {
+    getFasta: function () {
         var list = this.getSelected()
         if (list.length>0){
-            var w = window.open("", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
             
-            var fasta = '<pre>'
+            var fasta = ''
             for (var i=0; i<list.length; i++){
                 fasta += this.clone(list[i]).getFasta() + '\n'
             }
@@ -2238,7 +2237,6 @@ changeAlleleNotation: function(alleleNotation) {
                 }
             }
 
-
             for (var k=0; k<listGene.length; k++){
                 var germName = gene_germline[k].substring(0, 3);
                 if (this.germline[germName] != undefined) {
@@ -2249,15 +2247,21 @@ changeAlleleNotation: function(alleleNotation) {
                     }
                 }
             }
-
-            var result = $('<div/>', {
-                html: fasta
-            }).appendTo(w.document.body);
-        }else{
+            return fasta
+        } else {
             console.log({msg: "Export FASTA: please select clones to be exported", type: 'flash', priority: 2});
+        }
+        return -1
+    },
+
+    exportFasta: function () {
+        var fasta = this.getFasta()
+        if (fasta != -1) {
+            openAndFillNewTab( "<pre>" + fasta )
         }
         
     },
+
 
     /** 
      * Bypass the germline name to ge tthe sequence of a gene

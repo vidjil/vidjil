@@ -67,6 +67,7 @@ function Segment(id, model, database) {
     this.is_open = false;
     this.amino = false;
     this.aligned = false;
+        
     this.fixed = false;         // whether the segmenter is fixed
     this.germline = this.m.germline;
     //elements to be highlited in sequences
@@ -665,6 +666,7 @@ Segment.prototype = {
         var self = this;
 
         this.aligned = false ;
+        this.resetAlign()
         this.sequence[cloneID] = new Sequence(cloneID, this.m, this)
         
         var divParent = document.getElementById("listSeq");
@@ -774,6 +776,7 @@ Segment.prototype = {
     addSequenceTosegmenter : function(id, locus, str){
         var self =this
         this.aligned = false ;
+        this.resetAlign()
         if ( typeof this.sequence[id]=="undefined"){
             this.sequence[id] = new genSeq(id, locus, this.m, this)
             this.sequence[id].load("str")
@@ -934,6 +937,15 @@ Segment.prototype = {
                 console.log({"type": "flash", "msg": "cgi error : impossible to connect", "priority": 2});
             }
         });
+
+        // Allow to use button of the export menu
+        try {
+
+            div = document.getElementById("export_fasta_align")
+            div.classList.remove("disabledClass")
+        } catch (err) {
+            // Div doesn't exist (qunit only ?)
+        }
     },
 
     /**
@@ -941,15 +953,15 @@ Segment.prototype = {
      * @return {string} fasta 
      * */
     toFasta: function () {
-        var selected = this.sequenceListInSegmenter();
-        var result = "";
+        var selected = this.m.orderedSelectedClones;
+        var result = '';
 
         for (var i = 0; i < selected.length; i++) {
             if (typeof this.sequence[selected[i]] !== "undefined" &&
                 typeof this.sequence[selected[i]].seq !== "undefined") {
                 var seq = this.sequence[selected[i]];
                 if (seq.is_clone) {
-                    result +="> " + this.m.clone(selected[i]).getName() + " // " + this.m.clone(selected[i]).getStrSize() + "\n";
+                    result += "> " + this.m.clone(selected[i]).getName() + " // " + this.m.clone(selected[i]).getStrSize() + "\n";
                 } else {
                     result += "> " + selected[i];
                 }
@@ -960,6 +972,23 @@ Segment.prototype = {
     },
 
 
+    /**
+     * save a csv file of the currently visibles clones.
+     * @return {string} csv 
+     * */
+    exportAlignFasta: function () {
+
+        var list = this.m.getSelected()
+        if (list.length>0){
+        
+            var fasta = this.toFasta()
+            openAndFillNewTab( "<pre>" + fasta )
+        }else{
+            console.log({msg: "Export FASTA: please select clones to be exported", type: 'flash', priority: 2});
+        }
+        
+    },
+
 
     /**
      * remove alignement
@@ -969,9 +998,21 @@ Segment.prototype = {
 
         this.aligned = false
 
-        for (var i = 0; i < selected.length; i++) {
-            var spanM = document.getElementById("m" + selected[i])
-            spanM.innerHTML =  this.sequence[selected[i]].load().toString(this)
+        try {
+            div = document.getElementById("export_fasta_align")
+            div.classList.add("disabledClass")
+        } catch (err) {
+            // Div doesn't exist (qunit only ?)
+        }
+
+        try{
+            if( selected.length ){
+                for (var i = 0; i < selected.length; i++) {
+                    var spanM = document.getElementById("m" + selected[i])
+                    spanM.innerHTML =  this.sequence[selected[i]].load().toString(this)
+                }
+            }
+        } catch (err) {
         }
     },
     
@@ -984,12 +1025,12 @@ Segment.prototype = {
 
         var json = JSON.parse(file)
 
-	// Load all (aligned) sequences
+	    // Load all (aligned) sequences
         for (var i = 0; i < json.seq.length; i++) {
             this.sequence[this.memTab[i]].load(json.seq[i])
-	}
+    	}
 
-	// Render all (aligned) sequences
+	    // Render all (aligned) sequences
         for (var j = 0; j < json.seq.length; j++) {
 
             // global container

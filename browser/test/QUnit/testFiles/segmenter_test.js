@@ -73,6 +73,10 @@ QUnit.test("segmenter", function(assert) {
     // Clone 2 is more abundant than clone 1 more abundant than clone 0
     assert.ok(clone2_pos < clone1_pos);
     assert.ok(clone1_pos < clone0_pos);
+
+    var fasta = segment.toFasta();
+    assert.ok(fasta.indexOf('> test3') < fasta.indexOf('> test2'));
+    assert.ok(fasta.indexOf('> test2') < fasta.indexOf('> test1'));
     
     m.unselectAll()
     m.select(2)
