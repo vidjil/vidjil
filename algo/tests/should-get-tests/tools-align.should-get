@@ -1,3 +1,4 @@
+!NO_EXTRA:
 !LAUNCH: ../../tools/align -m 6 -i 0 -j 1 $VIDJIL_DATA/msa.fa
 
 $ Default cost and parameters

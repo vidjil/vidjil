@@ -57,6 +57,7 @@ RE_TEST = re.compile('^(\S)*[:]')
 DIRECTIVE_REQUIRES = '!REQUIRES:'
 DIRECTIVE_NO_LAUNCHER = '!NO_LAUNCHER:'
 DIRECTIVE_SCRIPT = '!LAUNCH:'
+DIRECTIVE_NO_EXTRA = '!NO_EXTRA:'
 DIRECTIVE_OPTIONS = '!OPTIONS:'
 DIRECTIVE_SOURCE = '!OUTPUT_FILE:'
 DIRECTIVE_EXIT_CODE = '!EXIT_CODE:'
@@ -674,6 +675,11 @@ class TestSuite():
             # Directive -- No launcher
             if l.startswith(DIRECTIVE_NO_LAUNCHER):
                 self.use_launcher = False
+                continue
+
+            # Directive -- No extra options
+            if l.startswith(DIRECTIVE_NO_EXTRA):
+                self.variables = [(VAR_EXTRA, '')] + self.variables
                 continue
 
             # Directive -- Source

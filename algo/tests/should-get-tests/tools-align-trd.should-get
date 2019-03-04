@@ -1,3 +1,4 @@
+!NO_EXTRA:
 !LAUNCH: ../../tools/align -m 1 -i 2 -j 1 -x $VIDJIL_DATA/trd-dd2-dd3.fa $VIDJIL_DIR/germline/homo-sapiens/TRDD.fa 
 
 $ Load correct sequences

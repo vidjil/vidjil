@@ -1,4 +1,4 @@
-!LAUNCH: (i=1; while [ $i -le 100000 ]; do echo '>read' ; echo ccgtgtattactgtgcgagagagctgaatacttccagcactg ; i=$((i+1)); done ;) > same-igh-100k.fa ; $LAUNCHER $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -r 5000  -w 15  same-igh-100k.fa; rm -f same-igh-100k.fa
+!LAUNCH: (i=1; while [ $i -le 100000 ]; do echo '>read' ; echo ccgtgtattactgtgcgagagagctgaatacttccagcactg ; i=$((i+1)); done ;) > same-igh-100k.fa ; $LAUNCHER $VIDJIL_DIR/$EXEC $EXTRA $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -r 5000  -w 15  same-igh-100k.fa; rm -f same-igh-100k.fa
 
 $ Find a unique clone with all reads
 1:>clone-001--IGH--0100000--100.--window

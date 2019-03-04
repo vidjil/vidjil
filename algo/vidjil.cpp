@@ -552,6 +552,8 @@ int main (int argc, char **argv)
   int verbose = 0 ;
   app.add_flag_function("-v", [&](size_t n) { verbose += n ; }, "verbose mode") -> group(group);
 
+  bool __only_on_exit__clean_memory; // Do not use except on exit, see #3729
+  app.add_flag("--clean-memory", __only_on_exit__clean_memory, "clean memory on exit") -> group(group) -> level();
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Help";
@@ -981,9 +983,7 @@ int main (int argc, char **argv)
 	  cout << "     " << key << " " << it->second.name << endl ;
 	}
       
-      delete multigermline;
-
-      return 0;
+      if (__only_on_exit__clean_memory) { delete multigermline; } exit(0);
     }
 
 
@@ -1653,10 +1653,8 @@ int main (int argc, char **argv)
 
   outputVidjil->out(out_json);
 
-
   //$$ Clean
-  delete multigermline ;
-  delete reads;
+  if (__only_on_exit__clean_memory) { delete multigermline ; delete reads; } exit(0) ;
 }
 
 //$$ end
