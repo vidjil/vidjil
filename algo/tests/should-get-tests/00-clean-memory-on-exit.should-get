@@ -9,4 +9,4 @@ $ Two times for the definition
 1:add_flag.*__only_on_exit__clean_memory
 
 $ And two other times, just before exiting
-2:if .__only_on_exit__clean_memory. .* exit.0.
+2:if .__only_on_exit__clean_memory. .* return.0.

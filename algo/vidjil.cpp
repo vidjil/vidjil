@@ -983,7 +983,7 @@ int main (int argc, char **argv)
 	  cout << "     " << key << " " << it->second.name << endl ;
 	}
       
-      if (__only_on_exit__clean_memory) { delete multigermline; } exit(0);
+      if (__only_on_exit__clean_memory) { delete multigermline; } return 0;
     }
 
 
@@ -1654,7 +1654,7 @@ int main (int argc, char **argv)
   outputVidjil->out(out_json);
 
   //$$ Clean
-  if (__only_on_exit__clean_memory) { delete multigermline ; delete reads; } exit(0) ;
+  if (__only_on_exit__clean_memory) { delete multigermline ; delete reads; } return 0 ;
 }
 
 //$$ end
