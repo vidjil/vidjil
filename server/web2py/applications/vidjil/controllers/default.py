@@ -115,6 +115,8 @@ def run_request():
     ##TODO check
     if not "sequence_file_id" in request.vars :
         error += "id sequence file needed, "
+    elif not "sample_set_id" in request.vars:
+        error += "sample set ID needed, "
     if not "config_id" in request.vars:
         error += "id config needed, "
         id_config = None
