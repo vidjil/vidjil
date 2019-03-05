@@ -5,6 +5,7 @@
 #include <list>
 #include "bioreader.hpp"
 #include "kmerstore.h"
+#include "read_score.h"
 
 using namespace std;
 
@@ -12,6 +13,8 @@ using namespace std;
 
 #define THRESHOLD_BAD_COVERAGE .5 /* Threshold below which the representatie
                                      coverage is considered bad */
+
+static ReadQualityScore DEFAULT_READ_SCORE;
 
 /**
  * Compute a representative sequence from a list of sequences.
@@ -57,7 +60,8 @@ public:
    * Compute the representative depending on the parameters set by the functions
    * @pre setRequiredSequence() must have been called (with a non-empty string).
    */
-  virtual void compute(bool try_hard=false) = 0;
+  virtual void compute(VirtualReadScore & readScorer = DEFAULT_READ_SCORE,
+                       bool try_hard=false) = 0;
 
   /**
    * @param min_cover: minimal number of reads supporting each position of the 
@@ -129,7 +133,8 @@ public:
   /**
    * @pre setCoverageReferenceLength() must have been called previously
    */
-  void compute(bool try_hard = false);
+  void compute(VirtualReadScore & readScorer = DEFAULT_READ_SCORE,
+               bool try_hard = false);
 
  private:
 

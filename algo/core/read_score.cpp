@@ -101,3 +101,15 @@ float ReadQualityScore::getScore(const Sequence &sequence) const {
     percent_quality = GOOD_QUALITY;
   return percent_quality * sequence.sequence.size() / GOOD_QUALITY;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////  RandomScore  ///////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+RandomScore::RandomScore(){srand(1);} // Ensures a deterministic output
+RandomScore::~RandomScore(){}
+
+float RandomScore::getScore(const Sequence &sequence) const {
+  UNUSED(sequence);
+  return rand() % 500;
+}

@@ -453,6 +453,14 @@ int main (int argc, char **argv)
                  "maximal number of reads to process ('" NO_LIMIT "': no limit, default), sampled reads")
     -> group(group) -> transform(string_NO_LIMIT);
 
+  VirtualReadScore *readScorer = &DEFAULT_READ_SCORE;
+  RandomScore randomScore;
+  app.add_flag_function("--consensus-on-random-sample",
+                        [&readScorer, &randomScore](size_t n) {
+                          UNUSED(n);
+                          readScorer = &randomScore;
+                        }, "for large clones, use a random sample of reads to compute the consensus sequence (instead of a sample of the longest and highest quality reads)")
+    ->group(group) -> level();
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Clone analysis (second pass)";
@@ -1056,7 +1064,8 @@ int main (int argc, char **argv)
     WindowsStorage *windowsStorage = we.extract(reads, wmer_size,
                                                 windows_labels, only_labeled_windows,
                                                 keep_unsegmented_as_clone,
-                                                expected_value, nb_reads_for_evalue);
+                                                expected_value, nb_reads_for_evalue,
+                                                readScorer);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 

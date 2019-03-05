@@ -11,6 +11,7 @@
 #include "windows.h"
 #include "read_storage.h"
 #include "bioreader.hpp"
+#include "read_score.h"
 
 #define NB_BINS_CLONES 10
 #define MAX_VALUE_BINS_CLONES 1000
@@ -51,6 +52,7 @@ class WindowExtractor {
    * @param only_labeled_windows: remember only windows from windows_labels
    * @param nb_expected: maximal e-value of the segmentation
    * @param nb_reads_for_evalue: number of reads, used for e-value computation. Can be approximate or faked.
+   * @param scorer: how reads are scored (only the best ones are keeped for large clones)
    * @return a pointer to a WindowsStorage that will contain all the windows.
    *         It is a pointer so that the WindowsStorage is not duplicated.
    * @post Statistics on segmentation will be provided through the getSegmentationStats() methods
@@ -60,7 +62,8 @@ class WindowExtractor {
                           size_t w,
                           map<string, string> &windows_labels, bool only_labeled_windows=false,
                           bool keep_unsegmented_as_clone=false,
-                          double nb_expected = THRESHOLD_NB_EXPECTED, int nb_reads_for_evalue = 1);
+                          double nb_expected = THRESHOLD_NB_EXPECTED, int nb_reads_for_evalue = 1,
+                          VirtualReadScore *scorer = &DEFAULT_READ_SCORE);
 
   /**
    * @return the average length of sequences whose segmentation has been classified as seg
