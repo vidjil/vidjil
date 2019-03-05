@@ -7,7 +7,7 @@
 #include "segment.h"
 
 WindowsStorage::WindowsStorage(map<string, string> &labels)
-  :windows_labels(labels),max_reads_per_window(~0),nb_bins(NB_BINS),max_value_bins(MAX_VALUE_BINS) {}
+  :windows_labels(labels),max_reads_per_window(~0),scorer(&DEFAULT_READ_SCORE),nb_bins(NB_BINS),max_value_bins(MAX_VALUE_BINS) {}
 
 list<pair <junction, size_t> > &WindowsStorage::getSortedList() {
   return sort_all_windows;
@@ -73,7 +73,7 @@ KmerRepresentativeComputer WindowsStorage::getRepresentativeComputer(junction wi
   repComp.setPercentCoverage(percent_cover);
   repComp.setRequiredSequence(window);
   repComp.setCoverageReferenceLength(getAverageLength(window));
-  repComp.compute();
+  repComp.compute(*scorer);
 
   // We should always have a representative, because either the junction is labelled (thus setMinCover(1)), or:
   // - there is at least min('min_reads_clone', 'max_auditioned') sequences in auditioned_sequences
@@ -153,11 +153,15 @@ void WindowsStorage::setIdToAll() {
     }
 }
 
+void WindowsStorage::setScorer(VirtualReadScore *scorer) {
+  this->scorer = scorer;
+}
+
 void WindowsStorage::add(junction window, Sequence sequence, int status, Germline *germline, list<int> extra_statuses) {
   if (! hasWindow(window)) {
     // First time we see that window: init
     status_by_window[window].resize(STATS_SIZE);
-    seqs_by_window[window].init(nb_bins, max_value_bins, &scorer);
+    seqs_by_window[window].init(nb_bins, max_value_bins, scorer);
     seqs_by_window[window].setMaxNbReadsStored(getMaximalNbReadsPerWindow());
   }
 

@@ -1056,7 +1056,8 @@ int main (int argc, char **argv)
     WindowsStorage *windowsStorage = we.extract(reads, wmer_size,
                                                 windows_labels, only_labeled_windows,
                                                 keep_unsegmented_as_clone,
-                                                expected_value, nb_reads_for_evalue);
+                                                expected_value, nb_reads_for_evalue,
+                                                readScorer);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 

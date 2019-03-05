@@ -81,7 +81,7 @@ KmerRepresentativeComputer::KmerRepresentativeComputer(list<Sequence> &r,
                                                        string seed)
   :RepresentativeComputer(r),seed(seed),stability_limit(DEFAULT_STABILITY_LIMIT){}
   
-void KmerRepresentativeComputer::compute(bool try_hard) {
+void KmerRepresentativeComputer::compute(VirtualReadScore &readScorer, bool try_hard) {
   assert(coverage_reference_length > 0);
   assert(required.length() > 0);
   is_computed = false;
@@ -115,9 +115,7 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
   }
 
   // Create a read chooser to have the sequences sorted on the criteria we want
-  VirtualReadScore *rlc = new RandomScore();
-  ReadChooser rc(sequences, *rlc);
-  delete rlc;
+  ReadChooser rc(sequences, readScorer);
 
   // Traverse the sequences to get the desired representative
   size_t pos_longest_run = 0;
@@ -219,7 +217,7 @@ void KmerRepresentativeComputer::compute(bool try_hard) {
 
 
   if (coverage < THRESHOLD_BAD_COVERAGE && ! try_hard) {
-    compute(true);
+    compute(readScorer, true);
     delete index[0];
 
     if (cover_longest_run)

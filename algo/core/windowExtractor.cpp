@@ -20,10 +20,12 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
 					 size_t w,
                                          map<string, string> &windows_labels, bool only_labeled_windows,
                                          bool keep_unsegmented_as_clone,
-                                         double nb_expected, int nb_reads_for_evalue) {
+                                         double nb_expected, int nb_reads_for_evalue,
+                                         VirtualReadScore *scorer) {
   init_stats();
 
   WindowsStorage *windowsStorage = new WindowsStorage(windows_labels);
+  windowsStorage->setScorer(scorer);
   windowsStorage->setMaximalNbReadsPerWindow(max_reads_per_window);
 
   unsigned long long int bp_total = 0;

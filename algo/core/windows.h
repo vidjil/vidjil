@@ -21,6 +21,7 @@
 #include "stats.h"
 #include "output.h"
 #include "../lib/json_fwd.hpp"
+#include "read_score.h"
 
 #define NB_BINS 30
 #define MAX_VALUE_BINS 500
@@ -37,7 +38,7 @@ class WindowsStorage {
   list<pair <junction, size_t> > sort_all_windows;
   map<junction, int> id_by_window;
   size_t max_reads_per_window;
-  ReadQualityScore scorer;
+  VirtualReadScore *scorer;
 
   /* Parameters for the read storage */
   size_t nb_bins;
@@ -96,7 +97,7 @@ class WindowsStorage {
    */
 
   KmerRepresentativeComputer getRepresentativeComputer(junction window, string seed, size_t min_cover,
-                             float percent_cover, size_t nb_sampled);
+                                                       float percent_cover, size_t nb_sampled);
 
   /**
    * @return a sample of nb_sampled sequences sharing the same window. The
@@ -172,6 +173,11 @@ class WindowsStorage {
    */
   void setMaximalNbReadsPerWindow(size_t max_reads);
 
+  /**
+   * Define what scorer will be used to keep the sequences and compute the representative
+   */
+  void setScorer(VirtualReadScore *scorer);
+  
   /**
    * Add a new window with its sequence.
    * @param window: the window to add
