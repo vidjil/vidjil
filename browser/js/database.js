@@ -201,7 +201,7 @@ Database.prototype = {
                  if (result.status == "COMPLETED"){
                      callback(result.data);
                  }else if(result.status == "FAILED"){
-                     console.log({"type": "flash", "msg": "process failed", "priority": 1});
+                     console.log({"type": "flash", "msg": "process failed:" + ((typeof result.message !== 'undefined') ? result.message: ''), "priority": 1});
                  }else{
                      setTimeout(function(){ self.waitProcess(processId, interval, callback); }, interval); 
                  }

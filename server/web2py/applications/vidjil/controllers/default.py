@@ -172,8 +172,15 @@ def run_extra():
 
 def checkProcess():
     task = db.scheduler_task[request.vars["processId"]]
-    
-    if task.status == "COMPLETED" :
+    results_file = db(db.results_file.scheduler_task_id == task.id).select().first()
+
+    msg = ''
+    sample_set_id = -1
+    if results_file:
+        sample_set_id = get_sample_set_id_from_results_file(results_file.id)
+    if not results_file or not auth.can_view_sample_set(sample_set_id):
+        msg = "You don't have access to this sample"
+    if sample_set_id > -1 and task.status == "COMPLETED" :
         run = db( db.scheduler_run.task_id == task.id ).select()[0]
     
         res = {"success" : "true",
@@ -181,9 +188,15 @@ def checkProcess():
                "data" : run.run_result,
                "processId" : task.id}
     else :
-        res = {"success" : "true",
-               "status" : task.status,
-               "processId" : task.id}
+        if len(msg) > 0:
+            res = {"success" : "false",
+                   "status" : "FAILED",
+                   "message": msg,
+                   "processId" : task.id}
+        else:
+            res = {"success" : "true",
+                   "status" : task.status,
+                   "processId" : task.id}
         
     log.error(res)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
