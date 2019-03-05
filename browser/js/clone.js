@@ -1213,10 +1213,7 @@ Clone.prototype = {
                 }
                 if ($('#debug_menu').is(':visible') && (typeof this.m.db_key.config != 'undefined' )) {
                 html += "<br/>"
-                call_reads = "db.call('default/run_request', { "
-                call_reads += "'sequence_file_id': '" + this.m.samples.db_key[this.m.samples.order[j]] + "', "
-                call_reads += "'config_id' : '" + this.m.db_key.config + "', "
-                call_reads += "'grep_reads' : '" + this.id + "' })"
+                call_reads = "db.get_read('" + this.id + "', "+ this.m.samples.sequence_file_id[this.m.samples.order[j]] + ')';
                 console.log(call_reads)
                 html += "<span class='button' onclick=\"" + call_reads + "\"> get reads </span>"
                 }

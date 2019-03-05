@@ -125,6 +125,18 @@ Database.prototype = {
                          report.reportcontamination()
                      })
     },
+
+    get_read: function(window, sequence_file_id) {
+	var self = this;
+	self.callProcess('default/run_request',
+			 {'sequence_file_id': sequence_file_id,
+			  'sample_set_id': self.m.sample_set_id,
+			  'config_id': self.m.db_key.config,
+			  'grep_reads': window},
+			 function(a) {
+			     openAndFillNewTab("Your reads are ready. <a href='"+DB_ADDRESS+"/results_file/download?filename=seq/clone.fa-1&results_file_id="+a.result_id+"'>Download them</a>");
+			 });
+    },
     
      /**
       * request a side process to the server
