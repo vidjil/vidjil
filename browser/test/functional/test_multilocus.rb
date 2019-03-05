@@ -72,6 +72,10 @@ class TestMultilocus < BrowserTest
     assert ($b.div(:id => "left-container").present?), ">> fail : left menu did not reappear"
   end
 
+  def test_02_export_align_sequences
+    assert ( $b.menu_item_export_fasta_align(:class => 'disabledClass').exists?), ">> export align sequences is disable by default"
+  end
+
   def test_03_rename_clone_by_clicking
     clone_name = $b.clone_info('25')[:name]
     assert (clone_name.title == 'TRBV29*01 -1/0/-0 TRBD1*01 -2/0/-5 TRBJ2-5*01'), " >> clone name is not correct : " + clone_name.title

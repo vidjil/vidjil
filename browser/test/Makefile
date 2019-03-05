@@ -1,4 +1,6 @@
 
+BROWSERS=
+
 all: unit functional
 
 unit: nightmare
@@ -8,10 +10,10 @@ headless:
 	HEADLESS=1 $(MAKE) external
 
 functional: ../../doc/analysis-example1.vidjil
-	sh launch_functional_tests functional/test_*rb
+	sh launch_functional_tests $(BROWSERS) functional/test_*rb
 
 external: ../../doc/analysis-example1.vidjil
-	sh launch_functional_tests functional/external_test_*rb
+	sh launch_functional_tests $(BROWSERS) functional/external_test_*rb
 
 functional-rbx: ../../doc/analysis-example1.vidjil
 	LIVE_SERVER=http://app.vidjil.org/browser/ ruby test_browser.rb
