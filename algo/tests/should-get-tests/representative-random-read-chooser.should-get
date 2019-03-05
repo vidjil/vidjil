@@ -1,0 +1,12 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -w 20 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG $VIDJIL_DATA/test-random-consensus.fa.gz > consensus-default.log
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -w 20 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG --consensus-on-random-sample $VIDJIL_DATA/test-random-consensus.fa.gz > consensus-random.log
+!LAUNCH: diff consensus-default.log consensus-random.log
+!EXIT_CODE: 1
+
+$ Output should differ: default has a consensus of 52bp (with the spurious insertion)
+# Appears twice in the header of the consensus sequence and in the similarity matrix
+2:^< .* 52 bp
+1:^< CTTTT
+
+$ With random read sample the consensus should not have the spurious insertion (49 bp)
+2:^> .* 49 bp
