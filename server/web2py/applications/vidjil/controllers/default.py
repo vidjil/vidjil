@@ -185,7 +185,9 @@ def checkProcess():
     
         res = {"success" : "true",
                "status" : task.status,
-               "data" : run.run_result,
+               "data" : {'run_result': run.run_result,
+                         'result_id': results_file.id
+                         },
                "processId" : task.id}
     else :
         if len(msg) > 0:
