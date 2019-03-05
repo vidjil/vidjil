@@ -183,7 +183,6 @@ Database.prototype = {
      * check if a server process is done(recursive)
      * */
      waitProcess: function (processId, interval, callback){
-         console.log("... " +processId)
          var self=this;
          var url = self.db_address + "default/checkProcess?processId="+processId;
          
@@ -197,6 +196,7 @@ Database.prototype = {
              xhrFields: {withCredentials: true},
              success: function (result) {
                  self.connected = true;
+		 console.log(result);
                  result = jQuery.parseJSON(result)
                  if (result.status == "COMPLETED"){
                      callback(result.data);
