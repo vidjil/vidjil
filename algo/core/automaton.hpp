@@ -169,12 +169,14 @@ void PointerACAutomaton<Info>::insert(const seqtype &seq, Info info) {
   pointer_state<Info> *state = getInitialState();
   size_t seq_length = seq.length();
   size_t i;
+  bool existing_final = true;
 
   for (i = 0; i < seq_length && state->transition(seq[i]) != NULL; i++) {
     state = state->transition(seq[i]);
   }
 
   if (i < seq_length) {
+    existing_final = false;
     // Need to create more states
     for (; i < seq_length; i++) {
       pointer_state<Info> *new_state = new pointer_state<Info>();
@@ -183,16 +185,14 @@ void PointerACAutomaton<Info>::insert(const seqtype &seq, Info info) {
     }
   }
   state->is_final = true;
-  if (state->informations.front().isNull()) {
+  if (! existing_final) {
     this->nb_kmers_inserted++;
     this->kmers_inserted[info]++;
-    state->informations.front() += info;
-  } else {
-    if (this->multiple_info)
-      state->informations.push_back(info);
-    else
-      state->informations.front() += info;
   }
+  if (state->informations.front().isNull() || ! this->multiple_info)
+    state->informations.front() += info;
+  else
+    state->informations.push_back(info);
 }
 
 template <class Info>

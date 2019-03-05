@@ -304,10 +304,10 @@ int main (int argc, char **argv)
 
   int options_s_k = 0 ;
 
-  IndexTypes indexType = KMER_INDEX;
-  app.add_flag_function("-q",
-                        [&](size_t n) { UNUSED(n); indexType = AC_AUTOMATON; },
-                        "use Aho-Corasick-like automaton (experimental)")
+  IndexTypes indexType = AC_AUTOMATON;
+  app.add_flag_function("--plain-index",
+                        [&](size_t n) { UNUSED(n); indexType = KMER_INDEX; },
+                        "use a plain index (pre-2019 method) instead of the recommended Aho-Corasick-like automaton")
     -> group(group) -> level();
 
   string seed = DEFAULT_SEED ;

@@ -82,6 +82,7 @@ public:
   static int last_id;
   int id; // id of this index
   int refs; // number of germlines using this index
+  bool multiple_in_one;
 
   list< pair <T, BioReader> > labels;
 
@@ -205,6 +206,7 @@ IKmerStore<T>::IKmerStore() {
   id = ++last_id;
   refs = 0;
   finished_building = false;
+  multiple_in_one = false;
 }
 
 template<class T> int IKmerStore<T>::last_id = 0;

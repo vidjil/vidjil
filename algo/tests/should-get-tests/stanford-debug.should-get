@@ -8,7 +8,7 @@ $ segmented.fa (-U)
 2:>lcl.FLN1.* VJ .* seed custom SEG_[+]
 
 $ unsegmented.fa (-u)
-4:>lcl.FLN1.* UNSEG
+3:>lcl.FLN1.* UNSEG
 
 $ fasta header stops before FA
 2:clone-.*-lcl.FLN1-
