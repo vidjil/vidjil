@@ -116,10 +116,10 @@ def output():
 @cache.action()
 def download():
     sample_set_id = get_sample_set_id_from_results_file(request.vars["results_file_id"])
-    if auth.can_view_sample_set(sample_set_id):
+    if auth.can_view_sample_set(sample_set_id) and not '..' in request.vars['filename']:
         results_id = int(request.vars["results_file_id"])
         directory = defs.DIR_OUT_VIDJIL_ID % results_id
-        filepath = directory + os.path.basename(request.vars['filename'])
+        filepath = directory + request.vars['filename']
         try:
             log.info("Downloaded results file", extra={'user_id': auth.user.id,
                 'record_id': request.vars["results_file_id"],
