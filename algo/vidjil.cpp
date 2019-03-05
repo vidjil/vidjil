@@ -459,8 +459,8 @@ int main (int argc, char **argv)
                         [&readScorer, &randomScore](size_t n) {
                           UNUSED(n);
                           readScorer = randomScore;
-                        }, "For large clones, a random sample of reads is used to compute the consensus sequence instead of a sample of the longest and highest quality reads")
-    ->group(group);
+                        }, "for large clones, use a random sample of reads to compute the consensus sequence (instead of a sample of the longest and highest quality reads)")
+    ->group(group) -> level();
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Clone analysis (second pass)";
