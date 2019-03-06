@@ -14,7 +14,7 @@ cd $VIDJIL_DIR
 # '-c windows'
 1:Extracting windows
 
-# '-c segment'
+# '-c designations'
 1:Segmenting V.D.J
 
 # '-c germlines'

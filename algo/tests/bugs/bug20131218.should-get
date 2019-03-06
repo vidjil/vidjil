@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -c segment -g ../../../germline/homo-sapiens.g:IGH bug20131218.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -g ../../../germline/homo-sapiens.g:IGH bug20131218.fa
 
 # The number of deletions in the D is larger than the D length itself.
 $ Bug with the number of deletions in the D.
