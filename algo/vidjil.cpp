@@ -70,6 +70,7 @@
 
 #define PROGNAME "vidjil-algo"
 #define VIDJIL_JSON_VERSION "2016b"
+#define DOCUMENTATION "doc/vidjil-algo.md"
 
 //$$ #define (mainly default options)
 
@@ -148,7 +149,7 @@ string usage_examples(char *progname)
 {
   stringstream ss;
   ss
-       << "Examples (see doc/algo.org)" << endl
+       << "Examples (see " DOCUMENTATION ")" << endl
        << "  " << progname << " -c clones   -g germline/homo-sapiens.g   -2 -3 -r 1  demo/Demo-X5.fa           # (basic usage, detect the locus for each read," << endl
        << "                                                                                               #  cluster reads and report clones starting from the first read (-r 1)," << endl
        << "                                                                                               #  including unexpected recombinations (-2), assign V(D)J genes and try to detect the CDR3s (-3))" << endl
@@ -571,7 +572,7 @@ int main (int argc, char **argv)
   app.add_flag_function("-H", [&](size_t n) { UNUSED(n); throw CLI::CallForAdvancedHelp() ; },
                         "help, including advanced and experimental options"
                         "\n                              "
-                        "The full help is available in the doc/algo.org file.")
+                        "The full help is available in " DOCUMENTATION ".")
     -> group(group);
 
 
@@ -749,7 +750,7 @@ int main (int argc, char **argv)
            << "* to cluster reads into clones ('-c clones')." << endl
            << "* Computing accurate V(D)J designations for many sequences ('-c segment' or large '-z' values)" << endl
            << "* is slow and should be done only on small datasets or for testing purposes." << endl
-	   << "* More information is provided in the 'doc/vidjil-algo.md' file." << endl 
+	   << "* More information is provided in " DOCUMENTATION "." << endl
 	   << endl ;
     }
 
@@ -1095,7 +1096,7 @@ int main (int argc, char **argv)
       {
         output.add_warning("W20", "Very few V(D)J recombinations found: " + fixed_string_of_float(ratio_segmented, 2) + "%", LEVEL_WARN);
         stream_segmentation_info << "  ! There are not so many CDR3 windows found in this set of reads." << endl ;
-        stream_segmentation_info << "  ! Please check the unsegmentation causes below and refer to the documentation." << endl ;
+        stream_segmentation_info << "  ! Please check the causes below and refer to " DOCUMENTATION "." << endl ;
       }
 
     we.out_stats(stream_segmentation_info);
