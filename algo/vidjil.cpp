@@ -70,6 +70,7 @@
 
 #define PROGNAME "vidjil-algo"
 #define VIDJIL_JSON_VERSION "2016b"
+#define DOCUMENTATION "doc/vidjil-algo.md"
 
 //$$ #define (mainly default options)
 
@@ -148,7 +149,7 @@ string usage_examples(char *progname)
 {
   stringstream ss;
   ss
-       << "Examples (see doc/algo.org)" << endl
+       << "Examples (see " DOCUMENTATION ")" << endl
        << "  " << progname << " -c clones   -g germline/homo-sapiens.g   -2 -3 -r 1  demo/Demo-X5.fa           # (basic usage, detect the locus for each read," << endl
        << "                                                                                               #  cluster reads and report clones starting from the first read (-r 1)," << endl
        << "                                                                                               #  including unexpected recombinations (-2), assign V(D)J genes and try to detect the CDR3s (-3))" << endl
@@ -162,6 +163,14 @@ string usage_examples(char *progname)
   return ss.str();
 }
 
+inline std::string failure_message_doc(const CLI::App *app, const CLI::Error &e) {
+    std::string header = ERROR_STRING + std::string(e.what()) + "\n";
+    header += "For more information, ";
+    if(app->get_help_ptr() != nullptr)
+        header += "run with " + app->get_help_ptr()->single_name() + " or ";
+    header += "see " DOCUMENTATION ".\n";
+    return header;
+}
 
 int atoi_NO_LIMIT(const char *optarg)
 {
@@ -215,6 +224,7 @@ int main (int argc, char **argv)
 #endif
 
   CLI::App app{"# vidjil-algo -- V(D)J recombinations analysis", argv[0]};
+  app.set_failure_message(failure_message_doc);
 
   //$$ options: defaults
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
@@ -571,7 +581,7 @@ int main (int argc, char **argv)
   app.add_flag_function("-H", [&](size_t n) { UNUSED(n); throw CLI::CallForAdvancedHelp() ; },
                         "help, including advanced and experimental options"
                         "\n                              "
-                        "The full help is available in the doc/algo.org file.")
+                        "The full help is available in " DOCUMENTATION ".")
     -> group(group);
 
 
@@ -593,8 +603,7 @@ int main (int argc, char **argv)
   else if (cmd == COMMAND_GERMLINES)
     command = CMD_GERMLINES;
   else {
-    cerr << "Unknwown command " << optarg << endl;
-    throw CLI::CallForHelp();
+    return app.exit(CLI::ConstructionError("Unknown command " + cmd, 1));
   }
 
   list <string> f_reps_V(v_reps_V.begin(), v_reps_V.end());
@@ -627,14 +636,12 @@ int main (int argc, char **argv)
 
   if (!multi_germline && (!f_reps_V.size() || !f_reps_J.size()))
     {
-      cerr << ERROR_STRING << "At least one germline must be given with -g or -V/(-D)/-J." << endl ;
-      return 1;
+      return app.exit(CLI::ConstructionError("At least one germline must be given with -g or -V/(-D)/-J.", 1));
     }
 
   if (options_s_k > 1)
     {
-      cerr << ERROR_STRING << "Use at most one -s or -k option." << endl ;
-      return 1;
+      return app.exit(CLI::ConstructionError("Use at most one -s or -k option.", 1));
     }
 
   map <string, string> windows_labels ;
@@ -652,25 +659,17 @@ int main (int argc, char **argv)
       cout << "# using default sequence file: " << f_reads << endl ;
     }
 
-  //  else
-  //  {
-  //    cerr << ERROR_STRING << "Wrong number of arguments." << endl ;
-  //    return 1;
-  //  }
-
   size_t min_cover_representative = (size_t) (min_reads_clone < (int) max_auditionned ? min_reads_clone : max_auditionned) ;
 
   // Check seed buffer  
   if (seed.size() >= MAX_SEED_SIZE)
     {
-      cerr << ERROR_STRING << "Seed size is too large (MAX_SEED_SIZE)." << endl ;
-      return 1;
+      return app.exit(CLI::ConstructionError("Seed size is too large (MAX_SEED_SIZE).", 1));
     }
 
   if ((wmer_size< 0) && (wmer_size!= NO_LIMIT_VALUE))
     {
-      cerr << ERROR_STRING << "Too small -w. The window size should be positive" << endl;
-      return 1;
+      return app.exit(CLI::ConstructionError("Too small -w. The window size should be positive.", 1));
     }
 
   // Check that out_dir is an existing directory or creates it
@@ -749,7 +748,7 @@ int main (int argc, char **argv)
            << "* to cluster reads into clones ('-c clones')." << endl
            << "* Computing accurate V(D)J designations for many sequences ('-c segment' or large '-z' values)" << endl
            << "* is slow and should be done only on small datasets or for testing purposes." << endl
-	   << "* More information is provided in the 'doc/vidjil-algo.md' file." << endl 
+	   << "* More information is provided in " DOCUMENTATION "." << endl
 	   << endl ;
     }
 
@@ -1095,7 +1094,7 @@ int main (int argc, char **argv)
       {
         output.add_warning("W20", "Very few V(D)J recombinations found: " + fixed_string_of_float(ratio_segmented, 2) + "%", LEVEL_WARN);
         stream_segmentation_info << "  ! There are not so many CDR3 windows found in this set of reads." << endl ;
-        stream_segmentation_info << "  ! Please check the unsegmentation causes below and refer to the documentation." << endl ;
+        stream_segmentation_info << "  ! Please check the causes below and refer to " DOCUMENTATION "." << endl ;
       }
 
     we.out_stats(stream_segmentation_info);

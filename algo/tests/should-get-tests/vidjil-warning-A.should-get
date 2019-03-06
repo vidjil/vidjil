@@ -7,6 +7,6 @@ $ Warning in json output
 1: "code": "W20", "level": "warn", "msg": "Very few V.D.J recombinations found: 0.00."
 
 $ Link to documentation
-1:vidjil-algo.md
+3:vidjil-algo.md
 
 

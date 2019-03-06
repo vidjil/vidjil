@@ -5,6 +5,9 @@
 $ Error, no germlines
 1:error.* one germline must be given
 
+$ Refer to documentation
+1:see doc/vidjil-algo.md
+
 
 
 
