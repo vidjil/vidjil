@@ -603,8 +603,7 @@ int main (int argc, char **argv)
   else if (cmd == COMMAND_GERMLINES)
     command = CMD_GERMLINES;
   else {
-    cerr << "Unknwown command " << optarg << endl;
-    throw CLI::CallForHelp();
+    return app.exit(CLI::ConstructionError("Unknown command " + cmd, 1));
   }
 
   list <string> f_reps_V(v_reps_V.begin(), v_reps_V.end());
@@ -637,14 +636,12 @@ int main (int argc, char **argv)
 
   if (!multi_germline && (!f_reps_V.size() || !f_reps_J.size()))
     {
-      cerr << ERROR_STRING << "At least one germline must be given with -g or -V/(-D)/-J." << endl ;
-      return 1;
+      return app.exit(CLI::ConstructionError("At least one germline must be given with -g or -V/(-D)/-J.", 1));
     }
 
   if (options_s_k > 1)
     {
-      cerr << ERROR_STRING << "Use at most one -s or -k option." << endl ;
-      return 1;
+      return app.exit(CLI::ConstructionError("Use at most one -s or -k option.", 1));
     }
 
   map <string, string> windows_labels ;
@@ -662,25 +659,17 @@ int main (int argc, char **argv)
       cout << "# using default sequence file: " << f_reads << endl ;
     }
 
-  //  else
-  //  {
-  //    cerr << ERROR_STRING << "Wrong number of arguments." << endl ;
-  //    return 1;
-  //  }
-
   size_t min_cover_representative = (size_t) (min_reads_clone < (int) max_auditionned ? min_reads_clone : max_auditionned) ;
 
   // Check seed buffer  
   if (seed.size() >= MAX_SEED_SIZE)
     {
-      cerr << ERROR_STRING << "Seed size is too large (MAX_SEED_SIZE)." << endl ;
-      return 1;
+      return app.exit(CLI::ConstructionError("Seed size is too large (MAX_SEED_SIZE).", 1));
     }
 
   if ((wmer_size< 0) && (wmer_size!= NO_LIMIT_VALUE))
     {
-      cerr << ERROR_STRING << "Too small -w. The window size should be positive" << endl;
-      return 1;
+      return app.exit(CLI::ConstructionError("Too small -w. The window size should be positive.", 1));
     }
 
   // Check that out_dir is an existing directory or creates it
