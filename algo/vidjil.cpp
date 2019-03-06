@@ -163,6 +163,14 @@ string usage_examples(char *progname)
   return ss.str();
 }
 
+inline std::string failure_message_doc(const CLI::App *app, const CLI::Error &e) {
+    std::string header = ERROR_STRING + std::string(e.what()) + "\n";
+    header += "For more information, ";
+    if(app->get_help_ptr() != nullptr)
+        header += "run with " + app->get_help_ptr()->single_name() + " or ";
+    header += "see " DOCUMENTATION ".\n";
+    return header;
+}
 
 int atoi_NO_LIMIT(const char *optarg)
 {
@@ -216,6 +224,7 @@ int main (int argc, char **argv)
 #endif
 
   CLI::App app{"# vidjil-algo -- V(D)J recombinations analysis", argv[0]};
+  app.set_failure_message(failure_message_doc);
 
   //$$ options: defaults
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
