@@ -1,5 +1,6 @@
 
-# Becomes ../Makefile in a release
+# algo/Makefile.algo (git)
+# /Makefile (in a release)
 
 .PHONY: all germline vidjil-algo demo test
 
