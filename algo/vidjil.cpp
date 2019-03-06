@@ -87,7 +87,7 @@
 
 #define COMMAND_WINDOWS "windows"
 #define COMMAND_CLONES "clones"
-#define COMMAND_SEGMENT "segment"
+#define COMMAND_SEGMENT "designations"
 #define COMMAND_GERMLINES "germlines"
  
 enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
@@ -150,14 +150,14 @@ string usage_examples(char *progname)
   stringstream ss;
   ss
        << "Examples (see " DOCUMENTATION ")" << endl
-       << "  " << progname << " -c clones   -g germline/homo-sapiens.g   -2 -3 -r 1  demo/Demo-X5.fa           # (basic usage, detect the locus for each read," << endl
+       << "  " << progname << " -c clones       -g germline/homo-sapiens.g   -2 -3 -r 1  demo/Demo-X5.fa           # (basic usage, detect the locus for each read," << endl
        << "                                                                                               #  cluster reads and report clones starting from the first read (-r 1)," << endl
        << "                                                                                               #  including unexpected recombinations (-2), assign V(D)J genes and try to detect the CDR3s (-3))" << endl
-       << "  " << progname << " -c clones   -g germline/homo-sapiens.g:IGH    -3     demo/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
-       << "  " << progname << " -c clones   -g germline/homo-sapiens.g   -2 -3 -z 20 demo/LIL-L4.fastq.gz      # (basic usage, output detailed V(D)J analysis on the first 20 clones)" << endl
-       << "  " << progname << " -c windows  -g germline/homo-sapiens.g   -y 0 -uu -U demo/LIL-L4.fastq.gz      # (splits all the reads into (large) files depending on the detection of V(D)J recombinations)" << endl
-       << "  " << progname << " -c segment  -g germline/homo-sapiens.g   -2 -3 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing, here on 50 sampled reads)" << endl
-       << "  " << progname << " -c germlines -g germline/homo-sapiens.g              demo/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
+       << "  " << progname << " -c clones       -g germline/homo-sapiens.g:IGH    -3     demo/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
+       << "  " << progname << " -c clones       -g germline/homo-sapiens.g   -2 -3 -z 20 demo/LIL-L4.fastq.gz      # (basic usage, output detailed V(D)J analysis on the first 20 clones)" << endl
+       << "  " << progname << " -c windows      -g germline/homo-sapiens.g   -y 0 -uu -U demo/LIL-L4.fastq.gz      # (splits all the reads into (large) files depending on the detection of V(D)J recombinations)" << endl
+       << "  " << progname << " -c designations -g germline/homo-sapiens.g   -2 -3 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, here on 50 sampled reads)" << endl
+       << "  " << progname << " -c germlines    -g germline/homo-sapiens.g               demo/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
     ;
 
   return ss.str();
@@ -252,7 +252,7 @@ int main (int argc, char **argv)
   app.add_option("-c", cmd, "command"
                  "\n  \t\t" COMMAND_CLONES    "  \t locus detection, window extraction, clone clustering (default command, most efficient, all outputs)"
                  "\n  \t\t" COMMAND_WINDOWS   "  \t locus detection, window extraction"
-                 "\n  \t\t" COMMAND_SEGMENT   "  \t detailed V(D)J designation (not recommended)"
+                 "\n  \t\t" COMMAND_SEGMENT   "  \t detailed V(D)J designation, without prior clustering (not as efficient)"
                  "\n  \t\t" COMMAND_GERMLINES "  \t statistics on k-mers in different germlines")
     -> group(group) -> set_type_name("COMMAND");
 
@@ -739,15 +739,15 @@ int main (int argc, char **argv)
   if (command == CMD_SEGMENT)
     {
       cout << endl
-	   << "* WARNING: " << PROGNAME << " was run with '-c segment' option" << endl ;
+	   << "* WARNING: " << PROGNAME << " was run with '-c" COMMAND_SEGMENT "' option" << endl ;
     }
   
   if (max_clones == NO_LIMIT_VALUE || max_clones > WARN_MAX_CLONES || command == CMD_SEGMENT)
     {
-      cout << "* " << PROGNAME << " efficientl extracts windows overlapping the CDR3" << endl
+      cout << "* " << PROGNAME << " efficiently extracts windows overlapping the CDR3" << endl
            << "* to cluster reads into clones ('-c clones')." << endl
-           << "* Computing accurate V(D)J designations for many sequences ('-c segment' or large '-z' values)" << endl
-           << "* is slow and should be done only on small datasets or for testing purposes." << endl
+           << "* Computing accurate V(D)J designations for many sequences ('-c " COMMAND_SEGMENT "' or large '-z' values)" << endl
+           << "* is not as efficient as the default '-c " COMMAND_CLONES "' command." << endl
 	   << "* More information is provided in " DOCUMENTATION "." << endl
 	   << endl ;
     }
@@ -1567,7 +1567,7 @@ int main (int argc, char **argv)
   } else if (command == CMD_SEGMENT) {
     //$$ CMD_SEGMENT
     ////////////////////////////////////////
-    //       V(D)J SEGMENTATION           //
+    //       V(D)J DESIGNATION            //
     ////////////////////////////////////////
 
     int nb = 0;
