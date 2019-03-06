@@ -477,11 +477,11 @@ The following options are experimental and have no consequences on the `.vdj.fa`
 nor on the standard output. They instead add a `clusters` sections in the `.vidjil` file
 that will be visualized in the web application.
 
-The `-n` option triggers an automatic clustering using DBSCAN algorithm (Ester and al., 1996).
-Using `-n 5` usually cluster reads within a distance of 1 mismatch (default score
+The `--cluster-epsilon` option triggers an automatic clustering using DBSCAN algorithm (Ester and al., 1996).
+Using `--cluster-epsilon 5` usually cluster reads within a distance of 1 mismatch (default score
 being +1 for a match and -4 for a mismatch). However, more distant reads can also
 be clustered when there are more than 10 reads within the distance threshold.
-This behaviour can be controlled with the `-N` option.
+This behaviour can be controlled with the `-cluster-N` option.
 
 The `-=` option allows to specify a file for manually clustering two windows
 considered as similar. Such a file may be automatically produced by vidjil
@@ -796,10 +796,10 @@ This file will be relatively small (a few kB or MB) and can be taken again as an
 ## Advanced usage
 
 ``` bash
-./vidjil-algo -c clones -g germline/homo-sapiens.g -r 1 -n 5 -x 10000 demo/LIL-L4.fastq.gz
+./vidjil-algo -c clones -g germline/homo-sapiens.g -r 1 --cluster-epsilon 5 -x 10000 demo/LIL-L4.fastq.gz
    # Extracts the windows with at least 1 read each (-r 1, the default being -r 5)
    # on the first 10,000 reads, then cluster them into clones
-   # with a second clustering step at distance five (-n 5)
+   # with a second clustering step at distance five (--cluster-epsilon 5)
    # The result of this second is in the .vidjil file ('clusters')
    # and can been seen and edited in the web application.
 ```
