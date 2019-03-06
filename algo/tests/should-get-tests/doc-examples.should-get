@@ -12,7 +12,7 @@
 # '-c windows'
 0:Extracting windows
 
-# '-c segment', one time
+# '-c designations', one time
 1:Segmenting V.D.J
 
 # '-c germlines'

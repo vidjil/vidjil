@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -E 1 -d -g $VIDJIL_DIR/germline -c segment bug2249.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -E 1 -d -g $VIDJIL_DIR/germline -c designations bug2249.fa
 
 $ Should not have a TRDD2 (length 9) with 8 deletions (first seq)
 f0:7 TRDD2.01 1

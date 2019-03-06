@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -c segment $VIDJIL_DATA/segment_S22.fa | grep '^>' ; cat out/segment_S22.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -c designations $VIDJIL_DATA/segment_S22.fa | grep '^>' ; cat out/segment_S22.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
 
 $ First sequence Stanford
 #                            164        175                 195     203

@@ -299,7 +299,7 @@ Recombination detection ("window" prediction, first pass)
     (all these options, except -w, are overriden when using -g)
   -k INT                      k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)
   -w INT                      w-mer size used for the length of the extracted window ('all': use all the read, no window clustering)
-  -e FLOAT=1                  maximal e-value for determining if a V-J segmentation can be trusted
+  -e FLOAT=1                  maximal e-value for determining if a V-J designation can be trusted
   -t INT                      trim V and J genes (resp. 5' and 3' regions) to keep at most <INT> nt  (0: no trim)
   -s SEED=10s                 seed, possibly spaced, used for the V/J affectation (default: depends on germline), given either explicitely or by an alias
                               10s:#####-##### 12s:######-###### 13s:#######-###### 9c:#########
@@ -349,7 +349,7 @@ It is an upper bound on the number of exepcted windows found by chance by the se
 The e-value computation takes into account both the number of reads in the
 input sequence and the number of locus searched for.
 The default value is 1.0, but values such as 1000, 1e-3 or even less can be used
-to have a more or less permissive segmentation.
+to have a more or less permissive designation.
 The threshold can be disabled with `-e all`.
 
 The `-t` option sets the maximal number of nucleotides that will be indexed in
@@ -643,7 +643,7 @@ We export all required fields, some optional fields, as also some custom fields 
 Note that Vidjil-algo is designed to efficiently gather reads from large datasets into clones. 
 By default (`-c clones`), we thus report in the AIRR format *clones*.
 See also [What is a clone ?](vidjil-format/#what-is-a-clone).
-Using `-c segment` trigger a separate analysis for each read, but this is usually not advised for large datasets. 
+Using `-c designations` trigger a separate analysis for each read, but this is usually not advised for large datasets. 
 
 
 | Name  | Type | AIRR 1.2 Description <br /> *vidjil-algo implementation* |
@@ -669,14 +669,14 @@ Our implementation of .tsv may evolve in future versions.
 Contact us if a particular feature does interest you.
 
 
-## Segmentation and .vdj format
+## The .vdj format
 
-Vidjil output includes segmentation of V(D)J recombinations. This happens
+Vidjil output includes analysis of V(D)J recombinations. This happens
 in the following situations:
 
   - in a first pass, when requested with `-U` option, in a `.segmented.vdj.fa` file.
     
-    The goal of this ultra-fast segmentation, based on a seed
+    The goal of this ultra-fast analysis, based on a seed
     heuristics, is only to identify the locus and to locate the w-window overlapping the
     CDR3. This should not be taken as a real V(D)J designation, as
     the center of the window may be shifted up to 15 bases from the
@@ -686,7 +686,8 @@ in the following situations:
     
       - at the end of the clones detection (default command `-c clones`,
         on a number of clones limited by the `-z` option)
-      - or directly when explicitly requiring segmentation (`-c segment`)
+      - or directly when explicitly requiring V(D)J designation for each read 
+        (`-c designations`)
     
     These V(D)J designations are obtained by full comparison (dynamic programming)
     with all germline sequences.
@@ -698,7 +699,7 @@ in the following situations:
     To check the quality of these designations, the automated test suite include
     sequences with manually curated V(D)J designations (see [should-vdj.org](http://git.vidjil.org/blob/master/doc/should-vdj.org)).
 
-Segmentations of V(D)J recombinations are displayed using a dedicated
+Designations of V(D)J recombinations are displayed using a dedicated
 `.vdj` format. This format is compatible with FASTA format. A line starting
 with a \> is of the following form:
 
@@ -707,7 +708,7 @@ with a \> is of the following form:
 
         name          sequence name (include the number of occurrences in the read set and possibly other information)
         +             strand on which the sequence is mapped
-        VDJ           type of segmentation (can be "VJ", "VDJ", "VDDJ", "53"...
+        VDJ           type of designation (can be "VJ", "VDJ", "VDDJ", "53"...
                       or shorter tags such as "V" for incomplete sequences).    
               The following line are for "VDJ" recombinations :
 
@@ -804,9 +805,9 @@ This file will be relatively small (a few kB or MB) and can be taken again as an
 ```
 
 ``` bash
-./vidjil-algo -c segment -g germline/homo-sapiens.g -2 -3 -d -x 50 demo/Stanford_S22.fasta
+./vidjil-algo -c designations -g germline/homo-sapiens.g -2 -3 -d -x 50 demo/Stanford_S22.fasta
    # Detailed V(D)J designation, including multiple D, and CDR3 detection on the first 50 reads, without clone clustering
-   # (this is slow and should only be used for testing, or on a small file)
+   # (this is not as efficient as '-c clones')
 ```
 
 ``` bash
