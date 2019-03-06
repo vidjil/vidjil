@@ -602,6 +602,8 @@ int main (int argc, char **argv)
     command = CMD_WINDOWS;
   else if (cmd == COMMAND_GERMLINES)
     command = CMD_GERMLINES;
+  else if (cmd == "segment")
+    return app.exit(CLI::ConstructionError("'-c segment' is deprecated, please use '-c designations'", 1));
   else {
     return app.exit(CLI::ConstructionError("Unknown command " + cmd, 1));
   }
