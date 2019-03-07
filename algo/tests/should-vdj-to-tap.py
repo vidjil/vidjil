@@ -166,7 +166,11 @@ def should_pattern_to_regex(p):
         for term in p.split():
             r += process_term(term)
 
-        regex_pattern = '.*'.join(r)
+        if len(r) > 1 and r[1][0] == '|':
+            # We have an alternative
+            regex_pattern = '('+' '.join(r)+').*'
+        else:
+            regex_pattern = '.*'.join(r)
 
     try:
         regex = re.compile(regex_pattern)
