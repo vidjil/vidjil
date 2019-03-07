@@ -361,7 +361,7 @@ string Segmenter::getInfoLine() const
 {
   string s = "" ;
 
-  s += (segmented ? "" : "! ") + info ;
+  s += (segmented ? "" : "\t ! ") + info ;
   s += " " + info_extra ;
   s += " " + segmented_germline->code ;
   s += " " + string(segmented_mesg[because]) ;
