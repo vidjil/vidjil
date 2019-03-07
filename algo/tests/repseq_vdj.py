@@ -267,9 +267,15 @@ def should_results_from_vidjil_output(f_log):
         if l[0] == '>':
             l = l.strip()
             pos = l.find(' + ') if ' + ' in l else l.find(' - ')
+            if pos == -1:
+                pos = l.find(' ! ')
+            if pos == -1:
+                raise ValueError("No [+-!] in the line: {}".format(l))
             should = l[1:pos].replace('_', ' ')
 
             pos = l.find('\t')
+            if pos == -1:
+                raise ValueError("I expected a tabulation to separate the sequence name from the remainder")
             result = l[pos+1:] + ' '
 
             yield (should, result)
