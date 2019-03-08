@@ -388,18 +388,18 @@ MRD detection).
 
 The `--max-clones` option limits the number of output clones, even without consensus sequences.
 
-The `-y` option limits the number of clones for which a consensus
+The `--max-consensus` option limits the number of clones for which a consensus
 sequence is computed. Usually you do not need to have more
-consensus (see below), but you can safely put `-y all` if you want
+consensus (see below), but you can safely put `--max-consensus all` if you want
 to compute all consensus sequences.
 
-The `-z` option limits the number of clones that are fully analyzed,
+The `--max-designations` option limits the number of clones that are fully analyzed,
 *with their V(D)J designation and possibly a CDR3 detection*,
 in particular to enable the web application
 to display the clones on the grid (otherwise they are displayed on the
 '?/?' axis).
-If you want to analyze more clones, you should use `-z 200` or
-`-z 500`. It is not recommended to use larger values: outputting more
+If you want to analyze more clones, you should use `--max-designations 200` or
+`--max-designations 500`. It is not recommended to use larger values: outputting more
 than 500 clones is often not useful since they can not be visualized easily
 in the web application, and takes more computation time.
 
@@ -409,12 +409,12 @@ and `.vdj.fa` files. If the clone is at some MRD point in the top 100 (or 200, o
 it will be fully analyzed/segmented by this other point (and then
 collected by the `fuse.py` script, using consensus sequences computed at this
 other point, and then, on the web application, correctly displayed on the grid).
-**Thus is advised to leave the default** `-z 100` **option
+**Thus is advised to leave the default** `--max-designations 100` **option
 for the majority of uses.**
 
-The `-A` option disables all these thresholds. This option should be
-used only for test and debug purposes, on very small datasets, and
-produce large file and takes huge computation times.
+The `--all` option disables all these thresholds. This option can be
+used for test and debug purposes or on small datasets.
+It produces large file and takes more time. 
 
 The `--analysis-filter` option speeds up the full analysis by a pre-processing step,
 again based on k-mers, to select a subset of the V germline genes to be compared to the read.
@@ -504,8 +504,8 @@ The main output of Vidjil-algo (with the default `-c clones` command) are two fo
 
   - The `.vidjil` file is *the file for the Vidjil web application*.
     The file is in a `.json` format (detailed in [vidjil-format](vidjil-format))
-    describing the windows and their count, the consensus sequences (`-y`),
-    the detailed V(D)J and CDR3 designation (`-z`, see warning below), and possibly
+    describing the windows and their count, the consensus sequences (`--max-consensus`),
+    the detailed V(D)J and CDR3 designation (`--max-designations`, see warning below), and possibly
     the results of the further clustering.
     
     The web application takes this `.vidjil` file ([possibly merged with `fuse.py`](#following-clones-in-several-samples)) for the *visualization and analysis* of clones and their
@@ -515,9 +515,9 @@ The main output of Vidjil-algo (with the default `-c clones` command) are two fo
 
   - The `.vdj.fa` file is *a FASTA file for further processing by other bioinformatics tools*.
     The sequences are at least the windows (and their count in the headers) or
-    the consensus sequences (`-y`) when they have been computed.
+    the consensus sequences (`--max-consensus`) when they have been computed.
     The headers include the count of each window, and further includes the
-    detailed V(D)J and CDR3 designation (`-z`, see warning below), given in a '.vdj' format, see below.
+    detailed V(D)J and CDR3 designation (`--max-designations`, see warning below), given in a '.vdj' format, see below.
     The further clustering is not output in this file.
     
     The `.vdj.fa` output enables to use Vidjil-algo as a *filtering tool*,
@@ -662,7 +662,7 @@ Using `-c designations` trigger a separate analysis for each read, but this is u
 | warnings (+) | string | *Warnings associated to this clone. See <https://gitlab.vidjil.org/blob/dev/doc/warnings.md>.*
 | sequence  | string | The query nucleotide sequence. Usually, this is the unmodified input sequence, which may be reverse complemented if necessary. In some cases, this field may contain consensus sequences or other types of collapsed input sequences if these steps are performed prior to alignment. <br />*This contains the consensus/representative sequence of each clone.*
 | rev_comp  | boolean | True if the alignment is on the opposite strand (reverse complemented) with respect to the query sequence. If True then all output data, such as alignment coordinates and sequences, are based on the reverse complement of 'sequence'. <br />*Set to null, as vidjil-algo gather reads from both strands in clones* |
-| v_call, d_call, j_call  | string  | V/D/J gene with allele. For example, IGHV4-59\*01. <br /> *implemented. In the case of uncomplete/unexpected recombinations (locus with a `+`), we still use `v/d/j_call`. Note that this value can be null on clones beyond the `-z` option.* |
+| v_call, d_call, j_call  | string  | V/D/J gene with allele. For example, IGHV4-59\*01. <br /> *implemented. In the case of uncomplete/unexpected recombinations (locus with a `+`), we still use `v/d/j_call`. Note that this value can be null on clones beyond the `--max-designations` option.* |
 | junction  | string  |      Junction region nucleotide sequence, where the junction is defined as the CDR3 plus the two flanking conserved codons. <br />*null*
 | junction_aa  | string  | Junction region amino acid sequence.      <br />*implemented*
 | cdr3_aa | string | Amino acid translation of the cdr3 field.   <br />*implemented*
@@ -692,7 +692,7 @@ in the following situations:
   - in a second pass, on the standard output and in both `.vidjil` and `.vdj.fa` files
     
       - at the end of the clones detection (default command `-c clones`,
-        on a number of clones limited by the `-z` option)
+        on a number of clones limited by the `--max-designations` option)
       - or directly when explicitly requiring V(D)J designation for each read 
         (`-c designations`)
     
