@@ -1,0 +1,12 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS --all -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/toy_V.fa ; cat out/toy_V.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
+
+$ Warning, --all
+1:WARNING
+
+$ Warning in json output
+1: "code": "W20", "level": "warn", "msg": "Very few V.D.J recombinations found: 0.00."
+
+$ Link to documentation
+3:vidjil-algo.md
+
+

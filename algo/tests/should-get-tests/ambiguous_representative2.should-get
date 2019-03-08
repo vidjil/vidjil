@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -A -c clones -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/test_representatives.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS --all -c clones -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/test_representatives.fa
 
 $ Three clones should be found
 1:3 clones

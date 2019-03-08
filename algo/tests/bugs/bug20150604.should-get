@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -KA -k 16 -z 0 -g ../../../germline/homo-sapiens.g:IGH bug20150604.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -K --all -k 16 -z 0 -g ../../../germline/homo-sapiens.g:IGH bug20150604.fa
 
 $ Bug on some architectures, not segmented
 1: junction detected in 1 reads

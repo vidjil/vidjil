@@ -1,8 +1,8 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -x 100 -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -r 5 -W ACTGTGCGAGAGTTGGAATTAGTAGTGGCTGGCCTGATTCCTGGGGCCAG $VIDJIL_DATA/Stanford_S22.fasta ; cat out/Stanford_S22.vidjil
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -x 100 -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -r 5 --label ACTGTGCGAGAGTTGGAATTAGTAGTGGCTGGCCTGATTCCTGGGGCCAG $VIDJIL_DATA/Stanford_S22.fasta ; cat out/Stanford_S22.vidjil
 
 $ Some clone has only one read, bypassing the -r 5 option, and the good label
-1: clone-00..*0001-.* -W
+1: clone-00..*0001-.* --label
 
 $ The label appears in the json output
-1: "label": "-W"
+1: "label": "--label"
 
