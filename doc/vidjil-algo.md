@@ -379,7 +379,7 @@ Limits to further analyze some clones (second pass)
 
 The `-r/--ratio` options are strong thresholds: if a clone does not have
 the requested number of reads, the clone is discarded (except when
-using `-l`, see below).
+using `--label`, see below).
 The default `-r 5` option is meant to only output clones that
 have a significant read support. **You should use** `-r 1` **if you
 want to detect all clones starting from the first read** (especially for
@@ -415,20 +415,20 @@ The `-A` option disables all these thresholds. This option should be
 used only for test and debug purposes, on very small datasets, and
 produce large file and takes huge computation times.
 
-The `-Z` option speeds up the full analysis by a pre-processing step,
+The `--analysis-filter` option speeds up the full analysis by a pre-processing step,
 again based on k-mers, to select a subset of the V germline genes to be compared to the read.
 The option gives the typical size of this subset (it can be larger when several V germlines
 genes are very similar, or smaller when there are not enough V germline genes).
-The default `-Z 3` is generally safe.
-Setting `-Z all` removes this pre-processing step, running a full dynamic programming
+The default `--analysis-filter 3` is generally safe.
+Setting `--analysis-filter all` removes this pre-processing step, running a full dynamic programming
 with all germline sequences that is much slower.
 
 ## Sequences of interest
 
 Vidjil-algo allows to indicate that specific sequences should be followed and output,
 even if those sequences are 'rare' (below the `-r/--ratio` thresholds).
-Such sequences can be provided either with `-W <sequence>`, or with `-l <file>`.
-The file given by `-l` should have one sequence by line, as in the following example:
+Such sequences can be provided either with `--label <sequence>`, or with `--label-file <file>`.
+The file given by `--label-file` should have one sequence by line, as in the following example:
 
 ``` diff
 GAGAGATGGACGGGATACGTAAAACGACATATGGTTCGGGGTTTGGTGCT my-clone-1
@@ -440,7 +440,7 @@ The first column of the file is the sequence to be followed
 while the remaining columns consist of the sequence's label.
 In Vidjil-algo output, the labels are output alongside their sequences.
 
-A sequence given `-W <sequence>` or with `-l <file>` can be exactly the size
+A sequence given `--label <sequence>` or with `-label-file <file>` can be exactly the size
 of the window (`-w`, that is 50 by default). In this case, it is guaranteed that
 such a window will be output if it is detected in the reads.
 More generally, when the provided sequence differs in length with the windows
@@ -449,9 +449,9 @@ we will keep any window that is contained in the sequence of interest.
 This filtering will work as expected when the provided sequence overlaps
 (at least partially) the CDR3 or its close neighborhood.
 
-With the `-F` option, *only* the windows related to the given sequences are kept.
+With the `--label-filter` option, *only* the windows related to the given sequences are kept.
 This allows to quickly filter a set of reads, looking for a known sequence or window,
-with the `-FaW <sequence>` options:
+with the `--out-reads --label-filter --label <sequence>` options:
 All the reads with the windows related to the sequence will be extracted to `out/seq/clone.fa-1`.
 
 ## Clone analysis: VDJ assignation and CDR3 detection
@@ -465,7 +465,7 @@ The CDR3/JUNCTION detection won't work with custom non-gapped V/J repertoires.
 CDR3 are reported as productive when they come from an in-frame recombination
 and when the sequence does not contain any in-frame stop codons.
 
-The advanced `-f` option sets the parameters used in the comparisons between
+The advanced `--analysis-cost` option sets the parameters used in the comparisons between
 the clone sequence and the V(D)J germline genes. The default values should work.
 
 The e-value set by `-e` is also applied to the V/J designation.
@@ -478,12 +478,12 @@ nor on the standard output. They instead add a `clusters` sections in the `.vidj
 that will be visualized in the web application.
 
 The `--cluster-epsilon` option triggers an automatic clustering using DBSCAN algorithm (Ester and al., 1996).
-Using `--cluster-epsilon 5` usually cluster reads within a distance of 1 mismatch (default score
+Using `--cluster-epsilon 5` usually clusters reads within a distance of 1 mismatch (default score
 being +1 for a match and -4 for a mismatch). However, more distant reads can also
 be clustered when there are more than 10 reads within the distance threshold.
 This behaviour can be controlled with the `-cluster-N` option.
 
-The `-=` option allows to specify a file for manually clustering two windows
+The `--cluster-forced-edges` option allows to specify a file for manually clustering two windows
 considered as similar. Such a file may be automatically produced by vidjil
 (`out/edges`), depending on the option provided. Only the two first columns
 (separed by one space) are important to vidjil, they only consist of the
