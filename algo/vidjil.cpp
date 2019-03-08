@@ -451,8 +451,8 @@ int main (int argc, char **argv)
       max_clones = NO_LIMIT_VALUE ;
     },
     "reports and analyzes all clones"
-    PAD_HELP "(--min-reads 1 --min-ratio 0 --max-clones " NO_LIMIT" --max-clones-with-consensus " NO_LIMIT " --max-clones-with-analysis " NO_LIMIT "),"
-    PAD_HELP "to be used only on very small datasets (for example --all -X 20)")
+    PAD_HELP "(--min-reads 1 --min-ratio 0 --max-clones " NO_LIMIT" --max-consensus " NO_LIMIT " --max-designations " NO_LIMIT "),"
+    PAD_HELP "to be used only on small datasets (for example --all -X 1000)")
     -> group(group);
 
   VirtualReadScore *readScorer = &DEFAULT_READ_SCORE;
