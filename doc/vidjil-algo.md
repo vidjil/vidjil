@@ -248,21 +248,19 @@ clustering.
 
 ``` diff
 Germline presets (at least one -g or -V/(-D)/-J option must be given)
-  -g GERMLINES ...
+  -g, --germline GERMLINES ...
+
          -g <.g FILE>(:FILTER)
                     multiple locus/germlines, with tuned parameters.
                     Common values are '-g germline/homo-sapiens.g' or '-g germline/mus-musculus.g'
                     The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
          -g PATH
                     multiple locus/germlines, shortcut for '-g PATH/homo-sapiens.g',
-                    processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations
+                    processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with incomplete/unusal recombinations
   -V FILE ...                 custom V germline multi-fasta file(s)
-  -D FILE ...                 custom D germline multi-fasta file(s), segment into V(D)J components
+  -D FILE ...                 custom D germline multi-fasta file(s), analyze into V(D)J components
   -J FILE ...                 custom V germline multi-fasta file(s)
-
-Locus/recombinations
-  -d                          try to detect several D (experimental)
-  -2                          try to detect unexpected recombinations (must be used with -g)
+  -2                          try to detect unexpected recombinations
 ```
 
 The `germline/*.g` presets configure the analyzed recombinations.
@@ -297,12 +295,12 @@ Recombination detection ("window" prediction, first pass)
     (use either -s or -k option, but not both)
     (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)
     (all these options, except -w, are overriden when using -g)
-  -k INT                      k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)
-  -w INT                      w-mer size used for the length of the extracted window ('all': use all the read, no window clustering)
-  -e FLOAT=1                  maximal e-value for determining if a V-J designation can be trusted
-  -t INT                      trim V and J genes (resp. 5' and 3' regions) to keep at most <INT> nt  (0: no trim)
-  -s SEED=10s                 seed, possibly spaced, used for the V/J affectation (default: depends on germline), given either explicitely or by an alias
-                              10s:#####-##### 12s:######-###### 13s:#######-###### 9c:#########
+  -k, --kmer INT              k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)
+  -w, --window INT            w-mer size used for the length of the extracted window ('all': use all the read, no window clustering)
+  -e, --e-value FLOAT=1       maximal e-value for determining if a V-J segmentation can be trusted
+  --trim INT                  trim V and J genes (resp. 5' and 3' regions) to keep at most <INT> nt  (0: no trim)
+  -s, --seed SEED=10s         seed, possibly spaced, used for the V/J affectation (default: depends on germline), given either explicitely or by an alias
+                               10s:#####-##### 12s:######-###### 13s:#######-###### 9c:#########
 ```
 
 The `-s`, `-k` are the options of the seed-based heuristic that detects
@@ -352,29 +350,32 @@ The default value is 1.0, but values such as 1000, 1e-3 or even less can be used
 to have a more or less permissive designation.
 The threshold can be disabled with `-e all`.
 
-The `-t` option sets the maximal number of nucleotides that will be indexed in
+The `--trim` option sets the maximal number of nucleotides that will be indexed in
 V genes (the 3' end) or in J genes (the 5' end). This reduces the load of the
 indexes, giving more precise window estimation and e-value computation.
-However giving a `-t` may also reduce the probability of seeing a heavily
+However giving a `--trim` may also reduce the probability of seeing a heavily
 trimmed or mutated V gene.
-The default is `-t 0`.
+The default is `--trim 0`.
 
 ## Thresholds on clone output
 
 The following options control how many clones are output and analyzed.
 
 ``` diff
-Limits to report a clone (or a window)
-  --max-clones INT            maximal number of output clones ('all': no maximum, default)
-  -r INT=5                    minimal number of reads supporting a clone
-  --ratio FLOAT=0             minimal percentage of reads supporting a clone
+Input
+  -x, --first-reads INT       maximal number of reads to process ('all': no limit, default), only first reads
+  -X, --sampled-reads INT     maximal number of reads to process ('all': no limit, default), sampled reads
 
-Limits to further analyze some clones (second pass)
-  -y INT=100                  maximal number of clones computed with a consensus sequence ('all': no limit)
-  -z INT=100                  maximal number of clones to be analyzed with a full V(D)J designation ('all': no limit, do not use)
-  -A                          reports and segments all clones (-r 0 --ratio 0 -y all -z all), to be used only on very small datasets (for example -AX 20)
-  -x INT                      maximal number of reads to process ('all': no limit, default), only first reads
-  -X INT                      maximal number of reads to process ('all': no limit, default), sampled reads
+Limits to report and to analyze clones (second pass)
+  -r, --min-reads INT=5       minimal number of reads supporting a clone
+  --min-ratio FLOAT=0         minimal percentage of reads supporting a clone
+  --max-clones INT            maximal number of output clones ('all': no maximum, default)
+  -y, --max-consensus INT=100 maximal number of clones computed with a consensus sequence ('all': no limit)
+  -z, --max-designations INT=100
+                              maximal number of clones to be analyzed with a full V(D)J designation ('all': no limit, do not use)
+  --all                       reports and analyzes all clones
+                              (--min-reads 1 --min-ratio 0 --max-clones all --max-consensus all --max-designations all),
+                              to be used only on small datasets (for example --all -X 1000)
 ```
 
 The `-r/--ratio` options are strong thresholds: if a clone does not have
@@ -455,6 +456,12 @@ with the `--out-reads --label-filter --label <sequence>` options:
 All the reads with the windows related to the sequence will be extracted to `out/seq/clone.fa-1`.
 
 ## Clone analysis: VDJ assignation and CDR3 detection
+
+```
+Clone analysis (second pass)
+  -d, --several-D             try to detect several D (experimental)
+  -3, --cdr3                  CDR3/JUNCTION detection (requires gapped V/J germlines)
+```
 
 The `-3` option launches a CDR3/JUNCTION detection based on the position
 of Cys104 and Phe118/Trp118 amino acids. This detection relies on alignment
