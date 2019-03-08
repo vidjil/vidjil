@@ -581,6 +581,16 @@ int main (int argc, char **argv)
     -> group(group);
 
 
+  // Deprecated options
+  bool deprecated = false;
+
+#define DEPRECATED(options, text) app.add_flag_function((options), [&](size_t n) { UNUSED(n); deprecated = true ; return app.exit(CLI::ConstructionError((text), 1));}) -> level(3);
+
+  DEPRECATED("-t", "'-t' is deprecated, please use '--trim'");
+  DEPRECATED("-A", "'-A' is deprecated, please use '--all'");
+  DEPRECATED("-a", "'-a' is deprecated, please use '--out-reads'");
+  DEPRECATED("-l", "'-l' is deprecated, please use '--label'");
+
   // ----------------------------------------------------------------------------------------------------------------------
   app.set_footer(usage_examples(argv[0]));
 
@@ -603,6 +613,7 @@ int main (int argc, char **argv)
   else {
     return app.exit(CLI::ConstructionError("Unknown command " + cmd, 1));
   }
+  if (deprecated) return 1 ;
 
   list <string> f_reps_V(v_reps_V.begin(), v_reps_V.end());
   list <string> f_reps_D(v_reps_D.begin(), v_reps_D.end());
