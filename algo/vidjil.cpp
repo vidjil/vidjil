@@ -645,7 +645,7 @@ int main (int argc, char **argv)
   map <string, string> windows_labels ;
 
   for(string lab : windows_labels_explicit)
-    windows_labels[lab] = string("-W");
+    windows_labels[lab] = string("--label");
   
   string out_seqdir = out_dir + "/seq/" ;
 
