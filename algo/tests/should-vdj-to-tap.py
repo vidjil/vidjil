@@ -233,7 +233,7 @@ def should_result_to_tap(should_pattern, result, tap_id):
     >>> srtt_ok(should, other_allele)
     False
 
-    args.ignore_N = True
+    >>> args.ignore_N = True
     >>> srtt_ok(should, should)
     True
     >>> srtt_ok(should, other_N)
@@ -241,7 +241,7 @@ def should_result_to_tap(should_pattern, result, tap_id):
     >>> srtt_ok(should, other_allele)
     False
 
-    args.ignore_allele = True
+    >>> args.ignore_allele = True
     >>> srtt_ok(should, should)
     True
     >>> srtt_ok(should, other_N)
