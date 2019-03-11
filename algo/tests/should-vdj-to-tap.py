@@ -166,7 +166,11 @@ def should_pattern_to_regex(p):
         for term in p.split():
             r += process_term(term)
 
-        regex_pattern = '.*'.join(r)
+        if len(r) > 1 and r[1][0] == '|':
+            # We have an alternative
+            regex_pattern = '('+' '.join(r)+').*'
+        else:
+            regex_pattern = '.*'.join(r)
 
     try:
         regex = re.compile(regex_pattern)
@@ -185,11 +189,65 @@ r_locus = re.compile('\[\S+\]')
 
 def should_result_to_tap(should_pattern, result, tap_id):
     '''
-    Parses (should, result) couples such as:
-    'TRDD2*01 1/AGG/1 TRDD3*01  TRD+', 'TRDD2*01 1/AGG/1 TRDD3*01  TRD+'
-    or
-    'TRDV3*01 0//0 TRDJ4*01, 'TRD UNSEG noisy'
-    and return a .tap line
+    Returns a .tap line asserting whether 'should_pattern' is found in 'result'
+    Looks at several 'args' options.
+    Fills some global variables.
+
+    >>> srtt = should_result_to_tap
+    >>> srtt_ok = (lambda should, result: not ('not ok' in srtt(should, result, 0)))
+    >>> args.verbose = False
+
+    >>> srtt('IGHD6-13*01 8/TT/6 IGHJ1*01 [IGH+]', ' 1 119 132 182	IGHD6-13*01 8/TT/6 IGHJ1*01', 2)
+    'ok 2 - IGHD6-13*01 8/TT/6 IGHJ1*01'
+
+    >>> srtt('Intron 2/0/9 KDE  [IGK+]', 'Intron 2//9 KDE  IGK+ SEG_+', 4)
+    'ok 4 - Intron 2/0/9 KDE'
+
+    >>> srtt('TRDD2 TRDD3', 'TRDD2*01 1/TGG/15 TRDD3*01', 12)
+    'ok 12 - TRDD2 TRDD3'
+
+    >>> srtt('TRDV1*01 1//7 TRAJ29*01 BUG', 'blabla', 14)
+    'not ok 14 # BUG - TRDV1*01 1//7 TRAJ29*01 BUG - found instead blabla'
+
+    # ignore_cdr3
+    >>> should = 'IGKV1-5*03 (9/4/1 IGKJ1*01, 9/7/4 IGKJ4*02)  [IGK]  {CQQYNRLWTF}'
+    >>> result =' 1 311 316 372	IGKV1-5*03 9/ACTT/1 IGKJ1*01  IGK SEG_+ 1.099553e-16 0.000000e+00/1.099553e-16 {295(30)324 p CQQYNRLWTF} '
+    >>> bad_cdr3 = result.replace('CQQ', 'YYY')
+    >>> srtt_ok(should, result)
+    True
+    >>> srtt_ok(should, bad_cdr3)
+    False
+    >>> args.ignore_cdr3 = True
+    >>> srtt_ok(should, bad_cdr3)
+    True
+
+    # ignore_N, ignore_allele
+    >>> should = 'TRAV1-1*01 1/ACGT/2 TRAJ1*01'
+    >>> other_N = 'TRAV1-1*01 1/ACG/3 TRAJ1*01'
+    >>> other_allele = 'TRAV1-1*01 1/ACGT/2 TRAJ1*02'
+
+    >>> srtt_ok(should, should)
+    True
+    >>> srtt_ok(should, other_N)
+    False
+    >>> srtt_ok(should, other_allele)
+    False
+
+    >>> args.ignore_N = True
+    >>> srtt_ok(should, should)
+    True
+    >>> srtt_ok(should, other_N)
+    True
+    >>> srtt_ok(should, other_allele)
+    False
+
+    >>> args.ignore_allele = True
+    >>> srtt_ok(should, should)
+    True
+    >>> srtt_ok(should, other_N)
+    True
+    >>> srtt_ok(should, other_allele)
+    True
     '''
 
     m_locus = r_locus.search(should_pattern)
@@ -268,6 +326,7 @@ def should_result_to_tap(should_pattern, result, tap_id):
     if not found:
         tap += ' - found instead ' + result
 
+    tap = tap.strip()
     return tap
 
 

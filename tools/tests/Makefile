@@ -15,6 +15,7 @@ doctests:
 	python -m doctest -v ../fuse.py
 	python -m doctest -v ../utils.py
 	python -m doctest -v ../vidjil-to-fasta.py
+	python -m doctest -v ../../algo/tests/should-vdj-to-tap.py
 	python ../org-babel-tangle.py --test
 	@echo "*** All python tests passed"
 
