@@ -452,8 +452,10 @@ This filtering will work as expected when the provided sequence overlaps
 
 With the `--label-filter` option, *only* the windows related to the given sequences are kept.
 This allows to quickly filter a set of reads, looking for a known sequence or window,
-with the `--out-reads --label-filter --label <sequence>` options:
-All the reads with the windows related to the sequence will be extracted to `out/seq/clone.fa-1`.
+with the `--grep-reads <sequence>` preset, equivalent to
+`--out-reads --label-filter --label <sequence>`:
+All the reads with the windows related to the sequence will be extracted 
+to files such as `out/seq/clone.fa-1`.
 
 ## Clone analysis: VDJ assignation and CDR3 detection
 
