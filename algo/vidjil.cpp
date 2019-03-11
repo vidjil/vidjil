@@ -570,6 +570,20 @@ int main (int argc, char **argv)
   app.add_flag("--clean-memory", __only_on_exit__clean_memory, "clean memory on exit") -> group(group) -> level();
 
   // ----------------------------------------------------------------------------------------------------------------------
+  group = "Presets";
+
+  app.add_option("--grep-reads",
+    [&only_labeled_windows,&windows_labels_explicit,&output_sequences_by_cluster](CLI::results_t res) {
+      only_labeled_windows = true;
+      windows_labels_explicit.push_back(res[0].c_str());
+      output_sequences_by_cluster = true;
+      return true;
+    },
+    "output, by clone, reads related to the given window sequence, even when they are below the thresholds"
+    PAD_HELP "(equivalent to --label SEQUENCE -label-filter --out-reads)")
+    -> group(group) -> level() -> set_type_name("SEQUENCE");
+
+  // ----------------------------------------------------------------------------------------------------------------------
   group = "Help";
   app.set_help_flag("--help,-h", "help")
     -> group(group);
