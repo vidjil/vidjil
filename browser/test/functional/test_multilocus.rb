@@ -219,6 +219,10 @@ class TestMultilocus < BrowserTest
 
   def test_14_export_sample_report
 
+    if ENV['WATIR_CHROME']
+      skip "Issue #3699 must be solved first"
+    end
+
     assert ($b.scatterplot_x_legend(0).text.include? 'TRB'), "Current system should be TRB"
 
     # Select a clone
