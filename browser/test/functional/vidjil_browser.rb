@@ -7,9 +7,16 @@ class VidjilBrowser < Watir::Browser
     if ENV['WATIR_BROWSER_PATH']
       print "Using custom browser location " + ENV['WATIR_BROWSER_PATH'] + "\n"
       Selenium::WebDriver::Firefox.path = ENV['WATIR_BROWSER_PATH']
+      Selenium::WebDriver::Chrome.path = ENV['WATIR_BROWSER_PATH'] 
     end
     # :chrome or :safari
-    super :firefox, :marionette => false
+    if ENV['WATIR_CHROME']
+      super :chrome
+    elsif ENV['WATIR_MARIONETTE']
+      super :firefox
+    else
+      super :firefox, :marionette => false
+    end
 
     print "Running "+driver.capabilities.browser_name+" "+driver.capabilities.version+"\n"
   end
@@ -337,6 +344,12 @@ class VidjilBrowser < Watir::Browser
     return div(:id => 'list_clones')
   end
   
+  def until(extra = {})
+    default = {timeout: 3}
+    default.merge(extra)
+    Watir::Wait.until(default) { yield }
+  end
+
   protected
 
   def scatterplot_id(number=1)
