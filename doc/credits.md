@@ -1,18 +1,18 @@
 # Credits
 
 Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes, developed and maintained by
-the [Bonsai bioinformatics lab](http://cristal.univ-lille.fr/bonsai) at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
-and the [VidjilNet consortium](http://www.vidjil.net) at Fondation Inria.
+the [Bonsai bioinformatics lab](http://cristal.univ-lille.fr/bonsai) at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lillendation 
+and the [VidjilNet consortium](http://www.vidjil.net) at Inria.
 
 Contact: [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
 
 ## Vidjil core development
 
-  - Mathieu Giraud, 2011-2018
-  - Mikaël Salson, 2011-2018
+  - Mathieu Giraud, 2011-2019
+  - Mikaël Salson, 2011-2019
   - Marc Duez, 2012-2016
   - Tatiana Rocher, 2014-2017
-  - Florian Thonier, 2015-2018
+  - Florian Thonier, 2015-2019
   - Ryan Herbert, 2015-2018
   - Aurélien Béliard, 2016-2017
 
@@ -26,6 +26,7 @@ Contact: [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
   - Eddy El Khatib and Nicolas Berveglieri, 2017
   - Téo Vasseur, 2017
   - Cyprien Borée, 2018
+  - Alexia Omietanski, 2018
 
 ## `.should-vdj.fa` tests with curated V(D)J designations
 
@@ -63,8 +64,8 @@ The development of Vidjil is funded by:
   - Université Lille 1, 2014-2017
   - SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), 2014-2017
   - Inria Lille, 2015-2018
-  - InCA, 2016-2018
-  - VidjilNet consortium, 2018
+  - InCA, 2016-2019
+  - VidjilNet consortium at Inria, 2018-
 
 
 ## References
