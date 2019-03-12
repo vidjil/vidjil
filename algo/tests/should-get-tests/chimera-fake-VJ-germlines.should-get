@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -A -g $VIDJIL_DATA/chimera-fake-VJ.g $VIDJIL_DATA/chimera-fake-VJ.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS --all -g $VIDJIL_DATA/chimera-fake-VJ.g $VIDJIL_DATA/chimera-fake-VJ.fa
 # Testing a custom (fake) germlines.data
 
 $ Report the species

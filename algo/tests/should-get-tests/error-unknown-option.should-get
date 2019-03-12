@@ -5,5 +5,5 @@ $ Unknown option
 1:error.* --hello
  
 $ Refer to online help and documentation
-1:run with -h
+1:run with --help
 1:see doc/vidjil-algo.md

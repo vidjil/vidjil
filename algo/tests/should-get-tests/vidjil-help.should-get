@@ -7,12 +7,12 @@ $ License
 $ Check default filtering options
 1: =5 .* minimal number of reads supporting a clone
 1: =0 .* minimal percentage of reads supporting a clone
-1: =100 .* maximal number of clones computed with a consensus sequence
-1: =100 .* maximal number of clones to be analyzed
+1: =100 .*maximal number of clones computed with a consensus sequence
+1: max-designations .*=100
 
 $ Do not display advanced options
 0: , experimental options
 0: custom Cost
 
 $ Correct number of regular options
-B25:^  -
+B24:^  -

@@ -5,7 +5,7 @@ $ License
 1:vidjil-algo is free software
 
 $ Check default costs
-1:segmenter .* "4, -6, -10, -1, -10"
+1:analysis.* "4, -6, -10, -1, -10"
 1:clustering .* "1, -4, -4, 0, 0"
 
 $ Show seeds
@@ -17,4 +17,4 @@ $ Display advanced options
 : custom Cost
 
 $ Correct number of options
-B51:^  -
+B52:^  -

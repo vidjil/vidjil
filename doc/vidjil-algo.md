@@ -248,21 +248,19 @@ clustering.
 
 ``` diff
 Germline presets (at least one -g or -V/(-D)/-J option must be given)
-  -g GERMLINES ...
+  -g, --germline GERMLINES ...
+
          -g <.g FILE>(:FILTER)
                     multiple locus/germlines, with tuned parameters.
                     Common values are '-g germline/homo-sapiens.g' or '-g germline/mus-musculus.g'
                     The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
          -g PATH
                     multiple locus/germlines, shortcut for '-g PATH/homo-sapiens.g',
-                    processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations
+                    processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with incomplete/unusal recombinations
   -V FILE ...                 custom V germline multi-fasta file(s)
-  -D FILE ...                 custom D germline multi-fasta file(s), segment into V(D)J components
+  -D FILE ...                 custom D germline multi-fasta file(s), analyze into V(D)J components
   -J FILE ...                 custom V germline multi-fasta file(s)
-
-Locus/recombinations
-  -d                          try to detect several D (experimental)
-  -2                          try to detect unexpected recombinations (must be used with -g)
+  -2                          try to detect unexpected recombinations
 ```
 
 The `germline/*.g` presets configure the analyzed recombinations.
@@ -297,12 +295,12 @@ Recombination detection ("window" prediction, first pass)
     (use either -s or -k option, but not both)
     (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)
     (all these options, except -w, are overriden when using -g)
-  -k INT                      k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)
-  -w INT                      w-mer size used for the length of the extracted window ('all': use all the read, no window clustering)
-  -e FLOAT=1                  maximal e-value for determining if a V-J designation can be trusted
-  -t INT                      trim V and J genes (resp. 5' and 3' regions) to keep at most <INT> nt  (0: no trim)
-  -s SEED=10s                 seed, possibly spaced, used for the V/J affectation (default: depends on germline), given either explicitely or by an alias
-                              10s:#####-##### 12s:######-###### 13s:#######-###### 9c:#########
+  -k, --kmer INT              k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)
+  -w, --window INT            w-mer size used for the length of the extracted window ('all': use all the read, no window clustering)
+  -e, --e-value FLOAT=1       maximal e-value for determining if a V-J segmentation can be trusted
+  --trim INT                  trim V and J genes (resp. 5' and 3' regions) to keep at most <INT> nt  (0: no trim)
+  -s, --seed SEED=10s         seed, possibly spaced, used for the V/J affectation (default: depends on germline), given either explicitely or by an alias
+                               10s:#####-##### 12s:######-###### 13s:#######-###### 9c:#########
 ```
 
 The `-s`, `-k` are the options of the seed-based heuristic that detects
@@ -352,34 +350,37 @@ The default value is 1.0, but values such as 1000, 1e-3 or even less can be used
 to have a more or less permissive designation.
 The threshold can be disabled with `-e all`.
 
-The `-t` option sets the maximal number of nucleotides that will be indexed in
+The `--trim` option sets the maximal number of nucleotides that will be indexed in
 V genes (the 3' end) or in J genes (the 5' end). This reduces the load of the
 indexes, giving more precise window estimation and e-value computation.
-However giving a `-t` may also reduce the probability of seeing a heavily
+However giving a `--trim` may also reduce the probability of seeing a heavily
 trimmed or mutated V gene.
-The default is `-t 0`.
+The default is `--trim 0`.
 
 ## Thresholds on clone output
 
 The following options control how many clones are output and analyzed.
 
 ``` diff
-Limits to report a clone (or a window)
-  --max-clones INT            maximal number of output clones ('all': no maximum, default)
-  -r INT=5                    minimal number of reads supporting a clone
-  --ratio FLOAT=0             minimal percentage of reads supporting a clone
+Input
+  -x, --first-reads INT       maximal number of reads to process ('all': no limit, default), only first reads
+  -X, --sampled-reads INT     maximal number of reads to process ('all': no limit, default), sampled reads
 
-Limits to further analyze some clones (second pass)
-  -y INT=100                  maximal number of clones computed with a consensus sequence ('all': no limit)
-  -z INT=100                  maximal number of clones to be analyzed with a full V(D)J designation ('all': no limit, do not use)
-  -A                          reports and segments all clones (-r 0 --ratio 0 -y all -z all), to be used only on very small datasets (for example -AX 20)
-  -x INT                      maximal number of reads to process ('all': no limit, default), only first reads
-  -X INT                      maximal number of reads to process ('all': no limit, default), sampled reads
+Limits to report and to analyze clones (second pass)
+  -r, --min-reads INT=5       minimal number of reads supporting a clone
+  --min-ratio FLOAT=0         minimal percentage of reads supporting a clone
+  --max-clones INT            maximal number of output clones ('all': no maximum, default)
+  -y, --max-consensus INT=100 maximal number of clones computed with a consensus sequence ('all': no limit)
+  -z, --max-designations INT=100
+                              maximal number of clones to be analyzed with a full V(D)J designation ('all': no limit, do not use)
+  --all                       reports and analyzes all clones
+                              (--min-reads 1 --min-ratio 0 --max-clones all --max-consensus all --max-designations all),
+                              to be used only on small datasets (for example --all -X 1000)
 ```
 
 The `-r/--ratio` options are strong thresholds: if a clone does not have
 the requested number of reads, the clone is discarded (except when
-using `-l`, see below).
+using `--label`, see below).
 The default `-r 5` option is meant to only output clones that
 have a significant read support. **You should use** `-r 1` **if you
 want to detect all clones starting from the first read** (especially for
@@ -387,18 +388,18 @@ MRD detection).
 
 The `--max-clones` option limits the number of output clones, even without consensus sequences.
 
-The `-y` option limits the number of clones for which a consensus
+The `--max-consensus` option limits the number of clones for which a consensus
 sequence is computed. Usually you do not need to have more
-consensus (see below), but you can safely put `-y all` if you want
+consensus (see below), but you can safely put `--max-consensus all` if you want
 to compute all consensus sequences.
 
-The `-z` option limits the number of clones that are fully analyzed,
+The `--max-designations` option limits the number of clones that are fully analyzed,
 *with their V(D)J designation and possibly a CDR3 detection*,
 in particular to enable the web application
 to display the clones on the grid (otherwise they are displayed on the
 '?/?' axis).
-If you want to analyze more clones, you should use `-z 200` or
-`-z 500`. It is not recommended to use larger values: outputting more
+If you want to analyze more clones, you should use `--max-designations 200` or
+`--max-designations 500`. It is not recommended to use larger values: outputting more
 than 500 clones is often not useful since they can not be visualized easily
 in the web application, and takes more computation time.
 
@@ -408,27 +409,27 @@ and `.vdj.fa` files. If the clone is at some MRD point in the top 100 (or 200, o
 it will be fully analyzed/segmented by this other point (and then
 collected by the `fuse.py` script, using consensus sequences computed at this
 other point, and then, on the web application, correctly displayed on the grid).
-**Thus is advised to leave the default** `-z 100` **option
+**Thus is advised to leave the default** `--max-designations 100` **option
 for the majority of uses.**
 
-The `-A` option disables all these thresholds. This option should be
-used only for test and debug purposes, on very small datasets, and
-produce large file and takes huge computation times.
+The `--all` option disables all these thresholds. This option can be
+used for test and debug purposes or on small datasets.
+It produces large file and takes more time. 
 
-The `-Z` option speeds up the full analysis by a pre-processing step,
+The `--analysis-filter` option speeds up the full analysis by a pre-processing step,
 again based on k-mers, to select a subset of the V germline genes to be compared to the read.
 The option gives the typical size of this subset (it can be larger when several V germlines
 genes are very similar, or smaller when there are not enough V germline genes).
-The default `-Z 3` is generally safe.
-Setting `-Z all` removes this pre-processing step, running a full dynamic programming
+The default `--analysis-filter 3` is generally safe.
+Setting `--analysis-filter all` removes this pre-processing step, running a full dynamic programming
 with all germline sequences that is much slower.
 
 ## Sequences of interest
 
 Vidjil-algo allows to indicate that specific sequences should be followed and output,
 even if those sequences are 'rare' (below the `-r/--ratio` thresholds).
-Such sequences can be provided either with `-W <sequence>`, or with `-l <file>`.
-The file given by `-l` should have one sequence by line, as in the following example:
+Such sequences can be provided either with `--label <sequence>`, or with `--label-file <file>`.
+The file given by `--label-file` should have one sequence by line, as in the following example:
 
 ``` diff
 GAGAGATGGACGGGATACGTAAAACGACATATGGTTCGGGGTTTGGTGCT my-clone-1
@@ -440,7 +441,7 @@ The first column of the file is the sequence to be followed
 while the remaining columns consist of the sequence's label.
 In Vidjil-algo output, the labels are output alongside their sequences.
 
-A sequence given `-W <sequence>` or with `-l <file>` can be exactly the size
+A sequence given `--label <sequence>` or with `-label-file <file>` can be exactly the size
 of the window (`-w`, that is 50 by default). In this case, it is guaranteed that
 such a window will be output if it is detected in the reads.
 More generally, when the provided sequence differs in length with the windows
@@ -449,12 +450,20 @@ we will keep any window that is contained in the sequence of interest.
 This filtering will work as expected when the provided sequence overlaps
 (at least partially) the CDR3 or its close neighborhood.
 
-With the `-F` option, *only* the windows related to the given sequences are kept.
+With the `--label-filter` option, *only* the windows related to the given sequences are kept.
 This allows to quickly filter a set of reads, looking for a known sequence or window,
-with the `-FaW <sequence>` options:
-All the reads with the windows related to the sequence will be extracted to `out/seq/clone.fa-1`.
+with the `--grep-reads <sequence>` preset, equivalent to
+`--out-reads --label-filter --label <sequence>`:
+All the reads with the windows related to the sequence will be extracted 
+to files such as `out/seq/clone.fa-1`.
 
 ## Clone analysis: VDJ assignation and CDR3 detection
+
+```
+Clone analysis (second pass)
+  -d, --several-D             try to detect several D (experimental)
+  -3, --cdr3                  CDR3/JUNCTION detection (requires gapped V/J germlines)
+```
 
 The `-3` option launches a CDR3/JUNCTION detection based on the position
 of Cys104 and Phe118/Trp118 amino acids. This detection relies on alignment
@@ -465,7 +474,7 @@ The CDR3/JUNCTION detection won't work with custom non-gapped V/J repertoires.
 CDR3 are reported as productive when they come from an in-frame recombination
 and when the sequence does not contain any in-frame stop codons.
 
-The advanced `-f` option sets the parameters used in the comparisons between
+The advanced `--analysis-cost` option sets the parameters used in the comparisons between
 the clone sequence and the V(D)J germline genes. The default values should work.
 
 The e-value set by `-e` is also applied to the V/J designation.
@@ -477,13 +486,13 @@ The following options are experimental and have no consequences on the `.vdj.fa`
 nor on the standard output. They instead add a `clusters` sections in the `.vidjil` file
 that will be visualized in the web application.
 
-The `-n` option triggers an automatic clustering using DBSCAN algorithm (Ester and al., 1996).
-Using `-n 5` usually cluster reads within a distance of 1 mismatch (default score
+The `--cluster-epsilon` option triggers an automatic clustering using DBSCAN algorithm (Ester and al., 1996).
+Using `--cluster-epsilon 5` usually clusters reads within a distance of 1 mismatch (default score
 being +1 for a match and -4 for a mismatch). However, more distant reads can also
 be clustered when there are more than 10 reads within the distance threshold.
-This behaviour can be controlled with the `-N` option.
+This behaviour can be controlled with the `-cluster-N` option.
 
-The `-=` option allows to specify a file for manually clustering two windows
+The `--cluster-forced-edges` option allows to specify a file for manually clustering two windows
 considered as similar. Such a file may be automatically produced by vidjil
 (`out/edges`), depending on the option provided. Only the two first columns
 (separed by one space) are important to vidjil, they only consist of the
@@ -497,8 +506,8 @@ The main output of Vidjil-algo (with the default `-c clones` command) are two fo
 
   - The `.vidjil` file is *the file for the Vidjil web application*.
     The file is in a `.json` format (detailed in [vidjil-format](vidjil-format))
-    describing the windows and their count, the consensus sequences (`-y`),
-    the detailed V(D)J and CDR3 designation (`-z`, see warning below), and possibly
+    describing the windows and their count, the consensus sequences (`--max-consensus`),
+    the detailed V(D)J and CDR3 designation (`--max-designations`, see warning below), and possibly
     the results of the further clustering.
     
     The web application takes this `.vidjil` file ([possibly merged with `fuse.py`](#following-clones-in-several-samples)) for the *visualization and analysis* of clones and their
@@ -508,9 +517,9 @@ The main output of Vidjil-algo (with the default `-c clones` command) are two fo
 
   - The `.vdj.fa` file is *a FASTA file for further processing by other bioinformatics tools*.
     The sequences are at least the windows (and their count in the headers) or
-    the consensus sequences (`-y`) when they have been computed.
+    the consensus sequences (`--max-consensus`) when they have been computed.
     The headers include the count of each window, and further includes the
-    detailed V(D)J and CDR3 designation (`-z`, see warning below), given in a '.vdj' format, see below.
+    detailed V(D)J and CDR3 designation (`--max-designations`, see warning below), given in a '.vdj' format, see below.
     The further clustering is not output in this file.
     
     The `.vdj.fa` output enables to use Vidjil-algo as a *filtering tool*,
@@ -655,7 +664,7 @@ Using `-c designations` trigger a separate analysis for each read, but this is u
 | warnings (+) | string | *Warnings associated to this clone. See <https://gitlab.vidjil.org/blob/dev/doc/warnings.md>.*
 | sequence  | string | The query nucleotide sequence. Usually, this is the unmodified input sequence, which may be reverse complemented if necessary. In some cases, this field may contain consensus sequences or other types of collapsed input sequences if these steps are performed prior to alignment. <br />*This contains the consensus/representative sequence of each clone.*
 | rev_comp  | boolean | True if the alignment is on the opposite strand (reverse complemented) with respect to the query sequence. If True then all output data, such as alignment coordinates and sequences, are based on the reverse complement of 'sequence'. <br />*Set to null, as vidjil-algo gather reads from both strands in clones* |
-| v_call, d_call, j_call  | string  | V/D/J gene with allele. For example, IGHV4-59\*01. <br /> *implemented. In the case of uncomplete/unexpected recombinations (locus with a `+`), we still use `v/d/j_call`. Note that this value can be null on clones beyond the `-z` option.* |
+| v_call, d_call, j_call  | string  | V/D/J gene with allele. For example, IGHV4-59\*01. <br /> *implemented. In the case of uncomplete/unexpected recombinations (locus with a `+`), we still use `v/d/j_call`. Note that this value can be null on clones beyond the `--max-designations` option.* |
 | junction  | string  |      Junction region nucleotide sequence, where the junction is defined as the CDR3 plus the two flanking conserved codons. <br />*null*
 | junction_aa  | string  | Junction region amino acid sequence.      <br />*implemented*
 | cdr3_aa | string | Amino acid translation of the cdr3 field.   <br />*implemented*
@@ -685,7 +694,7 @@ in the following situations:
   - in a second pass, on the standard output and in both `.vidjil` and `.vdj.fa` files
     
       - at the end of the clones detection (default command `-c clones`,
-        on a number of clones limited by the `-z` option)
+        on a number of clones limited by the `--max-designations` option)
       - or directly when explicitly requiring V(D)J designation for each read 
         (`-c designations`)
     
@@ -796,10 +805,10 @@ This file will be relatively small (a few kB or MB) and can be taken again as an
 ## Advanced usage
 
 ``` bash
-./vidjil-algo -c clones -g germline/homo-sapiens.g -r 1 -n 5 -x 10000 demo/LIL-L4.fastq.gz
+./vidjil-algo -c clones -g germline/homo-sapiens.g -r 1 --cluster-epsilon 5 -x 10000 demo/LIL-L4.fastq.gz
    # Extracts the windows with at least 1 read each (-r 1, the default being -r 5)
    # on the first 10,000 reads, then cluster them into clones
-   # with a second clustering step at distance five (-n 5)
+   # with a second clustering step at distance five (--cluster-epsilon 5)
    # The result of this second is in the .vidjil file ('clusters')
    # and can been seen and edited in the web application.
 ```

@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -f '1, 2, 3, 4, 5' $VIDJIL_DATA/Stanford_S22.fasta
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS --analysis-cost '1, 2, 3, 4, 5' $VIDJIL_DATA/Stanford_S22.fasta
 !EXIT_CODE: 1
 
 $Check that correct custom cost is used

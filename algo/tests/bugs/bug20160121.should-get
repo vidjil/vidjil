@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -s '#####-#####' -c clones -r 1 -g ../../../germline/homo-sapiens.g:IGH -t 0 -e 1e-2 bug20160121.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -s '#####-#####' -c clones -r 1 -g ../../../germline/homo-sapiens.g:IGH -e 1e-2 bug20160121.fa
 
 $ Sequences should not be segmented since they only contain J.
 1:UNSEG only J/3' -> 2
