@@ -23,6 +23,9 @@ VALGRIND_TOOLS= --tool=memcheck --leak-check=full --show-reachable=yes --trace-c
 VALGRIND_OUTPUT_XML=--xml=yes --xml-file='$(REPORTS_PATH)/valgrind.xml.%p'
 VALGRIND_OUTPUT=--error-exitcode=1
 
+SHOULD_TIMEOUT=140
+SHOULD_TIMEOUT_VALGRIND=300
+
 ifeq ($(XML_OUTPUT), 1)
   VALGRIND_OUTPUT=$(VALGRIND_OUTPUT_XML)
 endif
@@ -71,7 +74,7 @@ snapshot_diff_current:
 
 
 should: vidjil
-	time python3 should.py --xml $(SHOULD)
+	time python3 should.py --timeout $(SHOULD_TIMEOUT) --xml $(SHOULD)
 
 shouldvdj_if_python:
 	if python ../../tools/check_python_version.py ; \
@@ -122,7 +125,7 @@ curated-vdj.zip: $(SHOULD_VDJ_ARCHIVE)
 
 valgrind_should: vidjil
 	$(MAKE) -C "$(REPORTS_PATH)" clean_valgrind
-	time python3 should.py --timeout 300 --launcher "$(VALGRIND_CMD)" --extra=--clean-memory $(SHOULD)
+	time python3 should.py --timeout $(SHOULD_TIMEOUT_VALGRIND) --launcher "$(VALGRIND_CMD)" --extra=--clean-memory $(SHOULD)
 
 valgrind_%:
 	LAUNCHER="$(VALGRIND_CMD)" $(MAKE) $(patsubst valgrind_%,%,$@)
