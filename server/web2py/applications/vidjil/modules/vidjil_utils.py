@@ -645,7 +645,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         db.config.insert(
             name = 'multi',
             program = 'vidjil',
-            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD -i -e 1 -d -w 50 ',
+            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD -e 1 -d -w 50 ',
             fuse_command = '-t 100',
             info = 'multi-locus, only complete recombinations'
         )
