@@ -5,7 +5,7 @@
 
 ```
   Vidjil -- High-throughput Analysis of V(D)J Immune Repertoire -- [[http://www.vidjil.org]]
-  Copyright (C) 2011-2018 by Bonsai bioinformatics
+  Copyright (C) 2011-2019 by Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   and VidjilNet consortium.
   contact@vidjil.org
@@ -49,7 +49,7 @@ PLOS ONE 2016, 11(11):e0166126
 BMC Genomics 2014, 15:409
 <http://dx.doi.org/10.1186/1471-2164-15-409>
 
-Vidjil-algo is open-source, released under GNU GPLv3 license.
+Vidjil-algo is open-source, released under GNU GPLv3+ license.
 
 # Requirements and installation
 
@@ -330,9 +330,10 @@ return more clones, as any sequencing error in the window is not corrected.
 
 The special `-w all` option takes all the read as the windows, completely disabling
 the clustering by windows and generally returning more clones. This should only be used on
-datasets where reads of the same clone do have exactly the same length.
+datasets where reads of the same clone do have exactly the same length, or in situations
+in which one want to study very precisely the clonality, tracking all mutations along the read.
 
-Setting `-w` to lower values than 50 may "segment" (analyze) a few more reads, depending
+Setting `-w` to lower values than 50 may analyze a few more reads, depending
 on the read length of your data, but may in some cases falsely cluster reads from
 different clones.
 For VJ recombinations, the `-w 40` option is usually safe, and `-w 30` can also be tested.
@@ -340,9 +341,9 @@ Setting `-w` to lower values is not recommended.
 
 When the read is too short too extract the requested length, the window can be shifted
 (at most 10 bp) or shrinkened (down until 30bp) by increments of 5bp. Such reads
-are counted in `SEG changed w` and the corresponding clones are output with the `Wxx` warning.
+are counted in `SEG changed w` and the corresponding clones are output with the `W50` warning.
 
-The `-e` option sets the maximal e-value accepted for segmenting a sequence.
+The `-e` option sets the maximal e-value accepted for analyzing a sequence.
 It is an upper bound on the number of exepcted windows found by chance by the seed-based heuristic.
 The e-value computation takes into account both the number of reads in the
 input sequence and the number of locus searched for.
@@ -350,7 +351,7 @@ The default value is 1.0, but values such as 1000, 1e-3 or even less can be used
 to have a more or less permissive designation.
 The threshold can be disabled with `-e all`.
 
-The `--trim` option sets the maximal number of nucleotides that will be indexed in
+The advanced `--trim` option sets the maximal number of nucleotides that will be indexed in
 V genes (the 3' end) or in J genes (the 5' end). This reduces the load of the
 indexes, giving more precise window estimation and e-value computation.
 However giving a `--trim` may also reduce the probability of seeing a heavily
@@ -406,7 +407,7 @@ in the web application, and takes more computation time.
 Note that even if a clone is not in the top 100 (or 200, or 500) but
 still passes the `-r`, `--ratio` options, it is still reported in both the `.vidjil`
 and `.vdj.fa` files. If the clone is at some MRD point in the top 100 (or 200, or 500),
-it will be fully analyzed/segmented by this other point (and then
+it will be fully analyzed by this other point (and then
 collected by the `fuse.py` script, using consensus sequences computed at this
 other point, and then, on the web application, correctly displayed on the grid).
 **Thus is advised to leave the default** `--max-designations 100` **option
@@ -416,7 +417,7 @@ The `--all` option disables all these thresholds. This option can be
 used for test and debug purposes or on small datasets.
 It produces large file and takes more time. 
 
-The `--analysis-filter` option speeds up the full analysis by a pre-processing step,
+The `--analysis-filter` advanced option speeds up the full analysis by a pre-processing step,
 again based on k-mers, to select a subset of the V germline genes to be compared to the read.
 The option gives the typical size of this subset (it can be larger when several V germlines
 genes are very similar, or smaller when there are not enough V germline genes).
@@ -436,7 +437,7 @@ GAGAGATGGACGGGATACGTAAAACGACATATGGTTCGGGGTTTGGTGCT my-clone-1
 GAGAGATGGACGGAATACGTTAAACGACATATGGTTCGGGGTATGGTGCT my-clone-2 foo
 ```
 
-Sequences and labels must be separed by one space.
+Sequences and labels must be separated by one space.
 The first column of the file is the sequence to be followed
 while the remaining columns consist of the sequence's label.
 In Vidjil-algo output, the labels are output alongside their sequences.
@@ -529,8 +530,8 @@ The main output of Vidjil-algo (with the default `-c clones` command) are two fo
 
 By default, the two output files are named `out/basename.vidjil` in `out/basename.vdj.fa`, where:
 
-  - `out` is the directory where all the outputs are stored (can be changed with the `-o` option).
-  - `basename` is the basename of the input `.fasta/.fastq` file (can be overriden with the `-b` option)
+  - `out` is the directory where all the outputs are stored (can be changed with the `--dir` option).
+  - `basename` is the basename of the input `.fasta/.fastq` file (can be overriden with the `--base` option)
 
 ## Auxiliary output files
 
@@ -567,8 +568,8 @@ GGGTATAGCAGCAGCTGGTAC
 ACTACTTTGACTACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAG
 ```
 
-The `-a` debug option further output in each `out/seq/clone.fa-*` files the full list of reads belonging to this clone.
-The `-a` option produces large files, and is not recommanded in general cases.
+The `--out-reads` debug option further output in each `out/seq/clone.fa-*` files the full list of reads belonging to this clone.
+The `--out-reads` option produces large files, and is not recommended in general cases.
 
 ## Diversity measures
 
@@ -581,15 +582,15 @@ Several [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) are r
 E ans Ds values are between 0 (no diversity, one clone clusters all analyzed reads)
 and 1 (full diversity, each analyzed read belongs to a different clone).
 These values are now computed on the windows, before any further clustering.
-PCR and sequencing errors can thus lead to slighlty over-estimate the diversity.
+PCR and sequencing errors can thus lead to slightly over-estimate the diversity.
 
-## Unsegmentation causes
+## Details on non analyzed reads
 
-Vidjil-algo outputs details statistics on the reads that are not segmented (not analyzed).
-Basically, **an unsegmented read is a read where Vidjil-algo cannot identify a window at the junction of V and J genes**.
-To properly analyze a read, Vijdil needs that the sequence spans enough V region and J region
+Vidjil-algo outputs details statistics on the reads that are not analyzed.
+Basically, **an unanalyzed read is a read where Vidjil-algo cannot identify a window at the junction of V and J genes**.
+To properly analyze a read, Vijdil-algo needs that the sequence spans enough V region and J region
 (or, more generally, 5' region and 3' regions when looking for incomplete or unusual recombinations).
-The following unsegmentation causes are reported:
+The following causes are reported:
 
 |                     |                                                                                                                          |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------ |
@@ -611,37 +612,39 @@ Some datasets may give reads with many low `UNSEG too few` reads:
     Vidjil-algo detects a “window” including the CDR3. By default this window is 50bp long,
     so the read needs be that long centered on the junction.
 
-See the [user manual](user.md) for information on the biological or sequencing causes that can lead to few segmented reads.
+See the [user manual](user.md) for information on the biological or sequencing causes 
+that can lead to few analyzed reads.
 
 ## Filtering reads
 
 ``` diff
 Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)
-  -U                          output segmented reads (in .segmented.vdj.fa file)
-  -u
-        -u          output unsegmented reads, gathered by unsegmentation cause, except for very short and 'too few V/J' reads (in *.fa files)
-        -uu         output unsegmented reads, gathered by unsegmentation cause, all reads (in *.fa files) (use only for debug)
-        -uuu        output unsegmented reads, all reads, including a .unsegmented.vdj.fa file (use only for debug)
-  -K                          output detailed k-mer affectation on all reads (in .affects file) (use only for debug, for example -KX 100)
+  -U, --out-analyzed          output analyzed reads (in .segmented.vdj.fa file)
+  -u, --out-unanalyzed        
+        -u          output unanalyzed reads, gathered by cause, except for very short and 'too few V/J' reads (in *.fa files)
+        -uu         output unanalyzed reads, gathered by cause, all reads (in *.fa files) (use only for debug)
+        -uuu        output unanalyzed reads, all reads, including a .unsegmented.vdj.fa file (use only for debug)
+  --out-reads                 output all reads by clones (clone.fa-*), to be used only on small datasets
+  -K, --out-affects           output detailed k-mer affectation for each read (in .affects file) (use only for debug, for example -KX 100)
 ```
 
-It is possible to extract all segmented or unsegmented reads, possibly to give them to other software.
-Runing Vidjil with `-U` gives a file `out/basename.segmented.vdj.fa`, with all segmented reads.
+It is possible to extract all analyzed or not analyzed reads, possibly to give them to other software.
+Runing Vidjil with `-U` gives a file `out/basename.analyzed.vdj.fa`, with all analyzed reads.
 On datasets generated with rather specific V(D)J primers, this is generally not recommended, as it may generate a large file.
 However, the `-U` option is very useful for whole RNA-Seq or capture datasets that contain few reads with V(D)J recombinations.
 
-Similarly, options are available to get the unsegmented reads:
+Similarly, options are available to get the non analyzed reads:
 
-  - `-u` gives a set of files `out/basename.UNSEG_*`, with unsegmented reads gathered by unsegmentation cause.
+  - `-u` gives a set of files `out/basename.UNSEG_*`, with not analyzed reads gathered by cause.
     It outputs only reads sharing significantly sequences with V/J germline genes or with some ambiguity:
     it may be interesting to further study RNA-Seq datasets.
 
-  - `-uu` gives the same set of files, including **all** unsegmented reads (including `UNSEG too short` and `UNSEG too few V/J`),
+  - `-uu` gives the same set of files, including **all** not analyzed reads (including `UNSEG too short` and `UNSEG too few V/J`),
     and `-uuu` further outputs all these reads in a file `out/basename.unsegmented.vdj.fa`.
 
 Again, as these options may generate large files, they are generally not recommended.
 However, they are very useful in some situations, especially to understand why some dataset gives poor segmentation result.
-For example `-uu -X 1000` splits the unsegmented reads from the 1000 first reads.
+For example `-uu -X 1000` splits the not analyzed reads from the 1000 first reads.
 
 
 ## AIRR .tsv output
