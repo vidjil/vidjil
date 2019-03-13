@@ -522,6 +522,8 @@ line {
   flex: 1 1 auto;
   height: 0px; // set scrollbar flex will override height
   max-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 #data{
@@ -530,11 +532,9 @@ line {
 }
 
 #list_clones{
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   overflow-y : scroll;
   overflow-x : hidden;
-  height : calc(~"100% - 30px");  /*100% - list_menu height */
-  max-height: 100%;
   width: 100%;
   padding:2px;
 }
