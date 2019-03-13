@@ -10,7 +10,7 @@ class VidjilBrowser < Watir::Browser
       Selenium::WebDriver::Chrome.path = ENV['WATIR_BROWSER_PATH'] 
     end
     # :chrome or :safari
-    if ENV['WATIR_CHROME']
+    if ENV['WATIR_CHROME'] or ENV['WATIR_BROWSER_PATH'].include? "chrom"
       super :chrome
     elsif ENV['WATIR_MARIONETTE']
       super :firefox
