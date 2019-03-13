@@ -217,14 +217,14 @@ test_browser_unit:
   tags:
     - web
 
-test_browser-functional:
+.browser-functional:
   stage: test_functional
   retry: 2
   script:
     - make -C browser
     - source /etc/profile.d/rvm.sh
     - rvm use 2.6.1
-    - HEADLESS=1 make -C browser/test functional BROWSERS=--browsers-from-file
+    - HEADLESS=1 make -C browser/test functional
   artifacts:
     paths:
     - browser/
@@ -233,10 +233,8 @@ test_browser-functional:
     - /^hotfix-.*c.*\/.*$/
     - prod-client
     - schedules
-  tags:
-    - web
 
-test_browser-functional-external:
+.browser-functional-external:
   stage: test_functional_external
   retry: 2
   script:
@@ -252,8 +250,37 @@ test_browser-functional-external:
     - /^hotfix-.*c.*\/.*$/
     - prod-client
     - schedules
+
+test_browser-functional:
+  extends: .browser-functional
+  variables:
+    BROWSERS: "--browsers-from-file"
   tags:
     - web
+
+test_legacy-browser-functional:
+  extends: .browser-functional
+  variables:
+    WATIR_CHROME: "1"
+    FUNCTIONAL_CLIENT_BROWSER_PATH: ""
+  tags:
+    - legacy
+
+test_browser-functional-external:
+  extends: .browser-functional-external
+  variables:
+    BROWSERS: "--browsers-from-file"
+  tags:
+    - web
+
+test_legacy-browser-functional-external:
+  extends: .browser-functional-external
+  variables:
+    WATIR_CHROME: "1"
+    FUNCTIONAL_CLIENT_BROWSER_PATH: ""
+  tags:
+    - legacy
+
 
 code_quality:
   stage: test_quality
