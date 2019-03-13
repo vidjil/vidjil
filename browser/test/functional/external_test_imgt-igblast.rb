@@ -53,7 +53,7 @@ class ExternalTest < BrowserTest
     begin
       $b.clone_in_scatterplot('25').click
       $b.span(:id => "toIMGTSeg" ).click
-      $b.segmenter_checkbox_imgt_vdj.wait_until(&:present?)
+      $b.until { $b.segmenter_checkbox_imgt_vdj.present? }
 
       clone_info = $b.clone_info_segmenter('25')
       productive_title = clone_info[:axis].element(:class => 'productivity-IMGT').title
