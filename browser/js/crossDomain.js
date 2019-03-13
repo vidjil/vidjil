@@ -253,6 +253,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
             var input = document.createElement('input');
             input.type = 'checkbox';
             input.id = 'imgt_cdr3_input_check';
+            input.checked = false;
             $(input).on("click", function() {
                 if(this.checked) {
                     segmenter.highlight[1].field = "CDR3-IMGT";
@@ -264,7 +265,6 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
                     segmenter.update();
 
             });
-            input.click();
             var label = document.createElement('label');
             label.setAttribute("for", 'imgt_cdr3_input_check');
             label.innerHTML = 'CDR3-IMGT';
@@ -278,6 +278,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
             input = document.createElement('input');
             input.type = 'checkbox';
             input.id = 'imgt_vdj_input_check';
+            input.checked = false;
             $(input).on("click", function() {
                 if(this.checked) {
                     segmenter.highlight[2].field = "V-REGION";
@@ -295,7 +296,6 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
                     segmenter.update();
 
             });
-            input.click();
             label = document.createElement('label');
             label.setAttribute("for", 'imgt_vdj_input_check');
             label.innerHTML = "V/D/J-IMGT";
