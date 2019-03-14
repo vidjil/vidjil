@@ -449,7 +449,9 @@ More generally, when the provided sequence differs in length with the windows
 we will keep any windows that contain the sequence of interest or, conversely,
 we will keep any window that is contained in the sequence of interest.
 This filtering will work as expected when the provided sequence overlaps
-(at least partially) the CDR3 or its close neighborhood.
+(at least partially) the CDR3 or its close neighborhood,
+but will not work when the sequence is far of the CDR3 (except when
+using large `-w` values or `-w all`).
 
 With the `--label-filter` option, *only* the windows related to the given sequences are kept.
 This allows to quickly filter a set of reads, looking for a known sequence or window,
