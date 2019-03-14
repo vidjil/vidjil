@@ -1,7 +1,7 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
-2019-03-XX  The Vidjil Team
+2019-03-14  The Vidjil Team
 	* New --consensus-on-random-sample experimental option (core/representative.cpp) #3764
 	* Aho-Corasick automaton used by default (vidjil.cpp) #2566, will bring speed-ups in a future release
 	* Refactored command and option names, deprecate some short options names (vidjil.cpp) #3295 #3772
