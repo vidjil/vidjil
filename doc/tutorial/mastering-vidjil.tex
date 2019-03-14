@@ -145,6 +145,10 @@ After this rename, you can see that the clone is still selected.
 \question{How many clones are selected? How many reads do those clones
   represent?}
 
+\question{\new Notice the star at the the right of the screen, near the number
+  of reads. You can also tag clones using this icon. In that way, you will be able to tag
+  all the selected clones at once.}
+
 \question{When you want to focus on the selected clones, you can click on the
   focus link on the right, next to the number of selected clones.
   This feature is useful when you want to analyse some clones more thoroughly
@@ -186,10 +190,14 @@ By default in the bottom plot (the \textit{grid}), the clones
 The sequences of the clones now appear in the bottom part of the browser (the
 \textit{sequence panel}). If many clones are selected you can view more sequences
 by moving the mouse above the sequence panel.
-The sequences in the sequence panel can be visually compared but you can also align
+\new In such a case, you may be bothered by the sequence panel going up and
+down each time your mouse enters or exits the sequence panel. You can stick it
+in its current shape by clicking on the pin at the upper right corner of the
+sequence panel.
+
+Then, the sequences in the sequence panel can be visually compared but you can also align
 them to see more easily their similarities.
 
-\question{\new XXX Pin the segmenter}
 
 \question{Click on the \com{align} button on the left-hand side. The differences are
 emphasized in bold.}
@@ -281,10 +289,29 @@ be similar.
 \question{Choose now the preset \com{CDR3 length distribution} and
   then color by \com{productivity}.
   See that the color tiles in the info part (upper right) change to show the color key.}
-  
+
+\question{\new Instead of coloring by productivity, you could also color by
+  \com{clone}. When coloring by \com{clone}, each clone has a random color. Thus in
+  a bar plot, it is a convenient color mode to see the peaks that are due to a
+  single clone or to several clones.
+  However clones may be very similar. Another option is to color by
+  \com{CDR3}. In such case all clones with the same CDR3 will have the same
+  color (note that, due to a lack of available colors two different CDR3s
+  could share the same color just by chance).}
+
+
 Using those different features you should be able to analyse how similar your
 sequences are, and potentially you could cluster them if you'd like or tag them.
 
+\question{\new
+  Select the most abundant clone. It now appears in the sequence panel.
+  Now we would like to compare the sequence with the germline genes.
+  We can add the germline genes to the sequence panel by going
+  to the \com{import/export} menu and by clicking on \com{add germline genes}.
+  Now we can click on the \com{align} button to see the alignment between the
+  genes and the sequence. Mutations can be identified and silent mutations are
+  displayed with a double border in blue.
+}
 
 \bigskip
 
@@ -475,6 +502,10 @@ It can be opened by any spreadsheet software such as LibreOffice Calc or Excel f
 
 \question{Open again \com{import/export} menu, and click on one of the \com{export SVG} buttons.
 This exports the current view of the plot or the graph. The resulting file can be opened and edited from any image drawing software such as Inkscape.}
+
+\question{\new Select some clones and align them. The alignment can be
+  exported with the \com{export aligned fasta} button in the
+  \com{import/export} menu.}
 
 
 \vfill
