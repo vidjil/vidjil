@@ -187,9 +187,9 @@ or their “N length” (that is N1-D-N2 in the case of VDJ recombinations).
    - The “★” button (status bar, bottom right) allows
    to tag at once all the selected clones.
 
-## The sequence view (bottom panel)
+## The sequence panel (bottom panel)
 
-The sequence view displays nucleotide sequences from selected clones.
+The sequence panel displays nucleotide sequences from selected clones.
 
   - See "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clone)" below
   - Sequences can be aligned together (“align” button), identifying substitutions, insertions and deletions. Silent mutations are identified, as soon as a CDR3 is detected, and represented with a double border in blue.
@@ -374,7 +374,7 @@ Note that the algorithm also detects some VDDJ or VDDDJ recombinations that may 
 Some incomplete or unusual rearrangements (Dh/Jh, Dd2/Dd3, KDE-Intron, mixed TRA-TRD recombinations) are also detected.
 
 Once clones are selected, you can send their sequence to **IMGT/V-QUEST** and **IgBlast**
-by clicking on the links just above the sequence view (bottom left).
+by clicking on the links just above the sequence panel (bottom left).
 This opens another window/tab.
 
 # Can I see all the clones and all the reads ?
