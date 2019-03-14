@@ -48,7 +48,7 @@ This sample has been processed using the Vidjil algorithm.
 
 \marginpar{The percentage of analyzed reads can range from .01\,\% (for
   RNA-Seq or capture data) to 98-99\,\% (for very high-quality runs mostly on
-  Mi-Seq).}
+  Illumina).}
 \question{How many reads have been analyzed in the current sample with the embedded algorithm ?}
 
 Now we will try to assess the reason why some reads were not analyzed in our
@@ -74,7 +74,7 @@ algorithm: \href{http://www.vidjil.org/doc/vidjil-algo\#unsegmentation-causes}{v
 \subsection{Looking to a clone}
 
 Each RepSeq algorithm has its own definition of what a clone is (or, more precisely
-a clonotype), how to output its sequence and how to assign a V(D)J designation.
+a clonotype), and on how to output its sequence and how to assign a V(D)J designation.
 
 In this file, the most abundant clone
 is \texttt{IGHV3-9 7/CCCGGA/17 J6*02}.
@@ -94,8 +94,9 @@ There are several options to display the V(D)J designation.
 
 By default Vidjil displays the 50 most abundant clones at each time point.
 With five time points, we may therefore have from 50 to 250 clones displayed
-depending if the top 50 are always the same or always different.
-This number can be increased to a maximum of 100 clones by going in the \com{filter} menu and by putting the
+depending if the top 50 are always the same or always different or, more
+realistically, in-between.
+This number can be increased to a maximum of 100 clones by going to the \com{filter} menu and by putting the
 slider to its right end.
 \question{Notice how the IGH smaller clones percentage changes. What was its
   initial value? What is it now?}
@@ -187,18 +188,21 @@ The sequences of the clones now appear in the bottom part of the browser (the
 by moving the mouse above the segmenter.
 The sequences in the segmenter can be visually compared but you can also align
 them to see more easily their similarities.
+
+\question{\new XXX Pin the segmenter}
+
 \question{Click on the \com{align} button on the left-hand side. The differences are
 emphasized in bold.}
 
-Now it is the expertise of the user to determine if sequences are sufficiently
-similar, depending on the application. If some sequences don't appear to be similar enough, you can remove
+Now it is the user's expertise to determine if sequences are sufficiently
+similar, depending on her or his specific question. If some sequences don't appear to be similar enough, you can remove
 them from the segmenter by clicking on the cross in front of the sequence in
 the segmenter.
 \question{Remove all the sequences that are not similar enough with the first
   one.}
 
 Now all the sequences in the segmenter should be highly similar. All their
-differences should be due to sequencing or PCR errors.
+differences could be due to sequencing or PCR errors.
 These artifacts (mutations, homopolymers, insertions, deletions)
 depend on the sequencer and the PCR technique.
 
@@ -284,7 +288,7 @@ sequences are, and potentially you could cluster them if you'd like or tag them.
 
 \bigskip
 
-\textit{This part is specific to samples analyzed with the embedded algorithm of the Vidjil platform.}
+\textit{This part is specific to samples analyzed with Vidjil-algo.}
 
 Some clones may be less trustable than other ones\dots{} Let's see how to spot them.
 \question{In the clone list, search clones with an orange warning at the
