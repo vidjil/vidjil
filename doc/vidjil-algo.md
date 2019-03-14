@@ -81,8 +81,7 @@ You can also download a static binary, see [installation](#installation).
 To compile Vidjil-algo, make sure:
 
   - to be on a POSIX system ;
-  - to have a C++11 compiler (as `g++` 4.8 or above, `g++` 7.3 being supported, or `clang` 3.3 or above).
-    This version of Vidjil-algo does not work with `g++` 8.0 or above.
+  - to have a C++11 compiler (as `g++` 4.8 or above, `g++` 8.3 being supported, or `clang` 3.3 or above).
   - to have the `zlib` installed (`zlib1g-dev` package under Debian/Ubuntu,
     `zlib-devel` package under Fedora/CentOS).
 
