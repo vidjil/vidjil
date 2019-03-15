@@ -391,8 +391,18 @@ rvm use 2.6.1
 gem install minitest minitest-ci watir test-unit
 #+END_SRC
 
+***** Install web browsers
 The Firefox version used can be set with an environment variable (see
-below). All Firefox releases are [[https://download-installer.cdn.mozilla.net/pub/firefox/releases/ ][available here]].
+below). By default, the tests only work with Firefox ≤ 45. But this can be
+modified with an environment variable. All Firefox releases are [[https://download-installer.cdn.mozilla.net/pub/firefox/releases/ ][available
+here]].
+
+One can instead choose to launch functional tests using chrome. You should
+install =chromium-browser= as well as =chromium-chromedriver=.  On old Chrome
+versions the =chromedriver= package may not exist. In such a case you should
+[[https://chromedriver.storage.googleapis.com/index.html?path=2.11/][download the ChromeDriver by yourself]] (the supported Chrome versions are
+written in the =notes.txt= file of each version).
+
 
 **** Launch browser tests
 
@@ -400,12 +410,19 @@ below). All Firefox releases are [[https://download-installer.cdn.mozilla.net/pu
 make functional
 #+END_SRC
 
+***** Environment variables
     By default the tests are launched on the Firefox installed on the system.
     This can be modified by providing the =FUNCTIONAL_CLIENT_BROWSER_PATH=
     environment variable (which can contain several pathes, separated with
     spaces) to the =launch_functional_tests= script.  Or, if one wants to launch
     individual test scripts, to set the =WATIR_BROWSER_PATH= environment
     variable.
+
+    Other environment variables that can be specified to tune the default behaviour
+    - =WATIR_CHROME= :: should be set to something evaluated to =True=  (/e.g./ 1) if the
+                        tests must be launched using Chrome
+    - =WATIR_MARIONETTE= :: should be set to something evalued to =True= (/e.g. 1/)
+         if the tests must be launched on a recent Firefox version (> 45)
 
 
 **** Headless mode
