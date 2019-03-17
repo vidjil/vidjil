@@ -128,6 +128,8 @@ Database.prototype = {
 
     get_read: function(window, clone_id, sequence_file_id) {
 	var self = this;
+        var log = "Reads will be exported in a few minutes. You will be able to download them when they are ready. You can continue using the application.";
+        console.log({"type": "flash", "msg" : log, "priority": 2});
 	self.callProcess('default/run_request',
 			 {'sequence_file_id': sequence_file_id,
 			  'sample_set_id': self.m.sample_set_id,
