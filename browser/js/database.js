@@ -126,7 +126,7 @@ Database.prototype = {
                      })
     },
 
-    get_read: function(window, sequence_file_id) {
+    get_read: function(window, clone_id, sequence_file_id) {
 	var self = this;
 	self.callProcess('default/run_request',
 			 {'sequence_file_id': sequence_file_id,
