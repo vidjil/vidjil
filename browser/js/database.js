@@ -134,9 +134,20 @@ Database.prototype = {
 			  'config_id': self.m.db_key.config,
 			  'grep_reads': window},
 			 function(a) {
-			     openAndFillNewTab("Your reads are ready. <a href='"+DB_ADDRESS+"/results_file/download?filename=seq/clone.fa-1&results_file_id="+a.result_id+"'>Download them</a>");
+				// Link to result file and launch download
+                             var path_data = DB_ADDRESS+"/results_file/download?filename=seq/clone.fa-1&results_file_id="+a.result_id
+                             var file_name = "reads__"+clone_id+"__file_id_"+"_"+sequence_file_id+".fa"
+                             var anchor = document.createElement('a');
+                             anchor.setAttribute("download", file_name);
+                             anchor.setAttribute("href",     path_data);
+                             anchor.style = 'display: none';
+                             self.ajax_indicator_stop()
+                             document.body.appendChild(anchor);
+                             anchor.click();
+                             document.body.removeChild(anchor);
 			 });
     },
+
     
      /**
       * request a side process to the server
