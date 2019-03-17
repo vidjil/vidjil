@@ -144,7 +144,8 @@ Database.prototype = {
       * */
      callProcess : function (page, args, callback){
          var self=this;
-         
+         this.temporarilyDisableClickedLink();
+	 
          var arg = "";
          if (typeof args != "undefined" && Object.keys(args).length) 
              arg = this.argsToStr(args)
@@ -226,20 +227,7 @@ Database.prototype = {
      * */
     call: function (page, args) {
         var self = this;
-        try {
-            var event = window.event || arguments.callee.caller.arguments[0] 
-            event.stopPropagation();
-            var target = event.target
-            if (target.getAttribute("disabled")){
-                return;
-            } else {
-                target.setAttribute("disabled", "disabled")
-                self.ajax_indicator_start();
-                setTimeout(function(){target.removeAttribute("disabled")}, 2000)
-            }
-        }
-        catch(err)
-        {}
+	this.temporarilyDisableClickedLink()
         
         var url = self.db_address + page
         if (page.substr(0,4).toLowerCase() == "http") {
@@ -1114,6 +1102,33 @@ Database.prototype = {
         var tgt = $('#live-ajax');
         tgt.empty();
         $('body').css('cursor', 'default');
+    },
+
+    temporarilyDisableClickedLink: function() {
+	var self = this;
+        try {
+            var event = window.event;
+            if (typeof(event) === 'undefined') {
+                var caller = arguments.callee.caller;
+                while (caller != null && (caller.arguments.length == 0 ||
+                                          ! (caller.arguments[0] instanceof Event)))
+                    caller = caller.caller;
+                if (caller == null)
+                    return;
+                event = caller.arguments[0];
+            }
+            event.stopPropagation();
+            var target = $(event.target)
+            if (target.hasClass("disabledClass")){
+                return;
+            } else {
+                target.addClass("disabledClass")
+                self.ajax_indicator_start();
+                setTimeout(function(){target.removeClass("disabledClass")}, 3000)
+            }
+        }
+        catch(err)
+	{}
     },
     
     validate_fileform: function (form) { 
