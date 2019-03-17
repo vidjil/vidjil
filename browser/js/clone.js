@@ -1215,7 +1215,7 @@ Clone.prototype = {
                     html += "&emsp;"
                     var sample_set_id = this.m.samples.sequence_file_id[this.m.samples.order[j]];
                     call_reads = "db.get_read('" + this.id + "', "+ this.index +", " + sample_set_id + ')';
-                    html += '<i onclick="' + call_reads + '" class="icon-down" title="Download reads from this clone"></i>';
+                    html += '<i onclick="' + call_reads + '; m.closeInfoBox()" class="icon-down" title="Download reads from this clone"></i>';
                 }
                 html += "</td>"
             }
