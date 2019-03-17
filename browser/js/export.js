@@ -332,7 +332,7 @@ Report.prototype = {
     },
     
     info : function() {
-        var info = this.container("Report info")
+        var info = this.container("Report information")
         var left = $('<div/>', {'class': 'flex'}).appendTo(info);
         
         var date = new Date();
@@ -361,14 +361,14 @@ Report.prototype = {
         }
         
         var note = $('<div/>', {'class': 'info-note float-left'}).appendTo(left);
-        $('<div/>', {'class': 'case label', 'text' : "User note" }).appendTo(note);
+        // $('<div/>', {'class': 'case label', 'text' : "User note" }).appendTo(note);
         $('<div/>', {'class': 'note', 'text' : this.m.info }).appendTo(note);
         
         return this
     },
     
     sampleInfo : function(time) {
-        var sinfo = this.container("Sample info ("+this.m.getStrTime(time, "short_name")+")")
+        var sinfo = this.container("Sample information ("+this.m.getStrTime(time, "short_name")+")")
         var left = $('<div/>', {'class': 'flex'}).appendTo(sinfo);
         
         var content = [
@@ -397,10 +397,10 @@ Report.prototype = {
     },
 
     softwareInfo : function(time) {
-        var sinfo = this.container("Software info("+this.m.getStrTime(time, "short_name")+")");
+        var sinfo = this.container("Software information ("+this.m.getStrTime(time, "short_name")+")");
          var div = $('<div/>', {'class': 'flex'}).appendTo(sinfo);
          var content = [
-            {'label': "Software used:" , value : this.m.getSoftVersionTime(time)},
+            {'label': "Analysis software:" , value : this.m.getSoftVersionTime(time)},
             {'label': "Parameters:" , value : this.m.getCommandTime(time)}
          ];
 
@@ -542,7 +542,7 @@ Report.prototype = {
         var head = $('<div/>', {'class': 'float-left', 'id': 'segmentation-report'}).appendTo(reads_stats);
         $('<div/>', {'class': 'case', 'text': ' '}).appendTo(head);
         $('<div/>', {'class': 'case', 'text': 'total'}).appendTo(head);
-        $('<div/>', {'class': 'case', 'text': 'segmented'}).appendTo(head);
+        $('<div/>', {'class': 'case', 'text': 'analyzed'}).appendTo(head);
 
         if (this.m.system_selected.length < this.m.system_available.length) {
             $('<div/>', {'class': 'case', 'text': 'selected locus'}).appendTo(head); 
@@ -761,7 +761,7 @@ Report.prototype = {
         if (typeof this.m.logs == 'undefined')
             return this
 
-        var log = this.container("Report Log")
+        var log = this.container("Log")
 
         var table = $('<table/>', {'class': 'log-table flex'}).appendTo(log);
         for (var i=0; i < this.m.logs.length; i++ ){
