@@ -1211,14 +1211,11 @@ Clone.prototype = {
                 if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL) {
                   html += "<br />[" + this.getReads(this.m.samples.order[j]).toFixed(2) + "]"
                 }
-                if ($('#debug_menu').is(':visible') && (typeof this.m.db_key.config != 'undefined' )) {
-                html += "<br/>"
-                call_reads = "db.call('default/run_request', { "
-                call_reads += "'sequence_file_id': '" + this.m.samples.db_key[this.m.samples.order[j]] + "', "
-                call_reads += "'config_id' : '" + this.m.db_key.config + "', "
-                call_reads += "'grep_reads' : '" + this.id + "' })"
-                console.log(call_reads)
-                html += "<span class='button' onclick=\"" + call_reads + "\"> get reads </span>"
+                if (typeof this.m.db_key.config != 'undefined' ) {
+                    html += "&emsp;"
+                    var sample_set_id = this.m.samples.sequence_file_id[this.m.samples.order[j]];
+                    call_reads = "db.get_read('" + this.id + "', "+ this.index +", " + sample_set_id + ')';
+                    html += '<i onclick="' + call_reads + '; m.closeInfoBox()" class="icon-down" title="Download reads from this clone"></i>';
                 }
                 html += "</td>"
             }

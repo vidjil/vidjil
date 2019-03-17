@@ -156,6 +156,7 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     filename= db.sequence_file[id_sequence].filename
 
     res = {"redirect": "reload",
+           "processId": task.id,
            "message": "[%s] c%s: process requested - %s %s" % (data_id, id_config, grep_reads, filename)}
 
     log.info(res)
