@@ -1212,10 +1212,9 @@ Clone.prototype = {
                   html += "<br />[" + this.getReads(this.m.samples.order[j]).toFixed(2) + "]"
                 }
                 if (typeof this.m.db_key.config != 'undefined' ) {
-                html += "&emsp;"
-                call_reads = "db.get_read('" + this.id + "', "+ this.m.samples.sequence_file_id[this.m.samples.order[j]] + ')';
-                console.log(call_reads)
-                html += '<i onclick="' + call_reads + '" class="icon-down" title="Download reads from this clone"></i>';
+                    html += "&emsp;"
+                    call_reads = "db.get_read('" + this.id + "', "+ this.m.samples.sequence_file_id[this.m.samples.order[j]] + ')';
+                    html += '<i onclick="' + call_reads + '" class="icon-down" title="Download reads from this clone"></i>';
                 }
                 html += "</td>"
             }
