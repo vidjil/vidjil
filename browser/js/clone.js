@@ -1211,7 +1211,7 @@ Clone.prototype = {
                 if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL) {
                   html += "<br />[" + this.getReads(this.m.samples.order[j]).toFixed(2) + "]"
                 }
-                if ($('#debug_menu').is(':visible') && (typeof this.m.db_key.config != 'undefined' )) {
+                if (typeof this.m.db_key.config != 'undefined' ) {
                 html += "&emsp;"
                 call_reads = "db.get_read('" + this.id + "', "+ this.m.samples.sequence_file_id[this.m.samples.order[j]] + ')';
                 console.log(call_reads)
