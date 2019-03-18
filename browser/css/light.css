@@ -1946,9 +1946,13 @@ label.highlight_label {
   height: 100%;
   vertical-align: bottom;
 }
+i[class*="icon-"] {
+  cursor: pointer;
+}
 .disabledClass {
   pointer-events: none;
   opacity: 0.4;
+  cursor: auto;
 }
 .db_table td.pre-line {
   white-space: pre-line;
@@ -2241,4 +2245,9 @@ form .form_label {
 }
 [hidden] {
   display: none !important;
+}
+.disabledbutton {
+  pointer-events: none;
+  opacity: 0.4;
+  cursor: auto;
 }
