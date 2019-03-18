@@ -1,9 +1,12 @@
-\documentclass[10pt]{article}
+\documentclass[11pt]{article}
 \usepackage[english]{babel}
 \input{common-headers}
 
-\title{Mastering the Vidjil web application:\\ Browsing and analysing clones
+\title{Mastering the Vidjil web application \\[1ex] Day 1 -- Browsing and analysing clones
 }
+
+\widowpenalty10000
+\clubpenalty10000
 
 \begin{document}
 
@@ -17,6 +20,12 @@ These clones may have been computed by the Vidjil algorithm
 or by any other algorithm.}
 
 \bigskip
+
+
+\centerline{\includegraphics[width=.8\textwidth]{../../../vdj/vdj/doc/com/screenshots/vidjil-11-TRG-combined.png}}
+
+\bigskip
+
 
 \question{Connect to the public server (\url{https://app.vidjil.org}), either with your account
 or the demo account (\texttt{demo@vidjil.org} / \texttt{demo}),
@@ -38,35 +47,9 @@ In the following sections, we focus on the diagnosis sample.
 % how to view and filter clones and
 The section~\ref{sec:tracking} will deal with the comparison of several samples. 
 
-\section{Assessing the quality of the run and of the analysis}
-The Vidjil web application allows to run several ``RepSeq'' (immune repertoire analysis) algorithms.
-Each RepSeq algorithm has its own definition of what a clone is (or, more precisely
-a clonotype), how to output its sequence and how to assign a V(D)J designation.
-The number of analyzed reads will depend on the algorithm used.
-This sample has been processed using the Vidjil algorithm.
 
+\input{tutorial-quality}
 
-\marginpar{The percentage of analyzed reads can range from .01\,\% (for
-  RNA-Seq or capture data) to 98-99\,\% (for very high-quality runs mostly on
-  Illumina).}
-\question{How many reads have been analyzed in the current sample with the embedded algorithm ?}
-
-Now we will try to assess the reason why some reads were not analyzed in our
-sample.
-This might reflect a problem during the sequencing protocol\dots or that could
-be normal.
-For that sake you will need to display the information box by clicking on the
-\textit{i} in the upper left part.
-\question{What are the average read lengths on IGH? and on TRG?}
-The lines starting with \texttt{UNSEG} display the reasons why some reads have
-not been analyzed.
-
-You can see what those reasons mean in the online documentation of the
-algorithm: \href{http://www.vidjil.org/doc/vidjil-algo\#unsegmentation-causes}{vidjil.org/doc/vidjil-algo\#unsegmentation-causes
-}
-\question{What are the major causes explaining the reads have not been
-  analyzed? Also have a look at the average read lengths of these causes. Do
-  you notice something regarding the average read lengths?}
 
 \input{tutorial-clones}
 
@@ -76,13 +59,14 @@ algorithm: \href{http://www.vidjil.org/doc/vidjil-algo\#unsegmentation-causes}{v
 
 \centerline{\includegraphics[width=.5\textwidth]{./grid-1}}
 
+\end{document}
 \newpage
 
 
+\input{tutorial-server}
 \input{tutorial-several-samples}
 \input{tutorial-export}
 
-\input{tutorial-server}
 
 \vfill
 \flushright \it Aurélien Béliard, Aurélie Caillault, Mathieu Giraud, Tatiana Rocher, Mikaël Salson, Florian Thonier
