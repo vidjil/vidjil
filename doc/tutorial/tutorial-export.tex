@@ -1,0 +1,77 @@
+
+\section{Working with external software and exporting data}
+
+\subsection{Checking VDJ designations with other software}
+For some studies, VDJ designations are very important.
+In the list and in the sequence panel, those designations are written in their
+short form.
+
+\question{Put the mouse cursor over a clone. In the status bar (between the
+  grid and the sequence panel), the complete designation appears.}
+
+We can double check this designation with other popular software.
+\question{Select a few clones.}
+\marginpar{This requires an internet connection.}
+\question{Click on the down triangle, which is right to \com{IMGT/V-QUEST}. The
+  clone sequences are sent to IMGT/V-QUEST.}
+\question{Then tick the checkbox 5'V/D/3'J. In the sequence panel the boundaries of
+  the V(D)J genes as computed by IMGT/V-QUEST are underlined.}
+  
+Note that data returned by IMGT/V-QUEST is available by clicking on the \textit{i} icon of analyzed clones,
+enabling you to compare the annotations made by the original software and by IMGT/V-QUEST. 
+
+\question{You can also directly send the sequences to IMGT/V-QUEST or IgBlast
+  by clicking the corresponding buttons. This opens a new page with the
+  corresponding websites.}
+
+\bigskip
+
+It may happen the software makes a mistake in the VDJ designation.
+In such a case you're very welcome to report us the problem
+and we will try to improve the designation algorithm.
+
+\question{Go in the \com{Help} menu and click on \com{get
+    support}. It opens your mailer with a pre-composed email
+    describing the data you are on as well as the clones you selected.}.
+
+Even if you do not use the \com{get support} button, it's a good practise
+to send the complete address showing in your web browser, such
+as  \url{http://app.vidjil.org/?set=3241&config=39&plot=v,size,bar},
+when you want to discuss with colleagues or with us your data or your analyses.
+
+\bigskip
+
+Suppose that you would like to change the VDJ designation shown on the web application.
+\question{Click on the \textit{i} icon in the list of clones for the clone you
+  want to change the designation. In the segmentation part, click the edit
+  button. Choose what you would like to modify.}
+
+Beware: the modifications you made (name changes, clusters, clone
+tagging, sample reordering\dots) will \textbf{not} be automatically saved. You have to save
+your changes by yourself either by clicking on \com{save patient} in the top left menu (where the
+``patient'' name is written) or by using the \texttt{Ctrl+S} keyboard
+shortcut.
+For this demonstration data, you cannot save your changes as you do not have
+the rights to modify this patient.
+
+% TODO : créer un should-vdj automatiquement !
+\subsection{Exporting data}
+
+\question{In the export menu, generate printable reports by clicking on both entries starting with \com{export
+  report}. What differs between both?}
+
+\question{Select some clones and then, in the export menu, choose \com{export
+  fasta}. What happens?}
+
+\question{Open the \com{import/export} menu, and click on \com{export csv}.
+The resulting file describes all visible clones (V(D)J designation,  size for each sample).
+It can be opened by any spreadsheet software such as LibreOffice Calc or Excel for further analysis.}
+
+\question{Open again \com{import/export} menu, and click on the
+  \com{export bottom graph} button.
+This exports the current view of the plot.}
+
+\question{\new Select some clones and align them. The alignment can be
+  exported with the \com{export aligned fasta} button in the
+  \com{import/export} menu.}
+

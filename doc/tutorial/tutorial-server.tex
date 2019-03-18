@@ -1,0 +1,129 @@
+\section{Dealing with samples and patients}
+We will see how to make the best use of the patient and sample database and
+how to use it efficiently.
+For this sake you need an account with the rights to create new patients,
+runs, sets, to upload data and, preferably, to run analyses.
+Therefore the demo account is not suitable.
+
+\question{ Retrieve the toy dataset at
+  \href{http://vidjil.org/seqs/tutorial_dataset.zip}{vidjil.org/seqs/tutorial\_dataset.zip}
+  and extract the files from the archive.}
+
+You should now have three files. We will imagine that those three files are
+the results from a single sequencing run. More precisely, each one corresponds to
+a single patient. Thus we now want to upload those files and assign all of
+them to a same \com{run} and each of them to a single \com{patient}.
+
+\question{
+  Go to the main page of the Vidjil platform (by default
+  \href{https://app.vidjil.org}{app.vidjil.org}).
+  You should be on the \com{patients} page.
+  Go at the bottom of the page and click on \com{+ new patients} to create the
+  three patients.
+}
+
+Note that usually you should check whether the patient has
+already been created by searching her/his name in the search box at the
+upper left corner
+
+\question{
+  You are now on the  creation page for patients, runs, and sets.
+  You can create as many patients, runs and sets as you want.
+  \marginpar{Patients, runs and sets are just different ways to
+    group samples. 
+    The names are just used to add some semantic so that you
+    know that your patients will be on the patient page, your runs on the run
+    page and your other sets (thus any set of samples you want to make) on the
+    run page.}
+  Here we already have a line to create one patient.
+  We want to create two additional patients and one run.
+  Thus click twice on \com{add patient} and once on \com{add run}.
+}
+
+  Now you should have three lines with Patient 1, Patient 2, Patient 3 and one
+  line with Run 1.
+  If you created too many lines you can remove some by clicking on the cross at
+  the right hand side.
+
+\question{
+  For instance click on the cross corresponding to Patient 3.
+  The line has now been removed.
+  Click again on \com{add patient} so that the line appears again (it is now
+  called Patient 4).
+}
+
+\question{ Now you can fill the mandatory fields (circled with red) and,
+  optionally, the other fields.}
+
+The last field is optional but it is very important (the field called
+\com{patient/run information (\#tags can be used)}.
+
+Here you can enter any information relevant to this set of samples.
+More specifically you can enter tags (starting with a \#) that will allow
+you to search very easily and quickly all the patients/runs/sets sharing
+this tag.
+By default when you enter a \# in this field, some tags appear and the
+suggestions are  updated while you enter other characters.
+Note that a tag cannot contain any space.
+Also note that you can create other tags just by entering whatever you would
+like in the field preceded with a \#. Thus any tag you enter is saved (and
+can be suggested later on).
+
+\question{For patient 1 in this last field, enter \texttt{\#diagnosis of
+    patient with \#B-ALL}. For patient 2, enter \texttt{\#blood sample \#CLL}.
+  For patient 4, enter \texttt{bone \#marrow \#B-ALL}}
+
+Now the three patients and the run have been created but we have not uploaded
+the sequence files yet.
+
+\question{Now go to the \com{runs} page. You should see the run you have just
+  created. Click on it. Then click on \com{+ add samples}.}
+
+Similarly to the patient/run creation page, we can add as many samples as we
+want on this page.
+
+\question{As we need to upload three samples, click twice on the \com{add
+    other sample} button so that you have three lines to add a sample.}
+
+\question{For sample 1, choose the file corresponding to patient 1 (and
+  respectively for patient 2 and 3). You can also add extra information, with
+  tags, as previously.}
+
+Note the \com{common sets} field. This field means that all the samples will
+be added to this run (the one you created). If you would like to \textbf{all}
+the samples to another patient/run/set you should specify it here.
+
+In our case we want to add each sample to a different patient. Thus we don't
+need to modify this field.
+
+\question{Instead we need to modify the last field on each line. Click on
+  it. A list should appear with the last patients/runs/sets you created.
+  Either click on the correct patient or type the first letters of her/his
+  name. Then validate with \com{Enter} or by clicking on the correct entry.}
+
+\question{When you have associated each sample to its corresponding patient
+  you can upload the samples by clicking on the \com{Submit samples} button.}
+
+Now you are back on the page of the run where you should see the three samples
+that are being uploaded.
+
+\question{When the upload is finished you launch the analysis by selecting the
+configuration in the drop down at the right (\com{multi+inc+xxx}) and then
+clicking on the gearwheel.}
+
+You can have a coffee, a tea, or something else, while the process is
+launched.
+
+\question{To regularly check the status of your job you can click
+  on the \com{reload} button at the button left of the page.
+  Your process usually goes through the following stages: \com{QUEUED},
+  (possibly \com{STOPPED}), \com{ASSIGNED}, \com{RUNNING}, \com{COMPLETED} (or
+  \com{FAILED} when there is an issue, in such a case please contact us)}
+
+Then you can view the results as explained before.
+Instead we will remain on the server.
+
+\question{Now go back to the \com{patients} page. You can filter the page
+  using the tags you entered previously.
+  Enter \texttt{\#B-ALL} in the search box (notice the autocompletion that helps you)
+  and validate with \com{Enter}.}
