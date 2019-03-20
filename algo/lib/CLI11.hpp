@@ -4432,7 +4432,7 @@ inline std::string
 Formatter::make_group(std::string group, bool is_positional, std::vector<const Option *> opts) const {
     std::stringstream out;
 
-    out << "\n" << group << ":\n";
+    out << "\n" << group << "\n";
     for(const Option *opt : opts) {
         out << make_option(opt, is_positional);
     }
