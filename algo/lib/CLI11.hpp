@@ -178,7 +178,7 @@ inline std::vector<std::string> split(const std::string &s, char delim) {
 }
 
 /// Simple function to join a string
-template <typename T> std::string join(const T &v, std::string delim = ",") {
+template <typename T> std::string join(const T &v, std::string delim = ", ") {
     std::ostringstream s;
     auto beg = std::begin(v);
     auto end = std::end(v);
@@ -211,7 +211,7 @@ std::string join(const T &v, Callable func, std::string delim = ",") {
 }
 
 /// Join a string in reverse order
-template <typename T> std::string rjoin(const T &v, std::string delim = ",") {
+template <typename T> std::string rjoin(const T &v, std::string delim = ", ") {
     std::ostringstream s;
     for(std::size_t start = 0; start < v.size(); start++) {
         if(start > 0)
@@ -8818,7 +8818,7 @@ inline std::string
 Formatter::make_group(std::string group, bool is_positional, std::vector<const Option *> opts) const {
     std::stringstream out;
 
-    out << "\n" << group << ":\n";
+    out << "\n" << group << "\n";
     for(const Option *opt : opts) {
         out << make_option(opt, is_positional);
     }
