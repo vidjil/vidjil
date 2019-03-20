@@ -199,8 +199,8 @@ def checkProcess():
             res = {"success" : "true",
                    "status" : task.status,
                    "processId" : task.id}
-        
-    log.error(res)
+
+    log.debug(str(res))
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
