@@ -158,7 +158,7 @@ def run_contamination():
     
     res = {"success" : "true",
            "processId" : task.id}
-    log.error(res)
+    log.debug(str(res))
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def run_extra():
@@ -167,7 +167,7 @@ def run_extra():
                                                             min_threshold=5))
     res = {"success" : "true",
            "processId" : task.id}
-    log.debug(res)
+    log.debug(str(res))
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def checkProcess():
