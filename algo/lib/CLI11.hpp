@@ -1408,7 +1408,7 @@ class FormatterBase {
     virtual ~FormatterBase() = default;
 
     /// This is the key method that puts together help
-    virtual std::string make_help(const App *, std::string, AppFormatMode) const = 0;
+    virtual std::string make_help(const App *, std::string, AppFormatMode, int) const = 0;
 
     ///@}
     /// @name Setters
@@ -1440,7 +1440,7 @@ class FormatterBase {
 
 /// This is a specialty override for lambda functions
 class FormatterLambda final : public FormatterBase {
-    using funct_t = std::function<std::string(const App *, std::string, AppFormatMode)>;
+    using funct_t = std::function<std::string(const App *, std::string, AppFormatMode, int)>;
 
     /// The lambda to hold and run
     funct_t lambda_;
@@ -1450,8 +1450,8 @@ class FormatterLambda final : public FormatterBase {
     explicit FormatterLambda(funct_t funct) : lambda_(std::move(funct)) {}
 
     /// This will simply call the lambda function
-    std::string make_help(const App *app, std::string name, AppFormatMode mode) const override {
-        return lambda_(app, name, mode);
+    std::string make_help(const App *app, std::string name, AppFormatMode mode, int level) const override {
+      return lambda_(app, name, mode, level);
     }
 };
 
@@ -1474,7 +1474,7 @@ class Formatter : public FormatterBase {
     virtual std::string make_positionals(const App *app) const;
 
     /// This prints out all the groups of options
-    std::string make_groups(const App *app, AppFormatMode mode) const;
+    std::string make_groups(const App *app, AppFormatMode mode, int level) const;
 
     /// This prints out all the subcommands
     virtual std::string make_subcommands(const App *app, AppFormatMode mode) const;
@@ -1495,7 +1495,7 @@ class Formatter : public FormatterBase {
     virtual std::string make_usage(const App *app, std::string name) const;
 
     /// This puts everything together
-    std::string make_help(const App *, std::string, AppFormatMode) const override;
+    std::string make_help(const App *, std::string, AppFormatMode, int) const override;
 
     ///@}
     /// @name Options
@@ -1609,6 +1609,9 @@ template <typename CRTP> class OptionBase {
 
     /// True if this is a required option
     bool get_required() const { return required_; }
+
+    /// The help level
+    int get_help_level() const { return help_level_; }
 
     /// The status of ignore case
     bool get_ignore_case() const { return ignore_case_; }
@@ -2311,7 +2314,7 @@ struct AppFriend;
 
 namespace FailureMessage {
 std::string simple(const App *app, const Error &e);
-std::string help(const App *app, const Error &e);
+std::string help(const App *app, const Error &e, int level);
 } // namespace FailureMessage
 
 class App;
@@ -2571,7 +2574,7 @@ class App {
     }
 
     /// Set the help formatter
-    App *formatter_fn(std::function<std::string(const App *, std::string, AppFormatMode)> fmt) {
+    App *formatter_fn(std::function<std::string(const App *, std::string, AppFormatMode, int)> fmt) {
         formatter_ = std::make_shared<FormatterLambda>(fmt);
         return this;
     }
@@ -3531,6 +3534,11 @@ class App {
             return e.get_exit_code();
         }
 
+        if(dynamic_cast<const CLI::CallForAdvancedHelp *>(&e) != nullptr) {
+            out << help("", AppFormatMode::Normal, 2);
+            return e.get_exit_code();
+        }
+
         if(e.get_exit_code() != static_cast<int>(ExitCodes::Success)) {
             if(failure_message_)
                 err << failure_message_(this, e) << std::flush;
@@ -3619,7 +3627,7 @@ class App {
 
     /// Makes a help message, using the currently configured formatter
     /// Will only do one subcommand at a time
-    std::string help(std::string prev = "", AppFormatMode mode = AppFormatMode::Normal) const {
+    std::string help(std::string prev = "", AppFormatMode mode = AppFormatMode::Normal, int level=1) const {
         if(prev.empty())
             prev = get_name();
         else
@@ -3630,7 +3638,7 @@ class App {
         if(!selected_subcommands.empty())
             return selected_subcommands.at(0)->help(prev, mode);
         else
-            return formatter_->make_help(this, prev, mode);
+            return formatter_->make_help(this, prev, mode, level);
     }
 
     ///@}
@@ -4442,15 +4450,16 @@ inline std::string Formatter::make_positionals(const App *app) const {
         return make_group(get_label("Positionals"), true, opts);
 }
 
-inline std::string Formatter::make_groups(const App *app, AppFormatMode mode) const {
+inline std::string Formatter::make_groups(const App *app, AppFormatMode mode, int level=1) const {
     std::stringstream out;
     std::vector<std::string> groups = app->get_groups();
 
     // Options
     for(const std::string &group : groups) {
-        std::vector<const Option *> opts = app->get_options([app, mode, &group](const Option *opt) {
+        std::vector<const Option *> opts = app->get_options([app, mode, level, &group](const Option *opt) {
             return opt->get_group() == group                    // Must be in the right group
                    && opt->nonpositional()                      // Must not be a positional
+                   && opt->get_help_level() <= level            // Must have a help level at most equal to level
                    && (mode != AppFormatMode::Sub               // If mode is Sub, then
                        || (app->get_help_ptr() != opt           // Ignore help pointer
                            && app->get_help_all_ptr() != opt)); // Ignore help all pointer
@@ -4523,7 +4532,7 @@ inline std::string Formatter::make_footer(const App *app) const {
         return "";
 }
 
-inline std::string Formatter::make_help(const App *app, std::string name, AppFormatMode mode) const {
+inline std::string Formatter::make_help(const App *app, std::string name, AppFormatMode mode, int level) const {
 
     // This immediately forwards to the make_expanded method. This is done this way so that subcommands can
     // have overridden formatters
@@ -4535,7 +4544,7 @@ inline std::string Formatter::make_help(const App *app, std::string name, AppFor
     out << make_description(app);
     out << make_usage(app, name);
     out << make_positionals(app);
-    out << make_groups(app, mode);
+    out << make_groups(app, mode, level);
     out << make_subcommands(app, mode);
     out << make_footer(app);
 
