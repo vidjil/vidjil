@@ -42,6 +42,7 @@ def search_clonedb(sequences, sample_set_id):
                                                      'index': 'clonedb_{}'.format(parent_group)})
     options += sequences[1:]
     args = grep_clones.parser.parse_args(options)
+    log.debug("Seaching {} sequences in CloneDB for group {}".format(len(sequences), parent_group))
     try:
         occurrences = grep_clones.launch_search(args)
     except ValueError:
