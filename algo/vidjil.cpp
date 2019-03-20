@@ -224,6 +224,8 @@ int main (int argc, char **argv)
 #endif
 
   CLI::App app{"# vidjil-algo -- V(D)J recombinations analysis", argv[0]};
+  app.get_formatter()->label("REQUIRED", "");
+  app.get_formatter()->label("Positionnals", "");
   app.failure_message(failure_message_doc);
 
   //$$ options: defaults
