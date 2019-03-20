@@ -167,7 +167,7 @@ inline std::string failure_message_doc(const CLI::App *app, const CLI::Error &e)
     std::string header = ERROR_STRING + std::string(e.what()) + "\n";
     header += "For more information, ";
     if(app->get_help_ptr() != nullptr)
-        header += "run with " + app->get_help_ptr()->single_name() + " or ";
+        header += "run with " + app->get_help_ptr()->get_name() + " or ";
     header += "see " DOCUMENTATION ".\n";
     return header;
 }
@@ -224,7 +224,7 @@ int main (int argc, char **argv)
 #endif
 
   CLI::App app{"# vidjil-algo -- V(D)J recombinations analysis", argv[0]};
-  app.set_failure_message(failure_message_doc);
+  app.failure_message(failure_message_doc);
 
   //$$ options: defaults
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
@@ -242,7 +242,7 @@ int main (int argc, char **argv)
                                   - BAM (.bam)
                               Paired-end reads should be merged before given as an input to vidjil-algo.
                  )Z")
-    -> required() -> set_type_name("");
+    -> required() -> type_name("");
 
 
   // ----------------------------------------------------------------------------------------------------------------------
@@ -254,14 +254,14 @@ int main (int argc, char **argv)
                  "\n  \t\t" COMMAND_WINDOWS   "  \t locus detection, window extraction"
                  "\n  \t\t" COMMAND_SEGMENT   "  \t detailed V(D)J designation, without prior clustering (not as efficient)"
                  "\n  \t\t" COMMAND_GERMLINES "  \t statistics on k-mers in different germlines")
-    -> group(group) -> set_type_name("COMMAND");
+    -> group(group) -> type_name("COMMAND");
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Input" ;
 
   string read_header_separator = DEFAULT_READ_HEADER_SEPARATOR ;
   app.add_option("--header-sep", read_header_separator, "separator for headers in the reads file", false)
-    -> group(group) -> level() -> set_type_name("CHAR='" DEFAULT_READ_HEADER_SEPARATOR "'");
+    -> group(group) -> level() -> type_name("CHAR='" DEFAULT_READ_HEADER_SEPARATOR "'");
 
   int max_reads_processed = NO_LIMIT_VALUE;
   int max_reads_processed_sample = NO_LIMIT_VALUE;
@@ -287,7 +287,7 @@ int main (int argc, char **argv)
          -g PATH
                     multiple locus/germlines, shortcut for '-g PATH/)Z" DEFAULT_MULTI_GERMLINE_FILE R"Z(',
                     processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with incomplete/unusal recombinations)Z")
-    -> group(group) -> set_type_name("GERMLINES");
+    -> group(group) -> type_name("GERMLINES");
 
   vector <string> v_reps_V ;
   vector <string> v_reps_D ;
@@ -295,16 +295,16 @@ int main (int argc, char **argv)
    
   app.add_option("-V", v_reps_V,
                  "custom V germline multi-fasta file(s)")
-    -> group(group) -> set_type_name("FILE");
+    -> group(group) -> type_name("FILE");
 
 
   app.add_option("-D", v_reps_D,
                  "custom D germline multi-fasta file(s), analyze into V(D)J components")
-    -> group(group) -> set_type_name("FILE");
+    -> group(group) -> type_name("FILE");
 
   app.add_option("-J", v_reps_J,
                  "custom V germline multi-fasta file(s)")
-    -> group(group) -> set_type_name("FILE");
+    -> group(group) -> type_name("FILE");
 
 
   bool multi_germline_unexpected_recombinations_12 = false;
@@ -339,7 +339,7 @@ int main (int argc, char **argv)
                    return worked;
                  },
                  "k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)")
-    -> group(group) -> level() -> set_type_name("INT");
+    -> group(group) -> level() -> type_name("INT");
 
   int wmer_size = DEFAULT_W ;
   app.add_option("--window,-w", wmer_size,
@@ -362,7 +362,7 @@ int main (int argc, char **argv)
                  },
                  // trim_sequences,
                  "trim V and J genes (resp. 5' and 3' regions) to keep at most <INT> nt  (0: no trim)")
-    -> group(group) -> level() ->  set_type_name("INT");
+    -> group(group) -> level() -> type_name("INT");
 
   app.add_option("--seed,-s",
                  [&](CLI::results_t res) {
@@ -374,7 +374,7 @@ int main (int argc, char **argv)
                  "seed, possibly spaced, used for the V/J affectation (default: depends on germline), given either explicitely or by an alias"
                  PAD_HELP + string_of_map(seedMap, " ")
                  )
-    -> group(group) -> level() -> set_type_name("SEED=" DEFAULT_SEED);
+    -> group(group) -> level() -> type_name("SEED=" DEFAULT_SEED);
 
 
   // ----------------------------------------------------------------------------------------------------------------------
@@ -408,8 +408,8 @@ int main (int argc, char **argv)
   vector <string> windows_labels_explicit ;
   string windows_labels_file = "" ;
 
-  app.add_option("--label", windows_labels_explicit, "label the given sequence(s)") -> group(group) -> level() -> set_type_name("SEQUENCE");
-  app.add_option("--label-file", windows_labels_file, "label a set of sequences given in <file>") -> group(group) -> level() -> set_type_name("FILE");
+  app.add_option("--label", windows_labels_explicit, "label the given sequence(s)") -> group(group) -> level() -> type_name("SEQUENCE");
+  app.add_option("--label-file", windows_labels_file, "label a set of sequences given in <file>") -> group(group) -> level() -> type_name("FILE");
 
   bool only_labeled_windows = false ;
   app.add_flag("--label-filter", only_labeled_windows, "filter -- keep only the windows related to the labeled sequences") -> group(group) -> level();
@@ -441,7 +441,7 @@ int main (int argc, char **argv)
                    // TODO: return false on bad input
                  },
                  "maximal number of clones to be analyzed with a full V(D)J designation ('" NO_LIMIT "': no limit, do not use)")
-    -> group(group) -> set_type_name("INT=" + string_of_int(max_clones));
+    -> group(group) -> type_name("INT=" + string_of_int(max_clones));
 
   app.add_flag_function("--all", [&](size_t n) {
       UNUSED(n);
@@ -474,7 +474,7 @@ int main (int argc, char **argv)
                    return true;
                  },
                  "use custom Cost for clone analysis: format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_SEGMENT_COST) + ")")
-    -> group(group) -> level() -> set_type_name("COST");
+    -> group(group) -> level() -> type_name("COST");
 
   double expected_value_D = THRESHOLD_NB_EXPECTED_D;
   app.add_option("--analysis-e-value-D,-E", expected_value_D,
@@ -510,7 +510,7 @@ int main (int argc, char **argv)
   app.add_flag("--cluster-load-matrix", load_comp, "load comparative matrix for clustering") -> group(group) -> level();
 
   string forced_edges = "" ;
-  app.add_option("--cluster-forced-edges", forced_edges, "manual clustering -- a file used to force some specific edges") -> group(group) -> level() -> set_type_name("FILE");
+  app.add_option("--cluster-forced-edges", forced_edges, "manual clustering -- a file used to force some specific edges") -> group(group) -> level() -> type_name("FILE");
 
   Cost cluster_cost = DEFAULT_CLUSTER_COST ;
   app.add_option("--cluster-cost",
@@ -519,7 +519,7 @@ int main (int argc, char **argv)
                    return true;
                  },
                  "use custom Cost for automatic clustering : format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_CLUSTER_COST) + ")")
-    -> group(group) -> level() -> set_type_name("COST");
+    -> group(group) -> level() -> type_name("COST");
 
   
   // ----------------------------------------------------------------------------------------------------------------------
@@ -559,8 +559,8 @@ int main (int argc, char **argv)
   string out_dir = DEFAULT_OUT_DIR;
   string f_basename = "";
 
-  app.add_option("--dir,-o", out_dir, "output directory", true) -> group(group) -> set_type_name("PATH");
-  app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> set_type_name("STRING");
+  app.add_option("--dir,-o", out_dir, "output directory", true) -> group(group) -> type_name("PATH");
+  app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> type_name("STRING");
 
 
   int verbose = 0 ;
@@ -581,7 +581,7 @@ int main (int argc, char **argv)
     },
     "output, by clone, reads related to the given window sequence, even when they are below the thresholds"
     PAD_HELP "(equivalent to --label SEQUENCE -label-filter --out-reads)")
-    -> group(group) -> level() -> set_type_name("SEQUENCE");
+    -> group(group) -> level() -> type_name("SEQUENCE");
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Help";
@@ -606,7 +606,7 @@ int main (int argc, char **argv)
   DEPRECATED("-l", "'-l' is deprecated, please use '--label'");
 
   // ----------------------------------------------------------------------------------------------------------------------
-  app.set_footer(usage_examples(argv[0]));
+  app.footer(usage_examples(argv[0]));
 
   //$$ options: parsing
   CLI11_PARSE(app, argc, argv);
