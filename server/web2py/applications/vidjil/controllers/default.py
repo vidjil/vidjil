@@ -127,8 +127,11 @@ def run_request():
 
     id_sample_set = request.vars["sample_set_id"]
 
+    extra_info = ''
+
     if "grep_reads" in request.vars:
         grep_reads = request.vars["grep_reads"]
+        extra_info += 'to get reads '
     else:
         grep_reads = None
 
@@ -138,15 +141,17 @@ def run_request():
     if id_config:
         if not auth.can_use_config(id_config) :
             error += "you do not have permission to launch process for this config ("+str(id_config)+"), "
+        else:
+            extra_info += 'with config '+db.config[id_config].name
 
     if error == "" :
         res = schedule_run(request.vars["sequence_file_id"], id_config, grep_reads)
-        log.info("run requested", extra={'user_id': auth.user.id, 'record_id': request.vars['sequence_file_id'], 'table_name': 'sequence_file'})
+        log.info("run requested "+extra_info, extra={'user_id': auth.user.id, 'record_id': request.vars['sequence_file_id'], 'table_name': 'sequence_file'})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
         res = {"success" : "false",
-               "message" : "default/run_request : " + error}
+               "message" : "default/run_request "+extra_info+" : " + error}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
@@ -158,7 +163,7 @@ def run_contamination():
     
     res = {"success" : "true",
            "processId" : task.id}
-    log.error(res)
+    log.debug(str(res))
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def run_extra():
@@ -167,7 +172,7 @@ def run_extra():
                                                             min_threshold=5))
     res = {"success" : "true",
            "processId" : task.id}
-    log.debug(res)
+    log.debug(str(res))
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def checkProcess():
@@ -199,8 +204,8 @@ def checkProcess():
             res = {"success" : "true",
                    "status" : task.status,
                    "processId" : task.id}
-        
-    log.error(res)
+
+    log.debug(str(res))
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
