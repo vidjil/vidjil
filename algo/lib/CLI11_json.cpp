@@ -1,5 +1,6 @@
-#include <CLI/CLI.hpp>
-#include <nlohmann/json.hpp>
+// From CLI11 examples
+#include "CLI11.hpp"
+#include "json.hpp"
 
 // This example is only built on GCC 7 on Travis due to mismatch in stdlib
 // for clang (CLI11 is forgiving about mismatches, json.hpp is not)
