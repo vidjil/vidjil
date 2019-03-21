@@ -57,6 +57,7 @@
 
 #include "lib/CLI11.hpp"
 #include "lib/json.hpp"
+#include "lib/CLI11_json.hpp"
 
 #include "vidjil.h"
 
