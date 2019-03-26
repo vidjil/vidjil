@@ -262,7 +262,7 @@ test_legacy-browser-functional:
   extends: .browser-functional
   variables:
     WATIR_CHROME: "1"
-    FUNCTIONAL_CLIENT_BROWSER_PATH: ""
+    IGNORE_FUNCTIONAL_CBP: "1"
   tags:
     - legacy
 
@@ -277,7 +277,7 @@ test_legacy-browser-functional-external:
   extends: .browser-functional-external
   variables:
     WATIR_CHROME: "1"
-    FUNCTIONAL_CLIENT_BROWSER_PATH: ""
+    IGNORE_FUNCTIONAL_CBP: "1"
   tags:
     - legacy
 

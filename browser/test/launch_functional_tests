@@ -1,6 +1,6 @@
 # sh launch_functional_tests functional/test_*rb
 
-if [ -z "$FUNCTIONAL_CLIENT_BROWSER_PATH" ]; then
+if [ -z "$FUNCTIONAL_CLIENT_BROWSER_PATH" -o ! -z "$IGNORE_FUNCTIONAL_CBP" ]; then
     FUNCTIONAL_CLIENT_BROWSER_PATH="."
 fi
 
