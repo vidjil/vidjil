@@ -194,7 +194,7 @@ class TestMultilocus < BrowserTest
       name = $b.tag_item('0')[:name]
       name.wait_until(&:present?)
       name.click
-      name.wait_while(&:present?)
+      $b.until { not $b.tag_item('0')[:name].present? }
 
       $b.until {$b.clone_info('25')[:name].style('color') ==  'rgba(220, 50, 47, 1)' }
     end
