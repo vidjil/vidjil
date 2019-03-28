@@ -112,6 +112,11 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
+#define DEFAULT_MIN_COVER_REPRESENTATIVE 3 // At least 3 reads to support a
+                                           // representative (consisting of at
+                                           // least
+                                           // DEFAULT_RATIO_REPRESENTATIVE of
+                                           // the clone's reads)
 
 #define DEFAULT_KMER_THRESHOLD 1
 
@@ -684,7 +689,7 @@ int main (int argc, char **argv)
       cout << "# using default sequence file: " << f_reads << endl ;
     }
 
-  size_t min_cover_representative = (size_t) (min_reads_clone < (int) max_auditionned ? min_reads_clone : max_auditionned) ;
+  size_t min_cover_representative = (size_t) min(min_reads_clone, DEFAULT_MIN_COVER_REPRESENTATIVE);
 
   // Check seed buffer  
   if (seed.size() >= MAX_SEED_SIZE)
