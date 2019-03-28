@@ -12,6 +12,9 @@ class TestMultilocus < BrowserTest
       if $b.div(id: 'tip-container').present?
         $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
       end
+
+      # Make upload menu appear to test the application with this menu too
+      $b.execute_script("$('#upload_summary')[0].style.display='block';")
     end
   end
 
@@ -132,7 +135,6 @@ class TestMultilocus < BrowserTest
 
   def check_when_list_or_scatterplot_clicked
     clone_name = $b.clone_info('25')[:name]
-    assert ( $b.infoline.inner_html == clone_name.title), ">> Clone name is not correct in focus div"
     assert ( $b.clone_in_list('25').class_name.include? "list_select" ), ">> Incorrect class name, clone is not selected"
     assert ( $b.clone_in_scatterplot('25', :class => "circle_select").exists?)
     assert ( $b.clone_in_graph('25', :class=> "graph_select").exists?)
@@ -195,7 +197,7 @@ class TestMultilocus < BrowserTest
       name = $b.tag_item('0')[:name]
       name.wait_until(&:present?)
       name.click
-      name.wait_while(&:present?)
+      $b.until { not $b.tag_item('0')[:name].present? }
 
       $b.until {$b.clone_info('25')[:name].style('color') ==  'rgba(220, 50, 47, 1)' }
     end
@@ -383,6 +385,34 @@ class TestMultilocus < BrowserTest
       assert ($b.clone_info('77')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 77 have also changed color"
       assert ($b.clone_info('88')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 88 have also changed color"
     end
+  end
+
+  def test_20_menu_palette
+    original_color = $b.body.style('background-color')
+    dark = $b.menu_item('palette_dark')
+    dark.click
+
+    assert ($b.body.style('background-color') != original_color)
+    assert ($b.body.style('background-color').include? "51, 51, 51"), "Background should be dark"
+
+    $b.menu_item('palette_light').click
+
+    assert ($b.body.style('background-color') == original_color)
+  end
+
+  def test_21_menu_manual
+    $b.menu_item('help_manual').click
+
+    assert ($b.window(:title => /user manual/)), "User manual is opened"
+    $b.window(:title => /user manual/).use do
+      assert ($b.h1(:text => /user manual/).present?), "Make sure the page is loaded"
+    end
+  end
+
+  def test_22_menu_tutorial
+    $b.menu_item('help_tutorial').click
+
+    assert ($b.window(:title => /Mastering the Vidjil web application/)), "Tutorial is opened"
   end
 
   # Not really a test

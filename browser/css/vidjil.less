@@ -123,11 +123,7 @@ ul{
 }
 
 #upload_summary {
-  float: right;
   display:none;
-  margin-right: 200px;
-  position: relative;
-  right: 200px;
   z-index: 10;
   background-color: @background;
 }
@@ -981,6 +977,12 @@ span .end-codon-not-first {
 
 #add_clone_menu > #addclone_input.error {
   border: 1px solid @message_border_red;
+}
+
+#menu_right_part {
+   float:right;
+   display: flex;
+   justify-content: flex-end;
 }
 
 .buttonSelector {

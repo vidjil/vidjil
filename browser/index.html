@@ -70,13 +70,6 @@
                                     m.loadAnalysis('upload_analysis');">start</button> 
         </div>
         
-        <div id="upload_summary" style="" class="menu" onmouseover="showSelector('upload_summary_selector');" onmouseout="hideSelector();">
-            <span id="upload_summary_label">upload</span>
-            <div id="upload_summary_selector" class="selector"><div>
-
-            </div></div>
-        </div>
-
         <div id="add_clone_menu">
             <span class="closeButton" onclick="cancel();">X</span>
             <h2>Add clones from sequences</h2>
@@ -282,39 +275,48 @@
                 </div>
             </div>
 
-            <div class="menu" id="alert" style="float: right;"></div>
-            <div id="logo" style="float: right;" onclick="console.log({'type': 'popup', 'default':'welcome'})">Vidjil <span class='logo'>(beta)</span></div>
 
-            <div class="menu" style="float: right" onmouseover="showSelector('helpSelector');"> help
-                <div id="helpSelector" class="selector"><div>
-                    <a class="buttonSelector getHelp" onclick="report.sendMail()">get support</a>
-                    <a class="buttonSelector" href="http://www.vidjil.org/doc/user" target="_blank">manual</a>
-                    <a class="buttonSelector" href="http://www.vidjil.org/doc/tutorial/mastering-vidjil.html" target="_blank">tutorial</a>
-                    <a class="buttonSelector devel-mode" onclick="my_tips.reset()">reset tips of the day</a>
-                </div></div>
-                </div>
-
-            <div style="float: right" class="menu" onmouseover="showSelector('paletteSelector');"> palette 
-                <div id="paletteSelector" class="selector"><div>
-                    <a class="buttonSelector" onclick="changeStyle('solarizeL')">light</a>
-                    <a class="buttonSelector" onclick="changeStyle('display')">light (presentation)</a>
-                    <a class="buttonSelector" onclick="changeStyle('solarizeD')">dark</a>
-                </div></div>
-            </div>
-            <div style="float: right; margin: 5px;" id='live-ajax'>
+        <div id="menu_right_part">
+            <div id='live-ajax'>
                 <div class="active-container">
                     <img src="images/ajax-loader.gif" />
                 </div>
             </div>
 
-            <div id="fps" style="float: right; display: none"> </div>
+            <div id="upload_summary" class="menu" onmouseover="showSelector('upload_summary_selector');" onmouseout="hideSelector();">
+              <span id="upload_summary_label">upload</span>
+              <div id="upload_summary_selector" class="selector"><div>
+
+              </div></div>
+            </div>
+
+            <div id="palette_menu" class="menu" onmouseover="showSelector('paletteSelector');"> palette
+                <div id="paletteSelector" class="selector"><div>
+                    <a id="palette_light" class="buttonSelector" onclick="changeStyle('solarizeL')">light</a>
+                    <a id="palette_light_presentation" class="buttonSelector" onclick="changeStyle('display')">light (presentation)</a>
+                    <a id="palette_dark" class="buttonSelector" onclick="changeStyle('solarizeD')">dark</a>
+                </div></div>
+            </div>
+            <div id="help_menu" class="menu" onmouseover="showSelector('helpSelector');"> help
+                <div id="helpSelector" class="selector"><div>
+                    <a id="help_support" class="buttonSelector getHelp" onclick="report.sendMail()">get support</a>
+                    <a id="help_manual" class="buttonSelector" href="http://www.vidjil.org/doc/user" target="_blank">manual</a>
+                    <a id="help_tutorial" class="buttonSelector" href="http://www.vidjil.org/doc/tutorial/mastering-vidjil.html" target="_blank">tutorial</a>
+                    <a class="buttonSelector devel-mode" onclick="my_tips.reset()">reset tips of the day</a>
+                </div></div>
+                </div>
+
+            <div id="fps" style="display: none"> </div>
             <div id="header_messages" class="message_container header"></div>
 
+            <div class="menu" id="alert"></div>
+            <div id="logo"  onclick="console.log({'type': 'popup', 'default':'welcome'})">Vidjil <span class='logo'>(beta)</span></div>
 <!--
 	    <div class="menu" style="float: right; margin-right:100px"><span style="padding: 4px 5px; background-color: #fef6e3; font-family: ubuntulight;">
 		<b>Maintenance:</b> Vidjil will be offline Tuesday 7, 11:00 → 13:00 CEST. Thank you for your understanding.
 	    </span></div>
 -->
+         </div>
         </div>  
         <!-- fin top-container-->
         
