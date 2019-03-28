@@ -385,6 +385,34 @@ class TestMultilocus < BrowserTest
     end
   end
 
+  def test_20_menu_palette
+    original_color = $b.body.style('background-color')
+    dark = $b.menu_item('palette_dark')
+    dark.click
+
+    assert ($b.body.style('background-color') != original_color)
+    assert ($b.body.style('background-color').include? "51, 51, 51"), "Background should be dark"
+
+    $b.menu_item('palette_light').click
+
+    assert ($b.body.style('background-color') == original_color)
+  end
+
+  def test_21_menu_manual
+    $b.menu_item('help_manual').click
+
+    assert ($b.window(:title => /user manual/)), "User manual is opened"
+    $b.window(:title => /user manual/).use do
+      assert ($b.h1(:text => /user manual/).present?), "Make sure the page is loaded"
+    end
+  end
+
+  def test_22_menu_tutorial
+    $b.menu_item('help_tutorial').click
+
+    assert ($b.window(:title => /Mastering the Vidjil web application/)), "Tutorial is opened"
+  end
+
   # Not really a test
   def test_zz_close
     close_everything
