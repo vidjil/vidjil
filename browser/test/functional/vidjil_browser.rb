@@ -171,6 +171,18 @@ class VidjilBrowser < Watir::Browser
     return div(:id => 'settings_menu')
   end
 
+  def menu_palette
+    return div(:id => 'palette_menu')
+  end
+
+  def menu_help
+    return div(:id => 'help_menu')
+  end
+
+  def menu_upload
+    return div(:id => 'upload_summary')
+  end
+
   def menu_item_export(id, extra = {})
     menu = menu_import_export
     menu.click
@@ -183,6 +195,19 @@ class VidjilBrowser < Watir::Browser
 
   def menu_item_export_fasta_align(extra = {})
     return menu_item_export('export_fasta_align', extra)
+  end
+
+  def menu_item(id, extra = {})
+    item = element(extra.merge(:id => id))
+    assert(item.exists?)
+    parent = item.parent
+    while parent.tag_name != "body" and not parent.classes.include? "menu"
+      parent = parent.parent
+    end
+    if parent.tag_name != "body"
+      parent.click
+    end
+    return item
   end
 
   def merge
