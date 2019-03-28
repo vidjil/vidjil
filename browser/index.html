@@ -290,18 +290,18 @@
               </div></div>
             </div>
 
-            <div class="menu" onmouseover="showSelector('paletteSelector');"> palette
+            <div id="palette_menu" class="menu" onmouseover="showSelector('paletteSelector');"> palette
                 <div id="paletteSelector" class="selector"><div>
-                    <a class="buttonSelector" onclick="changeStyle('solarizeL')">light</a>
-                    <a class="buttonSelector" onclick="changeStyle('display')">light (presentation)</a>
-                    <a class="buttonSelector" onclick="changeStyle('solarizeD')">dark</a>
+                    <a id="palette_light" class="buttonSelector" onclick="changeStyle('solarizeL')">light</a>
+                    <a id="palette_light_presentation" class="buttonSelector" onclick="changeStyle('display')">light (presentation)</a>
+                    <a id="palette_dark" class="buttonSelector" onclick="changeStyle('solarizeD')">dark</a>
                 </div></div>
             </div>
-            <div class="menu" onmouseover="showSelector('helpSelector');"> help
+            <div id="help_menu" class="menu" onmouseover="showSelector('helpSelector');"> help
                 <div id="helpSelector" class="selector"><div>
-                    <a class="buttonSelector getHelp" onclick="report.sendMail()">get support</a>
-                    <a class="buttonSelector" href="http://www.vidjil.org/doc/user" target="_blank">manual</a>
-                    <a class="buttonSelector" href="http://www.vidjil.org/doc/tutorial/mastering-vidjil.html" target="_blank">tutorial</a>
+                    <a id="help_support" class="buttonSelector getHelp" onclick="report.sendMail()">get support</a>
+                    <a id="help_manual" class="buttonSelector" href="http://www.vidjil.org/doc/user" target="_blank">manual</a>
+                    <a id="help_tutorial" class="buttonSelector" href="http://www.vidjil.org/doc/tutorial/mastering-vidjil.html" target="_blank">tutorial</a>
                     <a class="buttonSelector devel-mode" onclick="my_tips.reset()">reset tips of the day</a>
                 </div></div>
                 </div>
