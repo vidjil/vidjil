@@ -132,7 +132,6 @@ class TestMultilocus < BrowserTest
 
   def check_when_list_or_scatterplot_clicked
     clone_name = $b.clone_info('25')[:name]
-    assert ( $b.infoline.inner_html == clone_name.title), ">> Clone name is not correct in focus div"
     assert ( $b.clone_in_list('25').class_name.include? "list_select" ), ">> Incorrect class name, clone is not selected"
     assert ( $b.clone_in_scatterplot('25', :class => "circle_select").exists?)
     assert ( $b.clone_in_graph('25', :class=> "graph_select").exists?)
