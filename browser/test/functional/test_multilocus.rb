@@ -199,6 +199,9 @@ class TestMultilocus < BrowserTest
       name.click
       $b.until { not $b.tag_item('0')[:name].present? }
 
+      # Move the mouse elsewhere
+      $b.clone_in_scatterplot('77').hover
+
       $b.until {$b.clone_info('25')[:name].style('color') ==  'rgba(220, 50, 47, 1)' }
     end
   end
@@ -373,6 +376,9 @@ class TestMultilocus < BrowserTest
       ## Test tag selection for one clone
       $b.clone_info('25')[:star].click
       $b.element(:id => 'tagElem_0').click
+
+      # Move the mouse elsewhere
+      $b.clone_in_scatterplot('72').hover
 
       $b.until {$b.clone_info('25')[:name].style('color') ==  'rgba(220, 50, 47, 1)' } # clone 25 should have changed color
       assert ( not $b.clone_info('88')[:name].style('color') ==  'rgba(220, 50, 47, 1)' ) , "clone 88 (second of the selection) haven't chaged color "
