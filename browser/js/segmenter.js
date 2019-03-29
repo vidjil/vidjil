@@ -671,7 +671,7 @@ Segment.prototype = {
         
         var divParent = document.getElementById("listSeq");
         
-        this.update_first_clone(cloneID)
+        this.update_first_clone(cloneID, forced=false)
 
         var li = document.createElement('li');
         li.id = "seq" + cloneID;
@@ -699,18 +699,25 @@ Segment.prototype = {
     * Update the first_clone of the segmenter.
     * This one can be changed when we deselect some clone into the segmenter
     **/
-    update_first_clone : function(cloneID) {
+    update_first_clone : function(cloneID, forced) {
+        if (forced == undefined) { forced = false }
 
         var divParent = document.getElementById("listSeq");
 
         // Am I the first clone in this segmenter ?
         var previous_li = divParent.getElementsByTagName("li");
 
-        if (previous_li && previous_li.length === 0 ) {
+        if (forced) {
+            this.first_clone = cloneID;
+            return
+        } else if (previous_li && previous_li.length === 0 ) {
             if (cloneID == undefined){
                 return
             }
             this.first_clone = cloneID
+            return
+        } else {
+            this.first_clone = 0
         }
     },
 
@@ -1374,6 +1381,7 @@ genSeq.prototype= {
         var mutations = {};
         var ref = '';
         var seq = '';
+
         if (this.segmenter.amino) {
             seq = this.seqAA;
             ref = this.segmenter.sequence[this.segmenter.first_clone].seqAA;
