@@ -1077,6 +1077,8 @@ changeAlleleNotation: function(alleleNotation) {
                 this.orderedSelectedClones.splice(pos,1);
             }
         }
+        // Here we should compute again segment.first_clone value, in case it was this one
+        segment.update_first_clone(this.orderedSelectedClones[0])
     },
 
 
