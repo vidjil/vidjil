@@ -7,6 +7,9 @@ fi
 if  [ "$1" = "--browsers-from-file" ]
 then
     shift
+    if [ ! -f ./tested-browsers ]; then
+        exit 1
+    fi
     BROWSER_LIST=`sed "s#^#$FUNCTIONAL_CLIENT_BROWSER_DIR#" ./tested-browsers`
 else
     BROWSER_LIST=$FUNCTIONAL_CLIENT_BROWSER_PATH
