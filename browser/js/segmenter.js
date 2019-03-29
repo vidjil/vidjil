@@ -670,12 +670,8 @@ Segment.prototype = {
         this.sequence[cloneID] = new Sequence(cloneID, this.m, this)
         
         var divParent = document.getElementById("listSeq");
-
-        // Am I the first clone in this segmenter ?
-        var previous_li = divParent.getElementsByTagName("li");
-        if (previous_li && previous_li.length === 0) {
-            this.first_clone = cloneID
-        }
+        
+        this.update_first_clone(cloneID)
 
         var li = document.createElement('li');
         li.id = "seq" + cloneID;
@@ -700,10 +696,29 @@ Segment.prototype = {
     },
 
     /**
+    * Update the first_clone of the segmenter.
+    * This one can be changed when we deselect some clone into the segmenter
+    **/
+    update_first_clone : function(cloneID) {
+
+        var divParent = document.getElementById("listSeq");
+
+        // Am I the first clone in this segmenter ?
+        var previous_li = divParent.getElementsByTagName("li");
+
+        if (previous_li && previous_li.length === 0 ) {
+            if (cloneID == undefined){
+                return
+            }
+            this.first_clone = cloneID
+        }
+    },
+
+
+    /**
     * select all the germline of a clone .
     * add them to the segmenter
     **/
-
     add_all_germline_to_segmenter : function() {
        for (var id in this.sequence) {
            if (this.isClone(id)) {
