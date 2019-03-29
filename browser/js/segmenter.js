@@ -718,7 +718,7 @@ Segment.prototype = {
             if (cloneID == undefined){
                 return
             }
-            this.first_clone = cloneID
+            this.set_first_clone( cloneID )
             return
         }
     },
