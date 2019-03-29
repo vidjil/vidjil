@@ -1078,7 +1078,7 @@ changeAlleleNotation: function(alleleNotation) {
             }
         }
         // Here we should compute again segment.first_clone value, in case it was this one
-        segment.update_first_clone(this.orderedSelectedClones[0])
+        segment.set_first_clone(this.orderedSelectedClones[0])
     },
 
 
