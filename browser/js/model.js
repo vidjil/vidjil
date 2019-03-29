@@ -950,6 +950,7 @@ changeAlleleNotation: function(alleleNotation) {
                 this.orderedSelectedClones.splice(index, 1);
             this.clone(cloneID).select = false;
             this.updateElemStyle([cloneID]);
+            segment.set_first_clone(this.orderedSelectedClones[0])
         }
         console.log("orderedSelectedClones: " + this.orderedSelectedClones.join(","));
     },
