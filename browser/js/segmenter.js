@@ -701,7 +701,7 @@ Segment.prototype = {
     **/
     set_first_clone : function(cloneID) {
         this.first_clone = cloneID;
-    }
+    },
 
     /**
     * Update the first_clone of the segmenter.
