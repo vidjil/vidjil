@@ -696,28 +696,30 @@ Segment.prototype = {
     },
 
     /**
-    * Update the first_clone of the segmenter.
+    * Set the first_clone of the segmenter.
     * This one can be changed when we deselect some clone into the segmenter
     **/
-    update_first_clone : function(cloneID, forced) {
-        if (forced == undefined) { forced = false }
+    set_first_clone : function(cloneID) {
+        this.first_clone = cloneID;
+    }
+
+    /**
+    * Update the first_clone of the segmenter.
+    * Look if the current clone is the first of the segmenter div
+    **/
+    update_first_clone : function(cloneID) {
 
         var divParent = document.getElementById("listSeq");
 
         // Am I the first clone in this segmenter ?
         var previous_li = divParent.getElementsByTagName("li");
 
-        if (forced) {
-            this.first_clone = cloneID;
-            return
-        } else if (previous_li && previous_li.length === 0 ) {
+        if (previous_li && previous_li.length === 0 ) {
             if (cloneID == undefined){
                 return
             }
             this.first_clone = cloneID
             return
-        } else {
-            this.first_clone = 0
         }
     },
 
