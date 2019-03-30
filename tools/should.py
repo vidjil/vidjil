@@ -26,7 +26,7 @@ if not (sys.version_info >= (3, 4)):
     print("Python >= 3.4 required")
     sys.exit(1)
 
-__version_info__ = ('1','0','0')
+__version_info__ = ('2','0','0')
 __version__ = '.'.join(__version_info__)
 
 import re
@@ -66,6 +66,7 @@ VAR_LAUNCHER = '$LAUNCHER'
 VAR_EXTRA = '$EXTRA'
 
 MOD_TODO = 'f'
+MOD_ALLOW = 'a'
 MOD_REGEX = 'r'
 MOD_COUNT_ALL = 'w'
 MOD_IGNORE_CASE = 'i'
@@ -96,6 +97,8 @@ SKIP = 'SKIP'
 TODO = 'TODO'
 TODO_PASSED = 'TODO_PASSED'
 
+ALLOW_FAILED = 'ALLOW_FAILED'
+
 STATUS = {
     None: 'not run',
     False: 'failed',
@@ -103,9 +106,22 @@ STATUS = {
     SKIP: 'skip',
     TODO: 'TODO',
     TODO_PASSED: 'TODO-but-ok',
+    ALLOW_FAILED: 'failed-but-ALLOW',
 }
 
-WARN_STATUS = [False, SKIP, TODO, TODO_PASSED]
+STATUS_ORDER = [
+    # Failed
+    False, TODO_PASSED,
+    # Warnings
+    TODO, ALLOW_FAILED, SKIP,
+    # Passed
+    True,
+    # 'Forgotten' status when mixed to other tests
+    None
+    ]
+
+FAIL_STATUS = [False, TODO_PASSED]
+WARN_STATUS = FAIL_STATUS + [ALLOW_FAILED, TODO, SKIP]
 
 STATUS_TAP = {
     None: 'not run',
@@ -114,12 +130,29 @@ STATUS_TAP = {
     SKIP: 'ok # SKIP',
     TODO: 'not ok # TODO',
     TODO_PASSED: 'ok # TODO',
+    ALLOW_FAILED: 'not ok # SKIP',
 }
 
 STATUS_XML = STATUS.copy()
 STATUS_XML[False] = 'failure'
 STATUS_XML[SKIP] = 'skipped'
 
+
+def combine_status(s1, s2):
+    '''
+    >>> combine_status(TODO, False)
+    False
+
+    >>> combine_status(True, SKIP) == SKIP
+    True
+
+    >>> combine_status(True, TODO_PASSED) == TODO_PASSED
+    True
+    '''
+
+    i1 = STATUS_ORDER.index(s1)
+    i2 = STATUS_ORDER.index(s2)
+    return STATUS_ORDER[min(i1,i2)]
 
 # Simple colored output
 
@@ -140,21 +173,23 @@ class ANSI:
 def color(col, text, colorize = True):
     if not colorize:
         return text
-    return CSIm % ANSI.BRIGHT + CSIm % col + text + CSIm % ANSI.RESET
+    return CSIm % col + text + CSIm % ANSI.RESET
 
 STATUS_COLORS = {
-    None: ANSI.BLUE,
+    None: ANSI.CYAN,
     False: ANSI.RED,
     True: ANSI.GREEN,
-    SKIP: ANSI.BLUE,
-    TODO: ANSI.BLUE,
-    TODO_PASSED: ANSI.BLUE,
+    SKIP: ANSI.CYAN,
+    TODO: ANSI.CYAN,
+    TODO_PASSED: ANSI.RED,
+    ALLOW_FAILED: ANSI.CYAN,
 }
 
 # Modifier parser
 
 MODIFIERS = [
     (MOD_TODO, 'todo', 'consider that the test should fail'),
+    (MOD_ALLOW, 'allow', 'consider that the test is allowed to fail'),
     (MOD_REGEX, 'regex', 'consider as a regular expression'),
     (MOD_COUNT_ALL, 'count-all', 'count all occurrences, even on a same line'),
     (MOD_IGNORE_CASE, 'ignore-case', 'ignore case changes'),
@@ -207,16 +242,17 @@ for (mod_char, mod_long, mod_help) in MODIFIERS:
 
 parser = ArgParser(description='Test command-line applications through .should files',
                    fromfile_prefix_chars='@',
-                   epilog='''Example:
+                   epilog='''Example (see also README.md and demo/*.should):
   %(prog)s demo/hello.should''',
+                   add_help=False,
                                  formatter_class=argparse.RawTextHelpFormatter)
 
-parser.add_argument('--version', action='version',
-                    version='%(prog)s {version}'.format(version=__version__))
 
 options = ArgParser(fromfile_prefix_chars='@') # Can be used in !OPTIONS: directive
 
-for p in (parser, options):
+group = parser.add_argument_group('running tests (can also be set per test in !OPTIONS)')
+
+for p in (group, options):
     p.add_argument('--cd', metavar='PATH', help='directory from which to run the test commands')
     p.add_argument('--cd-same', action='store_true', help='run the test commands from the same directory as the .should files')
     p.add_argument('--launcher', metavar='CMD', default='', help='launcher preceding each command (or replacing %s)' % VAR_LAUNCHER)
@@ -225,9 +261,17 @@ for p in (parser, options):
     p.add_argument('--var', metavar='NAME=value', action='append', help='variable definition (then use $NAME in .should files)')
     p.add_argument('--timeout', type=int, default = TIMEOUT, help = 'Delay (in seconds) after which the task is stopped (default: %(default)d)')
 
-parser.add_argument('--shuffle', action='store_true', help='shuffle the tests')
+group = parser.add_argument_group('selecting tests to be run')
 
-output = parser.add_argument_group('output options')
+group.add_argument('--shuffle', action='store_true', help='shuffle the tests')
+group.add_argument('--no-a', action='store_true', help="do not launch 'a' tests")
+group.add_argument('--no-f', action='store_true', help="do not launch 'f' tests")
+group.add_argument('--only-a', action='store_true', help="launches only 'a' tests")
+group.add_argument('--only-f', action='store_true', help="launches only 'f' tests")
+
+group.add_argument(RETRY_FLAG, action='store_true', help='launches only the last failed or warned tests')
+
+output = parser.add_argument_group('controlling output')
 
 output.add_argument('--log', action='append_const', dest='output', const=OUT_LOG, help='stores the output into .log files')
 output.add_argument('--tap', action='append_const', dest='output', const=OUT_TAP, help='outputs .tap files')
@@ -235,8 +279,13 @@ output.add_argument('--xml', action='append_const', dest='output', const=OUT_XML
 output.add_argument('-v', '--verbose', action='count', help='increase verbosity', default=1)
 output.add_argument('-q', '--quiet', action='store_const', dest='verbose', const=0, help='verbosity to zero')
 
+output.add_argument('--fail-a', action='store_true', help="fail on passing 'a' tests")
+output.add_argument("-h", "--help", action="help", help="show this help message and exit")
+output.add_argument('--version', action='version',
+                    version='%(prog)s {version}'.format(version=__version__))
+
+
 parser.add_argument('file', metavar='should-file', nargs='+', help='''input files (.should)''')
-parser.add_argument(RETRY_FLAG, action='store_true', help='launch again the last failed or warned tests')
 
 class ShouldException(BaseException):
     pass
@@ -355,6 +404,12 @@ class Stats():
     def items(self):
         return self.stats.items()
 
+    def __iter__(self):
+        '''Ordered according to STATUS_ORDER'''
+        for key in STATUS_ORDER[::-1]:
+            if key in self.keys():
+                yield (key, self[key])
+
     def values(self):
         return self.stats.values()
 
@@ -372,10 +427,15 @@ class Stats():
         s = '==> '
         s += STATUS[status]
         s += ' - '
-        s += ' '.join(['%s:%d' % (STATUS[key], len(val)) for (key, val) in self.items()] + ['total:%s' % self.total()])
+        s = color(STATUS_COLORS[status], s, colorize)
+        s += ' '.join([color(STATUS_COLORS[key], '%s:%d', colorize) % (STATUS[key], len(val)) for (key, val) in self])
+
+        nb_items = '- total:%s' % self.total()
         if self.item:
-            s += ' ' + self.item + ('s' if self.total() > 1 else '')
-        return color(STATUS_COLORS[status], s, colorize)
+            nb_items += ' ' + self.item + ('s' if self.total() > 1 else '')
+        s += ' ' + color(STATUS_COLORS[status], nb_items, colorize)
+
+        return s
 
 
 
@@ -426,6 +486,7 @@ class ExternalTestCase(TestCaseAbstract):
         self.name = name
         self.status = status
         self.info = info
+        self.modifiers = ''
 
     def str_additional_status(self, verbose = False):
         s = ''
@@ -578,6 +639,8 @@ class TestCase(TestCaseAbstract):
 
         if self.mods.todo:
             self.status = [TODO, TODO_PASSED][self.status]
+        if self.mods.allow:
+            self.status = [ALLOW_FAILED, True][self.status]
 
         if verbose > 0:
             print('')
@@ -602,12 +665,7 @@ class TestCase(TestCaseAbstract):
 class TestSuite():
     '''
     >>> s = TestSuite()
-    >>> s.load(['echo "hello"', '$My test', ':hello'])
-    >>> print(s)
-    echo "hello"
-    My test
-
-    >>> s.test()
+    >>> s.test(['echo "hello"', '$My test', ':hello'], colorize = False)
     True
     >>> s.tests[0].status
     True
@@ -615,8 +673,7 @@ class TestSuite():
     >>> s2 = TestSuite('r')
     >>> s2.variables.append(("$LAUNCHER", ""))
     >>> s2.variables.append(("$EXTRA", ""))
-    >>> s2.load(['echo "hello"', '$ A nice test', ':e.*o'])
-    >>> s2.test(verbose = 1, colorize = False)   # doctest: +NORMALIZE_WHITESPACE
+    >>> s2.test(['echo "hello"', '$ A nice test', ':e.*o'], verbose = 1, colorize = False)   # doctest: +NORMALIZE_WHITESPACE
     echo "hello"
       stdout --> 1 lines
       stderr --> 0 lines
@@ -625,7 +682,7 @@ class TestSuite():
     True
 
     >>> s2.str_status(colorize = False)
-    '==> ok - ok:2 total:2 tests'
+    '==> ok - ok:2 - total:2 tests'
 
     >>> print(s2.tap())   # doctest: +NORMALIZE_WHITESPACE
     1..2
@@ -643,9 +700,12 @@ class TestSuite():
         self.stdin = []
         self.stdout = []
         self.test_lines = []
+        self.skip = False
         self.status = None
         self.modifiers = modifiers
+        self.opt_modifiers = ''
         self.variables = []
+        self.status = None
         self.stats = Stats('test')
         self.source = None
         self.cd = cd
@@ -654,10 +714,25 @@ class TestSuite():
         self.elapsed_time = None
         self.timeout = timeout
 
-    def load(self, should_lines):
+    def cmd_variables_cd(self, cmd, verbose, colorize):
+        cmd = replace_variables(cmd, self.variables_all)
+        if self.cd:
+            cmd = 'cd %s ; ' % self.cd + cmd
+        if verbose > 0:
+            print(color(ANSI.MAGENTA, cmd, colorize))
+        return cmd
+
+    def test(self, should_lines, variables=[], verbose=0, colorize=True, only=None):
         name = ''
-        this_cmd_continues = False
-        for l in should_lines:
+        current_cmd = ''   # multi-line command
+        current_cmds = []  # commands since the last command run
+        current_tests = [] # tests since the last command run
+        self.only = only
+        self.variables_all = self.variables + variables
+
+        # Iterate over should_lines
+        # then use once DIRECTIVE_SCRIPT to flush the last tests
+        for l in list(should_lines) + [DIRECTIVE_SCRIPT]:
 
             l = l.lstrip().rstrip(ENDLINE_CHARS)
             if not l:
@@ -670,16 +745,29 @@ class TestSuite():
             # Directive -- Requires
             if l.startswith(DIRECTIVE_REQUIRES):
                 self.requires_cmd = l[len(DIRECTIVE_REQUIRES):].strip()
+
+                self.variables_all = self.variables + variables
+                requires_cmd = self.cmd_variables_cd(self.requires_cmd, verbose, colorize)
+                p = subprocess.Popen(requires_cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+                self.requires = (p.wait() == 0)
+                self.requires_stderr = [l.decode(errors='replace') for l in p.stderr.readlines()]
+                if not self.requires:
+                    self.skip_set('Condition is not met: %s' % self.requires_cmd, verbose)
+                if verbose > 0:
+                    print(color(ANSI.CYAN, ''.join(self.requires_stderr), colorize))
                 continue
 
             # Directive -- No launcher
             if l.startswith(DIRECTIVE_NO_LAUNCHER):
                 self.use_launcher = False
+                if replace_variables(VAR_LAUNCHER, self.variables_all):
+                    self.skip_set('%s while %s is given' % (DIRECTIVE_NO_LAUNCHER, VAR_LAUNCHER), verbose)
                 continue
 
             # Directive -- No extra options
             if l.startswith(DIRECTIVE_NO_EXTRA):
                 self.variables = [(VAR_EXTRA, '')] + self.variables
+                self.variables_all = self.variables + variables
                 continue
 
             # Directive -- Source
@@ -691,8 +779,8 @@ class TestSuite():
             if l.startswith(DIRECTIVE_OPTIONS):
                 opts, unknown = options.parse_known_args(l[len(DIRECTIVE_OPTIONS):].split())
                 self.variables = populate_variables(opts.var) + self.variables
-                if opts.mod:
-                    self.modifiers += ''.join(opts.mod)
+                self.variables_all = self.variables + variables
+                self.opt_modifiers = ''.join(opts.mod) if opts.mod else ''
                 continue
 
             # Directive -- Exit code
@@ -718,73 +806,60 @@ class TestSuite():
             if RE_TEST.search(l):
                 pos = l.find(TOKEN_TEST)
                 modifiers, expression = l[:pos], l[pos+1:]
-                self.tests.append(TestCase(self.modifiers + modifiers, expression, name))
+                test = TestCase(modifiers + self.opt_modifiers + self.modifiers, expression, name)
+                current_tests.append(test)
+                self.tests.append(test)
                 continue
 
-            # Command
+
+            # Command : flush and test the previous tests
+            # If the command is empty (for example at the ned), launch previous commands even when there are no tests
             l = l.strip()
+
+            if current_tests or not l:
+
+                # Test current_cmds with current_tests
+                if not self.skip:
+                    test_lines, exit_test = self.launch(current_cmds, verbose, colorize)
+                    current_tests.append(exit_test)
+                    self.test_lines += test_lines
+                    self.tests_on_lines(current_tests, test_lines, verbose, colorize)
+                    self.debug(self.status, "\n".join(current_cmds), test_lines, verbose, colorize)
+                else:
+                    self.skip_tests(current_tests)
+
+                current_cmds = []
+                current_tests = []
+
+            # Command
+            if not l:
+                continue
+
             next_cmd_continues = l.endswith(CONTINUATION_CHAR)
             if next_cmd_continues:
                 l = l[:-1]
 
-            if this_cmd_continues:
-                self.cmds[-1] += l
-            else:
-                self.cmds.append(l)
+            current_cmd += l
 
-            this_cmd_continues = next_cmd_continues
+            if not next_cmd_continues:
+                current_cmds.append(current_cmd)
+                self.cmds.append(current_cmd)
+                current_cmd = ''
 
 
-    def print_stderr(self, colorize=True):
-        print('  stdout --> %s lines' % len(self.stdout))
-        print('  stderr --> %s lines' % len(self.stderr))
-        print(color(ANSI.CYAN, ''.join(self.stderr), colorize))
+        # end of loop on should_lines
 
-    def skip_all(self, reason, verbose=1):
-        if verbose > 0:
-            print('Skipping tests: %s' % reason)
-        for test in self.tests:
-            test.status = SKIP
-            self.stats.up(test.status)
-        self.status = SKIP
-
-    def test(self, variables=[], verbose=0, colorize=True):
-
-        self.variables_all = self.variables + variables
         if verbose > 1:
             print_variables(self.variables_all)
 
-        def cmd_variables_cd(cmd):
-            cmd = replace_variables(cmd, self.variables_all)
-            if self.cd:
-                cmd = 'cd %s ; ' % self.cd + cmd
-            if verbose > 0:
-                print(color(ANSI.MAGENTA, cmd, colorize))
-            return cmd
+        return self.status
 
-        self.status = True
 
-        if self.requires_cmd:
-            requires_cmd = cmd_variables_cd(self.requires_cmd)
-            p = subprocess.Popen(requires_cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
-            self.requires = (p.wait() == 0)
-            self.requires_stderr = [l.decode(errors='replace') for l in p.stderr.readlines()]
-            if verbose > 0:
-                print(color(ANSI.CYAN, ''.join(self.requires_stderr), colorize))
-
-            if not self.requires:
-                self.skip_all('Condition is not met: %s' % self.requires_cmd, verbose)
-                return self.status
-
-        if not self.use_launcher:
-            if replace_variables(VAR_LAUNCHER, self.variables_all):
-                self.skip_all('%s while %s is given' % (DIRECTIVE_NO_LAUNCHER, VAR_LAUNCHER), verbose)
-                return self.status
-
+    def launch(self, cmds, verbose, colorize):
         start_time = time.time()
 
-        cmd = ' ; '.join(map(pre_process, self.cmds))
-        cmd = cmd_variables_cd(cmd)
+        cmd = ' ; '.join(map(pre_process, cmds))
+        cmd = self.cmd_variables_cd(cmd, verbose, colorize)
 
         f_stdout = tempfile.TemporaryFile()
         f_stderr = tempfile.TemporaryFile()
@@ -794,11 +869,18 @@ class TestSuite():
 
         try:
             self.exit_code = p.wait(self.timeout)
-            self.tests.append(ExternalTestCase('Exit code is %d' % self.expected_exit_code, self.exit_code == self.expected_exit_code, str(self.exit_code)))
+            exit_test = ExternalTestCase('Exit code is %d' % self.expected_exit_code, self.exit_code == self.expected_exit_code, str(self.exit_code))
         except subprocess.TimeoutExpired:
             self.exit_code = None
-            self.tests.append(ExternalTestCase('Exit code is %d' % self.expected_exit_code, SKIP, 'timeout after %s seconds' % self.timeout))
+            exit_test = ExternalTestCase('Exit code is %d' % self.expected_exit_code, SKIP, 'timeout after %s seconds' % self.timeout)
             p.kill()
+
+        self.tests.append(exit_test)
+        self.status = combine_status(self.status, exit_test.status)
+
+        if self.elapsed_time is None:
+            self.elapsed_time = 0
+        self.elapsed_time += time.time() - start_time
 
         f_stdout.seek(0)
         f_stderr.seek(0)
@@ -807,45 +889,67 @@ class TestSuite():
         f_stdout.close()
         f_stderr.close()
 
-
         if verbose > 0:
             self.print_stderr(colorize)
 
-        self.test_lines = open(self.source).readlines() if self.source else self.stdout
+        return open(self.source).readlines() if self.source else self.stdout, exit_test
 
-        for test in self.tests:
-            test.test(self.test_lines, variables=self.variables_all, verbose=verbose-1)
+
+
+    def tests_on_lines(self, tests, test_lines, verbose, colorize):
+        '''
+        Test all tests in 'tests' on 'test_lines',
+        taking into accound self modifiers
+        and gathering statuses in self.status
+        '''
+        for test in tests:
+            # Filter
+            if self.only:
+                if not self.only(test):
+                    test.status = SKIP
+                    continue
+
+            # Test the test
+            test.test(test_lines, variables=self.variables_all, verbose=verbose-1)
             self.stats.up(test.status)
-
-            # When a test fails, the file fails
-            if test.status is False:
-                self.status = False
-
-            # When the file is not failing, we may report a more sublte status
-            if test.status in WARN_STATUS and self.status is True:
-                self.status = test.status
+            self.status = combine_status(self.status, test.status)
 
             if verbose > 0 or test.status in WARN_STATUS:
                 print(test.str(colorize))
 
-        if self.status is False and verbose <= 0:
+    def print_stderr(self, colorize=True):
+        print('  stdout --> %s lines' % len(self.stdout))
+        print('  stderr --> %s lines' % len(self.stderr))
+        print(color(ANSI.CYAN, ''.join(self.stderr), colorize))
+
+    def skip_set(self, reason, verbose=1):
+        if verbose > 0:
+            print('Skipping tests: %s' % reason)
+        self.skip = True
+        self.status = combine_status(self.status, SKIP)
+
+    def skip_tests(self, tests):
+        for test in tests:
+            test.status = SKIP
+            self.stats.up(test.status)
+
+    def debug(self, status, cmd, test_lines, verbose, colorize):
+        if status in FAIL_STATUS and verbose <= 0:
             print(color(ANSI.MAGENTA, cmd, colorize))
             self.print_stderr(colorize)
 
-        if self.status is False or verbose > 1:
+        if status in FAIL_STATUS or verbose > 1:
             print(LINE)
-            if len(self.test_lines) <= MAX_DUMP_LINES:
-                print(''.join(self.test_lines), end='')
+            if len(test_lines) <= MAX_DUMP_LINES:
+                print(''.join(test_lines), end='')
             else:
-                print(''.join(self.test_lines[:MAX_HALF_DUMP_LINES]), end='')
-                print(color(ANSI.MAGENTA, '... %d other lines ...' % (len(self.test_lines) - 2*MAX_HALF_DUMP_LINES), colorize))
-                print(''.join(self.test_lines[-MAX_HALF_DUMP_LINES:]), end='')
+                print(''.join(test_lines[:MAX_HALF_DUMP_LINES]), end='')
+                print(color(ANSI.MAGENTA, '... %d other lines ...' % (len(test_lines) - 2*MAX_HALF_DUMP_LINES), colorize))
+                print(''.join(test_lines[-MAX_HALF_DUMP_LINES:]), end='')
 
             print(LINE)
 
-        self.elapsed_time = time.time() - start_time
 
-        return self.status
 
     def str_status(self, colorize=True):
         return self.stats.str_status(self.status, colorize)
@@ -907,8 +1011,8 @@ class FileSet():
     def __len__(self):
         return len(self.files)
 
-    def test(self, variables=None, cd=None, cd_same=False, output=None, verbose=0):
-        self.status = True
+    def test(self, variables=None, cd=None, cd_same=False, output=None, verbose=0, only=None):
+        self.status = None
 
         try:
           for f in self.files:
@@ -917,13 +1021,9 @@ class FileSet():
             cd_f = os.path.dirname(f) if cd_same else cd
             s = TestSuite(self.modifiers, cd_f, name = f, timeout = self.timeout)
             self.sets.append(s)
-            s.load(open(f))
-
-            s.test(variables, verbose - 1)
+            s.test(open(f), variables, verbose - 1, only=only)
             self.stats.up(s.status, f)
-            if not s.status:
-                self.status = False
-
+            self.status = combine_status(self.status, s.status)
             self.stats_tests += s.stats
 
             filename_without_ext = os.path.splitext(f)[0]
@@ -948,10 +1048,12 @@ class FileSet():
         if output and OUT_XML in output:
             self.xml().write(OUT_XML)
 
+        print()
         print('Summary', end=' ')
         print(self.stats.str_status(self.status))
         print('Summary', end=' ')
         print(self.stats_tests.str_status(self.status))
+        print()
 
         for sta in self.stats.keys():
             if sta == True:
@@ -967,7 +1069,7 @@ class FileSet():
                        {'id': 'Test at %s' % datetime.datetime.now().isoformat(),
                         'name': 'tested by should',
                         'tests': str(self.stats_tests.total()),
-                        'failures': str(len(self.stats_tests[False])),
+                        'failures': str(len(self.stats_tests[False]) if False in self.stats_tests else 0),
                        })
 
         for s in self.sets:
@@ -1033,12 +1135,24 @@ if __name__ == '__main__':
         print("Shuffling test files")
         random.shuffle(args.file)
 
+    # Filters
+    only = lambda test: (
+        ((MOD_TODO in test.modifiers) <= (not args.no_f)) and
+        ((MOD_TODO in test.modifiers) >= args.only_f) and
+        ((MOD_ALLOW in test.modifiers) <= (not args.no_a)) and
+        ((MOD_ALLOW in test.modifiers) >= args.only_a)
+        )
+
+    if args.fail_a:
+        args.mod = (args.mod if args.mod else []) + ['A']
+
+    # Launch tests
     fs = FileSet(args.file, timeout = args.timeout, modifiers=''.join(args.mod if args.mod else []))
-    status = fs.test(variables = variables, cd = args.cd, cd_same = args.cd_same, output = args.output, verbose = args.verbose)
+    status = fs.test(variables = variables, cd = args.cd, cd_same = args.cd_same, output = args.output, verbose = args.verbose, only = only)
 
     if len(fs) > 1:
         retry = fs.write_retry(sys.argv[1:], args.file, verbose = args.verbose)
 
-    sys.exit(0 if status else 1)
+    sys.exit(1 if status in FAIL_STATUS else 0)
 
 
