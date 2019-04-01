@@ -15,4 +15,4 @@ $ Do not display advanced options
 0: custom Cost
 
 $ Correct number of regular options
-B24:^  -
+24:^..-

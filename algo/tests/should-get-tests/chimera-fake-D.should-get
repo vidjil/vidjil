@@ -4,7 +4,7 @@ $ The KmerSegmenter segments the chimera reads on PSEUDO_MAX12 germline (-2)
 f1:unexpected .* -> .* 2
 
 $ The FineSegmenter gives the locus information (-2)
-f1:Unexpected [+]IGHD/[+]TRBJ
+1:Unexpected [+]IGHD/[+]TRBJ
 f1:Unexpected [+]TRAV/[+]TRDD
 
 $ The FineSegmenter correclty segments the V-D and D-J sequences (-2)

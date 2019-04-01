@@ -5,5 +5,5 @@ $ Compilation was run with -Wall
 >30: -Wall
 
 $ No compilation warning
-f0:warning
+a0:warning
 
