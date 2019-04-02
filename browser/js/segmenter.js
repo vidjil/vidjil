@@ -702,7 +702,7 @@ Segment.prototype = {
     * This one can be changed when we deselect some clone into the segmenter
     **/
     set_first_clone : function(cloneID) {
-        if (cloneID === NaN){
+        if (isNaN(cloneID)){
           console.error( "Nan error")
           return
         }
