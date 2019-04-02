@@ -268,6 +268,9 @@ int main (int argc, char **argv)
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Input" ;
 
+  app.set_config("--config", "", "read a (.json) config.vidjil file with options") -> type_name("FILE")
+    -> group(group) -> level();
+
   string read_header_separator = DEFAULT_READ_HEADER_SEPARATOR ;
   app.add_option("--header-sep", read_header_separator, "separator for headers in the reads file", false)
     -> group(group) -> level() -> type_name("CHAR='" DEFAULT_READ_HEADER_SEPARATOR "'");
