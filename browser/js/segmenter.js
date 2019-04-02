@@ -716,6 +716,8 @@ Segment.prototype = {
     update_first_clone : function(cloneID) {
 
         var divParent = document.getElementById("listSeq");
+        if (divParent == undefined) { return }
+
 
         // Am I the first clone in this segmenter ?
         var previous_li = divParent.getElementsByTagName("li");
