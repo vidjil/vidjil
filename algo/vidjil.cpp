@@ -230,6 +230,7 @@ int main (int argc, char **argv)
 #endif
 
   CLI::App app{"# vidjil-algo -- V(D)J recombinations analysis", argv[0]};
+  app.config_formatter(std::make_shared<ConfigJSON>());
   app.get_formatter()->label("REQUIRED", "");
   app.get_formatter()->label("Positionnals", "");
   app.failure_message(failure_message_doc);
@@ -743,6 +744,9 @@ int main (int argc, char **argv)
     cout << argv[i] << " ";
   }
   cout << endl;
+
+  // Dump configuration
+  json j_config = json::parse(app.config_to_str(true, true));
 
   //////////////////////////////////
   // Display time and date
@@ -1557,6 +1561,7 @@ int main (int argc, char **argv)
 
 
     // Complete main output
+    output.set("config", j_config);
     output.set("diversity", jsonDiversity);
     output.set("samples", "log", { stream_segmentation_info.str() }) ;
     output.set("reads", {
