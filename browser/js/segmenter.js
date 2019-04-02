@@ -61,7 +61,7 @@ function Segment(id, model, database) {
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z";
     this.cgi_address = CGI_ADDRESS
     this.m = model
-    this.first_clone = 0 ; // id of sequence at the top of the segmenter
+    this.first_clone = -1 ; // id of sequence at the top of the segmenter
     this.memtab = [];
     this.sequence = {};
     this.is_open = false;
@@ -718,6 +718,7 @@ Segment.prototype = {
 
         if (previous_li && previous_li.length === 0 ) {
             if (cloneID == undefined){
+                this.set_first_clone( -1 )
                 return
             }
             this.set_first_clone( cloneID )
@@ -1390,6 +1391,7 @@ genSeq.prototype= {
         var mutations = {};
         var ref = '';
         var seq = '';
+
 
         if (this.segmenter.amino) {
             seq = this.seqAA;

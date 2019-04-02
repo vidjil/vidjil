@@ -11,8 +11,8 @@ QUnit.test("segmenter", function(assert) {
     m.initClones()
     
     var segment = new Segment("segment", m);
+    assert.equal(segment.first_clone, -1, "segment.first_clone is set to -1 at init")
     segment.init()
-    assert.equal(segment.first_clone, 0, "segment.first_clone is set to 0 at init")
     
     //select test
     m.select(0)
@@ -34,7 +34,7 @@ QUnit.test("segmenter", function(assert) {
     assert.equal(document.getElementById("f0"), null, "unselect : Ok")
     assert.equal(document.getElementById("f1"), null, "unselect : Ok")
     assert.equal(document.getElementById("f2"), null, "unselect : Ok")
-    assert.equal(segment.first_clone, 0, "segment.first_clone is set to 0 when no clones are selected")
+    assert.equal(segment.first_clone, -1, "segment.first_clone is set to -1 when no clones are selected")
 
     m.select(0);
     m.select(2);
