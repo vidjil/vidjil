@@ -950,7 +950,6 @@ changeAlleleNotation: function(alleleNotation) {
                 this.orderedSelectedClones.splice(index, 1);
             this.clone(cloneID).select = false;
             this.updateElemStyle([cloneID]);
-            segment.set_first_clone(this.orderedSelectedClones[0])
         }
         console.log("orderedSelectedClones: " + this.orderedSelectedClones.join(","));
     },
@@ -1076,8 +1075,6 @@ changeAlleleNotation: function(alleleNotation) {
             var pos=this.orderedSelectedClones.indexOf(cloneID);
             if (pos>-1){
                 this.orderedSelectedClones.splice(pos,1);
-                // Here we should compute again segment.first_clone value, in case it was this one
-                segment.set_first_clone(this.orderedSelectedClones[0])
             }
         }
     },
