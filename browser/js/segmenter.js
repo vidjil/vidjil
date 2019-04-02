@@ -555,7 +555,7 @@ Segment.prototype = {
                 }
             }
         }
-        // faire l'update du first clone
+        // Update the first clone if needed
         this.update_first_clone()
 
         this.updateAlignmentButton()
@@ -673,7 +673,7 @@ Segment.prototype = {
         
         var divParent = document.getElementById("listSeq");
         
-        this.update_first_clone(cloneID, forced=false)
+        this.update_first_clone(cloneID)
 
         var li = document.createElement('li');
         li.id = "seq" + cloneID;
