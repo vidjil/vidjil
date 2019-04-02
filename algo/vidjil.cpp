@@ -419,9 +419,12 @@ int main (int argc, char **argv)
 
   vector <string> windows_labels_explicit ;
   string windows_labels_file = "" ;
+  string windows_labels_json = "" ;
 
   app.add_option("--label", windows_labels_explicit, "label the given sequence(s)") -> group(group) -> level() -> type_name("SEQUENCE");
   app.add_option("--label-file", windows_labels_file, "label a set of sequences given in <file>") -> group(group) -> level() -> type_name("FILE");
+  app.add_option("--label-json", windows_labels_json, "read a (.json) label.vidjil (experimental)") -> type_name("FILE")
+      -> group(group) -> level();
 
   bool only_labeled_windows = false ;
   app.add_flag("--label-filter", only_labeled_windows, "filter -- keep only the windows related to the labeled sequences") -> group(group) -> level();
@@ -730,6 +733,7 @@ int main (int argc, char **argv)
 
   /// Load labels ;
   load_into_map(windows_labels, windows_labels_file, "-l");
+  json j_labels = load_into_map_from_json(windows_labels, windows_labels_json);
 
   switch(command) {
   case CMD_WINDOWS: cout << "Extracting windows" << endl; 
@@ -750,6 +754,8 @@ int main (int argc, char **argv)
 
   // Dump configuration
   json j_config = json::parse(app.config_to_str(true, true));
+  if (!j_labels.empty())
+    j_config["labels"] = j_labels;
 
   //////////////////////////////////
   // Display time and date
