@@ -175,10 +175,10 @@ QUnit.test("segt", function (assert) {
     m.initClones();
     var segment = new Segment("segment",m);
     segment.init();
+    m.select(2)
     segment.addGermlineToSegmenter("IGHD1-1*01","IGH");
     assert.equal(segment.sequence["IGHD1-1*01"].seq.join("").toUpperCase(), "GGGCGCCGGGGCAGATTCTGAACAGCCCCGAGTCACGGTGGGTACAACTGGAACGAC")
     assert.equal(segment.sequence["IGHD1-1*01"].is_clone, false);
-    m.select(2)
     segment.addToSegmenter(2);
     segment.add_all_germline_to_segmenter();
     // segment.updateElem()
