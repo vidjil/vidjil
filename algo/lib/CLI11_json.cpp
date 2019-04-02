@@ -56,7 +56,7 @@ class ConfigJSON : public CLI::Config {
     std::vector<CLI::ConfigItem> from_config(std::istream &input) const override {
         json j;
         input >> j;
-        return _from_config(j);
+        return _from_config(j["config"]);
     }
 
     std::vector<CLI::ConfigItem>
