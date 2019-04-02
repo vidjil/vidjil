@@ -13,5 +13,10 @@ $ 1 clone is fully analyzed, and not more (-z 1)
 2:clone-.* IGHV
 
 
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS --config out/Stanford_S22.vidjil $VIDJIL_DATA/Stanford_S22.fasta ; cat out/Stanford_S22.vdj.fa
 
-
+$ Same tests than before, options taken from 'out/StanfordS22.vidjil' that was just generated
+1: ==> 10 clones
+2:clone-005--.* bp
+1:clone-006--.*--window
+2:clone-.* IGHV
