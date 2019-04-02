@@ -555,6 +555,8 @@ Segment.prototype = {
                 }
             }
         }
+        // faire l'update du first clone
+        this.update_first_clone()
 
         this.updateAlignmentButton()
         //this.updateSegmenterWithHighLighSelection();
@@ -720,7 +722,12 @@ Segment.prototype = {
             }
             this.set_first_clone( cloneID )
             return
+        } else if (previous_li.length != 0) {
+            // get first line from html content
+            var index_first_clone = Number( previous_li[0].id.substr(3) )
+            this.set_first_clone( index_first_clone )
         }
+
     },
 
 
