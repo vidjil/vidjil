@@ -4,7 +4,7 @@
 # Test limits in the .vidjil json output
 
 $ There is exactly one clone with a detailed analysis (-z 1)
-w1: "cdr3" 
+w1: "cdr3": {
 
 $ There are exactly five clones with representative sequences (-y 5)
 w5: "sequence": "

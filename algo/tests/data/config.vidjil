@@ -1,0 +1,8 @@
+{
+  "config": {
+    "first-reads": 10,
+    "min-reads": "1",
+    "max-consensus": "1",
+    "cdr3": true
+  }
+}
