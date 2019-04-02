@@ -1,0 +1,21 @@
+
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH --max-consensus 0 --first-reads 10 --label-json ../data/labels-json.vidjil $VIDJIL_DATA/Stanford_S22.fasta
+
+$ Labels are taken into account
+: 2 labels
+: Considering labeled windows
+
+$ Report two clones, even with --max-consensus 0
+: ==> 2 clones
+
+
+!LAUNCH: cat out/Stanford_S22.vidjil
+
+$ Labels are in the .json output 
+1: "label": "lab1"
+1: "label": "lab2"
+
+$ Other values from label-json.vidjil are also in the .json output
+1: "foo": 42
+1: "bar": 17
+
