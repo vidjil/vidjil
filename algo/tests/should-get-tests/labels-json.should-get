@@ -10,6 +10,7 @@ $ Report two clones, even with --max-consensus 0
 
 
 !LAUNCH: cat out/Stanford_S22.vidjil
+!NO_LAUNCHER:
 
 $ Labels are in the .json output 
 1: "label": "lab1"

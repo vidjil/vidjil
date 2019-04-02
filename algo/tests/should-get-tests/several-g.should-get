@@ -15,6 +15,7 @@ $ Segment two reads on IgVC/IgJC (second -g option)
 
 
 !LAUNCH: cat out/isotypes.vidjil
+!NO_LAUNCHER:
 
 $ Both germlines are in .vidjil
 1: /germline"
