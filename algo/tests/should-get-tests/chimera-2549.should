@@ -5,3 +5,10 @@ $ The KmerSegmenter segments the chimera on xxx germline (-2)
 
 $ The FineSegmenter gives the locus information (-2)
 1:Unexpected .*\+IGKV/-IGKV
+
+
+!NO_LAUNCHER:
+!LAUNCH: cat out/2549.vidjil
+
+$ The designation is the "name" field in the .json
+1: "name": "IGKV1/OR-2.01 21//15 IGKV1/OR-2.01"
