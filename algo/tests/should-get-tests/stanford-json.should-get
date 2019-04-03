@@ -10,13 +10,13 @@ $ Number of reads
 1:"total": \[13153\]
 
 $ Number of segmented reads
-1:"segmented": \[13152\]
+1:"segmented": \[13153\]
 
 $ Most abundant window
 1:"id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC".*"reads": \[8\]
 
 $ Affect values are over all the sequence
-1: "affectValues": .[^}]*"start": 1, "stop": 127
+1: "affectValues": .[^}]*"start": 1, "stop": 145
 
 $ No quality information here
 0: "quality"
@@ -40,21 +40,21 @@ $ Segmentation
 
 $ Segmentation details - V
 # IGHV3-11*03 may also be detected
-1:"5": ."delRight": 6, "name": "IGHV3-23.05", "stop": 54.
+1:"5": ."delRight": 6, "name": "IGHV3-23.05", "stop": 72.
 
 $ Segmentation details - D
-1:"4": ."delLeft": 9, "delRight": 0, "name": "IGHD6-13.01", "start": 73, "stop": 84.
+1:"4": ."delLeft": 9, "delRight": 0, "name": "IGHD6-13.01", "start": 91, "stop": 102.
 
 $ Segmentation details - J
-1:"3": ."delLeft": 5, "name": "IGHJ4.02", "start": 85.
+1:"3": ."delLeft": 5, "name": "IGHJ4.02", "start": 103.
 
 $ Segmentation details - N1, N2
 1:"N1": 18,
 1:"N2": 0,
 
 $ Segmentation details - CDR3, JUNCTION
-1:"cdr3": ."aa": "TREEQYSSWYFDF", "start": 55, "stop": 93.
-1:"junction": ."aa": "CTREEQYSSWYFDFW", .* "start": 52, "stop": 96.
+1:"cdr3": ."aa": "TREEQYSSWYFDF", "start": 73, "stop": 111.
+1:"junction": ."aa": "CTREEQYSSWYFDFW", .* "start": 70, "stop": 114.
 
 $ Second sequence has a DNA sequence provided
 1:"id": "TGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTAC".*"sequence": "[ACGT]+",
@@ -65,5 +65,5 @@ $ Second sequence also has evalues
 $ All 'start' fields are 1-based, they never equal to zero
 0: "start": 0
 
-$ Warning on low coverage
-1: "code": "W51", "level": "warn", "msg": "Low coverage: 0.442"
+$ Warning on common genes 
+1: "code": "W69", "level": "warn", "msg": "Several genes with equal[^"]*"

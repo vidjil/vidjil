@@ -7,9 +7,16 @@ class VidjilBrowser < Watir::Browser
     if ENV['WATIR_BROWSER_PATH']
       print "Using custom browser location " + ENV['WATIR_BROWSER_PATH'] + "\n"
       Selenium::WebDriver::Firefox.path = ENV['WATIR_BROWSER_PATH']
+      Selenium::WebDriver::Chrome.path = ENV['WATIR_BROWSER_PATH'] 
     end
     # :chrome or :safari
-    super :firefox, :marionette => false
+    if ENV['WATIR_CHROME'] or ENV['WATIR_BROWSER_PATH'].include? "chrom"
+      super :chrome
+    elsif ENV['WATIR_MARIONETTE']
+      super :firefox
+    else
+      super :firefox, :marionette => false
+    end
 
     print "Running "+driver.capabilities.browser_name+" "+driver.capabilities.version+"\n"
   end
@@ -164,14 +171,43 @@ class VidjilBrowser < Watir::Browser
     return div(:id => 'settings_menu')
   end
 
-  def menu_item_export(id)
-    menu = menu_import_export
-    menu.click
-    return menu.a(:id => id)
+  def menu_palette
+    return div(:id => 'palette_menu')
   end
 
-  def menu_item_export_fasta
-    return menu_item_export('export_fasta')
+  def menu_help
+    return div(:id => 'help_menu')
+  end
+
+  def menu_upload
+    return div(:id => 'upload_summary')
+  end
+
+  def menu_item_export(id, extra = {})
+    menu = menu_import_export
+    menu.click
+    return menu.a(extra.merge(:id => id))
+  end
+
+  def menu_item_export_fasta(extra = {})
+    return menu_item_export('export_fasta', extra)
+  end
+
+  def menu_item_export_fasta_align(extra = {})
+    return menu_item_export('export_fasta_align', extra)
+  end
+
+  def menu_item(id, extra = {})
+    item = element(extra.merge(:id => id))
+    assert(item.exists?)
+    parent = item.parent
+    while parent.tag_name != "body" and not parent.classes.include? "menu"
+      parent = parent.parent
+    end
+    if parent.tag_name != "body"
+      parent.click
+    end
+    return item
   end
 
   def merge
@@ -333,6 +369,12 @@ class VidjilBrowser < Watir::Browser
     return div(:id => 'list_clones')
   end
   
+  def until(extra = {})
+    default = {timeout: 3}
+    default.merge(extra)
+    Watir::Wait.until(default) { yield }
+  end
+
   protected
 
   def scatterplot_id(number=1)

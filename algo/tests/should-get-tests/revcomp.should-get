@@ -1,4 +1,4 @@
-!LAUNCH: $LAUNCHER $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -k 9 -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa  -K -c clones $VIDJIL_DATA/revcomp.fa ; grep 'X.X.X' out/revcomp.affects | sed 's/[^X]//g'  | sort -u ; grep '#>'  out/revcomp.affects | sed 's/.*SEG.../e-value:/' | cut -f 1 -d' '
+!LAUNCH: $LAUNCHER $VIDJIL_DIR/$EXEC $EXTRA $VIDJIL_DEFAULT_OPTIONS -k 9 -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa  -K -c clones $VIDJIL_DATA/revcomp.fa ; grep 'X.X.X' out/revcomp.affects | sed 's/[^X]//g'  | sort -u ; grep '#>'  out/revcomp.affects | sed 's/.*SEG.../e-value:/' | cut -f 1 -d' '
 
 $ Segments both reads, normal and reverse
 1:junction detected in 2 reads

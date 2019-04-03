@@ -679,3 +679,18 @@ function locus_cmp(valA, valB){
     }
     return 0
 }
+
+
+/**
+ * Open a new tab and put content in it.
+ * This function is use to show fasta export
+ * @param  {String} content Clones as fasta format
+ */
+function openAndFillNewTab (content){
+    var w = window.open("", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
+    
+    var result = $('<div/>', {
+        html: content
+    }).appendTo(w.document.body);
+    return
+}

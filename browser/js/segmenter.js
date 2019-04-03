@@ -61,12 +61,13 @@ function Segment(id, model, database) {
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z";
     this.cgi_address = CGI_ADDRESS
     this.m = model
-    this.first_clone = 0 ; // id of sequence at the top of the segmenter
+    this.first_clone = -1 ; // id of sequence at the top of the segmenter
     this.memtab = [];
     this.sequence = {};
     this.is_open = false;
     this.amino = false;
     this.aligned = false;
+        
     this.fixed = false;         // whether the segmenter is fixed
     this.germline = this.m.germline;
     //elements to be highlited in sequences
@@ -554,6 +555,8 @@ Segment.prototype = {
                 }
             }
         }
+        // Update the first clone if needed
+        this.update_first_clone()
 
         this.updateAlignmentButton()
         //this.updateSegmenterWithHighLighSelection();
@@ -665,15 +668,12 @@ Segment.prototype = {
         var self = this;
 
         this.aligned = false ;
+        this.resetAlign()
         this.sequence[cloneID] = new Sequence(cloneID, this.m, this)
         
         var divParent = document.getElementById("listSeq");
-
-        // Am I the first clone in this segmenter ?
-        var previous_li = divParent.getElementsByTagName("li");
-        if (previous_li && previous_li.length === 0) {
-            this.first_clone = cloneID
-        }
+        
+        this.update_first_clone(cloneID)
 
         var li = document.createElement('li');
         li.id = "seq" + cloneID;
@@ -698,10 +698,50 @@ Segment.prototype = {
     },
 
     /**
+    * Set the first_clone of the segmenter.
+    * This one can be changed when we deselect some clone into the segmenter
+    **/
+    set_first_clone : function(cloneID) {
+        if (isNaN(cloneID)){
+          console.error( "Nan error")
+          return
+        }
+        this.first_clone = cloneID;
+    },
+
+    /**
+    * Update the first_clone of the segmenter.
+    * Look if the current clone is the first of the segmenter div
+    **/
+    update_first_clone : function(cloneID) {
+
+        var divParent = document.getElementById("listSeq");
+        if (divParent == undefined) { return }
+
+
+        // Am I the first clone in this segmenter ?
+        var previous_li = divParent.getElementsByTagName("li");
+
+        if (previous_li && previous_li.length === 0 ) {
+            if (cloneID == undefined){
+                this.set_first_clone( -1 )
+                return
+            }
+            this.set_first_clone( cloneID )
+            return
+        } else if (previous_li.length != 0) {
+            // get first line from html content
+            var index_first_clone = Number( previous_li[0].id.substr(3) )
+            this.set_first_clone( index_first_clone )
+        }
+
+    },
+
+
+    /**
     * select all the germline of a clone .
     * add them to the segmenter
     **/
-
     add_all_germline_to_segmenter : function() {
        for (var id in this.sequence) {
            if (this.isClone(id)) {
@@ -774,6 +814,7 @@ Segment.prototype = {
     addSequenceTosegmenter : function(id, locus, str){
         var self =this
         this.aligned = false ;
+        this.resetAlign()
         if ( typeof this.sequence[id]=="undefined"){
             this.sequence[id] = new genSeq(id, locus, this.m, this)
             this.sequence[id].load("str")
@@ -934,6 +975,15 @@ Segment.prototype = {
                 console.log({"type": "flash", "msg": "cgi error : impossible to connect", "priority": 2});
             }
         });
+
+        // Allow to use button of the export menu
+        try {
+
+            div = document.getElementById("export_fasta_align")
+            div.classList.remove("disabledClass")
+        } catch (err) {
+            // Div doesn't exist (qunit only ?)
+        }
     },
 
     /**
@@ -941,15 +991,15 @@ Segment.prototype = {
      * @return {string} fasta 
      * */
     toFasta: function () {
-        var selected = this.sequenceListInSegmenter();
-        var result = "";
+        var selected = this.m.orderedSelectedClones;
+        var result = '';
 
         for (var i = 0; i < selected.length; i++) {
             if (typeof this.sequence[selected[i]] !== "undefined" &&
                 typeof this.sequence[selected[i]].seq !== "undefined") {
                 var seq = this.sequence[selected[i]];
                 if (seq.is_clone) {
-                    result +="> " + this.m.clone(selected[i]).getName() + " // " + this.m.clone(selected[i]).getStrSize() + "\n";
+                    result += "> " + this.m.clone(selected[i]).getName() + " // " + this.m.clone(selected[i]).getStrSize() + "\n";
                 } else {
                     result += "> " + selected[i];
                 }
@@ -960,6 +1010,23 @@ Segment.prototype = {
     },
 
 
+    /**
+     * save a csv file of the currently visibles clones.
+     * @return {string} csv 
+     * */
+    exportAlignFasta: function () {
+
+        var list = this.m.getSelected()
+        if (list.length>0){
+        
+            var fasta = this.toFasta()
+            openAndFillNewTab( "<pre>" + fasta )
+        }else{
+            console.log({msg: "Export FASTA: please select clones to be exported", type: 'flash', priority: 2});
+        }
+        
+    },
+
 
     /**
      * remove alignement
@@ -969,9 +1036,21 @@ Segment.prototype = {
 
         this.aligned = false
 
-        for (var i = 0; i < selected.length; i++) {
-            var spanM = document.getElementById("m" + selected[i])
-            spanM.innerHTML =  this.sequence[selected[i]].load().toString(this)
+        try {
+            div = document.getElementById("export_fasta_align")
+            div.classList.add("disabledClass")
+        } catch (err) {
+            // Div doesn't exist (qunit only ?)
+        }
+
+        try{
+            if( selected.length ){
+                for (var i = 0; i < selected.length; i++) {
+                    var spanM = document.getElementById("m" + selected[i])
+                    spanM.innerHTML =  this.sequence[selected[i]].load().toString(this)
+                }
+            }
+        } catch (err) {
         }
     },
     
@@ -984,12 +1063,12 @@ Segment.prototype = {
 
         var json = JSON.parse(file)
 
-	// Load all (aligned) sequences
+	    // Load all (aligned) sequences
         for (var i = 0; i < json.seq.length; i++) {
             this.sequence[this.memTab[i]].load(json.seq[i])
-	}
+    	}
 
-	// Render all (aligned) sequences
+	    // Render all (aligned) sequences
         for (var j = 0; j < json.seq.length; j++) {
 
             // global container
@@ -1318,6 +1397,8 @@ genSeq.prototype= {
         var mutations = {};
         var ref = '';
         var seq = '';
+
+
         if (this.segmenter.amino) {
             seq = this.seqAA;
             ref = this.segmenter.sequence[this.segmenter.first_clone].seqAA;

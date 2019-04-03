@@ -7,7 +7,9 @@
 \usepackage{multirow}
 %\usepackage{fourier-orns}
 \usepackage{hyperref}
-\usepackage[margin=3.2cm, top=2cm, bottom=2cm,left=2cm,a4paper]{geometry}
+\newlength\myleftmargin
+\setlength{\myleftmargin}{2cm}
+\usepackage[margin=3.5cm, top=2cm, bottom=2cm,left=\myleftmargin,a4paper]{geometry}
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{array}
@@ -28,6 +30,16 @@
 \let\oldmarginpar\marginpar
 \renewcommand\marginpar[1]{\oldmarginpar{\tiny#1}}
 
+\usepackage{titling}
+
+\usepackage{tikz}
+
+\newcommand\new{%
+  \tikz[overlay, remember picture]{\coordinate[anchor=base] (line) at (0,0);
+    %
+    \coordinate (margin start) at ([xshift=\myleftmargin]line -| current page.west);
+    \node[anchor=base east, font=\bf] at (margin start) {New!};}}
+
 \makeatletter
 \renewcommand\maketitle{\begin{minipage}[c]{.7\textwidth}%
 {\LARGE\sf \@title}
@@ -35,7 +47,7 @@
 \end{minipage}
 \hfill
 \begin{minipage}[c]{.2\textwidth}
-\includegraphics[width=\textwidth]{grid-0}
+%\includegraphics[width=\textwidth]{grid-0}
 \end{minipage}
 }
 \makeatother

@@ -123,11 +123,7 @@ ul{
 }
 
 #upload_summary {
-  float: right;
   display:none;
-  margin-right: 200px;
-  position: relative;
-  right: 200px;
   z-index: 10;
   background-color: @background;
 }
@@ -522,6 +518,8 @@ line {
   flex: 1 1 auto;
   height: 0px; // set scrollbar flex will override height
   max-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 #data{
@@ -530,11 +528,9 @@ line {
 }
 
 #list_clones{
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   overflow-y : scroll;
   overflow-x : hidden;
-  height : calc(~"100% - 30px");  /*100% - list_menu height */
-  max-height: 100%;
   width: 100%;
   padding:2px;
 }
@@ -983,6 +979,12 @@ span .end-codon-not-first {
   border: 1px solid @message_border_red;
 }
 
+#menu_right_part {
+   float:right;
+   display: flex;
+   justify-content: flex-end;
+}
+
 .buttonSelector {
   background : @background;
   cursor:pointer;
@@ -1054,7 +1056,7 @@ a.tag-link {
   &.data-container, &.info-container{
     top: 50px;
     left: 20px + @width_left_container;
-    max-width: calc(~"100%" - @width_left_container + 60px);
+     max-width: calc(~"100%" - (@width_left_container + 60px));
     height: calc(~"100%" - 215px);
   }
 
@@ -2213,9 +2215,14 @@ label.highlight_label {
     vertical-align: bottom;
 }
 
+i[class*="icon-"] {
+  cursor:pointer;
+}
+
 .disabledClass {
     pointer-events: none;
     opacity: 0.4;
+    cursor: auto;
 }
 
 .db_table td.pre-line {
@@ -2587,4 +2594,5 @@ form {
 .disabledbutton {
     pointer-events: none;
     opacity: 0.4;
+    cursor: auto;
 }

@@ -1,0 +1,8 @@
+{
+  "config": {
+    "labels": [
+      { "name": "lab1", "sequence": "CGAGAGTGGGCAGCAGCTGG", "foo": 42 },
+      { "name": "lab2", "sequence": "GAAGGGCTACTATGGTTCGGG", "bar": 17}
+    ]
+  }
+}

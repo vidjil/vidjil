@@ -1,6 +1,15 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+2019-03-14  The Vidjil Team
+	* New --consensus-on-random-sample experimental option (core/representative.cpp) #3764
+	* Aho-Corasick automaton used by default (vidjil.cpp) #2566, will bring speed-ups in a future release
+	* Refactored command and option names, deprecate some short options names (vidjil.cpp) #3295 #3772
+	* Bug closed (incorrect deletion reported on unexpected recombinations, core/segment.cpp) #3518
+	* Updated documentation
+	* Improved test framework (tools/should.py), updating code coverage, test compilation warnings #1233
+	* New and updated unit and functional tests
+
 2018-11-26
 	* Corrected 2018-10 release, works now on all suported platforms #3601 #3062 (core/output.cpp)
 	* Updated the functional test framework, relaunching some tests (tools/should.py)

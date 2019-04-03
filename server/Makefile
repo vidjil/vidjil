@@ -1,8 +1,12 @@
 
+WEB2PY_VERSION=2.17.2
+
 install: install_web2py
 
-install_web2py:
-	wget http://web2py.com/examples/static/web2py_src.zip
+download_web2py:
+	wget http://web2py.com/examples/static/${WEB2PY_VERSION}/web2py_src.zip
+
+install_web2py: download_web2py
 	unzip web2py_src.zip
 	mv web2py/handlers/wsgihandler.py web2py/wsgihandler.py
 	rm web2py_src.zip

@@ -44,8 +44,7 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
     $b.tag_item('3')[:name].click
     $b.clone_in_segmenter('1').hover # Change clone to hover: on hover color doesn't change
 
-    sleep(1)
-    assert ($b.clone_info_segmenter('0')[:name].style('color') == tagColor), "Clone has not changed color in segmenter"
+    $b.until { $b.clone_info_segmenter('0')[:name].style('color') == tagColor }
 
     # Must remove rgb from the start of the fill style, and the closing parentheses at the end,
     # as tagColor is a rgba color with four components, and not just a rgb as the fill color.

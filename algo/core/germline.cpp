@@ -387,6 +387,7 @@ void MultiGermline::build_with_one_index(string seed, bool set_index)
   index = KmerStoreFactory<KmerAffect>::createIndex(indexType, expand_seed(seed), rc);
   index->refs = 1;
   insert_in_one_index(index, set_index);
+  index->multiple_in_one = true;
 }
 
 void MultiGermline::finish() {

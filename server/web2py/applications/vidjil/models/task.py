@@ -170,6 +170,7 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     filename= db.sequence_file[id_sequence].filename
 
     res = {"redirect": "reload",
+           "processId": task.id,
            "message": "[%s] c%s: process requested - %s %s" % (data_id, id_config, grep_reads, filename)}
 
     log.info(res)
@@ -248,7 +249,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
 
     if grep_reads:
         # TODO: security, assert grep_reads XXXX
-        vidjil_cmd += ' -FaW "%s" ' % grep_reads
+        vidjil_cmd += ' --grep-reads "%s" ' % grep_reads
     
     os.makedirs(out_folder)
     out_log = out_folder+'/'+output_filename+'.vidjil.log'

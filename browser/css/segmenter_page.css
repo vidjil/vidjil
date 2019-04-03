@@ -84,11 +84,7 @@ ul {
   top: 32px;
 }
 #upload_summary {
-  float: right;
   display: none;
-  margin-right: 200px;
-  position: relative;
-  right: 200px;
   z-index: 10;
   background-color: #ffffff;
 }
@@ -406,18 +402,17 @@ line {
   flex: 1 1 auto;
   height: 0px;
   max-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 #data {
   flex: 0 1 auto;
   border: none;
 }
 #list_clones {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   overflow-y: scroll;
   overflow-x: hidden;
-  height: calc(100% - 30px);
-  /*100% - list_menu height */
-  max-height: 100%;
   width: 100%;
   padding: 2px;
 }
@@ -813,6 +808,11 @@ span .end-codon {
 #add_clone_menu > #addclone_input.error {
   border: 1px solid #8b0000;
 }
+#menu_right_part {
+  float: right;
+  display: flex;
+  justify-content: flex-end;
+}
 .buttonSelector {
   background: #ffffff;
   cursor: pointer;
@@ -878,7 +878,7 @@ a.tag-link {
 .modal.info-container {
   top: 50px;
   left: 495px;
-  max-width: calc(100% - 475px + 60px);
+  max-width: calc(100% - 535px);
   height: calc(100% - 215px);
 }
 .modal.jstree-container {
@@ -1947,9 +1947,13 @@ label.highlight_label {
   height: 100%;
   vertical-align: bottom;
 }
+i[class*="icon-"] {
+  cursor: pointer;
+}
 .disabledClass {
   pointer-events: none;
   opacity: 0.4;
+  cursor: auto;
 }
 .db_table td.pre-line {
   white-space: pre-line;
@@ -2246,6 +2250,7 @@ form .form_label {
 .disabledbutton {
   pointer-events: none;
   opacity: 0.4;
+  cursor: auto;
 }
 body {
   line-height: 20px;

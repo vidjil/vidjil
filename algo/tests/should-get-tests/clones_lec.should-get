@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g -c clones -A -3 $VIDJIL_DATA/segment_lec.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g -c clones --all -3 $VIDJIL_DATA/segment_lec.fa
 
 $ Extract up to 50bp windows (TRG)
 1:windows up to 50bp

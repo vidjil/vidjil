@@ -43,8 +43,8 @@ $ Junction of the first clone appears once, but CDR3 twice (it is also included 
 1:CTREEQYSSWYFDFW		
 w2:TREEQYSSWYFDF
 
-$ The first clone has three warnings
-1:W51 W69 W69
+$ The first clone has one warning
+1:TATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTG .* W69
 
 $ No spurious character
 0:"

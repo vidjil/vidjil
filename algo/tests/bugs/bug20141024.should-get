@@ -1,5 +1,5 @@
 !NO_LAUNCHER:
-!LAUNCH: valgrind --suppressions=gzstream_cpp.supp --suppressions=libstdc++_leak.supp --leak-check=full  $VIDJIL_DIR/$EXEC -c clones -d -g ../../../germline/homo-sapiens.g:IGH -z 2 -r 1 bug20141024.fa 2>&1
+!LAUNCH: valgrind --suppressions=gzstream_cpp.supp --suppressions=libstdc++_leak.supp --leak-check=full  $VIDJIL_DIR/$EXEC --clean-memory -c clones -d -g ../../../germline/homo-sapiens.g:IGH -z 2 -r 1 bug20141024.fa 2>&1
 !REQUIRES: which valgrind
 
 $ No invalid read with short sequences

@@ -8,4 +8,4 @@ $ Most abundant window, twice, fused
 1:"id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC".*"reads": \[8, 8\].*"top": 2
 
 $ Windows that are not in the bottom of the distribution
-1: "distribution": \{[^}]+ "0.00001": \[9061, 9061\]
+1: "distribution": \{[^}]+ "0.00001": \[9062, 9062\]

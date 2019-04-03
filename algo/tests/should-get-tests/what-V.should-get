@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -c segment -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/what-V.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -c designations -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/what-V.fa
 
 $ V1*01 is recognized three times
 3: VJ .* TRGV1.01

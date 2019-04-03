@@ -125,6 +125,31 @@ Database.prototype = {
                          report.reportcontamination()
                      })
     },
+
+    get_read: function(window, clone_id, sequence_file_id) {
+	var self = this;
+        var log = "Reads will be exported in a few minutes. You will be able to download them when they are ready. You can continue using the application.";
+        console.log({"type": "flash", "msg" : log, "priority": 2});
+	self.callProcess('default/run_request',
+			 {'sequence_file_id': sequence_file_id,
+			  'sample_set_id': self.m.sample_set_id,
+			  'config_id': self.m.db_key.config,
+			  'grep_reads': window},
+			 function(a) {
+				// Link to result file and launch download
+                             var path_data = DB_ADDRESS+"/results_file/download?filename=seq/clone.fa-1&results_file_id="+a.result_id
+                             var file_name = "reads__"+clone_id+"__file_id_"+"_"+sequence_file_id+".fa"
+                             var anchor = document.createElement('a');
+                             anchor.setAttribute("download", file_name);
+                             anchor.setAttribute("href",     path_data);
+                             anchor.style = 'display: none';
+                             self.ajax_indicator_stop()
+                             document.body.appendChild(anchor);
+                             anchor.click();
+                             document.body.removeChild(anchor);
+			 });
+    },
+
     
      /**
       * request a side process to the server
@@ -132,7 +157,8 @@ Database.prototype = {
       * */
      callProcess : function (page, args, callback){
          var self=this;
-         
+         this.temporarilyDisableClickedLink();
+	 
          var arg = "";
          if (typeof args != "undefined" && Object.keys(args).length) 
              arg = this.argsToStr(args)
@@ -171,7 +197,6 @@ Database.prototype = {
      * check if a server process is done(recursive)
      * */
      waitProcess: function (processId, interval, callback){
-         console.log("... " +processId)
          var self=this;
          var url = self.db_address + "default/checkProcess?processId="+processId;
          
@@ -185,11 +210,12 @@ Database.prototype = {
              xhrFields: {withCredentials: true},
              success: function (result) {
                  self.connected = true;
+		 console.log(result);
                  result = jQuery.parseJSON(result)
                  if (result.status == "COMPLETED"){
                      callback(result.data);
                  }else if(result.status == "FAILED"){
-                     console.log({"type": "flash", "msg": "process failed", "priority": 1});
+                     console.log({"type": "flash", "msg": "process failed:" + ((typeof result.message !== 'undefined') ? result.message: ''), "priority": 1});
                  }else{
                      setTimeout(function(){ self.waitProcess(processId, interval, callback); }, interval); 
                  }
@@ -214,20 +240,7 @@ Database.prototype = {
      * */
     call: function (page, args) {
         var self = this;
-        try {
-            var event = window.event || arguments.callee.caller.arguments[0] 
-            event.stopPropagation();
-            var target = event.target
-            if (target.getAttribute("disabled")){
-                return;
-            } else {
-                target.setAttribute("disabled", "disabled")
-                self.ajax_indicator_start();
-                setTimeout(function(){target.removeAttribute("disabled")}, 2000)
-            }
-        }
-        catch(err)
-        {}
+	this.temporarilyDisableClickedLink()
         
         var url = self.db_address + page
         if (page.substr(0,4).toLowerCase() == "http") {
@@ -1102,6 +1115,33 @@ Database.prototype = {
         var tgt = $('#live-ajax');
         tgt.empty();
         $('body').css('cursor', 'default');
+    },
+
+    temporarilyDisableClickedLink: function() {
+	var self = this;
+        try {
+            var event = window.event;
+            if (typeof(event) === 'undefined') {
+                var caller = arguments.callee.caller;
+                while (caller != null && (caller.arguments.length == 0 ||
+                                          ! (caller.arguments[0] instanceof Event)))
+                    caller = caller.caller;
+                if (caller == null)
+                    return;
+                event = caller.arguments[0];
+            }
+            event.stopPropagation();
+            var target = $(event.target)
+            if (target.hasClass("disabledClass")){
+                return;
+            } else {
+                target.addClass("disabledClass")
+                self.ajax_indicator_start();
+                setTimeout(function(){target.removeClass("disabledClass")}, 3000)
+            }
+        }
+        catch(err)
+	{}
     },
     
     validate_fileform: function (form) { 

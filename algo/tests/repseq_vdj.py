@@ -249,7 +249,8 @@ def header_igblast_results(ff_fasta, ff_igblast):
 
 ### Vidjil
 
-VIDJIL_FINE = '{directory}/vidjil-algo --header-sep "#" -c segment -3 -d -g {directory}/germline/homo-sapiens.g %s >> %s'
+
+VIDJIL_FINE = '{directory}/vidjil-algo --header-sep "#" -c designations -2 -3 -d -g {directory}/germline/homo-sapiens.g %s >> %s'
 VIDJIL_KMER = '{directory}/vidjil-algo -w 20 --header-sep "#" -b out -c windows -uuuU -2 -g {directory}/germline/homo-sapiens.g %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa >> %s'
 
 def should_results_from_vidjil_output(f_log):
@@ -266,9 +267,15 @@ def should_results_from_vidjil_output(f_log):
         if l[0] == '>':
             l = l.strip()
             pos = l.find(' + ') if ' + ' in l else l.find(' - ')
+            if pos == -1:
+                pos = l.find(' ! ')
+            if pos == -1:
+                raise ValueError("No [+-!] in the line: {}".format(l))
             should = l[1:pos].replace('_', ' ')
 
             pos = l.find('\t')
+            if pos == -1:
+                raise ValueError("I expected a tabulation to separate the sequence name from the remainder")
             result = l[pos+1:] + ' '
 
             yield (should, result)

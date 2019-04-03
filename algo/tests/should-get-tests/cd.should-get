@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -K -g $VIDJIL_DIR/germline/homo-sapiens-cd.g -A $VIDJIL_DATA/cd-4-19.fa ; grep 'seed' out/cd-4-19.affects
+!LAUNCH: $VIDJIL_DIR/$EXEC -K -g $VIDJIL_DIR/germline/homo-sapiens-cd.g --all $VIDJIL_DATA/cd-4-19.fa ; grep 'seed' out/cd-4-19.affects
 
 $ Load CD-sorting.fa
 1:homo-sapiens/CD-sorting.fa .* 28 sequences

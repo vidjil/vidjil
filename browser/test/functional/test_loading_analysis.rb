@@ -107,9 +107,9 @@ end
   def test_06_remove_cluster
     clustered = $b.clone_info('1')
     clustered[:cluster].click
-    $b.clone_in_cluster('1', '2')[:delete].wait_until(&:present?)
+    $b.until { $b.clone_in_cluster('1', '2')[:delete].present? }
     $b.clone_in_cluster('1', '2')[:delete].click
-
+    
     assert (not $b.clone_cluster('1').present?)
     
     assert ($b.clone_in_scatterplot('1').present?)
@@ -129,7 +129,7 @@ end
     clustered = $b.clone_info('1')
     assert (clustered[:name].text == 'clone2')
     assert ($b.clone_in_scatterplot('1').present?)
-    assert (not $b.clone_in_scatterplot('2').present?)
+    $b.until{ not $b.clone_in_scatterplot('2').present? }
   end
 
   def test_08_select_cluster
@@ -148,7 +148,7 @@ end
     assert ($b.clone_in_scatterplot('1', :class => "circle_select").exists?)
     assert ($b.clone_in_graph('1', :class=> "graph_select").exists?)
     assert ($b.clone_in_segmenter('1').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
-    assert ( $b.clone_in_scatterplot('2', :class => "circle_select").exists?)
+    $b.until { $b.clone_in_scatterplot('2', :class => "circle_select").exists? }
     assert ( $b.clone_in_graph('2', :class=> "graph_select").exists?)
     assert ( $b.clone_in_segmenter('2').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
 

@@ -174,3 +174,15 @@ def get_set_group(sid):
               (db.auth_permission.name == PermissionEnum.access.value)
             ).select().first()
     return perm.group_id
+
+def get_sample_set_id_from_results_file(results_file_id):
+    '''
+    Return the sample set ID corresponding to a result file ID
+    '''
+    sample_set_id = db((db.sequence_file.id == db.results_file.sequence_file_id)
+                    &(db.results_file.id == results_file_id)
+                    &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
+                    &(db.sample_set.id == db.sample_set_membership.sample_set_id)
+                ).select(db.sample_set_membership.sample_set_id).first().sample_set_id
+    return sample_set_id
+

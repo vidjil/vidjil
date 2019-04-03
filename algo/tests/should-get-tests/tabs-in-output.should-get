@@ -1,0 +1,4 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -2 -c designations -g $VIDJIL_DIR/germline  $VIDJIL_DATA/segment-or-not.fa
+
+$ Check that output has one tab for each sequence
+3:^>.*\t

@@ -115,6 +115,8 @@ def run_request():
     ##TODO check
     if not "sequence_file_id" in request.vars :
         error += "id sequence file needed, "
+    elif not "sample_set_id" in request.vars:
+        error += "sample set ID needed, "
     if not "config_id" in request.vars:
         error += "id config needed, "
         id_config = None
@@ -125,8 +127,11 @@ def run_request():
 
     id_sample_set = request.vars["sample_set_id"]
 
+    extra_info = ''
+
     if "grep_reads" in request.vars:
         grep_reads = request.vars["grep_reads"]
+        extra_info += 'to get reads '
     else:
         grep_reads = None
 
@@ -136,15 +141,17 @@ def run_request():
     if id_config:
         if not auth.can_use_config(id_config) :
             error += "you do not have permission to launch process for this config ("+str(id_config)+"), "
+        else:
+            extra_info += 'with config '+db.config[id_config].name
 
     if error == "" :
         res = schedule_run(request.vars["sequence_file_id"], id_config, grep_reads)
-        log.info("run requested", extra={'user_id': auth.user.id, 'record_id': request.vars['sequence_file_id'], 'table_name': 'sequence_file'})
+        log.info("run requested "+extra_info, extra={'user_id': auth.user.id, 'record_id': request.vars['sequence_file_id'], 'table_name': 'sequence_file'})
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
         res = {"success" : "false",
-               "message" : "default/run_request : " + error}
+               "message" : "default/run_request "+extra_info+" : " + error}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
@@ -156,7 +163,7 @@ def run_contamination():
     
     res = {"success" : "true",
            "processId" : task.id}
-    log.error(res)
+    log.debug(str(res))
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def run_extra():
@@ -165,25 +172,40 @@ def run_extra():
                                                             min_threshold=5))
     res = {"success" : "true",
            "processId" : task.id}
-    log.debug(res)
+    log.debug(str(res))
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def checkProcess():
     task = db.scheduler_task[request.vars["processId"]]
-    
-    if task.status == "COMPLETED" :
+    results_file = db(db.results_file.scheduler_task_id == task.id).select().first()
+
+    msg = ''
+    sample_set_id = -1
+    if results_file:
+        sample_set_id = get_sample_set_id_from_results_file(results_file.id)
+    if not results_file or not auth.can_view_sample_set(sample_set_id):
+        msg = "You don't have access to this sample"
+    if sample_set_id > -1 and task.status == "COMPLETED" :
         run = db( db.scheduler_run.task_id == task.id ).select()[0]
     
         res = {"success" : "true",
                "status" : task.status,
-               "data" : run.run_result,
+               "data" : {'run_result': run.run_result,
+                         'result_id': results_file.id
+                         },
                "processId" : task.id}
     else :
-        res = {"success" : "true",
-               "status" : task.status,
-               "processId" : task.id}
-        
-    log.error(res)
+        if len(msg) > 0:
+            res = {"success" : "false",
+                   "status" : "FAILED",
+                   "message": msg,
+                   "processId" : task.id}
+        else:
+            res = {"success" : "true",
+                   "status" : task.status,
+                   "processId" : task.id}
+
+    log.debug(str(res))
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 

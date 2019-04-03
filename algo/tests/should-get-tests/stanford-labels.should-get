@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -x 100 -r 5 -l $VIDJIL_DATA/Stanford_S22.label $VIDJIL_DATA/Stanford_S22.fasta ; cat out/Stanford_S22.vidjil
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -x 100 -r 5 --label-file $VIDJIL_DATA/Stanford_S22.label $VIDJIL_DATA/Stanford_S22.fasta ; cat out/Stanford_S22.vidjil
 
 $ Some clone has only one read, bypassing the -r 5 option, and the good label
 1: clone-00..*0001-.* my-clone

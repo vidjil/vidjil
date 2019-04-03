@@ -11,11 +11,11 @@ import os
 parser = argparse.ArgumentParser(description='Use PEAR read merger to make a new fastq file and keep unmerged reads')
 
 parser.add_argument("pear_dir", help="path to pear executable")
-parser.add_argument("file_R1", help="reverse read file")
-parser.add_argument("file_R2", help="forward read file")
+parser.add_argument("file_R1", help="forward read file")
+parser.add_argument("file_R2", help="reverse read file")
 parser.add_argument("output_file", help="output file")
-parser.add_argument("-r1", "--keep_r1", help="keep unmerged reverse reads", action="store_true")
-parser.add_argument("-r2", "--keep_r2", help="keep unmerged forward reads", action="store_true")
+parser.add_argument("-r1", "--keep_r1", help="keep unmerged forward reads", action="store_true")
+parser.add_argument("-r2", "--keep_r2", help="keep unmerged reverse reads", action="store_true")
 parser.add_argument("-p", "--pear-options", help="additional options passed to PEAR", default="")
 parser.add_argument("-k", "--keep", help="keep temporary files (may take lots of disk space in the end)", action = 'store_true')
 
@@ -42,10 +42,10 @@ try :
         with open(f_out+'.assembled.fastq', 'rb') as f1:
             shutil.copyfileobj(f1, outFile)
         if (args.keep_r1):
-            with open(f_out+'.unassembled.reverse.fastq', 'rb') as f2:
+            with open(f_out+'.unassembled.forward.fastq', 'rb') as f2:
                 shutil.copyfileobj(f2, outFile)
         if (args.keep_r2):
-            with open(f_out+'.unassembled.forward.fastq', 'rb') as f3:
+            with open(f_out+'.unassembled.reverse.fastq', 'rb') as f3:
                 shutil.copyfileobj(f3, outFile)
         if not args.keep:
             os.remove(f_out+'.assembled.fastq')

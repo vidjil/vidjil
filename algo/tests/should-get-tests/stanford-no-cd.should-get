@@ -1,0 +1,4 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -e 1e-2 -y 0 -g $VIDJIL_DIR/germline/homo-sapiens-cd.g $VIDJIL_DATA/Stanford_S22.fasta
+
+$ Do not segment any read with SEG_METHOD_ONE on homo-sapiens-cd.g
+1: CD .* -> .* 0 .* 0

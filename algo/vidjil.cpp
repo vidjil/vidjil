@@ -1,6 +1,6 @@
 /*
   This file is part of Vidjil-algo <http://www.vidjil.org>
-  Copyright (C) 2011-2018 by VidjilNet consortium and Bonsai bioinformatics
+  Copyright (C) 2011-2019 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
       Mathieu Giraud <mathieu.giraud@vidjil.org>
@@ -57,6 +57,7 @@
 
 #include "lib/CLI11.hpp"
 #include "lib/json.hpp"
+#include "lib/CLI11_json.hpp"
 
 #include "vidjil.h"
 
@@ -70,6 +71,7 @@
 
 #define PROGNAME "vidjil-algo"
 #define VIDJIL_JSON_VERSION "2016b"
+#define DOCUMENTATION "doc/vidjil-algo.md"
 
 //$$ #define (mainly default options)
 
@@ -86,7 +88,7 @@
 
 #define COMMAND_WINDOWS "windows"
 #define COMMAND_CLONES "clones"
-#define COMMAND_SEGMENT "segment"
+#define COMMAND_SEGMENT "designations"
 #define COMMAND_GERMLINES "germlines"
  
 enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
@@ -111,6 +113,11 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
+#define DEFAULT_MIN_COVER_REPRESENTATIVE 3 // At least 3 reads to support a
+                                           // representative (consisting of at
+                                           // least
+                                           // DEFAULT_RATIO_REPRESENTATIVE of
+                                           // the clone's reads)
 
 #define DEFAULT_KMER_THRESHOLD 1
 
@@ -133,7 +140,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 // display
 #define WIDTH_NB_READS 7
 #define WIDTH_NB_CLONES 3
-
+#define PAD_HELP "\n                              "
 
 using namespace std ;
 using json = nlohmann::json;
@@ -148,20 +155,28 @@ string usage_examples(char *progname)
 {
   stringstream ss;
   ss
-       << "Examples (see doc/algo.org)" << endl
-       << "  " << progname << " -c clones   -g germline/homo-sapiens.g   -2 -3 -r 1  demo/Demo-X5.fa           # (basic usage, detect the locus for each read," << endl
+       << "Examples (see " DOCUMENTATION ")" << endl
+       << "  " << progname << " -c clones       -g germline/homo-sapiens.g   -2 -3 -r 1  demo/Demo-X5.fa           # (basic usage, detect the locus for each read," << endl
        << "                                                                                               #  cluster reads and report clones starting from the first read (-r 1)," << endl
        << "                                                                                               #  including unexpected recombinations (-2), assign V(D)J genes and try to detect the CDR3s (-3))" << endl
-       << "  " << progname << " -c clones   -g germline/homo-sapiens.g:IGH    -3     demo/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
-       << "  " << progname << " -c clones   -g germline/homo-sapiens.g   -2 -3 -z 20 demo/LIL-L4.fastq.gz      # (basic usage, output detailed V(D)J analysis on the first 20 clones)" << endl
-       << "  " << progname << " -c windows  -g germline/homo-sapiens.g   -y 0 -uu -U demo/LIL-L4.fastq.gz      # (splits all the reads into (large) files depending on the detection of V(D)J recombinations)" << endl
-       << "  " << progname << " -c segment  -g germline/homo-sapiens.g   -2 -3 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing, here on 50 sampled reads)" << endl
-       << "  " << progname << " -c germlines -g germline/homo-sapiens.g              demo/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
+       << "  " << progname << " -c clones       -g germline/homo-sapiens.g:IGH    -3     demo/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
+       << "  " << progname << " -c clones       -g germline/homo-sapiens.g   -2 -3 -z 20 demo/LIL-L4.fastq.gz      # (basic usage, output detailed V(D)J analysis on the first 20 clones)" << endl
+       << "  " << progname << " -c windows      -g germline/homo-sapiens.g   -y 0 -uu -U demo/LIL-L4.fastq.gz      # (splits all the reads into (large) files depending on the detection of V(D)J recombinations)" << endl
+       << "  " << progname << " -c designations -g germline/homo-sapiens.g   -2 -3 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, here on 50 sampled reads)" << endl
+       << "  " << progname << " -c germlines    -g germline/homo-sapiens.g               demo/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
     ;
 
   return ss.str();
 }
 
+inline std::string failure_message_doc(const CLI::App *app, const CLI::Error &e) {
+    std::string header = ERROR_STRING + std::string(e.what()) + "\n";
+    header += "For more information, ";
+    if(app->get_help_ptr() != nullptr)
+        header += "run with " + app->get_help_ptr()->get_name() + " or ";
+    header += "see " DOCUMENTATION ".\n";
+    return header;
+}
 
 int atoi_NO_LIMIT(const char *optarg)
 {
@@ -185,7 +200,7 @@ string string_NO_LIMIT(string s)
 int main (int argc, char **argv)
 {
   cout << "# " << PROGNAME << " -- V(D)J recombinations analysis <http://www.vidjil.org/>" << endl
-       << "# Copyright (C) 2011-2018 by the Vidjil team" << endl
+       << "# Copyright (C) 2011-2019 by the Vidjil team" << endl
        << "# Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille" << endl 
        << "# VidjilNet consortium" << endl 
        << endl
@@ -215,6 +230,10 @@ int main (int argc, char **argv)
 #endif
 
   CLI::App app{"# vidjil-algo -- V(D)J recombinations analysis", argv[0]};
+  app.config_formatter(std::make_shared<ConfigJSON>());
+  app.get_formatter()->label("REQUIRED", "");
+  app.get_formatter()->label("Positionnals", "");
+  app.failure_message(failure_message_doc);
 
   //$$ options: defaults
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
@@ -232,7 +251,7 @@ int main (int argc, char **argv)
                                   - BAM (.bam)
                               Paired-end reads should be merged before given as an input to vidjil-algo.
                  )Z")
-    -> required() -> set_type_name("");
+    -> required() -> type_name("");
 
 
   // ----------------------------------------------------------------------------------------------------------------------
@@ -242,31 +261,45 @@ int main (int argc, char **argv)
   app.add_option("-c", cmd, "command"
                  "\n  \t\t" COMMAND_CLONES    "  \t locus detection, window extraction, clone clustering (default command, most efficient, all outputs)"
                  "\n  \t\t" COMMAND_WINDOWS   "  \t locus detection, window extraction"
-                 "\n  \t\t" COMMAND_SEGMENT   "  \t detailed V(D)J designation (not recommended)"
+                 "\n  \t\t" COMMAND_SEGMENT   "  \t detailed V(D)J designation, without prior clustering (not as efficient)"
                  "\n  \t\t" COMMAND_GERMLINES "  \t statistics on k-mers in different germlines")
-    -> group(group) -> set_type_name("COMMAND");
+    -> group(group) -> type_name("COMMAND");
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Input" ;
 
+  app.set_config("--config", "", "read a (.json) config.vidjil file with options") -> type_name("FILE")
+    -> group(group) -> level();
+
   string read_header_separator = DEFAULT_READ_HEADER_SEPARATOR ;
   app.add_option("--header-sep", read_header_separator, "separator for headers in the reads file", false)
-    -> group(group) -> level() -> set_type_name("CHAR='" DEFAULT_READ_HEADER_SEPARATOR "'");
+    -> group(group) -> level() -> type_name("CHAR='" DEFAULT_READ_HEADER_SEPARATOR "'");
+
+  int max_reads_processed = NO_LIMIT_VALUE;
+  int max_reads_processed_sample = NO_LIMIT_VALUE;
+
+  app.add_option("--first-reads,-x", max_reads_processed,
+                 "maximal number of reads to process ('" NO_LIMIT "': no limit, default), only first reads")
+    -> group(group) -> transform(string_NO_LIMIT);
+
+  app.add_option("--sampled-reads,-X", max_reads_processed_sample,
+                 "maximal number of reads to process ('" NO_LIMIT "': no limit, default), sampled reads")
+    -> group(group) -> transform(string_NO_LIMIT);
 
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Germline presets (at least one -g or -V/(-D)/-J option must be given)";
 
   vector <string> multi_germlines ;
-  app.add_option("-g", multi_germlines, R"Z(
+  app.add_option("--germline,-g", multi_germlines, R"Z(
          -g <.g FILE>(:FILTER)
                     multiple locus/germlines, with tuned parameters.
                     Common values are '-g germline/homo-sapiens.g' or '-g germline/mus-musculus.g'
                     The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
          -g PATH
                     multiple locus/germlines, shortcut for '-g PATH/)Z" DEFAULT_MULTI_GERMLINE_FILE R"Z(',
-                    processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations)Z")
-    -> group(group) -> set_type_name("GERMLINES");
+                    processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with incomplete/unusal recombinations)Z")
+    -> group(group) -> type_name("GERMLINES");
 
   vector <string> v_reps_V ;
   vector <string> v_reps_D ;
@@ -274,26 +307,20 @@ int main (int argc, char **argv)
    
   app.add_option("-V", v_reps_V,
                  "custom V germline multi-fasta file(s)")
-    -> group(group) -> set_type_name("FILE");
+    -> group(group) -> type_name("FILE");
 
 
   app.add_option("-D", v_reps_D,
-                 "custom D germline multi-fasta file(s), segment into V(D)J components")
-    -> group(group) -> set_type_name("FILE");
+                 "custom D germline multi-fasta file(s), analyze into V(D)J components")
+    -> group(group) -> type_name("FILE");
 
   app.add_option("-J", v_reps_J,
                  "custom V germline multi-fasta file(s)")
-    -> group(group) -> set_type_name("FILE");
+    -> group(group) -> type_name("FILE");
 
 
-  // ----------------------------------------------------------------------------------------------------------------------
-  group = "Locus/recombinations";
-
-  bool several_D = false;
   bool multi_germline_unexpected_recombinations_12 = false;
-
-  app.add_flag("-d", several_D, "try to detect several D (experimental)") -> group(group);
-  app.add_flag("-2", multi_germline_unexpected_recombinations_12, "try to detect unexpected recombinations (must be used with -g)") -> group(group);
+  app.add_flag("-2", multi_germline_unexpected_recombinations_12, "try to detect unexpected recombinations") -> group(group);
 
 
   // ----------------------------------------------------------------------------------------------------------------------
@@ -304,15 +331,15 @@ int main (int argc, char **argv)
 
   int options_s_k = 0 ;
 
-  IndexTypes indexType = KMER_INDEX;
-  app.add_flag_function("-q",
-                        [&](size_t n) { UNUSED(n); indexType = AC_AUTOMATON; },
-                        "use Aho-Corasick-like automaton (experimental)")
+  IndexTypes indexType = AC_AUTOMATON;
+  app.add_flag_function("--plain-index",
+                        [&](size_t n) { UNUSED(n); indexType = KMER_INDEX; },
+                        "use a plain index (pre-2019 method) instead of the recommended Aho-Corasick-like automaton")
     -> group(group) -> level();
 
   string seed = DEFAULT_SEED ;
   bool seed_changed = false;
-  app.add_option("-k",
+  app.add_option("--kmer,-k",
                  [&](CLI::results_t res) {
                    int kmer_size ;
                    bool worked = CLI::detail::lexical_cast(res[0], kmer_size);
@@ -324,22 +351,22 @@ int main (int argc, char **argv)
                    return worked;
                  },
                  "k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)")
-    -> group(group) -> level() -> set_type_name("INT");
+    -> group(group) -> level() -> type_name("INT");
 
   int wmer_size = DEFAULT_W ;
-  app.add_option("-w", wmer_size,
+  app.add_option("--window,-w", wmer_size,
                  "w-mer size used for the length of the extracted window ('" NO_LIMIT "': use all the read, no window clustering)")
     -> group(group) -> level() -> transform(string_NO_LIMIT);
 
 
   double expected_value = THRESHOLD_NB_EXPECTED;
-  app.add_option("-e", expected_value,
+  app.add_option("--e-value,-e", expected_value,
                  "maximal e-value for determining if a V-J segmentation can be trusted", true)
     -> group(group) -> level() -> transform(string_NO_LIMIT);
 
   int trim_sequences = DEFAULT_TRIM;
   bool trim_sequences_changed = false;
-  app.add_option("-t",
+  app.add_option("--trim",
                  [&](CLI::results_t res) {
                    CLI::detail::lexical_cast(res[0], trim_sequences);
                    trim_sequences_changed = true;
@@ -347,9 +374,9 @@ int main (int argc, char **argv)
                  },
                  // trim_sequences,
                  "trim V and J genes (resp. 5' and 3' regions) to keep at most <INT> nt  (0: no trim)")
-    -> group(group) -> level() ->  set_type_name("INT");
+    -> group(group) -> level() -> type_name("INT");
 
-  app.add_option("-s",
+  app.add_option("--seed,-s",
                  [&](CLI::results_t res) {
                    seed = res[0] ;
                    options_s_k++ ;
@@ -357,9 +384,9 @@ int main (int argc, char **argv)
                    return true;
                  },
                  "seed, possibly spaced, used for the V/J affectation (default: depends on germline), given either explicitely or by an alias"
-                 "\n                             " + string_of_map(seedMap, " ")
+                 PAD_HELP + string_of_map(seedMap, " ")
                  )
-    -> group(group) -> level() -> set_type_name("SEED=" DEFAULT_SEED);
+    -> group(group) -> level() -> type_name("SEED=" DEFAULT_SEED);
 
 
   // ----------------------------------------------------------------------------------------------------------------------
@@ -370,20 +397,20 @@ int main (int argc, char **argv)
   bool multi_germline_unexpected_recombinations_1U = false;
 
   app.add_flag("-I", multi_germline_mark,
-               "ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)")
+               "ignore k-mers common to different germline systems (experimental, do not use)")
     -> group(group) -> level();
 
   app.add_flag("-1", multi_germline_one_unique_index,
-               "use a unique index for all germline systems (experimental, must be used with -g, do not use)")
+               "use a unique index for all germline systems (experimental, do not use)")
     -> group(group) -> level();
 
   app.add_flag("-4", multi_germline_unexpected_recombinations_1U,
-               "try to detect unexpected recombinations with translocations (experimental, must be used with -g, do not use)")
+               "try to detect unexpected recombinations with translocations (experimental, do not use)")
     -> group(group) -> level();
 
   bool keep_unsegmented_as_clone = false;
-  app.add_flag("--keep", keep_unsegmented_as_clone,
-               "keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example --keep -AX 20)")
+  app.add_flag("--not-analyzed-as-clones", keep_unsegmented_as_clone,
+               "consider not analyzed reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example --not-analyzed-as-clones -AX 20)")
     -> group(group) -> level();
 
 
@@ -392,36 +419,35 @@ int main (int argc, char **argv)
 
   vector <string> windows_labels_explicit ;
   string windows_labels_file = "" ;
+  string windows_labels_json = "" ;
 
-  app.add_option("-W", windows_labels_explicit, "label the given sequence(s)") -> group(group) -> level() -> set_type_name("SEQUENCE");
-  app.add_option("-l", windows_labels_file, "label a set of sequences given in <file>") -> group(group) -> level() -> set_type_name("FILE");
+  app.add_option("--label", windows_labels_explicit, "label the given sequence(s)") -> group(group) -> level() -> type_name("SEQUENCE");
+  app.add_option("--label-file", windows_labels_file, "label a set of sequences given in <file>") -> group(group) -> level() -> type_name("FILE");
+  app.add_option("--label-json", windows_labels_json, "read a (.json) label.vidjil (experimental)") -> type_name("FILE")
+      -> group(group) -> level();
 
   bool only_labeled_windows = false ;
-  app.add_flag("-F", only_labeled_windows, "filter -- keep only the windows related to the labeled sequences") -> group(group) -> level();
+  app.add_flag("--label-filter", only_labeled_windows, "filter -- keep only the windows related to the labeled sequences") -> group(group) -> level();
 
 
   // ----------------------------------------------------------------------------------------------------------------------
-  group = "Limits to report a clone (or a window)";
+  group = "Limits to report and to analyze clones (second pass)";
   int max_clones_id = NO_LIMIT_VALUE ;
   int min_reads_clone = DEFAULT_MIN_READS_CLONE ;
   float ratio_reads_clone = DEFAULT_RATIO_READS_CLONE;
 
+  app.add_option("--min-reads,-r", min_reads_clone, "minimal number of reads supporting a clone", true) -> group(group);
+  app.add_option("--min-ratio", ratio_reads_clone, "minimal percentage of reads supporting a clone", true) -> group(group);
   app.add_option("--max-clones", max_clones_id, "maximal number of output clones ('" NO_LIMIT "': no maximum, default)", false) -> group(group);
-  app.add_option("-r", min_reads_clone, "minimal number of reads supporting a clone", true) -> group(group);
-  app.add_option("--ratio", ratio_reads_clone, "minimal percentage of reads supporting a clone", true) -> group(group);
-
-
-  // ----------------------------------------------------------------------------------------------------------------------
-  group = "Limits to further analyze some clones (second pass)";
 
   int max_clones = DEFAULT_MAX_CLONES ;
   int max_representatives = DEFAULT_MAX_REPRESENTATIVES ;
 
-  app.add_option("-y", max_representatives,
+  app.add_option("--max-consensus,-y", max_representatives,
                  "maximal number of clones computed with a consensus sequence ('" NO_LIMIT "': no limit)", true)
     -> group(group) -> transform(string_NO_LIMIT);
 
-  app.add_option("-z",
+  app.add_option("--max-designations,-z",
                  [&max_clones, &max_representatives](CLI::results_t res) {
                    max_clones = atoi_NO_LIMIT(res[0].c_str());
                    if ((max_representatives < max_clones) && (max_representatives != NO_LIMIT_VALUE))
@@ -430,51 +456,53 @@ int main (int argc, char **argv)
                    // TODO: return false on bad input
                  },
                  "maximal number of clones to be analyzed with a full V(D)J designation ('" NO_LIMIT "': no limit, do not use)")
-    -> group(group) -> set_type_name("INT=" + string_of_int(max_clones));
+    -> group(group) -> type_name("INT=" + string_of_int(max_clones));
 
-  app.add_flag_function("-A", [&](size_t n) {
+  app.add_flag_function("--all", [&](size_t n) {
       UNUSED(n);
       ratio_reads_clone = 0 ;
       min_reads_clone = 1 ;
       max_representatives = NO_LIMIT_VALUE ;
       max_clones = NO_LIMIT_VALUE ;
     },
-    "reports and segments all clones (-r 0 --ratio 0 -y " NO_LIMIT " -z " NO_LIMIT "), to be used only on very small datasets (for example -AX 20)")
+    "reports and analyzes all clones"
+    PAD_HELP "(--min-reads 1 --min-ratio 0 --max-clones " NO_LIMIT" --max-consensus " NO_LIMIT " --max-designations " NO_LIMIT "),"
+    PAD_HELP "to be used only on small datasets (for example --all -X 1000)")
     -> group(group);
 
-  int max_reads_processed = NO_LIMIT_VALUE;
-  int max_reads_processed_sample = NO_LIMIT_VALUE;
-
-  app.add_option("-x", max_reads_processed,
-                 "maximal number of reads to process ('" NO_LIMIT "': no limit, default), only first reads")
-    -> group(group) -> transform(string_NO_LIMIT);
-
-  app.add_option("-X", max_reads_processed_sample,
-                 "maximal number of reads to process ('" NO_LIMIT "': no limit, default), sampled reads")
-    -> group(group) -> transform(string_NO_LIMIT);
-
+  VirtualReadScore *readScorer = &DEFAULT_READ_SCORE;
+  RandomScore randomScore;
+  app.add_flag_function("--consensus-on-random-sample",
+                        [&readScorer, &randomScore](size_t n) {
+                          UNUSED(n);
+                          readScorer = &randomScore;
+                        }, "for large clones, use a random sample of reads to compute the consensus sequence (instead of a sample of the longest and highest quality reads)")
+    ->group(group) -> level();
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Clone analysis (second pass)";
 
   Cost segment_cost = DEFAULT_SEGMENT_COST ;
-  app.add_option("-f",
+  app.add_option("--analysis-cost",
                  [&segment_cost](CLI::results_t res) {
                    segment_cost = strToCost(res[0].c_str(), VDJ); 
                    return true;
                  },
-                 "use custom Cost for fine segmenter : format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_SEGMENT_COST) + ")")
-    -> group(group) -> level() -> set_type_name("COST");
+                 "use custom Cost for clone analysis: format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_SEGMENT_COST) + ")")
+    -> group(group) -> level() -> type_name("COST");
 
   double expected_value_D = THRESHOLD_NB_EXPECTED_D;
-  app.add_option("-E", expected_value_D,
+  app.add_option("--analysis-e-value-D,-E", expected_value_D,
                  "maximal e-value for determining if a D segment can be trusted", true)
     -> group(group) -> level();
 
   int kmer_threshold = DEFAULT_KMER_THRESHOLD;
-  app.add_option("-Z", kmer_threshold,
-                 "typical number of V genes, selected by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes)", true)
+  app.add_option("--analysis-filter", kmer_threshold,
+                 "typical number of V genes, filtered by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes)", true)
     -> group(group) -> transform(string_NO_LIMIT) -> level();
+
+  bool several_D = false;
+  app.add_flag("-d,--several-D", several_D, "try to detect several D (experimental)") -> group(group);
 
   bool detect_CDR3 = false;
   app.add_flag("-3,--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)")
@@ -488,53 +516,56 @@ int main (int argc, char **argv)
 
   int epsilon = DEFAULT_EPSILON ;
   int minPts = DEFAULT_MINPTS ;
-  app.add_option("-n", epsilon, "minimum required neighbors for automatic clustering. No automatic clusterisation if =0.", true) -> group(group) -> level();
-  app.add_option("-N", minPts, "minimum required neighbors for automatic clustering", true) -> group(group) -> level();
+  app.add_option("--cluster-epsilon", epsilon, "minimum required neighbors for automatic clustering. No automatic clusterisation if =0.", true) -> group(group) -> level();
+  app.add_option("--cluster-N", minPts, "minimum required neighbors for automatic clustering", true) -> group(group) -> level();
 
   bool save_comp = false;
   bool load_comp = false;
-  app.add_flag("-S", save_comp, "generate and save comparative matrix for clustering") -> group(group) -> level();
-  app.add_flag("-L", load_comp, "load comparative matrix for clustering") -> group(group) -> level();
+  app.add_flag("--cluster-save-matrix", save_comp, "generate and save comparative matrix for clustering") -> group(group) -> level();
+  app.add_flag("--cluster-load-matrix", load_comp, "load comparative matrix for clustering") -> group(group) -> level();
 
   string forced_edges = "" ;
-  app.add_option("--forced-edges", forced_edges, "manual clustering -- a file used to force some specific edges") -> group(group) -> level() -> set_type_name("FILE");
+  app.add_option("--cluster-forced-edges", forced_edges, "manual clustering -- a file used to force some specific edges") -> group(group) -> level() -> type_name("FILE");
 
   Cost cluster_cost = DEFAULT_CLUSTER_COST ;
-  app.add_option("-C",
+  app.add_option("--cluster-cost",
                  [&cluster_cost](CLI::results_t res) {
                    cluster_cost = strToCost(res[0].c_str(), Cluster);
                    return true;
                  },
                  "use custom Cost for automatic clustering : format \"match, subst, indels, del_end, homo\" (default " + string_of_cost(DEFAULT_CLUSTER_COST) + ")")
-    -> group(group) -> level() -> set_type_name("COST");
+    -> group(group) -> level() -> type_name("COST");
 
   
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)";
 
   bool output_segmented = false;
-  app.add_flag("-U", output_segmented,
-               "output segmented reads (in " SEGMENTED_FILENAME " file)")
+  app.add_flag("--out-analyzed,-U", output_segmented,
+               "output analyzed reads (in " SEGMENTED_FILENAME " file)")
     -> group(group);
 
   bool output_unsegmented = false;
   bool output_unsegmented_detail = false;
   bool output_unsegmented_detail_full = false;
 
-  app.add_flag_function("-u", [&](size_t n) {
+  app.add_flag_function("--out-unanalyzed,-u", [&](size_t n) {
       output_unsegmented = (n >= 3);             // -uuu
       output_unsegmented_detail_full = (n >= 2); // -uu
       output_unsegmented_detail = (n >= 1);      // -u
     }, R"Z(
-        -u          output unsegmented reads, gathered by unsegmentation cause, except for very short and 'too few V/J' reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files)
-        -uu         output unsegmented reads, gathered by unsegmentation cause, all reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files) (use only for debug)
-        -uuu        output unsegmented reads, all reads, including a )Z" UNSEGMENTED_FILENAME R"Z( file (use only for debug))Z")
+        -u          output unanalyzed reads, gathered by cause, except for very short and 'too few V/J' reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files)
+        -uu         output unanalyzed reads, gathered by cause, all reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files) (use only for debug)
+        -uuu        output unanalyzed reads, all reads, including a )Z" UNSEGMENTED_FILENAME R"Z( file (use only for debug))Z")
     -> group(group);
 
+  bool output_sequences_by_cluster = false;
+  app.add_flag("--out-reads", output_sequences_by_cluster, "output all reads by clones (" CLONE_FILENAME "*), to be used only on small datasets") -> group(group);
+
   bool output_affects = false;
-  app.add_flag("-K", output_affects,
-               "output detailed k-mer affectation on all reads (in " AFFECTS_FILENAME " file) (use only for debug, for example -KX 100)")
-    -> group(group);
+  app.add_flag("--out-affects,-K", output_affects,
+               "output detailed k-mer affectation for each read (in " AFFECTS_FILENAME " file) (use only for debug, for example -KX 100)")
+    -> group(group) -> level();
 
 
   // ----------------------------------------------------------------------------------------------------------------------
@@ -543,30 +574,54 @@ int main (int argc, char **argv)
   string out_dir = DEFAULT_OUT_DIR;
   string f_basename = "";
 
-  app.add_option("-o", out_dir, "output directory", true) -> group(group) -> set_type_name("PATH");
-  app.add_option("-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> set_type_name("STRING");
+  app.add_option("--dir,-o", out_dir, "output directory", true) -> group(group) -> type_name("PATH");
+  app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> type_name("STRING");
 
-  bool output_sequences_by_cluster = false;
-  app.add_flag("-a", output_sequences_by_cluster, "output all sequences by cluster (" CLONE_FILENAME "*), to be used only on small datasets") -> group(group);
 
   int verbose = 0 ;
-  app.add_flag_function("-v", [&](size_t n) { verbose += n ; }, "verbose mode") -> group(group);
+  app.add_flag_function("--verbose,-v", [&](size_t n) { verbose += n ; }, "verbose mode") -> group(group);
 
+  bool __only_on_exit__clean_memory; // Do not use except on exit, see #3729
+  app.add_flag("--clean-memory", __only_on_exit__clean_memory, "clean memory on exit") -> group(group) -> level();
+
+  // ----------------------------------------------------------------------------------------------------------------------
+  group = "Presets";
+
+  app.add_option("--grep-reads",
+    [&only_labeled_windows,&windows_labels_explicit,&output_sequences_by_cluster](CLI::results_t res) {
+      only_labeled_windows = true;
+      windows_labels_explicit.push_back(res[0].c_str());
+      output_sequences_by_cluster = true;
+      return true;
+    },
+    "output, by clone, reads related to the given window sequence, even when they are below the thresholds"
+    PAD_HELP "(equivalent to --label SEQUENCE -label-filter --out-reads)")
+    -> group(group) -> level() -> type_name("SEQUENCE");
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Help";
-  app.set_help_flag("-h", "help")
+  app.set_help_flag("--help,-h", "help")
     -> group(group);
 
-  app.add_flag_function("-H", [&](size_t n) { UNUSED(n); throw CLI::CallForAdvancedHelp() ; },
+  app.add_flag_function("--help-advanced,-H", [&](size_t n) { UNUSED(n); throw CLI::CallForAdvancedHelp() ; },
                         "help, including advanced and experimental options"
                         "\n                              "
-                        "The full help is available in the doc/algo.org file.")
+                        "The full help is available in " DOCUMENTATION ".")
     -> group(group);
 
 
+  // Deprecated options
+  bool deprecated = false;
+
+#define DEPRECATED(options, text) app.add_flag_function((options), [&](size_t n) { UNUSED(n); deprecated = true ; return app.exit(CLI::ConstructionError((text), 1));}) -> level(3);
+
+  DEPRECATED("-t", "'-t' is deprecated, please use '--trim'");
+  DEPRECATED("-A", "'-A' is deprecated, please use '--all'");
+  DEPRECATED("-a", "'-a' is deprecated, please use '--out-reads'");
+  DEPRECATED("-l", "'-l' is deprecated, please use '--label'");
+
   // ----------------------------------------------------------------------------------------------------------------------
-  app.set_footer(usage_examples(argv[0]));
+  app.footer(usage_examples(argv[0]));
 
   //$$ options: parsing
   CLI11_PARSE(app, argc, argv);
@@ -582,10 +637,12 @@ int main (int argc, char **argv)
     command = CMD_WINDOWS;
   else if (cmd == COMMAND_GERMLINES)
     command = CMD_GERMLINES;
+  else if (cmd == "segment")
+    return app.exit(CLI::ConstructionError("'-c segment' is deprecated, please use '-c designations'", 1));
   else {
-    cerr << "Unknwown command " << optarg << endl;
-    throw CLI::CallForHelp();
+    return app.exit(CLI::ConstructionError("Unknown command " + cmd, 1));
   }
+  if (deprecated) return 1 ;
 
   list <string> f_reps_V(v_reps_V.begin(), v_reps_V.end());
   list <string> f_reps_D(v_reps_D.begin(), v_reps_D.end());
@@ -617,20 +674,18 @@ int main (int argc, char **argv)
 
   if (!multi_germline && (!f_reps_V.size() || !f_reps_J.size()))
     {
-      cerr << ERROR_STRING << "At least one germline must be given with -g or -V/(-D)/-J." << endl ;
-      return 1;
+      return app.exit(CLI::ConstructionError("At least one germline must be given with -g or -V/(-D)/-J.", 1));
     }
 
   if (options_s_k > 1)
     {
-      cerr << ERROR_STRING << "Use at most one -s or -k option." << endl ;
-      return 1;
+      return app.exit(CLI::ConstructionError("Use at most one -s or -k option.", 1));
     }
 
   map <string, string> windows_labels ;
 
   for(string lab : windows_labels_explicit)
-    windows_labels[lab] = string("-W");
+    windows_labels[lab] = string("--label");
   
   string out_seqdir = out_dir + "/seq/" ;
 
@@ -642,25 +697,17 @@ int main (int argc, char **argv)
       cout << "# using default sequence file: " << f_reads << endl ;
     }
 
-  //  else
-  //  {
-  //    cerr << ERROR_STRING << "Wrong number of arguments." << endl ;
-  //    return 1;
-  //  }
-
-  size_t min_cover_representative = (size_t) (min_reads_clone < (int) max_auditionned ? min_reads_clone : max_auditionned) ;
+  size_t min_cover_representative = (size_t) min(min_reads_clone, DEFAULT_MIN_COVER_REPRESENTATIVE);
 
   // Check seed buffer  
   if (seed.size() >= MAX_SEED_SIZE)
     {
-      cerr << ERROR_STRING << "Seed size is too large (MAX_SEED_SIZE)." << endl ;
-      return 1;
+      return app.exit(CLI::ConstructionError("Seed size is too large (MAX_SEED_SIZE).", 1));
     }
 
   if ((wmer_size< 0) && (wmer_size!= NO_LIMIT_VALUE))
     {
-      cerr << ERROR_STRING << "Too small -w. The window size should be positive" << endl;
-      return 1;
+      return app.exit(CLI::ConstructionError("Too small -w. The window size should be positive.", 1));
     }
 
   // Check that out_dir is an existing directory or creates it
@@ -686,6 +733,7 @@ int main (int argc, char **argv)
 
   /// Load labels ;
   load_into_map(windows_labels, windows_labels_file, "-l");
+  json j_labels = load_into_map_from_json(windows_labels, windows_labels_json);
 
   switch(command) {
   case CMD_WINDOWS: cout << "Extracting windows" << endl; 
@@ -703,6 +751,11 @@ int main (int argc, char **argv)
     cout << argv[i] << " ";
   }
   cout << endl;
+
+  // Dump configuration
+  json j_config = json::parse(app.config_to_str(true, true));
+  if (!j_labels.empty())
+    j_config["labels"] = j_labels;
 
   //////////////////////////////////
   // Display time and date
@@ -730,16 +783,16 @@ int main (int argc, char **argv)
   if (command == CMD_SEGMENT)
     {
       cout << endl
-	   << "* WARNING: " << PROGNAME << " was run with '-c segment' option" << endl ;
+	   << "* WARNING: " << PROGNAME << " was run with '-c" COMMAND_SEGMENT "' option" << endl ;
     }
   
   if (max_clones == NO_LIMIT_VALUE || max_clones > WARN_MAX_CLONES || command == CMD_SEGMENT)
     {
-      cout << "* " << PROGNAME << " efficientl extracts windows overlapping the CDR3" << endl
+      cout << "* " << PROGNAME << " efficiently extracts windows overlapping the CDR3" << endl
            << "* to cluster reads into clones ('-c clones')." << endl
-           << "* Computing accurate V(D)J designations for many sequences ('-c segment' or large '-z' values)" << endl
-           << "* is slow and should be done only on small datasets or for testing purposes." << endl
-	   << "* More information is provided in the 'doc/vidjil-algo.md' file." << endl 
+           << "* Computing accurate V(D)J designations for many sequences ('-c " COMMAND_SEGMENT "' or large '-z' values)" << endl
+           << "* is not as efficient as the default '-c " COMMAND_CLONES "' command." << endl
+	   << "* More information is provided in " DOCUMENTATION "." << endl
 	   << endl ;
     }
 
@@ -981,9 +1034,7 @@ int main (int argc, char **argv)
 	  cout << "     " << key << " " << it->second.name << endl ;
 	}
       
-      delete multigermline;
-
-      return 0;
+      if (__only_on_exit__clean_memory) { delete multigermline; } return 0;
     }
 
 
@@ -1056,7 +1107,8 @@ int main (int argc, char **argv)
     WindowsStorage *windowsStorage = we.extract(reads, wmer_size,
                                                 windows_labels, only_labeled_windows,
                                                 keep_unsegmented_as_clone,
-                                                expected_value, nb_reads_for_evalue);
+                                                expected_value, nb_reads_for_evalue,
+                                                readScorer);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 
@@ -1086,7 +1138,7 @@ int main (int argc, char **argv)
       {
         output.add_warning("W20", "Very few V(D)J recombinations found: " + fixed_string_of_float(ratio_segmented, 2) + "%", LEVEL_WARN);
         stream_segmentation_info << "  ! There are not so many CDR3 windows found in this set of reads." << endl ;
-        stream_segmentation_info << "  ! Please check the unsegmentation causes below and refer to the documentation." << endl ;
+        stream_segmentation_info << "  ! Please check the causes below and refer to " DOCUMENTATION "." << endl ;
       }
 
     we.out_stats(stream_segmentation_info);
@@ -1518,6 +1570,7 @@ int main (int argc, char **argv)
 
 
     // Complete main output
+    output.set("config", j_config);
     output.set("diversity", jsonDiversity);
     output.set("samples", "log", { stream_segmentation_info.str() }) ;
     output.set("reads", {
@@ -1559,7 +1612,7 @@ int main (int argc, char **argv)
   } else if (command == CMD_SEGMENT) {
     //$$ CMD_SEGMENT
     ////////////////////////////////////////
-    //       V(D)J SEGMENTATION           //
+    //       V(D)J DESIGNATION            //
     ////////////////////////////////////////
 
     int nb = 0;
@@ -1653,10 +1706,8 @@ int main (int argc, char **argv)
 
   outputVidjil->out(out_json);
 
-
   //$$ Clean
-  delete multigermline ;
-  delete reads;
+  if (__only_on_exit__clean_memory) { delete multigermline ; delete reads; } return 0 ;
 }
 
 //$$ end
