@@ -96,8 +96,8 @@ void AlignBox::addToOutput(CloneOutput *clone, int alternative_genes) {
     int last_score = this->score[0].first;
     for(int i = 0; i < (int)this->score.size() &&
           (i < alternative_genes || last_score == this->score[i].first);++i){
-        int r = this->score[i].second;
-        jalt.push_back(json::object({{"name",rep->label(r)}}));
+      int r = this->score[i].second;
+      jalt.push_back(json::object({{"name",rep->label(r)}}));
       last_score = this->score[i].first;
     }
     clone->setSeg(key + "alt", jalt);
