@@ -91,11 +91,14 @@ void AlignBox::addToOutput(CloneOutput *clone, int alternative_genes) {
   clone->setSeg(key, j) ;
 
   /*Export the N best genes if threshold parameter is specified*/
-  if(rep && !this->score.empty() && rep->size() <= (int)this->score.size() && alternative_genes > 0 && alternative_genes <= (int)this->score.size()){
+  if(rep && !this->score.empty() && rep->size() <= (int)this->score.size() && alternative_genes > 0){
     json jalt = json::array();
-    for(int i = 0; i < alternative_genes;++i){
+    int last_score = this->score[0].first;
+    for(int i = 0; i < (int)this->score.size() &&
+          (i < alternative_genes || last_score == this->score[i].first);++i){
         int r = this->score[i].second;
         jalt.push_back(json::object({{"name",rep->label(r)}}));
+      last_score = this->score[i].first;
     }
     clone->setSeg(key + "alt", jalt);
   }
