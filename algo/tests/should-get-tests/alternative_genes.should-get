@@ -5,7 +5,9 @@ $ Presence of alternative:
 1: "3alt"
 1: "name": "IGHJ4.02"
 1: "name": "IGHJ4.01"
-1a: "name": "IGHJ5.01"
+1: "name": "IGHJ5.01"
+1: "name": "IGHJ5.02"
+0: "name": "IGHJ[1236]
 1: "4alt"
 1: "name": "IGHD3-22.01"
 1: "name": "IGHD3-10.02"
@@ -15,5 +17,5 @@ $ Presence of alternative:
 1: "name": "IGHV3-48.02"
 1: "name": "IGHV3-48.04"
 
-$ Correct number of "name" fields (1 clone + 3*1 'best' genes + 3*3 'alternative' genes)
-w13:"name"
+$ Correct number of "name" fields (1 clone + 3*1 'best' genes + 2*3 'alternative' genes + 4 alternative J genes)
+w14:"name"
