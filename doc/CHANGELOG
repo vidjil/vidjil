@@ -1,6 +1,11 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+2019-04-XX  The Vidjil Team
+	* New --config and --label-json experimental options (vidjil.cpp, lib/CLI11_json.cpp) #3837 #3839
+	* Improved computation of consensus sequence when there are many reads (vidjil.cpp) !448
+	* Updated the functional test framework (tools/should.py)
+
 2019-03-14  The Vidjil Team
 	* New --consensus-on-random-sample experimental option (core/representative.cpp) #3764
 	* Aho-Corasick automaton used by default (vidjil.cpp) #2566, will bring speed-ups in a future release
