@@ -471,12 +471,12 @@ int main (int argc, char **argv)
     -> group(group);
 
   VirtualReadScore *readScorer = &DEFAULT_READ_SCORE;
-  RandomScore randomScore;
-  app.add_flag_function("--consensus-on-random-sample",
-                        [&readScorer, &randomScore](size_t n) {
+  ReadQualityScore readQualityScore;
+  app.add_flag_function("--consensus-on-longest-sequences",
+                        [&readScorer, &readQualityScore](size_t n) {
                           UNUSED(n);
-                          readScorer = &randomScore;
-                        }, "for large clones, use a random sample of reads to compute the consensus sequence (instead of a sample of the longest and highest quality reads)")
+                          readScorer = &readQualityScore;
+                        }, "for large clones, use a sample of the longest and highest quality reads to compute the consensus sequence (instead of a random sample)")
     ->group(group) -> level();
 
   // ----------------------------------------------------------------------------------------------------------------------
