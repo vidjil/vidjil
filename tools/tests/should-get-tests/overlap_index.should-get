@@ -1,0 +1,5 @@
+!LAUNCH: python ../../overlap_index.py -i ../data/overlap_raw.vidjil -; cat ../data/overlap_computed.vidjil
+
+$ Various index have been computed
+1:"morisita"
+1:"jaccard"
