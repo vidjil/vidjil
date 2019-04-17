@@ -135,7 +135,7 @@ class AlignBox
   /* Marked position, for Cys104 and Phe118/Trp118 */
   int marked_pos;
 
-  /* Identifiers and scores of other possible reference sequence */
+  /* Scores and identifiers of other possible reference sequence */
   vector<pair<int, int> > score;
 };
 

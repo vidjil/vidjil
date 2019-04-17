@@ -61,7 +61,7 @@ function Segment(id, model, database) {
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z";
     this.cgi_address = CGI_ADDRESS
     this.m = model
-    this.first_clone = 0 ; // id of sequence at the top of the segmenter
+    this.first_clone = -1 ; // id of sequence at the top of the segmenter
     this.memtab = [];
     this.sequence = {};
     this.is_open = false;
@@ -555,6 +555,8 @@ Segment.prototype = {
                 }
             }
         }
+        // Update the first clone if needed
+        this.update_first_clone()
 
         this.updateAlignmentButton()
         //this.updateSegmenterWithHighLighSelection();
@@ -670,12 +672,8 @@ Segment.prototype = {
         this.sequence[cloneID] = new Sequence(cloneID, this.m, this)
         
         var divParent = document.getElementById("listSeq");
-
-        // Am I the first clone in this segmenter ?
-        var previous_li = divParent.getElementsByTagName("li");
-        if (previous_li && previous_li.length === 0) {
-            this.first_clone = cloneID
-        }
+        
+        this.update_first_clone(cloneID)
 
         var li = document.createElement('li');
         li.id = "seq" + cloneID;
@@ -700,10 +698,50 @@ Segment.prototype = {
     },
 
     /**
+    * Set the first_clone of the segmenter.
+    * This one can be changed when we deselect some clone into the segmenter
+    **/
+    set_first_clone : function(cloneID) {
+        if (isNaN(cloneID)){
+          console.error( "Nan error")
+          return
+        }
+        this.first_clone = cloneID;
+    },
+
+    /**
+    * Update the first_clone of the segmenter.
+    * Look if the current clone is the first of the segmenter div
+    **/
+    update_first_clone : function(cloneID) {
+
+        var divParent = document.getElementById("listSeq");
+        if (divParent == undefined) { return }
+
+
+        // Am I the first clone in this segmenter ?
+        var previous_li = divParent.getElementsByTagName("li");
+
+        if (previous_li && previous_li.length === 0 ) {
+            if (cloneID == undefined){
+                this.set_first_clone( -1 )
+                return
+            }
+            this.set_first_clone( cloneID )
+            return
+        } else if (previous_li.length != 0) {
+            // get first line from html content
+            var index_first_clone = Number( previous_li[0].id.substr(3) )
+            this.set_first_clone( index_first_clone )
+        }
+
+    },
+
+
+    /**
     * select all the germline of a clone .
     * add them to the segmenter
     **/
-
     add_all_germline_to_segmenter : function() {
        for (var id in this.sequence) {
            if (this.isClone(id)) {
@@ -1359,6 +1397,8 @@ genSeq.prototype= {
         var mutations = {};
         var ref = '';
         var seq = '';
+
+
         if (this.segmenter.amino) {
             seq = this.seqAA;
             ref = this.segmenter.sequence[this.segmenter.first_clone].seqAA;

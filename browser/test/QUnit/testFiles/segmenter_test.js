@@ -11,6 +11,7 @@ QUnit.test("segmenter", function(assert) {
     m.initClones()
     
     var segment = new Segment("segment", m);
+    assert.equal(segment.first_clone, -1, "segment.first_clone is set to -1 at init")
     segment.init()
     
     //select test
@@ -21,7 +22,10 @@ QUnit.test("segmenter", function(assert) {
     m.select(1)
     var div1 = document.getElementById("f1");
     assert.notEqual(div1.innerHTML.indexOf("test2"), -1, "select : Ok")
-    
+    assert.equal(segment.first_clone, 0, "segment.first_clone still set to 0 if clones 0 and 1 are selected")
+    m.unselect(0)
+    assert.equal(segment.first_clone, 1, "segment.first_clone is set to 1 if clones 0 is unselected")
+
     m.select(2)
     var div2 = document.getElementById("f2");
     assert.notEqual(div2.innerHTML.indexOf("test3"), -1, "select : Ok")
@@ -30,6 +34,7 @@ QUnit.test("segmenter", function(assert) {
     assert.equal(document.getElementById("f0"), null, "unselect : Ok")
     assert.equal(document.getElementById("f1"), null, "unselect : Ok")
     assert.equal(document.getElementById("f2"), null, "unselect : Ok")
+    assert.equal(segment.first_clone, -1, "segment.first_clone is set to -1 when no clones are selected")
 
     m.select(0);
     m.select(2);
@@ -82,6 +87,11 @@ QUnit.test("segmenter", function(assert) {
     m.select(2)
     m.changeTime(3)
     assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 3 reads ", "stats (1 clone with few reads) : Ok")
+
+    m.unselectAll()
+    m.select(2)
+    m.select(0)
+    assert.equal(segment.first_clone, 2, "segment.first_clone is set to 2, even if bigger clone is selected")
 });
 
 QUnit.test("sequence", function(assert) {
@@ -165,10 +175,10 @@ QUnit.test("segt", function (assert) {
     m.initClones();
     var segment = new Segment("segment",m);
     segment.init();
+    m.select(2)
     segment.addGermlineToSegmenter("IGHD1-1*01","IGH");
     assert.equal(segment.sequence["IGHD1-1*01"].seq.join("").toUpperCase(), "GGGCGCCGGGGCAGATTCTGAACAGCCCCGAGTCACGGTGGGTACAACTGGAACGAC")
     assert.equal(segment.sequence["IGHD1-1*01"].is_clone, false);
-    m.select(2)
     segment.addToSegmenter(2);
     segment.add_all_germline_to_segmenter();
     // segment.updateElem()

@@ -57,6 +57,7 @@
 
 #include "lib/CLI11.hpp"
 #include "lib/json.hpp"
+#include "lib/CLI11_json.hpp"
 
 #include "vidjil.h"
 
@@ -229,6 +230,7 @@ int main (int argc, char **argv)
 #endif
 
   CLI::App app{"# vidjil-algo -- V(D)J recombinations analysis", argv[0]};
+  app.config_formatter(std::make_shared<ConfigJSON>());
   app.get_formatter()->label("REQUIRED", "");
   app.get_formatter()->label("Positionnals", "");
   app.failure_message(failure_message_doc);
@@ -265,6 +267,9 @@ int main (int argc, char **argv)
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Input" ;
+
+  app.set_config("--config", "", "read a (.json) config.vidjil file with options") -> type_name("FILE")
+    -> group(group) -> level();
 
   string read_header_separator = DEFAULT_READ_HEADER_SEPARATOR ;
   app.add_option("--header-sep", read_header_separator, "separator for headers in the reads file", false)
@@ -414,9 +419,12 @@ int main (int argc, char **argv)
 
   vector <string> windows_labels_explicit ;
   string windows_labels_file = "" ;
+  string windows_labels_json = "" ;
 
   app.add_option("--label", windows_labels_explicit, "label the given sequence(s)") -> group(group) -> level() -> type_name("SEQUENCE");
   app.add_option("--label-file", windows_labels_file, "label a set of sequences given in <file>") -> group(group) -> level() -> type_name("FILE");
+  app.add_option("--label-json", windows_labels_json, "read a (.json) label.vidjil (experimental)") -> type_name("FILE")
+      -> group(group) -> level();
 
   bool only_labeled_windows = false ;
   app.add_flag("--label-filter", only_labeled_windows, "filter -- keep only the windows related to the labeled sequences") -> group(group) -> level();
@@ -725,6 +733,7 @@ int main (int argc, char **argv)
 
   /// Load labels ;
   load_into_map(windows_labels, windows_labels_file, "-l");
+  json j_labels = load_into_map_from_json(windows_labels, windows_labels_json);
 
   switch(command) {
   case CMD_WINDOWS: cout << "Extracting windows" << endl; 
@@ -742,6 +751,11 @@ int main (int argc, char **argv)
     cout << argv[i] << " ";
   }
   cout << endl;
+
+  // Dump configuration
+  json j_config = json::parse(app.config_to_str(true, true));
+  if (!j_labels.empty())
+    j_config["labels"] = j_labels;
 
   //////////////////////////////////
   // Display time and date
@@ -1556,6 +1570,7 @@ int main (int argc, char **argv)
 
 
     // Complete main output
+    output.set("config", j_config);
     output.set("diversity", jsonDiversity);
     output.set("samples", "log", { stream_segmentation_info.str() }) ;
     output.set("reads", {

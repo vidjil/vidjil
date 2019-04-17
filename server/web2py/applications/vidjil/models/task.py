@@ -39,6 +39,11 @@ def compute_contamination(sequence_file_id, results_file_id, config_id):
         #open sample
         with open(defs.DIR_RESULTS+db.results_file[results_file_id[i]].data_file, "r") as json_data:
             d = json.load(json_data)
+
+            # Be robust against 'null' values for clones
+            if not d["clones"]:
+                d["clones"] = []
+
             list1 = {}
             total_reads1=d["reads"]["segmented"][0]
             for clone in d["clones"]:
@@ -75,6 +80,10 @@ def compute_contamination(sequence_file_id, results_file_id, config_id):
                 with open(defs.DIR_RESULTS+row.results_file.data_file, "r") as json_data2:
                     try:
                         d = json.load(json_data2)
+                        # Be robust against 'null' values for clones
+                        if not d["clones"]:
+                            d["clones"] = []
+                            
                         total_reads2=d["reads"]["segmented"][0]
                         for clone in d["clones"]:
                             if clone["id"] in list1 :
@@ -102,6 +111,7 @@ def compute_extra(id_file, id_config, min_threshold):
         try:
             d = json.load(rf)
             loci_min = {}
+
             if 'reads' in d and 'germline' in d['reads']:
                 loci_totals = d['reads']['germline']
                 for locus in loci_totals:
@@ -114,6 +124,10 @@ def compute_extra(id_file, id_config, min_threshold):
                     germline = clone['germline']
                     if clone['reads'][0] >=  loci_min[germline]:
                         result[germline][0] += 1
+            elif d["clones"] is None:
+                # Be robust against 'null' values for clones
+                d["clones"] = []
+            
         except ValueError as e:
             print('invalid_json')
             return "FAIL"
