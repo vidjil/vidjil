@@ -1,5 +1,5 @@
 !REQUIRES: python $VIDJIL_DIR/tools/check_python_version.py
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS --alternative-genes 3 -c designations -x 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta > /dev/null ; cat out/Stanford_S22.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
+!LAUNCH: $VIDJIL_DIR/$EXEC --alternative-genes 3 -c designations -x 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta > /dev/null ; cat out/Stanford_S22.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
 
 $ Presence of alternative:
 1: "3alt"

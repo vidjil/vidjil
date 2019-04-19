@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRD,TRG,IGH,IGK,IGL -uuu $VIDJIL_DATA/segmentation-2.fa ; cat out/segmentation-2.unsegmented.vdj.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRD,TRG,IGH,IGK,IGL -uuu $VIDJIL_DATA/segmentation-2.fa ; cat out/segmentation-2.unsegmented.vdj.fa
 
 $ Only one sequence is segmented, but it is too small for a window (too short w)
 1: junction detected in 1 reads
@@ -24,7 +24,7 @@ $ The proper unsegmentation cause is given in the .unsegmented.vdj.fa file (-uuu
 
 
 
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRD,TRG,IGH,IGK,IGL -u $VIDJIL_DATA/segmentation-2.fa ; cat ./out///segmentation-2.UNSEG_ambiguous.fa ; cat ./out///segmentation-2.UNSEG_too_few_V_J.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRD,TRG,IGH,IGK,IGL -u $VIDJIL_DATA/segmentation-2.fa ; cat ./out///segmentation-2.UNSEG_ambiguous.fa ; cat ./out///segmentation-2.UNSEG_too_few_V_J.fa
 
 $ The proper unsegmentation cause is given
 1: UNSEG too short   -> .* 1

@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -r 5 -K -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRD,TRG,IGH,IGK,IGL $VIDJIL_DATA/multi-short.fa ; head -n 17 out/multi-short.affects
+!LAUNCH: $VIDJIL_DIR/$EXEC -r 5 -K -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRD,TRG,IGH,IGK,IGL $VIDJIL_DATA/multi-short.fa ; head -n 17 out/multi-short.affects
 # Testing .affects output (-K)
 
 $ First sequence (TRA), display sequence

@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -c designations $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH,IGK,IGL $VIDJIL_DATA/multi-complete.fa ; cat out/multi-complete.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH,IGK,IGL $VIDJIL_DATA/multi-complete.fa ; cat out/multi-complete.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
 
 $ Segment the Ig recombinations
 1:IGH SEG

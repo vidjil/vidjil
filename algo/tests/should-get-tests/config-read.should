@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH --config ../data/config.vidjil $VIDJIL_DATA/Stanford_S22.fasta
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH --config ../data/config.vidjil $VIDJIL_DATA/Stanford_S22.fasta
 
 $ Analyze 10 reads (--first-reads)
 : in 10 reads

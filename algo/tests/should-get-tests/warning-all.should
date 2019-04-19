@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS --all -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/toy_V.fa ; cat out/toy_V.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
+!LAUNCH: $VIDJIL_DIR/$EXEC --all -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/toy_V.fa ; cat out/toy_V.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
 
 $ Warning, --all
 1:WARNING

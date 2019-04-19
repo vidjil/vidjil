@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -c designations -g $VIDJIL_DIR/germline $VIDJIL_DATA/multi-tiny.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -g $VIDJIL_DIR/germline $VIDJIL_DATA/multi-tiny.fa
 
 $ Do not segment any of the seven reads
 7:UNSEG

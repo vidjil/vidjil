@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -c designations -3 -g $VIDJIL_DIR/germline $VIDJIL_DATA/no-cdr3.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -3 -g $VIDJIL_DIR/germline $VIDJIL_DATA/no-cdr3.fa
 
 $ No CDR3 should be found
 0:seq1.* IGH SEG.* [{].*[}]

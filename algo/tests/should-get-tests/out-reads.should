@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -z 2 -r 5 --out-reads -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta ; cat out/seq/clone.fa-2
+!LAUNCH: $VIDJIL_DIR/$EXEC -z 2 -r 5 --out-reads -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta ; cat out/seq/clone.fa-2
 # Testing detailed clone output (--out-reads)
 
 $ Detailed clone output (out/seq/clone.fa-2), germline

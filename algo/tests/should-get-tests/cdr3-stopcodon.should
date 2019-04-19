@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -c designations -3 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG $VIDJIL_DATA/cdr3-stopcodon.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -3 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG $VIDJIL_DATA/cdr3-stopcodon.fa
 !OUTPUT_FILE: out/cdr3-stopcodon.vidjil
 
 $ Two identical junctions in JSON

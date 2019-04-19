@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -v -g $VIDJIL_DIR/germline -c designations $VIDJIL_DATA/segment_simul.fa | grep '^[>#]'
+!LAUNCH: $VIDJIL_DIR/$EXEC -v -g $VIDJIL_DIR/germline -c designations $VIDJIL_DATA/segment_simul.fa | grep '^[>#]'
 
 
 $ First sequence, easy segmentation (no error, few deletions at the windows, small N)

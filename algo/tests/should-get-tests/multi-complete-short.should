@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline $VIDJIL_DATA/multi-complete.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline $VIDJIL_DATA/multi-complete.fa
 
 $ Segment all the seven reads
 1:junction detected in 7 reads
@@ -30,7 +30,7 @@ $ Compute the diversity. All windows have only one read, full diversity.
 1: Ds = 1.000
 
 
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline $VIDJIL_DATA/multi-short.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline $VIDJIL_DATA/multi-short.fa
 
 $ Segment all the seven reads
 1:junction detected in 7 reads

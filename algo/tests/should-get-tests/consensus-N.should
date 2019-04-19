@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS --all -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG ../should-vdj-tests/ext-nucleotides-N.should-vdj.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --all -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG ../should-vdj-tests/ext-nucleotides-N.should-vdj.fa
 
 $ Segments on TRG
 1: TRG .* -> .* 1

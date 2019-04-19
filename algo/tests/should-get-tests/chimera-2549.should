@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline --all -2 $VIDJIL_DATA/2549.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline --all -2 $VIDJIL_DATA/2549.fa
 
 $ The KmerSegmenter segments the chimera on xxx germline (-2)
 1:unexpected .* -> .* 1

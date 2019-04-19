@@ -1,5 +1,5 @@
 
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -K --all  -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH+  -r 4  -b co  $VIDJIL_DATA/D7-27--J1.fa  ; cat out/co.vidjil
+!LAUNCH: $VIDJIL_DIR/$EXEC -K --all  -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH+  -r 4  -b co  $VIDJIL_DATA/D7-27--J1.fa  ; cat out/co.vidjil
 
 # Test D7-27 0/92/0 J1 non-recombination
 

@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS --all -w all -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/s-somatic.fa ; cat out/s-somatic.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
+!LAUNCH: $VIDJIL_DIR/$EXEC --all -w all -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/s-somatic.fa ; cat out/s-somatic.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
 
 $ No clustering due to -w all
 1: considering all analyzed reads as windows

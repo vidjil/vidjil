@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS --all -g $VIDJIL_DIR/germline/homo-sapiens.g:TRD $VIDJIL_DATA/trd-dd2-dd3.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --all -g $VIDJIL_DIR/germline/homo-sapiens.g:TRD $VIDJIL_DATA/trd-dd2-dd3.fa
 
 $ Segment only 2 reads, because we do not look for incomplete recombinations
 1:junction detected in 2 reads

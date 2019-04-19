@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/ -r 1 -c clones $VIDJIL_DATA/revcomp-VdJa.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/ -r 1 -c clones $VIDJIL_DATA/revcomp-VdJa.fa
 
 $ Just one window found
 1:==> found 1 windows

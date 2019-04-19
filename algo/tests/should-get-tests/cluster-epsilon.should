@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -k 14 -w 50 -c clones -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa -y 3 -z 1 -r 1 $VIDJIL_DATA/clones_simul.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -k 14 -w 50 -c clones -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa -y 3 -z 1 -r 1 $VIDJIL_DATA/clones_simul.fa
 
 $ Junction extractions
 1:found 25 windows in 66 reads
@@ -16,7 +16,7 @@ $ Clone 3 output (sequencing error)
 1:Clone #003 .* 1 reads
 
 
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -k 14 -w 50 -c clones -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa -y 3 -z 0 -r 1 --cluster-epsilon 5 $VIDJIL_DATA/clones_simul.fa ; cat out/clones_simul.vidjil
+!LAUNCH: $VIDJIL_DIR/$EXEC -k 14 -w 50 -c clones -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa -y 3 -z 0 -r 1 --cluster-epsilon 5 $VIDJIL_DATA/clones_simul.fa ; cat out/clones_simul.vidjil
 
 $ Window extractions
 1:windows up to 50bp

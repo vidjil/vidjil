@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -x 1 -w -10 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta 2>&1
+!LAUNCH: $VIDJIL_DIR/$EXEC -x 1 -w -10 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta 2>&1
 !EXIT_CODE: 1
 
 $ Error, too small -w

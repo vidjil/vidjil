@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -e 100 --all -g $VIDJIL_DIR/germline -4 $VIDJIL_DATA/chimera-fake-half.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -e 100 --all -g $VIDJIL_DIR/germline -4 $VIDJIL_DATA/chimera-fake-half.fa
 # TODO: a more precise modeling should give a e-value computation that could make this work even with -e 1
 
 $ The KmerSegmenter segments the six chimera reads on PSEUDO_MAX1U germline (-4)

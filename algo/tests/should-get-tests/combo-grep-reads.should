@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -x 2000 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH --grep-reads GAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACT $VIDJIL_DATA/Stanford_S22.fasta ; cat out/seq/clone.fa-1
+!LAUNCH: $VIDJIL_DIR/$EXEC -x 2000 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH --grep-reads GAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACT $VIDJIL_DATA/Stanford_S22.fasta ; cat out/seq/clone.fa-1
 
 # See also label-grep-reads.should-get
 

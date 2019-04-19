@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens-cd.g -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRG,TRD,IGH,IGK,IGL $VIDJIL_DATA/multi-short.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens-cd.g -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRG,TRD,IGH,IGK,IGL $VIDJIL_DATA/multi-short.fa
 
 $ Segment all the seven reads
 1:junction detected in 7 reads

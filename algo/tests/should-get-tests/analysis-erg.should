@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens-isoforms.g -r 1 -e 0.1 $VIDJIL_DATA/erg_debre.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens-isoforms.g -r 1 -e 0.1 $VIDJIL_DATA/erg_debre.fa
 
 
 $ All sequences have been seen as different ERG recombinations

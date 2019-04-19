@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -w all -r 1 -y 15 -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta
+!LAUNCH: $VIDJIL_DIR/$EXEC -w all -r 1 -y 15 -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta
 
 # Testing '-w all' option
 
