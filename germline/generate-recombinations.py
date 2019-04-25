@@ -253,6 +253,7 @@ if __name__ == '__main__':
     parser.add_argument('--random-insertions', '-I', type=list_random_tuple, help='List of the number of insertions at junctions under the format mean,standard_deviation (or single value, if the number is the same everywhere')
     parser.add_argument('-n', '--nb-recombinations', type=int, default=5, help='Number of times each recombination (with insertions/deletions) is generated')
     parser.add_argument('-e', '--error', type=float, default = 0., help='Probability of substitution at the nucleotide level')
+    parser.add_argument('-b', '--basename', default='generated', help='Basename used for generated filenames')
 
     args = parser.parse_args()
 
@@ -295,6 +296,6 @@ if __name__ == '__main__':
 
             recombination5 = vdj_recombination(deletions=deletions, insertions=insertions, processing = [(lambda s: mutate_sequence(s, args.error))])
 
-            generate_to_file(repertoire, recombination5, code, '../data/gen/generated-%s.should-vdj.fa' % code_in_filename, args.nb_recombinations)
+            generate_to_file(repertoire, recombination5, code, '../data/gen/%s-%s.should-vdj.fa' % (args.basename, code_in_filename), args.nb_recombinations)
 
             print()
