@@ -1,4 +1,4 @@
 !LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g -r 1 $VIDJIL_DATA/unexpected_name.fa ; cat out/unexpected_name.vidjil
 
-$ Now name of unsegmented sequence is the 'code' given by vidjil-algo
-1: "clone-001--IGH--0000001--100%--unexpected_name-[0,294]-#1 - 295 bp (100% of 295.0 bp)"
+$ Name of unsegmented sequence should be the window itself
+1: "id": "TCGTTCTTGAAGAGACGGTGACCATCGTCCCTTGGCCGCAGATATCGAAA"
