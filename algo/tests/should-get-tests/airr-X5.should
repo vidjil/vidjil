@@ -1,0 +1,29 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -c clones -z 2 -2 -3 -r 1 -g $VIDJIL_DIR/germline/homo-sapiens.g ../should-vdj-tests/Demo-X5.should-vdj.fa  > /dev/null ; cat out/Demo-X5.should-vdj.tsv
+ 
+$ There are 15 = 1 + 14 lines, all with tabs
+15:
+15:\t
+
+$ All clones have 1 reads
+14: \t1\t
+
+$ 8 clones with TR recombinations, some of them having special recombinations
+2:TRA
+1:TRA[+]D
+
+2:TRB
+1:TRB[+]
+
+1:TRG
+
+3:TRD
+2:TRD[+]
+
+$ One recombination with KDE
+1:KDE
+
+$ No spurious character
+0:"
+0:@
+0:\\
+

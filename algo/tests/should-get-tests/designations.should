@@ -1,0 +1,53 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -c designations $VIDJIL_DATA/segment_S22.fa | grep '^>' ; cat out/segment_S22.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
+
+$ First sequence Stanford
+#                            164        175                 195     203
+#                             |          |                   |       |
+# S22  : 147 tgtattactgtgcgagagcgatcccccggtattactatgatactagtggcccaaacgactactggggccaggga
+#            ||||||||||||||||||                                      |||||||||||||| |||
+# V3-48: 277 tgtattactgtgcgagaga         |||||||||||||| |||||| 
+# D3-22:   0                             gtattactatgatagtagtggttattactac
+# J4   :   0                                                 actactttgactactggggccaaggaa
+# V: 1 del
+# N1: CGATCCCCCG
+# D: 0 del (left), 10 del (right)
+# N2: CCCAAAC
+# J: 8 del
+1:>lcl\\|FLN1FA002RWEZA.1\\|.*VDJ 1 165 176 196 204 243 IGHV3-48.0. 1/CGATCCCCCG/0 IGHD3-22.0. 10/CCCAAAC/8 IGHJ4.0.
+1: "name": "IGHV3-48.0. 1/CGATCCCCCG/0 IGHD3-22.0. 10/CCCAAAC/8 IGHJ4.0."
+
+$ Second sequence Stanford
+#                           165 169        180
+#                            |   |          | 
+# S22   : 150 tattactgtgcgagagtgggcagcagctggtctgatgcttttgattatctggggccaagggacaatggtcaccgtctcctcag
+#             ||||||||||||||||                ||||||||||||| |||||||||||||||||||||||||||||||| ||||
+# V1-3  : 279 tattactgtgcgagaga  ||||||||||||
+# D6-13 :   0             gggtatagcagcagctggtac
+# J3*02 :                                     tgatgcttttgat-atctggggccaagggacaatggtcaccgtctcttcag
+# V: 1 del
+# N1: TGG
+# D: 7 del, 2 del
+# N2: C
+# J: 0 del
+1:>lcl\\|FLN1FA001BLION.1\\|.*VDJ 1 166 170 181 183 233 IGHV1-3.01 1/TGG/7 IGHD6-13.0. 2/C/0 IGHJ3.0.
+1: "name": "IGHV1-3.01 1/TGG/7 IGHD6-13.0. 2/C/0 IGHJ3.0."
+
+$ Third sequence Stanford
+#                                 169     177                            208   214  
+#                                  |       |                              |     |
+# S22   : 148 ttgtattactgtgcaaaagataaaattgggtattatgattacgtttgggggagttatcgtttgggtctactggggccagggaaccctggtcaccgtctcctcag
+#             ||||||||||||||||||||||                                            ||||||||||||||||||||||||||||||||||||||
+# V3-9  : 276 ttgtattactgtgcaaaagata       ||||||||||||||||||||||||||||||||
+# D3-16*02: 0                              gtattatgattacgtttgggggagttatcgttatacc
+# J4*02 :   0                                                         actactttgactactggggccagggaaccctggtcaccgtctcctcag
+#
+# V: 0 del
+# N1: AAATTGG
+# D : 0 del, 5 del
+# N2 : TGGGT
+# J : 10 del
+1:>lcl\\|FLN1FA002SGU3N.1\\|.*VDJ 1 170 178 209 215 252 IGHV3-9.0. 0/AAATTGG/0 IGHD3-16.0. 5/TGGGT/10 IGHJ4.0.
+1: "name": "IGHV3-9.0. 0/AAATTGG/0 IGHD3-16.0. 5/TGGGT/10 IGHJ4.0."
+
+$ Json output
+1: "reads": ."germline": ."IGH": .3.., "segmented": .3., "total": .3..

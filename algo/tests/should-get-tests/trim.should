@@ -1,0 +1,4 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -y 0 --trim 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -x 100 $VIDJIL_DATA/Stanford_S22.fasta
+
+$ No read segmented as we have no germline because of the --trim
+1: UNSEG too few V/J ->      100

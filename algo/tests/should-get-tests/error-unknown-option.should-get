@@ -1,9 +1,0 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS --hello reads 2>&1
-!EXIT_CODE: 109
-
-$ Unknown option
-1:error.* --hello
- 
-$ Refer to online help and documentation
-1:run with --help
-1:see doc/vidjil-algo.md

@@ -1,0 +1,6 @@
+!REQUIRES: python $VIDJIL_DIR/tools/check_python_version.py
+!LAUNCH: $VIDJIL_DIR/$EXEC -x 100 -r 1 -z 5 -w 60 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta ; python $VIDJIL_DIR/tools/vidjil-to-fasta.py  -o out/S22.fasta out/Stanford_S22.vidjil ;
+!OUTPUT_FILE: out/S22.fasta
+
+$ 5 representative sequences in the FASTA output file
+5:>

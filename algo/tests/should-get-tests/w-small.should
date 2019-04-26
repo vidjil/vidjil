@@ -1,0 +1,6 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -x 100 -r 1 -y 1 -z 0 -w 10 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta 2>&1
+!OUTPUT_FILE: out/seq/clone.fa-1
+### !EXIT_CODE: 1
+
+$ We should find a window
+1:[ACGT]{10}

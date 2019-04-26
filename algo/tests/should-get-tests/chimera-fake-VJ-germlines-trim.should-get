@@ -1,8 +1,0 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS --all -g $VIDJIL_DATA/chimera-fake-VJ-trim.g $VIDJIL_DATA/chimera-fake-VJ.fa
-# Testing a custom (fake) .g with special parameters for the algorithm
-
-$ The KmerSegmenter segments no read in Y because of the parameter
-1:Y-.* -> .* 0
-1:UNSEG too few V/J -> 1
-$ The KmerSegmenter segments correctly in Z (no parameter)
-1:Z-.* -> .* 2

@@ -1,0 +1,34 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -3 -E 1.0 -g $VIDJIL_DIR/germline ../should-vdj-tests/Demo-X5.should-vdj.fa
+
+$ Detects a CDR3 on regular V(D)J recombinations
+1: IGH SEG.* [{].*[}]
+1: IGK SEG.* [{].*[}]
+1: IGL SEG.* [{].*[}]
+
+1: TRA SEG.* [{].*[}]
+1: TRB SEG.* [{].*[}]
+1: TRG SEG.* [{].*[}]
+1: TRD SEG.* [{].*[}]
+
+$ Do not detect a CDR3 on irregular/incomplete recombinations
+0: IGH[+] SEG.* [{].*[}]
+0: IGK[+] SEG.* [{].*[}]
+0: TRA[+]D SEG.* [{].*[}]
+0: TRB[+] SEG.* [{].*[}]
+0: TRD[+] SEG.* [{].*[}]
+
+
+$ Compute the correct .vdj.fa headers, regular V(D*)J recombinations (as well as on TRA+D)
+5: [+] VJ
+f2: [+] VDJ
+f1: [+] VDDJ
+
+$ Compute the correct .vdj.fa headers, other irregular/incomplete recombinations
+1: [+] DJ .* IGH[+]
+1: [+] DJ .* TRB[+]
+
+1: [+] VD .* TRD[+]
+1: [+] DD .* TRD[+]
+
+1: [+] V3 .* IGK[+]
+1: [+] r3 .* IGK[+]

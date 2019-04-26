@@ -1,0 +1,13 @@
+!REQUIRES: python $VIDJIL_DIR/tools/check_python_version.py
+!LAUNCH: $VIDJIL_DIR/$EXEC -3 --max-clones 10 -y 5 -z 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH  -r 4  -b limits  $VIDJIL_DATA/Stanford_S22.fasta > /dev/null ; cat out/limits.vidjil
+
+# Test limits in the .vidjil json output
+
+$ There is exactly one clone with a detailed analysis (-z 1)
+w1: "cdr3": {
+
+$ There are exactly five clones with representative sequences (-y 5)
+w5: "sequence": "
+
+$ There are exactly ten clones (--max-clones 10)
+w10: "id"

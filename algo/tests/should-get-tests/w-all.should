@@ -1,0 +1,14 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -w all -r 1 -y 15 -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta
+
+# Testing '-w all' option
+
+$ The junctions are the reads
+1: considering all analyzed reads as windows
+1: found 13141 windows in 13153 reads
+
+$ Only the first 12 clones have 2 reads
+2:clone-012--IGH--0000002
+2:clone-013--IGH--0000001
+
+$ Sequence for clone 1 is also its window
+2: GGGCTTGAGTGGATGGGATGGATGAACCCTAACAGTGGTAACACAGGCTATGCACAGAAGTTCCAGGGCAGAGTCACCATGACCAGGAACACCTCCATAAGCACAGCCTACATGGAGCTGAGCAGCCTGAGATCTGAGGACACCCAAGGGGGTTCGGGGAGTTATTATAACCTATCAGGAAGGGACCACGGTCACCGTCTCCTCA
