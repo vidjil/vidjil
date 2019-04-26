@@ -121,6 +121,14 @@ class AffectAnalyser {
    */
   virtual int last(const KmerAffect &affect) const  = 0;
 
+  /*
+   * @return the two affectations that are seen the most frequently in the sequence
+   *         taken apart the forbidden ones.
+   * @complexity n + m log m where n is the input sequence length and m the number 
+   *            of affectations
+   */
+  virtual pair <KmerAffect, KmerAffect> max12(const set<KmerAffect> forbidden) const = 0;
+  
   /**
    * @return a string representation of the object
    */
@@ -222,6 +230,8 @@ class KmerAffectAnalyser: public AffectAnalyser {
 
   int last(const KmerAffect &affect) const ;
 
+  pair <KmerAffect, KmerAffect> max12(const set<KmerAffect> forbidden) const;
+  
   string toString() const;
 
   string toStringValues() const;
@@ -302,12 +312,6 @@ class CountKmerAffectAnalyser: public KmerAffectAnalyser {
    */
   KmerAffect max(const set<KmerAffect> forbidden = set<KmerAffect>()) const;
 
-  /*
-   * @return the two affectations that are seen the most frequently in the sequence
-   *         taken apart the forbidden ones.
-   */
-  pair <KmerAffect, KmerAffect> max12(const set<KmerAffect> forbidden) const;
-  
   /**
    * Set the overlap allowed between two k-mers with two different affectations,
    * when looking for the maximum.

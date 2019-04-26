@@ -126,6 +126,7 @@ BioReader::BioReader(bool virtualfasta, string name)
   init(0, "");
   this -> name = name;
   basename = extract_basename(name);
+  filenames.push_back(this->name);
 }
 
 BioReader::BioReader(int extract_field, string extract_separator, int mark_pos)
@@ -157,6 +158,7 @@ void BioReader::add(const string &filename, bool verbose) {
 
   name += filename;
   basename += extract_basename(filename);
+  filenames.push_back(name);
 
   if (verbose)
     cout << " <== " << filename ;

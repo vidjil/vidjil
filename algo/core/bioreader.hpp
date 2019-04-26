@@ -189,6 +189,7 @@ public:
 
   string name;
   string basename;
+  list<string> filenames;
   int size() const;
   size_t totalSize() const;
 
