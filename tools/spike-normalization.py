@@ -18,7 +18,7 @@ import math
 ############################################################
 ### constants
 
-version = 'B0.01.03'
+version = 'B0.01.11'
 UNIVERSAL = 'universal'
 
 ############################################################
@@ -57,13 +57,20 @@ def linearRegression(y, x):
 
 
 def computeCopies(data):
+    totalReads = 0.0
     reads = {}
     copies = {}
+    ## get config
+    for spike in data['config']['labels']:
+        copies[spike['name']] = spike['copies']
+    ## get reads
     for clone in data['clones']:
+        totalReads += clone['reads'][0]
         if 'label' in clone:
             ## spike-in clone
             label = clone['label']
-
+            ## show spike name
+            clone['name'] = label + ' ' + clone['name']
             ## grab read data
             a = clone['reads']
             if len(a) > 1:
@@ -74,10 +81,7 @@ def computeCopies(data):
                 reads[label] = 0.0
             reads[label] += a[0]
 
-            ## set copies
-            copies[label] = clone['copies']
-
-    return copies, reads
+    return copies, reads, totalReads
 
 ############################################################
 
@@ -111,8 +115,8 @@ def computeUniversalCoefficient(copies, reads):
         s = sum(nReadsList)
         c = len(nReadsList)
         x.append(1.0*s/c)
-        y.append(1.0*nCopies)
-        ## print('{0:5} {1:10.1f}'.format(s/c, nCopies))
+        y.append(1.0*int(nCopies))
+        ## print('{0:5} {1:10.1f}'.format(s/c, int(nCopies)))
 
     ### test for zero items
     if len(x) == 0:
@@ -125,7 +129,7 @@ def computeUniversalCoefficient(copies, reads):
         r2[UNIVERSAL] = lr['r2']
         perr[UNIVERSAL] = lr['s']
         if msgs >= 1:
-            fmtStr = 'Universal coefficient estimation: {0} s: {1:.3%} r2: {2}'
+            fmtStr = 'Universal coefficient estimation: {0:15.13f} s: {1:5.1f} r2: {2:15.13f}'
             print(fmtStr.format(f[UNIVERSAL], perr[UNIVERSAL], r2[UNIVERSAL]), file=sys.stderr)
 
     return f
@@ -133,7 +137,7 @@ def computeUniversalCoefficient(copies, reads):
 ############################################################
 ### add normalized reads
 
-def addNormalizedReads(data, f):
+def addNormalizedReads(data, f, totalReads):
     if msgs >= 1:
         print('Normalizing reads and prinitng output file', file=sys.stderr)
 
@@ -148,7 +152,7 @@ def addNormalizedReads(data, f):
 
         ## update counters for clones
         reads = a[0]
-        clone['normalized_reads'] = [ reads*f[fam]/100000 ]
+        clone['normalized_reads'] = [ reads*f[fam]*totalReads/100000 ]
 
 ############################################################
 ### command line, initial msg
@@ -166,9 +170,9 @@ if __name__ == '__main__':
         data = json.load(inp)
 
     # process data
-    copies, reads = computeCopies(data)
+    copies, reads, totalReads = computeCopies(data)
     f = computeUniversalCoefficient(copies, reads)
-    addNormalizedReads(data, f)
+    addNormalizedReads(data, f, totalReads)
 
     # write output file
     with open(outf, 'w') as of:
