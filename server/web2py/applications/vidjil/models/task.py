@@ -868,6 +868,7 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
             cmd = cmd.replace( "&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
         cmd = cmd.replace( "&result&", output_file)
         cmd = cmd.replace("&pear&", defs.DIR_PEAR)
+        cmd = cmd.replace("&flash2&", defs.DIR_FLASH2)
         # Example of template to add some preprocess shortcut
         # cmd = cmd.replace("&preprocess_template&", defs.DIR_preprocess_template)
         # Where &preprocess_template& is the shortcut to change and
