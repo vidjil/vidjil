@@ -251,8 +251,8 @@ Clone.prototype = {
             // No feature here
             return;
 
-        this.seg[field_name].start = pos + 1
-        this.seg[field_name].stop = pos + seq.length
+        this.seg[field_name].start = pos
+        this.seg[field_name].stop  = pos + seq.length -1
     },
 
 
