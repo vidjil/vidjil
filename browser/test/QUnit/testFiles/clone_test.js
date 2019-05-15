@@ -311,7 +311,7 @@ QUnit.test("clone : feature defined by a nucleotide sequence", function(assert) 
 
     assert.deepEqual(c3.getSegStartStop('somefeature'), null, "start/stop positions are not present")
     c3.computeSegFeatureFromSeq('somefeature')
-    assert.deepEqual(c3.getSegStartStop('somefeature'), {"start": 7, "stop": 13}, "start/stop positions, computed from sequence")
+    assert.deepEqual(c3.getSegStartStop('somefeature'), {"start": 6, "stop": 12}, "start/stop positions, computed from sequence")
     assert.equal(c3.getSegLength('somefeature'), 7, "length of the feature");
 });
 
