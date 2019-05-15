@@ -273,7 +273,7 @@ Clone.prototype = {
     getSegNtSequence: function(field_name) {
         positions = this.getSegStartStop(field_name)
         if (positions !== null) {
-            return this.sequence.substr(positions.start-1, positions.stop - positions.start+1)
+            return this.sequence.substr(positions.start, positions.stop - positions.start+1)
         }
         return '';
     },
