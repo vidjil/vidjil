@@ -1,10 +1,10 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -w 20 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG $VIDJIL_DATA/test-random-consensus.fa.gz > consensus-default.log
-!LAUNCH: $VIDJIL_DIR/$EXEC -w 20 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG --consensus-on-random-sample $VIDJIL_DATA/test-random-consensus.fa.gz > consensus-random.log
+!LAUNCH: $VIDJIL_DIR/$EXEC -w 20 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG --consensus-on-longest-sequences $VIDJIL_DATA/test-random-consensus.fa.gz > consensus-longest.log
+!LAUNCH: $VIDJIL_DIR/$EXEC -w 20 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG $VIDJIL_DATA/test-random-consensus.fa.gz > consensus-random.log
 !NO_LAUNCHER:
-!LAUNCH: diff consensus-default.log consensus-random.log
+!LAUNCH: diff consensus-longest.log consensus-random.log
 !EXIT_CODE: 1
 
-$ Output should differ: default has a consensus of 52bp (with the spurious insertion)
+$ Output should differ: ReadQualityScore gives a consensus of 52bp (with the spurious insertion)
 # Appears twice in the header of the consensus sequence and in the similarity matrix
 2:^< .* 52 bp
 1:^< CTTTT
