@@ -889,8 +889,8 @@ Segment.prototype = {
         } 
         if (address == 'IMGTSeg') {
             imgtPostForSegmenter(this.m.species, request, system, this);
-            var change_options = {'l01p01c47' : 'N', // Deactivate default output
-                                  'l01p01c45' : 'Y'}; // Activate Summary output
+            var change_options = {'xv_ntseq' : 'false', // Deactivate default output
+                                  'xv_summary' : 'true'}; // Activate Summary output
             imgtPostForSegmenter(this.m.species, request, system, this, change_options);
         }
         if (address == 'ARResT') arrestPost(request, system);
