@@ -1,7 +1,7 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
-2019-05-XX  The Vidjil Team
+2019-05-17  The Vidjil Team
 	* Better method to build consensus sequences used by default, old behaviour with --consensus-on-longest-sequences #3866
 	* Optimized analyses with pre-computations, including for e-value estimation !468
 	* Updated functional .should tests with new syntax, renaming and moving some tests #3206 #3762
