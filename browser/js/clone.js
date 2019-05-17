@@ -234,6 +234,7 @@ Clone.prototype = {
 
     /**
      * Compute feature positions (start/stop) from its sequence, unless they are already present
+     * Computed positions are converted to start from 0 and can be used without manipualtions
      */
     computeSegFeatureFromSeq: function(field_name)
     {
@@ -311,6 +312,7 @@ Clone.prototype = {
 
     /**
      * Get the start and stop position of a given field (e.g. cdr3)
+     * Getted positions are 0 based.
      * If it does not exist return null
      */
     getSegStartStop: function(field_name) {
