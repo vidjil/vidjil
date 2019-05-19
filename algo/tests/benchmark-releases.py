@@ -34,6 +34,26 @@ BENCHS = {
   'igh-a': LIMIT1e3 + IGH + S22 + DESIGNATIONS,
 }
 
+COMPATIBILITY = [
+  ('2019.03', '-c designations', '-c segment'),
+]
+
+def convert(cmd, release):
+    '''
+    Convert a command line to be used by old vidjil-algo releases
+
+    >>> convert('-x 10 -c designations', '2019.05')
+    '-x 10 -c designations'
+
+    >>> convert('-x 10 -c designations', '2018.02')
+    '-x 10 -c segment'
+    '''
+
+    for rel, new, old in COMPATIBILITY:
+        if release < rel:
+            cmd = cmd.replace(new, old)
+    return cmd
+
 
 #####
 
@@ -132,7 +152,7 @@ def run_all(tag, args):
         print('%9s' % release, end=' ')
         log = RUN + '/%s-%s.log' % (tag, release)
 
-        cmd = '%s/%s ' % (BIN, release) + args
+        cmd = '%s/%s ' % (BIN, release) + convert(args, release)
         try:
             bench = go(cmd, log)
             stats[tag,release] = bench
