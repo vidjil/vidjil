@@ -14,8 +14,8 @@ LIMIT1e2 = '-x 100 '
 
 MULTI = '-g ../../germline/homo-sapiens.g '
 IGH = '-g ../../germline/homo-sapiens.g:IGH '
-L4 = '../demo/LIL-L4.fastq.gz '
-S22 = '../demo/Stanford_S22.fasta.gz '
+L4 = '../../demo/LIL-L4.fastq.gz '
+S22 = '../../demo/Stanford_S22.fasta '
 
 CONSENSUS_NO = '-y 0 -z 0 '
 CONSENSUS_ALL = '-y all -z 0 '
