@@ -1,11 +1,11 @@
 
-This is the preliminary help of the Vidjil server on Ubuntu server 14.04.
+This is the help of the Vidjil server.
 This help is intended for server administrators.
-Users should consult the web application manual.
-Other documentation can also be found in [dev.org](http://git.vidjil.org/blob/dev/doc/dev.org).
+Users should consult the [web application manual](http://www.vidjil.org/doc/user/)
+Other documentation can also be found in [doc/](http://www.vidjil.org/doc/).
+Finally, developer documentation
 
-
-# Plain installation or Docker containers
+# Docker containers or Plain installation
 
 There are two ways to install and run a Vidjil server:
 
@@ -374,8 +374,10 @@ docker-compose up -d nginx
 
 # Plain server installation
 
+This installation is not supported anymore.
+We rather advise to use the Docker containers (see above).
 
-## Requirements
+## Requirements (for Ubuntu 16.04)
 
 ``` bash
 apt-get install git
