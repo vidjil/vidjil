@@ -111,8 +111,8 @@ QUnit.test("sequence", function(assert) {
     assert.equal(h.stop, 6, '"f1" feature, stop')
 
     h = seq1.get_positionned_highlight('f2', '')
-    assert.equal(h.start, 15, '"f2" feature, start')
-    assert.equal(h.stop, 20, '"f2" feature, stop')
+    assert.equal(h.start, 14, '"f2" feature, start')
+    assert.equal(h.stop, 19, '"f2" feature, stop')
 
     segment.updateElemStyle([4]) /* Will remove sequence 4 from the segmenter
                                   * as it is not really selected
@@ -138,11 +138,11 @@ QUnit.test("segt", function (assert) {
     assert.equal(m.clone(3).getSequence(),"GGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA","sequence")
     m.clone(3).addSegFeatureFromSeq('test_feature','CACCCAGGAGGTGGAGCTGGATATTGAGACT');
     f1 = segment.sequence[3].get_positionned_highlight('test_feature','');
-    assert.equal(f1.start, 94 , "feature start");
-    assert.equal(f1.stop, 124, "feature stop");
+    assert.equal(f1.start, 93 , "feature start");
+    assert.equal(f1.stop, 123, "feature stop");
     assert.equal(f1.seq,'CACCCAGGAGGTGGAGCTGGATATTGAGACT', "feature sequence");
     assert.equal(m.clone(3).getSegNtSequence("test_feature"), "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "feature sequence 3");
-    assert.deepEqual(m.clone(3).getSegFeature("test_feature"),{"seq": "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 94, "stop": 124}, "feature sequence 4");
+    assert.deepEqual(m.clone(3).getSegFeature("test_feature"),{"seq": "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 93, "stop": 123}, "feature sequence 4");
     
     // segment.sequence[3].computeAAseq()
     // assert.equal(m.clone(3).getSegAASequence("cdr3"),"AKDILKSLKQQLATPNWFDP","feature sequence 2")
@@ -156,7 +156,7 @@ QUnit.test("segt", function (assert) {
     var h = segment.sequence[3].get_positionned_highlight('f1','');
     assert.equal(h.start,-1, " start feature value");
     assert.equal(h.stop, -1, "stop feature value");
-    assert.deepEqual(segment.sequence[3].get_positionned_highlight("test_feature",""),{"color": "", "css": "highlight_seq", "seq": "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 94, "stop": 124, "tooltip": ""}, "test feature value")
+    assert.deepEqual(segment.sequence[3].get_positionned_highlight("test_feature",""),{"color": "", "css": "highlight_seq", "seq": "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 93, "stop": 123, "tooltip": ""}, "test feature value")
     assert.equal(m.clone(3).getSegLength('test_feature'),31, "feature length");
     m.unselectAll();
     assert.equal(segment.toFasta(), "");

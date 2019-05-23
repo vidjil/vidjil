@@ -15,7 +15,7 @@ QUnit.module("Clone", {
             "3start" : 15,
             "5" : {'start': 1, 'end': 5}, // 0-based (old format, with 'end')
             "cdr3": {
-                "start": 11,
+                "start": 8,
                 "stop": 16,
                 "aa": "ABCDE"
             },
@@ -248,10 +248,10 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
         "getHtmlInfo: segmentation information (V gene) after changment");
 
     // Test junction in html export
-    assert.includes(html, "<tr><td>junction</td><td colspan='4'>aat</td></tr>",
+    assert.includes(html, "<tr><td>junction</td><td colspan='4'>att</td></tr>",
                  "getHtmlInfo c1: junction info for productive clone");   
     html = c3.getHtmlInfo();
-    assert.includes(html, "<tr><td>junction</td><td colspan='4'>aaaaaaaaattt</td></tr>",
+    assert.includes(html, "<tr><td>junction</td><td colspan='4'>aaaaaaaatttt</td></tr>",
                  "getHtmlInfo c3: junction info for non productive clone");   
     assert.includes(html, "<tr><td>junction (AA seq)</td><td colspan='4'>WKIC</td></tr>",
                  "getHtmlInfo c3: junction (AAseq) info for non productive clone"); 
@@ -272,10 +272,10 @@ QUnit.test('clone: get info from seg', function(assert) {
     assert.notOk(c1.hasSeg('toto'), "clone1 doesn't have toto")
     assert.notOk(c1.hasSeg('junction', 'toto'), "clone1 has junction but doesn't have toto")
 
-    assert.equal(c1.getSegLength('cdr3'), 6, "CDR3 length");
+    assert.equal(c1.getSegLength('cdr3'), 9, "CDR3 length");
     assert.equal(c2.getSegLength('cdr3'), 'undefined', "no cdr3 in c2");
     var pos_cdr3 = c1.getSegStartStop('cdr3')
-    assert.equal(pos_cdr3['start'], 10, "CDR3 length")
+    assert.equal(pos_cdr3['start'], 7, "CDR3 length")
     assert.equal(pos_cdr3['stop'], 15, "CDR3 length")
     assert.equal(c1.getSegStartStop('toto'), null, "no toto record")
     var pos_junction = c3.getSegStartStop('junction')
@@ -292,7 +292,8 @@ QUnit.test('clone: get info from seg', function(assert) {
     c1.computeEValue()
     assert.equal(c1.eValue, 1e-2, 'Recomputing e-value should not change its value')
 
-    assert.equal(c1.getSegNtSequence('junction'), 'aat', 'junction c1')
+    assert.equal(c1.getSegNtSequence('junction'), 'att', 'junction c1')
+    assert.equal(c1.getSegNtSequence('cdr3'), 'aaatttttt', 'sequence cdr3 c1 (by getSegNtSequence)')
     assert.equal(c1.getSegAASequence('junction'), '', 'no AA junction for c1')
     assert.equal(c1.getSegAASequence('cdr3'), 'ABCDE', 'AA CDR3 for c1')
 
@@ -310,7 +311,7 @@ QUnit.test("clone : feature defined by a nucleotide sequence", function(assert) 
 
     assert.deepEqual(c3.getSegStartStop('somefeature'), null, "start/stop positions are not present")
     c3.computeSegFeatureFromSeq('somefeature')
-    assert.deepEqual(c3.getSegStartStop('somefeature'), {"start": 7, "stop": 13}, "start/stop positions, computed from sequence")
+    assert.deepEqual(c3.getSegStartStop('somefeature'), {"start": 6, "stop": 12}, "start/stop positions, computed from sequence")
     assert.equal(c3.getSegLength('somefeature'), 7, "length of the feature");
 });
 
@@ -439,7 +440,7 @@ QUnit.test("export", function(assert) {
         "TRG", "-/-",
         "undefined V", "IGHD2*03", "IGHV4*01",
         "not productive",
-        "aaaaaaaaattt",
+        "aaaaaaaatttt",
         "WKIC",
         "AAAAAAAAAATTTTTTTTT",
         10, 10, 15, 15,
