@@ -68,7 +68,7 @@ def gene_matches(string, list_regex):
     results = []
     for regex in list_regex:
         match = re.search(regex, string)
-        if match <> None:
+        if match != None:
             results.append(match.group(0))
     return results
 
