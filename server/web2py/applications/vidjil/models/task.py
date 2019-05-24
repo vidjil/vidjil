@@ -148,6 +148,7 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     ts = time.time()
     data_id = db.results_file.insert(sequence_file_id = id_sequence,
                                      run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
+                                     hidden = grep_reads is not None, 
                                      config_id = id_config )
         
     args = [id_sequence, id_config, data_id, grep_reads]

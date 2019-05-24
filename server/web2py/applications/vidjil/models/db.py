@@ -209,6 +209,7 @@ db.define_table('results_file',
                 Field('config_id', 'reference config', ondelete='SET NULL'),
                 Field('run_date','datetime'),
                 Field('scheduler_task_id', 'integer'),
+                Field('hidden', 'boolean', default = False, notnull = True),
                 Field('data_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE))
