@@ -12,59 +12,40 @@ function setCrossDomainModel(model) {
 //parametre IMGT par defaut
 function initImgtInput(species) {
     var imgtInput = {};
-    imgtInput.callback = "jQuery17106713638880755752_1378825832820";
-    imgtInput.livret = "1";
-    imgtInput.Session = "&lt;session code=Â¤0Â¤ appliName=Â¤IMGTvquestÂ¤ time=Â¤3625396897Â¤/&gt;";
-    imgtInput.l01p01c02 = species;
-    imgtInput.l01p01c04 = "TR";
-    imgtInput.l01p01c03 = "inline";
-    imgtInput.l01p01c10 = "";
-    imgtInput.l01p01c07 = "2. Synthesis";
-    imgtInput.l01p01c05 = "HTML";
-    imgtInput.l01p01c09 = "60";
-    imgtInput.l01p01c60 = "5";
-    imgtInput.l01p01c12 = "Y";
-    imgtInput.l01p01c13 = "Y";
-    imgtInput.l01p01c06 = "Y";
-    imgtInput.l01p01c24 = "N";
-    imgtInput.l01p01c14 = "Y";
-    imgtInput.l01p01c15 = "Y";
-    imgtInput.l01p01c16 = "Y";
-    imgtInput.l01p01c41 = "Y";
-    imgtInput.l01p01c22 = "Y";
-    imgtInput.l01p01c17 = "Y";
-    imgtInput.l01p01c23 = "Y";
-    imgtInput.l01p01c19 = "Y";
-    imgtInput.l01p01c18 = "Y";
-    imgtInput.l01p01c20 = "Y";
-    imgtInput.l01p01c27 = "Y";
-    imgtInput.l01p01c28 = "Y";
-    imgtInput.l01p01c29 = "Y";
-    imgtInput.l01p01c30 = "Y";
-    imgtInput.l01p01c31 = "Y";
-    imgtInput.l01p01c32 = "Y";
-    imgtInput.l01p01c33 = "Y";
-    imgtInput.l01p01c34 = "Y";
-    imgtInput.l01p01c46 = "N";
-    imgtInput.l01p01c47 = "Y"; // nt-sequences
-    imgtInput.l01p01c48 = "N";
-    imgtInput.l01p01c49 = "N";
-    imgtInput.l01p01c50 = "N"; // Junction
-    imgtInput.l01p01c51 = "N";
-    imgtInput.l01p01c52 = "N";
-    imgtInput.l01p01c53 = "N";
-    imgtInput.l01p01c54 = "N";
-    imgtInput.l01p01c55 = "NO";
-    imgtInput.l01p01c35 = "F+ORF+ in-frame P";
-    imgtInput.l01p01c36 = "0";
-    imgtInput.l01p01c40 = "1";
-    imgtInput.l01p01c25 = "default";
-    imgtInput.l01p01c37 = "default";
-    imgtInput.l01p01c38 = "default";
-    imgtInput.l01p01c39 = "default";
-    imgtInput.l01p01c08 = "";
-    imgtInput.l01p01c26 = "";
-    imgtInput.l01p01c10 = ">a\nATGCGCAGATGC\n";
+    imgtInput.species = getSpeciesCommonName(species);
+    imgtInput.receptorOrLocusType = "TR";
+    imgtInput.inputType = "inline";
+    imgtInput.resultType = "synthesis";
+    imgtInput.outputType = "html";
+    imgtInput.nbNtPerLine = "60";
+    imgtInput.sv_V_GENEordertable = "1";
+    imgtInput.sv_V_GENEalignment = "true";
+    imgtInput.sv_V_REGIONalignment = "true";
+    imgtInput.sv_V_REGIONtranslation = "true";
+    imgtInput.sv_V_REGIONprotdisplay = "true";
+    imgtInput.sv_V_REGIONprotdisplay2 = "true";
+    imgtInput.sv_V_REGIONprotdisplay3 = "true";
+    imgtInput.sv_V_REGIONfrequentAA = "true";
+    imgtInput.sv_IMGTjctaResults = "true";
+
+    // part for the version where we asynchronously get results from V-QUEST
+    imgtInput.xv_IMGTgappedNt = "false";
+    imgtInput.xv_summary = "false";
+    imgtInput.xv_ntseq = "true"; // nt-sequences
+    imgtInput.xv_IMGTgappedAA = "false";
+    imgtInput.xv_AAseq = "false";
+    imgtInput.xv_JUNCTION = "false"; // Junction
+    imgtInput.xv_V_REGIONmuttable = "false";
+    imgtInput.xv_V_REGIONmutstatsNt = "false";
+    imgtInput.xv_V_REGIONmutstatsAA = "false";
+    imgtInput.xv_V_REGIONhotspots = "false";
+    // end of part
+    
+    imgtInput.IMGTrefdirSet = "1"; // "F+ORF+ in-frame P";
+    imgtInput.IMGTrefdirAlleles = "true";
+    imgtInput.V_REGIONsearchIndel = "true";
+    imgtInput.nbD_GENE = "";    // Default value: 1 for IGH, 1 for TRB, 3 for TRD
+    imgtInput.sequences = "";
     return imgtInput;
 }
 
@@ -101,17 +82,17 @@ function initIgBlastInput() {
 
 function imgtPost(species, data, system) {
     var imgtInput = initImgtInput(species);
-    imgtInput.l01p01c10 = data;
+    imgtInput.sequences = data;
     if (system[0] == "I") {
-        imgtInput.l01p01c04 = "IG";
+        imgtInput.receptorOrLocusType = "IG";
     }
     if (system[0] == "T") {
-        imgtInput.l01p01c04 = "TR";
+        imgtInput.receptorOrLocusType = "TR";
     }
     var form = document.getElementById("form");
     form.removeAllChildren();
     form.target = "_blank";
-    form.action = "http://www.imgt.org/IMGT_vquest/vquest";
+    form.action = "http://www.imgt.org/IMGT_vquest/analysis";
     form.method = "POST";
 
     for (var k in imgtInput) {
@@ -167,15 +148,15 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
         });
     }
 
-    imgtInput.l01p01c07 = "3. Excel";
-    imgtInput.l01p01c10 = data;
-    imgtInput.l01p01c62 = 2;
+    imgtInput.resultType = "excel";
+    imgtInput.sequences = data;
+    imgtInput.xv_outputtype = 2;
 
     if (system[0] == "I") {
-        imgtInput.l01p01c04 = "IG";
+        imgtInput.receptorOrLocusType = "IG";
     }
     if (system[0] == "T") {
-        imgtInput.l01p01c04 = "TR";
+        imgtInput.receptorOrLocusType = "TR";
     }
     var form = document.getElementById("form");
     form.removeAllChildren();

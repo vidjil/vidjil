@@ -135,6 +135,25 @@ function get_mutations(ref, seq, frame, with_end_codon) {
 }
 
 /**
+ * @return the common name of a species. Or the original name if the common
+ * name has not been set. The common names are given so that they are
+ * compatible with IMGT/V-QUEST®
+ */
+function getSpeciesCommonName(species) {
+    var lower_species = species.toLowerCase();
+    switch(lower_species) {
+    case "homo sapiens":
+        return "human";
+    case "mus musculus":
+        return "house mouse";
+    case "gallus gallus":
+        return "chicken";
+    default:
+        return species;
+    }
+}
+
+/**
  * Find the position of the nth occurence of needle
  *
  * @param str string to analyze
