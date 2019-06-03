@@ -12,9 +12,6 @@ function setCrossDomainModel(model) {
 //parametre IMGT par defaut
 function initImgtInput(species) {
     var imgtInput = {};
-    imgtInput.callback = "jQuery17106713638880755752_1378825832820";
-    imgtInput.livret = "1";
-    imgtInput.Session = "&lt;session code=Â¤0Â¤ appliName=Â¤IMGTvquestÂ¤ time=Â¤3625396897Â¤/&gt;";
     imgtInput.species = species;
     imgtInput.receptorOrLocusType = "TR";
     imgtInput.inputType = "inline";
