@@ -18,8 +18,8 @@ function initImgtInput(species) {
     imgtInput.species = species;
     imgtInput.receptorOrLocusType = "TR";
     imgtInput.inputType = "inline";
-    imgtInput.resultType = "sv";
-    imgtInput.outputType = "HTML";
+    imgtInput.resultType = "synthesis";
+    imgtInput.outputType = "html";
     imgtInput.nbNtPerLine = "60";
     imgtInput.sv_V_GENEordertable = "1";
     imgtInput.sv_V_GENEalignment = "true";
@@ -43,7 +43,7 @@ function initImgtInput(species) {
     imgtInput.xv_V_REGIONhotspots = "false";
     // end of part
     
-    imgtInput.IMGTrefdirSet = "F+ORF+ in-frame P";
+    imgtInput.IMGTrefdirSet = "1"; // "F+ORF+ in-frame P";
     imgtInput.IMGTrefdirAlleles = "true";
     imgtInput.V_REGIONsearchIndel = "true";
     imgtInput.nbD_GENE = "";    // Default value: 1 for IGH, 1 for TRB, 3 for TRD
@@ -150,7 +150,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
         });
     }
 
-    imgtInput.resultType = "xv";
+    imgtInput.resultType = "excel";
     imgtInput.sequences = data;
     imgtInput.xv_outputtype = 2;
 
