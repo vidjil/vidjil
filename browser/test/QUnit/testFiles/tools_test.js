@@ -139,6 +139,13 @@ QUnit.test("test nth_ocurrence", function(assert) {
     }
 );
 
+QUnit.test("test getSpeciesCommonName", function(assert) {
+    assert.equal(getSpeciesCommonName("homo sapiens"), "human");
+    assert.equal(getSpeciesCommonName("Homo sapiens"), "human");
+    assert.equal(getSpeciesCommonName("mus musculus"), "house mouse");
+    assert.equal(getSpeciesCommonName("gallus gallus"), "chicken");
+});
+
 QUnit.test("test tsvToArray", function(assert) {
         var tabstring = "head1\thead2\thead3\thead4\nLine 1 data1\tLine 1 data2\tLine 1 data3\tLine 1 data4\n";
         tabstring += "Line 2 data1\tLine 2 data2\tLine 2 data3\tLine 2 data4";

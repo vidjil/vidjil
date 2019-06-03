@@ -12,7 +12,7 @@ function setCrossDomainModel(model) {
 //parametre IMGT par defaut
 function initImgtInput(species) {
     var imgtInput = {};
-    imgtInput.species = species;
+    imgtInput.species = getSpeciesCommonName(species);
     imgtInput.receptorOrLocusType = "TR";
     imgtInput.inputType = "inline";
     imgtInput.resultType = "synthesis";
