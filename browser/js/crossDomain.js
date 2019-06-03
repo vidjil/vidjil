@@ -30,6 +30,7 @@ function initImgtInput(species) {
 
     // part for the version where we asynchronously get results from V-QUEST
     imgtInput.xv_IMGTgappedNt = "false";
+    imgtInput.xv_summary = "false";
     imgtInput.xv_ntseq = "true"; // nt-sequences
     imgtInput.xv_IMGTgappedAA = "false";
     imgtInput.xv_AAseq = "false";
