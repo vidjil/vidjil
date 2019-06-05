@@ -1,0 +1,14 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -3 -c designations -g $VIDJIL_DIR/germline/gallus-gallus.g $VIDJIL_DATA/specie_gallus-gallus.fa
+
+# each sequence here can be allele *01 or *02.
+
+$ First clone is correctly found
+1:IGLV1-1*01 0//2 IGLJ*01
+
+$ Second clone is correctly found
+1:IGLV1-1*01 0/C/6 IGLJ*01
+
+$ Third clone is correctly found
+1:IGLV1-4*01 0//6 IGLJ*01
+
+
