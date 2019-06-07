@@ -1,0 +1,38 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -k 14 -w 50 -c clones -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa -y 3 -z 1 -r 1 $VIDJIL_DATA/clones_simul.fa
+
+$ Junction extractions
+1:found 25 windows in 66 reads
+
+$ No clustering
+1:==> 25 clones
+
+$ Clone 1 output
+1:Clone #001 .* 29 reads
+
+$ Clone 2 output
+1:Clone #002 .* 14 reads
+
+$ Clone 3 output (sequencing error)
+1:Clone #003 .* 1 reads
+
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -k 14 -w 50 -c clones -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa -y 3 -z 0 -r 1 --cluster-epsilon 5 $VIDJIL_DATA/clones_simul.fa ; cat out/clones_simul.vidjil
+
+$ Window extractions
+1:windows up to 50bp
+2:found 25 windows in 66 reads
+
+$ Some clustering
+1:==> 2 clusters
+
+$ Clones #01 and #02 are clustered (not together): their windows appear two times in .vidjil ('id' and 'clusters')
+2:"CTGTGCGAGAGTGGGCAGCAGCTGGTCTGATGCTTTTGATTATCTGGGGC"
+2:"GCGAGAGCGATCCCCCGGTATTACTATGATACTAGTGGCCCAAACGACTA"
+
+$ Clones #03 is not clustered: its windows appear only once .vidjil ('id')
+1:"TGTGAGAGAGCGATCCCCCGGTATTACTAGGATACTAGTGGCCCAAACGA"
+
+$ Clones #01, #02 and #03 have the start of their sequence in .vidjil, on the good strand
+1: "sequence": "ACGCTGGCAATGGTAACACAAAATATTCACAGAAG
+1: "sequence": "TAGTGGTGCCATATACTACGCAGACTCTGTGAAGG
+1: "sequence": "CATTAGTAGTAATAGTGGTGCCATATACTACGCAG

@@ -14,7 +14,7 @@ using namespace std;
 #define THRESHOLD_BAD_COVERAGE .5 /* Threshold below which the representatie
                                      coverage is considered bad */
 
-static ReadQualityScore DEFAULT_READ_SCORE;
+static RandomScore DEFAULT_READ_SCORE;
 
 /**
  * Compute a representative sequence from a list of sequences.

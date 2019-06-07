@@ -1,0 +1,22 @@
+!LAUNCH: $LAUNCHER $VIDJIL_DIR/$EXEC -z 1 -k 9 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH --ratio 0.001 -r 2 -x 1000 -y 1 -c clones $VIDJIL_DATA/Stanford_S22.fasta | sed 's/--IGH--.*VDJ\\(.*\\).$/\\1/' | sed 's/IGH SEG_./IGH SEG_X/' > vidjil_s22.log
+!LAUNCH: $LAUNCHER $VIDJIL_DIR/$EXEC -z 1 -k 9 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH --ratio 0.001 -r 2 -x 1000 -y 1 -c clones $VIDJIL_DATA/Stanford_S22.rc.fasta | sed 's/--IGH--.*VDJ\\(.*\\).$/\\1/' |  sed 's/IGH SEG_./IGH SEG_X/' > vidjil_s22_rc.log
+!LAUNCH: diff out/Stanford_S22{,.rc}.vidjil | grep GGG && diff vidjil_s22.log vidjil_s22_rc.log
+!EXIT_CODE: 1
+
+$ Same number segmented
+0:==> segmented
+
+$ Same number of windows found
+0:==> found
+
+$ Same number unsegmented
+0:UNSEG.*->
+
+$ Keep the same number of windows
+0:==> keep 
+
+$ Same segmentation for the main clone
+0:clone.001.*IGH SEG_
+
+$ No sequence difference in the .vidjil
+0:"sequence"

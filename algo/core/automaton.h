@@ -24,6 +24,7 @@ class AbstractACAutomaton: public IKmerStore<Info> {
 
 protected:
   void *initialState;
+  float all_index_load;
   map<Info, size_t> kmers_inserted;
 public:
   AbstractACAutomaton();

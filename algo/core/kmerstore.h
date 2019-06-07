@@ -15,6 +15,7 @@ using namespace std;
 typedef
 enum { KMER_INDEX, AC_AUTOMATON } IndexTypes;
 
+#define MAX_PRECOMPUTED_PROBA 500 /* Precompute 500 probabilities for each index load */
 class Kmer {
 public:
   unsigned int count;
@@ -74,6 +75,8 @@ protected:
   size_t nb_kmers_inserted;
   size_t max_size_indexing;
   bool finished_building;
+  map<float, vector<double> > precomputed_proba_with_system,
+    precomputed_proba_without_system;
 
 public:
 
@@ -149,7 +152,7 @@ public:
   /**
    * @return probability that the number of kmers is 'at_least' or more in a sequence of length 'length'
    */
-  double getProbabilityAtLeastOrAbove(T kmer, int at_least, int length) const;
+  double getProbabilityAtLeastOrAbove(T kmer, int at_least, int length);
 
   /**
    * @return the value of k
@@ -199,6 +202,10 @@ public:
    * @pre word.length() == this->k
    */
   virtual T& operator[](seqtype& word) = 0;
+
+ protected:
+
+  void precompute_proba(float index_load);
 };
 
 template<class T>
@@ -366,17 +373,45 @@ int IKmerStore<T>::atMostMaxSizeIndexing(int n) const {
 }
 
 template<class T>
-double IKmerStore<T>::getProbabilityAtLeastOrAbove(const T kmer, int at_least, int length) const {
+void IKmerStore<T>::precompute_proba(float index_load) {
+  precomputed_proba_with_system[index_load] = vector<double>(MAX_PRECOMPUTED_PROBA);
+  precomputed_proba_without_system[index_load] = vector<double>(MAX_PRECOMPUTED_PROBA);
+
+  vector<double> &pproba_with = precomputed_proba_with_system[index_load];
+  vector<double> &pproba_without = precomputed_proba_without_system[index_load];
+
+  pproba_with[0] = 1;
+  pproba_without[0] = 1;
+  for (int i = 1; i < MAX_PRECOMPUTED_PROBA; i++) {
+    pproba_with[i] = pproba_with[i - 1] * index_load;
+    pproba_without[i] = pproba_without[i - 1] * (1 - index_load);
+  }
+}
+
+template<class T>
+double IKmerStore<T>::getProbabilityAtLeastOrAbove(const T kmer, int at_least, int length)  {
 
   if (at_least == 0) return 1.0; // even if 'length' is very small
   
   // n: number of kmers in the sequence
   int n = length - getS() + 1;
   float index_load = getIndexLoad(kmer) ;
+  if (! precomputed_proba_without_system.count(index_load)) {
+    precompute_proba(index_load);
+  }
 
   double proba = 0;
-  double probability_having_system = pow(index_load, at_least);
-  double probability_not_having_system = pow(1 - index_load, n - at_least);
+
+  double probability_not_having_system;
+  double probability_having_system;
+  if (precomputed_proba_with_system.at(index_load).size() > (size_t)at_least)
+    probability_having_system = precomputed_proba_with_system.at(index_load)[at_least];
+  else
+    probability_having_system = pow(index_load, at_least);
+  if (precomputed_proba_without_system.at(index_load).size() > (size_t)n - at_least)
+    probability_not_having_system = precomputed_proba_without_system.at(index_load)[n-at_least];
+  else
+    probability_not_having_system = pow(1 - index_load, n - at_least);
   for (int i=at_least; i<=n; i++) {
     proba += nChoosek(n, i) * probability_having_system * probability_not_having_system;
     probability_having_system *= index_load;

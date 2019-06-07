@@ -1,0 +1,6 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/Makefile $VIDJIL_DATA/Stanford_S22.fasta 2>&1
+!EXIT_CODE: 1
+
+$ Error, incorrect *.g
+1:error.* cannot properly read
+

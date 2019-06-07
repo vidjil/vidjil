@@ -82,7 +82,7 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
       stats[TOTAL_SEG_AND_WINDOW].insert(read_length) ;
       if (seg->isJunctionChanged())
         stats[SEG_CHANGED_WINDOW].insert(read_length);
-      stats_reads[seg->system].addScore(read_length);
+      stats_reads[seg->segmented_germline->code].addScore(read_length);
 
       if (out_segmented) {
         *out_segmented << *seg ; // KmerSegmenter output (V/N/J)

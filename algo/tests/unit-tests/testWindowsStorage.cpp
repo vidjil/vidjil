@@ -1,6 +1,7 @@
 #include <core/windows.h>
 #include <core/germline.h>
 #include <core/bioreader.hpp>
+#include <core/read_score.h>
 #include <map>
 
 void testWSAdd() {
@@ -110,6 +111,8 @@ void testWSAdd() {
 void testWSAddWithLimit() {
   map<string, string> labels;
   WindowsStorage ws(labels);
+  ReadQualityScore rqs;
+  ws.setScorer(&rqs);
   ws.setMaximalNbReadsPerWindow(3);
   ws.setBinParameters(1, 20);
   Sequence seq = {"label", "l", "GATACATTAGACAGCT", "", 0};

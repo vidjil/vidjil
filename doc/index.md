@@ -25,7 +25,7 @@ methods and software.
   - [Docker/Server installation and maintenance](server.md)
 
 These documentations and additional developer and maintainer documentation
-are availaible from the [doc/](http://gitlab.vidjil.org/tree/master/doc) directory in the source files.
+are available from the [doc/](http://gitlab.vidjil.org/tree/master/doc) directory in the source files.
 
 ### Further help
 

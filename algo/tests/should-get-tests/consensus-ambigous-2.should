@@ -1,0 +1,17 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC --all -c clones -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/test_representatives.fa
+
+$ Three clones should be found
+1:3 clones
+
+# All clones should have a representative on 100%  of the length
+# Each regex should appear twice as it also appears in the similarity matrix.
+
+$ Representative length of clone 1 (cf. #1541)
+f2:clone1.*100% of
+
+$ Representative length of clone 2
+2:clone2.*100% of
+
+$ Representative length of clone 3
+2:clone3.*100% of
+

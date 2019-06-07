@@ -1,0 +1,44 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRD,TRG,IGH,IGK,IGL -uuu $VIDJIL_DATA/segmentation-2.fa ; cat out/segmentation-2.unsegmented.vdj.fa
+
+$ Only one sequence is segmented, but it is too small for a window (too short w)
+1: junction detected in 1 reads
+1: found 0 windows in 0 reads
+
+$ The proper unsegmentation cause is given
+1: UNSEG too short   -> .* 1
+1: UNSEG strand      -> .* 1
+1: UNSEG too few V/J -> .* 3
+1: UNSEG only V/5'   -> .* 1
+1: UNSEG only J/3'   -> .* 1
+1: UNSEG ambiguous   -> .* 1
+1: UNSEG too short w -> .* 1
+
+$ The proper unsegmentation cause is given in the .unsegmented.vdj.fa file (-uuu)
+1: >too_short   .* UNSEG too short
+1: >strand      .* UNSEG strand
+3: >too_few_vj-..* UNSEG too few V/J
+1: >only_V      .* UNSEG only V/5'
+1: >only_J      .* UNSEG only J/3'
+1: >ambiguous   .* UNSEG ambiguous
+1: >too_short_w .* UNSEG too short w
+
+
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRD,TRG,IGH,IGK,IGL -u $VIDJIL_DATA/segmentation-2.fa ; cat ./out///segmentation-2.UNSEG_ambiguous.fa ; cat ./out///segmentation-2.UNSEG_too_few_V_J.fa
+
+$ The proper unsegmentation cause is given
+1: UNSEG too short   -> .* 1
+1: UNSEG strand      -> .* 1
+1: UNSEG too few V/J -> .* 3
+1: UNSEG only V/5'   -> .* 1
+1: UNSEG only J/3'   -> .* 1
+1: UNSEG ambiguous   -> .* 1
+1: UNSEG too short w -> .* 1
+
+$ The UNSEG ambiguous read is reported in the .UNSEG_ambiguous.fa file (-u)
+1: >ambiguous   .* UNSEG ambiguous
+
+$ The UNSEG too few V/J reads are *not* reported in any .fa file (-u)
+0: >too_few_vj-..* UNSEG too few V/J
+
+

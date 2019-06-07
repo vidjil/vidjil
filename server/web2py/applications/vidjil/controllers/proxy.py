@@ -16,7 +16,7 @@ def imgt():
         
         if 'Session' in payload.keys():
             del payload['Session']
-        response = requests.post("http://www.imgt.org/IMGT_vquest/vquest", data=payload)
+        response = requests.post("http://www.imgt.org/IMGT_vquest/analysis", data=payload)
         if response.status_code == requests.codes.ok:
             return response
         return gluon.contrib.simplejson.dumps("the site returned an invalid response")

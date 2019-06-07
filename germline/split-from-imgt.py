@@ -68,7 +68,7 @@ def gene_matches(string, list_regex):
     results = []
     for regex in list_regex:
         match = re.search(regex, string)
-        if match <> None:
+        if match != None:
             results.append(match.group(0))
     return results
 
@@ -274,7 +274,9 @@ SPECIES = {
     "Mus musculus_C57BL/6": 'mus-musculus/',
     "Rattus norvegicus": 'rattus-norvegicus/',
     "Rattus norvegicus_BN/SsNHsdMCW": 'rattus-norvegicus/',
-    "Rattus norvegicus_BN; Sprague-Dawley": 'rattus-norvegicus/'
+    "Rattus norvegicus_BN; Sprague-Dawley": 'rattus-norvegicus/',
+    "Gallus gallus": "gallus-gallus/",
+    "Gallus gallus_Red Jungle fowl": "gallus-gallus/"
 }
 
 
