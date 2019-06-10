@@ -3,7 +3,7 @@
 
 ''' Program to perform spike-in normalization in .vidjil files.
 
-    Developed at the Boldrini Center, Brazil, in 2018.
+    Developed at the Boldrini Center, Brazil, in 2018-2019.
 '''
 
 ############################################################
@@ -18,7 +18,7 @@ import math
 ############################################################
 ### constants
 
-version = 'B0.01.11'
+version = 'S0.01'
 UNIVERSAL = 'universal'
 
 ############################################################
@@ -57,7 +57,6 @@ def linearRegression(y, x):
 
 
 def computeCopies(data):
-    totalReads = 0.0
     reads = {}
     copies = {}
     ## get config
@@ -65,7 +64,6 @@ def computeCopies(data):
         copies[spike['name']] = spike['copies']
     ## get reads
     for clone in data['clones']:
-        totalReads += clone['reads'][0]
         if 'label' in clone:
             ## spike-in clone
             label = clone['label']
@@ -81,7 +79,7 @@ def computeCopies(data):
                 reads[label] = 0.0
             reads[label] += a[0]
 
-    return copies, reads, totalReads
+    return copies, reads, data['reads']['segmented'][0]
 
 ############################################################
 
@@ -118,10 +116,10 @@ def computeUniversalCoefficient(copies, reads):
         y.append(1.0*int(nCopies))
         ## print('{0:5} {1:10.1f}'.format(s/c, int(nCopies)))
 
-    ### test for zero items
-    if len(x) == 0:
-        print('** No spike-ins for universal coefficient **')
-        print('** Please check input files **')
+    ### test for not enough items
+    if len(x) == 0 or max(x) <= 10.0:
+        print('** Not enough spike-ins **', file=sys.stderr)
+        print('** No normalization performed **', file=sys.stderr)
     else:
         ### fit curve
         lr = linearRegression(y, x)
@@ -137,14 +135,12 @@ def computeUniversalCoefficient(copies, reads):
 ############################################################
 ### add normalized reads
 
-def addNormalizedReads(data, f, totalReads):
+def addNormalizedReads(data, coeff, totalReads):
     if msgs >= 1:
         print('Normalizing reads and prinitng output file', file=sys.stderr)
 
     ### all clones will be normalized
     for clone in data['clones']:
-        fam = UNIVERSAL
-
         ## grab read data
         a = clone['reads']
         if len(a) > 1:
@@ -152,7 +148,7 @@ def addNormalizedReads(data, f, totalReads):
 
         ## update counters for clones
         reads = a[0]
-        clone['normalized_reads'] = [ reads*f[fam]*totalReads/100000 ]
+        clone['normalized_reads'] = [ reads*coeff*totalReads/100000 ]
 
 ############################################################
 ### command line, initial msg
@@ -172,7 +168,8 @@ if __name__ == '__main__':
     # process data
     copies, reads, totalReads = computeCopies(data)
     f = computeUniversalCoefficient(copies, reads)
-    addNormalizedReads(data, f, totalReads)
+    if UNIVERSAL in f:
+        addNormalizedReads(data, f[UNIVERSAL], totalReads)
 
     # write output file
     with open(outf, 'w') as of:
