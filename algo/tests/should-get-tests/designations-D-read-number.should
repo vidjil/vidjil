@@ -1,0 +1,18 @@
+# See #3003
+
+# We launch three times a sequence of interest (buggy-D.fa) with a various
+# number of distinct reads (mutations randomly inserted in the middle).
+
+# The segmentation of one sequence should not depend on the number of the
+# other reads. This is what is tested, we first put 10 sequences, then 5 and
+# finally just the sequence of interest alone.
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -d -r 1 -w 60 -z 100 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/buggy-D.fa \
+; $VIDJIL_DIR/$EXEC -d -r 1 -w 60 -z 100 -x 6 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/buggy-D.fa \
+; $VIDJIL_DIR/$EXEC -d -r 1 -w 60 -z 100 -x 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/buggy-D.fa
+
+$ Three times the same window
+3: TGTGCGGGATCTTCGTCCTCTTATCATAATAATGGTTTTTTGGCGGGGGAGTCATGGGGC
+
+$ Three times the same segmentation
+f3: IGHV4-34.*IGHD.*IGHJ4

@@ -1,0 +1,16 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -r 1 -x 10 -y all -z 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta ; cat out/Stanford_S22.vdj.fa
+
+# Testing -x/-y/-z options
+
+$ 10 clones are output (-x 10)
+1: ==> 10 clones
+
+$ 10 clones are computed with a consensus sequence (-y all)
+2:clone-010--.* bp
+
+$ 1 clone is fully analyzed, and not more (-z 1)
+2:clone-.* IGHV
+
+
+
+

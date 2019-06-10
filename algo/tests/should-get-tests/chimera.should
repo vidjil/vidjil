@@ -1,0 +1,10 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC --all -uU -g $VIDJIL_DIR/germline $VIDJIL_DATA/chimera-trg.fa
+
+$ Do not segment on IG/TR by chance
+12:(IG|TR).* -> .* 0
+
+$ Report the sequence as AMBIGUOUS
+f1:UNSEG ambiguous -> 1
+# We are unable to report it as ambiguous yet as we are in the case where
+# we have +J+J +V+V. The maximum point won't be in the middle, thus the
+# V or J e-value will be high.

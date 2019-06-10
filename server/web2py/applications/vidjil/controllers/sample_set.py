@@ -287,6 +287,13 @@ def result_files():
     if isinstance(sample_set_ids, types.StringTypes):
         sample_set_ids = [sample_set_ids]
 
+    permissions = [auth.can_view_sample_set(int(id)) for id in sample_set_ids]
+    if sum(permissions) < len(permissions):
+        res = {"message": "You don't have permissions to access those sample sets"}
+        log.error("An error occured when creating archive of sample_sets %s" % str(sample_set_ids))
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+
     if int(config_id) == -1:
         config_query = (db.results_file.config_id > 0)
     else:

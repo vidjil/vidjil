@@ -1,0 +1,7 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH --all $VIDJIL_DATA/overlap-d-j.fa | grep -v out | tail -4 | tr -d '\n' | wc -c
+
+$ Exported sequence has all the bases
+1:116
+
+
+

@@ -1,21 +1,24 @@
 
-This is the preliminary help of the Vidjil server on Ubuntu server 14.04.
+This is the help of the Vidjil server.
 This help is intended for server administrators.
-Users should consult the web application manual.
-Other documentation can also be found in [dev.org](http://git.vidjil.org/blob/dev/doc/dev.org).
+Users should consult the [web application manual](http://www.vidjil.org/doc/user/)
+Other documentation can also be found in [doc/](http://www.vidjil.org/doc/).
+Finally, developer documentation
 
-
-# Plain installation or Docker containers
+# Docker containers or Plain installation
 
 There are two ways to install and run a Vidjil server:
 
-  - We are developping and deploying in 2018 **Docker containers** to ease the installation and the maintenance.
-    These Docker containers are now used in some partner hospitals.
+  - We are developping and deploying since 2018 **Docker containers** to ease the installation and the maintenance.
+    These Docker containers are used on the public server (<https://app.vidjil.org>) as well as in some partner hospitals.
     We recommend this installation for new instances of Vidjil.
+    We also provide support and remote maintenance
+    of such in-hospital servers through
+    the [VidjilNet consortium](http://www.vidjil.net/index.en.html).
 
   - The **plain installation of the server** should run on any Linux/Unix server with Nginx (recommanded) or Apache.
     We provide below detailed instructions for Ubuntu 14.04 LTS.
-    We use this installation on the public server (<https://app.vidjil.org>) since October 2014.
+    We used this installation on the public server between 2014 and 2018.
 
 # Requirements
 
@@ -371,8 +374,10 @@ docker-compose up -d nginx
 
 # Plain server installation
 
+This installation is not supported anymore.
+We rather advise to use the Docker containers (see above).
 
-## Requirements
+## Requirements (for Ubuntu 16.04)
 
 ``` bash
 apt-get install git

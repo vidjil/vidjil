@@ -1,0 +1,14 @@
+!NO_LAUNCHER:
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DATA/Stanford_S22.fasta 2>&1
+!EXIT_CODE: 1
+
+$ Error, no germlines
+1:error.* one germline must be given
+
+$ Refer to documentation
+1:see doc/vidjil-algo.md
+
+
+
+
+

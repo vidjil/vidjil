@@ -1,4 +1,0 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -r 5 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/representative-few-reads.fa
-
-$ Consensus sequence should span on the whole sequence
-1: clone.*99% of 243

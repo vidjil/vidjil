@@ -1,0 +1,30 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens-cd.g -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRG,TRD,IGH,IGK,IGL $VIDJIL_DATA/multi-short.fa
+
+$ Segment all the seven reads
+1:junction detected in 7 reads
+
+$ Do not segment any read with SEG_METHOD_ONE on homo-sapiens-cd.g
+1: CD .* -> .* 0 .* 0
+
+$ Segment one read on TRA
+1:TRA .* -> .* 1 
+
+$ Segment one read on TRB
+1:TRB .* -> .* 1 
+
+$ Segment one read on TRG
+1:TRG .* -> .* 1 
+
+$ Segment one read on TRD
+1:TRD .* -> .* 1 
+
+$ Segment one read on IGH
+1:IGH .* -> .* 1 
+
+$ Segment one read on IGK
+1:IGK .* -> .* 1 
+
+$ Segment one read on IGL
+1:IGL .* -> .* 1 
+
+
