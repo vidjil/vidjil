@@ -53,6 +53,9 @@ var config = {
     /* Do we have access to a CloneDB ? */
     "clonedb": false,
 
+    /* Load extra scripts */
+    /* "addons" : ["js/lib/important-lib.js", "js/myscript.js"], */
+
     /****************
      * Tips of the day
      */
