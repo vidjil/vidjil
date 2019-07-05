@@ -299,7 +299,6 @@ test_server_functional:
     - sed -i '/\/etc\/nginx\/ssl\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
     - sed -i 's/\:latest/\:test/g' ./docker/docker-compose.yml
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
-    - cd docker/vidjil-client/conf/ && mv conf.js conf_https.js && mv conf_http.js conf.js && cd ../../..
     - make germline && cp browser/js/germline.js docker/vidjil-client/conf
     - cd docker && docker-compose up -d && cd ..
     - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/web2py/" server/web2py/applications/vidjil/tests/init_func_test_db.sh
