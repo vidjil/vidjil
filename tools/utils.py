@@ -52,8 +52,12 @@ def concatenate_with_padding(d,
             continue
 
         d[key] = d1[key]
-        if key not in d2 :
+        ### For field normalized_reads, we prefer set it at None if not available for a timepoint
+        # Create a specific loop for it
+        if key not in d2 and key != "normalized_reads":
             d[key] += t2
+        elif key == "normalized_reads":
+            d[key] += [None]*len(d2["reads"])
 
     for key in d2:
         if key in ignore_keys:
@@ -61,8 +65,10 @@ def concatenate_with_padding(d,
         if type(d2[key]) is not list:
             continue
 
-        if key not in d :
+        if key not in d and key != "normalized_reads":
             d[key] = t1 + d2[key]
+        elif key == "normalized_reads":
+            d[key] = [None]*len(d1["reads"]) + d2[key]
         else :
             d[key] = d[key] + d2[key]
 
