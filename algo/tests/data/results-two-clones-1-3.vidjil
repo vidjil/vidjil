@@ -27,6 +27,7 @@
 	    "sequence" : "seq-1",
 
 	    "reads" :  [ 300 ] ,
+        "normalized_reads" :  [ 500 ] ,
 	    "top" : 1,
 	    "germline" : "IGH"
 	},
