@@ -155,16 +155,16 @@ class MiXCR_Result(Result):
             return None
 
     def populate(self):
-        self.vdj[V] = [self['Best V hit']]
-        if self['Best D hit']:
-            self.vdj[D] = [self['Best D hit']]
-        self.vdj[J] = [self['Best J hit']]
+        self.vdj[V] = [self['bestVHit']]
+        if self['bestDHit']:
+            self.vdj[D] = [self['bestDHit']]
+        self.vdj[J] = [self['bestJHit']]
 
-        self.vdj[N1] = self['N. Seq. VDJunction']
-        self.vdj[N2] = self['N. Seq. DJJunction']
-        self.vdj[N] = self['N. Seq. VJJunction']
+        self.vdj[N1] = self['nSeqVDJunction']
+        self.vdj[N2] = self['nSeqDJJunction']
+        self.vdj[N] = self['nSeqVJJunction']
 
-        self.vdj[JUNCTION] = self['AA. Seq. CDR3']
+        self.vdj[JUNCTION] = self['aaSeqCDR3']
 
 
 def header_mixcr_results(ff_mixcr):
@@ -177,7 +177,7 @@ def header_mixcr_results(ff_mixcr):
     while True:
         l = f.next()
         result = MiXCR_Result(l)
-        yield result['Description R1'], result.to_vdj()
+        yield result['descrsR1'], result.to_vdj()
 
 
 
