@@ -179,10 +179,10 @@ def header_mixcr_results(ff_mixcr):
     f = open(ff_mixcr).__iter__()
 
     mixcr_first_line = f.next()
-    globals()['mixcr_labels'] = mixcr_first_line.split('\t')
+    globals()['mixcr_labels'] = mixcr_first_line.rstrip().split('\t')
 
     while True:
-        l = f.next()
+        l = f.next().rstrip()
         result = MiXCR_Result(l)
         yield result['descrsR1'], result.to_vdj()
 
