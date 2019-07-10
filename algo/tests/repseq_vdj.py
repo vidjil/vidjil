@@ -92,6 +92,9 @@ class Result(VDJ_Formatter):
 
             self.populate()
 
+    def __contains__ (self, key):
+        return key in self.d
+    
     def __getitem__(self, key):
         return self.d[key]
 
@@ -160,11 +163,15 @@ class MiXCR_Result(Result):
             self.vdj[D] = [self['bestDHit']]
         self.vdj[J] = [self['bestJHit']]
 
-        self.vdj[N1] = self['nSeqVDJunction']
-        self.vdj[N2] = self['nSeqDJJunction']
-        self.vdj[N] = self['nSeqVJJunction']
+        if 'nSeqVDJunction' in self:
+            self.vdj[N1] = self['nSeqVDJunction']
+        if 'nSeqDJJunction' in self:
+            self.vdj[N2] = self['nSeqDJJunction']
+        if 'nSeqVJJunction' in self:
+            self.vdj[N] = self['nSeqVJJunction']
 
-        self.vdj[JUNCTION] = self['aaSeqCDR3']
+        if 'aaSeqCDR3' in self:
+            self.vdj[JUNCTION] = self['aaSeqCDR3']
 
 
 def header_mixcr_results(ff_mixcr):
