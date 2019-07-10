@@ -2,12 +2,13 @@
 Parses output of various RepSeq programs.
 Takes either:
   - a .fa file, a _Summary.txt file as produced by IMGT/V-QUEST
-  - or a results file produced by MiXCR
+  - or a results file produced by MiXCR or IgReC
 and creates a .vdj file to be checked by should-vdj-to-tap.py
 
 python repseq_vdj.py data-curated/curated_IG.fa data-curated/curated_ig_Summary.txt > data-curated/imgt-IG.vdj
 python repsep_vdj.py data-curated/curated_TR.fa data-curated/curated_tr_Summary.txt > data-curated/imgt-TR.vdj
 python repseq_vdj.py data-curated/mixcr.results > data-curated/mixcr.vdj
+python repseq_vdj.py bla.igrec.results
 python repseq_vdj.py data-curated/curated_IG.fa data-curated/igblast/IG/*.aln > data-curated/igblast-IG.vdj > data-curated/igblast-IG.vdj
 python repseq_vdj.py data-curated/curated_TR.fa data-curated/igblast/TR/*.aln > data-curated/igblast-TR.vdj > data-curated/igblast-TR.vdj
 '''
@@ -97,6 +98,49 @@ class Result(VDJ_Formatter):
     def __str__(self):
         return str(self.d)
 
+
+### IgReC
+
+IGREC_LABELS = [
+  'Read id',
+  'V id', 'V start', 'V end', 'V score',
+  'J id', 'J start', 'J end', 'J score',
+]
+
+class IgReC_Result(Result):
+
+    r'''
+    >>> lig = '\t'.join(['blabli4577', 'TRBV13*02', '1', '164', '0.58156', 'TRBJ1-5*01', '319', '367', '0.94'])
+    >>> r = IgReC_Result(lig)
+
+    >>> r['Read id']
+    'blabli4577'
+    >>> r.vdj[V]
+    ['TRBV13*02']
+    >>> r.vdj[J]
+    ['TRBJ1-5*01']
+    '''
+
+    def parse(self, l):
+        self.labels = IGREC_LABELS
+        if ('\t' in l.strip()):
+            return l
+        else:
+            return None
+
+    def populate(self):
+        self.vdj[V] = [self['V id']]
+        self.vdj[J] = [self['J id']]
+
+
+def header_igrec_results(ff_igrec):
+
+    f = open(ff_igrec).__iter__()
+
+    while True:
+        l = f.next()
+        result = IgReC_Result(l)
+        yield result['Read id'], result.to_vdj()
 
 
 ### MiXCR
@@ -354,6 +398,8 @@ if __name__ == '__main__':
 
     if 'mixcr' in sys.argv[1]:
         vdj.parse_from_gen(header_mixcr_results(sys.argv[1]))
+    elif 'igrec' in sys.argv[1]:
+        vdj.parse_from_gen(header_igrec_results(sys.argv[1]))
     elif 'igblast' in sys.argv[2]:
         vdj.parse_from_gen(header_igblast_results(sys.argv[1], sys.argv[2:]))
     else:
