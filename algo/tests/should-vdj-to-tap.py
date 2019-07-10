@@ -168,7 +168,7 @@ def should_pattern_to_regex(p):
 
         if len(r) > 1 and r[1][0] == '|':
             # We have an alternative
-            regex_pattern = '('+' '.join(r)+').*'
+            regex_pattern = '('+''.join(r)+').*'
         else:
             regex_pattern = '.*'.join(r)
 
