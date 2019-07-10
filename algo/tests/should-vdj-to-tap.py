@@ -248,6 +248,17 @@ def should_result_to_tap(should_pattern, result, tap_id):
     True
     >>> srtt_ok(should, other_allele)
     True
+
+    >>> should = 'TRAV1-1 TRAJ1'
+    >>> other = 'TRAV1-1*01 1/ACG/3 TRAJ1*01'
+    >>> (args.ignore_N, args.ignore_del) = (True, True)
+    >>> srtt_ok(should, other)
+    True
+
+    >>> should = 'TRAV1-1 (TRAJ1, TRAJ2)'
+    >>> other = 'TRAV1-1*01 1/ACG/3 TRAJ1*01'
+    >>> srtt_ok(should, other)
+    True
     '''
 
     m_locus = r_locus.search(should_pattern)
