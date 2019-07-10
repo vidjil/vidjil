@@ -168,7 +168,7 @@ def should_pattern_to_regex(p):
 
         if len(r) > 1 and r[1][0] == '|':
             # We have an alternative
-            regex_pattern = '.*('+''.join(r)+')'
+            regex_pattern = '.*('+''.join(r)+').*'
         else:
             regex_pattern = '.*'.join(r)
 
@@ -259,6 +259,22 @@ def should_result_to_tap(should_pattern, result, tap_id):
     >>> other = 'TRAV1-1*01 1/ACG/3 TRAJ1*01'
     >>> srtt_ok(should, other)
     True
+
+    >>> should = '(IGKV1D-37, IGKV1-37) IGKJ5'
+    >>> curated = 'IGKV1D-37*01 2/ATA/0 IGKJ5*01'
+    >>> srtt_ok(should, curated)
+    True
+
+    >>> should = 'IGKV1D-37 IGKJ5'
+    >>> curated = 'IGKV1D-37*01 2/ATA/0 IGKJ5*01'
+    >>> srtt_ok(should, curated)
+    True
+
+    # Negative tests matter too
+    >>> should = '(IGKV1D-37, IGKV1-37) IGKJ5'
+    >>> curated = 'IGKV1D-32*01 2/ATA/0 IGKJ5*01'
+    >>> srtt_ok(should, curated)
+    False
     '''
 
     m_locus = r_locus.search(should_pattern)
