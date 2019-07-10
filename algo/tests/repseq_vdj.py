@@ -102,7 +102,7 @@ class Result(VDJ_Formatter):
 ### IgReC
 
 IGREC_LABELS = [
-  'Read id',
+  'Read id', 'locus',
   'V id', 'V start', 'V end', 'V score',
   'J id', 'J start', 'J end', 'J score',
 ]
@@ -110,7 +110,7 @@ IGREC_LABELS = [
 class IgReC_Result(Result):
 
     r'''
-    >>> lig = '\t'.join(['blabli4577', 'TRBV13*02', '1', '164', '0.58156', 'TRBJ1-5*01', '319', '367', '0.94'])
+    >>> lig = '\t'.join(['blabli4577', 'TRB', 'TRBV13*02', '1', '164', '0.58156', 'TRBJ1-5*01', '319', '367', '0.94'])
     >>> r = IgReC_Result(lig)
 
     >>> r['Read id']
