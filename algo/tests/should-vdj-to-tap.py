@@ -168,7 +168,7 @@ def should_pattern_to_regex(p):
 
         if len(r) > 1 and r[1][0] == '|':
             # We have an alternative
-            regex_pattern = '('+' '.join(r)+').*'
+            regex_pattern = '.*('+''.join(r)+')'
         else:
             regex_pattern = '.*'.join(r)
 
@@ -247,6 +247,17 @@ def should_result_to_tap(should_pattern, result, tap_id):
     >>> srtt_ok(should, other_N)
     True
     >>> srtt_ok(should, other_allele)
+    True
+
+    >>> should = 'TRAV1-1 TRAJ1'
+    >>> other = 'TRAV1-1*01 1/ACG/3 TRAJ1*01'
+    >>> (args.ignore_N, args.ignore_del) = (True, True)
+    >>> srtt_ok(should, other)
+    True
+
+    >>> should = 'TRAV1-1 (TRAJ1, TRAJ2)'
+    >>> other = 'TRAV1-1*01 1/ACG/3 TRAJ1*01'
+    >>> srtt_ok(should, other)
     True
     '''
 
