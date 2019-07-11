@@ -137,7 +137,7 @@ def should_pattern_to_regex(p):
                 gene = gene.replace('/', '/?')
 
             if args.ignore_D and ('IGHD' in gene or 'TRBD' in gene or 'TRDD' in gene):
-                gene = '[^[:space]]*'
+                gene = '[^[:space:]]*'
                 allele = '[[:digit:]]*'
 
             if args.ignore_allele:
@@ -275,6 +275,19 @@ def should_result_to_tap(should_pattern, result, tap_id):
     >>> curated = 'IGKV1D-32*01 2/ATA/0 IGKJ5*01'
     >>> srtt_ok(should, curated)
     False
+
+    >>> should = 'IGHV7-4-1*02 IGHD6-25*01 (IGHJ6*02 ,IGHJ6*04)'
+    >>> obtained = 'IGHV7-4-1*02 1//4 IGHJ6*01'
+    >>> args.ignore_D = True
+    >>> srtt_ok(should, obtained)
+    True
+    >>> args.ignore_allele = False
+    >>> srtt_ok(should, obtained)
+    False
+    >>> (args.ignore_allele, args.ignore_D) = (True, False)
+    >>> srtt_ok(should, obtained)
+    False
+    
     '''
 
     m_locus = r_locus.search(should_pattern)
