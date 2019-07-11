@@ -92,6 +92,9 @@ class Result(VDJ_Formatter):
 
             self.populate()
 
+    def __contains__ (self, key):
+        return key in self.d
+    
     def __getitem__(self, key):
         return self.d[key]
 
@@ -155,16 +158,20 @@ class MiXCR_Result(Result):
             return None
 
     def populate(self):
-        self.vdj[V] = [self['Best V hit']]
-        if self['Best D hit']:
-            self.vdj[D] = [self['Best D hit']]
-        self.vdj[J] = [self['Best J hit']]
+        self.vdj[V] = [self['bestVHit']]
+        if self['bestDHit']:
+            self.vdj[D] = [self['bestDHit']]
+        self.vdj[J] = [self['bestJHit']]
 
-        self.vdj[N1] = self['N. Seq. VDJunction']
-        self.vdj[N2] = self['N. Seq. DJJunction']
-        self.vdj[N] = self['N. Seq. VJJunction']
+        if 'nSeqVDJunction' in self:
+            self.vdj[N1] = self['nSeqVDJunction']
+        if 'nSeqDJJunction' in self:
+            self.vdj[N2] = self['nSeqDJJunction']
+        if 'nSeqVJJunction' in self:
+            self.vdj[N] = self['nSeqVJJunction']
 
-        self.vdj[JUNCTION] = self['AA. Seq. CDR3']
+        if 'aaSeqCDR3' in self:
+            self.vdj[JUNCTION] = self['aaSeqCDR3']
 
 
 def header_mixcr_results(ff_mixcr):
@@ -172,12 +179,12 @@ def header_mixcr_results(ff_mixcr):
     f = open(ff_mixcr).__iter__()
 
     mixcr_first_line = f.next()
-    globals()['mixcr_labels'] = mixcr_first_line.split('\t')
+    globals()['mixcr_labels'] = mixcr_first_line.rstrip().split('\t')
 
     while True:
-        l = f.next()
+        l = f.next().rstrip()
         result = MiXCR_Result(l)
-        yield result['Description R1'], result.to_vdj()
+        yield result['descrsR1'], result.to_vdj()
 
 
 
