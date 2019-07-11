@@ -37,7 +37,9 @@ This is an almost minimal `.vidjil` file, describing clones in one sample.
 The `seg` element is optional: clones without `seg` elements will be shown on the grid with '?/?'.
 The `_average_read_length` is also optional, but allows to plot GENSCAN-like plots more precisely than getting only the length of the sequence.
 All other elements are required. The `reads.germlines` list can have only one element the case of data on a unique locus.
-There is here one clone on the `TRG` locus with a designation `TRGV5*01 5/CC/0 TRGJ1*02`.
+There is here one clone on the `TRG` locus with a designation (`name`) `TRGV5*01 5/CC/0 TRGJ1*02`.
+Note that this `name` is just used to name the clone.
+The actual values used for X- and Y- axis in the V/J grid plot are `seg.5.name` and `seg.3.name` fields.
 Note that other elements could be added by some program (such as `tag`, to identify some clones,
 or `clusters`, to further cluster some clones, see below).
 
@@ -65,6 +67,7 @@ or `clusters`, to further cluster some clones, see below).
     "clones": [
         {
             "id": "clone-001",
+            "name": "TRGV5*01 5/CC/0 TRGJ1*02",
             "sequence": "CTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGAAACTCTTTGGCAGTGGAAC",
     "reads" : [ 243241 ],
             "_average_read_length": [ 119.3 ],
@@ -85,7 +88,7 @@ or `clusters`, to further cluster some clones, see below).
 ## `.vidjil` file – several related samples
 
 This a `.vidjil` file obtained by merging with `fuse.py` two `.vidjil` files corresponding to two samples.
-Clones that have a same `id` are gathered (see 'What is a clone?', above).
+Clones that are from different files but that have a same `id` are gathered (see 'What is a clone?', above).
 It is the responsibility of the program generating the initial `.vidjil` files to choose these `id` to
 do a correct gathering.
 
