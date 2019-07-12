@@ -143,7 +143,7 @@ def header_igrec_results(ff_igrec):
     while True:
         l = f.next()
         result = IgReC_Result(l)
-        yield result['Read id'], result.to_vdj()
+        yield result['Read id'].replace('_', ' '), result.to_vdj()
 
 
 ### MiXCR
