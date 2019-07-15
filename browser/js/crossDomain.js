@@ -307,7 +307,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
 }
 
 
-function igBlastPost(data, system) {
+function igBlastPost(species, data, system) {
     var igBlastInput = initIgBlastInput();
     igBlastInput.queryseq = data;
     if (system[0] == "I") {
@@ -351,7 +351,7 @@ arrestInput.fname = "exported_func" ;
 arrestInput.pjxrand = ".0033328778554" ;
 arrestInput.elite = "" ;
 
-function arrestPost(data, system) {
+function arrestPost(species, data, system) {
 
     arrestInput.args = data;
 
@@ -394,7 +394,7 @@ blastInput.NCBIBLAST_BLASTN__ungapped        = 0;
 blastInput.NCBIBLAST_BLASTN__dust            = 1;
 blastInput.NCBIBLAST_BLASTN__repeat_mask     = 1;
 
-function blastPost(data, system) {
+function blastPost(species, data, system) {
 
     blastInput.query_sequence = data;
 

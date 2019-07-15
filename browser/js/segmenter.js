@@ -192,7 +192,7 @@ Segment.prototype = {
             span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and see the results in a new tab')
             span.className = "button"
             span.onclick = function () {
-                self.sendTo('IMGT')
+                self.sendTo('imgt')
             }
             span.appendChild(document.createTextNode("❯ to IMGT/V-QUEST"));
             div_menu.appendChild(span)
@@ -225,7 +225,7 @@ Segment.prototype = {
             span.setAttribute('title', 'Send sequences to ARResT/CompileJunctions and see the results in a new tab')
             span.className = "button devel-mode";
             span.onclick = function () {
-                self.sendTo('ARResT')
+                self.sendTo('arrest')
             };
             span.appendChild(document.createTextNode("❯ to ARResT/CJ"));
             div_menu.appendChild(span);
@@ -857,7 +857,7 @@ Segment.prototype = {
     /**
      * build a request with currently selected clones to send to IMGT or igblast <br>
      * (see crossDomain.js)
-     * @param {string} address - 'IMGT', 'ARResT', 'igBlast' or 'Blast'
+     * @param {string} address - 'imgt', 'arrest', 'igBlast' or 'blast'
      * */
     sendTo: function (address) {
 
@@ -884,18 +884,14 @@ Segment.prototype = {
                 request += ">" +list[i] + "\n" +this.germline[this.sequence[list[i]].locus][list[i]] + "\n";
             }
         }
-        if (address == 'IMGT') {
-            imgtPost(this.m.species, request, system);
-        } 
         if (address == 'IMGTSeg') {
             imgtPostForSegmenter(this.m.species, request, system, this);
             var change_options = {'xv_ntseq' : 'false', // Deactivate default output
                                   'xv_summary' : 'true'}; // Activate Summary output
             imgtPostForSegmenter(this.m.species, request, system, this, change_options);
+        } else {
+            window[address+"Post"](this.m.species, request, system)
         }
-        if (address == 'ARResT') arrestPost(request, system);
-        if (address == 'igBlast') igBlastPost(request, system);
-        if (address == 'blast') blastPost(request, system);
 
         this.update();
 
