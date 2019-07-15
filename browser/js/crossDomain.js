@@ -136,9 +136,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
 
     //process to first 10 sequences then alert user about the remaining part
     if (nb > 10) {
-        pos = nth_ocurrence(data, '>', 11);
-        var newdata = data.substr(pos);
-        data = data.substr(0, pos - 1);
+        data = getNFirstSequences(data, 10);
         var msg = "The first 10 sequences were sent to IMGT/V-QUEST."
 
         console.log({
@@ -395,6 +393,11 @@ blastInput.NCBIBLAST_BLASTN__dust            = 1;
 blastInput.NCBIBLAST_BLASTN__repeat_mask     = 1;
 
 function blastPost(species, data, system) {
+    if (self.m.getSelected().length > 30) {
+        data = getNFirstSequences(data, 30);
+        console.log({"type": "flash", "msg": "A maximum of 30 clones are allowed by Blast. Only the first 30 sequences will be sent" , "priority": 1});
+        
+    }
 
     blastInput.query_sequence = data;
 

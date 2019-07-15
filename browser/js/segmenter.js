@@ -248,11 +248,7 @@ Segment.prototype = {
             span.setAttribute('title', 'Send sequences to Ensembl Blast and see the results in a new tab')
             span.className = "button";
             span.onclick = function () {
-                if (self.m.getSelected().length > 30) {
-                    console.log({"type": "flash", "msg": "A maximum of 30 clones are allowed by Blast" , "priority": 1});
-                } else {
                 self.sendTo('blast');
-                }
             };
             span.appendChild(document.createTextNode("❯ to Blast"));
             div_menu.appendChild(span);
