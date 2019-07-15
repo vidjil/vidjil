@@ -187,70 +187,41 @@ Segment.prototype = {
             div_menu.appendChild(span)
 
             //toIMGT button
-            span = document.createElement('span');
-            span.id = "toIMGT"
-            span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and see the results in a new tab')
-            span.className = "button"
-            span.onclick = function () {
-                self.sendTo('imgt')
-            }
-            span.appendChild(document.createTextNode("❯ to IMGT/V-QUEST"));
+            span = createSendToButton("toIMGT", 'imgt', "❯ to IMGT/V-QUEST",
+                                      'Send sequences to IMGT/V-QUEST and see the results in a new tab', this);
             div_menu.appendChild(span)
 
             //toIMGTSeg button
-            span = document.createElement('span');
-            span.id = "toIMGTSeg";
-            span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and loads the results in the sequence panel')
-            span.className = "button button_next";
-            span.onclick = function () {
-                self.sendTo('IMGTSeg')
-            };
-            span.appendChild(document.createTextNode("▼"));
+            span = createSendToButton("toIMGTSeg", "IMGTSeg", "▼",
+                                      'Send sequences to IMGT/V-QUEST and loads the results in the sequence panel', this);
+            span.className += " button_next";
             div_menu.appendChild(span);
 
             //toIgBlast button
-            span = document.createElement('span');
-            span.id = "toIgBlast";
-            span.setAttribute('title', 'Send sequences to NCBI IgBlast and see the results in a new tab')
-            span.className = "button";
-            span.onclick = function () {
-                self.sendTo('igBlast')
-            };
-            span.appendChild(document.createTextNode("❯ to IgBlast"));
+            span = createSendToButton("toIgBlast", 'igBlast', "❯ to IgBlast",
+                                      'Send sequences to NCBI IgBlast and see the results in a new tab', this);
             div_menu.appendChild(span);
 
             //toARResT button
-            span = document.createElement('span');
-            span.id = "toARResT";
-            span.setAttribute('title', 'Send sequences to ARResT/CompileJunctions and see the results in a new tab')
-            span.className = "button devel-mode";
-            span.onclick = function () {
-                self.sendTo('arrest')
-            };
-            span.appendChild(document.createTextNode("❯ to ARResT/CJ"));
+            span = createSendToButton("toARResT", "arrest", "❯ to ARResT/CJ",
+                                      'Send sequences to ARResT/CompileJunctions and see the results in a new tab', this);
+            span.className += " devel-mode";
             div_menu.appendChild(span);
 
             //toCloneDB button
-            span = document.createElement('span');
-            span.id = "toCloneDB";
-            span.setAttribute('title', 'Send sequences to EC-NGS/CloneDB in the background')
-            span.className = "button ";
-            span.className += (typeof config !== 'undefined' && config.clonedb) ? "" : "devel-mode";
-            span.onclick = function () {
-                self.db.callCloneDB(self.m.getSelected());
-            };
-            span.appendChild(document.createTextNode("❯ to CloneDB"));
+            span = createSendToButton('toCloneDB', '', "❯ to CloneDB",
+                                      'Send sequences to EC-NGS/CloneDB in the background',
+                                      this,
+                                      function () {
+                                          self.db.callCloneDB(self.m.getSelected());
+                                      });
+            span.className += (typeof config !== 'undefined' && config.clonedb) ? "" : " devel-mode";
             div_menu.appendChild(span);
 
             //toBlast button
-            span = document.createElement('span');
-            span.id = "toBlast";
-            span.setAttribute('title', 'Send sequences to Ensembl Blast and see the results in a new tab')
-            span.className = "button";
-            span.onclick = function () {
-                self.sendTo('blast');
-            };
-            span.appendChild(document.createTextNode("❯ to Blast"));
+            span = createSendToButton("toBlast", "blast",
+                                      "❯ to Blast",
+                                      'Send sequences to Ensembl Blast and see the results in a new tab', this);
             div_menu.appendChild(span);
 
             //toClipBoard button

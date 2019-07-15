@@ -418,3 +418,30 @@ function blastPost(species, data, system) {
     form.submit();
 
 }
+
+/**
+ * Creates and returns a sendTo button (in a span)
+ * @param {id}: id of the span
+ * @param {name}: name of the sendTo function ({name}Post) [useless if
+ *                {onclick} is provided
+ * @param {label}: Label of the button
+ * @param {title}: Title when hovering the button
+ * @param {onclick}: (optional) Function to be called when clicking the button.
+ *                   By default will call {name}Post()
+ *
+ */
+function createSendToButton(id, name, label, title, segmenter, onclick) {
+    var span = document.createElement('span');
+    span.id = id;
+    span.setAttribute('title', 'title')
+    span.className = "button";
+    if (typeof onclick !== "undefined") {
+        span.onclick = onclick;
+    } else {
+        span.onclick = function () {
+            segmenter.sendTo(name);
+        };
+    }
+    span.appendChild(document.createTextNode(label));
+    return span;
+}
