@@ -119,7 +119,7 @@ var json_clone6 = {
         "id" : "id6",
         "germline" : "TRG",
         "reads" : [10,10,0,30],
-        "normalized_reads" : [20,20,0,30],
+        "normalized_reads" : [20,20,0,null],
     }
 
 QUnit.test("name, informations, getHtmlInfo", function(assert) {

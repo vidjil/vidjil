@@ -1,0 +1,45 @@
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/no_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o normalized_zero.vidjil; cat normalized_zero.vidjil
+
+$ Case zero; No field normalized_reads if not contain in the given files/clones
+0: normalized_reads
+
+
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil -o normalized_both.vidjil; cat normalized_both.vidjil
+
+$ Case both; Should find 1 field normalized_reads (clone id-1)
+1: normalized_reads
+
+$ Case both; Correct fusion of normalized_reads field if both clones are informatives
+lr: normalized_reads.*500,.*500
+
+
+
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/no_clones.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil -o normalized_one.vidjil; cat normalized_one.vidjil
+
+$ Case only one; Should find 1 filed normalized_reads
+1: normalized_reads
+
+$ Case only one; First value is null if on of file have not been annalysed by the normalization script
+1: null
+rl1: normalized_reads.*null,.*500
+
+
+
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil ../../../algo/tests/data/no_clones.vidjil -o normalized_one_revert.vidjil; cat normalized_one_revert.vidjil
+
+$ Case inverse; Should find 1 filed normalized_reads
+1: normalized_reads
+
+$ Case inverse; Idem, but reverse files
+1: null
+lr: "normalized_reads".*500,.*null
+
+
+
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS normalized_one.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil -o normalized_double.vidjil; cat normalized_double.vidjil
+$ Case double timepoint; Should find 1 filed normalized_reads
+1: normalized_reads
+
+$ Case double timepoint; Correct fusion if one of the file is a already fused vidjil
+1: null
+lr: "normalized_reads".*null,.*500,.*500

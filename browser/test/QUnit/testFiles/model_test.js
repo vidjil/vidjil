@@ -423,6 +423,12 @@ QUnit.test("normalization", function(assert) {
     m.initClones()
     assert.equal(m.have_external_normalization, false, "Model have_external_normalization is correctly resetted")
 
+
+    m.set_normalization(m.NORM_EXTERNAL)
+    assert.equal(m.normalize_reads(c6, 0, undefined), 20, "normalize_reads; get normalized value if present")
+    assert.equal(m.normalize_reads(c6, 0, false),     10, "normalize_reads; get raw value if specified" )
+    assert.equal(m.normalize_reads(c6, 2, undefined),  0, "normalize_reads; get value at 0 as computed by external normalization" )
+    assert.equal(m.normalize_reads(c6, 3, undefined), 30, "normalize_reads; get raw value if normalization equal null")
 })
 
 QUnit.test("findGermlineFromGene", function(assert) {
