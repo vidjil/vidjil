@@ -224,6 +224,12 @@ Segment.prototype = {
                                       'Send sequences to Ensembl Blast and see the results in a new tab', this);
             div_menu.appendChild(span);
 
+            // to AssignSubset
+            span = createSendToButton("toAssignSubsets", "assignSubsets", "❯ to AssignSubsets",
+                                      "Send sequences to ARResT/AssignSubsets to classify IGH sequence in a CLL subset", this);
+            span.className += " devel-mode";
+            div_menu.appendChild(span);
+
             //toClipBoard button
             span = document.createElement('span');
             span.id = "toClipBoard";

@@ -419,6 +419,34 @@ function blastPost(species, data, system) {
 
 }
 
+function assignSubsetsPost(species, data, system) {
+    if (system != "IGH") {
+        console.log({"type": "flash",
+                     "msg": "Subsets are only defined for IGH sequences. Thus you cannot launch it on other sequences",
+                     "priority": 1});
+    } else {
+        var form = document.getElementById("form");
+        form.removeAllChildren();
+        // form.target = "_blank";
+        form.enctype = 'multipart/form-data';
+        form.name = 'assignsubsets';
+        form.action = "http://tools.bat.infspire.org/cgi-bin/arrest/assignsubsets_html.pl";
+        form.method = "POST";
+        var formData = {};
+        formData.fastatext = data;
+        formData.elite = null;
+        for (var k in formData) {
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = k;
+            if (formData[k] != null)
+                input.value = formData[k];
+            form.appendChild(input);
+        }
+        form.submit();
+    }
+}
+
 /**
  * Creates and returns a sendTo button (in a span)
  * @param {id}: id of the span
