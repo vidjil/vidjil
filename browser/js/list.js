@@ -423,6 +423,7 @@ List.prototype = {
         var span_cluster = document.createElement('span');
         span_cluster.setAttribute("cloneID", cloneID);
         span_cluster.className = "clusterBox";
+        span_cluster.id = "clusterBox_"+cloneID;
 
         var firstChild = div_elem.childNodes[0];
         div_elem.insertBefore(span_cluster, firstChild);
