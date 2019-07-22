@@ -72,9 +72,9 @@ or `clusters`, to further cluster some clones, see below).
             "top": 1,
             "seg":
             {
-        "5": {"name": "TRGV5*01",  "start": 1,   "stop": 86, "delRight":5},
+        "5": {"name": "TRGV5*01",  "start": 1,   "stop": 87, "delRight":5},
         "3": {"name": "TRGJ1*02",  "start": 89,  "stop": 118,   "delLeft":0},
-                "cdr3": { "start": 77, "stop": 104, "seq": "gccacctgggccttattataagaaactc" }
+                "cdr3": { "start": 78, "stop": 105, "seq": "gccacctgggccttattataagaaactc" }
     }
 
         }
@@ -119,7 +119,7 @@ do a correct gathering.
             "top": 1,
             "seg":
             {
-        "5": {"name": "TRGV5*01",  "start": 1,  "stop": 86,  "delRight": 5},
+        "5": {"name": "TRGV5*01",  "start": 1,  "stop": 87,  "delRight": 5},
         "3": {"name": "TRGJ1*02",  "start": 89, "stop": 118, "delLeft":  0}
            }
         },
@@ -318,6 +318,8 @@ In the `.analysis` file, this section is intended to describe some specific clon
                     //
                     // JUNCTION//CDR3 should be stored that way (in fields called "junction" of "cdr3"),
                     // its productivity must be stored in a boolean field called "productive".
+                    // "seq" field should not be filled for cdr3 or junction (it is extracted from the sequence itself).
+                    // However a "aa" field may be used to give the amino-acid translation of the cdr3 or junction.
         "somefeature": { "start": 56, "stop": 61, "seq": "ACTGTA", "val": 145.7, "info": "analyzed with xyz" },
 
                     // Numerical or textual features concerning all the sequence or its analysis (such as 'evalue')
