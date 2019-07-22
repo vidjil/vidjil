@@ -72,9 +72,9 @@ or `clusters`, to further cluster some clones, see below).
             "top": 1,
             "seg":
             {
-        "5": {"name": "TRGV5*01",  "start": 1,   "stop": 86, "delRight":5},
+        "5": {"name": "TRGV5*01",  "start": 1,   "stop": 87, "delRight":5},
         "3": {"name": "TRGJ1*02",  "start": 89,  "stop": 118,   "delLeft":0},
-                "cdr3": { "start": 77, "stop": 104, "seq": "gccacctgggccttattataagaaactc" }
+                "cdr3": { "start": 78, "stop": 105, "seq": "gccacctgggccttattataagaaactc" }
     }
 
         }
@@ -119,7 +119,7 @@ do a correct gathering.
             "top": 1,
             "seg":
             {
-        "5": {"name": "TRGV5*01",  "start": 1,  "stop": 86,  "delRight": 5},
+        "5": {"name": "TRGV5*01",  "start": 1,  "stop": 87,  "delRight": 5},
         "3": {"name": "TRGJ1*02",  "start": 89, "stop": 118, "delLeft":  0}
            }
         },
