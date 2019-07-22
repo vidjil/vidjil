@@ -308,7 +308,8 @@ In the `.analysis` file, this section is intended to describe some specific clon
                     // Recombination with several D may use "4a", "4b"...
         "3": {"name": "IGHJ3*02", "start": 136, "stop": 171,  "delLeft": 5},  // J (or 3') segment
 
-                    // any feature to be highlighted in the sequence, with optional fields related to this feature:
+                    // Any feature to be highlighted in the sequence.
+                    // All those fields are optional (though some minor feature may not properly work in the client)
                     //  - "start"/"stop" : positions on the clone sequence (starting at 1)
                     //  - "delLeft/delRight" : a numerical value . It is the numbers of nucleotides deleted during the rearrangment. DelRight are compatible with V/5 and D/4 segments, delLeft is compatible with D/4 and J/3 segments.
                     //  - "seq" : a sequence
