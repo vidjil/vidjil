@@ -317,6 +317,8 @@ In the `.analysis` file, this section is intended to describe some specific clon
                     //
                     // JUNCTION//CDR3 should be stored that way (in fields called "junction" of "cdr3"),
                     // its productivity must be stored in a boolean field called "productive".
+                    // "seq" field should not be filled for cdr3 or junction (it is extracted from the sequence itself).
+                    // However a "aa" field may be used to give the amino-acid translation of the cdr3 or junction.
         "somefeature": { "start": 56, "stop": 61, "seq": "ACTGTA", "val": 145.7, "info": "analyzed with xyz" },
 
                     // Numerical or textual features concerning all the sequence or its analysis (such as 'evalue')
