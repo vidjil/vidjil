@@ -332,6 +332,11 @@ In the `.analysis` file, this section is intended to describe some specific clon
    "reads": [],      // number of reads in this clones [.vidjil only, required] 
                      // (with samples.number elements)
 
+   "_average_read_length": [],
+                     // Average read length of the reads clustered in this clone.
+                     // This value allows to draw a genescan-like plot.
+                     // (with samples.number elements)
+
    "top": 0,         // (not documented now) [required] threshold to display/hide the clone
    "stats": []       // (not documented now) [.vidjil only] (with sample.number elements)
 
