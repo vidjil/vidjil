@@ -268,7 +268,7 @@ Contact us (<mailto:contact@vidjil.org>) to have more information and help.
 
 # Docker -- Troubleshooting
 
-###  Error "Can't connect to MySQL server on 'mysql'"
+##  Error "Can't connect to MySQL server on 'mysql'"
 
 The mysql container is not fully launched. This can happen especially at the first launch.
 You may relaunch the containers.
@@ -298,6 +298,16 @@ you can look into:
  ```
  If the database does not exist, mysql will display an error after logging in.
 
+## Launching manually the backup
+
+The backup should be handled by the backup container. If so, connect to this
+container and run (for a full backup, otherwise add the `-i` option when
+running `backup.sh`):
+
+```sh
+cd /usr/share/vidjil/server
+sh backup.sh vidjil /mnt/backup >> /var/log/cron.log 2>&1
+```
 
 # Docker -- Updating a Docker installation
 
