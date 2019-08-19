@@ -60,10 +60,8 @@ var config = {
      * Tips of the day
      */
     "doc_address" : "doctips/",
-    "available_tips" : [
-                     'T01', 'T02', 'T03',
-                     'T30', 'T31', 'T32'
-                     ],
+    "available_tips" : [ ] ,
+    //                 [ 'T01', 'T02', 'T03', 'T30', 'T31', 'T32' ],
 
     /****************
      * Static alerts
