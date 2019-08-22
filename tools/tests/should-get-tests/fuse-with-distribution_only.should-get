@@ -1,0 +1,49 @@
+###################################
+### Part with unsegmented clones ##
+###################################
+!LAUNCH: python3 ../../fuse.py  -D  ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused.json
+
+
+$ Get correct keys for distributions json content
+1:"repertoires"
+1:"keys"
+1:"filters"
+
+
+$ Get correct files names
+r:/some/file_[12]
+
+
+# For the moment, 39 call by repertoire
+$ Have correct number of entrie for seg5
+78:"seg5"
+
+$ Have correct number of entrie for germline
+78:germline
+
+
+
+############################
+### Part with real clones ##
+############################
+!LAUNCH: rm fused.json
+!LAUNCH: python3 ../../fuse.py  -D  ../../../algo/tests/data/results_five_segmented_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused.json
+
+$ Get correct keys for distributions json content
+1:"repertoires"
+1:"keys"
+1:"filters"
+
+
+# For the moment, 31 call by repertoire
+$ Have correct number of entrie for seg5 (increase of 39 by the new repertoire)
+117:"seg5"
+
+$ Get correct files names
+:sequence_file
+
+
+$ EAch filename should appear 1 times (1 for repname)
+1:"sequence_file"
+1:"/some/file_1"
+1:"/some/file_2"

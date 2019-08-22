@@ -1,0 +1,29 @@
+### Without distributions computing
+!LAUNCH: python3 ../../fuse.py --output fused_with_distrib_step1.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_with_distrib_step1.vidjil
+
+$ Get correct file name in original_names field
+1:"/some/file_1"
+1:"/some/file_2"
+
+$ should not have distribution if not asked
+0:distributions
+
+
+
+
+
+
+### With distributions computing
+#rm fused.vidjil
+!LAUNCH: python3 ../../fuse.py --output fused_with_distrib_step2.vidjil -d ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_with_distrib_step2.vidjil
+
+$ Get correct file name in original_names field and distributions
+2:"/some/file_1"
+2:"/some/file_2"
+
+$ should have two time 'distributions' (console log + into vidjil file)
+2:distributions
+
+
+$ Axes title should be present 78 times (2*39)
+78:rearrangement
