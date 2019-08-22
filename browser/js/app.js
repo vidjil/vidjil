@@ -85,6 +85,9 @@ function loadAfterConf() {
                                             }else{
                                                 main();
                                             }
+                                            if (typeof config.addons !== "undefined") {
+                                                require(config.addons);
+                                            }
                                         })
                             })
                 },
