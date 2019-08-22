@@ -488,11 +488,12 @@ class ListWindows(VidjilJson):
 
         for clone in self:
             for i, s in enumerate(clone.d["reads"]):
-                for r in range(len(ranges)):
-                    if s*1. / self.d['reads'].d['segmented'][i] >= ranges[r]:
-                        break 
-                result[r][i] += s
-                
+                if self.d['reads'].d['segmented'][i] > 0:
+                    for r in range(len(ranges)):
+                        if s*1. / self.d['reads'].d['segmented'][i] >= ranges[r]:
+                            break
+                    result[r][i] += s
+
         for r in range(len(ranges)):
             ratio_in_string = '{0:.10f}'.format(ranges[r]).rstrip('0')
             self.d['reads'].d['distribution'][ratio_in_string] = result[r]
