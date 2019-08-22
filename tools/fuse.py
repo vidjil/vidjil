@@ -1021,6 +1021,8 @@ def main():
 
     group_options.add_argument('--test', action='store_true', help='run self-tests')
     group_options.add_argument('--multi', action='store_true', help='merge different systems from a same timepoint (deprecated, do not use)')
+    group_options.add_argument('--distributions', '-d', action='store_true', help='compute distributions')
+    group_options.add_argument('--only_disributions', '-D', action='store_true', help='export only distributions')
     
     group_options.add_argument('--compress', '-c', action='store_true', help='compress point names, removing common substrings')
     group_options.add_argument('--pipeline', '-p', action='store_true', help='compress point names (internal Bonsai pipeline)')
@@ -1148,6 +1150,12 @@ def main():
             
             print('\t==> merge to', jlist_fused)
 
+    if args.distributions or args.only_disributions:
+        print("### Compute distributions")
+        jlist_fused.init_distrib(LISTE_D)
+        jlist_fused.compute_distribution(LISTE_D)
+
+
     if args.compress:
         print()
         print("### Select point names")
@@ -1180,6 +1188,12 @@ def main():
             os.unlink(fasta_file.name)
     else : 
         jlist_fused.d["similarity"] = [];
+
+
+    if args.only_disributions:
+        print("### Save distributions file")
+        jlist_fused.save_distributions(args.output.replace(".vidjil", ".json"))
+        return
         
     print("### Save merged file")
     jlist_fused.save_json(args.output)
