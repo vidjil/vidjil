@@ -97,6 +97,26 @@ queries, such as the compare patients).
 Also some user characteristics are preloaded (groups and whether the person
 is an admin), which also prevents may DB calls.
 
+## Scheduler
+The scheduler is handled by Web2py. Here we summarise the way it works.
+
+Web2py has several workers. Its number is determined by the number of items
+given after the `-K` parameter to `web2py.py`. One of them is called the
+*ticker*. It is the master worker that will assign tasks to all the workers
+(including itself).
+
+At regular interval the worker signals that it is still alive (it is called
+the heartbeat and can be customised in Vidjil through the
+`SCHEDULER_HEARTBEAT` parameter in `defs.py`).
+
+Every 5 heartbeats (it is hardcoded in web2py in `gluon/scheduler.py`) the
+*ticker* will assign jobs. Each worker will also try to remove the dead
+workers. In our case it often produces an “*Error cleaning up*” error in the
+logs (see #3558).
+
+When a job timeouts it is not killed (see #2213). In `gluon/scheduler.py` a
+worker seems to be able to kill a process when the worker's state (and not the
+task's state) is `STOP_TASK`.
 # Tests
 
 # Packaging
