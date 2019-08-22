@@ -911,7 +911,7 @@ class ListWindows(VidjilJson):
     def save_distributions(self, foname):
         # Compute aggreg just before export
         fo = open(foname, "w")
-        json.dump(self.d["distributions"], fo, indent=2)
+        json.dump(self.d["distributions"], fo, indent=2, sort_keys=True)
         fo.close()
         return
 

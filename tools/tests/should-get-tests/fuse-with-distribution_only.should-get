@@ -49,7 +49,8 @@ $ EAch filename should appear 1 times (1 for repname)
 1:"/some/file_2"
 
 $ Case of an entire result (axes: germline, seg5)
-lr1:{        "axes": \[         "germline",          "seg5"        \],        "values": {          "IGK": {            "IGKV1-39\*01": \[              1,              5653            \],            "IGKV3-20\*01": \[              1,              3898            \],            "IGKV1-33\*01": \[              1,              2597            \],            "IGKV4-1\*01": \[              1,              2520            \],            "IGKV3-15\*01": \[              1,              2502            \]          }        }      },
+lr1:{        "axes": \[          "germline",          "seg5"        \],        "values": {          "IGK": {            "IGKV1-33\*01": \[              1,              2597            \],            "IGKV1-39\*01": \[              1,              5653            \],            "IGKV3-15\*01": \[              1,              2502            \],            "IGKV3-20\*01": \[              1,              3898            \],            "IGKV4-1\*01": \[              1,              2520            \]          }        }      },
+
 
 $ Case for the two other files (axes: germline, seg5)
 lr1:{        "axes": \[          "germline",          "seg5"        \],        "values": {          "IGH": {            "\?": \[              2,              900            \]          }        }      },
