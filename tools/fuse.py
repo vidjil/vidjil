@@ -656,6 +656,35 @@ w5.d ={"id" : "aaa", "reads" : [5], "top" : 3 }
 w6 = Window(1)
 w6.d ={"id" : "bbb", "reads" : [12], "top" : 2 }
 
+seg_w7 = {
+  "germline": "TRA",
+  "id": "TTCTTACTTCTGTGCTACGGACGCCGGGGCTCAGGAACCTACAAATACAT",
+  "name": "TRAV17*01 0/CCGGGG/5 TRAJ40*01",
+  "reads": [
+    16
+  ],
+  "seg": {
+    "3": {
+      "delLeft": 5,
+      "name": "TRAJ40*01",
+      "start": 112
+    },
+    "5": {
+      "delRight": 0,
+      "name": "TRAV17*01",
+      "stop": 105
+    },
+    "N": 6,
+    "cdr3": {
+      "aa": "ATDAG#SGTYKYI",
+      "start": 96,
+      "stop": 133
+    }
+  },
+  "sequence": "GTGGAAGATTAAGAGTCACGCTTGACACTTCCAAGAAAAGCAGTTCCTTGTTGATCACGGCTTCCCGGGCAGCAGACACTGCTTCTTACTTCTGTGCTACGGACGCCGGGGCTCAGGAACCTACAAATACATCTTTGGAACAG",
+  "top": 26
+}
+
 lw1 = ListWindows()
 lw1.d["timestamp"] = 'ts'
 lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25], "germline": {}, "distribution": {}}', object_hook=lw1.toPython)
@@ -814,9 +843,6 @@ def main():
                 jlist.build_stat()
                 jlist.filter(f)
 
-            w1 = Window(1)
-            w2 = Window(2)
-            w3 = w1+w2
             
             print("\t", jlist, end=' ')
             # Merge lists
