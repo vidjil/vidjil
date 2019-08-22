@@ -1047,23 +1047,27 @@ def main():
 
     jlist_fused = None
 
-    LISTE_D   = []
-    LIST_AXES = ["germline", # "top", # "name"
+    LIST_DISTRIBUTIONS   = []
+    LIST_AXIS = ["germline",
         "seg5", "seg4", "seg3",
+        "lenSeq", "lenCDR3",  
         "lenSeqConsensus", "lenSeqAverage", "GCContent", "coverage",
-        "lenSeq", # "evalue", l'arrondir ?
         "seg5_delRight", "seg3_delLeft", "seg4_delRight", "seg3_delLeft",
         "insert_53", "insert_54", "insert_43",
-        #"seg5_stop", "seg3_start", "seg4_stop", "seg4_start",
-        "lenCDR3",   # "cdr3_stop", "cdr3_start", 
-        "productive", #"junction_start", "junction_stop",
+        "productive", 
         "rearrangement", "complete",
+        # "evalue", l'arrondir ?
+        # "cdr3_stop", "cdr3_start", 
+        #"junction_start", "junction_stop",
+        #"seg5_stop", "seg3_start", "seg4_stop", "seg4_start",
+        # "top", # "name"
     ]
-    for axe1 in LIST_AXES:
-        LISTE_D.append([axe1])
-        for axe2 in LIST_AXES:
-            if axe1 != axe2:
-                LISTE_D.append([axe1, axe2])
+
+    for axis1 in LIST_AXIS:
+        LIST_DISTRIBUTIONS.append([axis1])
+        for axis2 in LIST_AXIS:
+            if axis1 != axis2:
+                LIST_DISTRIBUTIONS.append([axis1, axis2])
     
     print("### fuse.py -- " + DESCRIPTION)
     print()
@@ -1152,8 +1156,8 @@ def main():
 
     if args.distributions or args.only_disributions:
         print("### Compute distributions")
-        jlist_fused.init_distrib(LISTE_D)
-        jlist_fused.compute_distribution(LISTE_D)
+        jlist_fused.init_distrib(LIST_DISTRIBUTIONS)
+        jlist_fused.compute_distribution(LIST_DISTRIBUTIONS)
 
 
     if args.compress:
