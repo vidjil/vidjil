@@ -613,6 +613,27 @@ class ListWindows(VidjilJson):
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
         obj.d["diversity"] = self.d["diversity"] + other.d["diversity"]
         
+        try:
+            ### Verify that same file is not present twice
+            filename_jlist1 = list(self.d["distributions"]["repertoires"].keys())
+            filename_jlist2 = list(other.d["distributions"]["repertoires"].keys())
+            for filename in filename_jlist1:
+                if filename in filename_jlist2:
+                    raise( "Error, duplicate file name (in distributions) ")
+
+            ### Append distributions of each files
+            obj.d["distributions"] = {}
+            obj.d["distributions"]["repertoires"] = {}
+            obj.d["distributions"]["keys"]        = ["clones", "reads"]
+            obj.d["distributions"]["filters"]     = {}
+            obj.d["distributions"]["categories"]  = {}
+            for filename in filename_jlist1:
+                obj.d["distributions"]["repertoires"][filename] = self.d["distributions"]["repertoires"][filename]
+            for filename in filename_jlist2:
+                obj.d["distributions"]["repertoires"][filename] = other.d["distributions"]["repertoires"][filename]
+        except:
+            pass
+
         return obj
         
     ###
@@ -809,6 +830,74 @@ class ListWindows(VidjilJson):
             
         return obj_dict
         
+    def get_filename_pos(self, filename):
+        """ filename is the key of distributions repertoires """
+        return self.d["samples"].d["original_names"].index(filename)
+
+
+    # ========================= #
+    #  Distributions computing  #
+    # ========================= #
+    def init_distrib(self, list_distrib):
+        """ Create distributions structures """
+        self.d["distributions"] = {}
+        self.d["distributions"]["repertoires"] = defaultdict(lambda:[])
+        self.d["distributions"]["keys"]        = ["clones", "reads"]
+        self.d["distributions"]["filters"]     = []
+        # Warning, will fail of there are same original_names; fixme
+
+        nb_sample = self.d["samples"].d["number"]
+        # prefill distribution for each file of jlist
+        for filename in self.d["samples"].d["original_names"]:
+            for distrib in list_distrib:
+                self.d["distributions"]["repertoires"][filename].append({"axes":distrib,"values":defaultdict(lambda: False)})
+        return
+
+
+    def compute_distribution(self, list_distrib):
+        """ list_distrib is a list of distrib to compute """ 
+        for filename in self.d["samples"].d["original_names"]:
+            timepoint = self.get_filename_pos(filename)
+            for clone in self.d["clones"]:
+                if clone.d["reads"][timepoint] != 0:
+                    for distrib_pos in range( len(self.d["distributions"]["repertoires"][filename]) ):
+                        distrib      = list_distrib[distrib_pos]
+                        clone_values = clone.get_axes_values( distrib, timepoint )
+                        nb_reads     = clone.get_reads(self.get_filename_pos(filename))
+                        self.add_clone_values( filename, distrib_pos, clone_values, nb_reads)
+        return
+
+
+    def add_clone_values(self, filename, distrib_pos, values, nb_reads):
+        """ Add value of a clone to a specific distribution """
+        obj = self.d["distributions"]["repertoires"][filename][distrib_pos]["values"]
+        obj = self.recursive_add(obj, values, nb_reads) ## Add by recursion
+        self.d["distributions"]["repertoires"][filename][distrib_pos]["values"] = obj
+        return
+
+    def recursive_add( self, obj, values, nb_reads):
+        """ Add by recusivity the newer value to existing value; return the obj """
+        if len(values) > 1:
+            # Should increase for one depth
+            nvalues = values[1:]
+            obj[values[0]] = self.recursive_add(obj[values[0]], nvalues, nb_reads)
+        else:
+            # last depth
+            if not obj:
+                obj = defaultdict(lambda: False)
+            if not obj[values[0]]:
+                obj[values[0]] = [0, 0]
+
+            obj[values[0]][0] += 1
+            obj[values[0]][1] += nb_reads
+        return obj
+
+    def save_distributions(self, foname):
+        # Compute aggreg just before export
+        fo = open(foname, "w")
+        json.dump(self.d["distributions"], fo, indent=2)
+        fo.close()
+        return
 
 
 
