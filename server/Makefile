@@ -1,5 +1,5 @@
 
-WEB2PY_VERSION=2.17.2
+WEB2PY_VERSION=2.20.1
 
 install: install_web2py
 
