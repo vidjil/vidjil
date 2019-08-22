@@ -37,7 +37,9 @@ This is an almost minimal `.vidjil` file, describing clones in one sample.
 The `seg` element is optional: clones without `seg` elements will be shown on the grid with '?/?'.
 The `_average_read_length` is also optional, but allows to plot GENSCAN-like plots more precisely than getting only the length of the sequence.
 All other elements are required. The `reads.germlines` list can have only one element the case of data on a unique locus.
-There is here one clone on the `TRG` locus with a designation `TRGV5*01 5/CC/0 TRGJ1*02`.
+There is here one clone on the `TRG` locus with a designation (`name`) `TRGV5*01 5/CC/0 TRGJ1*02`.
+Note that this `name` is just used to name the clone.
+The actual values used for X- and Y- axis in the V/J grid plot are `seg.5.name` and `seg.3.name` fields.
 Note that other elements could be added by some program (such as `tag`, to identify some clones,
 or `clusters`, to further cluster some clones, see below).
 
@@ -65,6 +67,7 @@ or `clusters`, to further cluster some clones, see below).
     "clones": [
         {
             "id": "clone-001",
+            "name": "TRGV5*01 5/CC/0 TRGJ1*02",
             "sequence": "CTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGAAACTCTTTGGCAGTGGAAC",
     "reads" : [ 243241 ],
             "_average_read_length": [ 119.3 ],
@@ -72,9 +75,9 @@ or `clusters`, to further cluster some clones, see below).
             "top": 1,
             "seg":
             {
-        "5": {"name": "TRGV5*01",  "start": 1,   "stop": 86, "delRight":5},
+        "5": {"name": "TRGV5*01",  "start": 1,   "stop": 87, "delRight":5},
         "3": {"name": "TRGJ1*02",  "start": 89,  "stop": 118,   "delLeft":0},
-                "cdr3": { "start": 77, "stop": 104, "seq": "gccacctgggccttattataagaaactc" }
+                "cdr3": { "start": 78, "stop": 105, "seq": "gccacctgggccttattataagaaactc" }
     }
 
         }
@@ -85,7 +88,7 @@ or `clusters`, to further cluster some clones, see below).
 ## `.vidjil` file – several related samples
 
 This a `.vidjil` file obtained by merging with `fuse.py` two `.vidjil` files corresponding to two samples.
-Clones that have a same `id` are gathered (see 'What is a clone?', above).
+Clones that are from different files but that have a same `id` are gathered (see 'What is a clone?', above).
 It is the responsibility of the program generating the initial `.vidjil` files to choose these `id` to
 do a correct gathering.
 
@@ -119,7 +122,7 @@ do a correct gathering.
             "top": 1,
             "seg":
             {
-        "5": {"name": "TRGV5*01",  "start": 1,  "stop": 86,  "delRight": 5},
+        "5": {"name": "TRGV5*01",  "start": 1,  "stop": 87,  "delRight": 5},
         "3": {"name": "TRGJ1*02",  "start": 89, "stop": 118, "delLeft":  0}
            }
         },
@@ -308,7 +311,8 @@ In the `.analysis` file, this section is intended to describe some specific clon
                     // Recombination with several D may use "4a", "4b"...
         "3": {"name": "IGHJ3*02", "start": 136, "stop": 171,  "delLeft": 5},  // J (or 3') segment
 
-                    // any feature to be highlighted in the sequence, with optional fields related to this feature:
+                    // Any feature to be highlighted in the sequence.
+                    // All those fields are optional (though some minor feature may not properly work in the client)
                     //  - "start"/"stop" : positions on the clone sequence (starting at 1)
                     //  - "delLeft/delRight" : a numerical value . It is the numbers of nucleotides deleted during the rearrangment. DelRight are compatible with V/5 and D/4 segments, delLeft is compatible with D/4 and J/3 segments.
                     //  - "seq" : a sequence
@@ -317,6 +321,8 @@ In the `.analysis` file, this section is intended to describe some specific clon
                     //
                     // JUNCTION//CDR3 should be stored that way (in fields called "junction" of "cdr3"),
                     // its productivity must be stored in a boolean field called "productive".
+                    // "seq" field should not be filled for cdr3 or junction (it is extracted from the sequence itself).
+                    // However a "aa" field may be used to give the amino-acid translation of the cdr3 or junction.
         "somefeature": { "start": 56, "stop": 61, "seq": "ACTGTA", "val": 145.7, "info": "analyzed with xyz" },
 
                     // Numerical or textual features concerning all the sequence or its analysis (such as 'evalue')
@@ -327,6 +333,11 @@ In the `.analysis` file, this section is intended to describe some specific clon
 
 
    "reads": [],      // number of reads in this clones [.vidjil only, required] 
+                     // (with samples.number elements)
+
+   "_average_read_length": [],
+                     // Average read length of the reads clustered in this clone.
+                     // This value allows to draw a genescan-like plot.
                      // (with samples.number elements)
 
    "top": 0,         // (not documented now) [required] threshold to display/hide the clone

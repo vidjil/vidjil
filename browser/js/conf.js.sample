@@ -1,9 +1,19 @@
 /*
- * Vidjil browser, main configuration file
+ * Vidjil client, main configuration file
  * This file must be named 'js/conf.js' to be taken into account
  * */
 
 var config = {
+
+    /****************
+    * Static alerts
+    */
+    // "alert": "Rescue server",
+
+
+    /****************
+     * External services
+     */
 
     /* Used for the 'align' script
      * If this is not defined, the 'align' button is not available
@@ -11,7 +21,20 @@ var config = {
     "cgi_address" : "https://db.vidjil.org/cgi/", // Public test server
     // "cgi_address" : "http://127.0.1.1/cgi-bin/",
 
-    /* The following options control how the user may have access to .vidjil files.
+    /* Proxy config for IMGT querying */
+    /*
+    "proxy": "https://db.vidjil.org/vidjil/proxy/imgt",
+    */
+
+    /* Used for the standalone http://app.vidjil.org/analyze page */
+    "segmenter_address" : "https://db.vidjil.org/vidjil/segmenter",
+
+    /* Do we have access to a CloneDB ? */
+    "clonedb": false,
+
+
+    /****************
+    /* Access to .vidjil files
      * Any combination of 1), 2) and 3) should work
      */
 
@@ -42,29 +65,19 @@ var config = {
     // "autoload" : "data/Stanford-S22.vidjil",
     // "autoload_analysis" : "data/Stanford-S22.analysis"
 
-    // Proxy config for IMGT querying
-    /*
-    "proxy": "https://db.vidjil.org/vidjil/proxy/imgt"
-    */
 
-    /* Used for the standalone segmenter page */
-    "segmenter_address" : "https://db.vidjil.org/vidjil/segmenter",
+    /****************
+     * Load extra scripts
+     */
+    /* "addons" : ["js/lib/important-lib.js", "js/myscript.js"], */
 
-    /* Do we have access to a CloneDB ? */
-    "clonedb": false,
 
     /****************
      * Tips of the day
      */
     "doc_address" : "doctips/",
-    "available_tips" : [
-                     'T01', 'T02', 'T03',
-                     'T30', 'T31', 'T32'
-                     ],
+    "available_tips" : [ ]
+    //                 [ 'T01', 'T02', 'T03', 'T30', 'T31', 'T32' ]
 
-    /****************
-     * Static alerts
-     */
 
-    // "alert": "Rescue server",
 }
