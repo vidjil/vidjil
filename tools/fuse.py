@@ -123,6 +123,177 @@ class Window:
     def get_nb_reads(self, cid, point=0):
         return self[cid]["reads"][point]
 
+    def get_reads(self, t=-1):
+        if t== -1:
+            return self.d["reads"]
+        else:
+            return self.d["reads"][t]
+
+    def is_segmented(self):
+        if not "seg" in self.d.keys():
+            return False
+        return True
+
+
+    def get_axes_values(self, axes, timepoint):
+        """Return the values of given axes for this clone at a gvien timepoint"""
+        values = []
+        for axis in axes:
+            values.append(self.get_values(axis, timepoint))
+        return values
+
+
+    def get_values(self, axis, timepoint=0):
+        """Return the value of an axis for this clone at a given timepoint"""
+
+        axes = {
+            "top":      ["top"],
+            "germline": ["germline"],
+            "name":     ["name"],
+            "seg5":     ["seg",  "5", "name"],
+            "seg4":     ["seg",  "4", "name"],
+            "seg4a":    ["seg", "4a", "name"],
+            "seg4b":    ["seg", "4b", "name"],
+            "seg3":     ["seg",  "3", "name"],
+            "evalue":   ["evalue","val"],
+            "seg5_delRight": ["seg","5","delRight"],
+            "seg3_delLeft":  ["seg","3","delLeft"],
+            "seg4_delRight": ["seg","4","delRight"],
+            "seg3_delLeft":  ["seg","4","delLeft"],
+            ### Positions
+            "seg5_stop":  ["seg","5","stop"],
+            "seg3_start": ["seg","3","start"],
+            "seg4_stop":  ["seg","4","stop"],
+            "seg4_start": ["seg","4","start"],
+            "cdr3_stop":  ["seg","cdr3","stop"],
+            "cdr3_start": ["seg","cdr3","start"],
+            "junction_stop":  ["seg","junction","stop"],
+            "junction_start": ["seg","junction","start"],
+            "productive":     ["seg","junction","productive"],
+            "lenSeqAverage" : ["_average_read_length"]
+        }
+
+        ### length
+        axes_length = {
+            "insert_53": ["seg3_start", "seg5_stop", -1],
+            "insert_54": ["seg4_start", "seg5_stop", -1],
+            "insert_43": ["seg3_start", "seg4_stop", -1],
+            "lenCDR3": ["cdr3_stop", "cdr3_start", 0],
+            "lenJunction": ["junction_stop", "junction_start", 0]
+        }
+
+        try:
+            if axis in axes.keys():
+                path  = axes[axis]
+                depth = 0
+                value = self.d
+                if path[0] == "seg" and not self.is_segmented():
+                    return "?"
+
+                while depth != len(path):
+                    value  = value[path[depth]]
+                    depth += 1
+                if type(value) is list:
+                    # In these cases, should be a list of value at different timepoint
+                    return value[timepoint]
+                return value
+
+            ############################################################
+            ### These axes need to make some computation on clone fields
+            if axis == "lenSeq":
+                return len(self.d["sequence"])
+
+            if axis in axes_length.keys():
+                path = axes_length[axis]
+                if path[0] == "seg" and not self.is_segmented():
+                    return "not_segmented"
+                return self.get_values(path[0]) - self.get_values(path[1]) + path[2]
+
+
+            if axis == "GCContent":
+                return self.getGCcontent()
+
+            # FIXME: need to get the rigth position value
+            # If the clone have multiple sample, need to select the current.
+            # Should not apply if executed from the vidjil server, without previous fused files
+            if axis == "lenSeqConsensus":
+                return self.get_values("lenSeqAverage")/ self.get_values("lenSeq")
+            if axis == "coverage":
+                return round(self.d["_coverage"][0]*100, 2)
+
+            if axis == "complete":
+                germline = self.get_values("germline")
+                if "+" in germline:
+                    return False
+                elif germline in ["unexpected", "IKZF1", "ERG"]:
+                    # maybe more specific later ?
+                    return germline
+                elif germline in ["IGH","IGK","IGL","TRA","TRB","TRD","TRG"]:
+                    # List can be set if new complete germline is defined
+                    return True
+                else:
+                    return "unexpected"
+            if axis == "rearrangement":
+                return self.get_rearrangement()
+
+            return "unknow_axis"
+        except:
+            return "?"
+
+    def getGCcontent(self):
+        """ Compute and retur nthe GC ratio of a sequence """
+        if len(self.d["sequence"]) == 0:
+            return "?"
+
+        gc = 0
+        for nt in self.d["sequence"]:
+            if nt in "GgCc":
+                gc += 1
+
+        GCContent = gc / len(self.d["sequence"])
+        # return rounded value for better association of clones
+        return round( GCContent, 2)
+
+
+    def get_rearrangement( self):
+        """Get the rearrangement type of this clone"""
+        if not self.is_segmented():
+            return "?"
+
+        complete = self.get_values("complete")
+        seg_vals = {
+            "5":  self.get_values("seg5"),
+            "4a": self.get_values("seg4a"),
+            "4":  self.get_values("seg4"),
+            "4b": self.get_values("seg4b"),
+            "3":  self.get_values("seg3")
+        }
+
+        if complete == True:
+            if seg_vals["4a"] == "?" and seg_vals["4"] == "?" and seg_vals["4b"] == "?":
+                return "VJ"
+            elif seg_vals["4a"] == "?" and seg_vals["4b"] == "?":
+                return "VDJ"
+            elif seg_vals["4a"] == "?" or seg_vals["4b"] == "?":
+                return "VDDJ"
+            else:
+                return "VDDDJ"
+
+        elif complete == False:
+            # cas compliqué, DJ etant un 53, DD aussi et VD aussi
+            if "V" in seg_vals["5"] and "D" in seg_vals["3"]:
+                return "VD"
+            elif "D" in seg_vals["5"] and "J" in seg_vals["3"]:
+                return "DJ"
+            elif "D" in seg_vals["5"] and "D" in seg_vals["3"]:
+                return "DD"
+
+        elif complete in ["unexpected", "IKZF1", "ERG"]:
+            return complete
+        else:
+            return "?"
+
+
     def latex(self, point=0, base_germline=10000, base=10000, tag=''):
         reads = self.d["reads"][point]
         ratio_germline = float(reads)/base_germline
