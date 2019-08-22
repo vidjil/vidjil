@@ -3,7 +3,7 @@
 
     "samples" :  { 
 	"number" : 1,
-	"original_names" :  [ "/some/file" ] ,
+	"original_names" :  [ "/some/file_1" ] ,
 	"run_timestamp" :  [ "2015-02-19 16:37:06" ] ,
 	"producer" :  [ "vidjil dev 0cf35de (2015-02-17)" ] ,
 	"log" :  [ "Some log" ],
