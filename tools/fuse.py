@@ -71,6 +71,22 @@ class Window:
     >>> (w2 + w4).d["test"]
     [0, 'plop']
     
+    >>> w1.get_values("name")
+    '?'
+    
+    >>> w1.get_values("top")
+    3
+  
+    >>> w7   = Window(1)
+    >>> w7.d = seg_w7
+    >>> w7.d["seg"]["5"]["name"]
+    'TRAV17*01'
+      
+    >>> w7.get_values("name")
+    'TRAV17*01 0/CCGGGG/5 TRAJ40*01'
+    
+    >>> w7.get_values("seg5")
+    'TRAV17*01'
     '''
     
     ### init Window with the minimum data required
