@@ -31,7 +31,7 @@ $ Correct number of entries for some keys (2*30 + 1 by repertoire)
 ############################
 ### Part with real clones ##
 ############################
-!LAUNCH: python3 ../../fuse.py  -D  --no-clones --output fused_with_real_clones_and_complete_distributions.vidjil ../../../algo/tests/data/results_five_segmented_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_with_real_clones_and_complete_distributions.vidjil
+!LAUNCH: python3 ../../fuse.py  -d germline,seg5  --no-clones --output fused_with_real_clones_and_complete_distributions.vidjil ../../../algo/tests/data/results_five_segmented_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_with_real_clones_and_complete_distributions.vidjil
 
 $ Get correct keys for distributions json content
 1:"repertoires"
@@ -41,8 +41,8 @@ $ Get correct keys for distributions json content
 $ No clones
 0:"id"
 
-$ Correct number of entries for some keys (61 by repertoire)
-183:"seg5"
+$ Correct number of entries for some keys (1 by repertoire)
+3:"seg5"
 
 $ Get correct files names
 :sequence_file
@@ -62,8 +62,8 @@ lr1:{ "axes": \[ "germline", "seg5" \], "values": { "IGK": { .* "IGKV3-15\*01": 
 
 
 $ Case for the two other files (axes: germline, seg5)
-lr1:{        "axes": \[          "germline",          "seg5"        \],        "values": {          "IGH": {            "\?": \[              2,              900            \]          }        }      },
-lr1:{        "axes": \[          "germline",          "seg5"        \],        "values": {          "IGH": {            "\?": \[              2,              350            \]          }        }      },
+lr1:{ "axes": \[ "germline", "seg5" \], "values": { "IGH": { "\?": \[ 2, 900 \]
+lr1:{ "axes": \[ "germline", "seg5" \], "values": { "IGH": { "\?": \[ 2, 350 \]
 
 
 
