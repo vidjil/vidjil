@@ -816,13 +816,6 @@ class ListWindows(VidjilJson):
             obj[values[0]][1] += nb_reads
         return obj
 
-    def save_distributions(self, foname):
-        # Compute aggreg just before export
-        fo = open(foname, "w")
-        json.dump(self.d["distributions"], fo, indent=2, sort_keys=True)
-        fo.close()
-        return
-
 
 
 ### some data used for test
@@ -930,7 +923,7 @@ def main():
     group_options.add_argument('--test', action='store_true', help='run self-tests')
     group_options.add_argument('--multi', action='store_true', help='merge different systems from a same timepoint (deprecated, do not use)')
     group_options.add_argument('--distributions', '-d', action='store_true', help='compute distributions')
-    group_options.add_argument('--only_disributions', '-D', action='store_true', help='export only distributions')
+    group_options.add_argument('--no-clones', action='store_true', help='do not output individual clones')
     
     group_options.add_argument('--compress', '-c', action='store_true', help='compress point names, removing common substrings')
     group_options.add_argument('--pipeline', '-p', action='store_true', help='compress point names (internal Bonsai pipeline)')
@@ -1056,7 +1049,7 @@ def main():
             
             print('\t==> merge to', jlist_fused)
 
-    if args.distributions or args.only_disributions:
+    if args.distributions:
         print("### Compute distributions")
         jlist_fused.init_distrib(LIST_DISTRIBUTIONS)
         jlist_fused.compute_distribution(LIST_DISTRIBUTIONS)
@@ -1094,13 +1087,11 @@ def main():
             os.unlink(fasta_file.name)
     else : 
         jlist_fused.d["similarity"] = [];
+    
+    if args.no_clones:
+        # TODO: do not generate the list of clones in this case
+        del jlist_fused.d["clones"]
 
-
-    if args.only_disributions:
-        print("### Save distributions file")
-        jlist_fused.save_distributions(args.output.replace(".vidjil", ".json"))
-        return
-        
     print("### Save merged file")
     jlist_fused.save_json(args.output)
     
