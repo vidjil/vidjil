@@ -1,7 +1,16 @@
+#######################################
+### Part without clones (--no-clone) ##
+#######################################
+!LAUNCH: python3 ../../fuse.py  --no-clones --output fused_without_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_without_clones.vidjil
+
+$ Should not have field clones
+0:"clones": \[
+
+
 ###################################
 ### Part with unsegmented clones ##
 ###################################
-!LAUNCH: python3 ../../fuse.py  -d --no-clones ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused.vidjil
+!LAUNCH: python3 ../../fuse.py  -D --no-clones ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused.vidjil
 
 
 $ Get correct keys for distributions json content
@@ -14,16 +23,16 @@ $ Get correct files names
 r:/some/file_[12]
 
 
-$ Correct number of entries for some keys (29 by repertoire)
-58:"seg5"
-58:"lenCDR3"
+$ Correct number of entries for some keys (2*30 + 1 by repertoire)
+122:"seg5"
+122:"lenCDR3"
 
 
 ############################
 ### Part with real clones ##
 ############################
 !LAUNCH: rm fused.vidjil
-!LAUNCH: python3 ../../fuse.py  -d  --no-clones ../../../algo/tests/data/results_five_segmented_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused.vidjil
+!LAUNCH: python3 ../../fuse.py  -D  --no-clones ../../../algo/tests/data/results_five_segmented_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused.vidjil
 
 $ Get correct keys for distributions json content
 1:"repertoires"
@@ -33,8 +42,8 @@ $ Get correct keys for distributions json content
 $ No clones
 0:"id"
 
-$ Correct number of entries for some keys (29 by repertoire)
-87:"seg5"
+$ Correct number of entries for some keys (61 by repertoire)
+183:"seg5"
 
 $ Get correct files names
 :sequence_file
@@ -56,3 +65,38 @@ lr1:{ "axes": \[ "germline", "seg5" \], "values": { "IGK": { .* "IGKV3-15\*01": 
 $ Case for the two other files (axes: germline, seg5)
 lr1:{        "axes": \[          "germline",          "seg5"        \],        "values": {          "IGH": {            "\?": \[              2,              900            \]          }        }      },
 lr1:{        "axes": \[          "germline",          "seg5"        \],        "values": {          "IGH": {            "\?": \[              2,              350            \]          }        }      },
+
+
+
+####################################################
+### Part with real clones, only some distribution ##
+####################################################
+!LAUNCH: rm fused.vidjil
+!LAUNCH: python3 ../../fuse.py  -d seg5,seg3 -d evalue -d unknow_AXIS  --no-clones --output fused_only_some_axes.vidjil ../../../algo/tests/data/results_five_segmented_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_only_some_axes.vidjil
+
+$ Get correct keys for distributions json content
+1:"repertoires"
+1:"keys"
+1:"filters"
+
+$ No clones
+0:"id"
+
+$ Correct number of entries for some keys (1 by repertoire): seg5
+3:"seg5"
+$ Correct number of entries for some keys (1 by repertoire): unknow_AXIS (axis name)
+3:"unknow_AXIS"
+$ Correct number of entries for some keys (1 by repertoire): unknow_axis (axis returned value)
+3:"unknow_axis"
+
+$ Get correct files names
+:sequence_file
+
+
+$ Filenames (original_files and repname)
+2:"sequence_file"
+2:"/some/file_1"
+2:"/some/file_2"
+
+
+
