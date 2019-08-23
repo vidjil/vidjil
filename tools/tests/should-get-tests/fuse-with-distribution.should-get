@@ -25,5 +25,5 @@ $ should have two time 'distributions' (console log + into vidjil file)
 2:distributions
 
 
-$ Axis title should be present 122 times (2*30+1/file)
+$ Axis title should be present 122 times (2*60+1/file)
 122:lenCDR3
