@@ -1,7 +1,7 @@
 ###################################
 ### Part with unsegmented clones ##
 ###################################
-!LAUNCH: python3 ../../fuse.py  -D  ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused.json
+!LAUNCH: python3 ../../fuse.py  -d --no-clones ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused.vidjil
 
 
 $ Get correct keys for distributions json content
@@ -14,42 +14,40 @@ $ Get correct files names
 r:/some/file_[12]
 
 
-# For the moment, 39 call by repertoire
-$ Have correct number of entrie for seg5
-78:"seg5"
-
-$ Have correct number of entrie for germline
-78:germline
-
+$ Correct number of entries for some keys (29 by repertoire)
+58:"seg5"
+58:"lenCDR3"
 
 
 ############################
 ### Part with real clones ##
 ############################
-!LAUNCH: rm fused.json
-!LAUNCH: python3 ../../fuse.py  -D  ../../../algo/tests/data/results_five_segmented_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused.json
+!LAUNCH: rm fused.vidjil
+!LAUNCH: python3 ../../fuse.py  -d  --no-clones ../../../algo/tests/data/results_five_segmented_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused.vidjil
 
 $ Get correct keys for distributions json content
 1:"repertoires"
 1:"keys"
 1:"filters"
 
+$ No clones
+0:"id"
 
-# For the moment, 31 call by repertoire
-$ Have correct number of entrie for seg5 (increase of 39 by the new repertoire)
-117:"seg5"
+$ Correct number of entries for some keys (29 by repertoire)
+87:"seg5"
 
 $ Get correct files names
 :sequence_file
 
 
-$ EAch filename should appear 1 times (1 for repname)
-1:"sequence_file"
-1:"/some/file_1"
-1:"/some/file_2"
+$ Filenames (original_files and repname)
+2:"sequence_file"
+2:"/some/file_1"
+2:"/some/file_2"
 
 $ Case of an entire result (axes: germline, seg5)
-lr1:{        "axes": \[          "germline",          "seg5"        \],        "values": {          "IGK": {            "IGKV1-33\*01": \[              1,              2597            \],            "IGKV1-39\*01": \[              1,              5653            \],            "IGKV3-15\*01": \[              1,              2502            \],            "IGKV3-20\*01": \[              1,              3898            \],            "IGKV4-1\*01": \[              1,              2520            \]          }        }      },
+lr1:{ "axes": \[ "germline", "seg5" \], "values": { "IGK": { "IGKV1-39\*01": \[ 1, 5653 \], "IGKV3-20\*01": \[ 1, 3898 \], "IGKV1-33\*01": \[ 1, 2597 \], "IGKV4-1\*01": \[ 1, 2520 \], "IGKV3-15\*01": \[ 1, 2502 \]   } }
+
 
 
 $ Case for the two other files (axes: germline, seg5)
