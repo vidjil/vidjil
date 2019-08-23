@@ -49,7 +49,17 @@ SIMILARITY_LIMIT = 100
 
 GERMLINES_ORDER = ['TRA', 'TRB', 'TRG', 'TRD', 'DD', 'IGH', 'DHJH', 'IJK', 'IJL'] 
 
-####
+AVAILABLE_AXES = [
+    "top", "germline", "name",
+    "seg5", "seg4", "seg4a", "seg4b", "seg3",
+    "evalue", "lenSeqAverage", "lenCDR3", "lenJunction",
+    "seg5_delRight", "seg3_delLeft", "seg4_delRight", "seg4_delLeft",
+    "seg5_stop", "seg3_start", "seg4_stop", "seg4_start", "cdr3_stop", "cdr3_start",
+    "junction_stop", "junction_start", "productive",
+    "insert_53", "insert_54", "insert_43",
+    "evalue", "evalue_left", "evalue_right",
+]
+
 
 class Window:
     # Should be renamed "Clone"
@@ -908,7 +918,34 @@ lw2.d["clones"].append(w7)
 lw2.d["clones"].append(w8)
 lw2.d["diversity"] = Diversity()
 
-    
+
+
+def get_preset_of_distribution():
+    """
+    Return a list of preset of distributions
+
+    A this time, the preset os the full list of available axes multiply by itself
+
+    >>> lst = get_preset_of_distribution(); ["seg5", "seg3"] in lst
+    True
+    >>> lst = get_preset_of_distribution(); ["seg5", "seg5"] in lst
+    False
+    >>> lst = get_preset_of_distribution(); ["seg5", "unknow"] in lst
+    False
+    >>> len(lst)
+    959
+    """
+    lst_axes = AVAILABLE_AXES
+    LIST_DISTRIBUTIONS = []
+
+    for axis1 in lst_axes:
+        LIST_DISTRIBUTIONS.append([axis1])
+        for axis2 in lst_axes:
+            if axis1 != axis2:
+                LIST_DISTRIBUTIONS.append([axis1, axis2])
+    return LIST_DISTRIBUTIONS
+
+
 def exec_command(command, directory, input_file):
     '''
     Execute the command `command` from the directory
