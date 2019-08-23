@@ -1040,8 +1040,6 @@ def main():
 
     group_options.add_argument('--test', action='store_true', help='run self-tests')
     group_options.add_argument('--multi', action='store_true', help='merge different systems from a same timepoint (deprecated, do not use)')
-    group_options.add_argument('--distributions', '-d', action='store_true', help='compute distributions')
-    group_options.add_argument('--no-clones', action='store_true', help='do not output individual clones')
     
     group_options.add_argument('--compress', '-c', action='store_true', help='compress point names, removing common substrings')
     group_options.add_argument('--pipeline', '-p', action='store_true', help='compress point names (internal Bonsai pipeline)')
@@ -1054,7 +1052,10 @@ def main():
 
     group_options.add_argument('--pre', type=str,help='pre-process program (launched on each input .vidjil file) (needs defs.PRE_PROCESS_DIR)')
 
-    group_options.add_argument("--axes", "-a", action='append',  help="Axes of distributions to compute; callable mutliple time")
+    group_options.add_argument("--distributions", "-d", action='append',  type=str, help="a set of axes for distribution computing; callable mutliple time")
+    group_options.add_argument('--distributions_all', '-D', action='store_true', default=False, help='compute a preset of distributions')
+    group_options.add_argument('--distributions_list', '-l', action='store_true', default=False, help='list the available axes for distributions')
+    group_options.add_argument('--no-clones', action='store_true', default=False, help='do not output individual clones')
 
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
 
@@ -1067,15 +1068,18 @@ def main():
 
     jlist_fused = None
 
-    LIST_DISTRIBUTIONS   = []
-    # Available axes = germline, seg5, seg4, seg3, lenCDR3, lenSeqConsensus, lenSeqAverage, seg5_delRight, seg3_delLeft, seg4_delRight, seg3_delLeft, insert_53, insert_54, insert_43, productive
+    LIST_DISTRIBUTIONS = []
+    if args.distributions_list == True:
+        print("### List of available axes for distributions:\n%s\n" % AVAILABLE_AXES)
 
-    if args.axes != None: 
-        if not args.distributions:
-            print( "No inclusions of distributions. Please add --distributions")
-        else:
-            for elt in args.axes:
-                LIST_DISTRIBUTIONS.append( elt.split(","))
+    if args.distributions_all == True:
+        LIST_DISTRIBUTIONS = get_preset_of_distribution()
+
+    if args.distributions != None:
+        for elt in args.distributions:
+            axes = elt.split(",")
+            if axes not in LIST_DISTRIBUTIONS:
+                LIST_DISTRIBUTIONS.append( axes )
 
     print("### fuse.py -- " + DESCRIPTION)
     print()
@@ -1162,7 +1166,7 @@ def main():
             
             print('\t==> merge to', jlist_fused)
 
-    if args.distributions:
+    if len(LIST_DISTRIBUTIONS):
         print("### Compute distributions")
         jlist_fused.init_distrib(LIST_DISTRIBUTIONS)
         jlist_fused.compute_distribution(LIST_DISTRIBUTIONS)
