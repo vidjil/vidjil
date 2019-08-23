@@ -857,8 +857,33 @@ seg_w7 = {
       "aa": "ATDAG#SGTYKYI",
       "start": 96,
       "stop": 133
-    }
+    },
+    "evalue": {
+      "val": "1.180765e-43"
+    },
+    "evalue_left": {
+      "val": "1.296443e-47"
+    },
+    "evalue_right": {
+      "val": "1.180635e-43"
+    },
+    "junction": {
+      "aa": "CQQSYSTPYTF",
+      "productive": True,
+      "start": 93,
+      "stop": 136
+    },
   },
+  "germline": "TRA",
+  "_average_read_length": [
+    76.0
+  ],
+  "_coverage": [
+    0.973684191703796
+  ],
+  "_coverage_info": [
+    "74 bp (97% of 76.0 bp)"
+  ],
   "sequence": "GTGGAAGATTAAGAGTCACGCTTGACACTTCCAAGAAAAGCAGTTCCTTGTTGATCACGGCTTCCCGGGCAGCAGACACTGCTTCTTACTTCTGTGCTACGGACGCCGGGGCTCAGGAACCTACAAATACATCTTTGGAACAG",
   "top": 26
 }
