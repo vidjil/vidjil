@@ -214,101 +214,9 @@ class Window:
                     return value[timepoint]
                 return value
 
-            ############################################################
-            ### These axes need to make some computation on clone fields
-            if axis == "lenSeq":
-                return len(self.d["sequence"])
-
-            if axis in axes_length.keys():
-                path = axes_length[axis]
-                if path[0] == "seg" and not self.is_segmented():
-                    return "not_segmented"
-                return self.get_values(path[0]) - self.get_values(path[1]) + path[2]
-
-
-            if axis == "GCContent":
-                return self.getGCcontent()
-
-            # FIXME: need to get the rigth position value
-            # If the clone have multiple sample, need to select the current.
-            # Should not apply if executed from the vidjil server, without previous fused files
-            if axis == "lenSeqConsensus":
-                return self.get_values("lenSeqAverage")/ self.get_values("lenSeq")
-            if axis == "coverage":
-                return round(self.d["_coverage"][0]*100, 2)
-
-            if axis == "complete":
-                germline = self.get_values("germline")
-                if "+" in germline:
-                    return False
-                elif germline in ["unexpected", "IKZF1", "ERG"]:
-                    # maybe more specific later ?
-                    return germline
-                elif germline in ["IGH","IGK","IGL","TRA","TRB","TRD","TRG"]:
-                    # List can be set if new complete germline is defined
-                    return True
-                else:
-                    return "unexpected"
-            if axis == "rearrangement":
-                return self.get_rearrangement()
-
             return "unknow_axis"
         except:
             return "?"
-
-    def getGCcontent(self):
-        """ Compute and retur nthe GC ratio of a sequence """
-        if len(self.d["sequence"]) == 0:
-            return "?"
-
-        gc = 0
-        for nt in self.d["sequence"]:
-            if nt in "GgCc":
-                gc += 1
-
-        GCContent = gc / len(self.d["sequence"])
-        # return rounded value for better association of clones
-        return round( GCContent, 2)
-
-
-    def get_rearrangement( self):
-        """Get the rearrangement type of this clone"""
-        if not self.is_segmented():
-            return "?"
-
-        complete = self.get_values("complete")
-        seg_vals = {
-            "5":  self.get_values("seg5"),
-            "4a": self.get_values("seg4a"),
-            "4":  self.get_values("seg4"),
-            "4b": self.get_values("seg4b"),
-            "3":  self.get_values("seg3")
-        }
-
-        if complete == True:
-            if seg_vals["4a"] == "?" and seg_vals["4"] == "?" and seg_vals["4b"] == "?":
-                return "VJ"
-            elif seg_vals["4a"] == "?" and seg_vals["4b"] == "?":
-                return "VDJ"
-            elif seg_vals["4a"] == "?" or seg_vals["4b"] == "?":
-                return "VDDJ"
-            else:
-                return "VDDDJ"
-
-        elif complete == False:
-            # cas compliqué, DJ etant un 53, DD aussi et VD aussi
-            if "V" in seg_vals["5"] and "D" in seg_vals["3"]:
-                return "VD"
-            elif "D" in seg_vals["5"] and "J" in seg_vals["3"]:
-                return "DJ"
-            elif "D" in seg_vals["5"] and "D" in seg_vals["3"]:
-                return "DD"
-
-        elif complete in ["unexpected", "IKZF1", "ERG"]:
-            return complete
-        else:
-            return "?"
-
 
     def latex(self, point=0, base_germline=10000, base=10000, tag=''):
         reads = self.d["reads"][point]
@@ -1050,17 +958,11 @@ def main():
     LIST_DISTRIBUTIONS   = []
     LIST_AXIS = ["germline",
         "seg5", "seg4", "seg3",
-        "lenSeq", "lenCDR3",  
-        "lenSeqConsensus", "lenSeqAverage", "GCContent", "coverage",
+        "lenCDR3",
+        "lenSeqConsensus", "lenSeqAverage",
         "seg5_delRight", "seg3_delLeft", "seg4_delRight", "seg3_delLeft",
         "insert_53", "insert_54", "insert_43",
         "productive", 
-        "rearrangement", "complete",
-        # "evalue", l'arrondir ?
-        # "cdr3_stop", "cdr3_start", 
-        #"junction_start", "junction_stop",
-        #"seg5_stop", "seg3_start", "seg4_stop", "seg4_start",
-        # "top", # "name"
     ]
 
     for axis1 in LIST_AXIS:
