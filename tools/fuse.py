@@ -936,10 +936,11 @@ def main():
 
     group_options.add_argument('--pre', type=str,help='pre-process program (launched on each input .vidjil file) (needs defs.PRE_PROCESS_DIR)')
 
+    group_options.add_argument("--axes", "-a", action='append',  help="Axes of distributions to compute; callable mutliple time")
+
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
-  
+
     args = parser.parse_args()
-    # print args
 
     if args.test:
         import doctest
@@ -949,21 +950,15 @@ def main():
     jlist_fused = None
 
     LIST_DISTRIBUTIONS   = []
-    LIST_AXIS = ["germline",
-        "seg5", "seg4", "seg3",
-        "lenCDR3",
-        "lenSeqConsensus", "lenSeqAverage",
-        "seg5_delRight", "seg3_delLeft", "seg4_delRight", "seg3_delLeft",
-        "insert_53", "insert_54", "insert_43",
-        "productive", 
-    ]
+    # Available axes = germline, seg5, seg4, seg3, lenCDR3, lenSeqConsensus, lenSeqAverage, seg5_delRight, seg3_delLeft, seg4_delRight, seg3_delLeft, insert_53, insert_54, insert_43, productive
 
-    for axis1 in LIST_AXIS:
-        LIST_DISTRIBUTIONS.append([axis1])
-        for axis2 in LIST_AXIS:
-            if axis1 != axis2:
-                LIST_DISTRIBUTIONS.append([axis1, axis2])
-    
+    if args.axes != None: 
+        if not args.distributions:
+            print( "No inclusions of distributions. Please add --distributions")
+        else:
+            for elt in args.axes:
+                LIST_DISTRIBUTIONS.append( elt.split(","))
+
     print("### fuse.py -- " + DESCRIPTION)
     print()
 
