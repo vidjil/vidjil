@@ -862,7 +862,11 @@ class ListWindows(VidjilJson):
         return
 
     def recursive_add( self, obj, values, nb_reads):
-        """ Add by recusivity the newer value to existing value; return the obj """
+        """
+        Add (1, nb_reads) by recursively iterating over values.
+        For example self.recursive_add(obj, [val1, val2], nb_reads) add (1, nb_reads) to obj[val1][val2]
+        Return the updated incremented object
+        """
         if len(values) > 1:
             # Should increase for one depth
             nvalues = values[1:]
