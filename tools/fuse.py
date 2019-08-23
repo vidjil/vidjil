@@ -91,14 +91,63 @@ class Window:
     >>> w7.d = seg_w7
     >>> w7.d["seg"]["5"]["name"]
     'TRAV17*01'
-      
+
+    >>> w7.get_values("reads")
+    16
+
+    >>> w7.get_values("top")
+    26
+    >>> w7.get_values("germline")
+    'TRA'
     >>> w7.get_values("name")
     'TRAV17*01 0/CCGGGG/5 TRAJ40*01'
-    
     >>> w7.get_values("seg5")
     'TRAV17*01'
+    >>> w7.get_values("seg4a")
+    '?'
+    >>> w7.get_values("seg4")
+    '?'
+    >>> w7.get_values("seg4b")
+    '?'
+    >>> w7.get_values("seg3")
+    'TRAJ40*01'
+    >>> w7.get_values("evalue")
+    '1.180765e-43'
+    >>> w7.get_values("evalue_left")
+    '1.296443e-47'
+    >>> w7.get_values("evalue_right")
+    '1.180635e-43'
+    >>> w7.get_values("seg5_delRight")
+    0
+    >>> w7.get_values("seg3_delLeft")
+    5
+    >>> w7.get_values("seg4_delRight")
+    '?'
+    >>> w7.get_values("seg4_delLeft")
+    '?'
+    >>> w7.get_values("seg5_stop")
+    105
+    >>> w7.get_values("seg3_start")
+    112
+    >>> w7.get_values("seg4_stop")
+    '?'
+    >>> w7.get_values("seg4_start")
+    '?'
+    >>> w7.get_values("cdr3_start")
+    96
+    >>> w7.get_values("cdr3_stop")
+    133
+    >>> w7.get_values("junction_start")
+    93
+    >>> w7.get_values("junction_stop")
+    136
+    >>> w7.get_values("productive")
+    True
+    >>> w7.get_values("unavailable_axis")
+    'unknow_axis'
     '''
-    
+
+
     ### init Window with the minimum data required
     def __init__(self, size):
         self.d={}
