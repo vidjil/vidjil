@@ -54,16 +54,16 @@ $ Filenames (original_files and repname)
 2:"/some/file_2"
 
 $ Case of an entire result (axes: germline, seg5)
-lr1:{ "axes": \[ "germline", "seg5" \], "values": { "IGK": { .* "IGKV3-20\*01": \[ 1, 3898 \]
-lr1:{ "axes": \[ "germline", "seg5" \], "values": { "IGK": { .* "IGKV1-39\*01": \[ 1, 5653 \]
-lr1:{ "axes": \[ "germline", "seg5" \], "values": { "IGK": { .* "IGKV1-33\*01": \[ 1, 2597 \]
-lr1:{ "axes": \[ "germline", "seg5" \], "values": { "IGK": { .* "IGKV4-1\*01": \[ 1, 2520 \]
-lr1:{ "axes": \[ "germline", "seg5" \], "values": { "IGK": { .* "IGKV3-15\*01": \[ 1, 2502 \]
+lr1:"values": { "IGK": { .* "IGKV3-20\*01": \[ 1, 3898 \]
+lr1:"values": { "IGK": { .* "IGKV1-39\*01": \[ 1, 5653 \]
+lr1:"values": { "IGK": { .* "IGKV1-33\*01": \[ 1, 2597 \]
+lr1:"values": { "IGK": { .* "IGKV4-1\*01": \[ 1, 2520 \]
+lr1:"values": { "IGK": { .* "IGKV3-15\*01": \[ 1, 2502 \]
 
 
 $ Case for the two other files (axes: germline, seg5)
-lr1:{ "axes": \[ "germline", "seg5" \], "values": { "IGH": { "\?": \[ 2, 900 \]
-lr1:{ "axes": \[ "germline", "seg5" \], "values": { "IGH": { "\?": \[ 2, 350 \]
+lr1:"values": { "IGH": { "\?": \[ 2, 900 \]
+lr1:"values": { "IGH": { "\?": \[ 2, 350 \]
 
 
 
