@@ -28,7 +28,7 @@ f_out = args.output_file
 
 exit_code = subprocess.call(['%s/flash2' % args.flash2_dir,
  f_r1, f_r2,
- "-o", f_out,
+ "-d", f_out,
  # "-j", "1"]
                 # + shlex.split(args.flash2_options)
 ])
