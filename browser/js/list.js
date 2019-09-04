@@ -472,10 +472,6 @@ List.prototype = {
                 span_name.innerHTML = clone.getShortName();
                 span_name.title = clone.getNameAndCode();
                 span_name.style.color = clone.getColor();
-
-                //update star color
-                var span_star = div_elem.getElementsByClassName("starBox")[0];
-                span_star.style.color = this.m.tag[clone.getTag()].color
                 
                 //update clone axis
                 var span_axis = div_elem.getElementsByClassName("axisBox")[0];
