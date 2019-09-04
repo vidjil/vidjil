@@ -1204,7 +1204,6 @@ changeAlleleNotation: function(alleleNotation) {
      * @param {integer[]} - list - array of clone index
      * */
     updateElemStyle: function (list) {
-        this.updateModel();
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].updateElemStyle(list);
         }
