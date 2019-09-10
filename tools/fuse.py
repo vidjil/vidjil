@@ -841,7 +841,7 @@ class ListWindows(VidjilJson):
 
 
     def compute_distribution(self, list_distrib):
-        """ list_distrib is a list of distrib to compute """ 
+        """ Compute the distributions given in list_distrib """
         for filename in self.d["samples"].d["original_names"]:
             timepoint = self.get_filename_pos(filename)
             for clone in self.d["clones"]:
@@ -976,17 +976,17 @@ lw2.d["diversity"] = Diversity()
 
 
 
-def get_preset_of_distribution():
+def get_preset_of_distributions():
     """
-    Return a list of preset of distributions
+    Return a list of distributions
 
-    A this time, the preset os the full list of available axes multiply by itself
+    This is now the list of combinations of any two different axes.
 
-    >>> lst = get_preset_of_distribution(); ["seg5", "seg3"] in lst
+    >>> lst = get_preset_of_distributions(); ["seg5", "seg3"] in lst
     True
-    >>> lst = get_preset_of_distribution(); ["seg5", "seg5"] in lst
+    >>> lst = get_preset_of_distributions(); ["seg5", "seg5"] in lst
     False
-    >>> lst = get_preset_of_distribution(); ["seg5", "unknow"] in lst
+    >>> lst = get_preset_of_distributions(); ["seg5", "unknow"] in lst
     False
     >>> len(lst)
     959
@@ -1052,9 +1052,9 @@ def main():
 
     group_options.add_argument('--pre', type=str,help='pre-process program (launched on each input .vidjil file) (needs defs.PRE_PROCESS_DIR)')
 
-    group_options.add_argument("--distributions", "-d", action='append',  type=str, help="a set of axes for distribution computing; callable mutliple time")
-    group_options.add_argument('--distributions_all', '-D', action='store_true', default=False, help='compute a preset of distributions')
-    group_options.add_argument('--distributions_list', '-l', action='store_true', default=False, help='list the available axes for distributions')
+    group_options.add_argument("--distribution", "-d", action='append', type=str, help='compute the given distribution; callable multiple times')
+    group_options.add_argument('--distributions-all', '-D', action='store_true', default=False, help='compute a preset of distributions')
+    group_options.add_argument('--distributions-list', '-l', action='store_true', default=False, help='list the available axes for distributions')
     group_options.add_argument('--no-clones', action='store_true', default=False, help='do not output individual clones')
 
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
@@ -1069,17 +1069,17 @@ def main():
     jlist_fused = None
 
     LIST_DISTRIBUTIONS = []
-    if args.distributions_list == True:
-        print("### List of available axes for distributions:\n%s\n" % AVAILABLE_AXES)
+    if args.distributions_list:
+        print("### Available axes for distributions:\n%s\n" % AVAILABLE_AXES)
 
-    if args.distributions_all == True:
-        LIST_DISTRIBUTIONS = get_preset_of_distribution()
+    if args.distributions_all:
+        LIST_DISTRIBUTIONS = get_preset_of_distributions()
 
-    if args.distributions != None:
-        for elt in args.distributions:
+    if args.distribution:
+        for elt in args.distribution:
             axes = elt.split(",")
             if axes not in LIST_DISTRIBUTIONS:
-                LIST_DISTRIBUTIONS.append( axes )
+                LIST_DISTRIBUTIONS.append(axes)
 
     print("### fuse.py -- " + DESCRIPTION)
     print()
