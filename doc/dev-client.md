@@ -249,7 +249,7 @@ webpage.
     1.  Install rvm
         
         ``` bash
-        \curl -sSL https://get.rvm.io | bash
+        curl -sSL https://get.rvm.io | sudo bash
         ```
         
         Afterwards you may need to launch:
