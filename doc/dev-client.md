@@ -249,7 +249,7 @@ webpage.
     1.  Install rvm
         
         ``` bash
-        \curl -sSL https://get.rvm.io | bash
+        curl -sSL https://get.rvm.io | sudo bash
         ```
         
         Afterwards you may need to launch:
@@ -311,7 +311,16 @@ webpage.
           - `WATIR_MARIONETTE`  
             should be set to something evalued to `True` (*e.g. 1*)
             if the tests must be launched on a recent Firefox version (\> 45)
-
+            
+    2.  If you have set a configuration file (browser/js/conf.js), you should remove it during the tests. The easiest way to do it is to launch these commands before and after the tests
+    
+        ``` bash
+        # before tests
+        mv browser/js/conf.js     browser/js/conf.js.bak 
+        # after tests
+        mv browser/js/conf.js.bak browser/js/conf.js    
+        ```
+            
 4.  Headless mode
     
     On servers without a X server the client tests can be launched in headless
@@ -330,15 +339,6 @@ webpage.
     apt-get install xvfb
     # On Fedora/CentOS
     yum install xvfb
-    ```
-    
-    If you have set a configuration file (browser/js/conf.js), you should remove it during the headless testing. The easiest way to do it is to launch these commands before and after the test
-    
-    ``` bash
-    # before tests
-    mv browser/js/conf.js     browser/js/conf.js.bak 
-    # after tests
-    mv browser/js/conf.js.bak browser/js/conf.js    
     ```
     
     Then the client tests can be launched in headless mode with:
