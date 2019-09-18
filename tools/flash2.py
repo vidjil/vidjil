@@ -24,14 +24,22 @@ args  = parser.parse_args()
 f_r1  = args.file_R1
 f_r2  = args.file_R2
 f_out = args.output_file
+
+paths =  os.path.split(f_out)
+path_head = paths[0]
+path_file = paths[1]
 print( "args: %s" % args)
+print( "###" )
 print( "f_r1: %s" % f_r1)
 print( "f_r2: %s" % f_r2)
 print( "f_out: %s" % f_out)
+print( "path_head: %s" % path_head)
+print( "path_file: %s" % path_file)
 
 exit_code = subprocess.call(['%s/flash2' % args.flash2_dir,
  f_r1, f_r2,
- "-o", f_out,
+ "-d", path_head,
+ "-o", path_file,
  "-t", "1",
  # + shlex.split(args.flash2_options)
 ])
