@@ -48,7 +48,7 @@ if exit_code > 0:
     raise EnvironmentError("Flash2 failed")
 
 try :
-    with gzip.open(f_out+".fastq.gz", 'w') as outFile:
+    with gzip.open(f_out, 'w') as outFile:
         with open(f_out+'.extendedFrags.fastq', 'rb') as f1:
             shutil.copyfileobj(f1, outFile)
         if (args.keep_r1):
