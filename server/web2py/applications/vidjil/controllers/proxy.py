@@ -10,7 +10,7 @@ if request.env.http_origin:
 def index():
     return gluon.contrib.simplejson.dumps("index()")
 
-def proxy_request(url, headers):
+def proxy_request(url, headers={}):
     if request.env.request_method == "POST":
         payload = dict(request.post_vars)
         
@@ -22,8 +22,10 @@ def proxy_request(url, headers):
             return response
         return gluon.contrib.simplejson.dumps("the site returned an invalid response")
     return gluon.contrib.simplejson.dumps("improper method")
-   
 
 def imgt():
     return proxy_request("http://www.imgt.org/IMGT_vquest/analysis")
 
+def assign_subsets():
+    return proxy_request("http://tools.bat.infspire.org/cgi-bin/arrest/assignsubsets_html.pl",
+                         {'referer': "http://tools.bat.infspire.org/arrest/assignsubsets/"})
