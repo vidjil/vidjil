@@ -59,7 +59,8 @@ def info():
             ).select(
                 left=db.results_file.on(
                     (db.results_file.sequence_file_id==db.sequence_file.id)
-                    & (db.results_file.config_id==str(config_id) )
+                    & (db.results_file.config_id==str(config_id))
+                    & (db.results_file.hidden == False)
                 ), 
                 orderby = db.sequence_file.id|~db.results_file.run_date
             )
@@ -79,6 +80,7 @@ def info():
                 left=db.results_file.on(
                     (db.results_file.sequence_file_id==db.sequence_file.id)
                     & (db.results_file.config_id==str(config_id) )
+                    & (db.results_file.hidden == False)
                 )
             )
 

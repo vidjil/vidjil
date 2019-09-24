@@ -20,6 +20,7 @@ def index():
             & (db.sequence_file.id==db.sample_set_membership.sequence_file_id)
             & (db.sample_set_membership.sample_set_id==db.patient.sample_set_id)
             & (db.results_file.config_id==db.config.id)
+            & (db.results_file.hidden == False)
         ).select(
             orderby = ~db.results_file.run_date
         )

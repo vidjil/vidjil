@@ -313,6 +313,7 @@ def get_data():
                    & ( db.sample_set.id == db.sample_set_membership.sample_set_id )
                    & ( db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                    & ( db.results_file.sequence_file_id == db.sequence_file.id )
+                   & ( db.results_file.hidden == False )
                    & ( db.results_file.config_id == request.vars["config"]  )
                    ).select(db.sequence_file.ALL,db.results_file.ALL, db.sample_set.id, orderby=db.sequence_file.id|~db.results_file.run_date)
 

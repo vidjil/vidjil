@@ -62,6 +62,7 @@ def compute_contamination(sequence_file_id, results_file_id, config_id):
                        & ( db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                        & ( db.sequence_file.id != sequence_file_id[i])
                        & ( db.results_file.sequence_file_id == db.sequence_file.id )
+                       & ( db.results_file.hidden == False )
                        & ( db.results_file.config_id == config_id[i]  )
                        ).select(db.sequence_file.ALL,db.results_file.ALL, db.sample_set.id, orderby=db.sequence_file.id|~db.results_file.run_date)
 
@@ -104,6 +105,7 @@ def compute_extra(id_file, id_config, min_threshold):
     result = {}
     d = None
     results_file = db((db.results_file.sequence_file_id == id_file) &
+                      (db.results_file.hidden == False) &
                       (db.results_file.config_id == id_config)
                     ).select(orderby=~db.results_file.run_date).first()
     filename = defs.DIR_RESULTS+results_file.data_file
@@ -148,6 +150,7 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     ts = time.time()
     data_id = db.results_file.insert(sequence_file_id = id_sequence,
                                      run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
+                                     hidden = grep_reads is not None, 
                                      config_id = id_config )
         
     args = [id_sequence, id_config, data_id, grep_reads]
@@ -183,6 +186,7 @@ def schedule_fuse(sample_set_ids, config_ids):
             row = db((db.sample_set_membership.sample_set_id == sample_set_id)
                    & (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id)
                    & (db.results_file.config_id == config_id)
+                   & (db.results_file.hidden == False)
                 ).select(db.sample_set_membership.sample_set_id, db.sample_set_membership.sequence_file_id,
                         db.results_file.id, db.results_file.config_id).first()
             if row:
@@ -648,6 +652,7 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
                    & ( db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                    & ( db.sample_set_membership.sample_set_id == sample_set_id)
                    & ( db.results_file.config_id == id_config )
+                   & ( db.results_file.hidden == False)
                    ).select( orderby=db.sequence_file.id|~db.results_file.run_date) 
     query = []
     sequence_file_id = 0

@@ -99,7 +99,8 @@ def index():
             ).select(
                 left=db.results_file.on(
                     (db.results_file.sequence_file_id==db.sequence_file.id)
-                    & (db.results_file.config_id==str(config_id) )
+                    & (db.results_file.config_id==str(config_id))
+                    & (db.results_file.hidden == False)
                 ), 
                 orderby = db.sequence_file.id|~db.results_file.run_date
             )
@@ -118,7 +119,8 @@ def index():
             ).select(
                 left=db.results_file.on(
                     (db.results_file.sequence_file_id==db.sequence_file.id)
-                    & (db.results_file.config_id==str(config_id) )
+                    & (db.results_file.config_id==str(config_id))
+                    & (db.results_file.hidden == False)
                 )
             )
 
@@ -311,6 +313,7 @@ def result_files():
             (db.sequence_file.id == db.sample_set_membership.sequence_file_id) &
             (db.results_file.sequence_file_id == db.sequence_file.id) &
             (db.results_file.data_file != None) &
+            (db.results_file.hidden == False) &
             config_query
         )
 
@@ -600,6 +603,7 @@ def custom():
         & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
         & (db.results_file.sequence_file_id==db.sequence_file.id)
         & (db.results_file.data_file != '')
+        & (db.results_file.hidden == False)
         & (db.config.id==db.results_file.config_id))
 
     group_ids = get_involved_groups()
