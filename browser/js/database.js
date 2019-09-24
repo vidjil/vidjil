@@ -1102,18 +1102,24 @@ Database.prototype = {
         return args
     },
 
+    /**
+     * Start ajax sequence. Only the cursor changes.
+     */
     ajax_indicator_start: function() {
         if (!(this.uploader.is_uploading())) {
-            var tgt = $('#live-ajax');
-            tgt.empty();
-            $('<img/>', {src: 'images/ajax-loader.gif'}).appendTo($('<div/>', {class: 'active-container'}).appendTo(tgt));
+            $('#live-ajax-icon').empty();
+            $('#live-ajax-msg').empty();
             $('body').css('cursor', 'wait');
         }
     },
 
+    /**
+     * End ajax sequence
+     */
+
     ajax_indicator_stop: function() {
-        var tgt = $('#live-ajax');
-        tgt.empty();
+        $('#live-ajax-icon').empty();
+        $('#live-ajax-msg').empty();
         $('body').css('cursor', 'default');
     },
 
