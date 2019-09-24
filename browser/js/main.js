@@ -22,8 +22,11 @@
 
 
 NOTIFICATION_PERIOD = 300000			  // Time interval to check for notifications periodically (ms)
-
-
+AJAX_TIMEOUT_START = 200
+AJAX_TIMEOUT_LONG  = 600
+AJAX_TIMEOUT_MSG   = 8000
+var timeout;
+var ajaxOn = false;
 
 /* Console (optional)
  * Setting here a console replaces the default javascript console with a custom one.
@@ -152,17 +155,43 @@ if (typeof config !== 'undefined' && typeof config.alert !== 'undefined') {
 
 console.log("=== main.js finished ===");
 
-var timeout;
+
+
 $(document).ajaxStart(function () {
-    //show ajax indicator
+
+    ajaxOn = true;
+    // 1. Start AJAX sequence
+
+
     timeout = setTimeout(function(){
-        db.ajax_indicator_start()
-    }, 600);
-}).ajaxStop(function () {
+        if (ajaxOn){
+            db.ajax_indicator_start()
+            // 2. Show spinner
+            setTimeout(function(){
+		    if (ajaxOn){
+                  db.ajax_indicator_long()
+
+                  setTimeout(function(){
+                      if (ajaxOn) {
+                          // 3. Display message
+                          db.ajax_indicator_msg("Still computing content...")
+                      }
+                      }, AJAX_TIMEOUT_MSG);
+                }
+                }, AJAX_TIMEOUT_LONG);
+            }
+        }, AJAX_TIMEOUT_START);
+
+})
+
+
+$(document).ajaxStop(function () {
     //hide ajax indicator
+    ajaxOn = false;
     db.ajax_indicator_stop();
     clearTimeout(timeout);
 });
+
 db.ajax_indicator_stop();
 
 // Load regularly notifications
