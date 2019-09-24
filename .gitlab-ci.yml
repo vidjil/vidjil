@@ -21,6 +21,7 @@ stages:
   - valgrind_unit
   - valgrind_functional
   - multiple_tests
+  - benchmark
   - publish_release
   - deploy_prod
 
@@ -320,6 +321,20 @@ test_server_functional:
   tags:
     - x86_64
     - docker
+
+
+# Benchmark
+
+benchmark_algo:
+  stage: benchmark
+  script:
+    - cd algo/tests ; python3 benchmark-releases.py -bi
+  when: manual
+  only:
+    - /^feature-.*a.*\/.*$/
+  tags:
+    - several-compilers
+
 
 # Deployment
 
