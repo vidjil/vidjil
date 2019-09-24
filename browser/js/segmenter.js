@@ -227,7 +227,6 @@ Segment.prototype = {
             // to AssignSubset
             span = createSendToButton("toAssignSubsets", "assignSubsets", "❯ to AssignSubsets",
                                       "Send sequences to ARResT/AssignSubsets to classify IGH sequence in a CLL subset", this);
-            span.className += " devel-mode";
             div_menu.appendChild(span);
 
             //toClipBoard button
