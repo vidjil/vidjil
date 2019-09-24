@@ -1,0 +1,4 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -g $VIDJIL_DIR/germline/homo-sapiens.g -r 1 $VIDJIL_DATA/unexpected_name.fa ; cat out/unexpected_name.vidjil
+
+$ Name of unsegmented sequence should be the window itself
+1: "id": "TCGTTCTTGAAGAGACGGTGACCATCGTCCCTTGGCCGCAGATATCGAAA"

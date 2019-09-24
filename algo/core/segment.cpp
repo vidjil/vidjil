@@ -1404,10 +1404,6 @@ void FineSegmenter::toOutput(CloneOutput *clone){
         });
     }
   }
-  else // not segmented
-  {
-    clone->set("name", label);
-  }
 }
 
 json toJsonSegVal(string s) {
