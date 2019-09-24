@@ -24,7 +24,7 @@
 NOTIFICATION_PERIOD = 300000			  // Time interval to check for notifications periodically (ms)
 AJAX_TIMEOUT_START = 200
 AJAX_TIMEOUT_LONG  = 600
-AJAX_TIMEOUT_MSG   = 8000
+AJAX_TIMEOUT_MSG   = 5000
 var timeout;
 var ajaxOn = false;
 
@@ -174,7 +174,7 @@ $(document).ajaxStart(function () {
                   setTimeout(function(){
                       if (ajaxOn) {
                           // 3. Display message
-                          db.ajax_indicator_msg("Still computing content...")
+                          db.ajax_indicator_msg("waiting for server reply")
                       }
                       }, AJAX_TIMEOUT_MSG);
                 }

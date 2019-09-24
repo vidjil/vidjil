@@ -1129,7 +1129,7 @@ Database.prototype = {
      */
     ajax_indicator_msg: function(message) {
         if (!(this.uploader.is_uploading())) {
-            if (message == undefined) { message = "Waiting the answer of the server"}
+            if (message == undefined) { message = "waiting for server reply"}
             var div_msg  = document.getElementById("live-ajax-msg")
             div_msg.innerHTML = message
         }
