@@ -1114,6 +1114,28 @@ Database.prototype = {
     },
 
     /**
+     * Show a spinner
+     */
+    ajax_indicator_long: function() {
+        if (!(this.uploader.is_uploading())) {
+            var live_icon = document.getElementById("live-ajax-icon")
+            $('<img/>', {src: 'images/ajax-loader.gif'}).appendTo(live_icon)
+        }
+    },
+
+    /**
+     * Display a message to the user to tell him to wait a little more
+     * @param  {String} message the message to said to wait to the user; optionnal
+     */
+    ajax_indicator_msg: function(message) {
+        if (!(this.uploader.is_uploading())) {
+            if (message == undefined) { message = "Waiting the answer of the server"}
+            var div_msg  = document.getElementById("live-ajax-msg")
+            div_msg.innerHTML = message
+        }
+    },
+
+    /**
      * End ajax sequence
      */
 
