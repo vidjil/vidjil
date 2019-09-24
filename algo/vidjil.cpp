@@ -1637,6 +1637,7 @@ int main (int argc, char **argv)
         CloneOutput *clone = new CloneOutput();
         output.addClone(id, clone);
         clone->set("id", id);
+        clone->set("name", seq.label);
         clone->set("sequence", seq.sequence);
         clone->set("reads", { 1 });
         clone->set("top", 0);
