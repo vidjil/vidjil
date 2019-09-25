@@ -336,8 +336,8 @@ Report.prototype = {
 
     comments: function() {
         var comments = this.container("Comments")
-        $('<textarea/>', {'title': "These comments won't be saved.", 'rows': 5, 'style': "width: 100%; display: block;"}).appendTo(comments)
-
+        $('<textarea/>', {'title': "These comments won't be saved.", 'rows': 5, 'style': "width: 100%; display: block; overflow: hidden; resize: vertical;"}).appendTo(comments)
+    
         return this
     },
     
