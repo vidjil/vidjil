@@ -160,6 +160,7 @@ Report.prototype = {
             
             self.info()
                 .contamination()
+                .comments()
                 
             self.m.resize()
             self.m.resume()
@@ -200,6 +201,7 @@ Report.prototype = {
                 .cloneList()
                 .contamination()
                 .sampleLog()
+                .comments()
                 .restorestate()
                 
             self.m.resize()
@@ -244,6 +246,7 @@ Report.prototype = {
 
             self.sampleLog()
                 .softwareInfo(self.m.t)
+                .comments()
                 .restorestate()
 
             self.m.changeGermline(current_system)
@@ -328,6 +331,13 @@ Report.prototype = {
             for (var idx in v.value) $('<td/>', {'text': v.value[idx].replace("_L001__001", "")}).appendTo(row);
         }
         
+        return this
+    },
+
+    comments: function() {
+        var comments = this.container("Comments")
+        $('<textarea/>', {'title': "These comments won't be saved.", 'rows': 5, 'style': "width: 100%; display: block;"}).appendTo(comments)
+
         return this
     },
     
