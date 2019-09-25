@@ -713,3 +713,18 @@ function openAndFillNewTab (content){
     }).appendTo(w.document.body);
     return
 }
+
+/**
+ * @param {data} a string containing a multi-FASTA
+ * @param {n} the number of sequences to keep
+ * @return return a string containing at most {n} FASTA sequences.
+ *         if {n} is negative or null return {data} itself
+ */
+function getNFirstSequences(data, n) {
+    var pos = nth_ocurrence(data, '>', n+1);
+    if (pos) {
+        return data.substr(0, pos);
+    } else {
+        return data;
+    }    
+}

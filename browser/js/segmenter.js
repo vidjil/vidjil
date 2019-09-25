@@ -187,74 +187,47 @@ Segment.prototype = {
             div_menu.appendChild(span)
 
             //toIMGT button
-            span = document.createElement('span');
-            span.id = "toIMGT"
-            span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and see the results in a new tab')
-            span.className = "button"
-            span.onclick = function () {
-                self.sendTo('IMGT')
-            }
-            span.appendChild(document.createTextNode("❯ to IMGT/V-QUEST"));
+            span = createSendToButton("toIMGT", 'imgt', "❯ to IMGT/V-QUEST",
+                                      'Send sequences to IMGT/V-QUEST and see the results in a new tab', this);
             div_menu.appendChild(span)
 
             //toIMGTSeg button
-            span = document.createElement('span');
-            span.id = "toIMGTSeg";
-            span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and loads the results in the sequence panel')
-            span.className = "button button_next";
-            span.onclick = function () {
-                self.sendTo('IMGTSeg')
-            };
-            span.appendChild(document.createTextNode("▼"));
+            span = createSendToButton("toIMGTSeg", "IMGTSeg", "▼",
+                                      'Send sequences to IMGT/V-QUEST and loads the results in the sequence panel', this);
+            span.className += " button_next";
             div_menu.appendChild(span);
 
             //toIgBlast button
-            span = document.createElement('span');
-            span.id = "toIgBlast";
-            span.setAttribute('title', 'Send sequences to NCBI IgBlast and see the results in a new tab')
-            span.className = "button";
-            span.onclick = function () {
-                self.sendTo('igBlast')
-            };
-            span.appendChild(document.createTextNode("❯ to IgBlast"));
+            span = createSendToButton("toIgBlast", 'igBlast', "❯ to IgBlast",
+                                      'Send sequences to NCBI IgBlast and see the results in a new tab', this);
             div_menu.appendChild(span);
 
             //toARResT button
-            span = document.createElement('span');
-            span.id = "toARResT";
-            span.setAttribute('title', 'Send sequences to ARResT/CompileJunctions and see the results in a new tab')
-            span.className = "button devel-mode";
-            span.onclick = function () {
-                self.sendTo('ARResT')
-            };
-            span.appendChild(document.createTextNode("❯ to ARResT/CJ"));
+            span = createSendToButton("toARResT", "arrest", "❯ to ARResT/CJ",
+                                      'Send sequences to ARResT/CompileJunctions and see the results in a new tab', this);
+            span.className += " devel-mode";
             div_menu.appendChild(span);
 
             //toCloneDB button
-            span = document.createElement('span');
-            span.id = "toCloneDB";
-            span.setAttribute('title', 'Send sequences to EC-NGS/CloneDB in the background')
-            span.className = "button ";
-            span.className += (typeof config !== 'undefined' && config.clonedb) ? "" : "devel-mode";
-            span.onclick = function () {
-                self.db.callCloneDB(self.m.getSelected());
-            };
-            span.appendChild(document.createTextNode("❯ to CloneDB"));
+            span = createSendToButton('toCloneDB', '', "❯ to CloneDB",
+                                      'Send sequences to EC-NGS/CloneDB in the background',
+                                      this,
+                                      function () {
+                                          self.db.callCloneDB(self.m.getSelected());
+                                      });
+            span.className += (typeof config !== 'undefined' && config.clonedb) ? "" : " devel-mode";
             div_menu.appendChild(span);
 
             //toBlast button
-            span = document.createElement('span');
-            span.id = "toBlast";
-            span.setAttribute('title', 'Send sequences to Ensembl Blast and see the results in a new tab')
-            span.className = "button";
-            span.onclick = function () {
-                if (self.m.getSelected().length > 30) {
-                    console.log({"type": "flash", "msg": "A maximum of 30 clones are allowed by Blast" , "priority": 1});
-                } else {
-                self.sendTo('blast');
-                }
-            };
-            span.appendChild(document.createTextNode("❯ to Blast"));
+            span = createSendToButton("toBlast", "blast",
+                                      "❯ to Blast",
+                                      'Send sequences to Ensembl Blast and see the results in a new tab', this);
+            div_menu.appendChild(span);
+
+            // to AssignSubset
+            span = createSendToButton("toAssignSubsets", "assignSubsets", "❯ to AssignSubsets",
+                                      "Send sequences to ARResT/AssignSubsets to classify IGH sequence in a CLL subset", this);
+            span.className += " devel-mode";
             div_menu.appendChild(span);
 
             //toClipBoard button
@@ -857,7 +830,7 @@ Segment.prototype = {
     /**
      * build a request with currently selected clones to send to IMGT or igblast <br>
      * (see crossDomain.js)
-     * @param {string} address - 'IMGT', 'ARResT', 'igBlast' or 'Blast'
+     * @param {string} address - 'imgt', 'arrest', 'igBlast' or 'blast'
      * */
     sendTo: function (address) {
 
@@ -884,18 +857,14 @@ Segment.prototype = {
                 request += ">" +list[i] + "\n" +this.germline[this.sequence[list[i]].locus][list[i]] + "\n";
             }
         }
-        if (address == 'IMGT') {
-            imgtPost(this.m.species, request, system);
-        } 
         if (address == 'IMGTSeg') {
             imgtPostForSegmenter(this.m.species, request, system, this);
             var change_options = {'xv_ntseq' : 'false', // Deactivate default output
                                   'xv_summary' : 'true'}; // Activate Summary output
             imgtPostForSegmenter(this.m.species, request, system, this, change_options);
+        } else {
+            window[address+"Post"](this.m.species, request, system)
         }
-        if (address == 'ARResT') arrestPost(request, system);
-        if (address == 'igBlast') igBlastPost(request, system);
-        if (address == 'blast') blastPost(request, system);
 
         this.update();
 
