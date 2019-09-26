@@ -114,11 +114,28 @@ Model_loader.prototype = {
                 .update_selected_system()
             self.dataFileName = document.getElementById(id)
                 .files[0].name;
+            self.check_export_monitor()
+
         }
 
     }, 
+
     
-    
+    /**
+     * disable export monitor button if only one sample is present (add disable class)
+     */
+    check_export_monitor: function(){
+        var div = document.getElementById("export_monitor_report")
+        if (div) {
+            if (this.samples.names.length >1){
+                div.classList.remove( "disabledClass" )
+            } else {
+                div.classList.add( "disabledClass" )
+            }
+        }
+    },
+
+
     /** 
      * load the selected analysis file in the model
      * @param {string} analysis - id of the form (html element) linking to the analysis file
@@ -181,6 +198,8 @@ Model_loader.prototype = {
                     .initClones()
                 self.update_selected_system()
                 self.dataFileName = url_split[url_split.length-1]
+                self.check_export_monitor()
+
                 // self.applyUrlParams(paramsDict);
                 callback()
             },                
@@ -212,6 +231,7 @@ Model_loader.prototype = {
                 self.parseJsonAnalysis(result)
                 self.initClones()
                 self.analysisFileName = url_split[url_split.length-1]
+                self.check_export_monitor()
             },
             error: function () {
                 self.update()
@@ -354,7 +374,7 @@ Model_loader.prototype = {
         
         //remove incomplete similarity matrix (TODO: fix fuse.py)
         this.similarity = undefined;
-
+        this.check_export_monitor()
         return this
 
     }
