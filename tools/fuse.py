@@ -1183,6 +1183,9 @@ def main():
             else:
                 jlist.load(path_name, args.pipeline)
                 jlist.build_stat()
+                if len(LIST_DISTRIBUTIONS):
+                    jlist.init_distrib(LIST_DISTRIBUTIONS)
+                    jlist.compute_distribution(LIST_DISTRIBUTIONS)
                 jlist.filter(f)
 
             
@@ -1194,12 +1197,6 @@ def main():
                 jlist_fused = jlist_fused + jlist
             
             print('\t==> merge to', jlist_fused)
-
-    if len(LIST_DISTRIBUTIONS):
-        print("### Compute distributions")
-        jlist_fused.init_distrib(LIST_DISTRIBUTIONS)
-        jlist_fused.compute_distribution(LIST_DISTRIBUTIONS)
-
 
     if args.compress:
         print()
