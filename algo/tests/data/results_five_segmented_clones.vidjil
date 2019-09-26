@@ -5,7 +5,7 @@
   }],
   "clones": [    {
       "_average_read_length": [
-        76.0
+        76.123
       ],
       "_coverage": [
         0.973684191703796
@@ -75,7 +75,7 @@
     },
     {
       "_average_read_length": [
-        76.0
+        76.956
       ],
       "_coverage": [
         1.0
@@ -145,7 +145,7 @@
     },
     {
       "_average_read_length": [
-        76.0
+        76.5
       ],
       "_coverage": [
         1.0
