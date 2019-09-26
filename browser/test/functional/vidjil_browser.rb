@@ -184,9 +184,7 @@ class VidjilBrowser < Watir::Browser
   end
 
   def menu_item_export(id, extra = {})
-    menu = menu_import_export
-    menu.click
-    return menu.a(extra.merge(:id => id))
+    return menu_item(id, extra)
   end
 
   def menu_item_export_fasta(extra = {})
@@ -206,6 +204,7 @@ class VidjilBrowser < Watir::Browser
     end
     if parent.tag_name != "body"
       parent.click
+      parent.hover
     end
     return item
   end
