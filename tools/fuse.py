@@ -36,6 +36,7 @@ import os
 import datetime
 import subprocess
 import tempfile
+import math
 from operator import itemgetter, le
 from utils import *
 from defs import *
@@ -145,6 +146,12 @@ class Window:
     True
     >>> w7.get_values("unavailable_axis")
     'unknow_axis'
+    >>> w7.get_values("lenSeqAverage")
+    168.0
+    >>> w7.get_values("lenSeqAverage", 0)
+    168.0
+    >>> w7.get_values("lenSeqAverage", 1)
+    169.0
     '''
 
 
@@ -260,6 +267,10 @@ class Window:
             "lenJunction": ["junction_stop", "junction_start", 0]
         }
 
+        axes_rounded = {
+            "lenSeqAverage" : 1.0
+        }
+
         try:
             if axis in axes.keys():
                 path  = axes[axis]
@@ -271,14 +282,29 @@ class Window:
                 while depth != len(path):
                     value  = value[path[depth]]
                     depth += 1
+                if axis in axes_rounded.keys():
+                    value = self.round_axis(value, axes_rounded[axis])
+
+
                 if type(value) is list:
                     # In these cases, should be a list of value at different timepoint
                     return value[timepoint]
+
                 return value
 
             return "unknow_axis"
         except:
             return "?"
+
+    def round_axis(self, value, round_set):
+        if isinstance(value, list):
+            for i in range(len(value)):
+                value[i] = self.round_axis(value[i], round_set)
+        else:
+            value = round(float(value) / round_set) * round_set
+        return value
+
+
 
     def latex(self, point=0, base_germline=10000, base=10000, tag=''):
         reads = self.d["reads"][point]
@@ -870,6 +896,8 @@ class ListWindows(VidjilJson):
         if len(values) > 1:
             # Should increase for one depth
             nvalues = values[1:]
+            if not obj[values[0]] :
+                obj[values[0]] = defaultdict(lambda: False)
             obj[values[0]] = self.recursive_add(obj[values[0]], nvalues, nb_reads)
         else:
             # last depth
@@ -907,6 +935,10 @@ seg_w7 = {
   "reads": [
     16
   ],
+  "_average_read_length": [
+    168.468,
+    168.568,
+  ],
   "seg": {
     "3": {
       "delLeft": 5,
@@ -941,9 +973,6 @@ seg_w7 = {
     },
   },
   "germline": "TRA",
-  "_average_read_length": [
-    76.0
-  ],
   "_coverage": [
     0.973684191703796
   ],
@@ -1154,6 +1183,9 @@ def main():
             else:
                 jlist.load(path_name, args.pipeline)
                 jlist.build_stat()
+                if len(LIST_DISTRIBUTIONS):
+                    jlist.init_distrib(LIST_DISTRIBUTIONS)
+                    jlist.compute_distribution(LIST_DISTRIBUTIONS)
                 jlist.filter(f)
 
             
@@ -1165,12 +1197,6 @@ def main():
                 jlist_fused = jlist_fused + jlist
             
             print('\t==> merge to', jlist_fused)
-
-    if len(LIST_DISTRIBUTIONS):
-        print("### Compute distributions")
-        jlist_fused.init_distrib(LIST_DISTRIBUTIONS)
-        jlist_fused.compute_distribution(LIST_DISTRIBUTIONS)
-
 
     if args.compress:
         print()

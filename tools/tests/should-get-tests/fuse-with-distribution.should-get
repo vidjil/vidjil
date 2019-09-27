@@ -21,8 +21,8 @@ $ Get correct file name in original_names field and distributions
 2:"/some/file_1"
 2:"/some/file_2"
 
-$ should have two time 'distributions' (console log + into vidjil file)
-2:distributions
+$ should have two time 'distributions' (into vidjil file)
+1:distributions
 
 
 $ Axis title should be present 122 times (2*60+1/file)
