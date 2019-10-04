@@ -4,6 +4,7 @@ from gluon.dal import Row, Set, Query
 from enum import Enum
 
 from permission_enum import PermissionEnum
+import defs
 
 class PermissionLetterMapping(Enum):
     admin = 'e'
@@ -317,7 +318,7 @@ class VidjilAuth(Auth):
 
         :param: id should be an integer
         '''
-        return self.is_admin() or self.user_id == id
+        return self.is_admin() or ((self.user_id == id) and (self.user_id not in defs.LIMITED_ACCOUNTS))
 
     def can_modify(self, object_of_action, id, user = None):
         '''

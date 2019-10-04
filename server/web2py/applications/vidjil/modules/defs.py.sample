@@ -9,6 +9,9 @@ SMTP_SERVER = 'localhost'
 FROM_EMAIL = 'root@vidjil.org'
 ADMIN_EMAILS = ['notifications@vidjil.org']
 
+### Specific accounts
+LIMITED_ACCOUNTS = [ ]
+
 ### address for the sql database
 ###
 DB_ADDRESS = 'sqlite://storage.sqlite'
