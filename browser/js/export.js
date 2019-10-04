@@ -346,7 +346,7 @@ Report.prototype = {
         var left = $('<div/>', {'class': 'flex'}).appendTo(info);
         
         var date = new Date();
-        var report_timestamp = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() 
+        var report_timestamp = date.toISOString().split('T')[0]
         
         var analysis_timestamp = "–"
         if (typeof this.m.analysis.timestamp != "undefined")
