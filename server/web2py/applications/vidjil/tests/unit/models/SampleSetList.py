@@ -13,7 +13,7 @@ class SamplesetlistModel(unittest.TestCase):
         execfile("applications/vidjil/models/sample_set_list.py", globals())
         global auth
         auth = VidjilAuth(globals(), db)
-        auth.login_bare("test@vidjil.org", "1234")
+        auth.login_bare("test@vidjil.org", "123456")
 
     def testInit(self):
         slist = SampleSetList('patient')
