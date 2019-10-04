@@ -41,6 +41,7 @@ for browser in $BROWSER_LIST; do
     echo "\033[1m\033[33m===== Testing browser: " $browser "\033[0m"
     echo
     for file in $FUNCTIONAL_TESTS; do
+        [ -f init_tests.sh ] && . ./init_tests.sh
         echo "\033[34m===" $file "\033[0m"
         if [ ${#browser} -gt 1 ]; then
             export WATIR_BROWSER_PATH="$browser"
