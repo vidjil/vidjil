@@ -72,6 +72,38 @@ as well with the locus selection.
   - Other objects: `Report`, `Shortcut`
     Extends functionalities but requires elements from the full `index.html`.
 
+### Clone attributes
+
+
+C_SIZE_CONSTANT
+C_SIZE_DISTRIB
+C_SIZE_OTHER
+
+Each clone has one (and only one) of these attributes.
+Either its raw size is constant (`_CONSTANT`), either it is computed from other clones (`_DISTRIB`, `_OTHER`).
+Note that, that in each case, the displayed size can be different from the raw size
+due to normalizations.
+
+
+C_INTERACTABLE
+
+The clone can be selected by the user. It can be focused in, or hidden.
+
+
+C_CLUTERIZABLE
+
+The clone can be clustered with other clones. This clone should also be C_INTERACTABLE.
+
+
+C_INSCATTERPLOT 
+
+Each clone that has values on the current axes will be displayed in the 'scatterplot' panel.
+
+.sequence
+
+Each clone that has a sequence will be displayed in the bottom 'segmenter' panel.
+
+
 ## Integrating the client
 
 ### HTML and CSS
