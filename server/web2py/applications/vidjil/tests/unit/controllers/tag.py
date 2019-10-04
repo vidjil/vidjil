@@ -19,7 +19,7 @@ class TagController(unittest.TestCase):
         session = Session()
         request = Request({})
         auth = VidjilAuth(globals(), db)
-        auth.login_bare("test@vidjil.org", "1234")
+        auth.login_bare("test@vidjil.org", "123456")
         
         # rewrite info / error functions 
         # for some reasons we lost them between the testRunner and the testCase but we need them to avoid error so ...

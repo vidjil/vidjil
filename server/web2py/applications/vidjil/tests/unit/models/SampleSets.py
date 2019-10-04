@@ -13,7 +13,7 @@ class SamplesetsModel(unittest.TestCase):
         execfile("applications/vidjil/models/SampleSets.py", globals())
         global auth
         auth = VidjilAuth(globals(), db)
-        auth.login_bare("test@vidjil.org", "1234")
+        auth.login_bare("test@vidjil.org", "123456")
 
         # We have the following sample sets
         
