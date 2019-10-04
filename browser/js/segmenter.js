@@ -187,7 +187,7 @@ Segment.prototype = {
             div_menu.appendChild(span)
 
             //toIMGT button
-            span = createSendToButton("toIMGT", 'imgt', "❯ to IMGT/V-QUEST",
+            span = createSendToButton("toIMGT", 'imgt', "❯ IMGT/V-QUEST",
                                       'Send sequences to IMGT/V-QUEST and see the results in a new tab', this);
             div_menu.appendChild(span)
 
@@ -198,18 +198,18 @@ Segment.prototype = {
             div_menu.appendChild(span);
 
             //toIgBlast button
-            span = createSendToButton("toIgBlast", 'igBlast', "❯ to IgBlast",
+            span = createSendToButton("toIgBlast", 'igBlast', "❯ IgBlast",
                                       'Send sequences to NCBI IgBlast and see the results in a new tab', this);
             div_menu.appendChild(span);
 
             //toARResT button
-            span = createSendToButton("toARResT", "arrest", "❯ to ARResT/CJ",
+            span = createSendToButton("toARResT", "arrest", "❯ ARResT/CJ",
                                       'Send sequences to ARResT/CompileJunctions and see the results in a new tab', this);
             span.className += " devel-mode";
             div_menu.appendChild(span);
 
             //toCloneDB button
-            span = createSendToButton('toCloneDB', '', "❯ to CloneDB",
+            span = createSendToButton('toCloneDB', '', "❯ CloneDB",
                                       'Send sequences to EC-NGS/CloneDB in the background',
                                       this,
                                       function () {
@@ -220,12 +220,12 @@ Segment.prototype = {
 
             //toBlast button
             span = createSendToButton("toBlast", "blast",
-                                      "❯ to Blast",
+                                      "❯ Blast",
                                       'Send sequences to Ensembl Blast and see the results in a new tab', this);
             div_menu.appendChild(span);
 
             // to AssignSubset
-            span = createSendToButton("toAssignSubsets", "assignSubsets", "❯ to AssignSubsets",
+            span = createSendToButton("toAssignSubsets", "assignSubsets", "❯ AssignSubsets",
                                       "Send sequences to ARResT/AssignSubsets to classify IGH sequence in a CLL subset", this);
             div_menu.appendChild(span);
 
@@ -233,7 +233,7 @@ Segment.prototype = {
             span = document.createElement('span');
             span.id = "toClipBoard";
             span.className = "button";
-            span.appendChild(document.createTextNode("❯ to clipBoard"));
+            span.appendChild(document.createTextNode("❯ clipBoard"));
             // div_menu.appendChild(span)
 
             //germline button
