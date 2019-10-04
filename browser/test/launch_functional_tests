@@ -1,12 +1,15 @@
 # sh launch_functional_tests functional/test_*rb
 
-if [ -z "$FUNCTIONAL_CLIENT_BROWSER_PATH" ]; then
+if [ -z "$FUNCTIONAL_CLIENT_BROWSER_PATH" -o ! -z "$IGNORE_FUNCTIONAL_CBP" ]; then
     FUNCTIONAL_CLIENT_BROWSER_PATH="."
 fi
 
 if  [ "$1" = "--browsers-from-file" ]
 then
     shift
+    if [ ! -f ./tested-browsers ]; then
+        exit 1
+    fi
     BROWSER_LIST=`sed "s#^#$FUNCTIONAL_CLIENT_BROWSER_DIR#" ./tested-browsers`
 else
     BROWSER_LIST=$FUNCTIONAL_CLIENT_BROWSER_PATH
@@ -38,6 +41,7 @@ for browser in $BROWSER_LIST; do
     echo "\033[1m\033[33m===== Testing browser: " $browser "\033[0m"
     echo
     for file in $FUNCTIONAL_TESTS; do
+        [ -f init_tests.sh ] && . ./init_tests.sh
         echo "\033[34m===" $file "\033[0m"
         if [ ${#browser} -gt 1 ]; then
             export WATIR_BROWSER_PATH="$browser"

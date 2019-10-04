@@ -1,6 +1,4 @@
 
-BROWSERS=
-
 all: unit functional
 
 unit: nightmare
