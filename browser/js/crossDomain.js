@@ -1,4 +1,3 @@
-var PROXY_ADDRESS = "https://db.vidjil.org/vidjil/proxy/imgt"
 var modelRef;
 
 /**
@@ -162,10 +161,14 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
     //disabled due to security concerns
     //form.action = "http://www.imgt.org/IMGT_vquest/vquest";
     //using proxy on server to allow requests on other site than vidjil one's in JS.
-    if (typeof config != 'undefined' && typeof config.proxy != 'undefined') {
-        form.action = config.proxy
+    if (typeof config != 'undefined' && typeof config.db_address != 'undefined') {
+        form.action = config.db_address+"/proxy/imgt"
     } else {
-        form.action = PROXY_ADDRESS;
+        console.log({
+            "type": "flash",
+            "msg": "Your installation doesn't seem to be associated with a database.",
+            "priority": 2
+        });
     }
     form.method = "POST";
 
@@ -427,10 +430,18 @@ function assignSubsetsPost(species, data, system) {
     } else {
         var form = document.getElementById("form");
         form.removeAllChildren();
-        // form.target = "_blank";
+        form.target = "_blank";
         form.enctype = 'multipart/form-data';
         form.name = 'assignsubsets';
-        form.action = "http://tools.bat.infspire.org/cgi-bin/arrest/assignsubsets_html.pl";
+        if (typeof config != 'undefined' && typeof config.db_address != 'undefined') {
+            form.action = config.db_address+"/proxy/assign_subsets"
+        } else {
+            console.log({
+                "type": "flash",
+                "msg": "Your installation doesn't seem to be associated with a database.",
+                "priority": 2
+            });
+        }
         form.method = "POST";
         var formData = {};
         formData.fastatext = data;

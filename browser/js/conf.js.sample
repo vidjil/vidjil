@@ -21,11 +21,6 @@ var config = {
     "cgi_address" : "https://db.vidjil.org/cgi/", // Public test server
     // "cgi_address" : "http://127.0.1.1/cgi-bin/",
 
-    /* Proxy config for IMGT querying */
-    /*
-    "proxy": "https://db.vidjil.org/vidjil/proxy/imgt",
-    */
-
     /* Used for the standalone http://app.vidjil.org/analyze page */
     "segmenter_address" : "https://db.vidjil.org/vidjil/segmenter",
 
