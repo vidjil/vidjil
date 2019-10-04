@@ -318,7 +318,8 @@ class VidjilAuth(Auth):
 
         :param: id should be an integer
         '''
-        return self.is_admin() or ((self.user_id == id) and (self.user_id not in defs.LIMITED_ACCOUNTS))
+        return self.is_admin() or\
+            ((self.user_id == id) and (not hasattr(defs, 'LIMITED_ACCOUNTS') or self.user_id not in defs.LIMITED_ACCOUNTS))
 
     def can_modify(self, object_of_action, id, user = None):
         '''
