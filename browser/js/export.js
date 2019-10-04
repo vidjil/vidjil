@@ -355,8 +355,8 @@ Report.prototype = {
             analysis_timestamp = report_timestamp + " (not saved)"
         
         var content = [
-            {'label': "Filename:" , 'value' : this.m.dataFileName },
             {'label': "Report date:"  , 'value' : report_timestamp},
+            {'label': "Filename:" , 'value' : this.m.dataFileName },
             {'label': "Updated on:" , 'value' : analysis_timestamp},
             {'label': "Software used:" , 'value' : this.m.getSoftVersion()},
             {'label': "Analysis date:" , 'value' : "" }
