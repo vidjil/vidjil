@@ -47,6 +47,7 @@ DIR_FUSE = '../../tools'
 DIR_MIXCR = '../../'
 DIR_IGREC = '../../'
 DIR_PEAR = '../../'
+DIR_FLASH2 = '../../'
 DIR_CLONEDB = '../../../clonedb'
 
 ### Directory that store the germlines used by Vidjil
