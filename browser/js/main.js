@@ -22,9 +22,9 @@
 
 
 NOTIFICATION_PERIOD = 300000			  // Time interval to check for notifications periodically (ms)
-AJAX_TIMEOUT_START = 200
-AJAX_TIMEOUT_LONG  = 600
-AJAX_TIMEOUT_MSG   = 5000
+AJAX_TIMEOUT_START = 200                  // Delay before cursor wait
+AJAX_TIMEOUT_LONG  = 600                  // Delay before spinner at the top-right
+AJAX_TIMEOUT_MSG   = 5000                 // Delay before message
 var timeout;
 var ajaxOn = 0;
 
