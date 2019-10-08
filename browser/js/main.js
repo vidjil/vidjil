@@ -24,7 +24,8 @@
 NOTIFICATION_PERIOD = 300000			  // Time interval to check for notifications periodically (ms)
 AJAX_TIMEOUT_START = 200                  // Delay before cursor wait
 AJAX_TIMEOUT_LONG  = 600                  // Delay before spinner at the top-right
-AJAX_TIMEOUT_MSG   = 5000                 // Delay before message
+AJAX_TIMEOUT_MSG1  = 5000                 // Delay before first message
+AJAX_TIMEOUT_MSG2  = 12000                // Delay before second message
 var timeout;
 var ajaxOn = 0;
 
@@ -176,8 +177,15 @@ $(document).ajaxStart(function () {
                       if (ajaxOn == ajaxId) {
                           // 3. Display message
                           db.ajax_indicator_msg("waiting for server reply")
+
+                          setTimeout(function(){
+                              if (ajaxOn == ajaxId) {
+                                  // 4. Display another message
+                                  db.ajax_indicator_msg("still waiting...")
+                              }
+                            }, AJAX_TIMEOUT_MSG2);
                       }
-                      }, AJAX_TIMEOUT_MSG);
+                    }, AJAX_TIMEOUT_MSG1);
                 }
                 }, AJAX_TIMEOUT_LONG);
             }
