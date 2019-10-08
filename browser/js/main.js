@@ -26,7 +26,7 @@ AJAX_TIMEOUT_START = 200
 AJAX_TIMEOUT_LONG  = 600
 AJAX_TIMEOUT_MSG   = 5000
 var timeout;
-var ajaxOn = false;
+var ajaxOn = 0;
 
 /* Console (optional)
  * Setting here a console replaces the default javascript console with a custom one.
@@ -159,20 +159,21 @@ console.log("=== main.js finished ===");
 
 $(document).ajaxStart(function () {
 
-    ajaxOn = true;
-    // 1. Start AJAX sequence
-
+    // 0. Start AJAX sequence
+    var ajaxId = 1 + Math.floor(Math.random() * 1000);
+    ajaxOn = ajaxId
 
     timeout = setTimeout(function(){
-        if (ajaxOn){
+        if (ajaxOn == ajaxId){
+            // 1. Show cursor
             db.ajax_indicator_start()
-            // 2. Show spinner
             setTimeout(function(){
-		    if (ajaxOn){
+              if (ajaxOn == ajaxId){
+                  // 2. Show spinner
                   db.ajax_indicator_long()
 
                   setTimeout(function(){
-                      if (ajaxOn) {
+                      if (ajaxOn == ajaxId) {
                           // 3. Display message
                           db.ajax_indicator_msg("waiting for server reply")
                       }
@@ -187,7 +188,7 @@ $(document).ajaxStart(function () {
 
 $(document).ajaxStop(function () {
     //hide ajax indicator
-    ajaxOn = false;
+    ajaxOn = 0;
     db.ajax_indicator_stop();
     clearTimeout(timeout);
 });
