@@ -84,6 +84,9 @@ shouldvdj_if_python:
 	else echo "!!! Bad python version, we skip .should-vdj.fa tests..." ; \
 	fi
 
+should-vdj-tests/locus-merged.should-vdj.fa: $(SHOULD_VDJ) $(SHOULD_LOCUS)
+	awk '$$0 ~ /^>/ {gsub("_","-",FILENAME); $$0=$$0" @"FILENAME} {print}'  $^ > $@
+
 should-vdj-tests/vdj-merged.should-vdj.fa: $(SHOULD_VDJ)
 	awk '$$0 ~ /^>/ {gsub("_","-",FILENAME); $$0=$$0" @"FILENAME} {print}'  $^ > $@
 
@@ -91,9 +94,12 @@ should-vdj-tests/vdj-merged.should-vdj.fa: $(SHOULD_VDJ)
 shouldlocus: vidjil
 	$(SHOULD_VDJ_TO_TAP) -2q -r $(SHOULD_VDJ) $(SHOULD_LOCUS)
 
+shouldlocus_merged: should-vdj-tests/locus-merged.should-vdj.fa vidjil
+	$(SHOULD_VDJ_TO_TAP) -2q -r $<
+
 shouldlocus_and_vdj: vidjil
 	@echo "*** Launching .should-vdj-fa tests..."
-	$(MAKE) shouldlocus
+	$(MAKE) shouldlocus_merged
 	$(MAKE) shouldvdj_with_rc_merged
 	@echo "*** All .should-vdj.fa tests passed"
 
