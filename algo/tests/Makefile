@@ -84,6 +84,10 @@ shouldvdj_if_python:
 	else echo "!!! Bad python version, we skip .should-vdj.fa tests..." ; \
 	fi
 
+should-vdj-tests/vdj-merged.should-vdj.fa: $(SHOULD_VDJ)
+	awk '$$0 ~ /^>/ {gsub("_","-",FILENAME); $$0=$$0" @"FILENAME} {print}'  $^ > $@
+
+
 shouldlocus: vidjil
 	$(SHOULD_VDJ_TO_TAP) -2q -r $(SHOULD_VDJ) $(SHOULD_LOCUS)
 
@@ -102,8 +106,7 @@ shouldvdj:
 shouldvdj_with_rc:
 	$(SHOULD_VDJ_TO_TAP) -r $(SHOULD_VDJ)
 
-shouldvdj_with_rc_merged:
-	awk '$$0 ~ /^>/ {gsub("_","-",FILENAME); $$0=$$0" @"FILENAME} {print}'  $(SHOULD_VDJ) > should-vdj-tests/should-vdj.merged.fa
+shouldvdj_with_rc_merged: should-vdj-tests/vdj-merged.should-locus.fa
 	$(SHOULD_VDJ_TO_TAP) -r should-vdj-tests/should-vdj.merged.fa
 
 # When the global test suite is passing, individual failed tests (tagged with BUG or BUG-LOCUS in the *.should-vdj.fa files)
