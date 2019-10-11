@@ -365,6 +365,11 @@ int main (int argc, char **argv)
                  "maximal e-value for determining if a V-J segmentation can be trusted", true)
     -> group(group) -> level() -> transform(string_NO_LIMIT);
 
+  double expected_value_kmer = NO_LIMIT_VALUE;
+  app.add_option("--e-value-kmer", expected_value_kmer,
+                 "maximal e-value for the k-mer heuristics ('" NO_LIMIT "': use same value than '-e')", true)
+    -> group(group) -> level() -> transform(string_NO_LIMIT);
+
   int trim_sequences = DEFAULT_TRIM;
   bool trim_sequences_changed = false;
   app.add_option("--trim",
@@ -920,6 +925,10 @@ int main (int argc, char **argv)
     // Number of reads for e-value computation
     unsigned long long nb_reads_for_evalue = (expected_value > NO_LIMIT_VALUE) ? nb_sequences_in_file(f_reads, true) : 1 ;
 
+    if (expected_value_kmer == NO_LIMIT_VALUE)
+    {
+      expected_value_kmer = expected_value;
+    }
     
   //////////////////////////////////
   //$$ Read sequence files
@@ -1108,7 +1117,7 @@ int main (int argc, char **argv)
     WindowsStorage *windowsStorage = we.extract(reads, wmer_size,
                                                 windows_labels, only_labeled_windows,
                                                 keep_unsegmented_as_clone,
-                                                expected_value, nb_reads_for_evalue,
+                                                expected_value_kmer, nb_reads_for_evalue,
                                                 readScorer);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
@@ -1396,7 +1405,7 @@ int main (int argc, char **argv)
 
 	  
         // Re-launch also a KmerMultiSegmenter, for control purposes (affectations, evalue)
-        KmerMultiSegmenter kmseg(representative, multigermline, 0, expected_value, nb_reads_for_evalue);
+        KmerMultiSegmenter kmseg(representative, multigermline, 0, expected_value_kmer, nb_reads_for_evalue);
         KmerSegmenter *kseg = kmseg.the_kseg ;
         if (verbose)
           cout << "KmerSegmenter: " << kseg->getInfoLine() << endl;
@@ -1440,10 +1449,15 @@ int main (int argc, char **argv)
         // FineSegmenter
         size_t nb_fine_segmented = (size_t) max_clones; // When -1, it will become the max value.
         nb_fine_segmented = MIN(nb_fine_segmented, sort_clones.size());
-        FineSegmenter seg(representative, segmented_germline, segment_cost, expected_value, nb_fine_segmented, kmer_threshold, alternative_genes);
+
+        // The multiplier takes into account the expected_value_kmer.
+        // When --e-value-kmer is not set, the multiplier is 1.0. See #3594.
+        double fine_evalue_multiplier = MIN(expected_value_kmer, nb_fine_segmented);
+
+        FineSegmenter seg(representative, segmented_germline, segment_cost, expected_value, fine_evalue_multiplier, kmer_threshold, alternative_genes);
 
         if (segmented_germline->seg_method == SEG_METHOD_543)
-	  seg.FineSegmentD(segmented_germline, several_D, expected_value_D, nb_fine_segmented);
+          seg.FineSegmentD(segmented_germline, several_D, expected_value_D, fine_evalue_multiplier);
 
         if (detect_CDR3)
           seg.findCDR3();
@@ -1643,6 +1657,9 @@ int main (int argc, char **argv)
 
     Germline *not_segmented = new Germline(PSEUDO_NOT_ANALYZED, PSEUDO_NOT_ANALYZED_CODE);
 
+    // Multiplier is 1.0, we expect that the sequences are actual recombinations. See #3594.
+    double fine_evalue_multiplier = 1.0 ;
+
     while (reads->hasNext()) 
       {
         nb++;
@@ -1653,7 +1670,7 @@ int main (int argc, char **argv)
         KmerSegmenter *seg = kmseg.the_kseg ;
         Germline *germline = seg->segmented_germline ;
 
-        FineSegmenter s(seq, germline, segment_cost, expected_value, nb_reads_for_evalue, kmer_threshold, alternative_genes);
+        FineSegmenter s(seq, germline, segment_cost, expected_value, fine_evalue_multiplier, kmer_threshold, alternative_genes);
 
         string id = string_of_int(nb, 6);
         CloneOutput *clone = new CloneOutput();
@@ -1670,7 +1687,7 @@ int main (int argc, char **argv)
                 nb_segmented++ ;
 
                 if (germline->seg_method == SEG_METHOD_543)
-                  s.FineSegmentD(germline, several_D, expected_value_D, nb_reads_for_evalue);
+                  s.FineSegmentD(germline, several_D, expected_value_D, fine_evalue_multiplier);
 
                 if (detect_CDR3)
                   s.findCDR3();
