@@ -247,6 +247,7 @@ List.prototype = {
         var a_split = document.createElement('a')
         a_split.className = "button"
         a_split.appendChild(icon('icon-plus', 'Show all subclones'))
+        a_split.id = "list_split_all"
         a_split.onclick = function () {
             self.m.split_all(true)
         }
@@ -254,6 +255,7 @@ List.prototype = {
         var a_unsplit = document.createElement('a')
         a_unsplit.className = "button"
         a_unsplit.appendChild(icon('icon-minus', 'Hide all subclones'))
+        a_unsplit.id = "list_unsplit_all"
         a_unsplit.onclick = function () {
             self.m.split_all(false)
         }
@@ -489,9 +491,11 @@ List.prototype = {
                     if (clone.split) {
                         span_cluster.onclick = cluster_hide;
                         span_cluster.appendChild(icon('icon-minus', 'Hide the subclones'));
+                        this.showClusterContent(cloneID, false)
                     } else {
                         span_cluster.onclick = cluster_show;
                         span_cluster.appendChild(icon('icon-plus', 'Show the subclones'));
+                        this.hideClusterContent(cloneID, false)
                     }
                     self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
                 } else {
@@ -791,30 +795,60 @@ List.prototype = {
 
     /**
      * toggle on the display for a given clone of all clones merged with it
-     * @param {integer} cloneID - 
+     * Action by direct click on the show button of the list element
+     * @param {String} div - div name of the show button 
      * */
     showCluster: function (div) {
         var cloneID = div.getAttribute("cloneID");
         var self = this
         this.m.clone(cloneID).split = true
+        this.showClusterContent(cloneID, true)
+    },
+
+    /**
+     * toggle on the display for a given clone of all clones merged with it
+     * @param {integer} cloneID -
+     * @param {bool}    update  - Set the content of the update fct. Slow down the refresh if call from the model on multiple clones 
+     * */
+    showClusterContent: function(cloneID, update){
+        var self = this
+        var fct;
+        if (update == true || update == undefined) {
+            fct = function () { self.m.updateElem([cloneID]) }
+        } else if (update == false) {
+            fct = function(){}
+        }
         $("#cluster" + cloneID)
-            .show(50, function () {
-                self.m.updateElem([cloneID])
-            });
+            .show(50, fct );
     },
 
     /**
      * toggle off the display for a given clone of all clones merged with it
-     * @param {integer} cloneID - 
+     * Action by direct click on the hide button of the list element
+     * @param {String} div - div name of the hide button 
      * */
     hideCluster: function (div) {
         var cloneID = div.getAttribute("cloneID");
         var self = this
         this.m.clone(cloneID).split = false
+        this.hideClusterContent(cloneID, true)
+    },
+
+    /**
+     * toggle off the display for a given clone of all clones merged with it
+     * @param {integer} cloneID - 
+     * @param {bool}    update  - Set the content of the update fct. Slow down the refresh if call from the model on multiple clones 
+     * */
+    hideClusterContent: function(cloneID, update){
+        var self = this
+        var fct;
+        if (update == true || update == undefined) {
+            fct = function () { self.m.updateElem([cloneID]) }
+        } else if (update == false) {
+            fct = function(){}
+        }
         $("#cluster" + cloneID)
-            .hide(50, function () {
-                self.m.updateElem([cloneID])
-            });
+            .hide(50, fct );
     },
     
     /**
