@@ -62,6 +62,7 @@ function Model() {
     this.NORM_EXPECTED  = "expected"
     this.NORM_EXTERNAL  = "external"
     this.normalization_mode = this.NORM_FALSE
+    this.axes = new Axes(this)
 }
 
 
@@ -121,6 +122,67 @@ Model.prototype = {
         }, function() {
           $(this).removeClass('hovered');
         });
+
+        
+        // Table of conversion between axes name and distribution names
+        this.distrib_convertion = {
+            // Axes --> Fuse
+            "v":    "seg5",
+            "d":    "seg4",
+            "j":    "seg3",
+            "vDel": "seg5_delRight",
+            "jDel": "seg3_delLeft",
+            "GCContent" :    "GCContent",
+            "nLength":       "insert_53",
+            "lengthCDR3":    "lenCDR3",
+            "productivity":  "productive",
+            "locus" :        "germline",
+            // Particular, take the nb reads value of the distribution
+            "size":          "size",
+            // Should be in Array format
+            "consensusLength" : "lenSeqConsensus",
+            "averageLength" :   "lenSeqAverage", // make a round on it (into fuse.py) ?
+            "coverage":         "coverage",
+            // Don't exist into distribution at this time
+            "productivity-IMGT": false,
+            "VIdentity-IMGT":    false,
+            "tag":               false,
+            "sizeOtherSample" :  false,
+            "nbSamples" :        false,
+            "tsneX":        false,
+            "tsneY":        false,
+            "tsneX_system": false,
+            "tsneY_system": false,
+            "allele_v":   false,
+            "allele_j":   false,
+            "primers":    false, 
+            "occCloneDB": false,
+            /////////////////////
+            // Fuse --> Axes
+            "seg5":    "v",
+            "seg4":    "d",
+            "seg3":    "j",
+            "seg5_delRight":   "vDel",
+            "seg3_delLeft" :   "jDel",
+            "insert_53":       "nLength",
+            "lenCDR3":         "lengthCDR3",
+            "productive":      "productivity",
+            "germline":        "locus" ,
+            "lenSeqConsensus": "consensusLength",
+            "lenSeqAverage":   "averageLength",
+        }
+        // List of axe that must be in an array format
+        this.distrib_axe_is_timmed = {
+            "lenSeqConsensus": true,
+            "lenSeqAverage":   true,
+            "coverage":        true,
+        }
+
+        // List of axe that must be returned as number
+        this.distrib_axe_as_number = {
+            "GCContent": true
+
+        }
     },
 
     /**
@@ -873,7 +935,7 @@ changeAlleleNotation: function(alleleNotation) {
         console.log("select() (clone " + cloneID + ")");
 
         // others shouldn't be selectable
-        if (this.clones[cloneID].isVirtual()) {
+        if (!this.clones[cloneID].is_interactable()) {
             return 0;
         }
 
@@ -943,7 +1005,7 @@ changeAlleleNotation: function(alleleNotation) {
      */
     unselect: function(cloneID) {
         console.log("unselect() (clone " + cloneID + ")");
-        if (this.clones[cloneID].isVirtual()) {
+        if (!this.clones[cloneID].is_interactable()) {
             return 0;
         }
 
@@ -961,11 +1023,11 @@ changeAlleleNotation: function(alleleNotation) {
         console.log("toggle() (clone " + cloneID + ")");
 
         // others shouldn't be selectable
-        if (this.clones[cloneID].isVirtual()) {
+        if (this.clones[cloneID].is_interactable()) {
             return 0;
         }
 
-        if (this.clone(cloneID).isSelected()) {
+        if (this.clone(cloneID).isSelected(true)) {
             this.clone(cloneID).select = false;
             this.removeFromOrderedSelectedClones(cloneID);
         } else {
@@ -1104,6 +1166,7 @@ changeAlleleNotation: function(alleleNotation) {
     updateModel: function () {
 
         this.someClonesFiltered = false
+        var clone;
 
         for (var i = 0; i < this.clusters.length; i++) {
             // compute only non empty clones
@@ -1114,16 +1177,17 @@ changeAlleleNotation: function(alleleNotation) {
                         seq = this.clusters[i][j]
                         var subclone = this.clone(seq);
                         subclone.disable();
-                        if (seq != i && subclone.isSelected())
+                        if (seq != i && subclone.isSelected()){
                             // Unselect all subclones
                             this.unselect(seq);
+                        }
                     }
                     this.clone(i).enable(this.top)
                 } else {
                     var main_clone = this.clone(i);
                     for (var k = 0; k < this.clusters[i].length; k++) {
                         seq = this.clusters[i][k]
-                        var clone = this.clone(seq);
+                        clone = this.clone(seq);
                         clone.enable(this.top)
                         if (clone.isSelected() != main_clone.isSelected())
                             this.select(seq, main_clone.select);
@@ -1158,7 +1222,23 @@ changeAlleleNotation: function(alleleNotation) {
         }
 
         this.colorize_multitag_star_icon();
+
+        this.update_reads_distrib_clones()
     },
+
+    /**
+     * Update the current reads values of each distributions clones.
+     * Use to show the real size of a distribution clone, without the values of real and enable clone of the sample
+     * @return {[type]} [description]
+     */
+    update_reads_distrib_clones:function(){
+        for (var m = 0; m < this.clones.length; m++) {
+            if ( this.clone(m).has_size_distrib() ){
+                this.clone(m).update_reads_distrib_clones()
+            }
+        }
+    },
+
 
     /**
      * ask all linked views to do a complete update <br>
@@ -1277,7 +1357,7 @@ changeAlleleNotation: function(alleleNotation) {
         if (html_label !== null) {
             var count = 0;
             for (var i=0; i<this.clones.length; i++){
-                if (this.clone(i).top < top) count++;
+                if (this.clone(i).top < top && this.clone(i).has_size_constant() ) count++;
             }
             html_label.innerHTML = count + ' clones (top ' + top + ')' ;
         }
@@ -1312,9 +1392,9 @@ changeAlleleNotation: function(alleleNotation) {
         other_quantifiable_clones = [];
         for (var pos = 0; pos < this.clones.length; pos++) {
             var c = this.clone(pos)
-            if (c.isVirtual()) {
+            if (c.has_size_other()){
                 other_quantifiable_clones.push(pos);
-            } else if (c.isActive() && c.quantifiable) {
+            } else if (c.isActive() && c.quantifiable && c.has_size_constant() ) {
                 for (var s = 0; s < this.samples.number ; s++) {
                     for (var k = 0; k < this.clusters[pos].length; k++) {
                         newOthers[c.germline][s] -= this.clone(this.clusters[pos][k]).get('reads', s);
@@ -1387,32 +1467,48 @@ changeAlleleNotation: function(alleleNotation) {
             select_lead = true;
         } 
 
-        if (list.length === 0)
+        // remove not real selection
+        var self = this
+        function to_keep(cloneID){
+            var clone = self.clone(cloneID)
+            return clone.has_size_constant()
+        }
+        var filtered_list = list.filter(to_keep)
+
+        if (filtered_list.length === 0) // <= 1 ?
             return ;
         
         var new_cluster = [];
         var leader;
         var top = 200;
         
-        console.log("merge clones " + list)
+        console.log("merge clones " + filtered_list)
 
         this.saveClusters()
 
-        for (var i = 0; i < list.length; i++) {
-            if (this.clone(list[i]).top < top) {
-                leader = list[i];
-                top = this.clone(list[i]).top;
+        for (var i = 0; i < filtered_list.length; i++) {
+            if (this.clone(filtered_list[i]).top < top) {
+                leader = filtered_list[i];
+                top = this.clone(filtered_list[i]).top;
             }
-            new_cluster = new_cluster.concat(this.clusters[list[i]]);
+            new_cluster = new_cluster.concat(this.clusters[filtered_list[i]]);
 
             // All cluster lists of these clones are now empty...
-            this.clusters[list[i]] = [];
+            this.clusters[filtered_list[i]] = [];
         }
 
-        // ... except for the leader, who takes the list of all clones
+        // make assignation
+        for (var j = 0; j < filtered_list.length; j++) {
+            if (filtered_list[j] != leader){
+                this.clone(filtered_list[j]).mergedId = leader
+            }
+        }
+
+
+        // ... except for the leader, who takes the filtered_list of all clones
         this.clusters[leader] = new_cluster;
         this.unselectAll()
-        this.updateElem(list)
+        this.updateElem(filtered_list)
         if (select_lead) this.select(leader)
         
         this.analysisHasChanged = true
@@ -1442,6 +1538,7 @@ changeAlleleNotation: function(alleleNotation) {
 
         // The unmerged clone has now its own 1-clone cluster
         this.clusters[cloneID] = [cloneID];
+        this.clone(cloneID).mergedId = undefined;
 
         this.updateElem([cloneID, clusterID]);
     },
@@ -1573,6 +1670,7 @@ changeAlleleNotation: function(alleleNotation) {
         console.log("changeTime()" + newT)
         this.tOther = this.t
         this.t = newT;
+        this.update_list_compatible_clones()
         this.update();
         return this.t
     },
@@ -2191,7 +2289,7 @@ changeAlleleNotation: function(alleleNotation) {
         
         //only non-empty active clones and virtual clones
         for (var i=0; i<this.clusters.length; i++){
-            if ( (this.clusters[i].length !== 0 && this.clone(i).isActive()) || this.clone(i).isVirtual() ){
+            if ( (this.clusters[i].length !== 0 && this.clone(i).isActive()) || !this.clone(i).has_size_constant() ){ 
                 csv += this.clone(i).toCSV().join(',')
                 csv += "\n"
             }
@@ -2315,7 +2413,7 @@ changeAlleleNotation: function(alleleNotation) {
         }
         return span
     },
-
+  
     /**
      * return the system size
      * @param {string} system - system string ('trg', 'igh', ...)
@@ -2418,12 +2516,22 @@ changeAlleleNotation: function(alleleNotation) {
         this.reset_filter(true)
         for (var i=0; i<this.clones.length; i++){
             var c = this.clone(i)
-            if (c.getName().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
-            if (c.getSequence().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
-            if (c.getSegAASequence('cdr3').toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
-            if (c.getRevCompSequence().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
-            if (c.getSequenceName().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
-	}
+            if (c.getName().toUpperCase().indexOf(str.toUpperCase())               !=-1 ){
+                c.isFiltered = false; 
+            }
+            if (c.getSequence().toUpperCase().indexOf(str.toUpperCase())           !=-1 ){
+                c.isFiltered = false; 
+            }
+            if (c.getSegAASequence('cdr3').toUpperCase().indexOf(str.toUpperCase())!=-1 ){
+                c.isFiltered = false; 
+            }
+            if (c.getRevCompSequence().toUpperCase().indexOf(str.toUpperCase())    !=-1 ){
+                c.isFiltered = false; 
+            }
+            if (c.getSequenceName().toUpperCase().indexOf(str.toUpperCase())       !=-1 ){
+                c.isFiltered = false; 
+            }
+    	}
         this.update()
     },
     
@@ -2685,7 +2793,7 @@ changeAlleleNotation: function(alleleNotation) {
         }
 
         for (var i = 0; i < numberToProcess; i++) {
-            if ( !this.clones[i].isVirtual() ) {
+            if ( this.clones[i].has_sequence() ) {
                 if (this.clones[i].sequence.indexOf(sequence) != -1) {
                     this.clones[i].addSegFeatureFromSeq(feature, sequence)
                 }
@@ -2700,7 +2808,7 @@ changeAlleleNotation: function(alleleNotation) {
      */
     cleanPreviousFeature : function (feature) {
         for (var i = 0; i < this.clones.length; i++) {
-            if ( !this.clones[i].isVirtual() ) {
+            if ( this.clones[i].has_sequence() ) {
                     delete this.clones[i].seg[feature]
             }
         }
@@ -2810,7 +2918,14 @@ changeAlleleNotation: function(alleleNotation) {
                         var index = self.clones.length;
                         data.clones.forEach(function (clone) {
                             clone.quantifiable = false;
-                            clone = new Clone(clone, self, index);
+
+                            // real
+                            var c_attributes = C_CLUSTERIZABLE
+                                   | C_INTERACTABLE
+                                   | C_IN_SCATTERPLOT
+                                   | C_SIZE_CONSTANT
+
+                            clone = new Clone(clone, self, index, c_attributes);
                             // Array with self.sample.number times the same value
                             clone.reads = Array.apply(null, Array(self.samples.number))
                                 .map(function(){return SIZE_MANUALLY_ADDED_CLONE})

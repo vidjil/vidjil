@@ -280,7 +280,12 @@ Model_loader.prototype = {
         var index = 0
         for (var i = 0; i < data.clones.length; i++) {
             if (data.clones[i].top <= limit) {
-                var clone = new Clone(data.clones[i], self, index)
+                // real
+                var c_attributes = C_CLUSTERIZABLE
+                       | C_INTERACTABLE
+                       | C_IN_SCATTERPLOT
+                       | C_SIZE_CONSTANT
+                var clone = new Clone(data.clones[i], self, index, c_attributes)
                 self.mapID[data.clones[i].id] = index;
                 index++
             }
@@ -368,7 +373,7 @@ Model_loader.prototype = {
                 "reads": [],
                 "germline" : this.system_available[q],
             };
-            new Clone(other, self, index, true);
+            new Clone(other, self, index, C_SIZE_OTHER);
             index++ ;
         }
         
