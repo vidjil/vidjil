@@ -21,6 +21,17 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
+
+// Constantes
+C_CLUSTERIZABLE      = 1
+C_INTERACTABLE       = 4
+C_IN_SCATTERPLOT     = 32
+C_SIZE_DISTRIB       = 64
+C_SIZE_CONSTANT      = 128
+C_SIZE_OTHER         = 256
+
+
+
 /**
  * Clone object, store clone information and provide useful access function.
  *
@@ -31,14 +42,14 @@
  * @param {Model} model
  * @param {integer} index - clone index, it's just the clone position in the model's clone array
  * */
-function Clone(data, model, index, virtual) {
+function Clone(data, model, index, attributes) {
     this.m = model
     this.index = index
     this.split = false
     this.seg = {};
     this.segEdited = false
-    this.virtual = typeof virtual !== 'undefined' ? virtual : false
 
+    this.attributes = attributes
     var key = Object.keys(data)
 
     for (var i=0; i<key.length; i++ ){
@@ -158,7 +169,11 @@ Clone.prototype = {
 
     getShortName: function () {
 
-        name_items = this.getName().split(' ')
+        if ( this.hasSizeDistrib() ){
+            return this.getName()
+        } else {
+            name_items = this.getName().split(' ')
+        }
         short_name_items = []
 
         last_locus = ''
@@ -316,7 +331,7 @@ Clone.prototype = {
      * If it does not exist return null
      */
     getSegStartStop: function(field_name) {
-        if (this.hasSeg(field_name) &&
+        if (this.hasSequence() && this.hasSeg(field_name) &&
             typeof this.seg[field_name].start !== 'undefined' &&
             typeof this.seg[field_name].stop !== 'undefined') {
             return {'start': this.seg[field_name].start,
@@ -372,6 +387,13 @@ Clone.prototype = {
      * @return {string} name
      * */
     getName: function () {
+        if (this.hasSizeDistrib()){
+            // TODO: move this function into an update function and store result into an attribute of this clone
+            var t = this.m.t
+            var n = this.current_clones[t]
+            var name = this.getDistributionsValues().toString() + " (" + n + " clone" + (n>1 ? "s" : "") + ")"
+            return name
+        }
         if (this.getCluster().name){
             return this.getCluster().name;
         }else if (this.c_name) {
@@ -391,6 +413,8 @@ Clone.prototype = {
     getSequenceName: function () {
         if (typeof (this.c_name) != 'undefined') {
             return this.c_name;
+        } else if (this.hasSizeDistrib()){
+            return ""
         } else {
             return this.getCode();
         }
@@ -463,6 +487,7 @@ Clone.prototype = {
         return locus
     },
 
+
     /**
      * compute the clone size ( ratio of all clones clustered ) at a given time
      * @param {integer} time - tracking point (default value : current tracking point)
@@ -479,7 +504,7 @@ Clone.prototype = {
         
         if (this.m.reads.segmented[time] === 0 ) return 0;
         var result     = this.getReads(time) / this.m.reads.segmented[time];
-        if ( ignore_expected_normalisation == true && this.m.normalization_mode == this.m.NORM_EXPECTED){
+        if ( (ignore_expected_normalisation == true && this.m.normalization_mode == this.m.NORM_EXPECTED) || this.hasSizeDistrib()){
             // special getSize for scatterplot (ignore constant/expected normalization)
             return result
         }
@@ -575,6 +600,10 @@ Clone.prototype = {
      * For systemGroup the value may be undefined if there is no system group.
      * */
     getStrAllSystemSize: function (time, extra_info) {
+        if (this.hasSizeDistrib()){
+            return {global: undefined, system: undefined, systemGroup: undefined}
+        }
+
         extra_info = extra_info || false
 
         sizes = this.getAllSystemSize(time)
@@ -684,6 +713,92 @@ Clone.prototype = {
         var sizeQ = this.m.getSizeThresholdQ(time);
         return this.m.formatSize(size, true, sizeQ)
     },
+    
+
+    /**
+     * Return true if the clone share the same axes than the given distribution clone
+     * @return {Clone} dclone   A distributon clone to compare with
+     * @return {Array} dvalues  A list of values for 
+     * @return {Boolean} True if share the same axes
+     */
+    sameAsDistribClone: function(dclone, dvalues, t){
+
+        var axes = dclone.axes
+        var values = this.getDistributionsValues(axes, t, round=true)
+
+        if (dvalues.equals(values)){
+            return true
+        }
+        return false
+    },
+
+    /**
+     * Define a list of compatible real clones
+     * This list is called at the creation of the clone
+     */
+    defineCompatibleClones: function(){
+        var nb_sample = this.m.samples.number
+        this.lst_compatible_clones = new Array(nb_sample)
+        for (var sample = 0; sample < this.lst_compatible_clones.length; sample++) {
+            this.lst_compatible_clones[sample] = []
+        }
+
+        if (this.hasSizeDistrib()){
+            var axes       = this.axes
+            var dvalues    = this.getDistributionsValues(axes, 0, round=true)
+            for (var i = 0; i < this.m.clones.length; i++) {
+                var clone = this.m.clones[i]
+                if (clone.hasSizeConstant()) {
+                    for (var timepoint = 0; timepoint < nb_sample; timepoint++) {
+                        if (clone.sameAsDistribClone(this, dvalues, timepoint)){
+                            this.lst_compatible_clones[timepoint].push(i)
+                        }
+                    }
+                }
+            }
+        }
+    },
+
+
+    /**
+     * Compute the current size of a distrib clone. SUbstract active clone that share same distribution values
+     * Will be call at each change top, filter or search action
+     * @return {[type]} [description]
+     */
+    updateReadsDistribClones: function(){
+        if (this.hasSizeDistrib()){
+            var nb_sample = this.m.samples.number
+
+            this.current_reads  = JSON.parse(JSON.stringify(this.reads))
+            this.current_clones = JSON.parse(JSON.stringify(this.clone_number))
+            var axes       = this.axes
+            var dvalues    = this.getDistributionsValues(axes, 0)
+            for (var timepoint = 0; timepoint < nb_sample; timepoint++) {
+                for (var pos = 0; pos < this.lst_compatible_clones[timepoint].length; pos++) {
+                    var c_index = this.lst_compatible_clones[timepoint][pos]
+                    var clone   = this.m.clones[c_index]
+                    var cluster = this.m.clusters[c_index]
+                    if (clone.hasSizeConstant()) {
+                        if (cluster.length){
+                            if (clone.active || clone.isFiltered) { // cluster ?
+                                this.current_reads[timepoint]  -= clone.reads[timepoint]
+                                this.current_clones[timepoint] -= 1
+                            }
+                        } else if (cluster.length == 0) {
+                            // Look for cluster that include this clone
+                            var cluster_clone    = this.m.clone(clone.mergedId)
+                            if (cluster_clone.active || cluster_clone.isFiltered) { // cluster ?
+                                this.current_reads[timepoint]  -= clone.reads[timepoint]
+                                this.current_clones[timepoint] -= 1
+                            }
+                            // Attention , un clone cluster + split sera vu comme actif...
+                        }
+                    }
+                }
+            }
+        }
+    },
+
 
     /* compute the clone reads number ( sum of all reads of clones clustered )
      * @time : tracking point (default value : current tracking point)
@@ -699,8 +814,8 @@ Clone.prototype = {
         }
 
         return result
-
     },
+
 
     getRawReads: function (time) {
       return this.getReads(time, true)
@@ -848,6 +963,7 @@ Clone.prototype = {
 
     getSequenceLength : function () {
         if (typeof (this.sequence) != 'undefined' &&
+            this.hasSequence() &&
             typeof (this.sequence.length) != 'undefined'){
             return this.sequence.length
         }else{
@@ -969,7 +1085,9 @@ Clone.prototype = {
     updateColor: function () {
 
         var allele;
-        if (this.m.colorMethod == "abundance") {
+        if (!this.hasSizeConstant()){
+            this.color = "rgba(150, 150, 150, 0.65)"
+        } else if (this.m.colorMethod == "abundance") {
             var size = this.getSize()
             if (this.getCluster().length===0){ size = this.getSequenceSize() }
             if (size === 0){
@@ -1407,7 +1525,7 @@ Clone.prototype = {
         // Info
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
-        if (!this.isVirtual()) {
+        if (!this.hasSizeOther()) {
             span_info.onclick = function () {
                 self.m.displayInfoBox(self.index);
             }
@@ -1462,10 +1580,11 @@ Clone.prototype = {
     },
 
     enable: function (top) {
-        if (this.top > top || this.isVirtual())
-            return ;
+        if (this.top > top || this.hasSizeOther()){
+            return; 
+        }
 
-        if (this.m.tag[this.getTag()].display) {
+        if (this.m.tag[this.getTag()].display || this.hasSizeDistrib()) {
             this.active = true;
         }
         else {
@@ -1474,6 +1593,7 @@ Clone.prototype = {
     },
 
     disable: function () {
+        if (!this.hasSizeConstant()) return
         this.active = false;
     },
 
@@ -1495,10 +1615,6 @@ Clone.prototype = {
      */
     isActive: function () {
         return this.active
-    },
-
-    isVirtual: function () {
-        return this.virtual
     },
 
     isQuantifiable: function() {
@@ -1590,14 +1706,183 @@ Clone.prototype = {
          return
     },
 
+
+    /**
+     * This function return the value of the clone for the list of axis asked. 
+     * @param  {Array} axes Array of axis name to get
+     * @return {array}      Array of value for given axis array
+     */
+    getDistributionsValues: function(axes, timepoint, round){
+        if (axes == undefined && this.axes != undefined){
+            axes = this.axes
+        }
+        if (timepoint == undefined){
+            timepoint = 0
+        }
+        if (round == undefined){
+            round = true
+        }
+        var values = []
+        var axes_obj = this.m.axes
+
+        for (var a = 0; a < axes.length; a++) {
+            var axe  = axes[a]
+            var naxe = this.m.distrib_convertion[axe]
+            if (axe == undefined || naxe == undefined){
+                console.default.error("Getter: not axis " + axe + "; ("+naxe+")")
+            }
+            if (axes_obj.available()[naxe] != undefined && axes_obj.available()[naxe].fct != undefined) {
+                var value = axes_obj.available()[naxe].fct(this, timepoint)
+                if (round && axes_obj.available()[naxe] != undefined && axes_obj.available()[naxe].round != undefined){ 
+                    value = axes_obj.available()[naxe].round(value)
+                }
+                values.push( value )
+            } else {
+                console.default.error("Getter: not axis " + axe + "; ("+naxe+")")
+                if (axe == "lenSeq")        { values.push( this.getSequence().length ) }
+                else { values.push( "axis_unknow__"+axe )}
+            }
+        }
+        return values
+    },
+
+
+    isClusterizable: function() {
+        var comp = (C_CLUSTERIZABLE == (this.attributes & C_CLUSTERIZABLE))
+        return comp
+    },
+
+    isInteractable: function() {
+        var comp = (C_INTERACTABLE == (this.attributes & C_INTERACTABLE))
+        return comp
+    },
+ 
+    hasUnsetcolor : function() {
+        var comp = (C_UNSETCOLOR == (this.attributes & C_UNSETCOLOR))
+        return comp
+    },
+  
+    isInScatterplot: function() {
+        var comp = (C_IN_SCATTERPLOT == (this.attributes & C_IN_SCATTERPLOT))
+        return comp
+    },
+   
+    hasSizeDistrib: function(){
+        var comp = (C_SIZE_DISTRIB == (this.attributes & C_SIZE_DISTRIB))
+        return comp  
+    },
+    hasSizeConstant: function(){
+        var comp = (C_SIZE_CONSTANT == (this.attributes & C_SIZE_CONSTANT))
+        return comp  
+    },
+    hasSizeOther: function(){
+        var comp = (C_SIZE_OTHER == (this.attributes & C_SIZE_OTHER))
+        return comp  
+    },
+
+
+    hasSequence: function(){
+        if (this.sequence == 0 || this.sequence == undefined){
+            return false
+        } else if (typeof this.sequence !== 'string' ) {
+            console.default.error("sequence != 0/undefined, et pourtant pas string")
+            return false
+        } else {
+            return true
+        }
+    },
+    
+
+    /**
+     * Increase a default data for distrib clone creation with the correct values at the correct location
+     * @param  {Array}   axes    List of axes name to set
+     * @param  {Array}   content The values to include into data
+     */
+    augmentedDistribCloneData: function(axes, content){
+        for (var i = 0; i < axes.length; i++) {
+            var axe = axes[i]
+            var value = content[i]
+            this.increaseData(axe, value)
+        }
+    },
+     
+    /**
+     * Add to a distrib clone the value at the correct place
+     * @param  {String}  axe   Axe to set
+     * @param  {various} value Value to set
+     */
+    increaseData: function( axe, value){
+
+        // List of axe that must be in an array format
+        var distrib_axe_is_timmed = {
+            "lenSeqConsensus": true,
+            "lenSeqAverage":   true,
+            "coverage":        true,
+        }
+        // List of axe that must be returned as number
+        var distrib_axe_as_number = {
+            "GCContent": true
+
+        }
+
+        // Convert as number if needed
+        if (distrib_axe_as_number[axe]){ value = Number(value)}
+        // Convert as a list if needed
+        if (distrib_axe_is_timmed[axe]) {
+            var timepoint  = this.m.samples.order.indexOf(this.t)
+            var tmpValue   = Array(this.m.samples.number)
+            tmpValue.fill(value)
+            value          = tmpValue
+        }
+
+        var axes_obj = this.m.axes
+        var naxe = this.m.distrib_convertion[axe]
+        if (axes_obj.available()[naxe] != undefined) {
+            if (axes_obj.available()[naxe].set != undefined) {
+                axes_obj.available()[naxe].set(this, value)
+            } else {
+                console.default.warn( "Axe present and NOT settable: " + axe + ";" + naxe)
+            }
+        } else {
+            console.default.error( "Axe not present in obj: " + axe + ";" + naxe)
+
+            // Each content should be hardcoded. Not optimal
+            if (axe == "GCContent")            { this.GCContent            = value}
+            else if (axe == "lenSeqAverage")   { this._average_read_length = value}
+            else if (axe == "lenSeqConsensus") { this.consensusLength      = value}
+        }
+    },
+
+    sameAxesAsScatter: function(scatterplot){
+        var axes = [scatterplot.splitX, scatterplot.splitY]
+        var mode = scatterplot.mode
+        var x = this.axes
+
+        // convert name of axes
+        for (var i = 0; i < axes.length; i++) {
+            var axe  = axes[i]
+            var naxe = this.m.distrib_convertion[axe]
+            if (naxe != undefined){
+                axes[i] = naxe
+            }
+        }
+
+        if (mode == "bar"){
+            // on doit retirer dans ce cas le "size"
+            var pos_size = axes.indexOf("size")
+            if (pos_size != -1){
+                axes.splice(pos_size, 1)
+                return x.equals(axes)
+            } else {
+                // In mode bar, each axes should be associated with size
+                // console.default.warn( "same_axes_as_scatter: Only one axe to test (size not present), "+ axes)
+            }
+        } else {
+            // console.default.warn("same_axes_as_scatter: The scatter mode is not correct; '"+mode+"'")
+            return x.equals(axes)
+        }
+    },
 };
-
-
-
-
-
-
-
 
 
 
