@@ -333,6 +333,7 @@ Segment.prototype = {
             var focus_selected = document.createElement('a');
             focus_selected.appendChild(document.createTextNode("(focus)"))
             focus_selected.className = "focus_selected"
+            focus_selected.id        = "focus_selected"
             focus_selected.onclick = function () { self.m.focusSelected() }
             div_stats.appendChild(focus_selected)
 
@@ -341,6 +342,7 @@ Segment.prototype = {
             var hide_selected = document.createElement('a');
             hide_selected.appendChild(document.createTextNode("(hide)"))
             hide_selected.className = "focus_selected"
+            hide_selected.id        = "hide_selected"
             hide_selected.onclick = function () { self.m.hideSelected() }
             div_stats.appendChild(hide_selected)
 
