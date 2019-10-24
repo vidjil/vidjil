@@ -307,7 +307,9 @@ int KmerAffectAnalyser::last(const KmerAffect &affect) const{
 pair <KmerAffect, KmerAffect> KmerAffectAnalyser::max12(const set<KmerAffect> forbidden) const {
   pair<KmerAffect, int> max_counts[2] = {make_pair(KmerAffect::getUnknown(), -1),
                                          make_pair(KmerAffect::getUnknown(), -1)};
+  float proba_max[2] = {1, 1};  // Probabilities associated with the max_counts
   std::unordered_map<KmerAffect, int> counts;
+  size_t length = affectations.size();
 
   for (KmerAffect affect: affectations) {
     if (forbidden.count(affect) == 0) {
@@ -319,12 +321,17 @@ pair <KmerAffect, KmerAffect> KmerAffectAnalyser::max12(const set<KmerAffect> fo
   }
 
   for (auto it: counts) {
-    if (it.second > max_counts[1].second) {
-      if (it.second > max_counts[0].second) {
+    float proba = kms.getProbabilityAtLeastOrAbove(it.first, it.second, length);
+    if (proba < proba_max[1]) {
+      if (proba < proba_max[0]) {
+        // We found a better proba than the best yet
         max_counts[1] = max_counts[0];
         max_counts[0] = it;
+        proba_max[1] = proba_max[0];
+        proba_max[0] = proba;
       } else {
         max_counts[1] = it;
+        proba_max[1] = proba;
       }
     }
   }
