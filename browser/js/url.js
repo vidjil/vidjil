@@ -112,7 +112,7 @@ Url.prototype= {
             var clones = this.url_dict.clone.split(',');
             for (var j = 0; j < clones.length; j++) {
                 var c = this.m.clone(clones[j]);
-                if (typeof c !== "undefined" && !c.isVirtual()) {
+                if (typeof c !== "undefined" && c.isInteractable()) {
                     c.select = true;
                 }
             }

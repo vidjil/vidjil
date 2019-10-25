@@ -80,7 +80,7 @@ function processResult(data) {
     // Do not select virtual clones
     var cloneIds = [];
     for (var i = 0; i < model.clones.length; i++) {
-        if (! model.clones[i].isVirtual()) {
+        if (model.clones[i].isInteractable()) {
             cloneIds.push(i);
         }
     }

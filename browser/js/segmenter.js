@@ -638,6 +638,10 @@ Segment.prototype = {
      * */
     addToSegmenter: function (cloneID) {
         var self = this;
+        if ( !this.m.clone(cloneID).hasSequence() ){
+            // This clone should not be added to the segmenter
+            return
+        }
 
         this.aligned = false ;
         this.resetAlign()
@@ -657,14 +661,14 @@ Segment.prototype = {
         var spanF = document.createElement('span');
         spanF.id = "f" + cloneID;
         this.div_elem(spanF, cloneID);
+        li.appendChild(spanF);
 
         var spanM = document.createElement('span');
         spanM.id = "m" + cloneID;
         spanM.className = "seq-mobil";
         spanM.innerHTML = this.sequence[cloneID].load().toString()
-
-        li.appendChild(spanF);
         li.appendChild(spanM);
+
         divParent.appendChild(li);
 
     },
@@ -1056,22 +1060,31 @@ Segment.prototype = {
         var sumReads = 0;
         var sumRawReads = 0;
         var length = 0;
+        var nb_clones_not_constant = 0;
         var lastActiveClone = 0;
             
         //verifier que les points sélectionnés sont dans une germline courante
         for (var i = 0; i < list.length ; i++){
             if (this.m.clones[list[i]].isActive()) {
                 lastActiveClone = this.m.clones[list[i]]
-                length += 1;
-                sumPercentage += this.m.clone(list[i]).getSize();
-                sumReads+= this.m.clone(list[i]).getReads(); 
-                sumRawReads+= this.m.clone(list[i]).getRawReads();
+                if (lastActiveClone.hasSizeConstant()) {
+                  length += 1;
+                } else {
+                  var timepoint = this.m.t
+                  nb_clones_not_constant += lastActiveClone.current_clones[timepoint];
+                }
+                sumPercentage += lastActiveClone.getSize();
+                sumReads+= lastActiveClone.getReads();
+                sumRawReads+= lastActiveClone.getRawReads();
             }
         }
 
         var t = ""
         if (sumRawReads > 0) {
-            t += length + " clone" + (length>1 ? "s" : "") + ", "
+
+            if (length) t += length ;
+            if (nb_clones_not_constant) t += '+' + nb_clones_not_constant;
+            t += " clone" + (length+nb_clones_not_constant>1 ? "s" : "") + ", "
 
             t += this.m.toStringThousands(sumRawReads) + " read" + (sumRawReads>1 ? "s" : "")
 
@@ -1081,8 +1094,11 @@ Segment.prototype = {
             percentageStr = this.m.getStrAnySize(this.m.t, sumPercentage)
             if (percentageStr != "+")
                 t += " (" + percentageStr + ")"
-            if (length == 1)
+            if (length == 1){
                 extra_info_system = lastActiveClone.getStrAllSystemSize(this.m.t, true)
+            } else {
+                extra_info_system = ""
+            }
             t += " "
             $(".focus_selected").css("display", "")
         }
@@ -1479,6 +1495,8 @@ Sequence.prototype = Object.create(genSeq.prototype);
         var stop = -1;
                 
         var clone = this.m.clone(this.id);
+        if (!clone.hasSequence()) return 
+
         if (clone.hasSeg('cdr3')){
             if (typeof clone.seg.cdr3.start != "undefined") {
                 start = this.pos[clone.seg.cdr3.start];

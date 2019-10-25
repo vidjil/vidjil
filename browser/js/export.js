@@ -446,7 +446,7 @@ Report.prototype = {
             }
             
             //remove virtual and disabled clones
-            if (i != norm && (this.m.clone(i).isVirtual() || !this.m.clone(i).isActive())) {
+            if (i != norm && (this.m.clone(i).isInScatterplot() || !this.m.clone(i).isActive())) {
                 polyline.parentNode.removeChild(polyline);
             }
         }
@@ -524,7 +524,7 @@ Report.prototype = {
             circle.setAttribute("stroke", color);
             
             //remove virtual and disabled clones
-            if (this.m.clone(i).germline != system || this.m.clone(i).isVirtual() || !this.m.clone(i).isActive()) {
+            if (this.m.clone(i).germline != system || !this.m.clone(i).isInScatterplot() || !this.m.clone(i).isActive()) {
                 circle.parentNode.removeChild(circle);
             }
         }
