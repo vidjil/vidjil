@@ -130,44 +130,19 @@ Model.prototype = {
             "v":    "seg5",
             "d":    "seg4",
             "j":    "seg3",
-            "vDel": "seg5_delRight",
-            "jDel": "seg3_delLeft",
-            "GCContent" :    "GCContent",
-            "nLength":       "insert_53",
             "lengthCDR3":    "lenCDR3",
-            "productivity":  "productive",
             "locus" :        "germline",
             // Particular, take the nb reads value of the distribution
             "size":          "size",
             // Should be in Array format
             "consensusLength" : "lenSeqConsensus",
             "averageLength" :   "lenSeqAverage", // make a round on it (into fuse.py) ?
-            "coverage":         "coverage",
-            // Don't exist into distribution at this time
-            "productivity-IMGT": false,
-            "VIdentity-IMGT":    false,
-            "tag":               false,
-            "sizeOtherSample" :  false,
-            "nbSamples" :        false,
-            "tsneX":        false,
-            "tsneY":        false,
-            "tsneX_system": false,
-            "tsneY_system": false,
-            "allele_v":   false,
-            "allele_j":   false,
-            "primers":    false, 
-            "occCloneDB": false,
             /////////////////////
             // Fuse --> Axes
             "seg5":    "v",
             "seg4":    "d",
             "seg3":    "j",
-            "seg5_delRight":   "vDel",
-            "seg3_delLeft" :   "jDel",
-            "insert_53":       "nLength",
             "lenCDR3":         "lengthCDR3",
-            "productive":      "productivity",
-            "germline":        "locus" ,
             "lenSeqConsensus": "consensusLength",
             "lenSeqAverage":   "averageLength",
         }
@@ -180,8 +155,6 @@ Model.prototype = {
 
         // List of axe that must be returned as number
         this.distrib_axe_as_number = {
-            "GCContent": true
-
         }
     },
 
@@ -766,6 +739,8 @@ changeAlleleNotation: function(alleleNotation) {
           clone.normalized_reads[time] != null &&
           raw == undefined) {
               return clone.normalized_reads[time] ;
+      } else if (clone.hasSizeDistrib()){          
+        return clone.current_reads[time]
       } else {
         return clone.reads[time] ;
       }
@@ -935,7 +910,7 @@ changeAlleleNotation: function(alleleNotation) {
         console.log("select() (clone " + cloneID + ")");
 
         // others shouldn't be selectable
-        if (!this.clones[cloneID].is_interactable()) {
+        if (!this.clones[cloneID].isInteractable()) {
             return 0;
         }
 
@@ -1005,7 +980,7 @@ changeAlleleNotation: function(alleleNotation) {
      */
     unselect: function(cloneID) {
         console.log("unselect() (clone " + cloneID + ")");
-        if (!this.clones[cloneID].is_interactable()) {
+        if (!this.clones[cloneID].isInteractable()) {
             return 0;
         }
 
@@ -1023,11 +998,11 @@ changeAlleleNotation: function(alleleNotation) {
         console.log("toggle() (clone " + cloneID + ")");
 
         // others shouldn't be selectable
-        if (this.clones[cloneID].is_interactable()) {
+        if (this.clones[cloneID].isInteractable()) {
             return 0;
         }
 
-        if (this.clone(cloneID).isSelected(true)) {
+        if (this.clone(cloneID).isSelected()) {
             this.clone(cloneID).select = false;
             this.removeFromOrderedSelectedClones(cloneID);
         } else {
@@ -1223,7 +1198,7 @@ changeAlleleNotation: function(alleleNotation) {
 
         this.colorize_multitag_star_icon();
 
-        this.update_reads_distrib_clones()
+        this.updateReadsDistribClones()
     },
 
     /**
@@ -1231,10 +1206,12 @@ changeAlleleNotation: function(alleleNotation) {
      * Use to show the real size of a distribution clone, without the values of real and enable clone of the sample
      * @return {[type]} [description]
      */
-    update_reads_distrib_clones:function(){
+    updateReadsDistribClones:function(){
         for (var m = 0; m < this.clones.length; m++) {
-            if ( this.clone(m).has_size_distrib() ){
-                this.clone(m).update_reads_distrib_clones()
+            // recuperer le time pour être certain de la soustraction.
+            // enalbe peut être faux car compter dans un cluster, donc possiblement compter 2 fois...
+            if ( this.clone(m).hasSizeDistrib() ){
+                this.clone(m).updateReadsDistribClones()
             }
         }
     },
@@ -1357,7 +1334,8 @@ changeAlleleNotation: function(alleleNotation) {
         if (html_label !== null) {
             var count = 0;
             for (var i=0; i<this.clones.length; i++){
-                if (this.clone(i).top < top && this.clone(i).has_size_constant() ) count++;
+                if (this.clone(i).top < top && this.clone(i).hasSizeConstant() ) count++;
+                //todo: test ?
             }
             html_label.innerHTML = count + ' clones (top ' + top + ')' ;
         }
@@ -1392,9 +1370,9 @@ changeAlleleNotation: function(alleleNotation) {
         other_quantifiable_clones = [];
         for (var pos = 0; pos < this.clones.length; pos++) {
             var c = this.clone(pos)
-            if (c.has_size_other()){
+            if (c.hasSizeOther()){
                 other_quantifiable_clones.push(pos);
-            } else if (c.isActive() && c.quantifiable && c.has_size_constant() ) {
+            } else if (c.isActive() && c.quantifiable && c.hasSizeConstant() ) {
                 for (var s = 0; s < this.samples.number ; s++) {
                     for (var k = 0; k < this.clusters[pos].length; k++) {
                         newOthers[c.germline][s] -= this.clone(this.clusters[pos][k]).get('reads', s);
@@ -1471,7 +1449,7 @@ changeAlleleNotation: function(alleleNotation) {
         var self = this
         function to_keep(cloneID){
             var clone = self.clone(cloneID)
-            return clone.has_size_constant()
+            return clone.isClusterizable()
         }
         var filtered_list = list.filter(to_keep)
 
@@ -1670,7 +1648,7 @@ changeAlleleNotation: function(alleleNotation) {
         console.log("changeTime()" + newT)
         this.tOther = this.t
         this.t = newT;
-        this.update_list_compatible_clones()
+        this.updateListCompatibleClones()
         this.update();
         return this.t
     },
@@ -2289,7 +2267,8 @@ changeAlleleNotation: function(alleleNotation) {
         
         //only non-empty active clones and virtual clones
         for (var i=0; i<this.clusters.length; i++){
-            if ( (this.clusters[i].length !== 0 && this.clone(i).isActive()) || !this.clone(i).has_size_constant() ){ 
+            if ( (this.clusters[i].length !== 0 && this.clone(i).isActive()) || !this.clone(i).hasSizeConstant() ){ 
+            // todo; autoriser les distrib ?
                 csv += this.clone(i).toCSV().join(',')
                 csv += "\n"
             }
@@ -2559,10 +2538,9 @@ changeAlleleNotation: function(alleleNotation) {
      * filter, keep only currently selected clones
      * */
     focusSelected: function () {
-        // this.reset_filter(true)
         for (var i=0; i<this.clones.length; i++){
             var c = this.clone(i)
-            c.isFiltered = !c.isSelected()
+            c.isFiltered = c.isFiltered || ( !c.isSelected() && c.isActive() )
         }
         $("#filter_input").val("(focus on some clones)")
         this.update()
@@ -2572,9 +2550,11 @@ changeAlleleNotation: function(alleleNotation) {
      * hide selected clones
      * */
     hideSelected: function () {
-        var list = this.getSelected();
-        for (var i=0; i < list.length; i++) {
-            this.clone(list[i]).isFiltered = true
+        for (var i=0; i<this.clones.length; i++){
+            var c = this.clone(i)
+            if (c.isSelected()){
+                c.isFiltered = true
+            }
         }
         this.unselectAll();
         $("#filter_input").val("(focus on some clones)")
@@ -2793,7 +2773,8 @@ changeAlleleNotation: function(alleleNotation) {
         }
 
         for (var i = 0; i < numberToProcess; i++) {
-            if ( this.clones[i].has_sequence() ) {
+            if ( this.clones[i].hasSequence() ) {
+                // TODO : sequence 0 ou undefined ? bypass la fct ?
                 if (this.clones[i].sequence.indexOf(sequence) != -1) {
                     this.clones[i].addSegFeatureFromSeq(feature, sequence)
                 }
@@ -2808,7 +2789,7 @@ changeAlleleNotation: function(alleleNotation) {
      */
     cleanPreviousFeature : function (feature) {
         for (var i = 0; i < this.clones.length; i++) {
-            if ( this.clones[i].has_sequence() ) {
+            if ( this.clones[i].hasSequence() ) {
                     delete this.clones[i].seg[feature]
             }
         }
@@ -2956,6 +2937,255 @@ changeAlleleNotation: function(alleleNotation) {
                 view.shouldRefresh();
             }
         });
+    },
+
+
+
+    ////////////////////////////
+    /// Distributions 
+    ////////////////////////////
+    /**
+     * Load all distributions and create each distributons clones associated, for each timepoint
+     */
+    loadAllDistribClones: function(){
+        var raw_distribs_axes = []
+        var timename  = this.samples.original_names[0]
+        var distribs = this.distributions.repertoires[timename]
+        // Create the list of all available distributions (on the first timepoint, but should be similar for each)
+        for (var i = 0; i < distribs.length; i++) {
+            var distrib = distribs[i]
+            raw_distribs_axes.push( distrib.axes )
+        }
+        console.log("Their are " + raw_distribs_axes.length + " distribs to load")
+
+        var same_distribs;
+        var current_distrib;
+        for (var pos_axes = 0; pos_axes < raw_distribs_axes.length; pos_axes++) {
+            var axes = raw_distribs_axes[pos_axes]
+            same_distribs = []
+            // Get the list of all distributions of axees given
+            for (var pos_time = 0; pos_time < this.samples.number; pos_time++) {
+                var time = this.samples.order.indexOf(pos_time)
+                current_distrib = this.getDistrib(axes, time)
+                if (current_distrib == undefined) {
+                    console.default.error("Error, no distribution ", axes, " for timePoint ", time)
+                    // Should not happen
+                    // Create an empty distribution for this timepoint
+                    same_distribs.push({"axes":axes, "values":{}})
+                } else {
+                    same_distribs.push(current_distrib)
+                }
+            }
+
+            //Get all values for clones to creates (axs, number of reads, clones, ...)
+            concat = this.concatDistrib(same_distribs)
+            // Create all the corresponding clones
+            var indexs = this.createCloneFromdistribConcat(axes, concat)
+        }
+
+    },
+
+    /**
+     * Return the clone corresponding to an axes list and to axes values
+     *  !!!! pas utilisé pour le moment !!!
+     * @param  {Array} axes   List of axes to search
+     * @param  {Array} values List of values to get
+     * @return {Clone}        [description]
+     */
+    getCloneWithDistribValues: function(axes, values){
+        for (var c = 0; c < this.clones.length; c++) {
+            var clone = this.clones[c]
+            if (clone.sameAsDistribClone()){
+                return clone
+            }
+        }
+        return
+    },
+
+    /**
+     * Create clones from a list of information concatenated directly from distributions
+     * EAch clones created corresponding to each distribution of an axes set.
+     * @param  {Array} axes   List of axes 
+     * @param  {Array} concat Clones informations for the creation
+     * @return {Array}        Index of all created clones
+     */
+    createCloneFromdistribConcat: function(axes, concat){
+        var ids = []
+        for (var i = 0; i < concat.length; i++) {
+            var content = concat[i]
+            var creads  = content.splice(content.length-1, 1)[0]
+            var reads   = Array(creads.length)
+            var clone_number   = Array(creads.length)
+
+            for (var t = 0; t < creads.length; t++) {
+                reads[t] = creads[t][1]
+                clone_number[t] = creads[t][0]
+            }
+
+            // Compute new index
+            var index = this.clones.length 
+
+            // Minimal clone data content
+            var raw_data     = {"reads": reads, "sequence":0, "id": "distrib_"+index, "top":0, "germline": "distrib", "seg":{}}
+            dclone = new Clone(data, this, index, C_INTERACTABLE | C_IN_SCATTERPLOT | C_SIZE_DISTRIB)
+
+            // Increase data with specific content
+            dclone.augmentedDistribCloneData(axes, content )
+            dclone.axes          = axes
+            dclone.reads         = reads
+            dclone.clone_number  = clone_number
+            dclone.top           = 0
+            dclone.active        = true
+            dclone.current_reads = JSON.parse(JSON.stringify(reads))
+            dclone.defineCompatibleClones()
+            ids.push(index)
+        }
+
+        return ids
+    },
+
+
+    /**
+     * 
+     */
+    updateListCompatibleClones: function(){
+        for (var i = 0; i < this.clones.length; i++) {
+            var dclone = this.clones[i]
+            if (dclone.hasSizeDistrib()) {
+                dclone.current_reads = JSON.parse(JSON.stringify(reads))
+            }
+        }
+        return
+    },
+
+    /**
+     * Create an array with all data for distrib clones creation by concatenation of each distributions that share same axes values (given in paramer)
+     * @param  {Array} distribs The list of each distribution of an axes set given (should be one by timepoint)
+     * @return {Array}          List of each clone content, with axes values and number of reads/clones associatied for each timepoint
+     */
+    concatDistrib: function(distribs){
+        if (distribs.length != this.samples.number){
+            console.error("concatDistrib: The number of distributions given is not the same that the length of sample present in the model")
+            // what should i do ?
+            return
+        }
+        combo = [] // store each created associations
+        equal = 0
+
+        // Loop on the distributions
+        for (var i = 0; i < distribs.length; i++) {
+            var distrib = distribs[i]
+            var values  = distrib.values
+
+            // Get each values as a couple ([axe1_value, axe2_value, axeN_value, ..., reads, clone])
+            var couples = this.getCoupleForDistribClones(values, [], [])
+            
+
+            for (var j = 0; j < couples.length; j++) {
+                var couple    = couples[j]
+                var clone_val = couple.splice(couple.length-1, 1)[0]
+                var found     = false 
+                
+                // Look if the association already exist
+                for (var k = 0; k < combo.length; k++) {
+                    var cb = combo[k]
+
+
+                    if (couple.equals(cb.slice(0, cb.length-1))){
+                        // If equal, add reads/clones values
+                        found = true
+                        cb[cb.length-1][i] = clone_val
+                    }
+                }
+                // If not, init the association and add it to the list
+                if (!found){
+                    // Create a reads/clones array of the size of samples length
+                    reads = new Array(distribs.length)
+                    for (var p = 0; p < distribs.length; p++) {
+                        reads[p] = [0,0]
+                    }
+                    reads[i][0] = clone_val[0]
+                    reads[i][1] = clone_val[1]
+                    couple.push(reads)
+                    combo.push(couple)
+                }
+            }
+
+        }
+        return combo
+    },
+
+
+
+    /**
+     * Recursive function to return a list of values for the creation of each distrib clones
+     * The return is an Array of Array. Each element is the array of values for each axes plus the distribution values (aka [clones, reads])
+     * Compatible with distribution of various axe length
+     * @param  {Array/Hash} values  Current values of the given depth
+     * @param  {Array} clones  Array (of Array); the list of data to create each distribution clones. Augmented by recursion
+     * @param  {Array} current The current values of data for clones creation
+     * @return {Array}         Return clones values, depending of the depth.
+     */
+    getCoupleForDistribClones: function(values, clones, current){
+        if (Array.isArray(values)){
+            current.push(values)
+            clones.push(current)
+            return clones
+        } else {
+            var keys = Object.keys(values)
+            for (var pos = 0; pos < keys.length; pos++) {
+                var key = keys[pos]
+                var current_array = JSON.parse(JSON.stringify(current)); // copy
+                current_array.push(key)
+                clones = this.getCoupleForDistribClones( values[key], clones, current_array)
+            }
+            return clones
+        }
+
+    },
+
+
+
+    /**
+     * Return the distribution for the given list of axes and a timepoint
+     * @param  {Array} axes    Array of axes names, as available in distributiuon (so must be converted before)
+     * @param  {Number} time   timepoint position to get
+     * @return {distribution}  The distribution  with thze correct axes list and the correct timepoint
+     */
+    getDistrib: function(axes, time){
+        // get distributions of a timepoint
+        var timename  = this.samples.original_names[time]
+        var distribs  = this.distributions.repertoires[timename]
+        // Loop to find the one of the corresponding axes values
+        for (var i = 0; i < distribs.length; i++) {
+            var distrib = distribs[i]
+            if (distrib.axes.equals(axes) ){
+                return distrib
+            }
+        }
+        return undefined
+    },
+
+
+    /**
+     * Return the list of clones in function of the values of real, virtual and distrib
+     * @param  {boolean} real     set if real clone should be or not retained
+     * @param  {boolean} virtual  set if virtual clone should be or not retained
+     * @param  {boolean} distrib  set if distrib clone should be or not retained
+     * @return {Array}            Array of each clones correspondingf to the selection criteria.
+     */
+    getListClones: function(real, virtual, distrib){
+        real    = real    == undefined ? real    : true;
+        virtual = virtual == undefined ? virtual : true;
+        distrib = distrib == undefined ? distrib : false;
+
+        var lst = []
+        for (var i = 0; i < this.clones.length; i++) {
+            var clone = this.clones[i]
+            // a revoir.
+        }
+        return lst
+
     },
 
 

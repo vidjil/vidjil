@@ -380,6 +380,11 @@ Model_loader.prototype = {
         //remove incomplete similarity matrix (TODO: fix fuse.py)
         this.similarity = undefined;
         this.check_export_monitor()
+
+        if (data.distributions != undefined){
+            this.distributions = data.distributions
+            this.loadAllDistribClones()
+        }
         return this
 
     }
