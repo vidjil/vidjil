@@ -13,7 +13,7 @@ CGTCTTCTGTACTATGACGTCTCCAACTCAAAGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATAC
 GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACATGCACTGGGTCCGCCAAGCTACAGGAAAAGGTCTGGAGTGGGTCTCAGCTATTGGTACTGCTGGTGACACATACTATCCAGGCTCCGTGAAGGGCCGATTCACCATCTCCAGAGAAAATGCCAAGAACTCCTTGTATCTTCAAATGAACAGCCTGAGAGCCGGGGACACGGCTGTGTATTACTGTGCAAGAGTGAGGCGGAGAGATCGGGGGATTGTAGTGGTGGTAGCTGCTACTCAACGGTAAGTTGGTTCGACCCCTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGT"
 
     assert (not $b.element(:class => 'segmenter').present?), "Segmenter should not be present yet"
-    assert (not $b.element(:class => 'scatterplot').present?), "Segmenter should not be present yet"
+    assert (not $b.element(:class => 'scatterplot').present?), "Scatterplot should not be present yet"
 
     $b.button(:id => 'form_submit').click
 
@@ -21,7 +21,7 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
     $b.clone_in_scatterplot('0').wait_until(&:present?)
     
     assert ($b.element(:class => 'segmenter').present?), "Segmenter should be present"
-    assert ($b.element(:class => 'scatterplot').present?), "Segmenter should be present"
+    assert ($b.element(:class => 'scatterplot').present?), "Scatterplot should be present"
   end
 
   def test_01_segmenter

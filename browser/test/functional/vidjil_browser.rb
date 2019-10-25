@@ -98,6 +98,14 @@ class VidjilBrowser < Watir::Browser
     return element(extra.merge(:id => 'seq'+id))
   end
 
+  def clear_filter
+    return span(:id => "clear_filter")
+  end
+
+  def filter_area
+    return text_field(:id => "filter_input")
+  end
+  
   # Change the coloration
   def color_by(dimension)
     menu_color.select_list.select dimension
