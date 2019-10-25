@@ -272,6 +272,7 @@ List.prototype = {
         }
         
         var filter_reset = document.createElement('span')
+        filter_reset.id  = "clear_filter"
         filter_reset.appendChild(icon('icon-cancel', 'Clear the search'))
         filter_reset.className = "button"
         filter_reset.onclick = function () {
@@ -408,7 +409,7 @@ List.prototype = {
 
         var span_name = document.createElement('span');
         span_name.className = "nameBox";
-        if (!clone.isVirtual())
+        if (clone.hasSizeConstant())
             span_name.className += " cloneName";
         span_name.ondblclick = function () {
             self.editName(cloneID, this);
@@ -459,51 +460,61 @@ List.prototype = {
             var self = this;
             var div_elem = this.index[cloneID];
             
-            if (!((clone.isActive() && this.m.clusters[cloneID].length !== 0) ||
-                  (clone.isVirtual() && this.m.system_selected.indexOf(clone.germline) !== -1)))
+            // pas testé; vraiment necessaire ?
+            if  (!( (clone.isActive() && this.m.clusters[cloneID].length !== 0) || 
+                    (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) !== -1)  
+                  )
+                )
             {
                 div_elem.style.display = "none";
-            }else{
-                div_elem.style.display = "block";
-                
-                //complete namebox/cloneName
-                var span_name = div_elem.getElementsByClassName("nameBox")[0];
-                if (!clone.isVirtual())
-                    span_name = div_elem.getElementsByClassName("cloneName")[0];
-                if (typeof span_name == "undefined") return false;
-                if (typeof span_name == "undefined") console.log(cloneID);
-                span_name.innerHTML = clone.getShortName();
-                span_name.title = clone.getNameAndCode();
-                span_name.style.color = clone.getColor();
-                
-                //update clone axis
-                var span_axis = div_elem.getElementsByClassName("axisBox")[0];
-                span_axis.style.color = clone.getColor();
-                var axis = this.selectedAxis;
-                span_axis.removeAllChildren();
-                span_axis.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
-                // span_axis.setAttribute('title', clone.getPrintableSize());
-
-                //update cluster icon
-                var span_cluster = div_elem.getElementsByClassName("clusterBox")[0];
-                span_cluster.removeAllChildren();
-                if (this.m.clusters[cloneID].length > 1) {
-                    if (clone.split) {
-                        span_cluster.onclick = cluster_hide;
-                        span_cluster.appendChild(icon('icon-minus', 'Hide the subclones'));
-                        this.showClusterContent(cloneID, false)
-                    } else {
-                        span_cluster.onclick = cluster_show;
-                        span_cluster.appendChild(icon('icon-plus', 'Show the subclones'));
-                        this.hideClusterContent(cloneID, false)
-                    }
-                    self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
+            } else {
+                if (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1])){
+                    // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
+                    div_elem.style.display = "none";
+                } else if (clone.isFiltered){
+                    div_elem.style.display = "none";
                 } else {
-                    span_cluster.appendChild(document.createTextNode(' '));
-                    //update cluster display
-                    var display = clone.split
-                    if (this.m.clusters[cloneID].length < 2) display = false
-                    document.getElementById("cluster"+cloneID).style.display = "none";
+                    div_elem.style.display = "block";
+                    
+                    //complete namebox/cloneName
+                    var span_name = div_elem.getElementsByClassName("nameBox")[0];
+                    if (clone.hasSizeConstant())
+                        span_name = div_elem.getElementsByClassName("cloneName")[0];
+                    if (typeof span_name == "undefined") return false;
+                    if (typeof span_name == "undefined") console.log(cloneID);
+                    span_name.innerHTML = clone.getShortName();
+                    span_name.title = clone.getNameAndCode();
+                    span_name.style.color = clone.getColor();
+                    
+                    //update clone axis
+                    var span_axis = div_elem.getElementsByClassName("axisBox")[0];
+                    span_axis.style.color = clone.getColor();
+                    var axis = this.selectedAxis;
+                    span_axis.removeAllChildren();
+                    span_axis.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
+                    // span_axis.setAttribute('title', clone.getPrintableSize());
+
+                    //update cluster icon
+                    var span_cluster = div_elem.getElementsByClassName("clusterBox")[0];
+                    span_cluster.removeAllChildren();
+                    if (this.m.clusters[cloneID].length > 1) {
+                        if (clone.split) {
+                            span_cluster.onclick = cluster_hide;
+                            span_cluster.appendChild(icon('icon-minus', 'Hide the subclones'));
+                            this.showClusterContent(cloneID, false)
+                        } else {
+                            span_cluster.onclick = cluster_show;
+                            span_cluster.appendChild(icon('icon-plus', 'Show the subclones'));
+                            this.hideClusterContent(cloneID, false)
+                        }
+                        self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
+                    } else {
+                        span_cluster.appendChild(document.createTextNode(' '));
+                        //update cluster display
+                        var display = clone.split
+                        if (this.m.clusters[cloneID].length < 2) display = false
+                        document.getElementById("cluster"+cloneID).style.display = "none";
+                    }
                 }
             }
         }
@@ -548,7 +559,8 @@ List.prototype = {
             var span_name = document.createElement('span');
             span_name.className = "nameBox";
 
-            if (!self.m.clone(cloneID).isVirtual())
+            if (!self.m.clone(cloneID).hasSizeOther())
+                // todo; delete #3989
                 span_name.className += " cloneName";
 
             span_name.onclick = function (e) {
@@ -572,6 +584,7 @@ List.prototype = {
                 img.appendChild(icon('icon-cancel', 'Remove this subclone from the clone'));
             }
             img.className = "delBox";
+            img.id = "delBox_list_"+id;
 
             var span_stat = document.createElement('span');
             span_stat.className = "axisBox";
@@ -681,41 +694,49 @@ List.prototype = {
 
             var clone = this.m.clone(list[i])
 
+
             if (!((clone.isActive() && this.m.clusters[list[i]].length !== 0) ||
-                  (clone.isVirtual() && this.m.system_selected.indexOf(clone.germline) != -1))){
+                  (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) != -1))){
                 div.style.display = "none";
             }else{
-                div.style.display = "block";
+                if (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1])){
+                    // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
+                    div.style.display = "none";
+                } else if (clone.isFiltered){
+                    div.style.display = "none";
+                } else {
                 
-                //color
-                var color = clone.getColor();
+                    div.style.display = "block";
+                    //color
+                    var color = clone.getColor();
 
-                $("#" + list[i] + " .nameBox:first")
-                    .css("color", color)
-                $("#" + list[i] + " .axisBox:first")
-                    .css("color", color)
-                $("#_" + list[i] + " .nameBox:first")
-                    .css("color", color)
-                $("#_" + list[i] + " .axisBox:first")
-                    .css("color", color)
+                    $("#" + list[i] + " .nameBox:first")
+                        .css("color", color)
+                    $("#" + list[i] + " .axisBox:first")
+                        .css("color", color)
+                    $("#_" + list[i] + " .nameBox:first")
+                        .css("color", color)
+                    $("#_" + list[i] + " .axisBox:first")
+                        .css("color", color)
 
-                //clone selected ?
-                div.className = "list";
-                
-                if (clone.isSelected()) {
-                    $(div).addClass("list_select");
-                } 
-                if (this.m.focus ==list[i]) {
-                    $(div).addClass("list_focus");
-                } 
-
-                //cluster sequence selected?
-                var div2 = document.getElementById("_" + list[i]);
-                if (div2) {
+                    //clone selected ?
+                    div.className = "list";
+                    
                     if (clone.isSelected()) {
-                        div2.className = "listElem selected";
-                    } else {
-                        div2.className = "listElem";
+                        $(div).addClass("list_select");
+                    } 
+                    if (this.m.focus ==list[i]) {
+                        $(div).addClass("list_focus");
+                    } 
+
+                    //cluster sequence selected?
+                    var div2 = document.getElementById("_" + list[i]);
+                    if (div2) {
+                        if (clone.isSelected()) {
+                            div2.className = "listElem selected";
+                        } else {
+                            div2.className = "listElem";
+                        }
                     }
                 }
             }
@@ -762,11 +783,11 @@ List.prototype = {
             if (systemA != systemB) return systemA.localeCompare(systemB);
             
             // sort by (un)defined
-            if (cloneA.isVirtual()) {
-                if (cloneB.isVirtual())
+            if (cloneA.hasSizeOther()) {
+                if (cloneB.hasSizeOther())
                     return cloneA.getName().localeCompare(cloneB.getName())
                 return 1
-            } else if (cloneB.isVirtual())
+            } else if (cloneB.hasSizeOther())
                 return -1
 
             //sort by gene
