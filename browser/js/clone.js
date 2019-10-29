@@ -164,7 +164,7 @@ Clone.prototype = {
         var size = this._average_read_length[time];
         if (size === 0)
             return 'undefined';
-        return size;
+        return parseFloat(size);
     },
 
     getShortName: function () {
