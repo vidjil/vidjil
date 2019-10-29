@@ -84,7 +84,7 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
                 if (this.ignore(this.values[i]))
                     continue;
 
-                if (! this.values[i].isVirtual()) {
+                if (!this.values[i].hasSizeOther()) {
                     var tmp = this.applyConverter(this.values[i]);
 
                     if ( typeof tmp != "undefined" && !isNaN(tmp)){

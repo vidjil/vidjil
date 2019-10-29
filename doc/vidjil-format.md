@@ -149,6 +149,7 @@ do a correct gathering.
 }
 ```
 
+
 ## `.analysis` file
 
 This file reflects the annotations a user could have done within the Vidjil web application or some other tool.
@@ -346,6 +347,44 @@ In the `.analysis` file, this section is intended to describe some specific clon
 
 }
 ```
+
+
+## `distributions`: providing statistics on full clonal populations
+
+In some situations, one would like to represent whole distributions of clones
+according to "axes" such as V/J distribution or length.
+It is possible to specify in the `.vidjil` file such `"distributions"`
+without detailing the full list of clones, hence keeping a relatively small file
+and enabling fast post-processing or visualizations.
+
+In the example below, 5 clones (totaling 6 reads) have a length of 223.
+Distributions can be on several axes, like both V/J (here seg3/seg5).
+
+``` javascript
+{
+    "distributions":
+    {
+        "keys": ["clones", "reads"],
+        "repertoires": {
+            "sample_42": [
+                {
+                    "axes": ["lenSeqAverage"],
+                    "values": { "223": [5, 6], "232": [1, 7], "260": [5, 20] }
+                },
+                {
+                    "axes": ["seg3", "seg5"],
+                    "values": {
+                         "IGHJ3": {"IGHV4-39": [5, 20]},
+                         "IGHJ4": {"IGHV3-23": [1, 7], "IGHV3-64": [1, 1]},
+                         "IGHJ6": {"IGHV1-24": [2, 3], "IGHV1-8": [2, 2]}
+                       }
+                }]
+              }
+       }
+     }
+   }
+```
+
 
 ## `germlines` list \[optional\]\[work in progress, to be documented\]
 

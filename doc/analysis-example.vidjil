@@ -616,7 +616,6 @@
     {
       "germline": "TRB", 
       "name": "TRBV26*01 -4/0/-4 TRBD1*01 -5/5/-0 TRBJ1-4*02", 
-      "sequence": "CCTTGYGCCYYAATYAGYCYTYGGYGYYCYAGYCTGYCCYTGTGCYGYGYAYTTYYACYAAYTYTTTTYGGYATGYACYAGCTGYTGYCTGYGYYTYYAATGTYCYYCCYAG", 
       "top": 5, 
       "seg": {
         "5end": 66, 
@@ -1220,7 +1219,8 @@
       "reads": [
         450
       ], 
-      "id": "GYCTYTGTGCYGYGCYYAYYYAGYTYTTT"
+      "id": "GYCTYTGTGCYGYGCYYAYYYAGYTYTTT",
+      "sequence": "une sequence de test devraitapparaitre dans le segmenter"
     }, 
     {
       "germline": "TRB", 

@@ -620,11 +620,21 @@ ScatterPlot.prototype = {
         return this;
     },
 
-    includeBar: function(clone) {
-        return ((!this.use_system_grid ||
-                (this.use_system_grid && this.m.germlineV.system == clone.get('germline') )) &&
-                clone.isActive() &&
-                !clone.isVirtual());
+    includeBar: function(clone, log) {
+        var system_grid = (!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.get('germline') )) 
+        var showVirtual;
+
+        // Set if the clone should be show on is virtual/distrib status
+        if (clone.isInScatterplot() && clone.axes != undefined){
+            var axes = [this.splitX, this.splitY]
+            showVirtual = clone.sameAxesAsScatter(this)
+        } else if (!clone.isInScatterplot()) {
+            showVirtual = false
+        } else {
+            showVirtual = true        
+        }
+        var include = (system_grid && (clone.isActive()|| clone.hasSizeDistrib()) && showVirtual)
+        return include
     },
     
     /**
@@ -638,7 +648,8 @@ ScatterPlot.prototype = {
             for (var j in this.axisX.value_mapping[i]) {
                 var clone = this.axisX.value_mapping[i][j]
                 if (this.includeBar(clone)){
-                    tmp += clone.getSize();
+                    time = this.m.getTime();
+                    tmp += clone.getSize(time);
                 }
             }
             if (tmp > bar_max) bar_max = tmp;
@@ -673,7 +684,8 @@ ScatterPlot.prototype = {
                 var clone = this.axisX.value_mapping[i][j]
                 var cloneID = clone.index;
                 if (this.includeBar(clone)){
-                    height = clone.getSize()/bar_max;
+                    time = this.m.getTime();
+                    height = clone.getSize(time)/bar_max;
 
                     // Minimal height (does not affect y_pos)
                     var height_for_display = this.heightClone(height)
@@ -1180,8 +1192,8 @@ ScatterPlot.prototype = {
             if (otherSize > size) size = otherSize
         }
 
-        if ((size == Clone.prototype.NOT_QUANTIFIABLE_SIZE) ||
-            (size > 0 && size < this.CLONE_MIN_SIZE))
+        if ( ((size == Clone.prototype.NOT_QUANTIFIABLE_SIZE) ||
+              (size > 0 && size < this.CLONE_MIN_SIZE)) && !this.m.clone(cloneID).hasSizeDistrib() )
             size = this.CLONE_MIN_SIZE
 
         this.nodes[cloneID].s = size
@@ -1195,13 +1207,23 @@ ScatterPlot.prototype = {
     updateClone: function(cloneID) {
 
         // Clone size
-
+        var clone = this.m.clone(cloneID)
+        
         if (this.m.clone(cloneID)
             .isActive()) {
 
             var seqID, size;
-            if (this.m.clone(cloneID)
-                .split) {
+            if (clone.hasSizeDistrib()){
+                var axes = [this.splitX, this.splitY]
+                same_axes_as_scatter = clone.sameAxesAsScatter(this)
+                if (same_axes_as_scatter){
+                    time = this.m.getTime()
+                    size = clone.getReads() / this.m.reads.segmented[time]
+                } else {
+                    size = 0
+                }
+                this.updateCloneSize(cloneID, size)
+            } else if (clone.split) {
                 // Display merged sub-clones
                 for (var i = 0; i < this.m.clusters[cloneID].length; i++) {
                     seqID = this.m.clusters[cloneID][i]
@@ -1231,8 +1253,6 @@ ScatterPlot.prototype = {
         }
 
         // Clone position
-
-        var clone = this.m.clone(cloneID);
         var sys = clone.get('germline');
         if (this.use_system_grid && this.m.system == "multi" && typeof sys != 'undefined' && sys != this.m.germlineV.system) {
             this.nodes[cloneID].x2 = this.systemGrid[sys].x * this.resizeW;
@@ -1314,6 +1334,7 @@ ScatterPlot.prototype = {
     changePreset: function(){
         var elem = this.select_preset;
         this.changeSplitMethod(this.preset[elem.value].x, this.preset[elem.value].y, this.preset[elem.value].mode);
+        this.m.update();
     },
 
     updatePreset: function(){

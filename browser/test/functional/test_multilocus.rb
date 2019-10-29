@@ -282,10 +282,22 @@ class TestMultilocus < BrowserTest
   end
 
   def test_16_select_unsegmented
-    clone_id = '10'
-    $b.clone_in_scatterplot(clone_id).click
+    clone_list = ["1", "32", "24", "68"]
+    # clone with seg & sequence (1)
+    $b.clone_in_scatterplot(clone_list[0]).click
+    assert ($b.clone_in_segmenter(clone_list[0]).present?), "Clone %s (seg+/seq+) is in segmenter" % clone_list[0]
+    
+    # clone with seg & not sequence (32)
+    $b.clone_in_scatterplot(clone_list[1]).click
+    assert (not $b.clone_in_segmenter(clone_list[1]).present?), "Clone %s (seg+/seq-) is NOT in segmenter" % clone_list[1]
 
-    assert ($b.clone_in_segmenter(clone_id).exists?), "Clone %s is not in segmenter" % clone_id
+    # clone without seg & sequence (24)
+    $b.clone_in_scatterplot(clone_list[2]).click
+    assert (not $b.clone_in_segmenter(clone_list[2]).present?), "Clone %s (seg-/seq-) is NOT in segmenter" % clone_list[2]
+
+    # clone without seg & sequence (68)
+    $b.clone_in_scatterplot(clone_list[3]).click
+    assert ($b.clone_in_segmenter(clone_list[3]).present?), "Clone %s (seg-/seq+) is in segmenter" % clone_list[3]
   end
 
   def test_17_select_clustered
