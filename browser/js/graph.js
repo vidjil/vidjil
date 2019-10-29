@@ -426,7 +426,7 @@ Graph.prototype = {
      *
      * */
     updateElemStyle: function (list) {
-        if (this.m.focus != -1) {
+        if (this.m.focus != -1 && this.m.clone(this.m.focus).hasSizeConstant()) {
             var line = document.getElementById("polyline" + this.m.focus);
             document.getElementById("clones_container")
                 .appendChild(line);
