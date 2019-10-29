@@ -781,11 +781,11 @@ Graph.prototype = {
         
         for (var i = 0; i < this.m.clones.length; i++) {
             if (this.m.clone(i).hasSizeConstant()) {
-            this.data_clone[i] = {
-                id: i,
-                name: "line" + i,
-                path: this.constructPath(i, false)
-            };
+                this.data_clone[i] = {
+                    id: i,
+                    name: "line" + i,
+                    path: this.constructPath(i, false)
+                };
             }
         }
         
@@ -975,8 +975,8 @@ Graph.prototype = {
         for (var i=0; i<this.m.samples.order.length; i++) {
             for (var j=0; j<this.m.clones.length; j++){
                 if (this.m.clone(j).hasSizeConstant()) {
-                var size = this.m.precision*this.m.clone(j).getSize()
-                if (size>max) max=size;
+                    var size = this.m.precision*this.m.clone(j).getSize()
+                    if (size>max) max=size;
                 }
             }
         }
@@ -1435,21 +1435,21 @@ Stack.prototype = {
         
         for (i=0; i<this.m.clones.length; i++){
             if (this.m.clone(i).hasSizeConstant()) {
-            this.min[i] = []
-            this.max[i] = []
-            //active clones
-            if (this.m.clone(i).isActive()) {
-                for (j=0; j<this.m.samples.number; j++){
-                    this.min[i][j] = this.sum[j]
-                    this.sum[j] -= this.m.clone(i).getSize(j)
-                    this.max[i][j] = this.sum[j]
+                this.min[i] = []
+                this.max[i] = []
+                //active clones
+                if (this.m.clone(i).isActive()) {
+                    for (j=0; j<this.m.samples.number; j++){
+                        this.min[i][j] = this.sum[j]
+                        this.sum[j] -= this.m.clone(i).getSize(j)
+                        this.max[i][j] = this.sum[j]
+                    }
+                }else{
+                    for (j=0; j<this.m.samples.number; j++){
+                        this.min[i][j] = this.sum[j]
+                        this.max[i][j] = this.sum[j]
+                    }
                 }
-            }else{
-                for (j=0; j<this.m.samples.number; j++){
-                    this.min[i][j] = this.sum[j]
-                    this.max[i][j] = this.sum[j]
-                }
-            }
             }
         }
 
