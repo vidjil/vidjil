@@ -1455,9 +1455,9 @@ Stack.prototype = {
 
         //other
         for (j=0; j<this.m.samples.number; j++){
-            this.min[this.m.clones.length-1][j] = this.sum[j]
-            this.sum[this.m.clones.length-1] += this.m.clone(this.m.clones.length-1).getSize(j)
-            this.max[this.m.clones.length-1][j] = this.sum[j]
+            this.min[this.m.getNumberRealClones()-1][j] = this.sum[j]
+            this.sum[this.m.getNumberRealClones()-1] += this.m.clone(this.m.clones.length-1).getSize(j)
+            this.max[this.m.getNumberRealClones()-1][j] = this.sum[j]
         }
 
     }

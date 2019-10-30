@@ -3188,5 +3188,20 @@ changeAlleleNotation: function(alleleNotation) {
 
     },
 
+    /**
+     * Get the number of cloens that have constant size
+     * @return {Number} 
+     */
+    getNumberRealClones: function(){
+        var nb = 0
+        for (var i = 0; i < this.clones.length; i++) {
+            if (this.clone(i).hasSizeConstant()){
+                nb += 1
+            }
+        }
+        return nb
+
+    },
+
 
 }; //end prototype Model
