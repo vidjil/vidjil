@@ -1350,9 +1350,11 @@ Clone.prototype = {
 
         
         //sequence info (or cluster main sequence info)
-        html += row_1("sequence name", this.getSequenceName())
-        html += row_1("code", this.getCode())
-        html += row_1("length", this.getSequenceLength())
+        if (this.hasSequence()){
+            html += row_1("sequence name", this.getSequenceName())
+            html += row_1("code", this.getCode())
+            html += row_1("length", this.getSequenceLength())
+        }
 
         //coverage info
         if (typeof this.coverage != 'undefined') {
@@ -1407,16 +1409,28 @@ Clone.prototype = {
             }
         }
         
-        html += row_1("sequence", this.sequence)
-        html += row_1("id", this.id)
-        html += row_1("locus", this.m.systemBox(this.germline).outerHTML + this.germline +
+        if (this.hasSequence()){
+            html += row_1("sequence", this.sequence)
+        }
+        if (this.id != undefined){
+            html += row_1("id", this.id)
+        }
+        if (this.id != undefined){
+            html += row_1("locus", this.m.systemBox(this.germline).outerHTML + this.germline +
                 "<div class='div-menu-selector' id='listLocus' style='display: none'>" + this.createLocusList() + "</div>")
-        html += row_1("V gene (or 5')", this.getGene("5") +
+        }
+        if (this.hasSizeConstant() || (this.hasSizeDistrib() && this.getGene("5") != "undefined V")){
+            html += row_1("V gene (or 5')", this.getGene("5") +
                 "<div class='div-menu-selector' id='listVsegment' style='display: none'>" + this.createSegmentList("Vsegment") + "</div>")
-        html += row_1("(D gene)", this.getGene("4") +
+        }
+        if (this.hasSizeConstant() || (this.hasSizeDistrib() && this.getGene("4") != "undefined D")){
+            html += row_1("(D gene)", this.getGene("4") +
                 "<div class='div-menu-selector' id='listDsegment' style='display: none'>" + this.createSegmentList("Dsegment") + "</div>")
-        html += row_1("J gene (or 3')", this.getGene("3") +
+        }
+        if (this.hasSizeConstant() || (this.hasSizeDistrib() && this.getGene("3") != "undefined J")){
+            html += row_1("J gene (or 3')", this.getGene("3") +
                 "<div class='div-menu-selector' id='listJsegment' style='display: none'>" + this.createSegmentList("Jsegment") + "</div>")
+        }
 
         // Other seg info
         var exclude_seg_info = ['affectSigns', 'affectValues', '5', '4', '3']
