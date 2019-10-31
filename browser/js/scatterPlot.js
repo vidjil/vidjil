@@ -553,7 +553,7 @@ ScatterPlot.prototype = {
                 self.m.focusIn(d.id);
             })
             .on("click", function(d) {
-                self.m.select(d.id);
+                self.clickNode(d.id);
             })
     },
 
