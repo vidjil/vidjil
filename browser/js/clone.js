@@ -1296,7 +1296,8 @@ Clone.prototype = {
 
         html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.90); m.closeInfoBox();'>correlated</a> clones</p>"
         html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.99); m.closeInfoBox();'>strongly correlated</a> clones</p>"
-        
+        html += "<p>Download table as <a class='button' id='download_info_"+ this.index +"'onclick='export_table_to_csv(" + this.index + ")'>CSV</a></p>"
+
         //column
         html += "<div id='info_window'><table id='clone_download_info_"+this.index+"'><tr><th>Files names</th>"
 
