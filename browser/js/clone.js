@@ -1298,7 +1298,7 @@ Clone.prototype = {
         html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.99); m.closeInfoBox();'>strongly correlated</a> clones</p>"
         
         //column
-        html += "<div id='info_window'><table><tr><th></th>"
+        html += "<div id='info_window'><table id='clone_download_info_"+this.index+"'><tr><th>Files names</th>"
 
         for (var i = 0; i < time_length; i++) {
             html += "<td>" + this.m.getStrTime(this.m.samples.order[i], "name") + "</td>"
@@ -1539,6 +1539,7 @@ Clone.prototype = {
         // Info
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
+        span_info.id = "clone_infoBox_"+this.index;
         if (!this.hasSizeOther()) {
             span_info.onclick = function () {
                 self.m.displayInfoBox(self.index);
