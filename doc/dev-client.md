@@ -385,6 +385,13 @@ webpage.
     1.  `x11vnc -display :99 -localhost`
     2.  `vncviewer :0`
 
+    This will work when the headless mode is launched on the local machine.
+    Otherwise, when one wants to view what is going on on a distant host, one
+    should additionally do port forwarding through SSH, with `ssh -L
+    5900:localhost:5900 distant_host`, where 5900 is the port number on which
+    the VNC server is launched. Then `vncviewer` can be launched locally with
+    `vncviewer :5900`.
+
 5.  Interactive mode
     
     For debugging purposes, it may be useful to launch Watir in interactive
