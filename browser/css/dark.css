@@ -83,6 +83,10 @@ ul {
   right: 0px;
   top: 32px;
 }
+#live-ajax-msg {
+  font-style: italic;
+  margin-right: 1em;
+}
 #upload_summary {
   display: none;
   z-index: 10;
