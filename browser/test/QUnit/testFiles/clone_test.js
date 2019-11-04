@@ -255,8 +255,55 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
                  "getHtmlInfo c3: junction info for non productive clone");   
     assert.includes(html, "<tr><td>junction (AA seq)</td><td colspan='4'>WKIC</td></tr>",
                  "getHtmlInfo c3: junction (AAseq) info for non productive clone"); 
+    // test sequence if not prsent
+    html = c5.getHtmlInfo();
+    var notinclude = html.includes("<td>sequence</td>")
+    assert.notOk(notinclude, "getHtmlInfo: if no sequence, no field sequence (even if real clone)");
 
+    ////////////////////////////////////////////
+    // Test getHTMLinfo getted for distrib clone 
+    // ("axes": ["lenSeqAverage", "seg5"])
+    m.t = 0
+    var raw_data     = {
+        "id": "distrib_5", "top":0, "germline": "distrib", 
+        "seg":{}, "sequence":0, 
+        "reads": [100, 100, 100, 100], 
+        "axes": ["lenSeqAverage", "seg5"], "clone_number": [20, 20, 20, 20],
+        "distrib_content": ["162", "segV"]
+    }
+    m = new Model();
+    m.samples = {"number":0, "order":[0], "original_names": ["file"]}
+    m.reads = {
+        "segmented": [200,100,200,100],
+        "total": [200,100,200,100],
+        "germline": {
+          "TRG": [100,50,100,50],
+          "IGH": [100,50,100,50]
+        }
+      }
+    dclone = new Clone(raw_data, m, 0, C_INTERACTABLE | C_IN_SCATTERPLOT | C_SIZE_DISTRIB)
+    dclone.augmentedDistribCloneData(raw_data.axes, raw_data.distrib_content )
+    dclone.axes          = raw_data.axes
+    dclone.reads         = raw_data.reads
+    dclone.clone_number  = raw_data.clone_number
+    dclone.top           = 0
+    dclone.active        = true
+    dclone.current_reads = JSON.parse(JSON.stringify(raw_data.reads))
+    dclone.defineCompatibleClones()
+    dclone.updateReadsDistribClones()
+    html = m.clones[0].getHtmlInfo();
+
+    // Sequence
+    var notinclude = html.includes("<td>sequence</td>")
+    assert.notOk(notinclude, "getHtmlInfo: if no sequence, no field sequence");
+    // gene V
+    assert.includes(html, "<tr><td>V gene (or 5')</td>",
+        "getHtmlInfo: distrib clone with seg5 have field segment V");
+    // gene J
+    var notinclude = html.includes("<td>J gene (or 3')</td>")
+    assert.notOk(notinclude, "getHtmlInfo: if no seg3, no field segment J");
 });
+
 
 QUnit.test('clone: get info from seg', function(assert) {
     var m = new Model();
