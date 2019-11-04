@@ -123,8 +123,8 @@ class TestClones < BrowserTest
 
   def test_03_focus
     $b.clone_in_scatterplot("1").click
-    $b.clone_in_scatterplot("18").click
-    $b.clone_in_scatterplot("19").click
+    $b.clone_in_scatterplot("18").click(:control)
+    $b.clone_in_scatterplot("19").click(:control)
     $b.a(:id => "focus_selected").click
     sleep(1)
     # should be hidden
