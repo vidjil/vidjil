@@ -1345,6 +1345,18 @@ int main (int argc, char **argv)
           cout << clone_id_human << endl ;
           last_num_clone_on_stdout = num_clone ;
         }
+      else
+        {
+            // Progress bar. See the other progress bar in windowExtractor.cpp
+            if (!(num_clone % PROGRESS_POINT_CLONES))
+            {
+              cout << "." ;
+              if (!(num_clone % (PROGRESS_POINT_CLONES * PROGRESS_LINE)))
+              cout << setw(10) << num_clone / 1000 << "k clones " << endl;
+              cout.flush() ;
+            }
+        }
+
 
       //$$ Open CLONE_FILENAME
 
@@ -1503,6 +1515,7 @@ int main (int argc, char **argv)
 
     if (num_clone > last_num_clone_on_stdout)
       {
+        cout << endl << endl ;
 	cout << "#### Clones " 
 	     << "#" << setfill('0') << setw(WIDTH_NB_CLONES) << last_num_clone_on_stdout + 1 << " to "
 	     << "#" << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << "..." << endl ;
