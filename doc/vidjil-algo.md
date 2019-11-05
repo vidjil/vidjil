@@ -699,7 +699,8 @@ in the following situations:
     the center of the window may be shifted up to 15 bases from the
     actual center.
 
-  - in a second pass, on the standard output and in both `.vidjil` and `.vdj.fa` files
+  - in a second pass, on the `.vidjil` and `.vdj.fa` files
+    (and, for the first 50 clones, on the standard output)
     
       - at the end of the clones detection (default command `-c clones`,
         on a number of clones limited by the `--max-designations` option)
