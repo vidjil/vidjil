@@ -138,6 +138,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define WARN_NUM_CLONES_SIMILAR 10
 
 // display
+#define CLONES_ON_STDOUT 50
 #define WIDTH_NB_READS 7
 #define WIDTH_NB_CLONES 3
 #define PAD_HELP "\n                              "
@@ -1290,8 +1291,9 @@ int main (int argc, char **argv)
       junction win = it->first;
       size_t clone_nb_reads = it->second;
 
-    
       ++num_clone ;
+
+      bool clone_on_stdout = (num_clone <= CLONES_ON_STDOUT) || verbose;
 
       Germline *segmented_germline = windowsStorage->getGermline(it->first);
       
@@ -1338,9 +1340,11 @@ int main (int argc, char **argv)
           }
       }
 
-
-      cout << clone_id_human << endl ;
-      last_num_clone_on_stdout = num_clone ;
+      if (clone_on_stdout)
+        {
+          cout << clone_id_human << endl ;
+          last_num_clone_on_stdout = num_clone ;
+        }
 
       //$$ Open CLONE_FILENAME
 
@@ -1349,7 +1353,8 @@ int main (int argc, char **argv)
 
 
       //$$ Output window
-      cout << window_str ;
+      if (clone_on_stdout)
+        cout << window_str ;
       out_clone << window_str ;
 
 	//$$ Compute a representative sequence
@@ -1413,7 +1418,8 @@ int main (int argc, char **argv)
             && ! windowsStorage->isInterestingJunction(it->first))
 
           {
-            cout << representative << endl ;
+            if (clone_on_stdout)
+              cout << representative << endl ;
             out_clones << representative << endl ;
             continue;
           }
@@ -1433,7 +1439,8 @@ int main (int argc, char **argv)
           
 	// Output representative, possibly segmented... 
 	// to stdout, CLONES_FILENAME, and CLONE_FILENAME-*
-	cout << seg << endl ;
+  if (clone_on_stdout)
+    cout << seg << endl ;
 	out_clone << seg << endl ;
 	out_clones << seg << endl ;
     
@@ -1447,6 +1454,7 @@ int main (int argc, char **argv)
 
               if (cc)
                 {
+                  if (clone_on_stdout)
                   cout << " (similar to Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc << setfill(' ') << ")";
                   clone->add_warning("W53", "Similar to another clone " + code,
                                    num_clone <= WARN_NUM_CLONES_SIMILAR ? LEVEL_WARN : LEVEL_INFO);
@@ -1485,7 +1493,8 @@ int main (int argc, char **argv)
 	      }
 	  }
 	
-	cout << endl ;
+  if (clone_on_stdout)
+    cout << endl ;
       out_clone.close();
     } // end for clones
 	
