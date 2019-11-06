@@ -1393,6 +1393,7 @@ void FineSegmenter::toOutput(CloneOutput *clone){
         clone->setSeg("cdr3", {
             {"start", CDR3start},
             {"stop", CDR3end},
+            {"seq", CDR3nuc},
             {"aa", CDR3aa}
         });
     }
