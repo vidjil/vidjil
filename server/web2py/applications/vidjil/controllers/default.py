@@ -340,7 +340,11 @@ def get_data():
         data["samples"]["run_id"] = []
         for i in range(len(data["samples"]["original_names"])) :
             o_n = data["samples"]["original_names"][i].split('/')[-1]
-            data["samples"]["original_names"][i] = data["samples"]["original_names"][i].split('/')[-1]
+            
+            if 'distributions' in data and 'repertoires' in data['distributions']:
+                data['distributions']['repertoires'][o_n] = data['distributions']['repertoires'][data["samples"]["original_names"][i]]
+                del data['distributions']['repertoires'][data["samples"]["original_names"][i]]
+            data["samples"]["original_names"][i] = o_n
             data["samples"]["config_id"].append(request.vars['config'])
             data["samples"]["db_key"].append('')
             data["samples"]["commandline"].append(command)
