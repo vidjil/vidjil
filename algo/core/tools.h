@@ -4,6 +4,11 @@
 using namespace std ;
 typedef string junction ;
 
+// Progress bar
+#define PROGRESS_POINT 25000
+#define PROGRESS_POINT_CLONES 25
+#define PROGRESS_LINE 40
+
 // error
 #define ERROR_STRING "[error] "
 #define WARNING_STRING "[warning] "
