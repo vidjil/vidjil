@@ -42,11 +42,11 @@ class TestClones < BrowserTest
 
   def test_001_clone_present_in_scatterplot_segVJ
     ### Tests on size after top change
-    $b.menu_filter.click
-    $b.input(:id => "top_slider").click
-    $b.send_keys :arrow_left
-    $b.send_keys :arrow_left
-    $b.send_keys :arrow_left
+    slider = $b.menu_item("top_slider")
+    slider.click
+    slider.send_keys :arrow_left
+    slider.send_keys :arrow_left
+    slider.send_keys :arrow_left
     $b.clone_in_list("0").click # sortir pour m.update() ?*
 
     ### exist in scatterplot

@@ -1,5 +1,5 @@
 DB_ADDRESS = ""
-DB_TIMEOUT_CALL = 30000               // Regular call
+DB_TIMEOUT_CALL = 60000               // Regular call
 DB_TIMEOUT_GET_DATA = DB_TIMEOUT_CALL           // Get patient/sample .data
 DB_TIMEOUT_GET_CUSTOM_DATA = 1200000  // Launch custum fused sample .data
 
