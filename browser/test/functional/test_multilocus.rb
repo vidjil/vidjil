@@ -267,6 +267,26 @@ class TestMultilocus < BrowserTest
     assert (not $b.element(:class => 'waiting_msg').present?), "The ``generating report'' message should not be present anymore"
   end
 
+  def test_14b_export_sample_report
+
+    if $b.driver.capabilities.browser_name == 'chrome'
+      skip "Issue #3699 must be solved first"
+    end
+
+    # Select a clone
+    $b.clone_in_scatterplot('43').click
+
+    $b.menu_item_export('export_monitor_report').click
+
+    assert ($b.window(:title => "analysis-example.vidjil").exists?), ">> Report didn't show up"
+
+    $b.window(:title => "analysis-example.vidjil").use do
+      assert ($b.element(:class => 'clone_name').text.include? "TRBV13-1*02"), "Selected clone should be present"
+      assert (not $b.text.include? "smaller clone"), "Smaller clone should not be present"
+    end
+
+  end
+
   def test_15_smaller_clones
     for i in 0..3
       smaller = $b.list.li(:index => i)
