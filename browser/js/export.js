@@ -434,6 +434,9 @@ Report.prototype = {
             var polyline = svg_graph.querySelectorAll('[id="polyline'+i+'"]')[0]
             var tag = this.m.clone(i).getTag()
             var color = this.m.tag[tag].color
+
+            if (typeof polyline == 'undefined')
+                continue;
             
             if (i == norm) {
                 polyline.setAttribute("style", "stroke-width:12px; stroke:"+color);
