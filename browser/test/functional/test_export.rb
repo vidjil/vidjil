@@ -37,7 +37,7 @@ class TestExport < BrowserTest
       $b.menu_item_export('export_sample_report')
       assert (not $b.a(:id => "export_monitor_report", :class => 'disabledClass').exists?), ">> export monitor available if 2 samples are present"
       $b.menu_item_export('export_sample_report').click
-      assert ( $b.window(index: 1).exists?), "No new window should have openened"
+      assert ( $b.window(index: 1).exists?), "A new window should have openened"
   end
 
   # Not really a test
