@@ -540,7 +540,8 @@ Report.prototype = {
 
         for (var j=0; j<this.list.length; j++){
             var cloneID = this.list[j]
-            if (this.m.clone(cloneID).germline == system) this.clone(cloneID, time).appendTo(this.w.document.body);
+            if (this.m.clone(cloneID).germline == system && this.m.clone(cloneID).hasSizeConstant())
+                this.clone(cloneID, time).appendTo(this.w.document.body);
         }
         
         return this
@@ -676,8 +677,8 @@ Report.prototype = {
         
         for (var i=0; i<this.list.length; i++){
             var cloneID = this.list[i]
-            
-            this.clone(cloneID, time).appendTo(this.w.document.body);
+            if (this.m.clone(cloneID).hasSizeConstant())
+                this.clone(cloneID, time).appendTo(this.w.document.body);
         }
         
         return this
