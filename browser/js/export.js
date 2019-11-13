@@ -434,6 +434,9 @@ Report.prototype = {
             var polyline = svg_graph.querySelectorAll('[id="polyline'+i+'"]')[0]
             var tag = this.m.clone(i).getTag()
             var color = this.m.tag[tag].color
+
+            if (typeof polyline == 'undefined')
+                continue;
             
             if (i == norm) {
                 polyline.setAttribute("style", "stroke-width:12px; stroke:"+color);
@@ -446,7 +449,7 @@ Report.prototype = {
             }
             
             //remove virtual and disabled clones
-            if (i != norm && (this.m.clone(i).isInScatterplot() || !this.m.clone(i).isActive())) {
+            if (i != norm && (!this.m.clone(i).isInScatterplot() || !this.m.clone(i).isActive())) {
                 polyline.parentNode.removeChild(polyline);
             }
         }
@@ -537,7 +540,8 @@ Report.prototype = {
 
         for (var j=0; j<this.list.length; j++){
             var cloneID = this.list[j]
-            if (this.m.clone(cloneID).germline == system) this.clone(cloneID, time).appendTo(this.w.document.body);
+            if (this.m.clone(cloneID).germline == system && this.m.clone(cloneID).hasSizeConstant())
+                this.clone(cloneID, time).appendTo(this.w.document.body);
         }
         
         return this
@@ -673,8 +677,8 @@ Report.prototype = {
         
         for (var i=0; i<this.list.length; i++){
             var cloneID = this.list[i]
-            
-            this.clone(cloneID, time).appendTo(this.w.document.body);
+            if (this.m.clone(cloneID).hasSizeConstant())
+                this.clone(cloneID, time).appendTo(this.w.document.body);
         }
         
         return this

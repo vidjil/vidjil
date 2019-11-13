@@ -44,6 +44,7 @@ class TestClones < BrowserTest
     ### Tests on size after top change
     slider = $b.menu_item("top_slider")
     slider.click
+    $b.menu_filter.hover
     slider.send_keys :arrow_left
     slider.send_keys :arrow_left
     slider.send_keys :arrow_left
@@ -74,6 +75,7 @@ class TestClones < BrowserTest
   def test_01_clone_size
     $b.menu_filter.click
     $b.input(:id => "top_slider").click
+    $b.menu_filter.hover
     $b.send_keys :arrow_right
     $b.send_keys :arrow_right
     $b.clone_in_list("0").click
@@ -85,6 +87,7 @@ class TestClones < BrowserTest
     ### Tests on size after top change
     $b.menu_filter.click
     $b.input(:id => "top_slider").click
+    $b.menu_filter.hover
     $b.send_keys :arrow_left
     $b.send_keys :arrow_left
     $b.clone_in_list("0").click # sortir pour m.update() ?
@@ -167,6 +170,7 @@ class TestClones < BrowserTest
     # Change the top to top
     $b.menu_filter.click
     $b.input(:id => "top_slider").click
+    $b.menu_filter.hover
     $b.send_keys :arrow_right
     $b.send_keys :arrow_right
 
@@ -184,6 +188,7 @@ class TestClones < BrowserTest
     # Change the top to top
     $b.menu_filter.click
     $b.input(:id => "top_slider").click
+    $b.menu_filter.hover
     $b.send_keys :arrow_left
     $b.send_keys :arrow_left
     $b.send_keys :arrow_left
@@ -209,6 +214,7 @@ class TestClones < BrowserTest
     # Change the top to top
     $b.menu_filter.click
     $b.input(:id => "top_slider").click
+    $b.menu_filter.hover
     $b.send_keys :arrow_left
     $b.send_keys :arrow_left
     $b.send_keys :arrow_left
@@ -259,6 +265,7 @@ class TestClones < BrowserTest
     # Change the top to top
     $b.menu_filter.click
     $b.input(:id => "top_slider").click
+    $b.menu_filter.hover
     $b.send_keys :arrow_left
     $b.send_keys :arrow_left
     $b.send_keys :arrow_left
