@@ -22,7 +22,9 @@
  */
 
 
-// Constantes
+// Clone attributes
+// See "Clone attributes" in doc/dev-client.md
+
 C_CLUSTERIZABLE      = 1
 C_INTERACTABLE       = 4
 C_IN_SCATTERPLOT     = 32
