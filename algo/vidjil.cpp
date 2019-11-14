@@ -359,12 +359,6 @@ int main (int argc, char **argv)
                  "w-mer size used for the length of the extracted window ('" NO_LIMIT "': use all the read, no window clustering)")
     -> group(group) -> level() -> transform(string_NO_LIMIT);
 
-
-  double expected_value = THRESHOLD_NB_EXPECTED;
-  app.add_option("--e-value,-e", expected_value,
-                 "maximal e-value for determining if a V-J segmentation can be trusted", true)
-    -> group(group) -> level() -> transform(string_NO_LIMIT);
-
   double expected_value_kmer = NO_LIMIT_VALUE;
   app.add_option("--e-value-kmer", expected_value_kmer,
                  "maximal e-value for the k-mer heuristics ('" NO_LIMIT "': use same value than '-e')", true)
@@ -487,6 +481,11 @@ int main (int argc, char **argv)
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Clone analysis (second pass)";
+
+  double expected_value = THRESHOLD_NB_EXPECTED;
+  app.add_option("--e-value,-e", expected_value,
+                 "maximal e-value for determining if a V-J segmentation can be trusted", true)
+    -> group(group) -> transform(string_NO_LIMIT);
 
   Cost segment_cost = DEFAULT_SEGMENT_COST ;
   app.add_option("--analysis-cost",
