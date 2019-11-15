@@ -270,10 +270,12 @@ Model_loader.prototype = {
         self.reset();
         
         //copy .vidjil file in model
+        var store_config = this.config;
         for (var key in data){
             if (key != "clusters") self[key] = jQuery.parseJSON(JSON.stringify(data[key]))
         }
         this.data_clusters = data.clusters;
+        this.config = store_config;
         
         //filter clones (remove clone beyond the limit)
         self.clones = [];
