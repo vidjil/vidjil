@@ -1228,21 +1228,16 @@ changeAlleleNotation: function(alleleNotation) {
      * this function must be call for major change in the model
      * */
     update: function () {
-        var startTime = new Date()
-            .getTime();
-        var elapsedTime = 0;
-
         this.update_normalization();
         this.update_precision();
         this.updateModel();
 
         for (var i = 0; i < this.view.length; i++) {
-            this.view[i].update();
+            if (this.view[i].useSmartUpdate)
+                this.view[i].smartUpdate();
+            else
+                this.view[i].update();
         }
-        
-        elapsedTime = new Date()
-            .getTime() - startTime;
-        console.log("update(): " + elapsedTime + "ms");
     },
 
 
