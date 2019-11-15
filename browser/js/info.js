@@ -23,6 +23,8 @@
 
 function Info(id, model, builder) {
     View.call(this, model);
+    this.type = "Info"; 
+    this.useSmartUpdate = true;
     this.id = id;
     this.builder = builder;
 }

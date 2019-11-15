@@ -46,6 +46,8 @@ function List(id_list, id_data, model, database) {
     var self=this;
     
     View.call(this, model);
+    this.type = "List"; 
+    this.useSmartUpdate = true;
     this.db = database;
     
     this.id = id_list; //ID de la div contenant la liste
@@ -345,20 +347,13 @@ List.prototype = {
      * update all content for list and data list
      * */
     update: function () {
-        var startTime = new Date()
-            .getTime();
-        var elapsedTime = 0;
-        
+
         var list = [];
         for (var i = 0; i < this.m.clones.length; i++) {
             list.push(i);
         }
         this.updateElem(list);
         this.update_data_list()
-        
-        elapsedTime = new Date()
-            .getTime() - startTime;
-        //console.log("update List: " + elapsedTime + "ms");
         
         //TODO check order 
         document.getElementById("list_sort_select").selectedIndex = 0;

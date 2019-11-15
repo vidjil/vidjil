@@ -74,7 +74,9 @@
  * */
 function Graph(id, model, database) {
     //
-    View.call(this, model); 
+    View.call(this, model);
+    this.type = "Graph"; 
+    this.useSmartUpdate = true;
     
     this.id = id;
     this.resizeW = 1; //coeff d'agrandissement/réduction largeur                
@@ -319,7 +321,7 @@ Graph.prototype = {
         this.text_position_x = 60;
         this.text_position_x2 = div_width - 60;
     
-        this.update(speed);
+        this.smartUpdate(speed);
     },
     
 /* ************************************************ *
@@ -331,22 +333,11 @@ Graph.prototype = {
      * */
     update : function (speed) {
         speed = typeof speed !== 'undefined' ? speed : 500;
-        var startTime = new Date()
-            .getTime();
-        var elapsedTime = 0;
-        
         this.initAxis()
             .initData()
             .updateRes()
             .updateClones()
             .draw(speed);
-        
-        elapsedTime = new Date()
-            .getTime() - startTime;
-
-        // console.log("update Graph: " + elapsedTime + "ms");
-        
-        return this
     },
     
     /* update resolution curves
@@ -1381,7 +1372,7 @@ Graph.prototype = {
 
     shouldRefresh: function() {
         this.init();
-        this.update();
+        this.smartUpdate();
         this.resize();
     }
 

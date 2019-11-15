@@ -48,6 +48,8 @@ SEGMENT_KEYS = ["4", "4a", "4b"]
 function Segment(id, model, database) {
     
     View.call(this, model);
+    this.type = "Segmenter"; 
+    this.useSmartUpdate = true;
     this.db = database;
         
     if (typeof config != 'undefined') {
@@ -501,17 +503,9 @@ Segment.prototype = {
     update: function() {
         var self = this;
         try{
-            var startTime = new Date()
-                .getTime();
-            var elapsedTime = 0;
-
             var list = [];
             for (var i = 0; i < this.m.clones.length; i++) list.push(i);
             this.updateElem(list);
-
-            elapsedTime = new Date()
-                .getTime() - startTime;
-            console.log("update seg: " + elapsedTime + "ms");
         } catch(err) {
             sendErrorToDb(err, this.db);
         }

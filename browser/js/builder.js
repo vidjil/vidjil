@@ -24,6 +24,8 @@
 function Builder(model, database) {
     if (typeof model != "undefined"){
         View.call(this, model);
+        this.type = "Builder"; 
+        this.useSmartUpdate = true;
     }
 
     if(typeof database != 'undefined') {

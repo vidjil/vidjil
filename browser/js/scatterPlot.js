@@ -36,6 +36,8 @@ function ScatterPlot(id, model, database, default_preset) {
     var self = this;
     
     View.call(this, model);
+    this.type = "ScatterPlot"; 
+    this.useSmartUpdate = true;
     this.db = database;
     
     this.id = id; //ID of the scatterPlot div
@@ -1113,19 +1115,11 @@ ScatterPlot.prototype = {
     update: function() {
         var self = this;
         try{
-            var startTime = new Date()
-                .getTime();
-            var elapsedTime = 0;
-
             this.compute_size()
                 .initGrid()
                 .updateClones()
                 .updateMenu();
 
-            //Donne des informations quant au temps de MàJ des données
-            elapsedTime = new Date()
-                .getTime() - startTime;
-            //console.log("update sp: " + elapsedTime + "ms");
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
