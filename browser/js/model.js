@@ -1253,7 +1253,10 @@ changeAlleleNotation: function(alleleNotation) {
         this.updateModel()
         
         for (var i = 0; i < this.view.length; i++) {
-            this.view[i].updateElem(list);
+            if (this.view[i].useSmartUpdateElem)
+                this.view[i].smartUpdateElem(list);
+            else
+                this.view[i].updateElem(list);
         }
     },
 
@@ -1267,7 +1270,10 @@ changeAlleleNotation: function(alleleNotation) {
             this.clone(list[i]).updateCloneTagIcon();
         }
         for (i = 0; i < this.view.length; i++) {
-            this.view[i].updateElemStyle(list);
+            if (this.view[i].useSmartUpdateElemStyle)
+                this.view[i].smartUpdateElemStyle(list);
+            else
+                this.view[i].updateElemStyle(list);
         }
     },
     

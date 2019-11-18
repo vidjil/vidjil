@@ -33,13 +33,29 @@ function View(model) {
     this.m = model;
     this.m.view.push(this); //Model's sync
 
+    this.type = "default";
     this.updateCallCount = 0;
     this.updateTime = new Date().getTime();
+    this.updateMinWait = 50;    //update will at least wait XXX(ms) before starting 
+    this.updateMaxWait = 2000;  //update will start anyway if the wait has been more than XXX(ms)
 
-    this.type = "default";
-    this.useSmartUpdate = false;
-    this.smartUpdateMinWait = 50; //update will at least wait XXX(ms) before starting 
-    this.smartUpdateMaxWait = 2000; //update will start anyway if the wait has been more than XXX(ms)
+    //smartUpdateElem
+    this.useSmartUpdateElem = true;
+    this.updateElemCallCount = 0;
+    this.updateElemTime = new Date().getTime();
+    this.updateElemList = {};
+    this.updateElemMinWait = 50;    //update will at least wait XXX(ms) before starting 
+    this.updateElemMaxWait = 200;   //update will start anyway if the wait has been more than XXX(ms)
+
+    //smartUpdateElemStyle
+    this.useSmartUpdateElemStyle = true;
+    this.updateElemStyleCallCount = 0;
+    this.updateElemStyleTime = new Date().getTime();
+    this.updateElemStyleList = {};
+    this.updateElemStyleMinWait = 10;   //update will at least wait XXX(ms) before starting 
+    this.updateElemStyleMaxWait = 50;   //update will start anyway if the wait has been more than XXX(ms)
+
+    this.verbose = false;
 }
     
 View.prototype = {
@@ -65,7 +81,7 @@ View.prototype = {
     },
 
     /**
-     * wait a small delay (smartUpdateMinWait) before starting the update
+     * wait a small delay (updateMinWait) before starting the update
      * any addictional update() call during the wait will be discarded and will restart the delay
      * update will be 
      * can be used instead of update()
@@ -73,7 +89,6 @@ View.prototype = {
      * @param {*} speed  update speed transition in ms
      */
     smartUpdate: function (speed) {
-        speed = typeof speed !== 'undefined' ? speed : 500;
         var self = this;
 
         if (this.updateCallCount==0)
@@ -81,7 +96,7 @@ View.prototype = {
         this.updateCallCount++;
         
         var count =  this.updateCallCount;
-        setTimeout(function() { self.smartUpdate2(speed, count); }, this.smartUpdateMinWait);
+        setTimeout(function() { self.smartUpdate2(speed, count); }, this.updateMinWait);
     },
 
     /**
@@ -91,41 +106,35 @@ View.prototype = {
      * @param {*} callcount number of update already pending
      */
     smartUpdate2 : function(speed, callcount){
-        var elapsedTime = 0;
-        elapsedTime = new Date().getTime() - this.updateTime;
+        var elapsedTime = new Date().getTime() - this.updateTime;
         
-        if (this.updateCallCount==0){
-            //counter has been reset during the timeout (an update has been done)
-            this.smartUpdate(speed);
+        if (this.updateCallCount==0) //an update has already been done
+        {
+            this.smartUpdate(speed); //reschedule this update for next round
             return this;
         }
 
-        if (callcount == this.updateCallCount 
-            //counter did not increased during the timeout -> ready for update
-            ||
-            elapsedTime > this.smartUpdateMaxWait
-            //already XXXms has passed since first call -> start update anyway
-            ){
-
+        if ( callcount == this.updateCallCount 
+        //counter did not increased during the timeout -> ready for update
+            || elapsedTime > this.updateMaxWait)
+        //already XXXms has passed since first call -> start update anyway
+        {
             var tmp = this.updateCallCount;
             this.updateCallCount = 0;
-            var startTime = new Date()
-                .getTime();
-            
-            speed = typeof speed !== 'undefined' ? speed : 500;
+            var startTime = new Date().getTime();           
             this.update(speed);
             
-            var stopTime = new Date()
-                .getTime() - startTime;
-
-            console.log("update "+this.type+": " + stopTime + "ms "     // the time needed to update the view
-                       +"total time: " + elapsedTime + "ms "    // the time since the first update() call
-                       +"n:" +tmp);                             // the number of update() call squashed
-        }
-        
+            if (this.verbose)
+            {
+                var stopTime = new Date().getTime() - startTime;
+                console.log("update "+this.type+": " + stopTime + "ms " // the time needed to update the view
+                        +"total time: " + elapsedTime + "ms "           // the time since the first update() call
+                        +"n:" +tmp);                                    // the number of update() call squashed
+            }
+        }     
         return this
     },
-    
+
     /**
      * update(size/style/position) a list of selected clones <br>
      * a slight function for operation who impact only a bunch of clones (merge/split/...)
@@ -133,9 +142,59 @@ View.prototype = {
      * @param {integer[]} list - array of clone index
      * */
     updateElem : function (list) {
-        
+
     },
     
+    /**
+     * same as smartUpdate but for updateElem
+     * */
+    smartUpdateElem: function (list) {
+        var self = this;
+
+        for(var i = 0 ; i < list.length; i++)
+            this.updateElemList[list[i]] = true;
+
+        if (this.updateElemCallCount==0)
+            this.updateElemTime = new Date().getTime();
+        this.updateElemCallCount++;
+        
+        var count =  this.updateElemCallCount;
+        setTimeout(function() { self.smartUpdateElem2(count); }, this.updateElemMinWait);
+    },
+
+    smartUpdateElem2 : function(callcount){
+        var elapsedTime = new Date().getTime() - this.updateElemTime;
+        
+        if (Object.keys(this.updateElemList).length == 0) 
+            return this
+
+        if (this.updateElemCallCount==0)
+        {
+            this.smartUpdateElem([]);
+            return this;
+        }
+
+        if (callcount == this.updateElemCallCount || elapsedTime > this.updateElemMaxWait)
+        {
+            var tmp = this.updateElemCallCount;
+            this.updateElemCallCount = 0;
+            var startTime = new Date().getTime();
+            
+            this.updateElem(Object.keys(this.updateElemList));
+            this.updateElemList = {};
+
+            if (this.verbose)
+            {
+                var stopTime = new Date().getTime() - startTime;
+                console.log("updateElem "+this.type+": " + stopTime + "ms "     // the time needed to update the view
+                        +"total time: " + elapsedTime + "ms "    // the time since the first update() call
+                        +"n:" +tmp );                            // the number of updateElem() call squashed
+            }
+        }
+        
+        return this
+    },
+
     /**
      * update(style only) a list of selected clones <br>
      * a slight function for operation who impact only styles of clones (select/focus)
@@ -144,6 +203,55 @@ View.prototype = {
      * */
     updateElemStyle : function () {
         
+    },
+
+    /**
+     * same as smartUpdate but for updateElemStyle
+     * */
+    smartUpdateElemStyle: function (list) {
+        var self = this;
+
+        for(var i = 0 ; i < list.length; i++)
+            this.updateElemStyleList[list[i]] = true;
+
+        if (this.updateElemStyleCallCount==0)
+            this.updateElemStyleTime = new Date().getTime();
+        this.updateElemStyleCallCount++;
+        
+        var count =  this.updateElemStyleCallCount;
+        setTimeout(function() { self.smartUpdateElemStyle2(count); }, this.updateElemStyleMinWait);
+    },
+
+    smartUpdateElemStyle2 : function(callcount){
+        var elapsedTime = new Date().getTime() - this.updateElemStyleTime;
+        
+        if (Object.keys(this.updateElemStyleList).length == 0) 
+            return this
+
+        if (this.updateElemStyleCallCount==0)
+        {
+            this.smartUpdateElem([]);
+            return this;
+        }
+
+        if (callcount == this.updateElemStyleCallCount || elapsedTime > this.updateElemStyleMaxWait)
+        {
+            var tmp = this.updateElemStyleCallCount;
+            this.updateElemStyleCallCount = 0;
+            var startTime = new Date().getTime();
+            
+            this.updateElemStyle(Object.keys(this.updateElemStyleList));
+            this.updateElemStyleList = {};
+
+            if (this.verbose)
+            {
+                var stopTime = new Date().getTime() - startTime;
+                console.log("updateElemStyle "+this.type+": " + stopTime + "ms "     // the time needed to update the view
+                        +"total time: " + elapsedTime + "ms "    // the time since the first update() call
+                        +"n:" +tmp );                            // the number of updateElem() call squashed
+            }
+        }
+        return this
     },
     
     /**
