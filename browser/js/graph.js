@@ -422,7 +422,7 @@ Graph.prototype = {
             document.getElementById("clones_container")
                 .appendChild(line);
         }
-        this.drawClones(0);
+        this.drawClones(0, list);
         
         return this
     },
@@ -1245,7 +1245,7 @@ Graph.prototype = {
             selected_clones = this.g_clone;
             if (typeof list != "undefined"){
                 selected_clones = this.g_clone.filter(function(d, i) {
-                    if (list.indeOf(d.id) != -1) return true;
+                    if (list.indexOf(d.id) != -1) return true;
                     return false
                 });
             }
