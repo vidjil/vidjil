@@ -1063,6 +1063,7 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     multiSelect: function (list) {
 
+        if (list.length == 0) return;
         console.log("select() (clone " + list + ")");
 
         var tmp = []
@@ -1082,7 +1083,6 @@ changeAlleleNotation: function(alleleNotation) {
             list[j] = tmp[j].id
         }
         this.updateElemStyle(list);
-        this.update();
     },
 
     /**
