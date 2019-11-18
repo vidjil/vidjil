@@ -1264,7 +1264,7 @@ ScatterPlot.prototype = {
     updateElemStyle: function() {
         var self = this;
         if (this.mode == this.MODE_BAR) {
-            this.updateBar();
+            this.drawBarTab(0);
         } else {
             this.node
                 .attr("class", function(p) {
