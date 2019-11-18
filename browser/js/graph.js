@@ -76,7 +76,7 @@ function Graph(id, model, database) {
     //
     View.call(this, model);
     this.type = "Graph"; 
-    this.useSmartUpdate = true;
+    this.useSmartUpdateElemStyle = false;
     
     this.id = id;
     this.resizeW = 1; //coeff d'agrandissement/réduction largeur                

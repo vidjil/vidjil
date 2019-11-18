@@ -47,7 +47,6 @@ function List(id_list, id_data, model, database) {
     
     View.call(this, model);
     this.type = "List"; 
-    this.useSmartUpdate = true;
     this.db = database;
     
     this.id = id_list; //ID de la div contenant la liste

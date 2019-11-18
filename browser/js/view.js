@@ -34,6 +34,9 @@ function View(model) {
     this.m.view.push(this); //Model's sync
 
     this.type = "default";
+
+    //smartUpdate
+    this.useSmartUpdate = true;
     this.updateCallCount = 0;
     this.updateTime = new Date().getTime();
     this.updateMinWait = 50;    //update will at least wait XXX(ms) before starting 

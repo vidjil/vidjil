@@ -37,7 +37,6 @@ function ScatterPlot(id, model, database, default_preset) {
     
     View.call(this, model);
     this.type = "ScatterPlot"; 
-    this.useSmartUpdate = true;
     this.db = database;
     
     this.id = id; //ID of the scatterPlot div

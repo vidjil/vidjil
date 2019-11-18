@@ -1,7 +1,6 @@
 function Url(model, win) {
     View.call(this, model);
     this.type = "URL"; 
-    this.useSmartUpdate = true;
 
     this.m = model;
     this.window = (typeof win != "undefined") ? win : window

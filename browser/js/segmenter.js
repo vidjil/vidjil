@@ -49,7 +49,6 @@ function Segment(id, model, database) {
     
     View.call(this, model);
     this.type = "Segmenter"; 
-    this.useSmartUpdate = true;
     this.db = database;
         
     if (typeof config != 'undefined') {
