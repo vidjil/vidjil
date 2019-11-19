@@ -1325,7 +1325,9 @@ void FineSegmenter::findCDR3(){
     }
   else
     {
-      // start of codon fully included in the germline J
+      // Non-productive CDR3
+      // We want to output a '#' somewhere around the end of the N, and then restart
+      // at the start of the first codon fully included in the germline J
       int CDR3startJfull = JUNCTIONend - ((JUNCTIONend - box_J->start) / 3) * 3 + 1 ;
 
       CDR3aa =
@@ -1391,6 +1393,7 @@ void FineSegmenter::toOutput(CloneOutput *clone){
         clone->setSeg("cdr3", {
             {"start", CDR3start},
             {"stop", CDR3end},
+            {"seq", CDR3nuc},
             {"aa", CDR3aa}
         });
     }
