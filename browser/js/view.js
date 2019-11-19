@@ -117,9 +117,9 @@ View.prototype = {
             return this;
         }
 
-        if ( callcount == this.updateCallCount 
+        if ( callcount == this.updateCallCount || 
         //counter did not increased during the timeout -> ready for update
-            || elapsedTime > this.updateMaxWait)
+             elapsedTime > this.updateMaxWait)
         //already XXXms has passed since first call -> start update anyway
         {
             var tmp = this.updateCallCount;
@@ -130,9 +130,9 @@ View.prototype = {
             if (this.verbose)
             {
                 var stopTime = new Date().getTime() - startTime;
-                console.log("update "+this.type+": " + stopTime + "ms " // the time needed to update the view
-                        +"total time: " + elapsedTime + "ms "           // the time since the first update() call
-                        +"n:" +tmp);                                    // the number of update() call squashed
+                console.log("update "+this.type+": " + stopTime + "ms "+// the time needed to update the view
+                        "total time: " + elapsedTime + "ms " +           // the time since the first update() call
+                        "n:" +tmp);                                    // the number of update() call squashed
             }
         }     
         return this
@@ -189,9 +189,9 @@ View.prototype = {
             if (this.verbose)
             {
                 var stopTime = new Date().getTime() - startTime;
-                console.log("updateElem "+this.type+": " + stopTime + "ms "     // the time needed to update the view
-                        +"total time: " + elapsedTime + "ms "    // the time since the first update() call
-                        +"n:" +tmp );                            // the number of updateElem() call squashed
+                console.log("updateElem "+this.type+": " + stopTime + "ms "+     // the time needed to update the view
+                        "total time: " + elapsedTime + "ms "+   // the time since the first update() call
+                        "n:" +tmp );                            // the number of updateElem() call squashed
             }
         }
         
@@ -249,9 +249,9 @@ View.prototype = {
             if (this.verbose)
             {
                 var stopTime = new Date().getTime() - startTime;
-                console.log("updateElemStyle "+this.type+": " + stopTime + "ms "     // the time needed to update the view
-                        +"total time: " + elapsedTime + "ms "    // the time since the first update() call
-                        +"n:" +tmp );                            // the number of updateElem() call squashed
+                console.log("updateElemStyle "+this.type+": " + stopTime + "ms "+    // the time needed to update the view
+                        "total time: " + elapsedTime + "ms "+   // the time since the first update() call
+                        "n:" +tmp );                            // the number of updateElem() call squashed
             }
         }
         return this
