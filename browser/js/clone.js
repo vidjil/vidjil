@@ -1477,7 +1477,7 @@ Clone.prototype = {
         
         //IMGT info
         var other_infos = {"imgt": "<a target='_blank' href='http://www.imgt.org/IMGT_vquest/share/textes/'>IMGT/V-QUEST</a>",
-                       "clonedb": "<a target='_blank' href='http://ecngs.vidjil.org/clonedb'>CloneDB</a>"};
+                           "clonedb": "<a target='_blank' href='http://ecngs.vidjil.org/clonedb'>CloneDB</a> "+ (this.numberSampleSetInCloneDB() > 0 ? "<br /> A similar clone exists in "+this.numberSampleSetInCloneDB()+" other patients/runs/sets" : "")};
         for (var external_tool in other_infos) {
             if (typeof this.seg[external_tool] != 'undefined' &&
                 this.seg[external_tool] !== null) {
