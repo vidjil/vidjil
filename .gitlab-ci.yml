@@ -352,7 +352,7 @@ test_server_unit:
     tags:
       - web
 
-test_server_functional:
+.test_server_functional:
   stage: test_functional
   script:
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/server:test" docker/vidjil-server
@@ -367,7 +367,7 @@ test_server_functional:
     - docker exec docker_nginx_1 make -C /usr/share/vidjil browser
     - source /etc/profile.d/rvm.sh
     - rvm use 2.6.1
-    - HEADLESS=1 make functional_server BROWSERS="--browsers-from-file" || (cd docker && docker-compose stop; docker stop $(docker ps -aq); docker rm $(docker ps -aq); docker rmi "vidjil/server:test" "vidjil/client:test"; false)
+    - HEADLESS=1 make functional_server || (cd docker && docker-compose stop; docker stop $(docker ps -aq); docker rm $(docker ps -aq); docker rmi "vidjil/server:test" "vidjil/client:test"; false)
     - cd docker && docker-compose stop
     - docker stop $(docker ps -aq)
     - docker rm $(docker ps -aq)
@@ -381,6 +381,19 @@ test_server_functional:
   tags:
     - x86_64
     - docker
+
+test-server-functional-ff32:
+  extends: .test_server_functional
+  variables:
+    FIREFOX_VERSION: 32
+    IGNORE_FUNCTIONAL_CBP: 1
+
+test-server-functional-ff45:
+  extends: .test_server_functional
+  variables:
+    FIREFOX_VERSION: 45
+    IGNORE_FUNCTIONAL_CBP: 1
+
 
 
 # Benchmark
