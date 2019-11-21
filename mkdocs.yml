@@ -9,10 +9,11 @@ repo_name: gitlab
 
 pages:
     - / : index.md
-    - web, user manual: user.md
-    - locus and recombinations: locus.md
+    - user manual: user.md
+    - recombinations: locus.md
     - vidjil-algo: vidjil-algo.md
     - .vidjil format: vidjil-format.md
+    - admin: admin.md
     - server: server.md
     - credits: credits.md
 
