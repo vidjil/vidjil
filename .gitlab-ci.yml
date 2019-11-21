@@ -234,6 +234,12 @@ test_browser_unit:
     - prod-client
     - schedules
 
+.browser-functional-chrome:
+  extends: .browser-functional
+  variables:
+    WATIR_CHROME: "1"
+    IGNORE_FUNCTIONAL_CBP: "1"
+
 .browser-functional-external:
   stage: test_functional_external
   retry: 2
@@ -251,36 +257,63 @@ test_browser_unit:
     - prod-client
     - schedules
 
-test_browser-functional:
-  extends: .browser-functional
-  variables:
-    BROWSERS: "--browsers-from-file"
-  tags:
-    - web
-
-test_legacy-browser-functional:
-  extends: .browser-functional
-  variables:
-    WATIR_CHROME: "1"
-    IGNORE_FUNCTIONAL_CBP: "1"
-  tags:
-    - legacy
-
-test_browser-functional-external:
-  extends: .browser-functional-external
-  variables:
-    BROWSERS: "--browsers-from-file"
-  tags:
-    - web
-
-test_legacy-browser-functional-external:
+.browser-functional-external-chrome:
   extends: .browser-functional-external
   variables:
     WATIR_CHROME: "1"
+    IGNORE_FUNCTIONAL_CBP: "1"  
+    
+test_browser-functional-ff32:
+  extends: .browser-functional
+  variables:
+    FIREFOX_VERSION: 32
     IGNORE_FUNCTIONAL_CBP: "1"
+  tags:
+    - web
+
+test_browser-functional-ff45:
+  extends: .browser-functional
+  variables:
+    FIREFOX_VERSION: 45
+    IGNORE_FUNCTIONAL_CBP: "1"
+  tags:
+    - web
+
+test_browser-functional-chrome:
+  extends: .browser-functional-chrome
+  tags:
+    - web
+        
+test_legacy-browser-functional-chrome:
+  extends: .browser-functional-chrome
   tags:
     - legacy
 
+test_browser-functional-external-ff32:
+  extends: .browser-functional-external
+  variables:
+    FIREFOX_VERSION: 32
+    IGNORE_FUNCTIONAL_CBP: "1"
+  tags:
+    - web
+
+test_browser-functional-external-ff45:
+  extends: .browser-functional-external
+  variables:
+    FIREFOX_VERSION: 45
+    IGNORE_FUNCTIONAL_CBP: "1"
+  tags:
+    - web
+
+test_browser-functional-external-chrome:
+  extends: .browser-functional-external-chrome
+  tags:
+    - web
+    
+test_legacy-browser-functional-external-chrome:
+  extends: .browser-functional-external-chrome
+  tags:
+    - legacy
 
 code_quality:
   stage: test_quality
