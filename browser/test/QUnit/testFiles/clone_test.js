@@ -651,7 +651,16 @@ QUnit.test("attributes", function(assert) {
     clone = new Clone(json_clone1, m, 0, C_INTERACTABLE | C_SIZE_OTHER)
     assert.equal(clone.isInteractable(),  true, "clone should NOT be seen as isInteractable");
     assert.equal(clone.hasSizeOther(),   true, "clone should be seen as hasSizeOther");
-    
+});
 
+QUnit.test("clonedb", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100);
+    m.initClones();
 
+    assert.equal(m.clones[0].numberInCloneDB(), 126, "We should have 126 clone occurrences in CloneDB");
+    assert.equal(m.clones[0].numberSampleSetInCloneDB(), 2, "We should have two matching sample sets in CloneDB");
+
+    assert.equal(m.clones[1].numberInCloneDB(), undefined, "");
+    assert.equal(m.clones[1].numberSampleSetInCloneDB(), undefined, "");
 });

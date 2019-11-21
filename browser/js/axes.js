@@ -296,6 +296,14 @@ Axes.prototype = {
                 axis: new NumericalAxis(this.m),
                 min: 0,
                 fct: function(clone) {return clone.numberInCloneDB()}
+            },
+            "sampleSetOccCloneDB": {
+                hide : (typeof config === 'undefined' || ! config.clonedb),
+                doc: "number of patients/runs/sets sharing clones in cloneDB",
+                label: "cloneDB patients/runs/sets occurrences",
+                axis: new NumericalAxis(this.m),
+                min: 0,
+                fct: function(clone) {return clone.numberSampleSetInCloneDB()}
             }
         };
     }

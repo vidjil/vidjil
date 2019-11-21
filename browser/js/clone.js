@@ -1691,6 +1691,23 @@ Clone.prototype = {
     },
 
     /**
+    * Get the number of sample sets with some occurrences of the clone in cloneDB
+    * @return {int} res - the number of occurrences, undefined if cloneDB wasn't called
+     */
+    numberSampleSetInCloneDB: function() {
+      var res = 0;
+      var clonedb = this.seg.clonedb;
+      if (typeof clonedb == 'undefined'){
+        return undefined;
+      }else{
+        for (var c in clonedb.clones_names){
+            res += 1;
+        }
+        return res;
+      }        
+    },
+
+    /**
     * Update the clone tag icon
     */
     updateCloneTagIcon: function () {
