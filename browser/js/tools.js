@@ -284,6 +284,10 @@ function prepend_path_if_not_web(file, path) {
  * Return a hash whose keys are URLs to sample sets and configs.
  * An additional key (termed 'original') corresponds to the original
  * results as returned by CloneDB.
+ * An additional key (termed 'clones_names') stores sample set names
+ * (keys) and a list of two elements (as values) containing the number
+ * of clones matching the requested clone and the corresponding percentage
+ * of those matching clones in the sample set.
  */
 function processCloneDBContents(results,model) {
     var existing_urls = {};

@@ -1477,7 +1477,7 @@ Clone.prototype = {
         
         //IMGT info
         var other_infos = {"imgt": "<a target='_blank' href='http://www.imgt.org/IMGT_vquest/share/textes/'>IMGT/V-QUEST</a>",
-                       "clonedb": "<a target='_blank' href='http://ecngs.vidjil.org/clonedb'>CloneDB</a>"};
+                           "clonedb": "<a target='_blank' href='http://ecngs.vidjil.org/clonedb'>CloneDB</a> "+ (this.numberSampleSetInCloneDB() > 0 ? "<br /> A similar clone exists in "+this.numberSampleSetInCloneDB()+" other patients/runs/sets" : "")};
         for (var external_tool in other_infos) {
             if (typeof this.seg[external_tool] != 'undefined' &&
                 this.seg[external_tool] !== null) {
@@ -1688,6 +1688,23 @@ Clone.prototype = {
         }
         return res;
       }
+    },
+
+    /**
+    * Get the number of sample sets with some occurrences of the clone in cloneDB
+    * @return {int} res - the number of occurrences, undefined if cloneDB wasn't called
+     */
+    numberSampleSetInCloneDB: function() {
+      var res = 0;
+      var clonedb = this.seg.clonedb;
+      if (typeof clonedb == 'undefined'){
+        return undefined;
+      }else{
+        for (var c in clonedb.clones_names){
+            res += 1;
+        }
+        return res;
+      }        
     },
 
     /**

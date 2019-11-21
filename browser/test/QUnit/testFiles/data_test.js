@@ -49,7 +49,13 @@ json_data = {
             "3" : "TRGJ2*03",
             "3start" : 6,
             "5end" : 5,
-            "cdr3" : {"start": 5, "stop": 6, aa: "AG"}
+            "cdr3" : {"start": 5, "stop": 6, aa: "AG"},
+            "clonedb": {
+                "clones_names": {
+                    "A": [2, 0.25],
+                    "B": [124, 0.01]
+                }
+            }
         },
         "_average_read_length": [
             21
