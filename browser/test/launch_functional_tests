@@ -1,22 +1,9 @@
 # sh launch_functional_tests functional/test_*rb
 
-if [ -z "$FUNCTIONAL_CLIENT_BROWSER_PATH" -o ! -z "$IGNORE_FUNCTIONAL_CBP" ]; then
-    FUNCTIONAL_CLIENT_BROWSER_PATH="."
-fi
-
-if  [ "$1" = "--browsers-from-file" ]
-then
-    shift
-    if [ ! -f ./tested-browsers ]; then
-        exit 1
-    fi
-    BROWSER_LIST=`sed "s#^#$FUNCTIONAL_CLIENT_BROWSER_DIR#" ./tested-browsers`
+if [ ! -z "$FIREFOX_PATH" -a ! -z "$FIREFOX_VERSION" ]; then
+    BROWSER_LIST="$(printf $FIREFOX_PATH $FIREFOX_VERSION)"
 else
-    if [ "$FUNCTIONAL_CLIENT_BROWSER_PATH" = "." -a ! -z "$FIREFOX_VERSION" ]; then
-        BROWSER_LIST="$(printf $FIREFOX_PATH $FIREFOX_VERSION)"
-    else
-        BROWSER_LIST=$FUNCTIONAL_CLIENT_BROWSER_PATH
-    fi
+    BROWSER_LIST=.
 fi
 
 FUNCTIONAL_TESTS=$*

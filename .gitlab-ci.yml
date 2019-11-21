@@ -238,7 +238,6 @@ test_browser_unit:
   extends: .browser-functional
   variables:
     WATIR_CHROME: "1"
-    IGNORE_FUNCTIONAL_CBP: "1"
 
 .browser-functional-external:
   stage: test_functional_external
@@ -261,13 +260,11 @@ test_browser_unit:
   extends: .browser-functional-external
   variables:
     WATIR_CHROME: "1"
-    IGNORE_FUNCTIONAL_CBP: "1"  
     
 test_browser-functional-ff32:
   extends: .browser-functional
   variables:
     FIREFOX_VERSION: 32
-    IGNORE_FUNCTIONAL_CBP: "1"
   tags:
     - web
 
@@ -275,7 +272,6 @@ test_browser-functional-ff45:
   extends: .browser-functional
   variables:
     FIREFOX_VERSION: 45
-    IGNORE_FUNCTIONAL_CBP: "1"
   tags:
     - web
 
@@ -293,7 +289,6 @@ test_browser-functional-external-ff32:
   extends: .browser-functional-external
   variables:
     FIREFOX_VERSION: 32
-    IGNORE_FUNCTIONAL_CBP: "1"
   tags:
     - web
 
@@ -301,7 +296,6 @@ test_browser-functional-external-ff45:
   extends: .browser-functional-external
   variables:
     FIREFOX_VERSION: 45
-    IGNORE_FUNCTIONAL_CBP: "1"
   tags:
     - web
 
@@ -386,13 +380,11 @@ test-server-functional-ff32:
   extends: .test_server_functional
   variables:
     FIREFOX_VERSION: 32
-    IGNORE_FUNCTIONAL_CBP: 1
 
 test-server-functional-ff45:
   extends: .test_server_functional
   variables:
     FIREFOX_VERSION: 45
-    IGNORE_FUNCTIONAL_CBP: 1
 
 
 
