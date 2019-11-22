@@ -161,12 +161,12 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
     //disabled due to security concerns
     //form.action = "http://www.imgt.org/IMGT_vquest/vquest";
     //using proxy on server to allow requests on other site than vidjil one's in JS.
-    if (typeof config != 'undefined' && typeof config.db_address != 'undefined') {
-        form.action = config.db_address+"/proxy/imgt"
+    if (typeof config != 'undefined' && typeof config.proxy != 'undefined') {
+        form.action = config.proxy+"/imgt"
     } else {
         console.log({
             "type": "flash",
-            "msg": "Your installation doesn't seem to be associated with a database.",
+            "msg": "Your installation doesn't seem to have an associated proxy.",
             "priority": 2
         });
     }
@@ -433,12 +433,12 @@ function assignSubsetsPost(species, data, system) {
         form.target = "_blank";
         form.enctype = 'multipart/form-data';
         form.name = 'assignsubsets';
-        if (typeof config != 'undefined' && typeof config.db_address != 'undefined') {
-            form.action = config.db_address+"/proxy/assign_subsets"
+        if (typeof config != 'undefined' && typeof config.proxy != 'undefined') {
+            form.action = config.proxy+"/assign_subsets"
         } else {
             console.log({
                 "type": "flash",
-                "msg": "Your installation doesn't seem to be associated with a database.",
+                "msg": "Your installation doesn't seem to have an associated proxy.",
                 "priority": 2
             });
         }
