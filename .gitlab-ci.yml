@@ -233,6 +233,8 @@ test_browser_unit:
     - /^hotfix-.*c.*\/.*$/
     - prod-client
     - schedules
+  tags:
+    - web
 
 .browser-functional-chrome:
   extends: .browser-functional
@@ -255,6 +257,8 @@ test_browser_unit:
     - /^hotfix-.*c.*\/.*$/
     - prod-client
     - schedules
+  tags:
+    - web
 
 .browser-functional-external-chrome:
   extends: .browser-functional-external
@@ -265,20 +269,14 @@ ff32-browser-functional:
   extends: .browser-functional
   variables:
     FIREFOX_VERSION: 32
-  tags:
-    - web
 
 ff45-browser-functional:
   extends: .browser-functional
   variables:
     FIREFOX_VERSION: 45
-  tags:
-    - web
 
 chrome-browser-functional:
   extends: .browser-functional-chrome
-  tags:
-    - web
         
 old-chrome-browser-functional:
   extends: .browser-functional-chrome
@@ -289,20 +287,14 @@ ff32-browser-functional-external:
   extends: .browser-functional-external
   variables:
     FIREFOX_VERSION: 32
-  tags:
-    - web
 
 ff45-browser-functional-external:
   extends: .browser-functional-external
   variables:
     FIREFOX_VERSION: 45
-  tags:
-    - web
 
 chrome-browser-functional-external:
   extends: .browser-functional-external-chrome
-  tags:
-    - web
     
 old-chrome-browser-functional-external-chrome:
   extends: .browser-functional-external-chrome
