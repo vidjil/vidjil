@@ -275,12 +275,12 @@ ff45-browser-functional:
   tags:
     - web
 
-test_browser-functional-chrome:
+chrome-browser-functional:
   extends: .browser-functional-chrome
   tags:
     - web
         
-test_legacy-browser-functional-chrome:
+old-chrome-browser-functional:
   extends: .browser-functional-chrome
   tags:
     - legacy
@@ -299,12 +299,12 @@ ff45-browser-functional-external:
   tags:
     - web
 
-test_browser-functional-external-chrome:
+chrome-browser-functional-external:
   extends: .browser-functional-external-chrome
   tags:
     - web
     
-test_legacy-browser-functional-external-chrome:
+old-chrome-browser-functional-external-chrome:
   extends: .browser-functional-external-chrome
   tags:
     - legacy
