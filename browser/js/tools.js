@@ -766,4 +766,22 @@ function getNFirstSequences(data, n) {
     }    
 }
 
-
+/**
+ * @return a proxy URL if one can be obtained in the config (ending with /) or
+ * throws an exception and logs the error.
+ */
+function getProxy() {
+    if (typeof config != 'undefined') {
+        if (typeof config.proxy != 'undefined') {
+            return config.proxy+"/";
+        } else if (typeof config.db_address != 'undefined') {
+            return config.db_address+"/proxy/";
+        }
+    }
+    console.log({
+        "type": "flash",
+        "msg": "Your installation doesn't seem to have an associated proxy.",
+        "priority": 2
+    });
+    throw "No proxy";
+}
