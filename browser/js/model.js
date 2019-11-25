@@ -1082,7 +1082,8 @@ changeAlleleNotation: function(alleleNotation) {
             this.orderedSelectedClones.push(tmp[j].id);
             list[j] = tmp[j].id
         }
-        this.updateElemStyle(list);
+        this.updateModel();
+        this.updateElemStyle(this.orderedSelectedClones);
     },
 
     /**
@@ -1101,9 +1102,12 @@ changeAlleleNotation: function(alleleNotation) {
     unselectAll: function () {
         console.log("unselectAll()");
         this.orderedSelectedClones = [];
-        var list = this.getSelected();
-        for (var i = 0; i < list.length; i++) {
-            this.clone(list[i]).select = false;
+        var list = [];
+        for (var i=0; i<this.clones.length; i++){
+            if (this.clone(i).select == true){
+                list.push(i);
+                this.clone(i).select = false;
+            }
         }
         this.updateElemStyle(list);
     },
