@@ -1408,12 +1408,18 @@ genSeq.prototype= {
         var ref = '';
         var seq = '';
 
+        if (typeof(this.segmenter.sequence[this.segmenter.first_clone]) == "undefined"){ // the f* is this 
+            console.log("WUT???")
+            //TODO: store sequences in array and delete first_clone
+            this.segmenter.first_clone = Object.keys(this.segmenter.sequence)[0]//first key should be the oldest sequence added to segmenter
+        } 
 
         if (this.segmenter.amino) {
             seq = this.seqAA;
             ref = this.segmenter.sequence[this.segmenter.first_clone].seqAA;
         } else {
             seq = this.seq;
+
             ref = this.segmenter.sequence[this.segmenter.first_clone].seq;
         }
         if (this.segmenter.aligned) {
