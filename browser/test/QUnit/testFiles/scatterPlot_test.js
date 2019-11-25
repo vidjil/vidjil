@@ -4,6 +4,8 @@ QUnit.module("Scatterplot", {
 
 QUnit.test("grid", function(assert) {
     var m = new Model(m);
+    assert.expect(23);
+
     m.parseJsonData(json_data,100)
     m.loadGermline()
     m.initClones()
@@ -64,7 +66,13 @@ QUnit.test("grid", function(assert) {
     assert.approx(sp.nodes[2].bar_h, 0.40, 0.05, "node 2, bar h is about 0.40")
     m.clone(0).reads = [10000,1,1,1]
     m.update()
-    assert.equal(sp.nodes[2].bar_h, 0.01, "node 2, bar h is small, but not too much")
+
+    var done = assert.async();       
+    setTimeout(function() {
+        assert.equal(sp.nodes[2].bar_h, 0.01, "node 2, bar h is small, but not too much")
+        done();
+    }, 500 );
+    
 });
 
 
