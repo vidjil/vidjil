@@ -382,6 +382,14 @@ Then launch it again
 docker-compose up -d nginx
 ```
 
+## Knowing what docker image version is running
+
+As our latest image is always tagged `latest` you may have troubles to know
+what version is currently running on your server. To determine that, you can
+use the *digest* of the image. You can view it, for example with `docker image
+--digests vidjil/server`. Then you can compare it with the digests shown [on
+the Dockerhub page](https://hub.docker.com/r/vidjil/server/tags/).
+
 # Plain server installation
 
 This installation is not supported anymore.
