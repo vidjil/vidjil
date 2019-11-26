@@ -177,7 +177,7 @@ forget to make a backup of any file you replace.)
 ## First configuration and first launch
 
   - Set the SSL certificates (see above)
-  - Change the mysql root password in `docker-compose.yml`
+  - Change the mysql root password and the web2py admin password in `docker-compose.yml`
   - Change the mysql vidjil password in `mysql/create_db.sql` and sets it also in `DB_ADDRESS` in `vidjil-server/conf/defs.py`
 
   - Comment backup/reporter services in `docker-compose.yml`
