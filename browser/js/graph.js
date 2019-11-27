@@ -528,6 +528,8 @@ Graph.prototype = {
         var res = []
         for (var i = 0; i < this.m.samples.number; i++) {
             res[i] = (r / this.m.reads.segmented[i])
+            if(this.m.reads.segmented[i]==0) res[i] = 1;
+            if(res[i] > 1) res[i] = 1;
         }
         
         if (typeof res !== "undefined" && res.length !== 0) {
