@@ -334,6 +334,8 @@ Graph.prototype = {
      * */
     update : function (speed) {
         speed = typeof speed !== 'undefined' ? speed : 500;
+        this.g_clone = this.clones_container.selectAll("path")
+            .data(this.data_clone);
         this.initAxis()
             .initData()
             .updateRes()
@@ -576,7 +578,7 @@ Graph.prototype = {
         var size = []
         for (var i = 0; i < this.graph_col.length; i++) {
             if (seq_size) size[i] = this.m.clone(id).getSequenceSize(this.m.samples.order[i])
-            else size[i] = this.m.clone(id).getSize(this.m.samples.order[i])
+            else          size[i] = this.m.clone(id).getSize(this.m.samples.order[i])
         }
 
         var x = this.graph_col[0];
@@ -768,6 +770,9 @@ Graph.prototype = {
             .attr("id", function (d) {
                 return "poly" + d.name;
             })
+            .attr("d", function (p) {
+                return p.path
+            })
         this.g_clone.exit()
             .remove();
             
@@ -795,17 +800,16 @@ Graph.prototype = {
             path: this.constructPathR(5)
         });
 
-        this.g_res = this.reso_container.selectAll("g")
+        this.g_res = this.reso_container.selectAll("path")
             .data(this.data_res);
         this.g_res.enter()
-            .append("svg:g")
+            .append("svg:path")
             .attr("id", function (d) {
                 return d.name;
+            })
+            .attr("d", function (p) {
+                return p.path
             });
-        this.g_res.exit()
-            .remove();
-
-        this.g_res.append("path")
         this.g_res.exit()
             .remove();
             
@@ -942,14 +946,9 @@ Graph.prototype = {
     initOrdinateClones : function () {
         
         var max = this.m.precision*this.m.max_size
-        //get ready for something really dirty
         for (var i=0; i<this.m.samples.order.length; i++) {
-            for (var j=0; j<this.m.clones.length; j++){
-                if (this.m.clone(j).hasSizeConstant()) {
-                    var size = this.m.precision*this.m.clone(j).getSize()
-                    if (size>max) max=size;
-                }
-            }
+            var size = this.m.reads.segmented[i]
+            if (size>max) max=size;
         }
         
         this.scale_x = d3.scaleLog()
@@ -1204,27 +1203,36 @@ Graph.prototype = {
         
         if (this.mode=="stack"){
             //volumes
-            this.g_clone
+            var clone = this.g_clone;
+            if (speed !== 0){
+                clone = clone
+                .transition()
+                .duration(speed)
+            }
+            clone
                 .style("fill", function (d) {
                     return self.m.clone(d.id).getColor();
                 })
                 .style("stroke", "none")
                 .attr("class", function (p) {
                     var clone = self.m.clone(p.id)
-                    if (!clone.isActive()) return "graph_inactive";
                     if (clone.isSelected()) return "graph_select";
                     if (clone.isFocus()) return "graph_focus";
+                    if (!clone.isActive()) return "graph_inactive";
                     c++
                     return "graph_line";
                 })
                 .attr("id", function (d) {
                     return "poly" + d.name;
                 })
+                .attr("d", function (d) {
+                    return d.path
+                })
         }else{
             //courbes
             selected_clones = this.g_clone;
             if (typeof list != "undefined"){
-                selected_clones = this.g_clone.filter(function(d, i) {
+                selected_clones = this.g_clone.filter(function(d) {
                     if (list.indexOf(d.id) != -1) return true;
                     return false
                 });
@@ -1248,24 +1256,16 @@ Graph.prototype = {
                 .attr("id", function (d) {
                     return "poly" + d.name;
                 })
-                
-        }
-        
-        var clone = this.g_clone
-        if (speed !== 0){
-            clone = clone
-            .transition()
-            .duration(speed)
                 .on("mouseover", function (d) {
                     self.m.focusIn(d.id);
                 })
                 .on("click", function (d) {
                     self.clickGraph(d.id);
                 })               
+                .attr("d", function (d) {
+                    return d.path
+                });
         }
-        clone.attr("d", function (p) {
-                return p.path
-            })
             
         return this
     },
@@ -1328,14 +1328,11 @@ Graph.prototype = {
     drawRes: function (speed) {
         var self = this;
         
-        var res = this.g_res.selectAll("path")
-        if (speed !== 0){
-            res = res 
-            .transition()
-            .duration(speed)
-        }
-        
-        res.attr("d", function (p) {
+        var res = this.g_res
+        res
+        .transition()
+        .duration(500)     
+        .attr("d", function (p) {
                 return p.path
             })
             
