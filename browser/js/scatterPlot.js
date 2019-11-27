@@ -1720,7 +1720,7 @@ ScatterPlot.prototype = {
         if (endbar){
             this.endBar();
         }else{
-            this.update();
+            this.smartUpdate();
         }
 
         oldOtherVisibility = this.otherVisibility
