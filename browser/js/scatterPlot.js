@@ -1247,11 +1247,11 @@ ScatterPlot.prototype = {
         // Clone position
         var sys = clone.get('germline');
         if (this.use_system_grid && this.m.system == "multi" && typeof sys != 'undefined' && sys != this.m.germlineV.system) {
-            this.nodes[cloneID].x2 = this.systemGrid[sys].x * this.resizeW;
-            this.nodes[cloneID].y2 = this.systemGrid[sys].y * this.resizeH;
+            this.nodes[cloneID].x2 = Math.random()*0.01 + this.systemGrid[sys].x * this.resizeW;
+            this.nodes[cloneID].y2 = Math.random()*0.01 + this.systemGrid[sys].y * this.resizeH;
         } else {
-            this.nodes[cloneID].x2 = this.axisX.pos(clone).pos * this.gridSizeW
-            this.nodes[cloneID].y2 = this.axisY.pos(clone).pos * this.gridSizeH
+            this.nodes[cloneID].x2 = Math.random()*0.01 + this.axisX.pos(clone).pos * this.gridSizeW
+            this.nodes[cloneID].y2 = Math.random()*0.01 + this.axisY.pos(clone).pos * this.gridSizeH
         }
 
     },
