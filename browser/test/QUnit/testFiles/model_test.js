@@ -522,3 +522,30 @@ QUnit.test("tag / color", function(assert) {
     assert.equal(m.getColorSelectedClone(), "", "Color of selected clones (mix of clones) is false")
     
 });
+
+
+QUnit.test("distribution_load", function(assert) {
+
+    var m1 = new Model();
+    m1.parseJsonData(json_data, 100)
+    m1.initClones()
+
+    assert.equal(m1.clones.length, 7, 'Correct number of clones WITHOUT distributions clones')
+    assert.equal(m1.countRealClones(), 5, 'Correct number of real clones WITHOUT distributions clones')
+
+    m1.distributions = data_distributions
+    m1.loadAllDistribClones()
+    assert.equal(m1.clones.length, 12, 'Correct number of clones WITH distributions clones')
+    assert.equal(m1.countRealClones(), 5, 'Correct number of real clones WITH distributions clones')
+   
+    // Add distrib values directly into json data
+    var json_data_bis = JSON.parse(JSON.stringify(json_data)) // hard copy
+    json_data_bis.distributions = data_distributions
+    
+    var m2 = new Model();
+    m2.parseJsonData(json_data_bis, 100)
+
+    assert.equal(m2.clones.length, 12, 'Correct number of clones WITH distributions clones (directly from json_data)')
+    assert.equal(m2.countRealClones(), 5, 'Correct number of real clones WITH distributions clones (directly from json_data)')
+   
+});
