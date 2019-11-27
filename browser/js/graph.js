@@ -194,9 +194,6 @@ Graph.prototype = {
             this.axis_container = d3.select("#" + this.id + "_clipped")
                 .append("svg:g")
                 .attr("id", "axis_container")
-            this.reso_container = d3.select("#" + this.id + "_clipped")
-                .append("svg:g")
-                .attr("id", "reso_container")
             this.data_container = d3.select("#" + this.id + "_clipped")
                 .append("svg:g")
                 .attr("id", "data_container")
@@ -209,6 +206,9 @@ Graph.prototype = {
             this.text_container = d3.select("#" + this.id + "_clipped")
                 .append("svg:g")
                 .attr("id", "text_container")
+            this.reso_container = d3.select("#" + this.id + "_clipped")
+                .append("svg:g")
+                .attr("id", "reso_container")
 
             this.build_menu()
                 .build_list();
@@ -345,11 +345,7 @@ Graph.prototype = {
      * 
      * */
     updateRes : function () {
-        if(this.mode != "stack"){
-            this.data_res[0].path = this.constructPathR(1);
-            this.data_res[1].path = this.constructPathR(5);
-        }
-
+        this.initRes();
         return this
     },
     
