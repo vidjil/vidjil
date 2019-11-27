@@ -1348,7 +1348,14 @@ changeAlleleNotation: function(alleleNotation) {
      * added)
      * */
     countRealClones: function() {
-        return this.clones.length - this.system_available.length;
+        var sum = 0;
+        for (var i = 0; i < this.clones.length; i++) {
+            var clone = this.clones[i]
+            if (clone.hasSizeConstant()){
+                sum += 1
+            }
+        }
+        return sum
     },
 
     /**
