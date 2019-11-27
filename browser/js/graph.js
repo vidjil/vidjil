@@ -700,7 +700,6 @@ Graph.prototype = {
             .initData()
             .initClones()
             .initRes()
-            .build_path_events()
         
         return this
     },
@@ -1257,6 +1256,12 @@ Graph.prototype = {
             clone = clone
             .transition()
             .duration(speed)
+                .on("mouseover", function (d) {
+                    self.m.focusIn(d.id);
+                })
+                .on("click", function (d) {
+                    self.clickGraph(d.id);
+                })               
         }
         clone.attr("d", function (p) {
                 return p.path
@@ -1264,20 +1269,6 @@ Graph.prototype = {
             
         return this
     },
-    
-    build_path_events : function (){
-        var self = this;
-        this.clones_container.selectAll("path")
-            .on("mouseover", function (d) {
-                self.m.focusIn(d.id);
-            })
-            .on("click", function (d) {
-                self.clickGraph(d.id);
-            });
-            
-        return this;
-    },
-
     
     /* renderer function for data curves
      * 
