@@ -296,13 +296,6 @@ ScatterPlot.prototype = {
             this.nodes[i].old_y = Array.from(Array(20), () => 0)
         }
 
-        //Initialisation of the D3JS physic engine
-        this.force = d3.layout.force();
-        this.initMotor();
-        this.force
-            .nodes(this.nodes) //Nodes array initialisation
-            .on("tick", function(){self.tick()}); // on -> Listen updates compared to modified positions
-
         //Création d'un element SVG pour chaque nodes (this.node.[...])
         this.node = this.plot_container.selectAll("circle")
             .data(this.nodes) //Ajout de données pour les cercles
@@ -381,17 +374,6 @@ ScatterPlot.prototype = {
         return activeclones;
     },
 
-    /**
-     * initialize the D3JS physic engine with default values - usefull with reinitMotor()
-     * */
-    initMotor: function() {
-        this.force
-            .gravity(0) //No gravity
-            .theta(0) //Default value: 0.8
-            .charge(0) //Default value: -1
-            .friction(0.75) //Velocity
-            .size([1, 1]);
-    },
 
     /**
      * build scatterplot menu <br>
@@ -951,7 +933,6 @@ ScatterPlot.prototype = {
      * (used for export a scatterplot screenshot without waiting for the clones have found a balance)
      * */
     fastForward: function() {
-        this.force.stop()
         for (var i = 0; i < 500; i++) this.computeFrame()
         this.drawFrame()
     },
@@ -990,8 +971,6 @@ ScatterPlot.prototype = {
             return d.r2 > 0.1;
         });
 
-        //deplace le node vers son objectif
-        this.node.each(this.move());
         //mise a jour des rayons( maj progressive )
         this.node.each(this.updateRadius());
 
@@ -1037,36 +1016,6 @@ ScatterPlot.prototype = {
         }
     },
 
-    /**
-     * move current clone's positions closer to their expected positions
-     * */
-    move: function() {
-        self = this;
-        return function(d) {
-            if (d.r2<0.4){ //teleport a nodes directly at his expected position
-                d.old_x=[d.x2,d.x2,d.x2,d.x2,d.x2];
-                d.x=d.x2+Math.random(); //add a small random to avoid multiple nodes to teleport at the exact same position
-                d.old_y=[d.y2,d.y2,d.y2,d.y2,d.y2];
-                d.y=d.y2+Math.random();
-                return
-            }
-            d.old_x.push(d.x);
-            d.old_x.shift();
-            var delta, s;
-            if (d.x != d.x2) {
-                delta = d.x2 - d.x;
-                s = ((d.r1 / self.resizeCoef))
-                d.x += 0.015 * delta
-            }
-            d.old_y.push(d.y);
-            d.old_y.shift();
-            if (d.y != d.y2) {
-                delta = d.y2 - d.y;
-                s = ((d.r1 / self.resizeCoef))
-                d.y += 0.015 * delta
-            }
-        }
-    },
 
 
     /**
@@ -1161,7 +1110,7 @@ ScatterPlot.prototype = {
         for (var i = 0; i < this.nodes.length; i++) {
             this.updateClone(i);
         }
-        this.force.start();
+        
         this.updateElemStyle();
 
         if (this.m.germlineV.system != this.system) {
