@@ -295,6 +295,7 @@ ScatterPlot.prototype = {
             this.nodes[i].y = Math.random() * 250;
             this.nodes[i].old_y = Array.from(Array(20), () => 0)
         }
+        this.active_nodes = [];
 
         //Création d'un element SVG pour chaque nodes (this.node.[...])
         this.node = this.plot_container.selectAll("circle")
@@ -967,9 +968,6 @@ ScatterPlot.prototype = {
     computeFrame: function() {
         var self = this;
 
-        this.active_node = this.node.filter(function(d, i) {
-            return d.r2 > 0.1;
-        });
 
         //mise a jour des rayons( maj progressive )
         this.node.each(this.updateRadius());
@@ -1085,6 +1083,9 @@ ScatterPlot.prototype = {
     update: function() {
         var self = this;
         try{
+            this.node = this.plot_container.selectAll("circle")
+            .data(this.nodes);
+
             this.compute_size()
                 .initGrid()
                 .updateClones()
@@ -1093,6 +1094,28 @@ ScatterPlot.prototype = {
             if (this.mode == this.MODE_BAR)
                 this.updateBar();
             
+
+            this.active_nodes = this.nodes.filter(function(d, i) {
+                return d.r1 > 0;
+            });
+            if(typeof(this.simulation) != "undefined"){
+                this.simulation.stop();
+                this.simulation = null;
+            }
+
+            this.simulation = d3.forceSimulation()
+                .nodes(this.nodes)
+                .on("tick", function(){self.tick()})
+                .force("forceX", d3.forceX()
+                    .strength(0.1)
+                    .x(function(d){return (d.x2) }))
+                .force("forceY", d3.forceY()
+                    .strength(0.1)
+                    .y(function(d){return d.y2 }))
+                /*.force("collide", d3.forceCollide()
+                    .strength(0.8)
+                    .radius(function(d){ return d.r2+1})
+                    .iterations(1));*/
 
         } catch(err) {
             sendErrorToDb(err, this.db);
