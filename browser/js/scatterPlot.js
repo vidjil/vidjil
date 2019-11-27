@@ -330,9 +330,13 @@ ScatterPlot.prototype = {
                 if (self.m.clone(p.id)
                     .isFocus()) return "circle_focus";
                 return "circle";
-            })
-            //Appel de la fonction drag
-            .call(this.force.drag)
+            })     
+            /*     
+            .call(d3.drag()
+                .on("start", function(d){return self.dragstarted(d)})
+                .on("drag", function(d){return self.dragged(d)})
+                .on("end", function(d){return self.dragended(d)}))            
+                */ 
             //Action -> Si la souris est pointée/fixée sur un cercle, alors on affiche l'information concernant ce cercle
             .on("mouseover", function(d) {
                 self.m.focusIn(d.id);
@@ -340,10 +344,30 @@ ScatterPlot.prototype = {
             //Action -> Si l'on clique sur un cercle, alors on le sélectionne
             .on("click", function(d) {
                 self.clickNode(d.id);
-            })
+            });
 
     },
-
+/*
+    dragstarted: function(d)
+    { 
+        if (!d3.event.active) this.simulation.alphaTarget(.7).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+    },
+   
+    dragged: function(d)
+    {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+    },
+   
+    dragended: function(d)
+    {
+        if (!d3.event.active) this.simulation.alphaTarget(.7).restart();
+        d.fx = null;
+        d.fy = null;
+    },
+/*
     /**
      * Function which allows to return the number of active clones
      * @return {integer}
