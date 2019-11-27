@@ -2272,7 +2272,8 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     changeColorMethod: function (colorM) {
         this.colorMethod = colorM;
-        this.update();
+        var i = 0;
+        this.updateElemStyle(Array.from(Array(this.clones.length), () => i++));
     },
     
     /**
