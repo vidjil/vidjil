@@ -464,7 +464,6 @@ Builder.prototype = {
     build_top_container: function () {
         var self = this;
         var parent = document.getElementById("top_info");
-        if (parent == null) return;
         parent.removeAllChildren();
         parent.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
 
