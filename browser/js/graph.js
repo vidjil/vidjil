@@ -953,7 +953,7 @@ Graph.prototype = {
             }
         }
         
-        this.scale_x = d3.scale.log()
+        this.scale_x = d3.scaleLog()
             .domain([1, max])
             .range([0, 1]);
         
@@ -1019,12 +1019,12 @@ Graph.prototype = {
         
         //choose the best scale (linear/log) depending of the space between min/max
         if ( g_min!==0 && (g_min*100)<g_max){
-            this.scale_data = d3.scale.log()
+            this.scale_data = d3.scaleLog()
                 .domain([g_max, g_min])
                 .range([0, 1]);
         }else{
             if ( (g_min*2)<g_max) g_min = 0
-            this.scale_data = d3.scale.linear()
+            this.scale_data = d3.scaleLinear()
                 .domain([g_max, g_min])
                 .range([0, 1]);
         }
