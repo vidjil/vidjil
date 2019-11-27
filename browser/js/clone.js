@@ -788,12 +788,16 @@ Clone.prototype = {
                             }
                         } else if (cluster.length == 0) {
                             // Look for cluster that include this clone
-                            var cluster_clone    = this.m.clone(clone.mergedId)
-                            if (cluster_clone.active || cluster_clone.isFiltered) { // cluster ?
-                                this.current_reads[timepoint]  -= clone.reads[timepoint]
-                                this.current_clones[timepoint] -= 1
+                            // If analysis is loaded, the value is undefined at the first call of this function
+                            if (clone.mergedId != undefined){
+                                
+                                var cluster_clone    = this.m.clone(clone.mergedId)
+                                if (cluster_clone.active || cluster_clone.isFiltered) { // cluster ?
+                                    this.current_reads[timepoint]  -= clone.reads[timepoint]
+                                    this.current_clones[timepoint] -= 1
+                                }
+                                // Attention , un clone cluster + split sera vu comme actif...
                             }
-                            // Attention , un clone cluster + split sera vu comme actif...
                         }
                     }
                 }
