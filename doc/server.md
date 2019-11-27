@@ -177,7 +177,7 @@ forget to make a backup of any file you replace.)
 ## First configuration and first launch
 
   - Set the SSL certificates (see above)
-  - Change the mysql root password in `docker-compose.yml`
+  - Change the mysql root password and the web2py admin password in `docker-compose.yml`
   - Change the mysql vidjil password in `mysql/create_db.sql` and sets it also in `DB_ADDRESS` in `vidjil-server/conf/defs.py`
 
   - Comment backup/reporter services in `docker-compose.yml`
@@ -308,6 +308,20 @@ running `backup.sh`):
 cd /usr/share/vidjil/server
 sh backup.sh vidjil /mnt/backup >> /var/log/cron.log 2>&1
 ```
+
+## I can't connect to the web2py administration site
+The URL to this site is https://mywebsite/admin/default/.
+The password should be given in the `docker-compose.yml` file.
+Otherwise a random password is generated. You can still modify
+this password by connecting to the server (in the `uwsgi` container).
+Go in the the `/usr/share/vidjil/server/web2py` directory and then
+launch Python.
+```python
+from gluon.main import save_password
+save_password(PASSWORD, 443)
+```
+This password will not persist when the container will be restarted.
+For a persistent password, please use the environment variable.
 
 # Docker -- Updating a Docker installation
 
