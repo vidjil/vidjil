@@ -828,13 +828,10 @@ List.prototype = {
     showClusterContent: function(cloneID, update){
         var self = this
         var fct;
-        if (update == true || update == undefined) {
-            fct = function () { self.m.updateElem([cloneID]) }
-        } else if (update == false) {
-            fct = function(){}
-        }
+        if (update == true || update == undefined) 
+            self.m.updateElem([cloneID]) 
         $("#cluster" + cloneID)
-            .show(50, fct );
+            .show(50);
     },
 
     /**
@@ -857,13 +854,10 @@ List.prototype = {
     hideClusterContent: function(cloneID, update){
         var self = this
         var fct;
-        if (update == true || update == undefined) {
-            fct = function () { self.m.updateElem([cloneID]) }
-        } else if (update == false) {
-            fct = function(){}
-        }
+        if (update == true || update == undefined) 
+            self.m.updateElem([cloneID]) 
         $("#cluster" + cloneID)
-            .hide(50, fct );
+            .hide(50);
     },
     
     /**
