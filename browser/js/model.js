@@ -1321,8 +1321,9 @@ changeAlleleNotation: function(alleleNotation) {
         this.top = top;
 
         // top show cannot be greater than the number of clones
-        if (top > this.countRealClones())
-            top = this.countRealClones()
+        var max_clones = this.countRealClones();
+        if (top > max_clones)
+            top = max_clones;
         this.current_top = top
 
         var html_slider = document.getElementById('top_slider');
