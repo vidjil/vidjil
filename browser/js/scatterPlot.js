@@ -883,11 +883,7 @@ ScatterPlot.prototype = {
             .attr("width", div_width)
             .attr("height", div_height);
 
-        //Initialisation de la grille puis mise-à-jour
-        this.initGrid()
-            .updateClones()
-            .updateMenu()
-            .initGrid();
+        this.update();
         
         if (this.splitX == "tsneX_system" || this.splitX == "tsneX"){
             this.changeSplitMethod(this.splitX, this.splitY, this.mode)
@@ -958,11 +954,9 @@ ScatterPlot.prototype = {
         }
         this.fpsqueue.push(Math.round(1000 / (this.time1 - this.time0)));
         this.time0 = this.time1;
-
     },
 
     /**
-     * compute next position of each clones <br>
      * resolve collision
      * */
     computeFrame: function() {
@@ -993,15 +987,20 @@ ScatterPlot.prototype = {
     /**
      * draw each clones
      * */
-    drawFrame: function() {
+    drawFrame: function(c) {
+        var self = this;
         if (this.mode != this.MODE_BAR){
-            this.active_node
+            this.node
                 //attribution des nouvelles positions/tailles
                 .attr("cx", function(d) {
-                    return (d3.mean(d.old_x) + self.margin[3]);
+                    d.old_x.push(d.x + self.margin[3]);
+                    d.old_x.shift();
+                    return d3.mean(d.old_x);
                 })
                 .attr("cy", function(d) {
-                    return (d3.mean(d.old_y) + self.margin[0]);
+                    d.old_y.push(d.y + self.margin[0]);
+                    d.old_y.shift();
+                    return d3.mean(d.old_y);
                 })
                 .attr("r", function(d) {
                     return (d.r2);
@@ -1011,9 +1010,8 @@ ScatterPlot.prototype = {
                         .getName());
                 })
         }
+        return this;
     },
-
-
 
     /**
      * update current clone's radius closer to their expected radius
