@@ -846,7 +846,7 @@ changeAlleleNotation: function(alleleNotation) {
         // 1/0 == infinity
         this.precision=(1/this.min_size)*2
         
-        this.scale_color = d3.scale.log()
+        this.scale_color = d3.scaleLog()
             .domain([1, this.precision])
             .range([250, 0]);
     },
