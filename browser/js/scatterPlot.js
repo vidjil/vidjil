@@ -966,28 +966,27 @@ ScatterPlot.prototype = {
      * resolve collision
      * */
     computeFrame: function() {
-        var self = this;
-
-
         //mise a jour des rayons( maj progressive )
         this.node.each(this.updateRadius());
 
-        this.node.each(this.debugNaN())
-        //résolution des collisions
+        //find biggest node radius,will be used by collide() as max range for collision
         this.r_max = 0;
-        for (var i = 0; i < this.nodes.length; i++) {
-            if (this.nodes[i].r2 > this.r_max) this.r_max = this.nodes[i].r2;
-        }
+        for (var i = 0; i < this.active_nodes.length; i++) 
+            if (this.active_nodes[i].r2 > this.r_max) 
+                this.r_max = this.active_nodes[i].r2;
 
-        var quad = d3.geom.quadtree(this.nodes)
+        //create a new quadtree with only active_nodes
+        this.quad = d3.quadtree()    
+            .x(function(d) {return d.x;})
+            .y(function(d) {return d.y;})
+            .addAll(this.active_nodes);
 
-        for (var j = 0; j < this.nodes.length; j++) {
-            if (this.nodes[j].r1 > 0.1) {
-                quad.visit(this.collide(this.nodes[j]));
-            }
-        }
-        this.active_node.each(this.debugNaN())
-
+        //visit quadtree
+        for (var i = 0; i < this.active_nodes.length; i++) 
+            this.quad.visit(this.collide(this.active_nodes[i]));
+        
+        //debug invalid node positions
+        this.node.each(this.debugNaN())
         return this
     },
 
@@ -1049,27 +1048,29 @@ ScatterPlot.prototype = {
      * */
     collide: function(node) {
         
-        var r = node.r2 + this.r_max + 2,
+        var r = node.r2 + this.r_max,
             nx1 = node.x - r,
             nx2 = node.x + r,
             ny1 = node.y - r,
             ny2 = node.y + r;
             
         return function(quad, x1, y1, x2, y2) {
-            var node2 = quad.point
             
-            if (node2 && (node2 !== node) && node2.r1 !== 0) {
-                var delta_x = node.x - node2.x,
-                    delta_y = node.y - node2.y,
-                    delta = Math.sqrt( (delta_x * delta_x) + (delta_y * delta_y) ),
-                    r_sum = node.r2 + node2.r2 + 2;
-                if (delta < r_sum) {
-                    var s1 = node.s
-                    var s2 = node2.s
-                    var w = (s2 / (s1 + s2))
-                    var l = (delta - r_sum) / delta * w;
-                    node.x -= delta_x *= l;
-                    node.y -= delta_y *= l;
+            if (typeof (quad.data) != "undefined") {
+                var node2 = quad.data;
+                if (node2 != node){
+                    var delta_x = node.x - node2.x,
+                        delta_y = node.y - node2.y,
+                        delta = Math.sqrt( (delta_x * delta_x) + (delta_y * delta_y) ),
+                        r_sum = node.r2 + node2.r2 + 2;
+                    if (delta < r_sum) {
+                        var s1 = node.s
+                        var s2 = node2.s
+                        var w = (s2 / (s1 + s2))
+                        var l = (delta - r_sum) / delta * w;
+                        node.x -= delta_x *= l;
+                        node.y -= delta_y *= l;
+                    }
                 }
             }
             return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
