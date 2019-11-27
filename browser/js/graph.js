@@ -107,6 +107,8 @@ function Graph(id, model, database) {
 
     this.m.graph = this // TODO: find a better way to do this
     this.db = database;
+
+    this.lineGenerator = d3.line().curve(d3.curveMonotoneX);
 }
 
 Graph.prototype = {
@@ -551,16 +553,15 @@ Graph.prototype = {
             p.push([1, (1 - this.scale_x(size[this.m.samples.order[this.graph_col.length - 1]] * this.m.precision))]);
             p.push([1, 1 + 0.1]);
             
-            var x = (p[0][0] * this.resizeW + this.marge4)
-            var y = (p[0][1] * this.resizeH + this.marge5)
-            var che = ' M ' + x + ',' + y;
-            for (var m = 1; m < p.length; m++) {
+            var tab = []
+            for (var m = 0; m < p.length; m++) {
                 x = (p[m][0] * this.resizeW + this.marge4)
                 y = (p[m][1] * this.resizeH + this.marge5)
-                che += ' L ' + x + ',' + y;
+                if (isNaN(x)) return ' M 0,' + this.resizeH;
+                if (isNaN(y)) return ' M 0,' + this.resizeH;
+                tab.push([x,y]);
             }
-            che += ' Z ';
-            return che;
+            return this.lineGenerator(tab);
                 
         } else return "";
     }, //fin constructPathR()
@@ -588,14 +589,11 @@ Graph.prototype = {
             if (size[0] === 0) {
                 p = [];
             } else {
-                p = [
-                    [(x + (Math.random() * 0.05) - 0.125), (1 - y)]
-                ];
-                p.push([(x + (Math.random() * 0.05) + 0.075), (1 - y)]);
+                p = [ [(x + (Math.random() * 0.05) - 0.125), (1 - y)],
+                      [(x + (Math.random() * 0.05) + 0.075), (1 - y)]];
             }
         }
         
-
         //plusieurs points de suivi
         else {
 
@@ -606,14 +604,10 @@ Graph.prototype = {
             if (size[0] === 0) {
                 p = [];
             } else {
-                p = [
-                    [(x - 0.03), (1 - y)]
-                ];
-                p.push([(x), (1 - y)]);
+                p = [ [(x - 0.03), (1 - y)],
+                      [(x),        (1 - y)] ];
 
-                if (to == size[0]) {
-                    p.push([(x + 0.03), (1 - y)]);
-                }
+                if (to == size[0]) p.push([(x + 0.03), (1 - y)]);
             }
 
             //points suivants
@@ -626,40 +620,30 @@ Graph.prototype = {
                     y = this.scale_x(size[k] * this.m.precision)
 
                     if (size[k] === 0) {
-                        if (p.length !== 0) {
-                            p.push([(x), (1 + 0.03)]);
-                        }
+                        if (p.length !== 0) p.push([(x), (1 + 0.03)]);    
                     } else {
-
                         //si premiere apparition du clone sur le graphique
-                        if (p.length === 0) {
-                            p.push([(x - 0.03), (1 - y)]);
-                        }
+                        if (p.length === 0) p.push([(x - 0.03), (1 - y)]);
 
                         p.push([(x), (1 - y)]);
 
                         //si derniere apparition du clone sur le graphique
-                        if (to == size[k]) {
-                            p.push([(x + 0.03), (1 - y)]);
-                        }
-
+                        if (to == size[k]) p.push([(x + 0.03), (1 - y)]);
                     }
-
                 }
             }
-
         }
         
+        var tab = []
         if (p.length !== 0){
-            x = (p[0][0] * self.resizeW + self.marge4)
-            y = (p[0][1] * self.resizeH + self.marge5)
-            var che = ' M ' + x + ',' + y;
-            for (var m = 1; m < p.length; m++) {
+            for (var m = 0; m < p.length; m++) {
                 x = (p[m][0] * self.resizeW + self.marge4)
                 y = (p[m][1] * self.resizeH + self.marge5)
-                che += ' L ' + x + ',' + y;
+                if (isNaN(x)) return ' M 0,' + self.resizeH;
+                if (isNaN(y)) return ' M 0,' + self.resizeH;
+                tab.push([x,y]);
             }
-            return che;
+            return this.lineGenerator(tab);
         }else{
             return ' M 0,' + self.resizeH;
         }
