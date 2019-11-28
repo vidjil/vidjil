@@ -1393,12 +1393,12 @@ ScatterPlot.prototype = {
 
         //LEGENDE
         leg = this.axis_x_container.selectAll("text")
-            .data(data);
-        leg.enter()
-            .append("text");
-        leg.exit()
-            .remove();
-        leg.on("click", function(d){
+            .remove()
+            .exit()
+            .data(data)
+            .enter()
+            .append("text")
+            .on("click", function(d){
             self.m.unselectAllUnlessKey(d3.event)
             var listToSelect = [];
             var halfRangeColumn = 0.5;
@@ -1468,12 +1468,11 @@ ScatterPlot.prototype = {
 
         //this.AXIS
         lines = this.axis_x_container.selectAll("line")
-            .data(data);
-        lines.enter()
-            .append("line");
-        lines.exit()
-            .remove();
-        lines
+            .remove()
+            .exit()
+            .data(data)
+            .enter()
+            .append("line")
             .attr("x1", function(d) {
                 return self.gridSizeW * d.pos + self.margin[3];
             })
@@ -1514,12 +1513,12 @@ ScatterPlot.prototype = {
         
         //LEGENDE
         leg = this.axis_y_container.selectAll("text")
-            .data(data);
-        leg.enter()
-            .append("text");
-        leg.exit()
-            .remove();
-        leg.on("click", function(d){
+            .remove()
+            .exit()
+            .data(data)
+            .enter()
+            .append("text")
+            .on("click", function(d){
             if (self.mode !=this.MODE_BAR){
                 // Multi-selection by clicking on a legend
                 self.m.unselectAllUnlessKey(d3.event)
@@ -1571,12 +1570,11 @@ ScatterPlot.prototype = {
 
         //this.AXIS
         lines = this.axis_y_container.selectAll("line")
-            .data(data);
-        lines.enter()
-            .append("line");
-        lines.exit()
-            .remove();
-        lines
+            .remove()
+            .exit()
+            .data(data)
+            .enter()
+            .append("line")
             .attr("x1", function(d) {
                 return self.margin[3];
             })
@@ -1642,12 +1640,11 @@ ScatterPlot.prototype = {
             this.label_container.style("display", "");
             //LEGENDE
             leg = this.label_container.selectAll(".sp_system_label")
-                .data(data);
-            leg.enter()
-                .append("div");
-            leg.exit()
-                .remove();
-            leg
+                .remove()
+                .exit()
+                .data(data)
+                .enter()
+                .append("div")
                 .style("left", function(d) {
                     return "" + (d.x * self.resizeW + self.margin[3]) + "px"
                 })
