@@ -256,6 +256,20 @@ View.prototype = {
         }
         return this
     },
+
+    /**
+     * return true if an update/elem/style has been call but is pending
+     * @abstract
+     * */
+    updateIsPending(){
+        if (this.useSmartUpdate && this.updateCallCount>0)
+            return true;
+        if (this.useSmartUpdateElem && Object.keys(this.updateElemList).length>0)
+            return true;
+        if (this.useSmartUpdateElemStyle && Object.keys(this.updateElemStyleList).length>0)
+            return true;
+        return false;
+    },
     
     /**
      * resize view to match his div size <br>

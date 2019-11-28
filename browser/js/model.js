@@ -63,6 +63,8 @@ function Model() {
     this.NORM_EXTERNAL  = "external"
     this.normalization_mode = this.NORM_FALSE
     this.axes = new Axes(this)
+
+    setInterval(function(){return self.updateIcon()}, 100); 
 }
 
 
@@ -1242,8 +1244,8 @@ changeAlleleNotation: function(alleleNotation) {
             else
                 this.view[i].update();
         }
+        this.updateIcon();
     },
-
 
     /**
      * ask all linked views to update a clone list
@@ -1262,6 +1264,7 @@ changeAlleleNotation: function(alleleNotation) {
             else
                 this.view[i].updateElem(list);
         }
+        this.updateIcon();
     },
 
     /**
@@ -1279,6 +1282,28 @@ changeAlleleNotation: function(alleleNotation) {
             else
                 this.view[i].updateElemStyle(list);
         }
+        this.updateIcon();
+    },
+
+    /**
+     * return true if a view has not finished an update
+     */
+    updateIsPending:function(){
+        for (var i = 0; i < this.view.length; i++) {
+            if (this.view[i].updateIsPending())
+                return true;
+        }
+        return false;
+    },
+
+    /**
+     * display an icon in the top-container if a view has not finished an update
+     */
+    updateIcon:function(){
+        if (this.updateIsPending())
+            document.getElementById("updateIcon").style.display = "flex";
+        else
+            document.getElementById("updateIcon").style.display = "none";
     },
     
     /**
