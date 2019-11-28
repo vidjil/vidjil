@@ -261,7 +261,7 @@ View.prototype = {
      * return true if an update/elem/style has been call but is pending
      * @abstract
      * */
-    updateIsPending(){
+    updateIsPending: function(){
         if (this.useSmartUpdate && this.updateCallCount>0)
             return true;
         if (this.useSmartUpdateElem && Object.keys(this.updateElemList).length>0)
