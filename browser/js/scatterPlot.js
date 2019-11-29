@@ -291,9 +291,9 @@ ScatterPlot.prototype = {
             this.nodes[i].r1 = 0; // longueur du rayon1
             this.nodes[i].r2 = 0; // longueur du rayon2
             this.nodes[i].x = Math.random() * 500;
-            this.nodes[i].old_x = Array.from(Array(20), () => 0)
+            this.nodes[i].old_x = Array.from(Array(10), () => 0)
             this.nodes[i].y = Math.random() * 250;
-            this.nodes[i].old_y = Array.from(Array(20), () => 0)
+            this.nodes[i].old_y = Array.from(Array(10), () => 0)
         }
         this.active_nodes = [];
 
@@ -1104,17 +1104,21 @@ ScatterPlot.prototype = {
 
             this.simulation = d3.forceSimulation()
                 .nodes(this.nodes)
-                .on("tick", function(){self.tick()})
-                .force("forceX", d3.forceX()
-                    .strength(0.1)
-                    .x(function(d){return (d.x2) }))
-                .force("forceY", d3.forceY()
-                    .strength(0.1)
-                    .y(function(d){return d.y2 }))
-                /*.force("collide", d3.forceCollide()
-                    .strength(0.8)
-                    .radius(function(d){ return d.r2+1})
-                    .iterations(1));*/
+                    .force("forceX", d3.forceX()
+                        .strength(0.1)
+                        .x(function(d){return (d.x2) }))
+                    .force("forceY", d3.forceY()
+                        .strength(0.1)
+                        .y(function(d){return d.y2 }))
+                    .on("tick", function(){self.tick()})
+                    /*.force("repelForce",d3.forceManyBody()
+                        .strength(-140)
+                        .distanceMax(50)
+                        .distanceMin(10))
+                    .force("collide", d3.forceCollide()
+                        .strength(0.8)
+                        .radius(function(d){ return d.r2+1})
+                        .iterations(1));*/
 
         } catch(err) {
             sendErrorToDb(err, this.db);
