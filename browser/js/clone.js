@@ -56,6 +56,14 @@ function Clone(data, model, index, attributes) {
     this.attributes = attributes
     var key = Object.keys(data)
 
+    //// Attributes specific for distribution clones
+    // list of compatible real clones that share the same values for available axis
+    this.lst_compatible_clones = undefined
+    // Number of reads and clones, currently. 
+    // Updated at real clone manipualtion, (change filter values, top, ...)
+    this.current_clones = undefined
+    this.current_reads  = undefined
+
     for (var i=0; i<key.length; i++ ){
         this[key[i]]=data[key[i]]
     }
