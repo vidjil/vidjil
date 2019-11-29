@@ -385,6 +385,17 @@ Distributions can be on several axes, like both V/J (here seg3/seg5).
    }
 ```
 
+Distributions are easily computed by the tool `fuse.py` of vidjil. You need to specify a list of distributions waited in the command line. For the example show, the command is:
+
+```bash
+python fuse.py -d lenSeqAverage -d seg3,seg5 sample_42.vidjil
+```
+To get the list of available axis, run `fuse.py` with option `-l`:
+```bash
+python fuse.py -l
+```
+Some axis should be added after release. If you want to be able to had new one, you need to modify the function `get_values` in the `fuse.py` script. The new axis should also be added in the client to be taken into account (XXX see axis.js doc XXX).
+
 
 ## `germlines` list \[optional\]\[work in progress, to be documented\]
 
