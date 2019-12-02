@@ -577,6 +577,10 @@ Graph.prototype = {
         t = 0;
         var p;
 
+        var clone = self.m.clone(id)
+        if (!clone.isActive() && !clone.isSelected() && !clone.isFocus()) return ' M 0,' + self.resizeH;
+        if (clone.top > self.display_limit)return ' M 0,' + self.resizeH;
+
         var size = []
         for (var i = 0; i < this.graph_col.length; i++) {
             if (seq_size) size[i] = this.m.clone(id).getSequenceSize(this.m.samples.order[i])
