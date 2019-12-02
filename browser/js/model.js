@@ -1300,13 +1300,14 @@ changeAlleleNotation: function(alleleNotation) {
      * display an icon in the top-container if a view has not finished an update
      */
     updateIcon:function(){
-        var div = document.getElementById("updateIcon");
-        if (div==null) return
+        if (typeof (this.divUpdateIcon) == "undefined")
+            this.divUpdateIcon = document.getElementById("updateIcon");
+        if (this.divUpdateIcon==null) return
 
         if (this.updateIsPending())
-            div.style.display = "flex";
+            this.divUpdateIcon.style.display = "flex";
         else
-            div.style.display = "none";
+            this.divUpdateIcon.style.display = "none";
     },
     
     /**
