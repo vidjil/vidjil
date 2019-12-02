@@ -340,7 +340,9 @@ Graph.prototype = {
             .initData()
             .updateRes()
             .updateClones()
-            .draw(speed);
+            .drawAxis(speed)
+            .drawData(speed)
+            .drawRes(speed)
     },
     
     /* update resolution curves
