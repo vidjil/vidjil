@@ -989,8 +989,13 @@ ScatterPlot.prototype = {
      * */
     drawFrame: function(c) {
         var self = this;
+
+        var visible_nodes = this.node.filter(function(d, i) {
+            return d.r2 > 0;
+        });
+
         if (this.mode != this.MODE_BAR){
-            this.node
+            visible_nodes 
                 //attribution des nouvelles positions/tailles
                 .attr("cx", function(d) {
                     d.old_x.push(d.x + self.margin[3]);
