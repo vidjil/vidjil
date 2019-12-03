@@ -357,7 +357,17 @@ webpage.
         written in the `notes.txt` file of each version).
 
 3.  Launch client tests
+
+    As indicated previously, `rvm` must have been loaded. Thus you may need to
+    first launch:
+    ```bash
+    source /etc/profile.d/rvm.sh
+    rvm use 2.6.1
+    ```
     
+    Then you can launch the tests (potentially by altering its behaviour with
+    environment variables, see below).
+
     ``` bash
     make functional
     ```
@@ -365,17 +375,15 @@ webpage.
     1.  Environment variables
         
         By default the tests are launched on the Firefox installed on the system.
-        This can be modified by providing the `FUNCTIONAL_CLIENT_BROWSER_PATH`
-        environment variable (which can contain several pathes, separated with
-        spaces) to the `launch_functional_tests` script. Or, if one wants to launch
-        individual test scripts, to set the `WATIR_BROWSER_PATH` environment
-        variable.
+        This can be modified by providing the `WATIR_BROWSER_PATH` environment
+        variable that defines the path to another Firefox version.
         
         Other environment variables that can be specified to tune the default behaviour
         
           - `WATIR_CHROME`  
             should be set to something evaluated to `True` (*e.g.* 1) if the
-            tests must be launched using Chrome
+            tests must be launched using Chrome (in such a case
+            `WATIR_BROWSER_PATH` is useless)
           - `WATIR_MARIONETTE`  
             should be set to something evalued to `True` (*e.g. 1*)
             if the tests must be launched on a recent Firefox version (\> 45)
