@@ -50,9 +50,19 @@ function Clone(data, model, index, attributes) {
     this.split = false
     this.seg = {};
     this.segEdited = false
+    // Link to another clone that include this one in his cluster (after merge)
+    this.mergedId = undefined 
 
     this.attributes = attributes
     var key = Object.keys(data)
+
+    //// Attributes specific for distribution clones
+    // list of compatible real clones that share the same values for available axis
+    this.lst_compatible_clones = undefined
+    // Number of reads and clones, currently. 
+    // Updated at real clone manipualtion, (change filter values, top, ...)
+    this.current_clones = undefined
+    this.current_reads  = undefined
 
     for (var i=0; i<key.length; i++ ){
         this[key[i]]=data[key[i]]
@@ -735,7 +745,8 @@ Clone.prototype = {
     },
 
     /**
-     * Define a list of compatible real clones
+     * Define a list of compatible real clones that share the same values for available axis
+     * The list is sample dependant and differ for each sample
      * This list is called at the creation of the clone
      */
     defineCompatibleClones: function(){
@@ -763,7 +774,9 @@ Clone.prototype = {
 
 
     /**
-     * Compute the current size of a distrib clone. SUbstract active clone that share same distribution values
+     * Compute the current size of a distrib clone. Substract active clone that share same distribution values
+     * This allow to get the current number of reads or clones that are represented by a distribution clone
+     * Use the list of compatible clones, define for each sample/timepoint to look at if they are filtered or not at the moment
      * Will be call at each change top, filter or search action
      * @return {[type]} [description]
      */
