@@ -471,6 +471,12 @@ changeAlleleNotation: function(alleleNotation) {
                     var cloneID = this.mapID[clusters[i][j]]
                     new_cluster = new_cluster.concat(this.clusters[cloneID]);
                     this.clusters[cloneID] = [];
+                    // Set the mergeId value for cluterized clones
+                    var clone = this.clones[cloneID] 
+                    if (j != 0){
+                        clone.mergedId = this.mapID[clusters[i][0]]
+                    }
+
                 }else{
                     tmp.push(clusters[i][j])
                 }
