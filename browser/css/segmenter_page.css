@@ -860,6 +860,7 @@ a {
 a:hover {
   color: #002b36;
 }
+span.sample-tag,
 a.tag-link {
   color: black;
   background-color: #eee;
