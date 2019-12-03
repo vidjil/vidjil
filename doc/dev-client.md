@@ -321,7 +321,17 @@ webpage.
         written in the `notes.txt` file of each version).
 
 3.  Launch client tests
+
+    As indicated previously, `rvm` must have been loaded. Thus you may need to
+    first launch:
+    ```bash
+    source /etc/profile.d/rvm.sh
+    rvm use 2.6.1
+    ```
     
+    Then you can launch the tests (potentially by altering its behaviour with
+    environment variables, see below).
+
     ``` bash
     make functional
     ```
