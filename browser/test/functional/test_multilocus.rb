@@ -174,7 +174,8 @@ class TestMultilocus < BrowserTest
     $b.tag_selector_edit_normalisation.wait_until(&:present?)
     $b.tag_selector_edit_normalisation.set('0.01')
     $b.tag_selector_normalisation_validator.click 
-    
+    $b.div(id: 'updateIcon').wait_while(&:present?)
+
     assert ( $b.clone_info('25')[:size].text == '1.000%' ) , ">> fail normalize on : wrong clone size "
     
     $b.menu_settings.click 
@@ -309,18 +310,22 @@ class TestMultilocus < BrowserTest
     clone_list = ["1", "32", "24", "68"]
     # clone with seg & sequence (1)
     $b.clone_in_scatterplot(clone_list[0]).click
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     assert ($b.clone_in_segmenter(clone_list[0]).present?), "Clone %s (seg+/seq+) is in segmenter" % clone_list[0]
     
     # clone with seg & not sequence (32)
     $b.clone_in_scatterplot(clone_list[1]).click
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     assert (not $b.clone_in_segmenter(clone_list[1]).present?), "Clone %s (seg+/seq-) is NOT in segmenter" % clone_list[1]
 
     # clone without seg & sequence (24)
     $b.clone_in_scatterplot(clone_list[2]).click
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     assert (not $b.clone_in_segmenter(clone_list[2]).present?), "Clone %s (seg-/seq-) is NOT in segmenter" % clone_list[2]
 
     # clone without seg & sequence (68)
     $b.clone_in_scatterplot(clone_list[3]).click
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     assert ($b.clone_in_segmenter(clone_list[3]).present?), "Clone %s (seg-/seq+) is in segmenter" % clone_list[3]
   end
 
@@ -330,12 +335,12 @@ class TestMultilocus < BrowserTest
     $b.clone_in_scatterplot('90').click(:control)
 
     $b.merge.click
-
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     assert ($b.clone_in_scatterplot('90').exists?), "Main clone of the cluster should be clone 90"
     assert ($b.clone_in_scatterplot('90', :class => "circle_select").exists?), "Clone should be selected"
 
     $b.clone_info('90')[:cluster].click
-
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     $b.until { $b.clone_in_scatterplot('1', :class => "circle_select").exists?}
     assert ( $b.clone_in_graph('1', :class=> "graph_select").exists?)
     assert ( $b.clone_in_segmenter('1').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
@@ -350,7 +355,7 @@ class TestMultilocus < BrowserTest
     $b.clone_in_cluster('90', '37')[:delete].click
 
     $b.unselect
-
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     assert ($b.clone_in_scatterplot('1').exists?)
     assert ($b.clone_in_scatterplot('37').exists?)
     assert ($b.clone_in_scatterplot('90').exists?)
