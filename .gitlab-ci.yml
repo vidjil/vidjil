@@ -51,6 +51,10 @@ test_germlines:
     - /^feature-.*g.*\/.*$/
     - schedules
 
+# Doc
+
+include:
+  - local: '/doc/.gitlab-ci.yml'
 
 # Algorithm
 
