@@ -3,7 +3,10 @@
 import requests
 import glob
 import sys
-from urllib.parse import *
+try:
+    from urllib.parse import *
+except:
+    from urlparse import urlparse    
 import re
 from collections import defaultdict
 
