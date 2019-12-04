@@ -738,6 +738,8 @@ ScatterPlot.prototype = {
                 if (!self.m.clone(p.id)
                     .isActive()) return "circle_hidden";
                 if (self.m.clone(p.id)
+                    .isFiltered)return "circle_hidden";
+                if (self.m.clone(p.id)
                     .isSelected()){
                     if (self.m.clone(p.id)
                         .isFocus()) return "circle_focus circle_select";
@@ -1122,6 +1124,10 @@ ScatterPlot.prototype = {
                 .initGrid()
                 .updateClones()
                 .updateMenu();
+            
+            if (this.mode == this.MODE_BAR)
+                this.updateBar();
+            
 
         } catch(err) {
             sendErrorToDb(err, this.db);
@@ -1274,6 +1280,8 @@ ScatterPlot.prototype = {
                 .attr("class", function(p) {
                     if (!self.m.clone(p.id)
                         .isActive()) return "circle_hidden";
+                    if (self.m.clone(p.id)
+                        .isFiltered)return "circle_hidden";
                     if (self.m.clone(p.id)
                         .isSelected()){
                         if (self.m.clone(p.id)
