@@ -200,7 +200,7 @@ Then `docker ps` should display five running containers:
       - Copy also the generated `browser/js/germline.js` into the `docker/vidjil-client/conf/` directory.
 
 
-  - Open a web browser to <https://localhost>, or to your FQDN if you configured it (see above).
+  - Open a web browser to `https://localhost`, or to your FQDN if you configured it (see above).
 Click on `init database` and create a first account by entering an email.
 This account is the main root account of the server. Other administrators could then be created.
 It will be also the web2py admin password.
@@ -363,7 +363,7 @@ docker load -i <input_file>
 In some cases, you may need to update your `docker-compose.yml` file or some
 of the configuration files. We will describe the changes in the `CHANGELOG` file.
 The latest versions of these files are available on our
-[Gitlab](https://gitlab.vidjil.org/).
+[Gitlab](http://gitlab.vidjil.org/).
 
 Once the images are pulled, you can relaunch the containers:
 ```sh
