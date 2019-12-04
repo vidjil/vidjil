@@ -15,4 +15,10 @@ build_doc:
   tags:
     - doc
 
-
+deploy_doc:
+  stage: deploy_prod
+  script:
+    - scp -r site/ $VIDJIL_WWW:doc/
+  when: manual
+  only:
+    - /^[^\/]*doc[^\/]*\//
