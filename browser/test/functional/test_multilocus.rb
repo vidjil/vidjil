@@ -87,6 +87,7 @@ class TestMultilocus < BrowserTest
 
     $b.clone_name_editor.set 'renamed_click'
     $b.clone_name_saver.click
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     assert (clone_name.text == 'renamed_click'), " >> clone name (click) has not changed"
 
     $b.unselect
@@ -99,6 +100,7 @@ class TestMultilocus < BrowserTest
 
     $b.clone_name_editor.set 'renamed_return'
     $b.send_keys :return
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     assert (clone_name.text == 'renamed_return'), " >> clone name (return) has not changed"
 
     $b.unselect
@@ -176,7 +178,9 @@ class TestMultilocus < BrowserTest
     assert ( $b.clone_info('25')[:size].text == '1.000%' ) , ">> fail normalize on : wrong clone size "
     
     $b.menu_settings.click 
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     $b.radio(:id => 'reset_norm').click
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     assert ( $b.clone_info('25')[:size].text == '0.129%' ) , ">> fail normalize off : wrong clone size "
 
     $b.unselect
@@ -419,6 +423,7 @@ class TestMultilocus < BrowserTest
       ## Test tag selection for multiple clone
       $b.element(:id => "tag_icon__multiple").click
       $b.element(:id => 'tagElem_6').click
+      $b.div(id: 'updateIcon').wait_while(&:present?)
       assert ($b.clone_info('25')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 25 have also changed color"
       assert ($b.clone_info('77')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 77 have also changed color"
       assert ($b.clone_info('88')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 88 have also changed color"

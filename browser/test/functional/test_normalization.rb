@@ -57,7 +57,7 @@ class TestNormalization < BrowserTest
         assert ($b.div(:id => 'normalizetest25').present?), "Form still have the input for expected normalization"
         
         $b.div(:id => 'normalize_external').click
-        
+        $b.div(id: 'updateIcon').wait_while(&:present?)
         assert ($b.clone_info('1')[:size].text == '0.122%'), "Span should show correct normalized size (external) (" + $b.clone_info('1')[:size].text+")"
     end
 

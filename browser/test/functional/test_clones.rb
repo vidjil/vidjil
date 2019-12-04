@@ -114,13 +114,16 @@ class TestClones < BrowserTest
     ### Distrib clone should be hidable
     $b.send_keys 4
     $b.clone_in_list("18").click
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     assert ( $b.clone_in_scatterplot('18').present?),     ">> distrib clone should be in scatterplot"
     assert ( not $b.clone_in_segmenter("18").present? ),  ">> not present in segmenter"
     $b.a(:id => "hide_selected").click
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     sleep(1)
     assert ( not $b.clone_in_scatterplot('18').present?), ">>distrib clone should be hiden"
 
     $b.clear_filter.click
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     sleep(1)# Wait for filtered elements to reach their positions 
   end
 
@@ -128,7 +131,9 @@ class TestClones < BrowserTest
     $b.clone_in_scatterplot("1").click
     $b.clone_in_scatterplot("18").click(:control)
     $b.clone_in_scatterplot("19").click(:control)
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     $b.a(:id => "focus_selected").click
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     sleep(1)
     # should be hidden
     assert ( not $b.clone_in_scatterplot('17').present?), ">>distrib not focused clone should be hiden"
@@ -157,10 +162,12 @@ class TestClones < BrowserTest
     assert ( clone_name.text == "162 (2 clones)" ), ">>name of distrib clone for time 0"
     
     $b.send_keys :arrow_right
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     clone_name = $b.clone_info('18')[:name]
     assert ( clone_name.text == "162 (0 clone)" ), ">>name of distrib clone for time 1"
     
     $b.send_keys :arrow_right
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     clone_name = $b.clone_info('18')[:name]
     assert ( clone_name.text == "162 (7 clones)" ), ">>name of distrib clone for time 2"
     
