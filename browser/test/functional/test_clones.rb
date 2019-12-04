@@ -332,6 +332,7 @@ class TestClones < BrowserTest
     filter = $b.filter_area
     filter.value = 'acag'
     $b.send_keys :enter
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     assert (     $b.clone_in_list('0').present?),  ">> real clone exist in list"
     assert ( not $b.clone_in_list('18').present?), ">> distrib clone is hidden"
     # other ???
@@ -352,6 +353,7 @@ class TestClones < BrowserTest
     $b.send_keys :arrow_down
     $b.send_keys :arrow_down
     $b.send_keys :enter
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     assert ( $b.clone_info('0')[:name].style('color')  !=  'rgba(101, 123, 131, 1)' ) ,    "real clone should have changed color (diff from grey)"
     assert ( $b.clone_info('16')[:name].style('color').start_with?('rgba(150, 150, 150, 0.65') ) , "other clone shouldn't have changed color"
     assert ( $b.clone_info('18')[:name].style('color').start_with?('rgba(150, 150, 150, 0.65') ) , "distrib clone shouldn't have changed color"
@@ -364,12 +366,14 @@ class TestClones < BrowserTest
     $b.clone_in_list("20").click
     $b.clone_in_list("21").click(:control)
     $b.clone_in_list("22").click(:control)
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     stats = $b.statsline
     assert (stats.text.include? '+5 clones'), ">> Correct stats, should have '+5' clones"
     assert (stats.text.include? '50 reads'),  ">> Correct stats, should have 50 reads"
     assert (stats.text.include? '20.00%'),    ">> Correct stats, should be at 20.00%"
     # add a real clone
     $b.clone_in_list("0").click(:control)
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     stats = $b.statsline
     assert (stats.text.include? '1+5 clones'), ">> Correct stats, should have '4+5' clones"
     assert (stats.text.include? '100 reads'),  ">> Correct stats, should have 100 reads"
@@ -385,6 +389,7 @@ class TestClones < BrowserTest
     $b.clone_in_list("18").click(:control)
     $b.clone_in_list("19").click(:control)
     stats = $b.statsline
+    $b.div(id: 'updateIcon').wait_while(&:present?)
     assert (stats.text.include? '5+5 clones'), ">> Correct stats, should have '5+5' clones"
     assert (stats.text.include? '200 reads'),  ">> Correct stats, should have 50 reads"
     assert (stats.text.include? '80.00%'),     ">> Correct stats, should be at 80.00%"
