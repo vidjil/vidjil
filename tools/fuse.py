@@ -365,8 +365,8 @@ class Reads:
 
     def __init__(self):
         self.d={}
-        self.d["total"] = ["0"]
-        self.d["segmented"] = ["0"]
+        self.d["total"] = [0]
+        self.d["segmented"] = [0]
         self.d["germline"] = {}
         self.d['distribution'] = {}
 
@@ -385,6 +385,18 @@ class Reads:
         obj.d["total"] = self.d["total"] + other.d["total"]
         obj.d["segmented"] = self.d["segmented"] + other.d["segmented"]
         return obj
+
+    def addAIRRClone(self, clone):
+        """
+        Allow to add a clone create by AIRR import. 
+        Add reads values to germline, segmented and total section
+        """
+        if clone.d["germline"] not in self.d["germline"].keys():
+            self.d["germline"][clone.d["germline"]] = [0]
+        self.d["germline"][clone.d["germline"]][0]  += clone.d["reads"][0]
+        self.d["total"][0]     += clone.d["reads"][0]
+        self.d["segmented"][0] += clone.d["reads"][0]
+        return
 
     def __str__(self):
         return "<Reads: %s>" % self.d
@@ -521,10 +533,12 @@ class ListWindows(VidjilJson):
             json.dump(self, f, indent=2, default=self.toJson)
 
     def load(self, file_path, *args, **kwargs):
-        if not '.clntab' in file_path:
-            self.load_vidjil(file_path, *args, **kwargs)
-        else:
+        if '.clntab' in file_path:
             self.load_clntab(file_path, *args, **kwargs)
+        elif ".tsv" in file_path or ".AIRR" in file_path or ".airr" in file_path:
+            self.load_airr(file_path, *args, **kwargs)
+        else:
+            self.load_vidjil(file_path, *args, **kwargs)
 
     def loads(self, string, *args, **kwargs):
         self.loads_vidjil(string, *args, **kwargs)
@@ -798,6 +812,108 @@ class ListWindows(VidjilJson):
         
         self.d["reads"].d["segmented"] = [total_size]
         self.d["reads"].d["total"] = [total_size]
+        
+    def load_airr(self, file_path, *args, **kwargs):
+        '''Parser for .clntab file'''
+
+        self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
+        self.d["samples"].d["original_names"] = [file_path]
+        self.d["samples"].d["producer"]       = ["unknown (AIRR format)"]
+        self.d["samples"].d["log"]            = ["Created from an AIRR format. No other information available"]
+        self.d["reads"].d["germline"] = defaultdict(lambda: [0])
+        self.d["diversity"] = Diversity()
+
+        listw = []
+        listc = []
+        total_size = 0
+        i= 0
+        import csv
+        with open(file_path) as tsvfile:
+          reader = csv.DictReader(tsvfile, dialect='excel-tab')
+          for row in reader:
+            print( "%s; %s" % (i, len(row)) )
+            i += 1
+
+            ### bypass igBlast format
+            if "Total queries" in row["sequence_id"]:
+                print( "here")
+                break
+            else:
+                print( "%s -- %s" % (row["sequence_id"], row["sequence"]) )
+
+            # bypass imgt, seq non segmented
+            if row["sequence"] == "":
+                continue
+
+
+            w=Window(1)
+            w.d["seg"] = {}
+            
+            w.d["id"]=row["sequence_id"]
+            w.d["sequence"] = row["sequence"]
+            if "duplicate_count" not in row.keys() or row["duplicate_count"] == "":
+                w.d["reads"] = [1]
+            else :
+                w.d["reads"] = [ int(row["duplicate_count"]) ]
+
+
+            w.d["germline"] = row["locus"] #system ...
+            
+            w.d["seg"]["5"] = {"name": row["v_call"]}
+            if row["v_alignment_start"] != "": w.d["seg"]["5"]["start"] = row["v_alignment_start"]
+            if row["v_alignment_end"]   != "": w.d["seg"]["5"]["stop"]   = row["v_alignment_end"]
+            if "5prime_trimmed_n_nb" in row.keys() and row["5prime_trimmed_n_nb"]   != "": w.d["seg"]["5"]["delLeft"]   = row["5prime_trimmed_n_nb"]
+            w.d["seg"]["4"] = {"name": row["d_call"]}
+            if row["d_alignment_start"] != "": w.d["seg"]["4"]["start"] = row["d_alignment_start"]
+            if row["d_alignment_end"]   != "": w.d["seg"]["4"]["stop"]   = row["d_alignment_end"]
+            w.d["seg"]["3"] = {"name": row["j_call"]}
+            if row["j_alignment_start"] != "": w.d["seg"]["3"]["start"] = row["j_alignment_start"]
+            if row["j_alignment_end"]   != "": w.d["seg"]["3"]["stop"]   = row["j_alignment_end"]
+            if "3prime_trimmed_n_nb" in row.keys() and row["3prime_trimmed_n_nb"]   != "": w.d["seg"]["3"]["delLeft"]   = row["3prime_trimmed_n_nb"]
+            listw.append((w , w.d["reads"][0]))
+                
+            ### CDR3
+            if row["cdr3_start"]: w.d["seg"]["cdr3"] = {"start":row["cdr3_start"], "stop": row["cdr3_end"]}
+            ### NAME (simple, vidjil like)
+            if w.d["seg"]["4"]["name"] != "":
+                w.d["name"]= w.d["seg"]["5"]["name"] + " x/x/x " + w.d["seg"]["4"]["name"] + " x/x/x " + w.d["seg"]["3"]["name"]
+            else:
+                w.d["name"]= w.d["seg"]["5"]["name"] + " x/x/x " + w.d["seg"]["3"]["name"]
+
+            ### JUNCTION
+            w.d["seg"]["junction"] = {}
+            if row["junction"] != "":
+                w.d["seg"]["junction"]["aa"]         = row["junction_aa"]
+                w.d["seg"]["junction"]["productive"] = row["productive"]
+                # w.d["seg"]["junction"]["start"]      = row[""]
+                # w.d["seg"]["junction"]["stop"]       = row[""]
+
+            ### READS
+            self.d["reads"].addAIRRClone( w )
+            
+
+            ### Average/coverage
+            average_read_length = float(len(row["sequence"]))
+            w.d["_average_read_length"] = [average_read_length]
+            w.d["_coverage"] = [1.0]
+            w.d["_coverage_info"] = "%.1f bp (100%% of %.1f bp)" % (average_read_length, average_read_length )
+            
+
+            ### Warning
+            # Il faut avoir une table pour faire la conversion ? 
+            # TODO: undefined for the moment
+
+
+        #sort by sequence_size
+        listw = sorted(listw, key=itemgetter(1), reverse=True)
+        #sort by clonotype
+        listc = sorted(listc, key=itemgetter(1))
+        
+        #generate data "top"
+        for index in range(len(listw)):
+            listw[index][0].d["top"]=index+1
+            self.d["clones"].append(listw[index][0])
+        return
 
         
     def toJson(self, obj):
