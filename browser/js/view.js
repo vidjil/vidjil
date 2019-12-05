@@ -105,6 +105,8 @@ View.prototype = {
      * @param {*} callcount number of update already pending
      */
     smartUpdate2 : function(speed, callcount){   
+        var elapsedTime = new Date().getTime() - this.updateTime;
+
         if (this.updateCallCount==0) //an update has already been done
         {
             this.smartUpdate(speed); //reschedule this update for next round
@@ -152,6 +154,8 @@ View.prototype = {
     },
 
     smartUpdateElem2 : function(callcount){
+        var elapsedTime = new Date().getTime() - this.updateElemTime;
+
         if (Object.keys(this.updateElemList).length == 0) 
             return this
 
@@ -201,7 +205,9 @@ View.prototype = {
         setTimeout(function() { self.smartUpdateElemStyle2(count); }, this.updateElemStyleMinWait);
     },
 
-    smartUpdateElemStyle2 : function(callcount){      
+    smartUpdateElemStyle2 : function(callcount){   
+        var elapsedTime = new Date().getTime() - this.updateElemStyleTime;
+
         if (Object.keys(this.updateElemStyleList).length == 0) 
             return this
 
