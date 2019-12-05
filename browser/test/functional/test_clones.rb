@@ -149,7 +149,9 @@ class TestClones < BrowserTest
   def test_04_clone_name_in_list
     ### Test on size for various timepoint
     $b.send_keys 4
+    $b.update_icon.wait_while(&:present?)
     $b.clone_in_list("18").click
+    $b.update_icon.wait_while(&:present?)
     # $b.send_keys :arrow_left
 
     ## liste  clones at 162 : 

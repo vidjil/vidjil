@@ -74,8 +74,11 @@ class TestLoadingAnalysis < BrowserTest
     $b.tag_item('4')[:name].click
     $b.update_icon.wait_while(&:present?)
 
+    $b.clone_in_list('0').wait_while(&:present?)
     assert (not $b.clone_in_list('0').present?)
+    $b.clone_in_scatterplot('0').wait_while(&:present?)
     assert (not $b.clone_in_scatterplot('0').present?)
+    $b.clone_in_graph('0').wait_while(&:present?)
     assert (not $b.clone_in_graph('0').present?)
 
     # Unhide clone
