@@ -33,8 +33,6 @@ function View(model) {
     this.m = model;
     this.m.view.push(this); //Model's sync
 
-    this.type = "default";
-
     //smartUpdate
     this.useSmartUpdate = true;
     this.updateCallCount = 0;
@@ -57,8 +55,6 @@ function View(model) {
     this.updateElemStyleList = {};
     this.updateElemStyleMinWait = 10;   //update will at least wait XXX(ms) before starting 
     this.updateElemStyleMaxWait = 50;   //update will start anyway if the wait has been more than XXX(ms)
-
-    this.verbose = false;
 }
     
 View.prototype = {
@@ -108,9 +104,7 @@ View.prototype = {
      * @param {*} speed  update speed transition in ms
      * @param {*} callcount number of update already pending
      */
-    smartUpdate2 : function(speed, callcount){
-        var elapsedTime = new Date().getTime() - this.updateTime;
-        
+    smartUpdate2 : function(speed, callcount){   
         if (this.updateCallCount==0) //an update has already been done
         {
             this.smartUpdate(speed); //reschedule this update for next round
@@ -126,14 +120,6 @@ View.prototype = {
             this.updateCallCount = 0;
             var startTime = new Date().getTime();           
             this.update(speed);
-            
-            if (this.verbose)
-            {
-                var stopTime = new Date().getTime() - startTime;
-                console.log("update "+this.type+": " + stopTime + "ms "+// the time needed to update the view
-                        "total time: " + elapsedTime + "ms " +           // the time since the first update() call
-                        "n:" +tmp);                                    // the number of update() call squashed
-            }
         }     
         return this
     },
@@ -166,8 +152,6 @@ View.prototype = {
     },
 
     smartUpdateElem2 : function(callcount){
-        var elapsedTime = new Date().getTime() - this.updateElemTime;
-        
         if (Object.keys(this.updateElemList).length == 0) 
             return this
 
@@ -185,14 +169,6 @@ View.prototype = {
             
             this.updateElem(Object.keys(this.updateElemList));
             this.updateElemList = {};
-
-            if (this.verbose)
-            {
-                var stopTime = new Date().getTime() - startTime;
-                console.log("updateElem "+this.type+": " + stopTime + "ms "+     // the time needed to update the view
-                        "total time: " + elapsedTime + "ms "+   // the time since the first update() call
-                        "n:" +tmp );                            // the number of updateElem() call squashed
-            }
         }
         
         return this
@@ -225,9 +201,7 @@ View.prototype = {
         setTimeout(function() { self.smartUpdateElemStyle2(count); }, this.updateElemStyleMinWait);
     },
 
-    smartUpdateElemStyle2 : function(callcount){
-        var elapsedTime = new Date().getTime() - this.updateElemStyleTime;
-        
+    smartUpdateElemStyle2 : function(callcount){      
         if (Object.keys(this.updateElemStyleList).length == 0) 
             return this
 
@@ -245,14 +219,6 @@ View.prototype = {
             
             this.updateElemStyle(Object.keys(this.updateElemStyleList));
             this.updateElemStyleList = {};
-
-            if (this.verbose)
-            {
-                var stopTime = new Date().getTime() - startTime;
-                console.log("updateElemStyle "+this.type+": " + stopTime + "ms "+    // the time needed to update the view
-                        "total time: " + elapsedTime + "ms "+   // the time since the first update() call
-                        "n:" +tmp );                            // the number of updateElem() call squashed
-            }
         }
         return this
     },

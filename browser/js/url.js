@@ -1,6 +1,5 @@
 function Url(model, win) {
     View.call(this, model);
-    this.type = "URL"; 
 
     this.m = model;
     this.window = (typeof win != "undefined") ? win : window

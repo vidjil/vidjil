@@ -36,7 +36,6 @@ function ScatterPlot(id, model, database, default_preset) {
     var self = this;
     
     View.call(this, model);
-    this.type = "ScatterPlot"; 
     this.db = database;
     
     this.id = id; //ID of the scatterPlot div

@@ -75,7 +75,6 @@
 function Graph(id, model, database) {
     //
     View.call(this, model);
-    this.type = "Graph"; 
     this.useSmartUpdateElemStyle = false;
     
     this.id = id;

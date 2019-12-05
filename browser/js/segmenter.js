@@ -48,7 +48,6 @@ SEGMENT_KEYS = ["4", "4a", "4b"]
 function Segment(id, model, database) {
     
     View.call(this, model);
-    this.type = "Segmenter"; 
     this.db = database;
         
     if (typeof config != 'undefined') {
