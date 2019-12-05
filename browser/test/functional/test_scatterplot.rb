@@ -38,18 +38,18 @@ class TestScatterplot < BrowserTest
     # Maybe another method could be more acurate
     
     $b.clone_in_list("0").click
-    $b.div(id: 'updateIcon').wait_while(&:present?)
+    $b.update_icon.wait_while(&:present?)
     assert (     $b.clone_in_segmenter('0').exists? ), ">> Firste click; Correct selection of clone 0 by click in scatterplot"
     assert ( not $b.clone_in_segmenter('1').exists? ), ">> Firste click; Clone 1 should not be present in segmenter"
     
     $b.clone_in_list("1").click
-    $b.div(id: 'updateIcon').wait_while(&:present?)
+    $b.update_icon.wait_while(&:present?)
     assert ( not $b.clone_in_segmenter('0').exists? ), ">> Another click; Clone 0 should not be present anymore in segmenter"
     assert (     $b.clone_in_segmenter('1').exists? ), ">> Another click; Correct selection of clone 1 after second click in scatterplot"
    
 
     $b.clone_in_list("0").click(:control)
-    $b.div(id: 'updateIcon').wait_while(&:present?)
+    $b.update_icon.wait_while(&:present?)
     assert ( $b.clone_in_segmenter('0').exists? ), ">> ctrl+click; Clone 0 should be present in segmenter"
     assert ( $b.clone_in_segmenter('1').exists? ), ">> ctrl+click; Clone 1 should be present in segmenter"
 
@@ -63,18 +63,18 @@ class TestScatterplot < BrowserTest
     # Maybe another method could be more acurate
     
     $b.clone_in_list("0").click
-    $b.div(id: 'updateIcon').wait_while(&:present?)
+    $b.update_icon.wait_while(&:present?)
     assert (     $b.clone_in_segmenter('0').exists? ), ">> Firste click; Correct selection of clone 0 by click in scatterplot"
     assert ( not $b.clone_in_segmenter('1').exists? ), ">> Firste click; Clone 1 should not be present in segmenter"
     
     $b.clone_in_list("1").click
-    $b.div(id: 'updateIcon').wait_while(&:present?)
+    $b.update_icon.wait_while(&:present?)
     assert ( not $b.clone_in_segmenter('0').exists? ), ">> Another click; Clone 0 should not be present anymore in segmenter"
     assert (     $b.clone_in_segmenter('1').exists? ), ">> Another click; Correct selection of clone 1 after second click in scatterplot"
    
 
     $b.clone_in_list("0").click(:control)
-    $b.div(id: 'updateIcon').wait_while(&:present?)
+    $b.update_icon.wait_while(&:present?)
     assert ( $b.clone_in_segmenter('0').exists? ), ">> ctrl+click; Clone 0 should be present in segmenter"
     assert ( $b.clone_in_segmenter('1').exists? ), ">> ctrl+click; Clone 1 should be present in segmenter"
 
