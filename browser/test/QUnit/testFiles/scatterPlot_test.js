@@ -45,33 +45,36 @@ QUnit.test("grid", function(assert) {
     assert.equal(m.clone(2).getGene('5'), "IGHV1-2*01", "clone 2 is 'IGHV1-2*01'")
     assert.equal(sp.nodes[2].bar_x, sp.axisX.labels[0].pos, "node 2, bar x position is on 'IGVH4'")
 
-
+    var done = assert.async(2); 
+    var delay = 0;
+    var step = 500;
     $(document.getElementsByClassName("sp_legend")[0]).d3Click() //click label ighv4
-    assert.deepEqual(m.getSelected(), [2], "check click label");
-    
 
-    sp.available_axis["nLength"].axis.MAX_NB_STEPS_IN_AXIS = 8
-    sp.changeSplitMethod("nLength", "size", sp.MODE_BAR);
-    sp.update()
+    setTimeout(function() {
+        assert.deepEqual(m.getSelected(), [2], "check click label");
+        sp.available_axis["nLength"].axis.MAX_NB_STEPS_IN_AXIS = 8
+        sp.changeSplitMethod("nLength", "size", sp.MODE_BAR);
+        sp.update()
 
-    assert.equal(sp.select_x.selectedIndex, 8, 'select_x index');
-    assert.equal(sp.select_y.selectedIndex, 14, 'select_y index');
+        assert.equal(sp.select_x.selectedIndex, 8, 'select_x index');
+        assert.equal(sp.select_y.selectedIndex, 14, 'select_y index');
 
-    assert.equal(sp.nodes[1].bar_h , 0.3333333333333333, "node 1, bar h position")
-    assert.equal(sp.nodes[1].bar_x , (sp.axisX.labels[5].pos + sp.axisX.labels[6].pos)/2,
-                 "node 1, bar x position is between labels 5th ('8') and 6th ('10')")
-    assert.equal(sp.axisX.labels[5].text, "8", "Correct 5th label ('10')")
-    assert.equal(sp.nodes[1].bar_y , 0.3333333333333333, "node 1, bar y position")
+        assert.equal(sp.nodes[1].bar_h , 0.3333333333333333, "node 1, bar h position")
+        assert.equal(sp.nodes[1].bar_x , (sp.axisX.labels[5].pos + sp.axisX.labels[6].pos)/2,
+                    "node 1, bar x position is between labels 5th ('8') and 6th ('10')")
+        assert.equal(sp.axisX.labels[5].text, "8", "Correct 5th label ('10')")
+        assert.equal(sp.nodes[1].bar_y , 0.3333333333333333, "node 1, bar y position")
 
-    assert.approx(sp.nodes[2].bar_h, 0.40, 0.05, "node 2, bar h is about 0.40")
-    m.clone(0).reads = [10000,1,1,1]
-    m.update()
+        assert.approx(sp.nodes[2].bar_h, 0.40, 0.05, "node 2, bar h is about 0.40")
+        m.clone(0).reads = [10000,1,1,1]
+        m.update()
+        done();
+    }, delay+=step);
 
-    var done = assert.async();       
     setTimeout(function() {
         assert.equal(sp.nodes[2].bar_h, 0.01, "node 2, bar h is small, but not too much")
         done();
-    }, 500 );
+    }, delay+=step);
     
 });
 

@@ -184,6 +184,7 @@ ScatterPlot.prototype = {
 
             this.initMenu();
             this.initSVG();
+            this.resize();
 
             this.setPreset(this.default_preset)
             this.tsne_ready=false;
@@ -896,15 +897,11 @@ ScatterPlot.prototype = {
      * @param {float} [print]
      * */
     compute_size: function(div_width, div_height, print) {
-        if (typeof div_height == 'undefined') {
-            var div = document.getElementById(this.id)
-            div_height = div.offsetHeight
-            div_width = div.offsetWidth
+        if (typeof div_height != 'undefined') {
+            //recompute resizeW/H only if a custom div_Width/hieght is provided
+            this.resizeW = div_width - this.margin[3] - this.margin[1];
+            this.resizeH = div_height - this.margin[0] - this.margin[2];
         }
-        //On prend la largeur de la div
-        this.resizeW = div_width - this.margin[3] - this.margin[1];
-        //On prend la hauteur de la div
-        this.resizeH = div_height - this.margin[0] - this.margin[2];
 
         if (this.splitX == this.AXIS_ALLELE_V || this.splitX == this.AXIS_GENE_V || this.splitX == this.AXIS_ALLELE_J || this.splitX == this.AXIS_GENE_J || this.splitX == "tsneX_system" ||
             (this.mode == this.MODE_GRID & (this.splitY == this.AXIS_ALLELE_V || this.splitY == this.AXIS_GENE_V || this.splitY == this.AXIS_ALLELE_J || this.splitY == this.AXIS_GENE_J))) {
@@ -2052,7 +2049,6 @@ ScatterPlot.prototype = {
     shouldRefresh: function () {
         this.init();
         this.update();
-        this.resize();
     }
 }
 ScatterPlot.prototype = $.extend(Object.create(View.prototype), ScatterPlot.prototype);
