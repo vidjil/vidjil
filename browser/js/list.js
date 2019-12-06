@@ -521,7 +521,7 @@ List.prototype = {
                         cloneDom.updateDivContent("nameBox", clone.getShortName());
                     
                     //update clone axis
-                    var span_axis = span_name = cloneDom.getDiv("axisBox");
+                    var span_axis = cloneDom.getDiv("axisBox");
                     span_axis.style.color = clone.getColor();
                     var axis = this.selectedAxis;
                     cloneDom.updateDivContent("axisBox", axis.pretty ? axis.pretty(axis.fct(clone)).outerHTML : document.createTextNode(axis.fct(clone)).outerHTML)
@@ -529,7 +529,7 @@ List.prototype = {
                     // span_axis.setAttribute('title', clone.getPrintableSize());
 
                     //update cluster icon
-                    var span_cluster = span_name = cloneDom.getDiv("clusterBox");
+                    var span_cluster = cloneDom.getDiv("clusterBox");
                     
                     if (this.m.clusters[cloneID].length > 1) {
                         if (clone.split) {
