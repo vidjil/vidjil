@@ -31,6 +31,41 @@
  *
  */
 
+function CloneDom(div) {
+    var self=this;
+
+    this.div_elem = div;
+    this.div = {};
+    this.div_content = {};
+}
+
+CloneDom.prototype = {
+
+    getDiv: function(divName){
+        //if first time => find the div in dom and store it 
+        if (typeof (this.div[divName]) == "undefined")
+            this.div[divName] = this.div_elem.getElementsByClassName(divName)[0];
+        
+        return this.div[divName];
+    },
+
+    updateDivContent: function(divName, newContent){
+        var div = this.getDiv(divName);
+
+        var currentContent = this.div_content[divName];
+        if (currentContent != newContent){
+            div.innerHTML = newContent;
+            this.div_content[divName] = newContent;
+        }
+    }, 
+
+    clearDivContent: function(divName){
+        var div = this.getDiv(divName);
+
+        div.removeAllChildren();
+        this.div_content[divName] = '';
+    }
+}
 
 /** 
  * List view - build a list of clones/data and keep them up to date with the model
@@ -157,7 +192,7 @@ List.prototype = {
             div.id = i;
 
             div_list_clones.appendChild(div);
-            this.index[i] = div;
+            this.index[i] = new CloneDom(div);
         }
         
         for (var j = 0; j < this.m.clones.length; j++) {
@@ -405,7 +440,7 @@ List.prototype = {
         if (clone.hasSizeConstant())
             span_name.className += " cloneName";
         span_name.ondblclick = function () {
-            self.editName(cloneID, this);
+            self.editName(cloneID);
         }
         span_name.onclick = function (e) {
             self.clickList(e, cloneID);
@@ -451,7 +486,9 @@ List.prototype = {
             var clone = this.m.clone(cloneID);
 
             var self = this;
-            var div_elem = this.index[cloneID];
+
+            var cloneDom = this.index[cloneID];
+            var div_elem = cloneDom.div_elem;
             
             // pas testé; vraiment necessaire ?
             if  (!( (clone.isActive() && this.m.clusters[cloneID].length !== 0) || 
@@ -470,34 +507,40 @@ List.prototype = {
                     div_elem.style.display = "block";
                     
                     //complete namebox/cloneName
-                    var span_name = div_elem.getElementsByClassName("nameBox")[0];
+                    var span_name = cloneDom.getDiv("nameBox");
                     if (clone.hasSizeConstant())
-                        span_name = div_elem.getElementsByClassName("cloneName")[0];
+                        span_name = cloneDom.getDiv("cloneName");
                     if (typeof span_name == "undefined") return false;
                     if (typeof span_name == "undefined") console.log(cloneID);
-                    span_name.innerHTML = clone.getShortName();
                     span_name.title = clone.getNameAndCode();
                     span_name.style.color = clone.getColor();
+
+                    if (clone.hasSizeConstant())
+                        cloneDom.updateDivContent("cloneName", clone.getShortName());
+                    else
+                        cloneDom.updateDivContent("nameBox", clone.getShortName());
                     
                     //update clone axis
-                    var span_axis = div_elem.getElementsByClassName("axisBox")[0];
+                    var span_axis = span_name = cloneDom.getDiv("axisBox");
                     span_axis.style.color = clone.getColor();
                     var axis = this.selectedAxis;
-                    span_axis.removeAllChildren();
-                    span_axis.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
+                    cloneDom.updateDivContent("axisBox", axis.pretty ? axis.pretty(axis.fct(clone)).outerHTML : document.createTextNode(axis.fct(clone)).outerHTML)
+                    //span_axis.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
                     // span_axis.setAttribute('title', clone.getPrintableSize());
 
                     //update cluster icon
-                    var span_cluster = div_elem.getElementsByClassName("clusterBox")[0];
-                    span_cluster.removeAllChildren();
+                    var span_cluster = span_name = cloneDom.getDiv("clusterBox");
+                    
                     if (this.m.clusters[cloneID].length > 1) {
                         if (clone.split) {
                             span_cluster.onclick = cluster_hide;
-                            span_cluster.appendChild(icon('icon-minus', 'Hide the subclones'));
+                            cloneDom.updateDivContent("clusterBox", icon('icon-minus', 'Hide the subclones').outerHTML)
+                            //span_cluster.appendChild(icon('icon-minus', 'Hide the subclones'));
                             this.showClusterContent(cloneID, false)
                         } else {
                             span_cluster.onclick = cluster_show;
-                            span_cluster.appendChild(icon('icon-plus', 'Show the subclones'));
+                            cloneDom.updateDivContent("clusterBox", icon('icon-plus', 'Show the subclones').outerHTML)
+                            //span_cluster.appendChild(icon('icon-plus', 'Show the subclones'));
                             this.hideClusterContent(cloneID, false)
                         }
                         self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
@@ -607,14 +650,14 @@ List.prototype = {
      * @param {integer} cloneID - clone index
      * @param {dom_object} elem - div where will be the edit field
      * */
-    editName: function (cloneID, elem) {
+    editName: function (cloneID) {
         var self = this;
         if (document.getElementById("new_name")) {
             this.update();
         }
-        var divParent = elem;
+        var divParent = this.index[cloneID].getDiv("nameBox");
         var old_event = divParent.onclick;
-        divParent.removeAllChildren();
+        this.index[cloneID].clearDivContent("nameBox");
 
         if (cloneID[0] == 's')
             cloneID = cloneID.substr(3);
@@ -649,6 +692,7 @@ List.prototype = {
         a.onclick = function (event) {
             event.preventDefault()
             event.stopPropagation()
+            self.index[cloneID]= new CloneDom(self.index[cloneID].div_elem);
             var newName = document.getElementById("new_name")
                 .value;
             self.m.clone(cloneID).changeName(newName);
@@ -661,7 +705,7 @@ List.prototype = {
     /** 
      * */
     buildElem: function (cloneID) {
-        var div = this.index[cloneID];
+        var div = this.index[cloneID].div_elem;
         div.style.display = "block";
         if (!this.m.clone(cloneID).isActive()) div.style.display = "none";
         div.removeAllChildren();
@@ -683,7 +727,7 @@ List.prototype = {
     updateElemStyle: function (list) {
         for (var i = 0; i < list.length; i++) {
 
-            var div = this.index[list[i]];
+            var div = this.index[list[i]].div_elem;
 
             var clone = this.m.clone(list[i])
 
