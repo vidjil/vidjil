@@ -664,11 +664,7 @@ ScatterPlot.prototype = {
      * */
     computeBarTab : function () {
         var bar_max = nice_ceil(this.computeBarMax());
-
         var tab_length = Object.keys(this.axisX.value_mapping).length;
-        if (typeof this.axisX.total_gene != "undefined")
-            tab_length = this.axisX.total_gene+1; 
-            
         var width = Math.min(0.08, 0.8 / tab_length);
         
         
@@ -729,10 +725,10 @@ ScatterPlot.prototype = {
             .attr("id", function(d) {
                 return self.id + "_bar" + d.id;
             })
-            .attr("width", function(d) { return Math.floor(d.bar_w*self.gridSizeW) })
-            .attr("x", function(d) { return Math.floor((d.bar_x - d.bar_w/2)*self.gridSizeW + self.margin[3]) })
+            .attr("width", function(d) { return d.bar_w*self.gridSizeW })
+            .attr("x", function(d) { return (d.bar_x - d.bar_w/2)*self.gridSizeW + self.margin[3] })
             .attr("height", function(d) { return d.bar_h*self.gridSizeH })
-            .attr("y", function(d) { return Math.floor((1-d.bar_y)*self.gridSizeH + self.margin[0]) })
+            .attr("y", function(d) { return (1-d.bar_y)*self.gridSizeH + self.margin[0] })
             .style("fill", function(d) { return (self.m.clone(d.id).getColor()) })
             .attr("class", function(p) {
                 if (!self.m.clone(p.id)
