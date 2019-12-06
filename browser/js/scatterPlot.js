@@ -184,6 +184,7 @@ ScatterPlot.prototype = {
 
             this.initMenu();
             this.initSVG();
+            this.resize();
 
             this.setPreset(this.default_preset)
             this.tsne_ready=false;
@@ -733,6 +734,8 @@ ScatterPlot.prototype = {
                 if (!self.m.clone(p.id)
                     .isActive()) return "circle_hidden";
                 if (self.m.clone(p.id)
+                    .isFiltered)return "circle_hidden";
+                if (self.m.clone(p.id)
                     .isSelected()){
                     if (self.m.clone(p.id)
                         .isFocus()) return "circle_focus circle_select";
@@ -890,15 +893,11 @@ ScatterPlot.prototype = {
      * @param {float} [print]
      * */
     compute_size: function(div_width, div_height, print) {
-        if (typeof div_height == 'undefined') {
-            var div = document.getElementById(this.id)
-            div_height = div.offsetHeight
-            div_width = div.offsetWidth
+        if (typeof div_height != 'undefined') {
+            //recompute resizeW/H only if a custom div_Width/hieght is provided
+            this.resizeW = div_width - this.margin[3] - this.margin[1];
+            this.resizeH = div_height - this.margin[0] - this.margin[2];
         }
-        //On prend la largeur de la div
-        this.resizeW = div_width - this.margin[3] - this.margin[1];
-        //On prend la hauteur de la div
-        this.resizeH = div_height - this.margin[0] - this.margin[2];
 
         if (this.splitX == this.AXIS_ALLELE_V || this.splitX == this.AXIS_GENE_V || this.splitX == this.AXIS_ALLELE_J || this.splitX == this.AXIS_GENE_J || this.splitX == "tsneX_system" ||
             (this.mode == this.MODE_GRID & (this.splitY == this.AXIS_ALLELE_V || this.splitY == this.AXIS_GENE_V || this.splitY == this.AXIS_ALLELE_J || this.splitY == this.AXIS_GENE_J))) {
@@ -1113,19 +1112,15 @@ ScatterPlot.prototype = {
     update: function() {
         var self = this;
         try{
-            var startTime = new Date()
-                .getTime();
-            var elapsedTime = 0;
-
             this.compute_size()
                 .initGrid()
                 .updateClones()
                 .updateMenu();
+            
+            if (this.mode == this.MODE_BAR)
+                this.updateBar();
+            
 
-            //Donne des informations quant au temps de MàJ des données
-            elapsedTime = new Date()
-                .getTime() - startTime;
-            //console.log("update sp: " + elapsedTime + "ms");
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -1271,12 +1266,14 @@ ScatterPlot.prototype = {
     updateElemStyle: function() {
         var self = this;
         if (this.mode == this.MODE_BAR) {
-            this.updateBar();
+            this.drawBarTab(0);
         } else {
             this.node
                 .attr("class", function(p) {
                     if (!self.m.clone(p.id)
                         .isActive()) return "circle_hidden";
+                    if (self.m.clone(p.id)
+                        .isFiltered)return "circle_hidden";
                     if (self.m.clone(p.id)
                         .isSelected()){
                         if (self.m.clone(p.id)
@@ -1723,7 +1720,7 @@ ScatterPlot.prototype = {
         if (endbar){
             this.endBar();
         }else{
-            this.update();
+            this.smartUpdate();
         }
 
         oldOtherVisibility = this.otherVisibility
@@ -2048,7 +2045,6 @@ ScatterPlot.prototype = {
     shouldRefresh: function () {
         this.init();
         this.update();
-        this.resize();
     }
 }
 ScatterPlot.prototype = $.extend(Object.create(View.prototype), ScatterPlot.prototype);

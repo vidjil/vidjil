@@ -63,6 +63,8 @@ function Model() {
     this.NORM_EXTERNAL  = "external"
     this.normalization_mode = this.NORM_FALSE
     this.axes = new Axes(this)
+
+    setInterval(function(){return self.updateIcon()}, 100); 
 }
 
 
@@ -1063,6 +1065,7 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     multiSelect: function (list) {
 
+        if (list.length == 0) return;
         console.log("select() (clone " + list + ")");
 
         var tmp = []
@@ -1081,8 +1084,8 @@ changeAlleleNotation: function(alleleNotation) {
             this.orderedSelectedClones.push(tmp[j].id);
             list[j] = tmp[j].id
         }
-        this.updateElemStyle(list);
-        this.update();
+        this.updateModel();
+        this.updateElemStyle(this.orderedSelectedClones);
     },
 
     /**
@@ -1101,9 +1104,12 @@ changeAlleleNotation: function(alleleNotation) {
     unselectAll: function () {
         console.log("unselectAll()");
         this.orderedSelectedClones = [];
-        var list = this.getSelected();
-        for (var i = 0; i < list.length; i++) {
-            this.clone(list[i]).select = false;
+        var list = [];
+        for (var i=0; i<this.clones.length; i++){
+            if (this.clone(i).select == true){
+                list.push(i);
+                this.clone(i).select = false;
+            }
         }
         this.updateElemStyle(list);
     },
@@ -1228,23 +1234,18 @@ changeAlleleNotation: function(alleleNotation) {
      * this function must be call for major change in the model
      * */
     update: function () {
-        var startTime = new Date()
-            .getTime();
-        var elapsedTime = 0;
-
         this.update_normalization();
         this.update_precision();
         this.updateModel();
 
         for (var i = 0; i < this.view.length; i++) {
-            this.view[i].update();
+            if (this.view[i].useSmartUpdate)
+                this.view[i].smartUpdate();
+            else
+                this.view[i].update();
         }
-        
-        elapsedTime = new Date()
-            .getTime() - startTime;
-        console.log("update(): " + elapsedTime + "ms");
+        this.updateIcon();
     },
-
 
     /**
      * ask all linked views to update a clone list
@@ -1258,8 +1259,12 @@ changeAlleleNotation: function(alleleNotation) {
         this.updateModel()
         
         for (var i = 0; i < this.view.length; i++) {
-            this.view[i].updateElem(list);
+            if (this.view[i].useSmartUpdateElem)
+                this.view[i].smartUpdateElem(list);
+            else
+                this.view[i].updateElem(list);
         }
+        this.updateIcon();
     },
 
     /**
@@ -1272,8 +1277,36 @@ changeAlleleNotation: function(alleleNotation) {
             this.clone(list[i]).updateCloneTagIcon();
         }
         for (i = 0; i < this.view.length; i++) {
-            this.view[i].updateElemStyle(list);
+            if (this.view[i].useSmartUpdateElemStyle)
+                this.view[i].smartUpdateElemStyle(list);
+            else
+                this.view[i].updateElemStyle(list);
         }
+        this.updateIcon();
+    },
+
+    /**
+     * return true if a view has not finished an update
+     */
+    updateIsPending:function(){
+        for (var i = 0; i < this.view.length; i++) {
+            if (this.view[i].updateIsPending())
+                return true;
+        }
+        return false;
+    },
+
+    /**
+     * display an icon in the top-container if a view has not finished an update
+     */
+    updateIcon:function(){
+        var div = document.getElementById("updateIcon");
+        if (div==null) return
+
+        if (this.updateIsPending())
+            div.style.display = "flex";
+        else
+            div.style.display = "none";
     },
     
     /**
@@ -2267,7 +2300,9 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     changeColorMethod: function (colorM) {
         this.colorMethod = colorM;
-        this.update();
+        var list = [];
+        for (var i = 0; i<this.clones.length; i++) list.push(i);
+        this.updateElemStyle(list);
     },
     
     /**

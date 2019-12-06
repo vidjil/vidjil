@@ -482,15 +482,6 @@ Segment.prototype = {
         return div_highlight;
     },
 
-
-    /**
-     * update(size/style/position) a list of selected clones <br>
-     * @param {integer[]} list - array of clone index
-     * */
-    updateElem: function (list) {
-        this.updateElemStyle(list);
-    },
-
     /**
      * clear functionnal data in order to start from a clean instance when loading a new .vidjil file
      * */
@@ -504,37 +495,69 @@ Segment.prototype = {
         delete this.sequence[id];
     },
 
-   /**
-     * update(style only) a list of selected clones
+    /**
+     * 
+     */
+    update: function() {
+        var self = this;
+        try{
+            var list = [];
+            for (var i = 0; i < this.m.clones.length; i++) list.push(i);
+            this.updateElem(list);
+        } catch(err) {
+            sendErrorToDb(err, this.db);
+        }
+    },
+
+    /**
+     * check the list for newly selected/unselected clones to add/remove to segmenter 
+     * update others
+     * @abstract
      * @param {integer[]} list - array of clone index
      * */
-    updateElemStyle: function (list) {
-
+    updateElem: function (list) {
         for (var i = 0; i < list.length; i++) {
-            if (this.m.clone(list[i]).isSelected()) {
-                if (document.getElementById("seq" + list[i])) {
-                    var spanF = document.getElementById("f" + list[i]);
-                    this.div_elem(spanF, list[i]);
-                    var spanM = document.getElementById("m" + list[i]);
-                    spanM.innerHTML = this.sequence[list[i]].toString(this);
+            var cloneID = list[i];
+            if (this.m.clone(cloneID).isSelected()) {
+                //the clone is selected
+                if (this.sequence[cloneID]) {
+                    //it's already present in the segmenter         > update
+                    var spanF = document.getElementById("f" + cloneID);
+                    this.div_elem(spanF, cloneID);
+                    var spanM = document.getElementById("m" + cloneID);
+                    spanM.innerHTML = this.sequence[cloneID].toString(this);
                 } else {
-                    this.addToSegmenter(list[i]);
+                    //it's not present in the segmenter             > create
+                    this.addToSegmenter(cloneID);
                     this.show();
                 }
             } else {
-                if (document.getElementById("seq" + list[i])) {
-                    var element = document.getElementById("seq" + list[i]);
+                //the clone is not selected
+                if (this.sequence[cloneID]) {
+                    //it should not be present in the segmenter     > delete
+                    var element = document.getElementById("seq" + cloneID);
                     element.parentNode.removeChild(element);
-                    delete this.sequence[list[i]];
+                    delete this.sequence[cloneID];
                 }
             }
         }
+
         // Update the first clone if needed
         this.update_first_clone()
 
         this.updateAlignmentButton()
         //this.updateSegmenterWithHighLighSelection();
-        this.updateStats();         
+        this.updateStats();  
+    },
+
+    /**
+     * used to highlight mouseover clones or selected clones.
+     * in the segmenter case selecting/unselecting clones produces more than just a highlight and need an update
+     * @abstract
+     * @param {integer[]} list - array of clone index
+     * */
+    updateElemStyle: function (list) {   
+        this.updateElem(list);    
     },
 
     isClone: function (id) {
@@ -1384,12 +1407,18 @@ genSeq.prototype= {
         var ref = '';
         var seq = '';
 
+        if (typeof(this.segmenter.sequence[this.segmenter.first_clone]) == "undefined"){ // the f* is this 
+            console.log("WUT???")
+            //TODO: store sequences in array and delete first_clone
+            this.segmenter.first_clone = Object.keys(this.segmenter.sequence)[0]//first key should be the oldest sequence added to segmenter
+        } 
 
         if (this.segmenter.amino) {
             seq = this.seqAA;
             ref = this.segmenter.sequence[this.segmenter.first_clone].seqAA;
         } else {
             seq = this.seq;
+
             ref = this.segmenter.sequence[this.segmenter.first_clone].seq;
         }
         if (this.segmenter.aligned) {

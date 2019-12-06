@@ -382,6 +382,10 @@ class VidjilBrowser < Watir::Browser
     Watir::Wait.until(default) { yield }
   end
 
+  def update_icon
+    return div(:id => 'updateIcon')
+  end
+
   protected
 
   def scatterplot_id(number=1)

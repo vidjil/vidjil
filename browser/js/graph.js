@@ -74,7 +74,8 @@
  * */
 function Graph(id, model, database) {
     //
-    View.call(this, model); 
+    View.call(this, model);
+    this.useSmartUpdateElemStyle = false;
     
     this.id = id;
     this.resizeW = 1; //coeff d'agrandissement/réduction largeur                
@@ -319,7 +320,7 @@ Graph.prototype = {
         this.text_position_x = 60;
         this.text_position_x2 = div_width - 60;
     
-        this.update(speed);
+        this.smartUpdate(speed);
     },
     
 /* ************************************************ *
@@ -331,22 +332,11 @@ Graph.prototype = {
      * */
     update : function (speed) {
         speed = typeof speed !== 'undefined' ? speed : 500;
-        var startTime = new Date()
-            .getTime();
-        var elapsedTime = 0;
-        
         this.initAxis()
             .initData()
             .updateRes()
             .updateClones()
             .draw(speed);
-        
-        elapsedTime = new Date()
-            .getTime() - startTime;
-
-        // console.log("update Graph: " + elapsedTime + "ms");
-        
-        return this
     },
     
     /* update resolution curves
@@ -431,7 +421,7 @@ Graph.prototype = {
             document.getElementById("clones_container")
                 .appendChild(line);
         }
-        this.drawClones(0);
+        this.drawClones(0, list);
         
         return this
     },
@@ -1254,7 +1244,7 @@ Graph.prototype = {
             selected_clones = this.g_clone;
             if (typeof list != "undefined"){
                 selected_clones = this.g_clone.filter(function(d, i) {
-                    if (list.indeOf(d.id) != -1) return true;
+                    if (list.indexOf(d.id) != -1) return true;
                     return false
                 });
             }
@@ -1381,7 +1371,7 @@ Graph.prototype = {
 
     shouldRefresh: function() {
         this.init();
-        this.update();
+        this.smartUpdate();
         this.resize();
     }
 
