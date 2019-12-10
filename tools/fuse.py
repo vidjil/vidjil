@@ -846,46 +846,61 @@ class ListWindows(VidjilJson):
 
 
             w=Window(1)
-            w.d["seg"] = {}
+            w.d["seg"] = { "junction":{}, "cdr3":{} }
             
             w.d["id"]=row["sequence_id"]
             w.d["sequence"] = row["sequence"]
             if "duplicate_count" not in row.keys() or row["duplicate_count"] == "":
                 w.d["reads"] = [1]
             else :
-                w.d["reads"] = [ int(row["duplicate_count"]) ]
+                w.d["reads"] = [ int(float(row["duplicate_count"])) ]
 
 
-            w.d["germline"] = row["locus"] #system ...
+            axes = {"locus":  ["germline"],
+                    "v_call": ["seg", "5", "name"],
+                    "d_call": ["seg", "4", "name"],
+                    "j_call": ["seg", "3", "name"],
+                    "v_alignment_start":   ["seg","5","start"],
+                    "v_alignment_end":     ["seg","5","stop"],
+                    "d_alignment_start":   ["seg","4","start"],
+                    "d_alignment_end":     ["seg","4","stop"],
+                    "j_alignment_start":   ["seg","3","start"],
+                    "j_alignment_end":     ["seg","3","stop"],
+                    "junction_aa":         ["seg","junction","aa"],
+                    "productive":          ["seg","junction","productive"],
+                    "cdr3_start":          ["seg","cdr3", "cdr3_start"],
+                    "cdr3_start":          ["seg","cdr3", "cdr3_end"],
+                    "5prime_trimmed_n_nb": ["seg","5","delLeft"],
+                    "3prime_trimmed_n_nb": ["seg","3","delLeft"]}
             
-            w.d["seg"]["5"] = {"name": row["v_call"]}
-            if row["v_alignment_start"] != "": w.d["seg"]["5"]["start"] = row["v_alignment_start"]
-            if row["v_alignment_end"]   != "": w.d["seg"]["5"]["stop"]   = row["v_alignment_end"]
-            if "5prime_trimmed_n_nb" in row.keys() and row["5prime_trimmed_n_nb"]   != "": w.d["seg"]["5"]["delLeft"]   = row["5prime_trimmed_n_nb"]
-            w.d["seg"]["4"] = {"name": row["d_call"]}
-            if row["d_alignment_start"] != "": w.d["seg"]["4"]["start"] = row["d_alignment_start"]
-            if row["d_alignment_end"]   != "": w.d["seg"]["4"]["stop"]   = row["d_alignment_end"]
-            w.d["seg"]["3"] = {"name": row["j_call"]}
-            if row["j_alignment_start"] != "": w.d["seg"]["3"]["start"] = row["j_alignment_start"]
-            if row["j_alignment_end"]   != "": w.d["seg"]["3"]["stop"]   = row["j_alignment_end"]
-            if "3prime_trimmed_n_nb" in row.keys() and row["3prime_trimmed_n_nb"]   != "": w.d["seg"]["3"]["delLeft"]   = row["3prime_trimmed_n_nb"]
+
+            for axe in axes.keys():
+                if axe in row.keys():
+                    path   = axes[axe]
+                    depth  = 0
+                    value  = w.d
+                    to_put = row[axe]
+
+                    while depth != len(path):
+                        cat = path[depth]
+                        if cat not in value.keys():
+                            value[cat] = {}
+                        depth += 1
+                        
+                        if depth != len(path):
+                            value  = value[cat]
+
+                    value[cat] = to_put
+
+
             listw.append((w , w.d["reads"][0]))
-                
-            ### CDR3
-            if row["cdr3_start"]: w.d["seg"]["cdr3"] = {"start":row["cdr3_start"], "stop": row["cdr3_end"]}
+
+
             ### NAME (simple, vidjil like)
-            if w.d["seg"]["4"]["name"] != "":
+            if row["d_call"] != "":
                 w.d["name"]= w.d["seg"]["5"]["name"] + " x/x/x " + w.d["seg"]["4"]["name"] + " x/x/x " + w.d["seg"]["3"]["name"]
             else:
                 w.d["name"]= w.d["seg"]["5"]["name"] + " x/x/x " + w.d["seg"]["3"]["name"]
-
-            ### JUNCTION
-            w.d["seg"]["junction"] = {}
-            if row["junction"] != "":
-                w.d["seg"]["junction"]["aa"]         = row["junction_aa"]
-                w.d["seg"]["junction"]["productive"] = row["productive"]
-                # w.d["seg"]["junction"]["start"]      = row[""]
-                # w.d["seg"]["junction"]["stop"]       = row[""]
 
             ### READS
             self.d["reads"].addAIRRClone( w )
