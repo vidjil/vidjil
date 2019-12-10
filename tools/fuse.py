@@ -830,16 +830,15 @@ class ListWindows(VidjilJson):
         import csv
         with open(file_path) as tsvfile:
           reader = csv.DictReader(tsvfile, dialect='excel-tab')
+
           for row in reader:
-            print( "%s; %s" % (i, len(row)) )
+            row = self.airr_rename_cols(row)
             i += 1
 
             ### bypass igBlast format
             if "Total queries" in row["sequence_id"]:
                 print( "here")
                 break
-            else:
-                print( "%s -- %s" % (row["sequence_id"], row["sequence"]) )
 
             # bypass imgt, seq non segmented
             if row["sequence"] == "":
@@ -914,6 +913,18 @@ class ListWindows(VidjilJson):
             listw[index][0].d["top"]=index+1
             self.d["clones"].append(listw[index][0])
         return
+
+    def airr_rename_cols(self, row):
+        couples = [
+            ("bestVHit", "v_call"), ("bestDHit", "d_call"), ("bestJHit", "j_call"), 
+            ("cloneId", "sequence_id"), ("targetSequences", "sequence"),
+            ("cloneCount", "duplicate_count"), ("chains", "locus")
+        ]
+        for couple in couples:
+            if couple[0] in row.keys():
+                row[couple[1]] = row.pop(couple[0])
+        return row
+
 
         
     def toJson(self, obj):
