@@ -875,7 +875,7 @@ class ListWindows(VidjilJson):
             
 
             for axe in axes.keys():
-                if axe in row.keys():
+                if axe in row.keys() and row[axe] != "":
                     path   = axes[axe]
                     depth  = 0
                     value  = w.d
@@ -897,10 +897,17 @@ class ListWindows(VidjilJson):
 
 
             ### NAME (simple, vidjil like)
-            if row["d_call"] != "":
+            if row["v_call"] != "" and row["d_call"] != "" and row["j_call"] != "":
                 w.d["name"]= w.d["seg"]["5"]["name"] + " x/x/x " + w.d["seg"]["4"]["name"] + " x/x/x " + w.d["seg"]["3"]["name"]
-            else:
+            elif row["v_call"] != "" and row["j_call"] != "":
                 w.d["name"]= w.d["seg"]["5"]["name"] + " x/x/x " + w.d["seg"]["3"]["name"]
+            elif row["v_call"] != "" and row["d_call"] != "":
+                w.d["name"]= w.d["seg"]["5"]["name"] + " x/x/x " + w.d["seg"]["4"]["name"]
+            elif row["d_call"] != "" and row["j_call"] != "":
+                w.d["name"]= w.d["seg"]["4"]["name"] + " x/x/x " + w.d["seg"]["3"]["name"]
+            else:
+                "undetermined segmentation"
+
 
             ### READS
             self.d["reads"].addAIRRClone( w )
