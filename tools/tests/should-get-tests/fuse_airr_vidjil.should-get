@@ -1,0 +1,47 @@
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS  ../data/airr_output/airr_vidjil.tsv -o fuse_airr_vidjil.vidjil ; cat fuse_airr_vidjil.vidjil
+
+$ check original name
+1: "../data/airr_output/airr_vidjil.tsv"
+
+$ Check the producer string in output file
+1: "producer": "vidjil fuse"
+
+$ Check number of reads
+l1: "total".*14.*"segmented".*14.*"germline"
+
+$ Check number of clone
+14: "top"
+
+
+
+$ check diversity values
+lr1: "diversity":.*"index_H_entropy":.*"na"
+
+$ Check germline IGH
+1: "germline": "IGH"
+$ Check germline IGH+
+1: "germline": "IGH+"
+$ Check germline IGK
+1: "germline": "IGK"
+$ Check germline IGK+
+2: "germline": "IGK\+"
+$ Check germline IGL
+1: "germline": "IGL"
+
+$ Check germline TRA
+1: "germline": "TRA"
+$ Check germline TRA+D
+1: "germline": "TRA\+D"
+$ Check germline TRB
+1: "germline": "TRB"
+$ Check germline TRB+
+1: "germline": "TRB+"
+$ Check germline TRD
+1: "germline": "TRD"
+$ Check germline TRD+
+2: "germline": "TRD\+"
+$ Check germline TRG
+1: "germline": "TRG"
+
+$ Check _coverage_info
+14: "_coverage_info".*100%
