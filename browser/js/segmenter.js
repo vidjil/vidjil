@@ -1537,7 +1537,11 @@ Sequence.prototype = Object.create(genSeq.prototype);
                 stop = this.pos[clone.sequence.indexOf(clone.seg.cdr3) + clone.seg.cdr3.length -1];
             }
         }
-        
+        if (start == undefined || stop == undefined){
+            console.error( "Sequence error. Start/stop position of cdr3 are undefined")
+            return
+        }
+
         for (var h=0; h<this.seq.length; h++) this.seqAA[h] = " ";
         
         var i = 0
