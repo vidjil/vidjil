@@ -1,5 +1,5 @@
 ### Focusing on Ig recombinations with -g:IGH,IGK,IGL
-!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH,IGK,IGL $VIDJIL_DATA/multi-complete.fa ; cat out/multi-complete.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -e 0.1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH,IGK,IGL $VIDJIL_DATA/multi-complete.fa ; cat out/multi-complete.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
 
 $ Detect the Ig recombinations
 1:IGH SEG
