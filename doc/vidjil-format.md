@@ -147,11 +147,11 @@ do a correct gathering.
         },
         {
             "id": "seqedited_in_analysis",
-            "name": "seqedited_in_analysis",
+            "name": "name_seqedited_in_analysis",
             "sequence": "AAAAATTTTTAAAAATTTTTAAAAATTTTT",
             "reads": [ 521, 42 ],
             "germline": "TRG",
-            "top": 3,
+            "top": 4,
             "seg":
               {
                   "cdr3": {"start": 10, "stop": 20}
@@ -200,13 +200,14 @@ some clones, and added external data (`data`).
             "expected": "0.1"
         },
         {
-            "name": "seqedited_in_analysis",
+            "id": "seqedited_in_analysis",
             "segEdited": true,
+            "germline": "TRG",
             "sequence": "GGGGGCCCCCGGGGGCCCCCGGGGGCCCCCGGGGGCCCCCAAAAATTTTTAAAAATTTTTAAAAATTTTT",
             "reads": [ 521, 42 ],
             "seg":
               {
-                  "cdr3": {"start": 60, "stop": 70}
+                  "cdr3": {"start": 50, "stop": 60}
               }
         }
 
