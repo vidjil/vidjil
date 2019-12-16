@@ -823,6 +823,9 @@ class ListWindows(VidjilJson):
         self.d["reads"].d["germline"] = defaultdict(lambda: [0])
         self.d["diversity"] = Diversity()
 
+        ### Store created clone id
+        clone_ids = defaultdict(lambda: False)
+
         listw = []
         listc = []
         total_size = 0
