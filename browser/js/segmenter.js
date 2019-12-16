@@ -1397,6 +1397,7 @@ genSeq.prototype= {
     highlightToString: function(highlights, window_start) {
         result = document.createElement('span');
         currentSpan = document.createElement('span');
+        currentSpan.id = "sequence-clone-"+ this.id
 
         var canDisplaySynMutations = (! this.segmenter.amino &&
                                       this.m.clones.hasOwnProperty(this.segmenter.first_clone) &&
