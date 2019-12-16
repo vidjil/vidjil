@@ -887,7 +887,7 @@ class ListWindows(VidjilJson):
                     path   = axes[axe]
                     depth  = 0
                     value  = w.d
-                    to_put = row[axe]
+                    to_put = self.airr_clean_content(axe, row[axe])
 
                     while depth != len(path):
                         cat = path[depth]
@@ -955,6 +955,21 @@ class ListWindows(VidjilJson):
                 row[couple[1]] = row.pop(couple[0])
         return row
 
+
+    def airr_clean_content(self, category, value):
+        '''
+        Clean value of inapropriate content, as species names in segment name
+        '''
+        if category in ["v_call", "d_call", "j_call"]:
+            if "," in value:
+                value = value.split(", or")[0]
+            # clean specific vquest:
+            value = value.replace("Homsap ", "")
+            value = value.replace("Homsap_", "")
+            value = value.replace(" F", "")
+            value = value.replace(" (F)", "")
+            value = value.replace(" [ORF]", "")
+        return value
 
         
     def toJson(self, obj):
