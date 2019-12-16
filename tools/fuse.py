@@ -905,16 +905,16 @@ class ListWindows(VidjilJson):
 
 
             ### NAME (simple, vidjil like)
-            if row["v_call"] != "" and row["d_call"] != "" and row["j_call"] != "":
-                w.d["name"]= w.d["seg"]["5"]["name"] + " x/x/x " + w.d["seg"]["4"]["name"] + " x/x/x " + w.d["seg"]["3"]["name"]
-            elif row["v_call"] != "" and row["j_call"] != "":
-                w.d["name"]= w.d["seg"]["5"]["name"] + " x/x/x " + w.d["seg"]["3"]["name"]
-            elif row["v_call"] != "" and row["d_call"] != "":
-                w.d["name"]= w.d["seg"]["5"]["name"] + " x/x/x " + w.d["seg"]["4"]["name"]
-            elif row["d_call"] != "" and row["j_call"] != "":
-                w.d["name"]= w.d["seg"]["4"]["name"] + " x/x/x " + w.d["seg"]["3"]["name"]
-            else:
+            name = ""
+            if "v_call" in row.keys() and row["v_call"] != "":
+                name += (" "*int(name != "")) + w.d["seg"]["5"]["name"]
+            if "v_call" in row.keys() and row["d_call"] != "":
+                name += (" "*int(name != "")) + w.d["seg"]["4"]["name"]
+            if "v_call" in row.keys() and row["j_call"] != "":
+                name += (" "*int(name != "")) + w.d["seg"]["3"]["name"]
+            if name == "":
                 "undetermined segmentation"
+            w.d["name"] = name
 
 
             ### READS
