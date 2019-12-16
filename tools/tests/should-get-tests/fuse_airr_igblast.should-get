@@ -36,5 +36,3 @@ $ Check germline TRB (not present)
 $ Check _coverage_info
 14: "_coverage_info".*100%
 
-
-!LAUNCH: python ../../fuse.py $FUSE_OPTIONS  ../data/airr_output/airr_igblast_onlybuggy.tsv -o fuse_airr_igblast_onlybuggy.vidjil ; cat fuse_airr_igblast_onlybuggy.vidjil
