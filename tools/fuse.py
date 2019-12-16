@@ -882,7 +882,8 @@ class ListWindows(VidjilJson):
                     "cdr3_start":          ["seg","cdr3", "cdr3_start"],
                     "cdr3_start":          ["seg","cdr3", "cdr3_end"],
                     "5prime_trimmed_n_nb": ["seg","5","delLeft"],
-                    "3prime_trimmed_n_nb": ["seg","3","delLeft"]}
+                    "3prime_trimmed_n_nb": ["seg","3","delLeft"],
+                    "warnings":            ["warn"]}
             
 
             for axe in axes.keys():
@@ -972,6 +973,8 @@ class ListWindows(VidjilJson):
             value = value.replace(" F", "")
             value = value.replace(" (F)", "")
             value = value.replace(" [ORF]", "")
+        if category == 'warnings':
+            value = [{"code": value, "level": "warn"}]
         return value
 
         
