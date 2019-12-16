@@ -1,0 +1,40 @@
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS  ../data/airr_output/airr_igblast.tsv -o fuse_airr_igblast.vidjil ; cat fuse_airr_igblast.vidjil
+
+$ check original name
+1: "../data/airr_output/airr_igblast.tsv"
+
+$ Check the producer string in output file
+1: "producer": "vidjil fuse"
+
+$ Check number of reads
+l1: "total".*14.*"segmented".*14.*"germline"
+
+$ Check number of clone
+14: "top"
+
+$ Check repeated sequence_id: original
+1: "id": "TRDV1\*01"
+$ Check repeated sequence_id: first duplicate
+1: "id": "TRDV1\*01_1"
+$ Check repeated sequence_id: second duplicate
+1: "id": "TRDV1\*01_2"
+
+$ check diversity values
+lr1: "diversity":.*"index_H_entropy":.*"na"
+
+$ Check germline IGH
+4: "germline": "IGH"
+$ Check germline IGK
+7: "germline": "IGK"
+$ Check germline IGL
+2: "germline": "IGL"
+$ Check germline undetermined
+1: "germline": "undetermined"
+$ Check germline TRB (not present)
+0: "germline": "TRB"
+
+$ Check _coverage_info
+14: "_coverage_info".*100%
+
+
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS  ../data/airr_output/airr_igblast_onlybuggy.tsv -o fuse_airr_igblast_onlybuggy.vidjil ; cat fuse_airr_igblast_onlybuggy.vidjil

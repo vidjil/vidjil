@@ -45,3 +45,8 @@ $ Check germline TRG
 
 $ Check _coverage_info
 14: "_coverage_info".*100%
+
+## Specific vidjil
+
+$ warnings usage
+lr: "code": "W69 ",.*"level": "warn"
