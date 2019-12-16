@@ -922,6 +922,8 @@ class ListWindows(VidjilJson):
 
 
             ### READS
+            if not 'germline' in w.d.keys():
+                w.d["germline"] = "undetermined"
             self.d["reads"].addAIRRClone( w )
             
 
