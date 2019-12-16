@@ -848,7 +848,15 @@ class ListWindows(VidjilJson):
             w=Window(1)
             w.d["seg"] = { "junction":{}, "cdr3":{} }
             
-            w.d["id"]=row["sequence_id"]
+            w.d["id"] = row["sequence_id"]
+            # controle that no other clone is presetn with this id
+            p = 1
+            while clone_ids[w.d["id"]]:
+                w.d["id"] = row["sequence_id"] + "_%s" % p
+                p += 1
+            clone_ids[w.d["id"]] = True
+            
+            
             w.d["sequence"] = row["sequence"]
             if "duplicate_count" not in row.keys() or row["duplicate_count"] == "":
                 w.d["reads"] = [1]
