@@ -10,7 +10,8 @@ $ Check the producer string in output file
 1: "producer": "vidjil fuse"
 
 $ Check number of reads
-l1: "total".*14.*"segmented".*14.*"germline"
+l1: "total".*14
+l1: "segmented".*14
 
 $ Check number of clone
 14: "top"
@@ -61,7 +62,8 @@ $ _invert Check the producer string in output file
 1: "producer": "vidjil fuse"
 
 $ _invert Check number of reads
-l1: "total".*14.*"segmented".*14.*"germline"
+l1: "total".*14
+l1: "segmented".*14
 
 $ _invert Check number of clone
 14: "top"
@@ -102,5 +104,4 @@ lr1: "_coverage_info".*100%.*bp
 
 
 $ _invert deletion information should be present
-lr1: "3": {.*"delLeft": 0,.*"name": "TRBJ2-7\*01",
-# ,.* },
+lr1: "3": {.*"name": "TRBJ2-7\*01",.*"delLeft": 0

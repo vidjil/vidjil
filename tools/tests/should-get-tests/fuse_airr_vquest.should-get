@@ -6,8 +6,9 @@ $ check original name
 $ Check the producer string in output file
 1: "producer": "vidjil fuse"
 
-$ Check number of reads
-l1: "total".*5.*"segmented".*5.*"germline"
+$ Check number of 
+l1: "total".*5
+l1: "segmented".*5
 
 $ Check number of clone
 5: "top"

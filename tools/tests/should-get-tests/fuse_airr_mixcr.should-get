@@ -7,7 +7,8 @@ $ Check the producer string in output file
 1: "producer": "vidjil fuse"
 
 $ Check number of reads
-l1: "total".*8.*"segmented".*8.*"germline"
+l1: "total".*8
+l1: "segmented".*8
 
 $ Check number of clone
 8: "top"
