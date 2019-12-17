@@ -1,0 +1,55 @@
+###
+
+!LAUNCH: $VIDJIL_DIR/$EXEC --all -g $VIDJIL_DIR/germline/homo-sapiens.g:TRD+ $VIDJIL_DATA/hard-kmers.fa
+
+$ Detect 1 read
+1:junction detected in 1 read
+
+$ Detect the exact recombination
+1:>clone.*exact
+
+
+### -e-value 1e12
+!LAUNCH: $VIDJIL_DIR/$EXEC --all --e-value 1e12 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRD+ $VIDJIL_DATA/hard-kmers.fa
+
+$ Detect three sequences
+1:junction detected in 3 reads
+
+$ Detect the exact recombination
+1:>clone.*exact
+
+$ Detect the recombination with only one k-mer
+1:>clone.*one-9-mer
+
+$ Sadly, detect and designate the read with a random J but with a spurious k-mer
+1:>clone.*random
+1:>clone.*random.*TRDV1.* 10/.*/22 TRDD3
+
+
+### --e-value-kmer 1e12
+!LAUNCH: $VIDJIL_DIR/$EXEC --all --e-value-kmer 1e12 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRD+ $VIDJIL_DATA/hard-kmers.fa
+
+$ Detect three sequences
+1:junction detected in 3 reads
+
+$ Detect the exact recombination
+1:>clone.*exact
+
+$ Detect the recombination with only one k-mer
+1:>clone.*one-9-mer
+
+$ Sadly, detect the read with a random J but with a spurious k-mer
+1:>clone.*random
+$ but... do not designate it, as the global --e-value is still the default 1.0
+1:>clone.*random.*UNSEG
+
+
+### --seed 12s
+!LAUNCH: $VIDJIL_DIR/$EXEC -K --all --seed 12s -g $VIDJIL_DIR/germline/homo-sapiens.g:TRD+ $VIDJIL_DATA/hard-kmers.fa
+
+$ With another seed, detect three sequences
+1:junction detected in 3 reads
+
+$ Do not detect the read with a random J 
+0:>clone.*random
+
