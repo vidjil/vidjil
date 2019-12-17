@@ -343,12 +343,16 @@ When the read is too short too extract the requested length, the window can be s
 are counted in `SEG changed w` and the corresponding clones are output with the `W50` warning.
 
 The `-e` option sets the maximal e-value accepted for analyzing a sequence.
-It is an upper bound on the number of exepcted windows found by chance by the seed-based heuristic.
-The e-value computation takes into account both the number of reads in the
-input sequence and the number of locus searched for.
+It is an upper bound on the number of designated sequences found by chance by vidjil-algo.
+The e-value computation takes into account both the number of locus searched for
+and, for the defaut `-c clones` command, the number of reads in the input sequence.
 The default value is 1.0, but values such as 1000, 1e-3 or even less can be used
-to have a more or less permissive designation.
+to have a more or less permissive detection and designation.
 The threshold can be disabled with `-e all`.
+
+The advanced `--e-value-kmer` option sets the e-value for the seed-based heuristic.
+It is an upper bound on the number of expected windows found by chance.
+The default value is the same than value than the `-e`.
 
 The advanced `--trim` option sets the maximal number of nucleotides that will be indexed in
 V genes (the 3' end) or in J genes (the 5' end). This reduces the load of the
