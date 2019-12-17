@@ -536,7 +536,8 @@ Segment.prototype = {
                 if (this.sequence[cloneID]) {
                     //it should not be present in the segmenter     > delete
                     var element = document.getElementById("seq" + cloneID);
-                    element.parentNode.removeChild(element);
+                    if (element != null)
+                        element.parentNode.removeChild(element);
                     delete this.sequence[cloneID];
                 }
             }
