@@ -177,12 +177,22 @@
                 </div>
 
                 <div class="menu" id="filter_menu" onmouseenter="builder.build_displaySelector();" onmouseover="showSelector('filterSelector');" > filter
-                    <div id="filterSelector" class="selector"><div>
+                    <div id="filterSelector" class="selector">
+                      <div>
                         <div class="menu_box">
-                            <span id="top_label"></span></br>
-                            <input id="top_slider" type="range" min="5" max="100" step="5" value="10" onchange="m.displayTop(this.value)" />
+                          <span id="top_label"></span></br>
+                          <input id="top_slider" type="range" min="5" max="100" step="5" value="10" onchange="m.displayTop(this.value)" />
                         </div>
-                    </div></div>
+                      </div>
+                      
+                      <div>
+                        <div class="menu_box">
+                          <div id="filter_switch_sample">
+                            <input id="filter_switch_sample_check" type="checkbox"></input> Show only one sample
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                 </div>
 
                 <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();" onmouseover=" showSelector('settingsSelector');" > settings
