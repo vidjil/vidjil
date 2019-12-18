@@ -11,7 +11,7 @@ l1: "total".*5
 l1: "segmented".*5
 
 $ Check number of clone
-5: "top"
+14: "top"
 
 
 
@@ -33,3 +33,5 @@ lr: "_coverage_info".*100%.*bp
 ## specific vquest; Homsap in gene name, and multiple entries as list
 $ remove Homsap of genes names
 0: Homsap
+$ cdr1 is present
+3:cdr1
