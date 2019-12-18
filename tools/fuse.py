@@ -843,9 +843,6 @@ class ListWindows(VidjilJson):
                 print( "here")
                 break
 
-            # bypass imgt, seq non segmented
-            if row["sequence"] == "":
-                continue
 
 
             w=Window(1)
@@ -879,8 +876,10 @@ class ListWindows(VidjilJson):
                     "j_alignment_end":     ["seg","3","stop"],
                     "junction_aa":         ["seg","junction","aa"],
                     "productive":          ["seg","junction","productive"],
-                    "cdr3_start":          ["seg","cdr3", "cdr3_start"],
-                    "cdr3_start":          ["seg","cdr3", "cdr3_end"],
+                    "cdr1_start":          ["seg","cdr1", "start"],
+                    "cdr1_end":            ["seg","cdr1", "stop"],
+                    "cdr3_start":          ["seg","cdr3", "start"],
+                    "cdr3_end":            ["seg","cdr3", "stop"],
                     "5prime_trimmed_n_nb": ["seg","5","delLeft"],
                     "3prime_trimmed_n_nb": ["seg","3","delLeft"],
                     "warnings":            ["warn"]}
