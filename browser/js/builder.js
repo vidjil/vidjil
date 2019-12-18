@@ -391,6 +391,13 @@ Builder.prototype = {
         document.getElementById("top_slider")
             .max = max_top;
             
+
+        // init switch onlyOneSample
+        var onlyOneSample = document.getElementById("filter_switch_sample_check")
+        onlyOneSample.checked = this.m.show_only_one_sample
+
+
+
         //init notation
         if (this.m.notation_type == "scientific") {
             document.getElementById("notation").checked = true

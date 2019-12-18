@@ -125,6 +125,14 @@ Model.prototype = {
           $(this).removeClass('hovered');
         });
 
+        this.show_only_one_sample = false
+        $("#filter_switch_sample").click(function(){
+            self.show_only_one_sample = !self.show_only_one_sample
+            var check = document.getElementById("filter_switch_sample_check")
+            check.checked = self.show_only_one_sample
+            self.update()
+        })
+
         
         // Table of conversion between axes name and distribution names
         this.distrib_convertion = {
