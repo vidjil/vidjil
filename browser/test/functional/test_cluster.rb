@@ -52,6 +52,21 @@ class TestCluster < BrowserTest
   end
 
 
+  def test_05_switch_onlyOneSample
+    cloneId = '3'
+    assert ( $b.clone_in_graph(cloneId).present? ), ">> clone is present in the graph by default"
+
+    $b.menu_filter.click
+    $b.div(:id => "filter_switch_sample").click
+    assert ( $b.clone_in_list(cloneId).exists? ), ">> clone is present in the list"
+    assert ( $b.clone_in_graph(cloneId).present? ), ">> clone is present in the graph if switched in filter menu (and correct sample)"
+
+    # change current sample
+    $b.send_keys :arrow_right
+    assert ( not $b.clone_in_graph(cloneId).present? ), ">> clone is NOT present in the graph if switched in filter menu and sample with size at 0 for this clone"
+  end
+
+
 
   # Not really a test
   def test_zz_close
