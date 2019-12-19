@@ -1720,6 +1720,15 @@ changeAlleleNotation: function(alleleNotation) {
         this.samples.order = list
         this.update()
     },
+
+    /**
+     * Add a sample in the time order; at the end of the list
+     * @param {Number} time Time point to add at the list
+     */
+    addTimeOrder: function (time) {
+        this.samples.order.push(time)
+        this.update()
+    },
     
     /**
      * change timepoint for the next one in the current displayed time_order 
