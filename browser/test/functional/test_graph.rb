@@ -30,6 +30,7 @@ class TestGraph < BrowserTest
 
     # By default, checkbox are true
     $b.div(:id => 'visu2_menu').click
+    sleep 0.1
     check0 = $b.checkbox(:id => "graph_listElem_check_0")
     assert ( check0.set? ), "first checkbox is true"
     check1 = $b.checkbox(:id => "graph_listElem_check_1")
@@ -38,6 +39,7 @@ class TestGraph < BrowserTest
     # After click oin first sample checkbox, the corresponding checkbox is false, 
     # and not present in timeline
     check0.click
+    sleep 1
     time0 = $b.graph_x_legend("0")
     assert ( not time0.present? ), "first sample is NOT present in timeline after click"
     time1 = $b.graph_x_legend("1")
@@ -47,12 +49,15 @@ class TestGraph < BrowserTest
 
     # hide second sample by dblclick
     time1.double_click
+    sleep 1
     time1 = $b.graph_x_legend("1")
     assert ( not time1.present? ), "second sample is HIDDEN in timeline"
 
     # Use show all and hide all button
     $b.div(:id => 'visu2_menu').click
+    sleep 0.1
     $b.div(:id => 'graph_listElem_showAll').click
+    sleep 1
     assert ( time0.present? ), "first sample is SHOW in timeline"
     assert ( time1.present? ), "second sample is SHOW in timeline"
     assert ( check0.set? ), "first checkbox is true"
@@ -60,7 +65,9 @@ class TestGraph < BrowserTest
 
 
     $b.div(:id => 'visu2_menu').click
+    sleep 0.1
     $b.div(:id => 'graph_listElem_hideAll').click
+    sleep 1
     assert ( time0.present? ), "first sample is NOT hidden in timeline (hide simple click)"
     assert ( not time1.present? ), "second sample is HIDDEN in timeline"
     assert ( check0.set? ), "first checkbox is true  (hide simple click)"
@@ -68,6 +75,7 @@ class TestGraph < BrowserTest
 
     # test hide all, with simple and dblclick
     $b.div(:id => 'graph_listElem_hideAll').double_click
+    sleep 1
     assert ( not time0.present? ), "first sample is HIDDEN in timeline"
     assert ( not time1.present? ), "second sample is HIDDEN in timeline"
     assert ( not check0.set? ), "first checkbox is false"
@@ -77,10 +85,12 @@ class TestGraph < BrowserTest
     # Test the action on simple click on element of the list (should change selected sample)
     $b.div(:id => 'visu2_menu').click
     $b.div(:id => 'graph_listElem_showAll').click
+    sleep 1
     info_name = $b.div(:id => "info_sample_name")
     assert ( info_name.text == "T8045-BC081-Diag" ), "info name is the name of sample 0"
     # click to change the sample
     $b.div(:id => 'visu2_menu').click
+    sleep 1
     sample1 = $b.div(:id => "graph_listElem_text_1")
     sample1.click
     assert ( info_name.text == "T8045-BC082-fu1" ), "info name is the name of sample 1"
