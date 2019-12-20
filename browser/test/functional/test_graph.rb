@@ -102,6 +102,6 @@ class TestGraph < BrowserTest
 
   # Not really a test
   def test_zz_close
-    # close_everything
+    close_everything
   end
 end
