@@ -184,6 +184,8 @@ end
     # Click on first point
     $b.clone_in_scatterplot('3').click
     sleep 1
+    # If checked, the sequence will be split in mutiple dom element with highlight or not
+    assert ( not check.set? ), "CDR3 checkbox is not checked"
     assert ( $b.clone_in_segmenter('3').exists? ), ">> clone 3 is correctly present in the segmenter, without infinite loop"
     assert ( $b.span(:id => 'sequence-clone-3').text.include? 'GGGGGCCCCCGGGGGCCCCCGGGGGCCCCCGGGGGCCCCCAAAAATTTTTAAAAATTTTTAAAAATTTTT'), "sequence of analysis loaded replace sequence of vidjil file"
   end
