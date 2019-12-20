@@ -183,6 +183,7 @@ end
   def test_10_clone_segedited_from_analysis
     # Click on first point
     $b.clone_in_scatterplot('3').click
+    sleep 1
     assert ( $b.clone_in_segmenter('3').exists? ), ">> clone 3 is correctly present in the segmenter, without infinite loop"
     assert ( $b.span(:id => 'sequence-clone-3').text.include? 'GGGGGCCCCCGGGGGCCCCCGGGGGCCCCCGGGGGCCCCCAAAAATTTTTAAAAATTTTTAAAAATTTTT'), "sequence of analysis loaded replace sequence of vidjil file"
   end
