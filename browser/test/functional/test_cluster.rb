@@ -54,16 +54,25 @@ class TestCluster < BrowserTest
 
   def test_05_switch_onlyOneSample
     cloneId = '3'
-    assert ( $b.clone_in_graph(cloneId).present? ), ">> clone is present in the graph by default"
+    sleep 1
+    # exist will not work as the clone is present, but not visible.
+    # So use the number ofd points of the line [2+number of timepoint show]
+    polyline3 = $b.path(:id => "polyline"+cloneId )
 
+    assert ( polyline3.attribute_value("d").split(',').length == 4 ), ">> clone is present in the graph by default"
+
+    # switch the filter on, current sample include cloneId
     $b.menu_filter.click
     $b.div(:id => "filter_switch_sample").click
     assert ( $b.clone_in_list(cloneId).exists? ), ">> clone is present in the list"
-    assert ( $b.clone_in_graph(cloneId).present? ), ">> clone is present in the graph if switched in filter menu (and correct sample)"
 
-    # change current sample
+    assert ( polyline3.attribute_value("d").split(',').length == 4 ), ">> clone is present in the graph if switched in filter menu (and correct sample)"
+
+
+    # change current sample, will not include cloneId
     $b.send_keys :arrow_right
-    assert ( not $b.clone_in_graph(cloneId).present? ), ">> clone is NOT present in the graph if switched in filter menu and sample with size at 0 for this clone"
+    sleep 1
+    assert ( polyline3.attribute_value("d").split(',').length == 2 ), ">> clone is NOT present in the graph if switched in filter menu and sample with size at 0 for this clone"
   end
 
 
