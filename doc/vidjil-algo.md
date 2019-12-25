@@ -794,7 +794,7 @@ clustering such reads into clones, and further analyzing the clones.
 ```
 
 ``` bash
-./vidjil-algo -g germline -2 -3 -d demo/Stanford_S22.fasta
+./vidjil-algo -g germline/homo-sapiens.g -2 -3 -d demo/Stanford_S22.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
    # Assign the VDJ genes (including multiple D) and try to detect the CDR3 of each clone.
@@ -804,7 +804,7 @@ clustering such reads into clones, and further analyzing the clones.
 ## Sorting reads from whole RNA-Seq or capture datasets
 
 ``` bash
-./vidjil-algo -g germline -2 -U demo/Stanford_S22.fasta
+./vidjil-algo -g germline/homo-sapiens.g -2 -U demo/Stanford_S22.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
    # Assign the VDJ genes and try to detect the CDR3 of each clone.
