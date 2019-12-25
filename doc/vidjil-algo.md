@@ -605,8 +605,7 @@ The following causes are reported:
 | `UNSEG only V/5`    | Relevant similarities have been found with some V, but none or not enough with any J.                                    |
 | `UNSEG only J/3`    | Relevant similarities have been found with some J, but none or not enough with any V.                                    |
 | `UNSEG ambiguous`   | vidjil-algo finds some V and J similarities mixed together which makes the situation ambiguous and hardly solvable.      |
-| `UNSEG too short w` | The junction can be identified but the read is too short so that vidjil-algo could extract the window (by default 50bp). |
-|                     | It often means the junction is very close from one end of the read.                                                      |
+| `UNSEG too short w` | The junction can be identified but the read is too short so that vidjil-algo could extract the window (by default 50bp). It often means the junction is very close from one end of the read.  |
 
 Some datasets may give reads with many low `UNSEG too few` reads:
 
@@ -728,8 +727,9 @@ with a \> is of the following form:
         +             strand on which the sequence is mapped
         VDJ           type of designation (can be "VJ", "VDJ", "VDDJ", "53"...
                       or shorter tags such as "V" for incomplete sequences).    
-              The following line are for "VDJ" recombinations :
-
+```
+The following lines are for VDJ recombinations:
+``` diff
         startV endV   start and end position of the V gene in the sequence (start at 1)
         startD endD                      ... of the D gene ...
         startJ endJ                      ... of the J gene ...
@@ -768,10 +768,15 @@ applicable being removed:
 
 # Examples of use
 
-Examples on a IGH VDJ recombinations require either to specigy `-g germline/homo-sapiens-g:IGH`,
-or to use the multi-germline option `-g germline/homo-sapiens.g` that can be shortened into `-g germline`.
+## Basic usage
 
-## Basic usage: PCR-based datasets, with primers in the V(D)J regions (such as BIOMED-2 primers)
+On PCR-based datasets with primers in the V(D)J regions
+(such as EuroClonality-NGS or EuroClonality/BIOMED-2 primer sets),
+almost all of the reads are expected to be actual V(D)J recombinations.
+On the other side, typical whole RNA-Seq or capture datasets usually have 
+only a (very) small portion of recombined sequences.
+The following commands work in both cases, detecting the locus for each recombined read,
+clustering such reads into clones, and further analyzing the clones.
 
 ``` bash
 ./vidjil-algo -c clones   -g germline/homo-sapiens.g -2 -3 -r 1  demo/Demo-X5.fa
@@ -796,7 +801,7 @@ or to use the multi-germline option `-g germline/homo-sapiens.g` that can be sho
    # Summary of clones is available both on stdout, in out/reads.vdj.fa and in out/reads.vidjil.
 ```
 
-## Basic usage: Whole RNA-Seq or capture datasets
+## Sorting reads from whole RNA-Seq or capture datasets
 
 ``` bash
 ./vidjil-algo -g germline -2 -U demo/Stanford_S22.fasta
@@ -806,12 +811,14 @@ or to use the multi-germline option `-g germline/homo-sapiens.g` that can be sho
    # The out/reads.segmented.vdj.fa include all reads where a V(D)J recombination was found
 ```
 
-Typical whole RNA-Seq or capture datasets may be huge (several GB) but with only a (very) small portion of CDR3s.
+Typical whole RNA-Seq or capture datasets may be huge (several GB) but with only a (very) small portion of recombined sequences.
 Using Vidjil with `-U` will create a `out/reads.segmented.vdj.fa` file
 that includes all reads where a V(D)J recombination (or an unexpected recombination, with `-2`) was found.
-This file will be relatively small (a few kB or MB) and can be taken again as an input for Vidjil or for other programs.
+This file will be relatively small (a few kB or MB) and can be taken again as an input for Vidjil-algo or for other programs.
 
 ## Advanced usage
+
+An experimental further clustering can be triggered with `--cluster-epsilon`.
 
 ``` bash
 ./vidjil-algo -c clones -g germline/homo-sapiens.g -r 1 --cluster-epsilon 5 -x 10000 demo/LIL-L4.fastq.gz
@@ -822,11 +829,18 @@ This file will be relatively small (a few kB or MB) and can be taken again as an
    # and can been seen and edited in the web application.
 ```
 
+The V(D)J designation is usually run at the end of the clones detection (default command `-c clones`,
+on a number of clones limited by the `--max-designations` option).
+It is also possible to explicitly require V(D)J designation for each read (`-c designations`,
+no clone clustering, not recommended for large datasets)
+
 ``` bash
 ./vidjil-algo -c designations -g germline/homo-sapiens.g -2 -3 -d -x 50 demo/Stanford_S22.fasta
    # Detailed V(D)J designation, including multiple D, and CDR3 detection on the first 50 reads, without clone clustering
-   # (this is not as efficient as '-c clones')
+   # (this is not as efficient as '-c clones', no clustering)
 ```
+
+The command `-c germlines` outputs statistics on k-mers.
 
 ``` bash
 ./vidjil-algo -c germlines -g germline/homo-sapiens.g demo/Stanford_S22.fasta
