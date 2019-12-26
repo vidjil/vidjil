@@ -398,6 +398,16 @@ The `--max-designations` option limits the number of clones that are fully analy
 in particular to enable the web application
 to display the clones on the grid (otherwise they are displayed on the
 '?/?' axis).
+
+These V(D)J designations are obtained by full comparison (dynamic programming)
+with all germline sequences.
+Note that these designations are relatively slow to compute, especially
+for the IGH locus. However, they
+are not at the core of the Vidjil clone clustering method (which
+relies only on the 'window', see above).
+To check the quality of these designations, the automated test suite include
+sequences with manually curated V(D)J designations (see [should-vdj.org](http://git.vidjil.org/blob/master/doc/should-vdj.org)).
+
 If you want to analyze more clones, you should use `--max-designations 200` or
 `--max-designations 500`. It is not recommended to use larger values: outputting more
 than 500 clones is often not useful since they can not be visualized easily
@@ -459,9 +469,9 @@ with the `--grep-reads <sequence>` preset, equivalent to
 All the reads with the windows related to the sequence will be extracted 
 to files such as `out/seq/clone.fa-1`.
 
-## Clone analysis: VDJ assignation and CDR3 detection
+## Further clone analysis and CDR3 detection
 
-```
+``` diff
 Clone analysis (second pass)
   -d, --several-D             try to detect several D (experimental)
   -3, --cdr3                  CDR3/JUNCTION detection (requires gapped V/J germlines)
@@ -508,35 +518,45 @@ two windows that must be clustered.
 
 ## Main output files
 
-The main output of Vidjil-algo (with the default `-c clones` command) are two following files:
+The main output of Vidjil-algo (with the default `-c clones` command) are the three following files:
 
-  - The `.vidjil` file is *the file for the Vidjil web application*.
-    The file is in a `.json` format (detailed in [vidjil-format](vidjil-format))
-    describing the windows and their count, the consensus sequences (`--max-consensus`),
+  - The `.vidjil` file is the *main output file*, containing the most information.
+    The file is in a `.json` format,
+    its specification is detailed in [vidjil-format](vidjil-format.md).
+    It describes the clones, with the windows and their count, the consensus sequences (`--max-consensus`),
     the detailed V(D)J and CDR3 designation (`--max-designations`, see warning below), and possibly
     the results of the further clustering.
     
     The web application takes this `.vidjil` file ([possibly merged with `fuse.py`](#following-clones-in-several-samples)) for the *visualization and analysis* of clones and their
     tracking along different samples (for example time points in a MRD
     setup or in a immunological study).
-    Please see the [user manual](user.md) for more information on the web application.
+    Please see the [web application user manual](http://www.vidjil.org/user) for more information.
+
+  - The `.tsv` file is the AIRR output, for compatibility with other software
+    using the same format. See [below](#airr-tsv-output) for details.
 
   - The `.vdj.fa` file is *a FASTA file for further processing by other bioinformatics tools*.
-    The sequences are at least the windows (and their count in the headers) or
+    Even if it is advised to rather use the full information in the `.vijdil` file,
+    the `.vdj.fa` is a convenient way to have sequences of clones for further processing.
+    These sequences are at least the windows (and their count in the headers) or
     the consensus sequences (`--max-consensus`) when they have been computed.
-    The headers include the count of each window, and further includes the
-    detailed V(D)J and CDR3 designation (`--max-designations`, see warning below), given in a '.vdj' format, see below.
-    The further clustering is not output in this file.
+    The [headers](#the-vdj-fa-format) are described below.
+    Some other informations such as the further clustering are not output in this file.
     
     The `.vdj.fa` output enables to use Vidjil-algo as a *filtering tool*,
     shrinking a large read set into a manageable number of (pre-)clones
     that will be deeply analyzed and possibly further clustered by
     other software.
 
-By default, the two output files are named `out/basename.vidjil` in `out/basename.vdj.fa`, where:
+By default, the three output files are named
+`out/basename.vidjil`, `out/basename.tsv`, and `out/basename.vdj.fa`, where:
 
   - `out` is the directory where all the outputs are stored (can be changed with the `--dir` option).
   - `basename` is the basename of the input `.fasta/.fastq` file (can be overriden with the `--base` option)
+
+
+Vidjil-algo also outputs the first 50 clones on the standard output.
+More data can be printed on the standard output with the `-v` option.
 
 ## Auxiliary output files
 
@@ -633,9 +653,11 @@ Detailed output per read (generally not recommended, large files, but may be use
 ```
 
 It is possible to extract all analyzed or not analyzed reads, possibly to give them to other software.
-Runing Vidjil with `-U` gives a file `out/basename.analyzed.vdj.fa`, with all analyzed reads.
+Runing Vidjil-algo with `-U` gives a file `out/basename.analyzed.vdj.fa`, with all analyzed reads.
 On datasets generated with rather specific V(D)J primers, this is generally not recommended, as it may generate a large file.
 However, the `-U` option is very useful for whole RNA-Seq or capture datasets that contain few reads with V(D)J recombinations.
+Moreover `-U` only uses the ultra-fast first passs analysis, based on k-mer heuristics.
+
 
 Similarly, options are available to get the non analyzed reads:
 
@@ -685,40 +707,15 @@ Our implementation of .tsv may evolve in future versions.
 Contact us if a particular feature does interest you.
 
 
-## The .vdj format
+## The .vdj.fa format
 
-Vidjil output includes analysis of V(D)J recombinations. This happens
-in the following situations:
+The `.vdj.fa` format is compatible with the FASTA format,
+and details V(D)J recombinations in the FASTA headers.
+The format is described below, but may evolve in future releases.
+For post-processing tools needing some of that information, it is not recommended to parse these headers,
+but rather to use the `.vidjil` file that contains more information in a structured way.
 
-  - in a first pass, when requested with `-U` option, in a `.segmented.vdj.fa` file.
-    
-    The goal of this ultra-fast analysis, based on a seed
-    heuristics, is only to identify the locus and to locate the w-window overlapping the
-    CDR3. This should not be taken as a real V(D)J designation, as
-    the center of the window may be shifted up to 15 bases from the
-    actual center.
-
-  - in a second pass, on the `.vidjil` and `.vdj.fa` files
-    (and, for the first 50 clones, on the standard output)
-    
-      - at the end of the clones detection (default command `-c clones`,
-        on a number of clones limited by the `--max-designations` option)
-      - or directly when explicitly requiring V(D)J designation for each read 
-        (`-c designations`)
-    
-    These V(D)J designations are obtained by full comparison (dynamic programming)
-    with all germline sequences.
-    
-    Note that these designations are relatively slow to compute, especially
-    for the IGH locus. However, they
-    are not at the core of the Vidjil clone clustering method (which
-    relies only on the 'window', see above).
-    To check the quality of these designations, the automated test suite include
-    sequences with manually curated V(D)J designations (see [should-vdj.org](http://git.vidjil.org/blob/master/doc/should-vdj.org)).
-
-Designations of V(D)J recombinations are displayed using a dedicated
-`.vdj` format. This format is compatible with FASTA format. A line starting
-with a \> is of the following form:
+In a `.vdj.fa` format, a line starting with a \> is of the following form:
 
 ``` diff
 >name + VDJ  startV endV   startD endD   startJ  endJ   Vgene   delV/N1/delD5'   Dgene   delD3'/N2/delJ   Jgene   comments
@@ -765,6 +762,10 @@ applicable being removed:
 ``` diff
 >name + VJ  startV endV   startJ endJ   Vgene   delV/N1/delJ   Jgene  comments
 ```
+In the `.segmented.vdj.fa` file, the start/end positions of V and J genes are only an estimation,
+get from the k-mer heuristics, as the center of the window may be shifted up to 15 bases from the actual center.
+In the final `.vdj.fa` file, these values are the correct ones computed after dynamic programming comparison
+with germline genes.
 
 # Examples of use
 
