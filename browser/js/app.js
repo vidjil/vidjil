@@ -82,6 +82,7 @@ function loadAfterConf() {
                                          "../autocomplete",
                                          "../tips",
                                          "../tokeniser",
+                                         "../indexedDom",
                                          // Speed test
                                          "../speed_test",
                                          "../form_builder",
