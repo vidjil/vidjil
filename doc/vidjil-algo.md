@@ -850,28 +850,33 @@ The command `-c germlines` outputs statistics on k-mers.
 
 ## Following clones in several samples
 
-In a minimal residual disease setup, for instance, we are interested in
-following the main clones identified at diagnosis in the following samples.
+The goal of many immune repertoire sequencing (RepSeq) studies is
+to follow clones with V(D)J recombinations across several samples.
+This can be in a minimal residual disease (MRD) setup,
+tracking the clones found at the diagnosis in follow-up points,
+or more generally in any immunological study comparing
+samples from the same person or from different people.
 
-In its output files, Vidjil keeps track of all the clones, even if it
-provides a V(D)J assignation only for the main ones. Therefore the
-meaningful information is already in the files (for instance in the `.vidjil`
-files). However we have one `.vidjil` per sample which may not be very
-convenient. All the more since the web client only takes one `.vidjil` file
-as input and cannot take several ones.
+The `.vidjil` file output by `vidjil-algo` keeps track of some clones in *one sample*,
+limited by `--max-clones`.
+By default *all* the clones of the sample are kept (`--max-clones all`),
+even if the V(D)J designation is computed only for some of them.
 
-Therefore we need to merge all the `.vidjil` files into a single one. That is
-the purpose of the [tools/fuse.py](../tools/fuse.py) script.
+Merging `.vidjil` files into a single one is done
+with the [tools/fuse.py](../tools/fuse.py) script, such as in:
 
-Let assume that four `.vidjil` files have been produced for each sample
-(namely `diag.vidjil`, `fu1.vidjil`, `fu2.vidjil`, `fu3.vidjil`), merging them will
-be done in the following way:
-
-``` bash
+``` sh
 python tools/fuse.py --output mrd.vidjil --top 100 diag.vidjil fu1.vidjil fu2.vidjil fu3.vidjil
 ```
 
+The Vidjil web application takes the resulting `.vidjil` file (here `mrd.vidjil`).
+
 The `--top` parameter allows to choose how many top clones per sample should
-be kept. 100 means that for each sample, the top 100 clones are kept and
-followed in the other samples. In this example the output file is stored in
-`mrd.vidjil` which can then be fed to the web client.
+be kept. The default value is 50. Here `--top 100` means that for each sample, the top 100 clones are kept
+*and followed in the other samples*, even if it is not in the top 100 of the other samples.
+This allows to follow and quantify targeted clones even when there have only a few reads in some samples.
+
+As the `--top` value is below the default `--max-designations 100`, it means that every clone in the
+"merged" file will be fully analyzed with a V(D)J designation.
+Thus is advised to leave, in `vdijil-algo` the default `--max-clones all --max-designations 100` options
+for the majority of uses.
