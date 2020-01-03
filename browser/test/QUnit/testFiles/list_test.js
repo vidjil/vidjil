@@ -21,7 +21,7 @@ QUnit.test("edit", function(assert) {
 
 
     list.editName(1)
-    assert.notEqual(list.index[1].div_elem.innerHTML.indexOf("save"), -1, "open edit clone name : Ok")
+    assert.notEqual(list.index[1].getElement("main").innerHTML.indexOf("save"), -1, "open edit clone name : Ok")
     
     setTimeout( function() {
         $("#new_name").val("editName");
