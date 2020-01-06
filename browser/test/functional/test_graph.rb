@@ -22,6 +22,7 @@ class TestGraph < BrowserTest
   def test_00_list_clones
     # By default, 2 samples are present in timeline graph
     time0 = $b.graph_x_legend("0")
+    assert ($b.graph_x_legend('0', :class => 'graph_time2').exists?), "first sample is current sample"
     assert ( time0.present? ), "first sample is present in timeline"
     time1 = $b.graph_x_legend("1")
     assert ( time1.present? ), "second sample is present in timeline"
@@ -46,12 +47,17 @@ class TestGraph < BrowserTest
     assert ( time1.present? ), "second sample is still present in timeline"
     assert ( not check0.set? ), "first checkbox is false"
     assert ( check1.set? ), "second checkbox is true"
+    # verify that the second sample become selected (class: graph_time2)
+    assert ($b.graph_x_legend('1', :class => 'graph_time2').exists?), "second sample become current sample"
 
     # hide second sample by dblclick
     time1.double_click
     sleep 1
     time1 = $b.graph_x_legend("1")
     assert ( not time1.present? ), "second sample is HIDDEN in timeline"
+    check1 = $b.checkbox(:id => "graph_listElem_check_1")
+    assert ( not check1.set? ), "second checkbox is false as sample is disable"
+    
 
     # Use show all and hide all button
     $b.div(:id => 'visu2_menu').click
@@ -95,6 +101,10 @@ class TestGraph < BrowserTest
     sample1.click
     assert ( info_name.text == "T8045-BC082-fu1" ), "info name is the name of sample 1"
     # ===========
+    # hide sample XX, so sample yy should become the current one
+    time1.double_click
+    sleep 1
+    assert ($b.graph_x_legend('0', :class => 'graph_time2').exists?), "second sample become current sample"
      
   end
 
