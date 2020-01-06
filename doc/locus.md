@@ -49,17 +49,17 @@ many samples (10 to 100, or even more)
 can be pooled with proper barcoding in a same sequencing run.
 Contamination should then particularly be monitored.
 
-## Capture and other strategies without amplification
+## Capture and other strategies
 
-Several library preparations on DNA or RNA can be done without amplification:
-whole-genome sequencing, capture, 5'RACE...
+Several library preparations on DNA or RNA can be done with limited or no amplification:
+whole-genome or whole-transcriptome sequencing, capture, 5'RACE...
 Probes can possibly be designed in every V, D, or J gene, in the constant region, and/or
 consensus probes can be used.
 These methods can also be applied on single-cell sequencing, possibly with UMI identifiers.
 
 One advantage of such libraries is that they can be combined to other studies,
-as for example with full transcriptome analysis
-or  probes targeting oncogenes or other sequence of interest.
+as for example with transcriptome analysis
+or probes targeting oncogenes or other sequences of interest.
 Of course, the downside is that non-recombined DNA or RNA are also sequenced:
 Depending on the method and the datasets,
 as few as between 0.001% and 0.1% reads will have an actual V(D)J recombination.
