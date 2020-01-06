@@ -676,7 +676,7 @@ List.prototype = {
                     var classname = "list";
                     if (clone.isSelected())     classname += " list_select";
                     if (this.m.focus ==list[i]) classname += " list_focus";
-                    cloneDom.classname(classname);
+                    cloneDom.classname("main", classname);
 
                     //cluster sequence selected?
                     if (clusterDom) {
