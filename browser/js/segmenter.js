@@ -530,7 +530,8 @@ Segment.prototype = {
             var liDom = this.index[cloneID];
 
             if (this.m.clone(cloneID).isSelected()) {               // the clone is selected
-                this.addToSegmenter(cloneID);   
+                this.addToSegmenter(cloneID);
+                var liDom = this.index[cloneID];
                 if (liDom == null) continue;
                 liDom.display("main", "block");
                 this.div_elem(liDom.getElement("seq-fixed"), cloneID);
@@ -541,6 +542,8 @@ Segment.prototype = {
                     delete this.sequence[cloneID];                  //  > delete the sequence 
                     this.sequence_order.splice( this.sequence_order.indexOf(cloneID), 1 );
                 }
+
+                var liDom = this.index[cloneID];
                 if (liDom == null) 
                     continue;                                    
                 else
