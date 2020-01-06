@@ -31,8 +31,9 @@
   * /!\ don't index nested element (or do it but don't use content() on the top element for obvious reason)
   * */
  function IndexedDom(div) {
-    this.div = {};
-    this.div["main"] = {element: div};
+    this.div = {
+        main: {element: div}
+    };
 }
 
 IndexedDom.prototype = {
@@ -42,7 +43,7 @@ IndexedDom.prototype = {
      */
     getElement: function(className){
         if (typeof (this.div[className]) == "undefined")
-            this.div[className] = { element : this.div["main"].element.getElementsByClassName(className)[0]};
+            this.div[className] = { element : this.div.main.element.getElementsByClassName(className)[0]};
         
         return this.div[className].element;
     },
@@ -102,6 +103,6 @@ IndexedDom.prototype = {
         var div = this.getElement(className);
 
         div.removeAllChildren();
-        this.div[className] = { element : this.div["main"].element.getElementsByClassName(className)[0]};
+        this.div[className] = { element : this.div.main.element.getElementsByClassName(className)[0]};
     }
 }
