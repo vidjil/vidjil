@@ -186,6 +186,9 @@ end
     sleep 1
     # If cdr3 checked, the sequence will be split in mutiple dom element with highlight or not
     check = $b.checkbox(:id => "vdj_input_check")
+    if check.set? # by default, in chromium based browser, the checkbox is set to true
+      check.click
+    end
     assert ( not check.set? ), "CDR3 checkbox is not checked"
     assert ( $b.clone_in_segmenter('3').exists? ), ">> clone 3 is correctly present in the segmenter, without infinite loop"
     assert ( $b.span(:id => 'sequence-clone-3').text.include? 'GGGGGCCCCCGGGGGCCCCCGGGGGCCCCCGGGGGCCCCCAAAAATTTTTAAAAATTTTTAAAAATTTTT'), "sequence of analysis loaded replace sequence of vidjil file"
