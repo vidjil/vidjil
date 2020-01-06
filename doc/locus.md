@@ -35,7 +35,7 @@ and quantify immune recombinations.
    See for example [(Ferret, 2016)](http://dx.doi.org/10.1111/bjh.13981)
    (1-step, 23 primers in 5 tubes, TRG, TRD/TRD+, IGK, IGK+).
 
-All these primer sets were validated on ALL marker identification,
+These primer sets were designed and evaluated for onco-hematological studies on lymphoma and/or leukemia samples
 but may also be used in other studies on the immune repertoire.
 Such primer sets or DNA-Seq (or even on RNA-Seq) are very specific,
 leading to usually datasets with more than 90% or 99% of reads with V(D)J recombinations.
