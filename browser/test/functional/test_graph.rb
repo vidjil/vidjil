@@ -99,6 +99,7 @@ class TestGraph < BrowserTest
     sleep 1
     sample1 = $b.div(:id => "graph_listElem_text_1")
     sample1.click
+    sleep 1
     assert ( info_name.text == "T8045-BC082-fu1" ), "info name is the name of sample 1"
     # ===========
     # hide sample XX, so sample yy should become the current one
