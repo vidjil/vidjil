@@ -366,6 +366,7 @@ Graph.prototype = {
             this.m.changeTime(time)
         } else {
             this.m.samples.order.splice(pos_timepoint_in_order, 1)
+            this.m.changeTime(this.m.samples.order[0])
         }
         this.updateListCheckbox(time)
         this.m.update()
@@ -1337,6 +1338,13 @@ Graph.prototype = {
                     self.m.samples.order.splice(pos, 1)
                 }
                 self.m.update()
+                // invert checkbox value in list
+                self.updateListCheckbox(d.time)
+                // change current time to use first element of the current samples list
+                if (self.m.samples.order.length > 0){
+                    var new_time = self.m.samples.order[0]
+                    self.m.changeTime(new_time)
+                }
 
             })
         
