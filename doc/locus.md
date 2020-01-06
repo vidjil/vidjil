@@ -53,16 +53,16 @@ Contamination should then particularly be monitored.
 
 Several library preparations on DNA or RNA can be done without amplification:
 whole-genome sequencing, capture, 5'RACE...
-Probes can possibly desined in every V, D, or J gene, in the constant region, and/or
+Probes can possibly be designed in every V, D, or J gene, in the constant region, and/or
 consensus probes can be used.
 These methods can also be applied on single-cell sequencing, possibly with UMI identifiers.
 
-One advantage of such libraries is that they be combined to other studies,
+One advantage of such libraries is that they can be combined to other studies,
 as for example with full transcriptome analysis
 or  probes targeting oncogenes or other sequence of interest.
 Of course, the downside is that non-recombined DNA or RNA are also sequenced:
 Depending on the method and the datasets,
-as few as between 0.001% and 0.1% reads with actual V(D)J recombinations.
+as few as between 0.001% and 0.1% reads will have an actual V(D)J recombination.
 With datasets with billions of reads,
 this is usally enough to detect  dominant clones
 with something like a few hundred reads,
