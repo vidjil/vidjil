@@ -88,7 +88,7 @@ auth.define_tables(username=False, signature=False)
 mail = auth.settings.mailer
 mail.settings.server = defs.SMTP_SERVER
 mail.settings.sender = defs.FROM_EMAIL
-mail.settings.login = None
+mail.settings.login = defs.SMTP_CREDENTIALS
 
 ## configure auth policy
 auth.settings.registration_requires_verification = False

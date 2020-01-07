@@ -4,7 +4,8 @@
 ###
 
 ### Email notifications for server errors
-SMTP_SERVER = 'localhost'
+SMTP_SERVER = 'postfix'
+SMTP_CREDENTIALS = 'vidjil:smtp_pass' # set to None if no auth required
 # SMTP_SERVER = 'logging' # no mail
 FROM_EMAIL = 'notifications@vidjil.org'
 ADMIN_EMAILS = ['notifications@vidjil.org']
