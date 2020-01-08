@@ -42,8 +42,6 @@ GermlineList.prototype = {
         this.list = germline_data.systems;
     },
     
-
-    
     /**
     * add a list of germlines to the default germline list<br>
     * list {object[]} list 
@@ -95,6 +93,7 @@ function Germline (model) {
     this.m = model;
     this.allele = {};
     this.gene = {};
+    this.labels = [];
     this.system = "";
 }
 
@@ -116,6 +115,7 @@ Germline.prototype = {
         
         this.allele = {};
         this.gene = {};
+        this.labels = [];
         
         var type2;
         if (type=="V") type2="5";
@@ -147,8 +147,7 @@ Germline.prototype = {
         var g = {};
         for (var j=0; j<this.m.clones.length; j++){
             if (this.m.clone(j).hasSeg(type2) &&
-                typeof this.m.clone(j).seg[type2].name != "undefined"
-            ){
+                typeof this.m.clone(j).seg[type2].name != "undefined"){
                 var gene=this.m.clone(j).seg[type2].name;
                 if (this.m.system != "multi" || this.m.clone(j).get('germline') == system){
                     if ( typeof this.allele[gene] != "undefined"){
@@ -180,12 +179,13 @@ Germline.prototype = {
             var n = 0,
                 n2 = 0;
             var elem2 = keys[0].split('*')[0];
+            this.labels.push([elem2, []]);
             for (var l = 0; l < keys.length; l++) {
                 var tmp = this.allele[keys[l]];
                 this.allele[keys[l]] = {};
                 this.allele[keys[l]].seq = tmp;
                 this.allele[keys[l]].color = colorGenerator((30 + (l / keys.length) * 290));
-
+                
                 var elem = keys[l].split('*')[0];
                 if (elem != elem2) {
                     this.gene[elem2] = {};
@@ -193,11 +193,13 @@ Germline.prototype = {
                     this.gene[elem2].color = colorGenerator((30 + ((l - 1) / keys.length) * 290));
                     this.gene[elem2].rank = n;
                     n++;
+                    this.labels.push([elem, []]);
                     n2 = 0;
                 }
                 elem2 = elem;
                 this.allele[keys[l]].gene = n;
                 this.allele[keys[l]].rank = n2;
+                this.labels[n][1].push(keys[l]);
                 n2++;
             }
             this.gene[elem2] = {};
@@ -208,4 +210,5 @@ Germline.prototype = {
         
         return callback;
     }
+
 };
