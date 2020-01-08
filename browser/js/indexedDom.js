@@ -21,7 +21,7 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
- /* an object that keep track of a specified dom element and his childs
+ /* an object that keep track of a specified dom element and his children
   * provide a set of function to update contents/colors/display with minimal dom access
   *
   * the childs of the indexed element can be accessed by their className, the parent by using "main" as className
@@ -42,12 +42,20 @@ IndexedDom.prototype = {
      * save his DOM position for later use if not already done
      */
     getElement: function(className){
+        // The first time, stores the DOM element
         if (typeof (this.div[className]) == "undefined")
             this.div[className] = { element : this.div.main.element.getElementsByClassName(className)[0]};
         
+        // Returns the stored DOM element
         return this.div[className].element;
     },
 
+
+    /* Setters
+       The setters both stores the updated value in the IndexedDom as well as in the DOM.
+       Changes are done only when needed, because updating the DOM is slow... and these
+       setters are often called during an .update() without any actual changes.
+     */
 
     content: function(className, newContent){
         var div = this.getElement(className);
@@ -99,6 +107,7 @@ IndexedDom.prototype = {
         }
     },
 
+    /* Clear */
     clear: function(className){
         var div = this.getElement(className);
 
