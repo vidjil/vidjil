@@ -77,7 +77,6 @@ GermlineList.prototype = {
             return "x";
         }
     },
-    
 };
 
 
@@ -94,6 +93,7 @@ function Germline (model) {
     this.allele = {};
     this.gene = {};
     this.labels = [];
+    this.labelsWithAlleles = [];
     this.system = "";
 }
 
@@ -116,6 +116,7 @@ Germline.prototype = {
         this.allele = {};
         this.gene = {};
         this.labels = [];
+        this.labelsWithAlleles = [];
         
         var type2;
         if (type=="V") type2="5";
@@ -178,8 +179,11 @@ Germline.prototype = {
         if (keys.length !== 0){
             var n = 0,
                 n2 = 0;
+
+            this.Labels.push(elem2);
+            this.labelsWithAlleles.push([elem2, []]);   
+
             var elem2 = keys[0].split('*')[0];
-            this.labels.push([elem2, []]);
             for (var l = 0; l < keys.length; l++) {
                 var tmp = this.allele[keys[l]];
                 this.allele[keys[l]] = {};
@@ -192,14 +196,17 @@ Germline.prototype = {
                     this.gene[elem2].n = n2;
                     this.gene[elem2].color = colorGenerator((30 + ((l - 1) / keys.length) * 290));
                     this.gene[elem2].rank = n;
+                    
+                    this.Labels.push(elem);
+                    this.labelsWithAlleles.push([elem, []]);
+                    
                     n++;
-                    this.labels.push([elem, []]);
                     n2 = 0;
                 }
                 elem2 = elem;
                 this.allele[keys[l]].gene = n;
                 this.allele[keys[l]].rank = n2;
-                this.labels[n][1].push(keys[l]);
+                this.labelsWithAlleles[n][1].push(keys[l]);
                 n2++;
             }
             this.gene[elem2] = {};
