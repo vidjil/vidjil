@@ -27,8 +27,8 @@
  * @constructor 
  * */
 function GermlineList () {
-    this.list = {}
-    this.load()
+    this.list = {};
+    this.load();
 }
 
 
@@ -39,8 +39,7 @@ GermlineList.prototype = {
     * germline.js contain a copy of the germline list used if the server is unavailable
     * */
     load : function () {
-        this.list = germline_data.systems
-        
+        this.list = germline_data.systems;
     },
     
 
@@ -62,7 +61,7 @@ GermlineList.prototype = {
      * */
     getColor: function (system) {
         if (typeof this.list[system] != 'undefined' && typeof this.list[system].color != 'undefined' ){
-            return this.list[system].color
+            return this.list[system].color;
         }else{
             return "";
         }
@@ -75,13 +74,13 @@ GermlineList.prototype = {
      * */
     getShortcut: function (system) {
         if (typeof this.list[system] != 'undefined' && typeof this.list[system].shortcut != 'undefined' ){
-            return this.list[system].shortcut
+            return this.list[system].shortcut;
         }else{
-            return "x"
+            return "x";
         }
     },
     
-}
+};
 
 
 /** 
@@ -93,10 +92,10 @@ GermlineList.prototype = {
  * @constructor 
  * */
 function Germline (model) {
-    this.m = model
+    this.m = model;
     this.allele = {};
     this.gene = {};
-    this.system = ""
+    this.system = "";
 }
 
 Germline.prototype = {
@@ -112,29 +111,29 @@ Germline.prototype = {
     load : function (system, type, callback) {
         var self = this;
         
-        this.system = system
-        name = name.toUpperCase()
+        this.system = system;
+        name = name.toUpperCase();
         
-        this.allele = {}
-        this.gene = {}
+        this.allele = {};
+        this.gene = {};
         
-        var type2
-        if (type=="V") type2="5"
-        if (type=="D") type2="4"
-        if (type=="J") type2="3"
+        var type2;
+        if (type=="V") type2="5";
+        if (type=="D") type2="4";
+        if (type=="J") type2="3";
         if (typeof this.m.germlineList.list[system] !== 'undefined' &&
             typeof this.m.germlineList.list[system].recombinations !== 'undefined' && // Old 'custom' germline format, see #3043
             typeof this.m.germlineList.list[system].recombinations[0] !== 'undefined'){
             if (typeof this.m.germlineList.list[system].recombinations[0][type2] !== 'undefined' ){
                 for (var i=0; i<this.m.germlineList.list[system].recombinations[0][type2].length; i++){
-                    var filename = this.m.germlineList.list[system].recombinations[0][type2][i]
+                    var filename = this.m.germlineList.list[system].recombinations[0][type2][i];
 
 
-                    filename = filename.split('.')[0] //remove file extension 
+                    filename = filename.split('.')[0]; //remove file extension 
 
                     if (typeof germline[filename] != 'undefined'){
                         for (var key in germline[filename]){
-                            this.allele[key] = germline[filename][key].replace(/\./g,"")
+                            this.allele[key] = germline[filename][key].replace(/\./g,"");
                         }
                     }else{
                         console.log({"type": "flash", "msg": "warning : this browser version doesn't have the "+filename+" germline file", "priority": 2});
@@ -145,7 +144,7 @@ Germline.prototype = {
 
         //reduce germline size (keep only detected genes)
         //and add undetected genes (missing from germline)
-        var g = {}
+        var g = {};
         for (var j=0; j<this.m.clones.length; j++){
             if (this.m.clone(j).hasSeg(type2) &&
                 typeof this.m.clone(j).seg[type2].name != "undefined"
@@ -153,14 +152,14 @@ Germline.prototype = {
                 var gene=this.m.clone(j).seg[type2].name;
                 if (this.m.system != "multi" || this.m.clone(j).get('germline') == system){
                     if ( typeof this.allele[gene] != "undefined"){
-                        g[gene] = this.allele[gene]
+                        g[gene] = this.allele[gene];
                     }else{
-                        g[gene] = "unknow sequence"
+                        g[gene] = "unknow sequence";
                     }
                 }
             }
         }
-        this.allele = g
+        this.allele = g;
         
         //On trie tous les élèment dans germline, via le nom des objets
         var tmp1 = [];
@@ -197,16 +196,16 @@ Germline.prototype = {
                     n2 = 0;
                 }
                 elem2 = elem;
-                this.allele[keys[l]].gene = n
-                this.allele[keys[l]].rank = n2
+                this.allele[keys[l]].gene = n;
+                this.allele[keys[l]].rank = n2;
                 n2++;
             }
             this.gene[elem2] = {};
             this.gene[elem2].n = n2;
-            this.gene[elem2].rank = n
+            this.gene[elem2].rank = n;
             this.gene[elem2].color = colorGenerator((30 + ((l - 1) / keys.length) * 290));
         }
         
-        return callback
+        return callback;
     }
-}
+};
