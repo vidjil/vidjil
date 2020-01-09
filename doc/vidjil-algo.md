@@ -530,7 +530,7 @@ The main output of Vidjil-algo (with the default `-c clones` command) are the th
     The web application takes this `.vidjil` file ([possibly merged with `fuse.py`](#following-clones-in-several-samples)) for the *visualization and analysis* of clones and their
     tracking along different samples (for example time points in a MRD
     setup or in a immunological study).
-    Please see the [web application user manual](http://www.vidjil.org/user) for more information.
+    Please see the [web application user manual](http://www.vidjil.org/doc/user) for more information.
 
   - The `.tsv` file is the AIRR output, for compatibility with other software
     using the same format. See [below](#airr-tsv-output) for details.
@@ -540,7 +540,7 @@ The main output of Vidjil-algo (with the default `-c clones` command) are the th
     the `.vdj.fa` is a convenient way to have sequences of clones for further processing.
     These sequences are at least the windows (and their count in the headers) or
     the consensus sequences (`--max-consensus`) when they have been computed.
-    The [headers](#the-vdj-fa-format) are described below.
+    The [headers](#the-vdjfa-format) are described below.
     Some other informations such as the further clustering are not output in this file.
     
     The `.vdj.fa` output enables to use Vidjil-algo as a *filtering tool*,
