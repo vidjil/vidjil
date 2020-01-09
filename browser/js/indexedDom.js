@@ -117,7 +117,6 @@ IndexedDom.prototype = {
             return;
         }
 
-        var div = this.getElement(className);
-        this.div[className] = "undefined";
+        this.div[className] = undefined;
     }
 }
