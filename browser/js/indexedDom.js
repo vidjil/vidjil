@@ -109,9 +109,15 @@ IndexedDom.prototype = {
 
     /* Clear */
     clear: function(className){
-        var div = this.getElement(className);
+        if (className == "main"){
+            var tmp = this.getElement(className);
+            this.div = {
+                main: {element: tmp}
+            };
+            return;
+        }
 
-        div.removeAllChildren();
-        this.div[className] = { element : this.div.main.element.getElementsByClassName(className)[0]};
+        var div = this.getElement(className);
+        this.div[className] = "undefined";
     }
 }
