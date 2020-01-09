@@ -92,8 +92,8 @@ function Germline (model) {
     this.m = model;
     this.allele = {};
     this.gene = {};
-    this.labels = [];
-    this.labelsWithAlleles = [];
+    this.labels = {};
+    this.labelsWithAlleles = {};
     this.system = "";
 }
 
@@ -115,8 +115,8 @@ Germline.prototype = {
         
         this.allele = {};
         this.gene = {};
-        this.labels = [];
-        this.labelsWithAlleles = [];
+        this.labels = {};
+        this.labelsWithAlleles = {};
         
         var type2;
         if (type=="V") type2="5";
@@ -178,12 +178,13 @@ Germline.prototype = {
         var keys = Object.keys(list1);
         if (keys.length !== 0){
             var n = 0,
-                n2 = 0;
-
-            this.Labels.push(elem2);
-            this.labelsWithAlleles.push([elem2, []]);   
+                n2 = 0;  
 
             var elem2 = keys[0].split('*')[0];
+
+            this.labels[elem2] = {"text" : elem2};
+            this.labelsWithAlleles[elem2] = {"text" : elem2, sub: {}};
+
             for (var l = 0; l < keys.length; l++) {
                 var tmp = this.allele[keys[l]];
                 this.allele[keys[l]] = {};
@@ -197,16 +198,16 @@ Germline.prototype = {
                     this.gene[elem2].color = colorGenerator((30 + ((l - 1) / keys.length) * 290));
                     this.gene[elem2].rank = n;
                     
-                    this.Labels.push(elem);
-                    this.labelsWithAlleles.push([elem, []]);
-                    
+                    this.labels[elem] = {"text" : elem};
+                    this.labelsWithAlleles[elem] = {"text" : elem2, sub: {}};
+
                     n++;
                     n2 = 0;
                 }
                 elem2 = elem;
                 this.allele[keys[l]].gene = n;
                 this.allele[keys[l]].rank = n2;
-                this.labelsWithAlleles[n][1].push(keys[l]);
+                this.labelsWithAlleles[elem].sub[keys[l]] =  {"text" : keys[l].split('*')[1]};
                 n2++;
             }
             this.gene[elem2] = {};
