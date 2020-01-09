@@ -582,6 +582,7 @@ List.prototype = {
         }
         var divParent = this.index[cloneID].getElement("nameBox");
         var old_event = divParent.onclick;
+        this.index[cloneID].getElement("nameBox").removeAllChildren();
         this.index[cloneID].clear("nameBox");
 
         if (cloneID[0] == 's')
