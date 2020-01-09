@@ -129,9 +129,9 @@ We have improved our backup strategy to lower the likelihood of such an event.
 
 On the public test server, the backup strategy is as follows:
 
- - Once a month, the full database, results and analyses
- - Twice a day (1:00 GMT, 13:00 GMT), the full database, and the diff between the first of the month for the results and analyses
- - Original sequences files (such as .fasta) are not backuped (and the users and informed)
+ - Twice a month, the full database, results and analyses
+ - Four times a day (1:00 CEST, 10:00 CEST, 14:00 CEST, 18:00 CEST), the full database, and the diff between the last full backup for the results and analyses
+ - Original sequences files (such as .fastq) are not backuped (and the users are informed)
  - Backups are stored on an external secured server
  
 
