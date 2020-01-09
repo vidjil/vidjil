@@ -7,7 +7,7 @@ High-throughput sequencing (NGS/HTS) now enables the deep sequencing of a lympho
 # Library preparation and sequencing for human RepSeq studies
 
 Choosing library preparation and sequencing for immune repertoire analysis
-is a challenging task [(Langerak 2017)](https://doi.org/10.4049/jimmunol.1602050)
+is a challenging task [(Langerak 2017)](http://dx.doi.org/10.4049/jimmunol.1602050)
 and depends of multiple factors: aim of the study, people, sequencers, reagents, costs...
 We do not aim here to be authoritative,
 but give a few links to commonly used strategies for library preparation and sequencing.
@@ -18,9 +18,9 @@ PCR approaches are the state-of-the-art way to detect
 and quantify immune recombinations.
 
  - As of 2020, it is recommended to use the **EuroClonality-NGS** primer sets
-   published in [(Brüggemann, 2019)](https://doi.org/10.1038/s41375-019-0496-7)
+   published in [(Brüggemann, 2019)](http://dx.doi.org/10.1038/s41375-019-0496-7)
    (2-step, 138 primers in 8 tubes, IGH FR1, IGH+, IGK, IGK+, TRB, TRB+, TRD/TRD+, TRG)
-   and in [(Scheijen, 2019)](https://doi.org/10.1038/s41375-019-0508-7)
+   and in [(Scheijen, 2019)](http://dx.doi.org/10.1038/s41375-019-0508-7)
    (1-step, 53 primers in 3 tubes, IGH FR3, IGH+, IGK, IGK+).
    These primer sets were evaluated in a multi-center validation study.
    The EuroClonality-NGS consortium also published
@@ -31,7 +31,7 @@ and quantify immune recombinations.
 
  - Many studies are still successfully using primer sets based on
    the older **EuroClonality/BIOMED-2** sets
-   published in [(van Dongen, 2003)](https://doi.org/10.1038/sj.leu.2403202).
+   published in [(van Dongen, 2003)](http://dx.doi.org/10.1038/sj.leu.2403202).
    See for example [(Ferret, 2016)](http://dx.doi.org/10.1111/bjh.13981)
    (1-step, 23 primers in 5 tubes, TRG, TRD/TRD+, IGK, IGK+).
 
@@ -41,11 +41,11 @@ Such primer sets or DNA-Seq (or even on RNA-Seq) are very specific,
 leading to usually datasets with more than 90% or 99% of reads with V(D)J recombinations.
 
 One-step approaches may be used even with the 2-steps primers,
-see [(Brüggemann, 2019)](https://doi.org/10.1038/s41375-019-0496-7) for discussion.
+see [(Brüggemann, 2019)](http://dx.doi.org/10.1038/s41375-019-0496-7) for discussion.
 Some labs do sequence independently the tubes with barcoding,
 but for many applications the contents of the tubes can be pooled and sequenced at once.
 Using the full depth of a recent sequencer with spike-in control sequences,
-precise MRD quantification can be achieved [(Knecht 2019)](https://doi.org/10.1038/s41375-019-0499-4).
+precise MRD quantification can be achieved [(Knecht 2019)](http://dx.doi.org/10.1038/s41375-019-0499-4).
 When the goal is only to detect a few dominant clones,
 many samples (10 to 100, or even more)
 can be pooled with proper barcoding in a same sequencing run.
