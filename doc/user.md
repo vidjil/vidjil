@@ -321,7 +321,7 @@ The different permissions that can be attributed are:
   - View Details: Permissions to view patient/run/set data in an unencrypted manner for the patients/runs/sets of a group
   - Save: Permissions to save an analysis for the patients/runs/sets of a group
 
-# How do you define clones, their sequences, and their V(D)J designation?
+# How do you define clones, their sequences, their V(D)J designation and their productivity?
 
 The Vidjil web application allows to run several RepSeq algorithms.
 Each RepSeq algorithm (selected by « config », see above)
@@ -377,6 +377,16 @@ Once clones are selected, you can send their sequence to **IMGT/V-QUEST** and **
 by clicking on the links just above the sequence panel (bottom left).
 This opens another window/tab.
 
+## How is productivity computed? Why do I have some discrepancies with other software?
+Vidjil-algo computes the productivity by checking that the CDR3 comes from
+an in-frame recombination and that there is no stop codon in the full
+sequence.
+
+The productivitiy as computed by Vidjil-algo may differ from what computes
+other software. For instance, as of September 2019, IMGT/V-QUEST removes by default
+insertions and deletions from the sequences to compute the productivity, as it
+considers them as sequencing errors. Moreover IMGT/V-QUEST checks that there
+is no stop codon only in the CDR3 and not in the full sequence.
 # Can I see all the clones and all the reads ?
 
 The interest of NGS/RepSeq studies is to provide a deep view of any
