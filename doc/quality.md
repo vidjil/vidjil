@@ -22,11 +22,11 @@ We always want to extend the test coverage and to improve our development policy
 
 We develop an algorithm to process high-throughput sequencing data to detect sequences with V(D)J recombinations as well as incomplete or uncommon recombinations. We gather these sequences into clonotypes. We use and improve state-of-the-art text algorithms (spaced seeds, automata, bit parallelism, indexing structures...) to provide efficient analytical methods. As far as possible, we do not compute full alignments. We always plan to improve the algorithm, improving accuracy and speed and providing more pertinent analysis for immunology and hematology. We benchmark and improve the algorithm on carefully curated sequences.
 
-The original algorithm was published in [BMC Genomics 2014], and extension to several locus as well as incomplete recombinations have been described in [PLOS One 2016]. Vidjil-algo was evaluated as very reliable. As of 2020, we are still working in improving again the efficiency of the algorithm and use more efficient algorithms for seed patterns evaluation.
+The original algorithm was published in [BMC Genomics 2014], and extension to several loci as well as incomplete recombinations have been described in [PLOS One 2016]. Vidjil-algo was evaluated as very reliable. As of 2020, we are still working in improving again the efficiency of the algorithm and use more efficient algorithms for seed patterns evaluation.
 
 ## Tests
 
-Each new feature or release is carefully tested and gone through the following tests:
+Each new feature or release is carefully tested and goes through the following tests:
 
  - *Unit tests.* 150+ tests on the behaviour of minimal algorithmic bricks
  - *Functional tests.* 850+ tests in 100+ tests sets. We check that the command-line vidjil-algo has the expected behaviour in various conditions and options.
@@ -61,7 +61,7 @@ A sample database links the web application and the algorithmic part, allowing u
 
 ## Continuous integration, continuous or qualified delivery
 
-Continuous integration (CI) consists in systematically testing the modification brought to the code (either on the algorithm or on the web application). This is used since 2017, and the test coverage are regularly improved.
+Continuous integration (CI) consists in systematically testing the modification brought to the code (either on the algorithm or on the web application). This is used since 2017, and the test coverage regularly improves.
 
 Continuous delivery (CD) consists in systematically deploying new releases when the tests succeed. We aim at reaching this point on the public test server (app.vidjil.org). As of 2020, we have automated delivery that is still triggered by the core developpers.
 
@@ -69,7 +69,7 @@ However, on production servers used in routine analysis, we do not use CD but ra
 
 ## Tracking issues
 
-Both bug reports and features requests are followed on our public bugtracker, <http://gitlab.vidjil.org>.
+Both bug reports and feature requests are followed on our public bugtracker, <http://gitlab.vidjil.org>.
 
  - Most issues are public. Issues with confidential content, including support for the members,
    are limited to the core developer team.
@@ -82,7 +82,7 @@ Both bug reports and features requests are followed on our public bugtracker, <h
 ## User relations
 
  - There are at least two channels to join us : <support@vidjil.org> or the issue tracker. We can also arrange audio meetings.
- - We answer to each request: Even if we can not solve the request, we acknowledge the request and create issues when needed.
+ - We answer to each request: Even if we cannot solve the request, we acknowledge the request and create issues when needed.
  
  - We have quarterly audio meetings with active members of our community
  - We organize every 18 months meetings with our users (March 2015, November 2017, March 2019, September 2020, see <http://www.vidjil.org>)
@@ -123,8 +123,8 @@ Throughout the VidjilNet consortium, we propose two options for production serve
 
 Incidents, either on our side, or due to the hosting operator, can always happen. However our goal is to ensure that no results or analyses could be lost.
 Since October 2014, we lost once 1.5 days of data analyzed by our users on the public server
-(0,5 days in 2016, 1,0 days in November 2017).
-No loss of data occured in 2018 neither in 2019.
+(0.5 day in 2016, 1.0 day in November 2017).
+No loss of data occurred in 2018 neither in 2019.
 We have improved our backup strategy to lower the likelihood of such an event.
 
 On the public test server, the backup strategy is as follows:
