@@ -365,7 +365,7 @@ Graph.prototype = {
         // remove css rule of previous sample
         if (elem.length != 0) {
             // dont change if previous and current sample are the same
-            if (elem[0].id == 'graph_listElem_text_'+time) return
+            if (elem[0].id == 'graph_listElem_text_'+time && this.m.samples.order.length != 0){ return }
             elem[0].classList.remove("graph_listElem_selected")
         }
         // Add css rule to current timepoint (and if at least one is show)
