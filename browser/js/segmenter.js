@@ -523,12 +523,13 @@ Segment.prototype = {
     updateElem: function (list) {
         var self = this;
         list.sort(function(a,b){ return self.m.clone(b).getSize() - self.m.clone(a).getSize() })
+        var sliderNeedUpdate = (Object.keys(this.sequence).length==0)//slider move only if we add sequence to an empty segmenter
 
         for (var i = 0; i < list.length; i++) {     
 
             var cloneID = list[i];
             var liDom = this.index[cloneID];
-
+            
             if (this.m.clone(cloneID).isSelected()) {               // the clone is selected
                 this.addToSegmenter(cloneID);
                 liDom = this.index[cloneID];
@@ -550,7 +551,8 @@ Segment.prototype = {
                     liDom.display("main", "none");                          //  > hide the dom element
             }
         }
-        this.show();
+
+        if (sliderNeedUpdate) this.show();
         this.updateAlignmentButton()
         //this.updateSegmenterWithHighLighSelection();
         this.updateStats();  
@@ -871,13 +873,10 @@ Segment.prototype = {
     },
 
     /**
-     * move the horizontal slider to focus the most interesting parts of the sequences
+     * TODO: move the horizontal slider to focus the most interesting parts of the sequences
      * */
     show: function () {
-        var li = document.getElementById("listSeq")
-            .getElementsByTagName("li");
-        if (li.length > 0) {
-            var id = li[0].id.substr(3);
+        if (object.keys(sequence).length > 0) {
             var mid = 999999
             $(this.div_segmenter)
                 .animate({
