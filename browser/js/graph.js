@@ -396,9 +396,11 @@ Graph.prototype = {
     invertListElement: function(time){
         var pos_timepoint_in_order = this.m.samples.order.indexOf(time)
         if (pos_timepoint_in_order == -1){
+            // Add new timepoint
             this.m.samples.order.push( time )
             this.m.changeTime(time)
         } else {
+            // Remove timepoint
             this.m.samples.order.splice(pos_timepoint_in_order, 1)
             this.m.changeTime(this.m.samples.order[0])
         }
