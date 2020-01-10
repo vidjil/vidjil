@@ -357,6 +357,26 @@ Graph.prototype = {
     },
 
     /**
+     * Update, in the graph list, the sampel with the selected css rule
+     */
+    updateListElemSelected: function(){
+        var time = this.m.t
+        var elem = document.getElementsByClassName("graph_listElem_selected")
+        // remove css rule of previous sample
+        if (elem.length != 0) {
+            // dont change if previous and current sample are the same
+            if (elem[0].id == 'graph_listElem_text_'+time) return
+            elem[0].classList.remove("graph_listElem_selected")
+        }
+        // Add css rule to current timepoint (and if at least one is show)
+        if (time != undefined && this.m.samples.order.length != 0){
+            elem = document.getElementById('graph_listElem_text_'+time)
+            elem.classList.add("graph_listElem_selected")
+        }
+        return
+    },
+
+    /**
      * Update the state of the checkbox of a sample. Use the model samples order as reference.
      * @param  {[type]} time The timepoint to update
      */
@@ -467,6 +487,7 @@ Graph.prototype = {
      * */
     update : function (speed) {
         speed = typeof speed !== 'undefined' ? speed : 500;
+        this.updateListElemSelected();
         this.initAxis()
             .initData()
             .updateRes()
