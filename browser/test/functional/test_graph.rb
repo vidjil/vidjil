@@ -53,13 +53,12 @@ class TestGraph < BrowserTest
     # verify that the second sample become selected (class: graph_time2)
     assert ($b.graph_x_legend('1', :class => 'graph_time2').exists?), "second sample become current sample (bold in graph text)"
 
-    # hide second sample by dblclick
+    # hide second sample by dblclick on graph label (prevent as last)
     time1.double_click
     sleep 1
-    # time1 = $b.graph_x_legend("1")
-    assert ( not time1.present? ), "second sample is HIDDEN in timeline"
+    assert ( time1.present? ), "second sample still present in timeline"
     check1 = $b.checkbox(:id => "graph_listElem_check_1")
-    assert ( not check1.set? ), "second checkbox is false as sample is disable"
+    assert ( check1.set? ), "second checkbox still true as sample is not disable"
     
 
     # Use show all and hide all button
@@ -76,6 +75,7 @@ class TestGraph < BrowserTest
     assert (    $b.td(:id => 'graph_listElem_text_'+'1', :class => 'graph_listElem_selected').exists?), "Second sample IS bold in list"
 
 
+    # test hide all, with simple and dblclick
     $b.div(:id => 'visu2_menu').click
     sleep 0.1
     $b.td(:id => 'graph_listElem_hideAll').click
@@ -86,17 +86,17 @@ class TestGraph < BrowserTest
     assert ( check1.set? ), "first checkbox is true  (hide simple click)"
     assert ( not check0.set? ), "second checkbox is false"
 
-    # test hide all, with simple and dblclick
     $b.td(:id => 'graph_listElem_hideAll').double_click
+    # No action as only one sample still active
     sleep 1
     assert ( not time0.present? ), "first sample is HIDDEN in timeline"
-    assert ( not time1.present? ), "second sample is HIDDEN in timeline"
+    assert (     time1.present? ), "second sample still present as last active sample"
     assert ( not check0.set? ), "first checkbox is false"
-    assert ( not check1.set? ), "second checkbox is false"
+    assert (     check1.set? ), "second checkbox is true"
     assert ( not sample_arrow.present? ), "sample arrow next is NOT present after hide all"
     # No sample should be bold in list
     assert ( not $b.td(:id => 'graph_listElem_text_'+'0', :class => 'graph_listElem_selected').exists?), "First sample is NOT bold in list"
-    assert ( not $b.td(:id => 'graph_listElem_text_'+'1', :class => 'graph_listElem_selected').exists?), "Second sample is NOT bold in list"
+    assert (     $b.td(:id => 'graph_listElem_text_'+'1', :class => 'graph_listElem_selected').exists?), "Second sample is NOT bold in list"
 
     # Test the action on simple click on element of the list (should change selected sample)
     $b.div(:id => 'visu2_menu').click
