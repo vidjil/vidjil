@@ -230,7 +230,7 @@ Graph.prototype = {
         div.className = "graph_menu"
         div.appendChild(icon('icon-dot-3', 'Drag here samples to hide them'))
         
-        var list = document.createElement('div')
+        var list = document.createElement('table')
         list.id = "" + this.id + "_list"
         list.className = "graph_list"
         
@@ -263,39 +263,53 @@ Graph.prototype = {
         var list = document.getElementById("" + this.id + "_list")
         list.removeAllChildren();
 
-        $("<div/>", {
-            'id': "graph_listElem_showAll",
-            'class': "graph_listElem_button",
-            'text': "Show all timepoint",
-            'time': i
-        }).appendTo("#" + this.id + "_list");
-        $("<div/>", {
-            'id': "graph_listElem_hideAll",
-            'class': "graph_listElem_button",
-            'text': "Hide all timepoint",
-            'time': i
-        }).appendTo("#" + this.id + "_list");
+        // Create a table to store each line
+        var table   = document.createElement("table")
+
+        var line   = document.createElement("tr")
+        var line_content   = document.createElement("td")
+        line_content.id = "graph_listElem_showAll"
+        line_content.classList.add("graph_listAll")
+        line_content.textContent = "Show all timepoint"
+        line_content.colSpan = "2"
+        line.appendChild(line_content)
+        table.appendChild(line)   
+
+        line   = document.createElement("tr")
+        line_content   = document.createElement("td")
+        line_content.id = "graph_listElem_hideAll"
+        line_content.classList.add("graph_listAll")
+        line_content.textContent = "Hide all timepoint"
+        line_content.colSpan = "2"
+        line.appendChild(line_content)
+        table.appendChild(line)
 
         for (var i=0; i<this.m.samples.number; i++){
-            var list_content   = document.createElement("div")
+            // Create a line for each sample, with checkbox and name (text)
+            var list_content   = document.createElement("tr")
             list_content.id    = 'graph_listElem_'+i
             list_content.classList.add("graph_listElem")
             list_content.dataset.time = i
-            var content_text   = document.createElement("div")
-            content_text.classList.add("graph_listElem_text")
-            content_text.id    = "graph_listElem_text_"+i
-            content_text.textContent  = this.m.getStrTime(i)
-            content_text.dataset.time = i
+            // case: Name of sample
+            var line_content_text   = document.createElement("td")
+            line_content_text.classList.add("graph_listElem_text")
+            line_content_text.id    = "graph_listElem_text_"+i
+            line_content_text.textContent  = this.m.getStrTime(i)
+            line_content_text.dataset.time = i
+            // case: checkbox
+            var line_content_check  = document.createElement("td")
             var content_check  = document.createElement("input")
             content_check.classList.add("graph_listElem_check")
             content_check.type = "checkbox"
             content_check.id   = "graph_listElem_check_"+i
             content_check.dataset.time = i
+            line_content_check.appendChild(content_check)
 
-            list_content.appendChild(content_text)
-            list_content.appendChild(content_check)
-            list.appendChild(list_content)
+            list_content.appendChild(line_content_check)
+            list_content.appendChild(line_content_text)
+            table.appendChild(list_content) 
         }
+        list.appendChild(table)
 
         $("#graph_listElem_showAll").click(function () {
             console.log( "self.showAllTimepoint()" )
