@@ -819,27 +819,24 @@ changeAlleleNotation: function(alleleNotation) {
      * compute min/max clones sizes and abundance color scale<br>
      * clone size can change depending the parameter so it's neccesary to recompute precision from time to time
      * */
-    update_precision: function () {
-        var min_size = 1
-        var max
+    update_precision: function () { 
+        this.min_size = 1
+        this.max_size = 0
         for (var i=0; i<this.samples.order.length; i++){
             var t = this.samples.order[i]
             var size = this.min_sizes[t]
             size = this.normalize(this.min_sizes[t], t)
-            if (size < min_size) min_size = size
-        }
-        
-        this.max_size = 1
-        this.min_size = min_size
-        if (this.normalization_mode != this.NORM_FALSE){
-            for (var j=0; j<this.samples.order.length; j++){
-                if(this.normalization.size_list[j]==0){
-                max = this.normalization.expected_size
-                }else{
-                max = this.normalization.expected_size/this.normalization.size_list[j]
+            if (size < this.min_size) this.min_size = size
+
+            var maxreads = 0;
+            var biggestClone = 0;
+            for (var j=0;j<this.clones.length;j++){
+                if (this.clones[j].reads[t]>maxreads && this.clone(j).isActive()) {
+                    maxreads = this.clones[j].reads[t]
+                    biggestClone = j;
                 }
-                if (max>this.max_size) this.max_size=max;
             }
+            if (this.clone(biggestClone).getSize(t) > this.max_size) this.max_size = this.clone(biggestClone).getSize(t)
         }
         
         //*2 pour avoir une marge minimum d'un demi-log

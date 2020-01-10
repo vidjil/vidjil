@@ -950,12 +950,8 @@ Graph.prototype = {
      * 
      * */
     initOrdinateClones : function () {
-        
+    
         var max = this.m.precision*this.m.max_size
-        for (var i=0; i<this.m.samples.order.length; i++) {
-            var size = this.m.reads.segmented[i]
-            if (size>max) max=size;
-        }
         
         this.scale_x = d3.scaleLog()
             .domain([1, max])
@@ -972,8 +968,13 @@ Graph.prototype = {
             this.data_axis.push({"type" : "axis_h", "class" : "graph_text", "text" : "50%" ,"orientation" : "hori", "pos" : 0.5});
             this.data_axis.push({"type" : "axis_h", "class" : "graph_text", "text" : "100%" ,"orientation" : "hori", "pos" : 0});
         }else{
-            var height = 1;
+            var height = 0.00001;
             while(height<this.m.max_size) height = height*10
+
+            this.scale_x = d3.scaleLog()
+            .domain([1, this.m.precision*height])
+            .range([0, 1]);
+            
             while ((height * this.m.precision) > 0.5) {
 
                 var d = {};
