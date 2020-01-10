@@ -317,11 +317,7 @@ Graph.prototype = {
         })
         $("#graph_listElem_hideAll").click(function () {
             console.log( "self.hideAllTimepoint( true )" )
-            self.hideAllTimepoint(true)
-        })
-        $("#graph_listElem_hideAll").dblclick(function () {
-            console.log( "self.hideAllTimepoint( false )" )
-            self.hideAllTimepoint(false)
+            self.hideAllTimepoint()
         })
 
         $(".graph_listElem").click(function () {
@@ -399,8 +395,8 @@ Graph.prototype = {
             // Add new timepoint
             this.m.samples.order.push( time )
             this.m.changeTime(time)
-        } else {
-            // Remove timepoint
+        } else if (this.m.samples.order.length != 1) {
+            // Remove timepoint; Don't if there is only one sample
             this.m.samples.order.splice(pos_timepoint_in_order, 1)
             this.m.changeTime(this.m.samples.order[0])
         }
@@ -427,12 +423,10 @@ Graph.prototype = {
     },
 
     /**
-     * Remove all sample of the graph except one.
-     * keep_one Only one stay, the current timepoint
+     * Remove all sample of the graph except one
      */
-    hideAllTimepoint: function(keep_one){
-        var orderSamples = (keep_one == true) ? [this.m.t] : []
-        this.m.samples.order = orderSamples
+    hideAllTimepoint: function(){
+        this.m.samples.order = [this.m.t]
         this.updateList()
         this.m.update()
         return
@@ -1374,7 +1368,7 @@ Graph.prototype = {
             })
             .on("dblclick", function (d) {
                 var pos = self.m.samples.order.indexOf(d.time)
-                if (pos != -1) {
+                if (self.m.samples.order.length != 1 && pos != -1) {
                     self.m.samples.order.splice(pos, 1)
                 }
                 self.m.update()
