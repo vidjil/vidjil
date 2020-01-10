@@ -413,10 +413,13 @@ Graph.prototype = {
      * Each sample added will be put at the end of the list.
      */
     showAllTimepoint: function(){
+        // keep current timepoint active if exist, else, give active to first timepoint
+        var keeptime = this.m.t
         for (var time = 0; time < this.m.samples.number; time++) {
             if (this.m.samples.order.indexOf(time) == -1) this.m.addTimeOrder(time)
         }
-        this.updateList() 
+        this.updateList()
+        this.m.changeTime(keeptime)
         this.m.update()
         return
     },
