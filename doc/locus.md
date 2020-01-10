@@ -40,6 +40,8 @@ but may also be used in other studies on the immune repertoire.
 Such primer sets or DNA-Seq (or even on RNA-Seq) are very specific,
 leading to usually datasets with more than 90% or 99% of reads with V(D)J recombinations.
 
+One-step approaches may be used even with the 2-steps primers,
+see [(Brüggemann, 2019)](https://doi.org/10.1038/s41375-019-0496-7) for discussion.
 Some labs do sequence independently the tubes with barcoding,
 but for many applications the contents of the tubes can be pooled and sequenced at once.
 Using the full depth of a recent sequencer with spike-in control sequences,
