@@ -291,9 +291,9 @@ ScatterPlot.prototype = {
             this.nodes[i].r1 = 0; // longueur du rayon1
             this.nodes[i].r2 = 0; // longueur du rayon2
             this.nodes[i].x = Math.random() * 500;
-            this.nodes[i].old_x = Array.from(Array(10), function(){return 0})
+            this.nodes[i].old_x = [0,0,0,0,0,0,0,0,0,0]
             this.nodes[i].y = Math.random() * 250;
-            this.nodes[i].old_y = Array.from(Array(10), function(){return 0})
+            this.nodes[i].old_y = [0,0,0,0,0,0,0,0,0,0]
         }
         this.active_nodes = [];
 
