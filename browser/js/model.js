@@ -836,7 +836,8 @@ changeAlleleNotation: function(alleleNotation) {
                     biggestClone = j;
                 }
             }
-            if (this.clone(biggestClone).getSize(t) > this.max_size) this.max_size = this.clone(biggestClone).getSize(t)
+            if (this.clone(biggestClone) && this.clone(biggestClone).getSize(t) > this.max_size) 
+                this.max_size = this.clone(biggestClone).getSize(t)
         }
         
         //*2 pour avoir une marge minimum d'un demi-log
