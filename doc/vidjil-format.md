@@ -144,6 +144,14 @@ do a correct gathering.
                 "5": {"start": 1, "stop": 100},
                 "3": {"start": 101, "stop": 200}
             }
+        },
+        {
+            "id": "clone5",
+            "name": "clone_showOnlyOneSample",
+            "sequence": "GATACAaaaaaccccc",
+            "reads": [ 1021, 0 ],
+            "germline": "TRG",
+            "top": 5
         }
     ]
 }
