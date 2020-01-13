@@ -346,8 +346,8 @@ List.prototype = {
         var lock_div = document.createElement("icon")
         lock_div.id = "div_sortLock"
         lock_div.className = "icon-lock-1"
-        lock_div.title = "Lock positions of clones in the list. \
-        At unlock, selected sort method will be automaticly apply."
+        lock_div.title  = "Lock positions of clones in the list."
+        lock_div.title += "At unlock, selected sort method will be automaticly apply."
         lock_div.onclick = function(){
             var div = document.getElementById("div_sortLock")
             if (self.sort_lock == true){
