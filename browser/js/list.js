@@ -87,6 +87,7 @@ function List(id_list, id_data, model, database) {
     this.id_data = id_data;
     this.index = []
     this.index_data = {};
+    this.sort_lock = true; // By default, lock the list in the current state
 
     this.build();
     
@@ -97,6 +98,7 @@ function List(id_list, id_data, model, database) {
         "J/3'" : function(){self.sortListByJ()}
     }
 
+    this.sort_option_selected = "size"; // Store the selected sort method
     this.selectedAxis = {};
 }
 
@@ -325,6 +327,11 @@ List.prototype = {
         sort.className = "list_sort_select"
         sort.onchange = function() {
             self.sort_option[this.value]()
+            self.sort_option_selected = this.value
+            // Open the lock
+            self.sort_lock = false
+            var div = document.getElementById("div_sortLock")
+            div.className  = "icon-lock-open"
         }
         
         for (var key in this.sort_option) {
@@ -336,6 +343,25 @@ List.prototype = {
         
         sort_span.appendChild(document.createTextNode("sort by "));
         sort_span.appendChild(sort);
+        var lock_div = document.createElement("icon")
+        lock_div.id = "div_sortLock"
+        lock_div.className = "icon-lock-1"
+        lock_div.title = "Lock positions of clones in the list. \
+        At unlock, selected sort method will be automaticly apply."
+        lock_div.onclick = function(){
+            var div = document.getElementById("div_sortLock")
+            if (self.sort_lock == true){
+                self.sort_lock = false
+                div.className  = "icon-lock-open"
+                // Apply sort method at unlock
+                self.sort_option[self.sort_option_selected]()
+            } else {
+                self.sort_lock = true
+                div.className  = "icon-lock-1"
+            }
+        }
+
+        sort_span.appendChild( lock_div )
 
         var axis_span = document.createElement('span');
         axis_span.className = "list_axis devel-mode";
@@ -388,8 +414,10 @@ List.prototype = {
         this.updateElem(list);
         this.update_data_list()
         
-        //TODO check order 
-        document.getElementById("list_sort_select").selectedIndex = 0;
+        // Apply selected sort function if no sort lock
+        if (this.sort_lock == false){
+            this.sort_option[this.sort_option_selected]()
+        }
     },
 
     /**
