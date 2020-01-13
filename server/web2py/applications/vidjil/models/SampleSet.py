@@ -35,7 +35,8 @@ class SampleSet(object):
         return self.tag_decorator.sanitize(text)
 
     def get_configs(self, data):
-        return data['conf_list']
+        conf_list = get_conf_list_select()
+        return data._extra[conf_list]
 
     def get_list_path(self):
         return '/sample_set/all'
@@ -48,28 +49,36 @@ class SampleSet(object):
         http_origin = ""
         if request.env['HTTP_ORIGIN'] is not None:
             http_origin = request.env['HTTP_ORIGIN'] + "/"
-        for conf in data['conf_list']:
-            filename =  "(%s %s)" % (self.get_name(data), conf['name'])
-            if conf['fused_file'] is not None :
+        key = get_conf_list_select()
+        conf_list = [] if data._extra[key] is None else data._extra[key].split(';')
+        for conf in conf_list:
+            c = conf.split(',')
+            filename =  "(%s %s)" % (self.get_name(data), c[1])
+            if c[2] is not None :
                 configs.append(
-                    str(A(conf['name'],
-                        _href=http_origin + "?sample_set_id=%d&config=%d" % (data['sample_set_id'], conf['id']), _type="text/html",
-                        _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %d }, '%s' ); }" % (data['sample_set_id'], conf['id'], filename))))
+                    str(A(c[1],
+                        _href="index.html?sample_set_id=%d&config=%s" % (data['sample_set_id'], c[0]), _type="text/html",
+                        _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %s }, '%s' ); }" % (data['sample_set_id'], c[0], filename))))
             else:
-                configs.append(conf['name'])
+                configs.append(c[1])
         return XML(", ".join(configs))
 
     def get_groups(self, data):
-        return data['group_list']
+        key = get_group_names_select()
+        return data._extra[key]
 
     def get_groups_string(self, data):
-        return ', '.join([group for group in data['group_list'] if group != 'admin'])
+        key = get_group_names_select()
+        group_list = [] if data._extra[key] is None else data._extra[key].split()
+        return ', '.join([group for group in group_list if group != 'admin'])
 
     def get_creator(self, data):
         return data['creator']
 
     def get_files(self, data):
-        return '%d (%s)' % (data['file_count'], vidjil_utils.format_size(data['size']))
+        size = 0 if data['size'] is None else data['size']
+        file_count = 0 if data['file_count'] is None else data['file_count']
+        return '%d (%s)' % (file_count, vidjil_utils.format_size(size))
 
     def get_fields(self):
         fields = []
