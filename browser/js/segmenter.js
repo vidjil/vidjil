@@ -876,7 +876,7 @@ Segment.prototype = {
      * TODO: move the horizontal slider to focus the most interesting parts of the sequences
      * */
     show: function () {
-        if (object.keys(sequence).length > 0) {
+        if (Object.keys(this.sequence).length > 0) {
             var mid = 999999
             $(this.div_segmenter)
                 .animate({
