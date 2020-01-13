@@ -189,3 +189,14 @@ def get_sample_set_id_from_results_file(results_file_id):
                 ).select(db.sample_set_membership.sample_set_id).first().sample_set_id
     return sample_set_id
 
+def get_conf_list_select():
+    return "GROUP_CONCAT(DISTINCT CONCAT(config.id, ',', config.name, ',', fused_file.fused_file) SEPARATOR ';')"
+
+def get_config_ids_select():
+    return "GROUP_CONCAT(DISTINCT config.id)"
+
+def get_config_names_select():
+    return "GROUP_CONCAT(DISTINCT config.name)"
+
+def get_group_names_select():
+    return "GROUP_CONCAT(DISTINCT auth_group.role)"
