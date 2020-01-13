@@ -284,6 +284,10 @@ function prepend_path_if_not_web(file, path) {
  * Return a hash whose keys are URLs to sample sets and configs.
  * An additional key (termed 'original') corresponds to the original
  * results as returned by CloneDB.
+ * An additional key (termed 'clones_names') stores sample set names
+ * (keys) and a list of two elements (as values) containing the number
+ * of clones matching the requested clone and the corresponding percentage
+ * of those matching clones in the sample set.
  */
 function processCloneDBContents(results,model) {
     var existing_urls = {};
@@ -308,6 +312,10 @@ function processCloneDBContents(results,model) {
                         config_name = 'unknown';
 		    var url = '?sample_set_id='+results[clone].tags.sample_set[i]+'&config='+results[clone].tags.config_id[0];
 		    var msg = '<a href="'+url+'">'+name+'</a> ('+config_name+')';
+                    if (typeof results[clone].tags.sample_tags !== 'undefined' &&
+                       results[clone].tags.sample_tags[i].length > 0) {
+                        msg += '<br/><span class="sample-tag">'+results[clone].tags.sample_tags[i].join('</span> <span class="sample-tag">')+'</span>';
+                    }
 		    if (! (url in existing_urls)) {
                        clones_results[name] = [results[clone].occ,parseFloat(results[clone].tags.percentage[0])];
 			existing_urls[url] = true;
@@ -712,4 +720,72 @@ function openAndFillNewTab (content){
         html: content
     }).appendTo(w.document.body);
     return
+}
+
+/**
+ * Function that allow to make comparison between two arrays.
+ */
+if(Array.prototype.equals)
+    console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
+// attach the .equals method to Array's prototype to call it on any array
+Array.prototype.equals = function (array) {
+    // if the other array is a falsy value, return
+    if (!array)
+        return false;
+
+    // compare lengths - can save a lot of time 
+    if (this.length != array.length)
+        return false;
+
+    for (var i = 0, l=this.length; i < l; i++) {
+        // Check if we have nested arrays
+        if (this[i] instanceof Array && array[i] instanceof Array) {
+            // recurse into the nested arrays
+            if (!this[i].equals(array[i]))
+                return false;       
+        }           
+        else if (this[i] != array[i]) { 
+            // Warning - two different object instances will never be equal: {x:20} != {x:20}
+            return false;   
+        }           
+    }       
+    return true;
+}
+// Hide method from for-in loops
+Object.defineProperty(Array.prototype, "equals", {enumerable: false});
+
+
+/**
+ * @param {data} a string containing a multi-FASTA
+ * @param {n} the number of sequences to keep
+ * @return return a string containing at most {n} FASTA sequences.
+ *         if {n} is negative or null return {data} itself
+ */
+function getNFirstSequences(data, n) {
+    var pos = nth_ocurrence(data, '>', n+1);
+    if (pos) {
+        return data.substr(0, pos);
+    } else {
+        return data;
+    }    
+}
+
+/**
+ * @return a proxy URL if one can be obtained in the config (ending with /) or
+ * throws an exception and logs the error.
+ */
+function getProxy() {
+    if (typeof config != 'undefined') {
+        if (typeof config.proxy != 'undefined') {
+            return config.proxy+"/";
+        } else if (typeof config.db_address != 'undefined') {
+            return config.db_address+"/proxy/";
+        }
+    }
+    console.log({
+        "type": "flash",
+        "msg": "Your installation doesn't seem to have an associated proxy.",
+        "priority": 2
+    });
+    throw "No proxy";
 }

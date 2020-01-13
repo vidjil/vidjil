@@ -108,6 +108,15 @@ QUnit.test("time control", function(assert) {
 });
 
 QUnit.test("top clones", function(assert) {
+    
+    function count_active() {
+        var nb_active = 0
+        for (i = 0; i < m.clones.length; i++)
+            if (m.clones[i].isActive())
+                nb_active += 1
+        return nb_active
+    }
+    
     var m = new Model();
     m.parseJsonData(json_data,100)
     m.initClones()
@@ -120,16 +129,13 @@ QUnit.test("top clones", function(assert) {
     assert.equal(m.top, m.countRealClones() * 2 + 10, "Model top can be greater than the number of real clones")
     assert.equal(m.current_top, m.countRealClones(), "Current Top cannot be greater than the number of real clones")
 
+    c = m
+    assert.equal(m.clones.length, 7, "m.clones.length")
+    assert.equal(count_active(), 5, "Without top modification, there should be one active clone")
+
+    // 0-4; clone reel; 5-6, clone virtuel    
     m.displayTop(1)
 
-    function count_active() {
-        var nb_active = 0
-        for (i = 0; i < m.clones.length; i++)
-            if (m.clones[i].isActive())
-                nb_active += 1
-        return nb_active
-    }
-    
     assert.equal(count_active(), 1, "With top 1, there should be one active clone")
     m.changeTime(2)
     assert.equal(count_active(), 1, "With top 1, there should be one active clone")
@@ -362,12 +368,12 @@ QUnit.test("model: primer detection", function(assert) {
 QUnit.test("normalization", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data, 100)
-    var c1 = new Clone(json_clone1, m, 0)
-    var c2 = new Clone(json_clone2, m, 1)
-    var c3 = new Clone(json_clone3, m, 2)
-    var c4 = new Clone(json_clone4, m, 3)
-    var c5 = new Clone(json_clone5, m, 4)
-    var c6 = new Clone(json_clone6, m, 4)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c3 = new Clone(json_clone3, m, 2, c_attributes)
+    var c4 = new Clone(json_clone4, m, 3, c_attributes)
+    var c5 = new Clone(json_clone5, m, 5, c_attributes)
+    var c6 = new Clone(json_clone6, m, 6, c_attributes)
     m.initClones()
     m.set_normalization(m.NORM_FALSE)
     assert.equal(c2.getSize(),0.05,"clone3 size")
@@ -406,23 +412,29 @@ QUnit.test("normalization", function(assert) {
     // Test detection of external normalization inside clones
     var m = new Model();
     m.parseJsonData(json_data, 100)
-    var c1 = new Clone(json_clone1, m, 0)
-    var c2 = new Clone(json_clone2, m, 1)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
     m.initClones()
     assert.equal(m.have_external_normalization, false, "Model don't show clone with normalized_reads")
     
-    var c1 = new Clone(json_clone1, m, 0)
-    var c2 = new Clone(json_clone2, m, 1)
-    var c6 = new Clone(json_clone6, m, 4)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c6 = new Clone(json_clone6, m, 4, c_attributes)
     m.initClones()
     assert.equal(m.have_external_normalization, true, "model have detected normalized_reads of clones")
 
     m.parseJsonData(json_data, 100)
-    var c1 = new Clone(json_clone1, m, 0)
-    var c2 = new Clone(json_clone2, m, 1)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
     m.initClones()
     assert.equal(m.have_external_normalization, false, "Model have_external_normalization is correctly resetted")
 
+
+    m.set_normalization(m.NORM_EXTERNAL)
+    assert.equal(m.normalize_reads(c6, 0, undefined), 20, "normalize_reads; get normalized value if present")
+    assert.equal(m.normalize_reads(c6, 0, false),     10, "normalize_reads; get raw value if specified" )
+    assert.equal(m.normalize_reads(c6, 2, undefined),  0, "normalize_reads; get value at 0 as computed by external normalization" )
+    assert.equal(m.normalize_reads(c6, 3, undefined), 30, "normalize_reads; get raw value if normalization equal null")
 })
 
 QUnit.test("findGermlineFromGene", function(assert) {
@@ -452,12 +464,12 @@ QUnit.test("findGermlineFromGene", function(assert) {
 QUnit.test("getFasta", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data, 100)
-    var c1 = new Clone(json_clone1, m, 0)
-    var c2 = new Clone(json_clone2, m, 1)
-    var c3 = new Clone(json_clone3, m, 2)
-    var c4 = new Clone(json_clone4, m, 3)
-    var c5 = new Clone(json_clone5, m, 4)
-    var c6 = new Clone(json_clone6, m, 4)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c3 = new Clone(json_clone3, m, 2, c_attributes)
+    var c4 = new Clone(json_clone4, m, 3, c_attributes)
+    var c5 = new Clone(json_clone5, m, 4, c_attributes)
+    var c6 = new Clone(json_clone6, m, 4, c_attributes)
     m.initClones()
 
 
@@ -478,12 +490,12 @@ QUnit.test("tag / color", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
-    var c1 = new Clone(json_clone1, m, 0)
-    var c2 = new Clone(json_clone2, m, 1)
-    var c3 = new Clone(json_clone3, m, 2)
-    var c4 = new Clone(json_clone4, m, 3)
-    var c5 = new Clone(json_clone5, m, 4)
-    var c6 = new Clone(json_clone6, m, 4)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c3 = new Clone(json_clone3, m, 2, c_attributes)
+    var c4 = new Clone(json_clone4, m, 3, c_attributes)
+    var c5 = new Clone(json_clone5, m, 4, c_attributes)
+    var c6 = new Clone(json_clone6, m, 5, c_attributes)
     m.initClones()
 
     assert.equal(m.getColorSelectedClone(), false, "Color of selected clones (empty selection) is correct")
@@ -509,4 +521,31 @@ QUnit.test("tag / color", function(assert) {
     m.select(2)
     assert.equal(m.getColorSelectedClone(), "", "Color of selected clones (mix of clones) is false")
     
+});
+
+
+QUnit.test("distribution_load", function(assert) {
+
+    var m1 = new Model();
+    m1.parseJsonData(json_data, 100)
+    m1.initClones()
+
+    assert.equal(m1.clones.length, 7, 'Correct number of clones WITHOUT distributions clones')
+    assert.equal(m1.countRealClones(), 5, 'Correct number of real clones WITHOUT distributions clones')
+
+    m1.distributions = data_distributions
+    m1.loadAllDistribClones()
+    assert.equal(m1.clones.length, 12, 'Correct number of clones WITH distributions clones')
+    assert.equal(m1.countRealClones(), 5, 'Correct number of real clones WITH distributions clones')
+   
+    // Add distrib values directly into json data
+    var json_data_bis = JSON.parse(JSON.stringify(json_data)) // hard copy
+    json_data_bis.distributions = data_distributions
+    
+    var m2 = new Model();
+    m2.parseJsonData(json_data_bis, 100)
+
+    assert.equal(m2.clones.length, 12, 'Correct number of clones WITH distributions clones (directly from json_data)')
+    assert.equal(m2.countRealClones(), 5, 'Correct number of real clones WITH distributions clones (directly from json_data)')
+   
 });

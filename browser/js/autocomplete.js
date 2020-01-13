@@ -277,7 +277,7 @@ VidjilAutoComplete.prototype = {
 
         if (uncached.length > 0) {
             $.ajax({
-                type: "GET",
+                type: "POST",
                 data: {
                     keys: JSON.stringify(uncached)
                 },

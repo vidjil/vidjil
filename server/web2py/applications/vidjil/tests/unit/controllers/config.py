@@ -27,7 +27,7 @@ class ConfigController(unittest.TestCase):
         session = Session()
         request = Request({})
         auth = VidjilAuth(globals(), db)
-        auth.login_bare("test@vidjil.org", "1234")
+        auth.login_bare("test@vidjil.org", "123456")
         
         auth.add_permission(group_id, 'admin', db.patient, 0)
         auth.add_permission(group_id, 'admin', db.config, 0)

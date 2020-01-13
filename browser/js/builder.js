@@ -333,7 +333,10 @@ Builder.prototype = {
         var li = document.createElement('li');
         li.appendChild(div)
 
-        listTag.appendChild(li);
+        var listTag = document.getElementById("tagList")
+        if (listTag != null){
+            listTag.appendChild(li);
+        }
     },
 
     buildSystemSelector: function (system){
@@ -357,8 +360,9 @@ Builder.prototype = {
         // listGermline.appendChild(li);
     },
 
-    /*complete displaySelector menu with correct info about current tagname / top
-     * */
+    /**
+     * complete displaySelector menu with correct info about current tagname / top
+     **/
     build_displaySelector: function () {
         var self = this;
 
@@ -367,7 +371,9 @@ Builder.prototype = {
         // var listGermline = document.getElementById("germline_list")
         
         //reset
-        listTag.removeAllChildren();
+        if (listTag != null){
+            listTag.removeAllChildren();
+        }
         // listGermline.removeAllChildren();
 
         //init tag list
@@ -457,6 +463,7 @@ Builder.prototype = {
     build_top_container: function () {
         var self = this;
         var parent = document.getElementById("top_info");
+        if (parent == null) return;
         parent.removeAllChildren();
         parent.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
 

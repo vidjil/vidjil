@@ -3,6 +3,9 @@ This CHANGELOG concerns the Docker images of vidjil.
 We publish here notes to help to update these images.
 See <http://www.vidjil.org/doc/server>
 
+vidjil/server:2019-11-27-XXXXXXX
+   - The web2py password is now provided through an environment
+     variable in the docker-compos.yml file.
 vidjil/server:2018-10-19-3a690203
 vidjil/client:2018-10-18-f959661a
    - Tag initialization while creating the database

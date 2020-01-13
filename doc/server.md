@@ -177,7 +177,7 @@ forget to make a backup of any file you replace.)
 ## First configuration and first launch
 
   - Set the SSL certificates (see above)
-  - Change the mysql root password in `docker-compose.yml`
+  - Change the mysql root password and the web2py admin password in `docker-compose.yml`
   - Change the mysql vidjil password in `mysql/create_db.sql` and sets it also in `DB_ADDRESS` in `vidjil-server/conf/defs.py`
 
   - Comment backup/reporter services in `docker-compose.yml`
@@ -200,7 +200,7 @@ Then `docker ps` should display five running containers:
       - Copy also the generated `browser/js/germline.js` into the `docker/vidjil-client/conf/` directory.
 
 
-  - Open a web browser to <https://localhost>, or to your FQDN if you configured it (see above).
+  - Open a web browser to `https://localhost`, or to your FQDN if you configured it (see above).
 Click on `init database` and create a first account by entering an email.
 This account is the main root account of the server. Other administrators could then be created.
 It will be also the web2py admin password.
@@ -268,7 +268,7 @@ Contact us (<mailto:contact@vidjil.org>) to have more information and help.
 
 # Docker -- Troubleshooting
 
-###  Error "Can't connect to MySQL server on 'mysql'"
+##  Error "Can't connect to MySQL server on 'mysql'"
 
 The mysql container is not fully launched. This can happen especially at the first launch.
 You may relaunch the containers.
@@ -298,6 +298,30 @@ you can look into:
  ```
  If the database does not exist, mysql will display an error after logging in.
 
+## Launching manually the backup
+
+The backup should be handled by the backup container. If so, connect to this
+container and run (for a full backup, otherwise add the `-i` option when
+running `backup.sh`):
+
+```sh
+cd /usr/share/vidjil/server
+sh backup.sh vidjil /mnt/backup >> /var/log/cron.log 2>&1
+```
+
+## I can't connect to the web2py administration site
+The URL to this site is https://mywebsite/admin/default/.
+The password should be given in the `docker-compose.yml` file.
+Otherwise a random password is generated. You can still modify
+this password by connecting to the server (in the `uwsgi` container).
+Go in the the `/usr/share/vidjil/server/web2py` directory and then
+launch Python.
+```python
+from gluon.main import save_password
+save_password(PASSWORD, 443)
+```
+This password will not persist when the container will be restarted.
+For a persistent password, please use the environment variable.
 
 # Docker -- Updating a Docker installation
 
@@ -339,7 +363,7 @@ docker load -i <input_file>
 In some cases, you may need to update your `docker-compose.yml` file or some
 of the configuration files. We will describe the changes in the `CHANGELOG` file.
 The latest versions of these files are available on our
-[Gitlab](https://gitlab.vidjil.org/).
+[Gitlab](http://gitlab.vidjil.org/).
 
 Once the images are pulled, you can relaunch the containers:
 ```sh
@@ -371,6 +395,14 @@ Then launch it again
 ```
 docker-compose up -d nginx
 ```
+
+## Knowing what docker image version is running
+
+As our latest image is always tagged `latest` you may have troubles to know
+what version is currently running on your server. To determine that, you can
+use the *digest* of the image. You can view it, for example with `docker image
+--digests vidjil/server`. Then you can compare it with the digests shown [on
+the Dockerhub page](https://hub.docker.com/r/vidjil/server/tags/).
 
 # Plain server installation
 

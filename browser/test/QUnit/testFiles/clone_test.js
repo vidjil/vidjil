@@ -119,7 +119,7 @@ var json_clone6 = {
         "id" : "id6",
         "germline" : "TRG",
         "reads" : [10,10,0,30],
-        "normalized_reads" : [20,20,0,30],
+        "normalized_reads" : [20,20,0,null],
     }
 
 QUnit.test("name, informations, getHtmlInfo", function(assert) {
@@ -127,12 +127,12 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.equal(json_clone1.seg.junction.start, 10, "Start junction is 10 in JSON for clone 1");
     var m = new Model();
     m.parseJsonData(json_data)
-    var c1 = new Clone(json_clone1, m, 0)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
     assert.equal(c1.seg.junction.start, 9, "Start junction is now 9 for clone 1 as positions start at 0 in the code");
-    var c2 = new Clone(json_clone2, m, 1)
-    var c3 = new Clone(json_clone3, m, 2)
-    var c4 = new Clone(json_clone4, m, 3)
-    var c5 = new Clone(json_clone5, m, 4)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c3 = new Clone(json_clone3, m, 2, c_attributes)
+    var c4 = new Clone(json_clone4, m, 3, c_attributes)
+    var c5 = new Clone(json_clone5, m, 4, c_attributes)
     m.initClones()
     
     assert.equal(c1.getSequenceName(), "hello", "get name clone1 : hello");
@@ -255,15 +255,62 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
                  "getHtmlInfo c3: junction info for non productive clone");   
     assert.includes(html, "<tr><td>junction (AA seq)</td><td colspan='4'>WKIC</td></tr>",
                  "getHtmlInfo c3: junction (AAseq) info for non productive clone"); 
+    // test sequence if not prsent
+    html = c5.getHtmlInfo();
+    var notinclude = html.includes("<td>sequence</td>")
+    assert.notOk(notinclude, "getHtmlInfo: if no sequence, no field sequence (even if real clone)");
 
+    ////////////////////////////////////////////
+    // Test getHTMLinfo getted for distrib clone 
+    // ("axes": ["lenSeqAverage", "seg5"])
+    m.t = 0
+    var raw_data     = {
+        "id": "distrib_5", "top":0, "germline": "distrib", 
+        "seg":{}, "sequence":0, 
+        "reads": [100, 100, 100, 100], 
+        "axes": ["lenSeqAverage", "seg5"], "clone_number": [20, 20, 20, 20],
+        "distrib_content": ["162", "segV"]
+    }
+    m = new Model();
+    m.samples = {"number":0, "order":[0], "original_names": ["file"]}
+    m.reads = {
+        "segmented": [200,100,200,100],
+        "total": [200,100,200,100],
+        "germline": {
+          "TRG": [100,50,100,50],
+          "IGH": [100,50,100,50]
+        }
+      }
+    dclone = new Clone(raw_data, m, 0, C_INTERACTABLE | C_IN_SCATTERPLOT | C_SIZE_DISTRIB)
+    dclone.augmentedDistribCloneData(raw_data.axes, raw_data.distrib_content )
+    dclone.axes          = raw_data.axes
+    dclone.reads         = raw_data.reads
+    dclone.clone_number  = raw_data.clone_number
+    dclone.top           = 0
+    dclone.active        = true
+    dclone.current_reads = JSON.parse(JSON.stringify(raw_data.reads))
+    dclone.defineCompatibleClones()
+    dclone.updateReadsDistribClones()
+    html = m.clones[0].getHtmlInfo();
+
+    // Sequence
+    var notinclude = html.includes("<td>sequence</td>")
+    assert.notOk(notinclude, "getHtmlInfo: if no sequence, no field sequence");
+    // gene V
+    assert.includes(html, "<tr><td>V gene (or 5')</td>",
+        "getHtmlInfo: distrib clone with seg5 have field segment V");
+    // gene J
+    var notinclude = html.includes("<td>J gene (or 3')</td>")
+    assert.notOk(notinclude, "getHtmlInfo: if no seg3, no field segment J");
 });
+
 
 QUnit.test('clone: get info from seg', function(assert) {
     var m = new Model();
     m.parseJsonData(json_data)
-    var c1 = new Clone(json_clone1, m, 0)
-    var c2 = new Clone(json_clone2, m, 1)
-    var c3 = new Clone(json_clone3, m, 2)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c3 = new Clone(json_clone3, m, 2, c_attributes)
     m.initClones()
 
     assert.ok(c1.hasSeg('cdr3'), "clone1 has CDR3")
@@ -304,9 +351,9 @@ QUnit.test('clone: get info from seg', function(assert) {
 QUnit.test("clone : feature defined by a nucleotide sequence", function(assert) {
     var m = new Model()
     m.parseJsonData(json_data)
-    var c1 = new Clone(json_clone1, m, 0)
-    var c2 = new Clone(json_clone2, m, 1)
-    var c3 = new Clone(json_clone3, m, 2)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c3 = new Clone(json_clone3, m, 2, c_attributes)
     m.initClones()
 
     assert.deepEqual(c3.getSegStartStop('somefeature'), null, "start/stop positions are not present")
@@ -318,9 +365,9 @@ QUnit.test("clone : feature defined by a nucleotide sequence", function(assert) 
 QUnit.test("getSequence/RevComp", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data)
-    var c1 = new Clone(json_clone1, m, 0)
-    var c2 = new Clone(json_clone2, m, 1)
-    var c3 = new Clone(json_clone3, m, 2)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c3 = new Clone(json_clone3, m, 2, c_attributes)
     m.initClones()
 
     //fix test sequence et revcomp
@@ -335,9 +382,9 @@ QUnit.test("size", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
-    var c1 = new Clone(json_clone1, m, 0)
-    var c2 = new Clone(json_clone2, m, 1)
-    var c3 = new Clone(json_clone3, m, 2)
+    c1 = new Clone(json_clone1, m, 0, c_attributes)
+    c2 = new Clone(json_clone2, m, 1, c_attributes)
+    c3 = new Clone(json_clone3, m, 2, c_attributes)
     m.initClones()
 
     assert.equal(c1.getSystemSize(), "0.1", "clone c1 system size : 0.1");
@@ -368,7 +415,7 @@ QUnit.test("system", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
-    var c3 = new Clone(json_clone3, m, 0)
+    var c3 = new Clone(json_clone3, m, 0, c_attributes)
     m.initClones()
 
 
@@ -387,7 +434,7 @@ QUnit.test("tag / color", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
-    var c1 = new Clone(json_clone1, m, 0)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
     m.initClones()
 
     assert.equal(c1.getTag(), 8, "getTag() >> default tag : 8");
@@ -408,8 +455,8 @@ QUnit.test("tag / color", function(assert) {
 QUnit.test("color by CDR3", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data);
-    var c1 = new Clone(json_clone1, m, 0);
-    var c2 = new Clone(json_clone2, m, 0);
+    var c1 = new Clone(json_clone1, m, 0, c_attributes);
+    var c2 = new Clone(json_clone2, m, 0, c_attributes);
     m.initClones();
     var color = c1.getCDR3Color();
     c1.seg.junction.aa = "AZERTY";
@@ -426,8 +473,8 @@ QUnit.test("export", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
-    var c3 = new Clone(json_clone3, m, 0)
-    var c4 = new Clone(json_clone4, m, 1)
+    var c3 = new Clone(json_clone3, m, 0, c_attributes)
+    var c4 = new Clone(json_clone4, m, 1, c_attributes)
     m.initClones()
 
     assert.equal(c3.getPrintableSegSequence(), "aaaaaa\naaaattttt\ntttt", "c3.getPrintableSegSequence() : Ok");
@@ -478,9 +525,9 @@ QUnit.test("changeLocus/Segment", function(assert) {
     
     var m = new Model();
     m.parseJsonData(json_data)
-    var c1 = new Clone(json_clone1, m, 0)
-    var c2 = new Clone(json_clone2, m, 1)
-    var c3 = new Clone(json_clone3, m, 2)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c3 = new Clone(json_clone3, m, 2, c_attributes)
     m.initClones()
 
     // Test after germline manual changement
@@ -505,9 +552,9 @@ QUnit.test("changeLocus/Segment", function(assert) {
 QUnit.test("changeNameNotation", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data)
-    var c1 = new Clone(json_clone1, m, 0)
-    var c2 = new Clone(json_clone2, m, 1)
-    var c3 = new Clone(json_clone3, m, 2)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c3 = new Clone(json_clone3, m, 2, c_attributes)
     m.initClones()
     m.changeCloneNotation('short_sequence')
     assert.equal(c2.getShortName(), "IGHV3-23 6/ACGTG/4 D1-1 5/12/4 J5*02", "clone2, .getShortName()");
@@ -523,10 +570,10 @@ QUnit.test("getLengthDoubleFeature", function(assert) {
 
     var m = new Model();
     m.parseJsonData(json_data)
-    var c1 = new Clone(json_clone1, m, 0)
-    var c2 = new Clone(json_clone2, m, 1)
-    var c3 = new Clone(json_clone3, m, 2)
-    var c4 = new Clone(json_clone4, m, 3)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c3 = new Clone(json_clone3, m, 2, c_attributes)
+    var c4 = new Clone(json_clone4, m, 3, c_attributes)
     m.initClones()
 
     assert.equal(c2.getSegLengthDoubleFeature('primer5','primer3'), "undefined", "C2 getSegLengthDoubleFeature('primer5','primer3')");
@@ -537,9 +584,9 @@ QUnit.test("getLengthDoubleFeature", function(assert) {
 QUnit.test("changealleleNotation", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data)
-    var c1 = new Clone(json_clone1, m, 0)
-    var c2 = new Clone(json_clone2, m, 1)
-    var c3 = new Clone(json_clone3, m, 2)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c3 = new Clone(json_clone3, m, 2, c_attributes)
 
     m.initClones()
     m.changeAlleleNotation('always')
@@ -554,9 +601,9 @@ QUnit.test("changealleleNotation", function(assert) {
 QUnit.test("productivity", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data);
-    var c1 = new Clone(json_clone1, m, 0);
-    var c2 = new Clone(json_clone2, m, 1);
-    var c3 = new Clone(json_clone3, m, 2);
+    var c1 = new Clone(json_clone1, m, 0, c_attributes);
+    var c2 = new Clone(json_clone2, m, 1, c_attributes);
+    var c3 = new Clone(json_clone3, m, 2, c_attributes);
     m.initClones();
 
     assert.equal(c1.getProductivityName(), "productive", "clone 1 should be productive");
@@ -578,4 +625,42 @@ QUnit.test("productivity", function(assert) {
     assert.equal(c3.isProductive(), false, "clone 3 should not be productive");
     assert.equal(c3.getPhase(), 'undefined', "No phase for clone 3");
 
+});
+
+
+
+QUnit.test("attributes", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data);
+    var c1 = new Clone(json_clone1, m, 0, c_attributes);
+    var c2 = new Clone(json_clone2, m, 1, c_attributes);
+    var c3 = new Clone(json_clone3, m, 2, c_attributes);
+    m.initClones();
+
+
+
+    var clone;
+    clone = new Clone(json_clone1, m, 0, C_INTERACTABLE)
+    assert.equal(clone.isInteractable(),  true, "clone should be seen as isInteractable");
+    assert.equal(clone.hasSizeOther(),  false, "clone should NOT be seen as hasSizeOther");
+    
+    clone = new Clone(json_clone1, m, 0, C_SIZE_OTHER)
+    assert.equal(clone.isInteractable(), false, "clone should NOT be seen as isInteractable");
+    assert.equal(clone.hasSizeOther(),   true, "clone should be seen as hasSizeOther");
+        
+    clone = new Clone(json_clone1, m, 0, C_INTERACTABLE | C_SIZE_OTHER)
+    assert.equal(clone.isInteractable(),  true, "clone should NOT be seen as isInteractable");
+    assert.equal(clone.hasSizeOther(),   true, "clone should be seen as hasSizeOther");
+});
+
+QUnit.test("clonedb", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100);
+    m.initClones();
+
+    assert.equal(m.clones[0].numberInCloneDB(), 126, "We should have 126 clone occurrences in CloneDB");
+    assert.equal(m.clones[0].numberSampleSetInCloneDB(), 2, "We should have two matching sample sets in CloneDB");
+
+    assert.equal(m.clones[1].numberInCloneDB(), undefined, "");
+    assert.equal(m.clones[1].numberSampleSetInCloneDB(), undefined, "");
 });

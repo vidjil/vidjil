@@ -21,7 +21,7 @@ class ExternalTest < BrowserTest
     begin
       $b.clone_in_scatterplot('25').wait_until(&:present?)
       $b.clone_in_scatterplot('25').click
-      
+      $b.update_icon.wait_while(&:present?)
       $b.span(:id => "toIMGT" ).click
       
       assert ( $b.window(:title => "IMGT/V-QUEST").exists? ) , ">> fail opening IMGT "
@@ -36,6 +36,7 @@ class ExternalTest < BrowserTest
       $b.window(:title => "IMGT/V-QUEST").close
 
       $b.clone_in_scatterplot('26').click
+      $b.update_icon.wait_while(&:present?)
       $b.span(:id => "toIMGT" ).click
       assert ( $b.window(:title => "IMGT/V-QUEST").exists? ) , ">> fail opening second IMGT "
 
@@ -52,6 +53,7 @@ class ExternalTest < BrowserTest
   def test_10bis_imgt_post
     begin
       $b.clone_in_scatterplot('25').click
+      $b.update_icon.wait_while(&:present?)
       $b.span(:id => "toIMGTSeg" ).click
       $b.until { $b.segmenter_checkbox_imgt_vdj.present? }
 
@@ -80,7 +82,7 @@ class ExternalTest < BrowserTest
     begin
       $b.clone_in_scatterplot('25').wait_until(&:present?)
       $b.clone_in_scatterplot('25').click
-      
+      $b.update_icon.wait_while(&:present?)
       $b.span(:id => "toIgBlast" ).click
       
       assert ( $b.window(:title => "IgBLAST Search Results").exists? ) , ">> fail opening igblast "
@@ -95,6 +97,7 @@ class ExternalTest < BrowserTest
 
 
       $b.clone_in_scatterplot('26').click
+      $b.update_icon.wait_while(&:present?)
       $b.span(:id => 'toIgBlast').click
       assert ( $b.window(:title => "IgBLAST Search Results").exists? ) , ">> fail opening second igblast "
       $b.window(:title => "IgBLAST Search Results").use do

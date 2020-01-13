@@ -44,13 +44,15 @@ Axes.prototype = {
                 label:"V/5' gene",
                 axis: new GermlineAxis(this.m, false, true,
                                        "5", false),
-                fct: function(clone) {return clone.getGene("5", false)}
+                fct: function(clone) {return clone.getGene("5", false)},
+                set: function(clone, value) { clone.seg["5"] = {"name": value}},
             },
             "d": {
                 doc: "D gene, gathering all alleles",
                 label:"D gene",
                 axis: new GenericAxis(),
                 fct: function(clone) {return clone.getGene("4", false)},
+                set: function(clone, value) { clone.seg["4"] = {"name": value}},
                 sort: true
             },
             "j": {
@@ -58,21 +60,22 @@ Axes.prototype = {
                 label:"J/3' gene",
                 axis: new GermlineAxis(this.m, false, true,
                                        "3", false),
-                fct: function(clone) {return clone.getGene("3", false)}
+                fct: function(clone) {return clone.getGene("3", false)},
+                set: function(clone, value) { clone.seg["3"] = {"name": value}}
             },
             "allele_v": {
                 doc: "V gene (or 5' segment), with allele",
                 label:"V allele",
                 axis: new GermlineAxis(this.m, false, true,
                                        "5", true),
-                fct: function(clone) {return clone.getGene("5", true)}
+                fct: function(clone) {return clone.getGene("5", true)},
             },
             "allele_j": {
                 doc: "J gene (or 3' segment), with allele",
                 label:"J allele",
                 axis: new GermlineAxis(this.m, false, true,
                                        "3", true),
-                fct: function(clone) {return clone.getGene("3", true)}
+                fct: function(clone) {return clone.getGene("3", true)},
             },
             "consensusLength" : {
                 doc: "length of the consensus sequence",
@@ -85,14 +88,17 @@ Axes.prototype = {
                 doc: "average length of the reads belonging to each clone",
                 label: "clone average read length",
                 axis: new FloatAxis(this.m),
-                fct: function(clone) {return clone.getAverageReadLength()},
+                fct: function(clone, time) {return clone.getAverageReadLength(time)},
+                set: function(clone, value) {clone._average_read_length = value},
+                round: function(value) { return Math.round(Number(value)) },
                 pretty: function(len) { return createClassedSpan('widestBox', (len == 'undefined' ? '?' : len)) }
             },
             "GCContent" : {
                 doc: "%GC content of the consensus sequence of each clone",
                 label: "GC content",
                 axis: new PercentAxis(this.m),
-                fct: "GCContent"
+                fct: "GCContent",
+                set: function(clone, value) {this.GCContent = value}
             },
             "nLength": {
                 doc: "N length, from the end of the V/5' segment to the start of the J/3' segment (excluded)",
@@ -106,6 +112,11 @@ Axes.prototype = {
                 label: "CDR3 length (nt)",
                 axis: new NumericalAxis(this.m),
                 fct: function(clone) {return clone.getSegLength('cdr3')},
+                set: function(clone, value) { 
+                    if (clone.seg.cdr3== undefined) { clone.seg.cdr3 = {} }
+                    clone.seg.cdr3.start = 0
+                    clone.seg.cdr3.stop  = value
+                },
                 pretty: function(len) { return createClassedSpan('threeDigits', (len == 'undefined' ? '?' : len)) }
             },
             "productivity": {
@@ -164,6 +175,7 @@ Axes.prototype = {
                 label: "locus",
                 axis: new GenericAxis(),
                 fct: function(clone){return clone.germline},
+                set: function(clone, value){ clone.germline = value},
                 pretty: function(system) { return self.m.systemBox(system) },
                 sort: true
             },
@@ -284,6 +296,14 @@ Axes.prototype = {
                 axis: new NumericalAxis(this.m),
                 min: 0,
                 fct: function(clone) {return clone.numberInCloneDB()}
+            },
+            "sampleSetOccCloneDB": {
+                hide : (typeof config === 'undefined' || ! config.clonedb),
+                doc: "number of patients/runs/sets sharing clones in cloneDB",
+                label: "cloneDB patients/runs/sets occurrences",
+                axis: new NumericalAxis(this.m),
+                min: 0,
+                fct: function(clone) {return clone.numberSampleSetInCloneDB()}
             }
         };
     }

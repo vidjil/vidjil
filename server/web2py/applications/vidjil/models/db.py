@@ -79,6 +79,8 @@ auth.settings.two_factor_authentication_group = "auth2step"
 
 crud, service, plugins = Crud(db), Service(), PluginManager()
 
+auth.settings.password_min_length = 6
+
 ## create all tables needed by auth if not custom tables
 auth.define_tables(username=False, signature=False)
 
@@ -209,6 +211,7 @@ db.define_table('results_file',
                 Field('config_id', 'reference config', ondelete='SET NULL'),
                 Field('run_date','datetime'),
                 Field('scheduler_task_id', 'integer'),
+                Field('hidden', 'boolean', default = False, notnull = True),
                 Field('data_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE))

@@ -74,7 +74,8 @@
  * */
 function Graph(id, model, database) {
     //
-    View.call(this, model); 
+    View.call(this, model);
+    this.useSmartUpdateElemStyle = false;
     
     this.id = id;
     this.resizeW = 1; //coeff d'agrandissement/réduction largeur                
@@ -319,7 +320,7 @@ Graph.prototype = {
         this.text_position_x = 60;
         this.text_position_x2 = div_width - 60;
     
-        this.update(speed);
+        this.smartUpdate(speed);
     },
     
 /* ************************************************ *
@@ -331,22 +332,11 @@ Graph.prototype = {
      * */
     update : function (speed) {
         speed = typeof speed !== 'undefined' ? speed : 500;
-        var startTime = new Date()
-            .getTime();
-        var elapsedTime = 0;
-        
         this.initAxis()
             .initData()
             .updateRes()
             .updateClones()
             .draw(speed);
-        
-        elapsedTime = new Date()
-            .getTime() - startTime;
-
-        // console.log("update Graph: " + elapsedTime + "ms");
-        
-        return this
     },
     
     /* update resolution curves
@@ -381,11 +371,16 @@ Graph.prototype = {
             var stack = new Stack(this.m)
             stack.compute();
             for (var i = 0; i < this.m.clones.length; i++) {
-                this.data_clone[i].path = this.constructStack(i, stack);
+                if (this.m.clone(i).hasSizeConstant()) {
+                    this.data_clone[i].path = this.constructStack(i, stack);
+                }
             }
         }else{
             var list = []
-            for (var j = 0; j < this.m.clones.length; j++) list.push(j)
+            for (var j = 0; j < this.m.clones.length; j++) 
+                if (this.m.clone(j).hasSizeConstant()) {
+                    list.push(j)
+                }
             this.updateElem(list)
         }
         
@@ -421,12 +416,12 @@ Graph.prototype = {
      *
      * */
     updateElemStyle: function (list) {
-        if (this.m.focus != -1) {
+        if (this.m.focus != -1 && this.m.clone(this.m.focus).hasSizeConstant()) {
             var line = document.getElementById("polyline" + this.m.focus);
             document.getElementById("clones_container")
                 .appendChild(line);
         }
-        this.drawClones(0);
+        this.drawClones(0, list);
         
         return this
     },
@@ -775,11 +770,13 @@ Graph.prototype = {
         this.data_clone = [];
         
         for (var i = 0; i < this.m.clones.length; i++) {
-            this.data_clone[i] = {
-                id: i,
-                name: "line" + i,
-                path: this.constructPath(i, false)
-            };
+            if (this.m.clone(i).hasSizeConstant()) {
+                this.data_clone[i] = {
+                    id: i,
+                    name: "line" + i,
+                    path: this.constructPath(i, false)
+                };
+            }
         }
         
         this.g_clone = this.clones_container.selectAll("path")
@@ -967,8 +964,10 @@ Graph.prototype = {
         //get ready for something really dirty
         for (var i=0; i<this.m.samples.order.length; i++) {
             for (var j=0; j<this.m.clones.length; j++){
-                var size = this.m.precision*this.m.clone(j).getSize()
-                if (size>max) max=size;
+                if (this.m.clone(j).hasSizeConstant()) {
+                    var size = this.m.precision*this.m.clone(j).getSize()
+                    if (size>max) max=size;
+                }
             }
         }
         
@@ -1245,7 +1244,7 @@ Graph.prototype = {
             selected_clones = this.g_clone;
             if (typeof list != "undefined"){
                 selected_clones = this.g_clone.filter(function(d, i) {
-                    if (list.indeOf(d.id) != -1) return true;
+                    if (list.indexOf(d.id) != -1) return true;
                     return false
                 });
             }
@@ -1372,7 +1371,7 @@ Graph.prototype = {
 
     shouldRefresh: function() {
         this.init();
-        this.update();
+        this.smartUpdate();
         this.resize();
     }
 
@@ -1404,7 +1403,11 @@ Stack.prototype = {
         for (j=0; j<this.m.samples.number; j++){
             this.total_size[j]=0
             for (i=0; i<this.m.clones.length; i++){
-                if (this.m.clone(i).isActive()) this.total_size[j] += this.m.clone(i).getSize(j); //active clones
+                if (this.m.clone(i).hasSizeConstant()) {
+                    if (this.m.clone(i).isActive()) {
+                        this.total_size[j] += this.m.clone(i).getSize(j); //active clones
+                    }
+                }
             }
             
             this.total_size[j] += this.m.clone(this.m.clones.length-1).getSize(j);//other clones
@@ -1421,28 +1424,30 @@ Stack.prototype = {
         }
         
         for (i=0; i<this.m.clones.length; i++){
-            this.min[i] = []
-            this.max[i] = []
-            //active clones
-            if (this.m.clone(i).isActive()) {
-                for (j=0; j<this.m.samples.number; j++){
-                    this.min[i][j] = this.sum[j]
-                    this.sum[j] -= this.m.clone(i).getSize(j)
-                    this.max[i][j] = this.sum[j]
-                }
-            }else{
-                for (j=0; j<this.m.samples.number; j++){
-                    this.min[i][j] = this.sum[j]
-                    this.max[i][j] = this.sum[j]
+            if (this.m.clone(i).hasSizeConstant()) {
+                this.min[i] = []
+                this.max[i] = []
+                //active clones
+                if (this.m.clone(i).isActive()) {
+                    for (j=0; j<this.m.samples.number; j++){
+                        this.min[i][j] = this.sum[j]
+                        this.sum[j] -= this.m.clone(i).getSize(j)
+                        this.max[i][j] = this.sum[j]
+                    }
+                }else{
+                    for (j=0; j<this.m.samples.number; j++){
+                        this.min[i][j] = this.sum[j]
+                        this.max[i][j] = this.sum[j]
+                    }
                 }
             }
         }
 
         //other
         for (j=0; j<this.m.samples.number; j++){
-            this.min[this.m.clones.length-1][j] = this.sum[j]
-            this.sum[this.m.clones.length-1] += this.m.clone(this.m.clones.length-1).getSize(j)
-            this.max[this.m.clones.length-1][j] = this.sum[j]
+            this.min[this.m.getNumberRealClones()-1][j] = this.sum[j]
+            this.sum[this.m.getNumberRealClones()-1] += this.m.clone(this.m.clones.length-1).getSize(j)
+            this.max[this.m.getNumberRealClones()-1][j] = this.sum[j]
         }
 
     }

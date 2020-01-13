@@ -19,7 +19,7 @@ class GroupController(unittest.TestCase):
         session = Session()
         request = Request({})
         auth = VidjilAuth(globals(), db)
-        auth.login_bare("test@vidjil.org", "1234")
+        auth.login_bare("test@vidjil.org", "123456")
         
         
         auth.add_permission(group_id, 'admin', db.auth_group, 0)

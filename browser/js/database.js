@@ -1,5 +1,5 @@
 DB_ADDRESS = ""
-DB_TIMEOUT_CALL = 30000               // Regular call
+DB_TIMEOUT_CALL = 60000               // Regular call
 DB_TIMEOUT_GET_DATA = DB_TIMEOUT_CALL           // Get patient/sample .data
 DB_TIMEOUT_GET_CUSTOM_DATA = 1200000  // Launch custum fused sample .data
 
@@ -1102,18 +1102,46 @@ Database.prototype = {
         return args
     },
 
+    /**
+     * Start ajax sequence. Only the cursor changes.
+     */
     ajax_indicator_start: function() {
         if (!(this.uploader.is_uploading())) {
-            var tgt = $('#live-ajax');
-            tgt.empty();
-            $('<img/>', {src: 'images/ajax-loader.gif'}).appendTo($('<div/>', {class: 'active-container'}).appendTo(tgt));
+            $('#live-ajax-icon').empty();
+            $('#live-ajax-msg').empty();
             $('body').css('cursor', 'wait');
         }
     },
 
+    /**
+     * Show a spinner
+     */
+    ajax_indicator_long: function() {
+        if (!(this.uploader.is_uploading())) {
+            var live_icon = document.getElementById("live-ajax-icon")
+            $('<img/>', {src: 'images/ajax-loader.gif'}).appendTo(live_icon)
+        }
+    },
+
+    /**
+     * Display a message to the user to tell him to wait a little more
+     * @param  {String} message the message to said to wait to the user; optionnal
+     */
+    ajax_indicator_msg: function(message) {
+        if (!(this.uploader.is_uploading())) {
+            if (message == undefined) { message = "waiting for server reply"}
+            var div_msg  = document.getElementById("live-ajax-msg")
+            div_msg.innerHTML = message
+        }
+    },
+
+    /**
+     * End ajax sequence
+     */
+
     ajax_indicator_stop: function() {
-        var tgt = $('#live-ajax');
-        tgt.empty();
+        $('#live-ajax-icon').empty();
+        $('#live-ajax-msg').empty();
         $('body').css('cursor', 'default');
     },
 

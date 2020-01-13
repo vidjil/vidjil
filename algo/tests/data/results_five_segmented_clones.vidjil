@@ -1,0 +1,449 @@
+{
+  "categories": [{
+    "cat": "a_category",
+    "disease": "healthy"
+  }],
+  "clones": [    {
+      "_average_read_length": [
+        76.123
+      ],
+      "_coverage": [
+        0.973684191703796
+      ],
+      "_coverage_info": [
+        "74 bp (97% of 76.0 bp)"
+      ],
+      "germline": "IGK",
+      "id": "TACTGTCAACAGAGTTACAGTACCCCGTACACTTTTGGCCAGGGGACCAA",
+      "name": "IGKV1-39*01 3//1 IGKJ2*01",
+      "reads": [
+        5653
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 1,
+          "name": "IGKJ2*01",
+          "start": 37
+        },
+        "5": {
+          "delRight": 3,
+          "name": "IGKV1-39*01",
+          "stop": 36
+        },
+        "N": 0,
+        "affectSigns": {
+          "seq": "----------------------------          --------------------------",
+          "start": 1,
+          "stop": 74
+        },
+        "affectValues": {
+          "seq": "kkkkkkkkkkkkkkkkkkkkkkkkkkkk__________KKKKKKKKKKKKKKKKKKKKKKKKKK",
+          "start": 1,
+          "stop": 74
+        },
+        "cdr3": {
+          "aa": "QQSYSTPYT",
+          "start": 17,
+          "stop": 43
+        },
+        "evalue": {
+          "val": "1.180765e-43"
+        },
+        "evalue_left": {
+          "val": "1.296443e-47"
+        },
+        "evalue_right": {
+          "val": "1.180635e-43"
+        },
+        "junction": {
+          "aa": "CQQSYSTPYTF",
+          "productive": true,
+          "start": 14,
+          "stop": 46
+        },
+        "quality": {
+          "seq": "!!!!!!!!!!IGIHIIIIIIIIIIIIIIIIIIIIIIIJIIIIIIIJJJJJJJJJJJJIII!!!!!!!!!!!!!!",
+          "start": 1,
+          "stop": 74
+        }
+      },
+      "seg_stat": {
+        "3": 5653
+      },
+      "sequence": "TGCAACTTACTACTGTCAACAGAGTTACAGTACCCCGTACACTTTTGGCCAGGGGACCAAGCTGGAGATCAAAC",
+      "top": 1
+    },
+    {
+      "_average_read_length": [
+        76.956
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "76 bp (100% of 76.0 bp)"
+      ],
+      "germline": "IGK",
+      "id": "TACTGTCAGCAGTATGGTAGCTCACCGTACACTTTTGGCCAGGGGACCAA",
+      "name": "IGKV3-20*01 3//1 IGKJ2*01",
+      "reads": [
+        3898
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 1,
+          "name": "IGKJ2*01",
+          "start": 35
+        },
+        "5": {
+          "delRight": 3,
+          "name": "IGKV3-20*01",
+          "stop": 34
+        },
+        "N": 0,
+        "affectSigns": {
+          "seq": "    ----------------------------          ------------------------",
+          "start": 1,
+          "stop": 76
+        },
+        "affectValues": {
+          "seq": "____kkkkkkkkkkkkkkkkkkkkkkkkkkkk__________KKKKKKKKKKKKKKKKKKKKKKKK",
+          "start": 1,
+          "stop": 76
+        },
+        "cdr3": {
+          "aa": "QQYGSSPYT",
+          "start": 15,
+          "stop": 41
+        },
+        "evalue": {
+          "val": "1.075621e-39"
+        },
+        "evalue_left": {
+          "val": "4.476181e-43"
+        },
+        "evalue_right": {
+          "val": "1.075173e-39"
+        },
+        "junction": {
+          "aa": "CQQYGSSPYTF",
+          "productive": true,
+          "start": 12,
+          "stop": 44
+        },
+        "quality": {
+          "seq": "!!!!!!!!IGIIIHGIHHIIIIIIIIJIIIIIIJIIJIJIIIIJJJIJJIJJIJJJII!!!!!!!!!!!!!!!!!!",
+          "start": 1,
+          "stop": 76
+        }
+      },
+      "seg_stat": {
+        "3": 3898
+      },
+      "sequence": "CAGTGTATTACTGTCAGCAGTATGGTAGCTCACCGTACACTTTTGGCCAGGGGACCAAGCTGGAGATCAAACGAAC",
+      "top": 2
+    },
+    {
+      "_average_read_length": [
+        76.5
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "76 bp (100% of 76.0 bp)"
+      ],
+      "germline": "IGK",
+      "id": "TACTGTCAACAGTATGATAATCTCCCGTACACTTTTGGCCAGGGGACCAA",
+      "name": "IGKV1-33*01 3//1 IGKJ2*01",
+      "reads": [
+        2597
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 1,
+          "name": "IGKJ2*01",
+          "start": 39
+        },
+        "5": {
+          "delRight": 3,
+          "name": "IGKV1-33*01",
+          "stop": 38
+        },
+        "N": 0,
+        "affectSigns": {
+          "seq": "----------------------------          ----------------------------",
+          "start": 1,
+          "stop": 76
+        },
+        "affectValues": {
+          "seq": "kkkkkkkkkkkkkkkkkkkkkkkkkkkk__________KKKKKKKKKKKKKKKKKKKKKKKKKKKK",
+          "start": 1,
+          "stop": 76
+        },
+        "cdr3": {
+          "aa": "QQYDNLPYT",
+          "start": 19,
+          "stop": 45
+        },
+        "evalue": {
+          "val": "2.592885e-47"
+        },
+        "evalue_left": {
+          "val": "1.296443e-47"
+        },
+        "evalue_right": {
+          "val": "1.296443e-47"
+        },
+        "junction": {
+          "aa": "CQQYDNLPYTF",
+          "productive": true,
+          "start": 16,
+          "stop": 48
+        },
+        "quality": {
+          "seq": "!!!!!!!!!!!!IIIIIIHHHIHIIJIIIIIIGHHIIIJJJJIJIIJIIJIJJJJJJJIJJJ!!!!!!!!!!!!!!",
+          "start": 1,
+          "stop": 76
+        }
+      },
+      "seg_stat": {
+        "3": 2597
+      },
+      "sequence": "ATTGCAACATATTACTGTCAACAGTATGATAATCTCCCGTACACTTTTGGCCAGGGGACCAAGCTGGAGATCAAAC",
+      "top": 3
+    },
+    {
+      "_average_read_length": [
+        76.0
+      ],
+      "_coverage": [
+        0.973684191703796
+      ],
+      "_coverage_info": [
+        "74 bp (97% of 76.0 bp)"
+      ],
+      "germline": "IGK",
+      "id": "TACTGTCAGCAATATTATAGTACTCCGTACACTTTTGGCCAGGGGACCAA",
+      "name": "IGKV4-1*01 3//1 IGKJ2*01",
+      "reads": [
+        2520
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 1,
+          "name": "IGKJ2*01",
+          "start": 35
+        },
+        "5": {
+          "delRight": 3,
+          "name": "IGKV4-1*01",
+          "stop": 34
+        },
+        "N": 0,
+        "affectSigns": {
+          "seq": "  ----------------------------          ------------------------",
+          "start": 1,
+          "stop": 74
+        },
+        "affectValues": {
+          "seq": "__kkkkkkkkkkkkkkkkkkkkkkkkkkkk__________KKKKKKKKKKKKKKKKKKKKKKKK",
+          "start": 1,
+          "stop": 74
+        },
+        "cdr3": {
+          "aa": "QQYYSTPYT",
+          "start": 15,
+          "stop": 41
+        },
+        "evalue": {
+          "val": "1.075178e-39"
+        },
+        "evalue_left": {
+          "val": "5.525986e-45"
+        },
+        "evalue_right": {
+          "val": "1.075173e-39"
+        },
+        "junction": {
+          "aa": "CQQYYSTPYTF",
+          "productive": true,
+          "start": 12,
+          "stop": 44
+        },
+        "quality": {
+          "seq": "!!!!!!!!IHIIIIHIIIJIIIIIIIIIHGIGIJJJIJJJIIJJJJIIJJIJIJJJII!!!!!!!!!!!!!!!!",
+          "start": 1,
+          "stop": 74
+        }
+      },
+      "seg_stat": {
+        "3": 2520
+      },
+      "sequence": "CAGTTTATTACTGTCAGCAATATTATAGTACTCCGTACACTTTTGGCCAGGGGACCAAGCTGGAGATCAAACGA",
+      "top": 4
+    },
+    {
+      "_average_read_length": [
+        76.0
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "76 bp (100% of 76.0 bp)"
+      ],
+      "germline": "IGK",
+      "id": "TGTCAGCAGTATAATAACTGGCCTCCGCTCACTTTCGGCGGAGGGACCAA",
+      "name": "IGKV3-15*01 0//0 IGKJ4*01",
+      "reads": [
+        2502
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 0,
+          "name": "IGKJ4*01",
+          "start": 46
+        },
+        "5": {
+          "delRight": 0,
+          "name": "IGKV3-15*01",
+          "stop": 45
+        },
+        "N": 0,
+        "affectSigns": {
+          "seq": "---------------------          -----------------------------------",
+          "start": 1,
+          "stop": 76
+        },
+        "affectValues": {
+          "seq": "kkkkkkkkkkkkkkkkkkkkk__________KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK",
+          "start": 1,
+          "stop": 76
+        },
+        "cdr3": {
+          "aa": "QQYNNWPPLT",
+          "start": 23,
+          "stop": 52
+        },
+        "evalue": {
+          "val": "9.343769e-34"
+        },
+        "evalue_left": {
+          "val": "9.343769e-34"
+        },
+        "evalue_right": {
+          "val": "1.798806e-61"
+        },
+        "junction": {
+          "aa": "CQQYNNWPPLTF",
+          "productive": true,
+          "start": 20,
+          "stop": 55
+        },
+        "quality": {
+          "seq": "!!!!!!!!!!!!!!!!!!!HIHIIIIIIIJJIIHIIIIIIIIIIIJIIIIIIIIIJIIJJIIIIIIHIH!!!!!!!",
+          "start": 1,
+          "stop": 76
+        }
+      },
+      "seg_stat": {
+        "3": 2502
+      },
+      "sequence": "AGATTTTGCAGTTTATTACTGTCAGCAGTATAATAACTGGCCTCCGCTCACTTTCGGCGGAGGGACCAAGGTGGAG",
+      "top": 5
+    }
+  ],
+  "diversity": {
+    "index_Ds_diversity": 0.999757289886475,
+    "index_E_equitability": 0.710613250732422,
+    "index_H_entropy": 9.92569569544503
+  },
+  "germlines": {
+    "custom": {
+      "3": [],
+      "4": [],
+      "5": [],
+      "shortcut": "X"
+    },
+    "ref": "http://www.vidjil.org/germlines/germline-49.tar.gz",
+    "species": "Homo sapiens",
+    "species_taxon_id": 9606
+  },
+  "reads": {
+    "germline": {
+      "IGH": [
+        190947
+      ],
+      "IGH+": [
+        78925
+      ],
+      "IGK": [
+        657338
+      ],
+      "IGK+": [
+        0
+      ],
+      "IGL": [
+        235104
+      ],
+      "TRA": [
+        0
+      ],
+      "TRA+D": [
+        0
+      ],
+      "TRB": [
+        2
+      ],
+      "TRB+": [
+        0
+      ],
+      "TRD": [
+        0
+      ],
+      "TRD+": [
+        0
+      ],
+      "TRG": [
+        0
+      ],
+      "unexpected": [
+        2168
+      ]
+    },
+    "segmented": [
+      1164484
+    ],
+    "total": [
+      105515154
+    ]
+  },
+  "samples": {
+    "commandline": [
+      "vidjil-algo -o result/  -c clones -3 -z 100 -r 1 -ggermline/homo-sapiens.g -e 1 -2 -d -w 50 /mnt/data/sequence_file.fastq.gz "
+    ],
+    "log": [
+      "  ==> junction detected in 1164484 reads (1.1%)\n  ==> found 94208 windows in 1164484 reads (1.1% of 105515154 reads)\n  ! There are not so many CDR3 windows found in this set of reads.\n  ! Please check the unsegmentation causes below and refer to the documentation.\n                          reads av. len     clones clo/rds\n  IGH               ->   190947    76.0      20065   0.105\n  IGH+              ->    78925    76.0      10363   0.131\n  IGK               ->   657338    76.0      43921   0.067\n  IGK+              ->        0       -          0       -\n  IGL               ->   235104    76.0      19478   0.083\n  TRA               ->        0       -          0       -\n  TRA+D             ->        0       -          0       -\n  TRB               ->        2    76.0          1   0.500\n  TRB+              ->        0       -          0       -\n  TRD               ->        0       -          0       -\n  TRD+              ->        0       -          0       -\n  TRG               ->        0       -          0       -\n  unexpected        ->     2168    76.0        380   0.175\n\n  SEG               ->  1164484    76.0\n  SEG_+             ->     2858    76.0\n  SEG_-             ->  1161626    76.0\n  SEG changed w     ->   412847    76.0\n\n  UNSEG too short   ->        0       -\n  UNSEG strand      ->   395256    76.0\n  UNSEG too few V/J -> 91046588    76.0\n  UNSEG only V/5'   -> 11147607    76.0\n  UNSEG only J/3'   ->  1760542    76.0\n  UNSEG < delta_min ->        0       -\n  UNSEG ambiguous   ->      677    76.0\n  UNSEG too short w ->        0       -\n"
+    ],
+    "number": 1,
+    "original_names": [
+      "sequence_file"
+    ],
+    "producer": [
+      "vidjil-algo 2018.02"
+    ],
+    "run_timestamp": [
+      "2019-01-01 01:01:01"
+    ]
+  },
+  "similarity": [
+  ],
+  "vidjil_json_version": "2016b",
+  "warn": [
+    {
+      "code": "W20",
+      "msg": "Very few V(D)J recombinations found: 1.10%"
+    }
+  ]
+}

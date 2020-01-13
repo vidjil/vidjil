@@ -114,11 +114,28 @@ Model_loader.prototype = {
                 .update_selected_system()
             self.dataFileName = document.getElementById(id)
                 .files[0].name;
+            self.check_export_monitor()
+
         }
 
     }, 
+
     
-    
+    /**
+     * disable export monitor button if only one sample is present (add disable class)
+     */
+    check_export_monitor: function(){
+        var div = document.getElementById("export_monitor_report")
+        if (div) {
+            if (this.samples.names.length >1){
+                div.classList.remove( "disabledClass" )
+            } else {
+                div.classList.add( "disabledClass" )
+            }
+        }
+    },
+
+
     /** 
      * load the selected analysis file in the model
      * @param {string} analysis - id of the form (html element) linking to the analysis file
@@ -181,6 +198,8 @@ Model_loader.prototype = {
                     .initClones()
                 self.update_selected_system()
                 self.dataFileName = url_split[url_split.length-1]
+                self.check_export_monitor()
+
                 // self.applyUrlParams(paramsDict);
                 callback()
             },                
@@ -212,6 +231,7 @@ Model_loader.prototype = {
                 self.parseJsonAnalysis(result)
                 self.initClones()
                 self.analysisFileName = url_split[url_split.length-1]
+                self.check_export_monitor()
             },
             error: function () {
                 self.update()
@@ -250,17 +270,24 @@ Model_loader.prototype = {
         self.reset();
         
         //copy .vidjil file in model
+        var store_config = this.config;
         for (var key in data){
             if (key != "clusters") self[key] = jQuery.parseJSON(JSON.stringify(data[key]))
         }
         this.data_clusters = data.clusters;
+        this.config = store_config;
         
         //filter clones (remove clone beyond the limit)
         self.clones = [];
         var index = 0
         for (var i = 0; i < data.clones.length; i++) {
             if (data.clones[i].top <= limit) {
-                var clone = new Clone(data.clones[i], self, index)
+                // real
+                var c_attributes = C_CLUSTERIZABLE
+                       | C_INTERACTABLE
+                       | C_IN_SCATTERPLOT
+                       | C_SIZE_CONSTANT
+                var clone = new Clone(data.clones[i], self, index, c_attributes)
                 self.mapID[data.clones[i].id] = index;
                 index++
             }
@@ -348,13 +375,18 @@ Model_loader.prototype = {
                 "reads": [],
                 "germline" : this.system_available[q],
             };
-            new Clone(other, self, index, true);
+            new Clone(other, self, index, C_SIZE_OTHER);
             index++ ;
         }
         
         //remove incomplete similarity matrix (TODO: fix fuse.py)
         this.similarity = undefined;
+        this.check_export_monitor()
 
+        if (data.distributions != undefined){
+            this.distributions = data.distributions
+            this.loadAllDistribClones()
+        }
         return this
 
     }

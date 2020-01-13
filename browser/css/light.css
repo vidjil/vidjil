@@ -83,6 +83,10 @@ ul {
   right: 0px;
   top: 32px;
 }
+#live-ajax-msg {
+  font-style: italic;
+  margin-right: 1em;
+}
 #upload_summary {
   display: none;
   z-index: 10;
@@ -856,6 +860,7 @@ a {
 a:hover {
   color: #002b36;
 }
+span.sample-tag,
 a.tag-link {
   color: black;
   background-color: #eee;

@@ -21,6 +21,7 @@ stages:
   - valgrind_unit
   - valgrind_functional
   - multiple_tests
+  - benchmark
   - publish_release
   - deploy_prod
 
@@ -50,6 +51,10 @@ test_germlines:
     - /^feature-.*g.*\/.*$/
     - schedules
 
+# Doc
+
+include:
+  - local: '/doc/.gitlab-ci.yml'
 
 # Algorithm
 
@@ -216,17 +221,19 @@ test_browser_unit:
   tags:
     - web
 
-test_browser-functional:
+.browser-functional:
   stage: test_functional
   retry: 2
   script:
     - make -C browser
     - source /etc/profile.d/rvm.sh
     - rvm use 2.6.1
-    - HEADLESS=1 make -C browser/test functional BROWSERS=--browsers-from-file
+    - HEADLESS=1 make -C browser/test functional
   artifacts:
     paths:
     - browser/
+    reports:
+      junit: browser/test/test/TEST-*.xml
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
@@ -235,7 +242,12 @@ test_browser-functional:
   tags:
     - web
 
-test_browser-functional-external:
+.browser-functional-chrome:
+  extends: .browser-functional
+  variables:
+    WATIR_CHROME: "1"
+
+.browser-functional-external:
   stage: test_functional_external
   retry: 2
   script:
@@ -246,6 +258,8 @@ test_browser-functional-external:
   artifacts:
     paths:
     - browser/
+    reports:
+      junit: browser/test/test/TEST-*.xml
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
@@ -253,6 +267,47 @@ test_browser-functional-external:
     - schedules
   tags:
     - web
+
+.browser-functional-external-chrome:
+  extends: .browser-functional-external
+  variables:
+    WATIR_CHROME: "1"
+    
+ff32-browser-functional:
+  extends: .browser-functional
+  variables:
+    FIREFOX_VERSION: 32
+
+ff45-browser-functional:
+  extends: .browser-functional
+  variables:
+    FIREFOX_VERSION: 45
+
+chrome-browser-functional:
+  extends: .browser-functional-chrome
+        
+old-chrome-browser-functional:
+  extends: .browser-functional-chrome
+  tags:
+    - legacy
+
+ff32-browser-functional-external:
+  extends: .browser-functional-external
+  variables:
+    FIREFOX_VERSION: 32
+
+ff45-browser-functional-external:
+  extends: .browser-functional-external
+  variables:
+    FIREFOX_VERSION: 45
+
+chrome-browser-functional-external:
+  extends: .browser-functional-external-chrome
+    
+old-chrome-browser-functional-external-chrome:
+  extends: .browser-functional-external-chrome
+  tags:
+    - legacy
 
 code_quality:
   stage: test_quality
@@ -291,7 +346,7 @@ test_server_unit:
     tags:
       - web
 
-test_server_functional:
+.test_server_functional:
   stage: test_functional
   script:
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/server:test" docker/vidjil-server
@@ -299,10 +354,9 @@ test_server_functional:
     - sed -i '/\/etc\/nginx\/ssl\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
     - sed -i 's/\:latest/\:test/g' ./docker/docker-compose.yml
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
-    - cd docker/vidjil-client/conf/ && mv conf.js conf_https.js && mv conf_http.js conf.js && cd ../../..
     - make germline && cp browser/js/germline.js docker/vidjil-client/conf
     - cd docker && docker-compose up -d && cd ..
-    - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/web2py/" server/web2py/applications/vidjil/tests/init_func_test_db.sh
+    - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/web2py/" server/web2py/applications/vidjil/tests/init_tests.sh
     - docker exec docker_uwsgi_1 sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
     - docker exec docker_nginx_1 make -C /usr/share/vidjil browser
     - source /etc/profile.d/rvm.sh
@@ -312,6 +366,9 @@ test_server_functional:
     - docker stop $(docker ps -aq)
     - docker rm $(docker ps -aq)
     - docker rmi "vidjil/server:test" "vidjil/client:test" reporter:test
+  artifacts:
+    reports:
+      junit: server/web2py/applications/vidjil/tests/test/TEST-*.xml
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
@@ -321,6 +378,31 @@ test_server_functional:
   tags:
     - x86_64
     - docker
+
+ff32-server-functional:
+  extends: .test_server_functional
+  variables:
+    FIREFOX_VERSION: 32
+
+ff45-server-functional:
+  extends: .test_server_functional
+  variables:
+    FIREFOX_VERSION: 45
+
+
+
+# Benchmark
+
+benchmark_algo:
+  stage: benchmark
+  script:
+    - cd algo/tests ; python3 benchmark-releases.py -bi
+  when: manual
+  only:
+    - /^feature-.*a.*\/.*$/
+  tags:
+    - several-compilers
+
 
 # Deployment
 

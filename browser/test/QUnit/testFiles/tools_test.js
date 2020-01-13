@@ -416,3 +416,11 @@ QUnit.test("Sort list locus", function(assert) {
     assert.deepEqual(list_test_2, wait_test_2, "list2 is correctly sorted")
     }
 );
+
+QUnit.test("Get n first sequences", function(assert) {
+    seqs=">seq1\nAT\n>seq2\nTC\n>seq3\nCC\n";
+    assert.equal(getNFirstSequences(seqs, 1), ">seq1\nAT\n");
+    assert.equal(getNFirstSequences(seqs, 0), seqs);
+    assert.equal(getNFirstSequences(seqs, -1), seqs);
+    assert.equal(getNFirstSequences(seqs, 2), ">seq1\nAT\n>seq2\nTC\n");
+});

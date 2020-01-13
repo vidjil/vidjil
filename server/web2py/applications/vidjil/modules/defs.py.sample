@@ -9,6 +9,9 @@ SMTP_SERVER = 'localhost'
 FROM_EMAIL = 'root@vidjil.org'
 ADMIN_EMAILS = ['notifications@vidjil.org']
 
+### Specific accounts
+LIMITED_ACCOUNTS = [ ]
+
 ### address for the sql database
 ###
 DB_ADDRESS = 'sqlite://storage.sqlite'
@@ -44,6 +47,7 @@ DIR_FUSE = '../../tools'
 DIR_MIXCR = '../../'
 DIR_IGREC = '../../'
 DIR_PEAR = '../../'
+DIR_FLASH2 = '../../'
 DIR_CLONEDB = '../../../clonedb'
 
 ### Directory that store the germlines used by Vidjil

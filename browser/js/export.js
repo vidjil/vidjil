@@ -160,6 +160,7 @@ Report.prototype = {
             
             self.info()
                 .contamination()
+                .comments()
                 
             self.m.resize()
             self.m.resume()
@@ -200,6 +201,7 @@ Report.prototype = {
                 .cloneList()
                 .contamination()
                 .sampleLog()
+                .comments()
                 .restorestate()
                 
             self.m.resize()
@@ -244,6 +246,7 @@ Report.prototype = {
 
             self.sampleLog()
                 .softwareInfo(self.m.t)
+                .comments()
                 .restorestate()
 
             self.m.changeGermline(current_system)
@@ -330,13 +333,20 @@ Report.prototype = {
         
         return this
     },
+
+    comments: function() {
+        var comments = this.container("Comments")
+        $('<textarea/>', {'title': "These comments won't be saved.", 'rows': 5, 'style': "width: 100%; display: block; overflow: hidden; resize: vertical;"}).appendTo(comments)
+    
+        return this
+    },
     
     info : function() {
         var info = this.container("Report information")
         var left = $('<div/>', {'class': 'flex'}).appendTo(info);
         
         var date = new Date();
-        var report_timestamp = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() 
+        var report_timestamp = date.toISOString().split('T')[0]
         
         var analysis_timestamp = "–"
         if (typeof this.m.analysis.timestamp != "undefined")
@@ -345,8 +355,8 @@ Report.prototype = {
             analysis_timestamp = report_timestamp + " (not saved)"
         
         var content = [
-            {'label': "Filename:" , 'value' : this.m.dataFileName },
             {'label': "Report date:"  , 'value' : report_timestamp},
+            {'label': "Filename:" , 'value' : this.m.dataFileName },
             {'label': "Updated on:" , 'value' : analysis_timestamp},
             {'label': "Software used:" , 'value' : this.m.getSoftVersion()},
             {'label': "Analysis date:" , 'value' : "" }
@@ -424,6 +434,9 @@ Report.prototype = {
             var polyline = svg_graph.querySelectorAll('[id="polyline'+i+'"]')[0]
             var tag = this.m.clone(i).getTag()
             var color = this.m.tag[tag].color
+
+            if (typeof polyline == 'undefined')
+                continue;
             
             if (i == norm) {
                 polyline.setAttribute("style", "stroke-width:12px; stroke:"+color);
@@ -436,7 +449,7 @@ Report.prototype = {
             }
             
             //remove virtual and disabled clones
-            if (i != norm && (this.m.clone(i).isVirtual() || !this.m.clone(i).isActive())) {
+            if (i != norm && (!this.m.clone(i).isInScatterplot() || !this.m.clone(i).isActive())) {
                 polyline.parentNode.removeChild(polyline);
             }
         }
@@ -514,7 +527,7 @@ Report.prototype = {
             circle.setAttribute("stroke", color);
             
             //remove virtual and disabled clones
-            if (this.m.clone(i).germline != system || this.m.clone(i).isVirtual() || !this.m.clone(i).isActive()) {
+            if (this.m.clone(i).germline != system || !this.m.clone(i).isInScatterplot() || !this.m.clone(i).isActive()) {
                 circle.parentNode.removeChild(circle);
             }
         }
@@ -527,7 +540,8 @@ Report.prototype = {
 
         for (var j=0; j<this.list.length; j++){
             var cloneID = this.list[j]
-            if (this.m.clone(cloneID).germline == system) this.clone(cloneID, time).appendTo(this.w.document.body);
+            if (this.m.clone(cloneID).germline == system && this.m.clone(cloneID).hasSizeConstant())
+                this.clone(cloneID, time).appendTo(this.w.document.body);
         }
         
         return this
@@ -663,8 +677,8 @@ Report.prototype = {
         
         for (var i=0; i<this.list.length; i++){
             var cloneID = this.list[i]
-            
-            this.clone(cloneID, time).appendTo(this.w.document.body);
+            if (this.m.clone(cloneID).hasSizeConstant())
+                this.clone(cloneID, time).appendTo(this.w.document.body);
         }
         
         return this

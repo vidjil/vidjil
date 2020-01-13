@@ -112,7 +112,7 @@ function Com(default_console) {
             "</br> <a href='http://www.chromium.org/getting-involved/download-chromium'> Chromium </a> " +
             "</br></br> <div class='center' > <button onclick='popupMsg(msg.welcome)'>I want to try anyway</button></div> ",
 	    
-        "database_timeout": "Cannot connect database, please retry in a few seconds ",
+        "database_timeout": "Cannot connect server, please retry later ",
     
         "save_analysis": "You made some changes in the analysis of the previous patient" +
             "</br>that were not saved (patients → save analysis)." +

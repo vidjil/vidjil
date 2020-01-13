@@ -38,31 +38,31 @@ class VidjilauthModel(unittest.TestCase):
             first_name='First',
             last_name='Group Tester',
             email='group.tester%d@vidjil.org' % count,
-            password= db.auth_user.password.validate('1234')[0],
+            password= db.auth_user.password.validate('123456')[0],
         )
 
         user_id_sec = db.auth_user.insert(
                 first_name='Second',
                 last_name='Group Tester',
                 email='group.testertoo.%d@vidjil.org' % count,
-                password=db.auth_user.password.validate('1234')[0]
+                password=db.auth_user.password.validate('123456')[0]
                 )
 
         parent_user_id = db.auth_user.insert(
                 first_name='Par',
                 last_name='ent',
                 email='par.end.%d@vidjil.org' % count,
-                password=db.auth_user.password.validate('1234')[0]
+                password=db.auth_user.password.validate('123456')[0]
                 )
 
         admin_user_id = db.auth_user.insert(
                 first_name='Adm',
                 last_name='in',
                 email='adm.in.%d@vidjil.org' % count,
-                password=db.auth_user.password.validate('1234')[0]
+                password=db.auth_user.password.validate('123456')[0]
                 )
 
-        auth.login_bare("group.tester%d@vidjil.org" % count, "1234")
+        auth.login_bare("group.tester%d@vidjil.org" % count, "123456")
 
         count = count + 1
 

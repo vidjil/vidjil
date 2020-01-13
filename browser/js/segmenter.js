@@ -187,81 +187,53 @@ Segment.prototype = {
             div_menu.appendChild(span)
 
             //toIMGT button
-            span = document.createElement('span');
-            span.id = "toIMGT"
-            span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and see the results in a new tab')
-            span.className = "button"
-            span.onclick = function () {
-                self.sendTo('IMGT')
-            }
-            span.appendChild(document.createTextNode("❯ to IMGT/V-QUEST"));
+            span = createSendToButton("toIMGT", 'imgt', "❯ IMGT/V-QUEST",
+                                      'Send sequences to IMGT/V-QUEST and see the results in a new tab', this);
             div_menu.appendChild(span)
 
             //toIMGTSeg button
-            span = document.createElement('span');
-            span.id = "toIMGTSeg";
-            span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and loads the results in the sequence panel')
-            span.className = "button button_next";
-            span.onclick = function () {
-                self.sendTo('IMGTSeg')
-            };
-            span.appendChild(document.createTextNode("▼"));
+            span = createSendToButton("toIMGTSeg", "IMGTSeg", "▼",
+                                      'Send sequences to IMGT/V-QUEST and loads the results in the sequence panel', this);
+            span.className += " button_next";
             div_menu.appendChild(span);
 
             //toIgBlast button
-            span = document.createElement('span');
-            span.id = "toIgBlast";
-            span.setAttribute('title', 'Send sequences to NCBI IgBlast and see the results in a new tab')
-            span.className = "button";
-            span.onclick = function () {
-                self.sendTo('igBlast')
-            };
-            span.appendChild(document.createTextNode("❯ to IgBlast"));
+            span = createSendToButton("toIgBlast", 'igBlast', "❯ IgBlast",
+                                      'Send sequences to NCBI IgBlast and see the results in a new tab', this);
             div_menu.appendChild(span);
 
             //toARResT button
-            span = document.createElement('span');
-            span.id = "toARResT";
-            span.setAttribute('title', 'Send sequences to ARResT/CompileJunctions and see the results in a new tab')
-            span.className = "button devel-mode";
-            span.onclick = function () {
-                self.sendTo('ARResT')
-            };
-            span.appendChild(document.createTextNode("❯ to ARResT/CJ"));
+            span = createSendToButton("toARResT", "arrest", "❯ ARResT/CJ",
+                                      'Send sequences to ARResT/CompileJunctions and see the results in a new tab', this);
+            span.className += " devel-mode";
             div_menu.appendChild(span);
 
             //toCloneDB button
-            span = document.createElement('span');
-            span.id = "toCloneDB";
-            span.setAttribute('title', 'Send sequences to EC-NGS/CloneDB in the background')
-            span.className = "button ";
-            span.className += (typeof config !== 'undefined' && config.clonedb) ? "" : "devel-mode";
-            span.onclick = function () {
-                self.db.callCloneDB(self.m.getSelected());
-            };
-            span.appendChild(document.createTextNode("❯ to CloneDB"));
+            span = createSendToButton('toCloneDB', '', "❯ CloneDB",
+                                      'Send sequences to EC-NGS/CloneDB in the background',
+                                      this,
+                                      function () {
+                                          self.db.callCloneDB(self.m.getSelected());
+                                      });
+            span.className += (typeof config !== 'undefined' && config.clonedb) ? "" : " devel-mode";
             div_menu.appendChild(span);
 
             //toBlast button
-            span = document.createElement('span');
-            span.id = "toBlast";
-            span.setAttribute('title', 'Send sequences to Ensembl Blast and see the results in a new tab')
-            span.className = "button";
-            span.onclick = function () {
-                if (self.m.getSelected().length > 30) {
-                    console.log({"type": "flash", "msg": "A maximum of 30 clones are allowed by Blast" , "priority": 1});
-                } else {
-                self.sendTo('blast');
-                }
-            };
-            span.appendChild(document.createTextNode("❯ to Blast"));
+            span = createSendToButton("toBlast", "blast",
+                                      "❯ Blast",
+                                      'Send sequences to Ensembl Blast and see the results in a new tab', this);
+            div_menu.appendChild(span);
+
+            // to AssignSubset
+            span = createSendToButton("toAssignSubsets", "assignSubsets", "❯ AssignSubsets",
+                                      "Send sequences to ARResT/AssignSubsets to classify IGH sequence in a CLL subset", this);
             div_menu.appendChild(span);
 
             //toClipBoard button
             span = document.createElement('span');
             span.id = "toClipBoard";
             span.className = "button";
-            span.appendChild(document.createTextNode("❯ to clipBoard"));
+            span.appendChild(document.createTextNode("❯ clipBoard"));
             // div_menu.appendChild(span)
 
             //germline button
@@ -361,6 +333,7 @@ Segment.prototype = {
             var focus_selected = document.createElement('a');
             focus_selected.appendChild(document.createTextNode("(focus)"))
             focus_selected.className = "focus_selected"
+            focus_selected.id        = "focus_selected"
             focus_selected.onclick = function () { self.m.focusSelected() }
             div_stats.appendChild(focus_selected)
 
@@ -369,6 +342,7 @@ Segment.prototype = {
             var hide_selected = document.createElement('a');
             hide_selected.appendChild(document.createTextNode("(hide)"))
             hide_selected.className = "focus_selected"
+            hide_selected.id        = "hide_selected"
             hide_selected.onclick = function () { self.m.hideSelected() }
             div_stats.appendChild(hide_selected)
 
@@ -508,15 +482,6 @@ Segment.prototype = {
         return div_highlight;
     },
 
-
-    /**
-     * update(size/style/position) a list of selected clones <br>
-     * @param {integer[]} list - array of clone index
-     * */
-    updateElem: function (list) {
-        this.updateElemStyle(list);
-    },
-
     /**
      * clear functionnal data in order to start from a clean instance when loading a new .vidjil file
      * */
@@ -530,37 +495,69 @@ Segment.prototype = {
         delete this.sequence[id];
     },
 
-   /**
-     * update(style only) a list of selected clones
+    /**
+     * 
+     */
+    update: function() {
+        var self = this;
+        try{
+            var list = [];
+            for (var i = 0; i < this.m.clones.length; i++) list.push(i);
+            this.updateElem(list);
+        } catch(err) {
+            sendErrorToDb(err, this.db);
+        }
+    },
+
+    /**
+     * check the list for newly selected/unselected clones to add/remove to segmenter 
+     * update others
+     * @abstract
      * @param {integer[]} list - array of clone index
      * */
-    updateElemStyle: function (list) {
-
+    updateElem: function (list) {
         for (var i = 0; i < list.length; i++) {
-            if (this.m.clone(list[i]).isSelected()) {
-                if (document.getElementById("seq" + list[i])) {
-                    var spanF = document.getElementById("f" + list[i]);
-                    this.div_elem(spanF, list[i]);
-                    var spanM = document.getElementById("m" + list[i]);
-                    spanM.innerHTML = this.sequence[list[i]].toString(this);
+            var cloneID = list[i];
+            if (this.m.clone(cloneID).isSelected()) {
+                //the clone is selected
+                if (this.sequence[cloneID]) {
+                    //it's already present in the segmenter         > update
+                    var spanF = document.getElementById("f" + cloneID);
+                    this.div_elem(spanF, cloneID);
+                    var spanM = document.getElementById("m" + cloneID);
+                    spanM.innerHTML = this.sequence[cloneID].toString(this);
                 } else {
-                    this.addToSegmenter(list[i]);
+                    //it's not present in the segmenter             > create
+                    this.addToSegmenter(cloneID);
                     this.show();
                 }
             } else {
-                if (document.getElementById("seq" + list[i])) {
-                    var element = document.getElementById("seq" + list[i]);
+                //the clone is not selected
+                if (this.sequence[cloneID]) {
+                    //it should not be present in the segmenter     > delete
+                    var element = document.getElementById("seq" + cloneID);
                     element.parentNode.removeChild(element);
-                    delete this.sequence[list[i]];
+                    delete this.sequence[cloneID];
                 }
             }
         }
+
         // Update the first clone if needed
         this.update_first_clone()
 
         this.updateAlignmentButton()
         //this.updateSegmenterWithHighLighSelection();
-        this.updateStats();         
+        this.updateStats();  
+    },
+
+    /**
+     * used to highlight mouseover clones or selected clones.
+     * in the segmenter case selecting/unselecting clones produces more than just a highlight and need an update
+     * @abstract
+     * @param {integer[]} list - array of clone index
+     * */
+    updateElemStyle: function (list) {   
+        this.updateElem(list);    
     },
 
     isClone: function (id) {
@@ -666,6 +663,10 @@ Segment.prototype = {
      * */
     addToSegmenter: function (cloneID) {
         var self = this;
+        if ( !this.m.clone(cloneID).hasSequence() ){
+            // This clone should not be added to the segmenter
+            return
+        }
 
         this.aligned = false ;
         this.resetAlign()
@@ -685,14 +686,14 @@ Segment.prototype = {
         var spanF = document.createElement('span');
         spanF.id = "f" + cloneID;
         this.div_elem(spanF, cloneID);
+        li.appendChild(spanF);
 
         var spanM = document.createElement('span');
         spanM.id = "m" + cloneID;
         spanM.className = "seq-mobil";
         spanM.innerHTML = this.sequence[cloneID].load().toString()
-
-        li.appendChild(spanF);
         li.appendChild(spanM);
+
         divParent.appendChild(li);
 
     },
@@ -857,7 +858,7 @@ Segment.prototype = {
     /**
      * build a request with currently selected clones to send to IMGT or igblast <br>
      * (see crossDomain.js)
-     * @param {string} address - 'IMGT', 'ARResT', 'igBlast' or 'Blast'
+     * @param {string} address - 'imgt', 'arrest', 'igBlast' or 'blast'
      * */
     sendTo: function (address) {
 
@@ -884,18 +885,14 @@ Segment.prototype = {
                 request += ">" +list[i] + "\n" +this.germline[this.sequence[list[i]].locus][list[i]] + "\n";
             }
         }
-        if (address == 'IMGT') {
-            imgtPost(this.m.species, request, system);
-        } 
         if (address == 'IMGTSeg') {
             imgtPostForSegmenter(this.m.species, request, system, this);
             var change_options = {'xv_ntseq' : 'false', // Deactivate default output
                                   'xv_summary' : 'true'}; // Activate Summary output
             imgtPostForSegmenter(this.m.species, request, system, this, change_options);
+        } else {
+            window[address+"Post"](this.m.species, request, system)
         }
-        if (address == 'ARResT') arrestPost(request, system);
-        if (address == 'igBlast') igBlastPost(request, system);
-        if (address == 'blast') blastPost(request, system);
 
         this.update();
 
@@ -1088,22 +1085,31 @@ Segment.prototype = {
         var sumReads = 0;
         var sumRawReads = 0;
         var length = 0;
+        var nb_clones_not_constant = 0;
         var lastActiveClone = 0;
             
         //verifier que les points sélectionnés sont dans une germline courante
         for (var i = 0; i < list.length ; i++){
             if (this.m.clones[list[i]].isActive()) {
                 lastActiveClone = this.m.clones[list[i]]
-                length += 1;
-                sumPercentage += this.m.clone(list[i]).getSize();
-                sumReads+= this.m.clone(list[i]).getReads(); 
-                sumRawReads+= this.m.clone(list[i]).getRawReads();
+                if (lastActiveClone.hasSizeConstant()) {
+                  length += 1;
+                } else {
+                  var timepoint = this.m.t
+                  nb_clones_not_constant += lastActiveClone.current_clones[timepoint];
+                }
+                sumPercentage += lastActiveClone.getSize();
+                sumReads+= lastActiveClone.getReads();
+                sumRawReads+= lastActiveClone.getRawReads();
             }
         }
 
         var t = ""
         if (sumRawReads > 0) {
-            t += length + " clone" + (length>1 ? "s" : "") + ", "
+
+            if (length) t += length ;
+            if (nb_clones_not_constant) t += '+' + nb_clones_not_constant;
+            t += " clone" + (length+nb_clones_not_constant>1 ? "s" : "") + ", "
 
             t += this.m.toStringThousands(sumRawReads) + " read" + (sumRawReads>1 ? "s" : "")
 
@@ -1113,8 +1119,11 @@ Segment.prototype = {
             percentageStr = this.m.getStrAnySize(this.m.t, sumPercentage)
             if (percentageStr != "+")
                 t += " (" + percentageStr + ")"
-            if (length == 1)
+            if (length == 1){
                 extra_info_system = lastActiveClone.getStrAllSystemSize(this.m.t, true)
+            } else {
+                extra_info_system = ""
+            }
             t += " "
             $(".focus_selected").css("display", "")
         }
@@ -1398,12 +1407,18 @@ genSeq.prototype= {
         var ref = '';
         var seq = '';
 
+        if (typeof(this.segmenter.sequence[this.segmenter.first_clone]) == "undefined"){ // the f* is this 
+            console.log("WUT???")
+            //TODO: store sequences in array and delete first_clone
+            this.segmenter.first_clone = Object.keys(this.segmenter.sequence)[0]//first key should be the oldest sequence added to segmenter
+        } 
 
         if (this.segmenter.amino) {
             seq = this.seqAA;
             ref = this.segmenter.sequence[this.segmenter.first_clone].seqAA;
         } else {
             seq = this.seq;
+
             ref = this.segmenter.sequence[this.segmenter.first_clone].seq;
         }
         if (this.segmenter.aligned) {
@@ -1511,6 +1526,8 @@ Sequence.prototype = Object.create(genSeq.prototype);
         var stop = -1;
                 
         var clone = this.m.clone(this.id);
+        if (!clone.hasSequence()) return 
+
         if (clone.hasSeg('cdr3')){
             if (typeof clone.seg.cdr3.start != "undefined") {
                 start = this.pos[clone.seg.cdr3.start];

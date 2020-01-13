@@ -31,12 +31,14 @@ class TestLoadingAnalysis < BrowserTest
     assert ($b.clone_info('0')[:name].text == 'Main ALL clone')
 
     $b.select_tag('0').click
+    $b.update_icon.wait_while(&:present?)
 
     assert (not $b.clone_in_list('0').present?)
     assert (not $b.clone_in_scatterplot('0').present?)
     assert (not $b.clone_in_graph('0').present?)
 
     $b.select_tag('0').click
+    $b.update_icon.wait_while(&:present?)
   end
 
   def test_01_data_loaded
@@ -70,13 +72,18 @@ class TestLoadingAnalysis < BrowserTest
     # Hide the clone by affecting it to a hidden tag
     $b.clone_info('0')[:star].click
     $b.tag_item('4')[:name].click
+    $b.update_icon.wait_while(&:present?)
 
+    $b.clone_in_list('0').wait_while(&:present?)
     assert (not $b.clone_in_list('0').present?)
+    $b.clone_in_scatterplot('0').wait_while(&:present?)
     assert (not $b.clone_in_scatterplot('0').present?)
+    $b.clone_in_graph('0').wait_while(&:present?)
     assert (not $b.clone_in_graph('0').present?)
 
     # Unhide clone
     $b.element(:id => 'fastTag4', :class => 'inactiveTag').click
+    $b.update_icon.wait_while(&:present?)
     assert (not $b.element(:id => 'fastTag4', :class => 'inactiveTag').exists?)
     assert ($b.clone_in_list('0').present?)
     assert ($b.clone_in_scatterplot('0').present?)
@@ -90,6 +97,7 @@ class TestLoadingAnalysis < BrowserTest
     assert (not $b.clone_in_scatterplot('2').present?)
 
     clustered[:cluster].click
+    $b.update_icon.wait_while(&:present?)
 
     assert ($b.clone_in_scatterplot('1').present?), "First clone should still be present"
     $b.clone_in_scatterplot('2').wait_until(&:present?)
@@ -109,7 +117,8 @@ end
     clustered[:cluster].click
     $b.until { $b.clone_in_cluster('1', '2')[:delete].present? }
     $b.clone_in_cluster('1', '2')[:delete].click
-    
+    $b.update_icon.wait_while(&:present?)
+
     assert (not $b.clone_cluster('1').present?)
     
     assert ($b.clone_in_scatterplot('1').present?)
@@ -125,6 +134,7 @@ end
     $b.clone_in_scatterplot('2').click(:control)
 
     $b.merge.click
+    $b.update_icon.wait_while(&:present?)
 
     clustered = $b.clone_info('1')
     assert (clustered[:name].text == 'clone2')
@@ -134,6 +144,7 @@ end
 
   def test_08_select_cluster
     $b.clone_in_scatterplot('1').click
+    $b.update_icon.wait_while(&:present?)
 
     clustered = $b.clone_info('1')
     assert ($b.clone_in_scatterplot('1', :class => "circle_select").exists?)
@@ -153,12 +164,14 @@ end
     assert ( $b.clone_in_segmenter('2').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
 
     clustered[:cluster].click
+    $b.update_icon.wait_while(&:present?)
     $b.unselect
   end
 
   def test_90_select_other
     # Click on first point
     $b.graph_x_legend('1').click
+    $b.update_icon.wait_while(&:present?)
     assert ($b.graph_x_legend('1', :class => 'graph_time2').exists?)
     assert ($b.graph_x_legend('0', :class => 'graph_time').exists?)
 

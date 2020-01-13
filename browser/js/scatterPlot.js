@@ -184,6 +184,7 @@ ScatterPlot.prototype = {
 
             this.initMenu();
             this.initSVG();
+            this.resize();
 
             this.setPreset(this.default_preset)
             this.tsne_ready=false;
@@ -553,7 +554,7 @@ ScatterPlot.prototype = {
                 self.m.focusIn(d.id);
             })
             .on("click", function(d) {
-                self.m.select(d.id);
+                self.clickNode(d.id);
             })
     },
 
@@ -620,11 +621,21 @@ ScatterPlot.prototype = {
         return this;
     },
 
-    includeBar: function(clone) {
-        return ((!this.use_system_grid ||
-                (this.use_system_grid && this.m.germlineV.system == clone.get('germline') )) &&
-                clone.isActive() &&
-                !clone.isVirtual());
+    includeBar: function(clone, log) {
+        var system_grid = (!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.get('germline') )) 
+        var showVirtual;
+
+        // Set if the clone should be show on is virtual/distrib status
+        if (clone.isInScatterplot() && clone.axes != undefined){
+            var axes = [this.splitX, this.splitY]
+            showVirtual = clone.sameAxesAsScatter(this)
+        } else if (!clone.isInScatterplot()) {
+            showVirtual = false
+        } else {
+            showVirtual = true        
+        }
+        var include = (system_grid && (clone.isActive()|| clone.hasSizeDistrib()) && showVirtual)
+        return include
     },
     
     /**
@@ -638,7 +649,8 @@ ScatterPlot.prototype = {
             for (var j in this.axisX.value_mapping[i]) {
                 var clone = this.axisX.value_mapping[i][j]
                 if (this.includeBar(clone)){
-                    tmp += clone.getSize();
+                    time = this.m.getTime();
+                    tmp += clone.getSize(time);
                 }
             }
             if (tmp > bar_max) bar_max = tmp;
@@ -673,7 +685,8 @@ ScatterPlot.prototype = {
                 var clone = this.axisX.value_mapping[i][j]
                 var cloneID = clone.index;
                 if (this.includeBar(clone)){
-                    height = clone.getSize()/bar_max;
+                    time = this.m.getTime();
+                    height = clone.getSize(time)/bar_max;
 
                     // Minimal height (does not affect y_pos)
                     var height_for_display = this.heightClone(height)
@@ -720,6 +733,8 @@ ScatterPlot.prototype = {
             .attr("class", function(p) {
                 if (!self.m.clone(p.id)
                     .isActive()) return "circle_hidden";
+                if (self.m.clone(p.id)
+                    .isFiltered)return "circle_hidden";
                 if (self.m.clone(p.id)
                     .isSelected()){
                     if (self.m.clone(p.id)
@@ -878,15 +893,11 @@ ScatterPlot.prototype = {
      * @param {float} [print]
      * */
     compute_size: function(div_width, div_height, print) {
-        if (typeof div_height == 'undefined') {
-            var div = document.getElementById(this.id)
-            div_height = div.offsetHeight
-            div_width = div.offsetWidth
+        if (typeof div_height != 'undefined') {
+            //recompute resizeW/H only if a custom div_Width/hieght is provided
+            this.resizeW = div_width - this.margin[3] - this.margin[1];
+            this.resizeH = div_height - this.margin[0] - this.margin[2];
         }
-        //On prend la largeur de la div
-        this.resizeW = div_width - this.margin[3] - this.margin[1];
-        //On prend la hauteur de la div
-        this.resizeH = div_height - this.margin[0] - this.margin[2];
 
         if (this.splitX == this.AXIS_ALLELE_V || this.splitX == this.AXIS_GENE_V || this.splitX == this.AXIS_ALLELE_J || this.splitX == this.AXIS_GENE_J || this.splitX == "tsneX_system" ||
             (this.mode == this.MODE_GRID & (this.splitY == this.AXIS_ALLELE_V || this.splitY == this.AXIS_GENE_V || this.splitY == this.AXIS_ALLELE_J || this.splitY == this.AXIS_GENE_J))) {
@@ -1101,19 +1112,15 @@ ScatterPlot.prototype = {
     update: function() {
         var self = this;
         try{
-            var startTime = new Date()
-                .getTime();
-            var elapsedTime = 0;
-
             this.compute_size()
                 .initGrid()
                 .updateClones()
                 .updateMenu();
+            
+            if (this.mode == this.MODE_BAR)
+                this.updateBar();
+            
 
-            //Donne des informations quant au temps de MàJ des données
-            elapsedTime = new Date()
-                .getTime() - startTime;
-            //console.log("update sp: " + elapsedTime + "ms");
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -1180,8 +1187,8 @@ ScatterPlot.prototype = {
             if (otherSize > size) size = otherSize
         }
 
-        if ((size == Clone.prototype.NOT_QUANTIFIABLE_SIZE) ||
-            (size > 0 && size < this.CLONE_MIN_SIZE))
+        if ( ((size == Clone.prototype.NOT_QUANTIFIABLE_SIZE) ||
+              (size > 0 && size < this.CLONE_MIN_SIZE)) && !this.m.clone(cloneID).hasSizeDistrib() )
             size = this.CLONE_MIN_SIZE
 
         this.nodes[cloneID].s = size
@@ -1195,13 +1202,23 @@ ScatterPlot.prototype = {
     updateClone: function(cloneID) {
 
         // Clone size
-
+        var clone = this.m.clone(cloneID)
+        
         if (this.m.clone(cloneID)
             .isActive()) {
 
             var seqID, size;
-            if (this.m.clone(cloneID)
-                .split) {
+            if (clone.hasSizeDistrib()){
+                var axes = [this.splitX, this.splitY]
+                same_axes_as_scatter = clone.sameAxesAsScatter(this)
+                if (same_axes_as_scatter){
+                    time = this.m.getTime()
+                    size = clone.getReads() / this.m.reads.segmented[time]
+                } else {
+                    size = 0
+                }
+                this.updateCloneSize(cloneID, size)
+            } else if (clone.split) {
                 // Display merged sub-clones
                 for (var i = 0; i < this.m.clusters[cloneID].length; i++) {
                     seqID = this.m.clusters[cloneID][i]
@@ -1231,8 +1248,6 @@ ScatterPlot.prototype = {
         }
 
         // Clone position
-
-        var clone = this.m.clone(cloneID);
         var sys = clone.get('germline');
         if (this.use_system_grid && this.m.system == "multi" && typeof sys != 'undefined' && sys != this.m.germlineV.system) {
             this.nodes[cloneID].x2 = this.systemGrid[sys].x * this.resizeW;
@@ -1251,12 +1266,14 @@ ScatterPlot.prototype = {
     updateElemStyle: function() {
         var self = this;
         if (this.mode == this.MODE_BAR) {
-            this.updateBar();
+            this.drawBarTab(0);
         } else {
             this.node
                 .attr("class", function(p) {
                     if (!self.m.clone(p.id)
                         .isActive()) return "circle_hidden";
+                    if (self.m.clone(p.id)
+                        .isFiltered)return "circle_hidden";
                     if (self.m.clone(p.id)
                         .isSelected()){
                         if (self.m.clone(p.id)
@@ -1314,6 +1331,7 @@ ScatterPlot.prototype = {
     changePreset: function(){
         var elem = this.select_preset;
         this.changeSplitMethod(this.preset[elem.value].x, this.preset[elem.value].y, this.preset[elem.value].mode);
+        this.m.update();
     },
 
     updatePreset: function(){
@@ -1702,7 +1720,7 @@ ScatterPlot.prototype = {
         if (endbar){
             this.endBar();
         }else{
-            this.update();
+            this.smartUpdate();
         }
 
         oldOtherVisibility = this.otherVisibility
@@ -2027,7 +2045,6 @@ ScatterPlot.prototype = {
     shouldRefresh: function () {
         this.init();
         this.update();
-        this.resize();
     }
 }
 ScatterPlot.prototype = $.extend(Object.create(View.prototype), ScatterPlot.prototype);

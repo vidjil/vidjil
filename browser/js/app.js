@@ -1,3 +1,5 @@
+var DEFAULT_DB_ADDRESS="https://db.vidjil.org/vidjil/";
+
 requirejs.config({
     baseUrl: 'js/lib',
     paths: {
@@ -30,6 +32,12 @@ require(["../git-sha1"], function () { console.log("Vidjil client " + git_sha1) 
 
 
 function loadAfterConf() {
+    if (typeof config === "undefined") {
+        config = {};
+        config.db_address = DEFAULT_DB_ADDRESS;
+        config.use_database = false;
+    }
+
     require(['../../doctips/tips'],
             function(){},
             function(err) {
@@ -84,6 +92,9 @@ function loadAfterConf() {
                                                 require(["../main"]);
                                             }else{
                                                 main();
+                                            }
+                                            if (typeof config.addons !== "undefined") {
+                                                require(config.addons);
                                             }
                                         })
                             })

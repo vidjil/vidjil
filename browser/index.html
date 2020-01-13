@@ -163,7 +163,7 @@
                 </div>
 
                 <div class="menu" id="color_menu" onmouseover="showSelector('colorSelector');" > color by
-                    <div class="div-menu-selector"><select class="menu-selector" onchange="m.changeColorMethod(this.value)">
+                    <div class="div-menu-selector"><select id="color_menu_select" class="menu-selector" onchange="m.changeColorMethod(this.value)">
                         <option value="Tag">tag</option>
                         <option value="clone">clone</option>
                         <option value="cdr3">CDR3</option>
@@ -281,9 +281,12 @@
             <div id="fps" style="display: none"> </div>
             <div id="header_messages" class="message_container header"></div>
 
-            <div id='live-ajax'>
-                <div class="active-container">
-                    <img src="images/ajax-loader.gif" />
+            <div id='updateIcon' style="display: none; align-items: center; background: transparent; width:1px"></div>
+
+            <div id='live-ajax' style="display: flex; align-items: center">
+                <div id='live-ajax-msg'>
+                </div>
+                <div id='live-ajax-icon'>
                 </div>
             </div>
 

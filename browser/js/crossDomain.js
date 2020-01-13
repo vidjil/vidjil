@@ -1,4 +1,3 @@
-var PROXY_ADDRESS = "https://db.vidjil.org/vidjil/proxy/imgt"
 var modelRef;
 
 /**
@@ -136,9 +135,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
 
     //process to first 10 sequences then alert user about the remaining part
     if (nb > 10) {
-        pos = nth_ocurrence(data, '>', 11);
-        var newdata = data.substr(pos);
-        data = data.substr(0, pos - 1);
+        data = getNFirstSequences(data, 10);
         var msg = "The first 10 sequences were sent to IMGT/V-QUEST."
 
         console.log({
@@ -164,11 +161,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
     //disabled due to security concerns
     //form.action = "http://www.imgt.org/IMGT_vquest/vquest";
     //using proxy on server to allow requests on other site than vidjil one's in JS.
-    if (typeof config != 'undefined' && typeof config.proxy != 'undefined') {
-        form.action = config.proxy
-    } else {
-        form.action = PROXY_ADDRESS;
-    }
+    form.action = getProxy()+"imgt";
     form.method = "POST";
 
     for (var k in imgtInput) {
@@ -307,7 +300,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
 }
 
 
-function igBlastPost(data, system) {
+function igBlastPost(species, data, system) {
     var igBlastInput = initIgBlastInput();
     igBlastInput.queryseq = data;
     if (system[0] == "I") {
@@ -351,7 +344,7 @@ arrestInput.fname = "exported_func" ;
 arrestInput.pjxrand = ".0033328778554" ;
 arrestInput.elite = "" ;
 
-function arrestPost(data, system) {
+function arrestPost(species, data, system) {
 
     arrestInput.args = data;
 
@@ -394,7 +387,12 @@ blastInput.NCBIBLAST_BLASTN__ungapped        = 0;
 blastInput.NCBIBLAST_BLASTN__dust            = 1;
 blastInput.NCBIBLAST_BLASTN__repeat_mask     = 1;
 
-function blastPost(data, system) {
+function blastPost(species, data, system) {
+    if (self.m.getSelected().length > 30) {
+        data = getNFirstSequences(data, 30);
+        console.log({"type": "flash", "msg": "A maximum of 30 clones are allowed by Blast. Only the first 30 sequences will be sent" , "priority": 1});
+        
+    }
 
     blastInput.query_sequence = data;
 
@@ -414,4 +412,59 @@ function blastPost(data, system) {
 
     form.submit();
 
+}
+
+function assignSubsetsPost(species, data, system) {
+    if (system != "IGH") {
+        console.log({"type": "flash",
+                     "msg": "Subsets are only defined for IGH sequences. Thus you cannot launch it on other sequences",
+                     "priority": 1});
+    } else {
+        var form = document.getElementById("form");
+        form.removeAllChildren();
+        form.target = "_blank";
+        form.enctype = 'multipart/form-data';
+        form.name = 'assignsubsets';
+        form.action = getProxy()+"assign_subsets";
+        form.method = "POST";
+        var formData = {};
+        formData.fastatext = data;
+        formData.elite = null;
+        for (var k in formData) {
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = k;
+            if (formData[k] != null)
+                input.value = formData[k];
+            form.appendChild(input);
+        }
+        form.submit();
+    }
+}
+
+/**
+ * Creates and returns a sendTo button (in a span)
+ * @param {id}: id of the span
+ * @param {name}: name of the sendTo function ({name}Post) [useless if
+ *                {onclick} is provided
+ * @param {label}: Label of the button
+ * @param {title}: Title when hovering the button
+ * @param {onclick}: (optional) Function to be called when clicking the button.
+ *                   By default will call {name}Post()
+ *
+ */
+function createSendToButton(id, name, label, title, segmenter, onclick) {
+    var span = document.createElement('span');
+    span.id = id;
+    span.setAttribute('title', 'title')
+    span.className = "button";
+    if (typeof onclick !== "undefined") {
+        span.onclick = onclick;
+    } else {
+        span.onclick = function () {
+            segmenter.sendTo(name);
+        };
+    }
+    span.appendChild(document.createTextNode(label));
+    return span;
 }

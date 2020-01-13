@@ -98,6 +98,14 @@ class VidjilBrowser < Watir::Browser
     return element(extra.merge(:id => 'seq'+id))
   end
 
+  def clear_filter
+    return span(:id => "clear_filter")
+  end
+
+  def filter_area
+    return text_field(:id => "filter_input")
+  end
+  
   # Change the coloration
   def color_by(dimension)
     menu_color.select_list.select dimension
@@ -184,9 +192,7 @@ class VidjilBrowser < Watir::Browser
   end
 
   def menu_item_export(id, extra = {})
-    menu = menu_import_export
-    menu.click
-    return menu.a(extra.merge(:id => id))
+    return menu_item(id, extra)
   end
 
   def menu_item_export_fasta(extra = {})
@@ -206,6 +212,7 @@ class VidjilBrowser < Watir::Browser
     end
     if parent.tag_name != "body"
       parent.click
+      parent.hover
     end
     return item
   end
@@ -373,6 +380,10 @@ class VidjilBrowser < Watir::Browser
     default = {timeout: 3}
     default.merge(extra)
     Watir::Wait.until(default) { yield }
+  end
+
+  def update_icon
+    return div(:id => 'updateIcon')
   end
 
   protected

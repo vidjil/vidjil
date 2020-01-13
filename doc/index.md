@@ -14,15 +14,22 @@ methods and software.
 
   - Tutorial "Mastering the Vidjil web application": [english](./tutorial/mastering-vidjil.html) ([pdf](./tutorial/mastering-vidjil.pdf)), [français](./tutorial/mastering-vidjil-fr.html)
     ([pdf](./tutorial/mastering-vidjil-fr.pdf)). Start by this tutorial to have an overview of Vidjil.
-  - Web application [user manual](user.md)
+  - Web platform [user manual](user.md)
   - [Demo access](http://app.vidjil.org/) to the patient, experiment and sample server
   - [Public datasets](http://www.vidjil.org/data/) supporting Vidjil publications
 
-### Algorithm, web application, server, developper documentation
+### Algorithm and server documentation
 
-  - [Vidjil-algo documentation](vidjil-algo.md)
+  - [Vidjil-algo documentation](vidjil-algo.md), usage from the command-line
+  - [Server administration](admin.md), configuration and administration features available from the web application
+  - [Docker/Server installation and maintenance](server.md), server installation, configuration and maintenance from the command line
+
+### Developer documentation
+
   - [Encoding clones with V(D)J recombinations](vidjil-format.md), specification of the `.vidjil` file format
-  - [Docker/Server installation and maintenance](server.md)
+  - Specification of the [.should-vdj](should-vdj.org) format for encoding curated V(D)J designations
+  - List of implemented [warnings](warnings.md), list of default [tags](tags.org)
+  - Developer documentation: [Vidjil-algo](dev-algo.md), web application: [client](dev-client.md), [server](dev-server.md)
 
 These documentations and additional developer and maintainer documentation
 are available from the [doc/](http://gitlab.vidjil.org/tree/master/doc) directory in the source files.

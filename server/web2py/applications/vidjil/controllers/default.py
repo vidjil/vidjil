@@ -313,6 +313,7 @@ def get_data():
                    & ( db.sample_set.id == db.sample_set_membership.sample_set_id )
                    & ( db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                    & ( db.results_file.sequence_file_id == db.sequence_file.id )
+                   & ( db.results_file.hidden == False )
                    & ( db.results_file.config_id == request.vars["config"]  )
                    ).select(db.sequence_file.ALL,db.results_file.ALL, db.sample_set.id, orderby=db.sequence_file.id|~db.results_file.run_date)
 
@@ -339,7 +340,11 @@ def get_data():
         data["samples"]["run_id"] = []
         for i in range(len(data["samples"]["original_names"])) :
             o_n = data["samples"]["original_names"][i].split('/')[-1]
-            data["samples"]["original_names"][i] = data["samples"]["original_names"][i].split('/')[-1]
+            
+            if 'distributions' in data and 'repertoires' in data['distributions']:
+                data['distributions']['repertoires'][o_n] = data['distributions']['repertoires'][data["samples"]["original_names"][i]]
+                del data['distributions']['repertoires'][data["samples"]["original_names"][i]]
+            data["samples"]["original_names"][i] = o_n
             data["samples"]["config_id"].append(request.vars['config'])
             data["samples"]["db_key"].append('')
             data["samples"]["commandline"].append(command)

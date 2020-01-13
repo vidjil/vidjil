@@ -1,0 +1,24 @@
+
+build_doc:
+  stage: tgz_release
+  script:
+    - make -C doc html
+    - find site -name "*.html" -type f | xargs python tools/validate-links.py
+  artifacts:
+    paths:
+      - site/
+    expire_in: 1 month
+  only:
+    - /^[^\/]*doc[^\/]*\//
+    # branch name should contain doc before the first /
+    # eg.: doc/blabla or feature-adoc/blabla
+  tags:
+    - doc
+
+deploy_doc:
+  stage: deploy_prod
+  script:
+    - scp -r site/ $VIDJIL_WWW:doc/
+  when: manual
+  only:
+    - /^[^\/]*doc[^\/]*\//

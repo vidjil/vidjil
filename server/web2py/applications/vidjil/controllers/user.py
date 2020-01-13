@@ -57,7 +57,7 @@ def index():
     			reverse=reverse)
 
 def edit():
-    if auth.is_admin():
+    if auth.can_modify_user(int(request.vars['id'])):
         user = db.auth_user[request.vars["id"]]
         log.info("load edit form for user",
                 extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'auth_user'})
@@ -65,24 +65,26 @@ def edit():
     return error_message(ACCESS_DENIED)
 
 def edit_form():
-    if auth.is_admin():
-        error = ""
+    if auth.can_modify_user(int(request.vars['id'])):
+        error = []
         if request.vars["first_name"] == "" :
-            error += "first name needed, "
+            error.append("first name needed")
         if request.vars["last_name"] == "" :
-            error += "last name needed, "
+            error.append("last name needed")
         if request.vars["email"] == "":
-            error += "email cannot be empty"
+            error.append("email cannot be empty")
         elif not re.match(r"[^@]+@[^@]+\.[^@]+", request.vars["email"]):
-            error += "incorrect email format"
+            error.append("incorrect email format")
 
         if request.vars["password"] != "":
             if request.vars["confirm_password"] != request.vars["password"]:
-                error += "password fields must match"
+                error.append("password fields must match")
             else:
                 password = db.auth_user.password.validate(request.vars["password"])[0]
+                if not password:
+                    error.append("Password is too short, should be at least of length "+str(auth.settings.password_min_length))
 
-        if error == "":
+        if len(error) == 0:
             data = dict(first_name = request.vars["first_name"],
                                                     last_name = request.vars["last_name"],
                                                     email = request.vars["email"])
@@ -98,7 +100,7 @@ def edit_form():
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
         else :
-            res = {"success" : "false", "message" : error}
+            res = {"success" : "false", "message" : ', '.join(error)}
             log.error(res)
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :

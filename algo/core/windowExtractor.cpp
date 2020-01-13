@@ -1,9 +1,6 @@
 #include "windowExtractor.h"
 #include "segment.h"
-
-// Progress bar
-#define PROGRESS_POINT 25000
-#define PROGRESS_LINE 40
+#include "tools.h"
 
 WindowExtractor::WindowExtractor(MultiGermline *multigermline): out_segmented(NULL), out_unsegmented(NULL), out_unsegmented_detail(NULL), out_affects(NULL),
                                                                 max_reads_per_window(~0), multigermline(multigermline){

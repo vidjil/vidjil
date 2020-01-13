@@ -49,7 +49,13 @@ json_data = {
             "3" : "TRGJ2*03",
             "3start" : 6,
             "5end" : 5,
-            "cdr3" : {"start": 5, "stop": 6, aa: "AG"}
+            "cdr3" : {"start": 5, "stop": 6, aa: "AG"},
+            "clonedb": {
+                "clones_names": {
+                    "A": [2, 0.25],
+                    "B": [124, 0.01]
+                }
+            }
         },
         "_average_read_length": [
             21
@@ -228,3 +234,31 @@ json_data = {
     }
   ]
 };
+
+
+
+data_distributions =    {
+    "keys": ["clones", "reads"],
+    "repertoires": {
+        "Diag.fa": [
+            {
+                "axes": ["lenSeqAverage"],
+                "values": { "18": [1, 20], "20": [11, 125], "21": [11, 46], "241": [1, 5], "?": [1, 4] }
+            }],
+        "Fu-1.fa": [
+            {
+                "axes": ["lenSeqAverage"],
+                "values": { "18": [1, 20], "20": [1, 25], "21": [6, 46], "241": [1, 5], "?": [1, 4] }
+            }],
+        "Fu-2.fa": [
+            {
+                "axes": ["lenSeqAverage"],
+                "values": { "18": [5, 26], "20": [1, 50], "21": [10, 115], "241": [1, 5], "?": [1, 4] }
+            }],
+        "Fu-3.fa": [
+            {
+                "axes": ["lenSeqAverage"],
+                "values": { "18": [1, 10], "20": [1, 3], "21": [7, 27], "241": [1, 50], "?": [1, 20] }
+            }]
+        }
+   }
