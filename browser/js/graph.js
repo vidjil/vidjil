@@ -533,7 +533,7 @@ Graph.prototype = {
         for (var i = 0; i < this.m.samples.number; i++) {
             res[i] = (r / this.m.reads.segmented[i])
             if(this.m.reads.segmented[i]==0) res[i] = 1;
-            if(res[i] > 1) res[i] = 1;
+            if(res[i] > this.displayMax) res[i] = this.displayMax;
         }
         
         if (typeof res !== "undefined" && res.length !== 0) {
@@ -968,24 +968,28 @@ Graph.prototype = {
             this.data_axis.push({"type" : "axis_h", "class" : "graph_text", "text" : "50%" ,"orientation" : "hori", "pos" : 0.5});
             this.data_axis.push({"type" : "axis_h", "class" : "graph_text", "text" : "100%" ,"orientation" : "hori", "pos" : 0});
         }else{
-            var height = 0.00001;
-            while(height<this.m.max_size) height = height*10
 
+            //increase the max value displayable in graph until we can display the current biggest clone
+            this.displayMax = 0.00001;
+            while(this.displayMax<this.m.max_size) this.displayMax = this.displayMax*10
+
+            //update scale
             this.scale_x = d3.scaleLog()
-            .domain([1, this.m.precision*height])
+            .domain([1, this.m.precision*this.displayMax])
             .range([0, 1]);
             
-            while ((height * this.m.precision) > 0.5) {
-
+            //compute axis label
+            var axis_value = this.displayMax
+            while ((axis_value * this.m.precision) > 0.5) {
                 var d = {};
                 d.type = "axis_h";
-                d.text = this.m.formatSize(height, false)
+                d.text = this.m.formatSize(axis_value, false)
                 d['class'] = "graph_text";
                 d.orientation = "hori";
-                d.pos = 1 - this.scale_x(height * this.m.precision);
+                d.pos = 1 - this.scale_x(axis_value * this.m.precision);
                 if (d.pos>=-0.1) this.data_axis.push(d);
 
-                height = height / 10;
+                axis_value = axis_value/10;
             }
         }
 
