@@ -45,7 +45,9 @@
 		       {{= field['call'](data)}}
                    </td>
                {{ pass }}
-            {{ total_file_count += data.file_count ; total_size += data.size }}
+            {{ file_count = 0 if data.file_count is None else data.file_count }}
+            {{ size = 0 if data.size is None else data.size }}
+            {{ total_file_count += file_count ; total_size += size }}
                
 {{if isAdmin:}} <td onclick="db.call('sample_set/permission', {'id' :'{{=data.sample_set_id}}'} )" > <i class="icon-key" title="set permissions"></i> </td> {{else:}} <td></td> {{pass}}
                 {{if data.has_permission:}}
