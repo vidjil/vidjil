@@ -28,32 +28,39 @@ class SampleSetList():
         group_config_names = get_config_names_select()
         group_group_names = get_group_names_select()
 
+        # TODO remove this hack
+        if self.type == 'patient':
+            dedicated_fields = [
+                s_table.first_name.with_alias('first_name'),
+                s_table.last_name.with_alias('last_name'),
+                s_table.birth.with_alias('birth'),
+            ]
+            groupby = [s_table.id, s_table.sample_set_id, s_table.first_name, s_table.last_name, s_table.birth, s_table.info, db.auth_user.last_name]
+        else:
+            dedicated_fields = [s_table.name.with_alias('name')]
+            groupby = [s_table.id, s_table.sample_set_id, s_table.name, s_table.info, db.auth_user.last_name],
 
-        self.result = []
-
-        print(db(
+        self.result = db(
             (s_table.sample_set_id > 0) &
             (s_table.creator == db.auth_user.id)
-        )._select(
+        ).select(
             s_table.id.with_alias('id'),
             s_table.sample_set_id.with_alias('sample_set_id'),
-            s_table.first_name.with_alias('first_name'),
-            s_table.last_name.with_alias('last_name'),
-            s_table.birth.with_alias('birth'),
             s_table.info.with_alias('info'),
             db.auth_user.last_name.with_alias('creator'),
             db.sequence_file.size_file.sum().with_alias('size'),
             db.sequence_file.id.count().with_alias('file_count'),
+            db.anon_permission.name.with_alias('has_permission'),
             group_configs,
             group_config_ids,
             group_config_names,
-            #group_group_names,
+            group_group_names,
+            *dedicated_fields,
             left=left,
-            groupby= (s_table.id, s_table.sample_set_id, s_table.first_name, s_table.last_name, s_table.birth, s_table.info, db.auth_user.last_name),
+            groupby= groupby,
             orderby = ~db[type].id,
-            limitby=(0,1),
             cacheable=True
-        ))
+        )
 
         limitby = None
         if page is not None and step is not None:
