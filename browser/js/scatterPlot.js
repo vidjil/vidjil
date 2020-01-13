@@ -930,8 +930,12 @@ ScatterPlot.prototype = {
      * (used for export a scatterplot screenshot without waiting for the clones have found a balance)
      * */
     fastForward: function() {
-        for (var i = 0; i < 500; i++) this.computeFrame()
-        this.drawFrame()
+        this.simulation.stop()
+        for (var i = 0; i < 200; i++) {
+            this.computeFrame() 
+            this.simulation.tick()
+            this.drawFrame()
+        }
     },
 
     /**
