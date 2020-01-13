@@ -206,18 +206,13 @@ def all():
     search, tags = parse_search(request.vars["filter"])
     group_ids = get_involved_groups()
 
-    list = SampleSetList(type, page, step, tags=tags)
-    list.load_creator_names()
-    list.load_sample_information()
-    list.load_config_information()
-    if isAdmin or len(get_group_list(auth)) > 1:
-        list.load_permitted_groups()
-    list.load_anon_permissions()
-    result = list.get_values()
+    f = time.time()
+    slist = SampleSetList(type)
 
     # failsafe if filtered display all results
     step = len(list) if step is None else step
     page = 0 if page is None else page
+    result = slist.result
 
     factory = ModelFactory()
     helper = factory.get_instance(type=type)
