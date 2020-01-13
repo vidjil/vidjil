@@ -61,9 +61,9 @@ function Segment(id, model, database) {
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z";
     this.cgi_address = CGI_ADDRESS
     this.m = model
-    this.first_clone = -1 ; // id of sequence at the top of the segmenter
     this.memtab = [];
     this.sequence = {};
+    this.sequence_order = [];
     this.is_open = false;
     this.amino = false;
     this.aligned = false;
@@ -80,6 +80,8 @@ function Segment(id, model, database) {
     ];
 
     this.selectedAxis = [];
+
+    this.index = [];
 }
 
 
@@ -285,7 +287,6 @@ Segment.prototype = {
                         self.update();
 
                 });
-                input.click();
                 var label = document.createElement('label');
                 label.setAttribute("for", 'vdj_input_check');
                 label.innerHTML = 'CDR3';
@@ -418,6 +419,9 @@ Segment.prototype = {
                 });
             this.setFixed(this.fixed);
 
+            for (var c_id = 1; c_id < self.m.clones.length; c_id++)
+                self.addToSegmenter(c_id);
+
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -493,6 +497,7 @@ Segment.prototype = {
         elem = document.getElementById("seq"+id);
         elem.parentNode.removeChild(elem)
         delete this.sequence[id];
+        this.sequence_order.splice( this.sequence_order.indexOf(id), 1 );
     },
 
     /**
@@ -516,35 +521,38 @@ Segment.prototype = {
      * @param {integer[]} list - array of clone index
      * */
     updateElem: function (list) {
-        for (var i = 0; i < list.length; i++) {
+        var self = this;
+        list.sort(function(a,b){ return self.m.clone(b).getSize() - self.m.clone(a).getSize() })
+        var sliderNeedUpdate = (Object.keys(this.sequence).length==0)//slider move only if we add sequence to an empty segmenter
+
+        for (var i = 0; i < list.length; i++) {     
+
             var cloneID = list[i];
-            if (this.m.clone(cloneID).isSelected()) {
-                //the clone is selected
-                if (this.sequence[cloneID]) {
-                    //it's already present in the segmenter         > update
-                    var spanF = document.getElementById("f" + cloneID);
-                    this.div_elem(spanF, cloneID);
-                    var spanM = document.getElementById("m" + cloneID);
-                    spanM.innerHTML = this.sequence[cloneID].toString(this);
-                } else {
-                    //it's not present in the segmenter             > create
-                    this.addToSegmenter(cloneID);
-                    this.show();
+            var liDom = this.index[cloneID];
+            
+            if (this.m.clone(cloneID).isSelected()) {               // the clone is selected
+                this.addToSegmenter(cloneID);
+                liDom = this.index[cloneID];
+                if (liDom == null) continue;
+                liDom.display("main", "block");
+                this.div_elem(liDom.getElement("seq-fixed"), cloneID);
+                var seq = this.sequence[cloneID].toString(this);
+                liDom.content("seq-mobil", seq);       
+            } else {    
+                if (this.sequence[cloneID]){                         
+                    delete this.sequence[cloneID];                  //  > delete the sequence 
+                    this.sequence_order.splice( this.sequence_order.indexOf(cloneID), 1 );
                 }
-            } else {
-                //the clone is not selected
-                if (this.sequence[cloneID]) {
-                    //it should not be present in the segmenter     > delete
-                    var element = document.getElementById("seq" + cloneID);
-                    element.parentNode.removeChild(element);
-                    delete this.sequence[cloneID];
-                }
+
+                liDom = this.index[cloneID];
+                if (liDom == null) 
+                    continue;                                    
+                else
+                    liDom.display("main", "none");                          //  > hide the dom element
             }
         }
 
-        // Update the first clone if needed
-        this.update_first_clone()
-
+        if (sliderNeedUpdate) this.show();
         this.updateAlignmentButton()
         //this.updateSegmenterWithHighLighSelection();
         this.updateStats();  
@@ -668,76 +676,45 @@ Segment.prototype = {
             return
         }
 
+        if (this.sequence[cloneID] ){
+            // This clone already has been added to the segmenter
+            return
+        }
+
         this.aligned = false ;
         this.resetAlign()
         this.sequence[cloneID] = new Sequence(cloneID, this.m, this)
-        
+        this.sequence[cloneID].load();
+        this.sequence_order.push(cloneID);
         var divParent = document.getElementById("listSeq");
         
-        this.update_first_clone(cloneID)
-
-        var li = document.createElement('li');
-        li.id = "seq" + cloneID;
-        li.className = "sequence-line";
-        li.onmouseover = function () {
-            self.m.focusIn(cloneID);
+        if (document.getElementById("seq" + cloneID) != null ){                 //div already exist
+            document.getElementById("seq" + cloneID).style.display = "block";
+            divParent.appendChild(document.getElementById("seq" + cloneID));
+            return;
         }
-
-        var spanF = document.createElement('span');
-        spanF.id = "f" + cloneID;
-        this.div_elem(spanF, cloneID);
-        li.appendChild(spanF);
-
-        var spanM = document.createElement('span');
-        spanM.id = "m" + cloneID;
-        spanM.className = "seq-mobil";
-        spanM.innerHTML = this.sequence[cloneID].load().toString()
-        li.appendChild(spanM);
-
-        divParent.appendChild(li);
-
-    },
-
-    /**
-    * Set the first_clone of the segmenter.
-    * This one can be changed when we deselect some clone into the segmenter
-    **/
-    set_first_clone : function(cloneID) {
-        if (isNaN(cloneID)){
-          console.error( "Nan error")
-          return
-        }
-        this.first_clone = cloneID;
-    },
-
-    /**
-    * Update the first_clone of the segmenter.
-    * Look if the current clone is the first of the segmenter div
-    **/
-    update_first_clone : function(cloneID) {
-
-        var divParent = document.getElementById("listSeq");
-        if (divParent == undefined) { return }
-
-
-        // Am I the first clone in this segmenter ?
-        var previous_li = divParent.getElementsByTagName("li");
-
-        if (previous_li && previous_li.length === 0 ) {
-            if (cloneID == undefined){
-                this.set_first_clone( -1 )
-                return
+        else{                                                                   //create div
+            var li = document.createElement('li');
+            li.id = "seq" + cloneID;
+            li.className = "sequence-line";
+            li.onmouseover = function () {
+                self.m.focusIn(cloneID);
             }
-            this.set_first_clone( cloneID )
-            return
-        } else if (previous_li.length != 0) {
-            // get first line from html content
-            var index_first_clone = Number( previous_li[0].id.substr(3) )
-            this.set_first_clone( index_first_clone )
+
+            var spanF = document.createElement('span');
+            spanF.className = "seq-fixed";
+            li.appendChild(spanF);
+
+            var spanM = document.createElement('span');
+            spanM.className = "seq-mobil";
+            li.appendChild(spanM);
+
+            divParent.appendChild(li);
+
+            this.index[cloneID] = new IndexedDom(li);
         }
 
     },
-
 
     /**
     * select all the germline of a clone .
@@ -775,6 +752,7 @@ Segment.prototype = {
         del.appendChild(icon('icon-cancel', 'Unselect this clone'));
         del.onclick = function () {
             delete self.sequence[id];
+            self.sequence_order.splice( self.sequence_order.indexOf(id), 1 );
             self.aligned = false;
             self.removeGermline(id)
         }
@@ -821,18 +799,14 @@ Segment.prototype = {
             this.sequence[id].load("str")
             var divParent = document.getElementById("listSeq");
             var previous_li = divParent.getElementsByTagName("li");
-            if (previous_li && previous_li.length === 0) {
-                this.first_clone = id
-            }
+            this.sequence_order.push(id);
 
             var li = document.createElement('li');
             li.id = "seq" + id;
             li.className = "sequence-line";
             var spanF = document.createElement('span');
-            spanF.id = "f" + id;
             this.div_element(spanF, id);
             var spanM = document.createElement('span');
-            spanM.id = "m" + id;
 
             spanM.className = "seq-mobil";
             spanM.innerHTML = this.sequence[id].load(str).toString(this);
@@ -899,13 +873,10 @@ Segment.prototype = {
     },
 
     /**
-     * move the horizontal slider to focus the most interesting parts of the sequences
+     * TODO: move the horizontal slider to focus the most interesting parts of the sequences
      * */
     show: function () {
-        var li = document.getElementById("listSeq")
-            .getElementsByTagName("li");
-        if (li.length > 0) {
-            var id = li[0].id.substr(3);
+        if (Object.keys(this.sequence).length > 0) {
             var mid = 999999
             $(this.div_segmenter)
                 .animate({
@@ -1357,7 +1328,7 @@ genSeq.prototype= {
         if (mutation != undefined && mutation) {
             var span = document.createElement('span');
             span.className = mutation
-            span.setAttribute('other', other + '-' + this.segmenter.first_clone);
+            span.setAttribute('other', other + '-' + this.sequence_order[0]);
             span.appendChild(document.createTextNode(self));
             return span;
         }else {
@@ -1399,33 +1370,26 @@ genSeq.prototype= {
         currentSpan = document.createElement('span');
 
         var canDisplaySynMutations = (! this.segmenter.amino &&
-                                      this.m.clones.hasOwnProperty(this.segmenter.first_clone) &&
-                                      this.m.clones[this.segmenter.first_clone].isProductive());
-        var reference_phase = (canDisplaySynMutations) ? (this.m.clones[this.segmenter.first_clone].getPhase()) : undefined;
+                                      this.m.clones.hasOwnProperty(this.segmenter.sequence_order[0]) &&
+                                      this.m.clones[this.segmenter.sequence_order[0]].isProductive());
+        var reference_phase = (canDisplaySynMutations) ? (this.m.clones[this.segmenter.sequence_order[0]].getPhase()) : undefined;
 
         var mutations = {};
         var ref = '';
         var seq = '';
 
-        if (typeof(this.segmenter.sequence[this.segmenter.first_clone]) == "undefined"){ // the f* is this 
-            console.log("WUT???")
-            //TODO: store sequences in array and delete first_clone
-            this.segmenter.first_clone = Object.keys(this.segmenter.sequence)[0]//first key should be the oldest sequence added to segmenter
-        } 
-
         if (this.segmenter.amino) {
             seq = this.seqAA;
-            ref = this.segmenter.sequence[this.segmenter.first_clone].seqAA;
+            ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seqAA;
         } else {
             seq = this.seq;
-
-            ref = this.segmenter.sequence[this.segmenter.first_clone].seq;
+            ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;
         }
         if (this.segmenter.aligned) {
             mutations = get_mutations(ref, seq, reference_phase, true);
         }
 
-        var i_am_first_clone = (this.id == this.segmenter.first_clone)
+        var i_am_first_clone = (this.id == this.segmenter.sequence_order[0])
         
         for (var i = 0; i < this.seq.length; i++) {
             for (var m in highlights){
@@ -1456,7 +1420,7 @@ genSeq.prototype= {
                         currentSpan = document.createElement('span');
                         currentSpan.className = oldCurSpan.className;
                         result.appendChild(currentSpan);
-                        console.log("results: " + result.innerHTML);
+                        //console.log("results: " + result.innerHTML);
                     } else {
                         currentSpan = highlightSpan;
                     }
