@@ -15,6 +15,7 @@ pages:
     - .vidjil format: vidjil-format.md
     - admin: admin.md
     - server: server.md
+    - quality: quality.md
     - credits: credits.md
 
 extra_css:

@@ -281,6 +281,12 @@ class VidjilAuth(Auth):
             and (self.get_permission(PermissionEnum.admin.value, 'run', run_id, user=user)\
             or self.is_admin(user))
         
+    def can_modify_subset(self, type, subset_id, user = None) :
+        exists = self.exists(type, subset_id)
+        return exists\
+            and (self.get_permission(PermissionEnum.admin.value, type, subset_id, user=user)\
+            or self.is_admin(user))
+
     def can_modify_sample_set(self, sample_set_id, user = None) :
         sample_set = db.sample_set[sample_set_id]
         if sample_set is None:

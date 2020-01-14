@@ -1,10 +1,18 @@
-# Analyzed human locus
 
-The Vidjil web application displays multi-locus data, as long as this information
+# Analyzed human immune recombinations in Vidjil
+
+Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes.
+It was designed to analyze all the common V(D)J recombinations,
+even the incomplete/special recombinations occuring during the hematopoeisis.
+In particular, Vidjil analyzes all the human recombinations
+targeted by the EuroClonality-NGS (2019) and the EuroClonality/BIOMED-2 (2003) primer sets.
+
+The Vidjil web application displays these recombinations on several loci,
+as long as this information
 is provided in the `.vidjil` file computed by the analysis program.
-Vidjil-algo currently analyzes the following locus,
+Vidjil-algo currently analyzes the following recombinations,
 selecting the best locus for each read.
-The configuration of analyzed locus is done in the `germline/homo-sapiens.g` preset.
+The configuration of analyzed recombinations is done in the `germline/homo-sapiens.g` preset.
 
 |                      |         | complete recombinations                        |           | incomplete/special recombinations |
 | -------------------- | ------- | ---------------------------------------------- | --------- | --------------------------------- |

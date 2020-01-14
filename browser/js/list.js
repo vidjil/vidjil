@@ -20,52 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
-/* 
- * info.js
- *
- * contains tools to manipulate element of the left-container :
- * favorites list
- * clone list
- * info panel
- *
- *
- */
 
-function CloneDom(div) {
-    var self=this;
-
-    this.div_elem = div;
-    this.div = {};
-    this.div_content = {};
-}
-
-CloneDom.prototype = {
-
-    getDiv: function(divName){
-        //if first time => find the div in dom and store it 
-        if (typeof (this.div[divName]) == "undefined")
-            this.div[divName] = this.div_elem.getElementsByClassName(divName)[0];
-        
-        return this.div[divName];
-    },
-
-    updateDivContent: function(divName, newContent){
-        var div = this.getDiv(divName);
-
-        var currentContent = this.div_content[divName];
-        if (currentContent != newContent){
-            div.innerHTML = newContent;
-            this.div_content[divName] = newContent;
-        }
-    }, 
-
-    clearDivContent: function(divName){
-        var div = this.getDiv(divName);
-
-        div.removeAllChildren();
-        this.div_content[divName] = '';
-    }
-}
 
 /** 
  * List view - build a list of clones/data and keep them up to date with the model
@@ -85,7 +40,8 @@ function List(id_list, id_data, model, database) {
     
     this.id = id_list; //ID de la div contenant la liste
     this.id_data = id_data;
-    this.index = []
+    this.index = [];
+    this.index_cluster = [];
     this.index_data = {};
 
     this.build();
@@ -188,11 +144,11 @@ List.prototype = {
         div_list_clones.id = "list_clones"
         for (var i = 0; i < this.m.clones.length; i++) {
             var div = document.createElement('li');
-            div.className = "list";
             div.id = i;
+            div.className = "list";
 
             div_list_clones.appendChild(div);
-            this.index[i] = new CloneDom(div);
+            this.index[i] = new IndexedDom(div);
         }
         
         for (var j = 0; j < this.m.clones.length; j++) {
@@ -455,6 +411,7 @@ List.prototype = {
         span_cluster.setAttribute("cloneID", cloneID);
         span_cluster.className = "clusterBox";
         span_cluster.id = "clusterBox_"+cloneID;
+        span_cluster.onclick = function () {self.toggleCluster(this)};
 
         var firstChild = div_elem.childNodes[0];
         div_elem.insertBefore(span_cluster, firstChild);
@@ -470,13 +427,7 @@ List.prototype = {
     },
 
     updateElem: function (list) {
-        var cluster_hide = function () {
-            self.hideCluster(this)
-        }
-
-        var cluster_show = function () {
-            self.showCluster(this)
-        }
+        var self = this;
 
         for (var i = 0; i < list.length; i++) {
             var cloneID = list[i]
@@ -484,74 +435,47 @@ List.prototype = {
             if (typeof this.index[cloneID] == "undefined") return false;
 
             var clone = this.m.clone(cloneID);
-
-            var self = this;
-
             var cloneDom = this.index[cloneID];
-            var div_elem = cloneDom.div_elem;
             
-            // pas testé; vraiment necessaire ?
-            if  (!( (clone.isActive() && this.m.clusters[cloneID].length !== 0) || 
-                    (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) !== -1)  
-                  )
-                )
-            {
-                div_elem.style.display = "none";
-            } else {
-                if (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1])){
-                    // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
-                    div_elem.style.display = "none";
-                } else if (clone.isFiltered){
-                    div_elem.style.display = "none";
+            if (!( (clone.isActive() && this.m.clusters[cloneID].length !== 0) || 
+                (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) !== -1)  )||
+                (clone.isFiltered) || 
+                (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1]))){ // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
+                
+                cloneDom.display("main", "none");
+                continue;
+            }
+            
+            cloneDom.display("main", "block");
+            
+            var divClass = "nameBox"
+            if (clone.hasSizeConstant())
+                divClass = "cloneName";
+            if (cloneDom.getElement(divClass) == null) return false
+
+            cloneDom.color(  divClass, clone.getColor());
+            cloneDom.content(divClass, clone.getShortName());
+            cloneDom.title(  divClass, clone.getNameAndCode());
+            
+            //update clone axis
+            var axis = this.selectedAxis;
+            cloneDom.color("axisBox", clone.getColor());
+            cloneDom.content("axisBox", axis.pretty ? axis.pretty(axis.fct(clone)).outerHTML : document.createTextNode(axis.fct(clone)).outerHTML)
+
+            //update cluster icon
+            if (this.m.clusters[cloneID].length > 1) {
+                if (clone.split) {
+                    cloneDom.content("clusterBox", icon('icon-minus', 'Hide the subclones').outerHTML)
+                    this.showClusterContent(cloneID, false)
                 } else {
-                    div_elem.style.display = "block";
-                    
-                    //complete namebox/cloneName
-                    var span_name = cloneDom.getDiv("nameBox");
-                    if (clone.hasSizeConstant())
-                        span_name = cloneDom.getDiv("cloneName");
-                    if (typeof span_name == "undefined") return false;
-                    if (typeof span_name == "undefined") console.log(cloneID);
-                    span_name.title = clone.getNameAndCode();
-                    span_name.style.color = clone.getColor();
-
-                    if (clone.hasSizeConstant())
-                        cloneDom.updateDivContent("cloneName", clone.getShortName());
-                    else
-                        cloneDom.updateDivContent("nameBox", clone.getShortName());
-                    
-                    //update clone axis
-                    var span_axis = cloneDom.getDiv("axisBox");
-                    span_axis.style.color = clone.getColor();
-                    var axis = this.selectedAxis;
-                    cloneDom.updateDivContent("axisBox", axis.pretty ? axis.pretty(axis.fct(clone)).outerHTML : document.createTextNode(axis.fct(clone)).outerHTML)
-                    //span_axis.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
-                    // span_axis.setAttribute('title', clone.getPrintableSize());
-
-                    //update cluster icon
-                    var span_cluster = cloneDom.getDiv("clusterBox");
-                    
-                    if (this.m.clusters[cloneID].length > 1) {
-                        if (clone.split) {
-                            span_cluster.onclick = cluster_hide;
-                            cloneDom.updateDivContent("clusterBox", icon('icon-minus', 'Hide the subclones').outerHTML)
-                            //span_cluster.appendChild(icon('icon-minus', 'Hide the subclones'));
-                            this.showClusterContent(cloneID, false)
-                        } else {
-                            span_cluster.onclick = cluster_show;
-                            cloneDom.updateDivContent("clusterBox", icon('icon-plus', 'Show the subclones').outerHTML)
-                            //span_cluster.appendChild(icon('icon-plus', 'Show the subclones'));
-                            this.hideClusterContent(cloneID, false)
-                        }
-                        self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
-                    } else {
-                        span_cluster.appendChild(document.createTextNode(' '));
-                        //update cluster display
-                        var display = clone.split
-                        if (this.m.clusters[cloneID].length < 2) display = false
-                        document.getElementById("cluster"+cloneID).style.display = "none";
-                    }
+                    cloneDom.content("clusterBox", icon('icon-plus', 'Show the subclones').outerHTML)
+                    this.hideClusterContent(cloneID, false)
                 }
+                self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
+            } else {
+                cloneDom.getElement("clusterBox").appendChild(document.createTextNode(' '));
+                if (this.m.clusters[cloneID].length < 2) display = false
+                document.getElementById("cluster"+cloneID).style.display = "none";
             }
         }
     },
@@ -590,6 +514,7 @@ List.prototype = {
             div_clone.onmouseover = function () {
                 self.m.focusIn(id);
             }
+            self.index_cluster[id] = new IndexedDom(div_clone);
             if (clone.isSelected) div_clone.className = "listElem selected";
 
             var span_name = document.createElement('span');
@@ -655,9 +580,10 @@ List.prototype = {
         if (document.getElementById("new_name")) {
             this.update();
         }
-        var divParent = this.index[cloneID].getDiv("nameBox");
+        var divParent = this.index[cloneID].getElement("nameBox");
         var old_event = divParent.onclick;
-        this.index[cloneID].clearDivContent("nameBox");
+        this.index[cloneID].getElement("nameBox").removeAllChildren();
+        this.index[cloneID].clear("nameBox");
 
         if (cloneID[0] == 's')
             cloneID = cloneID.substr(3);
@@ -692,7 +618,7 @@ List.prototype = {
         a.onclick = function (event) {
             event.preventDefault()
             event.stopPropagation()
-            self.index[cloneID]= new CloneDom(self.index[cloneID].div_elem);
+            self.index[cloneID]= new IndexedDom(self.index[cloneID].getElement("main"));
             var newName = document.getElementById("new_name")
                 .value;
             self.m.clone(cloneID).changeName(newName);
@@ -705,7 +631,7 @@ List.prototype = {
     /** 
      * */
     buildElem: function (cloneID) {
-        var div = this.index[cloneID].div_elem;
+        var div = this.index[cloneID].getElement("main");
         div.style.display = "block";
         if (!this.m.clone(cloneID).isActive()) div.style.display = "none";
         div.removeAllChildren();
@@ -727,53 +653,39 @@ List.prototype = {
     updateElemStyle: function (list) {
         for (var i = 0; i < list.length; i++) {
 
-            var div = this.index[list[i]].div_elem;
-
+            var cloneDom = this.index[list[i]];
+            var clusterDom = this.index_cluster[list[i]];
             var clone = this.m.clone(list[i])
-
 
             if (!((clone.isActive() && this.m.clusters[list[i]].length !== 0) ||
                   (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) != -1))){
-                div.style.display = "none";
+                cloneDom.display("main", "none");
             }else{
                 if (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1])){
                     // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
-                    div.style.display = "none";
+                    cloneDom.display("main", "none");
                 } else if (clone.isFiltered){
-                    div.style.display = "none";
-                } else {
-                
-                    div.style.display = "block";
+                    cloneDom.display("main", "none");
+                } else {               
+                    cloneDom.display("main", "block");
                     //color
                     var color = clone.getColor();
-
-                    $("#" + list[i] + " .nameBox:first")
-                        .css("color", color)
-                    $("#" + list[i] + " .axisBox:first")
-                        .css("color", color)
-                    $("#_" + list[i] + " .nameBox:first")
-                        .css("color", color)
-                    $("#_" + list[i] + " .axisBox:first")
-                        .css("color", color)
+                    cloneDom.color("nameBox", color)
+                    cloneDom.color("axisBox", color)
 
                     //clone selected ?
-                    div.className = "list";
-                    
-                    if (clone.isSelected()) {
-                        $(div).addClass("list_select");
-                    } 
-                    if (this.m.focus ==list[i]) {
-                        $(div).addClass("list_focus");
-                    } 
+                    var classname = "list";
+                    if (clone.isSelected())     classname += " list_select";
+                    if (this.m.focus ==list[i]) classname += " list_focus";
+                    cloneDom.classname("main", classname);
 
                     //cluster sequence selected?
-                    var div2 = document.getElementById("_" + list[i]);
-                    if (div2) {
-                        if (clone.isSelected()) {
-                            div2.className = "listElem selected";
-                        } else {
-                            div2.className = "listElem";
-                        }
+                    if (clusterDom) {
+                        clusterDom.color("nameBox", color)
+                        clusterDom.color("axisBox", color)
+
+                        if (clone.isSelected()) clusterDom.classname("main", "listElem list_select");
+                        else                    clusterDom.classname("main", "listElem");
                     }
                 }
             }
@@ -852,15 +764,20 @@ List.prototype = {
     },
 
     /**
-     * toggle on the display for a given clone of all clones merged with it
+     * toggle the display for a given clone of all clones merged with it
      * Action by direct click on the show button of the list element
      * @param {String} div - div name of the show button 
      * */
-    showCluster: function (div) {
+    toggleCluster: function (div) {
         var cloneID = div.getAttribute("cloneID");
         var self = this
-        this.m.clone(cloneID).split = true
-        this.showClusterContent(cloneID, true)
+        if (this.m.clone(cloneID).split){
+            this.m.clone(cloneID).split = false
+            this.hideClusterContent(cloneID, true)
+        }else{
+            this.m.clone(cloneID).split = true
+            this.showClusterContent(cloneID, true)
+        }
     },
 
     /**
@@ -875,18 +792,6 @@ List.prototype = {
             self.m.updateElem([cloneID]) 
         $("#cluster" + cloneID)
             .show(50);
-    },
-
-    /**
-     * toggle off the display for a given clone of all clones merged with it
-     * Action by direct click on the hide button of the list element
-     * @param {String} div - div name of the hide button 
-     * */
-    hideCluster: function (div) {
-        var cloneID = div.getAttribute("cloneID");
-        var self = this
-        this.m.clone(cloneID).split = false
-        this.hideClusterContent(cloneID, true)
     },
 
     /**

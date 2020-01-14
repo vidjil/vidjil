@@ -16,6 +16,10 @@ methods and software.
     ([pdf](./tutorial/mastering-vidjil-fr.pdf)). Start by this tutorial to have an overview of Vidjil.
   - Web platform [user manual](user.md)
   - [Demo access](http://app.vidjil.org/) to the patient, experiment and sample server
+
+### Quality documentation and open data
+
+  - [Software Quality and Human Processes](quality.md)
   - [Public datasets](http://www.vidjil.org/data/) supporting Vidjil publications
 
 ### Algorithm and server documentation
