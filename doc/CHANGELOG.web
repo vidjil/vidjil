@@ -2,6 +2,8 @@
 This changelog concerns the Vidjil web application, client and server.
 As we are using continuous integration and deployment, some features are pushed on our servers between these releases.
 
+2020-XXX Release %"Web 2020.XXX"
+    * [FIX] Error at opening of analysis file with modified clone sequence ([#4100](https://gitlab.inria.fr/vidjil/vidjil/issues/4100))
 
 2017-10-XX Release %"Web 2017.10"
 	* New tag mechanism to store/filter default or custom metadata on patient/runs/sets #2170 #2172 #2683
