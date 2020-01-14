@@ -814,7 +814,7 @@ class ListWindows(VidjilJson):
         self.d["reads"].d["total"] = [total_size]
         
     def load_airr(self, file_path, *args, **kwargs):
-        '''Parser for .clntab file'''
+        '''Parser for AIRR files'''
 
         self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
         self.d["samples"].d["original_names"] = [file_path]
@@ -864,6 +864,8 @@ class ListWindows(VidjilJson):
                 w.d["reads"] = [ int(float(row["duplicate_count"])) ]
 
 
+            ## 'Regular' columns, translated straight from AIRR into .vidjil
+
             axes = {"locus":  ["germline"],
                     "v_call": ["seg", "5", "name"],
                     "d_call": ["seg", "4", "name"],
@@ -885,6 +887,7 @@ class ListWindows(VidjilJson):
                     "warnings":            ["warn"]}
             
 
+            ## Fill .vidjil values with a recursive call
             for axe in axes.keys():
                 if axe in row.keys() and row[axe] != "":
                     path   = axes[axe]
@@ -906,6 +909,7 @@ class ListWindows(VidjilJson):
 
             listw.append((w , w.d["reads"][0]))
 
+            ##### Special values in .vidjil, recomputed from AIRR data
 
             ### NAME (simple, vidjil like)
             name = ""
@@ -950,7 +954,9 @@ class ListWindows(VidjilJson):
         return
 
     def airr_rename_cols(self, row):
+        '''Rename columns to homogeneize AIRR data from different software'''
         couples = [
+            ## MiXCR
             ("bestVHit", "v_call"), ("bestDHit", "d_call"), ("bestJHit", "j_call"), 
             ("cloneId", "sequence_id"), ("targetSequences", "sequence"),
             ("cloneCount", "duplicate_count"), ("chains", "locus")
