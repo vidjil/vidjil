@@ -22,6 +22,7 @@ STATUS = {
 }
 
 stats = defaultdict(int)
+failed = []
 
 def check_url(url, ids=[]):
 
@@ -51,6 +52,8 @@ def check_file(f):
         ok = check_url(url, ids)
         print(STATUS[ok] + '    ' + url)
         globals()['stats'][ok] += 1
+        if ok == False:
+            failed.append(url)
     print()
 
 
@@ -59,6 +62,10 @@ def print_stats():
     for k, v in STATUS.items():
         print('  %s : %3d' % (v, globals()['stats'][k]))
 
+    if globals()['stats'][False]:
+        print('==== Failed')
+        for f in failed:
+            print('  ' + f)
     
 if __name__ == '__main__':
 
