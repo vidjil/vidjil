@@ -814,7 +814,10 @@ class ListWindows(VidjilJson):
         self.d["reads"].d["total"] = [total_size]
         
     def load_airr(self, file_path, *args, **kwargs):
-        '''Parser for AIRR files'''
+        '''
+        Parser for AIRR files
+        format: https://buildmedia.readthedocs.org/media/pdf/airr-standards/stable/airr-standards.pdf
+        '''
 
         self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
         self.d["samples"].d["original_names"] = [file_path]
@@ -970,6 +973,7 @@ class ListWindows(VidjilJson):
     def airr_clean_content(self, category, value):
         '''
         Clean value of inapropriate content, as species names in segment name
+        Use in the case of IMGT denomination
         '''
         if category in ["v_call", "d_call", "j_call"]:
             if "," in value:
