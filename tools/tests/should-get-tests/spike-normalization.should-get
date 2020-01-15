@@ -1,7 +1,7 @@
 !LAUNCH: python ../../spike-normalization.py ../data/input-spike-norm-1.vidjil out.vidjil && cat out.vidjil
 
-$ 4416 clones in the output, as in the input
-4416: "id"
+$ clones in the output, as in the input
+9: "id"
 
 $ no "normalized_reads": diagnostic sample
 0: "normalized_reads"
@@ -9,21 +9,21 @@ $ no "normalized_reads": diagnostic sample
 !LAUNCH: python ../../spike-normalization.py ../data/input-spike-norm-2.vidjil out.vidjil && cat out.vidjil
 
 $ clones in the output, same as in the input
-60512: "id"
+8: "id"
 
 $ "normalized_reads" expected in this sample
-60395: "normalized_reads"
+6: "normalized_reads"
 
 $ Good value for the first clone
-: 0.09425114
+: 0.3739975328
 
 !LAUNCH: python ../../spike-normalization.py ../data/input-spike-norm-3.vidjil out.vidjil && cat out.vidjil
 
 $ clones in the output, same as in the input
-61058: "id"
+7: "id"
 
 $ "normalized_reads" expected in this sample
-51954: "normalized_reads"
+2: "normalized_reads"
 
 $ Good value for the first clone
-: 0.391805891
+: 195.5076337269
