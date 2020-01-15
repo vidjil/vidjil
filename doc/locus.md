@@ -32,7 +32,7 @@ and quantify immune recombinations.
  - Many studies are still successfully using primer sets based on
    the older **EuroClonality/BIOMED-2** sets
    published in [(van Dongen, 2003)](http://dx.doi.org/10.1038/sj.leu.2403202).
-   See for example [(Ferret, 2016)](http://dx.doi.org/10.1111/bjh.13981)
+   See for example (Ferret, 2016)](https://hal.archives-ouvertes.fr/hal-01279160)
    (1-step, 23 primers in 5 tubes, TRG, TRD/TRD+, IGK, IGK+).
 
 These primer sets were designed and evaluated for onco-hematological studies on lymphoma and/or leukemia samples
