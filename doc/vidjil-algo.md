@@ -26,6 +26,8 @@ Other documentation (users and administrators of the web application, developper
 diversity. They are also useful markers of pathologies, and in
 leukemia, are used to quantify the minimal residual disease during
 patient follow-up.
+With adapted [library preparation and sequencing](http://www.vidjil.org/doc/locus),
+high-throughput sequencing (NGS/HTS) now enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](http://omictools.com/rep-seq-c424-p1.html) methods and software.
 
 Vidjil-algo processes high-throughput sequencing data to extract V(D)J
 junctions and gather them into clones. Vidjil-algo starts
