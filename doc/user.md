@@ -489,7 +489,8 @@ There can be several causes leading to bad ratios:
 
 ### PCR or sequencing causes
 
-  - The read length is too short and the reads do not span the junction zone.
+  - The read length is too short and the reads do not span the junction zone
+    (see also comments on read length concerning [library preparation and sequencing](http://www.vidjil.org/doc/locus#read-length)).
     Vidjil-algo detects a “window” including the CDR3. By default this window is 50bp long, so the read needs be
     that long centered on the junction.
     Reads with no similarity to either V or J are reported as not analyzed (`UNSEG only V/J` or even `UNSEG too few V/J`).
