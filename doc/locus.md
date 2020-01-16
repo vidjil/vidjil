@@ -70,6 +70,21 @@ this is usally enough to detect  dominant clones
 with something like a few hundred reads,
 but quantification is more limited.
 
+## Read length
+
+When the read length is too short and the reads do not span the CDR3 and a few more nucleotides,
+some V(D)J recombinations may not be properly detected or designated.
+
+As a rule of thumb, 100 bp centered around the CDR3 is usually enough to correctly identify *most* of the recombinations
+-- and many sequencing approaches today allow to have 300bp, 500bp or even much longer reads.
+However, even as few as 50 bp well-centered on the CDR3 usually detect many recombinations.
+The key point, depending on the library preparation, is thus what position the CDR3 is actually in the read.
+
+Anyway, with short reads, the identified recombinations may be skewed towards shorter sequences, such as:
+ - more VJ than VDJ recombinations
+ - shorter N and more deleted V, J and possibly D genes
+Those biases could occur inside one locus but also favor loci/systems with shorter recombinations
+
 
 # Analyzed human immune recombinations in Vidjil
 
