@@ -48,7 +48,7 @@ $ Check germline TRG
 1: "germline": "TRG"
 
 $ Check _coverage_info
-lr: "_coverage_info".*100%.*bp
+r28: 100%.*bp
 
 
 ### ===========================================================================================================
@@ -100,7 +100,7 @@ $ _invert Check germline TRG
 1: "germline": "TRG"
 
 $ _invert Check _coverage_info
-lr1: "_coverage_info".*100%.*bp
+r: 100%.*bp
 
 
 $ _invert deletion information should be present

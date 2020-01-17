@@ -28,7 +28,7 @@ $ Check germline TRB
 0: "germline": "TRB"
 
 $ Check _coverage_info
-lr: "_coverage_info".*100%.*bp
+r: 100%.*bp
 
 ## specific vquest; Homsap in gene name, and multiple entries as list
 $ remove Homsap of genes names
