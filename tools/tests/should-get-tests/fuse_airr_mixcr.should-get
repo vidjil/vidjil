@@ -34,4 +34,4 @@ $ Check germline TRA
 2: "germline": "TRA"
 
 $ Check _coverage_info
-8: "_coverage_info".*100%
+lr8: "_coverage_info".*100%

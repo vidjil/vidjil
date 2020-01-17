@@ -45,7 +45,7 @@ $ Check germline TRG
 1: "germline": "TRG"
 
 $ Check _coverage_info
-14: "_coverage_info".*100%
+lr14: "_coverage_info".*100%
 
 ## Specific vidjil
 

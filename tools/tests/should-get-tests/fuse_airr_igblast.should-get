@@ -35,5 +35,5 @@ $ Check germline TRB (not present)
 0: "germline": "TRB"
 
 $ Check _coverage_info
-14: "_coverage_info".*100%
+lr14: "_coverage_info".*100%
 
