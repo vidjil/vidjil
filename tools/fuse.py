@@ -937,7 +937,7 @@ class ListWindows(VidjilJson):
             average_read_length = float(len(row["sequence"]))
             w.d["_average_read_length"] = [average_read_length]
             w.d["_coverage"] = [1.0]
-            w.d["_coverage_info"] = "%.1f bp (100%% of %.1f bp)" % (average_read_length, average_read_length )
+            w.d["_coverage_info"] = ["%.1f bp (100%% of %.1f bp)" % (average_read_length, average_read_length )]
             
 
             ### Warning
@@ -973,8 +973,16 @@ class ListWindows(VidjilJson):
     def airr_clean_content(self, category, value):
         '''
         Clean value of inapropriate content, as species names in segment name
-        Use in the case of IMGT denomination
         '''
+        cat_boolean = ['productive']
+        cat_numeric = [
+            'cdr3_start', 'cdr3_end',
+            "v_alignment_start", "v_alignment_end",
+            "d_alignment_start", "d_alignment_end",
+            "j_alignment_start", "j_alignment_end"
+        ]
+
+        # Use in the case of IMGT denomination
         if category in ["v_call", "d_call", "j_call"]:
             if "," in value:
                 value = value.split(", or")[0]
@@ -984,8 +992,22 @@ class ListWindows(VidjilJson):
             value = value.replace(" F", "")
             value = value.replace(" (F)", "")
             value = value.replace(" [ORF]", "")
+
+        ## Give vidjil formating of warning
         if category == 'warnings':
             value = [{"code": value, "level": "warn"}]
+
+        ## convert boolean value (as igBlast productive field for example)
+        if category in cat_boolean:
+            if value == "T" or value == "true":
+                value = True
+            elif value == "F" or value == "false":
+                value = False
+
+        ## Convert numeric field is given in string format
+        if category in cat_numeric:
+            value = int(value)
+        
         return value
 
         
