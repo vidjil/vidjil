@@ -40,6 +40,7 @@ server {
             expires 1h;
 
             error_page 405 = $1;
+        }
 
         location /(c|client|browser) {
             rewrite /(c|client|browser) /browser;
