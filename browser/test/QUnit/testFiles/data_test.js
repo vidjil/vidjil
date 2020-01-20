@@ -65,7 +65,7 @@ json_data = {
         ]
     },
     {
-        "sequence" : "cccccgtcccccccatca",
+        "sequence" : "ATGCATGCATGCATGCCCCCCCCCCCCCAAATTTTTTTTTTTTTTTTTTTGATCGATCGATCGATCGAT",
         "name" : "test2",
         "id" : "id2",
         "reads" : [20,20,10,10] ,
@@ -86,7 +86,7 @@ json_data = {
         ]
     },
     {
-        "sequence" : "cccccccccccccccccccc",
+        "sequence" : "ATGCATGCATGCATGCCCCCCCCCCCCCCCCCCAAATTTTTTTTTTTTTTGATCGATCGATCGATCGAT",
         "name" : "test3",
         "id" : "id3",
         "reads" : [25,25,50,3],
