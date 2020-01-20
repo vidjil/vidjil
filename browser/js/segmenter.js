@@ -418,10 +418,11 @@ Segment.prototype = {
                     }
                 });
             this.setFixed(this.fixed);
-
-            for (var c_id = 1; c_id < self.m.clones.length; c_id++)
-                self.addToSegmenter(c_id);
-
+            
+            for (var c_id = 1; c_id < self.m.clones.length; c_id++){
+                    self.build_skeleton(c_id);
+            }
+            
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -686,34 +687,39 @@ Segment.prototype = {
         this.sequence[cloneID] = new Sequence(cloneID, this.m, this)
         this.sequence[cloneID].load();
         this.sequence_order.push(cloneID);
-        var divParent = document.getElementById("listSeq");
         
         if (document.getElementById("seq" + cloneID) != null ){                 //div already exist
             document.getElementById("seq" + cloneID).style.display = "block";
+            var divParent = document.getElementById("listSeq");
             divParent.appendChild(document.getElementById("seq" + cloneID));
             return;
         }
         else{                                                                   //create div
-            var li = document.createElement('li');
-            li.id = "seq" + cloneID;
-            li.className = "sequence-line";
-            li.onmouseover = function () {
-                self.m.focusIn(cloneID);
-            }
-
-            var spanF = document.createElement('span');
-            spanF.className = "seq-fixed";
-            li.appendChild(spanF);
-
-            var spanM = document.createElement('span');
-            spanM.className = "seq-mobil";
-            li.appendChild(spanM);
-
-            divParent.appendChild(li);
-
-            this.index[cloneID] = new IndexedDom(li);
+            this.build_skeleton(cloneID)
         }
 
+    },
+
+    build_skeleton: function(cloneID){
+        var divParent = document.getElementById("listSeq");
+        var li = document.createElement('li');
+        li.id = "seq" + cloneID;
+        li.className = "sequence-line";
+        li.onmouseover = function () {
+            self.m.focusIn(cloneID);
+        }
+
+        var spanF = document.createElement('span');
+        spanF.className = "seq-fixed";
+        li.appendChild(spanF);
+
+        var spanM = document.createElement('span');
+        spanM.className = "seq-mobil";
+        li.appendChild(spanM);
+
+        divParent.appendChild(li);
+
+        this.index[cloneID] = new IndexedDom(li);
     },
 
     /**
