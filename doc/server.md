@@ -867,9 +867,10 @@ then looking at the database.
 
 Currently there is not easy way of resetting a user's password.
 The current method is the following:
-\`cd server/web2py\`
-\`python web2py -S vidjil -M\`
-\`db.auth<sub>user</sub>\[\<user-id\].update<sub>record</sub>(password=CRYPT(key=auth.settings.hmac<sub>key</sub>)('\<password\>')\[0\],reset<sub>passwordkey</sub>='')\`
+```bash
+cd server/web2py
+python web2py -S vidjil -M db.auth_user[<user-id>].update_record(password=CRYPT(key=auth.settings.hmac_key)('<password>')[0],reset_password_key='')
+```
 
 # Migrating Data
 
