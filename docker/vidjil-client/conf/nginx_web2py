@@ -42,8 +42,11 @@ server {
             error_page 405 = $1;
         }
 
-        location /(c|client|browser) {
-            rewrite /(c|client|browser) /browser;
+        location ~ ^/(c|client) {
+            rewrite /(c|client) /browser;
+        }
+
+        location /browser {
             rewrite /browser/([0-9]+)/([0-9]+)(\/?) /browser/?set=$1&conf=$2 break;
             rewrite /browser/([0-9/]+)/(css|js|images|test)/(.*) /browser/$2/$3 redirect;
             root /usr/share/vidjil;
