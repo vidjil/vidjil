@@ -235,6 +235,55 @@ json_data = {
   ]
 };
 
+json_data_align = {
+    "vidjil_json_version": ["2014.09"],
+    "reads": {
+      "segmented": [200,100,200,100],
+      "total": [200,100,200,100],
+      "germline": {
+        "TRG": [100,50,100,50],
+        "IGH": [100,50,100,50]
+      }
+    },
+    "samples": {
+      "timestamp": ["2014-10-20 13:59:02", "2014-10-25 14:00:32", "2014-11-20 14:03:13", "2014-12-20 14:04:48"],
+      "commandline": [
+        "./vidjil -c clones -g germline/ -r 1 -o ./out0 -z 200 -n 5 Diag.fa ",
+      ],
+      "number": 4,
+      "original_names": [
+        "Diag.fa",
+      ],
+      "log": [
+        "  ==> segmented 362296 reads (38.7%)\n  ==> found 11526 40-windows in 335725 segments (35.8%) inside 937164 sequences\n ",
+      ],
+      "producer": ["ha","hi","ho","hu"],
+      "run_timestamp": ["2015-10-20 13:59:02", "2015-10-25 14:00:32", "2015-11-20 14:03:13", "2015-12-20 14:04:48"]
+    },
+    "data": {
+      "dataTest1" : [45],
+      "dataTest2" : [2]
+    },
+    "clones": [
+      {
+          "sequence" : "ATGCATGCATGCATGCCCCCCCCCCCCCAAATTTTTTTTTTTTTTTTTTTGATCGATCGATCGATCGAT",
+          "name" : "testalign1",
+          "id" : "id0",
+          "reads" : [20] ,
+          "top" : 1,
+          "germline" : "TRG",
+      },
+      {
+          "sequence" : "ATGCATGCATGCATGCCCCCCCCCCCCCCCCCCAAATTTTTTTTTTTTTTGATCGATCGATCGATCGAT",
+          "name" : "testalign2",
+          "id" : "id1",
+          "reads" : [25],
+          "top" : 2,
+          "germline" : "IGH",
+      }
+    ]
+  };
+
 
 
 data_distributions =    {
