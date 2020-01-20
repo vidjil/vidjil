@@ -1012,10 +1012,10 @@ Segment.prototype = {
         }
 
         try{
-            if( selected.length ){
+            if( selected.length && this.index.length){
                 for (var i = 0; i < selected.length; i++) {
-                    var spanM = document.getElementById("m" + selected[i])
-                    spanM.innerHTML =  this.sequence[selected[i]].load().toString(this)
+                    this.index[selected[i]].content("seq-mobil", 
+                                                    this.sequence[selected[i]].load().toString(this))
                 }
             }
         } catch (err) {
@@ -1040,9 +1040,8 @@ Segment.prototype = {
         for (var j = 0; j < json.seq.length; j++) {
 
             // global container
-            var spanM = document.getElementById("m" + this.memTab[j]);
             var seq = this.sequence[this.memTab[j]]
-            spanM.innerHTML = seq.toString(this)
+            this.index[this.memTab[j]].content("seq-mobil", seq.toString(this));
         }
 
     },
@@ -1328,7 +1327,7 @@ genSeq.prototype= {
         if (mutation != undefined && mutation) {
             var span = document.createElement('span');
             span.className = mutation
-            span.setAttribute('other', other + '-' + this.sequence_order[0]);
+            span.setAttribute('other', other + '-' + this.segmenter.sequence_order[0]);
             span.appendChild(document.createTextNode(self));
             return span;
         }else {
