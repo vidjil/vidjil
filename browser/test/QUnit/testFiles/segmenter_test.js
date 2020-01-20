@@ -281,15 +281,15 @@ QUnit.test("segt", function (assert) {
 
 QUnit.test("align", function (assert) {
     var m = new Model();
-    m.parseJsonData(json_data, 100);
+    m.parseJsonData(json_data_align, 100);
     m.initClones();
     var segment = new Segment("segment",m);
     segment.init();
     segment.update();
 
     //select 2 clones
+    m.select(0)
     m.select(1)
-    m.select(2)
 
     var done = assert.async(3);
     var delay = 0;
@@ -302,10 +302,10 @@ QUnit.test("align", function (assert) {
 
     //test align
     setTimeout( function() {
-        var aligned_sequence1 = segment.index[1].getElement("seq-mobil").innerText
+        var aligned_sequence1 = segment.index[0].getElement("seq-mobil").innerText
         assert.ok(aligned_sequence1.includes("-"), "aligned sequence should contains '-' " + aligned_sequence1 )
 
-        var aligned_sequence2 = segment.index[2].getElement("seq-mobil").innerText
+        var aligned_sequence2 = segment.index[1].getElement("seq-mobil").innerText
         assert.ok(aligned_sequence2.includes("-"), "aligned sequence should contains '-'" + aligned_sequence2 )
 
         segment.resetAlign()
@@ -314,10 +314,10 @@ QUnit.test("align", function (assert) {
 
     //test resetAlign
     setTimeout( function() {
-        aligned_sequence1 = segment.index[1].getElement("seq-mobil").innerText
+        aligned_sequence1 = segment.index[0].getElement("seq-mobil").innerText
         assert.ok(!aligned_sequence1.includes("-"), "sequence should not contains '-' " + aligned_sequence1 )
     
-        aligned_sequence2 = segment.index[2].getElement("seq-mobil").innerText
+        aligned_sequence2 = segment.index[1].getElement("seq-mobil").innerText
         assert.ok(!aligned_sequence2.includes("-"), "sequence should not contains '-' " + aligned_sequence2 )
         done()
     }, delay+=step)
