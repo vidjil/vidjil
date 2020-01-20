@@ -683,7 +683,7 @@ Segment.prototype = {
         }
 
         this.aligned = false ;
-        this.resetAlign()
+        if (this.aligned) this.resetAlign()
         this.sequence[cloneID] = new Sequence(cloneID, this.m, this)
         this.sequence[cloneID].load();
         this.sequence_order.push(cloneID);
