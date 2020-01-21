@@ -324,3 +324,42 @@ QUnit.test("align", function (assert) {
         done()
     }, delay+=step)
 })
+
+QUnit.test("reset", function (assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100);
+    m.initClones();
+
+    var segment = new Segment("segment",m);
+    segment.init();
+
+    m.select(0)
+
+    var done = assert.async(4);
+    var delay = 0;
+    var step = 500;
+
+    setTimeout( function() {
+        assert.ok((segment.index[0].getElement("seq-mobil").innerText != ""), "sequence 0 is in segmenter ")
+        done()
+    }, delay+=step)
+
+    setTimeout( function() {
+        segment.reset()
+        segment.init()
+        m.unselectAll()
+        done()
+    }, delay+=step)
+
+    setTimeout( function() {
+        assert.ok((document.getElementById("listSeq").innerText == ""), "segmenter should be empty after reset ")
+        m.select(0)
+        done()
+    }, delay+=step)
+
+    setTimeout( function() {
+        assert.ok((segment.index[0].getElement("seq-mobil").innerText != ""), "sequence 0 is back in segmenter ")
+        done()
+    }, delay+=step)
+ 
+})
