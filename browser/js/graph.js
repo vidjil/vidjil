@@ -228,7 +228,9 @@ Graph.prototype = {
         var div = document.createElement('div')
         div.id = "" + this.id + "_menu"
         div.className = "graph_menu"
-        div.appendChild(icon('icon-dot-3', 'Drag here samples to hide them'))
+        var list_title = document.createElement('div')
+        list_title.id = "graphList_title"
+        div.appendChild(list_title)
         
         var list = document.createElement('table')
         list.id = "" + this.id + "_list"
@@ -251,6 +253,7 @@ Graph.prototype = {
                     .show("fast")
             })
             
+        this.updateCountActiveSample()
         return this
     },
     
@@ -261,7 +264,12 @@ Graph.prototype = {
         var self = this;
         
         var list = document.getElementById("" + this.id + "_list")
+
         list.removeAllChildren();
+        var list_title = document.createElement('div')
+        list_title.id = "graphList_title"
+        list.appendChild(list_title)
+        this.updateCountActiveSample()
 
         // Create a table to store each line
         var table   = document.createElement("table")
@@ -433,6 +441,15 @@ Graph.prototype = {
     },
 
 
+    updateCountActiveSample: function(){
+        var div   = document.getElementById("graphList_title")
+        if (this.m.samples.number != 0 && this.m.samples.number != undefined){
+            div.textContent  = ""+this.m.samples.order.length+" / " + this.m.samples.number
+            console.default.log( div.text )
+        } else {
+            div.textContent  = "..."
+        }
+    },
 
     /* repositionne le graphique en fonction de la taille de la div le contenant
      *
@@ -487,6 +504,7 @@ Graph.prototype = {
     update : function (speed) {
         speed = typeof speed !== 'undefined' ? speed : 500;
         this.updateListElemSelected();
+        this.updateCountActiveSample();
         this.initAxis()
             .initData()
             .updateRes()
