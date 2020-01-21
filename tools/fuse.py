@@ -365,8 +365,8 @@ class Reads:
 
     def __init__(self):
         self.d={}
-        self.d["total"] = ["0"]
-        self.d["segmented"] = ["0"]
+        self.d["total"] = [0]
+        self.d["segmented"] = [0]
         self.d["germline"] = {}
         self.d['distribution'] = {}
 
@@ -385,6 +385,18 @@ class Reads:
         obj.d["total"] = self.d["total"] + other.d["total"]
         obj.d["segmented"] = self.d["segmented"] + other.d["segmented"]
         return obj
+
+    def addAIRRClone(self, clone):
+        """
+        Allow to add a clone create by AIRR import. 
+        Add reads values to germline, segmented and total section
+        """
+        if clone.d["germline"] not in self.d["germline"].keys():
+            self.d["germline"][clone.d["germline"]] = [0]
+        self.d["germline"][clone.d["germline"]][0]  += clone.d["reads"][0]
+        self.d["total"][0]     += clone.d["reads"][0]
+        self.d["segmented"][0] += clone.d["reads"][0]
+        return
 
     def __str__(self):
         return "<Reads: %s>" % self.d
@@ -521,10 +533,12 @@ class ListWindows(VidjilJson):
             json.dump(self, f, indent=2, default=self.toJson)
 
     def load(self, file_path, *args, **kwargs):
-        if not '.clntab' in file_path:
-            self.load_vidjil(file_path, *args, **kwargs)
-        else:
+        if '.clntab' in file_path:
             self.load_clntab(file_path, *args, **kwargs)
+        elif ".tsv" in file_path or ".AIRR" in file_path or ".airr" in file_path:
+            self.load_airr(file_path, *args, **kwargs)
+        else:
+            self.load_vidjil(file_path, *args, **kwargs)
 
     def loads(self, string, *args, **kwargs):
         self.loads_vidjil(string, *args, **kwargs)
@@ -798,6 +812,203 @@ class ListWindows(VidjilJson):
         
         self.d["reads"].d["segmented"] = [total_size]
         self.d["reads"].d["total"] = [total_size]
+        
+    def load_airr(self, file_path, *args, **kwargs):
+        '''
+        Parser for AIRR files
+        format: https://buildmedia.readthedocs.org/media/pdf/airr-standards/stable/airr-standards.pdf
+        '''
+
+        self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
+        self.d["samples"].d["original_names"] = [file_path]
+        self.d["samples"].d["producer"]       = ["unknown (AIRR format)"]
+        self.d["samples"].d["log"]            = ["Created from an AIRR format. No other information available"]
+        self.d["reads"].d["germline"] = defaultdict(lambda: [0])
+        self.d["diversity"] = Diversity()
+
+        ### Store created clone id
+        clone_ids = defaultdict(lambda: False)
+
+        listw = []
+        listc = []
+        total_size = 0
+        i= 0
+        import csv
+        with open(file_path) as tsvfile:
+          reader = csv.DictReader(tsvfile, dialect='excel-tab')
+
+          for row in reader:
+            row = self.airr_rename_cols(row)
+            i += 1
+
+            ### bypass igBlast format
+            if "Total queries" in row["sequence_id"]:
+                print( "here")
+                break
+
+
+
+            w=Window(1)
+            w.d["seg"] = { "junction":{}, "cdr3":{} }
+            
+            w.d["id"] = row["sequence_id"]
+            # controle that no other clone is presetn with this id
+            p = 1
+            while clone_ids[w.d["id"]]:
+                w.d["id"] = row["sequence_id"] + "_%s" % p
+                p += 1
+            clone_ids[w.d["id"]] = True
+            
+            
+            w.d["sequence"] = row["sequence"]
+            if "duplicate_count" not in row.keys() or row["duplicate_count"] == "":
+                w.d["reads"] = [1]
+            else :
+                w.d["reads"] = [ int(float(row["duplicate_count"])) ]
+
+
+            ## 'Regular' columns, translated straight from AIRR into .vidjil
+
+            axes = {"locus":  ["germline"],
+                    "v_call": ["seg", "5", "name"],
+                    "d_call": ["seg", "4", "name"],
+                    "j_call": ["seg", "3", "name"],
+                    "v_alignment_start":   ["seg","5","start"],
+                    "v_alignment_end":     ["seg","5","stop"],
+                    "d_alignment_start":   ["seg","4","start"],
+                    "d_alignment_end":     ["seg","4","stop"],
+                    "j_alignment_start":   ["seg","3","start"],
+                    "j_alignment_end":     ["seg","3","stop"],
+                    "junction_aa":         ["seg","junction","aa"],
+                    "productive":          ["seg","junction","productive"],
+                    "cdr1_start":          ["seg","cdr1", "start"],
+                    "cdr1_end":            ["seg","cdr1", "stop"],
+                    "cdr3_start":          ["seg","cdr3", "start"],
+                    "cdr3_end":            ["seg","cdr3", "stop"],
+                    "5prime_trimmed_n_nb": ["seg","5","delLeft"],
+                    "3prime_trimmed_n_nb": ["seg","3","delLeft"],
+                    "warnings":            ["warn"]}
+            
+
+            ## Fill .vidjil values with a recursive call
+            for axe in axes.keys():
+                if axe in row.keys() and row[axe] != "":
+                    path   = axes[axe]
+                    depth  = 0
+                    value  = w.d
+                    to_put = self.airr_clean_content(axe, row[axe])
+
+                    while depth != len(path):
+                        cat = path[depth]
+                        if cat not in value.keys():
+                            value[cat] = {}
+                        depth += 1
+                        
+                        if depth != len(path):
+                            value  = value[cat]
+
+                    value[cat] = to_put
+
+
+            listw.append((w , w.d["reads"][0]))
+
+            ##### Special values in .vidjil, recomputed from AIRR data
+
+            ### NAME (simple, vidjil like)
+            name = ""
+            if "v_call" in row.keys() and row["v_call"] != "":
+                name += (" "*int(name != "")) + w.d["seg"]["5"]["name"]
+            if "v_call" in row.keys() and row["d_call"] != "":
+                name += (" "*int(name != "")) + w.d["seg"]["4"]["name"]
+            if "v_call" in row.keys() and row["j_call"] != "":
+                name += (" "*int(name != "")) + w.d["seg"]["3"]["name"]
+            if name == "":
+                "undetermined segmentation"
+            w.d["name"] = name
+
+
+            ### READS
+            if not 'germline' in w.d.keys():
+                w.d["germline"] = "undetermined"
+            self.d["reads"].addAIRRClone( w )
+            
+
+            ### Average/coverage
+            average_read_length = float(len(row["sequence"]))
+            w.d["_average_read_length"] = [average_read_length]
+            w.d["_coverage"] = [1.0]
+            w.d["_coverage_info"] = ["%.1f bp (100%% of %.1f bp)" % (average_read_length, average_read_length )]
+            
+
+            ### Warning
+            # Il faut avoir une table pour faire la conversion ? 
+            # TODO: undefined for the moment
+
+
+        #sort by sequence_size
+        listw = sorted(listw, key=itemgetter(1), reverse=True)
+        #sort by clonotype
+        listc = sorted(listc, key=itemgetter(1))
+        
+        #generate data "top"
+        for index in range(len(listw)):
+            listw[index][0].d["top"]=index+1
+            self.d["clones"].append(listw[index][0])
+        return
+
+    def airr_rename_cols(self, row):
+        '''Rename columns to homogeneize AIRR data from different software'''
+        couples = [
+            ## MiXCR
+            ("bestVHit", "v_call"), ("bestDHit", "d_call"), ("bestJHit", "j_call"), 
+            ("cloneId", "sequence_id"), ("targetSequences", "sequence"),
+            ("cloneCount", "duplicate_count"), ("chains", "locus")
+        ]
+        for couple in couples:
+            if couple[0] in row.keys():
+                row[couple[1]] = row.pop(couple[0])
+        return row
+
+
+    def airr_clean_content(self, category, value):
+        '''
+        Clean value of inapropriate content, as species names in segment name
+        '''
+        cat_boolean = ['productive']
+        cat_numeric = [
+            'cdr3_start', 'cdr3_end',
+            "v_alignment_start", "v_alignment_end",
+            "d_alignment_start", "d_alignment_end",
+            "j_alignment_start", "j_alignment_end"
+        ]
+
+        # Use in the case of IMGT denomination
+        if category in ["v_call", "d_call", "j_call"]:
+            if "," in value:
+                value = value.split(", or")[0]
+            # clean specific vquest:
+            value = value.replace("Homsap ", "")
+            value = value.replace("Homsap_", "")
+            value = value.replace(" F", "")
+            value = value.replace(" (F)", "")
+            value = value.replace(" [ORF]", "")
+
+        ## Give vidjil formating of warning
+        if category == 'warnings':
+            value = [{"code": value, "level": "warn"}]
+
+        ## convert boolean value (as igBlast productive field for example)
+        if category in cat_boolean:
+            if value == "T" or value == "true":
+                value = True
+            elif value == "F" or value == "false":
+                value = False
+
+        ## Convert numeric field is given in string format
+        if category in cat_numeric:
+            value = int(value)
+        
+        return value
 
         
     def toJson(self, obj):
