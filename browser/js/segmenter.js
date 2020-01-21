@@ -419,9 +419,9 @@ Segment.prototype = {
                 });
             this.setFixed(this.fixed);
             
-            for (var c_id = 1; c_id < self.m.clones.length; c_id++){
-                    self.build_skeleton(c_id);
-            }
+            for (var c_id = 0; c_id < self.m.clones.length; c_id++)
+                self.build_skeleton(c_id);
+            
             
         } catch(err) {
             sendErrorToDb(err, this.db);
@@ -677,8 +677,8 @@ Segment.prototype = {
             return
         }
 
-        if (this.sequence[cloneID] ){
-            // This clone already has been added to the segmenter
+        if (this.sequence[cloneID]){
+            // This clone has already been added to the segmenter
             return
         }
 
@@ -701,6 +701,11 @@ Segment.prototype = {
     },
 
     build_skeleton: function(cloneID){
+        if ( !this.m.clone(cloneID).hasSequence() ){
+            // This clone should not be added to the segmenter
+            return
+        }
+
         var divParent = document.getElementById("listSeq");
         var li = document.createElement('li');
         li.id = "seq" + cloneID;
