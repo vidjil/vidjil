@@ -33,7 +33,7 @@ class TestCluster < BrowserTest
 
   def test_02_cluster_hide
     $b.clone_info('1')[:cluster].click
-    sleep(1)
+    $b.clone_cluster('1').wait_while(&:present?)
     assert (not $b.clone_cluster('1').present?), '>> cluster1 is not display'
   end
 
@@ -48,6 +48,7 @@ class TestCluster < BrowserTest
 
   def test_04_cluster_hide_all
     $b.a(:id => 'list_unsplit_all').click
+    $b.clone_in_segmenter('3').wait_while(&:present?)
     assert (not $b.clone_in_segmenter('3').exists? ), ">> The second clone of the clustr is hidden"
   end
 
