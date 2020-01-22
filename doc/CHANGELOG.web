@@ -2,6 +2,9 @@
 This changelog concerns the Vidjil web application, client and server.
 As we are using continuous integration and deployment, some features are pushed on our servers between these releases.
 
+2020-01-XX Release %"Web 2020.01"
+	* New behaviour of graphList (#4105); Now you can hide/show sample directly from a list with checkbox, and button for automation
+	  You can also hidding them by double clicking on their label in the timeline graphic.
 
 2017-10-XX Release %"Web 2017.10"
 	* New tag mechanism to store/filter default or custom metadata on patient/runs/sets #2170 #2172 #2683
