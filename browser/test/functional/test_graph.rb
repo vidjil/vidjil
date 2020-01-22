@@ -110,6 +110,7 @@ class TestGraph < BrowserTest
     assert ( info_name.text == "T8045-BC082-fu1" ), "info name is the name of sample 0"
     assert ( $b.td(:id => 'graph_listElem_text_'+'1', :class => 'graph_listElem_selected').exists?), "Second sample BECOME bold in list"
     assert ( div_ratio.text == "2 / 2" ), "Ratio show is correct after showAll click"
+
     # click to change the sample
     menu = $b.div(:id => 'visu2_menu')
     sample0 = $b.td(:id => "graph_listElem_text_0")

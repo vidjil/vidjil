@@ -293,6 +293,25 @@ Graph.prototype = {
         line.appendChild(line_content)
         table.appendChild(line)
 
+
+        line   = document.createElement("tr")
+        var line_content   = document.createElement("td")
+        line_content.id = "graph_listElem_showAll"
+        line_content.classList.add("graph_listAll")
+        line_content.textContent = "Show all timepoint"
+        line_content.colSpan = "2"
+        line.appendChild(line_content)
+        table.appendChild(line)   
+
+        line   = document.createElement("tr")
+        line_content   = document.createElement("td")
+        line_content.id = "graph_listElem_hideAll"
+        line_content.classList.add("graph_listAll")
+        line_content.textContent = "Hide all timepoint"
+        line_content.colSpan = "2"
+        line.appendChild(line_content)
+        table.appendChild(line)
+
         for (var i=0; i<this.m.samples.number; i++){
             // Create a line for each sample, with checkbox and name (text)
             var list_content   = document.createElement("tr")
@@ -441,16 +460,101 @@ Graph.prototype = {
         return
     },
 
-
+    /**
+     * Update count of active samples
+     * This value is shown in the first line of the graphList
+     */
     updateCountActiveSample: function(){
         var div   = document.getElementById("graphList_title")
         if (this.m.samples.number != 0 && this.m.samples.number != undefined){
             div.textContent  = ""+this.m.samples.order.length+" / " + this.m.samples.number
-            console.default.log( div.text )
         } else {
+            // If no sample in the model
             div.textContent  = "..."
         }
     },
+
+    /**
+     * Update, in the graph list, the sampel with the selected css rule
+     */
+    updateListElemSelected: function(){
+        var time = this.m.t
+        var elem = document.getElementsByClassName("graph_listElem_selected")
+        // remove css rule of previous sample
+        if (elem.length != 0) {
+            // dont change if previous and current sample are the same
+            if (elem[0].id == 'graph_listElem_text_'+time && this.m.samples.order.length != 0){ return }
+            elem[0].classList.remove("graph_listElem_selected")
+        }
+        // Add css rule to current timepoint (and if at least one is show)
+        if (time != undefined && this.m.samples.order.length != 0){
+            elem = document.getElementById('graph_listElem_text_'+time)
+            elem.classList.add("graph_listElem_selected")
+        }
+        return
+    },
+
+    /**
+     * Update the state of the checkbox of a sample. Use the model samples order as reference.
+     * @param  {[type]} time The timepoint to update
+     */
+    updateListCheckbox: function(time){
+        var checkbox_id  = "graph_listElem_check_"+time
+        var checkbox     = document.getElementById(checkbox_id)
+        checkbox.checked = (this.m.samples.order.indexOf(time) != -1)
+        return
+    },
+
+
+    /**
+     * Invert the value of a sample (show/hide).
+     * Update the checkbox, the sample in model order, and the model 
+     * @param  {[type]} time The timepoint to invert
+     */
+    invertListElement: function(time){
+        var pos_timepoint_in_order = this.m.samples.order.indexOf(time)
+        if (pos_timepoint_in_order == -1){
+            // Add new timepoint
+            this.m.samples.order.push( time )
+            this.m.changeTime(time)
+        } else if (this.m.samples.order.length != 1) {
+            // Remove timepoint; Don't if there is only one sample
+            this.m.samples.order.splice(pos_timepoint_in_order, 1)
+            this.m.changeTime(this.m.samples.order[0])
+        }
+        this.updateListCheckbox(time)
+        this.m.update()
+        return
+    },
+
+    /**
+     * Show all timepoint in the timeline graphic.
+     * Add all samples that are not already in the list of actif samples
+     * Each sample added will be put at the end of the list.
+     */
+    showAllTimepoint: function(){
+        // keep current timepoint active if exist, else, give active to first timepoint
+        var keeptime = this.m.t
+        for (var time = 0; time < this.m.samples.number; time++) {
+            if (this.m.samples.order.indexOf(time) == -1) this.m.addTimeOrder(time)
+        }
+        this.updateList()
+        this.m.changeTime(keeptime)
+        this.m.update()
+        return
+    },
+
+    /**
+     * Remove all sample of the graph except one
+     */
+    hideAllTimepoint: function(){
+        this.m.samples.order = [this.m.t]
+        this.updateList()
+        this.m.update()
+        return
+    },
+
+
 
     /* repositionne le graphique en fonction de la taille de la div le contenant
      *
@@ -506,6 +610,7 @@ Graph.prototype = {
         speed = typeof speed !== 'undefined' ? speed : 500;
         this.updateListElemSelected();
         this.updateCountActiveSample();
+
         this.initAxis()
             .initData()
             .updateRes()

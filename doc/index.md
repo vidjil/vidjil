@@ -6,7 +6,9 @@
 sequencing data from lymphocytes.** [V(D)J recombinations](http://en.wikipedia.org/wiki/V\(D\)J_recombination) in lymphocytes are
 essential for immunological diversity. They are also useful markers of
 pathologies, and in leukemia, are used to quantify the minimal residual
-disease during patient follow-up. High-throughput sequencing (NGS/HTS) now
+disease during patient follow-up.
+With adapted [library preparation and sequencing](locus.md),
+high-throughput sequencing (NGS/HTS) now
 enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](http://omictools.com/rep-seq-c424-p1.html)
 methods and software.
 
@@ -16,6 +18,10 @@ methods and software.
     ([pdf](./tutorial/mastering-vidjil-fr.pdf)). Start by this tutorial to have an overview of Vidjil.
   - Web platform [user manual](user.md)
   - [Demo access](http://app.vidjil.org/) to the patient, experiment and sample server
+
+### Quality documentation and open data
+
+  - [Software Quality and Human Processes](quality.md)
   - [Public datasets](http://www.vidjil.org/data/) supporting Vidjil publications
 
 ### Algorithm and server documentation
