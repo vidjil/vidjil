@@ -108,7 +108,7 @@ Url.prototype= {
 
     parseUrlParams:function () {
         params={}
-        var url = window.location;
+        var url = this.window.location;
         var url_param = [];
         if (url.search.length > 0) {
             url_param = url.search.substr(1).split("&");
@@ -151,7 +151,7 @@ Url.prototype= {
 
     pushUrl: function(params) {
         var new_url;
-        new_url = window.location.pathname + '?' + params;
+        new_url = this.window.location.pathname + '?' + params;
         try  {
             this.window.history.pushState('plop', 'plop', new_url);
         } catch(error) {
@@ -188,7 +188,7 @@ PositionalUrl.prototype = Object.create(Url.prototype);
 PositionalUrl.prototype.parseUrlParams = function() {
         var params = Url.prototype.parseUrlParams.call(this);
 
-        var url = window.location;
+        var url = this.window.location;
         var slash_params = url.pathname.substr(1).split('/');
         var positional_params = [];
         for (var k = 0; k < slash_params.length; k++) {
@@ -227,7 +227,7 @@ PositionalUrl.prototype.generateParamsString = function(params_dict) {
     }
 
 PositionalUrl.prototype.pushUrl = function(params) {
-        var new_url = window.location.href.split('browser')[0] + 'browser' + params;
+        var new_url = this.window.location.href.split('browser')[0] + 'browser' + params;
         console.log("new url: " + new_url);
         this.window.history.pushState('plop', 'plop', new_url);
     };
