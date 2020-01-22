@@ -92,7 +92,6 @@ function List(id_list, id_data, model, database) {
     this.build();
     
     this.sort_option = {
-        "-" : function () {},
         "size" : function(){self.sortListBy(function(id){return self.m.clone(id).getSize();})},
         "V/5'" : function(){self.sortListByV()},
         "J/3'" : function(){self.sortListByJ()}
