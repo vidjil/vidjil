@@ -491,7 +491,11 @@ Segment.prototype = {
      * clear functionnal data in order to start from a clean instance when loading a new .vidjil file
      * */
     reset: function() {
-        this.sequence = {};
+        this.sequence = {}
+        this.sequence_order = []
+        this.index = []
+        if (document.getElementById("listSeq"))
+            document.getElementById("listSeq").innerHTML = ""  
     },
 
     removeGermline:function(id){
@@ -1286,7 +1290,7 @@ Segment.prototype = {
     },
 
     empty: function() {
-        this.sequence = {};
+        this.reset();
     }
 
 }; //fin prototype Segment
