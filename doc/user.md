@@ -158,8 +158,9 @@ The number of displayed clones can be changed with the filter menu.
 
   - The “…” mark at the right of the graph show a menu that allow to manipulate sample (show or hide), one by one, or the entire list. 
 
-  - You can reorder the samples by dragging them, and hide some samples by double clicking on the label.
-    If you want to recover some hidden sample, you need to switch them from the “…” mark to the graph.
+  - You can reorder the samples by dragging them, and hide some samples by double clicking on their label.
+    The “X/Y” mark at the top right of the graph show the number of displayed samples.
+    Clicking on it shows a list where you can show or hide each sample.
 
   - If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between sample keys and dates in “settings \> sample key”
 

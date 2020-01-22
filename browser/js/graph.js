@@ -276,7 +276,7 @@ Graph.prototype = {
         var line_content   = document.createElement("td")
         line_content.id = "graph_listElem_showAll"
         line_content.classList.add("graph_listAll")
-        line_content.textContent = "Show all timepoint"
+        line_content.textContent = "show all samples"
         line_content.colSpan = "2"
         line.appendChild(line_content)
         table.appendChild(line)   
@@ -285,7 +285,7 @@ Graph.prototype = {
         line_content   = document.createElement("td")
         line_content.id = "graph_listElem_hideAll"
         line_content.classList.add("graph_listAll")
-        line_content.textContent = "Hide all timepoint"
+        line_content.textContent = "hide all samples"
         line_content.colSpan = "2"
         line.appendChild(line_content)
         table.appendChild(line)
