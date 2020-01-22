@@ -529,6 +529,7 @@ Segment.prototype = {
         for (var i = 0; i < list.length; i++) {     
 
             var cloneID = list[i];
+
             var liDom = this.index[cloneID];
             
             if (this.m.clone(cloneID).isSelected()) {               // the clone is selected
@@ -538,7 +539,7 @@ Segment.prototype = {
                 liDom.display("main", "block");
                 this.div_elem(liDom.getElement("seq-fixed"), cloneID);
                 var seq = this.sequence[cloneID].toString(this);
-                liDom.content("seq-mobil", seq);       
+                liDom.content("seq-mobil", seq);        
             } else {    
                 if (this.sequence[cloneID]){                         
                     delete this.sequence[cloneID];                  //  > delete the sequence 
@@ -555,7 +556,6 @@ Segment.prototype = {
 
         if (sliderNeedUpdate) this.show();
         this.updateAlignmentButton()
-        //this.updateSegmenterWithHighLighSelection();
         this.updateStats();  
     },
 
@@ -1378,6 +1378,7 @@ genSeq.prototype= {
     highlightToString: function(highlights, window_start) {
         result = document.createElement('span');
         currentSpan = document.createElement('span');
+        currentSpan.id = "sequence-clone-"+ this.id
 
         var canDisplaySynMutations = (! this.segmenter.amino &&
                                       this.m.clones.hasOwnProperty(this.segmenter.sequence_order[0]) &&
@@ -1511,7 +1512,11 @@ Sequence.prototype = Object.create(genSeq.prototype);
                 stop = this.pos[clone.sequence.indexOf(clone.seg.cdr3) + clone.seg.cdr3.length -1];
             }
         }
-        
+        if (start == undefined || stop == undefined){
+            console.error( "Sequence error. Start/stop position of cdr3 are undefined")
+            return
+        }
+
         for (var h=0; h<this.seq.length; h++) this.seqAA[h] = " ";
         
         var i = 0

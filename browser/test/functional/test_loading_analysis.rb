@@ -168,7 +168,7 @@ end
     $b.unselect
   end
 
-  def test_90_select_other
+  def test_09_select_other
     # Click on first point
     $b.graph_x_legend('1').click
     $b.update_icon.wait_while(&:present?)
@@ -178,6 +178,20 @@ end
     qpcr = $b.external_data('qPCR')
     assert (qpcr[:name] == 'qPCR' and qpcr[:value] == 0.024), "qPCR external data not as expected"
 
+  end
+
+  def test_10_clone_segedited_from_analysis
+    # Click on first point
+    $b.clone_in_scatterplot('3').click
+    sleep 1
+    # If cdr3 checked, the sequence will be split in mutiple dom element with highlight or not
+    check = $b.checkbox(:id => "vdj_input_check")
+    if check.set? # by default, in chromium based browser, the checkbox is set to true
+      check.click
+    end
+    assert ( not check.set? ), "CDR3 checkbox is not checked"
+    assert ( $b.clone_in_segmenter('3').exists? ), ">> clone 3 is correctly present in the segmenter, without infinite loop"
+    assert ( $b.span(:id => 'sequence-clone-3').text.include? 'GGGGGCCCCCGGGGGCCCCCGGGGGCCCCCGGGGGCCCCCAAAAATTTTTAAAAATTTTTAAAAATTTTT'), "sequence of analysis loaded replace sequence of vidjil file"
   end
 
   def test_zz_close
