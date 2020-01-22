@@ -1290,11 +1290,7 @@ Segment.prototype = {
     },
 
     empty: function() {
-        this.sequence = {}
-        this.sequence_order = []
-        this.index = []
-        if (document.getElementById("listSeq"))
-            document.getElementById("listSeq").innerHTML = ""  
+        this.reset();
     }
 
 }; //fin prototype Segment
