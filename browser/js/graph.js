@@ -165,7 +165,7 @@ Graph.prototype = {
                 })
                 .on("mouseover", function () {
                     self.m.focusOut();
-                    $("#" + self.id + "_list")
+                    $("#graphList_table")
                         .stop(true, true)
                         .hide("fast")
                 })
@@ -184,7 +184,7 @@ Graph.prototype = {
                 })
                 .on("mouseover", function () {
                     self.m.focusOut();
-                    $("#" + self.id + "_list")
+                    $("#graphList_table")
                         .stop(true, true)
                         .hide("fast")
                 })
@@ -233,7 +233,7 @@ Graph.prototype = {
         div.appendChild(list_title)
         
         var list = document.createElement('table')
-        list.id = "" + this.id + "_list"
+        list.id = "graphList_table"
         list.className = "graph_list"
         
         div.appendChild(list)
@@ -248,7 +248,7 @@ Graph.prototype = {
                 self.dragTimePoint()
             })
             .on("mouseover", function () {
-                $("#" + self.id + "_list")
+                $("#graphList_table")
                     .stop(true, true)
                     .show("fast")
             })
@@ -265,15 +265,12 @@ Graph.prototype = {
         
         var list = document.getElementById("" + this.id + "_list")
 
-        list.removeAllChildren();
-        var list_title = document.createElement('div')
-        list_title.id = "graphList_title"
-        list.appendChild(list_title)
         this.updateCountActiveSample()
 
-        // Create a table to store each line
-        var table = document.createElement("table")
-        table.id  = "graphList_table"
+        // Update table to store each line
+        var table = document.getElementById("graphList_table")
+        table.removeAllChildren()
+
 
         var line   = document.createElement("tr")
         var line_content   = document.createElement("td")
@@ -318,7 +315,6 @@ Graph.prototype = {
             list_content.appendChild(line_content_text)
             table.appendChild(list_content) 
         }
-        list.appendChild(table)
 
         $("#graph_listElem_showAll").click(function () {
             console.log( "self.showAllTimepoint()" )
