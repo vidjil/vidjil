@@ -272,7 +272,8 @@ Graph.prototype = {
         this.updateCountActiveSample()
 
         // Create a table to store each line
-        var table   = document.createElement("table")
+        var table = document.createElement("table")
+        table.id  = "graphList_table"
 
         var line   = document.createElement("tr")
         var line_content   = document.createElement("td")

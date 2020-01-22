@@ -28,10 +28,12 @@ class TestGraph < BrowserTest
     sample_arrow = $b.i(:title => "next sample")
     assert ( sample_arrow.present? ), "sample arrow next is present at beginning"
     assert ($b.graph_x_legend('0', :class => 'graph_time2').exists?), "first sample is current sample (bold in graph text)"
+    div_ratio = $b.div(:id => "graphList_title")
+    assert ( div_ratio.text == "2 / 2" ), "Ratio show is correct at init"
 
     # By default, checkbox are true
     $b.div(:id => 'visu2_menu').click
-    sleep 0.1
+    $b.table(:id => "graphList_table").wait_until(&:present?)
     assert ($b.td(:id => 'graph_listElem_text_'+'0', :class => 'graph_listElem_selected').exists?), "First sample IS bold in list"
     assert (not $b.td(:id => 'graph_listElem_text_'+'1', :class => 'graph_listElem_selected').exists?), "Second sample is NOT bold in list"
     # assert ( not $b.td(:id => '1', :class => 'graph_listElem_selected').exists?), "Second sample is NOT bold in list"
@@ -52,6 +54,7 @@ class TestGraph < BrowserTest
     assert ( check1.set? ), "second checkbox is true"
     # verify that the second sample become selected (class: graph_time2)
     assert ($b.graph_x_legend('1', :class => 'graph_time2').exists?), "second sample become current sample (bold in graph text)"
+    assert ( div_ratio.text == "1 / 2" ), "Ratio show is correct after first hidding first sample"
 
     # hide second sample by dblclick on graph label (prevent as last)
     time1.double_click
@@ -59,6 +62,7 @@ class TestGraph < BrowserTest
     assert ( time1.present? ), "second sample still present in timeline"
     check1 = $b.checkbox(:id => "graph_listElem_check_1")
     assert ( check1.set? ), "second checkbox still true as sample is not disable"
+    assert ( div_ratio.text == "1 / 2" ), "Ratio show is correct after prevent hidding of last sample"
     
 
     # Use show all and hide all button
@@ -105,6 +109,7 @@ class TestGraph < BrowserTest
     info_name = $b.div(:id => "info_sample_name")
     assert ( info_name.text == "T8045-BC082-fu1" ), "info name is the name of sample 0"
     assert ( $b.td(:id => 'graph_listElem_text_'+'1', :class => 'graph_listElem_selected').exists?), "Second sample BECOME bold in list"
+    assert ( div_ratio.text == "2 / 2" ), "Ratio show is correct after showAll click"
     # click to change the sample
     menu = $b.div(:id => 'visu2_menu')
     sample0 = $b.td(:id => "graph_listElem_text_0")
