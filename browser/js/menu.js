@@ -126,6 +126,9 @@ function showSelector(elem) {
             .css('display', 'none');
         $('#' + elem)
             .css('display', 'block')
+            .animate({
+                height: $('#' + elem).children(":first").height()
+            }, 100);
 }
 
 function hideSelector() {
