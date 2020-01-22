@@ -32,11 +32,11 @@ class TestGraph < BrowserTest
     assert ( div_ratio.text == "2 / 2" ), "Ratio show is correct at init"
 
     # By default, checkbox are true
-    $b.div(:id => 'visu2_menu').click
+    $b.div(:id => 'visu2_menu').hover
     $b.table(:id => "graphList_table").wait_until(&:present?)
     assert ($b.td(:id => 'graph_listElem_text_'+'0', :class => 'graph_listElem_selected').exists?), "First sample IS bold in list"
     assert (not $b.td(:id => 'graph_listElem_text_'+'1', :class => 'graph_listElem_selected').exists?), "Second sample is NOT bold in list"
-    # assert ( not $b.td(:id => '1', :class => 'graph_listElem_selected').exists?), "Second sample is NOT bold in list"
+    # Assert on checkbox
     check0 = $b.checkbox(:id => "graph_listElem_check_0")
     assert ( check0.set? ), "first checkbox is true"
     check1 = $b.checkbox(:id => "graph_listElem_check_1")

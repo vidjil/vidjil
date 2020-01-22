@@ -293,25 +293,6 @@ Graph.prototype = {
         line.appendChild(line_content)
         table.appendChild(line)
 
-
-        line   = document.createElement("tr")
-        var line_content   = document.createElement("td")
-        line_content.id = "graph_listElem_showAll"
-        line_content.classList.add("graph_listAll")
-        line_content.textContent = "Show all timepoint"
-        line_content.colSpan = "2"
-        line.appendChild(line_content)
-        table.appendChild(line)   
-
-        line   = document.createElement("tr")
-        line_content   = document.createElement("td")
-        line_content.id = "graph_listElem_hideAll"
-        line_content.classList.add("graph_listAll")
-        line_content.textContent = "Hide all timepoint"
-        line_content.colSpan = "2"
-        line.appendChild(line_content)
-        table.appendChild(line)
-
         for (var i=0; i<this.m.samples.number; i++){
             // Create a line for each sample, with checkbox and name (text)
             var list_content   = document.createElement("tr")
@@ -371,9 +352,6 @@ Graph.prototype = {
      * Update the content of checkbox for each sample, depending if his presence into the model samples order list
      */
     updateList : function() {
-        var self = this;
-        var list_sample = document.getElementById("" + this.id + "_list")
-
         for (var time = 0; time < this.m.samples.number; time++) { 
             this.updateListCheckbox(time)
         }
