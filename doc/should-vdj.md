@@ -1,6 +1,5 @@
-<link rel="stylesheet" type="text/css" href="org-mode.css" />
 
-# A quality control of bioinformatics analysis
+# Quality control of designation of V(D)J recombinations with `.should-vdj.fa` tests
 
 The `.should-vdj.fa` tests are sequences with manually curated V(D)J designations.
 These designations were checked by hand, possibly with the help of some bioinformatics tools.
@@ -10,18 +9,19 @@ to borderline or difficult cases, including incomplete or unusual recombinations
 This collection of sequences, distributed as open-source data, may help the robustness
 of any software doing immune repertoire sequencing (RepSeq) analysis.
 
-# Contributing to the tests
+## Contributing to the tests
 
-Users and developers of RepSeq software are encouraged to send us (`contact@vidjil.org`)
+Users and developers of RepSeq software are encouraged to [send us](contact@vidjil.org)
 their manually curated sequences, ideally in the format described below, or by
-directly proposing pull requests on GitHub with new tests in the [`algo/tests/should-vdj`](https://github.com/vidjil/vidjil/tree/master/algo/tests/should-vdj-tests) directory.
+directly proposing pull requests on Gitlab with new tests in the [`algo/tests/should-vdj`](https://gitlab.com/vidjil/vidjil/tree/master/algo/tests/should-vdj-tests) directory.
 We can also help to encode sequences in this format.
 The current tests were contributed by:
 
   - Yann Ferret (CHRU Lille), 2014-2015 \[1\]
-  - Florian Thonier (Inserm, Paris Necker), 2015
+  - Florian Thonier (Inserm, Paris Necker), 2015-2016
+  - And many users of the Vidjil platform
 
-# A `.should-vdj.fa` file
+## A `.should-vdj.fa` file
 
 A `.should-vdj.fa` file is (almost) a Fasta file, containing one or several sequences
 with their V(D)J designation:
@@ -50,7 +50,7 @@ aCTGTGCCTGCtaGTCACCTCATCGAATTATTATAAGA
 Nucleotide sequences can mix upper-case and lower-case characters, and may contain arbitrary line breaks.
 Comments can be given either as lines starting with `#`, or parts of headers, again starting with `#`.
 
-# Encoding the V(D)J designation
+## Encoding the V(D)J designation
 
 The header of each sequence, beginning by `>`, gives the V(D)J designation of the underlying sequence,
 such as in `>IGKV1-5*03 9/CTAC/1 IGKJ1*01  [IGK]`.
@@ -85,7 +85,7 @@ Incomplete or unusual recombinations can also be specified, such as
 
 Very special cases should be explained by comments in plain English.
 
-# Encoding the locus
+## Encoding the locus
 
 The end of the header may also contain information on the locus, between brackets, leading to additional tests.
 This also allows to specify only `>[TRG]` for a sequence that should be recognized as TRG
@@ -97,7 +97,7 @@ Mixed TRA/TRD recombinations can be encoded with `[TRA+D]`.
 
 Other special cases, such as translocations involving BCL1 or BCL2, should be written now as comments after a `#` character.
 
-# Encoding the JUNCTION/CDR3 information
+## Encoding the JUNCTION/CDR3 information
 
 JUNCTION or CDR3 information can be optionnaly encoded, using curly braces:
 
@@ -106,7 +106,7 @@ JUNCTION or CDR3 information can be optionnaly encoded, using curly braces:
 AAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGAGACCCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGC
 ```
 
-# Ambiguous or alternate designations
+## Ambiguous or alternate designations
 
 On some sequences, several V(D)J designations may be equally acceptable.
 These alternate choices can be encoded as `(choice1, choice2)`.
@@ -127,30 +127,31 @@ TGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGTT
 >TRGV4*02 (4/4/4 TRGJ1*01, 4/4/1 TRGJ1*02) [TRG]
 ```
 
-# Program-specific information
+## Program-specific information
 
-## Vidjil
+### Vidjil-algo
 
-In Vidjil, the automated test suite launches the analysis on all these
+The automated test suite of vidjil-algo launches the analysis on all these `.should-vdj`
 sequences and compares the computed designations with the curated designations.
 Cases with current failure will be marked as TODO.
 Having a correct behavior on these tests may be a goal for future releases.
 
-Vidjil can be tested on `.should-vdj:` tests can be launched within the `algo/tests` directory:
+Within the `algo/tests` directory:
 
   - `python should-vdj-to-tap.py` runs one or several tests, given as parameters on the command line,
   - `make shouldvdj` runs all `.should-vdj.fa` tests,
   - `make shouldvdj_and_locus` further runs tests on the locus.
     This locus test is also launched for all reverse complement sequences.
 
-# References
+## References
 
-The paper \[2\] includes an evaluation of the V(D)J designation of 125 clones.
+The paper \[1\] includes an evaluation of the V(D)J designation of 125 clones.
 
-1.  Y. Ferret, A. Caillault and al.,
-    Multi-loci diagnosis of acute lymphoblastic leukaemia with high-throughput sequencing and bioinformatics analysis
-    British Journal of Haematology, <doi:10.1111/bjh.13981>, 2016, in press.
+1.  Yann Ferret, A. Caillault et al.,
+    *Multi-loci diagnosis of acute lymphoblastic leukaemia with high-throughput sequencing and bioinformatics analysis*,
+    British Journal of Haematology, 2016, 173, 413–420,
+    <http://dx.doi.org/10.1111/bjh.13981>
 
-2.  Y. Ferret, A. Caillault and al.,
-    Multi-loci diagnosis of acute lymphoblastic leukaemia with high-throughput sequencing and bioinformatics analysis
-    British Journal of Haematology, <doi:10.1111/bjh.13981>, 2016, in press.
+2.  Mikaël Salson et al., A dataset of sequences with manually curated V(D)J designations
+    RepSeq 2015,
+    <https://hal.inria.fr/hal-01331556>
