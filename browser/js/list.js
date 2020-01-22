@@ -301,20 +301,19 @@ List.prototype = {
         var lock_div = document.createElement("icon")
         lock_div.id = "div_sortLock"
 
-        lock_div.className = "icon-lock-filled"
-        lock_div.style.fontSize = "18px";
+        lock_div.className = "icon-lock-1"
         lock_div.title  = "Keep list sorted"
         lock_div.onclick = function(){
             var div = document.getElementById("div_sortLock")
             if (self.sort_lock == true){
                 self.sort_lock = false
-                div.className  = "icon-lock-open-filled"
+                div.className  = "icon-lock-open"
                 div.title  = "Freeze list"
                 // Apply sort method at unlock
                 self.sort_option[self.sort_option_selected]()
             } else {
                 self.sort_lock = true
-                div.className  = "icon-lock-filled"
+                div.className  = "icon-lock-1"
                 div.title  = "Keep list sorted"
             }
         }
