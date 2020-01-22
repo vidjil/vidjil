@@ -331,7 +331,7 @@ List.prototype = {
             // Open the lock
             self.sort_lock = false
             var div = document.getElementById("div_sortLock")
-            div.className  = "icon-lock-open"
+            div.className  = "icon-lock-open-filled"
         }
         
         for (var key in this.sort_option) {
@@ -345,19 +345,20 @@ List.prototype = {
         sort_span.appendChild(sort);
         var lock_div = document.createElement("icon")
         lock_div.id = "div_sortLock"
-        lock_div.className = "icon-lock-1"
+        lock_div.className = "icon-lock-filled"
+        lock_div.style.fontSize = "18px";
         lock_div.title  = "Lock positions of clones in the list."
         lock_div.title += "At unlock, selected sort method will be automaticly apply."
         lock_div.onclick = function(){
             var div = document.getElementById("div_sortLock")
             if (self.sort_lock == true){
                 self.sort_lock = false
-                div.className  = "icon-lock-open"
+                div.className  = "icon-lock-open-filled"
                 // Apply sort method at unlock
                 self.sort_option[self.sort_option_selected]()
             } else {
                 self.sort_lock = true
-                div.className  = "icon-lock-1"
+                div.className  = "icon-lock-filled"
             }
         }
 

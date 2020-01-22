@@ -2257,3 +2257,10 @@ form .form_label {
   opacity: 0.4;
   cursor: auto;
 }
+
+.list_lock_off {
+  color: #b4b0b0;
+}
+.list_lock_on {
+  color: #000000;
+}
