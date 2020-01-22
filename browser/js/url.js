@@ -115,6 +115,13 @@ Url.prototype= {
         }
         for (var i = 0; i < url_param.length; i++) {
             var tmparr = url_param[i].split("=");
+
+            // if the format isn't respected ignore parameter
+            if (tmparr.length !== 2) {
+                console.log("incorrect parameter: " + url_param[i]);
+                continue;
+            }
+
             var p = params[tmparr[0]];
             var key = this.encoder.decode(tmparr[0]);
             var val = tmparr[1];
