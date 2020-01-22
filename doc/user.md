@@ -161,8 +161,9 @@ The number of displayed clones can be changed with the filter menu.
 
   - If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between sample keys and dates in “settings \> sample key”
 
-  - You can filter clonotype show in the panel to retain only clonotype present in the current sample. You can find switch under menu “filter \> Show only one sample“.
-    This option use usefull when you want to see contamination between samples for example.
+  - By default, the graph shows clones present in any sample.
+    You can instead choose to show only the clones present in the selected sample with “filter \> focus on clones of one sample“.
+
 
 ## The plot view and the plot presets
 
