@@ -140,7 +140,7 @@ class TestMultilocus < BrowserTest
     assert ( $b.clone_in_list('25').class_name.include? "list_select" ), ">> Incorrect class name, clone is not selected"
     assert ( $b.clone_in_scatterplot('25', :class => "circle_select").exists?)
     assert ( $b.clone_in_graph('25', :class=> "graph_select").exists?)
-    assert ( $b.clone_in_segmenter('25').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
+    assert ( $b.clone_in_segmenter('25').present? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
 
     stats = $b.statsline
     assert (stats.text.include? '1 clone'), ">> Incorrect stats, should have one clone"
@@ -343,13 +343,13 @@ class TestMultilocus < BrowserTest
     $b.update_icon.wait_while(&:present?)
     $b.until { $b.clone_in_scatterplot('1', :class => "circle_select").exists?}
     assert ( $b.clone_in_graph('1', :class=> "graph_select").exists?)
-    assert ( $b.clone_in_segmenter('1').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
+    assert ( $b.clone_in_segmenter('1').present? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
     assert ( $b.clone_in_scatterplot('37', :class => "circle_select").exists?)
     assert ( $b.clone_in_graph('37', :class=> "graph_select").exists?)
-    assert ( $b.clone_in_segmenter('37').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
+    assert ( $b.clone_in_segmenter('37').present? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
     assert ( $b.clone_in_scatterplot('90', :class => "circle_select").exists?)
     assert ( $b.clone_in_graph('90', :class=> "graph_select").exists?)
-    assert ( $b.clone_in_segmenter('90').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
+    assert ( $b.clone_in_segmenter('90').present? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
 
     $b.clone_in_cluster('90', '1')[:delete].click
     $b.clone_in_cluster('90', '37')[:delete].click

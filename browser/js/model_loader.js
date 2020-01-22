@@ -552,7 +552,12 @@ Model_loader.prototype = {
                             this.clones[n].germline = clone.germline;
                             this.clones[n].eValue   = clone.eValue;
                             this.clones[n].seg = clone.seg;
-                            
+
+                            if (clone.sequence != this.clones[n].sequence){
+                                // Sometimes sequence can differ. In this case, take the analysis one
+                                console.default.warn( "sequence contain in analysis differ for clone ", n)
+                                this.clones[n].sequence = clone.sequence
+                            }
                         }
                     }
                     // load germline in system_available

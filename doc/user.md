@@ -3,7 +3,8 @@
 Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes.
 [V(D)J recombinations](http://en.wikipedia.org/wiki/V\(D\)J_recombination) in lymphocytes are essential for immunological diversity.
 They are also useful markers of pathologies, and in leukemia, are used to quantify the minimal residual disease during patient follow-up.
-High-throughput sequencing (NGS/HTS) now enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](http://omictools.com/rep-seq-c424-p1.html) methods and software.
+With adapted [library preparation and sequencing](http://www.vidjil.org/doc/locus),
+high-throughput sequencing (NGS/HTS) now enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](http://omictools.com/rep-seq-c424-p1.html) methods and software.
 
 This is the help of the [Vidjil web application](http://app.vidjil.org/).
 Further help can always be asked to <support@vidjil.org>. We can also arrange phone or video meeting.
@@ -324,7 +325,7 @@ The different permissions that can be attributed are:
   - View Details: Permissions to view patient/run/set data in an unencrypted manner for the patients/runs/sets of a group
   - Save: Permissions to save an analysis for the patients/runs/sets of a group
 
-# How do you define clones, their sequences, and their V(D)J designation?
+# How do you define clones, their sequences, their V(D)J designation and their productivity?
 
 The Vidjil web application allows to run several RepSeq algorithms.
 Each RepSeq algorithm (selected by « config », see above)
@@ -380,6 +381,16 @@ Once clones are selected, you can send their sequence to **IMGT/V-QUEST** and **
 by clicking on the links just above the sequence panel (bottom left).
 This opens another window/tab.
 
+## How is productivity computed? Why do I have some discrepancies with other software?
+Vidjil-algo computes the productivity by checking that the CDR3 comes from
+an in-frame recombination and that there is no stop codon in the full
+sequence.
+
+The productivitiy as computed by Vidjil-algo may differ from what computes
+other software. For instance, as of September 2019, IMGT/V-QUEST removes by default
+insertions and deletions from the sequences to compute the productivity, as it
+considers them as sequencing errors. Moreover IMGT/V-QUEST checks that there
+is no stop codon only in the CDR3 and not in the full sequence.
 # Can I see all the clones and all the reads ?
 
 The interest of NGS/RepSeq studies is to provide a deep view of any
@@ -481,7 +492,8 @@ There can be several causes leading to bad ratios:
 
 ### PCR or sequencing causes
 
-  - The read length is too short and the reads do not span the junction zone.
+  - The read length is too short and the reads do not span the junction zone
+    (see also comments on read length concerning [library preparation and sequencing](http://www.vidjil.org/doc/locus#read-length)).
     Vidjil-algo detects a “window” including the CDR3. By default this window is 50bp long, so the read needs be
     that long centered on the junction.
     Reads with no similarity to either V or J are reported as not analyzed (`UNSEG only V/J` or even `UNSEG too few V/J`).

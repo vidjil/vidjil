@@ -48,7 +48,7 @@ class TestList < BrowserTest
     # verifier que l'ordre a déjà changer (automatique sort)
     listClone = $b.list()  
     l0 = listClone.div(index: 0)
-    assert ( l0.id == "listElem_4" ), "opening; correct id of the first element"
+    assert ( l0.id == "listElem_5" ), "opening; correct id of the first element (clone other)"
     
   end
 

@@ -33,7 +33,7 @@ class TestCluster < BrowserTest
 
   def test_02_cluster_hide
     $b.clone_info('1')[:cluster].click
-    sleep(1)
+    $b.clone_cluster('1').wait_while(&:present?)
     assert (not $b.clone_cluster('1').present?), '>> cluster1 is not display'
   end
 
@@ -48,31 +48,32 @@ class TestCluster < BrowserTest
 
   def test_04_cluster_hide_all
     $b.a(:id => 'list_unsplit_all').click
-    assert (not $b.clone_in_segmenter('3').exists? ), ">> The second clone of the clustr is hidden"
+    $b.clone_in_segmenter('3').wait_while(&:present?)
+    assert (not $b.clone_in_segmenter('3').present? ), ">> The second clone of the cluster is hidden"
   end
 
 
   def test_05_switch_onlyOneSample
-    cloneId = '3'
+    cloneId = '4'
     sleep 1
     # exist will not work as the clone is present, but not visible.
     # So use the number ofd points of the line [2+number of timepoint show]
-    polyline3 = $b.path(:id => "polyline"+cloneId )
+    polyline4 = $b.path(:id => "polyline"+cloneId )
 
-    assert ( polyline3.attribute_value("d").split(',').length == 4 ), ">> clone is present in the graph by default"
+    assert ( polyline4.attribute_value("d").split(',').length == 4 ), ">> clone is present in the graph by default"
 
     # switch the filter on, current sample include cloneId
     $b.menu_filter.click
     $b.div(:id => "filter_switch_sample").click
     assert ( $b.clone_in_list(cloneId).exists? ), ">> clone is present in the list"
 
-    assert ( polyline3.attribute_value("d").split(',').length == 4 ), ">> clone is present in the graph if switched in filter menu (and correct sample)"
+    assert ( polyline4.attribute_value("d").split(',').length == 4 ), ">> clone is present in the graph if switched in filter menu (and correct sample)"
 
 
     # change current sample, will not include cloneId
     $b.send_keys :arrow_right
     sleep 1
-    assert ( polyline3.attribute_value("d").split(',').length == 2 ), ">> clone is NOT present in the graph if switched in filter menu and sample with size at 0 for this clone"
+    assert ( polyline4.attribute_value("d").split(',').length == 2 ), ">> clone is NOT present in the graph if switched in filter menu and sample with size at 0 for this clone"
   end
 
 
