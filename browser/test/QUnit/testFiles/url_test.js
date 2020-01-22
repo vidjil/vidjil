@@ -3,16 +3,37 @@ QUnit.module("Url", {
 });
 
 /* ------------------------------------ */
-var current_url = "mock://"
+var initial_url = "mock://";
+var current_url = initial_url;
+
+function getSearch(url) {
+    var search = url.split('?')[1] ;
+    return (search == "" ? "" : '?' + search)
+}
+
+function getPathname(url) {
+    // remove protocol
+    var pathname = url.split('//');
+    pathname = pathname[1];
+    // remove search
+    pathname = pathname.split('?')[0];
+    // remove hostname
+    pathname = pathname.split('/');
+    return '/' + pathname.slice(1).join('/');
+}
+
 var windowMock = {
     mocked: true,
     location: {
-        search: {
-            toString: function() { var search = (current_url + '?').split('?')[1] ;
-                                   return (search == "" ? "" : '?' + search) }
-        }},
+        search: "",
+        pathname: ""
+    },
     history: {
-        pushState: function(x, y, url) { current_url = url }
+        pushState: function(x, y, url) {
+            current_url = url;
+            windowMock.location.search = getSearch(url);
+            windowMock.location.pathname = getPathname(url);
+        }
     }
 };
 windowMock.window = windowMock
