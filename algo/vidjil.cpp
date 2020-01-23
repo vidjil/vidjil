@@ -585,7 +585,7 @@ int main (int argc, char **argv)
   bool no_airr = false;
   bool no_vidjil = false;
   app.add_flag("--no-airr", no_airr, "do not output AIRR .tsv") -> group(group) -> level();
-  app.add_flag("--no-vidjil", no_vidjil, "do not output .vidjil") -> group(group) -> level();
+  app.add_flag("--no-vidjil", no_vidjil, "do not output clones in .vidjil") -> group(group) -> level();
 
   int verbose = 0 ;
   app.add_flag_function("--verbose,-v", [&](size_t n) { verbose += n ; }, "verbose mode") -> group(group);
