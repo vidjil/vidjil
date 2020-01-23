@@ -1,4 +1,3 @@
-
 #include "output.h"
 
 #define NULL_VAL ""
@@ -134,8 +133,8 @@ void SampleOutputVidjil::out(ostream &s, bool with_clones)
    json j_clones;
 
    if (with_clones)
-   for (auto it: clones)
-      j_clones.push_back(it.second->toJson());
+      for (auto it: clones)
+         j_clones.push_back(it.second->toJson());
 
    j["clones"] = j_clones;
 
