@@ -396,7 +396,7 @@ ff45-server-functional:
 benchmark_algo:
   stage: benchmark
   script:
-    - cd algo/tests ; python3 benchmark-releases.py -bi
+    - cd algo/tests ; python3 benchmark-releases.py -bic
   when: manual
   only:
     - /^feature-.*a.*\/.*$/
