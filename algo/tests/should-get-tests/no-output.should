@@ -1,0 +1,20 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta ; cat out/Stanford_S22.vidjil
+
+$ There are three clones in the .vidjil
+3:"id"
+
+!LAUNCH: $VIDJIL_DIR/$EXEC --no-vidjil -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta ; cat out/Stanford_S22.vidjil
+
+$ There are no clones in the .vidjil
+0:"id"
+
+
+!LAUNCH: rm out/Stanford_S22.tsv ; $VIDJIL_DIR/$EXEC -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta > /dev/null ; touch out/Stanford_S22.tsv ; cat out/Stanford_S22.tsv 
+
+$ The AIRR .tsv file has four lines
+4:
+
+!LAUNCH: rm out/Stanford_S22.tsv ; $VIDJIL_DIR/$EXEC --no-airr -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta > /dev/null ; touch out/Stanford_S22.tsv ; cat out/Stanford_S22.tsv 
+
+$ No AIRR .tsv file
+0:
