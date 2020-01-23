@@ -129,10 +129,11 @@ CloneOutput* SampleOutput::getClone(junction junction)
 
 // .vidjil json output
 
-void SampleOutputVidjil::out(ostream &s)
+void SampleOutputVidjil::out(ostream &s, bool with_clones)
 {
    json j_clones;
 
+   if (with_clones)
    for (auto it: clones)
       j_clones.push_back(it.second->toJson());
 

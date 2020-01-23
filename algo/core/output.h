@@ -69,7 +69,7 @@ public:
 class SampleOutputVidjil : public SampleOutput
 {
 public:
-  void out(ostream &s);
+  void out(ostream &s, bool with_clones=true);
 };
 
 // AIRR
