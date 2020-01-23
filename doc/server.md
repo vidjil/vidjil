@@ -256,7 +256,7 @@ Here are some notable configuration changes you should consider:
 # Docker -- Adding external software
 
 Some software can be added to Vidjil for pre-processing or even processing if the
-software outputs data compatible with the `.vidjil` format.
+software outputs data compatible with the `.vidjil` or AIRR format.
 We recommend you add software by adding a volume to your `docker-compose.yml`.
 By default we add our external files to `/opt/vidjil` on the host machine. You can then
 reference the executable in `vidjil-server/conf/defs.py`.

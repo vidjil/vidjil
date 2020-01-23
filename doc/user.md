@@ -30,16 +30,19 @@ recombinations and the sequences found in one or several samples.
 
 The easiest way to get these files is to [request an account](http://app.vidjil.org/) on the public Vidjil test server.
 You will then be able to upload,
-manage, process your samples (`.fasta`, `.fastq`, `.gz` or `.clntab` files) directly on the web application
+manage, process your samples (`.fasta`, `.fastq`, `.gz`, `.bam`, or `.clntab` files) directly on the web application
 (see *The patient/experiment database and the server*), and the server behind the patient/experiment
-database computes these `.vidjil` files.
-Otherwise, such `.vidjil` files can be obtained:
+database computes these `.vidjil` files with vidjil-algo.
+Otherwise, such `.vidjil` files can be obtained either:
 
-  - from vidjil-algo (starting from
+  - running vidjil-algo from the command line (starting from
     `.fasta`, `.fastq` or `.gz` files, see [vidjil-algo documentation](http://www.vidjil.org/doc/vidjil-algo/)).
     To gather several `.vidjil` files, you have to use the [fuse.py](http://git.vidjil.org/blob/master/tools/fuse.py) script
   - or by any other V(D)J analysis pipelines able to output files
-    respecting the `.vidjil` [file format](./format-analysis.org) (contact us if you are interested)
+    respecting the `.vidjil` [file format](http://www.vidjil.org/doc/vidjil-format/)
+  - or by using the [fuse.py](http://git.vidjil.org/blob/master/tools/fuse.py) script on the standard [AIRR representation](http://docs.airr-community.org/en/latest/datarep/overview.html#format-specification)
+
+Contact us if you want help on converting such data.
 
 # First aid
 
