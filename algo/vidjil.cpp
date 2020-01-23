@@ -582,6 +582,8 @@ int main (int argc, char **argv)
   app.add_option("--dir,-o", out_dir, "output directory", true) -> group(group) -> type_name("PATH");
   app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> type_name("STRING");
 
+  bool no_vidjil = false;
+  app.add_flag("--no-vidjil", no_vidjil, "do not output .vidjil") -> group(group) -> level();
 
   int verbose = 0 ;
   app.add_flag_function("--verbose,-v", [&](size_t n) { verbose += n ; }, "verbose mode") -> group(group);
@@ -1739,11 +1741,19 @@ int main (int argc, char **argv)
   static_cast<SampleOutputAIRR *>(&output) -> out(out_airr);
 
   //$ Output .vidjil json
-  cout << "  ==> " << f_json << "\t(data file for the Vidjil web application)" << endl ;
+  cout << "  ==> " << f_json ;
+  if (no_vidjil)
+  {
+    cout << "\t(data file for the Vidjil web application)" << endl;
+  }
+  else
+  {
+    cout << "\t(only metadata, no clone output)" << endl;
+  }
   ofstream out_json(f_json.c_str()) ;
   SampleOutputVidjil *outputVidjil = static_cast<SampleOutputVidjil *>(&output);
 
-  outputVidjil->out(out_json);
+  outputVidjil -> out(out_json, !no_vidjil);
 
   //$$ Clean
   if (__only_on_exit__clean_memory) { delete multigermline ; delete reads; } return 0 ;
