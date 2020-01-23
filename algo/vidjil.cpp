@@ -582,7 +582,9 @@ int main (int argc, char **argv)
   app.add_option("--dir,-o", out_dir, "output directory", true) -> group(group) -> type_name("PATH");
   app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> type_name("STRING");
 
+  bool no_airr = false;
   bool no_vidjil = false;
+  app.add_flag("--no-airr", no_airr, "do not output AIRR .tsv") -> group(group) -> level();
   app.add_flag("--no-vidjil", no_vidjil, "do not output .vidjil") -> group(group) -> level();
 
   int verbose = 0 ;
@@ -1736,9 +1738,12 @@ int main (int argc, char **argv)
   }
 
   //$ Output AIRR .tsv
-  cout << "  ==> " << f_airr << "   \t(AIRR output)" << endl;
-  ofstream out_airr(f_airr.c_str());
-  static_cast<SampleOutputAIRR *>(&output) -> out(out_airr);
+  if (!no_airr)
+  {
+    cout << "  ==> " << f_airr << "   \t(AIRR output)" << endl;
+    ofstream out_airr(f_airr.c_str());
+    static_cast<SampleOutputAIRR *>(&output) -> out(out_airr);
+  }
 
   //$ Output .vidjil json
   cout << "  ==> " << f_json ;
