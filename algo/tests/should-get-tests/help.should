@@ -36,5 +36,5 @@ $ Display advanced options
 : , experimental options
 : custom Cost
 
-$ Correct number of options
-55:^..-
+$ Correct number of options, including advanced options
+57:^..-
