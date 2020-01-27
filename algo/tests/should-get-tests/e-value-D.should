@@ -1,0 +1,20 @@
+
+### Testing -E (e-value threshold for D detection)
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations --first-reads 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRB ../should-vdj-tests/0000-nck-TRB.should-vdj.fa
+
+$ Default -E value, no D here
+1: TRBV6-1.* 7/AGGTGAGTCCC/2 TRBJ2-7
+0: TRBD1
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations --first-reads 1 -e 1e6 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRB ../should-vdj-tests/0000-nck-TRB.should-vdj.fa
+
+$ A large -e has no consequence on the default -E value, still no D here
+1: TRBV6-1.* 7/AGGTGAGTCCC/2 TRBJ2-7
+0: TRBD1
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations --first-reads 1 -E 100 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRB ../should-vdj-tests/0000-nck-TRB.should-vdj.fa
+
+$ With -E 100, a D is detected
+1: TRBV6-1.* TRBD1.* TRBJ2-7
+
