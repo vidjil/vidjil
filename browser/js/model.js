@@ -747,7 +747,7 @@ changeAlleleNotation: function(alleleNotation) {
           clone.normalized_reads[time] != null &&
           raw == undefined) {
               return clone.normalized_reads[time] ;
-      } else if (clone.hasSizeDistrib()){          
+      } else if (clone.hasSizeDistrib() && !isNaN(clone.current_reads[time])){          
         return clone.current_reads[time]
       } else {
         return clone.reads[time] ;
@@ -827,18 +827,16 @@ changeAlleleNotation: function(alleleNotation) {
             var size = this.min_sizes[t]
             size = this.normalize(this.min_sizes[t], t)
             if (size < this.min_size) this.min_size = size
-
-            var maxreads = 0;
-            var biggestClone = 0;
-            for (var j=0;j<this.clones.length;j++){
-                if (this.clones[j].reads[t]>maxreads && this.clone(j).isActive()) {
-                    maxreads = this.clones[j].reads[t]
-                    biggestClone = j;
-                }
-            }
-            if (this.clone(biggestClone) && this.clone(biggestClone).getSize(t) > this.max_size) 
-                this.max_size = this.clone(biggestClone).getSize(t)
         }
+
+
+        for (var j=0;j<this.clones.length;j++){
+            if (this.clone(j).isActive()) {
+                max_s = this.clones[j].getMaxSize()
+                if (max_s > this.max_size)
+                    this.max_size  = max_s
+            }
+        }    
         
         //*2 pour avoir une marge minimum d'un demi-log
         // 1/0 == infinity

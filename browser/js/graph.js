@@ -950,7 +950,7 @@ Graph.prototype = {
      * 
      * */
     initOrdinateClones : function () {
-    
+        this.m.update_precision()
         var max = this.m.precision*this.m.max_size
         
         this.scale_x = d3.scaleLog()
