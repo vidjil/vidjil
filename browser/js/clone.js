@@ -1770,7 +1770,7 @@ Clone.prototype = {
         }
         var values = []
         var axes_obj = this.m.axes
-        var available_axes = axes_obj.available()
+        var available_axes = this.m.available_axes
 
         for (var a = 0; a < axes.length; a++) {
             var axe  = axes[a]
@@ -1882,9 +1882,8 @@ Clone.prototype = {
             value          = tmpValue
         }
 
-        var axes_obj = this.m.axes
         var naxe = this.m.distrib_convertion[axe]
-        var available_axes = axes_obj.available()
+        var available_axes = this.m.available_axes
         if (available_axes[naxe] != undefined) {
             if (available_axes[naxe].set != undefined) {
                 available_axes[naxe].set(this, value)
