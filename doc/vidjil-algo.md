@@ -175,8 +175,12 @@ Xcode should be installed first.
 
 ### Download
 
-Stables releases can be downloaded from <http://www.vidjil.org/releases> or <http://bioinfo.lifl.fr/vidjil/>.
-Development code is found at <http://gitlab.vidjil.org>.
+These instructions targets *stable releases* of vidjil-algo, as downloaded from <http://www.vidjil.org/releases>
+or <http://bioinfo.lifl.fr/vidjil/>.
+
+Development code is found at <http://gitlab.vidjil.org>, in the `algo` directory.
+and compiling and running vidjil-algo on the development code can involve slightly different commands,
+including replacing `src` by `algo`.
 
 ### Compiling
 
@@ -194,7 +198,7 @@ make germline
    # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
 
 
-make vijdil-algo         # build vijil-algo from the sources (see the requirements,
+make -C src              # build vijil-algo from the sources (see the requirements,
                          # another option is: wget http://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -O vidjil-algo
                          # to download a static binary (built for x86_64 architectures)
 
