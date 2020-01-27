@@ -561,7 +561,7 @@ Graph.prototype = {
                 y = (p[m][1] * this.resizeH + this.marge5)
                 if (isNaN(x)) return ' M 0,' + this.resizeH;
                 if (isNaN(y)) return ' M 0,' + this.resizeH;
-                tab.push([x,y]);
+                tab.push([x.toFixed(3),y.toFixed(3)]);
             }
             return this.lineGenerator(tab);
                 
@@ -647,7 +647,7 @@ Graph.prototype = {
                 y = (p[m][1] * self.resizeH + self.marge5)
                 if (isNaN(x)) return ' M 0,' + self.resizeH;
                 if (isNaN(y)) return ' M 0,' + self.resizeH;
-                tab.push([x,y]);
+                tab.push([x.toFixed(3),y.toFixed(3)]);
             }
             return this.lineGenerator(tab);
         }else{
