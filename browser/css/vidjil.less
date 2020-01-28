@@ -85,13 +85,15 @@ ul{
 
 #visu-container{
   position: relative;
-  flex: 1 1 auto;
+  display: flex;
+  flex-flow: column;
   -khtml-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   user-select: none;
   height :100%;
+  width: 100%;
   margin : auto;
   overflow : hidden;
   background : @background;
@@ -154,7 +156,7 @@ ul{
 #mid-container {
   position : fixed;
   display: flex;
-  flex: 1 1 auto;
+  flex: auto;
   top : @top_container_height;
   bottom : 125px ;
   width: calc(~"100%" - @margin + @margin);
@@ -188,6 +190,8 @@ ul{
 
 #visu, #visu2 {
   height : 50%;
+  display: flex;
+  flex: auto;
   width : 100%;
 }
 
@@ -531,6 +535,7 @@ line {
 #list{
   flex: 1 1 auto;
   height: 0px; // set scrollbar flex will override height
+  min-height: 20%;
   max-height: 100%;
   display: flex;
   flex-direction: column;

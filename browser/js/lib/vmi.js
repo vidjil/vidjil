@@ -21,20 +21,27 @@ MenuDecorator.prototype = {
  * @param {string} parentId - id of the default parent node/panel of the view
  * @param {string} classes - class(es) to add to the view node
  **/
-function VMIView(id, parentId, classes, restricted) {
+function VMIView(id, parentId, classes, restricted, prefill, callback) {
     this.parentId = parentId;
     this.id = id;
     if (restricted == undefined) {
         restricted = []
     }
+    if (prefill == undefined) {
+        prefill = false
+    }
     this.restricted = restricted
+
+    this.callback = callback;
 
     var parent = document.getElementById(parentId);
 
     var node = document.createElement('div');
     node.className = "view " + classes;
     node.id = id;
-    node.textContent = id;
+    if (prefill){
+        node.textContent = "View "+id;
+    }
     // node.onclick = function() {
     //     this.parentNode.removeChild(this);
     // }
@@ -64,8 +71,8 @@ VMI.prototype = {
      * @param {string} classes
      * @param {string} restricted
      **/
-    addView : function(id, parentId, classes, restricted) {
-        var view = new VMIView(id, parentId, classes, restricted)
+    addView : function(id, parentId, classes, restricted, callback) {
+        var view = new VMIView(id, parentId, classes, restricted, false, callback)
         this.views.push(view);
     },
 
@@ -78,6 +85,9 @@ VMI.prototype = {
         if (panel) view.parentId = panel;
         var parent = document.getElementById(view.parentId)
         parent.insertBefore(view.node, parent.firstChild);
+        if(typeof view.callback !== 'undefined') {
+            view.callback.call();
+        }
     },
 
     /**
