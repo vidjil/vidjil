@@ -79,13 +79,17 @@ try {
     var panel_instructions = [{'mid-container': ["left-container", "visu-container"]},"bot-container"];
     vmi.setupPanels(panel_instructions, document.body);
 
-    vmi.addView("info", "left-container", "");
-    vmi.addView("list", "left-container", "");
-    vmi.addView("data", "left-container", "");
-    vmi.addView("visu2", "visu-container", "");
+    var callback = function() {
+        m.resize();
+    }
+
+    vmi.addView("info", "left-container", "", [], callback);
+    vmi.addView("list", "left-container", "", [], callback);
+    vmi.addView("data", "left-container", "", [], callback);
+    vmi.addView("visu2", "visu-container", "", [], callback);
     document.getElementById("visu-container").appendChild(separator);
-    vmi.addView("visu", "visu-container", "");
-    vmi.addView("segmenter", "bot-container", "");
+    vmi.addView("visu", "visu-container", "", [], callback);
+    vmi.addView("segmenter", "bot-container", "", [], callback);
     vmi.setOverlays(["info-row", "list-row", "data-row", "visu-container", "bot-container"]);
 
     /* Views
