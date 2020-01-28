@@ -95,7 +95,7 @@ http://dx.doi.org/10.3324/haematol.2017.177444
 Yann Ferret et al.,
 *Multi-loci diagnosis of acute lymphoblastic leukaemia with high-throughput sequencing and bioinformatics analysis*,
 British Journal of Haematology, 2016, 173, 413–420
-http://dx.doi.org/10.1111/bjh.13981
+https://hal.archives-ouvertes.fr/hal-01279160
 
 Henrike J. Fischer et al.,
 *Modulation of CNS autoimmune responses by CD8+ T cells coincides with their oligoclonal expansion*
