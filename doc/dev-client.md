@@ -1,10 +1,10 @@
 
-Here are aggregated notes forming the developer documentation on the Vidjil web client.
-This documentation is a work-in-progress, it is far from being as polished as the user documentation.
-Help can also be found in the source code and in the commit messages.
+Here are aggregated notes forming a part of the developper documentation on the Vidjil web client.
+These notes are a work-in-progress, they are not as polished as the user documentation.
+Developpers should also have a look on the [documentation for bioinformaticians and server administrators](/),
+on the [issues](http://gitlab.vidjil.org), in the commit messages, and in the source code.
 
-
-# Client
+# Development notes -- Client
 
 ## Installation
 

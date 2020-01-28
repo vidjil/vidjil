@@ -1,12 +1,11 @@
-<link rel="stylesheet" type="text/css" href="org-mode.css" />
 
-Here are aggregated notes forming the developer documentation on the Vidjil server,
+Here are aggregated notes forming a part of the developper documentation on the Vidjil server,
 on client-server interaction as well as on packaging.
-This documentation is a work-in-progress, it is far from being as polished as the user or maintainer documentation.
-Help can also be found in the source code and in the commit messages.
+These notes are a work-in-progress, they are not as polished as the user documentation.
+Developpers should also have a look on the [documentation for bioinformaticians and server administrators](/),
+on the [issues](http://gitlab.vidjil.org), in the commit messages, and in the source code.
 
-
-# Server
+# Development notes -- Server
 
 ## Notifications
 
