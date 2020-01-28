@@ -388,7 +388,7 @@ webpage.
         
         The Firefox version used can be set with an environment variable (see
         below). By default, the tests only work with Firefox ≤ 45. But this can be
-        modified with an environment variable. All Firefox releases are [available here](https://download-installer.cdn.mozilla.net/pub/firefox/releases/%20).
+        modified with an environment variable. All Firefox releases are [available here](https://download-installer.cdn.mozilla.net/pub/firefox/releases/).
         
         One can instead choose to launch functional tests using chrome. You should
         install `chromium-browser` as well as `chromium-chromedriver`. On old Chrome
