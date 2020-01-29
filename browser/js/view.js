@@ -29,8 +29,10 @@
  * @class View
  * @constructor 
  * */
-function View(model) {
+function View(model, id) {
+    var self = this;
     this.m = model;
+    this.id = id;
     this.m.view.push(this); //Model's sync
 
     //smartUpdate
@@ -55,6 +57,12 @@ function View(model) {
     this.updateElemStyleList = {};
     this.updateElemStyleMinWait = 10;   //update will at least wait XXX(ms) before starting 
     this.updateElemStyleMaxWait = 50;   //update will start anyway if the wait has been more than XXX(ms)
+    
+    if (typeof this.id != "undefined") {
+        this.autoresizeCounter=0;
+        this.resizeObserver = new ResizeObserver( function(){self.autoResize()} ) 
+        this.resizeObserver.observe(document.getElementById(this.id)); 
+    }
 }
     
 View.prototype = {
@@ -243,6 +251,17 @@ View.prototype = {
         return false;
     },
     
+    autoResize: function() {
+        var self = this
+
+        this.autoresizeCounter++
+        setTimeout(function(){
+            self.autoresizeCounter--
+            if (self.autoresizeCounter==0)
+                self.resize()
+        }, 500)
+    },
+
     /**
      * resize view to match his div size <br>
      * each view must be able to match the size of it's div

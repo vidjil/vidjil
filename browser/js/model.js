@@ -56,7 +56,7 @@ function Model() {
     this.checkBrowser();
     this.germlineList = new GermlineList()
     this.build();
-    window.onresize = function () { self.resize(); };
+    //window.onresize = function () { self.resize(); };
 
     this.NORM_FALSE     = "no_norm"
     this.NORM_EXPECTED  = "expected"
