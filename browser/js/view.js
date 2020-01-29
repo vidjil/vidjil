@@ -251,6 +251,10 @@ View.prototype = {
         return false;
     },
     
+    /**
+     * called by resizeObserver on size change
+     * 
+     * */
     autoResize: function() {
         var self = this
 

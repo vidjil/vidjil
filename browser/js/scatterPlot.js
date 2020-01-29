@@ -37,8 +37,6 @@ function ScatterPlot(id, model, database, default_preset) {
     
     View.call(this, model, id);
     this.db = database;
-    
-    this.id = id; //ID of the scatterPlot div
 
     //size ( computed value -> resize() function)
     this.resizeCoef = 1; //Multiplifying factor, application to nodes radius
