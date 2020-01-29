@@ -291,17 +291,11 @@ ScatterPlot.prototype = {
             this.nodes[i].r1 = 0; // longueur du rayon1
             this.nodes[i].r2 = 0; // longueur du rayon2
             this.nodes[i].x = Math.random() * 500;
-            this.nodes[i].old_x = [0, 0, 0, 0, 0]
+            this.nodes[i].old_x = [0,0,0,0,0,0,0,0,0,0]
             this.nodes[i].y = Math.random() * 250;
-            this.nodes[i].old_y = [0, 0, 0, 0, 0]
+            this.nodes[i].old_y = [0,0,0,0,0,0,0,0,0,0]
         }
-
-        //Initialisation of the D3JS physic engine
-        this.force = d3.layout.force();
-        this.initMotor();
-        this.force
-            .nodes(this.nodes) //Nodes array initialisation
-            .on("tick", function(){self.tick()}); // on -> Listen updates compared to modified positions
+        this.active_nodes = [];
 
         //Création d'un element SVG pour chaque nodes (this.node.[...])
         this.node = this.plot_container.selectAll("circle")
@@ -330,18 +324,43 @@ ScatterPlot.prototype = {
                 if (self.m.clone(p.id)
                     .isFocus()) return "circle_focus";
                 return "circle";
-            })
-            //Appel de la fonction drag
-            .call(this.force.drag)
+            })     
+           
+            .call(d3.drag()
+                .on("start", function(d){return self.dragstarted(d)})
+                .on("drag", function(d){return self.dragged(d)})
+                .on("end", function(d){return self.dragended(d)}))            
+                
             //Action -> Si la souris est pointée/fixée sur un cercle, alors on affiche l'information concernant ce cercle
             .on("mouseover", function(d) {
-                self.m.focusIn(d.id);
+                if (!self.isDragging)
+                    self.m.focusIn(d.id);
             })
             //Action -> Si l'on clique sur un cercle, alors on le sélectionne
             .on("click", function(d) {
                 self.clickNode(d.id);
-            })
+            });
 
+    },
+
+    dragstarted: function(d)
+    { 
+        this.isDragging = true;
+    },
+   
+    dragged: function(d)
+    {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+    },
+   
+    dragended: function(d)
+    {
+        this.isDragging = false;
+        if (!d3.event.active)
+            this.simulation.alpha(0.9).alphaTarget(0.08).alphaDecay(0.0227).restart();
+        d.fx = null;
+        d.fy = null;
     },
 
     /**
@@ -357,17 +376,6 @@ ScatterPlot.prototype = {
         return activeclones;
     },
 
-    /**
-     * initialize the D3JS physic engine with default values - usefull with reinitMotor()
-     * */
-    initMotor: function() {
-        this.force
-            .gravity(0) //No gravity
-            .theta(0) //Default value: 0.8
-            .charge(0) //Default value: -1
-            .friction(0.75) //Velocity
-            .size([1, 1]);
-    },
 
     /**
      * build scatterplot menu <br>
@@ -876,11 +884,7 @@ ScatterPlot.prototype = {
             .attr("width", div_width)
             .attr("height", div_height);
 
-        //Initialisation de la grille puis mise-à-jour
-        this.initGrid()
-            .updateClones()
-            .updateMenu()
-            .initGrid();
+        this.update();
         
         if (this.splitX == "tsneX_system" || this.splitX == "tsneX"){
             this.changeSplitMethod(this.splitX, this.splitY, this.mode)
@@ -927,9 +931,12 @@ ScatterPlot.prototype = {
      * (used for export a scatterplot screenshot without waiting for the clones have found a balance)
      * */
     fastForward: function() {
-        this.force.stop()
-        for (var i = 0; i < 500; i++) this.computeFrame()
-        this.drawFrame()
+        this.simulation.stop()
+        for (var i = 0; i < 200; i++) {
+            this.computeFrame() 
+            this.simulation.tick()
+            this.drawFrame()
+        }
     },
 
     /**
@@ -952,56 +959,58 @@ ScatterPlot.prototype = {
         }
         this.fpsqueue.push(Math.round(1000 / (this.time1 - this.time0)));
         this.time0 = this.time1;
-
     },
 
     /**
-     * compute next position of each clones <br>
      * resolve collision
      * */
     computeFrame: function() {
-        var self = this;
-
-        this.active_node = this.node.filter(function(d, i) {
-            return d.r2 > 0.1;
-        });
-
-        //deplace le node vers son objectif
-        this.node.each(this.move());
         //mise a jour des rayons( maj progressive )
         this.node.each(this.updateRadius());
 
-        this.node.each(this.debugNaN())
-        //résolution des collisions
+        //find biggest node radius,will be used by collide() as max range for collision
         this.r_max = 0;
-        for (var i = 0; i < this.nodes.length; i++) {
-            if (this.nodes[i].r2 > this.r_max) this.r_max = this.nodes[i].r2;
-        }
+        for (var i = 0; i < this.active_nodes.length; i++) 
+            if (this.active_nodes[i].r2 > this.r_max) 
+                this.r_max = this.active_nodes[i].r2;
 
-        var quad = d3.geom.quadtree(this.nodes)
+        //create a new quadtree with only active_nodes
+        this.quad = d3.quadtree()    
+            .x(function(d) {return d.x;})
+            .y(function(d) {return d.y;})
+            .addAll(this.active_nodes);
 
-        for (var j = 0; j < this.nodes.length; j++) {
-            if (this.nodes[j].r1 > 0.1) {
-                quad.visit(this.collide(this.nodes[j]));
-            }
-        }
-        this.active_node.each(this.debugNaN())
-
+        //visit quadtree
+        for (var j = 0; j < this.active_nodes.length; j++) 
+            this.quad.visit(this.collide(this.active_nodes[j]));
+        
+        //debug invalid node positions
+        this.node.each(this.debugNaN())
         return this
     },
 
     /**
      * draw each clones
      * */
-    drawFrame: function() {
+    drawFrame: function(c) {
+        var self = this;
+
+        var visible_nodes = this.node.filter(function(d, i) {
+            return d.r2 > 0;
+        });
+
         if (this.mode != this.MODE_BAR){
-            this.active_node
+            visible_nodes 
                 //attribution des nouvelles positions/tailles
                 .attr("cx", function(d) {
-                    return (d3.mean(d.old_x) + self.margin[3]);
+                    d.old_x.push(d.x + self.margin[3]);
+                    d.old_x.shift();
+                    return d3.mean(d.old_x);
                 })
                 .attr("cy", function(d) {
-                    return (d3.mean(d.old_y) + self.margin[0]);
+                    d.old_y.push(d.y + self.margin[0]);
+                    d.old_y.shift();
+                    return d3.mean(d.old_y);
                 })
                 .attr("r", function(d) {
                     return (d.r2);
@@ -1011,39 +1020,8 @@ ScatterPlot.prototype = {
                         .getName());
                 })
         }
+        return this;
     },
-
-    /**
-     * move current clone's positions closer to their expected positions
-     * */
-    move: function() {
-        self = this;
-        return function(d) {
-            if (d.r2<0.4){ //teleport a nodes directly at his expected position
-                d.old_x=[d.x2,d.x2,d.x2,d.x2,d.x2];
-                d.x=d.x2+Math.random(); //add a small random to avoid multiple nodes to teleport at the exact same position
-                d.old_y=[d.y2,d.y2,d.y2,d.y2,d.y2];
-                d.y=d.y2+Math.random();
-                return
-            }
-            d.old_x.push(d.x);
-            d.old_x.shift();
-            var delta, s;
-            if (d.x != d.x2) {
-                delta = d.x2 - d.x;
-                s = ((d.r1 / self.resizeCoef))
-                d.x += 0.015 * delta
-            }
-            d.old_y.push(d.y);
-            d.old_y.shift();
-            if (d.y != d.y2) {
-                delta = d.y2 - d.y;
-                s = ((d.r1 / self.resizeCoef))
-                d.y += 0.015 * delta
-            }
-        }
-    },
-
 
     /**
      * update current clone's radius closer to their expected radius
@@ -1078,27 +1056,29 @@ ScatterPlot.prototype = {
      * */
     collide: function(node) {
         
-        var r = node.r2 + this.r_max + 2,
+        var r = node.r2 + this.r_max,
             nx1 = node.x - r,
             nx2 = node.x + r,
             ny1 = node.y - r,
             ny2 = node.y + r;
             
         return function(quad, x1, y1, x2, y2) {
-            var node2 = quad.point
             
-            if (node2 && (node2 !== node) && node2.r1 !== 0) {
-                var delta_x = node.x - node2.x,
-                    delta_y = node.y - node2.y,
-                    delta = Math.sqrt( (delta_x * delta_x) + (delta_y * delta_y) ),
-                    r_sum = node.r2 + node2.r2 + 2;
-                if (delta < r_sum) {
-                    var s1 = node.s
-                    var s2 = node2.s
-                    var w = (s2 / (s1 + s2))
-                    var l = (delta - r_sum) / delta * w;
-                    node.x -= delta_x *= l;
-                    node.y -= delta_y *= l;
+            if (typeof (quad.data) != "undefined") {
+                var node2 = quad.data;
+                if (node2 != node){
+                    var delta_x = node.x - node2.x,
+                        delta_y = node.y - node2.y,
+                        delta = Math.sqrt( (delta_x * delta_x) + (delta_y * delta_y) ),
+                        r_sum = node.r2 + node2.r2 + 2;
+                    if (delta < r_sum) {
+                        var s1 = node.s
+                        var s2 = node2.s
+                        var w = (s2 / (s1 + s2))
+                        var l = (delta - r_sum) / delta * w;
+                        node.x -= delta_x *= l;
+                        node.y -= delta_y *= l;
+                    }
                 }
             }
             return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
@@ -1112,6 +1092,9 @@ ScatterPlot.prototype = {
     update: function() {
         var self = this;
         try{
+            this.node = this.plot_container.selectAll("circle")
+            .data(this.nodes);
+
             this.compute_size()
                 .initGrid()
                 .updateClones()
@@ -1120,6 +1103,32 @@ ScatterPlot.prototype = {
             if (this.mode == this.MODE_BAR)
                 this.updateBar();
             
+
+            this.active_nodes = this.nodes.filter(function(d, i) {
+                return d.r1 > 0;
+            });
+            if(typeof(this.simulation) != "undefined"){
+                this.simulation.stop();
+                this.simulation = null;
+            }
+
+            this.simulation = d3.forceSimulation()
+                .nodes(this.nodes)
+                    .force("forceX", d3.forceX()
+                        .strength(0.1)
+                        .x(function(d){return (d.x2) }))
+                    .force("forceY", d3.forceY()
+                        .strength(0.1)
+                        .y(function(d){return d.y2 }))
+                    .on("tick", function(){self.tick()})
+                    /*.force("repelForce",d3.forceManyBody()
+                        .strength(-140)
+                        .distanceMax(50)
+                        .distanceMin(10))
+                    .force("collide", d3.forceCollide()
+                        .strength(0.8)
+                        .radius(function(d){ return d.r2+1})
+                        .iterations(1));*/
 
         } catch(err) {
             sendErrorToDb(err, this.db);
@@ -1137,7 +1146,7 @@ ScatterPlot.prototype = {
         for (var i = 0; i < this.nodes.length; i++) {
             this.updateClone(i);
         }
-        this.force.start();
+        
         this.updateElemStyle();
 
         if (this.m.germlineV.system != this.system) {
@@ -1250,11 +1259,11 @@ ScatterPlot.prototype = {
         // Clone position
         var sys = clone.get('germline');
         if (this.use_system_grid && this.m.system == "multi" && typeof sys != 'undefined' && sys != this.m.germlineV.system) {
-            this.nodes[cloneID].x2 = this.systemGrid[sys].x * this.resizeW;
-            this.nodes[cloneID].y2 = this.systemGrid[sys].y * this.resizeH;
+            this.nodes[cloneID].x2 = Math.random()*0.01 + this.systemGrid[sys].x * this.resizeW;
+            this.nodes[cloneID].y2 = Math.random()*0.01 + this.systemGrid[sys].y * this.resizeH;
         } else {
-            this.nodes[cloneID].x2 = this.axisX.pos(clone).pos * this.gridSizeW
-            this.nodes[cloneID].y2 = this.axisY.pos(clone).pos * this.gridSizeH
+            this.nodes[cloneID].x2 = Math.random()*0.01 + this.axisX.pos(clone).pos * this.gridSizeW
+            this.nodes[cloneID].y2 = Math.random()*0.01 + this.axisY.pos(clone).pos * this.gridSizeH
         }
 
     },
@@ -1398,12 +1407,12 @@ ScatterPlot.prototype = {
 
         //LEGENDE
         leg = this.axis_x_container.selectAll("text")
-            .data(data);
-        leg.enter()
-            .append("text");
-        leg.exit()
-            .remove();
-        leg.on("click", function(d){
+            .remove()
+            .exit()
+            .data(data)
+            .enter()
+            .append("text")
+            .on("click", function(d){
             self.m.unselectAllUnlessKey(d3.event)
             var listToSelect = [];
             var halfRangeColumn = 0.5;
@@ -1473,12 +1482,11 @@ ScatterPlot.prototype = {
 
         //this.AXIS
         lines = this.axis_x_container.selectAll("line")
-            .data(data);
-        lines.enter()
-            .append("line");
-        lines.exit()
-            .remove();
-        lines
+            .remove()
+            .exit()
+            .data(data)
+            .enter()
+            .append("line")
             .attr("x1", function(d) {
                 return self.gridSizeW * d.pos + self.margin[3];
             })
@@ -1519,12 +1527,12 @@ ScatterPlot.prototype = {
         
         //LEGENDE
         leg = this.axis_y_container.selectAll("text")
-            .data(data);
-        leg.enter()
-            .append("text");
-        leg.exit()
-            .remove();
-        leg.on("click", function(d){
+            .remove()
+            .exit()
+            .data(data)
+            .enter()
+            .append("text")
+            .on("click", function(d){
             if (self.mode !=this.MODE_BAR){
                 // Multi-selection by clicking on a legend
                 self.m.unselectAllUnlessKey(d3.event)
@@ -1576,12 +1584,11 @@ ScatterPlot.prototype = {
 
         //this.AXIS
         lines = this.axis_y_container.selectAll("line")
-            .data(data);
-        lines.enter()
-            .append("line");
-        lines.exit()
-            .remove();
-        lines
+            .remove()
+            .exit()
+            .data(data)
+            .enter()
+            .append("line")
             .attr("x1", function(d) {
                 return self.margin[3];
             })
@@ -1647,12 +1654,11 @@ ScatterPlot.prototype = {
             this.label_container.style("display", "");
             //LEGENDE
             leg = this.label_container.selectAll(".sp_system_label")
-                .data(data);
-            leg.enter()
-                .append("div");
-            leg.exit()
-                .remove();
-            leg
+                .remove()
+                .exit()
+                .data(data)
+                .enter()
+                .append("div")
                 .style("left", function(d) {
                     return "" + (d.x * self.resizeW + self.margin[3]) + "px"
                 })
