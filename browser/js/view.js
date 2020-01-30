@@ -58,11 +58,9 @@ function View(model, id) {
     this.updateElemStyleMinWait = 10;   //update will at least wait XXX(ms) before starting 
     this.updateElemStyleMaxWait = 50;   //update will start anyway if the wait has been more than XXX(ms)
     
-    if (typeof this.id != "undefined") {
-        this.autoresizeCounter=0;
-        this.resizeObserver = new ResizeObserver( function(){self.autoResize()} ) 
-        this.resizeObserver.observe(document.getElementById(this.id)); 
-    }
+    //auto-resize (don't try to set auto-resize for view without a main div)
+    if (typeof this.id != "undefined") 
+        this.initAutoResize()
 }
     
 View.prototype = {
@@ -251,6 +249,40 @@ View.prototype = {
         return false;
     },
     
+    /**
+     * set an observer on the view main div to detect size changes and trigger a resize
+     * 
+     * */
+    initAutoResize: function(){
+        var self = this;
+
+        this.autoresizeCounter = 0;
+
+        if (typeof ResizeObserver != "undefined"){
+            //modern browser solution
+            this.resizeObserver = new ResizeObserver( function(){self.autoResize()} ) 
+            this.resizeObserver.observe(document.getElementById(this.id)); 
+        }
+        else{
+            //fallback for older browser
+            var div = document.getElementById(this.id)
+            this.memWidth = div.offsetWidth
+            this.memHeight= div.offsetHeight
+
+            setInterval( function(){
+                var div = document.getElementById(self.id)
+                var w = div.offsetWidth
+                var h = div.offsetHeight
+                if (div.offsetWidth  != self.memWidth ||
+                    div.offsetHeight != self.memHeight ){
+                        self.memWidth  = div.offsetWidth
+                        self.memHeight = div.offsetHeight
+                        self.autoResize()
+                    }
+            }, 500)
+        }
+    },
+
     /**
      * called by resizeObserver on size change
      * 
