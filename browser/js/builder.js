@@ -121,11 +121,10 @@ Builder.prototype = {
     
     resizeGraph : function (graphSize) {
         var spSize = 100 - graphSize
+        var separator = document.getElementById('visu-separator');
 
-        document.getElementById("visu")
-            .style.height = spSize + "%"
-        document.getElementById("visu2")
-            .style.height = graphSize + "%"
+        separator.nextElementSibling.style.height = spSize + "%"
+        separator.previousElementSibling.style.height = graphSize + "%"
     },
 
     dropSeparator: function () {

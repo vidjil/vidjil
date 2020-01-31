@@ -51,12 +51,69 @@ function VMIView(id, parentId, classes, restricted, prefill, callback) {
     parent.appendChild(node);
 }
 
+/**
+ * Constructor for vmi Panels
+ * @param {string} id - id for the panel and the DOM node
+ * @param {string} parent_id - id of the DOM node to insert to panel
+ * @param {function} callback - function to be executed when adding and removing views from the panel
+ **/
+function Panel(id, parent_id, callback) {
+    this.id = id;
+    this.parentId = parent_id;
+    this.callback = callback;
+    this.insertInDOM();
+}
+
+Panel.prototype = {
+    /**
+     * Add a VMI view to the panel and trigger callbacks
+     * @param {VMIView} view
+     **/
+    addView: function(view) {
+        view.parentId = this.id;
+        var parent = document.getElementById(this.id);
+        parent.insertBefore(view.node, parent.firstChild);
+        if(typeof view.callback !== 'undefined') {
+            view.callback();
+        }
+
+        if(typeof this.callback !== 'undefined') {
+            this.callback(view);
+        }
+    },
+
+    /**
+     * Insert the panel into the DOM based on parentId
+     **/
+    insertInDOM: function() {
+        if(document.getElementById(this.id) !== null) {
+            console.log('panel already in DOM: ' + this.id);
+            return;
+        }
+        var div = document.createElement('div');
+        div.id = this.id;
+        parent = document.getElementById(this.parentId);
+
+        if (this.parentId == "vmi-panels"){
+            div.className = "vmi-panel_parent";
+        } else {
+            div.className = "vmi-panel";
+        }
+
+        if(parent === null) {
+            document.body.appendChild(div);
+        } else {
+            parent.appendChild(div);
+        }
+    }
+}
 
 function VMI() {
     // var vmi = {};
 
     this.views = []; // Array referencing each View built with vmi
     this.selectedView; // Stores focused View for menu interactions and edit mode
+    this.panels = {};
     this.available_panels = []
     this.default_decorator = new MenuDecorator()
     this.drawer;
@@ -74,6 +131,8 @@ VMI.prototype = {
     addView : function(id, parentId, classes, restricted, callback) {
         var view = new VMIView(id, parentId, classes, restricted, false, callback)
         this.views.push(view);
+        var panel = this.panels[parentId];
+        panel.addView(view);
     },
 
     /**
@@ -81,12 +140,17 @@ VMI.prototype = {
      * @param {View} view
      * @param {string} panel - panel id ; if none is given the view is set to its last parent
      **/
-    setView : function(view, panel) {
-        if (panel) view.parentId = panel;
-        var parent = document.getElementById(view.parentId)
-        parent.insertBefore(view.node, parent.firstChild);
-        if(typeof view.callback !== 'undefined') {
-            view.callback.call();
+    setView : function(view, panel_id) {
+        if (typeof panel_id === 'undefined') {
+            panel_id = view.parentId
+        }
+
+        var parent = this.panels[view.parentId];
+        var panel = this.panels[panel_id];
+        panel.addView(view);
+
+        if(typeof parent.callback !== 'undefined') {
+            parent.callback(view);
         }
     },
 
@@ -237,26 +301,35 @@ VMI.prototype = {
      * Build a div with the default panel id
      **/
     setupPanel : function() {
-        var panels = document.createElement('div');
-        panels.id = "vmi-panels";
+        var panel = new Panel('vmi-panels');
+        this.panels[panel.id] = panel;
+        var div = document.createElement('div');
+        div.id = panel.id;
 
-        document.body.appendChild(panels)
+        document.body.appendChild(div)
     },
 
+    add_panel: function(panel, add_to_available) {
+        this.panels[panel.id] = panel;
 
-    create_panel : function(child_id, parent_div_id, add_to_available) {
         if (typeof(add_to_available) === 'undefined') {
             add_to_available = false;
         }
+
+        if( add_to_available){
+            this.available_panels.push(panel.id)
+        }
+    },
+
+    create_panel : function(child_id, parent_div_id, add_to_available) {
         var parent_div = document.getElementById(parent_div_id)
         // verify parent_div 
         if (parent_div == null){
             console.error(" create_panel: Parent div doesn't exist: " + parent_div_id)
             parent_div_id = "vmi-panels"
-            parent_div = document.getElementById(parent_div_id)
         }
         // verify if child not already exist
-        var elt = document.getElementById(child_id) 
+        var elt = this.panels[child_id];
         if (elt != null){
             console.log("panel already exist: " + child_id)
             if(this.available_panels.indexOf(child_id) == -1 && add_to_available){
@@ -264,18 +337,8 @@ VMI.prototype = {
             }
             return
         }
-        var child_div  = document.createElement('div');
-        child_div.id = child_id;
-        if (parent_div_id == "vmi-panels"){
-            child_div.className = "vmi-panel_parent";
-        } else {
-            child_div.className = "vmi-panel";
-        }
-
-        parent_div.appendChild(child_div)
-        if( add_to_available){
-            this.available_panels.push(child_id)
-        }
+        var panel = new Panel(child_id, parent_div_id);
+        this.add_panel(panel);
         return;
     },
 

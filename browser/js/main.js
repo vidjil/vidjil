@@ -75,20 +75,35 @@ try {
         "</div>",
         "</div>",
         "</div>"].join('');
+
+    var visu_callback = function(view) {
+        var panelDOM = document.getElementById(this.id);
+        var sep = document.getElementById('visu-separator');
+        panelDOM.removeChild(sep);
+        panelDOM.insertBefore(sep, panelDOM.firstElementChild.nextElementSibling);
+    }
+
     var separator = template.content.firstChild;
-    var panel_instructions = [{'mid-container': ["left-container", "visu-container"]},"bot-container"];
-    vmi.setupPanels(panel_instructions, document.body);
+    var mid_container = new Panel('mid-container');
+    var left_container = new Panel('left-container', 'mid-container');
+    var visu_container = new Panel('visu-container', 'mid-container', visu_callback);
+    var bot_container = new Panel('bot-container');
+
+    vmi.add_panel(mid_container, false);
+    vmi.add_panel(left_container, true);
+    vmi.add_panel(visu_container, true);
+    vmi.add_panel(bot_container, true);
 
     var callback = function() {
         m.resize();
     }
 
-    vmi.addView("info", "left-container", "", [], callback);
-    vmi.addView("list", "left-container", "", [], callback);
-    vmi.addView("data", "left-container", "", [], callback);
-    vmi.addView("visu2", "visu-container", "", [], callback);
     document.getElementById("visu-container").appendChild(separator);
+    vmi.addView("data", "left-container", "", [], callback);
+    vmi.addView("list", "left-container", "", [], callback);
+    vmi.addView("info", "left-container", "", [], callback);
     vmi.addView("visu", "visu-container", "", [], callback);
+    vmi.addView("visu2", "visu-container", "", [], callback);
     vmi.addView("segmenter", "bot-container", "", [], callback);
     vmi.setOverlays(["info-row", "list-row", "data-row", "visu-container", "bot-container"]);
 
