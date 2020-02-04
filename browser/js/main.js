@@ -53,7 +53,7 @@ var db = new Database(m);
 var notification = new Notification(m)
 
 try {
-    var vmi = new VMI();
+    var vmi = new VMI('vidjil-panels');
     vmi.setupDrawer();
 
     /* use template to create DOM elements from string */
@@ -84,7 +84,7 @@ try {
     }
 
     var separator = template.content.firstChild;
-    var mid_container = new Panel('mid-container');
+    var mid_container = new Panel('mid-container', 'vidjil-panels');
     var left_container = new Panel('left-container', 'mid-container');
     var visu_container = new Panel('visu-container', 'mid-container', visu_callback);
     var bot_container = new Panel('bot-container');
