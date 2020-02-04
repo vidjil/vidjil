@@ -98,6 +98,27 @@ try {
         m.resize();
     }
 
+    function reorg_panels() {
+        vmi.hideAllViews();
+        vmi.hideAllPanels();
+        vmi.setupPanels(['visu-container']);
+        vmi.setView(vmi.views['visu'], 'visu-container');
+        vmi.setView(vmi.views['visu2'], 'visu-container');
+    }
+
+    function restore_panels() {
+        vmi.hideAllViews();
+        vmi.hideAllPanels();
+        var panels = [{'mid-container': ['left-container', 'visu-container']}, 'bot-container'];
+        vmi.setupPanels(panels);
+        vmi.setView(vmi.views['data'], 'left-container');
+        vmi.setView(vmi.views['list'], 'left-container');
+        vmi.setView(vmi.views['info'], 'left-container');
+        vmi.setView(vmi.views['visu'], 'visu-container');
+        vmi.setView(vmi.views['visu2'], 'visu-container');
+        vmi.setView(vmi.views['segmenter'], 'bot-container');
+    }
+
     document.getElementById("visu-container").appendChild(separator);
     vmi.addView("data", "left-container", "", [], callback);
     vmi.addView("list", "left-container", "", [], callback);
