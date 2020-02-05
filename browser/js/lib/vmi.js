@@ -385,10 +385,16 @@ VMI.prototype = {
             if(this.available_panels.indexOf(child_id) == -1 && add_to_available){
                 this.available_panels.push(child_id)
             }
-            return
+        } else {
+            var panel = new Panel(child_id, parent_div_id);
+            this.add_panel(panel);
         }
-        var panel = new Panel(child_id, parent_div_id);
-        this.add_panel(panel);
+        var parent = this.panels[parent_div_id]
+        if(typeof parent !== 'undefined') {
+            if(typeof parent.callback !== 'undefined') {
+                parent.callback();
+            }
+        }
         return;
     },
 

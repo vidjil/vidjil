@@ -83,8 +83,20 @@ try {
         panelDOM.insertBefore(sep, panelDOM.firstElementChild.nextElementSibling);
     }
 
+    var mid_callback = function(view) {
+        var panelDOM = document.getElementById(this.id);
+        var sep = document.getElementById('vertical-separator');
+        var left = document.getElementById('left-container');
+        if(left === null) {
+            return;
+        }
+
+        panelDOM.removeChild(sep);
+        panelDOM.insertBefore(sep, left.nextElementSibling);
+    }
+
     var separator = template.content.firstChild;
-    var mid_container = new Panel('mid-container', 'vidjil-panels');
+    var mid_container = new Panel('mid-container', 'vidjil-panels', mid_callback);
     var left_container = new Panel('left-container', 'mid-container');
     var visu_container = new Panel('visu-container', 'mid-container', visu_callback);
     var bot_container = new Panel('bot-container');
