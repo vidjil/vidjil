@@ -1,9 +1,9 @@
 
-Here are aggregated notes forming a part of the developper documentation on the Vidjil server,
+Here are aggregated notes forming a part of the developer documentation on the Vidjil server,
 on client-server interaction as well as on packaging.
 These notes are a work-in-progress, they are not as polished as the user documentation.
-Developpers should also have a look on the [documentation for bioinformaticians and server administrators](/),
-on the [issues](http://gitlab.vidjil.org), in the commit messages, and in the source code.
+Developers should also have a look at the [documentation for bioinformaticians and server administrators](/),
+at the [issues](http://gitlab.vidjil.org), at the commit messages, and at the source code.
 
 # Development notes -- Server
 
