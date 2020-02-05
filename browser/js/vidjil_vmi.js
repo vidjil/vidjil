@@ -40,7 +40,8 @@ VidjilVMI.prototype = {
     restore_panels : function() {
         this.vmi.hideAllViews();
         this.vmi.hideAllPanels();
-        var panels = [{ [this.mid_id] : [this.left_id, this.visu_id]}, this.bot_id];
+        var panels = [{}, this.bot_id];
+        panels[0][this.mid_id] = [this.left_id, this.visu_id]
         this.vmi.setupPanels(panels);
         this.vmi.setView(this.vmi.views.data, this.left_id);
         this.vmi.setView(this.vmi.views.list, this.left_id);
