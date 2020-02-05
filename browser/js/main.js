@@ -53,8 +53,6 @@ var db = new Database(m);
 var notification = new Notification(m)
 
 try {
-    var vmi = new VMI('vidjil-panels');
-    vmi.setupDrawer();
 
     /* use template to create DOM elements from string */
     var template = document.createElement('template');
@@ -76,69 +74,12 @@ try {
         "</div>",
         "</div>"].join('');
 
-    var visu_callback = function(view) {
-        var panelDOM = document.getElementById(this.id);
-        var sep = document.getElementById('visu-separator');
-        panelDOM.removeChild(sep);
-        panelDOM.insertBefore(sep, panelDOM.firstElementChild.nextElementSibling);
-    }
-
-    var mid_callback = function(view) {
-        var panelDOM = document.getElementById(this.id);
-        var sep = document.getElementById('vertical-separator');
-        var left = document.getElementById('left-container');
-        if(left === null) {
-            return;
-        }
-
-        panelDOM.removeChild(sep);
-        panelDOM.insertBefore(sep, left.nextElementSibling);
-    }
-
     var separator = template.content.firstChild;
-    var mid_container = new Panel('mid-container', 'vidjil-panels', mid_callback);
-    var left_container = new Panel('left-container', 'mid-container');
-    var visu_container = new Panel('visu-container', 'mid-container', visu_callback);
-    var bot_container = new Panel('bot-container');
-
-    vmi.add_panel(mid_container, false);
-    vmi.add_panel(left_container, true);
-    vmi.add_panel(visu_container, true);
-    vmi.add_panel(bot_container, true);
-
-    var callback = function() {
-        m.resize();
-    }
-
-    function reorg_panels() {
-        vmi.hideAllViews();
-        vmi.hideAllPanels();
-        vmi.setupPanels(['visu-container']);
-        vmi.setView(vmi.views['visu'], 'visu-container');
-        vmi.setView(vmi.views['visu2'], 'visu-container');
-    }
-
-    function restore_panels() {
-        vmi.hideAllViews();
-        vmi.hideAllPanels();
-        var panels = [{'mid-container': ['left-container', 'visu-container']}, 'bot-container'];
-        vmi.setupPanels(panels);
-        vmi.setView(vmi.views['data'], 'left-container');
-        vmi.setView(vmi.views['list'], 'left-container');
-        vmi.setView(vmi.views['info'], 'left-container');
-        vmi.setView(vmi.views['visu'], 'visu-container');
-        vmi.setView(vmi.views['visu2'], 'visu-container');
-        vmi.setView(vmi.views['segmenter'], 'bot-container');
-    }
 
     document.getElementById("visu-container").appendChild(separator);
-    vmi.addView("data", "left-container", "", [], callback);
-    vmi.addView("list", "left-container", "", [], callback);
-    vmi.addView("info", "left-container", "", [], callback);
-    vmi.addView("visu", "visu-container", "", [], callback);
-    vmi.addView("visu2", "visu-container", "", [], callback);
-    vmi.addView("segmenter", "bot-container", "", [], callback);
-    vmi.setOverlays(["info-row", "list-row", "data-row", "visu-container", "bot-container"]);
+
+    var vidjil_vmi = new VidjilVMI();
+    vidjil_vmi.setup();
 
     /* Views
      * Each view is rendered inside a <div> html element (whose id is given as the first paramter),
