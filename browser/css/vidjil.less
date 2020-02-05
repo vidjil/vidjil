@@ -153,16 +153,22 @@ ul{
   overflow:hidden;
 }
 
-#mid-container {
+#vidjil-panels {
   position : fixed;
-  display: flex;
-  flex: auto;
   top : @top_container_height;
   bottom : 125px ;
   width: calc(~"100%" - @margin + @margin);
-  overflow: hidden;
   background: @background;
   margin: @margin;
+  display: flex;
+  flex: auto;
+  overflow: hidden;
+}
+
+#mid-container {
+  display: flex;
+  flex: auto;
+  overflow: hidden;
 }
 
 #right-container{
