@@ -12,33 +12,35 @@ high-throughput sequencing (NGS/HTS) now
 enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](http://omictools.com/rep-seq-c424-p1.html)
 methods and software.
 
-### Web application, user documentation
+### Life scientist
+  - Tutorial "Mastering the Vidjil web application": [english](./tutorial/mastering-vidjil.html) ([pdf](./tutorial/mastering-vidjil.pdf)), [français](./tutorial/mastering-vidjil-fr.html) ([pdf](./tutorial/mastering-vidjil-fr.pdf)) 🔗. Start by this tutorial to have an overview of Vidjil.
+  - Web platform [user manual](user.md). This is the main user manual of the Vidjil platform.
+  - [Libraries and recombinations](locus.md), documentation on library preparation and sequencing as well on detected immune recombinations
+  - [Demo access](http://app.vidjil.org/) 🔗 to the patient, experiment and sample public test server
 
-  - Tutorial "Mastering the Vidjil web application": [english](./tutorial/mastering-vidjil.html) ([pdf](./tutorial/mastering-vidjil.pdf)), [français](./tutorial/mastering-vidjil-fr.html)
-    ([pdf](./tutorial/mastering-vidjil-fr.pdf)). Start by this tutorial to have an overview of Vidjil.
-  - Web platform [user manual](user.md)
-  - [Demo access](http://app.vidjil.org/) to the patient, experiment and sample server
-
-### Quality documentation and open data
-
-  - [Software Quality and Human Processes](quality.md)
-  - [Public datasets](http://www.vidjil.org/data/) supporting Vidjil publications
-
-### Algorithm and server documentation
-
+### Bioinformatician
   - [Vidjil-algo documentation](vidjil-algo.md), usage from the command-line
-  - [Server administration](admin.md), configuration and administration features available from the web application
-  - [Docker/Server installation and maintenance](server.md), server installation, configuration and maintenance from the command line
+  - [fuse.py](tools.py), converting and merging immune repertoire data
+  - Specification of the [.vidjil format](vidjil-format.md) to encode immune repertoires with clones with V(D)J recombinations
+  - Specification of the [warnings](warnings.md), list of default [tags](tags.org)
+  - Specification of the [.should-vdj.fa tests](should-vdj.md) for encoding and testing curated V(D)J designations
 
-### Developer documentation
+### Server administrator
+  - [Server administration (web)](admin.md), configuration and administration features available from the web application
+  - [Server installation and maintenance (docker)](server.md), server installation, configuration and maintenance from the command line
 
-  - [Encoding clones with V(D)J recombinations](vidjil-format.md), specification of the `.vidjil` file format
-  - Specification of the [.should-vdj](should-vdj.org) format for encoding curated V(D)J designations
-  - List of implemented [warnings](warnings.md), list of default [tags](tags.org)
-  - Developer documentation: [Vidjil-algo](dev-algo.md), web application: [client](dev-client.md), [server](dev-server.md)
+### Quality, open data, roadmap, credits
+  - [Software and developement quality](quality.md), including software engineering methods and human and team processes
+ <!--  - [Roadmap](roadmap.md) -->
+  - [Public datasets](http://www.vidjil.org/data/) 🔗 supporting Vidjil publications
+  - [Credits, references](credits.md)
+
+### Further developer documentation
 
 These documentations and additional developer and maintainer documentation
-are available from the [doc/](http://gitlab.vidjil.org/tree/master/doc) directory in the source files.
+are available from the [doc/](http://gitlab.vidjil.org/tree/master/doc) directory in the source files,
+including development notes on Vidjil-algo (`dev-algo.md`)
+and on the web application client (`dev-client.md`) and the server (`dev-server.md`).
 
 ### Further help
 

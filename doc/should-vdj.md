@@ -150,7 +150,7 @@ The paper \[1\] includes an evaluation of the V(D)J designation of 125 clones.
 1.  Yann Ferret, A. Caillault et al.,
     *Multi-loci diagnosis of acute lymphoblastic leukaemia with high-throughput sequencing and bioinformatics analysis*,
     British Journal of Haematology, 2016, 173, 413–420,
-    <http://dx.doi.org/10.1111/bjh.13981>
+    <https://hal.archives-ouvertes.fr/hal-01279160>
 
 2.  Mikaël Salson et al., A dataset of sequences with manually curated V(D)J designations
     RepSeq 2015,

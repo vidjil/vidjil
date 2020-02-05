@@ -1,10 +1,10 @@
 
-Here are aggregated notes forming the developer documentation on the Vidjil web client.
-This documentation is a work-in-progress, it is far from being as polished as the user documentation.
-Help can also be found in the source code and in the commit messages.
+Here are aggregated notes forming a part of the developer documentation on the Vidjil web client.
+These notes are a work-in-progress, they are not as polished as the user documentation.
+Developers should also have a look at the [documentation for bioinformaticians and server administrators](/),
+at the [issues](http://gitlab.vidjil.org), at the commit messages, and at the source code.
 
-
-# Client
+# Development notes -- Client
 
 ## Installation
 
@@ -388,7 +388,7 @@ webpage.
         
         The Firefox version used can be set with an environment variable (see
         below). By default, the tests only work with Firefox ≤ 45. But this can be
-        modified with an environment variable. All Firefox releases are [available here](https://download-installer.cdn.mozilla.net/pub/firefox/releases/%20).
+        modified with an environment variable. All Firefox releases are [available here](https://download-installer.cdn.mozilla.net/pub/firefox/releases/).
         
         One can instead choose to launch functional tests using chrome. You should
         install `chromium-browser` as well as `chromium-chromedriver`. On old Chrome
