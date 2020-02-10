@@ -234,6 +234,10 @@ def addNormalizedReads(data, coeff, r2, spk):
             clone['normalized_reads'] = [ reads*coeff[fam]*spg/NG600 ]
             clone['R2'] = [ r2[fam] ]
             clone['family'] = [ fam ]
+        else:
+            ## to be able to show universal R2 for negative clones
+            clone['R2'] = [ r2[UNI] ]
+            clone['family'] = [ UNI ]            
 
 ############################################################
 ### command line, initial msg
