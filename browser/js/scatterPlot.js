@@ -522,10 +522,6 @@ ScatterPlot.prototype = {
      * compute and update the position of all rectangles representing a clone using selected axis
      * */
     updateBar: function() {
-
-        //split clones into bar (axisX)
-        //this.axis2X.init(this.m.clones, this.available_axis[this.splitX].fct);
-        
         //sort each bar (axisY)
         this.axis2X
             .compute(Math.round(this.resizeW/40))
@@ -546,54 +542,7 @@ ScatterPlot.prototype = {
                                         germline:   "multi"
                                     })
         this.axis2Y.compute(Math.round(this.resizeH/20))
-
-        //this.axisY.MAX_NB_STEPS_IN_AXIS = 5;
-        //this.axisY.init(this.m.clones, this.available_axis[this.splitY].fct);
-        //this.sortBarTab(this.axisY.converter);
     },
-    
-    /**
-     * sort each bar of barplot using a distribution function <br>
-     * param {function} fct - distribution function
-     * *
-    sortBarTab: function (fct) {
-        // console.log('sort')
-        // console.log(fct)
-        if (typeof fct == "string"){
-            var tmp = fct 
-            fct = function(clone){
-                return clone.get(tmp)
-            }
-        }
-
-        var compare = function (a,b) {
-            var va;
-            try{
-                va = fct(this.m.clone(a));
-            }catch(e){
-            }
-            var vb;
-            try{
-                vb = fct(this.m.clone(b));
-            }catch(e){}
-            
-            if (typeof va == "undefined") return (typeof vb == "undefined")  ? 0 :  -1;
-            if (typeof vb == "undefined") return (typeof va == "undefined")  ? 0 :  1;
-                    
-            if (va.constructor === String) {
-                if (vb.constructor === String) return va.localeCompare(vb);
-                if (vb.constructor === Number ) return 1
-            }
-            
-            if (va.constructor === Number) return (vb.constructor === Number ) ? (va-vb) : -1;
-        }
-        
-        for (var i in this.axisX.value_mapping) {
-            this.axisX.value_mapping[i].sort(compare);
-        }
-        
-        return this;
-    },*/
 
     includeBar: function(clone, log) {
         var system_grid = (!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.get('germline') )) 
@@ -1591,32 +1540,6 @@ ScatterPlot.prototype = {
         }
 
     },
-
-    /**
-     * compute one axis with a given splitMethod (list of splitmethod in this.available_axis)
-     * @param {Axis} axis
-     * @param {string} splitMethod
-     * *
-    updateAxis: function(splitMethod, is_Y, adaptAxis) {
-        if (typeof is_Y === "undefined") is_Y = false;
-        var axis;
-        var aa = this.available_axis[splitMethod] 
-        if (aa == undefined) {
-            console.log('Undefined axis: ' + splitMethod)
-            return
-        }
-
-        axis = aa.axis;
-        axis.reverse = is_Y;
-        axis.adapt = adaptAxis
-
-        if (is_Y)
-            axis.MAX_NB_STEPS_IN_AXIS = 6
-        axis.init(this.m.clones, aa.fct, aa.labels, aa.sort, aa.min, aa.max, aa.log, aa.display_label);
-
-        return axis;
-    },
-    */
 
     /**
      * check and put the correct currently 

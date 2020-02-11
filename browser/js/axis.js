@@ -194,20 +194,12 @@ Axis.prototype = {
                 var nice = nice_min_max_steps(this.scale.min, this.scale.max, max)
                 this.step = nice.step
                 this.precision = nice_number_digits(this.step, 1)
-                //find optimal step value
-                //while (delta/this.step < max) this.decrease_step()
-                //while (delta/this.step > max) this.increase_step()
 
-                //round up min to the inferior step value
-                //this.scale.min = this.scale.min - (this.scale.min%this.step) 
                 this.scale.nice_min = nice.min
                 var l = nice.min.toFixed(this.precision)
                 if (l == 0) l = (0).toFixed(this.precision)
                 this.scale.nice_min_label = l
 
-                //round up max to the superior step value
-                //if (this.scale.max%this.step != 0)
-                //    this.scale.max = this.scale.max + this.step - (this.scale.max%this.step) 
                 this.scale.nice_max = nice.max
                 l = nice.max.toFixed(this.precision)
                 if (l == 0) l = (0).toFixed(this.precision)
@@ -266,29 +258,6 @@ Axis.prototype = {
         this.labels[l] = {text: text, type: type}
     },
 
-/*
-    increase_step: function(){
-        var index = this.steps.indexOf(this.step)
-
-        if (index < this.steps.length-1) 
-            this.step = this.steps[index+1]
-        else{
-            for (var i=0; i<this.steps.length; i++) this.steps[i] = this.steps[i]*10
-            this.step = this.steps[0]
-        }
-    },
-
-    decrease_step:function(){
-        var index = this.steps.indexOf(this.step)
-
-        if (index==0){ 
-            for (var i=0; i<this.steps.length; i++) this.steps[i] = this.steps[i]/10
-            this.step = this.steps[this.steps.length-1]
-        }
-        else
-            this.step = this.steps[index-1]
-    },
-*/
     sorted_keys: function(){
         var sorted_keys = []
         var keys = Object.keys(this.labels).slice()
