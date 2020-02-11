@@ -280,6 +280,10 @@ Model_loader.prototype = {
         //filter clones (remove clone beyond the limit)
         self.clones = [];
         var index = 0
+        // Bypass null values given by vidjil-algo (if --no-clone for example)
+        if (data.clones == null) {
+            data.clones = []
+        }
         for (var i = 0; i < data.clones.length; i++) {
             if (data.clones[i].top <= limit) {
                 // real
