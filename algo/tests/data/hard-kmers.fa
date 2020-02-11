@@ -1,0 +1,22 @@
+# exact sequences
+>TRDV1--DD3+d-exact
+ttacagctagaagattcagcaaagtacttttgtgctc
+CACAGTGCTACAAAACCTACAGAGACCTGTACAAA
+
+# 3 mutations, no 9-mer 
+>TRDV1--DD3+d-no-9-mer
+ttacagctagaagattcagcaaagtacttttgtgctc
+CACAGTGCaACAAAACCcACAGAGACgTGTACAAA
+#       X        X        X
+
+# 3 mutations, only one 9-mer 
+>TRDV1--DD3+d-one-9-mer
+ttacagctagaagattcagcaaagtacttttgtgctc
+CACAGTGCaACAAAACCTcCAGAGACCaGTACAAA
+#       X====9====X        X       
+
+# random J sequence but with one spurious 9-mer
+>TRDV1--random
+ttacagctagaagattcagcaaagtacttttgtgctc
+gctgatcataACAAAACCTctgtcagtcatgagctg
+

@@ -280,6 +280,10 @@ Model_loader.prototype = {
         //filter clones (remove clone beyond the limit)
         self.clones = [];
         var index = 0
+        // Bypass null values given by vidjil-algo (if --no-clone for example)
+        if (data.clones == null) {
+            data.clones = []
+        }
         for (var i = 0; i < data.clones.length; i++) {
             if (data.clones[i].top <= limit) {
                 // real
@@ -552,7 +556,12 @@ Model_loader.prototype = {
                             this.clones[n].germline = clone.germline;
                             this.clones[n].eValue   = clone.eValue;
                             this.clones[n].seg = clone.seg;
-                            
+
+                            if (clone.sequence != this.clones[n].sequence){
+                                // Sometimes sequence can differ. In this case, take the analysis one
+                                console.default.warn( "sequence contain in analysis differ for clone ", n)
+                                this.clones[n].sequence = clone.sequence
+                            }
                         }
                     }
                     // load germline in system_available

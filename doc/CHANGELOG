@@ -1,6 +1,16 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+2020-01-24  The Vidjil Team
+	* Improved e-value estimation, -e is now the global e-value, new advanced option --e-value-kmer
+	  Sequences on larger datasets will now be better analyzed #3594 !538
+	* Added 'seg.cdr3.seq' output with nucleotide sequence #4017
+	* Improved 'name' output on sequences not fully analyzed with '-c designations' #3890
+	* Limit on 50 clones on stdout, as the main output is the .vidjil file #3302 !530
+	* New --no-vidjil and --no-airr advanced options to control the output #3861
+	* Extended and updated documentation, including on library preparation and sequencing and on quality
+	* New and updated tests
+
 2019-05-17  The Vidjil Team
 	* Better method to build consensus sequences used by default, old behaviour with --consensus-on-longest-sequences #3866
 	* Optimized analyses with pre-computations, including for e-value estimation !468

@@ -1,19 +1,19 @@
 # Credits
 
 Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes, developed and maintained by
-the [Bonsai bioinformatics lab](http://cristal.univ-lille.fr/bonsai) at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lillendation 
+the [Bonsai bioinformatics lab](http://cristal.univ-lille.fr/bonsai) at CRIStAL (UMR CNRS 9189, Université Lille) 
 and the [VidjilNet consortium](http://www.vidjil.net) at Inria.
 
 Contact: [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
 
 ## Vidjil core development
 
-  - Mathieu Giraud, 2011-2019
-  - Mikaël Salson, 2011-2019
-  - Marc Duez, 2012-2016
+  - Mathieu Giraud, 2011-2020
+  - Mikaël Salson, 2011-2020
+  - Marc Duez, 2012-2016, 2019-2020
   - Tatiana Rocher, 2014-2017
-  - Florian Thonier, 2015-2019
-  - Ryan Herbert, 2015-2018
+  - Florian Thonier, 2015-2020
+  - Ryan Herbert, 2015-2020
   - Aurélien Béliard, 2016-2017
 
 ## Other contributors
@@ -65,7 +65,7 @@ The development of Vidjil is funded by:
   - SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), 2014-2017
   - Inria Lille, 2015-2018
   - InCA, 2016-2019
-  - VidjilNet consortium at Inria, 2018-
+  - VidjilNet consortium at Inria, 2018-2020
 
 
 ## References
@@ -95,7 +95,7 @@ http://dx.doi.org/10.3324/haematol.2017.177444
 Yann Ferret et al.,
 *Multi-loci diagnosis of acute lymphoblastic leukaemia with high-throughput sequencing and bioinformatics analysis*,
 British Journal of Haematology, 2016, 173, 413–420
-http://dx.doi.org/10.1111/bjh.13981
+https://hal.archives-ouvertes.fr/hal-01279160
 
 Henrike J. Fischer et al.,
 *Modulation of CNS autoimmune responses by CD8+ T cells coincides with their oligoclonal expansion*

@@ -36,3 +36,15 @@ a {
 a:hover {
     color: black;
 }
+
+ul p {
+  margin: 0;
+}
+
+ul li {
+  margin: 5px 0;
+}
+
+ul ul li {
+  margin: 0;
+}

@@ -1,4 +1,4 @@
-# vidjil-algo 2019.05
+# vidjil-algo 2020.01
 **Command-line manual**
 
 *The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)*
@@ -175,8 +175,12 @@ Xcode should be installed first.
 
 ### Download
 
-Stables releases can be downloaded from <http://www.vidjil.org/releases> or <http://bioinfo.lifl.fr/vidjil/>.
-Development code is found at <http://gitlab.vidjil.org>.
+These instructions targets *stable releases* of vidjil-algo, as downloaded from <http://www.vidjil.org/releases>
+or <http://bioinfo.lifl.fr/vidjil/>.
+
+Development code is found at <http://gitlab.vidjil.org>, in the `algo` directory.
+and compiling and running vidjil-algo on the development code can involve slightly different commands,
+including replacing `src` by `algo`.
 
 ### Compiling
 
@@ -194,7 +198,7 @@ make germline
    # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
 
 
-make vijdil-algo         # build vijil-algo from the sources (see the requirements,
+make -C src              # build vijil-algo from the sources (see the requirements,
                          # another option is: wget http://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -O vidjil-algo
                          # to download a static binary (built for x86_64 architectures)
 
@@ -345,12 +349,16 @@ When the read is too short too extract the requested length, the window can be s
 are counted in `SEG changed w` and the corresponding clones are output with the `W50` warning.
 
 The `-e` option sets the maximal e-value accepted for analyzing a sequence.
-It is an upper bound on the number of exepcted windows found by chance by the seed-based heuristic.
-The e-value computation takes into account both the number of reads in the
-input sequence and the number of locus searched for.
+It is an upper bound on the number of designated sequences found by chance by vidjil-algo.
+The e-value computation takes into account both the number of locus searched for
+and, for the defaut `-c clones` command, the number of reads in the input sequence.
 The default value is 1.0, but values such as 1000, 1e-3 or even less can be used
-to have a more or less permissive designation.
+to have a more or less permissive detection and designation.
 The threshold can be disabled with `-e all`.
+
+The advanced `--e-value-kmer` option sets the e-value for the seed-based heuristic.
+It is an upper bound on the number of expected windows found by chance.
+The default value is the same than value than the `-e`.
 
 The advanced `--trim` option sets the maximal number of nucleotides that will be indexed in
 V genes (the 3' end) or in J genes (the 5' end). This reduces the load of the
@@ -679,6 +687,7 @@ For example `-uu -X 1000` splits the not analyzed reads from the 1000 first read
 
 Since version 2018.10, vidjil-algo supports the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
 We export all required fields, some optional fields, as also some custom fields (+).
+We also propose in [fuse.py](/tools) a way to convert AIRR format to the `.vidjil` format.
 
 Note that Vidjil-algo is designed to efficiently gather reads from large datasets into clones. 
 By default (`-c clones`), we thus report in the AIRR format *clones*.
@@ -864,21 +873,15 @@ limited by `--max-clones`.
 By default *all* the clones of the sample are kept (`--max-clones all`),
 even if the V(D)J designation is computed only for some of them.
 
-Merging `.vidjil` files into a single one is done
-with the [tools/fuse.py](../tools/fuse.py) script, such as in:
+The `tools/fuse.py` script, as documented [here](./tools.md),
+merge several `.vidjil` files into a single one that can then be fed to the web client:
 
 ``` sh
-python tools/fuse.py --output mrd.vidjil --top 100 diag.vidjil fu1.vidjil fu2.vidjil fu3.vidjil
+python tools/fuse.py --output out.vidjil --top 100 sample1.vidjil sample2.vidjil sample3.vidjil
 ```
 
-The Vidjil web application takes the resulting `.vidjil` file (here `mrd.vidjil`).
-
-The `--top` parameter allows to choose how many top clones per sample should
-be kept. The default value is 50. Here `--top 100` means that for each sample, the top 100 clones are kept
-*and followed in the other samples*, even if it is not in the top 100 of the other samples.
-This allows to follow and quantify targeted clones even when there have only a few reads in some samples.
-
-As the `--top` value is below the default `--max-designations 100`, it means that every clone in the
+As the `--top` value is equal or below the default `--max-designations 100`, it means that every clone in the
 "merged" file will be fully analyzed with a V(D)J designation.
 Thus is advised to leave, in `vdijil-algo` the default `--max-clones all --max-designations 100` options
 for the majority of uses.
+

@@ -359,10 +359,9 @@ int main (int argc, char **argv)
                  "w-mer size used for the length of the extracted window ('" NO_LIMIT "': use all the read, no window clustering)")
     -> group(group) -> level() -> transform(string_NO_LIMIT);
 
-
-  double expected_value = THRESHOLD_NB_EXPECTED;
-  app.add_option("--e-value,-e", expected_value,
-                 "maximal e-value for determining if a V-J segmentation can be trusted", true)
+  double expected_value_kmer = NO_LIMIT_VALUE;
+  app.add_option("--e-value-kmer", expected_value_kmer,
+                 "maximal e-value for the k-mer heuristics ('" NO_LIMIT "': use same value than '-e')", true)
     -> group(group) -> level() -> transform(string_NO_LIMIT);
 
   int trim_sequences = DEFAULT_TRIM;
@@ -483,6 +482,11 @@ int main (int argc, char **argv)
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Clone analysis (second pass)";
 
+  double expected_value = THRESHOLD_NB_EXPECTED;
+  app.add_option("--e-value,-e", expected_value,
+                 "maximal e-value for determining if a V-J segmentation can be trusted", true)
+    -> group(group) -> transform(string_NO_LIMIT);
+
   Cost segment_cost = DEFAULT_SEGMENT_COST ;
   app.add_option("--analysis-cost",
                  [&segment_cost](CLI::results_t res) {
@@ -578,6 +582,10 @@ int main (int argc, char **argv)
   app.add_option("--dir,-o", out_dir, "output directory", true) -> group(group) -> type_name("PATH");
   app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> type_name("STRING");
 
+  bool no_airr = false;
+  bool no_vidjil = false;
+  app.add_flag("--no-airr", no_airr, "do not output AIRR .tsv") -> group(group) -> level();
+  app.add_flag("--no-vidjil", no_vidjil, "do not output clones in .vidjil") -> group(group) -> level();
 
   int verbose = 0 ;
   app.add_flag_function("--verbose,-v", [&](size_t n) { verbose += n ; }, "verbose mode") -> group(group);
@@ -784,7 +792,7 @@ int main (int argc, char **argv)
   if (command == CMD_SEGMENT)
     {
       cout << endl
-	   << "* WARNING: " << PROGNAME << " was run with '-c" COMMAND_SEGMENT "' option" << endl ;
+	   << "* WARNING: " << PROGNAME << " was run with '-c " COMMAND_SEGMENT "' option" << endl ;
     }
   
   if (max_clones == NO_LIMIT_VALUE || max_clones > WARN_MAX_CLONES || command == CMD_SEGMENT)
@@ -920,6 +928,10 @@ int main (int argc, char **argv)
     // Number of reads for e-value computation
     unsigned long long nb_reads_for_evalue = (expected_value > NO_LIMIT_VALUE) ? nb_sequences_in_file(f_reads, true) : 1 ;
 
+    if (expected_value_kmer == NO_LIMIT_VALUE)
+    {
+      expected_value_kmer = expected_value;
+    }
     
   //////////////////////////////////
   //$$ Read sequence files
@@ -1108,7 +1120,7 @@ int main (int argc, char **argv)
     WindowsStorage *windowsStorage = we.extract(reads, wmer_size,
                                                 windows_labels, only_labeled_windows,
                                                 keep_unsegmented_as_clone,
-                                                expected_value, nb_reads_for_evalue,
+                                                expected_value_kmer, nb_reads_for_evalue,
                                                 readScorer);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
@@ -1396,7 +1408,7 @@ int main (int argc, char **argv)
 
 	  
         // Re-launch also a KmerMultiSegmenter, for control purposes (affectations, evalue)
-        KmerMultiSegmenter kmseg(representative, multigermline, 0, expected_value, nb_reads_for_evalue);
+        KmerMultiSegmenter kmseg(representative, multigermline, 0, expected_value_kmer, nb_reads_for_evalue);
         KmerSegmenter *kseg = kmseg.the_kseg ;
         if (verbose)
           cout << "KmerSegmenter: " << kseg->getInfoLine() << endl;
@@ -1440,10 +1452,15 @@ int main (int argc, char **argv)
         // FineSegmenter
         size_t nb_fine_segmented = (size_t) max_clones; // When -1, it will become the max value.
         nb_fine_segmented = MIN(nb_fine_segmented, sort_clones.size());
-        FineSegmenter seg(representative, segmented_germline, segment_cost, expected_value, nb_fine_segmented, kmer_threshold, alternative_genes);
+
+        // The multiplier takes into account the expected_value_kmer.
+        // When --e-value-kmer is not set, the multiplier is 1.0. See #3594.
+        double fine_evalue_multiplier = MIN(expected_value_kmer, nb_fine_segmented);
+
+        FineSegmenter seg(representative, segmented_germline, segment_cost, expected_value, fine_evalue_multiplier, kmer_threshold, alternative_genes);
 
         if (segmented_germline->seg_method == SEG_METHOD_543)
-	  seg.FineSegmentD(segmented_germline, several_D, expected_value_D, nb_fine_segmented);
+          seg.FineSegmentD(segmented_germline, several_D, expected_value_D, fine_evalue_multiplier);
 
         if (detect_CDR3)
           seg.findCDR3();
@@ -1643,6 +1660,9 @@ int main (int argc, char **argv)
 
     Germline *not_segmented = new Germline(PSEUDO_NOT_ANALYZED, PSEUDO_NOT_ANALYZED_CODE);
 
+    // Multiplier is 1.0, we expect that the sequences are actual recombinations. See #3594.
+    double fine_evalue_multiplier = 1.0 ;
+
     while (reads->hasNext()) 
       {
         nb++;
@@ -1653,7 +1673,7 @@ int main (int argc, char **argv)
         KmerSegmenter *seg = kmseg.the_kseg ;
         Germline *germline = seg->segmented_germline ;
 
-        FineSegmenter s(seq, germline, segment_cost, expected_value, nb_reads_for_evalue, kmer_threshold, alternative_genes);
+        FineSegmenter s(seq, germline, segment_cost, expected_value, fine_evalue_multiplier, kmer_threshold, alternative_genes);
 
         string id = string_of_int(nb, 6);
         CloneOutput *clone = new CloneOutput();
@@ -1670,7 +1690,7 @@ int main (int argc, char **argv)
                 nb_segmented++ ;
 
                 if (germline->seg_method == SEG_METHOD_543)
-                  s.FineSegmentD(germline, several_D, expected_value_D, nb_reads_for_evalue);
+                  s.FineSegmentD(germline, several_D, expected_value_D, fine_evalue_multiplier);
 
                 if (detect_CDR3)
                   s.findCDR3();
@@ -1718,16 +1738,27 @@ int main (int argc, char **argv)
   }
 
   //$ Output AIRR .tsv
-  cout << "  ==> " << f_airr << "   \t(AIRR output)" << endl;
-  ofstream out_airr(f_airr.c_str());
-  static_cast<SampleOutputAIRR *>(&output) -> out(out_airr);
+  if (!no_airr)
+  {
+    cout << "  ==> " << f_airr << "   \t(AIRR output)" << endl;
+    ofstream out_airr(f_airr.c_str());
+    static_cast<SampleOutputAIRR *>(&output) -> out(out_airr);
+  }
 
   //$ Output .vidjil json
-  cout << "  ==> " << f_json << "\t(data file for the Vidjil web application)" << endl ;
+  cout << "  ==> " << f_json ;
+  if (no_vidjil)
+  {
+    cout << "\t(data file for the Vidjil web application)" << endl;
+  }
+  else
+  {
+    cout << "\t(only metadata, no clone output)" << endl;
+  }
   ofstream out_json(f_json.c_str()) ;
   SampleOutputVidjil *outputVidjil = static_cast<SampleOutputVidjil *>(&output);
 
-  outputVidjil->out(out_json);
+  outputVidjil -> out(out_json, !no_vidjil);
 
   //$$ Clean
   if (__only_on_exit__clean_memory) { delete multigermline ; delete reads; } return 0 ;

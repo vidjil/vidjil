@@ -250,7 +250,7 @@ line {
 }
 
 .graph_line{
-  stroke-width : 2.5px;
+  stroke-width : 1.5px;
   cursor:pointer;
   stroke: @default;
 }
@@ -267,7 +267,7 @@ line {
 }
 
 .graph_inactive{
-  stroke-width : 1.5px;
+  stroke-width : 0.5px;
   cursor:pointer;
   display:none;
 }
@@ -317,11 +317,13 @@ line {
 #resolution1{
   fill : @background;
   opacity : 1;
+  pointer-events: none;
 }
 
 #resolution5{
-    fill: @border;
+    fill: @background;
     opacity: 0.6;
+    pointer-events: none;
 }
 
 .graph_time{

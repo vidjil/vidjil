@@ -144,6 +144,18 @@ do a correct gathering.
                 "5": {"start": 1, "stop": 100},
                 "3": {"start": 101, "stop": 200}
             }
+        },
+        {
+            "id": "seqedited_in_analysis",
+            "name": "name_seqedited_in_analysis",
+            "sequence": "AAAAATTTTTAAAAATTTTTAAAAATTTTT",
+            "reads": [ 521, 42 ],
+            "germline": "TRG",
+            "top": 4,
+            "seg":
+              {
+                  "cdr3": {"start": 10, "stop": 20}
+              }
         }
     ]
 }
@@ -186,6 +198,17 @@ some clones, and added external data (`data`).
             "sequence": "ATGACTCTGGAGTCTATTACTGTGCCACCTGGGATGTGAGTATTATAAGAAAC",
             "tag": "3",
             "expected": "0.1"
+        },
+        {
+            "id": "seqedited_in_analysis",
+            "segEdited": true,
+            "germline": "TRG",
+            "sequence": "GGGGGCCCCCGGGGGCCCCCGGGGGCCCCCGGGGGCCCCCAAAAATTTTTAAAAATTTTTAAAAATTTTT",
+            "reads": [ 521, 42 ],
+            "seg":
+              {
+                  "cdr3": {"start": 50, "stop": 60}
+              }
         }
 
     ],
