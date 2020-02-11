@@ -66,6 +66,7 @@ function loadAfterConf() {
                                          "../germline_axis",
                                          "../numerical_axis",
                                          "../axes",
+                                         "../axis",
                                          "../graph",
                                          "../scatterPlot",
                                          "../builder",
