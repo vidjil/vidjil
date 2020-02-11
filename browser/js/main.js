@@ -135,7 +135,7 @@ try {
     my_tips.display()
 
     var menu_container = document.getElementById('vmiSelector');
-    var menu = vmi.setMenuOptions(new VidjilMenuDecorator());
+    var menu = vidjil_vmi.vmi.setMenuOptions(new VidjilMenuDecorator());
     menu_container.appendChild(menu);
 } catch(err) {
     this.db.log_error(err)
