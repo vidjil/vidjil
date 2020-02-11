@@ -94,9 +94,6 @@ function Clone(data, model, index, attributes) {
     this.m.clusters[index]=[index]
     this.m.clones[index]=this
     this.tag = this.getTag();
-    this.computeGCContent()
-    this.computeCoverage()
-    this.computeEValue()
 
     // .warn, client computed warnings
     this.computeWarnings()
@@ -132,10 +129,10 @@ Clone.prototype = {
 
     computeWarnings: function() {
 
-        if (this.coverage < this.COVERAGE_WARN)
+        if (this.getCoverage() < this.COVERAGE_WARN)
             this.warn.push({'code': 'W51', 'level': warnLevels[WARN], 'msg': 'Low coverage (' + this.coverage.toFixed(3) + ')'}) ;
 
-        if (typeof(this.eValue) != 'undefined' && this.eValue > this.EVALUE_WARN)
+        if (typeof(this.getEValue()) != 'undefined' && this.eValue > this.EVALUE_WARN)
             this.warn.push({'code': 'Wxx', 'level': warnLevels[WARN], 'msg': 'Bad e-value (' + this.eValue + ')' });
     },
 
@@ -170,7 +167,7 @@ Clone.prototype = {
     REGEX_GENE_IGNORE_ALLELE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD|IKZF1-|ERG-)([\w-]*)([\w-*]*)$/,   // IGHV3-11*03  (ignore *03)
 
     getAverageReadLength: function(time) {
-        if (this._average_read_length == 'undefined')
+        if (typeof this._average_read_length == 'undefined')
             return 'undefined';
         time = this.m.getTime(time);
         var size = this._average_read_length[time];
@@ -860,12 +857,16 @@ Clone.prototype = {
         return true
     },
 
-    computeEValue: function () {
+    getEValue: function () {
+        if (this.eValue) return this.eValue
+
         var e = this.seg.evalue;
         if (typeof(e) != 'undefined')
             this.eValue = parseFloat(e.val)
         else
             this.eValue = undefined
+
+        return this.eValue
     },
 
     getGene: function (type, withAllele) {
@@ -892,7 +893,7 @@ Clone.prototype = {
         if (this.hasSeg('3', '5')){
             return this.seg['3'].start-this.seg['5'].stop-1
         }else{
-            return 'undefined'
+            return '?'
         }
     },
     
@@ -943,8 +944,9 @@ Clone.prototype = {
     /*
      * Compute coverage as the average value of non-zero coverages
      */
+    getCoverage: function () {
+        if (this.coverage) return this.coverage
 
-    computeCoverage: function () {
         if (typeof (this._coverage) == 'undefined') {
             this.coverage = undefined
             return
@@ -960,9 +962,13 @@ Clone.prototype = {
             }
         }
         this.coverage = sum/nb
+
+        return this.coverage
     },
 
-    computeGCContent: function () {
+    getGCContent: function() {
+        if (this.GCContent) return this.GCContent
+
         if (this.getSequenceLength() === 0) {
             this.GCContent = undefined
             return
@@ -974,7 +980,9 @@ Clone.prototype = {
                 gc++ }
 
         this.GCContent = gc / this.sequence.length
-    },
+
+        return this.GCContent
+    },    
 
     getSequenceLength : function () {
         if (typeof (this.sequence) != 'undefined' &&
@@ -1375,7 +1383,7 @@ Clone.prototype = {
         }
 
         //coverage info
-        if (typeof this.coverage != 'undefined') {
+        if (typeof this.getCoverage() != 'undefined') {
             html += row_1("average coverage",
                           "<span " +
                           (this.coverage < this.COVERAGE_WARN ? "class='warning'" : "") +
@@ -1384,7 +1392,7 @@ Clone.prototype = {
         }
 
         // e-value
-        if (typeof this.eValue != 'undefined') {
+        if (typeof this.getEValue() != 'undefined') {
             html += row_1("e-value",
                           "<span " +
                           (this.eValue > this.EVALUE_WARN ? "class='warning'" : "") +
