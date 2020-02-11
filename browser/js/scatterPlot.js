@@ -47,7 +47,7 @@ function ScatterPlot(id, model, database, default_preset) {
     this.gridSizeH = 1; //grid height
 
     //Margins (css style : top/right/bottom/left)
-    this.default_margin = [45,10,15,90];
+    this.default_margin = [70,10,15,100];
     this.graph_margin = [25,25,25,25];
     this.margin = this.default_margin;
 
@@ -56,7 +56,6 @@ function ScatterPlot(id, model, database, default_preset) {
     /* EDIT DISTANCE ONLY
        BEG --
     */
-    this.mouseZoom = 1; //Zoom (scroll wheel)
     this['continue'] = false; //Boolean used for the nodes movements
     this.allEdges = []; //Initial edges array
     this.edgeSaved = []; //Edges array saved for the Edit Distance visualization
@@ -72,27 +71,13 @@ function ScatterPlot(id, model, database, default_preset) {
         x: 0,
         y: 0
     };
-    this.distanceMax = 10; //Distance max to display (Edit Distance visualization)
     /*
        END --
     */
 
-    this.dbscanActive = false; //Boolean to know if the DSCAN visualization is on
-    this.DBSCANLength = 5; //Length of the DBSCAN edges
-
     this.CLONE_MIN_SIZE = 0.001
 
-    this.AXIS_GENE_V = "v"
-    this.AXIS_GENE_J = "j"
-    this.AXIS_ALLELE_V = "allele_v"
-    this.AXIS_ALLELE_J = "allele_j"
-    
-    this.MODE_GRID = "grid"
-    this.MODE_BAR = "bar"
-
-    this.mode = this.MODE_GRID;
-    this.splitY = this.AXIS_GENE_J; //Distribution method, for the Y axis
-    this.splitX = this.AXIS_GENE_V; //Distribution method, for the X axis
+    this.mode = "grid";
 
     this.time0 = Date.now(); //Initial date saved
     this.time1 = this.time0; //Frames computed
@@ -108,8 +93,8 @@ function ScatterPlot(id, model, database, default_preset) {
 
     //axis Y text position
     this.rotation_y = 0;
-    this.text_position_y = 60;
-    this.sub_text_position_y = 100;
+    this.text_position_y = 50;
+    this.sub_text_position_y = 90;
 
     // is 'otherSize' selected ?
     this.otherVisibility = false
@@ -122,29 +107,29 @@ function ScatterPlot(id, model, database, default_preset) {
 
     // Plot axis
     var axes = new Axes(this.m);
-    this.available_axis = axes.available();
+    this.available_axis = Axis.prototype.available();
 
     // Plot Presets
     this.preset = {
-        "V/J (genes)" : { "mode": this.MODE_GRID, "x" : this.AXIS_GENE_V, "y": this.AXIS_GENE_J},
-        "V/J (alleles)" : { "mode": this.MODE_GRID, "x" : this.AXIS_ALLELE_V, "y": this.AXIS_ALLELE_J},
-        "V/N length" : { "mode": this.MODE_GRID, "x" : this.AXIS_GENE_V, "y": "nLength"},
-        "clone average read length / locus" : { "mode": this.MODE_GRID, "x": "averageLength", "y" : "locus"},
-        // "V/abundance" : { "mode": this.MODE_GRID, "x" : this.AXIS_GENE_V, "y": "size"},
-        "clone average read length distribution" : { "mode": this.MODE_BAR, "x" : "averageLength", "y": "size"},
-        "V distribution" :            { "mode": this.MODE_BAR, "x" : this.AXIS_GENE_V, "y": "size"},
-        "N length distribution" :     { "mode": this.MODE_BAR, "x" : "nLength",  "y": this.AXIS_GENE_V},
-        "CDR3 length distribution" : { "mode": this.MODE_BAR, "x": "lengthCDR3", "y" : "size"},
-        "J distribution" :            { "mode": this.MODE_BAR, "x" : this.AXIS_GENE_J,         "y": "size"},
-        "compare two samples" : { "mode": this.MODE_GRID, "x" : "size", "y": "sizeOtherSample"},
-        "plot by similarity" : { "mode": this.MODE_GRID, "x" : "tsneX", "y": "tsneY"},
-        "plot by similarity and by locus" : { "mode": this.MODE_GRID, "x" : "tsneX_system", "y": "tsneY_system"},
-        "clone average read length / GC content " : { "mode": this.MODE_GRID, "x": "averageLength", "y" : "GCContent"},
-        "clone consensus coverage / GC content " : { "mode": this.MODE_GRID, "x": "coverage", "y" : "GCContent"},
-        "number of samples sharing each clone" : { "mode": this.MODE_GRID, "x": "nbSamples", "y" : "locus"},
-        // "interpolated length between BIOMED2 primers (inclusive)" : { "mode": this.MODE_BAR, "x": "primers", "y" : "size"},
-        "number of deletions for the segment V/5 in 3" : { "mode": this.MODE_BAR, "x": "vDel", "y" : "size"},
-        "number of deletions for the segment J/3 in 5" : { "mode": this.MODE_BAR, "x": "jDel",  "y" : "size"},
+        "V/J (genes)" :             { "x" : "V/5' gene",                "y": "J/3' gene"},
+        "V/J (alleles)" :           { "x" : "V/5 allele",               "y": "J/3 allele"},
+        "V/N length" :              { "x" : "V/5' gene",                "y": "N length"},
+        "read length / locus" :     { "x": "clone consensus length",    "y" : "locus"},
+      //"V/abundance" :             { "x" : "V/5' gene", "y": "size"},
+        "read length distribution" :{ "x" : "clone average read length"},
+        "V distribution" :          { "x" : "V/5' gene"},
+        "N length distribution" :   { "x" : "N length"},
+        "CDR3 length distribution" :{ "x" : "CDR3 length (nt)"},
+        "J distribution" :          { "x" : "J/3' gene"},
+        "compare two samples" :     { "x" : "size",                     "y": "size (other sample)"},
+      //"plot by similarity" :      { "x" : "tsneX",                    "y": "tsneY"},
+      //"plot by similarity and by locus" :             { "x" : "tsneX_system", "y": "tsneY_system"},
+        "clone average read length / GC content " :     { "x":"clone average read length",    "y" : "GC content"},
+        "clone consensus coverage / GC content " :      { "x": "clone consensus length",      "y" : "GC content"},
+        "number of samples sharing each clone" :        { "x": "nbSamples", "y" : "locus"},
+      //"interpolated length between BIOMED2 primers (inclusive)" : { "x": "primers", "y" : "size"},
+        "number of deletions for the segment V/5 in 3" :{ "x": "vDel"},
+        "number of deletions for the segment J/3 in 5" :{ "x": "jDel"},
     };
 
     this.default_preset = (typeof default_preset == "undefined") ? 1 : default_preset ;
@@ -155,17 +140,14 @@ function ScatterPlot(id, model, database, default_preset) {
         ["graph", "Edit dist. graph"]
     ];
 
-    this.axisX = new GermlineAxis(this.m, false)
-    this.axisY = new GermlineAxis(this.m, true)
-    this.axisX.init(this.m.germlineV, "V")
-    this.axisY.init(this.m.germlineJ, "J")
     this.use_system_grid = false
 
     if (typeof this.m.sp == "undefined")
         this.m.sp = this
+
+    this.axis2X = new Axis("V/5' gene")
+    this.axis2Y = new Axis("J/3' gene")
 }
-
-
 
 ScatterPlot.prototype = {
 
@@ -178,7 +160,7 @@ ScatterPlot.prototype = {
         try {
 
             document.getElementById(this.id)
-                .removeAllChildren();
+                    .removeAllChildren();
 
             this.initMenu();
             this.initSVG();
@@ -416,10 +398,11 @@ ScatterPlot.prototype = {
         //Ajout de chaque méthode de répartition dans les menus pour l'axe des X/Y
         var element;
         for (var key in this.available_axis) {
-            if (typeof this.available_axis[key].hide == "undefined" || !this.available_axis[key].hide){
+            var axisP = Axis.prototype.getAxisProperties(this.available_axis[key])
+            if (typeof axisP.hide == "undefined" || !axisP.hide){
                 element = document.createElement("option");
-                element.setAttribute('value', key);
-                var text = document.createTextNode(this.available_axis[key].label);
+                element.setAttribute('value', axisP.name);
+                var text = document.createTextNode( axisP.name);
                 element.appendChild(text);
 
                 var element2 = element.cloneNode(true);
@@ -457,35 +440,6 @@ ScatterPlot.prototype = {
         div_y.appendChild(this.select_y);
         div_preset.appendChild(document.createTextNode("preset "));
         div_preset.appendChild(this.select_preset);
-
-        
-        
-        /*Graph menu initialization*/
-        /*
-        var div_graph = document.createElement('div');
-        div_graph.className = "axis_select axis_select_graph"
-
-        var select_graph = document.createElement('select');
-        select_graph.setAttribute('name', 'select_graph[]');
-        select_graph.id = "select_graph"
-
-        select_graph.onchange = function() {
-            self.changeXaxis();
-        }
-
-        for (var i = 0; i < this.graph_menu.length; i++) {
-            var element = document.createElement("option");
-            element.setAttribute('value', this.graph_menu[i][0]);
-            var text = document.createTextNode(this.graph_menu[i][1]);
-            element.appendChild(text);
-
-            select_graph.appendChild(element);
-
-        }
-
-        div_graph.appendChild(select_graph);
-        
-        */
         
         var span_icon_bar = document.createElement('div');
         span_icon_bar.className = "sp_menu_icon";
@@ -506,7 +460,7 @@ ScatterPlot.prototype = {
                 $(span_icon_plot).empty().append(svg);
             }, 'xml');
         span_icon_plot.onclick = function(){
-                self.updateMode(self.MODE_GRID);
+                self.updateMode("grid");
             };
         
         var div_mode = document.createElement('div');
@@ -525,8 +479,8 @@ ScatterPlot.prototype = {
         anchor.appendChild(menu);
         divParent.appendChild(anchor);
         
-        if (this.mode==this.MODE_BAR) $("#"+this.id+"_bar").addClass("sp_selected_mode")
-        if (this.mode==this.MODE_GRID) $("#"+this.id+"_plot").addClass("sp_selected_mode")
+        if (this.mode=="bar") $("#"+this.id+"_bar").addClass("sp_selected_mode")
+        if (this.mode=="grid") $("#"+this.id+"_plot").addClass("sp_selected_mode")
     },
 
     /**
@@ -570,24 +524,38 @@ ScatterPlot.prototype = {
     updateBar: function() {
 
         //split clones into bar (axisX)
-        this.axisX.init(this.m.clones, this.available_axis[this.splitX].fct);
+        //this.axis2X.init(this.m.clones, this.available_axis[this.splitX].fct);
         
         //sort each bar (axisY)
-        
-        this.axisY = new PercentAxis(this.m, true);
-        this.axisY.MAX_NB_STEPS_IN_AXIS = 5;
-        this.axisY.init(this.m.clones, this.available_axis[this.splitY].fct);
-        this.sortBarTab(this.axisY.converter);
+        this.axis2X
+            .compute(Math.round(this.resizeW/40))
+            .computeBar()
+        var max = this.axis2X.barMax
+        this.axis2Y = new Axis().load({
+                                        name:       "size",
+                                        scale:      {
+                                                        mode:   "linear",
+                                                        min:    0,
+                                                        max:    max,
+                                                        reverse: true,
+                                                        display: "percent"
+                                                    },
+                                        fct:        function(clone) {
+                                                        return clone.getSize()
+                                                    },
+                                        germline:   "multi"
+                                    })
+        this.axis2Y.compute(Math.round(this.resizeH/20))
 
-        //compute position for each clones
-        this.computeBarTab();
-        
+        //this.axisY.MAX_NB_STEPS_IN_AXIS = 5;
+        //this.axisY.init(this.m.clones, this.available_axis[this.splitY].fct);
+        //this.sortBarTab(this.axisY.converter);
     },
     
     /**
      * sort each bar of barplot using a distribution function <br>
      * param {function} fct - distribution function
-     * */
+     * *
     sortBarTab: function (fct) {
         // console.log('sort')
         // console.log(fct)
@@ -625,7 +593,7 @@ ScatterPlot.prototype = {
         }
         
         return this;
-    },
+    },*/
 
     includeBar: function(clone, log) {
         var system_grid = (!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.get('germline') )) 
@@ -645,35 +613,9 @@ ScatterPlot.prototype = {
     },
     
     /**
-     * return the size of the biggest bar
-     * @return {float} - size
-     * */
-    computeBarMax : function () {
-        var bar_max = 0;
-        for (var i in this.axisX.value_mapping) {
-            var tmp = 0;
-            for (var j in this.axisX.value_mapping[i]) {
-                var clone = this.axisX.value_mapping[i][j]
-                if (this.includeBar(clone)){
-                    time = this.m.getTime();
-                    tmp += clone.getSize(time);
-                }
-            }
-            if (tmp > bar_max) bar_max = tmp;
-        }
-        
-        return bar_max;
-    },
-    
-    /**
      * compute the position of each rectangles / labels and start the display
      * */
-    computeBarTab : function () {
-        var bar_max = nice_ceil(this.computeBarMax());
-        var tab_length = Object.keys(this.axisX.value_mapping).length;
-        var width = Math.min(0.08, 0.8 / tab_length);
-        
-        
+    computeBarTab : function () {        
         //reset (TODO improve default position )
         for (var n in this.nodes) {
             this.nodes[n].bar_y = 0.5;
@@ -681,35 +623,33 @@ ScatterPlot.prototype = {
             this.nodes[n].bar_h = 0;
             this.nodes[n].bar_w = 0;
         }
-        
-        k=1 ;
-        for (var i in this.axisX.value_mapping) {
-            var y_pos = 0
-            var x_pos = this.axisX.pos_from_value(i).pos
-            
-            for (var j in this.axisX.value_mapping[i]){
-                var clone = this.axisX.value_mapping[i][j]
-                var cloneID = clone.index;
+
+        var bars = this.axis2X.getBar()
+        for (var b in bars) {
+            var bar = bars[b]
+
+            var x_pos = this.axis2X.getValuePos(bar.value)
+
+            for (var c in bar.clones){
+                var cloneID = bar.clones[c].id
+                var clone = this.m.clone(cloneID)
                 if (this.includeBar(clone)){
-                    time = this.m.getTime();
-                    height = clone.getSize(time)/bar_max;
+                    var start = this.axis2Y.getValuePos(bar.clones[c].start)
+                    var stop =  this.axis2Y.getValuePos(bar.clones[c].stop)
+                    height = Math.abs(start-stop)
 
                     // Minimal height (does not affect y_pos)
+                    var y_pos = Math.max(start,stop)
                     var height_for_display = this.heightClone(height)
-                    var y_pos_for_display = y_pos + height_for_display ;
+                    var y_pos_for_display = y_pos - height + height_for_display
 
-                    y_pos += height;
-
-                    this.nodes[cloneID].bar_y = y_pos_for_display;
-                    this.nodes[cloneID].bar_x = x_pos;
-                    this.nodes[cloneID].bar_h = height_for_display;
-                    this.nodes[cloneID].bar_w = width;
+                    this.nodes[cloneID].bar_y = y_pos_for_display
+                    this.nodes[cloneID].bar_x = x_pos
+                    this.nodes[cloneID].bar_h = height_for_display
+                    this.nodes[cloneID].bar_w = bar.width
                 }
             }
-            k++;
         }
-        this.axisY.reverse = true;
-        this.axisY.computeLabels(0, bar_max);
         this.initGrid();
         this.drawBarTab(500);
         
@@ -721,21 +661,17 @@ ScatterPlot.prototype = {
      * @param {integer} speed
      * */
     drawBarTab : function (speed) {
+        console.log("DRAWBARTAB"+speed)
         var self = this;
         //redraw
         this.bar = this.bar_container.selectAll("rect")
             .data(this.nodes)
+
+
         this.bar_container.selectAll("rect")
-            .transition()
-            .duration(speed)
             .attr("id", function(d) {
                 return self.id + "_bar" + d.id;
             })
-            .attr("width", function(d) { return d.bar_w*self.gridSizeW })
-            .attr("x", function(d) { return (d.bar_x - d.bar_w/2)*self.gridSizeW + self.margin[3] })
-            .attr("height", function(d) { return d.bar_h*self.gridSizeH })
-            .attr("y", function(d) { return (1-d.bar_y)*self.gridSizeH + self.margin[0] })
-            .style("fill", function(d) { return (self.m.clone(d.id).getColor()) })
             .attr("class", function(p) {
                 if (!self.m.clone(p.id)
                     .isActive()) return "circle_hidden";
@@ -751,6 +687,35 @@ ScatterPlot.prototype = {
                     .isFocus()) return "circle_focus";
                 return "circle";
             })
+            .style("fill", function(d) { 
+                //return (self.m.clone(d.id).getColor()) 
+                return self.axis2X.getColor(self.m.clone(d.id))   
+            })
+
+            
+            this.bar_container.selectAll("rect")
+            .transition()
+            .duration(speed)
+            .attr("width", function(d) { 
+                var w = d.bar_w*self.gridSizeW
+                if (isNaN(w)) return 1
+                else return w
+            })
+            .attr("x", function(d) { 
+                var x = (d.bar_x - d.bar_w/2)*self.gridSizeW + self.margin[3]
+                if (isNaN(x)) return 1
+                else return x
+             })
+            .attr("height", function(d) { 
+                var h = d.bar_h*self.gridSizeH 
+                if (isNaN(h)) return 1
+                else return h
+            })
+            .attr("y", function(d) { 
+                var y = (1-d.bar_y)*self.gridSizeH + self.margin[0]
+                if (isNaN(y)) return 1
+                else return y
+             })
     },
 
     /**
@@ -772,8 +737,8 @@ ScatterPlot.prototype = {
                 return "circle_hidden";
             })
 
-        this.axis_x_update(this.axisX.labels);
-        this.axis_y_update(this.axisY.labels);
+        this.axis_x_update();
+        this.axis_y_update();
 
         setTimeout(function () {
             self.bar_container.selectAll("rect")
@@ -804,7 +769,7 @@ ScatterPlot.prototype = {
      * switch between available modes
      */
     switchMode: function () {
-        this.changeMode(this.mode === this.MODE_GRID ? this.MODE_BAR : this.MODE_GRID)
+        this.changeMode(this.mode === "grid" ? "bar" : "grid")
     },
     
     /**
@@ -901,8 +866,7 @@ ScatterPlot.prototype = {
             this.resizeH = div_height - this.margin[0] - this.margin[2];
         }
 
-        if (this.splitX == this.AXIS_ALLELE_V || this.splitX == this.AXIS_GENE_V || this.splitX == this.AXIS_ALLELE_J || this.splitX == this.AXIS_GENE_J || this.splitX == "tsneX_system" ||
-            (this.mode == this.MODE_GRID & (this.splitY == this.AXIS_ALLELE_V || this.splitY == this.AXIS_GENE_V || this.splitY == this.AXIS_ALLELE_J || this.splitY == this.AXIS_GENE_J))) {
+        if (this.axis2X && this.axis2X.germline != "multi" || this.axis2Y.germline != "multi"){
             this.use_system_grid = true;
             this.buildSystemGrid()
         } else {
@@ -910,7 +874,7 @@ ScatterPlot.prototype = {
             this.systemGrid = {}
         }
 
-        if (!print && this.splitY != this.MODE_BAR && this.use_system_grid && this.m.system_available.length > 1) {
+        if (!print && this.use_system_grid && this.m.system_available.length > 1) {
             this.gridSizeW = 0.8 * this.resizeW;
             this.gridSizeH = 1 * this.resizeH;
         } else {
@@ -997,7 +961,7 @@ ScatterPlot.prototype = {
             return d.r2 > 0;
         });
 
-        if (this.mode != this.MODE_BAR){
+        if (this.mode != "bar"){
             visible_nodes 
                 //attribution des nouvelles positions/tailles
                 .attr("cx", function(d) {
@@ -1080,8 +1044,7 @@ ScatterPlot.prototype = {
                 }
             }
             return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
-        };
-        
+        };     
     },
 
     /**
@@ -1093,12 +1056,16 @@ ScatterPlot.prototype = {
             this.node = this.plot_container.selectAll("circle")
             .data(this.nodes);
 
+            this.axis2X.reload()
+                       .compute(Math.round(this.resizeW/40))
+            this.axis2Y.reload()
+                       .compute(Math.round(this.resizeH/25))
             this.compute_size()
                 .initGrid()
                 .updateClones()
                 .updateMenu();
             
-            if (this.mode == this.MODE_BAR)
+            if (this.mode == "bar")
                 this.updateBar();
             
 
@@ -1119,15 +1086,6 @@ ScatterPlot.prototype = {
                         .strength(0.1)
                         .y(function(d){return d.y2 }))
                     .on("tick", function(){self.tick()})
-                    /*.force("repelForce",d3.forceManyBody()
-                        .strength(-140)
-                        .distanceMax(50)
-                        .distanceMin(10))
-                    .force("collide", d3.forceCollide()
-                        .strength(0.8)
-                        .radius(function(d){ return d.r2+1})
-                        .iterations(1));*/
-
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -1137,8 +1095,9 @@ ScatterPlot.prototype = {
      * update all clones (color / position / axis)
      * */
     updateClones: function() {
-        if (this.mode == this.MODE_BAR) {
+        if (this.mode == "bar") {
             this.computeBarTab();
+            return this
         }
         
         for (var i = 0; i < this.nodes.length; i++) {
@@ -1260,8 +1219,8 @@ ScatterPlot.prototype = {
             this.nodes[cloneID].x2 = Math.random()*0.01 + this.systemGrid[sys].x * this.resizeW;
             this.nodes[cloneID].y2 = Math.random()*0.01 + this.systemGrid[sys].y * this.resizeH;
         } else {
-            this.nodes[cloneID].x2 = Math.random()*0.01 + this.axisX.pos(clone).pos * this.gridSizeW
-            this.nodes[cloneID].y2 = Math.random()*0.01 + this.axisY.pos(clone).pos * this.gridSizeH
+            this.nodes[cloneID].x2 = Math.random()*0.01 + this.axis2X.getPos(clone) * this.gridSizeW
+            this.nodes[cloneID].y2 = Math.random()*0.01 + this.axis2Y.getPos(clone) * this.gridSizeH
         }
 
     },
@@ -1272,7 +1231,7 @@ ScatterPlot.prototype = {
      * */
     updateElemStyle: function() {
         var self = this;
-        if (this.mode == this.MODE_BAR) {
+        if (this.mode == "bar") {
             this.drawBarTab(0);
         } else {
             this.node
@@ -1292,8 +1251,8 @@ ScatterPlot.prototype = {
                     return "circle";
                 })
                 .style("fill", function(d) {
-                    return (self.m.clone(d.id)
-                        .getColor());
+                    return self.axis2X.getColor(self.m.clone(d.id))    
+                    //return (self.m.clone(d.id).getColor());
                 })
         }
     },
@@ -1304,8 +1263,8 @@ ScatterPlot.prototype = {
     initGrid: function() {
         self = this;
 
-        this.axis_x_update(this.axisX.labels);
-        this.axis_y_update(this.axisY.labels);
+        this.axis_x_update();
+        this.axis_y_update();
         this.system_label_update(this.systemGrid.label);
 
         return this;
@@ -1337,7 +1296,7 @@ ScatterPlot.prototype = {
      * */
     changePreset: function(){
         var elem = this.select_preset;
-        this.changeSplitMethod(this.preset[elem.value].x, this.preset[elem.value].y, this.preset[elem.value].mode);
+        this.changeSplitMethod(this.preset[elem.value].x, this.preset[elem.value].y);
         this.m.update();
     },
 
@@ -1362,83 +1321,55 @@ ScatterPlot.prototype = {
     /* Fonction permettant de mettre à jour de l'axe des X
      * @param data - Un tableau d'objets, concernant les données et les légendages (pour l'axe de X)
      * */
-    axis_x_update: function(data) {
-
+    axis_x_update: function() {
         var self = this;
-
-        this.label_update();
+        var data = Object.values(this.axis2X.labels);
         
         //detect label size
         var label_width = 0;
         var line = 0
-        var sub_line = 0
+        
 
         for (var i = 0; i < data.length; i++) {
-            if (data[i].type == "line") {
-                if (data[i].text.length > label_width) {
-                    label_width = data[i].text.length;
+            if (data[i].type != "subline"){
+                var text = data[i].text
+                if (text.length > label_width) {
+                    label_width = text.length;
                 }
                 line++
-            } else {
-                sub_line++
             }
         }
 
         label_width = (label_width * 8)
         var space = (this.gridSizeW / line) / label_width
-            //var count=space
 
         var className = "sp_legend"
-        if (space < 1.1) {
+        if (space < 0.8) {
             this.rotation_x = 320;
             this.text_position_x = 55;
-            this.margin[0] = 60
-            this.sub_text_position_x = 80;
+            this.sub_text_position_x = 70;
             className = "sp_rotated_legend";
         } else {
             this.rotation_x = 0;
             className = "sp_legend";
-            this.text_position_x = 30;
-            this.margin[0] = 45
-            this.sub_text_position_x = 45;
+            this.text_position_x = 40;
+            this.sub_text_position_x = 60;
         }
+
 
         //LEGENDE
         leg = this.axis_x_container.selectAll("text")
             .remove()
-            .exit()
+            .exit()   
             .data(data)
             .enter()
             .append("text")
             .on("click", function(d){
-            self.m.unselectAllUnlessKey(d3.event)
-            var listToSelect = [];
-            var halfRangeColumn = 0.5;
-            if (self.axisX.labels.length>1){
-                var nb_start = 0
-                if (self.axisX.labels[0].text == "?")
-                    nb_start = 1
-                halfRangeColumn = Math.abs((self.axisX.labels[nb_start+1].pos - self.axisX.labels[nb_start].pos)/2);
-            }
-            for (n=0; n<self.nodes.length; n++){
-                if (Math.abs(self.axisX.pos(self.m.clone(n)).pos - d.pos) < halfRangeColumn){
-                    if (self.nodes[n].r1>0){
-                        console.log("splitX : " + (self.splitX == this.AXIS_GENE_V) + ", " + (self.splitX));
-                        console.log("germline : " + (self.m.clones[n].germline == self.m.germlineV.system));
-                        if (self.splitX == this.AXIS_ALLELE_V || self.splitX == this.AXIS_GENE_V || self.splitX == this.AXIS_ALLELE_J || self.splitX == this.AXIS_GENE_J || (self.mode == this.MODE_GRID & (self.splitY == this.AXIS_ALLELE_V || self.splitY == this.AXIS_GENE_V || self.splitY == this.AXIS_ALLELE_J || self.splitY == this.AXIS_GENE_J))){
-                            if (self.m.clones[n].germline == self.m.germlineV.system)
-                                listToSelect.push(self.nodes[n]);
-                        }
-                        else {
-                            listToSelect.push(self.nodes[n]);
-                        }
-                    }
-                }
-            }
-                self.m.multiSelect(listToSelect);
-           })
+                self.m.unselectAllUnlessKey(d3.event)
+                self.m.multiSelect(self.axis2X.getLabelInfo(d.id).clones)
+            })
             .attr("x", function(d) {
-                return self.gridSizeW * d.pos + self.margin[3];
+                return self.gridSizeW * d.position + self.margin[3];
             })
             .attr("y", function(d) {
                 if (d.type == "subline") return self.sub_text_position_x
@@ -1449,33 +1380,11 @@ ScatterPlot.prototype = {
             })
             .attr("class", function(d) {
                 return className;
-                /*
-                * TODO
-                if ( d.type=="line" ){
-                count++
-                if (self.coordinates[0] > ((self.resizeW*d.pos+self.margin[3])-(label_width/4) ) &&
-                self.coordinates[0] < ((self.resizeW*d.pos+self.margin[3])+(label_width/4) )
-                ){
-                return "sp_legend_focus";
-                }
-                if (count >= space){
-                count=0
-                return "sp_legend";
-                }else{
-                return "sp_hidden_legend";
-                }
-                }else{ return "sp_legend";}
-                */
             })
             .attr("transform", function(d) {
                 var y = self.text_position_x
                 if (d.type == "subline") y = self.sub_text_position_x
-                return "rotate(" + self.rotation_x + " " + (self.gridSizeW * d.pos + self.margin[3]) + " " + y + ")"
-            })
-            .style("fill", function(d) {
-                if (self.m.colorMethod == "V" && self.splitX == this.AXIS_GENE_V && (typeof(d.geneColor) != "undefined")) return d.geneColor;
-                if (self.m.colorMethod == "J" && self.splitX == this.AXIS_GENE_J && (typeof(d.geneColor) != "undefined")) return d.geneColor;
-                return null;
+                return "rotate(" + self.rotation_x + " " + (self.gridSizeW * d.position + self.margin[3]) + " " + y + ")"
             });
 
         //this.AXIS
@@ -1486,10 +1395,10 @@ ScatterPlot.prototype = {
             .enter()
             .append("line")
             .attr("x1", function(d) {
-                return self.gridSizeW * d.pos + self.margin[3];
+                return self.gridSizeW * d.position + self.margin[3];
             })
             .attr("x2", function(d) {
-                return self.gridSizeW * d.pos + self.margin[3];
+                return self.gridSizeW * d.position + self.margin[3];
             })
             .attr("y1", function(d) {
                 return self.margin[0];
@@ -1505,24 +1414,16 @@ ScatterPlot.prototype = {
                     return "sp_subline";
                 }
                 return "sp_line";
-            })
-            .style("stroke", function(d) {
-                if (self.m.colorMethod == "V" && self.splitX == this.AXIS_GENE_V && (typeof(d.geneColor) != "undefined")) return d.geneColor;
-                if (self.m.colorMethod == "J" && self.splitX == this.AXIS_GENE_J && (typeof(d.geneColor) != "undefined")) return d.geneColor;
-                return null;
             });
-
     },
 
     /* Fonction permettant de mettre à jour de l'axe des Y
      * @param data - Un tableau d'objets, concernant les données et les légendages (pour l'axe de Y)
      * */
-    axis_y_update: function(data) {
-
+    axis_y_update: function() {
         self = this;
+        var data = Object.values(this.axis2Y.labels);
 
-        this.label_update();
-        
         //LEGENDE
         leg = this.axis_y_container.selectAll("text")
             .remove()
@@ -1531,55 +1432,30 @@ ScatterPlot.prototype = {
             .enter()
             .append("text")
             .on("click", function(d){
-            if (self.mode !=this.MODE_BAR){
-                // Multi-selection by clicking on a legend
-                self.m.unselectAllUnlessKey(d3.event)
-                var listToSelect = [];
-                var halfRangeLine = 0.5;
-                if (self.axisY.labels.length>1){
-                    var nb_start = 0
-                    if (self.axisY.labels[0].text == "?")
-                        nb_start = 1
-                    halfRangeLine = Math.abs((self.axisY.labels[nb_start+1].pos - self.axisY.labels[nb_start].pos)/2);
-                }
-                for (n=0; n<self.nodes.length; n++){
-                        if (Math.abs(self.axisY.pos(self.m.clone(n)).pos - d.pos) < halfRangeLine){
-                            if (self.nodes[n].r1>0){
-                                if (self.splitX == this.AXIS_ALLELE_V || self.splitX == this.AXIS_GENE_V || self.splitX == this.AXIS_ALLELE_J || self.splitX == this.AXIS_GENE_J || (self.mode == this.MODE_GRID & (self.splitY == this.AXIS_ALLELE_V || self.splitY == this.AXIS_GENE_V || self.splitY == this.AXIS_ALLELE_J || self.splitY == this.AXIS_GENE_J))){
-                                    if (self.m.clones[n].germline == self.m.germlineV.system)
-                                        listToSelect.push(self.nodes[n]);
-                                }
-                                else
-                                    listToSelect.push(self.nodes[n]);
-                            }
-                        }
-                    }
-                self.m.multiSelect(listToSelect);
+                if (self.mode !="bar"){
+                    self.m.unselectAllUnlessKey(d3.event)
+                    self.m.multiSelect(self.axis2Y.getLabelInfo(d.id).clones);
                 }
             })
-
             .attr("x", function(d) {
                 if (d.type == "subline") return self.sub_text_position_y;
                 else return self.text_position_y;
             })
             .attr("y", function(d) {
-                return (self.resizeH * d.pos + self.margin[0]);
+                return (self.resizeH * d.position + self.margin[0]);
             })
             .text(function(d) {
                 return d.text;
             })
             .attr("class", "sp_legend")
+            /*
             .attr("transform", function(d) {
                 var x = self.text_position_y
                 if (d.type == "subline") x = self.sub_text_position_y
-                return "rotate(" + self.rotation_y + " " + x + " " + (self.resizeH * d.pos + self.margin[0]) + ")"
+                return "rotate(" + self.rotation_y + " " + x + " " + (self.resizeH * d.position + self.margin[0]) + ")"
             })
-            .style("fill", function(d) {
-                if (self.m.colorMethod == "V" && self.splitY == this.AXIS_GENE_V && (typeof(d.geneColor) != "undefined")) return d.geneColor;
-                if (self.m.colorMethod == "J" && self.splitY == this.AXIS_GENE_J && (typeof(d.geneColor) != "undefined")) return d.geneColor;
-                return null;
-            });
-
+            */
+            
         //this.AXIS
         lines = this.axis_y_container.selectAll("line")
             .remove()
@@ -1594,50 +1470,22 @@ ScatterPlot.prototype = {
                 return self.gridSizeW + self.margin[3];
             })
             .attr("y1", function(d) {
-                return self.gridSizeH * d.pos + self.margin[0];
+                return self.gridSizeH * d.position + self.margin[0];
             })
             .attr("y2", function(d) {
-                return self.gridSizeH * d.pos + self.margin[0];
+                return self.gridSizeH * d.position + self.margin[0];
             })
             .style("stroke", function(d) {
                 return null;
             })
             .attr("class", function(d) {
                 if (d.type == "subline") {
-                    if (self.splitY != this.AXIS_ALLELE_J && self.splitY != this.AXIS_ALLELE_V && self.splitY != "allele_v_used") return "sp_subline_hidden";
                     return "sp_subline";
                 }
                 return "sp_line";
             })
-            .style("stroke", function(d) {
-                if (self.m.colorMethod == "V" && self.splitY == this.AXIS_GENE_V && (typeof(d.geneColor) != "undefined")) return d.geneColor;
-                if (self.m.colorMethod == "J" && self.splitY == this.AXIS_GENE_J && (typeof(d.geneColor) != "undefined")) return d.geneColor;
-                return null;
-            });
-
     },
 
-    label_update : function () {
-
-        var data = [
-            {x:(this.gridSizeW/2)+this.margin[3], y:12, text:this.available_axis[this.splitX].label, rotation:0 },
-            {y:(this.gridSizeH/2)+this.margin[0],  x:12, text:this.available_axis[this.splitY].label, rotation:270}
-        ]
-
-        leg = this.axis_container.selectAll("text")
-            .data(data);
-        leg.enter()
-            .append("text");
-        leg.exit()
-            .remove()
-        leg.attr("x", function(d) {return d.x})
-            .attr("y", function(d) {return d.y})
-            .text(function(d) {return d.text})
-            .attr("class", "sp_legend2")
-            .attr("transform", function(d) {
-                if (d.rotate !== 0) return "rotate(" + d.rotation + " " + d.x + " " + d.y + ")"
-            })
-    },
 
     /**
      * redraw labels for system (TRG/IGH/...)
@@ -1687,13 +1535,17 @@ ScatterPlot.prototype = {
     changeSplitMethod: function(splitX, splitY, mode) {
         var self = this;
 
-        if (mode == this.MODE_BAR && mode != this.mode) {
+        if (!mode && !splitY) mode = "bar"
+
+        if (mode == "bar" && mode != this.mode) {
+            this.mode = "bar"
             this.endPlot();
             this.initBar();
         }
 
         var endbar = false;
-        if (mode != this.MODE_BAR && this.mode == this.MODE_BAR) {
+        if (mode != "bar" && this.mode == "bar") {
+            this.mode = mode
             endbar = true;
         }
 
@@ -1711,14 +1563,16 @@ ScatterPlot.prototype = {
 
         this.splitX = splitX;
         this.splitY = splitY;
-        this.mode = mode;
         this.compute_size();
 
-        this.axisX = this.updateAxis(this.splitX, false, (this.mode == this.MODE_BAR));
-        this.axisY = this.updateAxis(this.splitY, true, false);
+        if (this.splitX)
+            this.axis2X = new Axis(this.splitX)
+        if (this.splitY)
+            this.axis2Y = new Axis(this.splitY)
         
-        if (this.mode == this.MODE_BAR){
-            this.updateBar();
+        if (this.mode == "bar"){
+            this.updateBar()
+            return this
         }
         
         if (endbar){
@@ -1742,7 +1596,7 @@ ScatterPlot.prototype = {
      * compute one axis with a given splitMethod (list of splitmethod in this.available_axis)
      * @param {Axis} axis
      * @param {string} splitMethod
-     * */
+     * *
     updateAxis: function(splitMethod, is_Y, adaptAxis) {
         if (typeof is_Y === "undefined") is_Y = false;
         var axis;
@@ -1762,6 +1616,7 @@ ScatterPlot.prototype = {
 
         return axis;
     },
+    */
 
     /**
      * check and put the correct currently 
@@ -1890,8 +1745,6 @@ ScatterPlot.prototype = {
                     this.nodes[i].py += movementHeight;
                 }
 
-                if (this.dbscanActive) this.addNextPositionsToClones(movementWidth, movementHeight);
-
                 this.positionToMove.originx += movementWidth;
                 this.positionToMove.originy += movementHeight;
 
@@ -1981,7 +1834,7 @@ ScatterPlot.prototype = {
                 var node = this.nodes[i]
                 var clone = this.m.clone(i)
                 var node_x, node_y;
-                if (this.mode != this.MODE_BAR) {
+                if (this.mode != "bar") {
                     node_x = node.x + this.margin[3]
                     node_y = node.y + this.margin[0]
                 } else {
