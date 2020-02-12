@@ -183,6 +183,7 @@ ul{
 
 #left-container {
   display: flex;
+  flex: 1 0 auto;
   flex-flow: column;
   position: relative;
   width : @width_left_container;
@@ -524,7 +525,6 @@ line {
 @width_axisBox : 52px;
 @width_infoBox : 20px;
 @width_systemBox : 12px;
-@width_listElem : (@width_left_container - @width_scrollbar);
 @margin : 6px;
 @margin_nameBox : 10px;
 
@@ -582,13 +582,11 @@ line {
 }
 
 .list{
-  width : 	445px;
   display :	block;
   padding : 	2px;
 }
 
 .listElem{
-  width : @width_listElem;
   font-size: 13px;
   cursor:pointer;
   -webkit-transition: color 0.2s;
@@ -604,7 +602,6 @@ line {
 }
 
 .nameBox {
-  width: 300px;
   margin-right: @margin_nameBox;
   overflow: hidden;
   display: inline-block;
@@ -747,7 +744,6 @@ line {
 
 							  /*style segmenter element*/
 .list_select{
-  width : 445px;
   display : block;
   border : solid;
   border-width : 2px;
