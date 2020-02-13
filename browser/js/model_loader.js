@@ -539,20 +539,25 @@ Model_loader.prototype = {
                     var clone = clones[k];
                     if (clone.segEdited) {
                     for (var n=0; n < this.clones.length; n++){
+                        var newGermline = clone.germline;
+                        // Sometime, clone of analysis file don't exist in the vidjil file (#4181)
+                        // This is made by specific configuration with restricted locus analysis
+                        // In these case, we create the newGermline into the model
+
+                        // If newGermline don't exist, create an empty list for them
+                        if (this.reads.germline[newGermline] == undefined){
+                            console.default.log(" creation germline: " + newGermline)
+                            this.reads.germline[newGermline] = Array.apply(null, Array(this.samples.number)).map(function (x, i) { return 0; })
+                        }
+                        // Same for system_available
+                        if (this.system_available.indexOf(newGermline) == -1){
+                            this.system_available.push(newGermline)
+                        }
                         if (clone.id == this.clones[n].id){
                             this.clones[n].segEdited = true;
                             // Apply this.reads.germline changment 
                             for (var time =0; time< this.reads.segmented.length; time ++) {
                                 var oldGermline = this.clones[n].germline;
-                                var newGermline = clone.germline; 
-                                // If newGermline don't exist, create an empty list for them
-                                if (this.reads.germline[newGermline] == undefined){
-                                    this.reads.germline[newGermline] = Array.apply(null, Array(this.samples.number)).map(function (x, i) { return 0; })
-                                }
-                                // Same for system_available
-                                if (this.system_available.indexOf(newGermline) == -1){
-                                    this.system_available.push(newGermline)
-                                }
                                 if(oldGermline != "custom") {this.reads.germline[oldGermline][time] -= this.clones[n].reads[time];}
                                 if(newGermline != "custom") {this.reads.germline[newGermline][time] += this.clones[n].reads[time];}
                                 if (newGermline == "custom" && newGermline != oldGermline) {
