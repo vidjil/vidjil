@@ -20,12 +20,12 @@ VidjilVMI.prototype = {
         this.vmi.add_panel(visu_container, true);
         this.vmi.add_panel(bot_container, true);
 
-        this.vmi.addView("data", this.left_id, "", [], resize_callback);
-        this.vmi.addView("list", this.left_id, "", [], resize_callback);
-        this.vmi.addView("info", this.left_id, "", [], resize_callback);
-        this.vmi.addView("visu", this.visu_id, "", [], resize_callback);
-        this.vmi.addView("visu2", this.visu_id, "", [], resize_callback);
-        this.vmi.addView("segmenter", this.bot_id, "", [], resize_callback);
+        this.vmi.addView("data", this.left_id, "", []);
+        this.vmi.addView("list", this.left_id, "", []);
+        this.vmi.addView("info", this.left_id, "", []);
+        this.vmi.addView("visu", this.visu_id, "", []);
+        this.vmi.addView("visu2", this.visu_id, "", []);
+        this.vmi.addView("segmenter", this.bot_id, "", []);
         this.vmi.setOverlays(["info-row", "list-row", "data-row", this.visu_id, this.bot_id]);
     },
 
@@ -71,9 +71,3 @@ function mid_callback(view) {
     panelDOM.removeChild(sep);
     panelDOM.insertBefore(sep, left.nextElementSibling);
 }
-
-function resize_callback() {
-    m.resize();
-}
-
-
