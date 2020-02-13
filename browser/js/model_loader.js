@@ -545,6 +545,14 @@ Model_loader.prototype = {
                             for (var time =0; time< this.reads.segmented.length; time ++) {
                                 var oldGermline = this.clones[n].germline;
                                 var newGermline = clone.germline; 
+                                // If newGermline don't exist, create an empty list for them
+                                if (this.reads.germline[newGermline] == undefined){
+                                    this.reads.germline[newGermline] = Array.apply(null, Array(this.samples.number)).map(function (x, i) { return 0; })
+                                }
+                                // Same for system_available
+                                if (this.system_available.indexOf(newGermline) == -1){
+                                    this.system_available.push(newGermline)
+                                }
                                 if(oldGermline != "custom") {this.reads.germline[oldGermline][time] -= this.clones[n].reads[time];}
                                 if(newGermline != "custom") {this.reads.germline[newGermline][time] += this.clones[n].reads[time];}
                                 if (newGermline == "custom" && newGermline != oldGermline) {
