@@ -562,8 +562,16 @@ Axis.prototype = {
     },
 
     getColor: function(clone) {
-        var pos = this.getPos(clone)
-        if (typeof pos == "undefined") return undefined
+        var v = this.fct(clone)
+
+        if (v in this.labels && this.labels[v].color)
+            if (this.labels[v].color == " ") 
+                return undefined
+            else
+                return this.labels[v].color
+
+        var pos = this.getValuePos(v)
+        if (pos === undefined) return undefined
         
         if (this.color){
             var offset = 0
