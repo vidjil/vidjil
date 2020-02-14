@@ -494,7 +494,7 @@ Axis.prototype = {
                 var width = bar_width              
                 if (typeof v == "number")
                     v = v - v%step
-                else if (v in this.labels)
+                else if (v in this.labels && bar_width == 0)
                     width = 0.8 * (this.labels[v].stop_position - this.labels[v].start_position)
                     
                 
