@@ -114,7 +114,7 @@ function ScatterPlot(id, model, database, default_preset) {
         "V/J (genes)" :             { "x" : "V/5' gene",                "y": "J/3' gene"},
         "V/J (alleles)" :           { "x" : "V/5 allele",               "y": "J/3 allele"},
         "V/N length" :              { "x" : "V/5' gene",                "y": "N length"},
-        "read length / locus" :     { "x": "clone consensus length",    "y" : "locus"},
+        "read length / locus" :     { "x" : "clone average read length","y": "locus"},
       //"V/abundance" :             { "x" : "V/5' gene", "y": "size"},
         "read length distribution" :{ "x" : "clone average read length"},
         "V distribution" :          { "x" : "V/5' gene"},
@@ -565,42 +565,41 @@ ScatterPlot.prototype = {
      * compute the position of each rectangles / labels and start the display
      * */
     computeBarTab : function () {        
-        //reset (TODO improve default position )
-        for (var n in this.nodes) {
-            this.nodes[n].bar_y = 0.5;
-            this.nodes[n].bar_x = 1;
-            this.nodes[n].bar_h = 0;
-            this.nodes[n].bar_w = 0;
-        }
-
         var bars = this.axis2X.getBar()
+
         for (var b in bars) {
             var bar = bars[b]
-
             var x_pos = this.axis2X.getValuePos(bar.value)
 
             for (var c in bar.clones){
                 var cloneID = bar.clones[c].id
                 var clone = this.m.clone(cloneID)
+                var node = this.nodes[cloneID]
+
                 if (this.includeBar(clone)){
                     var start = this.axis2Y.getValuePos(bar.clones[c].start)
                     var stop =  this.axis2Y.getValuePos(bar.clones[c].stop)
-                    height = Math.abs(start-stop)
+                    var height = Math.abs(start-stop)
 
                     // Minimal height (does not affect y_pos)
                     var y_pos = Math.max(start,stop)
                     var height_for_display = this.heightClone(height)
                     var y_pos_for_display = y_pos - height + height_for_display
 
-                    this.nodes[cloneID].bar_y = y_pos_for_display
-                    this.nodes[cloneID].bar_x = x_pos
-                    this.nodes[cloneID].bar_h = height_for_display
-                    this.nodes[cloneID].bar_w = bar.width
+                    node.old_bar_y = node.bar_y
+                    node.old_bar_x = node.bar_x
+                    node.old_bar_h = node.bar_h
+                    node.old_bar_w = node.bar_w
+
+                    node.bar_y = y_pos_for_display
+                    node.bar_x = x_pos
+                    node.bar_h = height_for_display
+                    node.bar_w = bar.width
                 }
             }
         }
         this.initGrid();
-        this.drawBarTab(500);
+        this.drawBarTab(1000);
         
         return this
     },
@@ -610,61 +609,113 @@ ScatterPlot.prototype = {
      * @param {integer} speed
      * */
     drawBarTab : function (speed) {
-        console.log("DRAWBARTAB"+speed)
         var self = this;
         //redraw
         this.bar = this.bar_container.selectAll("rect")
             .data(this.nodes)
-
 
         this.bar_container.selectAll("rect")
             .attr("id", function(d) {
                 return self.id + "_bar" + d.id;
             })
             .attr("class", function(p) {
-                if (!self.m.clone(p.id)
-                    .isActive()) return "circle_hidden";
-                if (self.m.clone(p.id)
-                    .isFiltered)return "circle_hidden";
-                if (self.m.clone(p.id)
-                    .isSelected()){
-                    if (self.m.clone(p.id)
-                        .isFocus()) return "circle_focus circle_select";
-                    return "circle_select";
-                }
-                if (self.m.clone(p.id)
-                    .isFocus()) return "circle_focus";
-                return "circle";
+                var c = self.m.clone(p.id)
+
+                if ((!d.terminate) &&
+                    (!p.hasValidAxisPosition || p.use_system_grid || !c.isActive() || c.isFiltered) )
+                    return "circle_hidden"
+                if (c.isSelected() && c.isFocus())
+                    return "circle_focus circle_select"
+                if (c.isSelected())
+                    return "circle_select"
+                if (c.isFocus()) 
+                    return "circle_focus"
+
+                return "circle"
+            })
+            .attr("width", function(d) { 
+                var bar_w = (d.requireInit) ? d.bar_w : d.old_bar_w
+                var w = bar_w*self.gridSizeW
+                if (isNaN(w)) return 1
+                else return w
+            })
+            .attr("x", function(d) { 
+                var bar_x = (d.requireInit) ? d.bar_x : d.old_bar_x
+                var bar_w = (d.requireInit) ? d.bar_w : d.old_bar_w
+                var x = (bar_x - bar_w/2)*self.gridSizeW + self.margin[3]
+                if (isNaN(x)) return 1
+                else return x
+                
+             })
+            .attr("height", function(d) { 
+                if (d.requireInit)
+                    return 0
+
+                var h = d.old_bar_h*self.gridSizeH 
+                if (isNaN(h)) return 1
+                else return h
+            })
+            .attr("y", function(d) { 
+                if (d.requireInit)
+                    return self.gridSizeH + self.margin[0]
+
+                var y = (1-d.old_bar_y)*self.gridSizeH + self.margin[0]
+                if (isNaN(y)) return 1
+                else return y
+            })
+            .on("mouseover", function(d) {})
+            .on("click", function(d) {})
+            
+
+
+
+
+
+            this.bar_container.selectAll("rect")
+            .transition()
+            .duration(speed)
+            .attr("width", function(d) { 
+                var bar_w = (d.terminate) ? d.old_bar_w : d.bar_w
+                var w = bar_w*self.gridSizeW
+                if (isNaN(w)) return 1
+                else return w
+            })
+            .attr("x", function(d) { 
+                var bar_w = (d.terminate) ? d.old_bar_w : d.bar_w
+                var bar_x = (d.terminate) ? d.old_bar_x : d.bar_x
+                var x = (bar_x - bar_w/2)*self.gridSizeW + self.margin[3]
+                if (isNaN(x)) return 1
+                else return x
+            })
+            .attr("height", function(d) { 
+                var bar_h = (d.terminate) ? 0: d.bar_h
+                var h = bar_h*self.gridSizeH 
+                if (isNaN(h)) return 1
+                else return h
+            })
+            .attr("y", function(d) { 
+                if (d.terminate)
+                    return self.gridSizeH + self.margin[0]
+
+                var y = (1-d.bar_y)*self.gridSizeH + self.margin[0]
+                if (isNaN(y)) return 1
+                else return y
             })
             .style("fill", function(d) { 
                 //return (self.m.clone(d.id).getColor()) 
                 return self.axis2X.getColor(self.m.clone(d.id))   
             })
 
-            
-            this.bar_container.selectAll("rect")
-            .transition()
-            .duration(speed)
-            .attr("width", function(d) { 
-                var w = d.bar_w*self.gridSizeW
-                if (isNaN(w)) return 1
-                else return w
-            })
-            .attr("x", function(d) { 
-                var x = (d.bar_x - d.bar_w/2)*self.gridSizeW + self.margin[3]
-                if (isNaN(x)) return 1
-                else return x
-             })
-            .attr("height", function(d) { 
-                var h = d.bar_h*self.gridSizeH 
-                if (isNaN(h)) return 1
-                else return h
-            })
-            .attr("y", function(d) { 
-                var y = (1-d.bar_y)*self.gridSizeH + self.margin[0]
-                if (isNaN(y)) return 1
-                else return y
-             })
+            setTimeout(function(){
+                var that = self
+                self.bar_container.selectAll("rect")
+                .on("mouseover", function(d) {
+                    that.m.focusIn(d.id)
+                })
+                .on("click", function(d) {
+                    that.clickNode(d.id)
+                })
+            }, speed)
     },
 
     /**
@@ -1027,7 +1078,7 @@ ScatterPlot.prototype = {
             }
 
             this.simulation = d3.forceSimulation()
-                .nodes(this.nodes)
+                .nodes(this.nodes.filter(function(d){return d.hasValidAxisPosition}))
                     .force("forceX", d3.forceX()
                         .strength(0.1)
                         .x(function(d){return (d.x2) }))
@@ -1043,14 +1094,14 @@ ScatterPlot.prototype = {
     /**
      * update all clones (color / position / axis)
      * */
-    updateClones: function() {
+    updateClones: function() {    
+        for (var i = 0; i < this.nodes.length; i++) {
+            this.updateClone(i);
+        }
+
         if (this.mode == "bar") {
             this.computeBarTab();
             return this
-        }
-        
-        for (var i = 0; i < this.nodes.length; i++) {
-            this.updateClone(i);
         }
         
         this.updateElemStyle();
@@ -1097,6 +1148,8 @@ ScatterPlot.prototype = {
      * */
     updateCloneSize: function(cloneID, size)
     {
+        var node = this.nodes[cloneID];
+
         if (this.otherVisibility) {
             var otherSize = this.m.clone(cloneID).getSequenceSize(this.m.tOther)
             if (otherSize > size) size = otherSize
@@ -1106,8 +1159,8 @@ ScatterPlot.prototype = {
               (size > 0 && size < this.CLONE_MIN_SIZE)) && !this.m.clone(cloneID).hasSizeDistrib() )
             size = this.CLONE_MIN_SIZE
 
-        this.nodes[cloneID].s = size
-        this.nodes[cloneID].r1 = this.radiusClone(size)
+        node.s = size
+        node.r1 = this.radiusClone(size)
     },
 
     /**
@@ -1115,10 +1168,9 @@ ScatterPlot.prototype = {
      * @param {integer} cloneID - clone index 
      * */
     updateClone: function(cloneID) {
+        var clone = this.m.clone(cloneID)      
+        var node = this.nodes[cloneID]
 
-        // Clone size
-        var clone = this.m.clone(cloneID)
-        
         if (this.m.clone(cloneID)
             .isActive()) {
 
@@ -1158,18 +1210,35 @@ ScatterPlot.prototype = {
             }
 
         } else {
-            this.nodes[cloneID].r1 = 0
-            this.nodes[cloneID].s = 0
+            node.r1 = 0
+            node.s = 0
         }
 
         // Clone position
         var sys = clone.get('germline');
+        var xpos = this.axis2X.getPos(clone)
+        var ypos = this.axis2Y.getPos(clone)
+
+        node.requireInit = false
+        if (!node.hasValidAxisPosition)
+            node.requireInit = true
+        
+        node.terminate = false
+        if (xpos  === undefined && node.hasValidAxisPosition) node.terminate = true
+        if (ypos  === undefined && node.hasValidAxisPosition) node.terminate = true
+
+        node.hasValidAxisPosition = true
+        if (xpos  === undefined) node.hasValidAxisPosition = false
+        if (ypos  === undefined) node.hasValidAxisPosition = false
+
         if (this.use_system_grid && this.m.system == "multi" && typeof sys != 'undefined' && sys != this.m.germlineV.system) {
-            this.nodes[cloneID].x2 = Math.random()*0.01 + this.systemGrid[sys].x * this.resizeW;
-            this.nodes[cloneID].y2 = Math.random()*0.01 + this.systemGrid[sys].y * this.resizeH;
+            node.use_system_grid = true
+            node.x2 = Math.random()*0.01 + this.systemGrid[sys].x * this.resizeW;
+            node.y2 = Math.random()*0.01 + this.systemGrid[sys].y * this.resizeH;
         } else {
-            this.nodes[cloneID].x2 = Math.random()*0.01 + this.axis2X.getPos(clone) * this.gridSizeW
-            this.nodes[cloneID].y2 = Math.random()*0.01 + this.axis2Y.getPos(clone) * this.gridSizeH
+            node.use_system_grid = false
+            node.x2 = Math.random()*0.01 + xpos  * this.gridSizeW
+            node.y2 = Math.random()*0.01 + ypos * this.gridSizeH
         }
 
     },
@@ -1185,19 +1254,18 @@ ScatterPlot.prototype = {
         } else {
             this.node
                 .attr("class", function(p) {
-                    if (!self.m.clone(p.id)
-                        .isActive()) return "circle_hidden";
-                    if (self.m.clone(p.id)
-                        .isFiltered)return "circle_hidden";
-                    if (self.m.clone(p.id)
-                        .isSelected()){
-                        if (self.m.clone(p.id)
-                            .isFocus()) return "circle_focus circle_select";
-                        return "circle_select";
-                    }
-                    if (self.m.clone(p.id)
-                        .isFocus()) return "circle_focus";
-                    return "circle";
+                    var c = self.m.clone(p.id)
+
+                    if (!p.hasValidAxisPosition || !c.isActive() || c.isFiltered) 
+                        return "circle_hidden";
+                    if (c.isSelected() && c.isFocus())
+                        return "circle_focus circle_select"
+                    if (c.isSelected())
+                        return "circle_select"
+                    if (c.isFocus()) 
+                        return "circle_focus"
+
+                    return "circle"
                 })
                 .style("fill", function(d) {
                     return self.axis2X.getColor(self.m.clone(d.id))    
