@@ -260,7 +260,7 @@ Model.prototype = {
             {"color" : "#2aa198", "name" : "custom 1", "display" : true},
             {"color" : "#d33682", "name" : "custom 2", "display" : true},
             {"color" : "#859900", "name" : "custom 3", "display" : true},
-            {"color" : "", "name" : "-/-", "display" : true}
+            {"color" : " ", "name" : "-/-", "display" : true}
         ]
 
         this.default_tag=8;

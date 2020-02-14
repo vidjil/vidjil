@@ -111,7 +111,7 @@ AXIS_DEFAULT = {
                     },
         fct:        function(clone) {
                         var len = clone.getAverageReadLength()
-                        if (typeof len == "undefined") return "?"
+                        //if (len == "undefined") return "?"
                         return Math.round(len)
                     },
         autofill:   true,
