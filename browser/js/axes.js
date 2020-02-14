@@ -177,8 +177,18 @@ AXIS_DEFAULT = {
     "tag": {
         name:       "tag",
         doc:        "tag, as defined by the user",   
+        labels:     function(){
+                        var l = {}
+                        for (var i=0; i<m.tag.length; i++)
+                            l[m.tag[i].name] =  {
+                                                    text:   m.tag[i].name,   
+                                                    color:  m.tag[i].color
+                                                }
+                        return l
+                    },
         fct:        function(clone) {return clone.getTagName()},
-        autofill :  true
+        sort :      false,
+        autofill :  false
     },
     "clone consensus coverage": {
         name:       "clone consensus coverage",
@@ -396,8 +406,7 @@ AXIS_DEFAULT = {
                         return length
                     },
         autofill:   true
-    }
-    
+    },
 }
 
 
