@@ -745,7 +745,7 @@ ScatterPlot.prototype = {
                 .attr("class", function(p) {
                     return "circle_hidden";
             })
-            self.update()
+            self.smartUpdate()
         },400)
 
         
@@ -762,7 +762,7 @@ ScatterPlot.prototype = {
 
     updateMode : function (mode) {
         this.changeMode(mode);
-        this.m.update();
+        this.m.smartUpdate();
     },
 
     /**
@@ -847,7 +847,7 @@ ScatterPlot.prototype = {
             .attr("width", div_width)
             .attr("height", div_height);
 
-        this.update();
+        this.smartUpdate();
         
         if (this.splitX == "tsneX_system" || this.splitX == "tsneX"){
             this.changeSplitMethod(this.splitX, this.splitY, this.mode)
@@ -1053,6 +1053,9 @@ ScatterPlot.prototype = {
     update: function() {
         var self = this;
         try{
+            if (this.mode == "bar")
+            this.updateBar();
+
             this.node = this.plot_container.selectAll("circle")
             .data(this.nodes);
 
@@ -1063,11 +1066,7 @@ ScatterPlot.prototype = {
             this.compute_size()
                 .initGrid()
                 .updateClones()
-                .updateMenu();
-            
-            if (this.mode == "bar")
-                this.updateBar();
-            
+                .updateMenu();    
 
             this.active_nodes = this.nodes.filter(function(d, i) {
                 return d.r1 > 0;
@@ -1119,7 +1118,7 @@ ScatterPlot.prototype = {
      * @param {integer[]} list - array of clone index
      * */
     updateElem: function(list) {
-        this.update();
+        this.smartUpdate();
     },
 
     /** 
@@ -1295,7 +1294,7 @@ ScatterPlot.prototype = {
         var elem = this.select_x;
         this.changeSplitMethod(elem.value, this.splitY, this.mode);
         this.cancelPreset()
-        this.m.update();
+        this.smartUpdate();
     },
 
     /**
@@ -1305,7 +1304,7 @@ ScatterPlot.prototype = {
         var elem = this.select_y;
         this.changeSplitMethod(this.splitX, elem.value, this.mode);
         this.cancelPreset()
-        this.m.update();
+        this.smartUpdate();
     },
     
     /**
@@ -1314,12 +1313,12 @@ ScatterPlot.prototype = {
     changePreset: function(){
         var elem = this.select_preset;
         this.changeSplitMethod(this.preset[elem.value].x, this.preset[elem.value].y);
-        this.m.update();
+        this.smartUpdate();
     },
 
     updatePreset: function(){
         this.changePreset();
-        this.m.update();
+        this.smartUpdate();
     },
 
     setPreset: function(preset){
@@ -1892,7 +1891,7 @@ ScatterPlot.prototype = {
 
     shouldRefresh: function () {
         this.init();
-        this.update();
+        this.smartUpdate();
     }
 }
 ScatterPlot.prototype = $.extend(Object.create(View.prototype), ScatterPlot.prototype);
