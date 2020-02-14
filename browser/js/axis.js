@@ -96,31 +96,32 @@ Axis.prototype = {
             return
         }
 
+
         this.json = json
         this.name = json.name   
         this.doc = ('doc' in json) ? json.doc : json.name
-        this.fct = json.fct  
-        this.germline = "multi"     //default value
-        this.labels = {}
+        this.fct = json.fct    
         this.color = json.color
+        this.sort = json.sort
 
+        this.germline = "multi" 
         if ('germline' in json)
             if (typeof json.germline === "function") 
                 this.germline = json.germline()
             else 
                 this.germline = json.germline
 
+        this.labels = {}
         if ('labels' in json)
             if (typeof json.labels === "function") 
                 this.labels = json.labels()
             else 
                 this.labels = JSON.parse(JSON.stringify(json.labels))
 
+        this.scale = undefined
         if ('scale' in json)
             this.scale = JSON.parse(JSON.stringify(json.scale))
-        else
-            this.scale = undefined
-
+            
         return this
     },
 
@@ -266,7 +267,7 @@ Axis.prototype = {
         for (var k in keys)
             if (this.labels[keys[k]].side == "left")  
                 tmp.push(keys[k])
-        tmp.sort()
+        this.sort_keys(tmp)
         sorted_keys = sorted_keys.concat(tmp)
 
         tmp = []
@@ -275,7 +276,7 @@ Axis.prototype = {
             this.labels[keys[k]].type != "logScale" &&
             this.labels[keys[k]].type != "linearScale" ) 
                 tmp.push(keys[k])
-        tmp.sort()
+        this.sort_keys(tmp)
         sorted_keys = sorted_keys.concat(tmp)
 
         for (k in keys)
@@ -288,10 +289,36 @@ Axis.prototype = {
         for (k in keys)
             if (this.labels[keys[k]].side == "right")  
                 tmp.push(keys[k])
-        tmp.sort()
+        this.sort_keys(tmp)
         sorted_keys = sorted_keys.concat(tmp)
 
         return sorted_keys
+    },
+
+    sort_keys : function (array){
+        if (typeof this.sort == "undefined"){
+            array.sort()
+            return
+        }
+
+        if (typeof this.sort == "function"){
+            array.sort(this.sort)
+            return
+        }
+
+        if (typeof this.sort == "string"){
+            if (this.sort == "alphabetical")
+                array.sort()
+            else if (this.sort == "reverse_alphabetical")
+                array.sort().reverse()
+            
+            return
+        }
+
+        if (this.sort)
+            array.sort()
+
+        return
     },
 
     compute_relative_positions: function(){
