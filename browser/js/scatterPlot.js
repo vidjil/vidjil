@@ -1613,18 +1613,19 @@ ScatterPlot.prototype = {
       axis for axisX/Y menu <br>
      * */
     updateMenu: function() {
-        var select_x = 0;
+        var select_x = 0
         var select_y = 0
-        var i=0;
+        var i=0
+        
         for (var key in this.available_axis) {
-            if (typeof this.available_axis[key].hide !== "undefined" && this.available_axis[key].hide)
-                continue;
-            if (key == this.splitX) select_x = i
-            if (key == this.splitY) select_y = i
-            i++;
+            var axisName = this.available_axis[key]
+            if (axisName == this.splitX) select_x = i
+            if (axisName == this.splitY) select_y = i
+            i++
         }
         this.select_x.selectedIndex = select_x
         this.select_y.selectedIndex = select_y
+
         $(".sp_menu_icon").removeClass("sp_selected_mode");
         $("#"+this.id+"_"+this.mode).addClass("sp_selected_mode");
 
