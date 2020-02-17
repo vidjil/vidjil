@@ -565,7 +565,7 @@ Axis.prototype = {
         var v = this.fct(clone)
 
         if (v in this.labels && this.labels[v].color)
-            if (this.labels[v].color == " ") 
+            if (this.labels[v].color == "default") 
                 return undefined
             else
                 return this.labels[v].color
