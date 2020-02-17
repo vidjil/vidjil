@@ -449,7 +449,7 @@ ScatterPlot.prototype = {
                 $(span_icon_bar).empty().append(svg);
             }, 'xml');
         span_icon_bar.onclick = function(){
-                self.updateMode(self.MODE_BAR);
+                self.updateMode("bar");
             };
         
         span_icon_plot = document.createElement('div');
@@ -761,8 +761,8 @@ ScatterPlot.prototype = {
     },
 
     updateMode : function (mode) {
-        this.changeMode(mode);
-        this.m.smartUpdate();
+        this.changeMode(mode)
+        this.smartUpdate()
     },
 
     /**
