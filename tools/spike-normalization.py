@@ -18,7 +18,7 @@ import math
 ############################################################
 ### constants
 
-version = 'S0.05'
+version = 'S0.06'
 UNI = 'UNI'                     # except Vidjil leaves cluster to user
 NG600 = 100000                  # number of cells for 600ng of DNA
 ### maximum reads for a give spike-in allowed in diagnostic samples
@@ -213,6 +213,7 @@ def addNormalizedReads(data, coeff, r2, spk):
     prevalent, spg = prevalentGermline(data['reads']['germline'])
     data['samples']['prevalent'] = [ prevalent ]
     data['samples']['ampl_coeff'] = [ spg/spk ]
+    data['samples']['UNI_R2'] = [ r2[UNI] ]
     ### normalize just clones from the prevalent germline
     for clone in data['clones']:
         ## grab read data
@@ -234,10 +235,6 @@ def addNormalizedReads(data, coeff, r2, spk):
             clone['normalized_reads'] = [ reads*coeff[fam]*spg/NG600 ]
             clone['R2'] = [ r2[fam] ]
             clone['family'] = [ fam ]
-        else:
-            ## to be able to show universal R2 for negative clones
-            clone['R2'] = [ r2[UNI] ]
-            clone['family'] = [ UNI ]            
 
 ############################################################
 ### command line, initial msg
