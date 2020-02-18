@@ -23,7 +23,7 @@ class TestList < BrowserTest
     sleep 1
     # tester la presence du lock
     lock = $b.listLock()
-    assert ( lock.attribute_value("class") == "icon-lock-filled"), "lock start in good state (locked)"
+    assert ( lock.attribute_value("class") == "icon-lock-1"), "lock start in good state (locked)"
 
     # tester l'ordre des clones
     listClone = $b.list()  
@@ -44,7 +44,7 @@ class TestList < BrowserTest
     # Enlever le lock
     lock = $b.listLock()
     lock.click
-    assert ( lock.attribute_value("class") == "icon-lock-open-filled"), "lock in good state after click (unlocked)"
+    assert ( lock.attribute_value("class") == "icon-lock-open"), "lock in good state after click (unlocked)"
     # verifier que l'ordre a déjà changer (automatique sort)
     listClone = $b.list()  
     l0 = listClone.div(index: 0)
@@ -70,7 +70,7 @@ class TestList < BrowserTest
     # verouiller de nouveau
     lock = $b.listLock()
     lock.click
-    assert ( lock.attribute_value("class") == "icon-lock-filled"), "lock in good state after second click (locked)"
+    assert ( lock.attribute_value("class") == "icon-lock-1"), "lock in good state after second click (locked)"
     # changer de sample
     $b.send_keys :arrow_right
     sleep 0.1
@@ -91,7 +91,7 @@ class TestList < BrowserTest
 
     lock = $b.listLock()
     # verifier que le lock est bien levé
-    assert ( lock.attribute_value("class") == "icon-lock-open-filled"), "lock in good state after change of sort method (unlocked)"
+    assert ( lock.attribute_value("class") == "icon-lock-open"), "lock in good state after change of sort method (unlocked)"
     # voir qu'il y a bien une reorganisation de la liste
     
     listClone = $b.list()  

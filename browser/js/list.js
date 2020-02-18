@@ -286,7 +286,7 @@ List.prototype = {
             // Open the lock
             self.sort_lock = false
             var div = document.getElementById("div_sortLock")
-            div.className  = "icon-lock-open-filled"
+            div.className  = "icon-lock-open"
         }
         
         for (var key in this.sort_option) {
