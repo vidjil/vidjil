@@ -23,6 +23,8 @@ deploy_doc:
     - scp -r site/ $VIDJIL_WWW:doc/
   when: manual
   only:
+    refs:
+      - merge_requests
     changes:
       - doc/**/*
       - mkdocs.yml
