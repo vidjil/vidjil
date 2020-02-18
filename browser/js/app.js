@@ -4,13 +4,14 @@ requirejs.config({
     baseUrl: 'js/lib',
     paths: {
         app: '',
-        jquery: 'jquery-3.3.1.min'
+        jquery: 'jquery-3.3.1.min',
+        d3: 'd3.v5.min',
     }
 });
 
 // Load required libraries first
+require(['d3'], function(d3) {window.d3 = d3;});
 require(["jquery",
-         "d3.v3",
          "jquery.form",
          "file",
          "tsne",

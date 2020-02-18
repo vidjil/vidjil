@@ -1,0 +1,116 @@
+{
+  "clones": null,
+  "config": {
+    "all": false,
+    "alternative-genes": "0",
+    "analysis-e-value-D": "0.05",
+    "analysis-filter": "1",
+    "cdr3": false,
+    "clean-memory": false,
+    "cluster-N": "10",
+    "cluster-epsilon": "0",
+    "cluster-load-matrix": false,
+    "cluster-save-matrix": false,
+    "consensus-on-longest-sequences": false,
+    "dir": "./out/",
+    "e-value": "1",
+    "e-value-kmer": "-1",
+    "germline": "germline/homo-sapiens.g",
+    "help-advanced": false,
+    "label-filter": false,
+    "max-consensus": "100",
+    "min-ratio": "0",
+    "min-reads": "5",
+    "no-airr": false,
+    "no-vidjil": false,
+    "not-analyzed-as-clones": false,
+    "out-affects": false,
+    "out-analyzed": false,
+    "out-reads": false,
+    "out-unanalyzed": false,
+    "plain-index": false,
+    "several-D": false,
+    "verbose": false
+  },
+  "diversity": {
+    "index_Ds_diversity": 1.0,
+    "index_E_equitability": 1.0000001192092896,
+    "index_H_entropy": 2.639057606458664
+  },
+  "germlines": {
+    "custom": {
+      "3": [],
+      "4": [],
+      "5": [],
+      "shortcut": "X"
+    },
+    "ref": "http://www.vidjil.org/germlines/germline-59.tar.gz",
+    "species": "Homo sapiens",
+    "species_taxon_id": 9606
+  },
+  "reads": {
+    "germline": {
+      "IGH": [
+        1
+      ],
+      "IGH+": [
+        1
+      ],
+      "IGK": [
+        1
+      ],
+      "IGK+": [
+        2
+      ],
+      "IGL": [
+        1
+      ],
+      "TRA": [
+        1
+      ],
+      "TRA+D": [
+        1
+      ],
+      "TRB": [
+        1
+      ],
+      "TRB+": [
+        1
+      ],
+      "TRD": [
+        1
+      ],
+      "TRD+": [
+        2
+      ],
+      "TRG": [
+        1
+      ]
+    },
+    "segmented": [
+      14
+    ],
+    "total": [
+      14
+    ]
+  },
+  "samples": {
+    "commandline": [
+      "./vidjil-algo -g germline/homo-sapiens.g demo/Demo-X5.fa "
+    ],
+    "log": [
+      "  ==> junction detected in 14 reads (100%)\n  ==> found 14 windows in 14 reads (100% of 14 reads)\n                          reads av. len     clones clo/rds\n  IGH               ->        1   353.0          1   1.000\n  IGH+              ->        1   182.0          1   1.000\n  IGK               ->        1   372.0          1   1.000\n  IGK+              ->        2   280.5          2   1.000\n  IGL               ->        1   327.0          1   1.000\n  TRA               ->        1   155.0          1   1.000\n  TRA+D             ->        1   420.0          1   1.000\n  TRB               ->        1   177.0          1   1.000\n  TRB+              ->        1   152.0          1   1.000\n  TRD               ->        1   194.0          1   1.000\n  TRD+              ->        2   204.0          2   1.000\n  TRG               ->        1   115.0          1   1.000\n\n  SEG               ->       14   244.0\n  SEG_+             ->       14   244.0\n  SEG_-             ->        0       -\n  SEG changed w     ->        0       -\n\n  UNSEG too short   ->        0       -\n  UNSEG strand      ->        0       -\n  UNSEG too few V/J ->        0       -\n  UNSEG only V/5'   ->        0       -\n  UNSEG only J/3'   ->        0       -\n  UNSEG < delta_min ->        0       -\n  UNSEG ambiguous   ->        0       -\n  UNSEG too short w ->        0       -\n"
+    ],
+    "number": 1,
+    "original_names": [
+      "demo/Demo-X5.fa"
+    ],
+    "producer": [
+      "vidjil-algo dev 40034e517 (2020-02-03)"
+    ],
+    "run_timestamp": [
+      "2020-02-03 16:29:22"
+    ]
+  },
+  "vidjil_json_version": "2016b"
+}

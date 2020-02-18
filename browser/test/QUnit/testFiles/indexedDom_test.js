@@ -117,16 +117,16 @@ QUnit.test("speed", function(assert) {
 
     //average
     aAccessTime1 = 0
-    for (i = 0; i<accessTime1.length; i++) aAccessTime1+=accessTime1[i]
-    aAccessTime1 = (aAccessTime1*1000/accessTime1.length)
+    for (i = 100; i<accessTime1.length-100; i++) aAccessTime1+=accessTime1[i]
+    aAccessTime1 = (aAccessTime1*1000/(accessTime1.length-200))
 
     aAccessTime2 = 0
-    for (i = 0; i<accessTime2.length; i++) aAccessTime2+=accessTime2[i]
-    aAccessTime2 = (aAccessTime2*1000/accessTime2.length)
+    for (i = 100; i<accessTime2.length-100; i++) aAccessTime2+=accessTime2[i]
+    aAccessTime2 = (aAccessTime2*1000/(accessTime1.length-200))
 
     aAccessTime3 = 0
-    for (i = 0; i<accessTime3.length; i++) aAccessTime3+=accessTime3[i]
-    aAccessTime3 = (aAccessTime3*1000/accessTime3.length)
+    for (i = 100; i<accessTime3.length-100; i++) aAccessTime3+=accessTime3[i]
+    aAccessTime3 = (aAccessTime3*1000/(accessTime1.length-200))
 
     assert.ok(aAccessTime1 > aAccessTime2, "dom access using indexed dom after first use are faster "+aAccessTime1.toFixed(5)+"ns > "+aAccessTime2.toFixed(5)+"ns"+
                                             "  ("+(((aAccessTime1/aAccessTime2)-1)*100).toFixed(0)+"% faster)" );

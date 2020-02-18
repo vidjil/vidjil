@@ -134,7 +134,7 @@ Builder.prototype = {
 
             var sel = window.getSelection();
             sel.removeAllRanges();
-            this.m.resize();
+            //this.m.resize();
         }
     },
     
@@ -464,7 +464,7 @@ Builder.prototype = {
             val = 'flex';
         }
         $left.css('display', val);
-        this.m.resize();
+        //this.m.resize();
     },
 
     build_top_container: function () {

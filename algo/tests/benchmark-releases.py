@@ -5,6 +5,8 @@ SRC = DEST + 'src/'
 BIN = DEST + 'bin/'
 RUN = DEST + 'run/'
 
+CURRENT = 'HEAD'
+
 #####
 
 LIMIT1e5 = '-x 100000 '
@@ -70,7 +72,8 @@ import resource
 stats = {}
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-i', '--install', action='store_true', help='install various releases')
+parser.add_argument('-c', '--current', action='store_true', help='install current HEAD')
+parser.add_argument('-i', '--install', action='store_true', help='install various releases from %s' % ARCHIVE)
 parser.add_argument('-b', '--benchmark', action='store_true', help='benchmark installed releases')
 
 
@@ -127,6 +130,12 @@ def install(release, tgz):
     go('mkdir -p %s' % dir)
 
     log = dir + '/' + 'install.log'
+
+    if release == CURRENT:
+        go('make -C ../../algo', log)
+        go('cp ../../vidjil-algo %s/%s ' % (BIN, release), log)
+        return
+
     go('wget %s/%s -O %s/src.tgz' % (ARCHIVE, tgz, dir), log)
     go('cd %s ; tar xfz src.tgz' % dir, log)
     go('cd %s/*%s* ; make vidjil-algo || make CXX=g++-6' % (dir, release), log)
@@ -134,7 +143,10 @@ def install(release, tgz):
 
     print()
 
-def install_all():
+def install_current():
+    install(CURRENT, None)
+
+def install_from_archive():
     for release, tgz in get_releases():
         try:
             install(release, tgz)
@@ -197,8 +209,11 @@ if __name__ == '__main__':
     if not args.install and not args.benchmark:
         parser.print_help()
 
+    if args.current:
+        install_current()
+
     if args.install:
-        install_all()
+        install_from_archive()
 
     if args.benchmark:
         bench_all()

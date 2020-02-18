@@ -1770,6 +1770,7 @@ Clone.prototype = {
         }
         var values = []
         var axes_obj = this.m.axes
+        var available_axes = this.m.available_axes
 
         for (var a = 0; a < axes.length; a++) {
             var axe  = axes[a]
@@ -1777,10 +1778,10 @@ Clone.prototype = {
             if (axe == undefined || naxe == undefined){
                 console.default.error("Getter: not axis " + axe + "; ("+naxe+")")
             }
-            if (axes_obj.available()[naxe] != undefined && axes_obj.available()[naxe].fct != undefined) {
-                var value = axes_obj.available()[naxe].fct(this, timepoint)
-                if (round && axes_obj.available()[naxe] != undefined && axes_obj.available()[naxe].round != undefined){ 
-                    value = axes_obj.available()[naxe].round(value)
+            if (available_axes[naxe] != undefined && available_axes[naxe].fct != undefined) {
+                var value = available_axes[naxe].fct(this, timepoint)
+                if (round && available_axes[naxe] != undefined && available_axes[naxe].round != undefined){ 
+                    value = available_axes[naxe].round(value)
                 }
                 values.push( value )
             } else {
@@ -1881,11 +1882,11 @@ Clone.prototype = {
             value          = tmpValue
         }
 
-        var axes_obj = this.m.axes
         var naxe = this.m.distrib_convertion[axe]
-        if (axes_obj.available()[naxe] != undefined) {
-            if (axes_obj.available()[naxe].set != undefined) {
-                axes_obj.available()[naxe].set(this, value)
+        var available_axes = this.m.available_axes
+        if (available_axes[naxe] != undefined) {
+            if (available_axes[naxe].set != undefined) {
+                available_axes[naxe].set(this, value)
             } else {
                 console.default.warn( "Axe present and NOT settable: " + axe + ";" + naxe)
             }
