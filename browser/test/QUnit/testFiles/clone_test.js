@@ -167,9 +167,9 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.equal(c2.getNameAndCode(), some_name, "clone2, .getNameAndCode()");
     assert.equal(c3.getNameAndCode(), "plop (id3)", "clone3, .getNameAndCode()");
 
-    assert.equal(c1.GCContent, 0, "clone1 0% GC content");
-    assert.equal(typeof(c5.GCContent), 'undefined', "clone5, no GC content for c5: no consensus sequence");
-    assert.equal(typeof(c5.coverage), 'undefined', "clone5, no GC content for c5: no consensus sequence");
+    assert.equal(c1.getGCContent(), 0, "clone1 0% GC content");
+    assert.equal(typeof(c5.getGCContent()), 'undefined', "clone5, no GC content for c5: no consensus sequence");
+    assert.equal(typeof(c5.getCoverage()), 'undefined', "clone5, no GC content for c5: no consensus sequence");
     
     m.select(0)
     m.select(1)
@@ -352,11 +352,8 @@ QUnit.test('clone: get info from seg', function(assert) {
     assert.equal(pos_junction['start'], 9, "start junction of c1")
     assert.equal(pos_junction['stop'], 11, "stop junction of c1")
 
-    assert.equal(c1.eValue, 1e-2, 'Evalue of clone 1 should be 1e-2')
-    assert.equal(c2.eValue, undefined, 'e-value of clone should not be defined')
-
-    c1.computeEValue()
-    assert.equal(c1.eValue, 1e-2, 'Recomputing e-value should not change its value')
+    assert.equal(c1.getEValue(), 1e-2, 'Evalue of clone 1 should be 1e-2')
+    assert.equal(c2.getEValue(), undefined, 'e-value of clone should not be defined')
 
     assert.equal(c1.getSegNtSequence('junction'), 'att', 'junction c1')
     assert.equal(c1.getSegNtSequence('cdr3'), 'aaatttttt', 'sequence cdr3 c1 (by getSegNtSequence)')
@@ -458,7 +455,7 @@ QUnit.test("tag / color", function(assert) {
 
     assert.equal(c1.getTag(), 8, "getTag() >> default tag : 8");
     c1.updateColor()
-    assert.equal(c1.getColor(), "", "getColor() >> default tag color : ");
+    assert.equal(c1.getColor(), "default", "getColor() >> default tag color : ");
     
     c1.changeTag(5)
     c1.updateColor()

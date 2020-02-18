@@ -20,7 +20,7 @@ windowMock.window = windowMock
 
 QUnit.test("clone : modifyURL", function(assert) { with (windowMock) {
 
-    var m = new Model();
+    m = new Model();
     m.parseJsonData(json_data,100)
     var sp = new ScatterPlot("visu",m);
     sp.init();
@@ -63,13 +63,13 @@ QUnit.test("clone : modifyURL", function(assert) { with (windowMock) {
         assert.equal(window.location.search.toString(),"", "reboot url");
 
         sp.init()
-        sp.changeSplitMethod("nLength", "size", "bar");
+        sp.changeSplitMethod("N length", "size", "bar");
         m.update()
         done()
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(window.location.search.toString(),"?plot=nLength,size,bar", "test if plot is in url");
+        assert.equal(window.location.search.toString(),"?plot=N length,size,bar", "test if plot is in url");
         done()
     }, delay+=step);
     
@@ -90,7 +90,7 @@ QUnit.test("plot : modifyURL",function (assert) { with (windowMock) {
     url.init();
 
     setTimeout( function() {
-        sp.changeSplitMethod("nLength", "size", "grid");
+        sp.changeSplitMethod("N length", "size", "grid");
         m.update()
 
         done()
@@ -98,9 +98,9 @@ QUnit.test("plot : modifyURL",function (assert) { with (windowMock) {
 
     setTimeout( function() {
         assert.deepEqual(url.url_dict,{
-            "plot": "nLength,size,grid"
+            "plot": "N length,size,grid"
             }, "test plot url_dict")
-        assert.equal(window.location.search.toString(),"?plot=nLength,size,grid", "test if plot is in url");
+        assert.equal(window.location.search.toString(),"?plot=N length,size,grid", "test if plot is in url");
 
         done()
     }, delay+=step);

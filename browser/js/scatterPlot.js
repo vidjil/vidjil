@@ -111,7 +111,7 @@ function ScatterPlot(id, model, database, default_preset) {
 
     // Plot Presets
     this.preset = {
-        "V/J (genes)" :             { "x" : "V/5' gene",                "y": "J/3' gene"},
+        "V/J (genes)" :             { "x" : "V/5' gene",                "y": "J/3' gene", mode:"grid"},
         "V/J (alleles)" :           { "x" : "V/5 allele",               "y": "J/3 allele"},
         "V/N length" :              { "x" : "V/5' gene",                "y": "N length"},
         "read length / locus" :     { "x" : "clone average read length","y": "locus"},
