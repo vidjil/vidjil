@@ -230,7 +230,7 @@ AXIS_DEFAULT = {
         label:      "number of samples sharing each clone",
         fct :       function(clone){return clone.getNumberNonZeroSamples()},
         scale:      {   
-                        mode: "llinear",
+                        mode: "linear",
                         min: 1,
                         //max : function(){ return self.m.samples.number }
                     },
@@ -339,7 +339,7 @@ AXIS_DEFAULT = {
         max: function(){return self.gridSizeH/self.gridSizeW},
         hide : true,
         display_label : false
-    },*/
+    },
     "test1": {
         name:       "test1",
         labels:     {
@@ -406,7 +406,7 @@ AXIS_DEFAULT = {
                         return length
                     },
         autofill:   true
-    },
+    },*/
 }
 
 
@@ -497,7 +497,7 @@ Axes.prototype = {
                 doc: "%GC content of the consensus sequence of each clone",
                 label: "GC content",
                 axis: new PercentAxis(this.m),
-                fct: "GCContent",
+                fct: function(clone, time) {return clone.getGCContent()},
                 set: function(clone, value) {this.GCContent = value}
             },
             "nLength": {
