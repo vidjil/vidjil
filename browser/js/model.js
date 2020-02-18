@@ -56,13 +56,14 @@ function Model() {
     this.checkBrowser();
     this.germlineList = new GermlineList()
     this.build();
-    window.onresize = function () { self.resize(); };
+    //window.onresize = function () { self.resize(); };
 
     this.NORM_FALSE     = "no_norm"
     this.NORM_EXPECTED  = "expected"
     this.NORM_EXTERNAL  = "external"
     this.normalization_mode = this.NORM_FALSE
     this.axes = new Axes(this)
+    this.available_axes = this.axes.available()
 
     setInterval(function(){return self.updateIcon()}, 100); 
 }
@@ -747,7 +748,7 @@ changeAlleleNotation: function(alleleNotation) {
           clone.normalized_reads[time] != null &&
           raw == undefined) {
               return clone.normalized_reads[time] ;
-      } else if (clone.hasSizeDistrib()){          
+      } else if (clone.hasSizeDistrib() && !isNaN(clone.current_reads[time])){          
         return clone.current_reads[time]
       } else {
         return clone.reads[time] ;
@@ -819,34 +820,30 @@ changeAlleleNotation: function(alleleNotation) {
      * compute min/max clones sizes and abundance color scale<br>
      * clone size can change depending the parameter so it's neccesary to recompute precision from time to time
      * */
-    update_precision: function () {
-        var min_size = 1
-        var max
+    update_precision: function () { 
+        this.min_size = 1
+        this.max_size = 0
         for (var i=0; i<this.samples.order.length; i++){
             var t = this.samples.order[i]
             var size = this.min_sizes[t]
             size = this.normalize(this.min_sizes[t], t)
-            if (size < min_size) min_size = size
+            if (size < this.min_size) this.min_size = size
         }
-        
-        this.max_size = 1
-        this.min_size = min_size
-        if (this.normalization_mode != this.NORM_FALSE){
-            for (var j=0; j<this.samples.order.length; j++){
-                if(this.normalization.size_list[j]==0){
-                max = this.normalization.expected_size
-                }else{
-                max = this.normalization.expected_size/this.normalization.size_list[j]
-                }
-                if (max>this.max_size) this.max_size=max;
+
+
+        for (var j=0;j<this.clones.length;j++){
+            if (this.clone(j).isActive()) {
+                max_s = this.clones[j].getMaxSize()
+                if (max_s > this.max_size)
+                    this.max_size  = max_s
             }
-        }
+        }    
         
         //*2 pour avoir une marge minimum d'un demi-log
         // 1/0 == infinity
         this.precision=(1/this.min_size)*2
         
-        this.scale_color = d3.scale.log()
+        this.scale_color = d3.scaleLog()
             .domain([1, this.precision])
             .range([250, 0]);
     },
@@ -1300,13 +1297,14 @@ changeAlleleNotation: function(alleleNotation) {
      * display an icon in the top-container if a view has not finished an update
      */
     updateIcon:function(){
-        var div = document.getElementById("updateIcon");
-        if (div==null) return
+        if (typeof (this.divUpdateIcon) == "undefined")
+            this.divUpdateIcon = document.getElementById("updateIcon");
+        if (this.divUpdateIcon==null) return
 
         if (this.updateIsPending())
-            div.style.display = "flex";
+            this.divUpdateIcon.style.display = "flex";
         else
-            div.style.display = "none";
+            this.divUpdateIcon.style.display = "none";
     },
     
     /**

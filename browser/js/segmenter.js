@@ -657,7 +657,7 @@ Segment.prototype = {
     fillAxisBox: function (axisBox, clone) {
         axisBox.removeAllChildren();
         var axOpts = Clone.prototype.axisOptions();
-        var available_axis = (new Axes(this.m)).available();
+        var available_axis = this.m.available_axes
         for (var i in this.selectedAxis) {
             var span = document.createElement('span');
             var axis = this.selectedAxis[i];

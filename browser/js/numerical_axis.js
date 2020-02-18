@@ -130,11 +130,11 @@ NumericalAxis.prototype = Object.create(GenericAxis.prototype);
         var range = [0,1]
         if (self.reverse) range = [1,0]
         if (use_log){
-            this.sizeScale = d3.scale.log()
+            this.sizeScale = d3.scaleLog()
             .domain([min, max])
             .range(range);
         }else{
-            this.sizeScale = d3.scale.linear()
+            this.sizeScale = d3.scaleLinear()
                 .domain([min, max])
                 .range(range);
         }

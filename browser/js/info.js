@@ -22,8 +22,7 @@
  */
 
 function Info(id, model, builder) {
-    View.call(this, model);
-    this.id = id;
+    View.call(this, model, id);
     this.builder = builder;
 }
 

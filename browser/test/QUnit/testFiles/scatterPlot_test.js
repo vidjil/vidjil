@@ -170,7 +170,7 @@ QUnit.test("multiple selection", function(assert) {
         test2();
 
         done();
-    });
+    }, 1000);
 
     function test1() {
         sp.activeSelectorAt([sp_width*0.5, sp_height*0.5]);
