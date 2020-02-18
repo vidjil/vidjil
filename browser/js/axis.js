@@ -151,19 +151,12 @@ Axis.prototype = {
                 value = this.fct(clone)
 
                 if (typeof value == "number" ){
-
+                    this.initScale()
                     if (!(value in this.labels)){
-                        
-                        if (!this.scale) this.scale = {mode: "linear"}
-                        if (!this.scale.max) this.scale.max = value
-                        if (!this.scale.min) this.scale.min = value
-                        if (!this.scale.min_positive && value > 0) this.scale.min_positive = value
                         if (value > this.scale.max)     this.scale.max = value
                         if (value < this.scale.min)     this.scale.min = value
-                        if (value < this.scale.min)     this.scale.min = value
-                        if (this.scale.min_positive && 
-                            value < this.scale.min_positive && 
-                            value != 0)                 this.scale.min_positive = value
+                        if (value < this.scale.min_positive && 
+                            value > 0)                  this.scale.min_positive = value
                     }
                 }
 
@@ -174,6 +167,24 @@ Axis.prototype = {
         }
 
         return this
+    },
+
+    initScale:function(){
+        if (this.scale && this.scale.isInitialized) return;
+
+        //set default value if undefined
+        if (!this.scale)        this.scale = { 
+            mode:           "linear" , 
+            min:            Number.MAX_VALUE, 
+            max:            Number.MIN_VALUE,
+            min_positive :  Number.MAX_VALUE
+        }
+        if (!this.scale.mode)   this.scale.mode =   "linear"
+        if (!this.scale.min)    this.scale.min =    Number.MAX_VALUE
+        if (!this.scale.max)    this.scale.max =    Number.MIN_VALUE
+        if (!this.scale.min_positive) this.scale.min_positive = Number.MAX_VALUE
+
+        this.scale.isInitialized = true
     },
 
     /* 
