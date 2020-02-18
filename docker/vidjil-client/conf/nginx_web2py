@@ -42,8 +42,8 @@ server {
             error_page 405 = $1;
         }
 
-        location ~ ^/(c|client) {
-            rewrite /(c|client) /browser;
+        location ~ ^/(client|c) {
+            rewrite /(client|c) /browser;
         }
 
         location /browser {
