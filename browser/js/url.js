@@ -247,8 +247,8 @@ function UrlEncoder() {
     this.encoding = {
         'sample_set_id': 'set',
         'patient_id': 'patient',
-        'run_id': 'run'
-
+        'run_id': 'run',
+        'config': 'conf'
     };
 
     this.decoding = {};
