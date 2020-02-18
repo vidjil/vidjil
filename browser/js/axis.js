@@ -514,11 +514,11 @@ Axis.prototype = {
 
     computeBar: function(step){
         if (typeof step == "undefined")
-            step = 2
+            step = 1
 
-        var bar_width = 0
+        this.bar_width = 0
         if (this.scale)
-            bar_width = 0.8 * Math.abs(this.getValuePos(this.scale.nice_min) - this.getValuePos(this.scale.nice_min+step))
+            this.bar_width = 0.8 * Math.abs(this.getValuePos(this.scale.nice_min) - this.getValuePos(this.scale.nice_min+step))
 
         this.bar = { }
 
@@ -531,10 +531,10 @@ Axis.prototype = {
                 
                 if (!(v in this.labels) && isNaN(v)) continue
 
-                var width = bar_width              
+                var width = this.bar_width              
                 if (typeof v == "number")
                     v = v - v%step
-                else if (v in this.labels && bar_width == 0)
+                else if (v in this.labels && this.bar_width == 0)
                     width = 0.8 * (this.labels[v].stop_position - this.labels[v].start_position)
                     
                 
