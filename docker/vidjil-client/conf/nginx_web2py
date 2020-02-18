@@ -43,7 +43,7 @@ server {
         }
 
         location ~ ^/(client|c) {
-            rewrite /(client|c) /browser;
+            rewrite /(client|c)(.*) /browser$2 redirect;
         }
 
         location /browser {
