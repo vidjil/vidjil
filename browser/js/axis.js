@@ -226,8 +226,8 @@ Axis.prototype = {
                         labelCount++
                     }
                 }else{
-                    for (var i = this.scale.nice_min; i < this.scale.nice_max+this.step; i+= this.step){
-                        this.addScaleLabel(i, "linearScale")
+                    for (var j = this.scale.nice_min; j < this.scale.nice_max+this.step; j+= this.step){
+                        this.addScaleLabel(j, "linearScale")
                         labelCount++
                     }
                 }
@@ -241,13 +241,13 @@ Axis.prototype = {
 
                 //add labels
                 if (this.scale.reverse){
-                    for (var i = this.scale.nice_min; i < this.scale.nice_max+1; i=i*10){
-                        this.addScaleLabel(i, "logScale")
+                    for (var k = this.scale.nice_min; k < this.scale.nice_max+1; k=k*10){
+                        this.addScaleLabel(k, "logScale")
                         labelCount++
                     } 
                 }else{
-                    for (var i = this.scale.nice_min; i < this.scale.nice_max+1; i=i*10){
-                        this.addScaleLabel(i, "logScale")
+                    for (var z = this.scale.nice_min; z < this.scale.nice_max+1; z=z*10){
+                        this.addScaleLabel(z, "logScale")
                         labelCount++
                     } 
                 }
@@ -551,12 +551,12 @@ Axis.prototype = {
         if (this.bar[l].sum > this.barMax) this.barMax = this.bar[l].sum 
 
         //sort clones
-        for (var l in this.bar)
-            this.bar[l].clones.sort(function(a,b){return a.top - b.top})
+        for (var l2 in this.bar)
+            this.bar[l2].clones.sort(function(a,b){return a.top - b.top})
 
         //compute height
-        for (var l in this.bar){
-            var bar = this.bar[l]
+        for (var l3 in this.bar){
+            var bar = this.bar[l3]
             var h = 0
             for (var i=0; i<bar.clones.length; i++){
                 bar.clones[i].start = h
