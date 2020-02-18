@@ -4,12 +4,16 @@ COMPLETE=0
 INCREMENTAL=0
 DIR=
 DATABASE=
+BACKUP_DAY=
+YESTERDAY=
 
 usage() {
-    echo "$0: [-c] [-i] dbname [path]
+    echo "$0: [-c|-i|-d|-y] dbname [path]
 
 -c:   Backup everything
 -i:   Incremental backup, since the first of the month
+-d:   Backup of the current day
+-y:   Backup since yesterday
 path: Where to save the file" >&2
     exit 1
 }
@@ -20,11 +24,24 @@ fi
 
 if [ $# -ge 1 -a "$1" = "-i" ]; then
     INCREMENTAL=1
+    BACKUP_DAY=$(date --date="$(date +%Y-%m-01)" +"%Y-%m-%d")
     shift
 fi
 
 if [ $# -ge 1 -a "$1" = "-c" ]; then
     COMPLETE=1
+    shift
+fi
+
+if [ $# -ge 1 -a "$1" = "-d" ]; then
+    BACKUP_DAY=$(date +%Y-%m-%d)
+    INCREMENTAL=1
+    shift
+fi
+
+if [ $# -ge 1 -a "$1" = "-y" ]; then
+    BACKUP_DAY=$(date --date=yesterday +%Y-%m-%d)
+    INCREMENTAL=1
     shift
 fi
 
@@ -40,7 +57,6 @@ if [ $# -ge 1 ]; then
 fi
 
 now=$(date +"%Y-%m-%d_%H:%M:%S")
-FIRST_OF_THE_MONTH=$(date --date="$(date +%Y-%m-01)" +"%Y-%m-%d")
 
 vidjil_path=web2py/applications/vidjil
 db_backup_file=/tmp/db-backup-$now.csv
@@ -65,10 +81,10 @@ if [ $COMPLETE -eq 1 ]; then
         zip -r $filename_raw web2py/applications/vidjil/databases/  "$DIR_SEQUENCES" "$DIR_RESULTS" $db_backup_file $sql_backup_file
 else
     if [ $INCREMENTAL -eq 1 ]; then
-        filename_raw="${DIR}backup_incremental_${FIRST_OF_THE_MONTH}__${now}.tar"
+        filename_raw="${DIR}backup_incremental_${BACKUP_DAY}__${now}.tar"
         filename=$filename_raw.gz
 	tar cvf $filename_raw --force-local web2py/applications/vidjil/databases/ $db_backup_file $sql_backup_file
-	tar rvf $filename_raw --force-local --after-date "$FIRST_OF_THE_MONTH" "$DIR_RESULTS" 2>&1 | grep -v "file is unchanged"
+	tar rvf $filename_raw --force-local --after-date "$BACKUP_DAY" "$DIR_RESULTS" 2>&1 | grep -v "file is unchanged"
 	gzip $filename_raw
     else
         filename_raw="${DIR}backup_essentials_"$now
