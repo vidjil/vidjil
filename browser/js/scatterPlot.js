@@ -126,10 +126,10 @@ function ScatterPlot(id, model, database, default_preset) {
       //"plot by similarity and by locus" :             { "x" : "tsneX_system", "y": "tsneY_system"},
         "clone average read length / GC content " :     { "x":"clone average read length",    "y" : "GC content"},
         "clone consensus coverage / GC content " :      { "x": "clone consensus length",      "y" : "GC content"},
-        "number of samples sharing each clone" :        { "x": "nbSamples", "y" : "locus"},
+        "number of samples sharing each clone" :        { "x": "number of samples",           "y" : "locus"},
       //"interpolated length between BIOMED2 primers (inclusive)" : { "x": "primers", "y" : "size"},
-        "number of deletions for the segment V/5 in 3" :{ "x": "vDel"},
-        "number of deletions for the segment J/3 in 5" :{ "x": "jDel"},
+        "number of deletions for the segment V/5 in 3" :{ "x": "V/5' deletions in 3'"},
+        "number of deletions for the segment J/3 in 5" :{ "x": "J/3' deletions in 5'"},
     };
 
     this.default_preset = (typeof default_preset == "undefined") ? 1 : default_preset ;
@@ -145,8 +145,8 @@ function ScatterPlot(id, model, database, default_preset) {
     if (typeof this.m.sp == "undefined")
         this.m.sp = this
 
-    this.axis2X = new Axis("V/5' gene")
-    this.axis2Y = new Axis("J/3' gene")
+    this.axisX = new Axis("V/5' gene")
+    this.axisY = new Axis("J/3' gene")
 }
 
 ScatterPlot.prototype = {
@@ -522,12 +522,13 @@ ScatterPlot.prototype = {
      * compute and update the position of all rectangles representing a clone using selected axis
      * */
     updateBar: function() {
-        //sort each bar (axisY)
-        this.axis2X
+        if (!this.axisX.json) return
+        this.axisX
+            .reload()
             .compute(Math.round(this.resizeW/40))
             .computeBar()
-        var max = this.axis2X.barMax
-        this.axis2Y = new Axis().load({
+        var max = this.axisX.barMax
+        this.axisY = new Axis().load({
                                         name:       "size",
                                         scale:      {
                                                         mode:   "linear",
@@ -541,7 +542,7 @@ ScatterPlot.prototype = {
                                                     },
                                         germline:   "multi"
                                     })
-        this.axis2Y.compute(Math.round(this.resizeH/20))
+        this.axisY.compute(Math.round(this.resizeH/20))
     },
 
     includeBar: function(clone, log) {
@@ -565,11 +566,11 @@ ScatterPlot.prototype = {
      * compute the position of each rectangles / labels and start the display
      * */
     computeBarTab : function () {        
-        var bars = this.axis2X.getBar()
+        var bars = this.axisX.getBar()
 
         for (var b in bars) {
             var bar = bars[b]
-            var x_pos = this.axis2X.getValuePos(bar.value)
+            var x_pos = this.axisX.getValuePos(bar.value)
 
             for (var c in bar.clones){
                 var cloneID = bar.clones[c].id
@@ -577,8 +578,8 @@ ScatterPlot.prototype = {
                 var node = this.nodes[cloneID]
 
                 if (this.includeBar(clone)){
-                    var start = this.axis2Y.getValuePos(bar.clones[c].start)
-                    var stop =  this.axis2Y.getValuePos(bar.clones[c].stop)
+                    var start = this.axisY.getValuePos(bar.clones[c].start)
+                    var stop =  this.axisY.getValuePos(bar.clones[c].stop)
                     var height = Math.abs(start-stop)
 
                     // Minimal height (does not affect y_pos)
@@ -621,7 +622,7 @@ ScatterPlot.prototype = {
             .attr("class", function(p) {
                 var c = self.m.clone(p.id)
 
-                if ((!d.terminate) &&
+                if ((!p.terminate) &&
                     (!p.hasValidAxisPosition || p.use_system_grid || !c.isActive() || c.isFiltered) )
                     return "circle_hidden"
                 if (c.isSelected() && c.isFocus())
@@ -702,8 +703,8 @@ ScatterPlot.prototype = {
                 else return y
             })
             .style("fill", function(d) { 
-                //return (self.m.clone(d.id).getColor()) 
-                return self.axis2X.getColor(self.m.clone(d.id))   
+                return (self.m.clone(d.id).getColor()) 
+                //return self.axisX.getColor(self.m.clone(d.id))   
             })
 
             setTimeout(function(){
@@ -866,7 +867,7 @@ ScatterPlot.prototype = {
             this.resizeH = div_height - this.margin[0] - this.margin[2];
         }
 
-        if (this.axis2X && this.axis2X.germline != "multi" || this.axis2Y.germline != "multi"){
+        if (this.axisX && this.axisX.germline != "multi" || this.axisY.germline != "multi"){
             this.use_system_grid = true;
             this.buildSystemGrid()
         } else {
@@ -1053,16 +1054,18 @@ ScatterPlot.prototype = {
     update: function() {
         var self = this;
         try{
-            if (this.mode == "bar")
-            this.updateBar();
-
             this.node = this.plot_container.selectAll("circle")
-            .data(this.nodes);
+                                           .data(this.nodes);
 
-            this.axis2X.reload()
-                       .compute(Math.round(this.resizeW/40))
-            this.axis2Y.reload()
-                       .compute(Math.round(this.resizeH/25))
+            if (this.mode == "bar"){
+                this.updateBar()
+            }else{
+                this.axisX.reload()
+                        .compute(Math.round(this.resizeW/40))
+                this.axisY.reload()
+                        .compute(Math.round(this.resizeH/25))
+            }
+
             this.compute_size()
                 .initGrid()
                 .updateClones()
@@ -1071,13 +1074,14 @@ ScatterPlot.prototype = {
             this.active_nodes = this.nodes.filter(function(d, i) {
                 return d.r1 > 0;
             });
+
             if(typeof(this.simulation) != "undefined"){
                 this.simulation.stop();
                 this.simulation = null;
             }
 
             this.simulation = d3.forceSimulation()
-                .nodes(this.nodes.filter(function(d){return d.hasValidAxisPosition}))
+                .nodes(this.nodes.filter(function(d){return (d.hasValidAxisPosition || d.use_system_grid)}))
                     .force("forceX", d3.forceX()
                         .strength(0.1)
                         .x(function(d){return (d.x2) }))
@@ -1215,8 +1219,8 @@ ScatterPlot.prototype = {
 
         // Clone position
         var sys = clone.get('germline');
-        var xpos = this.axis2X.getPos(clone)
-        var ypos = this.axis2Y.getPos(clone)
+        var xpos = this.axisX.getPos(clone)
+        var ypos = this.axisY.getPos(clone)
 
         node.requireInit = false
         if (!node.hasValidAxisPosition)
@@ -1255,7 +1259,7 @@ ScatterPlot.prototype = {
                 .attr("class", function(p) {
                     var c = self.m.clone(p.id)
 
-                    if (!p.hasValidAxisPosition || !c.isActive() || c.isFiltered) 
+                    if (!(p.hasValidAxisPosition || p.use_system_grid) || !c.isActive() || c.isFiltered) 
                         return "circle_hidden";
                     if (c.isSelected() && c.isFocus())
                         return "circle_focus circle_select"
@@ -1267,8 +1271,8 @@ ScatterPlot.prototype = {
                     return "circle"
                 })
                 .style("fill", function(d) {
-                    return self.axis2X.getColor(self.m.clone(d.id))    
-                    //return (self.m.clone(d.id).getColor());
+                    //return self.axisX.getColor(self.m.clone(d.id))    
+                    return (self.m.clone(d.id).getColor());
                 })
         }
     },
@@ -1339,7 +1343,7 @@ ScatterPlot.prototype = {
      * */
     axis_x_update: function() {
         var self = this;
-        var data = Object.values(this.axis2X.labels);
+        var data = Object.values(this.axisX.labels);
         
         //detect label size
         var label_width = 0;
@@ -1382,7 +1386,7 @@ ScatterPlot.prototype = {
             .append("text")
             .on("click", function(d){
                 self.m.unselectAllUnlessKey(d3.event)
-                self.m.multiSelect(self.axis2X.getLabelInfo(d.id).clones)
+                self.m.multiSelect(self.axisX.getLabelInfo(d.id).clones)
             })
             .attr("x", function(d) {
                 return self.gridSizeW * d.position + self.margin[3];
@@ -1438,7 +1442,7 @@ ScatterPlot.prototype = {
      * */
     axis_y_update: function() {
         self = this;
-        var data = Object.values(this.axis2Y.labels);
+        var data = Object.values(this.axisY.labels);
 
         //LEGENDE
         leg = this.axis_y_container.selectAll("text")
@@ -1450,7 +1454,7 @@ ScatterPlot.prototype = {
             .on("click", function(d){
                 if (self.mode !="bar"){
                     self.m.unselectAllUnlessKey(d3.event)
-                    self.m.multiSelect(self.axis2Y.getLabelInfo(d.id).clones);
+                    self.m.multiSelect(self.axisY.getLabelInfo(d.id).clones);
                 }
             })
             .attr("x", function(d) {
@@ -1582,13 +1586,16 @@ ScatterPlot.prototype = {
         this.compute_size();
 
         if (this.splitX)
-            this.axis2X = new Axis(this.splitX)
+            this.axisX = new Axis(this.splitX)
         if (this.splitY)
-            this.axis2Y = new Axis(this.splitY)
+            this.axisY = new Axis(this.splitY)
         
         if (this.mode == "bar"){
             this.updateBar()
             return this
+        } else {
+            this.axisX.compute(Math.round(this.resizeW/40))
+            this.axisY.compute(Math.round(this.resizeH/20))
         }
         
         if (endbar){
@@ -1598,7 +1605,7 @@ ScatterPlot.prototype = {
         }
 
         oldOtherVisibility = this.otherVisibility
-        this.otherVisibility = this.splitX == "sizeOtherSample" || this.splitY == "sizeOtherSample"
+        this.otherVisibility = this.splitX == "size (other sample)" || this.splitY == "size (other sample)" 
         if (this.otherVisibility != oldOtherVisibility)
             this.updateClones()
 
