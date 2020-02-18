@@ -31,6 +31,7 @@ run ln -s /etc/vidjil/nginx_gzip_static.conf /etc/nginx/conf.d/web2py/gzip_stati
 run ln -s /etc/vidjil/nginx_gzip.conf /etc/nginx/conf.d/web2py/gzip.conf
 run ln -s /etc/vidjil/uwsgi.conf /etc/nginx/conf.d/web2py/uwsgi.conf
 run ln -s /etc/vidjil/germline.js /usr/share/vidjil/browser/js/germline.js
+run ln -s /usr/share/vidjil/browser /usr/share/vidjil/b
 
 copy ./scripts/nginx-entrypoint.sh /entrypoints/nginx-entrypoint.sh
 run chown -R www-data:www-data /usr/share/vidjil

@@ -42,14 +42,14 @@ server {
             error_page 405 = $1;
         }
 
-        location ~ ^/(client|c) {
-            rewrite /(client|c)(.*) /browser$2 redirect;
+        location ~ ^/(client|c|browser) {
+            rewrite /(client|c|browser)(.*)$ /b$2 redirect;
         }
 
-        location /browser {
-            rewrite /browser/([0-9]+)/([0-9]+)(\/?) /browser/?set=$1&conf=$2 break;
-            rewrite /browser/([0-9/]+)/(css|js|images|test)/(.*) /browser/$2/$3 redirect;
+        location ~ ^/b {
             root /usr/share/vidjil;
+            rewrite ^/b/([0-9/]+)/(css|js|images|test)/(.*) /$2/$3 redirect;
+            rewrite ^/b/([0-9]+)/([0-9]+)(\/?) /b/?set=$1&conf=$2 break;
             expires 1h;
             add_header Cache-Control must-revalidate;
 

@@ -199,7 +199,7 @@ PositionalUrl.prototype.parseUrlParams = function() {
         var slash_params = url.pathname.substr(1).split('/');
         var positional_params = [];
         for (var k = 0; k < slash_params.length; k++) {
-            if(slash_params[k] !== 'browser'  && slash_params[k] !== "index.html" && slash_params[k] !== "")
+            if(slash_params[k] !== 'b'  && slash_params[k] !== "index.html" && slash_params[k] !== "")
                 positional_params.push(slash_params[k]);
         }
         var pos_param_keys = this.getStraightParams();
@@ -234,7 +234,7 @@ PositionalUrl.prototype.generateParamsString = function(params_dict) {
     }
 
 PositionalUrl.prototype.pushUrl = function(params) {
-        var new_url = this.window.location.href.split('browser')[0] + 'browser' + params;
+        var new_url = this.window.location.href.split('b')[0] + 'b' + params;
         console.log("new url: " + new_url);
         this.window.history.pushState('plop', 'plop', new_url);
     };
