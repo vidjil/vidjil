@@ -146,6 +146,10 @@ def ignore_strand(start, end):
     return (end, start)
 
 def compute_updownstream_length(genes, default_length):
+    '''
+    Returns the maximal `min_length` size (but at most `default_length`)
+    such that this size never overlaps the previous/next gene.
+    '''
     positions = [ ignore_strand(info[1]['target_start'], info[1]['target_end']) for info in genes if 'target_start' in info[1]]
     positions = list(set(positions))
     positions.sort()
@@ -164,7 +168,9 @@ def compute_updownstream_length(genes, default_length):
     return min_length
 
 
-def retrieve_genes(f, genes, tag, additional_length, gene_list):
+def retrieve_genes(f_name, genes, tag, additional_length, gene_list):
+    f = verbose_open_w(f_name)
+
     for info in genes:
         (gene, coord) = info
         # try to extract from genome
@@ -183,6 +189,7 @@ def retrieve_genes(f, genes, tag, additional_length, gene_list):
                 print('! No positions for %s (%s: %s)' % (gene_id, gene, str(coord)))
 
     min_updownstream = compute_updownstream_length(genes, additional_length)
+    print('     %s, ' % f_name + 'genes: %d, ' % len(genes) + 'up/downstream: %dbp' % min_updownstream)
 
         # gene: is the name of the sequence where the VDJ gene was identified according to IMGT. The gene is just a part of the sequence
         # gene_id: is the NCBI ID of the VDJ gene
@@ -433,12 +440,12 @@ def split_IMGTGENEDBReferenceSequences(sources, gene_list):
     # Dump up/downstream data
 
     for system in upstream_data:
-        f = verbose_open_w(system + TAG_UPSTREAM + '.fa')
-        retrieve_genes(f, upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM, gene_list)
+        f_name = system + TAG_UPSTREAM + '.fa'
+        retrieve_genes(f_name, upstream_data[system], TAG_UPSTREAM, -LENGTH_UPSTREAM, gene_list)
 
     for system in downstream_data:
-        f = verbose_open_w(system + TAG_DOWNSTREAM + '.fa')
-        retrieve_genes(f, downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM, gene_list)
+        f_name = system + TAG_DOWNSTREAM + '.fa'
+        retrieve_genes(f_name, downstream_data[system], TAG_DOWNSTREAM, LENGTH_DOWNSTREAM, gene_list)
 
 
 
