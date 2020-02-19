@@ -461,13 +461,13 @@ function floor_pow10(x)
 
 function nice_ceil(x, force_pow10)
 {
-    if (x <= 0) return x
+    if (x == 0) return 0
+    if (x <  0) return -nice_floor(-x, force_pow10)
 
     try {
         var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
-
-        var xx = x / floor_power10
-        return (xx == 1 ? 1 : xx <= 1.5 ? 1.5 : Math.ceil(xx)) * floor_power10
+ 
+        return Math.ceil(x / floor_power10) * floor_power10
     }
     catch(e) {
         // Always return something
@@ -507,7 +507,8 @@ function nice_1_2_5_ceil(x)
 
 function nice_floor(x, force_pow10)
 {
-    if (x <= 0) return x
+    if (x == 0) return 0
+    if (x <  0) return -nice_ceil(-x, force_pow10)
 
     try {
         var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
