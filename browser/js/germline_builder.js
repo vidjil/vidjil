@@ -199,7 +199,7 @@ Germline.prototype = {
                     this.gene[elem2].rank = n;
                     
                     this.labels[elem] = {"text" : elem};
-                    this.labelsWithAlleles[elem] = {"text" : elem2, sub: {}};
+                    this.labelsWithAlleles[elem] = {"text" : elem, sub: {}};
 
                     n++;
                     n2 = 0;
@@ -215,7 +215,10 @@ Germline.prototype = {
             this.gene[elem2].rank = n;
             this.gene[elem2].color = colorGenerator((30 + ((l - 1) / keys.length) * 290));
         }
-        
+
+        var undefLabel = "undefined " + type
+        this.labels[undefLabel] = {"text" : undefLabel}
+        this.labelsWithAlleles[undefLabel] = {"text" : undefLabel}
         return callback;
     }
 
