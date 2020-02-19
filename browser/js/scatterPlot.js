@@ -1581,9 +1581,11 @@ ScatterPlot.prototype = {
             this.margin = this.default_margin;
         }
 
-        this.splitX = splitX;
-        this.splitY = splitY;
-        this.compute_size();
+        if (this.available_axis.indexOf(splitX) != -1)        
+            this.splitX = splitX
+        if (this.available_axis.indexOf(splitY) != -1)
+            this.splitY = splitY
+        this.compute_size()
 
         if (this.splitX)
             this.axisX = new Axis(this.splitX)

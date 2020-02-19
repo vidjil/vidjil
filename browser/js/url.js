@@ -87,7 +87,7 @@ Url.prototype= {
         }
 
         if (typeof this.url_dict.clone !== "undefined") {
-            var clones = this.url_dict.clone.replace(/%20/g, " ").split(',');
+            var clones = this.url_dict.clone.split(',');
             for (var j = 0; j < clones.length; j++) {
                 var c = this.m.clone(clones[j]);
                 if (typeof c !== "undefined" && c.isInteractable()) {
@@ -96,7 +96,8 @@ Url.prototype= {
             }
         }
         if (typeof this.url_dict.plot !== "undefined") {
-            var sp_params = this.url_dict.plot.replace(/%20/g, " ").split(',');
+            var sp_params = this.url_dict.plot.split(',');
+            sp_params.forEach(function(e,i,a) { a[i] = decodeURIComponent(e) })
             if (sp_params.length == 2) {
                 sp_params.push(this.sp.mode);
             }
