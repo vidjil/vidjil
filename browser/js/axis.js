@@ -528,7 +528,7 @@ Axis.prototype = {
         return AXIS_LABEL[labelType].margin_right
     },
 
-    computeBar: function(step){
+    computeBar: function(clones, step){
         if (typeof step == "undefined")
             step = 1
 
@@ -538,7 +538,8 @@ Axis.prototype = {
 
         this.bar = { }
 
-        for (var cloneID in m.clones){
+        for (var c in clones){
+            var cloneID = clones[c]
             var clone = m.clone(cloneID)
 
             if (clone.isInScatterplot() &&

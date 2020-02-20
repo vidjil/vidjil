@@ -269,10 +269,17 @@ ScatterPlot.prototype = {
      * */
     updateBar: function() {
         if (!this.axisX.json) return
+
+        var cloneList = []
+        for (var cloneID in this.m.clones){
+            var clone = m.clone(cloneID)
+            if (this.includeBar(clone)) cloneList.push(cloneID)
+        }
+
         this.axisX
             .reload()
             .compute(Math.round(this.resizeW/40))
-            .computeBar()
+            .computeBar(cloneList)
         var max = this.axisX.barMax
         this.axisY = new Axis().load({
                                         name:       "size",
