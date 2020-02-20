@@ -4,7 +4,7 @@ QUnit.module("Scatterplot", {
 
 QUnit.test("grid", function(assert) {
     m = new Model();
-    assert.expect(23);
+    assert.expect(21);
 
     m.parseJsonData(json_data,100)
     m.loadGermline()
@@ -27,7 +27,6 @@ QUnit.test("grid", function(assert) {
                                     "buildSystemGrid()");
     
     assert.equal(sp.nodes.length, 7 , "check nodes");
-    assert.equal(sp.select_preset.selectedIndex, 1, "check whether the default preset is selectionned")
 
     sp.changeSplitMethod("V/5' gene", "V/5' gene", "grid");
     sp.update()
@@ -36,7 +35,6 @@ QUnit.test("grid", function(assert) {
     assert.equal(document.getElementById("visu_circle2").className.baseVal, "circle", "check splitMethod V/V /plot : check if plot are displayed")
 
     sp.switchMode()
-    assert.equal(sp.select_preset.selectedIndex, 0, "check whether no preset is selectionned")
     assert.equal(sp.mode, "bar")
     sp.update()
 

@@ -68,6 +68,7 @@ function loadAfterConf() {
                                          "../axes",
                                          "../axis",
                                          "../graph",
+                                         "../scatterPlot_Menu",
                                          "../scatterPlot",
                                          "../builder",
                                          "../info",

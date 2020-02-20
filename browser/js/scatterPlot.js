@@ -34,9 +34,11 @@
  * */
 function ScatterPlot(id, model, database, default_preset) {
     var self = this;
-    
-    View.call(this, model, id);
-    this.db = database;
+
+    ScatterPlot_menu.call(this, default_preset)
+    View.call(this, model, id)
+    this.db = database
+    this.id = id
 
     //size ( computed value -> resize() function)
     this.resizeCoef = 1; //Multiplifying factor, application to nodes radius
@@ -51,40 +53,24 @@ function ScatterPlot(id, model, database, default_preset) {
     this.graph_margin = [25,25,25,25];
     this.margin = this.default_margin;
 
-    this.max_precision = 9; //Precision max (default: 9)
+    this.CLONE_MIN_SIZE = 0.001
 
-    /* EDIT DISTANCE ONLY
-       BEG --
-    */
-    this['continue'] = false; //Boolean used for the nodes movements
-    this.allEdges = []; //Initial edges array
-    this.edgeSaved = []; //Edges array saved for the Edit Distance visualization
-    this.edge = []; //Edges array given to the engine
-    this.edgeContainer = null; //SVG element to save the container of graph distribution
+    this.mode = "grid";
+
+    //Boolean for the nodes selector
+    this.active_selector = false
+
+    //selector
     this.active_move = false; //Boolean given to the nodes movements
-    this.reloadCharge = true; //Boolean allowing to reload the physic engine charge (reject)
-    this.canSavePositions = true; //Boolean which allows to save initial positions of nodes
-    //Object which allows to save new position, and move all nodes according to the object's parameters
     this.positionToMove = {
         originx: 0,
         originy: 0,
         x: 0,
         y: 0
     };
-    /*
-       END --
-    */
 
-    this.CLONE_MIN_SIZE = 0.001
-
-    this.mode = "grid";
-
-    this.time0 = Date.now(); //Initial date saved
-    this.time1 = this.time0; //Frames computed
-    this.fpsqueue = []; //Numbers of frames computed, according to the 20th last values
-
-    //Boolean for the nodes selector
-    this.active_selector = false
+    //mouse coordinates
+    this.coordinates = [0, 0];
 
     //axis X text position
     this.rotation_x = 0;
@@ -99,46 +85,8 @@ function ScatterPlot(id, model, database, default_preset) {
     // is 'otherSize' selected ?
     this.otherVisibility = false
 
-    //Clone selected
-    this.cloneSelected = -1;
-
-    //mouse coordinates
-    this.coordinates = [0, 0];
-
     // Plot axis
-    var axes = new Axes(this.m);
     this.available_axis = Axis.prototype.available();
-
-    // Plot Presets
-    this.preset = {
-        "V/J (genes)" :             { "x" : "V/5' gene",                "y": "J/3' gene", mode:"grid"},
-        "V/J (alleles)" :           { "x" : "V/5 allele",               "y": "J/3 allele"},
-        "V/N length" :              { "x" : "V/5' gene",                "y": "N length"},
-        "read length / locus" :     { "x" : "clone average read length","y": "locus"},
-      //"V/abundance" :             { "x" : "V/5' gene", "y": "size"},
-        "read length distribution" :{ "x" : "clone average read length"},
-        "V distribution" :          { "x" : "V/5' gene"},
-        "N length distribution" :   { "x" : "N length"},
-        "CDR3 length distribution" :{ "x" : "CDR3 length (nt)"},
-        "J distribution" :          { "x" : "J/3' gene"},
-        "compare two samples" :     { "x" : "size",                     "y": "size (other sample)"},
-      //"plot by similarity" :      { "x" : "tsneX",                    "y": "tsneY"},
-      //"plot by similarity and by locus" :             { "x" : "tsneX_system", "y": "tsneY_system"},
-        "clone average read length / GC content " :     { "x":"clone average read length",    "y" : "GC content"},
-        "clone consensus coverage / GC content " :      { "x": "clone consensus length",      "y" : "GC content"},
-        "number of samples sharing each clone" :        { "x": "number of samples",           "y" : "locus"},
-      //"interpolated length between BIOMED2 primers (inclusive)" : { "x": "primers", "y" : "size"},
-        "number of deletions for the segment V/5 in 3" :{ "x": "V/5' deletions in 3'"},
-        "number of deletions for the segment J/3 in 5" :{ "x": "J/3' deletions in 5'"},
-    };
-
-    this.default_preset = (typeof default_preset == "undefined") ? 1 : default_preset ;
-
-    //Menu with graph distrib' (see initMenu function)
-    this.graph_menu = [
-        ["dbscan", "Dbscan graph"],
-        ["graph", "Edit dist. graph"]
-    ];
 
     this.use_system_grid = false
 
@@ -162,11 +110,9 @@ ScatterPlot.prototype = {
             document.getElementById(this.id)
                     .removeAllChildren();
 
-            this.initMenu();
             this.initSVG();
             this.resize();
-
-            this.setPreset(this.default_preset)
+            this.initMenu();
             this.tsne_ready=false;
 
         } catch(err) {
@@ -354,133 +300,6 @@ ScatterPlot.prototype = {
                 .isActive()) activeclones += 1;
         }
         return activeclones;
-    },
-
-
-    /**
-     * build scatterplot menu <br>
-     * preset/axisX/axisY selector<br>
-     * scatterplot/bargraph selector<br>
-     * */
-    initMenu: function() {
-        var self = this;
-        
-        var divParent = document.getElementById(this.id)
-        var anchor = document.createElement('div');
-        anchor.className = "sp_menu_anchor";
-        var menu = document.createElement('div');
-        menu.className = "sp_menu";
-        var content = document.createElement('div');
-        content.className = "sp_menu_content";
-        
-        var div_x = document.createElement('div');
-        div_x.className = "axis_select axis_select_x";
-
-        var div_y = document.createElement('div');
-        div_y.className = "axis_select axis_select_y";
-        
-        var div_preset = document.createElement('div');
-        div_preset.className = "axis_select axis_select_preset";
-
-        this.select_x = document.createElement('select');
-        //Initialisation du menu déroulant
-        this.select_x.setAttribute('name', 'select_x[]');
-        this.select_x.onchange = function() {
-            self.changeXaxis();
-        }
-
-        this.select_y = document.createElement('select');
-        this.select_y.setAttribute('name', 'select_y[]');
-        this.select_y.onchange = function() {
-            self.changeYaxis();
-        }
-        
-        //Ajout de chaque méthode de répartition dans les menus pour l'axe des X/Y
-        var element;
-        for (var key in this.available_axis) {
-            var axisP = Axis.prototype.getAxisProperties(this.available_axis[key])
-            if (typeof axisP.hide == "undefined" || !axisP.hide){
-                element = document.createElement("option");
-                element.setAttribute('value', axisP.name);
-                var text = document.createTextNode( axisP.name);
-                element.appendChild(text);
-
-                var element2 = element.cloneNode(true);
-
-                this.select_x.appendChild(element);
-                this.select_y.appendChild(element2);
-            }
-        }
-
-        this.select_preset = document.createElement('select');
-        this.select_preset.className = "axis_select_preset_select";
-        //Initialisation du menu déroulant
-        this.select_preset.setAttribute('name', 'select_preset[]');
-        this.select_preset.onchange = function() {
-            self.updatePreset();
-        }
-        
-        element = document.createElement("option");
-        element.setAttribute('value', "custom");
-        element.appendChild(document.createTextNode("–"));
-        this.select_preset.appendChild(element);
-
-        var p = 0
-        for (var i in this.preset) {
-            element = document.createElement("option");
-            element.setAttribute('value', i);
-            element.appendChild(document.createTextNode('[' + (p < 10 ? p : '⇧' + (p-10)) + '] ' + i));
-            this.select_preset.appendChild(element);
-	    p += 1;
-        }
-        
-        div_x.appendChild(document.createTextNode("x "));
-        div_x.appendChild(this.select_x);
-        div_y.appendChild(document.createTextNode("y "));
-        div_y.appendChild(this.select_y);
-        div_preset.appendChild(document.createTextNode("preset "));
-        div_preset.appendChild(this.select_preset);
-        
-        var span_icon_bar = document.createElement('div');
-        span_icon_bar.className = "sp_menu_icon";
-        span_icon_bar.id = this.id+"_bar";
-        jQuery.get("images/bar.svg", function(data) {
-                var svg = jQuery(data).find('svg');
-                $(span_icon_bar).empty().append(svg);
-            }, 'xml');
-        span_icon_bar.onclick = function(){
-                self.updateMode("bar");
-            };
-        
-        span_icon_plot = document.createElement('div');
-        span_icon_plot.className = "sp_menu_icon";
-        span_icon_plot.id = this.id+"_plot";
-        jQuery.get("images/plot.svg", function(data) {
-                var svg = jQuery(data).find('svg');
-                $(span_icon_plot).empty().append(svg);
-            }, 'xml');
-        span_icon_plot.onclick = function(){
-                self.updateMode("grid");
-            };
-        
-        var div_mode = document.createElement('div');
-        div_mode.className = "sp_menu_mode";
-        div_mode.appendChild(span_icon_bar);
-        div_mode.appendChild(span_icon_plot);
-        
-        //Added all childs
-        content.appendChild(div_preset);
-        content.appendChild(div_mode);
-        content.appendChild(div_x);
-        content.appendChild(div_y);
-        //menu.appendChild(div_graph);
-        menu.appendChild(document.createTextNode("plot"));
-        menu.appendChild(content)
-        anchor.appendChild(menu);
-        divParent.appendChild(anchor);
-        
-        if (this.mode=="bar") $("#"+this.id+"_bar").addClass("sp_selected_mode")
-        if (this.mode=="grid") $("#"+this.id+"_plot").addClass("sp_selected_mode")
     },
 
     /**
@@ -758,7 +577,6 @@ ScatterPlot.prototype = {
      * */
     changeMode : function (mode) {
         this.changeSplitMethod(this.splitX, this.splitY, mode);
-        this.cancelPreset()
     },
 
     updateMode : function (mode) {
@@ -911,17 +729,6 @@ ScatterPlot.prototype = {
 
         this.computeFrame()
             .drawFrame()
-
-        //Calcul d'une frame (image / seconde)
-        this.time1 = Date.now();
-        if (this.fpsqueue.length === 10) {
-            $("#fps")
-                .innerHTML = d3.mean(this.fpsqueue)
-                .toFixed(3);
-            this.fpsqueue = [];
-        }
-        this.fpsqueue.push(Math.round(1000 / (this.time1 - this.time0)));
-        this.time0 = this.time1;
     },
 
     /**
@@ -1289,15 +1096,13 @@ ScatterPlot.prototype = {
 
         return this;
     },
-
-     
+  
     /**
      * retrieve and apply selected splitMethod in the axisX menu selector
      * */
     changeXaxis: function() {
         var elem = this.select_x;
         this.changeSplitMethod(elem.value, this.splitY, this.mode);
-        this.cancelPreset()
         this.smartUpdate();
     },
 
@@ -1307,35 +1112,7 @@ ScatterPlot.prototype = {
     changeYaxis: function() {
         var elem = this.select_y;
         this.changeSplitMethod(this.splitX, elem.value, this.mode);
-        this.cancelPreset()
         this.smartUpdate();
-    },
-    
-    /**
-     * retrieve and apply selected preset in the preset menu selector
-     * */
-    changePreset: function(){
-        var elem = this.select_preset;
-        this.changeSplitMethod(this.preset[elem.value].x, this.preset[elem.value].y);
-        this.smartUpdate();
-    },
-
-    updatePreset: function(){
-        this.changePreset();
-        this.smartUpdate();
-    },
-
-    setPreset: function(preset){
-        this.select_preset.selectedIndex = preset
-        this.changePreset()
-    },
-
-    /**
-     * deactivate preset selection
-     */
-    
-    cancelPreset: function() {
-        this.select_preset.selectedIndex = 0
     },
     
     /* Fonction permettant de mettre à jour de l'axe des X
@@ -1617,30 +1394,6 @@ ScatterPlot.prototype = {
 
     },
 
-    /**
-     * check and put the correct currently 
-      axis for axisX/Y menu <br>
-     * */
-    updateMenu: function() {
-        var select_x = 0
-        var select_y = 0
-        var i=0
-        
-        for (var key in this.available_axis) {
-            var axisName = this.available_axis[key]
-            if (axisName == this.splitX) select_x = i
-            if (axisName == this.splitY) select_y = i
-            i++
-        }
-        this.select_x.selectedIndex = select_x
-        this.select_y.selectedIndex = select_y
-
-        $(".sp_menu_icon").removeClass("sp_selected_mode");
-        $("#"+this.id+"_"+this.mode).addClass("sp_selected_mode");
-
-        return this;
-    },
-
     /** 
      * transition between scatterplot and bar graph 
      * */
@@ -1905,3 +1658,4 @@ ScatterPlot.prototype = {
     }
 }
 ScatterPlot.prototype = $.extend(Object.create(View.prototype), ScatterPlot.prototype);
+ScatterPlot.prototype = $.extend(Object.create(ScatterPlot_menu.prototype), ScatterPlot.prototype);
