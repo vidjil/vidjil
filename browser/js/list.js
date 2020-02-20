@@ -283,10 +283,10 @@ List.prototype = {
         sort.onchange = function() {
             self.sort_option[this.value]()
             self.sort_option_selected = this.value
-            // Open the lock
-            self.sort_lock = false
+            // close the lock
+            self.sort_lock = true
             var div = document.getElementById("div_sortLock")
-            div.className  = "icon-lock-open"
+            div.className  = "icon-lock-1"
         }
         
         for (var key in this.sort_option) {
