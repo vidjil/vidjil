@@ -455,7 +455,8 @@ function floor_pow10(x)
 
 /**
  * Give a nice decimal number above the given number
- * nice_ceil(0.14) -> 0.15
+ * nice_ceil(0.14) -> 0.2
+ * nice_ceil(0.14, 0.05) -> 0.15
  * nice_ceil(23.4) -> 30
  **/
 
