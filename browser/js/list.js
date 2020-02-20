@@ -286,7 +286,7 @@ List.prototype = {
             // close the lock
             self.sort_lock = true
             var div = document.getElementById("div_sortLock")
-            div.className  = "icon-lock-1"
+            div.className  = "icon-lock-1 list_lock_on"
         }
         
         for (var key in this.sort_option) {
@@ -301,19 +301,19 @@ List.prototype = {
         var lock_div = document.createElement("icon")
         lock_div.id = "div_sortLock"
 
-        lock_div.className = "icon-lock-1"
+        lock_div.className = "icon-lock-1 list_lock_on"
         lock_div.title  = "Keep list sorted"
         lock_div.onclick = function(){
             var div = document.getElementById("div_sortLock")
             if (self.sort_lock == true){
                 self.sort_lock = false
-                div.className  = "icon-lock-open"
+                div.className  = "icon-lock-open list_lock_off"
                 div.title  = "Freeze list"
                 // Apply sort method at unlock
                 self.sort_option[self.sort_option_selected]()
             } else {
                 self.sort_lock = true
-                div.className  = "icon-lock-1"
+                div.className  = "icon-lock-1 list_lock_on"
                 div.title  = "Keep list sorted"
             }
         }

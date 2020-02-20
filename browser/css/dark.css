@@ -2259,3 +2259,9 @@ form .form_label {
   opacity: 0.4;
   cursor: auto;
 }
+.list_lock_off {
+  color: #333333;
+}
+.list_lock_on {
+  color: #839496;
+}
