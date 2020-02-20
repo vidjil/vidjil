@@ -36,6 +36,7 @@ function ScatterPlot(id, model, database, default_preset) {
     var self = this;
 
     ScatterPlot_menu.call(this, default_preset)
+    ScatterPlot_selector.call(this)
     View.call(this, model, id)
     this.db = database
     this.id = id
@@ -55,23 +56,6 @@ function ScatterPlot(id, model, database, default_preset) {
 
     this.CLONE_MIN_SIZE = 0.001
 
-    this.mode = "grid";
-
-    //Boolean for the nodes selector
-    this.active_selector = false
-
-    //selector
-    this.active_move = false; //Boolean given to the nodes movements
-    this.positionToMove = {
-        originx: 0,
-        originy: 0,
-        x: 0,
-        y: 0
-    };
-
-    //mouse coordinates
-    this.coordinates = [0, 0];
-
     //axis X text position
     this.rotation_x = 0;
     this.text_position_x = 30;
@@ -88,13 +72,13 @@ function ScatterPlot(id, model, database, default_preset) {
     // Plot axis
     this.available_axis = Axis.prototype.available();
 
-    this.use_system_grid = false
-
     if (typeof this.m.sp == "undefined")
         this.m.sp = this
 
     this.axisX = new Axis("V/5' gene")
     this.axisY = new Axis("J/3' gene")
+    this.mode = "grid"
+    this.use_system_grid = false
 }
 
 ScatterPlot.prototype = {
@@ -111,8 +95,10 @@ ScatterPlot.prototype = {
                     .removeAllChildren();
 
             this.initSVG();
+            this.initBar();
             this.resize();
             this.initMenu();
+            this.initSelector();
             this.tsne_ready=false;
 
         } catch(err) {
@@ -143,24 +129,6 @@ ScatterPlot.prototype = {
             .attr("class", "background_sp")
             .attr("x", 0)
             .attr("y", 0)
-            //Actions sur l'arrière-plan
-            .on("mouseover", function() {
-                self.m.focusOut();
-                self.m.removeFocusEdge();
-            })
-            .on("mousedown", function() {
-                self.activeSelector();
-            })
-
-        //Actions sur le corps -|- aux sélections
-        $("body").bind("mouseup", function(e) {
-            d3.event = e;
-            self.stopSelector()
-        })
-        $("body").bind("mousemove", function(e) {
-            d3.event = e;
-            self.updateSelector()
-        })
 
         //add a container for x axis in the scatterplot svg
         this.axis_x_container = d3.select("#" + this.id + "_svg")
@@ -251,42 +219,7 @@ ScatterPlot.prototype = {
                     .isFocus()) return "circle_focus";
                 return "circle";
             })     
-           
-            .call(d3.drag()
-                .on("start", function(d){return self.dragstarted(d)})
-                .on("drag", function(d){return self.dragged(d)})
-                .on("end", function(d){return self.dragended(d)}))            
-                
-            //Action -> Si la souris est pointée/fixée sur un cercle, alors on affiche l'information concernant ce cercle
-            .on("mouseover", function(d) {
-                if (!self.isDragging)
-                    self.m.focusIn(d.id);
-            })
-            //Action -> Si l'on clique sur un cercle, alors on le sélectionne
-            .on("click", function(d) {
-                self.clickNode(d.id);
-            });
 
-    },
-
-    dragstarted: function(d)
-    { 
-        this.isDragging = true;
-    },
-   
-    dragged: function(d)
-    {
-        d.fx = d3.event.x;
-        d.fy = d3.event.y;
-    },
-   
-    dragended: function(d)
-    {
-        this.isDragging = false;
-        if (!d3.event.active)
-            this.simulation.alpha(0.9).alphaTarget(0.08).alphaDecay(0.0227).restart();
-        d.fx = null;
-        d.fy = null;
     },
 
     /**
@@ -328,12 +261,6 @@ ScatterPlot.prototype = {
             .style("fill", function(d) {
                 return (self.m.clone(d.id)
                     .getColor());
-            })
-            .on("mouseover", function(d) {
-                self.m.focusIn(d.id);
-            })
-            .on("click", function(d) {
-                self.clickNode(d.id);
             })
     },
 
@@ -483,14 +410,7 @@ ScatterPlot.prototype = {
                 if (isNaN(y)) return 1
                 else return y
             })
-            .on("mouseover", function(d) {})
-            .on("click", function(d) {})
             
-
-
-
-
-
             this.bar_container.selectAll("rect")
             .transition()
             .duration(speed)
@@ -526,16 +446,6 @@ ScatterPlot.prototype = {
                 //return self.axisX.getColor(self.m.clone(d.id))   
             })
 
-            setTimeout(function(){
-                var that = self
-                self.bar_container.selectAll("rect")
-                .on("mouseover", function(d) {
-                    that.m.focusIn(d.id)
-                })
-                .on("click", function(d) {
-                    that.clickNode(d.id)
-                })
-            }, speed)
     },
 
     /**
@@ -1060,7 +970,25 @@ ScatterPlot.prototype = {
     updateElemStyle: function() {
         var self = this;
         if (this.mode == "bar") {
-            this.drawBarTab(0);
+            this.bar_container.selectAll("rect")
+                .attr("class", function(p) {
+                    var c = self.m.clone(p.id)
+                    
+                    if (!p.hasValidAxisPosition || p.use_system_grid || !c.isActive() || c.isFiltered)
+                        return "circle_hidden"
+                    if (c.isSelected() && c.isFocus())
+                        return "circle_focus circle_select"
+                    if (c.isSelected())
+                        return "circle_select"
+                    if (c.isFocus()) 
+                        return "circle_focus"
+
+                    return "circle"
+                })
+                .style("fill", function(d) { 
+                    return (self.m.clone(d.id).getColor()) 
+                    //return self.axisX.getColor(self.m.clone(d.id))   
+                })
         } else {
             this.node
                 .attr("class", function(p) {
@@ -1337,7 +1265,6 @@ ScatterPlot.prototype = {
         if (mode == "bar" && mode != this.mode) {
             this.mode = "bar"
             this.endPlot();
-            this.initBar();
         }
 
         var endbar = false;
@@ -1407,255 +1334,11 @@ ScatterPlot.prototype = {
             })
     },
 
-    /**
-     * onmousedown event <br>
-     * start drawing a selector at this position
-     * */
-    activeSelector: function() {
-        this.activeSelectorAt(
-            d3.mouse(d3.select("#" + this.id + "_svg")
-                        .node())
-        );
-    },
-    
-    /**
-     * start drawing a selector at this position
-     * @param {integer[]} coord - the [x,y] coordinates at which start the selection
-     * */
-    activeSelectorAt: function(coord) {
-        this.coordinates = coord;
-
-        if (this.active_move) {
-
-            //Initialisation of the movement
-            this.positionToMove.x = this.coordinates[0];
-            this.positionToMove.y = this.coordinates[1];
-            this.positionToMove.originx = this.coordinates[0];
-            this.positionToMove.originy = this.coordinates[1];
-
-            //Simple modification to the CSS of the mouse
-            document.body.style.cursor = "move";
-
-        } else {
-
-            //Initialisation du sélecteur
-            this.selector
-                .attr("originx", this.coordinates[0])
-                .attr("originy", this.coordinates[1])
-                .attr("x", this.coordinates[0])
-                .attr("y", this.coordinates[1])
-                .attr("width", 0)
-                .attr("height", 0)
-                .style("display", "");
-
-        }
-
-        this.active_selector = true;
-    },
-
-
-    /**
-     * onmousemove event <br>
-     * redraw the selector every time the mouse move till the click release
-     * */
-    updateSelector: function() {
-        this.updateSelectorAt(
-            d3.mouse(d3.select("#" + this.id + "_svg")
-                    .node())
-        );
-    },
-    
-    
-    /**
-     * redraw the selector every time the mouse move till the click release
-     * @param {integer[]} coord - the [x,y] coordinates at which update the selector
-     * */
-    updateSelectorAt: function(coord) {
-        this.coordinates = coord;
-
-        //Active selector -> activeSelector() function
-        if (this.active_selector) {
-
-            var width, height;
-            /*Movement of all nodes, with mouse move*/
-            if (this.active_move) {
-
-                this.positionToMove.x = this.coordinates[0];
-                this.positionToMove.y = this.coordinates[1];
-
-                width = this.positionToMove.originx - this.positionToMove.x;
-                height = this.positionToMove.originy - this.positionToMove.y;
-
-                this.fixedAllClones(false);
-
-                var movementWidth = -(Math.abs(0.5 * width / 100) * width);
-                var movementHeight = -(Math.abs(0.5 * height / 100) * height);
-
-                for (var i = 0; i < this.nodes.length; i++) {
-                    this.nodes[i].x += movementWidth;
-                    this.nodes[i].px += movementWidth;
-                    this.nodes[i].y += movementHeight;
-                    this.nodes[i].py += movementHeight;
-                }
-
-                this.positionToMove.originx += movementWidth;
-                this.positionToMove.originy += movementHeight;
-
-            }
-            /*Nodes selection*/
-            else {
-
-                var x = this.selector.attr("originx");
-                var y = this.selector.attr("originy");
-
-                width = this.coordinates[0] - x;
-                height = this.coordinates[1] - y;
-
-                if (width > 5) {
-                    this.selector.attr("width", width - 3)
-                        .attr("x", x)
-                } else
-                if (width < -5) {
-                    this.selector
-                        .attr("width", -width)
-                        .attr("x", this.coordinates[0] + 3)
-                } else {
-                    this.selector.attr("width", 0)
-                        .attr("x", x)
-                }
-
-                if (height > 5) {
-                    this.selector.attr("height", height - 3)
-                        .attr("y", y)
-                } else
-                if (height < -5) {
-                    this.selector
-                        .attr("height", -height)
-                        .attr("y", this.coordinates[1] + 3)
-                } else {
-                    this.selector.attr("height", 0)
-                        .attr("y", y)
-                }
-            }
-        }
-    },
-
-
-
-
-    /**
-     * onmouserelease event<br>
-     * detect and select all clones under the selector
-     * @param {Event} e
-     * */
-    stopSelector: function(e) {
-        if (this.active_selector) {
-            this.stopSelectorAt(
-                d3.mouse(d3.select("#" + this.id + "_svg")
-                            .node())
-            );
-        }
-    },
-
-    /**
-     * detect and select all clones under the selector
-     * @param {integer[]} coord - the [x,y] coordinates at which stop the selector
-     * */
-    stopSelectorAt: function(coord) {
-
-        this.coordinates = coord;
-        
-        if (this.active_move) {
-            
-            //Selector disabled
-            this.cancelSelector();
-            
-            //Set the CSS of the mouse to "default"
-            document.body.style.cursor = "default";
-            
-        }
-        /*Selection*/
-        else {
-            var nodes_selected = []
-            var x1 = parseInt(this.selector.attr("x"))
-            var x2 = x1 + parseInt(this.selector.attr("width"))
-            var y1 = parseInt(this.selector.attr("y"))
-            var y2 = y1 + parseInt(this.selector.attr("height"))
-            
-            
-            for (var i = 0; i < this.nodes.length; i++) {
-                var node = this.nodes[i]
-                var clone = this.m.clone(i)
-                var node_x, node_y;
-                if (this.mode != "bar") {
-                    node_x = node.x + this.margin[3]
-                    node_y = node.y + this.margin[0]
-                } else {
-                    // bar_x and bar_y are both ratio values (between 0 and 1), need to multiply by the size of the grid
-                    node_x = node.bar_x * this.gridSizeW + this.margin[3];
-                    var mid_y = node.bar_y - node.bar_h / 2; // bar_x represents the middle of the rectangle, but not bar_y
-                    // bar_y starts from bottom, so we need to substract the y value from the height of the grid
-                    node_y = this.gridSizeH - mid_y * this.gridSizeH + this.margin[0];
-                }
-                
-                if (clone.isActive() && (clone.getSize() || clone.getSequenceSize()) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
-                nodes_selected.push(i);
-            }
-            
-            this.selector
-            .style("display", "none")
-            .attr("width", 0)
-            .attr("height", 0)
-            this.active_selector = false;
-            
-            this.m.unselectAllUnlessKey(d3.event)
-            this.m.multiSelect(nodes_selected)
-        }
-        
-    },
-
-
-
-
-
-
-
-
-
-    /**
-     * click event, select/unselect clones <br>
-     * @param {integer} cloneID - clone index
-     * */
-    clickNode: function(cloneID) {
-        this.m.unselectAllUnlessKey(d3.event)
-        this.m.select(cloneID)
-    },
-
-    /**
-     * cancel current select box
-     * */
-    cancelSelector: function() {
-        this.selector
-            .style("display", "none")
-            .attr("width", 0)
-            .attr("height", 0)
-            //On met le sélecteur à false -> annulation
-        this.active_selector = false;
-
-        //Si sélection sur le document, on efface tout
-        if (document.selection) {
-            document.selection.empty();
-        } else if (window.getSelection) {
-            window.getSelection()
-                .removeAllRanges();
-        }
-    },
-    
-
     shouldRefresh: function () {
         this.init();
         this.smartUpdate();
     }
 }
-ScatterPlot.prototype = $.extend(Object.create(View.prototype), ScatterPlot.prototype);
-ScatterPlot.prototype = $.extend(Object.create(ScatterPlot_menu.prototype), ScatterPlot.prototype);
+ScatterPlot.prototype = $.extend(Object.create(View.prototype), ScatterPlot.prototype)
+ScatterPlot.prototype = $.extend(Object.create(ScatterPlot_menu.prototype), ScatterPlot.prototype)
+ScatterPlot.prototype = $.extend(Object.create(ScatterPlot_selector.prototype), ScatterPlot.prototype)
