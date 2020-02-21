@@ -9,8 +9,6 @@ build_doc:
       - site/
     expire_in: 1 month
   only:
-    refs:
-      - merge_requests
     changes:
       - doc/**/*
       - mkdocs.yml
