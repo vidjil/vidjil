@@ -1131,6 +1131,32 @@ class ListWindows(VidjilJson):
             
         return obj_dict
         
+    def save_airr(self, output):
+        """ 
+        Create an export of content into AIRR file
+        Columns is hardcoded for the moment.
+        TODO: add some options to give more flexibility to cols
+        """
+        ## Constant header
+        list_header  = ["filename", "locus", "duplicate_count", "v_call", "d_call", "j_call", "sequence_id", "sequence", "productive"]
+        ## not available in this script; but present in AIRR format
+        list_header += ["junction_aa", "junction", "cdr3_aa", "warnings", "rev_comp", "sequence_alignment", "germline_alignment", "v_cigar", "d_cigar", "j_cigar"]
+        ## Specificly asked. Need to be added by server side action on vidjil files
+        list_header += ["first_name", "last_name", "birthday", "infos", "sampling_date","ratio_locus", "frame"]
+        ## Can be in option
+        list_header += ["other_filename"]
+
+        fo = open(output, 'w')
+        fo.write( "\t".join(list_header)+"\n")
+        for clone in self.d["clones"]:
+            reads = clone.d["reads"]
+            for time in range(0, len(reads)):
+                if reads[time]:
+                    fo.write( "\t".join( clone.toCSV(cols=list_header, time=time, jlist=self) )+"\n")
+        fo.close()
+        return
+
+
     def get_filename_pos(self, filename):
         """ filename is the key of distributions repertoires """
         return self.d["samples"].d["original_names"].index(filename)
