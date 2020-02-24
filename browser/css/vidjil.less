@@ -172,13 +172,11 @@ ul{
 }
 
 #right-container{
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: -moz-none;
-  -ms-user-select: none;
-  user-select: none;
+  display: flex;
+  flex: 1 0 auto;
+  flex-flow: column;
   float : right;
-  width : 0px;
+  width : @width_left_container;
 }
 
 #left-container {
