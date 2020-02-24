@@ -46,7 +46,7 @@ QUnit.test("grid", function(assert) {
     assert.equal(sp.axisX.labels[keys[1]].text, "undefined V", "second label for 'v' axis is '?'")
 
     assert.equal(m.clone(2).getGene('5'), "IGHV1-2*01", "clone 2 is 'IGHV1-2*01'")
-    assert.equal(sp.nodes[2].bar_x, sp.axisX.getValuePos('IGHV1-2'), "node 2, bar x position is on 'IGHV1-2'")
+    assert.equal(sp.axisX.getPos(m.clone(2)), sp.axisX.getValuePos('IGHV1-2'), "node 2, bar x position is on 'IGHV1-2'")
 
     var done = assert.async(2); 
     var delay = 0;
@@ -58,12 +58,12 @@ QUnit.test("grid", function(assert) {
         sp.changeSplitMethod("N length", "size", "bar");
         sp.update()
 
-        assert.equal(   sp.select_x.selectedIndex,  9,                      'select_x index')
-        assert.equal(   sp.select_y.selectedIndex,  16,                     'select_y index')
-        assert.approx(  sp.nodes[1].bar_h,          0.40, 0.05,             "node 1, bar h position " + m.clone(1).getSize())
-        assert.equal(   sp.nodes[1].bar_x,          sp.axisX.getValuePos(9),"node 1, bar x position " + m.clone(1).getNlength())
-        assert.approx(  sp.nodes[1].bar_y,          0.40, 0.05,             "node 1, bar y position")
-        assert.approx(  sp.nodes[2].bar_h,          0.50, 0.05,             "node 2, bar h position")
+        assert.equal(   sp.select_x.selectedIndex,      9,                      'select_x index')
+        assert.equal(   sp.select_y.selectedIndex,      16,                     'select_y index')
+        assert.approx(  sp.nodes[1].bar_h/sp.resizeH,   0.40, 0.05,             "node 1, bar h position " + m.clone(1).getSize())
+        assert.equal(   sp.axisX.getPos(m.clone(1)),    sp.axisX.getValuePos(9),"node 1, bar x position " + m.clone(1).getNlength())
+        assert.approx(  sp.nodes[1].bar_y/sp.resizeW,   0.40, 0.05,             "node 1, bar y position")
+        assert.approx(  sp.nodes[2].bar_h/sp.resizeH,   0.50, 0.05,             "node 2, bar h position")
 
         m.clone(0).reads = [10000,1,1,1]
         m.update()
@@ -71,7 +71,7 @@ QUnit.test("grid", function(assert) {
     }, delay+=step);
 
     setTimeout(function() {
-        assert.equal(sp.nodes[2].bar_h, 0.01, "node 2, bar h is small, but not too much " +m.clone(2).getSize())
+        assert.approx(  sp.nodes[2].bar_h/sp.resizeH,      0.01, 0.001,         "node 2, bar h is small, but not too much " +m.clone(2).getSize())
         done();
     }, delay+=step);
     

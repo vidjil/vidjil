@@ -96,9 +96,9 @@ ScatterPlot.prototype = {
 
             this.initSVG();
             this.initBar();
-            this.resize();
             this.initMenu();
             this.initSelector();
+            this.resize();
             this.tsne_ready=false;
 
         } catch(err) {
