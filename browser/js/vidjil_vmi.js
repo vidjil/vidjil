@@ -17,9 +17,9 @@ VidjilVMI.prototype = {
         var bot_container = new Panel(this.bot_id);
 
         this.vmi.add_panel(mid_container, false);
-        this.vmi.add_panel(left_container, true);
+        this.vmi.add_panel(left_container, false);
         this.vmi.add_panel(visu_container, true);
-        this.vmi.add_panel(bot_container, true);
+        this.vmi.add_panel(bot_container, false);
 
         this.vmi.addView("data", this.left_id, "", []);
         this.vmi.addView("list", this.left_id, "", []);
