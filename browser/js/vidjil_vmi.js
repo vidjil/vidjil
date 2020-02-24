@@ -26,8 +26,18 @@ VidjilVMI.prototype = {
         this.vmi.addView("info", this.left_id, "", []);
         this.vmi.addView("visu", this.visu_id, "", []);
         this.vmi.addView("visu2", this.visu_id, "", []);
-        this.vmi.addView("segmenter", this.bot_id, "", []);
+        var segmenter_view = this.vmi.addView("segmenter", this.bot_id, "", []);
+        segmenter_view.setMutable(false);
         this.vmi.setOverlays([this.visu_id]);
+
+        this.normal_mode();
+    },
+
+    reset_menu: function() {
+        var menu_container = document.getElementById(this.menu_id);
+        menu_container.removeAllChildren();
+        var menu = this.vmi.setMenuOptions(new VidjilMenuDecorator());
+        menu_container.appendChild(menu);
     },
 
     tablet_mode : function() {
@@ -43,6 +53,7 @@ VidjilVMI.prototype = {
         this.vmi.setView(this.vmi.views.visu, this.visu_id);
         this.vmi.setView(this.vmi.views.visu2, this.visu_id);
         this.vmi.setView(this.vmi.views.segmenter, this.bot_id);
+        this.reset_menu();
     },
 
     normal_mode : function() {
@@ -66,6 +77,7 @@ VidjilVMI.prototype = {
         this.vmi.setView(this.vmi.views.visu, this.visu_id);
         this.vmi.setView(this.vmi.views.visu2, this.visu_id);
         this.vmi.setView(this.vmi.views.segmenter, this.bot_id);
+        this.reset_menu();
     }
 
 }
