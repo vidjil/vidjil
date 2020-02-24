@@ -9,9 +9,9 @@ build_doc:
       - site/
     expire_in: 1 month
   only:
-    changes:
-      - doc/**/*
-      - mkdocs.yml
+      - /^[^\/]*doc[^\/]*\//
+      # branch name should contain doc before the first /
+      # eg.: doc/blabla or feature-adoc/blabla
   tags:
     - doc
 
@@ -21,6 +21,4 @@ deploy_doc:
     - scp -r site/ $VIDJIL_WWW:doc/
   when: manual
   only:
-    changes:
-      - doc/**/*
-      - mkdocs.yml
+      - /^[^\/]*doc[^\/]*\//
