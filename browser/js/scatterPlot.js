@@ -270,6 +270,8 @@ ScatterPlot.prototype = {
     updateBar: function() {
         if (!this.axisX.json) return
 
+        this.use_system_grid = (this.axisX.germline != "multi")
+
         var cloneList = []
         for (var cloneID in this.m.clones){
             var clone = m.clone(cloneID)
@@ -296,6 +298,7 @@ ScatterPlot.prototype = {
                                         germline:   "multi"
                                     })
         this.axisY.compute(Math.round(this.resizeH/20))
+
     },
 
     includeBar: function(clone, log) {
@@ -345,10 +348,10 @@ ScatterPlot.prototype = {
                     node.old_bar_h = node.bar_h
                     node.old_bar_w = node.bar_w
 
-                    node.bar_y = y_pos_for_display
-                    node.bar_x = x_pos
-                    node.bar_h = height_for_display
-                    node.bar_w = bar.width
+                    node.bar_y = self.gridSizeH - (this.gridSizeH * y_pos_for_display)
+                    node.bar_x = this.gridSizeW * x_pos
+                    node.bar_h = this.gridSizeH * height_for_display
+                    node.bar_w = this.gridSizeW * bar.width
                 }
             }
         }
@@ -389,14 +392,14 @@ ScatterPlot.prototype = {
             })
             .attr("width", function(d) { 
                 var bar_w = (d.requireInit) ? d.bar_w : d.old_bar_w
-                var w = bar_w*self.gridSizeW
+                var w = bar_w
                 if (isNaN(w)) return 1
                 else return w
             })
             .attr("x", function(d) { 
                 var bar_x = (d.requireInit) ? d.bar_x : d.old_bar_x
                 var bar_w = (d.requireInit) ? d.bar_w : d.old_bar_w
-                var x = (bar_x - bar_w/2)*self.gridSizeW + self.margin[3]
+                var x = (bar_x - bar_w/2)+ self.margin[3]
                 if (isNaN(x)) return 1
                 else return x
                 
@@ -405,7 +408,7 @@ ScatterPlot.prototype = {
                 if (d.requireInit)
                     return 0
 
-                var h = d.old_bar_h*self.gridSizeH 
+                var h = d.old_bar_h
                 if (isNaN(h)) return 1
                 else return h
             })
@@ -413,7 +416,7 @@ ScatterPlot.prototype = {
                 if (d.requireInit)
                     return self.gridSizeH + self.margin[0]
 
-                var y = (1-d.old_bar_y)*self.gridSizeH + self.margin[0]
+                var y = d.old_bar_y + self.margin[0]
                 if (isNaN(y)) return 1
                 else return y
             })
@@ -423,20 +426,20 @@ ScatterPlot.prototype = {
             .duration(speed)
             .attr("width", function(d) { 
                 var bar_w = (d.terminate) ? d.old_bar_w : d.bar_w
-                var w = bar_w*self.gridSizeW
+                var w = bar_w
                 if (isNaN(w)) return 1
                 else return w
             })
             .attr("x", function(d) { 
                 var bar_w = (d.terminate) ? d.old_bar_w : d.bar_w
                 var bar_x = (d.terminate) ? d.old_bar_x : d.bar_x
-                var x = (bar_x - bar_w/2)*self.gridSizeW + self.margin[3]
+                var x = (bar_x - bar_w/2) + self.margin[3]
                 if (isNaN(x)) return 1
                 else return x
             })
             .attr("height", function(d) { 
                 var bar_h = (d.terminate) ? 0: d.bar_h
-                var h = bar_h*self.gridSizeH 
+                var h = bar_h
                 if (isNaN(h)) return 1
                 else return h
             })
@@ -444,7 +447,7 @@ ScatterPlot.prototype = {
                 if (d.terminate)
                     return self.gridSizeH + self.margin[0]
 
-                var y = (1-d.bar_y)*self.gridSizeH + self.margin[0]
+                var y = d.bar_y + self.margin[0]
                 if (isNaN(y)) return 1
                 else return y
             })
@@ -453,39 +456,6 @@ ScatterPlot.prototype = {
                 //return self.axisX.getColor(self.m.clone(d.id))   
             })
 
-    },
-
-    /**
-     * transition between bar graph and scatterplot mode
-     * */
-    endBar: function() {
-        var self = this;
-
-        this.bar_container.selectAll("rect")
-            .transition()
-            .duration(500)
-            //use clone circle position to init the clone bar position
-            .attr("width", function(d) { return d.r2*2 })
-            .attr("x", function(d) { return d.x+self.margin[3]-(d.r2) })
-            .attr("height", function(d) { return d.r2*2 })
-            .attr("y", function(d) { return d.y+self.margin[0]-(d.r2) })
-        this.node
-            .attr("class", function(p) {
-                return "circle_hidden";
-            })
-
-        this.axis_x_update();
-        this.axis_y_update();
-
-        setTimeout(function () {
-            self.bar_container.selectAll("rect")
-                .attr("class", function(p) {
-                    return "circle_hidden";
-            })
-            self.smartUpdate()
-        },400)
-
-        
     },
 
     /**
@@ -1333,12 +1303,56 @@ ScatterPlot.prototype = {
      * */
     endPlot: function() {
         var self = this;
-        this.node
+        setTimeout(function(){
+            self.node
+                .attr("class", function(p) {
+                    return "circle_hidden";
+                })
+        }, 250)
+
+        
+        for (var c in this.nodes){
+            var node = this.nodes[c]
+            node.old_bar_y = node.y
+            node.old_bar_x = node.x
+            node.old_bar_h = node.r2*2
+            node.old_bar_w = node.r2*2
+
+            node.bar_y = node.y
+            node.bar_x = node.x
+            node.bar_h = node.r2*2
+            node.bar_w = node.r2*2
+        }
+    },
+
+        /**
+     * transition between bar graph and scatterplot mode
+     * */
+    endBar: function() {
+        var self = this;
+
+        for (var c in this.nodes){
+            var node = this.nodes[c]
+            node.old_y.fill(node.bar_y+node.bar_h/2)
+            node.old_x.fill(node.bar_x+node.bar_w/2)
+            node.r1 = Math.min(node.bar_w/2, node.bar_h/2)
+
+            node.y = node.bar_y+node.bar_h/2
+            node.x = node.bar_x+node.bar_w/2
+            node.r2 = Math.min(node.bar_w/2, node.bar_h/2)
+        }
+
+        this.bar_container.selectAll("rect")
             .transition()
-            .duration(500)
-            .attr("class", function(p) {
-                return "circle_hidden";
-            })
+            .duration(250)
+            .attr("height", function(d) { return 0 })
+
+            setTimeout(function(){
+                self.bar_container.selectAll("rect")
+                    .attr("class", function(p) {
+                        return "circle_hidden";
+                    })
+            }, 250)
     },
 
     shouldRefresh: function () {
