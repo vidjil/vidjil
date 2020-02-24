@@ -308,6 +308,81 @@ class Window:
         return value
 
 
+    def toCSV(self, cols= [], time=0, jlist = False):
+        """ Return a list of values of the clone added from a list of waited columns """
+        list_values = []
+
+
+        airr_to_axes = {
+            "locus":               "germline",
+            "v_call":              "seg5",
+            "d_call":              "seg4",
+            "j_call":              "seg3",
+            "v_alignment_end":     "seg5_stop",
+            "d_alignment_start":   "seg4_start",
+            "d_alignment_end":     "seg4_stop",
+            "j_alignment_start":   "seg3_start",
+            "productive":          "productive",
+            "cdr3_start":          "cdr3_start",
+            "cdr3_end":            "cdr3_stop",
+            "warnings":            "warn",
+            "sequence_id":         "id",
+            "sequence":            "sequence",
+            ## Not implemented in get_values
+            # For x_cigar, datananot available in clone
+            "junction":  "?",
+            "cdr3_aa":   "?",
+            "rev_comp":  "?",
+            "v_cigar":   "?",
+            "d_cigar":   "?",
+            "j_cigar":   "?",
+            "sequence_alignment": "?",
+            "germline_alignment": "?"
+        }
+
+        airr_computed =  ["duplicate_count", "ratio_locus", "filename", "other_filename"]
+        ## necker
+        airr_computed += ["first_name", "last_name", "birthday", "infos", "sampling_date", "frame"]
+
+        for col in cols:    
+
+            if col in airr_computed:
+                if col == "duplicate_count":
+                    value = self.d["reads"][time]
+                elif col == "ratio_locus":
+                    germline = self.get_values("germline")
+                    value = float(self.d["reads"][time]) / jlist.d["reads"].d["germline"][germline][time]
+                elif col == "filename":
+                    value = jlist.d["samples"].d["original_names"][time]
+                elif col == "other_filename":
+                    names = []
+                    reads = self.d["reads"]
+                    for i in range(0, len(reads)):
+                        name = jlist.d["samples"].d["original_names"][i]
+                        if reads[i] and i != time:
+                            names.append(name)
+                    value = ",".join(names)
+                elif col == "infos":
+                    value = jlist.d["samples"].d["info"][time]
+                elif col == "warnings":
+                    warns = self.get_values("warn")
+                    values = []
+                    for warn in warns:
+                        values.append( warn["code"] )
+                    value = ",".join(values)
+                else: 
+                    value = "not_implemented"
+
+            elif col in airr_to_axes.keys():
+                value = self.get_values(airr_to_axes[col])
+            else:
+                value = "colNotFound--%s" % col
+            if value == "?":
+                value = ""
+            list_values.append( str(value) )
+
+        return list_values
+
 
     def latex(self, point=0, base_germline=10000, base=10000, tag=''):
         reads = self.d["reads"][point]
