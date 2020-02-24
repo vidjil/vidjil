@@ -1,5 +1,6 @@
 !NO_LAUNCHER:
-!LAUNCH: (cd $VIDJIL_DIR/germline ; grep -A2 -F 'IGHD2-2*02' homo-sapiens/IGHD+up.fa | tr -d '\n')
+# The awk part prints the IGHD2-2*02 sequence
+!LAUNCH: (cd $VIDJIL_DIR/germline ; awk '$0 ~ /IGHD2-2.02/ {print; getline; while ($0 !~ /^>/) {print; getline}}' homo-sapiens/IGHD+up.fa | tr -d '\n')
 
 $ Correct sequence, with upstream
 i1:AGGATTTTGTGGGGGCTCGTGTCACTGTGA
