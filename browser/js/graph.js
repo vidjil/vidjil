@@ -230,11 +230,11 @@ Graph.prototype = {
         div.id = "" + this.id + "_menu"
         div.className = "graph_menu"
         var list_title = document.createElement('div')
-        list_title.id = "graphList_title"
+        list_title.id = this.id +"_title"
         div.appendChild(list_title)
         
         var list = document.createElement('table')
-        list.id = "graphList_table"
+        list.id = this.id +"_table"
         list.className = "graph_list"
         
         div.appendChild(list)
@@ -249,7 +249,7 @@ Graph.prototype = {
                 self.dragTimePoint()
             })
             .on("mouseover", function () {
-                $("#graphList_table")
+                $("#"+ self.id +"_table")
                     .stop(true, true)
                     .show("fast")
             })
@@ -269,13 +269,13 @@ Graph.prototype = {
         this.updateCountActiveSample()
 
         // Update table to store each line
-        var table = document.getElementById("graphList_table")
+        var table = document.getElementById(""+this.id +"_table")
         table.removeAllChildren()
 
 
         var line   = document.createElement("tr")
         var line_content   = document.createElement("td")
-        line_content.id = "graph_listElem_showAll"
+        line_content.id = this.id +"_listElem_showAll"
         line_content.classList.add("graph_listAll")
         line_content.textContent = "show all samples"
         line_content.colSpan = "2"
@@ -284,7 +284,7 @@ Graph.prototype = {
 
         line   = document.createElement("tr")
         line_content   = document.createElement("td")
-        line_content.id = "graph_listElem_hideAll"
+        line_content.id = this.id +"_listElem_hideAll"
         line_content.classList.add("graph_listAll")
         line_content.textContent = "hide all samples"
         line_content.colSpan = "2"
@@ -294,13 +294,13 @@ Graph.prototype = {
         for (var i=0; i<this.m.samples.number; i++){
             // Create a line for each sample, with checkbox and name (text)
             var list_content   = document.createElement("tr")
-            list_content.id    = 'graph_listElem_'+i
+            list_content.id    = this.id +"_listElem_"+i
             list_content.classList.add("graph_listElem")
             list_content.dataset.time = i
             // case: Name of sample
             var line_content_text   = document.createElement("td")
             line_content_text.classList.add("graph_listElem_text")
-            line_content_text.id    = "graph_listElem_text_"+i
+            line_content_text.id    = this.id +"_listElem_text_"+i
             line_content_text.textContent  = this.m.getStrTime(i)
             line_content_text.dataset.time = i
             // case: checkbox
@@ -308,7 +308,7 @@ Graph.prototype = {
             var content_check  = document.createElement("input")
             content_check.classList.add("graph_listElem_check")
             content_check.type = "checkbox"
-            content_check.id   = "graph_listElem_check_"+i
+            content_check.id   = this.id +"_listElem_check_"+i
             content_check.dataset.time = i
             line_content_check.appendChild(content_check)
 
@@ -317,11 +317,11 @@ Graph.prototype = {
             table.appendChild(list_content) 
         }
 
-        $("#graph_listElem_showAll").click(function () {
+        $("#"+this.id +"_listElem_showAll").click(function () {
             console.log( "self.showAllTimepoint()" )
             self.showAllTimepoint()
         })
-        $("#graph_listElem_hideAll").click(function () {
+        $("#"+this.id +"_listElem_hideAll").click(function () {
             console.log( "self.hideAllTimepoint( true )" )
             self.hideAllTimepoint()
         })
@@ -364,12 +364,12 @@ Graph.prototype = {
         // remove css rule of previous sample
         if (elem.length != 0) {
             // dont change if previous and current sample are the same
-            if (elem[0].id == 'graph_listElem_text_'+time && this.m.samples.order.length != 0){ return }
+            if (elem[0].id == this.id +'_listElem_text_'+time && this.m.samples.order.length != 0){ return }
             elem[0].classList.remove("graph_listElem_selected")
         }
         // Add css rule to current timepoint (and if at least one is show)
         if (time != undefined && this.m.samples.order.length != 0){
-            elem = document.getElementById('graph_listElem_text_'+time)
+            elem = document.getElementById(this.id +'_listElem_text_'+time)
             elem.classList.add("graph_listElem_selected")
         }
         return
@@ -380,7 +380,7 @@ Graph.prototype = {
      * @param  {[type]} time The timepoint to update
      */
     updateListCheckbox: function(time){
-        var checkbox_id  = "graph_listElem_check_"+time
+        var checkbox_id  = this.id +"_listElem_check_"+time
         var checkbox     = document.getElementById(checkbox_id)
         checkbox.checked = (this.m.samples.order.indexOf(time) != -1)
         return
@@ -440,7 +440,7 @@ Graph.prototype = {
      * This value is shown in the first line of the graphList
      */
     updateCountActiveSample: function(){
-        var div   = document.getElementById("graphList_title")
+        var div   = document.getElementById(this.id +"_title")
         if (this.m.samples.number != 0 && this.m.samples.number != undefined){
             div.textContent  = ""+this.m.samples.order.length+" / " + this.m.samples.number
         } else {
