@@ -1401,6 +1401,8 @@ def main():
     group_options.add_argument('--distributions-list', '-l', action='store_true', default=False, help='list the available axes for distributions')
     group_options.add_argument('--no-clones', action='store_true', default=False, help='do not output individual clones')
 
+    group_options.add_argument('--export-airr', action='store_true', default=False, help='export data in AIRR format.')
+
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
 
     args = parser.parse_args()
@@ -1551,7 +1553,11 @@ def main():
         del jlist_fused.d["clones"]
 
     print("### Save merged file")
-    jlist_fused.save_json(args.output)
+    if args.export_airr:
+        output= args.output.replace(".vidjil", ".airr")
+        jlist_fused.save_airr(output)
+    else:
+        jlist_fused.save_json(args.output)
     
     
     
