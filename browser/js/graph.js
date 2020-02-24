@@ -463,7 +463,7 @@ Graph.prototype = {
         this.text_position_x = 60;
         this.text_position_x2 = div_width - 60;
     
-        this.smartUpdate(speed);
+        this.update(speed);
     },
     
 /* ************************************************ *
@@ -1380,72 +1380,49 @@ Graph.prototype = {
         var self = this;
 
         var c = 0;
-        
-        if (this.mode=="stack"){
-            //volumes
-            var clone = this.g_clone;
-            if (speed !== 0){
-                clone = clone
-                .transition()
-                .duration(speed)
-            }
-            clone
-                .style("fill", function (d) {
-                    return self.m.clone(d.id).getColor();
-                })
-                .style("stroke", "none")
-                .attr("class", function (p) {
-                    var clone = self.m.clone(p.id)
-                    if (clone.isSelected()) return "graph_select";
-                    if (clone.isFocus()) return "graph_focus";
-                    if (!clone.isActive()) return "graph_inactive";
-                    c++
-                    return "graph_line";
-                })
-                .attr("id", function (d) {
-                    return "poly" + d.name;
-                })
-                .attr("d", function (d) {
-                    return d.path
-                })
-        }else{
-            //courbes
-            selected_clones = this.g_clone;
-            if (typeof list != "undefined"){
-                selected_clones = this.g_clone.filter(function(d) {
-                    if (list.indexOf(d.id) != -1) return true;
-                    return false
-                });
-            }
-            
-            selected_clones
-                .style("fill", "none")
-                .style("stroke", function (d) {
-                    return self.m.clone(d.id).getColor();
-                })
-                .attr("class", function (p) {
-                    var clone = self.m.clone(p.id)
-                    if (!clone.isActive()) return "graph_inactive";
-                    if (clone.isSelected()) return "graph_select";
-                    if (clone.isFocus()) return "graph_focus";
-                    c++
-                    if (c < self.display_limit2 ) return "graph_line";
-                    if (clone.top > self.display_limit) return "graph_inactive";
-                    return "graph_line";
-                })
-                .attr("id", function (d) {
-                    return "poly" + d.name;
-                })
-                .on("mouseover", function (d) {
-                    self.m.focusIn(d.id);
-                })
-                .on("click", function (d) {
-                    self.clickGraph(d.id);
-                })               
-                .attr("d", function (d) {
-                    return d.path
-                });
+
+        selected_clones = this.g_clone;
+        if (typeof list != "undefined"){
+            selected_clones = this.g_clone.filter(function(d) {
+                if (list.indexOf(d.id) != -1) return true;
+                return false
+            });
         }
+        
+        if (speed !== 0){
+            selected_clones = selected_clones
+            .transition()
+            .duration(speed)
+        }
+
+        selected_clones
+            .style("fill", "none")
+            .style("stroke", function (d) {
+                return self.m.clone(d.id).getColor();
+            })
+            .attr("class", function (p) {
+                var clone = self.m.clone(p.id)
+                if (!clone.isActive()) return "graph_inactive";
+                if (clone.isSelected()) return "graph_select";
+                if (clone.isFocus()) return "graph_focus";
+                c++
+                if (c < self.display_limit2 ) return "graph_line";
+                if (clone.top > self.display_limit) return "graph_inactive";
+                return "graph_line";
+            })
+            .attr("id", function (d) {
+                return "poly" + d.name;
+            })
+            .on("mouseover", function (d) {
+                self.m.focusIn(d.id);
+            })
+            .on("click", function (d) {
+                self.clickGraph(d.id);
+            })               
+            .attr("d", function (d) {
+                return d.path
+            });
+        
             
         return this
     },
@@ -1509,9 +1486,12 @@ Graph.prototype = {
         var self = this;
         
         var res = this.g_res
-        res
-        .transition()
-        .duration(500)     
+        if (speed !== 0){
+            res = res
+            .transition()
+            .duration(speed)
+        }
+        res  
         .attr("d", function (p) {
                 return p.path
             })

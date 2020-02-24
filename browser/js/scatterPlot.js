@@ -553,7 +553,7 @@ ScatterPlot.prototype = {
             .attr("width", div_width)
             .attr("height", div_height);
 
-        this.smartUpdate();
+        this.update()
         
         if (this.splitX == "tsneX_system" || this.splitX == "tsneX"){
             this.changeSplitMethod(this.splitX, this.splitY, this.mode)
