@@ -24,6 +24,7 @@ MenuDecorator.prototype = {
 function VMIView(id, parentId, classes, restricted, prefill, callback) {
     this.parentId = parentId;
     this.id = id;
+    this.mutable = true;
     if (restricted == undefined) {
         restricted = []
     }
@@ -49,6 +50,15 @@ function VMIView(id, parentId, classes, restricted, prefill, callback) {
     this.node = node;
     // document.getElementById("drawer").appendChild(node);
     parent.appendChild(node);
+}
+
+VMIView.prototype = {
+    setMutable : function(bool) {
+        if(typeof bool === 'undefined') {
+            return;
+        }
+        this.mutable = bool;
+    }
 }
 
 /**
@@ -160,6 +170,7 @@ VMI.prototype = {
         this.views[id] = view;
         var panel = this.panels[parentId];
         panel.addView(view);
+        return view;
     },
 
     /**
@@ -266,6 +277,8 @@ VMI.prototype = {
         var views = Object.values(this.views);
         for (var i in views) {
             view = views[i]
+            if(!view.mutable)
+                continue;
             
             div = decorator.decorate(view);
             div.onclick = this.viewSetter(view);
