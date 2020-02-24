@@ -26,20 +26,36 @@ VidjilVMI.prototype = {
         this.vmi.addView("visu", this.visu_id, "", []);
         this.vmi.addView("visu2", this.visu_id, "", []);
         this.vmi.addView("segmenter", this.bot_id, "", []);
-        this.vmi.setOverlays(["info-row", "list-row", "data-row", this.visu_id, this.bot_id]);
+        this.vmi.setOverlays([this.visu_id]);
     },
 
-    reorg_panels : function() {
+    tablet_mode : function() {
         this.vmi.hideAllViews();
         this.vmi.hideAllPanels();
-        this.vmi.setupPanels([this.visu_id]);
+        var views = Object.values(this.vmi.views);
+        for(i in views) {
+            if(views[i].id === 'segmenter')
+                continue;
+            views[i].setMutable(true);
+        }
+        this.vmi.setupPanels([this.visu_id, this.bot_id]);
         this.vmi.setView(this.vmi.views.visu, this.visu_id);
         this.vmi.setView(this.vmi.views.visu2, this.visu_id);
+        this.vmi.setView(this.vmi.views.segmenter, this.bot_id);
     },
 
-    restore_panels : function() {
+    normal_mode : function() {
         this.vmi.hideAllViews();
         this.vmi.hideAllPanels();
+        var views = Object.values(this.vmi.views);
+        for(i in views) {
+            views[i].setMutable(false);
+        }
+        var mutables = ['visu', 'visu2', 'visu3'];
+        for(i in mutables) {
+            var id = mutables[i];
+            this.vmi.views[id].setMutable(true);
+        }
         var panels = [{}, this.bot_id];
         panels[0][this.mid_id] = [this.left_id, this.visu_id]
         this.vmi.setupPanels(panels);
