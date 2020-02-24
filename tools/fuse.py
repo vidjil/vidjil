@@ -229,6 +229,7 @@ class Window:
         """Return the value of an axis for this clone at a given timepoint"""
 
         axes = {
+            "id":       ["id"],
             "top":      ["top"],
             "germline": ["germline"],
             "name":     ["name"],
@@ -255,7 +256,9 @@ class Window:
             "junction_stop":  ["seg","junction","stop"],
             "junction_start": ["seg","junction","start"],
             "productive":     ["seg","junction","productive"],
-            "lenSeqAverage" : ["_average_read_length"]
+            "lenSeqAverage" : ["_average_read_length"],
+            "warnings": ["warn"],
+            "sequence": ["sequence"]
         }
 
         ### length
