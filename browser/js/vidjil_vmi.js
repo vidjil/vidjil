@@ -1,5 +1,6 @@
 function VidjilVMI() {
     this.parent_id = 'vidjil-panels'
+    this.menu_id = 'vmiSelector';
     this.vmi = new VMI(this.parent_id);
     this.vmi.setupDrawer();
     this.mid_id = 'mid-container';
