@@ -209,6 +209,12 @@ some clones, and added external data (`data`).
               {
                   "cdr3": {"start": 50, "stop": 60}
               }
+        },
+        {
+            "id": "seqedited_new_locus",
+            "segEdited": true,
+            "germline": "IGH+",
+            "name": "clone_with_new_locus"
         }
 
     ],
