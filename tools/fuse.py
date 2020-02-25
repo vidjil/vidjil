@@ -362,14 +362,21 @@ class Window:
                         if reads[i] and i != time:
                             names.append(name)
                     value = ",".join(names)
-                elif col == "infos":
-                    value = jlist.d["samples"].d["info"][time]
                 elif col == "warnings":
                     warns = self.get_values("warn")
                     values = []
                     for warn in warns:
                         values.append( warn["code"] )
                     value = ",".join(values)
+                
+                ## Some cols are not always present in vidjil file
+                elif col in ["infos"]:
+                    try:
+                        if col == "infos":
+                            value = jlist.d["samples"].d["info"][time]
+                    except:
+                        value = "error_%s" % col
+
                 else: 
                     value = "not_implemented"
 
