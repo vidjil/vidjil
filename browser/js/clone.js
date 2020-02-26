@@ -399,6 +399,7 @@ Clone.prototype = {
         if (this.hasSizeDistrib()){
             // TODO: move this function into an update function and store result into an attribute of this clone
             var t = this.m.t
+            //if (this.current_clones == undefined) return "bob"
             var n = this.current_clones[t]
             var name = this.getDistributionsValues().toString() + " (" + n + " clone" + (n>1 ? "s" : "") + ")"
             return name
@@ -1792,8 +1793,7 @@ Clone.prototype = {
             round = true
         }
         var values = []
-        var axes_obj = this.m.axes
-        var available_axes = this.m.available_axes
+        var available_axes = Axis.prototype.available()
 
         for (var a = 0; a < axes.length; a++) {
             var axe  = axes[a]
@@ -1801,11 +1801,9 @@ Clone.prototype = {
             if (axe == undefined || naxe == undefined){
                 console.default.error("Getter: not axis " + axe + "; ("+naxe+")")
             }
-            if (available_axes[naxe] != undefined && available_axes[naxe].fct != undefined) {
-                var value = available_axes[naxe].fct(this, timepoint)
-                if (round && available_axes[naxe] != undefined && available_axes[naxe].round != undefined){ 
-                    value = available_axes[naxe].round(value)
-                }
+            if (available_axes.indexOf(naxe) != -1 ) {
+                var axis_p = Axis.prototype.getAxisProperties(naxe)
+                var value = axis_p.fct(this, timepoint)
                 values.push( value )
             } else {
                 console.default.error("Getter: not axis " + axe + "; ("+naxe+")")
@@ -1904,7 +1902,7 @@ Clone.prototype = {
             tmpValue.fill(value)
             value          = tmpValue
         }
-
+/*
         var naxe = this.m.distrib_convertion[axe]
         var available_axes = this.m.available_axes
         if (available_axes[naxe] != undefined) {
@@ -1915,12 +1913,15 @@ Clone.prototype = {
             }
         } else {
             console.default.error( "Axe not present in obj: " + axe + ";" + naxe)
-
+*/
             // Each content should be hardcoded. Not optimal
-            if (axe == "GCContent")            { this.GCContent            = value}
-            else if (axe == "lenSeqAverage")   { this._average_read_length = value}
-            else if (axe == "lenSeqConsensus") { this.consensusLength      = value}
-        }
+            if (axe == "GCContent")             { this.GCContent            = value}
+            else if (axe == "lenSeqAverage")    { this._average_read_length = value}
+            else if (axe == "lenSeqConsensus")  { this.consensusLength      = value}
+            else if (axe == "seg5")             { this.seg[5] =       { name: value}}
+            else if (axe == "seg4")             { this.seg[4] =       { name: value}}
+            else if (axe == "seg3")             { this.seg[3] =       { name: value}}
+            else if (axe == "lenCDR3")          { this.seg["cdr3"] =  { start:0, stop:value}} 
     },
 
     sameAxesAsScatter: function(scatterplot){
@@ -1938,15 +1939,7 @@ Clone.prototype = {
         }
 
         if (mode == "bar"){
-            // on doit retirer dans ce cas le "size"
-            var pos_size = axes.indexOf("size")
-            if (pos_size != -1){
-                axes.splice(pos_size, 1)
-                return x.equals(axes)
-            } else {
-                // In mode bar, each axes should be associated with size
-                // console.default.warn( "same_axes_as_scatter: Only one axe to test (size not present), "+ axes)
-            }
+            return (x.indexOf(axes[0]) != -1)
         } else {
             // console.default.warn("same_axes_as_scatter: The scatter mode is not correct; '"+mode+"'")
             return x.equals(axes)
