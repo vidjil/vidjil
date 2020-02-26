@@ -68,8 +68,8 @@ VidjilVMI.prototype = {
             views[i].setMutable(false);
         }
         var mutables = ['visu', 'visu2', 'visu3'];
-        for(var i in mutables) {
-            var id = mutables[i];
+        for(var i2 in mutables) {
+            var id = mutables[i2];
             this.vmi.views[id].setMutable(true);
         }
         var panels = [{}, this.bot_id];
