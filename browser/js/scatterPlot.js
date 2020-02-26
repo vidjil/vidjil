@@ -352,7 +352,11 @@ ScatterPlot.prototype = {
                     node.bar_x = this.gridSizeW * x_pos
                     node.bar_h = this.gridSizeH * height_for_display
                     node.bar_w = this.gridSizeW * bar.width
+                    node.includeBar = true
+                }else{
+                    node.includeBar = false
                 }
+
             }
         }
         this.initGrid();
@@ -379,7 +383,7 @@ ScatterPlot.prototype = {
                 var c = self.m.clone(p.id)
 
                 if ((!p.terminate) &&
-                    (!p.hasValidAxisPosition || p.use_system_grid || !c.isActive() || c.isFiltered) )
+                    (!p.hasValidAxisPosition || p.use_system_grid || !c.isActive() || c.isFiltered || !p.includeBar) )
                     return "circle_hidden"
                 if (c.isSelected() && c.isFocus())
                     return "circle_focus circle_select"
@@ -951,7 +955,7 @@ ScatterPlot.prototype = {
                 .attr("class", function(p) {
                     var c = self.m.clone(p.id)
                     
-                    if (!p.hasValidAxisPosition || p.use_system_grid || !c.isActive() || c.isFiltered)
+                    if (!p.hasValidAxisPosition || p.use_system_grid || !c.isActive() || c.isFiltered || !p.includeBar)
                         return "circle_hidden"
                     if (c.isSelected() && c.isFocus())
                         return "circle_focus circle_select"
