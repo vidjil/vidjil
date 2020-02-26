@@ -90,7 +90,7 @@ try {
     var graph = new Graph("visu2", m, db);               // Time graph
     var list_clones = new List("list", "data", m, db);   // List of clones
     var sp = new ScatterPlot("visu", m, db);             // Scatterplot (both grid and bar plot view)
-    var sp2 = new ScatterPlot("visu3", m, db);           // Temporary sp2 for vmi
+    var sp2;
     var segment = new Segment("segmenter", m, db);   // Segmenter
 
 
