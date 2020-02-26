@@ -138,24 +138,24 @@ Model.prototype = {
         // Table of conversion between axes name and distribution names
         this.distrib_convertion = {
             // Axes --> Fuse
-            "v":    "seg5",
-            "d":    "seg4",
-            "j":    "seg3",
-            "lengthCDR3":    "lenCDR3",
-            "locus" :        "germline",
+            "V/5' gene":        "seg5",
+            "D/4' gene":        "seg4",
+            "J/3' gene":        "seg3",
+            "CDR3 length (nt)": "lenCDR3",
+            "locus" :           "germline",
             // Particular, take the nb reads value of the distribution
-            "size":          "size",
+            "size":             "size",
             // Should be in Array format
-            "consensusLength" : "lenSeqConsensus",
-            "averageLength" :   "lenSeqAverage", // make a round on it (into fuse.py) ?
+            "clone consensus length" :      "lenSeqConsensus",
+            "clone average read length" :   "lenSeqAverage", // make a round on it (into fuse.py) ?
             /////////////////////
             // Fuse --> Axes
-            "seg5":    "v",
-            "seg4":    "d",
-            "seg3":    "j",
-            "lenCDR3":         "lengthCDR3",
-            "lenSeqConsensus": "consensusLength",
-            "lenSeqAverage":   "averageLength",
+            "seg5":             "V/5' gene",
+            "seg4":             "D/4' gene",
+            "seg3":             "J/3' gene",
+            "lenCDR3":          "CDR3 length (nt)",
+            "lenSeqConsensus":  "clone consensus length",
+            "lenSeqAverage":    "clone average read length",
         }
         // List of axe that must be in an array format
         this.distrib_axe_is_timmed = {
