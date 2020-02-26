@@ -29,7 +29,7 @@ VidjilVMI.prototype = {
         this.vmi.addView("info", this.left_id, "", []);
         this.vmi.addView("visu", this.visu_id, "", []);
         this.vmi.addView("visu2", this.visu_id, "", []);
-        var segmenter_view = this.vmi.addView("segmenter", this.bot_id, "", []);
+        var segmenter_view = this.vmi.addView("segmenter", this.bot_id, "", [], segmenter_callback);
         segmenter_view.setMutable(false);
         this.vmi.addView("visu3", this.right_id, "", []);
         this.vmi.setOverlays([this.visu_id]);
@@ -129,5 +129,12 @@ function mid_callback(view) {
         panelDOM.insertBefore(sep_right, right);
     } else {
         panelDOM.appendChild(sep_right);
+    }
+}
+
+function segmenter_callback(view) {
+    // can we make this cleaner ?
+    if(typeof segment !== 'undefined') {
+        segment.show();
     }
 }
