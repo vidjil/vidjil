@@ -109,8 +109,8 @@ AXIS_DEFAULT = {
         labels:     {   
                         "?":   {text:"?",   side: "right"}
                     },
-        fct:        function(clone) {
-                        var len = clone.getAverageReadLength()
+        fct:        function(clone, t) {
+                        var len = clone.getAverageReadLength(t)
                         if (len == "undefined") return "?"
                         return Math.round(len)
                     },
@@ -211,7 +211,7 @@ AXIS_DEFAULT = {
     "size" : {
         doc:        "ratio of the number of reads of each clone to the total number of reads in the selected locus",
         name:       "size",
-        fct :       function(clone){return clone.getSizeZero()},
+        fct :       function(clone,t){return clone.getSizeZero(t)},
         scale:      {   mode: "log"},
         autofill:   true
     },
@@ -239,7 +239,7 @@ AXIS_DEFAULT = {
     "primers": {
         name:       "primers",
         doc:        "interpolated length, between BIOMED2 primers (inclusive)",
-        fct:        function(cloneID) {return self.m.clone(cloneID).getSegLengthDoubleFeature('primer5', 'primer3')},
+        fct:        function(clone) {return clone.getSegLengthDoubleFeature('primer5', 'primer3')},
         autofill:   true
     }, 
     "V/5' deletions in 3'": {
