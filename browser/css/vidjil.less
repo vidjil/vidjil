@@ -157,7 +157,7 @@ ul{
   position : fixed;
   top : @top_container_height;
   bottom : 125px ;
-  width: calc(~"100%" - @margin + @margin);
+  width: calc(~"100%" - @margin);
   background: @background;
   margin: @margin;
   display: flex;
@@ -1578,7 +1578,7 @@ span.warningReads {
     top: -@margin;
 }
 
-#vertical-separator {
+#vertical-separator, #vertical-separator-right {
     position: relative;
     float: left;
     height: 100%;
@@ -1586,6 +1586,10 @@ span.warningReads {
     line-height: calc(~"100% - 1px");
     background : @border;
     cursor: pointer;
+}
+
+#vertical-separator-right {
+    float: right;
 }
 
 #visu-separator:hover , #vertical-separator:hover, #bot-separator:hover {

@@ -117,10 +117,17 @@ function mid_callback(view) {
     var panelDOM = document.getElementById(this.id);
     var sep = document.getElementById('vertical-separator');
     var left = document.getElementById('left-container');
-    if(left === null) {
-        return;
+    if(left !== null) {
+        panelDOM.removeChild(sep);
+        panelDOM.insertBefore(sep, left.nextElementSibling);
     }
 
-    panelDOM.removeChild(sep);
-    panelDOM.insertBefore(sep, left.nextElementSibling);
+    var sep_right = document.getElementById('vertical-separator-right');
+    var right = document.getElementById('right-container');
+    if(right !== null) {
+        panelDOM.removeChild(sep_right);
+        panelDOM.insertBefore(sep_right, right);
+    } else {
+        panelDOM.appendChild(sep_right);
+    }
 }

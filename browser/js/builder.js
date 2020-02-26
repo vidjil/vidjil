@@ -59,6 +59,10 @@ Builder.prototype = {
                 .on("click", function () {
                     self.toggle_left_container()
                 });
+            d3.select("#vertical-separator-right")
+                .on("click", function () {
+                    self.toggle_right_container()
+                });
 
             this.build_top_container()
             this.build_clusterSelector()
@@ -456,14 +460,22 @@ Builder.prototype = {
     */
     },
 
-    toggle_left_container: function () {
-        var $left = $("#left-container")
+    toggle_container: function(container_id) {
+        var $container = $("#"+container_id)
         var val = 'none';
-        if ($left.css('display') === "none") {
+        if ($container.css('display') === "none") {
             val = 'flex';
         }
-        $left.css('display', val);
+        $container.css('display', val);
         //this.m.resize();
+    },
+
+    toggle_left_container: function () {
+        this.toggle_container('left-container');
+    },
+
+    toggle_right_container: function() {
+        this.toggle_container('right-container');
     },
 
     build_top_container: function () {
