@@ -168,7 +168,7 @@ QUnit.test("url: generate", function(assert) { with (windowMock) {
 
 QUnit.test("url: positional parse", function(assert) { with (windowMock) {
     var m = new Model();
-    windowMock.history.pushState('plop', 'plop', 'mock://foo.bar/browser/1/3?param3=third');
+    windowMock.history.pushState('plop', 'plop', 'mock://foo.bar/b/1/3?param3=third');
     var url = new PositionalUrl(m, windowMock);
 
     var params = url.parseUrlParams();
