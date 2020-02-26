@@ -53,8 +53,8 @@ class TestClones < BrowserTest
     ### exist in scatterplot
     $b.clone_in_scatterplot('0').wait_until(&:present?) # ">> 'real' clone exist in graph"
     assert (     $b.clone_in_scatterplot('29').present?), ">> 'corresponding distrib' clone (seg5/seg3) exist in correpsonding scatterplot"
-    assert ( not $b.clone_in_scatterplot('15').present?), ">> 'other' clone DON'T exist in graph"
-    assert ( not $b.clone_in_scatterplot('18').present?), ">> 'other' clone DON'T exist in graph"
+    assert ( not $b.clone_in_scatterplot('15').present?), ">> 'other' clone DON'T exist in sp"
+    assert ( not $b.clone_in_scatterplot('18').present?), ">> 'other' clone DON'T exist in sp"
   end
 
   def test_002_clone_present_in_scatterplot_lenSeqAverage
@@ -62,9 +62,9 @@ class TestClones < BrowserTest
     $b.clone_in_scatterplot("0").click
     $b.send_keys 4;
     sleep(3)
-    assert (     $b.clone_in_scatterplot('0').present?), ">> 'real' clone exist in graph"
-    assert (     $b.clone_in_scatterplot('18').present?), ">> 'corresponding distrib' clone (len=162) exist in graph"
-    assert ( not $b.clone_in_scatterplot('29').present?), ">> 'NOT correpsonding distrib' clone DON'T exist in graph"
+    assert (     $b.clone_in_scatterplot('0').present?), ">> 'real' clone exist in sp"
+    assert (     $b.clone_in_scatterplot('18').present?), ">> 'corresponding distrib' clone (len=162) exist in sp"
+    assert ( not $b.clone_in_scatterplot('29').present?), ">> 'NOT correpsonding distrib' clone DON'T exist in sp"
     
     # Verify that data don't reappear at m.update()
     $b.scatterplot.click 

@@ -27,7 +27,7 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
   def test_01_segmenter
     assert ($b.clone_in_segmenter('0').present?), "Clone 0 should be in segmenter"
     assert ($b.clone_in_segmenter('1').present?), "Clone 1 should be in segmenter"
-    assert (not $b.clone_in_segmenter('2').exists?), "Clone 2 should not exist"
+    assert (not $b.clone_in_segmenter('2').present?), "Clone 2 should not be visible"
   end
 
   def test_02_scatterplot
