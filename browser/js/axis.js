@@ -150,7 +150,7 @@ Axis.prototype = {
                 (this.germline == "multi" || this.germline == clone.germline)){
                 value = this.fct(clone)
 
-                if (typeof value == "number" ){
+                if (typeof value == "number" && !Number.isNaN(value)){
                     if (!(value in this.labels)){
                         this.initScale()
                         if (value > this.scale.max)     this.scale.max = value
@@ -164,11 +164,18 @@ Axis.prototype = {
                     if (!(value in this.labels))
                         this.labels[value] = {text: value, type:"default"}
             }
+
         }
+        if (this.scale){
+            if (isNaN(this.scale.max) && !isNaN(this.scale.min))
+                this.scale.max = this.scale.min
+            if (isNaN(this.scale.min) && !isNaN(this.scale.max))
+                this.scale.min = this.scale.max
+        } 
 
         //scale exist but has not been initialized => no clones has returned a numeric value
         if (this.scale && !this.scale.isInitialized)
-            this.initScale("linear", 0, 1);
+            this.initScale("linear", 0, 1, 1);
 
         return this
     },
@@ -183,22 +190,18 @@ Axis.prototype = {
         if (min != undefined && min>0)  min_p = min
         if (min != undefined)   max   = min
         if (mode == undefined)  mode  = "linear"
-        if (min == undefined)   min   = Number.MAX_VALUE
-        if (max == undefined)   max   = Number.MIN_VALUE
-        if (min_p == undefined) min_p = Number.MAX_VALUE
+        if (min == undefined)   min   = 0
+        if (max == undefined)   max   = 1
+        if (min_p == undefined) min_p = 1
 
         //set default value if undefined
-        if (!this.scale)        this.scale = { 
-            mode:           mode, 
-            min:            min, 
-            max:            max,
-            min_positive :  min_p
-        }
+        if (!this.scale)        this.scale = { }
 
-        if (!this.scale.mode)   this.scale.mode =   mode
-        if (!this.scale.min)    this.scale.min =    min
-        if (!this.scale.max)    this.scale.max =    max
-        if (!this.scale.min_positive) this.scale.min_positive = min_p
+        this.scale.mode =   mode
+        this.scale.min =    min
+        this.scale.max =    max
+        if(max < min) this.scale.max = min
+        this.scale.min_positive = min_p
 
         this.scale.isInitialized = true
     },
