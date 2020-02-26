@@ -1921,7 +1921,8 @@ Clone.prototype = {
             else if (axe == "seg5")             { this.seg[5] =       { name: value}}
             else if (axe == "seg4")             { this.seg[4] =       { name: value}}
             else if (axe == "seg3")             { this.seg[3] =       { name: value}}
-            else if (axe == "lenCDR3")          { this.seg["cdr3"] =  { start:0, stop:value}} 
+            else if (axe == "lenCDR3")          { this.seg.cdr3 =     { start: 0, 
+                                                                        stop: value}} 
     },
 
     sameAxesAsScatter: function(scatterplot){
