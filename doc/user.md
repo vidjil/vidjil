@@ -389,8 +389,7 @@ sequence.
 The productivitiy as computed by Vidjil-algo may differ from what computes
 other software. For instance, as of September 2019, IMGT/V-QUEST removes by default
 insertions and deletions from the sequences to compute the productivity, as it
-considers them as sequencing errors. Moreover IMGT/V-QUEST checks that there
-is no stop codon only in the CDR3 and not in the full sequence.
+considers them as sequencing errors.
 # Can I see all the clones and all the reads ?
 
 The interest of NGS/RepSeq studies is to provide a deep view of any
