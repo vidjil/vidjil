@@ -30,8 +30,8 @@ class TestSimple < BrowserTest
 
     assert ($b.scatterplot_x_legend(0, 2).text == "?"), "Legend should be ?, it is " + $b.scatterplot_x_legend(0, 2).text
     assert ($b.scatterplot_x_legend(1, 2).text == "100"), "Legend should be 100, it is " + $b.scatterplot_x_legend(1, 2).text
-    assert ($b.scatterplot_x_legend(2, 2).text == "150"), "Legend should be 150, it is " + $b.scatterplot_x_legend(2, 2).text
-    assert ($b.scatterplot_y_legend(0, 2).text == "0%"), "First legend sould be 0%"
+    assert ($b.scatterplot_x_legend(2, 2).text == "200"), "Legend should be 200, it is " + $b.scatterplot_x_legend(2, 2).text
+    assert ($b.scatterplot_y_legend(0, 2).text == "100%"), "First legend sould be 0%, it is " + $b.scatterplot_y_legend(0, 2).text
   end
 
   def test_02_deactivate_locus

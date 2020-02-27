@@ -40,10 +40,10 @@ class TestMultilocus < BrowserTest
   end
 
   def test_00_legend_scatterplot
-    assert ($b.scatterplot_x_legend(0).text == 'TRBV1'), "Bad legend for scatterplot"
-    assert ($b.scatterplot_x_legend(4).text == '?'), "Bad legend for scatterplot"
-    assert ($b.scatterplot_y_legend(0).text == 'TRBJ1-1'), "Bad legend for scatterplot"
-    assert ($b.scatterplot_y_legend(9).text == '?'), "Bad legend for scatterplot"
+    assert ($b.scatterplot_x_legend(0).text == 'TRBV1'), "Bad legend for scatterplot " + $b.scatterplot_x_legend(0).text 
+    assert ($b.scatterplot_x_legend(4).text == 'undefined V'), "Bad legend for scatterplot " + $b.scatterplot_x_legend(4).text
+    assert ($b.scatterplot_y_legend(0).text == 'TRBJ1-1'), "Bad legend for scatterplot " + $b.scatterplot_y_legend(0).text
+    assert ($b.scatterplot_y_legend(9).text == 'undefined J'), "Bad legend for scatterplot " + $b.scatterplot_y_legend(9).text
   end
 
   def test_00_info_point
