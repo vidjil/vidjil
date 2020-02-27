@@ -693,6 +693,7 @@ ScatterPlot.prototype = {
                 var delta = d.r1 - d.r2;
                 d.r2 += 0.03 * delta;
                 if (d.r2 < 0.01) d.r2 = 0;
+                else if (d.r2 < 2) d.r2 = 2;
             }
         }
     },
