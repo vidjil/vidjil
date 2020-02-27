@@ -143,6 +143,7 @@ Axis.prototype = {
      * find the min_positive value() the axis can return (needed in case of log scale)
      **/
     autofill: function(){
+        var s;
         for (var cloneID in m.clones){
             clone = m.clone(cloneID)
 
@@ -153,10 +154,12 @@ Axis.prototype = {
                 if (typeof value == "number" && !Number.isNaN(value)){
                     if (!(value in this.labels)){
                         this.initScale()
-                        if (value > this.scale.max)     this.scale.max = value
-                        if (value < this.scale.min)     this.scale.min = value
-                        if (value < this.scale.min_positive && 
-                            value > 0)                  this.scale.min_positive = value
+                        s = this.scale
+                        if (s.max == "auto" || value > s.max)   s.max = value
+                        if (s.min == "auto" || value < s.min)   s.min = value
+                        if (value > 0 &&
+                            (s.min_positive == "auto" || 
+                            value < s.min_positive))            s.min_positive = value
                     }
                 }
 
@@ -166,16 +169,23 @@ Axis.prototype = {
             }
 
         }
-        if (this.scale){
-            if (isNaN(this.scale.max) && !isNaN(this.scale.min))
-                this.scale.max = this.scale.min
-            if (isNaN(this.scale.min) && !isNaN(this.scale.max))
-                this.scale.min = this.scale.max
-        } 
 
         //scale exist but has not been initialized => no clones has returned a numeric value
         if (this.scale && !this.scale.isInitialized)
-            this.initScale("linear", 0, 1, 1);
+            this.initScale()
+
+        if (this.scale){
+            s = this.scale
+            if (s.min == "auto" && s.max == "auto"){
+                s.min = 0
+                s.max = 1
+                s.min_positive = 1
+            }else if (s.max == "auto"){
+                s.max = s.min
+            }else if (s.min == "auto"){
+                s.min = s.max
+            }
+        }
 
         return this
     },
@@ -183,25 +193,14 @@ Axis.prototype = {
     /*
      * Init scale without overwriting existing value
      **/
-    initScale:function(mode, min, max, min_p){
-        
+    initScale:function(){      
         if (this.scale && this.scale.isInitialized) return
 
-        if (min != undefined && min>0)  min_p = min
-        if (min != undefined)   max   = min
-        if (mode == undefined)  mode  = "linear"
-        if (min == undefined)   min   = 0
-        if (max == undefined)   max   = 1
-        if (min_p == undefined) min_p = 1
-
-        //set default value if undefined
-        if (!this.scale)        this.scale = { }
-
-        this.scale.mode =   mode
-        this.scale.min =    min
-        this.scale.max =    max
-        if(max < min) this.scale.max = min
-        this.scale.min_positive = min_p
+        if (!this.scale)                    this.scale = { }
+        if (this.scale.mode == undefined)   this.scale.mode = "linear"
+        if (this.scale.min == undefined)    this.scale.min = "auto"
+        if (this.scale.min_p == undefined)  this.scale.min_p = "auto"
+        if (this.scale.max == undefined)    this.scale.max = "auto"
 
         this.scale.isInitialized = true
     },
