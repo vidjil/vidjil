@@ -87,12 +87,14 @@ ScatterPlot_menu.prototype = {
         this.select_x.setAttribute('name', 'select_x[]');
         this.select_x.onchange = function() {
             self.changeXaxis();
+            self.cancelPreset();
         }
 
         this.select_y = document.createElement('select');
         this.select_y.setAttribute('name', 'select_y[]');
         this.select_y.onchange = function() {
             self.changeYaxis();
+            self.cancelPreset();
         }
         
         //Ajout de chaque méthode de répartition dans les menus pour l'axe des X/Y
@@ -224,7 +226,6 @@ ScatterPlot_menu.prototype = {
     setPreset: function(preset){
         this.select_preset.selectedIndex = preset
         this.changePreset()
-        this.cancelPreset()
     },
 
     /**
