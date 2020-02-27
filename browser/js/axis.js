@@ -158,8 +158,8 @@ Axis.prototype = {
                         if (s.max == "auto" || value > s.max)   s.max = value
                         if (s.min == "auto" || value < s.min)   s.min = value
                         if (value > 0 &&
-                            (s.min_positive == "auto" || 
-                            value < s.min_positive))            s.min_positive = value
+                            (s.min_p == "auto" || 
+                            value < s.min_p))                   s.min_p = value
                     }
                 }
 
@@ -179,12 +179,19 @@ Axis.prototype = {
             if (s.min == "auto" && s.max == "auto"){
                 s.min = 0
                 s.max = 1
-                s.min_positive = 1
+                s.min_p = 0.1
             }else if (s.max == "auto"){
                 s.max = s.min
             }else if (s.min == "auto"){
                 s.min = s.max
             }
+            if (s.min_p == "auto"){
+                if (s.min > 0)      s.min_p = s.min
+                else if (s.max > 0) s.min_p = s.max/10
+                else                s.min_p = 0.1        //TODO: case of negative log scale
+            }
+
+
         }
 
         return this
@@ -253,7 +260,7 @@ Axis.prototype = {
 
             if (this.scale.mode == "log"){
                 this.scale.nice_max = Math.pow(10, Math.ceil (Math.log10(Math.abs(this.scale.max))))
-                this.scale.nice_min = Math.pow(10, Math.floor(Math.log10(Math.abs(this.scale.min_positive))))
+                this.scale.nice_min = Math.pow(10, Math.floor(Math.log10(Math.abs(this.scale.min_p))))
                 this.scale.nice_min_label = (this.scale.nice_min).toFixed(nice_number_digits(this.scale.nice_min, 1)) + "_l"
                 this.scale.nice_max_label = (this.scale.nice_max).toFixed(nice_number_digits(this.scale.nice_max, 1)) + "_l"
 
