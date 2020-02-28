@@ -368,6 +368,7 @@ class TestClones < BrowserTest
     $b.send_keys :arrow_down
     $b.send_keys :enter
     $b.update_icon.wait_while(&:present?)
+    sleep(1)
     assert ( $b.clone_info('0')[:name].style('color')  !=  'rgba(101, 123, 131, 1)' ) ,    "real clone should have changed color (diff from grey)"
     assert ( $b.clone_info('16')[:name].style('color').start_with?('rgba(150, 150, 150, 0.65') ) , "other clone shouldn't have changed color"
     assert ( $b.clone_info('18')[:name].style('color').start_with?('rgba(150, 150, 150, 0.65') ) , "distrib clone shouldn't have changed color"
