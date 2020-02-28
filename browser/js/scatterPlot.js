@@ -1035,7 +1035,8 @@ ScatterPlot.prototype = {
         //detect label size
         var label_width = 0;
         var line = 0
-        
+
+        this.label_update();
 
         for (var i = 0; i < data.length; i++) {
             if (data[i].type != "subline"){
@@ -1131,6 +1132,8 @@ ScatterPlot.prototype = {
         self = this;
         var data = Object.values(this.axisY.labels);
 
+        this.label_update();
+        
         //LEGENDE
         leg = this.axis_y_container.selectAll("text")
             .remove()
@@ -1193,6 +1196,27 @@ ScatterPlot.prototype = {
             })
     },
 
+    label_update : function () {
+
+        var data = [
+            {x:(this.gridSizeW/2)+this.margin[3], y:12, text:this.axisX.name, rotation:0 },
+            {y:(this.gridSizeH/2)+this.margin[0], x:12, text:this.axisY.name, rotation:270}
+        ]
+
+        leg = this.axis_container.selectAll("text")
+            .data(data);
+        leg.enter()
+            .append("text");
+        leg.exit()
+            .remove()
+        leg.attr("x", function(d) {return d.x})
+            .attr("y", function(d) {return d.y})
+            .text(function(d) {return d.text})
+            .attr("class", "sp_legend2")
+            .attr("transform", function(d) {
+                if (d.rotate !== 0) return "rotate(" + d.rotation + " " + d.x + " " + d.y + ")"
+            })
+    },
 
     /**
      * redraw labels for system (TRG/IGH/...)
