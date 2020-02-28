@@ -1390,5 +1390,5 @@ ScatterPlot.prototype = {
     }
 }
 ScatterPlot.prototype = $.extend(Object.create(View.prototype), ScatterPlot.prototype)
-ScatterPlot.prototype = $.extend(Object.create(ScatterPlot_menu.prototype), ScatterPlot.prototype)
-ScatterPlot.prototype = $.extend(Object.create(ScatterPlot_selector.prototype), ScatterPlot.prototype)
+Object.assign(ScatterPlot.prototype, ScatterPlot_selector.prototype)
+Object.assign(ScatterPlot.prototype, ScatterPlot_menu.prototype)
