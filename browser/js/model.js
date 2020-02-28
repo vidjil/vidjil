@@ -44,6 +44,7 @@ SIZE_MANUALLY_ADDED_CLONE = 100000; // Default size of a manually added clone.
  * */
 function Model() {
     var self=this;
+    m=this;
     console.log("creation Model")
     
     for (var f in Model_loader.prototype) {
