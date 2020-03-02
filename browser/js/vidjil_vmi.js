@@ -1,3 +1,7 @@
+const VVMI_TABLET = 'tablet';
+const VVMI_NORMAL = 'normal';
+const VVMI_WIDE = 'wide';
+
 function VidjilVMI() {
     this.parent_id = 'vidjil-panels'
     this.menu_id = 'vmiSelector';
@@ -8,6 +12,8 @@ function VidjilVMI() {
     this.right_id = 'right-container';
     this.visu_id = 'visu-container';
     this.bot_id = 'bot-container';
+    this.mode;
+    this.width = window.innerWidth;
 }
 
 VidjilVMI.prototype = {
@@ -34,7 +40,7 @@ VidjilVMI.prototype = {
         this.vmi.addView("visu3", this.right_id, "", []);
         this.vmi.setOverlays([this.visu_id]);
 
-        this.normal_mode();
+        this.initResizeObserver();
     },
 
     reset_menu: function() {
@@ -61,6 +67,7 @@ VidjilVMI.prototype = {
         this.vmi.setView(this.vmi.views.visu2, this.visu_id);
         this.vmi.setView(this.vmi.views.segmenter, this.bot_id);
         this.reset_menu();
+        this.mode = VVMI_TABLET;
     },
 
     normal_mode : function() {
@@ -88,6 +95,7 @@ VidjilVMI.prototype = {
         this.vmi.setView(this.vmi.views.visu2, this.visu_id);
         this.vmi.setView(this.vmi.views.segmenter, this.bot_id);
         this.reset_menu();
+        this.mode = VVMI_NORMAL;
     },
 
     wide_mode : function() {
@@ -111,8 +119,43 @@ VidjilVMI.prototype = {
         this.vmi.setView(this.vmi.views.visu3, this.right_id);
         this.vmi.setView(this.vmi.views.segmenter, this.bot_id);
         this.reset_menu();
-    }
+        this.mode = VVMI_WIDE;
+    },
 
+    select_mode: function() {
+        if(window.innerWidth <= 900) {
+            if(this.mode !== VVMI_TABLET)
+                this.tablet_mode();
+        } else if(window.innerWidth >= 2150) {
+            if(this.mode !== VVMI_WIDE)
+                this.wide_mode();
+        } else {
+            if(this.mode !== VVMI_NORMAL)
+                this.normal_mode();
+        }
+    },
+
+    initResizeObserver: function() {
+        var self = this;
+
+        if (typeof ResizeObserver !== 'undefined') {
+            this.resizeObserver = new ResizeObserver( function() {self.select_mode() } );
+            this.resizeObserver.observe(document.getElementById(self.parent_id));
+        } else {
+            //fallback for older browser
+            var div = document.getElementById(this.parent_id);
+            this.width = div.offsetWidth;
+
+            setInterval( function(){
+                var div = document.getElementById(self.parent_id);
+                var w = div.offsetWidth;
+                if (w != self.width){
+                    self.width = w;
+                    self.select_mode();
+                }
+            }, 500);
+        }
+    }
 }
 
 function visu_callback(view) {
