@@ -201,7 +201,10 @@ VMI.prototype = {
     },
 
     hideAllViews : function() {
-        var views = Object.values(this.views)
+        var self = this;
+        var views = Object.keys(self.views).map(function(key) {
+            return self.views[key];
+        });
         for(i in views) {
             this.hideView(views[i]);
         }
@@ -216,7 +219,10 @@ VMI.prototype = {
     },
 
     hideAllPanels : function() {
-        var panels = Object.values(this.panels);
+        var self = this;
+        var panels = Object.keys(self.panels).map(function(key) {
+            return self.panels[key];
+        });
         for(i in panels) {
             this.hidePanel(panels[i]);
         }
@@ -274,7 +280,9 @@ VMI.prototype = {
         var div;
         var view;
 
-        var views = Object.values(this.views);
+        var views = Object.keys(self.views).map(function(key) {
+            return self.views[key];
+        });
         for (var i in views) {
             view = views[i]
             if(!view.mutable)

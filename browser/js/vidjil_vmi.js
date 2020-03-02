@@ -45,9 +45,12 @@ VidjilVMI.prototype = {
     },
 
     tablet_mode : function() {
+        var vmi = this.vmi;
         this.vmi.hideAllViews();
         this.vmi.hideAllPanels();
-        var views = Object.values(this.vmi.views);
+        var views = Object.keys(vmi.views).map(function(key) {
+            return vmi.views[key];
+        });
         for(var i in views) {
             if(views[i].id === 'segmenter')
                 continue;
@@ -61,9 +64,12 @@ VidjilVMI.prototype = {
     },
 
     normal_mode : function() {
+        var vmi = this.vmi;
         this.vmi.hideAllViews();
         this.vmi.hideAllPanels();
-        var views = Object.values(this.vmi.views);
+        var views = Object.keys(vmi.views).map(function(key) {
+            return vmi.views[key];
+        });
         for(var i in views) {
             views[i].setMutable(false);
         }
@@ -85,9 +91,12 @@ VidjilVMI.prototype = {
     },
 
     wide_mode : function() {
+        var vmi = this.vmi;
         this.vmi.hideAllViews();
         this.vmi.hideAllPanels();
-        var views = Object.values(this.vmi.views);
+        var views = Object.keys(vmi.views).map(function(key) {
+            return vmi.views[key];
+        });
         for(var i in views) {
             views[i].setMutable(false);
         }
