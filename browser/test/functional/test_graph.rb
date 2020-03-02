@@ -45,9 +45,7 @@ class TestGraph < BrowserTest
     # After click on first sample checkbox, the corresponding checkbox is false, 
     # and sample not present in timeline
     check0.click
-    sleep 1
-    time0 = $b.graph_x_legend("0")
-    assert ( not time0.present? ), "first sample is NOT present in timeline after click"
+    $b.until { not time0.present? }  # Test "first sample is NOT present in timeline after click"
     assert ( not check0.set? ), "first checkbox is false"
     time1 = $b.graph_x_legend("1")
     assert ( time1.present? ), "second sample is still present in timeline"
@@ -58,8 +56,7 @@ class TestGraph < BrowserTest
 
     # hide second sample by dblclick on graph label (prevent as last)
     time1.double_click
-    sleep 1
-    assert ( time1.present? ), "second sample still present in timeline"
+    $b.until { time1.present? } # Test "second sample still present in timeline"
     check1 = $b.checkbox(:id => "visu2_listElem_check_1")
     assert ( check1.set? ), "second checkbox still true as sample is not disable"
     assert ( div_ratio.text == "1 / 2" ), "Ratio show is correct after prevent hidding of last sample"
@@ -67,9 +64,10 @@ class TestGraph < BrowserTest
 
     # Use show all and hide all button
     $b.div(:id => 'visu2_menu').click
-    sleep 0.1
+    $b.update_icon.wait_while(&:present?) # wait update
     $b.td(:id => 'visu2_listElem_showAll').click
-    sleep 1
+    $b.update_icon.wait_while(&:present?) # wait update
+
     assert ( time0.present? ), "first sample is SHOW in timeline"
     assert ( time1.present? ), "second sample is SHOW in timeline"
     assert ( check0.set? ), "first checkbox is true"
@@ -81,10 +79,10 @@ class TestGraph < BrowserTest
 
     # test hide all, with simple and dblclick
     $b.div(:id => 'visu2_menu').click
-    sleep 0.1
+    $b.update_icon.wait_while(&:present?) # wait update
     $b.td(:id => 'visu2_listElem_hideAll').click
-    sleep 1
-    # todo, corriger les textes
+    $b.update_icon.wait_while(&:present?) # wait update
+
     assert ( time1.present? ), "first sample is NOT hidden in timeline (hide simple click)"
     assert ( not time0.present? ), "second sample is HIDDEN in timeline"
     assert ( check1.set? ), "first checkbox is true  (hide simple click)"
@@ -92,7 +90,7 @@ class TestGraph < BrowserTest
 
     $b.td(:id => 'visu2_listElem_hideAll').double_click
     # No action as only one sample still active
-    sleep 1
+    $b.update_icon.wait_while(&:present?) # wait update
     assert ( not time0.present? ), "first sample is HIDDEN in timeline"
     assert (     time1.present? ), "second sample still present as last active sample"
     assert ( not check0.set? ), "first checkbox is false"
@@ -105,7 +103,8 @@ class TestGraph < BrowserTest
     # Test the action on simple click on element of the list (should change selected sample)
     $b.div(:id => 'visu2_menu').click
     $b.td(:id => 'visu2_listElem_showAll').click
-    sleep 1
+    $b.update_icon.wait_while(&:present?) # wait update
+
     info_name = $b.div(:id => "info_sample_name")
     assert ( info_name.text == "T8045-BC082-fu1" ), "info name is the name of sample 0"
     assert ( $b.td(:id => 'visu2_listElem_text_'+'1', :class => 'graph_listElem_selected').exists?), "Second sample BECOME bold in list"
@@ -115,13 +114,14 @@ class TestGraph < BrowserTest
     menu = $b.div(:id => 'visu2_menu')
     sample0 = $b.td(:id => "visu2_listElem_text_0")
     sample0.click
-    sleep 1
+    $b.update_icon.wait_while(&:present?) # wait update
+
     assert ( info_name.text == "T8045-BC081-Diag" ), "info name is the name of sample 1"
     assert ( $b.td(:id => 'visu2_listElem_text_'+'0', :class => 'graph_listElem_selected').exists?), "First sample BECOME bold in list"
     # ===========
     # hide sample XX, so sample yy should become the current one
     time1.double_click
-    sleep 1
+    $b.update_icon.wait_while(&:present?) # wait update
     assert ($b.graph_x_legend('0', :class => 'graph_time2').exists?), "second sample become current sample (bold in graph text)"
      
     $b.div(:id => 'visu2_menu').click
@@ -129,9 +129,15 @@ class TestGraph < BrowserTest
     
     # test change by arrow usage
     $b.send_keys :arrow_left
-    sleep 1
+    $b.update_icon.wait_while(&:present?) # wait update
     assert ( $b.td(:id => 'visu2_listElem_text_'+'1', :class => 'graph_listElem_selected').exists?), "Second sample BECOME bold in list"
     assert ( not $b.td(:id => 'visu2_listElem_text_'+'0', :class => 'graph_listElem_selected').exists?), "First sample is NOT bold in list"
+
+
+    ### test mouseout; hide table
+    $b.clone_in_list('0').click # click outside...
+    $b.update_icon.wait_while(&:present?) # wait update
+    $b.table(:id => "visu2_table").wait_while(&:present?)
   end
 
 

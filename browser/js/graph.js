@@ -166,7 +166,7 @@ Graph.prototype = {
                 })
                 .on("mouseover", function () {
                     self.m.focusOut();
-                    $("#graphList_table")
+                    $("#" + this.id + "_table")
                         .stop(true, true)
                         .hide("fast")
                 })
@@ -185,7 +185,7 @@ Graph.prototype = {
                 })
                 .on("mouseover", function () {
                     self.m.focusOut();
-                    $("#graphList_table")
+                    $("#" + this.id + "_table")
                         .stop(true, true)
                         .hide("fast")
                 })
@@ -251,7 +251,12 @@ Graph.prototype = {
             .on("mouseover", function () {
                 $("#"+ self.id +"_table")
                     .stop(true, true)
-                    .show("fast")
+                    .show()
+            })
+            .on("mouseout", function () {
+                $("#"+ self.id +"_table")
+                    .stop(true, true)
+                    .hide()
             })
             
         this.updateCountActiveSample()
