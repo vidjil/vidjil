@@ -94,6 +94,7 @@
     display: inline-block;" title="running pre_processs"></i>{{pass}} 
                         {{if row.sequence_file.pre_process_flag == "WAIT" :}}[queued]{{pass}} 
                         {{if row.sequence_file.pre_process_flag == "FAILED" :}}[failed] <span class="button" onclick="db.call('file/restart_pre_process', {sequence_file_id: {{=row.sequence_file.id}}})">try again</span>{{pass}}
+                        {{ if has_pre_process and row.sequence_file.pre_process_flag is None and row.sequence_file.data_file2 is None: }}<span title="All the files have not been properly received. Please edit the sample to reupload them.">[missing file]</span>{{pass}}
                         {{if row.sequence_file.pre_process_id != None :}} {{=pre_process_list[row.sequence_file.pre_process_id]}} {{pass}}
                      </td>
 		    {{if auth.is_admin():}}
