@@ -1,6 +1,6 @@
-const VVMI_TABLET = 'tablet';
-const VVMI_NORMAL = 'normal';
-const VVMI_WIDE = 'wide';
+VVMI_TABLET = 'tablet';
+VVMI_NORMAL = 'normal';
+VVMI_WIDE = 'wide';
 
 function VidjilVMI() {
     this.parent_id = 'vidjil-panels'
