@@ -159,10 +159,11 @@ The number of displayed clones can be changed with the filter menu.
 
   - The gray areas at the bottom of the graph show, for each sample, the resolution (1 read / 5 reads).
 
-  - The “…” mark at the right of the graph show a menu that allow to manipulate sample (show or hide), one by one, or the entire list. 
+  - The “…” mark at the right of the graph shows a menu to show or hide samples either one by one or all of them. 
+    Clicking on one sample in the menu focuses on this sample.
 
   - You can reorder the samples by dragging them, and hide some samples by double clicking on their label.
-    The “X/Y” mark at the top right of the graph show the number of displayed samples.
+    The “X/Y” mark at the top right of the graph shows the number of displayed samples.
     Clicking on it shows a list where you can show or hide each sample.
 
   - If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between sample keys and dates in “settings \> sample key”
