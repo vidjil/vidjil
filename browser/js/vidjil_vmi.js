@@ -12,7 +12,7 @@ function VidjilVMI() {
     this.right_id = 'right-container';
     this.visu_id = 'visu-container';
     this.bot_id = 'bot-container';
-    this.mode;
+    this.mode = "";
     this.width = window.innerWidth;
 }
 
