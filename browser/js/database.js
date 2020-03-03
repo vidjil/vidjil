@@ -377,9 +377,12 @@ Database.prototype = {
             });
         }else{
             $(".file_2").show();
-            $(".upload_field").each(function() {
-                $(this).prop("required", true);
-            });
+            if ($(".is_editing").length == 0) {
+                // Not editing a sample, but creating new ones
+                $(".upload_field").each(function() {
+                    $(this).prop("required", true);
+                });
+            }
         }
     },
 

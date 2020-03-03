@@ -12,6 +12,9 @@
             value="{{if 'id' in file:}}{{=file['id']}}{{pass}}" >
         <input type="hidden" id="sample_set_id" name="sample_set_id" value="{{if "sample_set_id" in request.vars:}}{{=request.vars["sample_set_id"]}}{{pass}}" >
         <input type="hidden" id="sample_type" name="sample_type" value="{{=sample_type}}" />
+        {{if isEditing:}}
+          <input type="hidden" id="is_editing" name="is_editing" value="1" />
+        {{pass}}
     </div>
 
     <div class="field_div">
@@ -19,7 +22,7 @@
             <input class="upload_field form-control" id="file_upload_1_{{=i}}" type="file"
             {{if network_source:}}
                 disabled
-            {{else:}}
+            {{elif not isEditing:}}
                 required
             {{pass}}
                 onchange="db.upload_file_onChange('file_filename_{{=i}}', this.value)"
@@ -30,7 +33,7 @@
             <input class="upload_field form-control" id="file_upload_2_{{=i}}" type="file"
             {{if network_source:}}
                 disabled
-            {{else:}}
+            {{elif not isEditing:}}
                 required
             {{pass}}
                 title="second file for this sample (.fa, .fastq, .fa.gz, .fastq.gz)"
