@@ -223,6 +223,19 @@ def all():
                 step = step,
                 page = page)
 
+
+def samples():
+    '''
+    API: List of samples, possibly filtered
+    '''
+    res = all()
+    export = dict(samples = res['query'],
+                  group_ids = res['group_ids'],
+                  step = res['step'],
+                  page = res['page'])
+    return response.json(export)
+
+
 def stats():
     start = time.time()
     if not auth.user :
