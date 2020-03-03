@@ -340,9 +340,7 @@ class Window:
             "germline_alignment": "?"
         }
 
-        airr_computed =  ["duplicate_count", "ratio_locus", "filename", "other_filename"]
-        ## necker
-        airr_computed += ["first_name", "last_name", "birthday", "infos", "sampling_date", "frame"]
+        airr_computed =  ["duplicate_count", "ratio_locus", "filename"]
 
         for col in cols:    
 
@@ -354,14 +352,6 @@ class Window:
                     value = float(self.d["reads"][time]) / jlist.d["reads"].d["germline"][germline][time]
                 elif col == "filename":
                     value = jlist.d["samples"].d["original_names"][time]
-                elif col == "other_filename":
-                    names = []
-                    reads = self.d["reads"]
-                    for i in range(0, len(reads)):
-                        name = jlist.d["samples"].d["original_names"][i]
-                        if reads[i] and i != time:
-                            names.append(name)
-                    value = ",".join(names)
                 elif col == "warnings":
                     warns = self.get_values("warn")
                     values = []
@@ -369,14 +359,6 @@ class Window:
                         values.append( warn["code"] )
                     value = ",".join(values)
                 
-                ## Some cols are not always present in vidjil file
-                elif col in ["infos"]:
-                    try:
-                        if col == "infos":
-                            value = jlist.d["samples"].d["info"][time]
-                    except:
-                        value = "error_%s" % col
-
                 else: 
                     value = "not_implemented"
 
@@ -384,7 +366,9 @@ class Window:
                 value = self.get_values(airr_to_axes[col])
             else:
                 value = "colNotFound--%s" % col
-            if value == "?":
+
+            if value == "?" or "colNotFound" in str(value) or value=="unknow_axis":
+                # for some axis, there is no computable data; for the moment don't show anything
                 value = ""
             list_values.append( str(value) )
 
