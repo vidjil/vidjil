@@ -3,11 +3,11 @@
 $ check original name (not present)
 0: "../data/demo_multiple.vidjil"
 $ check number of occurence of file_1 (present in 4 clones)
-r11: file_1
+r4: file_1
 $ check number of occurence of file_2 (present in 3 clones)
-r9:  file_2
+r3:  file_2
 $ check number of occurence of file_3 (present in 4 clones)
-r11: file_3
+r4: file_3
 
 
 
@@ -24,5 +24,6 @@ $ Check number of line for clone 4 (present in the 3 files)
 3: IGH_top_4
 
 
-$ Check ratio locus values
+$ Check export warnings (only code)
+3: W69
 

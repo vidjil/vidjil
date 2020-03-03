@@ -353,12 +353,12 @@ class Window:
                 elif col == "warnings":
                     if "warn" not in self.d.keys():
                         value = ""
-                        continue
-                    warns = self.d["warn"]
-                    values = []
-                    for warn in warns:
-                        values.append( warn["code"] )
-                    value = ",".join(values)
+                    else:
+                        warns = self.d["warn"]
+                        values = []
+                        for warn in warns:
+                            values.append( warn["code"] )
+                        value = ",".join(values)
                 
                 else: 
                     value = "not_implemented"
