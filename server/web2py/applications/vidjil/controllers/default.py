@@ -41,6 +41,11 @@ def home():
     res = {"redirect" : redirect}
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+def whoami():
+    if auth.user:
+        return "User %s (%s)" % (auth.user.id, auth.user.email)
+    return "No user"
+
 def logger():
     '''Log to the server'''
     res = {"success" : "false",
