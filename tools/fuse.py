@@ -60,7 +60,7 @@ AVAILABLE_AXES = [
     "insert_53", "insert_54", "insert_43",
     "evalue", "evalue_left", "evalue_right",
 ]
-
+GET_UNKNOW_AXIS = ""
 
 class Window:
     # Should be renamed "Clone"
@@ -295,7 +295,7 @@ class Window:
 
                 return value
 
-            return "unknow_axis"
+            return GET_UNKNOW_AXIS
         except:
             return "?"
 
@@ -361,16 +361,16 @@ class Window:
                         value = ",".join(values)
 
                 else:
-                    value = "not_implemented"
+                    value = GET_UNKNOW_AXIS
 
             elif col in airr_to_axes.keys():
                 value = self.get_values(airr_to_axes[col], timepoint=time)
             else:
-                value = "colNotFound--%s" % col
+                value = GET_UNKNOW_AXIS
 
-            if value == "?" or "colNotFound" in str(value) or value=="unknow_axis":
+            if value == "?":
                 # for some axis, there is no computable data; for the moment don't show anything
-                value = ""
+                value = GET_UNKNOW_AXIS
             list_values.append( str(value) )
 
         return list_values
