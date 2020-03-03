@@ -325,7 +325,6 @@ class Window:
             "productive":          "productive",
             "cdr3_start":          "cdr3_start",
             "cdr3_end":            "cdr3_stop",
-            "warnings":            "warn",
             "sequence_id":         "id",
             "sequence":            "sequence",
             ## Not implemented in get_values
@@ -341,7 +340,7 @@ class Window:
             "duplicate_count":    "reads"
         }
 
-        airr_computed =  ["ratio_locus", "filename"]
+        airr_computed =  ["ratio_locus", "filename", "warnings"]
 
         for col in cols:    
 
@@ -352,20 +351,15 @@ class Window:
                 elif col == "filename":
                     value = jlist.d["samples"].d["original_names"][time]
                 elif col == "warnings":
-                    warns = self.get_values("warn")
+                    if "warn" not in self.d.keys():
+                        value = ""
+                        continue
+                    warns = self.d["warn"]
                     values = []
                     for warn in warns:
                         values.append( warn["code"] )
                     value = ",".join(values)
                 
-                # ## Some cols are not always present in vidjil file
-                # elif col in ["infos"]:
-                #     try:
-                #         if col == "infos":
-                #             value = jlist.d["samples"].d["info"][time]
-                #     except:
-                #         value = "error_%s" % col
-
                 else: 
                     value = "not_implemented"
 
@@ -1139,10 +1133,8 @@ class ListWindows(VidjilJson):
         list_header  = ["filename", "locus", "duplicate_count", "v_call", "d_call", "j_call", "sequence_id", "sequence", "productive"]
         ## not available in this script; but present in AIRR format
         list_header += ["junction_aa", "junction", "cdr3_aa", "warnings", "rev_comp", "sequence_alignment", "germline_alignment", "v_cigar", "d_cigar", "j_cigar"]
-        ## Specificly asked. Need to be added by server side action on vidjil files
-        list_header += ["first_name", "last_name", "birthday", "infos", "sampling_date","ratio_locus", "frame"]
-        ## Can be in option
-        list_header += ["other_filename"]
+        # ## Specificly asked. Need to be added by server side action on vidjil files
+        list_header += ["ratio_locus"] #"first_name", "last_name", "birthday", "infos", "sampling_date", "frame"]
 
         fo = open(output, 'w')
         fo.write( "\t".join(list_header)+"\n")
