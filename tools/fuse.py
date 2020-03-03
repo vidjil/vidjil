@@ -337,19 +337,18 @@ class Window:
             "d_cigar":   "?",
             "j_cigar":   "?",
             "sequence_alignment": "?",
-            "germline_alignment": "?"
+            "germline_alignment": "?",
+            "duplicate_count":    "reads"
         }
 
-        airr_computed =  ["duplicate_count", "ratio_locus", "filename"]
+        airr_computed =  ["ratio_locus", "filename"]
 
         for col in cols:    
 
             if col in airr_computed:
-                if col == "duplicate_count":
-                    value = self.d["reads"][time]
-                elif col == "ratio_locus":
+                if col == "ratio_locus":
                     germline = self.get_values("germline")
-                    value = float(self.d["reads"][time]) / jlist.d["reads"].d["germline"][germline][time]
+                    value = float(self.get_values("reads", timepoint=time) ) / jlist.d["reads"].d["germline"][germline][time]
                 elif col == "filename":
                     value = jlist.d["samples"].d["original_names"][time]
                 elif col == "warnings":
@@ -359,11 +358,19 @@ class Window:
                         values.append( warn["code"] )
                     value = ",".join(values)
                 
+                # ## Some cols are not always present in vidjil file
+                # elif col in ["infos"]:
+                #     try:
+                #         if col == "infos":
+                #             value = jlist.d["samples"].d["info"][time]
+                #     except:
+                #         value = "error_%s" % col
+
                 else: 
                     value = "not_implemented"
 
             elif col in airr_to_axes.keys():
-                value = self.get_values(airr_to_axes[col])
+                value = self.get_values(airr_to_axes[col], timepoint=time)
             else:
                 value = "colNotFound--%s" % col
 
