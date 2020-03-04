@@ -460,7 +460,6 @@ line {
   padding-right: 30px;
 }
 .list {
-  display: block;
   padding: 2px;
 }
 .listElem {
@@ -472,6 +471,7 @@ line {
   transition: color 0.2s;
   padding: 1px 4px 4px 1px;
   height: 14px;
+  display: flex;
 }
 .selected {
   color: #777777;
@@ -482,8 +482,9 @@ line {
   display: inline-block;
   height: 16px;
   position: relative;
-  float: left;
   white-space: nowrap;
+  display: flex;
+  flex: 1 1 auto;
 }
 .seq-fixed .nameBox {
   width: 250px;
@@ -491,7 +492,6 @@ line {
 .list .axisBox,
 .axisBox span {
   max-width: 52px;
-  float: right;
   overflow: hidden;
   display: inline-block;
   max-height: 16px;
@@ -512,9 +512,8 @@ line {
 }
 .starBox {
   width: 16px;
-  float: right;
   height: 16px;
-  display: inline-block;
+  display: inline-flex;
   user-select: none;
   overflow: hidden;
 }
@@ -529,9 +528,8 @@ line {
 .infoBox {
   font-size: 90%;
   width: 16px;
-  float: right;
   height: 15px;
-  display: inline-block;
+  display: inline-flex;
   user-select: none;
   text-align: center;
   border: solid;
@@ -600,7 +598,6 @@ line {
 }
 /*style segmenter element*/
 .list_select {
-  display: block;
   border: solid;
   border-width: 2px;
   padding: 0px;
@@ -617,7 +614,7 @@ line {
 }
 .seq-fixed {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
   width: auto;
   margin: -2px;
   padding: 2px;

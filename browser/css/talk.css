@@ -113,7 +113,7 @@ ul {
   position: fixed;
   top: 32px;
   bottom: 125px ;
-  width: calc(100% - 6px + 6px);
+  width: calc(100% - 6px);
   background: #ffffff;
   margin: 6px;
   display: flex;
@@ -126,16 +126,15 @@ ul {
   overflow: hidden;
 }
 #right-container {
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: -moz-none;
-  -ms-user-select: none;
-  user-select: none;
+  display: flex;
+  flex: 1 0 auto;
+  flex-flow: column;
   float: right;
-  width: 0px;
+  width: 475px;
 }
 #left-container {
   display: flex;
+  flex: 1 0 auto;
   flex-flow: column;
   position: relative;
   width: 475px;
@@ -152,6 +151,13 @@ ul {
   display: flex;
   flex: auto;
   width: 100%;
+}
+#visu-placeholder {
+  height: 100%;
+  display: flex;
+  flex: auto;
+  width: 100%;
+  background: linear-gradient(to top left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) calc(50% - 0.8px), #000000 50%, rgba(0, 0, 0, 0) calc(50% + 0.8px), rgba(0, 0, 0, 0) 100%), linear-gradient(to top right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) calc(50% - 0.8px), #000000 50%, rgba(0, 0, 0, 0) calc(50% + 0.8px), rgba(0, 0, 0, 0) 100%);
 }
 #visu2 {
   max-height: calc(100% - 6px);
@@ -455,12 +461,9 @@ line {
   padding-right: 30px;
 }
 .list {
-  width: 445px;
-  display: block;
   padding: 2px;
 }
 .listElem {
-  width: 445px;
   font-size: 13px;
   cursor: pointer;
   -webkit-transition: color 0.2s;
@@ -469,19 +472,20 @@ line {
   transition: color 0.2s;
   padding: 1px 4px 4px 1px;
   height: 14px;
+  display: flex;
 }
 .selected {
   color: #002b36;
 }
 .nameBox {
-  width: 300px;
   margin-right: 10px;
   overflow: hidden;
   display: inline-block;
   height: 16px;
   position: relative;
-  float: left;
   white-space: nowrap;
+  display: flex;
+  flex: 1 1 auto;
 }
 .seq-fixed .nameBox {
   width: 250px;
@@ -489,7 +493,6 @@ line {
 .list .axisBox,
 .axisBox span {
   max-width: 52px;
-  float: right;
   overflow: hidden;
   display: inline-block;
   max-height: 16px;
@@ -510,9 +513,8 @@ line {
 }
 .starBox {
   width: 16px;
-  float: right;
   height: 16px;
-  display: inline-block;
+  display: inline-flex;
   user-select: none;
   overflow: hidden;
 }
@@ -527,9 +529,8 @@ line {
 .infoBox {
   font-size: 90%;
   width: 16px;
-  float: right;
   height: 15px;
-  display: inline-block;
+  display: inline-flex;
   user-select: none;
   text-align: center;
   border: solid;
@@ -598,8 +599,6 @@ line {
 }
 /*style segmenter element*/
 .list_select {
-  width: 445px;
-  display: block;
   border: solid;
   border-width: 2px;
   padding: 0px;
@@ -616,7 +615,7 @@ line {
 }
 .seq-fixed {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
   width: auto;
   margin: -2px;
   padding: 2px;
@@ -1360,7 +1359,8 @@ span.warningReads {
   position: relative;
   top: -6px;
 }
-#vertical-separator {
+#vertical-separator,
+#vertical-separator-right {
   position: relative;
   float: left;
   height: 100%;
@@ -1368,6 +1368,9 @@ span.warningReads {
   line-height: calc(100% - 1px);
   background: #cccccc;
   cursor: pointer;
+}
+#vertical-separator-right {
+  float: right;
 }
 #visu-separator:hover,
 #vertical-separator:hover,
@@ -1912,11 +1915,12 @@ table.log textarea {
   border: 1px solid #cccccc;
   overflow-wrap: break-word;
   overflow-y: hidden;
-  max-width: 457px;
   min-height: 32px;
   max-height: 32px;
-  width: 100%;
+  width: 99%;
   background-color: #ffffff;
+  margin-left: auto;
+  margin-right: auto;
 }
 .patient_info_text {
   margin-bottom: 5px;
