@@ -250,8 +250,9 @@ void testGetMaximum() {
   //   ^^^^^^^^^^
   vector<KmerAffect> affectations(a, a+sizeof(a)/sizeof(KmerAffect));
 
-  KmerAffectAnalyser kaa(*index, "", affectations);
-  TAP_TEST_EQUAL(kaa.getSequence(), "", TEST_AA_GET_SEQUENCE, "");
+  string seq = "AAAAAAAAAAAAAA";
+  KmerAffectAnalyser kaa(*index, seq, affectations);
+  TAP_TEST_EQUAL(kaa.getSequence(), seq, TEST_AA_GET_SEQUENCE, "");
 
   affect_infos results = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 2., 0);
   TAP_TEST(! results.max_found, TEST_AA_GET_MAXIMUM_MAX_FOUND, 
@@ -288,7 +289,8 @@ void testGetMaximum() {
   //  V V V V V V V V V V J J J V V V
   //                    ^^^^^^^^^^^^
   vector<KmerAffect> affectations2(a2, a2+sizeof(a2)/sizeof(KmerAffect));
-  KmerAffectAnalyser kaa2(*index, "", affectations2);
+  seq = "AAAAAAAAAAAAAAAA";
+  KmerAffectAnalyser kaa2(*index, seq, affectations2);
   results = kaa2.getMaximum(AFFECT_V, AFFECT_J, 2., 0);
   TAP_TEST(! results.max_found, 
            TEST_AA_GET_MAXIMUM_MAX_FOUND, "(" << results.first_pos_max
@@ -332,7 +334,8 @@ void testGetMaximum() {
   //  V V V V V V                     J J   J    // nb_before_left (6), nb_after_right (3)
   //                                      V      // nb_before_right (1)
   vector<KmerAffect> affectations3(a3, a3+sizeof(a3)/sizeof(KmerAffect));
-  KmerAffectAnalyser kaa3(*index, "", affectations3);
+  seq = "AAAAAAAAAAAAAAAAAAAAA";
+  KmerAffectAnalyser kaa3(*index, seq, affectations3);
   // span = 4, maxOverlap = 0
   results = kaa3.getMaximum(AFFECT_V, AFFECT_J, 2., 0);
 
@@ -363,7 +366,7 @@ void testGetMaximum() {
   //                    ^^^^^^^^^
   //  V V V V V V                 J J J J J J    // nb_before_left (6), nb_after_right (6)
   vector<KmerAffect> affectations4(a4, a4+sizeof(a4)/sizeof(KmerAffect));
-  KmerAffectAnalyser kaa4(*index, "", affectations4);
+  KmerAffectAnalyser kaa4(*index, seq, affectations4);
   // span = 4, maxOverlap = 0
   results = kaa4.getMaximum(AFFECT_V, AFFECT_J, 2., 0);
 
@@ -396,7 +399,7 @@ void testGetMaximum() {
   //          J J J                             // nb_after_left (3)
 
   vector<KmerAffect> affectations5(a5, a5+sizeof(a5)/sizeof(KmerAffect));
-  KmerAffectAnalyser kaa5(*index, "", affectations5);
+  KmerAffectAnalyser kaa5(*index, seq, affectations5);
   results = kaa5.getMaximum(AFFECT_V, AFFECT_J, 2., 0);
 
   TAP_TEST(! results.max_found, TEST_AA_GET_MAXIMUM_MAX_FOUND,
@@ -425,7 +428,7 @@ void testGetMaximum() {
   // J-J-J-J-J-J-J-J-V-V-V-V-V-J-J-J-V-V-V-V-
   //               ^^^^^^^^^^
   vector<KmerAffect> affectations6(a6, a6+sizeof(a6)/sizeof(KmerAffect));
-  KmerAffectAnalyser kaa6(*index, "", affectations6);
+  KmerAffectAnalyser kaa6(*index, seq, affectations6);
   results = kaa6.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 2., 0);
 
   TAP_TEST(! results.max_found, TEST_AA_GET_MAXIMUM_MAX_FOUND,
