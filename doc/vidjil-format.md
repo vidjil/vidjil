@@ -101,7 +101,11 @@ do a correct gathering.
 
     "samples": {
          "number": 2, 
-         "original_names": ["T8045-BC081-Diag.fastq", "T8045-BC082-fu1.fastq"]
+         "original_names": ["T8045-BC081-Diag.fastq", "T8045-BC082-fu1.fastq"],
+         "timestamp": [
+           "2019-12-17 17:49:22",
+           "2019-12-27 17:50:04"
+         ]
     },
 
     "reads" : {
