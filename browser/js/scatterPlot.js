@@ -33,7 +33,12 @@
  * @param {Model} model
  * */
 function ScatterPlot(id, model, database, default_preset) {
-    var self = this;
+    var self = this
+
+    if(ScatterPlot.prototype.initSelector == undefined)
+        Object.assign(ScatterPlot.prototype, ScatterPlot_selector.prototype)
+    if(ScatterPlot.prototype.initMenu == undefined)
+        Object.assign(ScatterPlot.prototype, ScatterPlot_menu.prototype)
 
     ScatterPlot_menu.call(this, default_preset)
     ScatterPlot_selector.call(this)
@@ -1390,5 +1395,4 @@ ScatterPlot.prototype = {
     }
 }
 ScatterPlot.prototype = $.extend(Object.create(View.prototype), ScatterPlot.prototype)
-Object.assign(ScatterPlot.prototype, ScatterPlot_selector.prototype)
-Object.assign(ScatterPlot.prototype, ScatterPlot_menu.prototype)
+
