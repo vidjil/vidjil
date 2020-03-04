@@ -252,6 +252,7 @@ Graph.prototype = {
                 $("#"+ self.id +"_table")
                     .stop(true, true)
                     .show()
+                self.updateList()
             })
             .on("mouseout", function () {
                 $("#"+ self.id +"_table")
@@ -354,14 +355,15 @@ Graph.prototype = {
      * Update the content of checkbox for each sample, depending if his presence into the model samples order list
      */
     updateList : function() {
-        for (var time = 0; time < this.m.samples.number; time++) { 
+        for (var time = 0; time < this.m.samples.number; time++) {
             this.updateListCheckbox(time)
+            this.updateListName(time)
         }
         return
     },
 
     /**
-     * Update, in the graph list, the sampel with the selected css rule
+     * Update, in the graph list, the sample with the selected css rule
      */
     updateListElemSelected: function(){
         var time = this.m.t
@@ -390,6 +392,19 @@ Graph.prototype = {
         checkbox.checked = (this.m.samples.order.indexOf(time) != -1)
         return
     },
+
+    /**
+     * Update the text of a sample. Adapt it with the model time_type format
+     * @param  {Number} time The timepoint to update
+     */
+    updateListName: function(time){
+        var name_id  = this.id +"_listElem_text_"+time
+        var name     = document.getElementById(name_id)
+        name.textContent  = this.m.getStrTime(time)
+        return
+    },
+
+
 
 
     /**
@@ -510,6 +525,7 @@ Graph.prototype = {
         speed = typeof speed !== 'undefined' ? speed : 500;
         this.updateListElemSelected();
         this.updateCountActiveSample();
+        this.updateList()
 
         this.g_clone = this.clones_container.selectAll("path")
             .data(this.data_clone);
