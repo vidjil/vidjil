@@ -60,7 +60,7 @@ AVAILABLE_AXES = [
     "insert_53", "insert_54", "insert_43",
     "evalue", "evalue_left", "evalue_right",
 ]
-GET_UNKNOW_AXIS = ""
+GET_UNKNOW_AXIS = "unknow_axis"
 
 class Window:
     # Should be renamed "Clone"
@@ -368,9 +368,9 @@ class Window:
             else:
                 value = GET_UNKNOW_AXIS
 
-            if value == "?":
+            if value == "?" or value == GET_UNKNOW_AXIS:
                 # for some axis, there is no computable data; for the moment don't show anything
-                value = GET_UNKNOW_AXIS
+                value = ""
             list_values.append( str(value) )
 
         return list_values
