@@ -1371,9 +1371,7 @@ span.warningReads {
 #vertical-separator-right {
   position: relative;
   float: left;
-  height: 100%;
   width: 6px;
-  line-height: calc(100% - 1px);
   background: #333333;
   cursor: pointer;
 }
