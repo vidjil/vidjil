@@ -14,20 +14,20 @@ class TestLoadingAnalysis < BrowserTest
     end
   end
 
-  def test_00_name
-    assert ($b.graph_x_legend('0').text == 'diag')
-    assert ($b.graph_x_legend('1').text == 'fu1')
+  def test_001_name
+    assert ($b.graph_x_legend('0').text == '2019-12-17')
+    assert ($b.graph_x_legend('1').text == '+10')
 
     # It should be selected
     assert ($b.graph_x_legend('0', :class => 'graph_time2').exists?)
   end
 
-  def test_00_order
+  def test_002_order
     # fu1 should be before diag
     assert ($b.graph_x_legend('0').attribute_value('x') > $b.graph_x_legend('1').attribute_value('x'))
   end
 
-  def test_00_custom_clone
+  def test_003_custom_clone
     assert ($b.clone_info('0')[:name].text == 'Main ALL clone')
 
     $b.select_tag('0').click
