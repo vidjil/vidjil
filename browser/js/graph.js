@@ -416,11 +416,11 @@ Graph.prototype = {
         var pos_timepoint_in_order = this.m.samples.order.indexOf(time)
         if (pos_timepoint_in_order == -1){
             // Add new timepoint
-            this.m.samples.order.push( time )
+            this.m.addTimeOrder( time )
             this.m.changeTime(time)
         } else if (this.m.samples.order.length != 1) {
             // Remove timepoint; Don't if there is only one sample
-            this.m.samples.order.splice(pos_timepoint_in_order, 1)
+            this.m.removeTimeOrder(time)
             this.m.changeTime(this.m.samples.order[0])
         }
         this.updateListCheckbox(time)
@@ -449,7 +449,7 @@ Graph.prototype = {
      * Remove all sample of the graph except one
      */
     hideAllTimepoint: function(){
-        this.m.samples.order = [this.m.t]
+        this.m.changeTimeOrder( [this.m.t] )
         this.updateList()
         this.m.update()
         return
@@ -1398,7 +1398,7 @@ Graph.prototype = {
             .on("dblclick", function (d) {
                 var pos = self.m.samples.order.indexOf(d.time)
                 if (self.m.samples.order.length != 1 && pos != -1) {
-                    self.m.samples.order.splice(pos, 1)
+                    self.m.removeTimeOrder(d.time)
                 }
                 self.m.update()
                 // invert checkbox value in list

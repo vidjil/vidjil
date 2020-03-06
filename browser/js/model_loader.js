@@ -308,6 +308,10 @@ Model_loader.prototype = {
             self.samples.order = []
             for (var j = 0; j < self.samples.number; j++) self.samples.order.push(j);
         }
+        if (typeof self.samples.stock_order == 'undefined'){
+            self.samples.stock_order = []
+            for (var j = 0; j < self.samples.number; j++) self.samples.stock_order.push(j);
+        }
         if (self.samples.order.length >= 2) {
             self.tOther = 1
         }
@@ -628,6 +632,7 @@ Model_loader.prototype = {
                 id: this.samples.original_names,
                 info: this.samples.info,
                 order: this.samples.order,
+                stock_order: this.samples.stock_order,
                 names: this.samples.names},
             clones : this.analysis_clones,
             clusters : this.analysis_clusters,
