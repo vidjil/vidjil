@@ -321,6 +321,67 @@ docker-compose up --build
 
 This will also start the environment for you.
 
+## Deploy a local version for developpment purpose
+
+You may want to make some modification into the code of Vidjil web application, server, browser or tools side.
+In these cases, you should get a copy of the vidjil repository where you will be able to make your changes, and also set some modifiaction into the `docker-compose.yml`.
+
+### Clone another vidjil repository into a subdirectory of vidjil. 
+
+In this example, the repository will be located into `vidjil/code/`
+
+```bash
+# clone a new vidjil repository
+git clone https://gitlab.inria.fr/vidjil/vidjil.git  code/
+# move into this new repository
+cd code
+# init this repository with server
+make server browser germline
+```
+
+### Update the docker-compose.yml
+
+After cloning a clean repository, you must add modifications in the `docker-compose.yml` file into fuse and nginx volumes.
+
+Modifications for `fuse volumes` declaration.
+```
+ # Link to server files
+ - ../code/server/web2py/applications/vidjil/controllers:/usr/share/vidjil/server/web2py/applications/vidjil/controllers
+ - ../code/server/web2py/applications/vidjil/models:/usr/share/vidjil/server/web2py/applications/vidjil/models
+ - ../code/server/web2py/applications/vidjil/modules:/usr/share/vidjil/server/web2py/applications/vidjil/modules
+ - ../code/server/web2py/applications/vidjil/scripts:/usr/share/vidjil/server/web2py/applications/vidjil/scripts
+ - ../code/server/web2py/applications/vidjil/static:/usr/share/vidjil/server/web2py/applications/vidjil/static
+ - ../code/server/web2py/applications/vidjil/tests:/usr/share/vidjil/server/web2py/applications/vidjil/tests
+ - ../code/server/web2py/applications/vidjil/views:/usr/share/vidjil/server/web2py/applications/vidjil/views   
+ # Browser & tools
+ - ../code/browser:/usr/share/vidjil/tools:Z
+```
+
+Modifications for `nginx volumes` declaration.
+```
+- ../code/browser:/usr/share/vidjil/browser:Z
+```
+
+
+### Add configuration files into the code/ repository
+
+As some files are virtualy linked into docker image from the docker directory, you should add them into `code/`.
+```bash
+cp docker/vidjil-client/conf/conf.js copy/browser/js/
+cp docker/vidjil-server/conf/defs.py copy/server/web2py/applications/vidjil/modules/
+```
+
+### Restart docker-compose
+
+After that, you should restart your docker instance to apply these new settings.
+
+``` bash
+docker-compose up
+```
+From now, the code present into `code/` will be use for the server and the browser.
+You will be able to test modifications before staging them into the repository.
+
+
 ## Building images for DockerHub
 
 Make sure your Dockerfile is up to date with any changes you may want to
