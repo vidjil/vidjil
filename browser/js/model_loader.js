@@ -310,7 +310,7 @@ Model_loader.prototype = {
         }
         if (typeof self.samples.stock_order == 'undefined'){
             self.samples.stock_order = []
-            for (var k = 0; k < self.samples.number; k++) self.samples.stock_order.push(k);
+            for (var s = 0; s < self.samples.number; s++) self.samples.stock_order.push(s);
         }
         if (self.samples.order.length >= 2) {
             self.tOther = 1
