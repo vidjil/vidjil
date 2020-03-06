@@ -65,7 +65,38 @@
 
             </tr>
         </thead>
-        
+        <tfoot class="db_fixed_footer">
+            <tr><td class="column_200"> '{{ str(len(query)) }}' samples </td>
+                <td class="column_100"> </td>
+                <td>  </td>
+                <td>  </td>
+                <td> </td>
+                {{if auth.is_admin():}} <td>  </td> {{pass}}
+                <td class="column5"> </td>
+                <td class="column5"> </td>
+                <td class="column5"> </td>
+
+                <td class="column_sep"></td>
+
+                <td class="column2"></td>
+                <td class="column_100">Run all</td>
+                <td class="column5"></td>
+                <td class="column5"></td>
+                <td class="column5"></td>
+                <td class="column5">
+                       {{if config_id > 0 and auth.can_use_config(config_id) :}}
+                          {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
+                               <span class="pointer" onclick="
+                               {{ for row in query : }}
+                                 db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } )
+                               {{pass}}
+                               "><i class="icon-cog-2" title="Run the selected configuration for this file"></i></span>
+                           {{pass}}
+                      {{pass}}
+                </td>
+
+            </tr>
+        </tfoot>
         
         <tbody>
             {{for row in query :}}
@@ -147,8 +178,11 @@
             {{pass}}
 
         </tbody>
+
+        
     </table>
     <table class="db_table" id="db_fixed_header"></table>
+    <table class="db_table" id="db_fixed_footer"></table>
 
     
     
