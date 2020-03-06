@@ -1719,7 +1719,51 @@ changeAlleleNotation: function(alleleNotation) {
         this.samples.order = list
         this.update()
     },
-    
+        /**
+     * Invert the value of a sample (show/hide).
+     * Update the checkbox, the sample in model order, and the model 
+     * @param  {[type]} time The timepoint to invert
+     */
+    switchTime: function(time){
+        var pos_timepoint_in_order = this.samples.order.indexOf(time)
+        if (pos_timepoint_in_order == -1){
+            // Add new timepoint
+            this.addTimeOrder( time )
+            this.changeTime(time)
+        } else if (this.samples.order.length != 1) {
+            // Remove timepoint; Don't if there is only one sample
+            this.removeTimeOrder(time)
+            this.changeTime(this.samples.order[0])
+        }
+        this.update()
+        return
+    },
+
+    /**
+     * Show all timepoint in the timeline graphic.
+     * Add all samples that are not already in the list of actif samples
+     * Each sample added will be put at the end of the list.
+     */
+    showAllTime: function(){
+        // keep current timepoint active if exist, else, give active to first timepoint
+        var keeptime = this.t
+        for (var time = 0; time < this.samples.number; time++) {
+            if (this.samples.order.indexOf(time) == -1) this.addTimeOrder(time)
+        }
+        this.changeTime(keeptime)
+        this.update()
+        return
+    },
+
+    /**
+     * Remove all sample of the graph except one
+     */
+    hideAllTime: function(){
+        this.changeTimeOrder( [this.t] )
+        this.update()
+        return
+    },
+
     /**
      * replace the current time order with a new one
      * @param {integer[]} list - list of time/sample index

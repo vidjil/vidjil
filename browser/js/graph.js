@@ -325,11 +325,11 @@ Graph.prototype = {
 
         $("#"+this.id +"_listElem_showAll").click(function () {
             console.log( "self.showAllTimepoint()" )
-            self.showAllTimepoint()
+            self.m.showAllTime()
         })
         $("#"+this.id +"_listElem_hideAll").click(function () {
             console.log( "self.hideAllTimepoint( true )" )
-            self.hideAllTimepoint()
+            self.m.hideAllTime()
         })
 
         $(".graph_listElem").click(function () {
@@ -340,11 +340,11 @@ Graph.prototype = {
         })
         $(".graph_listElem").dblclick(function () {
             var time = parseInt( this.dataset.time )
-            self.invertListElement(time)
+            self.m.switchTime(time)
         })
         $(".graph_listElem_check").click(function () {
             var time = parseInt( this.dataset.time )
-            self.invertListElement(time)
+            self.m.switchTime(time)
         })
 
         // Update checkbox state at init
@@ -406,54 +406,6 @@ Graph.prototype = {
 
 
 
-
-    /**
-     * Invert the value of a sample (show/hide).
-     * Update the checkbox, the sample in model order, and the model 
-     * @param  {[type]} time The timepoint to invert
-     */
-    invertListElement: function(time){
-        var pos_timepoint_in_order = this.m.samples.order.indexOf(time)
-        if (pos_timepoint_in_order == -1){
-            // Add new timepoint
-            this.m.addTimeOrder( time )
-            this.m.changeTime(time)
-        } else if (this.m.samples.order.length != 1) {
-            // Remove timepoint; Don't if there is only one sample
-            this.m.removeTimeOrder(time)
-            this.m.changeTime(this.m.samples.order[0])
-        }
-        this.updateListCheckbox(time)
-        this.m.update()
-        return
-    },
-
-    /**
-     * Show all timepoint in the timeline graphic.
-     * Add all samples that are not already in the list of actif samples
-     * Each sample added will be put at the end of the list.
-     */
-    showAllTimepoint: function(){
-        // keep current timepoint active if exist, else, give active to first timepoint
-        var keeptime = this.m.t
-        for (var time = 0; time < this.m.samples.number; time++) {
-            if (this.m.samples.order.indexOf(time) == -1) this.m.addTimeOrder(time)
-        }
-        this.updateList()
-        this.m.changeTime(keeptime)
-        this.m.update()
-        return
-    },
-
-    /**
-     * Remove all sample of the graph except one
-     */
-    hideAllTimepoint: function(){
-        this.m.changeTimeOrder( [this.m.t] )
-        this.updateList()
-        this.m.update()
-        return
-    },
 
     /**
      * Update count of active samples
@@ -1401,8 +1353,6 @@ Graph.prototype = {
                     self.m.removeTimeOrder(d.time)
                 }
                 self.m.update()
-                // invert checkbox value in list
-                self.updateListCheckbox(d.time)
                 // change current time to use first element of the current samples list
                 if (self.m.samples.order.length > 0){
                     var new_time = self.m.samples.order[0]
