@@ -1147,6 +1147,8 @@ Clone.prototype = {
             if (this.hasSeg('junction') &&
                 typeof this.seg.junction.productive != 'undefined') {
                 this.color = colorProductivity(this.seg.junction.productive)
+            }else{
+                this.color = "";
             }
         }else{
             this.color = "";
