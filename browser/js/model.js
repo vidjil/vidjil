@@ -2464,7 +2464,11 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
         var tagSelectorW = $(this.tagSelector).outerWidth()
         var maxLeft = $(window).width() - tagSelectorW;
-        var left = e.currentTarget.offsetLeft + (e.currentTarget.offsetWidth/2) + (tagSelectorW/2);
+        var tmp = e.clientX;
+        if(typeof e.currentTarget !== 'undefined') {
+            tmp = e.currentTarget.offsetLeft + (e.currentTarget.offsetWidth/2);
+        }
+        var left = tmp + (tagSelectorW/2);
         if (left>maxLeft) left=maxLeft;
         this.tagSelector.style.left=left+"px";
 
