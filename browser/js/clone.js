@@ -1111,53 +1111,86 @@ Clone.prototype = {
         var allele;
         if (!this.hasSizeConstant()){
             this.color = "rgba(150, 150, 150, 0.65)"
-        } else if (this.m.colorMethod == "abundance") {
-            var size = this.getSize()
-            if (this.getCluster().length===0){ size = this.getSequenceSize() }
-            if (size === 0){
-                this.color = "";
-            }else{
-                this.color = colorGenerator(this.m.scale_color(size * this.m.precision));
-            }
-        } else if (this.m.colorMethod == 'clone') {
-            this.color = colorGeneratorIndex(this.index)
-        } else if (this.m.colorMethod == 'cdr3') {
-            this.color = this.getCDR3Color();
-        }else if (this.m.colorMethod == "Tag"){
-            this.color =  this.m.tag[this.getTag()].color;
-        }else if (this.m.colorMethod == "dbscan"){
-            this.color =  this.colorDBSCAN;
-        }else if (this.m.colorMethod == "V" && this.getGene("5") != "undefined V"){
-            this.color = "";
-            allele = this.m.germlineV.allele[this.getGene("5")]
-            if (typeof allele != 'undefined' ) this.color = allele.color;
-        }else if (this.m.colorMethod == "D" && this.getGene("4") != "undefined D"){
-            this.color = "";
-            allele = this.m.germlineD.allele[this.getGene("4")]
-            if (typeof allele != 'undefined' ) this.color = allele.color;
-        }else if (this.m.colorMethod == "J" && this.getGene("3") != "undefined J"){
-            this.color = "";
-            allele = this.m.germlineJ.allele[this.getGene("3")]
-            if (typeof allele != 'undefined' ) this.color = allele.color;
-        }else if (this.m.colorMethod == "N"){
-            this.color =  this.colorN;
-        }else if (this.m.colorMethod == "system") {
-            this.color = this.m.germlineList.getColor(this.germline)
-        } else if (this.m.colorMethod == 'productive') {
-            if (this.hasSeg('junction') &&
-                typeof this.seg.junction.productive != 'undefined') {
-                this.color = colorProductivity(this.seg.junction.productive)
-            }else{
-                this.color = "";
-            }
-        }else{
-            this.color = "";
+            return
         }
+
+        switch (this.m.colorMethod){
+            
+            case "abundance":
+                var size = this.getSize()
+                if (this.getCluster().length===0)
+                    size = this.getSequenceSize()
+                if (size === 0)
+                    this.color = ""
+                else
+                    this.color = colorGenerator(this.m.scale_color(size * this.m.precision))
+
+                break;
+        
+            case "clone":
+                this.color = colorGeneratorIndex(this.index)
+                break;
+        
+            case "cdr3":
+                this.color = this.getCDR3Color()
+                break;
+        
+            case "Tag":
+                this.color =  this.m.tag[this.getTag()].color
+                if (this.color == "default") this.color = ""
+                break;
+
+            case "dbscan":
+                this.color =  this.colorDBSCAN
+                break;
+
+            case "system":
+                this.color = this.m.germlineList.getColor(this.germline)
+                break;
+
+            case "productive":
+                this.color = ""
+                if (this.hasSeg('junction') &&
+                    typeof this.seg.junction.productive != 'undefined') 
+                    this.color = colorProductivity(this.seg.junction.productive)
+                break;
+
+            case "N":
+                this.color =  this.colorN
+                break;
+
+            case "V":
+                this.color = ""
+                if (this.getGene("5") != "undefined V"){
+                    var allele = this.m.germlineV.allele[this.getGene("5")]
+                    if (typeof allele != 'undefined' ) this.color = allele.color
+                }
+                break;
+
+            case "D":
+                this.color = ""
+                if (this.getGene("4") != "undefined D"){
+                    var allele = this.m.germlineD.allele[this.getGene("4")]
+                    if (typeof allele != 'undefined' ) this.color = allele.color
+                }
+                break;
+
+            case "J":
+                this.color = ""
+                if (this.getGene("3") != "undefined J"){
+                    var allele = this.m.germlineJ.allele[this.getGene("3")]
+                    if (typeof allele != 'undefined' ) this.color = allele.color
+                }
+                break;
+        
+            default:
+                this.color = ""
+        }
+
         this.true_color = this.color
 
-        if (this.m.focus == this.index){
-            this.color = "";
-        }
+        if (this.m.focus == this.index)
+            this.color = ""
     },
     
     /**

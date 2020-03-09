@@ -352,6 +352,7 @@ class TestClones < BrowserTest
     # other ???
     # update ???
     $b.clear_filter.click
+    $b.clone_in_scatterplot('1').hover
   end
 
   
