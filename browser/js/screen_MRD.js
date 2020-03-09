@@ -59,7 +59,7 @@ Clone.prototype.getR2 = function(time) {
 	return "";
     } else if ('normalized_reads' in this && this.normalized_reads[time] === null && 'UNI_R2' in this.m.samples) {
 	// negative clone: report UNI R2
-	return this.m.samples["UNI_R2"][time];
+	return this.m.samples.UNI_R2[time];
     } else if ('R2' in this) {
 	return this.R2[time].toString();
     } else {
@@ -75,7 +75,7 @@ Clone.prototype.getPrevalent = function(time) {
 	// diagnostic sample
 	return "";
     } else {
-	return this.m.samples['prevalent'][time];
+	return this.m.samples.prevalent[time];
     }
 };
 
@@ -88,7 +88,7 @@ Clone.prototype.getAmplCoeff = function(time) {
 	// diagnostic sample
 	return "";
     } else if ('ampl_coeff' in this.m.samples) {
-	return this.m.samples['ampl_coeff'][time].toString();
+	return this.m.samples.ampl_coeff[time].toString();
     } else {
 	return "Please use version 6 or later of spike-normalization";
     }
@@ -165,19 +165,19 @@ Clone.prototype.getHtmlInfo = function () {
 	    // this .vidjil file is not all-diagnostic:
 	    // show R2, etc, fields for follow-up samples
 	    html += "</tr><tr><td>family used for fitting</td>"
-	    for (var k = 0; k < time_length; k++) {
+	    for (k = 0; k < time_length; k++) {
                 html += "<td>" + this.getFittingFamily(this.m.samples.order[k]) + "</td>"
 	    }
 	    html += "</tr><tr><td>Pearson R2</td>"
-	    for (var k = 0; k < time_length; k++) {
+	    for (k = 0; k < time_length; k++) {
                 html += "<td>" + this.getR2(this.m.samples.order[k]) + "</td>"
 	    }
 	    html += "</tr><tr><td>prevalent germline</td>"
-	    for (var k = 0; k < time_length; k++) {
+	    for (k = 0; k < time_length; k++) {
                 html += "<td>" + this.getPrevalent(this.m.samples.order[k]) + "</td>"
 	    }
 	    html += "</tr><tr><td>total prevalent / total spikes</td>"
-	    for (var k = 0; k < time_length; k++) {
+	    for (k = 0; k < time_length; k++) {
                 html += "<td>" + this.getAmplCoeff(this.m.samples.order[k]) + "</td>"
 	    }
 	}
