@@ -502,7 +502,7 @@ QUnit.test("tag / color", function(assert) {
     m.select(0)
     m.select(1)
 
-    assert.equal(m.getColorSelectedClone(), "default", "Color of selected clones (without tags) is correct")
+    assert.equal(m.getColorSelectedClone(), "", "Color of selected clones (without tags) is correct")
 
     // Change tag of clones
     assert.equal(c1.getTag(), 8, "getTag() >> default tag : 8");  

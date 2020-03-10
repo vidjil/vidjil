@@ -455,7 +455,7 @@ QUnit.test("tag / color", function(assert) {
 
     assert.equal(c1.getTag(), 8, "getTag() >> default tag : 8");
     c1.updateColor()
-    assert.equal(c1.getColor(), "default", "getColor() >> default tag color : ");
+    assert.equal(c1.getColor(), "", "getColor() >> default tag color : ");
     
     c1.changeTag(5)
     c1.updateColor()
