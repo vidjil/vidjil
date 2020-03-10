@@ -1162,24 +1162,24 @@ Clone.prototype = {
             case "V":
                 this.color = ""
                 if (this.getGene("5") != "undefined V"){
-                    var allele = this.m.germlineV.allele[this.getGene("5")]
-                    if (typeof allele != 'undefined' ) this.color = allele.color
+                    var alleleV = this.m.germlineV.allele[this.getGene("5")]
+                    if (typeof alleleV != 'undefined' ) this.color = alleleV.color
                 }
                 break;
 
             case "D":
                 this.color = ""
                 if (this.getGene("4") != "undefined D"){
-                    var allele = this.m.germlineD.allele[this.getGene("4")]
-                    if (typeof allele != 'undefined' ) this.color = allele.color
+                    var alleleD = this.m.germlineD.allele[this.getGene("4")]
+                    if (typeof alleleD != 'undefined' ) this.color = alleleD.color
                 }
                 break;
 
             case "J":
                 this.color = ""
                 if (this.getGene("3") != "undefined J"){
-                    var allele = this.m.germlineJ.allele[this.getGene("3")]
-                    if (typeof allele != 'undefined' ) this.color = allele.color
+                    var alleleJ = this.m.germlineJ.allele[this.getGene("3")]
+                    if (typeof alleleJ != 'undefined' ) this.color = alleleJ.color
                 }
                 break;
         
