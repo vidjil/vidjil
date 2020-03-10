@@ -362,11 +362,11 @@ class TestClones < BrowserTest
     assert ( $b.clone_info('18')[:name].style('color').start_with?('rgba(150, 150, 150, 0.65') ) , "distrib clone haven't changed color"
 
     # change color method and observe variation or not
-    $b.select(:id => 'color_menu_select').click
-    $b.send_keys :arrow_down
-    $b.send_keys :arrow_down
-    $b.send_keys :arrow_down
-    $b.send_keys :enter
+    color_select = $b.select(:id => 'color_menu_select')
+    color_select.click
+    color_v_option = color_select.option(value: 'V')
+    color_v_option.wait_until(&:visible?)
+    color_v_option.click
     $b.update_icon.wait_while(&:present?)
     assert ( $b.clone_info('0')[:name].style('color')  !=  'rgba(101, 123, 131, 1)' ) ,    "real clone should have changed color (diff from grey)"
     assert ( $b.clone_info('16')[:name].style('color').start_with?('rgba(150, 150, 150, 0.65') ) , "other clone shouldn't have changed color"
