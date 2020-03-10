@@ -413,7 +413,7 @@ class VidjilBrowser < Watir::Browser
   end
 
   def scatterplot_legend(axis, index, number=1)
-    return scatterplot_axis(axis, number).element(:class => 'sp_legend', :index => index)
+    return scatterplot_axis(axis, number).element(:tag_name => 'text', :index => index)
   end
 
 
