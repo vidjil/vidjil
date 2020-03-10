@@ -215,6 +215,7 @@ class TestClones < BrowserTest
 
     $b.clone_in_list("20").click
     $b.a(:id => "hide_selected").click
+    $b.update_icon.wait_while(&:present?)
     assert ( not $b.clone_in_list('20').present?),        ">> Hidded distrib clone DON'T exist in list"
     $b.clone_in_scatterplot('20').wait_while(&:present?) # ">> Hidded distrib clone DON'T exist in scatterplot"
     $b.clear_filter.click
