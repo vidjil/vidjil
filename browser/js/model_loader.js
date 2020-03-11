@@ -57,27 +57,27 @@ Model_loader.prototype = {
             
         else if (typeof params.sample_set_id !== "undefined" && typeof params.config !== "undefined"){
             //wait 1sec to check ssl
-            setTimeout(function () { db.load_data( {"sample_set_id" : params.sample_set_id , "config" : params.config } , "") }, 1000);
+            setTimeout(function () { self.db.load_data( {"sample_set_id" : params.sample_set_id , "config" : params.config } , "") }, 1000);
         }
         
         else if (typeof params.patient_id !== "undefined" && typeof params.config !== "undefined"){
             //wait 1sec to check ssl
-            setTimeout(function () { db.load_data( {"patient" : params.patient_id , "config" : params.config } , "")  }, 1000);
+            setTimeout(function () { self.db.load_data( {"patient" : params.patient_id , "config" : params.config } , "")  }, 1000);
         }
         
         else if (typeof params.run_id !== "undefined" && typeof params.config !== "undefined"){
             //wait 1sec to check ssl
-            setTimeout(function () { db.load_data( {"run" : params.run_id , "config" : params.config } , "")  }, 1000);
+            setTimeout(function () { self.db.load_data( {"run" : params.run_id , "config" : params.config } , "")  }, 1000);
         }
             
         else if (typeof params.custom !== "undefined" && params.custom.length>0){
             //wait 1sec to check ssl
-            setTimeout(function () { db.load_custom_data( {"custom" : params.custom })  }, 1000);
+            setTimeout(function () { self.db.load_custom_data( {"custom" : params.custom })  }, 1000);
         }
                 
         else if (typeof config != 'undefined' && config.use_database){
             //wait 1sec to check ssl
-            setTimeout(function () { db.call("default/home.html")}, 1000);
+            setTimeout(function () { self.db.call("default/home.html")}, 1000);
         }else{
             console.log({"type":"popup", "default":"welcome" })
         }
