@@ -292,16 +292,35 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     dclone.defineCompatibleClones()
     dclone.updateReadsDistribClones()
     html = m.clones[0].getHtmlInfo();
-
-    // Sequence
-    var notinclude = html.includes("<td>sequence</td>")
-    assert.notOk(notinclude, "getHtmlInfo: if no sequence, no field sequence");
+    console.log( html)
+    // Representative
+    var include = html.includes("<td class='header' colspan='2'>representative sequence</td>")
+    assert.ok(include, "getHtmlInfo: if clone distrib, keep field 'representative sequence'");
+    // Representative
+    include = html.includes("total clones size")
+    assert.ok(include, "getHtmlInfo: if clone distrib, other line name; 'clone size'");
+    // Representative
+    include = html.includes("current clone size")
+    assert.ok(include, "getHtmlInfo: if no sequence, field 'current clone size'");
     // gene V
     assert.includes(html, "<tr><td>V gene (or 5')</td>",
         "getHtmlInfo: distrib clone with seg5 have field segment V");
+    
+    // Sequence
+    var notinclude = html.includes("<td>sequence</td>")
+    assert.notOk(notinclude, "getHtmlInfo: if no sequence, no field sequence");
     // gene J
-    var notinclude = html.includes("<td>J gene (or 3')</td>")
+    notinclude = html.includes("<td>J gene (or 3')</td>")
     assert.notOk(notinclude, "getHtmlInfo: if no seg3, no field segment J");
+    // Edit button
+    notinclude = html.includes("<td class='header' colspan='2'>segmentation <button type='button' onclick='m.clones[0].toggle()'>edit</button></td>")
+    assert.notOk(notinclude, "getHtmlInfo: if clone distrib, no edit button");
+    // clone short name
+    notinclude = html.includes("clone short name")
+    assert.notOk(notinclude, "getHtmlInfo: if clone distrib, no 'clone short name'");
+    // clone short name
+    notinclude = html.includes("db.get_read")
+    assert.notOk(notinclude, "getHtmlInfo: if clone distrib, no download reads buttons");
 });
 
 
