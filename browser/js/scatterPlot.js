@@ -1034,8 +1034,15 @@ ScatterPlot.prototype = {
      * @param data - Un tableau d'objets, concernant les données et les légendages (pour l'axe de X)
      * */
     axis_x_update: function() {
-        var self = this;
-        var data = Object.values(this.axisX.labels);
+        var self = this
+        var data = []
+        if (Object.values)
+            data = Object.values(this.axisX.labels)
+        else{
+            keys = Object.keys(this.axisX.labels)
+            for (var k of keys)
+                data.push(this.axisX.labels[k])
+        }
         
         //detect label size
         var label_width = 0;
@@ -1134,8 +1141,15 @@ ScatterPlot.prototype = {
      * @param data - Un tableau d'objets, concernant les données et les légendages (pour l'axe de Y)
      * */
     axis_y_update: function() {
-        self = this;
-        var data = Object.values(this.axisY.labels);
+        self = this
+        var data = []
+        if (Object.values)
+            data = Object.values(this.axisX.labels)
+        else{
+            keys = Object.keys(this.axisX.labels)
+            for (var k of keys)
+                data.push(this.axisX.labels[k])
+        }
 
         this.label_update();
         
