@@ -21,6 +21,8 @@ windowMock.window = windowMock
 QUnit.test("clone : modifyURL", function(assert) { with (windowMock) {
 
     m = new Model();
+    var db = new Database(m)
+    var notification = new Notification(m)
     m.parseJsonData(json_data,100)
     var sp = new ScatterPlot("visu",m);
     sp.init();
@@ -83,6 +85,8 @@ QUnit.test("plot : modifyURL",function (assert) { with (windowMock) {
     var step = 500;
 
     var m = new Model();
+    var db = new Database(m)
+    var notification = new Notification(m)
     m.parseJsonData(json_data,100)
     var sp = new ScatterPlot("visu",m);
     sp.init();

@@ -1,6 +1,7 @@
 
 function Notification(m) {
-    this.m = m;
+	this.m = m
+	this.m.notification = this
 }
 
 
