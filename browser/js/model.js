@@ -1751,7 +1751,6 @@ changeAlleleNotation: function(alleleNotation) {
             if (this.samples.order.indexOf(time) == -1) this.addTimeOrder(time)
         }
         this.changeTime(keeptime)
-        this.update()
         return
     },
 
@@ -1760,7 +1759,6 @@ changeAlleleNotation: function(alleleNotation) {
      */
     hideAllTime: function(){
         this.changeTimeOrder( [this.t] )
-        this.update()
         return
     },
 
