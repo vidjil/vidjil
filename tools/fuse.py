@@ -340,7 +340,7 @@ class Window:
             "duplicate_count":    "reads"
         }
 
-        airr_computed =  ["ratio_locus", "filename", "warnings"]
+        airr_computed =  ["ratio_segmented", "ratio_locus", "filename", "warnings"]
 
         for col in cols:    
 
@@ -348,6 +348,8 @@ class Window:
                 if col == "ratio_locus":
                     germline = self.get_values("germline")
                     value = float(self.get_values("reads", timepoint=time) ) / jlist.d["reads"].d["germline"][germline][time]
+                elif col == "ratio_segmented":
+                    value = float(self.get_values("reads", timepoint=time) ) / jlist.d["reads"].d["segmented"][time]
                 elif col == "filename":
                     value = jlist.d["samples"].d["original_names"][time]
                 elif col == "warnings":
@@ -1134,7 +1136,7 @@ class ListWindows(VidjilJson):
         ## not available in this script; but present in AIRR format
         list_header += ["junction_aa", "junction", "cdr3_aa", "warnings", "rev_comp", "sequence_alignment", "germline_alignment", "v_cigar", "d_cigar", "j_cigar"]
         # ## Specificly asked. Need to be added by server side action on vidjil files
-        list_header += ["ratio_locus"] #"first_name", "last_name", "birthday", "infos", "sampling_date", "frame"]
+        list_header += ["ratio_segmented", "ratio_locus"] #"first_name", "last_name", "birthday", "infos", "sampling_date", "frame"]
 
         fo = open(output, 'w')
         fo.write( "\t".join(list_header)+"\n")
