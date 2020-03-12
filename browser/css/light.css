@@ -1510,6 +1510,9 @@ h3 .uid {
   top: 0px;
   background: #fdf6e3;
 }
+.db_fixed_footer {
+  background: #fdf6e3;
+}
 .db_help_desc {
   margin-left: 150px;
 }
