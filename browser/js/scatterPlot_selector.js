@@ -45,6 +45,8 @@ function ScatterPlot_selector() {
         //mouse coordinates
         this.coordinates = [0, 0]
 
+        this.mousedown = 0
+
 }
 
 ScatterPlot_selector.prototype = {
@@ -55,15 +57,21 @@ ScatterPlot_selector.prototype = {
         //multi-node selector
         d3.select("#" + this.id + "_svg")
             .on("mousedown", function() {
-                self.activeSelector();
+                self.mousedown = true
+                //self.activeSelector();
+                self.m.unselectAllUnlessKey(d3.event)
             })
         $("body")
             .bind("mouseup", function(e) {
+                self.mousedown = false
                 d3.event = e;
-                self.stopSelector()
+                if (self.active_selector)
+                    self.stopSelector()
             })
             .bind("mousemove", function(e) {
                 d3.event = e;
+                if (!self.active_selector && self.mousedown) 
+                    self.activeSelector()
                 self.updateSelector()
             })
 
