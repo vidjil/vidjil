@@ -246,7 +246,15 @@ View.prototype = {
             return true;
         if (this.useSmartUpdateElemStyle && Object.keys(this.updateElemStyleList).length>0)
             return true;
-        return false;
+
+        return this.updateInProgress()
+    },
+
+    /**
+     * @abstract
+     * */
+    updateInProgress: function(){
+        return false
     },
     
     /**
