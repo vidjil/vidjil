@@ -108,6 +108,12 @@ function Graph(id, model, database) {
     this.db = database;
 
     this.lineGenerator = d3.line().curve(d3.curveMonotoneX);
+
+    //flag used to count the number of transition (multiple transition can run at the same time)
+    //increase every time a transition is started
+    //decrease every time a transition is completed
+    //0 means all started transition have been completed
+    this.inProgress = 0
 }
 
 Graph.prototype = {
@@ -217,7 +223,11 @@ Graph.prototype = {
         
         return this
     },
-    
+
+    updateInProgress: function() {
+        if (this.inProgress>0) return true
+        return false
+    },
 
     /* constructor for the menu in the top-right corner of the graph
      * 
@@ -1292,6 +1302,10 @@ Graph.prototype = {
             axis = axis
             .transition()
             .duration(speed)
+            .on("start", function(){self.inProgress++}) 
+            .on("end", function(){self.inProgress--}) 
+            .on("interrupt", function(){self.inProgress--}) 
+            .on("cancel", function(){self.inProgress--}) 
         }
         axis
             .attr("x1", function (d) {
@@ -1312,7 +1326,7 @@ Graph.prototype = {
             })
             .attr("class", function (d) {
                 return d.type
-            })
+            });
 
         //legendes
         var label = this.g_text
@@ -1320,6 +1334,10 @@ Graph.prototype = {
             label = label
             .transition()
             .duration(speed)
+            .on("start", function(){self.inProgress++}) 
+            .on("end", function(){self.inProgress--}) 
+            .on("interrupt", function(){self.inProgress--}) 
+            .on("cancel", function(){self.inProgress--}) 
         }
         label
             .text(function (d) {
@@ -1347,7 +1365,7 @@ Graph.prototype = {
             })
             .attr("class", function (d) {
                 return d['class']
-            });
+            })
 
         this.text_container.selectAll("text")
             .on("click", function (d) {
@@ -1393,8 +1411,11 @@ Graph.prototype = {
             selected_clones = selected_clones
             .transition()
             .duration(speed)
+            .on("start", function(){self.inProgress++}) 
+            .on("end", function(){self.inProgress--}) 
+            .on("interrupt", function(){self.inProgress--}) 
+            .on("cancel", function(){self.inProgress--}) 
         }
-
         selected_clones
             .style("fill", "none")
             .style("stroke", function (d) {
@@ -1438,6 +1459,10 @@ Graph.prototype = {
             data = data
             .transition()
             .duration(speed)
+            .on("start", function(){self.inProgress++}) 
+            .on("end", function(){self.inProgress--}) 
+            .on("interrupt", function(){self.inProgress--}) 
+            .on("cancel", function(){self.inProgress--}) 
         }
         data.attr("d", function (p) {
                 var x,y,che;
@@ -1490,11 +1515,15 @@ Graph.prototype = {
             res = res
             .transition()
             .duration(speed)
+            .on("start", function(){self.inProgress++}) 
+            .on("end", function(){self.inProgress--}) 
+            .on("interrupt", function(){self.inProgress--}) 
+            .on("cancel", function(){self.inProgress--}) 
         }
         res  
         .attr("d", function (p) {
                 return p.path
-            })
+            });
             
         return this
     },
