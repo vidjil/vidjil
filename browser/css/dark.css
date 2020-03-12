@@ -1516,6 +1516,9 @@ h3 .uid {
   top: 0px;
   background: #073642;
 }
+.db_fixed_footer {
+  background: #073642;
+}
 .db_help_desc {
   margin-left: 150px;
 }
