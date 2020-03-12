@@ -365,7 +365,6 @@ class TestClones < BrowserTest
     color_select = $b.select(:id => 'color_menu_select')
     color_select.click
     color_v_option = color_select.option(value: 'V')
-    color_v_option.wait_until(&:visible?)
     color_v_option.click
     $b.span(class: 'systemBoxNameMenu').hover
     $b.update_icon.wait_while(&:present?)
