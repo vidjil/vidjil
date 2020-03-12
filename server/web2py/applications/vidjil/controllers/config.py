@@ -40,7 +40,7 @@ def add_form():
     if (not auth.can_create_config()):
         return error_message(ACCESS_DENIED)
 
-    required_fields = ['config_name', 'config_command', 'config_fuse_command', 'config_program']
+    required_fields = ['config_name', 'config_command', 'config_fuse_command', 'config_program', 'config_classification']
     for field in required_fields:
         if request.vars[field] == "" :
             error += field+" needed, "
@@ -51,7 +51,8 @@ def add_form():
                         info=request.vars['config_info'],
                         command=request.vars['config_command'],
                         fuse_command=request.vars['config_fuse_command'],
-                        program=request.vars['config_program']
+                        program=request.vars['config_program'],
+                        classification=request.vars['config_classification']
                         )
 
         user_group = None
@@ -94,7 +95,7 @@ def edit_form():
     if (not auth.can_modify_config(request.vars['id'])):
         error += "ACCESS_DENIED"
 
-    required_fields = ['id', 'config_name', 'config_command', 'config_fuse_command', 'config_program']
+    required_fields = ['id', 'config_name', 'config_command', 'config_fuse_command', 'config_program', 'config_classification']
     for field in required_fields:
         if request.vars[field] == "" :
             error += field+" needed, "
@@ -105,7 +106,8 @@ def edit_form():
                                              info=request.vars['config_info'],
                                              command=request.vars['config_command'],
                                              fuse_command=request.vars['config_fuse_command'],
-                                             program=request.vars['config_program']
+                                             program=request.vars['config_program'],
+                                             classification=request.vars['config_classification']
                                              )
 
         res = {"redirect": "config/index",

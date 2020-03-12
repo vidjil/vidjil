@@ -3,12 +3,15 @@
 {{('message' in globals())}}
 {{if 'message' in globals():}}
 
+
+
 <h3>{{=message}}</h3>
 
 <div id="db_table_container">
     <table class="db_table" id="table">
         <thead>
             <tr><td class="column_50"></td>
+                <td class="column2"> classifiaction </td>
                 <td class="column2"> name </td>
                 <td class="column1"> program </td>
                 <td> command </td>
@@ -25,6 +28,8 @@
        for row in query :}}
             <tr>
                 <td> {{=row.id }} </td>
+                {{ classification = db( (db.classification.id == row.classification) ).select()[0] }}
+                <td title="{{ =classification.info }}"> {{=classification.name }} </td>
                 <td> {{=row.name }} </td>
                 <td> {{=row.program }} </td>
                 <td> {{=row.command }} </td>
