@@ -1019,7 +1019,7 @@ Database.prototype = {
                         xhrFields: {withCredentials: true},
 		        timeout: DB_TIMEOUT_CALL,
 		        success: function (result) {
-		        	self.m.notification.parse_notification(result)
+		        	m.notification.parse_notification(result)
 		            
 		        }, 
 		        error: function (request, status, error) {

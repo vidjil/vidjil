@@ -1145,11 +1145,11 @@ ScatterPlot.prototype = {
         var self = this
         var data = []
         if (Object.values)
-            data = Object.values(this.axisX.labels)
+            data = Object.values(this.axisY.labels)
         else{
-            keys = Object.keys(this.axisX.labels)
+            keys = Object.keys(this.axisY.labels)
             keys.forEach(function (k, i) {
-                data.push(self.axisX.labels[k])
+                data.push(self.axisY.labels[k])
             })
         }
 
