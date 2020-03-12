@@ -300,8 +300,8 @@ code_quality:
 test_server_unit:
     stage: test_unit
     script:
-      - virtualenv $CI_BUILD_REF_SLUG
-      - source $CI_BUILD_REF_SLUG/bin/activate
+      - virtualenv $CI_COMMIT_SHORT_SHA
+      - source $CI_COMMIT_SHORT_SHA/bin/activate
       - pip install -r requirements.txt
       - make -C server install_web2py_standalone
       - make -C server launch_fuse_server
