@@ -203,6 +203,11 @@ db.define_table('config',
                 Field('program', 'string'),
                 Field('command', 'string'),
                 Field('fuse_command', 'string'),
+                Field('info','text'),
+                Field('classification','integer'))
+
+db.define_table('classification',
+                Field('name', 'string'),
                 Field('info','text'))
 
 

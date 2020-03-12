@@ -35,10 +35,14 @@
                                                                   'custom_list' : db.getListInput('custom_result[]'),
                                                                   'id' : '{{='' if request.vars["id"] is None else request.vars["id"]}}' })">
                     <option value="-1" {{if not config :}}selected{{pass}}> --- </option>
-                    {{for row in db((auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.accessible_query(PermissionEnum.admin_config.value, db.config) ) ).select(orderby=~db.config.name) :}}
-                        <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} >
-                            {{=row.name}}
-                        </option>
+                    {{for classification in db( (db.classification)).select(): }}
+                      <optgroup label="{{ =classification.name }}"  title="{{ =classification.info }}">
+                      {{for row in db( (db.config.classification == classification.id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.id) :}}
+                          <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} title="{{=row.info}}" >
+                              {{=row.name}}
+                          </option>
+                      {{pass}}
+                      </optgroup>
                     {{pass}}
                 </select>
             </span>
