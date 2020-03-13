@@ -210,20 +210,7 @@ ScatterPlot.prototype = {
             .attr("id", function(d) {
                 return self.id + "_circle" + d.id;
             })
-            //Attribution de l'activité des cercles (inactif, sélectionné, demande d'info ou autre)
-            .attr("class", function(p) {
-                if (!self.m.clone(p.id)
-                    .isActive()) return "circle_inactive";
-                if (self.m.clone(p.id)
-                    .isSelected()){
-                    if (self.m.clone(p.id)
-                        .isFocus()) return "circle_focus circle_select";
-                    return "circle_select";
-                }
-                if (self.m.clone(p.id)
-                    .isFocus()) return "circle_focus";
-                return "circle";
-            })     
+            .attr("class", "circle_hidden")     
 
     },
 
@@ -267,6 +254,7 @@ ScatterPlot.prototype = {
                 return (self.m.clone(d.id)
                     .getColor());
             })
+            .attr("class", "circle_hidden")     
     },
 
     /**
