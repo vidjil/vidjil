@@ -84,6 +84,12 @@ function ScatterPlot(id, model, database, default_preset) {
     this.axisY = new Axis("J/3' gene")
     this.mode = "grid"
     this.use_system_grid = false
+
+    //flag used to count the number of transition (multiple transition can run at the same time)
+    //increase every time a transition is started
+    //decrease every time a transition is completed
+    //0 means all started transition have been completed
+    this.inProgress = 0
 }
 
 ScatterPlot.prototype = {
@@ -418,10 +424,18 @@ ScatterPlot.prototype = {
                 else return y
             })
             
-            this.bar_container.selectAll("rect")
-            .transition()
-            .duration(speed)
-            .attr("width", function(d) { 
+            var bar = this.bar_container.selectAll("rect")
+            if (speed !== 0){
+                bar = bar
+                .transition()
+                .duration(speed)
+                .on("start", function(){self.inProgress++}) 
+                .on("end", function(){self.inProgress--}) 
+                .on("interrupt", function(){self.inProgress--}) 
+                .on("cancel", function(){self.inProgress--}) 
+            }
+            bar
+             .attr("width", function(d) { 
                 var bar_w = (d.terminate) ? d.old_bar_w : d.bar_w
                 var w = bar_w
                 if (isNaN(w)) return 1
@@ -784,6 +798,11 @@ ScatterPlot.prototype = {
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
+    },
+
+    updateInProgress: function() {
+        if (this.inProgress>0) return true
+        return false
     },
 
     /**
@@ -1383,6 +1402,10 @@ ScatterPlot.prototype = {
         this.bar_container.selectAll("rect")
             .transition()
             .duration(250)
+            .on("start", function(){self.inProgress++}) 
+            .on("end", function(){self.inProgress--}) 
+            .on("interrupt", function(){self.inProgress--}) 
+            .on("cancel", function(){self.inProgress--}) 
             .attr("height", function(d) { return 0 })
 
             setTimeout(function(){
