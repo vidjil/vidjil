@@ -212,6 +212,7 @@ class TestMultilocus < BrowserTest
   end
 
   def test_13_export_fasta
+    $b.unselect
     $b.clone_in_scatterplot('77').click
     $b.clone_in_scatterplot('25').click(:control)
     $b.clone_in_scatterplot('88').click(:control)

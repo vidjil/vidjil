@@ -61,7 +61,7 @@ class TestClones < BrowserTest
     ### change graphical
     $b.clone_in_scatterplot("0").click
     $b.send_keys 4;
-    sleep(3)
+    $b.update_icon.wait_while(&:present?)
     assert (     $b.clone_in_scatterplot('0').present?), ">> 'real' clone exist in sp"
     assert (     $b.clone_in_scatterplot('18').present?), ">> 'corresponding distrib' clone (len=162) exist in sp"
     assert ( not $b.clone_in_scatterplot('29').present?), ">> 'NOT correpsonding distrib' clone DON'T exist in sp"
@@ -123,12 +123,10 @@ class TestClones < BrowserTest
     assert ( not $b.clone_in_segmenter("18").present? ),  ">> not present in segmenter"
     $b.a(:id => "hide_selected").click
     $b.update_icon.wait_while(&:present?)
-    sleep(1)
     assert ( not $b.clone_in_scatterplot('18').present?), ">>distrib clone should be hiden"
 
     $b.clear_filter.click
     $b.update_icon.wait_while(&:present?)
-    sleep(1)# Wait for filtered elements to reach their positions 
   end
 
   def test_03_focus
@@ -138,7 +136,6 @@ class TestClones < BrowserTest
     $b.update_icon.wait_while(&:present?)
     $b.a(:id => "focus_selected").click
     $b.update_icon.wait_while(&:present?)
-    sleep(1)
     # should be hidden
     assert ( not $b.clone_in_scatterplot('17').present?), ">>distrib not focused clone should be hiden"
     assert ( not $b.clone_in_scatterplot('0').present?),  ">>real not focused clone should be hiden"
@@ -233,7 +230,7 @@ class TestClones < BrowserTest
     $b.send_keys :arrow_left
     $b.clone_in_list("0").click # validate
     $b.send_keys 4
-    sleep 1
+    $b.update_icon.wait_while(&:present?)
 
     # test size before focus
     assert ( $b.clone_info("0")[:size].text  == "20.00%"), ">> before focus; clone 0;correct starting size"
@@ -369,7 +366,6 @@ class TestClones < BrowserTest
     $b.send_keys :arrow_down
     $b.send_keys :enter
     $b.update_icon.wait_while(&:present?)
-    sleep(1)
     assert ( $b.clone_info('0')[:name].style('color')  !=  'rgba(101, 123, 131, 1)' ) ,    "real clone should have changed color (diff from grey)"
     assert ( $b.clone_info('16')[:name].style('color').start_with?('rgba(150, 150, 150, 0.65') ) , "other clone shouldn't have changed color"
     assert ( $b.clone_info('18')[:name].style('color').start_with?('rgba(150, 150, 150, 0.65') ) , "distrib clone shouldn't have changed color"
