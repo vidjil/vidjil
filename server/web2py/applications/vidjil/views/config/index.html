@@ -28,8 +28,12 @@
        for row in query :}}
             <tr>
                 <td> {{=row.id }} </td>
-                {{ classification = db( (db.classification.id == row.classification) ).select()[0] }}
-                <td title="{{ =classification.info }}"> {{=classification.name }} </td>
+                {{ classification = db( (db.classification.id == row.classification) ).select() }}
+                {{ if len(classification) != 0: }}
+                    <td title="{{ =classification[0].info }}"> {{=classification[0].name }} </td>
+                {{ else: }}
+                    <td title="not defined">not defined</td>
+                {{ pass}}
                 <td> {{=row.name }} </td>
                 <td> {{=row.program }} </td>
                 <td> {{=row.command }} </td>
