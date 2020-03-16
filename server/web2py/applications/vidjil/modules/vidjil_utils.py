@@ -627,7 +627,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
             command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -U ',
             fuse_command = '-t 100',
             info = 'Same as the default "multi+inc+xxx" (multi-locus, with some incomplete/unusual/unexpected recombinations), and extract analyzed reads in the "out" temporary directory.',
-            classification = "vidjil"
+            classification = 1
         )
         db.config.insert(
             name = 'multi+inc+xxx',
@@ -635,7 +635,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
             command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 ',
             fuse_command = '-t 100',
             info = 'multi-locus, with some incomplete/unusual/unexpected recombinations',
-            classification = "vidjil"
+            classification = 1
         )
         db.config.insert(
             name = 'multi+inc',
@@ -643,7 +643,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
             command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -w 50 ',
             fuse_command = '-t 100',
             info = 'multi-locus, with some incomplete/unusual recombinations',
-            classification = "vidjil"
+            classification = 1
         )
         db.config.insert(
             name = 'multi',
@@ -651,7 +651,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
             command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD -e 1 -d -w 50 ',
             fuse_command = '-t 100',
             info = 'multi-locus, only complete recombinations',
-            classification = "sub_locus"
+            classification = 2
         )
         db.config.insert(
             name = 'TRG',
@@ -659,7 +659,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
             command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:TRG ',
             fuse_command = '-t 100',
             info = 'TRG, VgJg',
-            classification = "sub_locus"
+            classification = 2
         )
         db.config.insert(
             name = 'IGH',
@@ -667,7 +667,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
             command = '-c clones -w 60 -d -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH ',
             fuse_command = '-t 100',
             info = 'IGH, Vh(Dh)Jh',
-            classification = "sub_locus"
+            classification = 2
         )
 
         ### Config classification
