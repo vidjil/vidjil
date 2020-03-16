@@ -1310,7 +1310,6 @@ ScatterPlot.prototype = {
         if (splitX == "tsneX" || splitX == "tsneX_system"){
             this.margin = this.graph_margin;
             if (!this.tsne_ready){
-                console.log("plop")
                 this.tsne_ready=true;
                 this.m.similarity_builder.init(function(){self.changeSplitMethod(splitX, splitY, mode)});
                 return 0;
@@ -1360,11 +1359,14 @@ ScatterPlot.prototype = {
      * */
     endPlot: function() {
         var self = this;
+
+        this.inProgress++
         setTimeout(function(){
             self.node
                 .attr("class", function(p) {
                     return "circle_hidden";
                 })
+                self.inProgress--
         }, 250)
 
         
@@ -1408,12 +1410,14 @@ ScatterPlot.prototype = {
             .on("cancel", function(){self.inProgress--}) 
             .attr("height", function(d) { return 0 })
 
-            setTimeout(function(){
-                self.bar_container.selectAll("rect")
-                    .attr("class", function(p) {
-                        return "circle_hidden";
-                    })
-            }, 250)
+        this.inProgress++
+        setTimeout(function(){
+            self.bar_container.selectAll("rect")
+                .attr("class", function(p) {
+                    return "circle_hidden";
+                })
+            self.inProgress--
+        }, 250)
     },
 
     shouldRefresh: function () {
