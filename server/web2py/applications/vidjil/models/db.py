@@ -197,6 +197,10 @@ db.define_table('sequence_file',
 
 
 
+db.define_table('classification',
+                Field('name', 'string'),
+                Field('info','text'))
+
 
 db.define_table('config',
                 Field('name', 'string'),
@@ -204,11 +208,7 @@ db.define_table('config',
                 Field('command', 'string'),
                 Field('fuse_command', 'string'),
                 Field('info','text'),
-                Field('classification','integer'))
-
-db.define_table('classification',
-                Field('name', 'string'),
-                Field('info','text'))
+                Field('classification', db.classification))
 
 
 db.define_table('results_file',
