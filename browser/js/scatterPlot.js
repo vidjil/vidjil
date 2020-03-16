@@ -1295,6 +1295,10 @@ ScatterPlot.prototype = {
         var self = this;
 
         this.inProgress++
+        setTimeout(function(){
+            self.inProgress--
+        }, 250)
+
         if (!mode && !splitY) mode = "bar"
 
         if (mode == "bar" && mode != this.mode) {
@@ -1353,9 +1357,6 @@ ScatterPlot.prototype = {
             this.m.graph.setOtherVisibility(this.otherVisibility)
         }
 
-        setTimeout(function(){
-            self.inProgress--
-        }, 250)
     },
 
     /** 
