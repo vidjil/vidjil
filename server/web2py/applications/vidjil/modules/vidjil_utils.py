@@ -619,6 +619,30 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         db.auth_membership.insert(user_id=id_first_user, group_id=id_sa_group)
         db.auth_membership.insert(user_id=id_first_user, group_id=id_public_group)
 
+
+        ### Base config classification
+        db.classification.insert(
+            name = 'Vidjil-algo',
+            info = 'Vidjil-algo'
+        )
+        db.classification.insert(
+            name = 'Sub groups',
+            info = 'Sub groups'
+        )
+        db.classification.insert(
+            name = 'Other germlines',
+            info = 'Other germlines'
+        )
+        db.classification.insert(
+            name = 'Other species',
+            info = 'Other species'
+        )
+        db.classification.insert(
+            name = 'Experimentals',
+            info = 'Experimentals'
+        )
+
+
         ## base Vidjil configs
 
         db.config.insert(
@@ -668,28 +692,6 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
             fuse_command = '-t 100',
             info = 'IGH, Vh(Dh)Jh',
             classification = 2
-        )
-
-        ### Config classification
-        db.classification.insert(
-            name = 'Vidjil-algo',
-            info = 'Vidjil-algo'
-        )
-        db.classification.insert(
-            name = 'Sub groups',
-            info = 'Sub groups'
-        )
-        db.classification.insert(
-            name = 'Other germlines',
-            info = 'Other germlines'
-        )
-        db.classification.insert(
-            name = 'Other species',
-            info = 'Other species'
-        )
-        db.classification.insert(
-            name = 'Experimentals',
-            info = 'Experimentals'
         )
 
         ## permission
