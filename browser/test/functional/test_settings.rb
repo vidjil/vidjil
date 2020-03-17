@@ -81,6 +81,7 @@ class TestGraph < BrowserTest
 
   def test_name_values(type_name)
     # By default, 2 samples are present in timeline graph
+    print "\nTest for: " + type_name
     time0 = $b.graph_x_legend("0")
     time1 = $b.graph_x_legend("1")
     list0 = $b.td(:id => 'visu2_listElem_text_0' )
