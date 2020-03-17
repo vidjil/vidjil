@@ -29,8 +29,10 @@
  * */
 function Shortcut (model) {
     this.m = model
+    View.call(this, model)
     this.init()
     this.on = true
+    this.inProgress = 0
 }
 
 var NB_CLONES_CHANGE = 10;
@@ -56,7 +58,11 @@ Shortcut.prototype = {
         document.onkeydown = function (e) { self.checkKey(e); }
         document.onkeyup = function (e) { self.m.sp.active_move = false; }
     },
-    
+
+    updateInProgress: function() {
+        if (this.inProgress>0) return true
+        return false
+    },
     
     /**
      * called each time a key is pressed <br>
@@ -64,6 +70,13 @@ Shortcut.prototype = {
      * @param {event} e - onkeydown event
      * */
     checkKey : function (e) {
+        var self = this
+
+        this.inProgress++
+        setTimeout(function(){
+            self.inProgress--
+        }, 500)
+
         if (!this.on)
             return ;
 
@@ -206,3 +219,4 @@ Shortcut.prototype = {
         }
     }
 }
+Shortcut.prototype = $.extend(Object.create(View.prototype), Shortcut.prototype)
