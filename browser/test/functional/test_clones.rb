@@ -162,17 +162,17 @@ class TestClones < BrowserTest
     
     # controle name
     clone_name = $b.clone_info('18')[:name]
-    assert ( clone_name.text == "162 (2 clones)" ), ">>name of distrib clone for time 0"
+    assert ( clone_name.text == "162 (2 clones)" ), ">>name of distrib clone for time 0 expected 162 (2 clones), was %s" % clone_name.text
     
     $b.send_keys :arrow_right
     $b.update_icon.wait_while(&:present?)
     clone_name = $b.clone_info('18')[:name]
-    assert ( clone_name.text == "162 (0 clone)" ), ">>name of distrib clone for time 1"
+    assert ( clone_name.text == "162 (0 clone)" ), ">>name of distrib clone for time 1 expected 162 (0 clone), was %s" % clone_name.text
     
     $b.send_keys :arrow_right
     $b.update_icon.wait_while(&:present?)
     clone_name = $b.clone_info('18')[:name]
-    assert ( clone_name.text == "162 (7 clones)" ), ">>name of distrib clone for time 2"
+    assert ( clone_name.text == "162 (7 clones)" ), ">>name of distrib clone for time 2 expected 162 (7 clones), was %s" % clone_name.text
     
     ### Tests on size after top change
     # return to time 0
