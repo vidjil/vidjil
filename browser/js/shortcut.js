@@ -111,7 +111,6 @@ Shortcut.prototype = {
         if (! e.ctrlKey && ! e.metaKey &&
             typeof this.system_shortcuts[key] != "undefined") {
 
-            var self = this
             var germlines = this.system_shortcuts[key].filter(function(g) {return self.m.system_available.indexOf(g) != -1})
             if (germlines.length === 0)
                 return
