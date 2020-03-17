@@ -398,6 +398,28 @@ deploy_review:
   tags:
     - web
 
+deploy_review_server:
+  stage: deploy_review
+  script:
+    - mkdir -p "/opt/vidjil_$CI_BUILD_REF_SLUG/databases" 
+    - mv docker docker_${CI_BUILD_REF_SLUG}
+    - cd docker_${CI_BUILD_REF_SLUG}
+    - awk 's{if(/\s*-\s*"[^"]*"/) next; else s=0} /ports:/{s=1; next}1' docker-compose.yml > /tmp/docker-compose-tmp
+    - awk -f volumes.awk /tmp/docker-compose-tmp > /tmp/docker-compose-tmp-2
+    - awk -f nginx.awk /tmp/docker-compose-tmp-2 > /tmp/docker-compose-tmp-3
+    - awk 's{next} /backup:/{s=1; next}1'  /tmp/docker-compose-tmp-3 > docker-compose.yml
+    - cp ${VIDJIL_CERTS_PATH}/web2py.key ${VIDJIL_CERTS_PATH}/${CI_BUILD_REF_SLUG}.ci.vidjil.org.key
+    - cp ${VIDJIL_CERTS_PATH}/web2py.info ${VIDJIL_CERTS_PATH}/${CI_BUILD_REF_SLUG}.ci.vidjil.org.info
+    - cp ${VIDJIL_CERTS_PATH}/web2py.crt ${VIDJIL_CERTS_PATH}/${CI_BUILD_REF_SLUG}.ci.vidjil.org.crt
+    - docker-compose up -d
+  environment:
+    name: review_server/$CI_BUILD_REF_NAME
+    url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
+    on_stop: stop_deploy_review_server
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+
 deploy_docker:
   stage: deploy_prod
   script:
@@ -466,3 +488,15 @@ stop_deploy_review:
     - /^hotfix-.*c.*\/.*$/
   tags:
     - web
+
+stop_deploy_review_server:
+  stage: deploy_review
+  script:
+    - ssh $REVIEW_SERVER "docker-compose -f $REVIEW_SERVER_PATH$CI_BUILD_REF_SLUG/docker_$CI_BUILD_REF_SLUG/docker-compose.yml down ; rm -rf $REVIEW_SERVER_PATH$CI_BUILD_REF_SLUG"
+  when: manual
+  environment:
+    name: review_server/$CI_BUILD_REF_NAME
+    action: stop
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
