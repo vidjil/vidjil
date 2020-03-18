@@ -5,7 +5,9 @@ BEGIN{
 }
 s{
   printf "            "
-  print "- /opt/vidjil_" slug "/databases/:/usr/share/vidjil/server/web2py/applications/vidjil/databases"
+  print "- ../browser:/usr/share/vidjil/browser"
+  printf "            "
+  print "- ../server/web2py/applications/vidjil:/usr/share/vidjil/server/web2py/applications/vidjil"
   s=0
 }
 

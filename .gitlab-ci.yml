@@ -401,13 +401,21 @@ deploy_review:
 deploy_review_server:
   stage: deploy_review
   script:
-    - mkdir -p "/opt/vidjil_$CI_BUILD_REF_SLUG/databases" 
+    - make -C browser icons
+    - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
+    - cp ./docker/vidjil-server/conf/defs.py ./server/web2py/applications/vidjil/modules/defs.py
+    - chown -R www-data: ./server/web2py/applications/vidjil
     - mv docker docker_${CI_BUILD_REF_SLUG}
     - cd docker_${CI_BUILD_REF_SLUG}
     - awk 's{if(/\s*-\s*"[^"]*"/) next; else s=0} /ports:/{s=1; next}1' docker-compose.yml > /tmp/docker-compose-tmp
     - awk -f volumes.awk /tmp/docker-compose-tmp > /tmp/docker-compose-tmp-2
     - awk -f nginx.awk /tmp/docker-compose-tmp-2 > /tmp/docker-compose-tmp-3
-    - awk 's{next} /backup:/{s=1; next}1'  /tmp/docker-compose-tmp-3 > docker-compose.yml
+    - awk -f network.awk /tmp/docker-compose-tmp-3 > /tmp/docker-compose-tmp-4
+    - awk 's{next} /backup:/{s=1; next}1'  /tmp/docker-compose-tmp-4 > docker-compose.yml
+    - mkdir ./vidjil-client/ssl
+    - cp ${VIDJIL_CERTS_PATH}/web2py.key vidjil-client/ssl/web2py.key
+    - cp ${VIDJIL_CERTS_PATH}/web2py.info vidjil-client/ssl/web2py.info
+    - cp ${VIDJIL_CERTS_PATH}/web2py.crt vidjil-client/ssl/web2py.crt
     - cp ${VIDJIL_CERTS_PATH}/web2py.key ${VIDJIL_CERTS_PATH}/${CI_BUILD_REF_SLUG}.ci.vidjil.org.key
     - cp ${VIDJIL_CERTS_PATH}/web2py.info ${VIDJIL_CERTS_PATH}/${CI_BUILD_REF_SLUG}.ci.vidjil.org.info
     - cp ${VIDJIL_CERTS_PATH}/web2py.crt ${VIDJIL_CERTS_PATH}/${CI_BUILD_REF_SLUG}.ci.vidjil.org.crt
