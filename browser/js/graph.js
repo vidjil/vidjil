@@ -581,9 +581,17 @@ Graph.prototype = {
         if (clone.top > self.display_limit)return ' M 0,' + self.resizeH;
 
         var size = []
+        var selected_point       = this.m.t
+        var value_selected_point = this.m.clone(id).getSize(selected_point)
+
         for (var i = 0; i < this.graph_col.length; i++) {
-            if (seq_size) size[i] = this.m.clone(id).getSequenceSize(this.m.samples.order[i])
-            else          size[i] = this.m.clone(id).getSize(this.m.samples.order[i])
+            // bypass clone size if it is not present in the current timepoint; TODO, add a switch on this behavior
+            if (this.m.show_only_one_sample && value_selected_point == 0) {
+                size[i] = 0
+            } else {
+                if (seq_size) size[i] = this.m.clone(id).getSequenceSize(this.m.samples.order[i])
+                else          size[i] = this.m.clone(id).getSize(this.m.samples.order[i])
+            }
         }
 
         var x = this.graph_col[0];

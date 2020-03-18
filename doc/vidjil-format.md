@@ -156,6 +156,14 @@ do a correct gathering.
               {
                   "cdr3": {"start": 10, "stop": 20}
               }
+        },
+        {
+            "id": "clone5",
+            "name": "clone_showOnlyOneSample",
+            "sequence": "GATACAaaaaaccccc",
+            "reads": [ 1021, 0 ],
+            "germline": "TRG",
+            "top": 5
         }
     ]
 }

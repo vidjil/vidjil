@@ -576,7 +576,7 @@ line {
   font-weight: bold;
 }
 .list_sort {
-  margin-right: 30px;
+  margin-right: 20px;
   float: right;
 }
 /*style segmenter element*/
@@ -2258,4 +2258,10 @@ form .form_label {
   pointer-events: none;
   opacity: 0.4;
   cursor: auto;
+}
+.list_lock_off {
+  color: #333333;
+}
+.list_lock_on {
+  color: #839496;
 }
