@@ -57,11 +57,21 @@ Shortcut.prototype = {
         
         document.onkeydown = function (e) { self.checkKey(e); }
         document.onkeyup = function (e) { self.m.sp.active_move = false; }
+        document.onmousedown = function (e) { self.checkMouse(e); }
     },
 
     updateInProgress: function() {
         if (this.inProgress>0) return true
         return false
+    },
+
+    checkMouse : function (e) {
+        var self = this
+
+        this.inProgress++
+        setTimeout(function(){
+            self.inProgress--
+        }, 500)
     },
     
     /**
