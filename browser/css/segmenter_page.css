@@ -2264,6 +2264,12 @@ form .form_label {
   opacity: 0.4;
   cursor: auto;
 }
+.list_lock_off {
+  color: #cccccc;
+}
+.list_lock_on {
+  color: #657b83;
+}
 body {
   line-height: 20px;
 }

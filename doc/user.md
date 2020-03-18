@@ -169,6 +169,10 @@ The number of displayed clones can be changed with the filter menu.
 
   - If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between sample keys and dates in “settings \> sample key”
 
+  - By default, the graph shows clones present in any sample.
+    You can instead choose to show only the clones present in the selected sample with “filter \> focus on clones of one sample“.
+
+
 ## The plot view and the plot presets
 
 The grid view shows the clones scattered according to some axes.
@@ -394,8 +398,7 @@ sequence.
 The productivitiy as computed by Vidjil-algo may differ from what computes
 other software. For instance, as of September 2019, IMGT/V-QUEST removes by default
 insertions and deletions from the sequences to compute the productivity, as it
-considers them as sequencing errors. Moreover IMGT/V-QUEST checks that there
-is no stop codon only in the CDR3 and not in the full sequence.
+considers them as sequencing errors.
 # Can I see all the clones and all the reads ?
 
 The interest of NGS/RepSeq studies is to provide a deep view of any

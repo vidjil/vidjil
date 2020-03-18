@@ -55,6 +55,7 @@ test_germlines:
 
 include:
   - local: '/doc/.gitlab-ci.yml'
+  - local: 'algo/.gitlab-ci-compilers.yml' # Stage multiple_tests
 
 # Algorithm
 
@@ -176,33 +177,6 @@ deploy_release_prod:
           tar xvzf vidjil-algo-${release_name}.tar.gz;\
           make -C vidjil-algo-${release_name};\
           ln -sfT vidjil-algo-${release_name} next"
-
-.testing-compilers: &test_various_compilers
-  stage: multiple_tests
-  tags:
-    - several-compilers
-  script:
-    - |
-      for CXX in $COMPILERS; do
-        echo "**** Using $CXX for compilation ****"
-        make -C algo clean
-        make -C algo CXX=$CXX unit
-        make -C algo CXX=$CXX should
-        make -C algo CXX=$CXX valgrind_unit
-      done
-
-test_various_compilers_manual:
-  <<: *test_various_compilers
-  when: manual
-  only:
-    - /^feature-.*a.*\/.*$/
-    - schedules
-
-test_various_compilers_release:
-  <<: *test_various_compilers
-  only:
-    - /^feature-.*a.*\/release$/
-
 
 # Client
 

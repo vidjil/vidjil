@@ -160,6 +160,14 @@ do a correct gathering.
               {
                   "cdr3": {"start": 10, "stop": 20}
               }
+        },
+        {
+            "id": "clone5",
+            "name": "clone_showOnlyOneSample",
+            "sequence": "GATACAaaaaaccccc",
+            "reads": [ 1021, 0 ],
+            "germline": "TRG",
+            "top": 5
         }
     ]
 }
@@ -214,6 +222,12 @@ some clones, and added external data (`data`).
               {
                   "cdr3": {"start": 50, "stop": 60}
               }
+        },
+        {
+            "id": "seqedited_new_locus",
+            "segEdited": true,
+            "germline": "IGH+",
+            "name": "clone_with_new_locus"
         }
 
     ],
