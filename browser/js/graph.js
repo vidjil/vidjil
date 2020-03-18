@@ -1063,6 +1063,8 @@ Graph.prototype = {
             time_name = this.m.getStrTime(l);
             if (time_name.length > maxchar+3) time_name = time_name.substring(0,maxchar)+" ..."
             if (l == this.m.t) time_name = this.m.getStrTime(l);
+            // If focus on this sample only (todo: #4221; add an search icon, hard with d3js)
+            if (this.m.show_only_one_sample && l == this.m.t) time_name += " *"
 
             d.type = "axis_v";
             d.text = time_name;
