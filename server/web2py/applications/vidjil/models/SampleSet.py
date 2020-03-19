@@ -50,7 +50,7 @@ class SampleSet(object):
             if conf['fused_file'] is not None :
                 configs.append(
                     str(A(conf['name'],
-                        _href="browser/index.html?sample_set_id=%d&config=%d" % (data['sample_set_id'], conf['id']), _type="text/html",
+                        _href=request.env['HTTP_ORIGIN'] + "/" + defs.BROWSER_PATH + "?sample_set_id=%d&config=%d" % (data['sample_set_id'], conf['id']), _type="text/html",
                         _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %d }, '%s' ); }" % (data['sample_set_id'], conf['id'], filename))))
             else:
                 configs.append(conf['name'])
