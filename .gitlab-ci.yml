@@ -404,7 +404,7 @@ deploy_review_server:
     - make -C browser icons
     - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
     - cp ./docker/vidjil-server/conf/defs.py ./server/web2py/applications/vidjil/modules/defs.py
-    - chown -R www-data: ./server/web2py/applications/vidjil
+    - chown -R www-data:www-data ./server/web2py/applications/vidjil
     - mv docker docker_${CI_BUILD_REF_SLUG}
     - cd docker_${CI_BUILD_REF_SLUG}
     - awk 's{if(/\s*-\s*"[^"]*"/) next; else s=0} /ports:/{s=1; next}1' docker-compose.yml > /tmp/docker-compose-tmp
