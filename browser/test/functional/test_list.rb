@@ -20,34 +20,37 @@ class TestList < BrowserTest
   end
   
   def test_00_list_clones
-    sleep 1
+    $b.update_icon.wait_while(&:present?)
+    # declare variables
+    $lock      = $b.listLock()
+    $listClone = $b.list()
+
     # tester la presence du lock
-    lock = $b.listLock()
-    assert ( lock.attribute_value("class") == "icon-lock-1 list_lock_on"), "lock start in good state (locked)"
+    assert ( $lock.attribute_value("class") == "icon-lock-1 list_lock_on"), "lock start in good state (locked)"
+    assert ( $lock.attribute_value("title") == "Release sort as 'size' on sample diag"), "lock title start by showing 'release xxx'"
 
     # tester l'ordre des clones
-    listClone = $b.list()  
-    l0 = listClone.div(index: 0)
+    l0 = $listClone.div(index: 0)
     assert ( l0.id == "listElem_0" ), "opening; correct id of the first element"
   end
 
 
   def test_01_xxx
-    # cahnger de sample, verifier que l'ordre est rester le meme
+    # Change sample (-> fu1); order should still the same
     $b.send_keys :arrow_right
-    listClone = $b.list()  
-    l0 = listClone.div(index: 0)
+    l0 = $listClone.div(index: 0)
     assert ( l0.id == "listElem_0" ), "opening; correct id of the first element"
+    assert ( $lock.attribute_value("title") == "Release sort as 'size' on sample diag"), "lock title still showsame message"
+    $b.screenshot.save 'screenshot.png'
   end
 
   def test_02_xxx
-    # Enlever le lock
-    lock = $b.listLock()
-    lock.click
-    assert ( lock.attribute_value("class") == "icon-lock-open list_lock_off"), "lock in good state after click (unlocked)"
-    # verifier que l'ordre a déjà changer (automatique sort)
-    listClone = $b.list()  
-    l0 = listClone.div(index: 0)
+    # Lock off
+    $lock.click
+    assert ( $lock.attribute_value("class") == "icon-lock-open list_lock_off"), "lock in good state after click (unlocked)"
+    assert ( $lock.attribute_value("title") == "Freeze list as 'size' on sample fu1"), "lock title show correct effet if click in icon (freeze, size, fu1)"
+    # Clone order should have changed (automatic sort)
+    l0 = $listClone.div(index: 0)
     assert ( l0.id == "listElem_5" ), "opening; correct id of the first element (clone other)"
     
   end
@@ -55,47 +58,48 @@ class TestList < BrowserTest
 
   def test_03_xxx
     
-    # changer de sample
+    # Change sample (-> diag)
     $b.send_keys :arrow_right
-    sleep 0.1
-    # verifier que l'ordre est redevenu celui du cas 1
-    listClone = $b.list()  
-    l0 = listClone.div(index: 0)
+    $b.update_icon.wait_while(&:present?)
+    # clone order
+    l0 = $listClone.div(index: 0)
     assert ( l0.id == "listElem_0" ), "opening; correct id of the first element"
+    assert ( $lock.attribute_value("title") == "Freeze list as 'size' on sample diag"), "lock title show correct effet if click in icon (freeze, size, diag)"
     
   end
 
 
   def test_04_xxx
-    # verouiller de nouveau
-    lock = $b.listLock()
-    lock.click
-    assert ( lock.attribute_value("class") == "icon-lock-1 list_lock_on"), "lock in good state after second click (locked)"
-    # changer de sample
+    # Lock again
+    $lock.click
+    $b.update_icon.wait_while(&:present?)
+    assert ( $lock.attribute_value("class") == "icon-lock-1 list_lock_on"), "lock in good state after second click (locked)"
+    assert ( $lock.attribute_value("title") == "Release sort as 'size' on sample diag"), "lock title showing 'release ...'size' ... diag'"
+    # Change sample (-> fu1)
     $b.send_keys :arrow_right
-    sleep 0.1
-    # verifier que l'ordre est rester le cas 1
-    listClone = $b.list()  
-    l0 = listClone.div(index: 0)
+    $b.update_icon.wait_while(&:present?)
+    assert ( $lock.attribute_value("title") == "Release sort as 'size' on sample diag"), "lock title showing 'release ...'size' ... diag'"
+
+    # Clone order should be as in case 1
+    l0 = $listClone.div(index: 0)
     assert ( l0.id == "listElem_0" ), "opening; correct id of the first element"
     
   end
 
   def test_05_xxx
-  #   # tester de changer la valeur de la methode (size => V/5')
+    # Change sort method (size => V/5')
     $b.select(:id => 'list_sort_select').click
     $b.send_keys :arrow_down
     $b.send_keys :arrow_down
     $b.send_keys :enter
-    sleep 0.1
+    $b.update_icon.wait_while(&:present?)
 
-    lock = $b.listLock()
-    # verifier que le lock est bien levé
-    assert ( lock.attribute_value("class") == "icon-lock-1 list_lock_on"), "lock in good state after change of sort method (locked)"
-    # voir qu'il y a bien une reorganisation de la liste
+    # Lock should be open
+    assert ( $lock.attribute_value("class") == "icon-lock-1 list_lock_on"), "lock in good state after change of sort method (locked)"
+    assert ( $lock.attribute_value("title") == "Release sort as 'V/5'' on sample fu1"), "lock title showing 'release ...'V/5'' ... diag'"
     
-    listClone = $b.list()  
-    l0 = listClone.div(index: 0)
+    # clone list should be cha
+    l0 = $listClone.div(index: 0)
     assert ( l0.id == "listElem_0" ), "opening; correct id of the first element"
     
   end
