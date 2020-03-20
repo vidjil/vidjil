@@ -152,13 +152,6 @@ ul {
   flex: auto;
   width: 100%;
 }
-#visu-placeholder {
-  height: 100%;
-  display: flex;
-  flex: auto;
-  width: 100%;
-  background: linear-gradient(to top left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) calc(50% - 0.8px), #000000 50%, rgba(0, 0, 0, 0) calc(50% + 0.8px), rgba(0, 0, 0, 0) 100%), linear-gradient(to top right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) calc(50% - 0.8px), #000000 50%, rgba(0, 0, 0, 0) calc(50% + 0.8px), rgba(0, 0, 0, 0) 100%);
-}
 #visu2 {
   max-height: calc(100% - 6px);
 }
