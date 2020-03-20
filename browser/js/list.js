@@ -54,7 +54,7 @@ function List(id_list, id_data, model, database) {
         "J/3'" : function(){self.sortListByJ()}
     }
 
-    this.sort_option_selected = "size"; // Store the selected sort method
+    this.sort_option_selected = "-"; // Store the selected sort method
     this.selectedAxis = {};
 }
 
