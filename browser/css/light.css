@@ -577,7 +577,7 @@ line {
   font-weight: bold;
 }
 .list_sort {
-  margin-right: 30px;
+  margin-right: 20px;
   float: right;
 }
 /*style segmenter element*/
@@ -1502,7 +1502,7 @@ h3 .uid {
 #db_table_container {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: calc(100% -30px);
+  height: calc(100% - 30px);
   position: relative;
 }
 #db_fixed_header {
@@ -2259,4 +2259,10 @@ form .form_label {
   pointer-events: none;
   opacity: 0.4;
   cursor: auto;
+}
+.list_lock_off {
+  color: #cccccc;
+}
+.list_lock_on {
+  color: #657b83;
 }
