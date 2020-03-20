@@ -1127,7 +1127,7 @@ class ListWindows(VidjilJson):
         return obj_dict
         
     def save_airr(self, output):
-        """ 
+        """
         Create an export of content into AIRR file
         Columns is hardcoded for the moment.
         TODO: add some options to give more flexibility to cols
