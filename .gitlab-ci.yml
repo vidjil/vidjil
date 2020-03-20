@@ -420,6 +420,7 @@ deploy_review_server:
     - cp ${VIDJIL_CERTS_PATH}/web2py.key ${VIDJIL_CERTS_PATH}/${CI_BUILD_REF_SLUG}.ci.vidjil.org.key
     - cp ${VIDJIL_CERTS_PATH}/web2py.info ${VIDJIL_CERTS_PATH}/${CI_BUILD_REF_SLUG}.ci.vidjil.org.info
     - cp ${VIDJIL_CERTS_PATH}/web2py.crt ${VIDJIL_CERTS_PATH}/${CI_BUILD_REF_SLUG}.ci.vidjil.org.crt
+    - sed -i -r "s/WEB2PY_ADMIN_PASSWORD=''/WEB2PY_ADMIN_PASSWORD='Sup3rSecr47'/" ./docker/docker-compose.yml
     - docker-compose up -d
   environment:
     name: review_server/$CI_BUILD_REF_NAME
