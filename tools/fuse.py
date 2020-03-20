@@ -797,7 +797,7 @@ class ListWindows(VidjilJson):
         others = OtherWindows(nb_points)
 
         for clone in self:
-            if (int(clone.d["top"]) < limit or limit == 0) :
+            if (int(clone.d["top"]) <= limit or limit == 0) :
                 w.append(clone)
             #else:
                 #others += clone

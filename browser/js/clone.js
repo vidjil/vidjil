@@ -1333,9 +1333,12 @@ Clone.prototype = {
         if (isCluster) {
             html += header("clone")
             html += row_1("clone name", this.getName())
-            html += row_1("clone short name", this.getShortName())
-
-            html += "<tr><td>clone size (n-reads (total reads))"
+            if (this.hasSizeConstant()){
+                html += row_1("clone short name", this.getShortName())
+                html += "<tr><td>clone size (n-reads (total reads))"
+            } else if (this.hasSizeDistrib()) {
+                html += "<tr><td title='Current size; depending of the number of clones curently not filtered'>current clone size<br/>(n-reads (total reads))"
+            }
             if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL) {
                 html += "<br />[normalized]"
             }
@@ -1346,7 +1349,7 @@ Clone.prototype = {
                 if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL) {
                   html += "<br />[" + this.getReads(this.m.samples.order[j]).toFixed(2) + "]"
                 }
-                if (typeof this.m.db_key.config != 'undefined' ) {
+                if (typeof this.m.db_key.config != 'undefined' && this.hasSizeConstant()) {
                     html += "&emsp;"
                     var sample_set_id = this.m.samples.sequence_file_id[this.m.samples.order[j]];
                     call_reads = "db.get_read('" + this.id + "', "+ this.index +", " + sample_set_id + ')';
@@ -1390,13 +1393,21 @@ Clone.prototype = {
         }
 
         // abundance info
-        html += "<tr><td>size (n-reads (total reads))</td>"
+        if (this.hasSizeConstant()) {
+            html += "<tr><td>size (n-reads (total reads))</td>"
+        } else {
+            html += "<tr><td>total clones size<br/>(n-reads (total reads))</td>"
+        }
         for (var l = 0; l < time_length; l++) {
             html += "<td>" + this.get('reads',this.m.samples.order[l]) + 
                     "  (" + this.m.reads.segmented[this.m.samples.order[l]] + ")</td>"
         }
         html += "</tr>"
-        html += "<tr><td>size (%)</td>"
+        if (this.hasSizeConstant()) {
+            html += "<tr><td>size (%)</td>"
+        } else {
+            html += "<tr><td>total size (%)</td>"
+        }
         for (var m = 0; m < time_length; m++) {
             html += "<td>" + this.getStrSequenceSize(this.m.samples.order[m]) + "</td>"
         }
@@ -1404,9 +1415,13 @@ Clone.prototype = {
 
         
         //segmentation info
-        html += header("segmentation" +
+        if (this.hasSizeConstant()) {
+            html += header("segmentation" +
                 " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>edit</button>" + //Use to hide/display lists 
                 this.getHTMLModifState()) // icon if manual changement
+        } else {
+            html += header("segmentation")
+        }
 
         if (typeof this.stats != 'undefined'){
             var total_stat = [];
