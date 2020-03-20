@@ -3,11 +3,11 @@
 $ check original name (not present)
 0: "../data/demo_multiple.vidjil"
 $ check number of occurence of file_1 (present in 4 clones)
-r4: file_1
+r5: file_1
 $ check number of occurence of file_2 (present in 3 clones)
-r3:  file_2
+r4:  file_2
 $ check number of occurence of file_3 (present in 4 clones)
-r4: file_3
+r5: file_3
 
 
 
