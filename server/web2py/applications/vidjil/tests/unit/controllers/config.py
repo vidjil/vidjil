@@ -61,6 +61,9 @@ class ConfigController(unittest.TestCase):
     
     
     def test2AddForm1(self):
+        # Add a testing classification
+        db.classification.insert(name="test_class", info="test_class_info")
+
         #test valid request
         request.vars['config_name'] = test_config_name
         request.vars['config_info'] = " plop"
@@ -85,6 +88,7 @@ class ConfigController(unittest.TestCase):
         request.vars["id"] = id_config
         request.vars['config_name'] = test_config_name
         request.vars['config_info'] = "plup"
+        request.vars['config_classification'] = 1
         
         resp = edit_form()
         self.assertTrue( db.config[id_config].info == "plup" , "fail to edit config info")
