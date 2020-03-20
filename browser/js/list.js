@@ -386,6 +386,7 @@ List.prototype = {
         } else {
             if (this.current_sample != this.m.t) {
                 document.getElementById("list_sort_select").selectedIndex = 0;
+                this.sort_option_selected = "-"
             }
         }
     },
