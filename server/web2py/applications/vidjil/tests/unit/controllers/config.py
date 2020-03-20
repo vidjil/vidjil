@@ -67,6 +67,7 @@ class ConfigController(unittest.TestCase):
         request.vars['config_command'] = " -plop"
         request.vars['config_fuse_command'] = " -plop"
         request.vars['config_program'] = " plop.cpp"
+        request.vars['config_classification'] = 1
         
         resp = add_form()
         self.assertTrue( len(db( db.config.name == test_config_name ).select()) == 1 , "fail to insert a new config") 

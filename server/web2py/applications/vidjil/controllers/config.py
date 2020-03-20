@@ -40,10 +40,16 @@ def add_form():
     if (not auth.can_create_config()):
         return error_message(ACCESS_DENIED)
 
-    required_fields = ['config_name', 'config_command', 'config_fuse_command', 'config_program', 'config_classification']
+    required_fields = ['config_name', 'config_command', 'config_fuse_command', 'config_program']
     for field in required_fields:
         if request.vars[field] == "" :
             error += field+" needed, "
+
+    ## test if classification id exist
+    classification = db(db.classification.id ==  request.vars["config_classification"]).select()
+    if len(classification) == 0:
+        error += "classification id don't exist, "
+
 
     if error=="" :
         
@@ -95,10 +101,15 @@ def edit_form():
     if (not auth.can_modify_config(request.vars['id'])):
         error += "ACCESS_DENIED"
 
-    required_fields = ['id', 'config_name', 'config_command', 'config_fuse_command', 'config_program', 'config_classification']
+    required_fields = ['id', 'config_name', 'config_command', 'config_fuse_command', 'config_program']
     for field in required_fields:
         if request.vars[field] == "" :
             error += field+" needed, "
+    
+    ## test if classification id exist
+    classification = db(db.classification.id ==  request.vars["config_classification"]).select()
+    if len(classification) == 0:
+        error += "classification id don't exist, "
 
     if error=="" :
 
