@@ -271,7 +271,9 @@ vector<Info> PointerACAutomaton<Info>::getResults(const seqtype &seq, bool no_re
   for (size_t i = 0; i < seq_len; i++) {
     current_state = (pointer_state<Info> *)next(current_state, seq[i]);
     Info info = current_state->informations.front();
-    result[i - info.getLength()+1] = info;
+    if (! info.isNull()) {
+      result[i - info.getLength()+1] = info;
+    }
   }
 
   return result;
