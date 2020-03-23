@@ -135,8 +135,10 @@ void PointerACAutomaton<Info>::build_failure_functions() {
     q.pop();
     current_state = couple.first;
     pointer_state<Info> *failed_state = couple.second;
-    if (failed_state->is_final)
+    if (failed_state->is_final) {
       current_state->is_final = true;
+      current_state->informations = failed_state->informations;
+    }
     for (size_t i = 0; i < NB_TRANSITIONS; i++) {
       if (current_state->transitions[i] != NULL) {
         q.push(pair<pointer_state<Info>*, pointer_state<Info>*>(current_state->transitions[i],

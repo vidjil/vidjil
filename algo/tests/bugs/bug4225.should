@@ -1,0 +1,5 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline -r 1 -1 -2 -K bug4225-j.fa
+!OUTPUT_FILE: out/bug4225-j.affects
+
+$ Find only +k and ? affects before the stretch of _ for all loci
+16: seed .*(\+k| \?){28}( _)+$
