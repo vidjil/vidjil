@@ -137,7 +137,16 @@ void PointerACAutomaton<Info>::build_failure_functions() {
     pointer_state<Info> *failed_state = couple.second;
     if (failed_state->is_final) {
       current_state->is_final = true;
-      current_state->informations = failed_state->informations;
+      if (! current_state->informations.front().isNull()) {
+        if (! this->multiple_info)
+          current_state->informations.front() += failed_state->informations.front();
+        else
+          current_state->informations.insert(current_state->informations.end(),
+                                             failed_state->informations.begin(),
+                                             failed_state->informations.end());
+      } else {
+        current_state->informations = failed_state->informations;
+      }
     }
     for (size_t i = 0; i < NB_TRANSITIONS; i++) {
       if (current_state->transitions[i] != NULL) {
