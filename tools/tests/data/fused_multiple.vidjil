@@ -85,7 +85,14 @@
         }
       },
       "sequence": "AGGGGTATTGTGGATGGCAGCGGGTGGTGATGGCAAAGTGCCAAGGAAAGGGAAAAAGGAAGAAGAGGGTTTTTATACTGATGTGTTTCATTGTGCACAGTGCTACAAAACCTACAGAGACCTGTACAAAAACTGCAGGGGCAAAAGTGCCATTTCCCTGGG",
-      "top": 1
+      "top": 1,
+      "warn": [
+        {
+          "code": "W69",
+          "level": "warn",
+          "msg": "Several genes with equal probability: TRBD2*01 TRBD2*02"
+        }
+      ]
     },
     {
       "reads": [
