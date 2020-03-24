@@ -277,11 +277,23 @@ vector<Info> PointerACAutomaton<Info>::getResults(const seqtype &seq, bool no_re
   size_t seq_len = seq.length();
   vector<Info> result(seq.length());
 
+  unsigned char previous_length = 0;
+  
   for (size_t i = 0; i < seq_len; i++) {
     current_state = (pointer_state<Info> *)next(current_state, seq[i]);
     Info info = current_state->informations.front();
     if (! info.isNull()) {
-      result[i - info.getLength()+1] = info;
+      if (info.isAmbiguous() && ! result[i - info.getLength() + 1].isNull()
+          && previous_length > 0)
+        // We try to maintain a consistency as the length for an ambiguous
+        // affect is a bit tricky to guess. So if we see that we gonna
+        // overwrite a result, we try to prevent that
+        result[i - previous_length + 1] = info;
+      else {
+        result[i - info.getLength()+1] = info;
+        if (! info.isAmbiguous())
+          previous_length = info.getLength();
+      }
     }
   }
 
