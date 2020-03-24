@@ -145,6 +145,7 @@ VidjilVMI.prototype = {
             //fallback for older browser
             var div = document.getElementById(this.parent_id);
             this.width = div.offsetWidth;
+            this.select_mode();
 
             setInterval( function(){
                 var div = document.getElementById(self.parent_id);
