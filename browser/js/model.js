@@ -1250,6 +1250,7 @@ changeAlleleNotation: function(alleleNotation) {
                 this.view[i].update();
         }
         this.updateIcon();
+        this.computeOrderWithStock()
     },
 
     /**
@@ -1724,6 +1725,110 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     changeTimeOrder: function (list) {
         this.samples.order = list
+        this.update()
+    },
+        /**
+     * Invert the value of a sample (show/hide).
+     * Update the checkbox, the sample in model order, and the model 
+     * @param  {[type]} time The timepoint to invert
+     */
+    switchTime: function(time){
+        var pos_timepoint_in_order = this.samples.order.indexOf(time)
+        if (pos_timepoint_in_order == -1){
+            // Add new timepoint
+            this.addTimeOrder( time )
+            this.changeTime(time)
+        } else if (this.samples.order.length != 1) {
+            // Remove timepoint; Don't if there is only one sample
+            this.removeTimeOrder(time)
+            this.changeTime(this.samples.order[0])
+        }
+        this.update()
+        return
+    },
+
+    /**
+     * Show all timepoint in the timeline graphic.
+     * Add all samples that are not already in the list of actif samples
+     * Each sample added will be put at the end of the list.
+     */
+    showAllTime: function(){
+        // keep current timepoint active if exist, else, give active to first timepoint
+        var keeptime = this.t
+        for (var time = 0; time < this.samples.number; time++) {
+            if (this.samples.order.indexOf(time) == -1) this.addTimeOrder(time)
+        }
+        this.changeTime(keeptime)
+        return
+    },
+
+    /**
+     * Remove all sample of the graph except one
+     */
+    hideAllTime: function(){
+        this.changeTimeOrder( [this.t] )
+        return
+    },
+
+    /**
+     * replace the current time order with a new one
+     * @param {integer[]} list - list of time/sample index
+     * */
+    changeTimeStockOrder: function (list) {
+        this.samples.stock_order = list
+        this.update()
+    },
+
+    /**
+     * Order the samples order list with the stock_order
+     */
+    computeOrderWithStock: function(){
+        /*
+          order     = [a, b, e, c]    // change e before c; d is not available
+          old_stock = [a, b, c, d, e] // original order
+          new_stock = [a, b, e, c, d] // new order
+         */
+        var order      = this.samples.order
+        var old_stock  = this.samples.stock_order
+        var time_stock = 0
+
+        for (var time = 0; time < order.length; time++) {
+
+            while (order.indexOf(old_stock[time_stock]) == -1){
+                time_stock += 1
+            }
+
+            if (order[time] != old_stock[time_stock]){
+                var index_old = old_stock.indexOf(order[time])
+                old_stock.splice(index_old, 1)
+                old_stock.splice(time_stock, 0, order[time])
+            } // else nothing
+
+            time_stock++
+        }
+        return old_stock
+    },
+
+
+    /**
+     * Add a sample in the time order; at the end of the list
+     * @param {Number} time Time point to add at the list
+     */
+    addTimeOrder: function (time) {
+        var index = this.samples.stock_order.indexOf(time)
+        this.samples.order.splice(index, 0, time)
+        this.update()
+    },
+    
+    /**
+     * Add a sample in the time order; at the end of the list
+     * @param {Number} time Time point to add at the list
+     */
+    removeTimeOrder: function (time) {
+        var index = this.samples.order.indexOf(time)
+        if (this.samples.order.length != 1 && index != -1) {
+            this.samples.order.splice(index, 1)
+        }
         this.update()
     },
     
@@ -3018,7 +3123,7 @@ changeAlleleNotation: function(alleleNotation) {
         for (var pos_axes = 0; pos_axes < raw_distribs_axes.length; pos_axes++) {
             var axes = raw_distribs_axes[pos_axes]
             same_distribs = []
-            // Get the list of all distributions of axees given
+            // Get the list of all distributions of axes given
             for (var pos_time = 0; pos_time < this.samples.number; pos_time++) {
                 var time = this.samples.order.indexOf(pos_time)
                 current_distrib = this.getDistrib(axes, time)

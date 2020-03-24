@@ -166,7 +166,7 @@ Graph.prototype = {
                 })
                 .on("mouseover", function () {
                     self.m.focusOut();
-                    $("#" + self.id + "_list")
+                    $("#" + this.id + "_table")
                         .stop(true, true)
                         .hide("fast")
                 })
@@ -185,7 +185,7 @@ Graph.prototype = {
                 })
                 .on("mouseover", function () {
                     self.m.focusOut();
-                    $("#" + self.id + "_list")
+                    $("#" + this.id + "_table")
                         .stop(true, true)
                         .hide("fast")
                 })
@@ -229,10 +229,12 @@ Graph.prototype = {
         var div = document.createElement('div')
         div.id = "" + this.id + "_menu"
         div.className = "graph_menu"
-        div.appendChild(icon('icon-dot-3', 'Drag here samples to hide them'))
+        var list_title = document.createElement('div')
+        list_title.id = this.id +"_title"
+        div.appendChild(list_title)
         
-        var list = document.createElement('div')
-        list.id = "" + this.id + "_list"
+        var list = document.createElement('table')
+        list.id = this.id +"_table"
         list.className = "graph_list"
         
         div.appendChild(list)
@@ -247,39 +249,179 @@ Graph.prototype = {
                 self.dragTimePoint()
             })
             .on("mouseover", function () {
-                $("#" + self.id + "_list")
+                $("#"+ self.id +"_table")
                     .stop(true, true)
-                    .show("fast")
+                    .show()
+                self.updateList()
+            })
+            .on("mouseout", function () {
+                $("#"+ self.id +"_table")
+                    .stop(true, true)
+                    .hide()
             })
             
+        this.updateCountActiveSample()
         return this
     },
     
-    /* used to build and update the list of disabled timepoint displayed in the top-right menu
-     * 
-     * */
+    /**
+     *  used to build and update the list of disabled timepoint displayed in the top-right menu
+     */
     build_list : function() {
         var self = this;
         
         var list = document.getElementById("" + this.id + "_list")
-        list.removeAllChildren();
+
+        this.updateCountActiveSample()
+
+        // Update table to store each line
+        var table = document.getElementById(""+this.id +"_table")
+        table.removeAllChildren()
+
+
+        var line   = document.createElement("tr")
+        var line_content   = document.createElement("td")
+        line_content.id = this.id +"_listElem_showAll"
+        line_content.classList.add("graph_listAll")
+        line_content.textContent = "show all samples"
+        line_content.colSpan = "2"
+        line.appendChild(line_content)
+        table.appendChild(line)   
+
+        line   = document.createElement("tr")
+        line_content   = document.createElement("td")
+        line_content.id = this.id +"_listElem_hideAll"
+        line_content.classList.add("graph_listAll")
+        line_content.textContent = "hide all samples"
+        line_content.colSpan = "2"
+        line.appendChild(line_content)
+        table.appendChild(line)
 
         for (var i=0; i<this.m.samples.number; i++){
-            if ( this.m.samples.order.indexOf(i) == -1){
-                $("<div/>", {
-                    'class': "graph_listElem",
-                    'text': this.m.getStrTime(i),
-                    'time': i
-                }).appendTo("#" + this.id + "_list");
-            }
+            // Create a line for each sample, with checkbox and name (text)
+            var list_content   = document.createElement("tr")
+            list_content.id    = this.id +"_listElem_"+i
+            list_content.classList.add("graph_listElem")
+            list_content.dataset.time = i
+            // case: Name of sample
+            var line_content_text   = document.createElement("td")
+            line_content_text.classList.add("graph_listElem_text")
+            line_content_text.id    = this.id +"_listElem_text_"+i
+            line_content_text.textContent  = this.m.getStrTime(i)
+            line_content_text.dataset.time = i
+            // case: checkbox
+            var line_content_check  = document.createElement("td")
+            var content_check  = document.createElement("input")
+            content_check.classList.add("graph_listElem_check")
+            content_check.type = "checkbox"
+            content_check.id   = this.id +"_listElem_check_"+i
+            content_check.dataset.time = i
+            line_content_check.appendChild(content_check)
+
+            list_content.appendChild(line_content_check)
+            list_content.appendChild(line_content_text)
+            table.appendChild(list_content) 
         }
-        
-        $(".graph_listElem").mousedown(function () {
-            var time = parseInt( $(this).attr("time") )
-            self.startDrag(time)
+
+        $("#"+this.id +"_listElem_showAll").click(function () {
+            console.log( "self.showAllTimepoint()" )
+            self.m.showAllTime()
         })
-        
+        $("#"+this.id +"_listElem_hideAll").click(function () {
+            console.log( "self.hideAllTimepoint( true )" )
+            self.m.hideAllTime()
+        })
+
+        $(".graph_listElem").click(function () {
+            var time = parseInt( this.dataset.time )
+            if (self.m.samples.order.indexOf(time) != -1){
+                self.m.changeTime(time)
+            }
+        })
+        $(".graph_listElem").dblclick(function () {
+            var time = parseInt( this.dataset.time )
+            self.m.switchTime(time)
+        })
+        $(".graph_listElem_check").click(function () {
+            var time = parseInt( this.dataset.time )
+            self.m.switchTime(time)
+        })
+
+        // Update checkbox state at init
+        this.updateList()
     },
+
+    /**
+     * Update the content of checkbox for each sample, depending if his presence into the model samples order list
+     */
+    updateList : function() {
+        for (var time = 0; time < this.m.samples.number; time++) {
+            this.updateListCheckbox(time)
+            this.updateListName(time)
+        }
+        return
+    },
+
+    /**
+     * Update, in the graph list, the sample with the selected css rule
+     */
+    updateListElemSelected: function(){
+        var time = this.m.t
+        var elem = document.getElementsByClassName("graph_listElem_selected")
+        // remove css rule of previous sample
+        if (elem.length != 0) {
+            // dont change if previous and current sample are the same
+            if (elem[0].id == this.id +'_listElem_text_'+time && this.m.samples.order.length != 0){ return }
+            elem[0].classList.remove("graph_listElem_selected")
+        }
+        // Add css rule to current timepoint (and if at least one is show)
+        if (time != undefined && this.m.samples.order.length != 0){
+            elem = document.getElementById(this.id +'_listElem_text_'+time)
+            elem.classList.add("graph_listElem_selected")
+        }
+        return
+    },
+
+    /**
+     * Update the state of the checkbox of a sample. Use the model samples order as reference.
+     * @param  {[type]} time The timepoint to update
+     */
+    updateListCheckbox: function(time){
+        var checkbox_id  = this.id +"_listElem_check_"+time
+        var checkbox     = document.getElementById(checkbox_id)
+        checkbox.checked = (this.m.samples.order.indexOf(time) != -1)
+        return
+    },
+
+    /**
+     * Update the text of a sample. Adapt it with the model time_type format
+     * @param  {Number} time The timepoint to update
+     */
+    updateListName: function(time){
+        var name_id  = this.id +"_listElem_text_"+time
+        var name     = document.getElementById(name_id)
+        name.textContent  = this.m.getStrTime(time)
+        return
+    },
+
+
+
+
+    /**
+     * Update count of active samples
+     * This value is shown in the first line of the graphList
+     */
+    updateCountActiveSample: function(){
+        var div   = document.getElementById(this.id +"_title")
+        if (this.m.samples.number != 0 && this.m.samples.number != undefined){
+            div.textContent  = ""+this.m.samples.order.length+" / " + this.m.samples.number
+        } else {
+            // If no sample in the model
+            div.textContent  = "..."
+        }
+    },
+
+
 
     /* repositionne le graphique en fonction de la taille de la div le contenant
      *
@@ -333,6 +475,10 @@ Graph.prototype = {
      * */
     update : function (speed) {
         speed = typeof speed !== 'undefined' ? speed : 500;
+        this.updateListElemSelected();
+        this.updateCountActiveSample();
+        this.updateList()
+
         this.g_clone = this.clones_container.selectAll("path")
             .data(this.data_clone);
         this.initAxis()
@@ -500,6 +646,7 @@ Graph.prototype = {
             this.m.changeTime(result[0])
             this.m.changeTimeOrder(result)
             this.build_list()
+            this.m.update()
         }
     },
 
@@ -1206,6 +1353,19 @@ Graph.prototype = {
             })
             .on("mousedown", function (d) {
                 if (d.type == "axis_v" || d.type == "axis_v2") return self.startDrag(d.time)
+            })
+            .on("dblclick", function (d) {
+                var pos = self.m.samples.order.indexOf(d.time)
+                if (self.m.samples.order.length != 1 && pos != -1) {
+                    self.m.removeTimeOrder(d.time)
+                }
+                self.m.update()
+                // change current time to use first element of the current samples list
+                if (self.m.samples.order.length > 0){
+                    var new_time = self.m.samples.order[0]
+                    self.m.changeTime(new_time)
+                }
+
             })
         
         return this
