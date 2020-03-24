@@ -23,6 +23,7 @@ class TestGraph < BrowserTest
 
   def test_00_starting_names
     type_name = "SamplePlus" # by default if date given in vidjil file 
+    $b.div(:id => 'visu2_menu').hover
     test_name_values(type_name)
 
   end
@@ -91,9 +92,6 @@ class TestGraph < BrowserTest
     assert ( time0.text == get_names("0", type_name) ), "correct name show for first sample (graph label)"
     assert ( time1.text == get_names("1", type_name) ), "correct name show for second sample (graph label)"
     ## In graph list
-    if $b.driver.capabilities.browser_name == 'chrome'
-      skip "Don't work with old chrome"
-    end
     
     assert ( list0.text == get_names("0", type_name) ), "correct name show for first sample (graphList text)"
     assert ( list1.text == get_names("1", type_name) ), "correct name show for second sample (graphList text)"
