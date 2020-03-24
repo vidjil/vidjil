@@ -52,6 +52,11 @@ public:
    * it only there for a reason of compatibility with KmerAffect)
    */
   bool isUnknown() const;
+  /**
+   * @return true iff the kmer is ambiguous (which doesn't make sense here but
+   * it only there for a reason of compatibility with KmerAffect)
+   */
+  bool isAmbiguous() const;
 } ;
 ostream &operator<<(ostream &os, const Kmer &kmer);
 bool operator==(const Kmer &k1, const Kmer &k2);
