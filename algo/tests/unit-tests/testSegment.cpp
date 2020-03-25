@@ -53,7 +53,8 @@ void testFineSegment(IndexTypes index)
   data.next();
 
   Germline *germline ;
-  germline = new Germline("IGH", 'G', seqV, seqD, seqJ, "########");
+  germline = new Germline("IGH", 'G', seqV, seqD, seqJ,
+                          "########", "########", "########");
   germline->new_index(index);
   germline->finish();
 
@@ -105,11 +106,13 @@ void testSegmentOverlap(IndexTypes index)
   BioReader data("data/bug-segment-overlap.fa", 1, " ");
   
   Germline *germline1 ;
-  germline1 = new Germline("TRG", 'G', seqV, BioReader(), seqJ, "##########");
+  germline1 = new Germline("TRG", 'G', seqV, BioReader(), seqJ,
+                           "##########", "##########", "##########");
   germline1->new_index(index);
 
   Germline *germline2 ;
-  germline2 = new Germline("TRG2", 'G', seqV, BioReader(), seqJ, "##########");
+  germline2 = new Germline("TRG2", 'G', seqV, BioReader(), seqJ,
+                           "##########", "##########", "##########");
   germline2->new_index(index);
 
   germline1->finish();
@@ -141,7 +144,8 @@ void testSegmentationCause(IndexTypes index) {
   BioReader data("data/segmentation.fasta", 1, " ");
 
   Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ, "##########");
+  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ,
+                          "##########", "##########", "##########");
   germline->new_index(index);
   germline->finish();
 
@@ -268,7 +272,8 @@ void testBug2224(IndexTypes index) {
 
 
   Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ, "###########");
+  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ,
+                          "###########", "###########", "###########");
   germline->new_index(index);
   germline->finish();
 
@@ -293,7 +298,8 @@ void testExtractor(IndexTypes index) {
   OnlineFasta data("data/segmentation.fasta", 1, " ");
 
   Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ, "##########");
+  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ,
+                          "##########", "##########", "##########");
   germline->new_index(index);
 
   MultiGermline *multi ;
@@ -409,7 +415,8 @@ void testProbability(IndexTypes index) {
     V.add(v);
     J.add(j);
   }
-  Germline germline("Test", 'T', V, BioReader(), J, "####");
+  Germline germline("Test", 'T', V, BioReader(), J,
+                    "####", "####", "####");
   germline.new_index(index);
   germline.finish();
 
