@@ -62,7 +62,7 @@ class TestCluster < BrowserTest
 
     assert ( polyline4.attribute_value("d").split(',').length == 12 ), ">> clone is present in the graph by default"
 
-    # switch the filter on, current sample include cloneId
+    ### switch the filter ON, current sample include cloneId
     $b.menu_filter.click
     $b.div(:id => "filter_switch_sample").click
     assert ( $b.clone_in_list(cloneId).exists? ), ">> clone is present in the list"
@@ -80,14 +80,26 @@ class TestCluster < BrowserTest
     $time0 = $b.graph_x_legend("0")
     $time1 = $b.graph_x_legend("1")
 
-    assert ( $time0.text == "diag" ), "label of timepoint 0 in graph don't have the '*'"
-    assert ( $time1.text == "fu1 *" ), "label of timepoint 1 in graph have the '*'"
-    ### reset focus
+    assert ( $time0.text == "2019-12-17" ), "label of timepoint 0 in graph don't have the '*'"
+    assert ( $time1.text == "+10 *" ), "label of timepoint 1 in graph have the '*'"
+
+    $b.send_keys :arrow_right
+    $b.update_icon.wait_while(&:present?)
+    assert ( $time0.text == "2019-12-17 *" ), "label of timepoint 0 in graph don't have the '*'"
+    assert ( $time1.text == "+10" ), "label of timepoint 1 in graph have the '*'"
+
+    # return to sample without clone4
+    $b.send_keys :arrow_right
+    $b.update_icon.wait_while(&:present?)
+    ### switch the filter OFF
     $b.menu_filter.click
     $b.div(:id => "filter_switch_sample").click
     $b.update_icon.wait_while(&:present?)
-    assert ( $time0.text == "diag" ), "label of timepoint 0 in graph still don't have the '*'"
-    assert ( $time1.text == "fu1" ), "label of timepoint 1 in graph don't have the '*' anymore"
+    assert ( $time0.text == "2019-12-17" ), "label of timepoint 0 in graph still don't have the '*'"
+    assert ( $time1.text == "+10" ), "label of timepoint 1 in graph don't have the '*' anymore"
+    
+    polyline4 = $b.path(:id => "polyline"+cloneId )
+    assert ( polyline4.attribute_value("d").split(',').length == 12 ), ">> clone is again present in the graph if switched in filter menu (in sample without it)"
   end
 
 
