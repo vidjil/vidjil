@@ -118,18 +118,14 @@ KmerAffect &KmerAffect::operator+=(const KmerAffect &kmer) {
   if (kmer.affect != affect) {
     if (isUnknown())
       *this = kmer;
-    else if (affect_char(affect) == affect_char(kmer.affect)
-             && (affect_strand(affect) != affect_strand(kmer.affect))) {
-      // Same label but different strand
+    else { 
+      // If we have same label but different strand
       // -> we put ambiguous, we could have something to say that
       // strand is ambiguous but not the label, but we don't have enough space
       // in 1 byte…
+      unsigned char length = affect.length;
       *this = AFFECT_AMBIGUOUS;
-      affect.length = kmer.getLength();
-    } else {
-      assert(affect.c != kmer.affect.c || getLength() == kmer.getLength());
-      *this = AFFECT_AMBIGUOUS;
-      affect.length = kmer.getLength();
+      affect.length = length;
     }
   }
   return *this;
