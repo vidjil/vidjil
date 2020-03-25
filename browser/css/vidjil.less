@@ -359,7 +359,7 @@ line {
 .graph_menu{
   position: absolute;
   top: 0px;
-  right: 0px;
+  right: 6px;
   min-width: 22px;
   min-height: 18px;
   text-align: center;
@@ -367,19 +367,25 @@ line {
   border-left: solid;
   border-color: @border;
   background : @background;
+  z-index: 1;
+  overflow: auto;
+  max-height: 100%;
 }
 
 .graph_list{
   display: none;
 }
 
+.graph_listAll:hover,
 .graph_listElem:hover{
   background : @border;
   width: 100%;
-  cursor: move;
+  cursor: pointer;
   cursor: webkit-grab;
 }
-
+.graph_listElem_selected {
+  font-weight: bold;
+}
 
 							  /*style scatterPlot element*/
 
