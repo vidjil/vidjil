@@ -3,19 +3,19 @@
 BEGIN{
     slug=ENVIRON["CI_BUILD_REF_SLUG"]
 }
-s{
+after_volumes{
   printf "            "
   print "- ../browser:/usr/share/vidjil/browser"
   printf "            "
   print "- ../server/web2py/applications/vidjil:/usr/share/vidjil/server/web2py/applications/vidjil"
-  s=0
+  after_volumes=0
 }
 
-s2{
+after_volumes2{
     if(/\s*-\s*\/opt\/*/) {
       next
     } else {
-      s2=0
+      after_volumes2=0
     }
 }
-/volumes:/{s=1; s2=1}1
+/volumes:/{after_volumes=1; after_volumes2=1}1

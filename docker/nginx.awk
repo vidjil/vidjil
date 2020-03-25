@@ -3,7 +3,18 @@
 BEGIN{
     slug=ENVIRON["CI_BUILD_REF_SLUG"]
 }
-s{
+after_ports{
+    if(/\s*-\s*"[^"]*"/)
+        next
+    else
+        after_ports=0
+}
+after_service{
+    printf "        "
+    print "network_mode: bridge"
+    after_service=0
+}    
+after_nginx{
     printf "        "
     print "expose:"
     printf "            "
@@ -16,5 +27,35 @@ s{
     print "- VIRTUAL_PORT=443"
     printf "            "
     print "- VIRTUAL_PROTO=https"
-    s=0
-} /nginx:$/{s=1}1
+    after_nginx=0
+}
+after_volumes{
+  printf "            "
+  print "- ../browser:/usr/share/vidjil/browser"
+  printf "            "
+  print "- ../server/web2py/applications/vidjil:/usr/share/vidjil/server/web2py/applications/vidjil"
+  after_volumes=0
+}
+
+after_volumes2{
+    if(/\s*-\s*\/opt\/*/) {
+      next
+    } else {
+      after_volumes2=0
+    }
+}
+/volumes:/{
+    after_volumes=1
+    after_volumes2=1
+}
+/nginx:$/{
+    after_nginx=1
+}
+/ports:/{
+    after_ports=1
+    next
+}
+/(nginx|fuse|uwsgi|workers|mysql):$/{
+    after_service=1
+}
+1
