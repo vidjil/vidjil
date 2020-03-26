@@ -265,7 +265,10 @@ class TestSample < ServerTest
   def test_run
     table = go_to_set_by_tag "#set_assoc_0"
 
-    $b.select_list(:id => "choose_config").select("2")
+    config_list = $b.select_list(:id => "choose_config")
+    assert ( config_list.optgroup(:label => "Vidjil-algo").exist? ), "optgroup is present in configlist"
+
+    config_list.select("2")
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     samples_table = $b.table(:id => "table")
