@@ -335,7 +335,8 @@ test_server_unit:
     - docker exec docker_nginx_1 make -C /usr/share/vidjil browser
     - source /etc/profile.d/rvm.sh
     - rvm use 2.6.1
-    - HEADLESS=1 make functional_server || (cd docker && docker-compose stop; docker stop $(docker ps -aq); docker rm $(docker ps -aq); docker rmi "vidjil/server:test" "vidjil/client:test"; false)
+    - HEADLESS=1 make functional_server
+  after_script:
     - cd docker && docker-compose stop
     - docker stop $(docker ps -aq)
     - docker rm $(docker ps -aq)
