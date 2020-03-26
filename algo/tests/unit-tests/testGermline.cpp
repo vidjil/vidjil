@@ -43,6 +43,7 @@ void testGermline() {
 
   testGermline1(g1);
   testIndexLoad(g1, KMER_INDEX, 0.24);
+  delete g1->index;
   testIndexLoad(g1, AC_AUTOMATON, 0.12);
   
   delete g1;
