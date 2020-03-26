@@ -326,6 +326,7 @@ test_server_unit:
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/server:test" docker/vidjil-server
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/client:test" docker/vidjil-client
     - sed -i '/\/etc\/nginx\/ssl\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
+    - sed -ri '/\/var\/lib\/mysql|vidjil\/databases/d' ./docker/docker-compose.yml
     - sed -i 's/\:latest/\:test/g' ./docker/docker-compose.yml
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
     - make germline && cp browser/js/germline.js docker/vidjil-client/conf
