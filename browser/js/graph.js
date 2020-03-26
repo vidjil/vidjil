@@ -288,7 +288,7 @@ Graph.prototype = {
         var table = document.getElementById(""+this.id +"_table")
         table.removeAllChildren()
 
-
+        // Show All
         var line   = document.createElement("tr")
         var line_content   = document.createElement("td")
         line_content.id = this.id +"_listElem_showAll"
@@ -298,11 +298,22 @@ Graph.prototype = {
         line.appendChild(line_content)
         table.appendChild(line)   
 
+        // Hide All
         line   = document.createElement("tr")
         line_content   = document.createElement("td")
         line_content.id = this.id +"_listElem_hideAll"
         line_content.classList.add("graph_listAll")
         line_content.textContent = "hide all samples"
+        line_content.colSpan = "2"
+        line.appendChild(line_content)
+        table.appendChild(line)
+
+        // Hide not share
+        line   = document.createElement("tr")
+        line_content   = document.createElement("td")
+        line_content.id = this.id +"_listElem_hideNotShare"
+        line_content.classList.add("graph_listAll")
+        line_content.textContent = "Samples with selection"
         line_content.colSpan = "2"
         line.appendChild(line_content)
         table.appendChild(line)
@@ -330,6 +341,13 @@ Graph.prototype = {
 
             list_content.appendChild(line_content_check)
             list_content.appendChild(line_content_text)
+
+            // Add all descripion of sample keys as tooltip
+            var tooltip = "Sample name: " + this.m.getStrTime(i, "names")
+            tooltip    += String.fromCharCode(13)+"Sampling date: " + this.m.getStrTime(i, "sampling_date")
+            tooltip    += String.fromCharCode(13)+"Delta time: " + this.m.getStrTime(i, "delta_date")
+            list_content.title = tooltip
+
             table.appendChild(list_content) 
         }
 
@@ -340,6 +358,10 @@ Graph.prototype = {
         $("#"+this.id +"_listElem_hideAll").click(function () {
             console.log( "self.hideAllTimepoint( true )" )
             self.m.hideAllTime()
+        })
+        $("#"+this.id +"_listElem_hideNotShare").click(function () {
+            console.log( "self.hideNotShare()" )
+            self.m.hideNotShare()
         })
 
         $(".graph_listElem").click(function () {
@@ -452,6 +474,7 @@ Graph.prototype = {
             div.textContent  = "..."
         }
     },
+
 
 
 

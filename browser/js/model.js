@@ -3364,5 +3364,41 @@ changeAlleleNotation: function(alleleNotation) {
 
     },
 
+    /**
+     * Return a list of samples with selected clones
+     * @return {Array} list of samples
+     */
+    getSampleWithSelectedClones: function(){
+        var selected = this.getSelected()
+        if (selected.length == 0) {
+            return this.samples.actifs
+        }
+
+        var list = []
+        for (var pos = 0; pos < selected.length; pos++) {
+            var clone = this.clones[selected[pos]]
+            for (var time = 0; time < clone.reads.length; time++) {
+                if (clone.reads[time] != 0 && list.indexOf(time) == -1) {
+                    list.push(time)
+                }
+            }
+        }
+        return list
+    },
+
+    /**
+     * Remove all sample of the graph except one
+     */
+    hideNotShare: function(){
+        // get list of sample with shared clone
+        if (this.getSelected().length == 0) {
+            return
+        }
+        this.changeTimeOrder( this.getSampleWithSelectedClones() )
+        // this.updateList()
+        // this.m.update()
+        return
+    },
+
 
 }; //end prototype Model
