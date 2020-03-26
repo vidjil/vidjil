@@ -46,6 +46,9 @@ enum {
   TEST_TRIM_SEQUENCE,
   TEST_GENERATE_ALL_SEEDS,
 
+  /* Germline tests */
+  TEST_GERMLINE,
+
   /* Storage tests */
   TEST_ARRAY_KMERSTORE,
   TEST_MAP_KMERSTORE,

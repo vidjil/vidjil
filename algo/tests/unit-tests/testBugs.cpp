@@ -13,7 +13,8 @@ void testSegmentationBug1(IndexTypes index) {
   BioReader seqJ("../../germline/homo-sapiens/TRGJ.fa");
 
   Germline *germline ;
-  germline = new Germline("custom", 'x', seqV, seqV, seqJ, "#############");
+  germline = new Germline("custom", 'x', seqV, seqV, seqJ,
+                          "#############", "#############", "#############");
   germline->new_index(index);
   germline->finish();
   
