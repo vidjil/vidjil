@@ -66,7 +66,7 @@
             </tr>
         </thead>
         <tfoot class="db_fixed_footer">
-            <tr><td class="column_200">{{ =str(len(query)) }} samples </td>
+            <tr><td class="column_200" id="footer_number_samples">{{ =str(len(query)) }} sample(s) </td>
                 <td class="column_100"> </td>
                 <td>  </td>
                 <td>  </td>
@@ -83,7 +83,7 @@
                 <td class="column5"></td>
                 <td class="column5"></td>
                 <td class="column5"></td>
-                <td class="column5">
+                <td class="column5" id="footer_run_icon">
                        {{if config_id > 0 and auth.can_use_config(config_id) :}}
                           {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
                                <span class="pointer" 

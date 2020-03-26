@@ -281,5 +281,18 @@ class TestSample < ServerTest
     lines[0].wait_until(&:present?)
     l = lines[0]
     assert(l.td(:text => "QUEUED").present? || l.td(:text => "ASSIGNED").present? || l.td(:text => "COMPLETED").present?)
+
+    footer = table.tfoot.rows
+    assert ( footer.length == 1 ), 'footer have correct number of lines'
+
+    f = footer[0]
+    number_sample = f.td(:id => "footer_number_samples")
+    assert ( number_sample.text == "1 sample(s)" ), 'footer have correct number of sample show'
+
+    assert ( f.td(:id => "footer_run_icon").exist?  ), 'footer have a run icon'
+
+    # change config to "---"
+    $b.select_list(:id => "choose_config").select("0")
+    assert ( not f.td(:id => "footer_run_icon").exist?  ), "footer don't have a run icon if no config selected"
   end
 end
