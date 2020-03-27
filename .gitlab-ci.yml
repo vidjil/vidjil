@@ -340,11 +340,8 @@ test_server_unit:
     - rvm use 2.6.1
     - HEADLESS=1 make functional_server
   after_script:
-    - cd docker && docker-compose stop
-    - docker stop $(docker ps -aq)
-    - docker rm $(docker ps -aq)
+    - cd docker && docker-compose down -v
     - docker rmi "vidjil/server:test" "vidjil/client:test" reporter:test
-    - docker volume rm $(docker volume ls -q)
   artifacts:
     reports:
       junit: server/web2py/applications/vidjil/tests/test/TEST-*.xml
