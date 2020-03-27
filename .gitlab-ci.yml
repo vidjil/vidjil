@@ -413,7 +413,7 @@ deploy_review_server:
     - sed -i -r "s/WEB2PY_ADMIN_PASSWORD=''/WEB2PY_ADMIN_PASSWORD='Sup3rSecr47'/" docker-compose.yml
     - cd ..
     - rsync -av --delete docker_${CI_BUILD_REF_SLUG} $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG
-    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; docker-compose up -d"
+    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; docker-compose up -d mysql fuse uwsgi nginx workers"
   environment:
     name: review_server/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
