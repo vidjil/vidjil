@@ -53,15 +53,14 @@ ul {
 #visu-container {
   position: relative;
   display: flex;
+  flex: 1 1 auto;
   flex-flow: column;
   -khtml-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   user-select: none;
-  height: 100%;
   width: 100%;
-  margin: auto;
   overflow: hidden;
   background: #ffffff;
 }
