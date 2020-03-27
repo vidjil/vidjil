@@ -10,7 +10,7 @@ services:
     uwsgi:
         image: vidjil/server:latest
         environment:
-            - WEB2PY_ADMIN_PASSWORD=''
+            - WEB2PY_ADMIN_PASSWORD=
         command: bash /entrypoints/uwsgi-entrypoint.sh
         volumes_from:
             - fuse
