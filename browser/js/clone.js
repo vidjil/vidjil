@@ -1566,16 +1566,16 @@ Clone.prototype = {
         html += "</table></div>"
         return html
     },
-
+/*
     axisOptions: function() {
         return [
-            "consensusLength", "averageLength", "nLength", "lengthCDR3",
-            "productivity", "productivity-IMGT",
-            "VIdentity-IMGT",
-            "tag", "coverage", "locus", "size", "nbSamples"
+            "clone consensus length", "clone average read length", "GC content", "N length",
+            "CDR3 length (nt)", "productivity", "productivity-IMGT",
+            "VIdentity-IMGT", "clone consensus coverage",
+            "tag", "coverage", "size", "number of samples", "primers"
         ];
     },
-
+*/
     /**
       * start to fill a node with clone informations common between segmenter and list
       * @param {dom_object} div_elem - html element to complete

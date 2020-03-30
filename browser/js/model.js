@@ -63,8 +63,8 @@ function Model() {
     this.NORM_EXPECTED  = "expected"
     this.NORM_EXTERNAL  = "external"
     this.normalization_mode = this.NORM_FALSE
-    this.axes = new Axes(this)
-    this.available_axes = this.axes.available()
+    //this.axes = new Axes(this)
+    //this.available_axes = this.axes.available()
 
     setInterval(function(){return self.updateIcon()}, 100); 
 }
