@@ -124,6 +124,24 @@ def index():
                 )
             )
 
+
+    for row in query:
+        row.list_share_set = []
+        list_share_set     = db(db.sample_set_membership.sequence_file_id == row.sequence_file.id).select()
+        for set_id in list_share_set:
+            if int(set_id.sample_set_id)  != int(request.vars['id']):
+                sample_set = db(db.sample_set.id == set_id.sample_set_id).select()[0]
+                # Define value to show
+                if sample_set.sample_type == "patient":
+                    name = db(db.patient.sample_set_id == set_id.sample_set_id).select()[0]
+                    sample_set.title = name.last_name.upper() +" "+ name.first_name +" ("+str(name.birth)+")"
+                elif sample_set.sample_type == "run":
+                    sample_set.title = db(db.run.sample_set_id == set_id.sample_set_id).select()[0].name
+                elif sample_set.sample_type == "generic":
+                    sample_set.title = db(db.generic.sample_set_id == set_id.sample_set_id).select()[0].name
+                row.list_share_set.append(sample_set)
+
+
     tag_decorator = TagDecorator(get_tag_prefix())
     query_pre_process = db( db.pre_process.id >0 ).select()
     pre_process_list = {}
