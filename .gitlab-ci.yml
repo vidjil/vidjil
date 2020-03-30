@@ -326,6 +326,9 @@ test_server_unit:
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/server:test" docker/vidjil-server
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/client:test" docker/vidjil-client
     - sed -i '/\/etc\/nginx\/ssl\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
+    - sed -i '/\/var\/lib\/mysql/d' ./docker/docker-compose.yml
+    - sed -i 's/\/opt\/vidjil\/databases/databases/' ./docker/docker-compose.yml
+    - echo -e "volumes:\n    databases:" >> ./docker/docker-compose.yml
     - sed -i 's/\:latest/\:test/g' ./docker/docker-compose.yml
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
     - make germline && cp browser/js/germline.js docker/vidjil-client/conf
@@ -335,10 +338,9 @@ test_server_unit:
     - docker exec docker_nginx_1 make -C /usr/share/vidjil browser
     - source /etc/profile.d/rvm.sh
     - rvm use 2.6.1
-    - HEADLESS=1 make functional_server || (cd docker && docker-compose stop; docker stop $(docker ps -aq); docker rm $(docker ps -aq); docker rmi "vidjil/server:test" "vidjil/client:test"; false)
-    - cd docker && docker-compose stop
-    - docker stop $(docker ps -aq)
-    - docker rm $(docker ps -aq)
+    - HEADLESS=1 make functional_server
+  after_script:
+    - cd docker && docker-compose down -v
     - docker rmi "vidjil/server:test" "vidjil/client:test" reporter:test
   artifacts:
     reports:
