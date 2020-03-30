@@ -50,8 +50,7 @@ function loadAfterConf() {
 
         require(["../germline"],
                 function() {
-                    require(["../generic_axis",
-                             "../closeable"],
+                    require(["../closeable"],
                             function() {
                                 require(["../compare",
                                          "../menu",
@@ -63,8 +62,6 @@ function loadAfterConf() {
                                          "../clone",
                                          "../dynprog",
                                          "../list",
-                                         "../germline_axis",
-                                         "../numerical_axis",
                                          "../axes",
                                          "../axis",
                                          "../graph",
