@@ -89,26 +89,11 @@
                     {{ has_pre_process = row.sequence_file.pre_process_id != None}}
                     <td>
                       <!-- Select set with this sample -->
-                      {{ list_share_set = db(db.sample_set_membership.sequence_file_id == row.sequence_file.id).select() }}
-                      {{ if len( list_share_set ) > 1: }}
-                          {{ for set_id in list_share_set:}}
-                            {{ if int(set_id.sample_set_id)  != int(request.vars['id']): }}<!-- Don't make link to itself -->
-                              {{ sample_set = db(db.sample_set.id == set_id.sample_set_id).select()[0] }}
-                              <!-- Define value to show -->
-                              {{ if sample_set.sample_type == "patient": }}
-                                {{ name = db(db.patient.sample_set_id == set_id.sample_set_id).select()[0] }}
-                                {{ title = name.last_name.upper() +" "+ name.first_name +" ("+str(name.birth)+")" }}
-                              {{ elif sample_set.sample_type == "run": }}
-                                {{ title = db(db.run.sample_set_id == set_id.sample_set_id).select()[0].name }}
-                              {{ elif sample_set.sample_type == "generic": }}
-                                {{ title = db(db.generic.sample_set_id == set_id.sample_set_id).select()[0].name }}
-                              {{ pass }}
-                              <!-- Show values -->
-                              <span class="{{ =sample_set.sample_type }}_token" onclick="db.call('sample_set/index', {'id': '{{ =int(set_id.sample_set_id) }}', 'config_id': -1 })" title="{{ =title }}">
-                                {{ =title }}
-                              </span>
-                            {{ pass }}
-                          {{ pass }}
+                      {{ for sample_set in row.list_share_set:}}
+                          <!-- Show values -->
+                          <span class="{{ =sample_set.sample_type }}_token" title="{{ =sample_set.title }}" onclick="db.call('sample_set/index', {'id': '{{ =int(sample_set.id) }}', 'config_id': -1 })" >
+                            {{ =sample_set.title }}
+                          </span>
                       {{ pass }}
                     </td>
                     <td {{if has_pre_process:}} class="pointer"
