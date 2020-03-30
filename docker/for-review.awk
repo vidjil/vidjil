@@ -55,7 +55,7 @@ after_volumes2{
     after_ports=1
     next
 }
-/(nginx|fuse|uwsgi|workers|mysql):$/{
+/^\s{3,6}(nginx|fuse|uwsgi|workers|mysql):$/{
     after_service=1
 }
 1
