@@ -484,7 +484,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
 
     KmerAffectAnalyser kaa(*(germline->index), sequence);
 
-    KmerAffect kmer = KmerAffect(germline->affect_4, 1, germline->seed.size());
+    KmerAffect kmer = KmerAffect(germline->affect_4, 1, germline->seed_4.size());
     int c = kaa.count(kmer);
 
     // E-value
@@ -576,12 +576,12 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
     return ;
   } else if (nb_strand[0] > RATIO_STRAND * nb_strand[1]) {
     strand = -1;
-    before = KmerAffect(germline->affect_3, -1, germline->seed.size());
-    after = KmerAffect(germline->affect_5, -1, germline->seed.size());
+    before = KmerAffect(germline->affect_3, -1, germline->seed_3.size());
+    after = KmerAffect(germline->affect_5, -1, germline->seed_5.size());
   } else if (nb_strand[1] > RATIO_STRAND * nb_strand[0]) {
     strand = 1;
-    before = KmerAffect(germline->affect_5, 1, germline->seed.size());
-    after = KmerAffect(germline->affect_3, 1, germline->seed.size());
+    before = KmerAffect(germline->affect_5, 1, germline->seed_5.size());
+    after = KmerAffect(germline->affect_3, 1, germline->seed_3.size());
   } else {
     // Ambiguous information: we have positive and negative strands
     // and there is not enough difference to put them apart.

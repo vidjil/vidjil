@@ -53,7 +53,8 @@ void testFineSegment(IndexTypes index)
   data.next();
 
   Germline *germline ;
-  germline = new Germline("IGH", 'G', seqV, seqD, seqJ, "########");
+  germline = new Germline("IGH", 'G', seqV, seqD, seqJ,
+                          "########", "########", "########");
   germline->new_index(index);
   germline->finish();
 
@@ -105,11 +106,13 @@ void testSegmentOverlap(IndexTypes index)
   BioReader data("data/bug-segment-overlap.fa", 1, " ");
   
   Germline *germline1 ;
-  germline1 = new Germline("TRG", 'G', seqV, BioReader(), seqJ, "##########");
+  germline1 = new Germline("TRG", 'G', seqV, BioReader(), seqJ,
+                           "##########", "##########", "##########");
   germline1->new_index(index);
 
   Germline *germline2 ;
-  germline2 = new Germline("TRG2", 'G', seqV, BioReader(), seqJ, "##########");
+  germline2 = new Germline("TRG2", 'G', seqV, BioReader(), seqJ,
+                           "##########", "##########", "##########");
   germline2->new_index(index);
 
   germline1->finish();
@@ -141,7 +144,8 @@ void testSegmentationCause(IndexTypes index) {
   BioReader data("data/segmentation.fasta", 1, " ");
 
   Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ, "##########");
+  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ,
+                          "##########", "##########", "##########");
   germline->new_index(index);
   germline->finish();
 
@@ -268,7 +272,8 @@ void testBug2224(IndexTypes index) {
 
 
   Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ, "###########");
+  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ,
+                          "###########", "###########", "###########");
   germline->new_index(index);
   germline->finish();
 
@@ -293,7 +298,8 @@ void testExtractor(IndexTypes index) {
   OnlineFasta data("data/segmentation.fasta", 1, " ");
 
   Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ, "##########");
+  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ,
+                          "##########", "##########", "##########");
   germline->new_index(index);
 
   MultiGermline *multi ;
@@ -409,7 +415,8 @@ void testProbability(IndexTypes index) {
     V.add(v);
     J.add(j);
   }
-  Germline germline("Test", 'T', V, BioReader(), J, "####");
+  Germline germline("Test", 'T', V, BioReader(), J,
+                    "####", "####", "####");
   germline.new_index(index);
   germline.finish();
 
@@ -436,6 +443,45 @@ void testProbability(IndexTypes index) {
   TAP_TEST_EQUAL(kaa->getProbabilityAtLeastOrAbove(AFFECT_UNKNOWN, 0), 1, TEST_PROBABILITY_SEGMENTATION, ".getProbabilityAtLeastOrAbove() with AFFECT_UNKOWN");
 }
 
+void testDifferentSeeds(IndexTypes index) {
+  string v_seq = "AGAGAGAGAGAGAGAGAGAGAGAGAGAGAG";
+  string j_seq = "CACACACACACACACACACACACACACACA";
+  BioReader V, J;
+  V.add({"V", "V", v_seq, "", 0});
+  J.add({"J", "J", j_seq, "", 0});
+  Sequence  seq = {"seq", "seq", "AGAGAGAGCACACACA", "", 0};
+  Germline germline_basic("Test1", 'T', V, BioReader(), J);
+  germline_basic.new_index(index);
+  germline_basic.finish();
+  
+  Germline germline_small_seed_5("Test1", 'T', V, BioReader(), J, "####", "", "");
+  germline_small_seed_5.new_index(index);
+  germline_small_seed_5.finish();
+  
+  Germline germline_small_seed_3("Test1", 'T', V, BioReader(), J, "", "", "####");
+  germline_small_seed_3.new_index(index);
+  germline_small_seed_3.finish();
+
+  Germline germline_small_seeds("Test1", 'T', V, BioReader(), J, "####", "", "####");
+  germline_small_seeds.new_index(index);
+  germline_small_seeds.finish();
+
+  KmerSegmenter ks1(seq, &germline_basic);
+  KmerSegmenter ks2(seq, &germline_small_seed_5);
+  KmerSegmenter ks3(seq, &germline_small_seed_3);
+  KmerSegmenter ks4(seq, &germline_small_seeds);
+
+  TAP_TEST(! ks1.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
+  TAP_TEST(! ks2.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
+  TAP_TEST(! ks3.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
+  TAP_TEST(ks4.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
+
+  TAP_TEST_EQUAL(ks1.getSegmentationStatus(), UNSEG_TOO_FEW_ZERO, TEST_KMER_SEGMENTATION_CAUSE, "");
+  TAP_TEST_EQUAL(ks2.getSegmentationStatus(), UNSEG_ONLY_V, TEST_KMER_SEGMENTATION_CAUSE, ks2.getInfoLineWithAffects());
+  TAP_TEST_EQUAL(ks3.getSegmentationStatus(), UNSEG_ONLY_J, TEST_KMER_SEGMENTATION_CAUSE, ks3.getInfoLineWithAffects());
+  TAP_TEST_EQUAL(ks4.getSegmentationStatus(), SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, ks4.getInfoLineWithAffects());
+}  
+
 void testSegment() {
   testSegmentOverlap(KMER_INDEX);
   testSegmentOverlap(AC_AUTOMATON);
@@ -451,4 +497,5 @@ void testSegment() {
   testBug2224(KMER_INDEX);
   testBug2224(AC_AUTOMATON);
   testBestLengthShifts();
+  testDifferentSeeds(AC_AUTOMATON); // KMER_INDEX can't deal with seeds of different sizes
 }

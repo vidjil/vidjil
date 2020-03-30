@@ -36,6 +36,7 @@ def get_json_patient(patient, config_id):
         info = {
             'info': r.sequence_file.info,
             'data': r.sequence_file.data_file,
+            'filename': r.sequence_file.filename,
             'date': str(r.sequence_file.sampling_date),
             'id': r.sequence_file.id,
             'results': r.results_file.data_file,

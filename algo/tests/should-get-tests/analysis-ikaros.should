@@ -6,7 +6,7 @@ $ All sequences have been seen as unique clone
 $ All sequences have been seen as different IKZF1 recombinations
 1: IKZF1 .* 22
 
-### control sequence given by Debré ###
+### control sequence given by Debre ###
 # del4-7__jonction_intron3_intron7
 $ Find the correct assignation for the sequence IKZF1-INTRON-3//IKZF1-INTRON-7
 1: IKZF1-INTRON-3 16/CCCGCG/8 IKZF1-INTRON-7
@@ -38,9 +38,9 @@ $ Find the correct assignation for the sequence
 
 
 ### 13922 - sequences ikfz1 ####
-$ Find the correct assignation for the sequence  (témoin del4-7)
+$ Find the correct assignation for the sequence  (temoin del4-7)
 1: IKZF1-INTRON-3 1//2 IKZF1-INTRON-7
-$ Find the correct assignation for the sequence (témoin del2-7)
+$ Find the correct assignation for the sequence (temoin del2-7)
 1: IKZF1-INTRON-1 8/CCCTTC/3 IKZF1-INTRON-7
 $ Find the correct assignation for the sequence (seq 4-7 du patient)
 1: IKZF1-INTRON-3 0/TCGG/6 IKZF1-INTRON-7

@@ -140,6 +140,7 @@ Double click to launch analysis on all samples">
     display: inline-block;" title="running pre_processs"></i>{{pass}} 
                         {{if row.sequence_file.pre_process_flag == "WAIT" :}}[queued]{{pass}} 
                         {{if row.sequence_file.pre_process_flag == "FAILED" :}}[failed] <span class="button" onclick="db.call('file/restart_pre_process', {sequence_file_id: {{=row.sequence_file.id}}})">try again</span>{{pass}}
+                        {{ if has_pre_process and row.sequence_file.pre_process_flag is None and row.sequence_file.data_file2 is None: }}<span title="All the files have not been properly received. Please edit the sample to reupload them.">[missing file]</span>{{pass}}
                         {{if row.sequence_file.pre_process_id != None :}} {{=pre_process_list[row.sequence_file.pre_process_id]}} {{pass}}
                      </td>
 		    {{if auth.is_admin():}}
@@ -182,7 +183,7 @@ Double click to launch analysis on all samples">
                      <td></td><td></td><td></td><td></td>
                    {{pass}}
                    <td>
-                   {{if row.sequence_file.data_file != None and ( row.results_file.id == None or ( status != "RUNNING" and status != "QUEUED" and status != "ASSIGNED") ):}}
+                   {{if row.sequence_file.data_file != None and ( row.results_file.id == None or ( status != "RUNNING" and status != "QUEUED" and status != "ASSIGNED") ) and (not has_pre_process or row.sequence_file.pre_process_flag in ("COMPLETED", "FAILED")) :}}
                        {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
                            <span class="pointer" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } )"><i class="icon-cog-2" title="Run the selected configuration for this file"></i></span>
                        {{pass}}

@@ -43,16 +43,18 @@ function List(id_list, id_data, model, database) {
     this.index = [];
     this.index_cluster = [];
     this.index_data = {};
+    this.sort_lock = true; // By default, lock the list in the current state
 
     this.build();
     
     this.sort_option = {
-        "-" : function () {},
+        "-"    : function () {},
         "size" : function(){self.sortListBy(function(id){return self.m.clone(id).getSize();})},
         "V/5'" : function(){self.sortListByV()},
         "J/3'" : function(){self.sortListByJ()}
     }
 
+    this.sort_option_selected = "-"; // Store the selected sort method
     this.selectedAxis = {};
 }
 
@@ -281,6 +283,13 @@ List.prototype = {
         sort.className = "list_sort_select"
         sort.onchange = function() {
             self.sort_option[this.value]()
+            self.sort_option_selected = this.value
+            // close the lock
+            self.sort_lock = true
+            self.current_sample = self.m.t
+            var div = document.getElementById("div_sortLock")
+            div.className  = "icon-lock-1 list_lock_on"
+            div.title  = "Release sort as '" + self.sort_option_selected +"' on sample " + self.m.getStrTime(self.m.t, "names")
         }
         
         for (var key in this.sort_option) {
@@ -292,6 +301,30 @@ List.prototype = {
         
         sort_span.appendChild(document.createTextNode("sort by "));
         sort_span.appendChild(sort);
+
+        this.current_sample = this.m.t
+        var lock_div = document.createElement("icon")
+        lock_div.id = "div_sortLock"
+        lock_div.className = "icon-lock-1 list_lock_on"
+        lock_div.title  = "Release sort as '" + this.sort_option_selected +"' on sample " + this.m.getStrTime(this.m.t, "names")
+        lock_div.onclick = function(){
+            var div = document.getElementById("div_sortLock")
+            if (self.sort_lock == true){
+                self.sort_lock = false
+                div.className  = "icon-lock-open list_lock_off"
+                self.current_sample = self.m.t
+                div.title  = "Freeze list as '" + self.sort_option_selected +"' on sample " + self.m.getStrTime(self.current_sample, "names")
+                // Apply sort method at unlock
+                self.sort_option[self.sort_option_selected]()
+            } else {
+                self.sort_lock = true
+                div.className  = "icon-lock-1 list_lock_on"
+                self.current_sample = self.m.t
+                div.title  = "Release sort as '" + self.sort_option_selected +"' on sample " + self.m.getStrTime(self.current_sample, "names")
+            }
+        }
+
+        sort_span.appendChild( lock_div )
 
         var axis_span = document.createElement('span');
         axis_span.className = "list_axis devel-mode";
@@ -344,8 +377,18 @@ List.prototype = {
         this.updateElem(list);
         this.update_data_list()
         
-        //TODO check order 
-        document.getElementById("list_sort_select").selectedIndex = 0;
+        // Apply selected sort function if no sort lock
+        if (this.sort_lock == false){
+            this.sort_option[this.sort_option_selected]()
+            this.current_sample = this.m.t
+            var div = document.getElementById("div_sortLock")
+            div.title  = "Freeze list as '" + this.sort_option_selected +"' on sample " + self.m.getStrTime(this.current_sample, "names")
+        } else {
+            if (this.current_sample != this.m.t) {
+                document.getElementById("list_sort_select").selectedIndex = 0;
+                this.sort_option_selected = "-"
+            }
+        }
     },
 
     /**

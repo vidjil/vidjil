@@ -871,7 +871,7 @@ int main (int argc, char **argv)
 	  Germline *germline;
 	  germline = new Germline("custom", 'X',
                                   f_reps_V, f_reps_D, f_reps_J,
-                                  seed, trim_sequences, (kmer_threshold != NO_LIMIT_VALUE));
+                                  seed, seed, seed, trim_sequences, (kmer_threshold != NO_LIMIT_VALUE));
 
           germline->new_index(indexType);
 
@@ -892,14 +892,14 @@ int main (int argc, char **argv)
       }
 
       if (multi_germline_unexpected_recombinations_12) {
-        Germline *pseudo = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", trim_sequences, (kmer_threshold != NO_LIMIT_VALUE));
+        Germline *pseudo = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", "", "", trim_sequences, (kmer_threshold != NO_LIMIT_VALUE));
         pseudo->seg_method = SEG_METHOD_MAX12 ;
         pseudo->set_index(multigermline->index);
         multigermline->germlines.push_back(pseudo);
       }
 
       if (multi_germline_unexpected_recombinations_1U) {
-        Germline *pseudo_u = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", trim_sequences, (kmer_threshold != NO_LIMIT_VALUE));
+        Germline *pseudo_u = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", "", "", trim_sequences, (kmer_threshold != NO_LIMIT_VALUE));
         pseudo_u->seg_method = SEG_METHOD_MAX1U ;
         // TODO: there should be more up/downstream regions for the PSEUDO_UNEXPECTED germline. And/or smaller seeds ?
         pseudo_u->set_index(multigermline->index);

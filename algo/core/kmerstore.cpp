@@ -61,6 +61,9 @@ bool Kmer::isNull() const{
 bool Kmer::isUnknown() const{
   return false;
 }
+bool Kmer::isAmbiguous() const{
+  return false;
+}
 
 ostream &operator<<(ostream &os, const Kmer &kmer) {
   os << kmer.count << ",";

@@ -4,6 +4,7 @@
 #include "testTools.cpp"
 #include "testFilter.cpp"
 #include "testKmerAffect.cpp"
+#include "testGermline.cpp"
 #include "testStorage.cpp"
 #include "testAffectAnalyser.cpp"
 #include "testBugs.cpp"
@@ -23,6 +24,7 @@ int main(void) {
   declare_tests();
   testTools();
   testFilter();
+  testGermline();
   testStorage();
   testKmerAffect();
   testAffectAnalyser();

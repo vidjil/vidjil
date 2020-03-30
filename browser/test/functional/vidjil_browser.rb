@@ -376,6 +376,11 @@ class VidjilBrowser < Watir::Browser
     return div(:id => 'list_clones')
   end
   
+  def listLock()
+    return element(:id => "div_sortLock")
+  end
+
+
   def until(extra = {})
     default = {timeout: 3}
     default.merge(extra)
