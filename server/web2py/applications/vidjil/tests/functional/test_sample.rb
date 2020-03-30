@@ -288,7 +288,7 @@ class TestSample < ServerTest
     f = footer[0]
     number_sample = f.td(:id => "footer_number_samples")
     print "'"+number_sample.text+"'"
-    assert ( number_sample.text == "1 sample(s)" ), 'footer have correct number of sample show'
+    assert ( number_sample.text == "2 sample(s)" ), 'footer have correct number of sample show'
 
     assert ( f.td(:id => "footer_run_icon").exist?  ), 'footer have a run icon'
 
