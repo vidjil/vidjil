@@ -22,7 +22,7 @@ after_nginx{
     printf "        "
     print "environment:"
     printf "            "
-    print "- VIRTUAL_HOST=" slug ".ci.vidjil.org"
+    print "- VIRTUAL_HOST=" slug ".server.ci.vidjil.org"
     printf "            "
     print "- VIRTUAL_PORT=443"
     printf "            "

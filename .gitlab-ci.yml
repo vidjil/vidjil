@@ -403,7 +403,7 @@ deploy_review_server:
   script:
     - make -C browser icons
     - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
-    - sed -i -r "s/localhost/${CI_BUILD_REF_SLUG}.ci.vidjil.org/g" ./browser/js/conf.js
+    - sed -i -r "s/localhost/${CI_BUILD_REF_SLUG}.server.ci.vidjil.org/g" ./browser/js/conf.js
     - cp ./docker/vidjil-server/conf/defs.py ./server/web2py/applications/vidjil/modules/defs.py
     - mv docker docker_${CI_BUILD_REF_SLUG}
     - cd docker_${CI_BUILD_REF_SLUG}
@@ -416,7 +416,7 @@ deploy_review_server:
     - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; docker-compose up -d mysql fuse uwsgi nginx workers"
   environment:
     name: review_server/$CI_BUILD_REF_NAME
-    url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
+    url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/?data=analysis-example.vidjil
     on_stop: stop_deploy_review_server
   only:
     - /^feature-.*s.*\/.*$/
