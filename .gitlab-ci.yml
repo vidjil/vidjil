@@ -494,7 +494,7 @@ stop_deploy_review:
 stop_deploy_review_server:
   stage: deploy_review
   script:
-    - ssh $REVIEW_SERVER "docker exec docker_${CI_BUILD_REF_SLUG}_uswgi chown -R $(cat $REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG/uid) $REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG/server/web2py/applications;  docker-compose -f $REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG/docker_$CI_BUILD_REF_SLUG/docker-compose.yml down ; rm -rf $REVIEW_SERVER_PATH$CI_BUILD_REF_SLUG; $REVIEW_SERVER_PATH_SERVER/uninstall_certs.sh $CI_BUILD_REF_SLUG"
+    - ssh $REVIEW_SERVER "docker exec docker_${CI_BUILD_REF_SLUG}_uswgi chown -R "'$(cat '$REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG'/uid)'" $REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG/server/web2py/applications;  docker-compose -f $REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG/docker_$CI_BUILD_REF_SLUG/docker-compose.yml down -v ; rm -rf $REVIEW_SERVER_PATH$CI_BUILD_REF_SLUG; $REVIEW_SERVER_PATH_SERVER/uninstall_certs.sh $CI_BUILD_REF_SLUG"
   when: manual
   environment:
     name: review_server/$CI_BUILD_REF_NAME
