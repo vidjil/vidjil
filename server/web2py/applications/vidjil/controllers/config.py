@@ -18,6 +18,7 @@ def index():
     query = db((auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) ) ).select(orderby=~db.config.name)
     used_query = db(db.results_file.config_id > 0).select(db.results_file.config_id, distinct=True)
     used_configs = [row.config_id for row in used_query]
+    classification = db( (db.classification) ).select()
 
     mes = u"Access config list"
     log.info(mes, extra={'user_id': auth.user.id, 'record_id': -1, 'table_name': 'config'})
@@ -25,12 +26,14 @@ def index():
     return dict(message=T('Configs'),
                query=query,
                used_configs=used_configs,
+               classification=classification,
                isAdmin = auth.is_admin())
 
 
 def add():
     if (auth.can_create_config()):
-        return dict(message=T('Add config'))
+        classification = db( (db.classification) ).select()
+        return dict(message=T('Add config'), classification=classification)
     return error_message(ACCESS_DENIED)
 
 
@@ -90,8 +93,9 @@ def add_form():
 def edit():
     if (auth.can_modify_config(request.vars['id'])):
         mes = u"Load config edit form"
+        classification = db( (db.classification) ).select()
         log.info(mes, extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'config'})
-        return dict(message=T('edit config'))
+        return dict(message=T('edit config'), classification=classification)
     return error_message(ACCESS_DENIED)
 
 
