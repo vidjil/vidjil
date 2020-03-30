@@ -124,6 +124,17 @@ def index():
                 )
             )
 
+    for row in query:
+        if row.results_file.scheduler_task_id != None:
+            task = db(db.scheduler_task.id == row.results_file.scheduler_task_id).select()[0]
+            row.results_file.status = task.status
+        else:
+            row.results_file.status = ""
+
+
+
+
+
     tag_decorator = TagDecorator(get_tag_prefix())
     query_pre_process = db( db.pre_process.id >0 ).select()
     pre_process_list = {}

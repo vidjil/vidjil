@@ -93,12 +93,7 @@
                                   {{pass}}"
                                onclick="
                                {{ for row in query : }}
-                                    {{if row.results_file.scheduler_task_id is None or db.scheduler_task[row.results_file.scheduler_task_id ] is None:}}
-                                        {{status = '' }}
-                                    {{else:}}
-                                        {{status = db.scheduler_task[row.results_file.scheduler_task_id ].status }}
-                                    {{pass}}
-                                    {{ if status in ["FAILED",'']: }}
+                                    {{ if row.results_file.status in ["FAILED",'']: }}
                                       db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } )
                                     {{pass}}
                                  {{pass}}
