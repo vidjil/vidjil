@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 services:
     mysql:
         image: mysql:5.7
@@ -7,16 +7,22 @@ services:
         volumes:
             - ./mysql/:/docker-entrypoint-initdb.d/
             - /opt/vidjil/mysql:/var/lib/mysql
+        healthcheck:
+          test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+          timeout: 20s
+          retries: 10
     uwsgi:
         image: vidjil/server:latest
         environment:
-            - WEB2PY_ADMIN_PASSWORD=''
+            - WEB2PY_ADMIN_PASSWORD=
         command: bash /entrypoints/uwsgi-entrypoint.sh
         volumes_from:
             - fuse
         depends_on:
-            - mysql
-            - fuse
+            mysql:
+              condition: service_healthy
+            fuse:
+              condition: service_started
         links:
             - mysql:mysql
             - fuse:fuse
@@ -37,7 +43,8 @@ services:
     nginx:
         image: vidjil/client:latest
         depends_on:
-            - uwsgi
+            uwsgi:
+              condition: service_started
         links:
                 - uwsgi:uwsgi
         ports:
@@ -56,8 +63,10 @@ services:
         volumes_from:
             - uwsgi
         depends_on:
-            - uwsgi
-            - mysql
+            uwsgi:
+              condition: service_started
+            mysql:
+              condition: service_healthy
         links:
             - mysql
     backup:
@@ -75,6 +84,7 @@ services:
         volumes:
             - ./reporter/code:/opt/reporter
         depends_on:
-            - uwsgi
+            uwsgi:
+              condition: service_started
         links:
             - uwsgi:uwsgi

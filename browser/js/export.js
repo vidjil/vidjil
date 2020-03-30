@@ -133,14 +133,13 @@ Report.prototype = {
     switchstate: function(system_list, sample_list){
         this.savestate();
         this.m.system_selected = system_list;
-        this.m.samples.order = sample_list;
+        this.m.changeTimeOrder( sample_list );
         return this;
     },
     
     restorestate: function(){
         this.m.system_selected = this.save_system;
-        this.m.samples.order = this.save_sample;
-        this.m.update();
+        this.m.changeTimeOrder( this.save_sample );
         return this;
     },
     

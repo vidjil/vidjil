@@ -101,7 +101,11 @@ do a correct gathering.
 
     "samples": {
          "number": 2, 
-         "original_names": ["T8045-BC081-Diag.fastq", "T8045-BC082-fu1.fastq"]
+         "original_names": ["T8045-BC081-Diag.fastq", "T8045-BC082-fu1.fastq"],
+         "timestamp": [
+           "2019-12-17 17:49:22",
+           "2019-12-27 17:50:04"
+         ]
     },
 
     "reads" : {
@@ -191,7 +195,8 @@ some clones, and added external data (`data`).
          "number": 2, 
          "names": ["diag", "fu1"],
          "original_names": ["file1.fastq", "file2.fastq"],
-         "order": [1, 0]
+         "order": [1, 0],
+         "stock_order": [1, 0]
     },
 
     "clones": [

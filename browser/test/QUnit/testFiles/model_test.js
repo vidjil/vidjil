@@ -549,3 +549,64 @@ QUnit.test("distribution_load", function(assert) {
     assert.equal(m2.countRealClones(), 5, 'Correct number of real clones WITH distributions clones (directly from json_data)')
    
 });
+
+
+QUnit.test("computeOrderWithStock", function(assert) {
+
+    var m = new Model();
+    m.parseJsonData(json_data, 100)
+    m.initClones()
+
+    // Only hidden sample
+    m.samples.order       = ["a", "c", "e"] // hide B & D
+    m.samples.stock_order = ["a", "b", "c", "d", "e"]
+    var waited    = ["a", "b", "c", "d", "e"]
+    m.computeOrderWithStock()
+    assert.deepEqual( m.samples.stock_order, waited, "result of computeOrderWithStock is correct (case with only hidden samples)")
+
+    // Only hidden sample (but with number)
+    m.samples.order       = [0, 2, 4] // hide B & D
+    m.samples.stock_order = [0, 1, 2, 3, 4]
+    var waited    = [0, 1, 2, 3, 4]
+    m.computeOrderWithStock()
+    assert.deepEqual( m.samples.stock_order, waited, "result of computeOrderWithStock is correct (case with only hidden samples as number)")
+
+    // only one move
+    m.samples.order       = ["a", "d", "b", "c", "e"] // D between A & B
+    m.samples.stock_order = ["a", "b", "c", "d", "e"]
+    waited        = ["a", "d", "b", "c", "e"]
+    m.computeOrderWithStock()
+    assert.deepEqual( m.samples.stock_order, waited, "result of computeOrderWithStock is correct (case with one move)")
+
+    // only one move + hidden
+    m.samples.order       = ["a", "d", "c", "e"] // D before C; B hidden
+    m.samples.stock_order = ["a", "b", "c", "d", "e"]
+    waited        = ["a", "b", "d", "c", "e"]
+    m.computeOrderWithStock()
+    assert.deepEqual( m.samples.stock_order, waited, "result of computeOrderWithStock is correct (case with moved+hidden samples)")
+
+    // Various 
+    m.samples.order       = ["a", "i", "b", "e", "c", "g", "f"] // I before B; G before F; D & H hidden
+    m.samples.stock_order = ["a", "b", "c", "d", "e", "f", "g", "h", "i"]
+    waited        = ["a", "i", "b", "e", "c", "d", "g", "f", "h"]
+    m.computeOrderWithStock()
+    assert.deepEqual( m.samples.stock_order, waited, "result of computeOrderWithStock is correct (case with multiple move/hide)")
+
+    // Test with manual change of sample order
+    m.parseJsonData(json_data, 100)
+    m.initClones()
+    console.log( m.samples.order)       //[0, 1, 2, 3]
+    console.log( m.samples.stock_order) //[0, 1, 2, 3]
+
+    m.changeTimeOrder([0,3,1]) // should automaticaly apply change to stock_order (3 before 1)
+    waited  = [0, 3, 1, 2]
+    assert.deepEqual( m.samples.stock_order, waited, "correct stock_order if apply m.changeTimeOrder")
+
+    m.switchTimeOrder(1,2) // Use index and not value! Should automaticaly apply change to stock_order (1 before 3); 
+    waited  = [0, 1, 3, 2]
+    assert.deepEqual( m.samples.stock_order, waited, "Correct stock_order if apply m.switchTimeOrder")
+
+
+
+
+});

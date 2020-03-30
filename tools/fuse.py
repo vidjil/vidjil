@@ -60,7 +60,8 @@ AVAILABLE_AXES = [
     "insert_53", "insert_54", "insert_43",
     "evalue", "evalue_left", "evalue_right",
 ]
-
+GET_UNKNOW_AXIS = "unknow_axis"
+UNKNOWN_VALUE   = ""
 
 class Window:
     # Should be renamed "Clone"
@@ -229,6 +230,7 @@ class Window:
         """Return the value of an axis for this clone at a given timepoint"""
 
         axes = {
+            "id":       ["id"],
             "top":      ["top"],
             "germline": ["germline"],
             "name":     ["name"],
@@ -255,7 +257,9 @@ class Window:
             "junction_stop":  ["seg","junction","stop"],
             "junction_start": ["seg","junction","start"],
             "productive":     ["seg","junction","productive"],
-            "lenSeqAverage" : ["_average_read_length"]
+            "lenSeqAverage" : ["_average_read_length"],
+            "warnings": ["warn"],
+            "sequence": ["sequence"]
         }
 
         ### length
@@ -292,7 +296,7 @@ class Window:
 
                 return value
 
-            return "unknow_axis"
+            return GET_UNKNOW_AXIS
         except:
             return "?"
 
@@ -304,6 +308,75 @@ class Window:
             value = round(float(value) / round_set) * round_set
         return value
 
+
+    def toCSV(self, cols= [], time=0, jlist = False):
+        """ Return a list of values of the clone added from a list of waited columns """
+        list_values = []
+
+
+        airr_to_axes = {
+            "locus":               "germline",
+            "v_call":              "seg5",
+            "d_call":              "seg4",
+            "j_call":              "seg3",
+            "v_alignment_end":     "seg5_stop",
+            "d_alignment_start":   "seg4_start",
+            "d_alignment_end":     "seg4_stop",
+            "j_alignment_start":   "seg3_start",
+            "productive":          "productive",
+            "cdr3_start":          "cdr3_start",
+            "cdr3_end":            "cdr3_stop",
+            "sequence_id":         "id",
+            "sequence":            "sequence",
+            ## Not implemented in get_values
+            # For x_cigar, datananot available in clone
+            "junction":  "?",
+            "cdr3_aa":   "?",
+            "rev_comp":  "?",
+            "v_cigar":   "?",
+            "d_cigar":   "?",
+            "j_cigar":   "?",
+            "sequence_alignment": "?",
+            "germline_alignment": "?",
+            "duplicate_count":    "reads"
+        }
+
+        airr_computed =  ["ratio_segmented", "ratio_locus", "filename", "warnings"]
+
+        for col in cols:    
+
+            if col in airr_computed:
+                if col == "ratio_locus":
+                    germline = self.get_values("germline")
+                    value = float(self.get_values("reads", timepoint=time) ) / jlist.d["reads"].d["germline"][germline][time]
+                elif col == "ratio_segmented":
+                    value = float(self.get_values("reads", timepoint=time) ) / jlist.d["reads"].d["segmented"][time]
+                elif col == "filename":
+                    value = jlist.d["samples"].d["original_names"][time]
+                elif col == "warnings":
+                    if "warn" not in self.d.keys():
+                        value = ""
+                    else:
+                        warns = self.d["warn"]
+                        values = []
+                        for warn in warns:
+                            values.append( warn["code"] )
+                        value = ",".join(values)
+
+                else:
+                    value = GET_UNKNOW_AXIS
+
+            elif col in airr_to_axes.keys():
+                value = self.get_values(airr_to_axes[col], timepoint=time)
+            else:
+                value = GET_UNKNOW_AXIS
+
+            if value == "?" or value == GET_UNKNOW_AXIS:
+                # for some axis, there is no computable data; for the moment don't show anything
+                value = UNKNOWN_VALUE
+            list_values.append( str(value) )
+
+        return list_values
 
 
     def latex(self, point=0, base_germline=10000, base=10000, tag=''):
@@ -1053,6 +1126,30 @@ class ListWindows(VidjilJson):
             
         return obj_dict
         
+    def save_airr(self, output):
+        """
+        Create an export of content into AIRR file
+        Columns is hardcoded for the moment.
+        TODO: add some options to give more flexibility to cols
+        """
+        ## Constant header
+        list_header  = ["filename", "locus", "duplicate_count", "v_call", "d_call", "j_call", "sequence_id", "sequence", "productive"]
+        ## not available in this script; but present in AIRR format
+        list_header += ["junction_aa", "junction", "cdr3_aa", "warnings", "rev_comp", "sequence_alignment", "germline_alignment", "v_cigar", "d_cigar", "j_cigar"]
+        # ## Specificly asked. Need to be added by server side action on vidjil files
+        list_header += ["ratio_segmented", "ratio_locus"] #"first_name", "last_name", "birthday", "infos", "sampling_date", "frame"]
+
+        fo = open(output, 'w')
+        fo.write( "\t".join(list_header)+"\n")
+        for clone in self.d["clones"]:
+            reads = clone.d["reads"]
+            for time in range(0, len(reads)):
+                if reads[time]:
+                    fo.write( "\t".join( clone.toCSV(cols=list_header, time=time, jlist=self) )+"\n")
+        fo.close()
+        return
+
+
     def get_filename_pos(self, filename):
         """ filename is the key of distributions repertoires """
         return self.d["samples"].d["original_names"].index(filename)
@@ -1297,6 +1394,8 @@ def main():
     group_options.add_argument('--distributions-list', '-l', action='store_true', default=False, help='list the available axes for distributions')
     group_options.add_argument('--no-clones', action='store_true', default=False, help='do not output individual clones')
 
+    group_options.add_argument('--export-airr', action='store_true', default=False, help='export data in AIRR format.')
+
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
 
     args = parser.parse_args()
@@ -1447,7 +1546,11 @@ def main():
         del jlist_fused.d["clones"]
 
     print("### Save merged file")
-    jlist_fused.save_json(args.output)
+    if args.export_airr:
+        output= args.output.replace(".vidjil", ".airr")
+        jlist_fused.save_airr(output)
+    else:
+        jlist_fused.save_json(args.output)
     
     
     
