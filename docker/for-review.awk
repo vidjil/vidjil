@@ -62,4 +62,8 @@ after_volumes2{
     print "        command: bash -c \"chown -R www-data /usr/share/vidjil/server/web2py/applications/; bash /entrypoints/uwsgi-entrypoint.sh\""
     next
 }
+/\/opt\/vidjil\/mysql/ {
+    # No volume for MySQL
+    next
+}
 1
