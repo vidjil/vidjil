@@ -366,7 +366,7 @@ class TestClones < BrowserTest
     color_select.click
     color_v_option = color_select.option(value: 'V')
     color_v_option.click
-    $b.span(class: 'systemBoxNameMenu').hover
+    $b.clone_in_list('22').hover
     $b.update_icon.wait_while(&:present?)
     assert ( $b.clone_info('0')[:name].style('color')  !=  'rgba(101, 123, 131, 1)' ) ,    "real clone should have changed color (diff from grey)"
     assert ( $b.clone_info('16')[:name].style('color').start_with?('rgba(150, 150, 150, 0.65') ) , "other clone shouldn't have changed color"
