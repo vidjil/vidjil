@@ -213,10 +213,10 @@ class TestMultilocus < BrowserTest
 
   def test_13_export_fasta
     $b.unselect
-    $b.clone_in_scatterplot('77').click
-    $b.clone_in_scatterplot('25').click(:control)
-    $b.clone_in_scatterplot('88').click(:control)
-    $b.clone_in_scatterplot('90').click(:control)
+    $b.clone_in_list('77').click
+    $b.clone_in_list('25').click(:control)
+    $b.clone_in_list('88').click(:control)
+    $b.clone_in_list('90').click(:control)
 
     $b.menu_item_export_fasta.click
     assert ( $b.window(:url => /about:blank/ )) , ">> fail opening fasta export "

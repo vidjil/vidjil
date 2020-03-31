@@ -119,6 +119,7 @@ class TestClones < BrowserTest
     $b.send_keys 4
     $b.clone_in_list("18").click
     $b.update_icon.wait_while(&:present?)
+    $b.clone_in_scatterplot('18').wait_until(&:present?) 
     assert ( $b.clone_in_scatterplot('18').present?),     ">> distrib clone should be in scatterplot"
     assert ( not $b.clone_in_segmenter("18").present? ),  ">> not present in segmenter"
     $b.a(:id => "hide_selected").click
