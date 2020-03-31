@@ -4,6 +4,7 @@ import vidjil_utils
 import time
 import json
 from vidjilparser import VidjilParser
+from collections  import defaultdict
 import operator
 import math
 
@@ -129,7 +130,17 @@ def index():
     pre_process_list = {}
     for row in query_pre_process:
         pre_process_list[row.id] = row.name
-    
+
+
+    classification = defaultdict( lambda: {"info":"", "name":"", "configs":[]} )
+    if auth.can_process_sample_set(request.vars['id']) :
+        for class_elt in db( (db.classification)).select():
+            classification[class_elt]["name"]    = class_elt.name
+            classification[class_elt]["info"]    = class_elt.info
+            classification[class_elt]["configs"] = db( (db.config.classification == class_elt.id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.id)
+
+
+
     log.info('sample_set (%s)' % request.vars["id"], extra={'user_id': auth.user.id,
         'record_id': request.vars["id"],
         'table_name': "sample_set"})
@@ -148,6 +159,7 @@ def index():
                 analysis_filename = analysis_filename,
                 sample_type = db.sample_set[request.vars["id"]].sample_type,
                 config=config,
+                classification=classification,
                 tag_decorator=tag_decorator)
 
 ## return a list of generic sample_sets
@@ -262,6 +274,14 @@ def stats():
     else:
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
 
+
+    classification = defaultdict( lambda: {"info":"", "name":"", "configs":[]} )
+    if auth.can_process_sample_set(request.vars['id']) :
+        for class_elt in db( (db.classification)).select():
+            classification[class_elt]["name"]    = class_elt.name
+            classification[class_elt]["info"]    = class_elt.info
+            classification[class_elt]["configs"] = db( (db.config.classification == class_elt.id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.id)
+
     result = helper.filter(search, result)
     log.info("%s stat list %s" % (request.vars["type"], search), extra={'user_id': auth.user.id,
         'record_id': None,
@@ -273,6 +293,7 @@ def stats():
                 helper = helper,
                 group_ids = group_ids,
                 isAdmin = isAdmin,
+                classification=classification,
                 reverse = False)
 
 def result_files():
@@ -679,11 +700,20 @@ def custom():
     log.info("load compare list", extra={'user_id': auth.user.id, 'record_id': None, 'table_name': "results_file"})
     log.debug("sample_set/custom (%.3fs) %s" % (time.time()-start, search))
 
+
+    classification = defaultdict( lambda: {"info":"", "name":"", "configs":[]} )
+    if auth.can_process_sample_set(request.vars['id']) :
+        for class_elt in db( (db.classification)).select():
+            classification[class_elt]["name"]    = class_elt.name
+            classification[class_elt]["info"]    = class_elt.info
+            classification[class_elt]["configs"] = db( (db.config.classification == class_elt.id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.id)
+
     return dict(query=query,
                 config_id=config_id,
                 config=config,
                 helper=helper,
                 tag_decorator=tag_decorator,
+                classification=classification,
                 group_ids=group_ids)
 
 def getStatHeaders():
