@@ -90,7 +90,7 @@ function Com(default_console) {
             BUTTON_CLOSE_POPUP,
 
         "welcome": " <h2>Vidjil <span class='logo'>(beta)</span></h2>" +
-            "(c) 2011-2017, the Vidjil team " +
+            "(c) 2011-2020, the Vidjil team " +
             (typeof git_sha1 !== "undefined" ? "&ndash; " + git_sha1 : "") + "</br>" +
             "<br />Aurélien Béliard, Marc Duez, Mathieu Giraud, Ryan Herbert, Mikaël Salson, Tatiana Rocher and Florian Thonier" +
             " &ndash; <a href='http://www.vidjil.org'>http://www.vidjil.org/</a>" + "</br>" +
@@ -98,6 +98,8 @@ function Com(default_console) {
             "in collaboration with the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille, " +
             "the <a href='http://www.ircl.org/plate-forme-genomique.html'>Functional and Structural Genomic Platform</a> (U. Lille 2, IFR-114, IRCL)" +
             " and the <a href='http://www.euroclonality.org/'>EuroClonality-NGS</a> working group." +
+            "<br/>" +
+            "<br/>Vidjil is hosted by the <a href='http://hpc.univ-lille.fr/'>scientific computing facility</a> at the Lille University." +
             "<br/>" +
             "<br>Vidjil is free software, and you are welcome to redistribute it under <a href='http://git.vidjil.org/blob/master/doc/LICENSE'>certain conditions</a>. This software is for research use only and comes with no warranty." +
             "<br>" +
