@@ -3,6 +3,18 @@
 BEGIN{
     slug=ENVIRON["CI_BUILD_REF_SLUG"]
 }
+/\/mnt\/upload\/uploads/ {
+    print "            - uploads:/mnt/upload/uploads"
+    next
+}
+/\/mnt\/result\/results/ {
+    print "            - results_tmp:/mnt/result/tmp"
+    print "            - results_results:/mnt/result/results"
+    next
+}
+/\/mnt\/result\/tmp/ {
+    next
+}
 after_ports{
     if(/\s*-\s*"[^"]*"/)
         next
@@ -67,3 +79,6 @@ after_volumes2{
     next
 }
 1
+END {
+  printf "volumes:\n    databases:\n    uploads:\n    results_results:\n    results_tmp:\n"
+}
