@@ -292,6 +292,7 @@ class TestSample < ServerTest
     assert ( number_sample.text == "1 sample(s)" || number_sample.text == "2 sample(s)" ), 'footer have correct number of sample show'
 
     assert ( f.td(:id => "footer_run_icon").exist?  ), 'footer have a run icon'
+    assert ( f.td(:id => "footer_run_icon_all",:class => ["pointer", "devel-mode"]).exist?  ), 'footer have a run icon for all sample in devel-mode'
 
     # change config to "---"
     $b.select_list(:id => "choose_config").select("0")

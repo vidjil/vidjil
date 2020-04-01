@@ -82,24 +82,30 @@
                 <td class="column_100">Run all</td>
                 <td class="column5"></td>
                 <td class="column5"></td>
-                <td class="column5"></td>
+                <td class="column5" id="footer_run_icon_all">
+                       {{if config_id > 0 and auth.can_use_config(config_id) :}}
+                          {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
+                              <span class="pointer devel-mode" 
+                               onclick="
+                                  {{ for row in query : }}
+                                      db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } )
+                                  {{pass}}"
+                              ><i class="icon-cog-2" title="Run the selected configuration for all samples">
+                               </i></span>
+                           {{pass}}
+                      {{pass}}
+                </td>
                 <td class="column5" id="footer_run_icon">
                        {{if config_id > 0 and auth.can_use_config(config_id) :}}
                           {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
                                <span class="pointer" 
-                               ondblclick="
-                                  {{ for row in query : }}
-                                      db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } )
-                                  {{pass}}"
                                onclick="
                                {{ for row in query : }}
                                     {{ if row.results_file.status in ["FAILED",'']: }}
                                       db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } )
                                     {{pass}}
                                  {{pass}}
-                               "><i class="icon-cog-2" title="Run the selected configuration for all samples
-One click to run only on not already analysed or failed samples
-Double click to launch analysis on all samples">
+                               "><i class="icon-cog-2" title="Run the selected configuration for all samples not already analysed or failed">
                                </i></span>
                            {{pass}}
                       {{pass}}
