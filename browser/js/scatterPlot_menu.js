@@ -215,12 +215,11 @@ ScatterPlot_menu.prototype = {
     changePreset: function(){
         var elem = this.select_preset;
         this.changeSplitMethod(this.preset[elem.value].x, this.preset[elem.value].y);
-        this.smartUpdate();
+        this.m.update();
     },
 
     updatePreset: function(){
         this.changePreset();
-        this.smartUpdate();
     },
 
     setPreset: function(preset){
