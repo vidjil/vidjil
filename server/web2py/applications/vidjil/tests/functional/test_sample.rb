@@ -295,6 +295,7 @@ class TestSample < ServerTest
 
     # change config to "---"
     $b.select_list(:id => "choose_config").select("0")
-    assert ( not f.td(:id => "footer_run_icon").exist?  ), "footer don't have a run icon if no config selected"
+    # footer don't have a run icon if no config selected ("---")
+    f.td(:id => "footer_run_icon").wait_until(&:present?)
   end
 end
