@@ -17,7 +17,8 @@
                 "3": ["TRAJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "13s"
+                "seed": "13s",
+                "seed_3": "10s"
             }
         },
 
@@ -31,7 +32,9 @@
                 "3": ["TRBJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "seed_3": "10s"
+                    
             }
         },
         "TRB+": {
@@ -44,7 +47,8 @@
                 "3": ["TRBJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "seed_3": "10s"
             }
         },
 
@@ -57,7 +61,8 @@
                 "3": ["TRGJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "seed_3": "8c"
             }
         },
 
@@ -71,7 +76,8 @@
                 "3": ["TRDJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "seed_3": "8c"
             }
         },
         "TRA+D": {
@@ -87,7 +93,8 @@
                 "3": ["TRAJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "13s"
+                "seed": "13s",
+                "seed_3": "10s"
             }
         },
         "TRD+": {
@@ -107,7 +114,8 @@
                 "3": ["TRDD3+down.fa"]
             } ],
             "parameters": {
-                "seed": "9c"
+                "seed": "9c",
+                "seed_3": "8c"
             }
         },
 
@@ -121,7 +129,8 @@
                 "3": ["IGHJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "seed_3": "10s"
             }
         },
         "IGH+": {
@@ -134,7 +143,8 @@
                 "3": ["IGHJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "seed_3": "10s"
             }
         },
 
@@ -147,7 +157,8 @@
                 "3": ["IGKJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "seed_3": "8c"
             }
         },
         "IGK+": {
@@ -160,7 +171,9 @@
                 "3": ["IGK-KDE.fa"]
             } ],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "seed_3": "8c"
+                    
             }
         },
 
@@ -173,7 +186,8 @@
                 "3": ["IGLJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "seed_3": "8c"
             }
         }
     }
