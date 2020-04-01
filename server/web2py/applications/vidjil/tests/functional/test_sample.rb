@@ -297,6 +297,11 @@ class TestSample < ServerTest
     $b.send_keys [:control, 'a'] # exit of devel-mode
 
     # change config to "---"
+    print "\n"
+    print $b.select_list(:id => "choose_config") # test
+    print "\n"
+    print $b.select_list(:id => "choose_config").to_s # test
+    print "\n"
     $b.select_list(:id => "choose_config").select("0")
     # footer don't have a run icon if no config selected ("---")
     f.td(:id => "footer_run_icon").wait_until(&:present?)
