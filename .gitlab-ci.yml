@@ -409,7 +409,9 @@ deploy_review_server:
     - cd docker_${CI_BUILD_REF_SLUG}
     - TMP_DOCKER=$(tempfile)
     - cp docker-compose.yml $TMP_DOCKER
-    - awk -f for-review.awk $TMP_DOCKER > docker-compose.yml
+    - awk -f ci/for-review.awk $TMP_DOCKER > docker-compose.yml
+    - sed -i '$e cat ci/fuse-entrypoint.sh' vidjil-server/scripts/fuse-entrypoint.sh
+    - rm -f $TMP_DOCKER
     - sed -i -r "s/WEB2PY_ADMIN_PASSWORD=''/WEB2PY_ADMIN_PASSWORD='Sup3rSecr47'/" docker-compose.yml
     - cd ..
     - rsync -av --delete --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
