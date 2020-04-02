@@ -412,7 +412,7 @@ deploy_review_server:
     - awk -f ci/for-review.awk $TMP_DOCKER > docker-compose.yml
     - sed -i '$e cat ci/fuse-entrypoint.sh' vidjil-server/scripts/fuse-entrypoint.sh
     - rm -f $TMP_DOCKER
-    - sed -i -r "s/WEB2PY_ADMIN_PASSWORD=''/WEB2PY_ADMIN_PASSWORD='Sup3rSecr47'/" docker-compose.yml
+    - sed -i -r "s/WEB2PY_ADMIN_PASSWORD=/WEB2PY_ADMIN_PASSWORD=$REVIEW_SERVER_ADMIN_PASSWORD/" docker-compose.yml
     - cd ..
     - rsync -av --delete --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
     - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; ls -lnd ../browser | cut -d ' ' -f 3 > ../uid; docker-compose up -d mysql fuse uwsgi nginx workers"
