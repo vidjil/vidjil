@@ -155,10 +155,11 @@ AXIS_DEFAULT = {
             "productive":       {text:"productive"},
         },
         fct:        function(clone) { return clone.getProductivityIMGT() },
+        pretty: function(tag) { return icon_pm(tag, "productive", "not productive") }
     },
-    /*"VIdentity IMGT": {
+    "VIdentity IMGT": {
         name:       "VIdentity IMGT",
-        label:      "V identity (as computed by IMGT/V-QUEST)",
+        doc:        "V identity (as computed by IMGT/V-QUEST)",
         fct:        function(clone) { return clone.getVIdentityIMGT() },
         pretty: function(val) {
             var Videntity_info = document.createElement('span');
@@ -175,7 +176,7 @@ AXIS_DEFAULT = {
             } else Videntity_info.innerHTML = "&nbsp;";
             return Videntity_info;
         },
-    },*/
+    },
     "tag": {
         name:       "tag",
         doc:        "tag, as defined by the user",   
