@@ -4,12 +4,11 @@ BEGIN{
     slug=ENVIRON["CI_BUILD_REF_SLUG"]
 }
 /\/mnt\/upload\/uploads/ {
-    print "            - uploads:/mnt/upload/uploads"
+    print "            - ./ci/uploads:/mnt/upload/uploads"
     next
 }
 /\/mnt\/result\/results/ {
-    print "            - results_tmp:/mnt/result/tmp"
-    print "            - results_results:/mnt/result/results"
+    print "            - ./ci/result:/mnt/result"
     next
 }
 /\/mnt\/result\/tmp/ {
@@ -46,6 +45,8 @@ after_volumes{
   print "- ../browser:/usr/share/vidjil/browser"
   printf "            "
   print "- ../server/web2py/applications/vidjil:/usr/share/vidjil/server/web2py/applications/vidjil"
+  printf "            "
+  print "- ./:/usr/share/vidjil/docker"
   after_volumes=0
 }
 
@@ -76,5 +77,5 @@ after_volumes2{
 }
 1
 END {
-  printf "volumes:\n    databases:\n    uploads:\n    results_results:\n    results_tmp:\n"
+  printf "volumes:\n    databases:\n"
 }
