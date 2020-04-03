@@ -301,6 +301,8 @@ class TestSample < ServerTest
     print $b.select_list(:id => "choose_config") # test
     print "\n"
     print $b.select_list(:id => "choose_config").to_s # test
+    
+    print $b.select_list(:id => "choose_config").html # test
     print "\n"
     $b.select_list(:id => "choose_config").select("0")
     # footer don't have a run icon if no config selected ("---")
