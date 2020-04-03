@@ -578,7 +578,11 @@ Axis.prototype = {
 
         //sort clones
         for (var l2 in this.bar)
-            this.bar[l2].clones.sort(function(a,b){return a.top - b.top})
+            this.bar[l2].clones.sort(function(a,b){
+                if (a.top == 0) return 1
+                if (b.top == 0) return -1
+                return a.top - b.top
+            })
 
         //compute height
         for (var l3 in this.bar){
