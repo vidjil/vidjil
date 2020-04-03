@@ -310,10 +310,9 @@ ScatterPlot_selector.prototype = {
                     node_y = node.y + this.margin[0]
                 } else {
                     // bar_x and bar_y are both ratio values (between 0 and 1), need to multiply by the size of the grid
-                    node_x = node.bar_x * this.gridSizeW + this.margin[3];
-                    var mid_y = node.bar_y - node.bar_h / 2; // bar_x represents the middle of the rectangle, but not bar_y
-                    // bar_y starts from bottom, so we need to substract the y value from the height of the grid
-                    node_y = this.gridSizeH - mid_y * this.gridSizeH + this.margin[0];
+                    node_x = node.bar_x + this.margin[3];
+                    var mid_y = node.bar_y + node.bar_h / 2; // bar_x represents the middle of the rectangle, but not bar_y
+                    node_y = mid_y + this.margin[0];
                 }
                 
                 if (clone.isActive() && (clone.getSize() || clone.getSequenceSize()) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
