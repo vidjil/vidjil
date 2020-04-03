@@ -75,6 +75,10 @@ after_volumes2{
     # No volume for MySQL
     next
 }
+/uwsgi-entrypoint.sh/{
+    print $0" --ci"
+    next
+}
 1
 END {
   printf "volumes:\n    databases:\n"
