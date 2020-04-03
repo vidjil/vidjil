@@ -24,12 +24,12 @@ class TestSampleSet < ServerTest
     table
   end
 
-  def test_00_patient_001_list
+  def test_patient_001_list
     table = go_to_list
     assert(table.tbody.present?)
   end
 
-  def test_01_patient_add
+  def test_patient_add
     table = go_to_list
 
     count = table.tbody.rows.count
@@ -80,7 +80,7 @@ class TestSampleSet < ServerTest
     end
   end
 
-  def test_02_patient_edit
+  def test_patient_edit
     table = go_to_list
 
     # click edit button for first line in table
@@ -109,7 +109,7 @@ class TestSampleSet < ServerTest
     assert(line.td(:index => 3).text == "#edited")
   end
 
-  def test_04_patient_delete
+  def test_patient_delete
     table = go_to_list
 
     count = table.tbody.rows.count
@@ -127,7 +127,7 @@ class TestSampleSet < ServerTest
     assert(lines.count == count-1)
   end
 
-  def test_05_patient_search
+  def test_patient_search
     table = go_to_list
 
     filter = $b.text_field(:id => "db_filter_input")
