@@ -208,7 +208,7 @@ db.define_table('config',
                 Field('command', 'string'),
                 Field('fuse_command', 'string'),
                 Field('info','text'),
-                Field('classification', db.classification))
+                Field('classification', 'reference classification', ondelete='SET NULL'))
 
 
 db.define_table('results_file',
