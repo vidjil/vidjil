@@ -131,15 +131,7 @@ def index():
     for row in query_pre_process:
         pre_process_list[row.id] = row.name
 
-
-    classification = defaultdict( lambda: {"info":"", "name":"", "configs":[]} )
-    if auth.can_process_sample_set(request.vars['id']) :
-        for class_elt in db( (db.classification)).select():
-            classification[class_elt]["name"]    = class_elt.name
-            classification[class_elt]["info"]    = class_elt.info
-            classification[class_elt]["configs"] = db( (db.config.classification == class_elt.id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.id)
-
-
+    classification   = getConfigsByClassification()
 
     log.info('sample_set (%s)' % request.vars["id"], extra={'user_id': auth.user.id,
         'record_id': request.vars["id"],
@@ -274,13 +266,7 @@ def stats():
     else:
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
 
-
-    classification = defaultdict( lambda: {"info":"", "name":"", "configs":[]} )
-    if auth.can_process_sample_set(request.vars['id']) :
-        for class_elt in db( (db.classification)).select():
-            classification[class_elt]["name"]    = class_elt.name
-            classification[class_elt]["info"]    = class_elt.info
-            classification[class_elt]["configs"] = db( (db.config.classification == class_elt.id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.id)
+    classification   = getConfigsByClassification()
 
     result = helper.filter(search, result)
     log.info("%s stat list %s" % (request.vars["type"], search), extra={'user_id': auth.user.id,
@@ -701,12 +687,7 @@ def custom():
     log.debug("sample_set/custom (%.3fs) %s" % (time.time()-start, search))
 
 
-    classification = defaultdict( lambda: {"info":"", "name":"", "configs":[]} )
-    if auth.can_process_sample_set(request.vars['id']) :
-        for class_elt in db( (db.classification)).select():
-            classification[class_elt]["name"]    = class_elt.name
-            classification[class_elt]["info"]    = class_elt.info
-            classification[class_elt]["configs"] = db( (db.config.classification == class_elt.id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.id)
+    classification   = getConfigsByClassification()
 
     return dict(query=query,
                 config_id=config_id,
@@ -715,6 +696,21 @@ def custom():
                 tag_decorator=tag_decorator,
                 classification=classification,
                 group_ids=group_ids)
+
+def getConfigsByClassification():
+    """ Return list of available and auth config, classed by classification values """
+    i = 0
+    classification   = defaultdict( lambda: {"info":"", "name":"", "configs":[]} )
+    if auth.can_process_sample_set(request.vars['id']) :
+        for class_elt in db( (db.classification)).select(orderby=db.classification.id):
+            classification["%02d_%s" % (i, class_elt)]["name"]    = class_elt.name
+            classification["%02d_%s" % (i, class_elt)]["info"]    = class_elt.info
+            classification["%02d_%s" % (i, class_elt)]["configs"] = db( (db.config.classification == class_elt.id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.id)
+            i += 1
+        classification["%02d_noclass" % i]["name"]    = "No classification"
+        classification["%02d_noclass" % i]["info"]    = "Configs without classification"
+        classification["%02d_noclass" % i]["configs"] = db( (db.config.classification == None) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.id)
+    return classification
 
 def getStatHeaders():
     m = StatDecorator()
