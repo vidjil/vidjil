@@ -61,7 +61,7 @@ services:
 
     workers:
         image: vidjil/server:latest
-        command: /usr/local/bin/gosu www-data python /usr/share/vidjil/server/web2py/web2py.py -K vidjil,vidjil,vidjil
+        command: bash /entrypoints/workers-entrypoint.sh
         volumes_from:
             - uwsgi
         depends_on:
