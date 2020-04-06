@@ -47,6 +47,9 @@ after_volumes{
   print "- ../server/web2py/applications/vidjil:/usr/share/vidjil/server/web2py/applications/vidjil"
   printf "            "
   print "- ./:/usr/share/vidjil/docker"
+  printf "            "
+  print "- databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases"
+  
   after_volumes=0
 }
 
