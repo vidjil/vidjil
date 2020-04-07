@@ -89,10 +89,11 @@ class TestSample < ServerTest
       form.text_field(:id => "file_info_%d" % i).set("#my_file_%d" % i)
       # TODO test other sets
     end
-    assert( not form.input(:type => "submit").disabled? ), "Submit button is not disabled before click"
+
+    assert(form.input(:type => "submit").enabled?) # Submit button is not disabled before click
     form.input(:type => "submit").click
 
-    assert( form.input(:type => "submit").disabled? ), "Submit button should be disabled after click"
+    assert(!form.input(:type => "submit").enabled?) # Submit button should be disabled after click
 
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
