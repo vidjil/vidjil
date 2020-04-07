@@ -14,6 +14,15 @@ info = db.config[request.vars["id"]]
                 <td > </td>
             </tr>
             <tr>
+                <td> <label for="config_classification" id="config_classification__label">classification: </label> </td>
+                <td><select id="config_classification" name="config_classification">
+                        {{for class_elt in classification: }}
+                            <option value="{{=class_elt.id}}" {{if class_elt.id == info.classification:}}selected="selected"{{pass}} title="{{=class_elt.info}}">{{=class_elt.name}}</option>
+                        {{pass}}
+                    </select></td>
+                <td> </td>
+            </tr>
+            <tr>
                 <td> <label for="config_program" id="config_program__label">Program: </label> </td>
                 <td><select id="config_program" name="config_program">
                         <option value="none" {{if info.program == "none":}}selected="selected"{{pass}}>none</option>
