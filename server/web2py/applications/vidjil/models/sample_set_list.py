@@ -1,4 +1,9 @@
 class SampleSetList():
+    '''
+    Deals with a list of a type of sample set (either patient, run or set).
+
+    This class is used to load all the required information for such a list.
+    '''
     def __init__(self, type, page=None, step=None, tags=None):
         self.type = type
 
@@ -43,17 +48,17 @@ class SampleSetList():
                 key = row[type]
             else:
                 key = row
-            self.elements[key.sample_set_id] = key
-            self.elements[key.sample_set_id].file_count = 0
-            self.elements[key.sample_set_id].size = 0
-            self.elements[key.sample_set_id].conf_list = []
-            self.elements[key.sample_set_id].conf_id_list = [-1]
-            self.elements[key.sample_set_id].most_used_conf = ""
-            self.elements[key.sample_set_id].groups = ""
-            self.elements[key.sample_set_id].group_list = []
+            self.elements[key.id] = key
+            self.elements[key.id].file_count = 0
+            self.elements[key.id].size = 0
+            self.elements[key.id].conf_list = []
+            self.elements[key.id].conf_id_list = [-1]
+            self.elements[key.id].most_used_conf = ""
+            self.elements[key.id].groups = ""
+            self.elements[key.id].group_list = []
             #self.elements[key.id].has_permission = auth.can_modify_sample_set(key.sample_set_id)
-            self.elements[key.sample_set_id].has_permission = auth.can_modify_subset(type, key.id)
-            self.elements[key.sample_set_id].anon_allowed = auth.can_view_info(type, key.id)
+            self.elements[key.id].has_permission = auth.can_modify_subset(type, key.id)
+            self.elements[key.id].anon_allowed = auth.can_view_info(type, key.id)
 
         self.element_ids = self.elements.keys()
 
