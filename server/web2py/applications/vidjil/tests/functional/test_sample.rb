@@ -96,6 +96,27 @@ class TestSample < ServerTest
 
     lines = table.tbody.rows
     assert(lines.count == count + $num_additional_files + 1)
+
+    # Then search for #test4 in the patient list and check that
+    # the number of files is correct
+    table = go_to_patient_list
+    filter = $b.text_field(:id => "db_filter_input")
+    filter.wait_until(&:present?)
+    filter.set('#test4')
+
+    filter.fire_event('onchange')
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
+    table = $b.table(:id => 'table')
+    lines = table.tbody.rows
+    assert(lines.count == 1)
+
+    nb_files = count + $num_additional_files + 1
+    nb_files_cell = lines[0].cell(:index => 7)
+    assert (nb_files_cell.text.include? nb_files.to_s+" ("), "Nb files cell contains "+nb_files_cell.text+" instead of "+nb_files.to_s+" expected"
+
+    # Check that we also have the "default + extra reads" config
+    results_cell = lines[0].cell(:index => 4)
+    assert (results_cell.text.include? "default + extract reads"), "Results cell contains "+results_cell.text
   end
 
   def test_edit
