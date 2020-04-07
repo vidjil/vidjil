@@ -98,6 +98,50 @@ class TestSample < ServerTest
     assert(lines.count == count + $num_additional_files + 1)
   end
 
+  def test_add_with_pre_process
+    # Add with a pre-process and check that some fields are required
+    table = go_to_set_by_tag "#test1"
+    count = table.tbody.rows.count
+
+    add_button = $b.span(:text => "+ add samples")
+    add_button.wait_until(&:present?)
+    add_button.click
+
+    form = $b.form(:id => "upload_form")
+    form.wait_until(&:present?)
+
+    $b.input(:id => "source_computer").click
+    $b.select(:id => "pre_process").select(/test pre-process 0/)
+
+    form = $b.form(:id => "upload_form")
+    form.wait_until(&:present?)
+
+    # Adding another sample
+    $b.span(:id => "file_button").click
+
+    form.file_field(:id => 'file_upload_1_0').set(File.expand_path(__FILE__))
+    form.file_field(:id => 'file_upload_1_1').set(File.expand_path(__FILE__))
+
+    form.input(:type => "submit").click
+    # Form should not be submitted because we didn't fill all fields
+    assert ($b.form(:id => "upload_form").present?)
+
+    form.file_field(:id => 'file_upload_2_0').set(File.expand_path(__FILE__))
+
+    form.input(:type => "submit").click
+    # Form should not be submitted because we didn't fill all fields
+    assert ($b.form(:id => "upload_form").present?)
+
+    form.file_field(:id => 'file_upload_2_1').set(File.expand_path(__FILE__))
+    form.input(:type => "submit").click
+
+    table = $b.table(:id => "table")
+    table.wait_until(&:present?)
+
+    lines = table.tbody.rows
+    assert(lines.count == count + 2)
+  end
+
   def test_edit
     table = go_to_set_by_tag "#test3"
 
