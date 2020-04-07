@@ -1,4 +1,9 @@
 class SampleSetList():
+    '''
+    Deals with a list of a type of sample set (either patient, run or set).
+
+    This class is used to load all the required information for such a list.
+    '''
     def __init__(self, type, page=None, step=None, tags=None):
         self.type = type
 
