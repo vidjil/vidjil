@@ -325,7 +325,7 @@ test_server_unit:
   script:
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/server:test" docker/vidjil-server
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/client:test" docker/vidjil-client
-    - sed -i '/\/etc\/nginx\/ssl\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
+    - sed -i '/\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
     - sed -i '/\/var\/lib\/mysql/d' ./docker/docker-compose.yml
     - sed -i 's/\/opt\/vidjil\/databases/databases/' ./docker/docker-compose.yml
     - echo -e "volumes:\n    databases:" >> ./docker/docker-compose.yml
@@ -398,6 +398,32 @@ deploy_review:
   tags:
     - web
 
+deploy_review_server:
+  stage: deploy_review
+  script:
+    - make -C browser icons
+    - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
+    - sed -i -r "s/localhost/${CI_BUILD_REF_SLUG}.server.ci.vidjil.org/g" ./browser/js/conf.js
+    - sed -r 's/^.*FILE_SOURCE.*$/FILE_SOURCE="\/usr\/share\/vidjil\/demo"/' ./docker/vidjil-server/conf/defs.py > ./server/web2py/applications/vidjil/modules/defs.py
+    - mv docker docker_${CI_BUILD_REF_SLUG}
+    - cd docker_${CI_BUILD_REF_SLUG}
+    - TMP_DOCKER=$(tempfile)
+    - cp docker-compose.yml $TMP_DOCKER
+    - awk -f ci/for-review.awk $TMP_DOCKER > docker-compose.yml
+    - sed -i '$e cat ci/fuse-entrypoint.sh' vidjil-server/scripts/fuse-entrypoint.sh
+    - rm -f $TMP_DOCKER
+    - sed -i -r "s/WEB2PY_ADMIN_PASSWORD=/WEB2PY_ADMIN_PASSWORD=$REVIEW_SERVER_ADMIN_PASSWORD/" docker-compose.yml
+    - cd ..
+    - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
+    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; ls -lnd ../browser | cut -d ' ' -f 3 > ../uid; docker-compose up -d mysql fuse uwsgi nginx workers"
+  environment:
+    name: review_server/$CI_BUILD_REF_NAME
+    url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/browser/
+    on_stop: stop_deploy_review_server
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+
 deploy_docker:
   stage: deploy_prod
   script:
@@ -466,3 +492,15 @@ stop_deploy_review:
     - /^hotfix-.*c.*\/.*$/
   tags:
     - web
+
+stop_deploy_review_server:
+  stage: deploy_review
+  script:
+    - ssh $REVIEW_SERVER "set -o xtrace; docker-compose -f $REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG/docker_$CI_BUILD_REF_SLUG/docker-compose.yml down -v ; rm -rf $REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG; $REVIEW_SERVER_PATH_SERVER/uninstall_certs.sh $CI_BUILD_REF_SLUG"
+  when: manual
+  environment:
+    name: review_server/$CI_BUILD_REF_NAME
+    action: stop
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
