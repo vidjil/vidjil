@@ -420,6 +420,7 @@ deploy_review_server:
     name: review_server/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/browser/
     on_stop: stop_deploy_review_server
+  when: manual
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
