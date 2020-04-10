@@ -65,6 +65,9 @@ after_volumes2{
     after_volumes2=1
 }
 /nginx:$/{
+    # Add extra_hosts for fuse
+    print "        extra_hosts:"
+    print "          - \"fuse:127.0.0.1\""
     after_nginx=1
 }
 /ports:/{

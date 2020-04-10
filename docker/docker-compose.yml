@@ -40,8 +40,6 @@ services:
             - ./vidjil-server/conf:/etc/vidjil
             - ./vidjil-server/scripts:/entrypoints
             - ../germline:/usr/share/vidjil/germline
-        extra_hosts:
-            - "fuse:127.0.0.1"
     nginx:
         image: vidjil/client:latest
         depends_on:
