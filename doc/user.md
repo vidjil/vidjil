@@ -142,7 +142,9 @@ e-value, number of reads) about each clone.
 In addition, depending on what the user launched on this clone, we may also
 find detailed informations retrieved from IMGT or from CloneDB.
 
-#### Detailed information from CloneDB (experimental feature)
+#### Detailed information from CloneDB
+
+(experimental feature)
 If you are connected to a patient/experiment database where CloneDB is enabled,
 and if CloneDB was launched on the selected clone,
 you can see here occurrences of this clone in CloneDB
@@ -207,8 +209,31 @@ The sequence panel displays nucleotide sequences from selected clones.
   - See "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clone)" below
   - Sequences can be aligned together (“align” button), identifying substitutions, insertions and deletions. Silent mutations are identified, as soon as a CDR3 is detected, and represented with a double border in blue.
   - You can remove sequences from the aligner (and the selection) by clicking on the “X” at the left.
-  - You can further analyze the sequences with IMGT/V-QUEST, IgBlast or Blast. This opens another window/tab.
   - You can unselect all sequences by clicking on the background of the grid.
+
+## Further sequence analysis with external software
+
+The sequence panel displays buttons to further analyze the selected sequences
+with other software useful for RepSeq studies.
+These buttons open another window/tab.
+
+   - [`❯ IMGT/V-QUEST`](http://www.imgt.org/IMGT_vquest):
+     The reference analysis from IMGT®.
+     The `▼` button further allows to retrieve back results from IMGT/V-QUEST
+     and to display them within Vidjil.
+
+   - [`❯ IgBlast`](https://www.ncbi.nlm.nih.gov/igblast/):
+     Nucleotide alignment with IG/TR germline sequences
+
+   - `❯ CloneDB`.  See [above](#detailed-information-from-clonedb)
+
+   - [`❯ Blast`](http://www.ensembl.org/Multi/Tools/Blast):
+     Nucleotide alignement against the Homo sapiens genome and other nucleotide collections
+
+   - [`❯ AssignSubsets`](http://tools.bat.infspire.org/arrest/assignsubsets/) (availaible for clones with IGH recombinations):
+     Assignment to the [19 known major subsets](https://www.ncbi.nlm.nih.gov/pubmed/22415752)
+     of stereotyped antigen receptor sequences for CLL
+
 
 # The patient/experiment database and the server
 

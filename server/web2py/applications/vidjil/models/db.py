@@ -197,13 +197,18 @@ db.define_table('sequence_file',
 
 
 
+db.define_table('classification',
+                Field('name', 'string'),
+                Field('info','text'))
+
 
 db.define_table('config',
                 Field('name', 'string'),
                 Field('program', 'string'),
                 Field('command', 'string'),
                 Field('fuse_command', 'string'),
-                Field('info','text'))
+                Field('info','text'),
+                Field('classification', 'reference classification', ondelete='SET NULL'))
 
 
 db.define_table('results_file',
