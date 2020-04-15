@@ -62,7 +62,7 @@
             } ],
             "parameters": {
                 "seed": "10s",
-                "seed_3": "8c"
+                "seed_3": "10s"
             }
         },
 
@@ -77,7 +77,7 @@
             } ],
             "parameters": {
                 "seed": "10s",
-                "seed_3": "8c"
+                "seed_3": "10s"
             }
         },
         "TRA+D": {
@@ -115,7 +115,7 @@
             } ],
             "parameters": {
                 "seed": "9c",
-                "seed_3": "8c"
+                "seed_3": "9c"
             }
         },
 
@@ -158,7 +158,7 @@
             } ],
             "parameters": {
                 "seed": "10s",
-                "seed_3": "8c"
+                "seed_3": "9c"
             }
         },
         "IGK+": {
@@ -172,7 +172,7 @@
             } ],
             "parameters": {
                 "seed": "10s",
-                "seed_3": "8c"
+                "seed_3": "10s"
                     
             }
         },
@@ -187,7 +187,7 @@
             } ],
             "parameters": {
                 "seed": "10s",
-                "seed_3": "8c"
+                "seed_3": "9c"
             }
         }
     }
