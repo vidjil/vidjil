@@ -703,7 +703,7 @@ def getConfigsByClassification():
     classification   = defaultdict( lambda: {"info":"", "name":"", "configs":[]} )
     if auth.can_process_sample_set(request.vars['id']) :
         for class_elt in db( (db.classification)).select(orderby=db.classification.id):
-            configs = db( (db.config.classification == class_elt.id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.id)
+            configs = db( (db.config.classification == class_elt.id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
             if len(configs): # don't show empty optgroup
                 classification["%02d_%s" % (i, class_elt)]["name"]    = class_elt.name
                 classification["%02d_%s" % (i, class_elt)]["info"]    = class_elt.info
@@ -711,7 +711,7 @@ def getConfigsByClassification():
             i += 1
         classification["%02d_noclass" % i]["name"]    = "–"
         classification["%02d_noclass" % i]["info"]    = ""
-        classification["%02d_noclass" % i]["configs"] = db( (db.config.classification == None) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.id)
+        classification["%02d_noclass" % i]["configs"] = db( (db.config.classification == None) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
     return classification
 
 def getStatHeaders():
