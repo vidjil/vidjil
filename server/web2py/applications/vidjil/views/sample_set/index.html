@@ -91,7 +91,7 @@
                       <!-- Select set with this sample -->
                       {{ for sample_set in row.list_share_set:}}
                           <!-- Show values -->
-                          <span class="{{ =sample_set.sample_type }}_token" title="{{ =sample_set.title }}" onclick="db.call('sample_set/index', {'id': '{{ =int(sample_set.id) }}', 'config_id': -1 })" >
+                          <span class="{{ =sample_set.sample_type }}_token set_token" title="{{ =sample_set.title }}" onclick="db.call('sample_set/index', {'id': '{{ =int(sample_set.id) }}', 'config_id': -1 })" >
                             {{ =sample_set.title }}
                           </span>
                       {{ pass }}
