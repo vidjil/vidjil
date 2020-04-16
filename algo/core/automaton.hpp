@@ -139,9 +139,7 @@ void PointerACAutomaton<Info>::build_failure_functions() {
     if (failed_state->is_final) {
       current_state->is_final = true;
       if (! current_state->informations.front().isNull()) {
-        if (! this->multiple_info)
-          current_state->informations.front() += failed_state->informations.front();
-        else
+        if (this->multiple_info)
           current_state->informations.insert(current_state->informations.end(),
                                              failed_state->informations.begin(),
                                              failed_state->informations.end());
