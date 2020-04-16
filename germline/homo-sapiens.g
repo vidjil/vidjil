@@ -93,7 +93,7 @@
                 "3": ["TRAJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "13s",
+                "seed": "10s",
                 "seed_3": "10s"
             }
         },
@@ -114,8 +114,8 @@
                 "3": ["TRDD3+down.fa"]
             } ],
             "parameters": {
-                "seed": "9c",
-                "seed_3": "9c"
+                "seed": "10s",
+                "seed_3": "10s"
             }
         },
 
