@@ -333,18 +333,18 @@ List.prototype = {
         axis.setAttribute('name', 'axis_list[]');
         axis.id = "list_axis_select";
 
-        var axOpts = Clone.prototype.axisOptions();
-        var available_axis = (new Axes(this.m)).available();
-        for (var i in axOpts) {
-            var axis_option = document.createElement("option");
-            axis_option.setAttribute('value', axOpts[i]);
-            axis_option.appendChild(document.createTextNode(available_axis[axOpts[i]].label));
-            axis.appendChild(axis_option);
+        //var axOpts = Clone.prototype.axisOptions()
+        var available_axis = Axis.prototype.available()
+        for (var i in available_axis) {
+            var axis_option = document.createElement("option")
+            axis_option.setAttribute('value', available_axis[i])
+            axis_option.appendChild(document.createTextNode(available_axis[i]))
+            axis.appendChild(axis_option)
         }
-        axis.value = "size";
-        this.selectedAxis = available_axis.size;
+        axis.value = "size"
+        this.selectedAxis = Axis.prototype.getAxisProperties("size")
         axis.onchange = function() {
-            self.selectedAxis = available_axis[axis.value];
+            self.selectedAxis = Axis.prototype.getAxisProperties(axis.value)
             self.update()
         }
 
@@ -503,7 +503,7 @@ List.prototype = {
             //update clone axis
             var axis = this.selectedAxis;
             cloneDom.color("axisBox", clone.getColor());
-            cloneDom.content("axisBox", axis.pretty ? axis.pretty(axis.fct(clone)).outerHTML : document.createTextNode(axis.fct(clone)).outerHTML)
+            cloneDom.content("axisBox", axis.pretty ? axis.pretty(axis.fct(clone)).outerHTML : axis.fct(clone))
 
             //update cluster icon
             if (this.m.clusters[cloneID].length > 1) {

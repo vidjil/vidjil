@@ -39,6 +39,7 @@ function Database(model, address) {
         this.m = model
         this.uploader = new Uploader()
         this.build()
+        this.m.db = this
         
         window.onbeforeunload = function(e){
             if ( self.uploader.is_uploading() ){
@@ -1018,7 +1019,7 @@ Database.prototype = {
                         xhrFields: {withCredentials: true},
 		        timeout: DB_TIMEOUT_CALL,
 		        success: function (result) {
-		        	notification.parse_notification(result)
+		        	m.notification.parse_notification(result)
 		            
 		        }, 
 		        error: function (request, status, error) {

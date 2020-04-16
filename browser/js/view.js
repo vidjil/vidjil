@@ -240,13 +240,34 @@ View.prototype = {
      * @abstract
      * */
     updateIsPending: function(){
+        var result = false
+        if (!this.delay) this.delay = 0
+
+
         if (this.useSmartUpdate && this.updateCallCount>0)
-            return true;
-        if (this.useSmartUpdateElem && Object.keys(this.updateElemList).length>0)
-            return true;
-        if (this.useSmartUpdateElemStyle && Object.keys(this.updateElemStyleList).length>0)
-            return true;
-        return false;
+            result = true
+        else if (this.useSmartUpdateElem && Object.keys(this.updateElemList).length>0)
+            result = true
+        else if (this.useSmartUpdateElemStyle && Object.keys(this.updateElemStyleList).length>0)
+            result = true
+        else 
+            result = this.updateInProgress()
+
+ 
+        if (result) 
+            this.delay = 5
+        else 
+            this.delay--
+
+
+        return (this.delay > 0)
+    },
+
+    /**
+     * @abstract
+     * */
+    updateInProgress: function(){
+        return false
     },
     
     /**

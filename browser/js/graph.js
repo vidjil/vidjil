@@ -108,6 +108,12 @@ function Graph(id, model, database) {
     this.db = database;
 
     this.lineGenerator = d3.line().curve(d3.curveMonotoneX);
+
+    //flag used to count the number of transition (multiple transition can run at the same time)
+    //increase every time a transition is started
+    //decrease every time a transition is completed
+    //0 means all started transition have been completed
+    this.inProgress = 0
 }
 
 Graph.prototype = {
@@ -217,7 +223,11 @@ Graph.prototype = {
         
         return this
     },
-    
+
+    updateInProgress: function() {
+        if (this.inProgress>0) return true
+        return false
+    },
 
     /* constructor for the menu in the top-right corner of the graph
      * 
@@ -404,6 +414,28 @@ Graph.prototype = {
         return
     },
 
+    /**
+     * Show all timepoint in the timeline graphic.
+     * Add all samples that are not already in the list of actif samples
+     * Each sample added will be put at the end of the list.
+     */
+    showAllTimepoint: function(){
+        var self = this
+        this.inProgress++
+        setTimeout(function(){
+            self.inProgress--
+        }, 250)
+
+        // keep current timepoint active if exist, else, give active to first timepoint
+        var keeptime = this.m.t
+        for (var time = 0; time < this.m.samples.number; time++) {
+            if (this.m.samples.order.indexOf(time) == -1) this.m.addTimeOrder(time)
+        }
+        this.updateList()
+        this.m.changeTime(keeptime)
+        this.m.update()
+        return
+    },
 
 
 
@@ -463,7 +495,7 @@ Graph.prototype = {
         this.text_position_x = 60;
         this.text_position_x2 = div_width - 60;
     
-        this.smartUpdate(speed);
+        this.update(speed);
     },
     
 /* ************************************************ *
@@ -1292,6 +1324,10 @@ Graph.prototype = {
             axis = axis
             .transition()
             .duration(speed)
+            .on("start", function(){self.inProgress++}) 
+            .on("end", function(){self.inProgress--}) 
+            .on("interrupt", function(){self.inProgress--}) 
+            .on("cancel", function(){self.inProgress--}) 
         }
         axis
             .attr("x1", function (d) {
@@ -1312,7 +1348,7 @@ Graph.prototype = {
             })
             .attr("class", function (d) {
                 return d.type
-            })
+            });
 
         //legendes
         var label = this.g_text
@@ -1320,6 +1356,10 @@ Graph.prototype = {
             label = label
             .transition()
             .duration(speed)
+            .on("start", function(){self.inProgress++}) 
+            .on("end", function(){self.inProgress--}) 
+            .on("interrupt", function(){self.inProgress--}) 
+            .on("cancel", function(){self.inProgress--}) 
         }
         label
             .text(function (d) {
@@ -1347,7 +1387,7 @@ Graph.prototype = {
             })
             .attr("class", function (d) {
                 return d['class']
-            });
+            })
 
         this.text_container.selectAll("text")
             .on("click", function (d) {
@@ -1380,72 +1420,52 @@ Graph.prototype = {
         var self = this;
 
         var c = 0;
-        
-        if (this.mode=="stack"){
-            //volumes
-            var clone = this.g_clone;
-            if (speed !== 0){
-                clone = clone
-                .transition()
-                .duration(speed)
-            }
-            clone
-                .style("fill", function (d) {
-                    return self.m.clone(d.id).getColor();
-                })
-                .style("stroke", "none")
-                .attr("class", function (p) {
-                    var clone = self.m.clone(p.id)
-                    if (clone.isSelected()) return "graph_select";
-                    if (clone.isFocus()) return "graph_focus";
-                    if (!clone.isActive()) return "graph_inactive";
-                    c++
-                    return "graph_line";
-                })
-                .attr("id", function (d) {
-                    return "poly" + d.name;
-                })
-                .attr("d", function (d) {
-                    return d.path
-                })
-        }else{
-            //courbes
-            selected_clones = this.g_clone;
-            if (typeof list != "undefined"){
-                selected_clones = this.g_clone.filter(function(d) {
-                    if (list.indexOf(d.id) != -1) return true;
-                    return false
-                });
-            }
-            
-            selected_clones
-                .style("fill", "none")
-                .style("stroke", function (d) {
-                    return self.m.clone(d.id).getColor();
-                })
-                .attr("class", function (p) {
-                    var clone = self.m.clone(p.id)
-                    if (!clone.isActive()) return "graph_inactive";
-                    if (clone.isSelected()) return "graph_select";
-                    if (clone.isFocus()) return "graph_focus";
-                    c++
-                    if (c < self.display_limit2 ) return "graph_line";
-                    if (clone.top > self.display_limit) return "graph_inactive";
-                    return "graph_line";
-                })
-                .attr("id", function (d) {
-                    return "poly" + d.name;
-                })
-                .on("mouseover", function (d) {
-                    self.m.focusIn(d.id);
-                })
-                .on("click", function (d) {
-                    self.clickGraph(d.id);
-                })               
-                .attr("d", function (d) {
-                    return d.path
-                });
+
+        selected_clones = this.g_clone;
+        if (typeof list != "undefined"){
+            selected_clones = this.g_clone.filter(function(d) {
+                if (list.indexOf(d.id) != -1) return true;
+                return false
+            });
         }
+        
+        if (speed !== 0){
+            selected_clones = selected_clones
+            .transition()
+            .duration(speed)
+            .on("start", function(){self.inProgress++}) 
+            .on("end", function(){self.inProgress--}) 
+            .on("interrupt", function(){self.inProgress--}) 
+            .on("cancel", function(){self.inProgress--}) 
+        }
+        selected_clones
+            .style("fill", "none")
+            .style("stroke", function (d) {
+                return self.m.clone(d.id).getColor();
+            })
+            .attr("class", function (p) {
+                var clone = self.m.clone(p.id)
+                if (!clone.isActive()) return "graph_inactive";
+                if (clone.isSelected()) return "graph_select";
+                if (clone.isFocus()) return "graph_focus";
+                c++
+                if (c < self.display_limit2 ) return "graph_line";
+                if (clone.top > self.display_limit) return "graph_inactive";
+                return "graph_line";
+            })
+            .attr("id", function (d) {
+                return "poly" + d.name;
+            })
+            .on("mouseover", function (d) {
+                self.m.focusIn(d.id);
+            })
+            .on("click", function (d) {
+                self.clickGraph(d.id);
+            })               
+            .attr("d", function (d) {
+                return d.path
+            });
+        
             
         return this
     },
@@ -1461,6 +1481,10 @@ Graph.prototype = {
             data = data
             .transition()
             .duration(speed)
+            .on("start", function(){self.inProgress++}) 
+            .on("end", function(){self.inProgress--}) 
+            .on("interrupt", function(){self.inProgress--}) 
+            .on("cancel", function(){self.inProgress--}) 
         }
         data.attr("d", function (p) {
                 var x,y,che;
@@ -1509,12 +1533,19 @@ Graph.prototype = {
         var self = this;
         
         var res = this.g_res
-        res
-        .transition()
-        .duration(500)     
+        if (speed !== 0){
+            res = res
+            .transition()
+            .duration(speed)
+            .on("start", function(){self.inProgress++}) 
+            .on("end", function(){self.inProgress--}) 
+            .on("interrupt", function(){self.inProgress--}) 
+            .on("cancel", function(){self.inProgress--}) 
+        }
+        res  
         .attr("d", function (p) {
                 return p.path
-            })
+            });
             
         return this
     },
