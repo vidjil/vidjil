@@ -410,7 +410,6 @@ deploy_review_server:
     - TMP_DOCKER=$(tempfile)
     - cp docker-compose.yml $TMP_DOCKER
     - awk -f ci/for-review.awk $TMP_DOCKER > docker-compose.yml
-    - sed -i '$e cat ci/fuse-entrypoint.sh' vidjil-server/scripts/fuse-entrypoint.sh
     - rm -f $TMP_DOCKER
     - sed -i -r "s/WEB2PY_ADMIN_PASSWORD=/WEB2PY_ADMIN_PASSWORD=$REVIEW_SERVER_ADMIN_PASSWORD/" docker-compose.yml
     - cd ..
