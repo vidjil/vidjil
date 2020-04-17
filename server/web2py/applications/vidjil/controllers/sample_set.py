@@ -126,9 +126,8 @@ def index():
             )
 
     for row in query:
-        if row.results_file.scheduler_task_id != None:
-            task = db(db.scheduler_task.id == row.results_file.scheduler_task_id).select()[0]
-            row.results_file.status = task.status
+        if row.results_file.scheduler_task_id != None and db.scheduler_task[row.results_file.scheduler_task_id] != None:
+            row.results_file.status = db.scheduler_task[row.results_file.scheduler_task_id].status
         else:
             row.results_file.status = ""
 

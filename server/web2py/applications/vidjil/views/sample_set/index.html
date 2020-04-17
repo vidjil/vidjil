@@ -118,11 +118,7 @@
         
         <tbody>
             {{for row in query :}}
-                {{if row.results_file.scheduler_task_id is None or db.scheduler_task[row.results_file.scheduler_task_id ] is None:}}
-                    {{status = '' }}
-                {{else:}}
-                    {{status = db.scheduler_task[row.results_file.scheduler_task_id ].status }}
-                {{pass}}
+                {{status = row.results_file.status }}
 
                  <tr>
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}  {{pass}} id="sequence_file_{{=row.sequence_file.id}}">
