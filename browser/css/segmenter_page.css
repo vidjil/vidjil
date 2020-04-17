@@ -106,6 +106,7 @@ ul {
   -ms-user-select: none;
   user-select: none;
   overflow: hidden;
+  height : 100%;
 }
 #mid-container {
   position: fixed;
@@ -2377,6 +2378,7 @@ textarea {
   -moz-flex: 2 32%;
   -ms-flex: 2 32%;
   flex: 2 32%;
+  height : 100%;
 }
 #segmenter_panel {
   bottom: 0;

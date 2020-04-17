@@ -89,12 +89,12 @@ class TestGraph < BrowserTest
     list1 = $b.td(:id => 'visu2_listElem_text_1' )
 
     ## In graph label
-    assert ( time0.text == get_names("0", type_name) ), "correct name show for first sample (graph label)"
-    assert ( time1.text == get_names("1", type_name) ), "correct name show for second sample (graph label)"
+    assert ( time0.text == get_names("0", type_name) ), "incorrect name show for first sample (graph label), expected " + get_names("0", type_name) + " got " + time0.text
+    assert ( time1.text == get_names("1", type_name) ), "incorrect name show for second sample (graph label), expected " + get_names("1", type_name) + " got " + time1.text
     ## In graph list
     
-    assert ( list0.text == get_names("0", type_name) ), "correct name show for first sample (graphList text)"
-    assert ( list1.text == get_names("1", type_name) ), "correct name show for second sample (graphList text)"
+    assert ( list0.text == get_names("0", type_name) ), "incorrect name show for first sample (graphList text), expected " + get_names("0", type_name) + " got " + time0.text
+    assert ( list1.text == get_names("1", type_name) ), "incorrect name show for second sample (graphList text), expected " + get_names("1", type_name) + " got " + time1.text
   end
 
 end

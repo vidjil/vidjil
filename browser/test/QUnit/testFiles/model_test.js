@@ -301,10 +301,9 @@ QUnit.test("system selection", function(assert) {
 });
 
 QUnit.test("model: analysis sample data application", function(assert) {
-    var m = new Model();
+    m = new Model();
     var sp = new ScatterPlot("visu", m);
-    var myUrl = new Url(m);
-    m.url_manager = myUrl;
+
 
     var ff = m.getFilteredFields({'log':[], 'producer':[], 'foobar':[], 'id': [], 'barfoo':[]});
     var bool = ff.indexOf('log') == -1 && ff.indexOf('producer') == -1 && ff.indexOf('id') == -1;

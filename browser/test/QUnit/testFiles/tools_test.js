@@ -171,7 +171,7 @@ QUnit.test("test rounding functions", function(assert) {
 
     assert.equal(nice_ceil(0), 0, "rounding 0");
     assert.equal(nice_ceil(0.072), 0.08, "rounding 0.08");
-    assert.equal(nice_ceil(1.2), 1.5, "rounding 1.2");
+    assert.equal(nice_ceil(1.2, 0.5), 1.5, "rounding 1.2");
     assert.equal(nice_ceil(18), 20, "rounding 1.2");
     assert.equal(nice_ceil(100), 100, "rounding 100");
 

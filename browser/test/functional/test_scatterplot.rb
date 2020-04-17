@@ -33,7 +33,7 @@ class TestScatterplot < BrowserTest
 
   def test_01_multiple_select_barmode
     $b.send_keys 4
-    sleep 1
+    $b.update_icon.wait_while(&:present?)
     # to verify correct selection, We will look in semgenter the presence if clone entrie
     # Maybe another method could be more acurate
     
@@ -58,7 +58,7 @@ class TestScatterplot < BrowserTest
 
   def test_02_multiple_select_bubble
     $b.send_keys 1
-    sleep 1
+    $b.update_icon.wait_while(&:present?)
     # to verify correct selection, We will look in semgenter the presence if clone entrie
     # Maybe another method could be more acurate
     

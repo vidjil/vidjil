@@ -27,7 +27,7 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
   def test_01_segmenter
     assert ($b.clone_in_segmenter('0').present?), "Clone 0 should be in segmenter"
     assert ($b.clone_in_segmenter('1').present?), "Clone 1 should be in segmenter"
-    assert (not $b.clone_in_segmenter('2').exists?), "Clone 2 should not exist"
+    assert (not $b.clone_in_segmenter('2').present?), "Clone 2 should not be visible"
   end
 
   def test_02_scatterplot
@@ -65,9 +65,9 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
 
   def test_06_scatterplot_change_preset
     $b.scatterplot_select_preset(/CDR3 length/)
-                                       
-    assert ($b.scatterplot_x_label.text =~ /CDR3 length/), "X scatterplot label should now be CDR3 length (was %s)" % $b.scatterplot_x_label.text
-    sleep 1 # Waiting for the transition to finish
+    $b.update_icon.wait_while(&:present?)   
+    text = $b.scatterplot_x_label.text
+    assert (text == "CDR3 length (nt)"), "X scatterplot label should now be CDR3 length (nt) (was %s)" % text
     assert ($b.clone_in_scatterplot('1').tag_name == 'rect'), "Clone should be a rectangle now (was %s)" % $b.clone_in_scatterplot('1').tag_name
   end
 

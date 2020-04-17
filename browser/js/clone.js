@@ -94,9 +94,6 @@ function Clone(data, model, index, attributes) {
     this.m.clusters[index]=[index]
     this.m.clones[index]=this
     this.tag = this.getTag();
-    this.computeGCContent()
-    this.computeCoverage()
-    this.computeEValue()
 
     // .warn, client computed warnings
     this.computeWarnings()
@@ -132,10 +129,10 @@ Clone.prototype = {
 
     computeWarnings: function() {
 
-        if (this.coverage < this.COVERAGE_WARN)
+        if (this.getCoverage() < this.COVERAGE_WARN)
             this.warn.push({'code': 'W51', 'level': warnLevels[WARN], 'msg': 'Low coverage (' + this.coverage.toFixed(3) + ')'}) ;
 
-        if (typeof(this.eValue) != 'undefined' && this.eValue > this.EVALUE_WARN)
+        if (typeof(this.getEValue()) != 'undefined' && this.eValue > this.EVALUE_WARN)
             this.warn.push({'code': 'Wxx', 'level': warnLevels[WARN], 'msg': 'Bad e-value (' + this.eValue + ')' });
     },
 
@@ -170,7 +167,7 @@ Clone.prototype = {
     REGEX_GENE_IGNORE_ALLELE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD|IKZF1-|ERG-)([\w-]*)([\w-*]*)$/,   // IGHV3-11*03  (ignore *03)
 
     getAverageReadLength: function(time) {
-        if (this._average_read_length == 'undefined')
+        if (typeof this._average_read_length == 'undefined')
             return 'undefined';
         time = this.m.getTime(time);
         var size = this._average_read_length[time];
@@ -402,6 +399,7 @@ Clone.prototype = {
         if (this.hasSizeDistrib()){
             // TODO: move this function into an update function and store result into an attribute of this clone
             var t = this.m.t
+            //if (this.current_clones == undefined) return "bob"
             var n = this.current_clones[t]
             var name = this.getDistributionsValues().toString() + " (" + n + " clone" + (n>1 ? "s" : "") + ")"
             return name
@@ -860,12 +858,16 @@ Clone.prototype = {
         return true
     },
 
-    computeEValue: function () {
+    getEValue: function () {
+        if (this.eValue) return this.eValue
+
         var e = this.seg.evalue;
         if (typeof(e) != 'undefined')
             this.eValue = parseFloat(e.val)
         else
             this.eValue = undefined
+
+        return this.eValue
     },
 
     getGene: function (type, withAllele) {
@@ -892,7 +894,7 @@ Clone.prototype = {
         if (this.hasSeg('3', '5')){
             return this.seg['3'].start-this.seg['5'].stop-1
         }else{
-            return 'undefined'
+            return '?'
         }
     },
     
@@ -943,8 +945,9 @@ Clone.prototype = {
     /*
      * Compute coverage as the average value of non-zero coverages
      */
+    getCoverage: function () {
+        if (this.coverage) return this.coverage
 
-    computeCoverage: function () {
         if (typeof (this._coverage) == 'undefined') {
             this.coverage = undefined
             return
@@ -960,9 +963,13 @@ Clone.prototype = {
             }
         }
         this.coverage = sum/nb
+
+        return this.coverage
     },
 
-    computeGCContent: function () {
+    getGCContent: function() {
+        if (this.GCContent) return this.GCContent
+
         if (this.getSequenceLength() === 0) {
             this.GCContent = undefined
             return
@@ -974,7 +981,9 @@ Clone.prototype = {
                 gc++ }
 
         this.GCContent = gc / this.sequence.length
-    },
+
+        return this.GCContent
+    },    
 
     getSequenceLength : function () {
         if (typeof (this.sequence) != 'undefined' &&
@@ -1102,51 +1111,86 @@ Clone.prototype = {
         var allele;
         if (!this.hasSizeConstant()){
             this.color = "rgba(150, 150, 150, 0.65)"
-        } else if (this.m.colorMethod == "abundance") {
-            var size = this.getSize()
-            if (this.getCluster().length===0){ size = this.getSequenceSize() }
-            if (size === 0){
-                this.color = "";
-            }else{
-                this.color = colorGenerator(this.m.scale_color(size * this.m.precision));
-            }
-        } else if (this.m.colorMethod == 'clone') {
-            this.color = colorGeneratorIndex(this.index)
-        } else if (this.m.colorMethod == 'cdr3') {
-            this.color = this.getCDR3Color();
-        }else if (this.m.colorMethod == "Tag"){
-            this.color =  this.m.tag[this.getTag()].color;
-        }else if (this.m.colorMethod == "dbscan"){
-            this.color =  this.colorDBSCAN;
-        }else if (this.m.colorMethod == "V" && this.getGene("5") != "undefined V"){
-            this.color = "";
-            allele = this.m.germlineV.allele[this.getGene("5")]
-            if (typeof allele != 'undefined' ) this.color = allele.color;
-        }else if (this.m.colorMethod == "D" && this.getGene("4") != "undefined D"){
-            this.color = "";
-            allele = this.m.germlineD.allele[this.getGene("4")]
-            if (typeof allele != 'undefined' ) this.color = allele.color;
-        }else if (this.m.colorMethod == "J" && this.getGene("3") != "undefined J"){
-            this.color = "";
-            allele = this.m.germlineJ.allele[this.getGene("3")]
-            if (typeof allele != 'undefined' ) this.color = allele.color;
-        }else if (this.m.colorMethod == "N"){
-            this.color =  this.colorN;
-        }else if (this.m.colorMethod == "system") {
-            this.color = this.m.germlineList.getColor(this.germline)
-        } else if (this.m.colorMethod == 'productive') {
-            if (this.hasSeg('junction') &&
-                typeof this.seg.junction.productive != 'undefined') {
-                this.color = colorProductivity(this.seg.junction.productive)
-            }
-        }else{
-            this.color = "";
+            return
         }
+
+        switch (this.m.colorMethod){
+            
+            case "abundance":
+                var size = this.getSize()
+                if (this.getCluster().length===0)
+                    size = this.getSequenceSize()
+                if (size === 0)
+                    this.color = ""
+                else
+                    this.color = colorGenerator(this.m.scale_color(size * this.m.precision))
+
+                break;
+        
+            case "clone":
+                this.color = colorGeneratorIndex(this.index)
+                break;
+        
+            case "cdr3":
+                this.color = this.getCDR3Color()
+                break;
+        
+            case "Tag":
+                this.color =  this.m.tag[this.getTag()].color
+                if (this.color == "default") this.color = ""
+                break;
+
+            case "dbscan":
+                this.color =  this.colorDBSCAN
+                break;
+
+            case "system":
+                this.color = this.m.germlineList.getColor(this.germline)
+                break;
+
+            case "productive":
+                this.color = ""
+                if (this.hasSeg('junction') &&
+                    typeof this.seg.junction.productive != 'undefined') 
+                    this.color = colorProductivity(this.seg.junction.productive)
+                break;
+
+            case "N":
+                this.color =  this.colorN
+                break;
+
+            case "V":
+                this.color = ""
+                if (this.getGene("5") != "undefined V"){
+                    var alleleV = this.m.germlineV.allele[this.getGene("5")]
+                    if (typeof alleleV != 'undefined' ) this.color = alleleV.color
+                }
+                break;
+
+            case "D":
+                this.color = ""
+                if (this.getGene("4") != "undefined D"){
+                    var alleleD = this.m.germlineD.allele[this.getGene("4")]
+                    if (typeof alleleD != 'undefined' ) this.color = alleleD.color
+                }
+                break;
+
+            case "J":
+                this.color = ""
+                if (this.getGene("3") != "undefined J"){
+                    var alleleJ = this.m.germlineJ.allele[this.getGene("3")]
+                    if (typeof alleleJ != 'undefined' ) this.color = alleleJ.color
+                }
+                break;
+        
+            default:
+                this.color = ""
+        }
+
         this.true_color = this.color
 
-        if (this.m.focus == this.index){
-            this.color = "";
-        }
+        if (this.m.focus == this.index)
+            this.color = ""
     },
     
     /**
@@ -1375,7 +1419,7 @@ Clone.prototype = {
         }
 
         //coverage info
-        if (typeof this.coverage != 'undefined') {
+        if (typeof this.getCoverage() != 'undefined') {
             html += row_1("average coverage",
                           "<span " +
                           (this.coverage < this.COVERAGE_WARN ? "class='warning'" : "") +
@@ -1384,7 +1428,7 @@ Clone.prototype = {
         }
 
         // e-value
-        if (typeof this.eValue != 'undefined') {
+        if (typeof this.getEValue() != 'undefined') {
             html += row_1("e-value",
                           "<span " +
                           (this.eValue > this.EVALUE_WARN ? "class='warning'" : "") +
@@ -1522,16 +1566,16 @@ Clone.prototype = {
         html += "</table></div>"
         return html
     },
-
+/*
     axisOptions: function() {
         return [
-            "consensusLength", "averageLength", "nLength", "lengthCDR3",
-            "productivity", "productivity-IMGT",
-            "VIdentity-IMGT",
-            "tag", "coverage", "locus", "size", "nbSamples"
+            "clone consensus length", "clone average read length", "GC content", "N length",
+            "CDR3 length (nt)", "productivity", "productivity-IMGT",
+            "VIdentity-IMGT", "clone consensus coverage",
+            "tag", "coverage", "size", "number of samples", "primers"
         ];
     },
-
+*/
     /**
       * start to fill a node with clone informations common between segmenter and list
       * @param {dom_object} div_elem - html element to complete
@@ -1784,8 +1828,7 @@ Clone.prototype = {
             round = true
         }
         var values = []
-        var axes_obj = this.m.axes
-        var available_axes = this.m.available_axes
+        var available_axes = Axis.prototype.available()
 
         for (var a = 0; a < axes.length; a++) {
             var axe  = axes[a]
@@ -1793,11 +1836,9 @@ Clone.prototype = {
             if (axe == undefined || naxe == undefined){
                 console.default.error("Getter: not axis " + axe + "; ("+naxe+")")
             }
-            if (available_axes[naxe] != undefined && available_axes[naxe].fct != undefined) {
-                var value = available_axes[naxe].fct(this, timepoint)
-                if (round && available_axes[naxe] != undefined && available_axes[naxe].round != undefined){ 
-                    value = available_axes[naxe].round(value)
-                }
+            if (available_axes.indexOf(naxe) != -1 ) {
+                var axis_p = Axis.prototype.getAxisProperties(naxe)
+                var value = axis_p.fct(this, timepoint)
                 values.push( value )
             } else {
                 console.default.error("Getter: not axis " + axe + "; ("+naxe+")")
@@ -1896,7 +1937,7 @@ Clone.prototype = {
             tmpValue.fill(value)
             value          = tmpValue
         }
-
+/*
         var naxe = this.m.distrib_convertion[axe]
         var available_axes = this.m.available_axes
         if (available_axes[naxe] != undefined) {
@@ -1907,12 +1948,16 @@ Clone.prototype = {
             }
         } else {
             console.default.error( "Axe not present in obj: " + axe + ";" + naxe)
-
+*/
             // Each content should be hardcoded. Not optimal
-            if (axe == "GCContent")            { this.GCContent            = value}
-            else if (axe == "lenSeqAverage")   { this._average_read_length = value}
-            else if (axe == "lenSeqConsensus") { this.consensusLength      = value}
-        }
+            if (axe == "GCContent")             { this.GCContent            = value}
+            else if (axe == "lenSeqAverage")    { this._average_read_length = value}
+            else if (axe == "lenSeqConsensus")  { this.consensusLength      = value}
+            else if (axe == "seg5")             { this.seg[5] =       { name: value}}
+            else if (axe == "seg4")             { this.seg[4] =       { name: value}}
+            else if (axe == "seg3")             { this.seg[3] =       { name: value}}
+            else if (axe == "lenCDR3")          { this.seg.cdr3 =     { start: 0, 
+                                                                        stop: value}} 
     },
 
     sameAxesAsScatter: function(scatterplot){
@@ -1930,15 +1975,7 @@ Clone.prototype = {
         }
 
         if (mode == "bar"){
-            // on doit retirer dans ce cas le "size"
-            var pos_size = axes.indexOf("size")
-            if (pos_size != -1){
-                axes.splice(pos_size, 1)
-                return x.equals(axes)
-            } else {
-                // In mode bar, each axes should be associated with size
-                // console.default.warn( "same_axes_as_scatter: Only one axe to test (size not present), "+ axes)
-            }
+            return (x.indexOf(axes[0]) != -1)
         } else {
             // console.default.warn("same_axes_as_scatter: The scatter mode is not correct; '"+mode+"'")
             return x.equals(axes)

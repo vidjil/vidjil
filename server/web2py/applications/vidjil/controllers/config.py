@@ -49,10 +49,12 @@ def add_form():
             error += field+" needed, "
 
     ## test if classification id exist
-    classification = db(db.classification.id ==  request.vars["config_classification"]).select()
-    if len(classification) == 0:
-        error += "classification id don't exist, "
-
+    if  request.vars["config_classification"] != "-1":
+        classification = db(db.classification.id ==  request.vars["config_classification"]).count()
+        if classification == 0:
+            error += "classification id don't exist, "
+    else :
+        request.vars["config_classification"] = None
 
     if error=="" :
         
@@ -111,9 +113,13 @@ def edit_form():
             error += field+" needed, "
     
     ## test if classification id exist
-    classification = db(db.classification.id ==  request.vars["config_classification"]).select()
-    if len(classification) == 0:
-        error += "classification id don't exist, "
+    if  request.vars["config_classification"] != "-1":
+        classification = db(db.classification.id ==  request.vars["config_classification"]).count()
+        if classification == 0:
+            error += "classification id don't exist, "
+    else :
+        request.vars["config_classification"] = None
+
 
     if error=="" :
 

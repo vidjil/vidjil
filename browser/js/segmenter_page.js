@@ -209,6 +209,7 @@ function main() {
     segmenter = new Segment('segmenter_container', model);
     scatter = new ScatterPlot('scatter_container', model);
     console = new Com(window.console);
+    shortcut = new Shortcut(model)
     setCrossDomainModel(model);
 
     prepareButtons();

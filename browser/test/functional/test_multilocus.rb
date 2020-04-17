@@ -40,10 +40,10 @@ class TestMultilocus < BrowserTest
   end
 
   def test_00_legend_scatterplot
-    assert ($b.scatterplot_x_legend(0).text == 'TRBV1'), "Bad legend for scatterplot"
-    assert ($b.scatterplot_x_legend(4).text == '?'), "Bad legend for scatterplot"
-    assert ($b.scatterplot_y_legend(0).text == 'TRBJ1-1'), "Bad legend for scatterplot"
-    assert ($b.scatterplot_y_legend(9).text == '?'), "Bad legend for scatterplot"
+    assert ($b.scatterplot_x_legend(0).text == 'TRBV1'), "Bad legend for scatterplot " + $b.scatterplot_x_legend(0).text 
+    assert ($b.scatterplot_x_legend(4).text == 'undefined V'), "Bad legend for scatterplot " + $b.scatterplot_x_legend(4).text
+    assert ($b.scatterplot_y_legend(0).text == 'TRBJ1-1'), "Bad legend for scatterplot " + $b.scatterplot_y_legend(0).text
+    assert ($b.scatterplot_y_legend(9).text == 'undefined J'), "Bad legend for scatterplot " + $b.scatterplot_y_legend(9).text
   end
 
   def test_00_info_point
@@ -212,10 +212,11 @@ class TestMultilocus < BrowserTest
   end
 
   def test_13_export_fasta
-    $b.clone_in_scatterplot('77').click
-    $b.clone_in_scatterplot('25').click(:control)
-    $b.clone_in_scatterplot('88').click(:control)
-    $b.clone_in_scatterplot('90').click(:control)
+    $b.unselect
+    $b.clone_in_list('77').click
+    $b.clone_in_list('25').click(:control)
+    $b.clone_in_list('88').click(:control)
+    $b.clone_in_list('90').click(:control)
 
     $b.menu_item_export_fasta.click
     assert ( $b.window(:url => /about:blank/ )) , ">> fail opening fasta export "
