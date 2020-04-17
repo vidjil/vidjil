@@ -60,6 +60,11 @@ after_volumes2{
       after_volumes2=0
     }
 }
+
+after_workers {
+    print "        restart: always"
+    after_workers=0
+}
 /volumes:/{
     after_volumes=1
     after_volumes2=1
@@ -73,6 +78,9 @@ after_volumes2{
 /ports:/{
     after_ports=1
     next
+}
+/workers:$/ {
+    after_workers=1
 }
 /^\s{3,6}(nginx|fuse|uwsgi|workers|mysql):$/{
     after_service=1
