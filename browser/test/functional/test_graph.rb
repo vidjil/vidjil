@@ -174,7 +174,28 @@ class TestGraph < BrowserTest
     $b.table(:id => "visu2_table").wait_while(&:present?)
   end
 
+  def test_07_graphlist_filter_on_shared_clones
+    $b.div(:id => 'visu2_menu').hover
+    $b.table(:id => "visu2_table").wait_until(&:present?)
+    $b.td(:id => 'visu2_listElem_showAll').click
+    
+    $b.clone_in_list('4').click
 
+    # Assert on checkbox at init
+    assert ( $check0.set? ), "first checkbox is true"
+    assert ( $check1.set? ), "second checkbox is true"
+
+    # By default, checkbox are true
+    $b.div(:id => 'visu2_menu').hover
+    $b.table(:id => "visu2_table").wait_until(&:present?)
+    $b.td(:id => 'visu2_listElem_hideNotShare').click
+    $b.update_icon.wait_while(&:present?) # wait update
+    
+    # Assert on checkbox after filter on shared clones
+    assert ( $check0.set? ), "first checkbox is true"
+    assert ( !$check1.set? ), "second checkbox is false"
+
+  end
 
   # Not really a test
   def test_zz_close

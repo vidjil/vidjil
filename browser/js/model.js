@@ -3371,7 +3371,7 @@ changeAlleleNotation: function(alleleNotation) {
     getSampleWithSelectedClones: function(){
         var selected = this.getSelected()
         if (selected.length == 0) {
-            return this.samples.actifs
+            return this.samples.order
         }
 
         var list = []
