@@ -610,7 +610,8 @@ QUnit.test("computeOrderWithStock", function(assert) {
 
 QUnit.test("getSampleWithSelectedClones", function(assert) {
     var m = new Model();
-    m.parseJsonData(json_data, 100)
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
     m.initClones()
 
     // clone 1 present only in sample 1 and 2
