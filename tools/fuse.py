@@ -37,6 +37,7 @@ import datetime
 import subprocess
 import tempfile
 import math
+import gzip
 from operator import itemgetter, le
 from utils import *
 from defs import *
@@ -62,6 +63,25 @@ AVAILABLE_AXES = [
 ]
 GET_UNKNOW_AXIS = "unknow_axis"
 UNKNOWN_VALUE   = ""
+
+def generic_open(path, mode='r', verbose=False):
+    '''
+    Open a file.
+    If 'r', possibly open .gz compressed files.
+    '''
+    if verbose:
+        print(" <==", path, "\t", end=' ')
+
+    if 'r' in mode:
+        try:
+            f = gzip.open(path, mode)
+            f.read(1)
+            f.seek(0)
+            return f
+        except IOError:
+            pass
+
+    return open(path, mode)
 
 class Window:
     # Should be renamed "Clone"
@@ -646,10 +666,7 @@ class ListWindows(VidjilJson):
         Detects and selects the parser according to the file extension.'''
         extension = file_path.split('.')[-1]
 
-        if verbose:
-            print("<==", file_path, "\t", end=' ')
-
-        with open(file_path, "r") as f:
+        with generic_open(file_path, "r", verbose) as f:
             self.init_data(json.load(f, object_hook=self.toPython))
             self.check_version(file_path)
 
@@ -886,7 +903,7 @@ class ListWindows(VidjilJson):
         self.d["reads"].d["segmented"] = [total_size]
         self.d["reads"].d["total"] = [total_size]
         
-    def load_airr(self, file_path, *args, **kwargs):
+    def load_airr(self, file_path, pipeline, verbose=True):
         '''
         Parser for AIRR files
         format: https://buildmedia.readthedocs.org/media/pdf/airr-standards/stable/airr-standards.pdf
@@ -907,7 +924,7 @@ class ListWindows(VidjilJson):
         total_size = 0
         i= 0
         import csv
-        with open(file_path) as tsvfile:
+        with generic_open(file_path, 'r', verbose) as tsvfile:
           reader = csv.DictReader(tsvfile, dialect='excel-tab')
 
           for row in reader:

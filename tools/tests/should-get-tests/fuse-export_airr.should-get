@@ -1,4 +1,4 @@
-!LAUNCH: python ../../fuse.py $FUSE_OPTIONS -o fuse_export_airr.airr --export-airr -t 5  ../data/fused_multiple.vidjil; cat fuse_export_airr.airr
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS -o fuse_export_airr.airr --export-airr -t 5  ../data/fused_multiple.vidjil.gz && cat fuse_export_airr.airr
 
 $ check original name (not present)
 0: "../data/demo_multiple.vidjil"

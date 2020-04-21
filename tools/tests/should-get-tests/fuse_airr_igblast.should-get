@@ -1,7 +1,7 @@
-!LAUNCH: python ../../fuse.py $FUSE_OPTIONS  ../data/airr_output/airr_igblast.tsv -o fuse_airr_igblast.vidjil ; cat fuse_airr_igblast.vidjil
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS  ../data/airr_output/airr_igblast.tsv.gz -o fuse_airr_igblast.vidjil ; cat fuse_airr_igblast.vidjil
 
 $ check original name
-1: "../data/airr_output/airr_igblast.tsv"
+1: "../data/airr_output/airr_igblast.tsv.gz"
 
 $ Check the producer string in output file
 1: "producer": "vidjil fuse"
