@@ -593,6 +593,24 @@ detection is.
 Whenever the e-value is too large, a warning sign will be shown next to the
 clone, instead of the info icon.
 
+
+# How can I have further support or help on a specific sample or on some sequences?
+
+When you have questions on specific data, we advise to use the `help > get support`
+link inside the web application.
+This opens a mail template with reference to the sample,
+and possibly with references to the selected clones.
+
+Indeed, the address <http://app.vidjil.org/?set=XXXXX&config=XXX&clone=XXX>
+reflects the sample you are studying with a given configuration.
+When you select one or several clones, the address is updated.
+
+Note that, even knowing this address,
+only the logged-in users with proper authorization can access to these data.
+This includes the uploader of the data,
+possibly users of the same groups if such groups were defined, and the server maintainers.
+
+
 # Keyboard shortcuts
 
 Note that some shortcuts may not work on some systems or on on some web browsers.
