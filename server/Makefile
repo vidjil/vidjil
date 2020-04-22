@@ -10,7 +10,7 @@ install_web2py: download_web2py
 	unzip web2py_src.zip
 	mv web2py/handlers/wsgihandler.py web2py/wsgihandler.py
 	rm web2py_src.zip
-	cp -i web2py/applications/vidjil/modules/defs.py.sample web2py/applications/vidjil/modules/defs.py
+	cp web2py/applications/vidjil/modules/defs.py.sample web2py/applications/vidjil/modules/defs.py
 
 unit: clean_unit_tests
 	python web2py/web2py.py -S vidjil -M -R testRunner.py
