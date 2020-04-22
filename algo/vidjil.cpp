@@ -1747,7 +1747,7 @@ int main (int argc, char **argv)
 
   //$ Output .vidjil json
   cout << "  ==> " << f_json ;
-  if (no_vidjil)
+  if (!no_vidjil)
   {
     cout << "\t(data file for the Vidjil web application)" << endl;
   }
