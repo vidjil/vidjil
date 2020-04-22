@@ -82,7 +82,7 @@ after_workers {
 /workers:$/ {
     after_workers=1
 }
-/^\s{3,6}(nginx|fuse|uwsgi|workers|mysql):$/{
+/^\s{3,6}(nginx|fuse|uwsgi|workers|mysql|postfix):$/{
     after_service=1
 }
 /\/opt\/vidjil\/mysql/ {
