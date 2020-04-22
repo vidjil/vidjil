@@ -4,7 +4,9 @@ Vidjil is an open-source platform for the analysis of high-throughput sequencing
 [V(D)J recombinations](http://en.wikipedia.org/wiki/V\(D\)J_recombination) in lymphocytes are essential for immunological diversity.
 They are also useful markers of pathologies, and in leukemia, are used to quantify the minimal residual disease during patient follow-up.
 With adapted [library preparation and sequencing](http://www.vidjil.org/doc/locus),
-high-throughput sequencing (NGS/HTS) now enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](http://omictools.com/rep-seq-c424-p1.html) methods and software.
+high-throughput sequencing (NGS/HTS) now
+enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](https://omictools.com/rep-seq-category)
+methods and software.
 
 This is the help of the [Vidjil web application](http://app.vidjil.org/).
 Further help can always be asked to <support@vidjil.org>. We can also arrange phone or video meeting.
@@ -592,6 +594,24 @@ detection is.
 
 Whenever the e-value is too large, a warning sign will be shown next to the
 clone, instead of the info icon.
+
+
+# How can I have further support or help on a specific sample or on some sequences?
+
+When you have questions on specific data, we advise to use the `help > get support`
+link inside the web application.
+This opens a mail template with reference to the sample,
+and possibly with references to the selected clones.
+
+Indeed, the address <http://app.vidjil.org/?set=XXXXX&config=XXX&clone=XXX>
+reflects the sample you are studying with a given configuration.
+When you select one or several clones, the address is updated.
+
+Note that, even knowing this address,
+only the logged-in users with proper authorization can access to these data.
+This includes the uploader of the data,
+possibly users of the same groups if such groups were defined, and the server maintainers.
+
 
 # Keyboard shortcuts
 
