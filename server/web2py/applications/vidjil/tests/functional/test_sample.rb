@@ -89,7 +89,14 @@ class TestSample < ServerTest
       form.text_field(:id => "file_info_%d" % i).set("#my_file_%d" % i)
       # TODO test other sets
     end
+
+    form_class = form.input(:type => "submit").class_name
+    assert( !(form_class.include? "disabledClass") ) # Submit button is not disabled before click
+
     form.input(:type => "submit").click
+    
+    form_class = form.input(:type => "submit").class_name
+    assert( (form_class.include? "disabledClass") ) # Submit button should be disabled after click
 
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
