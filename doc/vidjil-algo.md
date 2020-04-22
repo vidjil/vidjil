@@ -544,6 +544,8 @@ The main output of Vidjil-algo (with the default `-c clones` command) are the th
     setup or in a immunological study).
     Please see the [web application user manual](http://www.vidjil.org/doc/user) for more information.
 
+    With the `--gz` option, this file is output as a compressed `.vidjil.gz` file.
+
   - The `.tsv` file is the AIRR output, for compatibility with other software
     using the same format. See [below](#airr-tsv-output) for details.
 
