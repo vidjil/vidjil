@@ -332,6 +332,7 @@ test_server_unit:
     - sed -i 's/\:latest/\:test/g' ./docker/docker-compose.yml
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
     - make germline && cp browser/js/germline.js docker/vidjil-client/conf
+    - mkdir -p docker/postfix/ssl
     - cd docker && docker-compose up -d && cd ..
     - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/web2py/" server/web2py/applications/vidjil/tests/init_tests.sh
     - docker exec docker_uwsgi_1 sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
@@ -414,7 +415,7 @@ deploy_review_server:
     - sed -i -r "s/WEB2PY_ADMIN_PASSWORD=/WEB2PY_ADMIN_PASSWORD=$REVIEW_SERVER_ADMIN_PASSWORD/" docker-compose.yml
     - cd ..
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
-    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; docker-compose up -d mysql fuse uwsgi nginx workers"
+    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; mkdir -p postfix/ssl; docker-compose up -d mysql fuse uwsgi nginx workers"
   environment:
     name: review_server/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/browser/
