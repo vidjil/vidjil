@@ -1,0 +1,18 @@
+!NO_LAUNCHER:
+rm -f out/out-*.vidjil
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -b out-a $VIDJIL_DATA/clones_simul.fa
+
+$ Output
+1: out-a.vidjil
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH --gz -b out-b $VIDJIL_DATA/clones_simul.fa
+
+$ Output
+1: out-b.vidjil.gz
+
+!NO_EXTRA:
+gunzip out/out-b.vidjil.gz && diff -s -I '"....-..-..' -I "gz" -I "out-" out/out-a.vidjil out/out-b.vidjil ; echo "Diff: $?"
+
+$ Same output
+1:Diff: 0
