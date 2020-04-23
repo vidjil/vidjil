@@ -25,9 +25,8 @@ class TestSample < ServerTest
     # load patient list
     $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
-    table = $b.table(:id => "table")
-    table.wait_until(&:present?)
-    table
+    $b.table(:id => "table").wait_until(&:present?)
+    $b.table(:id => "table")
   end
 
   def go_to_set(index)
@@ -161,8 +160,9 @@ class TestSample < ServerTest
     assert ($b.form(:id => "upload_form").present?)
 
     form.file_field(:id => 'file_upload_2_1').set(File.expand_path(__FILE__))
-    form.input(:type => "submit").click
-
+    $b.form(:id => "upload_form").input(:css => "[type=submit]:not(.disabledClass)").click
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
+    
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
 
