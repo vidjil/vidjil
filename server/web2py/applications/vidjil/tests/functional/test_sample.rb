@@ -25,9 +25,8 @@ class TestSample < ServerTest
     # load patient list
     $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
-    table = $b.table(:id => "table")
-    table.wait_until(&:present?)
-    table
+    $b.table(:id => "table").wait_until(&:present?)
+    $b.table(:id => "table")
   end
 
   def go_to_set(index)
