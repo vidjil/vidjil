@@ -58,6 +58,7 @@
 #include "lib/CLI11.hpp"
 #include "lib/json.hpp"
 #include "lib/CLI11_json.hpp"
+#include "lib/gzstream.h"
 
 #include "vidjil.h"
 
@@ -107,6 +108,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define COMP_FILENAME "comp.vidjil"
 #define AIRR_SUFFIX ".tsv"
 #define JSON_SUFFIX ".vidjil"
+#define GZ_SUFFIX ".gz"
 
 #define DEFAULT_K      0
 #define DEFAULT_W      50
@@ -582,6 +584,9 @@ int main (int argc, char **argv)
   app.add_option("--dir,-o", out_dir, "output directory", true) -> group(group) -> type_name("PATH");
   app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> type_name("STRING");
 
+  bool out_gz = false;
+  app.add_flag("--gz", out_gz, "output compressed .vidjil.gz file") -> group(group) -> level();
+
   bool no_airr = false;
   bool no_vidjil = false;
   app.add_flag("--no-airr", no_airr, "do not output AIRR .tsv") -> group(group) -> level();
@@ -819,6 +824,9 @@ int main (int argc, char **argv)
 
   string f_airr = out_dir + f_basename + AIRR_SUFFIX ;
   string f_json = out_dir + f_basename + JSON_SUFFIX ;
+
+  if (out_gz)
+    f_json += GZ_SUFFIX;
 
   ostringstream stream_cmdline;
   for (int i=0; i < argc; i++) stream_cmdline << argv[i] << " ";
@@ -1745,7 +1753,7 @@ int main (int argc, char **argv)
     static_cast<SampleOutputAIRR *>(&output) -> out(out_airr);
   }
 
-  //$ Output .vidjil json
+  //$ Output .vidjil(.gz) json
   cout << "  ==> " << f_json ;
   if (!no_vidjil)
   {
@@ -1755,10 +1763,24 @@ int main (int argc, char **argv)
   {
     cout << "\t(only metadata, no clone output)" << endl;
   }
-  ofstream out_json(f_json.c_str()) ;
+
+  std::ostream *out_json;
+
+  if (out_gz)
+  {
+    out_json = new ogzstream(f_json.c_str());
+  }
+  else
+  {
+    out_json = new ofstream(f_json.c_str());
+  }
+
   SampleOutputVidjil *outputVidjil = static_cast<SampleOutputVidjil *>(&output);
 
-  outputVidjil -> out(out_json, !no_vidjil);
+  outputVidjil -> out(*out_json, !no_vidjil);
+
+  // In the case of ogzstream, delete actually calls .close() that is mandatory to make it work
+  delete out_json;
 
   //$$ Clean
   if (__only_on_exit__clean_memory) { delete multigermline ; delete reads; } return 0 ;
