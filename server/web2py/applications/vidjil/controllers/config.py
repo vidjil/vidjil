@@ -15,7 +15,7 @@ def index():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 
-    query = db((auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) ) ).select(orderby=~db.config.name)
+    query = db((auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) ) ).select(orderby=db.config.classification|db.config.name)
     used_query = db(db.results_file.config_id > 0).select(db.results_file.config_id, distinct=True)
     used_configs = [row.config_id for row in used_query]
     classification = db( (db.classification) ).select()
