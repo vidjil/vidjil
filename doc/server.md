@@ -137,6 +137,7 @@ From image `vidjil/server`
   - `fuse` The XmlRPCServer that handles queries for comparing samples
   - `backup` Starts a cron job to schedule regular backups
   - `reporter` A monitoring utility that can be configured to send monitoring information to a remote server
+  - `postfix` A mail relay to allow `uwsgi` to send error notifications
 
 
 
@@ -165,8 +166,12 @@ openssl x509 -noout -fingerprint -text < web2py.crt
 mkdir -p vidjil-client/ssl
 mv web2py.* vidjil-client/ssl/
       ```
+     + If you are using the `postfix` container you may want to generate certificates (using the same process) and place them in `postfix/ssl`.
+       The certificates must bear the name of your mail domain (<maildomain>.crt and <maildomain>.key)
+
      - A better option is to use other certificates, for example by configuring free [Let's Encrypt](https://letsencrypt.org/) certificates;
        In `docker-compose.yml`, update `nginx.volumes`, line `./vidjil-client/ssl:/etc/nginx/ssl`, to set the directory with the certificates.
+       The same can be done for the `postfix` container.
 
 
 If you would prefer to use the vidjil over HTTP (not recommended outside of testing purposes), you can
@@ -179,6 +184,8 @@ forget to make a backup of any file you replace.)
   - Set the SSL certificates (see above)
   - Change the mysql root password and the web2py admin password in `docker-compose.yml`
   - Change the mysql vidjil password in `mysql/create_db.sql` and sets it also in `DB_ADDRESS` in `vidjil-server/conf/defs.py`
+  - Set the desired mail domain and credentials for the `postfix` container and update `vidjil-server/conf/defs.py`
+    `SMTP_CREDENTIALS` and `FROM_EMAIL` to match
 
   - Comment backup/reporter services in `docker-compose.yml`
 

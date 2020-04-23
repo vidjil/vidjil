@@ -534,7 +534,7 @@ def submit():
 
                 if (p['id'] % 100) == 0:
                     mail.send(to=defs.ADMIN_EMAILS,
-                    subject="[Vidjil] %d" % p['id'],
+                    subject=defs.EMAIL_SUBJECT_START+" %d" % p['id'],
                     message="The %dth %s has just been created." % (p['id'], set_type))
 
             else :
