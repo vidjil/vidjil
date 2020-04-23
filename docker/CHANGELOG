@@ -3,7 +3,17 @@ This CHANGELOG concerns the Docker images of vidjil.
 We publish here notes to help to update these images.
 See <http://www.vidjil.org/doc/server>
 
-vidjil/server:2019-11-27-XXXXXXX
+vidjil/server:2020-04-21-8190bd6c
+   - Adding a new field in the database
+   - Changes in docker-compose to wait for MySQL
+   - Fix issue with upload not working with a single file
+   - Fix the possibility to relaunch some processes (#4242)
+vidjil/server:2020-03-16-657ac608
+   - Fix issues with jobs run while the second file is still uploading (#3907)
+   - Warning this image contains bugs that have been corrected in the following versions
+vidjil/server:2019-12-12-2ef3187e
+   - Fix issues with CloneDB with several sample sets
+vidjil/server:2019-11-27-b19f850b
    - The web2py password is now provided through an environment
      variable in the docker-compos.yml file.
 vidjil/server:2018-10-19-3a690203
