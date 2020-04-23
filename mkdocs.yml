@@ -2,7 +2,9 @@ site_name: Vidjil
 
 docs_dir: doc
 
-plugins: []
+plugins:
+    - gitlab_links:
+         gitlab_url: 'https://gitlab.inria.fr/vidjil/vidjil'
 
 repo_url: https://gitlab.inria.fr/vidjil/vidjil
 repo_name: gitlab

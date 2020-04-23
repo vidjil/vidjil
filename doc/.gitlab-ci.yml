@@ -1,6 +1,8 @@
 
 build_doc:
   stage: tgz_release
+  before_script:
+    - pip3 install mkdocs-gitlab-plugin
   script:
     - make -C doc html
     - find site -name "*.html" -type f | xargs python tools/validate-links.py
