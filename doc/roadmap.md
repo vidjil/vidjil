@@ -136,7 +136,7 @@ They often require development or refactor work.
        
 ## Speed
 
- - Speed-up vidjil-algo, especially for full designation of every clone #920 #1169
+ - Speed-up vidjil-algo, especially for full designation of every clone #920
     + 2018: 10x speed-up of V(D)J designation  ✅
     + 2020: ongoing work on Aho-Corasick automaton 🚧
 
