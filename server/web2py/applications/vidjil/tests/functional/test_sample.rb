@@ -161,8 +161,9 @@ class TestSample < ServerTest
     assert ($b.form(:id => "upload_form").present?)
 
     form.file_field(:id => 'file_upload_2_1').set(File.expand_path(__FILE__))
-    form.input(:type => "submit").click
-
+    $b.form(:id => "upload_form").input(:css => "[type=submit]:not(.disabledClass)").click
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
+    
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
 
