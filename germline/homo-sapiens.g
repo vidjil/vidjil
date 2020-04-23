@@ -93,7 +93,7 @@
                 "3": ["TRAJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "10s",
+                "seed": "10c",
                 "seed_3": "10s"
             }
         },
