@@ -1,3 +1,4 @@
 #!/bin/sh
-python ../../../web2py.py -S vidjil -M
+SCRIPT_DIR=$(dirname $0)
+python $SCRIPT_DIR/../../../web2py.py -S vidjil -M
 
