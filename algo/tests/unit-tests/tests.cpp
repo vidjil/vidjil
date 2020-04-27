@@ -19,6 +19,7 @@
 #include "testAutomaton.cpp"
 #include "testMath.cpp"
 #include "testProbability.cpp"
+#include "testBitSet.cpp"
 
 int main(void) {
   TAP_START(NB_TESTS);
@@ -42,5 +43,7 @@ int main(void) {
   testAutomaton();
   testMath();
   testProba();
+  testBitSet();
+
   TAP_END_TEST_EXIT
 }
