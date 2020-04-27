@@ -1,0 +1,11 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS  -r 1 -g $VIDJIL_DIR/germline/homo-sapiens.g ./bug4263.fastq
+
+$ All the reads are segmented
+1: junction detected in 7 reads
+
+$ We have a single clone
+1: Clone #001 .* 7 reads
+
+$ We succeed to fine segment it
+1: IGLV3.*IGLJ3
+
