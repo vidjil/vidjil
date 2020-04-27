@@ -17,7 +17,7 @@
                 "3": ["TRAJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "13s",
+                "seed": "12s",
                 "seed_3": "10s"
             }
         },
@@ -76,7 +76,7 @@
                 "3": ["TRDJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "10s",
+                "seed": "12s",
                 "seed_3": "10s"
             }
         },
@@ -93,7 +93,7 @@
                 "3": ["TRAJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "10c",
+                "seed": "12s",
                 "seed_3": "10s"
             }
         },
@@ -114,7 +114,7 @@
                 "3": ["TRDD3+down.fa"]
             } ],
             "parameters": {
-                "seed": "10s",
+                "seed": "12s",
                 "seed_3": "10s"
             }
         },
@@ -158,7 +158,7 @@
             } ],
             "parameters": {
                 "seed": "10s",
-                "seed_3": "9c"
+                "seed_3": "10s"
             }
         },
         "IGK+": {
@@ -187,7 +187,7 @@
             } ],
             "parameters": {
                 "seed": "10s",
-                "seed_3": "9c"
+                "seed_3": "10s"
             }
         }
     }
