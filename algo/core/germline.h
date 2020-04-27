@@ -159,6 +159,7 @@ class MultiGermline {
  private:
   IndexTypes indexType;
   map <string, Germline*> rep_germlines;
+  map <string, Germline*> code_germlines;
  public:
   bool one_index_per_germline;
   list <Germline*> germlines;
@@ -177,6 +178,7 @@ class MultiGermline {
   void add_germline(Germline *germline);
 
   Germline *get_germline(BioReader rep);
+  Germline *get_germline(string code) const;
 
   /**
    * Build from a json .g germline file

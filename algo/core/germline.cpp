@@ -501,6 +501,7 @@ void MultiGermline::finish() {
     germline->set_multigermline(this);
     rep_germlines[germline->rep_5.name] = germline;
     rep_germlines[germline->rep_3.name] = germline;
+    code_germlines[germline->code] = germline;
     germline->finish();
   }
 }
@@ -509,6 +510,12 @@ Germline *MultiGermline::get_germline(BioReader rep) {
   if (rep_germlines.count(rep.name) == 0)
     return nullptr;
   return rep_germlines[rep.name];
+}
+
+Germline *MultiGermline::get_germline(string code) const {
+  if (code_germlines.count(code) == 0)
+    return nullptr;
+  return code_germlines.at(code);
 }
 
 /* Mark k-mers common to several germlines as ambiguous */
