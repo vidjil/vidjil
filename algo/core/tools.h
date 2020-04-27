@@ -259,9 +259,13 @@ double nChoosek(unsigned n, unsigned k);
  * More precisely, the purpose of the function is to find the longest
  * substring whose prefixes and suffixes all have a ratio of N that
  * is less than or equal to RATIO_TOO_MANY_N
+ *
+ * The parameters required_start and required_end give the positions
+ * of the required sequence that must not be cut out.
+ * @post start_pos <= required_start && length >= required_length
  */
-void trimSequence(string &sequence, size_t &start_pos, size_t &length);
-
+void trimSequence(string &sequence, size_t &start_pos, size_t &length,
+                  size_t required_start=string::npos, size_t required_length=0);
 
 const Sequence NULL_SEQUENCE = create_sequence("", "", "NULL", "");
 

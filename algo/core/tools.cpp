@@ -372,7 +372,8 @@ double nChoosek(unsigned n, unsigned k)
     return nChoosek_stored[n][k];
 }
 
-void trimSequence(string &sequence, size_t &start_pos, size_t &length) {
+void trimSequence(string &sequence, size_t &start_pos, size_t &length,
+                  size_t required_start, size_t required_length) {
   float prefix_score = 0;
   float suffix_score = 0;
   size_t start_bad_suffix = 0;
@@ -425,8 +426,8 @@ void trimSequence(string &sequence, size_t &start_pos, size_t &length) {
     }
   }
 
-  start_pos = max_start_factor;
-  length = max_factor_length;
+  start_pos = min(required_start, max_start_factor);
+  length = max(required_length, max_factor_length);
 }
 
 

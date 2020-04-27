@@ -3,6 +3,7 @@
 #include "tests.h"
 #include <stdexcept>
 #include <vector>
+#include <tuple>
 
 void testOnlineBioReader1() {
   OnlineBioReader *fa = OnlineBioReaderFactory::create("data/test1.fa");
@@ -469,6 +470,28 @@ void testTrimSequence() {
       TAP_TEST(trimmed == seq_pair.second, TEST_TRIM_SEQUENCE,
                "got " << trimmed << " instead of " << seq_pair.second << " (original sequence: " << seq_pair.first
       << ")");
+    }
+
+    // Test the last parameters
+
+    //                       0        0  1          2  2 
+    //                       0        9  2          3  6
+    string representative = "TTTTTTTTTNNNNCCCCCCCCCCNNNNAAAAAAAAA";
+
+    list <std::tuple<size_t, size_t, string> > required_params = 
+      { std::make_tuple(13, 10, "CCCCCCCCCC"),
+        std::make_tuple(13, 11, "CCCCCCCCCCN"),
+        std::make_tuple(12, 10, "NCCCCCCCCC"),
+        std::make_tuple(12, 11, "NCCCCCCCCCC"),
+        std::make_tuple(12, 12, "NCCCCCCCCCCN"),
+        std::make_tuple(11, 14, "NNCCCCCCCCCCNN")};
+
+    for (auto ex: required_params) {
+      start = 0;
+      length = representative.length();
+      trimSequence(representative, start, length, std::get<0>(ex), std::get<1>(ex));
+      trimmed = representative.substr(start, length);
+      TAP_TEST_EQUAL(trimmed, std::get<2>(ex), TEST_TRIM_SEQUENCE, " required_start = " << std::get<0>(ex) << ", required_length = " << std::get<1>(ex));
     }
 }
 
