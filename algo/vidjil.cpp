@@ -1044,8 +1044,8 @@ int main (int argc, char **argv)
       IKmerStore<KmerAffect> *index = multigermline->index ;
 
       // Initialize statistics, with two additional categories
-      index->labels[KmerAffect::getAmbiguous()] = NULL;
-      index->labels[KmerAffect::getUnknown()] = NULL;
+      index->labels[KmerAffect::getAmbiguous()] = set<Germline*>();
+      index->labels[KmerAffect::getUnknown()] = set<Germline*>();
       
       for (auto it: index->labels)
 	{
@@ -1116,7 +1116,10 @@ int main (int argc, char **argv)
 	  cout << setw(12) << stats_kmer[key] << " " ;
 	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_kmer[key] / total_length * 100 << "%" ;
 
-	  cout << "     " << key << " " << it.second->code << endl ;
+	  cout << "     " << key << " ";
+          for (auto g_it: it.second)
+            cout << g_it->code << " ";
+          cout << endl;
 	}
       
       if (__only_on_exit__clean_memory) { delete multigermline; } return 0;

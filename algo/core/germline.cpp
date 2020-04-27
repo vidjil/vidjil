@@ -249,9 +249,9 @@ void Germline::mark_as_ambiguous(Germline *other)
 
 void Germline::override_rep5_rep3_from_labels(KmerAffect left, KmerAffect right)
 {
-  Germline *left_germline = index->getLabel(left);
+  Germline *left_germline = *(index->getLabel(left).begin());
   rep_5 = (left_germline) ? left_germline->rep_5 : BIOREADER_AMBIGUOUS;
-  Germline *right_germline = index->getLabel(right);
+  Germline *right_germline = *(index->getLabel(right).begin());
   rep_3 = (right_germline) ? right_germline->rep_3 : BIOREADER_AMBIGUOUS;
   if (multigermline) {
     Germline *g = multigermline->get_germline(rep_5);

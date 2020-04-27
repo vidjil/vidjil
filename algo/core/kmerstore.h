@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <math.h>
+#include <set>
 #include "BitSet.hpp"
 #include "bioreader.hpp"
 #include "tools.h"
@@ -98,7 +99,7 @@ public:
   int id; // id of this index
   int refs; // number of germlines using this index
 
-  map<T, Germline *> labels;
+  map<T, set<Germline *> > labels;
 
   IKmerStore();
 
@@ -184,7 +185,7 @@ public:
    * @param kmer: a kmer
    * @return one label associated with the kmer
    */
-  Germline *getLabel(T kmer) const;
+  set<Germline *> getLabel(T kmer) const;
 
   /**
    * @return whether the index differentiate kmer types
@@ -320,12 +321,10 @@ void IKmerStore<T>::insert(BioReader& input,
   }
 
   T current_label = T(label, 1, seed.size());
-  if (labels.count(current_label) == 0) {
-    labels[current_label] = germline;
+  labels[current_label].insert(germline);
 
-    if (revcomp_indexed  && ! T::hasRevcompSymetry()) {
-      labels[T(label, -1, seed.size())] = germline ;
-    }
+  if (revcomp_indexed  && ! T::hasRevcompSymetry()) {
+    labels[T(label, -1, seed.size())].insert(germline) ;
   }
 }
 
@@ -431,7 +430,7 @@ string IKmerStore<T>::getSeed() const {
 }
 
 template<class T>
-Germline *IKmerStore<T>::getLabel(T kmer) const {
+set<Germline *> IKmerStore<T>::getLabel(T kmer) const {
   if (labels.count(kmer) > 0)
     return labels.at(kmer);
   // Nothing interesting found
@@ -440,7 +439,7 @@ Germline *IKmerStore<T>::getLabel(T kmer) const {
     kmer.setLength(~0);
     return getLabel(kmer);
   }
-  return NULL ;
+  return set<Germline *>() ;
 }
 
 template<class T>
