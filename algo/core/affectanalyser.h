@@ -4,6 +4,7 @@
 
 #include "kmerstore.h"
 #include "kmeraffect.h"
+#include "BitSet.hpp"
 #include <set>
 #include <vector>
 #include <cassert>
@@ -333,4 +334,88 @@ class CountKmerAffectAnalyser: public KmerAffectAnalyser {
                 int start, int end, int iter, int min) const;
 };
 
+
+/**
+ * TODO: Clean the code. Should it derive from AffectAnalyser? But some methods
+ * are not adapted to it. Some methods are copied-pasted from KmerAffectAnalyser.
+ * Factorize or remove the methods from the other AffectAnalyser if we feel they're
+ * not useful anymore.
+ *
+ * This MultipleAffectAnalyser is used to determine what affectations are at place
+ * in a sequence. For this purpose we rely on BitSets and use bitwise operations
+ * to speed up the process.
+ * 
+ * For the max12() method, which determines the two most probable affectations,
+ * we first identify the most probable affectations (only by couting the ones in the
+ * bitsets). Then we need to get the second most abundant one. We do this by
+ * setting at 0 all the positions where we had a 1 for the most probable affectation
+ * (so that a same position cannot play twice)
+ * and then we do a second pass on the BitSets to determine the most probable remaining
+ * affectation.
+ */
+class MultipleAffectAnalyser {
+ protected:
+  IKmerStore<KmerAffect> &kms;
+  const string &seq;
+  map<KmerAffect, BitSet> affectations;
+  double left_evalue, right_evalue;
+
+ public:
+  /**
+   * @param kms: the index storing the affectation for the k-mers
+   *             (parameter is not copied)
+   * @param seq: the sequence to analyse (parameter is not copied)
+   */
+  MultipleAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq);
+
+  /**
+   * Count the number of unique affectations (excluding the unknown one)
+   * @complexity O(1)
+   */
+  int countUnique() const;
+  
+  /**
+   * Count the number of position with this affectations
+   * @complexity O(log(a) + |seq|/64)
+   *             log(a): access to the affectation in a map
+   *             |seq|/64: popcount on a bitvector of the length of the sequence
+   */
+  int count(const KmerAffect &affect) const;
+
+  /**
+   * Get the set of affectations that have been detected
+   * @complexity (optimal) linear in the number of distinct affectations
+   */
+  set<KmerAffect> getAffectations() const;
+
+  /**
+   * @return probability that the number of kmers is 'at_least' or more
+   */
+  double getProbabilityAtLeastOrAbove(const KmerAffect &kmer, int at_least) const;
+
+  /**
+   * @return probabilities that the number of left/right kmers is 'at_least' or more
+   */
+  pair <double, double> getLeftRightProbabilityAtLeastOrAbove() const;
+
+  affect_infos getMaximum(const KmerAffect &before, const KmerAffect &after, 
+                          float ratioMin=1.9, int maxOverlap=1);
+
+  const string &getSequence() const;
+
+  /**
+   * @param  A pair of KmerAffects
+   * @return The same pair of KmerAffects, but sorted.
+   *         The first one is 'more on the left' than the second one.
+   */
+  pair <KmerAffect, KmerAffect> sortLeftRight(const pair <KmerAffect, KmerAffect> ka12) const;
+
+  pair <KmerAffect, KmerAffect> max12(const set<KmerAffect> forbidden) const;
+
+  string toString() const;
+
+  string toStringValues() const;
+
+  string toStringSigns() const;
+};
 #endif
