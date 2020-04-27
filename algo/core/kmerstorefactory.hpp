@@ -45,7 +45,7 @@ template<class T>
 class _KmerStoreFactory<T, AC_AUTOMATON> {
 public:
   static IKmerStore<T> *createIndex(string seed, bool revcomp) {
-    return new PointerACAutomaton<T>(seed, revcomp);
+    return new PointerACAutomaton<T>(seed, revcomp, true);
   }
 };
 
