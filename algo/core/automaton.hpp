@@ -15,10 +15,11 @@ void AbstractACAutomaton<Info>::finish_building() {
   if (! IKmerStore<Info>::finished_building) {
     IKmerStore<Info>::finish_building();
     build_failure_functions();
-  }
-  all_index_load = 0;
-  for(auto iter: kmers_inserted) {
-    all_index_load += getIndexLoad(iter.first);
+    all_index_load = 0;
+    for(auto iter: kmers_inserted) {
+      if (iter.first.getStrand())
+        all_index_load += getIndexLoad(iter.first);
+    }
   }
 }
 
@@ -27,7 +28,10 @@ float AbstractACAutomaton<Info>::getIndexLoad(Info kmer) const {
   if (kmers_inserted.count(kmer) == 0) {
     return (kmer.isUnknown()) ? 1 - all_index_load : all_index_load;
   } else {
-    return kmers_inserted.at(kmer) / pow(4.0, kmer.getLength());
+    double nb_inserted = kmers_inserted.at(kmer);
+    if (this->revcomp_indexed)
+      nb_inserted *= 2;
+    return min(1., nb_inserted / pow(4.0, kmer.getLength()));
   }
 }
 
@@ -197,12 +201,18 @@ void PointerACAutomaton<Info>::insert(const seqtype &seq, Info info) {
   state->is_final = true;
   if (! existing_final) {
     this->nb_kmers_inserted++;
-    this->kmers_inserted[info]++;
   }
-  if (state->informations.front().isNull() || ! this->multiple_info)
-    state->informations.front() += info;
-  else
-    state->informations.push_back(info);
+  if (state->informations.back() != info) {
+    if (state->informations.front().isNull() || ! this->multiple_info) {
+      state->informations.front() += info;
+      if (! state->informations.front().isAmbiguous()) {
+        this->kmers_inserted[info]++;
+      }
+    } else {
+      this->kmers_inserted[info]++;
+      state->informations.push_back(info);
+    }
+  }
 }
 
 template <class Info>
