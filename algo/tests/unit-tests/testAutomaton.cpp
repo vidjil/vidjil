@@ -159,8 +159,42 @@ void testRCInsertAcAutomaton() {
   TAP_TEST(results == expected, TEST_AC_GET_RESULTS, "");
 }
 
+void testGetAllResults() {
+  PointerACAutomaton<KmerAffect> aho(false, true);
+
+  KmerAffect V = KmerAffect("V", 1, 4);
+  KmerAffect J = KmerAffect("J", 1, 4);
+  aho.insert("ACAGTC", "V", true, 0, "####");
+  // Will insert ACAG, CAGT, AGTC
+  aho.insert("AGTCTT", "J", true, 0, "####");
+  // Will insert AGTC, GTCT, TCTT
+  aho.build_failure_functions();
+
+  //                                                       0123456789
+  //                                                         VV   
+  //                                                          JJJ
+  map<KmerAffect, BitSet> all_results = aho.getAllResults("AGCAGTCTTA");
+  TAP_TEST_EQUAL(all_results.size(), 2, TEST_AC_ALL_RESULTS, "");
+  TAP_TEST_EQUAL(all_results.count(V), 1, TEST_AC_ALL_RESULTS, "");
+  TAP_TEST_EQUAL(all_results.count(J), 1, TEST_AC_ALL_RESULTS, "");
+
+  auto it = all_results.find(V);
+  BitSet &b_v = it->second;
+  TAP_TEST_EQUAL(b_v.count(), 2, TEST_AC_ALL_RESULTS, "");
+  TAP_TEST_EQUAL(b_v.size(), 10, TEST_AC_ALL_RESULTS, "");
+  for (uint i = 2; i < 4; i++)
+    TAP_TEST_EQUAL(b_v.get(i), 1, TEST_AC_ALL_RESULTS, " pos " << i);
+
+  it = all_results.find(J);
+  BitSet &b_j = it->second;
+  TAP_TEST_EQUAL(b_j.count(), 3, TEST_AC_ALL_RESULTS, "");
+  for (uint i = 3; i < 6; i++)
+    TAP_TEST_EQUAL(b_j.get(i), 1, TEST_AC_ALL_RESULTS, " pos " << i);
+}
+
 void testAutomaton() {
   testSimpleInsertACAutomaton();
   testRCInsertAcAutomaton();
   testGetMultiResults();
+  testGetAllResults();
 }

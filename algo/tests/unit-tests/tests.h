@@ -67,6 +67,7 @@ enum {
   TEST_AC_FINAL,
   TEST_AC_GET_RESULTS,
   TEST_AC_OCCURENCES,
+  TEST_AC_ALL_RESULTS,
 
   /* KmerAffect */
   TEST_AFFECT_STRAND,
@@ -268,6 +269,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_AC_FINAL, "Testing that final states are positioned correctly");
   RECORD_TAP_TEST(TEST_AC_GET_RESULTS, "Testing getResults with Aho-Corasick");
   RECORD_TAP_TEST(TEST_AC_OCCURENCES, "Testing getMultiResults has the correct number of occurences");
+  RECORD_TAP_TEST(TEST_AC_ALL_RESULTS, "Testing getAllResults with Aho-Corasick");
 
   RECORD_TAP_TEST(TEST_AFFECT_STRAND, "affect_strand()");
   RECORD_TAP_TEST(TEST_AFFECT_LENGTH, "affect_length()");

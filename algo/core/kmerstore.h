@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <math.h>
+#include "BitSet.hpp"
 #include "bioreader.hpp"
 #include "tools.h"
 #include "proba.h"
@@ -201,6 +202,17 @@ public:
   virtual vector<T> getResults(const seqtype &seq, bool no_revcomp=false, string seed="") = 0;
 
   /**
+   * @param seq: a sequence
+   * @param no_revcomp: force not to revcomp the sequence, even if
+   *                    the index was built with revcomp.
+   * @return a map which contains all the affectations found at all positions of 
+   * the sequence. The keys are affectations and values are BitSets whose length is
+   * the same as the sequence. A 1 is used to tell that the affectation exists at 
+   * that position.
+   * The function doesn't give the positions of UNKNOWN affectation.
+   */
+  virtual map<T, BitSet> getAllResults(const seqtype &seq, bool no_revcomp=false, string seed="") = 0;
+  /**
    * @return true iff the revcomp is indexed
    */
   bool isRevcomp() const;
@@ -241,6 +253,8 @@ public:
   MapKmerStore(int k, bool=false);
 
   vector<T> getResults(const seqtype &seq, bool no_revcomp=false, string seed="");
+  map<T, BitSet> getAllResults(const seqtype &seq, bool no_revcomp=false, string seed="");
+
   T& get(seqtype &word);
   T& operator[](seqtype & word);
 
@@ -272,6 +286,7 @@ public:
   ~ArrayKmerStore();
 
   vector<T> getResults(const seqtype &seq, bool no_revcomp=false, const string seed="");
+  map<T, BitSet> getAllResults(const seqtype &seq, bool no_revcomp=false, string seed="");
   T& get(seqtype &word);
   T& operator[](seqtype & word);
   T& operator[](int word);
@@ -496,6 +511,21 @@ vector<T> ArrayKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp, str
   return result;
 }
 
+template<class T>
+map<T, BitSet> ArrayKmerStore<T>::getAllResults(const seqtype &seq, bool no_revcomp, string seed) {
+  UNUSED(seq);
+  UNUSED(no_revcomp);
+  UNUSED(seed);
+  return map<T, BitSet>();
+}
+template<class T>
+map<T, BitSet> MapKmerStore<T>::getAllResults(const seqtype &seq, bool no_revcomp, string seed) {
+  UNUSED(seq);
+  UNUSED(no_revcomp);
+  UNUSED(seed);
+  return map<T, BitSet> ();
+}
+  
 
 template<class T>
 bool IKmerStore<T>::isRevcomp() const {

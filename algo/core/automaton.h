@@ -202,7 +202,9 @@ public:
   // From IKmerStore
 
   vector<Info> getResults(const seqtype &seq, bool no_revcomp=false, string seed = "");
- 	 
+
+  map<Info, BitSet> getAllResults(const seqtype &seq, bool no_revcomp=false, string seed="");
+
   map<Info,int> getMultiResults(const seqtype &seq, bool no_revcomp=false, string seed = "");
   Info& get(seqtype &word) ;
 

@@ -2,6 +2,7 @@
 #define AUTOMATON_HPP
 
 #include "automaton.h"
+#include "BitSet.hpp"
 #include <stack>
 #include <set>
 #include <list>
@@ -307,6 +308,36 @@ vector<Info> PointerACAutomaton<Info>::getResults(const seqtype &seq, bool no_re
   }
 
   return result;
+}
+
+template <class Info>
+map<Info, BitSet> PointerACAutomaton<Info>::getAllResults(const seqtype &seq, bool no_revcomp, string seed) {
+  UNUSED(no_revcomp);
+  UNUSED(seed);
+
+  pointer_state<Info>* current_state = getInitialState();
+  size_t seq_len = seq.length();
+  map<Info, BitSet> bitsets;
+  
+  for (size_t i = 0; i < seq_len; i++) {
+    current_state = (pointer_state<Info> *)next(current_state, seq[i]);
+    for (auto info : current_state->informations) {
+      if (! info.isNull()) {
+        auto bitset_it = bitsets.emplace(info,seq_len);
+
+        // Uncomment this for #3342
+        //        bitset_it.first->second.setConsecutive(i - info.getLength() + 1, info.getLength());
+        bitset_it.first->second.set(i - info.getLength() + 1);
+      }
+    }
+  }
+#ifdef DEBUG
+  for (auto it: bitsets) {
+    KmerAffect info = it.first;
+    cerr << info << "\t" << (int)info.getLength() << "\t" << this->getIndexLoad(info) << "\tin getAllResults" << endl;
+  }
+#endif
+  return bitsets;
 }
 
 template <class Info>
