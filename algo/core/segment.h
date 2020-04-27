@@ -337,7 +337,7 @@ ostream &operator<<(ostream &out, const Segmenter &s);
 class KmerSegmenter : public Segmenter
 {
  private:
-  KmerAffectAnalyser *kaa;
+  MultipleAffectAnalyser *kaa;
  protected:
   string affects;
 
@@ -362,7 +362,7 @@ class KmerSegmenter : public Segmenter
   /**
    * @return the KmerAffectAnalyser of the current sequence.
    */
-  KmerAffectAnalyser *getKmerAffectAnalyser() const;
+  MultipleAffectAnalyser *getKmerAffectAnalyser() const;
 
   string getInfoLineWithAffects() const;
   void toOutput(CloneOutput *clone);

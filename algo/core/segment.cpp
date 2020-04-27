@@ -502,18 +502,17 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
       return ;
     }
  
-  kaa = new KmerAffectAnalyser(*(germline->index), sequence);
+  kaa = new MultipleAffectAnalyser(*(germline->index), sequence);
   
   // Check strand consistency among the affectations.
   int strand;
   int nb_strand[2] = {0,0};     // In cell 0 we'll put the number of negative
                                 // strand, while in cell 1 we'll put the
                                 // positives
-  for (int i = 0; i < kaa->count(); i++) { 
-    KmerAffect it = kaa->getAffectation(i);
-    if (! it.isAmbiguous() && ! it.isUnknown()) {
-      strand = affect_strand(it.affect);
-      nb_strand[(strand + 1) / 2] ++; // (strand+1) / 2 → 0 if strand == -1; 1 if strand == 1
+  for (KmerAffect affect: kaa->getAffectations()) {
+    if (! affect.isAmbiguous() && ! affect.isUnknown()) {
+      strand = affect.getStrand();
+      nb_strand[(strand + 1) / 2] += kaa->count(affect); // (strand+1) / 2 → 0 if strand == -1; 1 if strand == 1
     }
   }
 
@@ -525,13 +524,13 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
 
   if (germline->seg_method == SEG_METHOD_ONE) {
 
-    KmerAffectAnalyser kaa(*(germline->index), sequence);
+    KmerAffectAnalyser ka(*(germline->index), sequence);
 
     KmerAffect kmer = KmerAffect(germline->affect_4, 1, germline->seed_4.size());
-    int c = kaa.count(kmer);
+    int c = ka.count(kmer);
 
     // E-value
-    double pvalue = kaa.getProbabilityAtLeastOrAbove(kmer, c);
+    double pvalue = ka.getProbabilityAtLeastOrAbove(kmer, c);
     evalue = pvalue * multiplier ;
 
     if (evalue >= threshold)
@@ -540,7 +539,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
         return ;
       }
 
-    int pos = kaa.minimize(kmer, DEFAULT_MINIMIZE_ONE_MARGIN, DEFAULT_MINIMIZE_WIDTH);
+    int pos = ka.minimize(kmer, DEFAULT_MINIMIZE_ONE_MARGIN, DEFAULT_MINIMIZE_WIDTH);
 
     if (pos == NO_MINIMIZING_POSITION)
       {
@@ -566,8 +565,6 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
       || (germline->seg_method == SEG_METHOD_MAX1U))
     { // Pseudo-germline, MAX12 and MAX1U
       pair <KmerAffect, KmerAffect> max12 ;
-      KmerAffectAnalyser ckaa = *kaa;
-
 
       set<KmerAffect> forbidden;
       forbidden.insert(KmerAffect::getAmbiguous());
@@ -576,13 +573,37 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
       if (germline->seg_method == SEG_METHOD_MAX12)
         // MAX12: two maximum k-mers (no unknown)
         {
-          max12 = ckaa.max12(forbidden);
-
-          if (max12.first.isUnknown() || max12.second.isUnknown())
-            {
+          size_t nb_affects = kaa->countUnique();
+          KmerAffect unique_affect;
+          if (nb_affects == 0) {
+            because = UNSEG_TOO_FEW_ZERO ;
+            return ;
+          }
+          if (nb_affects == 1) {
+            unique_affect = *(kaa->getAffectations().begin());
+          } else {
+            max12 = kaa->max12(forbidden);
+            if (max12.first.isAmbiguous()) {
               because = UNSEG_TOO_FEW_ZERO ;
               return ;
             }
+            if (max12.second.isAmbiguous()) {
+              nb_affects = 1;
+              unique_affect = max12.first;
+            }
+          }
+          if (nb_affects == 1) {
+            char affect = unique_affect.getLabel()[0];
+            for (auto g: segmented_germline->index->getLabel(unique_affect)) {
+              if (g->affect_5[0] == affect) {
+                because = UNSEG_ONLY_V;
+                return;
+              } else if (g->affect_3[0] == affect) {
+                because = UNSEG_ONLY_J;
+                return;
+              }
+            }
+          }
         }
 
       else
@@ -599,7 +620,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
           max12 = make_pair(max, KmerAffect::getUnknown());
         }
 
-      pair <KmerAffect, KmerAffect> before_after =  ckaa.sortLeftRight(max12);
+      pair <KmerAffect, KmerAffect> before_after =  kaa->sortLeftRight(max12);
 
       before = before_after.first ;
       after = before_after.second ;
@@ -617,15 +638,8 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
   if (nb_strand[0] == 0 && nb_strand[1] == 0) {
     because = UNSEG_TOO_FEW_ZERO ;
     return ;
-  } else if (nb_strand[0] > RATIO_STRAND * nb_strand[1]) {
-    strand = -1;
-    before = KmerAffect(germline->affect_3, -1, germline->seed_3.size());
-    after = KmerAffect(germline->affect_5, -1, germline->seed_5.size());
-  } else if (nb_strand[1] > RATIO_STRAND * nb_strand[0]) {
-    strand = 1;
-    before = KmerAffect(germline->affect_5, 1, germline->seed_5.size());
-    after = KmerAffect(germline->affect_3, 1, germline->seed_3.size());
-  } else {
+  } else if (nb_strand[0] < RATIO_STRAND * nb_strand[1] &&
+             nb_strand[1] < RATIO_STRAND * nb_strand[0]) {
     // Ambiguous information: we have positive and negative strands
     // and there is not enough difference to put them apart.
     if (nb_strand[0] + nb_strand[1] >= DETECT_THRESHOLD_STRAND)
@@ -637,23 +651,35 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
 
     } // endif Pseudo-germline
 
-  Germline *left_g = segmented_germline->index->getLabel(before);
-  Germline *right_g = segmented_germline->index->getLabel(after);
-  int order = left_g->code.compare(right_g->code);
+  set<Germline *> left_g = segmented_germline->index->getLabel(before);
+  set<Germline *> right_g = segmented_germline->index->getLabel(after);
+  vector<Germline *> common ;
+  set_intersection(left_g.begin(), left_g.end(), right_g.begin(), right_g.end(),
+                   inserter(common, common.begin()));
+  
   // If germlines differ take the longest one
   // if one is prefix of the other.
   //  (works for IGH/IGH+ for instance, what about TRA+D?)
   if (before.getStrand() == after.getStrand()) {
-    if (order < 0) {
-      if (right_g->code.compare(0, left_g->code.size(), left_g->code) == 0)
-        segmented_germline = right_g;
-    } else if (order >  0) {
-      if (left_g->code.compare(0, right_g->code.size(), right_g->code) == 0)
-        segmented_germline = left_g;
-    } else {
-      segmented_germline = left_g;
+    if (common.size() > 0)
+      segmented_germline = common.front();
+    else if (segmented_germline->get_multigermline() != nullptr) {
+      Germline *trd = segmented_germline->get_multigermline()->get_germline("TRD");
+      Germline *trad = segmented_germline->get_multigermline()->get_germline("TRA+D");
+      Germline *tra = segmented_germline->get_multigermline()->get_germline("TRA");
+      if ((left_g.count(trd) && right_g.count(trad)) ||
+          ((left_g.count(trad) || left_g.count(tra)) && right_g.count(trd)))
+        segmented_germline = trad;
     }
+  } else if (segmented_germline->code != PSEUDO_UNEXPECTED) {
+    because = UNSEG_STRAND_NOT_CONSISTENT;
+    return;
   }
+#ifdef DEBUG
+  PRINT_VAR(segmented_germline->code);
+  PRINT_VAR(segmented_germline);
+  PRINT_VAR(multiplier);
+#endif
   computeSegmentation(strand, before, after, threshold, multiplier);
 }
 
@@ -806,7 +832,7 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   return ;
 }
 
-KmerAffectAnalyser *KmerSegmenter::getKmerAffectAnalyser() const {
+MultipleAffectAnalyser *KmerSegmenter::getKmerAffectAnalyser() const {
   return kaa;
 }
 
