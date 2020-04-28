@@ -146,8 +146,8 @@ void testAffectAnalyser2() {
 
   TAP_TEST(kaa.getDistinctAffectations().size() == 3, TEST_AA_GET_DISTINCT_AFFECT, "");
 
-  TAP_TEST(ckaa.max(forbidden) == KmerAffect(seq[2*(nb_seq-1)+1], -1, k),
-           TEST_COUNT_AA_MAX, "max is " << ckaa.max(forbidden));
+  TAP_TEST_EQUAL(ckaa.max(forbidden), KmerAffect(seq[2*(nb_seq-1)+1], -1, k),
+           TEST_COUNT_AA_MAX, "");
 
   TAP_TEST(ckaa.max() == KmerAffect::getUnknown(), 
            TEST_COUNT_AA_MAX, "max is " << ckaa.max());
