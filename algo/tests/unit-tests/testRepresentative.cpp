@@ -57,6 +57,7 @@ void testRepresentative() {
 void testRevcompRepresentative() {
   list<Sequence> reads = BioReader("data/representative_revcomp.fq").getAll();
 
+  srand(1);
   KmerRepresentativeComputer krc(reads, "##############");
   krc.setOptions(false, 3, 0.5);
   krc.setCoverageReferenceLength(50);
@@ -69,6 +70,7 @@ void testRevcompRepresentative() {
     it->sequence = revcomp(it->sequence);
   }
 
+  srand(1);
   KmerRepresentativeComputer krc2(reads, "##############");
   krc2.setOptions(false, 3, 0.5);
   krc2.setCoverageReferenceLength(50);
