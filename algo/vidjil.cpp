@@ -1301,7 +1301,7 @@ int main (int argc, char **argv)
         << endl ;
 
     string f_clones = out_dir + f_basename + CLONES_FILENAME ;
-    cout << "  ==> " << f_clones << "   \t(main result file)" << endl ;
+    cout << "  ==> " << f_clones << "   \t(for post-processing with other software)" << endl ;
     ofstream out_clones(f_clones.c_str()) ;
 
     cout << "  ==> " << out_seqdir + CLONE_FILENAME + "*" << "\t(detail, by clone)" << endl ; 
@@ -1760,7 +1760,7 @@ int main (int argc, char **argv)
   cout << "  ==> " << f_json ;
   if (!no_vidjil)
   {
-    cout << "\t(data file for the Vidjil web application)" << endl;
+    cout << "\t(main output file, may be opened by the Vidjil web application)" << endl;
   }
   else
   {
