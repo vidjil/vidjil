@@ -549,6 +549,8 @@ The main output of Vidjil-algo (with the default `-c clones` command) are the th
   - The `.tsv` file is the AIRR output, for compatibility with other software
     using the same format. See [below](#airr-tsv-output) for details.
 
+    With the `--gz` option, this file is output as a compressed `.tsv.gz` file.
+
   - The `.vdj.fa` file is *a FASTA file for further processing by other bioinformatics tools*.
     Even if it is advised to rather use the full information in the `.vijdil` file,
     the `.vdj.fa` is a convenient way to have sequences of clones for further processing.
