@@ -182,8 +182,10 @@ void Germline::new_index(IndexTypes type)
 
 void Germline::set_index(IKmerStore<KmerAffect> *_index)
 {
-  index = _index;
-  index->refs++ ;
+  if (index != _index) {
+    index = _index;
+    index->refs++ ;
+  }
 }
 
 
