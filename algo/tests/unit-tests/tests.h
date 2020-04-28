@@ -59,7 +59,7 @@ enum {
   TEST_KMERSTORE_GET_S,
   TEST_KMERSTORE_GET_SEED,
   TEST_KMERSTORE_INSERT_ONE_SEQ,
-  TEST_GET_INDEX_LOAD,
+  //  TEST_GET_INDEX_LOAD,
 
   /* Aho Corasick tests */
   TEST_AC_TRANSITIONS,
@@ -145,7 +145,7 @@ enum {
   TEST_KMER_DATA,
   TEST_KMER_LEFT,
   TEST_KMER_RIGHT,
-  TEST_PROBABILITY_SEGMENTATION,
+  //  TEST_PROBABILITY_SEGMENTATION,
 
   /* WindowExtractor */
   TEST_EXTRACTOR_NB_READS,
@@ -262,7 +262,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_KMERSTORE_GET_K, "Testing getK() in KmerStore");
   RECORD_TAP_TEST(TEST_KMERSTORE_GET_S, "Testing getK() in KmerStore");
   RECORD_TAP_TEST(TEST_KMERSTORE_GET_SEED, "Testing getK() in KmerStore");
-  RECORD_TAP_TEST(TEST_GET_INDEX_LOAD, "Testing getIndexLoad() in KmerStore");
+  //  RECORD_TAP_TEST(TEST_GET_INDEX_LOAD, "Testing getIndexLoad() in KmerStore");
 
   RECORD_TAP_TEST(TEST_AC_TRANSITIONS, "Testing that transitions are correct in Aho-Corasick");
   RECORD_TAP_TEST(TEST_AC_GET, "Testing that retrieving information from Aho-Corasick is ok");
@@ -333,7 +333,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_KMER_DATA, "Test that data is consistent with what we expect for KmerSegmenter");
   RECORD_TAP_TEST(TEST_KMER_LEFT, "Test V end (resp. J start) with KmerSegmenter on fwd (resp bwd) strand");
   RECORD_TAP_TEST(TEST_KMER_RIGHT, "Test J start (resp. V end) with KmerSegmenter on fwd (resp bwd) strand");
-  RECORD_TAP_TEST(TEST_PROBABILITY_SEGMENTATION, "Test getProbabilityAtLeastOrAbove()");
+  // RECORD_TAP_TEST(TEST_PROBABILITY_SEGMENTATION, "Test getProbabilityAtLeastOrAbove()");
 
   RECORD_TAP_TEST(TEST_EXTRACTOR_NB_READS, "Test getNbReads() in WindowExtractor");
   RECORD_TAP_TEST(TEST_EXTRACTOR_NB_SEGMENTED, "Test getNbSegmented() in WindowsExtractor");
