@@ -81,7 +81,7 @@ void testRevcompRepresentative() {
   size_t pos1 = representative.label.find_first_of('[');
   size_t pos2 = representative2.label.find_first_of('[');
 
-  TAP_TEST(representative.label.substr(0, pos1) == representative2.label.substr(0, pos2), TEST_KMER_REPRESENTATIVE_REVCOMP,
+  TAP_TEST_EQUAL(representative.label.substr(0, pos1), representative2.label.substr(0, pos2), TEST_KMER_REPRESENTATIVE_REVCOMP,
            "The two representatives should have the same label");
 
   TAP_TEST(revcomp(representative.sequence) == representative2.sequence, TEST_KMER_REPRESENTATIVE_REVCOMP,
