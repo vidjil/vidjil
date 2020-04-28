@@ -46,7 +46,7 @@ if (test_results[id] <= TAP_MAX_FAILED) { \
 
 #define TAP_TEST_APPROX(test, expected, approx, id, msg) { test_nb_executions[id]++; \
       if (test_results[id] <= TAP_MAX_FAILED) {                           \
-        if ((abs((test) - expected)) > approx) {                                     \
+        if ((fabs((test) - expected)) > approx) {                                     \
           test_results[id]++;                                             \
           cerr << "Test " << #test << " failed (" << __FILE__ << ":" << __LINE__ << "): " \
                << " expected " << expected << " +/- " << approx << ", got " << (test)  \
