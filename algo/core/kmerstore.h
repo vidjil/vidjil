@@ -57,6 +57,11 @@ public:
    * it only there for a reason of compatibility with KmerAffect)
    */
   bool isAmbiguous() const;
+
+  /**
+   * @return 1 (only there for compatibility reasons with KmerAffect)
+   */
+  int getStrand() const;
 } ;
 ostream &operator<<(ostream &os, const Kmer &kmer);
 bool operator==(const Kmer &k1, const Kmer &k2);
