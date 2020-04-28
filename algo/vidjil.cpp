@@ -584,7 +584,7 @@ int main (int argc, char **argv)
   app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> type_name("STRING");
 
   bool out_gz = false;
-  app.add_flag("--gz", out_gz, "output compressed .tsv.gz and .vidjil.gz files") -> group(group) -> level();
+  app.add_flag("--gz", out_gz, "output compressed .tsv.gz, .vdj.fa.gz, and .vidjil.gz files") -> group(group) -> level();
 
   bool no_airr = false;
   bool no_vidjil = false;
@@ -821,11 +821,13 @@ int main (int argc, char **argv)
   //            JSON OUTPUT              //
   /////////////////////////////////////////
 
+  string f_clones = out_dir + f_basename + CLONES_FILENAME ;
   string f_airr = out_dir + f_basename + AIRR_SUFFIX ;
   string f_json = out_dir + f_basename + JSON_SUFFIX ;
 
   if (out_gz)
   {
+    f_clones += GZ_SUFFIX;
     f_airr += GZ_SUFFIX;
     f_json += GZ_SUFFIX;
   }
@@ -1300,9 +1302,8 @@ int main (int argc, char **argv)
     cout << "  ==> suggested edges in " << out_dir+ f_basename + EDGES_FILENAME
         << endl ;
 
-    string f_clones = out_dir + f_basename + CLONES_FILENAME ;
     cout << "  ==> " << f_clones << "   \t(for post-processing with other software)" << endl ;
-    ofstream out_clones(f_clones.c_str()) ;
+    ostream* out_clones = new_ofgzstream(f_clones.c_str(), out_gz) ;
 
     cout << "  ==> " << out_seqdir + CLONE_FILENAME + "*" << "\t(detail, by clone)" << endl ; 
     cout << endl ;
@@ -1357,7 +1358,7 @@ int main (int argc, char **argv)
         // If max_representatives is reached, we stop here but still outputs the window
         if ((max_representatives >= 0) && (num_clone >= max_representatives + 1))
           {
-            out_clones << window_str << endl ;
+            *out_clones << window_str << endl ;
             continue;
           }
       }
@@ -1454,7 +1455,7 @@ int main (int argc, char **argv)
           {
             if (clone_on_stdout)
               cout << representative << endl ;
-            out_clones << representative << endl ;
+            *out_clones << representative << endl ;
             continue;
           }
 
@@ -1481,7 +1482,7 @@ int main (int argc, char **argv)
   if (clone_on_stdout)
     cout << seg << endl ;
 	out_clone << seg << endl ;
-	out_clones << seg << endl ;
+	*out_clones << seg << endl ;
     
         seg.toOutput(clone);
 
@@ -1538,7 +1539,7 @@ int main (int argc, char **argv)
     } // end for clones
 	
     out_edges.close() ;
-    out_clones.close();
+    delete out_clones;
 
     if (num_clone > last_num_clone_on_stdout)
       {
