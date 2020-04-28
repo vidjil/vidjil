@@ -58,7 +58,6 @@
 #include "lib/CLI11.hpp"
 #include "lib/json.hpp"
 #include "lib/CLI11_json.hpp"
-#include "lib/gzstream.h"
 
 #include "vidjil.h"
 
@@ -585,7 +584,7 @@ int main (int argc, char **argv)
   app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> type_name("STRING");
 
   bool out_gz = false;
-  app.add_flag("--gz", out_gz, "output compressed .vidjil.gz file") -> group(group) -> level();
+  app.add_flag("--gz", out_gz, "output compressed .tsv.gz and .vidjil.gz files") -> group(group) -> level();
 
   bool no_airr = false;
   bool no_vidjil = false;
@@ -826,7 +825,10 @@ int main (int argc, char **argv)
   string f_json = out_dir + f_basename + JSON_SUFFIX ;
 
   if (out_gz)
+  {
+    f_airr += GZ_SUFFIX;
     f_json += GZ_SUFFIX;
+  }
 
   ostringstream stream_cmdline;
   for (int i=0; i < argc; i++) stream_cmdline << argv[i] << " ";
@@ -1299,7 +1301,7 @@ int main (int argc, char **argv)
         << endl ;
 
     string f_clones = out_dir + f_basename + CLONES_FILENAME ;
-    cout << "  ==> " << f_clones << "   \t(main result file)" << endl ;
+    cout << "  ==> " << f_clones << "   \t(for post-processing with other software)" << endl ;
     ofstream out_clones(f_clones.c_str()) ;
 
     cout << "  ==> " << out_seqdir + CLONE_FILENAME + "*" << "\t(detail, by clone)" << endl ; 
@@ -1745,36 +1747,27 @@ int main (int argc, char **argv)
     cout << endl;
   }
 
-  //$ Output AIRR .tsv
+  //$ Output AIRR .tsv(.gz)
   if (!no_airr)
   {
     cout << "  ==> " << f_airr << "   \t(AIRR output)" << endl;
-    ofstream out_airr(f_airr.c_str());
-    static_cast<SampleOutputAIRR *>(&output) -> out(out_airr);
+    std::ostream *out_airr = new_ofgzstream(f_airr.c_str(), out_gz);
+    static_cast<SampleOutputAIRR *>(&output) -> out(*out_airr);
+    delete out_airr;
   }
 
   //$ Output .vidjil(.gz) json
   cout << "  ==> " << f_json ;
   if (!no_vidjil)
   {
-    cout << "\t(data file for the Vidjil web application)" << endl;
+    cout << "\t(main output file, may be opened by the Vidjil web application)" << endl;
   }
   else
   {
     cout << "\t(only metadata, no clone output)" << endl;
   }
 
-  std::ostream *out_json;
-
-  if (out_gz)
-  {
-    out_json = new ogzstream(f_json.c_str());
-  }
-  else
-  {
-    out_json = new ofstream(f_json.c_str());
-  }
-
+  std::ostream *out_json = new_ofgzstream(f_json.c_str(), out_gz);
   SampleOutputVidjil *outputVidjil = static_cast<SampleOutputVidjil *>(&output);
 
   outputVidjil -> out(*out_json, !no_vidjil);

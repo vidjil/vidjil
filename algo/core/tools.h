@@ -43,6 +43,7 @@ typedef string junction ;
 #include <cassert>
 #include <vector>
 #include "bioreader.hpp"
+#include "../lib/gzstream.h"
 #include "kmeraffect.h"
 #include "../lib/json_fwd.hpp"
 using json = nlohmann::json;
@@ -280,6 +281,11 @@ bool operator!=(const Sequence &s1, const Sequence &s2);
 void output_label_average(ostream &out, string label, long long int nb, double average, int precision=1);
 
 void json_add_warning(json &clone, string code, string msg, string level=LEVEL_WARN);
+
+/*
+   Opens a ostream, possibly gz-compressed
+*/
+std::ostream* new_ofgzstream(const char *f, bool gz);
 
 
 //////////////////////////////////////////////////
