@@ -473,3 +473,19 @@ string extractGeneName(string label){
 	}
 	return result;
 }
+
+
+/*
+   Opens a ostream, possibly gz-compressed
+*/
+std::ostream* new_ofgzstream(const char *f, bool gz)
+{
+  if (gz)
+  {
+    return new ogzstream(f);
+  }
+  else
+  {
+    return new ofstream(f);
+  }
+}

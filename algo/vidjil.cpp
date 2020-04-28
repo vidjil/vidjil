@@ -58,7 +58,6 @@
 #include "lib/CLI11.hpp"
 #include "lib/json.hpp"
 #include "lib/CLI11_json.hpp"
-#include "lib/gzstream.h"
 
 #include "vidjil.h"
 
@@ -1764,17 +1763,7 @@ int main (int argc, char **argv)
     cout << "\t(only metadata, no clone output)" << endl;
   }
 
-  std::ostream *out_json;
-
-  if (out_gz)
-  {
-    out_json = new ogzstream(f_json.c_str());
-  }
-  else
-  {
-    out_json = new ofstream(f_json.c_str());
-  }
-
+  std::ostream *out_json = new_ofgzstream(f_json.c_str(), out_gz);
   SampleOutputVidjil *outputVidjil = static_cast<SampleOutputVidjil *>(&output);
 
   outputVidjil -> out(*out_json, !no_vidjil);
