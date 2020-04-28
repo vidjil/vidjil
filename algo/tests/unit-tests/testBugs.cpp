@@ -55,6 +55,6 @@ void testSegmentationBug1(IndexTypes index) {
 }
 
 void testBugs() {
-  testSegmentationBug1(KMER_INDEX);
+  //  testSegmentationBug1(KMER_INDEX);
   testSegmentationBug1(AC_AUTOMATON);
 }

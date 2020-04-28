@@ -485,18 +485,18 @@ void testDifferentSeeds(IndexTypes index) {
 }  
 
 void testSegment() {
-  testSegmentOverlap(KMER_INDEX);
+  //  testSegmentOverlap(KMER_INDEX);
   testSegmentOverlap(AC_AUTOMATON);
-  testSegmentationCause(KMER_INDEX);
+  // testSegmentationCause(KMER_INDEX);
   testSegmentationCause(AC_AUTOMATON);
-  testExtractor(KMER_INDEX);
+  // testExtractor(KMER_INDEX);
   testExtractor(AC_AUTOMATON);
   // testProbability(KMER_INDEX);
   // testProbability(AC_AUTOMATON); // TODO
   testOverlap();
-  testFineSegment(KMER_INDEX);
+  // testFineSegment(KMER_INDEX);
   testFineSegment(AC_AUTOMATON);
-  testBug2224(KMER_INDEX);
+  // testBug2224(KMER_INDEX);
   testBug2224(AC_AUTOMATON);
   testBestLengthShifts();
   testDifferentSeeds(AC_AUTOMATON); // KMER_INDEX can't deal with seeds of different sizes
