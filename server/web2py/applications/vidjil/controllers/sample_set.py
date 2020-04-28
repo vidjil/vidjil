@@ -740,60 +740,55 @@ def getStatHeaders():
 def getFusedStats(file_name, res, dest):
     log.debug("getFusedStats()")
     file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
-    parser = VidjilParser()
-    parser.addPrefix('clones.item', 'clones.item.top', operator.le, 100)
-    parser.addPrefix("reads")
-    parser.addPrefix("samples")
+    with open(file_path, 'r') as json_file :
+        data = json.load(json_file)
+        result_index = -1
+        if "results_file_id" in data['samples']:
+            result_index = data['samples']['results_file_id'].index(res['resuts_file_id'])
+        elif "original_names" in data['samples']:
+            result_index = data['samples']['original_names'].index(defs.DIR_SEQUENCES + res['sequence_file'])
+        dest['main clone'] = data['clones'][0]['name']
+        reads = data['reads']['total'][result_index]
+        # dest['reads'] = reads
+        mapped_reads = data['reads']['segmented'][result_index]
+        dest['mapped reads'] = "%d / %d (%.2f %%)" % (mapped_reads, reads, 100.0*mapped_reads/reads if reads else 0)
+        dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
+        dest['abundance'] = [(key, 100.0*data['reads']['germline'][key][result_index]/reads) for key in data['reads']['germline']]
 
-    mjson = parser.extract(file_path)
-    data = json.loads(mjson)
-    result_index = -1
-    if "results_file_id" in data['samples']:
-        result_index = data['samples']['results_file_id'].index(res['resuts_file_id'])
-    elif "original_names" in data['samples']:
-        result_index = data['samples']['original_names'].index(defs.DIR_SEQUENCES + res['sequence_file'])
-    dest['main clone'] = data['clones'][0]['name']
-    reads = data['reads']['total'][result_index]
-    # dest['reads'] = reads
-    mapped_reads = data['reads']['segmented'][result_index]
-    dest['mapped reads'] = "%d / %d (%.2f %%)" % (mapped_reads, reads, 100.0*mapped_reads/reads if reads else 0)
-    dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
-    dest['abundance'] = [(key, 100.0*data['reads']['germline'][key][result_index]/reads) for key in data['reads']['germline']]
+        tmp = {}
+        for c in data['clones']:
+            try:
+                arl = int(math.ceil(c['_average_read_length'][result_index]))
+            except:
+                continue
+            if arl > 0:
+                if arl not in tmp:
+                    tmp[arl] = 0.0
+                tmp[arl] += float(c['reads'][result_index])
+        min_len = 100 #int(min(tmp.keys()))
+        max_len = 600 #int(max(tmp.keys()))
+        tmp_list = []
 
-    tmp = {}
-    for c in data['clones']:
-        try:
-            arl = int(math.ceil(c['_average_read_length'][result_index]))
-        except:
-            continue
-        if arl > 0:
-            if arl not in tmp:
-                tmp[arl] = 0.0
-            tmp[arl] += float(c['reads'][result_index])
-    min_len = 100 #int(min(tmp.keys()))
-    max_len = 600 #int(max(tmp.keys()))
-    tmp_list = []
-
-    if mapped_reads == 0:
-        mapped_reads = 1
-    for i in range(min_len, max_len):
-        if i in tmp:
-            if tmp[i]:
-                scaled_val = (2.5 + math.log10(tmp[i]/mapped_reads)) / 2
-                display_val = max(0.01, min(1, scaled_val)) * 100
+        if mapped_reads == 0:
+            mapped_reads = 1
+        for i in range(min_len, max_len):
+            if i in tmp:
+                if tmp[i]:
+                    scaled_val = (2.5 + math.log10(tmp[i]/mapped_reads)) / 2
+                    display_val = max(0.01, min(1, scaled_val)) * 100
+                else:
+                    display_val = 0
+                real_val = 100.0*(tmp[i]/mapped_reads)
             else:
                 display_val = 0
-            real_val = 100.0*(tmp[i]/mapped_reads)
-        else:
-            display_val = 0
-            real_val = 0
-        tmp_list.append((i, display_val, real_val))
-    dest['read lengths'] = tmp_list
+                real_val = 0
+            tmp_list.append((i, display_val, real_val))
+        dest['read lengths'] = tmp_list
 
-    #dest['bool'] = False
-    #dest['bool_true'] = True
-    dest['loci'] = sorted([x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0])
-    dest['clones_five_percent'] = sum([data['reads']['distribution'][key][result_index] for key in data['reads']['germline']  if key in data['reads']['distribution']])
+        #dest['bool'] = False
+        #dest['bool_true'] = True
+        dest['loci'] = sorted([x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0])
+        dest['clones_five_percent'] = sum([data['reads']['distribution'][key][result_index] for key in data['reads']['germline']  if key in data['reads']['distribution']])
     return dest
 
 def getResultsStats(file_name, dest):
