@@ -544,12 +544,8 @@ The main output of Vidjil-algo (with the default `-c clones` command) are the th
     setup or in a immunological study).
     Please see the [web application user manual](http://www.vidjil.org/doc/user) for more information.
 
-    With the `--gz` option, this file is output as a compressed `.vidjil.gz` file.
-
   - The `.tsv` file is the AIRR output, for compatibility with other software
     using the same format. See [below](#airr-tsv-output) for details.
-
-    With the `--gz` option, this file is output as a compressed `.tsv.gz` file.
 
   - The `.vdj.fa` file is *a FASTA file for further processing by other bioinformatics tools*.
     Even if it is advised to rather use the full information in the `.vijdil` file,
@@ -570,6 +566,8 @@ By default, the three output files are named
   - `out` is the directory where all the outputs are stored (can be changed with the `--dir` option).
   - `basename` is the basename of the input `.fasta/.fastq` file (can be overriden with the `--base` option)
 
+With the `--gz` option, the three files are output
+as compressed `.vidjil.gz`, `.tsv.gz`, and `.vdj.fa.gz` files.
 
 Vidjil-algo also outputs the first 50 clones on the standard output.
 More data can be printed on the standard output with the `-v` option.
