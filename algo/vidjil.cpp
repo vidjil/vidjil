@@ -584,7 +584,7 @@ int main (int argc, char **argv)
   app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> type_name("STRING");
 
   bool out_gz = false;
-  app.add_flag("--gz", out_gz, "output compressed .vidjil.gz file") -> group(group) -> level();
+  app.add_flag("--gz", out_gz, "output compressed .tsv.gz and .vidjil.gz files") -> group(group) -> level();
 
   bool no_airr = false;
   bool no_vidjil = false;
@@ -825,7 +825,10 @@ int main (int argc, char **argv)
   string f_json = out_dir + f_basename + JSON_SUFFIX ;
 
   if (out_gz)
+  {
+    f_airr += GZ_SUFFIX;
     f_json += GZ_SUFFIX;
+  }
 
   ostringstream stream_cmdline;
   for (int i=0; i < argc; i++) stream_cmdline << argv[i] << " ";
@@ -1744,12 +1747,13 @@ int main (int argc, char **argv)
     cout << endl;
   }
 
-  //$ Output AIRR .tsv
+  //$ Output AIRR .tsv(.gz)
   if (!no_airr)
   {
     cout << "  ==> " << f_airr << "   \t(AIRR output)" << endl;
-    ofstream out_airr(f_airr.c_str());
-    static_cast<SampleOutputAIRR *>(&output) -> out(out_airr);
+    std::ostream *out_airr = new_ofgzstream(f_airr.c_str(), out_gz);
+    static_cast<SampleOutputAIRR *>(&output) -> out(*out_airr);
+    delete out_airr;
   }
 
   //$ Output .vidjil(.gz) json
