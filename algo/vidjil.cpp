@@ -337,7 +337,7 @@ int main (int argc, char **argv)
     -> group(group) -> type_name("FILE");
 
 
-  bool multi_germline_unexpected_recombinations_12 = false;
+  bool multi_germline_unexpected_recombinations_12 = true;
   app.add_flag("-2", multi_germline_unexpected_recombinations_12, "try to detect unexpected recombinations") -> group(group);
 
 

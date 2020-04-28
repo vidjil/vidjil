@@ -13,7 +13,7 @@ void Germline::init(string _code, char _shortcut,
                     string seed_5, string seed_4, string seed_3,
                     int max_indexing, bool build_automaton)
 {
-  seg_method = SEG_METHOD_53 ;
+  seg_method = SEG_METHOD_MAX12;
   code = _code ;
   shortcut = _shortcut ;
   index = 0 ;

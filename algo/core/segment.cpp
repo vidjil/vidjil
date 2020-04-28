@@ -559,9 +559,8 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
 
     return ;
   }
-  
-  
-  if ((germline->seg_method == SEG_METHOD_MAX12)
+
+  if (true || (germline->seg_method == SEG_METHOD_MAX12)
       || (germline->seg_method == SEG_METHOD_MAX1U))
     { // Pseudo-germline, MAX12 and MAX1U
       pair <KmerAffect, KmerAffect> max12 ;
@@ -570,7 +569,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
       forbidden.insert(KmerAffect::getAmbiguous());
       forbidden.insert(KmerAffect::getUnknown());
 
-      if (germline->seg_method == SEG_METHOD_MAX12)
+      if (true || germline->seg_method == SEG_METHOD_MAX12)
         // MAX12: two maximum k-mers (no unknown)
         {
           size_t nb_affects = kaa->countUnique();
