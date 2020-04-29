@@ -417,10 +417,13 @@ double IKmerStore<T>::getProbabilityAtLeastOrAbove(const T kmer, int at_least, i
     probability_not_having_system = precomputed_proba_without_system.at(index_load)[n-at_least];
   else
     probability_not_having_system = pow(1 - index_load, n - at_least);
+
+  double Cnk = nChoosek(n, at_least);
   for (int i=at_least; i<=n; i++) {
-    proba += nChoosek(n, i) * probability_having_system * probability_not_having_system;
+    proba += Cnk * probability_having_system * probability_not_having_system;
     probability_having_system *= index_load;
     probability_not_having_system /= (1 - index_load);
+    Cnk *= (n-i) / (i+1);
   }
 
 #ifdef DEBUG_KMS_EVALUE
