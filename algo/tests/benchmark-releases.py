@@ -159,6 +159,9 @@ def installed():
 
 
 def run_all(tag, args):
+    go("make -C ../.. germline")
+    go("make -C ../.. data")
+    go("make -C ../.. demo")
     print('==== %s ==== %s' % (tag, args))
     os.system('mkdir -p %s' % RUN)
     for release in installed():
