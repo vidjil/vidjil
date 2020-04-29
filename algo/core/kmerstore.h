@@ -62,6 +62,8 @@ public:
    */
   bool isAmbiguous() const;
 
+  static uint getMaxHashValue();
+  
   /**
    * @return 1 (only there for compatibility reasons with KmerAffect)
    */
@@ -74,6 +76,15 @@ bool operator>(const Kmer &k1, const Kmer &k2);
 bool operator<=(const Kmer &k1, const Kmer &k2);
 bool operator>=(const Kmer &k1, const Kmer &k2);
 bool operator!=(const Kmer &k1, const Kmer &k2);
+
+namespace std {
+  template <>
+  struct hash<Kmer> {
+    size_t operator()(const Kmer &kmer) const {
+      return kmer.count;
+    }
+  };
+}
 
 
 

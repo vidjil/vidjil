@@ -93,10 +93,12 @@ void PointerACAutomaton<Info>::init(string seed, bool revcomp, bool multiple_inf
   this->revcomp_indexed = revcomp;
   this->max_size_indexing = 0;
   this->multiple_info = multiple_info;
+  this->lookup_bitsets = (BitSet **) calloc(Info::getMaxHashValue(), sizeof(BitSet*));
 }
 
 template <class Info>
 PointerACAutomaton<Info>::~PointerACAutomaton() {
+  free(lookup_bitsets);
   free_automaton(this->getInitialState());
 }
 
@@ -318,16 +320,21 @@ map<Info, BitSet> PointerACAutomaton<Info>::getAllResults(const seqtype &seq, bo
   pointer_state<Info>* current_state = getInitialState();
   size_t seq_len = seq.length();
   map<Info, BitSet> bitsets;
+  list<Info> found_affects;
   
   for (size_t i = 0; i < seq_len; i++) {
     current_state = (pointer_state<Info> *)next(current_state, seq[i]);
-    for (auto info : current_state->informations) {
+    for (const Info &info : current_state->informations) {
       if (! info.isNull()) {
-        auto bitset_it = bitsets.emplace(info,seq_len);
+        size_t hash = std::hash<Info>{}(info);
+        if (! lookup_bitsets[hash]) {
+          lookup_bitsets[hash] = new BitSet(seq_len);
+          found_affects.push_back(info);
+        }
 
         // Uncomment this for #3342
         //        bitset_it.first->second.setConsecutive(i - info.getLength() + 1, info.getLength());
-        bitset_it.first->second.set(i - info.getLength() + 1);
+        lookup_bitsets[hash]->set(i - info.getLength() + 1);
       }
     }
   }
@@ -337,6 +344,14 @@ map<Info, BitSet> PointerACAutomaton<Info>::getAllResults(const seqtype &seq, bo
     cerr << info << "\t" << (int)info.getLength() << "\t" << this->getIndexLoad(info) << "\tin getAllResults" << endl;
   }
 #endif
+
+  for (Info &info : found_affects) {
+    size_t hash = std::hash<Info>{}(info);
+    bitsets.emplace(info, *lookup_bitsets[hash]);
+    delete lookup_bitsets[hash];
+    lookup_bitsets[hash] = NULL;
+  }
+  
   return bitsets;
 }
 

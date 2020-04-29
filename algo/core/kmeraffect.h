@@ -128,6 +128,11 @@ public:
   unsigned char getLength() const;
 
   /**
+   * @return the maximal hash value we can set
+   */
+  static uint getMaxHashValue();
+  
+  /**
    * @return the unknown affectation
    */
   static KmerAffect getUnknown();
@@ -177,8 +182,9 @@ ostream &operator<<(ostream &os, const KmerAffect &kmer);
 namespace std {
   template <>
   struct hash<KmerAffect> {
+    // Needs to have NO COLLISION (for optimisations in PointerACAutomaton::getAllResults)
     size_t operator()(const KmerAffect &affect) const {
-      return (((unsigned char) affect.affect.c << 8) | (affect.getLength()));
+      return (affect.getLabel()[0] << 9) | (affect.getLength() << 1) | (affect.getStrand() == 1 ? 1 : 0);
     }
   };
 }

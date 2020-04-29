@@ -160,6 +160,10 @@ unsigned char KmerAffect::getLength() const {
   return affect_length(affect);
 }
 
+uint KmerAffect::getMaxHashValue() {
+  return 1 << (8*sizeof(affect_t)+1);
+}
+
 KmerAffect KmerAffect::getUnknown() {
   return AFFECT_UNKNOWN;
 }

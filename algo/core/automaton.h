@@ -125,6 +125,8 @@ template <class Info>
 class PointerACAutomaton: public AbstractACAutomaton<Info> {
 private:
   bool multiple_info;
+  BitSet **lookup_bitsets;      // Use for getAllResults
+
 
   void free_automaton(pointer_state<Info> *);
   void init(string seed, bool revcomp, bool multiple_info);

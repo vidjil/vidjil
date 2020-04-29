@@ -46,6 +46,10 @@ string Kmer::getLabel() const{
 	return "";
 }
 
+uint Kmer::getMaxHashValue() {
+  return 1000;
+}
+
 int Kmer::getStrand() const{
 	return 1;
 }
