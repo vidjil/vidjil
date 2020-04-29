@@ -198,8 +198,6 @@ enum {
   /* Bugs */
   TEST_BUG2224,
 
-  // ProbaPrecomputer
-  TEST_PROBA_PRECOMPUTER,
   /* BitSet */
   TEST_BITSET_COUNT,
   TEST_BITSET_COPY,
@@ -208,6 +206,9 @@ enum {
   TEST_BITSET_FLIP,
   TEST_BITSET_AND,
   TEST_BITSET_CONSECUTIVE_SET,
+
+  // ProbaPrecomputer
+  TEST_PROBA_PRECOMPUTER,
 
   NB_TESTS
 };
@@ -380,7 +381,6 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_FINE_SEGMENT_OVERLAP, "Test fine segmentation with an overlap");
   RECORD_TAP_TEST(TEST_SEGMENT_REVCOMP, "Test segmentation on a sequence and its revcomp");
   RECORD_TAP_TEST(TEST_BUG2224, "Test issue #2224 (seed longer than sequence)");
-  RECORD_TAP_TEST(TEST_PROBA_PRECOMPUTER, "Test ProbaPrecomputer::getProba");
   RECORD_TAP_TEST(TEST_BITSET_COUNT, "Test BitSet::count");
   RECORD_TAP_TEST(TEST_BITSET_COPY, "Test BitSet copy constructor");
   RECORD_TAP_TEST(TEST_BITSET_GET, "Test BitSet::get");
@@ -388,6 +388,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_BITSET_FLIP, "Test BitSet::flip");
   RECORD_TAP_TEST(TEST_BITSET_AND, "Test BitSet::operator&=");
   RECORD_TAP_TEST(TEST_BITSET_CONSECUTIVE_SET, "Test BitSet::setConsecutive");
+  RECORD_TAP_TEST(TEST_PROBA_PRECOMPUTER, "Test ProbaPrecomputer::getProba");
 }
 
 TAP_DECLARATIONS

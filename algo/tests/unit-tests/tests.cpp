@@ -18,8 +18,8 @@
 #include "testReadStorage.cpp"
 #include "testAutomaton.cpp"
 #include "testMath.cpp"
-#include "testProbability.cpp"
 #include "testBitSet.cpp"
+#include "testProbability.cpp"
 
 int main(void) {
   TAP_START(NB_TESTS);
@@ -44,6 +44,6 @@ int main(void) {
   testMath();
   testProba();
   testBitSet();
-
+  testProba();
   TAP_END_TEST_EXIT
 }
