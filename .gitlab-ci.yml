@@ -372,9 +372,7 @@ ff45-server-functional:
 
 benchmark_algo:
   image:  gcc:6.3
-  before_script:
-    - apt-get update
-    - apt-get install -y time valgrind python3 wget tar
+  extends: .install-algo-dependencies
   stage: benchmark
   script:
     - cd algo/tests ; python3 benchmark-releases.py -r 3 -bIc
