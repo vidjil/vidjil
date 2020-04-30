@@ -378,9 +378,14 @@ int IKmerStore<T>::atMostMaxSizeIndexing(int n) const {
 
 template<class T>
 double IKmerStore<T>::getProbabilityAtLeastOrAbove(const T kmer, int at_least, int length)  {
-  // n: number of kmers in the sequence
-  int n = length - getS() + 1;
   float index_load = getIndexLoad(kmer) ;
+  int kmer_length = kmer.getLength();
+  if (kmer.isUnknown() || kmer.isAmbiguous() || kmer == AFFECT_NOT_UNKNOWN
+      || kmer.getLength() == ~0)
+    kmer_length = getS();
+    
+  int n = max(0, length - kmer_length + 1);
+  at_least = min(at_least, n);
 
   return proba.getProba(index_load, at_least, n);
 }
