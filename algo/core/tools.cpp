@@ -427,7 +427,9 @@ void trimSequence(string &sequence, size_t &start_pos, size_t &length,
   }
 
   start_pos = min(required_start, max_start_factor);
-  length = max(required_length, max_factor_length);
+  length = max_factor_length;
+  if (required_start != string::npos && start_pos + length < required_start + required_length)
+    length = required_start + required_length - start_pos;
 }
 
 

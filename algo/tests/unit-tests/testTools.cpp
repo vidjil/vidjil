@@ -493,6 +493,22 @@ void testTrimSequence() {
       trimmed = representative.substr(start, length);
       TAP_TEST_EQUAL(trimmed, std::get<2>(ex), TEST_TRIM_SEQUENCE, " required_start = " << std::get<0>(ex) << ", required_length = " << std::get<1>(ex));
     }
+
+    representative = "NNNNNCNGAGGAGGGCGGGAACAGAGTGACCGAGGGGGCAGCCTTGGGCTGACCTAGGACGGTCAGCTTGGTCCCTCNGNNGAATATTCGAGTACCAAAGATGTCNNNTNNTTGNCANTGNNNN";
+    string window = "GGTCAGCTTGGTCCCTCNGNNGAATATTCGAGTACCAAAGATGTCNNNTN";
+    start = 5;
+    length = 115;
+    trimSequence(representative, start, length, 60, 50);
+    trimmed = representative.substr(start, length);
+    TAP_TEST(trimmed.find(window) != string::npos, TEST_TRIM_SEQUENCE, "Trimmed representative is " << trimmed << " start = " << start << ", length = " << length );
+
+    representative = ::revcomp(representative);
+    window = ::revcomp(window);
+    start = 9;
+    length = 115;
+    trimSequence(representative, start, length, 14, 50);
+    trimmed = representative.substr(start, length);
+    TAP_TEST(trimmed.find(window) != string::npos, TEST_TRIM_SEQUENCE, "Trimmed representative is " << trimmed << " start = " << start << ", length = " << length );
 }
 
 /* 
