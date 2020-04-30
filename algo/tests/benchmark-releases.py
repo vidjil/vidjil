@@ -85,19 +85,20 @@ def go(cmd, log=None):
         flog = sys.stdout
     print(cmd, end=' ')
     start = resource.getrusage(resource.RUSAGE_CHILDREN)
-    completed = subprocess.run(cmd, shell=True, stderr=subprocess.STDOUT, stdout=flog)
+    returncode = subprocess.call(cmd, shell=True, stderr=subprocess.STDOUT, stdout=flog)
     end = resource.getrusage(resource.RUSAGE_CHILDREN)
     if log:
         flog.close()
 
-    if completed.returncode:
+    if returncode:
         print('FAILED', end=' ')
 
     stime = end.ru_stime-start.ru_stime
     utime = end.ru_utime-start.ru_utime
     print('%5.2fu %5.2fs' % (utime, stime))
 
-    completed.check_returncode()
+    if returncode:
+        raise subprocess.CalledProcessError(returncode, cmd)
 
     return stime + utime
 
@@ -158,6 +159,9 @@ def installed():
 
 
 def run_all(tag, args):
+    go("make -C ../.. germline")
+    go("make -C ../.. data")
+    go("make -C ../.. demo")
     print('==== %s ==== %s' % (tag, args))
     os.system('mkdir -p %s' % RUN)
     for release in installed():
