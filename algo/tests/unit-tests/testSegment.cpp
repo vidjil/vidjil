@@ -433,12 +433,12 @@ void testProbability(IndexTypes index) {
 
   KmerAffectAnalyser *kaa = kseg.getKmerAffectAnalyser();
 
-  TAP_TEST_EQUAL(kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 3), 0, TEST_PROBABILITY_SEGMENTATION, "");
+  TAP_TEST_APPROX(kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 3), 0, 1e-300, TEST_PROBABILITY_SEGMENTATION, "");
   TAP_TEST_EQUAL(kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 2), .75 * .75, TEST_PROBABILITY_SEGMENTATION, "");
   TAP_TEST(kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 1) == .75 * 2 * .25 + kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 2), TEST_PROBABILITY_SEGMENTATION, "");
   TAP_TEST_EQUAL(kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 0), 1, TEST_PROBABILITY_SEGMENTATION, "");
 
-  TAP_TEST_EQUAL(kaa->getProbabilityAtLeastOrAbove(AFFECT_UNKNOWN, 3), 0, TEST_PROBABILITY_SEGMENTATION, ".getProbabilityAtLeastOrAbove() with AFFECT_UNKOWN");
+  TAP_TEST_APPROX(kaa->getProbabilityAtLeastOrAbove(AFFECT_UNKNOWN, 3), 0, 1e-300, TEST_PROBABILITY_SEGMENTATION, ".getProbabilityAtLeastOrAbove() with AFFECT_UNKOWN");
   TAP_TEST_EQUAL(kaa->getProbabilityAtLeastOrAbove(AFFECT_UNKNOWN, 2), .25 * .25, TEST_PROBABILITY_SEGMENTATION, ".getProbabilityAtLeastOrAbove() with AFFECT_UNKOWN");
   TAP_TEST_EQUAL(kaa->getProbabilityAtLeastOrAbove(AFFECT_UNKNOWN, 0), 1, TEST_PROBABILITY_SEGMENTATION, ".getProbabilityAtLeastOrAbove() with AFFECT_UNKOWN");
 }
