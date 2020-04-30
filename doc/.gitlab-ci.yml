@@ -14,6 +14,7 @@ build_doc:
       - /^[^\/]*doc[^\/]*\//
       # branch name should contain doc before the first /
       # eg.: doc/blabla or feature-adoc/blabla
+      - /^feature-.*a.*\/release$/
   tags:
     - doc
 
@@ -24,3 +25,4 @@ deploy_doc:
   when: manual
   only:
       - /^[^\/]*doc[^\/]*\//
+      - /^feature-.*a.*\/release$/
