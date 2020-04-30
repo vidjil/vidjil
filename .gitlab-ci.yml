@@ -56,6 +56,7 @@ test_germlines:
 include:
   - local: '/doc/.gitlab-ci.yml'
   - local: 'algo/.gitlab-ci-compilers.yml' # Stage multiple_tests
+  - local: 'algo/.gitlab-ci.yml' # Vidjil-algo pipelines
 
 # Algorithm
 
