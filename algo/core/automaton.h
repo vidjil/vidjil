@@ -26,6 +26,11 @@ protected:
   void *initialState;
   float all_index_load;
   map<Info, size_t> kmers_inserted;
+  map<Info, float> index_load;
+
+private:
+  float computeIndexLoad(Info kmer) const;
+  
 public:
   AbstractACAutomaton();
 

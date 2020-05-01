@@ -18,6 +18,7 @@ void AbstractACAutomaton<Info>::finish_building() {
     build_failure_functions();
     all_index_load = 0;
     for(auto iter: kmers_inserted) {
+      index_load[iter.first] = computeIndexLoad(iter.first);
       if (iter.first.getStrand())
         all_index_load += getIndexLoad(iter.first);
     }
@@ -25,14 +26,19 @@ void AbstractACAutomaton<Info>::finish_building() {
 }
 
 template<class Info>
+float AbstractACAutomaton<Info>::computeIndexLoad(Info kmer) const {
+  double nb_inserted = kmers_inserted.at(kmer);
+  if (this->revcomp_indexed)
+    nb_inserted *= 2;
+  return min(1., nb_inserted / pow(4.0, kmer.getLength()));
+}
+
+template<class Info>
 float AbstractACAutomaton<Info>::getIndexLoad(Info kmer) const {
   if (kmers_inserted.count(kmer) == 0) {
     return (kmer.isUnknown()) ? 1 - all_index_load : all_index_load;
   } else {
-    double nb_inserted = kmers_inserted.at(kmer);
-    if (this->revcomp_indexed)
-      nb_inserted *= 2;
-    return min(1., nb_inserted / pow(4.0, kmer.getLength()));
+    return index_load.at(kmer);
   }
 }
 
