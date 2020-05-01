@@ -184,7 +184,7 @@ namespace std {
   struct hash<KmerAffect> {
     // Needs to have NO COLLISION (for optimisations in PointerACAutomaton::getAllResults)
     size_t operator()(const KmerAffect &affect) const {
-      return (affect.getLabel()[0] << 9) | (affect.getLength() << 1) | (affect.getStrand() == 1 ? 1 : 0);
+      return (((unsigned char)affect.affect.c << 8) | (affect.getLength()));
     }
   };
 }
