@@ -330,7 +330,9 @@ map<Info, BitSet> PointerACAutomaton<Info>::getAllResults(const seqtype &seq, bo
   
   for (size_t i = 0; i < seq_len; i++) {
     current_state = (pointer_state<Info> *)next(current_state, seq[i]);
-    for (const Info &info : current_state->informations) {
+    size_t nb_info = current_state->informations.size();
+    for (size_t j = 0 ; j < nb_info; j++) {
+      const Info &info = current_state->informations[j];
       if (! info.isNull()) {
         size_t hash = std::hash<Info>{}(info);
         if (! lookup_bitsets[hash]) {
