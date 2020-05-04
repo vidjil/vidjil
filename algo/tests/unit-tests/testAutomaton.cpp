@@ -110,14 +110,7 @@ void testGetMultiResults(){
   /* Situation: No K-mer appear in the sequence. */
   seqtype seq4 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
   results = aho.getMultiResults(seq4);
-  TAP_TEST(results.size() <= 1, TEST_AC_OCCURENCES, errorSize);
-  /*
-    If there is K-mers in automaton doesn't match the sequence, the map must
-    return only unknown K-mers.
-  */
-  pair<KmerAffect, int> singleResult = *(results.begin());
-  KmerAffect unknownKmerAffect = singleResult.first;
-  TAP_TEST_EQUAL(unknownKmerAffect, AFFECT_UNKNOWN, TEST_AC_OCCURENCES, "Unknown Kmer not found");
+  TAP_TEST(results.size() == 0, TEST_AC_OCCURENCES, errorSize);
 }
 
 void testRCInsertAcAutomaton() {
@@ -139,8 +132,9 @@ void testRCInsertAcAutomaton() {
   TAP_TEST(state->is_final, TEST_AC_FINAL, "");
 
   TAP_TEST(! aho.goto_state("CAAT")->is_final, TEST_AC_FINAL, "");
-  TAP_TEST(aho.goto_state("CAAT")->informations.size() == 1, TEST_AC_GET, "");
-  TAP_TEST(aho.goto_state("CAAT")->informations.front() == AFFECT_UNKNOWN, TEST_AC_GET, "");
+  string caat = "CAAT";
+  TAP_TEST(aho.goto_state(caat)->informations.size() == 0, TEST_AC_GET, "");
+  TAP_TEST(aho.get(caat) == AFFECT_UNKNOWN, TEST_AC_GET, "");
 
   TAP_TEST(aho.goto_state("GAGTG")->informations.front() == AFFECT_V_BWD, TEST_AC_GET, "");
   TAP_TEST(aho.goto_state("GAGTG")->is_final, TEST_AC_FINAL, "");

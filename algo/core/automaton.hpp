@@ -9,7 +9,9 @@
 //////////////////// IMPLEMENTATIONS ////////////////////
 
 template <class Info>
-AbstractACAutomaton<Info>::AbstractACAutomaton():IKmerStore<Info>() {}
+AbstractACAutomaton<Info>::AbstractACAutomaton():IKmerStore<Info>() {
+  null_info = Info();
+}
 
 template <class Info>
 void AbstractACAutomaton<Info>::finish_building() {
@@ -151,12 +153,12 @@ void PointerACAutomaton<Info>::build_failure_functions() {
     pointer_state<Info> *failed_state = couple.second;
     if (failed_state->is_final) {
       current_state->is_final = true;
-      if (! current_state->informations.front().isNull()) {
+      if (current_state->informations.size() > 0) {
         if (this->multiple_info)
           current_state->informations.insert(current_state->informations.end(),
                                              failed_state->informations.begin(),
                                              failed_state->informations.end());
-      } else {
+      } else if (failed_state->informations.size() > 0){
         current_state->informations = failed_state->informations;
       }
     }
@@ -211,16 +213,17 @@ void PointerACAutomaton<Info>::insert(const seqtype &seq, Info info) {
   if (! existing_final) {
     this->nb_kmers_inserted++;
   }
-  if (state->informations.back() != info) {
-    if (state->informations.front().isNull() || ! this->multiple_info) {
-      state->informations.front() += info;
-      if (! state->informations.front().isAmbiguous()) {
-        this->kmers_inserted[info]++;
-      }
-    } else {
+  if (state->informations.size() > 0 &&
+      state->informations.back() != info && 
+      ! this->multiple_info) {
+    state->informations.front() += info;
+    if (! state->informations.front().isAmbiguous()) {
       this->kmers_inserted[info]++;
-      state->informations.push_back(info);
     }
+  } else if (state->informations.size() == 0
+             || (multiple_info && state->informations.back() != info)){
+    this->kmers_inserted[info]++;
+    state->informations.push_back(info);
   }
 }
 
@@ -299,8 +302,8 @@ vector<Info> PointerACAutomaton<Info>::getResults(const seqtype &seq, bool no_re
   
   for (size_t i = 0; i < seq_len; i++) {
     current_state = (pointer_state<Info> *)next(current_state, seq[i]);
-    Info info = current_state->informations.front();
-    if (! info.isNull()) {
+    if (current_state->informations.size() > 0) {
+      Info info = current_state->informations.front();
       if (info.isAmbiguous() && ! result[i - info.getLength() + 1].isNull()
           && previous_length > 0)
         // We try to maintain a consistency as the length for an ambiguous
@@ -333,7 +336,6 @@ map<Info, BitSet> PointerACAutomaton<Info>::getAllResults(const seqtype &seq, bo
     size_t nb_info = current_state->informations.size();
     for (size_t j = 0 ; j < nb_info; j++) {
       const Info &info = current_state->informations[j];
-      if (! info.isNull()) {
         size_t hash = std::hash<Info>{}(info);
         if (! lookup_bitsets[hash]) {
           lookup_bitsets[hash] = new BitSet(seq_len);
@@ -343,7 +345,6 @@ map<Info, BitSet> PointerACAutomaton<Info>::getAllResults(const seqtype &seq, bo
         // Uncomment this for #3342
         //        bitset_it.first->second.setConsecutive(i - info.getLength() + 1, info.getLength());
         lookup_bitsets[hash]->set(i - info.getLength() + 1);
-      }
     }
   }
 #ifdef DEBUG
@@ -392,7 +393,9 @@ map<Info, int> PointerACAutomaton<Info>::getMultiResults(const seqtype &seq, boo
 template <class Info>
 Info& PointerACAutomaton<Info>::get(seqtype &word) {
   pointer_state<Info> *state = (pointer_state<Info> *)this->goto_state(word);
-  return state->informations.front();
+  if (state->informations.size() > 0)
+    return state->informations.front();
+  return this->null_info;
 }
 
 template <class Info>

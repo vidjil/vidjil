@@ -21,7 +21,9 @@ using namespace std;
  */
 template <class Info>
 class AbstractACAutomaton: public IKmerStore<Info> {
-
+public:
+  Info null_info;
+  
 protected:
   void *initialState;
   float all_index_load;
@@ -114,7 +116,7 @@ public:
   pointer_state():is_final(false),informations() {
     for (size_t i = 0; i < NB_TRANSITIONS; i++)
       transitions[i] = NULL;
-    informations.push_back(Info());
+    //    informations.push_back(Info());
   }
 
   pointer_state<Info> *transition(char c) {
