@@ -377,7 +377,7 @@ benchmark_algo:
     - apt-get install -y time valgrind python3 wget tar
   stage: benchmark
   script:
-    - cd algo/tests ; python3 benchmark-releases.py -bic
+    - cd algo/tests ; python3 benchmark-releases.py -r 5 -bic
   when: manual
   only:
     - /^feature-.*a.*\/.*$/

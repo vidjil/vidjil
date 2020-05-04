@@ -75,6 +75,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-c', '--current', action='store_true', help='install current HEAD')
 parser.add_argument('-i', '--install', action='store_true', help='install various releases from %s' % ARCHIVE)
 parser.add_argument('-b', '--benchmark', action='store_true', help='benchmark installed releases')
+parser.add_argument('-r', '--retries', type=int, default=1, help='Number of times each benchmark is launched')
 
 
 def go(cmd, log=None):
@@ -158,7 +159,7 @@ def installed():
     return sorted([f.replace(BIN, '') for f in glob.glob('%s/*' % BIN)])
 
 
-def run_all(tag, args):
+def run_all(tag, args, retries):
     go("make -C ../.. germline")
     go("make -C ../.. data")
     go("make -C ../.. demo")
@@ -170,12 +171,28 @@ def run_all(tag, args):
 
         cmd = '%s/%s ' % (BIN, release) + convert(args, release)
         try:
-            bench = go(cmd, log)
-            stats[tag,release] = bench
+            benchs = []
+            for i in range(retries) :
+                benchs.append(go(cmd, log))
+            time = min(benchs)
+            stats[tag,release] = time
         except subprocess.CalledProcessError:
             stats[tag,release] = None
     print()
 
+def bench_line(f, release, stats, index):
+    f.write('%-9s' % release)
+    for tag in BENCHS:
+        if (tag,release) in stats:
+            if stats[tag, release] is not None:
+                b = '%8.2f' % stats[tag,release][index]
+            else:
+                b = '%8s' % 'x'
+        else:
+            b = '%8s' % '-'
+        f.write(b)
+    f.write('\n')
+    
 def show_benchs(f):
     for tag, bench in BENCHS.items():
         f.write('%8s: %s\n' % (tag, bench))
@@ -183,25 +200,16 @@ def show_benchs(f):
     f.write('%9s ' % '')
     for tag in BENCHS:
         f.write('%8s' % tag)
-    f.write('\n\n')
+    f.write('\n\nTimes\n')
 
     for release in installed():
-        f.write('%-9s' % release)
-        for tag in BENCHS:
-            if (tag,release) in stats:
-                if stats[tag, release] is not None:
-                    b = '%8.2f' % stats[tag,release]
-                else:
-                    b = '%8s' % 'x'
-            else:
-                b = '%8s' % '-'
-            f.write(b)
-        f.write('\n')
+        bench_line(f, release, stats, 0)
 
-def bench_all():
+
+def bench_all(retries):
     try:
         for tag, bench in BENCHS.items():
-            run_all(tag, bench)
+            run_all(tag, bench, retries)
     except KeyboardInterrupt:
         pass
 
@@ -220,5 +228,5 @@ if __name__ == '__main__':
         install_from_archive()
 
     if args.benchmark:
-        bench_all()
+        bench_all(args.retries)
         show_benchs(sys.stdout)
