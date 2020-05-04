@@ -25,7 +25,7 @@ Benchmarks
 
 ## Tag and push
 
-* [ ] tag
+* [ ] tag (`git tag release-20XX-XX; git push origin release-20XX-XX`)
 * [ ] mirror to GH
 
 ## Deploy
