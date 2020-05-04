@@ -68,6 +68,7 @@ import time
 import sys
 import argparse
 import resource
+from tempfile import NamedTemporaryFile
 
 stats = {}
 
@@ -85,23 +86,23 @@ def go(cmd, log=None):
     else:
         flog = sys.stdout
     print(cmd, end=' ')
-    start = resource.getrusage(resource.RUSAGE_CHILDREN)
+    time_file = NamedTemporaryFile(mode='w+', delete=False)
+    cmd = "/usr/bin/time -o {} -f '%U\t%S\t%M' {}".format(time_file.name, cmd)
     returncode = subprocess.call(cmd, shell=True, stderr=subprocess.STDOUT, stdout=flog)
-    end = resource.getrusage(resource.RUSAGE_CHILDREN)
     if log:
         flog.close()
 
     if returncode:
         print('FAILED', end=' ')
-
-    stime = end.ru_stime-start.ru_stime
-    utime = end.ru_utime-start.ru_utime
-    print('%5.2fu %5.2fs' % (utime, stime))
-
-    if returncode:
         raise subprocess.CalledProcessError(returncode, cmd)
+    else:
+        (utime, stime, mem) = [ float(i) for i in time_file.read().split() ]
 
-    return stime + utime
+    mem = mem // 1000
+    os.unlink(time_file.name)
+    print('%5.2fu %5.2fs %6.1fM' % (utime, stime, mem))
+
+    return (stime + utime, mem)
 
 def code(tgz):
     '''
@@ -174,8 +175,9 @@ def run_all(tag, args, retries):
             benchs = []
             for i in range(retries) :
                 benchs.append(go(cmd, log))
-            time = min(benchs)
-            stats[tag,release] = time
+            time = min([b[0] for b in benchs])
+            mem = min([b[1] for b in benchs])
+            stats[tag,release] = (time, mem)
         except subprocess.CalledProcessError:
             stats[tag,release] = None
     print()
@@ -200,11 +202,15 @@ def show_benchs(f):
     f.write('%9s ' % '')
     for tag in BENCHS:
         f.write('%8s' % tag)
-    f.write('\n\nTimes\n')
-
+    f.write('\nTimes\n\n')
+            
     for release in installed():
         bench_line(f, release, stats, 0)
 
+    f.write('\nMemory\n')
+    for release in installed():
+        bench_line(f, release, stats, 1)
+    
 
 def bench_all(retries):
     try:
