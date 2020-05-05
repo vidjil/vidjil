@@ -74,8 +74,10 @@ stats = {}
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-c', '--current', action='store_true', help='install current HEAD')
-parser.add_argument('-i', '--install', action='store_true', help='install various releases from %s' % ARCHIVE)
+parser.add_argument('-i', '--install', default=None, nargs='?', const=' ', help='install various releases from %s (default all, otherwise specify them separated with whitespaces, eg. "2018-01 2019.03")' % ARCHIVE)
 parser.add_argument('-b', '--benchmark', action='store_true', help='benchmark installed releases')
+parser.add_argument('-s', '--select', dest='benchs', action='append',
+                    help = 'Specify the benchmarks to select (among {}, default is all)'.format(', '.join(BENCHS.keys())))
 parser.add_argument('-r', '--retries', type=int, default=1, help='Number of times each benchmark is launched')
 
 
@@ -152,10 +154,12 @@ def install(release, tgz):
 def install_current():
     install(CURRENT, None)
 
-def install_from_archive():
+def install_from_archive(install_versions):
+    to_install_versions = install_versions.split()
     for release, tgz in get_releases():
         try:
-            install(release, tgz)
+            if len(to_install_versions) == 0 or release in to_install_versions:
+                install(release, tgz)
         except subprocess.CalledProcessError:
             print("FAILED")
 
@@ -212,13 +216,14 @@ def show_benchs(f):
         bench_line(f, release, stats, 1)
     
 
-def bench_all(retries):
+def bench_all(retries, selected_benchs):
     try:
         go("make -C ../.. germline")
         go("make -C ../.. data")
         go("make -C ../.. demo")
         for tag, bench in BENCHS.items():
-            run_all(tag, bench, retries)
+            if len(selected_benchs) == 0 or tag in selected_benchs:
+                run_all(tag, bench, retries)
     except KeyboardInterrupt:
         pass
 
@@ -234,8 +239,8 @@ if __name__ == '__main__':
         install_current()
 
     if args.install:
-        install_from_archive()
+        install_from_archive(args.install)
 
     if args.benchmark:
-        bench_all(args.retries)
+        bench_all(args.retries, args.benchs)
         show_benchs(sys.stdout)
