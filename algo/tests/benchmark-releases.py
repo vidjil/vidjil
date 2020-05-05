@@ -79,15 +79,16 @@ parser.add_argument('-b', '--benchmark', action='store_true', help='benchmark in
 parser.add_argument('-r', '--retries', type=int, default=1, help='Number of times each benchmark is launched')
 
 
-def go(cmd, log=None):
+def go(cmd, log=None, time=False):
     if log:
         flog = open(log, 'a')
         flog.write('\n\n%s\n' % cmd)
     else:
         flog = sys.stdout
     print(cmd, end=' ')
-    time_file = NamedTemporaryFile(mode='w+', delete=False)
-    cmd = "/usr/bin/time -o {} -f '%U\t%S\t%M' {}".format(time_file.name, cmd)
+    if time:
+        time_file = NamedTemporaryFile(mode='w+', delete=False)
+        cmd = "/usr/bin/time -o {} -f '%U\t%S\t%M' {}".format(time_file.name, cmd)
     returncode = subprocess.call(cmd, shell=True, stderr=subprocess.STDOUT, stdout=flog)
     if log:
         flog.close()
@@ -95,6 +96,8 @@ def go(cmd, log=None):
     if returncode:
         print('FAILED', end=' ')
         raise subprocess.CalledProcessError(returncode, cmd)
+    elif not time:
+        return
     else:
         (utime, stime, mem) = [ float(i) for i in time_file.read().split() ]
 
@@ -174,7 +177,7 @@ def run_all(tag, args, retries):
         try:
             benchs = []
             for i in range(retries) :
-                benchs.append(go(cmd, log))
+                benchs.append(go(cmd, log, True))
             time = min([b[0] for b in benchs])
             mem = min([b[1] for b in benchs])
             stats[tag,release] = (time, mem)
