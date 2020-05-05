@@ -164,9 +164,6 @@ def installed():
 
 
 def run_all(tag, args, retries):
-    go("make -C ../.. germline")
-    go("make -C ../.. data")
-    go("make -C ../.. demo")
     print('==== %s ==== %s' % (tag, args))
     os.system('mkdir -p %s' % RUN)
     for release in installed():
@@ -217,6 +214,9 @@ def show_benchs(f):
 
 def bench_all(retries):
     try:
+        go("make -C ../.. germline")
+        go("make -C ../.. data")
+        go("make -C ../.. demo")
         for tag, bench in BENCHS.items():
             run_all(tag, bench, retries)
     except KeyboardInterrupt:
