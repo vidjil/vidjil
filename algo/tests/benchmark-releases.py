@@ -76,7 +76,10 @@ stats = {}
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-c', '--current', action='store_true', help='install current HEAD')
-parser.add_argument('-i', '--install', default=None, nargs='?', const=' ', help='install various releases from %s (default all, otherwise specify them separated with whitespaces, eg. "2018-01 2019.03")' % ARCHIVE)
+parser.add_argument('-i', '--install', dest='release', default=[], action='append', 
+                    help='install selected releases from %s, such as in "-s 2018.02 -s 2020.05"' % ARCHIVE)
+parser.add_argument('-I', '--install-all', action='store_true',
+                    help='install all releases from %s' % ARCHIVE)
 parser.add_argument('-b', '--benchmark', action='store_true', help='benchmark installed releases')
 parser.add_argument('-s', '--select', dest='benchs', default=[], action='append',
                     help = 'Specify the benchmarks to select (among {}, default is all)'.format(', '.join(BENCHS.keys())))
@@ -157,10 +160,9 @@ def install_current():
     install(CURRENT, None)
 
 def install_from_archive(install_versions):
-    to_install_versions = install_versions.split()
     for release, tgz in get_releases():
         try:
-            if len(to_install_versions) == 0 or release in to_install_versions:
+            if (not install_versions) or release in install_versions:
                 install(release, tgz)
         except subprocess.CalledProcessError:
             print("FAILED")
@@ -234,14 +236,14 @@ def bench_all(retries, selected_benchs):
 if __name__ == '__main__':
     args = parser.parse_args(sys.argv[1:])
 
-    if not args.install and not args.benchmark:
+    if not args.release and not args.benchmark:
         parser.print_help()
 
     if args.current:
         install_current()
 
-    if args.install:
-        install_from_archive(args.install)
+    if args.release or args.install_all:
+        install_from_archive(args.release)
 
     if args.benchmark:
         bench_all(args.retries, args.benchs)
