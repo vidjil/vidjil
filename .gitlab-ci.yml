@@ -378,6 +378,9 @@ benchmark_algo:
   stage: benchmark
   script:
     - cd algo/tests ; python3 benchmark-releases.py -r 3 -bIc
+  artifacts:
+    paths:
+      - algo/tests/benchmark.log
   when: manual
   only:
     - /^feature-.*a.*\/.*$/
