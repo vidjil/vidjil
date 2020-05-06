@@ -190,12 +190,12 @@ def run_all(tag, args, retries):
             stats[tag,release] = None
     print()
 
-def bench_line(f, release, stats, index):
+def bench_line(f, release, stats, index, format='%8.2f'):
     f.write('%-9s' % release)
     for tag in BENCHS:
         if (tag,release) in stats:
             if stats[tag, release] is not None:
-                b = '%8.2f' % stats[tag,release][index]
+                b = format % stats[tag,release][index]
             else:
                 b = '%8s' % 'x'
         else:
@@ -213,11 +213,11 @@ def show_benchs(f):
     f.write('\nTime (s)\n')
             
     for release in installed():
-        bench_line(f, release, stats, 0)
+        bench_line(f, release, stats, 0, '%8.2f')
 
     f.write('\nMemory (MB)\n')
     for release in installed():
-        bench_line(f, release, stats, 1)
+        bench_line(f, release, stats, 1, '%8d')
     
 
 def bench_all(retries, selected_benchs):
