@@ -23,18 +23,20 @@ CONSENSUS_NO = '-y 0 -z 0 '
 CONSENSUS_ALL = '-y all -z 0 '
 DESIGNATIONS = '-c designations '
 
-BENCHS = {
-  'init': '-x 1 ' + MULTI + L4 + CONSENSUS_NO,
-  'germ': LIMIT1e5 + MULTI + L4 + '-c germlines ',
+from collections import OrderedDict
 
-  'multi-0': LIMIT1e5 + MULTI + L4 + CONSENSUS_NO,
-  'multi-1': LIMIT1e5 + MULTI + L4 + CONSENSUS_ALL,
-  'multi-a': LIMIT1e3 + MULTI + L4 + DESIGNATIONS + '-z 1000',
+BENCHS = OrderedDict([
+  ('init', '-x 1 ' + MULTI + L4 + CONSENSUS_NO),
+  ('germ', LIMIT1e5 + MULTI + L4 + '-c germlines '),
 
-  'igh-0': LIMIT1e5 + IGH + S22 + CONSENSUS_NO,
-  'igh-1': LIMIT1e5 + IGH + S22 + CONSENSUS_ALL,
-  'igh-a': LIMIT1e3 + IGH + S22 + DESIGNATIONS,
-}
+  ('multi-0', LIMIT1e5 + MULTI + L4 + CONSENSUS_NO),
+  ('multi-1', LIMIT1e5 + MULTI + L4 + CONSENSUS_ALL),
+  ('multi-a', LIMIT1e3 + MULTI + L4 + DESIGNATIONS + '-z 1000'),
+
+  ('igh-0', LIMIT1e5 + IGH + S22 + CONSENSUS_NO),
+  ('igh-1', LIMIT1e5 + IGH + S22 + CONSENSUS_ALL),
+  ('igh-a', LIMIT1e3 + IGH + S22 + DESIGNATIONS),
+])
 
 COMPATIBILITY = [
   ('2019.03', '-c designations', '-c segment'),
