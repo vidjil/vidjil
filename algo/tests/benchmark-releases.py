@@ -78,7 +78,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-c', '--current', action='store_true', help='install current HEAD')
 parser.add_argument('-i', '--install', default=None, nargs='?', const=' ', help='install various releases from %s (default all, otherwise specify them separated with whitespaces, eg. "2018-01 2019.03")' % ARCHIVE)
 parser.add_argument('-b', '--benchmark', action='store_true', help='benchmark installed releases')
-parser.add_argument('-s', '--select', dest='benchs', action='append',
+parser.add_argument('-s', '--select', dest='benchs', default=[], action='append',
                     help = 'Specify the benchmarks to select (among {}, default is all)'.format(', '.join(BENCHS.keys())))
 parser.add_argument('-r', '--retries', type=int, default=1, help='Number of times each benchmark is launched')
 
