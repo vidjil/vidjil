@@ -9,6 +9,8 @@ CURRENT = 'HEAD'
 
 #####
 
+WARN_RATIO = 0.10
+
 LIMIT1e5 = '-x 100000 '
 LIMIT1e4 = '-x 10000 '
 LIMIT1e3 = '-x 1000 '
@@ -213,12 +215,22 @@ def run_all(tag, args, retries):
             stats[tag,release] = None
     print()
 
-def bench_line(f, release, stats, index, format='%8.2f'):
+def bench_line(f, release, stats, index, format='%8.2f', previous_release=None, colorize=True):
     f.write('%-9s' % release)
     for tag in BENCHS:
         if (tag,release) in stats:
             if stats[tag, release] is not None:
-                b = format % stats[tag,release][index]
+                val = stats[tag,release][index]
+                b = format % val
+
+                # Highlight value
+                if previous_release:
+                    if stats[tag, previous_release] is not None:
+                        previous_val = stats[tag,previous_release][index]
+                        if val/previous_val >= 1 + WARN_RATIO:
+                            b = color(ANSI.RED, b) if colorize else '!' + b[1:]
+                        elif val/previous_val <= 1 - WARN_RATIO:
+                            b = color(ANSI.GREEN, b) if colorize else '!' + b[1:]
             else:
                 b = '%8s' % 'x'
         else:
@@ -226,7 +238,7 @@ def bench_line(f, release, stats, index, format='%8.2f'):
         f.write(b)
     f.write('\n')
     
-def show_benchs(f):
+def show_benchs(f, colorize):
     for tag, bench in BENCHS.items():
         f.write('%8s: %s\n' % (tag, bench))
 
@@ -235,12 +247,16 @@ def show_benchs(f):
         f.write('%8s' % tag)
     f.write('\nTime (s)\n')
             
+    previous_release = None
     for release in installed():
-        bench_line(f, release, stats, 0, '%8.2f')
+        bench_line(f, release, stats, 0, '%8.2f', previous_release, colorize)
+        previous_release = release
 
     f.write('\nMemory (MB)\n')
+    previous_release = None
     for release in installed():
-        bench_line(f, release, stats, 1, '%8d')
+        bench_line(f, release, stats, 1, '%8d', previous_release, colorize)
+        previous_release = release
     
 
 def bench_all(retries, selected_benchs):
@@ -270,4 +286,4 @@ if __name__ == '__main__':
 
     if args.benchmark:
         bench_all(args.retries, args.benchs)
-        show_benchs(sys.stdout)
+        show_benchs(sys.stdout, colorize=True)
