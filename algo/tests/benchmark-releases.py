@@ -42,6 +42,29 @@ COMPATIBILITY = [
   ('2019.03', '-c designations', '-c segment'),
 ]
 
+# Simple colored output
+
+CSIm = '\033[%sm'
+
+class ANSI:
+    RESET = 0
+    BRIGHT = 1
+    BLACK = 30
+    RED = 31
+    GREEN = 32
+    YELLOW = 33
+    BLUE = 34
+    MAGENTA = 35
+    CYAN = 36
+    WHITE = 37
+
+def color(col, text, colorize = True):
+    if not colorize:
+        return text
+    return CSIm % col + text + CSIm % ANSI.RESET
+
+#
+
 def convert(cmd, release):
     '''
     Convert a command line to be used by old vidjil-algo releases
