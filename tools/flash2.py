@@ -7,6 +7,10 @@ import subprocess
 import argparse
 import shlex
 import os
+from logparser import FlashLogParser
+import tempfile
+import json
+from datetime import datetime
 
 parser = argparse.ArgumentParser(description='Use FLASH2 read merger to make a new fastq file and keep unmerged reads')
 
@@ -48,9 +52,11 @@ cmd = ['%s/flash2' % args.flash2_dir,
 cmd += shlex.split( f_opt )
 print( "# %s" % cmd )
 
-exit_code = subprocess.call( cmd )
+p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
 
-if exit_code > 0:
+(stdoutdata, stderrdata) = p.communicate()
+
+if p.returncode > 0:
     raise EnvironmentError("Flash2 failed")
 
 try :
@@ -70,6 +76,19 @@ try :
         ## Remove the histogram provide by Flash2
         os.remove(f_out+'.hist')
         os.remove(f_out+'.histogram')
+
+    with tempfile.NamedTemporaryFile() as logfile:
+        logfile.write(stdoutdata)
+        logfile.seek(0)
+
+        log_parser = FlashLogParser(logfile)
+        parsed_log = log_parser.parse()
+        parsed_log['samples']['pre_process']['commandline'] = [str(sys.argv)]
+        parsed_log['samples']['pre_process']['run_timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        with open('%s/pre_process.vidjil' % path_head, 'w') as vidjil_file:
+            vidjil_file.write(json.dumps(parsed_log))
+    print(stdoutdata)
 except IOError :
     os.remove(f_out)
     raise
