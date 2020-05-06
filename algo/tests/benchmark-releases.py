@@ -95,6 +95,7 @@ import time
 import sys
 import argparse
 import resource
+import datetime
 from tempfile import NamedTemporaryFile
 
 stats = {}
@@ -135,7 +136,7 @@ def go(cmd, log=None, time=False):
 
     mem = mem // 1000
     os.unlink(time_file.name)
-    print('%5.2fu %5.2fs %6.1fM' % (utime, stime, mem))
+    print(color(ANSI.YELLOW, '%5.2fu %5.2fs %6.1fM' % (utime, stime, mem)))
 
     return (stime + utime, mem)
 
@@ -197,10 +198,10 @@ def installed():
 
 
 def run_all(tag, args, retries):
-    print('==== %s ==== %s' % (tag, args))
+    print(color(ANSI.CYAN, '==== %s ==== %s' % (tag, args)))
     os.system('mkdir -p %s' % RUN)
     for release in installed():
-        print('%9s' % release, end=' ')
+        print(color(ANSI.MAGENTA, '%9s' % release), end=' ')
         log = RUN + '/%s-%s.log' % (tag, release)
 
         cmd = '%s/%s ' % (BIN, release) + convert(args, release)
@@ -239,21 +240,25 @@ def bench_line(f, release, stats, index, format='%8.2f', previous_release=None, 
     f.write('\n')
     
 def show_benchs(f, colorize):
+    f.write('\n')
+    f.write(color(ANSI.YELLOW, '\nBenchmark summary, %s\n' % datetime.datetime.now().isoformat(), colorize))
     for tag, bench in BENCHS.items():
         f.write('%8s: %s\n' % (tag, bench))
 
+    f.write('\n')
     f.write('%9s ' % '')
     for tag in BENCHS:
         f.write('%8s' % tag)
-    f.write('\nTime (s)\n')
+
+    f.write(color(ANSI.YELLOW, '\nTime (s)\n', colorize))
             
     previous_release = None
     for release in installed():
         bench_line(f, release, stats, 0, '%8.2f', previous_release, colorize)
         previous_release = release
 
-    f.write('\nMemory (MB)\n')
     previous_release = None
+    f.write(color(ANSI.YELLOW, '\nMemory (MB)\n', colorize))
     for release in installed():
         bench_line(f, release, stats, 1, '%8d', previous_release, colorize)
         previous_release = release
@@ -264,6 +269,8 @@ def bench_all(retries, selected_benchs):
         go("make -C ../.. germline")
         go("make -C ../.. data")
         go("make -C ../.. demo")
+        print()
+        print()
         for tag, bench in BENCHS.items():
             if len(selected_benchs) == 0 or tag in selected_benchs:
                 run_all(tag, bench, retries)
