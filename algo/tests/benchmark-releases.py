@@ -5,6 +5,8 @@ SRC = DEST + 'src/'
 BIN = DEST + 'bin/'
 RUN = DEST + 'run/'
 
+OUT = 'benchmark.log'
+
 CURRENT = 'HEAD'
 
 #####
@@ -294,3 +296,5 @@ if __name__ == '__main__':
     if args.benchmark:
         bench_all(args.retries, args.benchs)
         show_benchs(sys.stdout, colorize=True)
+        print('\n==>', OUT)
+        show_benchs(open(OUT, 'w'), colorize=False)
