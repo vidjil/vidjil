@@ -210,12 +210,12 @@ def show_benchs(f):
     f.write('%9s ' % '')
     for tag in BENCHS:
         f.write('%8s' % tag)
-    f.write('\nTimes\n\n')
+    f.write('\nTime (s)\n')
             
     for release in installed():
         bench_line(f, release, stats, 0)
 
-    f.write('\nMemory\n')
+    f.write('\nMemory (MB)\n')
     for release in installed():
         bench_line(f, release, stats, 1)
     
