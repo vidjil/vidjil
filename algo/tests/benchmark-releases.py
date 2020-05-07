@@ -220,6 +220,7 @@ def run_all(tag, args, retries):
 
 def bench_line(f, release, stats, index, format='%8.2f', previous_release=None, colorize=True):
     f.write('%-9s' % release)
+    warned = False
     for tag in BENCHS:
         if (tag,release) in stats:
             if stats[tag, release] is not None:
@@ -232,16 +233,19 @@ def bench_line(f, release, stats, index, format='%8.2f', previous_release=None, 
                         previous_val = stats[tag,previous_release][index]
                         if val/previous_val >= 1 + WARN_RATIO:
                             b = color(ANSI.RED, b) if colorize else '!' + b[1:]
+                            warned = True
                         elif val/previous_val <= 1 - WARN_RATIO:
                             b = color(ANSI.GREEN, b) if colorize else '!' + b[1:]
+                            warned = True
             else:
                 b = '%8s' % 'x'
         else:
             b = '%8s' % '-'
         f.write(b)
     f.write('\n')
+    return warned
     
-def show_benchs(f, colorize):
+def show_benchs(f, watched_release=None, colorize=True):
     f.write('\n')
     f.write(color(ANSI.YELLOW, '\nBenchmark summary, %s\n' % datetime.datetime.now().isoformat(), colorize))
     for tag, bench in BENCHS.items():
@@ -252,6 +256,8 @@ def show_benchs(f, colorize):
     for tag in BENCHS:
         f.write('%8s' % tag)
 
+    warned = False
+
     for (key, index, format) in [
       ('Time (s)', 0, '%8.2f'),
       ('Memory (MB)', 1, '%8d'),
@@ -259,9 +265,12 @@ def show_benchs(f, colorize):
         f.write(color(ANSI.YELLOW, '\n%s\n' % key, colorize))
         previous_release = None
         for release in installed():
-            bench_line(f, release, stats, index, format, previous_release, colorize)
+            w = bench_line(f, release, stats, index, format, previous_release, colorize)
             previous_release = release
+            if w and release == watched_release:
+                warned = True
 
+    return warned
 
 def bench_all(retries, selected_benchs):
     try:
@@ -294,4 +303,7 @@ if __name__ == '__main__':
         bench_all(args.retries, args.benchs)
         show_benchs(sys.stdout, colorize=True)
         print('\n==>', OUT)
-        show_benchs(open(OUT, 'w'), colorize=False)
+
+        watched_release = installed()[-1]
+        warned = show_benchs(open(OUT, 'w'), watched_release=watched_release, colorize=False)
+        sys.exit(42 if warned else 0)
