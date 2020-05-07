@@ -27,7 +27,16 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
 
   unsigned long long int bp_total = 0;
 
+  global_interrupted = false ;
+  signal(SIGINT, sigintHandler);
+
   while (reads->hasNext()) {
+
+    if (global_interrupted)
+    {
+      cout << WARNING_STRING << "Interrupted after processing " << nb_reads << " reads" << endl ;
+      break;
+    }
 
     try {
       reads->next();
@@ -119,6 +128,7 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
 	cout.flush() ;
       }
   }
+  signal(SIGINT, SIG_DFL);
 
   cout << endl ;
 
