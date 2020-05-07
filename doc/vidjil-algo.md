@@ -418,7 +418,7 @@ for the IGH locus. However, they
 are not at the core of the Vidjil clone clustering method (which
 relies only on the 'window', see above).
 To check the quality of these designations, the automated test suite include
-sequences with manually curated V(D)J designations (see [should-vdj.org](http://git.vidjil.org/blob/master/doc/should-vdj.org)).
+sequences with manually curated V(D)J designations (see [should-vdj.md](should-vdj)).
 
 If you want to analyze more clones, you should use `--max-designations 200` or
 `--max-designations 500`. It is not recommended to use larger values: outputting more
