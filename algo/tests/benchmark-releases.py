@@ -252,19 +252,16 @@ def show_benchs(f, colorize):
     for tag in BENCHS:
         f.write('%8s' % tag)
 
-    f.write(color(ANSI.YELLOW, '\nTime (s)\n', colorize))
-            
-    previous_release = None
-    for release in installed():
-        bench_line(f, release, stats, 0, '%8.2f', previous_release, colorize)
-        previous_release = release
+    for (key, index, format) in [
+      ('Time (s)', 0, '%8.2f'),
+      ('Memory (MB)', 1, '%8d'),
+     ]:
+        f.write(color(ANSI.YELLOW, '\n%s\n' % key, colorize))
+        previous_release = None
+        for release in installed():
+            bench_line(f, release, stats, index, format, previous_release, colorize)
+            previous_release = release
 
-    previous_release = None
-    f.write(color(ANSI.YELLOW, '\nMemory (MB)\n', colorize))
-    for release in installed():
-        bench_line(f, release, stats, 1, '%8d', previous_release, colorize)
-        previous_release = release
-    
 
 def bench_all(retries, selected_benchs):
     try:
