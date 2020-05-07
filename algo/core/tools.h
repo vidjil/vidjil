@@ -41,6 +41,7 @@ typedef string junction ;
 #include <iomanip>
 #include <string>
 #include <cassert>
+#include <signal.h>
 #include <vector>
 #include "bioreader.hpp"
 #include "../lib/gzstream.h"
@@ -95,6 +96,13 @@ inline int spaced_int(int *input, const string &seed) {
   return index_word;
 
 }
+
+/* Signal handling */
+
+
+extern bool global_interrupted;
+
+void sigintHandler(int sig_num);
 
 /* 
 	Extract the gene name from a label. This take the whole part
