@@ -1308,11 +1308,19 @@ int main (int argc, char **argv)
     cout << "  ==> " << out_seqdir + CLONE_FILENAME + "*" << "\t(detail, by clone)" << endl ; 
     cout << endl ;
 
+    global_interrupted = false;
+    signal(SIGINT, sigintHandler);
 
     for (list <pair<junction,size_t> >::const_iterator it = sort_clones.begin();
          it != sort_clones.end(); ++it) {
       junction win = it->first;
       size_t clone_nb_reads = it->second;
+
+      if (global_interrupted)
+      {
+        cout << WARNING_STRING << "Interrupted after analyzing " << num_clone << " clones" << endl ;
+        break;
+      }
 
       ++num_clone ;
 
@@ -1537,7 +1545,8 @@ int main (int argc, char **argv)
     cout << endl ;
       out_clone.close();
     } // end for clones
-	
+    signal(SIGINT, SIG_DFL);
+
     out_edges.close() ;
     delete out_clones;
 
