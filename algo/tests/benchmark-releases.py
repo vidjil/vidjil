@@ -231,12 +231,13 @@ def bench_line(f, release, stats, index, format='%8.2f', previous_release=None, 
                 if previous_release:
                     if stats[tag, previous_release] is not None:
                         previous_val = stats[tag,previous_release][index]
-                        if val/previous_val >= 1 + WARN_RATIO:
-                            b = color(ANSI.RED, b) if colorize else '!' + b[1:]
-                            warned = True
-                        elif val/previous_val <= 1 - WARN_RATIO:
-                            b = color(ANSI.GREEN, b) if colorize else '!' + b[1:]
-                            warned = True
+                        if previous_val:
+                            if val/previous_val >= 1 + WARN_RATIO:
+                                b = color(ANSI.RED, b) if colorize else '!' + b[1:]
+                                warned = True
+                            elif val/previous_val <= 1 - WARN_RATIO:
+                                b = color(ANSI.GREEN, b) if colorize else '!' + b[1:]
+                                warned = True
             else:
                 b = '%8s' % 'x'
         else:
