@@ -751,7 +751,8 @@ def getFusedStats(fuse):
             if "results_file_id" in data['samples']:
                 result_index = data['samples']['results_file_id'].index(resuts_file_id)
             elif "original_names" in data['samples']:
-                result_index = data['samples']['original_names'].index(defs.DIR_SEQUENCES + res['sequence_file'])
+                basenames = [os.path.basename(x) for x in data['samples']['original_names']]
+                result_index = basenames.index(os.path.basename(res['sequence_file']))
             dest['main clone'] = data['clones'][0]['name']
             reads = data['reads']['total'][result_index]
             # dest['reads'] = reads
