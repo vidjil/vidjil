@@ -1133,7 +1133,7 @@ int main (int argc, char **argv)
                                                 windows_labels, only_labeled_windows,
                                                 keep_unsegmented_as_clone,
                                                 expected_value_kmer, nb_reads_for_evalue,
-                                                readScorer);
+                                                readScorer, &output);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 
