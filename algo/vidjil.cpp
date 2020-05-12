@@ -1318,7 +1318,9 @@ int main (int argc, char **argv)
 
       if (global_interrupted)
       {
-        cout << WARNING_STRING << "Interrupted after analyzing " << num_clone << " clones" << endl ;
+        string msg = "Interrupted after analyzing " + string_of_int(num_clone) + " clones" ;
+        output.add_warning("W09", msg, LEVEL_WARN);
+        cout << WARNING_STRING << msg << endl ;
         break;
       }
 
