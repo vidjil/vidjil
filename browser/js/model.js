@@ -478,6 +478,15 @@ changeAlleleNotation: function(alleleNotation) {
             var new_cluster = [];
             var tmp = [];
             
+            var lpos = []
+            for (var seq=0; seq<clusters[i].length;seq++){
+                if (typeof this.mapID[clusters[i][seq]] != 'undefined'){
+                    lpos.push(this.mapID[clusters[i][seq]])
+                }
+            }
+            // order may be unconserved...
+            var biggest_clone = Math.min.apply(null, lpos)
+
             for (var j=0; j<clusters[i].length;j++){
                 if (typeof this.mapID[clusters[i][j]] != 'undefined'){
                     var cloneID = this.mapID[clusters[i][j]]
@@ -485,10 +494,9 @@ changeAlleleNotation: function(alleleNotation) {
                     this.clusters[cloneID] = [];
                     // Set the mergeId value for cluterized clones
                     var clone = this.clones[cloneID] 
-                    if (j != 0){
-                        clone.mergedId = this.mapID[clusters[i][0]]
+                    if (clone.index != biggest_clone){
+                        clone.mergedId = biggest_clone
                     }
-
                 }else{
                     tmp.push(clusters[i][j])
                 }
