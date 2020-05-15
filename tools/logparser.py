@@ -43,8 +43,7 @@ class FlashLogParser:
                     log_line = self.readline(True)
 
             log_line = self.readline()
-        result = {'samples': {'pre_process': parsed_log}}
-        result['producer'] = result['samples']['pre_process']['producer']
+        result = {'pre_process': parsed_log}
         return result
 
     def readline(self, strip=False):
