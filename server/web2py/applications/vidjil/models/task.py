@@ -665,7 +665,13 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
             
     for row in query :
         if row.results_file.data_file is not None :
-            files += defs.DIR_RESULTS + row.results_file.data_file + " "
+            res_file = defs.DIR_RESULTS + row.results_file.data_file
+            if row.sequence_file.pre_process_id:
+                pre_file = (defs.DIR_PRE_VIDJIL_ID + "/pre_process.vidjil") % row.sequence_file.id
+                files += "%s,%s" % (res_file, pre_file)
+            else:
+                files += res_file
+            files += " "
             sequence_file_list += str(row.results_file.sequence_file_id) + "_"
             
     if files == "":

@@ -411,6 +411,29 @@ class Window:
     ### print essential info about Window
     def __str__(self):
         return "<window : %s %s %s>" % ( self.d["reads"], '*' if self.d["top"] == sys.maxsize else self.d["top"], self.d["id"])
+
+class PreProcesses:
+
+    def __init__(self):
+        self.d={}
+        self.d['run_timestamp'] = [None]
+
+    def __add__(self, other):
+        obj = PreProcesses()
+
+        length = len(self.d['run_timestamp'])
+        concatenate_with_padding(obj.d,
+                                 self.d, length,
+                                 other.d, length)
+        concatenate_with_padding_alt(obj.d,
+                                 self.d, length,
+                                 other.d, length,
+                                 'stats')
+        concatenate_with_padding_alt(obj.d,
+                                 self.d, length,
+                                 other.d, length,
+                                 'parameters')
+        return obj
         
 class Samples: 
 
@@ -418,6 +441,7 @@ class Samples:
         self.d={}
         self.d["number"] = 1
         self.d["original_names"] = [""]
+        self.d["pre_process"] = PreProcesses()
 
     def __add__(self, other):
         obj=Samples()
@@ -427,6 +451,7 @@ class Samples:
                                  other.d, other.d['number'],
                                  ['number'])
 
+        obj.d['pre_process'] = self.d['pre_process'] + other.d['pre_process']
         obj.d["number"] =  int(self.d["number"]) + int(other.d["number"])
         
         return obj
@@ -461,6 +486,7 @@ class Reads:
         self.d={}
         self.d["total"] = [0]
         self.d["segmented"] = [0]
+        self.d["merged"] = [None]
         self.d["germline"] = {}
         self.d['distribution'] = {}
 
@@ -478,6 +504,7 @@ class Reads:
                 
         obj.d["total"] = self.d["total"] + other.d["total"]
         obj.d["segmented"] = self.d["segmented"] + other.d["segmented"]
+        obj.d["merged"] = self.d["merged"] + other.d["merged"]
         return obj
 
     def addAIRRClone(self, clone):
@@ -651,6 +678,12 @@ class ListWindows(VidjilJson):
         if 'distribution' not in self.d['reads'].d:
             self.d['reads'].d['distribution'] = {}
 
+        if 'merged' not in self.d['reads'].d:
+            self.d['reads'].d['merged'] = [None]
+
+        if 'pre_process' not in self.d['samples'].d:
+            self.d['samples'].d['pre_process'] = PreProcesses()
+
         self.id_lengths = defaultdict(int)
 
         print("%%")
@@ -688,6 +721,14 @@ class ListWindows(VidjilJson):
     def loads_vidjil(self, string, pipeline, verbose=True):
         '''init listWindows with a json string'''
         self.init_data(json.loads(string, object_hook=self.toPython))
+
+    def load_pre_process(self, file_path, verbose = True):
+        '''init listWindows with the pre_process data file'''
+        with generic_open(file_path, 'r', verbose) as f:
+            json_data = json.load(f, object_hook=self.toPython)
+
+            self.d['samples'].d['pre_process'] = json_data['pre_process']
+            self.d['reads'].d['merged'] = json_data['reads'].d['merged']
 
     def getTop(self, top):
         result = []
@@ -1104,8 +1145,9 @@ class ListWindows(VidjilJson):
         
     def toJson(self, obj):
         '''Serializer for json module'''
-        if isinstance(obj, ListWindows) or isinstance(obj, Window) or isinstance(obj, Samples) or isinstance(obj, Reads) or isinstance(obj, Diversity):
+        if isinstance(obj, ListWindows) or isinstance(obj, Window) or isinstance(obj, Samples) or isinstance(obj, Reads) or isinstance(obj, Diversity) or isinstance(obj, PreProcesses):
             result = {}
+
             for key in obj.d :
                 result[key]= obj.d[key]
                 
@@ -1139,6 +1181,12 @@ class ListWindows(VidjilJson):
             
         if "original_names" in obj_dict:
             obj = Samples()
+            obj.d=obj_dict
+            return obj
+
+        # TODO use a better identifier
+        if "parameters" in obj_dict:
+            obj = PreProcesses()
             obj.d=obj_dict
             return obj
             
@@ -1571,6 +1619,14 @@ def main():
         vparser.addPrefix('clones.item', 'clones.item.top', le, args.top)
 
     for path_name in files:
+        split_path = path_name.split(',')
+        pre_path = None
+        if len(split_path) > 1:
+            path_name = split_path[0]
+            pre_path = split_path[1]
+        else:
+            path_name = split_path[0]
+
         if args.ijson:
             json_clones = vparser.extract(path_name)
             clones = json.loads(json_clones)
@@ -1579,6 +1635,8 @@ def main():
         else:
             jlist = ListWindows()
             jlist.load(path_name, args.pipeline)
+            if pre_path is not None:
+                jlist.load_pre_process(pre_path)
             f += jlist.getTop(args.top)
 
     f = sorted(set(f))
@@ -1611,12 +1669,22 @@ def main():
     else:
         print("### Read and merge input files")
         for path_name in files:
+            split_path = path_name.split(',')
+            pre_path = None
+            if len(split_path) > 1:
+                path_name = split_path[0]
+                pre_path = split_path[1]
+            else:
+                path_name = split_path[0]
+
             jlist = ListWindows()
             if args.ijson:
                 json_reads = vparser.extract(path_name)
                 jlist.loads(json_reads, args.pipeline)
             else:
                 jlist.load(path_name, args.pipeline)
+                if pre_path is not None:
+                    jlist.load_pre_process(pre_path)
                 jlist.build_stat()
                 if len(LIST_DISTRIBUTIONS):
                     jlist.init_distrib(LIST_DISTRIBUTIONS)
