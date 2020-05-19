@@ -60,7 +60,18 @@ class FlashLogParser:
             try:
                 tmp = float(value)
             except ValueError:
-                tmp = value
+                try:
+                    tmp = value.split()[0]
+                    try:
+                        tmp = int(tmp)
+                    except ValueError:
+                        try:
+                            tmp = float(tmp)
+                        except ValueError:
+                            tmp = value
+                except:
+                    tmp = value
+
         return tmp
 
     def getkeyvalue(self, line):
