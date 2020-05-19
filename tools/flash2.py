@@ -83,7 +83,7 @@ try :
 
         log_parser = FlashLogParser(logfile)
         parsed_log = log_parser.parse()
-        parsed_log['pre_process']['commandline'] = [str(sys.argv)]
+        parsed_log['pre_process']['commandline'] = [sys.argv]
         parsed_log['number'] = 1
         #parsed_log['pre_process']['original_names'] = [path_file]
         timestamp = [datetime.now().strftime('%Y-%m-%d %H:%M:%S')]
