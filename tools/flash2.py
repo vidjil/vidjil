@@ -91,7 +91,7 @@ try :
         parsed_log['vidjil_json_version'] = 'TODO'
         parsed_log['reads'] = {}
         parsed_log['reads']['merged'] = parsed_log['pre_process']['stats']['combined_pairs']
-        parsed_log['reads']['total'] = parsed_log['reads']['merged']
+        parsed_log['reads']['total'] = parsed_log['pre_process']['stats']['total_pairs']
 
         with open('%s/pre_process.vidjil' % path_head, 'w') as vidjil_file:
             vidjil_file.write(json.dumps(parsed_log))
