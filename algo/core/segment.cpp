@@ -1121,10 +1121,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,
   seg_N = check_and_resolve_overlap(sequence_or_rc, 0, sequence_or_rc.length(),
                                     box_V, box_J, segment_cost, reverse_V, reverse_J);
 
-  // Reset extreme positions
-  box_V->start = 0;
-  box_J->end = sequence.length()-1;
-
   // Why could this happen ?
   if (box_J->start>=(int) sequence.length())
     box_J->start=sequence.length()-1;
