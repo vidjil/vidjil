@@ -44,8 +44,10 @@ cmd = ['%s/flash2' % args.flash2_dir,
  "-d", path_head,
  "-o", path_file,
  "-t", "1",
-  + shlex.split( f_opt )
 ]
+cmd += shlex.split( f_opt )
+print( "# %s" % cmd )
+
 exit_code = subprocess.call( cmd )
 
 if exit_code > 0:
