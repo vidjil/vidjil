@@ -14,6 +14,8 @@ def concatenate_with_padding_alt(d,
                                  d1, d1_size,
                                  d2, d2_size,
                                  key, ignore_keys=None):
+    '''Same as concatenate_with_padding but takes as key as parameter. Stores a dict un key if it is not
+    present in one of the dicts'''
     if key not in d:
         d[key] = {}
     if key not in d1:
