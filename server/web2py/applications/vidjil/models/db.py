@@ -195,6 +195,9 @@ db.define_table('sequence_file',
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE),
                 Field('data_file2', 'upload', 
                       uploadfolder=defs.DIR_SEQUENCES,
+                      length=LENGTH_UPLOAD, autodelete=AUTODELETE),
+                Field('pre_process_file', 'upload',
+                      uploadfolder=defs.DIR_RESULTS,
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
 

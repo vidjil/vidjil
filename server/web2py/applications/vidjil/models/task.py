@@ -666,8 +666,8 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
     for row in query :
         if row.results_file.data_file is not None :
             res_file = defs.DIR_RESULTS + row.results_file.data_file
-            if row.sequence_file.pre_process_id:
-                pre_file = (defs.DIR_PRE_VIDJIL_ID + "/pre_process.vidjil") % row.sequence_file.id
+            if row.sequence_file.pre_process_file:
+                pre_file = "%s/%s" % (defs.DIR_RESULTS, row.sequence_file.pre_process_file)
                 files += "%s,%s" % (res_file, pre_file)
             else:
                 files += res_file
@@ -906,19 +906,24 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         stream = open(filepath, 'rb')
     except:
         print("!!! Pre-process failed, no result file")
-        res = {"message": "{%s} p%s: 'pre_process' FAILED - %s" % (sequence_file_id, pre_process_id, output_file)}
+        res = {"message": "{%s} p%s: 're_process' FAILED - %s" % (sequence_file_id, pre_process_id, output_file)}
         log.error(res)
         db.sequence_file[sequence_file_id] = dict(pre_process_flag = "FAILED")
         db.commit()
         raise
 
-        
+    pre_process_filepath = '%s/pre_process.vidjil' % out_folder
+    try:
+        pre_process_output = open(pre_process_filepath, 'rb')
+    except FileNotFoundError:
+        pre_process_output = None
 
     # Now we update the sequence file with the result of the pre-process
     # We forget the initial data_file (and possibly data_file2)
     db.sequence_file[sequence_file_id] = dict(data_file = stream,
                                               data_file2 = None,
-                                              pre_process_flag = "COMPLETED")
+                                              pre_process_flag = "COMPLETED",
+                                              pre_process_file = pre_process_output)
     db.commit()
     #resume STOPPED task for this sequence file
     stopped_task = db(
@@ -940,6 +945,10 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
 
     # Remove data file from disk to save space (it is now saved elsewhere)
     os.remove(filepath)
+    try:
+        os.remove(pre_process_filepath)
+    except:
+        pass
     
     if clean_after:
         clean_cmd = "rm -rf " + out_folder 
