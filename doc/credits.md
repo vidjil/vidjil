@@ -92,6 +92,16 @@ Jean-Sebastien Allain et al.,
 Haematologica, 2018, 103:e207-e210
 http://dx.doi.org/10.3324/haematol.2017.177444
 
+Jack Bartram et al.,
+*High throughput sequencing in acute lymphoblastic leukemia reveals clonal architecture of central nervous system and bone marrow compartments*
+Haematologica, 2018,
+https://dx.doi.org/10.3324%2Fhaematol.2017.174987
+
+Sébastien Bender et al.,
+*Immunoglobulin variable domain high-throughput sequencing reveals specific novel mutational patterns in POEMS syndrome*
+Blood, 2020,
+https://doi.org/10.1182/blood.2019004197
+
 Yann Ferret et al.,
 *Multi-loci diagnosis of acute lymphoblastic leukaemia with high-throughput sequencing and bioinformatics analysis*,
 British Journal of Haematology, 2016, 173, 413–420
@@ -101,6 +111,21 @@ Henrike J. Fischer et al.,
 *Modulation of CNS autoimmune responses by CD8+ T cells coincides with their oligoclonal expansion*
 Journal of Neuroimmunology, 2015, S0165-5728(15)30065-5
 http://dx.doi.org/10.1016/j.jneuroim.2015.10.020
+
+Irene Jo et al.,
+*Considerations for monitoring minimal residual disease using immunoglobulin clonality in patients with precursor B-cell lymphoblastic leukemia*,
+Clinica Chimica Acta, 2019,
+https://doi.org/10.1016/j.cca.2018.10.037
+
+Takashi Kanamori et al.,
+*Genomic analysis of multiple myeloma using targeted capture sequencing in the Japanese cohort*
+British Journal of Haematology, 2020,
+https://doi.org/10.1111/bjh.16720
+
+Kenji Kimura et al.,
+*Identification of Clonal Immunoglobulin λ Light-Chain Gene Rearrangements in AL Amyloidosis Using Next Generation Sequencing*,
+ASH 2019,
+https://doi.org/10.1182/blood-2019-125028
 
 Michaela Kotrova et al.,
 *The predictive strength of next-generation sequencing MRD detection for relapse compared with current methods in childhood ALL*,
@@ -117,6 +142,11 @@ Ralf A. Linker et al.,
 European Journal of Immunology, 2015, 45, 1326-1338
 http://dx.doi.org/10.1002/eji.201444985
 
+Edit Porpaczy et al.,
+*Aggressive B-cell lymphomas in patients with myelofibrosis receiving JAK1/2 inhibitor therapy*,
+Blood, 2018,
+https://dx.doi.org/10.1182/blood-2017-10-810739
+
 Mikaël Salson et al.,
 *High-throughput sequencing in acute lymphoblastic leukemia: Follow-up of minimal residual disease and emergence of new clones*,
 Leukemia Research, 2017, 53, 1–7
@@ -127,52 +157,22 @@ Florian Scherer et al.,
 Science Translational Medicine, 2016, 8, 364ra155
 http://dx.doi.org/10.1126/scitranslmed.aai8545
 
-Edit Porpaczy et al.,
-*Aggressive B-cell lymphomas in patients with myelofibrosis receiving JAK1/2 inhibitor therapy*,
-Blood, 2018,
-https://dx.doi.org/10.1182/blood-2017-10-810739
-
-Jack Bartram et al.,
-*High throughput sequencing in acute lymphoblastic leukemia reveals clonal architecture of central nervous system and bone marrow compartments*
-Haematologica, 2018,
-https://dx.doi.org/10.3324%2Fhaematol.2017.174987
-
-Irene Jo et al.,
-*Considerations for monitoring minimal residual disease using immunoglobulin clonality in patients with precursor B-cell lymphoblastic leukemia*,
-Clinica Chimica Acta, 2019,
-https://doi.org/10.1016/j.cca.2018.10.037
-
-Gary Wright et al.,
-*Clinical benefit of a high‐throughput sequencing approach for minimal residual disease in acute lymphoblastic leukemia*,
-Pediatric Blood & Cancer, 2019,
-https://doi.org/10.1002/pbc.27787
-
-Kenji Kimura et al.,
-*Identification of Clonal Immunoglobulin λ Light-Chain Gene Rearrangements in AL Amyloidosis Using Next Generation Sequencing*,
-ASH 2019,
-https://doi.org/10.1182/blood-2019-125028
+Udo zur Stadt et al.,
+*Characterization of novel, recurrent genomic rearrangements as sensitive MRD targets in childhood B-cell precursor ALL*
+Blood Cancer Journal, 2019,
+https://doi.org/10.1038/s41408-019-0257-x
 
 Lucia Stranavova et al.,
 *Heterologous Cytomegalovirus and Allo-Reactivity by Shared T Cell Receptor Repertoire in Kidney Transplantation*
 Frontiers in Immunology, 2019,
 https://doi.org/10.3389/fimmu.2019.02549
 
+Gary Wright et al.,
+*Clinical benefit of a high‐throughput sequencing approach for minimal residual disease in acute lymphoblastic leukemia*,
+Pediatric Blood & Cancer, 2019,
+https://doi.org/10.1002/pbc.27787
+
 Wen‐Qing Yao et al.,
 *Angioimmunoblastic T‐cell lymphoma contains multiple clonal T‐cell populations derived from a common TET2 mutant progenitor cell*
 The Journal of Pathology, 2019,
 https://doi.org/10.1002/path.5376
-
-Udo zur Stadt et al.,
-*Characterization of novel, recurrent genomic rearrangements as sensitive MRD targets in childhood B-cell precursor ALL*
-Blood Cancer Journal, 2019,
-https://doi.org/10.1038/s41408-019-0257-x
-
-Takashi Kanamori et al.,
-*Genomic analysis of multiple myeloma using targeted capture sequencing in the Japanese cohort*
-British Journal of Haematology, 2020,
-https://doi.org/10.1111/bjh.16720
-
-Sébastien Bender et al.,
-*Immunoglobulin variable domain high-throughput sequencing reveals specific novel mutational patterns in POEMS syndrome*
-Blood, 2020,
-https://doi.org/10.1182/blood.2019004197
