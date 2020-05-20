@@ -1,4 +1,4 @@
-# vidjil-algo 2020.05
+# vidjil-algo 2020.06
 **Command-line manual**
 
 *The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)*
