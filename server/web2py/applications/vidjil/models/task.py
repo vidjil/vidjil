@@ -760,9 +760,15 @@ def custom_fuse(file_list):
     ## fuse.py 
     output_file = out_folder+'/'+output_filename+'.fused'
     files = ""
-    for id in file_list :
-        if db.results_file[id].data_file is not None :
-            files += os.path.abspath(defs.DIR_RESULTS + db.results_file[id].data_file) + " "
+    query = db(db.results_file.id.belongs(file_list) &
+               (db.sequence_file.id == db.results_file.sequence_file_id)
+            ).select()
+    for row in query :
+        if row.results_file.data_file is not None :
+            files += os.path.abspath(defs.DIR_RESULTS + row.results_file.data_file)
+            if row.sequence_file.pre_process_file is not None:
+                files += ",%s" % os.path.abspath(defs.DIR_RESULTS + row.sequence_file.pre_process_file)
+            files += " "
     
     try:
         cmd = "python "+ os.path.abspath(defs.DIR_FUSE) +"/fuse.py -o "+output_file+" -t 100 "+files
