@@ -126,12 +126,7 @@ try {
      */
     var shortcut = new Shortcut(m)
 
-    var myUrl;
-    if (window.location.origin === "null") {
-        myUrl = new Url(m);
-    } else {
-        myUrl = new PositionalUrl(m);
-    }
+    var myUrl = new Url(m);
     m.url_manager = myUrl;
 
     //TODO

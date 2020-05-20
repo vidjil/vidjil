@@ -42,6 +42,8 @@ server {
             error_page 405 = $1;
         }
 
+        #rewrite ^/([0-9]*)-([0-9]*)?(.*)$ /index.html?sample_set_id=$1&config=$2&$3 last;
+
         location ~ ^/(client|c|browser) {
             rewrite /(client|c|browser)(.*)$ /b$2 redirect;
         }
