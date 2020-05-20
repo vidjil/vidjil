@@ -28,4 +28,7 @@ quality:
 ../../doc/%:
 	$(MAKE) -C ../../doc $@
 
+../../tools/tests/%:
+	$(MAKE) -C ../../tools/tests data/$(notdir $@)
+
 .PHONY: unit functional headless all
