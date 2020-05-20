@@ -131,3 +131,43 @@ Edit Porpaczy et al.,
 *Aggressive B-cell lymphomas in patients with myelofibrosis receiving JAK1/2 inhibitor therapy*,
 Blood, 2018,
 https://dx.doi.org/10.1182/blood-2017-10-810739
+
+Irene Jo et al.,
+*Considerations for monitoring minimal residual disease using immunoglobulin clonality in patients with precursor B-cell lymphoblastic leukemia*,
+Clinica Chimica Acta, 2019,
+https://doi.org/10.1016/j.cca.2018.10.037
+
+Gary Wright et al.,
+*Clinical benefit of a high‐throughput sequencing approach for minimal residual disease in acute lymphoblastic leukemia*,
+Pediatric Blood & Cancer, 2019,
+https://doi.org/10.1002/pbc.27787
+
+Kenji Kimura et al.,
+*Identification of Clonal Immunoglobulin λ Light-Chain Gene Rearrangements in AL Amyloidosis Using Next Generation Sequencing*,
+ASH 2019,
+https://doi.org/10.1182/blood-2019-125028
+
+Lucia Stranavova et al.,
+*Heterologous Cytomegalovirus and Allo-Reactivity by Shared T Cell Receptor Repertoire in Kidney Transplantation*
+Frontiers in Immunology, 2019,
+https://doi.org/10.3389/fimmu.2019.02549
+
+Wen‐Qing Yao et al.,
+*Angioimmunoblastic T‐cell lymphoma contains multiple clonal T‐cell populations derived from a common TET2 mutant progenitor cell*
+The Journal of Pathology, 2019,
+https://doi.org/10.1002/path.5376
+
+Udo zur Stadt et al.,
+*Characterization of novel, recurrent genomic rearrangements as sensitive MRD targets in childhood B-cell precursor ALL*
+Blood Cancer Journal, 2019,
+https://doi.org/10.1038/s41408-019-0257-x
+
+Takashi Kanamori et al.,
+*Genomic analysis of multiple myeloma using targeted capture sequencing in the Japanese cohort*
+British Journal of Haematology, 2020,
+https://doi.org/10.1111/bjh.16720
+
+Sébastien Bender et al.,
+*Immunoglobulin variable domain high-throughput sequencing reveals specific novel mutational patterns in POEMS syndrome*
+Blood, 2020,
+https://doi.org/10.1182/blood.2019004197
