@@ -1,0 +1,16 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -3 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/productive_stop_before_V.fa
+!OUTPUT_FILE: out/productive_stop_before_V.vidjil
+
+$ first clone name
+1: "IGHV1-69*06 2/AACCCCCAACAAAGC/4 IGHD3-3*01 9/CCCATAAGTACCGT/1 IGHJ6*02"
+$ second clone name
+1: "IGHV3-74*01 0/GACCG/6 IGHD1-7*01 0/GC/10 IGHJ4*02"
+
+$ We should get 6 start position in vidjil (2 by segments)
+6: "start"
+
+$ We should get 6 stop position in vidjil (2 by segments)
+6: "stop"
+
+$ But only one productive
+2: "productive": true
