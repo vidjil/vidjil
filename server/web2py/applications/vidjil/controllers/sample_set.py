@@ -744,7 +744,7 @@ def getFusedStats(fuse):
     d = {}
     with open(file_path, 'r') as json_file :
         data = json.load(json_file)
-        top_clones = [c for c in data['clones'] if c['top'] == 1]
+        top_clones = data['clones'][:data['samples']['number']]
 
         for results_file_id in results_files:
             dest = {}
