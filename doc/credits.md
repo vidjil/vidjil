@@ -132,6 +132,11 @@ Edit Porpaczy et al.,
 Blood, 2018,
 https://dx.doi.org/10.1182/blood-2017-10-810739
 
+Jack Bartram et al.,
+*High throughput sequencing in acute lymphoblastic leukemia reveals clonal architecture of central nervous system and bone marrow compartments*
+Haematologica, 2018,
+https://dx.doi.org/10.3324%2Fhaematol.2017.174987
+
 Irene Jo et al.,
 *Considerations for monitoring minimal residual disease using immunoglobulin clonality in patients with precursor B-cell lymphoblastic leukemia*,
 Clinica Chimica Acta, 2019,
