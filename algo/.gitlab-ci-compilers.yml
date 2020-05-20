@@ -1,10 +1,14 @@
-.testing-compilers:
-  stage: multiple_tests
-  tags:
-    - cidocker
+.install-algo-dependencies:
   before_script:
     - apt-get update
     - apt-get install -y time valgrind python3 wget tar
+    
+
+.testing-compilers:
+  extends: .install-algo-dependencies
+  stage: multiple_tests
+  tags:
+    - cidocker
   script:
     - $CXX --version
     - make demo data germline

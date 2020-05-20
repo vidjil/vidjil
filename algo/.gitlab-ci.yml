@@ -1,0 +1,28 @@
+profiling_algo:
+  stage: benchmark
+  image: gcc:9
+  before_script:
+    - apt-get update
+    - apt-get install -y wget python3 tar libgoogle-perftools4 libgoogle-perftools-dev google-perftools graphviz
+  script:
+    - make demo data germline
+    - make DEBUG="-g"
+    - LIB_PROFILE=$(find /usr/lib -name libprofiler.so)
+    - CPUPROFILE=vidjil.cpu LD_PRELOAD="$LIB_PROFILE" ./vidjil-algo -g germline -r 1 demo/LIL-L4.fastq.gz
+    - LIB_MALLOC=$(find /usr/lib -name libtcmalloc.so)
+    - HEAPPROFILE=vidjil.mem LD_PRELOAD="$LIB_MALLOC" ./vidjil-algo -g germline -r 1 demo/LIL-L4.fastq.gz
+
+    - google-pprof --lines --text vidjil-algo vidjil.cpu
+    - echo "###########################################"
+    - google-pprof --lines --text vidjil-algo vidjil.mem.*
+    - google-pprof --lines --pdf vidjil-algo vidjil.cpu > vidjil-cpu.pdf
+    - google-pprof --lines --pdf vidjil-algo vidjil.mem.* > vidjil-mem.pdf
+  artifacts:
+    paths:
+      - vidjil-*.pdf
+      - vidjil.cpu
+      - vidjil.mem.*
+  when: manual
+  tags:
+    - cidocker
+    
