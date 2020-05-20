@@ -46,6 +46,14 @@ COMPATIBILITY = [
   ('2019.03', '-c designations', '-c segment'),
 ]
 
+# Notable changes that may affect speed/memory
+INFOS = {
+  '2019.03': 'Aho by default',
+  '2018.07': '--analysis-filter (always 3)',
+  '2018.10': '--analysis-filter 1',
+  '2020.04': '#4287',
+}
+
 # Simple colored output
 
 CSIm = '\033[%sm'
@@ -243,6 +251,8 @@ def bench_line(f, release, stats, index, format='%8.2f', previous_release=None, 
         else:
             b = '%8s' % '-'
         f.write(b)
+    if release in INFOS:
+        f.write('     ' + INFOS[release])
     f.write('\n')
     return warned
     
