@@ -744,6 +744,8 @@ def getFusedStats(fuse):
     d = {}
     with open(file_path, 'r') as json_file :
         data = json.load(json_file)
+        top_clones = [c for c in data['clones'] if c['top'] == 1]
+
         for results_file_id in results_files:
             dest = {}
             res = results_files[results_file_id]
@@ -753,7 +755,9 @@ def getFusedStats(fuse):
             elif "original_names" in data['samples']:
                 basenames = [os.path.basename(x) for x in data['samples']['original_names']]
                 result_index = basenames.index(os.path.basename(res['sequence_file']))
-            dest['main clone'] = data['clones'][0]['name']
+
+            sorted_clones = sorted(top_clones, key=lambda clone: clone['reads'][result_index], reverse=True)
+            dest['main clone'] = sorted_clones[0]['name']
             reads = data['reads']['total'][result_index]
             # dest['reads'] = reads
             mapped_reads = data['reads']['segmented'][result_index]
