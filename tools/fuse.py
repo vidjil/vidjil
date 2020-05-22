@@ -422,17 +422,18 @@ class PreProcesses:
     def __add__(self, other):
         obj = PreProcesses()
 
-        length = len(self.d['run_timestamp'])
+        length_self = len(self.d['run_timestamp'])
+        length_other = len(other.d['run_timestamp'])
         concatenate_with_padding(obj.d,
-                                 self.d, length,
-                                 other.d, length)
+                                 self.d, length_self,
+                                 other.d, length_other)
         concatenate_with_padding_alt(obj.d,
-                                 self.d, length,
-                                 other.d, length,
+                                 self.d, length_self,
+                                 other.d, length_other,
                                  'stats')
         concatenate_with_padding_alt(obj.d,
-                                 self.d, length,
-                                 other.d, length,
+                                 self.d, length_self,
+                                 other.d, length_other,
                                  'parameters')
         obj.d['producer'] = self.d['producer'] + other.d['producer']
         obj.d['run_timestamp'] = self.d['run_timestamp'] + other.d['run_timestamp']
