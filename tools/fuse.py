@@ -417,6 +417,7 @@ class PreProcesses:
     def __init__(self):
         self.d={}
         self.d['run_timestamp'] = [None]
+        self.d['producer'] = [None]
 
     def __add__(self, other):
         obj = PreProcesses()
@@ -433,6 +434,7 @@ class PreProcesses:
                                  self.d, length,
                                  other.d, length,
                                  'parameters')
+        obj.d['producer'] = self.d['producer'] + other.d['producer']
         return obj
         
 class Samples: 

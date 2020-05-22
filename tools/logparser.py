@@ -14,7 +14,7 @@ class FlashLogParser:
                 continue
 
             if(log_line.startswith('Starting FLASH')):
-                parsed_log['producer'] = ' '.join(log_line.split()[1:])
+                parsed_log['producer'] = [' '.join(log_line.split()[1:])]
 
             if(log_line in ['Input files:', 'Output files:']):
                 key = log_line.lower().split()[0]
