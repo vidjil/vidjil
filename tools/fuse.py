@@ -435,6 +435,7 @@ class PreProcesses:
                                  other.d, length,
                                  'parameters')
         obj.d['producer'] = self.d['producer'] + other.d['producer']
+        obj.d['run_timestamp'] = self.d['run_timestamp'] + other.d['run_timestamp']
         return obj
         
 class Samples: 
