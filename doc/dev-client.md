@@ -332,14 +332,14 @@ webpage.
     `browser/tests/functional`, with Watir.
     The functional tests are built using two base files:
     
-      - vidjil<sub>browser</sub>.rb  
+      - `vidjil_browser.rb`  
         abstracts the vidjil browser (avoid using IDs or
         class names that could change in the test). The tests must rely as
-        much as possible on vidjil<sub>browser</sub>. If access to some
+        much as possible on `vidjil_browser`. If access to some
         data/input/menus are missing they must be addded there.
-      - browser<sub>test</sub>.rb  
+      - `browser_test.rb`  
         prepares the environment for the tests. Each test
-        file will extend this class (as can be seen in test<sub>multilocus</sub>.rb)
+        file will extend this class (as can be seen in `test_multilocus.rb`)
     
     The file `segmenter_test.rb` extends the class in `browser_test.rb` to adapt
     it to the purpose of testing the analyze autonomous app.
