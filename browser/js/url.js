@@ -116,7 +116,11 @@ Url.prototype= {
             var p = params[tmparr[0]];
             var key = this.encoder.decode(tmparr[0]);
             var val = tmparr[1];
-            if (typeof p === "undefined") {
+            if ((key == "") /*empty keys are due to the use of "//" in url, ignore them*/ || 
+                (typeof val == "undefined")) { 
+                //do nothing
+            }
+            else if (typeof p === "undefined") {
                 params[key] = val;
             } else if (p.constructor === String){
                 params[key] = [];
@@ -130,9 +134,8 @@ Url.prototype= {
         var positionnal_params = url.pathname.substr(1).split('-');
         var pos_param_keys = this.getPositionnalParams();
         if (positionnal_params.length > 1 && positionnal_params[0] != "index.html")
-        for (var j = 0; j < positionnal_params.length; j++) {
+        for (var j = 0; j < positionnal_params.length; j++) 
             params[pos_param_keys[j]] = positionnal_params[j];
-        }
         return params
     },
 
