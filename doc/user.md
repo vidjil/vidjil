@@ -385,22 +385,30 @@ potential biases that could affect your analysis.
 
 ## How do you define a clone? How are gathered clones?
 
-In vidjil-algo, called **vidjil-algo** (Giraud, Salson, BMC Genomics 2014),
+Some RepSeq studies want to broadly cluster clones to have a global view on the immune repertoire.
+One may want to focus on CDR3 on the amino-acid level, or on the nucleotide level.
+One also generally wants to correct technological artifacts (PCR, sequencing).
+On the contrary, when studying hypermutations in IGH recombinations,
+people want to know as precisely as possible differences between sequences,
+even when they occur for a single nucleotide in the V gene or elsewhere.
+
+In **vidjil-algo** (Giraud, Salson, BMC Genomics 2014),
 sequences are gathered into a same clone as long as they share the
 same 50bp DNA sequence around the CDR3 sequence.
 In a first step, the algorithm has a quick heuristic which detects approximatively
 where the CDR3 lies and extracts a 50bp nucleotide sequence centered on that
 region. This region is called a **window** in vijdil-algo. When two
 sequences share the same window, they belong to the same clone. Therefore
-in vidjil-algo clones are only defined based on the exact match of a long DNA
+in vidjil-algo clones are only defined based on the (conservative) exact match of a long DNA
 sequence. This explains why some little clones can be seen around larger
-clones: they may be due to sequencing error that lead to different windows.
+clones: They may be due to artifacts that lead to different windows.
 However those small differences can also be due to a real biological process
 inside the cells. Therefore we let the user choose whether the clones should
-be manually clustered or not.
+be manually clustered or not -- and the choice may depend on the purpose of her study.
 
 In **MiXCR**, clones are defined based on the amino-acid CDR3 sequence, on the V
 gene used and on the hypermutations.
+Other software may have other definitions, see also [What is a clone ?](/vidjil-format/#what-is-a-clone).
 
 ## What is the sequence displayed for each clone ?
 
