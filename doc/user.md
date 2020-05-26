@@ -130,12 +130,13 @@ then followed by the J gene `TRGJ1*02`, with `6` nucleotides deleted at its star
   - Clones can be searched (“search” box) by either their name, their custom name,
     their DNA sequence, their (partial) CDR3 amino acid sequence.
 
-  - The concentration of some clones may not be displayed. Instead you can have
-    either a `+` symbol or a `-` symbol. In the former case that means the clone has
-    been detected (positive) but in few reads (typically less than five). In the
-    latter case it means that the clone has not been detected (negative) in the
-    sample but has been detected in another sample that is not currently
-    displayed.
+  - The concentration of some clones may not be displayed.
+    - A clone with a plus symbol `+` has been detected in that sample,
+      but with only a few reads, typically less than five.
+      Its concentration ratio is thus not significant, and
+      this clone would appear in the gray zone in the ple graph.
+    - A clone with a minus symbol `−` has not been detected in that sample,
+      but has been detected in another sample that is not currently displayed.
 
 ### Detailed information on each clone
 The “🛈” button opens a window showing detailed information (V(D)J designation,
