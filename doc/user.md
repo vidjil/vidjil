@@ -340,24 +340,27 @@ A click on the `out` link at the right of every sample give access to the raw ou
 ## Groups
 
 Each patient, run or set is assigned to at least one group.
-Users are assigned to diffrent groups and therefore gain access to any patients, runs or sets that said group has access to.
+Users are assigned to different groups and therefore gain access to any patients, runs or sets that said group has access to.
 
-There are also groups that may be clustered together. Usually this represents an organisation, such as a Hospital.
-The organisation has a group to which subgroups are associated. This allows users with different sets of permissions
-to gain access to files uploaded to the organisation's group automatically.
+Groups may be nested.
+For example, a group may represents an organization, such as a hospital or a network of hospitals.
+Subgroups may be created for individual labs and/or for different roles in the labs.
+This allows users to have different sets of permissions
+while accessing to some of the files uploaded to the organization's group.
 
-Users may be a part of several groups. By default Users are assigned their personnal group to which they can upload files
+Users may be a part of several groups. By default Users are assigned their personal group to which they can upload files
 and be the sole possessor of an access to this file.
-Different groups implies different sets of permissions. A user may not have the same permissions on a file accessed
-from an organisation's group as (s)he does on files from her/his personnal group, or even from a group associated to
-another organisation.
+Different groups imply different sets of permissions.
+A user may not have the same permissions on a file accessed
+from an organization's group as (s)he does on files from her/his personal group, or even from a group associated to
+another organization.
 
 The different permissions that can be attributed are:
 
-  - Read: Permissions to view patients/runs/sets to which a group or organisation has access to
+  - Read: Permissions to view patients/runs/sets to which a group or organization has access to
   - Create: Permissions to create patients/runs/sets
   - Upload: Permissions to upload samples to the patients/runs/sets of a group
-  - Run: Permissions to run vidjil on an uploaded samples to the patients/runs/sets of a group
+  - Run: Permissions to run Vidjil on an uploaded samples to the patients/runs/sets of a group
   - View Details: Permissions to view patient/run/set data in an unencrypted manner for the patients/runs/sets of a group
   - Save: Permissions to save an analysis for the patients/runs/sets of a group
 
