@@ -14,7 +14,7 @@ function getSearch(url) {
 function getPathname(url) {
     // remove protocol
     var pathname = url.split('//');
-    pathname = pathname[1];
+    pathname = pathname[pathname.length-1];
     // remove search
     pathname = pathname.split('?')[0];
     // remove hostname
@@ -163,13 +163,13 @@ QUnit.test("url: generate", function(assert) { with (windowMock) {
     var m = new Model();
     var url = new Url(m, windowMock);
     var param_string = url.generateParamsString(params);
-    assert.equal(param_string, "param1=first&param2=second&param3=third");
+    assert.equal(param_string, "?param1=first&param2=second&param3=third");
 }});
 
 QUnit.test("url: positional parse", function(assert) { with (windowMock) {
     var m = new Model();
-    windowMock.history.pushState('plop', 'plop', 'mock://foo.bar/b/1/3?param3=third');
-    var url = new PositionalUrl(m, windowMock);
+    windowMock.history.pushState('plop', 'plop', 'mock://foo.bar/1-3?param3=third');
+    var url = new Url(m, windowMock);
 
     var params = url.parseUrlParams();
     assert.deepEqual(params, {
@@ -188,7 +188,7 @@ QUnit.test("url: positional generate", function(assert) { with (windowMock) {
     };
 
     var m = new Model();
-    var url = new PositionalUrl(m, windowMock);
+    var url = new Url(m, windowMock);
     var param_string = url.generateParamsString(params);
-    assert.equal(param_string, '/1/4?foobar=barfoo&param4=fourth');
+    assert.equal(param_string, '1-4?foobar=barfoo&param4=fourth');
 }});
