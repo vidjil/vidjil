@@ -59,17 +59,19 @@ class BrowserTest < MiniTest::Test
     
     # A live server can be configured with a database.
     # The welcome popup should not be tested.
-    
-    if not ENV['LIVE_SERVER']
 
-      print "Welcome popup.\n"
+    sleep(5)
 
-      # wait for the welcoming popup
-      $b.div(:class => 'popup_msg').wait_until(timeout: 2){ |el| el.present? }
-    
-      # close the welcoming popup
+    if $b.div(id: 'tip-container').present?
+      $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
+    end
+
+    if $b.div(:class => 'db_div').present?
+      $b.div(:class => 'db_div').element(:class => 'icon-cancel').click
+    end
+
+    if $b.div(:class => 'popup_msg').present?
       $b.div(:class => 'popup_msg').button(:text => 'ok').click
-      assert (not $b.div(:class => 'popup_msg').present?), "Popup message still present after trying to close it"
     end
 
     print "Import data.\n"
