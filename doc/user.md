@@ -157,25 +157,34 @@ calculated over all the samples in the sample set.
 
 ## The sample graph
 
-The sample graph is hidden when there is only one sample. It shows the most frequent clones of each sample, tracked into every sample.
-The number of displayed clones can be changed with the filter menu.
+The sample graph is displayed as soon as there are at least two samples.
+It shows the most frequent clones of each sample, tracked into every sample.
 
   - The current sample is highlighted with a vertical gray bar. You can select another sample by clicking on it or using `←` and `→`.
 
-  - The gray areas at the bottom of the graph show, for each sample, the resolution (1 read / 5 reads).
+  - By default, the graph shows clones present in the top 20 of any sample.
+    See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads)".
+    You can instead choose to show only the clones present in the current sample
+    with “filter \> focus on clones of one sample“.
 
-  - A menu to show or hide samples either one by one or all of them is present on the graph.
-    This menu is shown when hovering the "X/Y" button at the top-right of the graph.
-    The X and Y values correspond to the shown and total  number of samples.
-    In this menu, clicking one time on one sample in the menu focuses on this sample. 
-    Double clicking on one sample switches its state between shown or hidden.
+  - When a clone gathers very few reads, typically less than five,
+    its concentration ratio is not significant and it is shown by a `+` in the clone list.
+    Such clones appear in the sample graph in a *gray zone*.
+    They should be considered as “detected, but not quantifiable“,
+    and different concentrations in the gray zone should not be compared.
 
-  - You can reorder the samples by dragging them, and hide some samples by double clicking on their label.
+  - Samples can be reordered by dragging their label.
+
+  - Samples can be hidden by double-clicking on their label.
+    At the top-right of the graph, a button such as `5/8`
+    shows how many samples are displayed (here `5`) and the total number of samples (here `8`).
+    This button reveals a menu where
+    any samples can be selected (single click),
+    or shown or hidden (double click),
+    as well as options to show or hide all samples.
 
   - If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between sample keys and dates in “settings \> sample key”
 
-  - By default, the graph shows clones present in any sample.
-    You can instead choose to show only the clones present in the selected sample with “filter \> focus on clones of one sample“.
 
 
 ## The plot view and the plot presets
