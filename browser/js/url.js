@@ -109,7 +109,7 @@ Url.prototype= {
 
     parseUrlParams:function () {
         params={}
-        var url = window.location;
+        var url = this.window.location;
         var url_param = url.search.substr(1).split("&");
         for (var i = 0; i < url_param.length; i++) {
             var tmparr = url_param[i].split("=");
