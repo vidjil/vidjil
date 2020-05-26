@@ -695,7 +695,7 @@ We also propose in [fuse.py](/tools) a way to convert AIRR format to the `.vidji
 
 Note that Vidjil-algo is designed to efficiently gather reads from large datasets into clones. 
 By default (`-c clones`), we thus report in the AIRR format *clones*.
-See also [What is a clone ?](vidjil-format/#what-is-a-clone).
+See also [What is a clone ?](/vidjil-format/#what-is-a-clone).
 Using `-c designations` trigger a separate analysis for each read, but this is usually not advised for large datasets. 
 
 
