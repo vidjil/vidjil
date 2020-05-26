@@ -4,7 +4,7 @@ WEB2PY_VERSION=2.17.2
 install: install_web2py
 
 download_web2py:
-	wget http://web2py.com/examples/static/${WEB2PY_VERSION}/web2py_src.zip
+	wget -O web2py_src.zip http://www.vidjil.org/lib/web2py_src-${WEB2PY_VERSION}.zip
 
 install_web2py: download_web2py
 	unzip web2py_src.zip
