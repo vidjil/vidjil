@@ -22,11 +22,11 @@ nav:
         - Specification of the .vidjil format: vidjil-format.md
         - Specification of the warnings: warnings.md
         - Specification of the .should-vdj.fa tests: should-vdj.md
-        - Further developer documentation: /#further-developer-documentation
+        - Further developer documentation: http://www.vidjil.org/doc/#further-developer-documentation
     - Server administrator:
         - Server administration (web): admin.md
         - Server installation and maintenance (docker): server.md
-        - Further developer documentation: /#further-developer-documentation
+        - Further developer documentation: http://www.vidjil.org/doc/#further-developer-documentation
     - Quality, roadmap, credits:
         - Software and development quality: quality.md
         - Public datasets supporting Vidjil publications 🔗: http://www.vidjil.org/data
