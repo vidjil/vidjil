@@ -1117,10 +1117,8 @@ Database.prototype = {
      */
     ajax_indicator_start: function() {
         if (!(this.uploader.is_uploading())) {
-            var tgt = $('#live-ajax-icon');
+            $('#live-ajax-icon').empty();
             $('#live-ajax-msg').empty();
-            tgt.empty();
-            $('<img/>', {src: './images/ajax-loader.gif'}).appendTo($('<div/>', {class: 'active-container'}).appendTo(tgt));
             $('body').css('cursor', 'wait');
         }
     },
