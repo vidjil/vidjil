@@ -485,7 +485,7 @@ int main (int argc, char **argv)
 
   double expected_value = THRESHOLD_NB_EXPECTED;
   app.add_option("--e-value,-e", expected_value,
-                 "maximal e-value for determining if a V-J segmentation can be trusted", true)
+                 "maximal e-value for trusting the detection of a V-J recombination", true)
     -> group(group) -> transform(string_NO_LIMIT);
 
   Cost segment_cost = DEFAULT_SEGMENT_COST ;
@@ -499,7 +499,7 @@ int main (int argc, char **argv)
 
   double expected_value_D = THRESHOLD_NB_EXPECTED_D;
   app.add_option("--analysis-e-value-D,-E", expected_value_D,
-                 "maximal e-value for determining if a D segment can be trusted", true)
+                 "maximal e-value for trusting the detection of a D segment", true)
     -> group(group) -> level();
 
   int kmer_threshold = DEFAULT_KMER_THRESHOLD;
@@ -548,7 +548,7 @@ int main (int argc, char **argv)
 
   bool output_segmented = false;
   app.add_flag("--out-analyzed,-U", output_segmented,
-               "output analyzed reads (in " SEGMENTED_FILENAME " file)")
+               "output reads with detected recombinations (in " SEGMENTED_FILENAME " file)")
     -> group(group);
 
   bool output_unsegmented = false;
@@ -560,9 +560,9 @@ int main (int argc, char **argv)
       output_unsegmented_detail_full = (n >= 2); // -uu
       output_unsegmented_detail = (n >= 1);      // -u
     }, R"Z(
-        -u          output unanalyzed reads, gathered by cause, except for very short and 'too few V/J' reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files)
-        -uu         output unanalyzed reads, gathered by cause, all reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files) (use only for debug)
-        -uuu        output unanalyzed reads, all reads, including a )Z" UNSEGMENTED_FILENAME R"Z( file (use only for debug))Z")
+        -u          output undetected reads, gathered by cause, except for very short and 'too few V/J' reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files)
+        -uu         output undetected reads, gathered by cause, all reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files) (use only for debug)
+        -uuu        output undetected reads, all reads, including a )Z" UNSEGMENTED_FILENAME R"Z( file (use only for debug))Z")
     -> group(group);
 
   bool output_sequences_by_cluster = false;
