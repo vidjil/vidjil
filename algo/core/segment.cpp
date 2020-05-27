@@ -86,13 +86,13 @@ void AlignBox::addToOutput(CloneOutput *clone, int alternative_genes) {
   json j;
   j["name"] = ref_label;
 
-  if (key != "3") // no end information for J
+  if (key != "3" || end < seq_length - 1) // end information for J
     {
       j["stop"] = end + 1;
       j["delRight"] = del_right;
     }
 
-  if (key != "5") // no start information for V
+  if (key != "5" || start > 0) // start information for V
     {
       j["start"] = start + 1;
       j["delLeft"] = del_left;
