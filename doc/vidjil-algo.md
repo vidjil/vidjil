@@ -519,7 +519,7 @@ The web application provides other options to inspect clones and cluster them.
 The `--cluster-epsilon` option triggers an automatic clustering using the
 [DBSCAN](https://en.wikipedia.org/wiki/DBSCAN) algorithm (Ester and al., 1996).
 Using `--cluster-epsilon 5` usually clusters reads within a distance of 1 mismatch (default score
-being +1 for a match and -4 for a mismatch). With that option, more distant reads with also
+being +1 for a match and -4 for a mismatch). With that option, more distant reads will also
 be clustered as soon there are more than 10 reads within the distance threshold.
 This behaviour can be controlled with the `-cluster-N` option.
 

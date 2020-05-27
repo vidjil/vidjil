@@ -134,7 +134,7 @@ then followed by the J gene `TRGJ1*02`, with `6` nucleotides deleted at its star
     - A clone with a plus symbol `+` has been detected in that sample,
       but with only a few reads, typically less than five.
       Its concentration ratio is thus not significant, and
-      this clone would appear in the gray zone in the ple graph.
+      this clone would appear in the gray zone in the sample graph.
     - A clone with a minus symbol `−` has not been detected in that sample,
       but has been detected in another sample that is not currently displayed.
 
@@ -179,9 +179,9 @@ It shows the most frequent clones of each sample, tracked into every sample.
     At the top-right of the graph, a button such as `5/8`
     shows how many samples are displayed (here `5`) and the total number of samples (here `8`).
     This button reveals a menu where
-    any samples can be selected (single click),
-    or shown or hidden (double click),
-    as well as options to show or hide all samples.
+    each sample can be selected (single click),
+    shown or hidden (double click),
+    as well as options to show or to hide all samples.
 
   - If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between sample keys and dates in “settings \> sample key”
 
