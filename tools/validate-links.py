@@ -3,6 +3,7 @@
 import requests
 import glob
 import sys
+import os.path
 try:
     from urllib.parse import *
 except:
@@ -11,6 +12,8 @@ import re
 from collections import defaultdict
 
 DEFAULT_FILES = glob.glob('../site/*/*.html')
+
+BASE_PATH = '../site/'
 
 REGEX_HREF = re.compile('href="(.*?)"')
 REGEX_ID = re.compile('id="(.*?)"')
@@ -26,15 +29,20 @@ USER_AGENT = {'User-Agent': 'Mozilla/5.0'}
 stats = defaultdict(int)
 failed = []
 
-def check_url(url, ids=[]):
+def check_url(url, ids=[], dirname=''):
 
     # Internal links
     if url.startswith('#'):
         return (not url[1:]) or (url[1:] in ids)
 
-    # Relative links: TODO
+
+    # Relative links
     if not url.startswith('http'):
-        return None
+        # Anchors in relative links - TODO
+        if '#' in url:
+            return None
+        ff = os.path.join(BASE_PATH if url.startswith('/') else dirname, url)
+        return os.path.exists(ff)
 
     # External http(s) links
     try:
@@ -46,12 +54,13 @@ def check_url(url, ids=[]):
 
 def check_file(f):
     print('<-- ', f)
+    dirname = os.path.dirname(f)
     content = ''.join(open(f).readlines())
 
     ids = REGEX_ID.findall(content)
 
     for url in REGEX_HREF.findall(content):
-        ok = check_url(url, ids)
+        ok = check_url(url, ids, dirname)
         print(STATUS[ok] + '    ' + url)
         globals()['stats'][ok] += 1
         if ok == False:
