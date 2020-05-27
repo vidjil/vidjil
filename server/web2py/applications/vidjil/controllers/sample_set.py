@@ -757,7 +757,10 @@ def getFusedStats(fuse):
                 result_index = basenames.index(os.path.basename(res['sequence_file']))
 
             sorted_clones = sorted(top_clones, key=lambda clone: clone['reads'][result_index], reverse=True)
-            dest['main clone'] = sorted_clones[0]['name']
+            if 'name' in sorted_clones[0]:
+                dest['main clone'] = sorted_clones[0]['name']
+            else:
+                dest['main clone'] = sorted_clones[0]['germline']
             reads = data['reads']['total'][result_index]
             # dest['reads'] = reads
             mapped_reads = data['reads']['segmented'][result_index]
