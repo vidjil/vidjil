@@ -35,6 +35,9 @@ def check_url(url, ids=[], dirname=''):
     if url.startswith('#'):
         return (not url[1:]) or (url[1:] in ids)
 
+    # Mailto
+    if url.startswith('mailto'):
+        return None
 
     # Relative links
     if not url.startswith('http'):
