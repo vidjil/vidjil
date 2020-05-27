@@ -763,6 +763,7 @@ def getStatHeaders():
     return [('sets', 'db', s),
             #('reads', 'parser', m),
             ('mapped reads', 'parser', m),
+            ('merged reads', 'parser', m),
             #('mapped_percent', 'parser', p),
             ('read lengths', 'parser', g),
             #('bool', 'parser', b),
@@ -770,7 +771,8 @@ def getStatHeaders():
             ('loci', 'parser', l),
             #('distribution', 'parser', lbc),
             #('clones_five_percent', 'parser', m),
-            ('main clone', 'parser', m)
+            ('main clone', 'parser', m),
+            ('pre process', 'parser', m)
             #('abundance', 'parser', lbc)
         ]
 
@@ -804,6 +806,10 @@ def getFusedStats(fuse):
             dest['mapped reads'] = "%d / %d (%.2f %%)" % (mapped_reads, reads, 100.0*mapped_reads/reads if reads else 0)
             dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
             dest['abundance'] = [(key, 100.0*data['reads']['germline'][key][result_index]/reads) for key in data['reads']['germline']]
+            if 'merged' in data['reads']:
+                dest['merged reads'] = data['reads']['merged'][result_index]
+            else:
+                dest['merged reads'] = None
 
             tmp = {}
             for c in data['clones']:
@@ -839,6 +845,7 @@ def getFusedStats(fuse):
             #dest['bool_true'] = True
             dest['loci'] = sorted([x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0])
             dest['clones_five_percent'] = sum([data['reads']['distribution'][key][result_index] for key in data['reads']['germline']  if key in data['reads']['distribution']])
+            dest['pre process'] = data['samples']['pre_process']['producer'][result_index]
             d[results_file_id] = dest
     return d
 
