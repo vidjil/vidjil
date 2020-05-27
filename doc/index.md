@@ -31,7 +31,7 @@ methods and software.
 
 ### Quality, open data, roadmap, credits
   - [Software and developement quality](quality.md), including software engineering methods and human and team processes
- <!--  - [Roadmap](roadmap.md) -->
+  - Bioinformatics, technical, and administrative [Roadmap](roadmap.md)
   - [Public datasets](http://www.vidjil.org/data/) 🔗 supporting Vidjil publications
   - [Credits, references](credits.md)
 
