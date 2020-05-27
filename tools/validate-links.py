@@ -67,7 +67,7 @@ def check_file(f):
         print(STATUS[ok] + '    ' + url)
         globals()['stats'][ok] += 1
         if ok == False:
-            failed.append(url)
+            failed.append("%s: %s" % (f.replace(BASE_PATH,''), url))
     print()
 
 
