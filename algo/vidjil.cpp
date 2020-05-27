@@ -547,7 +547,7 @@ int main (int argc, char **argv)
   group = "Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)";
 
   bool output_segmented = false;
-  app.add_flag("--out-analyzed,-U", output_segmented,
+  app.add_flag("--out-detected,-U", output_segmented,
                "output reads with detected recombinations (in " SEGMENTED_FILENAME " file)")
     -> group(group);
 
@@ -555,7 +555,7 @@ int main (int argc, char **argv)
   bool output_unsegmented_detail = false;
   bool output_unsegmented_detail_full = false;
 
-  app.add_flag_function("--out-unanalyzed,-u", [&](size_t n) {
+  app.add_flag_function("--out-undetected,-u", [&](size_t n) {
       output_unsegmented = (n >= 3);             // -uuu
       output_unsegmented_detail_full = (n >= 2); // -uu
       output_unsegmented_detail = (n >= 1);      // -u
