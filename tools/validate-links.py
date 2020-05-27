@@ -11,7 +11,9 @@ except:
 import re
 from collections import defaultdict
 
-DEFAULT_FILES = glob.glob('../site/*/*.html')
+ALL_FILES = glob.glob('../site/**/*.html', recursive=True)
+IGNORED_FILES = glob.glob('../site/dev-*/*.html') + ['../site/404.html', '../site/tips.html']
+DEFAULT_FILES = set(ALL_FILES) - set(IGNORED_FILES)
 
 BASE_PATH = '../site/'
 
