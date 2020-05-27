@@ -165,7 +165,11 @@ Url.prototype= {
 
     pushUrl: function(params) {
         var new_url = params;
-        this.window.history.pushState('plop', 'plop', new_url);
+        try  {
+            this.window.history.pushState('plop', 'plop', new_url);
+        } catch(error) {
+            console.log(error);
+        }
     },
 
     getPositionnalParams: function() {
