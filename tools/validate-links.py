@@ -30,6 +30,7 @@ USER_AGENT = {'User-Agent': 'Mozilla/5.0'}
 
 stats = defaultdict(int)
 failed = []
+not_checked = []
 
 def check_url(url, ids=[], dirname=''):
 
@@ -68,8 +69,12 @@ def check_file(f):
         ok = check_url(url, ids, dirname)
         print(STATUS[ok] + '    ' + url)
         globals()['stats'][ok] += 1
+
+        msg = "%s: %s" % (f.replace(BASE_PATH,''), url)
         if ok == False:
-            failed.append("%s: %s" % (f.replace(BASE_PATH,''), url))
+            failed.append(msg)
+        if ok == None:
+            not_checked.append(msg)
     print()
 
 
@@ -77,6 +82,11 @@ def print_stats():
     print('==== Summary')
     for k, v in STATUS.items():
         print('  %s : %3d' % (v, globals()['stats'][k]))
+
+    if globals()['stats'][None]:
+        print('==== Not checked')
+        for f in not_checked:
+            print('  ' + f)
 
     if globals()['stats'][False]:
         print('==== Failed')
