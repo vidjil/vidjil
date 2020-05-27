@@ -13,7 +13,12 @@ enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](ht
 methods and software.
 
 ### Life scientist
-  - Tutorial "Mastering the Vidjil web application": [english](./tutorial/mastering-vidjil.html) ([pdf](./tutorial/mastering-vidjil.pdf)), [français](./tutorial/mastering-vidjil-fr.html) ([pdf](./tutorial/mastering-vidjil-fr.pdf)) 🔗. Start by this tutorial to have an overview of Vidjil.
+  - Tutorial "Mastering the Vidjil web application":
+    [english](http://www.vidjil.org/doc/tutorial/mastering-vidjil.html)
+    ([pdf](http://www.vidjil.org/doc/tutorial/mastering-vidjil.pdf)),
+    [français](http://www.vidjil.org/doc/tutorial/mastering-vidjil-fr.html)
+    ([pdf](http://www.vidjil.org/doc/tutorial/mastering-vidjil-fr.pdf)) 🔗.
+    Start by this tutorial to have an overview of Vidjil.
   - Web platform [user manual](user.md). This is the main user manual of the Vidjil platform.
   - [Libraries and recombinations](locus.md), documentation on library preparation and sequencing as well on detected immune recombinations
   - [Demo access](http://app.vidjil.org/) 🔗 to the patient, experiment and sample public test server
