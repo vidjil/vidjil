@@ -77,6 +77,7 @@ Model.prototype = {
     build: function () {
         var self =this;
         
+        this.waiting_screen_is_on = false;
         this.waiting_screen = document.createElement("div");
         this.waiting_screen.className = "waiting_screen";
         
@@ -1304,10 +1305,15 @@ changeAlleleNotation: function(alleleNotation) {
      * return true if a view has not finished an update
      */
     updateIsPending:function(){
-        for (var i = 0; i < this.view.length; i++) {
+        //check if a view is waiting an update
+        for (var i = 0; i < this.view.length; i++) 
             if (this.view[i].updateIsPending())
                 return true;
-        }
+
+        //check waiting screen
+        if (this.waiting_screen_is_on) 
+            return true;
+
         return false;
     },
 
@@ -2629,12 +2635,16 @@ changeAlleleNotation: function(alleleNotation) {
         this.waiting_screen.style.display = "block";
         this.waiting_msg.innerHTML= text;
         if (typeof shortcut != 'undefined') shortcut.on = false;
+        this.waiting_screen_is_on = true;
+        this.updateIcon();
     },
     
     resume: function(){
         this.waiting_screen.style.display = "none";
         this.waiting_msg.removeAllChildren();
         if (typeof shortcut != 'undefined') shortcut.on = true;
+        this.waiting_screen_is_on = false;
+        this.updateIcon();
     },
     
     
