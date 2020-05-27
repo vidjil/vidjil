@@ -486,9 +486,10 @@ analyzed reads, including the hidden clones.
 The web application displays one consensus sequence per clone (see [Representative](#what-is-the-sequence-displayed-for-each-clone) above).
 In some situations, one may want to go back to the reads.
 
-For **vidjil-algo**, analyzing a dataset with the *default + extract reads* config enables
-to retrieve back the analyzed reads in the `.segmented.vdj.fa` file that can be downloaded through the `out` link near each sample.
-This `.vdj.fa` output enables to use vidjil-algo as a *filtering tool*,
+For **vidjil-algo**, analyzing a dataset with the *default + extract reads* config
+generates a `.detected.vdj.fa` file with the reads with detected V(D)J recombinations.
+This file can be downloaded through the `out` link near each sample.
+It enables to use vidjil-algo as a *filtering tool*,
 shrinking a large read set into a manageable number of (pre-)clones
 that will be deeply analyzed and possibly further clustered by
 other software.
@@ -509,8 +510,8 @@ With DNA-Seq sequencing with specific V(D)J primers,
 ratios above 90% usually mean very good results. Smaller ratios, especially under 60%, often mean that something went wrong.
 On the other side, capture with many probes or RNA-Seq strategies usually lead to datasets with less than 0.1% V(D)J recombinations.
 
-The “info“ button further detail the causes of non-analysis (for vijdil-algo, `UNSEG`, see detail on [vidjil-algo documentation](http://www.vidjil.org/doc/vidjil-algo/#unsegmentation-causes)).
-There can be several causes leading to bad ratios:
+The “info“ button further detail the causes of non-analysis (for vijdil-algo, `UNSEG`, see detail on [vidjil-algo documentation](vidjil-algo/#reads-without-detected-recombinations).
+There can be several causes leading to low ratios:
 
 ### Analysis or biological causes
 
