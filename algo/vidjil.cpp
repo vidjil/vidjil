@@ -1161,7 +1161,7 @@ int main (int argc, char **argv)
     // warn if there are too few segmented sequences
     if (ratio_segmented < WARN_PERCENT_SEGMENTED)
       {
-        output.add_warning("W20", "Very few V(D)J recombinations found: " + fixed_string_of_float(ratio_segmented, 2) + "%", LEVEL_WARN);
+        output.add_warning(W20_VERY_FEW_RECOMBINATIONS, "Very few V(D)J recombinations found: " + fixed_string_of_float(ratio_segmented, 2) + "%", LEVEL_WARN);
         stream_segmentation_info << "  ! There are not so many CDR3 windows found in this set of reads." << endl ;
         stream_segmentation_info << "  ! Please check the causes below and refer to " DOCUMENTATION "." << endl ;
       }
@@ -1319,7 +1319,7 @@ int main (int argc, char **argv)
       if (global_interrupted)
       {
         string msg = "Interrupted after analyzing " + string_of_int(num_clone) + " clones" ;
-        output.add_warning("W09", msg, LEVEL_WARN);
+        output.add_warning(W09_INTERRUPTED, msg, LEVEL_WARN);
         cout << WARNING_STRING << msg << endl ;
         break;
       }
@@ -1452,7 +1452,7 @@ int main (int argc, char **argv)
         });
 
         if (repComp.getCoverage() < WARN_COVERAGE)
-          clone->add_warning("W51", "Low coverage: " + fixed_string_of_float(repComp.getCoverage(), 3), LEVEL_WARN);
+          clone->add_warning(W51_LOW_COVERAGE, "Low coverage: " + fixed_string_of_float(repComp.getCoverage(), 3), LEVEL_WARN);
 
         if (label.length())
           clone->set("label", label) ;
@@ -1506,7 +1506,7 @@ int main (int argc, char **argv)
                 {
                   if (clone_on_stdout)
                   cout << " (similar to Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc << setfill(' ') << ")";
-                  clone->add_warning("W53", "Similar to another clone " + code,
+                  clone->add_warning(W53_SIMILAR_TO_ANOTHER_CLONE, "Similar to another clone " + code,
                                    num_clone <= WARN_NUM_CLONES_SIMILAR ? LEVEL_WARN : LEVEL_INFO);
 
                   nb_edges++ ;

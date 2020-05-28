@@ -1345,7 +1345,7 @@ void FineSegmenter::checkWarnings(CloneOutput *clone)
           && (box_J->ref_label.find("IGHJ1") != string::npos)
           && ((getMidLength() >= 90) || (getMidLength() <= 94)))
         {
-          clone->add_warning("W61", "Non-recombined D7-27/J1 sequence", LEVEL_ERROR);
+          clone->add_warning(W61_NON_RECOMBINED_D7_27_J1, "Non-recombined D7-27/J1 sequence", LEVEL_ERROR);
         }
 
       // Multiple candidate assignations
