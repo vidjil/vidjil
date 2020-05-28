@@ -1336,7 +1336,7 @@ void FineSegmenter::findCDR3(){
   // Reminder: JUNCTIONstart is 1-based
 }
 
-void FineSegmenter::checkWarnings(CloneOutput *clone)
+void FineSegmenter::checkWarnings(CloneOutput *clone, bool phony)
 {
   if (isSegmented())
     {
@@ -1345,7 +1345,7 @@ void FineSegmenter::checkWarnings(CloneOutput *clone)
           && (box_J->ref_label.find("IGHJ1") != string::npos)
           && ((getMidLength() >= 90) || (getMidLength() <= 94)))
         {
-          clone->add_warning(W61_NON_RECOMBINED_D7_27_J1, "Non-recombined D7-27/J1 sequence", LEVEL_ERROR);
+          clone->add_warning(W61_NON_RECOMBINED_D7_27_J1, "Non-recombined D7-27/J1 sequence", LEVEL_ERROR, phony);
         }
 
       // Multiple candidate assignations
@@ -1357,7 +1357,7 @@ void FineSegmenter::checkWarnings(CloneOutput *clone)
             if (it.first < box->score[0].first) break;
             genes += " " + box->rep->label(it.second);
           }
-          clone->add_warning("W69", "Several genes with equal probability:" + genes, LEVEL_WARN);
+          clone->add_warning("W69", "Several genes with equal probability:" + genes, LEVEL_WARN, phony);
         }
       }
     }

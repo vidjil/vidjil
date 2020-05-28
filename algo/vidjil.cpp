@@ -1320,7 +1320,6 @@ int main (int argc, char **argv)
       {
         string msg = "Interrupted after analyzing " + string_of_int(num_clone) + " clones" ;
         output.add_warning(W09_INTERRUPTED, msg, LEVEL_WARN);
-        cout << WARNING_STRING << msg << endl ;
         break;
       }
 
@@ -1452,7 +1451,7 @@ int main (int argc, char **argv)
         });
 
         if (repComp.getCoverage() < WARN_COVERAGE)
-          clone->add_warning(W51_LOW_COVERAGE, "Low coverage: " + fixed_string_of_float(repComp.getCoverage(), 3), LEVEL_WARN);
+          clone->add_warning(W51_LOW_COVERAGE, "Low coverage: " + fixed_string_of_float(repComp.getCoverage(), 3), LEVEL_WARN, clone_on_stdout);
 
         if (label.length())
           clone->set("label", label) ;
@@ -1504,10 +1503,8 @@ int main (int argc, char **argv)
 
               if (cc)
                 {
-                  if (clone_on_stdout)
-                  cout << " (similar to Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc << setfill(' ') << ")";
-                  clone->add_warning(W53_SIMILAR_TO_ANOTHER_CLONE, "Similar to another clone " + code,
-                                   num_clone <= WARN_NUM_CLONES_SIMILAR ? LEVEL_WARN : LEVEL_INFO);
+                  clone->add_warning(W53_SIMILAR_TO_ANOTHER_CLONE, "Similar to clone #" + string_of_int(cc) + " - " + code,
+                                   num_clone <= WARN_NUM_CLONES_SIMILAR ? LEVEL_WARN : LEVEL_INFO, clone_on_stdout);
 
                   nb_edges++ ;
                   out_edges << clones_map_windows[code] + " " + it->first + " "  ;
@@ -1531,7 +1528,7 @@ int main (int argc, char **argv)
 	      out_clone << endl;
 	   } // end if (seg.isSegmented())
 
-        seg.checkWarnings(clone);
+        seg.checkWarnings(clone, clone_on_stdout);
         
 	if (output_sequences_by_cluster) // -a option, output all sequences
 	  {

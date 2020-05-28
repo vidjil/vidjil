@@ -37,7 +37,6 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
     {
       string msg = "Interrupted after processing " + string_of_int(nb_reads) + " reads" ;
       if (output) output->add_warning(W09_INTERRUPTED, msg, LEVEL_WARN);
-      cout << WARNING_STRING << msg << endl ;
       break;
     }
 
