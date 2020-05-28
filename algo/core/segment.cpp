@@ -947,8 +947,8 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
   }
 
   // Should we run a full DP?
-  int length = min(box->end, (int) box->ref.size()) + box->del_right;
-  // length is an estimation of the number of aligned nucleotides. It would be better with #2138
+  int length = min(box->getLength(), (int) box->ref.size());
+  // length is an estimation of the number of aligned nucleotides.
   int min_number_of_matches = min(int(length * FRACTION_ALIGNED_AT_WORST), length - BOTTOM_TRIANGLE_SHIFT); // Minimal number of matches we can have with a triangle
   int max_number_of_insertions = length - min_number_of_matches;
   int score_with_limit_number_of_indels =  min_number_of_matches * segment_cost.match + max_number_of_insertions * segment_cost.insertion;
