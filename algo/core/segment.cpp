@@ -929,7 +929,7 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
 	// #define DEBUG_SEGMENT      
 
 #ifdef DEBUG_SEGMENT	
-	cout << rep.label(r) << " " << score << " " << dp.best_i << endl ;
+	cout << rep.label(r) << " " << score << " " << dp.first_i <<  " " << dp.best_i << endl ;
 #endif
 
     }
@@ -962,9 +962,8 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
   }
 
 #ifdef DEBUG_SEGMENT	
-  cout << "best: " << box->ref_label << " " << best_score ;
-  cout << "del/del2/begin:" << (box->del_right) << "/" << (box->del_left) << "/" << (box->start) << endl;
-  cout << endl;
+  cout << "reverse_both " << reverse_both << "   reverse_left " << reverse_ref << "   local " << local << endl;
+  cout << "best:   " << *box <<  "   read length: " << read.length() << "   ref length: " <<   box->ref.size()  << endl;
 #endif
 
 
