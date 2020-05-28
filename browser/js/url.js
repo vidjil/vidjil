@@ -133,6 +133,7 @@ Url.prototype= {
             }
         }
 
+        var url = this.window.location;
         var positionnal_params = url.pathname.substr(1).split('-');
         var pos_param_keys = this.getPositionnalParams();
         if (positionnal_params.length > 1 && positionnal_params[0] != "index.html")

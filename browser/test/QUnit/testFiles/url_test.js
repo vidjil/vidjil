@@ -139,7 +139,7 @@ QUnit.test("url: parse", function(assert) { with (windowMock) {
     var m = new Model();
     var url = new Url(m, windowMock);
 
-    var params = url.parseUrlParams(url.url);
+    var params = url.parseUrlParams('?param1=foo&param2=bar');
     assert.deepEqual(params, {
         "param1": "foo",
         "param2": "bar"
@@ -147,7 +147,7 @@ QUnit.test("url: parse", function(assert) { with (windowMock) {
 
     windowMock.history.pushState('plop', 'plop', 'mock://foo.bar?fakeparam&realparam=real');
     url = new Url(m, windowMock);
-    params = url.parseUrlParams(url.url);
+    params = url.parseUrlParams('?fakeparam&realparam=real');
     assert.deepEqual(params, {
         'realparam': 'real'
     });
@@ -171,7 +171,7 @@ QUnit.test("url: positional parse", function(assert) { with (windowMock) {
     windowMock.history.pushState('plop', 'plop', 'mock://foo.bar/1-3?param3=third');
     var url = new Url(m, windowMock);
 
-    var params = url.parseUrlParams();
+    var params = url.parseUrlParams('?param3=third');
     assert.deepEqual(params, {
         'sample_set_id': '1',
         'config': '3',
