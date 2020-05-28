@@ -4,7 +4,7 @@ function Url(model, win) {
     this.window = (typeof win != "undefined") ? win : window
 
     this.encoder = new UrlEncoder();
-    this.url_dict = this.parseUrlParams();
+    this.url_dict = this.parseUrlParams(this.window.location.search.toString())
     this.sp = this.m.sp
 
     this.m.start(this.url_dict);
@@ -107,10 +107,12 @@ Url.prototype= {
         }
     },
 
-    parseUrlParams:function () {
-        params={}
-        var url = this.window.location;
-        var url_param = url.search.substr(1).split("&");
+    parseUrlParams:function (urlparams) {
+        params={} 
+        if (urlparams.length === 0) {
+            return params;
+        }
+        url_param = urlparams.substr(1).split("&");
         for (var i = 0; i < url_param.length; i++) {
             var tmparr = url_param[i].split("=");
             var p = params[tmparr[0]];
