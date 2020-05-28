@@ -96,9 +96,20 @@ class AlignBox
   string key;
   string color;
 
-  int del_left;
+
+  /**
+  * Alignment positions *on the read*
+  */
+
   int start;
   int end;
+  int marked_pos;    // Marked position, for Cys104 and Phe118/Trp118
+
+  /**
+  * Alignment positions *compared to reference sequence*
+  */
+
+  int del_left;
   int del_right;
 
   AlignBox(string key = "", string color="");
@@ -131,9 +142,6 @@ class AlignBox
   int ref_nb;
   string ref_label;
   string ref;
-
-  /* Marked position, for Cys104 and Phe118/Trp118 */
-  int marked_pos;
 
   /* Scores and identifiers of other possible reference sequence */
   vector<pair<int, int> > score;
