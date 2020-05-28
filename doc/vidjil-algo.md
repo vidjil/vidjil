@@ -513,17 +513,23 @@ The `-E` option further sets the e-value for the detection of D segments.
 The following options are experimental and have no consequences on the `.vdj.fa` file,
 nor on the standard output. They instead add a `clusters` sections in the `.vidjil` file
 that will be visualized in the web application.
+Any such clustering should be avoided when one wants to precisely study hypermutations.
+The web application provides other options to inspect clones and cluster them.
 
-The `--cluster-epsilon` option triggers an automatic clustering using DBSCAN algorithm (Ester and al., 1996).
+The `--cluster-epsilon` option triggers an automatic clustering using the
+[DBSCAN](https://en.wikipedia.org/wiki/DBSCAN) algorithm (Ester and al., 1996).
 Using `--cluster-epsilon 5` usually clusters reads within a distance of 1 mismatch (default score
-being +1 for a match and -4 for a mismatch). However, more distant reads can also
-be clustered when there are more than 10 reads within the distance threshold.
+being +1 for a match and -4 for a mismatch). With that option, more distant reads will also
+be clustered as soon there are more than 10 reads within the distance threshold.
 This behaviour can be controlled with the `-cluster-N` option.
 
+Setting `--cluster-epsilon 10`, possibly with `--cluster-N 5` or `--cluster-N 1`
+will perform more aggressive clustering and is generally not advised.
+
 The `--cluster-forced-edges` option allows to specify a file for manually clustering two windows
-considered as similar. Such a file may be automatically produced by vidjil
+considered as similar. Such a file may be automatically produced by vidjil-algo
 (`out/edges`), depending on the option provided. Only the two first columns
-(separed by one space) are important to vidjil, they only consist of the
+(separed by one space) are important to vidjil-algo, they only consist of the
 two windows that must be clustered.
 
 # Output

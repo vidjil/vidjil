@@ -130,12 +130,13 @@ then followed by the J gene `TRGJ1*02`, with `6` nucleotides deleted at its star
   - Clones can be searched (“search” box) by either their name, their custom name,
     their DNA sequence, their (partial) CDR3 amino acid sequence.
 
-  - The concentration of some clones may not be displayed. Instead you can have
-    either a `+` symbol or a `-` symbol. In the former case that means the clone has
-    been detected (positive) but in few reads (typically less than five). In the
-    latter case it means that the clone has not been detected (negative) in the
-    sample but has been detected in another sample that is not currently
-    displayed.
+  - The concentration of some clones may not be displayed.
+    - A clone with a plus symbol `+` has been detected in that sample,
+      but with only a few reads, typically less than five.
+      Its concentration ratio is thus not significant, and
+      this clone would appear in the gray zone in the sample graph.
+    - A clone with a minus symbol `−` has not been detected in that sample,
+      but has been detected in another sample that is not currently displayed.
 
 ### Detailed information on each clone
 The “🛈” button opens a window showing detailed information (V(D)J designation,
@@ -156,25 +157,34 @@ calculated over all the samples in the sample set.
 
 ## The sample graph
 
-The sample graph is hidden when there is only one sample. It shows the most frequent clones of each sample, tracked into every sample.
-The number of displayed clones can be changed with the filter menu.
+The sample graph is displayed as soon as there are at least two samples.
+It shows the most frequent clones of each sample, tracked into every sample.
 
   - The current sample is highlighted with a vertical gray bar. You can select another sample by clicking on it or using `←` and `→`.
 
-  - The gray areas at the bottom of the graph show, for each sample, the resolution (1 read / 5 reads).
+  - By default, the graph shows clones present in the top 20 of any sample.
+    See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads)".
+    You can instead choose to show only the clones present in the current sample
+    with “filter \> focus on clones of one sample“.
 
-  - A menu to show or hide samples either one by one or all of them is present on the graph.
-    This menu is shown when hovering the "X/Y" button at the top-right of the graph.
-    The X and Y values correspond to the shown and total  number of samples.
-    In this menu, clicking one time on one sample in the menu focuses on this sample. 
-    Double clicking on one sample switches its state between shown or hidden.
+  - When a clone gathers very few reads, typically less than five,
+    its concentration ratio is not significant and it is shown by a `+` in the clone list.
+    Such clones appear in the sample graph in a *gray zone*.
+    They should be considered as “detected, but not quantifiable“,
+    and different concentrations in the gray zone should not be compared.
 
-  - You can reorder the samples by dragging them, and hide some samples by double clicking on their label.
+  - Samples can be reordered by dragging their label.
+
+  - Samples can be hidden by double-clicking on their label.
+    At the top-right of the graph, a button such as `5/8`
+    shows how many samples are displayed (here `5`) and the total number of samples (here `8`).
+    This button reveals a menu where
+    each sample can be selected (single click),
+    shown or hidden (double click),
+    as well as options to show or to hide all samples.
 
   - If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between sample keys and dates in “settings \> sample key”
 
-  - By default, the graph shows clones present in any sample.
-    You can instead choose to show only the clones present in the selected sample with “filter \> focus on clones of one sample“.
 
 
 ## The plot view and the plot presets
@@ -375,22 +385,30 @@ potential biases that could affect your analysis.
 
 ## How do you define a clone? How are gathered clones?
 
-In vidjil-algo, called **vidjil-algo** (Giraud, Salson, BMC Genomics 2014),
+Some RepSeq studies want to broadly cluster clones to have a global view on the immune repertoire.
+One may want to focus on CDR3 on the amino-acid level, or on the nucleotide level.
+One also generally wants to correct technological artifacts (PCR, sequencing).
+On the contrary, when studying hypermutations in IGH recombinations,
+people want to know as precisely as possible differences between sequences,
+even when they occur for a single nucleotide in the V gene or elsewhere.
+
+In **vidjil-algo** (Giraud, Salson, BMC Genomics 2014),
 sequences are gathered into a same clone as long as they share the
 same 50bp DNA sequence around the CDR3 sequence.
 In a first step, the algorithm has a quick heuristic which detects approximatively
 where the CDR3 lies and extracts a 50bp nucleotide sequence centered on that
 region. This region is called a **window** in vijdil-algo. When two
 sequences share the same window, they belong to the same clone. Therefore
-in vidjil-algo clones are only defined based on the exact match of a long DNA
+in vidjil-algo clones are only defined based on the (conservative) exact match of a long DNA
 sequence. This explains why some little clones can be seen around larger
-clones: they may be due to sequencing error that lead to different windows.
+clones: They may be due to artifacts that lead to different windows.
 However those small differences can also be due to a real biological process
 inside the cells. Therefore we let the user choose whether the clones should
-be manually clustered or not.
+be manually clustered or not -- and the choice may depend on the purpose of her study.
 
 In **MiXCR**, clones are defined based on the amino-acid CDR3 sequence, on the V
 gene used and on the hypermutations.
+Other software may have other definitions, see also [What is a clone ?](/vidjil-format/#what-is-a-clone).
 
 ## What is the sequence displayed for each clone ?
 
