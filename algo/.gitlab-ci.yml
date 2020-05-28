@@ -23,6 +23,8 @@ profiling_algo:
       - vidjil.cpu
       - vidjil.mem.*
   when: manual
+  only:
+    - /^feature-.*a.*\/.*$/
   tags:
     - cidocker
     
