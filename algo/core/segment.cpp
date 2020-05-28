@@ -877,11 +877,12 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
 {
   
   int best_score = MINUS_INF ;
+
+  box->rep = &rep;
   box->ref_nb = MINUS_INF ;
-  int best_best_i = (int) string::npos ;
+  box->start = (int) string::npos ;
+  box->end = (int) string::npos ;
   int best_best_j = (int) string::npos ;
-  int best_first_i = (int) string::npos ;
-  int best_first_j = (int) string::npos ;
 
   vector<pair<int, int> > score_r;
 
@@ -908,15 +909,20 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
       if (score > best_score)
       {
          dp.backtrack();
-	  best_score = score ;
-	  best_best_i = dp.best_i ;
-	  best_best_j = dp.best_j ;
-	  best_first_i = dp.first_i ;
-	  best_first_j = dp.first_j ;
-	  box->ref_nb = r ;
-	  box->ref_label = rep.label(r) ;
-          box->marked_pos = dp.marked_pos_i ;
-	}
+         best_score = score ;
+
+         // Reference identification
+         box->ref_nb = r ;
+
+         // Alignment positions *on the read*
+         box->start = dp.first_i;            // start position
+         box->end = dp.best_i ;              // end position
+         box->marked_pos = dp.marked_pos_i ; // marked position
+
+         // Alignment positions *on the reference*
+         box->del_left = dp.first_j;     // around start position
+         best_best_j = dp.best_j;        // around end position
+       }
 	
 	score_r.push_back(make_pair(score, r));
 
@@ -928,14 +934,20 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
 
     }
 
-  int length = best_best_i;     // end position of the alignment in the read
-  int del_end = rep.sequence(box->ref_nb).size() - best_best_j;
-  if (reverse_ref || reverse_both) {
-    length = read.length() - length - 1;
-    del_end = best_best_j;
+  sort(score_r.begin(),score_r.end(),comp_pair);
+  box->score = score_r;
+
+  box->ref_label = rep.label(box->ref_nb) ;
+  box->ref = rep.sequence(box->ref_nb);
+  box->del_right = box->ref.size() - best_best_j - 1;
+  box->seq_length = read.length();
+
+  if (reverse_both) {
+    box->reverse();
   }
-  length = min(length, (int) rep.sequence(box->ref_nb).size());
-  length += del_end;
+
+  // Should we run a full DP?
+  int length = min(box->end, (int) box->ref.size()) + box->del_right;
   // length is an estimation of the number of aligned nucleotides. It would be better with #2138
   int min_number_of_matches = min(int(length * FRACTION_ALIGNED_AT_WORST), length - BOTTOM_TRIANGLE_SHIFT); // Minimal number of matches we can have with a triangle
   int max_number_of_insertions = length - min_number_of_matches;
@@ -949,26 +961,13 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
     return;
   }
 
-    sort(score_r.begin(),score_r.end(),comp_pair);
-
-  box->ref = rep.sequence(box->ref_nb);
-  box->del_right = reverse_both ? best_best_j : box->ref.size() - best_best_j - 1;
-  box->del_left = best_first_j;
-  box->start = best_first_i;
-  box->rep = &rep; 
-  box->score = score_r;
-
 #ifdef DEBUG_SEGMENT	
   cout << "best: " << box->ref_label << " " << best_score ;
   cout << "del/del2/begin:" << (box->del_right) << "/" << (box->del_left) << "/" << (box->start) << endl;
   cout << endl;
 #endif
 
-  if (reverse_ref)
-    // Why -1 here and +1 in dynprog.cpp /// best_i = m - best_i + 1 ;
-    best_best_i = read.length() - best_best_i - 1 ;
 
-  box->end = best_best_i ;
 }
 
 string format_del(int deletions)
