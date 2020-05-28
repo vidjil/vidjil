@@ -1089,10 +1089,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,
   }
   align_against_collection(sequence_or_rc, germline->rep_3, NO_FORBIDDEN_ID, reverse_J, !reverse_J, false,
                            box_J, segment_cost, false, standardised_threshold_evalue);
-  // J was run with '!reverseJ', we copy the box informations from right to left
-  // Should this directly be handled in align_against_collection() ?
-  box_J->start = box_J->end ;
-  box_J->del_left = box_J->del_right;
 
   /* E-values */
   evalue_left  = multiplier * sequence.size() * germline->rep_5.totalSize() * segment_cost.toPValue(box_V->score[0].first);
