@@ -15,6 +15,8 @@ $ There is a warning on multiple candidate assignations
 1:"code": "W69"
 1:equal probability: TRBV7-2.0[12] TRBV7-2.0[12]"
 
+$ The warning is also found on stdout
+1:\[warning\] \(W69\) Several genes with equal probability
 
 !LAUNCH: $VIDJIL_DIR/$EXEC -c designations -g $VIDJIL_DIR/germline/homo-sapiens.g:TRB $VIDJIL_DATA/trb-only-VJ.fa
 !OUTPUT_FILE: out/trb-only-VJ.vidjil
