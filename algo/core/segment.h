@@ -104,6 +104,7 @@ class AlignBox
   int start;
   int end;
   int marked_pos;    // Marked position, for Cys104 and Phe118/Trp118
+  int seq_length;
 
   /**
   * Alignment positions *compared to reference sequence*
@@ -115,6 +116,11 @@ class AlignBox
   AlignBox(string key = "", string color="");
   string getSequence(string sequence);
   void addToOutput(CloneOutput *clone, int alternative_genes);
+
+  /**
+  * Mirror the AlignBox (over a a sequence length seq_length)
+  */
+  void reverse();
 
   /**
    * Returns 'V', 'D', 'J', or possibly '5', '4', '3', '?', depending on the ref_label and on the key

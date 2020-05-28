@@ -51,6 +51,16 @@ AlignBox::AlignBox(string _key, string _color) {
   ref_label = "";
 }
 
+void AlignBox::reverse() {
+  int start_ = start;
+  start = seq_length - end - 1;
+  end = seq_length - start_ - 1;
+
+  int del_left_ = del_left;
+  del_left = del_right;
+  del_right = del_left_;
+}
+
 int AlignBox::getLength() {
   return end - start + 1 ;
 }
