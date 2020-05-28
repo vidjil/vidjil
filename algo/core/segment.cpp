@@ -81,18 +81,28 @@ string AlignBox::getSequence(string sequence) {
   return sequence.substr(start, end-start+1);
 }
 
+bool AlignBox::CoverFirstPos()
+{
+  return (start <= 0);
+}
+
+bool AlignBox::CoverLastPos()
+{
+  return (end >= seq_length - 1);
+}
+
 void AlignBox::addToOutput(CloneOutput *clone, int alternative_genes) {
 
   json j;
   j["name"] = ref_label;
 
-  if (key != "3" || end < seq_length - 1) // end information for J
+  if (key != "3" || !CoverLastPos()) // end information for J
     {
       j["stop"] = end + 1;
       j["delRight"] = del_right;
     }
 
-  if (key != "5" || start > 0) // start information for V
+  if (key != "5" || !CoverFirstPos()) // start information for V
     {
       j["start"] = start + 1;
       j["delLeft"] = del_left;
