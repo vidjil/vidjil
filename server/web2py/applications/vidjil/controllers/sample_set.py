@@ -751,7 +751,7 @@ def getFusedStats(fuse):
             res = results_files[results_file_id]
             result_index = -1
             if "results_file_id" in data['samples']:
-                result_index = data['samples']['results_file_id'].index(resuts_file_id)
+                result_index = data['samples']['results_file_id'].index(results_file_id)
             elif "original_names" in data['samples']:
                 basenames = [os.path.basename(x) for x in data['samples']['original_names']]
                 result_index = basenames.index(os.path.basename(res['sequence_file']))
