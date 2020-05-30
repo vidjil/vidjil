@@ -2,8 +2,8 @@
 # This synthetic sequence ends after the end of the J gene, 
 # including a stop codon in all frames in that zone
 
-# end of the J gene @90
->TRGV9*01 0/CAT/0 TRGJP*01 0/17
-acctactactgtgccttgtgggaggtgCAT
+# end of the J gene @89
+>TRGV9*01 0/CA/0 TRGJP*01 0/17
+acctactactgtgccttgtgggaggtgCA
 tgggcaagagttgggcaaaaaaatcaaggtatttggtcccggaacaaagcttatcattacag
 cccTAGcTAGcTAGccc
