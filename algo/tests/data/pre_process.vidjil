@@ -1,0 +1,50 @@
+{
+    "reads": {
+        "total": [4000],
+        "merged": [3000]
+    },
+    
+    "number": 1,
+    "pre_process": {
+        "stats": {
+            "combined_pairs": [3000],
+            "outie_pairs": [1000],
+            "percent_combined": ["75%"],
+            "innie_pairs": [2000],
+            "total_pairs": [4000],
+            "uncombined_pairs": [1000],
+            "discarded_pairs": [0],
+            "percent_discarded": ["0.00%"]
+        },
+        "producer": ["FLASH v2.2.00"],
+        "parameters": {
+            "allow_outie_pairs": ["true"],
+            "input_format": ["FASTQ, phred_offset=33"],
+            "min_overlap": [10],
+            "max_overlap": [65],
+            "output_format": ["FASTQ, phred_offset=33"],
+            "combiner_threads": [1],
+            "cap_mismatch_quals": ["false"],
+            "min_overlap_outie": [35],
+            "max_mismatch_density": [0.25]
+        },
+        "commandline": ["pre_process commandline"],
+        "output": [
+            [
+            "r-reads.gz.extendedFrags.fastq",
+            "r-reads.gz.notCombined_1.fastq",
+            "r-reads.gz.notCombined_2.fastq",
+            "r-reads.gz.hist",
+            "r-reads.gz.histogram"
+            ]
+        ],
+        "input": [
+            [
+            "/some/sequence_1",
+            "/some/sequence_2"
+            ]
+        ],
+        "run_timestamp": ["2020-05-22 10:50:53"]
+    },
+    "vidjil_json_version": "2014.10"
+}

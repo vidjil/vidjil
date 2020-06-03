@@ -1,0 +1,20 @@
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o pre-process.vidjil; cat pre-process.vidjil
+
+$ Fuse with no pre-process file
+0: "combine_pairs"
+0: "pre_process commandline"
+
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil,../../../algo/tests/data/pre_process.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o pre-process.vidjil; cat pre-process.vidjil
+
+$ Fuse with one pre-process file
+1: "combined_pairs"
+1: "FLASH v2.2.00"
+1: "pre_process commandline"
+
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil,../../../algo/tests/data/pre_process.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil,../../../algo/tests/data/pre_process_2.vidjil -o pre-process.vidjil; cat pre-process.vidjil
+
+$ Fuse with two pre-process files
+1: "combined_pairs"
+2: "FLASH v2.2.00"
+1: "pre_process commandline"
+1: "second pre_process commandline"
