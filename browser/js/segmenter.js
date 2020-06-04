@@ -1570,20 +1570,24 @@ Sequence.prototype = Object.create(genSeq.prototype);
                 // We first put the end positions
                 highlights.push({'type':'N', 'color': "", 'start': vdjArray["5"].stop});
                 highlights.push({'type':'N', 'color': "", 'start': vdjArray["3"].start});
+                highlights.push({'type':'before5', 'color': "black", 'start': 0});                  // from seq start to 5 start
+                highlights.push({'type':'after3',  'color': "black", 'start': vdjArray["3"].stop}); // from 3 stop to seq end
 
                 var key;
                 for (var i in SEGMENT_KEYS) {
                     key = SEGMENT_KEYS[i]
                     if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key].stop != 'undefined'){
                         highlights.push({'type':'N', 'color': "", 'start': vdjArray[key].stop});
-                    }}
+                    }
+                }
 
                 // We now put the start positions (that may override previous end positions)
                 for (var j in SEGMENT_KEYS) {
                     key = SEGMENT_KEYS[j]
                     if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key].start!= 'undefined'){
                         highlights.push({'type':'D', 'color': "", 'start': vdjArray[key].start});
-                    }}
+                    }
+                }
 
                 highlights.push({'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : "", 'start': vdjArray["5"].start});
                 highlights.push({'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : "", 'start': vdjArray["3"].start});
@@ -1615,10 +1619,10 @@ Sequence.prototype = Object.create(genSeq.prototype);
     Sequence.prototype.getVdjStartEnd = function (clone) {
 
         var vdjArray ={"5": {}, "3": {}} ;
-        vdjArray["5"].start = 0;
-        vdjArray["5"].stop = this.pos[clone.seg["5"].stop] + 1;
+        vdjArray["5"].start = (clone.seg["5"].start != undefined) ? this.pos[clone.seg["5"].start] : 0;
+        vdjArray["5"].stop  = this.pos[clone.seg["5"].stop] + 1;
         vdjArray["3"].start = this.pos[clone.seg["3"].start];
-        vdjArray["3"].stop = this.seq.length;
+        vdjArray["3"].stop  = (clone.seg["3"].stop != undefined)  ? this.pos[clone.seg["3"].stop] : this.seq.length;
 
         for (var i in SEGMENT_KEYS)
         {
