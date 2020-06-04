@@ -760,13 +760,11 @@ def custom_fuse(file_list):
     ## fuse.py 
     output_file = out_folder+'/'+output_filename+'.fused'
     files = ""
-    query = db(db.results_file.id.belongs(file_list) &
-               (db.sequence_file.id == db.results_file.sequence_file_id)
-            ).select()
-    for row in query :
-        if row.results_file.data_file is not None :
-            files += os.path.abspath(defs.DIR_RESULTS + row.results_file.data_file)
-            if row.sequence_file.pre_process_file is not None:
+    for id in file_list :
+        if db.results_file[id].data_file is not None :
+            files += os.path.abspath(defs.DIR_RESULTS + db.results_file[id].data_file)
+            seq_file = db.sequence_file[db.results_file[id].sequence_file_id]
+            if seq_file.pre_process_file is not None:
                 files += ",%s" % os.path.abspath(defs.DIR_RESULTS + row.sequence_file.pre_process_file)
             files += " "
     
