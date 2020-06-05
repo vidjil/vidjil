@@ -765,7 +765,7 @@ def custom_fuse(file_list):
             files += os.path.abspath(defs.DIR_RESULTS + db.results_file[id].data_file)
             seq_file = db.sequence_file[db.results_file[id].sequence_file_id]
             if seq_file.pre_process_file is not None:
-                files += ",%s" % os.path.abspath(defs.DIR_RESULTS + row.sequence_file.pre_process_file)
+                files += ",%s" % os.path.abspath(defs.DIR_RESULTS + seq_file.pre_process_file)
             files += " "
     
     try:
