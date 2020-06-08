@@ -4,6 +4,7 @@
 #include "automaton.h"
 #include <stack>
 #include <set>
+#include <list>
 //////////////////// IMPLEMENTATIONS ////////////////////
 
 template <class Info>
@@ -160,7 +161,7 @@ void PointerACAutomaton<Info>::build_failure_functions() {
 }
 
 template <class Info>
-list<Info> &PointerACAutomaton<Info>::getInfo(void *state) {
+vector<Info> &PointerACAutomaton<Info>::getInfo(void *state) {
   return ((pointer_state<Info> *)state)->informations;
 }
 
