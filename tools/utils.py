@@ -31,7 +31,8 @@ def concatenate_with_padding_alt(d,
 def concatenate_with_padding(d, 
                              d1, d1_size, 
                              d2, d2_size,
-                             ignore_keys=None):
+                             ignore_keys=None,
+                             recursive=False):
     '''Concatenate two dictionaries d1 and d2 into d
     The dictionaries d1 and d2 store several values that are lists with d1_size and d2_size elements,
     and the resulting dictionary will store values that are lists with size d1_size + d2_size elements.
@@ -52,6 +53,7 @@ def concatenate_with_padding(d,
 
     t1=[]
     t2=[]
+    dict_keys = []
 
     if ignore_keys == None:
         ignore_keys = []
@@ -66,6 +68,7 @@ def concatenate_with_padding(d,
         if key in ignore_keys:
             continue
         if type(d1[key]) is not list:
+            dict_keys.append(key)
             continue
 
         d[key] = d1[key]
@@ -81,6 +84,7 @@ def concatenate_with_padding(d,
         if key in ignore_keys:
             continue
         if type(d2[key]) is not list:
+            dict_keys.append(key)
             continue
 
         if key not in d:
@@ -90,6 +94,21 @@ def concatenate_with_padding(d,
                 d[key] = [None]*len(d1["reads"]) + d2[key]
         else :
             d[key] = d[key] + d2[key]
+
+    if recursive:
+        keys = set(dict_keys)
+        for k in keys:
+            if k not in d:
+                d[k] = {}
+            if k not in d1:
+                d1[k] = {}
+            if k not in d2:
+                d2[k] = {}
+            concatenate_with_padding(d[k],
+                                     d1[k], d1_size,
+                                     d2[k], d2_size,
+                                     ignore_keys=ignore_keys,
+                                     recursive=True)
 
                 
 class AccessedDict(dict):
