@@ -99,8 +99,8 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define CLONES_FILENAME ".vdj.fa"
 #define CLONE_FILENAME "clone.fa-"
 #define WINDOWS_FILENAME ".windows.fa"
-#define SEGMENTED_FILENAME ".segmented.vdj.fa"
-#define UNSEGMENTED_FILENAME ".unsegmented.vdj.fa"
+#define SEGMENTED_FILENAME ".detected.vdj.fa"
+#define UNSEGMENTED_FILENAME ".undetected.vdj.fa"
 #define UNSEGMENTED_DETAIL_FILENAME ".fa"
 #define AFFECTS_FILENAME ".affects"
 #define EDGES_FILENAME ".edges"
@@ -485,7 +485,7 @@ int main (int argc, char **argv)
 
   double expected_value = THRESHOLD_NB_EXPECTED;
   app.add_option("--e-value,-e", expected_value,
-                 "maximal e-value for determining if a V-J segmentation can be trusted", true)
+                 "maximal e-value for trusting the detection of a V-J recombination", true)
     -> group(group) -> transform(string_NO_LIMIT);
 
   Cost segment_cost = DEFAULT_SEGMENT_COST ;
@@ -499,7 +499,7 @@ int main (int argc, char **argv)
 
   double expected_value_D = THRESHOLD_NB_EXPECTED_D;
   app.add_option("--analysis-e-value-D,-E", expected_value_D,
-                 "maximal e-value for determining if a D segment can be trusted", true)
+                 "maximal e-value for trusting the detection of a D segment", true)
     -> group(group) -> level();
 
   int kmer_threshold = DEFAULT_KMER_THRESHOLD;
@@ -547,22 +547,22 @@ int main (int argc, char **argv)
   group = "Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)";
 
   bool output_segmented = false;
-  app.add_flag("--out-analyzed,-U", output_segmented,
-               "output analyzed reads (in " SEGMENTED_FILENAME " file)")
+  app.add_flag("--out-detected,-U", output_segmented,
+               "output reads with detected recombinations (in " SEGMENTED_FILENAME " file)")
     -> group(group);
 
   bool output_unsegmented = false;
   bool output_unsegmented_detail = false;
   bool output_unsegmented_detail_full = false;
 
-  app.add_flag_function("--out-unanalyzed,-u", [&](size_t n) {
+  app.add_flag_function("--out-undetected,-u", [&](size_t n) {
       output_unsegmented = (n >= 3);             // -uuu
       output_unsegmented_detail_full = (n >= 2); // -uu
       output_unsegmented_detail = (n >= 1);      // -u
     }, R"Z(
-        -u          output unanalyzed reads, gathered by cause, except for very short and 'too few V/J' reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files)
-        -uu         output unanalyzed reads, gathered by cause, all reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files) (use only for debug)
-        -uuu        output unanalyzed reads, all reads, including a )Z" UNSEGMENTED_FILENAME R"Z( file (use only for debug))Z")
+        -u          output undetected reads, gathered by cause, except for very short and 'too few V/J' reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files)
+        -uu         output undetected reads, gathered by cause, all reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files) (use only for debug)
+        -uuu        output undetected reads, all reads, including a )Z" UNSEGMENTED_FILENAME R"Z( file (use only for debug))Z")
     -> group(group);
 
   bool output_sequences_by_cluster = false;
@@ -1133,7 +1133,7 @@ int main (int argc, char **argv)
                                                 windows_labels, only_labeled_windows,
                                                 keep_unsegmented_as_clone,
                                                 expected_value_kmer, nb_reads_for_evalue,
-                                                readScorer);
+                                                readScorer, &output);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 
@@ -1308,11 +1308,21 @@ int main (int argc, char **argv)
     cout << "  ==> " << out_seqdir + CLONE_FILENAME + "*" << "\t(detail, by clone)" << endl ; 
     cout << endl ;
 
+    global_interrupted = false;
+    signal(SIGINT, sigintHandler);
 
     for (list <pair<junction,size_t> >::const_iterator it = sort_clones.begin();
          it != sort_clones.end(); ++it) {
       junction win = it->first;
       size_t clone_nb_reads = it->second;
+
+      if (global_interrupted)
+      {
+        string msg = "Interrupted after analyzing " + string_of_int(num_clone) + " clones" ;
+        output.add_warning("W09", msg, LEVEL_WARN);
+        cout << WARNING_STRING << msg << endl ;
+        break;
+      }
 
       ++num_clone ;
 
@@ -1537,7 +1547,8 @@ int main (int argc, char **argv)
     cout << endl ;
       out_clone.close();
     } // end for clones
-	
+    signal(SIGINT, SIG_DFL);
+
     out_edges.close() ;
     delete out_clones;
 

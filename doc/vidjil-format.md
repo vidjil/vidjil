@@ -276,14 +276,15 @@ representative clone of the cluster.
 
 ## Statistics: the `reads` element \[.vidjil only, required\]
 
-The number of analyzed reads (`segmented`) may be higher than the sum of the read number of all clones,
+The number of reads with detected recombinations (`segmented`)
+may be higher than the sum of the read number of all clones,
 when one choose to report only the 'top' clones (`-t` option for fuse).
 
 ``` javascript
 {
     "total" : [],          // total number of reads per sample (with samples.number elements)
-    "segmented" : [],      // number of analyzed/segmented reads per sample (with samples.number elements)
-    "germline" : {         // number of analyzed/segmented reads per sample/germline (with samples.number elements)
+    "segmented" : [],      // number of reads with detected recombinations per sample (with samples.number elements)
+    "germline" : {         // number of reads with detected recombinations per sample/germline (with samples.number elements)
         "TRG" : [],
         "IGH" : []
     }
@@ -344,7 +345,7 @@ In the `.analysis` file, this section is intended to describe some specific clon
                     // settings web application menu
 
    "seg":           // detailed V(D)J designation/segmentation and other sequences features or values [optional]
-                    // on the web application, clones that are not segmented will be shown on the grid with '?/?'
+                    // on the web application, clones that are not detected will be shown on the grid with '?/?'
                     // positions are related to the 'sequence'
                     // names of V/D/J genes should match the ones in files referenced in germline/germline.data
                     // Positions on the sequence start at 1.

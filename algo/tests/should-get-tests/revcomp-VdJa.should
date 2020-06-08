@@ -6,7 +6,7 @@ $ Just one window found
 $ Just one clone found
 1:==> 1 clones
 
-$ Two reads segmented on TRA+D
+$ Two reads detected on TRA+D
 1:TRA.D -> 2
 
 $ One clone for the two reads, Vd1/Ja29

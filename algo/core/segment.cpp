@@ -895,12 +895,9 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
 
       int score = dp.compute(onlyBottomTriangle, BOTTOM_TRIANGLE_SHIFT);
       
-      if (local==true){ 
-	dp.backtrack();
-      }
-      
       if (score > best_score)
-	{
+      {
+         dp.backtrack();
 	  best_score = score ;
 	  best_best_i = dp.best_i ;
 	  best_best_j = dp.best_j ;
@@ -908,9 +905,6 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
 	  best_first_j = dp.first_j ;
 	  box->ref_nb = r ;
 	  box->ref_label = rep.label(r) ;
-
-          if (!local)
-            dp.backtrack();
           box->marked_pos = dp.marked_pos_i ;
 	}
 	

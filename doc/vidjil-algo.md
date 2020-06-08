@@ -304,7 +304,7 @@ Recombination detection ("window" prediction, first pass)
     (all these options, except -w, are overriden when using -g)
   -k, --kmer INT              k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)
   -w, --window INT            w-mer size used for the length of the extracted window ('all': use all the read, no window clustering)
-  -e, --e-value FLOAT=1       maximal e-value for determining if a V-J segmentation can be trusted
+  -e, --e-value FLOAT=1       maximal e-value for trusting the detection of a V-J recombination
   --trim INT                  trim V and J genes (resp. 5' and 3' regions) to keep at most <INT> nt  (0: no trim)
   -s, --seed SEED=10s         seed, possibly spaced, used for the V/J affectation (default: depends on germline), given either explicitely or by an alias
                                10s:#####-##### 12s:######-###### 13s:#######-###### 9c:#########
@@ -332,7 +332,7 @@ the start of the J, or at least some specific N region to uniquely identify the 
 Setting `-w` to higher values (such as `-w 60` or `-w 100`) makes the clone clustering
 even more conservative, enabling to split clones with low specificity (such as IGH with very
 large D, short or no N regions and almost no somatic hypermutations). However, such settings
-may "segment" (analyze) less reads, depending on the read length of your data, and may also
+may detect recombinations in less reads, depending on the read length of your data, and may also
 return more clones, as any sequencing error in the window is not corrected.
 
 The special `-w all` option takes all the read as the windows, completely disabling
@@ -513,17 +513,23 @@ The `-E` option further sets the e-value for the detection of D segments.
 The following options are experimental and have no consequences on the `.vdj.fa` file,
 nor on the standard output. They instead add a `clusters` sections in the `.vidjil` file
 that will be visualized in the web application.
+Any such clustering should be avoided when one wants to precisely study hypermutations.
+The web application provides other options to inspect clones and cluster them.
 
-The `--cluster-epsilon` option triggers an automatic clustering using DBSCAN algorithm (Ester and al., 1996).
+The `--cluster-epsilon` option triggers an automatic clustering using the
+[DBSCAN](https://en.wikipedia.org/wiki/DBSCAN) algorithm (Ester and al., 1996).
 Using `--cluster-epsilon 5` usually clusters reads within a distance of 1 mismatch (default score
-being +1 for a match and -4 for a mismatch). However, more distant reads can also
-be clustered when there are more than 10 reads within the distance threshold.
+being +1 for a match and -4 for a mismatch). With that option, more distant reads will also
+be clustered as soon there are more than 10 reads within the distance threshold.
 This behaviour can be controlled with the `-cluster-N` option.
 
+Setting `--cluster-epsilon 10`, possibly with `--cluster-N 5` or `--cluster-N 1`
+will perform more aggressive clustering and is generally not advised.
+
 The `--cluster-forced-edges` option allows to specify a file for manually clustering two windows
-considered as similar. Such a file may be automatically produced by vidjil
+considered as similar. Such a file may be automatically produced by vidjil-algo
 (`out/edges`), depending on the option provided. Only the two first columns
-(separed by one space) are important to vidjil, they only consist of the
+(separed by one space) are important to vidjil-algo, they only consist of the
 two windows that must be clustered.
 
 # Output
@@ -623,9 +629,9 @@ and 1 (full diversity, each analyzed read belongs to a different clone).
 These values are now computed on the windows, before any further clustering.
 PCR and sequencing errors can thus lead to slightly over-estimate the diversity.
 
-## Details on non analyzed reads
+## Reads without detected recombinations
 
-Vidjil-algo outputs details statistics on the reads that are not analyzed.
+Vidjil-algo outputs details statistics on the reads where no recombination was detected
 Basically, **an unanalyzed read is a read where Vidjil-algo cannot identify a window at the junction of V and J genes**.
 To properly analyze a read, Vijdil-algo needs that the sequence spans enough V region and J region
 (or, more generally, 5' region and 3' regions when looking for incomplete or unusual recombinations).
@@ -657,17 +663,18 @@ that can lead to few analyzed reads.
 
 ``` diff
 Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)
-  -U, --out-analyzed          output analyzed reads (in .segmented.vdj.fa file)
-  -u, --out-unanalyzed        
-        -u          output unanalyzed reads, gathered by cause, except for very short and 'too few V/J' reads (in *.fa files)
-        -uu         output unanalyzed reads, gathered by cause, all reads (in *.fa files) (use only for debug)
-        -uuu        output unanalyzed reads, all reads, including a .unsegmented.vdj.fa file (use only for debug)
+  -U, --out-detected          output reads with detected recombinations (in .detected.vdj.fa file)
+  -u, --out-undetected
+        -u          output undetected reads, gathered by cause, except for very short and 'too few V/J' reads (in *.fa files)
+        -uu         output undetected reads, gathered by cause, all reads (in *.fa files) (use only for debug)
+        -uuu        output undetected reads, all reads, including a .undetected.vdj.fa file (use only for debug)
   --out-reads                 output all reads by clones (clone.fa-*), to be used only on small datasets
   -K, --out-affects           output detailed k-mer affectation for each read (in .affects file) (use only for debug, for example -KX 100)
 ```
 
-It is possible to extract all analyzed or not analyzed reads, possibly to give them to other software.
-Runing Vidjil-algo with `-U` gives a file `out/basename.analyzed.vdj.fa`, with all analyzed reads.
+It is possible to extract all reads with or without detected recombinations,
+possibly to give them to other software.
+Runing Vidjil-algo with `-U` gives a file `out/basename.detected.vdj.fa`, with all detected reads.
 On datasets generated with rather specific V(D)J primers, this is generally not recommended, as it may generate a large file.
 However, the `-U` option is very useful for whole RNA-Seq or capture datasets that contain few reads with V(D)J recombinations.
 Moreover `-U` only uses the ultra-fast first passs analysis, based on k-mer heuristics.
@@ -675,16 +682,17 @@ Moreover `-U` only uses the ultra-fast first passs analysis, based on k-mer heur
 
 Similarly, options are available to get the non analyzed reads:
 
-  - `-u` gives a set of files `out/basename.UNSEG_*`, with not analyzed reads gathered by cause.
+  - `-u` gives a set of files `out/basename.UNSEG_*`, with not detected reads gathered by cause.
     It outputs only reads sharing significantly sequences with V/J germline genes or with some ambiguity:
     it may be interesting to further study RNA-Seq datasets.
 
-  - `-uu` gives the same set of files, including **all** not analyzed reads (including `UNSEG too short` and `UNSEG too few V/J`),
-    and `-uuu` further outputs all these reads in a file `out/basename.unsegmented.vdj.fa`.
+  - `-uu` gives the same set of files, including **all** not detected reads (including `UNSEG too short` and `UNSEG too few V/J`),
+    and `-uuu` further outputs all these reads in a file `out/basename.undetected.vdj.fa`.
 
 Again, as these options may generate large files, they are generally not recommended.
-However, they are very useful in some situations, especially to understand why some dataset gives poor segmentation result.
-For example `-uu -X 1000` splits the not analyzed reads from the 1000 first reads.
+However, they are very useful in some situations, especially to understand
+why some dataset gives low detection rate.
+For example `-uu -X 1000` splits the not detected reads from the 1000 first reads.
 
 
 ## AIRR .tsv output
@@ -695,7 +703,7 @@ We also propose in [fuse.py](/tools) a way to convert AIRR format to the `.vidji
 
 Note that Vidjil-algo is designed to efficiently gather reads from large datasets into clones. 
 By default (`-c clones`), we thus report in the AIRR format *clones*.
-See also [What is a clone ?](vidjil-format/#what-is-a-clone).
+See also [What is a clone ?](/vidjil-format/#what-is-a-clone).
 Using `-c designations` trigger a separate analysis for each read, but this is usually not advised for large datasets. 
 
 
@@ -761,7 +769,7 @@ The following lines are for VDJ recombinations:
         Jgene         name of the J gene being rearranged
 
         comments      optional comments. In Vidjil, the following comments are now used:
-                      - "seed" when this comes for the first pass (.segmented.vdj.fa). See the warning above.
+                      - "seed" when this comes for the first pass (.detected.vdj.fa). See the warning above.
                       - "!ov x" when there is an overlap of x bases between last V seed and first J seed
                       - the name of the locus (TRA, TRB, TRG, TRD, IGH, IGL, IGK, possibly followed
                         by a + for incomplete/unusual recombinations)
@@ -777,7 +785,7 @@ applicable being removed:
 ``` diff
 >name + VJ  startV endV   startJ endJ   Vgene   delV/N1/delJ   Jgene  comments
 ```
-In the `.segmented.vdj.fa` file, the start/end positions of V and J genes are only an estimation,
+In the `.detected.vdj.fa` file, the start/end positions of V and J genes are only an estimation,
 get from the k-mer heuristics, as the center of the window may be shifted up to 15 bases from the actual center.
 In the final `.vdj.fa` file, these values are the correct ones computed after dynamic programming comparison
 with germline genes.
@@ -824,11 +832,11 @@ clustering such reads into clones, and further analyzing the clones.
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
    # Assign the VDJ genes and try to detect the CDR3 of each clone.
-   # The out/reads.segmented.vdj.fa include all reads where a V(D)J recombination was found
+   # The out/reads.detected.vdj.fa include all reads where a V(D)J recombination was found
 ```
 
 Typical whole RNA-Seq or capture datasets may be huge (several GB) but with only a (very) small portion of recombined sequences.
-Using Vidjil with `-U` will create a `out/reads.segmented.vdj.fa` file
+Using Vidjil with `-U` will create a `out/reads.detected.vdj.fa` file
 that includes all reads where a V(D)J recombination (or an unexpected recombination, with `-2`) was found.
 This file will be relatively small (a few kB or MB) and can be taken again as an input for Vidjil-algo or for other programs.
 
