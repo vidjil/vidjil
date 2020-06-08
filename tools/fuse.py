@@ -416,8 +416,6 @@ class PreProcesses:
 
     def __init__(self):
         self.d={}
-        self.d['run_timestamp'] = [None]
-        self.d['producer'] = [None]
 
     def __add__(self, other):
         obj = PreProcesses()
@@ -427,17 +425,16 @@ class PreProcesses:
         concatenate_with_padding(obj.d,
                                  self.d, length_self,
                                  other.d, length_other)
-        concatenate_with_padding_alt(obj.d,
-                                 self.d, length_self,
-                                 other.d, length_other,
-                                 'stats')
-        concatenate_with_padding_alt(obj.d,
-                                 self.d, length_self,
-                                 other.d, length_other,
-                                 'parameters')
-        obj.d['producer'] = self.d['producer'] + other.d['producer']
-        obj.d['run_timestamp'] = self.d['run_timestamp'] + other.d['run_timestamp']
         return obj
+
+    def __iter__(self):
+        return self.d.__iter__()
+
+    def __getitem__(self, item):
+        return self.d.__getitem__(item)
+
+    def __setitem__(self, item, value):
+        return self.d.__setitem__(item, value)
         
 class Samples: 
 
@@ -445,7 +442,6 @@ class Samples:
         self.d={}
         self.d["number"] = 1
         self.d["original_names"] = [""]
-        self.d["pre_process"] = PreProcesses()
 
     def __add__(self, other):
         obj=Samples()
@@ -453,9 +449,9 @@ class Samples:
         concatenate_with_padding(obj.d, 
                                  self.d, self.d['number'], 
                                  other.d, other.d['number'],
-                                 ['number'])
+                                 ['number'],
+                                 recursive=True)
 
-        obj.d['pre_process'] = self.d['pre_process'] + other.d['pre_process']
         obj.d["number"] =  int(self.d["number"]) + int(other.d["number"])
         
         return obj
@@ -490,7 +486,6 @@ class Reads:
         self.d={}
         self.d["total"] = [0]
         self.d["segmented"] = [0]
-        self.d["merged"] = [None]
         self.d["germline"] = {}
         self.d['distribution'] = {}
 
@@ -505,10 +500,14 @@ class Reads:
                                  self.d['distribution'], len(self.d['total']),
                                  other.d['distribution'], len(other.d['total']),
                                  ['total'])
-                
+        if 'merged' in self.d or 'merged' in other.d:
+            for mydict in [obj.d, self.d, other.d]:
+                if 'merged' not in mydict:
+                    mydict['merged'] = [0] * len(mydict['total'])
+            obj.d['merged'] = self.d['merged'] + other.d['merged']
+
         obj.d["total"] = self.d["total"] + other.d["total"]
         obj.d["segmented"] = self.d["segmented"] + other.d["segmented"]
-        obj.d["merged"] = self.d["merged"] + other.d["merged"]
         return obj
 
     def addAIRRClone(self, clone):
@@ -681,12 +680,6 @@ class ListWindows(VidjilJson):
         
         if 'distribution' not in self.d['reads'].d:
             self.d['reads'].d['distribution'] = {}
-
-        if 'merged' not in self.d['reads'].d:
-            self.d['reads'].d['merged'] = [None]
-
-        if 'pre_process' not in self.d['samples'].d:
-            self.d['samples'].d['pre_process'] = PreProcesses()
 
         self.id_lengths = defaultdict(int)
 

@@ -10,24 +10,6 @@ def ordered(d, key=None):
     '''sorts a dictionary into an OrderedDict'''
     return collections.OrderedDict([(k, d[k]) for k in sorted(d, key=key)])
 
-def concatenate_with_padding_alt(d,
-                                 d1, d1_size,
-                                 d2, d2_size,
-                                 key, ignore_keys=None):
-    '''Same as concatenate_with_padding but takes as key as parameter. Stores a dict un key if it is not
-    present in one of the dicts'''
-    if key not in d:
-        d[key] = {}
-    if key not in d1:
-        d1[key] = {}
-    if key not in d2:
-        d2[key] = {}
-
-    concatenate_with_padding(d[key],
-                             d1[key], d1_size,
-                             d2[key], d2_size,
-                             ignore_keys)
-
 def concatenate_with_padding(d, 
                              d1, d1_size, 
                              d2, d2_size,
