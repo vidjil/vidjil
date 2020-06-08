@@ -20,7 +20,7 @@ $ Case only one; Should find 1 filed normalized_reads
 1: normalized_reads
 
 $ Case only one; First value is null if on of file have not been annalysed by the normalization script
-7: null
+1: null
 rl1: normalized_reads.*null,.*500
 
 
@@ -31,7 +31,7 @@ $ Case inverse; Should find 1 filed normalized_reads
 1: normalized_reads
 
 $ Case inverse; Idem, but reverse files
-7: null
+1: null
 lr: "normalized_reads".*500,.*null
 
 
@@ -41,5 +41,5 @@ $ Case double timepoint; Should find 1 filed normalized_reads
 1: normalized_reads
 
 $ Case double timepoint; Correct fusion if one of the file is a already fused vidjil
-10: null
+1: null
 lr: "normalized_reads".*null,.*500,.*500
