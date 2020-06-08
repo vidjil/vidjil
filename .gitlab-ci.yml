@@ -399,7 +399,6 @@ deploy_review:
     name: review/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
     on_stop: stop_deploy_review
-  when: manual
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
@@ -429,7 +428,6 @@ deploy_review_server:
     url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/browser/
     on_stop: stop_deploy_review_server
     auto_stop_in: 2 months
-  when: manual
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/

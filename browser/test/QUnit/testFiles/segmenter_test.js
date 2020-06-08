@@ -287,10 +287,6 @@ QUnit.test("align", function (assert) {
     segment.init();
     segment.update();
 
-    // hotfix
-    assert.ok(true, "hotfix");
-    return;
-
     if (segment.cgi_address == "") segment.cgi_address = "https://db.vidjil.org/cgi/"
     
     //select 2 clones
