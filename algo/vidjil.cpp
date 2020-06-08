@@ -1133,7 +1133,7 @@ int main (int argc, char **argv)
                                                 windows_labels, only_labeled_windows,
                                                 keep_unsegmented_as_clone,
                                                 expected_value_kmer, nb_reads_for_evalue,
-                                                readScorer);
+                                                readScorer, &output);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 
@@ -1308,11 +1308,21 @@ int main (int argc, char **argv)
     cout << "  ==> " << out_seqdir + CLONE_FILENAME + "*" << "\t(detail, by clone)" << endl ; 
     cout << endl ;
 
+    global_interrupted = false;
+    signal(SIGINT, sigintHandler);
 
     for (list <pair<junction,size_t> >::const_iterator it = sort_clones.begin();
          it != sort_clones.end(); ++it) {
       junction win = it->first;
       size_t clone_nb_reads = it->second;
+
+      if (global_interrupted)
+      {
+        string msg = "Interrupted after analyzing " + string_of_int(num_clone) + " clones" ;
+        output.add_warning("W09", msg, LEVEL_WARN);
+        cout << WARNING_STRING << msg << endl ;
+        break;
+      }
 
       ++num_clone ;
 
@@ -1537,7 +1547,8 @@ int main (int argc, char **argv)
     cout << endl ;
       out_clone.close();
     } // end for clones
-	
+    signal(SIGINT, SIG_DFL);
+
     out_edges.close() ;
     delete out_clones;
 

@@ -14,6 +14,7 @@ Warnings which were implemented ([x]) have a fixed code that should not be chang
 - [ ]     Outdated germlines  
 - [ ]     Strange parameters: xxxx xxxx
 - [ ] W0z Unknown error
+- [x] W09 Program interrupted, output data may be not complete
 
 ## Output of a pre-process ~"server-pre-process" 
 - [ ] W10 Few assembled reads  #2243  

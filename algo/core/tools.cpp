@@ -457,6 +457,20 @@ void json_add_warning(json &clone, string code, string msg, string level)
   clone["warn"] += { {"code", code}, {"level", level}, {"msg", msg} } ;
 }
 
+// Signal handling
+
+bool global_interrupted;
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+void sigintHandler(int sig_num)
+{
+  signal(SIGINT, sigintHandler);
+  global_interrupted = true;
+}
+#pragma GCC diagnostic pop
+
+
 /* 
 	 Return the part of label before the star
 	 For example:
