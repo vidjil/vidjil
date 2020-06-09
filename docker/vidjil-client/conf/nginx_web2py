@@ -30,33 +30,14 @@ server {
             proxy_read_timeout 600;
             client_max_body_size 20G;
             ###
-        
         }
-        ## if you serve static files through https, copy here the section
-        ## from the previous server instance to manage static files
 
-        location ~ ^/(css|js|images|test) {
-            root /usr/share/vidjil/browser/;
+        rewrite ^/([0-9]+)-([0-9]+)(\/?) /?set=$1&conf=$2 break;
+        location / {
+            root /usr/share/vidjil/browser;
             expires 1h;
-
-            error_page 405 = $1;
-        }
-
-        #rewrite ^/([0-9]*)-([0-9]*)?(.*)$ /index.html?sample_set_id=$1&config=$2&$3 last;
-
-        location ~ ^/(client|c|browser) {
-            rewrite /(client|c|browser)(.*)$ /b$2 redirect;
-        }
-
-        location ~ ^/b {
-            root /usr/share/vidjil;
-            rewrite ^/b/([0-9/]+)/(css|js|images|test)/(.*) /$2/$3 redirect;
-            rewrite ^/b/([0-9]+)/([0-9]+)(\/?) /b/?set=$1&conf=$2 break;
-            expires 1h;
-            add_header Cache-Control must-revalidate;
 
             error_page 405 = $uri;
-
         }
 
     location /germline {
