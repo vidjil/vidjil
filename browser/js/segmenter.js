@@ -156,32 +156,31 @@ Segment.prototype = {
 
             var tmp = document.createElement('div');
 
-            var axOpts = Clone.prototype.axisOptions();
-            var available_axis = (new Axes(this.m)).available();
+            var available_axis = Axis.prototype.available()
             var self_update = function() {
                 var index = parseInt(this.id.substring(3)); // ex: "sai5" -> index = 5
-                if (this.checked) self.selectedAxis[index] = available_axis[this.value];
+                if (this.checked) self.selectedAxis[index] = Axis.prototype.getAxisProperties(this.value)
                 else delete self.selectedAxis[index];
                 self.update();
             }
-            for (var i in axOpts) {
+            for (var i in available_axis) {
                 var axis_option = document.createElement('div');
                 var axis_input = document.createElement('input');
                 axis_input.setAttribute('type', "checkbox");
-                axis_input.setAttribute('value', axOpts[i]);
+                axis_input.setAttribute('value', available_axis[i]);
                 axis_input.setAttribute('id', "sai"+i); // segmenter axis input
-                if (axOpts[i] == "size") axis_input.setAttribute('checked', "");
+                if (available_axis[i] == "size") axis_input.setAttribute('checked', "");
                 axis_input.onchange = self_update;
 
                 var axis_label = document.createElement('label');
                 axis_label.setAttribute('for', "sai"+i);
-                axis_label.appendChild(document.createTextNode(available_axis[axOpts[i]].label));
+                axis_label.appendChild(document.createTextNode(available_axis[i]));
 
                 axis_option.appendChild(axis_input);
                 axis_option.appendChild(axis_label);
                 tmp.appendChild(axis_option);
             }
-            this.selectedAxis[axOpts.indexOf("size")] = available_axis.size;
+            this.selectedAxis[available_axis.indexOf("size")] = Axis.prototype.getAxisProperties("size")
 
             axis.appendChild(tmp);
             span.appendChild(axis);
@@ -656,15 +655,14 @@ Segment.prototype = {
 
     fillAxisBox: function (axisBox, clone) {
         axisBox.removeAllChildren();
-        var axOpts = Clone.prototype.axisOptions();
-        var available_axis = this.m.available_axes
+        var available_axis = Axis.prototype.available()
         for (var i in this.selectedAxis) {
             var span = document.createElement('span');
             var axis = this.selectedAxis[i];
             span.removeAllChildren();
             span.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
-            span.setAttribute('title', this.selectedAxis[i].label);
-            span.className = axOpts[i];
+            span.setAttribute('title', this.selectedAxis[i].doc);
+            span.className = available_axis[i];
             axisBox.appendChild(span);
         }
     },

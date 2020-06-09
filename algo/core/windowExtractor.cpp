@@ -18,7 +18,8 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
                                          map<string, string> &windows_labels, bool only_labeled_windows,
                                          bool keep_unsegmented_as_clone,
                                          double nb_expected, int nb_reads_for_evalue,
-                                         VirtualReadScore *scorer) {
+                                         VirtualReadScore *scorer,
+                                         SampleOutput *output) {
   init_stats();
 
   WindowsStorage *windowsStorage = new WindowsStorage(windows_labels);
@@ -27,7 +28,18 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
 
   unsigned long long int bp_total = 0;
 
+  global_interrupted = false ;
+  signal(SIGINT, sigintHandler);
+
   while (reads->hasNext()) {
+
+    if (global_interrupted)
+    {
+      string msg = "Interrupted after processing " + string_of_int(nb_reads) + " reads" ;
+      if (output) output->add_warning("W09", msg, LEVEL_WARN);
+      cout << WARNING_STRING << msg << endl ;
+      break;
+    }
 
     try {
       reads->next();
@@ -119,6 +131,7 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
 	cout.flush() ;
       }
   }
+  signal(SIGINT, SIG_DFL);
 
   cout << endl ;
 

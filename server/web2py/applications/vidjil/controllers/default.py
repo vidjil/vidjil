@@ -108,7 +108,7 @@ def run_request():
     enough_space = vidjil_utils.check_enough_space(defs.DIR_RESULTS)
     if not enough_space:
         mail.send(to=defs.ADMIN_EMAILS,
-            subject="[Vidjil] Server space",
+            subject=defs.EMAIL_SUBJECT_START+" Server space",
             message="The space in directory %s has passed below %d%%." % (defs.DIR_RESULTS, defs.FS_LOCK_THRESHHOLD))
         return error_message("Runs are temporarily disabled. System admins have been made aware of the situation.")
 
@@ -586,7 +586,7 @@ def error():
     user_str = user_str.replace('<','').replace('>','').strip()
 
     mail.send(to=defs.ADMIN_EMAILS,
-              subject="[Vidjil] Server error - %s" % user_str,
+              subject=defs.EMAIL_SUBJECT_START+" Server error - %s" % user_str,
               message="<html>Ticket: %s<br/>At: %s<br />User: %s</html>" % (ticket_url, requested_uri, user_str))
 
     return "Server error"

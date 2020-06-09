@@ -3,12 +3,15 @@
 {{('message' in globals())}}
 {{if 'message' in globals():}}
 
+
+
 <h3>{{=message}}</h3>
 
 <div id="db_table_container">
     <table class="db_table" id="table">
         <thead>
             <tr><td class="column_50"></td>
+                <td class="column2"> classification </td>
                 <td class="column2"> name </td>
                 <td class="column1"> program </td>
                 <td> command </td>
@@ -25,6 +28,17 @@
        for row in query :}}
             <tr>
                 <td> {{=row.id }} </td>
+                {{ found = False }}
+                {{for class_elt in classification: }}
+                    {{ if class_elt.id == row.classification: }}
+                        <td title="{{ =class_elt.name}}">{{=class_elt.name}}</td>
+                        {{ found = True }}
+                    {{pass}}
+                {{pass}}
+                {{ if not found: }}
+                    <td title="Not defined">Not defined</td>
+                {{pass}}
+
                 <td> {{=row.name }} </td>
                 <td> {{=row.program }} </td>
                 <td> {{=row.command }} </td>

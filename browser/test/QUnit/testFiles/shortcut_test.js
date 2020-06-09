@@ -11,7 +11,7 @@ function keyMock(d) {
 
 QUnit.test("shortcuts on scatterplot", function(assert) {
 
-    var m = new Model(m)
+    m = new Model()
     m.parseJsonData(json_data, 100)
     m.loadGermline()
     m.initClones()
@@ -22,13 +22,13 @@ QUnit.test("shortcuts on scatterplot", function(assert) {
     var shortcut = new Shortcut(m)
     shortcut.init()
     
-    assert.equal(sp.mode, sp.MODE_GRID)
+    assert.equal(sp.mode, "grid")
     shortcut.checkKey(keyMock({'key': '#'}))
-    assert.equal(sp.mode, sp.MODE_BAR)
+    assert.equal(sp.mode, "bar")
 
-    assert.equal(sp.splitX, sp.AXIS_GENE_V)
+    assert.equal(sp.splitX,"V/5' gene")
     shortcut.checkKey(keyMock({'keyCode': 52})) // Preset 4
-    assert.equal(sp.splitX, 'averageLength')
+    assert.equal(sp.splitX, "clone average read length")
 
     assert.equal(shortcut.system_shortcuts[76][0], "IGL", "System shortcut for IGL")
     assert.equal(m.system_selected.length, 2, "We have 2 systems, TRG and IGH")

@@ -88,7 +88,7 @@ auth.define_tables(username=False, signature=False)
 mail = auth.settings.mailer
 mail.settings.server = defs.SMTP_SERVER
 mail.settings.sender = defs.FROM_EMAIL
-mail.settings.login = None
+mail.settings.login = defs.SMTP_CREDENTIALS
 
 ## configure auth policy
 auth.settings.registration_requires_verification = False
@@ -197,13 +197,18 @@ db.define_table('sequence_file',
 
 
 
+db.define_table('classification',
+                Field('name', 'string'),
+                Field('info','text'))
+
 
 db.define_table('config',
                 Field('name', 'string'),
                 Field('program', 'string'),
                 Field('command', 'string'),
                 Field('fuse_command', 'string'),
-                Field('info','text'))
+                Field('info','text'),
+                Field('classification', 'reference classification', ondelete='SET NULL'))
 
 
 db.define_table('results_file',

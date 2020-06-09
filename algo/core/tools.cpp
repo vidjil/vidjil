@@ -372,7 +372,8 @@ double nChoosek(unsigned n, unsigned k)
     return nChoosek_stored[n][k];
 }
 
-void trimSequence(string &sequence, size_t &start_pos, size_t &length) {
+void trimSequence(string &sequence, size_t &start_pos, size_t &length,
+                  size_t required_start, size_t required_length) {
   float prefix_score = 0;
   float suffix_score = 0;
   size_t start_bad_suffix = 0;
@@ -425,8 +426,10 @@ void trimSequence(string &sequence, size_t &start_pos, size_t &length) {
     }
   }
 
-  start_pos = max_start_factor;
+  start_pos = min(required_start, max_start_factor);
   length = max_factor_length;
+  if (required_start != string::npos && start_pos + length < required_start + required_length)
+    length = required_start + required_length - start_pos;
 }
 
 
@@ -454,6 +457,20 @@ void json_add_warning(json &clone, string code, string msg, string level)
   clone["warn"] += { {"code", code}, {"level", level}, {"msg", msg} } ;
 }
 
+// Signal handling
+
+bool global_interrupted;
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+void sigintHandler(int sig_num)
+{
+  signal(SIGINT, sigintHandler);
+  global_interrupted = true;
+}
+#pragma GCC diagnostic pop
+
+
 /* 
 	 Return the part of label before the star
 	 For example:
@@ -471,4 +488,20 @@ string extractGeneName(string label){
 		result = label;
 	}
 	return result;
+}
+
+
+/*
+   Opens a ostream, possibly gz-compressed
+*/
+std::ostream* new_ofgzstream(const char *f, bool gz)
+{
+  if (gz)
+  {
+    return new ogzstream(f);
+  }
+  else
+  {
+    return new ofstream(f);
+  }
 }

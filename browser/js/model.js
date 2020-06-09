@@ -44,6 +44,7 @@ SIZE_MANUALLY_ADDED_CLONE = 100000; // Default size of a manually added clone.
  * */
 function Model() {
     var self=this;
+    m=this;
     console.log("creation Model")
     
     for (var f in Model_loader.prototype) {
@@ -62,8 +63,8 @@ function Model() {
     this.NORM_EXPECTED  = "expected"
     this.NORM_EXTERNAL  = "external"
     this.normalization_mode = this.NORM_FALSE
-    this.axes = new Axes(this)
-    this.available_axes = this.axes.available()
+    //this.axes = new Axes(this)
+    //this.available_axes = this.axes.available()
 
     setInterval(function(){return self.updateIcon()}, 100); 
 }
@@ -138,24 +139,24 @@ Model.prototype = {
         // Table of conversion between axes name and distribution names
         this.distrib_convertion = {
             // Axes --> Fuse
-            "v":    "seg5",
-            "d":    "seg4",
-            "j":    "seg3",
-            "lengthCDR3":    "lenCDR3",
-            "locus" :        "germline",
+            "V/5' gene":        "seg5",
+            "D/4' gene":        "seg4",
+            "J/3' gene":        "seg3",
+            "CDR3 length (nt)": "lenCDR3",
+            "locus" :           "germline",
             // Particular, take the nb reads value of the distribution
-            "size":          "size",
+            "size":             "size",
             // Should be in Array format
-            "consensusLength" : "lenSeqConsensus",
-            "averageLength" :   "lenSeqAverage", // make a round on it (into fuse.py) ?
+            "clone consensus length" :      "lenSeqConsensus",
+            "clone average read length" :   "lenSeqAverage", // make a round on it (into fuse.py) ?
             /////////////////////
             // Fuse --> Axes
-            "seg5":    "v",
-            "seg4":    "d",
-            "seg3":    "j",
-            "lenCDR3":         "lengthCDR3",
-            "lenSeqConsensus": "consensusLength",
-            "lenSeqAverage":   "averageLength",
+            "seg5":             "V/5' gene",
+            "seg4":             "D/4' gene",
+            "seg3":             "J/3' gene",
+            "lenCDR3":          "CDR3 length (nt)",
+            "lenSeqConsensus":  "clone consensus length",
+            "lenSeqAverage":    "clone average read length",
         }
         // List of axe that must be in an array format
         this.distrib_axe_is_timmed = {
@@ -260,7 +261,7 @@ Model.prototype = {
             {"color" : "#2aa198", "name" : "custom 1", "display" : true},
             {"color" : "#d33682", "name" : "custom 2", "display" : true},
             {"color" : "#859900", "name" : "custom 3", "display" : true},
-            {"color" : "", "name" : "-/-", "display" : true}
+            {"color" : "",        "name" : "-/-", "display" : true}
         ]
 
         this.default_tag=8;

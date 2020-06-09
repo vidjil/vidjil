@@ -99,14 +99,15 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define CLONES_FILENAME ".vdj.fa"
 #define CLONE_FILENAME "clone.fa-"
 #define WINDOWS_FILENAME ".windows.fa"
-#define SEGMENTED_FILENAME ".segmented.vdj.fa"
-#define UNSEGMENTED_FILENAME ".unsegmented.vdj.fa"
+#define SEGMENTED_FILENAME ".detected.vdj.fa"
+#define UNSEGMENTED_FILENAME ".undetected.vdj.fa"
 #define UNSEGMENTED_DETAIL_FILENAME ".fa"
 #define AFFECTS_FILENAME ".affects"
 #define EDGES_FILENAME ".edges"
 #define COMP_FILENAME "comp.vidjil"
 #define AIRR_SUFFIX ".tsv"
 #define JSON_SUFFIX ".vidjil"
+#define GZ_SUFFIX ".gz"
 
 #define DEFAULT_K      0
 #define DEFAULT_W      50
@@ -484,7 +485,7 @@ int main (int argc, char **argv)
 
   double expected_value = THRESHOLD_NB_EXPECTED;
   app.add_option("--e-value,-e", expected_value,
-                 "maximal e-value for determining if a V-J segmentation can be trusted", true)
+                 "maximal e-value for trusting the detection of a V-J recombination", true)
     -> group(group) -> transform(string_NO_LIMIT);
 
   Cost segment_cost = DEFAULT_SEGMENT_COST ;
@@ -498,7 +499,7 @@ int main (int argc, char **argv)
 
   double expected_value_D = THRESHOLD_NB_EXPECTED_D;
   app.add_option("--analysis-e-value-D,-E", expected_value_D,
-                 "maximal e-value for determining if a D segment can be trusted", true)
+                 "maximal e-value for trusting the detection of a D segment", true)
     -> group(group) -> level();
 
   int kmer_threshold = DEFAULT_KMER_THRESHOLD;
@@ -546,22 +547,22 @@ int main (int argc, char **argv)
   group = "Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)";
 
   bool output_segmented = false;
-  app.add_flag("--out-analyzed,-U", output_segmented,
-               "output analyzed reads (in " SEGMENTED_FILENAME " file)")
+  app.add_flag("--out-detected,-U", output_segmented,
+               "output reads with detected recombinations (in " SEGMENTED_FILENAME " file)")
     -> group(group);
 
   bool output_unsegmented = false;
   bool output_unsegmented_detail = false;
   bool output_unsegmented_detail_full = false;
 
-  app.add_flag_function("--out-unanalyzed,-u", [&](size_t n) {
+  app.add_flag_function("--out-undetected,-u", [&](size_t n) {
       output_unsegmented = (n >= 3);             // -uuu
       output_unsegmented_detail_full = (n >= 2); // -uu
       output_unsegmented_detail = (n >= 1);      // -u
     }, R"Z(
-        -u          output unanalyzed reads, gathered by cause, except for very short and 'too few V/J' reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files)
-        -uu         output unanalyzed reads, gathered by cause, all reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files) (use only for debug)
-        -uuu        output unanalyzed reads, all reads, including a )Z" UNSEGMENTED_FILENAME R"Z( file (use only for debug))Z")
+        -u          output undetected reads, gathered by cause, except for very short and 'too few V/J' reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files)
+        -uu         output undetected reads, gathered by cause, all reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME R"Z( files) (use only for debug)
+        -uuu        output undetected reads, all reads, including a )Z" UNSEGMENTED_FILENAME R"Z( file (use only for debug))Z")
     -> group(group);
 
   bool output_sequences_by_cluster = false;
@@ -581,6 +582,9 @@ int main (int argc, char **argv)
 
   app.add_option("--dir,-o", out_dir, "output directory", true) -> group(group) -> type_name("PATH");
   app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> type_name("STRING");
+
+  bool out_gz = false;
+  app.add_flag("--gz", out_gz, "output compressed .tsv.gz, .vdj.fa.gz, and .vidjil.gz files") -> group(group) -> level();
 
   bool no_airr = false;
   bool no_vidjil = false;
@@ -817,8 +821,16 @@ int main (int argc, char **argv)
   //            JSON OUTPUT              //
   /////////////////////////////////////////
 
+  string f_clones = out_dir + f_basename + CLONES_FILENAME ;
   string f_airr = out_dir + f_basename + AIRR_SUFFIX ;
   string f_json = out_dir + f_basename + JSON_SUFFIX ;
+
+  if (out_gz)
+  {
+    f_clones += GZ_SUFFIX;
+    f_airr += GZ_SUFFIX;
+    f_json += GZ_SUFFIX;
+  }
 
   ostringstream stream_cmdline;
   for (int i=0; i < argc; i++) stream_cmdline << argv[i] << " ";
@@ -1121,7 +1133,7 @@ int main (int argc, char **argv)
                                                 windows_labels, only_labeled_windows,
                                                 keep_unsegmented_as_clone,
                                                 expected_value_kmer, nb_reads_for_evalue,
-                                                readScorer);
+                                                readScorer, &output);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 
@@ -1290,18 +1302,27 @@ int main (int argc, char **argv)
     cout << "  ==> suggested edges in " << out_dir+ f_basename + EDGES_FILENAME
         << endl ;
 
-    string f_clones = out_dir + f_basename + CLONES_FILENAME ;
-    cout << "  ==> " << f_clones << "   \t(main result file)" << endl ;
-    ofstream out_clones(f_clones.c_str()) ;
+    cout << "  ==> " << f_clones << "   \t(for post-processing with other software)" << endl ;
+    ostream* out_clones = new_ofgzstream(f_clones.c_str(), out_gz) ;
 
     cout << "  ==> " << out_seqdir + CLONE_FILENAME + "*" << "\t(detail, by clone)" << endl ; 
     cout << endl ;
 
+    global_interrupted = false;
+    signal(SIGINT, sigintHandler);
 
     for (list <pair<junction,size_t> >::const_iterator it = sort_clones.begin();
          it != sort_clones.end(); ++it) {
       junction win = it->first;
       size_t clone_nb_reads = it->second;
+
+      if (global_interrupted)
+      {
+        string msg = "Interrupted after analyzing " + string_of_int(num_clone) + " clones" ;
+        output.add_warning("W09", msg, LEVEL_WARN);
+        cout << WARNING_STRING << msg << endl ;
+        break;
+      }
 
       ++num_clone ;
 
@@ -1347,7 +1368,7 @@ int main (int argc, char **argv)
         // If max_representatives is reached, we stop here but still outputs the window
         if ((max_representatives >= 0) && (num_clone >= max_representatives + 1))
           {
-            out_clones << window_str << endl ;
+            *out_clones << window_str << endl ;
             continue;
           }
       }
@@ -1444,7 +1465,7 @@ int main (int argc, char **argv)
           {
             if (clone_on_stdout)
               cout << representative << endl ;
-            out_clones << representative << endl ;
+            *out_clones << representative << endl ;
             continue;
           }
 
@@ -1471,7 +1492,7 @@ int main (int argc, char **argv)
   if (clone_on_stdout)
     cout << seg << endl ;
 	out_clone << seg << endl ;
-	out_clones << seg << endl ;
+	*out_clones << seg << endl ;
     
         seg.toOutput(clone);
 
@@ -1526,9 +1547,10 @@ int main (int argc, char **argv)
     cout << endl ;
       out_clone.close();
     } // end for clones
-	
+    signal(SIGINT, SIG_DFL);
+
     out_edges.close() ;
-    out_clones.close();
+    delete out_clones;
 
     if (num_clone > last_num_clone_on_stdout)
       {
@@ -1737,28 +1759,33 @@ int main (int argc, char **argv)
     cout << endl;
   }
 
-  //$ Output AIRR .tsv
+  //$ Output AIRR .tsv(.gz)
   if (!no_airr)
   {
     cout << "  ==> " << f_airr << "   \t(AIRR output)" << endl;
-    ofstream out_airr(f_airr.c_str());
-    static_cast<SampleOutputAIRR *>(&output) -> out(out_airr);
+    std::ostream *out_airr = new_ofgzstream(f_airr.c_str(), out_gz);
+    static_cast<SampleOutputAIRR *>(&output) -> out(*out_airr);
+    delete out_airr;
   }
 
-  //$ Output .vidjil json
+  //$ Output .vidjil(.gz) json
   cout << "  ==> " << f_json ;
-  if (no_vidjil)
+  if (!no_vidjil)
   {
-    cout << "\t(data file for the Vidjil web application)" << endl;
+    cout << "\t(main output file, may be opened by the Vidjil web application)" << endl;
   }
   else
   {
     cout << "\t(only metadata, no clone output)" << endl;
   }
-  ofstream out_json(f_json.c_str()) ;
+
+  std::ostream *out_json = new_ofgzstream(f_json.c_str(), out_gz);
   SampleOutputVidjil *outputVidjil = static_cast<SampleOutputVidjil *>(&output);
 
-  outputVidjil -> out(out_json, !no_vidjil);
+  outputVidjil -> out(*out_json, !no_vidjil);
+
+  // In the case of ogzstream, delete actually calls .close() that is mandatory to make it work
+  delete out_json;
 
   //$$ Clean
   if (__only_on_exit__clean_memory) { delete multigermline ; delete reads; } return 0 ;

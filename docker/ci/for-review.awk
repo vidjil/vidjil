@@ -60,18 +60,29 @@ after_volumes2{
       after_volumes2=0
     }
 }
+
+after_workers {
+    print "        restart: always"
+    after_workers=0
+}
 /volumes:/{
     after_volumes=1
     after_volumes2=1
 }
 /nginx:$/{
+    # Add extra_hosts for fuse
+    print "        extra_hosts:"
+    print "          - \"fuse:127.0.0.1\""
     after_nginx=1
 }
 /ports:/{
     after_ports=1
     next
 }
-/^\s{3,6}(nginx|fuse|uwsgi|workers|mysql):$/{
+/workers:$/ {
+    after_workers=1
+}
+/^\s{3,6}(nginx|fuse|uwsgi|workers|mysql|postfix):$/{
     after_service=1
 }
 /\/opt\/vidjil\/mysql/ {

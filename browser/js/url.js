@@ -97,6 +97,7 @@ Url.prototype= {
         }
         if (typeof this.url_dict.plot !== "undefined") {
             var sp_params = this.url_dict.plot.split(',');
+            sp_params.forEach(function(e,i,a) { a[i] = decodeURIComponent(e) })
             if (sp_params.length == 2) {
                 sp_params.push(this.sp.mode);
             }

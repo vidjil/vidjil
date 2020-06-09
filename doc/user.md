@@ -4,7 +4,9 @@ Vidjil is an open-source platform for the analysis of high-throughput sequencing
 [V(D)J recombinations](http://en.wikipedia.org/wiki/V\(D\)J_recombination) in lymphocytes are essential for immunological diversity.
 They are also useful markers of pathologies, and in leukemia, are used to quantify the minimal residual disease during patient follow-up.
 With adapted [library preparation and sequencing](http://www.vidjil.org/doc/locus),
-high-throughput sequencing (NGS/HTS) now enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](http://omictools.com/rep-seq-c424-p1.html) methods and software.
+high-throughput sequencing (NGS/HTS) now
+enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](https://omictools.com/rep-seq-category)
+methods and software.
 
 This is the help of the [Vidjil web application](http://app.vidjil.org/).
 Further help can always be asked to <support@vidjil.org>. We can also arrange phone or video meeting.
@@ -128,12 +130,13 @@ then followed by the J gene `TRGJ1*02`, with `6` nucleotides deleted at its star
   - Clones can be searched (“search” box) by either their name, their custom name,
     their DNA sequence, their (partial) CDR3 amino acid sequence.
 
-  - The concentration of some clones may not be displayed. Instead you can have
-    either a `+` symbol or a `-` symbol. In the former case that means the clone has
-    been detected (positive) but in few reads (typically less than five). In the
-    latter case it means that the clone has not been detected (negative) in the
-    sample but has been detected in another sample that is not currently
-    displayed.
+  - The concentration of some clones may not be displayed.
+    - A clone with a plus symbol `+` has been detected in that sample,
+      but with only a few reads, typically less than five.
+      Its concentration ratio is thus not significant, and
+      this clone would appear in the gray zone in the sample graph.
+    - A clone with a minus symbol `−` has not been detected in that sample,
+      but has been detected in another sample that is not currently displayed.
 
 ### Detailed information on each clone
 The “🛈” button opens a window showing detailed information (V(D)J designation,
@@ -142,7 +145,9 @@ e-value, number of reads) about each clone.
 In addition, depending on what the user launched on this clone, we may also
 find detailed informations retrieved from IMGT or from CloneDB.
 
-#### Detailed information from CloneDB (experimental feature)
+#### Detailed information from CloneDB
+
+(experimental feature)
 If you are connected to a patient/experiment database where CloneDB is enabled,
 and if CloneDB was launched on the selected clone,
 you can see here occurrences of this clone in CloneDB
@@ -152,25 +157,34 @@ calculated over all the samples in the sample set.
 
 ## The sample graph
 
-The sample graph is hidden when there is only one sample. It shows the most frequent clones of each sample, tracked into every sample.
-The number of displayed clones can be changed with the filter menu.
+The sample graph is displayed as soon as there are at least two samples.
+It shows the most frequent clones of each sample, tracked into every sample.
 
   - The current sample is highlighted with a vertical gray bar. You can select another sample by clicking on it or using `←` and `→`.
 
-  - The gray areas at the bottom of the graph show, for each sample, the resolution (1 read / 5 reads).
+  - By default, the graph shows clones present in the top 20 of any sample.
+    See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads)".
+    You can instead choose to show only the clones present in the current sample
+    with “filter \> focus on clones of one sample“.
 
-  - A menu to show or hide samples either one by one or all of them is present on the graph.
-    This menu is shown when hovering the "X/Y" button at the top-right of the graph.
-    The X and Y values correspond to the shown and total  number of samples.
-    In this menu, clicking one time on one sample in the menu focuses on this sample. 
-    Double clicking on one sample switches its state between shown or hidden.
+  - When a clone gathers very few reads, typically less than five,
+    its concentration ratio is not significant and it is shown by a `+` in the clone list.
+    Such clones appear in the sample graph in a *gray zone*.
+    They should be considered as “detected, but not quantifiable“,
+    and different concentrations in the gray zone should not be compared.
 
-  - You can reorder the samples by dragging them, and hide some samples by double clicking on their label.
+  - Samples can be reordered by dragging their label.
+
+  - Samples can be hidden by double-clicking on their label.
+    At the top-right of the graph, a button such as `5/8`
+    shows how many samples are displayed (here `5`) and the total number of samples (here `8`).
+    This button reveals a menu where
+    each sample can be selected (single click),
+    shown or hidden (double click),
+    as well as options to show or to hide all samples.
 
   - If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between sample keys and dates in “settings \> sample key”
 
-  - By default, the graph shows clones present in any sample.
-    You can instead choose to show only the clones present in the selected sample with “filter \> focus on clones of one sample“.
 
 
 ## The plot view and the plot presets
@@ -207,8 +221,31 @@ The sequence panel displays nucleotide sequences from selected clones.
   - See "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clone)" below
   - Sequences can be aligned together (“align” button), identifying substitutions, insertions and deletions. Silent mutations are identified, as soon as a CDR3 is detected, and represented with a double border in blue.
   - You can remove sequences from the aligner (and the selection) by clicking on the “X” at the left.
-  - You can further analyze the sequences with IMGT/V-QUEST, IgBlast or Blast. This opens another window/tab.
   - You can unselect all sequences by clicking on the background of the grid.
+
+## Further sequence analysis with external software
+
+The sequence panel displays buttons to further analyze the selected sequences
+with other software useful for RepSeq studies.
+These buttons open another window/tab.
+
+   - [`❯ IMGT/V-QUEST`](http://www.imgt.org/IMGT_vquest):
+     The reference analysis from IMGT®.
+     The `▼` button further allows to retrieve back results from IMGT/V-QUEST
+     and to display them within Vidjil.
+
+   - [`❯ IgBlast`](https://www.ncbi.nlm.nih.gov/igblast/):
+     Nucleotide alignment with IG/TR germline sequences
+
+   - `❯ CloneDB`.  See [above](#detailed-information-from-clonedb)
+
+   - [`❯ Blast`](http://www.ensembl.org/Multi/Tools/Blast):
+     Nucleotide alignement against the Homo sapiens genome and other nucleotide collections
+
+   - [`❯ AssignSubsets`](http://tools.bat.infspire.org/arrest/assignsubsets/) (availaible for clones with IGH recombinations):
+     Assignment to the [19 known major subsets](https://www.ncbi.nlm.nih.gov/pubmed/22415752)
+     of stereotyped antigen receptor sequences for CLL
+
 
 # The patient/experiment database and the server
 
@@ -313,24 +350,27 @@ A click on the `out` link at the right of every sample give access to the raw ou
 ## Groups
 
 Each patient, run or set is assigned to at least one group.
-Users are assigned to diffrent groups and therefore gain access to any patients, runs or sets that said group has access to.
+Users are assigned to different groups and therefore gain access to any patients, runs or sets that said group has access to.
 
-There are also groups that may be clustered together. Usually this represents an organisation, such as a Hospital.
-The organisation has a group to which subgroups are associated. This allows users with different sets of permissions
-to gain access to files uploaded to the organisation's group automatically.
+Groups may be nested.
+For example, a group may represents an organization, such as a hospital or a network of hospitals.
+Subgroups may be created for individual labs and/or for different roles in the labs.
+This allows users to have different sets of permissions
+while accessing to some of the files uploaded to the organization's group.
 
-Users may be a part of several groups. By default Users are assigned their personnal group to which they can upload files
+Users may be a part of several groups. By default Users are assigned their personal group to which they can upload files
 and be the sole possessor of an access to this file.
-Different groups implies different sets of permissions. A user may not have the same permissions on a file accessed
-from an organisation's group as (s)he does on files from her/his personnal group, or even from a group associated to
-another organisation.
+Different groups imply different sets of permissions.
+A user may not have the same permissions on a file accessed
+from an organization's group as (s)he does on files from her/his personal group, or even from a group associated to
+another organization.
 
 The different permissions that can be attributed are:
 
-  - Read: Permissions to view patients/runs/sets to which a group or organisation has access to
+  - Read: Permissions to view patients/runs/sets to which a group or organization has access to
   - Create: Permissions to create patients/runs/sets
   - Upload: Permissions to upload samples to the patients/runs/sets of a group
-  - Run: Permissions to run vidjil on an uploaded samples to the patients/runs/sets of a group
+  - Run: Permissions to run Vidjil on an uploaded samples to the patients/runs/sets of a group
   - View Details: Permissions to view patient/run/set data in an unencrypted manner for the patients/runs/sets of a group
   - Save: Permissions to save an analysis for the patients/runs/sets of a group
 
@@ -345,22 +385,30 @@ potential biases that could affect your analysis.
 
 ## How do you define a clone? How are gathered clones?
 
-In vidjil-algo, called **vidjil-algo** (Giraud, Salson, BMC Genomics 2014),
+Some RepSeq studies want to broadly cluster clones to have a global view on the immune repertoire.
+One may want to focus on CDR3 on the amino-acid level, or on the nucleotide level.
+One also generally wants to correct technological artifacts (PCR, sequencing).
+On the contrary, when studying hypermutations in IGH recombinations,
+people want to know as precisely as possible differences between sequences,
+even when they occur for a single nucleotide in the V gene or elsewhere.
+
+In **vidjil-algo** (Giraud, Salson, BMC Genomics 2014),
 sequences are gathered into a same clone as long as they share the
 same 50bp DNA sequence around the CDR3 sequence.
 In a first step, the algorithm has a quick heuristic which detects approximatively
 where the CDR3 lies and extracts a 50bp nucleotide sequence centered on that
 region. This region is called a **window** in vijdil-algo. When two
 sequences share the same window, they belong to the same clone. Therefore
-in vidjil-algo clones are only defined based on the exact match of a long DNA
+in vidjil-algo clones are only defined based on the (conservative) exact match of a long DNA
 sequence. This explains why some little clones can be seen around larger
-clones: they may be due to sequencing error that lead to different windows.
+clones: They may be due to artifacts that lead to different windows.
 However those small differences can also be due to a real biological process
 inside the cells. Therefore we let the user choose whether the clones should
-be manually clustered or not.
+be manually clustered or not -- and the choice may depend on the purpose of her study.
 
 In **MiXCR**, clones are defined based on the amino-acid CDR3 sequence, on the V
 gene used and on the hypermutations.
+Other software may have other definitions, see also [What is a clone ?](/vidjil-format/#what-is-a-clone).
 
 ## What is the sequence displayed for each clone ?
 
@@ -456,9 +504,10 @@ analyzed reads, including the hidden clones.
 The web application displays one consensus sequence per clone (see [Representative](#what-is-the-sequence-displayed-for-each-clone) above).
 In some situations, one may want to go back to the reads.
 
-For **vidjil-algo**, analyzing a dataset with the *default + extract reads* config enables
-to retrieve back the analyzed reads in the `.segmented.vdj.fa` file that can be downloaded through the `out` link near each sample.
-This `.vdj.fa` output enables to use vidjil-algo as a *filtering tool*,
+For **vidjil-algo**, analyzing a dataset with the *default + extract reads* config
+generates a `.detected.vdj.fa` file with the reads with detected V(D)J recombinations.
+This file can be downloaded through the `out` link near each sample.
+It enables to use vidjil-algo as a *filtering tool*,
 shrinking a large read set into a manageable number of (pre-)clones
 that will be deeply analyzed and possibly further clustered by
 other software.
@@ -479,8 +528,8 @@ With DNA-Seq sequencing with specific V(D)J primers,
 ratios above 90% usually mean very good results. Smaller ratios, especially under 60%, often mean that something went wrong.
 On the other side, capture with many probes or RNA-Seq strategies usually lead to datasets with less than 0.1% V(D)J recombinations.
 
-The “info“ button further detail the causes of non-analysis (for vijdil-algo, `UNSEG`, see detail on [vidjil-algo documentation](http://www.vidjil.org/doc/vidjil-algo/#unsegmentation-causes)).
-There can be several causes leading to bad ratios:
+The “info“ button further detail the causes of non-analysis (for vijdil-algo, `UNSEG`, see detail on [vidjil-algo documentation](vidjil-algo/#reads-without-detected-recombinations).
+There can be several causes leading to low ratios:
 
 ### Analysis or biological causes
 
@@ -567,6 +616,24 @@ detection is.
 
 Whenever the e-value is too large, a warning sign will be shown next to the
 clone, instead of the info icon.
+
+
+# How can I have further support or help on a specific sample or on some sequences?
+
+When you have questions on specific data, we advise to use the `help > get support`
+link inside the web application.
+This opens a mail template with reference to the sample,
+and possibly with references to the selected clones.
+
+Indeed, the address <http://app.vidjil.org/?set=XXXXX&config=XXX&clone=XXX>
+reflects the sample you are studying with a given configuration.
+When you select one or several clones, the address is updated.
+
+Note that, even knowing this address,
+only the logged-in users with proper authorization can access to these data.
+This includes the uploader of the data,
+possibly users of the same groups if such groups were defined, and the server maintainers.
+
 
 # Keyboard shortcuts
 

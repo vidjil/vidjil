@@ -21,6 +21,8 @@ STATUS = {
     True: 'ok'
 }
 
+USER_AGENT = {'User-Agent': 'Mozilla/5.0'}
+
 stats = defaultdict(int)
 failed = []
 
@@ -36,7 +38,7 @@ def check_url(url, ids=[]):
 
     # External http(s) links
     try:
-        req = requests.get(url)
+        req = requests.get(url, headers = USER_AGENT)
         return (req.status_code < 400)
     except:
         return False

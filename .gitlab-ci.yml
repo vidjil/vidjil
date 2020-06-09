@@ -56,6 +56,7 @@ test_germlines:
 include:
   - local: '/doc/.gitlab-ci.yml'
   - local: 'algo/.gitlab-ci-compilers.yml' # Stage multiple_tests
+  - local: 'algo/.gitlab-ci.yml' # Vidjil-algo pipelines
 
 # Algorithm
 
@@ -332,6 +333,7 @@ test_server_unit:
     - sed -i 's/\:latest/\:test/g' ./docker/docker-compose.yml
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
     - make germline && cp browser/js/germline.js docker/vidjil-client/conf
+    - mkdir -p docker/postfix/ssl
     - cd docker && docker-compose up -d && cd ..
     - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/web2py/" server/web2py/applications/vidjil/tests/init_tests.sh
     - docker exec docker_uwsgi_1 sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
@@ -370,14 +372,19 @@ ff45-server-functional:
 # Benchmark
 
 benchmark_algo:
+  image:  gcc:6.3
+  extends: .install-algo-dependencies
   stage: benchmark
   script:
-    - cd algo/tests ; python3 benchmark-releases.py -bic
+    - cd algo/tests ; python3 benchmark-releases.py -r 3 -bIc
+  artifacts:
+    paths:
+      - algo/tests/benchmark.log
   when: manual
   only:
     - /^feature-.*a.*\/.*$/
   tags:
-    - several-compilers
+    - cidocker
 
 
 # Deployment
@@ -405,21 +412,22 @@ deploy_review_server:
     - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
     - sed -i -r "s/localhost/${CI_BUILD_REF_SLUG}.server.ci.vidjil.org/g" ./browser/js/conf.js
     - sed -r 's/^.*FILE_SOURCE.*$/FILE_SOURCE="\/usr\/share\/vidjil\/demo"/' ./docker/vidjil-server/conf/defs.py > ./server/web2py/applications/vidjil/modules/defs.py
+    - sed -i -e "/EMAIL_SUBJECT_START/c EMAIL_SUBJECT_START='[Vidjil/CI][$CI_COMMIT_REF_NAME]'" -e '/FROM_EMAIL/c FROM_EMAIL="server.ci@vidjil.org"' ./server/web2py/applications/vidjil/modules/defs.py
     - mv docker docker_${CI_BUILD_REF_SLUG}
     - cd docker_${CI_BUILD_REF_SLUG}
     - TMP_DOCKER=$(tempfile)
     - cp docker-compose.yml $TMP_DOCKER
     - awk -f ci/for-review.awk $TMP_DOCKER > docker-compose.yml
-    - sed -i '$e cat ci/fuse-entrypoint.sh' vidjil-server/scripts/fuse-entrypoint.sh
     - rm -f $TMP_DOCKER
     - sed -i -r "s/WEB2PY_ADMIN_PASSWORD=/WEB2PY_ADMIN_PASSWORD=$REVIEW_SERVER_ADMIN_PASSWORD/" docker-compose.yml
     - cd ..
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
-    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; ls -lnd ../browser | cut -d ' ' -f 3 > ../uid; docker-compose up -d mysql fuse uwsgi nginx workers"
+    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; mkdir -p postfix/ssl; docker-compose up -d mysql fuse uwsgi nginx workers"
   environment:
     name: review_server/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/browser/
     on_stop: stop_deploy_review_server
+    auto_stop_in: 2 months
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/

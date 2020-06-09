@@ -33,7 +33,7 @@
             <input class="upload_field form-control" id="file_upload_2_{{=i}}" type="file"
             {{if network_source:}}
                 disabled
-            {{elif not isEditing:}}
+            {{elif not isEditing and required_files >= 2:}}
                 required
             {{pass}}
                 title="second file for this sample (.fa, .fastq, .fa.gz, .fastq.gz)"

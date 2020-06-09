@@ -2,7 +2,9 @@ site_name: Vidjil
 
 docs_dir: doc
 
-plugins: []
+plugins:
+    - gitlab_links:
+         gitlab_url: 'https://gitlab.inria.fr/vidjil/vidjil'
 
 repo_url: https://gitlab.inria.fr/vidjil/vidjil
 repo_name: gitlab
@@ -28,7 +30,7 @@ nav:
     - Quality, roadmap, credits:
         - Software and development quality: quality.md
         - Public datasets supporting Vidjil publications 🔗: http://www.vidjil.org/data
-#       - Roadmap: roadmap.md
+        - Roadmap: roadmap.md
         - Credits, references: credits.md
 
 extra_css:
