@@ -606,6 +606,27 @@ QUnit.test("computeOrderWithStock", function(assert) {
     assert.deepEqual( m.samples.stock_order, waited, "Correct stock_order if apply m.switchTimeOrder")
 
 
+});
+
+QUnit.test("getSampleWithSelectedClones", function(assert) {
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+
+    // clone 1 present only in sample 1 and 2
+    m.clones[1].reads[2] = 0
+    m.clones[1].reads[3] = 0
+
+    // clone 2 present only in sample 2 and 3
+    m.clones[2].reads[0] = 0
+    m.clones[2].reads[3] = 0
+
+    assert.deepEqual( m.getSampleWithSelectedClones(), [0,1,2,3], "no selection, should return list of all actives samples")
+    m.select(1)
+    assert.deepEqual( m.getSampleWithSelectedClones(), [0,1], "clone 1, should return samples 1 and 2")
+    m.select(2)
+    assert.deepEqual( m.getSampleWithSelectedClones(), [0,1,2], "clone 1 and 2, should return samples 1 and 2 and 3")
 
 
 });

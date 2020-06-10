@@ -239,9 +239,20 @@ Graph.prototype = {
         var div = document.createElement('div')
         div.id = "" + this.id + "_menu"
         div.className = "graph_menu"
-        var list_title = document.createElement('div')
+
+        var list_title_line = document.createElement('div')
+        var list_title = document.createElement('span')
         list_title.id = this.id +"_title"
-        div.appendChild(list_title)
+
+        var list_title_samples = document.createElement('span')
+        list_title_samples.textContent = " sample" + (this.m.samples.number > 1 ? "s" : "")
+        list_title_samples.id = this.id +"_title_samples"
+        list_title_samples.style.display = "none"
+
+        list_title_line.appendChild(list_title)
+        list_title_line.appendChild(list_title_samples)
+
+        div.appendChild(list_title_line)
         
         var list = document.createElement('table')
         list.id = this.id +"_table"
@@ -262,10 +273,16 @@ Graph.prototype = {
                 $("#"+ self.id +"_table")
                     .stop(true, true)
                     .show()
+                $("#"+ self.id +"_title_samples")
+                    .stop(true, true)
+                    .show()
                 self.updateList()
             })
             .on("mouseout", function () {
                 $("#"+ self.id +"_table")
+                    .stop(true, true)
+                    .hide()
+                $("#"+ self.id +"_title_samples")
                     .stop(true, true)
                     .hide()
             })
@@ -288,21 +305,32 @@ Graph.prototype = {
         var table = document.getElementById(""+this.id +"_table")
         table.removeAllChildren()
 
-
+        // Show All
         var line   = document.createElement("tr")
         var line_content   = document.createElement("td")
         line_content.id = this.id +"_listElem_showAll"
         line_content.classList.add("graph_listAll")
-        line_content.textContent = "show all samples"
+        line_content.textContent = "show all"
         line_content.colSpan = "2"
         line.appendChild(line_content)
         table.appendChild(line)   
 
+        // Hide All
         line   = document.createElement("tr")
         line_content   = document.createElement("td")
         line_content.id = this.id +"_listElem_hideAll"
         line_content.classList.add("graph_listAll")
-        line_content.textContent = "hide all samples"
+        line_content.textContent = "focus on selected samples"
+        line_content.colSpan = "2"
+        line.appendChild(line_content)
+        table.appendChild(line)
+
+        // Hide not share
+        line   = document.createElement("tr")
+        line_content   = document.createElement("td")
+        line_content.id = this.id +"_listElem_hideNotShare"
+        line_content.classList.add("graph_listAll")
+        line_content.textContent = "focus on selected clones"
         line_content.colSpan = "2"
         line.appendChild(line_content)
         table.appendChild(line)
@@ -330,6 +358,13 @@ Graph.prototype = {
 
             list_content.appendChild(line_content_check)
             list_content.appendChild(line_content_text)
+
+            // Add all descripion of sample keys as tooltip
+            var tooltip = this.m.getStrTime(i, "names")
+            tooltip    += String.fromCharCode(13) + this.m.getStrTime(i, "sampling_date")
+            tooltip    += String.fromCharCode(13) + this.m.getStrTime(i, "delta_date")
+            list_content.title = tooltip
+
             table.appendChild(list_content) 
         }
 
@@ -340,6 +375,10 @@ Graph.prototype = {
         $("#"+this.id +"_listElem_hideAll").click(function () {
             console.log( "self.hideAllTimepoint( true )" )
             self.m.hideAllTime()
+        })
+        $("#"+this.id +"_listElem_hideNotShare").click(function () {
+            console.log( "self.hideNotShare()" )
+            self.m.hideNotShare()
         })
 
         $(".graph_listElem").click(function () {
@@ -452,6 +491,7 @@ Graph.prototype = {
             div.textContent  = "..."
         }
     },
+
 
 
 
