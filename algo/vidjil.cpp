@@ -1725,6 +1725,7 @@ int main (int argc, char **argv)
           }
 
         s.toOutput(clone);
+        s.checkWarnings(clone);
         clone->set("germline", g->code);
         nb_segmented_by_germline[g->code]++ ;
 
