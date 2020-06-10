@@ -405,7 +405,7 @@ class FineSegmenter : public Segmenter
    */
   void findCDR3();
 
-  void checkWarnings(CloneOutput *clone);
+  void checkWarnings(CloneOutput *clone, bool phony=true);
   void toOutput(CloneOutput *clone);
   
 };

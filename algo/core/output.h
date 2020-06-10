@@ -26,7 +26,7 @@ public:
   void set(string key, string subkey, json val);
   void set(string key, string subkey, string subsubkey, json val);
 
-  void add_warning(string code, string msg, string level);
+  void add_warning(string code, string msg, string level, bool phony=true);
 
 };
 

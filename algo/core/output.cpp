@@ -53,8 +53,11 @@ void CloneOutput::setSeg(string subkey, json val)
   set(KEY_SEG, subkey, val);
 }
 
-void Output::add_warning(string code, string msg, string level)
+void Output::add_warning(string code, string msg, string level, bool phony)
 {
+  if (phony) {
+    cout << WARNING_STRING << "(" + code + ")" << " " << msg << endl;
+  }
   json_add_warning(j, code, msg, level);
 }
 

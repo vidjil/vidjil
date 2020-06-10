@@ -12,4 +12,4 @@ $ Correct (non-)recombination
 $ Warning
 1: "code": "W61"
 1: "msg": "Non-recombined D7-27/J1 sequence"
-
+1: .warning. .W61.

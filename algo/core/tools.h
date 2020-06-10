@@ -47,6 +47,7 @@ typedef string junction ;
 #include "../lib/gzstream.h"
 #include "kmeraffect.h"
 #include "../lib/json_fwd.hpp"
+#include "warnings.h"
 using json = nlohmann::json;
 using namespace std;
 
