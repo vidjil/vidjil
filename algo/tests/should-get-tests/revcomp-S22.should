@@ -3,13 +3,13 @@
 !LAUNCH: diff out/Stanford_S22{,.rc}.vidjil | grep GGG && diff vidjil_s22.log vidjil_s22_rc.log
 !EXIT_CODE: 1
 
-$ Same number segmented
-0:==> segmented
+$ Same number detected
+0:==> detected
 
 $ Same number of windows found
 0:==> found
 
-$ Same number unsegmented
+$ Same number undetected
 0:UNSEG.*->
 
 $ Keep the same number of windows

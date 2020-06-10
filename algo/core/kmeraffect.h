@@ -178,7 +178,7 @@ namespace std {
   template <>
   struct hash<KmerAffect> {
     size_t operator()(const KmerAffect &affect) const {
-      return (affect.getLabel()[0] << 8) | affect.getLength();
+      return (((unsigned char) affect.affect.c << 8) | (affect.getLength()));
     }
   };
 }

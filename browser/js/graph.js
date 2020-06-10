@@ -385,7 +385,7 @@ Graph.prototype = {
             elem[0].classList.remove("graph_listElem_selected")
         }
         // Add css rule to current timepoint (and if at least one is show)
-        if (time != undefined && this.m.samples.order.length != 0){
+        if (time != undefined && this.m.samples.order.length > 1){
             elem = document.getElementById(this.id +'_listElem_text_'+time)
             elem.classList.add("graph_listElem_selected")
         }
@@ -445,9 +445,9 @@ Graph.prototype = {
      */
     updateCountActiveSample: function(){
         var div   = document.getElementById(this.id +"_title")
-        if (this.m.samples.number != 0 && this.m.samples.number != undefined){
+        if (this.m.samples.number > 1 && this.m.samples.number != undefined){
             div.textContent  = ""+this.m.samples.order.length+" / " + this.m.samples.number
-        } else {
+        } else if (this.m.samples.number == 0 && this.m.samples.number != undefined){
             // If no sample in the model
             div.textContent  = "..."
         }
@@ -509,7 +509,9 @@ Graph.prototype = {
         speed = typeof speed !== 'undefined' ? speed : 500;
         this.updateListElemSelected();
         this.updateCountActiveSample();
-        this.updateList()
+        if (this.m.samples.number > 1){
+            this.updateList()
+        }
 
         this.g_clone = this.clones_container.selectAll("path")
             .data(this.data_clone);
