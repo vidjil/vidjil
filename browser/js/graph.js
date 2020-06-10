@@ -293,7 +293,7 @@ Graph.prototype = {
         var line_content   = document.createElement("td")
         line_content.id = this.id +"_listElem_showAll"
         line_content.classList.add("graph_listAll")
-        line_content.textContent = "show all samples"
+        line_content.textContent = "show all"
         line_content.colSpan = "2"
         line.appendChild(line_content)
         table.appendChild(line)   
@@ -303,7 +303,7 @@ Graph.prototype = {
         line_content   = document.createElement("td")
         line_content.id = this.id +"_listElem_hideAll"
         line_content.classList.add("graph_listAll")
-        line_content.textContent = "hide all samples"
+        line_content.textContent = "focus on selected samples"
         line_content.colSpan = "2"
         line.appendChild(line_content)
         table.appendChild(line)
@@ -313,7 +313,7 @@ Graph.prototype = {
         line_content   = document.createElement("td")
         line_content.id = this.id +"_listElem_hideNotShare"
         line_content.classList.add("graph_listAll")
-        line_content.textContent = "Samples with selection"
+        line_content.textContent = "focus on selected clones"
         line_content.colSpan = "2"
         line.appendChild(line_content)
         table.appendChild(line)
@@ -343,9 +343,9 @@ Graph.prototype = {
             list_content.appendChild(line_content_text)
 
             // Add all descripion of sample keys as tooltip
-            var tooltip = "Sample name: " + this.m.getStrTime(i, "names")
-            tooltip    += String.fromCharCode(13)+"Sampling date: " + this.m.getStrTime(i, "sampling_date")
-            tooltip    += String.fromCharCode(13)+"Delta time: " + this.m.getStrTime(i, "delta_date")
+            var tooltip = this.m.getStrTime(i, "names")
+            tooltip    += String.fromCharCode(13) + this.m.getStrTime(i, "sampling_date")
+            tooltip    += String.fromCharCode(13) + this.m.getStrTime(i, "delta_date")
             list_content.title = tooltip
 
             table.appendChild(list_content) 
