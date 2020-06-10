@@ -239,9 +239,20 @@ Graph.prototype = {
         var div = document.createElement('div')
         div.id = "" + this.id + "_menu"
         div.className = "graph_menu"
-        var list_title = document.createElement('div')
+
+        var list_title_line = document.createElement('div')
+        var list_title = document.createElement('span')
         list_title.id = this.id +"_title"
-        div.appendChild(list_title)
+
+        var list_title_samples = document.createElement('span')
+        list_title_samples.textContent = " sample" + (this.m.samples.number > 1 ? "s" : "")
+        list_title_samples.id = this.id +"_title_samples"
+        list_title_samples.style.display = "none"
+
+        list_title_line.appendChild(list_title)
+        list_title_line.appendChild(list_title_samples)
+
+        div.appendChild(list_title_line)
         
         var list = document.createElement('table')
         list.id = this.id +"_table"
@@ -262,10 +273,16 @@ Graph.prototype = {
                 $("#"+ self.id +"_table")
                     .stop(true, true)
                     .show()
+                $("#"+ self.id +"_title_samples")
+                    .stop(true, true)
+                    .show()
                 self.updateList()
             })
             .on("mouseout", function () {
                 $("#"+ self.id +"_table")
+                    .stop(true, true)
+                    .hide()
+                $("#"+ self.id +"_title_samples")
                     .stop(true, true)
                     .hide()
             })
