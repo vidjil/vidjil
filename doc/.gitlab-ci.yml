@@ -6,7 +6,7 @@ build_doc:
     - pip3 install mkdocs-gitlab-plugin requests
   script:
     - make -C doc html
-    - find site -name "*.html" -type f | xargs python tools/validate-links.py
+    - cd tools ; python validate-links.py
   artifacts:
     paths:
       - site/

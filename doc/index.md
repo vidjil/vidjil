@@ -13,14 +13,19 @@ enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](ht
 methods and software.
 
 ### Life scientist
-  - Tutorial "Mastering the Vidjil web application": [english](./tutorial/mastering-vidjil.html) ([pdf](./tutorial/mastering-vidjil.pdf)), [français](./tutorial/mastering-vidjil-fr.html) ([pdf](./tutorial/mastering-vidjil-fr.pdf)) 🔗. Start by this tutorial to have an overview of Vidjil.
+  - Tutorial "Mastering the Vidjil web application":
+    [english](http://www.vidjil.org/doc/tutorial/mastering-vidjil.html)
+    ([pdf](http://www.vidjil.org/doc/tutorial/mastering-vidjil.pdf)),
+    [français](http://www.vidjil.org/doc/tutorial/mastering-vidjil-fr.html)
+    ([pdf](http://www.vidjil.org/doc/tutorial/mastering-vidjil-fr.pdf)) 🔗.
+    Start by this tutorial to have an overview of Vidjil.
   - Web platform [user manual](user.md). This is the main user manual of the Vidjil platform.
   - [Libraries and recombinations](locus.md), documentation on library preparation and sequencing as well on detected immune recombinations
   - [Demo access](http://app.vidjil.org/) 🔗 to the patient, experiment and sample public test server
 
 ### Bioinformatician
   - [Vidjil-algo documentation](vidjil-algo.md), usage from the command-line
-  - [fuse.py](tools.py), converting and merging immune repertoire data
+  - [fuse.py](tools.md), converting and merging immune repertoire data
   - Specification of the [.vidjil format](vidjil-format.md) to encode immune repertoires with clones with V(D)J recombinations
   - Specification of the [warnings](warnings.md), list of default [tags](tags.org)
   - Specification of the [.should-vdj.fa tests](should-vdj.md) for encoding and testing curated V(D)J designations
@@ -31,7 +36,7 @@ methods and software.
 
 ### Quality, open data, roadmap, credits
   - [Software and developement quality](quality.md), including software engineering methods and human and team processes
- <!--  - [Roadmap](roadmap.md) -->
+  - Bioinformatics, technical, and administrative [Roadmap](roadmap.md)
   - [Public datasets](http://www.vidjil.org/data/) 🔗 supporting Vidjil publications
   - [Credits, references](credits.md)
 
