@@ -23,7 +23,7 @@ class TestGraph < BrowserTest
     # By default, 2 samples are present in timeline graph
     $time0 = $b.graph_x_legend("0")
     $time1 = $b.graph_x_legend("1")
-    $div_ratio = $b.div(:id => "visu2_title")
+    $div_ratio = $b.span(:id => "visu2_title")
     $check0 = $b.checkbox(:id => "visu2_listElem_check_0")
     $check1 = $b.checkbox(:id => "visu2_listElem_check_1")
     $sample_arrow = $b.i(:title => "next sample")
