@@ -932,13 +932,23 @@ Clone.prototype = {
         }
 
         var s = ''
-        s += this.sequence.substring(0,  this.seg['5'].stop+1)
-        s += '\n'
+        if (this.seg['5'].start != undefined && this.seg['5'].start != 0){
+            s += this.sequence.substring(0,  this.seg['5'].start) + '\n'
+            s += this.sequence.substring(this.seg['5'].start,  this.seg['5'].stop+1) + '\n'
+        } else {
+            s += this.sequence.substring(0,  this.seg['5'].stop+1) + '\n'
+        }
+
         if (this.seg['5'].stop+1 < this.seg['3'].start ) {
             s += this.sequence.substring(this.seg['5'].stop+1, this.seg['3'].start)
             s += '\n'
         }
-        s += this.sequence.substring(this.seg['3'].start)
+        if (this.seg['3'].stop != undefined && this.seg['3'].stop != this.sequence.length){
+            s += this.sequence.substring(this.seg['3'].start, this.seg['3'].stop+1) +'\n'
+            s += this.sequence.substring(this.seg['3'].stop+1)
+        } else {
+            s += this.sequence.substring(this.seg['3'].start)
+        }
         return s
     },
 

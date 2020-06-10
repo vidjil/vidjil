@@ -476,8 +476,9 @@ QUnit.test("getFasta", function(assert) {
     m.select(1)
     var fasta = m.getFasta()
     console.log( fasta )
+    clone = m.clone(0)
 
-    fasta_to_get = ">hello    19 nt, 10 reads (5.000%, 10.00% of TRG)\naaaaaa\naaaattttt\ntttt\n\n>IGHV3-23*01 6/ACGTG/4 IGHD1-1*01 5/CCCACGTGGGGG/4 IGHJ5*02    11 nt, 10 reads (5.000%, 10.00% of IGH)\nAACGTACCAGG\n\n"
+    fasta_to_get = ">hello    19 nt, 10 reads (5.000%, 10.00% of TRG)\na\naaaaa\naaaattttt\ntttt\n\n>IGHV3-23*01 6/ACGTG/4 IGHD1-1*01 5/CCCACGTGGGGG/4 IGHJ5*02    11 nt, 10 reads (5.000%, 10.00% of IGH)\nAACGTACCAGG\n\n"
     assert.equal(fasta, fasta_to_get, "getFasta return the correct content")
 
 });
