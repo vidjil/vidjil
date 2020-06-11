@@ -622,6 +622,11 @@ int main (int argc, char **argv)
   app.add_flag("--no-airr", no_airr, "do not output AIRR .tsv") -> group(group) -> level();
   app.add_flag("--no-vidjil", no_vidjil, "do not output clones in .vidjil") -> group(group) -> level();
 
+  bool output_details = false;
+  app.add_flag("--out-details", output_details,
+               "output in AIRR .tsv and in .vidjil more details for clones, even beyond --max-designations")
+    -> group(group) -> level();
+
   int verbose = 0 ;
   app.add_flag_function("--verbose,-v", [&](size_t n) { verbose += n ; }, "verbose mode") -> group(group);
 
@@ -1525,7 +1530,7 @@ int main (int argc, char **argv)
         bool stop_analysis = ((max_clones >= 0) && (num_clone >= max_clones + 1)
             && ! windowsStorage->isInterestingJunction(it->first));
 
-        if (!stop_analysis)
+        if (!stop_analysis || output_details)
         {
         clone->set("_coverage", { repComp.getCoverage() });
         clone->set("_coverage_info", {repComp.getCoverageInfo()});
