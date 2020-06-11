@@ -89,10 +89,6 @@ int main(int argc, const char** argv)
   
   align_against_collection(read, interestingV, -1, false, false, false, &box_V, VDJ);
   align_against_collection(read, interestingJ, -1, false, true, false, &box_J, VDJ);
-  // This should be handled directly into align_against_collection
-  box_J.start = box_J.end ;
-  box_J.del_left = box_J.del_right;
-  box_J.end = read.size() - 1;
   
   int align_V_length = min(GENE_ALIGN, box_V.end - box_V.start + 1);
   int align_J_length = min(GENE_ALIGN, (int)read.size() - box_J.start + 1);
