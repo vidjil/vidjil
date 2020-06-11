@@ -168,6 +168,26 @@ do a correct gathering.
             "reads": [ 1021, 0 ],
             "germline": "TRG",
             "top": 5
+        },
+        {
+            "id": "clone_cluster1",
+            "name": "clone_cluster1",
+            "sequence": "GATACAaaaaaccccc",
+            "reads": [ 1021, 0 ],
+            "germline": "TRG",
+            "top": 6
+        },
+        {
+            "id": "clone_cluster2",
+            "name": "clone_cluster2",
+            "sequence": "AAAAATTTTTAAAAATTTTTAAAAATTTTT",
+            "reads": [ 521, 42 ],
+            "germline": "TRG",
+            "top": 7,
+            "seg":
+              {
+                  "cdr3": {"start": 10, "stop": 20}
+              }
         }
     ]
 }
@@ -233,7 +253,8 @@ some clones, and added external data (`data`).
     ],
 
     "clusters": [
-        [ "clone2", "clone3"],
+        [ "clone3", "clone2"],
+        [ "clone_cluster2", "clone_cluster1"],
         [ "clone-5", "clone-10", "clone-179" ]
     ],
 
