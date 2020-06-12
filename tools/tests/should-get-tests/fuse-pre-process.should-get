@@ -1,23 +1,23 @@
-!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o pre-process.vidjil; cat pre-process.vidjil
+!LAUNCH: python3 ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o pre-process.vidjil; cat pre-process.vidjil
 
 $ Fuse with no pre-process file
 0: "pre_process"
 
-!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil,../../../algo/tests/data/pre_process.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o pre-process.vidjil; cat pre-process.vidjil
+!LAUNCH: python3 ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil,../../../algo/tests/data/pre_process.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o pre-process.vidjil; cat pre-process.vidjil
 
 $ Fuse with one pre-process file
 lr: "combined_pairs":\s*\[\s*3000,\s*0
 1: "FLASH v2.2.00"
 1: "pre_process commandline"
 
-!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil,../../../algo/tests/data/pre_process.vidjil -o pre-process.vidjil; cat pre-process.vidjil
+!LAUNCH: python3 ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil,../../../algo/tests/data/pre_process.vidjil -o pre-process.vidjil; cat pre-process.vidjil
 
 $ Idem but reverse order
 lr: "combined_pairs":\s*\[\s*0,\s*3000
 1: "FLASH v2.2.00"
 1: "pre_process commandline"
 
-!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil,../../../algo/tests/data/pre_process.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil,../../../algo/tests/data/pre_process_2.vidjil -o pre-process.vidjil; cat pre-process.vidjil
+!LAUNCH: python3 ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil,../../../algo/tests/data/pre_process.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil,../../../algo/tests/data/pre_process_2.vidjil -o pre-process.vidjil; cat pre-process.vidjil
 
 $ Fuse with two pre-process files
 lr: "combined_pairs":\s*\[\s*3000,\s*3000

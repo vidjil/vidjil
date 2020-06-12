@@ -58,7 +58,10 @@ def concatenate_with_padding(d,
         # Create a specific loop for it
         if key not in d2:
             if key != "normalized_reads":
-                d[key] += t2
+                if ((type(d1[key]) is list) and (len(d1[key]) > 0) and (type(d1[key][0]) in [str, list])):
+                    d[key] += [type(d1[key][0])()]*d2_size
+                else:
+                    d[key] += t2
             elif key == "normalized_reads":
                 d[key] += [None]*len(d2["reads"])
 
@@ -71,7 +74,10 @@ def concatenate_with_padding(d,
 
         if key not in d:
             if key != "normalized_reads":
-                d[key] = t1 + d2[key]
+                if ((type(d2[key]) is list) and (len(d2[key]) > 0) and (type(d2[key][0]) in [str, list])):
+                    d[key] = ([type(d2[key][0])()]*d1_size) + d2[key]
+                else:
+                    d[key] = t1 + d2[key]
             elif key == "normalized_reads":
                 d[key] = [None]*len(d1["reads"]) + d2[key]
         else :
