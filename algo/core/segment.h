@@ -133,6 +133,12 @@ class AlignBox
   int getLength();
 
   /**
+   * Return whether the box cover the first/last position od the reference sequence
+   */
+  bool CoverFirstPos();
+  bool CoverLastPos();
+
+  /**
    * Returns the position in the reference string corresponding to the position in the read
    * Preliminary implementation, only works for the start of V and J boxes
    */

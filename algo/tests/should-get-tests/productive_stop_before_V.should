@@ -1,0 +1,28 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -3 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/productive_stop_before_V.fa
+!OUTPUT_FILE: out/productive_stop_before_V.vidjil
+
+$ first clone name
+1: "IGHV1-69.06 2/AACCCCCAACAAAGC/4 IGHD3-3.01 9/CCCATAAGTACCGT/1 IGHJ6.02"
+$ second clone name
+1: "IGHV3-74.01 0/GACCG/6 IGHD1-7.01 0/GC/10 IGHJ4.02"
+
+# There are 10 = 2x5 segments (V, D, J, cdr3 and junction)
+
+$ Correct number of start positions
+10: "start"
+
+$ Correct start position of IGHV1-69*06
+1: "start": 133
+
+$ Correct stop position of IGHJ6*02
+1: "stop": 534
+
+$ Correct start position of IGHV3-74*01
+1: "start": 146
+
+$ Correct number of stop positions (10-1, no stop positions for J on the second sequence)
+9: "stop"
+
+$ The two sequences are productive
+f2: "productive": true
+

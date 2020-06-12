@@ -81,18 +81,28 @@ string AlignBox::getSequence(string sequence) {
   return sequence.substr(start, end-start+1);
 }
 
+bool AlignBox::CoverFirstPos()
+{
+  return (start <= 0);
+}
+
+bool AlignBox::CoverLastPos()
+{
+  return (end >= seq_length - 1);
+}
+
 void AlignBox::addToOutput(CloneOutput *clone, int alternative_genes) {
 
   json j;
   j["name"] = ref_label;
 
-  if (key != "3") // no end information for J
+  if (key != "3" || !CoverLastPos()) // end information for J
     {
       j["stop"] = end + 1;
       j["delRight"] = del_right;
     }
 
-  if (key != "5") // no start information for V
+  if (key != "5" || !CoverFirstPos()) // start information for V
     {
       j["start"] = start + 1;
       j["delLeft"] = del_left;
@@ -1120,10 +1130,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,
     //overlap VJ
   seg_N = check_and_resolve_overlap(sequence_or_rc, 0, sequence_or_rc.length(),
                                     box_V, box_J, segment_cost, reverse_V, reverse_J);
-
-  // Reset extreme positions
-  box_V->start = 0;
-  box_J->end = sequence.length()-1;
 
   // Why could this happen ?
   if (box_J->start>=(int) sequence.length())
