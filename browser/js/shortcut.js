@@ -47,12 +47,17 @@ Shortcut.prototype = {
         
         this.system_shortcuts = {}
         for (var system in germline_data.systems){
-            var keycode = germline_data.systems[system].shortcut.toUpperCase().charCodeAt(0)
 
-            if (typeof this.system_shortcuts[keycode] == "undefined")
-                this.system_shortcuts[keycode] = []
-            
-            this.system_shortcuts[keycode].push(system)
+            if (germline_data.systems[system].shortcut != undefined){ // at init/load, some data are not present
+                var keycode = germline_data.systems[system].shortcut.toUpperCase().charCodeAt(0)
+
+                if (typeof this.system_shortcuts[keycode] == "undefined")
+                    this.system_shortcuts[keycode] = []
+
+                this.system_shortcuts[keycode].push(system)
+            } else {
+                console.default.log("Shortcuts; system undefined: " + system)
+            }
         }
         
         document.onkeydown = function (e) { self.checkKey(e); }
