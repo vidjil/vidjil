@@ -16,6 +16,7 @@ build_doc:
       # branch name should contain doc before the first /
       # eg.: doc/blabla or feature-adoc/blabla
       - /^feature-.*a.*\/release$/
+  allow_failure: true
   tags:
     - cidocker
 
