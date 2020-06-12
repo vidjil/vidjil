@@ -1342,8 +1342,11 @@ void FineSegmenter::findCDR3(){
   JUNCTIONaa = nuc_to_aa(subsequence(getSequence().sequence, JUNCTIONstart, CDR3start-1))
     + CDR3aa + nuc_to_aa(subsequence(getSequence().sequence, CDR3end+1, JUNCTIONend));
 
-  JUNCTIONproductive = (CDR3nuc.length() % 3 == 0) && (! hasInFrameStopCodon(getSequence().sequence, (JUNCTIONstart-1)%3));
+  string sequence_startV_stopJ = subsequence(getSequence().sequence, box_V->start+1, box_J->end+1);
+  int frame = (JUNCTIONstart-1 - box_V->start) % 3;
   // Reminder: JUNCTIONstart is 1-based
+
+  JUNCTIONproductive = (CDR3nuc.length() % 3 == 0) && (!hasInFrameStopCodon(sequence_startV_stopJ, frame));
 }
 
 void FineSegmenter::checkWarnings(CloneOutput *clone, bool phony)

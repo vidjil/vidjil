@@ -24,5 +24,5 @@ $ Correct number of stop positions (10-1, no stop positions for J on the second 
 9: "stop"
 
 $ The two sequences are productive
-f2: "productive": true
+2: "productive": true
 
