@@ -102,7 +102,7 @@ class Window:
     check if other information are conserved
     
     >>> (w2 + w4).d["test"]
-    [0, 'plop']
+    ['', 'plop']
     
     >>> w1.get_values("name")
     '?'
