@@ -287,7 +287,6 @@ void WindowsStorage::sortedWindowsToOutput(SampleOutput *output, int max_output,
       clone->set("reads", {it->second});
       clone->set("top", top++);
       clone->set("germline", germline_by_window[it->first]->code);
-      clone->set("seg_stat", this->statusToJson(it->first));
       
       if (delete_all) {
         germline_by_window.erase(it->first);
