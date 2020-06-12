@@ -134,3 +134,56 @@ class Sample_setController(unittest.TestCase):
 
         resp = delete()
         self.assertNotEqual(resp.find('sample set ('+str(patient.sample_set_id)+') deleted'), -1, "delete sample_set failed")
+
+    def testGetFusedStats(self):
+        tmp_res_dir = defs.DIR_RESULTS
+        defs.DIR_RESULTS = './applications/vidjil/tests/unit/tools/'
+
+        fuse = {
+            'fused_file_name': 'test.fused',
+            'results_files': {
+                1: {},
+                3: {}
+            }
+        }
+
+        stats = getFusedStats(fuse)
+        self.assertEqual(stats.keys(), [1, 3], 'getFusedStats() is missing a results file entry')
+        # main clone
+        self.assertTrue(stats[1].has_key('main clone'), 'getFusedStats() has returned a malformed dictionnary')
+        self.assertEqual(stats[1]['main clone'], 'main clone',
+                'getFusedStats() has an incorrect main clone name')
+        self.assertEqual(stats[3]['main clone'], 'secondary clone',
+                'getFusedStats() has an incorrect main clone name')
+        # reads
+        #self.assertTrue(False, 'TODO test reads stats')
+
+
+        # no name
+        fuse = {
+            'fused_file_name': 'noname.fused',
+            'results_files': {
+                1: {}
+            }
+        }
+
+        stats = getFusedStats(fuse)
+        self.assertEqual(stats.keys(), [1], 'getFusedStats() is missing a results file entry')
+        self.assertTrue(stats[1].has_key('main clone'), 'getFusedStats() has returned a malformed dictionnary')
+        self.assertEqual(stats[1]['main clone'], 'IGH',
+                'getFusedStats() has an incorrect main clone name')
+
+        # original names
+        fuse = {
+            'fused_file_name': 'originalnames.fused',
+            'results_files': {
+                1: {
+                    'sequence_file': 'first.fasta'
+                }
+            }
+        }
+
+        stats = getFusedStats(fuse)
+        self.assertEqual(stats.keys(), [1], 'getFusedStats() is missing a results file entry')
+
+        defs.DIR_RESULTS = tmp_res_dir

@@ -737,64 +737,73 @@ def getStatHeaders():
             #('abundance', 'parser', lbc)
         ]
 
-def getFusedStats(file_name, res, dest):
+def getFusedStats(fuse):
     log.debug("getFusedStats()")
-    file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
-    parser = VidjilParser()
-    parser.addPrefix('clones.item', 'clones.item.top', operator.le, 100)
-    parser.addPrefix("reads")
-    parser.addPrefix("samples")
+    file_path = "%s%s" % (defs.DIR_RESULTS, fuse['fused_file_name'])
+    results_files = fuse['results_files']
+    d = {}
+    with open(file_path, 'r') as json_file :
+        data = json.load(json_file)
+        top_clones = data['clones'][:data['samples']['number']]
 
-    mjson = parser.extract(file_path)
-    data = json.loads(mjson)
-    result_index = -1
-    if "results_file_id" in data['samples']:
-        result_index = data['samples']['results_file_id'].index(res['resuts_file_id'])
-    elif "original_names" in data['samples']:
-        result_index = data['samples']['original_names'].index(defs.DIR_SEQUENCES + res['sequence_file'])
-    dest['main clone'] = data['clones'][0]['name']
-    reads = data['reads']['total'][result_index]
-    # dest['reads'] = reads
-    mapped_reads = data['reads']['segmented'][result_index]
-    dest['mapped reads'] = "%d / %d (%.2f %%)" % (mapped_reads, reads, 100.0*mapped_reads/reads if reads else 0)
-    dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
-    dest['abundance'] = [(key, 100.0*data['reads']['germline'][key][result_index]/reads) for key in data['reads']['germline']]
+        for results_file_id in results_files:
+            dest = {}
+            res = results_files[results_file_id]
+            result_index = -1
+            if "results_file_id" in data['samples']:
+                result_index = data['samples']['results_file_id'].index(results_file_id)
+            elif "original_names" in data['samples']:
+                basenames = [os.path.basename(x) for x in data['samples']['original_names']]
+                result_index = basenames.index(os.path.basename(res['sequence_file']))
 
-    tmp = {}
-    for c in data['clones']:
-        try:
-            arl = int(math.ceil(c['_average_read_length'][result_index]))
-        except:
-            continue
-        if arl > 0:
-            if arl not in tmp:
-                tmp[arl] = 0.0
-            tmp[arl] += float(c['reads'][result_index])
-    min_len = 100 #int(min(tmp.keys()))
-    max_len = 600 #int(max(tmp.keys()))
-    tmp_list = []
-
-    if mapped_reads == 0:
-        mapped_reads = 1
-    for i in range(min_len, max_len):
-        if i in tmp:
-            if tmp[i]:
-                scaled_val = (2.5 + math.log10(tmp[i]/mapped_reads)) / 2
-                display_val = max(0.01, min(1, scaled_val)) * 100
+            sorted_clones = sorted(top_clones, key=lambda clone: clone['reads'][result_index], reverse=True)
+            if 'name' in sorted_clones[0]:
+                dest['main clone'] = sorted_clones[0]['name']
             else:
-                display_val = 0
-            real_val = 100.0*(tmp[i]/mapped_reads)
-        else:
-            display_val = 0
-            real_val = 0
-        tmp_list.append((i, display_val, real_val))
-    dest['read lengths'] = tmp_list
+                dest['main clone'] = sorted_clones[0]['germline']
+            reads = data['reads']['total'][result_index]
+            # dest['reads'] = reads
+            mapped_reads = data['reads']['segmented'][result_index]
+            dest['mapped reads'] = "%d / %d (%.2f %%)" % (mapped_reads, reads, 100.0*mapped_reads/reads if reads else 0)
+            dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
+            dest['abundance'] = [(key, 100.0*data['reads']['germline'][key][result_index]/reads) for key in data['reads']['germline']]
 
-    #dest['bool'] = False
-    #dest['bool_true'] = True
-    dest['loci'] = sorted([x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0])
-    dest['clones_five_percent'] = sum([data['reads']['distribution'][key][result_index] for key in data['reads']['germline']  if key in data['reads']['distribution']])
-    return dest
+            tmp = {}
+            for c in data['clones']:
+                try:
+                    arl = int(math.ceil(c['_average_read_length'][result_index]))
+                except:
+                    continue
+                if arl > 0:
+                    if arl not in tmp:
+                        tmp[arl] = 0.0
+                    tmp[arl] += float(c['reads'][result_index])
+            min_len = 100 #int(min(tmp.keys()))
+            max_len = 600 #int(max(tmp.keys()))
+            tmp_list = []
+
+            if mapped_reads == 0:
+                mapped_reads = 1
+            for i in range(min_len, max_len):
+                if i in tmp:
+                    if tmp[i]:
+                        scaled_val = (2.5 + math.log10(tmp[i]/mapped_reads)) / 2
+                        display_val = max(0.01, min(1, scaled_val)) * 100
+                    else:
+                        display_val = 0
+                    real_val = 100.0*(tmp[i]/mapped_reads)
+                else:
+                    display_val = 0
+                    real_val = 0
+                tmp_list.append((i, display_val, real_val))
+            dest['read lengths'] = tmp_list
+
+            #dest['bool'] = False
+            #dest['bool_true'] = True
+            dest['loci'] = sorted([x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0])
+            dest['clones_five_percent'] = sum([data['reads']['distribution'][key][result_index] for key in data['reads']['germline']  if key in data['reads']['distribution']])
+            d[results_file_id] = dest
+    return d
 
 def getResultsStats(file_name, dest):
     import ijson.backends.yajl2_cffi as ijson
@@ -836,7 +845,7 @@ def getStatData(results_file_ids):
             db.sequence_file.data_file.with_alias("sequence_file"),
             db.sample_set.id.with_alias("set_id"),
             db.sample_set.sample_type.with_alias("sample_type"),
-            db.fused_file.fused_file.with_alias("fused_file"),
+            db.fused_file.fused_file.with_alias("fused_file"), db.fused_file.fused_file.with_alias("fused_file_id"),
             db.patient.first_name, db.patient.last_name, db.patient.info.with_alias('set_info'), db.patient.sample_set_id,
             db.run.name,
             db.generic.name,
@@ -853,15 +862,23 @@ def getStatData(results_file_ids):
     tmp_data = {}
     for res in query:
         set_type = res['sample_type']
-        if res.results_file_id not in tmp_data:
+        if res.fused_file_id not in tmp_data:
+            tmp_fuse = {}
+            tmp_fuse['results_files'] = {}
+            tmp_fuse['fused_file_name'] = res.fused_file
+            tmp_data[res.fused_file_id] = tmp_fuse
+        else:
+            tmp_fuse = tmp_data[res.fused_file_id]
+
+        if res.results_file_id not in tmp_fuse['results_files']:
             tmp = res.copy()
             tmp['sets'] = []
-            tmp_data[tmp['results_file_id']] = tmp
+            tmp_fuse['results_files'][tmp['results_file_id']] = tmp
             tmp.pop('set_id', None)
             tmp.pop(set_type, None)
             tmp.pop('set_info', None)
         else:
-            tmp = tmp_data[res['results_file_id']]
+            tmp = tmp_fuse['results_files'][res['results_file_id']]
 
         sample_set = {}
         sample_set['id'] = res['set_id']
@@ -872,20 +889,21 @@ def getStatData(results_file_ids):
 
 
     data = []
-    for key in tmp_data:
-        res = tmp_data[key]
-        d = {}
-        set_type = res['sample_type']
-        headers = getStatHeaders()
-        d = getFusedStats(res['fused_file'], res, d)
+    for fuse_id in tmp_data:
+        fuse = tmp_data[fuse_id]
+        d = getFusedStats(fuse)
         #d = getResultsStats(res['data_file'], d)
-        for head, htype, model in headers:
-            if htype == 'db':
-                d[head] = res[head]
-            d[head] = model.decorate(d[head])
-        d['sequence_file_id'] = res['results_file']['sequence_file_id']
-        d['config_id'] = res['results_file']['config_id']
-        data.append(d)
+        headers = getStatHeaders()
+        for results_file_id in d:
+            res = fuse['results_files'][results_file_id]
+            r = d[results_file_id]
+            for head, htype, model in headers:
+                if htype == 'db':
+                    r[head] = res[head]
+                r[head] = model.decorate(r[head])
+            r['sequence_file_id'] = res['results_file']['sequence_file_id']
+            r['config_id'] = res['results_file']['config_id']
+            data.append(r)
     return data
 
 def multi_sample_stats():
