@@ -198,6 +198,12 @@ VMI.prototype = {
      **/
     hideView : function(view) {
         this.drawer.appendChild(view.node);
+        if (typeof view.parentId !== 'undefined') {
+            var parent = this.panels[view.parentId];
+            if (typeof parent.callback !== 'undefined') {
+                parent.callback(view);
+            }
+        }
     },
 
     hideAllViews : function() {
