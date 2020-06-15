@@ -23,8 +23,7 @@
 /* #dcffed also available */
 
 #vmi-menu {
-  position: unset;
-  bottom: unset;
+  top: @top_container_height;
   width: unset;
 }
 
@@ -156,7 +155,8 @@ ul{
   position : fixed;
   top : @top_container_height;
   bottom : 125px ;
-  width: calc(~"100%" - @margin);
+  left : @vmi_menu_width;
+  width: calc(~"100%" - @margin - @vmi_menu_width);
   background: @background;
   margin: @margin;
   display: flex;
@@ -524,6 +524,7 @@ line {
 @width_systemBox : 12px;
 @margin : 6px;
 @margin_nameBox : 10px;
+@vmi_menu_width : 100px;
 
 .list:hover, .tagElem:hover, .data:hover{
   background :@border;
@@ -1263,9 +1264,8 @@ span.logo
 
 #bot-container {
   position: fixed;
-  left: 0;
   bottom: 0;
-  width: 100%;
+  width: calc(100% - @vmi_menu_width);
   border-top: solid;
   border-width: 6px;
   min-height: 125px;
