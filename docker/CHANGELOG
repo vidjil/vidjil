@@ -3,10 +3,10 @@ This CHANGELOG concerns the Docker images of vidjil.
 We publish here notes to help to update these images.
 See <http://www.vidjil.org/doc/server>
 
-vidjil/server:XXXX
+vidjil/server:2020-06-15-6ec207d2
    - New variable in defs.py: `EMAIL_SUBJECT_START`
-   - Docker containers should now be able to send emails even if you didn't have a mail server.
-     Please customize the ADMIN_EMAILS in the defs.py file also.
+   - Docker containers should now be able to send emails even if you didn't have a mail server (added a postfix container).
+     Please customize the ADMIN_EMAILS in the vidjil-server/conf/defs.py file also.
 vidjil/server:2020-04-21-8190bd6c
    - Adding a new field in the database
    - Changes in docker-compose to wait for MySQL
