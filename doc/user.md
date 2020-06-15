@@ -242,7 +242,7 @@ These buttons open another window/tab.
    - [`❯ Blast`](http://www.ensembl.org/Multi/Tools/Blast):
      Nucleotide alignement against the Homo sapiens genome and other nucleotide collections
 
-   - [`❯ AssignSubsets`](http://tools.bat.infspire.org/arrest/assignsubsets/) (availaible for clones with IGH recombinations):
+   - [`❯ AssignSubsets`](https://station1.arrest.tools/subsets) (availaible for clones with IGH recombinations):
      Assignment to the [19 known major subsets](https://www.ncbi.nlm.nih.gov/pubmed/22415752)
      of stereotyped antigen receptor sequences for CLL
 
