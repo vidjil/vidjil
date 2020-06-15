@@ -57,12 +57,15 @@ VidjilVMI.prototype = {
         var views = Object.keys(vmi.views).map(function(key) {
             return vmi.views[key];
         });
+        this.vmi.setupPanels([this.visu_id, this.bot_id]);
         for(var i in views) {
             if(views[i].id === 'segmenter')
                 continue;
             views[i].setMutable(true);
+            this.vmi.setView(views[i], this.visu_id);
+            this.vmi.hideView(views[i]);
         }
-        this.vmi.setupPanels([this.visu_id, this.bot_id]);
+
         this.vmi.setView(this.vmi.views.visu, this.visu_id);
         this.vmi.setView(this.vmi.views.visu2, this.visu_id);
         this.vmi.setView(this.vmi.views.segmenter, this.bot_id);
@@ -91,6 +94,8 @@ VidjilVMI.prototype = {
         this.vmi.setView(this.vmi.views.data, this.left_id);
         this.vmi.setView(this.vmi.views.list, this.left_id);
         this.vmi.setView(this.vmi.views.info, this.left_id);
+        this.vmi.setView(this.vmi.views.visu3, this.visu_id);
+        this.vmi.hideView(this.vmi.views.visu3);
         this.vmi.setView(this.vmi.views.visu, this.visu_id);
         this.vmi.setView(this.vmi.views.visu2, this.visu_id);
         this.vmi.setView(this.vmi.views.segmenter, this.bot_id);
