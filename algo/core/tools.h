@@ -1,5 +1,6 @@
 #ifndef TOOLS_H
 #define TOOLS_H
+#include <string>
 
 using namespace std ;
 typedef string junction ;
