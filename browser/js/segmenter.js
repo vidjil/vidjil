@@ -1572,6 +1572,7 @@ Sequence.prototype = Object.create(genSeq.prototype);
                 highlights.push({'type':'N', 'color': "", 'start': vdjArray["3"].start});
                 highlights.push({'type':'before5', 'color': "black", 'start': 0});                  // from seq start to 5 start
                 highlights.push({'type':'after3',  'color': "black", 'start': vdjArray["3"].stop}); // from 3 stop to seq end
+                // TOOD: remove the two previous lines, see #2135
 
                 var key;
                 for (var i in SEGMENT_KEYS) {
