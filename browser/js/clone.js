@@ -750,21 +750,15 @@ Clone.prototype = {
     defineCompatibleClones: function(){
         var nb_sample = this.m.samples.number
         this.lst_compatible_clones = new Array(nb_sample)
-        for (var sample = 0; sample < this.lst_compatible_clones.length; sample++) {
-            this.lst_compatible_clones[sample] = []
-        }
 
         if (this.hasSizeDistrib()){
             var axes       = this.axes
             var dvalues    = this.getDistributionsValues(axes, 0, round=true)
-            for (var i = 0; i < this.m.clones.length; i++) {
-                var clone = this.m.clones[i]
-                if (clone.hasSizeConstant()) {
-                    for (var timepoint = 0; timepoint < nb_sample; timepoint++) {
-                        if (clone.sameAsDistribClone(this, dvalues, timepoint)){
-                            this.lst_compatible_clones[timepoint].push(i)
-                        }
-                    }
+            for (var timepoint = 0; timepoint < nb_sample; timepoint++) {
+                if (this.m.distribs[axes][timepoint][dvalues] != undefined){
+                    this.lst_compatible_clones[timepoint] = this.m.distribs[axes][timepoint][dvalues]
+                } else {
+                    this.lst_compatible_clones[timepoint] = []
                 }
             }
         }

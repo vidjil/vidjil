@@ -3141,8 +3141,23 @@ changeAlleleNotation: function(alleleNotation) {
 
         var same_distribs;
         var current_distrib;
+
+        this.distribs = {}
+
         for (var pos_axes = 0; pos_axes < raw_distribs_axes.length; pos_axes++) {
             var axes = raw_distribs_axes[pos_axes]
+            this.distribs[axes] = []
+            for (var sample = 0; sample < this.samples.number; sample++) {
+                this.distribs[axes][sample] = {}
+                for (var c_pos = 0; c_pos < this.clones.length; c_pos++) {
+                    values = this.clones[c_pos].getDistributionsValues(axes, sample)
+                    if (typeof this.distribs[axes][sample][values] != typeof []){ // equivalent python defaultdict
+                        this.distribs[axes][sample][values] = []
+                    }
+                    this.distribs[axes][sample][values].push(this.clones[c_pos].index)
+                }
+            }
+
             same_distribs = []
             // Get the list of all distributions of axes given
             for (var pos_time = 0; pos_time < this.samples.number; pos_time++) {
