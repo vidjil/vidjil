@@ -363,3 +363,43 @@ QUnit.test("reset", function (assert) {
     }, delay+=step)
  
 })
+
+QUnit.test("highlight", function (assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100);
+    m.initClones();
+    var segment = new Segment("segment",m)
+    segment.init();
+
+    var clone = m.clone(3);
+    clone.seg["5"].start = 15  // 15 nt before V
+    clone.seg["3"].stop  = 221 // 20 nt after J
+    m.select(3)
+    segment.addToSegmenter(3);
+
+    // "<span class='seq-marge'></span>                                             // Marge
+    // <span></span>
+    // <span style=\"color: black;\" class=\"before5\">GGAAGGCCCCACAGC</span>       // before V
+    // <span class=\"V\">GTCTTCTGTACTAT...TCTGGGGTCTATTACTGTGCCACCTGGGACAGG</span>  // seg V
+    // <span class=\"N\">CTGA</span>                                                // insert N1
+    // <span class=\"N\"></span>                                                    // insert N2
+    // <span class=\"J\">AGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTC</span>              // seg J
+    // <span style=\"color: black;\" class=\"after3\">ATAGTAACTTCGCCTGGTAA</span>"  // after J
+    // 
+    var str   = segment.sequence[3].toString()
+    var spans = str.split("</span>")
+    assert.equal(spans.length, 9, "correct number of spans");
+
+    assert.includes(spans[0], "seq-marge", "")
+    assert.includes(spans[2], "GGAAGGCCCCACAGC",      "segment highlight: seq before V")
+    assert.includes(spans[2], "class=\"before5\"",    "segment highlight: color of seq before V")
+    assert.includes(spans[3], "GTCTTCTGTACTAT",       "segment highlight: part seq V")
+    assert.includes(spans[3], "class=\"V\"",          "segment highlight: class V")
+    assert.includes(spans[4], ">CTGA",                "segment highlight: seq N1 (VJ)")
+    assert.includes(spans[4], "class=\"N\"",          "segment highlight: class N")
+    assert.includes(spans[6], "AGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTC", "segment highlight: seq J")
+    assert.includes(spans[6], "class=\"J\"",          "segment highlight: class J")
+    assert.includes(spans[7], "ATAGTAACTTCGCCTGGTAA", "segment highlight: seq after J")
+    assert.includes(spans[7], "class=\"after3\"",     "segment highlight: color of seq after J")
+
+})
