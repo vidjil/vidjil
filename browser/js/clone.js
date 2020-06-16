@@ -1838,7 +1838,6 @@ Clone.prototype = {
             round = true
         }
         var values = []
-        var available_axes = Axis.prototype.available()
 
         for (var a = 0; a < axes.length; a++) {
             var axe  = axes[a]
@@ -1846,8 +1845,8 @@ Clone.prototype = {
             if (axe == undefined || naxe == undefined){
                 console.default.error("Getter: not axis " + axe + "; ("+naxe+")")
             }
-            if (available_axes.indexOf(naxe) != -1 ) {
-                var axis_p = Axis.prototype.getAxisProperties(naxe)
+            if (this.m.available_axes.indexOf(naxe) != -1 ) {
+                var axis_p = AXIS_DEFAULT[naxe]
                 var value = axis_p.fct(this, timepoint)
                 values.push( value )
             } else {
