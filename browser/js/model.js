@@ -3142,19 +3142,19 @@ changeAlleleNotation: function(alleleNotation) {
         var same_distribs;
         var current_distrib;
 
-        this.distribs = {}
+        this.distribs_compatible_clones = {}
 
         for (var pos_axes = 0; pos_axes < raw_distribs_axes.length; pos_axes++) {
             var axes = raw_distribs_axes[pos_axes]
-            this.distribs[axes] = []
+            this.distribs_compatible_clones[axes] = []
             for (var sample = 0; sample < this.samples.number; sample++) {
-                this.distribs[axes][sample] = {}
+                this.distribs_compatible_clones[axes][sample] = {}
                 for (var c_pos = 0; c_pos < this.clones.length; c_pos++) {
                     values = this.clones[c_pos].getDistributionsValues(axes, sample)
-                    if (typeof this.distribs[axes][sample][values] != typeof []){ // equivalent python defaultdict
-                        this.distribs[axes][sample][values] = []
+                    if (typeof this.distribs_compatible_clones[axes][sample][values] != typeof []){ // equivalent python defaultdict
+                        this.distribs_compatible_clones[axes][sample][values] = []
                     }
-                    this.distribs[axes][sample][values].push(this.clones[c_pos].index)
+                    this.distribs_compatible_clones[axes][sample][values].push(this.clones[c_pos].index)
                 }
             }
 
@@ -3181,22 +3181,6 @@ changeAlleleNotation: function(alleleNotation) {
 
     },
 
-    /**
-     * Return the clone corresponding to an axes list and to axes values
-     *  !!!! pas utilisé pour le moment !!!
-     * @param  {Array} axes   List of axes to search
-     * @param  {Array} values List of values to get
-     * @return {Clone}        [description]
-     */
-    getCloneWithDistribValues: function(axes, values){
-        for (var c = 0; c < this.clones.length; c++) {
-            var clone = this.clones[c]
-            if (clone.sameAsDistribClone()){
-                return clone
-            }
-        }
-        return
-    },
 
     /**
      * Create clones from a list of information concatenated directly from distributions

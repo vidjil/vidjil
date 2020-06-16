@@ -726,23 +726,6 @@ Clone.prototype = {
     
 
     /**
-     * Return true if the clone share the same axes than the given distribution clone
-     * @return {Clone} dclone   A distributon clone to compare with
-     * @return {Array} dvalues  A list of values for 
-     * @return {Boolean} True if share the same axes
-     */
-    sameAsDistribClone: function(dclone, dvalues, t){
-
-        var axes = dclone.axes
-        var values = this.getDistributionsValues(axes, t, round=true)
-
-        if (dvalues.equals(values)){
-            return true
-        }
-        return false
-    },
-
-    /**
      * Define a list of compatible real clones that share the same values for available axis
      * The list is sample dependant and differ for each sample
      * This list is called at the creation of the clone
@@ -755,8 +738,8 @@ Clone.prototype = {
             var axes       = this.axes
             var dvalues    = this.getDistributionsValues(axes, 0, round=true)
             for (var timepoint = 0; timepoint < nb_sample; timepoint++) {
-                if (this.m.distribs[axes][timepoint][dvalues] != undefined){
-                    this.lst_compatible_clones[timepoint] = this.m.distribs[axes][timepoint][dvalues]
+                if (this.m.distribs_compatible_clones[axes][timepoint][dvalues] != undefined){
+                    this.lst_compatible_clones[timepoint] = this.m.distribs_compatible_clones[axes][timepoint][dvalues]
                 } else {
                     this.lst_compatible_clones[timepoint] = []
                 }
