@@ -25,6 +25,12 @@
 #vmi-menu {
   top: @top_container_height;
   width: unset;
+  background-color: @background;
+  margin: @margin 0 0 0;
+  div {
+    padding: 5px;
+    border: 1px solid;
+  }
 }
 
 html{
@@ -155,8 +161,8 @@ ul{
   position : fixed;
   top : @top_container_height;
   bottom : 125px ;
-  left : @vmi_menu_width;
   width: calc(~"100%" - @margin - @vmi_menu_width);
+  right: 0;
   background: @background;
   margin: @margin;
   display: flex;
@@ -524,7 +530,7 @@ line {
 @width_systemBox : 12px;
 @margin : 6px;
 @margin_nameBox : 10px;
-@vmi_menu_width : 100px;
+@vmi_menu_width : 70px;
 
 .list:hover, .tagElem:hover, .data:hover{
   background :@border;
