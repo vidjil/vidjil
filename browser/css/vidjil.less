@@ -33,6 +33,11 @@
   }
 }
 
+.vmi-menu-right {
+  left: unset;
+  right: 0;
+}
+
 html{
   height: 100%;
   padding: 0px;
@@ -168,6 +173,11 @@ ul{
   display: flex;
   flex: auto;
   overflow: hidden;
+}
+
+.vidjil-panels-left {
+  right: unset;
+  left : 0;
 }
 
 #mid-container {
@@ -1271,7 +1281,7 @@ span.logo
 #bot-container {
   position: fixed;
   bottom: 0;
-  width: calc(100% - @vmi_menu_width);
+  width: calc(100% - @margin - @vmi_menu_width);
   border-top: solid;
   border-width: 6px;
   min-height: 125px;
