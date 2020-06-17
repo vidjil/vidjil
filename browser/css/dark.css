@@ -6,6 +6,12 @@
 #vmi-menu {
   top: 32px;
   width: unset;
+  background-color: #000000;
+  margin: 6px 0 0 0;
+}
+#vmi-menu div {
+  padding: 5px;
+  border: 1px solid;
 }
 html {
   height: 100%;
@@ -111,8 +117,8 @@ ul {
   position: fixed;
   top: 32px;
   bottom: 125px ;
-  left: 100px;
-  width: calc(100% - 6px - 100px);
+  width: calc(100% - 6px - 70px);
+  right: 0;
   background: #000000;
   margin: 6px;
   display: flex;
@@ -1069,7 +1075,7 @@ span.logo {
 #bot-container {
   position: fixed;
   bottom: 0;
-  width: calc(100% - 100px);
+  width: calc(100% - 70px);
   border-top: solid;
   border-width: 6px;
   min-height: 125px;
