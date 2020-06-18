@@ -32,6 +32,8 @@ class TestScatterplot < BrowserTest
   # id    29 --> seg5; seg3 (IGHV1; IGHJ1)
 
   def test_01_multiple_select_barmode
+    $b.menu_filter.click
+    $b.update_icon.wait_while(&:present?)
     $b.send_keys 4
     $b.update_icon.wait_while(&:present?)
     # to verify correct selection, We will look in semgenter the presence if clone entrie
@@ -57,6 +59,8 @@ class TestScatterplot < BrowserTest
   end
 
   def test_02_multiple_select_bubble
+    $b.menu_filter.click
+    $b.update_icon.wait_while(&:present?)
     $b.send_keys 1
     $b.update_icon.wait_while(&:present?)
     # to verify correct selection, We will look in semgenter the presence if clone entrie

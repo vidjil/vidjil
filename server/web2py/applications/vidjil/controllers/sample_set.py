@@ -133,6 +133,10 @@ def index():
 
     classification   = getConfigsByClassification()
 
+    http_origin = ""
+    if request.env['HTTP_ORIGIN'] is not None:
+        http_origin = request.env['HTTP_ORIGIN'] + "/"
+
     log.info('sample_set (%s)' % request.vars["id"], extra={'user_id': auth.user.id,
         'record_id': request.vars["id"],
         'table_name': "sample_set"})
@@ -152,7 +156,8 @@ def index():
                 sample_type = db.sample_set[request.vars["id"]].sample_type,
                 config=config,
                 classification=classification,
-                tag_decorator=tag_decorator)
+                tag_decorator=tag_decorator,
+                http_origin=http_origin)
 
 ## return a list of generic sample_sets
 def all():

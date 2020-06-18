@@ -81,3 +81,4 @@ SET_TYPE_RUN= 'run'
 SET_TYPE_GENERIC = 'generic'
 
 REQUIRE_HTTPS = True
+BROWSER_PATH = 'browser/index.html'

@@ -205,8 +205,8 @@
                          (db.config.id ==db.fused_file.config_id)
                        ).select() :}}
         
-            {{if row.fused_file.fused_file is not None :}}
-                <a class="button2" href="index.html?sample_set_id={{=request.vars["id"]}}&config={{=row.config.id}}" type="text/html"
+            {{if row.fused_file.fused_file is not None :}}     
+                <a class="button2" href="{{=http_origin}}?sample_set_id={{=request.vars["id"]}}&config={{=row.config.id}}" type="text/html"
                       onclick="event.preventDefault()
                                if( event.which == 2 ) { window.open(this.href) }
                                else { myUrl.loadUrl(db, { 'sample_set_id' : '{{=request.vars["id"]}}' , 'config' : {{=row.config.id}} }, '{{=info["filename"]}}' ) }" >

@@ -45,12 +45,15 @@ class SampleSet(object):
 
     def get_config_urls(self, data):
         configs = []
+        http_origin = ""
+        if request.env['HTTP_ORIGIN'] is not None:
+            http_origin = request.env['HTTP_ORIGIN'] + "/"
         for conf in data['conf_list']:
             filename =  "(%s %s)" % (self.get_name(data), conf['name'])
             if conf['fused_file'] is not None :
                 configs.append(
                     str(A(conf['name'],
-                        _href="index.html?sample_set_id=%d&config=%d" % (data['sample_set_id'], conf['id']), _type="text/html",
+                        _href=http_origin + "?sample_set_id=%d&config=%d" % (data['sample_set_id'], conf['id']), _type="text/html",
                         _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %d }, '%s' ); }" % (data['sample_set_id'], conf['id'], filename))))
             else:
                 configs.append(conf['name'])
