@@ -273,6 +273,19 @@ VMI.prototype = {
     },
 
     /**
+     * Generates a function to hide a view
+    * @param {View} view
+     **/
+    viewHider: function(view) {
+        var self = this;
+        var func = function(e) {
+            self.hideView(view);
+            e.stopPropagation();
+        }
+        return func;
+    },
+
+    /**
      * Builds menu buttons and interactions, especially depending on the views registered in this.views
      **/
     setMenuOptions : function(decorator) {
@@ -285,6 +298,7 @@ VMI.prototype = {
         menu.id = "vmi-menu";
         var div;
         var view;
+        var cross, crossspan;
 
         var views = Object.keys(self.views).map(function(key) {
             return self.views[key];
@@ -306,6 +320,14 @@ VMI.prototype = {
                 var div     = document.getElementById(view_id)
                 div.classList.remove("vmi-highlight");
             }
+            crossspan = document.createElement('span');
+            crossspan.classList.add("cancel-container");
+            cross = document.createElement('i');
+            cross.onclick = this.viewHider(view);
+            cross.classList.add("cancel-button");
+            cross.classList.add("icon-cancel-circled");
+            crossspan.appendChild(cross);
+            div.insertBefore(crossspan, div.childNodes[0]);
             // div.ondblclick = viewSelector(views[i]);
             // div.addEventListener('dblclick', focus);
             menu.appendChild(div);
