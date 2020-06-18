@@ -473,10 +473,14 @@ Model_loader.prototype = {
                     for (var key in dict[id]) {
                         clone[key][idx] = dict[id][key];
                     }
-
             }
         }
-        if ('order' in analysis) {
+        if ('order' in analysis && 'stock_order' in analysis) {
+            // Jquery Extend don't work on samples.order.
+            clone.order       = analysis.order
+            clone.stock_order = analysis.stock_order
+        } else if ('order' in analysis && !('stock_order' in analysis)) {
+            // Keep this behavior to ope old samples/analysis
             clone.order = this.calculateOrder(clone.order);
         }
         return clone;
