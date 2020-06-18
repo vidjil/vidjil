@@ -593,6 +593,7 @@ Model_loader.prototype = {
                 }
             }
             this.toggle_all_systems(true);
+            this.t = this.samples.order[0]
             
         }else{
             console.log({"type": "flash", "msg": "invalid version for this .analysis file" , "priority": 1});
