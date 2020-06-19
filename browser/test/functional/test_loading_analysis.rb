@@ -15,6 +15,10 @@ class TestLoadingAnalysis < BrowserTest
   end
 
   def test_001_name
+    # change current sample to start on sample 0 (second in loaded order)
+    $b.send_keys :arrow_right
+    $b.update_icon.wait_while(&:present?)
+
     assert ($b.graph_x_legend('0').text == '2019-12-17')
     assert ($b.graph_x_legend('1').text == '+10')
 
