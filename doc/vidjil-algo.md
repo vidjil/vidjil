@@ -64,6 +64,12 @@ Vidjil-algo is systematically tested with the following compilers :
   - gcc/g++ 4.8, 5.3, 6.3, 7.3, 8.4, 9.3, 10.1
   - clang 4.0, 6.0, 7.0
 
+These compilers are available on recent OS X and on the following Linux distributions:
+  - CentOS 7, 8
+  - Debian Jessie 8.0, Stretch 9.0, Buster 10.0
+  - FreeBSD 9.2, 10, 11, 12
+  - Ubuntu 16.04 LTS, 18.04 LTS, 20.04 LTS
+
 Vidjil-algo is developed with continuous integration using systematic unit and functional testing.
 The development team internally uses [Gitlab CI](http://gitlab.vidjil.org/pipelines) and [Jenkins](https://jenkins-ci.org/) for that.
 
@@ -78,90 +84,12 @@ To compile Vidjil-algo, make sure:
   - to have a C++11 compiler (as `g++` 4.8 or above, or `clang` 3.3 or above).
   - to have the `zlib` installed (`zlib1g-dev` package under Debian/Ubuntu,
     `zlib-devel` package under Fedora/CentOS).
-
-### CentOS 6
-
-g++-4.8 is included in the devtools 2.0.
-
-``` bash
-sudo wget http://people.centos.org/tru/devtools-2/devtools-2.repo -O /etc/yum.repos.d/devtools-2.repo
-sudo yum install devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++ devtoolset-2-valgrind
-
-# scl enable devtoolset-2 bash     # either open a shell running devtools
-source /opt/rh/devtoolset-2/enable # ... or source devtools in the same shell
-```
-
-### CentOS 7.2
-
-g++-4.8 is included.
-
-### FreeBSD 9.2
-
-g++-4.8 is included in FreeBSD 9.2.
-
-You may also need to install the `gzstream` library with:
-
-``` bash
-pkg install gzstream
-```
-
-Also Vidjil-algo uses GNU make which requires `gmake` under FreeBSD.
-At the time of redacting the documentation, `g++` requires extra options to
-ensure flawless compilation and execution of Vidjil-algo:
-
+  - to have GNU make (`gmake` under FreeBSD). On some FreeBSD distributions, it was required to use commands such as
 ``` bash
 make MAKE=gmake CXXFLAGS="-std=c++11 -O2 Wall -D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"
 ```
+    The `gcc49` at the end of the command line is to be replaced by the `gcc` version used.
 
-The `gcc49` at the end of the command line is to be replaced by the `gcc` version
-used.
-
-### Debian Squeeze 6.0 / Wheezy 7.0
-
-g++-4.8 should be pinned from testing.
-Put in `/etc/apt/preferences` the following lines:
-
-``` bash
-Package: *
-Pin: release n=wheezy # (or squeeze)
-Pin-Priority: 900
-
-Package: g++-4.8, gcc-4.8, valgrind*
-Pin: release n=jessie
-Pin-Priority: 950
-```
-
-Then g++ 4.8 can be installed.
-
-``` bash
-apt-get update
-apt-get install -t jessie g++-4.8 valgrind
-```
-
-### Ubuntu 16.04 LTS, Ubuntu 18.04 LTS
-
-Recent versions of `g++` are included.
-
-### Ubuntu 14.04 LTS
-
-``` bash
-sudo apt-get install g++-4.8
-```
-
-### Ubuntu 12.04 LTS
-
-g++-4.8 is included in the devtools 2.0.
-
-``` bash
-sudo apt-get install python-software-properties
-sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-sudo apt-get update
-sudo apt-get install g++-4.8
-```
-
-### OS X
-
-Xcode should be installed first.
 
 ## Installation
 
