@@ -71,7 +71,8 @@ These compilers are available on recent OS X and on the following Linux distribu
   - Ubuntu 16.04 LTS, 18.04 LTS, 20.04 LTS
 
 Vidjil-algo is developed with continuous integration using systematic unit and functional testing.
-The development team internally uses [Gitlab CI](http://gitlab.vidjil.org/pipelines) and [Jenkins](https://jenkins-ci.org/) for that.
+The development team internally uses [Gitlab CI](http://gitlab.vidjil.org/pipelines) for that,
+and the tested compilers are run through Docker containers described in `.gitlab-ci-compilers.yml`.
 
 ## Build requirements (optional)
 
