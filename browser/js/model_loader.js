@@ -416,7 +416,13 @@ Model_loader.prototype = {
         return fields;
     },
 
+    /**
+     * recalculating the array is sometimes necessary if the analysis and fused_file have diverged.
+     * @param  {Array} arr [description]
+     * @return {Array}     [description]
+     */
     calculateOrder: function(arr) {
+
         tmp = arr.slice();
         res = arr.slice();
         previous = -1;
@@ -479,6 +485,13 @@ Model_loader.prototype = {
             // Jquery Extend don't work on samples.order.
             clone.order       = analysis.order
             clone.stock_order = analysis.stock_order
+            // Check if new sample have been added
+            if (clone.stock_order.length < this.samples.number){
+                for (var j = clone.stock_order.length; j < this.samples.number; j++) {
+                    clone.order.push(j)
+                    clone.stock_order.push(j)
+                }
+            }
         } else if ('order' in analysis && !('stock_order' in analysis)) {
             // Keep this behavior to ope old samples/analysis
             clone.order = this.calculateOrder(clone.order);
