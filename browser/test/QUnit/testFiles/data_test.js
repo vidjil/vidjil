@@ -311,3 +311,72 @@ data_distributions =    {
             }]
         }
    }
+
+
+
+
+analysis_data_stock_order = {
+  "producer": "browser",
+  "timestamp": "2017-2-13 10:41:25",
+  "vidjil_json_version": "2014.09",
+  "samples": {
+    "id": [
+      "Diag.fa",
+      "Fu-0.fa",
+      "Fu-1.fa",
+      "Fu-2.fa"
+    ],
+    "timestamp": [
+      "2014-10-20 13:59:02",
+      "2014-10-22 11:00:32",
+      "2014-10-22 11:00:32",
+      "2014-10-25 14:00:32"
+    ],
+    "commandline": [
+      "./vidjil -c clones -g germline/ -r 1 -o ./out0 -z 200 -n 5 Diag.fa ",
+      "./vidjil -c clones -g germline/ -r 1 -o ./out1 -z 200 -n 5 Fu-0.fa ",
+      "./vidjil -c clones -g germline/ -r 1 -o ./out1 -z 200 -n 5 Fu-0.fa ",
+      "./vidjil -c clones -g germline/ -r 1 -o ./out2 -z 200 -n 5 Fu-1.fa "
+    ],
+    "number": 4,
+    "order": [
+      3,
+      0,
+      1
+    ],
+    "stock_order": [
+      2,
+      3, 
+      0,
+      1
+    ],
+    "names": [
+      "diag",
+      "fu0",
+      "fu1",
+      "fu2"
+    ]
+  },
+  "clones": [
+  ],
+  "clusters": [],
+  "tags": {
+    "names": {
+      "0": "clone 1",
+      "1": "clone 2",
+      "2": "clone 3",
+      "3": "standard",
+      "4": "standard (noise)",
+      "5": "custom 1",
+      "6": "custom 2",
+      "7": "custom 3",
+      "8": "-/-"
+    },
+    "hide": []
+  },
+  "normalization": {
+    "A": [],
+    "B": 0,
+    "id": -1
+  }
+}

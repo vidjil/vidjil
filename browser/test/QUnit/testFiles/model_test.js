@@ -62,6 +62,23 @@ QUnit.test("load", function(assert) {
     
 });
 
+
+QUnit.test("load with new order && stock_order", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100)
+    m.initClones()
+    m.parseJsonAnalysis(analysis_data_stock_order)
+    m.initClones()
+
+    assert.deepEqual(m.samples.order,         [3,0,1], "Correct order after loading" )
+    assert.deepEqual(m.samples.stock_order, [2,3,0,1], "Correct stock_order after loading" )
+    assert.equal(m.t, 3, "Correct time selected after analysis loading")
+
+    // Note, respective clone 0 size: 0.05, 0.1, 0.075, 0.15
+    assert.equal( m.clones[0].getSize(), m.clones[0].getSize(3), "clone 0 hve size corresponding to timepoint 3 (loading order)")
+});
+
+
 QUnit.test("time control", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data)
