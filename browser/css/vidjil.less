@@ -165,10 +165,17 @@ ul{
   bottom : 125px ;
   background: @background;
   margin: @margin;
-  width: calc(~"100%" - @margin - @vmi_menu_width);
   display: flex;
   flex: auto;
   overflow: hidden;
+}
+
+.vidjil-panels-left {
+  width: calc(~"100%" - @margin - @vmi_menu_width);
+}
+
+.vidjil-panels-full {
+  width: calc(~"100%" - @margin);
 }
 
 #mid-container {
@@ -1276,7 +1283,6 @@ span.logo
 #bot-container {
   position: fixed;
   bottom: 0;
-  width: calc(100% - @margin - @vmi_menu_width);
   border-top: solid;
   border-width: 6px;
   min-height: 125px;

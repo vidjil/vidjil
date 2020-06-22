@@ -71,6 +71,8 @@ VidjilVMI.prototype = {
         this.vmi.setView(this.vmi.views.segmenter, this.bot_id);
         this.reset_menu();
         this.mode = VVMI_TABLET;
+        $('#vidjil-panels, #bot-container').removeClass('vidjil-panels-full');
+        $('#vidjil-panels, #bot-container').addClass('vidjil-panels-left');
     },
 
     normal_mode : function() {
@@ -101,6 +103,8 @@ VidjilVMI.prototype = {
         this.vmi.setView(this.vmi.views.segmenter, this.bot_id);
         this.reset_menu();
         this.mode = VVMI_NORMAL;
+        $('#vidjil-panels, #bot-container').removeClass('vidjil-panels-full');
+        $('#vidjil-panels, #bot-container').addClass('vidjil-panels-left');
     },
 
     wide_mode : function() {
@@ -125,6 +129,8 @@ VidjilVMI.prototype = {
         this.vmi.setView(this.vmi.views.segmenter, this.bot_id);
         this.reset_menu();
         this.mode = VVMI_WIDE;
+        $('#vidjil-panels, #bot-container').addClass('vidjil-panels-full');
+        $('#vidjil-panels, #bot-container').removeClass('vidjil-panels-left');
     },
 
     select_mode: function() {
