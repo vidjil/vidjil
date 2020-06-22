@@ -5,6 +5,7 @@
 /* #dcffed also available */
 #vmi-menu {
   top: 32px;
+  right: 0;
   width: unset;
   background-color: #ffffff;
   margin: 6px 0 0 0;
@@ -12,10 +13,6 @@
 #vmi-menu div {
   padding: 5px;
   border: 1px solid;
-}
-.vmi-menu-right {
-  left: unset;
-  right: 0;
 }
 html {
   height: 100%;
@@ -120,18 +117,14 @@ ul {
 #vidjil-panels {
   position: fixed;
   top: 32px;
+  left: 0;
   bottom: 125px ;
-  width: calc(100% - 6px - 70px);
-  right: 0;
   background: #ffffff;
   margin: 6px;
+  width: calc(100% - 6px - 70px);
   display: flex;
   flex: auto;
   overflow: hidden;
-}
-.vidjil-panels-left {
-  right: unset;
-  left: 0;
 }
 #mid-container {
   display: flex;
@@ -167,6 +160,9 @@ ul {
 }
 #visu2 {
   max-height: calc(100% - 6px);
+}
+#visu3 {
+  height: 100%;
 }
 line {
   stroke: #93a1a1;
