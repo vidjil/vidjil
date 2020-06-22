@@ -71,8 +71,6 @@ VidjilVMI.prototype = {
         this.vmi.setView(this.vmi.views.segmenter, this.bot_id);
         this.reset_menu();
         this.mode = VVMI_TABLET;
-        $('#vidjil-panels').removeClass('vidjil-panels-left');
-        $('#vmi-menu').removeClass('vmi-menu-right');
     },
 
     normal_mode : function() {
@@ -103,8 +101,6 @@ VidjilVMI.prototype = {
         this.vmi.setView(this.vmi.views.segmenter, this.bot_id);
         this.reset_menu();
         this.mode = VVMI_NORMAL;
-        $('#vidjil-panels').addClass('vidjil-panels-left');
-        $('#vmi-menu').addClass('vmi-menu-right');
     },
 
     wide_mode : function() {

@@ -24,6 +24,7 @@
 
 #vmi-menu {
   top: @top_container_height;
+  right: 0;
   width: unset;
   background-color: @background;
   margin: @margin 0 0 0;
@@ -31,11 +32,6 @@
     padding: 5px;
     border: 1px solid;
   }
-}
-
-.vmi-menu-right {
-  left: unset;
-  right: 0;
 }
 
 html{
@@ -165,19 +161,14 @@ ul{
 #vidjil-panels {
   position : fixed;
   top : @top_container_height;
+  left : 0;
   bottom : 125px ;
-  width: calc(~"100%" - @margin - @vmi_menu_width);
-  right: 0;
   background: @background;
   margin: @margin;
+  width: calc(~"100%" - @margin - @vmi_menu_width);
   display: flex;
   flex: auto;
   overflow: hidden;
-}
-
-.vidjil-panels-left {
-  right: unset;
-  left : 0;
 }
 
 #mid-container {
