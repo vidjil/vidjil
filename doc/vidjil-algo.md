@@ -62,7 +62,7 @@ Vidjil-algo is open-source, released under GNU GPLv3+ license.
 Vidjil-algo is systematically tested with the following compilers :
 
   - gcc/g++ 4.8, 5.3, 6.3, 7.3, 8.4, 9.3, 10.1
-  - clang 4.0, 6.0, 7.0
+  - clang 3.4, 4.0, 6.0, 7.0
 
 These compilers are available on recent OS X and on the following Linux distributions:
   - CentOS 7, 8
