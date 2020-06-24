@@ -170,11 +170,24 @@ VidjilVMI.prototype = {
     }
 }
 
+function create_separator() {
+    var separator = document.createElement('div');
+    separator.classList.add('visu-separator');
+    return separator;
+}
+
 function visu_callback(view) {
-    var panelDOM = document.getElementById(this.id);
-    var sep = document.getElementById('visu-separator');
-    panelDOM.removeChild(sep);
-    panelDOM.insertBefore(sep, panelDOM.firstElementChild.nextElementSibling);
+    $('.visu-separator').remove();
+
+    if(this.view_ids.length <2)
+        // nothing to separate
+        return;
+
+    for(var j = 1; j < this.view_ids.length; j++) {
+        var view_id = this.view_ids[j];
+        new_sep = create_separator();
+        this.node.insertBefore(new_sep, this.views[view_id].node);
+    }
 }
 
 function mid_callback(view) {
