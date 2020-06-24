@@ -72,6 +72,8 @@ function Panel(id, parent_id, callback) {
     this.parentId = parent_id;
     this.callback = callback;
     this.node = this.createInDOM();
+    this.views = {};
+    this.view_ids = [];
 }
 
 Panel.prototype = {
@@ -81,13 +83,15 @@ Panel.prototype = {
      **/
     addView: function(view) {
         view.parentId = this.id;
-        var parent = document.getElementById(this.id);
+        var parent = this.node;
 
         if (parent === null) {
             console.error('Error, panel not in DOM: ' + this.id);
             return;
         }
         parent.insertBefore(view.node, parent.firstChild);
+        this.views[view.id] = view;
+        this.view_ids.unshift(view.id);
         if(typeof view.callback !== 'undefined') {
             view.callback();
         }
@@ -95,6 +99,13 @@ Panel.prototype = {
         if(typeof this.callback !== 'undefined') {
             this.callback(view);
         }
+    },
+
+    removeView: function(view) {
+        delete this.views[view.id];
+        var index = this.view_ids.indexOf(view.id);
+        if(index > -1)
+            this.view_ids.splice(index, 1);
     },
 
     /**
@@ -182,6 +193,9 @@ VMI.prototype = {
         if (typeof panel_id === 'undefined') {
             panel_id = view.parentId
         }
+        // remove view from old panel's list
+        var old_panel = this.panels[view.parentId];
+        old_panel.removeView(view);
 
         var parent = this.panels[view.parentId];
         var panel = this.panels[panel_id];
@@ -200,6 +214,7 @@ VMI.prototype = {
         this.drawer.appendChild(view.node);
         if (typeof view.parentId !== 'undefined') {
             var parent = this.panels[view.parentId];
+            parent.removeView(view);
             if (typeof parent.callback !== 'undefined') {
                 parent.callback(view);
             }
