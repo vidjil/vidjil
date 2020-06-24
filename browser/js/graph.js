@@ -360,10 +360,15 @@ Graph.prototype = {
             list_content.appendChild(line_content_text)
 
             // Add all descripion of sample keys as tooltip
-            var tooltip = this.m.getStrTime(i, "names")
-            tooltip    += String.fromCharCode(13) + this.m.getStrTime(i, "sampling_date")
-            tooltip    += String.fromCharCode(13) + this.m.getStrTime(i, "delta_date")
+            var tooltip = this.getTooltip(i, false, false)
             list_content.title = tooltip
+
+            list_content.onmouseover = function() {
+                self.graphListFocus(this.dataset.time)
+            };
+            list_content.onmouseout = function() {
+                self.graphListFocus(undefined)
+            };
 
             table.appendChild(list_content) 
         }
@@ -549,6 +554,7 @@ Graph.prototype = {
         speed = typeof speed !== 'undefined' ? speed : 500;
         this.updateListElemSelected();
         this.updateCountActiveSample();
+        this.graphListFocus(undefined)
         if (this.m.samples.number > 1){
             this.updateList()
         }
@@ -1431,6 +1437,13 @@ Graph.prototype = {
                 return d['class']
             })
 
+        if (document.getElementById(this.id + "_tooltip") == null){
+            d3.select("body").append("div")
+              .attr("class", "tooltip")
+              .attr("id", this.id + "_tooltip")
+              .style("opacity", 0);
+        }
+
         this.text_container.selectAll("text")
             .on("click", function (d) {
                 if (d.type == "axis_v" || d.type == "axis_v2") return self.m.changeTime(d.time)
@@ -1451,7 +1464,24 @@ Graph.prototype = {
                 }
 
             })
-        
+            .on("mouseover", function(d) {
+                var div = d3.select("#"+self.id + "_tooltip")
+                var time = d.time
+                var tooltip = self.getTooltip(time, true, true)
+                div.transition()
+                    .duration(200)
+                    .style("opacity", 1);
+                div .html(tooltip)
+                    .style("left", (d3.event.pageX + 24) + "px")
+                    .style("top", (d3.event.pageY - 32) + "px");
+                })
+            .on("mouseout", function(d) {
+                var div = d3.select("#"+self.id + "_tooltip")
+                div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+
         return this
     },
     
@@ -1596,6 +1626,37 @@ Graph.prototype = {
         this.init();
         this.smartUpdate();
         this.resize();
+    },
+
+    getTooltip: function(time, htmlFormat, includeName){
+        if (htmlFormat){
+            var breakChar = "<br/>"
+        } else {
+            var breakChar = String.fromCharCode(13)
+        }
+        var tooltip = "";
+        tooltip    += this.m.getStrTime(time, "names")
+        tooltip    += breakChar + this.m.getStrTime(time, "sampling_date")
+        tooltip    += breakChar + this.m.getStrTime(time, "delta_date")
+        return tooltip
+    },
+
+    graphListFocus: function(timeFocus){
+        var div;
+        for (var time = 0; time < this.m.samples.number; time++) {
+            div = document.getElementById("time"+time)
+            if (div != null){ // at init of graph, these div could be not already created
+                div.classList.remove("labelFocusMinor")
+                div.classList.remove("labelFocusMajor")
+                if (timeFocus != undefined ){
+                    if (timeFocus == time){
+                        div.classList.add("labelFocusMajor")
+                    } else {
+                        div.classList.add("labelFocusMinor")
+                    }
+                }
+            }
+        }
     }
 
 
