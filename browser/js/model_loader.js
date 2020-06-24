@@ -483,12 +483,16 @@ Model_loader.prototype = {
         }
 
         // Fix case of error where same timepoint is present multiple time in order
-        clone.order = clone.order.filter(function(item, pos) {
-            return clone.order.indexOf(item) == pos;
-        })
-        clone.stock_order = clone.stock_order.filter(function(item, pos) {
-            return clone.stock_order.indexOf(item) == pos;
-        })
+        if (analysis.order != undefined){
+            analysis.order = analysis.order.filter(function(item, pos) {
+                return analysis.order.indexOf(item) == pos;
+            })
+        }
+        if (analysis.stock_order != undefined){
+            analysis.stock_order = analysis.stock_order.filter(function(item, pos) {
+                return analysis.stock_order.indexOf(item) == pos;
+            })
+        }
 
         if ('order' in analysis && 'stock_order' in analysis) {
             // Jquery Extend don't work on samples.order.
