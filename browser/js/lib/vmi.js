@@ -400,10 +400,6 @@ VMI.prototype = {
     setupPanel : function() {
         var panel = new Panel('vmi-panels');
         this.panels[panel.id] = panel;
-        var div = document.createElement('div');
-        div.id = panel.id;
-
-        document.body.appendChild(div)
     },
 
     add_panel: function(panel, add_to_available) {
@@ -436,7 +432,7 @@ VMI.prototype = {
             }
         } else {
             var panel = new Panel(child_id, parent_div_id);
-            this.add_panel(panel);
+            this.add_panel(panel, add_to_available);
         }
         var parent = this.panels[parent_div_id]
         if(typeof parent !== 'undefined') {
