@@ -121,10 +121,15 @@ ul {
   bottom: 125px ;
   background: #ffffff;
   margin: 6px;
-  width: calc(100% - 6px - 70px);
   display: flex;
   flex: auto;
   overflow: hidden;
+}
+.vidjil-panels-left {
+  width: calc(100% - 6px - 70px);
+}
+.vidjil-panels-full {
+  width: calc(100% - 6px);
 }
 #mid-container {
   display: flex;
@@ -1079,7 +1084,7 @@ span.logo {
 #bot-container {
   position: fixed;
   bottom: 0;
-  width: calc(100% - 6px - 70px);
+  left: 6px;
   border-top: solid;
   border-width: 6px;
   min-height: 125px;
@@ -1353,11 +1358,9 @@ span.warningReads {
 .axis_select select[selected=selected] {
   color: #002b36;
 }
-#visu-separator {
+.visu-separator {
   position: relative;
   height: 6px;
-  cursor: move;
-  cursor: -webkit-grab;
   background: #cccccc;
 }
 #bot-separator {
