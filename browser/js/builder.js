@@ -124,11 +124,8 @@ Builder.prototype = {
     },
     
     resizeGraph : function (graphSize) {
-        var spSize = 100 - graphSize
-        var separator = document.getElementById('visu-separator');
-
-        separator.nextElementSibling.style.height = spSize + "%"
-        separator.previousElementSibling.style.height = graphSize + "%"
+        var graph = document.getElementById('visu2');
+        graph.style.height = graphSize + "%"
     },
 
     dropSeparator: function () {
