@@ -363,12 +363,14 @@ Graph.prototype = {
             var tooltip = this.getTooltip(i, false, false)
             list_content.title = tooltip
 
+            /* jshint ignore:start */
             list_content.onmouseover = function() {
                 self.graphListFocus(this.dataset.time)
             };
             list_content.onmouseout = function() {
                 self.graphListFocus(undefined)
             };
+            /* jshint ignore:end */
 
             table.appendChild(list_content) 
         }
@@ -1629,10 +1631,11 @@ Graph.prototype = {
     },
 
     getTooltip: function(time, htmlFormat, includeName){
+        var breakChar
         if (htmlFormat){
-            var breakChar = "<br/>"
+            breakChar = "<br/>"
         } else {
-            var breakChar = String.fromCharCode(13)
+            breakChar = String.fromCharCode(13)
         }
         var tooltip = "";
         tooltip    += this.m.getStrTime(time, "names")
