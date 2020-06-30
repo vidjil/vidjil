@@ -160,12 +160,13 @@ You can achieve this with the following steps:
        Note that it will trigger security warnings when accessing the client.
        From the `docker/` directory:
        ```
-openssl genrsa 4096 > web2py.key
-openssl req -new -x509 -nodes -sha1 -days 1780 -key web2py.key > web2py.crt
-openssl x509 -noout -fingerprint -text < web2py.crt
-mkdir -p vidjil-client/ssl
-mv web2py.* vidjil-client/ssl/
+       openssl genrsa 4096 > web2py.key
+       openssl req -new -x509 -nodes -sha1 -days 1780 -key web2py.key > web2py.crt
+       openssl x509 -noout -fingerprint -text < web2py.crt
+       mkdir -p vidjil-client/ssl
+       mv web2py.* vidjil-client/ssl/
       ```
+
      + If you are using the `postfix` container you may want to generate certificates (using the same process) and place them in `postfix/ssl`.
        The certificates must bear the name of your mail domain (<maildomain>.crt and <maildomain>.key)
 
