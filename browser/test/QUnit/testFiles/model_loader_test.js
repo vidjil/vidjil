@@ -32,4 +32,21 @@ QUnit.test("loadCluster", function(assert) {
     assert.deepEqual(m.clusters[2],         [], "Correct cluster for clone 2" )
     assert.deepEqual(m.clusters[3],        [3], "Correct cluster for clone 3" )
 
+    // Same tests but with another top order
+    var m = new Model();
+    var json_data_bis = JSON.parse(JSON.stringify(json_data)) // hard copy
+    json_data_bis.clones[0].top = 3 // cluster support clone is now the clone 1 (id:"id2")
+    m.parseJsonData(json_data_bis, 100)
+    m.initClones()
+    m.parseJsonAnalysis(analysis_data_clusters)
+
+    // Control real clusters; change support cluster clone
+    assert.deepEqual(m.clone(0).mergedId,          1, "another top order; Correct mergedId for cluster support clone (0)" )
+    assert.deepEqual(m.clone(1).mergedId,  undefined, "another top order; Correct mergedId value for supported clustered clone (1)" )
+    assert.deepEqual(m.clone(2).mergedId,          1, "another top order; Correct mergedId value for supported clustered clone (2)" )
+
+    assert.deepEqual(m.clusters[0],         [], "another top order; Correct cluster for clone 0" )
+    assert.deepEqual(m.clusters[1],  [1, 2, 0], "another top order; Correct cluster for clone 1" )
+    assert.deepEqual(m.clusters[2],         [], "another top order; Correct cluster for clone 2" )
+
 });
