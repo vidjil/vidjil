@@ -476,51 +476,49 @@ changeAlleleNotation: function(alleleNotation) {
 
         for (var i = 0; i < clusters.length; i++) {
 
-            var new_cluster = [];
-            var tmp = [];
-            
-            var lpos = []
-            for (var seq=0; seq<clusters[i].length;seq++){
-                if (typeof this.mapID[clusters[i][seq]] != 'undefined'){
-                    lpos.push(this.mapID[clusters[i][seq]])
-                }
-            }
-            // order may be unconserved...
-            var biggest_clone = Math.min.apply(null, lpos)
+            var clusterByIds = [];
+            var unfoundClone = [];
+            var cloneID;
 
+            // Create cluster by clone id
             for (var j=0; j<clusters[i].length;j++){
                 if (typeof this.mapID[clusters[i][j]] != 'undefined'){
-                    var cloneID = this.mapID[clusters[i][j]]
-                    new_cluster = new_cluster.concat(this.clusters[cloneID]);
-                    this.clusters[cloneID] = [];
+                    cloneID = this.mapID[clusters[i][j]]
+                    clusterByIds = clusterByIds.concat(this.clusters[cloneID]);
+                } else {
+                    unfoundClone.push( clusters[i][j] )
+                }
+            }
+
+            // order may be unconserved...
+            // Look for the biggest clone (with the smallest top)
+            if (clusterByIds.length !== 0){
+                var biggest_clone = clusterByIds[0]
+                for (var k=0; k<clusterByIds.length;k++){
+                    if (this.clone(clusterByIds[k]).top < this.clone(biggest_clone).top){
+                        biggest_clone = clusterByIds[k]
+                    }
+                }
+                this.clusters[biggest_clone] = clusterByIds;
+
+                // Set mergeId values
+                for (var pos=0; pos<clusterByIds.length;pos++){
+                    cloneID = clusterByIds[pos]
+
                     // Set the mergeId value for cluterized clones
                     var clone = this.clones[cloneID] 
                     if (clone.index != biggest_clone){
                         clone.mergedId = biggest_clone
+                        this.clusters[cloneID] = []
                     }
-                }else{
-                    tmp.push(clusters[i][j])
                 }
+
             }
-            
-            if (new_cluster.length !== 0){
-                var l = new_cluster[0]
-                for (var k=0; k<new_cluster.length;k++){
-                    if (this.clone(new_cluster[k]).top < this.clone(l).top) l = new_cluster[k]
-                }
-                this.clusters[l] = new_cluster;
-                
-                if (tmp.length !== 0){
-                    tmp.push(this.clone(l).id)
-                    this.analysis_clusters.push(tmp);
-                }
-                
-            }else{
-                
-                if (tmp.length !== 0){
-                    this.analysis_clusters.push(tmp);
-                }
+
+            if (unfoundClone.length !== 0){
+                this.analysis_clusters.push(unfoundClone);
             }
+
         }
     },
 
