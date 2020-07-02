@@ -474,6 +474,8 @@ changeAlleleNotation: function(alleleNotation) {
 	if (typeof (clusters) == 'undefined')
 	    return ;
 
+        var biggest_clone;
+
         for (var i = 0; i < clusters.length; i++) {
 
             var clusterByIds = [];
@@ -481,24 +483,22 @@ changeAlleleNotation: function(alleleNotation) {
             var cloneID;
 
             // Create cluster by clone id
+            biggest_clone = undefined;
             for (var j=0; j<clusters[i].length;j++){
                 if (typeof this.mapID[clusters[i][j]] != 'undefined'){
                     cloneID = this.mapID[clusters[i][j]]
                     clusterByIds = clusterByIds.concat(this.clusters[cloneID]);
+                    // order may be unconserved...
+                    // Look for the biggest clone (with the smallest top)
+                    if (biggest_clone == undefined || this.clone(cloneID).top < this.clone(biggest_clone).top){
+                        biggest_clone = cloneID
+                    }
                 } else {
                     unfoundClone.push( clusters[i][j] )
                 }
             }
 
-            // order may be unconserved...
-            // Look for the biggest clone (with the smallest top)
             if (clusterByIds.length !== 0){
-                var biggest_clone = clusterByIds[0]
-                for (var k=0; k<clusterByIds.length;k++){
-                    if (this.clone(clusterByIds[k]).top < this.clone(biggest_clone).top){
-                        biggest_clone = clusterByIds[k]
-                    }
-                }
                 this.clusters[biggest_clone] = clusterByIds;
 
                 // Set mergeId values
