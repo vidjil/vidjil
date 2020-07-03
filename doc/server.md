@@ -213,7 +213,18 @@ Click on `init database` and create a first account by entering an email.
 This account is the main root account of the server. Other administrators could then be created.
 It will be also the web2py admin password.
 
+*notice* : By default, Nginx HTTP server listens for incoming connection and binds on port 80 on the host, if you encounter the following message error:
+```
+ERROR: for nginx
+Cannot start service nginx: driver failed programming external
+connectivity on endpoint docker_nginx_1
+(236d0696ed5077c002718541a9703adeee0dfac66fb880d193690de6fa5c462e):
+Error starting userland proxy: listen tcp 0.0.0.0:80: bind: address already in use
+```
 
+You can resolve it either by changing the port used by Vidjil in the `nginx.ports`
+section of the `docker-compose.yml` file or by stopping the service using port
+80.
 
   
 
