@@ -143,14 +143,14 @@ From image `vidjil/server`
 
 ## Network usage and SSL certificates
 
-(If you are simply using Vidjil from your computer for testing purposes you can skip the next two steps).
+*If you are simply using Vidjil from your computer for testing purposes you can skip the next two steps.*
 
-  - Change the hostname in the nginx configuration `vidjil-client/conf/nginx_web2py`,
+  - Step 1 : Change the hostname in the nginx configuration `vidjil-client/conf/nginx_web2py`,
     replacing `$hostname` with your FQDN.
-  - Edit the `vidjil-client/conf/conf.js`
+  - Step 2 : Edit the `vidjil-client/conf/conf.js`
         change all 'localhost' to the FQDN
 
-(You will need the following step whether you are using locally or not).
+*You will need the following step whether you are using locally or not.*
 
 Vidjil uses HTTPS by default, and will therefore require SSL certificates.
 You can achieve this with the following steps:
@@ -160,12 +160,13 @@ You can achieve this with the following steps:
        Note that it will trigger security warnings when accessing the client.
        From the `docker/` directory:
        ```
-openssl genrsa 4096 > web2py.key
-openssl req -new -x509 -nodes -sha1 -days 1780 -key web2py.key > web2py.crt
-openssl x509 -noout -fingerprint -text < web2py.crt
-mkdir -p vidjil-client/ssl
-mv web2py.* vidjil-client/ssl/
+       openssl genrsa 4096 > web2py.key
+       openssl req -new -x509 -nodes -sha1 -days 1780 -key web2py.key > web2py.crt
+       openssl x509 -noout -fingerprint -text < web2py.crt
+       mkdir -p vidjil-client/ssl
+       mv web2py.* vidjil-client/ssl/
       ```
+
      + If you are using the `postfix` container you may want to generate certificates (using the same process) and place them in `postfix/ssl`.
        The certificates must bear the name of your mail domain (<maildomain>.crt and <maildomain>.key)
 
@@ -212,7 +213,18 @@ Click on `init database` and create a first account by entering an email.
 This account is the main root account of the server. Other administrators could then be created.
 It will be also the web2py admin password.
 
+*notice* : By default, Nginx HTTP server listens for incoming connection and binds on port 80 on the host, if you encounter the following message error:
+```
+ERROR: for nginx
+Cannot start service nginx: driver failed programming external
+connectivity on endpoint docker_nginx_1
+(236d0696ed5077c002718541a9703adeee0dfac66fb880d193690de6fa5c462e):
+Error starting userland proxy: listen tcp 0.0.0.0:80: bind: address already in use
+```
 
+You can resolve it either by changing the port used by Vidjil in the `nginx.ports`
+section of the `docker-compose.yml` file or by stopping the service using port
+80.
 
   
 
