@@ -380,3 +380,28 @@ analysis_data_stock_order = {
     "id": -1
   }
 }
+
+
+analysis_data_clusters = {
+  "producer": "browser",
+  "timestamp": "2017-2-13 10:41:25",
+  "vidjil_json_version": "2014.09",
+  "clones": [
+  ],
+  "clusters": [
+    [ // 3 real seq ID; top order: 2, 3, 1
+      "id2",
+      "id3",
+      "id1"
+    ],
+    [ // 2 fake seq ID
+      "id_fake_1",
+      "id_fake_2"
+    ],
+    [ // 2 fake + 1 real seq ID
+      "id_fake_1b",
+      "id_fake_2b",
+      "id4"
+    ]
+  ]
+}
