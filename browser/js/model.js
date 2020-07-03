@@ -487,7 +487,11 @@ changeAlleleNotation: function(alleleNotation) {
             for (var j=0; j<clusters[i].length;j++){
                 if (typeof this.mapID[clusters[i][j]] != 'undefined'){
                     cloneID = this.mapID[clusters[i][j]]
-                    clusterByIds = clusterByIds.concat(this.clusters[cloneID]);
+                    if (typeof this.clusters[cloneID] != 'undefined'){
+                        clusterByIds = clusterByIds.concat(this.clusters[cloneID]);
+                    } else {
+                        console.error("Error on cluster loading of clone "+cloneID)
+                    }
                     // order may be unconserved...
                     // Look for the biggest clone (with the smallest top)
                     if (biggest_clone == undefined || this.clone(cloneID).top < this.clone(biggest_clone).top){
