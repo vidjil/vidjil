@@ -143,14 +143,14 @@ From image `vidjil/server`
 
 ## Network usage and SSL certificates
 
-(If you are simply using Vidjil from your computer for testing purposes you can skip the next two steps).
+*If you are simply using Vidjil from your computer for testing purposes you can skip the next two steps.*
 
-  - Change the hostname in the nginx configuration `vidjil-client/conf/nginx_web2py`,
+  - Step 1 : Change the hostname in the nginx configuration `vidjil-client/conf/nginx_web2py`,
     replacing `$hostname` with your FQDN.
-  - Edit the `vidjil-client/conf/conf.js`
+  - Step 2 : Edit the `vidjil-client/conf/conf.js`
         change all 'localhost' to the FQDN
 
-(You will need the following step whether you are using locally or not).
+*You will need the following step whether you are using locally or not.*
 
 Vidjil uses HTTPS by default, and will therefore require SSL certificates.
 You can achieve this with the following steps:
