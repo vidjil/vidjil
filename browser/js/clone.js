@@ -1047,7 +1047,9 @@ Clone.prototype = {
     }, 
     
     getTag: function () {
-        if (this.tag) {
+        if (this.hasSizeDistrib()) {
+            return this.m.distrib_tag;
+        } else if (this.tag) {
             return this.tag;
         } else {
             return this.m.default_tag;
@@ -1682,7 +1684,7 @@ Clone.prototype = {
             return; 
         }
 
-        if (this.m.tag[this.getTag()].display || this.hasSizeDistrib()) {
+        if (this.m.tag[this.getTag()].display){
             this.active = true;
         }
         else {
@@ -1691,7 +1693,8 @@ Clone.prototype = {
     },
 
     disable: function () {
-        if (!this.hasSizeConstant()) return
+        if (!this.hasSizeConstant() && !this.hasSizeDistrib()) return
+        if (this.hasSizeDistrib() && this.m.tag[this.getTag()].display) return
         this.active = false;
     },
 
