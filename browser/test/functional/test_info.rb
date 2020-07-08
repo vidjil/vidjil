@@ -32,42 +32,33 @@ class TestClones < BrowserTest
   # id    29 --> seg5; seg3 (IGHV1; IGHJ1)
 
   def test_000_default
+    $info = $b.div(:id => "info").div(:class => "info_color")
 
-    assert (     $b.span(:id => "fastTag0").exist? ), "info colorMethod is on tag by default"
-    assert ( not $b.span(:text => "not productive").exist? ), "info colorMethod is NOT on productivity at init"
-
+    assert (     $info.span(:id => "fastTag0").exist? ), "info colorMethod is on tag by default"
+    assert ( not $info.span(:text => "not productive").exist? ), "info colorMethod is NOT on productivity at init"
   end
 
   def test_001_change_productivity
     $b.element(:id => "color_menu_select").click
-    $b.send_keys :arrow_down; # clone
-    $b.send_keys :arrow_down; # cdr3
-    $b.send_keys :arrow_down; # Vseg
-    $b.send_keys :arrow_down; # Jseg
-    $b.send_keys :arrow_down; # N
-    $b.send_keys :arrow_down; # Locus
-    $b.send_keys :arrow_down; # abundance
-    $b.send_keys :arrow_down; # productivity
-    $b.send_keys :enter;
+    $b.select_list(:id, "color_menu_select").select_value("productive")
     $b.update_icon.wait_while(&:present?)
 
-    assert ( not $b.span(:id => "fastTag0").exist? ),     "info colorMethod is no more on tag after select change"
-    assert ( $b.span(:text => "not productive").exist? ), "info colorMethod is on productivity (span not prod)"
-    assert ( $b.span(:text => "productive").exist? ),     "info colorMethod is on productivity (span prod)"
+    assert ( not $info.span(:id => "fastTag0").exist? ),     "info colorMethod is no more on tag after select change"
+    assert ( $info.span(:text => "not productive").exist? ), "info colorMethod is on productivity (span not prod)"
+    assert ( $info.span(:text => "productive").exist? ),     "info colorMethod is on productivity (span prod)"
 
   end
 
   def test_002_change_abundance
     $b.element(:id => "color_menu_select").click
-    $b.send_keys :arrow_up; # abundance
-    $b.send_keys :enter;
+    $b.select_list(:id, "color_menu_select").select_value("abundance")
     $b.update_icon.wait_while(&:present?)
 
-    assert ( not $b.span(:text => "not productive").exist? ), "info colorMethod is no more on productivity"
-    assert (     $b.span(:text => "abundance").exist? ),      "info colorMethod is on abundance (text)"
-    assert (     $b.span(:text => "0%").exist? ),             "info colorMethod is on abundance (0%)"
-    assert (     $b.span(:class => "gradient").exist? ),      "info colorMethod is on abundance (gradient class)"
-    assert (     $b.span(:text => "100%").exist? ),           "info colorMethod is on abundance (100%)"
+    assert ( not $info.span(:text => "not productive").exist? ), "info colorMethod is no more on productivity"
+    assert (     $info.span(:text => "abundance").exist? ),      "info colorMethod is on abundance (text)"
+    assert (     $info.span(:text => "0%").exist? ),             "info colorMethod is on abundance (0%)"
+    assert (     $info.span(:class => "gradient").exist? ),      "info colorMethod is on abundance (gradient class)"
+    assert (     $info.span(:text => "100%").exist? ),           "info colorMethod is on abundance (100%)"
   end
 
 
