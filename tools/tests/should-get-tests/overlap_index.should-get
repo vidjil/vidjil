@@ -1,4 +1,4 @@
-!LAUNCH: python ../../overlap_index.py -i ../data/overlap_raw.vidjil -; cat ../data/overlap_computed.vidjil
+!LAUNCH: python ../../fuse.py ../data/overlap_raw.vidjil -o overlap_computed.vidjil; cat overlap_computed.vidjil
 
 $ Various index have been computed
 1:"morisita"

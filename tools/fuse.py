@@ -638,6 +638,94 @@ class ListWindows(VidjilJson):
         return obj_dict
         
 
+    def computeMorisita(self):
+        morisita  = defaultdict( lambda: defaultdict( lambda: False ) )
+        jaccard   = defaultdict( lambda: defaultdict( lambda: False ) )
+        nb_sample = self.d["samples"].d["number"]
+
+        for pos_0 in range(0, nb_sample):
+            for pos_1 in range(0, nb_sample):
+                morisita[pos_0][pos_1] = self.compute_one_morisita(pos_0, pos_1)
+                jaccard[pos_0][pos_1]  = self.compute_one_Jaccard_index(pos_0, pos_1)
+        self.d["morisita"] = morisita
+        self.d["jaccard"]  = jaccard
+        return
+
+
+    def compute_one_morisita(self, pos_0, pos_1):
+        """
+        Morisita-Horn similarity index
+        This index apply to quantitative data.
+        Allow to evaluate the similarity between different groups, and is not sensible by richness of sampling
+        Formula:  CMH = 2 ∑▒((ai x bi))/((da+db)x(Na x Nb))
+        da = ∑ai2/Na2
+        db = ∑bi2/Nb2
+        Na = Total number of species at site A
+        Nb = Total number of species at site B
+        ai = Number of species i at site A
+        bi = Number of species i at site B
+        # Values between 0 (completly different communityes) and 1 (maximal similarity).
+        # 2 groups are similare (poor diversity) if CMH value is superior to 0.5
+        # and dissemblables if value is under 0,5 (high diversity).
+        """
+        index_div = "index_Ds_diversity"
+        clones    = self.d["clones"]
+        reads     = self.d["reads"].d["segmented"]
+
+        m  = 0
+        da = 0
+        db = 0
+        Na = reads[pos_0] * reads[pos_0]
+        Nb = reads[pos_1] * reads[pos_1]
+
+        for clone in clones:
+            ai = clone.d["reads"][pos_0]
+            bi = clone.d["reads"][pos_1]
+            m  += (ai * bi)
+            da += ( (ai*ai)  / Na )
+            db += ( (bi*bi)  / Nb )
+
+        m *= 2
+        d = ( (da/Na)+(db/Nb))*(Na*Nb)
+        m = m/d
+
+        return m
+
+
+    def compute_one_Jaccard_index(self, pos_0, pos_1):
+        """
+        Jaccard similarity index
+        Formula :
+            I = Nc / (N1 + N2 - Nc)
+        Nc : number of shared taxons between stations
+        N1 et N2 : number of taxons present only in stations 1 or 2
+        This index is from 0 to 1 and take into account only positive relations.
+        If index increase, an important number of species is present in only one location,
+        with a poor inter-location biodiversity.
+        """
+        clones    = self.d["clones"]
+        reads     = self.d["reads"].d["segmented"]
+        N1 = self.get_nb_species_of_sample(pos_0)
+        N2 = self.get_nb_species_of_sample(pos_1)
+
+        Nc = 0
+        for clone in clones:
+            ai = clone.d["reads"][pos_0]
+            bi = clone.d["reads"][pos_1]
+            Nc  += bool(ai * bi)
+        # print( "Nc: %s" % Nc)
+
+        I = Nc / (N1 + N2 - Nc)
+        return I
+
+
+    def get_nb_species_of_sample(self, pos):
+        X = 0
+        for clone in self.d["clones"]:
+            if clone.d["reads"][pos]:
+                X += 1
+        return X
+
 
 
 ### some data used for test
@@ -860,6 +948,10 @@ def main():
     else : 
         jlist_fused.d["similarity"] = [];
         
+
+    print("### Morisita")
+    jlist_fused.computeMorisita()
+
     print("### Save merged file")
     jlist_fused.save_json(args.output)
     
