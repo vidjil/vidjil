@@ -4,10 +4,12 @@
 ###
 
 ### Email notifications for server errors
-SMTP_SERVER = 'localhost'
+SMTP_SERVER = 'postfix'
+SMTP_CREDENTIALS = 'vidjil:smtp_pass' # set to None if no auth required
 # SMTP_SERVER = 'logging' # no mail
 FROM_EMAIL = 'notifications@vidjil.org'
 ADMIN_EMAILS = ['notifications@vidjil.org']
+EMAIL_SUBJECT_START = '[Vidjil]' # Customize the start of the email subject
 
 ### address for the sql database
 ### sqlite (not recommended)
@@ -79,3 +81,4 @@ SET_TYPE_RUN= 'run'
 SET_TYPE_GENERIC = 'generic'
 
 REQUIRE_HTTPS = True
+BROWSER_PATH = 'browser/index.html'

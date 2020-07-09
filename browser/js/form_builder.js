@@ -351,6 +351,8 @@ FileFormBuilder.prototype.build_file_field = function(id, hidden) {
     var i = this.build_input('upload_' + id, 'upload_field', 'file'+id, 'file', 'file');
     if (this.source) {
         i.disabled = true;
+    } else if (! hidden) {
+        i.required = true;
     }
     i.title = "(.fa, .fastq, .fa.gz, .fastq.gz, .clntab)";
     d.appendChild(i);

@@ -83,6 +83,10 @@ ul {
   right: 0px;
   top: 32px;
 }
+#live-ajax-msg {
+  font-style: italic;
+  margin-right: 1em;
+}
 #upload_summary {
   display: none;
   z-index: 10;
@@ -186,7 +190,7 @@ line {
   fill: #ffffff;
 }
 .graph_line {
-  stroke-width: 2.5px;
+  stroke-width: 1.5px;
   cursor: pointer;
   stroke: #657b83;
 }
@@ -200,7 +204,7 @@ line {
   opacity: 0.8;
 }
 .graph_inactive {
-  stroke-width: 1.5px;
+  stroke-width: 0.5px;
   cursor: pointer;
   display: none;
 }
@@ -243,10 +247,13 @@ line {
 #resolution1 {
   fill: #ffffff;
   opacity: 1;
+  pointer-events: none;
+
 }
 #resolution5 {
   fill: #cccccc;
   opacity: 0.6;
+  pointer-events: none;
 }
 .graph_time {
   fill: #657b83;
@@ -276,7 +283,7 @@ line {
 .graph_menu {
   position: absolute;
   top: 0px;
-  right: 0px;
+  right: 6px;
   min-width: 22px;
   min-height: 18px;
   text-align: center;
@@ -284,15 +291,22 @@ line {
   border-left: solid;
   border-color: #cccccc;
   background: #ffffff;
+  z-index: 1;
+  overflow: auto;
+  max-height: 100%;
 }
 .graph_list {
   display: none;
 }
+.graph_listAll:hover,
 .graph_listElem:hover {
   background: #cccccc;
   width: 100%;
-  cursor: move;
+  cursor: pointer;
   cursor: webkit-grab;
+}
+.graph_listElem_selected {
+  font-weight: bold;
 }
 /*style scatterPlot element*/
 .background_sp {
@@ -570,7 +584,7 @@ line {
   font-weight: bold;
 }
 .list_sort {
-  margin-right: 30px;
+  margin-right: 20px;
   float: right;
 }
 /*style segmenter element*/
@@ -856,6 +870,7 @@ a {
 a:hover {
   color: #002b36;
 }
+span.sample-tag,
 a.tag-link {
   color: black;
   background-color: #eee;
@@ -1494,7 +1509,7 @@ h3 .uid {
 #db_table_container {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: calc(100% -30px);
+  height: calc(100% - 30px);
   position: relative;
 }
 #db_fixed_header {
@@ -2251,4 +2266,10 @@ form .form_label {
   pointer-events: none;
   opacity: 0.4;
   cursor: auto;
+}
+.list_lock_off {
+  color: #cccccc;
+}
+.list_lock_on {
+  color: #657b83;
 }

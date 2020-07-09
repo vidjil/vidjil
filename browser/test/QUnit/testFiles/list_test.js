@@ -20,8 +20,8 @@ QUnit.test("edit", function(assert) {
     assert.equal(clone_list.childNodes.length, 7, "clone list length = 7 -> 5 clones+ 2 others (TRG & IGH) : Ok")
 
 
-    list.editName(1, list.index[1])
-    assert.notEqual(list.index[1].innerHTML.indexOf("save"), -1, "open edit clone name : Ok")
+    list.editName(1)
+    assert.notEqual(list.index[1].getElement("main").innerHTML.indexOf("save"), -1, "open edit clone name : Ok")
     
     setTimeout( function() {
         $("#new_name").val("editName");

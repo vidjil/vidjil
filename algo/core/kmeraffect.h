@@ -174,6 +174,17 @@ bool operator>=(const KmerAffect &a1, const KmerAffect &a2);
 bool operator!=(const KmerAffect &a1, const KmerAffect &a2);
 ostream &operator<<(ostream &os, const KmerAffect &kmer);
 
+namespace std {
+  template <>
+  struct hash<KmerAffect> {
+    size_t operator()(const KmerAffect &affect) const {
+      return (((unsigned char) affect.affect.c << 8) | (affect.getLength()));
+    }
+  };
+}
+
+  
+
 #define AFFECT_NOT_UNKNOWN_SYMBOL "*"
 #define AFFECT_AMBIGUOUS_SYMBOL "\0"
 #define AFFECT_UNKNOWN_SYMBOL "\1"

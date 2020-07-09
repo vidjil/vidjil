@@ -1,6 +1,6 @@
 /*
   This file is part of Vidjil <http://www.vidjil.org>
-  Copyright (C) 2011-2019 by VidjilNet consortium and Bonsai bioinformatics
+  Copyright (C) 2011-2020 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
       Mathieu Giraud <mathieu.giraud@vidjil.org>
@@ -44,13 +44,15 @@ bool operator==(const affect_t &a1, const affect_t &a2) {
      || a1.length == (unsigned char) ~0 || a2.length == (unsigned char)~0 || a1.length == a2.length);
 }
 bool operator<(const affect_t &a1, const affect_t &a2) {
-  return a1.c < a2.c;
+  return a1.c < a2.c
+    || (a1.c == a2.c && a1.length < a2.length
+        && affect_char(a1) != AFFECT_AMBIGUOUS_CHAR && affect_char(a1) != AFFECT_UNKNOWN_CHAR);
 }
 bool operator>(const affect_t &a1, const affect_t &a2) {
-  return a1.c > a2.c;
+  return ! (a1 <= a2);
 }
 bool operator<=(const affect_t &a1, const affect_t &a2) {
-  return ! (a1 > a2);
+  return (a1 < a2) || (a1 == a2);
 }
 bool operator>=(const affect_t &a1, const affect_t &a2) {
   return ! (a1 < a2);
@@ -118,18 +120,14 @@ KmerAffect &KmerAffect::operator+=(const KmerAffect &kmer) {
   if (kmer.affect != affect) {
     if (isUnknown())
       *this = kmer;
-    else if (affect_char(affect) == affect_char(kmer.affect)
-             && (affect_strand(affect) != affect_strand(kmer.affect))) {
-      // Same label but different strand
+    else { 
+      // If we have same label but different strand
       // -> we put ambiguous, we could have something to say that
       // strand is ambiguous but not the label, but we don't have enough space
       // in 1 byte…
+      unsigned char length = affect.length;
       *this = AFFECT_AMBIGUOUS;
-      affect.length = kmer.getLength();
-    } else {
-      assert(affect.c != kmer.affect.c || getLength() == kmer.getLength());
-      *this = AFFECT_AMBIGUOUS;
-      affect.length = kmer.getLength();
+      affect.length = length;
     }
   }
   return *this;

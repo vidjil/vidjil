@@ -1,4 +1,9 @@
 class SampleSetList():
+    '''
+    Deals with a list of a type of sample set (either patient, run or set).
+
+    This class is used to load all the required information for such a list.
+    '''
     def __init__(self, type, page=None, step=None, tags=None):
         self.type = type
 
@@ -51,7 +56,8 @@ class SampleSetList():
             self.elements[key.id].most_used_conf = ""
             self.elements[key.id].groups = ""
             self.elements[key.id].group_list = []
-            self.elements[key.id].has_permission = auth.can_modify_sample_set(key.sample_set_id)
+            #self.elements[key.id].has_permission = auth.can_modify_sample_set(key.sample_set_id)
+            self.elements[key.id].has_permission = auth.can_modify_subset(type, key.id)
             self.elements[key.id].anon_allowed = auth.can_view_info(type, key.id)
 
         self.element_ids = self.elements.keys()

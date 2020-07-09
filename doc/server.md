@@ -1,21 +1,24 @@
 
-This is the preliminary help of the Vidjil server on Ubuntu server 14.04.
+This is the help of the Vidjil server.
 This help is intended for server administrators.
-Users should consult the web application manual.
-Other documentation can also be found in [dev.org](http://git.vidjil.org/blob/dev/doc/dev.org).
+Users should consult the [web application manual](http://www.vidjil.org/doc/user/)
+Other documentation can also be found in [doc/](http://www.vidjil.org/doc/).
+Finally, developer documentation
 
-
-# Plain installation or Docker containers
+# Docker containers or Plain installation
 
 There are two ways to install and run a Vidjil server:
 
-  - We are developping and deploying in 2018 **Docker containers** to ease the installation and the maintenance.
-    These Docker containers are now used in some partner hospitals.
+  - We are developping and deploying since 2018 **Docker containers** to ease the installation and the maintenance.
+    These Docker containers are used on the public server (<https://app.vidjil.org>) as well as in some partner hospitals.
     We recommend this installation for new instances of Vidjil.
+    We also provide support and remote maintenance
+    of such in-hospital servers through
+    the [VidjilNet consortium](http://www.vidjil.net/index.en.html).
 
   - The **plain installation of the server** should run on any Linux/Unix server with Nginx (recommanded) or Apache.
     We provide below detailed instructions for Ubuntu 14.04 LTS.
-    We use this installation on the public server (<https://app.vidjil.org>) since October 2014.
+    We used this installation on the public server between 2014 and 2018.
 
 # Requirements
 
@@ -134,19 +137,20 @@ From image `vidjil/server`
   - `fuse` The XmlRPCServer that handles queries for comparing samples
   - `backup` Starts a cron job to schedule regular backups
   - `reporter` A monitoring utility that can be configured to send monitoring information to a remote server
+  - `postfix` A mail relay to allow `uwsgi` to send error notifications
 
 
 
 ## Network usage and SSL certificates
 
-(If you are simply using Vidjil from your computer for testing purposes you can skip the next two steps).
+*If you are simply using Vidjil from your computer for testing purposes you can skip the next two steps.*
 
-  - Change the hostname in the nginx configuration `vidjil-client/conf/nginx_web2py`,
+  - Step 1 : Change the hostname in the nginx configuration `vidjil-client/conf/nginx_web2py`,
     replacing `$hostname` with your FQDN.
-  - Edit the `vidjil-client/conf/conf.js`
+  - Step 2 : Edit the `vidjil-client/conf/conf.js`
         change all 'localhost' to the FQDN
 
-(You will need the following step whether you are using locally or not).
+*You will need the following step whether you are using locally or not.*
 
 Vidjil uses HTTPS by default, and will therefore require SSL certificates.
 You can achieve this with the following steps:
@@ -156,14 +160,19 @@ You can achieve this with the following steps:
        Note that it will trigger security warnings when accessing the client.
        From the `docker/` directory:
        ```
-openssl genrsa 4096 > web2py.key
-openssl req -new -x509 -nodes -sha1 -days 1780 -key web2py.key > web2py.crt
-openssl x509 -noout -fingerprint -text < web2py.crt
-mkdir -p vidjil-client/ssl
-mv web2py.* vidjil-client/ssl/
+       openssl genrsa 4096 > web2py.key
+       openssl req -new -x509 -nodes -sha1 -days 1780 -key web2py.key > web2py.crt
+       openssl x509 -noout -fingerprint -text < web2py.crt
+       mkdir -p vidjil-client/ssl
+       mv web2py.* vidjil-client/ssl/
       ```
+
+     + If you are using the `postfix` container you may want to generate certificates (using the same process) and place them in `postfix/ssl`.
+       The certificates must bear the name of your mail domain (<maildomain>.crt and <maildomain>.key)
+
      - A better option is to use other certificates, for example by configuring free [Let's Encrypt](https://letsencrypt.org/) certificates;
        In `docker-compose.yml`, update `nginx.volumes`, line `./vidjil-client/ssl:/etc/nginx/ssl`, to set the directory with the certificates.
+       The same can be done for the `postfix` container.
 
 
 If you would prefer to use the vidjil over HTTP (not recommended outside of testing purposes), you can
@@ -174,8 +183,10 @@ forget to make a backup of any file you replace.)
 ## First configuration and first launch
 
   - Set the SSL certificates (see above)
-  - Change the mysql root password in `docker-compose.yml`
+  - Change the mysql root password and the web2py admin password in `docker-compose.yml`
   - Change the mysql vidjil password in `mysql/create_db.sql` and sets it also in `DB_ADDRESS` in `vidjil-server/conf/defs.py`
+  - Set the desired mail domain and credentials for the `postfix` container and update `vidjil-server/conf/defs.py`
+    `SMTP_CREDENTIALS` and `FROM_EMAIL` to match
 
   - Comment backup/reporter services in `docker-compose.yml`
 
@@ -197,12 +208,23 @@ Then `docker ps` should display five running containers:
       - Copy also the generated `browser/js/germline.js` into the `docker/vidjil-client/conf/` directory.
 
 
-  - Open a web browser to <https://localhost>, or to your FQDN if you configured it (see above).
+  - Open a web browser to `https://localhost`, or to your FQDN if you configured it (see above).
 Click on `init database` and create a first account by entering an email.
 This account is the main root account of the server. Other administrators could then be created.
 It will be also the web2py admin password.
 
+*notice* : By default, Nginx HTTP server listens for incoming connection and binds on port 80 on the host, if you encounter the following message error:
+```
+ERROR: for nginx
+Cannot start service nginx: driver failed programming external
+connectivity on endpoint docker_nginx_1
+(236d0696ed5077c002718541a9703adeee0dfac66fb880d193690de6fa5c462e):
+Error starting userland proxy: listen tcp 0.0.0.0:80: bind: address already in use
+```
 
+You can resolve it either by changing the port used by Vidjil in the `nginx.ports`
+section of the `docker-compose.yml` file or by stopping the service using port
+80.
 
   
 
@@ -253,7 +275,7 @@ Here are some notable configuration changes you should consider:
 # Docker -- Adding external software
 
 Some software can be added to Vidjil for pre-processing or even processing if the
-software outputs data compatible with the `.vidjil` format.
+software outputs data compatible with the `.vidjil` or AIRR format.
 We recommend you add software by adding a volume to your `docker-compose.yml`.
 By default we add our external files to `/opt/vidjil` on the host machine. You can then
 reference the executable in `vidjil-server/conf/defs.py`.
@@ -265,7 +287,7 @@ Contact us (<mailto:contact@vidjil.org>) to have more information and help.
 
 # Docker -- Troubleshooting
 
-###  Error "Can't connect to MySQL server on 'mysql'"
+##  Error "Can't connect to MySQL server on 'mysql'"
 
 The mysql container is not fully launched. This can happen especially at the first launch.
 You may relaunch the containers.
@@ -295,6 +317,30 @@ you can look into:
  ```
  If the database does not exist, mysql will display an error after logging in.
 
+## Launching manually the backup
+
+The backup should be handled by the backup container. If so, connect to this
+container and run (for a full backup, otherwise add the `-i` option when
+running `backup.sh`):
+
+```sh
+cd /usr/share/vidjil/server
+sh backup.sh vidjil /mnt/backup >> /var/log/cron.log 2>&1
+```
+
+## I can't connect to the web2py administration site
+The URL to this site is https://mywebsite/admin/default/.
+The password should be given in the `docker-compose.yml` file.
+Otherwise a random password is generated. You can still modify
+this password by connecting to the server (in the `uwsgi` container).
+Go in the the `/usr/share/vidjil/server/web2py` directory and then
+launch Python.
+```python
+from gluon.main import save_password
+save_password(PASSWORD, 443)
+```
+This password will not persist when the container will be restarted.
+For a persistent password, please use the environment variable.
 
 # Docker -- Updating a Docker installation
 
@@ -336,7 +382,7 @@ docker load -i <input_file>
 In some cases, you may need to update your `docker-compose.yml` file or some
 of the configuration files. We will describe the changes in the `CHANGELOG` file.
 The latest versions of these files are available on our
-[Gitlab](https://gitlab.vidjil.org/).
+[Gitlab](http://gitlab.vidjil.org/).
 
 Once the images are pulled, you can relaunch the containers:
 ```sh
@@ -369,10 +415,20 @@ Then launch it again
 docker-compose up -d nginx
 ```
 
+## Knowing what docker image version is running
+
+As our latest image is always tagged `latest` you may have troubles to know
+what version is currently running on your server. To determine that, you can
+use the *digest* of the image. You can view it, for example with `docker image
+--digests vidjil/server`. Then you can compare it with the digests shown [on
+the Dockerhub page](https://hub.docker.com/r/vidjil/server/tags/).
+
 # Plain server installation
 
+This installation is not supported anymore.
+We rather advise to use the Docker containers (see above).
 
-## Requirements
+## Requirements (for Ubuntu 16.04)
 
 ``` bash
 apt-get install git
@@ -830,9 +886,10 @@ then looking at the database.
 
 Currently there is not easy way of resetting a user's password.
 The current method is the following:
-\`cd server/web2py\`
-\`python web2py -S vidjil -M\`
-\`db.auth<sub>user</sub>\[\<user-id\].update<sub>record</sub>(password=CRYPT(key=auth.settings.hmac<sub>key</sub>)('\<password\>')\[0\],reset<sub>passwordkey</sub>='')\`
+```bash
+cd server/web2py
+python web2py -S vidjil -M db.auth_user[<user-id>].update_record(password=CRYPT(key=auth.settings.hmac_key)('<password>')[0],reset_password_key='')
+```
 
 # Migrating Data
 

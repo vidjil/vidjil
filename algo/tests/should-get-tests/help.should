@@ -1,0 +1,40 @@
+!NO_LAUNCHER:
+!LAUNCH: $VIDJIL_DIR/$EXEC -h
+
+$ License
+1:vidjil-algo is free software
+
+$ Check default filtering options
+1: =5 .* minimal number of reads supporting a clone
+1: =0 .* minimal percentage of reads supporting a clone
+1: =100 .*maximal number of clones computed with a consensus sequence
+1: max-designations .*=100
+
+$ Do not display advanced options
+0: , experimental options
+0: custom Cost
+
+$ Correct number of regular options
+25:^..-
+
+
+!NO_LAUNCHER:
+!LAUNCH: $VIDJIL_DIR/$EXEC -H
+
+$ License
+1:vidjil-algo is free software
+
+$ Check default costs
+1:analysis.* "4, -6, -10, -1, -10"
+1:clustering .* "1, -4, -4, 0, 0"
+
+$ Show seeds
+1: 9c.#########
+1: 13s.#######-######
+
+$ Display advanced options
+: , experimental options
+: custom Cost
+
+$ Correct number of options, including advanced options
+58:^..-

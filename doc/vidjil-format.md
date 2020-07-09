@@ -37,7 +37,9 @@ This is an almost minimal `.vidjil` file, describing clones in one sample.
 The `seg` element is optional: clones without `seg` elements will be shown on the grid with '?/?'.
 The `_average_read_length` is also optional, but allows to plot GENSCAN-like plots more precisely than getting only the length of the sequence.
 All other elements are required. The `reads.germlines` list can have only one element the case of data on a unique locus.
-There is here one clone on the `TRG` locus with a designation `TRGV5*01 5/CC/0 TRGJ1*02`.
+There is here one clone on the `TRG` locus with a designation (`name`) `TRGV5*01 5/CC/0 TRGJ1*02`.
+Note that this `name` is just used to name the clone.
+The actual values used for X- and Y- axis in the V/J grid plot are `seg.5.name` and `seg.3.name` fields.
 Note that other elements could be added by some program (such as `tag`, to identify some clones,
 or `clusters`, to further cluster some clones, see below).
 
@@ -65,6 +67,7 @@ or `clusters`, to further cluster some clones, see below).
     "clones": [
         {
             "id": "clone-001",
+            "name": "TRGV5*01 5/CC/0 TRGJ1*02",
             "sequence": "CTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGAAACTCTTTGGCAGTGGAAC",
     "reads" : [ 243241 ],
             "_average_read_length": [ 119.3 ],
@@ -72,9 +75,9 @@ or `clusters`, to further cluster some clones, see below).
             "top": 1,
             "seg":
             {
-        "5": {"name": "TRGV5*01",  "start": 1,   "stop": 86, "delRight":5},
+        "5": {"name": "TRGV5*01",  "start": 1,   "stop": 87, "delRight":5},
         "3": {"name": "TRGJ1*02",  "start": 89,  "stop": 118,   "delLeft":0},
-                "cdr3": { "start": 77, "stop": 104, "seq": "gccacctgggccttattataagaaactc" }
+                "cdr3": { "start": 78, "stop": 105, "seq": "gccacctgggccttattataagaaactc" }
     }
 
         }
@@ -85,7 +88,7 @@ or `clusters`, to further cluster some clones, see below).
 ## `.vidjil` file – several related samples
 
 This a `.vidjil` file obtained by merging with `fuse.py` two `.vidjil` files corresponding to two samples.
-Clones that have a same `id` are gathered (see 'What is a clone?', above).
+Clones that are from different files but that have a same `id` are gathered (see 'What is a clone?', above).
 It is the responsibility of the program generating the initial `.vidjil` files to choose these `id` to
 do a correct gathering.
 
@@ -98,7 +101,11 @@ do a correct gathering.
 
     "samples": {
          "number": 2, 
-         "original_names": ["T8045-BC081-Diag.fastq", "T8045-BC082-fu1.fastq"]
+         "original_names": ["T8045-BC081-Diag.fastq", "T8045-BC082-fu1.fastq"],
+         "timestamp": [
+           "2019-12-17 17:49:22",
+           "2019-12-27 17:50:04"
+         ]
     },
 
     "reads" : {
@@ -119,7 +126,7 @@ do a correct gathering.
             "top": 1,
             "seg":
             {
-        "5": {"name": "TRGV5*01",  "start": 1,  "stop": 86,  "delRight": 5},
+        "5": {"name": "TRGV5*01",  "start": 1,  "stop": 87,  "delRight": 5},
         "3": {"name": "TRGJ1*02",  "start": 89, "stop": 118, "delLeft":  0}
            }
         },
@@ -141,10 +148,51 @@ do a correct gathering.
                 "5": {"start": 1, "stop": 100},
                 "3": {"start": 101, "stop": 200}
             }
+        },
+        {
+            "id": "seqedited_in_analysis",
+            "name": "name_seqedited_in_analysis",
+            "sequence": "AAAAATTTTTAAAAATTTTTAAAAATTTTT",
+            "reads": [ 521, 42 ],
+            "germline": "TRG",
+            "top": 4,
+            "seg":
+              {
+                  "cdr3": {"start": 10, "stop": 20}
+              }
+        },
+        {
+            "id": "clone5",
+            "name": "clone_showOnlyOneSample",
+            "sequence": "GATACAaaaaaccccc",
+            "reads": [ 1021, 0 ],
+            "germline": "TRG",
+            "top": 5
+        },
+        {
+            "id": "clone_cluster1",
+            "name": "clone_cluster1",
+            "sequence": "GATACAaaaaaccccc",
+            "reads": [ 1021, 0 ],
+            "germline": "TRG",
+            "top": 6
+        },
+        {
+            "id": "clone_cluster2",
+            "name": "clone_cluster2",
+            "sequence": "AAAAATTTTTAAAAATTTTTAAAAATTTTT",
+            "reads": [ 521, 42 ],
+            "germline": "TRG",
+            "top": 7,
+            "seg":
+              {
+                  "cdr3": {"start": 10, "stop": 20}
+              }
         }
     ]
 }
 ```
+
 
 ## `.analysis` file
 
@@ -167,7 +215,8 @@ some clones, and added external data (`data`).
          "number": 2, 
          "names": ["diag", "fu1"],
          "original_names": ["file1.fastq", "file2.fastq"],
-         "order": [1, 0]
+         "order": [1, 0],
+         "stock_order": [1, 0]
     },
 
     "clones": [
@@ -182,12 +231,30 @@ some clones, and added external data (`data`).
             "sequence": "ATGACTCTGGAGTCTATTACTGTGCCACCTGGGATGTGAGTATTATAAGAAAC",
             "tag": "3",
             "expected": "0.1"
+        },
+        {
+            "id": "seqedited_in_analysis",
+            "segEdited": true,
+            "germline": "TRG",
+            "sequence": "GGGGGCCCCCGGGGGCCCCCGGGGGCCCCCGGGGGCCCCCAAAAATTTTTAAAAATTTTTAAAAATTTTT",
+            "reads": [ 521, 42 ],
+            "seg":
+              {
+                  "cdr3": {"start": 50, "stop": 60}
+              }
+        },
+        {
+            "id": "seqedited_new_locus",
+            "segEdited": true,
+            "germline": "IGH+",
+            "name": "clone_with_new_locus"
         }
 
     ],
 
     "clusters": [
-        [ "clone2", "clone3"],
+        [ "clone3", "clone2"],
+        [ "clone_cluster2", "clone_cluster1"],
         [ "clone-5", "clone-10", "clone-179" ]
     ],
 
@@ -230,14 +297,15 @@ representative clone of the cluster.
 
 ## Statistics: the `reads` element \[.vidjil only, required\]
 
-The number of analyzed reads (`segmented`) may be higher than the sum of the read number of all clones,
+The number of reads with detected recombinations (`segmented`)
+may be higher than the sum of the read number of all clones,
 when one choose to report only the 'top' clones (`-t` option for fuse).
 
 ``` javascript
 {
     "total" : [],          // total number of reads per sample (with samples.number elements)
-    "segmented" : [],      // number of analyzed/segmented reads per sample (with samples.number elements)
-    "germline" : {         // number of analyzed/segmented reads per sample/germline (with samples.number elements)
+    "segmented" : [],      // number of reads with detected recombinations per sample (with samples.number elements)
+    "germline" : {         // number of reads with detected recombinations per sample/germline (with samples.number elements)
         "TRG" : [],
         "IGH" : []
     }
@@ -298,7 +366,7 @@ In the `.analysis` file, this section is intended to describe some specific clon
                     // settings web application menu
 
    "seg":           // detailed V(D)J designation/segmentation and other sequences features or values [optional]
-                    // on the web application, clones that are not segmented will be shown on the grid with '?/?'
+                    // on the web application, clones that are not detected will be shown on the grid with '?/?'
                     // positions are related to the 'sequence'
                     // names of V/D/J genes should match the ones in files referenced in germline/germline.data
                     // Positions on the sequence start at 1.
@@ -308,7 +376,8 @@ In the `.analysis` file, this section is intended to describe some specific clon
                     // Recombination with several D may use "4a", "4b"...
         "3": {"name": "IGHJ3*02", "start": 136, "stop": 171,  "delLeft": 5},  // J (or 3') segment
 
-                    // any feature to be highlighted in the sequence, with optional fields related to this feature:
+                    // Any feature to be highlighted in the sequence.
+                    // All those fields are optional (though some minor feature may not properly work in the client)
                     //  - "start"/"stop" : positions on the clone sequence (starting at 1)
                     //  - "delLeft/delRight" : a numerical value . It is the numbers of nucleotides deleted during the rearrangment. DelRight are compatible with V/5 and D/4 segments, delLeft is compatible with D/4 and J/3 segments.
                     //  - "seq" : a sequence
@@ -317,6 +386,8 @@ In the `.analysis` file, this section is intended to describe some specific clon
                     //
                     // JUNCTION//CDR3 should be stored that way (in fields called "junction" of "cdr3"),
                     // its productivity must be stored in a boolean field called "productive".
+                    // "seq" field should not be filled for cdr3 or junction (it is extracted from the sequence itself).
+                    // However a "aa" field may be used to give the amino-acid translation of the cdr3 or junction.
         "somefeature": { "start": 56, "stop": 61, "seq": "ACTGTA", "val": 145.7, "info": "analyzed with xyz" },
 
                     // Numerical or textual features concerning all the sequence or its analysis (such as 'evalue')
@@ -329,12 +400,68 @@ In the `.analysis` file, this section is intended to describe some specific clon
    "reads": [],      // number of reads in this clones [.vidjil only, required] 
                      // (with samples.number elements)
 
+   "_average_read_length": [],
+                     // Average read length of the reads clustered in this clone.
+                     // This value allows to draw a genescan-like plot.
+                     // (with samples.number elements)
+
    "top": 0,         // (not documented now) [required] threshold to display/hide the clone
    "stats": []       // (not documented now) [.vidjil only] (with sample.number elements)
 
 
 }
 ```
+
+
+## `distributions`: providing statistics on full clonal populations
+
+In some situations, one would like to represent whole distributions of clones
+according to "axes" such as V/J distribution or length.
+It is possible to specify in the `.vidjil` file such `"distributions"`
+without detailing the full list of clones, hence keeping a relatively small file
+and enabling fast post-processing or visualizations.
+
+In the example below, 5 clones (totaling 6 reads) have a length of 223.
+Distributions can be on several axes, like both V/J (here seg3/seg5).
+
+``` javascript
+{
+    "distributions":
+    {
+        "keys": ["clones", "reads"],
+        "repertoires": {
+            "sample_42": [
+                {
+                    "axes": ["lenSeqAverage"],
+                    "values": { "223": [5, 6], "232": [1, 7], "260": [5, 20] }
+                },
+                {
+                    "axes": ["seg3", "seg5"],
+                    "values": {
+                         "IGHJ3": {"IGHV4-39": [5, 20]},
+                         "IGHJ4": {"IGHV3-23": [1, 7], "IGHV3-64": [1, 1]},
+                         "IGHJ6": {"IGHV1-24": [2, 3], "IGHV1-8": [2, 2]}
+                       }
+                }]
+              }
+       }
+     }
+   }
+```
+
+Distributions from a `.vidjil` files can be computed by `tools/fuse.py`, 
+giving the desired list of distributions
+through the `-d` option. For the above example, run:
+
+```bash
+python fuse.py -d lenSeqAverage -d seg3,seg5 sample_42.vidjil
+```
+
+The command `fuse.py -l` yields the list of available axes,
+but currently only `lenSeqAverage` and `seq3,seq5` are supported.
+Adding axes can be done trough in `get_values()` in `tools/fuse.py`.
+Note that axes should also be added to `browser/js/axes.js` to be displayed in the client.
+
 
 ## `germlines` list \[optional\]\[work in progress, to be documented\]
 
@@ -368,7 +495,7 @@ against them (not implemented now).
 ## Tagging some clones: `tags` list \[optional\]
 
 The `tags` list describe the custom tag names as well as tags that should be hidden by default.
-The default tag names are defined in [../browser/js/vidjil-style.js](../browser/js/vidjil-style.js).
+The default tag names are defined in [../browser/js/vidjil-style.js](http://gitlab.vidjil.org/-/blob/master/browser/js/vidjil-style.js).
 
 ``` javascript
 "key" : "value"  // "key" is the tag id from 0 to 7 and "value" is the custom tag name attributed

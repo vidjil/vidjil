@@ -139,6 +139,13 @@ QUnit.test("test nth_ocurrence", function(assert) {
     }
 );
 
+QUnit.test("test getSpeciesCommonName", function(assert) {
+    assert.equal(getSpeciesCommonName("homo sapiens"), "human");
+    assert.equal(getSpeciesCommonName("Homo sapiens"), "human");
+    assert.equal(getSpeciesCommonName("mus musculus"), "house mouse");
+    assert.equal(getSpeciesCommonName("gallus gallus"), "chicken");
+});
+
 QUnit.test("test tsvToArray", function(assert) {
         var tabstring = "head1\thead2\thead3\thead4\nLine 1 data1\tLine 1 data2\tLine 1 data3\tLine 1 data4\n";
         tabstring += "Line 2 data1\tLine 2 data2\tLine 2 data3\tLine 2 data4";
@@ -164,7 +171,7 @@ QUnit.test("test rounding functions", function(assert) {
 
     assert.equal(nice_ceil(0), 0, "rounding 0");
     assert.equal(nice_ceil(0.072), 0.08, "rounding 0.08");
-    assert.equal(nice_ceil(1.2), 1.5, "rounding 1.2");
+    assert.equal(nice_ceil(1.2, 0.5), 1.5, "rounding 1.2");
     assert.equal(nice_ceil(18), 20, "rounding 1.2");
     assert.equal(nice_ceil(100), 100, "rounding 100");
 
@@ -409,3 +416,11 @@ QUnit.test("Sort list locus", function(assert) {
     assert.deepEqual(list_test_2, wait_test_2, "list2 is correctly sorted")
     }
 );
+
+QUnit.test("Get n first sequences", function(assert) {
+    seqs=">seq1\nAT\n>seq2\nTC\n>seq3\nCC\n";
+    assert.equal(getNFirstSequences(seqs, 1), ">seq1\nAT\n");
+    assert.equal(getNFirstSequences(seqs, 0), seqs);
+    assert.equal(getNFirstSequences(seqs, -1), seqs);
+    assert.equal(getNFirstSequences(seqs, 2), ">seq1\nAT\n>seq2\nTC\n");
+});

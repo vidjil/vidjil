@@ -3,7 +3,7 @@
 
     "samples" :  { 
 	"number" : 1,
-	"original_names" :  [ "/some/file" ] ,
+	"original_names" :  [ "/some/file_2" ] ,
 	"run_timestamp" :  [ "2015-02-19 16:37:06" ] ,
 	"producer" :  [ "vidjil dev 0cf35de (2015-02-17)" ] ,
 	"log" :  [ "Some log" ],
@@ -27,6 +27,7 @@
 	    "sequence" : "seq-1",
 
 	    "reads" :  [ 300 ] ,
+        "normalized_reads" :  [ 500 ] ,
 	    "top" : 1,
 	    "germline" : "IGH"
 	},

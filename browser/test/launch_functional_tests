@@ -1,15 +1,9 @@
 # sh launch_functional_tests functional/test_*rb
 
-if [ -z "$FUNCTIONAL_CLIENT_BROWSER_PATH" ]; then
-    FUNCTIONAL_CLIENT_BROWSER_PATH="."
-fi
-
-if  [ "$1" = "--browsers-from-file" ]
-then
-    shift
-    BROWSER_LIST=`sed "s#^#$FUNCTIONAL_CLIENT_BROWSER_DIR#" ./tested-browsers`
+if [ ! -z "$FIREFOX_PATH" -a ! -z "$FIREFOX_VERSION" ]; then
+    BROWSER_LIST="$(printf $FIREFOX_PATH $FIREFOX_VERSION)"
 else
-    BROWSER_LIST=$FUNCTIONAL_CLIENT_BROWSER_PATH
+    BROWSER_LIST=.
 fi
 
 FUNCTIONAL_TESTS=$*
@@ -38,6 +32,7 @@ for browser in $BROWSER_LIST; do
     echo "\033[1m\033[33m===== Testing browser: " $browser "\033[0m"
     echo
     for file in $FUNCTIONAL_TESTS; do
+        [ -f init_tests.sh ] && . ./init_tests.sh
         echo "\033[34m===" $file "\033[0m"
         if [ ${#browser} -gt 1 ]; then
             export WATIR_BROWSER_PATH="$browser"

@@ -122,6 +122,11 @@ ul{
   top: 32px;
 }
 
+#live-ajax-msg {
+  font-style: italic;
+  margin-right: 1em;  
+}
+
 #upload_summary {
   display:none;
   z-index: 10;
@@ -245,7 +250,7 @@ line {
 }
 
 .graph_line{
-  stroke-width : 2.5px;
+  stroke-width : 1.5px;
   cursor:pointer;
   stroke: @default;
 }
@@ -262,7 +267,7 @@ line {
 }
 
 .graph_inactive{
-  stroke-width : 1.5px;
+  stroke-width : 0.5px;
   cursor:pointer;
   display:none;
 }
@@ -312,11 +317,13 @@ line {
 #resolution1{
   fill : @background;
   opacity : 1;
+  pointer-events: none;
 }
 
 #resolution5{
-    fill: @border;
+    fill: @background;
     opacity: 0.6;
+    pointer-events: none;
 }
 
 .graph_time{
@@ -352,7 +359,7 @@ line {
 .graph_menu{
   position: absolute;
   top: 0px;
-  right: 0px;
+  right: 6px;
   min-width: 22px;
   min-height: 18px;
   text-align: center;
@@ -360,19 +367,25 @@ line {
   border-left: solid;
   border-color: @border;
   background : @background;
+  z-index: 1;
+  overflow: auto;
+  max-height: 100%;
 }
 
 .graph_list{
   display: none;
 }
 
+.graph_listAll:hover,
 .graph_listElem:hover{
   background : @border;
   width: 100%;
-  cursor: move;
+  cursor: pointer;
   cursor: webkit-grab;
 }
-
+.graph_listElem_selected {
+  font-weight: bold;
+}
 
 							  /*style scatterPlot element*/
 
@@ -716,7 +729,7 @@ line {
 }
 
 .list_sort{
-    margin-right : 30px;
+    margin-right : 20px;
     float: right;
 }
 
@@ -1033,7 +1046,7 @@ a:hover {
   color: @select;
 }
 
-a.tag-link {
+span.sample-tag, a.tag-link {
   color: black;
   background-color: #eee;
   border-radius: 5px;
@@ -1707,7 +1720,7 @@ h3 .uid {
 #db_table_container{
     overflow-y: scroll;
     overflow-x: hidden;
-    height: calc(100% -30px);
+    height: calc(100% - 30px);
     position: relative;
 }
 
@@ -2595,4 +2608,12 @@ form {
     pointer-events: none;
     opacity: 0.4;
     cursor: auto;
+}
+
+
+.list_lock_off {
+  color: @border;
+}
+.list_lock_on {
+  color: @default;
 }

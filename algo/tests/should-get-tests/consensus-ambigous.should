@@ -1,0 +1,16 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -r 1 -k 4 -w 20 -z 0 -c clones -V $VIDJIL_DATA/toy_V.fa -J $VIDJIL_DATA/toy_J.fa $VIDJIL_DATA/ambiguous_representative.fa
+
+$ Short reads properly detected
+1:SEG_+.* -> .* 4
+
+$ Window found
+1:^CACCCCCCCCCTTTTTTTCT$
+
+$ Representative computation
+1:>clone-001--custom--0000004--100%--seq.-\[8,49\]
+
+$ Representative sequence
+1: TATTTGTATANCACCCCCCCCCTTTTTTTCTNGCGCGAGCGA
+
+$ Representative sequence has the good length, it does not extend towards noisy sequences
+2: 42 bp .... of 58.. bp.

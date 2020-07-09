@@ -1,6 +1,6 @@
 /*
   This file is part of Vidjil <http://www.vidjil.org>
-  Copyright (C) 2011-2019 by VidjilNet consortium and Bonsai bioinformatics
+  Copyright (C) 2011-2020 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
       Mathieu Giraud <mathieu.giraud@vidjil.org>
@@ -46,6 +46,10 @@ string Kmer::getLabel() const{
 	return "";
 }
 
+int Kmer::getStrand() const{
+	return 1;
+}
+
 size_t Kmer::getLength() const{
   return 10;
 }
@@ -59,6 +63,9 @@ bool Kmer::isNull() const{
 }
 
 bool Kmer::isUnknown() const{
+  return false;
+}
+bool Kmer::isAmbiguous() const{
   return false;
 }
 

@@ -21,7 +21,7 @@ class ExternalTest < BrowserTest
     begin
       $b.clone_in_scatterplot('25').wait_until(&:present?)
       $b.clone_in_scatterplot('25').click
-      
+      $b.update_icon.wait_while(&:present?)
       $b.span(:id => "toIMGT" ).click
       
       assert ( $b.window(:title => "IMGT/V-QUEST").exists? ) , ">> fail opening IMGT "
@@ -36,6 +36,7 @@ class ExternalTest < BrowserTest
       $b.window(:title => "IMGT/V-QUEST").close
 
       $b.clone_in_scatterplot('26').click
+      $b.update_icon.wait_while(&:present?)
       $b.span(:id => "toIMGT" ).click
       assert ( $b.window(:title => "IMGT/V-QUEST").exists? ) , ">> fail opening second IMGT "
 
@@ -52,11 +53,12 @@ class ExternalTest < BrowserTest
   def test_10bis_imgt_post
     begin
       $b.clone_in_scatterplot('25').click
+      $b.update_icon.wait_while(&:present?)
       $b.span(:id => "toIMGTSeg" ).click
       $b.until { $b.segmenter_checkbox_imgt_vdj.present? }
 
       clone_info = $b.clone_info_segmenter('25')
-      productive_title = clone_info[:axis].element(:class => 'productivity-IMGT').title
+      productive_title = clone_info[:axis].element(:class => 'productivity IMGT').title
       assert (productive_title.include? 'productivity'), "IMGT should tell us the productivity of the sequence"
 
       clone_segmenter = $b.clone_in_segmenter('25')
@@ -80,7 +82,7 @@ class ExternalTest < BrowserTest
     begin
       $b.clone_in_scatterplot('25').wait_until(&:present?)
       $b.clone_in_scatterplot('25').click
-      
+      $b.update_icon.wait_while(&:present?)
       $b.span(:id => "toIgBlast" ).click
       
       assert ( $b.window(:title => "IgBLAST Search Results").exists? ) , ">> fail opening igblast "
@@ -95,6 +97,7 @@ class ExternalTest < BrowserTest
 
 
       $b.clone_in_scatterplot('26').click
+      $b.update_icon.wait_while(&:present?)
       $b.span(:id => 'toIgBlast').click
       assert ( $b.window(:title => "IgBLAST Search Results").exists? ) , ">> fail opening second igblast "
       $b.window(:title => "IgBLAST Search Results").use do

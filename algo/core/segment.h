@@ -96,14 +96,31 @@ class AlignBox
   string key;
   string color;
 
-  int del_left;
+
+  /**
+  * Alignment positions *on the read*
+  */
+
   int start;
   int end;
+  int marked_pos;    // Marked position, for Cys104 and Phe118/Trp118
+  int seq_length;
+
+  /**
+  * Alignment positions *compared to reference sequence*
+  */
+
+  int del_left;
   int del_right;
 
   AlignBox(string key = "", string color="");
   string getSequence(string sequence);
   void addToOutput(CloneOutput *clone, int alternative_genes);
+
+  /**
+  * Mirror the AlignBox (over a a sequence length seq_length)
+  */
+  void reverse();
 
   /**
    * Returns 'V', 'D', 'J', or possibly '5', '4', '3', '?', depending on the ref_label and on the key
@@ -114,6 +131,12 @@ class AlignBox
    * Returns the length
    */
   int getLength();
+
+  /**
+   * Return whether the box cover the first/last position od the reference sequence
+   */
+  bool CoverFirstPos();
+  bool CoverLastPos();
 
   /**
    * Returns the position in the reference string corresponding to the position in the read
@@ -131,9 +154,6 @@ class AlignBox
   int ref_nb;
   string ref_label;
   string ref;
-
-  /* Marked position, for Cys104 and Phe118/Trp118 */
-  int marked_pos;
 
   /* Scores and identifiers of other possible reference sequence */
   vector<pair<int, int> > score;
@@ -405,7 +425,7 @@ class FineSegmenter : public Segmenter
    */
   void findCDR3();
 
-  void checkWarnings(CloneOutput *clone);
+  void checkWarnings(CloneOutput *clone, bool phony=true);
   void toOutput(CloneOutput *clone);
   
 };

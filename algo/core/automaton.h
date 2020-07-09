@@ -1,7 +1,7 @@
 #ifndef AUTOMATON_H
 #define AUTOMATON_H
 
-#include <list>
+#include <vector>
 #include <cctype>
 #include "kmerstore.h"
 #include <cstdlib>
@@ -24,6 +24,7 @@ class AbstractACAutomaton: public IKmerStore<Info> {
 
 protected:
   void *initialState;
+  float all_index_load;
   map<Info, size_t> kmers_inserted;
 public:
   AbstractACAutomaton();
@@ -52,7 +53,7 @@ public:
   /**
    * @return the information stored for this state
    */
-  virtual list<Info> &getInfo(void *state) = 0;
+  virtual vector<Info> &getInfo(void *state) = 0;
 
   /**
    * @param starting_state: the starting state for traversing the automate.
@@ -103,7 +104,7 @@ class pointer_state {
 public:
   pointer_state<Info> *transitions[NB_TRANSITIONS]; /* Transitions to the 5 nt */
   bool is_final;
-  list<Info> informations;           /* != NULL when is_final */
+  vector<Info> informations;           /* != NULL when is_final */
 
   pointer_state():is_final(false),informations() {
     for (size_t i = 0; i < NB_TRANSITIONS; i++)
@@ -163,7 +164,7 @@ public:
   /**
    * @return the information stored for this state
    */
-  list<Info> &getInfo(void *state);
+  vector<Info> &getInfo(void *state);
 
   /**
    * @return the automaton initial state

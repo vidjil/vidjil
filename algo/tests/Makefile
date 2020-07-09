@@ -11,8 +11,8 @@ EXEC=$(SRC:.cpp=)
 OBJ=$(SRC:.cpp=.o)
 OTHER_SRC=$(wildcard unit-tests/*.cpp)
 LIB=../core/vidjil.a ../lib/lib.a
-SHOULD=$(wildcard should-get-tests/*.should-get) $(wildcard bugs/*.should-get)
-SHOULD_LOG=$(SHOULD:.should-get=.tap)
+SHOULD=$(wildcard should-get-tests/*.should) $(wildcard bugs/*.should)
+SHOULD_LOG=$(SHOULD:.should=.tap)
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
 SHOULD_VDJ_VDJ=$(SHOULD_VDJ:.should-vdj.fa=.1.vdj)
 SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
@@ -51,7 +51,7 @@ test: all
 	cat ./unit-tests/tests.cpp.tap
 	@echo "*** All unit tests passed"
 
-all: core $(EXEC)
+all: $(EXEC)
 	@echo "All tests compiled."
 
 snapshot:
@@ -133,8 +133,8 @@ valgrind_%:
 valgrind_tests: vidjil ./unit-tests/tests
 	$(VALGRIND_CMD) ./unit-tests/tests
 
-$(EXEC): % : %.o $(LIB) 
-	$(CXX) -o $@ $< $(LIB) $(LDLIBS) $(LDFLAGS) $(CXXFLAGS)
+$(EXEC): % : core %.o $(LIB) 
+	$(CXX) -o $@ $@.o $(LIB) $(LDLIBS) $(LDFLAGS) $(CXXFLAGS)
 
 
 ../%.a:

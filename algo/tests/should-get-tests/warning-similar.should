@@ -1,0 +1,7 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC --all -w all -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/s-somatic.fa ; cat out/s-somatic.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
+
+$ No clustering due to -w all
+1: considering all analyzed reads as windows
+
+$ Warning on similar clones in json ('warn' because this is a clone in the first 10 clones)
+1: "code": "W53", "level": "warn", "msg": "Similar to clone #1 .* IGHV3-48.01 .* IGHJ4.02"

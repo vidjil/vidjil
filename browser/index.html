@@ -26,8 +26,9 @@
 
         <link rel="shortcut icon" href="./images/favicon-v.ico" type="image/x-icon">
         <link rel="icon" href="./images/favicon-v.ico" type="image/x-icon">
-        <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu/stylesheet.css" /> 
-        <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu-mono/stylesheet.css" /> 
+
+        <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu/stylesheet.css" />
+        <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu-mono/stylesheet.css" />
         <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/fontello.css" />
         <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/animation.css" />
         <link rel="stylesheet" href="css/vmi/vmi.css" />
@@ -163,7 +164,7 @@
                 </div>
 
                 <div class="menu" id="color_menu" onmouseover="showSelector('colorSelector');" > color by
-                    <div class="div-menu-selector"><select class="menu-selector" onchange="m.changeColorMethod(this.value)">
+                    <div class="div-menu-selector"><select id="color_menu_select" class="menu-selector" onchange="m.changeColorMethod(this.value)">
                         <option value="Tag">tag</option>
                         <option value="clone">clone</option>
                         <option value="cdr3">CDR3</option>
@@ -177,12 +178,19 @@
                 </div>
 
                 <div class="menu" id="filter_menu" onmouseenter="builder.build_displaySelector();" onmouseover="showSelector('filterSelector');" > filter
-                    <div id="filterSelector" class="selector"><div>
+                    <div id="filterSelector" class="selector">
+                      <div>
                         <div class="menu_box">
-                            <span id="top_label"></span></br>
-                            <input id="top_slider" type="range" min="5" max="100" step="5" value="10" onchange="m.displayTop(this.value)" />
+                          <span id="top_label"></span></br>
+                          <input id="top_slider" type="range" min="5" max="100" step="5" value="10" onchange="m.displayTop(this.value)" />
                         </div>
-                    </div></div>
+                        <div class="menu_box">
+                          <div id="filter_switch_sample" title="Hide clones that are not present in the current sample">
+                            <input id="filter_switch_sample_check" type="checkbox"></input> Focus on clones of one sample
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                 </div>
 
                 <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();" onmouseover=" showSelector('settingsSelector');" > settings
@@ -281,9 +289,12 @@
             <div id="fps" style="display: none"> </div>
             <div id="header_messages" class="message_container header"></div>
 
-            <div id='live-ajax'>
-                <div class="active-container">
-                    <img src="images/ajax-loader.gif" />
+            <div id='updateIcon' style="display: none; align-items: center; background: transparent; width:1px"></div>
+
+            <div id='live-ajax' style="display: flex; align-items: center">
+                <div id='live-ajax-msg'>
+                </div>
+                <div id='live-ajax-icon'>
                 </div>
             </div>
 
@@ -311,7 +322,6 @@
                     <a class="buttonSelector devel-mode" onclick="my_tips.reset()">reset tips of the day</a>
                 </div></div>
                 </div>
-
 
             <div class="menu" id="alert"></div>
             <div id="logo"  onclick="console.log({'type': 'popup', 'default':'welcome'})">Vidjil <span class='logo'>(beta)</span></div>

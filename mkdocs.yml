@@ -2,19 +2,36 @@ site_name: Vidjil
 
 docs_dir: doc
 
-plugins: []
+plugins:
+    - gitlab_links:
+         gitlab_url: 'https://gitlab.inria.fr/vidjil/vidjil'
 
 repo_url: https://gitlab.inria.fr/vidjil/vidjil
 repo_name: gitlab
 
-pages:
+nav:
     - / : index.md
-    - web, user manual: user.md
-    - locus and recombinations: locus.md
-    - vidjil-algo: vidjil-algo.md
-    - .vidjil format: vidjil-format.md
-    - server: server.md
-    - credits: credits.md
+    - Life scientist:
+        - Web application user manual: user.md
+        - Libraries and recombinations: locus.md
+        - Tutorial "Mastering the Vidjil web application" 🔗: http://www.vidjil.org/doc/tutorial/mastering-vidjil.html
+        - Demo access to app.vidjil.org 🔗: http://app.vidjil.org/
+    - Bioinformatician:
+        - vidjil-algo, command-line manual: vidjil-algo.md
+        - fuse.py, converting and merging immune repertoire data: tools.md
+        - Specification of the .vidjil format: vidjil-format.md
+        - Specification of the warnings: warnings.md
+        - Specification of the .should-vdj.fa tests: should-vdj.md
+        - Further developer documentation: http://www.vidjil.org/doc/#further-developer-documentation
+    - Server administrator:
+        - Server administration (web): admin.md
+        - Server installation and maintenance (docker): server.md
+        - Further developer documentation: http://www.vidjil.org/doc/#further-developer-documentation
+    - Quality, roadmap, credits:
+        - Software and development quality: quality.md
+        - Public datasets supporting Vidjil publications 🔗: http://www.vidjil.org/data
+        - Roadmap: roadmap.md
+        - Credits, references: credits.md
 
 extra_css:
     - mkdocs-extra.css

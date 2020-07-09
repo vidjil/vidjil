@@ -48,6 +48,7 @@ QUnit.test("read details", function(assert) {
     document.getElementById('info').appendChild(top_info)
 
     m.keep_one_active_system('IGH')
+    info.update();
     var sbnm = document.getElementsByClassName('systemBoxNameMenu')
     assert.includes(sbnm[0].outerHTML, '<span class="systemBoxNameMenu inactive TRG">', 'system box TRG is inactive')
     assert.includes(sbnm[1].outerHTML, '<span class="systemBoxNameMenu IGH">', 'system box IGH is still active')

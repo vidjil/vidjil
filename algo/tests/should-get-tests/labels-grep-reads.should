@@ -1,0 +1,12 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -x 2000 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH --out-reads --label-filter --label GAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACT $VIDJIL_DATA/Stanford_S22.fasta ; cat out/seq/clone.fa-1
+
+# See also combo-grep-reads.should-get
+
+$ Keep only one windows, the one given by -W, with only 2 reads in the first 2000 reads (it is actually the second clone in Stanford_S22.fasta)
+1: keep 1 windows in 2 reads
+
+$ Tbere are the three IGHV/D/J genes in out/seq/clone.fa-1
+3:>IGH
+
+$ There are 2 reads in out/seq/clone.fa-1
+2:>lcl

@@ -39,6 +39,11 @@ def compute_contamination(sequence_file_id, results_file_id, config_id):
         #open sample
         with open(defs.DIR_RESULTS+db.results_file[results_file_id[i]].data_file, "r") as json_data:
             d = json.load(json_data)
+
+            # Be robust against 'null' values for clones
+            if not d["clones"]:
+                d["clones"] = []
+
             list1 = {}
             total_reads1=d["reads"]["segmented"][0]
             for clone in d["clones"]:
@@ -57,6 +62,7 @@ def compute_contamination(sequence_file_id, results_file_id, config_id):
                        & ( db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                        & ( db.sequence_file.id != sequence_file_id[i])
                        & ( db.results_file.sequence_file_id == db.sequence_file.id )
+                       & ( db.results_file.hidden == False )
                        & ( db.results_file.config_id == config_id[i]  )
                        ).select(db.sequence_file.ALL,db.results_file.ALL, db.sample_set.id, orderby=db.sequence_file.id|~db.results_file.run_date)
 
@@ -75,6 +81,10 @@ def compute_contamination(sequence_file_id, results_file_id, config_id):
                 with open(defs.DIR_RESULTS+row.results_file.data_file, "r") as json_data2:
                     try:
                         d = json.load(json_data2)
+                        # Be robust against 'null' values for clones
+                        if not d["clones"]:
+                            d["clones"] = []
+                            
                         total_reads2=d["reads"]["segmented"][0]
                         for clone in d["clones"]:
                             if clone["id"] in list1 :
@@ -95,6 +105,7 @@ def compute_extra(id_file, id_config, min_threshold):
     result = {}
     d = None
     results_file = db((db.results_file.sequence_file_id == id_file) &
+                      (db.results_file.hidden == False) &
                       (db.results_file.config_id == id_config)
                     ).select(orderby=~db.results_file.run_date).first()
     filename = defs.DIR_RESULTS+results_file.data_file
@@ -102,6 +113,7 @@ def compute_extra(id_file, id_config, min_threshold):
         try:
             d = json.load(rf)
             loci_min = {}
+
             if 'reads' in d and 'germline' in d['reads']:
                 loci_totals = d['reads']['germline']
                 for locus in loci_totals:
@@ -114,6 +126,10 @@ def compute_extra(id_file, id_config, min_threshold):
                     germline = clone['germline']
                     if clone['reads'][0] >=  loci_min[germline]:
                         result[germline][0] += 1
+            elif d["clones"] is None:
+                # Be robust against 'null' values for clones
+                d["clones"] = []
+            
         except ValueError as e:
             print('invalid_json')
             return "FAIL"
@@ -134,6 +150,7 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     ts = time.time()
     data_id = db.results_file.insert(sequence_file_id = id_sequence,
                                      run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
+                                     hidden = grep_reads is not None, 
                                      config_id = id_config )
         
     args = [id_sequence, id_config, data_id, grep_reads]
@@ -169,6 +186,7 @@ def schedule_fuse(sample_set_ids, config_ids):
             row = db((db.sample_set_membership.sample_set_id == sample_set_id)
                    & (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id)
                    & (db.results_file.config_id == config_id)
+                   & (db.results_file.hidden == False)
                 ).select(db.sample_set_membership.sample_set_id, db.sample_set_membership.sequence_file_id,
                         db.results_file.id, db.results_file.config_id).first()
             if row:
@@ -634,6 +652,7 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
                    & ( db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                    & ( db.sample_set_membership.sample_set_id == sample_set_id)
                    & ( db.results_file.config_id == id_config )
+                   & ( db.results_file.hidden == False)
                    ).select( orderby=db.sequence_file.id|~db.results_file.run_date) 
     query = []
     sequence_file_id = 0
@@ -854,6 +873,7 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
             cmd = cmd.replace( "&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
         cmd = cmd.replace( "&result&", output_file)
         cmd = cmd.replace("&pear&", defs.DIR_PEAR)
+        cmd = cmd.replace("&flash2&", defs.DIR_FLASH2)
         # Example of template to add some preprocess shortcut
         # cmd = cmd.replace("&preprocess_template&", defs.DIR_preprocess_template)
         # Where &preprocess_template& is the shortcut to change and

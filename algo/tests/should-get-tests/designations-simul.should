@@ -1,0 +1,23 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -v -g $VIDJIL_DIR/germline -c designations $VIDJIL_DATA/segment_simul.fa | grep '^[>#]'
+
+
+$ First sequence, easy segmentation (no error, few deletions at the windows, small N)
+#                         72   77          89   94
+#                         |    |           |    |
+# seq    :  61 attactgtgcgaCTTCataaccggaaccaGTTAtggttcgactcctggggccaaggaaccctggtcaccgtctcctcag
+#              ||||||||||||                     ||||||||||||||||||||||||||||||||||||||||||||||
+# V5-10-1: 280 attactgtgcgaga  |||||||||||||
+# D1-14*01:  1              ggtataaccggaaccac
+#                                          |||||||
+# D3-16*01:          gtattatgattacgtttgggggaGTTATGcttatacc
+# J5*01   :  1                             acaactggttcgactcctggggccaaggaaccctggtcaccgtctcctcag
+# -2/CTTC/-3  -1/GTTA/5
+1:^>seq1 \+ VDJ 1 73 78 90 95 140 IGHV5-10-1.0[1-4] 2/CTTC/3 IGHD1-14.01 1/GTTA/5 IGHJ5.01
+
+# Note that a second D (D3-16*01) can be detected (6 common nucleotides, or even 7 with an overlap on the first D)
+# This is tested in segment_simul.should-vdj
+
+# seq1_polyT is the same as seq1 but starts and ends with 10Ts, the recombination is in the middle.
+$ Sequence with polyT is properly designated
+1:^>seq1_polyT \+ VDJ 11 83 88 100 105 150
+1:^>seq1_polyT .* IGHV5-10-1.0[1-4] 2/CTTC/3 IGHD1-14.01 1/GTTA/5 IGHJ5.01

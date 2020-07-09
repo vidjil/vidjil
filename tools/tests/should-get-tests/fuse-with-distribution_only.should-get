@@ -1,0 +1,172 @@
+#######################################
+### Part without clones (--no-clone) ##
+#######################################
+!LAUNCH: python3 ../../fuse.py  --no-clones --output fused_without_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_without_clones.vidjil
+
+$ Should not have field clones
+0:"clones": \[
+
+
+###################################
+### Part with unsegmented clones ##
+###################################
+!LAUNCH: python3 ../../fuse.py  -D --no-clones --output fused_with_unsegmented_clones_and_complete_distributions.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_with_unsegmented_clones_and_complete_distributions.vidjil
+
+
+$ Get correct keys for distributions json content
+1:"repertoires"
+1:"keys"
+1:"filters"
+
+
+$ Get correct files names
+r:/some/file_[12]
+
+
+$ Correct number of entries for some keys (2*30 + 1 by repertoire)
+122:"seg5"
+122:"lenCDR3"
+
+
+############################
+### Part with real clones ##
+############################
+!LAUNCH: python3 ../../fuse.py  -d germline,seg5  --no-clones --output fused_with_real_clones_and_complete_distributions.vidjil ../../../algo/tests/data/results_five_segmented_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_with_real_clones_and_complete_distributions.vidjil
+
+$ Get correct keys for distributions json content
+1:"repertoires"
+1:"keys"
+1:"filters"
+
+$ No clones
+0:"id"
+
+$ Correct number of entries for some keys (1 by repertoire)
+3:"seg5"
+
+$ Get correct files names
+:sequence_file
+
+
+$ Filenames (original_files and repname)
+2:"sequence_file"
+2:"/some/file_1"
+2:"/some/file_2"
+
+$ Case of an entire result (axes: germline, seg5)
+lr1:"values": { "IGK": { .* "IGKV3-20\*01": \[ 1, 3898 \]
+lr1:"values": { "IGK": { .* "IGKV1-39\*01": \[ 1, 5653 \]
+lr1:"values": { "IGK": { .* "IGKV1-33\*01": \[ 1, 2597 \]
+lr1:"values": { "IGK": { .* "IGKV4-1\*01": \[ 1, 2520 \]
+lr1:"values": { "IGK": { .* "IGKV3-15\*01": \[ 1, 2502 \]
+
+
+$ Case for the two other files (axes: germline, seg5)
+lr1:"values": { "IGH": { "\?": \[ 2, 900 \]
+lr1:"values": { "IGH": { "\?": \[ 2, 350 \]
+
+
+
+####################################################
+### Part with real clones, only some distribution ##
+####################################################
+!LAUNCH: python3 ../../fuse.py  -d seg5,seg3 -d evalue -d unknow_AXIS  --no-clones --output fused_only_some_axes.vidjil ../../../algo/tests/data/results_five_segmented_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_only_some_axes.vidjil
+
+$ Get correct keys for distributions json content
+1:"repertoires"
+1:"keys"
+1:"filters"
+
+$ No clones
+0:"id"
+
+$ Correct number of entries for some keys (1 by repertoire): seg5
+3:"seg5"
+$ Correct number of entries for some keys (1 by repertoire): unknow_AXIS (axis name)
+3:"unknow_AXIS"
+$ Correct number of entries for some keys (1 by repertoire): unknow_axis (axis returned value)
+3:"unknow_axis"
+
+$ Get correct files names
+:sequence_file
+
+
+$ Filenames (original_files and repname)
+2:"sequence_file"
+2:"/some/file_1"
+2:"/some/file_2"
+
+
+
+
+###################################################
+### Part with real clones, control top to keep   ##
+###################################################
+!LAUNCH: python3 ../../fuse.py  -t 3 -d germline,seg5   --no-clones --output fused_distribution_top.vidjil ../../../algo/tests/data/results_five_segmented_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil; cat fused_distribution_top.vidjil
+
+$ Top clones; Get correct keys for distributions json content
+1:"repertoires"
+1:"keys"
+1:"filters"
+
+
+$ Top clones; Get correct files names (original_files, commandline and repname)
+3:sequence_file
+$ Top clones; Get correct files names (original_files and repname)
+2:"/some/file_1"
+
+$ Top clones; Case of an entire result with top idem (axes: germline, seg5)
+lr1:"values": { "IGK": { .* "IGKV3-20\*01": \[ 1, 3898 \]
+lr1:"values": { "IGK": { .* "IGKV1-39\*01": \[ 1, 5653 \]
+lr1:"values": { "IGK": { .* "IGKV1-33\*01": \[ 1, 2597 \]
+lr1:"values": { "IGK": { .* "IGKV4-1\*01": \[ 1, 2520 \]
+lr1:"values": { "IGK": { .* "IGKV3-15\*01": \[ 1, 2502 \]
+
+
+$ Case for the other files (axes: germline, seg5)
+lr1:"values": { "IGH": { "\?": \[ 2, 900 \]
+
+
+
+######################################################
+### Part with real clones, distribution with 3 axes ##
+######################################################
+!LAUNCH: python3 ../../fuse.py  -d germline,seg5,seg3 --no-clones --output fused_3_axes.vidjil ../../../algo/tests/data/results_five_segmented_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil; cat fused_3_axes.vidjil
+
+
+
+$ 3 axes; Correct number of entries for some keys (1 by repertoire): seg5
+2:"seg5"
+$ 3 axes; Correct number of entries for some keys (1 by repertoire+sample): germline
+3:"germline"
+
+$ 3 axes; Get correct files names
+:sequence_file
+
+
+$ 3 axes; Filenames (original_files and repname)
+2:"sequence_file"
+2:"/some/file_1"
+
+$ Top clones; Case of an entire result with top idem (axes: germline, seg5, seg3)
+lr1:"values": { "IGK": { .* "IGKV3-20\*01": { .* "IGKJ2\*01": \[ 1, 3898 \]
+lr1:"values": { "IGK": { .* "IGKV1-39\*01": { .* "IGKJ2\*01": \[ 1, 5653 \]
+
+$ Case for the two cloness files (axes: germline, seg5, seg3)
+lr1:"values": { "IGH": { "\?": { "\?": \[ 2, 900 \]
+
+
+
+
+#################################################
+### Part with real clones, test rounded axis   ##
+#################################################
+!LAUNCH: python3 ../../fuse.py  -d lenSeqAverage -d unknow_AXIS  --no-clones --output fused_rounded_axes.vidjil ../../../algo/tests/data/results_five_segmented_clones.vidjil; cat fused_rounded_axes.vidjil
+
+
+$ Rounded values: 76.123 (should not be present)
+0:"76.123"
+$ Rounded values: 76.0
+1:"76.0"
+$ Rounded values: 77.0
+1:"77.0"

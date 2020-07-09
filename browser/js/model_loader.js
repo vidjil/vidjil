@@ -57,27 +57,27 @@ Model_loader.prototype = {
             
         else if (typeof params.sample_set_id !== "undefined" && typeof params.config !== "undefined"){
             //wait 1sec to check ssl
-            setTimeout(function () { db.load_data( {"sample_set_id" : params.sample_set_id , "config" : params.config } , "") }, 1000);
+            setTimeout(function () { self.db.load_data( {"sample_set_id" : params.sample_set_id , "config" : params.config } , "") }, 1000);
         }
         
         else if (typeof params.patient_id !== "undefined" && typeof params.config !== "undefined"){
             //wait 1sec to check ssl
-            setTimeout(function () { db.load_data( {"patient" : params.patient_id , "config" : params.config } , "")  }, 1000);
+            setTimeout(function () { self.db.load_data( {"patient" : params.patient_id , "config" : params.config } , "")  }, 1000);
         }
         
         else if (typeof params.run_id !== "undefined" && typeof params.config !== "undefined"){
             //wait 1sec to check ssl
-            setTimeout(function () { db.load_data( {"run" : params.run_id , "config" : params.config } , "")  }, 1000);
+            setTimeout(function () { self.db.load_data( {"run" : params.run_id , "config" : params.config } , "")  }, 1000);
         }
             
         else if (typeof params.custom !== "undefined" && params.custom.length>0){
             //wait 1sec to check ssl
-            setTimeout(function () { db.load_custom_data( {"custom" : params.custom })  }, 1000);
+            setTimeout(function () { self.db.load_custom_data( {"custom" : params.custom })  }, 1000);
         }
                 
         else if (typeof config != 'undefined' && config.use_database){
             //wait 1sec to check ssl
-            setTimeout(function () { db.call("default/home.html")}, 1000);
+            setTimeout(function () { self.db.call("default/home.html")}, 1000);
         }else{
             console.log({"type":"popup", "default":"welcome" })
         }
@@ -114,11 +114,28 @@ Model_loader.prototype = {
                 .update_selected_system()
             self.dataFileName = document.getElementById(id)
                 .files[0].name;
+            self.check_export_monitor()
+
         }
 
     }, 
+
     
-    
+    /**
+     * disable export monitor button if only one sample is present (add disable class)
+     */
+    check_export_monitor: function(){
+        var div = document.getElementById("export_monitor_report")
+        if (div) {
+            if (this.samples.names.length >1){
+                div.classList.remove( "disabledClass" )
+            } else {
+                div.classList.add( "disabledClass" )
+            }
+        }
+    },
+
+
     /** 
      * load the selected analysis file in the model
      * @param {string} analysis - id of the form (html element) linking to the analysis file
@@ -181,6 +198,8 @@ Model_loader.prototype = {
                     .initClones()
                 self.update_selected_system()
                 self.dataFileName = url_split[url_split.length-1]
+                self.check_export_monitor()
+
                 // self.applyUrlParams(paramsDict);
                 callback()
             },                
@@ -212,6 +231,7 @@ Model_loader.prototype = {
                 self.parseJsonAnalysis(result)
                 self.initClones()
                 self.analysisFileName = url_split[url_split.length-1]
+                self.check_export_monitor()
             },
             error: function () {
                 self.update()
@@ -250,17 +270,28 @@ Model_loader.prototype = {
         self.reset();
         
         //copy .vidjil file in model
+        var store_config = this.config;
         for (var key in data){
             if (key != "clusters") self[key] = jQuery.parseJSON(JSON.stringify(data[key]))
         }
         this.data_clusters = data.clusters;
+        this.config = store_config;
         
         //filter clones (remove clone beyond the limit)
         self.clones = [];
         var index = 0
+        // Bypass null values given by vidjil-algo (if --no-clone for example)
+        if (data.clones == null) {
+            data.clones = []
+        }
         for (var i = 0; i < data.clones.length; i++) {
             if (data.clones[i].top <= limit) {
-                var clone = new Clone(data.clones[i], self, index)
+                // real
+                var c_attributes = C_CLUSTERIZABLE
+                       | C_INTERACTABLE
+                       | C_IN_SCATTERPLOT
+                       | C_SIZE_CONSTANT
+                var clone = new Clone(data.clones[i], self, index, c_attributes)
                 self.mapID[data.clones[i].id] = index;
                 index++
             }
@@ -276,6 +307,10 @@ Model_loader.prototype = {
         if (typeof self.samples.order == 'undefined'){
             self.samples.order = []
             for (var j = 0; j < self.samples.number; j++) self.samples.order.push(j);
+        }
+        if (typeof self.samples.stock_order == 'undefined'){
+            self.samples.stock_order = []
+            for (var s = 0; s < self.samples.number; s++) self.samples.stock_order.push(s);
         }
         if (self.samples.order.length >= 2) {
             self.tOther = 1
@@ -348,13 +383,18 @@ Model_loader.prototype = {
                 "reads": [],
                 "germline" : this.system_available[q],
             };
-            new Clone(other, self, index, true);
+            new Clone(other, self, index, C_SIZE_OTHER);
             index++ ;
         }
         
         //remove incomplete similarity matrix (TODO: fix fuse.py)
         this.similarity = undefined;
+        this.check_export_monitor()
 
+        if (data.distributions != undefined){
+            this.distributions = data.distributions
+            this.loadAllDistribClones()
+        }
         return this
 
     }
@@ -376,7 +416,13 @@ Model_loader.prototype = {
         return fields;
     },
 
+    /**
+     * recalculating the array is sometimes necessary if the analysis and fused_file have diverged.
+     * @param  {Array} arr [description]
+     * @return {Array}     [description]
+     */
     calculateOrder: function(arr) {
+
         tmp = arr.slice();
         res = arr.slice();
         previous = -1;
@@ -433,10 +479,21 @@ Model_loader.prototype = {
                     for (var key in dict[id]) {
                         clone[key][idx] = dict[id][key];
                     }
-
             }
         }
-        if ('order' in analysis) {
+        if ('order' in analysis && 'stock_order' in analysis) {
+            // Jquery Extend don't work on samples.order.
+            clone.order       = analysis.order
+            clone.stock_order = analysis.stock_order
+            // Check if new sample have been added
+            if (clone.stock_order.length < this.samples.number){
+                for (var j = clone.stock_order.length; j < this.samples.number; j++) {
+                    clone.order.push(j)
+                    clone.stock_order.push(j)
+                }
+            }
+        } else if ('order' in analysis && !('stock_order' in analysis)) {
+            // Keep this behavior to ope old samples/analysis
             clone.order = this.calculateOrder(clone.order);
         }
         return clone;
@@ -503,12 +560,25 @@ Model_loader.prototype = {
                     var clone = clones[k];
                     if (clone.segEdited) {
                     for (var n=0; n < this.clones.length; n++){
+                        var newGermline = clone.germline;
+                        // Sometime, clone of analysis file don't exist in the vidjil file (#4181)
+                        // This is made by specific configuration with restricted locus analysis
+                        // In these case, we create the newGermline into the model
+
+                        // If newGermline don't exist, create an empty list for them
+                        if (this.reads.germline[newGermline] == undefined){
+                            console.default.log(" creation germline: " + newGermline)
+                            this.reads.germline[newGermline] = Array.apply(null, Array(this.samples.number)).map(function (x, i) { return 0; })
+                        }
+                        // Same for system_available
+                        if (this.system_available.indexOf(newGermline) == -1){
+                            this.system_available.push(newGermline)
+                        }
                         if (clone.id == this.clones[n].id){
                             this.clones[n].segEdited = true;
                             // Apply this.reads.germline changment 
                             for (var time =0; time< this.reads.segmented.length; time ++) {
                                 var oldGermline = this.clones[n].germline;
-                                var newGermline = clone.germline; 
                                 if(oldGermline != "custom") {this.reads.germline[oldGermline][time] -= this.clones[n].reads[time];}
                                 if(newGermline != "custom") {this.reads.germline[newGermline][time] += this.clones[n].reads[time];}
                                 if (newGermline == "custom" && newGermline != oldGermline) {
@@ -520,7 +590,12 @@ Model_loader.prototype = {
                             this.clones[n].germline = clone.germline;
                             this.clones[n].eValue   = clone.eValue;
                             this.clones[n].seg = clone.seg;
-                            
+
+                            if (clone.sequence != this.clones[n].sequence){
+                                // Sometimes sequence can differ. In this case, take the analysis one
+                                console.default.warn( "sequence contain in analysis differ for clone ", n)
+                                this.clones[n].sequence = clone.sequence
+                            }
                         }
                     }
                     // load germline in system_available
@@ -531,6 +606,7 @@ Model_loader.prototype = {
                 }
             }
             this.toggle_all_systems(true);
+            this.t = this.samples.order[0]
             
         }else{
             console.log({"type": "flash", "msg": "invalid version for this .analysis file" , "priority": 1});
@@ -587,6 +663,7 @@ Model_loader.prototype = {
                 id: this.samples.original_names,
                 info: this.samples.info,
                 order: this.samples.order,
+                stock_order: this.samples.stock_order,
                 names: this.samples.names},
             clones : this.analysis_clones,
             clusters : this.analysis_clusters,

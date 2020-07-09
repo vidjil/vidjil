@@ -10,7 +10,7 @@ class VidjilBrowser < Watir::Browser
       Selenium::WebDriver::Chrome.path = ENV['WATIR_BROWSER_PATH'] 
     end
     # :chrome or :safari
-    if ENV['WATIR_CHROME'] or ENV['WATIR_BROWSER_PATH'].include? "chrom"
+    if ENV['WATIR_CHROME'] or (ENV['WATIR_BROWSER_PATH'] and ENV['WATIR_BROWSER_PATH'].include? "chrom")
       super :chrome
     elsif ENV['WATIR_MARIONETTE']
       super :firefox
@@ -76,13 +76,17 @@ class VidjilBrowser < Watir::Browser
   # Return the clone on the scatterplot
   # Beware the id must be a string
   def clone_in_scatterplot(id, extra={}, number=1)
+
     circle = element(extra.merge(:id => scatterplot_id(number) + "_circle"+id))
-    if circle.exists? and not circle.present?
-      bar = element(extra.merge(:id => scatterplot_id(number) + "_bar"+id))
-      if bar.exists? and bar.present?
-        return bar
-      end
+    if circle.exists? and circle.present?
+      return circle
     end
+
+    bar = element(extra.merge(:id => scatterplot_id(number) + "_bar"+id))
+    if bar.exists? and bar.present?
+      return bar
+    end
+    
     return circle
   end
 
@@ -98,6 +102,14 @@ class VidjilBrowser < Watir::Browser
     return element(extra.merge(:id => 'seq'+id))
   end
 
+  def clear_filter
+    return span(:id => "clear_filter")
+  end
+
+  def filter_area
+    return text_field(:id => "filter_input")
+  end
+  
   # Change the coloration
   def color_by(dimension)
     menu_color.select_list.select dimension
@@ -184,9 +196,7 @@ class VidjilBrowser < Watir::Browser
   end
 
   def menu_item_export(id, extra = {})
-    menu = menu_import_export
-    menu.click
-    return menu.a(extra.merge(:id => id))
+    return menu_item(id, extra)
   end
 
   def menu_item_export_fasta(extra = {})
@@ -206,6 +216,7 @@ class VidjilBrowser < Watir::Browser
     end
     if parent.tag_name != "body"
       parent.click
+      parent.hover
     end
     return item
   end
@@ -369,10 +380,19 @@ class VidjilBrowser < Watir::Browser
     return div(:id => 'list_clones')
   end
   
+  def listLock()
+    return element(:id => "div_sortLock")
+  end
+
+
   def until(extra = {})
     default = {timeout: 3}
     default.merge(extra)
     Watir::Wait.until(default) { yield }
+  end
+
+  def update_icon
+    return div(:id => 'updateIcon')
   end
 
   protected
@@ -397,7 +417,7 @@ class VidjilBrowser < Watir::Browser
   end
 
   def scatterplot_legend(axis, index, number=1)
-    return scatterplot_axis(axis, number).element(:class => 'sp_legend', :index => index)
+    return scatterplot_axis(axis, number).element(:tag_name => 'text', :index => index)
   end
 
 

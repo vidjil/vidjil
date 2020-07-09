@@ -9,6 +9,7 @@
 #include <math.h>
 #include "bioreader.hpp"
 #include "tools.h"
+#include "proba.h"
 
 using namespace std;
 
@@ -51,6 +52,16 @@ public:
    * it only there for a reason of compatibility with KmerAffect)
    */
   bool isUnknown() const;
+  /**
+   * @return true iff the kmer is ambiguous (which doesn't make sense here but
+   * it only there for a reason of compatibility with KmerAffect)
+   */
+  bool isAmbiguous() const;
+
+  /**
+   * @return 1 (only there for compatibility reasons with KmerAffect)
+   */
+  int getStrand() const;
 } ;
 ostream &operator<<(ostream &os, const Kmer &kmer);
 bool operator==(const Kmer &k1, const Kmer &k2);
@@ -74,7 +85,8 @@ protected:
   size_t nb_kmers_inserted;
   size_t max_size_indexing;
   bool finished_building;
-
+  ProbaPrecomputer proba;
+  
 public:
 
   virtual ~IKmerStore();
@@ -149,7 +161,7 @@ public:
   /**
    * @return probability that the number of kmers is 'at_least' or more in a sequence of length 'length'
    */
-  double getProbabilityAtLeastOrAbove(T kmer, int at_least, int length) const;
+  double getProbabilityAtLeastOrAbove(T kmer, int at_least, int length);
 
   /**
    * @return the value of k
@@ -199,6 +211,10 @@ public:
    * @pre word.length() == this->k
    */
   virtual T& operator[](seqtype& word) = 0;
+
+ protected:
+
+  void precompute_proba(float index_load);
 };
 
 template<class T>
@@ -366,31 +382,18 @@ int IKmerStore<T>::atMostMaxSizeIndexing(int n) const {
 }
 
 template<class T>
-double IKmerStore<T>::getProbabilityAtLeastOrAbove(const T kmer, int at_least, int length) const {
-
-  if (at_least == 0) return 1.0; // even if 'length' is very small
-  
-  // n: number of kmers in the sequence
-  int n = length - getS() + 1;
+double IKmerStore<T>::getProbabilityAtLeastOrAbove(const T kmer, int at_least, int length)  {
   float index_load = getIndexLoad(kmer) ;
+  int kmer_length = kmer.getLength();
+  if (kmer.isUnknown() || kmer.isAmbiguous() || kmer == AFFECT_NOT_UNKNOWN
+      || kmer.getLength() == ~0)
+    kmer_length = getS();
+    
+  int n = max(0, length - kmer_length + 1);
+  at_least = min(at_least, n);
 
-  double proba = 0;
-  double probability_having_system = pow(index_load, at_least);
-  double probability_not_having_system = pow(1 - index_load, n - at_least);
-  for (int i=at_least; i<=n; i++) {
-    proba += nChoosek(n, i) * probability_having_system * probability_not_having_system;
-    probability_having_system *= index_load;
-    probability_not_having_system /= (1 - index_load);
-  }
-
-#ifdef DEBUG_KMS_EVALUE
-  cerr << "e-value:\tindex_load=" << index_load << ",\tat_least=" << at_least << ",\tlength=" << length <<",\tp-value=" << proba << endl;
-#endif
-
-  return proba;
+  return proba.getProba(index_load, at_least, n);
 }
-
-
 
 template<class T>
 int IKmerStore<T>::getK() const {

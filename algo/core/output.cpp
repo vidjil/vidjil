@@ -1,4 +1,3 @@
-
 #include "output.h"
 
 #define NULL_VAL ""
@@ -54,8 +53,11 @@ void CloneOutput::setSeg(string subkey, json val)
   set(KEY_SEG, subkey, val);
 }
 
-void Output::add_warning(string code, string msg, string level)
+void Output::add_warning(string code, string msg, string level, bool phony)
 {
+  if (phony) {
+    cout << WARNING_STRING << "(" + code + ")" << " " << msg << endl;
+  }
   json_add_warning(j, code, msg, level);
 }
 
@@ -129,12 +131,13 @@ CloneOutput* SampleOutput::getClone(junction junction)
 
 // .vidjil json output
 
-void SampleOutputVidjil::out(ostream &s)
+void SampleOutputVidjil::out(ostream &s, bool with_clones)
 {
    json j_clones;
 
-   for (auto it: clones)
-      j_clones.push_back(it.second->toJson());
+   if (with_clones)
+      for (auto it: clones)
+         j_clones.push_back(it.second->toJson());
 
    j["clones"] = j_clones;
 

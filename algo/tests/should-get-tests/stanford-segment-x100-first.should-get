@@ -1,5 +1,0 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -c designations -x 2 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta
-
-$ Segments the good number of sequences in Stanford S22 
-2: >lcl
-

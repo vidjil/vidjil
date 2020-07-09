@@ -21,10 +21,15 @@
             <span>
                 <select id="choose_config" name="config" onchange="db.call('sample_set/index', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
                     <option value="-1" {{if not config :}}selected{{pass}}> --- </option>
-                    {{for row in db((auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=~db.config.name) :}}
-                        <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} title="{{=row.info}}" >
-                            {{=row.name}}
-                        </option>
+                    {{ for class_name in sorted(classification.keys()): }}
+                      {{ class_elt = classification[class_name] }}
+                      <optgroup label="{{ =class_elt['name'] }}"  title="{{ =class_elt['info'] }}">
+                        {{ for row in class_elt['configs']: }}
+                            <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} title="{{=row.info}}" >
+                                {{=row.name}}
+                            </option>
+                        {{pass}}
+                      </optgroup>
                     {{pass}}
                 </select>
             </span>
@@ -34,10 +39,7 @@
 
 </div>
 
-    
-    
-    
-    
+
     
     
     
@@ -94,6 +96,7 @@
     display: inline-block;" title="running pre_processs"></i>{{pass}} 
                         {{if row.sequence_file.pre_process_flag == "WAIT" :}}[queued]{{pass}} 
                         {{if row.sequence_file.pre_process_flag == "FAILED" :}}[failed] <span class="button" onclick="db.call('file/restart_pre_process', {sequence_file_id: {{=row.sequence_file.id}}})">try again</span>{{pass}}
+                        {{ if has_pre_process and row.sequence_file.pre_process_flag is None and row.sequence_file.data_file2 is None: }}<span title="All the files have not been properly received yet. It this persists, please edit the sample to reupload them.">[waiting file]</span>{{pass}}
                         {{if row.sequence_file.pre_process_id != None :}} {{=pre_process_list[row.sequence_file.pre_process_id]}} {{pass}}
                      </td>
 		    {{if auth.is_admin():}}
@@ -136,7 +139,7 @@
                      <td></td><td></td><td></td><td></td>
                    {{pass}}
                    <td>
-                   {{if row.sequence_file.data_file != None and ( row.results_file.id == None or ( status != "RUNNING" and status != "QUEUED" and status != "ASSIGNED") ):}}
+                   {{if row.sequence_file.data_file != None and ( row.results_file.id != None or ( status not in ["RUNNING", "QUEUED", "ASSIGNED"]) ) and (not has_pre_process or (row.sequence_file.pre_process_flag != None and row.sequence_file.pre_process_flag != "FAILED")) :}}
                        {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
                            <span class="pointer" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } )"><i class="icon-cog-2" title="Run the selected configuration for this file"></i></span>
                        {{pass}}
@@ -202,8 +205,8 @@
                          (db.config.id ==db.fused_file.config_id)
                        ).select() :}}
         
-            {{if row.fused_file.fused_file is not None :}}
-                <a class="button2" href="index.html?sample_set_id={{=request.vars["id"]}}&config={{=row.config.id}}" type="text/html"
+            {{if row.fused_file.fused_file is not None :}}     
+                <a class="button2" href="{{=http_origin}}?sample_set_id={{=request.vars["id"]}}&config={{=row.config.id}}" type="text/html"
                       onclick="event.preventDefault()
                                if( event.which == 2 ) { window.open(this.href) }
                                else { myUrl.loadUrl(db, { 'sample_set_id' : '{{=request.vars["id"]}}' , 'config' : {{=row.config.id}} }, '{{=info["filename"]}}' ) }" >

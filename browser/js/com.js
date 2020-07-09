@@ -90,14 +90,16 @@ function Com(default_console) {
             BUTTON_CLOSE_POPUP,
 
         "welcome": " <h2>Vidjil <span class='logo'>(beta)</span></h2>" +
-            "(c) 2011-2017, the Vidjil team " +
+            "(c) 2011-2020, the Vidjil team " +
             (typeof git_sha1 !== "undefined" ? "&ndash; " + git_sha1 : "") + "</br>" +
             "<br />Aurélien Béliard, Marc Duez, Mathieu Giraud, Ryan Herbert, Mikaël Salson, Tatiana Rocher and Florian Thonier" +
             " &ndash; <a href='http://www.vidjil.org'>http://www.vidjil.org/</a>" + "</br>" +
-            "</br>Vidjil is developed by the <a href='http://cristal.univ-lille.fr/bonsai'>Bonsai bioinformatics team</a> (CRIStAL, CNRS, Univ. Lille, Inria Lille), " +
+            "</br>Vidjil is developed by the <a href='http://cristal.univ-lille.fr/bonsai'>Bonsai bioinformatics team</a> (CRIStAL, CNRS, Univ. Lille) and the <a href='http://vidjil.net'>VidjilNet consortium</a> (Inria) " +
             "in collaboration with the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille, " +
             "the <a href='http://www.ircl.org/plate-forme-genomique.html'>Functional and Structural Genomic Platform</a> (U. Lille 2, IFR-114, IRCL)" +
             " and the <a href='http://www.euroclonality.org/'>EuroClonality-NGS</a> working group." +
+            "<br/>" +
+            "<br/>Vidjil is hosted by the <a href='http://hpc.univ-lille.fr/'>scientific computing facility</a> at the Lille University." +
             "<br/>" +
             "<br>Vidjil is free software, and you are welcome to redistribute it under <a href='http://git.vidjil.org/blob/master/doc/LICENSE'>certain conditions</a>. This software is for research use only and comes with no warranty." +
             "<br>" +
@@ -112,7 +114,7 @@ function Com(default_console) {
             "</br> <a href='http://www.chromium.org/getting-involved/download-chromium'> Chromium </a> " +
             "</br></br> <div class='center' > <button onclick='popupMsg(msg.welcome)'>I want to try anyway</button></div> ",
 	    
-        "database_timeout": "Cannot connect database, please retry in a few seconds ",
+        "database_timeout": "Cannot connect server, please retry later ",
     
         "save_analysis": "You made some changes in the analysis of the previous patient" +
             "</br>that were not saved (patients → save analysis)." +

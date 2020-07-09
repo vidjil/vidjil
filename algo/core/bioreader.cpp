@@ -1,6 +1,6 @@
 /*
   This file is part of Vidjil <http://www.vidjil.org>
-  Copyright (C) 2011-2019 by VidjilNet consortium and Bonsai bioinformatics
+  Copyright (C) 2011-2020 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
       Mathieu Giraud <mathieu.giraud@vidjil.org>
@@ -126,6 +126,7 @@ BioReader::BioReader(bool virtualfasta, string name)
   init(0, "");
   this -> name = name;
   basename = extract_basename(name);
+  filenames.push_back(this->name);
 }
 
 BioReader::BioReader(int extract_field, string extract_separator, int mark_pos)
@@ -157,6 +158,7 @@ void BioReader::add(const string &filename, bool verbose) {
 
   name += filename;
   basename += extract_basename(filename);
+  filenames.push_back(name);
 
   if (verbose)
     cout << " <== " << filename ;

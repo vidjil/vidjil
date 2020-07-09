@@ -17,9 +17,9 @@ class User_groupModel(unittest.TestCase):
             first_name='test',
             last_name='user',
             email='tester@vidjil.org',
-            password= db.auth_user.password.validate('1234')[0],
+            password= db.auth_user.password.validate('123456')[0],
         )
-        auth.login_bare("tester@vidjil.org", "1234")
+        auth.login_bare("tester@vidjil.org", "123456")
 
         user_group_id = db.auth_group.insert(
                 role='user_%d' % user_id

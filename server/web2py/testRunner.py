@@ -87,7 +87,7 @@ user_id = db.auth_user.insert(
     first_name='Testers',
     last_name='Inc',
     email='test@vidjil.org',
-    password= db.auth_user.password.validate('1234')[0],
+    password= db.auth_user.password.validate('123456')[0],
 )
 unique_group = db.auth_group.insert(role="user_"+str(user_id), description=" ")
 db.auth_membership.insert(user_id=user_id, group_id=unique_group)

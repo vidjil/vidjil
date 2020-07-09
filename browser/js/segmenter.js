@@ -61,9 +61,9 @@ function Segment(id, model, database) {
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z";
     this.cgi_address = CGI_ADDRESS
     this.m = model
-    this.first_clone = -1 ; // id of sequence at the top of the segmenter
     this.memtab = [];
     this.sequence = {};
+    this.sequence_order = [];
     this.is_open = false;
     this.amino = false;
     this.aligned = false;
@@ -80,6 +80,8 @@ function Segment(id, model, database) {
     ];
 
     this.selectedAxis = [];
+
+    this.index = [];
 }
 
 
@@ -154,32 +156,31 @@ Segment.prototype = {
 
             var tmp = document.createElement('div');
 
-            var axOpts = Clone.prototype.axisOptions();
-            var available_axis = (new Axes(this.m)).available();
+            var available_axis = Axis.prototype.available()
             var self_update = function() {
                 var index = parseInt(this.id.substring(3)); // ex: "sai5" -> index = 5
-                if (this.checked) self.selectedAxis[index] = available_axis[this.value];
+                if (this.checked) self.selectedAxis[index] = Axis.prototype.getAxisProperties(this.value)
                 else delete self.selectedAxis[index];
                 self.update();
             }
-            for (var i in axOpts) {
+            for (var i in available_axis) {
                 var axis_option = document.createElement('div');
                 var axis_input = document.createElement('input');
                 axis_input.setAttribute('type', "checkbox");
-                axis_input.setAttribute('value', axOpts[i]);
+                axis_input.setAttribute('value', available_axis[i]);
                 axis_input.setAttribute('id', "sai"+i); // segmenter axis input
-                if (axOpts[i] == "size") axis_input.setAttribute('checked', "");
+                if (available_axis[i] == "size") axis_input.setAttribute('checked', "");
                 axis_input.onchange = self_update;
 
                 var axis_label = document.createElement('label');
                 axis_label.setAttribute('for', "sai"+i);
-                axis_label.appendChild(document.createTextNode(available_axis[axOpts[i]].label));
+                axis_label.appendChild(document.createTextNode(available_axis[i]));
 
                 axis_option.appendChild(axis_input);
                 axis_option.appendChild(axis_label);
                 tmp.appendChild(axis_option);
             }
-            this.selectedAxis[axOpts.indexOf("size")] = available_axis.size;
+            this.selectedAxis[available_axis.indexOf("size")] = Axis.prototype.getAxisProperties("size")
 
             axis.appendChild(tmp);
             span.appendChild(axis);
@@ -187,81 +188,53 @@ Segment.prototype = {
             div_menu.appendChild(span)
 
             //toIMGT button
-            span = document.createElement('span');
-            span.id = "toIMGT"
-            span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and see the results in a new tab')
-            span.className = "button"
-            span.onclick = function () {
-                self.sendTo('IMGT')
-            }
-            span.appendChild(document.createTextNode("❯ to IMGT/V-QUEST"));
+            span = createSendToButton("toIMGT", 'imgt', "❯ IMGT/V-QUEST",
+                                      'Send sequences to IMGT/V-QUEST and see the results in a new tab', this);
             div_menu.appendChild(span)
 
             //toIMGTSeg button
-            span = document.createElement('span');
-            span.id = "toIMGTSeg";
-            span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and loads the results in the sequence panel')
-            span.className = "button button_next";
-            span.onclick = function () {
-                self.sendTo('IMGTSeg')
-            };
-            span.appendChild(document.createTextNode("▼"));
+            span = createSendToButton("toIMGTSeg", "IMGTSeg", "▼",
+                                      'Send sequences to IMGT/V-QUEST and loads the results in the sequence panel', this);
+            span.className += " button_next";
             div_menu.appendChild(span);
 
             //toIgBlast button
-            span = document.createElement('span');
-            span.id = "toIgBlast";
-            span.setAttribute('title', 'Send sequences to NCBI IgBlast and see the results in a new tab')
-            span.className = "button";
-            span.onclick = function () {
-                self.sendTo('igBlast')
-            };
-            span.appendChild(document.createTextNode("❯ to IgBlast"));
+            span = createSendToButton("toIgBlast", 'igBlast', "❯ IgBlast",
+                                      'Send sequences to NCBI IgBlast and see the results in a new tab', this);
             div_menu.appendChild(span);
 
             //toARResT button
-            span = document.createElement('span');
-            span.id = "toARResT";
-            span.setAttribute('title', 'Send sequences to ARResT/CompileJunctions and see the results in a new tab')
-            span.className = "button devel-mode";
-            span.onclick = function () {
-                self.sendTo('ARResT')
-            };
-            span.appendChild(document.createTextNode("❯ to ARResT/CJ"));
+            span = createSendToButton("toARResT", "arrest", "❯ ARResT/CJ",
+                                      'Send sequences to ARResT/CompileJunctions and see the results in a new tab', this);
+            span.className += " devel-mode";
             div_menu.appendChild(span);
 
             //toCloneDB button
-            span = document.createElement('span');
-            span.id = "toCloneDB";
-            span.setAttribute('title', 'Send sequences to EC-NGS/CloneDB in the background')
-            span.className = "button ";
-            span.className += (typeof config !== 'undefined' && config.clonedb) ? "" : "devel-mode";
-            span.onclick = function () {
-                self.db.callCloneDB(self.m.getSelected());
-            };
-            span.appendChild(document.createTextNode("❯ to CloneDB"));
+            span = createSendToButton('toCloneDB', '', "❯ CloneDB",
+                                      'Send sequences to EC-NGS/CloneDB in the background',
+                                      this,
+                                      function () {
+                                          self.db.callCloneDB(self.m.getSelected());
+                                      });
+            span.className += (typeof config !== 'undefined' && config.clonedb) ? "" : " devel-mode";
             div_menu.appendChild(span);
 
             //toBlast button
-            span = document.createElement('span');
-            span.id = "toBlast";
-            span.setAttribute('title', 'Send sequences to Ensembl Blast and see the results in a new tab')
-            span.className = "button";
-            span.onclick = function () {
-                if (self.m.getSelected().length > 30) {
-                    console.log({"type": "flash", "msg": "A maximum of 30 clones are allowed by Blast" , "priority": 1});
-                } else {
-                self.sendTo('blast');
-                }
-            };
-            span.appendChild(document.createTextNode("❯ to Blast"));
+            span = createSendToButton("toBlast", "blast",
+                                      "❯ Blast",
+                                      'Send sequences to Ensembl Blast and see the results in a new tab', this);
+            div_menu.appendChild(span);
+
+            // to AssignSubset
+            span = createSendToButton("toAssignSubsets", "assignSubsets", "❯ AssignSubsets",
+                                      "Send sequences to ARResT/AssignSubsets to classify IGH sequence in a CLL subset", this);
             div_menu.appendChild(span);
 
             //toClipBoard button
             span = document.createElement('span');
             span.id = "toClipBoard";
             span.className = "button";
-            span.appendChild(document.createTextNode("❯ to clipBoard"));
+            span.appendChild(document.createTextNode("❯ clipBoard"));
             // div_menu.appendChild(span)
 
             //germline button
@@ -313,7 +286,6 @@ Segment.prototype = {
                         self.update();
 
                 });
-                input.click();
                 var label = document.createElement('label');
                 label.setAttribute("for", 'vdj_input_check');
                 label.innerHTML = 'CDR3';
@@ -361,6 +333,7 @@ Segment.prototype = {
             var focus_selected = document.createElement('a');
             focus_selected.appendChild(document.createTextNode("(focus)"))
             focus_selected.className = "focus_selected"
+            focus_selected.id        = "focus_selected"
             focus_selected.onclick = function () { self.m.focusSelected() }
             div_stats.appendChild(focus_selected)
 
@@ -369,6 +342,7 @@ Segment.prototype = {
             var hide_selected = document.createElement('a');
             hide_selected.appendChild(document.createTextNode("(hide)"))
             hide_selected.className = "focus_selected"
+            hide_selected.id        = "hide_selected"
             hide_selected.onclick = function () { self.m.hideSelected() }
             div_stats.appendChild(hide_selected)
 
@@ -443,7 +417,11 @@ Segment.prototype = {
                     }
                 });
             this.setFixed(this.fixed);
-
+            
+            for (var c_id = 0; c_id < self.m.clones.length; c_id++)
+                self.build_skeleton(c_id);
+            
+            
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -508,59 +486,90 @@ Segment.prototype = {
         return div_highlight;
     },
 
-
-    /**
-     * update(size/style/position) a list of selected clones <br>
-     * @param {integer[]} list - array of clone index
-     * */
-    updateElem: function (list) {
-        this.updateElemStyle(list);
-    },
-
     /**
      * clear functionnal data in order to start from a clean instance when loading a new .vidjil file
      * */
     reset: function() {
-        this.sequence = {};
+        this.sequence = {}
+        this.sequence_order = []
+        this.index = []
+        if (document.getElementById("listSeq"))
+            document.getElementById("listSeq").innerHTML = ""  
     },
 
     removeGermline:function(id){
         elem = document.getElementById("seq"+id);
         elem.parentNode.removeChild(elem)
         delete this.sequence[id];
+        this.sequence_order.splice( this.sequence_order.indexOf(id), 1 );
     },
 
-   /**
-     * update(style only) a list of selected clones
+    /**
+     * 
+     */
+    update: function() {
+        var self = this;
+        try{
+            var list = [];
+            for (var i = 0; i < this.m.clones.length; i++) list.push(i);
+            this.updateElem(list);
+        } catch(err) {
+            sendErrorToDb(err, this.db);
+        }
+    },
+
+    /**
+     * check the list for newly selected/unselected clones to add/remove to segmenter 
+     * update others
+     * @abstract
      * @param {integer[]} list - array of clone index
      * */
-    updateElemStyle: function (list) {
+    updateElem: function (list) {
+        var self = this;
+        list.sort(function(a,b){ return self.m.clone(b).getSize() - self.m.clone(a).getSize() })
+        var sliderNeedUpdate = (Object.keys(this.sequence).length==0)//slider move only if we add sequence to an empty segmenter
 
-        for (var i = 0; i < list.length; i++) {
-            if (this.m.clone(list[i]).isSelected()) {
-                if (document.getElementById("seq" + list[i])) {
-                    var spanF = document.getElementById("f" + list[i]);
-                    this.div_elem(spanF, list[i]);
-                    var spanM = document.getElementById("m" + list[i]);
-                    spanM.innerHTML = this.sequence[list[i]].toString(this);
-                } else {
-                    this.addToSegmenter(list[i]);
-                    this.show();
+        for (var i = 0; i < list.length; i++) {     
+
+            var cloneID = list[i];
+
+            var liDom = this.index[cloneID];
+            
+            if (this.m.clone(cloneID).isSelected()) {               // the clone is selected
+                this.addToSegmenter(cloneID);
+                liDom = this.index[cloneID];
+                if (liDom == null) continue;
+                liDom.display("main", "block");
+                this.div_elem(liDom.getElement("seq-fixed"), cloneID);
+                var seq = this.sequence[cloneID].toString(this);
+                liDom.content("seq-mobil", seq);        
+            } else {    
+                if (this.sequence[cloneID]){                         
+                    delete this.sequence[cloneID];                  //  > delete the sequence 
+                    this.sequence_order.splice( this.sequence_order.indexOf(cloneID), 1 );
                 }
-            } else {
-                if (document.getElementById("seq" + list[i])) {
-                    var element = document.getElementById("seq" + list[i]);
-                    element.parentNode.removeChild(element);
-                    delete this.sequence[list[i]];
-                }
+
+                liDom = this.index[cloneID];
+                if (liDom == null) 
+                    continue;                                    
+                else
+                    liDom.display("main", "none");                          //  > hide the dom element
             }
         }
-        // Update the first clone if needed
-        this.update_first_clone()
 
+        if (sliderNeedUpdate) this.show();
         this.updateAlignmentButton()
-        //this.updateSegmenterWithHighLighSelection();
-        this.updateStats();         
+        this.updateStats();  
+    },
+
+    /**
+     * used to highlight mouseover clones or selected clones.
+     * in the segmenter case selecting/unselecting clones produces more than just a highlight and need an update
+     * @abstract
+     * @param {integer[]} list - array of clone index
+     * */
+    updateElemStyle: function (list) {   
+        this.updateElem(list);    
     },
 
     isClone: function (id) {
@@ -646,15 +655,14 @@ Segment.prototype = {
 
     fillAxisBox: function (axisBox, clone) {
         axisBox.removeAllChildren();
-        var axOpts = Clone.prototype.axisOptions();
-        var available_axis = (new Axes(this.m)).available();
+        var available_axis = Axis.prototype.available()
         for (var i in this.selectedAxis) {
             var span = document.createElement('span');
             var axis = this.selectedAxis[i];
             span.removeAllChildren();
             span.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
-            span.setAttribute('title', this.selectedAxis[i].label);
-            span.className = axOpts[i];
+            span.setAttribute('title', this.selectedAxis[i].doc);
+            span.className = available_axis[i];
             axisBox.appendChild(span);
         }
     },
@@ -666,15 +674,41 @@ Segment.prototype = {
      * */
     addToSegmenter: function (cloneID) {
         var self = this;
+        if ( !this.m.clone(cloneID).hasSequence() ){
+            // This clone should not be added to the segmenter
+            return
+        }
+
+        if (this.sequence[cloneID]){
+            // This clone has already been added to the segmenter
+            return
+        }
 
         this.aligned = false ;
-        this.resetAlign()
+        if (this.aligned) this.resetAlign()
         this.sequence[cloneID] = new Sequence(cloneID, this.m, this)
+        this.sequence[cloneID].load();
+        this.sequence_order.push(cloneID);
         
-        var divParent = document.getElementById("listSeq");
-        
-        this.update_first_clone(cloneID)
+        if (document.getElementById("seq" + cloneID) != null ){                 //div already exist
+            document.getElementById("seq" + cloneID).style.display = "block";
+            var divParent = document.getElementById("listSeq");
+            divParent.appendChild(document.getElementById("seq" + cloneID));
+            return;
+        }
+        else{                                                                   //create div
+            this.build_skeleton(cloneID)
+        }
 
+    },
+
+    build_skeleton: function(cloneID){
+        if ( !this.m.clone(cloneID).hasSequence() ){
+            // This clone should not be added to the segmenter
+            return
+        }
+
+        var divParent = document.getElementById("listSeq");
         var li = document.createElement('li');
         li.id = "seq" + cloneID;
         li.className = "sequence-line";
@@ -683,60 +717,17 @@ Segment.prototype = {
         }
 
         var spanF = document.createElement('span');
-        spanF.id = "f" + cloneID;
-        this.div_elem(spanF, cloneID);
+        spanF.className = "seq-fixed";
+        li.appendChild(spanF);
 
         var spanM = document.createElement('span');
-        spanM.id = "m" + cloneID;
         spanM.className = "seq-mobil";
-        spanM.innerHTML = this.sequence[cloneID].load().toString()
-
-        li.appendChild(spanF);
         li.appendChild(spanM);
+
         divParent.appendChild(li);
 
+        this.index[cloneID] = new IndexedDom(li);
     },
-
-    /**
-    * Set the first_clone of the segmenter.
-    * This one can be changed when we deselect some clone into the segmenter
-    **/
-    set_first_clone : function(cloneID) {
-        if (isNaN(cloneID)){
-          console.error( "Nan error")
-          return
-        }
-        this.first_clone = cloneID;
-    },
-
-    /**
-    * Update the first_clone of the segmenter.
-    * Look if the current clone is the first of the segmenter div
-    **/
-    update_first_clone : function(cloneID) {
-
-        var divParent = document.getElementById("listSeq");
-        if (divParent == undefined) { return }
-
-
-        // Am I the first clone in this segmenter ?
-        var previous_li = divParent.getElementsByTagName("li");
-
-        if (previous_li && previous_li.length === 0 ) {
-            if (cloneID == undefined){
-                this.set_first_clone( -1 )
-                return
-            }
-            this.set_first_clone( cloneID )
-            return
-        } else if (previous_li.length != 0) {
-            // get first line from html content
-            var index_first_clone = Number( previous_li[0].id.substr(3) )
-            this.set_first_clone( index_first_clone )
-        }
-
-    },
-
 
     /**
     * select all the germline of a clone .
@@ -774,6 +765,7 @@ Segment.prototype = {
         del.appendChild(icon('icon-cancel', 'Unselect this clone'));
         del.onclick = function () {
             delete self.sequence[id];
+            self.sequence_order.splice( self.sequence_order.indexOf(id), 1 );
             self.aligned = false;
             self.removeGermline(id)
         }
@@ -820,18 +812,14 @@ Segment.prototype = {
             this.sequence[id].load("str")
             var divParent = document.getElementById("listSeq");
             var previous_li = divParent.getElementsByTagName("li");
-            if (previous_li && previous_li.length === 0) {
-                this.first_clone = id
-            }
+            this.sequence_order.push(id);
 
             var li = document.createElement('li');
             li.id = "seq" + id;
             li.className = "sequence-line";
             var spanF = document.createElement('span');
-            spanF.id = "f" + id;
             this.div_element(spanF, id);
             var spanM = document.createElement('span');
-            spanM.id = "m" + id;
 
             spanM.className = "seq-mobil";
             spanM.innerHTML = this.sequence[id].load(str).toString(this);
@@ -857,7 +845,7 @@ Segment.prototype = {
     /**
      * build a request with currently selected clones to send to IMGT or igblast <br>
      * (see crossDomain.js)
-     * @param {string} address - 'IMGT', 'ARResT', 'igBlast' or 'Blast'
+     * @param {string} address - 'imgt', 'arrest', 'igBlast' or 'blast'
      * */
     sendTo: function (address) {
 
@@ -884,31 +872,24 @@ Segment.prototype = {
                 request += ">" +list[i] + "\n" +this.germline[this.sequence[list[i]].locus][list[i]] + "\n";
             }
         }
-        if (address == 'IMGT') {
-            imgtPost(this.m.species, request, system);
-        } 
         if (address == 'IMGTSeg') {
             imgtPostForSegmenter(this.m.species, request, system, this);
-            var change_options = {'l01p01c47' : 'N', // Deactivate default output
-                                  'l01p01c45' : 'Y'}; // Activate Summary output
+            var change_options = {'xv_ntseq' : 'false', // Deactivate default output
+                                  'xv_summary' : 'true'}; // Activate Summary output
             imgtPostForSegmenter(this.m.species, request, system, this, change_options);
+        } else {
+            window[address+"Post"](this.m.species, request, system)
         }
-        if (address == 'ARResT') arrestPost(request, system);
-        if (address == 'igBlast') igBlastPost(request, system);
-        if (address == 'blast') blastPost(request, system);
 
         this.update();
 
     },
 
     /**
-     * move the horizontal slider to focus the most interesting parts of the sequences
+     * TODO: move the horizontal slider to focus the most interesting parts of the sequences
      * */
     show: function () {
-        var li = document.getElementById("listSeq")
-            .getElementsByTagName("li");
-        if (li.length > 0) {
-            var id = li[0].id.substr(3);
+        if (Object.keys(this.sequence).length > 0) {
             var mid = 999999
             $(this.div_segmenter)
                 .animate({
@@ -1044,10 +1025,10 @@ Segment.prototype = {
         }
 
         try{
-            if( selected.length ){
+            if( selected.length && this.index.length){
                 for (var i = 0; i < selected.length; i++) {
-                    var spanM = document.getElementById("m" + selected[i])
-                    spanM.innerHTML =  this.sequence[selected[i]].load().toString(this)
+                    this.index[selected[i]].content("seq-mobil", 
+                                                    this.sequence[selected[i]].load().toString(this))
                 }
             }
         } catch (err) {
@@ -1072,9 +1053,8 @@ Segment.prototype = {
         for (var j = 0; j < json.seq.length; j++) {
 
             // global container
-            var spanM = document.getElementById("m" + this.memTab[j]);
             var seq = this.sequence[this.memTab[j]]
-            spanM.innerHTML = seq.toString(this)
+            this.index[this.memTab[j]].content("seq-mobil", seq.toString(this));
         }
 
     },
@@ -1088,22 +1068,31 @@ Segment.prototype = {
         var sumReads = 0;
         var sumRawReads = 0;
         var length = 0;
+        var nb_clones_not_constant = 0;
         var lastActiveClone = 0;
             
         //verifier que les points sélectionnés sont dans une germline courante
         for (var i = 0; i < list.length ; i++){
             if (this.m.clones[list[i]].isActive()) {
                 lastActiveClone = this.m.clones[list[i]]
-                length += 1;
-                sumPercentage += this.m.clone(list[i]).getSize();
-                sumReads+= this.m.clone(list[i]).getReads(); 
-                sumRawReads+= this.m.clone(list[i]).getRawReads();
+                if (lastActiveClone.hasSizeConstant()) {
+                  length += 1;
+                } else {
+                  var timepoint = this.m.t
+                  nb_clones_not_constant += lastActiveClone.current_clones[timepoint];
+                }
+                sumPercentage += lastActiveClone.getSize();
+                sumReads+= lastActiveClone.getReads();
+                sumRawReads+= lastActiveClone.getRawReads();
             }
         }
 
         var t = ""
         if (sumRawReads > 0) {
-            t += length + " clone" + (length>1 ? "s" : "") + ", "
+
+            if (length) t += length ;
+            if (nb_clones_not_constant) t += '+' + nb_clones_not_constant;
+            t += " clone" + (length+nb_clones_not_constant>1 ? "s" : "") + ", "
 
             t += this.m.toStringThousands(sumRawReads) + " read" + (sumRawReads>1 ? "s" : "")
 
@@ -1113,8 +1102,11 @@ Segment.prototype = {
             percentageStr = this.m.getStrAnySize(this.m.t, sumPercentage)
             if (percentageStr != "+")
                 t += " (" + percentageStr + ")"
-            if (length == 1)
+            if (length == 1){
                 extra_info_system = lastActiveClone.getStrAllSystemSize(this.m.t, true)
+            } else {
+                extra_info_system = ""
+            }
             t += " "
             $(".focus_selected").css("display", "")
         }
@@ -1296,7 +1288,7 @@ Segment.prototype = {
     },
 
     empty: function() {
-        this.sequence = {};
+        this.reset();
     }
 
 }; //fin prototype Segment
@@ -1348,7 +1340,7 @@ genSeq.prototype= {
         if (mutation != undefined && mutation) {
             var span = document.createElement('span');
             span.className = mutation
-            span.setAttribute('other', other + '-' + this.segmenter.first_clone);
+            span.setAttribute('other', other + '-' + this.segmenter.sequence_order[0]);
             span.appendChild(document.createTextNode(self));
             return span;
         }else {
@@ -1388,29 +1380,29 @@ genSeq.prototype= {
     highlightToString: function(highlights, window_start) {
         result = document.createElement('span');
         currentSpan = document.createElement('span');
+        currentSpan.id = "sequence-clone-"+ this.id
 
         var canDisplaySynMutations = (! this.segmenter.amino &&
-                                      this.m.clones.hasOwnProperty(this.segmenter.first_clone) &&
-                                      this.m.clones[this.segmenter.first_clone].isProductive());
-        var reference_phase = (canDisplaySynMutations) ? (this.m.clones[this.segmenter.first_clone].getPhase()) : undefined;
+                                      this.m.clones.hasOwnProperty(this.segmenter.sequence_order[0]) &&
+                                      this.m.clones[this.segmenter.sequence_order[0]].isProductive());
+        var reference_phase = (canDisplaySynMutations) ? (this.m.clones[this.segmenter.sequence_order[0]].getPhase()) : undefined;
 
         var mutations = {};
         var ref = '';
         var seq = '';
 
-
         if (this.segmenter.amino) {
             seq = this.seqAA;
-            ref = this.segmenter.sequence[this.segmenter.first_clone].seqAA;
+            ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seqAA;
         } else {
             seq = this.seq;
-            ref = this.segmenter.sequence[this.segmenter.first_clone].seq;
+            ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;
         }
         if (this.segmenter.aligned) {
             mutations = get_mutations(ref, seq, reference_phase, true);
         }
 
-        var i_am_first_clone = (this.id == this.segmenter.first_clone)
+        var i_am_first_clone = (this.id == this.segmenter.sequence_order[0])
         
         for (var i = 0; i < this.seq.length; i++) {
             for (var m in highlights){
@@ -1441,7 +1433,7 @@ genSeq.prototype= {
                         currentSpan = document.createElement('span');
                         currentSpan.className = oldCurSpan.className;
                         result.appendChild(currentSpan);
-                        console.log("results: " + result.innerHTML);
+                        //console.log("results: " + result.innerHTML);
                     } else {
                         currentSpan = highlightSpan;
                     }
@@ -1511,6 +1503,8 @@ Sequence.prototype = Object.create(genSeq.prototype);
         var stop = -1;
                 
         var clone = this.m.clone(this.id);
+        if (!clone.hasSequence()) return 
+
         if (clone.hasSeg('cdr3')){
             if (typeof clone.seg.cdr3.start != "undefined") {
                 start = this.pos[clone.seg.cdr3.start];
@@ -1520,7 +1514,11 @@ Sequence.prototype = Object.create(genSeq.prototype);
                 stop = this.pos[clone.sequence.indexOf(clone.seg.cdr3) + clone.seg.cdr3.length -1];
             }
         }
-        
+        if (start == undefined || stop == undefined){
+            console.error( "Sequence error. Start/stop position of cdr3 are undefined")
+            return
+        }
+
         for (var h=0; h<this.seq.length; h++) this.seqAA[h] = " ";
         
         var i = 0
@@ -1572,20 +1570,25 @@ Sequence.prototype = Object.create(genSeq.prototype);
                 // We first put the end positions
                 highlights.push({'type':'N', 'color': "", 'start': vdjArray["5"].stop});
                 highlights.push({'type':'N', 'color': "", 'start': vdjArray["3"].start});
+                highlights.push({'type':'before5', 'color': "black", 'start': 0});                  // from seq start to 5 start
+                highlights.push({'type':'after3',  'color': "black", 'start': vdjArray["3"].stop}); // from 3 stop to seq end
+                // TOOD: remove the two previous lines, see #2135
 
                 var key;
                 for (var i in SEGMENT_KEYS) {
                     key = SEGMENT_KEYS[i]
                     if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key].stop != 'undefined'){
                         highlights.push({'type':'N', 'color': "", 'start': vdjArray[key].stop});
-                    }}
+                    }
+                }
 
                 // We now put the start positions (that may override previous end positions)
                 for (var j in SEGMENT_KEYS) {
                     key = SEGMENT_KEYS[j]
                     if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key].start!= 'undefined'){
                         highlights.push({'type':'D', 'color': "", 'start': vdjArray[key].start});
-                    }}
+                    }
+                }
 
                 highlights.push({'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : "", 'start': vdjArray["5"].start});
                 highlights.push({'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : "", 'start': vdjArray["3"].start});
@@ -1617,10 +1620,10 @@ Sequence.prototype = Object.create(genSeq.prototype);
     Sequence.prototype.getVdjStartEnd = function (clone) {
 
         var vdjArray ={"5": {}, "3": {}} ;
-        vdjArray["5"].start = 0;
-        vdjArray["5"].stop = this.pos[clone.seg["5"].stop] + 1;
+        vdjArray["5"].start = (clone.seg["5"].start != undefined) ? this.pos[clone.seg["5"].start] : 0;
+        vdjArray["5"].stop  = this.pos[clone.seg["5"].stop] + 1;
         vdjArray["3"].start = this.pos[clone.seg["3"].start];
-        vdjArray["3"].stop = this.seq.length;
+        vdjArray["3"].stop  = (clone.seg["3"].stop != undefined)  ? this.pos[clone.seg["3"].stop] : this.seq.length;
 
         for (var i in SEGMENT_KEYS)
         {

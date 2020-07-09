@@ -1,14 +1,17 @@
+var DEFAULT_DB_ADDRESS="https://db.vidjil.org/vidjil/";
+
 requirejs.config({
-    baseUrl: 'js/lib',
+    baseUrl: './js/lib',
     paths: {
         app: '',
-        jquery: 'jquery-3.3.1.min'
+        jquery: 'jquery-3.3.1.min',
+        d3: 'd3.v5.min',
     }
 });
 
 // Load required libraries first
+require(['d3'], function(d3) {window.d3 = d3;});
 require(["jquery",
-         "d3.v3",
          "jquery.form",
          "file",
          "tsne",
@@ -30,6 +33,12 @@ require(["../git-sha1"], function () { console.log("Vidjil client " + git_sha1) 
 
 
 function loadAfterConf() {
+    if (typeof config === "undefined") {
+        config = {};
+        config.db_address = DEFAULT_DB_ADDRESS;
+        config.use_database = false;
+    }
+
     require(['../../doctips/tips'],
             function(){},
             function(err) {
@@ -41,8 +50,7 @@ function loadAfterConf() {
 
         require(["../germline"],
                 function() {
-                    require(["../generic_axis",
-                             "../closeable"],
+                    require(["../closeable"],
                             function() {
                                 require(["../compare",
                                          "../menu",
@@ -54,10 +62,11 @@ function loadAfterConf() {
                                          "../clone",
                                          "../dynprog",
                                          "../list",
-                                         "../germline_axis",
-                                         "../numerical_axis",
                                          "../axes",
+                                         "../axis",
                                          "../graph",
+                                         "../scatterPlot_menu",
+                                         "../scatterPlot_selector",
                                          "../scatterPlot",
                                          "../builder",
                                          "../info",
@@ -74,6 +83,7 @@ function loadAfterConf() {
                                          "../autocomplete",
                                          "../tips",
                                          "../tokeniser",
+                                         "../indexedDom",
                                          // Speed test
                                          "../speed_test",
                                          "../form_builder",
@@ -84,6 +94,9 @@ function loadAfterConf() {
                                                 require(["../main"]);
                                             }else{
                                                 main();
+                                            }
+                                            if (typeof config.addons !== "undefined") {
+                                                require(config.addons);
                                             }
                                         })
                             })

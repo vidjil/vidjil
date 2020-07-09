@@ -4,6 +4,7 @@ from gluon.dal import Row, Set, Query
 from enum import Enum
 
 from permission_enum import PermissionEnum
+import defs
 
 class PermissionLetterMapping(Enum):
     admin = 'e'
@@ -280,6 +281,12 @@ class VidjilAuth(Auth):
             and (self.get_permission(PermissionEnum.admin.value, 'run', run_id, user=user)\
             or self.is_admin(user))
         
+    def can_modify_subset(self, type, subset_id, user = None) :
+        exists = self.exists(type, subset_id)
+        return exists\
+            and (self.get_permission(PermissionEnum.admin.value, type, subset_id, user=user)\
+            or self.is_admin(user))
+
     def can_modify_sample_set(self, sample_set_id, user = None) :
         sample_set = db.sample_set[sample_set_id]
         if sample_set is None:
@@ -309,6 +316,16 @@ class VidjilAuth(Auth):
         return exists\
             and (self.get_permission(PermissionEnum.admin_pre_process.value, 'pre_process', pre_process_id, user)\
             or self.is_admin(user))
+
+    def can_modify_user(self, id):
+        '''
+        Returns True if the current user can modify the user
+        whose ID is given as parameter
+
+        :param: id should be an integer
+        '''
+        return self.is_admin() or\
+            ((self.user_id == id) and (not hasattr(defs, 'LIMITED_ACCOUNTS') or self.user_id not in defs.LIMITED_ACCOUNTS))
 
     def can_modify(self, object_of_action, id, user = None):
         '''

@@ -1,6 +1,6 @@
 /*
   This file is part of Vidjil <http://www.vidjil.org>
-  Copyright (C) 2011-2019 by VidjilNet consortium and Bonsai bioinformatics
+  Copyright (C) 2011-2020 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
   Mathieu Giraud <mathieu.giraud@vidjil.org>
@@ -189,6 +189,7 @@ public:
 
   string name;
   string basename;
+  list<string> filenames;
   int size() const;
   size_t totalSize() const;
 

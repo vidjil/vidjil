@@ -83,6 +83,10 @@ ul {
   right: 0px;
   top: 32px;
 }
+#live-ajax-msg {
+  font-style: italic;
+  margin-right: 1em;
+}
 #upload_summary {
   display: none;
   z-index: 10;
@@ -102,6 +106,7 @@ ul {
   -ms-user-select: none;
   user-select: none;
   overflow: hidden;
+  height : 100%;
 }
 #mid-container {
   position: fixed;
@@ -276,7 +281,7 @@ line {
 .graph_menu {
   position: absolute;
   top: 0px;
-  right: 0px;
+  right: 6px;
   min-width: 22px;
   min-height: 18px;
   text-align: center;
@@ -284,15 +289,22 @@ line {
   border-left: solid;
   border-color: #cccccc;
   background: #ffffff;
+  z-index: 1;
+  overflow: auto;
+  max-height: 100%;
 }
 .graph_list {
   display: none;
 }
+.graph_listAll:hover,
 .graph_listElem:hover {
   background: #cccccc;
   width: 100%;
-  cursor: move;
+  cursor: pointer;
   cursor: webkit-grab;
+}
+.graph_listElem_selected {
+  font-weight: bold;
 }
 /*style scatterPlot element*/
 .background_sp {
@@ -806,7 +818,7 @@ span .end-codon {
   transition-delay: 0s, 0s;
 }
 #add_clone_menu > #addclone_input.error {
-  border: 1px solid #8b0000;
+  border: 1px solid darkred;
 }
 #menu_right_part {
   float: right;
@@ -856,6 +868,7 @@ a {
 a:hover {
   color: #002b36;
 }
+span.sample-tag,
 a.tag-link {
   color: black;
   background-color: #eee;
@@ -878,7 +891,7 @@ a.tag-link {
 .modal.info-container {
   top: 50px;
   left: 495px;
-  max-width: calc(100% - 535px);
+  max-width: calc(100% - (475px + 60px));
   height: calc(100% - 215px);
 }
 .modal.jstree-container {
@@ -1633,18 +1646,18 @@ h3 .uid {
 .flash_1,
 .log_1 {
   font-weight: bold;
-  background-color: #dff0d8;
+  background-color: #DFF0D8;
 }
 .flash_2,
 .log_2 {
   font-weight: bold;
-  background-color: #f2deae;
+  background-color: #F2DEAE;
 }
 .flash_3,
 .log_3 {
   font-weight: bold;
   border-color: darkred;
-  background-color: #f2dede;
+  background-color: #F2DEDE;
 }
 .tip_1 {
   width: 400px;
@@ -1654,7 +1667,7 @@ h3 .uid {
   border-radius: 5px;
   padding: 5px;
   margin: 5px;
-  background: #dff0d8;
+  background: #DFF0D8;
   border-color: #cccccc;
 }
 #tip_img {
@@ -1780,7 +1793,7 @@ table.log textarea {
   flex-grow: 1;
 }
 .tagColor0 {
-  background: #dc322f;
+  background: #DC322F;
 }
 .tagColor1 {
   background: #cb4b16;
@@ -1817,15 +1830,15 @@ table.log textarea {
   text-align: center;
 }
 .urgent_message {
-  border: 2px solid #8b0000;
+  border: 2px solid darkred;
   margin: 3px;
   font-weight: bold;
-  background-color: #f2dede;
+  background-color: #F2DEDE;
 }
 .info_message {
   border: 1px solid #cccccc;
   margin: 4px;
-  background-color: #dff0d8;
+  background-color: #DFF0D8;
 }
 .notification {
   padding: 3px;
@@ -2252,6 +2265,12 @@ form .form_label {
   opacity: 0.4;
   cursor: auto;
 }
+.list_lock_off {
+  color: #cccccc;
+}
+.list_lock_on {
+  color: #657b83;
+}
 body {
   line-height: 20px;
 }
@@ -2359,6 +2378,7 @@ textarea {
   -moz-flex: 2 32%;
   -ms-flex: 2 32%;
   flex: 2 32%;
+  height : 100%;
 }
 #segmenter_panel {
   bottom: 0;

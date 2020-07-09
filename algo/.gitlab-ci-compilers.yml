@@ -1,0 +1,183 @@
+.install-algo-dependencies:
+  before_script:
+    - apt-get update
+    - apt-get install -y time valgrind python3 wget tar
+    
+
+.testing-compilers:
+  extends: .install-algo-dependencies
+  stage: multiple_tests
+  tags:
+    - cidocker
+  script:
+    - $CXX --version
+    - make demo data germline
+    - make -C algo clean
+    - make -C algo CXX=$CXX CC=$CC unit
+    - make -C algo CXX=$CXX CC=$CC should
+    - make -C algo CXX=$CXX CC=$CC valgrind_unit
+
+.installing-compiler:
+  before_script:
+    - apt-get update
+    - apt-get install -y time valgrind python3 $COMPILER_PKG-$VERSION zlib1g-dev make wget tar python2.7
+    - ln -sf /usr/bin/python2.7 /usr/bin/python
+    - export CXX=${COMPILER_CPP}-$VERSION
+    - export CC=${COMPILER_C}-$VERSION
+
+.testing-gcc:
+  extends: .testing-compilers
+  variables:
+    CXX: g++
+    CC: gcc
+.testing-clang:
+  variables:
+    COMPILER_PKG: "clang"
+    COMPILER_CPP: "clang++"
+    COMPILER_C: "clang"
+    VERSION: $CLANG_VERSION
+  extends:
+    - .testing-compilers
+    - .installing-compiler      # Overrides the before_script to install the compiler
+
+.installing-testing-gcc:
+  variables:
+    COMPILER_PKG: "g++"
+    COMPILER_CPP: "g++"
+    COMPILER_C: "gcc"
+    VERSION: $GCC_VERSION
+  extends:
+    - .testing-compilers
+    - .installing-compiler
+    
+    
+.testing_various_compilers_manual:
+  when: manual
+  only:
+    - /^feature-.*a.*\/.*$/
+    - schedules
+    
+.testing_various_compilers_release:
+  only:
+    - /^feature-.*a.*\/release$/
+
+test_gcc48_manual:
+  image: debian:8-slim
+  variables:
+    GCC_VERSION: "4.8"
+  extends:
+    - .installing-testing-gcc
+    - .testing_various_compilers_manual
+test_gcc48_release:
+  image: debian:8-slim
+  variables:
+    GCC_VERSION: "4.8"
+  extends:
+    - .installing-testing-gcc
+    - .testing_various_compilers_release
+test_gcc5_manual:
+  image: gcc:5.3
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_manual
+test_gcc5_release:
+  image: gcc:5.3
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_release
+test_gcc6_manual:
+  image: gcc:6.3
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_manual
+test_gcc6_release:
+  image: gcc:6.3
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_release
+test_gcc7_manual:
+  image: gcc:7.3
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_manual
+test_gcc7_release:
+  image: gcc:7.3
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_release
+test_gcc8_manual:
+  image: gcc:8
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_manual
+test_gcc8_release:
+  image: gcc:8
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_release
+test_gcc9_manual:
+  image: gcc:9
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_manual
+test_gcc9_release:
+  image: gcc:9
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_release
+test_clang34_manual:
+  image: debian:8-slim
+  variables:
+    CLANG_VERSION: "3.4"
+  extends:
+    - .testing-clang
+    - .testing_various_compilers_manual
+test_clang34_release:
+  image: debian:8-slim
+  variables:
+    CLANG_VERSION: "3.4"
+  extends:
+    - .testing-clang
+    - .testing_various_compilers_release
+test_clang4_manual:
+  image: debian:8-slim
+  variables:
+    CLANG_VERSION: "4.0"
+  extends:
+    - .testing-clang
+    - .testing_various_compilers_manual
+test_clang4_release:
+  image: debian:8-slim
+  variables:
+    CLANG_VERSION: "4.0"
+  extends:
+    - .testing-clang
+    - .testing_various_compilers_release
+test_clang6_manual:
+  image: debian:8-slim
+  variables:
+    CLANG_VERSION: "6.0"
+  extends:
+    - .testing-clang
+    - .testing_various_compilers_manual
+test_clang6_release:
+  image: debian:8-slim
+  variables:
+    CLANG_VERSION: "6.0"
+  extends:
+    - .testing-clang
+    - .testing_various_compilers_release
+test_clang7_manual:
+  image: debian:10-slim
+  variables:
+    CLANG_VERSION: "7"
+  extends:
+    - .testing-clang
+    - .testing_various_compilers_manual
+test_clang7_release:
+  image: debian:10-slim
+  variables:
+    CLANG_VERSION: "7"
+  extends:
+    - .testing-clang
+    - .testing_various_compilers_release

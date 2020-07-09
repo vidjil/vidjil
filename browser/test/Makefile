@@ -1,6 +1,4 @@
 
-BROWSERS=
-
 all: unit functional
 
 unit: nightmare
@@ -9,7 +7,7 @@ headless:
 	HEADLESS=1 $(MAKE) functional
 	HEADLESS=1 $(MAKE) external
 
-functional: ../../doc/analysis-example1.vidjil
+functional: ../../doc/analysis-example1.vidjil ../../tools/tests/data/fused_multiple.vidjil
 	sh launch_functional_tests $(BROWSERS) functional/test_*rb
 
 external: ../../doc/analysis-example1.vidjil
@@ -29,5 +27,8 @@ quality:
 
 ../../doc/%:
 	$(MAKE) -C ../../doc $@
+
+../../tools/tests/%:
+	$(MAKE) -C ../../tools/tests data/$(notdir $@)
 
 .PHONY: unit functional headless all

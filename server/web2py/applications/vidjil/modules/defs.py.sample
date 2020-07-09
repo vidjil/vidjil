@@ -5,9 +5,14 @@
 
 ### Email notifications for server errors
 SMTP_SERVER = 'localhost'
+SMTP_CREDENTIALS = 'vidjil:XXXXXX' # set to None if no auth required
 # SMTP_SERVER = 'logging' # no mail
 FROM_EMAIL = 'root@vidjil.org'
 ADMIN_EMAILS = ['notifications@vidjil.org']
+EMAIL_SUBJECT_START = '[Vidjil]' # Customize the start of the email subject
+
+### Specific accounts
+LIMITED_ACCOUNTS = [ ]
 
 ### address for the sql database
 ###
@@ -44,6 +49,7 @@ DIR_FUSE = '../../tools'
 DIR_MIXCR = '../../'
 DIR_IGREC = '../../'
 DIR_PEAR = '../../'
+DIR_FLASH2 = '../../'
 DIR_CLONEDB = '../../../clonedb'
 
 ### Directory that store the germlines used by Vidjil
@@ -90,3 +96,4 @@ FILE_SOURCE = '/mnt/data/src'
 FILE_TYPES = ['fasta', 'fastq', 'fastq.gz', 'fa']
 
 REQUIRE_HTTPS = True
+BROWSER_PATH='browser/index.html'

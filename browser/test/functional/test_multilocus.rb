@@ -40,10 +40,10 @@ class TestMultilocus < BrowserTest
   end
 
   def test_00_legend_scatterplot
-    assert ($b.scatterplot_x_legend(0).text == 'TRBV1'), "Bad legend for scatterplot"
-    assert ($b.scatterplot_x_legend(4).text == '?'), "Bad legend for scatterplot"
-    assert ($b.scatterplot_y_legend(0).text == 'TRBJ1-1'), "Bad legend for scatterplot"
-    assert ($b.scatterplot_y_legend(9).text == '?'), "Bad legend for scatterplot"
+    assert ($b.scatterplot_x_legend(0).text == 'TRBV1'), "Bad legend for scatterplot " + $b.scatterplot_x_legend(0).text 
+    assert ($b.scatterplot_x_legend(4).text == 'undefined V'), "Bad legend for scatterplot " + $b.scatterplot_x_legend(4).text
+    assert ($b.scatterplot_y_legend(0).text == 'TRBJ1-1'), "Bad legend for scatterplot " + $b.scatterplot_y_legend(0).text
+    assert ($b.scatterplot_y_legend(9).text == 'undefined J'), "Bad legend for scatterplot " + $b.scatterplot_y_legend(9).text
   end
 
   def test_00_info_point
@@ -87,6 +87,7 @@ class TestMultilocus < BrowserTest
 
     $b.clone_name_editor.set 'renamed_click'
     $b.clone_name_saver.click
+    $b.update_icon.wait_while(&:present?)
     assert (clone_name.text == 'renamed_click'), " >> clone name (click) has not changed"
 
     $b.unselect
@@ -99,6 +100,7 @@ class TestMultilocus < BrowserTest
 
     $b.clone_name_editor.set 'renamed_return'
     $b.send_keys :return
+    $b.update_icon.wait_while(&:present?)
     assert (clone_name.text == 'renamed_return'), " >> clone name (return) has not changed"
 
     $b.unselect
@@ -138,7 +140,7 @@ class TestMultilocus < BrowserTest
     assert ( $b.clone_in_list('25').class_name.include? "list_select" ), ">> Incorrect class name, clone is not selected"
     assert ( $b.clone_in_scatterplot('25', :class => "circle_select").exists?)
     assert ( $b.clone_in_graph('25', :class=> "graph_select").exists?)
-    assert ( $b.clone_in_segmenter('25').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
+    assert ( $b.clone_in_segmenter('25').present? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
 
     stats = $b.statsline
     assert (stats.text.include? '1 clone'), ">> Incorrect stats, should have one clone"
@@ -172,11 +174,14 @@ class TestMultilocus < BrowserTest
     $b.tag_selector_edit_normalisation.wait_until(&:present?)
     $b.tag_selector_edit_normalisation.set('0.01')
     $b.tag_selector_normalisation_validator.click 
-    
+    $b.update_icon.wait_while(&:present?)
+
     assert ( $b.clone_info('25')[:size].text == '1.000%' ) , ">> fail normalize on : wrong clone size "
     
     $b.menu_settings.click 
+    $b.update_icon.wait_while(&:present?)
     $b.radio(:id => 'reset_norm').click
+    $b.update_icon.wait_while(&:present?)
     assert ( $b.clone_info('25')[:size].text == '0.129%' ) , ">> fail normalize off : wrong clone size "
 
     $b.unselect
@@ -199,15 +204,19 @@ class TestMultilocus < BrowserTest
       name.click
       $b.until { not $b.tag_item('0')[:name].present? }
 
+      # Move the mouse elsewhere
+      $b.clone_in_scatterplot('77').hover
+
       $b.until {$b.clone_info('25')[:name].style('color') ==  'rgba(220, 50, 47, 1)' }
     end
   end
 
   def test_13_export_fasta
-    $b.clone_in_scatterplot('77').click
-    $b.clone_in_scatterplot('25').click(:control)
-    $b.clone_in_scatterplot('88').click(:control)
-    $b.clone_in_scatterplot('90').click(:control)
+    $b.unselect
+    $b.clone_in_list('77').click
+    $b.clone_in_list('25').click(:control)
+    $b.clone_in_list('88').click(:control)
+    $b.clone_in_list('90').click(:control)
 
     $b.menu_item_export_fasta.click
     assert ( $b.window(:url => /about:blank/ )) , ">> fail opening fasta export "
@@ -264,6 +273,26 @@ class TestMultilocus < BrowserTest
     assert (not $b.element(:class => 'waiting_msg').present?), "The ``generating report'' message should not be present anymore"
   end
 
+  def test_14b_export_sample_report
+
+    if $b.driver.capabilities.browser_name == 'chrome'
+      skip "Issue #3699 must be solved first"
+    end
+
+    # Select a clone
+    $b.clone_in_scatterplot('43').click
+
+    $b.menu_item_export('export_monitor_report').click
+
+    assert ($b.window(:title => "analysis-example.vidjil").exists?), ">> Report didn't show up"
+
+    $b.window(:title => "analysis-example.vidjil").use do
+      assert ($b.element(:class => 'clone_name').text.include? "TRBV13-1*02"), "Selected clone should be present"
+      assert (not $b.text.include? "smaller clone"), "Smaller clone should not be present"
+    end
+
+  end
+
   def test_15_smaller_clones
     for i in 0..3
       smaller = $b.list.li(:index => i)
@@ -279,10 +308,26 @@ class TestMultilocus < BrowserTest
   end
 
   def test_16_select_unsegmented
-    clone_id = '10'
-    $b.clone_in_scatterplot(clone_id).click
+    clone_list = ["1", "32", "24", "68"]
+    # clone with seg & sequence (1)
+    $b.clone_in_scatterplot(clone_list[0]).click
+    $b.update_icon.wait_while(&:present?)
+    assert ($b.clone_in_segmenter(clone_list[0]).present?), "Clone %s (seg+/seq+) is in segmenter" % clone_list[0]
+    
+    # clone with seg & not sequence (32)
+    $b.clone_in_scatterplot(clone_list[1]).click
+    $b.update_icon.wait_while(&:present?)
+    assert (not $b.clone_in_segmenter(clone_list[1]).present?), "Clone %s (seg+/seq-) is NOT in segmenter" % clone_list[1]
 
-    assert ($b.clone_in_segmenter(clone_id).exists?), "Clone %s is not in segmenter" % clone_id
+    # clone without seg & sequence (24)
+    $b.clone_in_scatterplot(clone_list[2]).click
+    $b.update_icon.wait_while(&:present?)
+    assert (not $b.clone_in_segmenter(clone_list[2]).present?), "Clone %s (seg-/seq-) is NOT in segmenter" % clone_list[2]
+
+    # clone without seg & sequence (68)
+    $b.clone_in_scatterplot(clone_list[3]).click
+    $b.update_icon.wait_while(&:present?)
+    assert ($b.clone_in_segmenter(clone_list[3]).present?), "Clone %s (seg-/seq+) is in segmenter" % clone_list[3]
   end
 
   def test_17_select_clustered
@@ -291,27 +336,27 @@ class TestMultilocus < BrowserTest
     $b.clone_in_scatterplot('90').click(:control)
 
     $b.merge.click
-
+    $b.update_icon.wait_while(&:present?)
     assert ($b.clone_in_scatterplot('90').exists?), "Main clone of the cluster should be clone 90"
     assert ($b.clone_in_scatterplot('90', :class => "circle_select").exists?), "Clone should be selected"
 
     $b.clone_info('90')[:cluster].click
-
+    $b.update_icon.wait_while(&:present?)
     $b.until { $b.clone_in_scatterplot('1', :class => "circle_select").exists?}
     assert ( $b.clone_in_graph('1', :class=> "graph_select").exists?)
-    assert ( $b.clone_in_segmenter('1').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
+    assert ( $b.clone_in_segmenter('1').present? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
     assert ( $b.clone_in_scatterplot('37', :class => "circle_select").exists?)
     assert ( $b.clone_in_graph('37', :class=> "graph_select").exists?)
-    assert ( $b.clone_in_segmenter('37').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
+    assert ( $b.clone_in_segmenter('37').present? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
     assert ( $b.clone_in_scatterplot('90', :class => "circle_select").exists?)
     assert ( $b.clone_in_graph('90', :class=> "graph_select").exists?)
-    assert ( $b.clone_in_segmenter('90').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
+    assert ( $b.clone_in_segmenter('90').present? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
 
     $b.clone_in_cluster('90', '1')[:delete].click
     $b.clone_in_cluster('90', '37')[:delete].click
 
     $b.unselect
-
+    $b.update_icon.wait_while(&:present?)
     assert ($b.clone_in_scatterplot('1').exists?)
     assert ($b.clone_in_scatterplot('37').exists?)
     assert ($b.clone_in_scatterplot('90').exists?)
@@ -374,6 +419,9 @@ class TestMultilocus < BrowserTest
       $b.clone_info('25')[:star].click
       $b.element(:id => 'tagElem_0').click
 
+      # Move the mouse elsewhere
+      $b.clone_in_scatterplot('72').hover
+
       $b.until {$b.clone_info('25')[:name].style('color') ==  'rgba(220, 50, 47, 1)' } # clone 25 should have changed color
       assert ( not $b.clone_info('88')[:name].style('color') ==  'rgba(220, 50, 47, 1)' ) , "clone 88 (second of the selection) haven't chaged color "
 
@@ -381,6 +429,7 @@ class TestMultilocus < BrowserTest
       ## Test tag selection for multiple clone
       $b.element(:id => "tag_icon__multiple").click
       $b.element(:id => 'tagElem_6').click
+      $b.update_icon.wait_while(&:present?)
       assert ($b.clone_info('25')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 25 have also changed color"
       assert ($b.clone_info('77')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 77 have also changed color"
       assert ($b.clone_info('88')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 88 have also changed color"

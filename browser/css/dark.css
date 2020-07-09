@@ -83,6 +83,10 @@ ul {
   right: 0px;
   top: 32px;
 }
+#live-ajax-msg {
+  font-style: italic;
+  margin-right: 1em;
+}
 #upload_summary {
   display: none;
   z-index: 10;
@@ -186,7 +190,7 @@ line {
   fill: #000000;
 }
 .graph_line {
-  stroke-width: 2.5px;
+  stroke-width: 1.5px;
   cursor: pointer;
   stroke: #839496;
 }
@@ -200,7 +204,7 @@ line {
   opacity: 0.8;
 }
 .graph_inactive {
-  stroke-width: 1.5px;
+  stroke-width: 0.5px;
   cursor: pointer;
   display: none;
 }
@@ -243,10 +247,12 @@ line {
 #resolution1 {
   fill: #000000;
   opacity: 1;
+  pointer-events: none;
 }
 #resolution5 {
-  fill: #333333;
+  fill: #000000;
   opacity: 0.6;
+  pointer-events: none;
 }
 .graph_time {
   fill: #839496;
@@ -276,7 +282,7 @@ line {
 .graph_menu {
   position: absolute;
   top: 0px;
-  right: 0px;
+  right: 6px;
   min-width: 22px;
   min-height: 18px;
   text-align: center;
@@ -284,15 +290,22 @@ line {
   border-left: solid;
   border-color: #333333;
   background: #000000;
+  z-index: 1;
+  overflow: auto;
+  max-height: 100%;
 }
 .graph_list {
   display: none;
 }
+.graph_listAll:hover,
 .graph_listElem:hover {
   background: #333333;
   width: 100%;
-  cursor: move;
+  cursor: pointer;
   cursor: webkit-grab;
+}
+.graph_listElem_selected {
+  font-weight: bold;
 }
 /*style scatterPlot element*/
 .background_sp {
@@ -570,7 +583,7 @@ line {
   font-weight: bold;
 }
 .list_sort {
-  margin-right: 30px;
+  margin-right: 20px;
   float: right;
 }
 /*style segmenter element*/
@@ -806,7 +819,7 @@ span .end-codon {
   transition-delay: 0s, 0s;
 }
 #add_clone_menu > #addclone_input.error {
-  border: 1px solid darkred;
+  border: 1px solid #8b0000;
 }
 #menu_right_part {
   float: right;
@@ -856,6 +869,7 @@ a {
 a:hover {
   color: #fdf6e3;
 }
+span.sample-tag,
 a.tag-link {
   color: black;
   background-color: #eee;
@@ -878,7 +892,7 @@ a.tag-link {
 .modal.info-container {
   top: 50px;
   left: 495px;
-  max-width: calc(100% - 535px);
+  max-width: calc(100% - (475px + 60px));
   height: calc(100% - 215px);
 }
 .modal.jstree-container {
@@ -1494,7 +1508,7 @@ h3 .uid {
 #db_table_container {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: calc(100% -30px);
+  height: calc(100% - 30px);
   position: relative;
 }
 #db_fixed_header {
@@ -1633,18 +1647,18 @@ h3 .uid {
 .flash_1,
 .log_1 {
   font-weight: bold;
-  background-color: #dff0d8;
+  background-color: #DFF0D8;
 }
 .flash_2,
 .log_2 {
   font-weight: bold;
-  background-color: #f2deae;
+  background-color: #F2DEAE;
 }
 .flash_3,
 .log_3 {
   font-weight: bold;
   border-color: darkred;
-  background-color: #f2dede;
+  background-color: #F2DEDE;
 }
 .tip_1 {
   width: 400px;
@@ -1654,7 +1668,7 @@ h3 .uid {
   border-radius: 5px;
   padding: 5px;
   margin: 5px;
-  background: #dff0d8;
+  background: #DFF0D8;
   border-color: #333333;
 }
 #tip_img {
@@ -1780,7 +1794,7 @@ table.log textarea {
   flex-grow: 1;
 }
 .tagColor0 {
-  background: #dc322f;
+  background: #DC322F;
 }
 .tagColor1 {
   background: #cb4b16;
@@ -1820,12 +1834,12 @@ table.log textarea {
   border: 2px solid #8b0000;
   margin: 3px;
   font-weight: bold;
-  background-color: #f2dede;
+  background-color: #F2DEDE;
 }
 .info_message {
   border: 1px solid #333333;
   margin: 4px;
-  background-color: #dff0d8;
+  background-color: #DFF0D8;
 }
 .notification {
   padding: 3px;
@@ -2251,4 +2265,10 @@ form .form_label {
   pointer-events: none;
   opacity: 0.4;
   cursor: auto;
+}
+.list_lock_off {
+  color: #333333;
+}
+.list_lock_on {
+  color: #839496;
 }

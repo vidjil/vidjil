@@ -22,8 +22,12 @@
 
 
 NOTIFICATION_PERIOD = 300000			  // Time interval to check for notifications periodically (ms)
-
-
+AJAX_TIMEOUT_START = 200                  // Delay before cursor wait
+AJAX_TIMEOUT_LONG  = 600                  // Delay before spinner at the top-right
+AJAX_TIMEOUT_MSG1  = 10000                 // Delay before first message
+AJAX_TIMEOUT_MSG2  = 30000                // Delay before second message
+var timeout;
+var ajaxOn = 0;
 
 /* Console (optional)
  * Setting here a console replaces the default javascript console with a custom one.
@@ -152,17 +156,51 @@ if (typeof config !== 'undefined' && typeof config.alert !== 'undefined') {
 
 console.log("=== main.js finished ===");
 
-var timeout;
+
+
 $(document).ajaxStart(function () {
-    //show ajax indicator
+
+    // 0. Start AJAX sequence
+    var ajaxId = 1 + Math.floor(Math.random() * 1000);
+    ajaxOn = ajaxId
+
     timeout = setTimeout(function(){
-        db.ajax_indicator_start()
-    }, 600);
-}).ajaxStop(function () {
+        if (ajaxOn == ajaxId){
+            // 1. Show cursor
+            db.ajax_indicator_start()
+            setTimeout(function(){
+              if (ajaxOn == ajaxId){
+                  // 2. Show spinner
+                  db.ajax_indicator_long()
+
+                  setTimeout(function(){
+                      if (ajaxOn == ajaxId) {
+                          // 3. Display message
+                          db.ajax_indicator_msg("waiting for server reply")
+
+                          setTimeout(function(){
+                              if (ajaxOn == ajaxId) {
+                                  // 4. Display another message
+                                  db.ajax_indicator_msg("still waiting...")
+                              }
+                            }, AJAX_TIMEOUT_MSG2);
+                      }
+                    }, AJAX_TIMEOUT_MSG1);
+                }
+                }, AJAX_TIMEOUT_LONG);
+            }
+        }, AJAX_TIMEOUT_START);
+
+})
+
+
+$(document).ajaxStop(function () {
     //hide ajax indicator
+    ajaxOn = 0;
     db.ajax_indicator_stop();
     clearTimeout(timeout);
 });
+
 db.ajax_indicator_stop();
 
 // Load regularly notifications

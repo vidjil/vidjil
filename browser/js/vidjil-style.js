@@ -53,7 +53,9 @@
       return "rgb("+v+","+p+","+q+")";
     }
   }
-
+function oldColorGenerator(t){
+  return colorGenerator((t*300))
+}
 
 function colorGeneratorIndex(i) {
     var z = 6

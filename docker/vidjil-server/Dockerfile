@@ -44,6 +44,6 @@ copy ./scripts/fuse-entrypoint.sh /entrypoints/fuse-entrypoint.sh
 run mkdir /usr/share/vidjil/server/web2py/applications/vidjil/databases && touch /usr/share/vidjil/server/web2py/applications/vidjil/databases/sql.log
 run mkdir /var/vidjil
 run touch /var/vidjil/vidjil.log && touch /var/vidjil/vidjil-debug.log
-run cd /usr/share/vidjil/server/web2py && python -c "from gluon.main import save_password; save_password('default',443)"
+run PASSWORD=`openssl rand -base64 10` && cd /usr/share/vidjil/server/web2py && python -c "from gluon.main import save_password; save_password('${PASSWORD}',443)"
 run chown -R www-data:www-data /usr/share/vidjil
 run useradd -ms /bin/bash vidjil && usermod -aG sudo vidjil

@@ -1,0 +1,29 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g -c clones --all -3 $VIDJIL_DATA/segment_lec.fa
+
+$ Extract up to 50bp windows (TRG)
+1:windows up to 50bp
+
+$ Find the good number of windows
+1: found 4 .* in 7 reads .* 7 reads
+
+$ Find the good statistics on TRG
+1: TRG .* -> .* 7 .* 84.0 .* 4 .* 0.571
+
+$ Find the good length statistics
+1: SEG -> .* 84.0
+
+$ Four detected on forward
+1:SEG_\+ -> 4
+
+$ Three detected on reverse (Junc#01 doesn't have its rc)
+1:SEG_- -> 3
+
+$ No too short window
+1:UNSEG too short w -> 0
+
+$ Some shifted/shortened windows
+1: SEG changed w -> 3   40.0
+
+$ Find the good CDR3
+2: CATWA#YYKKLF
+1: CAAWRPTGWFKIF

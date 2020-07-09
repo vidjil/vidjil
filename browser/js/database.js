@@ -1,5 +1,5 @@
 DB_ADDRESS = ""
-DB_TIMEOUT_CALL = 30000               // Regular call
+DB_TIMEOUT_CALL = 60000               // Regular call
 DB_TIMEOUT_GET_DATA = DB_TIMEOUT_CALL           // Get patient/sample .data
 DB_TIMEOUT_GET_CUSTOM_DATA = 1200000  // Launch custum fused sample .data
 
@@ -39,6 +39,7 @@ function Database(model, address) {
         this.m = model
         this.uploader = new Uploader()
         this.build()
+        this.m.db = this
         
         window.onbeforeunload = function(e){
             if ( self.uploader.is_uploading() ){
@@ -372,8 +373,17 @@ Database.prototype = {
         if ($option.attr('required_files') == "1"){
             $(".file_2").hide();
             $(".upload_file").val("");
+            $(".upload_field").each(function() {
+                $(this).prop("required", false);
+            });
         }else{
             $(".file_2").show();
+            if ($(".is_editing").length == 0) {
+                // Not editing a sample, but creating new ones
+                $(".upload_field").each(function() {
+                    $(this).prop("required", true);
+                });
+            }
         }
     },
 
@@ -583,13 +593,22 @@ Database.prototype = {
         if ( document.getElementById('upload_form') ){
             $('#upload_form').on('submit', function(e) {
                 e.preventDefault();
+
+                //clear empty values before submiting data
+                var upload_form = $('#upload_form').serializeObject()
+                if ("file" in upload_form)
+                    upload_form.file = upload_form.file.filter(function(el) {
+                        return typeof el != "object" || Array.isArray(el) || Object.keys(el).length > 0;
+                    });
+                var data = JSON.stringify(upload_form)
+
                 $.ajax({
                     type     : "POST",
                     cache: false,
                     crossDomain: true,
                     xhrFields: {withCredentials: true},
                     url      : $(this).attr('action'),
-                    data     : {'data': JSON.stringify($('#upload_form').serializeObject())},
+                    data     : {'data': data},
                     success  : function(result) {
                         var js = self.display_result(result)
                         var id, fileSelect, files, file, filename;
@@ -1009,7 +1028,7 @@ Database.prototype = {
                         xhrFields: {withCredentials: true},
 		        timeout: DB_TIMEOUT_CALL,
 		        success: function (result) {
-		        	notification.parse_notification(result)
+		        	m.notification.parse_notification(result)
 		            
 		        }, 
 		        error: function (request, status, error) {
@@ -1102,18 +1121,46 @@ Database.prototype = {
         return args
     },
 
+    /**
+     * Start ajax sequence. Only the cursor changes.
+     */
     ajax_indicator_start: function() {
         if (!(this.uploader.is_uploading())) {
-            var tgt = $('#live-ajax');
-            tgt.empty();
-            $('<img/>', {src: 'images/ajax-loader.gif'}).appendTo($('<div/>', {class: 'active-container'}).appendTo(tgt));
+            $('#live-ajax-icon').empty();
+            $('#live-ajax-msg').empty();
             $('body').css('cursor', 'wait');
         }
     },
 
+    /**
+     * Show a spinner
+     */
+    ajax_indicator_long: function() {
+        if (!(this.uploader.is_uploading())) {
+            var live_icon = document.getElementById("live-ajax-icon")
+            $('<img/>', {src: 'images/ajax-loader.gif'}).appendTo(live_icon)
+        }
+    },
+
+    /**
+     * Display a message to the user to tell him to wait a little more
+     * @param  {String} message the message to said to wait to the user; optionnal
+     */
+    ajax_indicator_msg: function(message) {
+        if (!(this.uploader.is_uploading())) {
+            if (message == undefined) { message = "waiting for server reply"}
+            var div_msg  = document.getElementById("live-ajax-msg")
+            div_msg.innerHTML = message
+        }
+    },
+
+    /**
+     * End ajax sequence
+     */
+
     ajax_indicator_stop: function() {
-        var tgt = $('#live-ajax');
-        tgt.empty();
+        $('#live-ajax-icon').empty();
+        $('#live-ajax-msg').empty();
         $('body').css('cursor', 'default');
     },
 

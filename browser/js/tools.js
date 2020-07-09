@@ -135,6 +135,25 @@ function get_mutations(ref, seq, frame, with_end_codon) {
 }
 
 /**
+ * @return the common name of a species. Or the original name if the common
+ * name has not been set. The common names are given so that they are
+ * compatible with IMGT/V-QUEST®
+ */
+function getSpeciesCommonName(species) {
+    var lower_species = species.toLowerCase();
+    switch(lower_species) {
+    case "homo sapiens":
+        return "human";
+    case "mus musculus":
+        return "house mouse";
+    case "gallus gallus":
+        return "chicken";
+    default:
+        return species;
+    }
+}
+
+/**
  * Find the position of the nth occurence of needle
  *
  * @param str string to analyze
@@ -265,6 +284,10 @@ function prepend_path_if_not_web(file, path) {
  * Return a hash whose keys are URLs to sample sets and configs.
  * An additional key (termed 'original') corresponds to the original
  * results as returned by CloneDB.
+ * An additional key (termed 'clones_names') stores sample set names
+ * (keys) and a list of two elements (as values) containing the number
+ * of clones matching the requested clone and the corresponding percentage
+ * of those matching clones in the sample set.
  */
 function processCloneDBContents(results,model) {
     var existing_urls = {};
@@ -289,6 +312,10 @@ function processCloneDBContents(results,model) {
                         config_name = 'unknown';
 		    var url = '?sample_set_id='+results[clone].tags.sample_set[i]+'&config='+results[clone].tags.config_id[0];
 		    var msg = '<a href="'+url+'">'+name+'</a> ('+config_name+')';
+                    if (typeof results[clone].tags.sample_tags !== 'undefined' &&
+                       results[clone].tags.sample_tags[i].length > 0) {
+                        msg += '<br/><span class="sample-tag">'+results[clone].tags.sample_tags[i].join('</span> <span class="sample-tag">')+'</span>';
+                    }
 		    if (! (url in existing_urls)) {
                        clones_results[name] = [results[clone].occ,parseFloat(results[clone].tags.percentage[0])];
 			existing_urls[url] = true;
@@ -428,19 +455,20 @@ function floor_pow10(x)
 
 /**
  * Give a nice decimal number above the given number
- * nice_ceil(0.14) -> 0.15
+ * nice_ceil(0.14) -> 0.2
+ * nice_ceil(0.14, 0.05) -> 0.15
  * nice_ceil(23.4) -> 30
  **/
 
 function nice_ceil(x, force_pow10)
 {
-    if (x <= 0) return x
+    if (x == 0) return 0
+    if (x <  0) return -nice_floor(-x, force_pow10)
 
     try {
         var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
-
-        var xx = x / floor_power10
-        return (xx == 1 ? 1 : xx <= 1.5 ? 1.5 : Math.ceil(xx)) * floor_power10
+ 
+        return Math.ceil(x / floor_power10) * floor_power10
     }
     catch(e) {
         // Always return something
@@ -480,7 +508,8 @@ function nice_1_2_5_ceil(x)
 
 function nice_floor(x, force_pow10)
 {
-    if (x <= 0) return x
+    if (x == 0) return 0
+    if (x <  0) return -nice_ceil(-x, force_pow10)
 
     try {
         var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
@@ -693,4 +722,72 @@ function openAndFillNewTab (content){
         html: content
     }).appendTo(w.document.body);
     return
+}
+
+/**
+ * Function that allow to make comparison between two arrays.
+ */
+if(Array.prototype.equals)
+    console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
+// attach the .equals method to Array's prototype to call it on any array
+Array.prototype.equals = function (array) {
+    // if the other array is a falsy value, return
+    if (!array)
+        return false;
+
+    // compare lengths - can save a lot of time 
+    if (this.length != array.length)
+        return false;
+
+    for (var i = 0, l=this.length; i < l; i++) {
+        // Check if we have nested arrays
+        if (this[i] instanceof Array && array[i] instanceof Array) {
+            // recurse into the nested arrays
+            if (!this[i].equals(array[i]))
+                return false;       
+        }           
+        else if (this[i] != array[i]) { 
+            // Warning - two different object instances will never be equal: {x:20} != {x:20}
+            return false;   
+        }           
+    }       
+    return true;
+}
+// Hide method from for-in loops
+Object.defineProperty(Array.prototype, "equals", {enumerable: false});
+
+
+/**
+ * @param {data} a string containing a multi-FASTA
+ * @param {n} the number of sequences to keep
+ * @return return a string containing at most {n} FASTA sequences.
+ *         if {n} is negative or null return {data} itself
+ */
+function getNFirstSequences(data, n) {
+    var pos = nth_ocurrence(data, '>', n+1);
+    if (pos) {
+        return data.substr(0, pos);
+    } else {
+        return data;
+    }    
+}
+
+/**
+ * @return a proxy URL if one can be obtained in the config (ending with /) or
+ * throws an exception and logs the error.
+ */
+function getProxy() {
+    if (typeof config != 'undefined') {
+        if (typeof config.proxy != 'undefined') {
+            return config.proxy+"/";
+        } else if (typeof config.db_address != 'undefined') {
+            return config.db_address+"/proxy/";
+        }
+    }
+    console.log({
+        "type": "flash",
+        "msg": "Your installation doesn't seem to have an associated proxy.",
+        "priority": 2
+    });
+    throw "No proxy";
 }

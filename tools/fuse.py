@@ -36,6 +36,8 @@ import os
 import datetime
 import subprocess
 import tempfile
+import math
+import gzip
 from operator import itemgetter, le
 from utils import *
 from defs import *
@@ -49,7 +51,37 @@ SIMILARITY_LIMIT = 100
 
 GERMLINES_ORDER = ['TRA', 'TRB', 'TRG', 'TRD', 'DD', 'IGH', 'DHJH', 'IJK', 'IJL'] 
 
-####
+AVAILABLE_AXES = [
+    "top", "germline", "name",
+    "seg5", "seg4", "seg4a", "seg4b", "seg3",
+    "evalue", "lenSeqAverage", "lenCDR3", "lenJunction",
+    "seg5_delRight", "seg3_delLeft", "seg4_delRight", "seg4_delLeft",
+    "seg5_stop", "seg3_start", "seg4_stop", "seg4_start", "cdr3_stop", "cdr3_start",
+    "junction_stop", "junction_start", "productive",
+    "insert_53", "insert_54", "insert_43",
+    "evalue", "evalue_left", "evalue_right",
+]
+GET_UNKNOW_AXIS = "unknow_axis"
+UNKNOWN_VALUE   = ""
+
+def generic_open(path, mode='r', verbose=False):
+    '''
+    Open a file.
+    If 'r', possibly open .gz compressed files.
+    '''
+    if verbose:
+        print(" <==", path, "\t", end=' ')
+
+    if 'r' in mode:
+        try:
+            f = gzip.open(path, mode)
+            f.read(1)
+            f.seek(0)
+            return f
+        except IOError:
+            pass
+
+    return open(path, mode)
 
 class Window:
     # Should be renamed "Clone"
@@ -71,8 +103,79 @@ class Window:
     >>> (w2 + w4).d["test"]
     [0, 'plop']
     
-    '''
+    >>> w1.get_values("name")
+    '?'
     
+    >>> w1.get_values("top")
+    3
+  
+    >>> w7   = Window(1)
+    >>> w7.d = seg_w7
+    >>> w7.d["seg"]["5"]["name"]
+    'TRAV17*01'
+
+    >>> w7.get_values("reads")
+    16
+
+    >>> w7.get_values("top")
+    26
+    >>> w7.get_values("germline")
+    'TRA'
+    >>> w7.get_values("name")
+    'TRAV17*01 0/CCGGGG/5 TRAJ40*01'
+    >>> w7.get_values("seg5")
+    'TRAV17*01'
+    >>> w7.get_values("seg4a")
+    '?'
+    >>> w7.get_values("seg4")
+    '?'
+    >>> w7.get_values("seg4b")
+    '?'
+    >>> w7.get_values("seg3")
+    'TRAJ40*01'
+    >>> w7.get_values("evalue")
+    '1.180765e-43'
+    >>> w7.get_values("evalue_left")
+    '1.296443e-47'
+    >>> w7.get_values("evalue_right")
+    '1.180635e-43'
+    >>> w7.get_values("seg5_delRight")
+    0
+    >>> w7.get_values("seg3_delLeft")
+    5
+    >>> w7.get_values("seg4_delRight")
+    '?'
+    >>> w7.get_values("seg4_delLeft")
+    '?'
+    >>> w7.get_values("seg5_stop")
+    105
+    >>> w7.get_values("seg3_start")
+    112
+    >>> w7.get_values("seg4_stop")
+    '?'
+    >>> w7.get_values("seg4_start")
+    '?'
+    >>> w7.get_values("cdr3_start")
+    96
+    >>> w7.get_values("cdr3_stop")
+    133
+    >>> w7.get_values("junction_start")
+    93
+    >>> w7.get_values("junction_stop")
+    136
+    >>> w7.get_values("productive")
+    True
+    >>> w7.get_values("unavailable_axis")
+    'unknow_axis'
+    >>> w7.get_values("lenSeqAverage")
+    168.0
+    >>> w7.get_values("lenSeqAverage", 0)
+    168.0
+    >>> w7.get_values("lenSeqAverage", 1)
+    169.0
+    '''
+
+
     ### init Window with the minimum data required
     def __init__(self, size):
         self.d={}
@@ -122,6 +225,179 @@ class Window:
         
     def get_nb_reads(self, cid, point=0):
         return self[cid]["reads"][point]
+
+    def get_reads(self, t=-1):
+        if t== -1:
+            return self.d["reads"]
+        else:
+            return self.d["reads"][t]
+
+    def is_segmented(self):
+        if not "seg" in self.d.keys():
+            return False
+        return True
+
+
+    def get_axes_values(self, axes, timepoint):
+        """Return the values of given axes for this clone at a gvien timepoint"""
+        values = []
+        for axis in axes:
+            values.append(self.get_values(axis, timepoint))
+        return values
+
+
+    def get_values(self, axis, timepoint=0):
+        """Return the value of an axis for this clone at a given timepoint"""
+
+        axes = {
+            "id":       ["id"],
+            "top":      ["top"],
+            "germline": ["germline"],
+            "name":     ["name"],
+            "reads":    ["reads"],
+            "seg5":     ["seg",  "5", "name"],
+            "seg4":     ["seg",  "4", "name"],
+            "seg4a":    ["seg", "4a", "name"],
+            "seg4b":    ["seg", "4b", "name"],
+            "seg3":     ["seg",  "3", "name"],
+            "evalue":   ["seg", "evalue","val"],
+            "evalue_left":   ["seg", "evalue_left","val"],
+            "evalue_right":  ["seg", "evalue_right","val"],
+            "seg5_delRight": ["seg","5","delRight"],
+            "seg3_delLeft":  ["seg","3","delLeft"],
+            "seg4_delRight": ["seg","4","delRight"],
+            "seg4_delLeft":  ["seg","4","delLeft"],
+            ### Positions
+            "seg5_stop":  ["seg","5","stop"],
+            "seg3_start": ["seg","3","start"],
+            "seg4_stop":  ["seg","4","stop"],
+            "seg4_start": ["seg","4","start"],
+            "cdr3_stop":  ["seg","cdr3","stop"],
+            "cdr3_start": ["seg","cdr3","start"],
+            "junction_stop":  ["seg","junction","stop"],
+            "junction_start": ["seg","junction","start"],
+            "productive":     ["seg","junction","productive"],
+            "lenSeqAverage" : ["_average_read_length"],
+            "warnings": ["warn"],
+            "sequence": ["sequence"]
+        }
+
+        ### length
+        axes_length = {
+            "insert_53": ["seg3_start", "seg5_stop", -1],
+            "insert_54": ["seg4_start", "seg5_stop", -1],
+            "insert_43": ["seg3_start", "seg4_stop", -1],
+            "lenCDR3": ["cdr3_stop", "cdr3_start", 0],
+            "lenJunction": ["junction_stop", "junction_start", 0]
+        }
+
+        axes_rounded = {
+            "lenSeqAverage" : 1.0
+        }
+
+        try:
+            if axis in axes.keys():
+                path  = axes[axis]
+                depth = 0
+                value = self.d
+                if path[0] == "seg" and not self.is_segmented():
+                    return "?"
+
+                while depth != len(path):
+                    value  = value[path[depth]]
+                    depth += 1
+                if axis in axes_rounded.keys():
+                    value = self.round_axis(value, axes_rounded[axis])
+
+
+                if type(value) is list:
+                    # In these cases, should be a list of value at different timepoint
+                    return value[timepoint]
+
+                return value
+
+            return GET_UNKNOW_AXIS
+        except:
+            return "?"
+
+    def round_axis(self, value, round_set):
+        if isinstance(value, list):
+            for i in range(len(value)):
+                value[i] = self.round_axis(value[i], round_set)
+        else:
+            value = round(float(value) / round_set) * round_set
+        return value
+
+
+    def toCSV(self, cols= [], time=0, jlist = False):
+        """ Return a list of values of the clone added from a list of waited columns """
+        list_values = []
+
+
+        airr_to_axes = {
+            "locus":               "germline",
+            "v_call":              "seg5",
+            "d_call":              "seg4",
+            "j_call":              "seg3",
+            "v_alignment_end":     "seg5_stop",
+            "d_alignment_start":   "seg4_start",
+            "d_alignment_end":     "seg4_stop",
+            "j_alignment_start":   "seg3_start",
+            "productive":          "productive",
+            "cdr3_start":          "cdr3_start",
+            "cdr3_end":            "cdr3_stop",
+            "sequence_id":         "id",
+            "sequence":            "sequence",
+            ## Not implemented in get_values
+            # For x_cigar, datananot available in clone
+            "junction":  "?",
+            "cdr3_aa":   "?",
+            "rev_comp":  "?",
+            "v_cigar":   "?",
+            "d_cigar":   "?",
+            "j_cigar":   "?",
+            "sequence_alignment": "?",
+            "germline_alignment": "?",
+            "duplicate_count":    "reads"
+        }
+
+        airr_computed =  ["ratio_segmented", "ratio_locus", "filename", "warnings"]
+
+        for col in cols:    
+
+            if col in airr_computed:
+                if col == "ratio_locus":
+                    germline = self.get_values("germline")
+                    value = float(self.get_values("reads", timepoint=time) ) / jlist.d["reads"].d["germline"][germline][time]
+                elif col == "ratio_segmented":
+                    value = float(self.get_values("reads", timepoint=time) ) / jlist.d["reads"].d["segmented"][time]
+                elif col == "filename":
+                    value = jlist.d["samples"].d["original_names"][time]
+                elif col == "warnings":
+                    if "warn" not in self.d.keys():
+                        value = ""
+                    else:
+                        warns = self.d["warn"]
+                        values = []
+                        for warn in warns:
+                            values.append( warn["code"] )
+                        value = ",".join(values)
+
+                else:
+                    value = GET_UNKNOW_AXIS
+
+            elif col in airr_to_axes.keys():
+                value = self.get_values(airr_to_axes[col], timepoint=time)
+            else:
+                value = GET_UNKNOW_AXIS
+
+            if value == "?" or value == GET_UNKNOW_AXIS:
+                # for some axis, there is no computable data; for the moment don't show anything
+                value = UNKNOWN_VALUE
+            list_values.append( str(value) )
+
+        return list_values
+
 
     def latex(self, point=0, base_germline=10000, base=10000, tag=''):
         reads = self.d["reads"][point]
@@ -182,8 +458,8 @@ class Reads:
 
     def __init__(self):
         self.d={}
-        self.d["total"] = ["0"]
-        self.d["segmented"] = ["0"]
+        self.d["total"] = [0]
+        self.d["segmented"] = [0]
         self.d["germline"] = {}
         self.d['distribution'] = {}
 
@@ -202,6 +478,18 @@ class Reads:
         obj.d["total"] = self.d["total"] + other.d["total"]
         obj.d["segmented"] = self.d["segmented"] + other.d["segmented"]
         return obj
+
+    def addAIRRClone(self, clone):
+        """
+        Allow to add a clone create by AIRR import. 
+        Add reads values to germline, segmented and total section
+        """
+        if clone.d["germline"] not in self.d["germline"].keys():
+            self.d["germline"][clone.d["germline"]] = [0]
+        self.d["germline"][clone.d["germline"]][0]  += clone.d["reads"][0]
+        self.d["total"][0]     += clone.d["reads"][0]
+        self.d["segmented"][0] += clone.d["reads"][0]
+        return
 
     def __str__(self):
         return "<Reads: %s>" % self.d
@@ -317,11 +605,12 @@ class ListWindows(VidjilJson):
 
         for clone in self:
             for i, s in enumerate(clone.d["reads"]):
-                for r in range(len(ranges)):
-                    if s*1. / self.d['reads'].d['segmented'][i] >= ranges[r]:
-                        break 
-                result[r][i] += s
-                
+                if self.d['reads'].d['segmented'][i] > 0:
+                    for r in range(len(ranges)):
+                        if s*1. / self.d['reads'].d['segmented'][i] >= ranges[r]:
+                            break
+                    result[r][i] += s
+
         for r in range(len(ranges)):
             ratio_in_string = '{0:.10f}'.format(ranges[r]).rstrip('0')
             self.d['reads'].d['distribution'][ratio_in_string] = result[r]
@@ -337,10 +626,12 @@ class ListWindows(VidjilJson):
             json.dump(self, f, indent=2, default=self.toJson)
 
     def load(self, file_path, *args, **kwargs):
-        if not '.clntab' in file_path:
-            self.load_vidjil(file_path, *args, **kwargs)
-        else:
+        if '.clntab' in file_path:
             self.load_clntab(file_path, *args, **kwargs)
+        elif ".tsv" in file_path or ".AIRR" in file_path or ".airr" in file_path:
+            self.load_airr(file_path, *args, **kwargs)
+        else:
+            self.load_vidjil(file_path, *args, **kwargs)
 
     def loads(self, string, *args, **kwargs):
         self.loads_vidjil(string, *args, **kwargs)
@@ -375,10 +666,7 @@ class ListWindows(VidjilJson):
         Detects and selects the parser according to the file extension.'''
         extension = file_path.split('.')[-1]
 
-        if verbose:
-            print("<==", file_path, "\t", end=' ')
-
-        with open(file_path, "r") as f:
+        with generic_open(file_path, "r", verbose) as f:
             self.init_data(json.load(f, object_hook=self.toPython))
             self.check_version(file_path)
 
@@ -441,6 +729,27 @@ class ListWindows(VidjilJson):
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
         obj.d["diversity"] = self.d["diversity"] + other.d["diversity"]
         
+        try:
+            ### Verify that same file is not present twice
+            filename_jlist1 = list(self.d["distributions"]["repertoires"].keys())
+            filename_jlist2 = list(other.d["distributions"]["repertoires"].keys())
+            for filename in filename_jlist1:
+                if filename in filename_jlist2:
+                    raise( "Error, duplicate file name (in distributions) ")
+
+            ### Append distributions of each files
+            obj.d["distributions"] = {}
+            obj.d["distributions"]["repertoires"] = {}
+            obj.d["distributions"]["keys"]        = ["clones", "reads"]
+            obj.d["distributions"]["filters"]     = {}
+            obj.d["distributions"]["categories"]  = {}
+            for filename in filename_jlist1:
+                obj.d["distributions"]["repertoires"][filename] = self.d["distributions"]["repertoires"][filename]
+            for filename in filename_jlist2:
+                obj.d["distributions"]["repertoires"][filename] = other.d["distributions"]["repertoires"][filename]
+        except:
+            pass
+
         return obj
         
     ###
@@ -505,7 +814,7 @@ class ListWindows(VidjilJson):
         others = OtherWindows(nb_points)
 
         for clone in self:
-            if (int(clone.d["top"]) < limit or limit == 0) :
+            if (int(clone.d["top"]) <= limit or limit == 0) :
                 w.append(clone)
             #else:
                 #others += clone
@@ -593,6 +902,203 @@ class ListWindows(VidjilJson):
         
         self.d["reads"].d["segmented"] = [total_size]
         self.d["reads"].d["total"] = [total_size]
+        
+    def load_airr(self, file_path, pipeline, verbose=True):
+        '''
+        Parser for AIRR files
+        format: https://buildmedia.readthedocs.org/media/pdf/airr-standards/stable/airr-standards.pdf
+        '''
+
+        self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
+        self.d["samples"].d["original_names"] = [file_path]
+        self.d["samples"].d["producer"]       = ["unknown (AIRR format)"]
+        self.d["samples"].d["log"]            = ["Created from an AIRR format. No other information available"]
+        self.d["reads"].d["germline"] = defaultdict(lambda: [0])
+        self.d["diversity"] = Diversity()
+
+        ### Store created clone id
+        clone_ids = defaultdict(lambda: False)
+
+        listw = []
+        listc = []
+        total_size = 0
+        i= 0
+        import csv
+        with generic_open(file_path, 'r', verbose) as tsvfile:
+          reader = csv.DictReader(tsvfile, dialect='excel-tab')
+
+          for row in reader:
+            row = self.airr_rename_cols(row)
+            i += 1
+
+            ### bypass igBlast format
+            if "Total queries" in row["sequence_id"]:
+                print( "here")
+                break
+
+
+
+            w=Window(1)
+            w.d["seg"] = { "junction":{}, "cdr3":{} }
+            
+            w.d["id"] = row["sequence_id"]
+            # controle that no other clone is presetn with this id
+            p = 1
+            while clone_ids[w.d["id"]]:
+                w.d["id"] = row["sequence_id"] + "_%s" % p
+                p += 1
+            clone_ids[w.d["id"]] = True
+            
+            
+            w.d["sequence"] = row["sequence"]
+            if "duplicate_count" not in row.keys() or row["duplicate_count"] == "":
+                w.d["reads"] = [1]
+            else :
+                w.d["reads"] = [ int(float(row["duplicate_count"])) ]
+
+
+            ## 'Regular' columns, translated straight from AIRR into .vidjil
+
+            axes = {"locus":  ["germline"],
+                    "v_call": ["seg", "5", "name"],
+                    "d_call": ["seg", "4", "name"],
+                    "j_call": ["seg", "3", "name"],
+                    "v_alignment_start":   ["seg","5","start"],
+                    "v_alignment_end":     ["seg","5","stop"],
+                    "d_alignment_start":   ["seg","4","start"],
+                    "d_alignment_end":     ["seg","4","stop"],
+                    "j_alignment_start":   ["seg","3","start"],
+                    "j_alignment_end":     ["seg","3","stop"],
+                    "junction_aa":         ["seg","junction","aa"],
+                    "productive":          ["seg","junction","productive"],
+                    "cdr1_start":          ["seg","cdr1", "start"],
+                    "cdr1_end":            ["seg","cdr1", "stop"],
+                    "cdr3_start":          ["seg","cdr3", "start"],
+                    "cdr3_end":            ["seg","cdr3", "stop"],
+                    "5prime_trimmed_n_nb": ["seg","5","delLeft"],
+                    "3prime_trimmed_n_nb": ["seg","3","delLeft"],
+                    "warnings":            ["warn"]}
+            
+
+            ## Fill .vidjil values with a recursive call
+            for axe in axes.keys():
+                if axe in row.keys() and row[axe] != "":
+                    path   = axes[axe]
+                    depth  = 0
+                    value  = w.d
+                    to_put = self.airr_clean_content(axe, row[axe])
+
+                    while depth != len(path):
+                        cat = path[depth]
+                        if cat not in value.keys():
+                            value[cat] = {}
+                        depth += 1
+                        
+                        if depth != len(path):
+                            value  = value[cat]
+
+                    value[cat] = to_put
+
+
+            listw.append((w , w.d["reads"][0]))
+
+            ##### Special values in .vidjil, recomputed from AIRR data
+
+            ### NAME (simple, vidjil like)
+            name = ""
+            if "v_call" in row.keys() and row["v_call"] != "":
+                name += (" "*int(name != "")) + w.d["seg"]["5"]["name"]
+            if "v_call" in row.keys() and row["d_call"] != "":
+                name += (" "*int(name != "")) + w.d["seg"]["4"]["name"]
+            if "v_call" in row.keys() and row["j_call"] != "":
+                name += (" "*int(name != "")) + w.d["seg"]["3"]["name"]
+            if name == "":
+                "undetermined segmentation"
+            w.d["name"] = name
+
+
+            ### READS
+            if not 'germline' in w.d.keys():
+                w.d["germline"] = "undetermined"
+            self.d["reads"].addAIRRClone( w )
+            
+
+            ### Average/coverage
+            average_read_length = float(len(row["sequence"]))
+            w.d["_average_read_length"] = [average_read_length]
+            w.d["_coverage"] = [1.0]
+            w.d["_coverage_info"] = ["%.1f bp (100%% of %.1f bp)" % (average_read_length, average_read_length )]
+            
+
+            ### Warning
+            # Il faut avoir une table pour faire la conversion ? 
+            # TODO: undefined for the moment
+
+
+        #sort by sequence_size
+        listw = sorted(listw, key=itemgetter(1), reverse=True)
+        #sort by clonotype
+        listc = sorted(listc, key=itemgetter(1))
+        
+        #generate data "top"
+        for index in range(len(listw)):
+            listw[index][0].d["top"]=index+1
+            self.d["clones"].append(listw[index][0])
+        return
+
+    def airr_rename_cols(self, row):
+        '''Rename columns to homogeneize AIRR data from different software'''
+        couples = [
+            ## MiXCR
+            ("bestVHit", "v_call"), ("bestDHit", "d_call"), ("bestJHit", "j_call"), 
+            ("cloneId", "sequence_id"), ("targetSequences", "sequence"),
+            ("cloneCount", "duplicate_count"), ("chains", "locus")
+        ]
+        for couple in couples:
+            if couple[0] in row.keys():
+                row[couple[1]] = row.pop(couple[0])
+        return row
+
+
+    def airr_clean_content(self, category, value):
+        '''
+        Clean value of inapropriate content, as species names in segment name
+        '''
+        cat_boolean = ['productive']
+        cat_numeric = [
+            'cdr3_start', 'cdr3_end',
+            "v_alignment_start", "v_alignment_end",
+            "d_alignment_start", "d_alignment_end",
+            "j_alignment_start", "j_alignment_end"
+        ]
+
+        # Use in the case of IMGT denomination
+        if category in ["v_call", "d_call", "j_call"]:
+            if "," in value:
+                value = value.split(", or")[0]
+            # clean specific vquest:
+            value = value.replace("Homsap ", "")
+            value = value.replace("Homsap_", "")
+            value = value.replace(" F", "")
+            value = value.replace(" (F)", "")
+            value = value.replace(" [ORF]", "")
+
+        ## Give vidjil formating of warning
+        if category == 'warnings':
+            value = [{"code": value, "level": "warn"}]
+
+        ## convert boolean value (as igBlast productive field for example)
+        if category in cat_boolean:
+            if value == "T" or value == "true":
+                value = True
+            elif value == "F" or value == "false":
+                value = False
+
+        ## Convert numeric field is given in string format
+        if category in cat_numeric:
+            value = int(value)
+        
+        return value
 
         
     def toJson(self, obj):
@@ -637,7 +1143,102 @@ class ListWindows(VidjilJson):
             
         return obj_dict
         
+    def save_airr(self, output):
+        """
+        Create an export of content into AIRR file
+        Columns is hardcoded for the moment.
+        TODO: add some options to give more flexibility to cols
+        """
+        ## Constant header
+        list_header  = ["filename", "locus", "duplicate_count", "v_call", "d_call", "j_call", "sequence_id", "sequence", "productive"]
+        ## not available in this script; but present in AIRR format
+        list_header += ["junction_aa", "junction", "cdr3_aa", "warnings", "rev_comp", "sequence_alignment", "germline_alignment", "v_cigar", "d_cigar", "j_cigar"]
+        # ## Specificly asked. Need to be added by server side action on vidjil files
+        list_header += ["ratio_segmented", "ratio_locus"] #"first_name", "last_name", "birthday", "infos", "sampling_date", "frame"]
 
+        fo = open(output, 'w')
+        fo.write( "\t".join(list_header)+"\n")
+        for clone in self.d["clones"]:
+            reads = clone.d["reads"]
+            for time in range(0, len(reads)):
+                if reads[time]:
+                    fo.write( "\t".join( clone.toCSV(cols=list_header, time=time, jlist=self) )+"\n")
+        fo.close()
+        return
+
+
+    def get_filename_pos(self, filename):
+        """ filename is the key of distributions repertoires """
+        return self.d["samples"].d["original_names"].index(filename)
+
+
+    # ========================= #
+    #  Distributions computing  #
+    # ========================= #
+    def init_distrib(self, list_distrib):
+        """ Create distributions structures """
+        self.d["distributions"] = {}
+        self.d["distributions"]["repertoires"] = defaultdict(lambda:[])
+        self.d["distributions"]["keys"]        = ["clones", "reads"]
+        self.d["distributions"]["filters"]     = []
+        # Warning, will fail of there are same original_names; fixme
+
+        nb_sample = self.d["samples"].d["number"]
+        # prefill distribution for each file of jlist
+        for filename in self.d["samples"].d["original_names"]:
+            for distrib in list_distrib:
+                self.d["distributions"]["repertoires"][filename].append({"axes":distrib,"values":defaultdict(lambda: False)})
+        return
+
+
+    def compute_distribution(self, list_distrib):
+        """ Compute the distributions given in list_distrib """
+        for filename in self.d["samples"].d["original_names"]:
+            timepoint = self.get_filename_pos(filename)
+            for clone in self.d["clones"]:
+                if clone.d["reads"][timepoint] != 0:
+                    for distrib_pos in range( len(self.d["distributions"]["repertoires"][filename]) ):
+                        distrib      = list_distrib[distrib_pos]
+                        clone_values = clone.get_axes_values( distrib, timepoint )
+                        nb_reads     = clone.get_reads(self.get_filename_pos(filename))
+                        self.add_clone_values( filename, distrib_pos, clone_values, nb_reads)
+        return
+
+
+    def add_clone_values(self, filename, distrib_pos, values, nb_reads):
+        """ Add value of a clone to a specific distribution """
+        obj = self.d["distributions"]["repertoires"][filename][distrib_pos]["values"]
+        obj = self.recursive_add(obj, values, nb_reads) ## Add by recursion
+        self.d["distributions"]["repertoires"][filename][distrib_pos]["values"] = obj
+        return
+
+    def recursive_add( self, obj, values, nb_reads):
+        """
+        Add (1, nb_reads) by recursively iterating over values.
+        For example self.recursive_add(obj, [val1, val2], nb_reads) add (1, nb_reads) to obj[val1][val2]
+        Return the updated incremented object
+        """
+        if len(values) > 1:
+            # Should increase for one depth
+            nvalues = values[1:]
+            if not obj[values[0]] :
+                obj[values[0]] = defaultdict(lambda: False)
+            obj[values[0]] = self.recursive_add(obj[values[0]], nvalues, nb_reads)
+        else:
+            # last depth
+            if not obj:
+                obj = defaultdict(lambda: False)
+            if not obj[values[0]]:
+                obj[values[0]] = [0, 0]
+
+            obj[values[0]][0] += 1
+            obj[values[0]][1] += nb_reads
+        return obj
+
+
+    ##########################
+    ###  Morisita's index  ###
+    ##########################
     def computeMorisita(self):
         morisita  = defaultdict( lambda: defaultdict( lambda: False ) )
         jaccard   = defaultdict( lambda: defaultdict( lambda: False ) )
@@ -744,6 +1345,61 @@ w5.d ={"id" : "aaa", "reads" : [5], "top" : 3 }
 w6 = Window(1)
 w6.d ={"id" : "bbb", "reads" : [12], "top" : 2 }
 
+seg_w7 = {
+  "germline": "TRA",
+  "id": "TTCTTACTTCTGTGCTACGGACGCCGGGGCTCAGGAACCTACAAATACAT",
+  "name": "TRAV17*01 0/CCGGGG/5 TRAJ40*01",
+  "reads": [
+    16
+  ],
+  "_average_read_length": [
+    168.468,
+    168.568,
+  ],
+  "seg": {
+    "3": {
+      "delLeft": 5,
+      "name": "TRAJ40*01",
+      "start": 112
+    },
+    "5": {
+      "delRight": 0,
+      "name": "TRAV17*01",
+      "stop": 105
+    },
+    "N": 6,
+    "cdr3": {
+      "aa": "ATDAG#SGTYKYI",
+      "start": 96,
+      "stop": 133
+    },
+    "evalue": {
+      "val": "1.180765e-43"
+    },
+    "evalue_left": {
+      "val": "1.296443e-47"
+    },
+    "evalue_right": {
+      "val": "1.180635e-43"
+    },
+    "junction": {
+      "aa": "CQQSYSTPYTF",
+      "productive": True,
+      "start": 93,
+      "stop": 136
+    },
+  },
+  "germline": "TRA",
+  "_coverage": [
+    0.973684191703796
+  ],
+  "_coverage_info": [
+    "74 bp (97% of 76.0 bp)"
+  ],
+  "sequence": "GTGGAAGATTAAGAGTCACGCTTGACACTTCCAAGAAAAGCAGTTCCTTGTTGATCACGGCTTCCCGGGCAGCAGACACTGCTTCTTACTTCTGTGCTACGGACGCCGGGGCTCAGGAACCTACAAATACATCTTTGGAACAG",
+  "top": 26
+}
+
 lw1 = ListWindows()
 lw1.d["timestamp"] = 'ts'
 lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25], "germline": {}, "distribution": {}}', object_hook=lw1.toPython)
@@ -764,7 +1420,34 @@ lw2.d["clones"].append(w7)
 lw2.d["clones"].append(w8)
 lw2.d["diversity"] = Diversity()
 
-    
+
+
+def get_preset_of_distributions():
+    """
+    Return a list of distributions
+
+    This is now the list of combinations of any two different axes.
+
+    >>> lst = get_preset_of_distributions(); ["seg5", "seg3"] in lst
+    True
+    >>> lst = get_preset_of_distributions(); ["seg5", "seg5"] in lst
+    False
+    >>> lst = get_preset_of_distributions(); ["seg5", "unknow"] in lst
+    False
+    >>> len(lst)
+    959
+    """
+    lst_axes = AVAILABLE_AXES
+    LIST_DISTRIBUTIONS = []
+
+    for axis1 in lst_axes:
+        LIST_DISTRIBUTIONS.append([axis1])
+        for axis2 in lst_axes:
+            if axis1 != axis2:
+                LIST_DISTRIBUTIONS.append([axis1, axis2])
+    return LIST_DISTRIBUTIONS
+
+
 def exec_command(command, directory, input_file):
     '''
     Execute the command `command` from the directory
@@ -815,10 +1498,16 @@ def main():
 
     group_options.add_argument('--pre', type=str,help='pre-process program (launched on each input .vidjil file) (needs defs.PRE_PROCESS_DIR)')
 
+    group_options.add_argument("--distribution", "-d", action='append', type=str, help='compute the given distribution; callable multiple times')
+    group_options.add_argument('--distributions-all', '-D', action='store_true', default=False, help='compute a preset of distributions')
+    group_options.add_argument('--distributions-list', '-l', action='store_true', default=False, help='list the available axes for distributions')
+    group_options.add_argument('--no-clones', action='store_true', default=False, help='do not output individual clones')
+
+    group_options.add_argument('--export-airr', action='store_true', default=False, help='export data in AIRR format.')
+
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
-  
+
     args = parser.parse_args()
-    # print args
 
     if args.test:
         import doctest
@@ -826,6 +1515,19 @@ def main():
         sys.exit(0)
 
     jlist_fused = None
+
+    LIST_DISTRIBUTIONS = []
+    if args.distributions_list:
+        print("### Available axes for distributions:\n%s\n" % AVAILABLE_AXES)
+
+    if args.distributions_all:
+        LIST_DISTRIBUTIONS = get_preset_of_distributions()
+
+    if args.distribution:
+        for elt in args.distribution:
+            axes = elt.split(",")
+            if axes not in LIST_DISTRIBUTIONS:
+                LIST_DISTRIBUTIONS.append(axes)
 
     print("### fuse.py -- " + DESCRIPTION)
     print()
@@ -900,11 +1602,11 @@ def main():
             else:
                 jlist.load(path_name, args.pipeline)
                 jlist.build_stat()
+                if len(LIST_DISTRIBUTIONS):
+                    jlist.init_distrib(LIST_DISTRIBUTIONS)
+                    jlist.compute_distribution(LIST_DISTRIBUTIONS)
                 jlist.filter(f)
 
-            w1 = Window(1)
-            w2 = Window(2)
-            w3 = w1+w2
             
             print("\t", jlist, end=' ')
             # Merge lists
@@ -951,9 +1653,17 @@ def main():
 
     print("### Morisita")
     jlist_fused.computeMorisita()
+    
+    if args.no_clones:
+        # TODO: do not generate the list of clones in this case
+        del jlist_fused.d["clones"]
 
     print("### Save merged file")
-    jlist_fused.save_json(args.output)
+    if args.export_airr:
+        output= args.output.replace(".vidjil", ".airr")
+        jlist_fused.save_airr(output)
+    else:
+        jlist_fused.save_json(args.output)
     
     
     

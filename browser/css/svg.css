@@ -60,13 +60,13 @@ ul {
   height: 100%;
   margin: auto;
   overflow: hidden;
-  background: #ffffff;
+  background: #FFFFFF;
 }
 #top-container {
   flex: 0 1 auto;
   height: 32px;
   width: 100%;
-  background: #ffffff;
+  background: #FFFFFF;
 }
 #top-container.alert {
   background: yellow;
@@ -82,10 +82,14 @@ ul {
   right: 0px;
   top: 32px;
 }
+#live-ajax-msg {
+  font-style: italic;
+  margin-right: 1em;
+}
 #upload_summary {
   display: none;
   z-index: 10;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
 }
 .upload_field {
   width: 100%;
@@ -110,7 +114,7 @@ ul {
   bottom: 125px ;
   width: calc(100% - 6px + 6px);
   overflow: hidden;
-  background: #ffffff;
+  background: #FFFFFF;
   margin: 6px;
 }
 #right-container {
@@ -151,7 +155,7 @@ line {
   flex: 0 0 auto;
   font-size: 13px;
   padding: 3px;
-  background: #ffffff;
+  background: #FFFFFF;
 }
 .info_line {
   border-bottom: solid;
@@ -179,10 +183,10 @@ line {
 }
 /*Style polyline / graph*/
 .background_graph {
-  fill: #ffffff;
+  fill: #FFFFFF;
 }
 .background_graph2 {
-  fill: #ffffff;
+  fill: #FFFFFF;
 }
 .graph_line {
   stroke-width: 2.5px;
@@ -240,7 +244,7 @@ line {
   fill: #777777;
 }
 #resolution1 {
-  fill: #ffffff;
+  fill: #FFFFFF;
   opacity: 1;
 }
 #resolution5 {
@@ -275,27 +279,34 @@ line {
 .graph_menu {
   position: absolute;
   top: 0px;
-  right: 0px;
+  right: 6px;
   min-width: 22px;
   min-height: 18px;
   text-align: center;
   border-bottom: solid;
   border-left: solid;
   border-color: #333333;
-  background: #ffffff;
+  background: #FFFFFF;
+  z-index: 1;
+  overflow: auto;
+  max-height: 100%;
 }
 .graph_list {
   display: none;
 }
+.graph_listAll:hover,
 .graph_listElem:hover {
   background: #333333;
   width: 100%;
-  cursor: move;
+  cursor: pointer;
   cursor: webkit-grab;
+}
+.graph_listElem_selected {
+  font-weight: bold;
 }
 /*style scatterPlot element*/
 .background_sp {
-  fill: #ffffff;
+  fill: #FFFFFF;
 }
 .circle {
   cursor: pointer;
@@ -406,6 +417,7 @@ line {
 }
 #data {
   flex: 0 1 auto;
+  border: none;
 }
 #list_clones {
   flex: 0 1 auto;
@@ -509,7 +521,7 @@ line {
   text-align: center;
   border: solid;
   border-width: 1px;
-  border-color: #ffffff;
+  border-color: #FFFFFF;
   border-radius: 5px;
   margin: 0px 1px;
 }
@@ -687,7 +699,7 @@ span .end-codon {
   width: 220px;
   border: solid;
   display: none;
-  background: #ffffff;
+  background: #FFFFFF;
 }
 .dataMenu {
   padding: 5px;
@@ -697,7 +709,7 @@ span .end-codon {
   width: 220px;
   border: solid;
   display: none;
-  background: #ffffff;
+  background: #FFFFFF;
 }
 .tagElem {
   margin: 1px;
@@ -760,7 +772,7 @@ span .end-codon {
   margin: -2px 0px 0px 5px;
 }
 .menu-selector {
-  background: #ffffff;
+  background: #FFFFFF;
   color: #657B83;
   height: 18px;
   width: 60px;
@@ -781,7 +793,7 @@ span .end-codon {
   left: 50%;
   font-size: 13px;
   padding: 10px;
-  background: #ffffff;
+  background: #FFFFFF;
   display: none;
 }
 #add_clone_menu {
@@ -812,7 +824,7 @@ span .end-codon {
   justify-content: flex-end;
 }
 .buttonSelector {
-  background: #ffffff;
+  background: #FFFFFF;
   cursor: pointer;
   font-size: 13px;
   margin: 2px;
@@ -837,7 +849,7 @@ span .end-codon {
   max-width: 80%;
   font-size: 13px;
   padding: 10px;
-  background: #ffffff;
+  background: #FFFFFF;
   display: none;
   position: fixed;
   left: 50%;
@@ -854,6 +866,7 @@ a {
 a:hover {
   color: #777777;
 }
+span.sample-tag,
 a.tag-link {
   color: black;
   background-color: #eee;
@@ -869,14 +882,14 @@ a.tag-link {
   position: fixed;
   font-size: 13px;
   padding: 10px;
-  background: #ffffff;
+  background: #FFFFFF;
   display: none;
 }
 .modal.data-container,
 .modal.info-container {
   top: 50px;
   left: 495px;
-  max-width: calc(100% - 535px);
+  max-width: calc(100% - (475px + 60px));
   height: calc(100% - 215px);
 }
 .modal.jstree-container {
@@ -900,7 +913,7 @@ a.tag-link {
 #bot-container,
 #segmenter_axis_menu,
 .seq-fixed {
-  background: #ffffff;
+  background: #FFFFFF;
 }
 .closeButton {
   position: absolute;
@@ -1229,7 +1242,7 @@ span.warningReads {
   min-width: 22px;
   min-height: 18px;
   border-color: #333333;
-  background: #ffffff;
+  background: #FFFFFF;
   display: inline-block;
   padding: 2px;
 }
@@ -1272,7 +1285,7 @@ span.warningReads {
   border-width: 2px;
   border-radius: 5px;
   margin: 5px auto;
-  border-color: #ffffff;
+  border-color: #FFFFFF;
 }
 .sp_menu_icon:hover {
   background: #333333;
@@ -1298,7 +1311,7 @@ span.warningReads {
   white-space: nowrap;
 }
 .axis_select select {
-  background: #ffffff;
+  background: #FFFFFF;
   color: #777777;
   height: 20px;
   width: 120px;
@@ -1344,6 +1357,9 @@ span.warningReads {
 #bot-separator:hover {
   background: #777777;
 }
+#norm_button {
+  width: 7ex;
+}
 .edit_button {
   float: right;
   margin-right: 2px;
@@ -1356,7 +1372,7 @@ span.warningReads {
   width: 100%;
   height: calc(100% - 35px);
   font-size: 14px;
-  background: #ffffff;
+  background: #FFFFFF;
   display: none;
   left: 0%;
 }
@@ -1395,7 +1411,7 @@ span.warningReads {
   background-color: #777777;
 }
 .db_table_split td {
-  border-top: 2ex solid #ffffff;
+  border-top: 2ex solid #FFFFFF;
 }
 .db_table .column_200 {
   width: 200px;
@@ -1425,8 +1441,8 @@ span.warningReads {
   width: 50px;
   border: solid;
   border-width: 1px;
-  border-color: #ffffff;
-  background: #ffffff;
+  border-color: #FFFFFF;
+  background: #FFFFFF;
 }
 h3 .uid {
   font-size: 70%;
@@ -1489,7 +1505,7 @@ h3 .uid {
 #db_table_container {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: 100%;
+  height: calc(100% -30px);
   position: relative;
 }
 #db_fixed_header {
@@ -1607,7 +1623,7 @@ h3 .uid {
   border-radius: 5px;
   padding: 5px;
   margin: 5px;
-  background: #ffffff;
+  background: #FFFFFF;
   border-color: #333333;
   transition: background 1s linear;
 }
@@ -1619,27 +1635,27 @@ h3 .uid {
   min-height: 20px;
   display: block;
   margin: 5px;
-  background: #ffffff;
+  background: #FFFFFF;
   border: solid;
   border-width: 2px;
   border-radius: 2px;
-  border-color: #ffffff;
+  border-color: #FFFFFF;
 }
 .flash_1,
 .log_1 {
   font-weight: bold;
-  background-color: #dff0d8;
+  background-color: #DFF0D8;
 }
 .flash_2,
 .log_2 {
   font-weight: bold;
-  background-color: #f2deae;
+  background-color: #F2DEAE;
 }
 .flash_3,
 .log_3 {
   font-weight: bold;
   border-color: darkred;
-  background-color: #f2dede;
+  background-color: #F2DEDE;
 }
 .tip_1 {
   width: 400px;
@@ -1649,7 +1665,7 @@ h3 .uid {
   border-radius: 5px;
   padding: 5px;
   margin: 5px;
-  background: #dff0d8;
+  background: #DFF0D8;
   border-color: #333333;
 }
 #tip_img {
@@ -1693,7 +1709,7 @@ select > option:hover {
   border: solid;
   border-width: 1px;
   min-height: 20px;
-  background: #ffffff;
+  background: #FFFFFF;
   border-color: #333333;
   max-height: 100px;
   display: none;
@@ -1719,7 +1735,7 @@ input:focus,
 textarea:focus,
 #add_clone_menu > #addclone_input:focus {
   border-color: #333333;
-  box-shadow: inset 0 1px 1px #ffffff, 0 0 8px #333333;
+  box-shadow: inset 0 1px 1px #FFFFFF, 0 0 8px #333333;
   outline: 0;
   outline: thin dotted \9;
 }
@@ -1775,7 +1791,7 @@ table.log textarea {
   flex-grow: 1;
 }
 .tagColor0 {
-  background: #dc322f;
+  background: #DC322F;
 }
 .tagColor1 {
   background: #cb4b16;
@@ -1802,7 +1818,7 @@ table.log textarea {
   background: #777777;
 }
 .inactiveTag {
-  background-image: linear-gradient(45deg, transparent -25%, #ffffff 100%, #ffffff 100%, transparent 0%);
+  background-image: linear-gradient(45deg, transparent -25%, #FFFFFF 100%, #FFFFFF 100%, transparent 0%);
 }
 .message_container {
   display: none;
@@ -1815,12 +1831,12 @@ table.log textarea {
   border: 2px solid darkred;
   margin: 3px;
   font-weight: bold;
-  background-color: #f2dede;
+  background-color: #F2DEDE;
 }
 .info_message {
   border: 1px solid #333333;
   margin: 4px;
-  background-color: #dff0d8;
+  background-color: #DFF0D8;
 }
 .notification {
   padding: 3px;
@@ -1879,7 +1895,7 @@ table.log textarea {
   min-height: 32px;
   max-height: 32px;
   width: 100%;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
 }
 .patient_info_text {
   margin-bottom: 5px;
@@ -2209,7 +2225,7 @@ form .form_label {
   margin-top: -20%;
 }
 .meter span.value_container span.meter_value {
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   opacity: 0.5;
   color: #777777;
   height: 50%;
@@ -2221,7 +2237,7 @@ form .form_label {
   display: block;
   height: 100%;
   background-color: #777777;
-  background-image: linear-gradient(center bottom, #777777 37%, #ffffff 69%);
+  background-image: linear-gradient(center bottom, #777777 37%, #FFFFFF 69%);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(0, 0, 0, 0.4);
   position: relative;
   overflow: hidden;
@@ -2232,7 +2248,7 @@ form .form_label {
 .bar_chart .bar {
   display: inline-block;
   background-color: #777777;
-  background-image: linear-gradient(center bottom, #777777 37%, #ffffff 69%);
+  background-image: linear-gradient(center bottom, #777777 37%, #FFFFFF 69%);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(0, 0, 0, 0.4);
   min-width: 0.2%;
 }
@@ -2246,6 +2262,12 @@ form .form_label {
   pointer-events: none;
   opacity: 0.4;
   cursor: auto;
+}
+.list_lock_off {
+  color: #333333;
+}
+.list_lock_on {
+  color: #777777;
 }
 #resolution5 {
   opacity: 0;

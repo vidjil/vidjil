@@ -1,0 +1,15 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -r 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH  $VIDJIL_DATA/short-j.fa
+
+$ Both seeds for IGH are identical
+1: IGH .* ######-###### .* ######-######
+
+$ With default seeds the J is not found as it is too short
+1: UNSEG only V/5' -> 1
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -r 1 -g $VIDJIL_DATA/seeds.g  $VIDJIL_DATA/short-j.fa
+
+$ With different seeds we don't have the same seed for the IGHV and IGHJ
+1: IGH .* ######-###### .* ########
+
+$ The sequence is detected
+1: SEG -> 1

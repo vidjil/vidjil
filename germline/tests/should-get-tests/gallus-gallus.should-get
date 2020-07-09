@@ -1,0 +1,12 @@
+!NO_LAUNCHER:
+!LAUNCH: (cd $VIDJIL_DIR/germline ; cat gallus-gallus/IGHV.fa | tr '|' '#' )
+
+
+$ Found sequence of Gallus gallus Red Jungle fowl
+1: .*#IGHV1-1.01#Gallus gallus_Red Jungle fowl#
+
+$ Found sequence of Gallus gallus
+1: .*#IGHV1-21.*#Gallus gallus#
+
+$ Found a sequence part of IGHV1-1*01
+i1: tgggtgcgacaggcgcccggcaaggggctggagtgggtcgctggtattggcagcagt

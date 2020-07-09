@@ -79,6 +79,8 @@ auth.settings.two_factor_authentication_group = "auth2step"
 
 crud, service, plugins = Crud(db), Service(), PluginManager()
 
+auth.settings.password_min_length = 6
+
 ## create all tables needed by auth if not custom tables
 auth.define_tables(username=False, signature=False)
 
@@ -86,7 +88,7 @@ auth.define_tables(username=False, signature=False)
 mail = auth.settings.mailer
 mail.settings.server = defs.SMTP_SERVER
 mail.settings.sender = defs.FROM_EMAIL
-mail.settings.login = None
+mail.settings.login = defs.SMTP_CREDENTIALS
 
 ## configure auth policy
 auth.settings.registration_requires_verification = False
@@ -195,13 +197,18 @@ db.define_table('sequence_file',
 
 
 
+db.define_table('classification',
+                Field('name', 'string'),
+                Field('info','text'))
+
 
 db.define_table('config',
                 Field('name', 'string'),
                 Field('program', 'string'),
                 Field('command', 'string'),
                 Field('fuse_command', 'string'),
-                Field('info','text'))
+                Field('info','text'),
+                Field('classification', 'reference classification', ondelete='SET NULL'))
 
 
 db.define_table('results_file',
@@ -209,6 +216,7 @@ db.define_table('results_file',
                 Field('config_id', 'reference config', ondelete='SET NULL'),
                 Field('run_date','datetime'),
                 Field('scheduler_task_id', 'integer'),
+                Field('hidden', 'boolean', default = False, notnull = True),
                 Field('data_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE))

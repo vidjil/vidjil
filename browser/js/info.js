@@ -22,8 +22,7 @@
  */
 
 function Info(id, model, builder) {
-    View.call(this, model);
-    this.id = id;
+    View.call(this, model, id);
     this.builder = builder;
 }
 
@@ -64,6 +63,7 @@ Info.prototype = {
             var point_value = this.m.getStrTime(this.m.t, "name");
             point_value = point_value !== "" ? point_value : "-/-";
             var point_name_container = document.createElement("div");
+            point_name_container.id  = "info_sample_name"
             point_name_container.className += "inline-block_90 centered ellipsis";
             point_name_container.title = point_value;
             point_name_container.appendChild(document.createTextNode(point_value));

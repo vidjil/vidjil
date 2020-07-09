@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 services:
     mysql:
         image: mysql:5.7
@@ -7,17 +7,28 @@ services:
         volumes:
             - ./mysql/:/docker-entrypoint-initdb.d/
             - /opt/vidjil/mysql:/var/lib/mysql
+        healthcheck:
+          test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+          timeout: 20s
+          retries: 10
     uwsgi:
         image: vidjil/server:latest
+        environment:
+            - WEB2PY_ADMIN_PASSWORD=
         command: bash /entrypoints/uwsgi-entrypoint.sh
         volumes_from:
             - fuse
         depends_on:
-            - mysql
-            - fuse
+            mysql:
+              condition: service_healthy
+            fuse:
+              condition: service_started
+            postfix:
+              condition: service_started
         links:
             - mysql:mysql
             - fuse:fuse
+            - postfix:postfix
     fuse:
         image: vidjil/server:latest
         command: bash /entrypoints/fuse-entrypoint.sh
@@ -30,11 +41,13 @@ services:
             - /opt/vidjil/log/uwsgi:/var/log/uwsgi
             - /opt/vidjil/backup:/mnt/backup
             - ./vidjil-server/conf:/etc/vidjil
+            - ./vidjil-server/scripts:/entrypoints
             - ../germline:/usr/share/vidjil/germline
     nginx:
         image: vidjil/client:latest
         depends_on:
-            - uwsgi
+            uwsgi:
+              condition: service_started
         links:
                 - uwsgi:uwsgi
         ports:
@@ -49,17 +62,20 @@ services:
 
     workers:
         image: vidjil/server:latest
-        command: /usr/local/bin/gosu www-data python /usr/share/vidjil/server/web2py/web2py.py -K vidjil,vidjil,vidjil
+        command: bash /entrypoints/workers-entrypoint.sh
         volumes_from:
             - uwsgi
         depends_on:
-            - uwsgi
-            - mysql
+            uwsgi:
+              condition: service_started
+            mysql:
+              condition: service_healthy
         links:
             - mysql
+            - postfix
     backup:
         image: vidjil/server:latest
-        command: bash -c "echo '0 5 * * * cd /usr/share/vidjil/server; sh backup.sh /mnt/backup 2>1&' > /etc/cron.d/backup-cron && cron"
+        command: bash -c "echo '0 5 * * * cd /usr/share/vidjil/server; sh backup.sh /mnt/backup 2>1&' > /etc/cron.d/backup-cron && cron && tail -f /var/log/cron.log"
         volumes_from:
             - uwsgi
         links:
@@ -72,6 +88,16 @@ services:
         volumes:
             - ./reporter/code:/opt/reporter
         depends_on:
-            - uwsgi
+            uwsgi:
+              condition: service_started
         links:
             - uwsgi:uwsgi
+    postfix:
+        image: catatnight/postfix
+        expose:
+            - 587
+        volumes:
+            - ./postfix/ssl:/etc/postfix/certs
+        environment:
+            - maildomain=vidjil.org
+            - smtp_user=vidjil:smtp_pass

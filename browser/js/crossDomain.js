@@ -1,4 +1,3 @@
-var PROXY_ADDRESS = "https://db.vidjil.org/vidjil/proxy/imgt"
 var modelRef;
 
 /**
@@ -12,59 +11,40 @@ function setCrossDomainModel(model) {
 //parametre IMGT par defaut
 function initImgtInput(species) {
     var imgtInput = {};
-    imgtInput.callback = "jQuery17106713638880755752_1378825832820";
-    imgtInput.livret = "1";
-    imgtInput.Session = "&lt;session code=Â¤0Â¤ appliName=Â¤IMGTvquestÂ¤ time=Â¤3625396897Â¤/&gt;";
-    imgtInput.l01p01c02 = species;
-    imgtInput.l01p01c04 = "TR";
-    imgtInput.l01p01c03 = "inline";
-    imgtInput.l01p01c10 = "";
-    imgtInput.l01p01c07 = "2. Synthesis";
-    imgtInput.l01p01c05 = "HTML";
-    imgtInput.l01p01c09 = "60";
-    imgtInput.l01p01c60 = "5";
-    imgtInput.l01p01c12 = "Y";
-    imgtInput.l01p01c13 = "Y";
-    imgtInput.l01p01c06 = "Y";
-    imgtInput.l01p01c24 = "N";
-    imgtInput.l01p01c14 = "Y";
-    imgtInput.l01p01c15 = "Y";
-    imgtInput.l01p01c16 = "Y";
-    imgtInput.l01p01c41 = "Y";
-    imgtInput.l01p01c22 = "Y";
-    imgtInput.l01p01c17 = "Y";
-    imgtInput.l01p01c23 = "Y";
-    imgtInput.l01p01c19 = "Y";
-    imgtInput.l01p01c18 = "Y";
-    imgtInput.l01p01c20 = "Y";
-    imgtInput.l01p01c27 = "Y";
-    imgtInput.l01p01c28 = "Y";
-    imgtInput.l01p01c29 = "Y";
-    imgtInput.l01p01c30 = "Y";
-    imgtInput.l01p01c31 = "Y";
-    imgtInput.l01p01c32 = "Y";
-    imgtInput.l01p01c33 = "Y";
-    imgtInput.l01p01c34 = "Y";
-    imgtInput.l01p01c46 = "N";
-    imgtInput.l01p01c47 = "Y"; // nt-sequences
-    imgtInput.l01p01c48 = "N";
-    imgtInput.l01p01c49 = "N";
-    imgtInput.l01p01c50 = "N"; // Junction
-    imgtInput.l01p01c51 = "N";
-    imgtInput.l01p01c52 = "N";
-    imgtInput.l01p01c53 = "N";
-    imgtInput.l01p01c54 = "N";
-    imgtInput.l01p01c55 = "NO";
-    imgtInput.l01p01c35 = "F+ORF+ in-frame P";
-    imgtInput.l01p01c36 = "0";
-    imgtInput.l01p01c40 = "1";
-    imgtInput.l01p01c25 = "default";
-    imgtInput.l01p01c37 = "default";
-    imgtInput.l01p01c38 = "default";
-    imgtInput.l01p01c39 = "default";
-    imgtInput.l01p01c08 = "";
-    imgtInput.l01p01c26 = "";
-    imgtInput.l01p01c10 = ">a\nATGCGCAGATGC\n";
+    imgtInput.species = getSpeciesCommonName(species);
+    imgtInput.receptorOrLocusType = "TR";
+    imgtInput.inputType = "inline";
+    imgtInput.resultType = "synthesis";
+    imgtInput.outputType = "html";
+    imgtInput.nbNtPerLine = "60";
+    imgtInput.sv_V_GENEordertable = "1";
+    imgtInput.sv_V_GENEalignment = "true";
+    imgtInput.sv_V_REGIONalignment = "true";
+    imgtInput.sv_V_REGIONtranslation = "true";
+    imgtInput.sv_V_REGIONprotdisplay = "true";
+    imgtInput.sv_V_REGIONprotdisplay2 = "true";
+    imgtInput.sv_V_REGIONprotdisplay3 = "true";
+    imgtInput.sv_V_REGIONfrequentAA = "true";
+    imgtInput.sv_IMGTjctaResults = "true";
+
+    // part for the version where we asynchronously get results from V-QUEST
+    imgtInput.xv_IMGTgappedNt = "false";
+    imgtInput.xv_summary = "false";
+    imgtInput.xv_ntseq = "true"; // nt-sequences
+    imgtInput.xv_IMGTgappedAA = "false";
+    imgtInput.xv_AAseq = "false";
+    imgtInput.xv_JUNCTION = "false"; // Junction
+    imgtInput.xv_V_REGIONmuttable = "false";
+    imgtInput.xv_V_REGIONmutstatsNt = "false";
+    imgtInput.xv_V_REGIONmutstatsAA = "false";
+    imgtInput.xv_V_REGIONhotspots = "false";
+    // end of part
+    
+    imgtInput.IMGTrefdirSet = "1"; // "F+ORF+ in-frame P";
+    imgtInput.IMGTrefdirAlleles = "true";
+    imgtInput.V_REGIONsearchIndel = "true";
+    imgtInput.nbD_GENE = "";    // Default value: 1 for IGH, 1 for TRB, 3 for TRD
+    imgtInput.sequences = "";
     return imgtInput;
 }
 
@@ -101,17 +81,17 @@ function initIgBlastInput() {
 
 function imgtPost(species, data, system) {
     var imgtInput = initImgtInput(species);
-    imgtInput.l01p01c10 = data;
+    imgtInput.sequences = data;
     if (system[0] == "I") {
-        imgtInput.l01p01c04 = "IG";
+        imgtInput.receptorOrLocusType = "IG";
     }
     if (system[0] == "T") {
-        imgtInput.l01p01c04 = "TR";
+        imgtInput.receptorOrLocusType = "TR";
     }
     var form = document.getElementById("form");
     form.removeAllChildren();
     form.target = "_blank";
-    form.action = "http://www.imgt.org/IMGT_vquest/vquest";
+    form.action = "http://www.imgt.org/IMGT_vquest/analysis";
     form.method = "POST";
 
     for (var k in imgtInput) {
@@ -155,9 +135,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
 
     //process to first 10 sequences then alert user about the remaining part
     if (nb > 10) {
-        pos = nth_ocurrence(data, '>', 11);
-        var newdata = data.substr(pos);
-        data = data.substr(0, pos - 1);
+        data = getNFirstSequences(data, 10);
         var msg = "The first 10 sequences were sent to IMGT/V-QUEST."
 
         console.log({
@@ -167,15 +145,15 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
         });
     }
 
-    imgtInput.l01p01c07 = "3. Excel";
-    imgtInput.l01p01c10 = data;
-    imgtInput.l01p01c62 = 2;
+    imgtInput.resultType = "excel";
+    imgtInput.sequences = data;
+    imgtInput.xv_outputtype = 2;
 
     if (system[0] == "I") {
-        imgtInput.l01p01c04 = "IG";
+        imgtInput.receptorOrLocusType = "IG";
     }
     if (system[0] == "T") {
-        imgtInput.l01p01c04 = "TR";
+        imgtInput.receptorOrLocusType = "TR";
     }
     var form = document.getElementById("form");
     form.removeAllChildren();
@@ -183,11 +161,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
     //disabled due to security concerns
     //form.action = "http://www.imgt.org/IMGT_vquest/vquest";
     //using proxy on server to allow requests on other site than vidjil one's in JS.
-    if (typeof config != 'undefined' && typeof config.proxy != 'undefined') {
-        form.action = config.proxy
-    } else {
-        form.action = PROXY_ADDRESS;
-    }
+    form.action = getProxy()+"imgt";
     form.method = "POST";
 
     for (var k in imgtInput) {
@@ -244,7 +218,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
             // sai : segmenter axis inputs ; activate productivity-IMGT and VIdentity-IMGT
             var sai = document.getElementById('segmenter_axis_select').getElementsByTagName('input');
             for (var index in sai) {
-                if (!sai[index].checked && (sai[index].value == "productivity-IMGT" || sai[index].value == "VIdentity-IMGT"))
+                if (!sai[index].checked && (sai[index].value == "productivity IMGT" || sai[index].value == "VIdentity IMGT"))
                     sai[index].click();
             }
 
@@ -326,7 +300,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
 }
 
 
-function igBlastPost(data, system) {
+function igBlastPost(species, data, system) {
     var igBlastInput = initIgBlastInput();
     igBlastInput.queryseq = data;
     if (system[0] == "I") {
@@ -370,7 +344,7 @@ arrestInput.fname = "exported_func" ;
 arrestInput.pjxrand = ".0033328778554" ;
 arrestInput.elite = "" ;
 
-function arrestPost(data, system) {
+function arrestPost(species, data, system) {
 
     arrestInput.args = data;
 
@@ -413,7 +387,12 @@ blastInput.NCBIBLAST_BLASTN__ungapped        = 0;
 blastInput.NCBIBLAST_BLASTN__dust            = 1;
 blastInput.NCBIBLAST_BLASTN__repeat_mask     = 1;
 
-function blastPost(data, system) {
+function blastPost(species, data, system) {
+    if (self.m.getSelected().length > 30) {
+        data = getNFirstSequences(data, 30);
+        console.log({"type": "flash", "msg": "A maximum of 30 clones are allowed by Blast. Only the first 30 sequences will be sent" , "priority": 1});
+        
+    }
 
     blastInput.query_sequence = data;
 
@@ -433,4 +412,59 @@ function blastPost(data, system) {
 
     form.submit();
 
+}
+
+function assignSubsetsPost(species, data, system) {
+    if (system != "IGH") {
+        console.log({"type": "flash",
+                     "msg": "Subsets are only defined for IGH sequences. Thus you cannot launch it on other sequences",
+                     "priority": 1});
+    } else {
+        var form = document.getElementById("form");
+        form.removeAllChildren();
+        form.target = "_blank";
+        form.enctype = 'multipart/form-data';
+        form.name = 'assignsubsets';
+        form.action = getProxy()+"assign_subsets";
+        form.method = "POST";
+        var formData = {};
+        formData.fastatext = data;
+        formData.elite = null;
+        for (var k in formData) {
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = k;
+            if (formData[k] != null)
+                input.value = formData[k];
+            form.appendChild(input);
+        }
+        form.submit();
+    }
+}
+
+/**
+ * Creates and returns a sendTo button (in a span)
+ * @param {id}: id of the span
+ * @param {name}: name of the sendTo function ({name}Post) [useless if
+ *                {onclick} is provided
+ * @param {label}: Label of the button
+ * @param {title}: Title when hovering the button
+ * @param {onclick}: (optional) Function to be called when clicking the button.
+ *                   By default will call {name}Post()
+ *
+ */
+function createSendToButton(id, name, label, title, segmenter, onclick) {
+    var span = document.createElement('span');
+    span.id = id;
+    span.setAttribute('title', 'title')
+    span.className = "button";
+    if (typeof onclick !== "undefined") {
+        span.onclick = onclick;
+    } else {
+        span.onclick = function () {
+            segmenter.sendTo(name);
+        };
+    }
+    span.appendChild(document.createTextNode(label));
+    return span;
 }
