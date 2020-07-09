@@ -488,12 +488,21 @@ It should then show up in any sample.
 in the `.analysis` file, it will always be shown even if it does not
 meet the "top" filter.
 
-## The "smaller clones"
+## Studying the distribution of "smaller clones"
 
-There is a virtual clone per locus in the clone list which groups all clones that are hidden
-(because of the "top" or because of hiding some tags). The sum of
-ratios in the list of clones is always 100%: thus the "smaller clones"
-changes when one use the "filter" menu.
+Clones beyond the "top 50"/"top 100" clones are still useful to study full repertoires,
+including assessing the polyclonal background and the diversity of the repertoires.
+Clones that are hidden (because of the "top" or because of hiding some tags)
+are gathered into virtual clones, shown with light gray (this "color by clone").
+Depending on the analysis configuration, these "smaller clones" are shown, in the clone list:
+
+- either *gathered by consensus length*, the Genescan-like plot showing the clone distribution.
+  This is the default on  default configurations on the public server,
+
+- or *gathered by locus* into a unique virtual clone.
+
+In both cases, the sum of ratios in the list of clones is always 100%: thus these "smaller clones"
+changes when one uses the "filter" menu.
 
 Note that the ratios include the "smaller clones": if a clone
 is reported to have 10.54%, this 10.54% ratio relates to the number of
