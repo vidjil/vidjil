@@ -456,9 +456,12 @@ One often wants to "see all clones and reads", but a complete list is difficult
 to see in itself. In a typical dataset with about 10<sup>6</sup> reads, even in
 the presence of a dominant clone, there can be 10<sup>4</sup> or 10<sup>5</sup> different
 clones detected. A dominant clone can have thousands or even more reads.
-There are ways to retrieve the full list of clones and reads (for example by launching
-the command-line program), but, for most of the cases, one may want to focus on some clones
-with their consensus sequences.
+
+For most of the cases, one may want to focus on some clones with their consensus sequences,
+Vidjil allows both:
+- to fully study these "top clones"
+- to study the distribution of the "smaller clones"
+- when this is needed, to retrieve the full list of clones and/or reads
 
 ## The "top" slider in the "filter" menu
 
