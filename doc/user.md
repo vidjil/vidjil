@@ -318,6 +318,7 @@ At the moment the only preprocess avalaible on the public server (<http://app.vi
     **highly** recommended to merge those reads in order to have a read that consists
     of the whole DNA fragment instead of split fragments.
     To merge R1/R2 fragments, select an adapted *pre-process scenario* and provide both R1/R2 files at once when adding a sample.
+    On the public test server, the software use by default is [Flash2](https://academic.oup.com/bioinformatics/article/27/21/2957/217265).
     
     There are two scenarios to merge reads. Indeed in case the merging is not
     possible for some paired-end reads we must keep only one of the fragments (either R1 or
