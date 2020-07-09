@@ -508,6 +508,14 @@ Note that the ratios include the "smaller clones": if a clone
 is reported to have 10.54%, this 10.54% ratio relates to the number of
 analyzed reads, including the hidden clones.
 
+## Export the full list of clones
+
+The full list of clones can be retrieven by launching the command-line vidjil-algo.
+
+On the public server, we also provide `Export all clones (AIRR)` configuration to export
+a `.tsv` file that can be further processed or opened in any spreadsheet editor.
+XXX TODO XXX
+
 ## Going back to the analyzed reads
 
 The web application displays one consensus sequence per clone (see [Representative](#what-is-the-sequence-displayed-for-each-clone) above).
