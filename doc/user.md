@@ -499,7 +499,7 @@ Clones that are hidden (because of the "top" or because of hiding some tags)
 are gathered into virtual clones, shown with light gray (this "color by clone").
 Depending on the analysis configuration, these "smaller clones" are shown, in the clone list:
 
-- either *gathered by consensus length*, the Genescan-like plot showing the clone distribution.
+- either *gathered by read length*, the Genescan-like plot showing the clone distribution.
   This is the default on  default configurations on the public server,
 
 - or *gathered by locus* into a unique virtual clone.
