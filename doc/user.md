@@ -496,7 +496,8 @@ meet the "top" filter.
 The top 50/top 100 clones are displayed but all of them are computed and are useful to study full repertoires,
 including assessing the polyclonal background and the diversity of the repertoires.
 Clones that are hidden (because of the "top" or because of hiding some tags)
-are gathered into virtual clones, shown with light gray (this "color by clone").
+are gathered into virtual clones, shown with light gray.
+Note that selecting `color by clone` emphasizes the difference between the top clones, colored, and these virtual clones.
 Depending on the analysis configuration, these "smaller clones" are shown, in the clone list:
 
 - either *gathered by read length*, the Genescan-like plot showing the clone distribution.
