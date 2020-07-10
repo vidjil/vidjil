@@ -493,7 +493,7 @@ meet the "top" filter.
 
 ## Studying the distribution of "smaller clones"
 
-Clones beyond the "top 50"/"top 100" clones are still useful to study full repertoires,
+The top 50/top 100 clones are displayed but all of them are computed and are useful to study full repertoires,
 including assessing the polyclonal background and the diversity of the repertoires.
 Clones that are hidden (because of the "top" or because of hiding some tags)
 are gathered into virtual clones, shown with light gray (this "color by clone").
