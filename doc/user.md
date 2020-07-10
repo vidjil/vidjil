@@ -513,7 +513,7 @@ analyzed reads, including the hidden clones.
 
 ## Export the full list of clones
 
-The full list of clones can be retrieven by launching the command-line vidjil-algo.
+The full list of clones can be retrieved by launching the command-line vidjil-algo.
 
 On the public server, we also provide `Export all clones (AIRR)` configuration to export
 a `.tsv` file that can be further processed or opened in any spreadsheet editor.
