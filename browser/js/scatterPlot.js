@@ -689,15 +689,29 @@ ScatterPlot.prototype = {
     },
 
     /**
-     * update current clone's radius closer to their expected radius
+     * increase or decrease the radius of a node(r2) until it reaches the expected size(r1)
+     * this function is called once per frame
      * */
     updateRadius: function() {
+        epsilon = 0.2                       // expansion threshold (default 0.2px)
+        expansion_speed = 0.03              // the speed of a node expansion (default 3% of missing radius per frame)
+        minimum_radius = 2                  // minimum radius for non empty clones (default 2px)
         return function(d) {
+            //expansion continue until the node radius reach the expected value
             if (d.r1 != d.r2) {
-                var delta = d.r1 - d.r2;
-                d.r2 += 0.03 * delta;
-                if (d.r2 < 0.01) d.r2 = 0;
-                else if (d.r2 < 2) d.r2 = 2;
+                var delta = d.r1 - d.r2
+                
+                //if node radius is close enough to the expected radius, 
+                if (delta < epsilon && delta > -epsilon) 
+                    //stop expansion and use the expected value instead
+                    d.r2 = d.r1
+                else
+                    //apply expansion
+                    d.r2 += expansion_speed * delta
+
+                //don't let non empty clones shrink too much
+                if (d.r1 != 0  && d.r2 < minimum_radius)
+                    d.r2 = minimum_radius
             }
         }
     },
