@@ -88,20 +88,20 @@ class TestScatterplot < BrowserTest
   def test_03_update_radius
     $b.menu_filter.click
     $b.update_icon.wait_while(&:present?)
-    $b.send_keys 1
-    $b.update_icon.wait_while(&:present?)
 
     #visible clones never shrink under 4px width (minimum radius 2px)
 
+    $b.send_keys 1
+
     $b.update_icon.wait_while(&:present?)
-    assert ( $b.node_in_scatterplot('1').width > 4),  ">> clone 1 should be visible in scatterplot at time 0"
-    assert ( $b.node_in_scatterplot('2').width > 4),  ">> clone 2 should be visible in scatterplot at time 0"
+    assert ( $b.clone_in_scatterplot('1').width > 4),  ">> clone 1 should be visible in scatterplot at time 0"
+    assert ( $b.clone_in_scatterplot('2').width > 4),  ">> clone 2 should be visible in scatterplot at time 0"
     
     $b.send_keys :arrow_right
 
     $b.update_icon.wait_while(&:present?)
-    assert ( $b.node_in_scatterplot('1').width > 4),  ">> clone 1 should still be visible in scatterplot at time 1"
-    assert ( $b.node_in_scatterplot('2').width < 4),  ">> clone 2 should NOT be visible in scatterplot at time 1 "
+    assert ( $b.clone_in_scatterplot('1').width > 4),  ">> clone 1 should still be visible in scatterplot at time 1"
+    assert ( $b.clone_in_scatterplot('2').width < 4),  ">> clone 2 should NOT be visible in scatterplot at time 1 "
 
   end
 

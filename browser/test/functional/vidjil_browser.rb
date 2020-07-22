@@ -102,14 +102,6 @@ class VidjilBrowser < Watir::Browser
     return element(extra.merge(:id => 'seq'+id))
   end
 
-  def node_in_scatterplot(id, extra={})
-    return element(extra.merge(:id => 'visu_circle'+id))
-  end
-
-  def bar_in_scatterplot(id, extra={})
-    return element(extra.merge(:id => 'visu_bar'+id))
-  end
-
   def clear_filter
     return span(:id => "clear_filter")
   end
