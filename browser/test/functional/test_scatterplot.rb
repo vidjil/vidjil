@@ -103,6 +103,20 @@ class TestScatterplot < BrowserTest
     assert ( $b.clone_in_scatterplot('1').width > 4),  ">> clone 1 should still be visible in scatterplot at time 1"
     assert ( $b.clone_in_scatterplot('2').width < 4),  ">> clone 2 should NOT be visible in scatterplot at time 1 "
 
+
+  def test_04_axis_order_in_compare
+    $b.clone_in_list("0").click
+    $b.update_icon.wait_while(&:present?)
+    $b.send_keys 9
+    $b.update_icon.wait_while(&:present?)
+
+    axis_container_Y = $b.element(:id => "visu_axis_y_container")
+    axis = axis_container_Y.elements(:class => "sp_legend")
+
+    assert (  axis.length == 3 ),  ">> Get the correct number of axis (3) for Y axes"
+    assert (  axis[0].text == "1" ),    ">> correct first legend"
+    assert (  axis[1].text == "0.1" ),  ">> correct second legend"
+    assert (  axis[2].text == "0.01" ), ">> correct third legend"
   end
 
 
