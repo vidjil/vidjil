@@ -2431,13 +2431,6 @@ changeAlleleNotation: function(alleleNotation) {
         var list = [];
         for (var i = 0; i<this.clones.length; i++) list.push(i);
         this.updateElemStyle(list);
-        // Add update of the color method hint in info panel
-        for (var vpos = 0; vpos<this.view.length; vpos++){
-            var view = this.view[vpos]
-            if (view.id == "info"){
-                view.update()
-            }
-        }
     },
     
     /**
