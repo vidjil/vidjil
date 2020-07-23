@@ -20,7 +20,10 @@ class TestList < BrowserTest
   end
   
   def test_00_list_clones
+    # change current sample to start on sample 0 (second in loaded order)
+    $b.send_keys :arrow_right
     $b.update_icon.wait_while(&:present?)
+
     # declare variables
     $lock      = $b.listLock()
     $listClone = $b.list()
@@ -73,11 +76,11 @@ class TestList < BrowserTest
     $b.update_icon.wait_while(&:present?)
     # Clone order should have changed (sort 'size')
     l0 = $listClone.div(index: 0)
-    assert ( l0.id == "listElem_5" ), "opening; correct id of the first element (clone other)"
+    assert ( l0.id == "listElem_7" ), "opening; correct id of the first element (clone other)"
     
     $lock.click # remove lock
     l0 = $listClone.div(index: 0)
-    assert ( l0.id == "listElem_5" ), "opening; correct id of the first element (clone other)"
+    assert ( l0.id == "listElem_7" ), "opening; correct id of the first element (clone other)"
     $b.div(:id => "left-container").click # get out of the select list
   end
 

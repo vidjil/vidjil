@@ -3,16 +3,37 @@ QUnit.module("Url", {
 });
 
 /* ------------------------------------ */
-var current_url = "mock://"
+var initial_url = "mock://";
+var current_url = initial_url;
+
+function getSearch(url) {
+    var search = url.split('?')[1] ;
+    return (search == "" ? "" : '?' + search)
+}
+
+function getPathname(url) {
+    // remove protocol
+    var pathname = url.split('//');
+    pathname = pathname[pathname.length-1];
+    // remove search
+    pathname = pathname.split('?')[0];
+    // remove hostname
+    pathname = pathname.split('/');
+    return '/' + pathname.slice(1).join('/');
+}
+
 var windowMock = {
     mocked: true,
     location: {
-        search: {
-            toString: function() { var search = (current_url + '?').split('?')[1] ;
-                                   return (search == "" ? "" : '?' + search) }
-        }},
+        search: "",
+        pathname: ""
+    },
     history: {
-        pushState: function(x, y, url) { current_url = url }
+        pushState: function(x, y, url) {
+            current_url = url;
+            windowMock.location.search = getSearch(url);
+            windowMock.location.pathname = getPathname(url);
+        }
     }
 };
 windowMock.window = windowMock
@@ -113,4 +134,61 @@ QUnit.test("plot : modifyURL",function (assert) { with (windowMock) {
 
 }});
 
+QUnit.test("url: parse", function(assert) { with (windowMock) {
+    windowMock.history.pushState('plop', 'plop', 'mock://foo.bar?param1=foo&param2=bar');
+    var m = new Model();
+    var url = new Url(m, windowMock);
 
+    var params = url.parseUrlParams('?param1=foo&param2=bar');
+    assert.deepEqual(params, {
+        "param1": "foo",
+        "param2": "bar"
+    }, "test url parse correct url");
+
+    windowMock.history.pushState('plop', 'plop', 'mock://foo.bar?fakeparam&realparam=real');
+    url = new Url(m, windowMock);
+    params = url.parseUrlParams('?fakeparam&realparam=real');
+    assert.deepEqual(params, {
+        'realparam': 'real'
+    });
+}})
+
+QUnit.test("url: generate", function(assert) { with (windowMock) {
+    var params = {
+        'param1': 'first',
+        'param2': 'second',
+        'param3': 'third'
+    };
+
+    var m = new Model();
+    var url = new Url(m, windowMock);
+    var param_string = url.generateParamsString(params);
+    assert.equal(param_string, "?param1=first&param2=second&param3=third");
+}});
+
+QUnit.test("url: positional parse", function(assert) { with (windowMock) {
+    var m = new Model();
+    windowMock.history.pushState('plop', 'plop', 'mock://foo.bar/1-3?param3=third');
+    var url = new Url(m, windowMock);
+
+    var params = url.parseUrlParams('?param3=third');
+    assert.deepEqual(params, {
+        'sample_set_id': '1',
+        'config': '3',
+        'param3': 'third'
+    });
+}});
+
+QUnit.test("url: positional generate", function(assert) { with (windowMock) {
+    var params = {
+        'sample_set_id': 1,
+        'config': 4,
+        'foobar': 'barfoo',
+        'param4': 'fourth'
+    };
+
+    var m = new Model();
+    var url = new Url(m, windowMock);
+    var param_string = url.generateParamsString(params);
+    assert.equal(param_string, '1-4?foobar=barfoo&param4=fourth');
+}});

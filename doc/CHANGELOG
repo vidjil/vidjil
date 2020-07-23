@@ -1,6 +1,19 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+2020-06-12  The Vidjil Team
+	* New report of 'start of V' and 'end of J' positions #2138, improving the productivity estimation #2142
+	  This is based on a streamlined alignment for reverse sequences (core/segment.cpp) !706
+	* Faster and improved probability computations (core/proba.cpp) !679
+	  This will bring further speed-ups in a future release
+	* Ctrl-C now gracefully stops execution with a warning W09 and some output #4286
+	* Streamlined handling of warnings #3360, also reported with -c designations #3811
+	* Better and more reproducible speed and memory benchmarks (benchmark-releases.py, #4275) #918, new profiling #918
+	* Adoption of 'detected' term, renamed output files to '.detected.vdj.fa' #3413
+	* Updated documentation
+	* New and updated tests
+	* Better release process through a merge request template !685
+
 2020-05-02  The Vidjil Team
 	* Bug closed (crash in very rare cases #4272)
 

@@ -441,12 +441,6 @@ int DynProg::compute(bool onlyBottomTriangle, int onlyBottomTriangleShift)
       best_score = B[m][n].score;
     }
 
-  if (reverse_x)
-    best_i = m - best_i + 1 ;
-
-  if (reverse_y)
-    best_j = n - best_j + 1;
-
   B[0][0].type = FIN;
   
   // In the matrix positions start at 1, but start positions may start at 0
@@ -490,13 +484,6 @@ void DynProg::backtrack()
   
   int i=best_i+1;
   int j=best_j+1;
-
-  // Retake good i/j when there were reversed strings
-  if (reverse_x)
-    i = m - i + 1 ;
-
-  if (reverse_y)
-    j = n - j + 1;
 
   if ((i<0) || (i>m) || (j<0) || (j>n))
     {

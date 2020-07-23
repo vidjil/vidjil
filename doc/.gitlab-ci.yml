@@ -6,7 +6,7 @@ build_doc:
     - pip3 install mkdocs-gitlab-plugin requests
   script:
     - make -C doc html
-    - find site -name "*.html" -type f | xargs python tools/validate-links.py
+    - cd tools ; python validate-links.py
   artifacts:
     paths:
       - site/
@@ -16,6 +16,7 @@ build_doc:
       # branch name should contain doc before the first /
       # eg.: doc/blabla or feature-adoc/blabla
       - /^feature-.*a.*\/release$/
+  allow_failure: true
   tags:
     - cidocker
 

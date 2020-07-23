@@ -168,6 +168,26 @@ do a correct gathering.
             "reads": [ 1021, 0 ],
             "germline": "TRG",
             "top": 5
+        },
+        {
+            "id": "clone_cluster1",
+            "name": "clone_cluster1",
+            "sequence": "GATACAaaaaaccccc",
+            "reads": [ 1021, 0 ],
+            "germline": "TRG",
+            "top": 6
+        },
+        {
+            "id": "clone_cluster2",
+            "name": "clone_cluster2",
+            "sequence": "AAAAATTTTTAAAAATTTTTAAAAATTTTT",
+            "reads": [ 521, 42 ],
+            "germline": "TRG",
+            "top": 7,
+            "seg":
+              {
+                  "cdr3": {"start": 10, "stop": 20}
+              }
         }
     ]
 }
@@ -233,7 +253,8 @@ some clones, and added external data (`data`).
     ],
 
     "clusters": [
-        [ "clone2", "clone3"],
+        [ "clone3", "clone2"],
+        [ "clone_cluster2", "clone_cluster1"],
         [ "clone-5", "clone-10", "clone-179" ]
     ],
 
@@ -253,10 +274,16 @@ some clones, and added external data (`data`).
 }
 ```
 
-The `order` field defines the order in which order the points should be
-considered. In that case we should first consider the second point (whose `name`
+The `stock_order` and `order` fields define the order in which the points should be considered.
+
+* `stock_order` contains the order for all the existing samples and thus remembers positions of each samples, hidden or not.
+* `order` only remembers the currently shown samples.
+
+In the example above we should first consider the second point (whose `name`
 is *fu1)* and the point to be considered in second should be the first one in
 the file (whose `name` is *diag*).
+If `order` value was `[1]`, only the second sample would be shown and the first would be hidden.
+In such a case `stock_order` should still contain two values.
 
 The `clusters` field indicate clones (by their `id`) that have been further clustered.
 Usually, these clones were defined in a related `.vidjil` file (as *clone2* and *clone3*,
@@ -474,7 +501,7 @@ against them (not implemented now).
 ## Tagging some clones: `tags` list \[optional\]
 
 The `tags` list describe the custom tag names as well as tags that should be hidden by default.
-The default tag names are defined in [../browser/js/vidjil-style.js](../browser/js/vidjil-style.js).
+The default tag names are defined in [../browser/js/vidjil-style.js](http://gitlab.vidjil.org/-/blob/master/browser/js/vidjil-style.js).
 
 ``` javascript
 "key" : "value"  // "key" is the tag id from 0 to 7 and "value" is the custom tag name attributed

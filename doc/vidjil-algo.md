@@ -1,4 +1,4 @@
-# vidjil-algo 2020.05
+# vidjil-algo 2020.06
 **Command-line manual**
 
 *The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)*
@@ -274,7 +274,7 @@ The `germline/*.g` presets configure the analyzed recombinations.
 The following presets are provided:
 
   - `germline/homo-sapiens.g`: Homo sapiens, TR (`TRA`, `TRB`, `TRG`, `TRD`) and Ig (`IGH`, `IGK`, `IGL`) locus,
-    including incomplete/unusal recombinations (`TRA+D`, `TRB+`, `TRD+`, `IGH+`, `IGK+`, see [locus](locus)).
+    including incomplete/unusal recombinations (`TRA+D`, `TRB+`, `TRD+`, `IGH+`, `IGK+`, see <locus.md>.
   - `germline/homo-sapiens-isotypes.g`: Homo sapiens heavy chain locus, looking for sequences with, on one side, IGHJ (or even IGHV) genes,
     and, on the other side, an IGH constant chain.
   - `germline/homo-sapiens-cd.g`: Homo sapiens, common CD genes (experimental, does not check for recombinations)
@@ -418,7 +418,7 @@ for the IGH locus. However, they
 are not at the core of the Vidjil clone clustering method (which
 relies only on the 'window', see above).
 To check the quality of these designations, the automated test suite include
-sequences with manually curated V(D)J designations (see [should-vdj.md](should-vdj)).
+[sequences with manually curated V(D)J designations](should-vdj.md).
 
 If you want to analyze more clones, you should use `--max-designations 200` or
 `--max-designations 500`. It is not recommended to use larger values: outputting more
@@ -496,11 +496,12 @@ as provided by `make germline`.
 The CDR3/JUNCTION detection won't work with custom non-gapped V/J repertoires.
 
 CDR3 are reported as *productive* when they come from an in-frame recombination
-and when the full sequence does not contain any in-frame stop codons.
+and when the sequence does not contain any in-frame stop codons.
 Note that some other software only consider stop codons in the CDR3,
-and may thus under-estimate non-productivity. Vidjil-algo looks for in-frame stop codons
-on all the available sequence (and may sometimes over-estimate non-productivity when
-the sequence contains intronic regions).
+and may thus under-estimate non-productivity.
+When the sequence is long enough to start before the start of the V gene
+or to end after the end of the J gene, vidjil-algo do not consider these intronic sequences
+in the productivity estimation.
 
 The advanced `--analysis-cost` option sets the parameters used in the comparisons between
 the clone sequence and the V(D)J germline genes. The default values should work.
@@ -699,17 +700,17 @@ For example `-uu -X 1000` splits the not detected reads from the 1000 first read
 
 Since version 2018.10, vidjil-algo supports the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
 We export all required fields, some optional fields, as also some custom fields (+).
-We also propose in [fuse.py](/tools) a way to convert AIRR format to the `.vidjil` format.
+We also propose in [fuse.py](tools.md) a way to convert AIRR format to the `.vidjil` format.
 
 Note that Vidjil-algo is designed to efficiently gather reads from large datasets into clones. 
 By default (`-c clones`), we thus report in the AIRR format *clones*.
-See also [What is a clone ?](/vidjil-format/#what-is-a-clone).
+See also [What is a clone ?](vidjil-format/#what-is-a-clone).
 Using `-c designations` trigger a separate analysis for each read, but this is usually not advised for large datasets. 
 
 
 | Name  | Type | AIRR 1.2 Description <br /> *vidjil-algo implementation* |
 | ----- | ---- |  ------------------------------------------------------- |
-| locus | string | Gene locus (chain type). For example, `IGH`, `IGK`, `IGL`, `TRA`, `TRB`, `TRD`, or `TRG`.<br />*Vidjil-algo outputs all these loci. Moreover, the incomplete recombinations analyzed by vidjil-algo are reported as `IGH+`, `IGK+`, `TRA+D`, `TRB+`, `TRD+`, and `xxx` for unexpected recombinations. See  [locus](locus).*
+| locus | string | Gene locus (chain type). For example, `IGH`, `IGK`, `IGL`, `TRA`, `TRB`, `TRD`, or `TRG`.<br />*Vidjil-algo outputs all these loci. Moreover, the incomplete recombinations analyzed by vidjil-algo are reported as `IGH+`, `IGK+`, `TRA+D`, `TRB+`, `TRD+`, and `xxx` for unexpected recombinations. See  <locus.md>.*
 | duplicate_count | number | Number of reads contributing to the (UMI) consensus for this sequence. For example, the sum of the number of reads for all UMIs that contribute to the query sequence. <br />*Number of reads gathered in the clone.*
 | sequence_id | string  | Unique query sequence identifier within the file. Most often this will be the input sequence header or a substring thereof, but may also be a custom identifier defined by the tool in cases where query sequences have been combined in some fashion prior to alignment. <br />*This identifier is the (50 bp by default) window extacted around the junction.* |
 | clone_id 	| string | 	Clonal cluster assignment for the query sequence. <br />*This identifier is again the (50 bp by default) window extacted around the junction.*

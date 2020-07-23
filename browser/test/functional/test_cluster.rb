@@ -20,6 +20,10 @@ class TestCluster < BrowserTest
   end
   
   def test_00_list_clones
+    # change current sample to start on sample 0 (second in loaded order)
+    $b.send_keys :arrow_right
+    $b.update_icon.wait_while(&:present?)
+
     assert ($b.div(:id => 'cluster1').exists? ), '>> cluster1 exist'
     assert (not $b.clone_cluster('1').present?), '>> cluster1 is not display'
   end
@@ -100,6 +104,33 @@ class TestCluster < BrowserTest
     
     polyline4 = $b.path(:id => "polyline"+cloneId )
     assert ( polyline4.attribute_value("d").split(',').length == 12 ), ">> clone is again present in the graph if switched in filter menu (in sample without it)"
+  end
+
+
+  def test_06_cluster_not_ordered
+    # cluster of clone in an inverted order (considering size)
+    # clone 1 (biggest) should be before the second; even if clone 2 is before in cluster from analysis file
+    
+    assert ($b.div(:id => 'cluster5').exists? ), '>> cluster5 exist'
+    assert (not $b.clone_cluster('5').present?), '>> cluster5 is not display'
+
+    assert (     $b.clone_in_list('5').present? ), ">> clone 5 is present"
+    assert ( not $b.clone_in_list('6').present? ), ">> clone 6 is not present as it is clutered into clone 5"
+    
+    $b.clone_in_list('5').click
+
+    assert ( not $b.clone_in_segmenter('6').present? ), ">> The second clone of the cluster is NOT present in segmenter"
+
+    $b.a(:id => 'list_split_all').click
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.clone_in_segmenter('5').present? ), ">> The first clone of the cluster is present in segmenter"
+    assert ( $b.clone_in_segmenter('6').present? ), ">> The second clone of the cluster is present in segmenter"
+
+    # Add test on order of clones in list
+    cluster = $b.clone_cluster('5')
+    assert (  cluster.div(index: 0).id == "_6" ), ">> first clone in cluster is the 6th"
+    assert (  cluster.div(index: 1).id == "_5" ), ">> second clone in cluster is the 5th"
+
   end
 
 

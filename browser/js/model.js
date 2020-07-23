@@ -63,8 +63,8 @@ function Model() {
     this.NORM_EXPECTED  = "expected"
     this.NORM_EXTERNAL  = "external"
     this.normalization_mode = this.NORM_FALSE
-    //this.axes = new Axes(this)
-    //this.available_axes = this.axes.available()
+    this.axes = new Axis(this)
+    this.available_axes = this.axes.available()
 
     setInterval(function(){return self.updateIcon()}, 100); 
 }
@@ -77,6 +77,7 @@ Model.prototype = {
     build: function () {
         var self =this;
         
+        this.waiting_screen_is_on = false;
         this.waiting_screen = document.createElement("div");
         this.waiting_screen.className = "waiting_screen";
         
@@ -473,45 +474,55 @@ changeAlleleNotation: function(alleleNotation) {
 	if (typeof (clusters) == 'undefined')
 	    return ;
 
+        var biggest_clone;
+
         for (var i = 0; i < clusters.length; i++) {
 
-            var new_cluster = [];
-            var tmp = [];
-            
+            var clusterByIds = [];
+            var unfoundClone = [];
+            var cloneID;
+
+            // Create cluster by clone id
+            biggest_clone = undefined;
             for (var j=0; j<clusters[i].length;j++){
                 if (typeof this.mapID[clusters[i][j]] != 'undefined'){
-                    var cloneID = this.mapID[clusters[i][j]]
-                    new_cluster = new_cluster.concat(this.clusters[cloneID]);
-                    this.clusters[cloneID] = [];
+                    cloneID = this.mapID[clusters[i][j]]
+                    if (typeof this.clusters[cloneID] != 'undefined'){
+                        clusterByIds = clusterByIds.concat(this.clusters[cloneID]);
+                    } else {
+                        console.error("Error on cluster loading of clone "+cloneID)
+                    }
+                    // order may be unconserved...
+                    // Look for the biggest clone (with the smallest top)
+                    if (biggest_clone == undefined || this.clone(cloneID).top < this.clone(biggest_clone).top){
+                        biggest_clone = cloneID
+                    }
+                } else {
+                    unfoundClone.push( clusters[i][j] )
+                }
+            }
+
+            if (clusterByIds.length !== 0){
+                this.clusters[biggest_clone] = clusterByIds;
+
+                // Set mergeId values
+                for (var pos=0; pos<clusterByIds.length;pos++){
+                    cloneID = clusterByIds[pos]
+
                     // Set the mergeId value for cluterized clones
                     var clone = this.clones[cloneID] 
-                    if (j != 0){
-                        clone.mergedId = this.mapID[clusters[i][0]]
+                    if (clone.index != biggest_clone){
+                        clone.mergedId = biggest_clone
+                        this.clusters[cloneID] = []
                     }
+                }
 
-                }else{
-                    tmp.push(clusters[i][j])
-                }
             }
-            
-            if (new_cluster.length !== 0){
-                var l = new_cluster[0]
-                for (var k=0; k<new_cluster.length;k++){
-                    if (this.clone(new_cluster[k]).top < this.clone(l).top) l = new_cluster[k]
-                }
-                this.clusters[l] = new_cluster;
-                
-                if (tmp.length !== 0){
-                    tmp.push(this.clone(l).id)
-                    this.analysis_clusters.push(tmp);
-                }
-                
-            }else{
-                
-                if (tmp.length !== 0){
-                    this.analysis_clusters.push(tmp);
-                }
+
+            if (unfoundClone.length !== 0){
+                this.analysis_clusters.push(unfoundClone);
             }
+
         }
     },
 
@@ -1296,10 +1307,15 @@ changeAlleleNotation: function(alleleNotation) {
      * return true if a view has not finished an update
      */
     updateIsPending:function(){
-        for (var i = 0; i < this.view.length; i++) {
+        //check if a view is waiting an update
+        for (var i = 0; i < this.view.length; i++) 
             if (this.view[i].updateIsPending())
                 return true;
-        }
+
+        //check waiting screen
+        if (this.waiting_screen_is_on) 
+            return true;
+
         return false;
     },
 
@@ -2621,12 +2637,16 @@ changeAlleleNotation: function(alleleNotation) {
         this.waiting_screen.style.display = "block";
         this.waiting_msg.innerHTML= text;
         if (typeof shortcut != 'undefined') shortcut.on = false;
+        this.waiting_screen_is_on = true;
+        this.updateIcon();
     },
     
     resume: function(){
         this.waiting_screen.style.display = "none";
         this.waiting_msg.removeAllChildren();
         if (typeof shortcut != 'undefined') shortcut.on = true;
+        this.waiting_screen_is_on = false;
+        this.updateIcon();
     },
     
     
@@ -3362,6 +3382,42 @@ changeAlleleNotation: function(alleleNotation) {
         }
         return nb
 
+    },
+
+    /**
+     * Return a list of samples with selected clones
+     * @return {Array} list of samples
+     */
+    getSampleWithSelectedClones: function(){
+        var selected = this.getSelected()
+        if (selected.length == 0) {
+            return this.samples.order
+        }
+
+        var list = []
+        for (var pos = 0; pos < selected.length; pos++) {
+            var clone = this.clones[selected[pos]]
+            for (var time = 0; time < clone.reads.length; time++) {
+                if (clone.reads[time] != 0 && list.indexOf(time) == -1) {
+                    list.push(time)
+                }
+            }
+        }
+        return list
+    },
+
+    /**
+     * Remove all sample of the graph except one
+     */
+    hideNotShare: function(){
+        // get list of sample with shared clone
+        if (this.getSelected().length == 0) {
+            return
+        }
+        this.changeTimeOrder( this.getSampleWithSelectedClones() )
+        // this.updateList()
+        // this.m.update()
+        return
     },
 
 
