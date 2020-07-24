@@ -845,7 +845,8 @@ def getFusedStats(fuse):
             #dest['bool_true'] = True
             dest['loci'] = sorted([x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0])
             dest['clones_five_percent'] = sum([data['reads']['distribution'][key][result_index] for key in data['reads']['germline']  if key in data['reads']['distribution']])
-            dest['pre process'] = data['samples']['pre_process']['producer'][result_index]
+            if 'pre_process' in data['samples']:
+                dest['pre process'] = data['samples']['pre_process']['producer'][result_index]
             d[results_file_id] = dest
     return d
 
