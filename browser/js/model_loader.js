@@ -505,10 +505,19 @@ Model_loader.prototype = {
                     clone.stock_order.push(j)
                 }
             }
+
+            // stock_order should not be different than number of samples present in vidjil/analysis (issue #4408).
+            // Order should not be bigger than number of samples present in vidjil/analysis (but can have less)
+            // TODO: be able to reset order in case of config 1 have same number of sample than config 2 (particular case of #4407)
+            if (typeof this.samples != 'undefined' && (clone.stock_order.length != this.samples.number || clone.order.length > this.samples.number)){
+                clone.order       = Array.from(Array(this.samples.number).keys())
+                clone.stock_order = Array.from(Array(this.samples.number).keys())
+            }
         } else if ('order' in analysis && !('stock_order' in analysis)) {
             // Keep this behavior to ope old samples/analysis
             clone.order = this.calculateOrder(clone.order);
         }
+
         return clone;
     },
 
