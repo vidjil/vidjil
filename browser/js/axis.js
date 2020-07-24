@@ -625,13 +625,13 @@ Axis.prototype = {
 
     //return position of a given value
     getValuePos: function(v){
-        //continuous value
-        if (this.scale && typeof v == "number" && !isNaN(v))
-            return this.scale.fct(v) 
-        
         //discret value
         if (v in this.labels) 
             return this.labels[v].position
+
+        //continuous value
+        if (this.scale && typeof v == "number" && !isNaN(v))
+            return this.scale.fct(v) 
 
         return undefined
     },
