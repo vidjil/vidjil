@@ -223,7 +223,10 @@ AXIS_DEFAULT = {
         doc:        "ratio of the number of reads of each clone to the total number of reads in the selected locus, on a second sample",
         name:       "size (other sample)",
         fct :       function(clone){return clone.getSize(m.tOther)},
-        scale:      {   mode: "log"},
+        scale:      {
+                        mode: "log",
+                        reverse: true
+                    },
         autofill:   true
     },
     "number of samples" : {
