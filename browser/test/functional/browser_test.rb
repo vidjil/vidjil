@@ -39,10 +39,12 @@ class BrowserTest < MiniTest::Test
     if ENV['LIVE_SERVER']
       index_path = ENV['LIVE_SERVER'] + '/?data='
     end
-      
-    print "Open browser\n"
-    $b = VidjilBrowser.new
 
+    if not defined? $b
+      print "Open browser\n"
+      $b = VidjilBrowser.new
+    end
+    
     print "Resize\n"
     $b.window.resize_to(1500, 800)
 

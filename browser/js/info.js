@@ -190,6 +190,7 @@ Info.prototype = {
             parent.appendChild(div_sequence_info);
 
             this.builder.initTag();
+            this.colorMethod = this.m.colorMethod
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -281,6 +282,16 @@ Info.prototype = {
         else
             this.m[fieldName][this.m.t] = value;
         this.post_save(this);
+    },
+
+    /**
+     * Update the view. Change the color method if an update is detected in model
+     * @param {integer[]} - list - array of clone index
+     * */
+    updateElemStyle: function (list) {
+        if (this.m.colorMethod != this.colorMethod)
+            this.update()
+        this.colorMethod = this.m.colorMethod
     },
 
     create_sample_info_container: function(info, className, id, placeholder, target) {

@@ -274,10 +274,16 @@ some clones, and added external data (`data`).
 }
 ```
 
-The `order` field defines the order in which order the points should be
-considered. In that case we should first consider the second point (whose `name`
+The `stock_order` and `order` fields define the order in which the points should be considered.
+
+* `stock_order` contains the order for all the existing samples and thus remembers positions of each samples, hidden or not.
+* `order` only remembers the currently shown samples.
+
+In the example above we should first consider the second point (whose `name`
 is *fu1)* and the point to be considered in second should be the first one in
 the file (whose `name` is *diag*).
+If `order` value was `[1]`, only the second sample would be shown and the first would be hidden.
+In such a case `stock_order` should still contain two values.
 
 The `clusters` field indicate clones (by their `id`) that have been further clustered.
 Usually, these clones were defined in a related `.vidjil` file (as *clone2* and *clone3*,
