@@ -198,6 +198,12 @@ class TestGraph < BrowserTest
   end
 
   def test_08_mouseover 
+    ## reset, time 0, preset 0
+    $b.send_keys 0
+    $b.graph_x_legend("0").fire_event('click')
+    $b.update_icon.wait_while(&:present?)
+
+
     # Use show all and hide all button
     $b.div(:id => 'visu2_menu').click
     $b.update_icon.wait_while(&:present?) # wait update
@@ -217,12 +223,10 @@ class TestGraph < BrowserTest
 
     $b.clone_in_list('4').click
     $b.update_icon.wait_while(&:present?) # wait update
-    # Correct font-size value, but didn't work in assert...
-    # assert ( $b.element(tag_name: 'text', :id => 'time0').style('font-size') == "6px" ), "sample 0 have correct label size when no hover in graphlist"
-    # assert ( $b.element(tag_name: 'text', :id => 'time1').style('font-size') == "13px" ), "sample 1 have correct label size when no hover in graphlist"
     assert ( $b.graph_x_legend('0', :class => 'graph_time2').exists? ), "sample 1 have correct label size when no hover in graphlist (bold as select)"
 
-    # Hover graph Label to show tooltip
+
+    ### Hover graph Label to show tooltip
     tooltip = $b.div(:id => "visu2_tooltip")
     # before hover, tooltip should be hidden
     assert ( tooltip.style('opacity') == "0" ), "correct opacity of tooltip when label is NOT hover"
@@ -230,7 +234,9 @@ class TestGraph < BrowserTest
     sleep 0.3 # no update icon in this case; so whould use a fixed time
     # after hover, tooltip should be show
     assert ( tooltip.style('opacity') == "1" ), "correct opacity of tooltip when label is hover"
-    # todo; text content
+
+    ## Test text content
+    assert ( tooltip.text == "T8045-BC082-fu1\n2019-12-27\n+10"), "Correct text in the sample tooltip"
 
   end
 
