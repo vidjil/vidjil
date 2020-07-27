@@ -125,29 +125,22 @@ def index():
                 )
             )
 
-    listSets = []
-    ## Phase 1; collect all set_id to construct SampleSets object
+    all_sequence_files = [r.sample_set_membership.sequence_file_id for r in query]
+
+    (shared_sets, sample_sets) = get_associated_sample_sets(all_sequence_files)
+    
+    samplesets = SampleSets(sample_sets.keys())
+    sets_names = samplesets.get_names()
+                                            
+    ## assign set to each rows
     for row in query:
-        row.list_share_set     = []
-        row.tmp_list_share_set = db(db.sample_set_membership.sequence_file_id == row.sequence_file.id).select()
-        for set_id in row.tmp_list_share_set:
-            if int(set_id.sample_set_id)  != int(request.vars['id']):
-                listSets.append( set_id.sample_set_id )
-
-    samplesets = SampleSets(listSets)
-    setsvalues = samplesets.get_names()
-
-    ## Phase 2; assign set to each rows
-    for row in query:
-        for set_id in row.tmp_list_share_set:
-            if int(set_id.sample_set_id)  != int(request.vars['id']):
-                ID = set_id.sample_set_id
-                ## Filter to keep only set specific at this row
-                for elt in samplesets.sample_sets:
-                    if elt.id == ID:
-                        values = {"title": setsvalues[ID], "sample_type": elt["sample_type"], "id":ID}
-                        row.list_share_set.append( values )
-
+        row.list_share_set = []
+        if row.sequence_file.id in shared_sets:
+            for elt in shared_sets[row.sequence_file.id]:
+                if elt != sample_set_id:
+                    values = {"title": sets_names[elt],
+                              "sample_type": sample_sets[elt].sample_type, "id":elt}
+                    row.list_share_set.append(values)
 
     tag_decorator = TagDecorator(get_tag_prefix())
     query_pre_process = db( db.pre_process.id >0 ).select()
