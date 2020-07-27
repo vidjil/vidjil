@@ -103,6 +103,7 @@ class TestScatterplot < BrowserTest
     assert ( $b.clone_in_scatterplot('1').width > 4),  ">> clone 1 should still be visible in scatterplot at time 1"
     assert ( $b.clone_in_scatterplot('2').width < 4),  ">> clone 2 should NOT be visible in scatterplot at time 1 "
 
+  end
 
   def test_04_axis_order_in_compare
     $b.clone_in_list("0").click
@@ -113,13 +114,14 @@ class TestScatterplot < BrowserTest
     axis_container_Y = $b.element(:id => "visu_axis_y_container")
     axis = axis_container_Y.elements(:class => "sp_legend")
 
-    assert (  axis.length == 3 ),  ">> Get the correct number of axis (3) for Y axes"
-    assert (  axis[0].text == "1" ),    ">> correct first legend"
-    assert (  axis[1].text == "0.1" ),  ">> correct second legend"
-    assert (  axis[2].text == "0.01" ), ">> correct third legend"
+    assert (  axis.length == 4 ),  ">> incorrect number of axis, got (" + axis.length.to_s + "), expected (4)"
+    assert (  axis[0].text == "0" ),    ">> incorrect first legend, got '"  + axis[0].text + "', expected '0'"
+    assert (  axis[1].text == "1" ),    ">> incorrect second legend, got '" + axis[1].text + "', expected '1'"
+    assert (  axis[2].text == "0.1" ),  ">> incorrect third legend, got '"  + axis[2].text + "', expected '0.1'"
+    assert (  axis[3].text == "0.01" ), ">> incorrect fourth legend, got '" + axis[3].text + "', expected '0.01'"
   end
 
-
+  
   # Not really a test
   def test_zz_close
     close_everything
