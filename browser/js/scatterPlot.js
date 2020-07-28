@@ -822,7 +822,7 @@ ScatterPlot.prototype = {
      * update all clones (color / position / axis)
      * */
     updateClones: function() {    
-        for (var i = 0; i < this.nodes.length; i++) {
+        for (var i = 0; i < this.m.clones.length; i++) {
             this.updateClone(i);
         }
 
@@ -898,8 +898,7 @@ ScatterPlot.prototype = {
         var clone = this.m.clone(cloneID)      
         var node = this.nodes[cloneID]
 
-        if (this.m.clone(cloneID)
-            .isActive()) {
+        if (clone && clone.isActive()) {
 
             var seqID, size;
             if (clone.hasSizeDistrib()){
