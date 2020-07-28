@@ -1645,8 +1645,11 @@ int main (int argc, char **argv)
 	      }
 	  }
 	
-  if (clone_on_stdout)
-    cout << endl ;
+      if (clone_on_stdout)
+      {
+        cout << endl ;
+        cerr.flush();
+      }
 
       if (output_clone_files)
       {
