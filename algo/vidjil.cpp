@@ -567,7 +567,7 @@ int main (int argc, char **argv)
     -> group(group);
 
   bool output_sequences_by_cluster = false;
-  app.add_flag("--out-reads", output_sequences_by_cluster, "output all reads by clones (" CLONE_FILENAME "*), to be used only on small datasets") -> group(group);
+  app.add_flag("--out-reads", output_sequences_by_cluster, "output all reads by clones (in " CLONE_DIR "/" CLONE_FILENAME "* files), to be used only on small datasets") -> group(group);
 
   bool output_affects = false;
   app.add_flag("--out-affects,-K", output_affects,
