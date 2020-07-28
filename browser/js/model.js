@@ -3144,6 +3144,7 @@ changeAlleleNotation: function(alleleNotation) {
 
         this.distribs_compatible_clones = {}
 
+        // Fill this.distribs_compatible_clones
         for (var pos_axes = 0; pos_axes < raw_distribs_axes.length; pos_axes++) {
             var axes = raw_distribs_axes[pos_axes]
             this.distribs_compatible_clones[axes] = []
