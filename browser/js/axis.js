@@ -267,15 +267,19 @@ Axis.prototype = {
 
                 //add labels
                 if (this.scale.reverse){
-                    for (var k = this.scale.nice_min; k < this.scale.nice_max+1; k=k*10){
+                    if (this.scale.min == 0 && this.labels[0] == undefined)
+                        this.labels[0] = {text: "0", type:"slim", side: "right"}
+                    for (var k = this.scale.nice_max; k >= this.scale.nice_min; k=k/10){
                         this.addScaleLabel(k, "logScale")
                         labelCount++
                     } 
                 }else{
-                    for (var z = this.scale.nice_min; z < this.scale.nice_max+1; z=z*10){
+                    for (var z = this.scale.nice_min; z <= this.scale.nice_max; z=z*10){
                         this.addScaleLabel(z, "logScale")
                         labelCount++
                     } 
+                    if (this.scale.min == 0 && this.labels[0] == undefined)
+                        this.labels[0] = {text: "0", type:"slim", side: "left"}
                 }
             }
             this.scaledMargin = max/labelCount
@@ -621,13 +625,13 @@ Axis.prototype = {
 
     //return position of a given value
     getValuePos: function(v){
-        //continuous value
-        if (this.scale && typeof v == "number" && !isNaN(v))
-            return this.scale.fct(v) 
-        
         //discret value
         if (v in this.labels) 
             return this.labels[v].position
+
+        //continuous value
+        if (this.scale && typeof v == "number" && !isNaN(v))
+            return this.scale.fct(v) 
 
         return undefined
     },

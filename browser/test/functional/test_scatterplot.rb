@@ -105,7 +105,23 @@ class TestScatterplot < BrowserTest
 
   end
 
+  def test_04_axis_order_in_compare
+    $b.clone_in_list("0").click
+    $b.update_icon.wait_while(&:present?)
+    $b.send_keys 9
+    $b.update_icon.wait_while(&:present?)
 
+    axis_container_Y = $b.element(:id => "visu_axis_y_container")
+    axis = axis_container_Y.elements(:class => "sp_legend")
+
+    assert (  axis.length == 4 ),  ">> incorrect number of axis, got (" + axis.length.to_s + "), expected (4)"
+    assert (  axis[0].text == "0" ),    ">> incorrect first legend, got '"  + axis[0].text + "', expected '0'"
+    assert (  axis[1].text == "1" ),    ">> incorrect second legend, got '" + axis[1].text + "', expected '1'"
+    assert (  axis[2].text == "0.1" ),  ">> incorrect third legend, got '"  + axis[2].text + "', expected '0.1'"
+    assert (  axis[3].text == "0.01" ), ">> incorrect fourth legend, got '" + axis[3].text + "', expected '0.01'"
+  end
+
+  
   # Not really a test
   def test_zz_close
     close_everything
