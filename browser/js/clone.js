@@ -726,23 +726,6 @@ Clone.prototype = {
     
 
     /**
-     * Return true if the clone share the same axes than the given distribution clone
-     * @return {Clone} dclone   A distributon clone to compare with
-     * @return {Array} dvalues  A list of values for 
-     * @return {Boolean} True if share the same axes
-     */
-    sameAsDistribClone: function(dclone, dvalues, t){
-
-        var axes = dclone.axes
-        var values = this.getDistributionsValues(axes, t, round=true)
-
-        if (dvalues.equals(values)){
-            return true
-        }
-        return false
-    },
-
-    /**
      * Define a list of compatible real clones that share the same values for available axis
      * The list is sample dependant and differ for each sample
      * This list is called at the creation of the clone
@@ -750,21 +733,15 @@ Clone.prototype = {
     defineCompatibleClones: function(){
         var nb_sample = this.m.samples.number
         this.lst_compatible_clones = new Array(nb_sample)
-        for (var sample = 0; sample < this.lst_compatible_clones.length; sample++) {
-            this.lst_compatible_clones[sample] = []
-        }
 
         if (this.hasSizeDistrib()){
             var axes       = this.axes
             var dvalues    = this.getDistributionsValues(axes, 0, round=true)
-            for (var i = 0; i < this.m.clones.length; i++) {
-                var clone = this.m.clones[i]
-                if (clone.hasSizeConstant()) {
-                    for (var timepoint = 0; timepoint < nb_sample; timepoint++) {
-                        if (clone.sameAsDistribClone(this, dvalues, timepoint)){
-                            this.lst_compatible_clones[timepoint].push(i)
-                        }
-                    }
+            for (var timepoint = 0; timepoint < nb_sample; timepoint++) {
+                if (this.m.distribs_compatible_clones[axes][timepoint][dvalues] != undefined){
+                    this.lst_compatible_clones[timepoint] = this.m.distribs_compatible_clones[axes][timepoint][dvalues]
+                } else {
+                    this.lst_compatible_clones[timepoint] = []
                 }
             }
         }
