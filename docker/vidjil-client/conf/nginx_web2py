@@ -28,4 +28,9 @@ server {
 
         include /etc/vidjil/server_location.conf;
         include /etc/vidjil/client_location.conf;        
+
+        # Used for Let's Encrypt challenges
+        location /.well-known {
+                 root /etc/letsencrypt/well-known;
+        }
 }
