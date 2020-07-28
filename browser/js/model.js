@@ -262,10 +262,12 @@ Model.prototype = {
             {"color" : "#2aa198", "name" : "custom 1", "display" : true},
             {"color" : "#d33682", "name" : "custom 2", "display" : true},
             {"color" : "#859900", "name" : "custom 3", "display" : true},
-            {"color" : "",        "name" : "-/-", "display" : true}
+            {"color" : "",        "name" : "-/-", "display" : true},
+            {"color" : "#bdbdbd", "name" : "smaller clones", "display" : true}
         ]
 
         this.default_tag=8;
+        this.distrib_tag=9;
 
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].reset();

@@ -506,6 +506,7 @@ Info.prototype = {
                 spantag.onclick = span_onclick;
                 span2.appendChild(spantag);
             }
+
             break;
         case 'productive':
             span0.appendChild(document.createTextNode('not productive '));
