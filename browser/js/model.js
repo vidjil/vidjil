@@ -263,7 +263,7 @@ Model.prototype = {
             {"color" : "#d33682", "name" : "custom 2", "display" : true},
             {"color" : "#859900", "name" : "custom 3", "display" : true},
             {"color" : "",        "name" : "-/-", "display" : true},
-            {"color" : "#bdbdbd", "name" : "distributions", "display" : true}
+            {"color" : "#bdbdbd", "name" : "smaller clones", "display" : true}
         ]
 
         this.default_tag=8;
