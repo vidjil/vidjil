@@ -218,6 +218,9 @@ class TestSample < ServerTest
   end
 
   def test_set_association_create
+
+    ##  1. get the patient, run, set IDs of the sample sets which have #set_assoc_0 in the description 
+    
     $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
@@ -238,6 +241,8 @@ class TestSample < ServerTest
     table.wait_until(&:present?)
 
     set_id = table.a(:text => "#set_assoc_0").parent.parent.td(:class => 'uid').text
+
+    ## 2. Add a sample in the patient and make the association with the other sets
 
     samples_table = go_to_set_by_tag "#set_assoc_0"
     $b.span(:class => "button2", :text => "+ add samples").click
@@ -264,6 +269,7 @@ class TestSample < ServerTest
     form.text_field(:id => "file_sampling_date_0").set("2010-10-10")
     form.text_field(:id => "file_info_0").set("#my_file_add")
 
+    # Include the three sets (patient, run and set we identified previously)
     val = ":p 0 (2010-10-10) (#{patient_id})|:r run 0 (#{run_id})|:s generic 0 (#{set_id})"
     $b.execute_script("return $('#file_set_list').val('#{val}');")
 
@@ -271,6 +277,7 @@ class TestSample < ServerTest
 
     samples_table = $b.table(:id => "table")
     samples_table.wait_until(&:present?)
+    # Checking in the edit form that the three sets appear
     samples_table.a(:text => "#set_assoc_0").parent.parent.i(:class => "icon-pencil-2").click
 
     form = $b.form(:id => "upload_form")
