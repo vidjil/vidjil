@@ -97,6 +97,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 // Fixed filenames/suffixes
 #define CLONES_FILENAME ".vdj.fa"
+#define CLONE_DIR "seq/"
 #define CLONE_FILENAME "clone.fa-"
 #define WINDOWS_FILENAME ".windows.fa"
 #define SEGMENTED_FILENAME ".detected.vdj.fa"
@@ -700,7 +701,7 @@ int main (int argc, char **argv)
   for(string lab : windows_labels_explicit)
     windows_labels[lab] = string("--label");
   
-  string out_seqdir = out_dir + "/seq/" ;
+  string out_seqdir = out_dir + "/" + CLONE_DIR ;
 
   if (verbose)
     cout << "# verbose " << verbose << endl ;
