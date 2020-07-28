@@ -76,10 +76,8 @@ try {
         "</div>",
         "</div>"].join('');
     var separator = template.content.firstChild;
-
-    /* vmi currently create view in a static frame, not in self generated panels*/
-    //var panel_instructions = [{'mid-container': ["left-container", "visu-container"]},"bot-container"];
-    //vmi.setupPanels(panel_instructions, document.body);
+    var panel_instructions = [{'mid-container': ["left-container", "visu-container"]},"bot-container"];
+    vmi.setupPanels(panel_instructions, document.body);
 
     vmi.addView("info", "left-container", "");
     vmi.addView("list", "left-container", "");
