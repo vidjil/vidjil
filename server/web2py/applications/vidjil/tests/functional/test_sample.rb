@@ -277,6 +277,21 @@ class TestSample < ServerTest
 
     samples_table = $b.table(:id => "table")
     samples_table.wait_until(&:present?)
+    # Check that the "associated sets" header appears
+    assert(samples_table.td(:text => "associated sets").present?)
+    # We are on the patient we should have a link to the run and the set
+    $b.screenshot.save('/tmp/ci.png')
+    # Get the row with the created file
+    tag = samples_table.a(:text=>"#my_file_add")
+    assert(tag.present?)
+    tr = tag.parent.parent
+    assert (tr.present?)
+    assert (tr.tag_name == "tr")
+    assert(tr.span(:class => ["set_token", "run_token"], :text => "run 0").present?)
+    generic_span = tr.span(:class => ["generic_token", "set_token"], :title => "generic 0")
+    assert(generic_span.present?)
+    assert (generic_span.onclick.include? "db.call('sample_set/index'"), "onclick contains: "+generic_span.onclick
+
     # Checking in the edit form that the three sets appear
     samples_table.a(:text => "#set_assoc_0").parent.parent.i(:class => "icon-pencil-2").click
 
