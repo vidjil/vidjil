@@ -737,6 +737,8 @@ int main (int argc, char **argv)
     return 2;
   }
 
+  if (output_sequences_by_cluster)
+    output_clone_files = true;
 
   if (output_clone_files)
   {
