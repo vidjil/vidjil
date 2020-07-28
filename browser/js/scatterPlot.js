@@ -545,6 +545,8 @@ ScatterPlot.prototype = {
      * @param {float} [div_height]
      * */
     resize: function(div_width, div_height) {
+        if(!this.m.isReady()) return      //don't resize if model is not ready
+
         var print = true
         if (typeof div_height == 'undefined') {
             var div = document.getElementById(this.id)

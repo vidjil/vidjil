@@ -248,6 +248,7 @@ Model_loader.prototype = {
      * */
     parseJsonData: function (data, limit) {
         self = this;
+        this.is_ready = false
         
         //convert data to json if necessary
         if (typeof data == "string") {
@@ -395,6 +396,7 @@ Model_loader.prototype = {
             this.distributions = data.distributions
             this.loadAllDistribClones()
         }
+        this.is_ready = true
         return this
 
     }
@@ -527,7 +529,7 @@ Model_loader.prototype = {
      * */ 
     parseJsonAnalysis: function (analysis) {
         var self = this
-        
+        this.is_ready = false
         
         if (typeof analysis == "string") {
             try {
@@ -633,6 +635,8 @@ Model_loader.prototype = {
         }else{
             console.log({"type": "flash", "msg": "invalid version for this .analysis file" , "priority": 1});
         }
+
+        this.is_ready = true
     },
     
     /**
@@ -883,5 +887,11 @@ Model_loader.prototype = {
         }
         this.average_quality = this.average_quality/count; 
     },
+
+    // return True if the model is loaded
+    // return False if the model is empty or currently loading
+    isReady: function() {
+        return this.is_ready 
+    }
 
 };
