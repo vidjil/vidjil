@@ -127,20 +127,19 @@ def index():
 
     all_sequence_files = [r.sample_set_membership.sequence_file_id for r in query]
 
-    (shared_sets, sample_sets) = get_associated_sample_sets(all_sequence_files)
+    (shared_sets, sample_sets) = get_associated_sample_sets(all_sequence_files, [sample_set_id])
     
     samplesets = SampleSets(sample_sets.keys())
     sets_names = samplesets.get_names()
-                                            
+
     ## assign set to each rows
     for row in query:
         row.list_share_set = []
         if row.sequence_file.id in shared_sets:
             for elt in shared_sets[row.sequence_file.id]:
-                if elt != sample_set_id:
-                    values = {"title": sets_names[elt],
-                              "sample_type": sample_sets[elt].sample_type, "id":elt}
-                    row.list_share_set.append(values)
+                values = {"title": sets_names[elt],
+                          "sample_type": sample_sets[elt].sample_type, "id":elt}
+                row.list_share_set.append(values)
 
     tag_decorator = TagDecorator(get_tag_prefix())
     query_pre_process = db( db.pre_process.id >0 ).select()

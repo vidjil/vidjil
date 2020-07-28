@@ -127,7 +127,7 @@ def get_sequence_file_sample_sets(sequence_file_id):
         sample_set_ids.append(row.sample_set_id)
     return sample_set_ids
 
-def get_associated_sample_sets(sequence_file_ids):
+def get_associated_sample_sets(sequence_file_ids, forbidden_ids = []):
     '''
     From a list of sequence_file IDs return a tuple.
     The first component of the tuple is a dictionary whose keys are 
@@ -136,9 +136,12 @@ def get_associated_sample_sets(sequence_file_ids):
     The second component of the tuple is a dictionary whose keys are sample set IDs
     and the values are the corresponding sample sets. The sample sets in this dictionary
     are the sample sets which share a sequence file whose ID is in sequence_file_ids.
+
+    forbidden_ids: list of the sample sets IDs that must not be retrieved.
     '''
     shared_sequences = db(
-        db.sample_set_membership.sequence_file_id.belongs(sequence_file_ids)
+        (db.sample_set_membership.sequence_file_id.belongs(sequence_file_ids))
+        & ~(db.sample_set_membership.sample_set_id.belongs(forbidden_ids))
     ).select(
         db.sample_set.ALL,
         db.sample_set_membership.sequence_file_id,
