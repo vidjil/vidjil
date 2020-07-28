@@ -1239,21 +1239,29 @@ class ListWindows(VidjilJson):
     ##########################
     ###  Morisita's index  ###
     ##########################
-    def computeMorisita(self):
-        morisita  = defaultdict( lambda: defaultdict( lambda: False ) )
-        jaccard   = defaultdict( lambda: defaultdict( lambda: False ) )
+    def computeOverlaps(self):
+        '''
+        Compute, for each combinaison of sample, various overlap indexs
+        '''
         nb_sample = self.d["samples"].d["number"]
+        self.d["overlaps"] = {}
+        self.d["overlaps"]["morisita"] = []
+        self.d["overlaps"]["jaccard"]  = []
 
         for pos_0 in range(0, nb_sample):
+            morisita = []
+            jaccard  = []
             for pos_1 in range(0, nb_sample):
-                morisita[pos_0][pos_1] = self.compute_one_morisita(pos_0, pos_1)
-                jaccard[pos_0][pos_1]  = self.compute_one_Jaccard_index(pos_0, pos_1)
-        self.d["morisita"] = morisita
-        self.d["jaccard"]  = jaccard
+                print( "Overlap: %s vs %s" % (pos_0, pos_1) )
+                morisita.append( self.computeOverlapMorisita(pos_0, pos_1) )
+                jaccard.append(  self.computeOverlapJaccard(pos_0, pos_1)  )
+            self.d["overlaps"]["morisita"].append( morisita)
+            self.d["overlaps"]["jaccard"].append(  jaccard )
+            
         return
 
 
-    def compute_one_morisita(self, pos_0, pos_1):
+    def computeOverlapMorisita(self, pos_0, pos_1):
         """
         Morisita-Horn similarity index
         This index apply to quantitative data.
@@ -1268,6 +1276,7 @@ class ListWindows(VidjilJson):
         # Values between 0 (completly different communityes) and 1 (maximal similarity).
         # 2 groups are similare (poor diversity) if CMH value is superior to 0.5
         # and dissemblables if value is under 0,5 (high diversity).
+        !!! Computed only on present clones (so should be run with `-Y all`)
         """
         index_div = "index_Ds_diversity"
         clones    = self.d["clones"]
@@ -1283,17 +1292,19 @@ class ListWindows(VidjilJson):
             ai = clone.d["reads"][pos_0]
             bi = clone.d["reads"][pos_1]
             m  += (ai * bi)
-            da += ( (ai*ai)  / Na )
-            db += ( (bi*bi)  / Nb )
+            da += (ai*ai)
+            db += (bi*bi)
 
-        m *= 2
-        d = ( (da/Na)+(db/Nb))*(Na*Nb)
-        m = m/d
+        d = (da+db)/2
+        if m == 0: #if really no shared clones
+            res =  0
+        else:
+            res = round( (m/d), 3) 
 
-        return m
+        return res
 
 
-    def compute_one_Jaccard_index(self, pos_0, pos_1):
+    def computeOverlapJaccard(self, pos_0, pos_1):
         """
         Jaccard similarity index
         Formula :
@@ -1315,8 +1326,10 @@ class ListWindows(VidjilJson):
             bi = clone.d["reads"][pos_1]
             Nc  += bool(ai * bi)
         # print( "Nc: %s" % Nc)
+        if Nc == 0: # if really no shared clones
+            return 0
 
-        I = Nc / (N1 + N2 - Nc)
+        I = round( (Nc / (N1 + N2 - Nc)), 3)
         return I
 
 
@@ -1652,7 +1665,7 @@ def main():
         
 
     print("### Morisita")
-    jlist_fused.computeMorisita()
+    jlist_fused.computeOverlaps()
     
     if args.no_clones:
         # TODO: do not generate the list of clones in this case
