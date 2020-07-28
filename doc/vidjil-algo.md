@@ -514,7 +514,8 @@ ATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGAC
 Windows of size 50 (modifiable by `-w`) have been extracted.
 The first window has 8 occurrences, the second window has 5 occurrences.
 
-The `out/seq/clone.fa-*` contains the detailed analysis by clone, with
+With the `--out-clone-files` option, one `out/seq/clone.fa-*` file is created for each clone.
+It contains the detailed analysis by clone, with
 the window, the consensus sequence, as well as with the most similar V, (D) and J germline genes:
 
 ``` diff
