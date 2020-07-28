@@ -456,7 +456,7 @@ two windows that must be clustered.
 
 ## Main output files
 
-The main output of Vidjil-algo (with the default `-c clones` command) are the three following files:
+The main output of Vidjil-algo (with the default `-c clones` command) are the two following files:
 
   - The `.vidjil` file is the *main output file*, containing the most information.
     The file is in a `.json` format,
@@ -473,12 +473,15 @@ The main output of Vidjil-algo (with the default `-c clones` command) are the th
   - The `.tsv` file is the AIRR output, for compatibility with other software
     using the same format. See [below](#airr-tsv-output) for details.
 
+Moreover, with the `--out-vdjfa`, another file is produced:
+
   - The `.vdj.fa` file is *a FASTA file for further processing by other bioinformatics tools*.
     Even if it is advised to rather use the full information in the `.vijdil` file,
     the `.vdj.fa` is a convenient way to have sequences of clones for further processing.
     These sequences are at least the windows (and their count in the headers) or
     the consensus sequences (`--max-consensus`) when they have been computed.
-    The [headers](#the-vdjfa-format) are described below.
+    The [headers](#headers-in-vdj-fa-files-deprecated) are described below, but the format of the headers is deprecated
+    and will not be enforced in future releases.
     Some other informations such as the further clustering are not output in this file.
     
     The `.vdj.fa` output enables to use Vidjil-algo as a *filtering tool*,
@@ -651,13 +654,14 @@ Our implementation of .tsv may evolve in future versions.
 Contact us if a particular feature does interest you.
 
 
-## The .vdj.fa format
+## Headers in the .vdj.fa files (deprecated)
 
-The `.vdj.fa` format is compatible with the FASTA format,
-and details V(D)J recombinations in the FASTA headers.
-The format is described below, but may evolve in future releases.
-For post-processing tools needing some of that information, it is not recommended to parse these headers,
-but rather to use the `.vidjil` file that contains more information in a structured way.
+The `.vdj.fa` format is compatible with the FASTA format.
+
+The FASTA header of each sequence gives some details on the V(D)J recombinations.
+The format of these headers is described below, but is considered as deprecated and may be removed in future releases in Q3 2021.
+For post-processing tools needing some of that information, it is thus not recommended to parse these headers,
+but rather to use either the `.vidjil` file that contains more information in a structured way, or the AIRR `.tsv` output.
 
 In a `.vdj.fa` format, a line starting with a \> is of the following form:
 
