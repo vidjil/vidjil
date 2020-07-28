@@ -158,6 +158,7 @@ def index():
         'table_name': "sample_set"})
     #if (auth.can_view_patient(request.vars["id"]) ):
     return dict(query=query,
+                has_shared_sets = len(shared_sets) > 0,
                 pre_process_list=pre_process_list,
                 config_id=config_id,
                 info=info_file,
