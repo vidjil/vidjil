@@ -14,6 +14,9 @@ $ There are no clones in the .vidjil
 $ Correct output message
 1:only metadata
 
+$ There is no clone output in individual files
+0:detail, by clone
+
 !LAUNCH: rm out/Stanford_S22.tsv ; $LAUNCHER $VIDJIL_DIR/$EXEC $EXTRA -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta > /dev/null ; touch out/Stanford_S22.tsv ; cat out/Stanford_S22.tsv
 
 $ The AIRR .tsv file has four lines
