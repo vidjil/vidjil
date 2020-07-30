@@ -456,7 +456,7 @@ two windows that must be clustered.
 
 ## Main output files
 
-The main output of Vidjil-algo (with the default `-c clones` command) are the two following files:
+The default output of Vidjil-algo (with the default `-c clones` command) are the two following files:
 
   - The `.vidjil` file is the *main output file*, containing the most information.
     The file is in a `.json` format,
@@ -473,35 +473,39 @@ The main output of Vidjil-algo (with the default `-c clones` command) are the tw
   - The `.tsv` file is the AIRR output, for compatibility with other software
     using the same format. See [below](#airr-tsv-output) for details.
 
-Moreover, with the `--out-vdjfa`, another file is produced:
 
-  - The `.vdj.fa` file is *a FASTA file for further processing by other bioinformatics tools*.
-    Even if it is advised to rather use the full information in the `.vijdil` file,
-    the `.vdj.fa` is a convenient way to have sequences of clones for further processing.
-    These sequences are at least the windows (and their count in the headers) or
-    the consensus sequences (`--max-consensus`) when they have been computed.
-    The [headers](#headers-in-vdj-fa-files-deprecated) are described below, but the format of the headers is deprecated
-    and will not be enforced in future releases.
-    Some other informations such as the further clustering are not output in this file.
-    
-    The `.vdj.fa` output enables to use Vidjil-algo as a *filtering tool*,
-    shrinking a large read set into a manageable number of (pre-)clones
-    that will be deeply analyzed and possibly further clustered by
-    other software.
-
-By default, the three output files are named
-`out/basename.vidjil`, `out/basename.tsv`, and `out/basename.vdj.fa`, where:
+By default, these output files are named
+`out/basename.vidjil` and `out/basename.tsv`, where:
 
   - `out` is the directory where all the outputs are stored (can be changed with the `--dir` option).
   - `basename` is the basename of the input `.fasta/.fastq` file (can be overriden with the `--base` option)
 
-With the `--gz` option, the three files are output
-as compressed `.vidjil.gz`, `.tsv.gz`, and `.vdj.fa.gz` files.
+With the `--gz` option, both files are output
+as compressed `.vidjil.gz` and `.tsv.gz` files.
 
 Vidjil-algo also outputs the first 50 clones on the standard output.
 More data can be printed on the standard output with the `-v` option.
 
 ## Auxiliary output files
+
+### `.vdj.fa`
+
+With the `--out-vdjfa` option, a `.vdj.fa` file is created (or, with `--gz`, a `.vdj.fa.gz` file).
+This is *a FASTA file for further processing by other bioinformatics tools*.
+Even if it is advised to rather use the full information in the `.vijdil` file,
+the `.vdj.fa` is a convenient way to have sequences of clones for further processing.
+These sequences are at least the windows (and their count in the headers) or
+the consensus sequences (`--max-consensus`) when they have been computed.
+The [headers](#headers-in-vdj-fa-files-deprecated) are described below, but the format of the headers is deprecated
+and will not be enforced in future releases.
+Some other informations such as the further clustering are not output in this file.
+
+The `.vdj.fa` output enables to use Vidjil-algo as a *filtering tool*,
+shrinking a large read set into a manageable number of (pre-)clones
+that will be deeply analyzed and possibly further clustered by
+other software.
+
+### `.windows.fa`
 
 The `out/basename.windows.fa` file contains the list of windows, with number of occurrences:
 
@@ -516,6 +520,8 @@ ATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGAC
 
 Windows of size 50 (modifiable by `-w`) have been extracted.
 The first window has 8 occurrences, the second window has 5 occurrences.
+
+### `seq/clone.fa-*`
 
 With the `--out-clone-files` option, one `out/seq/clone.fa-*` file is created for each clone.
 It contains the detailed analysis by clone, with
@@ -739,7 +745,9 @@ clustering such reads into clones, and further analyzing the clones.
 ./vidjil-algo -g germline/homo-sapiens.g:IGH -3 demo/Stanford_S22.fasta
    # Cluster the reads and report the clones, based on windows overlapping IGH CDR3s.
    # Assign the V(D)J genes and try to detect the CDR3 of each clone.
-   # Summary of clones is available both on stdout, in out/Stanford_S22.vdj.fa and in out/Stanford_S22.vidjil.
+   # Main output files are both out/Stanford_S22.vidjil and out/Stanford_S22.tsv.
+   # Summary of clones is available on stdout.
+
 ```
 
 ``` bash
@@ -747,7 +755,8 @@ clustering such reads into clones, and further analyzing the clones.
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
    # Assign the VDJ genes (including multiple D) and try to detect the CDR3 of each clone.
-   # Summary of clones is available both on stdout, in out/reads.vdj.fa and in out/reads.vidjil.
+   # Main output files are both out/reads.vidjil and out/reads.tsv.
+   # Summary of clones is available on stdout.
 ```
 
 ## Sorting reads from whole RNA-Seq or capture datasets
