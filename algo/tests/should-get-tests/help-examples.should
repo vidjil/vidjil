@@ -1,7 +1,7 @@
 !NO_LAUNCHER:
 
-cd $VIDJIL_DIR
-./$EXEC -h | grep '$EXEC -c' | sed 's/X 50/X 5/' | sed 's/demo.LIL-L4/-X 1000 demo\/LIL-L4/' | sh
+cd $VIDJIL_DIR ; ./$EXEC -h | grep '$EXEC -c' | sed 's/X 50/X 5/' | sed 's/demo.LIL-L4/-X 1000 demo\/LIL-L4/' > help-examples.sh
+cd $VIDJIL_DIR ; sh help-examples.sh
 
 # Test examples embedded in './vidjil-algo -h'
 

@@ -1,5 +1,6 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC --analysis-cost '1, 2, 3, 4, 5' $VIDJIL_DATA/Stanford_S22.fasta
 !EXIT_CODE: 1
+!LAUNCH: $VIDJIL_DIR/$EXEC --analysis-cost '1, 2, 3, 4, 5' $VIDJIL_DATA/Stanford_S22.fasta
+
 
 $Check that correct custom cost is used
 1:use custom Cost "1, 2, 3, 4, 5"

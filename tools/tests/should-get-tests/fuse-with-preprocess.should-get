@@ -1,12 +1,12 @@
 
-TMP_DEFS=`tempfile`
+
 # Not satisfactory
-cp ../../defs.py $TMP_DEFS
+cp ../../defs.py defs.py.tmp
 echo "PRE_PROCESS_DIR='tests/data/pre_process'" >> ../../defs.py
 
 python3 ../../fuse.py $FUSE_OPTIONS --pre igh-to-trg.sh ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil; cat fused.vidjil
 
-mv $TMP_DEFS ../../defs.py
+mv defs.py.tmp ../../defs.py
 
 cat fused.vidjil
 
