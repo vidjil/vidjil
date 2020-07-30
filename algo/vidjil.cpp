@@ -587,6 +587,11 @@ int main (int argc, char **argv)
   bool out_gz = false;
   app.add_flag("--gz", out_gz, "output compressed .tsv.gz, .vdj.fa.gz, and .vidjil.gz files") -> group(group) -> level();
 
+  bool output_vdjfa = false;
+  app.add_flag("--out-vdjfa", output_vdjfa,
+               "output clones in a " CLONES_FILENAME " file (only for clone sequence data)")
+    -> group(group) -> level();
+
   bool output_clone_files = false;
   app.add_flag("--out-clone-files", output_clone_files,
                "output clones in individual files (in " CLONE_DIR "/" CLONE_FILENAME "* files)")
@@ -1314,8 +1319,13 @@ int main (int argc, char **argv)
     cout << "  ==> suggested edges in " << out_dir+ f_basename + EDGES_FILENAME
         << endl ;
 
-    cout << "  ==> " << f_clones << "   \t(for post-processing with other software)" << endl ;
-    ostream* out_clones = new_ofgzstream(f_clones.c_str(), out_gz) ;
+    ostream* out_clones = NULL;
+    if (output_vdjfa)
+    {
+      cout << "  ==> " << f_clones << "   \t(for sequence post-processing with other software)" << endl;
+      cout << "!! To get structured data, do not parse the Fasta headers, but rather work on the .vidjil file." << endl;
+      out_clones = new_ofgzstream(f_clones.c_str(), out_gz);
+    }
 
     if (output_clone_files)
     {
@@ -1382,7 +1392,8 @@ int main (int argc, char **argv)
         // If max_representatives is reached, we stop here but still outputs the window
         if ((max_representatives >= 0) && (num_clone >= max_representatives + 1))
           {
-            *out_clones << window_str << endl ;
+            if (output_vdjfa)
+              *out_clones << window_str << endl ;
             continue;
           }
       }
@@ -1485,7 +1496,9 @@ int main (int argc, char **argv)
           {
             if (clone_on_stdout)
               cout << representative << endl ;
-            *out_clones << representative << endl ;
+
+            if (output_vdjfa)
+              *out_clones << representative << endl ;
 
             if (output_clone_files)
             {
@@ -1522,7 +1535,8 @@ int main (int argc, char **argv)
   if (output_clone_files)
     *out_clone << seg << endl ;
 
-  *out_clones << seg << endl ;
+  if (output_vdjfa)
+    *out_clones << seg << endl ;
     
         seg.toOutput(clone);
 
@@ -1587,7 +1601,9 @@ int main (int argc, char **argv)
     signal(SIGINT, SIG_DFL);
 
     out_edges.close() ;
-    delete out_clones;
+
+    if (output_vdjfa)
+      delete out_clones;
 
     if (num_clone > last_num_clone_on_stdout)
       {
