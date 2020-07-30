@@ -18,8 +18,8 @@ $ There is a warning on multiple candidate assignations
 $ The warning is also found on stdout
 1:\[warning\] \(W69\) Several genes with equal probability
 
-!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -g $VIDJIL_DIR/germline/homo-sapiens.g:TRB $VIDJIL_DATA/trb-only-VJ.fa
 !OUTPUT_FILE: out/trb-only-VJ.vidjil
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -g $VIDJIL_DIR/germline/homo-sapiens.g:TRB $VIDJIL_DATA/trb-only-VJ.fa
 
 $ With -c designation, the recombination is properly designated, without any D
 1:"name": "TRBJ2-3.01"
