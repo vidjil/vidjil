@@ -457,12 +457,7 @@ deploy_prod:
   stage: deploy_prod
   script:
     - ssh $PROD_CLIENT_SERVER "
-         cd $PROD_CLIENT_PATH;
-         git fetch
-         && git reset --hard origin/prod-client
-         && make -C browser
-         && make -C browser sha1
-         && cp doc/analysis-example.vidjil browser/"
+         cd $PROD_CLIENT_PATH;"
   environment:
     name: production
     url: http://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil
