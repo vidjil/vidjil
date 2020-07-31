@@ -153,6 +153,35 @@ QUnit.test("url: parse", function(assert) { with (windowMock) {
     });
 }})
 
+QUnit.test("url: select clones", function(assert) { with (windowMock) {
+    windowMock.history.pushState('plop', 'plop', 'mock://foo.bar?clone=1,2');
+    // create model
+    var m = new Model();
+    m.parseJsonData(json_data,100)
+    m.loadGermline()
+    m.initClones()
+    // Init scatterplot (before URL object)
+    var sp = new ScatterPlot("visu",m);
+    sp.init();
+    // Init ur manager
+    var url = new Url(m, windowMock);
+    m.url_manager = url;
+
+    // Verify that clones are correctly see
+    var params = url.parseUrlParams('?clone=1,2');
+    console.log( params )
+    assert.deepEqual(params, {
+        "clone": "1,2"
+    }, "test url parse correct url for clone selectionjjb  ");
+
+    // Apply url selection on clones
+    m.url_manager.applyURL()
+    assert.notOk( m.clone(0).select, "Clone 0 should NOT be selected")
+    assert.ok(    m.clone(1).select, "Clone 1 should be selected")
+    assert.ok(    m.clone(2).select, "Clone 2 should be selected")
+    assert.notOk( m.clone(3).select, "Clone 3 should NOT be selected")
+}})
+
 QUnit.test("url: generate", function(assert) { with (windowMock) {
     var params = {
         'param1': 'first',
