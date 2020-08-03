@@ -2,8 +2,8 @@
 ## Now a productive sequence, with a stop codon after a TRGJ gene
 ## We now use -J ../TRGJ.fa, see #3147
 
-!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -3 -V $VIDJIL_DIR/germline/homo-sapiens/TRGV.fa -J $VIDJIL_DIR/germline/homo-sapiens/TRGJ.fa $VIDJIL_DATA/productive_stop_after_J.fa
 !OUTPUT_FILE: out/productive_stop_after_J.vidjil
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -3 -V $VIDJIL_DIR/germline/homo-sapiens/TRGV.fa -J $VIDJIL_DIR/germline/homo-sapiens/TRGJ.fa $VIDJIL_DATA/productive_stop_after_J.fa
 
 $ Clone name
 1: "TRGV9.01 0/CA/0 TRGJP.01"

@@ -499,6 +499,8 @@ Graph.prototype = {
      *
      * */
     resize: function (div_width, div_height) {
+        if(!this.m.isReady()) return      //don't resize if model is not ready
+
         var div = document.getElementById(this.id)
         
         var speed = 0

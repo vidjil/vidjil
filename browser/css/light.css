@@ -1821,6 +1821,10 @@ table.log textarea {
 .tagColor8 {
   background: #657b83;
 }
+.tagColor9 {
+  background: #bdbdbd;
+  margin-left: 7px;
+}
 .inactiveTag {
   background-image: linear-gradient(45deg, transparent -25%, #ffffff 100%, #ffffff 100%, transparent 0%);
 }

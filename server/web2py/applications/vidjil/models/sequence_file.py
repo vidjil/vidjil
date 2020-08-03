@@ -127,6 +127,35 @@ def get_sequence_file_sample_sets(sequence_file_id):
         sample_set_ids.append(row.sample_set_id)
     return sample_set_ids
 
+def get_associated_sample_sets(sequence_file_ids, forbidden_ids = []):
+    '''
+    From a list of sequence_file IDs return a tuple.
+    The first component of the tuple is a dictionary whose keys are 
+    the sequence_file IDs and the values are lists of sample sets those sequence_files 
+    belong to.
+    The second component of the tuple is a dictionary whose keys are sample set IDs
+    and the values are the corresponding sample sets. The sample sets in this dictionary
+    are the sample sets which share a sequence file whose ID is in sequence_file_ids.
+
+    forbidden_ids: list of the sample sets IDs that must not be retrieved.
+    '''
+    shared_sequences = db(
+        (db.sample_set_membership.sequence_file_id.belongs(sequence_file_ids))
+        & ~(db.sample_set_membership.sample_set_id.belongs(forbidden_ids))
+    ).select(
+        db.sample_set.ALL,
+        db.sample_set_membership.sequence_file_id,
+        left = db.sample_set.on(db.sample_set.id == db.sample_set_membership.sample_set_id)
+    )
+
+    shared_sets = defaultdict(list)
+    for shared in shared_sequences:
+        shared_sets[shared.sample_set_membership.sequence_file_id].append(shared.sample_set.id)
+
+    sample_sets = {s.sample_set.id : s.sample_set for s in shared_sequences}
+
+    return (shared_sets, sample_sets)
+
 def get_sequence_file_config_ids(sequence_file_id):
     '''
     return the list of configs run ona sequence_file

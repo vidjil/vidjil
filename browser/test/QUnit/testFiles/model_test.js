@@ -76,6 +76,19 @@ QUnit.test("load with new order && stock_order", function(assert) {
 
     // Note, respective clone 0 size: 0.05, 0.1, 0.075, 0.15
     assert.equal( m.clones[0].getSize(), m.clones[0].getSize(3), "clone 0 hve size corresponding to timepoint 3 (loading order)")
+
+    // Test loading file with duplicate sample present in order field of analysis
+    var m = new Model();
+    m.parseJsonData(json_data, 100)
+    m.initClones()
+    analysis_data_stock_order_with_error =  JSON.parse(JSON.stringify(analysis_data_stock_order))
+    analysis_data_stock_order_with_error.samples.order = [3, 3, 0, 1]
+    m.parseJsonAnalysis(analysis_data_stock_order_with_error)
+    m.initClones()
+
+    assert.deepEqual(m.samples.order,         [3,0,1], "Correct order after loading analysis with dusplicate sample in order" )
+    assert.deepEqual(m.samples.stock_order, [2,3,0,1], "Correct stock_order after loading analysis with dusplicate sample in order" )
+    
 });
 
 

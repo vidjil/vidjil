@@ -248,6 +248,7 @@ Model_loader.prototype = {
      * */
     parseJsonData: function (data, limit) {
         self = this;
+        this.is_ready = false
         
         //convert data to json if necessary
         if (typeof data == "string") {
@@ -395,6 +396,7 @@ Model_loader.prototype = {
             this.distributions = data.distributions
             this.loadAllDistribClones()
         }
+        this.is_ready = true
         return this
 
     }
@@ -481,6 +483,19 @@ Model_loader.prototype = {
                     }
             }
         }
+
+        // Fix case of error where same timepoint is present multiple time in order
+        if (analysis.order != undefined){
+            analysis.order = analysis.order.filter(function(item, pos) {
+                return analysis.order.indexOf(item) == pos;
+            })
+        }
+        if (analysis.stock_order != undefined){
+            analysis.stock_order = analysis.stock_order.filter(function(item, pos) {
+                return analysis.stock_order.indexOf(item) == pos;
+            })
+        }
+
         if ('order' in analysis && 'stock_order' in analysis) {
             // Jquery Extend don't work on samples.order.
             clone.order       = analysis.order
@@ -492,10 +507,19 @@ Model_loader.prototype = {
                     clone.stock_order.push(j)
                 }
             }
+
+            // stock_order should not be different than number of samples present in vidjil/analysis (issue #4408).
+            // Order should not be bigger than number of samples present in vidjil/analysis (but can have less)
+            // TODO: be able to reset order in case of config 1 have same number of sample than config 2 (particular case of #4407)
+            if (typeof this.samples != 'undefined' && (clone.stock_order.length != this.samples.number || clone.order.length > this.samples.number)){
+                clone.order       = Array.from(Array(this.samples.number).keys())
+                clone.stock_order = Array.from(Array(this.samples.number).keys())
+            }
         } else if ('order' in analysis && !('stock_order' in analysis)) {
             // Keep this behavior to ope old samples/analysis
             clone.order = this.calculateOrder(clone.order);
         }
+
         return clone;
     },
 
@@ -505,7 +529,7 @@ Model_loader.prototype = {
      * */ 
     parseJsonAnalysis: function (analysis) {
         var self = this
-        
+        this.is_ready = false
         
         if (typeof analysis == "string") {
             try {
@@ -611,6 +635,8 @@ Model_loader.prototype = {
         }else{
             console.log({"type": "flash", "msg": "invalid version for this .analysis file" , "priority": 1});
         }
+
+        this.is_ready = true
     },
     
     /**
@@ -861,5 +887,11 @@ Model_loader.prototype = {
         }
         this.average_quality = this.average_quality/count; 
     },
+
+    // return True if the model is loaded
+    // return False if the model is empty or currently loading
+    isReady: function() {
+        return this.is_ready 
+    }
 
 };

@@ -63,8 +63,7 @@ function Model() {
     this.NORM_EXPECTED  = "expected"
     this.NORM_EXTERNAL  = "external"
     this.normalization_mode = this.NORM_FALSE
-    this.axes = new Axis(this)
-    this.available_axes = this.axes.available()
+    this.available_axes = Axis.prototype.available()
 
     setInterval(function(){return self.updateIcon()}, 100); 
 }
@@ -262,10 +261,12 @@ Model.prototype = {
             {"color" : "#2aa198", "name" : "custom 1", "display" : true},
             {"color" : "#d33682", "name" : "custom 2", "display" : true},
             {"color" : "#859900", "name" : "custom 3", "display" : true},
-            {"color" : "",        "name" : "-/-", "display" : true}
+            {"color" : "",        "name" : "-/-", "display" : true},
+            {"color" : "#bdbdbd", "name" : "smaller clones", "display" : true}
         ]
 
         this.default_tag=8;
+        this.distrib_tag=9;
 
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].reset();
@@ -3141,8 +3142,24 @@ changeAlleleNotation: function(alleleNotation) {
 
         var same_distribs;
         var current_distrib;
+
+        this.distribs_compatible_clones = {}
+
+        // Fill this.distribs_compatible_clones
         for (var pos_axes = 0; pos_axes < raw_distribs_axes.length; pos_axes++) {
             var axes = raw_distribs_axes[pos_axes]
+            this.distribs_compatible_clones[axes] = []
+            for (var sample = 0; sample < this.samples.number; sample++) {
+                this.distribs_compatible_clones[axes][sample] = {}
+                for (var c_pos = 0; c_pos < this.clones.length; c_pos++) {
+                    values = this.clones[c_pos].getDistributionsValues(axes, sample)
+                    if (typeof this.distribs_compatible_clones[axes][sample][values] != typeof []){ // equivalent python defaultdict
+                        this.distribs_compatible_clones[axes][sample][values] = []
+                    }
+                    this.distribs_compatible_clones[axes][sample][values].push(this.clones[c_pos].index)
+                }
+            }
+
             same_distribs = []
             // Get the list of all distributions of axes given
             for (var pos_time = 0; pos_time < this.samples.number; pos_time++) {
@@ -3166,22 +3183,6 @@ changeAlleleNotation: function(alleleNotation) {
 
     },
 
-    /**
-     * Return the clone corresponding to an axes list and to axes values
-     *  !!!! pas utilisé pour le moment !!!
-     * @param  {Array} axes   List of axes to search
-     * @param  {Array} values List of values to get
-     * @return {Clone}        [description]
-     */
-    getCloneWithDistribValues: function(axes, values){
-        for (var c = 0; c < this.clones.length; c++) {
-            var clone = this.clones[c]
-            if (clone.sameAsDistribClone()){
-                return clone
-            }
-        }
-        return
-    },
 
     /**
      * Create clones from a list of information concatenated directly from distributions
