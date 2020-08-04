@@ -84,7 +84,6 @@ function loadAfterConf() {
                                          "../tips",
                                          "../tokeniser",
                                          "../indexedDom",
-                                         "../screen_MRD",
                                          // Speed test
                                          "../speed_test",
                                          "../form_builder",

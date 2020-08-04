@@ -1333,8 +1333,25 @@ Clone.prototype = {
         var time_length = this.m.samples.order.length
         var html = ""
 
-        var header = function(content) { return "<tr><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; }
-        var row_1  = function(item, content) { return "<tr><td>" + item + "</td><td colspan='" + time_length + "'>" + content + "</td></tr>" ; }
+        var clean_title = function(title){ console.default.log( title); return title.replace(/ ()%-/gi,"_")} //.replace("/","").replace("(","").replace(")","").replace("%","") }
+        var header = function(content, title) { 
+            title = (title == undefined) ? clean_title(content) : clean_title(title)
+            return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; 
+        }
+        var row_1  = function(item, content, title) { 
+            title = (title == undefined) ? clean_title(item) : clean_title(title)
+            return "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>" + item + "</td><td colspan='" + time_length + "' id='modal_line_value_"+title+"'>" + content + "</td></tr>" ; 
+        }
+        var row_from_list  = function(item, content, title) { 
+            title = (title == undefined) ?clean_title(item) : clean_title(title)
+            var div = "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>"+ item + "</td>"
+            for (var i = 0; i < content.length; i++) {
+                col  = content[i]
+                div += "<td id='modal_line_value_"+title+"_"+i+"'>" + col + "</td>"
+            }
+            div += "</tr>" ;
+            return div;
+        }
 
         if (isCluster) {
             html = "<h2>Cluster info : " + this.getName() + "</h2>"
@@ -1394,6 +1411,29 @@ Clone.prototype = {
             for (var k = 0; k < time_length; k++) {
                 html += "<td>" + this.getStrSize(this.m.samples.order[k]) + "</td>"
             }
+
+            if ('prevalent' in this.m.samples) {
+                // this .vidjil file is not all-diagnostic:
+                // show R2, etc, fields for follow-up samples
+                content_fitting_family = []
+                content_getR2 = []
+                content_getPrevalent = []
+                content_getAmplCoeff = []
+                for (k = 0; k < time_length; k++) {
+                    content_fitting_family.push( this.getFittingFamily(this.m.samples.order[k]) )
+                    content_getR2.push( this.getR2(this.m.samples.order[k]) )
+                    prevalent = this.getPrevalent(this.m.samples.order[k])
+                    if (prevalent != ""){
+                        prevalent = this.m.systemBox(prevalent).outerHTML + prevalent
+                    }
+                    content_getPrevalent.push( prevalent )
+                    content_getAmplCoeff.push( this.getAmplCoeff(this.m.samples.order[k]) )
+                }
+                html += row_from_list("family used for fitting",        content_fitting_family, "mrd_family")
+                html += row_from_list("Pearson R2",                     content_getR2,          "mrd_pearson")
+                html += row_from_list("prevalent germline",             content_getPrevalent,   "mrd_prevalent")
+                html += row_from_list("total prevalent / total spikes", content_getAmplCoeff,   "mrd_prevalent_on_spike")
+            }
             html += header("representative sequence")
         }else{
             html += header("sequence")
@@ -1451,7 +1491,7 @@ Clone.prototype = {
         if (this.hasSizeConstant()) {
             html += header("segmentation" +
                 " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>edit</button>" + //Use to hide/display lists 
-                this.getHTMLModifState()) // icon if manual changement
+                this.getHTMLModifState(), "segmentation") // icon if manual changement
         } else {
             html += header("segmentation")
         }
@@ -1970,6 +2010,72 @@ Clone.prototype = {
             return x.equals(axes)
         }
     },
+
+
+    //////////////////////////////
+    ///  MRD, Spike and Familly
+    //////////////////////////////
+    /**
+     * @return {string} the family used for fiting at the given time
+     */
+    getFittingFamily: function(time) {
+        if (this.m.samples.prevalent[time] == 0) {
+            // diagnostic sample
+            return "";
+        } else if ("normalized_reads" in this && this.normalized_reads[time] === null) {
+            // negative clone: report UNI
+            return "UNI";
+        } else if ('family' in this) {
+            return this.family[time];
+        } else {
+            return "Please use version 6 or later of spike-normalization";
+        }
+    },
+
+    /**
+     * @return {string} the Pearson R2 value for the spike-in fitting at the given time
+     */
+    getR2: function(time) {
+        if (this.m.samples.prevalent[time] == 0) {
+            // diagnostic sample
+            return "";
+        } else if ('normalized_reads' in this && this.normalized_reads[time] === null && 'UNI_R2' in this.m.samples) {
+            // negative clone: report UNI R2
+            return this.m.samples.UNI_R2[time];
+        } else if ('R2' in this) {
+            return this.R2[time].toString();
+        } else {
+            return "Please use version 6 or later of spike-normalization"; // arrive souvent si non norm
+        }
+    },
+
+    /**
+     * @return {string} the prevalent germline at the given time
+     */
+    getPrevalent: function(time) {
+        if (this.m.samples.prevalent[time] == 0) {
+            // diagnostic sample
+            return "";
+        } else {
+            return this.m.samples.prevalent[time];
+        }
+    },
+
+    /**
+     * @return {string} the amplification coefficient at the given time
+     * (ampl. coeff. = total prevalent / total spike)
+     */
+    getAmplCoeff: function(time) {
+        if (this.m.samples.prevalent[time] == 0) {
+            // diagnostic sample
+            return "";
+        } else if ('ampl_coeff' in this.m.samples) {
+            return this.m.samples.ampl_coeff[time].toString();
+        } else {
+            return "Please use version 6 or later of spike-normalization";
+        }
+    },
+
 };
 
 
