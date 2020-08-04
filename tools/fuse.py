@@ -26,6 +26,7 @@
 #  along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
 
 from __future__ import print_function
+from __future__ import division
 
 import check_python_version
 import sys
@@ -1517,6 +1518,7 @@ def main():
     group_options.add_argument('--no-clones', action='store_true', default=False, help='do not output individual clones')
 
     group_options.add_argument('--export-airr', action='store_true', default=False, help='export data in AIRR format.')
+    group_options.add_argument('--overlaps', action='store_true', default=False, help='Compute overlaps index of repertoires.')
 
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
 
@@ -1664,8 +1666,9 @@ def main():
         jlist_fused.d["similarity"] = [];
         
 
-    print("### Morisita")
-    jlist_fused.computeOverlaps()
+    if args.overlaps:
+        print("### Overlaps index")
+        jlist_fused.computeOverlaps()
     
     if args.no_clones:
         # TODO: do not generate the list of clones in this case
