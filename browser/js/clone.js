@@ -1333,7 +1333,7 @@ Clone.prototype = {
         var time_length = this.m.samples.order.length
         var html = ""
 
-        var clean_title = function(title){ return title.replace(/ ()%-/gi,"_")} //.replace("/","").replace("(","").replace(")","").replace("%","") }
+        var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/gi,'_').replace(/__/gi,'_')}
         var header = function(content, title) { 
             title = (title == undefined) ? clean_title(content) : clean_title(title)
             return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; 
