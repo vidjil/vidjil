@@ -93,12 +93,15 @@ OUT_XML = 'should.xml'
 TAP = 'tap'
 XML = 'xml'
 
+JSON_KEY_NOT_FOUND = 'not found'
+
 LINE = '-' * 40
 ENDLINE_CHARS = '\r\n'
 CONTINUATION_CHAR = '\\'
 MAX_HALF_DUMP_LINES = 45
 MAX_DUMP_LINES = 2*MAX_HALF_DUMP_LINES + 10
 
+NOT_ZERO = '+'
 
 # Simple colored output
 
@@ -331,8 +334,9 @@ class ShouldException(BaseException):
     pass
 
 
-def write_to_file(f, what):
-    print('==> %s' % f)
+def write_to_file(f, what, phony=True):
+    if phony:
+        print('==> %s' % f)
     with open(f, 'w', encoding='utf-8') as ff:
         ff.write(what)
 
@@ -579,6 +583,7 @@ class ExternalTestCase(TestCaseAbstract):
         self.info = info
         self.modifiers = ''
         self.raw = None
+        self.json_data = None
 
     def str_additional_status(self, verbose = False):
         s = ''
@@ -674,13 +679,14 @@ class TestCase(TestCaseAbstract):
         self.status = Sta()
         self.count = '?'
         self.raw = raw
+        self.json_data = None
 
         # Extract self.expected_count from modifiers
         m = RE_MODIFIERS.match(modifiers)
         if not m:
             raise ShouldException('Error in parsing modifiers: ' + modifiers)
         self.modifiers = m.group(1) + m.group(3)
-        self.expected_count = int(m.group(2)) if m.group(2) else None
+        self.expected_count = int(m.group(2)) if m.group(2) else NOT_ZERO
 
         # Parse modifiers
         self.mods = parser_mod.parse_modifiers(self.modifiers)
@@ -721,25 +727,26 @@ class TestCase(TestCaseAbstract):
         if self.mods.json:
             try:
                 d = json.loads(lines[0])
-                elt = deep_get(d, self.key)
+                self.json_data = deep_get(d, self.key)
 
                 if expression_var:
                     # An expression is provided: prepare data for further count
-                    if type(elt) is list:
-                        lines = [json.dumps(x) for x in elt]
-                    elif type(elt) is dict:
-                        lines = [json.dumps(x) for x in elt.values()]
+                    if type(self.json_data) is list:
+                        lines = [json.dumps(x) for x in self.json_data]
+                    elif type(self.json_data) is dict:
+                        lines = [json.dumps(x) for x in self.json_data.values()]
                     else:
-                        lines = [str(elt)]
+                        lines = [str(self.json_data)]
                 else:
                     # No expression provided: we just count the keys
-                    if type(elt) in [list, dict]:
-                        self.count = len(elt)
+                    if type(self.json_data) in [list, dict]:
+                        self.count = len(self.json_data)
                     else:
                         self.count = 1
 
             except (json.decoder.JSONDecodeError, KeyError):
                 # No json, or non-existent key: count is 0
+                self.json_data = JSON_KEY_NOT_FOUND
                 self.count = 0
 
         # Main count
@@ -758,7 +765,7 @@ class TestCase(TestCaseAbstract):
                     self.count += l.count(expression_var) if self.mods.count_all else 1
 
         # Compute status
-        if self.expected_count is None:
+        if self.expected_count == NOT_ZERO:
             sta = (self.count > 0)
         elif self.mods.less_than:
             sta = (self.count < self.expected_count)
@@ -782,12 +789,12 @@ class TestCase(TestCaseAbstract):
         if self.status.is_warned() or verbose:
             s += ' (%s/%s%s)' % (self.count,
                                  MOD_LESS_THAN if self.mods.less_than else MOD_MORE_THAN if self.mods.more_than else '',
-                                 self.expected_count if self.expected_count is not None else '+')
+                                 self.expected_count)
 
         return s
 
     def __repr__(self):
-        return '%s%s:%s' % (self.modifiers, self.expected_count if self.expected_count is not None else '', self.expression)
+        return '%s%s:%s' % (self.modifiers, self.expected_count if self.expected_count != NOT_ZERO else '', self.expression)
 
 
 class TestSuite():
@@ -914,7 +921,8 @@ class TestSuite():
 
             # Directive -- Exit code
             if l.startswith(DIRECTIVE_EXIT_CODE):
-                self.expected_exit_code = int(l[len(DIRECTIVE_EXIT_CODE):].strip())
+                e = l[len(DIRECTIVE_EXIT_CODE):].strip()
+                self.expected_exit_code = NOT_ZERO if e == NOT_ZERO else int(e)
                 continue
 
             # Name
@@ -1001,11 +1009,15 @@ class TestSuite():
                              stdout=f_stdout, stderr=f_stderr,
                              close_fds=True)
 
-        exit_code_message = 'Exit code is %d -- %s' % (self.expected_exit_code, cmd)
+        exit_code_message = 'Exit code is %s -- %s' % (self.expected_exit_code, cmd)
 
         try:
             self.exit_code = p.wait(self.timeout)
-            exit_test = ExternalTestCase(exit_code_message, self.exit_code == self.expected_exit_code, str(self.exit_code))
+            if self.expected_exit_code == NOT_ZERO:
+                success = (self.exit_code > 0)
+            else:
+                success = (self.exit_code == self.expected_exit_code)
+            exit_test = ExternalTestCase(exit_code_message, success, str(self.exit_code))
         except subprocess.TimeoutExpired:
             self.exit_code = None
             exit_test = ExternalTestCase(exit_code_message, S_SKIP, 'timeout after %s seconds' % self.timeout)
@@ -1053,8 +1065,8 @@ class TestSuite():
                 print(test.str(colorize=colorize, verbose=verbose>0))
                 if test.raw:
                     print(test.raw)
-                if verbose > 1 or (verbose > 0 and test.status in WARN_STATUS):
-                    print("%s%s %r" % (self.status, self.str_additional_status(verbose=True), self))
+                if test.json_data:
+                    print(test.key, '-->', color(test.status.color, str(test.json_data), colorize))
                 print()
 
     def print_stderr(self, colorize=True):
@@ -1089,7 +1101,8 @@ class TestSuite():
 
             print(LINE)
 
-
+    def str_additional_status(self, verbose=False):
+        return ''
 
     def str_status(self, colorize=True):
         return self.stats.str_status(self.status, colorize)
@@ -1169,19 +1182,26 @@ class FileSet():
             filename_without_ext = os.path.splitext(f)[0]
 
             if output and OUT_LOG in output:
-                write_to_file(filename_without_ext + OUT_LOG, ''.join(s.test_lines))
+                write_to_file(filename_without_ext + OUT_LOG, ''.join(s.test_lines), verbose > 0)
 
             if output and OUT_TAP in output:
-                write_to_file(filename_without_ext + OUT_TAP, s.tap())
+                write_to_file(filename_without_ext + OUT_TAP, s.tap(), verbose > 0)
 
-            if verbose > 0 or s.status is False:
-                if not verbose:
-                    print(f, end=' ')
-                if s.elapsed_time:
+            if verbose > 0 or s.status.is_warned():
+                print(s.str_status(), end=' ')
+
+            if not verbose or verbose > 1 or s.status.is_warned():
+                print(f, end='')
+
+            if verbose > 0:
+                print('')
+
+            if verbose > 0 and s.elapsed_time:
                     if s.elapsed_time >= SHOW_ELAPSED_TIME_ABOVE:
                         print(s.str_elapsed_time())
-                print(s.str_status())
-                print('')
+
+            print('')
+
         except KeyboardInterrupt:
             print('==== interrupted ====\n')
 
@@ -1250,8 +1270,8 @@ class FileSet():
         if verbose > 0:
             cmd = '%s %s' % (sys.argv[0], RETRY_FAILED_FLAG)
             if len(files_warned) > len(files_failed):
-                cmd += 'or %s %s' % (sys.argv[0], RETRY_WARNED_FLAG)
-            print(cmd + ' will relaunch these tests.')
+                cmd += ' or %s %s' % (sys.argv[0], RETRY_WARNED_FLAG)
+            print('\n' + cmd + ' will relaunch these tests.')
 
 def read_retry(f):
     try:
