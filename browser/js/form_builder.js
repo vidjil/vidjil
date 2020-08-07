@@ -48,7 +48,7 @@ FormBuilder.prototype = {
         return l;
     },
 
-    build_input: function(id, className, name, input_type, set_type, placeholder, required) {
+    build_input: function(id, className, name, input_type, set_type, placeholder, content, required) {
         var i = document.createElement('input');
         i.id = set_type + "_" + id + "_" + this.index;
         i.className = "form-control " + className;
@@ -59,6 +59,9 @@ FormBuilder.prototype = {
             i.required = required;
         }
 
+        if (content != undefined) 
+            i.value = content
+
         if (typeof placeholder !== "undefined") {
             i.placeholder = placeholder;
         }
@@ -66,7 +69,7 @@ FormBuilder.prototype = {
         return i;
     },
 
-    build_field: function(id, name, label, required) {
+    build_field: function(id, name, label, content, required) {
         if (typeof name === "undefined") {
             name = id;
         }
@@ -76,9 +79,9 @@ FormBuilder.prototype = {
         }
 
         var d = this.build_wrapper();
-        d.appendChild(this.build_input(id, 'string', name, 'text', this.type, label, required));
+        d.appendChild(this.build_input(id, 'string', name, 'text', this.type, label, content, required));
         return d;
-    }
+    },
 
     build_textarea: function(id, className, name, set_type, placeholder) {
         var t = document.createElement('textarea');
@@ -108,7 +111,7 @@ FormBuilder.prototype = {
         return l;
     },
 
-    build_date: function(id, object, name, label) {
+    build_date: function(id, object, name, label, content) {
         if (typeof name === "undefined") {
             name = id;
         }
@@ -118,18 +121,18 @@ FormBuilder.prototype = {
         }
 
         var d = this.build_wrapper();
-        var i = this.build_input(id, 'date', name, 'text', object, 'yyyy-mm-dd', false);
+        var i = this.build_input(id, 'date', name, 'text', object, 'yyyy-mm-dd', content, false);
         i.pattern = "(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))";
         i.title = label;
         d.appendChild(i);
         return d;
     },
 
-    build_info: function(object, keys, label) {
+    build_info: function(object, keys, label, content) {
         var d = this.build_wrapper();
         var id = 'info';
 
-        var txt = this.build_input('info', "text", 'info', 'text', object, label + ' information (#tags can be used)');
+        var txt = this.build_input('info', "text", 'info', 'text', object, label + ' information (#tags can be used)', content, false);
         $(txt).data('needs-atwho', true);
         $(txt).on('focus', function() {
             $(this).data('keys', keys);
@@ -194,16 +197,19 @@ function RunFormBuilder() {
 
 RunFormBuilder.prototype = {
 
-    build: function(index) {
+    build: function(index, content) {
         this.index = index;
+        this.content = content
+        if (this.content == undefined) this.content = {}
+
         var div = this.build_div(this.type);
         div.appendChild(this.createCloseButton());
         div.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         div.appendChild(this.build_input('sample_set_id', 'text', 'sample_set_id', 'hidden', this.type));
         div.appendChild(this.set_id());
-        div.appendChild(this.build_field('name', undefined, undefined, true));
-        div.appendChild(this.build_date('run_date', this.type, 'run_date', 'Date'));
-        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'run'));
+        div.appendChild(this.build_field('name', undefined, undefined, this.content.name, true));
+        div.appendChild(this.build_date('run_date', this.type, 'run_date', 'Date', this.content.date));
+        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'run', this.content.info));
         // div.appendChild(this.build_field('sequencer'));
         // div.appendChild(this.build_field('pcr', 'pcr', 'PCR'));
         return div;
@@ -217,20 +223,23 @@ RunFormBuilder.prototype = $.extend(Object.create(FormBuilder.prototype), RunFor
 
 
 function GenericFormBuilder() {
-    SetFormBuilder.call(this);
+    FormBuilder.call(this);
     this.type = 'generic';
 }
 
 GenericFormBuilder.prototype ={
 
-    build: function(index) {
+    build: function(index, content) {
         this.index = index;
+        this.content = content
+        if (this.content == undefined) this.content = {}
+
         var div = this.build_div(this.type);
         div.appendChild(this.createCloseButton());
         div.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         div.appendChild(this.build_input('sample_set_id', 'text', 'sample_set_id', 'hidden', this.type));
-        div.appendChild(this.build_field('name', undefined, undefined, true));
-        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'set'));
+        div.appendChild(this.build_field('name', undefined, undefined, this.content.name ,true));
+        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'set', this.content.info));
         return div;
     }
 }
