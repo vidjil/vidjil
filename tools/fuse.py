@@ -1281,13 +1281,10 @@ class ListWindows(VidjilJson):
         """
         index_div = "index_Ds_diversity"
         clones    = self.d["clones"]
-        reads     = self.d["reads"].d["segmented"]
 
         m  = 0
         da = 0
         db = 0
-        Na = reads[pos_0] * reads[pos_0]
-        Nb = reads[pos_1] * reads[pos_1]
 
         for clone in clones:
             ai = clone.d["reads"][pos_0]
