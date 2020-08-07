@@ -195,15 +195,6 @@ PatientFormBuilder.prototype = {
         div.appendChild(this.build_date('birth'));
         div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'patient'));
         return div;
-    },
-
-    createCloseButton: function() {
-        var self = this;
-        var close = Object.getPrototypeOf(PatientFormBuilder.prototype).createCloseButton.call(this);
-        $(close).click(function() {
-            var button = document.getElementById('patient_button');
-        });
-        return close;
     }
 }
 PatientFormBuilder.prototype = $.extend(Object.create(SetFormBuilder.prototype), PatientFormBuilder.prototype)
@@ -232,15 +223,6 @@ RunFormBuilder.prototype = {
         // div.appendChild(this.build_field('sequencer'));
         // div.appendChild(this.build_field('pcr', 'pcr', 'PCR'));
         return div;
-    },
-
-    createCloseButton: function() {
-        var self = this;
-        var close = Object.getPrototypeOf(RunFormBuilder.prototype).createCloseButton.call(this);
-        $(close).click(function() {
-            var button = document.getElementById('run_button');
-        });
-        return close;
     }
 }
 RunFormBuilder.prototype = $.extend(Object.create(SetFormBuilder.prototype), RunFormBuilder.prototype)
@@ -266,15 +248,6 @@ GenericFormBuilder.prototype ={
         div.appendChild(this.build_field('name', undefined, undefined, true));
         div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'set'));
         return div;
-    },
-
-    createCloseButton: function() {
-        var self = this;
-        var close = Object.getPrototypeOf(GenericFormBuilder.prototype).createCloseButton.call(this);
-        $(close).click(function() {
-            var button = document.getElementById('generic_button');
-        });
-        return close;
     }
 }
 GenericFormBuilder.prototype = $.extend(Object.create(SetFormBuilder.prototype), GenericFormBuilder.prototype)
@@ -416,15 +389,6 @@ FileFormBuilder.prototype = {
         indicator.id = "file_indicator_" + self.index;
         d.appendChild(indicator);
         return d;
-    },
-
-    createCloseButton = function() {
-        var self = this;
-        var close = Object.getPrototypeOf(FileFormBuilder.prototype).createCloseButton.call(this);
-        $(close).click(function() {
-            var button = document.getElementById('file_button');
-        });
-        return close;
     }
 }
 FileFormBuilder.prototype = $.extend(Object.create(FormBuilder.prototype), FileFormBuilder.prototype)
