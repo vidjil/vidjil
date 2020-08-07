@@ -1279,7 +1279,6 @@ class ListWindows(VidjilJson):
         # and dissemblables if value is under 0,5 (high diversity).
         !!! Computed only on present clones (so should be run with `-Y all`)
         """
-        index_div = "index_Ds_diversity"
         clones    = self.d["clones"]
 
         m  = 0
