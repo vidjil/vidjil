@@ -1,3 +1,57 @@
+function addPatientForm(content) {
+    var fieldSet = document.getElementById('fieldset_container')
+    var index = document.getElementById('patient_button').dataset.index++
+    var div = new PatientFormBuilder().build(index, content)
+    fieldSet.appendChild(div);
+}
+
+function addRunForm(content) {
+    var fieldSet = document.getElementById('fieldset_container')
+    var index = document.getElementById('run_button').dataset.index++
+    var div = new RunFormBuilder().build(index, content)
+    fieldSet.appendChild(div);
+}
+
+function addSetForm(content) {
+    var fieldSet = document.getElementById('fieldset_container')
+    var index = document.getElementById('generic_button').dataset.index++
+    var div = new GenericFormBuilder().build(index, content)
+    fieldSet.appendChild(div);
+}
+
+function readClipBoard() {
+    navigator.clipboard.readText()
+        .then(function(clipboard){
+            var lines = clipboard.split('\n');
+
+            for(var i = 0;i < lines.length;i++){
+                var cells = lines[i].split('\t');
+
+                if (cells.length == 4)
+                    addPatientForm({    //patient_id : cells[0],
+                                        first_name : cells[0],
+                                        last_name : cells[1],
+                                        birth : cells[2],
+                                        info : cells[3]})
+
+                if (cells.length == 3)                   
+                    addRunForm({    //run_id : cells[0],
+                                    name : cells[0],
+                                    date : cells[1],
+                                    info : cells[2]})
+
+                if (cells.length == 2)                   
+                    addSetForm({    name : cells[0],
+                                    info : cells[1]})
+            }
+        })
+        .catch(function(err){
+            console.log('Something went wrong', err);
+        });
+}
+
+
+
 function capitalise(text) {
     return text.charAt(0).toUpperCase() + text.slice(1)
 }
