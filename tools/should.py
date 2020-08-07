@@ -337,11 +337,11 @@ def write_to_file(f, what):
         ff.write(what)
 
 
-RE_GETITEM = re.compile('(\S+)\[(\S+)\]$')
+RE_GETITEM = re.compile('(\S*?)\[(\S+?)\](\S*)$')
 
 def deep_get(d, key, sep='.'):
     '''
-    >>> d = {'1':{ '2': 3, '4': 5}, 'z': [6, {'a': 7}]}
+    >>> d = {'1':{ '2': 3, '4': 5}, 'z': [6, {'a': 7}, [8, {'b': 9}]]}
 
     >>> deep_get(d, '1.2')
     3
@@ -351,17 +351,45 @@ def deep_get(d, key, sep='.'):
 
     >>> deep_get(d, 'z[1].a')
     7
+    >>> deep_get(d, 'z[2][0]')
+    8
+    >>> deep_get(d, 'z[2][1].b')
+    9
+
     >>> deep_get(d, 'z[3]')
     Traceback (most recent call last):
     KeyError: 'z[3]'
+
+    >>> deep_get(9, '')
+    9
+    >>> deep_get([1, 2, 3], '[1]')
+    2
     '''
 
     def deep_get_(d, keys):
         if not keys:
             return d
+        if not keys[0]:
+            return d
+
         m = RE_GETITEM.match(keys[0])
-        obj = d[m.group(1)][int(m.group(2))] if m else d[keys[0]]
-        return deep_get_(obj, keys[1:])
+        if m:
+            key = m.group(1)
+            index = int(m.group(2))
+            s_index_next = m.group(3)
+
+            if key:
+                d = d[key]
+            obj = d[index]
+
+            if s_index_next:
+                keys = [s_index_next] + keys[1:]
+            else:
+                keys = keys[1:]
+        else:
+            obj = d[keys[0]]
+            keys = keys[1:]
+        return deep_get_(obj, keys)
 
     try:
         return deep_get_(d, key.split(sep))
