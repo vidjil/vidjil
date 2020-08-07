@@ -17,17 +17,21 @@
       Patients, runs and sets are different ways to group samples.
       You can create at once several of these sets:
       <span class="button2"
-            onclick="document.getElementById('fieldset_container').appendChild(new PatientFormBuilder().build(this.dataset.index++));"
+            onclick="addPatientForm()"
             id="patient_button"
             data-index="{{=len(sets[defs.SET_TYPE_PATIENT])}}">add patient</span>
       <span class="button2"
-            onclick="document.getElementById('fieldset_container').appendChild(new RunFormBuilder().build(this.dataset.index++));"
+            onclick="addRunForm()"
             id="run_button"
             data-index="{{=len(sets[defs.SET_TYPE_RUN])}}">add run</span>
       <span class="button2"
-            onclick="document.getElementById('fieldset_container').appendChild(new GenericFormBuilder().build(this.dataset.index++));"
+            onclick="addSetForm()"
             id="generic_button"
             data-index="{{=len(sets[defs.SET_TYPE_GENERIC])}}">add set</span>
+      <span class="button2"
+            onclick="readClipBoard();"
+            id="generic_button"
+            data-index="{{=len(sets[defs.SET_TYPE_GENERIC])}}">paste clipboard</span>
       <div class="clear"></div>
     </div>
 {{ pass }}

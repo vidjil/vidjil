@@ -1,4 +1,6 @@
+<div>
 <span class="left form_label">Set {{=i+1}}</span>
+<i class="icon-cancel" onclick="var elem = this.parentNode;elem.parentNode.removeChild(elem);"></i>
 <input type="hidden" id="generic_id_{{=i}}" name="generic[{{=i}}][id]" value="{{if set is not None:}}{{=set['id']}}{{pass}}">
 <input type="hidden" sample_set_id="generic_sample_set_id_{{=i}}" name="generic[{{=i}}][sample_set_id]" value="{{if set is not None:}}{{=set['sample_set_id']}}{{pass}}">
 {{ if set is not None and 'error' in set and len(set['error']) > 0: }}
@@ -24,4 +26,5 @@
         placeholder="set information (#tags can be used)"
         autocomplete="off"
         value="{{if set is not None and set['info'] is not None:}}{{=set['info']}}{{pass}}"/>
+</div>
 </div>
