@@ -142,20 +142,7 @@ FormBuilder.prototype = {
         }
         d.appendChild(txt);
         return d;
-    }
-}
-FormBuilder.prototype = $.extend(Object.create(Closeable.prototype), FormBuilder.prototype)
-
-
-
-
-
-function SetFormBuilder() {
-    this.type = 'foobar';
-    FormBuilder.call(this);
-}
-
-SetFormBuilder.prototype = {
+    },
 
     set_id: function() {
         var id = 'id_label';
@@ -163,48 +150,45 @@ SetFormBuilder.prototype = {
         f.firstChild.className += " stringid";
         return f;
     },
-
-    build_date: function(id, name, label) {
-        return Object.getPrototypeOf(SetFormBuilder.prototype).build_date.call(this, id, this.type, name, label);
-    }
 }
-SetFormBuilder.prototype = $.extend(Object.create(FormBuilder.prototype), SetFormBuilder.prototype)
-
-
+FormBuilder.prototype = $.extend(Object.create(Closeable.prototype), FormBuilder.prototype)
 
 
 
 
 
 function PatientFormBuilder() {
-    SetFormBuilder.call(this);
+    FormBuilder.call(this);
     this.type = 'patient'
 }
 
 PatientFormBuilder.prototype = {
 
-    build: function(index) {
+    build: function(index, content) {
         this.index = index;
+        this.content = content
+        if (this.content == undefined) this.content = {}
+
         var div = this.build_div(this.type);
         div.appendChild(this.createCloseButton());
         div.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         div.appendChild(this.build_input('sample_set_id', 'text', 'sample_set_id', 'hidden', this.type));
         div.appendChild(this.set_id());
-        div.appendChild(this.build_field('first_name', undefined, undefined, true));
-        div.appendChild(this.build_field('last_name', undefined, undefined, true));
-        div.appendChild(this.build_date('birth'));
-        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'patient'));
+        div.appendChild(this.build_field('first_name', undefined, undefined ,this.content.first_name, true));
+        div.appendChild(this.build_field('last_name', undefined, undefined ,this.content.last_name, true));
+        div.appendChild(this.build_date('birth', this.type, undefined, undefined, this.content.birth));
+        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'patient', this.content.info));
         return div;
     }
 }
-PatientFormBuilder.prototype = $.extend(Object.create(SetFormBuilder.prototype), PatientFormBuilder.prototype)
+PatientFormBuilder.prototype = $.extend(Object.create(FormBuilder.prototype), PatientFormBuilder.prototype)
 
 
 
 
 
 function RunFormBuilder() {
-    SetFormBuilder.call(this);
+    FormBuilder.call(this);
     this.type = 'run';
 }
 
@@ -218,14 +202,14 @@ RunFormBuilder.prototype = {
         div.appendChild(this.build_input('sample_set_id', 'text', 'sample_set_id', 'hidden', this.type));
         div.appendChild(this.set_id());
         div.appendChild(this.build_field('name', undefined, undefined, true));
-        div.appendChild(this.build_date('run_date', 'run_date', 'Date'));
+        div.appendChild(this.build_date('run_date', this.type, 'run_date', 'Date'));
         div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'run'));
         // div.appendChild(this.build_field('sequencer'));
         // div.appendChild(this.build_field('pcr', 'pcr', 'PCR'));
         return div;
     }
 }
-RunFormBuilder.prototype = $.extend(Object.create(SetFormBuilder.prototype), RunFormBuilder.prototype)
+RunFormBuilder.prototype = $.extend(Object.create(FormBuilder.prototype), RunFormBuilder.prototype)
 
 
 
@@ -250,7 +234,7 @@ GenericFormBuilder.prototype ={
         return div;
     }
 }
-GenericFormBuilder.prototype = $.extend(Object.create(SetFormBuilder.prototype), GenericFormBuilder.prototype)
+GenericFormBuilder.prototype = $.extend(Object.create(FormBuilder.prototype), GenericFormBuilder.prototype)
 
 
 
@@ -272,7 +256,7 @@ FileFormBuilder.prototype = {
         div.appendChild(this.createCloseButton());
         div.appendChild(this.build_hidden_fields());
         div.appendChild(this.build_file_div());
-        div.appendChild(this.build_date('sampling_date', 'file'));
+        div.appendChild(this.build_date('sampling_date', this.type, 'file'));
         div.appendChild(this.build_info('file', this.group_ids, 'sample'));
         div.appendChild(this.build_set_div());
         return div;
