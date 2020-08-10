@@ -3,7 +3,7 @@
 
 ''' Program to perform spike-in normalization in .vidjil files.
 
-    Developed at the Boldrini Center, Brazil, in 2018-2019.
+    Developed at the Boldrini Center, Brazil, in 2018-2020.
 '''
 
 ############################################################
@@ -14,16 +14,48 @@ import sys
 import json
 import os
 import math
-import argparse
 
 ############################################################
 ### constants
 
-version = 'S0.06'
+version = 'S0.08'
 UNI = 'UNI'                     # except Vidjil leaves cluster to user
 NG600 = 100000                  # number of cells for 600ng of DNA
-### maximum reads for a give spike-in allowed in diagnostic samples
+### maximum reads for a given spike-in allowed in diagnostic samples
 DIAGMAX = 20.0
+
+############################################################
+### translation table: Vidjil family -> JSON family
+
+family = {
+    "IGHV1": "VH1",
+    "IGHV2": "VH2",
+    "IGHV3": "VH3",
+    "IGHV4": "VH4",
+    "IGHV5": "VH5",
+    "IGHV6": "VH6",
+    "IGHV7": "VH7",
+    "IGKV1": "VK1",
+    "IGKV2": "VK2",
+    "IGKV3": "VK3",
+    "IGLV1": "VL1",
+    "IGLV2": "VL2",
+    "TRDD2": "DD2",
+    "TRDV1": "VD1",
+    "TRDV2": "VD2",
+    "TRDV3": "VD3",
+    "TRGV1": "VGf1",
+    "TRGV2": "VGf1",
+    "TRGV3": "VGf1",
+    "TRGV4": "VGf1",
+    "TRGV5": "VGf1",
+    "TRGV6": "VGf1",
+    "TRGV7": "VGf1",
+    "TRGV8": "VGf1",
+    "TRGV9": "VG9",
+    "TRGV10": "VG10",
+    "TRGV11": "VG11",
+    }
 
 ############################################################
 ### routines
@@ -31,7 +63,7 @@ DIAGMAX = 20.0
 ############################################################
 ### function to get family name from clone name
 ### returns the longest alphanumeric prefix
-def family(name):
+def vidfam(name):
     pos = 1
     while pos < len(name) and name[pos].isalnum():
         pos+=1
@@ -74,7 +106,7 @@ def prevalentGermline(germlines):
     reads = {}
     prevalent = ""
     for g in germlines:
-        germline = g[0:3] # fiable
+        germline = g[0:3]
         if germline in reads:
             reads[germline] += germlines[g][0]
         else:
@@ -87,7 +119,6 @@ def prevalentGermline(germlines):
     
 def spikeTable(data):
     reads = {}
-    fams = {}
     ## get config
     spikes = data['config']['labels']
     
@@ -97,8 +128,7 @@ def spikeTable(data):
             ## spike-in clone
             label = clone['label']
             if 'name' in clone:
-                ## call family before changing clone name
-                fams[label] = family(clone['name'])
+                ## change clone name
                 clone['name'] = label + ' ' + clone['name']
             else:
                 ## add spike name to clone anyway
@@ -112,10 +142,17 @@ def spikeTable(data):
                 reads[label] = 0.0
             reads[label] += a[0]
     for spike in spikes:
+        ## 'label' in Vidjil file is 'name' is spike JSON
         spike['reads'] = reads[spike['name']] if spike['name'] in reads else 0
-        ## vfam stands for 'Vidjil family' 
-        spike['vfam'] = fams[spike['name']] if spike['name'] in fams else spike['family']
-
+    if msgs >= 1:
+        lastFam = ''
+        for spike in sorted(spikes, key=lambda spk: spk['family']+" {0:03}".format(int(spk['copies']))):
+            if spike['family'] != lastFam:
+                print("=" * (30 + 1 + 7 + 1 + 4), file=sys.stderr)
+            lastFam = spike['family']
+            fmtStr = '{0:30} {1:7} {2:>4}'
+            print(fmtStr.format(spike['name'], spike['reads'], spike['copies']), file=sys.stderr)
+        print("=" * (30 + 1 + 7 + 1 + 4), file=sys.stderr)
     return spikes
 
 ############################################################
@@ -126,8 +163,6 @@ def computeCoefficients(spikes):
     computes f for each user family
     plus UNI coefficient
     if family not dense enough or Pearson < 0.8 use UNI
-    plus SPIKE coefficient, used for spikes
-    goal is to force sum of spikes = 100,000 - sum of non spikes
     '''
 
     coeff = {}
@@ -140,14 +175,15 @@ def computeCoefficients(spikes):
 
     copyNos = list(set([int(spike['copies']) for spike in spikes]))
     avgReads = []
-    if msgs:
+    if msgs >= 1:
         print('copyNos: ', copyNos)
     for copyNo in copyNos:
         reads = [ spike['reads'] for spike in spikes
-                    if int(spike['copies']) == copyNo ]
+                  if int(spike['copies']) == copyNo
+        ]
         ## len(reads) is never zero because spike['copies'] is in copyNos
         avgReads.append(sum(reads)/len(reads))
-    if msgs:
+    if msgs >= 1:
         print('avgReads: ', avgReads)
     if len(avgReads) == 0 or max(avgReads) <= DIAGMAX:
         ## not enough spikes; probably diagnostic sample
@@ -155,11 +191,14 @@ def computeCoefficients(spikes):
         print('** No normalization performed **', file=sys.stderr)
     else:
         ### universal coefficient
+        if msgs >= 2:
+            fmtStr = 'UNI regression: {0} {1}'
+            print(fmtStr.format(copyNos, avgReads), file=sys.stderr)
         lr = linearRegression(copyNos, avgReads)
         coeff[UNI] = lr['slope']
         r2[UNI] = lr['r2']
         perr[UNI] = lr['s']
-        if msgs:
+        if msgs >= 1:
             fmtStr = 'Uni coefficient estimation: {0:15.13f} s: {1:5.1f} r2: {2:15.13f}'
             print(fmtStr.format(coeff[UNI], perr[UNI], r2[UNI]), file=sys.stderr)
 
@@ -167,33 +206,36 @@ def computeCoefficients(spikes):
         ### also use one point per copy number
         ### test for not enough points and r2 <= 0.8
 
-        vfams = list(set([spike['vfam'] for spike in spikes]))
-        if msgs:
-            print('Vfams: {0}'.format(vfams))
-        for vfam in vfams:
-            copyNos = list(set([int(spike['copies']) for spike in spikes if spike['vfam'] == vfam]))
+        fams = list(set([spike['family'] for spike in spikes]))
+        if msgs >= 1:
+            print('Fams: {0}'.format(fams))
+        for fam in fams:
+            copyNos = list(set([int(spike['copies']) for spike in spikes if spike['family'] == fam]))
             reads = [ sum([ spike['reads'] for spike in spikes
-                            if spike['vfam'] == vfam and int(spike['copies']) == copyNo])
+                            if spike['family'] == fam and int(spike['copies']) == copyNo])
                       for copyNo in copyNos ]
             if len(reads) <= 1 or max(reads) <= DIAGMAX:
                 ## not enough points; use UNI coefficient
-                coeff[vfam] = coeff[UNI]
-                r2[vfam] = r2[UNI]
-                perr[vfam] = perr[UNI]
+                coeff[fam] = coeff[UNI]
+                r2[fam] = r2[UNI]
+                perr[fam] = perr[UNI]
             else:
                 ### fit curve
+                if msgs >= 2:
+                    fmtStr = '{0} regression: {1} {2}'
+                    print(fmtStr.format(fam, copyNos, reads), file=sys.stderr)
                 lr = linearRegression(copyNos, reads)
-                coeff[vfam] = lr['slope']
-                r2[vfam] = lr['r2']
-                perr[vfam] = lr['s']
+                coeff[fam] = lr['slope']
+                r2[fam] = lr['r2']
+                perr[fam] = lr['s']
                 if lr['r2'] <= 0.8:
                     ## r2 <= 0.8; use UNI cofficient
-                    coeff[vfam] = coeff[UNI]
-                    r2[vfam] = r2[UNI]
-                    perr[vfam] = perr[UNI]
-            if msgs:
+                    coeff[fam] = coeff[UNI]
+                    r2[fam] = r2[UNI]
+                    perr[fam] = perr[UNI]
+            if msgs >= 1:
                 fmtStr = '{0} coefficient estimation: {1:15.13f} s: {2:5.1f} r2: {3:15.13f}'
-                print(fmtStr.format(vfam, coeff[vfam], perr[vfam], r2[vfam]), file=sys.stderr)
+                print(fmtStr.format(fam, coeff[fam], perr[fam], r2[fam]), file=sys.stderr)
 
     return coeff, r2
 
@@ -206,14 +248,15 @@ def computeCoefficients(spikes):
 ### spk: total number of spike-in reads
 
 def addNormalizedReads(data, coeff, r2, spk):
-    if msgs:
-        print('Normalizing reads and prinitng output file', file=sys.stderr)
+    if msgs >= 1:
+        print('Normalizing reads and printing output file', file=sys.stderr)
 
     data['coefficients'] = coeff
     ## find prevalent germine and sum of its reads
     prevalent, spg = prevalentGermline(data['reads']['germline'])
     data['samples']['prevalent'] = [ prevalent ]
     data['samples']['ampl_coeff'] = [ spg/spk ]
+    data['samples']['UNI_COEFF'] = [ coeff[UNI] ]
     data['samples']['UNI_R2'] = [ r2[UNI] ]
     ### normalize just clones from the prevalent germline
     for clone in data['clones']:
@@ -224,15 +267,24 @@ def addNormalizedReads(data, coeff, r2, spk):
         reads = a[0]
         if 'name' in clone:
             ## use UNI for unknown, unnamed or unsegmented families or reads
-            fam = family(clone['name'])
-            if fam not in coeff:
+            vfam = vidfam(clone['name'])
+            if vfam in family:
+                fam = family[vfam]
+                if clone['name'].find('DD3') >= 0:
+                    fam += '-dd3'
+            else:
                 ## unknown family or unsegmented clone
+                fam = UNI
+            if fam not in coeff:
+                print('  *** check JSON file: missing family: {0}'.format(fam), file=sys.stderr)
+                print('  ***  (using universal coefficient)', file=sys.stderr)
                 fam = UNI
         else:
             ## unnamed clone
             fam = UNI
         if 'germline' in clone and clone['germline'][0:3] == prevalent:
-            clone['copy_number'] = reads * coeff[fam]
+            clone['norm_coeff'] = [ coeff[fam] ]
+            clone['copy_number'] = [ reads * coeff[fam] ]
             clone['normalized_reads'] = [ reads*coeff[fam]*spg/NG600 ]
             clone['R2'] = [ r2[fam] ]
             clone['family'] = [ fam ]
@@ -241,33 +293,12 @@ def addNormalizedReads(data, coeff, r2, spk):
 ### command line, initial msg
 
 if __name__ == '__main__':
-
-    print("#", ' '.join(sys.argv))
-
-    DESCRIPTION = 'Script to include spike-nomalization on a vidjil result file'
-    
-    #### Argument parser (argparse)
-
-    parser = argparse.ArgumentParser(description= DESCRIPTION,
-                                    epilog='''Example:
-  python %(prog)s --input filein.vidjil --ouput fileout.vidjil''',
-                                    formatter_class=argparse.RawTextHelpFormatter)
-
-
-    group_options = parser.add_argument_group() # title='Options and parameters')
-    group_options.add_argument('--input',  help='Vidjil input file')
-    group_options.add_argument('--output', help='Vidjil output file with normalization')
-    group_options.add_argument('--silent', action='store_false', default=False, help='run script in silent verbose mode')
-    
-    args = parser.parse_args()
-
-    inf  = args.input
-    outf = args.output
-    msgs = args.silent
-    print ( "silent: %s" % msgs)
+    inf = sys.argv[1]
+    outf = sys.argv[2]
+    msgs = int(sys.argv[3]) if len(sys.argv) >= 4 else 0
 
     # read input file
-    if msgs:
+    if msgs >= 1:
         print('Reading input file', file=sys.stderr)
 
     with open(inf) as inp:
@@ -275,8 +306,8 @@ if __name__ == '__main__':
 
     # process data
     spikes = spikeTable(data)
-    spk = sum([spike['reads'] for spike in spikes])
     coeff, r2 = computeCoefficients(spikes)
+    spk = sum([spike['reads'] for spike in spikes])
     if coeff:
         addNormalizedReads(data, coeff, r2, spk)
 
