@@ -308,6 +308,7 @@ function FileFormBuilder(group_ids, source, num_files) {
     this.group_ids = group_ids;
     this.source = source;
     this.num_files = num_files;
+    this.type = "file"
 
 }
 
@@ -319,7 +320,7 @@ FileFormBuilder.prototype = {
         div.appendChild(this.createCloseButton());
         div.appendChild(this.build_hidden_fields());
         div.appendChild(this.build_file_div());
-        div.appendChild(this.build_date('sampling_date', this.type, 'file'));
+        div.appendChild(this.build_date('sampling_date', this.type, 'sampling_date'));
         div.appendChild(this.build_info('file', this.group_ids, 'sample'));
         div.appendChild(this.build_set_div());
         return div;
