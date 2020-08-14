@@ -372,15 +372,25 @@ Model.prototype = {
         }
     }, //end initClones
 
-changeCloneNotation: function(cloneNotationType) {
-    this.cloneNotationType = cloneNotationType;
-    this.update();
+changeCloneNotation: function(cloneNotationType, update) {
+    this.cloneNotationType = cloneNotationType
+
+    if (this.localStorage) this.localStorage.setItem('cloneNotation', cloneNotationType)
+
+
+    update = (update==undefined) ? true : update
+    if (update) this.update();
 },
 
 
-changeAlleleNotation: function(alleleNotation) {
+changeAlleleNotation: function(alleleNotation, update) {
     this.alleleNotation = alleleNotation;
-    this.update();
+
+    if (this.localStorage) this.localStorage.setItem('alleleNotation', alleleNotation)
+    
+
+    update = (update==undefined) ? true : update
+    if (update) this.update();
 },
     
     /**
@@ -2435,6 +2445,8 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     changeNotation: function (notation, update) {
         this.notation_type = notation
+        if (this.localStorage) this.localStorage.setItem('notation', notation)
+
         if (update) this.update()
     },
     
@@ -2445,18 +2457,26 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     changeTimeFormat: function (time, update) {
         this.time_type = time
+        if (this.localStorage) this.localStorage.setItem('timeFormat', time)
+
         if (update) this.update()
     },
     
     /**
      * change default color method
-     * @param {string} colorM - TODO 
+     * @param {string} colorM 
+     * @pram {bool} update - will update the display after default = true
      * */
-    changeColorMethod: function (colorM) {
-        this.colorMethod = colorM;
-        var list = [];
-        for (var i = 0; i<this.clones.length; i++) list.push(i);
-        this.updateElemStyle(list);
+    changeColorMethod: function (colorM, update) {
+        update = (update==undefined) ? true : update;
+
+        this.colorMethod = colorM
+        if (this.localStorage) this.localStorage.setItem('colorMethod', colorM)
+
+        if (!update) return 
+        var list = []
+        for (var i = 0; i<this.clones.length; i++) list.push(i)
+        this.updateElemStyle(list)
     },
     
     /**
