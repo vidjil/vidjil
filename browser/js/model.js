@@ -53,6 +53,7 @@ function Model() {
     this.germline = {};
     this.create_germline_obj();
     this.view = [];
+    this.checkLocalStorage();
     this.setAll();
     this.checkBrowser();
     this.germlineList = new GermlineList()
@@ -2137,6 +2138,27 @@ changeAlleleNotation: function(alleleNotation) {
             console.log({"type": "popup", "default": "browser_error"});
         }
 
+    },
+
+    /**
+     * check browser local storage availability
+     * */
+    checkLocalStorage: function () {
+        this.localStorage
+        try {
+            this.localStorage = window['localStorage'];
+            var x = '__storage_test__';
+            this.localStorage.setItem(x, x);
+            this.localStorage.removeItem(x);
+        }
+        catch(e) {
+            return e instanceof DOMException && (
+                e.code === 22 ||
+                e.code === 1014 ||
+                e.name === 'QuotaExceededError' ||
+                e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+                (this.localStorage && this.localStorage.length !== 0);
+        }
     },
 
 
