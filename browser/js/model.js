@@ -206,6 +206,9 @@ Model.prototype = {
         this.tOther = 0;  // Other (previously) selected time/sample
         this.focus = -1;
 
+        this.colorMethod = "Tag"
+        this.notation_type = "percent"
+        this.time_type = "name"
 
         this.display_window = false
         this.isPlaying = false;
