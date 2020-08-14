@@ -175,13 +175,29 @@ Model.prototype = {
      * Set all the properties. Called in the constructor.
      */
     setAll: function () {
-        this.reset();
-
+        this.reset()
         this.system_selected = []
-        this.colorMethod = "Tag";
-        this.changeNotation("percent", false)
-        this.changeTimeFormat("name", false)
-        this.top = 50;
+        this.top = 50
+
+        var colorM = this.colorMethod
+        var notation = this.notation_type
+        var timeFormat = this.time_type
+        var alleleNotation = this.alleleNotation
+        var cloneNotation = this.cloneNotationType
+
+        if (this.localStorage){
+            if (localStorage.getItem('colorMethod'))    colorM      = localStorage.getItem('colorMethod')
+            if (localStorage.getItem('timeFormat'))     timeFormat  = localStorage.getItem('timeFormat')
+            if (localStorage.getItem('notation'))       notation    = localStorage.getItem('notation')
+            if (localStorage.getItem('alleleNotation')) alleleNotation = localStorage.getItem('alleleNotation')
+            if (localStorage.getItem('cloneNotation'))  cloneNotation = localStorage.getItem('cloneNotation')
+        }
+        
+        this.changeColorMethod(colorM ,   false)
+        this.changeNotation(notation,     false)
+        this.changeTimeFormat(timeFormat, false)
+        this.changeAlleleNotation(alleleNotation, false)
+        this.changeCloneNotation(cloneNotation, false)
     },
     /**
      * remove all elements from the previous .vidjil file but keep current user parameters and linked views
