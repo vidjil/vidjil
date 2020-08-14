@@ -393,6 +393,8 @@ changeCloneNotation: function(cloneNotationType, update) {
 
     if (this.localStorage) this.localStorage.setItem('cloneNotation', cloneNotationType)
 
+    var menu = document.getElementById("menuCloneNot_" + cloneNotationType)
+    if (menu) menu.checked = true
 
     update = (update==undefined) ? true : update
     if (update) this.update();
@@ -404,6 +406,8 @@ changeAlleleNotation: function(alleleNotation, update) {
 
     if (this.localStorage) this.localStorage.setItem('alleleNotation', alleleNotation)
     
+    var menu = document.getElementById("menuAlleleNot_" + alleleNotation)
+    if (menu) menu.checked = true
 
     update = (update==undefined) ? true : update
     if (update) this.update();
@@ -2463,6 +2467,9 @@ changeAlleleNotation: function(alleleNotation, update) {
         this.notation_type = notation
         if (this.localStorage) this.localStorage.setItem('notation', notation)
 
+        var menu = document.getElementById("menuNotation_" + notation)
+        if (menu) menu.checked = true
+
         if (update) this.update()
     },
     
@@ -2474,6 +2481,9 @@ changeAlleleNotation: function(alleleNotation, update) {
     changeTimeFormat: function (time, update) {
         this.time_type = time
         if (this.localStorage) this.localStorage.setItem('timeFormat', time)
+
+        var menu = document.getElementById("menuTimeForm_" + time)
+        if (menu) menu.checked = true
 
         if (update) this.update()
     },
@@ -2488,6 +2498,8 @@ changeAlleleNotation: function(alleleNotation, update) {
 
         this.colorMethod = colorM
         if (this.localStorage) this.localStorage.setItem('colorMethod', colorM)
+        var menu = document.getElementById("color_menu_select")
+        if (menu) menu.value = colorM
 
         if (!update) return 
         var list = []
