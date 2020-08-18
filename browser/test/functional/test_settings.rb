@@ -25,7 +25,9 @@ class TestGraph < BrowserTest
     type_name = "local_storage" 
     $b.div(:id => 'visu2_menu').hover
     sleep 0.5   #wait for menu to finish transition before starting 
-    test_name_values(type_name)
+    if $b.driver.respond_to? :local_storage
+      test_name_values(type_name)
+    end
   end
 
 

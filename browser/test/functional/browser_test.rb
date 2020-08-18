@@ -51,7 +51,7 @@ class BrowserTest < MiniTest::Test
     print "Testing Vidjil client at " + index_path + "\n"
     $b.goto index_path
 
-    if local_storage != nil
+    if local_storage != nil and $b.driver.respond_to? :local_storage
       $b.driver.execute_script("localStorage.clear();")
       print "Set localStorage :\n"
       local_storage.each do |key, value|
