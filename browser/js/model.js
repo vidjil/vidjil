@@ -385,7 +385,7 @@ Model.prototype = {
 changeCloneNotation: function(cloneNotationType, update) {
     this.cloneNotationType = cloneNotationType
 
-    if (this.localStorage) this.localStorage.setItem('cloneNotation', cloneNotationType)
+    if (this.localStorage) localStorage.setItem('cloneNotation', cloneNotationType)
 
     var menu = document.getElementById("menuCloneNot_" + cloneNotationType)
     if (menu) menu.checked = true
@@ -398,7 +398,7 @@ changeCloneNotation: function(cloneNotationType, update) {
 changeAlleleNotation: function(alleleNotation, update) {
     this.alleleNotation = alleleNotation;
 
-    if (this.localStorage) this.localStorage.setItem('alleleNotation', alleleNotation)
+    if (this.localStorage) localStorage.setItem('alleleNotation', alleleNotation)
     
     var menu = document.getElementById("menuAlleleNot_" + alleleNotation)
     if (menu) menu.checked = true
@@ -2184,7 +2184,7 @@ changeAlleleNotation: function(alleleNotation, update) {
                 e.code === 1014 ||
                 e.name === 'QuotaExceededError' ||
                 e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
-                (this.localStorage && this.localStorage.length !== 0);
+                (this.localStorage && this.localStorage.length !== 0)
         }
     },
 
@@ -2459,7 +2459,7 @@ changeAlleleNotation: function(alleleNotation, update) {
      * */
     changeNotation: function (notation, update) {
         this.notation_type = notation
-        if (this.localStorage) this.localStorage.setItem('notation', notation)
+        if (this.localStorage) localStorage.setItem('notation', notation)
 
         var menu = document.getElementById("menuNotation_" + notation)
         if (menu) menu.checked = true
@@ -2474,7 +2474,7 @@ changeAlleleNotation: function(alleleNotation, update) {
      * */
     changeTimeFormat: function (time, update) {
         this.time_type = time
-        if (this.localStorage) this.localStorage.setItem('timeFormat', time)
+        if (this.localStorage) localStorage.setItem('timeFormat', time)
 
         var menu = document.getElementById("menuTimeForm_" + time)
         if (menu) menu.checked = true
@@ -2491,7 +2491,7 @@ changeAlleleNotation: function(alleleNotation, update) {
         update = (update==undefined) ? true : update;
 
         this.colorMethod = colorM
-        if (this.localStorage) this.localStorage.setItem('colorMethod', colorM)
+        if (this.localStorage) localStorage.setItem('colorMethod', colorM)
         var menu = document.getElementById("color_menu_select")
         if (menu) menu.value = colorM
 
