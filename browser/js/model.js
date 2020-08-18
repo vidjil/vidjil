@@ -341,12 +341,12 @@ Model.prototype = {
         $("#expected_normalization").hide();
 
         // time_type to name_short if there is many samples
-        if (this.samples.order.length > 6)
+        if (this.samples.order.length > 6 && !localStorage.getItem("timeFormat"))
             this.changeTimeFormat("short_name", false)
 
         // time_type to delta_date if we have enough different dates
         deltas = this.dateDiffMinMax()
-        if (deltas.max > 1)
+        if (deltas.max > 1 && !localStorage.getItem("timeFormat"))
             this.changeTimeFormat("delta_date", false)
         
         //      NSIZE
