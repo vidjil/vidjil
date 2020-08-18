@@ -382,10 +382,10 @@ Model.prototype = {
         }
     }, //end initClones
 
-changeCloneNotation: function(cloneNotationType, update) {
+changeCloneNotation: function(cloneNotationType, update, save) {
     this.cloneNotationType = cloneNotationType
 
-    if (this.localStorage) localStorage.setItem('cloneNotation', cloneNotationType)
+    if (this.localStorage && save) localStorage.setItem('cloneNotation', cloneNotationType)
 
     var menu = document.getElementById("menuCloneNot_" + cloneNotationType)
     if (menu) menu.checked = true
@@ -395,10 +395,10 @@ changeCloneNotation: function(cloneNotationType, update) {
 },
 
 
-changeAlleleNotation: function(alleleNotation, update) {
+changeAlleleNotation: function(alleleNotation, update, save) {
     this.alleleNotation = alleleNotation;
 
-    if (this.localStorage) localStorage.setItem('alleleNotation', alleleNotation)
+    if (this.localStorage && save) localStorage.setItem('alleleNotation', alleleNotation)
     
     var menu = document.getElementById("menuAlleleNot_" + alleleNotation)
     if (menu) menu.checked = true
@@ -2454,11 +2454,12 @@ changeAlleleNotation: function(alleleNotation, update) {
     /**
      * change default notation display for sizes
      * @param {string} notation - notation type ('scientific' , 'percent')
-     * @pram {bool} update - will update the display after
+     * @param {bool} update - will update the display after
+     * @param {bool} save - will save value in user preferences (localStorage) 
      * */
-    changeNotation: function (notation, update) {
+    changeNotation: function (notation, update, save) {
         this.notation_type = notation
-        if (this.localStorage) localStorage.setItem('notation', notation)
+        if (this.localStorage && save) localStorage.setItem('notation', notation)
 
         var menu = document.getElementById("menuNotation_" + notation)
         if (menu) menu.checked = true
@@ -2469,11 +2470,12 @@ changeAlleleNotation: function(alleleNotation, update) {
     /**
      * change default time format for sample/time names
      * @param {string} notation - format ('name', 'sampling_date', 'delta_date', 'delta_date_no_zero')
-     * @pram {bool} update - will update the display after
+     * @param {bool} update - will update the display after
+     * @param {bool} save - will save value in user preferences (localStorage) 
      * */
-    changeTimeFormat: function (time, update) {
+    changeTimeFormat: function (time, update, save) {
         this.time_type = time
-        if (this.localStorage) localStorage.setItem('timeFormat', time)
+        if (this.localStorage && save) localStorage.setItem('timeFormat', time)
 
         var menu = document.getElementById("menuTimeForm_" + time)
         if (menu) menu.checked = true
@@ -2484,13 +2486,14 @@ changeAlleleNotation: function(alleleNotation, update) {
     /**
      * change default color method
      * @param {string} colorM 
-     * @pram {bool} update - will update the display after default = true
+     * @param {bool} update - will update the display after default = true
+     * @param {bool} save - will save value in user preferences (localStorage) 
      * */
-    changeColorMethod: function (colorM, update) {
+    changeColorMethod: function (colorM, update, save) {
         update = (update==undefined) ? true : update;
 
         this.colorMethod = colorM
-        if (this.localStorage) localStorage.setItem('colorMethod', colorM)
+        if (this.localStorage && save) localStorage.setItem('colorMethod', colorM)
         var menu = document.getElementById("color_menu_select")
         if (menu) menu.value = colorM
 
@@ -2498,6 +2501,16 @@ changeAlleleNotation: function(alleleNotation, update) {
         var list = []
         for (var i = 0; i<this.clones.length; i++) list.push(i)
         this.updateElemStyle(list)
+    },
+
+    resetSettings: function () {
+        localStorage.clear()
+        this.changeColorMethod("Tag",       false)
+        this.changeNotation("percent",      false)
+        this.changeTimeFormat("name",       false)
+        this.changeAlleleNotation("when_not_01", false)
+        this.changeCloneNotation("short_sequence", false)
+        console.log({ msg: "user preferences have been reset", type: "flash", priority: 2 });
     },
     
     /**
