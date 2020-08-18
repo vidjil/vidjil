@@ -179,25 +179,19 @@ Model.prototype = {
         this.system_selected = []
         this.top = 50
 
-        var colorM = this.colorMethod
-        var notation = this.notation_type
-        var timeFormat = this.time_type
-        var alleleNotation = this.alleleNotation
-        var cloneNotation = this.cloneNotationType
-
         if (this.localStorage){
-            if (localStorage.getItem('colorMethod'))    colorM      = localStorage.getItem('colorMethod')
-            if (localStorage.getItem('timeFormat'))     timeFormat  = localStorage.getItem('timeFormat')
-            if (localStorage.getItem('notation'))       notation    = localStorage.getItem('notation')
-            if (localStorage.getItem('alleleNotation')) alleleNotation = localStorage.getItem('alleleNotation')
-            if (localStorage.getItem('cloneNotation'))  cloneNotation = localStorage.getItem('cloneNotation')
+            if (localStorage.getItem('colorMethod'))    this.colorMethod = localStorage.getItem('colorMethod')
+            if (localStorage.getItem('timeFormat'))     this.time_type = localStorage.getItem('timeFormat')
+            if (localStorage.getItem('notation'))       this.notation_type  = localStorage.getItem('notation')
+            if (localStorage.getItem('alleleNotation')) this.alleleNotation = localStorage.getItem('alleleNotation')
+            if (localStorage.getItem('cloneNotation'))  this.cloneNotationType = localStorage.getItem('cloneNotation')
         }
         
-        this.changeColorMethod(colorM ,   false)
-        this.changeNotation(notation,     false)
-        this.changeTimeFormat(timeFormat, false)
-        this.changeAlleleNotation(alleleNotation, false)
-        this.changeCloneNotation(cloneNotation, false)
+        this.changeColorMethod(this.colorMethod,    false)
+        this.changeNotation(this.notation_type,     false)
+        this.changeTimeFormat(this.time_type,       false)
+        this.changeAlleleNotation(this.alleleNotation, false)
+        this.changeCloneNotation(this.cloneNotationType, false)
     },
     /**
      * remove all elements from the previous .vidjil file but keep current user parameters and linked views
