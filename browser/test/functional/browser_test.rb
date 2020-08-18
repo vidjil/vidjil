@@ -26,7 +26,7 @@ class BrowserTest < MiniTest::Test
     end
   end
 
-  def set_browser(vidjil_file, analysis_file=nil)
+  def set_browser(vidjil_file, analysis_file=nil, local_storage=nil)
     folder_path = File.expand_path(File.dirname(__FILE__))
     folder_path.sub! '/browser/test/functional', ''
     index_path = 'file://' + folder_path + '/browser/index.html'
@@ -50,6 +50,16 @@ class BrowserTest < MiniTest::Test
 
     print "Testing Vidjil client at " + index_path + "\n"
     $b.goto index_path
+
+    if local_storage != nil
+      $b.driver.execute_script("localStorage.clear();")
+      print "Set localStorage :\n"
+      local_storage.each do |key, value|
+        $b.driver.local_storage[key] = value
+        print "       [" + key + "] => " + value+ "\n"
+      end
+      $b.refresh
+    end
 
     # check that the browser loaded correctly
     if not $b.div(:id => 'logo').present?
