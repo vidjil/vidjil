@@ -54,6 +54,7 @@ function Model() {
     this.create_germline_obj();
     this.view = [];
     this.checkLocalStorage();
+    this.reset();
     this.setAll();
     this.checkBrowser();
     this.germlineList = new GermlineList()
@@ -175,7 +176,6 @@ Model.prototype = {
      * Set all the properties. Called in the constructor.
      */
     setAll: function () {
-        this.reset()
         this.system_selected = []
         this.top = 50
 
