@@ -2171,12 +2171,11 @@ changeAlleleNotation: function(alleleNotation, update) {
      * check browser local storage availability
      * */
     checkLocalStorage: function () {
-        this.localStorage
         try {
-            this.localStorage = window['localStorage'];
-            var x = '__storage_test__';
-            this.localStorage.setItem(x, x);
-            this.localStorage.removeItem(x);
+            this.localStorage = window.localStorage
+            var x = '__storage_test__'
+            this.localStorage.setItem(x, x)
+            this.localStorage.removeItem(x)
         }
         catch(e) {
             return e instanceof DOMException && (
