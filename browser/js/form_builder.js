@@ -27,22 +27,24 @@ function readClipBoard() {
             for(var i = 0;i < lines.length;i++){
                 var cells = lines[i].split('\t');
 
-                if (cells.length == 4)
-                    addPatientForm({    //patient_id : cells[0],
-                                        first_name : cells[0],
-                                        last_name : cells[1],
-                                        birth : cells[2],
-                                        info : cells[3]})
+                if (cells.length == 5){
+                    addPatientForm({    patient_id : cells[0],
+                                        first_name : cells[1],
+                                        last_name : cells[2],
+                                        birth : cells[3],
+                                        info : cells[4]})
+                }
+                else if (cells.length == 4){            
+                    addRunForm({    run_id : cells[0],
+                                    name : cells[1],
+                                    date : cells[2],
+                                    info : cells[3]})
 
-                if (cells.length == 3)                   
-                    addRunForm({    //run_id : cells[0],
-                                    name : cells[0],
-                                    date : cells[1],
-                                    info : cells[2]})
-
-                if (cells.length == 2)                   
+                }
+                else if (cells.length == 2){            
                     addSetForm({    name : cells[0],
                                     info : cells[1]})
+                }
             }
         })
         .catch(function(err){
@@ -201,9 +203,9 @@ FormBuilder.prototype = {
         return d;
     },
 
-    set_id: function() {
+    set_id: function(content) {
         var id = 'id_label';
-        var f = this.build_field(id, id, capitalise(this.type)+' ID');
+        var f = this.build_field(id, id, capitalise(this.type)+' ID', content);
         f.firstChild.className += " stringid";
         return f;
     },
@@ -230,7 +232,7 @@ PatientFormBuilder.prototype = {
         div.appendChild(this.createCloseButton());
         div.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         div.appendChild(this.build_input('sample_set_id', 'text', 'sample_set_id', 'hidden', this.type));
-        div.appendChild(this.set_id());
+        div.appendChild(this.set_id(this.content.patient_id));
         div.appendChild(this.build_field('first_name', undefined, undefined ,this.content.first_name, true));
         div.appendChild(this.build_field('last_name', undefined, undefined ,this.content.last_name, true));
         div.appendChild(this.build_date('birth', this.type, undefined, undefined, this.content.birth));
@@ -260,7 +262,7 @@ RunFormBuilder.prototype = {
         div.appendChild(this.createCloseButton());
         div.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         div.appendChild(this.build_input('sample_set_id', 'text', 'sample_set_id', 'hidden', this.type));
-        div.appendChild(this.set_id());
+        div.appendChild(this.set_id(this.content.run_id));
         div.appendChild(this.build_field('name', undefined, undefined, this.content.name, true));
         div.appendChild(this.build_date('run_date', this.type, 'run_date', 'Date', this.content.date));
         div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'run', this.content.info));
