@@ -14,6 +14,7 @@ import sys
 import json
 import os
 import math
+import argparse
 
 ############################################################
 ### constants
@@ -106,7 +107,7 @@ def prevalentGermline(germlines):
     reads = {}
     prevalent = ""
     for g in germlines:
-        germline = g[0:3]
+        germline = g[0:3] # fiable
         if germline in reads:
             reads[germline] += germlines[g][0]
         else:
@@ -175,7 +176,7 @@ def computeCoefficients(spikes):
 
     copyNos = list(set([int(spike['copies']) for spike in spikes]))
     avgReads = []
-    if msgs >= 1:
+    if msgs:
         print('copyNos: ', copyNos)
     for copyNo in copyNos:
         reads = [ spike['reads'] for spike in spikes
@@ -183,7 +184,7 @@ def computeCoefficients(spikes):
         ]
         ## len(reads) is never zero because spike['copies'] is in copyNos
         avgReads.append(sum(reads)/len(reads))
-    if msgs >= 1:
+    if msgs:
         print('avgReads: ', avgReads)
     if len(avgReads) == 0 or max(avgReads) <= DIAGMAX:
         ## not enough spikes; probably diagnostic sample
@@ -198,7 +199,7 @@ def computeCoefficients(spikes):
         coeff[UNI] = lr['slope']
         r2[UNI] = lr['r2']
         perr[UNI] = lr['s']
-        if msgs >= 1:
+        if msgs:
             fmtStr = 'Uni coefficient estimation: {0:15.13f} s: {1:5.1f} r2: {2:15.13f}'
             print(fmtStr.format(coeff[UNI], perr[UNI], r2[UNI]), file=sys.stderr)
 
@@ -207,7 +208,7 @@ def computeCoefficients(spikes):
         ### test for not enough points and r2 <= 0.8
 
         fams = list(set([spike['family'] for spike in spikes]))
-        if msgs >= 1:
+        if msgs:
             print('Fams: {0}'.format(fams))
         for fam in fams:
             copyNos = list(set([int(spike['copies']) for spike in spikes if spike['family'] == fam]))
@@ -233,7 +234,7 @@ def computeCoefficients(spikes):
                     coeff[fam] = coeff[UNI]
                     r2[fam] = r2[UNI]
                     perr[fam] = perr[UNI]
-            if msgs >= 1:
+            if msgs:
                 fmtStr = '{0} coefficient estimation: {1:15.13f} s: {2:5.1f} r2: {3:15.13f}'
                 print(fmtStr.format(fam, coeff[fam], perr[fam], r2[fam]), file=sys.stderr)
 
@@ -248,8 +249,8 @@ def computeCoefficients(spikes):
 ### spk: total number of spike-in reads
 
 def addNormalizedReads(data, coeff, r2, spk):
-    if msgs >= 1:
-        print('Normalizing reads and printing output file', file=sys.stderr)
+    if msgs:
+        print('Normalizing reads and prinitng output file', file=sys.stderr)
 
     data['coefficients'] = coeff
     ## find prevalent germine and sum of its reads
@@ -293,12 +294,33 @@ def addNormalizedReads(data, coeff, r2, spk):
 ### command line, initial msg
 
 if __name__ == '__main__':
-    inf = sys.argv[1]
-    outf = sys.argv[2]
-    msgs = int(sys.argv[3]) if len(sys.argv) >= 4 else 0
+
+    print("#", ' '.join(sys.argv))
+
+    DESCRIPTION = 'Script to include spike-nomalization on a vidjil result file'
+    
+    #### Argument parser (argparse)
+
+    parser = argparse.ArgumentParser(description= DESCRIPTION,
+                                    epilog='''Example:
+  python %(prog)s --input filein.vidjil --ouput fileout.vidjil''',
+                                    formatter_class=argparse.RawTextHelpFormatter)
+
+
+    group_options = parser.add_argument_group() # title='Options and parameters')
+    group_options.add_argument('--input',  help='Vidjil input file')
+    group_options.add_argument('--output', help='Vidjil output file with normalization')
+    group_options.add_argument('--silent', action='store_false', default=False, help='run script in silent verbose mode')
+    
+    args = parser.parse_args()
+
+    inf  = args.input
+    outf = args.output
+    msgs = args.silent
+    print ( "silent: %s" % msgs)
 
     # read input file
-    if msgs >= 1:
+    if msgs:
         print('Reading input file', file=sys.stderr)
 
     with open(inf) as inp:
