@@ -1,6 +1,13 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+2020-08-XX  The Vidjil Team
+	* Cleaned output, no .vdj.fa and seq/clone-*.fa by default, new options --out-vdjfa and --out-clone-files #4386 #4387
+	  Pipelines should not rely on the format of the headers in the .vdj.fa file, but rather parse the .vidjil file #3795
+	* Extended test and support to g++ 10.1, while reworking the documentation on supported compilers !733
+	* Updated documentation
+	* Updated the functional test framework (tools/should.py) !669 !784, new and updated tests
+
 2020-06-12  The Vidjil Team
 	* New report of 'start of V' and 'end of J' positions #2138, improving the productivity estimation #2142
 	  This is based on a streamlined alignment for reverse sequences (core/segment.cpp) !706

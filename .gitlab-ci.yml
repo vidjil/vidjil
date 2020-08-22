@@ -127,6 +127,7 @@ algo_valgrind_functional:
 
 release_valgrind_functional:
   <<: *valgrind_functional
+  allow_failure: true
   only:
     - /^feature-.*a.*\/release$/
 

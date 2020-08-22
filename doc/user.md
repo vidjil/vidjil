@@ -5,8 +5,8 @@ Vidjil is an open-source platform for the analysis of high-throughput sequencing
 They are also useful markers of pathologies, and in leukemia, are used to quantify the minimal residual disease during patient follow-up.
 With adapted [library preparation and sequencing](http://www.vidjil.org/doc/locus),
 high-throughput sequencing (NGS/HTS) now
-enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](https://omictools.com/rep-seq-category)
-methods and software.
+enables the deep sequencing of a lymphoid population with dedicated
+sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 
 This is the help of the [Vidjil web application](http://app.vidjil.org/).
 Further help can always be asked to <support@vidjil.org>. We can also arrange phone or video meeting.
@@ -420,7 +420,7 @@ inside a clone can have different lengths or can be shifted,
 especially in the case of overlapping paired-end sequencing. There can be also
 some sequencing errors.
 The `.vidjil` file has to give one consensus sequence per clone, and
-Rep-Seq algorithms have to deal with great care to these difference in
+RepSeq algorithms have to deal with great care to these difference in
 order not to gather reads from different clones.
 
 For **vidjil-algo**, it is required that the window centered on
