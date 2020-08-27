@@ -169,8 +169,7 @@ automatic clusterization, see below), leaving the user or other
 software making detailed analysis and decisions on the final
 clustering.
 
-## Recombination / locus selection
-
+## Germline presets: locus and recombination selection
 
 ``` diff
 Germline/recombination selection (at least one -g or -V/(-D)/-J option must be given)
@@ -211,10 +210,10 @@ The following presets are provided:
 
 Finally, the advanced `-V/(-D)/-J` options enable to select custom V, (D) and J repertoires given as `.fasta` files.
 
-### Custom `germline/*.g` presets (advanced usage)
+## Custom `germline/*.g` presets
 
 New `germline/*.g` presets for other species or for custom recombinations can be created, possibly referring to other `.fasta` files.
-Please contact us if you need help in configuring such other germlines.
+This is an advanced usage, please contact us if you need help in configuring such other germlines.
 
 Inside a `.g` file, the `systems` entries details how vidjil-algo looks for recombinations.
 Let's look to the `IGH` entry in the `germline/homo-sapiens.g` preset:
@@ -242,7 +241,7 @@ The `parameters.seed` value of `12s` is equivalent to `-s 12s` advanced option o
 Here `recombinations` describes one sequence analysis mode, called `543`:
 a VJ junction is detected when there is a significant similarity (in terms of numbers of k-mers, see below) against sequences in `IGHV.fa` in the 5' region,
 followed by a significant similarity in the 3' region against sequences in `IGHJ+down.fa`
--- here we take both J genes and downstream sequences to improve the detection.
+– here we take both J genes and downstream sequences to improve the detection.
 
 In a second pass (V(D)J designation), full alignment is done against these sequences.
 The optional `4` entry  (`IGHD.fa`) is taken only there into account.
