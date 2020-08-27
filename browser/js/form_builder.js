@@ -44,7 +44,8 @@ function addForm(content){
 */
 function parseClipboard(clipboard){
     var lines = clipboard.split('\n')
-    var patient_count, run_count, set_count, unknow_count =0
+    var patient_count, run_count, set_count, unknow_count
+    patient_count = run_count = set_count = unknow_count = 0
     var parsed_lines = []
 
     for(var i = 0; i < lines.length; i++){
