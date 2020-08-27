@@ -275,25 +275,15 @@ Segment.prototype = {
                 var input = document.createElement('input');
                 input.type = 'checkbox';
                 input.id = 'vdj_input_check';
+                input.setAttribute("title", 'Display CDR3 computed by Vidjil');
                 input.checked = (self.m.localStorage && localStorage.getItem('segmenter_cdr3'))
-
-                input.addEventListener('change', (event) => {
-                    if (event.target.checked) {
-                        self.highlight[0].field = "cdr3"
-                        self.highlight[0].color = "red"
-                        if (self.m.localStorage) localStorage.setItem('segmenter_cdr3', "checked")
-                    } else {
-                        self.highlight[0].field = ""
-                        if (self.m.localStorage) localStorage.removeItem('segmenter_cdr3')
-                    }
-                    self.update()
+                input.addEventListener('change', function(evt){
+                    self.highligtCDR3(event.target.checked)  
                 })
 
                 var label = document.createElement('label');
                 label.setAttribute("for", 'vdj_input_check');
                 label.innerHTML = 'CDR3';
-
-                input.setAttribute("title", 'Display CDR3 computed by Vidjil');
                 label.setAttribute("title", 'Display CDR3 computed by Vidjil');
 
                 span.appendChild(input);
@@ -424,7 +414,7 @@ Segment.prototype = {
             for (var c_id = 0; c_id < self.m.clones.length; c_id++)
                 self.build_skeleton(c_id);
             
-            
+            this.highligtCDR3()
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -1292,6 +1282,20 @@ Segment.prototype = {
 
     empty: function() {
         this.reset();
+    },
+
+    highligtCDR3: function(checked){
+        if (typeof checked == 'undefined') checked = document.getElementById("vdj_input_check").checked
+
+        if (checked) {
+            this.highlight[0].field = "cdr3"
+            this.highlight[0].color = "red"
+            if (this.m.localStorage) localStorage.setItem('segmenter_cdr3', "checked")
+        } else {
+            this.highlight[0].field = ""
+            if (this.m.localStorage) localStorage.removeItem('segmenter_cdr3')
+        }
+        this.update()
     }
 
 }; //fin prototype Segment
