@@ -275,13 +275,16 @@ Segment.prototype = {
                 var input = document.createElement('input');
                 input.type = 'checkbox';
                 input.id = 'vdj_input_check';
+                input.checked = (self.m.localStorage && localStorage.getItem('segmenter_cdr3'))
 
                 input.addEventListener('change', (event) => {
                     if (event.target.checked) {
                         self.highlight[0].field = "cdr3"
                         self.highlight[0].color = "red"
+                        if (self.m.localStorage) localStorage.setItem('segmenter_cdr3', "checked")
                     } else {
                         self.highlight[0].field = ""
+                        if (self.m.localStorage) localStorage.removeItem('segmenter_cdr3')
                     }
                     self.update()
                 })
