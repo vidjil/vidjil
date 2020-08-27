@@ -414,7 +414,7 @@ Segment.prototype = {
             for (var c_id = 0; c_id < self.m.clones.length; c_id++)
                 self.build_skeleton(c_id);
             
-            this.highligtCDR3()
+            this.highligtCDR3(self.m.localStorage && localStorage.getItem('segmenter_cdr3'))
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -1285,7 +1285,11 @@ Segment.prototype = {
     },
 
     highligtCDR3: function(checked){
-        if (typeof checked == 'undefined') checked = document.getElementById("vdj_input_check").checked
+        if (typeof checked == 'undefined') 
+            if (document.getElementById("vdj_input_check")) 
+                checked = document.getElementById("vdj_input_check").checked
+            else
+                return
 
         if (checked) {
             this.highlight[0].field = "cdr3"
@@ -1295,6 +1299,7 @@ Segment.prototype = {
             this.highlight[0].field = ""
             if (this.m.localStorage) localStorage.removeItem('segmenter_cdr3')
         }
+
         this.update()
     }
 
