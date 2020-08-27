@@ -19,59 +19,103 @@ function addSetForm(content) {
     fieldSet.appendChild(div);
 }
 
-function readClipBoard() {
-    navigator.clipboard.readText()
-        .then(function(clipboard){
-            var lines = clipboard.split('\n')
-            var patient_count = 0
-            var run_count = 0
-            var set_count = 0
+function addForms(array_content) {
+    for (var c in array_content)
+        addForm(array_content[c])
+}
 
-            for(var i = 0;i < lines.length;i++){
-                var cells = lines[i].split('\t')
+function addForm(content){
+    switch (content.type) {
+        case 'patient':
+            addPatientForm(content)
+            break
+        case 'run':
+            addRunForm(content)
+            break
+        case 'generic':
+            addSetForm(content)
+            break
+        default:
+            console.log({msg: "addForm() : unknow type", priority: 1})
+      }
+}
 
-                if (cells.length == 5){
-                    addPatientForm({    patient_id : cells[0],
+/*
+*/
+function parseClipboard(clipboard){
+    var lines = clipboard.split('\n')
+    var patient_count, run_count, set_count, unknow_count =0
+    var parsed_lines = []
+
+    for(var i = 0; i < lines.length; i++){
+        var cells = lines[i].split('\t')
+
+        switch (cells.length) {
+            case 5:
+                patient_count++
+                parsed_lines.push({     type : 'patient', 
+                                        patient_id : cells[0],
                                         first_name : cells[1],
                                         last_name : cells[2],
                                         birth : cells[3],
                                         info : cells[4]})
-                    patient_count++
-                }
-                else if (cells.length == 4){            
-                    addRunForm({    run_id : cells[0],
-                                    name : cells[1],
-                                    date : cells[2],
-                                    info : cells[3]})
-                    run_count++
-                }
-                else if (cells.length == 2){            
-                    addSetForm({    name : cells[0],
-                                    info : cells[1]})
-                    set_count++
-                }
-            }
+                break
+            case 4:
+                run_count++        
+                parsed_lines.push({     type : 'run', 
+                                        run_id : cells[0],
+                                        name : cells[1],
+                                        date : cells[2],
+                                        info : cells[3]})
+                break
+            case 2:    
+                set_count++     
+                parsed_lines.push({     type : 'generic', 
+                                        name : cells[0],
+                                        info : cells[1]})
+                break
+            default:
+                unknow_count++
+        }
+    }
 
-            if (patient_count == 0 && run_count == 0 && set_count == 0)
-                console.log({"type": "popup", "msg":    "Nothing found in clipboard, please be sure to have valid data in clipboard<br>"+
-                                                        "data in clipboard are expected to be tabulated <br>"+
-                                                        " (a copy from an excell spreadsheet should be already in this format)<br>"+
-                                                        "- row must be separeted with a break line<br>"+
-                                                        "- cells must be separated with a tabulation<br>"+ 
-                                                        "<br>"+
-                                                        "- a row with 5 cells will be loaded as a new patient (id/first_name/last_name/date/info)<br>"+
-                                                        "- a row with 4 cells will be loaded as a new run (id/run_name/date/info)<br>"+
-                                                        "- a row with 2 cells will be loaded as a new set (set_name/info)<br>"})
+    if (patient_count == 0 && run_count == 0 && set_count == 0)
+        console.log({"type": "popup", "msg":    "Nothing found in clipboard, please be sure to have valid data in clipboard<br>"+
+                                                "data in clipboard are expected to be tabulated <br>"+
+                                                " (a copy from an excell spreadsheet should be already in this format)<br>"+
+                                                "- row must be separeted with a break line<br>"+
+                                                "- cells must be separated with a tabulation<br>"+ 
+                                                "<br>"+
+                                                "- a row with 5 cells will be loaded as a new patient (id/first_name/last_name/date/info)<br>"+
+                                                "- a row with 4 cells will be loaded as a new run (id/run_name/date/info)<br>"+
+                                                "- a row with 2 cells will be loaded as a new set (set_name/info)<br>"})
 
-            if (patient_count !=0)
-                console.log({msg: patient_count+" patient(s) loaded from clipboard, please check form before saving", type: 'flash', priority: 1});
-            if (run_count !=0)
-                console.log({msg: run_count+" run(s) loaded from clipboard, please check form before saving", type: 'flash', priority: 1});
-            if (set_count !=0)
-                console.log({msg: set_count+" set(s) loaded from clipboard, please check form before saving", type: 'flash', priority: 1});
+    if (patient_count !=0)
+        console.log({msg: patient_count+" patient(s) loaded from clipboard, please check form before saving", type: 'flash', priority: 1})
+    if (run_count !=0)
+        console.log({msg: run_count+" run(s) loaded from clipboard, please check form before saving", type: 'flash', priority: 1})
+    if (set_count !=0)
+        console.log({msg: set_count+" set(s) loaded from clipboard, please check form before saving", type: 'flash', priority: 1})
+    if (unknow_count !=0)
+        console.log({msg: unknow_count+" line(s) have been ignored from clipboard", type: 'flash', priority: 1})
+
+    return parsed_lines
+}
+
+function readClipBoard() {
+    if (!navigator.clipboard){
+        console.log({msg: "clipboard features are not supported by your navigator", type: 'flash', priority: 1})
+        return
+    }
+
+    navigator.clipboard
+        .readText()
+        .then(function(clipboard){
+            var parsed_content = parseClipboard(clipboard)
+            addForms(parsed_content)
         })
         .catch(function(err){
-            console.log('Something went wrong', err)
+            console.log({msg: "clipboard error, please allow browser access to clipboard to use this feature", type: 'flash', priority: 1})
         });
 }
 
