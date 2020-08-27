@@ -275,17 +275,17 @@ Segment.prototype = {
                 var input = document.createElement('input');
                 input.type = 'checkbox';
                 input.id = 'vdj_input_check';
-                $(input).on("click", function() {
-                    if(this.checked) {
-                        self.highlight[0].field = "cdr3";
-                        self.highlight[0].color = "red";
 
+                input.addEventListener('change', (event) => {
+                    if (event.target.checked) {
+                        self.highlight[0].field = "cdr3"
+                        self.highlight[0].color = "red"
                     } else {
-                        self.highlight[0].field = "";
+                        self.highlight[0].field = ""
                     }
-                        self.update();
+                    self.update()
+                })
 
-                });
                 var label = document.createElement('label');
                 label.setAttribute("for", 'vdj_input_check');
                 label.innerHTML = 'CDR3';
