@@ -272,14 +272,15 @@ Segment.prototype = {
             span.id = 'highlightCheckboxes';
 
             if(this.findPotentialField().indexOf('cdr3') != -1) {
-                var input = document.createElement('input');
+                input = document.createElement('input');
                 input.type = 'checkbox';
                 input.id = 'vdj_input_check';
                 input.setAttribute("title", 'Display CDR3 computed by Vidjil');
-                input.checked = (self.m.localStorage && localStorage.getItem('segmenter_cdr3'))
+                input.checked = (self.m.localStorage && localStorage.getItem('segmenter_cdr3')=="checked")
                 input.addEventListener('change', function(evt){
-                    self.highligtCDR3(event.target.checked)  
+                    self.highlightCDR3(event.target.checked, true)
                 })
+                self.checkboxCDR3 = input
 
                 var label = document.createElement('label');
                 label.setAttribute("for", 'vdj_input_check');
@@ -414,7 +415,7 @@ Segment.prototype = {
             for (var c_id = 0; c_id < self.m.clones.length; c_id++)
                 self.build_skeleton(c_id);
             
-            this.highligtCDR3(self.m.localStorage && localStorage.getItem('segmenter_cdr3'))
+            this.highlightCDR3(self.m.localStorage && localStorage.getItem('segmenter_cdr3'), false)
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -1284,20 +1285,25 @@ Segment.prototype = {
         this.reset();
     },
 
-    highligtCDR3: function(checked){
+    /** set the checkbox for highlight cdr3
+     * @param {bool} - checkbox value
+     * @param {bool} - save in localStorage as user preference
+    */
+    highlightCDR3: function(checked, save){
+        //if value is unspecified, retrieve current value of the checkbox to sync segmenter internal parameter with it
         if (typeof checked == 'undefined') 
-            if (document.getElementById("vdj_input_check")) 
-                checked = document.getElementById("vdj_input_check").checked
-            else
-                return
+            if (this.checkboxCDR3) 
+                checked = this.checkboxCDR3.checked
 
         if (checked) {
             this.highlight[0].field = "cdr3"
             this.highlight[0].color = "red"
-            if (this.m.localStorage) localStorage.setItem('segmenter_cdr3', "checked")
+            if (this.m.localStorage && save) localStorage.setItem('segmenter_cdr3', "checked")
+            if (this.checkboxCDR3) this.checkboxCDR3.checked = true
         } else {
             this.highlight[0].field = ""
-            if (this.m.localStorage) localStorage.removeItem('segmenter_cdr3')
+            if (this.m.localStorage && save) localStorage.setItem('segmenter_cdr3', "unchecked")
+            if (this.checkboxCDR3) this.checkboxCDR3.checked = false
         }
 
         this.update()

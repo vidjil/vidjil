@@ -2510,7 +2510,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.changeTimeFormat("name",       false)
         this.changeAlleleNotation("when_not_01", false)
         this.changeCloneNotation("short_sequence", false)
-        console.log({ msg: "user preferences have been reset", type: "flash", priority: 2 });
+        console.log({ msg: "user preferences have been reset", type: "flash", priority: 1 });
     },
     
     /**
