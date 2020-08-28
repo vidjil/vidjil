@@ -656,6 +656,13 @@ only the logged-in users with proper authorization can access to these data.
 This includes the uploader of the data,
 possibly users of the same groups if such groups were defined, and the server maintainers.
 
+# Settings
+
+The settings menu allows to set:
+ -
+ -
+
+These settings are kept in your web browser ``localStorage'' between several sessions.
 
 # Keyboard shortcuts
 
