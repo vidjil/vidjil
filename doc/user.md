@@ -659,8 +659,10 @@ possibly users of the same groups if such groups were defined, and the server ma
 # Settings
 
 The settings menu allows to set:
- -
- -
+ -clone size format     [scientific notation / percentage]
+ -sample key            [sample name / shortened name / sampling date / day since first sampling]
+ -clone junction format [junction length / AA sequence / mixed (display AA sequence only for short junction)]
+ -clone alleles format  [hide alleles / display alleles / mixed (display only for marginal alleles)]
 
 These settings are kept in your web browser ``localStorage'' between several sessions.
 
