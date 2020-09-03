@@ -272,6 +272,10 @@ Model.prototype = {
             this.view[i].reset();
         }
         
+        // Reset html form to the current model value after reset
+        document.getElementById("menuTimeFormName").checked = true;
+        document.getElementById("menuCloneNotSeqShort").checked = true;
+        document.getElementById("menu_allele_when_not_01").checked = true;
     },
     
     
@@ -329,11 +333,13 @@ Model.prototype = {
         // time_type to name_short if there is many samples
         if (this.samples.order.length > 6)
             this.changeTimeFormat("short_name", false)
+            document.getElementById("menuTimeFormShort").checked = true;
 
         // time_type to delta_date if we have enough different dates
         deltas = this.dateDiffMinMax()
         if (deltas.max > 1)
             this.changeTimeFormat("delta_date", false)
+            document.getElementById("menuTimeFormSamplePlus").checked = true;
         
         //      NSIZE
         var n_max = 0;
@@ -366,6 +372,7 @@ Model.prototype = {
                 $("#external_normalization").show();
             }
         }
+        this.displayTop(50) // reset value
     }, //end initClones
 
 changeCloneNotation: function(cloneNotationType) {
@@ -1367,6 +1374,9 @@ changeAlleleNotation: function(alleleNotation) {
         }
 
         this.displayTop();
+        document.getElementById("top_slider").min = 5
+        document.getElementById("top_slider").max = 100
+        document.getElementById("top_slider").value = 10
     },
 
 

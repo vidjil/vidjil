@@ -1,0 +1,166 @@
+{
+  "germlines": {}, 
+  "producer": "vidjil fuse", 
+  "timestamp": "2020-09-02 09:17:49", 
+  "vidjil_json_version": "2016b", 
+  "reads": {
+    "segmented": [
+      7258, 4149
+    ], 
+    "total": [
+      25000, 25000
+    ], 
+    "germline": {
+      "IGH+": [
+        48, 5
+      ], 
+      "IGH": [
+        7209, 4142
+      ]
+    }
+  }, 
+  "samples": {
+    "log": [
+      "log1", "log2"
+    ], 
+    "producer": [
+      "vidjil-algo 2020.06", "vidjil-algo 2020.06"
+    ], 
+    "timestamp": [
+      "2020-09-02 09:17:03", "2020-09-02 09:17:48"
+    ], 
+    "commandline": [
+      "cmd 1", "cmd 2"
+    ], 
+    "number": 2, 
+    "original_names": [
+      "sequence_file 1", "sequence_file 2"
+    ], 
+    "run_timestamp": [
+      "2020-09-02 09:16:32", "2020-09-02 09:16:30"
+    ]
+  }, 
+  "clones": [
+    {
+      "germline": "TRG",
+      "id": "clone_1",
+      "reads": [7109 ],
+      "top": 1
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_2",
+      "reads": [7109 ],
+      "top": 2
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_3",
+      "reads": [7109 ],
+      "top": 3
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_4",
+      "reads": [7109 ],
+      "top": 4
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_5",
+      "reads": [7109 ],
+      "top": 5
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_6",
+      "reads": [7109 ],
+      "top": 6
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_7",
+      "reads": [7109 ],
+      "top": 7
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_8",
+      "reads": [7109 ],
+      "top": 8
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_9",
+      "reads": [7109 ],
+      "top": 9
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_10",
+      "reads": [7109 ],
+      "top": 10
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_11",
+      "reads": [7109 ],
+      "top": 11
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_12",
+      "reads": [7109 ],
+      "top": 12
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_13",
+      "reads": [7109 ],
+      "top": 13
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_14",
+      "reads": [7109 ],
+      "top": 14
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_15",
+      "reads": [7109 ],
+      "top": 15
+    },    
+    {
+      "germline": "TRG",
+      "id": "clone_16",
+      "reads": [7109 ],
+      "top": 16
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_17",
+      "reads": [7109 ],
+      "top": 17
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_18",
+      "reads": [7109 ],
+      "top": 18
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_19",
+      "reads": [7109 ],
+      "top": 19
+    },
+    {
+      "germline": "TRG",
+      "id": "clone_20",
+      "reads": [7109 ],
+      "top": 20
+    }
+  ], 
+  "clusters": []
+}
