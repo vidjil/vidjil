@@ -273,9 +273,13 @@ Model.prototype = {
         }
         
         // Reset html form to the current model value after reset
-        document.getElementById("menuTimeFormName").checked = true;
-        document.getElementById("menuCloneNotSeqShort").checked = true;
-        document.getElementById("menu_allele_when_not_01").checked = true;
+        try {
+            document.getElementById("menuTimeFormName").checked = true;        // sample name
+            document.getElementById("menuCloneNotSeqShort").checked = true;    // clone insert
+            document.getElementById("menu_allele_when_not_01").checked = true; // clone allele
+        } catch (err) {
+            // Don't exist into Qunit pipeline
+        }
     },
     
     
@@ -333,13 +337,21 @@ Model.prototype = {
         // time_type to name_short if there is many samples
         if (this.samples.order.length > 6)
             this.changeTimeFormat("short_name", false)
-            document.getElementById("menuTimeFormShort").checked = true;
+            try{
+                document.getElementById("menuTimeFormShort").checked = true;
+            } catch (err) {
+                // Don't exist into Qunit pipeline
+            }
 
         // time_type to delta_date if we have enough different dates
         deltas = this.dateDiffMinMax()
         if (deltas.max > 1)
             this.changeTimeFormat("delta_date", false)
-            document.getElementById("menuTimeFormSamplePlus").checked = true;
+            try {
+                document.getElementById("menuTimeFormSamplePlus").checked = true;
+            } catch (err) {
+                /// Don't exist into Qunit pipeline
+            }
         
         //      NSIZE
         var n_max = 0;
@@ -973,7 +985,7 @@ changeAlleleNotation: function(alleleNotation) {
                 div.style.color = ""
             }
         } catch (err) {
-            // ne rien faire.
+            // Don't exist into Qunit pipeline
         }
     },
 
@@ -1374,9 +1386,13 @@ changeAlleleNotation: function(alleleNotation) {
         }
 
         this.displayTop();
-        document.getElementById("top_slider").min = 5
-        document.getElementById("top_slider").max = 100
-        document.getElementById("top_slider").value = 10
+        try {
+            document.getElementById("top_slider").min = 5
+            document.getElementById("top_slider").max = 100
+            document.getElementById("top_slider").value = 10
+        } catch (err) {
+            // Don't exist into Qunit pipeline
+        }
     },
 
 
