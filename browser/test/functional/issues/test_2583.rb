@@ -23,7 +23,7 @@ class TestGraph < BrowserTest
   # also reset other 
 
   def test_00_load_analysis_without_clone
-    set_browser("/browser/test/data/issues/2583.vidjil")
+    set_browser("/browser/test/data/issues/2583_noclone.vidjil")
     $b.update_icon.wait_while(&:present?) # wait update
 
     $b.menu_filter.hover
@@ -45,7 +45,7 @@ class TestGraph < BrowserTest
 
 
   def test_01_reset_samplename_settings
-    set_browser("/browser/test/data/issues/2583.vidjil")
+    set_browser("/browser/test/data/issues/2583_noclone.vidjil")
     $b.update_icon.wait_while(&:present?) # wait update
     assert (not $b.input(:id => "menuTimeFormName").checked?  ), "settings sample name: not simple name"
     assert (not $b.input(:id => "menuTimeFormShort").checked? ), "settings sample name: not short name"
@@ -60,7 +60,7 @@ class TestGraph < BrowserTest
     assert (not $b.input(:id => "menuTimeFormShort").checked? ), "settings sample name: not short name"
     
     # test reset of this parameter after loading of a new analysis
-    set_browser("/browser/test/data/issues/2583.vidjil")
+    set_browser("/browser/test/data/issues/2583_noclone.vidjil")
     assert (not $b.input(:id => "menuTimeFormName").checked?  ), "settings sample name: not simple name"
     assert ($b.input(:id => "menuTimeFormSamplePlus").checked?), "settings sample name:  IS sample plus (correct reset)"
 
@@ -68,7 +68,7 @@ class TestGraph < BrowserTest
   
 
   def test_02_reset_Nregion_names
-    set_browser("/browser/test/data/issues/2583.vidjil")
+    set_browser("/browser/test/data/issues/2583_noclone.vidjil")
     $b.update_icon.wait_while(&:present?) # wait update
     assert (not $b.input(:id => "menuCloneNotNucNum").checked? ), "settings Nregion: not number"
     assert ($b.input(:id => "menuCloneNotSeqShort").checked? ),   "settings Nregion: IS short name if needed"
@@ -82,7 +82,7 @@ class TestGraph < BrowserTest
     assert (not $b.input(:id => "menuCloneNotSeqShort").checked? ), "settings Nregion: not short name if needed"
     
     # test reset of this parameter after loading of a new analysis
-    set_browser("/browser/test/data/issues/2583.vidjil")
+    set_browser("/browser/test/data/issues/2583_noclone.vidjil")
     assert ($b.input(:id => "menuCloneNotSeqShort").checked? ),   "settings Nregion: IS short name"
     assert (not $b.input(:id => "menuCloneNotSeq").checked?),     "settings Nregion: not sample"
   end
