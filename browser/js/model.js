@@ -1409,7 +1409,7 @@ changeAlleleNotation: function(alleleNotation) {
         if (html_label !== null) {
             var count = 0;
             for (var i=0; i<this.clones.length; i++){
-                if (this.clone(i).top < top && this.clone(i).hasSizeConstant() ) count++;
+                if (this.clone(i).top <= top && this.clone(i).hasSizeConstant() ) count++;
                 //todo: test ?
             }
             html_label.innerHTML = count + ' clones (top ' + top + ')' ;
