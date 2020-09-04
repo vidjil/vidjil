@@ -1351,9 +1351,9 @@ span.logo
   vertical-align: middle;
 }
 
-#info_timepoint td{
+#info_timepoint, #info_timepoint td, .info_overlaps td{
   min-width : 150px;
-  max-width : 700px;
+  max-width : 100%;
   overflow-wrap: break-word;
   word-wrap: break-word;
   border-style:solid;
@@ -1362,16 +1362,17 @@ span.logo
   vertical-align: middle;
 }
 
-#info_window table, #info_timepoint table{
+#info_window table, #info_timepoint table, .info_overlaps table{
   border-style:solid;
   border-color: @border;
   border-collapse: collapse;
 }
 
-#info_window table .header, #info_timepoint table .header{
+#info_window table .header, #info_timepoint table .header, .info_overlaps table .header{
   border-width : 2px;
   background-color: @border;
 }
+
 
 span.ok { color: green; }
 text.ok { color: green; }
