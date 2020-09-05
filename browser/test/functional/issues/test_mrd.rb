@@ -91,7 +91,7 @@ class TestGraph < BrowserTest
     mrd_prevalent_on_spike_value = mrd_prevalent_on_spike.td(:id => "modal_line_value_mrd_prevalent_on_spike_0")
 
     assert ( mrd_family_value.text == "UNI" ),            "modal line mrd_family content is correct"
-    assert ( mrd_pearson_value.text == "0.96" ),          "modal line mrd_pearson content is correct"
+    assert ( mrd_pearson_value.text == "0.964285714285714" ),          "modal line mrd_pearson content is correct"
     assert ( mrd_prevalent_value.text.include? "IGK" ), "modal line mrd_prevalent content is correct" # value not dependant of the clone...
     assert ( mrd_prevalent_on_spike_value.text == "64.89233726998077" ), "modal line mrd_prevalent_on_spike content is correct"
 
