@@ -187,17 +187,17 @@ Clone.prototype.getHtmlInfo = function () {
 	    for (k = 0; k < time_length; k++) {
                 html += "<td id='modal_line_value_mrd_family_" + k.toString() + "'>" + this.getFittingFamily(this.m.samples.order[k]) + "</td>"
 	    }
-	    html += "</tr><tr id='modal_line_mrd_prevalent_on_spike'><td>normalization coefficient</td>"
+	    html += "</tr><tr><td>normalization coefficient</td>"
 	    for (k = 0; k < time_length; k++) {
-                html += "<td id='modal_line_value_mrd_prevalent_on_spike_" + k.toString() + "'>" + this.getNormCoeff(this.m.samples.order[k]) + "</td>"
+                html += "<td>" + this.getNormCoeff(this.m.samples.order[k]) + "</td>"
 	    }
 	    html += "</tr><tr id='modal_line_mrd_pearson'><td>Pearson R2</td>"
 	    for (k = 0; k < time_length; k++) {
                 html += "<td id='modal_line_value_mrd_pearson_" + k.toString() + "'>" + this.getR2(this.m.samples.order[k]) + "</td>"
 	    }
-	    html += "</tr><tr><td>total prevalent / total spikes</td>"
+	    html += "</tr><tr id='modal_line_mrd_prevalent_on_spike'><td>total prevalent / total spikes</td>"
 	    for (k = 0; k < time_length; k++) {
-                html += "<td>" + this.getAmplCoeff(this.m.samples.order[k]) + "</td>"
+                html += "<td id='modal_line_value_mrd_prevalent_on_spike_" + k.toString() + "'>" + this.getAmplCoeff(this.m.samples.order[k]) + "</td>"
 	    }
 	}
         html += header("representative sequence")
