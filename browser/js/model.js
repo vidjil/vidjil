@@ -1472,24 +1472,22 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     getPointHtmlInfo: function (timeID) {
         var html = ""
-        var colspan_header =  "colspan='"+(1+this.samples.number)+"'"
-        var colspan_line   =  "colspan='"+this.samples.number+"'"
 
         html = "<h2>Sample " + this.getStrTime(timeID, "name") + " ("+ this.getSampleTime(timeID)+")</h2>"
         html += "<div id='info_timepoint'><table><tr><th></th>"
-        html += "<tr><td> reads </td><td "+colspan_line+">" + this.reads.total[timeID] + "</td></tr>"
-        html += "<tr><td> analyzed reads </td><td "+colspan_line+">" + this.reads.segmented_all[timeID] +
+        html += "<tr><td> reads </td><td>" + this.reads.total[timeID] + "</td></tr>"
+        html += "<tr><td> analyzed reads </td><td>" + this.reads.segmented_all[timeID] +
             " ("+ (this.reads.segmented_all[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )</td></tr>"
 
-        html += "<tr><td> analysis software </td><td "+colspan_line+">" + this.getSoftVersionTime(timeID) + "</td></tr>"
-        html += "<tr><td> parameters </td><td "+colspan_line+">" + this.getCommandTime(timeID) + "</td></tr>"
-        html += "<tr><td> timestamp </td><td "+colspan_line+">" + this.getTimestampTime(timeID) + "</td></tr>"
-        html += "<tr><td> analysis log </td><td "+colspan_line+"><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
+        html += "<tr><td> analysis software </td><td>" + this.getSoftVersionTime(timeID) + "</td></tr>"
+        html += "<tr><td> parameters </td><td>" + this.getCommandTime(timeID) + "</td></tr>"
+        html += "<tr><td> timestamp </td><td>" + this.getTimestampTime(timeID) + "</td></tr>"
+        html += "<tr><td> analysis log </td><td><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
 
         if ( typeof this.diversity != 'undefined') {
             html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
             for (var key in this.diversity) {
-                html += "<tr><td> " + key.replace('index_', '') + "</td><td "+colspan_line+">" + this.getDiversity(key, timeID) + '</td></tr>'
+                html += "<tr><td> " + key.replace('index_', '') + "</td><td>" + this.getDiversity(key, timeID) + '</td></tr>'
             }
         }
 
@@ -1501,35 +1499,21 @@ changeAlleleNotation: function(alleleNotation) {
         }
 
 
-        if ( typeof this.overlaps != 'undefined') {
-            html += "<tr><td class='header' "+colspan_header+"> overlaps </td></tr>"
-            html += '<tr><td></td>'
-            for (var posSample = 0; posSample < this.samples.number; posSample++) {
-                html += "<td>"+this.samples.original_names[posSample]+"</td>"
-            }
-            html += '</tr>'
-            for (var key in this.overlaps) {
-                html += "<tr><td> " + key + "</td>"
-                var overlap = this.overlaps[key]
-                for (var pos = 0; pos < overlap[this.t].length; pos++) {
-                    value = overlap[this.t][pos]
-                    if (pos != this.t){
-                        html += "<td>" + value + '</td>'
-                    } else {
-                        html += "<td>" + "--" + '</td>'
-                    }
-                }
-                html += '</tr>'
-            }
-        }
 
         html += "</table></div>"
 
         if ( typeof this.overlaps != 'undefined') {
             html += "<br/><h3>Overlaps index</h3>"
 
+            var overlap_links = {
+                "morisita": "https://en.wikipedia.org/wiki/Morisita%27s_overlap_index",
+                "jaccard": "https://en.wikipedia.org/wiki/Jaccard_index"
+            }
             for (var key in this.overlaps) {
-                html += key+"<br/><table class='info_overlaps' id='overlap_"+key+"'>"
+                var overlap_name = key.charAt(0).toUpperCase() + key.slice(1);
+                html += "<h4 style='display:inline'>"+overlap_name+"'s index</h4>"
+                html += "<a title='Help link for "+overlap_name+"\'s index' class='icon-help-circled-1' target='_blank' href='"+overlap_links[key]+"' style='text-decoration: none;'></a>"
+                html += "<table class='info_overlaps' id='overlap_"+key+"'>"
                 var overlap = this.overlaps[key]
                 html += "<tr><td  class='header'></td>" // header with samples names
                 for (var posSample = 0; posSample < overlap.length; posSample++) {
@@ -1537,13 +1521,18 @@ changeAlleleNotation: function(alleleNotation) {
                 }
                 html += '</tr>'
                 for (var posSample = 0; posSample < overlap.length; posSample++) {
-                    html += '<tr>'+ "<td class='header'>"+this.samples.original_names[posSample]+"</td>"
+                    if (posSample == this.t){
+                        html += "<tr class='info_overlaps_line' >"
+                    } else {
+                        html += "<tr>"
+                    }
+                    html += "<td class='header'>"+this.samples.original_names[posSample]+"</td>"
                     values = overlap[posSample]
                     for (var i = 0; i < (overlap[posSample].length); i++) {
                         value = overlap[posSample][i]
 
                         if (i == posSample){
-                            html += "<td>" + "--" + '</td>'
+                            html += "<td class=''>" + "--" + '</td>'
                         } else {
                             html += "<td>" + value + '</td>'
                         }

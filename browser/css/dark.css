@@ -1169,7 +1169,7 @@ span.logo {
 }
 #info_window table,
 #info_timepoint table,
-.info_overlaps table {
+.info_overlaps {
   border-style: solid;
   border-color: #333333;
   border-collapse: collapse;
@@ -1179,6 +1179,10 @@ span.logo {
 .info_overlaps table .header {
   border-width: 2px;
   background-color: #333333;
+}
+.info_overlaps_line {
+  background-color: #586e75;
+  font-weight: bold;
 }
 span.ok {
   color: green;
