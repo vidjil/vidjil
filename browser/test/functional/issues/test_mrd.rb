@@ -94,6 +94,7 @@ class TestGraph < BrowserTest
     assert ( mrd_pearson_value.text == "0.964285714285714" ),          "modal line mrd_pearson content is correct"
     assert ( mrd_prevalent_value.text.include? "IGK" ), "modal line mrd_prevalent content is correct" # value not dependant of the clone...
     assert ( mrd_prevalent_on_spike_value.text == "64.89233726998077" ), "modal line mrd_prevalent_on_spike content is correct"
+    modal.i(:class => "icon-cancel").fire_event('click') # close modal
 
   end  
 
