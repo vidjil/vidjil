@@ -1486,8 +1486,8 @@ changeAlleleNotation: function(alleleNotation) {
 
         if ( typeof this.diversity != 'undefined') {
             html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
-            for (var key in this.diversity) {
-                html += "<tr><td> " + key.replace('index_', '') + "</td><td>" + this.getDiversity(key, timeID) + '</td></tr>'
+            for (var key_diversity in this.diversity) {
+                html += "<tr><td> " + key_diversity.replace('index_', '') + "</td><td>" + this.getDiversity(key_diversity, timeID) + '</td></tr>'
             }
         }
 
@@ -1509,18 +1509,18 @@ changeAlleleNotation: function(alleleNotation) {
                 "morisita": "https://en.wikipedia.org/wiki/Morisita%27s_overlap_index",
                 "jaccard": "https://en.wikipedia.org/wiki/Jaccard_index"
             }
-            for (var key in this.overlaps) {
-                var overlap_name = key.charAt(0).toUpperCase() + key.slice(1);
+            for (var key_overlap in this.overlaps) {
+                var overlap_name = key_overlap.charAt(0).toUpperCase() + key_overlap.slice(1);
                 html += "<h4 style='display:inline'>"+overlap_name+"'s index</h4>"
-                html += "<a title='Help link for "+overlap_name+"\'s index' class='icon-help-circled-1' target='_blank' href='"+overlap_links[key]+"' style='text-decoration: none;'></a>"
-                html += "<table class='info_overlaps' id='overlap_"+key+"'>"
-                var overlap = this.overlaps[key]
+                html += "<a title='Help link for "+overlap_name+"\'s index' class='icon-help-circled-1' target='_blank' href='"+overlap_links[key_overlap]+"' style='text-decoration: none;'></a>"
+                html += "<table class='info_overlaps' id='overlap_"+key_overlap+"'>"
+                var overlap = this.overlaps[key_overlap]
                 html += "<tr><td  class='header'></td>" // header with samples names
                 for (var posSample = 0; posSample < overlap.length; posSample++) {
                     html += "<td  class='header'>"+this.samples.original_names[posSample]+"</td>"
                 }
                 html += '</tr>'
-                for (var posSample = 0; posSample < overlap.length; posSample++) {
+                for (posSample = 0; posSample < overlap.length; posSample++) {
                     if (posSample == this.t){
                         html += "<tr class='info_overlaps_line' >"
                     } else {
