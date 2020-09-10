@@ -217,7 +217,7 @@ New `germline/*.g` presets for other species or for custom recombinations can be
 This is an advanced usage, please contact us if you need help in configuring such other germlines.
 
 Inside a `.g` file, the `systems` entries details how vidjil-algo looks for recombinations.
-Let's look to the `IGH` entry in the `germline/homo-sapiens.g` preset:
+Let's look at the `IGH` entry in the `germline/homo-sapiens.g` preset:
 
 ```json
         "IGH": {
@@ -249,7 +249,7 @@ The optional `4` entry  (`IGHD.fa`) is taken only there into account.
 However, if a D is not detected and designated, the read will be designated as VJ.
 
 
-The `TRD+` entry, for incomplete recombinations (see <locus.md>), shows an exemple where
+The `TRD+` entry, for incomplete recombinations (see <locus.md>), shows an example where
 both Vd-Dd3, Dd2-Jd (possibly Dd2-Dd-Jd), and Dd2-Dd3 recombinations are searched:
 
 ```json
@@ -274,8 +274,8 @@ as in `germline/homo-sapiens-cd.g`:
      "recombinations": [ { "1": ["CD-sorting.fa"] } ]
 ```
 
-This can be used to detect known non-recombined sequences,
-as here usual CD sequences in RNA-seq data.
+This can be used to detect non-recombined known sequences,
+as show here with usual CD sequences in RNA-seq data.
 However, putting too many sequences here may generate many hits
 that may hide actual recombinations.
 
@@ -447,7 +447,7 @@ The first column of the file is the sequence to be followed
 while the remaining columns consist of the sequence's label.
 In Vidjil-algo output, the labels are output alongside their sequences.
 
-A sequence given `--label <sequence>` or with `-label-file <file>` can be exactly the size
+A sequence given `--label <sequence>` or with `--label-file <file>` can be exactly the size
 of the window (`-w`, that is 50 by default). In this case, it is guaranteed that
 such a window will be output if it is detected in the reads.
 More generally, when the provided sequence differs in length with the windows
@@ -468,7 +468,7 @@ to files such as `out/seq/clone.fa-1`.
 ## Further clone analysis: V(D)J designation, CDR3 detection
 Note that such sequences must have been detected as a V(D)J (or V(D)J-like) recombination
 in the first pass: the `--label`, `-label-file`, or `--label-filter` options can not
- make appear a sequence that would be not retrieven while removing the thresholds with `--all`.
+ detect a recombination that was not detected when removing all the thresholds with `--all`.
 To increase the sensitivity, see above the `--e-value` option, or,
 to look for non-recombined sequences, see above the experimental `1` sequence analysis.
 
