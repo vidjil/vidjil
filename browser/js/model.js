@@ -1484,6 +1484,7 @@ changeAlleleNotation: function(alleleNotation) {
         html += "<tr><td> timestamp </td><td>" + this.getTimestampTime(timeID) + "</td></tr>"
         html += "<tr><td> analysis log </td><td><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
 
+        var colspan_header =  "colspan='"+(1+this.samples.number)+"'"
         if ( typeof this.diversity != 'undefined') {
             html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
             for (var key_diversity in this.diversity) {
