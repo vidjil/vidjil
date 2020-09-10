@@ -99,11 +99,13 @@ class BrowserTest < MiniTest::Test
 
   def close_everything
     if defined? $b
-      if ENV['HEADLESS']
-        $headless.destroy
-      else
-        $b.close
-      end
+        if ENV['HEADLESS']
+          $headless.destroy
+        else
+          if ENV['KEEPOPEN'] == "0"
+            $b.close
+          end
+        end
     end
   end
 

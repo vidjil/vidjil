@@ -1,4 +1,4 @@
-# vidjil-algo 2020.06
+# vidjil-algo 2020.08
 **Command-line manual**
 
 *The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)*
@@ -28,8 +28,8 @@ leukemia, are used to quantify the minimal residual disease during
 patient follow-up.
 With adapted [library preparation and sequencing](http://www.vidjil.org/doc/locus),
 high-throughput sequencing (NGS/HTS) now
-enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](https://omictools.com/rep-seq-category)
-methods and software.
+enables the deep sequencing of a lymphoid population with dedicated
+sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 
 Vidjil-algo processes high-throughput sequencing data to extract V(D)J
 junctions and gather them into clones. Vidjil-algo starts
@@ -496,7 +496,7 @@ Even if it is advised to rather use the full information in the `.vijdil` file,
 the `.vdj.fa` is a convenient way to have sequences of clones for further processing.
 These sequences are at least the windows (and their count in the headers) or
 the consensus sequences (`--max-consensus`) when they have been computed.
-The [headers](#headers-in-vdj-fa-files-deprecated) are described below, but the format of the headers is deprecated
+The [headers](#headers-in-the-vdjfa-files-deprecated) are described below, but the format of the headers is deprecated
 and will not be enforced in future releases.
 Some other informations such as the further clustering are not output in this file.
 

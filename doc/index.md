@@ -9,8 +9,8 @@ pathologies, and in leukemia, are used to quantify the minimal residual
 disease during patient follow-up.
 With adapted [library preparation and sequencing](locus.md),
 high-throughput sequencing (NGS/HTS) now
-enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](https://omictools.com/rep-seq-category)
-methods and software.
+enables the deep sequencing of a lymphoid population with dedicated
+sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 
 ### Life scientist
   - Tutorial "Mastering the Vidjil web application":

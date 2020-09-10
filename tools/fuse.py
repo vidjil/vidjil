@@ -26,6 +26,7 @@
 #  along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
 
 from __future__ import print_function
+from __future__ import division
 
 import check_python_version
 import sys
@@ -1236,6 +1237,107 @@ class ListWindows(VidjilJson):
         return obj
 
 
+    ##########################
+    ###  Morisita's index  ###
+    ##########################
+    def computeOverlaps(self):
+        '''
+        Compute, for each combinaison of sample, various overlap indexs
+        '''
+        nb_sample = self.d["samples"].d["number"]
+        self.d["overlaps"] = {}
+        self.d["overlaps"]["morisita"] = []
+        self.d["overlaps"]["jaccard"]  = []
+
+        for pos_0 in range(0, nb_sample):
+            morisita = []
+            jaccard  = []
+            for pos_1 in range(0, nb_sample):
+                print( "Overlap: %s vs %s" % (pos_0, pos_1) )
+                morisita.append( self.computeOverlapMorisita(pos_0, pos_1) )
+                jaccard.append(  self.computeOverlapJaccard(pos_0, pos_1)  )
+            self.d["overlaps"]["morisita"].append( morisita)
+            self.d["overlaps"]["jaccard"].append(  jaccard )
+            
+        return
+
+
+    def computeOverlapMorisita(self, pos_0, pos_1):
+        """
+        Morisita-Horn similarity index
+        This index apply to quantitative data.
+        Allow to evaluate the similarity between different groups, and is not sensible by richness of sampling
+        Formula:  CMH = 2 ∑▒((ai x bi))/((da+db)x(Na x Nb))
+        da = ∑ai2/Na2
+        db = ∑bi2/Nb2
+        Na = Total number of species at site A
+        Nb = Total number of species at site B
+        ai = Number of species i at site A
+        bi = Number of species i at site B
+        # Values between 0 (completly different communityes) and 1 (maximal similarity).
+        # 2 groups are similare (poor diversity) if CMH value is superior to 0.5
+        # and dissemblables if value is under 0,5 (high diversity).
+        !!! Computed only on present clones (so should be run with `-Y all`)
+        """
+        clones    = self.d["clones"]
+
+        m  = 0
+        da = 0
+        db = 0
+
+        for clone in clones:
+            ai = clone.d["reads"][pos_0]
+            bi = clone.d["reads"][pos_1]
+            m  += (ai * bi)
+            da += (ai*ai)
+            db += (bi*bi)
+
+        d = (da+db)/2
+        if m == 0: #if really no shared clones
+            res =  0
+        else:
+            res = round( (m/d), 3) 
+
+        return res
+
+
+    def computeOverlapJaccard(self, pos_0, pos_1):
+        """
+        Jaccard similarity index
+        Formula :
+            I = Nc / (N1 + N2 - Nc)
+        Nc : number of shared taxons between stations
+        N1 et N2 : number of taxons present only in stations 1 or 2
+        This index is from 0 to 1 and take into account only positive relations.
+        If index increase, an important number of species is present in only one location,
+        with a poor inter-location biodiversity.
+        """
+        clones    = self.d["clones"]
+        reads     = self.d["reads"].d["segmented"]
+        N1 = self.get_nb_species_of_sample(pos_0)
+        N2 = self.get_nb_species_of_sample(pos_1)
+
+        Nc = 0
+        for clone in clones:
+            ai = clone.d["reads"][pos_0]
+            bi = clone.d["reads"][pos_1]
+            Nc  += bool(ai * bi)
+        # print( "Nc: %s" % Nc)
+        if Nc == 0: # if really no shared clones
+            return 0
+
+        I = round( (Nc / (N1 + N2 - Nc)), 3)
+        return I
+
+
+    def get_nb_species_of_sample(self, pos):
+        X = 0
+        for clone in self.d["clones"]:
+            if clone.d["reads"][pos]:
+                X += 1
+        return X
+
+
 
 ### some data used for test
 w1 = Window(1)
@@ -1412,6 +1514,7 @@ def main():
     group_options.add_argument('--no-clones', action='store_true', default=False, help='do not output individual clones')
 
     group_options.add_argument('--export-airr', action='store_true', default=False, help='export data in AIRR format.')
+    group_options.add_argument('--overlaps', action='store_true', default=False, help='Compute overlaps index of repertoires.')
 
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
 
@@ -1557,6 +1660,11 @@ def main():
             os.unlink(fasta_file.name)
     else : 
         jlist_fused.d["similarity"] = [];
+        
+
+    if args.overlaps:
+        print("### Overlaps index")
+        jlist_fused.computeOverlaps()
     
     if args.no_clones:
         # TODO: do not generate the list of clones in this case
