@@ -275,7 +275,7 @@ as in `germline/homo-sapiens-cd.g`:
 ```
 
 This can be used to detect non-recombined known sequences,
-as show here with usual CD sequences in RNA-seq data.
+as shown here with usual CD sequences in RNA-seq data.
 However, putting too many sequences here may generate many hits
 that may hide actual recombinations.
 
