@@ -1518,7 +1518,7 @@ changeAlleleNotation: function(alleleNotation) {
                 var overlap = this.overlaps[key_overlap]
                 html += "<tr><td  class='header'></td>" // header with samples names
                 for (var posSample = 0; posSample < overlap.length; posSample++) {
-                    html += "<td  class='header'>"+this.samples.names[posSample]+"</td>"
+                    html += "<td  class='header'>"+this.getSampleName(posSample)+"</td>"
                 }
                 html += '</tr>'
                 for (posSample = 0; posSample < overlap.length; posSample++) {
@@ -1527,7 +1527,7 @@ changeAlleleNotation: function(alleleNotation) {
                     } else {
                         html += "<tr>"
                     }
-                    html += "<td class='header'>"+this.samples.names[posSample]+"</td>"
+                    html += "<td class='header'>"+this.getSampleName(posSample)+"</td>"
                     values = overlap[posSample]
                     for (var i = 0; i < (overlap[posSample].length); i++) {
                         value = overlap[posSample][i]
@@ -3465,5 +3465,18 @@ changeAlleleNotation: function(alleleNotation) {
         return
     },
 
+    /**
+     * Get the name of a samples.
+     * If getted from the server, the correct name to send come from original_names field
+     * Else return value from samples.names
+     */
+    getSampleName: function(posSample){
+        var name_server = this.samples.original_names[posSample]
+        var name_file = this.samples.names[posSample]
+        if (name_file == ""){
+            return name_server
+        }
+        return name_file
+    },
 
 }; //end prototype Model
