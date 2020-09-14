@@ -1333,6 +1333,7 @@ Clone.prototype = {
         var time_length = this.m.samples.order.length
         var html = ""
 
+        // Functions to format html row
         var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/gi,'_').replace(/__/gi,'_')}
         var header = function(content, title) { 
             title = (title == undefined) ? clean_title(content) : clean_title(title)
@@ -1412,28 +1413,14 @@ Clone.prototype = {
                 html += "<td>" + this.getStrSize(this.m.samples.order[k]) + "</td>"
             }
 
-            if ('prevalent' in this.m.samples) {
-                // this .vidjil file is not all-diagnostic:
-                // show R2, etc, fields for follow-up samples
-                content_fitting_family = []
-                content_getR2 = []
-                content_getPrevalent = []
-                content_getAmplCoeff = []
-                for (k = 0; k < time_length; k++) {
-                    content_fitting_family.push( this.getFittingFamily(this.m.samples.order[k]) )
-                    content_getR2.push( this.getR2(this.m.samples.order[k]) )
-                    prevalent = this.getPrevalent(this.m.samples.order[k])
-                    if (prevalent != ""){
-                        prevalent = this.m.systemBox(prevalent).outerHTML + prevalent
-                    }
-                    content_getPrevalent.push( prevalent )
-                    content_getAmplCoeff.push( this.getAmplCoeff(this.m.samples.order[k]) )
+            // Specific part for MRD script
+            if ('prevalent' in this.m.samples && this.getHtmlInfo_prevalent != undefined){
+                values = this.getHtmlInfo_prevalent()
+                for (var mrd_val = 0; mrd_val < values.length; mrd_val++) {
+                    html += row_from_list(values[mrd_val][0], values[mrd_val][1], values[mrd_val][2])
                 }
-                html += row_from_list("family used for fitting",        content_fitting_family, "mrd_family")
-                html += row_from_list("Pearson R2",                     content_getR2,          "mrd_pearson")
-                html += row_from_list("prevalent germline",             content_getPrevalent,   "mrd_prevalent")
-                html += row_from_list("total prevalent / total spikes", content_getAmplCoeff,   "mrd_prevalent_on_spike")
             }
+
             html += header("representative sequence")
         }else{
             html += header("sequence")
@@ -2011,70 +1998,6 @@ Clone.prototype = {
         }
     },
 
-
-    //////////////////////////////
-    ///  MRD, Spike and Familly
-    //////////////////////////////
-    /**
-     * @return {string} the family used for fiting at the given time
-     */
-    getFittingFamily: function(time) {
-        if (this.m.samples.prevalent[time] == 0) {
-            // diagnostic sample
-            return "";
-        } else if ("normalized_reads" in this && this.normalized_reads[time] === null) {
-            // negative clone: report UNI
-            return "UNI";
-        } else if ('family' in this) {
-            return this.family[time];
-        } else {
-            return "Please use version 6 or later of spike-normalization";
-        }
-    },
-
-    /**
-     * @return {string} the Pearson R2 value for the spike-in fitting at the given time
-     */
-    getR2: function(time) {
-        if (this.m.samples.prevalent[time] == 0) {
-            // diagnostic sample
-            return "";
-        } else if ('normalized_reads' in this && this.normalized_reads[time] === null && 'UNI_R2' in this.m.samples) {
-            // negative clone: report UNI R2
-            return this.m.samples.UNI_R2[time];
-        } else if ('R2' in this) {
-            return this.R2[time].toString();
-        } else {
-            return "Please use version 6 or later of spike-normalization"; // arrive souvent si non norm
-        }
-    },
-
-    /**
-     * @return {string} the prevalent germline at the given time
-     */
-    getPrevalent: function(time) {
-        if (this.m.samples.prevalent[time] == 0) {
-            // diagnostic sample
-            return "";
-        } else {
-            return this.m.samples.prevalent[time];
-        }
-    },
-
-    /**
-     * @return {string} the amplification coefficient at the given time
-     * (ampl. coeff. = total prevalent / total spike)
-     */
-    getAmplCoeff: function(time) {
-        if (this.m.samples.prevalent[time] == 0) {
-            // diagnostic sample
-            return "";
-        } else if ('ampl_coeff' in this.m.samples) {
-            return this.m.samples.ampl_coeff[time].toString();
-        } else {
-            return "Please use version 6 or later of spike-normalization";
-        }
-    },
 
 };
 
