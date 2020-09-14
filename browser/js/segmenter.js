@@ -276,6 +276,7 @@ Segment.prototype = {
                 input.type = 'checkbox';
                 input.id = 'vdj_input_check';
                 input.setAttribute("title", 'Display CDR3 computed by Vidjil');
+                input.autocomplete = 'off';
                 input.checked = (self.m.localStorage && localStorage.getItem('segmenter_cdr3')=="checked")
                 input.addEventListener('change', function(evt){
                     self.highlightCDR3(event.target.checked, true)
@@ -414,8 +415,10 @@ Segment.prototype = {
             
             for (var c_id = 0; c_id < self.m.clones.length; c_id++)
                 self.build_skeleton(c_id);
-            
-            this.highlightCDR3(self.m.localStorage && localStorage.getItem('segmenter_cdr3'), false)
+
+            if (self.highlightCDR3)
+                this.highlightCDR3(self.highlightCDR3.checked, false)
+                
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
