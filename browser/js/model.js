@@ -1484,21 +1484,65 @@ changeAlleleNotation: function(alleleNotation) {
         html += "<tr><td> timestamp </td><td>" + this.getTimestampTime(timeID) + "</td></tr>"
         html += "<tr><td> analysis log </td><td><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
 
+        var colspan_header =  "colspan='"+(1+this.samples.number)+"'"
         if ( typeof this.diversity != 'undefined') {
-            html += "<tr><td class='header' colspan='2'> diversity </td></tr>"
-            for (var key in this.diversity) {
-                html += "<tr><td> " + key.replace('index_', '') + "</td><td>" + this.getDiversity(key, timeID) + '</td></tr>'
+            html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
+            for (var key_diversity in this.diversity) {
+                html += "<tr><td> " + key_diversity.replace('index_', '') + "</td><td>" + this.getDiversity(key_diversity, timeID) + '</td></tr>'
             }
         }
 
         if ( typeof this.samples.diversity != 'undefined' && typeof this.samples.diversity[timeID] != 'undefined') {
-            html += "<tr><td class='header' colspan='2'> diversity </td></tr>"
+            html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
             for (var k in this.samples.diversity[timeID]) {
                 html += "<tr><td> " + k.replace('index_', '') + "</td><td>" + this.samples.diversity[timeID][k].toFixed(3) + '</td></tr>'
             }
         }
 
+
+
         html += "</table></div>"
+
+        if ( typeof this.overlaps != 'undefined') {
+            html += "<br/><h3>Overlaps index</h3>"
+
+            var overlap_links = {
+                "morisita": "https://en.wikipedia.org/wiki/Morisita%27s_overlap_index",
+                "jaccard": "https://en.wikipedia.org/wiki/Jaccard_index"
+            }
+            for (var key_overlap in this.overlaps) {
+                var overlap_name = key_overlap.charAt(0).toUpperCase() + key_overlap.slice(1);
+                html += "<h4 style='display:inline'>"+overlap_name+"'s index</h4>"
+                html += "<a title='Help link for "+overlap_name+"\'s index' class='icon-help-circled-1' target='_blank' href='"+overlap_links[key_overlap]+"' style='text-decoration: none;'></a>"
+                html += "<table class='info_overlaps' id='overlap_"+key_overlap+"'>"
+                var overlap = this.overlaps[key_overlap]
+                html += "<tr><td  class='header'></td>" // header with samples names
+                for (var posSample = 0; posSample < overlap.length; posSample++) {
+                    html += "<td  class='header'>"+this.getSampleName(posSample)+"</td>"
+                }
+                html += '</tr>'
+                for (posSample = 0; posSample < overlap.length; posSample++) {
+                    if (posSample == this.t){
+                        html += "<tr class='info_overlaps_line' >"
+                    } else {
+                        html += "<tr>"
+                    }
+                    html += "<td class='header'>"+this.getSampleName(posSample)+"</td>"
+                    values = overlap[posSample]
+                    for (var i = 0; i < (overlap[posSample].length); i++) {
+                        value = overlap[posSample][i]
+
+                        if (i == posSample){
+                            html += "<td class=''>" + "--" + '</td>'
+                        } else {
+                            html += "<td>" + value + '</td>'
+                        }
+                    }
+                    html += '</tr>'
+                }
+                html += "</table>"
+            }
+        }
         return html
     },
 
@@ -3421,5 +3465,18 @@ changeAlleleNotation: function(alleleNotation) {
         return
     },
 
+    /**
+     * Get the name of a samples.
+     * If getted from the server, the correct name to send come from original_names field
+     * Else return value from samples.names
+     */
+    getSampleName: function(posSample){
+        var name_server = this.samples.original_names[posSample]
+        var name_file = this.samples.names[posSample]
+        if (name_file == ""){
+            return name_server
+        }
+        return name_file
+    },
 
 }; //end prototype Model
