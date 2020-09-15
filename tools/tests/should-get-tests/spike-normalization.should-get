@@ -34,7 +34,7 @@ $ clones in the output, same as in the input
 $ "normalized_reads" expected in this sample
 2: "normalized_reads"
 
-$ mrd field; 6 for clones, 1 for sample
+$ mrd field; 2 for clones, 1 for sample
 3: "mrd"
 
 $ Good value for the first clone
