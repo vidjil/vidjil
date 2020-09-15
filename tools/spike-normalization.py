@@ -252,13 +252,14 @@ def addNormalizedReads(data, coeff, r2, spk):
     if msgs:
         print('Normalizing reads and prinitng output file', file=sys.stderr)
 
-    data['coefficients'] = coeff
+    data["mrd"] = {}
+    data['mrd']['coefficients'] = coeff
     ## find prevalent germine and sum of its reads
     prevalent, spg = prevalentGermline(data['reads']['germline'])
-    data['samples']['prevalent'] = [ prevalent ]
-    data['samples']['ampl_coeff'] = [ spg/spk ]
-    data['samples']['UNI_COEFF'] = [ coeff[UNI] ]
-    data['samples']['UNI_R2'] = [ r2[UNI] ]
+    data['mrd']['prevalent']  = [ prevalent ]
+    data['mrd']['ampl_coeff'] = [ spg/spk ]
+    data['mrd']['UNI_COEFF']  = [ coeff[UNI] ]
+    data['mrd']['UNI_R2']     = [ r2[UNI] ]
     ### normalize just clones from the prevalent germline
     for clone in data['clones']:
         ## grab read data
@@ -284,11 +285,12 @@ def addNormalizedReads(data, coeff, r2, spk):
             ## unnamed clone
             fam = UNI
         if 'germline' in clone and clone['germline'][0:3] == prevalent:
-            clone['norm_coeff'] = [ coeff[fam] ]
-            clone['copy_number'] = [ reads * coeff[fam] ]
+            clone['mrd'] = {}
+            clone['mrd']['norm_coeff'] = [ coeff[fam] ]
+            clone['mrd']['copy_number'] = [ reads * coeff[fam] ]
+            clone['mrd']['R2'] = [ r2[fam] ]
+            clone['mrd']['family'] = [ fam ]
             clone['normalized_reads'] = [ reads*coeff[fam]*spg/NG600 ]
-            clone['R2'] = [ r2[fam] ]
-            clone['family'] = [ fam ]
 
 ############################################################
 ### command line, initial msg
