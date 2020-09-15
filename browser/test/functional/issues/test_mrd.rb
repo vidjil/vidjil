@@ -24,7 +24,9 @@ class TestGraph < BrowserTest
     c1 = $b.clone_in_list("1") # c0 have warning icon
     c1.click
     c1.i(:class => "icon-info").click
+    $b.update_icon.wait_while(&:present?)
     modal = $b.modal_container
+
 
     mrd_family    = modal.tr(:id => "modal_line_mrd_family")
     mrd_pearson   = modal.tr(:id => "modal_line_mrd_pearson")
@@ -44,7 +46,9 @@ class TestGraph < BrowserTest
     c0 = $b.clone_in_list("0")
     c0.click
     c0.i(:class => "icon-info").click
+    $b.update_icon.wait_while(&:present?)
     modal = $b.modal_container
+
 
     mrd_family    = modal.tr(:id => "modal_line_mrd_family")
     mrd_pearson   = modal.tr(:id => "modal_line_mrd_pearson")
@@ -72,7 +76,9 @@ class TestGraph < BrowserTest
     c1 = $b.clone_in_list("1")
     c1.click
     c1.i(:class => "icon-info").click
+    $b.update_icon.wait_while(&:present?)
     modal = $b.modal_container
+
 
     mrd_family    = modal.tr(:id => "modal_line_mrd_family")
     mrd_pearson   = modal.tr(:id => "modal_line_mrd_pearson")
