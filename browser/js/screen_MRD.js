@@ -37,11 +37,11 @@
  * @return {string} the family used for fiting at the given time
  */
 Clone.prototype.getFittingFamily = function(time) {
-    if (this.m.samples.prevalent[time] == 0) {
+    if (this.m.mrd.prevalent[time] == 0) {
         // diagnostic sample
         return "";
-    } else if ('family' in this) {
-       return this.family[time];
+    } else if (this.mrd != undefined && 'family' in this.mrd) {
+       return this.mrd.family[time];
     } else {
         // negative clone: report UNI
         return "UNI";
@@ -53,14 +53,14 @@ Clone.prototype.getFittingFamily = function(time) {
  * @return {string} the normalization coefficient at the given time
  */
 Clone.prototype.getNormCoeff = function(time) {
-    if (this.m.samples.prevalent[time] == 0) {
+    if (this.m.mrd.prevalent[time] == 0) {
         // diagnostic sample
         return "";
-    } else if ('norm_coeff' in this) {
-        return this.norm_coeff[time];
-    } else if ('UNI_COEFF' in this.m.samples) {
-        // negative clone: report UNI
-        return this.m.samples.UNI_COEFF[time];
+    } else if (this.mrd != undefined && 'norm_coeff' in this.mrd) {
+        return this.mrd.norm_coeff[time];
+    } else if ('UNI_COEFF' in this.m.mrd) {
+        // negative clone:report UNI
+        return this.m.mrd.UNI_COEFF[time];
     } else {
         return "";
     }
@@ -70,14 +70,14 @@ Clone.prototype.getNormCoeff = function(time) {
  * @return {string} the Pearson R2 value for the spike-in fitting at the given time
  */
 Clone.prototype.getR2 = function(time) {
-    if (this.m.samples.prevalent[time] == 0) {
+    if (this.m.mrd.prevalent[time] == 0) {
         // diagnostic sample
         return "";
-    } else if ('R2' in this) {
-       return this.R2[time].toString();
-    } else if ('UNI_R2' in this.m.samples) {
+    } else if (this.mrd != undefined && 'R2' in this.mrd) {
+       return this.mrd.R2[time]//.toString();
+    } else if ('UNI_R2' in this.m.mrd) {
         // negative clone: report UNI R2
-        return this.m.samples.UNI_R2[time];
+        return this.m.mrd.UNI_R2[time];
     } else {
        return "";
     }
@@ -88,11 +88,11 @@ Clone.prototype.getR2 = function(time) {
  * @return {string} the prevalent germline at the given time
  */
 Clone.prototype.getPrevalent = function(time) {
-    if (this.m.samples.prevalent[time] == 0) {
+    if (this.m.mrd.prevalent[time] == 0) {
         // diagnostic sample
         return "";
     } else {
-       return this.m.samples.prevalent[time];
+       return this.m.mrd.prevalent[time];
     }
 };
 
@@ -102,11 +102,11 @@ Clone.prototype.getPrevalent = function(time) {
  * (ampl. coeff. = total prevalent / total spike)
  */
 Clone.prototype.getAmplCoeff = function(time) {
-    if (this.m.samples.prevalent[time] == 0) {
+    if (this.m.mrd.prevalent[time] == 0) {
         // diagnostic sample
         return "";
-    } else if ('ampl_coeff' in this.m.samples) {
-       return this.m.samples.ampl_coeff[time].toString();
+    } else if ('ampl_coeff' in this.m.mrd) {
+       return this.m.mrd.ampl_coeff[time]//.toString();
     } else {
        return "Please use version 6 or later of spike-normalization";
     }
@@ -119,7 +119,7 @@ Clone.prototype.getAmplCoeff = function(time) {
 Clone.prototype.getHtmlInfo_prevalent = function () {
     values = []
 
-    if ('prevalent' in this.m.samples) {
+    if ('mrd' in this.m) {
         // this .vidjil file is not all-diagnostic:
         // show R2, etc, fields for follow-up samples
         content_fitting_family = []

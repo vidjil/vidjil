@@ -1414,7 +1414,7 @@ Clone.prototype = {
             }
 
             // Specific part for MRD script
-            if ('prevalent' in this.m.samples && this.getHtmlInfo_prevalent != undefined){
+            if ('mrd' in this.m && this.getHtmlInfo_prevalent != undefined){
                 values = this.getHtmlInfo_prevalent()
                 for (var mrd_val = 0; mrd_val < values.length; mrd_val++) {
                     html += row_from_list(values[mrd_val][0], values[mrd_val][1], values[mrd_val][2])

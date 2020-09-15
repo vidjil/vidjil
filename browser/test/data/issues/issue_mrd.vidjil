@@ -1,13 +1,6 @@
 {
   "clones": [
     {
-      "R2": [
-        0.95
-      ],
-      "copy_number": 41.37324910738808,
-      "family": [
-        "UNI"
-      ],
       "germline": "IGK",
       "id": "AACAGTATAATAGTTCGCTCAGGGGGCGAGGGAATGAATTCACTTTCGGC",
       "normalized_reads": [
@@ -20,12 +13,18 @@
         "3": 269
       },
       "sequence": 0,
-      "top": 231
+      "top": 231,
+      "mrd": {
+        "R2": [
+          0.95
+        ],
+        "copy_number": 41.37324910738808,
+        "family": [
+          "UNI"
+        ]
+      }
     },
     {
-      "R2": [
-        0.96
-      ],
       "_average_read_length": [
         150.88140869140625
       ],
@@ -34,10 +33,6 @@
       ],
       "_coverage_info": [
         "149 bp (98% of 150.9 bp)"
-      ],
-      "copy_number": 162.10931062894807,
-      "family": [
-        "UNI"
       ],
       "germline": "IGK",
       "id": "CTGTCAACAGAGTTACAGTACCCCTCGGACGTTCGGCCAAGGGACCAAGG",
@@ -53,7 +48,16 @@
         "3": 1054
       },
       "sequence": "CAAGGTTCAGCGGCAGTGGATCTGGGACAGATTTCACTCTCACCATCAGCAGTCTGCAACCTGAAGATTTTGCAACTTACTACTGTCAACAGAGTTACAGTACCCCTCGGACGTTCGGCCAAGGGACCAAGGTGGAGATCAAACGTAAG",
-      "top": 10
+      "top": 10,
+      "mrd": {
+        "R2": [
+          0.96
+        ],
+        "copy_number": 162.10931062894807,
+        "family": [
+          "UNI"
+        ]
+      }
     },
     {
       "_average_read_length": [
@@ -101,20 +105,9 @@
         "3": 1
       },
       "sequence": 0,
-      "top": 15850
+      "top": 15
     }
   ],
-  "coefficients": {
-    "IGHV5": 0.15380390002746497,
-    "UNI": 0.15380390002746497,
-    "VH1": 0.15380390002746497,
-    "VH2": 0.15380390002746497,
-    "VH3": 0.15380390002746497,
-    "VH4": 0.15380390002746497,
-    "VH5": 0.15380390002746497,
-    "VH6": 0.15380390002746497,
-    "VH7": 0.15380390002746497
-  },
   "config": {
     "all": false,
     "alternative-genes": "0",
@@ -366,12 +359,6 @@
     ]
   },
   "samples": {
-    "UNI_R2": [
-      0.964285714285714
-    ],
-    "ampl_coeff": [
-      64.89233726998077
-    ],
     "commandline": [
       "./vidjil-algo Boldrini-spikes.json "
     ],
@@ -382,15 +369,34 @@
     "original_names": [
       "/home/joao_meidanis/boldrini/vidjil/docker/button-patients/IGK-2530-1A-K_S20_L001_R1_001.fastq.gz"
     ],
-    "prevalent": [
-      "IGK"
-    ],
     "producer": [
       "vidjil-algo dev ff39f8efe (2020-01-09)"
     ],
     "run_timestamp": [
       "2020-01-13 13:28:12"
     ]
+  },
+  "mrd": {
+   "UNI_R2": [
+      0.964285714285714
+    ],
+    "ampl_coeff": [
+      64.89233726998077
+    ],
+    "prevalent": [
+      "IGK"
+    ],
+    "coefficients": {
+      "IGHV5": 0.15380390002746497,
+      "UNI": 0.15380390002746497,
+      "VH1": 0.15380390002746497,
+      "VH2": 0.15380390002746497,
+      "VH3": 0.15380390002746497,
+      "VH4": 0.15380390002746497,
+      "VH5": 0.15380390002746497,
+      "VH6": 0.15380390002746497,
+      "VH7": 0.15380390002746497
+    }
   },
   "vidjil_json_version": "2016b"
 }
