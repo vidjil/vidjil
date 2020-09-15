@@ -484,6 +484,54 @@ extend the `germline.data` default file with a custom germline
 }
 ```
 
+## `MRD data` \[optional\]\[work in progress, to be documented\]
+
+A work in progress is done to computed and see these informations. 
+This is computed by the post-analysis script `tools/spike-bormalization.py`.
+In this case, multiple data will be implemented in `vidjil` file. 
+The first part is set into an `mrd` field and contain data for each sample. 
+```javascript
+"mrd": {
+  "coefficients": {
+    "IGHV5": 0.15380390002746497,
+    "UNI": 0.15380390002746497,
+    "VH1": 0.15380390002746497,
+    "VH2": 0.15380390002746497,
+    "VH3": 0.15380390002746497,
+    "VH4": 0.15380390002746497,
+    "VH5": 0.15380390002746497,
+    "VH6": 0.15380390002746497,
+    "VH7": 0.15380390002746497
+  },
+  "UNI_R2": [
+    0.964285714285714
+  ],
+  "ampl_coeff": [
+    64.89233726998077
+  ],
+  "prevalent": [
+    "IGK"
+  ]
+}
+````
+
+
+```javascript
+"clones": [
+  {
+    ...
+    "mrd": {
+      "R2": [0.95 ],
+      "copy_number": 41.37324910738808,
+      "family": ["UNI"]
+    },
+    "normalized_reads": [195.50763372699805 ]
+  }
+]
+````
+The second part is set into each clone
+TODO
+
 ## Further clustering of clones: the `clusters` list \[optional\]
 
 Each element in the 'clusters' list describe a list of clones that are 'merged'.
