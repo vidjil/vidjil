@@ -515,6 +515,10 @@ The first part is set into an `mrd` field and contain data for each sample.
 }
 ````
 
+`coefficients`:
+`UNI_R2`:
+`ampl_coeff`:
+`prevalent`:
 
 ```javascript
 "clones": [
@@ -529,7 +533,12 @@ The first part is set into an `mrd` field and contain data for each sample.
   }
 ]
 ````
-The second part is set into each clone
+The second set of fields is set into each clone, under `mrd`.
+`R2`:
+`copy_number`:
+`family`:
+`normalized_reads`: This field is use by post-process script to show normalization. It is not specific to mrd.
+
 TODO
 
 ## Further clustering of clones: the `clusters` list \[optional\]
