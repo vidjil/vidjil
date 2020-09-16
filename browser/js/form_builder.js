@@ -126,11 +126,21 @@ function parseClipboard(clipboard){
 }
 
 function readClipBoard() {
+    //clipboard API is missing (old browser)
     if (!navigator.clipboard){
-        console.log({msg: "clipboard features are not supported by your navigator", type: 'flash', priority: 1})
+        readClipBoard2()
+        return
+    }
+    
+    //clipboard API is incomplete (firefox...)
+    var permissionQuery = { name: 'clipboard-read', allowWithoutGesture: false }
+    navigator.permissions.query(permissionQuery)
+    if (!navigator.clipboard.readText){
+        readClipBoard2()
         return
     }
 
+    //user did not allowed clipboard acces?
     navigator.clipboard
         .readText()
         .then(function(clipboard){
@@ -138,8 +148,15 @@ function readClipBoard() {
             addForms(parsed_content)
         })
         .catch(function(err){
-            console.log({msg: "clipboard error, please allow browser access to clipboard to use this feature", type: 'flash', priority: 1})
+            creadClipBoard2()
+            return
         });
+}
+
+function readClipBoard2() {
+    var template = document.getElementById("clipboard-popup")
+    var clone = template.content.firstElementChild.cloneNode(true)
+    console.popupHTML(clone)
 }
 
 

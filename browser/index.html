@@ -363,4 +363,20 @@
 
     </body> 
 
+
+    <template id='clipboard-popup'> 
+        <div>
+        <div>
+            Your browser does not support clipboard API or you refused Vidjil to accede to your clipboard content. <br>
+        </div>
+        <div>
+            <form name="clipboardForm" action="javascript:addForms(parseClipboard(clipboardData.value))">
+                <textarea   name="clipboardData" id="clipboardData" rows="6" cols="70" 
+                            placeholder="Please copy your clipboard manually in this texarea to proceed anyway."></textarea>
+                <input name="Submit"  type="submit" value="Continue"/>
+            </form>   
+        </div>
+        </div>
+    </template>
+
 </html>
