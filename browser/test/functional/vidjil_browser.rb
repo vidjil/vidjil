@@ -399,6 +399,10 @@ class VidjilBrowser < Watir::Browser
     return div(:id => 'updateIcon')
   end
 
+  def modal_container
+    return div(:class =>  ["modal", "info-container"])
+  end
+
   protected
 
   def scatterplot_id(number=1)
