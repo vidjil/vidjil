@@ -310,8 +310,8 @@ if __name__ == '__main__':
 
 
     group_options = parser.add_argument_group() # title='Options and parameters')
-    group_options.add_argument('--input',  help='Vidjil input file')
-    group_options.add_argument('--output', help='Vidjil output file with normalization')
+    group_options.add_argument('-i', '--input',  help='Vidjil input file')
+    group_options.add_argument('-o', '--output', help='Vidjil output file with normalization')
     group_options.add_argument('--silent', action='store_false', default=False, help='run script in silent verbose mode')
     
     args = parser.parse_args()
