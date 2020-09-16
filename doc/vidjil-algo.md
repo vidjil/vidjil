@@ -173,18 +173,18 @@ clustering.
 
 
 ``` diff
-Germline presets (at least one -g or -V/(-D)/-J option must be given)
+Germline/recombination selection (at least one -g or -V/(-D)/-J option must be given)
   -g, --germline GERMLINES ...
 
-         -g <.g FILE>(:FILTER)
-                    multiple locus/germlines, with tuned parameters.
+         -g <.g FILE>(:FOCUS) ...
+                    germline preset(s) (.g file(s)), detecting multiple recombinations, with tuned parameters.
                     Common values are '-g germline/homo-sapiens.g' or '-g germline/mus-musculus.g'
-                    The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
+                    One can focus on some recombinations, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
          -g PATH
-                    multiple locus/germlines, shortcut for '-g PATH/homo-sapiens.g',
+                    human germline preset, shortcut for '-g PATH/homo-sapiens.g',
                     processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with incomplete/unusal recombinations
   -V FILE ...                 custom V germline multi-fasta file(s)
-  -D FILE ...                 custom D germline multi-fasta file(s), analyze into V(D)J components
+  -D FILE ...                 custom D germline multi-fasta file(s) for V(D)J designation
   -J FILE ...                 custom V germline multi-fasta file(s)
   -2                          try to detect unexpected recombinations
 ```
