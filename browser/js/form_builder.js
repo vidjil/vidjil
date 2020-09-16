@@ -100,7 +100,7 @@ function parseClipboard(clipboard){
         }
     }
 
-    if (patient_count == 0 && run_count == 0 && set_count == 0)
+    if (patient_count == 0 && run_count == 0 && set_count == 0){
         console.log({"type": "popup", "msg":    "Nothing found in clipboard, please be sure to have valid data in clipboard<br>"+
                                                 "data in clipboard are expected to be tabulated <br>"+
                                                 " (a copy from an excell spreadsheet should be already in this format)<br>"+
@@ -110,6 +110,8 @@ function parseClipboard(clipboard){
                                                 "- a row with 5 cells will be loaded as a new patient (id/first_name/last_name/date/info)<br>"+
                                                 "- a row with 4 cells will be loaded as a new run (id/run_name/date/info)<br>"+
                                                 "- a row with 2 cells will be loaded as a new set (set_name/info)<br>"})
+        return []
+    }
 
     if (patient_count !=0)
         console.log({msg: patient_count+" patient(s) loaded from clipboard, please check form before saving", type: 'flash', priority: 1})
