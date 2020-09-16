@@ -22,6 +22,8 @@ function addSetForm(content) {
 function addForms(array_content) {
     for (var c in array_content)
         addForm(array_content[c])
+    if (array_content.length > 0)
+        removeEmptyForms()
 }
 
 function addForm(content){
@@ -40,9 +42,27 @@ function addForm(content){
       }
 }
 
+function removeEmptyForms(){
+    var fc = document.getElementById('fieldset_container')
+    var fl = fc.getElementsByClassName('form_line')
+
+    for (var i = 0; i<fl.length; i++ ){
+        var fields = fl[i].getElementsByClassName('form-control')
+        var isEmpty=true
+
+        for (var j = 0; j<fields.length; j++ )
+            if (fields[j].value != '') isEmpty=false
+        
+        if (isEmpty)
+            fl[i].parentNode.removeChild(fl[i])
+    } 
+}
+
 /*
 */
 function parseClipboard(clipboard){
+    console.closePopupMsg()
+
     var lines = clipboard.split('\n')
     var patient_count, run_count, set_count, unknow_count
     patient_count = run_count = set_count = unknow_count = 0
@@ -226,6 +246,7 @@ FormBuilder.prototype = {
         s.className = "left form_label"
         $(s).text(capitalise(type == 'generic' ? 'set' : type) + " " + (this.index+1)); // for compatibility with older browsers (FF32, IE7/8)
         d.appendChild(s);
+        d.className = "form_line"
         return d;
     },
 

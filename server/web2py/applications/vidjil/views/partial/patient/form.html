@@ -1,4 +1,4 @@
-<div>
+<div class="form_line">
 <span class="left form_label">Patient {{=i+1}}</span>
 <i class="icon-cancel" onclick="var elem = this.parentNode;elem.parentNode.removeChild(elem);"></i>
 <input type="hidden" id="patient_id_{{=i}}" name="patient[{{=i}}][id]" value="{{if set is not None:}}{{=set['id']}}{{pass}}">
