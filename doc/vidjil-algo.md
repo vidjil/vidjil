@@ -400,7 +400,7 @@ with the `--grep-reads <sequence>` preset, equivalent to
 All the reads with the windows related to the sequence will be extracted 
 to files such as `out/seq/clone.fa-1`.
 
-## Further clone analysis and CDR3 detection
+## Further clone analysis: V(D)J designation, CDR3 detection
 
 ``` diff
 Clone analysis (second pass)
