@@ -53,6 +53,8 @@ function Model() {
     this.germline = {};
     this.create_germline_obj();
     this.view = [];
+    this.checkLocalStorage();
+    this.reset();
     this.setAll();
     this.checkBrowser();
     this.germlineList = new GermlineList()
@@ -174,13 +176,22 @@ Model.prototype = {
      * Set all the properties. Called in the constructor.
      */
     setAll: function () {
-        this.reset();
-
         this.system_selected = []
-        this.colorMethod = "Tag";
-        this.changeNotation("percent", false)
-        this.changeTimeFormat("name", false)
-        this.top = 50;
+        this.top = 50
+
+        if (this.localStorage){
+            if (localStorage.getItem('colorMethod'))    this.colorMethod = localStorage.getItem('colorMethod')
+            if (localStorage.getItem('timeFormat'))     this.time_type = localStorage.getItem('timeFormat')
+            if (localStorage.getItem('notation'))       this.notation_type  = localStorage.getItem('notation')
+            if (localStorage.getItem('alleleNotation')) this.alleleNotation = localStorage.getItem('alleleNotation')
+            if (localStorage.getItem('cloneNotation'))  this.cloneNotationType = localStorage.getItem('cloneNotation')
+        }
+        
+        this.changeColorMethod(this.colorMethod,    false)
+        this.changeNotation(this.notation_type,     false)
+        this.changeTimeFormat(this.time_type,       false)
+        this.changeAlleleNotation(this.alleleNotation, false)
+        this.changeCloneNotation(this.cloneNotationType, false)
     },
     /**
      * remove all elements from the previous .vidjil file but keep current user parameters and linked views
@@ -205,6 +216,9 @@ Model.prototype = {
         this.tOther = 0;  // Other (previously) selected time/sample
         this.focus = -1;
 
+        this.colorMethod = "Tag"
+        this.notation_type = "percent"
+        this.time_type = "name"
 
         this.display_window = false
         this.isPlaying = false;
@@ -327,12 +341,12 @@ Model.prototype = {
         $("#expected_normalization").hide();
 
         // time_type to name_short if there is many samples
-        if (this.samples.order.length > 6)
+        if (this.samples.order.length > 6 && !localStorage.getItem("timeFormat"))
             this.changeTimeFormat("short_name", false)
 
         // time_type to delta_date if we have enough different dates
         deltas = this.dateDiffMinMax()
-        if (deltas.max > 1)
+        if (deltas.max > 1 && !localStorage.getItem("timeFormat"))
             this.changeTimeFormat("delta_date", false)
         
         //      NSIZE
@@ -368,15 +382,29 @@ Model.prototype = {
         }
     }, //end initClones
 
-changeCloneNotation: function(cloneNotationType) {
-    this.cloneNotationType = cloneNotationType;
-    this.update();
+changeCloneNotation: function(cloneNotationType, update, save) {
+    this.cloneNotationType = cloneNotationType
+
+    if (this.localStorage && save) localStorage.setItem('cloneNotation', cloneNotationType)
+
+    var menu = document.getElementById("menuCloneNot_" + cloneNotationType)
+    if (menu) menu.checked = true
+
+    update = (update==undefined) ? true : update
+    if (update) this.update();
 },
 
 
-changeAlleleNotation: function(alleleNotation) {
+changeAlleleNotation: function(alleleNotation, update, save) {
     this.alleleNotation = alleleNotation;
-    this.update();
+
+    if (this.localStorage && save) localStorage.setItem('alleleNotation', alleleNotation)
+    
+    var menu = document.getElementById("menuAlleleNot_" + alleleNotation)
+    if (menu) menu.checked = true
+
+    update = (update==undefined) ? true : update
+    if (update) this.update();
 },
     
     /**
@@ -2183,6 +2211,26 @@ changeAlleleNotation: function(alleleNotation) {
 
     },
 
+    /**
+     * check browser local storage availability
+     * */
+    checkLocalStorage: function () {
+        try {
+            this.localStorage = window.localStorage
+            var x = '__storage_test__'
+            this.localStorage.setItem(x, x)
+            this.localStorage.removeItem(x)
+        }
+        catch(e) {
+            return e instanceof DOMException && (
+                e.code === 22 ||
+                e.code === 1014 ||
+                e.name === 'QuotaExceededError' ||
+                e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+                (this.localStorage && this.localStorage.length !== 0)
+        }
+    },
+
 
     NB_READS_THRESHOLD_QUANTIFIABLE: 5,
 
@@ -2450,32 +2498,63 @@ changeAlleleNotation: function(alleleNotation) {
     /**
      * change default notation display for sizes
      * @param {string} notation - notation type ('scientific' , 'percent')
-     * @pram {bool} update - will update the display after
+     * @param {bool} update - will update the display after
+     * @param {bool} save - will save value in user preferences (localStorage) 
      * */
-    changeNotation: function (notation, update) {
+    changeNotation: function (notation, update, save) {
         this.notation_type = notation
+        if (this.localStorage && save) localStorage.setItem('notation', notation)
+
+        var menu = document.getElementById("menuNotation_" + notation)
+        if (menu) menu.checked = true
+
         if (update) this.update()
     },
     
     /**
      * change default time format for sample/time names
      * @param {string} notation - format ('name', 'sampling_date', 'delta_date', 'delta_date_no_zero')
-     * @pram {bool} update - will update the display after
+     * @param {bool} update - will update the display after
+     * @param {bool} save - will save value in user preferences (localStorage) 
      * */
-    changeTimeFormat: function (time, update) {
+    changeTimeFormat: function (time, update, save) {
         this.time_type = time
+        if (this.localStorage && save) localStorage.setItem('timeFormat', time)
+
+        var menu = document.getElementById("menuTimeForm_" + time)
+        if (menu) menu.checked = true
+
         if (update) this.update()
     },
     
     /**
      * change default color method
-     * @param {string} colorM - TODO 
+     * @param {string} colorM 
+     * @param {bool} update - will update the display after default = true
+     * @param {bool} save - will save value in user preferences (localStorage) 
      * */
-    changeColorMethod: function (colorM) {
-        this.colorMethod = colorM;
-        var list = [];
-        for (var i = 0; i<this.clones.length; i++) list.push(i);
-        this.updateElemStyle(list);
+    changeColorMethod: function (colorM, update, save) {
+        update = (update==undefined) ? true : update;
+
+        this.colorMethod = colorM
+        if (this.localStorage && save) localStorage.setItem('colorMethod', colorM)
+        var menu = document.getElementById("color_menu_select")
+        if (menu) menu.value = colorM
+
+        if (!update) return 
+        var list = []
+        for (var i = 0; i<this.clones.length; i++) list.push(i)
+        this.updateElemStyle(list)
+    },
+
+    resetSettings: function () {
+        localStorage.clear()
+        this.changeColorMethod("Tag",       false)
+        this.changeNotation("percent",      false)
+        this.changeTimeFormat("name",       false)
+        this.changeAlleleNotation("when_not_01", false)
+        this.changeCloneNotation("short_sequence", false)
+        console.log({ msg: "user preferences have been reset", type: "flash", priority: 1 });
     },
     
     /**
