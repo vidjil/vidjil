@@ -127,6 +127,7 @@ algo_valgrind_functional:
 
 release_valgrind_functional:
   <<: *valgrind_functional
+  allow_failure: true
   only:
     - /^feature-.*a.*\/release$/
 
@@ -301,8 +302,8 @@ code_quality:
 test_server_unit:
     stage: test_unit
     script:
-      - virtualenv $CI_BUILD_REF_SLUG
-      - source $CI_BUILD_REF_SLUG/bin/activate
+      - virtualenv $CI_COMMIT_SHORT_SHA
+      - source $CI_COMMIT_SHORT_SHA/bin/activate
       - pip install -r requirements.txt
       - make -C server install_web2py_standalone
       - make -C server launch_fuse_server
@@ -457,12 +458,7 @@ deploy_prod:
   stage: deploy_prod
   script:
     - ssh $PROD_CLIENT_SERVER "
-         cd $PROD_CLIENT_PATH;
-         git fetch
-         && git reset --hard origin/prod-client
-         && make -C browser
-         && make -C browser sha1
-         && cp doc/analysis-example.vidjil browser/"
+         cd $PROD_CLIENT_PATH;"
   environment:
     name: production
     url: http://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil

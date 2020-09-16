@@ -1,5 +1,5 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -3 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/productive_stop_before_V.fa
 !OUTPUT_FILE: out/productive_stop_before_V.vidjil
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -3 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/productive_stop_before_V.fa
 
 $ first clone name
 1: "IGHV1-69.06 2/AACCCCCAACAAAGC/4 IGHD3-3.01 9/CCCATAAGTACCGT/1 IGHJ6.02"

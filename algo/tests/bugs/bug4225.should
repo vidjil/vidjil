@@ -1,11 +1,11 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline -r 1 -1 -2 -K bug4225-j.fa
 !OUTPUT_FILE: out/bug4225-j.affects
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline -r 1 -1 -2 -K bug4225-j.fa
 
 $ Find only +k and ? affects before the stretch of _ for all loci
 16: seed .*(\+k| \?){28}( _)+$
 
-!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline -r 1 -4 -K ../data/chimera-fake-half.fa
 !OUTPUT_FILE: out/chimera-fake-half.affects
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline -r 1 -4 -K ../data/chimera-fake-half.fa
 
 $ Find only +B and ? affects on the TRB and unexpected lines
 2: seed .* _(\+B| \?){48} _

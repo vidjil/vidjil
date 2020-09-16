@@ -125,6 +125,16 @@ test_gcc9_release:
   extends:
     - .testing-gcc
     - .testing_various_compilers_release
+test_gcc10_manual:
+  image: gcc:10
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_manual
+test_gcc10_release:
+  image: gcc:10
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_release
 test_clang34_manual:
   image: debian:8-slim
   variables:

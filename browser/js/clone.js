@@ -726,23 +726,6 @@ Clone.prototype = {
     
 
     /**
-     * Return true if the clone share the same axes than the given distribution clone
-     * @return {Clone} dclone   A distributon clone to compare with
-     * @return {Array} dvalues  A list of values for 
-     * @return {Boolean} True if share the same axes
-     */
-    sameAsDistribClone: function(dclone, dvalues, t){
-
-        var axes = dclone.axes
-        var values = this.getDistributionsValues(axes, t, round=true)
-
-        if (dvalues.equals(values)){
-            return true
-        }
-        return false
-    },
-
-    /**
      * Define a list of compatible real clones that share the same values for available axis
      * The list is sample dependant and differ for each sample
      * This list is called at the creation of the clone
@@ -750,21 +733,15 @@ Clone.prototype = {
     defineCompatibleClones: function(){
         var nb_sample = this.m.samples.number
         this.lst_compatible_clones = new Array(nb_sample)
-        for (var sample = 0; sample < this.lst_compatible_clones.length; sample++) {
-            this.lst_compatible_clones[sample] = []
-        }
 
         if (this.hasSizeDistrib()){
             var axes       = this.axes
             var dvalues    = this.getDistributionsValues(axes, 0, round=true)
-            for (var i = 0; i < this.m.clones.length; i++) {
-                var clone = this.m.clones[i]
-                if (clone.hasSizeConstant()) {
-                    for (var timepoint = 0; timepoint < nb_sample; timepoint++) {
-                        if (clone.sameAsDistribClone(this, dvalues, timepoint)){
-                            this.lst_compatible_clones[timepoint].push(i)
-                        }
-                    }
+            for (var timepoint = 0; timepoint < nb_sample; timepoint++) {
+                if (this.m.distribs_compatible_clones[axes][timepoint][dvalues] != undefined){
+                    this.lst_compatible_clones[timepoint] = this.m.distribs_compatible_clones[axes][timepoint][dvalues]
+                } else {
+                    this.lst_compatible_clones[timepoint] = []
                 }
             }
         }
@@ -932,13 +909,23 @@ Clone.prototype = {
         }
 
         var s = ''
-        s += this.sequence.substring(0,  this.seg['5'].stop+1)
-        s += '\n'
+        if (this.seg['5'].start != undefined && this.seg['5'].start != 0){
+            s += this.sequence.substring(0,  this.seg['5'].start) + '\n'
+            s += this.sequence.substring(this.seg['5'].start,  this.seg['5'].stop+1) + '\n'
+        } else {
+            s += this.sequence.substring(0,  this.seg['5'].stop+1) + '\n'
+        }
+
         if (this.seg['5'].stop+1 < this.seg['3'].start ) {
             s += this.sequence.substring(this.seg['5'].stop+1, this.seg['3'].start)
             s += '\n'
         }
-        s += this.sequence.substring(this.seg['3'].start)
+        if (this.seg['3'].stop != undefined && this.seg['3'].stop != this.sequence.length){
+            s += this.sequence.substring(this.seg['3'].start, this.seg['3'].stop+1) +'\n'
+            s += this.sequence.substring(this.seg['3'].stop+1)
+        } else {
+            s += this.sequence.substring(this.seg['3'].start)
+        }
         return s
     },
 
@@ -1037,7 +1024,9 @@ Clone.prototype = {
     }, 
     
     getTag: function () {
-        if (this.tag) {
+        if (this.hasSizeDistrib()) {
+            return this.m.distrib_tag;
+        } else if (this.tag) {
             return this.tag;
         } else {
             return this.m.default_tag;
@@ -1672,7 +1661,7 @@ Clone.prototype = {
             return; 
         }
 
-        if (this.m.tag[this.getTag()].display || this.hasSizeDistrib()) {
+        if (this.m.tag[this.getTag()].display){
             this.active = true;
         }
         else {
@@ -1681,7 +1670,8 @@ Clone.prototype = {
     },
 
     disable: function () {
-        if (!this.hasSizeConstant()) return
+        if (!this.hasSizeConstant() && !this.hasSizeDistrib()) return
+        if (this.hasSizeDistrib() && this.m.tag[this.getTag()].display) return
         this.active = false;
     },
 
@@ -1828,7 +1818,6 @@ Clone.prototype = {
             round = true
         }
         var values = []
-        var available_axes = Axis.prototype.available()
 
         for (var a = 0; a < axes.length; a++) {
             var axe  = axes[a]
@@ -1836,8 +1825,8 @@ Clone.prototype = {
             if (axe == undefined || naxe == undefined){
                 console.default.error("Getter: not axis " + axe + "; ("+naxe+")")
             }
-            if (available_axes.indexOf(naxe) != -1 ) {
-                var axis_p = Axis.prototype.getAxisProperties(naxe)
+            if (this.m.available_axes.indexOf(naxe) != -1 ) {
+                var axis_p = AXIS_DEFAULT[naxe]
                 var value = axis_p.fct(this, timepoint)
                 values.push( value )
             } else {

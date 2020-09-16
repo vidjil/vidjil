@@ -5,8 +5,8 @@ Vidjil is an open-source platform for the analysis of high-throughput sequencing
 They are also useful markers of pathologies, and in leukemia, are used to quantify the minimal residual disease during patient follow-up.
 With adapted [library preparation and sequencing](http://www.vidjil.org/doc/locus),
 high-throughput sequencing (NGS/HTS) now
-enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](https://omictools.com/rep-seq-category)
-methods and software.
+enables the deep sequencing of a lymphoid population with dedicated
+sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 
 This is the help of the [Vidjil web application](http://app.vidjil.org/).
 Further help can always be asked to <support@vidjil.org>. We can also arrange phone or video meeting.
@@ -242,7 +242,7 @@ These buttons open another window/tab.
    - [`❯ Blast`](http://www.ensembl.org/Multi/Tools/Blast):
      Nucleotide alignement against the Homo sapiens genome and other nucleotide collections
 
-   - [`❯ AssignSubsets`](http://tools.bat.infspire.org/arrest/assignsubsets/) (availaible for clones with IGH recombinations):
+   - [`❯ AssignSubsets`](https://station1.arrest.tools/subsets) (availaible for clones with IGH recombinations):
      Assignment to the [19 known major subsets](https://www.ncbi.nlm.nih.gov/pubmed/22415752)
      of stereotyped antigen receptor sequences for CLL
 
@@ -318,6 +318,7 @@ At the moment the only preprocess avalaible on the public server (<http://app.vi
     **highly** recommended to merge those reads in order to have a read that consists
     of the whole DNA fragment instead of split fragments.
     To merge R1/R2 fragments, select an adapted *pre-process scenario* and provide both R1/R2 files at once when adding a sample.
+    On the public test server, the default scenarios use the [Flash2](https://academic.oup.com/bioinformatics/article/27/21/2957/217265) read merger with the option `-M 300`.
     
     There are two scenarios to merge reads. Indeed in case the merging is not
     possible for some paired-end reads we must keep only one of the fragments (either R1 or
@@ -419,7 +420,7 @@ inside a clone can have different lengths or can be shifted,
 especially in the case of overlapping paired-end sequencing. There can be also
 some sequencing errors.
 The `.vidjil` file has to give one consensus sequence per clone, and
-Rep-Seq algorithms have to deal with great care to these difference in
+RepSeq algorithms have to deal with great care to these difference in
 order not to gather reads from different clones.
 
 For **vidjil-algo**, it is required that the window centered on
@@ -456,9 +457,12 @@ One often wants to "see all clones and reads", but a complete list is difficult
 to see in itself. In a typical dataset with about 10<sup>6</sup> reads, even in
 the presence of a dominant clone, there can be 10<sup>4</sup> or 10<sup>5</sup> different
 clones detected. A dominant clone can have thousands or even more reads.
-There are ways to retrieve the full list of clones and reads (for example by launching
-the command-line program), but, for most of the cases, one may want to focus on some clones
-with their consensus sequences.
+
+For most of the cases, one may want to focus on some clones with their consensus sequences,
+Vidjil allows both:
+- to fully study these "top clones"
+- to study the distribution of the "smaller clones"
+- when this is needed, to retrieve the full list of clones and/or reads
 
 ## The "top" slider in the "filter" menu
 
@@ -488,16 +492,34 @@ It should then show up in any sample.
 in the `.analysis` file, it will always be shown even if it does not
 meet the "top" filter.
 
-## The "smaller clones"
+## Studying the distribution of "smaller clones"
 
-There is a virtual clone per locus in the clone list which groups all clones that are hidden
-(because of the "top" or because of hiding some tags). The sum of
-ratios in the list of clones is always 100%: thus the "smaller clones"
-changes when one use the "filter" menu.
+The top 50/top 100 clones are displayed but all of them are computed and are useful to study full repertoires,
+including assessing the polyclonal background and the diversity of the repertoires.
+Clones that are hidden (because of the "top" or because of hiding some tags)
+are gathered into virtual clones, shown with light gray.
+Note that selecting `color by clone` emphasizes the difference between the top clones, colored, and these virtual clones.
+Depending on the analysis configuration, these "smaller clones" are shown, in the clone list:
+
+- either *gathered by read length*, the Genescan-like plot showing the clone distribution.
+  This is the default on  default configurations on the public server,
+
+- or *gathered by locus* into a unique virtual clone.
+
+In both cases, the sum of ratios in the list of clones is always 100%: thus these "smaller clones"
+changes when one uses the "filter" menu.
 
 Note that the ratios include the "smaller clones": if a clone
 is reported to have 10.54%, this 10.54% ratio relates to the number of
 analyzed reads, including the hidden clones.
+
+## Export the full list of clones
+
+The full list of clones can be retrieved by launching the command-line vidjil-algo.
+
+On the public server, we also provide `Export all clones (AIRR)` configuration to export
+a `.tsv` file that can be further processed or opened in any spreadsheet editor.
+XXX TODO XXX
 
 ## Going back to the analyzed reads
 
@@ -634,6 +656,15 @@ only the logged-in users with proper authorization can access to these data.
 This includes the uploader of the data,
 possibly users of the same groups if such groups were defined, and the server maintainers.
 
+# Settings
+
+The settings menu allows to set:
+ -clone size format     [scientific notation / percentage]
+ -sample key            [sample name / shortened name / sampling date / day since first sampling]
+ -clone junction format [junction length / AA sequence / mixed (display AA sequence only for short junction)]
+ -clone alleles format  [hide alleles / display alleles / mixed (display only for marginal alleles)]
+
+These settings are kept in your web browser ``localStorage'' between several sessions.
 
 # Keyboard shortcuts
 

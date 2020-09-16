@@ -50,6 +50,9 @@
                 <td class="column_100"> sampling date </td>
                 <td> info </td>
                 <td> size </td>
+                {{if has_shared_sets: }}
+                <td> associated sets </td>
+                {{pass}}
                 <td> pre-process </td>
 		{{if auth.is_admin():}} <td> uploader </td> {{pass}}
                 <td class="column5"> </td>
@@ -88,6 +91,17 @@
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} >
                         {{=vidjil_utils.format_size(row.sequence_file.size_file)}} </td>
                     {{ has_pre_process = row.sequence_file.pre_process_id != None}}
+                    {{if has_shared_sets:}}
+                    <td>
+                      <!-- Select set with this sample -->
+                      {{ for sample_set in row.list_share_set:}}
+                          <!-- Show values -->
+                          <span class="{{ =sample_set['sample_type'] }}_token set_token" title="{{ =sample_set['title'] }}" onclick="db.call('sample_set/index', {'id': '{{ =int(sample_set['id']) }}', 'config_id': -1 })" >
+                            {{ =sample_set['title'] }}
+                          </span>
+                      {{ pass }}
+                    </td>
+                    {{pass}}
                     <td {{if has_pre_process:}} class="pointer"
                         title="View more information on the pre-process {{=pre_process_list[row.sequence_file.pre_process_id]}}"{{pass}}
                         {{if has_pre_process:}} onclick="db.call('pre_process/info', {'sequence_file_id' :'{{=row.sequence_file.id }}', 'sample_set_id' : '{{=request.vars["id"]}}'} )" {{pass}}
@@ -205,8 +219,8 @@
                          (db.config.id ==db.fused_file.config_id)
                        ).select() :}}
         
-            {{if row.fused_file.fused_file is not None :}}
-                <a class="button2" href="index.html?sample_set_id={{=request.vars["id"]}}&config={{=row.config.id}}" type="text/html"
+            {{if row.fused_file.fused_file is not None :}}     
+                <a class="button2" href="{{=http_origin}}?sample_set_id={{=request.vars["id"]}}&config={{=row.config.id}}" type="text/html"
                       onclick="event.preventDefault()
                                if( event.which == 2 ) { window.open(this.href) }
                                else { myUrl.loadUrl(db, { 'sample_set_id' : '{{=request.vars["id"]}}' , 'config' : {{=row.config.id}} }, '{{=info["filename"]}}' ) }" >

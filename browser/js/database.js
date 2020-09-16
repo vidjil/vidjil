@@ -593,13 +593,22 @@ Database.prototype = {
         if ( document.getElementById('upload_form') ){
             $('#upload_form').on('submit', function(e) {
                 e.preventDefault();
+
+                //clear empty values before submiting data
+                var upload_form = $('#upload_form').serializeObject()
+                if ("file" in upload_form)
+                    upload_form.file = upload_form.file.filter(function(el) {
+                        return typeof el != "object" || Array.isArray(el) || Object.keys(el).length > 0;
+                    });
+                var data = JSON.stringify(upload_form)
+
                 $.ajax({
                     type     : "POST",
                     cache: false,
                     crossDomain: true,
                     xhrFields: {withCredentials: true},
                     url      : $(this).attr('action'),
-                    data     : {'data': JSON.stringify($('#upload_form').serializeObject())},
+                    data     : {'data': data},
                     success  : function(result) {
                         var js = self.display_result(result)
                         var id, fileSelect, files, file, filename;

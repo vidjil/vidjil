@@ -214,7 +214,7 @@ AXIS_DEFAULT = {
     "size" : {
         doc:        "ratio of the number of reads of each clone to the total number of reads in the selected locus",
         name:       "size",
-        fct :       function(clone,t){return clone.getSizeZero(t)},
+        fct :       function(clone,t){return clone.getSize(t)},
         scale:      {   mode: "log"},
         autofill:   true,
         pretty:     function(size) {return createClassedSpan("sizeBox sixChars", (self.m ? self.m : self).getStrAnySize(undefined, size)) }
@@ -222,11 +222,11 @@ AXIS_DEFAULT = {
     "size (other sample)" : {
         doc:        "ratio of the number of reads of each clone to the total number of reads in the selected locus, on a second sample",
         name:       "size (other sample)",
-        fct :       function(clone){
-                        var size = clone.getSizeZero(m.tOther) ;
-                        return (typeof size == "undefined") ? self.m.min_size : size
+        fct :       function(clone){return clone.getSize(m.tOther)},
+        scale:      {
+                        mode: "log",
+                        reverse: true
                     },
-        scale:      {   mode: "log"},
         autofill:   true
     },
     "number of samples" : {

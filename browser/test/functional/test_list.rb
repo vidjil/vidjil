@@ -20,7 +20,10 @@ class TestList < BrowserTest
   end
   
   def test_00_list_clones
+    # change current sample to start on sample 0 (second in loaded order)
+    $b.send_keys :arrow_right
     $b.update_icon.wait_while(&:present?)
+
     # declare variables
     $lock      = $b.listLock()
     $listClone = $b.list()

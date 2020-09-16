@@ -1,6 +1,5 @@
 function Url(model, win) {
     View.call(this, model);
-
     this.m = model;
     this.window = (typeof win != "undefined") ? win : window
 
@@ -33,9 +32,9 @@ Url.prototype= {
         }
 
         // get sample_set/patient/run, config...
-        var straight_params = this.getStraightParams();
-        for (var i = 0; i < straight_params.length; i++) {
-            var p = straight_params[i];
+        var positionnal_params = this.getPositionnalParams();
+        for (var i = 0; i < positionnal_params.length; i++) {
+            var p = positionnal_params[i];
             if (typeof this.m[p] !== "undefined") {
                 params_dict[p] = this.m[p];
             }
@@ -62,6 +61,7 @@ Url.prototype= {
     /**
      * update(size/style/position) a list of selected clones <br>
      * a slight function for operation who impact only a bunch of clones (merge/split/...)
+     * @abstract
      * @param {integer[]} list - array of clone index
      * */
     updateElem : function (list) {
@@ -71,6 +71,7 @@ Url.prototype= {
     /**
      * update(style only) a list of selected clones <br>
      * a slight function for operation who impact only styles of clones (select/focus)
+     * @abstract
      * @param {integer[]} list - array of clone index
      * */
     updateElemStyle : function () {
@@ -79,10 +80,10 @@ Url.prototype= {
     
 
     applyURL : function() {
-        var straight_params = this.getStraightParams();
-        for (var i = 0; i < straight_params.length; i++) {
-            if (typeof this.url_dict[straight_params[i]] !== "undefined") {
-                this.m[straight_params[i]] = this.url_dict[straight_params[i]];
+        var positionnal_params = this.getPositionnalParams();
+        for (var i = 0; i < positionnal_params.length; i++) {
+            if (typeof this.url_dict[positionnal_params[i]] !== "undefined") {
+                this.m[positionnal_params[i]] = this.url_dict[positionnal_params[i]];
             }
         }
 
@@ -90,7 +91,8 @@ Url.prototype= {
             var clones = this.url_dict.clone.split(',');
             for (var j = 0; j < clones.length; j++) {
                 var c = this.m.clone(clones[j]);
-                if (typeof c !== "undefined" && c.isInteractable()) {
+                if (typeof c !== "undefined" && (c.hasSizeConstant() || c.hasSizeDistrib())) {
+                    // Only select constant clone
                     c.select = true;
                 }
             }
@@ -107,7 +109,7 @@ Url.prototype= {
     },
 
     parseUrlParams:function (urlparams) {
-        params={}
+        params={} 
         if (urlparams.length === 0) {
             return params;
         }
@@ -117,7 +119,11 @@ Url.prototype= {
             var p = params[tmparr[0]];
             var key = this.encoder.decode(tmparr[0]);
             var val = tmparr[1];
-            if (typeof p === "undefined") {
+            if ((key == "") /*empty keys are due to the use of "//" in url, ignore them*/ || 
+                (typeof val == "undefined")) { 
+                //do nothing
+            }
+            else if (typeof p === "undefined") {
                 params[key] = val;
             } else if (p.constructor === String){
                 params[key] = [];
@@ -127,28 +133,42 @@ Url.prototype= {
                 params[key].push(val);
             }
         }
+
+        var url = this.window.location;
+        var positionnal_params = url.pathname.substr(1).split('-');
+        var pos_param_keys = this.getPositionnalParams();
+        if (positionnal_params.length > 1 && positionnal_params[0] != "index.html")
+        for (var j = 0; j < positionnal_params.length; j++) 
+            params[pos_param_keys[j]] = positionnal_params[j];
         return params
     },
 
     generateParamsString: function(params_dict) {
         var params_list = [];
+        var positionnal_params = [];
         for (var key in params_dict){
-            if ((typeof key != "undefined" && key !== "") && (typeof params_dict[key]!= "undefined")) {
-                var encoded = this.encoder.encode(key);
-                if (params_dict[key].constructor !== Array && params_dict[key] !== '') {
-                    params_list.push(encoded+"="+params_dict[key])
-                } else if (params_dict[key].constructor === Array) {
-                    for (var i = 0; i < params_dict[key].length; i++) {
-                        params_list.push(encoded+"="+params_dict[key][i]);
+            var val = params_dict[key];
+            if ((typeof key != "undefined" && key !== "") && (typeof val != "undefined")) {
+                var pos = this.getPosition(key);
+                if (pos >= 0) {
+                    positionnal_params[pos] = val;
+                } else {
+                    var encoded = this.encoder.encode(key);
+                    if (val.constructor !== Array && val !== '') {
+                        params_list.push(encoded+"="+val)
+                    } else if (val.constructor === Array) {
+                        for (var i = 0; i < val.length; i++) {
+                            params_list.push(encoded+"="+val[i]);
+                        }
                     }
                 }
             }
         }
-        return params_list.join("&");
+        return positionnal_params.join('-') + '?' + params_list.join("&");
     },
 
     pushUrl: function(params) {
-        var new_url = "?" + params;
+        var new_url = params;
         try  {
             this.window.history.pushState('plop', 'plop', new_url);
         } catch(error) {
@@ -156,8 +176,12 @@ Url.prototype= {
         }
     },
 
-    getStraightParams: function() {
+    getPositionnalParams: function() {
         return ["sample_set_id", "config"];
+    },
+
+    getPosition: function(param) {
+        return this.getPositionnalParams().indexOf(param);
     },
 
     loadUrl: function(db, args, filename) {
@@ -176,12 +200,13 @@ Url.prototype= {
 };
 Url.prototype = $.extend(Object.create(View.prototype), Url.prototype);
 
+
 function UrlEncoder() {
     this.encoding = {
         'sample_set_id': 'set',
         'patient_id': 'patient',
-        'run_id': 'run'
-
+        'run_id': 'run',
+        'config': 'conf'
     };
 
     this.decoding = {};

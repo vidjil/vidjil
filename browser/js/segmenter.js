@@ -272,25 +272,20 @@ Segment.prototype = {
             span.id = 'highlightCheckboxes';
 
             if(this.findPotentialField().indexOf('cdr3') != -1) {
-                var input = document.createElement('input');
+                input = document.createElement('input');
                 input.type = 'checkbox';
                 input.id = 'vdj_input_check';
-                $(input).on("click", function() {
-                    if(this.checked) {
-                        self.highlight[0].field = "cdr3";
-                        self.highlight[0].color = "red";
+                input.setAttribute("title", 'Display CDR3 computed by Vidjil');
+                input.autocomplete = 'off';
+                input.checked = (self.m.localStorage && localStorage.getItem('segmenter_cdr3')=="checked")
+                input.addEventListener('change', function(evt){
+                    self.highlightCDR3(event.target.checked, true)
+                })
+                self.checkboxCDR3 = input
 
-                    } else {
-                        self.highlight[0].field = "";
-                    }
-                        self.update();
-
-                });
                 var label = document.createElement('label');
                 label.setAttribute("for", 'vdj_input_check');
                 label.innerHTML = 'CDR3';
-
-                input.setAttribute("title", 'Display CDR3 computed by Vidjil');
                 label.setAttribute("title", 'Display CDR3 computed by Vidjil');
 
                 span.appendChild(input);
@@ -420,8 +415,10 @@ Segment.prototype = {
             
             for (var c_id = 0; c_id < self.m.clones.length; c_id++)
                 self.build_skeleton(c_id);
-            
-            
+
+            if (self.highlightCDR3)
+                this.highlightCDR3(self.highlightCDR3.checked, false)
+                
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -1289,6 +1286,30 @@ Segment.prototype = {
 
     empty: function() {
         this.reset();
+    },
+
+    /** set the checkbox for highlight cdr3
+     * @param {bool} - checkbox value
+     * @param {bool} - save in localStorage as user preference
+    */
+    highlightCDR3: function(checked, save){
+        //if value is unspecified, retrieve current value of the checkbox to sync segmenter internal parameter with it
+        if (typeof checked == 'undefined') 
+            if (this.checkboxCDR3) 
+                checked = this.checkboxCDR3.checked
+
+        if (checked) {
+            this.highlight[0].field = "cdr3"
+            this.highlight[0].color = "red"
+            if (this.m.localStorage && save) localStorage.setItem('segmenter_cdr3', "checked")
+            if (this.checkboxCDR3) this.checkboxCDR3.checked = true
+        } else {
+            this.highlight[0].field = ""
+            if (this.m.localStorage && save) localStorage.setItem('segmenter_cdr3', "unchecked")
+            if (this.checkboxCDR3) this.checkboxCDR3.checked = false
+        }
+
+        this.update()
     }
 
 }; //fin prototype Segment
@@ -1570,20 +1591,25 @@ Sequence.prototype = Object.create(genSeq.prototype);
                 // We first put the end positions
                 highlights.push({'type':'N', 'color': "", 'start': vdjArray["5"].stop});
                 highlights.push({'type':'N', 'color': "", 'start': vdjArray["3"].start});
+                highlights.push({'type':'before5', 'color': "black", 'start': 0});                  // from seq start to 5 start
+                highlights.push({'type':'after3',  'color': "black", 'start': vdjArray["3"].stop}); // from 3 stop to seq end
+                // TOOD: remove the two previous lines, see #2135
 
                 var key;
                 for (var i in SEGMENT_KEYS) {
                     key = SEGMENT_KEYS[i]
                     if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key].stop != 'undefined'){
                         highlights.push({'type':'N', 'color': "", 'start': vdjArray[key].stop});
-                    }}
+                    }
+                }
 
                 // We now put the start positions (that may override previous end positions)
                 for (var j in SEGMENT_KEYS) {
                     key = SEGMENT_KEYS[j]
                     if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key].start!= 'undefined'){
                         highlights.push({'type':'D', 'color': "", 'start': vdjArray[key].start});
-                    }}
+                    }
+                }
 
                 highlights.push({'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : "", 'start': vdjArray["5"].start});
                 highlights.push({'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : "", 'start': vdjArray["3"].start});
@@ -1615,10 +1641,10 @@ Sequence.prototype = Object.create(genSeq.prototype);
     Sequence.prototype.getVdjStartEnd = function (clone) {
 
         var vdjArray ={"5": {}, "3": {}} ;
-        vdjArray["5"].start = 0;
-        vdjArray["5"].stop = this.pos[clone.seg["5"].stop] + 1;
+        vdjArray["5"].start = (clone.seg["5"].start != undefined) ? this.pos[clone.seg["5"].start] : 0;
+        vdjArray["5"].stop  = this.pos[clone.seg["5"].stop] + 1;
         vdjArray["3"].start = this.pos[clone.seg["3"].start];
-        vdjArray["3"].stop = this.seq.length;
+        vdjArray["3"].stop  = (clone.seg["3"].stop != undefined)  ? this.pos[clone.seg["3"].stop] : this.seq.length;
 
         for (var i in SEGMENT_KEYS)
         {

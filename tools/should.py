@@ -2,7 +2,7 @@
 
 # should -- Test command-line applications through .should files
 #
-# Copyright (C) 2018 by CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
+# Copyright (C) 2018-2020 by CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
 # Contributors:
 #     Mathieu Giraud <mathieu.giraud@vidjil.org>
 #     Mikaël Salson <mikael.salson@vidjil.org>
@@ -26,7 +26,7 @@ if not (sys.version_info >= (3, 4)):
     print("Python >= 3.4 required")
     sys.exit(1)
 
-__version_info__ = ('2','0','0')
+__version_info__ = ('3','0','0')
 __version__ = '.'.join(__version_info__)
 
 import re
@@ -39,14 +39,17 @@ from collections import defaultdict, OrderedDict
 import xml.etree.ElementTree as ET
 import datetime
 import tempfile
+import json
 
 # Make sure the output is in utf8
 sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf8', buffering=1)
 sys.stderr = open(sys.stderr.fileno(), mode='w', encoding='utf8', buffering=1)
 
 DEFAULT_CFG = 'should.cfg'
-RETRY = 'should.retry'
-RETRY_FLAG = '--retry'
+RETRY_FAILED = 'should.retry'
+RETRY_FAILED_FLAG = '--retry'
+RETRY_WARNED = 'should.warned.retry'
+RETRY_WARNED_FLAG = '--retry-warned'
 
 TOKEN_COMMENT = '#'
 TOKEN_DIRECTIVE = '!'
@@ -73,6 +76,7 @@ MOD_IGNORE_CASE = 'i'
 MOD_BLANKS = 'b'
 MOD_MULTI_LINES = 'l'
 MOD_KEEP_LEADING_TRAILING_SPACES = 'z'
+MOD_JSON = 'j'
 
 MOD_MORE_THAN = '>'
 MOD_LESS_THAN = '<'
@@ -86,73 +90,18 @@ OUT_LOG = '.log'
 OUT_TAP = '.tap'
 OUT_XML = 'should.xml'
 
+TAP = 'tap'
+XML = 'xml'
+
+JSON_KEY_NOT_FOUND = 'not found'
+
 LINE = '-' * 40
 ENDLINE_CHARS = '\r\n'
 CONTINUATION_CHAR = '\\'
 MAX_HALF_DUMP_LINES = 45
 MAX_DUMP_LINES = 2*MAX_HALF_DUMP_LINES + 10
 
-SKIP = 'SKIP'
-
-TODO = 'TODO'
-TODO_PASSED = 'TODO_PASSED'
-
-ALLOW_FAILED = 'ALLOW_FAILED'
-
-STATUS = {
-    None: 'not run',
-    False: 'failed',
-    True: 'ok',
-    SKIP: 'skip',
-    TODO: 'TODO',
-    TODO_PASSED: 'TODO-but-ok',
-    ALLOW_FAILED: 'failed-but-ALLOW',
-}
-
-STATUS_ORDER = [
-    # Failed
-    False, TODO_PASSED,
-    # Warnings
-    TODO, ALLOW_FAILED, SKIP,
-    # Passed
-    True,
-    # 'Forgotten' status when mixed to other tests
-    None
-    ]
-
-FAIL_STATUS = [False, TODO_PASSED]
-WARN_STATUS = FAIL_STATUS + [ALLOW_FAILED, TODO, SKIP]
-
-STATUS_TAP = {
-    None: 'not run',
-    False: 'not ok',
-    True: 'ok',
-    SKIP: 'ok # SKIP',
-    TODO: 'not ok # TODO',
-    TODO_PASSED: 'ok # TODO',
-    ALLOW_FAILED: 'not ok # SKIP',
-}
-
-STATUS_XML = STATUS.copy()
-STATUS_XML[False] = 'failure'
-STATUS_XML[SKIP] = 'skipped'
-
-
-def combine_status(s1, s2):
-    '''
-    >>> combine_status(TODO, False)
-    False
-
-    >>> combine_status(True, SKIP) == SKIP
-    True
-
-    >>> combine_status(True, TODO_PASSED) == TODO_PASSED
-    True
-    '''
-
-    i1 = STATUS_ORDER.index(s1)
-    i2 = STATUS_ORDER.index(s2)
-    return STATUS_ORDER[min(i1,i2)]
+NOT_ZERO = '+'
 
 # Simple colored output
 
@@ -175,15 +124,107 @@ def color(col, text, colorize = True):
         return text
     return CSIm % col + text + CSIm % ANSI.RESET
 
-STATUS_COLORS = {
-    None: ANSI.CYAN,
-    False: ANSI.RED,
-    True: ANSI.GREEN,
-    SKIP: ANSI.CYAN,
-    TODO: ANSI.CYAN,
-    TODO_PASSED: ANSI.RED,
-    ALLOW_FAILED: ANSI.CYAN,
-}
+
+# Status
+
+S_FAILED = 'failed'
+S_TODO_PASSED = 'TODO-but-ok'
+S_TODO = 'TODO'
+S_AF = 'failed-but-ALLOW'
+S_SKIP = 'skip'
+S_OK = 'ok'
+S_NOT_RUN = 'not-run'
+
+FAIL_STATUS = [S_FAILED, S_TODO_PASSED]
+WARN_STATUS = FAIL_STATUS + [S_AF, S_TODO, S_SKIP]
+
+NO_ALIAS = 'no-alias'
+
+class Status():
+
+    ALL = []
+
+    def __init__(self, num, name, color, tap_str, alias=NO_ALIAS):
+        self.num = num
+        self.name = name
+        self.color = color
+        self.tap_str = tap_str
+        self.alias = alias
+
+    def is_failed(self):
+        return self.name in FAIL_STATUS
+
+    def is_warned(self):
+        return self.name in WARN_STATUS
+
+    def tap(self):
+        return self.tap_str
+
+    def xml(self):
+        if self.name == S_FAILED:
+            return 'failure'
+        if self.name == S_SKIP:
+            return 'skipped'
+        return self.name
+
+    def out(self, format, colorize=True):
+        if format == XML:
+            return self.xml()
+        if format == TAP:
+            return self.tap()
+        return self.__str__(colorize)
+
+    def or_alias(self):
+        if self.alias == NO_ALIAS:
+            return self.name
+        return self.alias
+
+    def __hash__(self):
+        return hash(self.name)
+
+    def __add__(self, other):
+        '''
+        >>> (Sta(S_NOT_RUN) + Sta(S_OK)).name == S_OK
+        True
+
+        >>> (Sta(S_TODO) + Sta(S_FAILED)).name == S_FAILED
+        True
+
+        >>> (Sta(S_OK) + Sta(S_SKIP)).name == S_SKIP
+        True
+
+        >>> (Sta(S_TODO_PASSED) + Sta(S_OK)).name == S_TODO_PASSED
+        True
+        '''
+
+        return self if self.num > other.num else other
+
+    def __str__(self, colorize=True):
+        return '%s' % color(self.color, self.name, colorize)
+
+
+Status.ALL = [# name            color       tap              alias
+    # S_FAILED
+    Status(99,  S_FAILED,       ANSI.RED,   'not ok',        alias=False),
+    Status(98,  S_TODO_PASSED,  ANSI.RED,   'ok # TODO'),
+    # Warned
+    Status(12,  S_TODO,         ANSI.CYAN,  'not ok # TODO',),
+    Status(11,  S_AF,           ANSI.CYAN,  'not ok # SKIP'),
+    Status(10,  S_SKIP,         ANSI.CYAN,  'ok # SKIP'),
+    # Passed
+    Status( 1,  S_OK,           ANSI.GREEN, 'ok',            alias=True),
+    # Forgotten status when mixed to other tests
+    Status( 0,  S_NOT_RUN,      ANSI.CYAN,  'not run',       alias=None),
+]
+
+def Sta(sta = S_NOT_RUN):
+    '''
+    Get a constant status, from Status.ALL, by its name or its alias
+    '''
+    for s in Status.ALL:
+        if s.alias == sta or s.name == sta:
+            return s
+    return None
 
 # Modifier parser
 
@@ -196,6 +237,7 @@ MODIFIERS = [
     (MOD_BLANKS, 'blanks', "ignore whitespace differences as soon as there is at least one space. Implies 'r'"),
     (MOD_MULTI_LINES, 'multi-lines', 'search on all the output rather than on every line'),
     (MOD_KEEP_LEADING_TRAILING_SPACES, 'ltspaces', 'keep leading and trailing spaces'),
+    (MOD_JSON, 'json', "interpret json data. Implies '" + MOD_MULTI_LINES + MOD_COUNT_ALL + "'"),
 
     (MOD_MORE_THAN, 'more-than', 'requires that the expression occurs strictly more than the given number'),
     (MOD_LESS_THAN, 'less-than', 'requires that the expression occurs strictly less than the given number'),
@@ -269,7 +311,8 @@ group.add_argument('--no-f', action='store_true', help="do not launch 'f' tests"
 group.add_argument('--only-a', action='store_true', help="launches only 'a' tests")
 group.add_argument('--only-f', action='store_true', help="launches only 'f' tests")
 
-group.add_argument(RETRY_FLAG, action='store_true', help='launches only the last failed or warned tests')
+group.add_argument(RETRY_FAILED_FLAG, action='store_true', help='launches only the last failed tests')
+group.add_argument(RETRY_WARNED_FLAG, action='store_true', help='launches only the last failed or warned tests')
 
 output = parser.add_argument_group('controlling output')
 
@@ -291,11 +334,71 @@ class ShouldException(BaseException):
     pass
 
 
-def write_to_file(f, what):
-    print('==> %s' % f)
+def write_to_file(f, what, phony=True):
+    if phony:
+        print('==> %s' % f)
     with open(f, 'w', encoding='utf-8') as ff:
         ff.write(what)
 
+
+RE_GETITEM = re.compile('(\S*?)\[(\S+?)\](\S*)$')
+
+def deep_get(d, key, sep='.'):
+    '''
+    >>> d = {'1':{ '2': 3, '4': 5}, 'z': [6, {'a': 7}, [8, {'b': 9}]]}
+
+    >>> deep_get(d, '1.2')
+    3
+    >>> deep_get(d, '3')
+    Traceback (most recent call last):
+    KeyError: '3'
+
+    >>> deep_get(d, 'z[1].a')
+    7
+    >>> deep_get(d, 'z[2][0]')
+    8
+    >>> deep_get(d, 'z[2][1].b')
+    9
+
+    >>> deep_get(d, 'z[3]')
+    Traceback (most recent call last):
+    KeyError: 'z[3]'
+
+    >>> deep_get(9, '')
+    9
+    >>> deep_get([1, 2, 3], '[1]')
+    2
+    '''
+
+    def deep_get_(d, keys):
+        if not keys:
+            return d
+        if not keys[0]:
+            return d
+
+        m = RE_GETITEM.match(keys[0])
+        if m:
+            key = m.group(1)
+            index = int(m.group(2))
+            s_index_next = m.group(3)
+
+            if key:
+                d = d[key]
+            obj = d[index]
+
+            if s_index_next:
+                keys = [s_index_next] + keys[1:]
+            else:
+                keys = keys[1:]
+        else:
+            obj = d[keys[0]]
+            keys = keys[1:]
+        return deep_get_(obj, keys)
+
+    try:
+        return deep_get_(d, key.split(sep))
+    except:
+        raise KeyError(key)
 
 
 # Command pre-processing
@@ -405,9 +508,9 @@ class Stats():
         return self.stats.items()
 
     def __iter__(self):
-        '''Ordered according to STATUS_ORDER'''
-        for key in STATUS_ORDER[::-1]:
-            if key in self.keys():
+        '''Ordered according to Status.ALL'''
+        for key in Status.ALL[::-1]:
+            if key in self.stats:
                 yield (key, self[key])
 
     def values(self):
@@ -425,15 +528,15 @@ class Stats():
 
     def str_status(self, status, colorize=True):
         s = '==> '
-        s += STATUS[status]
+        s += status.name
         s += ' - '
-        s = color(STATUS_COLORS[status], s, colorize)
-        s += ' '.join([color(STATUS_COLORS[key], '%s:%d', colorize) % (STATUS[key], len(val)) for (key, val) in self])
+        s = color(status.color, s, colorize)
+        s += ' '.join([color(key.color, '%s:%d', colorize) % (key.name, len(val)) for (key, val) in self])
 
         nb_items = '- total:%s' % self.total()
         if self.item:
             nb_items += ' ' + self.item + ('s' if self.total() > 1 else '')
-        s += ' ' + color(STATUS_COLORS[status], nb_items, colorize)
+        s += ' ' + color(status.color, nb_items, colorize)
 
         return s
 
@@ -447,50 +550,44 @@ class TestCaseAbstract:
     def str_additional_status(self, verbose=False):
         return ''
 
-    def str_status(self, verbose=False, names=STATUS, colorize=True):
+    def str(self, format=None, verbose=False, colorize=True):
         s = ''
-        s += color(STATUS_COLORS[self.status], names[self.status], colorize)
-        s += self.str_additional_status(verbose)
+        s += self.status.out(format=format,colorize=colorize)
+        s += self.str_additional_status(verbose=verbose)
+
+        if self.name:
+            s += ' - ' + self.name
 
         return s
 
     def xml(self):
-        x = ET.Element('testcase', {'name': self.name, 'status': STATUS_XML[self.status]})
-        if self.status in WARN_STATUS:
-            x.append(ET.Element(STATUS_XML[self.status],
-                                {'message': repr(self) + '\n' + self.str_status(names=STATUS_XML, colorize = False)}))
+        x = ET.Element('testcase', {'name': self.name, 'status': self.status.xml()})
+        if self.status.is_warned():
+            x.append(ET.Element(self.status.xml(),
+                                {'message': repr(self) + '\n' + self.str(format=XML, colorize=False)}))
         return x
 
-    def tap(self, names=STATUS_TAP, colorize=False):
-        s = []
-
-        if self.status is not None:
-            s.append(self.str_status(names=names, colorize=colorize))
-
-        if self.name:
-            s.append(self.name)
-
-        return ' - '.join(s)
-
-    def str(self, colorize):
-        return self.tap(names=STATUS, colorize=colorize)
+    def tap(self, verbose=False):
+        return self.str(format=TAP, colorize=False, verbose=False)
 
     def __str__(self):
-        return self.str(colorize=True)
+        return self.str(colorize=True, verbose=True)
 
     def __repr__(self):
         raise NotImplemented
 
 class ExternalTestCase(TestCaseAbstract):
-    def __init__(self, name, status, info=''):
+    def __init__(self, name, sta, info=''):
         self.name = name
-        self.status = status
+        self.status = Sta(sta)
         self.info = info
         self.modifiers = ''
+        self.raw = None
+        self.json_data = None
 
     def str_additional_status(self, verbose = False):
         s = ''
-        if self.status in WARN_STATUS or verbose:
+        if self.status.is_warned() or verbose:
             s += ' (%s)' % self.info
         return s
 
@@ -507,13 +604,13 @@ class TestCase(TestCaseAbstract):
     >>> repr(test)
     ':hello'
 
-    >>> test.str_status(colorize=False)
-    'not run'
+    >>> test.str(colorize=False)
+    'not-run'
 
     >>> test.test(['world'])
     False
 
-    >>> test.status
+    >>> test.status.or_alias()
     False
 
     >>> test.test(['hello'])
@@ -577,20 +674,29 @@ class TestCase(TestCaseAbstract):
     ShouldException: Error in parsing modifiers: 1x2
     '''
 
-    def __init__(self, modifiers, expression, name=''):
+    def __init__(self, modifiers, expression, name='', raw=''):
         self.name = name
-        self.status = None
+        self.status = Sta()
         self.count = '?'
+        self.raw = raw
+        self.json_data = None
 
         # Extract self.expected_count from modifiers
         m = RE_MODIFIERS.match(modifiers)
         if not m:
             raise ShouldException('Error in parsing modifiers: ' + modifiers)
         self.modifiers = m.group(1) + m.group(3)
-        self.expected_count = int(m.group(2)) if m.group(2) else None
+        self.expected_count = int(m.group(2)) if m.group(2) else NOT_ZERO
 
         # Parse modifiers
         self.mods = parser_mod.parse_modifiers(self.modifiers)
+
+        if self.mods.json:
+            es = expression.split(':')
+            key, expression = es[0], ':'.join(es[1:])
+            self.key = key.strip()
+            self.mods.multi_lines = True
+            self.mods.count_all = True
 
         self.expression = expression if self.mods.ltspaces else expression.strip()
         if self.mods.blanks:
@@ -615,8 +721,38 @@ class TestCase(TestCaseAbstract):
         if not self.regex and self.mods.ignore_case:
             expression_var = expression_var.upper()
 
-        self.count = 0
-        for l in lines:
+        self.count = None
+
+        # json handling
+        if self.mods.json:
+            try:
+                d = json.loads(lines[0])
+                self.json_data = deep_get(d, self.key)
+
+                if expression_var:
+                    # An expression is provided: prepare data for further count
+                    if type(self.json_data) is list:
+                        lines = [json.dumps(x) for x in self.json_data]
+                    elif type(self.json_data) is dict:
+                        lines = [json.dumps(x) for x in self.json_data.values()]
+                    else:
+                        lines = [str(self.json_data)]
+                else:
+                    # No expression provided: we just count the keys
+                    if type(self.json_data) in [list, dict]:
+                        self.count = len(self.json_data)
+                    else:
+                        self.count = 1
+
+            except (json.decoder.JSONDecodeError, KeyError):
+                # No json, or non-existent key: count is 0
+                self.json_data = JSON_KEY_NOT_FOUND
+                self.count = 0
+
+        # Main count
+        if self.count is None:
+          self.count = 0
+          for l in lines:
             if self.regex:
                 if self.mods.count_all:
                     self.count += len(self.regex.findall(l))
@@ -628,38 +764,37 @@ class TestCase(TestCaseAbstract):
                 if expression_var in l:
                     self.count += l.count(expression_var) if self.mods.count_all else 1
 
-        if self.expected_count is None:
-            self.status = (self.count > 0)
+        # Compute status
+        if self.expected_count == NOT_ZERO:
+            sta = (self.count > 0)
         elif self.mods.less_than:
-            self.status = (self.count < self.expected_count)
+            sta = (self.count < self.expected_count)
         elif self.mods.more_than:
-            self.status = (self.count > self.expected_count)
+            sta = (self.count > self.expected_count)
         else:
-            self.status = (self.count == self.expected_count)
+            sta = (self.count == self.expected_count)
 
         if self.mods.todo:
-            self.status = [TODO, TODO_PASSED][self.status]
+            sta = [S_TODO, S_TODO_PASSED][sta]
         if self.mods.allow:
-            self.status = [ALLOW_FAILED, True][self.status]
+            sta = [S_AF, True][sta]
 
-        if verbose > 0:
-            print('')
-            print(self.str_status(True) + ' ' + repr(self))
+        self.status = Sta(sta)
 
-        return self.status
+        return self.status.or_alias()
 
     def str_additional_status(self, verbose=False):
         s = ''
 
-        if self.status in WARN_STATUS or verbose:
+        if self.status.is_warned() or verbose:
             s += ' (%s/%s%s)' % (self.count,
                                  MOD_LESS_THAN if self.mods.less_than else MOD_MORE_THAN if self.mods.more_than else '',
-                                 self.expected_count if self.expected_count is not None else '+')
+                                 self.expected_count)
 
         return s
 
     def __repr__(self):
-        return '%s%s:%s' % (self.modifiers, self.expected_count if self.expected_count is not None else '', self.expression)
+        return '%s%s:%s' % (self.modifiers, self.expected_count if self.expected_count != NOT_ZERO else '', self.expression)
 
 
 class TestSuite():
@@ -667,7 +802,7 @@ class TestSuite():
     >>> s = TestSuite()
     >>> s.test(['echo "hello"', '$My test', ':hello'], colorize = False)
     True
-    >>> s.tests[0].status
+    >>> s.tests[0].status.or_alias()
     True
 
     >>> s2 = TestSuite('r')
@@ -677,8 +812,9 @@ class TestSuite():
     echo "hello"
       stdout --> 1 lines
       stderr --> 0 lines
-    ok - A nice test
-    ok - Exit code is 0
+    ok (0) - Exit code is 0 -- echo "hello"
+    ok (1/+) - A nice test
+    :e.*o
     True
 
     >>> s2.str_status(colorize = False)
@@ -686,8 +822,8 @@ class TestSuite():
 
     >>> print(s2.tap())   # doctest: +NORMALIZE_WHITESPACE
     1..2
+    ok - Exit code is 0 -- echo "hello"
     ok - A nice test
-    ok - Exit code is 0
     '''
 
     def __init__(self, modifiers = '', cd = None, name = '', timeout = TIMEOUT):
@@ -705,7 +841,7 @@ class TestSuite():
         self.modifiers = modifiers
         self.opt_modifiers = ''
         self.variables = []
-        self.status = None
+        self.status = Sta()
         self.stats = Stats('test')
         self.source = None
         self.cd = cd
@@ -725,8 +861,8 @@ class TestSuite():
     def test(self, should_lines, variables=[], verbose=0, colorize=True, only=None):
         name = ''
         current_cmd = ''   # multi-line command
-        current_cmds = []  # commands since the last command run
-        current_tests = [] # tests since the last command run
+        current_test_lines = [] # currently evaluated output lines
+        current_tests = False # tests were evaluated since the last command run
         self.only = only
         self.variables_all = self.variables + variables
 
@@ -785,7 +921,8 @@ class TestSuite():
 
             # Directive -- Exit code
             if l.startswith(DIRECTIVE_EXIT_CODE):
-                self.expected_exit_code = int(l[len(DIRECTIVE_EXIT_CODE):].strip())
+                e = l[len(DIRECTIVE_EXIT_CODE):].strip()
+                self.expected_exit_code = NOT_ZERO if e == NOT_ZERO else int(e)
                 continue
 
             # Name
@@ -806,53 +943,58 @@ class TestSuite():
             if RE_TEST.search(l):
                 pos = l.find(TOKEN_TEST)
                 modifiers, expression = l[:pos], l[pos+1:]
-                test = TestCase(modifiers + self.opt_modifiers + self.modifiers, expression, name)
-                current_tests.append(test)
+                test = TestCase(modifiers + self.opt_modifiers + self.modifiers, expression, name, l)
+
+                if self.skip:
+                    self.skip_tests([test])
+                    continue
+
+                self.one_test(test, current_test_lines, verbose, colorize)
                 self.tests.append(test)
+                current_tests = True
                 continue
 
 
-            # Command : flush and test the previous tests
-            # If the command is empty (for example at the ned), launch previous commands even when there are no tests
             l = l.strip()
 
-            if current_tests or not l:
-
-                # Test current_cmds with current_tests
-                if not self.skip:
-                    test_lines, exit_test = self.launch(current_cmds, verbose, colorize)
-                    current_tests.append(exit_test)
-                    self.test_lines += test_lines
-                    self.tests_on_lines(current_tests, test_lines, verbose, colorize)
-                    self.debug(self.status, "\n".join(current_cmds), test_lines, verbose, colorize)
-                else:
-                    self.skip_tests(current_tests)
-
-                current_cmds = []
-                current_tests = []
-
-            # Command
-            if not l:
-                continue
-
+            # The command possibly continues on the next line
             next_cmd_continues = l.endswith(CONTINUATION_CHAR)
             if next_cmd_continues:
                 l = l[:-1]
 
             current_cmd += l
 
-            if not next_cmd_continues:
-                current_cmds.append(current_cmd)
-                self.cmds.append(current_cmd)
-                current_cmd = ''
+            if next_cmd_continues:
+                continue
 
+            # Flush tasks on the previous tests
+            if current_tests:
+                # Debug the previous tests
+                self.debug(self.status, current_cmd, test_lines, verbose, colorize)
+
+                # Empty the buffers
+                current_test_lines = []
+                current_tests = False
+
+            # If we are at the end (DIRECTIVE_SCRIPT)
+            if not l:
+                continue
+
+            # Launch the command
+            test_lines, exit_test = self.launch([current_cmd], verbose, colorize)
+            self.one_test(exit_test, test_lines, verbose, colorize)
+
+            self.cmds.append(current_cmd)
+            current_cmd = ''
+            current_test_lines += test_lines
+            self.test_lines += test_lines
 
         # end of loop on should_lines
 
         if verbose > 1:
             print_variables(self.variables_all)
 
-        return self.status
+        return self.status.or_alias()
 
 
     def launch(self, cmds, verbose, colorize):
@@ -867,16 +1009,22 @@ class TestSuite():
                              stdout=f_stdout, stderr=f_stderr,
                              close_fds=True)
 
+        exit_code_message = 'Exit code is %s -- %s' % (self.expected_exit_code, cmd)
+
         try:
             self.exit_code = p.wait(self.timeout)
-            exit_test = ExternalTestCase('Exit code is %d' % self.expected_exit_code, self.exit_code == self.expected_exit_code, str(self.exit_code))
+            if self.expected_exit_code == NOT_ZERO:
+                success = (self.exit_code > 0)
+            else:
+                success = (self.exit_code == self.expected_exit_code)
+            exit_test = ExternalTestCase(exit_code_message, success, str(self.exit_code))
         except subprocess.TimeoutExpired:
             self.exit_code = None
-            exit_test = ExternalTestCase('Exit code is %d' % self.expected_exit_code, SKIP, 'timeout after %s seconds' % self.timeout)
+            exit_test = ExternalTestCase(exit_code_message, S_SKIP, 'timeout after %s seconds' % self.timeout)
             p.kill()
 
         self.tests.append(exit_test)
-        self.status = combine_status(self.status, exit_test.status)
+        self.status += exit_test.status
 
         if self.elapsed_time is None:
             self.elapsed_time = 0
@@ -896,26 +1044,30 @@ class TestSuite():
 
 
 
-    def tests_on_lines(self, tests, test_lines, verbose, colorize):
-        '''
-        Test all tests in 'tests' on 'test_lines',
-        taking into accound self modifiers
-        and gathering statuses in self.status
-        '''
-        for test in tests:
+    def one_test(self, test, test_lines, verbose, colorize):
+            '''
+            Test the TestCase 'test' on 'test_lines',
+            taking into account self.only, self.modifiers
+            and gathering statuses in self.status and self.stats
+            '''
             # Filter
             if self.only:
                 if not self.only(test):
-                    test.status = SKIP
-                    continue
+                    test.status = S_SKIP
+                    return
 
             # Test the test
             test.test(test_lines, variables=self.variables_all, verbose=verbose-1)
             self.stats.up(test.status)
-            self.status = combine_status(self.status, test.status)
+            self.status += test.status
 
-            if verbose > 0 or test.status in WARN_STATUS:
-                print(test.str(colorize))
+            if verbose > 0 or test.status.is_warned():
+                print(test.str(colorize=colorize, verbose=verbose>0))
+                if test.raw:
+                    print(test.raw)
+                if test.json_data:
+                    print(test.key, '-->', color(test.status.color, str(test.json_data), colorize))
+                print()
 
     def print_stderr(self, colorize=True):
         print('  stdout --> %s lines' % len(self.stdout))
@@ -926,19 +1078,19 @@ class TestSuite():
         if verbose > 0:
             print('Skipping tests: %s' % reason)
         self.skip = True
-        self.status = combine_status(self.status, SKIP)
+        self.status += Sta(S_SKIP)
 
     def skip_tests(self, tests):
         for test in tests:
-            test.status = SKIP
+            test.status = Sta(S_SKIP)
             self.stats.up(test.status)
 
     def debug(self, status, cmd, test_lines, verbose, colorize):
-        if status in FAIL_STATUS and verbose <= 0:
+        if status.is_failed() and verbose <= 0:
             print(color(ANSI.MAGENTA, cmd, colorize))
             self.print_stderr(colorize)
 
-        if status in FAIL_STATUS or verbose > 1:
+        if status.is_failed() or verbose > 1:
             print(LINE)
             if len(test_lines) <= MAX_DUMP_LINES:
                 print(''.join(test_lines), end='')
@@ -949,7 +1101,8 @@ class TestSuite():
 
             print(LINE)
 
-
+    def str_additional_status(self, verbose=False):
+        return ''
 
     def str_status(self, colorize=True):
         return self.stats.str_status(self.status, colorize)
@@ -961,7 +1114,7 @@ class TestSuite():
                         'cmd': str(self.cmds),
                         'tests': str(self.stats.total()),
                         'failures': str(len(self.stats[False])),
-                        'skipped': str(len(self.stats[SKIP])),
+                        'skipped': str(len(self.stats[S_SKIP])),
                         'time': self.str_elapsed_time(tag=''),
                         'timestamp': datetime.datetime.now().isoformat()
                        })
@@ -1003,7 +1156,7 @@ class FileSet():
         self.files = files
         self.sets = []
         self.modifiers = modifiers
-        self.status = None
+        self.status = Sta()
         self.stats = Stats('file')
         self.stats_tests = Stats('test')
         self.timeout = timeout
@@ -1012,7 +1165,7 @@ class FileSet():
         return len(self.files)
 
     def test(self, variables=None, cd=None, cd_same=False, output=None, verbose=0, only=None):
-        self.status = None
+        self.status = Sta()
 
         try:
           for f in self.files:
@@ -1023,25 +1176,32 @@ class FileSet():
             self.sets.append(s)
             s.test(open(f), variables, verbose - 1, only=only)
             self.stats.up(s.status, f)
-            self.status = combine_status(self.status, s.status)
+            self.status += s.status
             self.stats_tests += s.stats
 
             filename_without_ext = os.path.splitext(f)[0]
 
             if output and OUT_LOG in output:
-                write_to_file(filename_without_ext + OUT_LOG, ''.join(s.test_lines))
+                write_to_file(filename_without_ext + OUT_LOG, ''.join(s.test_lines), verbose > 0)
 
             if output and OUT_TAP in output:
-                write_to_file(filename_without_ext + OUT_TAP, s.tap())
+                write_to_file(filename_without_ext + OUT_TAP, s.tap(), verbose > 0)
 
-            if verbose > 0 or s.status is False:
-                if not verbose:
-                    print(f, end=' ')
-                if s.elapsed_time:
+            if verbose > 0 or s.status.is_warned():
+                print(s.str_status(), end=' ')
+
+            if not verbose or verbose > 1 or s.status.is_warned():
+                print(f, end='')
+
+            if verbose > 0:
+                print('')
+
+            if verbose > 0 and s.elapsed_time:
                     if s.elapsed_time >= SHOW_ELAPSED_TIME_ABOVE:
                         print(s.str_elapsed_time())
-                print(s.str_status())
-                print('')
+
+            print('')
+
         except KeyboardInterrupt:
             print('==== interrupted ====\n')
 
@@ -1056,13 +1216,13 @@ class FileSet():
         print()
 
         for sta in self.stats.keys():
-            if sta == True:
+            if sta.name == S_OK:
                 continue
-            print('files with %s:' % color(STATUS_COLORS[sta], STATUS[sta]))
+            print('files with %s:' % sta)
             for f in self.stats[sta]:
                 print('  ' + f)
 
-        return self.status
+        return self.status.or_alias()
 
     def xml(self):
         x = ET.Element('testsuites',
@@ -1079,18 +1239,22 @@ class FileSet():
 
     def write_retry(self, argv, argv_remove, verbose=1):
         '''
-        If there were tests in WARN_STATUS, write the RETRY file
+        If there were tests in WARN_STATUS, write the RETRY_FAILED/RETRY_WARNED files
         with, non-file arguments and WARN_STATUS files.
         '''
 
         # cmd = [sys.executable, sys.argv[0]]
 
-        files = []
+        files_failed = []
+        files_warned = []
 
-        for sta in WARN_STATUS:
-            files += self.stats[sta]
+        for status, ff in self.stats:
+            if status.is_failed():
+                files_failed += ff
+            if status.is_warned():
+                files_warned += ff
 
-        if not files:
+        if not files_warned:
             return
 
         args = []
@@ -1098,15 +1262,20 @@ class FileSet():
             if arg not in argv_remove:
                 args.append(arg)
 
-        with open(RETRY, 'w') as f:
-            f.write('\n'.join(args + files) + '\n')
+        with open(RETRY_FAILED, 'w') as f:
+            f.write('\n'.join(args + files_failed) + '\n')
+        with open(RETRY_WARNED, 'w') as f:
+            f.write('\n'.join(args + files_warned) + '\n')
 
         if verbose > 0:
-            print('%s %s will relaunch these tests.' % (sys.argv[0], RETRY_FLAG))
+            cmd = '%s %s' % (sys.argv[0], RETRY_FAILED_FLAG)
+            if len(files_warned) > len(files_failed):
+                cmd += ' or %s %s' % (sys.argv[0], RETRY_WARNED_FLAG)
+            print('\n' + cmd + ' will relaunch these tests.')
 
-def read_retry():
+def read_retry(f):
     try:
-        return [l.rstrip() for l in open(RETRY).readlines()]
+        return [l.rstrip() for l in open(f).readlines()]
     except:
         return []
 
@@ -1114,8 +1283,12 @@ def read_retry():
 if __name__ == '__main__':
     argv = (['@' + DEFAULT_CFG] + sys.argv[1:]) if os.path.exists(DEFAULT_CFG) else sys.argv[1:]
 
-    if RETRY_FLAG in argv:
-        retry = read_retry()
+    if RETRY_FAILED_FLAG in argv or RETRY_WARNED_FLAG in argv:
+        retry = []
+        if RETRY_FAILED_FLAG in argv:
+            retry = read_retry(RETRY_FAILED)
+        if RETRY_WARNED_FLAG in argv:
+            retry = read_retry(RETRY_WARNED)
         argv += retry
         if retry:
             print(color(ANSI.BLUE, "Retrying previous failed or warned tests"))
@@ -1148,11 +1321,11 @@ if __name__ == '__main__':
 
     # Launch tests
     fs = FileSet(args.file, timeout = args.timeout, modifiers=''.join(args.mod if args.mod else []))
-    status = fs.test(variables = variables, cd = args.cd, cd_same = args.cd_same, output = args.output, verbose = args.verbose, only = only)
+    fs.test(variables = variables, cd = args.cd, cd_same = args.cd_same, output = args.output, verbose = args.verbose, only = only)
 
     if len(fs) > 1:
         retry = fs.write_retry(sys.argv[1:], args.file, verbose = args.verbose)
 
-    sys.exit(1 if status in FAIL_STATUS else 0)
+    sys.exit(1 if fs.status.is_failed() else 0)
 
 

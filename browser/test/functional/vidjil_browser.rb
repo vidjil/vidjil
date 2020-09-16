@@ -145,6 +145,10 @@ class VidjilBrowser < Watir::Browser
     return element(:id => 'info_selected_locus').span(:index => 1)
   end
 
+  def info_colorBy
+    return div(:id => "info").div(:class => "info_color")
+  end
+
   # Return the div containing the information (status bar)
   def infoline
     return div(:id => segmenter_id).div(:class => 'focus')

@@ -122,6 +122,42 @@ var json_clone6 = {
         "normalized_reads" : [20,20,0,null],
     }
 
+// Cmone with seg start and stop position
+var json_clone7 = {
+      "germline": "IGH",
+      "id": "id7",
+      "name": "clone with exact position",
+      "reads": [0,0,0,0],
+      "seg": {
+        "3": {
+          "delLeft": 1,
+          "delRight": 40,
+          "name": "IGHJ6*02",
+          "start": 16,
+          "stop": 25
+        },
+        "4": {
+          "delLeft": 4,
+          "delRight": 9,
+          "name": "IGHD3-3*01",
+          "start": 13,
+          "stop": 15
+        },
+        "5": {
+          "delLeft": 0,
+          "delRight": 2,
+          "name": "IGHV1-69*06",
+          "start": 6,
+          "stop": 10
+        },
+        "N1": 15,
+        "N2": 0,
+      },
+      "sequence": "bbbbbVVVVVnnDDDJJJJJJJJJJaaaaaa",
+      "top": 7
+    }
+
+
 QUnit.test("name, informations, getHtmlInfo", function(assert) {
     
     assert.equal(json_clone1.seg.junction.start, 10, "Start junction is 10 in JSON for clone 1");
@@ -527,14 +563,21 @@ QUnit.test("export", function(assert) {
     ]
     assert.deepEqual(c4.toCSV(), res4, "c4.toCSV() - no junctionAA")
 
-
-
     m.select(0)
     m.select(1)
     m.merge()
-
     assert.equal(c3.toCSV()[0], "0+1", ".toCSV(), merged clone")
-});
+    
+    // Fasta output for clone with preV and postJ
+    var c7 = new Clone(json_clone7, m, 1, c_attributes)
+    assert.equal(c7.getFasta(), ">clone with exact position    31 nt, 0 read \nbbbbb\nVVVVV\nnnDDD\nJJJJJJJJJJ\naaaaaa\n", "getFasta() with preV and postJ: Ok");
+    // Test if preV and postJ are empty (no empty line waited)
+    c7.seg["5"].start = 0
+    c7.seg["3"].stop  = c7.sequence.length 
+    assert.equal(c7.getFasta(), ">clone with exact position    31 nt, 0 read \nbbbbbVVVVV\nnnDDD\nJJJJJJJJJJaaaaaa\n", "getFasta() with preV and postJ: Ok");
+
+})
+
 
 
 QUnit.test("changeLocus/Segment", function(assert) {

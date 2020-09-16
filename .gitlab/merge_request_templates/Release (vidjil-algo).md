@@ -40,7 +40,10 @@ After these steps, we merge back the release in `dev`:
 
 ## After the release: deploy
 
-* [ ] Open a new internal issue with the `Deploy (vidjil-algo)` template.
+Sometimes, the deploy stages can occur several days after the release.
+
+* [ ] Open a new internal issue with the `Deploy (vidjil-algo)` template : vdj#XXXXX
+
 
 /label ~cpp
 
