@@ -881,7 +881,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
 
         for (var j=0;j<this.clones.length;j++){
-            if (this.clone(j).isActive()) {
+            if (this.clone(j).isActive() && this.clone(j).hasSizeConstant()) {
                 max_s = this.clones[j].getMaxSize()
                 if (max_s > this.max_size)
                     this.max_size  = max_s
