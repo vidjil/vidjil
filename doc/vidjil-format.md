@@ -486,22 +486,90 @@ extend the `germline.data` default file with a custom germline
 
 ## `MRD data` \[optional\]\[work in progress, to be documented\]
 
-A work in progress is done to computed and see these informations. 
-This is computed by the post-analysis script `tools/spike-bormalization.py`.
-In this case, multiple data will be implemented in `vidjil` file. 
-The first part is set into an `mrd` field and contain data for each sample. 
+Vidjil offers support for the use of spike-ins to serve as a yardstick
+to obtain copy numbers from read counts, with the goal of estimating
+Minimal Residual Disease (MRD) values.  To use this feature, users
+should:
+
+  - add spike-ins in known copy numbers in their lab preps
+  - inform `vidjil-algo` the sequences and copy numbers of these spike-ins
+  - add a pre-processing step in the analysis configuration to insert
+    the normalized values (MRD estimations) into the `vidjil` file
+
+The web application can then take the info from the `vidjil` file and
+display it.
+
+To inform `vidjil-algo` of the spike-in sequences and copy numbers, a
+file in JSON format must be created, as in the following example:
+
+```javascript
+{
+  "config": {
+    "labels": [
+      {
+        "name": "spike-1",
+        "copies": "10",
+        "sequence": "GGAACTGGGCCTGGGGATACGGAAATATCGGTACACCGATAAAC",
+        "family": "TRDV1"
+      },
+      {
+        "name": "spike-2",
+        "copies": "40",
+        "sequence": "GGGAATACCTCGGTGCGGTGGGGGATCCCAAGACCCCCCTCTACACCGATAA",
+        "family": "TRDV1"
+      },
+      {
+        "name": "spike-3",
+        "copies": "160",
+        "sequence": "GCTCTTGGGGTGCATCAGTCCATGACCCACCGATAAACTCATC",
+        "family": "TRDV1"
+      }
+    ]
+  }
+}
+````
+
+and given to `vidjil-algo` by means of the flag `--label-json
+spikes.json`.  Notice that the family of each spike-in must be
+informed as well, because it has been determined that performing the
+procedure within a family yields better results
+(https://doi.org/10.1111/bjh.16571).
+
+For the pre-processing step, Vidjil offers a script called
+`spike-normalization.py`, so one can add a line such as the following
+one to the `Fuse command:` field in the analysis config:
+
+```javascript
+-t 100 --pre spike_normalization.py
+````
+
+The `spike-normalization.py` script is responsible for collecting read
+counts for the spike-ins, combining them with their copy numbers, and
+computing normalized values from the read counts of other clones in
+the same family.  If a family does not have at least 3 spike-ins, or
+if its linear regression's Person R2 coefficient is below 0.8, a
+universal normalization is used instead.  The universal normalization
+takes into consideration all spike-ins from all families.
+
+With this, the Vidjil web interface will show a normalized value,
+intended as an estimate of the MRD value, instead of the usual read
+percentage for each clone.  To switch between displaying normalized
+values or read percentages, the corresponding option in the setting
+menu can be used.
+
+Only clones from the prevalent germline, that is, the germline with
+more reads in the sample, are normalized by this process.
+
+The information flow of normalization is as follows.  The
+post-analysis script `tools/spike-normalization.py` writes multiple
+data fields in the `vidjil` file.  Part of the info is set into an
+`mrd` field, and contains data for each sample.  
 ```javascript
 "mrd": {
   "coefficients": {
     "IGHV5": 0.15380390002746497,
     "UNI": 0.15380390002746497,
-    "VH1": 0.15380390002746497,
-    "VH2": 0.15380390002746497,
-    "VH3": 0.15380390002746497,
-    "VH4": 0.15380390002746497,
-    "VH5": 0.15380390002746497,
-    "VH6": 0.15380390002746497,
-    "VH7": 0.15380390002746497
+    "IGHV1": 0.15380390002746497
   },
   "UNI_R2": [
     0.964285714285714
@@ -515,31 +583,42 @@ The first part is set into an `mrd` field and contain data for each sample.
 }
 ````
 
-`coefficients`:
-`UNI_R2`:
-`ampl_coeff`:
-`prevalent`:
+The item `coefficients`, one per family, contains the coefficients that
+multiplied by a read count will yield a normalized value.  Here, `UNI`
+stands for the universal coefficient, based on all spike-ins.  Field
+`UNI_R2` shows the Pearson R2 coefficient of the linear regression for
+the universal coefficient.  Field `ampl_coeff` contains the ratio
+between the total number of reads captured by Vidjil and spike-in
+reads.  Although not used in calculations, it is an important
+parameter to assess the quality of the sample.  If spike-ins reads
+make up too large a fraction of the entire collection, this can lead
+to distortions.  Finally, `prevalent` indicates the prevalent germline
+in the sample.
+
+The remaining set of fields is set into each clone, under key `mrd`,
+and are arrays containing one value per time point.
 
 ```javascript
 "clones": [
   {
     ...
     "mrd": {
-      "R2": [0.95 ],
-      "copy_number": 41.37324910738808,
-      "family": ["UNI"]
+      "R2": [ 0.95 ],
+      "copy_number": [ 41.37324910738808 ],
+      "family": [ "UNI" ]
     },
-    "normalized_reads": [195.50763372699805 ]
+    "normalized_reads": [ 195.50763372699805 ]
   }
 ]
 ````
-The second set of fields is set into each clone, under `mrd`.
-`R2`:
-`copy_number`:
-`family`:
-`normalized_reads`: This field is use by post-process script to show normalization. It is not specific to mrd.
 
-TODO
+Here, field `R2` indicates the Pearson R2 coefficient for the linear
+regression used in this clone; `copy_number` is the estimated copy
+number of this clone, obtained by mutiplying this clone's coefficient
+by its read count; `family` is the clone family; and
+`normalized_reads` is the estimated value of MRD for this clone.
+
+TODO: COMMENTS?
 
 ## Further clustering of clones: the `clusters` list \[optional\]
 
