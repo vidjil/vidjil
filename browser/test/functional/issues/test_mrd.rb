@@ -37,6 +37,7 @@ class TestGraph < BrowserTest
     assert ( not  mrd_pearson.exist? ),   "modal line mrd_pearson NOT exist for clone without mrd"
     assert ( not  mrd_prevalent.exist? ), "modal line mrd_prevalent NOT exist for clone without mrd"
     assert ( not  mrd_prevalent_on_spike.exist? ), "modal line mrd_prevalent_on_spike NOT exist for clone without mrd"
+    modal.i(:class => "icon-cancel").fire_event('click') # close modal
 
 
   end  
