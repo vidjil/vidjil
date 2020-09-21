@@ -180,6 +180,7 @@ function readClipBoard(type) {
 function readClipBoard2(type) {
     var template = document.getElementById("clipboard-popup")
     var clone = template.content.firstElementChild.cloneNode(true)
+    clone.getElementsByTagName('form')[0].action = "javascript:addForms(parseClipboard(clipboardData.value, '"+type+"'))"
     console.popupHTML(clone)
 }
 
