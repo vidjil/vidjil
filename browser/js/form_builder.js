@@ -42,6 +42,11 @@ function addForm(content){
       }
 }
 
+function antiSpam(object, timer){
+    object.classList.add('disabledClass'); 
+    setTimeout(function(o){o.classList.remove('disabledClass')}, timer, object)
+}
+
 function removeEmptyForms(){
     var fc = document.getElementById('fieldset_container')
     var fl = fc.getElementsByClassName('form_line')

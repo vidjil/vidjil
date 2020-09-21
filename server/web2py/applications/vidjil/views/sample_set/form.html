@@ -22,7 +22,7 @@
             title="add patient input row to the form"
             data-index="{{=len(sets[defs.SET_TYPE_PATIENT])}}">add patient</span>
       <span class="button2 clipboard-button"
-            onclick="readClipBoard('patient');"
+            onclick="readClipBoard('patient'); antiSpam(this,1000)"
             id="patient_clipboard"
             title="add patient(s) from clipboard content">
             <i class="icon-newspaper"></i></span>
@@ -31,7 +31,7 @@
             id="run_button"
             data-index="{{=len(sets[defs.SET_TYPE_RUN])}}">add run</span>
       <span class="button2 clipboard-button"
-            onclick="readClipBoard('run');"
+            onclick="readClipBoard('run'); antiSpam(this,1000)"
             id="run_clipboard"
             title="add run(s) from clipboard content">
             <i class="icon-newspaper"></i></span>
@@ -40,7 +40,7 @@
             id="generic_button"
             data-index="{{=len(sets[defs.SET_TYPE_GENERIC])}}">add set</span>
       <span class="button2 clipboard-button"
-            onclick="readClipBoard('generic');"
+            onclick="readClipBoard('generic'); antiSpam(this,1000)"
             id="set_clipboard"
             title="add sample set(s) from clipboard content">
             <i class="icon-newspaper"></i></span>
