@@ -974,6 +974,10 @@ div.button {
   padding-left: 10px;
   padding-right: 10px;
 }
+.clipboard-button {
+  margin-left: -5px;
+  padding: 3px;
+}
 .smallbutton {
   cursor: pointer;
   font-size: 13px;
