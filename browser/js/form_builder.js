@@ -60,12 +60,10 @@ function removeEmptyForms(){
 
 /*
 */
-function parseClipboard(clipboard){
+function parseClipboard(clipboard, type){
     console.closePopupMsg()
 
     var lines = clipboard.split('\n')
-    var patient_count, run_count, set_count, unknow_count
-    patient_count = run_count = set_count = unknow_count = 0
     var parsed_lines = []
 
     for(var i = 0; i < lines.length; i++){
@@ -73,7 +71,6 @@ function parseClipboard(clipboard){
 
         switch (cells.length) {
             case 5:
-                patient_count++
                 parsed_lines.push({     type : 'patient', 
                                         patient_id : cells[0],
                                         first_name : cells[1],
@@ -81,8 +78,7 @@ function parseClipboard(clipboard){
                                         birth : cells[3],
                                         info : cells[4]})
                 break
-            case 4:
-                run_count++        
+            case 4:    
                 parsed_lines.push({     type : 'run', 
                                         run_id : cells[0],
                                         name : cells[1],
@@ -90,45 +86,68 @@ function parseClipboard(clipboard){
                                         info : cells[3]})
                 break
             case 2:    
-                set_count++     
                 parsed_lines.push({     type : 'generic', 
                                         name : cells[0],
                                         info : cells[1]})
                 break
             default:
-                unknow_count++
         }
     }
 
-    if (patient_count == 0 && run_count == 0 && set_count == 0){
-        console.log({"type": "popup", "msg":    "Nothing found in clipboard, please be sure to have valid data in clipboard<br>"+
-                                                "data in clipboard are expected to be tabulated <br>"+
-                                                " (a copy from an excell spreadsheet should be already in this format)<br>"+
-                                                "- row must be separeted with a break line<br>"+
-                                                "- cells must be separated with a tabulation<br>"+ 
-                                                "<br>"+
-                                                "- a row with 5 cells will be loaded as a new patient (id/first_name/last_name/date/info)<br>"+
-                                                "- a row with 4 cells will be loaded as a new run (id/run_name/date/info)<br>"+
-                                                "- a row with 2 cells will be loaded as a new set (set_name/info)<br>"})
-        return []
+    var filtered_lines 
+    if (type != undefined)
+        filtered_lines = parsed_lines.filter(function(a){return a.type == type})
+    else
+        filtered_lines = parsed_lines 
+
+    
+    var error_msg = ""
+    switch (type) {
+        case "patient":
+            error_msg = "No patient(s) found, please be sure to have valid data in clipboard<br>"+
+            "content is expected to be tabulated(a copy from an excell spreadsheet should already be in this format)<br><br>"+
+            "- row must be separeted with a break line<br>"+
+            "- cells must be separated with a tabulation<br>"+ 
+            "- each row must contains 5 cells (id/first_name/last_name/date/info)<br>"+
+            "- cells can be empty <br>"
+            break
+        case "run":
+            error_msg = "No run(s) found, please be sure to have valid data in clipboard<br>"+
+            "content is expected to be tabulated(a copy from an excell spreadsheet should already be in this format)<br><br>"+
+            "- row must be separeted with a break line<br>"+
+            "- cells must be separated with a tabulation<br>"+ 
+            "- each row must contains 4 cells (id/run_name/date/info)<br>"+
+            "- cells can be empty <br>"
+            break
+        case "generic":
+            error_msg = "No sample set(s) found, please be sure to have valid data in clipboard<br>"+
+            "content is expected to be tabulated(a copy from an excell spreadsheet should already be in this format)<br><br>"+
+            "- row must be separeted with a break line<br>"+
+            "- cells must be separated with a tabulation<br>"+ 
+            "- each row must contains 2 cells (set_name/info)<br>"+
+            "- cells can be empty <br>"     
+            break
+        default:
+            error_msg = "Nothing found, please be sure to have valid data in clipboard<br>"+
+            "content is expected to be tabulated(a copy from an excell spreadsheet should already be in this format)<br><br>"+
+            "- row must be separeted with a break line<br>"+
+            "- cells must be separated with a tabulation<br><br>"+
+            "- a row with 5 cells will be loaded as a new patient (id/first_name/last_name/date/info)<br>"+
+            "- a row with 4 cells will be loaded as a new run (id/run_name/date/info)<br>"+
+            "- a row with 2 cells will be loaded as a new set (set_name/info)<br>"+
+            "- cells can be empty <br>"     
     }
 
-    if (patient_count !=0)
-        console.log({msg: patient_count+" patient(s) loaded from clipboard, please check form before saving", type: 'flash', priority: 1})
-    if (run_count !=0)
-        console.log({msg: run_count+" run(s) loaded from clipboard, please check form before saving", type: 'flash', priority: 1})
-    if (set_count !=0)
-        console.log({msg: set_count+" set(s) loaded from clipboard, please check form before saving", type: 'flash', priority: 1})
-    if (unknow_count !=0)
-        console.log({msg: unknow_count+" line(s) have been ignored from clipboard", type: 'flash', priority: 1})
+    if (filtered_lines.length == 0)
+        console.log({"type": "popup", "msg": error_msg})
 
-    return parsed_lines
+    return filtered_lines
 }
 
-function readClipBoard() {
+function readClipBoard(type) {
     //clipboard API is missing (old browser)
     if (!navigator.clipboard){
-        readClipBoard2()
+        readClipBoard2(type)
         return
     }
     
@@ -136,7 +155,7 @@ function readClipBoard() {
     var permissionQuery = { name: 'clipboard-read', allowWithoutGesture: false }
     navigator.permissions.query(permissionQuery)
     if (!navigator.clipboard.readText){
-        readClipBoard2()
+        readClipBoard2(type)
         return
     }
 
@@ -144,16 +163,16 @@ function readClipBoard() {
     navigator.clipboard
         .readText()
         .then(function(clipboard){
-            var parsed_content = parseClipboard(clipboard)
+            var parsed_content = parseClipboard(clipboard, type)
             addForms(parsed_content)
         })
         .catch(function(err){
-            creadClipBoard2()
+            readClipBoard2(type)
             return
         });
 }
 
-function readClipBoard2() {
+function readClipBoard2(type) {
     var template = document.getElementById("clipboard-popup")
     var clone = template.content.firstElementChild.cloneNode(true)
     console.popupHTML(clone)
