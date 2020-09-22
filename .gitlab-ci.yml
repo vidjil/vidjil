@@ -189,6 +189,7 @@ test_browser_unit:
   artifacts:
     paths:
     - browser/
+    when: always
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
@@ -208,7 +209,8 @@ test_browser_unit:
     - HEADLESS=1 make -C browser/test functional
   artifacts:
     paths:
-    - browser/
+    - browser/ 
+    when: always
     reports:
       junit: browser/test/test/TEST-*.xml
   only:
@@ -235,6 +237,7 @@ test_browser_unit:
   artifacts:
     paths:
     - browser/
+    when: always
     reports:
       junit: browser/test/test/TEST-*.xml
   only:
