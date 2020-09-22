@@ -33,7 +33,7 @@ Chrome 79, and possibly other recent versions, are tested through our continuous
 We also provide an extended support on
 
   - Firefox, versions 32 to 77
-  - Chrome, version 38 to 78
+  - Chrome, version 49 to 78
 
 Some of these legacy platforms are also tested through our continuous integration pipelines.
 However, old platforms have security flaws and are not recommended for routine usage involving clinical data.
