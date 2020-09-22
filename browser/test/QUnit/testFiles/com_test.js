@@ -3,6 +3,7 @@ QUnit.module("Console", {
 });
 
 QUnit.test("console", function(assert) {
+    console = new Com(console)
 
     assert.expect(6);
     var ready = assert.async(4);
@@ -38,4 +39,6 @@ QUnit.test("console", function(assert) {
         assert.notEqual(box.innerHTML.indexOf("plap"), -1, "console log : Ok")
         ready()
     }, 100)
+
+    console = console.default
 });
