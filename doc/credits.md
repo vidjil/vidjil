@@ -107,6 +107,11 @@ Sébastien Bender et al.,
 Blood, 2020,
 <https://doi.org/10.1182/blood.2019004197>
 
+Monika Brüggemann et al., on behalf of the EuroClonality-NGS working group,
+*Standardized next-generation sequencing of immunoglobulin and T-cell receptor gene recombinations for MRD marker identification in acute lymphoblastic leukaemia; a EuroClonality-NGS validation study*
+Leukemia, 2019, 33, 2241–2253,
+<https://doi.org/10.1038/s41375-019-0496-7>
+
 Roberta Cavagna et al.,
 *Capture-based Next-Generation Sequencing Improves the Identification of Immunoglobulin/T-Cell Receptor Clonal Markers and Gene Mutations in Adult Acute Lymphoblastic Leukemia Patients Lacking Molecular Probes*
 Cancers, 2020, 12(6), 1505,
@@ -145,7 +150,7 @@ British Journal of Haematology, 2020,
 
 Kenji Kimura et al.,
 *Identification of Clonal Immunoglobulin λ Light-Chain Gene Rearrangements in AL Amyloidosis Using Next Generation Sequencing*,
-ASH 2019,
+ASH 2019, Blood,
 <https://doi.org/10.1182/blood-2019-125028>
 
 Michaela Kotrova et al.,
@@ -174,8 +179,8 @@ Leukemia Research, 2017, 53, 1–7
 <http://dx.doi.org/10.1016/j.leukres.2016.11.009>
 
 Masashi Sanada et al.,
-*Targeted-Capture Sequencing Is a Useful Method for MRD Markers Screening in KMT2A (MLL) Rearranged Leukemia*
-Blood, 2019, 134(S1):2759
+*Targeted-Capture Sequencing Is a Useful Method for MRD Markers Screening in KMT2A (MLL) Rearranged Leukemia*,
+ASH 2019, Blood, 134(S1):2759
 <https://doi.org/10.1182/blood-2019-125421>
 
 Florian Scherer et al.,
