@@ -275,6 +275,38 @@ They are just different ways to group samples.
 Sets can for example gather a set of samples of a same experiment.
 Runs can be used to gather samples that have been sequenced in the same run.
 
+## Batch creation of patients/runs/sets
+<a name='batch-creation'></a>
+
+Patients, runs and sets can be added one by one (`add patient`, `add run`, `add set`).
+They can also be created by pasting data from a properly formatted table
+created by any spreadsheet editor such as LibreCalc/LibreOffice or Excel.
+
+Data has to be presented with the following columns, but some cells may be empty.
+Do not copy any header row, but only the data rows.
+
+*Patient* : 5 columns (patient id, first name, last name, birth date, info)
+
+|     |        |      |            |      |
+| --- | ------ | ---- | ---------- | ---- |
+| 42  | John   | Doe  |            | #ALL |
+|     | George | Sand | 1804-02-01 |      |
+
+*Run* : 4 columns (run id, name, date, info)
+
+|         |       |            |                    |
+| ------- | ----- | ---------- | ------------------ |
+| 2020r84 | Lib84 | 2020-09-15 |                    |
+| 2020r85 | Lib85 | 2020-09-15 | new IGH-DJ primers |
+
+*Set* : 2 columns (set name, info)
+
+|           |                         |
+| --------- | ----------------------- |
+| CohortCLL | Retrospective 2015-2019 |
+| Mouse1604 |                         |
+
+
 ## Permanent address (URL) to a set of samples
 
 Addresses such as <http://app.vidjil.org/?set=3241&config=39> directly target a set of samples (here the public dataset L3), possibly with your saved analysis.
