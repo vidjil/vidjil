@@ -54,8 +54,6 @@ class TestScatterplot < BrowserTest
     $b.update_icon.wait_while(&:present?)
     assert ( $b.clone_in_segmenter('0').present? ), ">> ctrl+click; Clone 0 should be present in segmenter"
     assert ( $b.clone_in_segmenter('1').present? ), ">> ctrl+click; Clone 1 should be present in segmenter"
-
-
   end
 
   def test_02_multiple_select_bubble
@@ -81,9 +79,8 @@ class TestScatterplot < BrowserTest
     $b.update_icon.wait_while(&:present?)
     assert ( $b.clone_in_segmenter('0').present? ), ">> ctrl+click; Clone 0 should be present in segmenter"
     assert ( $b.clone_in_segmenter('1').present? ), ">> ctrl+click; Clone 1 should be present in segmenter"
-
-
   end
+
 
   def test_03_update_radius
     $b.menu_filter.click
@@ -121,6 +118,29 @@ class TestScatterplot < BrowserTest
     assert (  axis[3].text == "0.01" ), ">> incorrect fourth legend, got '" + axis[3].text + "', expected '0.01'"
   end
 
+  def test_07_open_click_by_dblclick
+     ## reset, time 0, preset 0
+    $b.send_keys 0
+    $b.graph_x_legend("0").fire_event('click')
+    $b.update_icon.wait_while(&:present?)
+
+    ## open a first time the modal (init style and content); and close it
+    modal = $b.modal_container
+    c0 = $b.clone_in_list("0")
+    c0.span(:class => ["infoBox", "warn"]).click
+    modal.i(:class => "icon-cancel").click 
+    ## verify that clone window is close before
+    assert ( modal.style == "display: none;" ), "before dblclick, modal is closed"
+
+
+    ## verify that clone window is open after
+    $b.clone_in_scatterplot("1").double_click
+    $b.update_icon.wait_while(&:present?)
+    assert ( modal.style == "display: block;" ), "after dblclick, modal is opened"
+
+    ## Verify that content is related to correct clone
+    assert ( modal.h2(:text => "Cluster info : T2 - IGHV1*01 0//0 IGHJ1*01").present? ), "Correct title content for modal"
+  end
   
   # Not really a test
   def test_zz_close

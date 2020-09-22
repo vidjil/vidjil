@@ -169,22 +169,21 @@ automatic clusterization, see below), leaving the user or other
 software making detailed analysis and decisions on the final
 clustering.
 
-## Recombination / locus selection
-
+## Germline presets: locus and recombination selection
 
 ``` diff
-Germline presets (at least one -g or -V/(-D)/-J option must be given)
+Germline/recombination selection (at least one -g or -V/(-D)/-J option must be given)
   -g, --germline GERMLINES ...
 
-         -g <.g FILE>(:FILTER)
-                    multiple locus/germlines, with tuned parameters.
+         -g <.g FILE>(:FOCUS) ...
+                    germline preset(s) (.g file(s)), detecting multiple recombinations, with tuned parameters.
                     Common values are '-g germline/homo-sapiens.g' or '-g germline/mus-musculus.g'
-                    The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
+                    One can focus on some recombinations, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
          -g PATH
-                    multiple locus/germlines, shortcut for '-g PATH/homo-sapiens.g',
+                    human germline preset, shortcut for '-g PATH/homo-sapiens.g',
                     processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with incomplete/unusal recombinations
   -V FILE ...                 custom V germline multi-fasta file(s)
-  -D FILE ...                 custom D germline multi-fasta file(s), analyze into V(D)J components
+  -D FILE ...                 custom D germline multi-fasta file(s) for V(D)J designation
   -J FILE ...                 custom V germline multi-fasta file(s)
   -2                          try to detect unexpected recombinations
 ```
@@ -196,12 +195,10 @@ The following presets are provided:
     including incomplete/unusal recombinations (`TRA+D`, `TRB+`, `TRD+`, `IGH+`, `IGK+`, see <locus.md>.
   - `germline/homo-sapiens-isotypes.g`: Homo sapiens heavy chain locus, looking for sequences with, on one side, IGHJ (or even IGHV) genes,
     and, on the other side, an IGH constant chain.
-  - `germline/homo-sapiens-cd.g`: Homo sapiens, common CD genes (experimental, does not check for recombinations)
+  - `germline/homo-sapiens-isoforms.g`: Homo sapiens IKZF1 and ERG recombinations.
+  - `germline/homo-sapiens-cd.g`: Homo sapiens, common CD genes (experimental, does not check for recombinations).
   - `germline/mus-musculus.g`: Mus musculus (strains BALB/c and C57BL/6)
   - `germline/rattus-norvegicus.g`: Rattus norvegicus (strains BN/SsNHsdMCW and Sprague-Dawley)
-
-New `germline/*.g` presets for other species or for custom recombinations can be created, possibly referring to other `.fasta` files.
-Please contact us if you need help in configuring other germlines.
 
   - Recombinations can be filtered, such as in
     `-g germline/homo-sapiens.g:IGH` (only IGH, complete recombinations),
@@ -213,6 +210,74 @@ Please contact us if you need help in configuring other germlines.
   - Using `-2` further test unexpected recombinations (tagged as `xxx`), as in `-g germline/homo-sapiens.g -2`.
 
 Finally, the advanced `-V/(-D)/-J` options enable to select custom V, (D) and J repertoires given as `.fasta` files.
+
+## Custom `germline/*.g` presets
+
+New `germline/*.g` presets for other species or for custom recombinations can be created, possibly referring to other `.fasta` files.
+This is an advanced usage, please contact us if you need help in configuring such other germlines.
+
+Inside a `.g` file, the `systems` entries details how vidjil-algo looks for recombinations.
+Let's look at the `IGH` entry in the `germline/homo-sapiens.g` preset:
+
+```json
+        "IGH": {
+            "shortcut": "H",
+            "color" : "#6c71c4",
+            "description": "Human immunoglobulin, heavy locus (14q32.33)",
+            "recombinations": [ {
+                "5": ["IGHV.fa"],
+                "4": ["IGHD.fa"],
+                "3": ["IGHJ+down.fa"]
+            } ],
+            "parameters": {
+                "seed": "12s"
+            }
+        }
+```
+
+The `shortcut` must be a unique 1-character string.
+The `color` and `description` fields are not used by `vidjil-algo`, but rather by the web application.
+The `parameters.seed` value of `12s` is equivalent to `-s 12s` advanced option on k-mer size described below.
+
+Here `recombinations` describes one sequence analysis mode, called `543`:
+a VJ junction is detected when there is a significant similarity (in terms of numbers of k-mers, see below) against sequences in `IGHV.fa` in the 5' region,
+followed by a significant similarity in the 3' region against sequences in `IGHJ+down.fa`
+– here we take both J genes and downstream sequences to improve the detection.
+
+In a second pass (V(D)J designation), full alignment is done against these sequences.
+The optional `4` entry  (`IGHD.fa`) is taken only there into account.
+However, if a D is not detected and designated, the read will be designated as VJ.
+
+
+The `TRD+` entry, for incomplete recombinations (see <locus.md>), shows an example where
+both Vd-Dd3, Dd2-Jd (possibly Dd2-Dd-Jd), and Dd2-Dd3 recombinations are searched:
+
+```json
+    "recombinations": [ {
+        "5": ["TRDV.fa"],
+        "3": ["TRDD3+down.fa"]
+    }, {
+        "5": ["TRDD2+up.fa"],
+        "4": ["TRDD.fa"],
+        "3": ["TRDJ+down.fa"]
+    }, {
+        "5": ["TRDD2+up.fa"],
+        "3": ["TRDD3+down.fa"]
+    } ]
+```
+
+There is also an experimental sequence analysis mode, called `1`,
+that detects similarities and designates sequences *without recombinations*,
+as in `germline/homo-sapiens-cd.g`:
+
+```json
+     "recombinations": [ { "1": ["CD-sorting.fa"] } ]
+```
+
+This can be used to detect non-recombined known sequences,
+as shown here with usual CD sequences in RNA-seq data.
+However, putting too many sequences here may generate many hits
+that may hide actual recombinations.
 
 ## Main algorithm parameters
 
@@ -233,7 +298,7 @@ The `-s`, `-k` are the options of the seed-based heuristic that detects
 "junctions", that is a zone in a read that is similar to V genes on its
 left end and similar to J genes in its right end. A detailed
 explanation can be found in (Giraud, Salson and al., 2014).
-*These options are for advanced usage, the defaults values should work.*
+*These options are for advanced usage, the default values, as set in the `germline/*.g` presets, should work.*
 The `-s` or `-k` option selects the seed used for the k-mer V/J affectation.
 
 The `-w` option fixes the size of the "window" that is the main
@@ -382,7 +447,7 @@ The first column of the file is the sequence to be followed
 while the remaining columns consist of the sequence's label.
 In Vidjil-algo output, the labels are output alongside their sequences.
 
-A sequence given `--label <sequence>` or with `-label-file <file>` can be exactly the size
+A sequence given `--label <sequence>` or with `--label-file <file>` can be exactly the size
 of the window (`-w`, that is 50 by default). In this case, it is guaranteed that
 such a window will be output if it is detected in the reads.
 More generally, when the provided sequence differs in length with the windows
@@ -400,7 +465,12 @@ with the `--grep-reads <sequence>` preset, equivalent to
 All the reads with the windows related to the sequence will be extracted 
 to files such as `out/seq/clone.fa-1`.
 
-## Further clone analysis and CDR3 detection
+## Further clone analysis: V(D)J designation, CDR3 detection
+Note that such sequences must have been detected as a V(D)J (or V(D)J-like) recombination
+in the first pass: the `--label`, `-label-file`, or `--label-filter` options can not
+ detect a recombination that was not detected when removing all the thresholds with `--all`.
+To increase the sensitivity, see above the `--e-value` option, or,
+to look for non-recombined sequences, see above the experimental `1` sequence analysis.
 
 ``` diff
 Clone analysis (second pass)

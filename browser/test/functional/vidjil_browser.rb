@@ -400,7 +400,7 @@ class VidjilBrowser < Watir::Browser
   end
 
   def modal_container
-     return div(:class =>  ["modal", "info-container"])
+    return div(:class =>  ["modal", "info-container"])
   end
 
   protected

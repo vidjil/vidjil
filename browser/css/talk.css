@@ -190,7 +190,7 @@ line {
   fill: #ffffff;
 }
 .graph_line {
-  stroke-width: 2.5px;
+  stroke-width: 1.5px;
   cursor: pointer;
   stroke: #657b83;
 }
@@ -204,7 +204,7 @@ line {
   opacity: 0.8;
 }
 .graph_inactive {
-  stroke-width: 1.5px;
+  stroke-width: 0.5px;
   cursor: pointer;
   display: none;
 }
@@ -247,10 +247,12 @@ line {
 #resolution1 {
   fill: #ffffff;
   opacity: 1;
+  pointer-events: none;
 }
 #resolution5 {
-  fill: #cccccc;
+  fill: #ffffff;
   opacity: 0.6;
+  pointer-events: none;
 }
 .graph_time {
   fill: #657b83;
@@ -581,7 +583,7 @@ line {
   font-weight: bold;
 }
 .list_sort {
-  margin-right: 30px;
+  margin-right: 20px;
   float: right;
 }
 /*style segmenter element*/
@@ -971,6 +973,10 @@ div.button {
   text-align: center;
   padding-left: 10px;
   padding-right: 10px;
+}
+.clipboard-button {
+  margin-left: -5px;
+  padding: 3px;
 }
 .smallbutton {
   cursor: pointer;
@@ -1506,7 +1512,7 @@ h3 .uid {
 #db_table_container {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: calc(100% -30px);
+  height: calc(100% - 30px);
   position: relative;
 }
 #db_fixed_header {
@@ -1817,6 +1823,10 @@ table.log textarea {
 }
 .tagColor8 {
   background: #657b83;
+}
+.tagColor9 {
+  background: #bdbdbd;
+  margin-left: 7px;
 }
 .inactiveTag {
   background-image: linear-gradient(45deg, transparent -25%, #ffffff 100%, #ffffff 100%, transparent 0%);

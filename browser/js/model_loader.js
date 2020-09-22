@@ -107,6 +107,7 @@ Model_loader.prototype = {
         oFReader.readAsText(oFile);
         oFReader.onload = function (oFREvent) {
             self.reset();
+            self.setAll()
             self.parseJsonData(oFREvent.target.result, limit);
             self.loadGermline()
                 .initClones()
@@ -193,6 +194,7 @@ Model_loader.prototype = {
             url: url,
             success: function (result) {
                 self.reset();
+                self.setAll();
                 self.parseJsonData(result, 100)
                     .loadGermline()
                     .initClones()
@@ -269,6 +271,7 @@ Model_loader.prototype = {
             return 0;
         }
         self.reset();
+        self.setAll()
         
         //copy .vidjil file in model
         var store_config = this.config;

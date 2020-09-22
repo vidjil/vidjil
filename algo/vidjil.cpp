@@ -291,16 +291,16 @@ int main (int argc, char **argv)
 
 
   // ----------------------------------------------------------------------------------------------------------------------
-  group = "Germline presets (at least one -g or -V/(-D)/-J option must be given)";
+  group = "Germline/recombination selection (at least one -g or -V/(-D)/-J option must be given)";
 
   vector <string> multi_germlines ;
   app.add_option("--germline,-g", multi_germlines, R"Z(
-         -g <.g FILE>(:FILTER)
-                    multiple locus/germlines, with tuned parameters.
+         -g <.g FILE>(:FOCUS) ...
+                    germline preset(s) (.g file(s)), detecting multiple recombinations, with tuned parameters.
                     Common values are '-g germline/homo-sapiens.g' or '-g germline/mus-musculus.g'
-                    The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
+                    One can focus on some recombinations, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
          -g PATH
-                    multiple locus/germlines, shortcut for '-g PATH/)Z" DEFAULT_MULTI_GERMLINE_FILE R"Z(',
+                    human germline preset, shortcut for '-g PATH/)Z" DEFAULT_MULTI_GERMLINE_FILE R"Z(',
                     processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with incomplete/unusal recombinations)Z")
     -> group(group) -> type_name("GERMLINES");
 
@@ -314,7 +314,7 @@ int main (int argc, char **argv)
 
 
   app.add_option("-D", v_reps_D,
-                 "custom D germline multi-fasta file(s), analyze into V(D)J components")
+                 "custom D germline multi-fasta file(s) for V(D)J designation")
     -> group(group) -> type_name("FILE");
 
   app.add_option("-J", v_reps_J,
