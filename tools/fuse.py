@@ -1466,13 +1466,17 @@ def exec_command(command, directory, input_file):
     
     Returns the output filename (a .vidjil). 
     '''
+    # split command
+    soft = command.split()[0]
+    args = command[len(soft):]
+
     assert (not os.path.sep in command), "No {} allowed in the command name".format(os.path.sep)
     ff = tempfile.NamedTemporaryFile(suffix='.vidjil', delete=False)
 
     basedir = os.path.dirname(os.path.abspath(sys.argv[0]))
-    command_fullpath = basedir+os.path.sep+directory+os.path.sep+command
-    com = '%s %s %s' % (quote(command_fullpath), quote(os.path.abspath(input_file)), ff.name)
-    print(com)
+    command_fullpath = basedir+os.path.sep+directory+os.path.sep+soft
+    com = '%s %s -i %s -o %s' % (quote(command_fullpath), args, quote(os.path.abspath(input_file)), ff.name)
+    print("Preprocess command: \n%s" % com)
     os.system(com)
     print()
     return ff.name
@@ -1506,7 +1510,8 @@ def main():
 
     group_options.add_argument('--first', '-f', type=int, default=0, help='take only into account the first FIRST files (0 for all) (%(default)s)')
 
-    group_options.add_argument('--pre', type=str,help='pre-process program (launched on each input .vidjil file) (needs defs.PRE_PROCESS_DIR)')
+    group_options.add_argument('--pre', type=str,help='pre-process program (launched on each input .vidjil file) (needs defs.PRE_PROCESS_DIR). \
+                                             Program should take arguments -i/-o for input of vidjil file and output of temporary modified vidjil file.')
 
     group_options.add_argument("--distribution", "-d", action='append', type=str, help='compute the given distribution; callable multiple times')
     group_options.add_argument('--distributions-all', '-D', action='store_true', default=False, help='compute a preset of distributions')
