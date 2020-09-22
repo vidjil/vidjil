@@ -15,7 +15,7 @@
 {{ else: }}
     <div class="buttons_add_elements">
       Patients, runs and sets are different ways to group samples.
-      You can create at once several of these sets:
+      You can <a target='_blank' href="http://www.vidjil.org/doc/#batch-creation">create at once</a> several of them:
       <span class="button2"
             onclick="addPatientForm()"
             id="patient_button"
@@ -24,7 +24,7 @@
       <span class="button2 clipboard-button"
             onclick="readClipBoard('patient'); antiSpam(this,1000)"
             id="patient_clipboard"
-            title="add patient(s) from clipboard content">
+            title="paste patients from clipboard">
             <i class="icon-newspaper"></i></span>
       <span class="button2"
             onclick="addRunForm()"
@@ -33,7 +33,7 @@
       <span class="button2 clipboard-button"
             onclick="readClipBoard('run'); antiSpam(this,1000)"
             id="run_clipboard"
-            title="add run(s) from clipboard content">
+            title="paste runs from clipboard">
             <i class="icon-newspaper"></i></span>
       <span class="button2"
             onclick="addSetForm()"
@@ -42,7 +42,7 @@
       <span class="button2 clipboard-button"
             onclick="readClipBoard('generic'); antiSpam(this,1000)"
             id="set_clipboard"
-            title="add sample set(s) from clipboard content">
+            title="paste sample sets from clipboard">
             <i class="icon-newspaper"></i></span>
       <div class="clear"></div>
     </div>

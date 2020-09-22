@@ -109,38 +109,26 @@ function parseClipboard(clipboard, type){
     var error_msg = ""
     switch (type) {
         case "patient":
-            error_msg = "No patient(s) found, please be sure to have valid data in clipboard<br>"+
-            "content is expected to be tabulated(a copy from an excell spreadsheet should already be in this format)<br><br>"+
-            "- row must be separeted with a break line<br>"+
-            "- cells must be separated with a tabulation<br>"+ 
-            "- each row must contains 5 cells (id/first_name/last_name/date/info)<br>"+
-            "- cells can be empty <br>"
+            error_msg = "Unable to parse data, please be sure to have valid patient data in clipboard<br>"+
+            "Data should have 5 columns (patient id, first name, last name, birth date, info)<br>" +
+            "See the <a target='_blank' href='http://www.vidjil.org/doc/#batch-creation'>required format</a>. <br>"
             break
         case "run":
-            error_msg = "No run(s) found, please be sure to have valid data in clipboard<br>"+
-            "content is expected to be tabulated(a copy from an excell spreadsheet should already be in this format)<br><br>"+
-            "- row must be separeted with a break line<br>"+
-            "- cells must be separated with a tabulation<br>"+ 
-            "- each row must contains 4 cells (id/run_name/date/info)<br>"+
-            "- cells can be empty <br>"
+            error_msg = "Unable to parse data, please be sure to have valid run data in clipboard<br>"+
+            "Data should have 4 columns (run id, name, date, info)<br>" +
+            "See the <a target='_blank' href='http://www.vidjil.org/doc/#batch-creation'>required format</a>. <br>"
             break
         case "generic":
-            error_msg = "No sample set(s) found, please be sure to have valid data in clipboard<br>"+
-            "content is expected to be tabulated(a copy from an excell spreadsheet should already be in this format)<br><br>"+
-            "- row must be separeted with a break line<br>"+
-            "- cells must be separated with a tabulation<br>"+ 
-            "- each row must contains 2 cells (set_name/info)<br>"+
-            "- cells can be empty <br>"     
+            error_msg = "Unable to parse data, please be sure to have valid sample set data in clipboard<br>"+
+            "Data should have 2 columns (set name, info)<br>" +
+            "See the <a target='_blank' href='http://www.vidjil.org/doc/#batch-creation'>required format</a> <br>"
             break
         default:
-            error_msg = "Nothing found, please be sure to have valid data in clipboard<br>"+
-            "content is expected to be tabulated(a copy from an excell spreadsheet should already be in this format)<br><br>"+
-            "- row must be separeted with a break line<br>"+
-            "- cells must be separated with a tabulation<br><br>"+
-            "- a row with 5 cells will be loaded as a new patient (id/first_name/last_name/date/info)<br>"+
-            "- a row with 4 cells will be loaded as a new run (id/run_name/date/info)<br>"+
-            "- a row with 2 cells will be loaded as a new set (set_name/info)<br>"+
-            "- cells can be empty <br>"     
+            error_msg = "Unable to parse data, please be sure to have valid sample set data in clipboard<br>"+
+            "Patient data should have 5 columns (patient id, first name, last name, birth date, info)<br>" +
+            "Run data should have 4 columns (run id, name, date, info)<br>" +
+            "Saple set data should have 2 columns (set name, info)<br>" +
+            "See the <a target='_blank' href='http://www.vidjil.org/doc/#batch-creation'>required format</a>. <br>"
     }
 
     if (filtered_lines.length == 0)
