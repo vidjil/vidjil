@@ -1,4 +1,4 @@
-
+console = new Com(console)
 
 QUnit.assert.includes = function(result, pattern, message ) {
     // Checks that the result includes the pattern
