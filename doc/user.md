@@ -17,7 +17,7 @@ The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Ryan and Tatiana)
 
 ## Supported browsers
 
-The Vidjil web application runs in any moder browser.
+The Vidjil web application runs in any modern browser.
 We recommend to either regularly update one's web browsers,
 or to use long-term releases, such as [Firefox ESR](https://www.mozilla.org/en-US/firefox/enterprise).
 As of September 2020, we recommend using Firefox or Chrome/Chromium :
