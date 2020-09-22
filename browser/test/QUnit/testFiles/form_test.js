@@ -2,6 +2,7 @@ QUnit.module("Form", {
 });
 
 QUnit.test("clipboard", function(assert) {
+
     var clipboard_content = "1	pim	tim	2000-10-10	hi\n"+  //patient 1
     "XTHSVJVDKLJSVDVNB\n"+                                  //invalid
     "2	pam	tam	bob	 \n"+                                   //patient 2

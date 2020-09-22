@@ -66,7 +66,9 @@ function removeEmptyForms(){
 /*
 */
 function parseClipboard(clipboard, type){
-    console.closePopupMsg()
+    if (console instanceof Com){
+        console.closePopupMsg()
+    }
 
     var lines = clipboard.split('\n')
     var parsed_lines = []
@@ -168,6 +170,7 @@ function readClipBoard(type) {
 function readClipBoard2(type) {
     var template = document.getElementById("clipboard-popup")
     var clone = template.content.firstElementChild.cloneNode(true)
+    /*jshint scripturl:true*/
     clone.getElementsByTagName('form')[0].action = "javascript:addForms(parseClipboard(clipboardData.value, '"+type+"'))"
     console.popupHTML(clone)
 }
