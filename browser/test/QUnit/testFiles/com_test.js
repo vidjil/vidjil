@@ -3,6 +3,7 @@ QUnit.module("Console", {
 });
 
 QUnit.test("console", function(assert) {
+    console = new Com(console)
 
     assert.expect(6);
     var ready = assert.async(4);

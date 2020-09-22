@@ -66,7 +66,9 @@ function removeEmptyForms(){
 /*
 */
 function parseClipboard(clipboard, type){
-    console.closePopupMsg()
+    if (console instanceof Com){
+        console.closePopupMsg()
+    }
 
     var lines = clipboard.split('\n')
     var parsed_lines = []
