@@ -2,7 +2,6 @@ QUnit.module("Form", {
 });
 
 QUnit.test("clipboard", function(assert) {
-    console = new Com(console)
 
     var clipboard_content = "1	pim	tim	2000-10-10	hi\n"+  //patient 1
     "XTHSVJVDKLJSVDVNB\n"+                                  //invalid
@@ -32,5 +31,4 @@ QUnit.test("clipboard", function(assert) {
     assert.equal(parsed_lines[3].date , "2002-12-12")
     assert.equal(parsed_lines[4].info , "hi")
 
-    console = console.default
 });
