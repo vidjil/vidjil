@@ -3,6 +3,12 @@ load 'segmenter_test.rb'
 
 class TestSegmenterPage < SegmenterTest
 
+  def test_00_failure_waited
+    # for testing pipeline purpose
+    # Should be reverted
+    assert (1 == 2), "test that should fail"
+  end
+
   def test_00_launch_query
     sequences = $b.textarea(:id => 'form_sequences')
 
