@@ -257,7 +257,7 @@ Some clones may be less trustable than other ones\dots{} Let's see how to spot t
 \question{In the clone list, search clones with an orange warning at the
   right side. Click on the warning. What are the warnings due to?}
 
-There may have two reasons: 
+There may have several reasons: 
 \begin{itemize}
 \item average coverage: in that case the clonal sequence displayed is short
   compared to the reads in the clone. This may be the case when too different
@@ -265,6 +265,11 @@ There may have two reasons:
 \item $e$-value: It is a statistical value computed to ensure that
   recombinations have not been spot by chance. This value is generally much
   lower than 1 ($<10^{-5}$).
+\item Clone similar to another one: In that case Vidjil-algo tells you that
+  other clones have the same genes and may be similar
+\item Non-recombined sequences: Some known unrecombined sequences are tagged
+  so that you can spot them easily. We tag the unrecombined IGHD7-27/IGHJ1
+  sequences that may be amplified.
 \end{itemize}
 
 You can view those values for any clone by clicking the \textit{i} icon on the
