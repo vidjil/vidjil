@@ -9,7 +9,7 @@
 \usepackage{hyperref}
 \newlength\myleftmargin
 \setlength{\myleftmargin}{2cm}
-\usepackage[margin=3.5cm, top=2cm, bottom=2cm,left=\myleftmargin,a4paper]{geometry}
+\usepackage[margin=3.5cm, top=2.5cm, bottom=2cm,left=\myleftmargin,right=4cm,a4paper]{geometry}
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{array}
@@ -27,8 +27,11 @@
 \newcommand\com[1]{\textsf{#1}}
 
 \newcommand\question[1]{\par\noindent\textbf{\thequestionum}.~#1\addtocounter{questionum}{1}}
+\setlength{\marginparsep}{1em}
+\setlength{\marginparwidth}{3cm}
+
 \let\oldmarginpar\marginpar
-\renewcommand\marginpar[1]{\oldmarginpar{\tiny#1}}
+\renewcommand\marginpar[1]{\oldmarginpar{\footnotesize\itshape #1}}
 
 \usepackage{titling}
 
