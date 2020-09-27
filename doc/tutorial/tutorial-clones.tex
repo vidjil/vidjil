@@ -1,7 +1,7 @@
 \section{Viewing and filtering clones}
 
 
-\subsection{Looking to a clone}
+\subsection{Looking at a clone}
 
 Each RepSeq algorithm has its own definition of what a clone is (or, more precisely
 a clonotype), and on how to output its sequence and how to assign a V(D)J designation.
@@ -106,7 +106,24 @@ Sometimes, one wants to hide noisy or unrelated clones.
 % Another way to hide clonesis to assign is to change the tag of it as ``standard (niose)`` and choose to uncheck this tag by clicking on the corresponding tile on the list of tiles at the informatons panel to switch them from a visible state to a filter one.
 %%% Voir ci-dessus, déjà mis
 
-  
+It is also possible to filter samples that do not contain a clone.  When you
+have lots of samples it helps to keep the sample of interest.  Here the number
+of sample is quite limited, so the feature may appear less useful.
+
+\question{\new Click on the \com{IGHV3-11 / IGHJ6} clone in the last sample, whose
+  abundance is around 10\,\%.
+  Then go in the menu at the upper-right corner of the graph (where \com{5/5}
+  is written) and select \com{focus on selected clones}.
+}
+
+By selecting this, the samples where this clone doesn't appear are hidden.
+This is useful for instance to assess the contamination among dozens of
+samples.
+
+\question{You can go back to the previous view by returning into the menu and
+  clicking on \com{show all}. Notice also how in the menu you can select the
+  samples to be shown.}
+
 \section{Analysing clone populations}
 
 \subsection{Clustering clones through inspection of their sequences}
