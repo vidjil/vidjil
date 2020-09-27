@@ -1,16 +1,15 @@
 
 \section{Assessing the quality of the run and of the analysis}
-The Vidjil web application allows to run several ``RepSeq'' (immune repertoire analysis) algorithms.
-Each RepSeq algorithm has its own definition of what a clone is (or, more precisely
+The Vidjil web application allows to run several ``AIRR/RepSeq'' (immune repertoire analysis) algorithms.
+Each AIRR/RepSeq algorithm has its own definition of what a clone is (or, more precisely
 a clonotype), how to output its sequence and how to assign a V(D)J designation.
 The number of analyzed reads will depend on the algorithm used.
 This sample has been processed using the Vidjil algorithm.
 
 
-\marginpar{The percentage of analyzed reads can range from .01\,\% (for
-  RNA-Seq or capture data) to 98-99\,\% (for very high-quality runs mostly on
-  Illumina).}
-\question{How many reads have been analyzed in the current sample with the embedded algorithm ?}
+\marginpar{The percentage of analyzed reads can range from .01\,\% or below (for
+  RNA-Seq or capture data) to 98-99\,\% or above (for amplicon libraries with high-quality runs).}
+\question{How many reads have been analyzed in the current sample by Vidjil-algo?}
 
 \reponse{In the upper left corner, you can see an information panel with \com{analyzed reads 1 967 338 (82.31\,\%)'}}
 
@@ -32,7 +31,7 @@ not been analyzed.
 You can see what those reasons mean in the online documentation of the
 algorithm:
 
- \centerline{\href{http://www.vidjil.org/doc/vidjil-algo/\#reads-without-detected-recombinations}{vidjil.org/doc/vidjil-algo\#reads-without-detected-recombinations}}
+ \centerline{\tt\href{http://www.vidjil.org/doc/vidjil-algo/\#reads-without-detected-recombinations}{vidjil.org/doc/vidjil-algo\#reads-without-detected-recombinations}}
 
 \question{What are the major causes explaining the reads have not been
   analyzed? Also have a look at the average read lengths of these causes. Do
