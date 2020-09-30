@@ -631,18 +631,22 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     },
 
     getDiversity: function(key, time) {
-	time = typeof time !== 'undefined' ? time : this.t
-	if (typeof this.diversity != 'undefined' &&
-	    typeof this.diversity[key] != 'undefined') {
+    	time = typeof time !== 'undefined' ? time : this.t
+    	if (typeof this.diversity != 'undefined' &&
+    	    typeof this.diversity[key] != 'undefined') {
 
-	    // Diversity may not be stored in an Array for retrocompatiblitiy reasons
-	    // See #1941 and #3416
-	    if (typeof this.diversity[key][time] != 'undefined') {
-		return this.diversity[key][time].toFixed(3);
-	    } else {
-		return this.diversity[key].toFixed(3);
-	    }
-	}
+            console.default.log("this.diversity[key][time]: " + this.diversity[key][time])
+    	    if (this.diversity[key][time] == 'na') {
+                console.default.log("diversity is na")
+                return "na" // Append if no diversity computable by fuse (AIRR import for exemple)
+            } else if (typeof this.diversity[key][time] != 'undefined') {
+        	    // Diversity may not be stored in an Array for retrocompatiblitiy reasons
+        	    // See #1941 and #3416
+        		return this.diversity[key][time].toFixed(3);
+    	    } else {
+    		    return this.diversity[key].toFixed(3);
+    	    }
+    	}
     },
     
     /**
