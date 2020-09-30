@@ -1780,8 +1780,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         if (this.clusters_copy.length > 0){
             this.clusters = this.clusters_copy.pop()
             
-            for (var i = 0; i < this.clones.length; i++) {
-                this.clone(i).mergedId = undefined
+            for (var c = 0; c < this.clones.length; c++) {
+                this.clone(c).mergedId = undefined
             }
             for (var i = 0; i < this.clusters.length; i++) {
                 var cluster = this.clusters[i]
