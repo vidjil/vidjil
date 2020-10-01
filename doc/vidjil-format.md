@@ -605,7 +605,8 @@ and are arrays containing one value per time point.
     "mrd": {
       "R2": [ 0.95 ],
       "copy_number": [ 41.37324910738808 ],
-      "family": [ "UNI" ]
+      "family": [ "UNI" ],
+      "norm_coeff": [ 0.11118547904332683 ]
     },
     "normalized_reads": [ 195.50763372699805 ]
   }
