@@ -272,7 +272,7 @@ def addNormalizedReads(data, coeff, r2, spk):
             vfam = vidfam(clone['name'])
             if vfam in family:
                 fam = family[vfam]
-                if clone['name'].find('DD3') >= 0:
+                if vfam[1:3] == 'D2' and clone['name'].find('DD3') >= 0:
                     fam += '-dd3'
             else:
                 ## unknown family or unsegmented clone
