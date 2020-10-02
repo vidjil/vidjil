@@ -200,7 +200,7 @@ class Window:
     def __add__(self, other):
         """Concat two windows, extending lists such as 'reads'"""
         #data we don't need to duplicate
-        myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline"]
+        myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline", "mrd"]
         obj = Window(1)
         
         # 'id' and 'top' will be taken from 'topmost' clone
@@ -212,6 +212,23 @@ class Window:
                                  self.d, len(self.d["reads"]),
                                  other.d, len(other.d["reads"]),
                                  myList)
+        # MRD data, only if none is empty
+        zeroed = {"copy_number": [0],
+                  "R2": [0],
+                  "family": ["None"],
+                   "norm_coeff": [0]}
+        if "mrd" in self.d:
+            first = self.d["mrd"]
+        else:
+            first = zeroed
+        if "mrd" in other.d:
+            second = other.d["mrd"]
+        else:
+            second = zeroed
+        obj.d["mrd"] = {}
+        concatenate_with_padding(obj.d["mrd"],
+                                 first, len(self.d["reads"]),
+                                 second, len(other.d["reads"]))
                     
         # All other data, including 'top'
         # When there are conflicting keys, keep data from the 'topmost' clone
@@ -433,6 +450,27 @@ class Samples:
 
     def __str__(self):
         return "<Samples: %s>" % self.d
+        
+class MRD: 
+
+    def __init__(self):
+        self.d={}
+        self.d["number"] = 0
+            
+    def __add__(self, other):
+        obj=MRD()
+
+        concatenate_with_padding(obj.d, 
+                                 self.d, self.d['number'], 
+                                 other.d, other.d['number'],
+                                 ['number'])
+
+        obj.d["number"] =  int(self.d["number"]) + int(other.d["number"])
+        
+        return obj
+
+    def __str__(self):
+        return "<MRD: %s>" % self.d
 
 class Diversity: 
 
@@ -572,6 +610,7 @@ class ListWindows(VidjilJson):
         self.d["clones"] = []
         self.d["clusters"] = []
         self.d["germlines"] = {}
+        self.d["mrd"] = MRD()
         
         self.d["vidjil_json_version"] = VIDJIL_JSON_VERSION
         self.d["producer"] = FUSE_VERSION
@@ -729,6 +768,7 @@ class ListWindows(VidjilJson):
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
         obj.d["diversity"] = self.d["diversity"] + other.d["diversity"]
+        obj.d["mrd"] = self.d["mrd"] + other.d["mrd"]
         
         try:
             ### Verify that same file is not present twice
@@ -1104,7 +1144,7 @@ class ListWindows(VidjilJson):
         
     def toJson(self, obj):
         '''Serializer for json module'''
-        if isinstance(obj, ListWindows) or isinstance(obj, Window) or isinstance(obj, Samples) or isinstance(obj, Reads) or isinstance(obj, Diversity):
+        if isinstance(obj, ListWindows) or isinstance(obj, Window) or isinstance(obj, Samples) or isinstance(obj, Reads) or isinstance(obj, Diversity) or isinstance(obj, MRD):
             result = {}
             for key in obj.d :
                 result[key]= obj.d[key]
@@ -1125,6 +1165,12 @@ class ListWindows(VidjilJson):
         if "samples" in obj_dict:
             obj = ListWindows()
             obj.d=obj_dict
+            return obj
+
+        if "coefficients" in obj_dict:
+            obj = MRD()
+            obj.d=obj_dict
+            obj.d["number"] = len(obj_dict['prevalent'])
             return obj
 
         if "id" in obj_dict:

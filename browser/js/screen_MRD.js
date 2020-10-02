@@ -119,7 +119,7 @@ Clone.prototype.getAmplCoeff = function(time) {
 Clone.prototype.getHtmlInfo_prevalent = function () {
     values = []
 
-    if ('mrd' in this.m) {
+    if ('mrd' in this) {
         // this .vidjil file is not all-diagnostic:
         // show R2, etc, fields for follow-up samples
         content_fitting_family = []
