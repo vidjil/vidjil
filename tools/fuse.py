@@ -1171,6 +1171,7 @@ class ListWindows(VidjilJson):
         if "coefficients" in obj_dict:
             obj = MRD()
             obj.d=obj_dict
+            # TODO: make this more generic
             obj.d["number"] = len(obj_dict['prevalent'])
             return obj
 
