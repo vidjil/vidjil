@@ -47,6 +47,15 @@
       <div class="clear"></div>
     </div>
 {{ pass }}
+{{ if not defs.HEALTHCARE_COMPLIANCE: }}
+    <div>
+      <p>
+        <span class='warn'><b>⚠️ Research Use Only.</b></span>
+        This server is not compliant for clinical use.
+        See options for <a href="http://www.vidjil.org/doc/healthcare">hosting healthcare data</a>.
+      </p>
+    </div>
+{{ pass }}
     <div id="fieldset_container">
         {{ for set_type in sets: }}
             {{ for i, set in enumerate(sets[set_type]): }}
