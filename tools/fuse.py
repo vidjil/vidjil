@@ -213,6 +213,7 @@ class Window:
                                  other.d, len(other.d["reads"]),
                                  myList)
         # MRD data, only if none is empty
+        # TODO: Make this more generic to work with any MRD setup
         zeroed = {"copy_number": [0],
                   "R2": [0],
                   "family": ["None"],
