@@ -30,6 +30,13 @@ class MigrateLogger():
     def getLogger(self):
         return self.log
 
+    def infoConfig(self, tables):
+        config_id = []
+        for res in tables['results_file']:
+            config_id.append(tables['results_file'][res]['config_id'])
+        config_id = list(dict.fromkeys(config_id))
+        self.info("IDs of detected config %s" % str(config_id))
+
 def get_dict_from_row(row):
     '''
     Create a dict element from a Row element
@@ -281,6 +288,8 @@ def export_group_data(filesrc, filepath, groupids, log=MigrateLogger()):
 
     tables = export_peripheral_data(ext, tables, sample_set_ids, log=log)
 
+    log.infoConfig(tables)
+
     if not os.path.exists(filepath):
         os.makedirs(filepath)
 
@@ -301,6 +310,8 @@ def export_sample_set_data(filesrc, filepath, sample_type, sample_ids, log=Migra
     tables[sample_type], sample_set_ids = ext.populateSets(rows)
 
     tables = export_peripheral_data(ext, tables, sample_set_ids, log=log)
+
+    log.infoConfig(tables)
 
     if not os.path.exists(filepath):
         os.makedirs(filepath)
