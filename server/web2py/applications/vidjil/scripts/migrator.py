@@ -202,6 +202,10 @@ class Importer():
                                       name=PermissionEnum.access.value,
                                       table_name=stype,
                                       record_id=nid)
+            db.auth_permission.insert(group_id=self.groupid,
+                                      name=PermissionEnum.access.value,
+                                      table_name="sample_set",
+                                      record_id=ssid)
             self.log.debug("associated set %d to group %d" % (nid, self.groupid))
 
     def importTable(self, table, values, ref_fields={}, map_val=False):
