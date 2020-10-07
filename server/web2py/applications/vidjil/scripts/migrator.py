@@ -134,6 +134,7 @@ class Extractor():
         memberships = {}
         sequence_files = {}
         for row in rows:
+            row.provider = 1
             ssm_id = row.sample_set_membership.id
             sf_id = row.sequence_file.id
             self.log.debug("populating sequence file: %d, membership: %d" % (sf_id, ssm_id))
