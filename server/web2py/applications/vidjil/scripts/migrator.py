@@ -109,6 +109,7 @@ class Extractor():
         sets = {}
         sample_set_ids = []
         for row in rows:
+            row.creator = 1
             self.log.debug("populating : %d, sample_set: %d" % (row.id, row.sample_set_id))
             sets[row.id] = get_dict_from_row(row)
             sample_set_ids.append(row.sample_set_id)
