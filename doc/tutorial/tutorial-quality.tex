@@ -1,5 +1,14 @@
 
 \section{Assessing the quality of the run and of the analysis}
+\begin{verbatim}
+
+
+  ########################################################
+  ### Assessing the quality of the run and of the analysis
+  ########################################################
+
+\end{verbatim}
+
 The Vidjil web application allows to run several ``AIRR/RepSeq'' (immune repertoire analysis) algorithms.
 Each AIRR/RepSeq algorithm has its own definition of what a clone is (or, more precisely
 a clonotype), how to output its sequence and how to assign a V(D)J designation.
@@ -10,8 +19,13 @@ This sample has been processed using the Vidjil algorithm.
 \marginpar{The percentage of analyzed reads can range from .01\,\% or below (for
   RNA-Seq or capture data) to 98-99\,\% or above (for amplicon libraries with high-quality runs).}
 \question{How many reads have been analyzed in the current sample by Vidjil-algo?}
-
 \reponse{In the upper left corner, you can see an information panel with \com{analyzed reads 1 967 338 (82.31\,\%)'}}
+\begin{verbatim}
+  def test_A_quality_01_number_reads
+    assert ($b.info_segmented.text == "1 967 338 (82.31%)"), "number of reads segmented"
+    assert ($b.info_selected_locus.text == "1 965 646 (82.24%)"), "number of reads selected"
+  end
+\end{verbatim}
 
 Now we will try to assess the reason why some reads were not analyzed in our
 sample.
@@ -24,6 +38,20 @@ For that sake you will need to display the information box by clicking on the
 \reponse{In the Analysis log row, under \com{av. len}\\*
 IGH \fl 314.5\\*
 TRG \fl 197.6 }
+\begin{verbatim}
+  def test_A_quality_02_sample_log
+    $b.info_point.i.click
+    assert ($b.div(:id => 'info_timepoint').present?), "After clicking info timepoint should be visible"
+    table = $b.div(:id => 'info_timepoint').table
+    assert (table[1][1].text == '2390273'), "Incorrect  number of reads in infopoint"
+    assert (table[2][1].text.include? '1967338'), "Incorrect  number of reads in infopoint"
+    assert (table[6][1].text.include? 'IGH               ->   562520   314.5      31770   0.056'), "Correct number of reads+info in infopoint: IGH"
+    assert (table[6][1].text.include? 'TRG               ->  1403126   197.6      73089   0.052'), "Correct number of reads+info in infopoint: TRG"
+    assert (table[6][1].text.include? 'UNSEG only V/5\'   ->   332125   191.2'), "Correct  number of reads+info in infopoint: UNSEG only V"
+    $b.div(:class => 'data-container').span(:class => 'closeButton').click
+    assert (not $b.div(:id => 'info_timepoint').present?), "Info timepoint should not be present"
+  end
+\end{verbatim}
 
 The lines starting with \texttt{UNSEG} display the reasons why some reads have
 not been analyzed.

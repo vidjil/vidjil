@@ -136,7 +136,7 @@
                             <a class="buttonSelector disabledClass" id="export_fasta_align" onclick="javascript:segment.exportAlignFasta()">export aligned fasta (selected clones)</a>
                         </div>
                         <div class="menu_box">
-                            <a class="buttonSelector" id="export_fasta" onclick="javascript:segment.add_all_germline_to_segmenter()">add germline genes (experimental)</a>
+                            <a class="buttonSelector" id="export_add_germline" onclick="javascript:segment.add_all_germline_to_segmenter()">add germline genes (experimental)</a>
                         </div>
                     </div></div>
                 </div>
@@ -147,18 +147,18 @@
                           <a class="buttonSelector" onclick="m.restoreClusters();">revert to previous clusters</a>
                         </div>
                         <div class="menu_box">
-                          <a class="buttonSelector" onclick="m.merge();">cluster selected clones</a>
-                          <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(5)});">cluster by V/5' </a>
-                          <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(3)});">cluster by J/3' </a>
-                          <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getSegAASequence('junction')});">cluster by CDR3 </a>
-                          <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).germline});">cluster by locus </a>
-                          <a class="buttonSelector devel-mode" onclick="m.similarity_builder.DBscan(95,0.001);">cluster by DBscan (experimental) </a>
-                          <a class="buttonSelector" onclick="m.similarity_builder.cluster_me(95,0.1);">cluster by similarity </a>
+                          <a id="clusterBy_selected"   class="buttonSelector" onclick="m.merge();">cluster selected clones</a>
+                          <a id="clusterBy_5"          class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(5)});">cluster by V/5' </a>
+                          <a id="clusterBy_3"          class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(3)});">cluster by J/3' </a>
+                          <a id="clusterBy_cdr3"       class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getSegAASequence('junction')});">cluster by CDR3 </a>
+                          <a id="clusterBy_locus"      class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).germline});">cluster by locus </a>
+                          <a id="clusterBy_dbscan"     class="buttonSelector devel-mode" onclick="m.similarity_builder.DBscan(95,0.001);">cluster by DBscan (experimental) </a>
+                          <a id="clusterBy_similarity" class="buttonSelector" onclick="m.similarity_builder.cluster_me(95,0.1);">cluster by similarity </a>
                           <div id="clusterby_button"> </div>
                         </div>
                         <div class="menu_box">
-                          <a class="buttonSelector" onclick="m.break();">break selected clusters</a>
-                          <a class="buttonSelector" onclick="m.resetClusters();">break all clusters</a>
+                          <a id="cluster_break_selected" class="buttonSelector" onclick="m.break();">break selected clusters</a>
+                          <a id="cluster_break_all" class="buttonSelector" onclick="m.resetClusters();">break all clusters</a>
                         </div>
                     </div></div>
                 </div>
