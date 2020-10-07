@@ -153,7 +153,7 @@ class GroupExtractor(Extractor):
     def __init__(self, db, log):
         Extractor.__init__(self, db, log)
 
-    def getAccessible(self, table, groupid):
+    def getAccessible(self, table, groupids):
         db = self.db
 
         rows = db((((db[table].id == db.auth_permission.record_id)
@@ -162,7 +162,7 @@ class GroupExtractor(Extractor):
                     & (db.sample_set.id == db[table].sample_set_id)
                     & (db.auth_permission.table_name == "sample_set")))
                 & (db.auth_permission.name == PermissionEnum.access.value)
-                & (db.auth_permission.group_id == groupid)
+                & (db.auth_permission.group_id.belongs(groupids))
                ).select(db[table].ALL)
         return rows
 
@@ -262,19 +262,19 @@ def export_peripheral_data(extractor, data_dict, sample_set_ids, log=MigrateLogg
 
     return data_dict
 
-def export_group_data(filesrc, filepath, groupid, log=MigrateLogger()):
+def export_group_data(filesrc, filepath, groupids, log=MigrateLogger()):
     log.info("exporting group data")
     ext = GroupExtractor(db, log)
 
     tables = {}
 
-    patient_rows = ext.getAccessible('patient', groupid)
+    patient_rows = ext.getAccessible('patient', groupids)
     tables['patient'], patient_ssids = ext.populateSets(patient_rows)
 
-    run_rows = ext.getAccessible('run', groupid)
+    run_rows = ext.getAccessible('run', groupids)
     tables['run'], run_ssids = ext.populateSets(run_rows)
 
-    generic_rows = ext.getAccessible('generic', groupid)
+    generic_rows = ext.getAccessible('generic', groupids)
     tables['generic'], generic_ssids = ext.populateSets(generic_rows)
     
     sample_set_ids = patient_ssids + run_ssids + generic_ssids
@@ -365,12 +365,12 @@ def main():
     ss_parser.add_argument('ssids', metavar='ID', type=long, nargs='+', help='Ids of sample sets to be extracted')
 
     group_parser = exp_subparser.add_parser('group', help='Extract data by groupid')
-    group_parser.add_argument('groupid', type=long, help='The long ID of the group')
+    group_parser.add_argument('groupids', metavar='GID', type=long, nargs='+', help='The long IDs of the exported groups')
 
     import_parser = subparsers.add_parser('import', help='Import data from JSON into the DB')
     import_parser.add_argument('--dry-run', dest='dry', action='store_true', help='With a dry run, the data will not be saved to the database')
     import_parser.add_argument('--config', type=str, dest='config', help='Select the config mapping file')
-    import_parser.add_argument('groupid', type=long, help='The long ID of the group')
+    import_parser.add_argument('groupid', type=long, help='The long ID of the receiver group')
 
     parser.add_argument('-p', type=str, dest='filepath', default='./', help='Select the file destination')
     parser.add_argument('-s', type=str, dest='filesrc', default='./', help='Select the file source')
@@ -384,7 +384,7 @@ def main():
 
     if args.command == 'export':
         if args.mode == 'group':
-            export_group_data(args.filesrc, args.filepath, args.groupid, log)
+            export_group_data(args.filesrc, args.filepath, args.groupids, log)
         elif args.mode == 'sample_set':
             export_sample_set_data(args.filesrc, args.filepath, args.sample_type, args.ssids, log)
     elif args.command == 'import':
