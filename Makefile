@@ -45,6 +45,8 @@ functional_server:
 headless_server:
 	$(MAKE) -C server headless
 
+tutorial-test.rb:
+	$(MAKE) -C doc/tutorial tutorial-test.rb
 ###
 
 data:
