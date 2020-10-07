@@ -2,6 +2,14 @@
 
 
 \subsection{Looking at a clone}
+\begin{verbatim}
+
+
+  #################################
+  ### Viewing and filtering clones
+  #################################
+
+\end{verbatim}
 
 Each RepSeq algorithm has its own definition of what a clone is (or, more precisely
 a clonotype), and on how to output its sequence and how to assign a V(D)J designation.
@@ -14,15 +22,85 @@ is \texttt{IGHV3-9 7/CCCGGA/17 J6*02}.
 
 \reponse{The bottom panel display information about currently selected clones \fl 189 991 reads (9.665\,\%)}
 
+\begin{verbatim}
+  def test_B_clones_01_major
+    # major clone of sample 0 is clone 1 
+    clone = $b.clone_in_list("1").click
+    cinfo = $b.clone_info("1")
+    assert ( cinfo[:name].text == "IGHV3-9 7/CCCGGA/17 J6*02"), "correct name for first clone"
+
+    stats = $b.statsline
+    assert (stats.text.include? '1 clone, 189 991 reads (9.665%)'),  "Correct stats, number of reads and percentage"
+  end
+\end{verbatim}
+
+
 There are several options to display the V(D)J designation.
 
 \question{In the  \com{settings} menu, under \com{N regions in clone names} select \com{length} to show N zones by their length. Revert to the
   default \com{sequence (when short)} setting to show the full N on short sequences.}
-  
+
+\begin{verbatim}
+  def test_B_clones_02_setting_n_length
+    $b.menu_settings.click
+    $b.input(:id => "menuCloneNot_nucleotide_number").click
+    $b.update_icon.wait_while(&:present?) # wait update
+    cinfo = $b.clone_info("1")
+    assert ( cinfo[:name].text == "IGHV3-9 7/6/17 J6*02"), "correct name for first clone (nucleotide_number)"
+    cinfo30 = $b.clone_info("30")
+    assert ( cinfo30[:name].text == "IGHV3-13*05 1/55/16 J6*02"), "correct name for 30th clone (nucleotide_number)"
+
+    $b.menu_settings.click
+    $b.input(:id => "menuCloneNot_short_sequence").click
+    $b.update_icon.wait_while(&:present?) # wait update
+    cinfo = $b.clone_info("1")
+    assert ( cinfo[:name].text == "IGHV3-9 7/CCCGGA/17 J6*02"), "correct name for first clone (short_sequence)"
+    cinfo30 = $b.clone_info("30")
+    assert ( cinfo30[:name].text == "IGHV3-13*05 1/55/16 J6*02"), "correct name for 30th clone (short_sequence)"
+
+    $b.menu_settings.click
+    $b.input(:id => "menuCloneNot_full_sequence").click
+    $b.update_icon.wait_while(&:present?) # wait update
+    cinfo = $b.clone_info("1")
+    assert ( cinfo[:name].text == "IGHV3-9 7/CCCGGA/17 J6*02"), "correct name for first clone (full_sequence)"
+    cinfo30 = $b.clone_info("30")
+    assert ( cinfo30[:name].text == "IGHV3-13*05 1/GAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGG/16 J6*02"), "correct name for 30th clone (full_sequence)"
+
+    # Reset params as nucleotide number
+    $b.menu_settings.click
+    $b.input(:id => "menuCloneNot_nucleotide_number").click
+    $b.update_icon.wait_while(&:present?) # wait update
+  end
+\end{verbatim}
+
 \question{Try also the options  \com{alleles in clone names} : by selecting \com{always}, the clone
   V gene is displayed as \com{IGHV3-9*01}. Revert to the default \com{when not
     *01}. This setting, which is the default, allows to have a more condensed
   V(D)J designation that doesn't make the \com{*01} appear (it is implicit).}
+
+
+\begin{verbatim}
+  def test_B_clones_03_setting_allele
+    $b.menu_settings.click
+    $b.input(:id => "menuAlleleNot_never").click
+    $b.update_icon.wait_while(&:present?) # wait update
+    cinfo = $b.clone_info("1")
+    assert ( cinfo[:name].text == "IGHV3-9 7/6/17 J6"), "correct name for first clone (menuAlleleNot_never)"
+
+    $b.menu_settings.click
+    $b.input(:id => "menuAlleleNot_when_not_01").click
+    $b.update_icon.wait_while(&:present?) # wait update
+    cinfo = $b.clone_info("1")
+    assert ( cinfo[:name].text == "IGHV3-9 7/6/17 J6*02"), "correct name for first clone (menuAlleleNot_when_not_01)"
+
+    $b.menu_settings.click
+    $b.input(:id => "menuAlleleNot_always").click
+    $b.update_icon.wait_while(&:present?) # wait update
+    cinfo = $b.clone_info("1")
+    assert ( cinfo[:name].text == "IGHV3-9*01 7/6/17 J6*02"), "correct name for first clone (menuAlleleNot_always)"
+
+  end
+\end{verbatim}
 
 \subsection{Showing more clones}
 
@@ -37,6 +115,43 @@ slider to its right end.
 
 \reponse{filter set to 50 \fl IGH smaller clones 10.11\,\%\\*
  filter set to 100 \fl IGH smaller clones 8.92\,\%\\*}
+\begin{verbatim}
+  def test_B_clones_04_filter_slider
+    if not ENV['HEADLESS']
+      # Igh small position: 454
+      cinfo = $b.clone_info("454")
+      assert ( cinfo[:size].text == "10.11%"), "correct name for first clone (short_sequence)"
+
+      ## Change slider value
+      assert ( not $b.clone_in_list('308').present?), "small clone is not present in list (before slider increase)"
+      slider = $b.menu_item("top_slider")
+      slider.click
+      $b.menu_filter.hover
+      slider.send_keys :arrow_right 
+      slider.send_keys :arrow_right
+      slider.send_keys :arrow_right
+      $b.clone_in_list("0").click
+      ### exist in scatterplot
+      $b.clone_in_list('308').wait_until(&:present?) # "small clone is present in list (after slider increase)"
+      assert ( not $b.clone_in_list('309').present?), "Not all real clones are present in list"
+
+      ## control by size of smaller clone
+      assert ( cinfo[:size].text == "9.768%"), "correct name for first clone (short_sequence)"
+
+      ### decrease by slider usage
+      slider = $b.menu_item("top_slider")
+      slider.click
+      $b.menu_filter.hover
+      slider.send_keys :arrow_left 
+      $b.clone_in_list("0").click
+      $b.update_icon.wait_while(&:present?)
+
+      ### exist in scatterplot
+      assert ( not $b.clone_in_list('308').present?), "a small clone is hidden if slider decrease"
+      assert ( cinfo[:size].text == "10.11%"), "correct name for first clone (short_sequence) after decrease slider value"
+    end
+  end
+\end{verbatim}
 
 The \textit{smaller clones} correspond to clones that are not displayed
 because they are never among the most abundant ones.
@@ -49,10 +164,44 @@ Usually we may want to tag them in order to remember them later on.
 \question{Click on the star and choose colored tags for these two clones, such as \texttt{clone 1} or \texttt{clone 2}.
   Notice how the color applies throughout all the views.}
 
+\begin{verbatim}
+  def test_B_clones_05_tag_biggest_clone
+    # control default color of clones
+    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(101, 123, 131, 1)' )
+
+    $b.clone_in_list("0").click
+    $b.clone_info("1")[:star].click # top IGH
+    $b.tag_item('0')[:name].click
+    $b.clone_info("4")[:star].click # top TRG 
+    $b.tag_item('1')[:name].click
+    $b.clone_info("0")[:star].click ## clone rechute
+    $b.tag_item('4')[:name].click
+    $b.update_icon.wait_while(&:present?)
+
+    # New color
+    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(108, 113, 196, 1)' )
+  end
+\end{verbatim}
+
 Later you may want to filter clones depending on the tags you have chosen.
 
 \question{In the upper left part, click on the little dark gray square (the
   second coloured square starting from the right). What happens? What if you click again?}
+
+\begin{verbatim}
+  def test_B_clones_06_filter_by_tag
+    assert ($b.clone_in_list("1").present?), "clone 0 is present at starting test"
+
+    # Click on tag switch; clone 1 will be hidden
+    $b.info_colorBy.span(:id => "fastTag0").click
+    $b.update_icon.wait_while(&:present?)
+    assert (not $b.clone_in_list("1").present?), "clone 0 is hidden"
+
+    $b.info_colorBy.span(:id => "fastTag0").click
+    $b.update_icon.wait_while(&:present?)
+    assert ($b.clone_in_list("1").present?), "clone 0 is present at the end of the test"
+  end
+\end{verbatim}
 
 This is a way of filtering some clones. This may be useful when we want to
 focus on some specific clones. Another way of doing so is to filter them by
@@ -60,18 +209,81 @@ their gene names or by their DNA sequences.
 \question{In the search box,
   enter \texttt{GGAGTCGGGG} and validate with \texttt{Enter}.  How many sequences are
   left?}
+
+
+\begin{verbatim}
+  def test_B_clones_06_filter_by_tag
+    assert ($b.clone_in_list("1").present?), "clone 0 is present at starting test"
+
+    # Click on tag switch; clone 1 will be hidden
+    $b.info_colorBy.span(:id => "fastTag0").click
+    $b.update_icon.wait_while(&:present?)
+    assert (not $b.clone_in_list("1").present?), "clone 0 is hidden"
+
+    $b.info_colorBy.span(:id => "fastTag0").click
+    $b.update_icon.wait_while(&:present?)
+    assert ($b.clone_in_list("1").present?), "clone 0 is present at the end of the test"
+  end
+\end{verbatim}
+
 Note that the search is performed both on the forward and the reverse strand.
 \question{Check that by searching for the reverse complement of the
   sequence: \texttt{CCCCGACTCC}. Do you find the same results as previously?}
 \question{How can you cancel this filter and view again all the clones?}
 
+\begin{verbatim}
+  def test_B_clones_07_filter_search_area
+    ## test that clone are present before filtering
+    assert ( $b.clone_in_list('0').present?),  ">> clone 0 is present"
+    assert ( $b.clone_in_list('1').present?),  ">> clone 1 is present"
+    #assert ( $b.clone_in_list('212').present?),  ">> clone 212 is present"
+    assert ( $b.clone_in_list('454').present?),  ">> clone 454 is present"
+
+    filter = $b.filter_area
+    filter.value = 'CCCCGACTCC'
+    $b.send_keys :enter
+    $b.update_icon.wait_while(&:present?)
+    # clone present before filtering; not after
+    assert ( not $b.clone_in_list('0').present?), ">> clone 0 is hidden"
+    assert ( not $b.clone_in_list('1').present?), ">> clone 1 is hidden"
+    #assert ( not $b.clone_in_list('212').present?), ">> clone 212 is hidden"
+    assert ( not $b.clone_in_list('454').present?), ">> clone 454 is hidden"
+    # clones that should stay present (19 clones, test somes)
+    assert (     $b.clone_in_list('6').present?),   ">> clone 6   is present even with filtering"
+    assert (     $b.clone_in_list('142').present?), ">> clone 142 is present even with filtering"
+    assert (     $b.clone_in_list('51').present?),  ">> clone 51  is present even with filtering"
+    assert (     $b.clone_in_list('52').present?),  ">> clone 52  is present even with filtering"
+    assert (     $b.clone_in_list('16').present?),  ">> clone 16  is present even with filtering"
+
+    # tester le nombre de clone présents
+
+    $b.clear_filter.click
+    $b.clone_in_scatterplot('1').hover
+    ## test that clone are present again after remove filter
+    assert ( $b.clone_in_list('0').present?),   ">> clone 0 is present again"
+    assert ( $b.clone_in_list('1').present?),   ">> clone 1 is present again"
+    #assert ( $b.clone_in_list('212').present?), ">> clone 212 is present again"
+    assert ( $b.clone_in_list('454').present?), ">> clone 454 is present again"
+  end
+\end{verbatim}  
 \bigskip
 
 Another solution to tag a specific clone is to rename it.
 \question{Double click on the name of a clone (in the list of clones) and
   choose another name (\textit{e.g.} interesting clone) and validate using
   \texttt{Enter}.}
+\begin{verbatim}
+  def test_B_clones_08_change_clone_name
+    $b.clone_in_list("1").click
+    cinfo = $b.clone_info("1")
+    cinfo[:name].double_click # set mode to allow setting
 
+    $b.clone_name_editor.set 'interesting clone'
+    $b.clone_name_saver.click
+    $b.update_icon.wait_while(&:present?)
+    assert (cinfo[:name].text == 'interesting clone'), " >> clone name ('interesting clone') has changed"
+  end
+\end{verbatim}
 
 \bigskip
 
@@ -79,29 +291,151 @@ After this rename, you can see that the clone is still selected.
 \question{Click on several clones by holding the \texttt{Ctrl} key to select
   more. Each time you add a new clone to the selection, its sequence
   is added in the bottom part.}
+\begin{verbatim}
+  def test_B_clones_09_multiselection
+    $b.menu_filter.click
+    $b.update_icon.wait_while(&:present?)
+    $b.send_keys 4
+    $b.update_icon.wait_while(&:present?)
+    # to verify correct selection, We will look in segmenter the presence if clone entrie
+    # Maybe another method could be more acurate
+    
+    $b.clone_in_list("1").click
+    $b.update_icon.wait_while(&:present?)
+    assert ( not $b.clone_in_segmenter('0').present? ), ">> Another click; Clone 0 should not be present anymore in segmenter"
+    assert (     $b.clone_in_segmenter('1').present? ), ">> Another click; Correct selection of clone 1 after second click in scatterplot"
+   
+    $b.clone_in_list("0").click(:control)
+    $b.update_icon.wait_while(&:present?)
+    # clone is present in segmenter
+    assert ( $b.clone_in_segmenter('0').present? ), ">> ctrl+click; Clone 0 should be present in segmenter"
+    assert ( $b.clone_in_segmenter('1').present? ), ">> ctrl+click; Clone 1 should be present in segmenter"
+    # As whell than their sequences ? TODO
+  end
+\end{verbatim}
 
 \question{How many clones are selected? How many reads do those clones
   represent?}
+\begin{verbatim}
+  def test_B_clones_10_size_if_multiple_selection
+    $b.clone_in_list("1").click
+    $b.clone_in_list("4").click(:control)
+    $b.update_icon.wait_while(&:present?)
+
+    stats = $b.statsline
+    assert (stats.text.include? '2 clones, 364 027 reads (18.51%)'),  "Correct stats, number of reads and percentage"
+  end
+\end{verbatim}
 
 \question{ Notice the star at the the right of the screen, near the number
   of reads. You can also tag clones using this icon. In that way, you will be able to tag
   all the selected clones at once.}
+\begin{verbatim}
+  def test_B_clones_11_multiple_tag
+    $b.clone_in_list("7").click
+    $b.clone_in_list("11").click(:control)
+    $b.clone_in_list("13").click(:control)
+    $b.update_icon.wait_while(&:present?)
+
+    $b.element(:id => "tag_icon__multiple").click
+    $b.element(:id => 'tagElem_6').click
+    $b.update_icon.wait_while(&:present?)
+    $b.clone_in_list("0").click(:control) # select another clone, else last selected still keep default color as "hover"
+    assert ($b.clone_info('5')[:name].style('color') ==  'rgba(101, 123, 131, 1)' ) , "clone 5 still have default color"
+    assert ($b.clone_info('7')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 7 have also changed color"
+    assert ($b.clone_info('11')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 11 have also changed color"
+    assert ($b.clone_info('13')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 13 have also changed color"
+  end
+\end{verbatim}
 
 \question{When you want to focus on the selected clones, you can click on the
   focus link on the right, next to the number of selected clones.
   This feature is useful when you want to analyse some clones more thoroughly
   without being annoyed by other clones.}
+\begin{verbatim}
+  def test_B_clones_12_focus
+    ## test that clone are present before focus
+    assert ( $b.clone_in_list('1').present?), ">> clone 1 is present"
+    assert ( $b.clone_in_list('7').present?), ">> clone 7 is present"
+    assert ( $b.clone_in_list('11').present?), ">> clone 11 is present"
+    
+    # select somme clones (7, 11, 13)
+    $b.clone_in_list("7").click
+    $b.clone_in_list("11").click(:control)
+    $b.clone_in_list("13").click(:control)
+    $b.update_icon.wait_while(&:present?)
+    $b.a(:id => "focus_selected").click
+    $b.update_icon.wait_while(&:present?)
+
+    ## test that clone are hidden after focus
+    assert ( not $b.clone_in_list('1').present?), ">> clone 1 is hidden"
+    assert (     $b.clone_in_list('7').present?), ">> clone 7 is present"
+    assert (     $b.clone_in_list('11').present?), ">> clone 3 is present"
+    assert ( not $b.clone_in_list('5').present?), ">> clone 5 is hidden"
+  end
+\end{verbatim}
 
 \question{To remove this focus, click on the cross next to the search box,
   above the list.}
+\begin{verbatim}
+  def test_B_clones_13_remove_filter
+    ## test that clone are present after resetting filtering
+    $b.clear_filter.click
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.clone_in_list('1').present?), ">> clone 1 is present again"
+    assert ( $b.clone_in_list('7').present?), ">> clone 7 is still present"
+    assert ( $b.clone_in_list('5').present?), ">> clone 5 is present again"
+  end
+\end{verbatim}
 
 \question{To unselect them all, you can click in an empty area on the top or
   bottom plot.}
+\begin{verbatim}
+  def test_B_clones_14_unselect_by_click_in_empty_zone
+
+  end
+\end{verbatim}
 
 Sometimes, one wants to hide noisy or unrelated clones.
 
 \question{Select a clone or several clones and click on the \com{hide} button, near the \com{focus} button. Show again these
   clones by clicking on the cross next to the search box.}
+\begin{verbatim}
+  def test_B_clones_15_hide_selected
+    ## test that clone are present before focus
+    assert ( $b.clone_in_list('1').present?), ">> clone 1 is present"
+    assert ( $b.clone_in_list('7').present?), ">> clone 7 is present"
+    assert ( $b.clone_in_list('11').present?), ">> clone 11 is present"
+    
+    # select somme clones (7, 11, 13)
+    $b.clone_in_list("7").click
+    $b.clone_in_list("11").click(:control)
+    $b.clone_in_list("13").click(:control)
+    $b.update_icon.wait_while(&:present?)
+    $b.a(:id => "hide_selected").click
+    $b.update_icon.wait_while(&:present?)
+
+    ## test that clone are hidden after focus
+    assert (     $b.clone_in_list('1').present?), ">> clone 1 is present"
+    assert ( not $b.clone_in_list('7').present?), ">> clone 7 is hidden"
+    assert ( not $b.clone_in_list('11').present?), ">> clone 3 is hidden"
+    assert (     $b.clone_in_list('5').present?), ">> clone 5 is present"
+
+    ## test that clone are present after resetting filtering
+    $b.clear_filter.click
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.clone_in_list('1').present?), ">> clone 1 is present again"
+    assert ( $b.clone_in_list('7').present?), ">> clone 7 is still present"
+    assert ( $b.clone_in_list('5').present?), ">> clone 5 is present again"
+
+    ## test that clone are present after resetting filtering
+    $b.clear_filter.click
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.clone_in_list('1').present?), ">> clone 1 is present again"
+    assert ( $b.clone_in_list('7').present?), ">> clone 7 is still present"
+    assert ( $b.clone_in_list('5').present?), ">> clone 5 is present again"
+  end
+\end{verbatim}
 
 % Another way to hide clonesis to assign is to change the tag of it as ``standard (niose)`` and choose to uncheck this tag by clicking on the corresponding tile on the list of tiles at the informatons panel to switch them from a visible state to a filter one.
 %%% Voir ci-dessus, déjà mis
@@ -115,6 +449,31 @@ of sample is quite limited, so the feature may appear less useful.
   Then go in the menu at the upper-right corner of the graph (where \com{5/5}
   is written) and select \com{focus on selected clones}.
 }
+\begin{verbatim}
+  def test_B_clones_16_graphmenu_filter
+    assert ( $b.clone_in_list('5').present?), ">> clone 5 is present again"
+    div_ratio = $b.span(:id => "visu2_title")
+    assert ( div_ratio.text == "5 / 5" ), "Ratio show is correct at init"
+    time0 = $b.graph_x_legend("0")
+    check0 = $b.checkbox(:id => "visu2_listElem_check_0")
+    check2 = $b.checkbox(:id => "visu2_listElem_check_2")
+    assert ( time0.present? ), "first sample is present in timeline"
+    assert ( check0.set? ), "first checkbox is true"
+    assert ( check2.set? ), "third checkbox is true"
+
+    $b.clone_in_list("5").click
+    $b.update_icon.wait_while(&:present?) # wait update
+    $b.div(:id => 'visu2_menu').hover
+    $b.table(:id => "visu2_table").wait_until(&:present?)
+    $b.td(:id => 'visu2_listElem_hideNotShare').click
+    $b.update_icon.wait_while(&:present?) # wait update
+
+    assert ( div_ratio.text == "3 / 5" ), "Ratio show is correct after focus"
+    assert ( not time0.present? ), "first sample is hidden in timeline menu"
+    assert ( not check0.set? ), "first checkbox is false"
+    assert ( check2.set? ), "third checkbox is true"
+  end
+\end{verbatim}
 
 By selecting this, the samples where this clone doesn't appear are hidden.
 This is useful for instance to assess the contamination among dozens of
@@ -123,6 +482,37 @@ samples.
 \question{You can go back to the previous view by returning into the menu and
   clicking on \com{show all}. Notice also how in the menu you can select the
   samples to be shown.}
+\begin{verbatim}
+  def test_B_clones_17_graphmenu_activate
+    time0 = $b.graph_x_legend("0")
+    check0 = $b.checkbox(:id => "visu2_listElem_check_0")
+    check1 = $b.checkbox(:id => "visu2_listElem_check_1")
+    check2 = $b.checkbox(:id => "visu2_listElem_check_2")
+    div_ratio = $b.span(:id => "visu2_title")
+    
+    ### starting state
+    assert ( div_ratio.text == "3 / 5" ), "Ratio show is correct after focus"
+    assert ( not check0.set? ), "first checkbox is false"
+    assert ( check2.set? ), "third checkbox is true"
+
+    ### Switch the first sample only (by checkbox)
+    $b.div(:id => 'visu2_menu').hover
+    $b.table(:id => "visu2_table").wait_until(&:present?)
+    check0.click
+    $b.until { time0.present? }  # Test "first sample is NOT present in timeline after click"
+    assert ( check0.set? ), "first checkbox is true"
+    assert ( div_ratio.text == "4 / 5" ), "Ratio show is correct at init"
+
+    ### Click on show all
+    $b.td(:id => 'visu2_listElem_showAll').click
+    $b.update_icon.wait_while(&:present?) # wait update
+
+    assert ( div_ratio.text == "5 / 5" ), "Ratio show is correct at init"
+    assert ( check0.set? ), "first checkbox is true"
+    assert ( check1.set? ), "second checkbox is true"
+    assert ( check2.set? ), "third checkbox is true"
+  end
+\end{verbatim}
 
 \section{Analysing clone populations}
 
@@ -141,6 +531,21 @@ By default in the bottom plot (the \textit{grid}), the clones
   \textit{IGHV-3-13}~\textit{IGHJ6} recombination and select them
   all. You can do so either by holding \texttt{Ctrl} or by drawing a rectangle around the clones while
   maintaining down the left button of the mouse.}
+\begin{verbatim}
+  def test_B_clones_18_select_mulitple_ighv3_13_clonotype
+    $b.clone_in_list("0").click
+    $b.send_keys 0
+
+    $b.scatterplot_x_legend(6).click # clonotype with IGHV3-13
+
+    ## control that these clonotype is selected and visible in semgenter
+    assert ( not $b.clone_in_segmenter('0').present? ), "clone 0 chould not be present";
+    assert (     $b.clone_in_segmenter('30').present? ), "clone 30/A should be present";
+    assert (     $b.clone_in_segmenter('43').present? ), "clone 43/B should be present";
+    assert (     $b.clone_in_segmenter('47').present? ), "clone 43/C should be present";
+
+  end
+\end{verbatim}
 
 The sequences of the clones now appear in the bottom part of the browser (the
 \textit{sequence panel}). If many clones are selected you can view more sequences
@@ -156,6 +561,11 @@ them to see more easily their similarities.
 
 \question{Click on the \com{align} button on the left-hand side. The differences are
 emphasized in bold.}
+\begin{verbatim}
+  def test_B_clones_19_align
+    # TODO
+  end
+\end{verbatim}
 
 Now it is the user's expertise to determine if sequences are sufficiently
 similar, depending on her or his specific question. If some sequences don't appear to be similar enough, you can remove
@@ -163,6 +573,13 @@ them from the sequence panel by clicking on the cross in front of the sequence i
 the sequence panel.
 \question{Remove all the sequences that are not similar enough with the first
   one.}
+\begin{verbatim}
+  def test_B_clones_20_unselect_from_segmenter
+    $b.clone_in_segmenter("47").i(:class => "icon-cancel").click
+    $b.update_icon.wait_while(&:present?)
+    assert ( not $b.clone_in_segmenter('47').present? ), "clone 47/C should be present";
+  end
+\end{verbatim}
 
 Now all the sequences in the sequence panel should be highly similar. All their
 differences could be due to sequencing or PCR errors.
@@ -171,18 +588,38 @@ depend on the sequencer and the PCR technique.
 
 \question{Cluster all those clones in a single clone by clicking on the ``cluster''
   button, next to the \com{align} button.}
+\begin{verbatim}
+  def test_B_clones_21_click_on_merge
+    $b.merge.click
+    $b.update_icon.wait_while(&:present?)
+
+    assert (     $b.clone_in_list("30").present? ),  ">> Real clone A should be present in list "
+    assert ( not $b.clone_in_list("43").present? ),  ">> Real clone B should NOT be present in list (clustered)"
+    assert (     $b.clone_in_list("47").present? ),  ">> Real clone C should be present in list (not present in segmenter when merged)"
+  end
+\end{verbatim}
 
 All the clustered sequences now appear within a same clone. That can be seen
 in the list: the clone which hosts the subclones appears with a $+$ on its
 left. You can click on the $+$ to see the subclones that have been clustered in
 the main one.
 \question{Click on the $+$ and observe the changes in the grid.}
+\begin{verbatim}
+  def test_B_clones_22
+    # TODO
+  end
+\end{verbatim}
 
 As you may have noticed the subclones appear again in the grid. You can
 compare their sequences again if you'd like (for example to double check that
 you were right to cluster them). You can also remove some subclones from the
 cluster by clicking on the cross at their left in the list.
 \question{For the sake of the exercise, remove the last clone of the cluster.}
+\begin{verbatim}
+  def test_B_clones_23
+    # TODO
+  end
+\end{verbatim}
 
 \question{%
 %For the next step, choose the preset \com{V distribution} (keyboard shortcut \com{5}).
@@ -190,9 +627,25 @@ cluster by clicking on the cross at their left in the list.
 Open the \com{cluster} menu, and choose \com{cluster by V/5}. What happened ? There are now two clones with TRGV2. Why ?}
 %%  Confirm this by changing the x axis into ``V allele``.
 %%% -> Problème, on n'a pas encore parlé des axes à cet endroit.
+\begin{verbatim}
+  def test_B_clones_24_cluster_by_V
+    $b.element(:id => "cluster_menu").hover
+    $b.element(:id => "clusterBy_5").wait_until(&:present?)
+    $b.element(:id => "clusterBy_5").click
+
+    ## TODO; import brahce corrigée
+  end
+\end{verbatim}
 
 \question{In the \com{cluster} menu, select  \com{revert to previous clusters} to undo these clusterings.}
-
+\begin{verbatim}
+  def test_B_clones_25
+    $b.element(:id => "cluster_menu").hover
+    $b.element(:id => "cluster_break_all").wait_until(&:present?)
+    $b.element(:id => "cluster_break_all").click
+    ## TODO; import brahce corrigée
+  end
+\end{verbatim}
 
 \subsection{Other metrics and analysis on the clones}
 
@@ -204,11 +657,32 @@ For instance we can choose to plot the V genes versus the length of the N
 insertions.
 \question{Go to the \com{plot} menu (in the upper left corner of the grid),
   and in the preset box choose \com{V/N length}.}
+\begin{verbatim}
+  def test_B_clones_26_change_scatter_axis
+    # change preset, first time as user can do (don't use $b.scatterplot_select_preset) 
+    select_preset = $b.select_list(:name => "select_preset[]")
+    $b.element(:id => "visu_sp_menu").hover
+    select_preset.select("V/N length")
+    $b.update_icon.wait_while(&:present?)
+
+    ## TODO; control
+    
+    # selectX = $b.select_list(:name => "select_x[]")
+    # selectY = $b.select_list(:name => "select_y[]")
+    # selectX.select("J/3' gene")
+  end
+\end{verbatim}
 
 Then you can continue aligning and clustering clones if necessary.
 
 \question{You can also try the preset \com{clone average read length/GC content}
   which tends to separate quite nicely the distinct clones.}
+\begin{verbatim}
+  def test_B_clones_27_change_preset_2
+    $b.scatterplot_select_preset "clone average read length / GC content"
+    $b.update_icon.wait_while(&:present?)
+  end
+\end{verbatim}
 
 Note that you can choose any axis to be plotted: just go the \com{plot} menu and
 select any value you would like for the $x$ axis and for the $y$ axis.
@@ -219,6 +693,18 @@ and the $y$ axis selects the order of the boxes sharing a same $x$).
 
 \question{In the \com{plot} menu, switch between the ``bubble plot'' and the ``bar plot''.
 In the bar plot mode, pass the mouse over the bars: What happens?}
+\begin{verbatim}
+  def test_B_clones_28_switch_scatterplot_mode
+    $b.element(:id => "visu_sp_menu").hover
+    $b.div(:id => "visu_bar").click
+    $b.update_icon.wait_while(&:present?)
+    sleep 1
+
+    $b.element(:id => "visu_sp_menu").hover
+    $b.div(:id => "visu_plot").click
+    $b.update_icon.wait_while(&:present?)
+  end
+\end{verbatim}
 
 % Another possibility is to request Vidjil to compute the similarity between
 % clones.
@@ -231,6 +717,20 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
 % that two similar clones are far apart.
 
 \question{Press the keys \texttt{0} to \texttt{9} on the numeric keypad. What happens ?}
+\begin{verbatim}
+  def test_B_clones_29_shortcut_preset
+    $b.send_keys 0
+    $b.update_icon.wait_while(&:present?)
+    ## todo make control
+
+    $b.send_keys 9
+    $b.update_icon.wait_while(&:present?)
+    ## todo make control
+
+    # $b.send_keys 0
+    $b.update_icon.wait_while(&:present?)
+  end
+\end{verbatim}
 
 There is still a feature to help you analyse your data that we have not
 explored yet.
@@ -238,12 +738,42 @@ You can change the colors to make it represent some variables of interest
 with the \com{color by} menu.
 \question{First choose the preset \com{V/J (genes)} and
   then color by \com{N length} (in the box at the top of the screen).}
+\begin{verbatim}
+  def test_B_clones_30_color_mode
+    $b.scatterplot_select_preset "V/J (genes)"
+    $b.update_icon.wait_while(&:present?)
+
+    # control color state at init
+    assert ( not $b.info_colorBy.span(:class => "gradient").exist? ), "at init, color are not gradient"
+
+    select_color = $b.select_list(:id => "color_menu_select")
+    select_color.select("N")
+    $b.update_icon.wait_while(&:present?)
+    
+    ## control
+    $b.clone_in_list("0").click
+    assert ($b.clone_info('1')[:name].style('color') ==  'rgba(36, 75, 183, 1)' ), "Good color for clone 1 with color method N"
+    assert ($b.clone_info('4')[:name].style('color') ==  'rgba(61, 36, 183, 1)' ), "Good color for clone 4 with color method N"
+    ## test label
+    assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"),  "scatter plot legend X is correct after preset change"
+    assert ( $b.scatterplot_y_legend(0).text == "IGHJ1"), "scatter plot legend Y is correct after preset change"
+  end
+\end{verbatim}
+  
 \marginpar{We apologize to color blinds: the colors are not yet color-blind friendly.}Clones that are close on the grid with similar colors are likely to
 be similar.
 
 \question{Choose now the preset \com{CDR3 length distribution} and
   then color by \com{productivity}.
   See that the color tiles in the info part (upper right) change to show the color key.}
+\begin{verbatim}
+  def test_B_clones_31_color_gradient
+    $b.scatterplot_select_preset "CDR3 length distribution"
+    $b.update_icon.wait_while(&:present?)
+
+    assert ( $b.info_colorBy.span(:class => "gradient").exist? ), "color gradient is present"
+  end
+\end{verbatim}
 
 \question{ Instead of coloring by productivity, you could also color by
   \com{clone}. When coloring by \com{clone}, each clone has a random color. Thus in
@@ -253,6 +783,17 @@ be similar.
   \com{CDR3}. In such case all clones with the same CDR3 will have the same
   color (note that, due to a lack of available colors two different CDR3s
   could share the same color just by chance).}
+\begin{verbatim}
+  def test_B_clones_32_color_by_clone
+    select_color = $b.select_list(:id => "color_menu_select")
+    select_color.select("clone")
+    $b.update_icon.wait_while(&:present?)
+
+    $b.clone_in_list("0").click
+    assert ($b.clone_info('1')[:name].style('color') ==  'rgba(153, 153, 61, 1)' ), "Good color for clone 1 with color method 'clone'"
+    assert ($b.clone_info('4')[:name].style('color') ==  'rgba(61, 61, 153, 1)' ), "Good color for clone 4 with color method 'clone'"
+  end
+\end{verbatim}
 
 
 Using those different features you should be able to analyse how similar your
@@ -267,6 +808,19 @@ sequences are, and potentially you could cluster them if you'd like or tag them.
   genes and the sequence. Mutations can be identified and silent mutations are
   displayed with a double border in blue.
 }
+\begin{verbatim}
+  def test_B_clones_33_align_germline
+    assert ( not $b.clone_in_segmenter("IGHJ6*02").exist? ), "sequence germline is NOT present in the segmenter"
+    $b.clone_in_list("1").click
+
+    $b.menu_import_export.hover
+    $b.menu_item_export_add_germline.click
+    $b.update_icon.wait_while(&:present?)
+
+    assert ( $b.clone_in_segmenter("IGHJ6*02").exist? ), "sequence germline is present in the segmenter"
+    # todo, align; mutation
+  end
+\end{verbatim}
 
 \bigskip
 
@@ -275,6 +829,28 @@ sequences are, and potentially you could cluster them if you'd like or tag them.
 Some clones may be less trustable than other ones\dots{} Let's see how to spot them.
 \question{In the clone list, search clones with an orange warning at the
   right side. Click on the warning. What are the warnings due to?}
+\begin{verbatim}
+  def test_B_clones_34
+    $b.clone_in_list("11").click #first clone with warning
+
+    # <i title="W53: Similar to clone #2 - TRGV10*01 13//5 TRGJP1*01undefined: undefinedundefined: undefinedundefined: undefinedundefined: undefined" class="icon-warning-1"></i>
+
+    assert ( not $b.clone_info("1")[:info].i(:class => "icon-warning-1").exist?), "no warning icon for clone 1"
+    assert ( $b.clone_info("11")[:info].i(:class => "icon-warning-1").exist?), "warning icon present for clone 11"
+    assert ( not $b.modal_container.div(:id => "info_window").present? ), "modal info of clone is not present"
+    $b.clone_info("11")[:info].click
+
+    modal_table = $b.modal_container.div(:id => "info_window")
+    
+    assert ( $b.modal_container.div(:id => "info_window").present? ), "modal info of clone is present"
+    assert ( modal_table.td(:text => "W53").present? ), "warning number present in the clone info table"
+    assert ( modal_table.td(:text => "Similar to clone #2 - TRGV10*01 13//5 TRGJP1*01").present? ), "warning content present in the clone info table"
+
+    # close modal
+    $b.modal_container.span(:class => 'closeButton').click
+
+  end
+\end{verbatim}
 
 There may have several reasons: 
 \begin{itemize}
@@ -306,16 +882,66 @@ clicked on.
 
 \question{Click on \com{IGH}, while holding the \texttt{Shift} key. Now what is the
   number of analyzed reads? Why did it change?}
+\begin{verbatim}
+  def test_B_clones_35_locus_switch
+    assert ( not $b.locus_topleft("TRG").classes.include? "inactive" ), "locus TRG present in info panel"
+    assert ( not $b.locus_topleft("IGH").classes.include? "inactive" ), "locus IGH present in info panel"
+    $b.locus_topleft("IGH").click(:shift)
+    $b.update_icon.wait_while(&:present?)
+
+    assert ( $b.locus_topleft("TRG").classes.include? "inactive" ), "locus TRG NOT present in info panel after switch"
+    assert ( not $b.locus_topleft("IGH").classes.include? "inactive" ), "locus IGH present in info panel after switch"
+  end
+\end{verbatim}
 
 \question{Now click on \com{TRG}, to filter it in again.}
+\begin{verbatim}
+  def test_B_clones_36_activate_again_locus
+    $b.locus_topleft("TRG").click
+    $b.update_icon.wait_while(&:present?)
+    assert ( not $b.locus_topleft("TRG").classes.include? "inactive" ), "locus TRG present in info panel after switch"
+    assert ( not $b.locus_topleft("IGH").classes.include? "inactive" ), "locus IGH present in info panel after switch"
+  end
+\end{verbatim}
 
 \question{Press on the \texttt{g} key. What happens? Now, press on the
   \texttt{h} key. Press on the \texttt{g} again (you can do that anytime you
   like :)). Let's stick to the TRG locus.}
+\begin{verbatim}
+  def test_B_clones_37_shortcut
+    $b.send_keys 0 # return to a grap with locus 
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"), "scatterplot_legend X at init; IGHV1-2"
+    assert ( $b.scatterplot_y_legend(0).text == "IGHJ1"), "scatterplot_legend Y at init; IGHJ-1"
+
+    $b.send_keys "g"
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_legend(0).text == "TRGV10"), "scatterplot_legend X  after shortcut G; TRGV10"
+    assert ( $b.scatterplot_y_legend(0).text == "TRGJ1"), "scatterplot_legend Y  after shortcut G; TRGJ1"
+    
+
+    $b.send_keys "h"
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"), "scatterplot_legend X after shortcut H; IGHV1-2"
+    assert ( $b.scatterplot_y_legend(0).text == "IGHJ1"), "scatterplot_legend Y after shortcut H; IGHJ-1"
+  end
+\end{verbatim}
 
 You can also change the current locus by clicking on the locus name in the
 right part of the grid.
+\begin{verbatim}
+  def test_B_clones_38_switch_locus_by_scatterplot_click
+    $b.send_keys 0 # return to a grap with locus 
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"), "scatterplot_legend X at init; IGHV1-2"
+    assert ( $b.scatterplot_y_legend(0).text == "IGHJ1"), "scatterplot_legend Y at init; IGHJ-1"
 
+    $b.scatterplot_locus("TRG").click
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_legend(0).text == "TRGV10"), "scatterplot_legend X  after shortcut G; TRGV10"
+    assert ( $b.scatterplot_y_legend(0).text == "TRGJ1"), "scatterplot_legend Y  after shortcut G; TRGJ1"  
+  end
+\end{verbatim}
 
 \subsection{Clone quantification (using spike-ins)}
 
@@ -325,15 +951,56 @@ Let us assume that the main clone with IGHV-3-9 / IGHJ5 is a spike-in whose
 expected concentration is 1\% (.01).
 
 \question{First let's color this clone with the \com{standard} tag.}
+\begin{verbatim}
+  def test_B_clones_39_reset_color_tag
+    select_color = $b.select_list(:id => "color_menu_select")
+    select_color.select("Tag")
+
+    # New color
+    cinfo = $b.clone_info("454")
+    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(108, 113, 196, 1)' )
+  end
+\end{verbatim}
 
 \question{ Now we will set its concentration to .01 as expected. Click again on
   the star. In the \com{normalize to} field enter \com{.01} and click \com{ok}.
   Now, in the graph, this clone should correspond to a straight line at 1\%.}
+\begin{verbatim}
+  def test_B_clones_40_normalization
+    cinfo = $b.clone_info("1")
+    assert ( cinfo[:size].text == "9.665%"), "correct size after normalization"
+    ## open tag menu for clone 1
+    $b.clone_info("1")[:star].click # top IGH
+    ## change norm value
+    $b.tag_selector_edit_normalisation.send_keys "0.01"
+    $b.tag_selector_normalisation_validator.click
+    # $b.send_keys :enter
+    $b.update_icon.wait_while(&:present?)
+
+    ## control
+    assert ( cinfo[:size].text == "1.000%"), "correct size after normalization"
+    $b.menu_settings.hover
+    assert ($b.div(:id => 'normalizetest1').present?), "Form have the input for expected normalization"
+  end
+\end{verbatim}
 
 \question{ Notice how the concentrations of the other clones have changed
   accordingly.
   You can go to the \com{settings} menu to disable this normalization and to
   go back to the raw concentrations.}
+\begin{verbatim}
+  def test_B_clones_41_disable_normalization
+    cinfo = $b.clone_info("1")
+    assert ( cinfo[:size].text == "1.000%"), "correct size after normalization (init of test)"
+    
+    $b.menu_settings.click
+    $b.input(:id => 'reset_norm').click
+
+    ## control
+    cinfo = $b.clone_info("1")
+    assert ( cinfo[:size].text == "9.665%"), "correct size after disabled normalization"
+  end
+\end{verbatim}
 
 Then you can set expected concentrations for other clones and you are free to
 switch between those normalizations.

@@ -50,6 +50,10 @@ class TestInfo < BrowserTest
     assert (     $b.info_colorBy.span(:text => "100%").exist? ),           "info colorMethod is on abundance (100%)"
   end
 
+  def test_003_play_button
+    $b.div(:class => "play_button button").click
+  end
+
 
   # Not really a test
   def test_zz_close

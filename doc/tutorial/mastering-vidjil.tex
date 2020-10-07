@@ -23,13 +23,18 @@ class TestList < BrowserTest
   def setup
     super
     if not defined? $b
-      set_browser("/doc/analysis-example2.vidjil", "/doc/analysis-example2.analysis")
+      set_browser("/doc/demo_lil_l3_tutorial.vidjil")
       if $b.div(id: 'tip-container').present?
         $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
       end
     end
   end
 
+  # position of clones
+  # clone 0, top clone of last sample (relapse)
+  # clone 1, top clone of first sample
+  # clone 4, second clone of first sample
+  # clone 7, 11, 13; clone 3, 4 and 5 of first sample
 
   def after_tests
   end
