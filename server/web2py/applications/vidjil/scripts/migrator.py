@@ -227,7 +227,7 @@ class Importer():
             for key in ref_fields:
                 ref_key = ref_fields[key]
                 matching_id = self.mappings[key].getMatchingId(val[ref_key])
-                self.log.debug("%s replacing %s: %d with %d" % (table, ref_key, val[ref_key], matching_id))
+                #self.log.debug("%s replacing %s: %d with %d" % (table, ref_key, val[ref_key], matching_id))
                 val[ref_key] = matching_id
             oid = db[table].insert(**val)
             self.log.debug("new %s: %d" % (table, oid))
