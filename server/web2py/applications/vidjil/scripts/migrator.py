@@ -136,7 +136,8 @@ class Extractor():
         memberships = {}
         sequence_files = {}
         for row in rows:
-            row.provider = 1
+            row.sequence_file.provider = 1
+            row.sequence_file.patient_id = None
             ssm_id = row.sample_set_membership.id
             sf_id = row.sequence_file.id
             self.log.debug("populating sequence file: %d, membership: %d" % (sf_id, ssm_id))
@@ -343,7 +344,12 @@ def import_data(filesrc, filedest, groupid, config=None, dry_run=False, log=Migr
             if stype in data:
                 imp.importSampleSets(stype, data[stype])
 
-        imp.importTable('sequence_file', data['sequence_file'], map_val=True)
+        for row in data['analysis_file']:
+            data['analysis_file'][row]['patient_id'] = None
+            data['analysis_file'][row]['config_id'] = None
+
+        for row in data['fused_file']:
+            data['fused_file'][row]['patient_id'] = None
         imp.importTable('sample_set_membership', data['membership'], {'sample_set': 'sample_set_id', 'sequence_file': 'sequence_file_id'})
         imp.importTable('scheduler_task', data['scheduler_task'], map_val=True)
         imp.importTable('scheduler_run', data['scheduler_run'], {'scheduler_task': 'task_id'})
