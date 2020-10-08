@@ -164,11 +164,9 @@ class GroupExtractor(Extractor):
     def getAccessible(self, table, groupids):
         db = self.db
 
-        rows = db((((db[table].id == db.auth_permission.record_id)
-                    & (db.auth_permission.table_name == table))
-                | ((db.sample_set.id == db.auth_permission.record_id)
-                    & (db.sample_set.id == db[table].sample_set_id)
-                    & (db.auth_permission.table_name == "sample_set")))
+        rows = db((db.sample_set.id == db.auth_permission.record_id)
+                & (db.sample_set.id == db[table].sample_set_id)
+                & (db.auth_permission.table_name == "sample_set")
                 & (db.auth_permission.name == PermissionEnum.access.value)
                 & (db.auth_permission.group_id.belongs(groupids))
                ).select(db[table].ALL)
