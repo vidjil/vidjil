@@ -30,6 +30,13 @@ class MigrateLogger():
     def getLogger(self):
         return self.log
 
+    def infoConfig(self, tables):
+        config_id = []
+        for res in tables['results_file']:
+            config_id.append(tables['results_file'][res]['config_id'])
+        config_id = list(dict.fromkeys(config_id))
+        self.info("IDs of detected config %s" % str(config_id))
+
 def get_dict_from_row(row):
     '''
     Create a dict element from a Row element
@@ -109,6 +116,7 @@ class Extractor():
         sets = {}
         sample_set_ids = []
         for row in rows:
+            row.creator = 1
             self.log.debug("populating : %d, sample_set: %d" % (row.id, row.sample_set_id))
             sets[row.id] = get_dict_from_row(row)
             sample_set_ids.append(row.sample_set_id)
@@ -126,6 +134,7 @@ class Extractor():
         memberships = {}
         sequence_files = {}
         for row in rows:
+            row.provider = 1
             ssm_id = row.sample_set_membership.id
             sf_id = row.sequence_file.id
             self.log.debug("populating sequence file: %d, membership: %d" % (sf_id, ssm_id))
@@ -152,12 +161,16 @@ class GroupExtractor(Extractor):
     def __init__(self, db, log):
         Extractor.__init__(self, db, log)
 
-    def getAccessible(self, table, groupid):
+    def getAccessible(self, table, groupids):
         db = self.db
-        rows = db((db[table].id == db.auth_permission.record_id)
-                & (db.auth_permission.table_name == table)
+
+        rows = db((((db[table].id == db.auth_permission.record_id)
+                    & (db.auth_permission.table_name == table))
+                | ((db.sample_set.id == db.auth_permission.record_id)
+                    & (db.sample_set.id == db[table].sample_set_id)
+                    & (db.auth_permission.table_name == "sample_set")))
                 & (db.auth_permission.name == PermissionEnum.access.value)
-                & (db.auth_permission.group_id == groupid)
+                & (db.auth_permission.group_id.belongs(groupids))
                ).select(db[table].ALL)
         return rows
 
@@ -197,6 +210,10 @@ class Importer():
                                       name=PermissionEnum.access.value,
                                       table_name=stype,
                                       record_id=nid)
+            db.auth_permission.insert(group_id=self.groupid,
+                                      name=PermissionEnum.access.value,
+                                      table_name="sample_set",
+                                      record_id=ssid)
             self.log.debug("associated set %d to group %d" % (nid, self.groupid))
 
     def importTable(self, table, values, ref_fields={}, map_val=False):
@@ -253,24 +270,26 @@ def export_peripheral_data(extractor, data_dict, sample_set_ids, log=MigrateLogg
 
     return data_dict
 
-def export_group_data(filesrc, filepath, groupid, log=MigrateLogger()):
+def export_group_data(filesrc, filepath, groupids, log=MigrateLogger()):
     log.info("exporting group data")
     ext = GroupExtractor(db, log)
 
     tables = {}
 
-    patient_rows = ext.getAccessible('patient', groupid)
+    patient_rows = ext.getAccessible('patient', groupids)
     tables['patient'], patient_ssids = ext.populateSets(patient_rows)
 
-    run_rows = ext.getAccessible('run', groupid)
+    run_rows = ext.getAccessible('run', groupids)
     tables['run'], run_ssids = ext.populateSets(run_rows)
 
-    generic_rows = ext.getAccessible('generic', groupid)
+    generic_rows = ext.getAccessible('generic', groupids)
     tables['generic'], generic_ssids = ext.populateSets(generic_rows)
     
     sample_set_ids = patient_ssids + run_ssids + generic_ssids
 
     tables = export_peripheral_data(ext, tables, sample_set_ids, log=log)
+
+    log.infoConfig(tables)
 
     if not os.path.exists(filepath):
         os.makedirs(filepath)
@@ -292,6 +311,8 @@ def export_sample_set_data(filesrc, filepath, sample_type, sample_ids, log=Migra
     tables[sample_type], sample_set_ids = ext.populateSets(rows)
 
     tables = export_peripheral_data(ext, tables, sample_set_ids, log=log)
+
+    log.infoConfig(tables)
 
     if not os.path.exists(filepath):
         os.makedirs(filepath)
@@ -356,12 +377,12 @@ def main():
     ss_parser.add_argument('ssids', metavar='ID', type=long, nargs='+', help='Ids of sample sets to be extracted')
 
     group_parser = exp_subparser.add_parser('group', help='Extract data by groupid')
-    group_parser.add_argument('groupid', type=long, help='The long ID of the group')
+    group_parser.add_argument('groupids', metavar='GID', type=long, nargs='+', help='The long IDs of the exported groups')
 
     import_parser = subparsers.add_parser('import', help='Import data from JSON into the DB')
     import_parser.add_argument('--dry-run', dest='dry', action='store_true', help='With a dry run, the data will not be saved to the database')
     import_parser.add_argument('--config', type=str, dest='config', help='Select the config mapping file')
-    import_parser.add_argument('groupid', type=long, help='The long ID of the group')
+    import_parser.add_argument('groupid', type=long, help='The long ID of the receiver group')
 
     parser.add_argument('-p', type=str, dest='filepath', default='./', help='Select the file destination')
     parser.add_argument('-s', type=str, dest='filesrc', default='./', help='Select the file source')
@@ -375,7 +396,7 @@ def main():
 
     if args.command == 'export':
         if args.mode == 'group':
-            export_group_data(args.filesrc, args.filepath, args.groupid, log)
+            export_group_data(args.filesrc, args.filepath, args.groupids, log)
         elif args.mode == 'sample_set':
             export_sample_set_data(args.filesrc, args.filepath, args.sample_type, args.ssids, log)
     elif args.command == 'import':
