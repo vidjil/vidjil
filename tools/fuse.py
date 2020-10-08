@@ -769,7 +769,8 @@ class ListWindows(VidjilJson):
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
         obj.d["diversity"] = self.d["diversity"] + other.d["diversity"]
-        obj.d["mrd"] = self.d["mrd"] + other.d["mrd"]
+        if "mrd" in self.d and "mrd" in other.d:
+            obj.d["mrd"] = self.d["mrd"] + other.d["mrd"]
         
         try:
             ### Verify that same file is not present twice
