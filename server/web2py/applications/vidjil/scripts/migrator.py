@@ -78,6 +78,8 @@ class IdMapper():
         self.mapping = {}
 
     def getMatchingId(self, oid):
+        if oid is None:
+            return oid
         if oid not in self.mapping:
             self.log.debug('id %d not in mapping, returning it' % oid)
             self.log.debug("mapping: " + str(self.mapping.keys()))
@@ -134,7 +136,8 @@ class Extractor():
         memberships = {}
         sequence_files = {}
         for row in rows:
-            row.provider = 1
+            row.sequence_file.provider = 1
+            row.sequence_file.patient_id = None
             ssm_id = row.sample_set_membership.id
             sf_id = row.sequence_file.id
             self.log.debug("populating sequence file: %d, membership: %d" % (sf_id, ssm_id))
@@ -164,11 +167,9 @@ class GroupExtractor(Extractor):
     def getAccessible(self, table, groupids):
         db = self.db
 
-        rows = db((((db[table].id == db.auth_permission.record_id)
-                    & (db.auth_permission.table_name == table))
-                | ((db.sample_set.id == db.auth_permission.record_id)
-                    & (db.sample_set.id == db[table].sample_set_id)
-                    & (db.auth_permission.table_name == "sample_set")))
+        rows = db((db.sample_set.id == db.auth_permission.record_id)
+                & (db.sample_set.id == db[table].sample_set_id)
+                & (db.auth_permission.table_name == "sample_set")
                 & (db.auth_permission.name == PermissionEnum.access.value)
                 & (db.auth_permission.group_id.belongs(groupids))
                ).select(db[table].ALL)
@@ -186,12 +187,13 @@ class SampleSetExtractor(Extractor):
 
 class Importer():
 
-    def __init__(self, groupid, db, log, config_mapper):
+    def __init__(self, groupid, db, log, config_mapper, pprocess_mapper):
         self.log = log
         self.log.info("initialising importer")
         self.groupid = groupid
         self.db = db
-        self.mappings = {'config': config_mapper}
+        self.mappings = {'config': config_mapper,
+                        'pre_process': pprocess_mapper}
         self.mappings['sample_set'] = IdMapper(self.log)
 
     def importSampleSets(self, stype, sets):
@@ -225,7 +227,7 @@ class Importer():
             for key in ref_fields:
                 ref_key = ref_fields[key]
                 matching_id = self.mappings[key].getMatchingId(val[ref_key])
-                self.log.debug("%s replacing %s: %d with %d" % (table, ref_key, val[ref_key], matching_id))
+                #self.log.debug("%s replacing %s: %d with %d" % (table, ref_key, val[ref_key], matching_id))
                 val[ref_key] = matching_id
             oid = db[table].insert(**val)
             self.log.debug("new %s: %d" % (table, oid))
@@ -325,7 +327,7 @@ def export_sample_set_data(filesrc, filepath, sample_type, sample_ids, log=Migra
 
     log.info("done")
 
-def import_data(filesrc, filedest, groupid, config=None, dry_run=False, log=MigrateLogger()):
+def import_data(filesrc, filedest, groupid, config=None, pprocess=None, dry_run=False, log=MigrateLogger()):
     log.info("importing data")
     data = {}
     with open(filesrc + '/export.json', 'r') as infile:
@@ -335,7 +337,12 @@ def import_data(filesrc, filedest, groupid, config=None, dry_run=False, log=Migr
     config_mapper = ConfigMapper(log)
     if config:
         config_mapper.load(config)
-    imp = Importer(groupid, db, log, config_mapper)
+
+    pprocess_mapper = ConfigMapper(log)
+    if pprocess_mapper:
+        pprocess_mapper.load(pprocess)
+
+    imp = Importer(groupid, db, log, config_mapper, pprocess_mapper)
 
     try:
         set_types = ['patient', 'run', 'generic']
@@ -343,7 +350,14 @@ def import_data(filesrc, filedest, groupid, config=None, dry_run=False, log=Migr
             if stype in data:
                 imp.importSampleSets(stype, data[stype])
 
-        imp.importTable('sequence_file', data['sequence_file'], map_val=True)
+        for row in data['analysis_file']:
+            data['analysis_file'][row]['patient_id'] = None
+            data['analysis_file'][row]['config_id'] = None
+
+        for row in data['fused_file']:
+            data['fused_file'][row]['patient_id'] = None
+
+        imp.importTable('sequence_file', data['sequence_file'], {'pre_process': 'pre_process_id'}, map_val=True)
         imp.importTable('sample_set_membership', data['membership'], {'sample_set': 'sample_set_id', 'sequence_file': 'sequence_file_id'})
         imp.importTable('scheduler_task', data['scheduler_task'], map_val=True)
         imp.importTable('scheduler_run', data['scheduler_run'], {'scheduler_task': 'task_id'})
@@ -382,6 +396,7 @@ def main():
     import_parser = subparsers.add_parser('import', help='Import data from JSON into the DB')
     import_parser.add_argument('--dry-run', dest='dry', action='store_true', help='With a dry run, the data will not be saved to the database')
     import_parser.add_argument('--config', type=str, dest='config', help='Select the config mapping file')
+    import_parser.add_argument('--pre-process', type=str, dest='pprocess', help='Select the pre-process mapping file')
     import_parser.add_argument('groupid', type=long, help='The long ID of the receiver group')
 
     parser.add_argument('-p', type=str, dest='filepath', default='./', help='Select the file destination')
@@ -402,7 +417,7 @@ def main():
     elif args.command == 'import':
         if args.dry:
             log.log.setLevel(logging.DEBUG)
-        import_data(args.filesrc, args.filepath, args.groupid, args.config, args.dry, log)
+        import_data(args.filesrc, args.filepath, args.groupid, args.config, args.pprocess, args.dry, log)
 
 if __name__ == '__main__':
     main()
