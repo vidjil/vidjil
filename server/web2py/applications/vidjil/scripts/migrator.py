@@ -372,9 +372,9 @@ def import_data(filesrc, filedest, groupid, config=None, pprocess=None, dry_run=
             db.rollback()
             log.info("dry run successful, no data saved")
         else:
-            db.commit()
             log.info("copying files from %s to %s" % (filesrc, filedest))
             copy_files(data, filesrc + '/files', filedest, log=log)
+            db.commit()
             log.info("done")
     except:
         log.error("something went wrong, rolling back")
