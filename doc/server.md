@@ -908,18 +908,120 @@ python web2py -S vidjil -M db.auth_user[<user-id>].update_record(password=CRYPT(
 
 # Migrating Data
 
-## Database
 
-The easiest way to perform a database migration is to first extract the
-data with the following command:
+Usually, when extracting data for a given user or group, the whole database should not be
+copied over.
+The `migrator` script allows the selective export and import of data,
+whether it be a single patient/run/set or a list of them, or even all the sample sets
+associated to a group (or to a user).
+The script takes care both of database, but also of results and analysis files (see below for sequence files).
+
+See `server/web2py/applications/vidjil/scripts/migrator.py --help`
+
+## Exporting an archive
+
+(to be detailed)
+
+## Importing an archive
+
+### Step 1 : extract the archive on your server
+
+The export directory must be on your server and accessible from your vidjil-server docker container.
+You can define a new shared volume; or simply put the export directory on an already accessible location such as  `[DOCKER DIRECTORY]/vidjil-server/conf/export/`
+
+### Step 2 : prepare the group that will own the data
+
+The permissions on a vidjil server are *group* based. Users and groups may be different from one server to another one. Before importing data on a server, one must have a group ready to receive the permissions to manage the imported files.
+
+From the admin web interface has, you can create a new group  ("groups" -> "+new group" -> "add group"). The group ID is displayed between parenthesis next to its name on the group page, you will need it later. If you create such a group on a blank vidjil server, the ID is *4*.
+
+### Step 3 : prepare your server analysis configs
+
+*This step may require bioinformatics support depending on your data, the config previously used, and the ones you intend to use on your new installation. We can offer support via the [VidjilNet consortium](http://www.vidjil.net) for help on setting that.*
+
+Vidjil analysis configs should not be directly transferred between servers. Indeed, they depend on the setup of each server setup (software, paths...) and can collide with existing configs on your installation. Before importing, you thus need to create the missing analysis configs on your server and edit the `config.json` file provided in the export folder.
+
+This `config.json` file initially contains a list of the analysis configs from the original public server, such as:
+
+```
+  "2": {
+      "description": [
+        "IGH",
+        "vidjil",
+        "-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD -e 1 -w 50 -d -y all",
+        "-t 100 -d lenSeqAverage",
+        "multi-locus"
+      ],
+      "link_local": 6
+  },
+```
+
+- `"2"`           :  the original config ID on the server from which the data was exported
+- `"description"` :  the original config parameters (only for information, they are ignoed in the import)
+- `"link_local"`  :  the config ID that will be used on the new server
+
+In the `config.json` file, you have to replace all` link_local` values with the corresponding config ID
+of a similar config on your server (if you don't have a similar one you should create one).
+
+If you much of your imported data was on `old` configs, that you do not intend to run anymore,
+a solution is to create a generic `legacy` config for these old data.
+
+<!--
+ The `config.json` could thus look like:
+
+XXXXXX mettre ici un config.json "par défaut" mappant les configs actuelles (de prod) de app sur les configs propres d'un nouveau serveur XXXX
+-->
+
+
+### Step 4 : prepare your server pre-process configs
+
+Proceed as in step 3 for pre-process configs. The file to edit is named `pprocess.json`.
+
+
+### Step 5 : import
+
+The import takes place inside the vidjil-server container
+```sh
+docker exec -it docker_uwsgi_1 bash
+cd usr/share/vidjil/server/web2py/applications/vidjil/scripts/
+sh migrator.sh -p [RESULTS DIRECTORY] -s [EXPORT DIRECTORY] import --config [CONFIG.JSON FILE] --pre-process [PPROCESS.JSON FILE] [GROUP ID]
+```
+
+- [RESULTS DIRECTORY]          the results directory path inside the container, it should be defined in your docker-compose.yml, by default it is /mnt/result/results/
+- [EXPORT DIRECTORY]        the export directory you installed in step 1, if you set it up in docker/vidjil-server/conf/export/ is location inside the container should be /etc/vidjil/export/
+- [CONFIG.JSON FILE]         this file is located in the export folder and you should have edited it during step 3
+- [PPROCESS.JSON FILE]         this file is located in the export folder and you should have edited it during step 4
+- [GROUP ID]                         ID of the group you should have created/selected during step 2
+
+Usually, the command is thus:
+```
+sh migrator.sh -p /mnt/result/results/ -s /etc/vidjil/export/XXXX/ import --config/etc/vidjil/exportXXXX/config.json --pre-process /etc/vidjil/export/XXXX/pprocess.json  4
+```
+
+
+
+## Exporting/importing input sequence files
+
+Note that web2py and the Vidjil server are robust to missing *input* files.
+These files are not backuped and may be removed from the server at any time.
+Most of the time, these large files won't be migrated along with the database, the results and the analysis files.
+
+However, they can simply be copied over to the new installation. Their filenames
+are stored in the database and should therefore be accessible as long as
+they are in the correct directories.
+
+
+
+## Exporting/importing a full database
+
+When a full database migration is needed, it can be done with the following command:
 
 ``` bash
 mysqldump -u <user> -p <db> -c --no-create-info > <file>
 ```
 
-An important element to note here is the –no-create-info we add this
-parameter because web2py needs to be allowed to create tables itself
-because it keeps track of database migrations and errors will occur if
+The `--no-create-info` option is important because web2py needs to be allowed to create tables itself.
+Indeed, it keeps track of database migrations and errors will occur if
 tables exist which it considers it needs to create.
 
 In order to import the data into an installation you first need to ensure
@@ -936,127 +1038,14 @@ Once the tables have been created, the data can be imported as follows:
 mysql -u <user> -p <db> < <file>
 ```
 
+At least the results and analysis files should thus be copied.
+
 Please note that with this method you should have at least one admin user
-that is accessible in the imported data. Since the initialisation is being
-skipped, you will not have the usual admin account present.
+that is accessible in the imported data. Since the initialization is being
+skipped, the usual admin account won't be present.
 It is also possible to create a user directly from the database although
 this is not the recommended course of action.
 
-## Files
-
-Files can simply be copied over to the new installation, their filenames
-are stored in the database and should therefore be accessible as long as
-they are in the correct directories.
-
-## Filtering data (soon deprecated)
-
-When extracting data for a given user, the whole database should not be
-copied over.
-There are two courses of action:
-
-  - create a copy of the existing database and remove the users that are
-    irrelevant. The cascading delete should remove any unwanted data
-    barring a few exceptions (notably fused<sub>file</sub>, groups and sample<sub>setmembership</sub>)
-
-  - export the relevant data directly from the database. This method
-    requires multiple queries which will not be detailed here.
-
-Once the database has been correctly extracted, a list of files can be
-obtained from sequence<sub>file</sub>, fused<sub>file</sub>, results<sub>file</sub> and analysis<sub>file</sub>
-with the following query:
-
-``` sql
-SELECT <filename field>
-FROM <table name>
-INTO OUTFILE 'filepath'
-FIELDS TERMINATED BY ','
-ENCLOSED BY ''
-LINES TERMINATED BY '\n'
-```
-
-Note: We are managing filenames here which should not contain any
-character such as quotes or commas so we can afford to refrain from
-enclosing the data with quotes.
-
-This query will output a csv file containing a filename on each line.
-Copying the files is now just a matter of running the following script:
-
-``` bash
-sh copy_files <file source> <file destination> <input file>
-```
-
-## Exporting sample sets
-
-The migrator script allows the export and import of data, whether it be a
-single patient/run/set or a list of them, or even all the sample sets
-associated to a group.
-
-``` example
-usage: migrator.py [-h] [-f FILENAME] [--debug] {export,import} ...
-
-Export and import data
-
-positional arguments:
-{export,import}  Select operation mode
-  export         Export data from the DB into a JSON file
-  import         Import data from JSON into the DB
-
-optional arguments:
-  -h, --help       show this help message and exit
-  -f FILENAME      Select the file to be read or written to
-  --debug          Output debug information
-```
-
-Export:
-
-``` example
-usage: migrator.py export [-h] {sample_set,group} ...
-
-positional arguments:
-  {sample_set,group}  Select data selection method
-    sample_set        Export data by sample-set ids
-    group             Extract data by groupid
-
-optional arguments:
-  -h, --help          show this help message and exit
-```
-
-``` example
-usage: migrator.py export sample_set [-h] {patient,run,generic} ID [ID
-...]
-
-positional arguments:
-  {patient,run,generic}
-                          Type of sample
-    ID                    Ids of sample sets to be extracted
-
-  optional arguments:
-    -h, --help            show this help message and exit
-```
-
-``` example
-usage: migrator.py export group [-h] groupid
-
-positional arguments:
-  groupid     The long ID of the group
-
-optional arguments:
-  -h, --help  show this help message and exit
-```
-
-Import:
-
-``` example
-usage: migrator.py import [-h] [--dry-run] [--config CONFIG] groupid
-
-positional arguments:
-  groupid     The long ID of the group
-
-optional arguments:
-  -h, --help  show this help message and exit
-  --dry-run   With a dry run, the data will not be saved to the database
-  --config CONFIG  Select the config mapping file
-```
 
 # Using CloneDB [Under development]
 The [CloneDB](https://gitlab.inria.fr/vidjil/clonedb) has to be installed
