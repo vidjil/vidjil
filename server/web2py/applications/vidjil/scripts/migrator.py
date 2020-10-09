@@ -247,8 +247,11 @@ def copy_files(data, src, dest, log=MigrateLogger()):
     for t in file_fields:
         for entry in data[t]:
             if (data[t][entry][file_fields[t]] is not None):
-                log.debug("Copying %s" % data[t][entry][file_fields[t]])
-                copy(src + '/' + data[t][entry][file_fields[t]], dest + '/' + data[t][entry][file_fields[t]])
+                try:
+                    copy(src + '/' + data[t][entry][file_fields[t]], dest + '/' + data[t][entry][file_fields[t]])
+                    log.debug("Copying %s" % data[t][entry][file_fields[t]])
+                except:
+                    log.error("failed to copy file %s" % data[t][entry][file_fields[t]])
 
 def export_peripheral_data(extractor, data_dict, sample_set_ids, log=MigrateLogger()):
     sequence_rows = extractor.getSequenceFiles(sample_set_ids)
