@@ -102,7 +102,9 @@ class ConfigMapper(IdMapper):
         with open(cfile, 'r') as cfg:
             config_map = json.load(cfg, encoding='utf-8')
             for key in config_map:
-                self.mapping[long(key)] = config_map[key]
+                if config_map[key]["link_local"]:
+                    self.mapping[long(key)] = config_map[key]["link_local"]
+
             self.log.info("mapping loaded")
             self.log.debug("mapping: " + str(self.mapping.keys()))
 
