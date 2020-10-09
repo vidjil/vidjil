@@ -966,11 +966,37 @@ of a similar config on your server (if you don't have a similar one you should c
 If you much of your imported data was on `old` configs, that you do not intend to run anymore,
 a solution is to create a generic `legacy` config for these old data.
 
-<!--
- The `config.json` could thus look like:
+Below is an example of such a `config.json`, linking actual configuration on the public >app.vidjil.org> server to configs to a newly installed server.
+This should be completed by a mapping of other configs that were used in the migrated data.
 
-XXXXXX mettre ici un config.json "par défaut" mappant les configs actuelles (de prod) de app sur les configs propres d'un nouveau serveur XXXX
--->
+```
+{
+  "2": {
+    "description": [ "IGH", "vidjil",  "-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD -e 1 -w 50 -d -y all", "-t 100 -d lenSeqAverage",  "multi-locus" ],
+    "link_local": 6
+  },
+  "25": {
+    "description": [ "multi+inc+xxx",  "vidjil",  "-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -y all",  "-t 100 -d lenSeqAverage",  "default: multi-locus, with some incomplete/unusual/unexpected recombinations"
+    ],
+    "link_local": 2
+  },
+  "26": {
+    "description": [ "multi+inc", "vidjil", "c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -d -w 50",  "-t 100",  "multi-locus, with some incomplete/unusual recombinations" ],
+    "link_local": 3
+  },
+  "30": {
+    "description": [
+      "TRG", "vidjil", "-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:TRG -y all", "-t 100 -d lenSeqAverage", "TRG, VgJg"
+    ],
+    "link_local": 5
+  },
+  "32": {
+    "description": [ "multi", "vidjil", "-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD -e 1 -w 50 -d -y all", "-t 100 -d lenSeqAverage", "multi-locus" ],
+    "link_local": 4
+  }
+}
+```
+
 
 
 ### Step 4 : prepare your server pre-process configs
