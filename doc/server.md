@@ -185,6 +185,8 @@ You can achieve this with the following steps:
     cp /etc/letsencrypt/live/vdd.vidjil.org/privkey.pem vidjil-client/ssl/web2py.key
     ```
     The certificates can be renewed with `certbot renew` but beware to copy the certificates after that.
+    Instead of copying the certificates, you may wish to mount `/etc/letsencrypt` in the Docker image as a volume (*eg.* `/etc/letsencrypt:/etc/nginx/ssl`).
+    On certificate renewal (with `certbot`), you then need to restart the Nginx server.
     
 If necessary, in `docker-compose.yml`, update `nginx.volumes`, line `./vidjil-client/ssl:/etc/nginx/ssl`, to set the directory with the certificates.
     The same can be done for the `postfix` container.
