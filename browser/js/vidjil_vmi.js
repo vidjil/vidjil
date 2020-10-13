@@ -103,8 +103,8 @@ VidjilVMI.prototype = {
         this.vmi.setView(this.vmi.views.segmenter, this.bot_id);
         this.reset_menu();
         this.mode = VVMI_NORMAL;
-        $('#vidjil-panels, #bot-container').removeClass('vidjil-panels-full');
-        $('#vidjil-panels, #bot-container').addClass('vidjil-panels-left');
+        $('#vidjil-panels, #bot-container').removeClass('vidjil-panels-left');
+        $('#vidjil-panels, #bot-container').addClass('vidjil-panels-full');
     },
 
     wide_mode : function() {
