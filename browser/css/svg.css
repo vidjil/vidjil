@@ -3,9 +3,15 @@
 /* default tag color */
 /* #dcffed also available */
 #vmi-menu {
-  position: unset;
-  bottom: unset;
+  top: 32px;
+  right: 0;
   width: unset;
+  background-color: #ffffff;
+  margin: 6px 0 0 0;
+}
+#vmi-menu div {
+  padding: 5px;
+  border: 1px solid;
 }
 html {
   height: 100%;
@@ -52,23 +58,22 @@ ul {
 #visu-container {
   position: relative;
   display: flex;
+  flex: 1 1 auto;
   flex-flow: column;
   -khtml-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   user-select: none;
-  height: 100%;
   width: 100%;
-  margin: auto;
   overflow: hidden;
-  background: #FFFFFF;
+  background: #ffffff;
 }
 #top-container {
   flex: 0 1 auto;
   height: 32px;
   width: 100%;
-  background: #FFFFFF;
+  background: #ffffff;
 }
 #top-container.alert {
   background: yellow;
@@ -91,7 +96,7 @@ ul {
 #upload_summary {
   display: none;
   z-index: 10;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 .upload_field {
   width: 100%;
@@ -111,13 +116,19 @@ ul {
 #vidjil-panels {
   position: fixed;
   top: 32px;
+  left: 0;
   bottom: 125px ;
-  width: calc(100% - 6px);
   background: #ffffff;
   margin: 6px;
   display: flex;
   flex: auto;
   overflow: hidden;
+}
+.vidjil-panels-left {
+  width: calc(100% - -64px);
+}
+.vidjil-panels-full {
+  width: calc(100% - 6px);
 }
 #mid-container {
   display: flex;
@@ -154,6 +165,9 @@ ul {
 #visu2 {
   max-height: calc(100% - 6px);
 }
+#visu3 {
+  height: 100%;
+}
 line {
   stroke: #586e75;
   stroke-width: 0.5;
@@ -163,7 +177,7 @@ line {
   flex: 0 0 auto;
   font-size: 13px;
   padding: 3px;
-  background: #FFFFFF;
+  background: #ffffff;
 }
 .info_line {
   border-bottom: solid;
@@ -191,10 +205,10 @@ line {
 }
 /*Style polyline / graph*/
 .background_graph {
-  fill: #FFFFFF;
+  fill: #ffffff;
 }
 .background_graph2 {
-  fill: #FFFFFF;
+  fill: #ffffff;
 }
 .graph_line {
   stroke-width: 1.5px;
@@ -228,12 +242,12 @@ line {
 }
 .axis_m {
   stroke: #777777;
-  opacity: 0.5;
+  opacity: 0.5 ;
   stroke-width: 20px;
 }
 .axis_m_other {
   stroke: #777777;
-  opacity: 0.25;
+  opacity: 0.25 ;
   stroke-width: 10px;
   display: none;
 }
@@ -252,12 +266,12 @@ line {
   fill: #777777;
 }
 #resolution1 {
-  fill: #FFFFFF;
+  fill: #ffffff;
   opacity: 1;
   pointer-events: none;
 }
 #resolution5 {
-  fill: #FFFFFF;
+  fill: #ffffff;
   opacity: 0.6;
   pointer-events: none;
 }
@@ -296,7 +310,7 @@ line {
   border-bottom: solid;
   border-left: solid;
   border-color: #333333;
-  background: #FFFFFF;
+  background: #ffffff;
   z-index: 1;
   overflow: auto;
   max-height: 100%;
@@ -316,12 +330,12 @@ line {
 }
 /*style scatterPlot element*/
 .background_sp {
-  fill: #FFFFFF;
+  fill: #ffffff;
 }
 .circle {
   cursor: pointer;
   -webkit-transition: fill 0.2s;
-  -o-transition: fill 0.2s;
+  -o-transition: fill  0.2s;
   -ms-transition: fill 0.2s;
   transition: fill 0.2s;
   fill: #777777;
@@ -459,7 +473,7 @@ line {
   font-size: 13px;
   cursor: pointer;
   -webkit-transition: color 0.2s;
-  -o-transition: color 0.2s;
+  -o-transition: color  0.2s;
   -ms-transition: color 0.2s;
   transition: color 0.2s;
   padding: 1px 4px 4px 1px;
@@ -527,7 +541,7 @@ line {
   text-align: center;
   border: solid;
   border-width: 1px;
-  border-color: #FFFFFF;
+  border-color: #ffffff;
   border-radius: 5px;
   margin: 0px 1px;
 }
@@ -664,13 +678,13 @@ line {
   bottom: 1px;
 }
 .highlight_seq {
-  top: 0.9em;
+  top: .9em;
   padding-bottom: 1px;
   opacity: 0.6;
   font-size: 70%;
-  letter-spacing: 0.428em;
+  letter-spacing: .428em;
   /* (1-.7) / .7 */
-  left: 0.214em;
+  left: .214em;
 }
 .highlight {
   display: inline-block;
@@ -703,7 +717,7 @@ span .end-codon {
   width: 220px;
   border: solid;
   display: none;
-  background: #FFFFFF;
+  background: #ffffff;
 }
 .dataMenu {
   padding: 5px;
@@ -713,7 +727,7 @@ span .end-codon {
   width: 220px;
   border: solid;
   display: none;
-  background: #FFFFFF;
+  background: #ffffff;
 }
 .tagElem {
   margin: 1px;
@@ -776,7 +790,7 @@ span .end-codon {
   margin: -2px 0px 0px 5px;
 }
 .menu-selector {
-  background: #FFFFFF;
+  background: #ffffff;
   color: #657B83;
   height: 18px;
   width: 60px;
@@ -797,7 +811,7 @@ span .end-codon {
   left: 50%;
   font-size: 13px;
   padding: 10px;
-  background: #FFFFFF;
+  background: #ffffff;
   display: none;
 }
 #add_clone_menu {
@@ -820,7 +834,7 @@ span .end-codon {
   transition-delay: 0s, 0s;
 }
 #add_clone_menu > #addclone_input.error {
-  border: 1px solid darkred;
+  border: 1px solid #8b0000;
 }
 #menu_right_part {
   float: right;
@@ -828,7 +842,7 @@ span .end-codon {
   justify-content: flex-end;
 }
 .buttonSelector {
-  background: #FFFFFF;
+  background: #ffffff;
   cursor: pointer;
   font-size: 13px;
   margin: 2px;
@@ -853,7 +867,7 @@ span .end-codon {
   max-width: 80%;
   font-size: 13px;
   padding: 10px;
-  background: #FFFFFF;
+  background: #ffffff;
   display: none;
   position: fixed;
   left: 50%;
@@ -886,14 +900,14 @@ a.tag-link {
   position: fixed;
   font-size: 13px;
   padding: 10px;
-  background: #FFFFFF;
+  background: #ffffff;
   display: none;
 }
 .modal.data-container,
 .modal.info-container {
   top: 50px;
   left: 495px;
-  max-width: calc(100% - (475px + 60px));
+  max-width: calc(100% - 535px);
   height: calc(100% - 215px);
 }
 .modal.jstree-container {
@@ -917,7 +931,7 @@ a.tag-link {
 #bot-container,
 #segmenter_axis_menu,
 .seq-fixed {
-  background: #FFFFFF;
+  background: #ffffff;
 }
 .closeButton {
   position: absolute;
@@ -995,7 +1009,7 @@ span.logo {
   font-size: 60% ;
   font-weight: bold;
   vertical-align: super;
-  opacity: 0.8;
+  opacity: .8;
   color: #f88;
 }
 .bot-bar {
@@ -1032,7 +1046,7 @@ span.logo {
   position: relative;
   text-align: center;
   float: left;
-  width: calc(100% - (475px + 350px + 300px + 50));
+  width: calc(100% - 1175px);
   overflow: hidden;
   height: 1.1em;
 }
@@ -1059,7 +1073,7 @@ span.logo {
   min-width: 150px;
   margin-left: -6px;
   border-top: none;
-  margin-top: calc(32px - 24px);
+  margin-top: calc(8px);
   z-index: 5;
   overflow: hidden;
 }
@@ -1068,9 +1082,8 @@ span.logo {
 }
 #bot-container {
   position: fixed;
-  left: 0;
   bottom: 0;
-  width: 100%;
+  left: 6px;
   border-top: solid;
   border-width: 6px;
   min-height: 125px;
@@ -1160,9 +1173,11 @@ span.logo {
   text-align: center;
   vertical-align: middle;
 }
-#info_timepoint td {
+#info_timepoint,
+#info_timepoint td,
+.info_overlaps td {
   min-width: 150px;
-  max-width: 700px;
+  max-width: 100%;
   overflow-wrap: break-word;
   word-wrap: break-word;
   border-style: solid;
@@ -1171,15 +1186,21 @@ span.logo {
   vertical-align: middle;
 }
 #info_window table,
-#info_timepoint table {
+#info_timepoint table,
+.info_overlaps {
   border-style: solid;
   border-color: #333333;
   border-collapse: collapse;
 }
 #info_window table .header,
-#info_timepoint table .header {
+#info_timepoint table .header,
+.info_overlaps table .header {
   border-width: 2px;
   background-color: #333333;
+}
+.info_overlaps_line {
+  background-color: #333333;
+  font-weight: bold;
 }
 span.ok {
   color: green;
@@ -1212,7 +1233,7 @@ text.alert {
   fill: red;
 }
 span.warningReads {
-  margin-left: 0.5em;
+  margin-left: .5em;
   display: inline-block;
   width: 1em;
   text-align: center;
@@ -1250,7 +1271,7 @@ span.warningReads {
   min-width: 22px;
   min-height: 18px;
   border-color: #333333;
-  background: #FFFFFF;
+  background: #ffffff;
   display: inline-block;
   padding: 2px;
 }
@@ -1293,7 +1314,7 @@ span.warningReads {
   border-width: 2px;
   border-radius: 5px;
   margin: 5px auto;
-  border-color: #FFFFFF;
+  border-color: #ffffff;
 }
 .sp_menu_icon:hover {
   background: #333333;
@@ -1319,7 +1340,7 @@ span.warningReads {
   white-space: nowrap;
 }
 .axis_select select {
-  background: #FFFFFF;
+  background: #ffffff;
   color: #777777;
   height: 20px;
   width: 120px;
@@ -1336,11 +1357,9 @@ span.warningReads {
 .axis_select select[selected=selected] {
   color: #777777;
 }
-#visu-separator {
+.visu-separator {
   position: relative;
   height: 6px;
-  cursor: move;
-  cursor: -webkit-grab;
   background: #333333;
 }
 #bot-separator {
@@ -1382,7 +1401,7 @@ span.warningReads {
   width: 100%;
   height: calc(100% - 35px);
   font-size: 14px;
-  background: #FFFFFF;
+  background: #ffffff;
   display: none;
   left: 0%;
 }
@@ -1421,7 +1440,7 @@ span.warningReads {
   background-color: #777777;
 }
 .db_table_split td {
-  border-top: 2ex solid #FFFFFF;
+  border-top: 2ex solid #ffffff;
 }
 .db_table .column_200 {
   width: 200px;
@@ -1451,8 +1470,8 @@ span.warningReads {
   width: 50px;
   border: solid;
   border-width: 1px;
-  border-color: #FFFFFF;
-  background: #FFFFFF;
+  border-color: #ffffff;
+  background: #ffffff;
 }
 h3 .uid {
   font-size: 70%;
@@ -1515,7 +1534,7 @@ h3 .uid {
 #db_table_container {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: calc(100% - 30px);
+  height: calc(70%);
   position: relative;
 }
 #db_fixed_header {
@@ -1633,7 +1652,7 @@ h3 .uid {
   border-radius: 5px;
   padding: 5px;
   margin: 5px;
-  background: #FFFFFF;
+  background: #ffffff;
   border-color: #333333;
   transition: background 1s linear;
 }
@@ -1645,27 +1664,27 @@ h3 .uid {
   min-height: 20px;
   display: block;
   margin: 5px;
-  background: #FFFFFF;
+  background: #ffffff;
   border: solid;
   border-width: 2px;
   border-radius: 2px;
-  border-color: #FFFFFF;
+  border-color: #ffffff;
 }
 .flash_1,
 .log_1 {
   font-weight: bold;
-  background-color: #DFF0D8;
+  background-color: #dff0d8;
 }
 .flash_2,
 .log_2 {
   font-weight: bold;
-  background-color: #F2DEAE;
+  background-color: #f2deae;
 }
 .flash_3,
 .log_3 {
   font-weight: bold;
   border-color: darkred;
-  background-color: #F2DEDE;
+  background-color: #f2dede;
 }
 .tip_1 {
   width: 400px;
@@ -1675,7 +1694,7 @@ h3 .uid {
   border-radius: 5px;
   padding: 5px;
   margin: 5px;
-  background: #DFF0D8;
+  background: #dff0d8;
   border-color: #333333;
 }
 #tip_img {
@@ -1719,7 +1738,7 @@ select > option:hover {
   border: solid;
   border-width: 1px;
   min-height: 20px;
-  background: #FFFFFF;
+  background: #ffffff;
   border-color: #333333;
   max-height: 100px;
   display: none;
@@ -1745,7 +1764,7 @@ input:focus,
 textarea:focus,
 #add_clone_menu > #addclone_input:focus {
   border-color: #333333;
-  box-shadow: inset 0 1px 1px #FFFFFF, 0 0 8px #333333;
+  box-shadow: inset 0 1px 1px #ffffff, 0 0 8px #333333;
   outline: 0;
   outline: thin dotted \9;
 }
@@ -1801,7 +1820,7 @@ table.log textarea {
   flex-grow: 1;
 }
 .tagColor0 {
-  background: #DC322F;
+  background: #dc322f;
 }
 .tagColor1 {
   background: #cb4b16;
@@ -1832,7 +1851,7 @@ table.log textarea {
   margin-left: 7px;
 }
 .inactiveTag {
-  background-image: linear-gradient(45deg, transparent -25%, #FFFFFF 100%, #FFFFFF 100%, transparent 0%);
+  background-image: linear-gradient(45deg, transparent -25%, #ffffff 100%, #ffffff 100%, transparent 0%);
 }
 .message_container {
   display: none;
@@ -1842,15 +1861,15 @@ table.log textarea {
   text-align: center;
 }
 .urgent_message {
-  border: 2px solid darkred;
+  border: 2px solid #8b0000;
   margin: 3px;
   font-weight: bold;
-  background-color: #F2DEDE;
+  background-color: #f2dede;
 }
 .info_message {
   border: 1px solid #333333;
   margin: 4px;
-  background-color: #DFF0D8;
+  background-color: #dff0d8;
 }
 .notification {
   padding: 3px;
@@ -2240,7 +2259,7 @@ form .form_label {
   margin-top: -20%;
 }
 .meter span.value_container span.meter_value {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   opacity: 0.5;
   color: #777777;
   height: 50%;
@@ -2252,7 +2271,7 @@ form .form_label {
   display: block;
   height: 100%;
   background-color: #777777;
-  background-image: linear-gradient(center bottom, #777777 37%, #FFFFFF 69%);
+  background-image: linear-gradient(center bottom, #777777 37%, #ffffff 69%);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(0, 0, 0, 0.4);
   position: relative;
   overflow: hidden;
@@ -2263,7 +2282,7 @@ form .form_label {
 .bar_chart .bar {
   display: inline-block;
   background-color: #777777;
-  background-image: linear-gradient(center bottom, #777777 37%, #FFFFFF 69%);
+  background-image: linear-gradient(center bottom, #777777 37%, #ffffff 69%);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(0, 0, 0, 0.4);
   min-width: 0.2%;
 }
