@@ -134,10 +134,10 @@ VidjilVMI.prototype = {
     },
 
     select_mode: function() {
-        if(window.innerWidth <= 900) {
+        if(window.innerWidth <= 900 && devel_mode) {
             if(this.mode !== VVMI_TABLET)
                 this.tablet_mode();
-        } else if(window.innerWidth >= 2150) {
+        } else if(window.innerWidth >= 2150 && devel_mode) {
             if(this.mode !== VVMI_WIDE)
                 this.wide_mode();
         } else {
