@@ -28,6 +28,7 @@ AJAX_TIMEOUT_MSG1  = 10000                 // Delay before first message
 AJAX_TIMEOUT_MSG2  = 30000                // Delay before second message
 var timeout;
 var ajaxOn = 0;
+var devel_mode = false;
 
 /* Console (optional)
  * Setting here a console replaces the default javascript console with a custom one.
