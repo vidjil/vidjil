@@ -52,13 +52,15 @@ ul {
 }
 #visu-container {
   position: relative;
-  flex: 1 1 auto;
+  display: flex;
+  flex-flow: column;
   -khtml-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   user-select: none;
   height: 100%;
+  width: 100%;
   margin: auto;
   overflow: hidden;
   background: #000000;
@@ -107,16 +109,21 @@ ul {
   user-select: none;
   overflow: hidden;
 }
-#mid-container {
+#vidjil-panels {
   position: fixed;
-  display: flex;
-  flex: 1 1 auto;
   top: 32px;
   bottom: 125px ;
   width: calc(100% - 6px + 6px);
-  overflow: hidden;
   background: #000000;
   margin: 6px;
+  display: flex;
+  flex: auto;
+  overflow: hidden;
+}
+#mid-container {
+  display: flex;
+  flex: auto;
+  overflow: hidden;
 }
 #right-container {
   -khtml-user-select: none;
@@ -142,6 +149,8 @@ ul {
 #visu,
 #visu2 {
   height: 50%;
+  display: flex;
+  flex: auto;
   width: 100%;
 }
 #visu2 {
@@ -414,6 +423,7 @@ line {
 #list {
   flex: 1 1 auto;
   height: 0px;
+  min-height: 20%;
   max-height: 100%;
   display: flex;
   flex-direction: column;

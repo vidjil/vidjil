@@ -106,16 +106,22 @@ ul {
   user-select: none;
   overflow: hidden;
 }
-#mid-container {
+#vidjil-panels {
   position: fixed;
-  display: flex;
-  flex: 1 1 auto;
   top: 32px;
   bottom: 125px ;
   width: calc(100% - 6px + 6px);
   overflow: hidden;
-  background: #FFFFFF;
+  background: #ffffff;
   margin: 6px;
+  display: flex;
+  flex: auto;
+  overflow: hidden;
+}
+#mid-container {
+  display: flex;
+  flex: auto;
+  overflow: hidden;
 }
 #right-container {
   -khtml-user-select: none;
@@ -141,6 +147,8 @@ ul {
 #visu,
 #visu2 {
   height: 50%;
+  display: flex;
+  flex: auto;
   width: 100%;
 }
 #visu2 {
@@ -413,6 +421,7 @@ line {
 #list {
   flex: 1 1 auto;
   height: 0px;
+  min-height: 20%;
   max-height: 100%;
   display: flex;
   flex-direction: column;
