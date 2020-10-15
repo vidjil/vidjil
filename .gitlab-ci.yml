@@ -13,6 +13,7 @@ stages:
   - deploy_review
   - test_germlines
   - test_functional
+  - test_tutorial
   - test_shouldvdj
   - test_functional_external
   - coverage
@@ -283,6 +284,53 @@ chrome-browser-functional-external:
     
 old-chrome-browser-functional-external-chrome:
   extends: .browser-functional-external-chrome
+  tags:
+    - legacy
+
+
+
+.browser-tutorial:
+  stage: test_tutorial
+  retry: 2
+  script:
+    - make -C browser
+    - source /etc/profile.d/rvm.sh
+    - rvm use 2.6.1
+    - HEADLESS=1 make test_tutorial
+  artifacts:
+    paths:
+    - browser/
+    reports:
+      junit: browser/test/test/TEST-*.xml
+  only:
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
+    - prod-client
+    - schedules
+  tags:
+    - web
+
+.browser-tutorial-chrome:
+  extends: .browser-tutorial
+  variables:
+    WATIR_CHROME: "1"
+
+
+ff32-browser-tutorial:
+  extends: .browser-tutorial
+  variables:
+    FIREFOX_VERSION: 32
+
+ff45-browser-tutorial:
+  extends: .browser-tutorial
+  variables:
+    FIREFOX_VERSION: 45
+
+chrome-browser-tutorial:
+  extends: .browser-tutorial-chrome
+        
+old-chrome-browser-tutorial:
+  extends: .browser-tutorial-chrome
   tags:
     - legacy
 
