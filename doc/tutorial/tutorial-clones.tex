@@ -392,7 +392,7 @@ After this rename, you can see that the clone is still selected.
   bottom plot.}
 \begin{verbatim}
   def test_B_clones_14_unselect_by_click_in_empty_zone
-
+    # TODO
   end
 \end{verbatim}
 
@@ -563,7 +563,7 @@ them to see more easily their similarities.
 emphasized in bold.}
 \begin{verbatim}
   def test_B_clones_19_align
-    # TODO
+    # TODO; align don't available without server
   end
 \end{verbatim}
 
@@ -633,7 +633,7 @@ Open the \com{cluster} menu, and choose \com{cluster by V/5}. What happened ? Th
     $b.element(:id => "clusterBy_5").wait_until(&:present?)
     $b.element(:id => "clusterBy_5").click
 
-    ## TODO; import brahce corrigée
+    ## TODO; wait MR !811
   end
 \end{verbatim}
 
@@ -643,7 +643,7 @@ Open the \com{cluster} menu, and choose \com{cluster by V/5}. What happened ? Th
     $b.element(:id => "cluster_menu").hover
     $b.element(:id => "cluster_break_all").wait_until(&:present?)
     $b.element(:id => "cluster_break_all").click
-    ## TODO; import brahce corrigée
+    ## TODO; wait MR !811
   end
 \end{verbatim}
 
@@ -659,17 +659,17 @@ insertions.
   and in the preset box choose \com{V/N length}.}
 \begin{verbatim}
   def test_B_clones_26_change_scatter_axis
-    # change preset, first time as user can do (don't use $b.scatterplot_select_preset) 
+    # change preset, first time manually as user can do (don't use $b.scatterplot_select_preset this time) 
     select_preset = $b.select_list(:name => "select_preset[]")
     $b.element(:id => "visu_sp_menu").hover
     select_preset.select("V/N length")
     $b.update_icon.wait_while(&:present?)
 
-    ## TODO; control
-    
-    # selectX = $b.select_list(:name => "select_x[]")
-    # selectY = $b.select_list(:name => "select_y[]")
-    # selectX.select("J/3' gene")
+    assert ( $b.scatterplot_x_label.text == "V/5' gene" ), "Correct legend for axe X for preset V/N length"
+    assert ( $b.scatterplot_y_label.text == "N length" ), "Correct legend for axe Y for preset V/N length"
+    assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"), "scatterplot_legend X for this preset is 'IGHV1-2'"
+    assert ( $b.scatterplot_y_legend(0).text == "?"), "scatterplot_legend Y for this preset is '?'"
+
   end
 \end{verbatim}
 
@@ -681,6 +681,10 @@ Then you can continue aligning and clustering clones if necessary.
   def test_B_clones_27_change_preset_2
     $b.scatterplot_select_preset "clone average read length / GC content"
     $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_label.text == "clone average read length" ), "Correct legend for axe X for preset 0"
+    assert ( $b.scatterplot_y_label.text == "GC content" ), "Correct legend for axe Y for preset 0"
+    assert ( $b.scatterplot_x_legend(0).text == "20"), "scatterplot_legend X for this preset is '20'"
+    assert ( $b.scatterplot_y_legend(0).text == "0.40"), "scatterplot_legend Y for this preset is '0.40'"
   end
 \end{verbatim}
 
@@ -695,14 +699,23 @@ and the $y$ axis selects the order of the boxes sharing a same $x$).
 In the bar plot mode, pass the mouse over the bars: What happens?}
 \begin{verbatim}
   def test_B_clones_28_switch_scatterplot_mode
+    $b.send_keys 0
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_label.text == "V/5' gene" ), "Correct legend for axe X for preset 0"
+    assert ( $b.scatterplot_y_label.text == "J/3' gene" ), "Correct legend for axe Y for preset 0"
+
     $b.element(:id => "visu_sp_menu").hover
     $b.div(:id => "visu_bar").click
     $b.update_icon.wait_while(&:present?)
-    sleep 1
+    assert ( $b.scatterplot_x_label.text == "V/5' gene" ), "Correct legend for axe X after switch in bar mode"
+    assert ( $b.scatterplot_y_label.text == "size" ), "Correct legend for axe Y after switch in bar mode"
 
     $b.element(:id => "visu_sp_menu").hover
     $b.div(:id => "visu_plot").click
     $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_label.text == "V/5' gene" ), "Correct legend for axe X after switch back in bubble mode"
+    assert ( $b.scatterplot_y_label.text == "J/3' gene" ), "Correct legend for axe Y after switch back in bubble mode"
+
   end
 \end{verbatim}
 
@@ -721,14 +734,82 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
   def test_B_clones_29_shortcut_preset
     $b.send_keys 0
     $b.update_icon.wait_while(&:present?)
-    ## todo make control
+    assert ( $b.scatterplot_x_label.text == "V/5' gene" ), "Correct legend for axe X for preset 0"
+    assert ( $b.scatterplot_y_label.text == "J/3' gene" ), "Correct legend for axe Y for preset 0"
+    # assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"), "scatterplot_legend X at init; IGHV1-2"
+    # assert ( $b.scatterplot_y_legend(0).text == "IGHJ1"), "scatterplot_legend Y at init; IGHJ-1"
+
+    $b.send_keys 1
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_label.text == "V/5' allele" ), "Correct legend for axe X for preset 1"
+    assert ( $b.scatterplot_y_label.text == "J/3' allele" ), "Correct legend for axe Y for preset 1"
+    #assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2*04"), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
+    #assert ( $b.scatterplot_y_legend(0).text == "IGHJ1"), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
+
+
+    $b.send_keys 2
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_label.text == "V/5' gene" ), "Correct legend for axe X for preset 2"
+    assert ( $b.scatterplot_y_label.text == "N length" ), "Correct legend for axe Y for preset 2"
+    #assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
+    #assert ( $b.scatterplot_y_legend(0).text == "?"), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
+
+    $b.send_keys 3
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_label.text == "clone average read length" ), "Correct legend for axe X for preset 3"
+    assert ( $b.scatterplot_y_label.text == "locus" ), "Correct legend for axe Y for preset 3"
+    #assert ( $b.scatterplot_x_legend(0).text == "20"), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
+    #assert ( $b.scatterplot_y_legend(0).text == "IGH"), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
+
+    $b.send_keys 4
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_label.text == "clone average read length" ), "Correct legend for axe X for preset 4"
+    assert ( $b.scatterplot_y_label.text == "size" ), "Correct legend for axe Y for preset 4"
+    #assert ( $b.scatterplot_x_legend(0).text == "20"), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
+    #assert ( $b.scatterplot_y_legend(0).text == "20%"), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
+
+    $b.send_keys 5
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_label.text == "V/5' gene" ), "Correct legend for axe X for preset 5"
+    assert ( $b.scatterplot_y_label.text == "size" ), "Correct legend for axe Y for preset 5"
+    #assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
+    #assert ( $b.scatterplot_y_legend(0).text == "16%"), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
+
+    $b.send_keys 6
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_label.text == "N length" ), "Correct legend for axe X for preset 6"
+    assert ( $b.scatterplot_y_label.text == "size" ), "Correct legend for axe Y for preset 6"
+    #assert ( $b.scatterplot_x_legend(0).text == "?"), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
+    #assert ( $b.scatterplot_y_legend(0).text == "55%"), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
+
+    $b.send_keys 7
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_label.text == "CDR3 length (nt)" ), "Correct legend for axe X for preset 7"
+    assert ( $b.scatterplot_y_label.text == "size" ), "Correct legend for axe Y for preset 7"
+    #assert ( $b.scatterplot_x_legend(0).text == ""), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
+    #assert ( $b.scatterplot_y_legend(0).text == ""), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
+
+    $b.send_keys 8
+    $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_label.text == "J/3' gene" ), "Correct legend for axe X for preset 8"
+    assert ( $b.scatterplot_y_label.text == "size" ), "Correct legend for axe Y for preset 8"
+    #assert ( $b.scatterplot_x_legend(0).text == ""), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
+    #assert ( $b.scatterplot_y_legend(0).text == ""), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
 
     $b.send_keys 9
     $b.update_icon.wait_while(&:present?)
-    ## todo make control
+    assert ( $b.scatterplot_x_label.text == "size" ), "Correct legend for axe X for preset 9"
+    assert ( $b.scatterplot_y_label.text == "size (other sample)" ), "Correct legend for axe Y for preset 9"
+    #assert ( $b.scatterplot_x_legend(0).text == ""), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
+    #assert ( $b.scatterplot_y_legend(0).text == ""), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
 
     # $b.send_keys 0
     $b.update_icon.wait_while(&:present?)
+    assert ( $b.scatterplot_x_label.text == "V/5' gene" ), "Correct legend for axe X for preset 0"
+    assert ( $b.scatterplot_y_label.text == "J/3' gene" ), "Correct legend for axe Y for preset 0"
+    #assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
+    #assert ( $b.scatterplot_y_legend(0).text == "?"), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
+
   end
 \end{verbatim}
 
@@ -818,7 +899,8 @@ sequences are, and potentially you could cluster them if you'd like or tag them.
     $b.update_icon.wait_while(&:present?)
 
     assert ( $b.clone_in_segmenter("IGHJ6*02").exist? ), "sequence germline is present in the segmenter"
-    # todo, align; mutation
+    # todo, align; mutation; not available without server side
+
   end
 \end{verbatim}
 
