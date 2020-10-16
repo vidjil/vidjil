@@ -10,7 +10,7 @@
         "3": 269
       },
       "sequence": 0,
-      "top": 231
+      "top": 3
     },
     {
       "germline": "IGH",
@@ -22,7 +22,7 @@
         "3": 7
       },
       "sequence": 0,
-      "top": 6639
+      "top": 4
     },
     {
       "germline": "TRG",
@@ -34,7 +34,7 @@
         "3": 1
       },
       "sequence": 0,
-      "top": 47580
+      "top": 7
     },
     {
       "_average_read_length": [
@@ -105,7 +105,7 @@
         "3": 1054
       },
       "sequence": "CAAGGTTCAGCGGCAGTGGATCTGGGACAGATTTCACTCTCACCATCAGCAGTCTGCAACCTGAAGATTTTGCAACTTACTACTGTCAACAGAGTTACAGTACCCCTCGGACGTTCGGCCAAGGGACCAAGGTGGAGATCAAACGTAAG",
-      "top": 10,
+      "top": 2,
       "warn": [
         {
           "code": "W69",
@@ -184,7 +184,7 @@
         "3": 1
       },
       "sequence": 0,
-      "top": 38430
+      "top": 6
     },
     {
       "germline": "IGH",
@@ -196,7 +196,7 @@
         "3": 1
       },
       "sequence": 0,
-      "top": 15850
+      "top": 5
     }
   ],
   "config": {

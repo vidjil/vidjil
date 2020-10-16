@@ -10,7 +10,7 @@
         "3": 2
       },
       "sequence": 0,
-      "top": 13375
+      "top": 6
     },
     {
       "germline": "IGH",
@@ -22,7 +22,7 @@
         "3": 17
       },
       "sequence": 0,
-      "top": 2930
+      "top": 3
     },
     {
       "germline": "IGH+",
@@ -34,7 +34,7 @@
         "3": 5
       },
       "sequence": 0,
-      "top": 4514
+      "top": 5
     },
     {
       "germline": "TRG",
@@ -46,7 +46,7 @@
         "3": 1
       },
       "sequence": 0,
-      "top": 58163
+      "top": 8
     },
     {
       "germline": "unexpected",
@@ -58,7 +58,7 @@
         "3": 1
       },
       "sequence": 0,
-      "top": 52899
+      "top": 7
     },
     {
       "_average_read_length": [
@@ -138,7 +138,7 @@
         "3": 16303
       },
       "sequence": "CGTCCAAGAACCAGTTCTCCCTGAAGCTGAGCTCTGTGACCGCTGCGGACACGGCCGTGTATTACTGTGCGAGAAGGGGTATAGCAGCAGCTGGTGCCTACTTTGACTACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGTAAG",
-      "top": 6
+      "top": 2
     },
     {
       "_average_read_length": [
@@ -218,7 +218,7 @@
         "3": 25527
       },
       "sequence": "TACCATGACCAACATGGACCCTGTGGACACAGCCACATATTACTGTGCACGGAAGGGACCTTTACGATTTTTGGAGTGGTTATTAGGCCCTCTTACTACGGTATGGACGTCTGGGGCCAAGGGACCACGGTCACCGTCTCCTCAGGTAAG",
-      "top": 3,
+      "top": 1,
       "warn": [
         {
           "code": "W69",
@@ -237,7 +237,7 @@
         "3": 2
       },
       "sequence": 0,
-      "top": 7007
+      "top": 5
     }
   ],
   "config": {

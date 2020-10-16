@@ -218,19 +218,26 @@ class Window:
                   "R2": [0],
                   "family": ["None"],
                    "norm_coeff": [0]}
-        if "mrd" in self.d:
-            first = self.d["mrd"]
-        else:
-            first = zeroed
-        if "mrd" in other.d:
-            second = other.d["mrd"]
-        else:
-            second = zeroed
-        obj.d["mrd"] = {}
-        concatenate_with_padding(obj.d["mrd"],
-                                 first, len(self.d["reads"]),
-                                 second, len(other.d["reads"]))
-                    
+        if "mrd" in self.d or "mrd" in other.d:
+            if "mrd" in self.d:
+                first = self.d["mrd"]
+            else:
+                first = zeroed
+                for key in first.keys():
+                    first[key] = first[key] * len(self.d["reads"])
+
+            if "mrd" in other.d:
+                second = other.d["mrd"]
+            else:
+                second = zeroed
+                for key in second.keys():
+                    second[key] = second[key] * len(other.d["reads"])
+
+            obj.d["mrd"] = {}
+            concatenate_with_padding(obj.d["mrd"],
+                                     first, len(self.d["reads"]),
+                                     second, len(other.d["reads"]))
+                        
         # All other data, including 'top'
         # When there are conflicting keys, keep data from the 'topmost' clone
         order = [other, self] if other.d["top"] < self.d["top"] else [self, other]
@@ -454,9 +461,9 @@ class Samples:
         
 class MRD: 
 
-    def __init__(self):
+    def __init__(self, number=1):
         self.d={}
-        self.d["number"] = 0
+        self.d["number"] = number
             
     def __add__(self, other):
         obj=MRD()
@@ -611,7 +618,6 @@ class ListWindows(VidjilJson):
         self.d["clones"] = []
         self.d["clusters"] = []
         self.d["germlines"] = {}
-        self.d["mrd"] = MRD()
         
         self.d["vidjil_json_version"] = VIDJIL_JSON_VERSION
         self.d["producer"] = FUSE_VERSION
@@ -769,7 +775,12 @@ class ListWindows(VidjilJson):
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
         obj.d["diversity"] = self.d["diversity"] + other.d["diversity"]
-        if "mrd" in self.d and "mrd" in other.d:
+        if "mrd" in self.d or "mrd" in other.d:
+            if not "mrd" in self.d:
+                self.d["mrd"] = MRD()
+            if not "mrd" in other.d:
+                other.d["mrd"] = MRD()
+
             obj.d["mrd"] = self.d["mrd"] + other.d["mrd"]
         
         try:
