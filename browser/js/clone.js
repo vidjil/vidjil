@@ -1374,9 +1374,22 @@ Clone.prototype = {
         //warnings
         if (this.isWarned()) {
             html += header("warnings")
-
+            var warnings = {}
+            // Create a dict of all warning present, and add each sample with it
+            // One warning msg by entrie, without duplication.
             for (i = 0; i < this.warn.length; i++) {
-                html += row_1(this.warn[i].code, this.warn[i].msg);
+                if (this.warn[i] != 0 && this.warn[i] != undefined){
+                    if (warnings[this.warn[i].msg] == undefined){
+                        warnings[this.warn[i].msg] = {"code":this.warn[i].code, "msg": this.warn[i].msg, "samples":[i]}
+                    } else {
+                        warnings[this.warn[i].msg].samples.push(i)
+                    }
+                }
+            }
+            // put warning html content, with list of concerned sample, without duplication
+            for (warn in warnings) {
+                var pluriel = warnings[warn].samples.length > 1 ? "s" : ""
+                html += row_1(warnings[warn].code, warnings[warn].msg);
             }
         }
 
