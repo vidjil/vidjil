@@ -42,7 +42,8 @@ class SampleSetList():
             groupby = [s_table.id, s_table.sample_set_id, s_table.name, s_table.info, db.auth_user.last_name],
 
         self.result = db(
-            (s_table.sample_set_id > 0) &
+            (auth.vidjil_accessible_query('read', db.sample_set)) &
+            (s_table.sample_set_id == db.sample_set.id) &
             (s_table.creator == db.auth_user.id)
         ).select(
             s_table.id.with_alias('id'),
