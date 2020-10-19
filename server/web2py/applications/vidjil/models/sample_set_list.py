@@ -14,6 +14,7 @@ class SampleSetList():
                 db.config.on(db.fused_file.config_id == db.config.id),
                 db.auth_permission.on((db.auth_permission.table_name == 'sample_set') & (db.auth_permission.record_id == s_table.sample_set_id) & (db.auth_permission.name == PermissionEnum.access.value)),
                 db.auth_group.on(db.auth_permission.group_id == db.auth_group.id),
+                db.auth_membership.on(db.auth_group.id == db.auth_membership.group_id),
                 db.auth_permission.with_alias('anon_permission').on(
                     (db.anon_permission.table_name == self.type) &
                     (db.anon_permission.name == "anon")  &
