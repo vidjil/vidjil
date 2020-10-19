@@ -61,7 +61,29 @@ def index():
 
     if request.vars["config_id"] and request.vars["config_id"] != "-1" and request.vars["config_id"] != "None":
         config_id = long(request.vars["config_id"])
-        config_name = db.config[request.vars["config_id"]].name
+        config = True
+    elif request.vars["config_id"] and request.vars["config_id"] == "-1":
+        most_used_query = db(
+                (db.fused_file.sample_set_id == sample_set.id)
+            ).select(
+                db.fused_file.config_id.with_alias('id'),
+                db.fused_file.id.count().with_alias('use_count'),
+                groupby=db.fused_file.config_id,
+                orderby=db.fused_file.id.count(),
+                limitby=(0,1)
+            )
+        if len(most_used_query) > 0:
+            config_id = most_used_query[0].id
+            config = True
+        else:
+            config_id = -1
+            config = False
+    else:
+        config_id = -1
+        config = False
+
+    if config :
+        config_name = db.config[config_id].name
 
         fused = db(
             (db.fused_file.sample_set_id == sample_set_id)
@@ -73,7 +95,6 @@ def index():
         ).select(orderby=~db.analysis_file.analyze_date)
         
         
-        config = True
         fused_count = fused.count()
         fused_file = fused.select()
         fused_filename = info_file["filename"] +"_"+ config_name + ".vidjil"
@@ -81,17 +102,6 @@ def index():
         analysis_file = analysis
         analysis_filename = info_file["filename"]+"_"+ config_name + ".analysis"
         
-    else:
-        config_id = -1
-        config = False
-        fused_count = 0
-        fused_file = ""
-        fused_filename = ""
-        analysis_count = 0
-        analysis_file = ""
-        analysis_filename = ""
-
-    if config :
 	query =[]
 	
         query2 = db(
@@ -113,6 +123,12 @@ def index():
 		previous=row.sequence_file.id
 
     else:
+        fused_count = 0
+        fused_file = ""
+        fused_filename = ""
+        analysis_count = 0
+        analysis_file = ""
+        analysis_filename = ""
 
         query = db(
                 (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
