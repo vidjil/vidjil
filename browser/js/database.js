@@ -834,6 +834,7 @@ Database.prototype = {
             xhrField: {withCredentials: true},
             success: function (result) {
                 db.call("default/home");
+                db.clear_login_info();
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
@@ -843,6 +844,23 @@ Database.prototype = {
                 }
             }
         });
+    },
+
+    extract_login_info: function() {
+        var login_info = document.getElementById('db_auth_name');
+        if(login_info != null) {
+            var container = document.getElementById('login-container');
+            container.innerHTML = login_info.innerHTML;
+            var logout = document.createElement('a');
+            logout.classList.add('button');
+            logout.text = '(logout)';
+            logout.onclick = function() {db.logout()};
+            container.appendChild(logout);
+        }
+    },
+
+    clear_login_info: function() {
+        document.getElementById('login-container').innerHTML = '';
     },
 
     /*récupére et initialise le browser avec un fichier .data
@@ -1077,6 +1095,7 @@ Database.prototype = {
         this.div.style.display = "block";
         this.msg.innerHTML = msg;
             
+        this.extract_login_info();
         this.uploader.display()
     },
 
