@@ -16,6 +16,7 @@ var config = {
      */
 
     /* 1) Patient database */
+    "server_id" : "",
     "use_database" : true,
     "db_address" : "https://localhost/vidjil/", // Public test server
     "login" : "",

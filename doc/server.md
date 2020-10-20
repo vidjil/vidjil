@@ -731,6 +731,8 @@ Now we need to configure the database connection parameters:
     ```
 
 This tells the browser to access the server on the current domain.
+You may also add a variable called `server_id` in order to name different
+instances and environments; it will be displayed in the top menu.
 
   - copy vidjil/server/web2py/applications/vidjil/modules/defs.py.sample
     to vidjil/server/web2py/applications/vidjil/modules/defs.py
