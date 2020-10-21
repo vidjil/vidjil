@@ -119,7 +119,7 @@ Model_loader.prototype = {
             self.dataFileName = document.getElementById(id)
                 .files[0].name;
             self.check_export_monitor()
-
+            self.file_source = "local";
         }
 
     }, 
@@ -204,6 +204,7 @@ Model_loader.prototype = {
                 self.update_selected_system()
                 self.dataFileName = url_split[url_split.length-1]
                 self.check_export_monitor()
+                self.file_source = "database";
 
                 // self.applyUrlParams(paramsDict);
                 callback()

@@ -13,6 +13,12 @@ function Url(model, win) {
 Url.prototype= {
     update: function () {
 
+        //keep url up to date only for database file
+        if (this.m.file_source != "database") {
+            this.clean();
+            return;
+        }
+
         // get selected clones
         var selectedList = this.m.getSelected();
         var params_dict = this.url_dict;
