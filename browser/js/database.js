@@ -977,6 +977,7 @@ Database.prototype = {
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.m.resume()
+                self.m.url_manager.clean();
                 self.display_result(result, "", args);
                 self.connected = true;
             },

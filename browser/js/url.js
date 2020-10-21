@@ -198,6 +198,22 @@ Url.prototype= {
         this.url_dict = {};
         this.pushUrl("");
         db.load_custom_data();
+    },
+
+    clean: function(){
+        var url = this.window.location;
+        var original_pathname = url.pathname;
+        var positionnal_params = url.pathname.substr(1).split('-');
+        if (positionnal_params.length > 1 && positionnal_params[0] != "index.html"){   
+            var split = original_pathname.split('/');
+            if (split[split.length-1] == "")
+                split.splice(split.length-1, 1);
+            split.splice(split.length-1, 1);
+            original_pathname = split.join('/');
+        } 
+
+        if (original_pathname == "") original_pathname = "/";
+        this.pushUrl(original_pathname);
     }
 
 };
