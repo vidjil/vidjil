@@ -166,6 +166,10 @@ class SampleSet(object):
     def get_dedicated_group(self):
         pass
 
+    @abstractmethod
+    def get_filtered_fields(self, search):
+        pass
+
 def get_sample_name(sample_set_id):
     '''
     Return the name associated with a sample set (eg. a run or a

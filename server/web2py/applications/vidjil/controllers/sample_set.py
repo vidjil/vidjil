@@ -210,8 +210,7 @@ def all():
 
     step = None
     page = None
-    is_not_filtered = "sort" not in request.vars and "filter" not in request.vars
-    if request.vars['page'] is not None and is_not_filtered:
+    if request.vars['page'] is not None:
         page = int(request.vars['page'])
         step = 50
 
@@ -226,7 +225,7 @@ def all():
     helper = factory.get_instance(type=type)
 
     f = time.time()
-    slist = SampleSetList(helper, page, step, tags)
+    slist = SampleSetList(helper, page, step, tags, search)
 
     # failsafe if filtered display all results
     step = len(slist) if step is None else step
@@ -245,7 +244,6 @@ def all():
     else:
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
 
-    result = helper.filter(search, result)
     log.info("%s list %s" % (request.vars["type"], search), extra={'user_id': auth.user.id,
         'record_id': None,
         'table_name': "sample_set"})

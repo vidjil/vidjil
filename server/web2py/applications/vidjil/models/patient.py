@@ -75,6 +75,11 @@ class Patient(SampleSet):
         table = db[self.type]
         return [table.first_name, table.last_name, table.birth]
 
+    def get_filtered_fields(self, search):
+        table = db[self.type]
+        return (table.first_name.contains(search) |
+                table.last_name.contains(search))
+
     def get_name_filter_query(self, query):
         if query is None or query == '':
             return (db[self.type].id > 0)

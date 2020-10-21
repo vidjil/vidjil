@@ -42,3 +42,7 @@ class Generic(SampleSet):
     def get_dedicated_group(self):
         table = db[self.type]
         return [table.name]
+
+    def get_filtered_fields(self, search):
+        table = db[self.type]
+        return table.name.contains(search)
