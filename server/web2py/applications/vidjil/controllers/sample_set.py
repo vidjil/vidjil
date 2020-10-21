@@ -222,16 +222,17 @@ def all():
     search, tags = parse_search(request.vars["filter"])
     group_ids = get_involved_groups()
 
+    factory = ModelFactory()
+    helper = factory.get_instance(type=type)
+
     f = time.time()
-    slist = SampleSetList(type, page, step, tags)
+    slist = SampleSetList(helper, page, step, tags)
 
     # failsafe if filtered display all results
     step = len(slist) if step is None else step
     page = 0 if page is None else page
     result = slist.result
 
-    factory = ModelFactory()
-    helper = factory.get_instance(type=type)
     fields = helper.get_fields()
     sort_fields = helper.get_sort_fields()
 

@@ -32,3 +32,13 @@ class Generic(SampleSet):
         if data["name"].find("|") >= 0:
             error.append("illegal character '|' in name")
         return error
+
+    def get_dedicated_fields(self):
+        table = db[self.type]
+        return [
+            table.name.with_alias('name')
+        ]
+
+    def get_dedicated_group(self):
+        table = db[self.type]
+        return [table.name]

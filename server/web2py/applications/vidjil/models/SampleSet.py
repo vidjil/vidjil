@@ -158,6 +158,14 @@ class SampleSet(object):
     def validate(self, data):
         pass
 
+    @abstractmethod
+    def get_dedicated_fields(self):
+        pass
+
+    @abstractmethod
+    def get_dedicated_group(self):
+        pass
+
 def get_sample_name(sample_set_id):
     '''
     Return the name associated with a sample set (eg. a run or a

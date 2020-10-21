@@ -4,9 +4,9 @@ class SampleSetList():
 
     This class is used to load all the required information for such a list.
     '''
-    def __init__(self, type, page=None, step=None, tags=None):
-        self.type = type
-        s_table = db[type]
+    def __init__(self, helper, page=None, step=None, tags=None):
+        self.type = helper.get_type()
+        s_table = db[self.type]
 
         limitby = None
         if page is not None and step is not None:
@@ -16,7 +16,10 @@ class SampleSetList():
                 db.sequence_file.on(db.sample_set_membership.sequence_file_id == db.sequence_file.id),
                 db.fused_file.on(s_table.sample_set_id == db.fused_file.sample_set_id),
                 db.config.on(db.fused_file.config_id == db.config.id),
-                db.auth_permission.on((db.auth_permission.table_name == 'sample_set') & (db.auth_permission.record_id == s_table.sample_set_id) & (db.auth_permission.name == PermissionEnum.access.value)),
+                db.auth_permission.on(
+                    (db.auth_permission.table_name == 'sample_set') &
+                    (db.auth_permission.record_id == s_table.sample_set_id) &
+                    (db.auth_permission.name == PermissionEnum.access.value)),
                 db.auth_group.on(db.auth_permission.group_id == db.auth_group.id),
                 db.auth_membership.on(db.auth_group.id == db.auth_membership.group_id),
                 db.auth_permission.with_alias('anon_permission').on(
@@ -33,17 +36,10 @@ class SampleSetList():
         group_config_names = get_config_names_select()
         group_group_names = get_group_names_select()
 
-        # TODO remove this hack
-        if self.type == 'patient':
-            dedicated_fields = [
-                s_table.first_name.with_alias('first_name'),
-                s_table.last_name.with_alias('last_name'),
-                s_table.birth.with_alias('birth'),
-            ]
-            groupby = [s_table.id, s_table.sample_set_id, s_table.first_name, s_table.last_name, s_table.birth, s_table.info, db.auth_user.last_name]
-        else:
-            dedicated_fields = [s_table.name.with_alias('name')]
-            groupby = [s_table.id, s_table.sample_set_id, s_table.name, s_table.info, db.auth_user.last_name],
+        dedicated_fields = helper.get_dedicated_fields()
+
+        groupby = [s_table.id, s_table.sample_set_id, s_table.info, db.auth_user.last_name]
+        groupby += helper.get_dedicated_group()
 
         query = ((auth.vidjil_accessible_query('read', db.sample_set)) &
             (s_table.sample_set_id == db.sample_set.id) &
@@ -75,7 +71,7 @@ class SampleSetList():
                 *select + dedicated_fields,
                 left=left,
                 limitby = limitby,
-                orderby = ~db[type].id,
+                orderby = ~db[self.type].id,
                 groupby = groupby + [db.tag_ref.record_id|db.tag_ref.table_name],
                 having = count >= len(tags),
                 cacheable=True
@@ -88,7 +84,7 @@ class SampleSetList():
                 left=left,
                 limitby = limitby,
                 groupby = groupby,
-                orderby = ~db[type].id,
+                orderby = ~db[self.type].id,
                 cacheable=True
             )
 
