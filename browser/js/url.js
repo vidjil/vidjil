@@ -1,11 +1,11 @@
 function Url(model, win) {
     View.call(this, model);
     this.m = model;
-    this.window = (typeof win != "undefined") ? win : window
+    this.window = (typeof win != "undefined") ? win : window;
 
     this.encoder = new UrlEncoder();
-    this.url_dict = this.parseUrlParams(this.window.location.search.toString())
-    this.sp = this.m.sp
+    this.url_dict = this.parseUrlParams(this.window.location.search.toString());
+    this.sp = this.m.sp;
 
     this.m.start(this.url_dict);
 }
@@ -109,10 +109,19 @@ Url.prototype= {
     },
 
     parseUrlParams:function (urlparams) {
-        params={} 
+        params={};
+
+        var url = this.window.location;
+        var positionnal_params = url.pathname.substr(1).split('-');
+        var pos_param_keys = this.getPositionnalParams();
+        if (positionnal_params.length > 1 && positionnal_params[0] != "index.html")
+            for (var j = 0; j < positionnal_params.length; j++) 
+                params[pos_param_keys[j]] = positionnal_params[j];
+
         if (urlparams.length === 0) {
             return params;
         }
+
         url_param = urlparams.substr(1).split("&");
         for (var i = 0; i < url_param.length; i++) {
             var tmparr = url_param[i].split("=");
@@ -133,14 +142,8 @@ Url.prototype= {
                 params[key].push(val);
             }
         }
-
-        var url = this.window.location;
-        var positionnal_params = url.pathname.substr(1).split('-');
-        var pos_param_keys = this.getPositionnalParams();
-        if (positionnal_params.length > 1 && positionnal_params[0] != "index.html")
-        for (var j = 0; j < positionnal_params.length; j++) 
-            params[pos_param_keys[j]] = positionnal_params[j];
-        return params
+            
+        return params;
     },
 
     generateParamsString: function(params_dict) {
