@@ -176,10 +176,12 @@ Url.prototype= {
         return positionnal_params.join('-') + '?' + params_list.join("&");
     },
 
-    pushUrl: function(params) {
-        var new_url = params;
+    pushUrl: function(url) {
+        if (url==this.current_state) return;
+
         try  {
-            this.window.history.pushState('plop', 'plop', new_url);
+            this.window.history.pushState('plop', 'plop', url);
+            this.current_state = url;
         } catch(error) {
             console.log(error);
         }
