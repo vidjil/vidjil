@@ -60,4 +60,7 @@ var config = {
      */
 
     // "alert": "Server is down",
+
+    //rewrite url to include sample/display infos (default : true)
+    //"url_rewriting" : false
 }

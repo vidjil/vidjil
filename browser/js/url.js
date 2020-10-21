@@ -177,6 +177,9 @@ Url.prototype= {
     },
 
     pushUrl: function(url) {
+        if (config && 
+            (config.url_rewriting != undefined && !config.url_rewriting)) return;
+
         if (url==this.current_state) return;
 
         try  {
