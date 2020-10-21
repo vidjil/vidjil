@@ -98,7 +98,7 @@ class SampleSetList():
         self.result = query_gss
 
     def __len__(self):
-        return len(self.element_ids)
+        return len(self.result)
 
 def filter_by_tags(query, table, tags):
     if tags is not None and len(tags) > 0:

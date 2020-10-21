@@ -226,7 +226,7 @@ def all():
     slist = SampleSetList(type)
 
     # failsafe if filtered display all results
-    step = len(list) if step is None else step
+    step = len(slist) if step is None else step
     page = 0 if page is None else page
     result = slist.result
 
