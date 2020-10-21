@@ -8,6 +8,10 @@ class SampleSetList():
         self.type = type
         s_table = db[type]
 
+        limitby = None
+        if page is not None and step is not None:
+            limitby = (page*step, (page+1)*step+1) # one more element to indicate if another page exists
+
         left = [db.sample_set_membership.on(s_table.sample_set_id == db.sample_set_membership.sample_set_id),
                 db.sequence_file.on(db.sample_set_membership.sequence_file_id == db.sequence_file.id),
                 db.fused_file.on(s_table.sample_set_id == db.fused_file.sample_set_id),
@@ -41,11 +45,11 @@ class SampleSetList():
             dedicated_fields = [s_table.name.with_alias('name')]
             groupby = [s_table.id, s_table.sample_set_id, s_table.name, s_table.info, db.auth_user.last_name],
 
-        self.result = db(
-            (auth.vidjil_accessible_query('read', db.sample_set)) &
+        query = ((auth.vidjil_accessible_query('read', db.sample_set)) &
             (s_table.sample_set_id == db.sample_set.id) &
-            (s_table.creator == db.auth_user.id)
-        ).select(
+            (s_table.creator == db.auth_user.id))
+
+        select = [
             s_table.id.with_alias('id'),
             s_table.sample_set_id.with_alias('sample_set_id'),
             s_table.info.with_alias('info'),
@@ -56,20 +60,8 @@ class SampleSetList():
             group_configs,
             group_config_ids,
             group_config_names,
-            group_group_names,
-            *dedicated_fields,
-            left=left,
-            groupby= groupby,
-            orderby = ~db[type].id,
-            cacheable=True
-        )
-
-        limitby = None
-        if page is not None and step is not None:
-            limitby = (page*step, (page+1)*step+1) # one more element to indicate if another page exists
-
-        query = ((auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)) &
-                (db[type].sample_set_id == db.sample_set.id))
+            group_group_names
+        ]
 
         if (tags is not None and len(tags) > 0):
             query = filter_by_tags(query, self.type, tags)
@@ -77,22 +69,27 @@ class SampleSetList():
             query_gss = db(
                 query
             ).select(
-                db[type].ALL,
                 db.tag_ref.record_id,
                 db.tag_ref.table_name,
                 count,
+                *select + dedicated_fields,
+                left=left,
                 limitby = limitby,
                 orderby = ~db[type].id,
-                groupby = db.tag_ref.record_id|db.tag_ref.table_name,
-                having = count >= len(tags)
+                groupby = groupby + [db.tag_ref.record_id|db.tag_ref.table_name],
+                having = count >= len(tags),
+                cacheable=True
             )
         else:
             query_gss = db(
                 query
             ).select(
-                db[type].ALL,
+                *select + dedicated_fields,
+                left=left,
                 limitby = limitby,
-                orderby = ~db[type].id
+                groupby = groupby,
+                orderby = ~db[type].id,
+                cacheable=True
             )
 
         self.result = query_gss

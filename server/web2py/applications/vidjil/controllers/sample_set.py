@@ -223,7 +223,7 @@ def all():
     group_ids = get_involved_groups()
 
     f = time.time()
-    slist = SampleSetList(type)
+    slist = SampleSetList(type, page, step, tags)
 
     # failsafe if filtered display all results
     step = len(slist) if step is None else step
