@@ -16,11 +16,17 @@ class SampleSetList():
                 db.sequence_file.on(db.sample_set_membership.sequence_file_id == db.sequence_file.id),
                 db.fused_file.on(s_table.sample_set_id == db.fused_file.sample_set_id),
                 db.config.on(db.fused_file.config_id == db.config.id),
-                db.auth_permission.on(
-                    (db.auth_permission.table_name == 'sample_set') &
-                    (db.auth_permission.record_id == s_table.sample_set_id) &
-                    (db.auth_permission.name == PermissionEnum.access.value)),
-                db.auth_group.on(db.auth_permission.group_id == db.auth_group.id),
+                db.auth_permission.with_alias('generic_perm').on(
+                    (db.generic_perm.table_name == 'sample_set') &
+                    (db.generic_perm.record_id == s_table.sample_set_id) &
+                    (db.generic_perm.name == PermissionEnum.access.value)),
+                db.auth_permission.with_alias('specific_perm').on(
+                    (db.specific_perm.table_name == self.type) &
+                    (db.specific_perm.record_id == s_table.id) &
+                    (db.specific_perm.name == PermissionEnum.access.value)),
+                db.auth_group.on(
+                    (db.generic_perm.group_id == db.auth_group.id) |
+                    (db.specific_perm.group_id == db.auth_group.id)),
                 db.auth_membership.on(db.auth_group.id == db.auth_membership.group_id),
                 db.auth_permission.with_alias('anon_permission').on(
                     (db.anon_permission.table_name == self.type) &
