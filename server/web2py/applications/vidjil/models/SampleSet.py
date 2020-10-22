@@ -50,9 +50,9 @@ class SampleSet(object):
         if request.env['HTTP_ORIGIN'] is not None:
             http_origin = request.env['HTTP_ORIGIN'] + "/"
         key = get_conf_list_select()
-        conf_list = [] if data._extra[key] is None else data._extra[key].split(';')
+        conf_list = [] if data._extra[key] is None else data._extra[key].split(',')
         for conf in conf_list:
-            c = conf.split(',')
+            c = conf.split(';')
             filename =  "(%s %s)" % (self.get_name(data), c[1])
             if c[2] is not None :
                 configs.append(
@@ -211,7 +211,7 @@ def get_sample_set_id_from_results_file(results_file_id):
     return sample_set_id
 
 def get_conf_list_select():
-    return "GROUP_CONCAT(DISTINCT CONCAT(config.id, ',', config.name, ',', fused_file.fused_file) SEPARATOR ';')"
+    return "GROUP_CONCAT(DISTINCT CONCAT(config.id, ';', config.name, ';', fused_file.fused_file))"
 
 def get_config_ids_select():
     return "GROUP_CONCAT(DISTINCT config.id)"
