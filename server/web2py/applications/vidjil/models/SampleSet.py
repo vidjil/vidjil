@@ -217,7 +217,7 @@ def get_sample_set_id_from_results_file(results_file_id):
     return sample_set_id
 
 def get_conf_list_select():
-    return "GROUP_CONCAT(DISTINCT CONCAT(config.id, ';', config.name, ';', fused_file.fused_file))"
+    return "GROUP_CONCAT(DISTINCT (config.id || ';' || config.name || ';' || fused_file.fused_file))"
 
 def get_config_ids_select():
     return "GROUP_CONCAT(DISTINCT config.id)"
@@ -229,4 +229,4 @@ def get_group_names_select():
     return "GROUP_CONCAT(DISTINCT auth_group.role)"
 
 def get_file_sizes_select():
-    return "GROUP_CONCAT(DISTINCT CONCAT(sequence_file.id, ';', sequence_file.size_file))"
+    return "GROUP_CONCAT(DISTINCT (sequence_file.id || ';' || sequence_file.size_file))"
