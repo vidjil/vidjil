@@ -31,6 +31,7 @@ class SampleSetList():
                     (db.auth_membership.group_id == db.auth_group.id))
                 ]
 
+        # SQL string with GROUP_CONCAT queries
         group_configs = get_conf_list_select()
         group_config_ids = get_config_ids_select()
         group_config_names = get_config_names_select()
