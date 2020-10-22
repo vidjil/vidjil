@@ -66,7 +66,7 @@ class SampleSetList():
             s_table.info.with_alias('info'),
             db.auth_user.last_name.with_alias('creator'),
             db.sequence_file.size_file.sum().with_alias('size'),
-            db.sequence_file.id.count().with_alias('file_count'),
+            db.sequence_file.id.count(distinct=True).with_alias('file_count'),
             db.anon_permission.name.with_alias('has_permission'),
             group_configs,
             group_config_ids,
