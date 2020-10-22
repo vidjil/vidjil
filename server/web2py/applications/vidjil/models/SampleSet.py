@@ -75,9 +75,15 @@ class SampleSet(object):
     def get_creator(self, data):
         return data['creator']
 
+    def get_files_values(self, data):
+        key = get_file_sizes_select()
+        tmp = [] if data._extra[key] is None else data._extra[key].split(',')
+        file_count = len(tmp)
+        sizes = [int(s.split(';')[1]) for s in tmp]
+        return file_count, sum(sizes)
+
     def get_files(self, data):
-        size = 0 if data['size'] is None else data['size']
-        file_count = 0 if data['file_count'] is None else data['file_count']
+        file_count, size = self.get_files_values(data)
         return '%d (%s)' % (file_count, vidjil_utils.format_size(size))
 
     def get_fields(self):
@@ -221,3 +227,6 @@ def get_config_names_select():
 
 def get_group_names_select():
     return "GROUP_CONCAT(DISTINCT auth_group.role)"
+
+def get_file_sizes_select():
+    return "GROUP_CONCAT(DISTINCT CONCAT(sequence_file.id, ';', sequence_file.size_file))"

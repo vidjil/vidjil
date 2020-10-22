@@ -42,6 +42,7 @@ class SampleSetList():
         group_config_ids = get_config_ids_select()
         group_config_names = get_config_names_select()
         group_group_names = get_group_names_select()
+        group_file_sizes = get_file_sizes_select()
 
         dedicated_fields = helper.get_dedicated_fields()
 
@@ -65,8 +66,7 @@ class SampleSetList():
             s_table.sample_set_id.with_alias('sample_set_id'),
             s_table.info.with_alias('info'),
             db.auth_user.last_name.with_alias('creator'),
-            db.sequence_file.size_file.sum().with_alias('size'),
-            db.sequence_file.id.count(distinct=True).with_alias('file_count'),
+            group_file_sizes,
             db.anon_permission.name.with_alias('has_permission'),
             group_configs,
             group_config_ids,
