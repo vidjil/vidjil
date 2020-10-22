@@ -280,13 +280,14 @@ def stats():
     search, tags = parse_search(request.vars["filter"])
     group_ids = get_involved_groups()
 
-    list = SampleSetList(type, tags=tags)
+    factory = ModelFactory()
+    helper = factory.get_instance(type=type)
+
+    list = SampleSetList(helper, tags=tags)
     list.load_sample_information()
     list.load_anon_permissions()
     result = list.get_values()
 
-    factory = ModelFactory()
-    helper = factory.get_instance(type=type)
     fields = helper.get_reduced_fields()
 
     ##sort result

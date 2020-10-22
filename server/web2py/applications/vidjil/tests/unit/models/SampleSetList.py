@@ -16,11 +16,15 @@ class SamplesetlistModel(unittest.TestCase):
         auth.login_bare("test@vidjil.org", "123456")
 
     def testInit(self):
-        slist = SampleSetList('patient')
+        factory = ModelFactory()
+        helper = factory.get_instance(type='patient')
+        slist = SampleSetList(helper)
         self.assertTrue(len(slist.element_ids) > 0, "The sample set list was not expected to be empty")
 
     def testCreatorNames(self):
-        slist = SampleSetList('patient')
+        factory = ModelFactory()
+        helper = factory.get_instance(type='patient')
+        slist = SampleSetList(helper)
         slist.load_creator_names()
         values = slist.get_values() 
         first = values[0]
@@ -28,7 +32,9 @@ class SamplesetlistModel(unittest.TestCase):
         self.assertFalse(name == "", "load_creator_names failed to retrieve a username")
 
     def testPermittedGroups(self):
-        slist = SampleSetList('patient')
+        factory = ModelFactory()
+        helper = factory.get_instance(type='patient')
+        slist = SampleSetList(helper)
         slist.load_permitted_groups()
         value = slist.get_values()[0]
         groups = value.groups
@@ -38,7 +44,9 @@ class SamplesetlistModel(unittest.TestCase):
         self.assertFalse(group_list == [], "load_permitted_groups found groups although the group_list is empty")
 
     def testAnonPermissions(self):
-        slist = SampleSetList('patient')
+        factory = ModelFactory()
+        helper = factory.get_instance(type='patient')
+        slist = SampleSetList(helper)
         slist.load_anon_permissions()
         value = slist.get_values()[0]
 
