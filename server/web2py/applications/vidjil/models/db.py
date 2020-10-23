@@ -111,7 +111,7 @@ use_janrain(auth, filename='private/janrain.key')
 
 # TODO: create a custom adapter ?
 if defs.DB_ADDRESS.split(':')[0] == 'mysql':
-    db.executesql("SET sql_mode='PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'")
+    db.executesql("SET sql_mode='PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';")
 
 #########################################################################
 ## Define your tables below for example
