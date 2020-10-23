@@ -20,13 +20,8 @@ class SampleSetList():
                     (db.generic_perm.table_name == 'sample_set') &
                     (db.generic_perm.record_id == s_table.sample_set_id) &
                     (db.generic_perm.name == PermissionEnum.access.value)),
-                db.auth_permission.with_alias('specific_perm').on(
-                    (db.specific_perm.table_name == self.type) &
-                    (db.specific_perm.record_id == s_table.id) &
-                    (db.specific_perm.name == PermissionEnum.access.value)),
                 db.auth_group.on(
-                    (db.generic_perm.group_id == db.auth_group.id) |
-                    (db.specific_perm.group_id == db.auth_group.id)),
+                    (db.generic_perm.group_id == db.auth_group.id)),
                 db.auth_membership.on(db.auth_group.id == db.auth_membership.group_id),
                 db.auth_permission.with_alias('anon_permission').on(
                     (db.anon_permission.table_name == self.type) &
