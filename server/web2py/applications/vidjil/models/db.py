@@ -289,11 +289,14 @@ db.define_table('tag_ref',
                 Field('table_name', 'string'),
                 Field('record_id', 'integer'))
 
+# try to create an index on these un-indexed columns, if it fails, we assume they already exist
 try:
     db.executesql('CREATE INDEX table_name_index ON tag_ref (table_name);')
     db.executesql('CREATE INDEX record_id_index ON tag_ref (record_id);')
+    db.executesql('CREATE INDEX name_index ON auth_permission (name);')
+    db.executesql('CREATE INDEX record_id_index ON auth_permission (record_id);')
 except:
-    pass
+        pass
 
 ## after defining tables, uncomment below to enable auditing
 auth.enable_record_versioning(db)
