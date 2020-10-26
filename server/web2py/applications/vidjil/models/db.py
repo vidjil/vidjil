@@ -109,6 +109,9 @@ auth.messages.group_description = 'Group of user %(id)04d - %(first_name)s %(las
 from gluon.contrib.login_methods.rpx_account import use_janrain
 use_janrain(auth, filename='private/janrain.key')
 
+if defs.DB_ADDRESS.split(':')[0] == 'mysql':
+    db.executesql("SET sql_mode='PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';")
+
 #########################################################################
 ## Define your tables below for example
 ##

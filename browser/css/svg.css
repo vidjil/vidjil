@@ -2279,6 +2279,21 @@ form .form_label {
 .list_lock_on {
   color: #777777;
 }
+.set_group {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  margin-bottom: 25px;
+}
+.set_cell {
+  display: flex;
+  flex-flow: column;
+  width: 33%;
+}
+.set_data {
+  width: 100%;
+  flex: 1;
+}
 #resolution5 {
   opacity: 0;
 }
