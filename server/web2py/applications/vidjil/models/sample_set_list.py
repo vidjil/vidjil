@@ -44,9 +44,11 @@ class SampleSetList():
         groupby = [s_table.id, s_table.sample_set_id, s_table.info, db.auth_user.last_name]
         groupby += helper.get_dedicated_group()
 
-        query = ((auth.vidjil_accessible_query('read', db.sample_set)) &
-            (s_table.sample_set_id == db.sample_set.id) &
-            (s_table.creator == db.auth_user.id))
+        join = [s_table.on(s_table.sample_set_id == db.sample_set.id),
+                db.auth_user.on(db.auth_user.id == s_table.creator)
+            ]
+
+        query = (auth.vidjil_accessible_query('read', db.sample_set))
 
         if search is not None and search != "":
             query = (query &
@@ -79,6 +81,7 @@ class SampleSetList():
                 db.tag_ref.table_name,
                 count,
                 *select + dedicated_fields,
+                join=join,
                 left=left,
                 limitby = limitby,
                 orderby = ~db[self.type].id,
@@ -91,6 +94,7 @@ class SampleSetList():
                 query
             ).select(
                 *select + dedicated_fields,
+                join=join,
                 left=left,
                 limitby = limitby,
                 groupby = groupby,
