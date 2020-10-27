@@ -2,6 +2,14 @@
 
 <div>
     <div class="db_block">
+        <div class="db_block_left">
+            search
+            <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}"  onchange="db.call('my_account/index', {'filter' : this.value, 'group_ids': {{=group_ids}}  } )"
+            onfocus="new VidjilAutoComplete().setupTags(this);"
+            data-needs-atwho="true" data-keys="{{=involved_group_ids}}">
+        </div>
+    </div>
+    <div class="db_block">
         {{ for role in result: }}
             <div class="set_group">
                 <div class="set_group_header">

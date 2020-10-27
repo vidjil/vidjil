@@ -12,7 +12,19 @@ ACCESS_DENIED = "access denied"
 
 def index():
     start = time.time()
-    group_list = auth.get_user_groups() + auth.get_user_group_parents()
+
+    if 'group_ids' in request.vars and request.vars['group_ids'] is not None:
+        group_list = request.vars['group_ids']
+    else:
+        group_list = [int(g.id) for g in auth.get_user_groups() + auth.get_user_group_parents()]
+
+    involved_group_ids = get_involved_groups()
+
+    if "filter" not in request.vars :
+        request.vars["filter"] = ""
+
+
+    search, tags = parse_search(request.vars["filter"])
 
     left = [
         db.sample_set_membership.on(
@@ -24,6 +36,16 @@ def index():
         (db.auth_permission.table_name == 'sample_set') &
         (db.sample_set.id == db.auth_permission.record_id) &
         (db.auth_group.id == db.auth_permission.group_id)
+    )
+
+    if (tags is not None and len(tags) > 0):
+        base_query = (base_query &
+            (db.tag.name.upper().belongs([t.upper() for t in tags])) &
+            (db.tag_ref.tag_id == db.tag.id) &
+            (db.tag_ref.table_name == 'sequence_file') &
+            (db.tag_ref.record_id == db.sample_set_membership.sequence_file_id)
+        )
+
     query = db(base_query).select(
         db.auth_group.id,
         db.auth_group.role,
@@ -77,4 +99,6 @@ def index():
         result[r.auth_group.role]['fuses'] = [] if r._extra[group_fuses] is None else [fuse.split(';') for fuse in r._extra[group_fuses].split(',')]
 
     log.debug("my account list (%.3fs)" % (time.time()-start))
-    return dict(result=result)
+    return dict(result=result,
+                group_ids = group_list,
+                involved_group_ids = involved_group_ids)
