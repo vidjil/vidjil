@@ -1,0 +1,186 @@
+<template id='aligner'>
+    <div class="aligner">
+        <div class="bot-bar">
+            <div class="menu-segmenter"><span id="merge" title="Merge the selected clones into a unique cluster"
+                    class="button">cluster</span><span id="align" title="Align the sequences"
+                    class="button inactive">align</span><span id="segmenter_axis_menu"
+                    class="pointer devel-mode">axis<span id="segmenter_axis_select" class="selector"
+                        style="position: absolute; top: -230px; display: none;">
+
+                        <div>
+                            <div><input type="checkbox" value="V/5' gene" id="sai0"><label for="sai0">V/5' gene</label>
+                            </div>
+                            <div><input type="checkbox" value="V/5 allele" id="sai1"><label for="sai1">V/5
+                                    allele</label></div>
+                            <div><input type="checkbox" value="D/4' gene" id="sai2"><label for="sai2">D/4' gene</label>
+                            </div>
+                            <div><input type="checkbox" value="D/4 allele" id="sai3"><label for="sai3">D/4
+                                    allele</label></div>
+                            <div><input type="checkbox" value="J/3' gene" id="sai4"><label for="sai4">J/3' gene</label>
+                            </div>
+                            <div><input type="checkbox" value="J/3 allele" id="sai5"><label for="sai5">J/3
+                                    allele</label></div>
+                            <div><input type="checkbox" value="clone consensus length" id="sai6"><label for="sai6">clone
+                                    consensus length</label></div>
+                            <div><input type="checkbox" value="clone average read length" id="sai7"><label
+                                    for="sai7">clone average read length</label></div>
+                            <div><input type="checkbox" value="GC content" id="sai8"><label for="sai8">GC
+                                    content</label></div>
+                            <div><input type="checkbox" value="N length" id="sai9"><label for="sai9">N length</label>
+                            </div>
+                            <div><input type="checkbox" value="CDR3 length (nt)" id="sai10"><label for="sai10">CDR3
+                                    length (nt)</label></div>
+                            <div><input type="checkbox" value="productivity" id="sai11"><label
+                                    for="sai11">productivity</label></div>
+                            <div><input type="checkbox" value="productivity IMGT" id="sai12"><label
+                                    for="sai12">productivity IMGT</label></div>
+                            <div><input type="checkbox" value="VIdentity IMGT" id="sai13"><label for="sai13">VIdentity
+                                    IMGT</label></div>
+                            <div><input type="checkbox" value="tag" id="sai14"><label for="sai14">tag</label></div>
+                            <div><input type="checkbox" value="clone consensus coverage" id="sai15"><label
+                                    for="sai15">clone consensus coverage</label></div>
+                            <div><input type="checkbox" value="locus" id="sai16"><label for="sai16">locus</label></div>
+                            <div><input type="checkbox" value="size" id="sai17" checked=""><label
+                                    for="sai17">size</label></div>
+                            <div><input type="checkbox" value="size (other sample)" id="sai18"><label for="sai18">size
+                                    (other sample)</label></div>
+                            <div><input type="checkbox" value="number of samples" id="sai19"><label for="sai19">number
+                                    of samples</label></div>
+                            <div><input type="checkbox" value="primers" id="sai20"><label for="sai20">primers</label>
+                            </div>
+                            <div><input type="checkbox" value="V/5' deletions in 3'" id="sai21"><label for="sai21">V/5'
+                                    deletions in 3'</label></div>
+                            <div><input type="checkbox" value="J/3' deletions in 5'" id="sai22"><label for="sai22">J/3'
+                                    deletions in 5'</label></div>
+                            <div><input type="checkbox" value="cloneDB occurrences" id="sai23"><label
+                                    for="sai23">cloneDB occurrences</label></div>
+                            <div><input type="checkbox" value="cloneDB patients/runs/sets occurrences" id="sai24"><label
+                                    for="sai24">cloneDB patients/runs/sets occurrences</label></div>
+                        </div>
+
+                    </span></span><span id="toIMGT" title="title" class="button">❯ IMGT/V-QUEST</span><span
+                    id="toIMGTSeg" title="title" class="button button_next">▼</span><span id="toIgBlast" title="title"
+                    class="button">❯ IgBlast</span><span id="toARResT" title="title" class="button devel-mode">❯
+                    ARResT/CJ</span><span id="toCloneDB" title="title" class="button devel-mode">❯ CloneDB</span><span
+                    id="toBlast" title="title" class="button">❯ Blast</span><span id="toAssignSubsets" title="title"
+                    class="button">❯ AssignSubsets</span></div>
+
+            <div class="menu-highlight devel-mode">
+
+                <select id="highlight_0" style="border-color: red; width: 60px;">
+                    <option></option>
+                    <option>id</option>
+                    <option>3</option>
+                    <option>5</option>
+                    <option>junction</option>
+                    <option>cdr3</option>
+                    <option>affectSigns</option>
+                    <option>quality</option>
+                    <option>affectValues</option>
+                    <option>V-REGION</option>
+                    <option>J-REGION</option>
+                    <option>D-REGION</option>
+                    <option>CDR3-IMGT</option>
+                </select>
+
+                <select id="highlight_1" style="border-color: orange; width: 60px;">
+                    <option></option>
+                    <option>id</option>
+                    <option>3</option>
+                    <option>5</option>
+                    <option>junction</option>
+                    <option>cdr3</option>
+                    <option>affectSigns</option>
+                    <option>quality</option>
+                    <option>affectValues</option>
+                    <option>V-REGION</option>
+                    <option>J-REGION</option>
+                    <option>D-REGION</option>
+                    <option>CDR3-IMGT</option>
+                </select>
+
+                <select id="highlight_2" style="border-color: blue; width: 60px;">
+                    <option></option>
+                    <option>id</option>
+                    <option>3</option>
+                    <option>5</option>
+                    <option>junction</option>
+                    <option>cdr3</option>
+                    <option>affectSigns</option>
+                    <option>quality</option>
+                    <option>affectValues</option>
+                    <option>V-REGION</option>
+                    <option>J-REGION</option>
+                    <option>D-REGION</option>
+                    <option>CDR3-IMGT</option>
+                </select>
+
+                <select id="highlight_3" style="border-color: green; width: 60px;">
+                    <option></option>
+                    <option>id</option>
+                    <option>3</option>
+                    <option>5</option>
+                    <option>junction</option>
+                    <option>cdr3</option>
+                    <option>affectSigns</option>
+                    <option>quality</option>
+                    <option>affectValues</option>
+                    <option>V-REGION</option>
+                    <option>J-REGION</option>
+                    <option>D-REGION</option>
+                    <option>CDR3-IMGT</option>
+                </select>
+
+                <select id="highlight_4" style="border-color: yellow; width: 60px;">
+                    <option></option>
+                    <option>id</option>
+                    <option>3</option>
+                    <option>5</option>
+                    <option>junction</option>
+                    <option>cdr3</option>
+                    <option>affectSigns</option>
+                    <option>quality</option>
+                    <option>affectValues</option>
+                    <option>V-REGION</option>
+                    <option>J-REGION</option>
+                    <option>D-REGION</option>
+                    <option>CDR3-IMGT</option>
+                </select>
+
+                <input id="segmenter_aa" type="checkbox">AA</div><span id="highlightCheckboxes"><input type="checkbox"
+                    id="vdj_input_check" title="Display CDR3 computed by Vidjil" autocomplete="off"><label
+                    for="vdj_input_check" title="Display CDR3 computed by Vidjil">CDR3</label></span>
+
+            <div class="focus cloneName">
+
+            </div>
+            <div class="stats"><span class="stats_content"></span><a class="focus_selected" id="focus_selected"
+                    style="display: none;">(focus)</a> <a class="focus_selected" id="hide_selected"
+                    style="display: none;">(hide)</a><span class="button" title="Tag selected clones"><i
+                        id="tag_icon__multiple" class="icon-star-2" style="display: none;"></i></span><span
+                    id="fixsegmenter" class="button"><i title="fix the segmenter in his position"
+                        class="icon-pin-outline"></i></span></div>
+        </div>
+        <div class="segmenter" style="height: 100px;">
+            <ul id="listSeq">
+
+            </ul>
+        </div>
+    </div>
+</template>
+
+<template id="aligner-sequence">
+    <li class="sequence-line" style="display: none;"><span class="seq-fixed"></span><span class="seq-mobil"></span></li>
+</template>
+
+<template id="aligner-F">
+    <span class="seq-fixed cloneName">
+        <span class="nameBox" title="clone name">
+            <span class="delBox"><i class="icon-cancel" title="Unselect this clone"></i></span>
+            <span class="nameBox2"></span>
+        </span>
+        <span class="infoBox"><i class="icon-info" title="clone information"></i></span>
+        <span class="starBox" id="color60"><i id="tag_icon_60" title="clone_tag" class="icon-star-2"></i></span>
+        <span class="axisBox"></span>
+    </span>
+</template>
