@@ -107,6 +107,11 @@ IndexedDom.prototype = {
         }
     },
 
+    replace: function(className, newElement){
+        var div = this.getElement(className);
+        div.parentNode.replaceChild(newElement, div);
+    },
+
     /* Clear */
     clear: function(className){
         if (className == "main"){
