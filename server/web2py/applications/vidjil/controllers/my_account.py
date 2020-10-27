@@ -1,6 +1,7 @@
 # coding: utf8
 
 from datetime import datetime, timedelta
+import time
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin
@@ -10,6 +11,7 @@ if request.env.http_origin:
 ACCESS_DENIED = "access denied"
 
 def index():
+    start = time.time()
     group_list = auth.get_user_groups() + auth.get_user_group_parents()
 
     left = [
@@ -79,4 +81,5 @@ def index():
 
         result[r.auth_group.role]['fuses'] = [] if r._extra[group_fuses] is None else [fuse.split(';') for fuse in r._extra[group_fuses].split(',')]
 
+    log.debug("my account list (%.3fs)" % (time.time()-start))
     return dict(result=result)
