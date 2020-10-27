@@ -19,12 +19,12 @@ def index():
             db.sample_set_membership.sample_set_id == db.sample_set.id)
     ]
 
-    query = db(
+    base_query = (
         db.auth_permission.group_id.belongs(group_list) &
         (db.auth_permission.table_name == 'sample_set') &
         (db.sample_set.id == db.auth_permission.record_id) &
         (db.auth_group.id == db.auth_permission.group_id)
-    ).select(
+    query = db(base_query).select(
         db.auth_group.id,
         db.auth_group.role,
         db.sample_set.sample_type.with_alias('sample_type'),
@@ -61,12 +61,7 @@ def index():
             db.config.id == db.fused_file.config_id)
     ]
 
-    query = db(
-        db.auth_permission.group_id.belongs(group_list) &
-        (db.auth_permission.table_name == 'sample_set') &
-        (db.sample_set.id == db.auth_permission.record_id) &
-        (db.auth_group.id == db.auth_permission.group_id)
-    ).select(
+    query = db(base_query).select(
         db.auth_group.role,
         db.sample_set.sample_type.with_alias('sample_type'),
         group_statuses,
