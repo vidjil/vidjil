@@ -3,26 +3,30 @@
 <div>
     <div class="db_block">
         {{ for role in result: }}
-            <div>{{=role}}</div>
-            <hr>
             <div class="set_group">
-                {{ for r in result[role]: }}
+                <div class="set_group_header">
+                    {{=role}}
+                    <hr>
+                </div>
+                {{ for r in result[role]['count']: }}
                     <div class="set_cell">
                         <div class="set_data">
                             <span class="button_token {{=r.sample_type}}_token">{{=r.sample_type}}s</span>:
                         </div>
                         <div class="set_data">number: {{=r['num_sets']}}</div>
                         <div class="set_data">associated samples: {{=r['num_samples']}}</div>
-                        <div class="set_data">recent jobs: {{=r['statuses']}}</div>
-                        <div class="set_data">
-                        {{ for fuse in r['fuses']: }}
-                            <span class="button button_token {{=r.sample_type}}_token">
-                                <a href="https://localhost/?sample_set_id={{=fuse[1]}}&config={{=fuse[2]}}">{{=fuse[0]}}</a>
-                            </span>
-                            {{pass}}
-                        </div>
                     </div>
                     {{pass}}
+                <div class="set_data">recent jobs: {{=result[role]['statuses']}}</div>
+                <div class="set_data">
+                {{ for fuse in result[role]['fuses']: }}
+                    <div class="analysis_button">
+                        <span class="button button_token {{=fuse[3]}}_token">
+                            <a href="https://localhost/?sample_set_id={{=fuse[1]}}&config={{=fuse[2]}}">{{=fuse[0]}}</a>
+                        </span>
+                    </div>
+                    {{pass}}
+                </div>
             </div>
             {{pass}}
     </div>

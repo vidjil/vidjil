@@ -2289,10 +2289,15 @@ form .form_label {
   color: #657b83;
 }
 .set_group {
-  display: flex;
+  display: inline-flex;
   flex-wrap: wrap;
   flex-direction: row;
   margin-bottom: 25px;
+  margin-right: 15px;
+  width: 48%;
+}
+.set_group_header {
+  width: 100%;
 }
 .set_cell {
   display: flex;
@@ -2301,5 +2306,10 @@ form .form_label {
 }
 .set_data {
   width: 100%;
-  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.analysis_button {
+  display: inline-flex;
 }
