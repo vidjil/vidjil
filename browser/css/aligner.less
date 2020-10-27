@@ -1,0 +1,155 @@
+.segmenter .axisBox>span {
+    margin : 0 3px;
+  }
+
+.list_select{
+    width : 445px;
+    display : block;
+    border : solid;
+    border-width : 2px;
+    padding : 0px;
+    border-color : @select;
+  }
+  .list_focus{
+      background : @border !important;
+  }
+  
+  .sequence-line { 
+      white-space: nowrap;
+  }
+  .sequence-line:hover { 
+      font-weight: bold;
+  }
+  
+  .seq-fixed {
+    position: relative;
+    display: inline-block;
+  //  width: (@width_left_container - @width_scrollbar);
+    width : auto;
+    margin: -2px;
+    padding: 2px;
+    padding-left: 5px;
+    left:0px;
+    cursor:pointer;
+    z-index:1;
+  }
+  
+  .seq-mobil {
+    margin-left: @width_left_container;
+    letter-spacing: 0.12em;
+    font-family : @monospace-font; 
+    position: relative;
+    bottom: 3px;
+    font-size:1em;
+  }
+  
+  .seq-marge {
+    word-spacing: normal;
+  }
+  
+  .V {
+    color: #000;
+    background-color: #efe;
+  }
+  .D {
+    color: #000;
+    background-color: #fee;
+  }
+  .J {
+    color: #000;
+    background-color: #ffffe2;
+  }
+  .N, .N + .J, .N + .D {
+    box-shadow: -1px 0 0 @default;
+  }
+  
+  .highlight_border, .highlight_seq {
+      display: inline-flex;
+      height: 1em;
+      position: relative;
+  }
+  .highlight_border {
+      border-bottom: solid;
+      margin: -1px;
+      border-width: 4px;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: -moz-none;
+      -ms-user-select: none;
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.3;
+      bottom: 1px;
+  }
+  .highlight_seq {
+    top: .9em;
+    padding-bottom: 1px;
+    opacity: 0.6;
+  
+    font-size: 70%;
+    letter-spacing: .428em; /* (1-.7) / .7 */
+    left: .214em;
+  }
+  .highlight{
+      display: inline-block;
+      width: 0px;
+      word-spacing: normal;
+  }
+  span .substitution, span .indel, span .insertion, span .deletion {
+    font-weight: bold;
+    color: #800;
+  }
+  span .substitution {
+    border-bottom: 1px solid #800;
+  }
+  span .silent {
+    border-bottom: 3px double #008;
+    color: #008;
+  }
+  
+  span .end-codon {
+    box-shadow: 1px 0 0 @default;
+  }
+  
+  #segmenter_axis_menu, .seq-fixed{
+    background : @background;
+  }
+
+.menu-segmenter {
+    position: relative;
+    float: left;
+    width: @width_left_container +200;
+}
+
+#toIMGTSeg {
+    width: 12px;
+    display: inline-block;
+    text-align: center;
+}
+
+.menu-highlight {
+    position: relative;
+    float: left;
+    width: eval(@width_highlight);
+}
+
+.segmenter {
+    overflow-x: scroll !important; 
+    overflow-y: auto;
+    height : 100px;
+}
+
+#segmenter {
+    display: flex;
+    flex-flow: column;
+  }
+
+#highlightCheckboxes {
+    height: 100%;
+    float: left;
+}
+
+.seq-fixed {
+    bottom: 1px;
+    width: 250px;
+}
