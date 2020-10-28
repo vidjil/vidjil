@@ -2305,6 +2305,9 @@ form .form_label {
 .analysis_button {
   display: inline-flex;
 }
+.margined-top {
+  margin-top: 10px;
+}
 #mid-container {
   font-size: 125%;
 }

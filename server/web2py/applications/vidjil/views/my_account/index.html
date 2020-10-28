@@ -27,8 +27,8 @@
                         <div class="set_data">associated samples: {{=r['num_samples']}}</div>
                     </div>
                     {{pass}}
-                <div class="set_data">recent jobs: {{=result[role]['statuses']}}</div>
-                <div class="set_data">
+                <div class="set_data margined-top">recent jobs: {{=result[role]['statuses']}}</div>
+                <div class="set_data margined-top">
                 {{ for fuse in result[role]['fuses']: }}
                     <div class="analysis_button">
                         <span class="button button_token {{=fuse[3]}}_token">
