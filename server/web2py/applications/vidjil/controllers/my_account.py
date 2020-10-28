@@ -2,6 +2,7 @@
 
 from datetime import datetime, timedelta
 import time
+import types
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin
@@ -15,6 +16,8 @@ def index():
 
     if 'group_ids' in request.vars and request.vars['group_ids'] is not None:
         group_list = request.vars['group_ids']
+        if isinstance(group_list, types.StringTypes):
+            group_list = [group_list]
     else:
         group_list = [int(g.id) for g in auth.get_user_groups() + auth.get_user_group_parents()]
 

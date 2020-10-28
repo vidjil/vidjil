@@ -1228,6 +1228,21 @@ Database.prototype = {
         this.updateStatsButton();
     },
 
+    callGroupStats: function() {
+        var group_ids = [];
+        $('[name^="group_ids"]:checked').each(function() {
+            group_ids.push("group_ids=" + $(this).val());
+        });
+        this.call('my_account/index?' + group_ids.join("&"));
+    },
+
+    stopGroupPropagate: function(e) {
+        if(!e) {
+            e = window.event
+        }
+        e.stopPropagation();
+    },
+
     // Log functions, to server
     // 'quiet' is set to true to avoid infinite loops with timeouts
     log : function (lvl, msg) {

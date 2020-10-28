@@ -8,10 +8,12 @@
     <div id="db_table_container">
         <table class="db_table" id="table">
             <thead>
-                <tr><td class="column1"> group name</td>
+                <tr><td class="column5"></td>
+                    <td class="column1"> group name</td>
                     <td class="column2"> member</td>
                     <td> info </td>
                     <td> parents </td>
+                    <td class="column5"> </td>
                     <td class="column5"> </td>
                     <td class="column5"> </td>
                     <td class="column5"> </td>
@@ -19,10 +21,15 @@
             </thead>
            {{for row in query :}}
                <tr onclick="db.call('group/info', {'id' :'{{=row.id}}'} )">
+                   <td>
+                       <input type="checkbox" name="group_ids[]" value="{{=row.id}}"
+                         onclick="db.stopGroupPropagate(event)" />
+                   </td>
                     <td> {{=row.role}} </td>
                     <td> {{=row.count}}  </td>
                     <td> {{=row.access}} // {{=row.description }} </td>
                     <td> {{=row.parents}} </td>
+                    <td onclick="db.call('my_account', {'group_ids' :'{{=row.id}}'} )" > <i class="icon-chart-pie" title="view group statistics"></i> </td>
                     <td onclick="db.call('group/permission', {'id' :'{{=row.id}}'} )" > <i class="icon-key" title="set permissions"></i> </td>
                     <td onclick="db.call('group/edit', {'id' :'{{=row.id}}'} )" > <i class="icon-pencil-2" title="edit group"></i> </td>
                     <td onclick="db.call('group/confirm', {'id' :'{{=row.id}}'} )" > <i class="icon-erase" title="delete group"></i> </td>
@@ -34,6 +41,7 @@
 </div>
 
 <span class="button2" onclick="db.call('group/add')"> + new group </span>
+<span class="button2" onclick="db.callGroupStats()">group stats</span>
 
 
 {{elif 'content' in globals():}}
