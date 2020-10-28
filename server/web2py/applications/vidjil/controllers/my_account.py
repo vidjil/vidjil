@@ -71,6 +71,7 @@ def index():
 
     group_statuses = "GROUP_CONCAT(DISTINCT scheduler_task.id || ';' || scheduler_task.status)"
     group_fuses = "GROUP_CONCAT(DISTINCT config.name || ';' || fused_file.sample_set_id || ';' || fused_file.config_id || ';' || sample_set.sample_type)"
+    group_tags = "GROUP_CONCAT(DISTINCT tag.name)"
 
     left = [
         db.sample_set.on(
@@ -86,13 +87,19 @@ def index():
             (db.fused_file.sample_set_id == db.sample_set.id) &
             (db.fused_file.fuse_date >= two_days_ago)),
         db.config.on(
-            db.config.id == db.fused_file.config_id)
+            db.config.id == db.fused_file.config_id),
+        db.tag_ref.on(
+            (db.tag_ref.table_name == 'sequence_file') &
+            (db.tag_ref.record_id == db.sample_set_membership.sequence_file_id)),
+        db.tag.on(
+            db.tag_ref.tag_id == db.tag.id)
     ]
 
     query = db(base_query).select(
         db.auth_group.role,
         group_statuses,
         group_fuses,
+        group_tags,
         left=left,
         groupby=db.auth_group.role,
         orderby=~db.scheduler_task.id
@@ -102,6 +109,8 @@ def index():
         result[r.auth_group.role]['statuses'] = "" if r._extra[group_statuses] is None else "".join([s.split(';')[1][0] for s in r._extra[group_statuses].split(',')])
 
         result[r.auth_group.role]['fuses'] = [] if r._extra[group_fuses] is None else [fuse.split(';') for fuse in r._extra[group_fuses].split(',')]
+
+        result[r.auth_group.role]['tags'] = [] if r._extra[group_tags] is None else r._extra[group_tags].split(',')
 
     log.debug("my account list (%.3fs)" % (time.time()-start))
     return dict(result=result,

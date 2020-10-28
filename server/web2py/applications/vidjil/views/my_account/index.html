@@ -37,6 +37,11 @@
                     </div>
                     {{pass}}
                 </div>
+                <div class="set_data">
+                    {{ for tag in result[role]['tags']: }}
+                    <a onclick="event.preventDefault();event.stopPropagation();db.callLinkable($(this))" href="/my_account/index" class="tag-link" data-linkable-type="tag" data-linkable-target-param="filter" data-linkable-name="#{{=tag}}">#{{=tag}}</a>
+                        {{pass}}
+                </div>
             </div>
             {{pass}}
     </div>
