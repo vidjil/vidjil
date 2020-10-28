@@ -30,15 +30,16 @@ def index():
     search, tags = parse_search(request.vars["filter"])
 
     left = [
+        db.sample_set.on(
+            db.sample_set.id == db.auth_permission.record_id),
         db.sample_set_membership.on(
             db.sample_set_membership.sample_set_id == db.sample_set.id)
     ]
 
     base_query = (
-        db.auth_permission.group_id.belongs(group_list) &
-        (db.auth_permission.table_name == 'sample_set') &
-        (db.sample_set.id == db.auth_permission.record_id) &
-        (db.auth_group.id == db.auth_permission.group_id)
+        db.auth_group.id.belongs(group_list) &
+        (db.auth_permission.group_id == db.auth_group.id) &
+        (db.auth_permission.table_name == 'sample_set')
     )
 
     if (tags is not None and len(tags) > 0):
@@ -72,6 +73,8 @@ def index():
     group_fuses = "GROUP_CONCAT(DISTINCT config.name || ';' || fused_file.sample_set_id || ';' || fused_file.config_id || ';' || sample_set.sample_type)"
 
     left = [
+        db.sample_set.on(
+            db.auth_permission.record_id == db.sample_set.id),
         db.sample_set_membership.on(
             db.sample_set_membership.sample_set_id == db.sample_set.id),
         db.results_file.on(
@@ -88,7 +91,6 @@ def index():
 
     query = db(base_query).select(
         db.auth_group.role,
-        db.sample_set.sample_type.with_alias('sample_type'),
         group_statuses,
         group_fuses,
         left=left,

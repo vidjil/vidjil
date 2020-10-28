@@ -17,6 +17,8 @@
                     <hr>
                 </div>
                 {{ for r in result[role]['count']: }}
+                    {{ if r.sample_type is None: }}
+                        {{ continue }}
                     <div class="set_cell">
                         <div class="set_data">
                             <span class="button_token {{=r.sample_type}}_token">{{=r.sample_type}}s</span>:
