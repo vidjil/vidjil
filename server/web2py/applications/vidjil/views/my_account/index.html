@@ -13,7 +13,7 @@
         {{ for role in result: }}
             <div class="set_group">
                 <div class="set_group_header">
-                    {{=role}}
+                    {{=role}} ({{=result[role]['permissions']}})
                     <hr>
                 </div>
                 {{ for r in result[role]['count']: }}

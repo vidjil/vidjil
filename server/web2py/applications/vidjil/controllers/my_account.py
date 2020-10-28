@@ -112,6 +112,19 @@ def index():
 
         result[r.auth_group.role]['tags'] = [] if r._extra[group_tags] is None else r._extra[group_tags].split(',')
 
+    group_permissions = "GROUP_CONCAT(DISTINCT auth_permission.name)"
+
+    perm_query = db(base_query &
+            (db.auth_permission.record_id == 0)
+        ).select(
+            db.auth_group.role,
+            group_permissions,
+            groupby=db.auth_group.role
+        )
+
+    for r in perm_query:
+        result[r.auth_group.role]['permissions'] = [] if r._extra[group_permissions] is None else r._extra[group_permissions]
+
     log.debug("my account list (%.3fs)" % (time.time()-start))
     return dict(result=result,
                 group_ids = group_list,
