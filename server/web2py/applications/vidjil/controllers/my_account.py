@@ -14,7 +14,7 @@ ACCESS_DENIED = "access denied"
 def index():
     start = time.time()
 
-    if 'group_ids' in request.vars and request.vars['group_ids'] is not None:
+    if auth.is_admin() and 'group_ids' in request.vars and request.vars['group_ids'] is not None:
         group_list = request.vars['group_ids']
         if isinstance(group_list, types.StringTypes):
             group_list = [group_list]
