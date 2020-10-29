@@ -318,11 +318,10 @@ def get_data():
                    ).select(db.sequence_file.ALL,db.results_file.ALL, db.sample_set.id, orderby=db.sequence_file.id|~db.results_file.run_date)
 
         query2 = {}
-        sequence_file_id = 0
         # convert query results as a dict with file name as key
         for row in query : 
-            if row.sequence_file.id != sequence_file_id :
-                query2[row.sequence_file.data_file]=row
+            query2[row.sequence_file.data_file]=row
+
         
         data["sample_set_id"] = sample_set.id
 
@@ -351,23 +350,31 @@ def get_data():
             data["samples"]["db_key"].append('')
             data["samples"]["commandline"].append(command)
             
-            found = False
+            found_sequence_file = False
+            found_result_file   = False # For AIRR files
+            found_filename      = False # for Vidjil files
             if o_n in query2:
-                found = "sequence_file"
+                found_sequence_file = True
             else:
-                # Sometimes, result_file is tha key to use, and not sequence_file (AIRR/clntab import)
+                # Sometimes, result_file is the key to use, and not sequence_file (AIRR/clntab import)
                 for seqfile in query2:
+                    # AIRR case
                     if o_n == query2[seqfile].results_file.data_file:
-                        found = "results_file__%s" % seqfile
+                        found_result_file = seqfile
+                        break
+                    # Vidjil file case
+                    elif os.path.splitext(o_n)[0] == os.path.splitext(query2[seqfile].sequence_file.filename)[0]: # ne marche pas a cause de l'extension
+                        found_filename = seqfile
                         break
 
-            if found:
-                if found == "sequence_file":
+            if found_sequence_file or found_result_file or found_filename:
+                if found_sequence_file: # standard case
                     row = query2[o_n]
-                else:
-                    ## AIRR/clntab data
-                    seqfile = found.split("__")[1]
-                    row = query2[seqfile]
+                elif found_filename: # case import vidjil file
+                    row = query2[found_filename]
+                else: # case AIRR/clntab data
+                    row = query2[found_result_file]
+
                 # Use row to fill fields
                 data["samples"]["names"].append(row.sequence_file.filename.split('.')[0])
                 data["samples"]["sample_name"].append(row.sequence_file.id)
@@ -378,7 +385,6 @@ def get_data():
                 data["samples"]["id"].append(row.sequence_file.id)
                 data["samples"]["patient_id"].append(get_patient_id(row.sequence_file.id))
                 data["samples"]["run_id"].append(row.sequence_file.id)
-
             else :
                 data["samples"]["info"].append("this file has been deleted from the database, info relative to this sample are no longer available")
                 data["samples"]["timestamp"].append("None")
