@@ -637,8 +637,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
             console.default.log("this.diversity[key][time]: " + this.diversity[key][time])
     	    if (this.diversity[key][time] == 'na') {
-                console.default.log("diversity is na")
-                return "na" // Append if no diversity computable by fuse (AIRR import for exemple)
+                return // Append if no diversity computable by fuse (AIRR import for exemple)
             } else if (typeof this.diversity[key][time] != 'undefined') {
         	    // Diversity may not be stored in an Array for retrocompatiblitiy reasons
         	    // See #1941 and #3416
