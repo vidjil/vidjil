@@ -37,7 +37,7 @@
                 {{ for fuse in result[role]['fuses']: }}
                     <div class="analysis_button">
                         <span class="button button_token {{=fuse[3]}}_token">
-                            <a href="https://localhost/?sample_set_id={{=fuse[1]}}&config={{=fuse[2]}}">{{=fuse[0]}}</a>
+                            <a href="https://localhost/?sample_set_id={{=fuse[1]}}&config={{=fuse[2]}}">{{=fuse[4]}}: {{=fuse[0]}}</a>
                         </span>
                     </div>
                     {{pass}}

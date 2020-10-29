@@ -88,7 +88,7 @@ def index():
     two_days_ago = datetime.today() - timedelta(days=2)
 
     group_statuses = "GROUP_CONCAT(DISTINCT scheduler_task.id || ';' || scheduler_task.status)"
-    group_fuses = "GROUP_CONCAT(DISTINCT config.name || ';' || fused_file.sample_set_id || ';' || fused_file.config_id || ';' || sample_set.sample_type)"
+    group_fuses = "GROUP_CONCAT(DISTINCT config.name || ';' || fused_file.sample_set_id || ';' || fused_file.config_id || ';' || sample_set.sample_type || ';' || sequence_file.filename)"
     group_tags = "GROUP_CONCAT(DISTINCT tag.name)"
 
     left = [
@@ -96,6 +96,8 @@ def index():
             db.auth_permission.record_id == db.sample_set.id),
         db.sample_set_membership.on(
             db.sample_set_membership.sample_set_id == db.sample_set.id),
+        db.sequence_file.on(
+            db.sequence_file.id == db.sample_set_membership.sequence_file_id),
         db.results_file.on(
             db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id),
         db.scheduler_task.on(
