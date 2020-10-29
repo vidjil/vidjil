@@ -42,6 +42,25 @@ def index():
         (db.auth_permission.table_name == 'sample_set')
     )
 
+    group_permissions = "GROUP_CONCAT(DISTINCT auth_permission.name)"
+
+    perm_query = db(base_query &
+            (db.auth_permission.record_id == 0)
+        ).select(
+            db.auth_group.role,
+            group_permissions,
+            groupby=db.auth_group.role
+        )
+
+    result = {}
+    for r in perm_query:
+        if(r.auth_group.role not in result):
+            result[r.auth_group.role] = {'count': []}
+            result[r.auth_group.role]['statuses'] = ""
+            result[r.auth_group.role]['fuses'] = []
+            result[r.auth_group.role]['tags'] = []
+        result[r.auth_group.role]['permissions'] = [] if r._extra[group_permissions] is None else r._extra[group_permissions]
+
     if (tags is not None and len(tags) > 0):
         base_query = (base_query &
             (db.tag.name.upper().belongs([t.upper() for t in tags])) &
@@ -60,7 +79,6 @@ def index():
         groupby=(db.auth_group.role, db.sample_set.sample_type)
     )
 
-    result = {}
     for r in query:
         if r.auth_group.role in result:
             result[r.auth_group.role]['count'].append(r)
@@ -111,19 +129,6 @@ def index():
         result[r.auth_group.role]['fuses'] = [] if r._extra[group_fuses] is None else [fuse.split(';') for fuse in r._extra[group_fuses].split(',')]
 
         result[r.auth_group.role]['tags'] = [] if r._extra[group_tags] is None else r._extra[group_tags].split(',')
-
-    group_permissions = "GROUP_CONCAT(DISTINCT auth_permission.name)"
-
-    perm_query = db(base_query &
-            (db.auth_permission.record_id == 0)
-        ).select(
-            db.auth_group.role,
-            group_permissions,
-            groupby=db.auth_group.role
-        )
-
-    for r in perm_query:
-        result[r.auth_group.role]['permissions'] = [] if r._extra[group_permissions] is None else r._extra[group_permissions]
 
     log.debug("my account list (%.3fs)" % (time.time()-start))
     return dict(result=result,
