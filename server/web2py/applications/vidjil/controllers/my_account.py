@@ -21,7 +21,6 @@ def index():
     else:
         group_list = [int(g.id) for g in auth.get_user_groups() + auth.get_user_group_parents()]
 
-    involved_group_ids = get_involved_groups()
 
     if "filter" not in request.vars :
         request.vars["filter"] = ""
@@ -131,6 +130,8 @@ def index():
         result[r.auth_group.role]['fuses'] = [] if r._extra[group_fuses] is None else [fuse.split(';') for fuse in r._extra[group_fuses].split(',')]
 
         result[r.auth_group.role]['tags'] = [] if r._extra[group_tags] is None else r._extra[group_tags].split(',')
+
+    involved_group_ids = get_involved_groups()
 
     log.debug("my account list (%.3fs)" % (time.time()-start))
     return dict(result=result,
