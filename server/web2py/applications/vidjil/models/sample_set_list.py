@@ -29,7 +29,9 @@ class SampleSetList():
                     (db.anon_permission.record_id == s_table.id) &
                     (db.auth_group.id == db.anon_permission.group_id ) &
                     (db.auth_membership.user_id == auth.user_id) &
-                    (db.auth_membership.group_id == db.auth_group.id))
+                    (db.auth_membership.group_id == db.auth_group.id)),
+                db.auth_user.on(
+                    db.auth_user.id == s_table.creator)
                 ]
 
         # SQL string with GROUP_CONCAT queries
@@ -44,9 +46,7 @@ class SampleSetList():
         groupby = [s_table.id, s_table.sample_set_id, s_table.info, db.auth_user.last_name]
         groupby += helper.get_dedicated_group()
 
-        join = [s_table.on(s_table.sample_set_id == db.sample_set.id),
-                db.auth_user.on(db.auth_user.id == s_table.creator)
-            ]
+        join = [s_table.on(s_table.sample_set_id == db.sample_set.id)]
 
         query = (auth.vidjil_accessible_query('read', db.sample_set))
 
