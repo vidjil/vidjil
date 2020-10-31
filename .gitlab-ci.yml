@@ -307,7 +307,7 @@ old-chrome-browser-functional-external-chrome:
     - /^hotfix-.*c.*\/.*$/
     - prod-client
     - schedules
-    - doc
+    - /tutorial/
   tags:
     - web
 
