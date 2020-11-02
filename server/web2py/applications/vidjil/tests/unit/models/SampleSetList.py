@@ -45,6 +45,9 @@ class SamplesetlistModel(unittest.TestCase):
         slist = SampleSetList(helper)
         value = slist.result[0]
 
-        self.assertFalse(value.has_permission, "Anon was allowed, when it was not expected to be")
+        set_ids = set([s.id for s in slist.result])
+        anon_permissions = list(set([s.id for s in db(auth.vidjil_accesssible_query('anon', db.sample_set))]) & set_ids)
+
+        self.assertFalse(value.sample_set_id in anon_permissions, "Anon was allowed, when it was not expected to be")
 
 
