@@ -23,13 +23,6 @@ class SampleSetList():
                 db.auth_group.on(
                     (db.generic_perm.group_id == db.auth_group.id)),
                 db.auth_membership.on(db.auth_group.id == db.auth_membership.group_id),
-                db.auth_permission.with_alias('anon_permission').on(
-                    (db.anon_permission.table_name == self.type) &
-                    (db.anon_permission.name == "anon")  &
-                    (db.anon_permission.record_id == s_table.id) &
-                    (db.auth_group.id == db.anon_permission.group_id ) &
-                    (db.auth_membership.user_id == auth.user_id) &
-                    (db.auth_membership.group_id == db.auth_group.id)),
                 db.auth_user.on(
                     db.auth_user.id == s_table.creator)
                 ]
@@ -64,7 +57,6 @@ class SampleSetList():
             s_table.info.with_alias('info'),
             db.auth_user.last_name.with_alias('creator'),
             group_file_sizes,
-            db.anon_permission.name.with_alias('has_permission'),
             group_configs,
             group_config_ids,
             group_config_names,

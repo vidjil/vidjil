@@ -227,6 +227,16 @@ def all():
     f = time.time()
     slist = SampleSetList(helper, page, step, tags, search)
 
+    log.debug("list loaded (%.3fs)" % (time.time() - f))
+
+    mid = time.time()
+
+    set_ids = set([s.sample_set_id for s in slist.result])
+    admin_permissions = [s.id for s in db(auth.vidjil_accessible_query(PermissionEnum.admin.value, db.sample_set)).select(db.sample_set.id)]
+    admin_permissions = list(set(admin_permissions) & set_ids)
+
+    log.debug("permission load (%.3fs)" % (time.time() - mid))
+
     # failsafe if filtered display all results
     step = len(slist) if step is None else step
     page = 0 if page is None else page
@@ -254,6 +264,7 @@ def all():
                 fields = fields,
                 helper = helper,
                 group_ids = group_ids,
+                admin_permissions = admin_permissions,
                 isAdmin = isAdmin,
                 reverse = reverse,
                 step = step,
