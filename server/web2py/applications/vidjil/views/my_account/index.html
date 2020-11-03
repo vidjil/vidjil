@@ -17,15 +17,12 @@
                     <hr>
                 </div>
                 {{ for set_type in ['patient', 'run', 'set']: }}
-                    {{ for r in result[role][set_type]['count']: }}
-                        <div class="set_cell">
-                            <div class="set_data">
-                                <span class="button_token {{=r.sample_type}}_token">{{=r.sample_type}}s</span>:
-                            </div>
-                            <div class="set_data">number: {{=r['num_sets']}}</div>
-                            <div class="set_data">associated samples: {{=r['num_samples']}}</div>
-                        </div>
-                        {{pass}}
+                    {{ r = result[role][set_type]['count'] }}
+                    <div class="set_cell">
+                        <div class="button_token {{=r['sample_type']}}_token">{{=set_type}}s</div>:
+                        <div>{{=r['num_sets']}}</div>
+                        <div>(samples: {{=r['num_samples']}})</div>
+                    </div>
                     {{pass}}
                 <div class="set_data margined-top">recent jobs: {{=result[role]['statuses']}}</div>
                 <div class="set_data margined-top">
