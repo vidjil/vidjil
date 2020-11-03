@@ -76,7 +76,7 @@ def get_tags(group_list):
 def index():
     start = time.time()
 
-    two_days_ago = datetime.today() - timedelta(days=2)
+    since = datetime.today() - timedelta(days=30)
 
     if auth.is_admin() and 'group_ids' in request.vars and request.vars['group_ids'] is not None:
         group_list = request.vars['group_ids']
@@ -128,10 +128,10 @@ def index():
             db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id),
         db.scheduler_task.on(
             (db.scheduler_task.id == db.results_file.scheduler_task_id) &
-            (db.scheduler_task.start_time >= two_days_ago)),
+            (db.scheduler_task.start_time >= since)),
         db.fused_file.on(
             (db.fused_file.sample_set_id == db.sample_set.id) &
-            (db.fused_file.fuse_date >= two_days_ago)),
+            (db.fused_file.fuse_date >= since)),
         db.config.on(
             db.config.id == db.fused_file.config_id)
     ]
