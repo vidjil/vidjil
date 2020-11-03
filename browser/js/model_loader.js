@@ -427,7 +427,7 @@ Model_loader.prototype = {
 
     /**
      * recalculating the array is sometimes necessary if the analysis and fused_file have diverged.
-     * @param  {Array} arr [description]
+     * @param  {Array} arr Order as loaded from analysis file
      * @return {Array}     [description]
      */
     calculateOrder: function(arr) {
@@ -475,6 +475,7 @@ Model_loader.prototype = {
 
     copySampleFields: function(samples, analysis) {
         var clone = $.extend({}, samples);
+
         if ('id' in analysis) {
             //replace names, timestamps, order...
             dict = this.buildDict(analysis.id, clone.original_names);
@@ -492,15 +493,15 @@ Model_loader.prototype = {
         }
 
         // Fix case of error where same timepoint is present multiple time in order
+        if (clone.order != undefined){
+            clone.order = removeDuplicate(clone.order)
+        }
         if (analysis.order != undefined){
-            analysis.order = analysis.order.filter(function(item, pos) {
-                return analysis.order.indexOf(item) == pos;
-            })
+            analysis.order = removeDuplicate(analysis.order)
+
         }
         if (analysis.stock_order != undefined){
-            analysis.stock_order = analysis.stock_order.filter(function(item, pos) {
-                return analysis.stock_order.indexOf(item) == pos;
-            })
+            analysis.stock_order = removeDuplicate(analysis.stock_order)
         }
 
         if ('order' in analysis && 'stock_order' in analysis) {
@@ -522,8 +523,8 @@ Model_loader.prototype = {
                 clone.order       = Array.from(Array(this.samples.number).keys())
                 clone.stock_order = Array.from(Array(this.samples.number).keys())
             }
-        } else if ('order' in analysis && !('stock_order' in analysis)) {
-            // Keep this behavior to ope old samples/analysis
+
+        } else if ('order' in analysis && !('stock_order' in analysis) && analysis.id.length != clone.original_names.length) {
             clone.order = this.calculateOrder(clone.order);
         }
 
