@@ -269,6 +269,12 @@ Here are some notable configuration changes you should consider:
   - Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `vidjil-server/conf/defs.py`.
     They are used for admin emails monitoring the server an reporting errors.
 
+  - If, according yo tour local regulations, the server is suitable for hosting clinical data,
+    you may update the `HEALTHCARE_COMPLIANCE` variable to remove warnings related to non-healthcare compliance.
+    Updating this variable is the sole responsibility of the institution responsible for the server,
+    and should be done in accordance with the regulations that apply in your country.
+    See also the [hosting options](healthcare.md) offered by the VidjilNet consortium.
+
   - To allow users to select files from a mounted volume,
     set `FILE_SOURCE` and `FILE_TYPES` in `vidjil-server/conf/defs.py`.
     In this case, the `DIR_SEQUENCES` directory will be populated with links to the selected files.
