@@ -2286,15 +2286,14 @@ form .form_label {
   flex-direction: row;
   margin-bottom: 25px;
   margin-right: 15px;
+  flex-flow: column;
   width: 48%;
 }
 .set_group_header {
   width: 100%;
 }
 .set_cell {
-  display: flex;
-  flex-flow: column;
-  width: 33%;
+  word-break: break-all;
 }
 .set_data {
   width: 100%;
@@ -2304,6 +2303,9 @@ form .form_label {
 }
 .margined-top {
   margin-top: 10px;
+}
+.margined-bottom {
+  margin-bottom: 10px;
 }
 body {
   line-height: 20px;
