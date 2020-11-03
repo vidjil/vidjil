@@ -101,7 +101,7 @@ def index():
             for set_type in ['patient', 'run', 'set']:
                 result[r.auth_group.role][set_type] = {'count': {'num_sets': 0, 'num_samples': 0, 'sample_type': 'generic' if set_type == 'set' else set_type}}
                 result[r.auth_group.role][set_type]['tags'] = []
-            result[r.auth_group.role]['statuses'] = ""
+                result[r.auth_group.role][set_type]['statuses'] = ""
             result[r.auth_group.role]['fuses'] = []
         result[r.auth_group.role]['permissions'] = [] if r._extra[group_permissions()] is None else r._extra[group_permissions()]
 
@@ -181,7 +181,7 @@ def index():
             result[r.auth_group.role][key]['count']['num_sets'] += r.num_sets
             result[r.auth_group.role][key]['count']['num_samples'] += r.num_sets
             result[r.auth_group.role][key]['count']['sample_type'] = r.sample_type
-            result[r.auth_group.role]['statuses'] += "" if r._extra[group_statuses] is None else "".join([s.split(';')[1][0] for s in r._extra[group_statuses].split(',')])
+            result[r.auth_group.role][key]['statuses'] += "" if r._extra[group_statuses] is None else "".join([s.split(';')[1][0] for s in r._extra[group_statuses].split(',')])
 
             fuses = [] if r._extra[group_fuses[key]] is None else [fuse.split(';') for fuse in r._extra[group_fuses[key]].split(',')]
             result[r.auth_group.role]['fuses'] += (fuses)
