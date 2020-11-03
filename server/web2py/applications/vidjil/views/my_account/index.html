@@ -18,19 +18,20 @@
                 </div>
                 {{ for set_type in ['patient', 'run', 'set']: }}
                     {{ r = result[role][set_type]['count'] }}
-                    <div class="set_cell">
-                        <div class="button_token {{=r['sample_type']}}_token">{{=set_type}}s</div>:
-                        <div>{{=r['num_sets']}}</div>
-                        <div>(samples: {{=r['num_samples']}})</div>
+                    <div class="set_cell margined-bottom">
+                        <span class="button_token {{=r['sample_type']}}_token">{{=set_type}}s</span>:
+                        <span>{{=r['num_sets']}}</span>
+                        <span>(samples: {{=r['num_samples']}})</span>
+                        <span>/ last month:</span>
+                        <span>jobs: {{=len(result[role][set_type]['statuses'])}} {{=result[role][set_type]['statuses']}}</span>
                     </div>
                     {{pass}}
-                <div class="set_data margined-top">recent jobs: {{=result[role]['statuses']}}</div>
-                <div class="set_data margined-top">
+                <div class="set_data margined-bottom">
                     {{ for tag in result[role]['tags']: }}
                         <a onclick="event.preventDefault();event.stopPropagation();db.callLinkable($(this))" href="/my_account/index" class="tag-link" data-linkable-type="tag" data-linkable-target-param="filter" data-linkable-name="#{{=tag}}">#{{=tag}}</a>
                         {{pass}}
                 </div>
-                <div class="set_data margined-top">
+                <div class="set_data">
                 {{ for fuse in result[role]['fuses']: }}
                     <div class="analysis_button">
                         <span class="button button_token {{=fuse[3]}}_token">
