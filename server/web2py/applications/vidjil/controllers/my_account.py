@@ -104,7 +104,7 @@ def index():
                 result[r.auth_group.role][set_type]['statuses'] = ""
             result[r.auth_group.role]['fuses'] = []
             result[r.auth_group.role]['tags'] = []
-        result[r.auth_group.role]['permissions'] = [] if r._extra[group_permissions()] is None else r._extra[group_permissions()]
+        result[r.auth_group.role]['permissions'] = "" if r._extra[group_permissions()] is None else r._extra[group_permissions()]
 
     query = (base_query(group_list) &
             (db.auth_permission.name == 'access') &
