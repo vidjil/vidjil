@@ -105,7 +105,6 @@ def index():
 
     search, tags = parse_search(request.vars["filter"])
 
-
     result = {}
     perm_query = get_permissions(group_list)
     for r in perm_query:
