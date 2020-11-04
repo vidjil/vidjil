@@ -186,3 +186,52 @@ def index():
     return dict(result=result,
                 group_ids = group_list,
                 involved_group_ids = involved_group_ids)
+
+def jobs():
+    since = datetime.today() - timedelta(days=30)
+
+    if auth.is_admin() and 'group_ids' in request.vars and request.vars['group_ids'] is not None:
+        group_list = request.vars['group_ids']
+        if isinstance(group_list, types.StringTypes):
+            group_list = [group_list]
+    else:
+        group_list = [int(g.id) for g in auth.get_user_groups() + auth.get_user_group_parents()]
+
+    log.debug("group_list: %s" % group_list)
+
+    if "filter" not in request.vars :
+        request.vars["filter"] = ""
+
+    search, tags = parse_search(request.vars["filter"])
+
+    query = (access_query(group_list) &
+            (db.sample_set.id == db.auth_permission.record_id) &
+            (db.sample_set_membership.sample_set_id == db.sample_set.id) &
+            (db.sequence_file.id == db.sample_set_membership.sequence_file_id) &
+            (db.results_file.sequence_file_id == db.sequence_file.id) &
+            (db.config.id == db.results_file.config_id) &
+            (db.scheduler_task.id == db.results_file.scheduler_task_id) &
+            (db.scheduler_task.start_time > since))
+
+    if (tags is not None and len(tags) > 0):
+        query = (query & filter_by_tags(tags))
+
+    result = db(query).select(
+            db.sample_set.id.with_alias('sample_set_id'),
+            db.sample_set.sample_type.with_alias('sample_type'),
+            db.sequence_file.filename.with_alias('filename'),
+            db.sequence_file.info.with_alias('info'),
+            db.config.id.with_alias('config_id'),
+            db.config.name.with_alias('config'),
+            db.scheduler_task.status.with_alias('status'),
+            db.scheduler_task.start_time.with_alias('time'),
+            orderby=~db.scheduler_task.start_time
+        )
+
+    involved_group_ids = get_involved_groups() # for search autocomplete
+    tagdecorator = TagDecorator(get_tag_prefix())
+
+    return dict(result=result,
+                group_ids = group_list,
+                involved_group_ids = involved_group_ids,
+                tagdecorator = tagdecorator)
