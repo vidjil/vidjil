@@ -109,6 +109,7 @@ def index():
     query = (base_query(group_list) &
             (db.auth_permission.name == 'access') &
             (db.auth_permission.record_id > 0))
+
     if (tags is not None and len(tags) > 0):
         query = (query &
             (db.tag.name.upper().belongs([t.upper() for t in tags])) &
@@ -186,8 +187,6 @@ def index():
 
             fuses = [] if r._extra[group_fuses[key]] is None else [fuse.split(';') for fuse in r._extra[group_fuses[key]].split(',')]
             result[r.auth_group.role]['fuses'] += (fuses)
-
-
 
     tags = get_tags(group_list)
     for r in tags:
