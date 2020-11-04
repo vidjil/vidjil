@@ -32,6 +32,12 @@ def base_query(group_list):
     return (db.auth_group.id.belongs(group_list) &
         (db.auth_permission.group_id == db.auth_group.id))
 
+def access_query(group_list):
+    return (base_query(group_list) &
+            (db.auth_permission.table_name == 'sample_set') &
+            (db.auth_permission.name == 'access') &
+            (db.auth_permission.record_id > 0))
+
 def base_left():
     return [db.sample_set.on(
                 db.sample_set.id == db.auth_permission.record_id),
@@ -106,11 +112,7 @@ def index():
             result[r.auth_group.role]['tags'] = []
         result[r.auth_group.role]['permissions'] = "" if r._extra[group_permissions()] is None else r._extra[group_permissions()]
 
-    query = (base_query(group_list) &
-            (db.auth_permission.table_name == 'sample_set') &
-            (db.auth_permission.name == 'access') &
-            (db.auth_permission.record_id > 0))
-
+    query = access_query(group_list)
     if (tags is not None and len(tags) > 0):
         query = (query &
             (db.tag.name.upper().belongs([t.upper() for t in tags])) &
