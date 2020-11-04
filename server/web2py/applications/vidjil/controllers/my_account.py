@@ -148,35 +148,18 @@ def index():
         group_statuses,
     ]
 
-    patient_query = (query &
-                    (db.patient.sample_set_id == db.auth_permission.record_id))
 
-    queries['patient'] = db(patient_query).select(
-        group_fuses['patient'],
-        *select,
-        left=left,
-        groupby=(db.auth_group.role, db.sample_set.sample_type)
-    )
+    for set_type in ['patient', 'run', 'generic']:
+        key = 'set' if set_type == 'generic' else set_type
+        set_query = (query &
+                    (db[set_type].sample_set_id == db.auth_permission.record_id))
 
-    run_query = (query &
-                (db.run.sample_set_id == db.auth_permission.record_id))
-
-    queries['run'] = db(run_query).select(
-        group_fuses['run'],
-        *select,
-        left=left,
-        groupby=(db.auth_group.role, db.sample_set.sample_type)
-    )
-
-    generic_query = (query &
-                (db.generic.sample_set_id == db.auth_permission.record_id))
-
-    queries['set'] = db(generic_query).select(
-        group_fuses['set'],
-        *select,
-        left=left,
-        groupby=(db.auth_group.role, db.sample_set.sample_type)
-    )
+        queries[key] = db(set_query).select(
+            group_fuses[key],
+            *select,
+            left=left,
+            groupby=(db.auth_group.role, db.sample_set.sample_type)
+        )
 
     for key in queries:
         query = queries[key]
