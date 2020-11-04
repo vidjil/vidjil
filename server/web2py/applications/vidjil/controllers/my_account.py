@@ -126,8 +126,6 @@ def index():
     group_statuses = "GROUP_CONCAT(DISTINCT scheduler_task.id || ';' || SUBSTRING(scheduler_task.status, 1, 1))"
     group_fuses = get_group_fuses()
 
-    queries = {}
-
     left = base_left() + [
         db.sequence_file.on(
             db.sequence_file.id == db.sample_set_membership.sequence_file_id),
@@ -152,7 +150,7 @@ def index():
         group_statuses,
     ]
 
-
+    queries = {}
     for set_type in ['patient', 'run', 'generic']:
         key = 'set' if set_type == 'generic' else set_type
         set_query = (query &
