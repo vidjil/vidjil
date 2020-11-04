@@ -38,6 +38,13 @@ def access_query(group_list):
             (db.auth_permission.name == 'access') &
             (db.auth_permission.record_id > 0))
 
+def filter_by_tags(tags):
+        return ((db.tag.name.upper().belongs([t.upper() for t in tags])) &
+        (db.tag_ref.tag_id == db.tag.id) &
+        (db.tag_ref.table_name == 'sequence_file') &
+        (db.tag_ref.record_id == db.sample_set_membership.sequence_file_id)
+    )
+
 def base_left():
     return [db.sample_set.on(
                 db.sample_set.id == db.auth_permission.record_id),
@@ -114,12 +121,7 @@ def index():
 
     query = access_query(group_list)
     if (tags is not None and len(tags) > 0):
-        query = (query &
-            (db.tag.name.upper().belongs([t.upper() for t in tags])) &
-            (db.tag_ref.tag_id == db.tag.id) &
-            (db.tag_ref.table_name == 'sequence_file') &
-            (db.tag_ref.record_id == db.sample_set_membership.sequence_file_id)
-        )
+        query = (query & filter_by_tags(tags))
 
     group_statuses = "GROUP_CONCAT(DISTINCT scheduler_task.id || ';' || SUBSTRING(scheduler_task.status, 1, 1))"
     group_fuses = get_group_fuses()
