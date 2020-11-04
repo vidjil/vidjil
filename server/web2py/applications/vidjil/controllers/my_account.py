@@ -107,6 +107,7 @@ def index():
         result[r.auth_group.role]['permissions'] = "" if r._extra[group_permissions()] is None else r._extra[group_permissions()]
 
     query = (base_query(group_list) &
+            (db.auth_permission.table_name == 'sample_set') &
             (db.auth_permission.name == 'access') &
             (db.auth_permission.record_id > 0))
 
