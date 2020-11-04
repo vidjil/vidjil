@@ -162,9 +162,9 @@ def index():
             groupby=(db.auth_group.role, db.sample_set.sample_type)
         )
 
-    for key in queries:
+    for key in queries: # patient, run, set
         query = queries[key]
-        for r in query:
+        for r in query: # 1 or 0 rows
             result[r.auth_group.role][key]['count']['num_sets'] += r.num_sets
             result[r.auth_group.role][key]['count']['num_samples'] += r.num_sets
             result[r.auth_group.role][key]['count']['sample_type'] = r.sample_type
@@ -173,11 +173,11 @@ def index():
             fuses = [] if r._extra[group_fuses[key]] is None else [fuse.split(';') for fuse in r._extra[group_fuses[key]].split(',')]
             result[r.auth_group.role]['fuses'] += (fuses)
 
-    tags = get_tags(group_list)
+    tags = get_tags(group_list) # list tags used without filtering
     for r in tags:
         result[r.auth_group.role]['tags'] = [] if r._extra[group_tags()] is None else r._extra[group_tags()].split(',')
 
-    involved_group_ids = get_involved_groups()
+    involved_group_ids = get_involved_groups() # for search autocomplete
 
     log.debug("my account list (%.3fs)" % (time.time()-start))
     return dict(result=result,
