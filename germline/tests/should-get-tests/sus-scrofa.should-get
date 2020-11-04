@@ -1,0 +1,31 @@
+!NO_LAUNCHER:
+!LAUNCH: (cd $VIDJIL_DIR/germline ; cat sus-scrofa/*.fa | tr '|' '#' )
+
+
+$ Found germline for main Sus scrofa
+:"Sus scrofa"
+$ Found germline for Sus scrofa_Duroc
+:"Sus scrofa_Duroc"
+$ Found germline for Sus scrofa_Minnesota miniature swine
+:"Sus scrofa_Minnesota miniature swine"
+$ Found germline for Sus scrofa_Landrace boar
+:"Sus scrofa_Landrace boar"
+$ Found germline for Sus scrofa_Yorkshire
+:"Sus scrofa_Yorkshire"
+
+
+$ Found some sequences of Sus scrofa (raw)
+1: .*#IGHV1-11.01#Sus scrofa#
+
+$ Found some sequences of Sus scrofa_Duroc
+1: .*#TRBV1.*#Sus scrofa_Duroc#
+
+$ Found some sequences of Sus Sus scrofa_Minnesota miniature swine
+1: .*#IGHG1.#Sus Sus scrofa_Minnesota miniature swine#
+
+$ Found some sequences of Sus scrofa_Yorkshire
+1: .*#IGHG1*.#Sus scrofa_Yorkshire#
+
+$ Found some sequences of Sus scrofa_Landrace boar
+1: .*#IGHM.*#Sus scrofa_Landrace boar#
+
