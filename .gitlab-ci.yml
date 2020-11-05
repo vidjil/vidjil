@@ -423,7 +423,7 @@ deploy_review_server:
     - make -C browser icons
     - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
     - sed -i -r "s/localhost/${CI_BUILD_REF_SLUG}.server.ci.vidjil.org/g" ./browser/js/conf.js
-    - sed -i "s/\"server_id\" ':' \"\"/\"server_id\" ':' \"${CI_BUILD_REF_SLUG}.server.ci.vidjil.org\"/" ./browser/js/conf.js
+    - 'sed -i "s/\"server_id\" : \"\"/\"server_id\" : \"${CI_BUILD_REF_SLUG}.server.ci.vidjil.org\"/" ./browser/js/conf.js'
     - sed -r 's/^.*FILE_SOURCE.*$/FILE_SOURCE="\/usr\/share\/vidjil\/demo"/' ./docker/vidjil-server/conf/defs.py > ./server/web2py/applications/vidjil/modules/defs.py
     - sed -i -e "/EMAIL_SUBJECT_START/c EMAIL_SUBJECT_START='[Vidjil/CI][$CI_COMMIT_REF_NAME]'" -e '/FROM_EMAIL/c FROM_EMAIL="server.ci@vidjil.org"' ./server/web2py/applications/vidjil/modules/defs.py
     - mv docker docker_${CI_BUILD_REF_SLUG}
