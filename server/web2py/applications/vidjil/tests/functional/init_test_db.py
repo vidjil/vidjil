@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import vidjil_utils
+from datetime import datetime
 
 class DBInitialiser(object):
 
@@ -101,7 +102,8 @@ class DBInitialiser(object):
             membership = db(db.sample_set_membership.sequence_file_id == sf.id).select(limitby=(0,1)).first()
             stid = db.scheduler_task.insert(
                 application_name="vidjil",
-                status="COMPLETED"
+                status="COMPLETED",
+                start_time=datetime.now()
             )
             db.results_file.insert(
                 sequence_file_id=sf.id,
