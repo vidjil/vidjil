@@ -122,7 +122,7 @@ def index():
     if (tags is not None and len(tags) > 0):
         query = (query & filter_by_tags(tags))
 
-    group_statuses = "GROUP_CONCAT(DISTINCT scheduler_task.id || ';' || SUBSTRING(scheduler_task.status, 1, 1))"
+    group_statuses = "GROUP_CONCAT(DISTINCT scheduler_task.id || ';' || scheduler_task.status)"
     group_fuses = get_group_fuses()
 
     left = base_left() + [
@@ -168,7 +168,7 @@ def index():
             result[r.auth_group.role][key]['count']['num_sets'] += r.num_sets
             result[r.auth_group.role][key]['count']['num_samples'] += r.num_sets
             result[r.auth_group.role][key]['count']['sample_type'] = r.sample_type
-            result[r.auth_group.role][key]['statuses'] += "" if r._extra[group_statuses] is None else "".join([s.split(';')[1] for s in r._extra[group_statuses].split(',')])
+            result[r.auth_group.role][key]['statuses'] += "" if r._extra[group_statuses] is None else "".join([s.split(';')[1][0] for s in r._extra[group_statuses].split(',')])
 
             fuses = [] if r._extra[group_fuses[key]] is None else [fuse.split(';') for fuse in r._extra[group_fuses[key]].split(',')]
             result[r.auth_group.role]['fuses'] += (fuses)
