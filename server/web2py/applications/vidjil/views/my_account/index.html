@@ -11,7 +11,7 @@
     </div>
     <div class="db_block">
         {{ for role in result: }}
-            <div class="set_group">
+            <div id="{{=role}}_info" class="set_group">
                 <div class="set_group_header">
                     {{=role}} ({{=result[role]['permissions']}})
                     <hr>
@@ -20,8 +20,8 @@
                     {{ r = result[role][set_type]['count'] }}
                     <div class="set_cell margined-bottom">
                         <span class="button_token {{=r['sample_type']}}_token">{{=set_type}}s</span>:
-                        <span>{{=r['num_sets']}}</span>
-                        <span>(samples: {{=r['num_samples']}})</span>
+                        <span class="{{=set_type}}_num_sets">{{=r['num_sets']}}</span>
+                        <span class="{{=set_type}}_num_samples">(samples: {{=r['num_samples']}})</span>
                         <span>/ last month:</span>
                         <span>jobs: {{=len(result[role][set_type]['statuses'])}} {{=result[role][set_type]['statuses']}}</span>
                     </div>
