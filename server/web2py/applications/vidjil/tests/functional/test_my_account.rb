@@ -40,8 +40,8 @@ class TestMyAccount < ServerTest
   def test_filter_my_account_tag
     go_to_my_account
 
-    test1_tag = $b.a(class: 'tag-link', text: 'test1')
-    test2_tag = $b.a(class: 'tag-link', text: 'test2')
+    test1_tag = $b.a(class: 'tag-link', text: '#test1')
+    test2_tag = $b.a(class: 'tag-link', text: '#test2')
 
     assert(test1_tag.present?)
     assert(test2_tag.present?)
@@ -69,8 +69,8 @@ class TestMyAccount < ServerTest
   def test_filter_jobs_tag
     table = go_to_jobs
 
-    test1_tag = $b.a(class: 'tag-link', text: 'test1')
-    test2_tag = $b.a(class: 'tag-link', text: 'test2')
+    test1_tag = $b.a(class: 'tag-link', text: '#test1')
+    test2_tag = $b.a(class: 'tag-link', text: '#test2')
 
     assert(test1_tag.present?)
     assert(test2_tag.present?)
