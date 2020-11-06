@@ -11,6 +11,7 @@ FROM_EMAIL = 'notifications@vidjil.org'
 ADMIN_EMAILS = ['notifications@vidjil.org']
 
 ### Server healthcare compliance
+### Please see <http://www.vidjil.org/doc/server#healthcare>
 HEALTHCARE_COMPLIANCE = False
 
 ### address for the sql database

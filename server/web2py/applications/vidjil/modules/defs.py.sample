@@ -12,6 +12,7 @@ ADMIN_EMAILS = ['notifications@vidjil.org']
 EMAIL_SUBJECT_START = '[Vidjil]' # Customize the start of the email subject
 
 ### Server healthcare compliance
+### Please see <http://www.vidjil.org/doc/server#healthcare>
 HEALTHCARE_COMPLIANCE = False
 
 ### Specific accounts
