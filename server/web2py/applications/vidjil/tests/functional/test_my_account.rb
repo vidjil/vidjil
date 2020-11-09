@@ -54,12 +54,12 @@ class TestMyAccount < ServerTest
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     filter = $b.text_field(id: 'db_filter_input')
-    assert(filter.text == '#test1')
+    assert(filter.value == '#test1')
     assert(public_group_info.span(class: 'patient_num_sets').text != num_patients)
 
     filter.set('#test2')
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
-    assert(filter.text == '#test2')
+    assert(filter.value == '#test2')
     assert(public_group_info.span(class: 'patient_num_sets').text != num_patients)
 
     assert(test1_tag.present? == false)
