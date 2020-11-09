@@ -129,6 +129,7 @@ def index():
                 result[r.auth_group.role][set_type] = {'count': {'num_sets': 0, 'num_samples': 0, 'sample_type': 'generic' if set_type == 'set' else set_type}}
                 result[r.auth_group.role][set_type]['tags'] = []
                 result[r.auth_group.role][set_type]['statuses'] = ""
+                result[r.auth_group.role][set_type]['num_jobs'] = 0
             result[r.auth_group.role]['fuses'] = []
             result[r.auth_group.role]['analyses'] = []
             result[r.auth_group.role]['tags'] = []
