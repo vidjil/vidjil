@@ -28,7 +28,7 @@
                     {{pass}}
                 <div class="set_data margined-bottom">
                     {{ for tag in result[role]['tags']: }}
-                        <a onclick="event.preventDefault();event.stopPropagation();db.callLinkable($(this))" href="/my_account/index" class="tag-link" data-linkable-type="tag" data-linkable-target-param="filter" data-linkable-name="#{{=tag}}">#{{=tag}}</a>
+                        <a onclick="event.preventDefault();event.stopPropagation();db.callLinkable($(this))" href="/my_account/index" class="tag-link" data-linkable-type="tag" data-linkable-target-param="filter" data-linkable-name="#{{=tag.split(' ')[0]}}">#{{=tag}}</a>
                         {{pass}}
                 </div>
                 <div class="set_data">

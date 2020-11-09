@@ -179,7 +179,7 @@ def index():
     tags = get_most_used_tags(group_list) # list tags used without filtering
     for r in tags:
         if(r.tag.name is not None):
-            result[r.auth_group.role]['tags'].append(r.tag.name)
+            result[r.auth_group.role]['tags'].append("%s (%d)" % (r.tag.name, r.count))
 
     involved_group_ids = get_involved_groups() # for search autocomplete
 
