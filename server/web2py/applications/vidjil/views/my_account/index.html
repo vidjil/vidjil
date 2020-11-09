@@ -23,7 +23,7 @@
                         <span class="{{=set_type}}_num_sets">{{=r['num_sets']}}</span>
                         <span class="{{=set_type}}_num_samples">(samples: {{=r['num_samples']}})</span>
                         <span>/ last month:</span>
-                        <span>jobs: {{=len(result[role][set_type]['statuses'])}} {{=result[role][set_type]['statuses']}}</span>
+                        <span>jobs: {{=result[role][set_type]['num_jobs']}} {{=result[role][set_type]['statuses']}}</span>
                     </div>
                     {{pass}}
                 <div class="set_data margined-bottom">

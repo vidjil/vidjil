@@ -162,16 +162,19 @@ def index():
             groupby=(db.auth_group.role, db.sample_set.sample_type)
         )
 
+    list_size = 50
     for key in queries: # patient, run, set
         query = queries[key]
         for r in query: # 1 or 0 rows
             result[r.auth_group.role][key]['count']['num_sets'] += r.num_sets
             result[r.auth_group.role][key]['count']['num_samples'] += r.num_sets
             result[r.auth_group.role][key]['count']['sample_type'] = r.sample_type
-            result[r.auth_group.role][key]['statuses'] += "" if r._extra[group_statuses] is None else "".join([s.split(';')[1][0] for s in r._extra[group_statuses].split(',')])
+            statuses = "" if r._extra[group_statuses] is None else "".join([s.split(';')[1][0] for s in r._extra[group_statuses].split(',')])
+            result[r.auth_group.role][key]['num_jobs'] = len(statuses)
+            result[r.auth_group.role][key]['statuses'] += statuses[:list_size]
 
             fuses = [] if r._extra[group_fuses[key]] is None else [fuse.split(';') for fuse in r._extra[group_fuses[key]].split(',')]
-            result[r.auth_group.role]['fuses'] += (fuses)
+            result[r.auth_group.role]['fuses'] += (fuses[:list_size])
 
     tags = get_most_used_tags(group_list) # list tags used without filtering
     for r in tags:
