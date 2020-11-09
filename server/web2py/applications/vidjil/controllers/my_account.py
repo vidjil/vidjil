@@ -181,7 +181,8 @@ def index():
             group_analyses[key],
             *select,
             left=left,
-            groupby=(db.auth_group.role, db.sample_set.sample_type)
+            groupby=(db.auth_group.role, db.sample_set.sample_type),
+            orderby=~db.scheduler_task.start_time
         )
 
     list_size = 50
