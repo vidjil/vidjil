@@ -63,10 +63,7 @@ def get_permissions(group_list):
             groupby=db.auth_group.role
         )
 
-def group_tags():
-    return "GROUP_CONCAT(DISTINCT tag.name)"
-
-def get_tags_filter(group_list):
+def get_most_used_tags(group_list):
     left = [
         db.sample_set.on(
             db.auth_permission.record_id == db.sample_set.id),
@@ -81,9 +78,12 @@ def get_tags_filter(group_list):
 
     return db(base_query(group_list)).select(
         db.auth_group.role,
-        group_tags(),
+        db.tag_ref.id.count().with_alias('count'),
+        db.tag.name,
         left=left,
-        groupby=db.auth_group.role
+        groupby=(db.auth_group.role, db.tag.name),
+        orderby=~db.tag_ref.id.count(),
+        limitby=(0,100)
     )
 
 def index():
@@ -173,9 +173,10 @@ def index():
             fuses = [] if r._extra[group_fuses[key]] is None else [fuse.split(';') for fuse in r._extra[group_fuses[key]].split(',')]
             result[r.auth_group.role]['fuses'] += (fuses)
 
-    tags = get_tags_filter(group_list) # list tags used without filtering
+    tags = get_most_used_tags(group_list) # list tags used without filtering
     for r in tags:
-        result[r.auth_group.role]['tags'] = [] if r._extra[group_tags()] is None else r._extra[group_tags()].split(',')
+        if(r.tag.name is not None):
+            result[r.auth_group.role]['tags'].append(r.tag.name)
 
     involved_group_ids = get_involved_groups() # for search autocomplete
 
