@@ -84,6 +84,7 @@ class TestMyAccount < ServerTest
     test1_tag.click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
+    test1_tag = $b.a(class: 'tag-link', text: '#test1')
     assert(test1_tag.present?)
     assert(test2_tag.present? == false)
 
