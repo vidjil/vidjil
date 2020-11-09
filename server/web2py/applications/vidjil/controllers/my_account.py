@@ -11,19 +11,22 @@ if request.env.http_origin:
 
 ACCESS_DENIED = "access denied"
 
-def get_group_fuses():
-    group_fuses = {}
+def generic_get_group(element_type):
+    group = {}
     separator = "|| ';' ||"
     fields = ["config.name",
-              "fused_file.sample_set_id",
-              "fused_file.config_id ",
+              "%s_file.sample_set_id" % element_type,
+              "%s_file.config_id" % element_type,
               "sample_set.sample_type"
             ]
     group_concat = "GROUP_CONCAT(DISTINCT  " + separator.join(fields)
-    group_fuses['patient'] =  group_concat + separator + "patient.first_name || ' ' || patient.last_name)"
-    group_fuses['run'] = group_concat + separator + "run.name)"
-    group_fuses['set'] = group_concat + separator + "generic.name)"
-    return group_fuses
+    group['patient'] =  group_concat + separator + "patient.first_name || ' ' || patient.last_name)"
+    group['run'] = group_concat + separator + "run.name)"
+    group['set'] = group_concat + separator + "generic.name)"
+    return group
+
+def get_group_fuses():
+    return generic_get_group('fused')
 
 def group_permissions():
     return "GROUP_CONCAT(DISTINCT auth_permission.name)"
