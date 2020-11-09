@@ -14,6 +14,7 @@
             <thead>
             <tr>
                 <td class="column4"></td>
+                <td>name</td>
                 <td>filename</td>
                 <td>info</td>
                 <td class="column2">config</td>
@@ -24,6 +25,13 @@
             {{ for row in result: }}
                 <tr>
                     <td class="uid"><span class="{{=row.sample_type}}_token">{{=row.sample_set_id}}</span></td>
+                    {{ if row.sample_type == 'patient': }}
+                        {{split_name = row._extra[names['patient']].split(' ')}}
+                        {{ name = vidjil_utils.display_names(row.sample_set_id, split_name[0], split_name[1]) }}
+                    {{ else: }}
+                        {{ name = row[row.sample_type].name }}
+                    {{pass}}
+                    <td>{{=name}}</td>
                     <td>{{=row.filename}}</td>
                     {{ info = tagdecorator.decorate(row.info, 'tag', 'sequence_file', '/my_account/jobs') }}
                     <td>{{=tagdecorator.sanitize(info)}}</td>

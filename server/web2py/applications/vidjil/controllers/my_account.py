@@ -241,22 +241,42 @@ def jobs():
     if (tags is not None and len(tags) > 0):
         query = (query & filter_by_tags(tags))
 
-    result = db(query).select(
-            db.sample_set.id.with_alias('sample_set_id'),
-            db.sample_set.sample_type.with_alias('sample_type'),
-            db.sequence_file.filename.with_alias('filename'),
-            db.sequence_file.info.with_alias('info'),
-            db.config.id.with_alias('config_id'),
-            db.config.name.with_alias('config'),
-            db.scheduler_task.status.with_alias('status'),
-            db.scheduler_task.start_time.with_alias('time'),
-            orderby=~db.scheduler_task.start_time
-        )
+    names = {}
+    names['patient'] = "patient.first_name || ' ' || patient.last_name"
+    names['run'] = "run.name"
+    names['generic'] = "generic.name"
+
+    queries = {}
+    for set_type in ['patient', 'run', 'generic']:
+        set_query = (query &
+                    (db[set_type].sample_set_id == db.sample_set.id))
+
+        key = 'set' if set_type == 'generic' else set_type
+        queries[key] = db(set_query).select(
+                names[set_type],
+                db.sample_set.id.with_alias('sample_set_id'),
+                db.sample_set.sample_type.with_alias('sample_type'),
+                db.sequence_file.filename.with_alias('filename'),
+                db.sequence_file.info.with_alias('info'),
+                db.config.id.with_alias('config_id'),
+                db.config.name.with_alias('config'),
+                db.scheduler_task.status.with_alias('status'),
+                db.scheduler_task.start_time.with_alias('time'),
+                orderby=~db.scheduler_task.start_time
+            )
 
     involved_group_ids = get_involved_groups() # for search autocomplete
     tagdecorator = TagDecorator(get_tag_prefix())
 
+    result = []
+    for key in queries:
+        result += queries[key]
+
+    sorted_start = time.time()
+    result = sorted(result, key=lambda x: x.time, reverse=True)
+    log.debug("jobs list sort (%.3fs)" % (time.time() - sorted_start))
     return dict(result=result,
                 group_ids = group_list,
                 involved_group_ids = involved_group_ids,
-                tagdecorator = tagdecorator)
+                tagdecorator = tagdecorator,
+                names = names)
