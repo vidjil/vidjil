@@ -15,9 +15,10 @@ sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 ### Life scientist
   - Tutorial "Mastering the Vidjil web application":
     [english](http://www.vidjil.org/doc/tutorial/mastering-vidjil.html)
-    ([pdf](http://www.vidjil.org/doc/tutorial/mastering-vidjil.pdf)),
-    [français](http://www.vidjil.org/doc/tutorial/mastering-vidjil-fr.html)
-    ([pdf](http://www.vidjil.org/doc/tutorial/mastering-vidjil-fr.pdf)) 🔗.
+    ([pdf](http://www.vidjil.org/doc/tutorial/mastering-vidjil.pdf))
+    <!-- [français](http://www.vidjil.org/doc/tutorial/mastering-vidjil-fr.html)
+    ([pdf](http://www.vidjil.org/doc/tutorial/mastering-vidjil-fr.pdf))  -->
+    🔗.
     Start by this tutorial to have an overview of Vidjil.
   - Web platform [user manual](user.md). This is the main user manual of the Vidjil platform.
   - [Libraries and recombinations](locus.md), documentation on library preparation and sequencing as well on detected immune recombinations
