@@ -41,8 +41,8 @@ class TestMyAccount < ServerTest
   def test_filter_my_account_tag
     go_to_my_account
 
-    test1_tag = $b.a(class: 'tag-link', text: '#test1')
-    test2_tag = $b.a(class: 'tag-link', text: '#test2')
+    test1_tag = $b.a(class: 'tag-link', text: /#test1 (\d*)/)
+    test2_tag = $b.a(class: 'tag-link', text: /#test2 (\d*)/)
 
     assert(test1_tag.present?)
     assert(test2_tag.present?)
