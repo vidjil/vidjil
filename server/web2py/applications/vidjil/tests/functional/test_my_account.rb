@@ -48,19 +48,19 @@ class TestMyAccount < ServerTest
     assert(test2_tag.present?)
 
     public_group_info = $b.div(id: 'public_info')
-    num_patients = public_group_info.span(class: 'patient_num_sets').inner_text
+    num_patients = public_group_info.span(class: 'patient_num_sets').text
 
     test1_tag.click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     filter = $b.text_field(id: 'db_filter_input')
     assert(filter.text == '#test1')
-    assert(public_group_info.span(class: 'patient_num_sets').inner_text != num_patients)
+    assert(public_group_info.span(class: 'patient_num_sets').text != num_patients)
 
     filter.set('#test2')
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     assert(filter.text == '#test2')
-    assert(public_group_info.span(class: 'patient_num_sets').inner_text != num_patients)
+    assert(public_group_info.span(class: 'patient_num_sets').text != num_patients)
 
     assert(test1_tag.present? == false)
     assert(test2_tag.present?)
