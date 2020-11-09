@@ -28,6 +28,18 @@ def generic_get_group(element_type):
 def get_group_fuses():
     return generic_get_group('fused')
 
+def get_group_analyses():
+    group = {}
+    separator = "|| ';' ||"
+    fields = ["analysis_file.sample_set_id",
+              "sample_set.sample_type"
+            ]
+    group_concat = "GROUP_CONCAT(DISTINCT  " + separator.join(fields)
+    group['patient'] =  group_concat + separator + "patient.first_name || ' ' || patient.last_name)"
+    group['run'] = group_concat + separator + "run.name)"
+    group['set'] = group_concat + separator + "generic.name)"
+    return group
+
 def group_permissions():
     return "GROUP_CONCAT(DISTINCT auth_permission.name)"
 
@@ -118,6 +130,7 @@ def index():
                 result[r.auth_group.role][set_type]['tags'] = []
                 result[r.auth_group.role][set_type]['statuses'] = ""
             result[r.auth_group.role]['fuses'] = []
+            result[r.auth_group.role]['analyses'] = []
             result[r.auth_group.role]['tags'] = []
         result[r.auth_group.role]['permissions'] = "" if r._extra[group_permissions()] is None else r._extra[group_permissions()]
 
@@ -127,6 +140,7 @@ def index():
 
     group_statuses = "GROUP_CONCAT(DISTINCT scheduler_task.id || ';' || scheduler_task.status)"
     group_fuses = get_group_fuses()
+    group_analyses = get_group_analyses()
 
     left = base_left() + [
         db.sequence_file.on(
@@ -140,7 +154,10 @@ def index():
             (db.fused_file.sample_set_id == db.sample_set.id) &
             (db.fused_file.fuse_date >= since)),
         db.config.on(
-            db.config.id == db.fused_file.config_id)
+            db.config.id == db.fused_file.config_id),
+        db.analysis_file.on(
+            (db.analysis_file.sample_set_id == db.sample_set.id) &
+            (db.analysis_file.analyze_date > since))
     ]
 
     select = [
@@ -160,6 +177,7 @@ def index():
 
         queries[key] = db(set_query).select(
             group_fuses[key],
+            group_analyses[key],
             *select,
             left=left,
             groupby=(db.auth_group.role, db.sample_set.sample_type)
@@ -178,6 +196,9 @@ def index():
 
             fuses = [] if r._extra[group_fuses[key]] is None else [fuse.split(';') for fuse in r._extra[group_fuses[key]].split(',')]
             result[r.auth_group.role]['fuses'] += (fuses[:list_size])
+
+            analyses = [] if r._extra[group_analyses[key]] is None else [analysis.split(';') for analysis in r._extra[group_analyses[key]].split(',')]
+            result[r.auth_group.role]['analyses'] += analyses[:list_size]
 
     tags = get_most_used_tags(group_list) # list tags used without filtering
     for r in tags:

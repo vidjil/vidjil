@@ -32,10 +32,21 @@
                         {{pass}}
                 </div>
                 <div class="set_data">
+                    <div>fuses:</div>
                 {{ for fuse in result[role]['fuses']: }}
                     <div class="analysis_button">
                         <span class="button button_token {{=fuse[3]}}_token">
                             <a href="https://localhost/?sample_set_id={{=fuse[1]}}&config={{=fuse[2]}}">{{=fuse[4]}}: {{=fuse[0]}}</a>
+                        </span>
+                    </div>
+                    {{pass}}
+                </div>
+                <div class="set_data">
+                    <div>analyses:</div>
+                {{ for analysis in result[role]['analyses']: }}
+                    <div class="analysis_button">
+                        <span class="button button_token {{=analysis[1]}}_token">
+                            <span onclick="db.call('sample_set/index', {'id': {{=analysis[0]}}, 'config_id': -1})">{{=analysis[2]}}</span>
                         </span>
                     </div>
                     {{pass}}
