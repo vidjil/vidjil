@@ -1387,7 +1387,7 @@ Clone.prototype = {
                 }
             }
             // put warning html content, with list of concerned sample, without duplication
-            for (warn in warnings) {
+            for (var warn in warnings) {
                 var pluriel = warnings[warn].samples.length > 1 ? "s" : ""
                 html += row_1(warnings[warn].code, warnings[warn].msg);
             }
