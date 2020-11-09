@@ -1236,6 +1236,14 @@ Database.prototype = {
         this.call('my_account/index?' + group_ids.join("&"));
     },
 
+    callJobStats: function() {
+        var group_ids = [];
+        $('[name^="group_ids"]:checked').each(function() {
+            group_ids.push("group_ids=" + $(this).val());
+        });
+        this.call('my_account/jobs?' + group_ids.join("&"));
+    },
+
     stopGroupPropagate: function(e) {
         if(!e) {
             e = window.event
