@@ -58,6 +58,7 @@ class TestMyAccount < ServerTest
     assert(public_group_info.span(class: 'patient_num_sets').text != num_patients)
 
     filter.set('#test2')
+    filter.fire_event('onchange')
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     assert(filter.value == '#test2')
     assert(public_group_info.span(class: 'patient_num_sets').text != num_patients)
@@ -90,6 +91,7 @@ class TestMyAccount < ServerTest
 
     filter = $b.text_field(id: 'db_filter_input')
     filter.set('#test2')
+    filter.fire_event('onchange')
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     assert(test1_tag.present? == false)
