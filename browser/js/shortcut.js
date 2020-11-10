@@ -177,10 +177,12 @@ Shortcut.prototype = {
             if (e.ctrlKey || e.metakey){
                 var d_m = $("#debug_menu")
                 if (d_m.css("display") == "none"){
+                    devel_mode = true;
                     $("#debug_menu").css("display", "");
                     $(".devel-mode").show();
                     $(".beta-mode").show();
                 }else{
+                    devel_mode = false;
                     $("#debug_menu").css("display", "none");
                     $(".devel-mode").hide();
                     $(".beta-mode").hide();
