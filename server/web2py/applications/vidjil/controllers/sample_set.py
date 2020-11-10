@@ -294,10 +294,8 @@ def stats():
     factory = ModelFactory()
     helper = factory.get_instance(type=type)
 
-    list = SampleSetList(helper, tags=tags)
-    list.load_sample_information()
-    list.load_anon_permissions()
-    result = list.get_values()
+    slist = SampleSetList(helper, tags=tags)
+    result = slist.result
 
     fields = helper.get_reduced_fields()
 
