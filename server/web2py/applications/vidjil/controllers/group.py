@@ -177,7 +177,82 @@ def info():
         log.info("access user list", extra={'user_id': auth.user.id,
                 'record_id': request.vars["id"],
                 'table_name': "group"})
-        return dict(message=T('group info'))
+
+        group = db.auth_group[request.vars["id"]]
+
+        base_query = ((db.auth_user.id == db.auth_membership.user_id)
+                & (db.auth_membership.group_id == request.vars["id"]))
+
+        query = db(base_query).select(
+                db.auth_user.id,
+                db.auth_user.first_name,
+                db.auth_user.last_name,
+                db.auth_user.email,
+                db.sequence_file.id.count(True).with_alias('file_count'),
+                db.sequence_file.size_file.coalesce_zero().sum().with_alias('size'),
+                left=[db.auth_permission.on(
+                        (db.auth_permission.group_id == request.vars["id"]) &
+                        (db.auth_permission.name == 'access') &
+                        (db.auth_permission.table_name == 'sample_set') &
+                        (db.auth_permission.record_id > 0)),
+                    db.sample_set_membership.on(
+                        db.sample_set_membership.sample_set_id == db.auth_permission.record_id),
+                    db.sequence_file.on(
+                        (db.sequence_file.provider == db.auth_user.id) &
+                        (db.sequence_file.id == db.sample_set_membership.sequence_file_id))
+                ],
+                groupby=(db.auth_user.id)
+            )
+
+        sset_count = db(base_query).select(
+                db.auth_user.id,
+                db.patient.id.count(True).with_alias('patient_count'),
+                db.run.id.count(True).with_alias('run_count'),
+                db.generic.id.count(True).with_alias('generic_count'),
+                left=[db.auth_permission.on(
+                        (db.auth_permission.group_id == request.vars["id"]) &
+                        (db.auth_permission.name == 'access') &
+                        (db.auth_permission.table_name == 'sample_set') &
+                        (db.auth_permission.record_id > 0)),
+                    db.sample_set_membership.on(
+                        db.sample_set_membership.sample_set_id == db.auth_permission.record_id),
+                    db.patient.on(
+                        (db.patient.creator == db.auth_user.id) &
+                        (db.patient.sample_set_id == db.sample_set_membership.sample_set_id)),
+                    db.run.on(
+                        (db.run.creator == db.auth_user.id) &
+                        (db.run.sample_set_id == db.sample_set_membership.sample_set_id)),
+                    db.generic.on(
+                        (db.generic.creator == db.auth_user.id) &
+                        (db.generic.sample_set_id == db.sample_set_membership.sample_set_id))
+                ],
+                groupby=(db.auth_user.id)
+            )
+
+        logins = db(base_query).select(
+                db.auth_user.id,
+                db.auth_event.time_stamp.max().with_alias('last_login'),
+                left=[db.auth_event.on(
+                    (db.auth_event.user_id == db.auth_user.id) &
+                    (db.auth_event.origin == 'auth') &
+                    (db.auth_event.description.like('%Logged-in')))
+                ],
+                groupby=(db.auth_user.id, db.auth_event.description)
+            )
+
+        result = {}
+        for row in query:
+            result[row.auth_user.id] = row
+
+        for row in sset_count:
+            result[row.auth_user.id]['count'] = row.patient_count + row.run_count + row.generic_count
+
+        for row in logins:
+            result[row.auth_user.id]['last_login'] = row.last_login
+
+        return dict(message=T('group info'),
+                    result=result,
+                    group=group)
     return error_message(ACCESS_DENIED)
 
 
