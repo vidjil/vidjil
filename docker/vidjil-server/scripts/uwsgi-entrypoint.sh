@@ -12,10 +12,6 @@ if [[ -n "$WEB2PY_ADMIN_PASSWORD" ]]; then
 fi
 
 if [ "$1" == "--ci" ]; then
-    cd /usr/share/vidjil/server/web2py/applications/vidjil/scripts
-    echo "Loading SQL"
-    /usr/local/bin/gosu $user bash launch_python_script.sh load-sql.py -n /usr/share/vidjil/docker/ci/ci.sql
-    echo "SQL loaded"
     python /usr/share/vidjil/tools/fuse.py --output /mnt/result/results/fused.vidjil /usr/share/vidjil/doc/analysis-example.vidjil /usr/share/vidjil/doc/analysis-example.vidjil /usr/share/vidjil/doc/analysis-example.vidjil
 fi
 

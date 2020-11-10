@@ -1,7 +1,7 @@
 \section{Viewing and filtering clones}
 
 
-\subsection{Looking to a clone}
+\subsection{Looking at a clone}
 
 Each RepSeq algorithm has its own definition of what a clone is (or, more precisely
 a clonotype), and on how to output its sequence and how to assign a V(D)J designation.
@@ -12,13 +12,17 @@ is \texttt{IGHV3-9 7/CCCGGA/17 J6*02}.
 \question{Select this clone, either by clicking on the list or on the grid.
   How many reads do this clone represent? (see again the bottom part to the right)}
 
+\reponse{The bottom panel display information about currently selected clones \fl 189 991 reads (9.665\,\%)}
+
 There are several options to display the V(D)J designation.
 
-\question{In the  \com{settings} menu, select \com{length} to show N zones by their length. Revert to the
+\question{In the  \com{settings} menu, under \com{N regions in clone names} select \com{length} to show N zones by their length. Revert to the
   default \com{sequence (when short)} setting to show the full N on short sequences.}
   
 \question{Try also the options  \com{alleles in clone names} : by selecting \com{always}, the clone
-  V gene is displayed as \com{IGHV3-9*01}. Revert to the default \com{when not *01} to have more condensed V(D)J designations.}
+  V gene is displayed as \com{IGHV3-9*01}. Revert to the default \com{when not
+    *01}. This setting, which is the default, allows to have a more condensed
+  V(D)J designation that doesn't make the \com{*01} appear (it is implicit).}
 
 \subsection{Showing more clones}
 
@@ -28,8 +32,12 @@ depending if the top 50 are always the same or always different or, more
 realistically, in-between.
 This number can be increased to a maximum of 100 clones by going to the \com{filter} menu and by putting the
 slider to its right end.
-\question{Notice how the IGH smaller clones percentage changes. What was its
+\question{Notice how the IGH smaller clones percentage (second clone displayed in the list) changes. What was its
   initial value? What is it now?}
+
+\reponse{filter set to 50 \fl IGH smaller clones 10.11\,\%\\*
+ filter set to 100 \fl IGH smaller clones 8.92\,\%\\*}
+
 The \textit{smaller clones} correspond to clones that are not displayed
 because they are never among the most abundant ones.
 
@@ -37,14 +45,14 @@ because they are never among the most abundant ones.
 \subsection{Tagging and filtering clones}
 
 Consider the most abundant clones in the list:  \texttt{IGHV3-9 7/CCCGGA/17 J6*02} and  \texttt{TRGV10 13//5 JP1}.
-Usually we may want to tag them in order to remember it later on.
+Usually we may want to tag them in order to remember them later on.
 \question{Click on the star and choose colored tags for these two clones, such as \texttt{clone 1} or \texttt{clone 2}.
   Notice how the color applies throughout all the views.}
 
 Later you may want to filter clones depending on the tags you have chosen.
 
-\question{In the upper left part, click on the little gray square (at the
-  right of the coloured squares). What happens? What if you click again?}
+\question{In the upper left part, click on the little dark gray square (the
+  second coloured square starting from the right). What happens? What if you click again?}
 
 This is a way of filtering some clones. This may be useful when we want to
 focus on some specific clones. Another way of doing so is to filter them by
@@ -75,7 +83,7 @@ After this rename, you can see that the clone is still selected.
 \question{How many clones are selected? How many reads do those clones
   represent?}
 
-\question{\new Notice the star at the the right of the screen, near the number
+\question{ Notice the star at the the right of the screen, near the number
   of reads. You can also tag clones using this icon. In that way, you will be able to tag
   all the selected clones at once.}
 
@@ -98,7 +106,24 @@ Sometimes, one wants to hide noisy or unrelated clones.
 % Another way to hide clonesis to assign is to change the tag of it as ``standard (niose)`` and choose to uncheck this tag by clicking on the corresponding tile on the list of tiles at the informatons panel to switch them from a visible state to a filter one.
 %%% Voir ci-dessus, déjà mis
 
-  
+It is also possible to filter samples that do not contain a clone.  When you
+have lots of samples it helps to keep the sample of interest.  Here the number
+of sample is quite limited, so the feature may appear less useful.
+
+\question{\new Click on the \com{IGHV3-11 / IGHJ6} clone in the last sample, whose
+  abundance is around 10\,\%.
+  Then go in the menu at the upper-right corner of the graph (where \com{5/5}
+  is written) and select \com{focus on selected clones}.
+}
+
+By selecting this, the samples where this clone doesn't appear are hidden.
+This is useful for instance to assess the contamination among dozens of
+samples.
+
+\question{You can go back to the previous view by returning into the menu and
+  clicking on \com{show all}. Notice also how in the menu you can select the
+  samples to be shown.}
+
 \section{Analysing clone populations}
 
 \subsection{Clustering clones through inspection of their sequences}
@@ -120,7 +145,7 @@ By default in the bottom plot (the \textit{grid}), the clones
 The sequences of the clones now appear in the bottom part of the browser (the
 \textit{sequence panel}). If many clones are selected you can view more sequences
 by moving the mouse above the sequence panel.
-\new In such a case, you may be bothered by the sequence panel going up and
+ In such a case, you may be bothered by the sequence panel going up and
 down each time your mouse enters or exits the sequence panel. You can stick it
 in its current shape by clicking on the pin at the upper right corner of the
 sequence panel.
@@ -195,15 +220,15 @@ and the $y$ axis selects the order of the boxes sharing a same $x$).
 \question{In the \com{plot} menu, switch between the ``bubble plot'' and the ``bar plot''.
 In the bar plot mode, pass the mouse over the bars: What happens?}
 
-Another possibility is to request Vidjil to compute the similarity between
-clones.
-\question{Now select the preset \com{plot by similarity} or even \com{plot
-  similarity by locus} to plot similarity for the current locus (beware: this
-may take some time).}
-Now the most similar clones should be close together. However note that it is
-theoretically impossible to achieve such a representation in 2 dimensions. So
-it is possible that two dissimilar clones are close together or, conversely,
-that two similar clones are far apart.
+% Another possibility is to request Vidjil to compute the similarity between
+% clones.
+% \question{Now select the preset \com{plot by similarity} or even \com{plot
+%   similarity by locus} to plot similarity for the current locus (beware: this
+% may take some time).}
+% Now the most similar clones should be close together. However note that it is
+% theoretically impossible to achieve such a representation in 2 dimensions. So
+% it is possible that two dissimilar clones are close together or, conversely,
+% that two similar clones are far apart.
 
 \question{Press the keys \texttt{0} to \texttt{9} on the numeric keypad. What happens ?}
 
@@ -211,7 +236,7 @@ There is still a feature to help you analyse your data that we have not
 explored yet.
 You can change the colors to make it represent some variables of interest
 with the \com{color by} menu.
-\question{First choose the preset \com{plot by similarity and by locus} and
+\question{First choose the preset \com{V/J (genes)} and
   then color by \com{N length} (in the box at the top of the screen).}
 \marginpar{We apologize to color blinds: the colors are not yet color-blind friendly.}Clones that are close on the grid with similar colors are likely to
 be similar.
@@ -220,7 +245,7 @@ be similar.
   then color by \com{productivity}.
   See that the color tiles in the info part (upper right) change to show the color key.}
 
-\question{\new Instead of coloring by productivity, you could also color by
+\question{ Instead of coloring by productivity, you could also color by
   \com{clone}. When coloring by \com{clone}, each clone has a random color. Thus in
   a bar plot, it is a convenient color mode to see the peaks that are due to a
   single clone or to several clones.
@@ -233,7 +258,7 @@ be similar.
 Using those different features you should be able to analyse how similar your
 sequences are, and potentially you could cluster them if you'd like or tag them.
 
-\question{\new
+\question{
   Select the most abundant clone. It now appears in the sequence panel.
   Now we would like to compare the sequence with the germline genes.
   We can add the germline genes to the sequence panel by going
@@ -251,7 +276,7 @@ Some clones may be less trustable than other ones\dots{} Let's see how to spot t
 \question{In the clone list, search clones with an orange warning at the
   right side. Click on the warning. What are the warnings due to?}
 
-There may have two reasons: 
+There may have several reasons: 
 \begin{itemize}
 \item average coverage: in that case the clonal sequence displayed is short
   compared to the reads in the clone. This may be the case when too different
@@ -259,11 +284,18 @@ There may have two reasons:
 \item $e$-value: It is a statistical value computed to ensure that
   recombinations have not been spot by chance. This value is generally much
   lower than 1 ($<10^{-5}$).
+\item Clone similar to another one: In that case Vidjil-algo tells you that
+  other clones have the same genes and may be similar
+\item Non-recombined sequences: Some known unrecombined sequences are tagged
+  so that you can spot them easily. We tag the unrecombined IGHD7-27/IGHJ1
+  sequences that may be amplified.
 \end{itemize}
 
 You can view those values for any clone by clicking the \textit{i} icon on the
 right side, in the list of clones.
 \subsection{Analysing recombinations from several loci}
+
+First make sure to come back to the preset \com{V/J (genes)} in the \com{plot} menu.
 
 If you want to focus on specific locus, you can click on the locus name in
 the upper left part. One click will make the locus disappear, another one will
@@ -294,11 +326,11 @@ expected concentration is 1\% (.01).
 
 \question{First let's color this clone with the \com{standard} tag.}
 
-\question{\new Now we will set its concentration to .01 as expected. Click again on
+\question{ Now we will set its concentration to .01 as expected. Click again on
   the star. In the \com{normalize to} field enter \com{.01} and click \com{ok}.
   Now, in the graph, this clone should correspond to a straight line at 1\%.}
 
-\question{\new Notice how the concentrations of the other clones have changed
+\question{ Notice how the concentrations of the other clones have changed
   accordingly.
   You can go to the \com{settings} menu to disable this normalization and to
   go back to the raw concentrations.}

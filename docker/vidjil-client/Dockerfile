@@ -7,7 +7,7 @@ with a full installation of the Vidjil client."
 run sed -i 's/^\(user .*\)$/user www-data;/' /etc/nginx/nginx.conf
 
 run set -x \
-	&& apt-get update && apt-get install -y --no-install-recommends wget make unzip git sudo curl fcgiwrap && rm -rf /var/lib/apt/lists/*
+	&& apt-get update && apt-get install -y --no-install-recommends wget make unzip git sudo curl ca-certificates fcgiwrap && rm -rf /var/lib/apt/lists/*
 
 arg git_branch=dev
 arg remote_repo=https://gitlab.inria.fr/vidjil/vidjil.git
