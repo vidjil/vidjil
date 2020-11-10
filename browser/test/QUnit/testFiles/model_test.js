@@ -659,5 +659,20 @@ QUnit.test("getSampleWithSelectedClones", function(assert) {
     m.select(2)
     assert.deepEqual( m.getSampleWithSelectedClones(), [0,1,2], "clone 1 and 2, should return samples 1 and 2 and 3")
 
+  
+});
+
+
+QUnit.test("getSampleName", function(assert) {
+
+    var m = new Model();
+    m.parseJsonData(json_data, 100)
+    m.initClones()
+
+    assert.equal( m.getSampleName(0), "Diag.fa", "Correct name getted as no values for m.samples.names (values from server)")
+
+    // Simulate data from server opening
+    m.samples.names = ["f0", "f1", "f2", "f3"]
+    assert.equal( m.getSampleName(0), "f0", "Correct name getted if values from server")
 
 });

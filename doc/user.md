@@ -15,17 +15,38 @@ The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Ryan and Tatiana)
 
 # Requirements
 
-## Web application
+## Supported browsers
 
-The Vidjil web application runs in any modern browser. It has been successfully tested on the following platforms
+The Vidjil web application runs in any modern browser.
+We recommend to either regularly update one's web browsers,
+or to use long-term releases, such as [Firefox ESR](https://www.mozilla.org/en-US/firefox/enterprise).
+As of September 2020, we recommend using Firefox or Chrome/Chromium :
 
-  - Firefox version \>= 32
-  - Chrome version \>= 38
-  - IE version \>= 10.0 (Vidjil will not run on IE 9.0 or below)
-  - Opera version \>= XX
-  - Safari version \>= 6.0
+  - Firefox, *version \>= 78 ESR*
+  - Chrome, *version \>= 79*
 
-## The .vidjil files
+These platforms will be supported to at least *June 2023*.
+Chrome 79, and possibly other recent versions, are tested through our continuous integration pipelines.
+
+## Legacy browsers
+
+We also provide an extended support on
+
+  - Firefox, versions 32 to 77
+  - Chrome, version 49 to 78
+
+Some of these legacy platforms are also tested through our continuous integration pipelines.
+However, old platforms have security flaws and are not recommended for routine usage involving clinical data.
+They may not get the new features, and *this extended support may be dropped in September 2021*.
+
+## Other browsers
+
+Vidjil is also reported to work with recent Edge, IE (version >= 10.0), Opera or Safari browsers,
+but these browsers are not officialy supported.
+Note that Vidjil will not run on IE 9.0 or below.
+
+
+## Getting .vidjil files
 
 The vidjil web application displays `.vidjil` files that summarize the V(D)J
 recombinations and the sequences found in one or several samples.
@@ -274,6 +295,38 @@ edited ('e') or deleted ('X').
 They are just different ways to group samples.
 Sets can for example gather a set of samples of a same experiment.
 Runs can be used to gather samples that have been sequenced in the same run.
+
+## Batch creation of patients/runs/sets
+<a name='batch-creation'></a>
+
+Patients, runs and sets can be added one by one (`add patient`, `add run`, `add set`).
+They can also be created by pasting data from a properly formatted table
+created by any spreadsheet editor such as LibreCalc/LibreOffice or Excel.
+
+Data has to be presented with the following columns, but some cells may be empty.
+Do not copy any header row, but only the data rows.
+
+*Patient* : 5 columns (patient id, first name, last name, birth date, info)
+
+|     |        |      |            |      |
+| --- | ------ | ---- | ---------- | ---- |
+| 42  | John   | Doe  |            | #ALL |
+|     | George | Sand | 1804-02-01 |      |
+
+*Run* : 4 columns (run id, name, date, info)
+
+|         |       |            |                    |
+| ------- | ----- | ---------- | ------------------ |
+| 2020r84 | Lib84 | 2020-09-15 |                    |
+| 2020r85 | Lib85 | 2020-09-15 | new IGH-DJ primers |
+
+*Set* : 2 columns (set name, info)
+
+|           |                         |
+| --------- | ----------------------- |
+| CohortCLL | Retrospective 2015-2019 |
+| Mouse1604 |                         |
+
 
 ## Permanent address (URL) to a set of samples
 
@@ -656,6 +709,15 @@ only the logged-in users with proper authorization can access to these data.
 This includes the uploader of the data,
 possibly users of the same groups if such groups were defined, and the server maintainers.
 
+# Settings
+
+The settings menu allows to set:
+ -clone size format     [scientific notation / percentage]
+ -sample key            [sample name / shortened name / sampling date / day since first sampling]
+ -clone junction format [junction length / AA sequence / mixed (display AA sequence only for short junction)]
+ -clone alleles format  [hide alleles / display alleles / mixed (display only for marginal alleles)]
+
+These settings are kept in your web browser ``localStorage'' between several sessions.
 
 # Keyboard shortcuts
 

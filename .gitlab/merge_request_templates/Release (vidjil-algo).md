@@ -32,6 +32,8 @@ Benchmarks
 * [ ] push: `git push origin master release-20XX-XX`
 * [ ] mirror to GH: `git push github master release-20XX.XX`
 * [ ] click `publish_release` (there may be changes to CD...)
+* [ ] deploy the doc
+
 
 After these steps, we merge back the release in `dev`:
 * [ ] merge this MR to dev
@@ -39,7 +41,9 @@ After these steps, we merge back the release in `dev`:
 ## After the release: deploy
 
 Sometimes, the deploy stages can occur several days after the release.
-Open a new internal issue with the "Deploy" template.
+
+* [ ] Open a new internal issue with the `Deploy (vidjil-algo)` template : vdj#XXXXX
+
 
 /label ~cpp
 

@@ -4,11 +4,33 @@
 cp ../../defs.py defs.py.tmp
 echo "PRE_PROCESS_DIR='tests/data/pre_process'" >> ../../defs.py
 
-python3 ../../fuse.py $FUSE_OPTIONS --pre igh-to-trg.sh ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil; cat fused.vidjil
+### Use a script to verify that an external script can be triggered
 
+# First, verify init state
+cat ../../../algo/tests/data/results-two-clones-1-2.vidjil
+$ Init, correct number of IGH and TRG
+0:TRG
+6:IGH
+
+# Apply a simple 'sed' script; IGH --> TRG
+python3 ../../fuse.py $FUSE_OPTIONS --pre igh-to-trg.sh ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fused_preprocess_igh-to-trg.vidjil; cat fused_preprocess_igh-to-trg.vidjil
+
+$ IGH  should become TRG (-3 that come from "custom" field; not replicate after fuse)
+3:TRG
+0:IGH
+
+
+python3 ../../fuse.py $FUSE_OPTIONS --pre "igh-to-trg.sh -l IGK" ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fused_preprocess_with_param.vidjil; cat fused_preprocess_with_param.vidjil
+
+
+$ IGH  should become IGK (-3 that come from "custom" field; not replicate after fuse; +3 from preprocess command print)
+0:TRG
+0:IGH
+6:IGK
+
+
+### Restore inital defs.py file
 mv defs.py.tmp ../../defs.py
 
-cat fused.vidjil
 
-6:TRG
-0:IGH
+

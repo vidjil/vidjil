@@ -571,6 +571,21 @@ def submit():
                 register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
 
     if not error:
+        if not bool(length_mapping):
+            creation_group_tuple = get_default_creation_group(auth)
+            response.view = 'sample_set/form.html'
+            sets = {
+                'patient': [],
+                'run': [],
+                'generic': []
+            }
+            return dict(message=T("form is empty"),
+                    groups=creation_group_tuple[0],
+                    group_ids = get_involved_groups(),
+                    master_group=creation_group_tuple[1],
+                    sets=sets,
+                    isEditing = False)
+
         max_num = max(length_mapping.keys())
         msg = "successfully added/edited set(s)"
         if sum_sets == 1:

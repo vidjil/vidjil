@@ -116,6 +116,17 @@ logs (see #3558).
 When a job timeouts it is not killed (see #2213). In `gluon/scheduler.py` a
 worker seems to be able to kill a process when the worker's state (and not the
 task's state) is `STOP_TASK`.
+
+## Batch creation of patients/runs/sets
+
+Data should be tabulated (row separated with a break line, cells separated with a tabulation).
+
+Browser cannot access data from the clipboard in the following cases:
+ - the browser does not support it (FF)
+ - the user refused to grant the access
+
+In that cases, a textarea is provided.
+
 # Tests
 
 # Packaging

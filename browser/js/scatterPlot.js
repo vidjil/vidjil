@@ -213,7 +213,8 @@ ScatterPlot.prototype = {
             .attr("id", function(d) {
                 return self.id + "_circle" + d.id;
             })
-            .attr("class", "circle_hidden")     
+            .attr("class", "circle_hidden")
+            .on("dblclick",function(d){ self.m.displayInfoBox(d.id) });
 
     },
 

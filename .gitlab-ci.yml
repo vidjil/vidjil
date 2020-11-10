@@ -51,12 +51,13 @@ test_germlines:
     - /^feature-.*g.*\/.*$/
     - schedules
 
-# Doc
+# Includes
 
 include:
-  - local: '/doc/.gitlab-ci.yml'
+  - local: '/doc/.gitlab-ci.yml' # Doc
   - local: 'algo/.gitlab-ci-compilers.yml' # Stage multiple_tests
   - local: 'algo/.gitlab-ci.yml' # Vidjil-algo pipelines
+  - template: Code-Quality.gitlab-ci.yml # Code quality
 
 # Algorithm
 
@@ -285,7 +286,14 @@ old-chrome-browser-functional-external-chrome:
   tags:
     - legacy
 
+# Code quality
+
 code_quality:
+  stage: test_quality
+  artifacts:
+    paths: [gl-code-quality-report.json]
+
+code_quality_custom:
   stage: test_quality
   script: make -C browser quality
   only:
