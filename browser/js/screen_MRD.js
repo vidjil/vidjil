@@ -32,6 +32,9 @@
  * getHTMLInfo function of Clone prototype.
  * Coding conventions and comment styles are borrowed from clone.js.
  */
+UNIVERSAL_FAMILY = "UNI"
+UNIVERSAL_COEFF  = 'UNI_COEFF'
+UNIVERSAL_R2     = 'UNI_R2'
 
 /**
  * @return {string} the family used for fiting at the given time
@@ -44,7 +47,7 @@ Clone.prototype.getFittingFamily = function(time) {
        return this.mrd.family[time];
     } else {
         // negative clone: report UNI
-        return "UNI";
+        return UNIVERSAL_FAMILY;
     }
 };
 
@@ -58,7 +61,7 @@ Clone.prototype.getNormCoeff = function(time) {
         return "";
     } else if (this.mrd != undefined && 'norm_coeff' in this.mrd) {
         return this.mrd.norm_coeff[time];
-    } else if ('UNI_COEFF' in this.m.mrd) {
+    } else if (UNIVERSAL_COEFF in this.m.mrd) {
         // negative clone:report UNI
         return this.m.mrd.UNI_COEFF[time];
     } else {
@@ -75,7 +78,7 @@ Clone.prototype.getR2 = function(time) {
         return "";
     } else if (this.mrd != undefined && 'R2' in this.mrd) {
        return this.mrd.R2[time]//.toString();
-    } else if ('UNI_R2' in this.m.mrd) {
+    } else if (UNIVERSAL_R2 in this.m.mrd) {
         // negative clone: report UNI R2
         return this.m.mrd.UNI_R2[time];
     } else {
