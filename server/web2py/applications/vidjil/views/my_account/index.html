@@ -36,7 +36,13 @@
                 {{ for fuse in result[role]['fuses']: }}
                     <div class="analysis_button">
                         <span class="button button_token {{=fuse[3]}}_token">
-                            <a href="https://localhost/?sample_set_id={{=fuse[1]}}&config={{=fuse[2]}}">{{=fuse[4]}}: {{=fuse[0]}}</a>
+                            {{ if fuse[3] == 'patient': }}
+                                {{ split_name = fuse[4].split(' ') }}
+                                {{ name = vidjil_utils.display_names(fuse[1], split_name[0], split_name[1]) }}
+                            {{else:}}
+                                {{ name = fuse[4] }}
+                                {{ pass }}
+                            <a href="https://localhost/?sample_set_id={{=fuse[1]}}&config={{=fuse[2]}}">{{=name}}: {{=fuse[0]}}</a>
                         </span>
                     </div>
                     {{pass}}
@@ -46,7 +52,14 @@
                 {{ for analysis in result[role]['analyses']: }}
                     <div class="analysis_button">
                         <span class="button button_token {{=analysis[1]}}_token">
-                            <span onclick="db.call('sample_set/index', {'id': {{=analysis[0]}}, 'config_id': -1})">{{=analysis[2]}}</span>
+                            {{ if analysis[1] == 'patient': }}
+                                {{ split_name = analysis[2].split(' ') }}
+                                {{ name = vidjil_utils.display_names(analysis[0], split_name[0], split_name[1]) }}
+                            {{ else: }}
+                                {{ name = analysis[2] }}
+                                {{pass}}
+
+                            <span onclick="db.call('sample_set/index', {'id': {{=analysis[0]}}, 'config_id': -1})">{{=name}}</span>
                         </span>
                     </div>
                     {{pass}}
