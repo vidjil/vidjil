@@ -314,7 +314,7 @@ def stats():
     log.info("%s stat list %s" % (request.vars["type"], search), extra={'user_id': auth.user.id,
         'record_id': None,
         'table_name': "sample_set"})
-    log.debug("stat list (%.3fs)" % time.time()-start)
+    log.debug("stat list (%.3f s)" % (time.time()-start))
 
     return dict(query = result,
                 fields = fields,
