@@ -156,6 +156,7 @@ class TestMultilocus < BrowserTest
     check_when_list_or_scatterplot_clicked
 
     $b.unselect
+    $b.update_icon.wait_while(&:present?)
     assert (not $b.clone_in_list('25').class_name.include? "list_select"), ">> Incorrect class name, clone is not unselected'"
   end
 
@@ -166,6 +167,7 @@ class TestMultilocus < BrowserTest
     check_when_list_or_scatterplot_clicked
 
     $b.unselect
+    $b.update_icon.wait_while(&:present?)
     assert (not $b.clone_in_list('25').class_name.include? "list_select"), ">> Incorrect class name, clone is not unselected'"
   end
 

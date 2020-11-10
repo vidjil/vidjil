@@ -84,10 +84,6 @@
         <!-- TOP-CONTAINER -->
         <div id="top-container" onmouseout="hideSelector()">
             <div id="menu-container">
-                <div class="menu devel-mode" onmouseover="showSelector('vmiSelector');">vmi
-                    <!-- Div is filld programmatically with vmi menu -->
-                    <div class="selector" id="vmiSelector"></div>
-                </div>
                 <div class="menu" id="top_info">
                     <!--Div is filled programmatically -->
                 </div>
@@ -360,28 +356,34 @@
         </div>  
         <!-- fin top-container-->
         
-        <!-- MID-CONTAINER -->
-        <div id="mid-container" onmouseover="hideSelector()">
+        <div id="vmiSelector"></div>
+        <div id='vidjil-panels'>
+            <!-- MID-CONTAINER -->
+            <div id="mid-container" onmouseover="hideSelector()">
 
-            <!-- LEFT-CONTAINER -->
-            <div id="left-container">
+                <!-- LEFT-CONTAINER -->
+                <div id="left-container">
+                </div>
+                <!-- fin left-container -->
+
+                <div id="vertical-separator"></div>
+
+                <!-- VISU-CONTAINER  -->
+                <div id="visu-container">
+                </div>
+
+                <div id="vertical-separator-right"></div>
+
+                <!-- RIGHT-CONTAINER -->
+                <div id="right-container">
+                </div>
+
             </div>
-            <!-- fin left-container -->
+            <!-- fin mid-container -->
 
-            <div id="vertical-separator"></div>
-
-            <!-- RIGHT-CONTAINER -->
-            <div id="right-container"></div>
-
-            <!-- VISU-CONTAINER  -->
-            <div id="visu-container">
-            </div>
-
+            <!-- BOT-CONTAINER / SEGMENTER-CONTAINER -->
+            <div id="bot-container"> </div>
         </div>
-        <!-- fin mid-container -->
-
-        <!-- BOT-CONTAINER / SEGMENTER-CONTAINER -->
-        <div id="bot-container"> </div>
 
         <form id="form"></form>
 

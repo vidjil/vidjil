@@ -76,6 +76,7 @@ class TestLoadingAnalysis < BrowserTest
     # Hide the clone by affecting it to a hidden tag
     $b.clone_info('0')[:star].click
     $b.tag_item('4')[:name].click
+    $b.execute_script('m.update()'); # Update should be done correctly but the issue is unrelated to this branch (see #4231)
     $b.update_icon.wait_while(&:present?)
 
     $b.clone_in_list('0').wait_while(&:present?)

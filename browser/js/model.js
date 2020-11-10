@@ -2462,6 +2462,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         if (top>maxTop) top=maxTop;
         this.tagSelector.style.top=top+"px";
 
+        var tagSelectorW = $(this.tagSelector).outerWidth()
+        var maxLeft = $(window).width() - tagSelectorW;
+        var tmp = e.clientX;
+        if(typeof e.currentTarget !== 'undefined') {
+            tmp = e.currentTarget.offsetLeft + (e.currentTarget.offsetWidth/2);
+        }
+        var left = tmp + (tagSelectorW/2);
+        if (left>maxLeft) left=maxLeft;
+        this.tagSelector.style.left=left+"px";
+
         // If multiple clones Ids; disabled normalization div
         if (clonesIDs.length > 1) {
             $("#"+div.id).addClass("disabledbutton");
