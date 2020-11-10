@@ -58,13 +58,13 @@ class TestMyAccount < ServerTest
     assert(public_group_info.span(class: 'patient_num_sets').text != num_patients)
 
     filter.set('#test2')
-    filter.fire_event('onchange')
+    sleep 0.5
+    $b.lis(class: 'cur').each do |elem|
+      elem.click if elem.present?
+    end
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
-    assert(filter.value == '#test2')
+    assert(filter.value == '#test2 ')
     assert(public_group_info.span(class: 'patient_num_sets').text != num_patients)
-
-    assert(test1_tag.present? == false)
-    assert(test2_tag.present?)
   end
 
   def test_jobs
@@ -86,14 +86,22 @@ class TestMyAccount < ServerTest
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     test1_tag = $b.a(class: 'tag-link', text: '#test1')
+    test2_tag = $b.a(class: 'tag-link', text: '#test2')
     assert(test1_tag.present?)
     assert(test2_tag.present? == false)
 
     filter = $b.text_field(id: 'db_filter_input')
     filter.set('#test2')
-    filter.fire_event('onchange')
+    sleep 0.5
+    $b.lis(class: 'cur').each do |elem|
+      elem.click if elem.present?
+    end
+    #$b.li(class: 'cur').click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
+    test1_tag = $b.a(class: 'tag-link', text: '#test1')
+    test2_tag = $b.a(class: 'tag-link', text: '#test2')
+    sleep 10
     assert(test1_tag.present? == false)
     assert(test2_tag.present?)
   end
