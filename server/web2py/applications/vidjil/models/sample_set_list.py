@@ -56,6 +56,7 @@ class SampleSetList():
             s_table.sample_set_id.with_alias('sample_set_id'),
             s_table.info.with_alias('info'),
             db.auth_user.last_name.with_alias('creator'),
+            db.sequence_file.id.count(True).with_alias('file_count'),
             group_file_sizes,
             group_configs,
             group_config_ids,

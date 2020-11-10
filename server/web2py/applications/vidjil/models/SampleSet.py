@@ -77,10 +77,9 @@ class SampleSet(object):
 
     def get_files_values(self, data):
         key = get_file_sizes_select()
-        tmp = [] if data._extra[key] is None else data._extra[key].split(',')
-        file_count = len(tmp)
-        sizes = [int(s.split(';')[1]) for s in tmp]
-        return file_count, sum(sizes)
+        size = 0 if data._extra[key] is None else data._extra[key]
+        file_count = data.file_count
+        return file_count, size
 
     def get_files(self, data):
         file_count, size = self.get_files_values(data)
@@ -229,4 +228,4 @@ def get_group_names_select():
     return "GROUP_CONCAT(DISTINCT auth_group.role)"
 
 def get_file_sizes_select():
-    return "GROUP_CONCAT(DISTINCT (sequence_file.id || ';' || sequence_file.size_file))"
+    return "COUNT(DISTINCT sequence_file.id) * SUM(sequence_file.size_file) / COUNT(*)"
