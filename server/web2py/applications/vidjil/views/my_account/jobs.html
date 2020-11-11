@@ -23,7 +23,7 @@
             </tr>
             </thead>
             {{ for row in result: }}
-                <tr>
+                <tr class="pointer" onclick="db.call('sample_set/index', {'id': {{=row.sample_set_id}}, 'config_id': {{=row.config_id}}})">
                     <td class="uid"><span class="{{=row.sample_type}}_token">{{=row.sample_set_id}}</span></td>
                     {{ if row.sample_type == 'patient': }}
                         {{split_name = row._extra[names['patient']].split(' ')}}
