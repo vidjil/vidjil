@@ -224,8 +224,11 @@ def index():
 
     involved_group_ids = get_involved_groups() # for search autocomplete
 
+    keys = sorted(result.keys(), key=lambda x: (result[x]['patient']['count']['num_sets'] + result[x]['run']['count']['num_sets'] + result[x]['set']['count']['num_sets']), reverse=True)
+
     log.debug("my account list (%.3fs)" % (time.time()-start))
-    return dict(result=result,
+    return dict(keys = keys,
+                result=result,
                 group_ids = group_list,
                 involved_group_ids = involved_group_ids)
 

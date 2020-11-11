@@ -10,7 +10,7 @@
         </div>
     </div>
     <div class="db_block">
-        {{ for role in result: }}
+        {{ for role in keys: }}
             <div id="{{=role}}_info" class="set_group">
                 <div class="set_group_header">
                     {{=role}} ({{=result[role]['permissions']}})
