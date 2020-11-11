@@ -183,6 +183,18 @@ def info():
         base_query = ((db.auth_user.id == db.auth_membership.user_id)
                 & (db.auth_membership.group_id == request.vars["id"]))
 
+        parent_group = db(db.group_assoc.second_group_id == request.vars["id"]).select()
+
+        group_ids = [request.vars["id"]] + [r.first_group_id for r in parent_group]
+
+        base_left = [db.auth_permission.on(
+                        (db.auth_permission.group_id.belongs(group_ids)) &
+                        (db.auth_permission.name == 'access') &
+                        (db.auth_permission.table_name == 'sample_set') &
+                        (db.auth_permission.record_id > 0)),
+                    db.sample_set_membership.on(
+                        db.sample_set_membership.sample_set_id == db.auth_permission.record_id)]
+
         query = db(base_query).select(
                 db.auth_user.id,
                 db.auth_user.first_name,
@@ -190,14 +202,7 @@ def info():
                 db.auth_user.email,
                 db.sequence_file.id.count(True).with_alias('file_count'),
                 db.sequence_file.size_file.coalesce_zero().sum().with_alias('size'),
-                left=[db.auth_permission.on(
-                        (db.auth_permission.group_id == request.vars["id"]) &
-                        (db.auth_permission.name == 'access') &
-                        (db.auth_permission.table_name == 'sample_set') &
-                        (db.auth_permission.record_id > 0)),
-                    db.sample_set_membership.on(
-                        db.sample_set_membership.sample_set_id == db.auth_permission.record_id),
-                    db.sequence_file.on(
+                left=base_left + [db.sequence_file.on(
                         (db.sequence_file.provider == db.auth_user.id) &
                         (db.sequence_file.id == db.sample_set_membership.sequence_file_id))
                 ],
@@ -209,14 +214,7 @@ def info():
                 db.patient.id.count(True).with_alias('patient_count'),
                 db.run.id.count(True).with_alias('run_count'),
                 db.generic.id.count(True).with_alias('generic_count'),
-                left=[db.auth_permission.on(
-                        (db.auth_permission.group_id == request.vars["id"]) &
-                        (db.auth_permission.name == 'access') &
-                        (db.auth_permission.table_name == 'sample_set') &
-                        (db.auth_permission.record_id > 0)),
-                    db.sample_set_membership.on(
-                        db.sample_set_membership.sample_set_id == db.auth_permission.record_id),
-                    db.patient.on(
+                left=base_left + [db.patient.on(
                         (db.patient.creator == db.auth_user.id) &
                         (db.patient.sample_set_id == db.sample_set_membership.sample_set_id)),
                     db.run.on(
