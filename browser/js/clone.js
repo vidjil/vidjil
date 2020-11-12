@@ -1656,9 +1656,9 @@ Clone.prototype = {
         }
 
         // Gather all elements
-        div_elem.appendChild(span_info);
-        div_elem.appendChild(span_star);
         div_elem.appendChild(span_axis);
+        div_elem.appendChild(span_star);
+        div_elem.appendChild(span_info);
     },
 
     toCSVheader: function (m) {

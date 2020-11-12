@@ -432,7 +432,6 @@ List.prototype = {
         }
         div_elem.className = "listElem";
         div_elem.id        = "listElem_"+cloneID
-        div_elem.style.display = "block";
 
         var span_name = document.createElement('span');
         span_name.className = "nameBox";
@@ -601,9 +600,9 @@ List.prototype = {
             }
 
             div_clone.appendChild(img);
-            div_clone.appendChild(span_info);
             div_clone.appendChild(span_name);
             div_clone.appendChild(span_stat);
+            div_clone.appendChild(span_info);
             div_cluster.appendChild(div_clone);
         }
 
