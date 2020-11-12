@@ -20,9 +20,9 @@ def generic_get_group(element_type):
               "sample_set.sample_type"
             ]
     group_concat = "GROUP_CONCAT(DISTINCT  " + separator.join(fields)
-    group['patient'] =  group_concat + separator + "patient.first_name || ' ' || patient.last_name)"
-    group['run'] = group_concat + separator + "run.name)"
-    group['set'] = group_concat + separator + "generic.name)"
+    group['patient'] =  group_concat + separator + "patient.first_name || ' ' || patient.last_name || '#')"
+    group['run'] = group_concat + separator + "run.name || '#')"
+    group['set'] = group_concat + separator + "generic.name || '#')"
     return group
 
 def get_group_fuses():
@@ -35,9 +35,9 @@ def get_group_analyses():
               "sample_set.sample_type"
             ]
     group_concat = "GROUP_CONCAT(DISTINCT  " + separator.join(fields)
-    group['patient'] =  group_concat + separator + "patient.first_name || ' ' || patient.last_name)"
-    group['run'] = group_concat + separator + "run.name)"
-    group['set'] = group_concat + separator + "generic.name)"
+    group['patient'] =  group_concat + separator + "patient.first_name || ' ' || patient.last_name || '#')"
+    group['run'] = group_concat + separator + "run.name || '#')"
+    group['set'] = group_concat + separator + "generic.name || '#')"
     return group
 
 def group_permissions():
@@ -144,7 +144,7 @@ def index():
     if (tags is not None and len(tags) > 0):
         query = (query & filter_by_tags(tags))
 
-    group_statuses = "GROUP_CONCAT(DISTINCT scheduler_task.id || ';' || scheduler_task.status)"
+    group_statuses = "GROUP_CONCAT(DISTINCT scheduler_task.id || ';' || scheduler_task.status || '#')"
     group_fuses = get_group_fuses()
     group_analyses = get_group_analyses()
 
@@ -203,14 +203,14 @@ def index():
             result[r.auth_group.role][key]['count']['num_sets'] += r.num_sets
             result[r.auth_group.role][key]['count']['num_samples'] += r.num_sets
             result[r.auth_group.role][key]['count']['sample_type'] = r.sample_type
-            statuses = "" if r._extra[group_statuses] is None else "".join([s.split(';')[1][0] for s in r._extra[group_statuses].split(',')])
+            statuses = "" if r._extra[group_statuses] is None else "".join([s.strip('#').split(';')[1][0] for s in r._extra[group_statuses].split(',') if s[-1] == '#'])
             result[r.auth_group.role][key]['num_jobs'] = len(statuses)
             result[r.auth_group.role][key]['statuses'] += statuses[:list_size]
 
-            fuses = [] if r._extra[group_fuses[key]] is None else [fuse.split(';') for fuse in r._extra[group_fuses[key]].split(',')]
+            fuses = [] if r._extra[group_fuses[key]] is None else [fuse.strip('#').split(';') for fuse in r._extra[group_fuses[key]].split(',') if fuse[-1] == '#']
             result[r.auth_group.role]['fuses'] += (fuses[:list_size])
 
-            analyses = [] if r._extra[group_analyses[key]] is None else [analysis.split(';') for analysis in r._extra[group_analyses[key]].split(',')]
+            analyses = [] if r._extra[group_analyses[key]] is None else [analysis.strip('#').split(';') for analysis in r._extra[group_analyses[key]].split(',') if analysis[-1] == '#']
             result[r.auth_group.role]['analyses'] += analyses[:list_size]
         log.debug("\t%s aggregation: (%0.3fs)" % (key, time.time()-tmp_start))
     log.debug("total data aggregation: (%0.3fs)" % (time.time()-aggregation_start))
