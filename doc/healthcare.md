@@ -22,6 +22,7 @@ Through the VidjilNet consortium, we also offer options for data hosting and pro
 ## In-lab/in-hospital Hosting
 
 - Installed by your local IT staff, with support from the Vidjil team
+- Documentation on [installation and maintenance](server.md#docker-installation)
 - Remote dedicated support and/or maintenance available for [VidjilNet](http://www.vidjil.net) members, possibly through remote SSH access
 - Suitable for production and hosting clinical data, depending the regulations of your country
 - Eligible for laboratory accreditation (through COFRAC in France or national equivalents in other EU countries)
