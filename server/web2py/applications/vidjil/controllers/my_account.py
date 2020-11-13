@@ -80,10 +80,8 @@ def get_permissions(group_list):
 
 def get_most_used_tags(group_list):
     left = [
-        db.sample_set.on(
-            db.auth_permission.record_id == db.sample_set.id),
         db.sample_set_membership.on(
-            db.sample_set_membership.sample_set_id == db.sample_set.id),
+            db.sample_set_membership.sample_set_id == db.auth_permission.record_id),
         db.tag_ref.on(
             (db.tag_ref.table_name == 'sequence_file') &
             (db.tag_ref.record_id == db.sample_set_membership.sequence_file_id)),
