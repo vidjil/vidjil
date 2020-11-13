@@ -291,6 +291,34 @@ Database.prototype = {
         });
     },
 
+    callUrlJson : function(url, args) {
+        var self=this;
+
+        $.ajax({
+            type: "POST",
+            crossDomain: true,
+            url: url,
+            data: {'data': JSON.stringify(args)},
+            timeout: DB_TIMEOUT_CALL,
+            xhrFields: {withCredentials: true},
+            success: function (result) {
+                self.display_result(result, url, args)
+                self.connected = true;
+            },
+            error: function (request, status, error) {
+                self.connected = false;
+                if (status === "timeout") {
+                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                } else {
+                    self.check_cert()
+                }
+                self.warn("callUrlJson: " + status + " - " + url.replace(self.db_address, '') + "?" + self.argsToStr(args))
+            }
+
+        });
+
+    },
+
     callLinkable: function (linkable) {
         var href = linkable.attr('href');
         var type = linkable.data('linkable-type');
@@ -1231,17 +1259,17 @@ Database.prototype = {
     callGroupStats: function() {
         var group_ids = [];
         $('[name^="group_ids"]:checked').each(function() {
-            group_ids.push("group_ids=" + $(this).val());
+            group_ids.push($(this).val());
         });
-        this.call('my_account/index?' + group_ids.join("&"));
+        this.callUrlJson(DB_ADDRESS + 'my_account/index', {'group_ids': group_ids});
     },
 
     callJobStats: function() {
         var group_ids = [];
         $('[name^="group_ids"]:checked').each(function() {
-            group_ids.push("group_ids=" + $(this).val());
+            group_ids.push($(this).val());
         });
-        this.call('my_account/jobs?' + group_ids.join("&"));
+        this.callUrlJson(DB_ADDRESS + 'my_account/index', {'group_ids': group_ids});
     },
 
     stopGroupPropagate: function(e) {
