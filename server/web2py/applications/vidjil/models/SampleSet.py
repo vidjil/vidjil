@@ -69,7 +69,7 @@ class SampleSet(object):
 
     def get_groups_string(self, data):
         key = get_group_names_select()
-        group_list = [] if data._extra[key] is None else data._extra[key].split()
+        group_list = [] if data._extra[key] is None else data._extra[key].split(',')
         return ', '.join([group for group in group_list if group != 'admin'])
 
     def get_creator(self, data):
