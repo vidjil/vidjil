@@ -119,11 +119,7 @@ def index():
     search, tags = parse_search(request.vars["filter"])
 
     result = {}
-    perm_start = time.time()
     perm_query = get_permissions(group_list)
-    log.debug("permission query: (%0.3fs)" % (time.time()-perm_start))
-
-    init_data_start = time.time()
     for r in perm_query:
         if(r.auth_group.role not in result):
             result[r.auth_group.role] = {}
@@ -136,7 +132,6 @@ def index():
             result[r.auth_group.role]['analyses'] = []
             result[r.auth_group.role]['tags'] = []
         result[r.auth_group.role]['permissions'] = "" if r._extra[group_permissions()] is None else r._extra[group_permissions()]
-    log.debug("initialisation: (%0.3fs)" % (time.time()-init_data_start))
 
     query = access_query(group_list)
     if (tags is not None and len(tags) > 0):
@@ -174,9 +169,7 @@ def index():
     ]
 
     queries = {}
-    queries_start = time.time()
     for set_type in ['patient', 'run', 'generic']:
-        tmp_start = time.time()
         key = 'set' if set_type == 'generic' else set_type
         set_query = (query &
                     (db[set_type].sample_set_id == db.auth_permission.record_id))
@@ -189,13 +182,9 @@ def index():
             groupby=(db.auth_group.role, db.sample_set.sample_type),
             orderby=~db.scheduler_task.start_time
         )
-        log.debug("\t%s query: (%0.3fs)" % (set_type, time.time()-tmp_start))
-    log.debug("total queries: (%0.3fs)" % (time.time()-queries_start))
 
     list_size = 50
-    aggregation_start = time.time()
     for key in queries: # patient, run, set
-        tmp_start = time.time()
         query = queries[key]
         for r in query: # 1 or 0 rows
             result[r.auth_group.role][key]['count']['num_sets'] += r.num_sets
@@ -210,10 +199,7 @@ def index():
 
             analyses = [] if r._extra[group_analyses[key]] is None else [analysis.strip('#').split(';') for analysis in r._extra[group_analyses[key]].split(',') if analysis[-1] == '#']
             result[r.auth_group.role]['analyses'] += analyses[:list_size]
-        log.debug("\t%s aggregation: (%0.3fs)" % (key, time.time()-tmp_start))
-    log.debug("total data aggregation: (%0.3fs)" % (time.time()-aggregation_start))
 
-    tags_start = time.time()
     tags = get_most_used_tags(group_list) # list tags used without filtering
     for r in tags:
         if(r.tag.name is not None):
@@ -222,7 +208,6 @@ def index():
             else:
                 tag_string = "%s" % r.tag.name
             result[r.auth_group.role]['tags'].append(tag_string)
-    log.debug("most used tags: (%0.3fs)" % (time.time()-tags_start))
 
     involved_group_ids = get_involved_groups() # for search autocomplete
 
