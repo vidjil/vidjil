@@ -288,6 +288,12 @@ db.define_table('tag_ref',
                 Field('table_name', 'string'),
                 Field('record_id', 'integer'))
 
+try:
+    db.executesql('CREATE INDEX table_name_index ON tag_ref (table_name);')
+    db.executesql('CREATE INDEX record_id_index ON tag_ref (record_id);')
+except:
+    pass
+
 ## after defining tables, uncomment below to enable auditing
 auth.enable_record_versioning(db)
 
