@@ -100,12 +100,12 @@ def get_most_used_tags(group_list):
     )
 
 def index():
-    import json
     start = time.time()
 
     since = datetime.today() - timedelta(days=30)
 
     if auth.is_admin() and 'data' in request.vars:
+        import json
         group_list = json.loads(request.vars['data'])['group_ids']
     else:
         group_list = [int(g.id) for g in auth.get_user_groups() + auth.get_user_group_parents()]
