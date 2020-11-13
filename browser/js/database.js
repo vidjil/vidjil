@@ -1269,7 +1269,7 @@ Database.prototype = {
         $('[name^="group_ids"]:checked').each(function() {
             group_ids.push($(this).val());
         });
-        this.callUrlJson(DB_ADDRESS + 'my_account/index', {'group_ids': group_ids});
+        this.callUrlJson(DB_ADDRESS + 'my_account/jobs', {'group_ids': group_ids});
     },
 
     stopGroupPropagate: function(e) {
