@@ -47,22 +47,24 @@ class TestGraph < BrowserTest
   def test_01_reset_samplename_settings
     set_browser("/browser/test/data/issues/2583_noclone.vidjil")
     $b.update_icon.wait_while(&:present?) # wait update
-    assert (not $b.input(:id => "menuTimeFormName").checked?  ), "settings sample name: not simple name"
-    assert (not $b.input(:id => "menuTimeFormShort").checked? ), "settings sample name: not short name"
-    assert (not $b.input(:id => "menuTimeFormSample").checked?), "settings sample name: not sample"
-    assert ($b.input(:id => "menuTimeFormSamplePlus").checked?), "settings sample name:  IS sample plus"
+    $b.menu_settings.hover
+    assert (    $b.input(:id => "menuTimeForm_name").checked?  ),        "settings sample name: Is simple name"
+    assert (not $b.input(:id => "menuTimeForm_short_name").checked? ),   "settings sample name: not short name"
+    assert (not $b.input(:id => "menuTimeForm_sampling_date").checked?), "settings sample name: not sample"
+    assert (not $b.input(:id => "menuTimeForm_delta_date").checked?),    "settings sample name:  not sample plus"
 
     ## change setting value
     $b.menu_settings.hover
-    $b.input(:id => "menuTimeFormName").click
+    $b.input(:id => "menuTimeForm_name").click
     $b.update_icon.wait_while(&:present?) # wait update
-    assert (    $b.input(:id => "menuTimeFormName").checked?  ), "settings sample name: IS simple name"
-    assert (not $b.input(:id => "menuTimeFormShort").checked? ), "settings sample name: not short name"
+    assert (    $b.input(:id => "menuTimeForm_name").checked?  ),      "settings sample name: IS simple name"
+    assert (not $b.input(:id => "menuTimeForm_short_name").checked? ), "settings sample name: not short name"
     
     # test reset of this parameter after loading of a new analysis
     set_browser("/browser/test/data/issues/2583_noclone.vidjil")
-    assert (not $b.input(:id => "menuTimeFormName").checked?  ), "settings sample name: not simple name"
-    assert ($b.input(:id => "menuTimeFormSamplePlus").checked?), "settings sample name:  IS sample plus (correct reset)"
+    # Dates are present, use it by default ??
+    assert (    $b.input(:id => "menuTimeForm_name").checked?  ),     "settings sample name: Is simple name"
+    assert (not $b.input(:id => "menuTimeForm_delta_date").checked?), "settings sample name:  not sample plus (correct reset)"
 
   end
   
@@ -70,21 +72,22 @@ class TestGraph < BrowserTest
   def test_02_reset_Nregion_names
     set_browser("/browser/test/data/issues/2583_noclone.vidjil")
     $b.update_icon.wait_while(&:present?) # wait update
-    assert (not $b.input(:id => "menuCloneNotNucNum").checked? ), "settings Nregion: not number"
-    assert ($b.input(:id => "menuCloneNotSeqShort").checked? ),   "settings Nregion: IS short name if needed"
-    assert (not $b.input(:id => "menuCloneNotSeq").checked?),     "settings Nregion: not nucleotides only"
+    # $b.menu_settings.hover
+    assert (not $b.input(:id => "menuCloneNot_nucleotide_number").checked? ), "settings Nregion: not number"
+    assert ($b.input(:id => "menuCloneNot_short_sequence").checked? ),        "settings Nregion: IS short name if needed"
+    assert (not $b.input(:id => "menuCloneNot_full_sequence").checked?),      "settings Nregion: not nucleotides only"
 
     ## change setting value
     $b.menu_settings.hover
-    $b.input(:id => "menuCloneNotSeq").click
+    $b.input(:id => "menuCloneNot_full_sequence").click
     $b.update_icon.wait_while(&:present?) # wait update
-    assert (    $b.input(:id => "menuCloneNotSeq").checked?  ), "settings Nregion: IS nucleotides only"
-    assert (not $b.input(:id => "menuCloneNotSeqShort").checked? ), "settings Nregion: not short name if needed"
+    assert (    $b.input(:id => "menuCloneNot_full_sequence").checked?  ), "settings Nregion: IS nucleotides only"
+    assert (not $b.input(:id => "menuCloneNot_short_sequence").checked? ), "settings Nregion: not short name if needed"
     
     # test reset of this parameter after loading of a new analysis
     set_browser("/browser/test/data/issues/2583_noclone.vidjil")
-    assert ($b.input(:id => "menuCloneNotSeqShort").checked? ),   "settings Nregion: IS short name"
-    assert (not $b.input(:id => "menuCloneNotSeq").checked?),     "settings Nregion: not sample"
+    assert ($b.input(:id => "menuCloneNot_short_sequence").checked? ),   "settings Nregion: IS short name"
+    assert (not $b.input(:id => "menuCloneNot_full_sequence").checked?), "settings Nregion: not sample"
   end
   
   
