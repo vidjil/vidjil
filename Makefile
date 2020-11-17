@@ -18,6 +18,11 @@ test_tools_if_python:
 test_tools:
 	$(MAKE) -C tools/tests
 
+test_tutorial:
+	$(MAKE) -C doc/tutorial tutorial-test.rb
+	$(MAKE) -C browser/test tutorial 
+
+
 shouldvdj_generate:
 	@echo
 	rm -rf data/gen

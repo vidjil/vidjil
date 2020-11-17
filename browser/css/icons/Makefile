@@ -11,7 +11,7 @@ retrieve:
 
 ### Don't edit below ###
 
-FONTELLO_HOST ?= http://fontello.com
+FONTELLO_HOST ?= https://fontello.com
 
 fontopen:
 	@if test ! `which curl` ; then \

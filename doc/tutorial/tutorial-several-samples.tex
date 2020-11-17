@@ -181,7 +181,7 @@ compare different research or medical situations.
 Revert the color by choosing \com{by tag}.}
 \begin{verbatim}
   def test_C_samples_08_compare_sample
-    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(101, 123, 131, 1)' )
+    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(108, 113, 196, 1)' )
     
     select_color = $b.select_list(:id => "color_menu_select")
     select_color.select("abundance")
@@ -192,7 +192,6 @@ Revert the color by choosing \com{by tag}.}
 
     $b.graph_x_legend("4").click ## set current sample
     assert ($b.clone_info('0')[:name].style('color') ==  'rgba(183, 126, 36, 1)' )
-
   end
 \end{verbatim}
 
@@ -214,7 +213,7 @@ Another option is to directly plot a log-log curve comparing two samples.
     assert ( $b.scatterplot_x_legend(0).text == "0"), "correct legend for axe X at pos 0"
     assert ( $b.scatterplot_x_legend(8).text == "1"), "correct legend for axe X at pos 8 (biggest)"
     assert ( $b.scatterplot_y_legend(0).text == "0"), "correct legend for axe Y at pos 0"
-    assert ( $b.scatterplot_y_legend(7).text == "0.1"),   "correct legend for axe Y at pos 7 (smallest)"
+    assert ( $b.scatterplot_y_legend(7).text == "0.0000001"),   "correct legend for axe Y at pos 7 (smallest)"
   end
 \end{verbatim}
 

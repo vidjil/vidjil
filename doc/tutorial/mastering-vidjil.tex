@@ -23,7 +23,7 @@ class TestList < BrowserTest
   def setup
     super
     if not defined? $b
-      set_browser("/doc/demo_lil_l3_tutorial.vidjil")
+      set_browser("/browser/test/data/demo_lil_l3_tutorial.vidjil")
       if $b.div(id: 'tip-container').present?
         $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
       end

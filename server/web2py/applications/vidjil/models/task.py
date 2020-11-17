@@ -352,6 +352,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
             compute_extra(id_file, id_config, 5)
             run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
 
+    os.remove(results_filepath)
     return "SUCCESS"
 
 def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False):
@@ -557,6 +558,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
         print(row.sample_set_id)
         run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
 
+    os.remove(results_filepath)
 
     return "SUCCESS"
 
