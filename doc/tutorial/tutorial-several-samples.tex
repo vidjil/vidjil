@@ -75,17 +75,16 @@ We will look now at how the V gene distribution evolves along the time.
 
     ## launch "play" function
     $b.div(:class => ["play_button", "button"]).click
-    sleep 1
+    $b.wait_while{ $b.info_name.text == "LIL-L3-0" }
     assert ($b.info_name.text == "LIL-L3-1"), "Correct name of sample after play lunched, step 1"
-    sleep 3
+    $b.wait_while{ $b.info_name.text == "LIL-L3-1" }
     assert ($b.info_name.text == "LIL-L3-2"), "Correct name of sample after play lunched, step 2" 
-    sleep 3
+    $b.wait_while{ $b.info_name.text == "LIL-L3-2" }
     assert ($b.info_name.text == "LIL-L3-3"), "Correct name of sample after play lunched, step 3"
-    sleep 3
+    $b.wait_while{ $b.info_name.text == "LIL-L3-3" }
     assert ($b.info_name.text == "LIL-L3-4"), "Correct name of sample after play lunched, step 4"
-    sleep 3
+    $b.wait_while{ $b.info_name.text == "LIL-L3-4" }
     assert ($b.info_name.text == "LIL-L3-0"), "Correct name of sample after play lunched, step 5; return to first sample"
-
   end
 \end{verbatim}
 
@@ -188,10 +187,11 @@ Revert the color by choosing \com{by tag}.}
     $b.update_icon.wait_while(&:present?)
 
     assert ( $b.info_colorBy.span(:class => "gradient").exist? ), "color gradient is present"
-    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(36, 183, 67, 1)' ) # rgb(36, 183, 67)
+    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(133, 183, 36, 1)' )
 
     $b.graph_x_legend("4").click ## set current sample
-    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(183, 126, 36, 1)' )
+    $b.update_icon.wait_while(&:present?)
+    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(183, 62, 36, 1)' )
   end
 \end{verbatim}
 
