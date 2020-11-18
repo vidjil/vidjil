@@ -285,15 +285,7 @@ Model.prototype = {
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].reset();
         }
-        
-        // Reset html form to the current model value after reset
-        try {
-            document.getElementById("menuTimeFormName").checked = true;        // sample name
-            document.getElementById("menuCloneNotSeqShort").checked = true;    // clone insert
-            document.getElementById("menu_allele_when_not_01").checked = true; // clone allele
-        } catch (err) {
-            // Don't exist into Qunit pipeline
-        }
+
     },
     
     
@@ -351,21 +343,11 @@ Model.prototype = {
         // time_type to name_short if there is many samples
         if (this.samples.order.length > 6 && !localStorage.getItem("timeFormat"))
             this.changeTimeFormat("short_name", false)
-            try{
-                document.getElementById("menuTimeFormShort").checked = true;
-            } catch (err) {
-                // Don't exist into Qunit pipeline
-            }
 
         // time_type to delta_date if we have enough different dates
         deltas = this.dateDiffMinMax()
         if (deltas.max > 1 && !localStorage.getItem("timeFormat"))
             this.changeTimeFormat("delta_date", false)
-            try {
-                document.getElementById("menuTimeFormSamplePlus").checked = true;
-            } catch (err) {
-                /// Don't exist into Qunit pipeline
-            }
         
         //      NSIZE
         var n_max = 0;
