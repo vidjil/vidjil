@@ -15,6 +15,7 @@ class TestMyAccount < ServerTest
       login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
       Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     end
+    $b.devel_mode()
   end
 
   def  go_to_my_account
