@@ -373,6 +373,11 @@ class VidjilBrowser < Watir::Browser
     return tag_selector.button(:text => 'ok')
   end
 
+  # Enter in dev mode
+  def devel_mode
+    $b.execute_script('$(".devel-mode").show();')
+  end
+
   # Unselect everything, both on clones, and move away from menus (as if we click on the back)
   def unselect
     $b.execute_script('m.unselectAll()')
