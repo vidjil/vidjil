@@ -177,8 +177,11 @@ Usually we may want to tag them in order to remember them later on.
     $b.clone_info("0")[:star].click ## clone rechute
     $b.tag_item('4')[:name].click
     $b.update_icon.wait_while(&:present?)
+    $b.clone_in_list("0").click
+    sleep 1
 
     # New color
+    print " ** Test that can failed on some browser (test_B_clones_05): " + $b.clone_info('0')[:name].style('color') + " ** "
     assert ($b.clone_info('0')[:name].style('color') ==  'rgba(108, 113, 196, 1)' )
   end
 \end{verbatim}
