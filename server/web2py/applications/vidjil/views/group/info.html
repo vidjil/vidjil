@@ -3,15 +3,6 @@
 {{('message' in globals())}}
 {{if 'message' in globals():}}
 
-{{
-group = db.auth_group[request.vars["id"]]
-
-query = db( 
-        (db.auth_user.id == db.auth_membership.user_id) 
-        & (db.auth_membership.group_id == request.vars["id"]) 
-    ).select() 
-}}
-
     <div>
         <h3>group : {{=group.role}}  ({{=group.id}})</h3>
     </div>
@@ -49,18 +40,25 @@ query = db(
             <thead>
                 <tr><td class="column1"> user name </td>
                     <td> email </td>
+                    <td> last login </td>
                     <td class="column2"> - </td>
+                    <td class="column_100"> sets created </td>
+                    <td class="column_100"> files </td>
                     <td class="column5"> </td>
                 </tr>
             </thead>
             <tbody>
-                {{for row in query :}}
+                {{for id in result :}}
+                    {{ row = result[id] }}
                      <tr>
                         <td> {{=row.auth_user.first_name + " " + row.auth_user.last_name}}</td>
                         <td> {{=row.auth_user.email}} </td>
+                        <td> {{=row['last_login']}} </td>
                         <td> {{if auth.can_modify_group(request.vars["id"], row.auth_user.id):}}
                          admin
                          {{pass}}</td>
+                        <td> {{=row['count']}} </td>
+                        <td>{{=row.file_count}} ({{=vidjil_utils.format_size(row.size)}})</td>
                         <td onclick="db.call('group/kick', {'user_id' :'{{=row.auth_user.id}}', 'group_id' : '{{=request.vars["id"]}}'} )" > X </td>
                     </tr>
                 {{pass}}
