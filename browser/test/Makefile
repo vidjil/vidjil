@@ -12,6 +12,7 @@ functional: ../../doc/analysis-example1.vidjil ../../tools/tests/data/fused_mult
 	KEEPOPEN=0 sh launch_functional_tests $(BROWSERS)  functional/issues/test_*rb
 
 tutorial:
+	$(MAKE) -C ../../demo all
 	KEEPOPEN=0 sh launch_functional_tests $(BROWSERS)  functional/tutorial-test.rb
 
 external: ../../doc/analysis-example1.vidjil
