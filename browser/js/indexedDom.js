@@ -110,6 +110,7 @@ IndexedDom.prototype = {
     replace: function(className, newElement){
         var div = this.getElement(className);
         div.parentNode.replaceChild(newElement, div);
+        this.div[className].element = newElement;
     },
 
     /* Clear */

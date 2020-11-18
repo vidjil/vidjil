@@ -2,6 +2,26 @@
     margin : 0 3px;
   }
 
+  .bot-bar {
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: -moz-none;
+    -ms-user-select: none;
+    user-select: none;
+    width: 100%;
+    border-color: @border; 
+    border: solid;
+    border-width: 1px;
+  }
+
+  .stats {
+    position: relative;
+    text-align: right;
+    float: right;
+    width: @width_stats - 3px;
+    padding: 2px 5px;
+  }
+
 .list_select{
     width : 445px;
     display : block;
@@ -16,6 +36,7 @@
   
   .sequence-line { 
       white-space: nowrap;
+      height:25px;
   }
   .sequence-line:hover { 
       font-weight: bold;
@@ -35,12 +56,11 @@
   }
   
   .seq-mobil {
-    margin-left: @width_left_container;
-    letter-spacing: 0.12em;
     font-family : @monospace-font; 
-    position: relative;
-    bottom: 3px;
+    top: 0px;
+    position: absolute;
     font-size:1em;
+    display: inline-block;
   }
   
   .seq-marge {
@@ -151,5 +171,118 @@
 
 .seq-fixed {
     bottom: 1px;
-    width: 250px;
+}
+
+.aligner-menu{
+  display:inline-block;
+  padding: 2px 10px;
+}
+
+.aligner-menu:hover{
+  cursor: pointer;
+  background-color: #ddd
+}
+
+.aligner-button{
+  cursor: pointer;
+  font-size: 13px;
+  min-width: 16px;
+  color: #657b83;
+}
+
+.external-tool-menu:hover .external-tool-menu-content,
+.highlight-menu:hover .highlight-menu-content,
+.align-settings-menu:hover .align-settings-menu-content{
+  display: block;
+}
+
+.external-tool-menu-content,
+.highlight-menu-content,
+.align-settings-menu-content{
+  display: none;
+  position: absolute;
+  bottom: 125px;
+  background-color: white;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.external-tool-menu-content a,
+.highlight-menu-content  a,
+.align-settings-menu-content a{
+  padding: 8px 12px;
+  text-decoration: none;
+  display: block;
+}
+
+.external-tool-menu-content a:hover,
+.highlight-menu-content a:hover,
+.align-settings-menu-content a:hover{
+  background-color: #ddd
+}
+
+.seq-nuc{
+  position:relative;
+  opacity: 1;
+}
+
+.seq-mut{
+  position:absolute;
+  opacity: 1;
+  top:0px;
+  font-weight: bold;
+}
+.seq-mut2{
+  position:absolute;
+  opacity: 1;
+  top:0px;
+  font-weight: bold;
+}
+
+.seq-v{
+  position:absolute;
+  opacity: 0.1;
+  background: green;
+  height:15px;
+  top:0px;
+}
+.seq-d{
+  position:absolute;
+  opacity: 0.1;
+  background: red;
+  height:15px;
+  top:0px;
+}
+.seq-dd{
+  position:absolute;
+  opacity: 0.1;
+  background: red;
+  height:15px;
+  top:0px;
+}
+.seq-ddd{
+  position:absolute;
+  opacity: 0.1;
+  background: red;
+  height:15px;
+  top:0px;
+}
+.seq-j{
+  position:absolute;
+  opacity: 0.1;
+  background: yellow;
+  height:15px;
+  top:0px;
+}
+
+.seq-aa-separator{
+  position: absolute;
+  height : 15px
+}
+
+.seq-cdr3{
+  position:absolute;
+  background: rgb(216, 58, 58);
+  height:5px;
+  top:13px;
 }

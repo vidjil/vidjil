@@ -121,9 +121,10 @@ ul {
   bottom: 125px ;
   background: #ffffff;
   margin: 6px;
-  display: flex;
-  flex: auto;
-  overflow: hidden;
+  margin: 6px 6px 0px 6px;
+  border-bottom-color: white;
+  border-bottom-style: solid;
+  border-bottom-width: 6px;
 }
 .vidjil-panels-left {
   width: calc(100% - 6px - 70px);
@@ -494,9 +495,6 @@ line {
   display: flex;
   flex: 1 1 auto;
 }
-.nameBox {
-  width: 250px;
-}
 .list .axisBox,
 .axisBox span {
   max-width: 52px;
@@ -594,7 +592,7 @@ line {
   margin-left: 2px;
 }
 #new_name {
-  font-family: monospace, ubuntu_monobold, Courier New, monaco, terminal, courier, system;
+  font-family: monospace;
   font-weight: bold;
 }
 .list_sort {
@@ -848,9 +846,7 @@ a.tag-link {
 .button_left {
   cursor: pointer;
   font-size: 13px;
-  padding: 0px 3px;
-  margin-right: 5px;
-  margin-left: 5px;
+  padding: 2px 5px;
   min-width: 16px;
   color: #657b83;
 }
@@ -903,17 +899,6 @@ span.logo {
   opacity: 0.8;
   color: #f88;
 }
-.bot-bar {
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: -moz-none;
-  -ms-user-select: none;
-  user-select: none;
-  height: 20px;
-  border-bottom: solid;
-  width: 100%;
-  padding-top: 2px;
-}
 .devel-mode,
 .beta-mode {
   display: none;
@@ -925,13 +910,6 @@ span.logo {
   width: calc(100% - (475px + 350px + 300px + 50));
   overflow: hidden;
   height: 1.1em;
-}
-.stats {
-  position: relative;
-  text-align: right;
-  float: right;
-  width: 347px;
-  padding-right: 3px;
 }
 .selector {
   display: none;
@@ -954,9 +932,7 @@ span.logo {
 #bot-container {
   position: fixed;
   bottom: 0;
-  left: 6px;
-  border-top: solid;
-  border-width: 6px;
+  width: 100%;
   min-height: 125px;
 }
 .tn {
@@ -1006,7 +982,7 @@ span.logo {
   opacity: 0.5;
 }
 #test_result {
-  font-family: monospace, ubuntu_monobold, Courier New, monaco, terminal, courier, system;
+  font-family: monospace;
   font-weight: bold;
   position: absolute;
   width: 100%;
@@ -1020,7 +996,6 @@ span.logo {
 #list_menu,
 #top-container,
 .list_clones,
-.bot-bar,
 #bot-container,
 .tagSelector {
   border-color: #cccccc;
@@ -1591,6 +1566,7 @@ select > option:hover {
 }
 .inactive {
   opacity: 0.5;
+  pointer-events: none;
 }
 .suggest_box {
   height: 0px;
@@ -1636,7 +1612,7 @@ code,
 kbd,
 samp,
 tt {
-  font-family: monospace, ubuntu_monobold, Courier New, monaco, terminal, courier, system;
+  font-family: monospace;
   font-size: 1em;
 }
 table.log {
@@ -1674,7 +1650,7 @@ table.log textarea {
   padding: 5px 0px;
   background: grey;
   color: white;
-  font-family: monospace, ubuntu_monobold, Courier New, monaco, terminal, courier, system;
+  font-family: monospace;
   white-space: pre-line;
   overflow: auto;
   max-height: 100%;
@@ -2165,6 +2141,24 @@ form .form_label {
 .segmenter .axisBox > span {
   margin: 0 3px;
 }
+.bot-bar {
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
+  width: 100%;
+  border-color: #cccccc;
+  border: solid;
+  border-width: 1px;
+}
+.stats {
+  position: relative;
+  text-align: right;
+  float: right;
+  width: 347px;
+  padding: 2px 5px;
+}
 .list_select {
   width: 445px;
   display: block;
@@ -2178,6 +2172,7 @@ form .form_label {
 }
 .sequence-line {
   white-space: nowrap;
+  height: 25px;
 }
 .sequence-line:hover {
   font-weight: bold;
@@ -2194,12 +2189,11 @@ form .form_label {
   z-index: 1;
 }
 .seq-mobil {
-  margin-left: 475px;
-  letter-spacing: 0.12em;
-  font-family: monospace, ubuntu_monobold, Courier New, monaco, terminal, courier, system;
-  position: relative;
-  bottom: 3px;
+  font-family: monospace;
+  top: 0px;
+  position: absolute;
   font-size: 1em;
+  display: inline-block;
 }
 .seq-marge {
   word-spacing: normal;
@@ -2305,7 +2299,108 @@ span .end-codon {
 }
 .seq-fixed {
   bottom: 1px;
-  width: 250px;
+}
+.aligner-menu {
+  display: inline-block;
+  padding: 2px 10px;
+}
+.aligner-menu:hover {
+  cursor: pointer;
+  background-color: #ddd;
+}
+.aligner-button {
+  cursor: pointer;
+  font-size: 13px;
+  min-width: 16px;
+  color: #657b83;
+}
+.external-tool-menu:hover .external-tool-menu-content,
+.highlight-menu:hover .highlight-menu-content,
+.align-settings-menu:hover .align-settings-menu-content {
+  display: block;
+}
+.external-tool-menu-content,
+.highlight-menu-content,
+.align-settings-menu-content {
+  display: none;
+  position: absolute;
+  bottom: 125px;
+  background-color: white;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+.external-tool-menu-content a,
+.highlight-menu-content a,
+.align-settings-menu-content a {
+  padding: 8px 12px;
+  text-decoration: none;
+  display: block;
+}
+.external-tool-menu-content a:hover,
+.highlight-menu-content a:hover,
+.align-settings-menu-content a:hover {
+  background-color: #ddd;
+}
+.seq-nuc {
+  position: relative;
+  opacity: 1;
+}
+.seq-mut {
+  position: absolute;
+  opacity: 1;
+  top: 0px;
+  font-weight: bold;
+}
+.seq-mut2 {
+  position: absolute;
+  opacity: 1;
+  top: 0px;
+  font-weight: bold;
+}
+.seq-v {
+  position: absolute;
+  opacity: 0.1;
+  background: green;
+  height: 15px;
+  top: 0px;
+}
+.seq-d {
+  position: absolute;
+  opacity: 0.1;
+  background: red;
+  height: 15px;
+  top: 0px;
+}
+.seq-dd {
+  position: absolute;
+  opacity: 0.1;
+  background: red;
+  height: 15px;
+  top: 0px;
+}
+.seq-ddd {
+  position: absolute;
+  opacity: 0.1;
+  background: red;
+  height: 15px;
+  top: 0px;
+}
+.seq-j {
+  position: absolute;
+  opacity: 0.1;
+  background: yellow;
+  height: 15px;
+  top: 0px;
+}
+.seq-aa-separator {
+  position: absolute;
+  height: 15px;
+}
+.seq-cdr3 {
+  position: absolute;
+  background: #d83a3a;
+  height: 5px;
+  top: 13px;
 }
 div.tooltip {
   position: absolute;

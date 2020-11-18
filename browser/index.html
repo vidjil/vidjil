@@ -20,23 +20,24 @@
 -->
 
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Vidjil</title>
 
-        <link rel="shortcut icon" href="./images/favicon-v.ico" type="image/x-icon">
-        <link rel="icon" href="./images/favicon-v.ico" type="image/x-icon">
+<head>
+    <meta charset="utf-8">
+    <title>Vidjil</title>
 
-        <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu/stylesheet.css" />
-        <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu-mono/stylesheet.css" />
-        <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/fontello.css" />
-        <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/animation.css" />
-        <link rel="stylesheet" href="css/vmi/vmi.css" />
-        <link id="palette" rel="stylesheet" type="text/css" href="css/light.css" />
-        <link id="seg_highlight" rel="stylesheet" type="text/css" href="css/segmenter_highlight.css" />
-        <link rel="stylesheet" href="css/jstree_themes/default/style.min.css" />
+    <link rel="shortcut icon" href="./images/favicon-v.ico" type="image/x-icon">
+    <link rel="icon" href="./images/favicon-v.ico" type="image/x-icon">
 
-        <script data-main="js/app.js" src="js/lib/require.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu/stylesheet.css" />
+    <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu-mono/stylesheet.css" />
+    <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/fontello.css" />
+    <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/animation.css" />
+    <link rel="stylesheet" href="css/vmi/vmi.css" />
+    <link id="palette" rel="stylesheet" type="text/css" href="css/light.css" />
+    <link id="seg_highlight" rel="stylesheet" type="text/css" href="css/segmenter_highlight.css" />
+    <link rel="stylesheet" href="css/jstree_themes/default/style.min.css" />
+
+    <script data-main="js/app.js" src="js/lib/require.js"></script>
 
     <script>
         function includeHTML() {
@@ -71,31 +72,31 @@
 </head>
 
 
-    <body>
+<body>
 
         <div id="file_menu" >
             <span class="closeButton" onclick="cancel();"><i class="icon-cancel" title=""></i></span>
 
-            <h2>Vidjil <span class='logo'>(beta)</span> &ndash; V(D)J repertoire browsing and analysis</h2>
+        <h2>Vidjil <span class='logo'>(beta)</span> &ndash; V(D)J repertoire browsing and analysis</h2>
 
-            Data file (.vidjil):<br/>
-            <input id="upload_json" type="file" name="json" /></br>
-            <p class='help'>The .vidjil file stores a set of clones on several points.</p>
+        Data file (.vidjil):<br />
+        <input id="upload_json" type="file" name="json" /></br>
+        <p class='help'>The .vidjil file stores a set of clones on several points.</p>
 
-            Analysis file (.analysis, optional):<br/>
-            <input id="upload_pref" type="file" name="pref" /></br>
-            <p class='help'>The .analysis file stores all parameters set by the user (tags, colors, manual clusters).</p>
+        Analysis file (.analysis, optional):<br />
+        <input id="upload_pref" type="file" name="pref" /></br>
+        <p class='help'>The .analysis file stores all parameters set by the user (tags, colors, manual clusters).</p>
 
-            <button id="start_import_json" onclick="document.getElementById('file_menu').style.display='none';
-            m.load('upload_json','upload_pref', 200)">start</button> 
-        </div>
+        <button id="start_import_json" onclick="document.getElementById('file_menu').style.display='none';
+            m.load('upload_json','upload_pref', 200)">start</button>
+    </div>
 
         <div id="axis_choice" >
             <span class="closeButton" onclick="cancel();"><i class="icon-cancel" title=""></i></span>
             <h2>analysis menu</h2>
 
-            Analysis file:<br/>
-            <input id="upload_analysis" type="file" name="analysis" /></br></br>
+        Analysis file:<br />
+        <input id="upload_analysis" type="file" name="analysis" /></br></br>
 
             <button onclick="document.getElementById('axis_choice').style.display='none';
                                     m.loadAnalysis('upload_analysis');">start</button> 
@@ -105,11 +106,15 @@
             <span class="closeButton" onclick="cancel();"><i class="icon-cancel" title=""></i></span>
             <h2>Add clones from sequences</h2>
 
-            <textarea id="addclone_input" placeholder="Sequence(s) (Fasta)"></textarea>
+    <div id="add_clone_menu">
+        <span class="closeButton" onclick="cancel();">X</span>
+        <h2>Add clones from sequences</h2>
 
-            <button onclick="document.getElementById('add_clone_menu').style.display = 'none';
+        <textarea id="addclone_input" placeholder="Sequence(s) (Fasta)"></textarea>
+
+        <button onclick="document.getElementById('add_clone_menu').style.display = 'none';
                 m.addManualClones('addclone_input');">Add</button>
-        </div>
+    </div>
 
         <!-- TOP-CONTAINER -->
         <div id="top-container" onmouseout="hideSelector()">
@@ -126,51 +131,72 @@
                             <div id="last_loaded_file">
                             </div>
                         </div>
-                    </div></div>
+                    </div>
                 </div>
+            </div>
 
-                <div class="menu" id="static_file_menu" onmouseover="showSelector('fileSelector');" style="display : none">file
-                  <div id="fileSelector" class="selector"><div>
+            <div class="menu" id="static_file_menu" onmouseover="showSelector('fileSelector');" style="display : none">
+                file
+                <div id="fileSelector" class="selector">
+                    <div>
                         <div class="menu_box">
                             <div id="upload_list">
                             </div>
                         </div>
-                  </div></div>
+                    </div>
                 </div>
- 
-                <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');">import/export
-                    <div id="demoSelector" class="selector"><div>
+            </div>
+
+            <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');">import/export
+                <div id="demoSelector" class="selector">
+                    <div>
                         <div class="menu_box">
-                            <a id="import_data_anchor" class="buttonSelector" onclick="javascript:loadData()">import data (.vidjil)</a>
-                            <a id="import_data_analysis" class="buttonSelector" onclick="javascript:loadAnalysis()">import analysis</a>
+                            <a id="import_data_anchor" class="buttonSelector" onclick="javascript:loadData()">import
+                                data (.vidjil)</a>
+                            <a id="import_data_analysis" class="buttonSelector"
+                                onclick="javascript:loadAnalysis()">import analysis</a>
                         </div>
                         <div class="menu_box devel-mode">
-                            <a class="buttonSelector" id ="add_clones" onclick="javascript:showAddManualCloneMenu()">add clones from sequences</a>
+                            <a class="buttonSelector" id="add_clones" onclick="javascript:showAddManualCloneMenu()">add
+                                clones from sequences</a>
                         </div>
                         <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
                         <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
                         <div class="menu_box">
-                          <a class="buttonSelector" id="export_sample_report" onclick="javascript:report.reportHTMLdiag()">export report (sample)</a>
-                          <a class="buttonSelector" id="export_monitor_report" onclick="javascript:report.reportHTML()">export report (monitor)</a>
+                            <a class="buttonSelector" id="export_sample_report"
+                                onclick="javascript:report.reportHTMLdiag()">export report (sample)</a>
+                            <a class="buttonSelector" id="export_monitor_report"
+                                onclick="javascript:report.reportHTML()">export report (monitor)</a>
                         </div>
                         <div class="menu_box">
-                            <a class="buttonSelector" id="export_analysis" onclick="javascript:m.saveAnalysis()">export analysis</a>
-                            <a class="buttonSelector" id="export_svg1" onclick="javascript:m.exportViewToPNG(document.querySelector('#visu2_svg'))">export top graph (PNG)</a>
-                            <a class="buttonSelector" id="export_svg2" onclick="javascript:m.exportViewToPNG(document.querySelector('#visu_svg'))">export bottom graph (PNG)</a>
-                            <a class="buttonSelector" id="export_csv" onclick="javascript:m.exportCSV()">export csv (visible clones)</a>
-                            <a class="buttonSelector" id="export_fasta" onclick="javascript:m.exportFasta()">export fasta (selected clones)</a>
-                            <a class="buttonSelector disabledClass" id="export_fasta_align" onclick="javascript:segment.exportAlignFasta()">export aligned fasta (selected clones)</a>
+                            <a class="buttonSelector" id="export_analysis" onclick="javascript:m.saveAnalysis()">export
+                                analysis</a>
+                            <a class="buttonSelector" id="export_svg1"
+                                onclick="javascript:m.exportViewToPNG(document.querySelector('#visu2_svg'))">export top
+                                graph (PNG)</a>
+                            <a class="buttonSelector" id="export_svg2"
+                                onclick="javascript:m.exportViewToPNG(document.querySelector('#visu_svg'))">export
+                                bottom graph (PNG)</a>
+                            <a class="buttonSelector" id="export_csv" onclick="javascript:m.exportCSV()">export csv
+                                (visible clones)</a>
+                            <a class="buttonSelector" id="export_fasta" onclick="javascript:m.exportFasta()">export
+                                fasta (selected clones)</a>
+                            <a class="buttonSelector disabledClass" id="export_fasta_align"
+                                onclick="javascript:segment.exportAlignFasta()">export aligned fasta (selected
+                                clones)</a>
                         </div>
                         <div class="menu_box">
                             <a class="buttonSelector" id="export_add_germline" onclick="javascript:segment.add_all_germline_to_segmenter()">add germline genes (experimental)</a>
                         </div>
-                    </div></div>
+                    </div>
                 </div>
+            </div>
 
-                <div class="menu" id="cluster_menu" onmouseover="showSelector('clusterSelector');" > cluster
-                    <div id="clusterSelector" class="selector"><div>
+            <div class="menu" id="cluster_menu" onmouseover="showSelector('clusterSelector');"> cluster
+                <div id="clusterSelector" class="selector">
+                    <div>
                         <div class="menu_box">
-                          <a class="buttonSelector" onclick="m.restoreClusters();">revert to previous clusters</a>
+                            <a class="buttonSelector" onclick="m.restoreClusters();">revert to previous clusters</a>
                         </div>
                         <div class="menu_box">
                           <a id="clusterBy_selected"   class="buttonSelector" onclick="m.merge();">cluster selected clones</a>
@@ -186,8 +212,9 @@
                           <a id="cluster_break_selected" class="buttonSelector" onclick="m.break();">break selected clusters</a>
                           <a id="cluster_break_all" class="buttonSelector" onclick="m.resetClusters();">break all clusters</a>
                         </div>
-                    </div></div>
+                    </div>
                 </div>
+            </div>
 
                 <div class="menu" id="color_menu" onmouseover="showSelector('colorSelector');" > color by
                     <div class="div-menu-selector"><select id="color_menu_select" class="menu-selector" onchange="m.changeColorMethod(this.value, true, true)">
@@ -201,27 +228,33 @@
                         <option value="abundance">abundance</option>
                         <option value="productive">productivity</option>
                     </select></div>
-                </div>
+            </div>
 
-                <div class="menu" id="filter_menu" onmouseenter="builder.build_displaySelector();" onmouseover="showSelector('filterSelector');" > filter
-                    <div id="filterSelector" class="selector">
-                      <div>
+            <div class="menu" id="filter_menu" onmouseenter="builder.build_displaySelector();"
+                onmouseover="showSelector('filterSelector');"> filter
+                <div id="filterSelector" class="selector">
+                    <div>
                         <div class="menu_box">
-                          <span id="top_label"></span></br>
-                          <input id="top_slider" type="range" min="5" max="100" step="5" value="10" onchange="m.displayTop(this.value)" />
+                            <span id="top_label"></span></br>
+                            <input id="top_slider" type="range" min="5" max="100" step="5" value="10"
+                                onchange="m.displayTop(this.value)" />
                         </div>
                         <div class="menu_box">
-                          <div id="filter_switch_sample" title="Hide clones that are not present in the current sample">
-                            <input id="filter_switch_sample_check" type="checkbox"></input> Focus on clones of one sample
-                          </div>
+                            <div id="filter_switch_sample"
+                                title="Hide clones that are not present in the current sample">
+                                <input id="filter_switch_sample_check" type="checkbox"></input> Focus on clones of one
+                                sample
+                            </div>
                         </div>
-                      </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();" onmouseover=" showSelector('settingsSelector');" > settings
-                    <div id="settingsSelector" class="selector"><div>
-                     
+            <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();"
+                onmouseover=" showSelector('settingsSelector');"> settings
+                <div id="settingsSelector" class="selector">
+                    <div>
+
                         <div class="menu_box">
                             normalization
                             <form name="normalize_list" id="normalize_list">
@@ -229,62 +262,87 @@
                         </div>
                         <div class="menu_box">
                             size display</br>
-                            <label    for="menuNotation_scientific"     class="buttonSelector" onclick="m.changeNotation('scientific', true, true)">
-                                <input id="menuNotation_scientific"     type="radio" name="notation" value="scientific" />scientific notation
+                            <label for="menuNotation_scientific" class="buttonSelector"
+                                onclick="m.changeNotation('scientific', true, true)">
+                                <input id="menuNotation_scientific" type="radio" name="notation"
+                                    value="scientific" />scientific notation
                             </label>
-                            <label    for="menuNotation_percent"        class="buttonSelector" onclick="m.changeNotation('percent', true, true)">
-                                <input id="menuNotation_percent"        type="radio" name="notation" value="percent" checked />percent
+                            <label for="menuNotation_percent" class="buttonSelector"
+                                onclick="m.changeNotation('percent', true, true)">
+                                <input id="menuNotation_percent" type="radio" name="notation" value="percent"
+                                    checked />percent
                             </label>
                         </div>
                         <div class="menu_box">
                             sample key</br>
-                            <label    for="menuTimeForm_name"           class="buttonSelector" onclick="m.changeTimeFormat('name', true, true)">
-                                <input id="menuTimeForm_name"           type="radio" name="time" value="name" checked   />name
+                            <label for="menuTimeForm_name" class="buttonSelector"
+                                onclick="m.changeTimeFormat('name', true, true)">
+                                <input id="menuTimeForm_name" type="radio" name="time" value="name" checked />name
                             </label>
-                            <label    for="menuTimeForm_short_name"     class="buttonSelector" onclick="m.changeTimeFormat('short_name', true, true)">
-                                <input id="menuTimeForm_short_name"     type="radio" name="time" value="short_name"     />name (short)
+                            <label for="menuTimeForm_short_name" class="buttonSelector"
+                                onclick="m.changeTimeFormat('short_name', true, true)">
+                                <input id="menuTimeForm_short_name" type="radio" name="time" value="short_name" />name
+                                (short)
                             </label>
-                            <label    for="menuTimeForm_sampling_date"  class="buttonSelector" onclick="m.changeTimeFormat('sampling_date', true, true)">
-                                <input id="menuTimeForm_sampling_date"  type="radio" name="time" value="sampling_date"  />sampling date
+                            <label for="menuTimeForm_sampling_date" class="buttonSelector"
+                                onclick="m.changeTimeFormat('sampling_date', true, true)">
+                                <input id="menuTimeForm_sampling_date" type="radio" name="time"
+                                    value="sampling_date" />sampling date
                             </label>
-                            <label    for="menuTimeForm_delta_date"     class="buttonSelector" onclick="m.changeTimeFormat('delta_date', true, true)">
-                                <input id="menuTimeForm_delta_date"     type="radio" name="time" value="delta_date"     />day after first sample
-                            </label>
-                        </div>
-                        <div class="menu_box">
-                             N regions in clone names</br>
-                             <label   for="menuCloneNot_nucleotide_number"  class="buttonSelector" onclick="m.changeCloneNotation('nucleotide_number', true, true)">
-                                <input id="menuCloneNot_nucleotide_number"  type="radio" name="show_name" value="nucleotide_number" />length
-                            </label>
-                             <label   for="menuCloneNot_short_sequence"     class="buttonSelector" onclick="m.changeCloneNotation('short_sequence', true, true)">
-                                <input id="menuCloneNot_short_sequence"     type="radio" name="show_name" value="short_sequence" checked />sequence (when short)
-                            </label>
-                             <label   for="menuCloneNot_full_sequence"      class="buttonSelector" onclick="m.changeCloneNotation('full_sequence', true, true)">
-                                <input id="menuCloneNot_full_sequence"      type="radio" name="show_name" value="full_sequence" />sequence (always)
+                            <label for="menuTimeForm_delta_date" class="buttonSelector"
+                                onclick="m.changeTimeFormat('delta_date', true, true)">
+                                <input id="menuTimeForm_delta_date" type="radio" name="time" value="delta_date" />day
+                                after first sample
                             </label>
                         </div>
                         <div class="menu_box">
-                             alleles in clone names</br>
-                             <label   for="menuAlleleNot_never"         class="buttonSelector" onclick="m.changeAlleleNotation('never', true, true)">
-                                <input id="menuAlleleNot_never"         type="radio" name="menu_allele" value="never" />never
+                            N regions in clone names</br>
+                            <label for="menuCloneNot_nucleotide_number" class="buttonSelector"
+                                onclick="m.changeCloneNotation('nucleotide_number', true, true)">
+                                <input id="menuCloneNot_nucleotide_number" type="radio" name="show_name"
+                                    value="nucleotide_number" />length
                             </label>
-                             <label   for="menuAlleleNot_when_not_01"   class="buttonSelector" onclick="m.changeAlleleNotation('when_not_01', true, true)">
-                                <input id="menuAlleleNot_when_not_01"   type="radio" name="menu_allele" value="when_not_01" checked />when not *01
+                            <label for="menuCloneNot_short_sequence" class="buttonSelector"
+                                onclick="m.changeCloneNotation('short_sequence', true, true)">
+                                <input id="menuCloneNot_short_sequence" type="radio" name="show_name"
+                                    value="short_sequence" checked />sequence (when short)
                             </label>
-                             <label   for="menuAlleleNot_always"        class="buttonSelector" onclick="m.changeAlleleNotation('always', true, true)">
-                                <input id="menuAlleleNot_always"        type="radio" name="menu_allele" value="always" />always
+                            <label for="menuCloneNot_full_sequence" class="buttonSelector"
+                                onclick="m.changeCloneNotation('full_sequence', true, true)">
+                                <input id="menuCloneNot_full_sequence" type="radio" name="show_name"
+                                    value="full_sequence" />sequence (always)
+                            </label>
+                        </div>
+                        <div class="menu_box">
+                            alleles in clone names</br>
+                            <label for="menuAlleleNot_never" class="buttonSelector"
+                                onclick="m.changeAlleleNotation('never', true, true)">
+                                <input id="menuAlleleNot_never" type="radio" name="menu_allele" value="never" />never
+                            </label>
+                            <label for="menuAlleleNot_when_not_01" class="buttonSelector"
+                                onclick="m.changeAlleleNotation('when_not_01', true, true)">
+                                <input id="menuAlleleNot_when_not_01" type="radio" name="menu_allele"
+                                    value="when_not_01" checked />when not *01
+                            </label>
+                            <label for="menuAlleleNot_always" class="buttonSelector"
+                                onclick="m.changeAlleleNotation('always', true, true)">
+                                <input id="menuAlleleNot_always" type="radio" name="menu_allele" value="always" />always
                             </label>
                         </div>
                         <div class="menu_box">
                             <a class="buttonSelector" onclick="m.resetSettings();">reset settings</a>
-                       </div>
+                        </div>
 
 
                         <div class="menu_box devel-mode">
                             primer set</br>
-                            <label for="primerBiomed2" class="buttonSelector" onclick="m.switchPrimersSet('biomed2')"><input type="radio" id="primerBiomed2" name="primers" value="biomed2" />biomed2</label>
-                            <label for="primer_fictif" class="buttonSelector" onclick="m.switchPrimersSet('primer_fictif')"><input type="radio" id="primer_fictif" name="primers" value="primer_fictif" />primer_fictif</label>
-			    <!-- TODO : construire liste à partir des data disponibles/chargées dans le model.
+                            <label for="primerBiomed2" class="buttonSelector"
+                                onclick="m.switchPrimersSet('biomed2')"><input type="radio" id="primerBiomed2"
+                                    name="primers" value="biomed2" />biomed2</label>
+                            <label for="primer_fictif" class="buttonSelector"
+                                onclick="m.switchPrimersSet('primer_fictif')"><input type="radio" id="primer_fictif"
+                                    name="primers" value="primer_fictif" />primer_fictif</label>
+                            <!-- TODO : construire liste à partir des data disponibles/chargées dans le model.
                             TODO : passer ça en liste deroulante ? -->
                         </div>
                         <!--
@@ -302,38 +360,50 @@
 
                             <div class="menu_box">
                                 <div id="DBSCANEpsSlider">
-                                <input id="changeEps" type="range" min="0" max="40" step="1" value="0" onchange="m.changeEps(this.value)" />
+                                    <input id="changeEps" type="range" min="0" max="40" step="1" value="0"
+                                        onchange="m.changeEps(this.value)" />
                                 </div>
                             </div>
 
 
                             <div class="menu_box">
                                 <div id="DBSCANNbrSlider">
-                                <input id="changeNbr" type="range" min="0" max="100" step="1" value="0" onchange="m.changeNbr(this.value)" />
+                                    <input id="changeNbr" type="range" min="0" max="100" step="1" value="0"
+                                        onchange="m.changeNbr(this.value)" />
                                 </div>
                             </div>
 
 
                             <div class="menu_box">
                                 <div id="EditDistanceSlider">
-                                </br>
-                                <input id="displayMax_slider" type="range" min="1" max="20" step="1" value="10" onchange="sp.displayDistanceMax(this.value)" style="display:none"/>
+                                    </br>
+                                    <input id="displayMax_slider" type="range" min="1" max="20" step="1" value="10"
+                                        onchange="sp.displayDistanceMax(this.value)" style="display:none" />
                                 </div>
                             </div>
                         </div>
 
-                    </div></div>
-                </div>
-
-
-                <div id="debug_menu" class="menu" onmouseover="showSelector('adminSelector');" style="display : none"> development
-                    <div id="adminSelector" class="selector"><div>
-                        <input type="checkbox" onclick=" this.checked ? $('#fps').css('display', '') : $('#fps').css('display', 'none');">display fps</input></br>
-                        <input type="checkbox" onclick=" this.checked ? console.openLog() : console.closeLog() ;">log</input>
-                        <div class="buttonSelector" onclick="m.changeTimeFormat('delta_date_no_zero', true)"><input type="radio" name="time" value="delta_date_no_zero">day after first sample (no zero)</input></div>
-                    </div></div>
+                    </div>
                 </div>
             </div>
+
+
+            <div id="debug_menu" class="menu" onmouseover="showSelector('adminSelector');" style="display : none">
+                development
+                <div id="adminSelector" class="selector">
+                    <div>
+                        <input type="checkbox"
+                            onclick=" this.checked ? $('#fps').css('display', '') : $('#fps').css('display', 'none');">display
+                        fps</input></br>
+                        <input type="checkbox"
+                            onclick=" this.checked ? console.openLog() : console.closeLog() ;">log</input>
+                        <div class="buttonSelector" onclick="m.changeTimeFormat('delta_date_no_zero', true)"><input
+                                type="radio" name="time" value="delta_date_no_zero">day after first sample (no
+                            zero)</input></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
         <div id="menu_right_part">
@@ -352,34 +422,46 @@
                 </div>
             </div>
 
-            <div id="upload_summary" class="menu" onmouseover="showSelector('upload_summary_selector');" onmouseout="hideSelector();">
-              <span id="upload_summary_label">upload</span>
-              <div id="upload_summary_selector" class="selector"><div>
+            <div id="upload_summary" class="menu" onmouseover="showSelector('upload_summary_selector');"
+                onmouseout="hideSelector();">
+                <span id="upload_summary_label">upload</span>
+                <div id="upload_summary_selector" class="selector">
+                    <div>
 
-              </div></div>
+                    </div>
+                </div>
             </div>
 
             <div id="palette_menu" class="menu" onmouseover="showSelector('paletteSelector');"> palette
-                <div id="paletteSelector" class="selector"><div>
-                    <a id="palette_light" class="buttonSelector" onclick="changeStyle('solarizeL')">light</a>
-                    <a id="palette_light_presentation" class="buttonSelector" onclick="changeStyle('display')">light (presentation)</a>
-                    <a id="palette_dark" class="buttonSelector" onclick="changeStyle('solarizeD')">dark</a>
-                </div></div>
+                <div id="paletteSelector" class="selector">
+                    <div>
+                        <a id="palette_light" class="buttonSelector" onclick="changeStyle('solarizeL')">light</a>
+                        <a id="palette_light_presentation" class="buttonSelector" onclick="changeStyle('display')">light
+                            (presentation)</a>
+                        <a id="palette_dark" class="buttonSelector" onclick="changeStyle('solarizeD')">dark</a>
+                    </div>
+                </div>
             </div>
             <div id="help_menu" class="menu" onmouseover="showSelector('helpSelector');"> help
-                <div id="helpSelector" class="selector"><div>
-                    <a id="help_support" class="buttonSelector getHelp" onclick="report.sendMail()">get support</a>
-                    <a id="help_manual" class="buttonSelector" href="http://www.vidjil.org/doc/user" target="_blank">manual</a>
-                    <a id="help_tutorial" class="buttonSelector" href="http://www.vidjil.org/doc/tutorial/mastering-vidjil.html" target="_blank">tutorial</a>
-                    <a id="help_bugtracker" class="buttonSelector" href="https://gitlab.inria.fr/vidjil/vidjil" target="_blank" title="The bugtracker is the place where you can communicate and collaborate with the developer and other Vidjil users to share ideas and report bugs.
+                <div id="helpSelector" class="selector">
+                    <div>
+                        <a id="help_support" class="buttonSelector getHelp" onclick="report.sendMail()">get support</a>
+                        <a id="help_manual" class="buttonSelector" href="http://www.vidjil.org/doc/user"
+                            target="_blank">manual</a>
+                        <a id="help_tutorial" class="buttonSelector"
+                            href="http://www.vidjil.org/doc/tutorial/mastering-vidjil.html" target="_blank">tutorial</a>
+                        <a id="help_bugtracker" class="buttonSelector" href="https://gitlab.inria.fr/vidjil/vidjil"
+                            target="_blank" title="The bugtracker is the place where you can communicate and collaborate with the developer and other Vidjil users to share ideas and report bugs.
  +Need to be registered or create a specific account.">bugtracker</a>
-                    <a class="buttonSelector devel-mode" onclick="my_tips.reset()">reset tips of the day</a>
-                </div></div>
+                        <a class="buttonSelector devel-mode" onclick="my_tips.reset()">reset tips of the day</a>
+                    </div>
                 </div>
+            </div>
 
             <div class="menu" id="alert"></div>
-            <div id="logo"  onclick="console.log({'type': 'popup', 'default':'welcome'})">Vidjil <span class='logo'>(beta)</span></div>
-<!--
+            <div id="logo" onclick="console.log({'type': 'popup', 'default':'welcome'})">Vidjil <span
+                    class='logo'>(beta)</span></div>
+            <!--
 	    <div class="menu" style="float: right; margin-right:100px"><span style="padding: 4px 5px; background-color: #fef6e3; font-family: ubuntulight;">
 		<b>Maintenance:</b> Vidjil will be offline Tuesday 7, 11:00 → 13:00 CEST. Thank you for your understanding.
 	    </span></div>
@@ -417,32 +499,42 @@
             <div id="bot-container"> </div>
         </div>
 
+        <!-- BOT-CONTAINER / SEGMENTER-CONTAINER -->
+        <div id="bot-container"> </div>
+
         <form id="form"></form>
 
-        <div id="tip-container"></div>
+    <form id="form"></form>
 
-    </body> 
+    <div id="tip-container"></div>
+
+</body>
 
 
-    <template id='clipboard-popup'> 
-        <div>
+
+
+<template id='clipboard-popup'>
+    <div>
         <div>
             Add several patients, runs, or sample sets
-           <br>
+            <br>
         </div>
         <div>
             <form name="clipboardForm">
-                <textarea   name="clipboardData" id="clipboardData" rows="6" cols="70" 
-                            placeholder="Paste table data here"></textarea>
-                <input name="Submit"  type="submit" value="Continue"/>
-            </form>   
+                <textarea name="clipboardData" id="clipboardData" rows="6" cols="70"
+                    placeholder="Paste table data here"></textarea>
+                <input name="Submit" type="submit" value="Continue" />
+            </form>
             See the <a target='_blank' href='http://www.vidjil.org/doc/#batch-creation'>required format</a>
         </div>
-        </div>
-    </template>
+    </div>
+</template>
+
 
 <div w3-include-html="template/aligner.html"></div>
+
 <script>
     includeHTML();
 </script>
+
 </html>

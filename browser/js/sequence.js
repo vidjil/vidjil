@@ -1,3 +1,8 @@
+SEGMENT_KEYS = ["4", "4a", "4b", "cdr3"];
+
+CHAR_WIDTH = 15;
+
+
 function genSeq(id, locus, model, segmenter) {
     this.id = id; //clone ID     
     this.m = model; //Model utilisé     
@@ -172,6 +177,55 @@ function Sequence(id, model, segmenter) {
     this.use_marge = true;
     this.is_clone = true;
     this.locus = this.m.clone(id).germline;
+
+    this.layers = [
+        {
+            'menu_name': "VDJ",
+            'height': 15,
+            'position': 0, 
+            'segment':[{   
+                'className' : "seq-v",
+                'start' : function(c){return c.seg["5"].start;},
+                'stop' : function(c){return c.seg["5"].stop;},
+                'color' : "green"
+            },
+            {   
+                'className' : "seq-d",
+                'start' : function(c){return c.seg["4"].start;},
+                'stop' : function(c){return c.seg["4"].stop;},
+                'color' : "red"
+            },
+            {   
+                'className' : "seq-j",
+                'start' : function(c){return c.seg["3"].start;},
+                'stop' : function(c){return c.seg["3"].stop;},
+                'color' : "yellow"
+            },
+            {   
+                'className' : "seq-dd",
+                'start' : function(c){return c.seg["4a"].start;},
+                'stop' : function(c){return c.seg["4a"].stop;},
+                'color' : "red"
+            },
+            {   
+                'className' : "seq-ddd",
+                'start' : function(c){return c.seg["4b"].start;},
+                'stop' : function(c){return c.seg["4b"].stop;},
+                'color' : "red"
+            }]
+        },
+        {
+            'menu_name': "CDR3",
+            'height': 5,
+            'position': 15, 
+            'segment':[{   
+                    'className' : "seq-cdr3",
+                    'start' : function(c){return c.seg.cdr3.start;},
+                    'stop' : function(c){return c.seg.cdr3.stop;},
+                    'color' : "pink"
+            }]
+        }
+    ];
 }
 
 Sequence.prototype = {
@@ -250,149 +304,109 @@ Sequence.prototype = {
         }
     },
 
-    /**
-     * return sequence completed with html tag <br>
-     * @return {string}
-     * */
-    toString: function () {
+    toString: function(div) {
+        var div_nuc = div.getElementsByClassName("seq-nuc")[0];
+        div_nuc.style.letterSpacing = "0px";
+        var c_size = this.average_char_size(div_nuc);
+        var l_spacing = CHAR_WIDTH - c_size;
+        div_nuc.style.letterSpacing = l_spacing + "px";
+        div_nuc.innerHTML = this.seq.join('');
+
         var clone = this.m.clone(this.id);
-
-        var window_start, result;
-        var highlights = [];
-
         if (typeof clone.sequence != 'undefined' && clone.sequence !== 0) {
+            for (var i in this.layers){
+                var l = this.layers[i];
+                for (var j in l.segment){
+                    var s = l.segment[j];
 
-            //find V, D, J position
-            if (clone.hasSeg('5', '3')){
+                    var div_h = div.getElementsByClassName(s.className)[0];
+                    var start = this.segment_start(clone,s.start);
+                    var stop = this.segment_stop(clone,s.stop);
+                    
+                    if (start != undefined && stop != undefined){
+                        var width = Math.floor(CHAR_WIDTH * (stop - start));
+                        var left = Math.floor(CHAR_WIDTH * start) - Math.round(l_spacing*2)/4;
+                        div_h.style.width = width + "px";
+                        div_h.style.left = left + "px";
+                    }
+                }    
+            }
 
-                var vdjArray = this.getVdjStartEnd(clone);
 
-                // We first put the end positions
-                highlights.push({'type':'N', 'color': "", 'start': vdjArray["5"].stop});
-                highlights.push({'type':'N', 'color': "", 'start': vdjArray["3"].start});
-                highlights.push({'type':'before5', 'color': "black", 'start': 0});                  // from seq start to 5 start
-                highlights.push({'type':'after3',  'color': "black", 'start': vdjArray["3"].stop}); // from 3 stop to seq end
-                // TOOD: remove the two previous lines, see #2135
-
-                var key;
-                for (var i in SEGMENT_KEYS) {
-                    key = SEGMENT_KEYS[i];
-                    if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key].stop != 'undefined'){
-                        highlights.push({'type':'N', 'color': "", 'start': vdjArray[key].stop});
+            if (this.segmenter.aligned && this.id != this.segmenter.sequence[this.segmenter.sequence_order[0]].id){
+                var seq,ref;
+                if (this.segmenter.amino) {
+                    seq = this.seqAA;
+                    ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seqAA;
+                } else {
+                    seq = this.seq;
+                    ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;
+                }
+    
+                this.seq_mut=[];
+                this.seq_mut2=[];
+                this.seq_a =[];
+                for (var a in this.seq){
+                    if (this.seq[a] != ref[a] && this.seq[a] != '-' && ref[a] != '-'){
+                        this.seq_mut2[a] = this.seq[a];
+                        this.seq_mut[a] = '_';
+                        this.seq_a[a] = this.seq[a];
+                    }else{
+                        this.seq_mut[a] = '\u00A0';
+                        this.seq_mut2[a] = '\u00A0';
+                        this.seq_a[a] = '.';
+                        if(this.seq[a] == '-' || ref[a] == '-')
+                            this.seq_a[a] = this.seq[a];
                     }
                 }
 
-                // We now put the start positions (that may override previous end positions)
-                for (var j in SEGMENT_KEYS) {
-                    key = SEGMENT_KEYS[j];
-                    if (typeof vdjArray[key] != 'undefined' && typeof vdjArray[key].start!= 'undefined'){
-                        highlights.push({'type':'D', 'color': "", 'start': vdjArray[key].start});
-                    }
-                }
+                var div_mut = div.getElementsByClassName("seq-mut")[0];
+                div_mut.style.letterSpacing = l_spacing + "px";
+                div_mut.innerHTML = this.seq_mut.join('');
 
-                highlights.push({'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : "", 'start': vdjArray["5"].start});
-                highlights.push({'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : "", 'start': vdjArray["3"].start});
+                var div_mut2 = div.getElementsByClassName("seq-mut2")[0];
+                div_mut2.style.letterSpacing = l_spacing + "px";
+                div_mut2.innerHTML = this.seq_mut2.join('');
+
+                if (this.segmenter.use_dot)
+                    div_nuc.innerHTML = this.seq_a.join('');
             }
 
-            window_start = this.pos[clone.sequence.indexOf(clone.id)];
-            if (clone.hasSeg('cdr3')){
-                if (typeof clone.seg.cdr3.start != "undefined"){
-                    window_start = this.pos[clone.seg.cdr3.start];
-                }else if (clone.seg.cdr3.constructor === String){
-                    window_start = this.pos[clone.sequence.indexOf(clone.seg.cdr3)];
-                }
-            }
-            
-            for (var k in this.segmenter.highlight){
-                highlights.push(this.get_positionned_highlight(this.segmenter.highlight[k].field,
-                                                               this.segmenter.highlight[k].color));
-            }
         }
-        return this.highlightToString(highlights, window_start);
     },
 
-    /**
-     * get V D J start end position in a reusable way...
-     *
-     * @param cloneinfo
-     * @return {object}
-     */
-    getVdjStartEnd: function (clone) {
-
-        var vdjArray ={"5": {}, "3": {}} ;
-        vdjArray["5"].start = (clone.seg["5"].start != undefined) ? this.pos[clone.seg["5"].start] : 0;
-        vdjArray["5"].stop  = this.pos[clone.seg["5"].stop] + 1;
-        vdjArray["3"].start = this.pos[clone.seg["3"].start];
-        vdjArray["3"].stop  = (clone.seg["3"].stop != undefined)  ? this.pos[clone.seg["3"].stop] : this.seq.length;
-
-        for (var i in SEGMENT_KEYS)
-        {
-            var key = SEGMENT_KEYS[i];
-            vdjArray[key] = {};
-            if (typeof clone.seg[key] != 'undefined' && typeof clone.seg[key].start != 'undefined' && typeof clone.seg[key].stop != 'undefined') {
-                vdjArray[key] = {};
-                vdjArray[key].start = this.pos[clone.seg[key].start];
-                vdjArray[key].stop = this.pos[clone.seg[key].stop] + 1;
-            }
+    segment_start: function(clone, fct){
+        try{
+            return this.pos[fct(clone)];
+        }catch(e){
+            return undefined;
         }
-        return vdjArray;
+    },
+    segment_stop: function(clone, fct){
+        try{
+            return this.pos[fct(clone)]+1;
+        }catch(e){
+            return undefined;
+        }
     },
 
-    /**
-     * build a highlight descriptor (start/stop/color/...)
-     * @param {string} field - clone field name who contain the information to highlight
-     * @param {string} color
-     * @return {object}
-     * */
-    get_positionned_highlight: function (field, color) {
-        var clone = this.m.clone(this.id);
-        var h = {'color' : color, 'seq': ''};
-        var p = clone.getSegFeature(field);
+    average_char_size: function(parent, classname){
+        var size = 100;
+        var text = "";
+        for (var i = 0; i < size; i++) text+="A";
+        var div = document.createElement("div");
+        div.className = classname;
+        div.style.display = "inline-block";
+        div.textContent = text;
+        parent.appendChild(div);
+        average_size = div.offsetWidth/size;
+        console.log(average_size); 
+        parent.removeChild(div);
+        return average_size;
+    },
 
-        if (typeof p.start == 'undefined')
-            return {'start' : -1, 'stop' : -1, 'seq': '', 'color' : color};
+ 
 
-        if (typeof p.seq == 'undefined')
-            p.seq = '';
-
-        // Build the highlight object from p        
-        // Both 'start' and 'stop' positions are included in the highlight
-        {
-            h.start = this.pos[p.start];
-            h.stop = this.pos[p.stop];
-            h.tooltip = typeof p.tooltip != 'undefined'? p.tooltip:"";
-        }
-
-        // Build the (possibly invisible) sequence
-        if (p.seq === '') {
-            h.css = "highlight_border";
-            for (var l=0; l<(h.stop - h.start + 1); l++) h.seq += "\u00A0";
-        } else {
-            h.css = "highlight_seq";
-            var j = 0;
-            for (var k=h.start; j<p.seq.length; k++) { // End condition on j, not on k
-                var c = "\u00A0";
-                if (this.seq[k] != '-') {
-                    var cc = p.seq[j++];
-                    if ((cc != '_') && (cc != ' ')) c = cc ;
-                    if (field == "quality") {
-                        var percent = (cc.charCodeAt(0)-this.m.min_quality)/(this.m.max_quality-this.m.min_quality);
-                        var color_hue = (percent * 100);
-                        var col = colorGenerator(color_hue);
-                        c = "<span style='height:"+(50+(percent*50))+"%;";
-                        c += "top:"+(100-(50+(percent*50)))+"%;";
-                        c += "position:relative;";
-                        c += "background-color:"+col+";";
-                        c += "'>\u00A0</span>";
-                    }
-                }
-                h.seq += c;
-            }
-
-        }
-
-        return h;
-    }
 };
 Sequence.prototype = $.extend(Object.create(genSeq.prototype), Sequence.prototype);
 

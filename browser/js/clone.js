@@ -1609,12 +1609,18 @@ Clone.prototype = {
       * start to fill a node with clone informations common between segmenter and list
       * @param {dom_object} div_elem - html element to complete
       * */
-    div_elem: function (div_elem) {
-
-        div_elem.removeAllChildren();
-        
+    div_elem: function (div_elem, clear) {
         var self = this;
 
+        if(typeof clear != undefined && clear==false ){
+            div_elem.getElementsByClassName("starBox")[0].onclick = function (e) {
+                self.m.openTagSelector([self.index], e);
+            }
+            return; 
+        }
+        
+
+        div_elem.removeAllChildren(); 
         // Tag/Star
         var span_star = document.createElement('span')
         span_star.setAttribute('class', 'starBox');

@@ -174,9 +174,19 @@ ul{
 }
 
 #mid-container {
+position : fixed;
   display: flex;
-  flex: auto;
+  flex: 1 1 auto;
+  top : @top_container_height;
+  bottom : 125px ;
+  width: calc(~"100%" - @margin + @margin);
   overflow: hidden;
+  background: @background;
+  margin: @margin;
+  margin: @margin @margin 0px @margin;
+  border-bottom-color: white;
+  border-bottom-style: solid;
+  border-bottom-width: @margin;
 }
 
 #right-container{
@@ -623,10 +633,6 @@ line {
   flex: 1 1 auto;
 }
 
-.nameBox {
-  width: 250px;
-}
-
 .list .axisBox, .axisBox span {
   max-width: @width_axisBox;
   overflow: hidden;
@@ -1018,9 +1024,7 @@ span.sample-tag, a.tag-link {
 .button, .button_right, .button_left{
   cursor:pointer;
   font-size: 13px;
-  padding: 0px 3px;
-  margin-right:5px;
-  margin-left:5px;
+  padding: 2px 5px;
   min-width : 16px;
   color: @default;
 }
@@ -1085,18 +1089,6 @@ span.logo
   color: #f88;
 }
 
-.bot-bar {
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: -moz-none;
-    -ms-user-select: none;
-    user-select: none;
-    height: 20px;
-    border-bottom: solid;
-    width: 100%;
-    padding-top: 2px;
-}
-
 .devel-mode, .beta-mode {
     display: none;
 }
@@ -1109,14 +1101,6 @@ span.logo
     overflow: hidden;
     height: 1.1em;
 }
-.stats {
-  position: relative;
-  text-align: right;
-  float: right;
-  width: @width_stats - 3px;
-  padding-right: 3px;
-}
-
 
 .selector{
   display: none;
@@ -1141,9 +1125,7 @@ span.logo
 #bot-container {
   position: fixed;
   bottom: 0;
-  left: @margin;
-  border-top: solid;
-  border-width: 6px;
+  width: 100%;
   min-height: 125px;
 }
 
@@ -1808,6 +1790,7 @@ select>option:hover {
 
 .inactive {
     opacity: 0.5;
+    pointer-events: none;
 }
 
 .suggest_box {
