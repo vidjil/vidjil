@@ -64,7 +64,7 @@
 
 {{if auth.can_create_patient():}}
 <span class="button2" onclick="db.call('sample_set/form', {'type': '{{=helper.type}}'})"> + new {{=helper.get_type_display()}}s </span>
-<span class="button2" onclick="db.call('sample_set/custom', {'filter': '{{=request.vars['filter']}}' })"> compare samples/patients </span>
+<span class="button2 devel-mode" onclick="db.call('sample_set/custom', {'filter': '{{=request.vars['filter']}}' })"> compare samples/patients </span>
 {{else:}}
 <!-- <span class="button2 inactive" onclick="db.call('sample_set/add')" title="you don't have permission to create new {{=helper.get_type_display()}}s"> add sample_set </span> -->
 {{pass}}
