@@ -45,6 +45,9 @@ Model_loader.prototype = {
         if (typeof config != 'undefined' && typeof config.autoload_analysis != 'undefined')
             params.analysis = config.autoload_analysis
 
+        if (typeof config != 'undefined' && typeof config.server_id != 'undefined')
+            document.getElementById('server-id').innerText = config.server_id
+
         /** load the default vidjil file, open the database or display the welcome popup depending on the case*/
         if (typeof params.data !== "undefined") {
             if (typeof params.analysis !== "undefined"){
