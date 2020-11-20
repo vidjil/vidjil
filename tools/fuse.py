@@ -222,6 +222,16 @@ class Window:
                 if key not in obj.d:
                     obj.d[key] = source.d[key]
 
+        # !! No name field if fuse with an empty clone
+        if "name" in self.d and "name" in other.d and self.d["name"] != other.d["name"]:
+            if obj.d["name"] == self.d["name"]:
+                name = other.d["name"]
+            else:
+                name = self.d["name"]
+            # init warn field if not already present
+            if not "warn" in obj.d:
+                obj.d["warn"] = []
+            obj.d["warn"].append( {"code":"W81", "msg":"Clone have different names between samples: %s" % name, "level": "warn"})
         return obj
         
     def get_nb_reads(self, cid, point=0):
