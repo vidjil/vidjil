@@ -113,7 +113,7 @@ to learn the essential features of Vidjil.
 <!-- The name can be edited (“edit”). -->
 
   - *date.* Date of the current sample
-    (can be edited in the database, on the patient/run/sample set tab).
+    (can be edited in the database, on the patient/run/set tab).
     When displaying multiple samples from a same patient/run/set,
     you can change the sample viewed by clicking on the `←` and `→` buttons,
     or cycle trough them by clicking on the "▶" button.
@@ -337,8 +337,8 @@ Do not copy any header row, but only the data rows.
 
 ## Permanent address (URL) to a set of samples
 
-Addresses such as <http://app.vidjil.org/?set=3241&config=39> directly target a set of samples (here the public dataset L3), possibly with your saved analysis.
-Moreover, the address also encodes other parameters, for instance <http://app.vidjil.org/?set=3241&config=39&plot=v,size,bar&clone=11,31> (selected axes and selected clones).
+Addresses such as <http://app.vidjil.org/3241-25> directly target a set of samples (here the public dataset L3), possibly with your saved analysis.
+Moreover, the address may also encode other parameters, for instance <https://app.vidjil.org/3241-25?plot=clone%20average%20read%20length,J/3%27%20gene,bar&clone=30> (selected axes and selected clones).
 
 To discuss on some results or to raise any issue, you can share such addresses with other users (with whom you share access grants, see below),
 to your local IT staff or to the Vidjil team.
