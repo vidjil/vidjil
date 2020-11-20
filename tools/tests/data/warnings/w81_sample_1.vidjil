@@ -1,10 +1,10 @@
 {
+    "notes": "Sample with clone 1 and 3;", 
     "clones": [
         {"germline": "IGK", "id": "clone_1", "name": "clone_name_1", "reads": [500], "top": 1}, 
         {"germline": "IGK", "id": "clone_3", "name": "clone_name_3", "reads": [500], "top": 2}], 
     "clusters": [],
     "germlines": {}, 
-    "notes": "Sample with clone 1 and 3;", 
     "producer": "vidjil fuse", 
     "reads": {"germline": {"IGK": [9500]}, "segmented": [9500], "total": [9500]}, 
     "samples": {
