@@ -16,32 +16,39 @@ class SamplesetlistModel(unittest.TestCase):
         auth.login_bare("test@vidjil.org", "123456")
 
     def testInit(self):
-        slist = SampleSetList('patient')
-        self.assertTrue(len(slist.element_ids) > 0, "The sample set list was not expected to be empty")
+        factory = ModelFactory()
+        helper = factory.get_instance(type='patient')
+        slist = SampleSetList(helper)
+        self.assertTrue(len(slist) > 0, "The sample set list was not expected to be empty")
 
     def testCreatorNames(self):
-        slist = SampleSetList('patient')
-        slist.load_creator_names()
-        values = slist.get_values() 
+        factory = ModelFactory()
+        helper = factory.get_instance(type='patient')
+        slist = SampleSetList(helper)
+        values = slist.result
         first = values[0]
-        name = first.creator
+        name = helper.get_creator(first)
         self.assertFalse(name == "", "load_creator_names failed to retrieve a username")
 
     def testPermittedGroups(self):
-        slist = SampleSetList('patient')
-        slist.load_permitted_groups()
-        value = slist.get_values()[0]
-        groups = value.groups
-        group_list = value.group_list
+        factory = ModelFactory()
+        helper = factory.get_instance(type='patient')
+        slist = SampleSetList(helper)
+        value = slist.result[0]
+        groups = helper.get_groups(value)
 
         self.assertFalse(groups == "", "load_permitted_groups didn't load ay groups")
-        self.assertFalse(group_list == [], "load_permitted_groups found groups although the group_list is empty")
 
     def testAnonPermissions(self):
-        slist = SampleSetList('patient')
-        slist.load_anon_permissions()
-        value = slist.get_values()[0]
+        factory = ModelFactory()
+        helper = factory.get_instance(type='patient')
+        slist = SampleSetList(helper)
+        value = slist.result[0]
 
-        self.assertFalse(value.anon_allowed, "Anon was allowed, when it was not expected to be")
+        set_ids = set([s.id for s in slist.result])
+        anon_set_ids = set([s.id for s in db(auth.vidjil_accessible_query('anon', db.sample_set)).select(db.sample_set.id)])
+        anon_permissions = list(anon_set_ids & set_ids)
+
+        self.assertFalse(value.sample_set_id in anon_permissions, "Anon was allowed, when it was not expected to be")
 
 
