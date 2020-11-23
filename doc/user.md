@@ -54,7 +54,7 @@ recombinations and the sequences found in one or several samples.
 The easiest way to get these files is to [request an account](http://app.vidjil.org/) on the public Vidjil test server.
 You will then be able to upload,
 manage, process your samples (`.fasta`, `.fastq`, `.gz`, `.bam`, or `.clntab` files) directly on the web application
-(see *The patient/experiment database and the server*), and the server behind the patient/experiment
+(see *The sample database and the server*), and the server behind the sample
 database computes these `.vidjil` files with vidjil-algo.
 Otherwise, such `.vidjil` files can be obtained either:
 
@@ -71,8 +71,8 @@ Contact us if you want help on converting such data.
 
   - Open data by:
     
-      - either with “patients”/“open patient” if you are connected to a patient/experiment database, such as on <http://app.vidjil.org/>.
-        In this case, there are always some "Demo" datasets for demonstration purposes.
+      - either with “samples”/“open samples” if you are connected to a sample database, such as on <http://app.vidjil.org/> or <http://health.vidjil.org/>.
+        In these cases, there are always some "Demo" datasets for demonstration purposes.
         Once a patient/run/set is selected, you can access the results by clicking on the link near `See results` (bottom right).
     
       - or with “file”/“import/export”, manually selecting a `.vidjil` file
@@ -94,7 +94,7 @@ Contact us if you want help on converting such data.
 
   - Your analysis (clone tagging, renaming, clustering) can be saved:
     
-      - either with “patients”/“save analysis” if you are connected to a patient/experiment database
+      - either with “samples”/“save analysis” if you are connected to a sample database
       - or with “file”/“export .analysis”
 
 You are advised to go through to the tutorial available from <http://www.vidjil.org/doc>
@@ -113,7 +113,7 @@ to learn the essential features of Vidjil.
 <!-- The name can be edited (“edit”). -->
 
   - *date.* Date of the current sample
-    (can be edited in the database, on the patient/run/sample set tab).
+    (can be edited in the database, on the patient/run/set tab).
     When displaying multiple samples from a same patient/run/set,
     you can change the sample viewed by clicking on the `←` and `→` buttons,
     or cycle trough them by clicking on the "▶" button.
@@ -169,7 +169,7 @@ find detailed informations retrieved from IMGT or from CloneDB.
 #### Detailed information from CloneDB
 
 (experimental feature)
-If you are connected to a patient/experiment database where CloneDB is enabled,
+If you are connected to a sample database where CloneDB is enabled,
 and if CloneDB was launched on the selected clone,
 you can see here occurrences of this clone in CloneDB
 as well as links to the relevant patients/runs/sets.
@@ -268,11 +268,12 @@ These buttons open another window/tab.
      of stereotyped antigen receptor sequences for CLL
 
 
-# The patient/experiment database and the server
+# The sample database and the server
 
-If a server with a patient/experiment database is configured with your
-installation of Vidjil (as on <http://app.vidjil.org/>), the
-'patient' menu gives you access to the server.
+If a server with a sample database is configured with your
+installation of Vidjil (as on the public test server <http://app.vidjil.org/>
+or on the healthcare server <http://health.vidjil.org/>), the
+'samples' menu gives you access to the server.
 
 With authentication, you can add 'patients', 'runs', or 'sets', they are just three different ways to group 'samples'.
 Samples are `.fasta`, `.fastq`, `.gz` or `.clntab` files, possibly pre-processed.
@@ -280,6 +281,12 @@ Once you uploaded samples (either in 'patients', 'runs', or 'sets'),
 you can process your data and save the results of your analysis.
 
 ## Patients
+
+<i>
+⚠️ The public <http://app.vidjil.org/> server is for Research Use Only
+and is not compliant for clinical use.
+Clinical data have to be uploaded on a [certified healthcare server](http://www.vidjil.org/doc/healthcare).
+</i>
 
 Once you are authenticated, this page shows the patient list. Here you
 can see your patients and patients whose permission has been given to you.
@@ -330,8 +337,8 @@ Do not copy any header row, but only the data rows.
 
 ## Permanent address (URL) to a set of samples
 
-Addresses such as <http://app.vidjil.org/?set=3241&config=39> directly target a set of samples (here the public dataset L3), possibly with your saved analysis.
-Moreover, the address also encodes other parameters, for instance <http://app.vidjil.org/?set=3241&config=39&plot=v,size,bar&clone=11,31> (selected axes and selected clones).
+Addresses such as <http://app.vidjil.org/3241-25> directly target a set of samples (here the public dataset L3), possibly with your saved analysis.
+Moreover, the address may also encode other parameters, for instance <https://app.vidjil.org/3241-25?plot=clone%20average%20read%20length,J/3%27%20gene,bar&clone=30> (selected axes and selected clones).
 
 To discuss on some results or to raise any issue, you can share such addresses with other users (with whom you share access grants, see below),
 to your local IT staff or to the Vidjil team.
@@ -395,7 +402,7 @@ The server mainteners can add new configurations tailored to specific needs, con
 The « reload » button (bottom left) updates the view. It is useful to see if the status of the task changed.
 It should do `QUEUED` → `ASSIGNED` → `RUNNING` → `COMPLETED`.
 It is possible to launch several processes at the same time (some will wait in the `QUEUED` / `ASSIGNED` states), and also to launch processes while you
-are uploading data. Finally, you can safely close the window with the patient/experiment database (and even your web browser) when some process are queued/launched.
+are uploading data. Finally, you can safely close the window with the sample database (and even your web browser) when some process are queued/launched.
 The only thing you should not do is to close completely your web browser (or the webpage) while sequences are uploading.
 
 Once a task is completed, a click on the `See results` link (bottom right) will open the main window to browse the clones.
@@ -758,7 +765,7 @@ the letter corresponding to the locus of interest.
 |           |                                                          |
 | --------- | -------------------------------------------------------- |
 | `Ctrl-s`  | save the analysis (when connected to a database)         |
-| `Shift-p` | open the 'patient' window (when connected to a database) |
+| `Shift-p` | open the database panel (when connected to a database)   |
 
 # References
 
