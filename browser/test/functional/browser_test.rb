@@ -26,7 +26,7 @@ class BrowserTest < MiniTest::Test
     end
   end
 
-  def set_browser(vidjil_file, analysis_file=nil, local_storage=nil)
+  def set_browser(vidjil_file, analysis_file=nil, local_storage=nil, close_tooltip=true)
     folder_path = File.expand_path(File.dirname(__FILE__))
     folder_path.sub! '/browser/test/functional', ''
     index_path = 'file://' + folder_path + '/browser/index.html'
@@ -104,6 +104,11 @@ class BrowserTest < MiniTest::Test
     end
 
     $b.div(:id => 'file_menu').button(:text => 'start').click
+
+    # close tooltip
+    if close_tooltip and $b.div(id: 'tip-container').present?
+      $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
+    end
 
   end
 
