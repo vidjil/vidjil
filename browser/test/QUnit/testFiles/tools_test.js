@@ -436,3 +436,9 @@ QUnit.test("remove duplicates", function(assert) {
   var array = [0,1,2,3,3,3,4,0]
   assert.deepEqual(removeDuplicate(array), [0,1,2,3,4], "correct array after removeDuplicate (4)")
 });
+
+QUnit.test("remove elt in decrease", function(assert) {
+
+  var listel = [0,1,2,4,5,7,8]
+  assert.deepEqual(removeEltAndDecrease(listel, 3), [0,1,2,3,4,6,7], "correct array after removeEltAndDecrease (3)")
+});
