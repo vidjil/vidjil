@@ -9,9 +9,6 @@ class TestGraph < BrowserTest
     super
     if not defined? $b
       set_browser("/doc/analysis-example2.vidjil")
-      if $b.div(id: 'tip-container').present?
-        $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
-      end
     end
   end
 
