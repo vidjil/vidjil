@@ -498,38 +498,48 @@ Model_loader.prototype = {
         }
         if (analysis.order != undefined){
             analysis.order = removeDuplicate(analysis.order)
-
         }
         if (analysis.stock_order != undefined){
             analysis.stock_order = removeDuplicate(analysis.stock_order)
+        } else {
+            // Create new values of stock_order for old analysis files
+            analysis.stock_order = JSON.parse(JSON.stringify(analysis.order));
+            for (var i = 0; i < analysis.id.length; i++) {
+              if (analysis.order.indexOf(i) == -1){
+                analysis.stock_order.push(i)
+              }
+            }
         }
 
-        if ('order' in analysis && 'stock_order' in analysis) {
-            // Jquery Extend don't work on samples.order.
-            clone.order       = analysis.order
-            clone.stock_order = analysis.stock_order
-            // Check if new sample have been added
-            if (clone.stock_order.length < this.samples.number){
-                for (var j = clone.stock_order.length; j < this.samples.number; j++) {
-                    clone.order.push(j)
-                    clone.stock_order.push(j)
-                }
-            }
-
-            // stock_order should not be different than number of samples present in vidjil/analysis (issue #4408).
-            // Order should not be bigger than number of samples present in vidjil/analysis (but can have less)
-            // TODO: be able to reset order in case of config 1 have same number of sample than config 2 (particular case of #4407)
-            if (typeof this.samples != 'undefined' && (clone.stock_order.length != this.samples.number || clone.order.length > this.samples.number)){
-                clone.order       = Array.from(Array(this.samples.number).keys())
-                clone.stock_order = Array.from(Array(this.samples.number).keys())
-            }
-
-        } else if ('order' in analysis && !('stock_order' in analysis) && analysis.id.length != clone.original_names.length) {
-            clone.order = this.calculateOrder(clone.order);
+        // Delete values of analysis that are not present in current loaded samples
+        var pos = 0
+        for (var i = 0; i < analysis.id.length; i++) {
+            var file = analysis.id[i]
+            if (samples.original_names.indexOf(file) == -1){
+                // delete this value and decrease greater values
+                analysis.id.splice(i,1); // remove file
+                analysis.order = removeEltAndDecrease(analysis.order, i)
+                analysis.stock_order = removeEltAndDecrease(analysis.stock_order, i)
+                i = i-1
+            } else { pos += 1 }
         }
 
+        pos = analysis.id.length
+        // Add values of samples that are not present in analysis
+        for (var i = 0; i < samples.original_names.length; i++) {
+            var file = samples.original_names[i]
+            if (analysis.id.indexOf(file) == -1){
+                analysis.id.push( file )
+                analysis.order.push(pos)
+                analysis.stock_order.push(pos)
+                pos += 1
+            }
+        }
+        clone.order = analysis.order
+        clone.stock_order = analysis.stock_order
         return clone;
     },
+
 
     /**
      * parse a json or a json_text and complete the model with it's content
