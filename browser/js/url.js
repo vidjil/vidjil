@@ -116,9 +116,10 @@ Url.prototype= {
 
     parseUrlParams:function (urlparams) {
         params={};
-
+        
         var url = this.window.location;
-        var positionnal_params = url.pathname.substr(1).split('-');
+        var url_last_segment = url.pathname.substr(1).split('/').pop();
+        var positionnal_params = url_last_segment.split('-');
         var pos_param_keys = this.getPositionnalParams();
         if (positionnal_params.length > 1 && positionnal_params[0] != "index.html")
             for (var j = 0; j < positionnal_params.length; j++) 
