@@ -59,4 +59,5 @@ Warnings which were implemented ([x]) have a fixed code that should not be chang
 - [ ] W8x Potential contamination or public clone #1744 
 - [ ]     Known public clone 
 - [x] W81 Clone have different names between samples #4566
+- [x] W82 Clone have different productivity between samples #4578
 

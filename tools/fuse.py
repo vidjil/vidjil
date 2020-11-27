@@ -229,8 +229,23 @@ class Window:
             else:
                 name = self.d["name"]
 
-            msg = "Clone have different names between samples: %s" % name
+            msg = "Clone have different names between samples (pos %s): %s" % (len(self.d["reads"]), name)
             obj.addWarning(code="W81", msg=msg, level="warn")
+
+        # !! No name field if fuse with an empty clone
+        if ("seg" in self.d and "junction" in self.d["seg"]) and ("seg" in other.d and "junction" in other.d["seg"]) and self.d["seg"]["junction"] != other.d["seg"]["junction"]:
+            if obj.d["seg"]["junction"]["productive"] == self.d["seg"]["junction"]["productive"]:
+                junction = other.d["seg"]["junction"]["productive"]
+            else:
+                junction = self.d["seg"]["junction"]["productive"]
+            if junction:
+                junction = "productive"
+            else:
+                junction = "not productive"
+
+            # show number/position of the corresponding sample ?
+            msg = "Clone have different productivity between samples (pos %s): %s" % (len(self.d["reads"]), junction)
+            obj.addWarning(code="W82", msg=msg, level="warn")
         return obj
         
     def addWarning(self, code, msg, level):
