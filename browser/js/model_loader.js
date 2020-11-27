@@ -509,23 +509,23 @@ Model_loader.prototype = {
 
         // Delete values of analysis that are not present in current loaded samples
         var pos = 0
-        for (var i = 0; i < analysis.id.length; i++) {
-            var file = analysis.id[i]
-            if (samples.original_names.indexOf(file) == -1){
+        for (var delpos = 0; delpos < analysis.id.length; delpos++) {
+            var analysis_file = analysis.id[delpos]
+            if (samples.original_names.indexOf(analysis_file) == -1){
                 // delete this value and decrease greater values
-                analysis.id.splice(i,1); // remove file
-                analysis.order = removeEltAndDecrease(analysis.order, i)
-                analysis.stock_order = removeEltAndDecrease(analysis.stock_order, i)
-                i = i-1
+                analysis.id.splice(delpos,1); // remove file
+                analysis.order = removeEltAndDecrease(analysis.order, delpos)
+                analysis.stock_order = removeEltAndDecrease(analysis.stock_order, delpos)
+                delpos = delpos-1
             } else { pos += 1 }
         }
 
         pos = analysis.id.length
         // Add values of samples that are not present in analysis
-        for (var i = 0; i < samples.original_names.length; i++) {
-            var file = samples.original_names[i]
-            if (analysis.id.indexOf(file) == -1){
-                analysis.id.push( file )
+        for (var addpos = 0; addpos < samples.original_names.length; addpos++) {
+            var sample_file = samples.original_names[addpos]
+            if (analysis.id.indexOf(sample_file) == -1){
+                analysis.id.push( sample_file )
                 analysis.order.push(pos)
                 analysis.stock_order.push(pos)
                 pos += 1
