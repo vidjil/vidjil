@@ -6,5 +6,5 @@ server {
         uwsgi_max_temp_file_size 20480m;
         client_max_body_size 20G;
 
-        include /etc/vidjil/*_location.conf
+        include /etc/vidjil/*_location.conf;
 }
