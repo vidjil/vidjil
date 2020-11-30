@@ -503,7 +503,11 @@ Model_loader.prototype = {
             analysis.stock_order = removeDuplicate(analysis.stock_order)
         } else {
             // Create new values of stock_order for old analysis files
-            analysis.stock_order = JSON.parse(JSON.stringify(analysis.order));
+            if (analysis.order != undefined) {
+                analysis.stock_order = JSON.parse(JSON.stringify(analysis.order));
+            } else {
+                analysis.stock_order = []
+            }
             for (var i = 0; i < analysis.id.length; i++) {
               if (analysis.order.indexOf(i) == -1){
                 analysis.stock_order.push(i)
