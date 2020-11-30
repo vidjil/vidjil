@@ -183,6 +183,8 @@ Url.prototype= {
 
         if (url==this.current_state) return;
 
+        if (this.m.file_source != "database") return;
+
         try  {
             this.window.history.pushState('plop', 'plop', url);
             this.current_state = url;
