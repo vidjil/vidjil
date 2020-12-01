@@ -506,6 +506,7 @@ Model_loader.prototype = {
             if (analysis.order != undefined) {
                 analysis.stock_order = JSON.parse(JSON.stringify(analysis.order));
             } else {
+                analysis.order = []
                 analysis.stock_order = []
             }
             for (var i = 0; i < analysis.id.length; i++) {
