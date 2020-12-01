@@ -65,29 +65,34 @@ QUnit.test("load", function(assert) {
 
 QUnit.test("load with new order && stock_order", function(assert) {
     var m = new Model();
-    m.parseJsonData(json_data, 100)
+    m.parseJsonData(json_data, 100) //[ "Diag.fa", "Fu-1.fa", "Fu-2.fa", "Fu-3.fa" ]
     m.initClones()
-    m.parseJsonAnalysis(analysis_data_stock_order)
+    m.parseJsonAnalysis(JSON.parse(JSON.stringify(analysis_data_stock_order)))  // [ "Diag.fa", "Fu-0.fa", "Fu-1.fa", "Fu-2.fa" ]
     m.initClones()
+    // fu-3 is replaced with fu-0
+    // "order": [ 3, 0, 1 ],
+    // "stock_order": [2, 3, 0, 1 ]
+    // become ==> "order": [ 2, 0, 3 ] and "stock_order": [1, 2, 0, 3 ]
 
-    assert.deepEqual(m.samples.order,         [3,0,1], "Correct order after loading" )
-    assert.deepEqual(m.samples.stock_order, [2,3,0,1], "Correct stock_order after loading" )
-    assert.equal(m.t, 3, "Correct time selected after analysis loading")
+    assert.deepEqual(m.samples.order,         [ 2, 0, 3], "Correct order after loading" )
+    assert.deepEqual(m.samples.stock_order, [1, 2, 0, 3], "Correct stock_order after loading" )
+    assert.equal(m.t, 2, "Correct time selected after analysis loading")
 
     // Note, respective clone 0 size: 0.05, 0.1, 0.075, 0.15
-    assert.equal( m.clones[0].getSize(), m.clones[0].getSize(3), "clone 0 hve size corresponding to timepoint 3 (loading order)")
+    assert.equal( m.clones[0].getSize(), m.clones[0].getSize(2), "clone 0 hve size corresponding to timepoint 2 (loading order)")
 
     // Test loading file with duplicate sample present in order field of analysis
     var m = new Model();
     m.parseJsonData(json_data, 100)
     m.initClones()
+    // Copy and modify
     analysis_data_stock_order_with_error =  JSON.parse(JSON.stringify(analysis_data_stock_order))
-    analysis_data_stock_order_with_error.samples.order = [3, 3, 0, 1]
+    analysis_data_stock_order_with_error.samples.order = [3, 3, 0, 1] // become [2, 0]
     m.parseJsonAnalysis(analysis_data_stock_order_with_error)
     m.initClones()
 
-    assert.deepEqual(m.samples.order,         [3,0,1], "Correct order after loading analysis with dusplicate sample in order" )
-    assert.deepEqual(m.samples.stock_order, [2,3,0,1], "Correct stock_order after loading analysis with dusplicate sample in order" )
+    assert.deepEqual(m.samples.order,          [2, 0, 3], "Correct order after loading analysis with dusplicate sample in order" )
+    assert.deepEqual(m.samples.stock_order, [1, 2, 0, 3], "Correct stock_order after loading analysis with dusplicate sample in order" )
     
 });
 
@@ -351,10 +356,12 @@ QUnit.test("model: analysis sample data application", function(assert) {
     var field = m.copyField(dest, src, "val");
     assert.deepEqual(field, {"1": {"val": "f"}, "2": {"val": "o"}}, "copy the contents of analysis sample fields");
 
+    // Here sample "3" is deleted as it is not present, and sample "4" is added.
+    // It take position of 3
     dest = {"original_names": ["1", "4", "2"], "val": ["a", "b", "c"], "lav": ["c", "b", "a"]};
     src = {"id": ["1", "2", "3"], "val": ["f", "o", "o"]};
     var res = m.copySampleFields(dest, src);
-    var expected = {"original_names": ["1", "4", "2"], "val": ["f", "b", "o"], "lav": ["c", "b", "a"]};
+    var expected = {"original_names": ["1", "4", "2"], "val": ["f", "b", "o"], "lav": ["c", "b", "a"],"order": [2 ],"stock_order": [0, 1, 2 ]};
     assert.deepEqual(res, expected, "copy all relevant fields from analysis to samples");
 
     m.parseJsonData(json_data, 100);
@@ -363,7 +370,7 @@ QUnit.test("model: analysis sample data application", function(assert) {
     assert.notEqual(m.samples.names[1], "fu0", "missing sample successfully ignored");
     assert.equal(m.samples.names[1], "fu1", "correctly shifted samples");
 
-    assert.deepEqual(m.samples.order, [0,3,1,2], "order converted");
+    assert.deepEqual(m.samples.order, [0,1,2,3], "order converted");
 });
 
 
