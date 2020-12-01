@@ -214,7 +214,6 @@ some clones, and added external data (`data`).
     ],
          "number": 2, 
          "names": ["diag", "fu1"],
-         "original_names": ["file1.fastq", "file2.fastq"],
          "order": [1, 0],
          "stock_order": [1, 0]
     },
